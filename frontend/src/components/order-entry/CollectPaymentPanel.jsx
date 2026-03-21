@@ -256,29 +256,24 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           </div>
         </div>
 
-        {/* Apply Discounts Section */}
+        {/* 1. Discount Section - Always visible */}
         <div 
-          className="p-4 rounded-lg border"
+          className="p-3 rounded-lg border"
           style={{ borderColor: COLORS.borderGray }}
-          data-testid="apply-discounts-section"
+          data-testid="discount-section"
         >
-          <div className="text-sm font-semibold mb-3" style={{ color: COLORS.darkText }}>
-            🏷️ APPLY DISCOUNTS
-          </div>
-
-          {/* Manual Discount */}
-          <div className="mb-3">
-            <div className="text-xs mb-2" style={{ color: COLORS.grayText }}>Discount</div>
-            <div className="flex gap-2">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🏷️ Discount</span>
+            <div className="flex gap-2 flex-1 justify-end">
               <select
                 value={discountType || ""}
                 onChange={(e) => setDiscountType(e.target.value || null)}
-                className="px-3 py-2 rounded-lg border text-sm outline-none"
-                style={{ borderColor: COLORS.borderGray }}
+                className="px-2 py-1.5 rounded-lg border text-sm outline-none"
+                style={{ borderColor: COLORS.borderGray, minWidth: "80px" }}
               >
                 <option value="">None</option>
-                <option value="percent">Percent %</option>
-                <option value="flat">Flat ₹</option>
+                <option value="percent">%</option>
+                <option value="flat">₹</option>
               </select>
               {discountType && (
                 <input
@@ -286,16 +281,62 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                   placeholder={discountType === 'percent' ? "%" : "₹"}
                   value={discountValue}
                   onChange={(e) => setDiscountValue(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg border text-sm outline-none"
+                  className="w-20 px-2 py-1.5 rounded-lg border text-sm outline-none"
                   style={{ borderColor: COLORS.borderGray }}
                 />
               )}
+              {manualDiscount > 0 && (
+                <span className="text-sm font-medium self-center" style={{ color: COLORS.primaryGreen }}>-₹{manualDiscount}</span>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Loyalty Points */}
-          {customer?.loyaltyPoints > 0 && (
-            <label className="flex items-center justify-between py-2 cursor-pointer border-t" style={{ borderColor: COLORS.borderGray }}>
+        {/* 2. Coupon Section - Only if customer entered */}
+        {customer && (
+          <div 
+            className="p-3 rounded-lg border"
+            style={{ borderColor: COLORS.borderGray }}
+            data-testid="coupon-section"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🎫 Coupon</span>
+              <input
+                type="text"
+                placeholder="Enter code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                className="flex-1 px-2 py-1.5 rounded-lg border text-sm outline-none"
+                style={{ borderColor: COLORS.borderGray }}
+                data-testid="coupon-input"
+              />
+              <button
+                onClick={handleApplyCoupon}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium"
+                style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
+                data-testid="apply-coupon-btn"
+              >
+                Apply
+              </button>
+            </div>
+            {couponError && <div className="text-xs mt-1 ml-16" style={{ color: "#D32F2F" }}>{couponError}</div>}
+            {selectedCoupon && (
+              <div className="flex items-center justify-between mt-2 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
+                <span className="text-sm" style={{ color: COLORS.primaryGreen }}>✓ {selectedCoupon.code} (-₹{couponDiscount})</span>
+                <button onClick={() => setSelectedCoupon(null)} className="text-xs" style={{ color: COLORS.grayText }}>Remove</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. Loyalty Section - Only if customer has points */}
+        {customer?.loyaltyPoints > 0 && (
+          <div 
+            className="p-3 rounded-lg border"
+            style={{ borderColor: COLORS.borderGray }}
+            data-testid="loyalty-section"
+          >
+            <label className="flex items-center justify-between cursor-pointer">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -304,20 +345,25 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                   className="w-4 h-4 accent-green-600"
                   data-testid="use-loyalty-checkbox"
                 />
-                <span className="text-sm" style={{ color: COLORS.darkText }}>
-                  ⭐ Use Loyalty ({customer.loyaltyPoints} pts)
-                </span>
+                <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>⭐ Loyalty</span>
+                <span className="text-xs" style={{ color: COLORS.grayText }}>({customer.loyaltyPoints} pts)</span>
               </div>
-              <span className="text-sm" style={{ color: COLORS.primaryGreen }}>
-                -₹{Math.min(customer.loyaltyPoints, itemTotal)}
+              <span className="text-sm font-medium" style={{ color: useLoyalty ? COLORS.primaryGreen : COLORS.grayText }}>
+                {useLoyalty ? `-₹${loyaltyDiscount}` : `₹${customer.loyaltyPoints} available`}
               </span>
             </label>
-          )}
+          </div>
+        )}
 
-          {/* Wallet */}
-          {customer?.walletBalance > 0 && (
-            <label className="flex items-center justify-between py-2 cursor-pointer border-t" style={{ borderColor: COLORS.borderGray }}>
-              <div className="flex items-center gap-2">
+        {/* 4. Wallet Section - Only if customer has balance */}
+        {customer?.walletBalance > 0 && (
+          <div 
+            className="p-3 rounded-lg border"
+            style={{ borderColor: COLORS.borderGray }}
+            data-testid="wallet-section"
+          >
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useWallet}
@@ -325,62 +371,26 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                   className="w-4 h-4 accent-green-600"
                   data-testid="use-wallet-checkbox"
                 />
-                <span className="text-sm" style={{ color: COLORS.darkText }}>
-                  💰 Use Wallet (₹{customer.walletBalance})
+                <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>💰 Wallet</span>
+                <span className="text-xs" style={{ color: COLORS.grayText }}>(₹{customer.walletBalance})</span>
+              </label>
+              <div className="flex items-center gap-2">
+                {useWallet && (
+                  <input
+                    type="number"
+                    value={walletAmount}
+                    onChange={(e) => setWalletAmount(Math.min(parseFloat(e.target.value) || 0, customer.walletBalance))}
+                    className="w-16 px-2 py-1 text-sm text-right rounded border"
+                    style={{ borderColor: COLORS.borderGray }}
+                  />
+                )}
+                <span className="text-sm font-medium" style={{ color: useWallet ? COLORS.primaryGreen : COLORS.grayText }}>
+                  {useWallet ? `-₹${walletDiscount}` : ""}
                 </span>
               </div>
-              {useWallet && (
-                <input
-                  type="number"
-                  value={walletAmount}
-                  onChange={(e) => setWalletAmount(Math.min(parseFloat(e.target.value) || 0, customer.walletBalance))}
-                  className="w-20 px-2 py-1 text-sm text-right rounded border"
-                  style={{ borderColor: COLORS.borderGray }}
-                />
-              )}
-            </label>
-          )}
-
-          {/* Coupon */}
-          <div className="pt-2 border-t mt-2" style={{ borderColor: COLORS.borderGray }}>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Enter coupon code"
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                className="flex-1 px-3 py-2 rounded-lg border text-sm outline-none"
-                style={{ borderColor: COLORS.borderGray }}
-                data-testid="coupon-input"
-              />
-              <button
-                onClick={handleApplyCoupon}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
-                data-testid="apply-coupon-btn"
-              >
-                Apply
-              </button>
             </div>
-            {couponError && (
-              <div className="text-xs mt-1" style={{ color: "#D32F2F" }}>{couponError}</div>
-            )}
-            {selectedCoupon && (
-              <div className="flex items-center justify-between mt-2 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
-                <span className="text-sm" style={{ color: COLORS.primaryGreen }}>
-                  ✓ {selectedCoupon.code} applied
-                </span>
-                <button 
-                  onClick={() => setSelectedCoupon(null)}
-                  className="text-xs px-2 py-1 rounded"
-                  style={{ color: COLORS.grayText }}
-                >
-                  Remove
-                </button>
-              </div>
-            )}
           </div>
-        </div>
+        )}
 
         {/* Payment Method */}
         <div 
