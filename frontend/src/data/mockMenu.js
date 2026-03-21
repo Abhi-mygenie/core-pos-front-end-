@@ -5,6 +5,21 @@ export const mockMenuCategories = [
   { id: "main", name: "Main Course" },
   { id: "bar", name: "Bar" },
   { id: "dessert", name: "Dessert" },
+  { id: "beverages", name: "Beverages" },
+  { id: "breakfast", name: "Breakfast" },
+  { id: "lunch", name: "Lunch Specials" },
+  { id: "dinner", name: "Dinner Specials" },
+  { id: "indian", name: "Indian" },
+  { id: "chinese", name: "Chinese" },
+  { id: "italian", name: "Italian" },
+  { id: "mexican", name: "Mexican" },
+  { id: "thai", name: "Thai" },
+  { id: "seafood", name: "Seafood" },
+  { id: "pizza", name: "Pizza" },
+  { id: "burgers", name: "Burgers" },
+  { id: "salads", name: "Salads" },
+  { id: "sandwiches", name: "Sandwiches" },
+  { id: "combos", name: "Combos" },
 ];
 
 export const mockMenuSubCategories = {

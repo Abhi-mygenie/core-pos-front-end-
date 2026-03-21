@@ -23,6 +23,7 @@ A Restaurant POS (Point of Sale) frontend system built with React, CRACO, and Ta
 - ✅ **Fixed: First click selection** - Changed from onClick to onMouseDown to prevent blur race condition
 - ✅ **Fixed: Linked field clearing** - Clearing name clears phone (and vice versa) when customer was selected
 - ✅ **Fixed: Double dropdown bug** - After selecting customer, dropdowns no longer reappear (checks `isCustomerSelected` state)
+- ✅ **Category Panel Redesign** - Added search box, compact items (36px vs 50px), scroll indicator, supports 20 categories
 
 ## Features
 - Login Page with MyGenie branding
