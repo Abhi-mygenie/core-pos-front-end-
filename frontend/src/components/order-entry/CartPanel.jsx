@@ -139,6 +139,7 @@ const CartPanel = ({
   const [showNameSuggestions, setShowNameSuggestions] = useState(false);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
+  const [isCustomerSelected, setIsCustomerSelected] = useState(false); // Track if customer was selected from suggestions
   const phoneInputRef = useRef(null);
   const nameInputRef = useRef(null);
 
@@ -147,6 +148,7 @@ const CartPanel = ({
     if (customer) {
       setCustomerName(customer.name || "");
       setCustomerPhone(customer.phone || "");
+      setIsCustomerSelected(!!customer.id);
     }
   }, [customer]);
 
@@ -174,9 +176,13 @@ const CartPanel = ({
     }
   }, [customerName]);
 
-  // Close suggestions on outside click
+  // Close suggestions on outside click (but not when clicking suggestions)
   useEffect(() => {
     const handleClickOutside = (e) => {
+      // Check if clicking on a suggestion button - if so, don't close
+      if (e.target.closest('[data-suggestion="true"]')) {
+        return;
+      }
       if (phoneInputRef.current && !phoneInputRef.current.contains(e.target)) {
         setShowPhoneSuggestions(false);
       }
@@ -189,26 +195,50 @@ const CartPanel = ({
   }, []);
 
   // Select customer from suggestions (from phone or name)
-  const selectCustomer = (c, fromName = false) => {
+  const selectCustomer = (c) => {
     setCustomerName(c.name);
     setCustomerPhone(c.phone);
     setShowPhoneSuggestions(false);
     setShowNameSuggestions(false);
+    setIsCustomerSelected(true);
     onCustomerChange?.({ id: c.id, name: c.name, phone: c.phone });
   };
 
-  // Handle field blur - update customer
+  // Handle name change - if customer was selected and name is cleared, clear phone too
+  const handleNameChange = (e) => {
+    const newName = e.target.value;
+    setCustomerName(newName);
+    
+    // If name is cleared and a customer was previously selected, clear phone too
+    if (!newName.trim() && isCustomerSelected) {
+      setCustomerPhone("");
+      setIsCustomerSelected(false);
+      onCustomerChange?.(null);
+    }
+  };
+
+  // Handle phone change - if customer was selected and phone is cleared, clear name too
+  const handlePhoneChange = (e) => {
+    const newPhone = e.target.value;
+    setCustomerPhone(newPhone);
+    
+    // If phone is cleared and a customer was previously selected, clear name too
+    if (!newPhone.trim() && isCustomerSelected) {
+      setCustomerName("");
+      setIsCustomerSelected(false);
+      onCustomerChange?.(null);
+    }
+  };
+
+  // Handle field blur - update customer (no delay needed with onMouseDown)
   const handleFieldBlur = () => {
-    // Small delay to allow click on suggestion to register
-    setTimeout(() => {
-      if (customerName.trim() || customerPhone.trim()) {
-        onCustomerChange?.({
-          id: customer?.id || null,
-          name: customerName.trim(),
-          phone: customerPhone.trim(),
-        });
-      }
-    }, 150);
+    if (customerName.trim() || customerPhone.trim()) {
+      onCustomerChange?.({
+        id: customer?.id || null,
+        name: customerName.trim(),
+        phone: customerPhone.trim(),
+      });
+    }
   };
 
   return (
@@ -224,7 +254,7 @@ const CartPanel = ({
             type="text"
             placeholder="Customer name"
             value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
+            onChange={handleNameChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
             className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
@@ -241,7 +271,11 @@ const CartPanel = ({
               {filteredByName.map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => selectCustomer(c, true)}
+                  data-suggestion="true"
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent blur from firing
+                    selectCustomer(c);
+                  }}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
                   style={{ borderColor: COLORS.borderGray }}
                   data-testid={`name-suggestion-${c.id}`}
@@ -259,7 +293,7 @@ const CartPanel = ({
             type="tel"
             placeholder="Phone number"
             value={customerPhone}
-            onChange={(e) => setCustomerPhone(e.target.value)}
+            onChange={handlePhoneChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerPhone.length >= 3 && setShowPhoneSuggestions(filteredCustomers.length > 0)}
             className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
@@ -275,7 +309,11 @@ const CartPanel = ({
               {filteredCustomers.map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => selectCustomer(c)}
+                  data-suggestion="true"
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent blur from firing
+                    selectCustomer(c);
+                  }}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
                   style={{ borderColor: COLORS.borderGray }}
                 >
