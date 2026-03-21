@@ -127,23 +127,29 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
         </span>
       </div>
 
+      {/* Sticky Bill Summary Header */}
+      <div 
+        className="sticky top-0 z-10 px-4 py-3 flex items-center justify-between border-b bg-white"
+        style={{ borderColor: COLORS.borderGray }}
+        data-testid="bill-summary-header"
+      >
+        <div className="text-sm font-semibold" style={{ color: COLORS.darkText }}>
+          📋 BILL SUMMARY
+        </div>
+        <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
+          ₹{finalTotal.toLocaleString()}
+        </div>
+      </div>
+
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         
-        {/* Bill Summary */}
+        {/* Bill Items */}
         <div 
           className="p-4 rounded-lg border"
           style={{ borderColor: COLORS.borderGray }}
           data-testid="bill-summary-section"
         >
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-sm font-semibold" style={{ color: COLORS.darkText }}>
-              📋 BILL SUMMARY
-            </div>
-            <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
-              ₹{finalTotal.toLocaleString()}
-            </div>
-          </div>
           
           {/* Items List */}
           <div className="space-y-2 text-sm">
