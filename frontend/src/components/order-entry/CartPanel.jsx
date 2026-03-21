@@ -95,7 +95,7 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
           📝 {item.itemNotes.map(n => n.label).join(", ")}
         </div>
       )}
-      <div className="flex items-center gap-1 mt-1">
+      <div className="flex items-center gap-1 mt-1 -ml-2">
         <button className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" style={{ color: COLORS.primaryGreen }}>Customize</button>
         <button 
           className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" 
