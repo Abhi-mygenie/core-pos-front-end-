@@ -152,8 +152,14 @@ const CartPanel = ({
     }
   }, [customer]);
 
-  // Filter customers based on phone search
+  // Filter customers based on phone search - don't show if customer already selected
   useEffect(() => {
+    if (isCustomerSelected) {
+      // Don't show suggestions if customer is already selected
+      setFilteredCustomers([]);
+      setShowPhoneSuggestions(false);
+      return;
+    }
     if (customerPhone.trim() && customerPhone.length >= 3) {
       const filtered = searchCustomers(customerPhone);
       setFilteredCustomers(filtered);
@@ -162,10 +168,16 @@ const CartPanel = ({
       setFilteredCustomers([]);
       setShowPhoneSuggestions(false);
     }
-  }, [customerPhone]);
+  }, [customerPhone, isCustomerSelected]);
 
-  // Filter customers based on name search
+  // Filter customers based on name search - don't show if customer already selected
   useEffect(() => {
+    if (isCustomerSelected) {
+      // Don't show suggestions if customer is already selected
+      setFilteredByName([]);
+      setShowNameSuggestions(false);
+      return;
+    }
     if (customerName.trim() && customerName.length >= 2) {
       const filtered = searchCustomers(customerName);
       setFilteredByName(filtered);
@@ -174,7 +186,7 @@ const CartPanel = ({
       setFilteredByName([]);
       setShowNameSuggestions(false);
     }
-  }, [customerName]);
+  }, [customerName, isCustomerSelected]);
 
   // Close suggestions on outside click (but not when clicking suggestions)
   useEffect(() => {
