@@ -244,7 +244,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
             📋 Bill Summary
           </div>
           <div className="space-y-2 text-sm">
-            {cartItems.map((item, idx) => (
+            {(cartItems || []).map((item, idx) => (
               <div key={idx} className="flex justify-between">
                 <span style={{ color: COLORS.darkText }}>
                   {item.name} x{item.qty}
@@ -325,7 +325,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
             )}
 
             {/* Available Coupons */}
-            {customer.coupons.length > 0 && (
+            {customer.coupons && customer.coupons.length > 0 && (
               <div className="pt-2 border-t mt-2" style={{ borderColor: COLORS.borderGray }}>
                 <div className="text-xs mb-2" style={{ color: COLORS.grayText }}>Available Coupons</div>
                 {customer.coupons.map((coupon) => (
