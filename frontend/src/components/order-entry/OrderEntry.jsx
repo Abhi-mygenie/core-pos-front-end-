@@ -334,9 +334,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         <div className="w-96 flex-shrink-0 flex flex-col" style={{ backgroundColor: COLORS.lightBg }}>
           {showPaymentPanel ? (
             <CollectPaymentPanel
+              cartItems={cartItems}
               total={total}
-              onClose={() => setShowPaymentPanel(false)}
-              onComplete={() => { setShowPaymentPanel(false); onClose(); }}
+              customer={customer}
+              onBack={() => setShowPaymentPanel(false)}
+              onPaymentComplete={() => { setShowPaymentPanel(false); onClose(); }}
             />
           ) : (
             <>
