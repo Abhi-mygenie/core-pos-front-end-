@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockMenuItems } from "../../data";
+import { mockMenuItems, getAllMenuItems } from "../../data";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
 import ItemCustomizationModal from "./ItemCustomizationModal";
@@ -88,7 +88,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // Get current menu items based on category, search, and dietary filters
   const getFilteredItems = () => {
-    let items = mockMenuItems[activeCategory] || [];
+    // If "all" category is selected, get all items from all categories
+    let items = activeCategory === "all" 
+      ? getAllMenuItems() 
+      : (mockMenuItems[activeCategory] || []);
     if (searchQuery.trim()) {
       items = items.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }

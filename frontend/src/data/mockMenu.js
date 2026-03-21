@@ -1,5 +1,6 @@
 // Mock Menu Categories and Items for Order Entry Screen
 export const mockMenuCategories = [
+  { id: "all", name: "All" },
   { id: "popular", name: "Popular" },
   { id: "starters", name: "Starters" },
   { id: "main", name: "Main Course" },
@@ -21,6 +22,19 @@ export const mockMenuCategories = [
   { id: "sandwiches", name: "Sandwiches" },
   { id: "combos", name: "Combos" },
 ];
+
+// Helper to get all menu items combined
+export const getAllMenuItems = () => {
+  const allItems = [];
+  Object.values(mockMenuItems).forEach(categoryItems => {
+    allItems.push(...categoryItems);
+  });
+  // Remove duplicates by id
+  const uniqueItems = allItems.filter((item, index, self) => 
+    index === self.findIndex(i => i.id === item.id)
+  );
+  return uniqueItems;
+};
 
 export const mockMenuSubCategories = {
   popular: ["All", "Bestsellers", "Chef's Special"],
