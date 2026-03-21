@@ -329,8 +329,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           </div>
         )}
 
-        {/* 3. Loyalty Section - Only if customer has points */}
-        {customer?.loyaltyPoints > 0 && (
+        {/* 3. Loyalty Section - Placeholder when customer selected */}
+        {customer && (
           <div 
             className="p-3 rounded-lg border"
             style={{ borderColor: COLORS.borderGray }}
@@ -342,21 +342,22 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                   type="checkbox"
                   checked={useLoyalty}
                   onChange={(e) => setUseLoyalty(e.target.checked)}
-                  className="w-4 h-4 accent-green-600"
+                  disabled={!customer?.loyaltyPoints}
+                  className="w-4 h-4 accent-green-600 disabled:opacity-50"
                   data-testid="use-loyalty-checkbox"
                 />
                 <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>⭐ Loyalty</span>
-                <span className="text-xs" style={{ color: COLORS.grayText }}>({customer.loyaltyPoints} pts)</span>
+                <span className="text-xs" style={{ color: COLORS.grayText }}>({customer?.loyaltyPoints || 0} pts)</span>
               </div>
-              <span className="text-sm font-medium" style={{ color: useLoyalty ? COLORS.primaryGreen : COLORS.grayText }}>
-                {useLoyalty ? `-₹${loyaltyDiscount}` : `₹${customer.loyaltyPoints} available`}
+              <span className="text-sm font-medium" style={{ color: useLoyalty && loyaltyDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
+                {useLoyalty && loyaltyDiscount > 0 ? `-₹${loyaltyDiscount}` : customer?.loyaltyPoints > 0 ? `₹${customer.loyaltyPoints} available` : "No points"}
               </span>
             </label>
           </div>
         )}
 
-        {/* 4. Wallet Section - Only if customer has balance */}
-        {customer?.walletBalance > 0 && (
+        {/* 4. Wallet Section - Placeholder when customer selected */}
+        {customer && (
           <div 
             className="p-3 rounded-lg border"
             style={{ borderColor: COLORS.borderGray }}
@@ -368,14 +369,15 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                   type="checkbox"
                   checked={useWallet}
                   onChange={(e) => setUseWallet(e.target.checked)}
-                  className="w-4 h-4 accent-green-600"
+                  disabled={!customer?.walletBalance}
+                  className="w-4 h-4 accent-green-600 disabled:opacity-50"
                   data-testid="use-wallet-checkbox"
                 />
                 <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>💰 Wallet</span>
-                <span className="text-xs" style={{ color: COLORS.grayText }}>(₹{customer.walletBalance})</span>
+                <span className="text-xs" style={{ color: COLORS.grayText }}>(₹{customer?.walletBalance || 0})</span>
               </label>
               <div className="flex items-center gap-2">
-                {useWallet && (
+                {useWallet && customer?.walletBalance > 0 && (
                   <input
                     type="number"
                     value={walletAmount}
@@ -384,8 +386,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                     style={{ borderColor: COLORS.borderGray }}
                   />
                 )}
-                <span className="text-sm font-medium" style={{ color: useWallet ? COLORS.primaryGreen : COLORS.grayText }}>
-                  {useWallet ? `-₹${walletDiscount}` : ""}
+                <span className="text-sm font-medium" style={{ color: useWallet && walletDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
+                  {useWallet && walletDiscount > 0 ? `-₹${walletDiscount}` : customer?.walletBalance > 0 ? "" : "No balance"}
                 </span>
               </div>
             </div>
