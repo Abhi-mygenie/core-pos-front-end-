@@ -20,10 +20,21 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [amountReceived, setAmountReceived] = useState("");
   const [showSplit, setShowSplit] = useState(false);
+  const [splitType, setSplitType] = useState(null); // 'payment' or 'station'
   const [splitPayments, setSplitPayments] = useState([
     { method: "cash", amount: "" },
     { method: "card", amount: "" },
   ]);
+  const [stationPayments, setStationPayments] = useState({
+    bar: { method: "cash", paid: false },
+    kitchen: { method: "cash", paid: false },
+  });
+
+  // Group items by station
+  const barItems = (cartItems || []).filter(item => item.station === "bar");
+  const kitchenItems = (cartItems || []).filter(item => item.station === "kitchen" || !item.station);
+  const barTotal = barItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const kitchenTotal = kitchenItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
   // Calculate bill
   const itemTotal = (cartItems || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -418,7 +429,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
             ].map(({ id, icon: Icon, label }) => (
               <button
                 key={id}
-                onClick={() => { setPaymentMethod(id); setShowSplit(false); }}
+                onClick={() => { setPaymentMethod(id); setShowSplit(false); setSplitType(null); }}
                 className="py-3 px-2 rounded-lg border-2 flex flex-col items-center gap-1 transition-colors"
                 style={{
                   borderColor: paymentMethod === id && !showSplit ? COLORS.primaryGreen : COLORS.borderGray,
@@ -436,7 +447,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           
           <div className="grid grid-cols-2 gap-2">
             <button
-              onClick={() => setShowSplit(!showSplit)}
+              onClick={() => { setShowSplit(!showSplit); if (!showSplit) setSplitType("payment"); }}
               className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors"
               style={{
                 borderColor: showSplit ? COLORS.primaryGreen : COLORS.borderGray,
@@ -448,7 +459,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               <span className="text-xs" style={{ color: showSplit ? COLORS.primaryGreen : COLORS.darkText }}>Split</span>
             </button>
             <button
-              onClick={() => { setPaymentMethod("credit"); setShowSplit(false); }}
+              onClick={() => { setPaymentMethod("credit"); setShowSplit(false); setSplitType(null); }}
               className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors"
               style={{
                 borderColor: paymentMethod === "credit" && !showSplit ? COLORS.primaryGreen : COLORS.borderGray,
@@ -461,39 +472,152 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
             </button>
           </div>
 
-          {/* Split Payment */}
+          {/* Split Options */}
           {showSplit && (
-            <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: COLORS.borderGray }}>
-              {splitPayments.map((sp, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <select
-                    value={sp.method}
-                    onChange={(e) => {
-                      const newSplit = [...splitPayments];
-                      newSplit[idx].method = e.target.value;
-                      setSplitPayments(newSplit);
-                    }}
-                    className="px-3 py-2 rounded-lg border text-sm outline-none"
-                    style={{ borderColor: COLORS.borderGray }}
-                  >
-                    <option value="cash">Cash</option>
-                    <option value="card">Card</option>
-                    <option value="upi">UPI</option>
-                  </select>
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    value={sp.amount}
-                    onChange={(e) => {
-                      const newSplit = [...splitPayments];
-                      newSplit[idx].amount = e.target.value;
-                      setSplitPayments(newSplit);
-                    }}
-                    className="flex-1 px-3 py-2 rounded-lg border text-sm outline-none"
-                    style={{ borderColor: COLORS.borderGray }}
-                  />
+            <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }}>
+              {/* Split Type Toggle */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => setSplitType("payment")}
+                  className="flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-colors"
+                  style={{
+                    backgroundColor: splitType === "payment" ? COLORS.primaryGreen : COLORS.lightBg,
+                    color: splitType === "payment" ? "white" : COLORS.darkText,
+                  }}
+                >
+                  By Payment
+                </button>
+                <button
+                  onClick={() => setSplitType("station")}
+                  className="flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-colors"
+                  style={{
+                    backgroundColor: splitType === "station" ? COLORS.primaryGreen : COLORS.lightBg,
+                    color: splitType === "station" ? "white" : COLORS.darkText,
+                  }}
+                >
+                  By Station
+                </button>
+              </div>
+
+              {/* Split by Payment */}
+              {splitType === "payment" && (
+                <div className="space-y-2">
+                  {splitPayments.map((sp, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <select
+                        value={sp.method}
+                        onChange={(e) => {
+                          const newSplit = [...splitPayments];
+                          newSplit[idx].method = e.target.value;
+                          setSplitPayments(newSplit);
+                        }}
+                        className="px-2 py-1.5 rounded-lg border text-sm outline-none"
+                        style={{ borderColor: COLORS.borderGray }}
+                      >
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="upi">UPI</option>
+                      </select>
+                      <input
+                        type="number"
+                        placeholder="Amount"
+                        value={sp.amount}
+                        onChange={(e) => {
+                          const newSplit = [...splitPayments];
+                          newSplit[idx].amount = e.target.value;
+                          setSplitPayments(newSplit);
+                        }}
+                        className="flex-1 px-2 py-1.5 rounded-lg border text-sm outline-none"
+                        style={{ borderColor: COLORS.borderGray }}
+                      />
+                    </div>
+                  ))}
+                  <div className="text-xs text-right" style={{ color: COLORS.grayText }}>
+                    Remaining: ₹{Math.max(0, finalTotal - splitPayments.reduce((sum, sp) => sum + (parseFloat(sp.amount) || 0), 0)).toFixed(2)}
+                  </div>
                 </div>
-              ))}
+              )}
+
+              {/* Split by Station */}
+              {splitType === "station" && (
+                <div className="space-y-3">
+                  {/* Bar Items */}
+                  {barItems.length > 0 && (
+                    <div className="p-3 rounded-lg" style={{ backgroundColor: COLORS.lightBg }}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>🍺 Bar ({barItems.length} items)</span>
+                        <span className="text-sm font-bold" style={{ color: COLORS.primaryOrange }}>₹{barTotal.toLocaleString()}</span>
+                      </div>
+                      <div className="text-xs mb-2 space-y-0.5" style={{ color: COLORS.grayText }}>
+                        {barItems.map((item, idx) => (
+                          <div key={idx}>{item.name} x{item.qty}</div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <select
+                          value={stationPayments.bar.method}
+                          onChange={(e) => setStationPayments({...stationPayments, bar: {...stationPayments.bar, method: e.target.value}})}
+                          className="px-2 py-1.5 rounded border text-xs"
+                          style={{ borderColor: COLORS.borderGray }}
+                        >
+                          <option value="cash">Cash</option>
+                          <option value="card">Card</option>
+                          <option value="upi">UPI</option>
+                        </select>
+                        <button
+                          onClick={() => setStationPayments({...stationPayments, bar: {...stationPayments.bar, paid: true}})}
+                          disabled={stationPayments.bar.paid}
+                          className="flex-1 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-50"
+                          style={{ 
+                            backgroundColor: stationPayments.bar.paid ? COLORS.lightBg : COLORS.primaryGreen,
+                            color: stationPayments.bar.paid ? COLORS.grayText : "white"
+                          }}
+                        >
+                          {stationPayments.bar.paid ? "✓ Paid" : `Pay ₹${barTotal}`}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Kitchen Items */}
+                  {kitchenItems.length > 0 && (
+                    <div className="p-3 rounded-lg" style={{ backgroundColor: COLORS.lightBg }}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>🍳 Kitchen ({kitchenItems.length} items)</span>
+                        <span className="text-sm font-bold" style={{ color: COLORS.primaryOrange }}>₹{kitchenTotal.toLocaleString()}</span>
+                      </div>
+                      <div className="text-xs mb-2 space-y-0.5" style={{ color: COLORS.grayText }}>
+                        {kitchenItems.map((item, idx) => (
+                          <div key={idx}>{item.name} x{item.qty}</div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <select
+                          value={stationPayments.kitchen.method}
+                          onChange={(e) => setStationPayments({...stationPayments, kitchen: {...stationPayments.kitchen, method: e.target.value}})}
+                          className="px-2 py-1.5 rounded border text-xs"
+                          style={{ borderColor: COLORS.borderGray }}
+                        >
+                          <option value="cash">Cash</option>
+                          <option value="card">Card</option>
+                          <option value="upi">UPI</option>
+                        </select>
+                        <button
+                          onClick={() => setStationPayments({...stationPayments, kitchen: {...stationPayments.kitchen, paid: true}})}
+                          disabled={stationPayments.kitchen.paid}
+                          className="flex-1 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-50"
+                          style={{ 
+                            backgroundColor: stationPayments.kitchen.paid ? COLORS.lightBg : COLORS.primaryGreen,
+                            color: stationPayments.kitchen.paid ? COLORS.grayText : "white"
+                          }}
+                        >
+                          {stationPayments.kitchen.paid ? "✓ Paid" : `Pay ₹${kitchenTotal}`}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
