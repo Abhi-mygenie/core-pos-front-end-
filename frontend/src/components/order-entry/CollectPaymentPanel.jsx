@@ -136,8 +136,13 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           style={{ borderColor: COLORS.borderGray }}
           data-testid="bill-summary-section"
         >
-          <div className="text-sm font-semibold mb-3" style={{ color: COLORS.darkText }}>
-            📋 BILL SUMMARY
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-semibold" style={{ color: COLORS.darkText }}>
+              📋 BILL SUMMARY
+            </div>
+            <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
+              ₹{finalTotal.toLocaleString()}
+            </div>
           </div>
           
           {/* Items List */}
@@ -248,19 +253,6 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                 <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Total to Pay */}
-        <div 
-          className="py-4 px-6 rounded-lg text-center"
-          style={{ backgroundColor: COLORS.lightBg }}
-        >
-          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: COLORS.grayText }}>
-            Total to Pay
-          </div>
-          <div className="text-3xl font-bold" style={{ color: COLORS.primaryOrange }}>
-            ₹{finalTotal.toLocaleString()}
           </div>
         </div>
 
