@@ -19,6 +19,7 @@ A Restaurant POS (Point of Sale) frontend system built with React, CRACO, and Ta
 - ✅ Set up frontend with all dependencies
 - ✅ Configured CRACO with webpack aliases (@/ prefix)
 - ✅ Application running successfully on port 3000
+- ✅ **Customer Name Auto-Suggest** - Added auto-suggestions to name field showing matching customers (name + phone) after 2 characters typed
 
 ## Features
 - Login Page with MyGenie branding

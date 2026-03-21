@@ -136,8 +136,11 @@ const CartPanel = ({
   const [customerName, setCustomerName] = useState(customer?.name || "");
   const [customerPhone, setCustomerPhone] = useState(customer?.phone || "");
   const [showPhoneSuggestions, setShowPhoneSuggestions] = useState(false);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [filteredByName, setFilteredByName] = useState([]);
   const phoneInputRef = useRef(null);
+  const nameInputRef = useRef(null);
 
   // Sync with customer prop
   useEffect(() => {
@@ -159,34 +162,53 @@ const CartPanel = ({
     }
   }, [customerPhone]);
 
+  // Filter customers based on name search
+  useEffect(() => {
+    if (customerName.trim() && customerName.length >= 2) {
+      const filtered = searchCustomers(customerName);
+      setFilteredByName(filtered);
+      setShowNameSuggestions(filtered.length > 0);
+    } else {
+      setFilteredByName([]);
+      setShowNameSuggestions(false);
+    }
+  }, [customerName]);
+
   // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (phoneInputRef.current && !phoneInputRef.current.contains(e.target)) {
         setShowPhoneSuggestions(false);
       }
+      if (nameInputRef.current && !nameInputRef.current.contains(e.target)) {
+        setShowNameSuggestions(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Select customer from suggestions
-  const selectCustomer = (c) => {
+  // Select customer from suggestions (from phone or name)
+  const selectCustomer = (c, fromName = false) => {
     setCustomerName(c.name);
     setCustomerPhone(c.phone);
     setShowPhoneSuggestions(false);
+    setShowNameSuggestions(false);
     onCustomerChange?.({ id: c.id, name: c.name, phone: c.phone });
   };
 
   // Handle field blur - update customer
   const handleFieldBlur = () => {
-    if (customerName.trim() || customerPhone.trim()) {
-      onCustomerChange?.({
-        id: customer?.id || null,
-        name: customerName.trim(),
-        phone: customerPhone.trim(),
-      });
-    }
+    // Small delay to allow click on suggestion to register
+    setTimeout(() => {
+      if (customerName.trim() || customerPhone.trim()) {
+        onCustomerChange?.({
+          id: customer?.id || null,
+          name: customerName.trim(),
+          phone: customerPhone.trim(),
+        });
+      }
+    }, 150);
   };
 
   return (
@@ -196,18 +218,40 @@ const CartPanel = ({
         className="px-3 py-3 grid grid-cols-2 gap-2"
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
-        <div className="relative">
-          <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+        <div className="relative" ref={nameInputRef}>
+          <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 z-10" style={{ color: COLORS.grayText }} />
           <input
             type="text"
             placeholder="Customer name"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             onBlur={handleFieldBlur}
+            onFocus={() => customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
             className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
             style={{ borderColor: COLORS.borderGray, fontSize: "13px" }}
             data-testid="quick-customer-name"
           />
+          {/* Name Auto-suggest */}
+          {showNameSuggestions && (
+            <div
+              className="absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg z-50 overflow-hidden max-h-40 overflow-y-auto"
+              style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}` }}
+              data-testid="name-suggestions-dropdown"
+            >
+              {filteredByName.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => selectCustomer(c, true)}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
+                  style={{ borderColor: COLORS.borderGray }}
+                  data-testid={`name-suggestion-${c.id}`}
+                >
+                  <div className="font-medium" style={{ color: COLORS.darkText, fontSize: "12px" }}>{c.name}</div>
+                  <div className="text-xs" style={{ color: COLORS.grayText }}>{c.phone}</div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="relative" ref={phoneInputRef}>
           <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
