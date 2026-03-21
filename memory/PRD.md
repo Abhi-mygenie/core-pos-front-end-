@@ -29,6 +29,7 @@ A Restaurant POS (Point of Sale) frontend system built with React, CRACO, and Ta
 - ✅ **Header Alignment** - Standardized all 3 section headers to `py-3` for consistent height
 - ✅ **Touch-Friendly Icons** - Increased icon padding to `p-3` and gap to `gap-3` for 40x40px tap targets
 - ✅ **Tap Compliant Filters** - Dietary filter pills now 42px height (py-3) meeting touch accessibility standards
+- ✅ **RHS Cart Panel Tap Compliance** - Fixed Cancel(x), Qty +/-, Add Note, Customize buttons to 40x40px+ targets
 
 ## Features
 - Login Page with MyGenie branding

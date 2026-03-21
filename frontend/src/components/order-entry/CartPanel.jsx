@@ -29,11 +29,11 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   return (
     <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: statusBg }}>
-        <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
+      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: statusBg }}>
+        <StatusIcon className="w-5 h-5" style={{ color: statusColor }} />
       </div>
-      <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
-        <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+      <button onClick={() => setCancelItem(item)} className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+        <XCircle className="w-5 h-5" style={{ color: COLORS.grayText }} />
       </button>
       <div className="flex-1 min-w-0">
         <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
@@ -46,28 +46,28 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         <div className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
           {item.addedAt ? getTimeAgo(item.addedAt) : `${item.time} mins ago`}
         </div>
-        <button onClick={() => setTransferItem(item)} className="text-xs mt-1 hover:underline" style={{ color: COLORS.grayText }} data-testid={`transfer-food-btn-${item.id}`}>
+        <button onClick={() => setTransferItem(item)} className="px-3 py-2 text-xs mt-1 hover:bg-gray-50 rounded-lg transition-colors" style={{ color: COLORS.grayText }} data-testid={`transfer-food-btn-${item.id}`}>
           Transfer food
         </button>
       </div>
       {/* Qty - locked with pencil */}
-      <div className="w-16 flex items-center justify-center gap-1" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <div className="w-28 flex items-center justify-center gap-0.5" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
         {editingQtyItemId === item.id ? (
           <>
-            <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
-            <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-            <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>+</button>
+            <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
+            <span className="font-bold w-6 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+            <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
           </>
         ) : (
           <>
             <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-            <button onClick={() => setEditingQtyItemId(item.id)} className="p-0.5 hover:bg-gray-100 rounded" data-testid={`qty-edit-${item.id}`}>
-              <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+            <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
+              <Pencil className="w-4 h-4" style={{ color: COLORS.grayText }} />
             </button>
           </>
         )}
       </div>
-      <div className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <div className="w-20 text-right flex items-center justify-end" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
         <span className="font-bold" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
       </div>
     </div>
@@ -77,8 +77,8 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
 // New item row (not yet placed — editable with Customize/Add Note)
 const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote }) => (
   <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-    <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
-      <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+    <button onClick={() => setCancelItem(item)} className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+      <XCircle className="w-5 h-5" style={{ color: COLORS.grayText }} />
     </button>
     <div className="flex-1 min-w-0">
       <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
@@ -94,10 +94,10 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
           📝 {item.itemNotes.map(n => n.label).join(", ")}
         </div>
       )}
-      <div className="flex items-center gap-3 mt-1">
-        <button className="text-xs hover:underline" style={{ color: COLORS.primaryGreen }}>Customize</button>
+      <div className="flex items-center gap-2 mt-1">
+        <button className="px-3 py-2 text-xs hover:bg-gray-50 rounded-lg transition-colors" style={{ color: COLORS.primaryGreen }}>Customize</button>
         <button 
-          className="text-xs hover:underline" 
+          className="px-3 py-2 text-xs hover:bg-gray-50 rounded-lg transition-colors" 
           style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
           onClick={() => onAddNote(item, cartIndex)}
           data-testid={`add-note-btn-${item.id}`}
@@ -107,12 +107,12 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
       </div>
     </div>
     {/* Qty - open by default */}
-    <div className="w-16 flex items-center justify-center gap-1" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-      <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
-      <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-      <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-plus-${item.id}`}>+</button>
+    <div className="w-28 flex items-center justify-center gap-0.5" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
+      <span className="font-bold w-6 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+      <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }} data-testid={`qty-plus-${item.id}`}>+</button>
     </div>
-    <div className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+    <div className="w-20 text-right flex items-center justify-end" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
       <span className="font-bold" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
     </div>
   </div>
