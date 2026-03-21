@@ -235,7 +235,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     key={filter.key}
                     data-testid={`filter-${filter.key}`}
                     onClick={() => togglePrimaryFilter(filter.key)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+                    className="px-4 py-3 rounded-full text-xs font-medium transition-colors"
                     style={{
                       backgroundColor: isActive ? COLORS.primaryGreen : "transparent",
                       color: isActive ? "white" : COLORS.darkText,
@@ -264,7 +264,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     key={filter.key}
                     data-testid={`filter-${filter.key}`}
                     onClick={() => toggleSecondaryFilter(filter.key)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors"
+                    className="px-4 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors"
                     style={{
                       backgroundColor: isActive ? COLORS.primaryGreen : "transparent",
                       color: isActive ? "white" : COLORS.grayText,

@@ -43,7 +43,7 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
         <div className="flex items-center gap-3">
           <button
             onClick={onShiftTable}
-            className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
             title="Shift Table"
             data-testid="shift-table-btn"
           >
@@ -51,7 +51,7 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
           </button>
           <button
             onClick={onMergeTable}
-            className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
             title="Merge Tables"
             data-testid="merge-tables-btn"
           >
