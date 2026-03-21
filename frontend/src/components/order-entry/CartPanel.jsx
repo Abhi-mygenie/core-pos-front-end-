@@ -28,17 +28,17 @@ const getTimeAgo = (isoString) => {
 const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   return (
-    <div className="px-3 py-2.5 flex items-center gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: statusBg }}>
+    <div className="px-3 py-2.5 flex items-start gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: statusBg }}>
         <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
       </div>
-      <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+      <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
         <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
       </button>
       <div className="flex-1 min-w-0">
         <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
         {item.customizations && (
-          <div className="text-xs mt-0.5 truncate" style={{ color: COLORS.primaryGreen }}>
+          <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
             {item.customizations.size && <span>{item.customizations.size}</span>}
             {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
           </div>
@@ -53,7 +53,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         </div>
       </div>
       {/* Qty - locked with pencil */}
-      <div className="flex items-center gap-0.5 pl-2" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
         {editingQtyItemId === item.id ? (
           <>
             <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
@@ -69,7 +69,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
           </>
         )}
       </div>
-      <div className="w-16 text-right pl-2" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <div className="w-16 text-right pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
         <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
       </div>
     </div>
@@ -78,20 +78,20 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
 
 // New item row (not yet placed — editable with Customize/Add Note)
 const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote }) => (
-  <div className="px-3 py-2.5 flex items-center gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-    <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+  <div className="px-3 py-2.5 flex items-start gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+    <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
       <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
     </button>
     <div className="flex-1 min-w-0">
       <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
       {item.customizations && (
-        <div className="text-xs mt-0.5 truncate" style={{ color: COLORS.primaryGreen }}>
+        <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
           {item.customizations.size && <span>{item.customizations.size}</span>}
           {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
         </div>
       )}
       {item.itemNotes && item.itemNotes.length > 0 && (
-        <div className="text-xs mt-0.5 truncate" style={{ color: COLORS.primaryOrange }}>
+        <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
           📝 {item.itemNotes.map(n => n.label).join(", ")}
         </div>
       )}
@@ -108,12 +108,12 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
       </div>
     </div>
     {/* Qty controls */}
-    <div className="flex items-center gap-0.5 pl-2" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+    <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
       <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
       <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
       <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }} data-testid={`qty-plus-${item.id}`}>+</button>
     </div>
-    <div className="w-16 text-right pl-2" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+    <div className="w-16 text-right pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
       <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
     </div>
   </div>
