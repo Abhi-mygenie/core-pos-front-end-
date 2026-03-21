@@ -26,6 +26,8 @@ A Restaurant POS (Point of Sale) frontend system built with React, CRACO, and Ta
 - ✅ **Category Panel Redesign** - Added search box, compact items (36px vs 50px), scroll indicator, supports 20 categories
 - ✅ **"All" Category** - Added "All" as first option to show all menu items from all categories
 - ✅ **Back Button** - Added orange back arrow in category panel header (before Shift/Merge buttons) to return to dashboard
+- ✅ **Header Alignment** - Standardized all 3 section headers to `py-3` for consistent height
+- ✅ **Touch-Friendly Icons** - Increased icon padding to `p-2.5` and gap to `gap-3` for better tap targets (44px+)
 
 ## Features
 - Login Page with MyGenie branding

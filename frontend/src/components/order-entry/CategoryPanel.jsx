@@ -26,13 +26,13 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
     >
       {/* Action buttons with Back arrow */}
       <div
-        className="px-2 py-2 flex items-center justify-between"
+        className="px-3 py-3 flex items-center justify-between"
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
         {/* Back button */}
         <button
           onClick={onBack}
-          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
           title="Go Back"
           data-testid="category-back-btn"
         >
@@ -40,10 +40,10 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
         </button>
         
         {/* Shift & Merge buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={onShiftTable}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
             title="Shift Table"
             data-testid="shift-table-btn"
           >
@@ -51,7 +51,7 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
           </button>
           <button
             onClick={onMergeTable}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
             title="Merge Tables"
             data-testid="merge-tables-btn"
           >
