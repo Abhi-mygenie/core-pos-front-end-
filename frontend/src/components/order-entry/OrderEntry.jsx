@@ -198,6 +198,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onCategoryChange={(id) => setActiveCategory(id)}
           onShiftTable={() => setShowShiftModal(true)}
           onMergeTable={() => setShowMergeModal(true)}
+          onBack={onClose}
         />
 
         {/* MIDDLE PANEL - Menu Items */}

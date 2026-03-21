@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import { ChevronRight, ArrowRightLeft, GitMerge, Search, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronLeft, ArrowRightLeft, GitMerge, Search, ChevronDown } from "lucide-react";
 import { COLORS } from "../../constants";
 import { mockMenuCategories } from "../../data";
 
-const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable }) => {
+const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onBack }) => {
   const [searchQuery, setSearchQuery] = useState("");
   
   // Filter categories based on search
@@ -24,27 +24,40 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
       style={{ backgroundColor: COLORS.lightBg, borderRight: `1px solid ${COLORS.borderGray}` }}
       data-testid="category-panel"
     >
-      {/* Action buttons */}
+      {/* Action buttons with Back arrow */}
       <div
-        className="px-3 py-2 flex items-center justify-center gap-3"
+        className="px-2 py-2 flex items-center justify-between"
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
+        {/* Back button */}
         <button
-          onClick={onShiftTable}
+          onClick={onBack}
           className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-          title="Shift Table"
-          data-testid="shift-table-btn"
+          title="Go Back"
+          data-testid="category-back-btn"
         >
-          <ArrowRightLeft className="w-4 h-4" style={{ color: COLORS.grayText }} />
+          <ChevronLeft className="w-5 h-5" style={{ color: COLORS.primaryOrange }} />
         </button>
-        <button
-          onClick={onMergeTable}
-          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-          title="Merge Tables"
-          data-testid="merge-tables-btn"
-        >
-          <GitMerge className="w-4 h-4" style={{ color: COLORS.grayText }} />
-        </button>
+        
+        {/* Shift & Merge buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onShiftTable}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Shift Table"
+            data-testid="shift-table-btn"
+          >
+            <ArrowRightLeft className="w-4 h-4" style={{ color: COLORS.grayText }} />
+          </button>
+          <button
+            onClick={onMergeTable}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Merge Tables"
+            data-testid="merge-tables-btn"
+          >
+            <GitMerge className="w-4 h-4" style={{ color: COLORS.grayText }} />
+          </button>
+        </div>
       </div>
 
       {/* Search box */}
