@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
 import { COLORS, CONFIG } from "../constants";
-import { mockTables, mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems, mockFlatTables } from "../data";
 import { Sidebar, Header } from "../components/layout";
 import { TableSection, RoomSection } from "../components/sections";
 import { DineInCard, DeliveryCard } from "../components/cards";
@@ -77,10 +76,12 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 
 // Main Home/Dashboard Component
 const DashboardPage = () => {
-  // --- State ---
-  const [tables, setTables] = useState(mockTables);
-  const [flatTables, setFlatTables] = useState(mockFlatTables);
-  const [rooms, setRooms] = useState(mockRooms);
+  // --- State --- (Empty initial state - will be populated from API)
+  const [tables, setTables] = useState({});
+  const [flatTables, setFlatTables] = useState([]);
+  const [rooms, setRooms] = useState({});
+  const [deliveryOrders, setDeliveryOrders] = useState([]);
+  const [takeAwayOrders, setTakeAwayOrders] = useState([]);
   const [isOnline] = useState(true);
   const [activeChannels, setActiveChannels] = useState(CONFIG.DEFAULT_CHANNELS);
   const [activeStatuses, setActiveStatuses] = useState(CONFIG.DEFAULT_STATUSES);
@@ -126,12 +127,11 @@ const DashboardPage = () => {
 
     if (activeChannels.includes("dineIn")) {
       const enriched = allTablesList.map(table => {
-        const orderData = mockOrderItems[table.id] || {};
         return {
           ...table,
-          customer: orderData.customer || "",
+          customer: table.customer || "",
           reservedFor: table.reservedFor || "",
-          phone: orderData.phone || ""
+          phone: table.phone || ""
         };
       });
       results.tables = searchItems(enriched, query, item => ({
@@ -141,14 +141,14 @@ const DashboardPage = () => {
     }
 
     if (activeChannels.includes("delivery")) {
-      results.delivery = searchItems(mockDeliveryOrders, query, item => ({
+      results.delivery = searchItems(deliveryOrders, query, item => ({
         id: item.id,
         all: [item.id, item.customer, item.phone]
       }));
     }
 
     if (activeChannels.includes("takeAway")) {
-      results.takeAway = searchItems(mockTakeAwayOrders, query, item => ({
+      results.takeAway = searchItems(takeAwayOrders, query, item => ({
         id: item.id,
         all: [item.id, item.customer, item.phone]
       }));
@@ -162,7 +162,7 @@ const DashboardPage = () => {
     }
 
     return results;
-  }, [searchQuery, activeChannels, allTablesList, allRoomsList]);
+  }, [searchQuery, activeChannels, allTablesList, allRoomsList, deliveryOrders, takeAwayOrders]);
 
   const matchingTableIds = useMemo(() => getMatchingIds(searchQuery, searchResults.tables), [searchQuery, searchResults]);
   const matchingRoomIds = useMemo(() => getMatchingIds(searchQuery, searchResults.rooms), [searchQuery, searchResults]);
@@ -371,7 +371,7 @@ const DashboardPage = () => {
             {activeChannels.includes("delivery") && (
               <OrderListSection
                 title="Delivery Orders"
-                orders={mockDeliveryOrders}
+                orders={deliveryOrders}
                 matchingIds={matchingDeliveryIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}
@@ -383,7 +383,7 @@ const DashboardPage = () => {
             {activeChannels.includes("takeAway") && (
               <OrderListSection
                 title="TakeAway Orders"
-                orders={mockTakeAwayOrders}
+                orders={takeAwayOrders}
                 matchingIds={matchingTakeAwayIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}
