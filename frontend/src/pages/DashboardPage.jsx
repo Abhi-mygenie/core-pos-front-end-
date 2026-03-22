@@ -395,6 +395,7 @@ const DashboardPage = () => {
             onOrderTypeChange={handleOrderTypeChange}
             allTables={allTablesList}
             onSelectTable={handleTableClick}
+            onResetForNewOrder={() => { setOrderEntryTable(null); setOrderEntryType("walkIn"); }}
           />
         )}
       </div>

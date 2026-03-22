@@ -22,7 +22,8 @@ const OrderEntry = ({
   orderType = "delivery", 
   onOrderTypeChange, 
   allTables = [], 
-  onSelectTable 
+  onSelectTable,
+  onResetForNewOrder,
 }) => {
   // Context for cross-table operations
   const {
@@ -130,11 +131,13 @@ const OrderEntry = ({
     }
   };
 
-  // After "Order Placed" is dismissed, clear the cart for new orders
+  // After "Order Placed" is dismissed, reset for new order
   const handleOrderPlacedClose = () => {
     setShowOrderPlaced(false);
     // Clear cart — placed items already saved in context
     setCartItems([]);
+    // Reset to Walk-In with no table selected
+    onResetForNewOrder?.();
   };
 
   // --- CANCEL ITEM (partial qty support) ---
