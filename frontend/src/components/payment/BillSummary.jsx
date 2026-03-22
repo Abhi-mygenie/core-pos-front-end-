@@ -46,7 +46,7 @@ const BillSummary = ({
       ...manualDiscount, 
       type: type.id, 
       amount: type.id === "none" ? 0 : (type.defaultPercent || manualDiscount.amount),
-      mode: type.id === "none" ? manualDiscount.mode : "percent" // Named discounts always percentage
+      mode: type.id === "none" ? manualDiscount.mode : "percent"
     });
     setShowDiscountDropdown(false);
   };
@@ -63,6 +63,21 @@ const BillSummary = ({
 
   const selectedDiscountType = discountTypes.find(d => d.id === manualDiscount.type) || discountTypes[0];
   const isNamedDiscount = manualDiscount.type !== "none";
+
+  // Helper to get customization text (without arrow)
+  const getCustomizationText = (item) => {
+    if (!item.customizations) return null;
+    
+    const parts = [
+      item.customizations.size,
+      item.customizations.crust,
+      item.customizations.base,
+      item.customizations.spice,
+      ...(item.customizations.addons || [])
+    ].filter(Boolean);
+    
+    return parts.length > 0 ? parts.join(", ") : null;
+  };
 
   return (
     <div 
@@ -88,33 +103,27 @@ const BillSummary = ({
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Items List with Customizations */}
+        {/* Items List - No heading, no arrow, only show customizations if present */}
         <div className="space-y-2">
-          <div className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
-            Items
-          </div>
-          {cartItems.map((item, idx) => (
-            <div key={idx} className="py-1">
-              <div className="flex justify-between text-sm">
-                <span style={{ color: COLORS.darkText }}>
-                  {item.name} x{item.qty}
-                </span>
-                <span style={{ color: COLORS.darkText }}>₹{(item.price * item.qty).toLocaleString()}</span>
-              </div>
-              {/* Customization details */}
-              {item.customizations && (
-                <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
-                  → {[
-                    item.customizations.size,
-                    item.customizations.crust,
-                    item.customizations.base,
-                    item.customizations.spice,
-                    ...(item.customizations.addons || [])
-                  ].filter(Boolean).join(", ")}
+          {cartItems.map((item, idx) => {
+            const customizationText = getCustomizationText(item);
+            return (
+              <div key={idx} className="py-1">
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: COLORS.darkText }}>
+                    {item.name} x{item.qty}
+                  </span>
+                  <span style={{ color: COLORS.darkText }}>₹{(item.price * item.qty).toLocaleString()}</span>
                 </div>
-              )}
-            </div>
-          ))}
+                {/* Only show customization line if there's actual data */}
+                {customizationText && (
+                  <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                    {customizationText}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Item Total */}
@@ -227,16 +236,14 @@ const BillSummary = ({
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: COLORS.grayText }}>%</span>
               )}
             </div>
-          </div>
-          
-          {/* Discount Applied */}
-          {manualDiscountAmount > 0 && (
-            <div className="flex justify-end mt-2">
-              <span className="text-sm font-medium" style={{ color: COLORS.primaryGreen }}>
+
+            {/* Discount Amount - Same row */}
+            {manualDiscountAmount > 0 && (
+              <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.primaryGreen }}>
                 -₹{manualDiscountAmount.toLocaleString()}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Loyalty Points Section - Only if customer exists */}
@@ -342,8 +349,8 @@ const BillSummary = ({
           </div>
         )}
 
-        {/* Total Discount */}
-        {totalDiscount > 0 && (
+        {/* Total Discount - Only show if there's discount from loyalty/coupon (not manual) */}
+        {(loyaltyDiscount > 0 || couponDiscount > 0) && (
           <div className="flex justify-between pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
             <span className="font-medium" style={{ color: COLORS.darkText }}>Total Discount</span>
             <span className="font-medium" style={{ color: COLORS.primaryGreen }}>-₹{totalDiscount.toLocaleString()}</span>
@@ -376,19 +383,6 @@ const BillSummary = ({
               <span style={{ color: COLORS.grayText }}>₹{vatAmount.toLocaleString()}</span>
             </div>
           )}
-        </div>
-
-        {/* Final Total */}
-        <div 
-          className="p-4 -mx-4 -mb-4 text-center"
-          style={{ backgroundColor: `${COLORS.primaryGreen}10` }}
-        >
-          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: COLORS.grayText }}>
-            Total to Pay
-          </div>
-          <div className="text-3xl font-bold" style={{ color: COLORS.primaryGreen }}>
-            ₹{finalTotal.toLocaleString()}
-          </div>
         </div>
       </div>
     </div>
