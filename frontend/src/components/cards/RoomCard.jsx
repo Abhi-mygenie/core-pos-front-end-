@@ -86,7 +86,7 @@ const RoomCard = ({ room, onClick }) => {
   const bookingSource = room.bookingSource ? BOOKING_SOURCES[room.bookingSource] : null;
 
   const handleSecondaryAction = (actionId) => {
-    console.log(`Secondary action: ${actionId} for room ${room.id}`);
+    // TODO: implement secondary action handler
     setShowMenu(false);
   };
 

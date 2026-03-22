@@ -383,7 +383,7 @@ const DashboardPage = () => {
                     )}
                     <RoomSection
                       section={section}
-                      onRoomClick={(room) => console.log("Room clicked:", room)}
+                      onRoomClick={() => {/* TODO: room click handler */}}
                       activeFirst={activeFirst}
                       searchQuery={searchQuery}
                       matchingRoomIds={matchingRoomIds}

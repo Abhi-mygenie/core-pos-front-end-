@@ -1,4 +1,3 @@
-export { useToast, toast } from './use-toast';
 export { default as useClickOutside } from './useClickOutside';
 export { default as useChannelLogic } from './useChannelLogic';
 export { default as useSearchResults } from './useSearchResults';

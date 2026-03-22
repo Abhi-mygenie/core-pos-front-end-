@@ -160,21 +160,21 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
               <button
                 className="p-1.5 rounded border"
                 style={{ borderColor: "#EF4444", color: "#EF4444" }}
-                onClick={() => console.log(`Cancel order ${order.id}`)}
+                onClick={() => {/* TODO: cancel */}}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
               <button
                 className="px-2.5 py-1.5 text-[10px] font-bold rounded border"
                 style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
-                onClick={() => console.log(`Edit order ${order.id}`)}
+                onClick={() => {/* TODO: edit */}}
               >
                 Edit
               </button>
               <button
                 className="px-2.5 py-1.5 text-[10px] font-bold rounded"
                 style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
-                onClick={() => console.log(`Confirm order ${order.id}`)}
+                onClick={() => {/* TODO: confirm */}}
               >
                 Confirm
               </button>
@@ -185,7 +185,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
             <button
               className="px-3 py-1.5 text-[10px] font-bold rounded"
               style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
-              onClick={() => console.log(`${order.source === "own" ? "Assign Rider" : "Dispatch"} order ${order.id}`)}
+              onClick={() => {/* TODO: dispatch */}}
             >
               {order.source === "own" ? "Assign Rider" : "Dispatch"}
             </button>
@@ -195,7 +195,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
             <button
               className="px-3 py-1.5 text-[10px] font-bold rounded"
               style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
-              onClick={() => console.log(`Mark delivered ${order.id}`)}
+              onClick={() => {/* TODO: mark delivered */}}
             >
               Delivered
             </button>

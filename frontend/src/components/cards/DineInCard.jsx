@@ -15,13 +15,9 @@ const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
 
   const statusConfig = getTableStatusConfig(table.status);
 
-  const handleServeItem = (itemId) => {
-    console.log(`Serve item ${itemId} for table ${table.id}`);
-  };
+  const handleServeItem = (itemId) => { /* TODO: serve item */ };
 
-  const handleServeAll = () => {
-    console.log(`Serve all ready items for table ${table.id}`);
-  };
+  const handleServeAll = () => { /* TODO: serve all */ };
 
   const handleEditClick = () => {
     if (onEdit) {
