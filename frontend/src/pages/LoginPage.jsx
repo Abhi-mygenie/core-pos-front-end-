@@ -3,12 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useAuth } from "../context/AuthContext";
+import { useInitialData } from "../context/InitialDataContext";
 import { toast } from "sonner";
+import InitialLoadingOverlay from "../components/common/InitialLoadingOverlay";
 
 // Login Screen Component
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isLoading: authLoading } = useAuth();
+  const { login, isLoading: authLoading, token } = useAuth();
+  const { 
+    loadInitialData, 
+    isInitialLoading, 
+    loadingProgress, 
+    currentStep, 
+    completedSteps, 
+    loadingSteps,
+    loadingError,
+    isDataLoaded 
+  } = useInitialData();
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +44,11 @@ const LoginPage = () => {
           localStorage.setItem("username", username);
         }
         toast.success("Login successful!");
-        // Navigate to dashboard
+        
+        // Load initial data with the new token
+        await loadInitialData(result.token);
+        
+        // Navigate to dashboard after data is loaded
         navigate("/dashboard");
       } else {
         setError(result.error || "Login failed. Please check your credentials.");
@@ -56,21 +73,32 @@ const LoginPage = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: COLORS.sectionBg }}
-      data-testid="login-screen"
-    >
+    <>
+      {/* Initial Loading Overlay */}
+      <InitialLoadingOverlay
+        isLoading={isInitialLoading}
+        progress={loadingProgress}
+        currentStep={currentStep}
+        completedSteps={completedSteps}
+        loadingSteps={loadingSteps}
+        error={loadingError}
+      />
+      
       <div 
-        className="w-full max-w-md p-8 rounded-2xl shadow-lg"
-        style={{ backgroundColor: COLORS.lightBg }}
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{ backgroundColor: COLORS.sectionBg }}
+        data-testid="login-screen"
       >
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <img 
-            src={GENIE_LOGO_URL} 
-            alt="Genie Logo" 
-            className="h-24 w-auto"
+        <div 
+          className="w-full max-w-md p-8 rounded-2xl shadow-lg"
+          style={{ backgroundColor: COLORS.lightBg }}
+        >
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src={GENIE_LOGO_URL} 
+              alt="Genie Logo" 
+              className="h-24 w-auto"
             data-testid="login-logo"
           />
         </div>
@@ -223,6 +251,7 @@ const LoginPage = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 

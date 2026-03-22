@@ -9,8 +9,8 @@ import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { TableOrderProvider } from "../context/TableOrderContext";
 import { SettingsPanel } from "../components/settings";
 import { MenuManagementPanel } from "../components/menu";
-import { tableAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useInitialData } from "../context/InitialDataContext";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -81,7 +81,15 @@ const DashboardPage = () => {
   // Auth context
   const { token } = useAuth();
   
-  // --- State --- (Will be populated from API)
+  // Initial data from context (preloaded after login)
+  const { 
+    tables: apiTables, 
+    rooms: apiRooms, 
+    isDataLoaded,
+    refreshTables 
+  } = useInitialData();
+  
+  // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
   const [rooms, setRooms] = useState({});
@@ -100,95 +108,90 @@ const DashboardPage = () => {
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [menuManagementOpen, setMenuManagementOpen] = useState(false);
-  const [isLoadingTables, setIsLoadingTables] = useState(true);
 
-  // Fetch tables from API
-  const fetchTables = useCallback(async () => {
-    if (!token) return;
+  // Transform API data to frontend format
+  const transformTableData = useCallback((tableList, roomList) => {
+    // Transform to frontend format and group by section (title)
+    const transformTable = (item) => ({
+      id: `T${item.table_no}`,
+      tableId: item.id,
+      tableNo: item.table_no,
+      status: item.engage === 'Yes' ? 'active' : 'available',
+      waiterId: item.waiter_id,
+      section: item.title || 'Main',
+      customer: '',
+      waiter: '',
+      items: [],
+      amount: 0,
+      time: '',
+    });
     
-    try {
-      setIsLoadingTables(true);
-      const data = await tableAPI.getAllTables();
-      
-      // Separate tables and rooms based on rtype
-      const tableList = data.filter(item => item.rtype === 'TB');
-      const roomList = data.filter(item => item.rtype === 'RM');
-      
-      // Transform to frontend format and group by section (title)
-      const transformTable = (item) => ({
-        id: `T${item.table_no}`,
-        tableId: item.id,
-        tableNo: item.table_no,
-        status: item.engage === 'Yes' ? 'active' : 'available',
-        waiterId: item.waiter_id,
-        section: item.title || 'Main',
-        // Order data will come from orders API later
-        customer: '',
-        waiter: '',
-        items: [],
-        amount: 0,
-        time: '',
-      });
-      
-      const transformRoom = (item) => ({
-        id: `R${item.table_no}`,
-        roomId: item.id,
-        roomNo: item.table_no,
-        status: item.engage === 'Yes' ? 'active' : 'available',
-        waiterId: item.waiter_id,
-        section: item.title || 'Main',
-        guest: '',
-        items: [],
-        amount: 0,
-        time: '',
-      });
-      
-      // Group tables by section (title)
-      const tablesBySection = {};
-      tableList.forEach(item => {
-        const section = item.title || 'Main';
-        if (!tablesBySection[section]) {
-          tablesBySection[section] = { name: section, tables: [] };
-        }
-        tablesBySection[section].tables.push(transformTable(item));
-      });
-      
-      // Group rooms by section
-      const roomsBySection = {};
-      roomList.forEach(item => {
-        const section = item.title || 'Main';
-        if (!roomsBySection[section]) {
-          roomsBySection[section] = { name: section, rooms: [] };
-        }
-        roomsBySection[section].rooms.push(transformRoom(item));
-      });
-      
-      // Set state
-      if (Object.keys(tablesBySection).length > 0) {
-        setTables(tablesBySection);
-        setFlatTables([]);
-      } else {
-        // No sections, use flat list
-        setTables({});
-        setFlatTables(tableList.map(transformTable));
+    const transformRoom = (item) => ({
+      id: `R${item.table_no}`,
+      roomId: item.id,
+      roomNo: item.table_no,
+      status: item.engage === 'Yes' ? 'active' : 'available',
+      waiterId: item.waiter_id,
+      section: item.title || 'Main',
+      guest: '',
+      items: [],
+      amount: 0,
+      time: '',
+    });
+    
+    // Group tables by section (title)
+    const tablesBySection = {};
+    tableList.forEach(item => {
+      const section = item.title || 'Main';
+      if (!tablesBySection[section]) {
+        tablesBySection[section] = { name: section, tables: [] };
       }
-      
-      setRooms(roomsBySection);
-      
-    } catch (error) {
-      console.error('Failed to fetch tables:', error);
-      setTables({});
+      tablesBySection[section].tables.push(transformTable(item));
+    });
+    
+    // Group rooms by section
+    const roomsBySection = {};
+    roomList.forEach(item => {
+      const section = item.title || 'Main';
+      if (!roomsBySection[section]) {
+        roomsBySection[section] = { name: section, rooms: [] };
+      }
+      roomsBySection[section].rooms.push(transformRoom(item));
+    });
+    
+    // Set state
+    if (Object.keys(tablesBySection).length > 0) {
+      setTables(tablesBySection);
       setFlatTables([]);
-      setRooms({});
-    } finally {
-      setIsLoadingTables(false);
+    } else {
+      setTables({});
+      setFlatTables(tableList.map(transformTable));
     }
-  }, [token]);
+    
+    setRooms(roomsBySection);
+  }, []);
 
-  // Fetch tables on mount
+  // Use preloaded data from context
   useEffect(() => {
-    fetchTables();
-  }, [fetchTables]);
+    if (isDataLoaded && apiTables.length > 0) {
+      transformTableData(apiTables, apiRooms);
+    }
+  }, [isDataLoaded, apiTables, apiRooms, transformTableData]);
+
+  // Fallback: Load data if navigated directly to dashboard without login flow
+  useEffect(() => {
+    if (token && !isDataLoaded && apiTables.length === 0) {
+      // This handles the case when user refreshes the dashboard page
+      refreshTables();
+    }
+  }, [token, isDataLoaded, apiTables.length, refreshTables]);
+
+  // Also watch for refreshed tables data
+  useEffect(() => {
+    if (apiTables.length > 0) {
+      transformTableData(apiTables, apiRooms);
+    }
+  }, [apiTables, apiRooms, transformTableData]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
