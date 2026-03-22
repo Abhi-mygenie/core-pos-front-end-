@@ -76,7 +76,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
 };
 
 // New item row (not yet placed — editable with Customize/Add Note)
-const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote }) => (
+const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote, onCustomize }) => (
   <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
     <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
       <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
@@ -96,7 +96,14 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
         </div>
       )}
       <div className="flex items-center gap-3 mt-1">
-        <button className="text-xs hover:underline" style={{ color: COLORS.primaryGreen }}>Customize</button>
+        <button 
+          className="text-xs hover:underline" 
+          style={{ color: COLORS.primaryGreen }}
+          onClick={() => onCustomize && onCustomize(item)}
+          data-testid={`customize-btn-${item.id}`}
+        >
+          Customize
+        </button>
         <button 
           className="text-xs hover:underline" 
           style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
@@ -130,6 +137,7 @@ const CartPanel = ({
   handlePlaceOrder,
   setShowPaymentPanel,
   onAddNote,
+  onCustomize,
   customer,
   onCustomerChange,
 }) => {
@@ -315,6 +323,7 @@ const CartPanel = ({
                     setCancelItem={setCancelItem}
                     updateQuantity={updateQuantity}
                     onAddNote={onAddNote}
+                    onCustomize={onCustomize}
                   />
                 )}
               </div>

@@ -202,6 +202,7 @@ const OrderEntry = ({
                 handlePlaceOrder={handlePlaceOrder}
                 setShowPaymentPanel={setShowPaymentPanel}
                 onAddNote={openItemNotes}
+                onCustomize={openCustomization}
                 customer={customer}
                 onCustomerChange={setCustomer}
               />
