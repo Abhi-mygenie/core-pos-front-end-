@@ -45,8 +45,8 @@ const LoginPage = () => {
         }
         toast.success("Login successful!");
         
-        // Load initial data with the new token
-        await loadInitialData(result.token);
+        // Load initial data with the new token (token is in result.data.token)
+        await loadInitialData(result.data.token);
         
         // Navigate to dashboard after data is loaded
         navigate("/dashboard");
