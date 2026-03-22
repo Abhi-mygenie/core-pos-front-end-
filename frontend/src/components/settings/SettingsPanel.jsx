@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Building2, Clock, Zap, CreditCard, Receipt, Printer, 
-  Tag, FileText, ChevronRight, X
+  Tag, FileText, ChevronRight, X, LayoutGrid
 } from 'lucide-react';
 import { COLORS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
@@ -13,6 +13,7 @@ import TaxChargesForm from './TaxChargesForm';
 import PrintersForm from './PrintersForm';
 import DiscountsForm from './DiscountsForm';
 import TermsForm from './TermsForm';
+import TableManagementForm from './TableManagementForm';
 
 const settingsMenuItems = [
   {
@@ -21,6 +22,13 @@ const settingsMenuItems = [
     description: 'Name, Logo, Contact, Address',
     icon: Building2,
     permission: 'restaurant_setup',
+  },
+  {
+    id: 'table-management',
+    label: 'Table Management',
+    description: 'Tables, Rooms, Sections',
+    icon: LayoutGrid,
+    permission: 'restaurant_settings',
   },
   {
     id: 'operating-hours',
