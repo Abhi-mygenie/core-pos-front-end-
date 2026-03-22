@@ -110,19 +110,16 @@ const BillSummary = ({
       style={{ borderColor: COLORS.borderGray, maxHeight: "100%" }}
       data-testid="bill-summary-section"
     >
-      {/* Sticky Header with Final Amount */}
+      {/* Sticky Header with Final Amount - Compact */}
       <div 
-        className="px-4 py-3 flex items-center justify-between sticky top-0 z-10"
+        className="px-4 py-2 flex items-center justify-between sticky top-0 z-10"
         style={{ backgroundColor: COLORS.sectionBg, borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
-        <div className="flex items-center gap-2 font-semibold" style={{ color: COLORS.darkText }}>
+        <div className="flex items-center gap-2 font-semibold text-sm" style={{ color: COLORS.darkText }}>
           <ClipboardList className="w-4 h-4" /> Bill Summary
         </div>
-        <div className="text-right">
-          <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
-            ₹{finalTotal.toLocaleString()}
-          </div>
-          <div className="text-xs" style={{ color: COLORS.grayText }}>Total to Pay</div>
+        <div className="text-lg font-bold" style={{ color: COLORS.primaryOrange }}>
+          ₹{finalTotal.toLocaleString()}
         </div>
       </div>
 
