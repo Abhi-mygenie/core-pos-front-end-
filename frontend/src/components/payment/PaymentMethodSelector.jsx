@@ -68,23 +68,22 @@ const PaymentMethodSelector = ({
         <CreditCard className="w-4 h-4" /> Payment Method
       </div>
       
-      {/* Main Payment Buttons */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      {/* Main Payment Buttons - Compact */}
+      <div className="grid grid-cols-3 gap-2 mb-2">
         {PAYMENT_OPTIONS.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => handleMainPayment(id)}
-            className="p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all"
+            className="p-2 rounded-lg border flex items-center justify-center gap-2 transition-all"
             style={{
               borderColor: !showSplit && !isOtherSelected && paymentMethod === id ? COLORS.primaryGreen : COLORS.borderGray,
               backgroundColor: !showSplit && !isOtherSelected && paymentMethod === id ? `${COLORS.primaryGreen}10` : "white",
+              color: !showSplit && !isOtherSelected && paymentMethod === id ? COLORS.primaryGreen : COLORS.darkText,
             }}
             data-testid={`payment-${id}-btn`}
           >
-            <Icon className="w-5 h-5" style={{ color: !showSplit && !isOtherSelected && paymentMethod === id ? COLORS.primaryGreen : COLORS.grayText }} />
-            <span className="text-xs" style={{ color: !showSplit && !isOtherSelected && paymentMethod === id ? COLORS.primaryGreen : COLORS.darkText }}>
-              {label}
-            </span>
+            <Icon className="w-4 h-4" />
+            <span className="text-sm">{label}</span>
           </button>
         ))}
       </div>
