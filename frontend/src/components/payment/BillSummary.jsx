@@ -154,11 +154,8 @@ const BillSummary = ({
           <span className="font-bold text-sm" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
         </div>
 
-        {/* Discount Section - Compact */}
+        {/* Discount Section - Compact, no heading */}
         <div className="pt-2 border-t relative" style={{ borderColor: COLORS.borderGray, zIndex: 20 }}>
-          <div className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: COLORS.grayText }}>
-            Discount
-          </div>
           <div className="flex gap-2 items-center relative">
             {/* Discount Type Dropdown */}
             <div className="relative flex-1" ref={discountDropdownRef}>
@@ -299,11 +296,8 @@ const BillSummary = ({
           </div>
         </div>
 
-        {/* TIP Section - Flat amount only */}
+        {/* TIP Section - Compact, no heading */}
         <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
-          <div className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: COLORS.grayText }}>
-            Tip
-          </div>
           <div className="flex gap-2 items-center">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: COLORS.grayText }}>₹</span>

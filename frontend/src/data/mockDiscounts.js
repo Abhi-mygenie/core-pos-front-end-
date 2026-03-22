@@ -1,6 +1,6 @@
 // Mock Discount Types for Bill Summary
 export const discountTypes = [
-  { id: "none", name: "No Discount" },
+  { id: "none", name: "NA" },
   { id: "happy_hour", name: "Happy Hour", defaultPercent: 10 },
   { id: "staff", name: "Staff Discount", defaultPercent: 15 },
   { id: "manager", name: "Manager Discount", defaultPercent: 20 },
