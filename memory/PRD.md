@@ -5,36 +5,43 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git and rebui
 
 ## Tech Stack
 - React.js (Frontend only, no backend)
-- Tailwind CSS
-- Radix UI (Icons/Dropdowns)
-- Custom React Hooks for state management
-- Mock data (no real API)
+- Tailwind CSS, Radix UI, Lucide React icons
+- Custom React Hooks + Context for state management
+- Mock data (no real API), Sonner for toast notifications
 
 ## Architecture
 ```
-/app/frontend/
-├── src/
-│   ├── components/
-│   │   ├── payment/         # BillSummary.jsx, PaymentMethodSelector.jsx
-│   │   ├── order-entry/     # CartPanel.jsx, OrderEntry.jsx, ItemCustomizationModal.jsx, 
-│   │   │                    # AddQuantityModal.jsx, TransferFoodModal.jsx, MergeTableModal.jsx,
-│   │   │                    # TablePickerGrid.jsx, OrderModals.jsx
-│   │   └── ...
-│   ├── hooks/               # usePaymentCalculation.js, useCartManager.js, useCustomerLookup.js
-│   ├── data/                # mockMenu.js, mockDiscounts.js, mockCustomers.js
-│   └── constants/           # colors.js
+/app/frontend/src/
+├── components/
+│   ├── payment/         # BillSummary.jsx, PaymentMethodSelector.jsx
+│   ├── order-entry/     # CartPanel, OrderEntry, Modals (Transfer, Merge, Shift, Cancel)
+│   │                    # TablePickerGrid, AddQuantityModal, ItemCustomizationModal
+│   └── layout/, cards/, sections/, ui/ (shadcn)
+├── context/             # TableOrderContext.jsx (shared table state)
+├── hooks/               # useCartManager, usePaymentCalculation, useMenuFilter, useOrderModals
+├── data/                # mockMenu, mockTables, mockOrderItems, mockCustomers, mockDiscounts
+└── constants/           # colors.js
 ```
 
 ## Credentials
 - Login: Admin/Admin
-- Flow: Dashboard -> Dine In -> Click Running Table -> Order Entry
+- Flow: Dashboard → Dine In → Click Running Table → Order Entry
 
 ## Completed Features
-- [x] Cloned repo and configured .env for frontend POS
-- [x] BillSummary.jsx redesign: Sticky header, discount dropdown (Flat/%), flat Tip, 10% Service Charge, split 2.5% SGST/CGST, compact layout
-- [x] PaymentMethodSelector.jsx: Removed Credit, added Wallet, added "Other" dropdown, compact buttons
-- [x] Cart Customization Logic: Hide customize for non-customizable items, edit existing customizations, quantity increase prompt for customized items
-- [x] TransferFoodModal.jsx UI overhaul: Wider modal (max-w-2xl), rounded-2xl, TablePickerGrid, selection chips, styled footer (2026-03-22)
+- [x] Cloned repo and configured .env
+- [x] BillSummary redesign: Sticky header, discount dropdown (Flat/%), flat Tip, 10% Service Charge, split 2.5% SGST/CGST, compact layout
+- [x] PaymentMethodSelector: Wallet, "Other" dropdown, compact buttons
+- [x] Cart Customization Logic: Hide customize for non-customizable, edit mode, quantity increase prompt
+- [x] TransferFoodModal UI overhaul: wider modal, TablePickerGrid, selection chips, qty picker
+- [x] CancelFoodModal UI overhaul: matching design, qty picker for partial cancel
+- [x] ShiftTableModal: only shows available tables
+- [x] **TableOrderContext** - Global shared state for cross-table operations (2026-03-22)
+- [x] **Cancel Item** - Partial qty cancel, reduces item qty or removes, toast notification (2026-03-22)
+- [x] **Transfer Food** - Partial qty transfer, moves items to target table, toast notification (2026-03-22)
+- [x] **Shift Table** - Moves all items, updates table statuses (source→available, dest→occupied), closes to dashboard, toast (2026-03-22)
+- [x] **Merge Tables** - Combines items from selected tables into primary, source tables become available, toast (2026-03-22)
+- [x] Transfer food link styled green for visibility
+- [x] Sonner toast notifications for all 4 operations
 
 ## Upcoming Tasks (P1)
 - [ ] Implement Wallet payment handling flow
@@ -44,7 +51,9 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git and rebui
 - [ ] Test with alcohol items to verify VAT calculation on frontend cart
 
 ## Refactoring Opportunities
-- BillSummary.jsx could be broken into DiscountSection, TaxSection sub-components
+- BillSummary.jsx → break into DiscountSection, TaxSection sub-components
+- Add data-testid to TablePickerGrid buttons for better automated testing
 
 ## Testing
 - User explicitly requested: Do NOT use testing agent. Use screenshot tool only.
+- Verified: Cancel (partial qty ✅), Transfer (✅), Shift (✅), Merge (code verified, same pattern)

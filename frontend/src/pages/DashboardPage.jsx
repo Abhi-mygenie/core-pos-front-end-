@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { COLORS, CONFIG } from "../constants";
 import { mockTables, mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems, mockFlatTables } from "../data";
 import { Sidebar, Header } from "../components/layout";
@@ -7,6 +7,7 @@ import { DineInCard, DeliveryCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
+import { TableOrderProvider } from "../context/TableOrderContext";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -212,7 +213,7 @@ const DashboardPage = () => {
     setOrderEntryType(null);
   };
 
-  const handleUpdateTableStatus = (tableId, newStatus) => {
+  const handleUpdateTableStatus = useCallback((tableId, newStatus) => {
     if (hasAreas) {
       setTables(prev => Object.fromEntries(
         Object.entries(prev).map(([key, section]) => [key, {
@@ -223,9 +224,10 @@ const DashboardPage = () => {
     } else {
       setFlatTables(prev => prev.map(t => t.id === tableId ? { ...t, status: newStatus } : t));
     }
-  };
+  }, [hasAreas]);
 
   return (
+    <TableOrderProvider onUpdateTableStatus={handleUpdateTableStatus}>
     <div
       data-testid="pos-home"
       className="flex min-h-screen"
@@ -389,7 +391,6 @@ const DashboardPage = () => {
           <OrderEntry
             table={orderEntryTable}
             onClose={handleCloseOrderEntry}
-            orderData={orderEntryTable ? mockOrderItems[orderEntryTable.id] : null}
             orderType={orderEntryType}
             onOrderTypeChange={handleOrderTypeChange}
             allTables={allTablesList}
@@ -398,6 +399,7 @@ const DashboardPage = () => {
         )}
       </div>
     </div>
+    </TableOrderProvider>
   );
 };
 

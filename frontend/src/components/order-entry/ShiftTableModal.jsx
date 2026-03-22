@@ -5,7 +5,7 @@ import { mockTables } from "../../data";
 import { getModalStatusConfig } from "../../utils/statusHelpers";
 import TablePickerGrid from "./TablePickerGrid";
 
-const ALLOWED_STATUSES = ["available", "reserved"];
+const ALLOWED_STATUSES = ["available"];
 
 const ShiftTableModal = ({ currentTable, onClose, onShift }) => {
   const [selectedTable, setSelectedTable] = useState(null);

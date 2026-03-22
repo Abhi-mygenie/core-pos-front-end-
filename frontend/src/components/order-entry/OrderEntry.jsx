@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { COLORS } from "../../constants";
 import { useCartManager, useMenuFilter, useOrderModals } from "../../hooks";
+import { useTableOrders } from "../../context/TableOrderContext";
+import { toast } from "sonner";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
 import CollectPaymentPanel from "./CollectPaymentPanel";
@@ -17,12 +19,24 @@ import AddQuantityModal from "./AddQuantityModal";
 const OrderEntry = ({ 
   table, 
   onClose, 
-  orderData, 
   orderType = "delivery", 
   onOrderTypeChange, 
   allTables = [], 
   onSelectTable 
 }) => {
+  // Context for cross-table operations
+  const {
+    getTableOrder,
+    syncTableItems,
+    cancelItems,
+    transferItems,
+    shiftTable,
+    mergeTables,
+  } = useTableOrders();
+
+  // Get order data from context
+  const orderData = table ? getTableOrder(table.id) : null;
+
   // Cart management
   const {
     cartItems,
@@ -37,6 +51,7 @@ const OrderEntry = ({
     updateQuantity,
     updateCartItem,
     removeItem,
+    reduceItemQty,
     placeOrder,
     updateItemNotes,
   } = useCartManager(orderData);
@@ -97,7 +112,8 @@ const OrderEntry = ({
   // Initialize cart with existing order items
   useEffect(() => {
     initializeCart();
-  }, [initializeCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table?.id]);
 
   // Event handlers
   const handlePlaceOrder = () => {
@@ -106,22 +122,68 @@ const OrderEntry = ({
     }
   };
 
-  const handleTransfer = (item, targetTable) => {
-    removeItem(item.id);
-    setTransferItem(null);
-  };
-
-  const handleMerge = (targetTable) => {
-    setShowMergeModal(false);
-  };
-
-  const handleShift = (targetTable) => {
-    setShowShiftModal(false);
-  };
-
-  const handleCancelFood = (item, reason) => {
-    removeItem(item.id);
+  // --- CANCEL ITEM (partial qty support) ---
+  const handleCancelFood = ({ item, cancelQty, reason, notes }) => {
+    const qty = cancelQty || item.qty || 1;
+    if (qty >= item.qty) {
+      // Cancel all - remove item
+      removeItem(item.id);
+    } else {
+      // Partial cancel - reduce qty
+      reduceItemQty(item.id, qty);
+    }
+    // Also update context
+    if (table?.id) {
+      cancelItems(table.id, item.id, qty);
+    }
     setCancelItem(null);
+    toast.success(`Cancelled ${qty}x ${item.name}`, {
+      description: reason?.label ? `Reason: ${reason.label}` : undefined,
+    });
+  };
+
+  // --- TRANSFER FOOD (partial qty support) ---
+  const handleTransfer = ({ item, toTable, transferQty, switchNotes }) => {
+    const qty = transferQty || item.qty || 1;
+    if (qty >= item.qty) {
+      removeItem(item.id);
+    } else {
+      reduceItemQty(item.id, qty);
+    }
+    // Add to destination table via context
+    if (table?.id) {
+      transferItems(table.id, toTable.id, item, qty);
+    }
+    setTransferItem(null);
+    toast.success(`Transferred ${qty}x ${item.name} to ${toTable.id}`);
+  };
+
+  // --- SHIFT TABLE (move everything) ---
+  const handleShift = ({ fromTable, toTable }) => {
+    if (table?.id) {
+      shiftTable(table.id, toTable.id);
+    }
+    setShowShiftModal(false);
+    toast.success(`Shifted ${table?.id} → ${toTable.id}`, {
+      description: "All items moved to new table",
+    });
+    // Close order entry - user will see updated dashboard
+    onClose();
+  };
+
+  // --- MERGE TABLES ---
+  const handleMerge = ({ primaryTable, mergeTables: selectedTables, combinedBill }) => {
+    if (table?.id) {
+      const sourceIds = selectedTables.map((t) => t.id);
+      mergeTables(table.id, sourceIds);
+    }
+    setShowMergeModal(false);
+    const tableNames = selectedTables.map((t) => t.id).join(", ");
+    toast.success(`Merged ${tableNames} into ${table?.id}`, {
+      description: `Combined bill: ₹${combinedBill?.toLocaleString() || ""}`,
+    });
+    // Re-initialize cart to show merged items
+    setTimeout(() => initializeCart(), 100);
   };
 
   const handleSaveItemNotes = (notes) => {

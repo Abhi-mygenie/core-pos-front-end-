@@ -1,25 +1,29 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 
 /**
  * Custom hook for cart management in OrderEntry
+ * Now accepts pre-built items from context (with prices already set)
  */
 const useCartManager = (orderData) => {
   const [cartItems, setCartItems] = useState([]);
   const [flashItemId, setFlashItemId] = useState(null);
   const [editingQtyItemId, setEditingQtyItemId] = useState(null);
+  const orderDataRef = useRef(orderData);
+  orderDataRef.current = orderData;
 
-  // Initialize cart with existing order items
+  // Initialize cart with existing order items (from context, prices already set)
+  // Uses ref to avoid re-creating when orderData object reference changes
   const initializeCart = useCallback(() => {
-    if (orderData && orderData.items) {
-      const existingItems = orderData.items.map(item => ({
+    const data = orderDataRef.current;
+    if (data && data.items) {
+      setCartItems(data.items.map(item => ({
         ...item,
-        price: Math.floor(Math.random() * 400) + 100,
-        placed: true,
-        addedAt: new Date(Date.now() - item.time * 60000).toISOString(),
-      }));
-      setCartItems(existingItems);
+        price: item.price || Math.floor(Math.random() * 400) + 100,
+        placed: item.placed !== undefined ? item.placed : true,
+        addedAt: item.addedAt || new Date(Date.now() - (item.time || 0) * 60000).toISOString(),
+      })));
     }
-  }, [orderData]);
+  }, []);
 
   // Cart item counts by item id (for badge on pills)
   const cartCountMap = useMemo(() => {
@@ -90,9 +94,25 @@ const useCartManager = (orderData) => {
     ));
   }, []);
 
-  // Remove item
+  // Remove item entirely
   const removeItem = useCallback((itemId) => {
     setCartItems(prev => prev.filter(ci => ci.id !== itemId));
+  }, []);
+
+  // Reduce item qty (for partial cancel/transfer). Removes if qty reaches 0.
+  const reduceItemQty = useCallback((itemId, reduceBy) => {
+    setCartItems(prev => {
+      const result = [];
+      for (const item of prev) {
+        if (item.id === itemId) {
+          const remaining = item.qty - reduceBy;
+          if (remaining > 0) result.push({ ...item, qty: remaining });
+        } else {
+          result.push(item);
+        }
+      }
+      return result;
+    });
   }, []);
 
   // Place order - mark all items as placed
@@ -124,6 +144,7 @@ const useCartManager = (orderData) => {
     updateQuantity,
     updateCartItem,
     removeItem,
+    reduceItemQty,
     placeOrder,
     updateItemNotes,
   };
