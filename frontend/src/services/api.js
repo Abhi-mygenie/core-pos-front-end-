@@ -66,4 +66,21 @@ export const menuAPI = {
   // TODO: Add CRUD operations when APIs are provided
 };
 
+// Table/Dashboard APIs
+export const tableAPI = {
+  // Get all tables with engage status (for Dashboard)
+  getAllTables: async () => {
+    const response = await api.get('/api/v1/vendoremployee/all-table-list');
+    return response.data;
+  },
+  
+  // Get only free/available tables (for table selection)
+  getFreeTables: async () => {
+    const response = await api.get('/api/v1/vendoremployee/get-table-list');
+    return response.data;
+  },
+  
+  // TODO: Add CRUD operations when APIs are provided
+};
+
 export default api;

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { COLORS, CONFIG } from "../constants";
 import { Sidebar, Header } from "../components/layout";
 import { TableSection, RoomSection } from "../components/sections";
@@ -9,6 +9,8 @@ import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { TableOrderProvider } from "../context/TableOrderContext";
 import { SettingsPanel } from "../components/settings";
 import { MenuManagementPanel } from "../components/menu";
+import { tableAPI } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -76,7 +78,10 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 
 // Main Home/Dashboard Component
 const DashboardPage = () => {
-  // --- State --- (Empty initial state - will be populated from API)
+  // Auth context
+  const { token } = useAuth();
+  
+  // --- State --- (Will be populated from API)
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
   const [rooms, setRooms] = useState({});
@@ -95,6 +100,95 @@ const DashboardPage = () => {
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [menuManagementOpen, setMenuManagementOpen] = useState(false);
+  const [isLoadingTables, setIsLoadingTables] = useState(true);
+
+  // Fetch tables from API
+  const fetchTables = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      setIsLoadingTables(true);
+      const data = await tableAPI.getAllTables();
+      
+      // Separate tables and rooms based on rtype
+      const tableList = data.filter(item => item.rtype === 'TB');
+      const roomList = data.filter(item => item.rtype === 'RM');
+      
+      // Transform to frontend format and group by section (title)
+      const transformTable = (item) => ({
+        id: `T${item.table_no}`,
+        tableId: item.id,
+        tableNo: item.table_no,
+        status: item.engage === 'Yes' ? 'active' : 'available',
+        waiterId: item.waiter_id,
+        section: item.title || 'Main',
+        // Order data will come from orders API later
+        customer: '',
+        waiter: '',
+        items: [],
+        amount: 0,
+        time: '',
+      });
+      
+      const transformRoom = (item) => ({
+        id: `R${item.table_no}`,
+        roomId: item.id,
+        roomNo: item.table_no,
+        status: item.engage === 'Yes' ? 'active' : 'available',
+        waiterId: item.waiter_id,
+        section: item.title || 'Main',
+        guest: '',
+        items: [],
+        amount: 0,
+        time: '',
+      });
+      
+      // Group tables by section (title)
+      const tablesBySection = {};
+      tableList.forEach(item => {
+        const section = item.title || 'Main';
+        if (!tablesBySection[section]) {
+          tablesBySection[section] = { name: section, tables: [] };
+        }
+        tablesBySection[section].tables.push(transformTable(item));
+      });
+      
+      // Group rooms by section
+      const roomsBySection = {};
+      roomList.forEach(item => {
+        const section = item.title || 'Main';
+        if (!roomsBySection[section]) {
+          roomsBySection[section] = { name: section, rooms: [] };
+        }
+        roomsBySection[section].rooms.push(transformRoom(item));
+      });
+      
+      // Set state
+      if (Object.keys(tablesBySection).length > 0) {
+        setTables(tablesBySection);
+        setFlatTables([]);
+      } else {
+        // No sections, use flat list
+        setTables({});
+        setFlatTables(tableList.map(transformTable));
+      }
+      
+      setRooms(roomsBySection);
+      
+    } catch (error) {
+      console.error('Failed to fetch tables:', error);
+      setTables({});
+      setFlatTables([]);
+      setRooms({});
+    } finally {
+      setIsLoadingTables(false);
+    }
+  }, [token]);
+
+  // Fetch tables on mount
+  useEffect(() => {
+    fetchTables();
+  }, [fetchTables]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
