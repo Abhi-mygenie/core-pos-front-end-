@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { tableAPI, menuAPI, cancellationAPI } from '../services/api';
 
 const InitialDataContext = createContext(null);
@@ -114,6 +114,14 @@ export const InitialDataProvider = ({ children }) => {
     setProducts([]);
     setCancellationReasons([]);
   }, []);
+
+  // Auto-load data if user has token but data isn't loaded (e.g., page refresh)
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token && !isDataLoaded && !isInitialLoading) {
+      loadInitialData(token);
+    }
+  }, [isDataLoaded, isInitialLoading, loadInitialData]);
 
   // Refresh specific data
   const refreshTables = useCallback(async () => {
