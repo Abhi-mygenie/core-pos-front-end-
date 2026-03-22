@@ -296,8 +296,8 @@ const BillSummary = ({
           </div>
         </div>
 
-        {/* TIP Section - Compact, no heading */}
-        <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+        {/* TIP Section - Compact, no heading, no border */}
+        <div className="pt-2" style={{ zIndex: 10 }}>
           <div className="flex gap-2 items-center">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: COLORS.grayText }}>₹</span>
@@ -319,8 +319,8 @@ const BillSummary = ({
           </div>
         </div>
 
-        {/* SERVICE CHARGE Section - Checkbox */}
-        <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+        {/* SERVICE CHARGE Section - Checkbox, no border */}
+        <div className="pt-2">
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
