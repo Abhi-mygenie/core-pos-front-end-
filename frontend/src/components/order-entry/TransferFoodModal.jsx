@@ -3,7 +3,7 @@ import { X, Check } from "lucide-react";
 import { COLORS } from "../../constants";
 import TablePickerGrid from "./TablePickerGrid";
 
-const ALLOWED_STATUSES = ["occupied", "billReady", "available"];
+const ALLOWED_STATUSES = ["occupied", "billReady"];
 
 const TransferFoodModal = ({ item, currentTable, onClose, onTransfer }) => {
   const [selectedTable, setSelectedTable] = useState(null);
