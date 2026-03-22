@@ -39,10 +39,14 @@ export const InitialDataProvider = ({ children }) => {
   const loadInitialData = useCallback(async (token) => {
     if (!token) return;
 
+    const startTime = Date.now();
+    const MINIMUM_LOADING_TIME = 2000; // Minimum 2 seconds to show progress
+
     setIsInitialLoading(true);
     setLoadingProgress(0);
     setCompletedSteps([]);
     setLoadingError(null);
+    setIsDataLoaded(false);
 
     try {
       // Step 1: Load Tables
@@ -53,6 +57,7 @@ export const InitialDataProvider = ({ children }) => {
       setTables(tableList);
       setRooms(roomList);
       completeStep('tables');
+      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
       // Step 2: Load Categories
       setCurrentStep('categories');
@@ -62,12 +67,14 @@ export const InitialDataProvider = ({ children }) => {
         : (categoriesData.categories || categoriesData.data || []);
       setCategories(categoryList);
       completeStep('categories');
+      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
-      // Step 3: Load Products (sample for menu)
+      // Step 3: Load Products (all for menu)
       setCurrentStep('products');
-      const productsData = await menuAPI.getProducts(100, 1, 'all', null);
+      const productsData = await menuAPI.getProducts(500, 1, 'all', null);
       setProducts(productsData.products || []);
       completeStep('products');
+      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
       // Step 4: Load Settings (Cancellation Reasons)
       setCurrentStep('settings');
@@ -75,12 +82,15 @@ export const InitialDataProvider = ({ children }) => {
       setCancellationReasons(reasonsData.reasons || []);
       completeStep('settings');
 
+      // Ensure minimum loading time for better UX
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime < MINIMUM_LOADING_TIME) {
+        await new Promise(resolve => setTimeout(resolve, MINIMUM_LOADING_TIME - elapsedTime));
+      }
+
       // All done
       setCurrentStep('');
       setIsDataLoaded(true);
-      
-      // Small delay to show 100% before hiding
-      await new Promise(resolve => setTimeout(resolve, 500));
       
     } catch (error) {
       console.error('Failed to load initial data:', error);

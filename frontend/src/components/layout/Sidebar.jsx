@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { 
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
-  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff 
+  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, RotateCcw
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth } from "../../context/AuthContext";
+import { useInitialData } from "../../context/InitialDataContext";
 
 // Sidebar Menu Data
 const sidebarMenuItems = [
@@ -99,9 +100,16 @@ const sidebarMenuItems = [
 // Sidebar Component
 const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, settingsOpen, setSettingsOpen, menuManagementOpen, setMenuManagementOpen }) => {
   const navigate = useNavigate();
-  const { user, logout: authLogout } = useAuth();
+  const { user, logout: authLogout, token } = useAuth();
+  const { loadInitialData, isInitialLoading } = useInitialData();
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
+
+  const handleReloadAll = async () => {
+    if (token && !isInitialLoading) {
+      await loadInitialData(token);
+    }
+  };
 
   const toggleSection = (sectionId) => {
     setExpandedSections(prev => ({
@@ -307,7 +315,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, set
         <button
           data-testid="sidebar-refresh"
           onClick={() => {/* TODO: refresh orders */}}
-          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors hover:opacity-90 ${
+          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-2 rounded-lg transition-colors hover:opacity-90 ${
             isExpanded ? "justify-start" : "justify-center"
           }`}
           style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
@@ -315,6 +323,21 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, set
         >
           <RefreshCw className="w-5 h-5 flex-shrink-0" />
           {isExpanded && <span className="text-sm font-semibold">Refresh</span>}
+        </button>
+
+        {/* Reload All Settings Button */}
+        <button
+          data-testid="sidebar-reload-all"
+          onClick={handleReloadAll}
+          disabled={isInitialLoading}
+          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors hover:opacity-90 ${
+            isExpanded ? "justify-start" : "justify-center"
+          } ${isInitialLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+          style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
+          title={!isExpanded ? "Reload All Settings" : undefined}
+        >
+          <RotateCcw className={`w-5 h-5 flex-shrink-0 ${isInitialLoading ? "animate-spin" : ""}`} />
+          {isExpanded && <span className="text-sm font-semibold">{isInitialLoading ? "Reloading..." : "Reload All"}</span>}
         </button>
 
         {/* Profile */}

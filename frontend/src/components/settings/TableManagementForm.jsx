@@ -3,11 +3,19 @@ import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
 import { COLORS } from '../../constants';
 import { tableAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useInitialData } from '../../context/InitialDataContext';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 
 const TableManagementForm = () => {
   const { token } = useAuth();
+  const { 
+    tables: preloadedTables, 
+    rooms: preloadedRooms, 
+    isDataLoaded,
+    refreshTables 
+  } = useInitialData();
+  
   const [tables, setTables] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,31 +23,37 @@ const TableManagementForm = () => {
   const [addType, setAddType] = useState('table'); // 'table' | 'room'
   const [editingItem, setEditingItem] = useState(null);
 
-  // Fetch tables and rooms
+  // Initialize from preloaded data
+  useEffect(() => {
+    if (isDataLoaded) {
+      setTables(preloadedTables);
+      setRooms(preloadedRooms);
+      setIsLoading(false);
+    }
+  }, [isDataLoaded, preloadedTables, preloadedRooms]);
+
+  // Fetch tables and rooms (for refresh or fallback)
   const fetchData = useCallback(async () => {
     if (!token) return;
     
     try {
       setIsLoading(true);
-      const data = await tableAPI.getAllTables();
-      
-      // Separate tables and rooms
-      const tableList = data.filter(item => item.rtype === 'TB');
-      const roomList = data.filter(item => item.rtype === 'RM');
-      
-      setTables(tableList);
-      setRooms(roomList);
+      // Use context refresh which updates the shared state
+      await refreshTables();
     } catch (error) {
       console.error('Failed to fetch tables:', error);
       toast.error('Failed to load tables');
     } finally {
       setIsLoading(false);
     }
-  }, [token]);
+  }, [token, refreshTables]);
 
+  // Fallback fetch if not preloaded
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (!isDataLoaded) {
+      fetchData();
+    }
+  }, [isDataLoaded, fetchData]);
 
   // Group items by section (title)
   const groupBySection = (items) => {

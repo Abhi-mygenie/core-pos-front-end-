@@ -19,6 +19,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useAuth } from '../../context/AuthContext';
+import { useInitialData } from '../../context/InitialDataContext';
 import { COLORS } from '../../constants';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -34,6 +35,11 @@ import { toast } from 'sonner';
 
 const MenuManagementPanel = ({ onClose }) => {
   const { token } = useAuth();
+  const { 
+    categories: preloadedCategories, 
+    products: preloadedProducts,
+    isDataLoaded 
+  } = useInitialData();
   
   // State
   const [menus, setMenus] = useState([]);
@@ -194,7 +200,43 @@ const MenuManagementPanel = ({ onClose }) => {
     }
   }, [token, selectedMenu, pagination.limit]);
 
-  // Fetch categories for vendor's restaurant
+  // Initialize from preloaded data or fetch if not available
+  const initializeFromPreloadedData = useCallback(() => {
+    if (isDataLoaded && preloadedCategories.length > 0) {
+      setCategories(preloadedCategories);
+    }
+    
+    if (isDataLoaded && preloadedProducts.length > 0) {
+      // Derive unique menus from preloaded products
+      const menuMap = {};
+      preloadedProducts.forEach(product => {
+        const menuName = product.food_for || 'Normal';
+        if (!menuMap[menuName]) {
+          menuMap[menuName] = { name: menuName, count: 0 };
+        }
+        menuMap[menuName].count++;
+      });
+      
+      const menuList = Object.values(menuMap);
+      setMenus(menuList.length > 0 ? menuList : [{ name: 'Normal', count: 0 }]);
+      
+      // Select first menu by default
+      if (menuList.length > 0 && !selectedMenu) {
+        setSelectedMenu(menuList[0].name);
+      }
+      
+      // Set products and pagination
+      setProducts(preloadedProducts);
+      setPagination(prev => ({ 
+        ...prev, 
+        total: preloadedProducts.length,
+        currentPage: 1 
+      }));
+      setIsLoading(false);
+    }
+  }, [isDataLoaded, preloadedCategories, preloadedProducts, selectedMenu]);
+
+  // Fetch categories for vendor's restaurant (fallback if not preloaded)
   const fetchCategories = useCallback(async () => {
     if (!token) return;
     
@@ -209,7 +251,7 @@ const MenuManagementPanel = ({ onClose }) => {
     }
   }, [token]);
 
-  // Fetch menus (unique food_for values) - initial load
+  // Fetch menus (unique food_for values) - fallback if not preloaded
   const fetchMenus = useCallback(async () => {
     if (!token) return;
     
@@ -240,11 +282,16 @@ const MenuManagementPanel = ({ onClose }) => {
     }
   }, [token, selectedMenu]);
 
-  // Initial load
+  // Initial load - use preloaded data if available
   useEffect(() => {
-    fetchMenus();
-    fetchCategories();
-  }, [fetchMenus, fetchCategories]);
+    if (isDataLoaded && preloadedCategories.length > 0 && preloadedProducts.length > 0) {
+      initializeFromPreloadedData();
+    } else {
+      // Fallback to fetching
+      fetchMenus();
+      fetchCategories();
+    }
+  }, [isDataLoaded, preloadedCategories.length, preloadedProducts.length, initializeFromPreloadedData, fetchMenus, fetchCategories]);
 
   // Fetch products when category or menu changes
   useEffect(() => {

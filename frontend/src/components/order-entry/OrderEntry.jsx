@@ -3,6 +3,7 @@ import { COLORS } from "../../constants";
 import { useCartManager, useMenuFilter, useOrderModals } from "../../hooks";
 import { useTableOrders } from "../../context/TableOrderContext";
 import { useAuth } from "../../context/AuthContext";
+import { useInitialData } from "../../context/InitialDataContext";
 import { menuAPI } from "../../services/api";
 import { toast } from "sonner";
 import CategoryPanel from "./CategoryPanel";
@@ -43,6 +44,13 @@ const OrderEntry = ({
   
   // Auth context for token
   const { token } = useAuth();
+  
+  // Preloaded data from context
+  const { 
+    categories: preloadedCategories, 
+    products: preloadedProducts,
+    isDataLoaded 
+  } = useInitialData();
 
   // Cart management
   const {
@@ -64,14 +72,63 @@ const OrderEntry = ({
     updateItemNotes,
   } = useCartManager(orderData);
 
-  // Menu data from API
+  // Menu data
   const [menuCategories, setMenuCategories] = useState([]);
   const [menuItems, setMenuItems] = useState({});
-  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(!isDataLoaded);
 
-  // Fetch categories from API
+  // Transform products to menu items format
+  const transformProductsToMenuItems = useCallback((products) => {
+    const itemsByCategory = {};
+    
+    products.forEach(product => {
+      const menuItem = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        type: product.veg === 1 ? 'veg' : (product.egg === 1 ? 'egg' : 'nonveg'),
+        category: product.category_id,
+        categoryName: product.category_name,
+        image: product.image,
+        description: product.description || '',
+        glutenFree: product.gluten_free === 1,
+        jain: product.jain === 1,
+        vegan: product.vegan === 1,
+        hasCustomization: product.variations && product.variations.length > 0,
+        variations: product.variations || [],
+        tax: product.tax,
+        taxType: product.tax_type,
+        station: product.station_name,
+      };
+      
+      const catId = product.category_id || 'uncategorized';
+      if (!itemsByCategory[catId]) {
+        itemsByCategory[catId] = [];
+      }
+      itemsByCategory[catId].push(menuItem);
+    });
+    
+    return itemsByCategory;
+  }, []);
+
+  // Initialize from preloaded data
+  useEffect(() => {
+    if (preloadedCategories.length > 0) {
+      setMenuCategories(preloadedCategories);
+    }
+    if (preloadedProducts.length > 0) {
+      const transformed = transformProductsToMenuItems(preloadedProducts);
+      setMenuItems(transformed);
+      setIsLoadingMenu(false);
+    } else if (isDataLoaded) {
+      // Data loading completed but no products
+      setIsLoadingMenu(false);
+    }
+  }, [isDataLoaded, preloadedCategories, preloadedProducts, transformProductsToMenuItems]);
+
+  // Fallback fetch if not preloaded
   const fetchCategories = useCallback(async () => {
-    if (!token) return;
+    if (!token || (isDataLoaded && preloadedCategories.length > 0)) return;
     
     try {
       const data = await menuAPI.getCategories();
@@ -81,62 +138,34 @@ const OrderEntry = ({
       console.error('Failed to fetch categories:', error);
       setMenuCategories([]);
     }
-  }, [token]);
+  }, [token, isDataLoaded, preloadedCategories.length]);
 
-  // Fetch products from API and organize by category
+  // Fallback fetch products if not preloaded
   const fetchProducts = useCallback(async () => {
-    if (!token) return;
+    if (!token || (isDataLoaded && preloadedProducts.length > 0)) return;
     
     try {
       setIsLoadingMenu(true);
-      const data = await menuAPI.getProducts(200, 1, 'all', null);
+      const data = await menuAPI.getProducts(500, 1, 'all', null);
       const products = data.products || [];
-      
-      // Transform products to menu item format and group by category
-      const itemsByCategory = {};
-      
-      products.forEach(product => {
-        // Transform API product to menu item format
-        const menuItem = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          type: product.veg === 1 ? 'veg' : (product.egg === 1 ? 'egg' : 'nonveg'),
-          category: product.category_id,
-          categoryName: product.category_name,
-          image: product.image,
-          description: product.description || '',
-          glutenFree: product.gluten_free === 1,
-          jain: product.jain === 1,
-          vegan: product.vegan === 1,
-          hasCustomization: product.variations && product.variations.length > 0,
-          variations: product.variations || [],
-          tax: product.tax,
-          taxType: product.tax_type,
-          station: product.station_name,
-        };
-        
-        const catId = product.category_id || 'uncategorized';
-        if (!itemsByCategory[catId]) {
-          itemsByCategory[catId] = [];
-        }
-        itemsByCategory[catId].push(menuItem);
-      });
-      
-      setMenuItems(itemsByCategory);
+      setMenuItems(transformProductsToMenuItems(products));
     } catch (error) {
       console.error('Failed to fetch products:', error);
       setMenuItems({});
     } finally {
       setIsLoadingMenu(false);
     }
-  }, [token]);
+  }, [token, isDataLoaded, preloadedProducts.length, transformProductsToMenuItems]);
 
-  // Fetch menu data on mount
+  // Fetch menu data on mount only if not preloaded
   useEffect(() => {
-    fetchCategories();
-    fetchProducts();
-  }, [fetchCategories, fetchProducts]);
+    if (!isDataLoaded || preloadedCategories.length === 0) {
+      fetchCategories();
+    }
+    if (!isDataLoaded || preloadedProducts.length === 0) {
+      fetchProducts();
+    }
+  }, [isDataLoaded, preloadedCategories.length, preloadedProducts.length, fetchCategories, fetchProducts]);
 
   // Menu filtering - pass menuItems from API
   const {

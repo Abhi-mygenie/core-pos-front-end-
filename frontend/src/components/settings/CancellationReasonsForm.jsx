@@ -3,18 +3,30 @@ import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
 import { COLORS } from '../../constants';
 import { cancellationAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useInitialData } from '../../context/InitialDataContext';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 
 const CancellationReasonsForm = () => {
   const { token } = useAuth();
+  const { cancellationReasons: preloadedReasons, isDataLoaded } = useInitialData();
+  
   const [reasons, setReasons] = useState([]);
   const [totalSize, setTotalSize] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  // Fetch reasons
+  // Initialize from preloaded data
+  useEffect(() => {
+    if (isDataLoaded && preloadedReasons.length >= 0) {
+      setReasons(preloadedReasons);
+      setTotalSize(preloadedReasons.length);
+      setIsLoading(false);
+    }
+  }, [isDataLoaded, preloadedReasons]);
+
+  // Fetch reasons (for refresh or fallback)
   const fetchReasons = useCallback(async () => {
     if (!token) return;
     
@@ -31,9 +43,12 @@ const CancellationReasonsForm = () => {
     }
   }, [token]);
 
+  // Fallback fetch if not preloaded
   useEffect(() => {
-    fetchReasons();
-  }, [fetchReasons]);
+    if (!isDataLoaded) {
+      fetchReasons();
+    }
+  }, [isDataLoaded, fetchReasons]);
 
   // Handlers
   const handleAdd = () => {
