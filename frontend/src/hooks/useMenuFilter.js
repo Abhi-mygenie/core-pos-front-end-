@@ -5,7 +5,7 @@ import { mockMenuItems } from "../data";
  * Custom hook for menu filtering in OrderEntry
  */
 const useMenuFilter = () => {
-  const [activeCategory, setActiveCategory] = useState("popular");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [primaryFilter, setPrimaryFilter] = useState(null); // "veg" | "egg" | "nonveg" | null
   const [secondaryFilters, setSecondaryFilters] = useState({ 
@@ -26,7 +26,10 @@ const useMenuFilter = () => {
 
   // Get filtered menu items
   const filteredItems = useMemo(() => {
-    let items = mockMenuItems[activeCategory] || [];
+    // "all" shows items from every category combined
+    let items = activeCategory === "all"
+      ? Object.values(mockMenuItems).flat()
+      : (mockMenuItems[activeCategory] || []);
     
     // Search filter
     if (searchQuery.trim()) {
