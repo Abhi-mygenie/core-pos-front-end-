@@ -118,14 +118,14 @@ const BillSummary = ({
         </div>
       </div>
 
-      {/* Scrollable Content - disable overflow when dropdown is open */}
-      <div className={`flex-1 p-4 space-y-4 ${isDropdownOpen ? 'overflow-visible' : 'overflow-y-auto'}`}>
-        {/* Items List - No heading, no arrow, only show customizations if present */}
-        <div className="space-y-2">
+      {/* Scrollable Content - Compact padding */}
+      <div className={`flex-1 px-4 py-3 space-y-3 ${isDropdownOpen ? 'overflow-visible' : 'overflow-y-auto'}`}>
+        {/* Items List - Compact layout */}
+        <div className="space-y-1">
           {cartItems.map((item, idx) => {
             const customizationText = getCustomizationText(item);
             return (
-              <div key={idx} className="py-1">
+              <div key={idx}>
                 <div className="flex justify-between text-sm">
                   <span style={{ color: COLORS.darkText }}>
                     {item.name} x{item.qty}
@@ -134,7 +134,7 @@ const BillSummary = ({
                 </div>
                 {/* Only show customization line if there's actual data */}
                 {customizationText && (
-                  <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                  <div className="text-xs pl-2" style={{ color: COLORS.primaryGreen }}>
                     {customizationText}
                   </div>
                 )}
@@ -143,15 +143,15 @@ const BillSummary = ({
           })}
         </div>
 
-        {/* Item Total */}
-        <div className="flex justify-between pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
-          <span className="font-medium" style={{ color: COLORS.darkText }}>Item Total</span>
-          <span className="font-medium" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
+        {/* Item Total - Compact */}
+        <div className="flex justify-between pt-2 pb-1 border-t" style={{ borderColor: COLORS.borderGray }}>
+          <span className="font-medium text-sm" style={{ color: COLORS.darkText }}>Item Total</span>
+          <span className="font-medium text-sm" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
         </div>
 
-        {/* Discount Section - higher z-index container */}
-        <div className="pt-3 border-t relative" style={{ borderColor: COLORS.borderGray, zIndex: 20 }}>
-          <div className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: COLORS.grayText }}>
+        {/* Discount Section - Compact */}
+        <div className="pt-2 border-t relative" style={{ borderColor: COLORS.borderGray, zIndex: 20 }}>
+          <div className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: COLORS.grayText }}>
             Discount
           </div>
           <div className="flex gap-2 items-center relative">
