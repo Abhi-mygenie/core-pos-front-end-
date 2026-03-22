@@ -199,6 +199,21 @@ export const InitialDataProvider = ({ children }) => {
       console.error('Failed to load initial data:', error);
       debugLog('❌ Error loading data', { error: error.message, attempt: attemptNumber });
       
+      // Check if it's a 401 Unauthorized error
+      const isUnauthorized = error.response?.status === 401;
+      
+      if (isUnauthorized) {
+        // Token is invalid/expired - clear it and redirect to login
+        debugLog('🔒 401 Unauthorized - clearing token and redirecting to login');
+        localStorage.removeItem('authToken');
+        setLoadingError('Session expired. Please login again.');
+        hasAttemptedLoad.current = true; // Prevent further retries
+        
+        // Redirect to login page
+        window.location.href = '/';
+        return;
+      }
+      
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
       
@@ -237,7 +252,15 @@ export const InitialDataProvider = ({ children }) => {
   }, []);
 
   // Auto-load data if user has token but data isn't loaded (e.g., page refresh)
+  // SKIP auto-load on login page - user should login first
   useEffect(() => {
+    // Don't auto-load on login page
+    const isLoginPage = window.location.pathname === '/' || window.location.pathname === '/login';
+    if (isLoginPage) {
+      debugLog('On login page - skipping auto-load');
+      return;
+    }
+    
     const token = localStorage.getItem('authToken');
     
     // Don't auto-load if already loaded, currently loading, or max retries reached
