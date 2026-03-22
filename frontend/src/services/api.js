@@ -83,4 +83,15 @@ export const tableAPI = {
   // TODO: Add CRUD operations when APIs are provided
 };
 
+// Cancellation Reasons APIs
+export const cancellationAPI = {
+  // Get all cancellation reasons
+  getReasons: async (limit = 50, offset = 1) => {
+    const response = await api.get(`/api/v1/vendoremployee/cancellation-reasons?limit=${limit}&offset=${offset}`);
+    return response.data;
+  },
+  
+  // TODO: Add create/update/delete when APIs are provided
+};
+
 export default api;

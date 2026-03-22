@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Building2, Clock, Zap, CreditCard, Receipt, Printer, 
-  Tag, FileText, ChevronRight, X, LayoutGrid
+  Tag, FileText, ChevronRight, X, LayoutGrid, XCircle
 } from 'lucide-react';
 import { COLORS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +14,7 @@ import PrintersForm from './PrintersForm';
 import DiscountsForm from './DiscountsForm';
 import TermsForm from './TermsForm';
 import TableManagementForm from './TableManagementForm';
+import CancellationReasonsForm from './CancellationReasonsForm';
 
 const settingsMenuItems = [
   {
@@ -77,6 +78,13 @@ const settingsMenuItems = [
     label: 'Terms & Conditions',
     description: 'Bill T&C',
     icon: FileText,
+    permission: 'restaurant_settings',
+  },
+  {
+    id: 'cancellation-reasons',
+    label: 'Cancellation Reasons',
+    description: 'Order & Item cancellation reasons',
+    icon: XCircle,
     permission: 'restaurant_settings',
   },
 ];
@@ -210,6 +218,29 @@ const SettingsPanel = ({ onClose }) => {
         data-testid="settings-panel"
       >
         <TermsForm onBack={handleBack} />
+      </div>
+    );
+  }
+
+  if (activeSection === 'cancellation-reasons') {
+    return (
+      <div 
+        className="h-full flex flex-col rounded-2xl shadow-sm overflow-hidden"
+        style={{ backgroundColor: COLORS.lightBg }}
+        data-testid="settings-panel"
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: COLORS.borderGray }}>
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-sm font-medium hover:opacity-80"
+            style={{ color: COLORS.primaryGreen }}
+          >
+            ← Back to Settings
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          <CancellationReasonsForm />
+        </div>
       </div>
     );
   }
