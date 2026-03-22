@@ -3,90 +3,73 @@
 ## Original Problem Statement
 1. Pull code from repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: 22-1-march-)
 2. Build project as-is
-3. Summarize learnings about the project
+3. Fix drag & drop for menu items
+4. Update API endpoints to use correct vendor-specific endpoints
+5. Remove demo data - show only real API data for logged-in restaurants
 
 ## Architecture
 - **Frontend**: React 19 + Craco + Tailwind CSS + Radix UI
 - **Backend API**: `https://preprod.mygenie.online` (external)
 - **State**: React Context (AuthContext, TableOrderContext)
-- **Build Tool**: Craco (Create React App Configuration Override)
 
-## Tech Stack
-| Layer | Technology |
-|-------|------------|
-| Framework | React 19 |
-| Styling | Tailwind CSS 3.4 |
-| Components | Radix UI, Shadcn patterns |
-| Drag & Drop | @dnd-kit |
-| HTTP Client | Axios |
-| Forms | react-hook-form + zod |
-| Charts | Recharts |
-| Routing | React Router DOM 7 |
+## API Endpoints Updated (Jan 2026)
 
-## API Endpoints (External)
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/v1/auth/vendoremployee/login` | POST | Authentication |
-| `/api/v2/vendoremployee/vendor-profile/profile` | GET | Vendor profile |
-| `/api/v1/categories` | GET | Categories list |
-| `/api/v1/vendoremployee/get-products-list` | GET | Products paginated |
+| Endpoint | Method | Purpose | Status |
+|----------|--------|---------|--------|
+| `/api/v1/auth/vendoremployee/login` | POST | Authentication | ✅ Working |
+| `/api/v2/vendoremployee/vendor-profile/profile` | GET | Vendor profile | ✅ Working |
+| `/api/v1/vendoremployee/get-categories` | GET | Categories (vendor-specific) | ✅ UPDATED |
+| `/api/v1/vendoremployee/get-products-list` | GET | Products (with category_id) | ✅ UPDATED |
 
-## What's Been Implemented (Jan 2026)
+### API Changes Made
+1. **Categories**: Changed from `/api/v1/categories` to `/api/v1/vendoremployee/get-categories`
+   - Now returns only categories for logged-in vendor's restaurant
+   - No need for frontend filtering by restaurant_id
 
-### Phase 1: Setup
-- [x] Cloned from GitHub branch 22-1-march-
-- [x] Dependencies installed via yarn
-- [x] Production build successful (220KB JS, 11KB CSS)
+2. **Products**: Added `category_id` parameter
+   - Server-side filtering instead of fetching all 200 products
+   - Proper pagination with `limit`, `offset`, `category_id`, `type`
 
-### Core Features
-- [x] Login page with API integration
-- [x] Dashboard with multi-channel support (Dine-In, Delivery, TakeAway, Room)
-- [x] Table view with area sections
-- [x] Order cards with status management
-- [x] Search across tables/orders
-- [x] Settings panel (8 sections)
-- [x] Menu management (categories, products, drag-drop, bulk actions)
+## What's Been Implemented
 
-## File Structure
-```
-/frontend/src/
-├── components/
-│   ├── cards/        # Table, Delivery, DineIn, Room cards
-│   ├── common/       # FilterPill, SearchResult components
-│   ├── header/       # ChannelPills, StatusFilters, ViewToggle
-│   ├── layout/       # Header, Sidebar
-│   ├── menu/         # Menu management (CRUD, DnD)
-│   ├── order-entry/  # Order taking flow
-│   ├── payment/      # Payment processing
-│   ├── sections/     # Table, Room, Order sections
-│   ├── settings/     # 8 settings forms
-│   └── ui/           # Shadcn UI primitives
-├── context/          # AuthContext, TableOrderContext
-├── data/             # Mock data
-├── hooks/            # Custom hooks
-├── pages/            # LoginPage, DashboardPage
-├── services/         # API layer
-└── utils/            # Helpers
-```
+### Phase 1: Setup ✅
+- Cloned from GitHub branch 22-1-march-
+- Dependencies installed via yarn
+- Production build successful
 
-## Backlog (P0/P1/P2)
-### P0 - Critical
-- [ ] Connect real CRUD APIs for Settings/Menu/Products
+### Phase 2: Bug Fixes ✅
+- Fixed product drag & drop (was only working for categories)
+- Root cause: `handleProductDragEnd` was operating on paginated subset incorrectly
+- Solution: Proper state update with `food_order` persistence
 
-### P1 - Important
-- [ ] Form validation for all inputs
-- [ ] Loading spinners & error toasts
-- [ ] Image upload to server (not base64)
+### Phase 3: API Updates ✅
+- Updated `getCategories()` to use vendor-specific endpoint
+- Updated `getProducts()` to support `category_id` parameter
+- Implemented server-side pagination and filtering
+- Removed client-side category filtering (now handled by API)
 
-### P2 - Nice to Have
-- [ ] Printer assignment UI
-- [ ] Refactor MenuManagementPanel.jsx (1000+ lines)
+## File Changes
+
+| File | Changes |
+|------|---------|
+| `/frontend/src/services/api.js` | Updated endpoints |
+| `/frontend/src/components/menu/MenuManagementPanel.jsx` | Server-side filtering, fixed DnD |
 
 ## Test Credentials
 - Email: owner@18march.com
 - Password: Qplazm@10
 
-## Notes
-- All CUD operations are MOCKED (local state only)
-- Read operations connect to real API
-- Build output: 4.4MB uncompressed, 231KB gzipped
+## Current Status
+- ✅ Login working
+- ✅ Categories loading from vendor API
+- ✅ Products loading with server-side filtering
+- ✅ Category click filters products via API
+- ✅ Pagination working server-side
+- ✅ Drag & drop for categories working
+- ✅ Drag & drop for products fixed
+
+## Backlog
+- P1: Category product counts (API doesn't return count field)
+- P2: Form validation for all inputs
+- P2: Image upload to server (currently base64 preview)
+- P3: Refactor MenuManagementPanel.jsx (still 1000+ lines)

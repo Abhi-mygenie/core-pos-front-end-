@@ -47,15 +47,19 @@ export const vendorAPI = {
 
 // Menu Management APIs
 export const menuAPI = {
-  // Get all categories (need to filter by restaurant_id on frontend)
+  // Get categories for logged-in vendor's restaurant
   getCategories: async () => {
-    const response = await api.get('/api/v1/categories');
+    const response = await api.get('/api/v1/vendoremployee/get-categories');
     return response.data;
   },
   
-  // Get products list with pagination
-  getProducts: async (limit = 10, offset = 1, type = 'all') => {
-    const response = await api.get(`/api/v1/vendoremployee/get-products-list?limit=${limit}&offset=${offset}&type=${type}`);
+  // Get products list with pagination and optional category filter
+  getProducts: async (limit = 10, offset = 1, type = 'all', categoryId = null) => {
+    let url = `/api/v1/vendoremployee/get-products-list?limit=${limit}&offset=${offset}&type=${type}`;
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
+    const response = await api.get(url);
     return response.data;
   },
   
