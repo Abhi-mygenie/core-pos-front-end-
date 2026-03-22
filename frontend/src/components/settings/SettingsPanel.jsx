@@ -107,6 +107,29 @@ const SettingsPanel = ({ onClose }) => {
     );
   }
 
+  if (activeSection === 'table-management') {
+    return (
+      <div 
+        className="h-full flex flex-col rounded-2xl shadow-sm overflow-hidden"
+        style={{ backgroundColor: COLORS.lightBg }}
+        data-testid="settings-panel"
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: COLORS.borderGray }}>
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-sm font-medium hover:opacity-80"
+            style={{ color: COLORS.primaryGreen }}
+          >
+            ← Back to Settings
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          <TableManagementForm />
+        </div>
+      </div>
+    );
+  }
+
   if (activeSection === 'operating-hours') {
     return (
       <div 

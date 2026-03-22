@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, LayoutGrid, DoorOpen, Users, RefreshCw } from 'lucide-react';
+import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
 import { COLORS } from '../../constants';
 import { tableAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -11,8 +11,8 @@ const TableManagementForm = () => {
   const [tables, setTables] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('tables'); // 'tables' | 'rooms'
   const [showAddModal, setShowAddModal] = useState(false);
+  const [addType, setAddType] = useState('table'); // 'table' | 'room'
   const [editingItem, setEditingItem] = useState(null);
 
   // Fetch tables and rooms
@@ -57,19 +57,34 @@ const TableManagementForm = () => {
   const groupedTables = groupBySection(tables);
   const groupedRooms = groupBySection(rooms);
 
-  // Placeholder handlers for CRUD (to be connected when APIs are provided)
-  const handleAdd = () => {
+  // Get all unique sections
+  const allSections = [...new Set([
+    ...Object.keys(groupedTables),
+    ...Object.keys(groupedRooms)
+  ])];
+
+  // Handlers
+  const handleAddTable = () => {
     setEditingItem(null);
+    setAddType('table');
     setShowAddModal(true);
   };
 
-  const handleEdit = (item) => {
+  const handleAddRoom = () => {
+    setEditingItem(null);
+    setAddType('room');
+    setShowAddModal(true);
+  };
+
+  const handleEdit = (item, type) => {
     setEditingItem(item);
+    setAddType(type);
     setShowAddModal(true);
   };
 
-  const handleDelete = async (item) => {
-    if (!window.confirm(`Are you sure you want to delete ${activeTab === 'tables' ? 'Table' : 'Room'} ${item.table_no}?`)) {
+  const handleDelete = async (item, type) => {
+    const typeName = type === 'table' ? 'Table' : 'Room';
+    if (!window.confirm(`Are you sure you want to delete ${typeName} ${item.table_no}?`)) {
       return;
     }
     // TODO: Call delete API when provided
@@ -82,8 +97,78 @@ const TableManagementForm = () => {
     setShowAddModal(false);
   };
 
-  const currentItems = activeTab === 'tables' ? groupedTables : groupedRooms;
-  const itemCount = activeTab === 'tables' ? tables.length : rooms.length;
+  // Render item card
+  const renderItemCard = (item, type) => (
+    <div
+      key={item.id}
+      className="rounded-lg border p-4 bg-white hover:shadow-md transition-shadow"
+      style={{ borderColor: COLORS.borderGray }}
+      data-testid={`${type}-card-${item.id}`}
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <span 
+            className="text-lg font-bold"
+            style={{ color: COLORS.darkText }}
+          >
+            {type === 'table' ? 'T' : 'R'}{item.table_no}
+          </span>
+          <div className="text-xs mt-1" style={{ color: COLORS.grayText }}>
+            W: {item.waiter_id}
+          </div>
+        </div>
+        <div className="flex gap-1">
+          <button
+            onClick={() => handleEdit(item, type)}
+            className="p-1.5 rounded hover:bg-gray-100 transition-colors"
+            title="Edit"
+            data-testid={`edit-${type}-${item.id}`}
+          >
+            <Pencil className="w-4 h-4" style={{ color: COLORS.grayText }} />
+          </button>
+          <button
+            onClick={() => handleDelete(item, type)}
+            className="p-1.5 rounded hover:bg-red-50 transition-colors"
+            title="Delete"
+            data-testid={`delete-${type}-${item.id}`}
+          >
+            <Trash2 className="w-4 h-4" style={{ color: '#ef4444' }} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Render section
+  const renderSection = (sectionName, items, type) => (
+    <div key={sectionName} className="mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <h4 className="text-sm font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>
+          {sectionName}
+        </h4>
+        <span 
+          className="text-xs px-2 py-0.5 rounded-full"
+          style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}
+        >
+          {items.length}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {items.map(item => renderItemCard(item, type))}
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center" style={{ color: COLORS.grayText }}>
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3" />
+          <p>Loading tables and rooms...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -97,162 +182,73 @@ const TableManagementForm = () => {
             Manage your restaurant tables and rooms
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={fetchData}
+          disabled={isLoading}
+          data-testid="refresh-tables-btn"
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Tables Section */}
+      <div className="border rounded-lg p-4" style={{ borderColor: COLORS.borderGray }}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
+            Tables ({tables.length})
+          </h3>
           <Button
-            variant="outline"
             size="sm"
-            onClick={fetchData}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleAdd}
+            onClick={handleAddTable}
             style={{ backgroundColor: COLORS.primaryGreen }}
+            data-testid="add-table-btn"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add {activeTab === 'tables' ? 'Table' : 'Room'}
+            Add New Table
           </Button>
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-2 border-b" style={{ borderColor: COLORS.borderGray }}>
-        <button
-          onClick={() => setActiveTab('tables')}
-          className="flex items-center gap-2 px-4 py-3 font-medium transition-colors"
-          style={{
-            color: activeTab === 'tables' ? COLORS.primaryGreen : COLORS.grayText,
-            borderBottom: activeTab === 'tables' ? `2px solid ${COLORS.primaryGreen}` : '2px solid transparent',
-          }}
-        >
-          <LayoutGrid className="w-4 h-4" />
-          Tables ({tables.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('rooms')}
-          className="flex items-center gap-2 px-4 py-3 font-medium transition-colors"
-          style={{
-            color: activeTab === 'rooms' ? COLORS.primaryGreen : COLORS.grayText,
-            borderBottom: activeTab === 'rooms' ? `2px solid ${COLORS.primaryGreen}` : '2px solid transparent',
-          }}
-        >
-          <DoorOpen className="w-4 h-4" />
-          Rooms ({rooms.length})
-        </button>
-      </div>
-
-      {/* Content */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center" style={{ color: COLORS.grayText }}>
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3" />
-            <p>Loading {activeTab}...</p>
+        
+        {tables.length === 0 ? (
+          <div className="text-center py-8" style={{ color: COLORS.grayText }}>
+            <p>No tables found. Click "Add New Table" to create one.</p>
           </div>
-        </div>
-      ) : itemCount === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center mb-4" 
-            style={{ backgroundColor: COLORS.sectionBg }}
+        ) : (
+          Object.entries(groupedTables).map(([section, items]) => 
+            renderSection(section, items, 'table')
+          )
+        )}
+      </div>
+
+      {/* Rooms Section */}
+      <div className="border rounded-lg p-4" style={{ borderColor: COLORS.borderGray }}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
+            Rooms ({rooms.length})
+          </h3>
+          <Button
+            size="sm"
+            onClick={handleAddRoom}
+            style={{ backgroundColor: COLORS.primaryGreen }}
+            data-testid="add-room-btn"
           >
-            {activeTab === 'tables' ? (
-              <LayoutGrid className="w-8 h-8" style={{ color: COLORS.grayText }} />
-            ) : (
-              <DoorOpen className="w-8 h-8" style={{ color: COLORS.grayText }} />
-            )}
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Room
+          </Button>
+        </div>
+        
+        {rooms.length === 0 ? (
+          <div className="text-center py-8" style={{ color: COLORS.grayText }}>
+            <p>No rooms found. Click "Add New Room" to create one.</p>
           </div>
-          <p className="text-lg font-medium" style={{ color: COLORS.darkText }}>
-            No {activeTab === 'tables' ? 'Tables' : 'Rooms'} Found
-          </p>
-          <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
-            Click "Add {activeTab === 'tables' ? 'Table' : 'Room'}" to create your first one.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {Object.entries(currentItems).map(([section, items]) => (
-            <div key={section}>
-              {/* Section Header */}
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>
-                  {section}
-                </h3>
-                <span 
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}
-                >
-                  {items.length}
-                </span>
-              </div>
-
-              {/* Items Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-lg border p-4 hover:shadow-md transition-shadow"
-                    style={{ 
-                      borderColor: COLORS.borderGray,
-                      backgroundColor: item.engage === 'Yes' ? `${COLORS.primaryOrange}10` : 'white'
-                    }}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <span 
-                          className="text-lg font-bold"
-                          style={{ color: COLORS.darkText }}
-                        >
-                          {activeTab === 'tables' ? 'T' : 'R'}{item.table_no}
-                        </span>
-                        <div className="flex items-center gap-1 mt-1">
-                          <span
-                            className="text-xs px-2 py-0.5 rounded-full"
-                            style={{
-                              backgroundColor: item.engage === 'Yes' ? `${COLORS.primaryOrange}20` : `${COLORS.primaryGreen}20`,
-                              color: item.engage === 'Yes' ? COLORS.primaryOrange : COLORS.primaryGreen,
-                            }}
-                          >
-                            {item.engage === 'Yes' ? 'Occupied' : 'Available'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="p-1.5 rounded hover:bg-gray-100 transition-colors"
-                          title="Edit"
-                        >
-                          <Pencil className="w-4 h-4" style={{ color: COLORS.grayText }} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item)}
-                          className="p-1.5 rounded hover:bg-red-50 transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" style={{ color: '#ef4444' }} />
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="text-xs space-y-1" style={{ color: COLORS.grayText }}>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        <span>Waiter ID: {item.waiter_id}</span>
-                      </div>
-                      {item.status === 1 && (
-                        <span className="text-green-600">Active</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        ) : (
+          Object.entries(groupedRooms).map(([section, items]) => 
+            renderSection(section, items, 'room')
+          )
+        )}
+      </div>
 
       {/* Add/Edit Modal */}
       {showAddModal && (
@@ -261,8 +257,8 @@ const TableManagementForm = () => {
           onClose={() => setShowAddModal(false)}
           onSave={handleSave}
           item={editingItem}
-          type={activeTab === 'tables' ? 'Table' : 'Room'}
-          sections={Object.keys(currentItems)}
+          type={addType}
+          sections={allSections}
         />
       )}
     </div>
@@ -271,6 +267,7 @@ const TableManagementForm = () => {
 
 // Add/Edit Modal Component
 const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
+  const typeName = type === 'table' ? 'Table' : 'Room';
   const [formData, setFormData] = useState({
     table_no: item?.table_no || '',
     title: item?.title || '',
@@ -280,10 +277,10 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.table_no.trim()) {
-      toast.error(`${type} number is required`);
+      toast.error(`${typeName} number is required`);
       return;
     }
-    onSave(formData);
+    onSave({ ...formData, rtype: type === 'table' ? 'TB' : 'RM' });
   };
 
   if (!isOpen) return null;
@@ -293,14 +290,14 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div className="px-6 py-4 border-b" style={{ borderColor: COLORS.borderGray }}>
           <h3 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
-            {item ? `Edit ${type}` : `Add New ${type}`}
+            {item ? `Edit ${typeName}` : `Add New ${typeName}`}
           </h3>
         </div>
         
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: COLORS.darkText }}>
-              {type} Number *
+              {typeName} Number *
             </label>
             <input
               type="text"
@@ -308,7 +305,8 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
               onChange={(e) => setFormData({ ...formData, table_no: e.target.value })}
               className="w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2"
               style={{ borderColor: COLORS.borderGray }}
-              placeholder={`Enter ${type.toLowerCase()} number`}
+              placeholder={`Enter ${typeName.toLowerCase()} number`}
+              data-testid="table-number-input"
             />
           </div>
 
@@ -324,6 +322,7 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
               style={{ borderColor: COLORS.borderGray }}
               placeholder="e.g., Main, Outdoor, VIP"
               list="sections-list"
+              data-testid="section-input"
             />
             <datalist id="sections-list">
               {sections.map(section => (
@@ -342,7 +341,8 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
               onChange={(e) => setFormData({ ...formData, waiter_id: e.target.value })}
               className="w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2"
               style={{ borderColor: COLORS.borderGray }}
-              placeholder="Assign waiter (optional)"
+              placeholder="Assign waiter ID (optional)"
+              data-testid="waiter-input"
             />
           </div>
 
@@ -352,6 +352,7 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
               variant="outline"
               className="flex-1"
               onClick={onClose}
+              data-testid="cancel-btn"
             >
               Cancel
             </Button>
@@ -359,8 +360,9 @@ const AddEditModal = ({ isOpen, onClose, onSave, item, type, sections }) => {
               type="submit"
               className="flex-1"
               style={{ backgroundColor: COLORS.primaryGreen }}
+              data-testid="save-btn"
             >
-              {item ? 'Update' : 'Create'} {type}
+              {item ? 'Update' : 'Create'} {typeName}
             </Button>
           </div>
         </form>
