@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { X, ChevronDown } from "lucide-react";
+import { X, ChevronDown, Minus, Plus } from "lucide-react";
 import { COLORS } from "../../constants";
 import { cancellationReasons } from "../../data";
 
 const CancelFoodModal = ({ item, onClose, onCancel }) => {
+  const [cancelQty, setCancelQty] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const totalQty = item?.qty || 1;
+  const showQtyPicker = totalQty > 1;
 
   // Handle cancel
   const handleCancel = () => {
     onCancel({
       item,
+      cancelQty,
       reason: selectedReason,
       notes: additionalNotes,
     });
@@ -50,7 +55,9 @@ const CancelFoodModal = ({ item, onClose, onCancel }) => {
                 Cancel {item?.name}
               </h2>
               <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
-                Select a reason for cancellation
+                {showQtyPicker
+                  ? `Select quantity to cancel (total: ${totalQty})`
+                  : "Select a reason for cancellation"}
               </p>
             </div>
             <button
@@ -65,6 +72,62 @@ const CancelFoodModal = ({ item, onClose, onCancel }) => {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {/* Quantity Selector - only if qty > 1 */}
+          {showQtyPicker && (
+            <div>
+              <label
+                className="text-xs font-semibold uppercase tracking-wide mb-1.5 block"
+                style={{ color: COLORS.grayText }}
+              >
+                Cancel Quantity
+              </label>
+              <div
+                className="flex items-center justify-between px-4 py-3 rounded-xl border"
+                style={{ borderColor: COLORS.borderGray }}
+              >
+                <span className="text-sm" style={{ color: COLORS.darkText }}>
+                  Cancel <span className="font-bold">{cancelQty}</span> of{" "}
+                  {totalQty}
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCancelQty((q) => Math.max(1, q - 1))}
+                    disabled={cancelQty <= 1}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors disabled:opacity-30"
+                    style={{
+                      backgroundColor: COLORS.sectionBg,
+                      color: COLORS.darkText,
+                    }}
+                    data-testid="cancel-qty-minus"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span
+                    className="text-lg font-bold w-8 text-center"
+                    style={{ color: COLORS.darkText }}
+                    data-testid="cancel-qty-value"
+                  >
+                    {cancelQty}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCancelQty((q) => Math.min(totalQty, q + 1))
+                    }
+                    disabled={cancelQty >= totalQty}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors disabled:opacity-30"
+                    style={{
+                      backgroundColor: COLORS.sectionBg,
+                      color: COLORS.darkText,
+                    }}
+                    data-testid="cancel-qty-plus"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Reason Dropdown */}
           <div className="relative">
             <label
@@ -75,7 +138,11 @@ const CancelFoodModal = ({ item, onClose, onCancel }) => {
             </label>
             <div
               className="flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-colors hover:border-gray-300"
-              style={{ borderColor: showDropdown ? COLORS.primaryOrange : COLORS.borderGray }}
+              style={{
+                borderColor: showDropdown
+                  ? COLORS.primaryOrange
+                  : COLORS.borderGray,
+              }}
               onClick={() => setShowDropdown(!showDropdown)}
               data-testid="reason-dropdown"
             >
@@ -134,11 +201,10 @@ const CancelFoodModal = ({ item, onClose, onCancel }) => {
               placeholder="Type here.."
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value)}
-              className="w-full p-4 rounded-xl border resize-none h-32 focus:outline-none focus:ring-2"
+              className="w-full p-4 rounded-xl border resize-none h-28 focus:outline-none focus:ring-2"
               style={{
                 borderColor: COLORS.borderGray,
                 backgroundColor: COLORS.lightBg,
-                focusRingColor: COLORS.primaryOrange,
               }}
               data-testid="cancel-notes-input"
             />
@@ -159,7 +225,7 @@ const CancelFoodModal = ({ item, onClose, onCancel }) => {
             style={{ backgroundColor: COLORS.errorText }}
             data-testid="cancel-item-btn"
           >
-            Cancel Item
+            Cancel {cancelQty > 1 || showQtyPicker ? `${cancelQty} Item${cancelQty > 1 ? "s" : ""}` : "Item"}
           </button>
         </div>
       </div>

@@ -47,7 +47,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         <div className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
           {item.addedAt ? getTimeAgo(item.addedAt) : `${item.time} mins ago`}
         </div>
-        <button onClick={() => setTransferItem(item)} className="text-xs mt-1 hover:underline" style={{ color: COLORS.grayText }} data-testid={`transfer-food-btn-${item.id}`}>
+        <button onClick={() => setTransferItem(item)} className="text-xs mt-1 hover:underline font-medium" style={{ color: COLORS.primaryGreen }} data-testid={`transfer-food-btn-${item.id}`}>
           Transfer food
         </button>
       </div>
