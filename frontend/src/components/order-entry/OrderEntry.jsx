@@ -70,7 +70,6 @@ const OrderEntry = ({
   // Menu data
   const [menuCategories, setMenuCategories] = useState([]);
   const [menuItems, setMenuItems] = useState({});
-  const [isLoadingMenu, setIsLoadingMenu] = useState(!isDataLoaded);
 
   // Transform products to menu items format
   const transformProductsToMenuItems = useCallback((products) => {
@@ -112,9 +111,11 @@ const OrderEntry = ({
       setMenuCategories(preloadedCategories);
       const transformed = transformProductsToMenuItems(preloadedProducts);
       setMenuItems(transformed);
-      setIsLoadingMenu(false);
     }
   }, [isDataLoaded, preloadedCategories, preloadedProducts, transformProductsToMenuItems]);
+
+  // Derive loading state from context
+  const isLoadingMenu = !isDataLoaded;
 
   // Menu filtering - pass menuItems from API
   const {

@@ -47,7 +47,6 @@ const MenuManagementPanel = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [vegFilter, setVegFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
     total: 0,
     limit: 10,
@@ -194,10 +193,11 @@ const MenuManagementPanel = ({ onClose }) => {
       if (menuList.length > 0) {
         setSelectedMenu(menuList[0].name);
       }
-      
-      setIsLoading(false);
     }
   }, [isDataLoaded, preloadedCategories, preloadedProducts]);
+
+  // Derive loading state from context
+  const isLoading = !isDataLoaded;
 
   // Filter products - ALL client-side filtering (menu, category, search, veg, status)
   const filteredProducts = products

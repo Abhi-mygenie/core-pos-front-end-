@@ -14,7 +14,6 @@ const TableManagementForm = () => {
   
   const [tables, setTables] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [addType, setAddType] = useState('table'); // 'table' | 'room'
   const [editingItem, setEditingItem] = useState(null);
@@ -24,9 +23,11 @@ const TableManagementForm = () => {
     if (isDataLoaded) {
       setTables(preloadedTables);
       setRooms(preloadedRooms);
-      setIsLoading(false);
     }
   }, [isDataLoaded, preloadedTables, preloadedRooms]);
+
+  // Derive loading state from context
+  const isLoading = !isDataLoaded;
 
   // Group items by section (title)
   const groupBySection = (items) => {

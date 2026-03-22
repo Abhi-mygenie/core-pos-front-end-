@@ -10,7 +10,6 @@ const CancellationReasonsForm = () => {
   
   const [reasons, setReasons] = useState([]);
   const [totalSize, setTotalSize] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
@@ -19,9 +18,11 @@ const CancellationReasonsForm = () => {
     if (isDataLoaded) {
       setReasons(preloadedReasons);
       setTotalSize(preloadedReasons.length);
-      setIsLoading(false);
     }
   }, [isDataLoaded, preloadedReasons]);
+
+  // Derive loading state from context
+  const isLoading = !isDataLoaded;
 
   // Handlers
   const handleAdd = () => {
