@@ -149,9 +149,9 @@ const BillSummary = ({
         </div>
 
         {/* Item Total - Compact */}
-        <div className="flex justify-between pt-2 pb-1 border-t" style={{ borderColor: COLORS.borderGray }}>
-          <span className="font-medium text-sm" style={{ color: COLORS.darkText }}>Item Total</span>
-          <span className="font-medium text-sm" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
+        <div className="flex justify-between py-1 border-t" style={{ borderColor: COLORS.borderGray }}>
+          <span className="font-bold text-sm" style={{ color: COLORS.darkText }}>Item Total</span>
+          <span className="font-bold text-sm" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
         </div>
 
         {/* Discount Section - Compact */}
