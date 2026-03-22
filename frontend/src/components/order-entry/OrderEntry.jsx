@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { COLORS } from "../../constants";
 import { useCartManager, useMenuFilter, useOrderModals } from "../../hooks";
 import { useTableOrders } from "../../context/TableOrderContext";
+import { useAuth } from "../../context/AuthContext";
+import { menuAPI } from "../../services/api";
 import { toast } from "sonner";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
@@ -38,6 +40,9 @@ const OrderEntry = ({
 
   // Get order data from context
   const orderData = table ? getTableOrder(table.id) : null;
+  
+  // Auth context for token
+  const { token } = useAuth();
 
   // Cart management
   const {
@@ -59,11 +64,81 @@ const OrderEntry = ({
     updateItemNotes,
   } = useCartManager(orderData);
 
-  // Empty menu data - will be populated from API
+  // Menu data from API
   const [menuCategories, setMenuCategories] = useState([]);
   const [menuItems, setMenuItems] = useState({});
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
 
-  // Menu filtering - pass empty menuItems
+  // Fetch categories from API
+  const fetchCategories = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      const data = await menuAPI.getCategories();
+      const categoryList = Array.isArray(data) ? data : (data.categories || data.data || []);
+      setMenuCategories(categoryList);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      setMenuCategories([]);
+    }
+  }, [token]);
+
+  // Fetch products from API and organize by category
+  const fetchProducts = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      setIsLoadingMenu(true);
+      const data = await menuAPI.getProducts(200, 1, 'all', null);
+      const products = data.products || [];
+      
+      // Transform products to menu item format and group by category
+      const itemsByCategory = {};
+      
+      products.forEach(product => {
+        // Transform API product to menu item format
+        const menuItem = {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          type: product.veg === 1 ? 'veg' : (product.egg === 1 ? 'egg' : 'nonveg'),
+          category: product.category_id,
+          categoryName: product.category_name,
+          image: product.image,
+          description: product.description || '',
+          glutenFree: product.gluten_free === 1,
+          jain: product.jain === 1,
+          vegan: product.vegan === 1,
+          hasCustomization: product.variations && product.variations.length > 0,
+          variations: product.variations || [],
+          tax: product.tax,
+          taxType: product.tax_type,
+          station: product.station_name,
+        };
+        
+        const catId = product.category_id || 'uncategorized';
+        if (!itemsByCategory[catId]) {
+          itemsByCategory[catId] = [];
+        }
+        itemsByCategory[catId].push(menuItem);
+      });
+      
+      setMenuItems(itemsByCategory);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      setMenuItems({});
+    } finally {
+      setIsLoadingMenu(false);
+    }
+  }, [token]);
+
+  // Fetch menu data on mount
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, [fetchCategories, fetchProducts]);
+
+  // Menu filtering - pass menuItems from API
   const {
     activeCategory,
     setActiveCategory,
@@ -292,13 +367,29 @@ const OrderEntry = ({
             onToggleSecondaryFilter={toggleSecondaryFilter}
           />
 
-          <MenuItemsGrid
-            items={filteredItems}
-            cartCountMap={cartCountMap}
-            flashItemId={flashItemId}
-            onAddToCart={addToCart}
-            onCustomize={openCustomization}
-          />
+          {isLoadingMenu ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center" style={{ color: COLORS.grayText }}>
+                <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-orange-500 rounded-full mx-auto mb-3"></div>
+                <p>Loading menu...</p>
+              </div>
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center" style={{ color: COLORS.grayText }}>
+                <p className="text-lg font-medium mb-2">No items found</p>
+                <p className="text-sm">Try selecting a different category or adjusting filters</p>
+              </div>
+            </div>
+          ) : (
+            <MenuItemsGrid
+              items={filteredItems}
+              cartCountMap={cartCountMap}
+              flashItemId={flashItemId}
+              onAddToCart={addToCart}
+              onCustomize={openCustomization}
+            />
+          )}
         </div>
 
         {/* RIGHT PANEL - Cart */}

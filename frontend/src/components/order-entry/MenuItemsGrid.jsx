@@ -10,8 +10,10 @@ const MenuItemPill = ({
   onAddToCart,
   onCustomize,
 }) => {
+  const hasCustomization = item.customizable || item.hasCustomization || (item.variations && item.variations.length > 0);
+  
   const handleClick = () => {
-    if (item.customizable) {
+    if (hasCustomization) {
       onCustomize(item);
     } else {
       onAddToCart(item);
@@ -32,7 +34,7 @@ const MenuItemPill = ({
       }}
     >
       <span>{item.name}</span>
-      {item.customizable && (
+      {hasCustomization && (
         <span className="text-xs font-medium" style={{ color: COLORS.primaryGreen }}>
           Customize
         </span>
