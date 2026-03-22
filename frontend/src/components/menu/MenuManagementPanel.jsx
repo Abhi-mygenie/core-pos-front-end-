@@ -120,29 +120,49 @@ const MenuManagementPanel = ({ onClose }) => {
   const handleProductDragEnd = (event) => {
     const { active, over } = event;
     
-    if (active.id !== over?.id) {
-      const oldIndex = paginatedProducts.findIndex(p => p.id === active.id);
-      const newIndex = paginatedProducts.findIndex(p => p.id === over.id);
+    if (!over || active.id === over.id) return;
+    
+    setProducts(prev => {
+      // Get products for current menu/category, sorted by food_order
+      const currentCategoryId = selectedCategory;
+      const currentMenuName = selectedMenu;
       
-      if (oldIndex !== -1 && newIndex !== -1) {
-        // Reorder products
-        const reorderedProducts = arrayMove(paginatedProducts, oldIndex, newIndex);
-        
-        // Update food_order for products in this category
-        const updatedProducts = products.map(product => {
-          const reorderedIndex = reorderedProducts.findIndex(rp => rp.id === product.id);
-          if (reorderedIndex !== -1) {
-            return { ...product, food_order: reorderedIndex + 1 };
-          }
-          return product;
-        });
-        
-        setProducts(updatedProducts);
-        toast.success('Product order updated');
-        
-        // TODO: Call API to persist order
-      }
-    }
+      // Separate products into current view and others
+      const inCurrentView = prev
+        .filter(p => {
+          if (currentMenuName && p.food_for !== currentMenuName) return false;
+          if (currentCategoryId && p.category_id !== currentCategoryId) return false;
+          return true;
+        })
+        .sort((a, b) => (a.food_order || 0) - (b.food_order || 0));
+      
+      const otherProducts = prev.filter(p => {
+        if (currentMenuName && p.food_for !== currentMenuName) return true;
+        if (currentCategoryId && p.category_id !== currentCategoryId) return true;
+        return false;
+      });
+      
+      // Find indices in the current view
+      const oldIndex = inCurrentView.findIndex(p => p.id === active.id);
+      const newIndex = inCurrentView.findIndex(p => p.id === over.id);
+      
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      
+      // Reorder products in current view
+      const reordered = arrayMove(inCurrentView, oldIndex, newIndex);
+      
+      // Update food_order for all reordered products
+      const updatedCurrentView = reordered.map((product, index) => ({
+        ...product,
+        food_order: index + 1
+      }));
+      
+      // Combine back with other products
+      return [...updatedCurrentView, ...otherProducts];
+    });
+    
+    toast.success('Product order updated');
+    // TODO: Call API to persist order
   };
 
   // Fetch all products to derive menus
@@ -201,29 +221,32 @@ const MenuManagementPanel = ({ onClose }) => {
   }, [fetchProducts, fetchCategories]);
 
   // Filter products based on selected menu, category, search, and filters
-  const filteredProducts = products.filter(product => {
-    // Menu filter
-    if (selectedMenu && product.food_for !== selectedMenu) return false;
-    
-    // Category filter
-    if (selectedCategory && product.category_id !== selectedCategory) return false;
-    
-    // Search filter
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    
-    // Veg filter
-    if (vegFilter === 'veg' && product.veg !== 1) return false;
-    if (vegFilter === 'nonveg' && product.veg !== 0) return false;
-    if (vegFilter === 'egg' && product.egg !== 1) return false;
-    if (vegFilter === 'jain' && product.jain !== 1) return false;
-    
-    // Status filter
-    if (statusFilter === 'active' && product.status !== 1) return false;
-    if (statusFilter === 'inactive' && product.status !== 0) return false;
-    if (statusFilter === 'outofstock' && product.stock_out !== 'Y') return false;
-    
-    return true;
-  });
+  // Then sort by food_order to maintain drag & drop order
+  const filteredProducts = products
+    .filter(product => {
+      // Menu filter
+      if (selectedMenu && product.food_for !== selectedMenu) return false;
+      
+      // Category filter
+      if (selectedCategory && product.category_id !== selectedCategory) return false;
+      
+      // Search filter
+      if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      
+      // Veg filter
+      if (vegFilter === 'veg' && product.veg !== 1) return false;
+      if (vegFilter === 'nonveg' && product.veg !== 0) return false;
+      if (vegFilter === 'egg' && product.egg !== 1) return false;
+      if (vegFilter === 'jain' && product.jain !== 1) return false;
+      
+      // Status filter
+      if (statusFilter === 'active' && product.status !== 1) return false;
+      if (statusFilter === 'inactive' && product.status !== 0) return false;
+      if (statusFilter === 'outofstock' && product.stock_out !== 'Y') return false;
+      
+      return true;
+    })
+    .sort((a, b) => (a.food_order || 0) - (b.food_order || 0));
 
   // Get categories with product count for selected menu
   const getCategoriesWithCount = () => {
