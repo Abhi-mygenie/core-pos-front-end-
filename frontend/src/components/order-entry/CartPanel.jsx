@@ -1,0 +1,385 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone } from "lucide-react";
+import { COLORS } from "../../constants";
+import { searchCustomers } from "../../data";
+import { useClickOutside } from "../../hooks";
+import RePrintButton from "./RePrintButton";
+
+// Get icon, color, and bg for food item status
+const getItemStatusIcon = (status) => {
+  switch (status) {
+    case "preparing":
+      return { Icon: CookingPot, color: COLORS.primaryOrange, bg: `${COLORS.primaryOrange}15` };
+    case "ready":
+      return { Icon: UtensilsCrossed, color: COLORS.primaryGreen, bg: `${COLORS.primaryGreen}15` };
+    case "served":
+      return { Icon: Check, color: COLORS.primaryGreen, bg: `${COLORS.primaryGreen}15` };
+    default:
+      return { Icon: CookingPot, color: COLORS.primaryOrange, bg: `${COLORS.primaryOrange}15` };
+  }
+};
+
+const getTimeAgo = (isoString) => {
+  const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 60000);
+  if (diff < 1) return "Just now";
+  return `${diff} mins ago`;
+};
+
+// Placed item row (sent to kitchen)
+const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity }) => {
+  const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
+  return (
+    <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: statusBg }}>
+        <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
+      </div>
+      <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+        <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+      </button>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
+        {item.customizations && (
+          <div className="text-xs mt-0.5" style={{ color: COLORS.primaryGreen }}>
+            {item.customizations.size && <span>{item.customizations.size}</span>}
+            {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
+          </div>
+        )}
+        <div className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
+          {item.addedAt ? getTimeAgo(item.addedAt) : `${item.time} mins ago`}
+        </div>
+        <button onClick={() => setTransferItem(item)} className="text-xs mt-1 hover:underline font-medium" style={{ color: COLORS.primaryGreen }} data-testid={`transfer-food-btn-${item.id}`}>
+          Transfer food
+        </button>
+      </div>
+      {/* Qty - locked with pencil */}
+      <div className="w-16 flex items-center justify-center gap-1" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+        {editingQtyItemId === item.id ? (
+          <>
+            <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
+            <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+            <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>+</button>
+          </>
+        ) : (
+          <>
+            <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+            <button onClick={() => setEditingQtyItemId(item.id)} className="p-0.5 hover:bg-gray-100 rounded" data-testid={`qty-edit-${item.id}`}>
+              <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+            </button>
+          </>
+        )}
+      </div>
+      <div className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+        <span className="font-bold" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
+      </div>
+    </div>
+  );
+};
+
+// New item row (not yet placed — editable with Customize/Add Note)
+const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote, onCustomize, onQuantityIncrease }) => (
+  <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+    <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+      <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+    </button>
+    <div className="flex-1 min-w-0">
+      <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
+      {item.customizations && (
+        <div className="text-xs mt-0.5" style={{ color: COLORS.primaryGreen }}>
+          {item.customizations.size && <span>{item.customizations.size}</span>}
+          {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
+        </div>
+      )}
+      {/* Show item notes if any */}
+      {item.itemNotes && item.itemNotes.length > 0 && (
+        <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
+          📝 {item.itemNotes.map(n => n.label).join(", ")}
+        </div>
+      )}
+      <div className="flex items-center gap-3 mt-1">
+        {/* Only show Customize for customizable items */}
+        {item.customizable && (
+          <button 
+            className="text-xs hover:underline" 
+            style={{ color: COLORS.primaryGreen }}
+            onClick={() => onCustomize && onCustomize(item, cartIndex)}
+            data-testid={`customize-btn-${item.id}`}
+          >
+            {item.customizations ? "Edit" : "Customize"}
+          </button>
+        )}
+        <button 
+          className="text-xs hover:underline" 
+          style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
+          onClick={() => onAddNote(item, cartIndex)}
+          data-testid={`add-note-btn-${item.id}`}
+        >
+          {item.itemNotes?.length > 0 ? "Edit Note" : "Add Note"}
+        </button>
+      </div>
+    </div>
+    {/* Qty - open by default */}
+    <div className="w-16 flex items-center justify-center gap-1" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1, cartIndex); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
+      <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+      <button 
+        onClick={() => {
+          // If item is customizable and has customizations, prompt user
+          if (item.customizable && item.customizations) {
+            onQuantityIncrease && onQuantityIncrease(item, cartIndex);
+          } else {
+            updateQuantity(item.id, item.qty + 1, cartIndex);
+          }
+        }} 
+        className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" 
+        style={{ color: COLORS.grayText }} 
+        data-testid={`qty-plus-${item.id}`}
+      >+</button>
+    </div>
+    <div className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+      <span className="font-bold" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
+    </div>
+  </div>
+);
+
+const CartPanel = ({
+  cartItems,
+  total,
+  editingQtyItemId,
+  setEditingQtyItemId,
+  updateQuantity,
+  setCancelItem,
+  setTransferItem,
+  handlePlaceOrder,
+  setShowPaymentPanel,
+  onAddNote,
+  onCustomize,
+  onQuantityIncrease,
+  customer,
+  onCustomerChange,
+}) => {
+  const newItemCount = cartItems.filter(i => !i.placed).length;
+  const [customerName, setCustomerName] = useState(customer?.name || "");
+  const [customerPhone, setCustomerPhone] = useState(customer?.phone || "");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [activeField, setActiveField] = useState(null); // 'name' or 'phone'
+  const nameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
+
+  // Sync with customer prop
+  useEffect(() => {
+    if (customer) {
+      setCustomerName(customer.name || "");
+      setCustomerPhone(customer.phone || "");
+    }
+  }, [customer]);
+
+  // Filter customers based on name OR phone search
+  useEffect(() => {
+    const query = activeField === 'name' ? customerName : customerPhone;
+    if (query && query.trim().length >= 3) {
+      const filtered = searchCustomers(query.trim());
+      setFilteredCustomers(filtered);
+      setShowSuggestions(filtered.length > 0);
+    } else {
+      setFilteredCustomers([]);
+      setShowSuggestions(false);
+    }
+  }, [customerName, customerPhone, activeField]);
+
+  // Close suggestions on outside click using custom hook
+  const handleClickOutside = useCallback(() => {
+    setShowSuggestions(false);
+    setActiveField(null);
+  }, []);
+  useClickOutside(nameInputRef, handleClickOutside, showSuggestions && activeField === 'name');
+  useClickOutside(phoneInputRef, handleClickOutside, showSuggestions && activeField === 'phone');
+
+  // Select customer from suggestions
+  const selectCustomer = (c) => {
+    setCustomerName(c.name);
+    setCustomerPhone(c.phone);
+    setShowSuggestions(false);
+    setActiveField(null);
+    onCustomerChange?.({ id: c.id, name: c.name, phone: c.phone });
+  };
+
+  // Handle field blur - update customer (with delay to allow suggestion click)
+  const handleFieldBlur = () => {
+    // Delay to allow click on suggestion to fire first
+    setTimeout(() => {
+      if (!showSuggestions && (customerName.trim() || customerPhone.trim())) {
+        onCustomerChange?.({
+          id: customer?.id || null,
+          name: customerName.trim(),
+          phone: customerPhone.trim(),
+        });
+      }
+    }, 300);
+  };
+
+  return (
+    <>
+      {/* Quick Customer Fields */}
+      <div 
+        className="px-3 py-3 grid grid-cols-2 gap-2 relative z-[60]"
+        style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+      >
+        {/* Name Field with Search */}
+        <div className="relative" ref={nameInputRef}>
+          <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+          <input
+            type="text"
+            placeholder="Customer name"
+            value={customerName}
+            onChange={(e) => { const val = e.target.value; setCustomerName(val); setActiveField('name'); if (!val.trim()) { setCustomerPhone(""); onCustomerChange?.(null); } }}
+            onFocus={() => { setActiveField('name'); if (customerName.length >= 3) setShowSuggestions(filteredCustomers.length > 0); }}
+            onBlur={handleFieldBlur}
+            className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
+            style={{ borderColor: COLORS.borderGray, fontSize: "13px" }}
+            data-testid="quick-customer-name"
+          />
+          {/* Name Auto-suggest */}
+          {showSuggestions && activeField === 'name' && (
+            <div
+              className="absolute top-full left-0 mt-1 rounded-lg shadow-lg overflow-hidden max-h-40 overflow-y-auto"
+              style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}`, zIndex: 9999, minWidth: "250px" }}
+            >
+              {filteredCustomers.map((c) => (
+                <button
+                  key={c.id}
+                  onMouseDown={(e) => { e.preventDefault(); selectCustomer(c); }}
+                  className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center justify-between"
+                  data-testid={`customer-suggestion-${c.id}`}
+                >
+                  <span className="font-medium text-sm" style={{ color: COLORS.darkText }}>{c.name}</span>
+                  <span className="text-xs" style={{ color: COLORS.grayText }}>{c.phone}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Phone Field with Search */}
+        <div className="relative" ref={phoneInputRef}>
+          <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+          <input
+            type="tel"
+            placeholder="Phone number"
+            value={customerPhone}
+            onChange={(e) => { const val = e.target.value; setCustomerPhone(val); setActiveField('phone'); if (!val.trim()) { setCustomerName(""); onCustomerChange?.(null); } }}
+            onFocus={() => { setActiveField('phone'); if (customerPhone.length >= 3) setShowSuggestions(filteredCustomers.length > 0); }}
+            onBlur={handleFieldBlur}
+            className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
+            style={{ borderColor: COLORS.borderGray, fontSize: "13px" }}
+            data-testid="quick-customer-phone"
+          />
+          {/* Phone Auto-suggest */}
+          {showSuggestions && activeField === 'phone' && (
+            <div
+              className="absolute top-full left-0 mt-1 rounded-lg shadow-lg overflow-hidden max-h-40 overflow-y-auto"
+              style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}`, zIndex: 9999, minWidth: "250px" }}
+            >
+              {filteredCustomers.map((c) => (
+                <button
+                  key={c.id}
+                  onMouseDown={(e) => { e.preventDefault(); selectCustomer(c); }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
+                  style={{ borderColor: COLORS.borderGray }}
+                >
+                  <div className="font-medium" style={{ color: COLORS.darkText, fontSize: "12px" }}>{c.name}</div>
+                  <div className="text-xs" style={{ color: COLORS.grayText }}>{c.phone}</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Column Headers */}
+      <div className="px-4 py-2 flex items-center text-xs font-medium" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
+        <span className="flex-1">Items</span>
+        <span className="w-16 text-center" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>Qty</span>
+        <span className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>Price</span>
+      </div>
+
+      {/* Cart Items */}
+      <div className="flex-1 overflow-y-auto">
+        {cartItems.length === 0 ? (
+          <div className="p-8 text-center" style={{ color: COLORS.grayText }}>
+            <Utensils className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p>No items in order</p>
+            <p className="text-sm mt-1">Tap menu items to add</p>
+          </div>
+        ) : (
+          cartItems.map((item, index) => {
+            const prevItem = index > 0 ? cartItems[index - 1] : null;
+            const showKotSeparator = prevItem && prevItem.placed && !item.placed;
+
+            return (
+              <div key={`${item.id}-${index}`}>
+                {showKotSeparator && (
+                  <div className="px-4 py-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+                    <RePrintButton />
+                  </div>
+                )}
+                {item.placed ? (
+                  <PlacedItemRow
+                    item={item}
+                    setCancelItem={setCancelItem}
+                    setTransferItem={setTransferItem}
+                    editingQtyItemId={editingQtyItemId}
+                    setEditingQtyItemId={setEditingQtyItemId}
+                    updateQuantity={updateQuantity}
+                  />
+                ) : (
+                  <NewItemRow
+                    item={item}
+                    cartIndex={index}
+                    setCancelItem={setCancelItem}
+                    updateQuantity={updateQuantity}
+                    onAddNote={onAddNote}
+                    onCustomize={onCustomize}
+                    onQuantityIncrease={onQuantityIncrease}
+                  />
+                )}
+              </div>
+            );
+          })
+        )}
+
+        {/* Re-Print at end of placed items */}
+        {cartItems.some(i => i.placed) && (
+          <div className="px-4 py-3">
+            <RePrintButton />
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Action Buttons */}
+      <div className="p-4 flex gap-3" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
+        <button
+          data-testid="place-order-btn"
+          onClick={handlePlaceOrder}
+          disabled={cartItems.length === 0}
+          className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50"
+          style={{ backgroundColor: COLORS.primaryOrange }}
+        >
+          Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}
+        </button>
+        <button
+          data-testid="collect-bill-btn"
+          onClick={() => setShowPaymentPanel(true)}
+          disabled={cartItems.length === 0}
+          className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          style={{ backgroundColor: "#2E7D32" }}
+        >
+          <span>Collect Bill</span>
+          <span>₹{total.toLocaleString()}</span>
+        </button>
+      </div>
+    </>
+  );
+};
+
+export default CartPanel;
