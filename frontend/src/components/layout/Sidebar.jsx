@@ -101,7 +101,7 @@ const sidebarMenuItems = [
 const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, settingsOpen, setSettingsOpen, menuManagementOpen, setMenuManagementOpen }) => {
   const navigate = useNavigate();
   const { user, logout: authLogout, token } = useAuth();
-  const { loadInitialData, isInitialLoading } = useInitialData();
+  const { loadInitialData, isInitialLoading, resetData } = useInitialData();
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
 
@@ -164,6 +164,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, set
 
   const handleLogout = () => {
     authLogout();
+    resetData(); // Clear cached data (tables, products, categories, etc.)
     localStorage.removeItem("rememberMe");
     localStorage.removeItem("username");
     navigate("/");
