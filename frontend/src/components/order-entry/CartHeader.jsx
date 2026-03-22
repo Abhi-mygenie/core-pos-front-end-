@@ -1,5 +1,5 @@
-import { useRef, useCallback } from "react";
-import { ChevronLeft, ChevronDown, UserPlus, StickyNote, Truck, ShoppingBag, UtensilsCrossed } from "lucide-react";
+import { useRef, useCallback, useState } from "react";
+import { ChevronLeft, ChevronDown, UserPlus, StickyNote, Truck, ShoppingBag, UtensilsCrossed, Search } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useClickOutside } from "../../hooks";
 
@@ -31,9 +31,11 @@ const OrderTypeSelector = ({
   onSelectTable,
 }) => {
   const dropdownRef = useRef(null);
+  const [tableSearch, setTableSearch] = useState("");
 
   const handleClickOutside = useCallback(() => {
     setShowDropdown(false);
+    setTableSearch("");
   }, [setShowDropdown]);
 
   useClickOutside(dropdownRef, handleClickOutside, showDropdown);
@@ -47,6 +49,10 @@ const OrderTypeSelector = ({
     if (aPri !== bPri) return aPri - bPri;
     return (parseInt(a.id.replace(/\D/g, ''), 10) || 0) - (parseInt(b.id.replace(/\D/g, ''), 10) || 0);
   });
+
+  const filteredTables = tableSearch
+    ? sortedTables.filter(t => t.id.toLowerCase().includes(tableSearch.toLowerCase()))
+    : sortedTables;
 
   const getTableStatusLabel = (status) => {
     switch (status) {
@@ -63,7 +69,7 @@ const OrderTypeSelector = ({
       <button
         className="px-4 py-2 rounded-full font-bold text-white text-sm cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2"
         style={{ backgroundColor: COLORS.primaryOrange }}
-        onClick={() => setShowDropdown(!showDropdown)}
+        onClick={() => { setShowDropdown(!showDropdown); setTableSearch(""); }}
         data-testid="order-type-badge"
       >
         {orderType === "walkIn" && table ? (
@@ -79,63 +85,94 @@ const OrderTypeSelector = ({
 
       {showDropdown && (
         <div
-          className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-50 overflow-hidden min-w-[180px] max-h-[400px] overflow-y-auto"
-          style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
+          className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-[70] overflow-hidden min-w-[220px] max-h-[400px] flex flex-col"
+          style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}` }}
+          data-testid="order-type-dropdown"
         >
           {/* Order Types */}
-          {ORDER_TYPES.map(type => {
-            const Icon = type.icon;
-            const isActive = orderType === type.id;
-            return (
-              <button
-                key={type.id}
-                data-testid={`order-type-${type.id}`}
-                className="w-full px-4 py-3 flex items-center gap-3 text-sm font-medium transition-colors hover:bg-gray-50"
-                style={{
-                  color: isActive ? COLORS.primaryOrange : COLORS.darkText,
-                  backgroundColor: isActive ? `${COLORS.primaryOrange}10` : "transparent",
-                }}
-                onClick={() => { onOrderTypeChange?.(type.id); setShowDropdown(false); }}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{type.label}</span>
-              </button>
-            );
-          })}
+          <div className="flex-shrink-0">
+            {ORDER_TYPES.map(type => {
+              const Icon = type.icon;
+              const isActive = orderType === type.id;
+              return (
+                <button
+                  key={type.id}
+                  data-testid={`order-type-${type.id}`}
+                  className="w-full px-4 py-3 flex items-center gap-3 text-sm font-medium transition-colors hover:bg-gray-50"
+                  style={{
+                    color: isActive ? COLORS.primaryOrange : COLORS.darkText,
+                    backgroundColor: isActive ? `${COLORS.primaryOrange}10` : "transparent",
+                  }}
+                  onClick={() => { onOrderTypeChange?.(type.id); setShowDropdown(false); setTableSearch(""); }}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{type.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
           {/* Divider */}
-          <div className="h-px mx-3" style={{ backgroundColor: COLORS.borderGray }} />
+          <div className="h-px mx-3 flex-shrink-0" style={{ backgroundColor: COLORS.borderGray }} />
+
+          {/* Search Bar */}
+          <div className="px-3 py-2 flex-shrink-0">
+            <div
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border"
+              style={{ borderColor: COLORS.borderGray, backgroundColor: COLORS.lightBg }}
+            >
+              <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
+              <input
+                type="text"
+                placeholder="Search table..."
+                value={tableSearch}
+                onChange={(e) => setTableSearch(e.target.value)}
+                className="w-full text-sm bg-transparent outline-none"
+                style={{ color: COLORS.darkText }}
+                data-testid="table-search-input"
+                autoFocus
+              />
+            </div>
+          </div>
           
           {/* Tables Header */}
-          <div className="px-3 py-2">
+          <div className="px-3 py-1 flex-shrink-0">
             <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>Tables</span>
           </div>
 
-          {/* Table List */}
-          {sortedTables.map(t => {
-            const isSelected = table?.id === t.id && orderType === "walkIn";
-            const isAvailable = t.status === "available";
-            return (
-              <button
-                key={t.id}
-                data-testid={`select-table-${t.id}`}
-                className="w-full px-4 py-2.5 flex items-center justify-between text-sm transition-colors hover:bg-gray-50"
-                style={{
-                  color: isSelected ? COLORS.primaryOrange : isAvailable ? COLORS.darkText : COLORS.grayText,
-                  backgroundColor: isSelected ? `${COLORS.primaryOrange}10` : "transparent",
-                }}
-                onClick={() => { onSelectTable?.(t); setShowDropdown(false); }}
-              >
-                <span className="font-medium">{t.id}</span>
-                <span 
-                  className="text-xs capitalize" 
-                  style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}
-                >
-                  {getTableStatusLabel(t.status)}
-                </span>
-              </button>
-            );
-          })}
+          {/* Table List - Scrollable */}
+          <div className="overflow-y-auto flex-1">
+            {filteredTables.length === 0 ? (
+              <div className="px-4 py-3 text-sm text-center" style={{ color: COLORS.grayText }}>
+                No tables found
+              </div>
+            ) : (
+              filteredTables.map(t => {
+                const isSelected = table?.id === t.id && orderType === "walkIn";
+                const isAvailable = t.status === "available";
+                return (
+                  <button
+                    key={t.id}
+                    data-testid={`select-table-${t.id}`}
+                    className="w-full px-4 py-2.5 flex items-center justify-between text-sm transition-colors hover:bg-gray-50"
+                    style={{
+                      color: isSelected ? COLORS.primaryOrange : isAvailable ? COLORS.darkText : COLORS.grayText,
+                      backgroundColor: isSelected ? `${COLORS.primaryOrange}10` : "transparent",
+                    }}
+                    onClick={() => { onSelectTable?.(t); setShowDropdown(false); setTableSearch(""); }}
+                  >
+                    <span className="font-medium">{t.id}</span>
+                    <span 
+                      className="text-xs capitalize" 
+                      style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}
+                    >
+                      {getTableStatusLabel(t.status)}
+                    </span>
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
     </div>
