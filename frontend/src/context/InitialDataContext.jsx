@@ -6,6 +6,14 @@ const InitialDataContext = createContext(null);
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds between retries
 
+// Loading steps configuration
+const LOADING_STEPS = [
+  { id: 'tables', label: 'Loading tables...', progress: 25 },
+  { id: 'categories', label: 'Loading categories...', progress: 50 },
+  { id: 'products', label: 'Loading products...', progress: 80 },
+  { id: 'settings', label: 'Loading settings...', progress: 100 },
+];
+
 // Debug logger
 const debugLog = (action, data = null) => {
   const timestamp = new Date().toISOString();
