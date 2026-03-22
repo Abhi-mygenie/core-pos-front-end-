@@ -5,6 +5,7 @@ import { discountTypes, TAX_RATES } from "../../data/mockDiscounts";
 
 /**
  * BillSummary - Comprehensive bill display with discounts and taxes
+ * Features: Sticky header, customization details, SGST/CGST split
  */
 const BillSummary = ({ 
   cartItems, 
@@ -32,7 +33,8 @@ const BillSummary = ({
   // Totals
   totalDiscount,
   subtotal,
-  gstAmount,
+  sgstAmount,
+  cgstAmount,
   vatAmount,
   finalTotal,
 }) => {
@@ -40,7 +42,12 @@ const BillSummary = ({
   const [showModeDropdown, setShowModeDropdown] = useState(false);
 
   const handleDiscountTypeChange = (type) => {
-    onManualDiscountChange({ ...manualDiscount, type: type.id, amount: type.id === "none" ? 0 : manualDiscount.amount });
+    onManualDiscountChange({ 
+      ...manualDiscount, 
+      type: type.id, 
+      amount: type.id === "none" ? 0 : (type.defaultPercent || manualDiscount.amount),
+      mode: type.id === "none" ? manualDiscount.mode : "percent" // Named discounts always percentage
+    });
     setShowDiscountDropdown(false);
   };
 
@@ -55,41 +62,57 @@ const BillSummary = ({
   };
 
   const selectedDiscountType = discountTypes.find(d => d.id === manualDiscount.type) || discountTypes[0];
+  const isNamedDiscount = manualDiscount.type !== "none";
 
   return (
     <div 
-      className="rounded-lg border overflow-hidden"
-      style={{ borderColor: COLORS.borderGray }}
+      className="rounded-lg border overflow-hidden flex flex-col"
+      style={{ borderColor: COLORS.borderGray, maxHeight: "100%" }}
       data-testid="bill-summary-section"
     >
-      {/* Header with Orange Total */}
+      {/* Sticky Header with Final Amount */}
       <div 
-        className="px-4 py-3 flex items-center justify-between"
-        style={{ backgroundColor: COLORS.sectionBg }}
+        className="px-4 py-3 flex items-center justify-between sticky top-0 z-10"
+        style={{ backgroundColor: COLORS.sectionBg, borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
         <div className="flex items-center gap-2 font-semibold" style={{ color: COLORS.darkText }}>
           <ClipboardList className="w-4 h-4" /> Bill Summary
         </div>
         <div className="text-right">
           <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
-            ₹{itemTotal.toLocaleString()}
+            ₹{finalTotal.toLocaleString()}
           </div>
-          <div className="text-xs" style={{ color: COLORS.grayText }}>Item Total</div>
+          <div className="text-xs" style={{ color: COLORS.grayText }}>Total to Pay</div>
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Items List */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Items List with Customizations */}
         <div className="space-y-2">
           <div className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
             Items
           </div>
           {cartItems.map((item, idx) => (
-            <div key={idx} className="flex justify-between text-sm">
-              <span style={{ color: COLORS.darkText }}>
-                {item.name} x{item.qty}
-              </span>
-              <span style={{ color: COLORS.darkText }}>₹{(item.price * item.qty).toLocaleString()}</span>
+            <div key={idx} className="py-1">
+              <div className="flex justify-between text-sm">
+                <span style={{ color: COLORS.darkText }}>
+                  {item.name} x{item.qty}
+                </span>
+                <span style={{ color: COLORS.darkText }}>₹{(item.price * item.qty).toLocaleString()}</span>
+              </div>
+              {/* Customization details */}
+              {item.customizations && (
+                <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                  → {[
+                    item.customizations.size,
+                    item.customizations.crust,
+                    item.customizations.base,
+                    item.customizations.spice,
+                    ...(item.customizations.addons || [])
+                  ].filter(Boolean).join(", ")}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -129,70 +152,81 @@ const BillSummary = ({
                       className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between"
                       style={{ color: COLORS.darkText }}
                     >
-                      {type.name}
-                      {type.id === manualDiscount.type && (
-                        <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
-                      )}
+                      <span>{type.name}</span>
+                      <div className="flex items-center gap-2">
+                        {type.defaultPercent && (
+                          <span className="text-xs" style={{ color: COLORS.grayText }}>{type.defaultPercent}%</span>
+                        )}
+                        {type.id === manualDiscount.type && (
+                          <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
+                        )}
+                      </div>
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Mode Dropdown (Flat/Percent) */}
-            <div className="relative w-24">
-              <button
-                onClick={() => setShowModeDropdown(!showModeDropdown)}
-                className="w-full px-3 py-2 text-sm rounded-lg border flex items-center justify-between"
-                style={{ borderColor: COLORS.borderGray, backgroundColor: "#fff" }}
-                disabled={manualDiscount.type === "none"}
-                data-testid="discount-mode-dropdown"
-              >
-                <span style={{ color: COLORS.darkText }}>
-                  {manualDiscount.mode === "flat" ? "Flat ₹" : "%"}
-                </span>
-                <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />
-              </button>
-              {showModeDropdown && (
-                <div 
-                  className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10"
-                  style={{ borderColor: COLORS.borderGray }}
+            {/* Mode Dropdown (Flat/Percent) - Only shown when No Discount selected */}
+            {!isNamedDiscount && (
+              <div className="relative w-24">
+                <button
+                  onClick={() => setShowModeDropdown(!showModeDropdown)}
+                  className="w-full px-3 py-2 text-sm rounded-lg border flex items-center justify-between"
+                  style={{ borderColor: COLORS.borderGray, backgroundColor: "#fff" }}
+                  data-testid="discount-mode-dropdown"
                 >
-                  <button
-                    onClick={() => handleDiscountModeChange("flat")}
-                    className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between"
-                    style={{ color: COLORS.darkText }}
+                  <span style={{ color: COLORS.darkText }}>
+                    {manualDiscount.mode === "flat" ? "Flat ₹" : "%"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                </button>
+                {showModeDropdown && (
+                  <div 
+                    className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10"
+                    style={{ borderColor: COLORS.borderGray }}
                   >
-                    Flat ₹
-                    {manualDiscount.mode === "flat" && (
-                      <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleDiscountModeChange("percent")}
-                    className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between"
-                    style={{ color: COLORS.darkText }}
-                  >
-                    Percent %
-                    {manualDiscount.mode === "percent" && (
-                      <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
-                    )}
-                  </button>
-                </div>
-              )}
-            </div>
+                    <button
+                      onClick={() => handleDiscountModeChange("flat")}
+                      className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between"
+                      style={{ color: COLORS.darkText }}
+                    >
+                      Flat ₹
+                      {manualDiscount.mode === "flat" && (
+                        <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleDiscountModeChange("percent")}
+                      className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center justify-between"
+                      style={{ color: COLORS.darkText }}
+                    >
+                      Percent %
+                      {manualDiscount.mode === "percent" && (
+                        <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Amount Input */}
-            <input
-              type="number"
-              value={manualDiscount.amount || ""}
-              onChange={(e) => handleDiscountAmountChange(e.target.value)}
-              placeholder={manualDiscount.mode === "flat" ? "₹" : "%"}
-              className="w-20 px-3 py-2 text-sm rounded-lg border text-right"
-              style={{ borderColor: COLORS.borderGray }}
-              disabled={manualDiscount.type === "none"}
-              data-testid="discount-amount-input"
-            />
+            <div className="relative w-20">
+              <input
+                type="number"
+                value={manualDiscount.amount || ""}
+                onChange={(e) => handleDiscountAmountChange(e.target.value)}
+                placeholder={isNamedDiscount || manualDiscount.mode === "percent" ? "%" : "₹"}
+                className="w-full px-3 py-2 text-sm rounded-lg border text-right"
+                style={{ borderColor: COLORS.borderGray }}
+                disabled={manualDiscount.type === "none" && !manualDiscount.mode}
+                data-testid="discount-amount-input"
+              />
+              {isNamedDiscount && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: COLORS.grayText }}>%</span>
+              )}
+            </div>
           </div>
           
           {/* Discount Applied */}
@@ -322,12 +356,18 @@ const BillSummary = ({
           <span className="font-medium" style={{ color: COLORS.darkText }}>₹{subtotal.toLocaleString()}</span>
         </div>
 
-        {/* Taxes */}
+        {/* Taxes - SGST, CGST, VAT */}
         <div className="space-y-1">
-          {gstAmount > 0 && (
+          {sgstAmount > 0 && (
             <div className="flex justify-between text-sm">
-              <span style={{ color: COLORS.grayText }}>GST @ {TAX_RATES.GST * 100}% (Food)</span>
-              <span style={{ color: COLORS.grayText }}>₹{gstAmount.toLocaleString()}</span>
+              <span style={{ color: COLORS.grayText }}>SGST @ {TAX_RATES.SGST * 100}% (Food)</span>
+              <span style={{ color: COLORS.grayText }}>₹{sgstAmount.toLocaleString()}</span>
+            </div>
+          )}
+          {cgstAmount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span style={{ color: COLORS.grayText }}>CGST @ {TAX_RATES.CGST * 100}% (Food)</span>
+              <span style={{ color: COLORS.grayText }}>₹{cgstAmount.toLocaleString()}</span>
             </div>
           )}
           {vatAmount > 0 && (

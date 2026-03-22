@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { TAX_RATES } from "../data/mockDiscounts";
 
 /**
  * Custom hook for payment calculations
- * Handles item total, discounts, taxes (GST/VAT), and final total
+ * Handles item total, discounts, taxes (SGST/CGST/VAT), and final total
  */
 const usePaymentCalculation = ({
   cartItems = [],
@@ -36,13 +36,20 @@ const usePaymentCalculation = ({
   }, [cartItems]);
 
   // Calculate manual discount
+  // Named discounts are always percentage, "none" can be flat or percent
   const manualDiscountAmount = useMemo(() => {
-    if (!manualDiscount || manualDiscount.type === "none" || !manualDiscount.amount) return 0;
-    
-    if (manualDiscount.mode === "percent") {
-      return Math.round((itemTotal * manualDiscount.amount) / 100);
+    if (!manualDiscount || manualDiscount.type === "none") {
+      // No discount type selected - use mode (flat/percent)
+      if (!manualDiscount.amount) return 0;
+      if (manualDiscount.mode === "percent") {
+        return Math.round((itemTotal * manualDiscount.amount) / 100);
+      }
+      return Math.min(manualDiscount.amount, itemTotal);
     }
-    return Math.min(manualDiscount.amount, itemTotal);
+    
+    // Named discount - always percentage
+    if (!manualDiscount.amount) return 0;
+    return Math.round((itemTotal * manualDiscount.amount) / 100);
   }, [manualDiscount, itemTotal]);
 
   // Calculate loyalty discount
@@ -77,24 +84,28 @@ const usePaymentCalculation = ({
   );
 
   // Calculate taxes based on item categories (applied after discount proportionally)
-  const { gstAmount, vatAmount } = useMemo(() => {
-    if (itemTotal === 0) return { gstAmount: 0, vatAmount: 0 };
+  const { sgstAmount, cgstAmount, vatAmount } = useMemo(() => {
+    if (itemTotal === 0) return { sgstAmount: 0, cgstAmount: 0, vatAmount: 0 };
     
     // Calculate proportion of discount for each category
     const discountRatio = totalDiscount / itemTotal;
     const effectiveFoodTotal = foodTotal * (1 - discountRatio);
     const effectiveAlcoholTotal = alcoholTotal * (1 - discountRatio);
     
-    const gst = Math.round(effectiveFoodTotal * TAX_RATES.GST);
+    // SGST and CGST for food (2.5% each)
+    const sgst = Math.round(effectiveFoodTotal * TAX_RATES.SGST);
+    const cgst = Math.round(effectiveFoodTotal * TAX_RATES.CGST);
+    
+    // VAT for alcohol
     const vat = Math.round(effectiveAlcoholTotal * TAX_RATES.VAT);
     
-    return { gstAmount: gst, vatAmount: vat };
+    return { sgstAmount: sgst, cgstAmount: cgst, vatAmount: vat };
   }, [foodTotal, alcoholTotal, totalDiscount, itemTotal]);
 
   // Final total
   const finalTotal = useMemo(() => 
-    subtotal + gstAmount + vatAmount,
-    [subtotal, gstAmount, vatAmount]
+    subtotal + sgstAmount + cgstAmount + vatAmount,
+    [subtotal, sgstAmount, cgstAmount, vatAmount]
   );
 
   // Calculate change for cash payment
@@ -124,7 +135,8 @@ const usePaymentCalculation = ({
     couponDiscount,
     totalDiscount,
     subtotal,
-    gstAmount,
+    sgstAmount,
+    cgstAmount,
     vatAmount,
     finalTotal,
     calculateChange,

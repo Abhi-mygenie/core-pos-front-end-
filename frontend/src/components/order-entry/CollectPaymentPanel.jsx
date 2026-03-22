@@ -11,6 +11,7 @@ import {
 
 /**
  * CollectPaymentPanel - Optimized with new Bill Summary UX
+ * Features: Sticky header, SGST/CGST split, customization display
  */
 const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) => {
   // Customer lookup hook
@@ -55,7 +56,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
     couponDiscount,
     totalDiscount,
     subtotal,
-    gstAmount,
+    sgstAmount,
+    cgstAmount,
     vatAmount,
     finalTotal,
     calculateChange,
@@ -92,7 +94,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
       },
       totalDiscount,
       subtotal,
-      taxes: { gst: gstAmount, vat: vatAmount },
+      taxes: { sgst: sgstAmount, cgst: cgstAmount, vat: vatAmount },
       total: finalTotal,
       paymentMethod: showSplit ? "split" : paymentMethod,
       splitPayments: showSplit ? splitPayments : null,
@@ -103,7 +105,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
     <div className="flex flex-col h-full" data-testid="collect-payment-panel">
       {/* Header */}
       <div 
-        className="px-4 py-3 flex items-center gap-3 border-b"
+        className="px-4 py-3 flex items-center gap-3 border-b flex-shrink-0"
         style={{ borderColor: COLORS.borderGray }}
       >
         <button
@@ -150,7 +152,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
           // Totals
           totalDiscount={totalDiscount}
           subtotal={subtotal}
-          gstAmount={gstAmount}
+          sgstAmount={sgstAmount}
+          cgstAmount={cgstAmount}
           vatAmount={vatAmount}
           finalTotal={finalTotal}
         />
@@ -185,7 +188,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
       </div>
 
       {/* Pay Button */}
-      <div className="p-0">
+      <div className="p-0 flex-shrink-0">
         <button
           onClick={handlePayment}
           className="w-full py-4 font-semibold text-white text-lg"
