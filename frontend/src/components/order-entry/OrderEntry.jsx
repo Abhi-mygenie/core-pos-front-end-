@@ -59,7 +59,11 @@ const OrderEntry = ({
     updateItemNotes,
   } = useCartManager(orderData);
 
-  // Menu filtering
+  // Empty menu data - will be populated from API
+  const [menuCategories, setMenuCategories] = useState([]);
+  const [menuItems, setMenuItems] = useState({});
+
+  // Menu filtering - pass empty menuItems
   const {
     activeCategory,
     setActiveCategory,
@@ -70,7 +74,7 @@ const OrderEntry = ({
     secondaryFilters,
     toggleSecondaryFilter,
     filteredItems,
-  } = useMenuFilter();
+  } = useMenuFilter(menuItems);
 
   // Modal management
   const {
@@ -271,6 +275,7 @@ const OrderEntry = ({
           onShiftTable={() => setShowShiftModal(true)}
           onMergeTable={() => setShowMergeModal(true)}
           onClose={onClose}
+          categories={menuCategories}
         />
 
         {/* MIDDLE PANEL - Menu Items */}

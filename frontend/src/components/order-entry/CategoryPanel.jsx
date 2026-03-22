@@ -1,8 +1,7 @@
 import { ChevronRight, ChevronLeft, ArrowRightLeft, GitMerge } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockMenuCategories } from "../../data";
 
-const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onClose }) => (
+const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onClose, categories = [] }) => (
   <div
     className="w-48 flex-shrink-0 flex flex-col"
     style={{ backgroundColor: COLORS.lightBg, borderRight: `1px solid ${COLORS.borderGray}` }}
@@ -37,7 +36,24 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
       </button>
     </div>
     <div className="flex-1 overflow-y-auto">
-      {mockMenuCategories.map((category) => (
+      {/* All category */}
+      <button
+        key="all"
+        data-testid="category-all"
+        onClick={() => onCategoryChange("all")}
+        className="w-full px-4 py-5 text-left font-medium flex items-center justify-between transition-colors"
+        style={{
+          backgroundColor: activeCategory === "all" ? COLORS.primaryGreen : "transparent",
+          color: activeCategory === "all" ? "white" : COLORS.darkText,
+        }}
+      >
+        <span>All</span>
+        {activeCategory === "all" && (
+          <ChevronRight className="w-5 h-5" style={{ color: "white" }} />
+        )}
+      </button>
+      {/* Dynamic categories from API */}
+      {categories.map((category) => (
         <button
           key={category.id}
           data-testid={`category-${category.id}`}
@@ -54,6 +70,11 @@ const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMerge
           )}
         </button>
       ))}
+      {categories.length === 0 && (
+        <div className="px-4 py-8 text-center text-sm" style={{ color: COLORS.grayText }}>
+          No categories available
+        </div>
+      )}
     </div>
   </div>
 );

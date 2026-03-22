@@ -1,10 +1,10 @@
 import { useState, useCallback, useMemo } from "react";
-import { mockMenuItems } from "../data";
 
 /**
  * Custom hook for menu filtering in OrderEntry
+ * Now uses empty data - will be populated from API
  */
-const useMenuFilter = () => {
+const useMenuFilter = (menuItems = {}) => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [primaryFilter, setPrimaryFilter] = useState(null); // "veg" | "egg" | "nonveg" | null
@@ -28,8 +28,8 @@ const useMenuFilter = () => {
   const filteredItems = useMemo(() => {
     // "all" shows items from every category combined
     let items = activeCategory === "all"
-      ? Object.values(mockMenuItems).flat()
-      : (mockMenuItems[activeCategory] || []);
+      ? Object.values(menuItems).flat()
+      : (menuItems[activeCategory] || []);
     
     // Search filter
     if (searchQuery.trim()) {
@@ -55,7 +55,7 @@ const useMenuFilter = () => {
     }
     
     return items;
-  }, [activeCategory, searchQuery, primaryFilter, secondaryFilters]);
+  }, [activeCategory, searchQuery, primaryFilter, secondaryFilters, menuItems]);
 
   // Clear all filters
   const clearFilters = useCallback(() => {
