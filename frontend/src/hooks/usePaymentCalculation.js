@@ -1,55 +1,100 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { TAX_RATES } from "../data/mockDiscounts";
 
 /**
  * Custom hook for payment calculations
- * Handles subtotal, tax, discounts, and final total
+ * Handles item total, discounts, taxes (GST/VAT), and final total
  */
 const usePaymentCalculation = ({
-  total,
-  taxRate = 0.05,
+  cartItems = [],
   customer,
   useLoyalty,
-  useWallet,
-  walletAmount,
+  loyaltyPointsToRedeem = 0,
   selectedCoupon,
+  manualDiscount = { type: "none", mode: "flat", amount: 0 },
 }) => {
-  const subtotal = total;
-  const tax = useMemo(() => Math.round(subtotal * taxRate), [subtotal, taxRate]);
+  // Calculate item total
+  const itemTotal = useMemo(() => {
+    return cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  }, [cartItems]);
+
+  // Separate food and alcohol items for tax calculation
+  const { foodTotal, alcoholTotal } = useMemo(() => {
+    let food = 0;
+    let alcohol = 0;
+    
+    cartItems.forEach(item => {
+      const itemAmount = item.price * item.qty;
+      if (item.taxCategory === "alcohol") {
+        alcohol += itemAmount;
+      } else {
+        food += itemAmount;
+      }
+    });
+    
+    return { foodTotal: food, alcoholTotal: alcohol };
+  }, [cartItems]);
+
+  // Calculate manual discount
+  const manualDiscountAmount = useMemo(() => {
+    if (!manualDiscount || manualDiscount.type === "none" || !manualDiscount.amount) return 0;
+    
+    if (manualDiscount.mode === "percent") {
+      return Math.round((itemTotal * manualDiscount.amount) / 100);
+    }
+    return Math.min(manualDiscount.amount, itemTotal);
+  }, [manualDiscount, itemTotal]);
 
   // Calculate loyalty discount
   const loyaltyDiscount = useMemo(() => {
-    if (!useLoyalty || !customer) return 0;
-    return Math.min(customer.loyaltyPoints || 0, subtotal);
-  }, [useLoyalty, customer, subtotal]);
-
-  // Calculate wallet discount
-  const walletDiscount = useMemo(() => {
-    if (!useWallet || !customer) return 0;
-    const maxWallet = walletAmount || customer.walletBalance || 0;
-    return Math.min(maxWallet, subtotal - loyaltyDiscount);
-  }, [useWallet, customer, walletAmount, subtotal, loyaltyDiscount]);
+    if (!useLoyalty || !customer || !customer.loyaltyPoints) return 0;
+    const pointsToUse = Math.min(loyaltyPointsToRedeem, customer.loyaltyPoints);
+    return Math.min(pointsToUse, itemTotal - manualDiscountAmount);
+  }, [useLoyalty, customer, loyaltyPointsToRedeem, itemTotal, manualDiscountAmount]);
 
   // Calculate coupon discount
   const couponDiscount = useMemo(() => {
     if (!selectedCoupon) return 0;
+    const remainingAmount = itemTotal - manualDiscountAmount - loyaltyDiscount;
+    
     if (selectedCoupon.type === "percent") {
-      return Math.min(
-        Math.round((subtotal * selectedCoupon.discount) / 100),
-        selectedCoupon.maxDiscount || Infinity
-      );
+      const discount = Math.round((remainingAmount * selectedCoupon.discount) / 100);
+      return Math.min(discount, selectedCoupon.maxDiscount || Infinity, remainingAmount);
     }
-    return selectedCoupon.discount || 0;
-  }, [selectedCoupon, subtotal]);
+    return Math.min(selectedCoupon.discount || 0, remainingAmount);
+  }, [selectedCoupon, itemTotal, manualDiscountAmount, loyaltyDiscount]);
 
-  // Total calculations
+  // Total discount
   const totalDiscount = useMemo(() => 
-    loyaltyDiscount + walletDiscount + couponDiscount,
-    [loyaltyDiscount, walletDiscount, couponDiscount]
+    manualDiscountAmount + loyaltyDiscount + couponDiscount,
+    [manualDiscountAmount, loyaltyDiscount, couponDiscount]
   );
 
+  // Subtotal after discounts
+  const subtotal = useMemo(() => 
+    Math.max(0, itemTotal - totalDiscount),
+    [itemTotal, totalDiscount]
+  );
+
+  // Calculate taxes based on item categories (applied after discount proportionally)
+  const { gstAmount, vatAmount } = useMemo(() => {
+    if (itemTotal === 0) return { gstAmount: 0, vatAmount: 0 };
+    
+    // Calculate proportion of discount for each category
+    const discountRatio = totalDiscount / itemTotal;
+    const effectiveFoodTotal = foodTotal * (1 - discountRatio);
+    const effectiveAlcoholTotal = alcoholTotal * (1 - discountRatio);
+    
+    const gst = Math.round(effectiveFoodTotal * TAX_RATES.GST);
+    const vat = Math.round(effectiveAlcoholTotal * TAX_RATES.VAT);
+    
+    return { gstAmount: gst, vatAmount: vat };
+  }, [foodTotal, alcoholTotal, totalDiscount, itemTotal]);
+
+  // Final total
   const finalTotal = useMemo(() => 
-    Math.max(0, subtotal + tax - totalDiscount),
-    [subtotal, tax, totalDiscount]
+    subtotal + gstAmount + vatAmount,
+    [subtotal, gstAmount, vatAmount]
   );
 
   // Calculate change for cash payment
@@ -59,19 +104,28 @@ const usePaymentCalculation = ({
   };
 
   // Get quick amount suggestions
-  const getQuickAmounts = useMemo(() => [
-    finalTotal,
-    Math.ceil(finalTotal / 100) * 100,
-    Math.ceil(finalTotal / 500) * 500,
-  ], [finalTotal]);
+  const getQuickAmounts = useMemo(() => {
+    const amounts = [finalTotal];
+    const roundedUp100 = Math.ceil(finalTotal / 100) * 100;
+    const roundedUp500 = Math.ceil(finalTotal / 500) * 500;
+    
+    if (roundedUp100 !== finalTotal) amounts.push(roundedUp100);
+    if (roundedUp500 !== finalTotal && roundedUp500 !== roundedUp100) amounts.push(roundedUp500);
+    
+    return amounts;
+  }, [finalTotal]);
 
   return {
-    subtotal,
-    tax,
+    itemTotal,
+    foodTotal,
+    alcoholTotal,
+    manualDiscountAmount,
     loyaltyDiscount,
-    walletDiscount,
     couponDiscount,
     totalDiscount,
+    subtotal,
+    gstAmount,
+    vatAmount,
     finalTotal,
     calculateChange,
     getQuickAmounts,

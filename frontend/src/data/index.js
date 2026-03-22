@@ -5,3 +5,4 @@ export * from './mockMenu';
 export * from './mockConstants';
 export * from './notePresets';
 export * from './mockCustomers';
+export * from './mockDiscounts';

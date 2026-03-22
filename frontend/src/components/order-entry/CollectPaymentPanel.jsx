@@ -4,14 +4,13 @@ import { COLORS } from "../../constants";
 import { usePaymentCalculation, useCustomerLookup, useCouponValidation } from "../../hooks";
 import {
   BillSummary,
-  RewardsSection,
   PaymentMethodSelector,
   CashInputSection,
   SplitPaymentSection,
 } from "../payment";
 
 /**
- * CollectPaymentPanel - Optimized and decomposed
+ * CollectPaymentPanel - Optimized with new Bill Summary UX
  */
 const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) => {
   // Customer lookup hook
@@ -27,8 +26,14 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
 
   // Rewards state
   const [useLoyalty, setUseLoyalty] = useState(false);
-  const [useWallet, setUseWallet] = useState(false);
-  const [walletAmount, setWalletAmount] = useState(0);
+  const [loyaltyPointsToRedeem, setLoyaltyPointsToRedeem] = useState(0);
+
+  // Manual discount state
+  const [manualDiscount, setManualDiscount] = useState({
+    type: "none",
+    mode: "flat",
+    amount: 0,
+  });
 
   // Coupon validation hook
   const {
@@ -42,22 +47,26 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
 
   // Payment calculation hook
   const {
-    subtotal,
-    tax,
+    itemTotal,
+    foodTotal,
+    alcoholTotal,
+    manualDiscountAmount,
     loyaltyDiscount,
-    walletDiscount,
     couponDiscount,
     totalDiscount,
+    subtotal,
+    gstAmount,
+    vatAmount,
     finalTotal,
     calculateChange,
     getQuickAmounts,
   } = usePaymentCalculation({
-    total,
+    cartItems,
     customer,
     useLoyalty,
-    useWallet,
-    walletAmount,
+    loyaltyPointsToRedeem,
     selectedCoupon,
+    manualDiscount,
   });
 
   // Payment state
@@ -75,9 +84,15 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
   const handlePayment = () => {
     onPaymentComplete({
       customer: customer || { name: customerName, phone },
+      itemTotal,
+      discounts: { 
+        manual: manualDiscountAmount, 
+        loyalty: loyaltyDiscount, 
+        coupon: couponDiscount 
+      },
+      totalDiscount,
       subtotal,
-      tax,
-      discounts: { loyalty: loyaltyDiscount, wallet: walletDiscount, coupon: couponDiscount },
+      taxes: { gst: gstAmount, vat: vatAmount },
       total: finalTotal,
       paymentMethod: showSplit ? "split" : paymentMethod,
       splitPayments: showSplit ? splitPayments : null,
@@ -108,49 +123,37 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Bill Summary */}
+        {/* New Bill Summary with all discounts and taxes */}
         <BillSummary
           cartItems={cartItems}
-          subtotal={subtotal}
-          tax={tax}
-        />
-
-        {/* Rewards Section */}
-        <RewardsSection
+          itemTotal={itemTotal}
+          foodTotal={foodTotal}
+          alcoholTotal={alcoholTotal}
+          // Manual Discount
+          manualDiscount={manualDiscount}
+          onManualDiscountChange={setManualDiscount}
+          manualDiscountAmount={manualDiscountAmount}
+          // Loyalty
           customer={customer}
-          subtotal={subtotal}
           useLoyalty={useLoyalty}
           setUseLoyalty={setUseLoyalty}
-          useWallet={useWallet}
-          setUseWallet={setUseWallet}
-          walletAmount={walletAmount}
-          setWalletAmount={setWalletAmount}
-          selectedCoupon={selectedCoupon}
-          onSelectCoupon={handleSelectCoupon}
+          loyaltyPointsToRedeem={loyaltyPointsToRedeem}
+          setLoyaltyPointsToRedeem={setLoyaltyPointsToRedeem}
+          loyaltyDiscount={loyaltyDiscount}
+          // Coupon
           couponCode={couponCode}
           setCouponCode={setCouponCode}
-          couponError={couponError}
           onApplyCoupon={handleApplyCoupon}
+          selectedCoupon={selectedCoupon}
+          couponError={couponError}
+          couponDiscount={couponDiscount}
+          // Totals
+          totalDiscount={totalDiscount}
+          subtotal={subtotal}
+          gstAmount={gstAmount}
+          vatAmount={vatAmount}
+          finalTotal={finalTotal}
         />
-
-        {/* Discount Summary */}
-        {totalDiscount > 0 && (
-          <div className="flex justify-between px-4 py-2 rounded-lg" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
-            <span className="text-sm" style={{ color: COLORS.primaryGreen }}>Total Discount</span>
-            <span className="text-sm font-medium" style={{ color: COLORS.primaryGreen }}>-₹{totalDiscount}</span>
-          </div>
-        )}
-
-        {/* Total */}
-        <div 
-          className="p-4 rounded-lg text-center"
-          style={{ backgroundColor: COLORS.sectionBg }}
-        >
-          <div className="text-sm" style={{ color: COLORS.grayText }}>TOTAL TO PAY</div>
-          <div className="text-3xl font-bold" style={{ color: COLORS.primaryGreen }}>
-            ₹{finalTotal}
-          </div>
-        </div>
 
         {/* Payment Method Selector */}
         <PaymentMethodSelector
@@ -189,7 +192,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
           style={{ backgroundColor: COLORS.primaryGreen }}
           data-testid="complete-payment-btn"
         >
-          Pay ₹{finalTotal}
+          Pay ₹{finalTotal.toLocaleString()}
         </button>
       </div>
     </div>
