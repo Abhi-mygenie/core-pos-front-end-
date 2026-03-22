@@ -32,6 +32,7 @@ const OrderEntry = ({
     transferItems,
     shiftTable,
     mergeTables,
+    updateTableStatus,
   } = useTableOrders();
 
   // Get order data from context
@@ -40,6 +41,7 @@ const OrderEntry = ({
   // Cart management
   const {
     cartItems,
+    setCartItems,
     cartCountMap,
     total,
     flashItemId,
@@ -118,8 +120,21 @@ const OrderEntry = ({
   // Event handlers
   const handlePlaceOrder = () => {
     if (placeOrder()) {
+      // Sync placed items to context and mark table as occupied
+      if (table?.id) {
+        syncTableItems(table.id, cartItems.map(item => ({ ...item, placed: true })));
+        updateTableStatus(table.id, "occupied");
+      }
       setShowOrderPlaced(true);
+      toast.success("Order placed successfully!");
     }
+  };
+
+  // After "Order Placed" is dismissed, clear the cart for new orders
+  const handleOrderPlacedClose = () => {
+    setShowOrderPlaced(false);
+    // Clear cart — placed items already saved in context
+    setCartItems([]);
   };
 
   // --- CANCEL ITEM (partial qty support) ---
@@ -350,7 +365,7 @@ const OrderEntry = ({
         onSaveItemNotes={handleSaveItemNotes}
         // Order Placed
         showOrderPlaced={showOrderPlaced}
-        onCloseOrderPlaced={() => setShowOrderPlaced(false)}
+        onCloseOrderPlaced={handleOrderPlacedClose}
         // Transfer
         transferItem={transferItem}
         onCloseTransfer={() => setTransferItem(null)}

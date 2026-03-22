@@ -200,6 +200,12 @@ export const TableOrderProvider = ({ children, onUpdateTableStatus }) => {
     [onUpdateTableStatus]
   );
 
+  // Expose table status update
+  const updateTableStatus = useCallback(
+    (tableId, status) => onUpdateTableStatus?.(tableId, status),
+    [onUpdateTableStatus]
+  );
+
   const value = useMemo(
     () => ({
       tableOrders,
@@ -209,6 +215,7 @@ export const TableOrderProvider = ({ children, onUpdateTableStatus }) => {
       transferItems,
       shiftTable,
       mergeTables,
+      updateTableStatus,
     }),
     [
       tableOrders,
@@ -218,6 +225,7 @@ export const TableOrderProvider = ({ children, onUpdateTableStatus }) => {
       transferItems,
       shiftTable,
       mergeTables,
+      updateTableStatus,
     ]
   );
 
