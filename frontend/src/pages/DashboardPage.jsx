@@ -76,48 +76,74 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 );
 
 // Dashboard Loading Component
-const DashboardLoading = ({ progress, currentStep, error, retryCount, maxRetries }) => (
-  <div className="flex-1 flex items-center justify-center min-h-screen" style={{ backgroundColor: COLORS.sectionBg }}>
-    <div className="text-center p-8 rounded-2xl shadow-lg" style={{ backgroundColor: COLORS.lightBg, minWidth: '400px' }}>
-      {error ? (
-        <>
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
-            <span className="text-2xl">⚠️</span>
-          </div>
-          <h2 className="text-xl font-semibold mb-2" style={{ color: COLORS.darkText }}>
-            {retryCount < maxRetries ? 'Connection Issue' : 'Failed to Load'}
-          </h2>
-          <p className="text-sm mb-4" style={{ color: COLORS.grayText }}>{error}</p>
-          {retryCount < maxRetries && (
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: COLORS.primaryGreen, borderTopColor: 'transparent' }}></div>
-              <span className="text-sm" style={{ color: COLORS.primaryGreen }}>
-                Retrying... (Attempt {retryCount + 1}/{maxRetries})
-              </span>
+const DashboardLoading = ({ progress, currentStep, error, retryCount, maxRetries, loadingStats }) => {
+  // Get detailed message for current step
+  const getStepMessage = () => {
+    if (!currentStep) return 'Preparing...';
+    
+    const stats = loadingStats || {};
+    switch (currentStep) {
+      case 'tables':
+        const t = stats.tables?.loaded || 0;
+        const r = stats.rooms?.loaded || 0;
+        return t > 0 || r > 0 ? `${t} Tables, ${r} Rooms loaded` : 'Loading tables...';
+      case 'categories':
+        const c = stats.categories?.loaded || 0;
+        return c > 0 ? `${c} Categories loaded` : 'Loading categories...';
+      case 'products':
+        const p = stats.products?.loaded || 0;
+        return p > 0 ? `${p} Menu items loaded` : 'Loading menu items...';
+      case 'settings':
+        const s = stats.cancellationReasons?.loaded || 0;
+        return s > 0 ? `${s} Settings loaded` : 'Loading settings...';
+      default:
+        return `${currentStep.charAt(0).toUpperCase() + currentStep.slice(1)}...`;
+    }
+  };
+
+  return (
+    <div className="flex-1 flex items-center justify-center min-h-screen" style={{ backgroundColor: COLORS.sectionBg }}>
+      <div className="text-center p-8 rounded-2xl shadow-lg" style={{ backgroundColor: COLORS.lightBg, minWidth: '400px' }}>
+        {error ? (
+          <>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
+              <span className="text-2xl">⚠️</span>
             </div>
-          )}
-        </>
-      ) : (
-        <>
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#E8F5E9' }}>
-            <div className="w-8 h-8 border-3 border-t-transparent rounded-full animate-spin" style={{ borderColor: COLORS.primaryGreen, borderTopColor: 'transparent', borderWidth: '3px' }}></div>
-          </div>
-          <h2 className="text-xl font-semibold mb-2" style={{ color: COLORS.darkText }}>Loading Dashboard</h2>
-          <p className="text-sm mb-4" style={{ color: COLORS.grayText }}>
-            {currentStep ? `${currentStep.charAt(0).toUpperCase() + currentStep.slice(1)}...` : 'Preparing...'}
-          </p>
-          <div className="w-full h-2 rounded-full overflow-hidden" style={{ backgroundColor: COLORS.borderGray }}>
-            <div 
-              className="h-full transition-all duration-300 rounded-full" 
-              style={{ backgroundColor: COLORS.primaryGreen, width: `${progress}%` }}
-            ></div>
-          </div>
-          <p className="text-xs mt-2" style={{ color: COLORS.grayText }}>{progress}% complete</p>
-        </>
-      )}
+            <h2 className="text-xl font-semibold mb-2" style={{ color: COLORS.darkText }}>
+              {retryCount < maxRetries ? 'Connection Issue' : 'Failed to Load'}
+            </h2>
+            <p className="text-sm mb-4" style={{ color: COLORS.grayText }}>{error}</p>
+            {retryCount < maxRetries && (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: COLORS.primaryGreen, borderTopColor: 'transparent' }}></div>
+                <span className="text-sm" style={{ color: COLORS.primaryGreen }}>
+                  Retrying... (Attempt {retryCount + 1}/{maxRetries})
+                </span>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#E8F5E9' }}>
+              <div className="w-8 h-8 border-3 border-t-transparent rounded-full animate-spin" style={{ borderColor: COLORS.primaryGreen, borderTopColor: 'transparent', borderWidth: '3px' }}></div>
+            </div>
+            <h2 className="text-xl font-semibold mb-2" style={{ color: COLORS.darkText }}>Loading Dashboard</h2>
+            <p className="text-sm mb-4" style={{ color: COLORS.grayText }}>
+              {getStepMessage()}
+            </p>
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ backgroundColor: COLORS.borderGray }}>
+              <div 
+                className="h-full transition-all duration-300 rounded-full" 
+                style={{ backgroundColor: COLORS.primaryGreen, width: `${progress}%` }}
+              ></div>
+            </div>
+            <p className="text-xs mt-2" style={{ color: COLORS.grayText }}>{progress}% complete</p>
+          </>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Main Home/Dashboard Component
 const DashboardPage = () => {
@@ -131,7 +157,8 @@ const DashboardPage = () => {
     currentStep,
     loadingError,
     retryCount,
-    maxRetries
+    maxRetries,
+    loadingStats
   } = useInitialData();
   
   // --- State ---
@@ -374,6 +401,7 @@ const DashboardPage = () => {
         error={loadingError}
         retryCount={retryCount}
         maxRetries={maxRetries}
+        loadingStats={loadingStats}
       />
     );
   }

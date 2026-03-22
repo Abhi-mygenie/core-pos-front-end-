@@ -17,9 +17,11 @@ const LoginPage = () => {
     loadingProgress, 
     currentStep, 
     completedSteps, 
-    loadingSteps,
+    loadingStats,
     loadingError,
-    isDataLoaded 
+    isDataLoaded,
+    retryCount,
+    maxRetries
   } = useInitialData();
   
   const [username, setUsername] = useState("");
@@ -80,8 +82,10 @@ const LoginPage = () => {
         progress={loadingProgress}
         currentStep={currentStep}
         completedSteps={completedSteps}
-        loadingSteps={loadingSteps}
+        loadingStats={loadingStats}
         error={loadingError}
+        retryCount={retryCount}
+        maxRetries={maxRetries}
       />
       
       <div 

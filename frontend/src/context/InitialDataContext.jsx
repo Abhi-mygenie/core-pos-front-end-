@@ -3,13 +3,6 @@ import { tableAPI, menuAPI, cancellationAPI } from '../services/api';
 
 const InitialDataContext = createContext(null);
 
-const LOADING_STEPS = [
-  { id: 'tables', label: 'Loading tables...', progress: 25 },
-  { id: 'categories', label: 'Loading categories...', progress: 50 },
-  { id: 'products', label: 'Loading products...', progress: 75 },
-  { id: 'settings', label: 'Loading settings...', progress: 100 },
-];
-
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds between retries
 
@@ -32,6 +25,15 @@ export const InitialDataProvider = ({ children }) => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [loadingError, setLoadingError] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  
+  // Detailed loading stats
+  const [loadingStats, setLoadingStats] = useState({
+    tables: { loaded: 0, total: 0 },
+    rooms: { loaded: 0, total: 0 },
+    categories: { loaded: 0, total: 0 },
+    products: { loaded: 0, total: 0 },
+    cancellationReasons: { loaded: 0, total: 0 }
+  });
   
   // Retry state
   const [retryCount, setRetryCount] = useState(0);
@@ -72,55 +74,105 @@ export const InitialDataProvider = ({ children }) => {
     setLoadingProgress(0);
     setCompletedSteps([]);
     setLoadingError(null);
+    setLoadingStats({
+      tables: { loaded: 0, total: 0 },
+      rooms: { loaded: 0, total: 0 },
+      categories: { loaded: 0, total: 0 },
+      products: { loaded: 0, total: 0 },
+      cancellationReasons: { loaded: 0, total: 0 }
+    });
     if (!isRetry) {
       setIsDataLoaded(false);
     }
 
     try {
-      // Step 1: Load Tables
+      // Step 1: Load Tables & Rooms
       setCurrentStep('tables');
+      setLoadingProgress(10);
       debugLog('API CALL: GET /api/v1/vendoremployee/all-table-list');
       const tablesData = await tableAPI.getAllTables();
       debugLog('API RESPONSE: all-table-list', { count: tablesData?.length || 0 });
+      
       const tableList = tablesData.filter(item => item.rtype === 'TB');
       const roomList = tablesData.filter(item => item.rtype === 'RM');
+      
+      // Update stats progressively
+      setLoadingStats(prev => ({
+        ...prev,
+        tables: { loaded: tableList.length, total: tableList.length },
+        rooms: { loaded: roomList.length, total: roomList.length }
+      }));
+      
       setTables(tableList);
       setRooms(roomList);
+      setLoadingProgress(25);
       completeStep('tables');
       debugLog(`Loaded ${tableList.length} tables, ${roomList.length} rooms`);
-      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       // Step 2: Load Categories
       setCurrentStep('categories');
+      setLoadingProgress(30);
       debugLog('API CALL: GET /api/v1/vendoremployee/get-categories');
       const categoriesData = await menuAPI.getCategories();
       debugLog('API RESPONSE: get-categories', { raw: categoriesData });
+      
       const categoryList = Array.isArray(categoriesData) 
         ? categoriesData 
         : (categoriesData.categories || categoriesData.data || []);
+      
+      // Update stats
+      setLoadingStats(prev => ({
+        ...prev,
+        categories: { loaded: categoryList.length, total: categoryList.length }
+      }));
+      
       setCategories(categoryList);
+      setLoadingProgress(50);
       completeStep('categories');
       debugLog(`Loaded ${categoryList.length} categories`);
-      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Step 3: Load Products (ALL products - no pagination, single fetch)
+      // Step 3: Load Products (ALL products)
       setCurrentStep('products');
+      setLoadingProgress(55);
       debugLog('API CALL: GET /api/v1/vendoremployee/get-products-list?limit=10000');
       const productsData = await menuAPI.getProducts(10000, 1, 'all', null);
       debugLog('API RESPONSE: get-products-list', { count: productsData?.products?.length || 0 });
-      setProducts(productsData.products || []);
+      
+      const productList = productsData.products || [];
+      
+      // Update stats
+      setLoadingStats(prev => ({
+        ...prev,
+        products: { loaded: productList.length, total: productList.length }
+      }));
+      
+      setProducts(productList);
+      setLoadingProgress(80);
       completeStep('products');
-      debugLog(`Loaded ${productsData?.products?.length || 0} products`);
-      await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
+      debugLog(`Loaded ${productList.length} products`);
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Step 4: Load Settings (Cancellation Reasons - ALL)
+      // Step 4: Load Cancellation Reasons
       setCurrentStep('settings');
+      setLoadingProgress(85);
       debugLog('API CALL: GET /api/v1/vendoremployee/cancellation-reasons?limit=1000');
       const reasonsData = await cancellationAPI.getReasons(1000, 1);
       debugLog('API RESPONSE: cancellation-reasons', { count: reasonsData?.reasons?.length || 0 });
-      setCancellationReasons(reasonsData.reasons || []);
+      
+      const reasonsList = reasonsData.reasons || [];
+      
+      // Update stats
+      setLoadingStats(prev => ({
+        ...prev,
+        cancellationReasons: { loaded: reasonsList.length, total: reasonsList.length }
+      }));
+      
+      setCancellationReasons(reasonsList);
+      setLoadingProgress(100);
       completeStep('settings');
-      debugLog(`Loaded ${reasonsData?.reasons?.length || 0} cancellation reasons`);
+      debugLog(`Loaded ${reasonsList.length} cancellation reasons`);
 
       // Ensure minimum loading time for better UX
       const elapsedTime = Date.now() - startTime;
@@ -231,9 +283,11 @@ export const InitialDataProvider = ({ children }) => {
     loadingProgress,
     currentStep,
     completedSteps,
-    loadingSteps: LOADING_STEPS,
     loadingError,
     isDataLoaded,
+    
+    // Detailed loading stats
+    loadingStats,
     
     // Retry state
     retryCount,

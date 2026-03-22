@@ -1,17 +1,67 @@
-import { useEffect } from 'react';
 import { COLORS } from '../../constants';
 import { Check, Loader2 } from 'lucide-react';
+
+// Define loading steps with their labels
+const LOADING_STEPS = [
+  { id: 'tables', label: 'Tables & Rooms' },
+  { id: 'categories', label: 'Categories' },
+  { id: 'products', label: 'Menu Items' },
+  { id: 'settings', label: 'Settings' },
+];
 
 const InitialLoadingOverlay = ({ 
   isLoading, 
   progress, 
   currentStep, 
   completedSteps, 
-  loadingSteps,
-  error 
+  loadingStats,
+  error,
+  retryCount,
+  maxRetries
 }) => {
   // Don't render if not loading
   if (!isLoading) return null;
+
+  // Get detailed label for current step
+  const getStepLabel = (step) => {
+    const stats = loadingStats || {};
+    
+    switch (step.id) {
+      case 'tables':
+        const tablesCount = stats.tables?.loaded || 0;
+        const roomsCount = stats.rooms?.loaded || 0;
+        if (tablesCount > 0 || roomsCount > 0) {
+          return `${tablesCount} Tables, ${roomsCount} Rooms loaded`;
+        }
+        return 'Loading tables & rooms...';
+      
+      case 'categories':
+        const catCount = stats.categories?.loaded || 0;
+        const catTotal = stats.categories?.total || 0;
+        if (catCount > 0) {
+          return `${catCount} of ${catTotal} Categories loaded`;
+        }
+        return 'Loading categories...';
+      
+      case 'products':
+        const prodCount = stats.products?.loaded || 0;
+        const prodTotal = stats.products?.total || 0;
+        if (prodCount > 0) {
+          return `${prodCount} of ${prodTotal} Menu Items loaded`;
+        }
+        return 'Loading menu items...';
+      
+      case 'settings':
+        const reasonsCount = stats.cancellationReasons?.loaded || 0;
+        if (reasonsCount > 0) {
+          return `${reasonsCount} Settings loaded`;
+        }
+        return 'Loading settings...';
+      
+      default:
+        return step.label;
+    }
+  };
 
   return (
     <div 
@@ -38,7 +88,9 @@ const InitialLoadingOverlay = ({
             className="text-sm mt-2"
             style={{ color: COLORS.grayText }}
           >
-            Setting up your restaurant...
+            {retryCount > 0 
+              ? `Retrying... (Attempt ${retryCount + 1} of ${maxRetries})`
+              : 'Setting up your restaurant...'}
           </p>
         </div>
 
@@ -64,12 +116,11 @@ const InitialLoadingOverlay = ({
           </div>
         </div>
 
-        {/* Loading Steps */}
+        {/* Loading Steps with Detailed Stats */}
         <div className="space-y-3">
-          {loadingSteps.map((step) => {
+          {LOADING_STEPS.map((step) => {
             const isCompleted = completedSteps.includes(step.id);
             const isCurrent = currentStep === step.id;
-            const isPending = !isCompleted && !isCurrent;
 
             return (
               <div 
@@ -78,7 +129,7 @@ const InitialLoadingOverlay = ({
                 data-testid={`loading-step-${step.id}`}
               >
                 {/* Icon */}
-                <div className="w-5 h-5 flex items-center justify-center">
+                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                   {isCompleted ? (
                     <Check 
                       className="w-5 h-5" 
@@ -97,7 +148,7 @@ const InitialLoadingOverlay = ({
                   )}
                 </div>
 
-                {/* Label */}
+                {/* Label with Stats */}
                 <span 
                   className="text-sm"
                   style={{ 
@@ -109,12 +160,27 @@ const InitialLoadingOverlay = ({
                     fontWeight: isCurrent ? 500 : 400
                   }}
                 >
-                  {step.label}
+                  {isCompleted || isCurrent ? getStepLabel(step) : step.label}
                 </span>
               </div>
             );
           })}
         </div>
+
+        {/* Summary after loading */}
+        {completedSteps.length === LOADING_STEPS.length && loadingStats && (
+          <div 
+            className="mt-6 p-4 rounded-lg text-center"
+            style={{ backgroundColor: `${COLORS.primaryGreen}10` }}
+          >
+            <p className="text-sm font-medium" style={{ color: COLORS.primaryGreen }}>
+              ✓ All data loaded successfully!
+            </p>
+            <p className="text-xs mt-1" style={{ color: COLORS.grayText }}>
+              {loadingStats.tables?.loaded || 0} tables • {loadingStats.categories?.loaded || 0} categories • {loadingStats.products?.loaded || 0} items
+            </p>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (
@@ -122,15 +188,19 @@ const InitialLoadingOverlay = ({
             className="mt-6 p-4 rounded-lg text-center"
             style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}
           >
-            <p className="text-sm font-medium">Failed to load data</p>
+            <p className="text-sm font-medium">
+              {retryCount < maxRetries ? 'Connection issue' : 'Failed to load data'}
+            </p>
             <p className="text-xs mt-1">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-3 px-4 py-2 text-sm font-medium rounded-lg"
-              style={{ backgroundColor: '#dc2626', color: 'white' }}
-            >
-              Retry
-            </button>
+            {retryCount >= maxRetries && (
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-3 px-4 py-2 text-sm font-medium rounded-lg"
+                style={{ backgroundColor: '#dc2626', color: 'white' }}
+              >
+                Retry
+              </button>
+            )}
           </div>
         )}
       </div>
