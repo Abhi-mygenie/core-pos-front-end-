@@ -10,8 +10,8 @@ import {
 } from "../payment";
 
 /**
- * CollectPaymentPanel - Optimized with new Bill Summary UX
- * Features: Sticky header, SGST/CGST split, customization display
+ * CollectPaymentPanel - With Tip and Service Charge
+ * Order: Item Total → Discount → Tip → Service Charge → Taxes → Final
  */
 const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) => {
   // Customer lookup hook
@@ -36,6 +36,12 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
     amount: 0,
   });
 
+  // Tip state (flat amount)
+  const [tip, setTip] = useState(0);
+
+  // Service charge state
+  const [applyServiceCharge, setApplyServiceCharge] = useState(false);
+
   // Coupon validation hook
   const {
     selectedCoupon,
@@ -55,6 +61,9 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
     loyaltyDiscount,
     couponDiscount,
     totalDiscount,
+    afterDiscount,
+    tipAmount,
+    serviceChargeAmount,
     subtotal,
     sgstAmount,
     cgstAmount,
@@ -69,6 +78,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
     loyaltyPointsToRedeem,
     selectedCoupon,
     manualDiscount,
+    tip,
+    applyServiceCharge,
   });
 
   // Payment state
@@ -93,6 +104,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
         coupon: couponDiscount 
       },
       totalDiscount,
+      tip: tipAmount,
+      serviceCharge: serviceChargeAmount,
       subtotal,
       taxes: { sgst: sgstAmount, cgst: cgstAmount, vat: vatAmount },
       total: finalTotal,
@@ -125,7 +138,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* New Bill Summary with all discounts and taxes */}
+        {/* Bill Summary with Discount, Tip, Service Charge, Taxes */}
         <BillSummary
           cartItems={cartItems}
           itemTotal={itemTotal}
@@ -135,6 +148,14 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete }) =>
           manualDiscount={manualDiscount}
           onManualDiscountChange={setManualDiscount}
           manualDiscountAmount={manualDiscountAmount}
+          // Tip
+          tip={tip}
+          onTipChange={setTip}
+          tipAmount={tipAmount}
+          // Service Charge
+          applyServiceCharge={applyServiceCharge}
+          onServiceChargeChange={setApplyServiceCharge}
+          serviceChargeAmount={serviceChargeAmount}
           // Loyalty
           customer={customer}
           useLoyalty={useLoyalty}

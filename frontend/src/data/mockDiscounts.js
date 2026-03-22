@@ -16,3 +16,6 @@ export const TAX_RATES = {
   CGST: 0.025,    // 2.5% Central GST for food
   VAT: 0.20,      // 20% VAT for alcohol
 };
+
+// Service charge rate (configurable)
+export const SERVICE_CHARGE_RATE = 0.10; // 10%

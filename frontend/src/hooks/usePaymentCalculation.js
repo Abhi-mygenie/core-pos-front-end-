@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { TAX_RATES } from "../data/mockDiscounts";
+import { TAX_RATES, SERVICE_CHARGE_RATE } from "../data/mockDiscounts";
 
 /**
  * Custom hook for payment calculations
- * Handles item total, discounts, taxes (SGST/CGST/VAT), and final total
+ * Order: Item Total → Discount → Tip → Service Charge → Taxes → Final
  */
 const usePaymentCalculation = ({
   cartItems = [],
@@ -12,6 +12,8 @@ const usePaymentCalculation = ({
   loyaltyPointsToRedeem = 0,
   selectedCoupon,
   manualDiscount = { type: "none", mode: "flat", amount: 0 },
+  tip = 0,
+  applyServiceCharge = false,
 }) => {
   // Calculate item total
   const itemTotal = useMemo(() => {
@@ -36,10 +38,8 @@ const usePaymentCalculation = ({
   }, [cartItems]);
 
   // Calculate manual discount
-  // Named discounts are always percentage, "none" can be flat or percent
   const manualDiscountAmount = useMemo(() => {
     if (!manualDiscount || manualDiscount.type === "none") {
-      // No discount type selected - use mode (flat/percent)
       if (!manualDiscount.amount) return 0;
       if (manualDiscount.mode === "percent") {
         return Math.round((itemTotal * manualDiscount.amount) / 100);
@@ -47,7 +47,6 @@ const usePaymentCalculation = ({
       return Math.min(manualDiscount.amount, itemTotal);
     }
     
-    // Named discount - always percentage
     if (!manualDiscount.amount) return 0;
     return Math.round((itemTotal * manualDiscount.amount) / 100);
   }, [manualDiscount, itemTotal]);
@@ -77,30 +76,50 @@ const usePaymentCalculation = ({
     [manualDiscountAmount, loyaltyDiscount, couponDiscount]
   );
 
-  // Subtotal after discounts
-  const subtotal = useMemo(() => 
+  // Amount after discount (base for service charge)
+  const afterDiscount = useMemo(() => 
     Math.max(0, itemTotal - totalDiscount),
     [itemTotal, totalDiscount]
   );
 
-  // Calculate taxes based on item categories (applied after discount proportionally)
+  // Tip amount (flat)
+  const tipAmount = useMemo(() => Math.max(0, tip || 0), [tip]);
+
+  // Service charge (10% of after discount amount)
+  const serviceChargeAmount = useMemo(() => {
+    if (!applyServiceCharge) return 0;
+    return Math.round(afterDiscount * SERVICE_CHARGE_RATE);
+  }, [applyServiceCharge, afterDiscount]);
+
+  // Subtotal (taxable amount = after discount + tip + service charge)
+  const subtotal = useMemo(() => 
+    afterDiscount + tipAmount + serviceChargeAmount,
+    [afterDiscount, tipAmount, serviceChargeAmount]
+  );
+
+  // Calculate taxes based on item categories (applied on subtotal proportionally)
   const { sgstAmount, cgstAmount, vatAmount } = useMemo(() => {
     if (itemTotal === 0) return { sgstAmount: 0, cgstAmount: 0, vatAmount: 0 };
     
-    // Calculate proportion of discount for each category
+    // Calculate effective amounts after discount (proportional)
     const discountRatio = totalDiscount / itemTotal;
     const effectiveFoodTotal = foodTotal * (1 - discountRatio);
     const effectiveAlcoholTotal = alcoholTotal * (1 - discountRatio);
     
-    // SGST and CGST for food (2.5% each)
-    const sgst = Math.round(effectiveFoodTotal * TAX_RATES.SGST);
-    const cgst = Math.round(effectiveFoodTotal * TAX_RATES.CGST);
+    // Add tip and service charge proportionally to food/alcohol
+    const foodRatio = itemTotal > 0 ? foodTotal / itemTotal : 0;
+    const alcoholRatio = itemTotal > 0 ? alcoholTotal / itemTotal : 0;
     
-    // VAT for alcohol
-    const vat = Math.round(effectiveAlcoholTotal * TAX_RATES.VAT);
+    const tipAndSC = tipAmount + serviceChargeAmount;
+    const foodTaxable = effectiveFoodTotal + (tipAndSC * foodRatio);
+    const alcoholTaxable = effectiveAlcoholTotal + (tipAndSC * alcoholRatio);
+    
+    const sgst = Math.round(foodTaxable * TAX_RATES.SGST);
+    const cgst = Math.round(foodTaxable * TAX_RATES.CGST);
+    const vat = Math.round(alcoholTaxable * TAX_RATES.VAT);
     
     return { sgstAmount: sgst, cgstAmount: cgst, vatAmount: vat };
-  }, [foodTotal, alcoholTotal, totalDiscount, itemTotal]);
+  }, [foodTotal, alcoholTotal, totalDiscount, itemTotal, tipAmount, serviceChargeAmount]);
 
   // Final total
   const finalTotal = useMemo(() => 
@@ -134,6 +153,9 @@ const usePaymentCalculation = ({
     loyaltyDiscount,
     couponDiscount,
     totalDiscount,
+    afterDiscount,
+    tipAmount,
+    serviceChargeAmount,
     subtotal,
     sgstAmount,
     cgstAmount,

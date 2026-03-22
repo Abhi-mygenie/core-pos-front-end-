@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { ClipboardList, Star, Ticket, ChevronDown, Check } from "lucide-react";
 import { COLORS } from "../../constants";
-import { discountTypes, TAX_RATES } from "../../data/mockDiscounts";
+import { discountTypes, TAX_RATES, SERVICE_CHARGE_RATE } from "../../data/mockDiscounts";
 
 /**
- * BillSummary - Comprehensive bill display with discounts and taxes
- * Features: Sticky header, customization details, SGST/CGST split
+ * BillSummary - Comprehensive bill display with discounts, tip, service charge, and taxes
+ * Order: Item Total → Discount → Tip → Service Charge → Taxes → Final
  */
 const BillSummary = ({ 
   cartItems, 
@@ -16,6 +16,14 @@ const BillSummary = ({
   manualDiscount,
   onManualDiscountChange,
   manualDiscountAmount,
+  // Tip props
+  tip,
+  onTipChange,
+  tipAmount,
+  // Service Charge props
+  applyServiceCharge,
+  onServiceChargeChange,
+  serviceChargeAmount,
   // Loyalty props
   customer,
   useLoyalty,
@@ -289,6 +297,55 @@ const BillSummary = ({
             {manualDiscountAmount > 0 && (
               <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.primaryGreen }}>
                 -₹{manualDiscountAmount.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* TIP Section - Flat amount only */}
+        <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+          <div className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: COLORS.grayText }}>
+            Tip
+          </div>
+          <div className="flex gap-2 items-center">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: COLORS.grayText }}>₹</span>
+              <input
+                type="number"
+                value={tip || ""}
+                onChange={(e) => onTipChange(parseFloat(e.target.value) || 0)}
+                placeholder="Enter tip amount"
+                className="w-full pl-7 pr-3 py-2 text-sm rounded-lg border"
+                style={{ borderColor: COLORS.borderGray }}
+                data-testid="tip-amount-input"
+              />
+            </div>
+            {tipAmount > 0 && (
+              <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.primaryOrange }}>
+                +₹{tipAmount.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* SERVICE CHARGE Section - Checkbox */}
+        <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={applyServiceCharge}
+                onChange={(e) => onServiceChargeChange(e.target.checked)}
+                className="w-4 h-4 accent-orange-500"
+                data-testid="service-charge-checkbox"
+              />
+              <span className="text-sm" style={{ color: COLORS.darkText }}>
+                Service Charge ({SERVICE_CHARGE_RATE * 100}%)
+              </span>
+            </label>
+            {serviceChargeAmount > 0 && (
+              <span className="text-sm font-medium" style={{ color: COLORS.primaryOrange }}>
+                +₹{serviceChargeAmount.toLocaleString()}
               </span>
             )}
           </div>
