@@ -69,16 +69,16 @@ export const InitialDataProvider = ({ children }) => {
       completeStep('categories');
       await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
-      // Step 3: Load Products (all for menu)
+      // Step 3: Load Products (ALL products - no pagination, single fetch)
       setCurrentStep('products');
-      const productsData = await menuAPI.getProducts(500, 1, 'all', null);
+      const productsData = await menuAPI.getProducts(10000, 1, 'all', null);
       setProducts(productsData.products || []);
       completeStep('products');
       await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
-      // Step 4: Load Settings (Cancellation Reasons)
+      // Step 4: Load Settings (Cancellation Reasons - ALL)
       setCurrentStep('settings');
-      const reasonsData = await cancellationAPI.getReasons(50, 1);
+      const reasonsData = await cancellationAPI.getReasons(1000, 1);
       setCancellationReasons(reasonsData.reasons || []);
       completeStep('settings');
 

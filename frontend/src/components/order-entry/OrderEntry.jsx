@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { COLORS } from "../../constants";
 import { useCartManager, useMenuFilter, useOrderModals } from "../../hooks";
 import { useTableOrders } from "../../context/TableOrderContext";
-import { useAuth } from "../../context/AuthContext";
 import { useInitialData } from "../../context/InitialDataContext";
-import { menuAPI } from "../../services/api";
 import { toast } from "sonner";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
@@ -41,9 +39,6 @@ const OrderEntry = ({
 
   // Get order data from context
   const orderData = table ? getTableOrder(table.id) : null;
-  
-  // Auth context for token
-  const { token } = useAuth();
   
   // Preloaded data from context
   const { 
@@ -111,61 +106,15 @@ const OrderEntry = ({
     return itemsByCategory;
   }, []);
 
-  // Initialize from preloaded data
+  // Initialize from preloaded data ONLY (no API calls)
   useEffect(() => {
-    if (preloadedCategories.length > 0) {
+    if (isDataLoaded) {
       setMenuCategories(preloadedCategories);
-    }
-    if (preloadedProducts.length > 0) {
       const transformed = transformProductsToMenuItems(preloadedProducts);
       setMenuItems(transformed);
       setIsLoadingMenu(false);
-    } else if (isDataLoaded) {
-      // Data loading completed but no products
-      setIsLoadingMenu(false);
     }
   }, [isDataLoaded, preloadedCategories, preloadedProducts, transformProductsToMenuItems]);
-
-  // Fallback fetch if not preloaded
-  const fetchCategories = useCallback(async () => {
-    if (!token || (isDataLoaded && preloadedCategories.length > 0)) return;
-    
-    try {
-      const data = await menuAPI.getCategories();
-      const categoryList = Array.isArray(data) ? data : (data.categories || data.data || []);
-      setMenuCategories(categoryList);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-      setMenuCategories([]);
-    }
-  }, [token, isDataLoaded, preloadedCategories.length]);
-
-  // Fallback fetch products if not preloaded
-  const fetchProducts = useCallback(async () => {
-    if (!token || (isDataLoaded && preloadedProducts.length > 0)) return;
-    
-    try {
-      setIsLoadingMenu(true);
-      const data = await menuAPI.getProducts(500, 1, 'all', null);
-      const products = data.products || [];
-      setMenuItems(transformProductsToMenuItems(products));
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      setMenuItems({});
-    } finally {
-      setIsLoadingMenu(false);
-    }
-  }, [token, isDataLoaded, preloadedProducts.length, transformProductsToMenuItems]);
-
-  // Fetch menu data on mount only if not preloaded
-  useEffect(() => {
-    if (!isDataLoaded || preloadedCategories.length === 0) {
-      fetchCategories();
-    }
-    if (!isDataLoaded || preloadedProducts.length === 0) {
-      fetchProducts();
-    }
-  }, [isDataLoaded, preloadedCategories.length, preloadedProducts.length, fetchCategories, fetchProducts]);
 
   // Menu filtering - pass menuItems from API
   const {

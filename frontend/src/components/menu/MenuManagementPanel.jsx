@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Search, Filter, ChevronLeft, ChevronRight, 
   Utensils, Leaf, Egg, X, GripVertical, Plus, Trash2, Edit2,
@@ -18,14 +18,12 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useAuth } from '../../context/AuthContext';
 import { useInitialData } from '../../context/InitialDataContext';
 import { COLORS } from '../../constants';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Switch } from '../ui/switch';
-import { menuAPI } from '../../services/api';
 import ProductModal from './ProductModal';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import MenuModal from './MenuModal';
@@ -34,7 +32,6 @@ import { SortableItem, DragHandle } from './SortableItem';
 import { toast } from 'sonner';
 
 const MenuManagementPanel = ({ onClose }) => {
-  const { token } = useAuth();
   const { 
     categories: preloadedCategories, 
     products: preloadedProducts,
@@ -171,42 +168,15 @@ const MenuManagementPanel = ({ onClose }) => {
     // TODO: Call API to persist order
   };
 
-  // Fetch products with server-side filtering
-  const fetchProducts = useCallback(async (categoryId = null, page = 1) => {
-    if (!token) return;
-    
-    try {
-      setIsLoading(true);
-      const data = await menuAPI.getProducts(
-        pagination.limit, 
-        page, 
-        selectedMenu || 'all',
-        categoryId
-      );
-      
-      // Store products from API
-      setProducts(data.products || []);
-      setPagination(prev => ({ 
-        ...prev, 
-        total: data.total_size || 0,
-        currentPage: page 
-      }));
-      
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      setProducts([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token, selectedMenu, pagination.limit]);
-
-  // Initialize from preloaded data or fetch if not available
-  const initializeFromPreloadedData = useCallback(() => {
-    if (isDataLoaded && preloadedCategories.length > 0) {
+  // Initialize from preloaded data ONLY (no API calls)
+  useEffect(() => {
+    if (isDataLoaded) {
+      // Set categories from preloaded data
       setCategories(preloadedCategories);
-    }
-    
-    if (isDataLoaded && preloadedProducts.length > 0) {
+      
+      // Set products from preloaded data
+      setProducts(preloadedProducts);
+      
       // Derive unique menus from preloaded products
       const menuMap = {};
       preloadedProducts.forEach(product => {
@@ -221,88 +191,24 @@ const MenuManagementPanel = ({ onClose }) => {
       setMenus(menuList.length > 0 ? menuList : [{ name: 'Normal', count: 0 }]);
       
       // Select first menu by default
-      if (menuList.length > 0 && !selectedMenu) {
+      if (menuList.length > 0) {
         setSelectedMenu(menuList[0].name);
       }
       
-      // Set products and pagination
-      setProducts(preloadedProducts);
-      setPagination(prev => ({ 
-        ...prev, 
-        total: preloadedProducts.length,
-        currentPage: 1 
-      }));
       setIsLoading(false);
     }
-  }, [isDataLoaded, preloadedCategories, preloadedProducts, selectedMenu]);
+  }, [isDataLoaded, preloadedCategories, preloadedProducts]);
 
-  // Fetch categories for vendor's restaurant (fallback if not preloaded)
-  const fetchCategories = useCallback(async () => {
-    if (!token) return;
-    
-    try {
-      const data = await menuAPI.getCategories();
-      // Handle response - could be array directly or nested in data property
-      const categoryList = Array.isArray(data) ? data : (data.categories || data.data || []);
-      setCategories(categoryList);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-      setCategories([]);
-    }
-  }, [token]);
-
-  // Fetch menus (unique food_for values) - fallback if not preloaded
-  const fetchMenus = useCallback(async () => {
-    if (!token) return;
-    
-    try {
-      // Fetch a sample to derive menu types
-      const data = await menuAPI.getProducts(100, 1, 'all', null);
-      
-      // Derive unique menus from products
-      const menuMap = {};
-      (data.products || []).forEach(product => {
-        const menuName = product.food_for || 'Normal';
-        if (!menuMap[menuName]) {
-          menuMap[menuName] = { name: menuName, count: 0 };
-        }
-        menuMap[menuName].count++;
-      });
-      
-      const menuList = Object.values(menuMap);
-      setMenus(menuList.length > 0 ? menuList : [{ name: 'Normal', count: 0 }]);
-      
-      // Select first menu by default
-      if (menuList.length > 0 && !selectedMenu) {
-        setSelectedMenu(menuList[0].name);
-      }
-    } catch (error) {
-      console.error('Failed to fetch menus:', error);
-      setMenus([{ name: 'Normal', count: 0 }]);
-    }
-  }, [token, selectedMenu]);
-
-  // Initial load - use preloaded data if available
-  useEffect(() => {
-    if (isDataLoaded && preloadedCategories.length > 0 && preloadedProducts.length > 0) {
-      initializeFromPreloadedData();
-    } else {
-      // Fallback to fetching
-      fetchMenus();
-      fetchCategories();
-    }
-  }, [isDataLoaded, preloadedCategories.length, preloadedProducts.length, initializeFromPreloadedData, fetchMenus, fetchCategories]);
-
-  // Fetch products when category or menu changes
-  useEffect(() => {
-    fetchProducts(selectedCategory, 1);
-  }, [selectedCategory, selectedMenu, fetchProducts]);
-
-  // Filter products - only client-side filters (search, veg, status)
-  // Category filtering is now done server-side via API
+  // Filter products - ALL client-side filtering (menu, category, search, veg, status)
   const filteredProducts = products
     .filter(product => {
-      // Search filter (client-side for instant feedback)
+      // Menu filter
+      if (selectedMenu && product.food_for !== selectedMenu) return false;
+      
+      // Category filter
+      if (selectedCategory && product.category_id !== selectedCategory) return false;
+      
+      // Search filter
       if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       
       // Veg filter
@@ -320,27 +226,39 @@ const MenuManagementPanel = ({ onClose }) => {
     })
     .sort((a, b) => (a.food_order || 0) - (b.food_order || 0));
 
-  // Get categories with product count from API data
+  // Get categories with product count - calculated from products in current menu
   const getCategoriesWithCount = () => {
-    // Categories now come from vendor-specific API
+    // Calculate product count per category from preloaded products (for current menu)
+    const countMap = {};
+    products
+      .filter(p => !selectedMenu || p.food_for === selectedMenu)
+      .forEach(p => {
+        countMap[p.category_id] = (countMap[p.category_id] || 0) + 1;
+      });
+    
     return categories
       .map(cat => ({
         ...cat,
-        productCount: cat.products_count || cat.product_count || 0
+        productCount: countMap[cat.id] || 0
       }))
       .sort((a, b) => (a.cat_order || a.priority || 0) - (b.cat_order || b.priority || 0));
   };
 
   const categoriesWithCount = getCategoriesWithCount();
-  const totalInMenu = pagination.total;
+  
+  // Total products in current menu (for "All Items" count)
+  const totalInMenu = products.filter(p => !selectedMenu || p.food_for === selectedMenu).length;
 
-  // Pagination - now server-side
-  const totalPages = Math.ceil(pagination.total / pagination.limit);
-  const paginatedProducts = filteredProducts; // Products already paginated from server
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredProducts.length / pagination.limit);
+  const paginatedProducts = filteredProducts.slice(
+    (pagination.currentPage - 1) * pagination.limit,
+    pagination.currentPage * pagination.limit
+  );
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      fetchProducts(selectedCategory, newPage);
+      setPagination(prev => ({ ...prev, currentPage: newPage }));
     }
   };
 

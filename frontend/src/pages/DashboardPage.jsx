@@ -9,7 +9,6 @@ import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { TableOrderProvider } from "../context/TableOrderContext";
 import { SettingsPanel } from "../components/settings";
 import { MenuManagementPanel } from "../components/menu";
-import { useAuth } from "../context/AuthContext";
 import { useInitialData } from "../context/InitialDataContext";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
@@ -78,15 +77,11 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 
 // Main Home/Dashboard Component
 const DashboardPage = () => {
-  // Auth context
-  const { token } = useAuth();
-  
   // Initial data from context (preloaded after login)
   const { 
     tables: apiTables, 
     rooms: apiRooms, 
-    isDataLoaded,
-    refreshTables 
+    isDataLoaded 
   } = useInitialData();
   
   // --- State ---
@@ -171,27 +166,12 @@ const DashboardPage = () => {
     setRooms(roomsBySection);
   }, []);
 
-  // Use preloaded data from context
+  // Use preloaded data from context ONLY (no fallback API calls)
   useEffect(() => {
     if (isDataLoaded && apiTables.length > 0) {
       transformTableData(apiTables, apiRooms);
     }
   }, [isDataLoaded, apiTables, apiRooms, transformTableData]);
-
-  // Fallback: Load data if navigated directly to dashboard without login flow
-  useEffect(() => {
-    if (token && !isDataLoaded && apiTables.length === 0) {
-      // This handles the case when user refreshes the dashboard page
-      refreshTables();
-    }
-  }, [token, isDataLoaded, apiTables.length, refreshTables]);
-
-  // Also watch for refreshed tables data
-  useEffect(() => {
-    if (apiTables.length > 0) {
-      transformTableData(apiTables, apiRooms);
-    }
-  }, [apiTables, apiRooms, transformTableData]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;

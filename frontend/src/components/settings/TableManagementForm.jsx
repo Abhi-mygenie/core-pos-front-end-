@@ -1,19 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { COLORS } from '../../constants';
-import { tableAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import { useInitialData } from '../../context/InitialDataContext';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 
 const TableManagementForm = () => {
-  const { token } = useAuth();
   const { 
     tables: preloadedTables, 
     rooms: preloadedRooms, 
-    isDataLoaded,
-    refreshTables 
+    isDataLoaded 
   } = useInitialData();
   
   const [tables, setTables] = useState([]);
@@ -23,7 +19,7 @@ const TableManagementForm = () => {
   const [addType, setAddType] = useState('table'); // 'table' | 'room'
   const [editingItem, setEditingItem] = useState(null);
 
-  // Initialize from preloaded data
+  // Initialize from preloaded data ONLY (no API calls)
   useEffect(() => {
     if (isDataLoaded) {
       setTables(preloadedTables);
@@ -31,29 +27,6 @@ const TableManagementForm = () => {
       setIsLoading(false);
     }
   }, [isDataLoaded, preloadedTables, preloadedRooms]);
-
-  // Fetch tables and rooms (for refresh or fallback)
-  const fetchData = useCallback(async () => {
-    if (!token) return;
-    
-    try {
-      setIsLoading(true);
-      // Use context refresh which updates the shared state
-      await refreshTables();
-    } catch (error) {
-      console.error('Failed to fetch tables:', error);
-      toast.error('Failed to load tables');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token, refreshTables]);
-
-  // Fallback fetch if not preloaded
-  useEffect(() => {
-    if (!isDataLoaded) {
-      fetchData();
-    }
-  }, [isDataLoaded, fetchData]);
 
   // Group items by section (title)
   const groupBySection = (items) => {
@@ -177,7 +150,6 @@ const TableManagementForm = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center" style={{ color: COLORS.grayText }}>
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3" />
           <p>Loading tables and rooms...</p>
         </div>
       </div>
@@ -196,16 +168,6 @@ const TableManagementForm = () => {
             Manage your restaurant tables and rooms
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchData}
-          disabled={isLoading}
-          data-testid="refresh-tables-btn"
-        >
-          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
       </div>
 
       {/* Tables Section */}

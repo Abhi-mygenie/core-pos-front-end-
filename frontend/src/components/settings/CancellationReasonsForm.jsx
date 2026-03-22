@@ -1,14 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { COLORS } from '../../constants';
-import { cancellationAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import { useInitialData } from '../../context/InitialDataContext';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 
 const CancellationReasonsForm = () => {
-  const { token } = useAuth();
   const { cancellationReasons: preloadedReasons, isDataLoaded } = useInitialData();
   
   const [reasons, setReasons] = useState([]);
@@ -17,38 +14,14 @@ const CancellationReasonsForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  // Initialize from preloaded data
+  // Initialize from preloaded data ONLY (no API calls)
   useEffect(() => {
-    if (isDataLoaded && preloadedReasons.length >= 0) {
+    if (isDataLoaded) {
       setReasons(preloadedReasons);
       setTotalSize(preloadedReasons.length);
       setIsLoading(false);
     }
   }, [isDataLoaded, preloadedReasons]);
-
-  // Fetch reasons (for refresh or fallback)
-  const fetchReasons = useCallback(async () => {
-    if (!token) return;
-    
-    try {
-      setIsLoading(true);
-      const data = await cancellationAPI.getReasons(50, 1);
-      setReasons(data.reasons || []);
-      setTotalSize(data.total_size || 0);
-    } catch (error) {
-      console.error('Failed to fetch cancellation reasons:', error);
-      toast.error('Failed to load cancellation reasons');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  // Fallback fetch if not preloaded
-  useEffect(() => {
-    if (!isDataLoaded) {
-      fetchReasons();
-    }
-  }, [isDataLoaded, fetchReasons]);
 
   // Handlers
   const handleAdd = () => {
@@ -93,7 +66,6 @@ const CancellationReasonsForm = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center" style={{ color: COLORS.grayText }}>
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3" />
           <p>Loading cancellation reasons...</p>
         </div>
       </div>
@@ -112,27 +84,15 @@ const CancellationReasonsForm = () => {
             Manage reasons shown when cancelling orders or items
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchReasons}
-            disabled={isLoading}
-            data-testid="refresh-reasons-btn"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleAdd}
-            style={{ backgroundColor: COLORS.primaryGreen }}
-            data-testid="add-reason-btn"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Reason
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={handleAdd}
+          style={{ backgroundColor: COLORS.primaryGreen }}
+          data-testid="add-reason-btn"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Reason
+        </Button>
       </div>
 
       {/* Table */}
