@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { tableAPI, menuAPI, cancellationAPI } from '../services/api';
 
 const InitialDataContext = createContext(null);
@@ -10,6 +10,20 @@ const LOADING_STEPS = [
   { id: 'settings', label: 'Loading settings...', progress: 100 },
 ];
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds between retries
+
+// Debug logger
+const debugLog = (action, data = null) => {
+  const timestamp = new Date().toISOString();
+  const prefix = '🔵 [InitialDataContext]';
+  if (data) {
+    console.log(`${prefix} ${timestamp} - ${action}`, data);
+  } else {
+    console.log(`${prefix} ${timestamp} - ${action}`);
+  }
+};
+
 export const InitialDataProvider = ({ children }) => {
   // Loading state
   const [isInitialLoading, setIsInitialLoading] = useState(false);
@@ -18,6 +32,11 @@ export const InitialDataProvider = ({ children }) => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [loadingError, setLoadingError] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  
+  // Retry state
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
+  const hasAttemptedLoad = useRef(false);
 
   // Data state
   const [tables, setTables] = useState([]);
@@ -36,51 +55,72 @@ export const InitialDataProvider = ({ children }) => {
   };
 
   // Load all initial data
-  const loadInitialData = useCallback(async (token) => {
-    if (!token) return;
+  const loadInitialData = useCallback(async (token, isRetry = false) => {
+    if (!token) {
+      debugLog('No token provided, skipping load');
+      return;
+    }
+
+    const attemptNumber = isRetry ? retryCount + 1 : 1;
+    debugLog(`Starting data load (Attempt ${attemptNumber}/${MAX_RETRIES})`, { token: token.substring(0, 20) + '...' });
 
     const startTime = Date.now();
     const MINIMUM_LOADING_TIME = 2000; // Minimum 2 seconds to show progress
 
     setIsInitialLoading(true);
+    setIsRetrying(isRetry);
     setLoadingProgress(0);
     setCompletedSteps([]);
     setLoadingError(null);
-    setIsDataLoaded(false);
+    if (!isRetry) {
+      setIsDataLoaded(false);
+    }
 
     try {
       // Step 1: Load Tables
       setCurrentStep('tables');
+      debugLog('API CALL: GET /api/v1/vendoremployee/all-table-list');
       const tablesData = await tableAPI.getAllTables();
+      debugLog('API RESPONSE: all-table-list', { count: tablesData?.length || 0 });
       const tableList = tablesData.filter(item => item.rtype === 'TB');
       const roomList = tablesData.filter(item => item.rtype === 'RM');
       setTables(tableList);
       setRooms(roomList);
       completeStep('tables');
+      debugLog(`Loaded ${tableList.length} tables, ${roomList.length} rooms`);
       await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
       // Step 2: Load Categories
       setCurrentStep('categories');
+      debugLog('API CALL: GET /api/v1/vendoremployee/get-categories');
       const categoriesData = await menuAPI.getCategories();
+      debugLog('API RESPONSE: get-categories', { raw: categoriesData });
       const categoryList = Array.isArray(categoriesData) 
         ? categoriesData 
         : (categoriesData.categories || categoriesData.data || []);
       setCategories(categoryList);
       completeStep('categories');
+      debugLog(`Loaded ${categoryList.length} categories`);
       await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
       // Step 3: Load Products (ALL products - no pagination, single fetch)
       setCurrentStep('products');
+      debugLog('API CALL: GET /api/v1/vendoremployee/get-products-list?limit=10000');
       const productsData = await menuAPI.getProducts(10000, 1, 'all', null);
+      debugLog('API RESPONSE: get-products-list', { count: productsData?.products?.length || 0 });
       setProducts(productsData.products || []);
       completeStep('products');
+      debugLog(`Loaded ${productsData?.products?.length || 0} products`);
       await new Promise(resolve => setTimeout(resolve, 300)); // Visual delay
 
       // Step 4: Load Settings (Cancellation Reasons - ALL)
       setCurrentStep('settings');
+      debugLog('API CALL: GET /api/v1/vendoremployee/cancellation-reasons?limit=1000');
       const reasonsData = await cancellationAPI.getReasons(1000, 1);
+      debugLog('API RESPONSE: cancellation-reasons', { count: reasonsData?.reasons?.length || 0 });
       setCancellationReasons(reasonsData.reasons || []);
       completeStep('settings');
+      debugLog(`Loaded ${reasonsData?.reasons?.length || 0} cancellation reasons`);
 
       // Ensure minimum loading time for better UX
       const elapsedTime = Date.now() - startTime;
@@ -91,23 +131,44 @@ export const InitialDataProvider = ({ children }) => {
       // All done
       setCurrentStep('');
       setIsDataLoaded(true);
+      setRetryCount(0); // Reset retry count on success
+      hasAttemptedLoad.current = true;
+      debugLog('✅ All data loaded successfully!');
       
     } catch (error) {
       console.error('Failed to load initial data:', error);
-      setLoadingError(error.message || 'Failed to load data');
+      debugLog('❌ Error loading data', { error: error.message, attempt: attemptNumber });
+      
+      const newRetryCount = retryCount + 1;
+      setRetryCount(newRetryCount);
+      
+      if (newRetryCount < MAX_RETRIES) {
+        setLoadingError(`Failed to load data. Retrying... (Attempt ${newRetryCount + 1}/${MAX_RETRIES})`);
+        debugLog(`Will retry in ${RETRY_DELAY}ms...`);
+        // Will be retried by useEffect
+      } else {
+        setLoadingError(`Failed to load data after ${MAX_RETRIES} attempts. Please refresh the page.`);
+        debugLog('Max retries reached, giving up');
+        hasAttemptedLoad.current = true; // Prevent further auto-retries
+      }
     } finally {
       setIsInitialLoading(false);
+      setIsRetrying(false);
     }
-  }, []);
+  }, [retryCount]);
 
   // Reset data (on logout)
   const resetData = useCallback(() => {
+    debugLog('Resetting all data (logout)');
     setIsInitialLoading(false);
     setLoadingProgress(0);
     setCurrentStep('');
     setCompletedSteps([]);
     setLoadingError(null);
     setIsDataLoaded(false);
+    setRetryCount(0);
+    setIsRetrying(false);
+    hasAttemptedLoad.current = false;
     setTables([]);
     setRooms([]);
     setCategories([]);
@@ -118,10 +179,26 @@ export const InitialDataProvider = ({ children }) => {
   // Auto-load data if user has token but data isn't loaded (e.g., page refresh)
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    if (token && !isDataLoaded && !isInitialLoading) {
-      loadInitialData(token);
+    
+    // Don't auto-load if already loaded, currently loading, or max retries reached
+    if (isDataLoaded || isInitialLoading || hasAttemptedLoad.current) {
+      return;
     }
-  }, [isDataLoaded, isInitialLoading, loadInitialData]);
+    
+    if (token && retryCount < MAX_RETRIES) {
+      debugLog('Auto-load triggered', { retryCount, hasAttemptedLoad: hasAttemptedLoad.current });
+      
+      if (retryCount > 0) {
+        // Delay retry
+        const timeoutId = setTimeout(() => {
+          loadInitialData(token, true);
+        }, RETRY_DELAY);
+        return () => clearTimeout(timeoutId);
+      } else {
+        loadInitialData(token, false);
+      }
+    }
+  }, [isDataLoaded, isInitialLoading, loadInitialData, retryCount]);
 
   // Refresh specific data
   const refreshTables = useCallback(async () => {
@@ -157,6 +234,11 @@ export const InitialDataProvider = ({ children }) => {
     loadingSteps: LOADING_STEPS,
     loadingError,
     isDataLoaded,
+    
+    // Retry state
+    retryCount,
+    isRetrying,
+    maxRetries: MAX_RETRIES,
     
     // Data
     tables,

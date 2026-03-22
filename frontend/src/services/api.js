@@ -2,6 +2,18 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+// Debug logger for API calls
+const apiLog = (method, url, data = null) => {
+  const timestamp = new Date().toISOString();
+  console.log(`🌐 [API] ${timestamp} - ${method} ${url}`, data || '');
+};
+
+const apiResponseLog = (method, url, status, data = null) => {
+  const timestamp = new Date().toISOString();
+  const statusEmoji = status >= 200 && status < 300 ? '✅' : '❌';
+  console.log(`${statusEmoji} [API Response] ${timestamp} - ${method} ${url} (${status})`, data ? { dataKeys: Object.keys(data) } : '');
+};
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
@@ -10,14 +22,28 @@ const api = axios.create({
   },
 });
 
-// Add auth token to requests
+// Add auth token to requests and log
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('authToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  apiLog(config.method?.toUpperCase(), config.url, config.data);
   return config;
 });
+
+// Log responses
+api.interceptors.response.use(
+  (response) => {
+    apiResponseLog(response.config.method?.toUpperCase(), response.config.url, response.status, response.data);
+    return response;
+  },
+  (error) => {
+    const status = error.response?.status || 'Network Error';
+    apiResponseLog(error.config?.method?.toUpperCase(), error.config?.url, status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 // Auth APIs
 export const authAPI = {
