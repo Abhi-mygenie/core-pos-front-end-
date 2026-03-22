@@ -195,7 +195,15 @@ const DashboardPage = () => {
 
   const handleAddOrder = () => {
     setOrderEntryTable(null);
-    setOrderEntryType("delivery");
+    // Map active dashboard tab to order type
+    if (activeChannels.length === 1 && activeChannels[0] === "delivery") {
+      setOrderEntryType("delivery");
+    } else if (activeChannels.length === 1 && activeChannels[0] === "takeAway") {
+      setOrderEntryType("takeAway");
+    } else {
+      // dineIn, all, or mixed → default to walkIn
+      setOrderEntryType("walkIn");
+    }
   };
 
   const handleOrderTypeChange = (newType) => {
