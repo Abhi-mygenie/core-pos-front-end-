@@ -19,6 +19,7 @@ const OrderModals = ({
   customizationItem,
   onCloseCustomization,
   onAddCustomizedItem,
+  editMode = false,
   // Order Notes
   showNotesModal,
   onCloseNotesModal,
@@ -57,7 +58,8 @@ const OrderModals = ({
         <ItemCustomizationModal 
           item={customizationItem} 
           onClose={onCloseCustomization} 
-          onAddToOrder={onAddCustomizedItem} 
+          onAddToOrder={onAddCustomizedItem}
+          editMode={editMode} 
         />
       )}
       

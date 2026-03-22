@@ -8,6 +8,7 @@ import MenuFiltersBar from "./MenuFiltersBar";
 import MenuItemsGrid from "./MenuItemsGrid";
 import CartHeader from "./CartHeader";
 import OrderModals from "./OrderModals";
+import AddQuantityModal from "./AddQuantityModal";
 
 /**
  * OrderEntry - 3-Panel Layout for order management
@@ -34,6 +35,7 @@ const OrderEntry = ({
     addToCart,
     addCustomizedItemToCart,
     updateQuantity,
+    updateCartItem,
     removeItem,
     placeOrder,
     updateItemNotes,
@@ -84,6 +86,13 @@ const OrderEntry = ({
   const [printAllKOT, setPrintAllKOT] = useState(true);
   const [orderNotes, setOrderNotes] = useState([]);
   const [customer, setCustomer] = useState(null);
+  
+  // Edit customization state
+  const [editingCartIndex, setEditingCartIndex] = useState(null);
+  
+  // Quantity increase prompt state
+  const [quantityPromptItem, setQuantityPromptItem] = useState(null);
+  const [quantityPromptCartIndex, setQuantityPromptCartIndex] = useState(null);
 
   // Initialize cart with existing order items
   useEffect(() => {
@@ -120,6 +129,52 @@ const OrderEntry = ({
       updateItemNotes(itemNotesModal.cartIndex, notes);
       setItemNotesModal(null);
     }
+  };
+
+  // Handle customize from cart (edit mode)
+  const handleCartCustomize = (item, cartIndex) => {
+    setEditingCartIndex(cartIndex);
+    // Open customization with existing item data
+    setCustomizationItem(item);
+  };
+
+  // Handle customization save (either add new or update existing)
+  const handleCustomizationSave = (customizedItem) => {
+    if (editingCartIndex !== null) {
+      // Edit mode - update existing cart item
+      updateCartItem(editingCartIndex, customizedItem);
+      setEditingCartIndex(null);
+    } else {
+      // Add mode - add new item
+      addCustomizedItemToCart(customizedItem);
+    }
+    setCustomizationItem(null);
+  };
+
+  // Handle quantity increase for customized items
+  const handleQuantityIncrease = (item, cartIndex) => {
+    setQuantityPromptItem(item);
+    setQuantityPromptCartIndex(cartIndex);
+  };
+
+  // Handle same customization choice
+  const handleSameCustomization = () => {
+    if (quantityPromptItem && quantityPromptCartIndex !== null) {
+      updateQuantity(quantityPromptItem.id, quantityPromptItem.qty + 1, quantityPromptCartIndex);
+    }
+    setQuantityPromptItem(null);
+    setQuantityPromptCartIndex(null);
+  };
+
+  // Handle new customization choice
+  const handleNewCustomization = () => {
+    if (quantityPromptItem) {
+      // Open customization modal for new item (not edit mode)
+      setEditingCartIndex(null);
+      setCustomizationItem(quantityPromptItem);
+    }
+    setQuantityPromptItem(null);
+    setQuantityPromptCartIndex(null);
   };
 
   return (
@@ -202,7 +257,8 @@ const OrderEntry = ({
                 handlePlaceOrder={handlePlaceOrder}
                 setShowPaymentPanel={setShowPaymentPanel}
                 onAddNote={openItemNotes}
-                onCustomize={openCustomization}
+                onCustomize={handleCartCustomize}
+                onQuantityIncrease={handleQuantityIncrease}
                 customer={customer}
                 onCustomerChange={setCustomer}
               />
@@ -218,8 +274,9 @@ const OrderEntry = ({
         orderNotes={orderNotes}
         // Customization
         customizationItem={customizationItem}
-        onCloseCustomization={() => setCustomizationItem(null)}
-        onAddCustomizedItem={(item) => { addCustomizedItemToCart(item); setCustomizationItem(null); }}
+        onCloseCustomization={() => { setCustomizationItem(null); setEditingCartIndex(null); }}
+        onAddCustomizedItem={handleCustomizationSave}
+        editMode={editingCartIndex !== null}
         // Order Notes
         showNotesModal={showNotesModal}
         onCloseNotesModal={() => setShowNotesModal(false)}
@@ -252,6 +309,16 @@ const OrderEntry = ({
         onCloseCustomer={() => setShowCustomerModal(false)}
         onSaveCustomer={setCustomer}
       />
+
+      {/* Quantity Increase Prompt Modal */}
+      {quantityPromptItem && (
+        <AddQuantityModal
+          item={quantityPromptItem}
+          onClose={() => { setQuantityPromptItem(null); setQuantityPromptCartIndex(null); }}
+          onSameCustomization={handleSameCustomization}
+          onNewCustomization={handleNewCustomization}
+        />
+      )}
     </div>
   );
 };

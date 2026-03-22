@@ -76,7 +76,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
 };
 
 // New item row (not yet placed — editable with Customize/Add Note)
-const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote, onCustomize }) => (
+const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote, onCustomize, onQuantityIncrease }) => (
   <div className="px-4 py-3 flex items-start gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
     <button onClick={() => setCancelItem(item)} className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
       <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
@@ -96,14 +96,17 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote,
         </div>
       )}
       <div className="flex items-center gap-3 mt-1">
-        <button 
-          className="text-xs hover:underline" 
-          style={{ color: COLORS.primaryGreen }}
-          onClick={() => onCustomize && onCustomize(item)}
-          data-testid={`customize-btn-${item.id}`}
-        >
-          Customize
-        </button>
+        {/* Only show Customize for customizable items */}
+        {item.customizable && (
+          <button 
+            className="text-xs hover:underline" 
+            style={{ color: COLORS.primaryGreen }}
+            onClick={() => onCustomize && onCustomize(item, cartIndex)}
+            data-testid={`customize-btn-${item.id}`}
+          >
+            {item.customizations ? "Edit" : "Customize"}
+          </button>
+        )}
         <button 
           className="text-xs hover:underline" 
           style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
@@ -116,9 +119,21 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote,
     </div>
     {/* Qty - open by default */}
     <div className="w-16 flex items-center justify-center gap-1" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-      <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
+      <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1, cartIndex); }} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-minus-${item.id}`}>−</button>
       <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-      <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }} data-testid={`qty-plus-${item.id}`}>+</button>
+      <button 
+        onClick={() => {
+          // If item is customizable and has customizations, prompt user
+          if (item.customizable && item.customizations) {
+            onQuantityIncrease && onQuantityIncrease(item, cartIndex);
+          } else {
+            updateQuantity(item.id, item.qty + 1, cartIndex);
+          }
+        }} 
+        className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-lg font-bold" 
+        style={{ color: COLORS.grayText }} 
+        data-testid={`qty-plus-${item.id}`}
+      >+</button>
     </div>
     <div className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
       <span className="font-bold" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
@@ -138,6 +153,7 @@ const CartPanel = ({
   setShowPaymentPanel,
   onAddNote,
   onCustomize,
+  onQuantityIncrease,
   customer,
   onCustomerChange,
 }) => {
@@ -324,6 +340,7 @@ const CartPanel = ({
                     updateQuantity={updateQuantity}
                     onAddNote={onAddNote}
                     onCustomize={onCustomize}
+                    onQuantityIncrease={onQuantityIncrease}
                   />
                 )}
               </div>

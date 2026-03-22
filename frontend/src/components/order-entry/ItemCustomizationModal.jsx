@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Minus, Plus, StickyNote } from "lucide-react";
 import { COLORS } from "../../constants";
 
-const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
+const ItemCustomizationModal = ({ item, onClose, onAddToOrder, editMode = false }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedVariants, setSelectedVariants] = useState({}); // { groupId: optionId }
   const [quantity, setQuantity] = useState(1);
@@ -10,13 +10,21 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
   const [notes, setNotes] = useState("");
   const [showNotes, setShowNotes] = useState(false);
 
-  // Initialize with first size/variant options if available
+  // Initialize with existing customizations (edit mode) or defaults
   useEffect(() => {
-    if (item?.sizes?.length > 0) {
+    if (!item) return;
+
+    // If editing, restore existing selections
+    if (editMode && item.selectedSize) {
+      setSelectedSize(item.selectedSize);
+    } else if (item?.sizes?.length > 0) {
       setSelectedSize(item.sizes[0]);
     }
-    // Initialize variant groups with first option
-    if (item?.variantGroups?.length > 0) {
+
+    // Restore or initialize variant groups
+    if (editMode && item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
+      setSelectedVariants(item.selectedVariants);
+    } else if (item?.variantGroups?.length > 0) {
       const initialVariants = {};
       item.variantGroups.forEach(group => {
         if (group.options?.length > 0) {
@@ -25,7 +33,34 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
       });
       setSelectedVariants(initialVariants);
     }
-  }, [item]);
+
+    // Restore addons
+    if (editMode && item.selectedAddons?.length > 0) {
+      const addonsMap = {};
+      item.selectedAddons.forEach(addon => {
+        addonsMap[addon.id] = addon.quantity || 1;
+      });
+      setSelectedAddons(addonsMap);
+    } else {
+      setSelectedAddons({});
+    }
+
+    // Restore notes
+    if (editMode && item.notes) {
+      setNotes(item.notes);
+      setShowNotes(!!item.notes);
+    } else {
+      setNotes("");
+      setShowNotes(false);
+    }
+
+    // Restore quantity (only for new items, edit keeps original qty)
+    if (!editMode) {
+      setQuantity(item.quantity || 1);
+    } else {
+      setQuantity(1); // In edit mode, we update in place, qty is managed separately
+    }
+  }, [item, editMode]);
 
   // Calculate total price
   const calculateTotal = () => {
@@ -441,7 +476,7 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
             style={{ backgroundColor: COLORS.primaryGreen }}
             data-testid="add-to-order-btn"
           >
-            Add to Order
+            {editMode ? "Update Item" : "Add to Order"}
           </button>
         </div>
       </div>

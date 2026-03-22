@@ -66,10 +66,27 @@ const useCartManager = (orderData) => {
     }]);
   }, []);
 
-  // Update quantity
-  const updateQuantity = useCallback((itemId, newQty) => {
-    setCartItems(prev => prev.map(item => 
-      item.id === itemId ? { ...item, qty: newQty } : item
+  // Update quantity - now supports cartIndex for specific item
+  const updateQuantity = useCallback((itemId, newQty, cartIndex = null) => {
+    setCartItems(prev => prev.map((item, idx) => {
+      // If cartIndex provided, use it; otherwise match by id
+      if (cartIndex !== null) {
+        return idx === cartIndex ? { ...item, qty: newQty } : item;
+      }
+      return item.id === itemId ? { ...item, qty: newQty } : item;
+    }));
+  }, []);
+
+  // Update cart item (for editing customizations)
+  const updateCartItem = useCallback((cartIndex, updatedItem) => {
+    setCartItems(prev => prev.map((item, idx) => 
+      idx === cartIndex ? { 
+        ...updatedItem, 
+        qty: item.qty, 
+        placed: item.placed, 
+        addedAt: item.addedAt,
+        status: item.status
+      } : item
     ));
   }, []);
 
@@ -105,6 +122,7 @@ const useCartManager = (orderData) => {
     addToCart,
     addCustomizedItemToCart,
     updateQuantity,
+    updateCartItem,
     removeItem,
     placeOrder,
     updateItemNotes,

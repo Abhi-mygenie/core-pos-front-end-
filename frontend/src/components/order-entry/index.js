@@ -17,3 +17,4 @@ export { default as MenuFiltersBar } from './MenuFiltersBar';
 export { default as MenuItemsGrid, MenuItemPill } from './MenuItemsGrid';
 export { default as CartHeader, OrderTypeSelector } from './CartHeader';
 export { default as OrderModals } from './OrderModals';
+export { default as AddQuantityModal } from './AddQuantityModal';
