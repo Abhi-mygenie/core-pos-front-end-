@@ -1,16 +1,24 @@
-import { ChevronRight, ArrowRightLeft, GitMerge } from "lucide-react";
+import { ChevronRight, ChevronLeft, ArrowRightLeft, GitMerge } from "lucide-react";
 import { COLORS } from "../../constants";
 import { mockMenuCategories } from "../../data";
 
-const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable }) => (
+const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onClose }) => (
   <div
     className="w-48 flex-shrink-0 flex flex-col"
     style={{ backgroundColor: COLORS.lightBg, borderRight: `1px solid ${COLORS.borderGray}` }}
   >
     <div
-      className="px-4 py-3 flex items-center justify-center gap-4"
+      className="px-4 py-3 flex items-center justify-center gap-3"
       style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
     >
+      <button
+        onClick={onClose}
+        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        title="Back to Dashboard"
+        data-testid="category-back-btn"
+      >
+        <ChevronLeft className="w-6 h-6" style={{ color: COLORS.primaryOrange }} />
+      </button>
       <button
         onClick={onShiftTable}
         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
