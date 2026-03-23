@@ -1,42 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
+import { useToast } from "../hooks/use-toast";
+import * as authService from "../api/services/authService";
 
 // Login Screen Component
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const { toast } = useToast();
+  
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  // Check for remembered email on mount
+  useEffect(() => {
+    const rememberedEmail = authService.getRememberedEmail();
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+    
+    // If already authenticated, redirect to loading
+    if (authService.isAuthenticated()) {
+      navigate("/loading");
+    }
+  }, [navigate]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter email and password",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
-    // Simulate login - in production, this would call your PHP backend
-    setTimeout(() => {
+    try {
+      // Call login API
+      await authService.login({ email, password }, rememberMe);
+      
+      // Navigate to loading screen on success
+      navigate("/loading");
+      
+    } catch (error) {
+      // Show error toast with API message
+      toast({
+        title: "Login Failed",
+        description: error.readableMessage || "Invalid credentials. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      // Store remember me preference if needed
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-        localStorage.setItem("username", username);
-      }
-      // Navigate to dashboard
-      navigate("/dashboard");
-    }, 1000);
+    }
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password - could open modal or navigate to reset page
-    alert("Forgot password functionality will be implemented");
+    toast({
+      title: "Coming Soon",
+      description: "Forgot password functionality will be available soon.",
+    });
   };
 
   const handleRequestDemo = () => {
-    // Handle demo request - could open modal or navigate to demo request page
-    alert("Request demo functionality will be implemented");
+    toast({
+      title: "Coming Soon", 
+      description: "Demo request functionality will be available soon.",
+    });
   };
 
   return (
@@ -69,7 +107,7 @@ const LoginPage = () => {
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-5">
-          {/* Username Field */}
+          {/* Email Field */}
           <div>
             <div 
               className="flex items-center gap-3 px-4 py-3 rounded-lg border focus-within:ring-2 focus-within:ring-opacity-50 transition-all"
@@ -80,14 +118,15 @@ const LoginPage = () => {
             >
               <User className="w-5 h-5 flex-shrink-0" style={{ color: COLORS.grayText }} />
               <input
-                type="text"
-                placeholder="Username or Email"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="flex-1 outline-none text-sm"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 outline-none text-sm bg-transparent"
                 style={{ color: COLORS.darkText }}
-                data-testid="login-username"
+                data-testid="login-email"
                 required
+                autoComplete="email"
               />
             </div>
           </div>
@@ -107,10 +146,11 @@ const LoginPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 outline-none text-sm"
+                className="flex-1 outline-none text-sm bg-transparent"
                 style={{ color: COLORS.darkText }}
                 data-testid="login-password"
                 required
+                autoComplete="current-password"
               />
               <button
                 type="button"
@@ -159,11 +199,21 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 disabled:opacity-70"
+            className="w-full py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
             style={{ backgroundColor: COLORS.primaryGreen }}
             data-testid="login-button"
           >
-            {isLoading ? "Logging in..." : "LOG IN"}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Logging in...
+              </span>
+            ) : (
+              "LOG IN"
+            )}
           </button>
         </form>
 
@@ -192,7 +242,7 @@ const LoginPage = () => {
           className="text-center text-xs mt-8"
           style={{ color: COLORS.grayText }}
         >
-          © 2026 Restaurant POS. All rights reserved.
+          © 2026 MyGenie Restaurant POS. All rights reserved.
         </p>
       </div>
     </div>
