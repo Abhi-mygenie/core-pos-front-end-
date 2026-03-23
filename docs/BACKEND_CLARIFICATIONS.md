@@ -1,7 +1,7 @@
 # Backend Clarifications & Open Questions
 
-> Last Updated: 2026-03-23
-> Status: Phase 1 Part B — Running orders API analyzed with Palm House restaurant data
+> Last Updated: 2026-03-24
+> Status: Phase 1 Part B+ — Running orders integrated, Unified OrderCard built, 3-zone header layout
 
 ---
 
@@ -46,15 +46,44 @@
 **Status:** RESOLVED — The `employee-orders-list` API only returns queue orders by default. No frontend filtering needed.
 
 ### Q5: `def_ord_status` Restaurant Field
-**Source:** Restaurant profile → `def_ord_status: 1`
-**Priority:** P2
-What does this field control? Is it the default status assigned to new orders?
+**Source:** Restaurant profile → `def_ord_status: 2`
+**Priority:** P1
+**Confirmed meaning:** Default order status for new items. For Mygenie Dev restaurant, value is `2` (Ready).
+**Impact on repeat-item behavior:**
+- `def_ord_status = 2 (Ready)` → Repeating an item increments qty on same row (simple behavior)
+- `def_ord_status = other value` → Repeating an item creates a new separate row (stage-level tracking)
+**Status:** CONFIRMED by user
 
 ### Q6: `f_order_status` values 4, 8, and 9
 - **Status 4:** OPEN — User will provide definition later.
-- **Status 8:** CORRECTED — NOT "Running/Active" as previously assumed. Per user: **status 8 = Paid through payment gateway**. All 24 takeaway orders in the owner@mygeniedev.com account have this status. Needs further discussion with user on how to display these. Previously mapped as "running" in F_ORDER_STATUS constant — **needs correction**.
-- **Status 9:** OPEN — Observed on 2 POS/dine-in orders. Needs team clarification. Currently shows as "unknown" (unmapped fallback). To be discussed with user.
+- **Status 8:** CONFIRMED — **Paid through payment gateway**. NOT "Running/Active" as previously assumed. All 24 takeaway orders in owner@mygeniedev.com have this status. Currently mapped as "running" in F_ORDER_STATUS constant — **needs label correction**.
+- **Status 9:** OPEN — Observed on 2 POS/dine-in orders. Needs user clarification. Currently shows as "unknown" (unmapped fallback).
 - **`order_type="WalkIn"`:** OPEN — Needs team clarification on whether it's treated differently from "pos". Currently mapped as dineIn.
+
+### Q7: `food_status` on items — CONFIRMED
+**Observation:** `food_status` on `orderDetails[]` items maps to the same scale as `f_order_status`:
+| food_status | Meaning | OrderCard Display | Item Action |
+|---|---|---|---|
+| 1 | Preparing | 🟠 Orange dot + "Preparing" | **[Ready]** button (dine-in only) |
+| 2 | Ready | 🟢 Green dot + "Ready" | **[Serve]** button (dine-in only) |
+| 5 | Served | ✅ Green check + "Served" | **[Cancel]** button (collapsed section, dine-in only) |
+**Status:** CONFIRMED by user
+
+### Q8: `order_in` / Source Detection
+**Observation:** `order_in` field indicates order source:
+- `null` / empty → Own order (POS, scan-and-order, own app)
+- `"RM"` → Room order (filtered out for POS Phase 1)
+- `"swiggy"` → Swiggy aggregator order (to be confirmed when data exists)
+- `"zomato"` → Zomato aggregator order (to be confirmed when data exists)
+**Status:** PARTIALLY CONFIRMED — Own and RM confirmed. Swiggy/Zomato values need verification with actual aggregator orders.
+
+### Q9: Waiter Display Rules
+**Observation:** `vendorEmployee.f_name` provides the staff member who punched/managed the order.
+**Confirmed rules:**
+- Shows in OrderCard header center zone for **ALL own order types** (dine-in, takeaway, delivery)
+- Does NOT show for aggregator orders (Swiggy/Zomato)
+- For scan-and-order dine-in, waiter is the staff member who accepted the order
+**Status:** CONFIRMED by user
 
 ---
 
@@ -95,9 +124,10 @@ What does this field control? Is it the default status assigned to new orders?
 **Observation:** User confirmed that auto-refresh/polling of running orders is NOT required for Phase 1B.
 **Status:** CONFIRMED by user
 
-### B15: Waiter info NOT from running orders API
-**Observation:** While `waiter_id` and `restaurantTable.waiter` fields exist in the response, user confirmed that waiter name display on table cards will come from a separate source/API in a future phase. Skip waiter display for now.
-**Status:** CONFIRMED by user
+### B15: Waiter info from running orders API — UPDATED
+**Observation:** `vendorEmployee.f_name` in the running orders response provides the waiter/staff name.
+**Updated rule:** Waiter name now displays in OrderCard header (center zone) for ALL own order types. Previously deferred — now implemented.
+**Status:** IMPLEMENTED
 
 ---
 
@@ -186,6 +216,38 @@ What does this field control? Is it the default status assigned to new orders?
 **Impact:** This is a backend data limitation for this specific account. Other restaurants may have customer names populated.
 **Status:** CONFIRMED — Not a frontend bug
 
+### B17: Dine-in can come from scan-and-order
+**Observation:** Dine-in orders are NOT limited to POS-punched. Customers can scan a QR code at the table and place orders directly.
+**Impact:** Dine-in orders from scan-and-order need an order-level **[Accept]** action (same as online orders from Swiggy/Zomato). The OrderCard handles this via `isYetToConfirm` check (f_order_status=7).
+**Status:** CONFIRMED by user
+
+### B18: Item-level actions are dine-in only
+**Observation:** User confirmed:
+- **Dine-in:** Item-level status display + actions (Preparing→[Ready], Ready→[Serve], Served→[Cancel] in collapsed section)
+- **TakeAway:** Items listed for reference only, NO individual actions
+- **Delivery:** Items listed for reference only, NO individual actions
+**Status:** CONFIRMED by user
+
+### B19: Order-level Accept action
+**Observation:** Accept is an **order-level** action, not item-level. It appears when a new order arrives from any online channel:
+- Scan-and-order (dine-in)
+- Swiggy/Zomato (takeaway/delivery)
+- Own online app orders
+Staff clicks Accept to confirm the entire order.
+**Status:** CONFIRMED by user
+
+### B20: Delivery card extra features
+**Observation:** Delivery orders have 2 additional features depending on source:
+| Source | Extra Feature |
+|---|---|
+| Swiggy/Zomato | **Rider details** — name, phone, status (from aggregator API) |
+| Own delivery | **Address details** — shown on click of 📍 icon in header (popup, not inline) |
+**Status:** CONFIRMED by user
+
+### B21: `configuration` restaurant field
+**Observation:** Restaurant profile has `configuration: "Simple"`. User initially referenced this as controlling repeat-item row behavior but then corrected — `def_ord_status` is the relevant field, not `configuration`.
+**Status:** CLARIFIED — `configuration` is a separate restaurant config type, unrelated to item row behavior
+
 ---
 
 ## API Response Sample Sizes
@@ -219,9 +281,9 @@ What does this field control? Is it the default status assigned to new orders?
 ---
 
 ## Next Steps
-1. Implement Phase 1B: Build `orderService.js`, `orderTransform.js`, `OrderContext.jsx` for running orders
-2. Confirm `f_order_status` values 4 and 8 from user (Q6)
-3. Confirm `order_status` field purpose if relevant (Q2)
+1. ~~Implement Phase 1B: Build orderService.js, orderTransform.js, OrderContext.jsx for running orders~~ DONE
+2. Confirm `f_order_status` values 4 and 9 from user (Q6) — **Status 8 confirmed as "paid via gateway"**
+3. ~~Confirm order_status field purpose~~ DONE (Q2)
 4. Get correct base URL for restaurant logo images (B5)
 5. Audit product `veg` field values for data quality (B7)
 6. Test with non-owner role accounts to verify permission gating
@@ -229,3 +291,7 @@ What does this field control? Is it the default status assigned to new orders?
 8. Provide APIs for Merge Table, Shift Table, and Transfer Food operations (UI already built)
 9. Phase 1C: Map `b_order_status` and `k_order_status` station-level statuses
 10. Phase 2: Map room orders (`rtype="RM"`) with `associated_order_list` and `room_info`
+11. Fix f_order_status=8 label from "running" to correct label (e.g., "Paid Online")
+12. Verify Swiggy/Zomato `order_in` values with actual aggregator order data (Q8)
+13. Implement POST APIs for item-level actions (Ready, Serve, Cancel) — currently console.log only
+14. Implement POST API for order-level Accept/Reject — currently console.log only
