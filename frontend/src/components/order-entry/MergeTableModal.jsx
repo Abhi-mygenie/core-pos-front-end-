@@ -161,7 +161,7 @@ const MergeTableModal = ({ currentTable, onClose, onMerge }) => {
                     style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
                     onClick={() => removeFromSelection(table.id)}
                   >
-                    {table.id} {table.amount ? `₹${table.amount.toLocaleString()}` : ""}
+                    {(table.label || table.id)} {table.amount ? `₹${table.amount.toLocaleString()}` : ""}
                     <X className="w-3 h-3" />
                   </span>
                 ))}
@@ -279,7 +279,7 @@ const MergeTableModal = ({ currentTable, onClose, onMerge }) => {
 
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-bold text-sm" style={{ color: COLORS.darkText }}>
-                                {table.id}
+                                {table.label || table.id}
                               </span>
                               <div
                                 className="w-2 h-2 rounded-full"
@@ -339,7 +339,7 @@ const MergeTableModal = ({ currentTable, onClose, onMerge }) => {
                           </div>
                         </div>
                         <span className="font-semibold text-sm" style={{ color: COLORS.darkText }}>
-                          {table.id}
+                          {table.label || table.id}
                         </span>
                         <span className="text-sm" style={{ color: COLORS.grayText }}>
                           {area.name}

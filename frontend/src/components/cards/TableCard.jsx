@@ -8,7 +8,7 @@ import { IconButton, TextButton } from "./buttons";
 import { CARD_BASE_STYLE } from "./TableCard.styles";
 
 // Table Card Component - Simplified (no expansion, uses modal)
-const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onToggleSnooze }) => {
+const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onToggleSnooze, currencySymbol = '₹' }) => {
   const statusConfig = getTableStatusConfig(table.status);
   const isActive = isTableActive(table.status);
   const hasOrders = ["occupied", "billReady"].includes(table.status);
@@ -51,11 +51,11 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           style={headerPillStyle}
         >
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">{table.id}</span>
+            <span className="text-sm font-bold">{table.label || table.id}</span>
             {table.status === "reserved" ? (
               <span className="text-xs font-semibold" style={{ color: COLORS.primaryOrange }}>Reserved</span>
             ) : table.amount ? (
-              <span className="text-xs font-semibold">₹{table.amount.toLocaleString()}</span>
+              <span className="text-xs font-semibold">{currencySymbol}{table.amount.toLocaleString()}</span>
             ) : null}
           </div>
           

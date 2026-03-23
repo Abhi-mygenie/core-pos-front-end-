@@ -1,22 +1,31 @@
 import { useState, useMemo } from "react";
 import { ChevronRight, ChevronLeft, ArrowRightLeft, GitMerge, Search, ChevronDown } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockMenuCategories } from "../../data";
 
-const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onBack }) => {
+const CategoryPanel = ({ activeCategory, onCategoryChange, onShiftTable, onMergeTable, onBack, categories = [] }) => {
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Build full category list: All + Popular + real categories from API
+  const allCategories = useMemo(() => {
+    const specials = [
+      { id: "all", name: "All" },
+      { id: "popular", name: "Popular" },
+    ];
+    const real = categories.map(c => ({ id: c.categoryId, name: c.categoryName }));
+    return [...specials, ...real];
+  }, [categories]);
   
   // Filter categories based on search
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return mockMenuCategories;
+    if (!searchQuery.trim()) return allCategories;
     const query = searchQuery.toLowerCase();
-    return mockMenuCategories.filter(cat => 
+    return allCategories.filter(cat => 
       cat.name.toLowerCase().includes(query)
     );
-  }, [searchQuery]);
+  }, [searchQuery, allCategories]);
 
   // Check if there are more categories than visible
-  const hasMoreCategories = mockMenuCategories.length > 8;
+  const hasMoreCategories = allCategories.length > 8;
 
   return (
     <div

@@ -238,7 +238,7 @@ const ShiftTableModal = ({ currentTable, onClose, onShift }) => {
                             {/* Table ID + Status Dot */}
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-bold text-sm" style={{ color: COLORS.darkText }}>
-                                {table.id}
+                                {table.label || table.id}
                               </span>
                               <div
                                 className="w-2 h-2 rounded-full"
@@ -300,7 +300,7 @@ const ShiftTableModal = ({ currentTable, onClose, onShift }) => {
                         }}
                       >
                         <span className="font-semibold text-sm" style={{ color: COLORS.darkText }}>
-                          {isCurrent ? `${table.id} ★` : table.id}
+                          {isCurrent ? `${table.label || table.id} ★` : (table.label || table.id)}
                         </span>
                         <span className="text-sm" style={{ color: COLORS.grayText }}>
                           {area.name}

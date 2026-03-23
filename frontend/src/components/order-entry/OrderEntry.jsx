@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockMenuItems, getAllMenuItems } from "../../data";
+import { useMenu } from "../../contexts";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
 import ItemCustomizationModal from "./ItemCustomizationModal";
@@ -25,6 +25,23 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable }) => {
+  const { categories, products, popularFood } = useMenu();
+
+  // Adapt real product data to the format expected by menu item pills
+  const adaptProduct = (product) => ({
+    id: product.productId,
+    name: product.productName,
+    price: product.basePrice,
+    type: product.isVeg ? 'veg' : product.hasEgg ? 'egg' : 'nonveg',
+    station: product.station || 'kitchen',
+    glutenFree: false,
+    jain: product.isJain || false,
+    vegan: false,
+    customizable: product.hasVariations || (product.addOns && product.addOns.length > 0),
+    variantGroups: product.variations || [],
+    addons: product.addOns || [],
+  });
+
   const [activeCategory, setActiveCategory] = useState("popular");
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems, setCartItems] = useState([]);
@@ -88,10 +105,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // Get current menu items based on category, search, and dietary filters
   const getFilteredItems = () => {
-    // If "all" category is selected, get all items from all categories
-    let items = activeCategory === "all" 
-      ? getAllMenuItems() 
-      : (mockMenuItems[activeCategory] || []);
+    let items;
+    if (activeCategory === "all") {
+      items = products.filter(p => p.isActive && !p.isDisabled).map(adaptProduct);
+    } else if (activeCategory === "popular") {
+      const source = popularFood.length > 0 ? popularFood : products.slice(0, 20);
+      items = source.filter(p => p.isActive && !p.isDisabled).map(adaptProduct);
+    } else {
+      items = products
+        .filter(p => p.categoryId === activeCategory && p.isActive && !p.isDisabled)
+        .map(adaptProduct);
+    }
     if (searchQuery.trim()) {
       items = items.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
@@ -199,6 +223,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onShiftTable={() => setShowShiftModal(true)}
           onMergeTable={() => setShowMergeModal(true)}
           onBack={onClose}
+          categories={categories}
         />
 
         {/* MIDDLE PANEL - Menu Items */}
@@ -364,7 +389,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     data-testid="order-type-badge"
                   >
                     {orderType === "walkIn" && table ? (
-                      <span>{table.id}</span>
+                      <span>{table.label || table.id}</span>
                     ) : (
                       <>
                         {(() => { const Icon = ORDER_TYPES.find(t => t.id === orderType)?.icon; return Icon ? <Icon className="w-4 h-4" /> : null; })()}
@@ -408,7 +433,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                           const aPri = DROPDOWN_TABLE_SORT[a.status] ?? 5;
                           const bPri = DROPDOWN_TABLE_SORT[b.status] ?? 5;
                           if (aPri !== bPri) return aPri - bPri;
-                          return (parseInt(a.id.replace(/\D/g, ''), 10) || 0) - (parseInt(b.id.replace(/\D/g, ''), 10) || 0);
+                          return (parseInt((a.label || a.id).replace(/\D/g, ''), 10) || 0) - (parseInt((b.label || b.id).replace(/\D/g, ''), 10) || 0);
                         })
                         .map(t => {
                           const isSelected = table?.id === t.id && orderType === "walkIn";
@@ -424,7 +449,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                               }}
                               onClick={() => { onSelectTable?.(t); setShowTypeDropdown(false); }}
                             >
-                              <span className="font-medium">{t.id}</span>
+                              <span className="font-medium">{t.label || t.id}</span>
                               <span className="text-xs capitalize" style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}>
                                 {t.status === "available" ? "Available" : t.status === "paid" ? "Clear" : t.status === "billReady" ? "Bill Ready" : t.status === "yetToConfirm" ? "Clear" : t.status}
                               </span>

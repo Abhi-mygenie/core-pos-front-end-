@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLORS } from "../constants";
-import { mockTables, mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems, mockFlatTables } from "../data";
+import { mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems } from "../data";
 import { Sidebar, Header } from "../components/layout";
 import { TableSection, RoomSection } from "../components/sections";
 import { DineInCard, DeliveryCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
-import { useRestaurant } from "../contexts";
+import { useRestaurant, useTables } from "../contexts";
 import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
 import MenuManagementPanel from "../components/panels/MenuManagementPanel";
@@ -80,7 +80,8 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 // Main Home/Dashboard Component
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { isLoaded: restaurantLoaded } = useRestaurant();
+  const { isLoaded: restaurantLoaded, currencySymbol } = useRestaurant();
+  const { tables: apiTables, isLoaded: tablesLoaded } = useTables();
 
   // Redirect to login if not authenticated, or to loading if data not loaded
   useEffect(() => {
@@ -92,8 +93,8 @@ const DashboardPage = () => {
   }, [navigate, restaurantLoaded]);
 
   // --- State ---
-  const [tables, setTables] = useState(mockTables);
-  const [flatTables, setFlatTables] = useState(mockFlatTables);
+  const [tables, setTables] = useState({});
+  const [flatTables, setFlatTables] = useState([]);
   const [rooms, setRooms] = useState(mockRooms);
   const [isOnline] = useState(true);
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn"]);
@@ -108,6 +109,41 @@ const DashboardPage = () => {
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // --- Seed tables from real API data ---
+  useEffect(() => {
+    if (!tablesLoaded || apiTables.length === 0) return;
+
+    const adaptTable = (t) => ({
+      id: String(t.tableId),
+      label: `T${t.tableNumber}`,
+      status: t.isOccupied ? 'occupied' : 'available',
+      tableId: t.tableId,
+    });
+
+    const hasSections = apiTables.some(t => t.sectionName);
+
+    if (hasSections) {
+      const grouped = {};
+      apiTables.forEach(table => {
+        if (table.status === 'disabled') return;
+        const section = table.sectionName || 'Default';
+        const key = section.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        if (!grouped[key]) {
+          grouped[key] = { name: section, prefix: 'T', tables: [] };
+        }
+        grouped[key].tables.push(adaptTable(table));
+      });
+      setTables(grouped);
+      setFlatTables([]);
+    } else {
+      const flat = apiTables
+        .filter(t => t.status !== 'disabled')
+        .map(adaptTable);
+      setTables({});
+      setFlatTables(flat);
+    }
+  }, [tablesLoaded, apiTables]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -314,6 +350,7 @@ const DashboardPage = () => {
                         matchingTableIds={matchingTableIds}
                         snoozedOrders={snoozedOrders}
                         onToggleSnooze={toggleSnooze}
+                        currencySymbol={currencySymbol}
                       />
                     </div>
                   ))}
@@ -339,6 +376,7 @@ const DashboardPage = () => {
                         onUpdateStatus={handleUpdateTableStatus}
                         isSnoozed={snoozedOrders?.has(table.id)}
                         onToggleSnooze={toggleSnooze}
+                        currencySymbol={currencySymbol}
                       />
                     ))}
                   </div>

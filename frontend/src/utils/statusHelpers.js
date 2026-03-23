@@ -136,8 +136,10 @@ export const sortByActiveFirst = (items, priorityMap, activeFirst = true) => {
       const bPriority = priorityMap[b.status] ?? maxPriority;
       if (aPriority !== bPriority) return aPriority - bPriority;
     }
-    const aNum = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
-    const bNum = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+    const aStr = a.label || a.id;
+    const bStr = b.label || b.id;
+    const aNum = parseInt(aStr.replace(/\D/g, ''), 10) || 0;
+    const bNum = parseInt(bStr.replace(/\D/g, ''), 10) || 0;
     return aNum - bNum;
   });
 };

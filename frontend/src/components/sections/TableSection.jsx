@@ -3,7 +3,7 @@ import TableCard from "../cards/TableCard";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../../utils";
 
 // Section Component for Table View
-const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, activeFirst, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze }) => {
+const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, activeFirst, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol }) => {
   // Filter tables based on search
   const filteredTables = matchingTableIds === null 
     ? section.tables 
@@ -40,6 +40,7 @@ const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, acti
             onUpdateStatus={onUpdateStatus}
             isSnoozed={snoozedOrders?.has(table.id)}
             onToggleSnooze={onToggleSnooze}
+            currencySymbol={currencySymbol}
           />
         ))}
       </div>

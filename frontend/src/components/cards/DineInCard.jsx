@@ -47,7 +47,7 @@ const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
           </div>
           
           {/* Table ID + Customer Name + Phone + Time - all in one line */}
-          <span className="text-base font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>{table.id}</span>
+          <span className="text-base font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>{table.label || table.id}</span>
           {orderData.customer && (
             <span className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>{orderData.customer}</span>
           )}
