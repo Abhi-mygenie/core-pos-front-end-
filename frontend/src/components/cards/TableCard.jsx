@@ -23,10 +23,16 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
     minHeight: CONFIG.CARD_MIN_HEIGHT,
   }), [statusConfig.borderColor]);
 
-  const headerPillStyle = useMemo(() => ({
-    backgroundColor: "#E5E7EB",
-    color: COLORS.darkText,
-  }), []);
+  const headerPillStyle = useMemo(() => {
+    // Different background colors by order type
+    let bg = '#E5E7EB'; // Default gray for dine-in/walk-in
+    if (table.orderType === 'takeAway') bg = '#FFF3E0'; // Light amber
+    else if (table.orderType === 'delivery') bg = '#E3F2FD'; // Light blue
+    return {
+      backgroundColor: bg,
+      color: COLORS.darkText,
+    };
+  }, [table.orderType]);
 
   const handleCardClick = () => {
     if (hasOrders || isYetToConfirm) {

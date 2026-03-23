@@ -122,21 +122,21 @@ const Header = ({
 
   // Determine which statuses to show based on selected channels and view
   const isRoomOnly = activeChannels.length === 1 && activeChannels[0] === "room";
-  const isDineInTableView = activeChannels.length === 1 && activeChannels[0] === "dineIn" && activeView === "table";
+  const isTableView = !isRoomOnly && activeView === "table";
   
   // Context-aware status filters
   let statuses;
   if (isRoomOnly) {
     // Room View: Show room-specific statuses
     statuses = roomStatusesMain;
-  } else if (isDineInTableView) {
-    // Dine-In Table View: Show only Schedule and Confirm
+  } else if (isTableView) {
+    // Grid/Table View (any channel): Only Schedule and Confirm
     statuses = [
       { id: "schedule", label: "Schedule" },
       { id: "confirm", label: "Confirm" }
     ];
   } else {
-    // Order View (Delivery, TakeAway, Dine-In Order View, or Mixed): Show all order statuses
+    // Order/List View: Show all order statuses
     statuses = orderStatuses;
   }
 
