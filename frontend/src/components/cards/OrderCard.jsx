@@ -115,11 +115,11 @@ const OrderCard = ({
           {isDelivery && isOwn && (
             <button
               data-testid={`address-btn-${orderId}`}
-              className="p-1 hover:bg-gray-100 rounded flex-shrink-0"
+              className="p-2.5 hover:bg-gray-100 rounded flex-shrink-0"
               onClick={() => setShowAddress(!showAddress)}
               title="View address"
             >
-              <MapPin className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+              <MapPin className="w-4 h-4" style={{ color: COLORS.grayText }} />
             </button>
           )}
         </div>
@@ -133,10 +133,10 @@ const OrderCard = ({
             <button
               data-testid={`snooze-btn-${orderId}`}
               onClick={(e) => { e.stopPropagation(); onToggleSnooze(String(orderId)); }}
-              className={`p-1 rounded flex-shrink-0 transition-colors ${isSnoozed ? "bg-orange-100" : "hover:bg-gray-100"}`}
+              className={`p-2.5 rounded flex-shrink-0 transition-colors ${isSnoozed ? "bg-orange-100" : "hover:bg-gray-100"}`}
               title={isSnoozed ? "Unsnooze" : "Snooze"}
             >
-              <Clock className="w-3.5 h-3.5" style={{ color: isSnoozed ? COLORS.primaryOrange : COLORS.grayText }} />
+              <Clock className="w-4 h-4" style={{ color: isSnoozed ? COLORS.primaryOrange : COLORS.grayText }} />
             </button>
           )}
         </div>
@@ -162,22 +162,22 @@ const OrderCard = ({
             activeItems.map((item) => {
               const cfg = ITEM_STATUS[item.status] || ITEM_STATUS.preparing;
               return (
-                <div key={item.id} className="flex items-center justify-between py-1.5">
+                <div key={item.id} className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div
-                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: cfg.color }}
                     />
                     <span className="text-sm truncate" style={{ color: COLORS.darkText }}>
                       {item.name} ({item.qty})
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-3 flex-shrink-0">
                     <span className="text-xs" style={{ color: cfg.color }}>{cfg.label}</span>
                     {cfg.action && item.status !== "served" && (
                       <button
                         data-testid={`item-action-${item.id}`}
-                        className="px-2.5 py-1 text-[10px] font-bold rounded"
+                        className="px-4 py-2 text-xs font-bold rounded min-h-[44px] min-w-[44px]"
                         style={{
                           backgroundColor: item.status === "ready" ? COLORS.primaryGreen : COLORS.primaryOrange,
                           color: "white",
@@ -223,21 +223,21 @@ const OrderCard = ({
         <div className="border-b" style={{ borderColor: COLORS.borderGray }}>
           <button
             data-testid={`served-toggle-${orderId}`}
-            className="w-full px-4 py-2 flex items-center justify-between text-xs hover:bg-gray-50"
+            className="w-full px-4 py-3 flex items-center justify-between text-xs hover:bg-gray-50 min-h-[44px]"
             style={{ color: COLORS.grayText }}
             onClick={() => setShowServed(!showServed)}
           >
             <span>Served Items ({servedItems.length})</span>
-            {showServed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {showServed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
 
           {showServed && (
             <div className="px-4 pb-2">
               {servedItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-1">
+                <div key={item.id} className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-2">
                     <div
-                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: COLORS.primaryGreen }}
                     />
                     <span className="text-xs" style={{ color: COLORS.grayText }}>
@@ -247,7 +247,7 @@ const OrderCard = ({
                   </div>
                   <button
                     data-testid={`cancel-item-${item.id}`}
-                    className="px-2 py-0.5 text-[10px] font-medium rounded border"
+                    className="px-3 py-2 text-xs font-medium rounded border min-h-[44px]"
                     style={{ borderColor: COLORS.errorText, color: COLORS.errorText }}
                     onClick={() => handleItemAction(item.id, "Cancel")}
                   >
@@ -286,38 +286,38 @@ const OrderCard = ({
       )}
 
       {/* ── FOOTER ACTIONS ── */}
-      <div className="px-4 py-2.5 flex items-center justify-between" style={{ backgroundColor: COLORS.sectionBg }}>
-        <div className="flex items-center gap-2">
+      <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: COLORS.sectionBg }}>
+        <div className="flex items-center gap-3">
           <button
             data-testid={`bill-btn-${orderId}`}
-            className="px-3.5 py-1.5 text-xs font-medium rounded border"
+            className="px-4 py-2.5 text-sm font-medium rounded border min-h-[44px]"
             style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
           >
             Bill
           </button>
           <button
             data-testid={`kot-btn-${orderId}`}
-            className="px-3.5 py-1.5 text-xs font-medium rounded border"
+            className="px-4 py-2.5 text-sm font-medium rounded border min-h-[44px]"
             style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
           >
             KOT
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {isYetToConfirm ? (
             /* New online order — Accept flow */
             <>
               <button
                 data-testid={`reject-btn-${orderId}`}
-                className="p-1.5 rounded border"
+                className="p-2.5 rounded border min-h-[44px] min-w-[44px] flex items-center justify-center"
                 style={{ borderColor: COLORS.errorText, color: COLORS.errorText }}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-5 h-5" />
               </button>
               <button
                 data-testid={`accept-btn-${orderId}`}
-                className="px-3.5 py-1.5 text-xs font-bold rounded"
+                className="px-5 py-2.5 text-sm font-bold rounded min-h-[44px]"
                 style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
                 onClick={handleAccept}
               >
@@ -329,14 +329,14 @@ const OrderCard = ({
             <>
               <button
                 data-testid={`cancel-btn-${orderId}`}
-                className="p-1.5 rounded border"
+                className="p-2.5 rounded border min-h-[44px] min-w-[44px] flex items-center justify-center"
                 style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-5 h-5" />
               </button>
               <button
                 data-testid={`collect-btn-${orderId}`}
-                className="px-3.5 py-1.5 text-xs font-bold rounded"
+                className="px-5 py-2.5 text-sm font-bold rounded min-h-[44px]"
                 style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
                 onClick={handleCollect}
               >
