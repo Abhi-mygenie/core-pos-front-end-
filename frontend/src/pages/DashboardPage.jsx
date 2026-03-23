@@ -158,15 +158,16 @@ const DashboardPage = () => {
     loadingError,
     retryCount,
     maxRetries,
-    loadingStats
+    loadingStats,
+    deliveryOrders: apiDeliveryOrders,
+    takeAwayOrders: apiTakeAwayOrders,
+    dineInOrders: apiDineInOrders
   } = useInitialData();
   
   // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
   const [rooms, setRooms] = useState({});
-  const [deliveryOrders, setDeliveryOrders] = useState([]);
-  const [takeAwayOrders, setTakeAwayOrders] = useState([]);
   const [isOnline] = useState(true);
   const [activeChannels, setActiveChannels] = useState(CONFIG.DEFAULT_CHANNELS);
   const [activeStatuses, setActiveStatuses] = useState(CONFIG.DEFAULT_STATUSES);
@@ -182,21 +183,46 @@ const DashboardPage = () => {
   const [menuManagementOpen, setMenuManagementOpen] = useState(false);
 
   // Transform API data to frontend format
-  const transformTableData = useCallback((tableList, roomList) => {
-    // Transform to frontend format and group by section (title)
-    const transformTable = (item) => ({
-      id: `T${item.table_no}`,
-      tableId: item.id,
-      tableNo: item.table_no,
-      status: item.engage === 'Yes' ? 'active' : 'available',
-      waiterId: item.waiter_id,
-      section: item.title || 'Main',
-      customer: '',
-      waiter: '',
-      items: [],
-      amount: 0,
-      time: '',
+  const transformTableData = useCallback((tableList, roomList, dineInOrdersList) => {
+    // Create a map of tableId -> orders for quick lookup
+    const ordersByTableId = {};
+    (dineInOrdersList || []).forEach(order => {
+      if (order.tableId) {
+        if (!ordersByTableId[order.tableId]) {
+          ordersByTableId[order.tableId] = [];
+        }
+        ordersByTableId[order.tableId].push(order);
+      }
     });
+
+    // Transform to frontend format and group by section (title)
+    const transformTable = (item) => {
+      const tableOrders = ordersByTableId[item.id] || [];
+      const hasOrders = tableOrders.length > 0;
+      const latestOrder = tableOrders[0]; // Most recent order
+      
+      return {
+        id: `T${item.table_no}`,
+        tableId: item.id,
+        tableNo: item.table_no,
+        status: item.engage === 'Yes' ? 'active' : 'available',
+        waiterId: item.waiter_id,
+        section: item.title || 'Main',
+        // Populate from order if available
+        customer: latestOrder?.customer || '',
+        waiter: latestOrder?.waiterName || '',
+        items: latestOrder?.items || [],
+        amount: latestOrder?.amount || 0,
+        time: latestOrder?.time || '',
+        // Order data
+        orders: tableOrders,
+        orderCount: tableOrders.length,
+        hasOrders: hasOrders,
+        latestOrder: latestOrder,
+        paymentStatus: latestOrder?.paymentStatus || '',
+        orderStatus: latestOrder?.status || '',
+      };
+    };
     
     const transformRoom = (item) => ({
       id: `R${item.table_no}`,
@@ -246,9 +272,9 @@ const DashboardPage = () => {
   // Use preloaded data from context ONLY (no fallback API calls)
   useEffect(() => {
     if (isDataLoaded && apiTables.length > 0) {
-      transformTableData(apiTables, apiRooms);
+      transformTableData(apiTables, apiRooms, apiDineInOrders);
     }
-  }, [isDataLoaded, apiTables, apiRooms, transformTableData]);
+  }, [isDataLoaded, apiTables, apiRooms, apiDineInOrders, transformTableData]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -295,16 +321,16 @@ const DashboardPage = () => {
     }
 
     if (activeChannels.includes("delivery")) {
-      results.delivery = searchItems(deliveryOrders, query, item => ({
-        id: item.id,
-        all: [item.id, item.customer, item.phone]
+      results.delivery = searchItems(apiDeliveryOrders, query, item => ({
+        id: item.orderId || item.id,
+        all: [item.orderId || item.id, item.customer, item.phone]
       }));
     }
 
     if (activeChannels.includes("takeAway")) {
-      results.takeAway = searchItems(takeAwayOrders, query, item => ({
-        id: item.id,
-        all: [item.id, item.customer, item.phone]
+      results.takeAway = searchItems(apiTakeAwayOrders, query, item => ({
+        id: item.orderId || item.id,
+        all: [item.orderId || item.id, item.customer, item.phone]
       }));
     }
 
@@ -316,7 +342,7 @@ const DashboardPage = () => {
     }
 
     return results;
-  }, [searchQuery, activeChannels, allTablesList, allRoomsList, deliveryOrders, takeAwayOrders]);
+  }, [searchQuery, activeChannels, allTablesList, allRoomsList, apiDeliveryOrders, apiTakeAwayOrders]);
 
   const matchingTableIds = useMemo(() => getMatchingIds(searchQuery, searchResults.tables), [searchQuery, searchResults]);
   const matchingRoomIds = useMemo(() => getMatchingIds(searchQuery, searchResults.rooms), [searchQuery, searchResults]);
@@ -539,7 +565,7 @@ const DashboardPage = () => {
             {activeChannels.includes("delivery") && (
               <OrderListSection
                 title="Delivery Orders"
-                orders={deliveryOrders}
+                orders={apiDeliveryOrders}
                 matchingIds={matchingDeliveryIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}
@@ -551,7 +577,7 @@ const DashboardPage = () => {
             {activeChannels.includes("takeAway") && (
               <OrderListSection
                 title="TakeAway Orders"
-                orders={takeAwayOrders}
+                orders={apiTakeAwayOrders}
                 matchingIds={matchingTakeAwayIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}

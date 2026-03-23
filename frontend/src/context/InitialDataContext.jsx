@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-import { tableAPI, menuAPI, cancellationAPI } from '../services/api';
+import { tableAPI, menuAPI, cancellationAPI, orderAPI } from '../services/api';
+import { transformAllOrders, splitOrdersByType } from '../utils/orderTransformer';
 
 const InitialDataContext = createContext(null);
 
@@ -8,10 +9,11 @@ const RETRY_DELAY = 2000; // 2 seconds between retries
 
 // Loading steps configuration
 const LOADING_STEPS = [
-  { id: 'tables', label: 'Loading tables...', progress: 25 },
-  { id: 'categories', label: 'Loading categories...', progress: 50 },
-  { id: 'products', label: 'Loading products...', progress: 80 },
-  { id: 'settings', label: 'Loading settings...', progress: 100 },
+  { id: 'tables', label: 'Loading tables...', progress: 20 },
+  { id: 'categories', label: 'Loading categories...', progress: 40 },
+  { id: 'products', label: 'Loading products...', progress: 60 },
+  { id: 'settings', label: 'Loading settings...', progress: 80 },
+  { id: 'orders', label: 'Loading orders...', progress: 100 },
 ];
 
 // Debug logger
@@ -40,7 +42,8 @@ export const InitialDataProvider = ({ children }) => {
     rooms: { loaded: 0, total: 0 },
     categories: { loaded: 0, total: 0 },
     products: { loaded: 0, total: 0 },
-    cancellationReasons: { loaded: 0, total: 0 }
+    cancellationReasons: { loaded: 0, total: 0 },
+    orders: { loaded: 0, total: 0 }
   });
   
   // Retry state
@@ -54,6 +57,12 @@ export const InitialDataProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [cancellationReasons, setCancellationReasons] = useState([]);
+  
+  // Orders state
+  const [orders, setOrders] = useState([]);
+  const [deliveryOrders, setDeliveryOrders] = useState([]);
+  const [takeAwayOrders, setTakeAwayOrders] = useState([]);
+  const [dineInOrders, setDineInOrders] = useState([]);
 
   // Mark step as completed
   const completeStep = (stepId) => {
@@ -157,14 +166,14 @@ export const InitialDataProvider = ({ children }) => {
       }));
       
       setProducts(productList);
-      setLoadingProgress(80);
+      setLoadingProgress(60);
       completeStep('products');
       debugLog(`Loaded ${productList.length} products`);
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Step 4: Load Cancellation Reasons
       setCurrentStep('settings');
-      setLoadingProgress(85);
+      setLoadingProgress(65);
       debugLog('API CALL: GET /api/v1/vendoremployee/cancellation-reasons?limit=1000');
       const reasonsData = await cancellationAPI.getReasons(1000, 1);
       debugLog('API RESPONSE: cancellation-reasons', { count: reasonsData?.reasons?.length || 0 });
@@ -178,9 +187,35 @@ export const InitialDataProvider = ({ children }) => {
       }));
       
       setCancellationReasons(reasonsList);
-      setLoadingProgress(100);
+      setLoadingProgress(80);
       completeStep('settings');
       debugLog(`Loaded ${reasonsList.length} cancellation reasons`);
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Step 5: Load Orders
+      setCurrentStep('orders');
+      setLoadingProgress(85);
+      debugLog('API CALL: POST /api/v1/vendoremployee/station-order-list');
+      const ordersData = await orderAPI.getStationOrders('KDS');
+      debugLog('API RESPONSE: station-order-list', { count: ordersData?.orders?.length || 0 });
+      
+      const rawOrders = ordersData.orders || [];
+      const transformedOrders = transformAllOrders(rawOrders);
+      const splitOrders = splitOrdersByType(transformedOrders);
+      
+      // Update stats
+      setLoadingStats(prev => ({
+        ...prev,
+        orders: { loaded: transformedOrders.length, total: transformedOrders.length }
+      }));
+      
+      setOrders(transformedOrders);
+      setDeliveryOrders(splitOrders.delivery);
+      setTakeAwayOrders(splitOrders.takeAway);
+      setDineInOrders(splitOrders.dineIn);
+      setLoadingProgress(100);
+      completeStep('orders');
+      debugLog(`Loaded ${transformedOrders.length} orders (${splitOrders.delivery.length} delivery, ${splitOrders.takeAway.length} takeaway, ${splitOrders.dineIn.length} dine-in)`);
 
       // Ensure minimum loading time for better UX
       const elapsedTime = Date.now() - startTime;
@@ -249,6 +284,10 @@ export const InitialDataProvider = ({ children }) => {
     setCategories([]);
     setProducts([]);
     setCancellationReasons([]);
+    setOrders([]);
+    setDeliveryOrders([]);
+    setTakeAwayOrders([]);
+    setDineInOrders([]);
   }, []);
 
   // Auto-load data if user has token but data isn't loaded (e.g., page refresh)
@@ -332,6 +371,12 @@ export const InitialDataProvider = ({ children }) => {
     products,
     cancellationReasons,
     
+    // Orders data
+    orders,
+    deliveryOrders,
+    takeAwayOrders,
+    dineInOrders,
+    
     // Actions
     loadInitialData,
     resetData,
@@ -341,6 +386,10 @@ export const InitialDataProvider = ({ children }) => {
     setRooms,
     setCategories,
     setProducts,
+    setOrders,
+    setDeliveryOrders,
+    setTakeAwayOrders,
+    setDineInOrders,
   };
 
   return (

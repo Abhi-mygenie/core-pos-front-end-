@@ -120,4 +120,22 @@ export const cancellationAPI = {
   // TODO: Add create/update/delete when APIs are provided
 };
 
+// Order APIs
+export const orderAPI = {
+  // Get station orders (for KDS, kitchen display)
+  getStationOrders: async (roleName = 'KDS') => {
+    const formData = new FormData();
+    formData.append('role_name', roleName);
+    
+    const response = await api.post('/api/v1/vendoremployee/station-order-list', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+  
+  // TODO: Add order status update, cancel order, etc. when APIs are provided
+};
+
 export default api;

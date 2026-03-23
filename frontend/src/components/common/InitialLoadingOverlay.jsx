@@ -7,6 +7,7 @@ const LOADING_STEPS = [
   { id: 'categories', label: 'Categories' },
   { id: 'products', label: 'Menu Items' },
   { id: 'settings', label: 'Settings' },
+  { id: 'orders', label: 'Orders' },
 ];
 
 const InitialLoadingOverlay = ({ 
@@ -57,6 +58,13 @@ const InitialLoadingOverlay = ({
           return `${reasonsCount} Settings loaded`;
         }
         return 'Loading settings...';
+      
+      case 'orders':
+        const ordersCount = stats.orders?.loaded || 0;
+        if (ordersCount > 0) {
+          return `${ordersCount} Orders loaded`;
+        }
+        return 'Loading orders...';
       
       default:
         return step.label;
