@@ -2,19 +2,50 @@ import { useMemo } from "react";
 import { Printer, Clock, X, Check, PlusSquare } from "lucide-react";
 import PropTypes from 'prop-types';
 import { COLORS, CONFIG } from "../../constants";
-import { mockOrderItems } from "../../data";
 import { getTableStatusConfig, isTableActive } from "../../utils";
 import { IconButton, TextButton } from "./buttons";
 import { CARD_BASE_STYLE } from "./TableCard.styles";
 
 // Table Card Component - Simplified (no expansion, uses modal)
 const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onToggleSnooze }) => {
-  const statusConfig = getTableStatusConfig(table.status);
-  const isActive = isTableActive(table.status);
-  const hasOrders = ["occupied", "billReady"].includes(table.status);
-  const isYetToConfirm = table.status === "yetToConfirm";
+  // Check if table has real orders from API
+  const hasRealOrders = table.hasOrders && table.orders && table.orders.length > 0;
+  const latestOrder = table.latestOrder;
   
-  const orderData = mockOrderItems[table.id] || { waiter: "", items: [] };
+  // Determine status based on order data
+  const derivedStatus = useMemo(() => {
+    if (hasRealOrders && latestOrder) {
+      // Map order status to table status
+      switch (latestOrder.status) {
+        case 'pending': return 'yetToConfirm';
+        case 'preparing': return 'occupied';
+        case 'ready': return 'billReady';
+        case 'served': return 'paid';
+        case 'paid': return 'paid';
+        default: return table.status || 'available';
+      }
+    }
+    return table.status || 'available';
+  }, [hasRealOrders, latestOrder, table.status]);
+
+  const statusConfig = getTableStatusConfig(derivedStatus);
+  const isActive = isTableActive(derivedStatus) || hasRealOrders;
+  const hasOrders = ["occupied", "billReady"].includes(derivedStatus) || hasRealOrders;
+  const isYetToConfirm = derivedStatus === "yetToConfirm";
+  
+  // Use real order data if available
+  const orderData = useMemo(() => {
+    if (hasRealOrders && latestOrder) {
+      return {
+        customer: latestOrder.customer || 'Guest',
+        waiter: latestOrder.waiterName || '',
+        items: latestOrder.items || [],
+        amount: latestOrder.amount || 0,
+        time: latestOrder.time || ''
+      };
+    }
+    return { customer: '', waiter: '', items: [], amount: 0, time: '' };
+  }, [hasRealOrders, latestOrder]);
 
   // Memoize dynamic styles to prevent unnecessary re-renders
   const cardStyle = useMemo(() => ({
@@ -52,8 +83,10 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
         >
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">{table.id}</span>
-            {table.status === "reserved" ? (
+            {derivedStatus === "reserved" ? (
               <span className="text-xs font-semibold" style={{ color: COLORS.primaryOrange }}>Reserved</span>
+            ) : orderData.amount > 0 ? (
+              <span className="text-xs font-semibold">₹{orderData.amount.toLocaleString()}</span>
             ) : table.amount ? (
               <span className="text-xs font-semibold">₹{table.amount.toLocaleString()}</span>
             ) : null}
@@ -88,7 +121,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           <div className="mt-2.5 flex-1 flex flex-col">
             {/* Customer Name - Show NA if not captured */}
             <div className="text-lg font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.darkText }}>
-              {table.status === "reserved" 
+              {derivedStatus === "reserved" 
                 ? table.reservedFor 
                 : orderData.customer 
                   ? orderData.customer 
@@ -100,7 +133,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
               {(hasOrders || isYetToConfirm) && orderData.waiter && (
                 <span>{orderData.waiter} · </span>
               )}
-              <span>{table.status === "reserved" ? table.reservedTime : table.time}</span>
+              <span>{derivedStatus === "reserved" ? table.reservedTime : (orderData.time || table.time)}</span>
             </div>
 
             {/* Action Buttons */}
@@ -145,7 +178,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
                   Bill
                 </TextButton>
               </div>
-            ) : table.status === "reserved" ? (
+            ) : derivedStatus === "reserved" ? (
               /* Reserved: Cancel (red X) left + Seat button right */
               <div className="flex gap-2">
                 <IconButton
@@ -187,18 +220,25 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
 TableCard.propTypes = {
   table: PropTypes.shape({
     id: PropTypes.string.isRequired,
+    tableId: PropTypes.number,
     status: PropTypes.oneOf([
       'available', 
       'occupied', 
       'reserved', 
       'paid', 
       'yetToConfirm', 
-      'billReady'
-    ]).isRequired,
+      'billReady',
+      'active'
+    ]),
     amount: PropTypes.number,
     reservedFor: PropTypes.string,
     reservedTime: PropTypes.string,
     time: PropTypes.string,
+    // Order-related props
+    hasOrders: PropTypes.bool,
+    orders: PropTypes.array,
+    latestOrder: PropTypes.object,
+    orderCount: PropTypes.number,
   }).isRequired,
   onClick: PropTypes.func.isRequired,
   onOpenModal: PropTypes.func,

@@ -31,7 +31,9 @@ export const transformApiOrderToUI = (apiOrder) => {
   const orderTypeMap = {
     'take_away': 'takeAway',
     'dine_in': 'dineIn',
-    'delivery': 'delivery'
+    'dinein': 'dineIn',      // API returns 'dinein' without underscore
+    'delivery': 'delivery',
+    'pos': 'dineIn'          // POS orders treated as dine-in
   };
 
   return {
