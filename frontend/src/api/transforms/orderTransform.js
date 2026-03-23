@@ -14,11 +14,11 @@ const computeElapsedTime = (dateStr) => {
   const diffMs = now - created;
   const diffMin = Math.floor(diffMs / 60000);
   if (diffMin < 1) return 'Just now';
-  if (diffMin < 60) return `${diffMin} min`;
+  if (diffMin < 60) return `${diffMin} mins`;
   const diffHrs = Math.floor(diffMin / 60);
-  if (diffHrs < 24) return `${diffHrs} hr${diffHrs > 1 ? 's' : ''}`;
+  if (diffHrs < 24) return `${diffHrs} hrs`;
   const diffDays = Math.floor(diffHrs / 24);
-  return `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+  return `${diffDays} days`;
 };
 
 /**
@@ -131,6 +131,10 @@ export const fromAPI = {
 
       // Staff
       punchedBy: employee.f_name || '',
+      waiter: employee.f_name || '',
+
+      // Source (own, swiggy, zomato, etc.)
+      source: (api.order_in || 'own').toLowerCase(),
 
       // Items
       items: (api.orderDetails || []).map(fromAPI.orderItem),

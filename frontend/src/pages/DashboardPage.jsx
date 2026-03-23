@@ -4,7 +4,7 @@ import { COLORS } from "../constants";
 import { mockRooms } from "../data";
 import { Sidebar, Header } from "../components/layout";
 import { TableSection, RoomSection } from "../components/sections";
-import { DineInCard, DeliveryCard } from "../components/cards";
+import { DineInCard, DeliveryCard, OrderCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
@@ -54,8 +54,8 @@ const EmptyTableState = () => (
   </div>
 );
 
-// Reusable order list section (Delivery/TakeAway)
-const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleSnooze, className }) => (
+// Reusable order list section (Delivery/TakeAway) — now uses OrderCard
+const OrderListSection = ({ title, orders, orderType, matchingIds, snoozedOrders, onToggleSnooze, onEdit, className }) => (
   <div className={className}>
     <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
       <span className="font-medium" style={{ color: COLORS.darkText }}>{title}</span>
@@ -63,15 +63,17 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
       <span>{matchingIds === null ? orders.length : matchingIds.size} Orders</span>
     </div>
     {orders.length > 0 ? (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
         {orders
           .filter(order => matchingIds === null || matchingIds.has(String(order.orderId)))
           .map((order) => (
-            <DeliveryCard
+            <OrderCard
               key={order.orderId}
               order={order}
+              orderType={orderType}
               isSnoozed={snoozedOrders.has(String(order.orderId))}
               onToggleSnooze={onToggleSnooze}
+              onEdit={onEdit}
             />
           ))}
       </div>
@@ -559,19 +561,28 @@ const DashboardPage = () => {
                     <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
                       <span className="font-medium" style={{ color: COLORS.darkText }}>Dine In Orders</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
                       {allTablesList
                         .filter(t => !["available", "reserved"].includes(t.status))
                         .filter(t => matchingTableIds === null || matchingTableIds.has(t.id))
-                        .map((table) => (
-                          <DineInCard
-                            key={table.id}
-                            table={table}
-                            onEdit={handleTableClick}
-                            isSnoozed={snoozedOrders.has(table.id)}
-                            onToggleSnooze={toggleSnooze}
-                          />
-                        ))
+                        .map((table) => {
+                          // Resolve the full order data for this table entry
+                          const order = table.isWalkIn
+                            ? walkInOrders.find(o => o.orderId === table.walkInOrderId)
+                            : getOrderByTableId(table.tableId);
+                          if (!order) return null;
+                          return (
+                            <OrderCard
+                              key={table.id}
+                              order={order}
+                              orderType="dineIn"
+                              tableLabel={table.label}
+                              isSnoozed={snoozedOrders.has(table.id)}
+                              onToggleSnooze={toggleSnooze}
+                              onEdit={() => handleTableClick(table)}
+                            />
+                          );
+                        })
                       }
                     </div>
                   </div>
@@ -582,9 +593,11 @@ const DashboardPage = () => {
                   <OrderListSection
                     title="Delivery Orders"
                     orders={deliveryOrders}
+                    orderType="delivery"
                     matchingIds={matchingDeliveryIds}
                     snoozedOrders={snoozedOrders}
                     onToggleSnooze={toggleSnooze}
+                    onEdit={(order) => handleTableClick({ id: `del-${order.orderId}`, orderId: order.orderId, orderType: 'delivery' })}
                     className={activeChannels.includes("dineIn") ? "mt-6 pt-6 border-t" : ""}
                   />
                 )}
@@ -594,9 +607,11 @@ const DashboardPage = () => {
                   <OrderListSection
                     title="TakeAway Orders"
                     orders={takeAwayOrders}
+                    orderType="takeAway"
                     matchingIds={matchingTakeAwayIds}
                     snoozedOrders={snoozedOrders}
                     onToggleSnooze={toggleSnooze}
+                    onEdit={(order) => handleTableClick({ id: `ta-${order.orderId}`, orderId: order.orderId, orderType: 'takeAway' })}
                     className={activeChannels.includes("dineIn") || activeChannels.includes("delivery") ? "mt-6 pt-6 border-t" : ""}
                   />
                 )}
