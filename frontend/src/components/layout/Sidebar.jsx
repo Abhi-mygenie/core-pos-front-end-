@@ -6,6 +6,7 @@ import {
   PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff 
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
+import * as authService from "../../api/services/authService";
 
 // Sidebar Menu Data
 const sidebarMenuItems = [
@@ -129,8 +130,9 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) =
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("rememberMe");
-    localStorage.removeItem("username");
+    // Clear auth token and session data
+    authService.logout();
+    sessionStorage.clear();
     navigate("/");
   };
 

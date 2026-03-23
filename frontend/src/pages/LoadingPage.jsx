@@ -16,10 +16,10 @@ const LoadingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Loading status for each API
+  // Loading status for each API with counts
   const [loadingStatus, setLoadingStatus] = useState(
     API_LOADING_ORDER.reduce((acc, item) => {
-      acc[item.key] = { status: LOADING_STATES.IDLE, error: null };
+      acc[item.key] = { status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0 };
       return acc;
     }, {})
   );
@@ -73,10 +73,10 @@ const LoadingPage = () => {
   }, [loadingStatus, loadedData, navigate]);
 
   // Update status for a specific API
-  const updateStatus = (key, status, error = null) => {
+  const updateStatus = (key, status, error = null, loaded = 0, total = 0) => {
     setLoadingStatus((prev) => ({
       ...prev,
-      [key]: { status, error },
+      [key]: { status, error, loaded, total },
     }));
   };
 
@@ -85,12 +85,12 @@ const LoadingPage = () => {
     const data = {};
     
     // 1. Profile & Permissions
-    updateStatus('profile', LOADING_STATES.LOADING);
+    updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1);
     try {
       data.profile = await profileService.getProfile();
-      updateStatus('profile', LOADING_STATES.SUCCESS);
+      updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1);
     } catch (error) {
-      updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage, 0, 1);
       toast({
         title: "Failed to load profile",
         description: error.readableMessage,
@@ -99,12 +99,13 @@ const LoadingPage = () => {
     }
 
     // 2. Categories
-    updateStatus('categories', LOADING_STATES.LOADING);
+    updateStatus('categories', LOADING_STATES.LOADING, null, 0, 0);
     try {
       data.categories = await categoryService.getCategories();
-      updateStatus('categories', LOADING_STATES.SUCCESS);
+      const count = data.categories?.length || 0;
+      updateStatus('categories', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      updateStatus('categories', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('categories', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load categories",
         description: error.readableMessage,
@@ -113,18 +114,20 @@ const LoadingPage = () => {
     }
 
     // 3. Products
-    updateStatus('products', LOADING_STATES.LOADING);
+    updateStatus('products', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
       data.products = productsResponse.products;
+      const loadedCount = data.products?.length || 0;
+      const totalCount = productsResponse.total || loadedCount;
       
       // Calculate item counts for categories
       if (data.categories) {
         data.categories = categoryService.calculateItemCounts(data.categories, data.products);
       }
-      updateStatus('products', LOADING_STATES.SUCCESS);
+      updateStatus('products', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
     } catch (error) {
-      updateStatus('products', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('products', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load products",
         description: error.readableMessage,
@@ -133,12 +136,13 @@ const LoadingPage = () => {
     }
 
     // 4. Tables
-    updateStatus('tables', LOADING_STATES.LOADING);
+    updateStatus('tables', LOADING_STATES.LOADING, null, 0, 0);
     try {
       data.tables = await tableService.getTables(true); // Tables only, no rooms
-      updateStatus('tables', LOADING_STATES.SUCCESS);
+      const count = data.tables?.length || 0;
+      updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load tables",
         description: error.readableMessage,
@@ -147,13 +151,14 @@ const LoadingPage = () => {
     }
 
     // 5. Cancellation Reasons (Settings)
-    updateStatus('cancellationReasons', LOADING_STATES.LOADING);
+    updateStatus('cancellationReasons', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const reasonsResponse = await settingsService.getCancellationReasons({ limit: 100, offset: 1 });
       data.cancellationReasons = reasonsResponse.reasons;
-      updateStatus('cancellationReasons', LOADING_STATES.SUCCESS);
+      const count = data.cancellationReasons?.length || 0;
+      updateStatus('cancellationReasons', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load settings",
         description: error.readableMessage,
@@ -162,13 +167,15 @@ const LoadingPage = () => {
     }
 
     // 6. Popular Food
-    updateStatus('popularFood', LOADING_STATES.LOADING);
+    updateStatus('popularFood', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const popularResponse = await productService.getPopularFood({ limit: 50, offset: 1, type: 'all' });
       data.popularFood = popularResponse.products;
-      updateStatus('popularFood', LOADING_STATES.SUCCESS);
+      const loadedCount = data.popularFood?.length || 0;
+      const totalCount = popularResponse.total || loadedCount;
+      updateStatus('popularFood', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
     } catch (error) {
-      updateStatus('popularFood', LOADING_STATES.ERROR, error.readableMessage);
+      updateStatus('popularFood', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load popular items",
         description: error.readableMessage,
@@ -183,7 +190,7 @@ const LoadingPage = () => {
   const handleRetry = () => {
     setLoadingStatus(
       API_LOADING_ORDER.reduce((acc, item) => {
-        acc[item.key] = { status: LOADING_STATES.IDLE, error: null };
+        acc[item.key] = { status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0 };
         return acc;
       }, {})
     );
@@ -206,6 +213,31 @@ const LoadingPage = () => {
       default:
         return <div className="w-5 h-5 rounded-full border-2 border-gray-300" />;
     }
+  };
+
+  // Get count display text
+  const getCountText = (statusObj) => {
+    const { status, loaded, total } = statusObj;
+    
+    if (status === LOADING_STATES.SUCCESS) {
+      if (total > 0 && loaded !== total) {
+        return `${loaded} of ${total} loaded`;
+      }
+      return `${loaded} loaded`;
+    }
+    
+    if (status === LOADING_STATES.LOADING) {
+      if (total > 0) {
+        return `${loaded} of ${total} loading...`;
+      }
+      return "Loading...";
+    }
+    
+    if (status === LOADING_STATES.ERROR) {
+      return "Failed";
+    }
+    
+    return "";
   };
 
   return (
@@ -246,39 +278,45 @@ const LoadingPage = () => {
         {/* Loading Checklist */}
         <div className="space-y-3 mb-8">
           {API_LOADING_ORDER.map((item) => {
-            const status = loadingStatus[item.key];
+            const statusObj = loadingStatus[item.key];
             return (
               <div 
                 key={item.key}
                 className="flex items-center gap-3 p-3 rounded-lg transition-all"
                 style={{ 
-                  backgroundColor: status.status === LOADING_STATES.SUCCESS 
+                  backgroundColor: statusObj.status === LOADING_STATES.SUCCESS 
                     ? 'rgba(34, 197, 94, 0.1)' 
-                    : status.status === LOADING_STATES.ERROR
+                    : statusObj.status === LOADING_STATES.ERROR
                     ? 'rgba(239, 68, 68, 0.1)'
                     : 'transparent'
                 }}
                 data-testid={`loading-item-${item.key}`}
               >
-                {getStatusIcon(status.status)}
+                {getStatusIcon(statusObj.status)}
                 <span 
                   className="flex-1 text-sm"
                   style={{ 
-                    color: status.status === LOADING_STATES.SUCCESS 
+                    color: statusObj.status === LOADING_STATES.SUCCESS 
                       ? COLORS.primaryGreen 
-                      : status.status === LOADING_STATES.ERROR
+                      : statusObj.status === LOADING_STATES.ERROR
                       ? '#ef4444'
                       : COLORS.darkText
                   }}
                 >
                   {item.label}
                 </span>
-                {status.status === LOADING_STATES.SUCCESS && (
-                  <span className="text-xs" style={{ color: COLORS.grayText }}>Done</span>
-                )}
-                {status.status === LOADING_STATES.ERROR && (
-                  <span className="text-xs text-red-500">Failed</span>
-                )}
+                <span 
+                  className="text-xs"
+                  style={{ 
+                    color: statusObj.status === LOADING_STATES.SUCCESS 
+                      ? COLORS.primaryGreen 
+                      : statusObj.status === LOADING_STATES.ERROR
+                      ? '#ef4444'
+                      : COLORS.grayText
+                  }}
+                >
+                  {getCountText(statusObj)}
+                </span>
               </div>
             );
           })}
