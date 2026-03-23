@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight, ChevronDown } from "lucide-react";
 import { COLORS, LOGO_URL } from "../../constants";
+import { useRestaurant } from "../../contexts";
 
 // Multi-selectable channel IDs (excludes Room)
 const MULTI_CHANNEL_IDS = ["delivery", "takeAway", "dineIn"];
@@ -60,6 +61,17 @@ const Header = ({
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
   const moreStatusesRef = useRef(null);
+
+  // Filter channels based on restaurant features
+  const { features } = useRestaurant();
+  const featureChannelMap = {
+    delivery: features.delivery,
+    takeAway: features.takeaway,
+    dineIn: features.dineIn,
+    room: features.room,
+  };
+  const visibleChannels = channels.filter((ch) => featureChannelMap[ch.id] !== false);
+  const visibleMultiChannelIds = MULTI_CHANNEL_IDS.filter((id) => featureChannelMap[id] !== false);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -153,16 +165,16 @@ const Header = ({
     return "Search...";
   };
 
-  // "All" means all 3 multi-selectable channels are active (no room)
-  const isAllChannels = MULTI_CHANNEL_IDS.every(id => activeChannels.includes(id)) && !activeChannels.includes("room");
+  // "All" means all visible multi-selectable channels are active (no room)
+  const isAllChannels = visibleMultiChannelIds.length > 0 && visibleMultiChannelIds.every(id => activeChannels.includes(id)) && !activeChannels.includes("room");
 
   // Dine In is the only selected channel (show table/order toggle)
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
 
   const handleChannelToggle = (channelId) => {
-    // "All" selects Del + Take + Dine
+    // "All" selects visible multi-selectable channels
     if (channelId === "all") {
-      setActiveChannels([...MULTI_CHANNEL_IDS]);
+      setActiveChannels([...visibleMultiChannelIds]);
       return;
     }
     // Room is exclusive — deselects everything else
@@ -183,8 +195,8 @@ const Header = ({
     // Toggle within multi-select group
     if (activeChannels.includes(channelId)) {
       const next = activeChannels.filter(c => c !== channelId);
-      // Don't allow empty — revert to all 3
-      setActiveChannels(next.length === 0 ? [...MULTI_CHANNEL_IDS] : next);
+      // Don't allow empty — revert to all visible
+      setActiveChannels(next.length === 0 ? [...visibleMultiChannelIds] : next);
     } else {
       setActiveChannels([...activeChannels, channelId]);
     }
@@ -234,7 +246,7 @@ const Header = ({
               <LayoutGrid className="w-4 h-4" />
               <span className="text-sm font-medium">All</span>
             </button>
-            {channels.map((channel) => {
+            {visibleChannels.map((channel) => {
               const Icon = channel.icon;
               const isRoom = channel.id === "room";
               const isActive = isRoom

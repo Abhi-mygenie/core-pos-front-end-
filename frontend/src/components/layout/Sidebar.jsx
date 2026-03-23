@@ -6,7 +6,23 @@ import {
   PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff 
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
-import * as authService from "../../api/services/authService";
+import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
+import { useToast } from "../../hooks/use-toast";
+
+// Permission mapping for sidebar items
+const SIDEBAR_PERMISSIONS = {
+  dashboard: 'pos',
+  orders: 'order',
+  reports: 'report',
+  'menu-management': 'menu',
+  employees: 'employee',
+  expenses: 'expence',
+  inventory: 'inventory',
+  settings: 'restaurant_settings',
+};
+
+// Items that show "Coming soon" toast instead of navigating
+const COMING_SOON_ITEMS = new Set(['employees', 'expenses', 'inventory']);
 
 // Sidebar Menu Data
 const sidebarMenuItems = [
@@ -56,36 +72,16 @@ const sidebarMenuItems = [
     id: "employees",
     label: "Employees",
     icon: Users,
-    children: [
-      { id: "staff-list", label: "Staff List", path: "/employees/list" },
-      { id: "shifts", label: "Shifts & Schedule", path: "/employees/shifts" },
-      { id: "roles", label: "Roles & Permissions", path: "/employees/roles" },
-      { id: "attendance", label: "Attendance", path: "/employees/attendance" },
-      { id: "payroll", label: "Payroll", path: "/employees/payroll" },
-    ],
   },
   {
     id: "expenses",
     label: "Expenses",
     icon: Wallet,
-    children: [
-      { id: "add-expense", label: "Add Expense", path: "/expenses/add" },
-      { id: "expense-reports", label: "Expense Reports", path: "/expenses/reports" },
-      { id: "expense-categories", label: "Categories", path: "/expenses/categories" },
-      { id: "receipts", label: "Receipts", path: "/expenses/receipts" },
-    ],
   },
   {
     id: "inventory",
     label: "Inventory",
     icon: Package,
-    children: [
-      { id: "stock-list", label: "Stock List", path: "/inventory/stock" },
-      { id: "low-stock", label: "Low Stock Alerts", path: "/inventory/alerts" },
-      { id: "purchase-orders", label: "Purchase Orders", path: "/inventory/orders" },
-      { id: "suppliers", label: "Suppliers", path: "/inventory/suppliers" },
-      { id: "stock-reports", label: "Stock Reports", path: "/inventory/reports" },
-    ],
   },
   {
     id: "settings",
@@ -105,8 +101,29 @@ const sidebarMenuItems = [
 // Sidebar Component
 const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user, logout: authLogout, hasPermission } = useAuth();
+  const { clearRestaurant } = useRestaurant();
+  const { clearMenu } = useMenu();
+  const { clearTables } = useTables();
+  const { clearSettings } = useSettings();
+
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
+
+  // Filter menu items by permission
+  const visibleMenuItems = sidebarMenuItems.filter((item) => {
+    const perm = SIDEBAR_PERMISSIONS[item.id];
+    if (!perm) return true; // No permission required
+    return hasPermission(perm);
+  });
+
+  const showComingSoon = (label) => {
+    toast({
+      title: "Coming Soon",
+      description: `${label} will be available in a future update.`,
+    });
+  };
 
   const toggleSection = (sectionId) => {
     setExpandedSections(prev => ({
@@ -116,22 +133,31 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) =
   };
 
   const handleItemClick = (item) => {
+    // "Coming soon" items
+    if (COMING_SOON_ITEMS.has(item.id)) {
+      showComingSoon(item.label);
+      return;
+    }
+
     if (item.children) {
       toggleSection(item.id);
     } else {
       setActiveItem(item.id);
-      // navigate(item.path); // Uncomment when routes are ready
     }
   };
 
   const handleChildClick = (parentId, child) => {
-    setActiveItem(child.id);
-    // navigate(child.path); // Uncomment when routes are ready
+    // All children are "Coming soon" in Phase 1
+    showComingSoon(child.label);
   };
 
   const handleLogout = () => {
-    // Clear auth token and session data
-    authService.logout();
+    // Clear all contexts
+    authLogout();
+    clearRestaurant();
+    clearMenu();
+    clearTables();
+    clearSettings();
     sessionStorage.clear();
     navigate("/");
   };
@@ -179,7 +205,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) =
 
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto py-4">
-        {sidebarMenuItems.map((item) => {
+        {visibleMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeItem === item.id;
           const isOpen = expandedSections[item.id];
@@ -294,16 +320,31 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) =
           }`}
           title={!isExpanded ? "Profile" : undefined}
         >
+          {user?.image ? (
+            <img 
+              src={user.image} 
+              alt={user.fullName || 'User'} 
+              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+            />
+          ) : null}
           <div 
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: COLORS.primaryOrange }}
+            style={{ 
+              backgroundColor: COLORS.primaryOrange,
+              display: user?.image ? 'none' : 'flex',
+            }}
           >
             <User className="w-4 h-4 text-white" />
           </div>
           {isExpanded && (
             <div className="flex-1 text-left">
-              <div className="text-sm font-medium" style={{ color: COLORS.darkText }}>John Doe</div>
-              <div className="text-xs" style={{ color: COLORS.grayText }}>Manager</div>
+              <div className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>
+                {user?.fullName || 'User'}
+              </div>
+              <div className="text-xs" style={{ color: COLORS.grayText }}>
+                {user?.roleName || 'Staff'}
+              </div>
             </div>
           )}
         </button>

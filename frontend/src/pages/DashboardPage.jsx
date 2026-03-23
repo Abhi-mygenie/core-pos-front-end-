@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLORS } from "../constants";
 import { mockTables, mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems, mockFlatTables } from "../data";
 import { Sidebar, Header } from "../components/layout";
@@ -7,6 +8,8 @@ import { DineInCard, DeliveryCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
+import { useRestaurant } from "../contexts";
+import * as authService from "../api/services/authService";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -74,6 +77,18 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
 
 // Main Home/Dashboard Component
 const DashboardPage = () => {
+  const navigate = useNavigate();
+  const { isLoaded: restaurantLoaded } = useRestaurant();
+
+  // Redirect to login if not authenticated, or to loading if data not loaded
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      navigate("/");
+    } else if (!restaurantLoaded) {
+      navigate("/loading");
+    }
+  }, [navigate, restaurantLoaded]);
+
   // --- State ---
   const [tables, setTables] = useState(mockTables);
   const [flatTables, setFlatTables] = useState(mockFlatTables);
