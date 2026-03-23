@@ -478,6 +478,66 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | `user_name` or `user.f_name + user.l_name` | `order.customer` | Customer name input | "WC" default if empty + walk-in |
 | `user.phone` | `order.phone` | Phone number input | Populated when order card is clicked |
 
+### 8g. Order Source Detection
+
+| API Field | Frontend Field | Notes |
+|---|---|---|
+| `order_in` | `source` | Normalized to lowercase. `null`/empty → `"own"` |
+
+| Source Value | Logo Display | Applies To |
+|---|---|---|
+| `"own"` (default) | **MyGenie logo** (image) | All dine-in, own takeaway, own delivery |
+| `"swiggy"` | **"S"** (orange bg #FF5722) | Swiggy aggregator orders |
+| `"zomato"` | **"Z"** (red bg #E23744) | Zomato aggregator orders |
+
+### 8h. Waiter / Staff Assignment
+
+| API Field | Frontend Field | UI Location | Notes |
+|---|---|---|---|
+| `vendorEmployee.f_name` | `order.waiter` | OrderCard header center zone | Shows for ALL own orders (dine-in, takeaway, delivery). Not shown for aggregator orders. |
+
+### 8i. Unified OrderCard UI Mapping (Component: `OrderCard.jsx`)
+
+**Card Component:** Single `OrderCard.jsx` handles all 3 order types with consistent structure.
+
+**Header — 3-Zone Layout (same height for all types):**
+| Zone | Content | Style |
+|---|---|---|
+| **Left** | Logo + stacked: Order ID (top, xs bold) + Customer name or "WC" (bottom, sm medium) + 📍 address icon (own delivery only) | `flex items-center gap-2`, stacked via `flex-col leading-tight` |
+| **Center** | Waiter name (own orders only) · Time ("X mins") | `flex-1 justify-center`, gray text |
+| **Right** | ₹Amount (xl bold orange) + Snooze clock icon | `flex-shrink-0` |
+
+**Primary ID per type:**
+| Order Type | Primary ID (top line) | Example |
+|---|---|---|
+| Dine-In | Table label | `T1`, `WC` |
+| TakeAway | Order number | `#000217` |
+| Delivery | Order number | `#000350` |
+
+**Items Section — Varies by type:**
+| Order Type | Item Display | Item Actions |
+|---|---|---|
+| **Dine-In** | Status dot (orange=preparing, green=ready) + name (qty) + status label | Preparing → **[Ready]** button; Ready → **[Serve]** button |
+| **Dine-In (served)** | Collapsed "Served Items (N)" section, expandable | **[Cancel]** button per served item |
+| **TakeAway** | Green dot + name (qty) | None — items for reference only |
+| **Delivery** | Green dot + name (qty) | None — items for reference only |
+
+**Extra Sections (Delivery only):**
+| Scenario | Section | Content |
+|---|---|---|
+| Swiggy/Zomato delivery | Rider section | Rider name, phone, status pill. "Awaiting Runner" if unassigned |
+| Own delivery | Address popup | Triggered by 📍 icon in header. Shows `deliveryAddress.formatted` |
+
+**Footer Actions:**
+| Scenario | Left Buttons | Right Buttons |
+|---|---|---|
+| Normal (active order) | `Bill` · `KOT` | `X` (cancel) · `Collect` (green) |
+| New online order (`yetToConfirm`) | `Bill` · `KOT` | `X` (reject) · `Accept` (green) |
+
+**Touch Compatibility:** All buttons have `min-h-[44px]` and `min-w-[44px]` tap targets. `gap-3` between action buttons prevents accidental taps.
+
+**Responsive Grid:** List view uses `repeat(auto-fill, minmax(360px, 1fr))` — adapts from 4 columns (wide) to 1 column (narrow).
+
 ---
 
 ## Summary
