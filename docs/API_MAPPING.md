@@ -194,15 +194,15 @@
 
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `categoryId` | Yes | Menu panel — category list, product filtering | Pending |
-| `name` | `categoryName` | Yes | Menu panel — category name label | Pending |
-| `image` | `categoryImage` | Yes | Menu panel — category thumbnail | Pending |
+| `id` | `categoryId` | Yes | Menu Mgmt — category list + product filtering + Quick Edit dropdown | Mapped |
+| `name` | `categoryName` | Yes | Menu Mgmt — category list label + product card subtitle + Quick Edit dropdown | Mapped |
+| `image` | `categoryImage` | Yes | Menu Mgmt — category thumbnail (not displayed yet — no image in card) | Pending |
 | `slug` | `slug` | Yes | Internal reference | Active |
 | `parent_id` | `parentId` | Yes | Category hierarchy (not used in Phase 1) | Unused |
-| `cat_order` | `sortOrder` | Yes | Category list sort order | Active |
-| `position` | `position` | Yes | Category grid position | Pending |
-| `status` | `isActive` | Yes | Filter — only active shown | Active |
-| (computed) | `itemCount` | Yes | Menu panel — "(X items)" badge | Pending |
+| `cat_order` | `sortOrder` | Yes | Menu Mgmt — category drag-and-drop reorder | Mapped |
+| `position` | `position` | Yes | Category grid position | Active |
+| `status` | `isActive` | Yes | Menu Mgmt — filter (Active/Inactive chips) | Mapped |
+| (computed) | `itemCount` | Yes | Menu Mgmt — category count badge "(5)" | Mapped |
 | `restaurant_id` | `restaurantId` | Yes | Internal reference | Active |
 | `created_at` | `createdAt` | Yes | Settings display | Pending |
 | `updated_at` | `updatedAt` | Yes | Settings display | Pending |
@@ -226,50 +226,50 @@
 **Product Fields:**
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `productId` | Yes | Order entry — item selection | Pending |
-| `name` | `productName` | Yes | Menu panel, Order entry — item name | Pending |
-| `description` | `description` | Yes | Menu panel — item detail | Pending |
-| `image` | `productImage` | Yes | Menu panel, Order entry — thumbnail | Pending |
+| `id` | `productId` | Yes | Menu Mgmt — product card, drag-and-drop key | Mapped |
+| `name` | `productName` | Yes | Menu Mgmt — product card title + Quick Edit name input + Full Edit | Mapped |
+| `description` | `description` | Yes | Menu Mgmt — Full Edit form | Mapped |
+| `image` | `productImage` | Yes | Menu Mgmt — not displayed on card yet (thumbnail pending) | Pending |
 | `slug` | `slug` | Yes | Internal reference | Active |
-| `category_id` | `categoryId` | Yes | Filter products by category | Active |
-| `category_ids` | `categoryIds` | Yes | Multi-category assignment | Active |
-| `price` | `basePrice` | Yes | Menu panel, Order entry — price display | Pending |
-| `discount` | `discount` | Yes | Order entry — discount calculation | Pending |
-| `discount_type` | `discountType` | Yes | Order entry — discount calculation | Pending |
-| `tax` | `tax.percentage` | Yes | Order billing — tax calc | Pending |
-| `tax_type` | `tax.type` | Yes | Order billing — GST/VAT | Pending |
-| `tax_calc` | `tax.calculation` / `tax.isInclusive` | Yes | Order billing — inclusive/exclusive | Pending |
-| `veg` | `isVeg` | Yes | Menu panel — veg/non-veg indicator | Pending |
-| `egg` | `hasEgg` | Yes | Menu panel — egg indicator | Pending |
-| `jain` | `isJain` | Yes | Menu panel — jain indicator | Pending |
-| `allergen` | `allergen` | Yes | Menu panel — allergen info | Pending |
-| `variations` | `variations[]` | Yes | Order entry — size/option selection | Pending |
-| (computed) | `hasVariations` | Yes | Order entry — show variation picker | Active |
-| `add_ons` | `addOns[]` | Yes | Order entry — add-on selection | Pending |
-| `status` | `isActive` | Yes | Filter — availability | Active |
-| `stock_out` | `isOutOfStock` | Yes | Menu panel — "Out of Stock" badge | Pending |
-| `is_disable` | `isDisabled` | Yes | Menu panel — disabled state | Pending |
+| `category_id` | `categoryId` | Yes | Menu Mgmt — category filtering + Quick Edit dropdown + product card subtitle | Mapped |
+| `category_ids` | `categoryIds` | Yes | Menu Mgmt — multi-category filtering | Mapped |
+| `price` | `basePrice` | Yes | Menu Mgmt — product card price + Quick Edit + Full Edit | Mapped |
+| `discount` | `discount` | Yes | Menu Mgmt — Full Edit discount field | Mapped |
+| `discount_type` | `discountType` | Yes | Menu Mgmt — Full Edit discount type dropdown | Mapped |
+| `tax` | `tax.percentage` | Yes | Menu Mgmt — Quick Edit "Tax %" + Full Edit | Mapped |
+| `tax_type` | `tax.type` | Yes | Menu Mgmt — Quick Edit "Tax Type" dropdown + Full Edit | Mapped |
+| `tax_calc` | `tax.calculation` / `tax.isInclusive` | Yes | Menu Mgmt — Full Edit "Tax Inclusive" toggle | Mapped |
+| `veg` | `isVeg` | Yes | Menu Mgmt — product card food dot (🟢) + filter chip + Quick Edit + Full Edit | Mapped |
+| `egg` | `hasEgg` | Yes | Menu Mgmt — product card food dot (🟡) + filter chip + Quick Edit + Full Edit | Mapped |
+| `jain` | `isJain` | Yes | Menu Mgmt — product card food dot (🟣) + filter chip + Full Edit | Mapped |
+| `allergen` | `allergen` | Yes | Menu Mgmt — not displayed (no allergen UI yet) | Pending |
+| `variations` | `variations[]` | Yes | Menu Mgmt — Full Edit read-only list | Mapped (read-only) |
+| (computed) | `hasVariations` | Yes | Internal — variation picker gate | Active |
+| `add_ons` | `addOns[]` | Yes | Menu Mgmt — Full Edit read-only list | Mapped (read-only) |
+| `status` | `isActive` | Yes | Menu Mgmt — filter chip (Active/Inactive) | Mapped |
+| `stock_out` | `isOutOfStock` | Yes | Menu Mgmt — card "Out of Stock" badge + greyed card + Full Edit toggle | Mapped |
+| `is_disable` | `isDisabled` | Yes | Menu Mgmt — card "Hidden from POS" + dashed border + Full Edit toggle | Mapped |
 | `available_time_starts` | `availableTimeStart` | Yes | Time-based availability | Pending |
 | `available_time_ends` | `availableTimeEnd` | Yes | Time-based availability | Pending |
-| `dinein` | `availability.dineIn` | Yes | Channel filtering | Pending |
-| `takeaway` | `availability.takeaway` | Yes | Channel filtering | Pending |
-| `delivery` | `availability.delivery` | Yes | Channel filtering | Pending |
-| `station_name` | `station` | Yes | KOT routing | Pending |
+| `dinein` | `availability.dineIn` | Yes | Menu Mgmt — product card channel chip [Dine-In] + Full Edit toggle | Mapped |
+| `takeaway` | `availability.takeaway` | Yes | Menu Mgmt — product card channel chip [Takeaway] + Full Edit toggle | Mapped |
+| `delivery` | `availability.delivery` | Yes | Menu Mgmt — product card channel chip [Delivery] + Full Edit toggle | Mapped |
+| `station_name` | `station` | Yes | Menu Mgmt — product card station badge (KDS/BAR) + Full Edit dropdown | Mapped |
 | `order_count` | `orderCount` | Yes | Popular items sorting | Active |
-| `recommended` | `isRecommended` | Yes | Menu panel — recommended badge | Pending |
-| `avg_rating` | `avgRating` | Yes | Menu panel — rating display | Pending |
-| `rating_count` | `ratingCount` | Yes | Menu panel — rating count | Pending |
-| `complementary` | `isComplementary` | Yes | Complementary order flow | Pending |
-| `complementary_price` | `complementaryPrice` | Yes | Complementary pricing | Pending |
-| `is_inventory` | `isInventoryLinked` | Yes | Inventory tracking | Pending |
-| `is_recipe` | `hasRecipe` | Yes | Recipe link | Pending |
-| `recipe_id` | `recipeId` | Yes | Recipe link | Pending |
-| `takeaway_charge` | `takeawayCharge` | Yes | Order billing — extra charges | Pending |
-| `delivery_charge` | `deliveryCharge` | Yes | Order billing — extra charges | Pending |
-| `pack_charges` | `packCharges` | Yes | Order billing — extra charges | Pending |
-| `prepration_time_min` | `prepTimeMin` | Yes | KDS — prep time display | Pending |
-| `serve_time_in_min` | `serveTimeMin` | Yes | KDS — serve time | Pending |
-| `item_code` | `itemCode` | Yes | Menu panel — item code display | Pending |
+| `recommended` | `isRecommended` | Yes | Not displayed yet | Pending |
+| `avg_rating` | `avgRating` | Yes | Not displayed yet | Pending |
+| `rating_count` | `ratingCount` | Yes | Not displayed yet | Pending |
+| `complementary` | `isComplementary` | Yes | Menu Mgmt — product card subtitle "Complementary" + Quick Edit + Full Edit | Mapped |
+| `complementary_price` | `complementaryPrice` | Yes | Menu Mgmt — Full Edit (shown when complementary=Yes) | Mapped |
+| `is_inventory` | `isInventoryLinked` | Yes | Inventory tracking — not displayed yet | Pending |
+| `is_recipe` | `hasRecipe` | Yes | Recipe link — not displayed yet | Pending |
+| `recipe_id` | `recipeId` | Yes | Recipe link — not displayed yet | Pending |
+| `takeaway_charge` | `takeawayCharge` | Yes | Order billing — not displayed yet | Pending |
+| `delivery_charge` | `deliveryCharge` | Yes | Order billing — not displayed yet | Pending |
+| `pack_charges` | `packCharges` | Yes | Order billing — not displayed yet | Pending |
+| `prepration_time_min` | `prepTimeMin` | Yes | Menu Mgmt — Full Edit "Prep Time" field | Mapped |
+| `serve_time_in_min` | `serveTimeMin` | Yes | Menu Mgmt — Full Edit "Serve Time" field | Mapped |
+| `item_code` | `itemCode` | Yes | Menu Mgmt — Full Edit "Item Code" field | Mapped |
 | `restaurant_id` | `restaurantId` | Yes | Internal reference | Active |
 | `created_at` | `createdAt` | Yes | Settings display | Pending |
 | `updated_at` | `updatedAt` | Yes | Settings display | Pending |
@@ -360,9 +360,9 @@ Same field mapping as Section 4 (Products). Returns popular/trending items sorte
 | Login | 6 | 6 | 3 (token, roleName, permissions) | 3 |
 | Profile — User | 30+ | 10 | 5 (fullName, firstName, lastName, roleName, permissions, image) | 20+ |
 | Profile — Restaurant | 120+ | 30 | 29 (Settings panel — all tiles) | 90+ |
-| Categories | 12 | 12 | 0 | 0 |
-| Products | 40+ | 40+ | 0 | 0 |
+| Categories | 12 | 12 | 8 (Menu Mgmt — list, filter, count, reorder, CRUD) | 0 |
+| Products | 40+ | 40+ | 35 (Menu Mgmt — card, Quick Edit, Full Edit, filters) | 5 (allergen, recommended, ratings) |
 | Tables | 13 | 13 | 7 (Settings → Table Management) | 0 |
 | Cancellation Reasons | 8 | 8 | 4 (Settings → Cancellation Reasons) | 0 |
-| Popular Food | (same as Products) | (same) | 0 | 0 |
+| Popular Food | (same as Products) | (same) | 0 (not yet used in UI) | 0 |
 | Running Orders | Unknown | 0 | 0 | All |

@@ -1,0 +1,145 @@
+<analysis>**original_problem_statement**: 
+pull code from default branch https://github.com/Abhi-mygenie/core-pos-front-end-.git and build and run as it is. 
+Incrementally analyze API endpoints and map them to the frontend UI. Build Phase 1 Part A (Login, Profile, Menu Admin, Settings, Tables). 
+*Product Requirement Update during session:* The Admin UIs (Settings, Menu Management) must be built with **fully functional CRUD UX right now** (actual forms, inputs, dropdowns, toggles) rather than just read-only with coming soon toasts. However, the actual API integration (POST/PUT/DELETE) is deferred to Phase 2. Saves should be visually mocked with a toast.
+
+**User's preferred language**: English
+
+**what currently exists?** 
+A React frontend and FastAPI backend POS application. Global state management (Context API) is fully wired and bug-free. The Sidebar and Header correctly reflect user permissions and restaurant features. The Settings Admin UI is built as a full-width panel with 3 CRUD UX patterns (View/Edit toggles, List+Form, Master-Detail). The Menu Management Admin UI is built with categories, products, filtering, Quick Edit inline forms, and drag-and-drop reordering. Detailed documentation mapping API fields to UI locations now exists.
+
+**Last working item**:
+    - Last item agent was working: Building the  (Sub-step 3 of Step 7) and updating the API mapping documentation. The agent finalized the Category/Product 2-column layout, added  for drag-and-drop, and implemented a Quick Edit inline tile feature requested by the user.
+    - Status: USER VERIFICATION PENDING
+    - Agent Testing Done: Y
+    - Which testing method agent to use? Screenshot tool (verified UI states and filters)
+    - User Testing Done: N
+
+**All Pending/In progress Issue list**:
+  Issue 1: Broken Restaurant Logo URL (P1)
+     - Attempted fixes: Identified the issue. The  transform or the raw API is likely returning a relative/broken path for the restaurant logo. Documented in .
+     - Next debug checklist: Inspect  and the  field from the profile API response. Fix the base URL appending logic so the image renders in the Sidebar and Settings -> Restaurant Info.
+     - Why fix this issue and what will be achieved with the fix? Fixes a broken image icon visible across core navigational and settings components.
+     - Status: NOT STARTED
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: NA
+
+**In progress Task List**:
+  Task 1: Step 7 Sub-step 4 - Table mapping in dashboard
+     - Where to resume: Open . Replace  with real data from .
+     - What will be achieved with this? The dashboard will display real table statuses fetched during the loading screen.
+     - Status: NOT STARTED
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on something: User approval of Menu Management UI.
+
+  Task 2: Step 7 Sub-step 5 - Ordering screen menu population
+     - Where to resume: Wire real menu data (from ) into the POS OrderEntry component used by staff to punch orders.
+     - What will be achieved with this? Removes mock product data from the actual POS ordering flow.
+     - Status: NOT STARTED
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on something: Task 1
+
+  Task 3: Step 7 Sub-step 6 - Currency symbol + Search wiring
+     - Where to resume: Update Order cards and menu prices across the app to use . Wire the Dashboard search bar to search real tables/orders.
+     - What will be achieved with this? Dynamic localization and functional dashboard search.
+     - Status: NOT STARTED
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on something: Task 2
+
+**Upcoming and Future Tasks**
+    Upcoming Tasks:
+    - P0: Complete the remaining sub-steps for Step 7 (Dashboard Table Mapping, Order Screen Menu, Search/Currency).
+    - P1: Phase 1 Part B - Implement  API and populate Dashboard Order Cards. (Note: Currently blocked waiting for backend team clarification on  mappings - see ).
+    
+    Future Tasks:
+    - P2: Phase 2 - Implement actual API POST/PUT/DELETE integration for the Settings and Menu Management CRUD forms (currently saves are mocked).
+    - P2: Phase 2 - Add-ons management UI (User instructed to defer this until a separate API is provided).
+    - P2: Phase 2 - Employee Management panel.
+    - P2: Phase 2 - Room mapping (), Place Order action, Collect Bill/Payment features.
+
+**Completed work in this session**
+- Fixed React StrictMode double-fetch bug in Context API /  (DONE)
+- Created , ,  (DONE)
+- Sidebar & Header UI wired to real permissions, user profile, and restaurant feature toggles (DONE)
+- Full-width Settings Panel built with fully mocked CRUD UX (View/Edit toggle, List+Form, Master-Detail) (DONE)
+- Full-width Menu Management Panel built with filtering, Quick Edit, Full Edit forms, and Drag & Drop (DONE)
+
+**Earlier issues found/mentioned but not fixed**
+None.
+
+**Known issue recurrence from previous fork**
+  - Issue recurrence in previous fork: None
+  - Recurrence count: 0
+  - Status: NA
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+- Global Context state mapping.
+- **React StrictMode Async Bug**: To prevent duplicate overlapping API calls on mount,  uses an object reference  inside a  that gets mutated in the  cleanup.
+- **Mocked CRUD UX**: The user explicitly requested actual forms, dropdowns, and toggles for the Admin panels. They look and act like real forms, but clicking Save currently just triggers a success toast. Actual API integration is Phase 2.
+- **Drag-and-Drop**: Installed  to handle category and product reordering. 
+
+**key DB schema**
+  - Mapped comprehensively in .
+
+**changes in tech stack**
+  - Added  for React drag-and-drop functionality.
+
+**All files of reference**
+  - : Contains the  ref fix for StrictMode.
+  -  (and its sub-components in ): Contains the 3 CRUD UX patterns.
+  -  (and its sub-components in ): Contains drag-and-drop, filtering, and Quick Edit logic.
+  - : The source of truth for what API fields go to what UI elements.
+  - : Contains critical definitions (e.g.,  = hidden from POS,  = visible but greyed out).
+
+**Areas that need refactoring**: 
+  -  was not created/updated. The next agent should generate  summarizing the project state as requested in system guidelines.
+
+**key api endpoints**
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+
+**Critical Info for New Agent**
+- **MAJOR UX SHIFT**: The previous rule was Read-Only UI with Coming Soon toasts. The user changed their mind. You must now build **Full CRUD UI forms** (inputs, toggles, Quick Edits). However, the *API saving* is still deferred to Phase 2. Just mock the saves visually with toasts. Coming Soon toasts are now reserved *only* for completely unbuilt modules (like Employee Management).
+- **Admin Panel Layout**: The Settings and Menu Management panels are NOT narrow slide-outs with backdrops. They are full-width components that occupy the entire remaining screen space to the right of the Sidebar.
+- Wait for user approval before moving to the next sub-step. 
+
+**documents and test reports created in this job**
+  - 
+  - 
+  - 
+
+**Last 10 User Messages and any pending HUMAN messages**
+- (User) Provided a screenshot of a Quick Edit feature they wanted on the product tiles.
+- (Agent) Proposed revised Menu Management UX incorporating the 3-state tile (Normal, Quick Edit, Full Edit form).
+- (User) yes go ahead
+- (Agent) Installed dnd library, built the components, tested via screenshots, and asked for approval to update docs and summarize.
+- (User) Ok but before that update mapping documents
+- (Agent) Updated  and  via search_replace. *Current State - Pending agent response to user.*
+
+**Project Health Check:**
+- Mocked (UI forms implemented but API POST/PUT disconnected).
+- Broken (Restaurant logo image URL in sidebar/settings).
+
+**3rd Party Integrations**
+- None.
+
+**Testing status**
+  - Testing agent used after significant changes: NO (Screenshot tool utilized instead)
+  - Troubleshoot agent used after agent stuck in loop: NO
+  - Test files created: None
+  - Known regressions: None
+
+**Credentials to test flow:**
+Email: owner@18march.com
+Pass: Qplazm@10
+
+**What agent forgot to execute**
+- The agent failed to create/update  when preparing to finish the task, opting only to update the custom markdown docs inside .</analysis>

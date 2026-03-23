@@ -91,6 +91,13 @@ What does this field control? Is it the default status assigned to new orders?
 
 **Impact:** Transform layer handles this correctly. Just noting the inconsistency.
 
+### B1b: `is_disable` vs `stock_out` on Products — clarified
+**Observation:** These are two different states:
+- `is_disable = 1` → Product is **hidden from POS entirely** (not shown to waiter/customer). UI: dashed border + "Hidden from POS" label.
+- `stock_out = 1` → Product is **visible but greyed out** with "Out of Stock" badge (cannot be ordered). UI: greyed card + red badge.
+- Both can be toggled independently.
+**Status:** RESOLVED — confirmed by user
+
 ### B2: Yes/No vs 1/0 inconsistency
 **Observation:** Boolean fields use mixed representations:
 - Some fields: `"Yes"` / `"No"` strings
