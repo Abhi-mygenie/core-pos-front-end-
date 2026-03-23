@@ -52,8 +52,8 @@ What does this field control? Is it the default status assigned to new orders?
 
 ### Q6: `f_order_status` values 4, 8, and 9
 - **Status 4:** OPEN — User will provide definition later.
-- **Status 8:** CONFIRMED — Means "Running/Active". Shows on dashboard with "RUNNING" badge. 22 takeaway orders observed with this status.
-- **Status 9:** OPEN — Observed on 2 PayLater orders. Needs team clarification. Currently shows as "PENDING" (unknown fallback).
+- **Status 8:** CORRECTED — NOT "Running/Active" as previously assumed. Per user: **status 8 = Paid through payment gateway**. All 24 takeaway orders in the owner@mygeniedev.com account have this status. Needs further discussion with user on how to display these. Previously mapped as "running" in F_ORDER_STATUS constant — **needs correction**.
+- **Status 9:** OPEN — Observed on 2 POS/dine-in orders. Needs team clarification. Currently shows as "unknown" (unmapped fallback). To be discussed with user.
 - **`order_type="WalkIn"`:** OPEN — Needs team clarification on whether it's treated differently from "pos". Currently mapped as dineIn.
 
 ---
@@ -181,6 +181,11 @@ What does this field control? Is it the default status assigned to new orders?
 **Impact:** Handled correctly in transform. Just noting the non-standard representation.
 **Status:** RESOLVED — Transform handles it
 
+### B16: TakeAway orders have no customer names
+**Observation:** All 24 TakeAway orders in the owner@mygeniedev.com account return `user_name=""` and `user.f_name=""`. Only a phone number (`9714176033`) is present. The frontend correctly defaults to "WC" label for these.
+**Impact:** This is a backend data limitation for this specific account. Other restaurants may have customer names populated.
+**Status:** CONFIRMED — Not a frontend bug
+
 ---
 
 ## API Response Sample Sizes
@@ -193,7 +198,7 @@ What does this field control? Is it the default status assigned to new orders?
 | Tables | Varies | Tables only (rooms filtered out) |
 | Cancellation Reasons | 2 | Active reasons |
 | Popular Food | Varies | Sorted by order_count |
-| **Running Orders** | **33** | **Palm House (role_name=Manager). 20 RM, 13 non-RM. All f_order_status=5** |
+| **Running Orders** | **30** | **owner@mygeniedev.com: 24 take_away (f_status=8), 5 pos (f_status=5,9), 1 WalkIn (f_status=9)** |
 
 ---
 
