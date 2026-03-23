@@ -126,7 +126,7 @@ const OrderCard = ({
 
         {/* Amount + Snooze */}
         <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-          <span className="font-bold text-base" style={{ color: COLORS.primaryOrange }}>
+          <span className="font-bold text-xl" style={{ color: COLORS.primaryOrange }}>
             ₹{(order.amount || 0).toLocaleString()}
           </span>
           {onToggleSnooze && (
