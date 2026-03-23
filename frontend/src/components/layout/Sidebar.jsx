@@ -99,7 +99,7 @@ const sidebarMenuItems = [
 ];
 
 // Sidebar Component
-const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) => {
+const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onOpenSettings }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, logout: authLogout, hasPermission } = useAuth();
@@ -136,6 +136,12 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode }) =
     // "Coming soon" items
     if (COMING_SOON_ITEMS.has(item.id)) {
       showComingSoon(item.label);
+      return;
+    }
+
+    // Settings opens its own panel
+    if (item.id === 'settings') {
+      onOpenSettings?.();
       return;
     }
 

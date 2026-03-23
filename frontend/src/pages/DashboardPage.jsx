@@ -10,6 +10,7 @@ import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { useRestaurant } from "../contexts";
 import * as authService from "../api/services/authService";
+import SettingsPanel from "../components/panels/SettingsPanel";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -104,6 +105,7 @@ const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSilentMode, setIsSilentMode] = useState(false);
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -251,6 +253,12 @@ const DashboardPage = () => {
         setIsExpanded={setSidebarExpanded}
         isSilentMode={isSilentMode}
         setIsSilentMode={setIsSilentMode}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
+
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
 
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
