@@ -274,6 +274,27 @@ const DashboardPage = () => {
     return 'Orders';
   }, [activeChannels]);
 
+  // Filter grid items by active status filters (Schedule, Confirm in grid view)
+  const filteredGridItems = useMemo(() => {
+    // Map filter IDs to grid item status values
+    const statusFilterMap = {
+      confirm: 'yetToConfirm',   // f_order_status=7
+      schedule: 'scheduled',      // scheduled orders
+    };
+
+    return gridItems.filter(item => {
+      // Available/reserved tables always show
+      if (item.status === 'available' || item.status === 'reserved') return true;
+
+      // Check if item's status matches a deactivated filter
+      if (item.status === 'yetToConfirm' && !activeStatuses.includes('confirm')) return false;
+      if (item.status === 'scheduled' && !activeStatuses.includes('schedule')) return false;
+
+      // All other statuses (occupied, billReady, paid, etc.) always show in grid view
+      return true;
+    });
+  }, [gridItems, activeStatuses]);
+
   // --- Search ---
   const searchResults = useMemo(() => {
     const results = {
@@ -498,16 +519,16 @@ const DashboardPage = () => {
                     </div>
                   ))}
                 </div>
-              ) : gridItems.length > 0 ? (
+              ) : filteredGridItems.length > 0 ? (
                 <div>
                   <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
                     <span className="font-medium" style={{ color: COLORS.darkText }}>{gridTitle}</span>
                     <span style={{ color: COLORS.borderGray }}>|</span>
-                    <span>{gridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)).length} Items</span>
+                    <span>{filteredGridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)).length} Items</span>
                   </div>
                   <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, 160px)' }}>
                     {sortByActiveFirst(
-                      gridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)),
+                      filteredGridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)),
                       TABLE_STATUS_PRIORITY,
                       activeFirst
                     ).map((item) => (

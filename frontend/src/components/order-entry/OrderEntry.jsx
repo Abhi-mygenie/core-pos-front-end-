@@ -91,22 +91,32 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }
   }, [showTypeDropdown]);
 
-  // Initialize cart with existing order items from running order
+  // Initialize cart and customer data from running order
   useEffect(() => {
-    if (orderData && orderData.items && orderData.items.length > 0) {
-      const existingItems = orderData.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        qty: item.qty || 1,
-        price: item.unitPrice || item.price || 0,
-        status: item.status || 'preparing',
-        placed: true,
-        addedAt: item.createdAt || new Date().toISOString(),
-        variation: item.variation,
-        addOns: item.addOns,
-        notes: item.notes,
-      }));
-      setCartItems(existingItems);
+    if (orderData) {
+      // Set customer data
+      if (orderData.customer || orderData.phone) {
+        setCustomer({
+          name: orderData.customer !== 'WC' ? (orderData.customer || '') : '',
+          phone: orderData.phone || '',
+        });
+      }
+      // Set cart items
+      if (orderData.items && orderData.items.length > 0) {
+        const existingItems = orderData.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          qty: item.qty || 1,
+          price: item.unitPrice || item.price || 0,
+          status: item.status || 'preparing',
+          placed: true,
+          addedAt: item.createdAt || new Date().toISOString(),
+          variation: item.variation,
+          addOns: item.addOns,
+          notes: item.notes,
+        }));
+        setCartItems(existingItems);
+      }
     }
   }, [orderData]);
 
