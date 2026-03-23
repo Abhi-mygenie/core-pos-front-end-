@@ -109,6 +109,11 @@ What does this field control? Is it the default status assigned to new orders?
 **Observation:** Product images sometimes contain full URLs, sometimes relative paths. Category images use a different base path (`/storage/category/`) than general images (`/storage/`).
 **Impact:** Transform layer handles both cases with `getImageUrl()` / `getProductImageUrl()` / `getCategoryImageUrl()` helpers.
 
+### B5: Restaurant logo URL construction
+**Observation:** The restaurant logo field returns a relative filename (e.g., `2025-12-01-692d50d9332d8.png`) but `getImageUrl()` prepends a base storage URL that may not match the actual image server. The logo shows as a broken image in the Settings → Restaurant Info view.
+**Impact:** Need to confirm the correct base URL for restaurant logo/cover_photo images from the backend team.
+**Status:** OPEN
+
 ### B5: Pagination uses `offset` as page number
 **Observation:** The API uses `offset` parameter but it behaves as a page number (1-indexed), not a traditional offset (skip count).
 - `offset=1` = page 1
