@@ -117,16 +117,16 @@ Grouped by feature area:
 
 ## Sidebar Menu → Permission Mapping
 
-| Sidebar Item | Required Permission(s) | Phase 1 Behavior |
+| Sidebar Item | Required Permission(s) | Phase 1 Status |
 |---|---|---|
-| Dashboard | `pos` | Always visible if POS access |
-| Orders | `order` | Show submenu |
-| Reports | `report` | Show submenu |
-| Menu Management | `menu` | Opens slide-out panel |
-| Employees | `employee` | "Coming soon" toast |
-| Expenses | `expence` | "Coming soon" toast |
-| Inventory | `inventory` | "Coming soon" toast |
-| Settings | `restaurant_settings` | Opens slide-out panel |
+| Dashboard | `pos` | Mapped — visibility gated by `hasPermission('pos')` |
+| Orders | `order` | Mapped — visibility gated |
+| Reports | `report` | Mapped — visibility gated |
+| Menu Management | `menu` | Mapped — visibility gated, opens panel (Sub-step 3) |
+| Employees | `employee` | Mapped — "Coming soon" toast on click |
+| Expenses | `expence` | Mapped — "Coming soon" toast on click |
+| Inventory | `inventory` | Mapped — "Coming soon" toast on click |
+| Settings | `restaurant_settings` | Mapped — visibility gated, opens Settings panel |
 
 ---
 

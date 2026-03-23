@@ -1,7 +1,7 @@
 # API Field Mapping Document
 
 > Last Updated: 2026-03-23
-> Status: Phase 1 Part A — All fields transformed, UI mapping in progress
+> Status: Phase 1 Part A — Transforms done. Sidebar, Header, Settings UI mapped.
 
 ---
 
@@ -12,9 +12,9 @@
 
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `token` | `token` | Yes | Stored in localStorage, used in axios headers | Active |
-| `role_name` | `roleName` | Yes | Sidebar profile section | Pending |
-| `role` | `permissions` | Yes | AuthContext — gates sidebar items, buttons | Pending |
+| `token` | `token` | Yes | Stored in localStorage, used in axios headers | Mapped |
+| `role_name` | `roleName` | Yes | Sidebar profile subtitle | Mapped |
+| `role` | `permissions` | Yes | AuthContext — gates sidebar items, buttons | Mapped |
 | `firebase_token` | `firebaseToken` | Yes | Not used in Phase 1 (push notifications) | Unused |
 | `first_login` | `isFirstLogin` | Yes | Not used in Phase 1 | Unused |
 | `zone_wise_topic` | `zoneWiseTopic` | Yes | Not used in Phase 1 (Firebase topics) | Unused |
@@ -38,15 +38,15 @@
 |---|---|---|---|---|
 | `id` | `odwnerId` | Yes | Internal reference | Active |
 | `emp_id` | `employeeId` | Yes | Internal reference | Active |
-| `emp_f_name` | `firstName` | Yes | Sidebar profile name | Pending |
-| `emp_l_name` | `lastName` | Yes | Sidebar profile name | Pending |
-| (computed) | `fullName` | Yes | Sidebar profile display | Pending |
+| `emp_f_name` | `firstName` | Yes | Sidebar profile name | Mapped |
+| `emp_l_name` | `lastName` | Yes | Sidebar profile name | Mapped |
+| (computed) | `fullName` | Yes | Sidebar profile display | Mapped |
 | `emp_email` / `email` | `email` | Yes | Profile display | Pending |
 | `phone` | `phone` | Yes | Profile display | Pending |
-| `role_name` | `roleName` | Yes | Sidebar profile subtitle | Pending |
+| `role_name` | `roleName` | Yes | Sidebar profile subtitle | Mapped |
 | `default_user` | `isDefaultUser` | Yes | Permission checks | Active |
-| `image` | `image` | Yes | Sidebar avatar | Pending |
-| `role` | `permissions` | Yes | AuthContext — RBAC gating | Pending |
+| `image` | `image` | Yes | Sidebar avatar | Mapped |
+| `role` | `permissions` | Yes | AuthContext — Sidebar RBAC gating | Mapped |
 
 **Unused User Fields (not in transform):**
 | API Field | Description | Notes |
@@ -76,34 +76,34 @@
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
 | `id` | `id` | Yes | Internal reference | Active |
-| `name` | `name` | Yes | Sidebar header, Settings | Pending |
-| `phone` | `phone` | Yes | Settings display | Pending |
-| `email` | `email` | Yes | Settings display | Pending |
-| `address` | `address` | Yes | Settings display | Pending |
-| `logo` | `logo` | Yes | Sidebar header logo | Pending |
+| `name` | `name` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
+| `phone` | `phone` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
+| `email` | `email` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
+| `address` | `address` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
+| `logo` | `logo` | Yes | Settings → Restaurant Info (broken URL — see B5) | Mapped* |
 | `cover_photo` | `coverPhoto` | Yes | Settings display | Pending |
-| `currency` | `currency` | Yes | Internal | Active |
+| `currency` | `currency` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
 | (computed from currency) | `currencySymbol` | Yes | All price displays | Pending |
-| `dine_in` | `features.dineIn` | Yes | Dashboard channel tabs visibility | Pending |
-| `delivery` | `features.delivery` | Yes | Dashboard channel tabs visibility | Pending |
-| `take_away` | `features.takeaway` | Yes | Dashboard channel tabs visibility | Pending |
-| `room` | `features.room` | Yes | Dashboard channel tabs visibility | Pending |
-| `inventory` | `features.inventory` | Yes | Sidebar menu visibility | Pending |
-| `tip` | `features.tip` | Yes | Order billing | Pending |
-| `service_charge` | `features.serviceCharge` | Yes | Order billing | Pending |
-| `tax` | `tax.percentage` | Yes | Order billing | Pending |
-| `gst_tax` | `tax.gstPercentage` | Yes | Order billing | Pending |
-| `gst_code` | `tax.gstCode` | Yes | Bill display | Pending |
-| `payment_types` | `paymentTypes[]` | Yes | Payment selection | Pending |
-| `pay_cash` | `paymentMethods.cash` | Yes | Payment toggles | Pending |
-| `pay_upi` | `paymentMethods.upi` | Yes | Payment toggles | Pending |
-| `pay_cc` | `paymentMethods.card` | Yes | Payment toggles | Pending |
-| `pay_tab` | `paymentMethods.tab` | Yes | Payment toggles | Pending |
-| `restaurant_discount_type` | `discountTypes[]` | Yes | Discount selection | Pending |
-| `restaurant_printer_new` | `printers[]` | Yes | Printer settings | Pending |
-| `schedules` | `schedules[]` | Yes | Settings — operating hours | Pending |
-| `settings` | `settings` | Yes | Various settings toggles | Pending |
-| `search_by` | `searchOptions` | Yes | Dashboard search config | Pending |
+| `dine_in` | `features.dineIn` | Yes | Header channel tabs + Settings → Restaurant Info toggle | Mapped |
+| `delivery` | `features.delivery` | Yes | Header channel tabs + Settings → Restaurant Info + Delivery Settings toggle | Mapped |
+| `take_away` | `features.takeaway` | Yes | Header channel tabs + Settings → Restaurant Info + Delivery Settings toggle | Mapped |
+| `room` | `features.room` | Yes | Header channel tabs + Settings → Restaurant Info toggle | Mapped |
+| `inventory` | `features.inventory` | Yes | Settings → Restaurant Info toggle | Mapped |
+| `tip` | `features.tip` | Yes | Settings → Service Charge toggle | Mapped |
+| `service_charge` | `features.serviceCharge` | Yes | Settings → Service Charge toggle | Mapped |
+| `tax` | `tax.percentage` | Yes | Settings → Tax & GST (read + edit) | Mapped |
+| `gst_tax` | `tax.gstPercentage` | Yes | Settings → Tax & GST (read + edit) | Mapped |
+| `gst_code` | `tax.gstCode` | Yes | Settings → Tax & GST (read + edit) | Mapped |
+| `payment_types` | `paymentTypes[]` | Yes | Settings → Payment Methods (list + add/edit/delete) | Mapped |
+| `pay_cash` | `paymentMethods.cash` | Yes | Settings → Payment Methods toggle | Mapped |
+| `pay_upi` | `paymentMethods.upi` | Yes | Settings → Payment Methods toggle | Mapped |
+| `pay_cc` | `paymentMethods.card` | Yes | Settings → Payment Methods toggle | Mapped |
+| `pay_tab` | `paymentMethods.tab` | Yes | Settings → Payment Methods toggle | Mapped |
+| `restaurant_discount_type` | `discountTypes[]` | Yes | Settings → Discount Types (list + add/edit/delete) | Mapped |
+| `restaurant_printer_new` | `printers[]` | Yes | Settings → Printers (list + add/edit/delete) | Mapped |
+| `schedules` | `schedules[]` | Yes | Settings → Operating Hours (list + edit per day) | Mapped |
+| `settings` | `settings` | Yes | Settings → General Settings (toggles + edit) | Mapped |
+| `search_by` | `searchOptions` | Yes | Settings → General Settings (read) | Mapped |
 
 **Unused Restaurant Fields (not in transform):**
 | API Field | Description | Notes |
@@ -283,14 +283,14 @@
 
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `tableId` | Yes | Dashboard — table card, order entry | Pending |
-| `table_no` | `tableNumber` | Yes | Dashboard — table card "T1", "T2" | Pending |
+| `id` | `tableId` | Yes | Settings → Table Management grid + edit | Mapped |
+| `table_no` | `tableNumber` | Yes | Settings → Table Management "T1", "T2" labels | Mapped |
 | (computed) | `displayName` | Yes | Dashboard — "Section - T1" | Pending |
-| `title` | `sectionName` | Yes | Dashboard — section grouping headers | Pending |
+| `title` | `sectionName` | Yes | Settings → Table Management sections list | Mapped |
 | `rtype` | `tableType` / `isRoom` | Yes | Filter tables vs rooms | Active |
 | `status` | `isActive` | Yes | Filter — only active shown | Active |
-| `engage` | `isOccupied` | Yes | Dashboard — table card status color | Pending |
-| (computed) | `status` | Yes | Dashboard — free/occupied/disabled | Pending |
+| `engage` | `isOccupied` | Yes | Settings → Table Management orange highlight | Mapped |
+| (computed) | `status` | Yes | Settings → Table Management "free/occupied" label | Mapped |
 | `waiter_id` | `assignedWaiterId` | Yes | Order entry — waiter assignment | Pending |
 | `qr_code` | `qrCode` | Yes | Table settings — QR display | Pending |
 | `restaurant_id` | `restaurantId` | Yes | Internal reference | Active |
@@ -316,10 +316,10 @@
 **Reason Fields:**
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `reasonId` | Yes | Settings — reason list | Pending |
-| `reason` | `reasonText` | Yes | Settings — reason text, Cancel dialog | Pending |
-| `item_type` | `itemType` / `applicableTo` / `isForOrder` / `isForItem` | Yes | Settings — "Order Level" / "Item Level" / "Both" | Pending |
-| `status` | `isActive` | Yes | Filter — only active shown | Active |
+| `id` | `reasonId` | Yes | Settings → Cancellation Reasons list item | Mapped |
+| `reason` | `reasonText` | Yes | Settings → Cancellation Reasons text + edit form | Mapped |
+| `item_type` | `itemType` / `applicableTo` / `isForOrder` / `isForItem` | Yes | Settings → "Order Level" / "Item Level" / "Both" + edit dropdown | Mapped |
+| `status` | `isActive` | Yes | Filter — only active shown + edit toggle | Mapped |
 | `user_type` | `userType` | Yes | Settings display | Pending |
 | `restaurant_id` | `restaurantId` | Yes | Internal reference | Active |
 | `created_at` | `createdAt` | Yes | Settings display | Pending |
@@ -357,12 +357,12 @@ Same field mapping as Section 4 (Products). Returns popular/trending items sorte
 
 | Endpoint | Total API Fields | Transformed | Mapped to UI | Unused |
 |---|---|---|---|---|
-| Login | 6 | 6 | 1 (token) | 3 |
-| Profile — User | 30+ | 10 | 1 (token/auth) | 20+ |
-| Profile — Restaurant | 120+ | 30 | 0 | 90+ |
+| Login | 6 | 6 | 3 (token, roleName, permissions) | 3 |
+| Profile — User | 30+ | 10 | 5 (fullName, firstName, lastName, roleName, permissions, image) | 20+ |
+| Profile — Restaurant | 120+ | 30 | 29 (Settings panel — all tiles) | 90+ |
 | Categories | 12 | 12 | 0 | 0 |
 | Products | 40+ | 40+ | 0 | 0 |
-| Tables | 13 | 13 | 0 | 0 |
-| Cancellation Reasons | 8 | 8 | 0 | 0 |
+| Tables | 13 | 13 | 7 (Settings → Table Management) | 0 |
+| Cancellation Reasons | 8 | 8 | 4 (Settings → Cancellation Reasons) | 0 |
 | Popular Food | (same as Products) | (same) | 0 | 0 |
 | Running Orders | Unknown | 0 | 0 | All |
