@@ -1,81 +1,98 @@
 # Backend Clarifications & Open Questions
 
 > Last Updated: 2026-03-23
-> Status: Tracking open questions, answered items, and undocumented behaviors
-
----
-
-## Open Questions (Pending)
-
-### Q1: Order Status Values — `food_status` (1-5)
-**Endpoint:** `GET /api/v1/vendoremployee/pos/employee-orders-list`
-**Priority:** P1 (Blocks Phase 1 Part B — Dashboard Order Cards)
-
-What do `food_status` values 1 through 5 mean?
-
-| Value | Likely Meaning | Confirmed? |
-|---|---|---|
-| 1 | Confirmed / New | No |
-| 2 | Preparing / Cooking | No |
-| 3 | Ready | No |
-| 4 | Served | No |
-| 5 | Cancelled? / Completed? | No |
-
-**Action needed:** Backend team to confirm mapping.
-
----
-
-### Q2: Order Status Values — `order_status`
-**Endpoint:** `GET /api/v1/vendoremployee/pos/employee-orders-list`
-**Priority:** P1
-
-What are the possible values and meanings for `order_status`?
-
-| Value | Likely Meaning | Confirmed? |
-|---|---|---|
-| ? | Pending | No |
-| ? | Confirmed | No |
-| ? | Completed | No |
-| ? | Cancelled | No |
-
----
-
-### Q3: Station-specific Order Status — `f_order_status`, `b_order_status`, `k_order_status`
-**Endpoint:** `GET /api/v1/vendoremployee/pos/employee-orders-list`
-**Priority:** P2
-
-What do these three fields represent?
-- `f_order_status` — Food order status?
-- `b_order_status` — Bar order status?
-- `k_order_status` — Kitchen order status?
-
-What are their possible values and how do they relate to `food_status`?
-
----
-
-### Q4: "BILL READY" and "PAID" Status Identification
-**Priority:** P1
-
-How to determine when an order is in "BILL READY" state vs "PAID" state from the API response?
-
-| Status | Identified by | Confirmed? |
-|---|---|---|
-| BILL READY | `food_status === ?` and/or `order_status === ?` | No |
-| PAID | `order_status === ?` or separate `payment_status` field? | No |
-
----
-
-### Q5: `def_ord_status` Restaurant Field
-**Source:** Restaurant profile → `def_ord_status: 1`
-**Priority:** P2
-
-What does this field control? Is it the default status assigned to new orders?
+> Status: Phase 1 Part B — Running orders API analyzed with Palm House restaurant data
 
 ---
 
 ## Answered / Resolved
 
-*(None yet — will be populated as answers come in)*
+### Q1: `f_order_status` — CONFIRMED by user
+**Endpoint:** `GET /api/v1/vendoremployee/pos/employee-orders-list`
+
+| f_order_status | Status Key | Badge Label | Table Card Status |
+|---|---|---|---|
+| 1 | `preparing` | Preparing | `occupied` |
+| 2 | `ready` | Ready | `occupied` (food ready) |
+| 3 | `cancelled` | Cancelled | skip / `available` |
+| **4** | **TBD** | **TBD** | **User will provide later** |
+| 5 | `served` | Served | `billReady` |
+| 6 | `paid` | Paid | `paid` |
+| 7 | `pending` | Yet to be confirmed | `yetToConfirm` |
+| **8** | **TBD** | **TBD** | **User will provide later** |
+
+**`food_status` on items uses the same 1-7 scale with some exceptions (to be documented when edge cases are found).**
+
+### Q3: Station-specific statuses — CONFIRMED, DEFERRED
+- `f_order_status` — Overall food order status (used for table card + order badge)
+- `b_order_status` — Bar station status → **Deferred to Phase 1C**
+- `k_order_status` — Kitchen station status → **Deferred to Phase 1C**
+
+### Q4: "BILL READY" and "PAID" — RESOLVED
+| Status | How to Identify |
+|---|---|
+| BILL READY | `f_order_status === 5` (served) AND `payment_status === "unpaid"` |
+| PAID | `f_order_status === 6` OR `payment_status === "paid"` |
+
+---
+
+## Open Questions (Still Pending)
+
+### Q2: `order_status` field purpose
+**Observation:** All 33 running orders have `order_status="queue"`. This field exists alongside `f_order_status` but its purpose/values are unknown.
+**Hypothesis:** May always be "queue" for running/active orders, and change to something else for completed/archived orders.
+**Status:** OPEN — Noted for documentation. Using `f_order_status` as the primary status field.
+
+### Q5: `def_ord_status` Restaurant Field
+**Source:** Restaurant profile → `def_ord_status: 1`
+**Priority:** P2
+What does this field control? Is it the default status assigned to new orders?
+
+### Q6: `f_order_status` values 4 and 8
+**Status:** OPEN — User will provide definitions later. Transform will handle them as `unknown` until confirmed.
+
+---
+
+## Running Orders API — Confirmed Behaviors
+
+### B10: `role_name` parameter behavior
+**Observation:** The `employee-orders-list` API requires a `role_name` parameter and returns different results based on it:
+- `role_name=Owner` → Returns 0 orders (Owner sees nothing??)
+- `role_name=Manager` → Returns all running orders (33 in Palm House)
+- `role_name=Waiter` → Returns orders assigned to that waiter only
+
+**Rule:** Use `role_name=Manager` for all roles EXCEPT when logged-in user's role is "Waiter" — then use `role_name=Waiter`.
+**Status:** CONFIRMED by user
+
+### B11: Room orders (`rtype="RM"`) — SKIP for Phase 1B
+**Observation:** Orders with `order_in="RM"` or whose `restaurantTable.rtype="RM"` are room/hotel orders. These have:
+- Very large item counts (100+ items per order)
+- `associated_order_list` (sub-orders within a room tab)
+- `room_info` field
+**Rule:** Filter OUT any order where `restaurantTable.rtype === "RM"` or `order_in === "RM"`. Room orders will be mapped in a future phase.
+**Status:** CONFIRMED by user — Deferred to Phase 2
+
+### B12: Walk-in / Counter orders (`table_id=0`)
+**Observation:** Orders with `table_id=0` have no physical table. These are walk-in customers or counter orders.
+**Rule:** Treat as dine-in with a dynamic virtual table. Display with customer name (from `user_name`) or "Walk-in" as the table label.
+**Status:** CONFIRMED by user
+
+### B13: `order_type` values
+**Observation:** API returns `order_type` as:
+- `"pos"` — Punched from POS (most common, includes dine-in)
+- `"dinein"` — Direct dine-in order
+- Delivery/Takeaway values not observed in Palm House data (restaurant doesn't have these enabled)
+
+**Rule:** Check restaurant settings API for which order channels are enabled (`dine_in`, `delivery`, `take_away`). Only show channels that are enabled.
+**Status:** CONFIRMED — Palm House only has dine-in
+
+### B14: No auto-refresh polling needed
+**Observation:** User confirmed that auto-refresh/polling of running orders is NOT required for Phase 1B.
+**Status:** CONFIRMED by user
+
+### B15: Waiter info NOT from running orders API
+**Observation:** While `waiter_id` and `restaurantTable.waiter` fields exist in the response, user confirmed that waiter name display on table cards will come from a separate source/API in a future phase. Skip waiter display for now.
+**Status:** CONFIRMED by user
 
 ---
 
@@ -161,16 +178,17 @@ What does this field control? Is it the default status assigned to new orders?
 
 ---
 
-## API Response Sample Sizes (from test account)
+## API Response Sample Sizes
 
 | Endpoint | Sample Count | Notes |
 |---|---|---|
 | Profile permissions | 50 | Owner has all permissions |
-| Categories | 30 | Active categories |
-| Products | 144 | All products (limit=500) |
+| Categories | 30 | Active categories (18march) |
+| Products | 144 | All products (limit=500, 18march) |
 | Tables | Varies | Tables only (rooms filtered out) |
 | Cancellation Reasons | 2 | Active reasons |
 | Popular Food | Varies | Sorted by order_count |
+| **Running Orders** | **33** | **Palm House (role_name=Manager). 20 RM, 13 non-RM. All f_order_status=5** |
 
 ---
 
@@ -191,10 +209,13 @@ What does this field control? Is it the default status assigned to new orders?
 ---
 
 ## Next Steps
-1. Get answers to Q1-Q4 from backend team before starting Phase 1 Part B
-2. Get correct base URL for restaurant logo images (B5)
-3. Audit product `veg` field values for data quality (B7)
-4. Test with non-owner role accounts to verify permission gating
-5. Formalize `add_ons` transform in Phase 2 to avoid fragile raw passthrough (B8)
-6. Document the Running Orders API response once available
-7. Provide APIs for Merge Table, Shift Table, and Transfer Food operations (UI already built)
+1. Implement Phase 1B: Build `orderService.js`, `orderTransform.js`, `OrderContext.jsx` for running orders
+2. Confirm `f_order_status` values 4 and 8 from user (Q6)
+3. Confirm `order_status` field purpose if relevant (Q2)
+4. Get correct base URL for restaurant logo images (B5)
+5. Audit product `veg` field values for data quality (B7)
+6. Test with non-owner role accounts to verify permission gating
+7. Formalize `add_ons` transform in Phase 2 to avoid fragile raw passthrough (B8)
+8. Provide APIs for Merge Table, Shift Table, and Transfer Food operations (UI already built)
+9. Phase 1C: Map `b_order_status` and `k_order_status` station-level statuses
+10. Phase 2: Map room orders (`rtype="RM"`) with `associated_order_list` and `room_info`
