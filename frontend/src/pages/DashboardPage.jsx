@@ -11,6 +11,7 @@ import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { useRestaurant } from "../contexts";
 import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
+import MenuManagementPanel from "../components/panels/MenuManagementPanel";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -106,6 +107,7 @@ const DashboardPage = () => {
   const [isSilentMode, setIsSilentMode] = useState(false);
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -254,11 +256,18 @@ const DashboardPage = () => {
         isSilentMode={isSilentMode}
         setIsSilentMode={setIsSilentMode}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenMenu={() => setIsMenuOpen(true)}
       />
 
       <SettingsPanel
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        sidebarWidth={sidebarExpanded ? 280 : 70}
+      />
+
+      <MenuManagementPanel
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
         sidebarWidth={sidebarExpanded ? 280 : 70}
       />
 
