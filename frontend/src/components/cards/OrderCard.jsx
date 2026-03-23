@@ -93,17 +93,17 @@ const OrderCard = ({
         className="px-4 py-3 flex items-center border-b"
         style={{ borderColor: COLORS.borderGray }}
       >
-        {/* LEFT: Logo + ID + Customer Name + Address icon */}
+        {/* LEFT: Logo + Stacked (ID on top, Customer below) + Address icon */}
         <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
           {renderLogo()}
-          <span className="text-sm font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>
-            {primaryId}
-          </span>
-          {order.customer && order.customer !== "WC" && order.customer !== tableLabel && (
-            <span className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>
-              {order.customer}
+          <div className="flex flex-col leading-tight">
+            <span className="text-xs font-bold" style={{ color: COLORS.darkText }}>
+              {primaryId}
             </span>
-          )}
+            <span className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>
+              {order.customer || "WC"}
+            </span>
+          </div>
           {isDelivery && isOwn && (
             <button
               data-testid={`address-btn-${orderId}`}
