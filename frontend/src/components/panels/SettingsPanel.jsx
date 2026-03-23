@@ -305,7 +305,7 @@ const DETAIL_VIEWS = {
 };
 
 // ─── Main Panel ─────────────────────────────────────────────────────────────
-const SettingsPanel = ({ isOpen, onClose }) => {
+const SettingsPanel = ({ isOpen, onClose, sidebarWidth }) => {
   const [activeTile, setActiveTile] = useState(null);
 
   const handleClose = () => {
@@ -322,21 +322,12 @@ const SettingsPanel = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div
-          data-testid="settings-backdrop"
-          className="fixed inset-0 bg-black/20 z-40"
-          onClick={handleClose}
-        />
-      )}
-
       {/* Panel */}
       <div
         data-testid="settings-panel"
         className="fixed top-0 right-0 h-full z-50 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl"
         style={{
-          width: "520px",
+          left: `${sidebarWidth || 70}px`,
           backgroundColor: COLORS.lightBg,
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}

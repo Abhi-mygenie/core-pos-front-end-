@@ -259,6 +259,7 @@ const DashboardPage = () => {
       <SettingsPanel
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        sidebarWidth={sidebarExpanded ? 280 : 70}
       />
 
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
