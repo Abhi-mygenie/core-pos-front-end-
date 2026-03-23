@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { User, CheckCircle, ChevronDown, ChevronUp, X, MessageCircle, Utensils, Clock } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockOrderItems } from "../../data";
+import { useOrders } from "../../contexts";
 import { getTableStatusConfig } from "../../utils";
 
 // Dine-In Order Card Component - Neutral design with full functionality
 const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
   const [showServedItems, setShowServedItems] = useState(false);
-  
-  const orderData = mockOrderItems[table.id] || { waiter: "", customer: "", phone: "", items: [] };
+  const { orderItemsByTableId } = useOrders();
+
+  // Get real order data from context (by tableId), or use walk-in order data from table prop
+  const orderData = orderItemsByTableId[table.tableId] || {
+    waiter: "", customer: table.label || "", phone: "", items: [],
+    amount: table.amount, time: table.time, status: table.status,
+  };
   const preparingItems = orderData.items.filter(item => item.status === "preparing");
   const readyItems = orderData.items.filter(item => item.status === "ready");
   const servedItems = orderData.items.filter(item => item.status === "served");

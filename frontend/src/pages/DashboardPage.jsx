@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLORS } from "../constants";
-import { mockRooms, mockDeliveryOrders, mockTakeAwayOrders, mockOrderItems } from "../data";
+import { mockRooms } from "../data";
 import { Sidebar, Header } from "../components/layout";
 import { TableSection, RoomSection } from "../components/sections";
 import { DineInCard, DeliveryCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
-import { useRestaurant, useTables } from "../contexts";
+import { useRestaurant, useTables, useOrders } from "../contexts";
 import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
 import MenuManagementPanel from "../components/panels/MenuManagementPanel";
@@ -62,18 +62,22 @@ const OrderListSection = ({ title, orders, matchingIds, snoozedOrders, onToggleS
       <span style={{ color: COLORS.borderGray }}>|</span>
       <span>{matchingIds === null ? orders.length : matchingIds.size} Orders</span>
     </div>
-    <div className="grid grid-cols-3 gap-4">
-      {orders
-        .filter(order => matchingIds === null || matchingIds.has(order.id))
-        .map((order) => (
-          <DeliveryCard
-            key={order.id}
-            order={order}
-            isSnoozed={snoozedOrders.has(order.id)}
-            onToggleSnooze={onToggleSnooze}
-          />
-        ))}
-    </div>
+    {orders.length > 0 ? (
+      <div className="grid grid-cols-3 gap-4">
+        {orders
+          .filter(order => matchingIds === null || matchingIds.has(String(order.orderId)))
+          .map((order) => (
+            <DeliveryCard
+              key={order.orderId}
+              order={order}
+              isSnoozed={snoozedOrders.has(String(order.orderId))}
+              onToggleSnooze={onToggleSnooze}
+            />
+          ))}
+      </div>
+    ) : (
+      <p className="text-sm py-4" style={{ color: COLORS.grayText }}>No active orders</p>
+    )}
   </div>
 );
 
@@ -82,6 +86,10 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { isLoaded: restaurantLoaded, currencySymbol } = useRestaurant();
   const { tables: apiTables, isLoaded: tablesLoaded } = useTables();
+  const {
+    dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
+    orderItemsByTableId, getOrderByTableId,
+  } = useOrders();
 
   // Redirect to login if not authenticated, or to loading if data not loaded
   useEffect(() => {
@@ -110,16 +118,26 @@ const DashboardPage = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // --- Seed tables from real API data ---
+  // --- Seed tables from real API data + enrich with order data ---
   useEffect(() => {
     if (!tablesLoaded || apiTables.length === 0) return;
 
-    const adaptTable = (t) => ({
-      id: String(t.tableId),
-      label: `T${t.tableNumber}`,
-      status: t.isOccupied ? 'occupied' : 'available',
-      tableId: t.tableId,
-    });
+    const adaptTable = (t) => {
+      // Check if this table has a running order
+      const order = getOrderByTableId(t.tableId);
+      const hasOrder = !!order;
+
+      return {
+        id: String(t.tableId),
+        label: `T${t.tableNumber}`,
+        status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
+        tableId: t.tableId,
+        // Order enrichment (only if order exists)
+        amount: hasOrder ? order.amount : undefined,
+        time: hasOrder ? order.time : undefined,
+        orderNumber: hasOrder ? order.orderNumber : undefined,
+      };
+    };
 
     const hasSections = apiTables.some(t => t.sectionName);
 
@@ -134,16 +152,52 @@ const DashboardPage = () => {
         }
         grouped[key].tables.push(adaptTable(table));
       });
+
+      // Add walk-in orders as virtual table entries in a "Walk-In" section
+      if (walkInOrders.length > 0) {
+        grouped['walk_in'] = {
+          name: 'Walk-In',
+          prefix: 'WC',
+          tables: walkInOrders.map((order, idx) => ({
+            id: `wc-${order.orderId}`,
+            label: order.customer || 'WC',
+            status: order.tableStatus,
+            tableId: 0,
+            amount: order.amount,
+            time: order.time,
+            orderNumber: order.orderNumber,
+            isWalkIn: true,
+            walkInOrderId: order.orderId,
+          })),
+        };
+      }
+
       setTables(grouped);
       setFlatTables([]);
     } else {
       const flat = apiTables
         .filter(t => t.status !== 'disabled')
         .map(adaptTable);
+
+      // Append walk-in orders as virtual entries
+      walkInOrders.forEach((order) => {
+        flat.push({
+          id: `wc-${order.orderId}`,
+          label: order.customer || 'WC',
+          status: order.tableStatus,
+          tableId: 0,
+          amount: order.amount,
+          time: order.time,
+          orderNumber: order.orderNumber,
+          isWalkIn: true,
+          walkInOrderId: order.orderId,
+        });
+      });
+
       setTables({});
       setFlatTables(flat);
     }
-  }, [tablesLoaded, apiTables]);
+  }, [tablesLoaded, apiTables, getOrderByTableId, walkInOrders]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -176,31 +230,30 @@ const DashboardPage = () => {
 
     if (activeChannels.includes("dineIn")) {
       const enriched = allTablesList.map(table => {
-        const orderData = mockOrderItems[table.id] || {};
+        const orderData = orderItemsByTableId[table.tableId] || {};
         return {
           ...table,
-          customer: orderData.customer || "",
-          reservedFor: table.reservedFor || "",
+          customer: orderData.customer || table.label || "",
           phone: orderData.phone || ""
         };
       });
       results.tables = searchItems(enriched, query, item => ({
         id: item.id,
-        all: [item.id, item.customer, item.reservedFor, item.phone]
+        all: [item.label || item.id, item.customer, item.phone]
       }));
     }
 
     if (activeChannels.includes("delivery")) {
-      results.delivery = searchItems(mockDeliveryOrders, query, item => ({
-        id: item.id,
-        all: [item.id, item.customer, item.phone]
+      results.delivery = searchItems(deliveryOrders, query, item => ({
+        id: String(item.orderId),
+        all: [item.orderNumber, item.customer, item.phone]
       }));
     }
 
     if (activeChannels.includes("takeAway")) {
-      results.takeAway = searchItems(mockTakeAwayOrders, query, item => ({
-        id: item.id,
-        all: [item.id, item.customer, item.phone]
+      results.takeAway = searchItems(takeAwayOrders, query, item => ({
+        id: String(item.orderId),
+        all: [item.orderNumber, item.customer, item.phone]
       }));
     }
 
@@ -414,7 +467,7 @@ const DashboardPage = () => {
             {activeChannels.includes("delivery") && (
               <OrderListSection
                 title="Delivery Orders"
-                orders={mockDeliveryOrders}
+                orders={deliveryOrders}
                 matchingIds={matchingDeliveryIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}
@@ -426,7 +479,7 @@ const DashboardPage = () => {
             {activeChannels.includes("takeAway") && (
               <OrderListSection
                 title="TakeAway Orders"
-                orders={mockTakeAwayOrders}
+                orders={takeAwayOrders}
                 matchingIds={matchingTakeAwayIds}
                 snoozedOrders={snoozedOrders}
                 onToggleSnooze={toggleSnooze}
@@ -460,7 +513,7 @@ const DashboardPage = () => {
           <OrderEntry
             table={orderEntryTable}
             onClose={handleCloseOrderEntry}
-            orderData={orderEntryTable ? mockOrderItems[orderEntryTable.id] : null}
+            orderData={orderEntryTable ? (orderItemsByTableId[orderEntryTable.tableId] || null) : null}
             orderType={orderEntryType}
             onOrderTypeChange={handleOrderTypeChange}
             allTables={allTablesList}

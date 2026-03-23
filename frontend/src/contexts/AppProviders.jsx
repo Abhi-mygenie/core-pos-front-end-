@@ -3,6 +3,7 @@ import { RestaurantProvider } from './RestaurantContext';
 import { MenuProvider } from './MenuContext';
 import { TableProvider } from './TableContext';
 import { SettingsProvider } from './SettingsContext';
+import { OrderProvider } from './OrderContext';
 
 // Combined App Providers - Wraps all context providers
 const AppProviders = ({ children }) => {
@@ -12,7 +13,9 @@ const AppProviders = ({ children }) => {
         <MenuProvider>
           <TableProvider>
             <SettingsProvider>
-              {children}
+              <OrderProvider>
+                {children}
+              </OrderProvider>
             </SettingsProvider>
           </TableProvider>
         </MenuProvider>

@@ -70,6 +70,56 @@ export const STATION_TYPES = {
 };
 
 // =============================================================================
+// ORDER STATUS MAPPINGS (Phase 1 Part B)
+// =============================================================================
+
+// f_order_status (API) → frontend status key
+export const F_ORDER_STATUS = {
+  1: 'preparing',
+  2: 'ready',
+  3: 'cancelled',
+  // 4: TBD — user will provide later
+  5: 'served',
+  6: 'paid',
+  7: 'pending',
+  8: 'running',   // active/running order on dashboard
+  // 9: TBD — needs team clarification
+};
+
+// Frontend status → table card status (for enriching table grid)
+export const ORDER_TO_TABLE_STATUS = {
+  pending: 'yetToConfirm',
+  preparing: 'occupied',
+  ready: 'occupied',
+  running: 'occupied',
+  served: 'billReady',
+  paid: 'paid',
+  cancelled: null, // skip — table goes back to available
+};
+
+// Order type values from API
+export const ORDER_TYPES = {
+  POS: 'pos',
+  DINE_IN: 'dinein',
+  WALK_IN: 'WalkIn',
+  TAKE_AWAY: 'take_away',
+  DELIVERY: 'delivery',
+};
+
+// Order lifecycle (order_status field)
+export const ORDER_LIFECYCLE = {
+  QUEUE: 'queue',       // active/running
+  DELIVERED: 'delivered', // completed/settled
+};
+
+// Payment status
+export const PAYMENT_STATUS = {
+  UNPAID: 'unpaid',
+  PAID: 'paid',
+  PAY_LATER: 'PayLater',
+};
+
+// =============================================================================
 // YES/NO TRANSFORMS
 // =============================================================================
 export const YES_NO_MAP = {
@@ -99,6 +149,7 @@ export const API_LOADING_ORDER = [
   { key: 'tables', label: 'Tables', endpoint: 'TABLES' },
   { key: 'cancellationReasons', label: 'Settings', endpoint: 'CANCELLATION_REASONS' },
   { key: 'popularFood', label: 'Popular Items', endpoint: 'POPULAR_FOOD' },
+  { key: 'runningOrders', label: 'Running Orders', endpoint: 'RUNNING_ORDERS' },
 ];
 
 // =============================================================================

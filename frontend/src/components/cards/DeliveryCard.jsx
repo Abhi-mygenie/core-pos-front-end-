@@ -4,11 +4,15 @@ import { getOrderStatusConfig, getRiderStatusConfig } from "../../utils";
 
 // Compact Delivery/TakeAway Card Component (XD Design) - Reduced size
 const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
-  const sourceColor = SOURCE_COLORS[order.source] || SOURCE_COLORS.own;
+  // Support both real (canonical) and legacy field names
+  const orderId = order.orderId || order.id;
+  const orderNumber = order.orderNumber || order.id;
+  const source = order.source || 'own';
+  const sourceColor = SOURCE_COLORS[source] || SOURCE_COLORS.own;
   
   // Get source initial for logo
   const getSourceLogo = () => {
-    switch (order.source) {
+    switch (source) {
       case "swiggy": return "S";
       case "zomato": return "Z";
       default: return "O"; // Own
@@ -20,7 +24,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
 
   return (
     <div
-      data-testid={`delivery-card-${order.id}`}
+      data-testid={`delivery-card-${orderId}`}
       className={`rounded-lg shadow-sm overflow-hidden ${isSnoozed ? 'opacity-60' : ''}`}
       style={{ backgroundColor: COLORS.lightBg, border: `1.5px solid ${COLORS.borderGray}` }}
     >
@@ -36,7 +40,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
           </div>
           
           {/* Order ID + Customer Name + Phone + Time - all in one line */}
-          <span className="text-sm font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>#{order.id}</span>
+          <span className="text-sm font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>#{orderNumber}</span>
           {order.customer && (
             <span className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>{order.customer}</span>
           )}
@@ -57,10 +61,10 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
           {/* Snooze Button */}
           {onToggleSnooze && (
             <button 
-              data-testid={`snooze-btn-${order.id}`}
+              data-testid={`snooze-btn-${orderId}`}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleSnooze(order.id);
+                onToggleSnooze(String(orderId));
               }}
               className={`p-1 rounded flex-shrink-0 transition-colors ${isSnoozed ? 'bg-orange-100' : 'hover:bg-gray-100'}`}
               title={isSnoozed ? "Unsnooze" : "Snooze"}
@@ -73,8 +77,8 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
 
       {/* Items List */}
       <div className="px-3 py-2 border-b" style={{ borderColor: COLORS.borderGray }}>
-        {order.items.map((item) => (
-          <div key={item.id} className="flex items-center gap-1.5 py-0.5">
+        {(order.items || []).map((item, idx) => (
+          <div key={item.id || idx} className="flex items-center gap-1.5 py-0.5">
             <div 
               className="w-1.5 h-1.5 rounded-full flex-shrink-0"
               style={{ backgroundColor: item.status === "ready" ? COLORS.primaryGreen : COLORS.primaryOrange }}
@@ -88,7 +92,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
         {/* Total */}
         <div className="flex justify-end mt-1.5 pt-1.5 border-t border-dashed" style={{ borderColor: COLORS.borderGray }}>
           <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>
-            ₹{order.amount.toLocaleString()}
+            ₹{(order.amount || 0).toLocaleString()}
           </span>
         </div>
       </div>
@@ -160,21 +164,21 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
               <button
                 className="p-1.5 rounded border"
                 style={{ borderColor: "#EF4444", color: "#EF4444" }}
-                onClick={() => console.log(`Cancel order ${order.id}`)}
+                onClick={() => console.log(`Cancel order ${orderId}`)}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
               <button
                 className="px-2.5 py-1.5 text-[10px] font-bold rounded border"
                 style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
-                onClick={() => console.log(`Edit order ${order.id}`)}
+                onClick={() => console.log(`Edit order ${orderId}`)}
               >
                 Edit
               </button>
               <button
                 className="px-2.5 py-1.5 text-[10px] font-bold rounded"
                 style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
-                onClick={() => console.log(`Confirm order ${order.id}`)}
+                onClick={() => console.log(`Confirm order ${orderId}`)}
               >
                 Confirm
               </button>
@@ -185,9 +189,9 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
             <button
               className="px-3 py-1.5 text-[10px] font-bold rounded"
               style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
-              onClick={() => console.log(`${order.source === "own" ? "Assign Rider" : "Dispatch"} order ${order.id}`)}
+              onClick={() => console.log(`${source === "own" ? "Assign Rider" : "Dispatch"} order ${orderId}`)}
             >
-              {order.source === "own" ? "Assign Rider" : "Dispatch"}
+              {source === "own" ? "Assign Rider" : "Dispatch"}
             </button>
           )}
           
@@ -195,7 +199,7 @@ const DeliveryCard = ({ order, isSnoozed, onToggleSnooze }) => {
             <button
               className="px-3 py-1.5 text-[10px] font-bold rounded"
               style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
-              onClick={() => console.log(`Mark delivered ${order.id}`)}
+              onClick={() => console.log(`Mark delivered ${orderId}`)}
             >
               Delivered
             </button>

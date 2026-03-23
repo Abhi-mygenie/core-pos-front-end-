@@ -48,6 +48,8 @@ export const ORDER_STATUS_CONFIG = {
   dispatched: { label: "DISPATCHED", color: "#3B82F6" },
   delivered: { label: "DELIVERED", color: COLORS.primaryGreen },
   pending: { label: "PENDING", color: COLORS.grayText },
+  running: { label: "RUNNING", color: COLORS.primaryOrange },
+  unknown: { label: "PENDING", color: COLORS.grayText },
 };
 
 // Rider status configurations

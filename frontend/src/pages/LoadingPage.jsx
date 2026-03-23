@@ -4,13 +4,14 @@ import { Check, Loader2, AlertCircle } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
-import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../contexts";
+import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders } from "../contexts";
 import * as authService from "../api/services/authService";
 import * as profileService from "../api/services/profileService";
 import * as categoryService from "../api/services/categoryService";
 import * as productService from "../api/services/productService";
 import * as tableService from "../api/services/tableService";
 import * as settingsService from "../api/services/settingsService";
+import * as orderService from "../api/services/orderService";
 
 // Loading Screen Component - Loads all data after login
 const LoadingPage = () => {
@@ -23,6 +24,7 @@ const LoadingPage = () => {
   const { setCategories, setProducts, setPopularFood } = useMenu();
   const { setTables } = useTables();
   const { setCancellationReasons } = useSettings();
+  const { setOrders } = useOrders();
   
   // Loading status for each API with counts
   const [loadingStatus, setLoadingStatus] = useState(
@@ -211,6 +213,28 @@ const LoadingPage = () => {
       toast({
         title: "Failed to load popular items",
         description: error.readableMessage,
+        variant: "destructive",
+      });
+    }
+
+    if (ctrl.aborted) return;
+
+    // 7. Running Orders
+    updateStatus('runningOrders', LOADING_STATES.LOADING, null, 0, 0);
+    try {
+      const userRole = data.profile?.user?.roleName || 'Owner';
+      const roleParam = orderService.getOrderRoleParam(userRole);
+      data.runningOrders = await orderService.getRunningOrders(roleParam);
+      if (ctrl.aborted) return;
+      const count = data.runningOrders?.length || 0;
+      setOrders(data.runningOrders);
+      updateStatus('runningOrders', LOADING_STATES.SUCCESS, null, count, count);
+    } catch (error) {
+      if (ctrl.aborted) return;
+      updateStatus('runningOrders', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0);
+      toast({
+        title: "Failed to load orders",
+        description: error.readableMessage || error.message,
         variant: "destructive",
       });
     }
