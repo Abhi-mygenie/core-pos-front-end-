@@ -1,7 +1,7 @@
 # API Field Mapping Document
 
 > Last Updated: 2026-03-23
-> Status: Phase 1 Part A — Transforms done. Sidebar, Header, Settings UI mapped.
+> Status: Phase 1 Part A — Transforms done. Sidebar, Header, Settings UI, Menu Management, Dashboard Tables, Order Entry mapped.
 
 ---
 
@@ -83,7 +83,7 @@
 | `logo` | `logo` | Yes | Settings → Restaurant Info (broken URL — see B5) | Mapped* |
 | `cover_photo` | `coverPhoto` | Yes | Settings display | Pending |
 | `currency` | `currency` | Yes | Settings → Restaurant Info (read + edit) | Mapped |
-| (computed from currency) | `currencySymbol` | Yes | All price displays | Pending |
+| (computed from currency) | `currencySymbol` | Yes | TableCard price display, Order Entry prices (via prop) | Mapped |
 | `dine_in` | `features.dineIn` | Yes | Header channel tabs + Settings → Restaurant Info toggle | Mapped |
 | `delivery` | `features.delivery` | Yes | Header channel tabs + Settings → Restaurant Info + Delivery Settings toggle | Mapped |
 | `take_away` | `features.takeaway` | Yes | Header channel tabs + Settings → Restaurant Info + Delivery Settings toggle | Mapped |
@@ -243,9 +243,9 @@
 | `egg` | `hasEgg` | Yes | Menu Mgmt — product card food dot (🟡) + filter chip + Quick Edit + Full Edit | Mapped |
 | `jain` | `isJain` | Yes | Menu Mgmt — product card food dot (🟣) + filter chip + Full Edit | Mapped |
 | `allergen` | `allergen` | Yes | Menu Mgmt — not displayed (no allergen UI yet) | Pending |
-| `variations` | `variations[]` | Yes | Menu Mgmt — Full Edit read-only list | Mapped (read-only) |
-| (computed) | `hasVariations` | Yes | Internal — variation picker gate | Active |
-| `add_ons` | `addOns[]` | Yes | Menu Mgmt — Full Edit read-only list | Mapped (read-only) |
+| `variations` | `variations[]` | Yes | Menu Mgmt — Full Edit read-only list + **Order Entry → ItemCustomizationModal** variant groups | Mapped |
+| (computed) | `hasVariations` | Yes | Order Entry — "Customize" label on product pill + modal gating | Active |
+| `add_ons` | `addOns[]` | Yes (raw passthrough) | Menu Mgmt — Full Edit read-only list + **Order Entry → ItemCustomizationModal** addon pills | Mapped |
 | `status` | `isActive` | Yes | Menu Mgmt — filter chip (Active/Inactive) | Mapped |
 | `stock_out` | `isOutOfStock` | Yes | Menu Mgmt — card "Out of Stock" badge + greyed card + Full Edit toggle | Mapped |
 | `is_disable` | `isDisabled` | Yes | Menu Mgmt — card "Hidden from POS" + dashed border + Full Edit toggle | Mapped |
@@ -283,14 +283,14 @@
 
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `tableId` | Yes | Settings → Table Management grid + edit | Mapped |
-| `table_no` | `tableNumber` | Yes | Settings → Table Management "T1", "T2" labels | Mapped |
-| (computed) | `displayName` | Yes | Dashboard — "Section - T1" | Pending |
-| `title` | `sectionName` | Yes | Settings → Table Management sections list | Mapped |
+| `id` | `tableId` | Yes | Settings → Table Management grid + edit. **Dashboard — unique table key for state tracking** | Mapped |
+| `table_no` | `tableNumber` | Yes | Settings → Table Management "T1", "T2" labels. **Dashboard — table card display label** | Mapped |
+| (computed) | `displayName` | Yes | Dashboard — "Section - T1" or "T1". Used as `label` field on dashboard table cards | Mapped |
+| `title` | `sectionName` | Yes | Settings → Table Management sections list. **Dashboard — groups tables by section columns** | Mapped |
 | `rtype` | `tableType` / `isRoom` | Yes | Filter tables vs rooms | Active |
 | `status` | `isActive` | Yes | Filter — only active shown | Active |
-| `engage` | `isOccupied` | Yes | Settings → Table Management orange highlight | Mapped |
-| (computed) | `status` | Yes | Settings → Table Management "free/occupied" label | Mapped |
+| `engage` | `isOccupied` | Yes | Settings → Table Management orange highlight. **Dashboard — occupied (orange) vs available (gray) status** | Mapped |
+| (computed) | `status` | Yes | Settings → Table Management "free/occupied" label. **Dashboard — table card status color** | Mapped |
 | `waiter_id` | `assignedWaiterId` | Yes | Order entry — waiter assignment | Pending |
 | `qr_code` | `qrCode` | Yes | Table settings — QR display | Pending |
 | `restaurant_id` | `restaurantId` | Yes | Internal reference | Active |
@@ -334,7 +334,42 @@
 
 Same field mapping as Section 4 (Products). Returns popular/trending items sorted by `order_count`.
 
+**UI Usage:** Order Entry → "Popular" category tab. Populated via `useMenu().popularFood`. Falls back to first 20 products if popular list is empty.
+
 ---
+
+## 7b. Variation & Add-on Transform Schema (Cross-cutting)
+
+**Transform:** `productTransform.fromAPI.variations()` + `productTransform.fromAPI.variationOptions()`
+
+The transform outputs a canonical schema consumed by both Menu Management (read-only display) and Order Entry (ItemCustomizationModal interactive selection).
+
+**Variation Group (API → Frontend):**
+| Raw API Field | Transformed Field | Notes |
+|---|---|---|
+| *(synthetic)* | `id` | Generated as `vg-{index}` for React keys and state tracking |
+| `name` | `name` | Group label, e.g. "Size" |
+| `type` | `type` | `"single"` or `"multi"` selection |
+| `required` (`"on"` string) | `required` (boolean) | `"on"` → `true`, else `false` |
+| `min` | `min` | Min selections (for multi-type) |
+| `max` | `max` | Max selections (for multi-type) |
+| `values[]` | `options[]` | See option mapping below |
+
+**Variation Option (API → Frontend):**
+| Raw API Field | Transformed Field | Notes |
+|---|---|---|
+| *(synthetic)* | `id` | Generated as `vo-{index}` for React keys and comparison |
+| `label` | `name` | Option display name, e.g. "Half", "Full" |
+| `optionPrice` | `price` | Additional price (parsed to float) |
+
+**Add-ons:** Passed through raw from API (`api.add_ons`). The raw structure `{ id, name, price, status, ... }` happens to match what `ItemCustomizationModal` expects. No transform applied.
+
+**Consumer Components:**
+- `ItemCustomizationModal` → reads `variantGroups[].id`, `.name`, `.required`, `.options[].id`, `.name`, `.price`
+- `MenuManagementPanel` → reads `variations[].name`, `.options[].name`, `.options[].price` (display only)
+
+---
+
 
 ## 8. GET `/api/v1/vendoremployee/pos/employee-orders-list` (Phase 1 Part B — NOT YET IMPLEMENTED)
 
@@ -359,10 +394,10 @@ Same field mapping as Section 4 (Products). Returns popular/trending items sorte
 |---|---|---|---|---|
 | Login | 6 | 6 | 3 (token, roleName, permissions) | 3 |
 | Profile — User | 30+ | 10 | 5 (fullName, firstName, lastName, roleName, permissions, image) | 20+ |
-| Profile — Restaurant | 120+ | 30 | 29 (Settings panel — all tiles) | 90+ |
-| Categories | 12 | 12 | 8 (Menu Mgmt — list, filter, count, reorder, CRUD) | 0 |
-| Products | 40+ | 40+ | 35 (Menu Mgmt — card, Quick Edit, Full Edit, filters) | 5 (allergen, recommended, ratings) |
-| Tables | 13 | 13 | 7 (Settings → Table Management) | 0 |
+| Profile — Restaurant | 120+ | 30 | 30 (Settings panel — all tiles + currencySymbol) | 90+ |
+| Categories | 12 | 12 | 9 (Menu Mgmt + Order Entry category panel) | 0 |
+| Products | 40+ | 40+ | 38 (Menu Mgmt + Order Entry pills + Customization Modal variations/addons) | 5 (allergen, recommended, ratings) |
+| Tables | 13 | 13 | 10 (Settings + Dashboard grid — tableId, label, section, status) | 0 |
 | Cancellation Reasons | 8 | 8 | 4 (Settings → Cancellation Reasons) | 0 |
-| Popular Food | (same as Products) | (same) | 0 (not yet used in UI) | 0 |
+| Popular Food | (same as Products) | (same) | Used in Order Entry "Popular" tab | 0 |
 | Running Orders | Unknown | 0 | 0 | All |

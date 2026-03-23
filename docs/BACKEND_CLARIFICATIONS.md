@@ -117,9 +117,20 @@ What does this field control? Is it the default status assigned to new orders?
 **Impact:** Transform layer handles both cases with `getImageUrl()` / `getProductImageUrl()` / `getCategoryImageUrl()` helpers.
 
 ### B5: Restaurant logo URL construction
-**Observation:** The restaurant logo field returns a relative filename (e.g., `2025-12-01-692d50d9332d8.png`) but `getImageUrl()` prepends a base storage URL that may not match the actual image server. The logo shows as a broken image in the Settings → Restaurant Info view.
-**Impact:** Need to confirm the correct base URL for restaurant logo/cover_photo images from the backend team.
-**Status:** OPEN
+**Observation:** The restaurant logo field returns a relative filename (e.g., `2025-12-01-692d6b75d92cd.png`) but `getImageUrl()` prepends a base storage URL that may not match the actual image server. The logo shows as a broken image in the Settings → Restaurant Info view.
+**Tested URL patterns (all return 404):**
+- `https://preprod.mygenie.online/storage/{filename}`
+- `https://preprod.mygenie.online/storage/restaurant/{filename}`
+- `https://preprod.mygenie.online/storage/app/public/{filename}`
+- `https://preprod.mygenie.online/storage/app/public/restaurant/{filename}`
+- `https://preprod.mygenie.online/storage/app/public/vendor/{filename}`
+- `https://preprod.mygenie.online/public/storage/{filename}`
+- `https://preprod.mygenie.online/public/storage/restaurant/{filename}`
+- `https://preprod.mygenie.online/storage/uploads/restaurant/{filename}`
+
+**Note:** Product images work because the API returns full URLs (e.g., `https://preprod.mygenie.online/public/assets/admin/img/...`), whereas the restaurant logo only returns a bare filename.
+**Impact:** Need backend team to confirm the correct base URL for restaurant logo/cover_photo images.
+**Status:** OPEN — Awaiting backend team response
 
 ### B6: Discount Types & Printers empty for test account
 **Observation:** `restaurant_discount_type` and `restaurant_printer_new` arrays are both empty `[]` for the test account (`owner@18march.com` / restaurant: 18march, ID: 478). The Settings UI correctly shows empty states. However, these features ARE expected to have data for other restaurant accounts.
@@ -131,6 +142,22 @@ What does this field control? Is it the default status assigned to new orders?
 - `offset=1` = page 1
 - `offset=2` = page 2
 **Impact:** Transform renames it to `page` for clarity.
+
+### B7: Veg/Non-Veg data classification inconsistency
+**Observation:** When applying the "Veg" dietary filter in Order Entry, 45 items are returned — some of which have names containing "chicken" or other non-veg keywords. This suggests some products may have incorrect `veg` classification in the backend database.
+**Examples:** Items like "Fried CHICKEN" or chicken-related products appearing under the Veg filter.
+**Impact:** Frontend filter logic is correct (`product.isVeg === true` → show). This is a **data quality issue** that needs to be reviewed in the backend/admin panel.
+**Status:** OPEN — Backend team to audit product `veg` field values
+
+### B8: `add_ons` raw passthrough (fragile coupling)
+**Observation:** The `addOns` field on products is NOT transformed by `productTransform.js` — it is passed through raw from the API (`api.add_ons || []`). The raw API structure `{ id, name, price, status, show_type, veg, ... }` happens to match what `ItemCustomizationModal` expects (`{ id, name, price }`), so it works today.
+**Risk:** If the backend ever renames these fields (e.g., `price` → `addon_price`), the customization modal will break silently. Consider adding a transform for add-ons in Phase 2.
+**Status:** NOTED — Works for now, should formalize transform in Phase 2
+
+### B9: Variation `required` field uses non-standard `"on"` string
+**Observation:** The `required` field on variation groups uses the string `"on"` to indicate required, rather than a boolean `true` or `"Yes"`. The transform converts this: `variation.required === 'on'` → `required: true`.
+**Impact:** Handled correctly in transform. Just noting the non-standard representation.
+**Status:** RESOLVED — Transform handles it
 
 ---
 
@@ -165,5 +192,9 @@ What does this field control? Is it the default status assigned to new orders?
 
 ## Next Steps
 1. Get answers to Q1-Q4 from backend team before starting Phase 1 Part B
-2. Test with non-owner role accounts to verify permission gating
-3. Document the Running Orders API response once available
+2. Get correct base URL for restaurant logo images (B5)
+3. Audit product `veg` field values for data quality (B7)
+4. Test with non-owner role accounts to verify permission gating
+5. Formalize `add_ons` transform in Phase 2 to avoid fragile raw passthrough (B8)
+6. Document the Running Orders API response once available
+7. Provide APIs for Merge Table, Shift Table, and Transfer Food operations (UI already built)
