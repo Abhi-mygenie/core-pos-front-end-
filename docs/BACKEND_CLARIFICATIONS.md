@@ -114,6 +114,11 @@ What does this field control? Is it the default status assigned to new orders?
 **Impact:** Need to confirm the correct base URL for restaurant logo/cover_photo images from the backend team.
 **Status:** OPEN
 
+### B6: Discount Types & Printers empty for test account
+**Observation:** `restaurant_discount_type` and `restaurant_printer_new` arrays are both empty `[]` for the test account (`owner@18march.com` / restaurant: 18march, ID: 478). The Settings UI correctly shows empty states. However, these features ARE expected to have data for other restaurant accounts.
+**Impact:** CRUD UI forms are built and ready. Cannot verify rendering with real data using current test account. Need a test account with discount types and printers configured to validate.
+**Status:** OPEN — Awaiting test account with configured discounts/printers
+
 ### B5: Pagination uses `offset` as page number
 **Observation:** The API uses `offset` parameter but it behaves as a page number (1-indexed), not a traditional offset (skip count).
 - `offset=1` = page 1
