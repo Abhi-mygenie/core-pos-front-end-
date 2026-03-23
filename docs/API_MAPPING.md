@@ -1,7 +1,7 @@
 # API Field Mapping Document
 
-> Last Updated: 2026-03-23
-> Status: Phase 1 Part A — Transforms done. Sidebar, Header, Settings UI, Menu Management, Dashboard Tables, Order Entry mapped.
+> Last Updated: 2026-03-24
+> Status: Phase 1 Part A+B — All transforms done. Running Orders fully integrated. Unified grid/list views with channel filtering.
 
 ---
 
@@ -116,6 +116,16 @@
 | `available_time_starts/ends` | Operating hours | Covered by schedules |
 | `avg_rating` | Average rating | Customer facing |
 | `bill_date_format` | Date format on bill | Printing |
+
+**Key Restaurant Config Fields (discovered, not yet in transform):**
+| API Field | Value (Mygenie Dev) | Description | Impact |
+|---|---|---|---|
+| `def_ord_status` | `2` (Ready) | Default order status for new items. Controls repeat-item row behavior: Ready = qty increment on same row; other values = new separate row | Order Entry cart behavior |
+| `configuration` | `"Simple"` | Restaurant config type (Simple vs Advanced stage tracking) | Order flow |
+| `print_kot` | `"No"` | KOT printing disabled | Printing |
+| `is_ready` | `"No"` | Purpose unclear — needs clarification | TBD |
+| `schedule_order` | `True` | Scheduled orders enabled | Dashboard filters |
+| `list_serve_item` | `"Dynamic"` | How served items are listed | KDS |
 | `billing_auto_bill_print` | Auto print bill | Printing |
 | `billing_emp` | Employee on bill | Printing |
 | `booking_details` | Booking feature | Reservation |
@@ -371,20 +381,102 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 ---
 
 
-## 8. GET `/api/v1/vendoremployee/pos/employee-orders-list` (Phase 1 Part B — NOT YET IMPLEMENTED)
+## 8. GET `/api/v1/vendoremployee/pos/employee-orders-list` (Phase 1 Part B — IMPLEMENTED)
 
-**Service:** Not yet created
-**Transform:** Not yet created
+**Service:** `orderService.getRunningOrders()`
+**Transform:** `orderTransform.fromAPI.order()`, `orderTransform.fromAPI.orderItem()`
+**Context:** `OrderContext.jsx` — provides `dineInOrders`, `walkInOrders`, `deliveryOrders`, `takeAwayOrders`, `getOrderByTableId`, `orderItemsByTableId`
 
-**Known fields (from API analysis):**
-| API Field | Frontend Field | UI Location | Status |
+**Query Parameters:**
+| Param | Value | Notes |
+|---|---|---|
+| `role_name` | `"Manager"` (default) or `"Waiter"` | Manager sees all orders; Waiter sees assigned only |
+
+### 8a. Order Fields
+
+| API Field | Frontend Field | Used in Transform | UI Location | Status |
+|---|---|---|---|---|
+| `id` | `orderId` | Yes | Dashboard grid/list cards, OrderEntry data lookup | Mapped |
+| `restaurant_order_id` | `orderNumber` | Yes | Dashboard card label (e.g., "#000351") | Mapped |
+| `order_type` | `orderType` | Yes (via `normalizeOrderType`) | Dashboard channel filtering (dineIn/takeAway/delivery) | Mapped |
+| `order_type` (raw) | `rawOrderType` | Yes | Debug reference | Mapped |
+| `order_in` | `orderIn` | Yes | Room order filtering (`"RM"` = skip) | Mapped |
+| `f_order_status` | `status` / `fOrderStatus` / `tableStatus` | Yes (via `mapOrderStatus`, `mapTableStatus`) | Dashboard card status color + badge | Mapped |
+| `order_status` | `lifecycle` | Yes | `"queue"` = active, `"delivered"` = completed | Mapped |
+| `table_id` | `tableId` | Yes | Table grid enrichment (0 = walk-in/takeaway) | Mapped |
+| `restaurantTable.table_no` | `tableNumber` | Yes | Table label | Mapped |
+| `restaurantTable.title` | `tableSectionName` | Yes | Section grouping | Mapped |
+| `restaurantTable.rtype` | `isRoom` | Yes | Room filtering (`"RM"` → skip for POS) | Mapped |
+| `user_name` | `customer` | Yes | Dashboard card label + CartPanel customer name field | Mapped |
+| `user.f_name` + `user.l_name` | `customer` (fallback) | Yes | Fallback when `user_name` is empty | Mapped |
+| `user.phone` | `phone` | Yes | CartPanel phone field | Mapped |
+| `order_amount` | `amount` | Yes | Dashboard card price display | Mapped |
+| `delivery_address` | `deliveryAddress` | Yes | Delivery order address (structured object) | Mapped |
+| `delivery_man` | `deliveryPerson` | Yes | Delivery assignment info | Mapped |
+| `vendorEmployee.f_name` | `employeeName` | Yes | Waiter/staff assignment | Mapped |
+| `payment_method` | `paymentMethod` | Yes | Payment info | Mapped |
+| `payment_status` | `paymentStatus` | Yes | Bill Ready vs Paid determination | Mapped |
+| `orderDetails[]` | `items[]` | Yes (via `fromAPI.orderItem`) | CartPanel item list when order is clicked | Mapped |
+| `created_at` | `createdAt` | Yes | Order timestamp | Mapped |
+
+### 8b. Order Item Fields (orderDetails[])
+
+| API Field | Frontend Field | Used in Transform | UI Location | Status |
+|---|---|---|---|---|
+| `id` | `id` | Yes | CartPanel item key + status tracking | Mapped |
+| `food_details.name` | `name` | Yes | CartPanel item name | Mapped |
+| `quantity` | `qty` | Yes | CartPanel item quantity | Mapped |
+| `price` | `price` | Yes | CartPanel total price (qty × unit) | Mapped |
+| `unit_price` | `unitPrice` | Yes | CartPanel per-item price display | Mapped |
+| `food_status` | `status` | Yes (via `mapOrderStatus`) | CartPanel item status icon (green tick = served, cooking pot = preparing) | Mapped |
+| `variation` | `variation` | Yes | CartPanel customization display | Mapped |
+| `add_ons` | `addOns` | Yes | CartPanel addon display | Mapped |
+| `food_level_notes` | `notes` | Yes | CartPanel item notes | Mapped |
+| `station` | `station` | Yes | KDS routing (deferred) | Mapped |
+| `ready_at` | `readyAt` | Yes | Timestamp tracking | Mapped |
+| `serve_at` | `serveAt` | Yes | Timestamp tracking | Mapped |
+| `cancel_at` | `cancelAt` | Yes | Timestamp tracking | Mapped |
+| `created_at` | `createdAt` | Yes | CartPanel "X mins ago" display | Mapped |
+
+### 8c. f_order_status Mapping
+
+| f_order_status | Frontend Status Key | Table Card Status | Badge/Icon | Notes |
+|---|---|---|---|---|
+| 1 | `preparing` | `occupied` | CookingPot (orange) | Item being prepared |
+| 2 | `ready` | `occupied` | UtensilsCrossed (green) | Ready to serve. **Also `def_ord_status` for Mygenie Dev** |
+| 3 | `cancelled` | skip/`available` | — | Cancelled order |
+| 4 | **TBD** | **TBD** | — | User will provide later |
+| 5 | `served` | `billReady` | Check (green) | Food served, bill ready |
+| 6 | `paid` | `paid` | — | Payment completed |
+| 7 | `pending` | `yetToConfirm` | — | Yet to be confirmed |
+| 8 | **`running`** (needs correction) | `occupied` | — | **CORRECTED: Paid through payment gateway, NOT "running/active"** |
+| 9 | **TBD** | — | — | Unknown — observed on 2 POS orders. Needs clarification |
+
+### 8d. Order Type Normalization
+
+| API `order_type` | Frontend `orderType` | Dashboard Channel | Grid Card Icon |
 |---|---|---|---|
-| `id` | `orderId` | Dashboard order cards | Not Implemented |
-| `food_status` | ? | Order card status badge | Blocked — see BACKEND_CLARIFICATIONS.md |
-| `order_status` | ? | Order card status | Blocked |
-| `f_order_status` | ? | Food order status | Blocked |
-| `b_order_status` | ? | Bar order status | Blocked |
-| `k_order_status` | ? | Kitchen order status | Blocked |
+| `"pos"` | `"dineIn"` | Dine | None |
+| `"dinein"` | `"dineIn"` | Dine | None |
+| `"WalkIn"` | `"dineIn"` (isWalkIn=true) | Dine | None (label = customer name or "WC") |
+| `"take_away"` | `"takeAway"` | Take | ShoppingBag (amber pill `#FFF3E0`) |
+| `"delivery"` | `"delivery"` | Del | Bike (blue pill `#E3F2FD`) |
+
+### 8e. Order Routing Rules
+
+| Condition | Behavior |
+|---|---|
+| `restaurantTable.rtype === "RM"` or `order_in === "RM"` | **Filtered OUT** — Room orders skipped for POS Phase 1 |
+| `table_id === 0` | Walk-in / counter order — virtual table entry with customer name |
+| `order_type === "take_away"` | TakeAway channel — grid card with ShoppingBag icon |
+| `order_type === "delivery"` | Delivery channel — grid card with Bike icon |
+
+### 8f. Customer Data Flow
+
+| Source | Frontend Field | Cart Panel Field | Notes |
+|---|---|---|---|
+| `user_name` or `user.f_name + user.l_name` | `order.customer` | Customer name input | "WC" default if empty + walk-in |
+| `user.phone` | `order.phone` | Phone number input | Populated when order card is clicked |
 
 ---
 
@@ -400,4 +492,4 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | Tables | 13 | 13 | 10 (Settings + Dashboard grid — tableId, label, section, status) | 0 |
 | Cancellation Reasons | 8 | 8 | 4 (Settings → Cancellation Reasons) | 0 |
 | Popular Food | (same as Products) | (same) | Used in Order Entry "Popular" tab | 0 |
-| Running Orders | Unknown | 0 | 0 | All |
+| **Running Orders** | **25+ per order** | **25+** | **Dashboard grid/list cards + CartPanel items + customer data** | **3 (b_order_status, k_order_status, associated_order_list)** |
