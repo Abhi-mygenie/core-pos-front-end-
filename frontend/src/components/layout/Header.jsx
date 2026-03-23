@@ -643,8 +643,8 @@ const Header = ({
             <PlusSquare className="w-5 h-5" />
           </button>
           
-          {/* View Toggle - Only when Dine In is the sole selected channel */}
-          {isDineInOnly && (
+          {/* View Toggle - Available for all non-room channels */}
+          {!isRoomOnly && (
             <div className="flex items-center bg-gray-100 rounded-lg p-1">
               <button
                 data-testid="table-view-btn"

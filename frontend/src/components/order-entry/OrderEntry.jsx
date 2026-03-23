@@ -91,14 +91,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }
   }, [showTypeDropdown]);
 
-  // Initialize cart with existing order items
+  // Initialize cart with existing order items from running order
   useEffect(() => {
-    if (orderData && orderData.items) {
+    if (orderData && orderData.items && orderData.items.length > 0) {
       const existingItems = orderData.items.map(item => ({
-        ...item,
-        price: Math.floor(Math.random() * 400) + 100,
+        id: item.id,
+        name: item.name,
+        qty: item.qty || 1,
+        price: item.unitPrice || item.price || 0,
+        status: item.status || 'preparing',
         placed: true,
-        addedAt: new Date(Date.now() - item.time * 60000).toISOString(),
+        addedAt: item.createdAt || new Date().toISOString(),
+        variation: item.variation,
+        addOns: item.addOns,
+        notes: item.notes,
       }));
       setCartItems(existingItems);
     }

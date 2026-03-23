@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Printer, Clock, X, Check, PlusSquare } from "lucide-react";
+import { Printer, Clock, X, Check, PlusSquare, ShoppingBag, Bike } from "lucide-react";
 import PropTypes from 'prop-types';
 import { COLORS, CONFIG } from "../../constants";
 import { mockOrderItems } from "../../data";
@@ -51,6 +51,8 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           style={headerPillStyle}
         >
           <div className="flex items-center gap-2">
+            {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
+            {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
             <span className="text-sm font-bold">{table.label || table.id}</span>
             {table.status === "reserved" ? (
               <span className="text-xs font-semibold" style={{ color: COLORS.primaryOrange }}>Reserved</span>

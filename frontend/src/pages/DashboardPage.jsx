@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLORS } from "../constants";
 import { mockRooms } from "../data";
@@ -132,6 +132,7 @@ const DashboardPage = () => {
         label: `T${t.tableNumber}`,
         status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
         tableId: t.tableId,
+        orderType: 'dineIn',
         // Order enrichment (only if order exists)
         amount: hasOrder ? order.amount : undefined,
         time: hasOrder ? order.time : undefined,
@@ -168,6 +169,7 @@ const DashboardPage = () => {
             orderNumber: order.orderNumber,
             isWalkIn: true,
             walkInOrderId: order.orderId,
+            orderType: 'walkIn',
           })),
         };
       }
@@ -191,6 +193,7 @@ const DashboardPage = () => {
           orderNumber: order.orderNumber,
           isWalkIn: true,
           walkInOrderId: order.orderId,
+          orderType: 'walkIn',
         });
       });
 
@@ -210,11 +213,66 @@ const DashboardPage = () => {
     return Object.values(rooms).flatMap(s => s.rooms);
   }, [rooms]);
 
-  // Dine In view logic
+  // View conditions
+  const isRoomOnly = activeChannels.length === 1 && activeChannels[0] === "room";
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
-  const hasDineIn = activeChannels.includes("dineIn");
-  const showDineInAsTable = isDineInOnly && activeView === "table";
-  const showDineInAsOrder = hasDineIn && (isDineInOnly ? activeView === "order" : true);
+  const showGridView = !isRoomOnly && activeView === "table";
+  const showListView = !isRoomOnly && activeView === "order";
+
+  // Unified grid items: combine tables + takeaway + delivery based on active channels
+  const gridItems = useMemo(() => {
+    let items = [];
+
+    if (activeChannels.includes('dineIn')) {
+      items.push(...allTablesList);
+    }
+
+    if (activeChannels.includes('takeAway')) {
+      takeAwayOrders.forEach(order => {
+        items.push({
+          id: `ta-${order.orderId}`,
+          label: order.customer || 'TA',
+          status: order.tableStatus,
+          tableId: 0,
+          amount: order.amount,
+          time: order.time,
+          orderNumber: order.orderNumber,
+          orderType: 'takeAway',
+          orderId: order.orderId,
+        });
+      });
+    }
+
+    if (activeChannels.includes('delivery')) {
+      deliveryOrders.forEach(order => {
+        items.push({
+          id: `del-${order.orderId}`,
+          label: order.customer || 'Del',
+          status: order.tableStatus,
+          tableId: 0,
+          amount: order.amount,
+          time: order.time,
+          orderNumber: order.orderNumber,
+          orderType: 'delivery',
+          orderId: order.orderId,
+        });
+      });
+    }
+
+    return items;
+  }, [activeChannels, allTablesList, takeAwayOrders, deliveryOrders]);
+
+  // Grid title based on active channels
+  const gridTitle = useMemo(() => {
+    const channels = activeChannels.filter(c => c !== 'room');
+    if (channels.length >= 3) return 'All Orders';
+    if (channels.length === 1) {
+      if (channels[0] === 'dineIn') return 'Tables';
+      if (channels[0] === 'takeAway') return 'TakeAway Orders';
+      if (channels[0] === 'delivery') return 'Delivery Orders';
+    }
+    return 'Orders';
+  }, [activeChannels]);
 
   // --- Search ---
   const searchResults = useMemo(() => {
@@ -285,6 +343,31 @@ const DashboardPage = () => {
     });
   };
 
+  // Resolve order data for any grid entry (table, walk-in, takeaway, delivery)
+  const getOrderDataForEntry = useCallback((tableEntry) => {
+    if (!tableEntry) return null;
+
+    // Takeaway or delivery virtual entry
+    if (tableEntry.orderId) {
+      const allOrders = [...takeAwayOrders, ...deliveryOrders, ...walkInOrders];
+      const order = allOrders.find(o => o.orderId === tableEntry.orderId);
+      if (order) return order;
+    }
+
+    // Walk-in virtual entry
+    if (tableEntry.isWalkIn && tableEntry.walkInOrderId) {
+      const order = walkInOrders.find(o => o.orderId === tableEntry.walkInOrderId);
+      if (order) return order;
+    }
+
+    // Physical table
+    if (tableEntry.tableId) {
+      return orderItemsByTableId[tableEntry.tableId] || null;
+    }
+
+    return null;
+  }, [takeAwayOrders, deliveryOrders, walkInOrders, orderItemsByTableId]);
+
   const handleSearchSelect = (selection) => {
     const { type, data } = selection;
     if (type === 'table') {
@@ -295,9 +378,16 @@ const DashboardPage = () => {
     }
   };
 
-  const handleTableClick = (table) => {
-    setOrderEntryTable(table);
-    setOrderEntryType("walkIn");
+  const handleTableClick = (tableEntry) => {
+    setOrderEntryTable(tableEntry);
+    // Set correct order type based on entry
+    if (tableEntry.orderType === 'takeAway') {
+      setOrderEntryType('takeAway');
+    } else if (tableEntry.orderType === 'delivery') {
+      setOrderEntryType('delivery');
+    } else {
+      setOrderEntryType('walkIn');
+    }
   };
 
   const handleAddOrder = () => {
@@ -384,9 +474,9 @@ const DashboardPage = () => {
             className="rounded-2xl shadow-sm p-6"
             style={{ backgroundColor: COLORS.lightBg }}
           >
-            {/* Dine In - Table View */}
-            {showDineInAsTable && (
-              hasAreas ? (
+            {/* Grid View - Unified for all channels */}
+            {showGridView && (
+              isDineInOnly && hasAreas ? (
                 <div className="flex gap-8 overflow-x-auto">
                   {Object.entries(tables).map(([key, section], index) => (
                     <div key={key} className="contents">
@@ -408,26 +498,26 @@ const DashboardPage = () => {
                     </div>
                   ))}
                 </div>
-              ) : flatTables.length > 0 ? (
+              ) : gridItems.length > 0 ? (
                 <div>
                   <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
-                    <span className="font-medium" style={{ color: COLORS.darkText }}>All Tables</span>
+                    <span className="font-medium" style={{ color: COLORS.darkText }}>{gridTitle}</span>
                     <span style={{ color: COLORS.borderGray }}>|</span>
-                    <span>{matchingTableIds === null ? flatTables.length : matchingTableIds.size} Tables</span>
+                    <span>{gridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)).length} Items</span>
                   </div>
                   <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, 160px)' }}>
                     {sortByActiveFirst(
-                      flatTables.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)),
+                      gridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)),
                       TABLE_STATUS_PRIORITY,
                       activeFirst
-                    ).map((table) => (
+                    ).map((item) => (
                       <TableCard
-                        key={table.id}
-                        table={table}
+                        key={item.id}
+                        table={item}
                         onClick={handleTableClick}
                         onOpenModal={handleTableClick}
                         onUpdateStatus={handleUpdateTableStatus}
-                        isSnoozed={snoozedOrders?.has(table.id)}
+                        isSnoozed={snoozedOrders?.has(item.id)}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
                       />
@@ -439,52 +529,57 @@ const DashboardPage = () => {
               )
             )}
 
-            {/* Dine In - Order View (tiles) */}
-            {showDineInAsOrder && (
-              <div>
-                <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
-                  <span className="font-medium" style={{ color: COLORS.darkText }}>Dine In Orders</span>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  {allTablesList
-                    .filter(t => !["available", "reserved"].includes(t.status))
-                    .filter(t => matchingTableIds === null || matchingTableIds.has(t.id))
-                    .map((table) => (
-                      <DineInCard
-                        key={table.id}
-                        table={table}
-                        onEdit={handleTableClick}
-                        isSnoozed={snoozedOrders.has(table.id)}
-                        onToggleSnooze={toggleSnooze}
-                      />
-                    ))
-                  }
-                </div>
-              </div>
-            )}
+            {/* List View - Detailed cards per channel */}
+            {showListView && (
+              <>
+                {/* Dine In Orders */}
+                {activeChannels.includes("dineIn") && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
+                      <span className="font-medium" style={{ color: COLORS.darkText }}>Dine In Orders</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      {allTablesList
+                        .filter(t => !["available", "reserved"].includes(t.status))
+                        .filter(t => matchingTableIds === null || matchingTableIds.has(t.id))
+                        .map((table) => (
+                          <DineInCard
+                            key={table.id}
+                            table={table}
+                            onEdit={handleTableClick}
+                            isSnoozed={snoozedOrders.has(table.id)}
+                            onToggleSnooze={toggleSnooze}
+                          />
+                        ))
+                      }
+                    </div>
+                  </div>
+                )}
 
-            {/* Delivery View */}
-            {activeChannels.includes("delivery") && (
-              <OrderListSection
-                title="Delivery Orders"
-                orders={deliveryOrders}
-                matchingIds={matchingDeliveryIds}
-                snoozedOrders={snoozedOrders}
-                onToggleSnooze={toggleSnooze}
-                className={hasDineIn ? "mt-6 pt-6 border-t" : ""}
-              />
-            )}
+                {/* Delivery Orders */}
+                {activeChannels.includes("delivery") && (
+                  <OrderListSection
+                    title="Delivery Orders"
+                    orders={deliveryOrders}
+                    matchingIds={matchingDeliveryIds}
+                    snoozedOrders={snoozedOrders}
+                    onToggleSnooze={toggleSnooze}
+                    className={activeChannels.includes("dineIn") ? "mt-6 pt-6 border-t" : ""}
+                  />
+                )}
 
-            {/* TakeAway View */}
-            {activeChannels.includes("takeAway") && (
-              <OrderListSection
-                title="TakeAway Orders"
-                orders={takeAwayOrders}
-                matchingIds={matchingTakeAwayIds}
-                snoozedOrders={snoozedOrders}
-                onToggleSnooze={toggleSnooze}
-                className={hasDineIn || activeChannels.includes("delivery") ? "mt-6 pt-6 border-t" : ""}
-              />
+                {/* TakeAway Orders */}
+                {activeChannels.includes("takeAway") && (
+                  <OrderListSection
+                    title="TakeAway Orders"
+                    orders={takeAwayOrders}
+                    matchingIds={matchingTakeAwayIds}
+                    snoozedOrders={snoozedOrders}
+                    onToggleSnooze={toggleSnooze}
+                    className={activeChannels.includes("dineIn") || activeChannels.includes("delivery") ? "mt-6 pt-6 border-t" : ""}
+                  />
+                )}
+              </>
             )}
 
             {/* Room View (dynamic) */}
@@ -513,7 +608,7 @@ const DashboardPage = () => {
           <OrderEntry
             table={orderEntryTable}
             onClose={handleCloseOrderEntry}
-            orderData={orderEntryTable ? (orderItemsByTableId[orderEntryTable.tableId] || null) : null}
+            orderData={orderEntryTable ? getOrderDataForEntry(orderEntryTable) : null}
             orderType={orderEntryType}
             onOrderTypeChange={handleOrderTypeChange}
             allTables={allTablesList}

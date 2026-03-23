@@ -1,72 +1,81 @@
 <analysis>**original_problem_statement**: 
-pull code from default branch https://github.com/Abhi-mygenie/core-pos-front-end-.git and build and run as it is. 
-Incrementally analyze API endpoints and map them to the frontend UI. Build Phase 1 Part A (Login, Profile, Menu Admin, Settings, Tables). 
-*Product Requirement Update during session:* The Admin UIs (Settings, Menu Management) must be built with **fully functional CRUD UX right now** (actual forms, inputs, dropdowns, toggles) rather than just read-only with coming soon toasts. However, the actual API integration (POST/PUT/DELETE) is deferred to Phase 2. Saves should be visually mocked with a toast.
+Pull code from the default branch, build and run. Incrementally analyze API endpoints and map them to the frontend UI. Build Phase 1 Part A and Part B (Running Orders). 
+*Product Requirement Update:* The Admin UIs must be built with fully functional CRUD UX, but actual API saving (POST/PUT) is deferred to Phase 2. Running Orders (Phase 1 Part B) needs to be integrated, replacing mocked table/order data with real API data, while mapping complex  logic to UI elements.
 
-**User's preferred language**: English
+**User's preferred language**: English (INSTRUCT next agent to respond in English only)
 
 **what currently exists?** 
-A React frontend and FastAPI backend POS application. Global state management (Context API) is fully wired and bug-free. The Sidebar and Header correctly reflect user permissions and restaurant features. The Settings Admin UI is built as a full-width panel with 3 CRUD UX patterns (View/Edit toggles, List+Form, Master-Detail). The Menu Management Admin UI is built with categories, products, filtering, Quick Edit inline forms, and drag-and-drop reordering. Detailed documentation mapping API fields to UI locations now exists.
+A React frontend and FastAPI backend POS application. Global state management (Context API) and transform layers () are fully wired. Sidebar, Header, Settings, and Menu Admin UIs are built. Real tables, menu items, variations, and running orders data are successfully fetching from the API and populating the Dashboard and Order Entry screens. The app currently uses a canonical frontend schema to seamlessly swap mock data for real data.
 
 **Last working item**:
-    - Last item agent was working: Building the  (Sub-step 3 of Step 7) and updating the API mapping documentation. The agent finalized the Category/Product 2-column layout, added  for drag-and-drop, and implemented a Quick Edit inline tile feature requested by the user.
-    - Status: USER VERIFICATION PENDING
-    - Agent Testing Done: Y
-    - Which testing method agent to use? Screenshot tool (verified UI states and filters)
+    - Last item agent was working: **Task 1 of User Feedback:** Unifying the Table (Grid) View to display ALL order types (Dine-in tables, Walk-ins, Takeaway, and Delivery). The agent was just about to modify  to include all channels in the flat table array and update  to display specific icons (ShoppingBag for Takeaway, Bike for Delivery, and no icon for Dine-in/Walk-in).
+    - Status: IN PROGRESS
+    - Agent Testing Done: N
+    - Which testing method agent to use? screenshot tool (for visual verification of the unified grid) followed by frontend testing agent.
     - User Testing Done: N
 
-**All Pending/In progress Issue list**:
-  Issue 1: Broken Restaurant Logo URL (P1)
-     - Attempted fixes: Identified the issue. The  transform or the raw API is likely returning a relative/broken path for the restaurant logo. Documented in .
-     - Next debug checklist: Inspect  and the  field from the profile API response. Fix the base URL appending logic so the image renders in the Sidebar and Settings -> Restaurant Info.
-     - Why fix this issue and what will be achieved with the fix? Fixes a broken image icon visible across core navigational and settings components.
+**All Pending/In progress Issue list**:  
+  Issue 1: Empty cart upon clicking a Running Order (P0)
+     - Attempted fixes: None yet (Task was prioritized as Step 3 in the current plan).
+     - Next debug checklist: Check  click handlers and  /  initialization logic.
+     - Why fix this issue and what will be achieved with the fix? Currently, clicking a running order opens  with an empty cart. It needs to pre-populate with the order's existing  from the API so staff can view/modify active orders.
      - Status: NOT STARTED
      - Is recurring issue? N
      - Should Test frontend/backend/both after fix? frontend
      - Blocked on other issue: NA
 
-**In progress Task List**:
-  Task 1: Step 7 Sub-step 4 - Table mapping in dashboard
-     - Where to resume: Open . Replace  with real data from .
-     - What will be achieved with this? The dashboard will display real table statuses fetched during the loading screen.
-     - Status: NOT STARTED
+  Issue 2: Broken Restaurant Logo URL (P2)
+     - Attempted fixes: Agent analyzed API responses and tested 8 different URL path combinations. All returned 404.
+     - Next debug checklist: Waiting on backend team to provide the correct image server path.
+     - Why fix this issue and what will be achieved with the fix? Fixes the missing logo in the Sidebar.
+     - Status: BLOCKED (Awaiting backend clarification; frontend graceful fallback is already implemented).
+     - Is recurring issue? N
      - Should Test frontend/backend/both after fix? frontend
-     - Blocked on something: User approval of Menu Management UI.
+     - Blocked on other issue: Backend team clarification
 
-  Task 2: Step 7 Sub-step 5 - Ordering screen menu population
-     - Where to resume: Wire real menu data (from ) into the POS OrderEntry component used by staff to punch orders.
-     - What will be achieved with this? Removes mock product data from the actual POS ordering flow.
+**In progress Task List**:
+  Task 1: Unify Grid View for Takeaway/Delivery/Walk-ins (P0)
+     - Where to resume: Open  and modify the flat table generation logic to include takeaway and delivery orders. Update  to accept an  prop to render icons (Lucide  for Takeaway,  for Delivery). For walk-ins (), use the customer name or WC as the label with *no icon*.
+     - What will be achieved with this? Addresses user feedback that Takeaway and Delivery orders are missing from the Table grid view.
+     - Status: IN PROGRESS
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on something: NA
+
+  Task 2: Header Status Filters & View Toggles for All Channels (P0)
+     - Where to resume: Update the Dashboard Header to display status filter pills (, , , ) and the View Toggle (/) across ALL channel tabs (Takeaway, Delivery, All), not just Dine-in.
+     - What will be achieved with this? Allows users to filter active orders by  regardless of the order channel.
      - Status: NOT STARTED
      - Should Test frontend/backend/both after fix? frontend
      - Blocked on something: Task 1
 
-  Task 3: Step 7 Sub-step 6 - Currency symbol + Search wiring
-     - Where to resume: Update Order cards and menu prices across the app to use . Wire the Dashboard search bar to search real tables/orders.
-     - What will be achieved with this? Dynamic localization and functional dashboard search.
-     - Status: NOT STARTED
-     - Should Test frontend/backend/both after fix? frontend
-     - Blocked on something: Task 2
-
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - P0: Complete the remaining sub-steps for Step 7 (Dashboard Table Mapping, Order Screen Menu, Search/Currency).
-    - P1: Phase 1 Part B - Implement  API and populate Dashboard Order Cards. (Note: Currently blocked waiting for backend team clarification on  mappings - see ).
+    - P0: Cart pre-population on clicking a running order card (See Issue 1).
+    - P1: Map Delivery orders fully (Phase 1 Part B completion) handling the structured  object.
     
     Future Tasks:
-    - P2: Phase 2 - Implement actual API POST/PUT/DELETE integration for the Settings and Menu Management CRUD forms (currently saves are mocked).
-    - P2: Phase 2 - Add-ons management UI (User instructed to defer this until a separate API is provided).
-    - P2: Phase 2 - Employee Management panel.
+    - P2: Phase 2 - Actual API POST/PUT/DELETE for Settings and Menu CRUD forms.
     - P2: Phase 2 - Room mapping (), Place Order action, Collect Bill/Payment features.
+    - P2: Phase 2 - Add-ons management UI.
+    - P2: Phase 2 - Employee Management panel.
+    - P2: Phase 1C - Implement  and  (bar/kitchen station statuses).
 
 **Completed work in this session**
-- Fixed React StrictMode double-fetch bug in Context API /  (DONE)
-- Created , ,  (DONE)
-- Sidebar & Header UI wired to real permissions, user profile, and restaurant feature toggles (DONE)
-- Full-width Settings Panel built with fully mocked CRUD UX (View/Edit toggle, List+Form, Master-Detail) (DONE)
-- Full-width Menu Management Panel built with filtering, Quick Edit, Full Edit forms, and Drag & Drop (DONE)
+- Wired real table data to Dashboard via  (DONE)
+- Wired real menu/category data to  (DONE)
+- Fixed Variation/Add-on mappings in  so names, prices, and required states map to the Customization Modal (DONE)
+- Implemented , , and  for Phase 1 Part B (DONE)
+- Rendered real running API orders into  and  lists on the Dashboard (DONE)
+- Added dynamic filtering to skip Room orders () from the POS dashboard (DONE)
 
 **Earlier issues found/mentioned but not fixed**
-None.
+   - Issue 1: Veg/Non-Veg Misclassification
+     - Debug checklist: Not a frontend bug. Backend API is returning chicken items under the Veg filter.
+     - Why to solve this issue and what will be achieved with this? Data quality correction.
+     - Should Test frontend/backend/both after fix: backend
+     - Is recurring issue? N
+   - Issue 2: Unknown  meanings
+     - Debug checklist: Check . Needs clarification for statuses 4, 9, and the Schedule status.
 
 **Known issue recurrence from previous fork**
   - Issue recurrence in previous fork: None
@@ -77,69 +86,67 @@ None.
 
 
 **Key Technical Concepts**
-- Global Context state mapping.
-- **React StrictMode Async Bug**: To prevent duplicate overlapping API calls on mount,  uses an object reference  inside a  that gets mutated in the  cleanup.
-- **Mocked CRUD UX**: The user explicitly requested actual forms, dropdowns, and toggles for the Admin panels. They look and act like real forms, but clicking Save currently just triggers a success toast. Actual API integration is Phase 2.
-- **Drag-and-Drop**: Installed  to handle category and product reordering. 
+- **Transform Architecture**: The app strictly uses  files to convert raw API snake_case responses into a canonical camelCase frontend schema. This ensures the UI doesn't break and allows seamless switching between mock data and real data.
+- **Order Mapping Rules**:
+  -  indicates a Walk-in or Takeaway order.
+  -  drives the table/card status colors (e.g., 1=preparing/occupied, 5=served/billReady, 8=running).
+  - Room orders () must be explicitly filtered out of the POS view.
 
 **key DB schema**
-  - Mapped comprehensively in .
+  -  mapping,  schema, and  schemas are extensively documented in .
 
 **changes in tech stack**
-  - Added  for React drag-and-drop functionality.
+  - None.
 
 **All files of reference**
-  - : Contains the  ref fix for StrictMode.
-  -  (and its sub-components in ): Contains the 3 CRUD UX patterns.
-  -  (and its sub-components in ): Contains drag-and-drop, filtering, and Quick Edit logic.
-  - : The source of truth for what API fields go to what UI elements.
-  - : Contains critical definitions (e.g.,  = hidden from POS,  = visible but greyed out).
+  - Created: , , 
+  - Updated:  (Core grid/list logic)
+  - Updated:  (Needs icon logic next)
+  - Updated:  (Fixed variation keys)
+  - Updated:  &  (Crucial truth source)
 
 **Areas that need refactoring**: 
-  -  was not created/updated. The next agent should generate  summarizing the project state as requested in system guidelines.
+  - None required right now. Code is following established transform patterns nicely.
 
 **key api endpoints**
   - 
   - 
   - 
-  - 
-  - 
-  - 
 
 **Critical Info for New Agent**
-- **MAJOR UX SHIFT**: The previous rule was Read-Only UI with Coming Soon toasts. The user changed their mind. You must now build **Full CRUD UI forms** (inputs, toggles, Quick Edits). However, the *API saving* is still deferred to Phase 2. Just mock the saves visually with toasts. Coming Soon toasts are now reserved *only* for completely unbuilt modules (like Employee Management).
-- **Admin Panel Layout**: The Settings and Menu Management panels are NOT narrow slide-outs with backdrops. They are full-width components that occupy the entire remaining screen space to the right of the Sidebar.
-- Wait for user approval before moving to the next sub-step. 
+- **TESTING ACCOUNT**: Use  (Password: ) for testing Running Orders. *Do not use other accounts* (like Serena or Palm House) as they only have Room orders, which are filtered out, making the dashboard appear empty.
+- **Card Icon Rule**: User explicitly stated: Takeaway gets a  icon, Delivery gets a  icon. Walk-ins () get NO ICON, just their name or WC. Physical tables get NO ICON, just T1.
+- View toggles (Grid vs. List) and Status Filters (Confirm, Cooking, Ready, Running) must be made available globally across all Dashboard channel tabs, not locked to the Dine tab.
 
 **documents and test reports created in this job**
   - 
   - 
   - 
+  - 
+  - 
 
-**Last 10 User Messages and any pending HUMAN messages**
-- (User) Provided a screenshot of a Quick Edit feature they wanted on the product tiles.
-- (Agent) Proposed revised Menu Management UX incorporating the 3-state tile (Normal, Quick Edit, Full Edit form).
-- (User) yes go ahead
-- (Agent) Installed dnd library, built the components, tested via screenshots, and asked for approval to update docs and summarize.
-- (User) Ok but before that update mapping documents
-- (Agent) Updated  and  via search_replace. *Current State - Pending agent response to user.*
+**Last 10 User Messages and any pending HUMAN messages** 
+ - (User) Provided feedback screenshots highlighting 3 issues: 1) Grid view only shows dine-in, missing takeaway/delivery. 2) Clicking a running order opens an empty cart. 3) Both views (Grid/List) should support all channels with proper header filters.
+ - (Agent) Proposed breaking into 3 steps: 1) Grid cards for all with icons. 2) Header filters. 3) Cart pre-population. Asked for clarification on Walk-in icons.
+ - (User) Confirmed the plan. Walk-in with no physical table no need just WC. primary info customer name. update above info in ur learning then proceed wth step 1
+ - (Agent) Updated learnings and was checking view toggle logic to begin Step 1. *Current State - Task Handoff*.
 
 **Project Health Check:**
-- Mocked (UI forms implemented but API POST/PUT disconnected).
-- Broken (Restaurant logo image URL in sidebar/settings).
+- Broken (Restaurant logo 404, backend issue)
+- Mocked (POST/PUT CRUD operations, Delivery address mapping)
 
 **3rd Party Integrations**
 - None.
 
 **Testing status**
-  - Testing agent used after significant changes: NO (Screenshot tool utilized instead)
+  - Testing agent used after significant changes: YES (v3 fork used twice, passed 14/14 and 12/12)
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: None
+  - Test files created: , 
   - Known regressions: None
 
 **Credentials to test flow:**
-Email: owner@18march.com
-Pass: Qplazm@10
+Email: 
+Pass: 
 
 **What agent forgot to execute**
-- The agent failed to create/update  when preparing to finish the task, opting only to update the custom markdown docs inside .</analysis>
+- The agent was successfully aligned with user requests and was mid-thought process on modifying . No tasks were forgotten, but execution of the 3-step feedback plan is required next.</analysis>
