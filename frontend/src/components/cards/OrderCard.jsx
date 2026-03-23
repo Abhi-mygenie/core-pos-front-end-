@@ -88,12 +88,13 @@ const OrderCard = ({
       className={`rounded-lg shadow-sm overflow-hidden ${isSnoozed ? "opacity-60" : ""}`}
       style={{ backgroundColor: COLORS.lightBg, border: `1.5px solid ${COLORS.borderGray}` }}
     >
-      {/* ── HEADER ── */}
+      {/* ── HEADER — 3-zone layout: Left (ID+Name) | Center (Waiter+Time) | Right (Price+Snooze) ── */}
       <div
-        className="px-4 py-3 flex items-center justify-between border-b"
+        className="px-4 py-3 flex items-center border-b"
         style={{ borderColor: COLORS.borderGray }}
       >
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+        {/* LEFT: Logo + ID + Customer Name + Address icon */}
+        <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
           {renderLogo()}
           <span className="text-sm font-bold flex-shrink-0" style={{ color: COLORS.darkText }}>
             {primaryId}
@@ -103,15 +104,6 @@ const OrderCard = ({
               {order.customer}
             </span>
           )}
-          {isDineIn && order.waiter && (
-            <span className="text-xs flex-shrink-0" style={{ color: COLORS.grayText }}>
-              · {order.waiter}
-            </span>
-          )}
-          <span className="text-xs flex-shrink-0" style={{ color: COLORS.grayText }}>
-            · {order.time}
-          </span>
-          {/* Address icon — own delivery only */}
           {isDelivery && isOwn && (
             <button
               data-testid={`address-btn-${orderId}`}
@@ -124,8 +116,20 @@ const OrderCard = ({
           )}
         </div>
 
-        {/* Amount + Snooze */}
-        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+        {/* CENTER: Waiter + Time */}
+        <div className="flex-1 flex items-center justify-center gap-1.5">
+          {isOwn && order.waiter && (
+            <span className="text-xs" style={{ color: COLORS.grayText }}>
+              {order.waiter}
+            </span>
+          )}
+          <span className="text-xs" style={{ color: COLORS.grayText }}>
+            · {order.time}
+          </span>
+        </div>
+
+        {/* RIGHT: Amount + Snooze */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           <span className="font-bold text-xl" style={{ color: COLORS.primaryOrange }}>
             ₹{(order.amount || 0).toLocaleString()}
           </span>
