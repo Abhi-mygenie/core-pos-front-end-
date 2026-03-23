@@ -38,18 +38,23 @@
 
 ## Open Questions (Still Pending)
 
-### Q2: `order_status` field purpose
-**Observation:** All 33 running orders have `order_status="queue"`. This field exists alongside `f_order_status` but its purpose/values are unknown.
-**Hypothesis:** May always be "queue" for running/active orders, and change to something else for completed/archived orders.
-**Status:** OPEN — Noted for documentation. Using `f_order_status` as the primary status field.
+### Q2: `order_status` field purpose — CONFIRMED
+**Observation:** `order_status` is a lifecycle indicator separate from `f_order_status`:
+- `"queue"` = active/running order → **shows on dashboard**
+- `"delivered"` = completed/settled → **should NOT show on dashboard**
+
+**Status:** RESOLVED — The `employee-orders-list` API only returns queue orders by default. No frontend filtering needed.
 
 ### Q5: `def_ord_status` Restaurant Field
 **Source:** Restaurant profile → `def_ord_status: 1`
 **Priority:** P2
 What does this field control? Is it the default status assigned to new orders?
 
-### Q6: `f_order_status` values 4 and 8
-**Status:** OPEN — User will provide definitions later. Transform will handle them as `unknown` until confirmed.
+### Q6: `f_order_status` values 4, 8, and 9
+- **Status 4:** OPEN — User will provide definition later.
+- **Status 8:** CONFIRMED — Means "Running/Active". Shows on dashboard with "RUNNING" badge. 22 takeaway orders observed with this status.
+- **Status 9:** OPEN — Observed on 2 PayLater orders. Needs team clarification. Currently shows as "PENDING" (unknown fallback).
+- **`order_type="WalkIn"`:** OPEN — Needs team clarification on whether it's treated differently from "pos". Currently mapped as dineIn.
 
 ---
 

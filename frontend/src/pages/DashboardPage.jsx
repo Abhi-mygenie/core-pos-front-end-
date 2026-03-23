@@ -265,7 +265,7 @@ const DashboardPage = () => {
     }
 
     return results;
-  }, [searchQuery, activeChannels, allTablesList, allRoomsList]);
+  }, [searchQuery, activeChannels, allTablesList, allRoomsList, deliveryOrders, takeAwayOrders, orderItemsByTableId]);
 
   const matchingTableIds = useMemo(() => getMatchingIds(searchQuery, searchResults.tables), [searchQuery, searchResults]);
   const matchingRoomIds = useMemo(() => getMatchingIds(searchQuery, searchResults.rooms), [searchQuery, searchResults]);
