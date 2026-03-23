@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
+import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../contexts";
 import * as authService from "../api/services/authService";
 import * as profileService from "../api/services/profileService";
 import * as categoryService from "../api/services/categoryService";
@@ -15,6 +16,13 @@ import * as settingsService from "../api/services/settingsService";
 const LoadingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Context setters
+  const { setUserData } = useAuth();
+  const { setRestaurant } = useRestaurant();
+  const { setCategories, setProducts, setPopularFood } = useMenu();
+  const { setTables } = useTables();
+  const { setCancellationReasons } = useSettings();
   
   // Loading status for each API with counts
   const [loadingStatus, setLoadingStatus] = useState(
@@ -24,8 +32,8 @@ const LoadingPage = () => {
     }, {})
   );
   
-  // Loaded data (will be passed to context in Step 6)
-  const [loadedData, setLoadedData] = useState({});
+  // Ref to track loaded data across the async flow
+  const loadedDataRef = useRef({});
   
   // Overall progress
   const [progress, setProgress] = useState(0);
@@ -61,16 +69,13 @@ const LoadingPage = () => {
       setIsComplete(true);
       
       if (!hasAnyError) {
-        // Store data in sessionStorage temporarily (will use context in Step 6)
-        sessionStorage.setItem('pos_loaded_data', JSON.stringify(loadedData));
-        
         // Navigate to dashboard after short delay
         setTimeout(() => {
           navigate("/dashboard");
         }, 500);
       }
     }
-  }, [loadingStatus, loadedData, navigate]);
+  }, [loadingStatus, navigate]);
 
   // Update status for a specific API
   const updateStatus = (key, status, error = null, loaded = 0, total = 0) => {
@@ -88,6 +93,9 @@ const LoadingPage = () => {
     updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1);
     try {
       data.profile = await profileService.getProfile();
+      // Dispatch to Auth & Restaurant contexts
+      setUserData(data.profile.user, data.profile.permissions);
+      setRestaurant(data.profile.restaurant);
       updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1);
     } catch (error) {
       updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage, 0, 1);
@@ -140,6 +148,8 @@ const LoadingPage = () => {
     try {
       data.tables = await tableService.getTables(true); // Tables only, no rooms
       const count = data.tables?.length || 0;
+      // Dispatch to Table context
+      setTables(data.tables);
       updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
       updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
@@ -156,6 +166,8 @@ const LoadingPage = () => {
       const reasonsResponse = await settingsService.getCancellationReasons({ limit: 100, offset: 1 });
       data.cancellationReasons = reasonsResponse.reasons;
       const count = data.cancellationReasons?.length || 0;
+      // Dispatch to Settings context
+      setCancellationReasons(data.cancellationReasons);
       updateStatus('cancellationReasons', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
       updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
@@ -183,7 +195,13 @@ const LoadingPage = () => {
       });
     }
 
-    setLoadedData(data);
+    // Dispatch Menu context (categories with item counts + products + popular)
+    setCategories(data.categories);
+    setProducts(data.products);
+    setPopularFood(data.popularFood);
+
+    // Store ref for retry logic
+    loadedDataRef.current = data;
   };
 
   // Retry loading
@@ -194,7 +212,7 @@ const LoadingPage = () => {
         return acc;
       }, {})
     );
-    setLoadedData({});
+    loadedDataRef.current = {};
     setProgress(0);
     setIsComplete(false);
     setHasError(false);
