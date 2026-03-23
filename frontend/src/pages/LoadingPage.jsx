@@ -47,10 +47,10 @@ const LoadingPage = () => {
       return;
     }
     
-    let aborted = false;
-    loadAllData(aborted);
+    const ctrl = { aborted: false };
+    loadAllData(ctrl);
     
-    return () => { aborted = true; };
+    return () => { ctrl.aborted = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -87,20 +87,20 @@ const LoadingPage = () => {
     }));
   };
 
-  // Load all APIs in sequence (aborted flag guards against StrictMode double-invoke)
-  const loadAllData = async (aborted) => {
+  // Load all APIs in sequence (ctrl.aborted guards against StrictMode double-invoke)
+  const loadAllData = async (ctrl) => {
     const data = {};
     
     // 1. Profile & Permissions
     updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1);
     try {
       data.profile = await profileService.getProfile();
-      if (aborted) return;
+      if (ctrl.aborted) return;
       setUserData(data.profile.user, data.profile.permissions);
       setRestaurant(data.profile.restaurant);
       updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage, 0, 1);
       toast({
         title: "Failed to load profile",
@@ -109,17 +109,17 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // 2. Categories
     updateStatus('categories', LOADING_STATES.LOADING, null, 0, 0);
     try {
       data.categories = await categoryService.getCategories();
-      if (aborted) return;
+      if (ctrl.aborted) return;
       const count = data.categories?.length || 0;
       updateStatus('categories', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('categories', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load categories",
@@ -128,13 +128,13 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // 3. Products
     updateStatus('products', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
-      if (aborted) return;
+      if (ctrl.aborted) return;
       data.products = productsResponse.products;
       const loadedCount = data.products?.length || 0;
       const totalCount = productsResponse.total || loadedCount;
@@ -144,7 +144,7 @@ const LoadingPage = () => {
       }
       updateStatus('products', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('products', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load products",
@@ -153,18 +153,18 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // 4. Tables
     updateStatus('tables', LOADING_STATES.LOADING, null, 0, 0);
     try {
       data.tables = await tableService.getTables(true);
-      if (aborted) return;
+      if (ctrl.aborted) return;
       const count = data.tables?.length || 0;
       setTables(data.tables);
       updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load tables",
@@ -173,19 +173,19 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // 5. Cancellation Reasons (Settings)
     updateStatus('cancellationReasons', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const reasonsResponse = await settingsService.getCancellationReasons({ limit: 100, offset: 1 });
-      if (aborted) return;
+      if (ctrl.aborted) return;
       data.cancellationReasons = reasonsResponse.reasons;
       const count = data.cancellationReasons?.length || 0;
       setCancellationReasons(data.cancellationReasons);
       updateStatus('cancellationReasons', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load settings",
@@ -194,19 +194,19 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // 6. Popular Food
     updateStatus('popularFood', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const popularResponse = await productService.getPopularFood({ limit: 50, offset: 1, type: 'all' });
-      if (aborted) return;
+      if (ctrl.aborted) return;
       data.popularFood = popularResponse.products;
       const loadedCount = data.popularFood?.length || 0;
       const totalCount = popularResponse.total || loadedCount;
       updateStatus('popularFood', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
     } catch (error) {
-      if (aborted) return;
+      if (ctrl.aborted) return;
       updateStatus('popularFood', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
       toast({
         title: "Failed to load popular items",
@@ -215,7 +215,7 @@ const LoadingPage = () => {
       });
     }
 
-    if (aborted) return;
+    if (ctrl.aborted) return;
 
     // Dispatch Menu context
     setCategories(data.categories);
@@ -237,7 +237,7 @@ const LoadingPage = () => {
     setProgress(0);
     setIsComplete(false);
     setHasError(false);
-    loadAllData(false);
+    loadAllData({ aborted: false });
   };
 
   // Get icon for status
