@@ -147,10 +147,11 @@ export const fromAPI = {
    */
   variations: (apiVariations) => {
     if (!Array.isArray(apiVariations)) return [];
-    return apiVariations.map((variation) => ({
+    return apiVariations.map((variation, idx) => ({
+      id: `vg-${idx}`,
       name: variation.name,
       type: variation.type, // 'single' or 'multi'
-      isRequired: variation.required === 'on',
+      required: variation.required === 'on',
       min: variation.min || 0,
       max: variation.max || 0,
       options: fromAPI.variationOptions(variation.values),
@@ -162,9 +163,10 @@ export const fromAPI = {
    */
   variationOptions: (apiValues) => {
     if (!Array.isArray(apiValues)) return [];
-    return apiValues.map((value) => ({
-      label: value.label,
-      additionalPrice: parseFloat(value.optionPrice) || 0,
+    return apiValues.map((value, idx) => ({
+      id: `vo-${idx}`,
+      name: value.label,
+      price: parseFloat(value.optionPrice) || 0,
     }));
   },
 

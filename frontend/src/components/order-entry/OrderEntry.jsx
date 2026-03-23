@@ -40,6 +40,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     customizable: product.hasVariations || (product.addOns && product.addOns.length > 0),
     variantGroups: product.variations || [],
     addons: product.addOns || [],
+    productImage: product.productImage,
   });
 
   const [activeCategory, setActiveCategory] = useState("popular");
