@@ -2,9 +2,8 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
 import { COLORS } from "../constants";
-import { mockRooms } from "../data";
 import { Sidebar, Header } from "../components/layout";
-import { TableSection, RoomSection } from "../components/sections";
+import { TableSection } from "../components/sections";
 import { DineInCard, DeliveryCard, OrderCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
@@ -124,7 +123,7 @@ const DashboardPage = () => {
   // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
-  const [rooms, setRooms] = useState(mockRooms);
+  const [rooms, setRooms] = useState({});
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // Real-time internet connectivity detection
@@ -679,23 +678,10 @@ const DashboardPage = () => {
               </>
             )}
 
-            {/* Room View (dynamic) */}
+            {/* Room View - TODO: Phase 2A implementation */}
             {activeChannels.includes("room") && (
               <div className="flex gap-8 overflow-x-auto">
-                {Object.entries(rooms).map(([key, section], index) => (
-                  <div key={key} className="contents">
-                    {index > 0 && (
-                      <div className="w-px self-stretch" style={{ backgroundColor: COLORS.borderGray }} />
-                    )}
-                    <RoomSection
-                      section={section}
-                      onRoomClick={(room) => console.log("Room clicked:", room)}
-                      activeFirst={activeFirst}
-                      searchQuery={searchQuery}
-                      matchingRoomIds={matchingRoomIds}
-                    />
-                  </div>
-                ))}
+                {/* Room integration will use TableSection with room data */}
               </div>
             )}
           </div>
