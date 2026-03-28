@@ -145,24 +145,17 @@ const Header = ({
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
 
   const handleChannelToggle = (channelId) => {
-    // "All" selects visible multi-selectable channels
+    // "All" selects all visible channels
     if (channelId === "all") {
       setActiveChannels([...visibleMultiChannelIds]);
       return;
     }
-    // Was "All" selected → select only clicked one
-    if (isAllChannels) {
-      setActiveChannels([channelId]);
-      return;
+    // Individual channel = exclusive selection (only that one)
+    // If already selected and it's the only one, stay selected (can't deselect all)
+    if (activeChannels.length === 1 && activeChannels[0] === channelId) {
+      return; // Already selected, do nothing
     }
-    // Toggle within multi-select group
-    if (activeChannels.includes(channelId)) {
-      const next = activeChannels.filter(c => c !== channelId);
-      // Don't allow empty — revert to all visible
-      setActiveChannels(next.length === 0 ? [...visibleMultiChannelIds] : next);
-    } else {
-      setActiveChannels([...activeChannels, channelId]);
-    }
+    setActiveChannels([channelId]);
   };
 
   const handleStatusToggle = (statusId) => {

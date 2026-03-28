@@ -137,7 +137,7 @@ const DashboardPage = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-  const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn"]);
+  const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn", "room"]);
   const [activeStatuses, setActiveStatuses] = useState(["confirm", "cooking", "ready", "running", "schedule"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
   const [activeView, setActiveView] = useState("table");
