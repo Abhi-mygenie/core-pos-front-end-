@@ -24,9 +24,9 @@ const LoginPage = () => {
       setRememberMe(true);
     }
     
-    // If already authenticated, redirect to loading
+    // If already authenticated, redirect to dashboard directly
     if (authService.isAuthenticated()) {
-      navigate("/loading");
+      navigate("/dashboard", { replace: true });
     }
   }, [navigate]);
 
@@ -49,7 +49,7 @@ const LoginPage = () => {
       await authService.login({ email, password }, rememberMe);
       
       // Navigate to loading screen on success
-      navigate("/loading");
+      navigate("/loading", { replace: true });
       
     } catch (error) {
       // Show error toast with API message

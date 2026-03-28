@@ -37,11 +37,14 @@ export const fromAPI = {
   }),
 
   /**
-   * Transform products array
+   * Transform products array — filters to Normal food_for only
+   * Phase 3: will support multiple menus (Buffet, HappyHour, etc.)
    */
   productList: (apiProducts) => {
     if (!Array.isArray(apiProducts)) return [];
-    return apiProducts.map(fromAPI.product);
+    return apiProducts
+      .map(fromAPI.product)
+      .filter(p => p.foodFor === 'Normal');
   },
 
   /**
@@ -100,7 +103,10 @@ export const fromAPI = {
     
     // Station routing (for KOT)
     station: api.station_name || STATION_TYPES.KDS,
-    
+
+    // Menu type — Phase 1/2: only 'Normal' shown in POS. Phase 3: multiple menus
+    foodFor: api.food_for || 'Normal',
+
     // Order stats
     orderCount: api.order_count || 0,
     isRecommended: toBoolean(api.recommended),

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { TABLE_STATUS } from '../api/constants';
+import * as tableService from '../api/services/tableService';
 
 // Create Table Context
 const TableContext = createContext(null);
@@ -19,6 +20,12 @@ export const TableProvider = ({ children }) => {
   const clearTables = useCallback(() => {
     setTablesData([]);
     setIsLoaded(false);
+  }, []);
+
+  // Refresh tables — re-fetch engage status and update context
+  const refreshTables = useCallback(async () => {
+    const fresh = await tableService.getTables(true);
+    setTablesData(fresh || []);
   }, []);
 
   // Get unique sections from tables
@@ -95,6 +102,7 @@ export const TableProvider = ({ children }) => {
     // Actions
     setTables,
     clearTables,
+    refreshTables,
     
     // Helpers
     getTableById,
@@ -111,6 +119,7 @@ export const TableProvider = ({ children }) => {
     isLoaded,
     setTables,
     clearTables,
+    refreshTables,
     getTableById,
     getTableByNumber,
     getTablesBySection,

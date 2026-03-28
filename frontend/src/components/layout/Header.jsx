@@ -46,6 +46,8 @@ const Header = ({
   setActiveChannels, 
   activeStatuses, 
   setActiveStatuses, 
+  tableFilter,
+  setTableFilter,
   activeView, 
   setActiveView, 
   activeFirst, 
@@ -294,6 +296,7 @@ const Header = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => { if (!searchQuery) setIsSearchFocused(false); }}
                 className="flex-1 bg-transparent text-sm outline-none"
                 style={{ color: COLORS.darkText }}
               />
@@ -561,15 +564,21 @@ const Header = ({
           {/* Divider */}
           <div className="w-px h-6" style={{ backgroundColor: COLORS.borderGray }} />
 
-          {/* Status Filter Pills - Multi-select */}
+          {/* Status Filter Pills */}
           <div className="flex items-center gap-2">
             {statuses.map((status) => {
-              const isActive = activeStatuses.includes(status.id);
+              // Table view: exclusive single-select filter
+              const isActive = isTableView
+                ? tableFilter === status.id
+                : activeStatuses.includes(status.id);
+              const handleClick = isTableView
+                ? () => setTableFilter(prev => prev === status.id ? null : status.id)
+                : () => handleStatusToggle(status.id);
               return (
                 <button
                   key={status.id}
                   data-testid={`status-${status.id}`}
-                  onClick={() => handleStatusToggle(status.id)}
+                  onClick={handleClick}
                   className="px-3 py-2.5 rounded-md text-xs font-medium transition-all"
                   style={{
                     backgroundColor: isActive ? COLORS.lightBg : "transparent",

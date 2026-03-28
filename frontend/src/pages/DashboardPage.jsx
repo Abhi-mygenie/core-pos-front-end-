@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { RefreshCw } from "lucide-react";
 import { COLORS } from "../constants";
 import { mockRooms } from "../data";
 import { Sidebar, Header } from "../components/layout";
@@ -8,10 +9,11 @@ import { DineInCard, DeliveryCard, OrderCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
-import { useRestaurant, useTables, useOrders } from "../contexts";
+import { useRestaurant, useTables, useOrders, useAuth } from "../contexts";
 import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
 import MenuManagementPanel from "../components/panels/MenuManagementPanel";
+import { useRefreshAllData } from "../hooks/useRefreshAllData";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -88,10 +90,12 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { isLoaded: restaurantLoaded, currencySymbol } = useRestaurant();
   const { tables: apiTables, isLoaded: tablesLoaded } = useTables();
+  const { user } = useAuth();
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
     orderItemsByTableId, getOrderByTableId,
   } = useOrders();
+  const refreshAllData = useRefreshAllData();
 
   // Redirect to login if not authenticated, or to loading if data not loaded
   useEffect(() => {
@@ -102,23 +106,68 @@ const DashboardPage = () => {
     }
   }, [navigate, restaurantLoaded]);
 
+  // Warn before browser reload/close — prevents accidental session loss
+  // Exception: skip dialog when it's an intentional auth redirect (401)
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (sessionStorage.getItem('auth_redirect')) {
+        sessionStorage.removeItem('auth_redirect');
+        return; // intentional redirect — no dialog
+      }
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
   const [rooms, setRooms] = useState(mockRooms);
-  const [isOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // Real-time internet connectivity detection
+  useEffect(() => {
+    const handleOnline  = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online',  handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online',  handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn"]);
   const [activeStatuses, setActiveStatuses] = useState(["confirm", "cooking", "ready", "running", "schedule"]);
+  const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
   const [activeView, setActiveView] = useState("table");
   const [activeFirst, setActiveFirst] = useState(true);
   const [orderEntryTable, setOrderEntryTable] = useState(null);
   const [orderEntryType, setOrderEntryType] = useState(null);
+  const [cartsByTable, setCartsByTable] = useState({});
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSilentMode, setIsSilentMode] = useState(false);
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefreshAll = async () => {
+    if (isRefreshing) return;
+    // Guard: block refresh when OrderEntry is open
+    if (orderEntryType !== null) {
+      return; // toast shown in Sidebar
+    }
+    setIsRefreshing(true);
+    setCartsByTable({}); // clear stale saved carts
+    try {
+      await refreshAllData(user?.roleName || 'Owner');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   // --- Seed tables from real API data + enrich with order data ---
   useEffect(() => {
@@ -139,6 +188,8 @@ const DashboardPage = () => {
         amount: hasOrder ? order.amount : undefined,
         time: hasOrder ? order.time : undefined,
         orderNumber: hasOrder ? order.orderNumber : undefined,
+        fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
+        orderId: hasOrder ? order.orderId : undefined,
       };
     };
 
@@ -171,7 +222,9 @@ const DashboardPage = () => {
             orderNumber: order.orderNumber,
             isWalkIn: true,
             walkInOrderId: order.orderId,
+            orderId: order.orderId,
             orderType: 'walkIn',
+            fOrderStatus: order.fOrderStatus,
           })),
         };
       }
@@ -195,7 +248,9 @@ const DashboardPage = () => {
           orderNumber: order.orderNumber,
           isWalkIn: true,
           walkInOrderId: order.orderId,
+          orderId: order.orderId,
           orderType: 'walkIn',
+          fOrderStatus: order.fOrderStatus,
         });
       });
 
@@ -241,6 +296,7 @@ const DashboardPage = () => {
           orderNumber: order.orderNumber,
           orderType: 'takeAway',
           orderId: order.orderId,
+          fOrderStatus: order.fOrderStatus,
         });
       });
     }
@@ -257,6 +313,7 @@ const DashboardPage = () => {
           orderNumber: order.orderNumber,
           orderType: 'delivery',
           orderId: order.orderId,
+          fOrderStatus: order.fOrderStatus,
         });
       });
     }
@@ -276,26 +333,12 @@ const DashboardPage = () => {
     return 'Orders';
   }, [activeChannels]);
 
-  // Filter grid items by active status filters (Schedule, Confirm in grid view)
+  // Filter grid items — exclusive filter for Schedule/Confirm in table view
   const filteredGridItems = useMemo(() => {
-    // Map filter IDs to grid item status values
-    const statusFilterMap = {
-      confirm: 'yetToConfirm',   // f_order_status=7
-      schedule: 'scheduled',      // scheduled orders
-    };
-
-    return gridItems.filter(item => {
-      // Available/reserved tables always show
-      if (item.status === 'available' || item.status === 'reserved') return true;
-
-      // Check if item's status matches a deactivated filter
-      if (item.status === 'yetToConfirm' && !activeStatuses.includes('confirm')) return false;
-      if (item.status === 'scheduled' && !activeStatuses.includes('schedule')) return false;
-
-      // All other statuses (occupied, billReady, paid, etc.) always show in grid view
-      return true;
-    });
-  }, [gridItems, activeStatuses]);
+    if (tableFilter === 'confirm') return gridItems.filter(item => item.status === 'yetToConfirm');
+    if (tableFilter === 'schedule') return gridItems.filter(item => item.status === 'scheduled');
+    return gridItems; // no filter active — show all
+  }, [gridItems, tableFilter]);
 
   // --- Search ---
   const searchResults = useMemo(() => {
@@ -403,13 +446,14 @@ const DashboardPage = () => {
 
   const handleTableClick = (tableEntry) => {
     setOrderEntryTable(tableEntry);
-    // Set correct order type based on entry
     if (tableEntry.orderType === 'takeAway') {
       setOrderEntryType('takeAway');
     } else if (tableEntry.orderType === 'delivery') {
       setOrderEntryType('delivery');
+    } else if (tableEntry.orderType === 'dineIn') {
+      setOrderEntryType('dineIn');    // physical table — NOT walkIn
     } else {
-      setOrderEntryType('walkIn');
+      setOrderEntryType('walkIn');    // actual walk-in orders (wc-* entries)
     }
   };
 
@@ -459,6 +503,9 @@ const DashboardPage = () => {
         setIsSilentMode={setIsSilentMode}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenMenu={() => setIsMenuOpen(true)}
+        onRefresh={handleRefreshAll}
+        isRefreshing={isRefreshing}
+        isOrderEntryOpen={orderEntryType !== null}
       />
 
       <SettingsPanel
@@ -473,13 +520,25 @@ const DashboardPage = () => {
         sidebarWidth={sidebarExpanded ? 280 : 70}
       />
 
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden relative">
+        {/* Refresh overlay — dims content while refreshing */}
+        {isRefreshing && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
+            style={{ backgroundColor: 'rgba(255,255,255,0.6)' }}>
+            <div className="flex flex-col items-center gap-3">
+              <RefreshCw className="w-8 h-8 animate-spin" style={{ color: COLORS.primaryOrange }} />
+              <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>Refreshing data...</span>
+            </div>
+          </div>
+        )}
         <Header
           isOnline={isOnline}
           activeChannels={activeChannels}
           setActiveChannels={setActiveChannels}
           activeStatuses={activeStatuses}
           setActiveStatuses={setActiveStatuses}
+          tableFilter={tableFilter}
+          setTableFilter={setTableFilter}
           activeView={activeView}
           setActiveView={setActiveView}
           activeFirst={activeFirst}
@@ -499,7 +558,7 @@ const DashboardPage = () => {
           >
             {/* Grid View - Unified for all channels */}
             {showGridView && (
-              isDineInOnly && hasAreas ? (
+              isDineInOnly && hasAreas && !activeFirst ? (
                 <div className="flex gap-8 overflow-x-auto">
                   {Object.entries(tables).map(([key, section], index) => (
                     <div key={key} className="contents">
@@ -517,6 +576,8 @@ const DashboardPage = () => {
                         snoozedOrders={snoozedOrders}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
+                        activeStatuses={activeStatuses}
+                        tableFilter={tableFilter}
                       />
                     </div>
                   ))}
@@ -649,6 +710,8 @@ const DashboardPage = () => {
             onOrderTypeChange={handleOrderTypeChange}
             allTables={allTablesList}
             onSelectTable={handleTableClick}
+            savedCart={cartsByTable[orderEntryTable?.id || orderEntryType] || []}
+            onCartChange={(key, items) => setCartsByTable(prev => ({ ...prev, [key]: items }))}
           />
         )}
       </div>

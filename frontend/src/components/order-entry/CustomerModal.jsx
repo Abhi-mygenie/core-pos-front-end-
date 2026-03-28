@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Search, User, Calendar, CreditCard } from "lucide-react";
 import { COLORS } from "../../constants";
-import { mockCustomers, searchCustomers } from "../../data";
+import { searchCustomers } from "../../api/services/customerService";
 
 const CustomerModal = ({ onClose, onSave, initialData = null }) => {
   const [name, setName] = useState(initialData?.name || "");
@@ -14,12 +14,14 @@ const CustomerModal = ({ onClose, onSave, initialData = null }) => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const memberInputRef = useRef(null);
 
-  // Filter members based on search
+  // Filter members based on search — async API call
+  // CHG-036: Now calls customerService.searchByPhone() with graceful fallback
   useEffect(() => {
     if (memberSearch.trim()) {
-      const filtered = searchCustomers(memberSearch);
-      setFilteredMembers(filtered);
-      setShowMemberSuggestions(filtered.length > 0);
+      searchCustomers(memberSearch).then(filtered => {
+        setFilteredMembers(filtered);
+        setShowMemberSuggestions(filtered.length > 0);
+      });
     } else {
       setFilteredMembers([]);
       setShowMemberSuggestions(false);

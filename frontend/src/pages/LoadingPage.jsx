@@ -75,7 +75,7 @@ const LoadingPage = () => {
       if (!hasAnyError) {
         // Navigate to dashboard after short delay
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/dashboard", { replace: true });
         }, 500);
       }
     }

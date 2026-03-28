@@ -3,17 +3,24 @@ import TableCard from "../cards/TableCard";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../../utils";
 
 // Section Component for Table View
-const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, activeFirst, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol }) => {
+const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, activeFirst, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol, tableFilter }) => {
   // Filter tables based on search
   const filteredTables = matchingTableIds === null 
     ? section.tables 
     : section.tables.filter(t => matchingTableIds.has(t.id));
 
-  // Sort tables using priority-based utility
-  const sortedTables = sortByActiveFirst(filteredTables, TABLE_STATUS_PRIORITY, activeFirst);
+  // Exclusive filter: Confirm = show only yetToConfirm, Schedule = show only scheduled, null = show all
+  const statusFiltered = filteredTables.filter(t => {
+    if (tableFilter === 'confirm') return t.status === 'yetToConfirm';
+    if (tableFilter === 'schedule') return t.status === 'scheduled';
+    return true;
+  });
 
-  // Don't render section if no matching tables
-  if (searchQuery && sortedTables.length === 0) {
+  // Sort tables using priority-based utility
+  const sortedTables = sortByActiveFirst(statusFiltered, TABLE_STATUS_PRIORITY, activeFirst);
+
+  // Don't render section if no tables to show (after all filters applied)
+  if (sortedTables.length === 0) {
     return null;
   }
 

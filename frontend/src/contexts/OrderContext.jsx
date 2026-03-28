@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import * as orderService from '../api/services/orderService';
 
 // Create Order Context
 const OrderContext = createContext(null);
@@ -18,6 +19,12 @@ export const OrderProvider = ({ children }) => {
   const clearOrders = useCallback(() => {
     setOrdersState([]);
     setIsLoaded(false);
+  }, []);
+
+  // Refresh orders — re-fetch from API and update context
+  const refreshOrders = useCallback(async (roleName = 'Manager') => {
+    const fresh = await orderService.getRunningOrders(roleName);
+    setOrdersState(fresh || []);
   }, []);
 
   // --- Computed: orders by type ---
@@ -90,6 +97,7 @@ export const OrderProvider = ({ children }) => {
     // Actions
     setOrders,
     clearOrders,
+    refreshOrders,
 
     // Computed
     dineInOrders,
@@ -104,7 +112,7 @@ export const OrderProvider = ({ children }) => {
     orderItemsByTableId,
   }), [
     orders, isLoaded,
-    setOrders, clearOrders,
+    setOrders, clearOrders, refreshOrders,
     dineInOrders, takeAwayOrders, deliveryOrders,
     tableOrders, walkInOrders,
     getOrderByTableId, getOrdersByTableId, orderItemsByTableId,

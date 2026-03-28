@@ -121,8 +121,42 @@ export const fromAPI = {
 };
 
 // =============================================================================
-// Frontend → API (Request) - Phase 2
+// Frontend → API (Request) - Phase 1C Table Operations
 // =============================================================================
 export const toAPI = {
-  // Will be added in Phase 2 for create/update operations
+  /**
+   * Shift table payload
+   * @param {Object} currentTable - Table entry from DashboardPage (has orderId, tableId, amount)
+   * @param {Object} targetTable  - Selected free table from ShiftTableModal (has tableId)
+   */
+  shiftTable: (currentTable, targetTable) => ({
+    order_id: currentTable.orderId,
+    old_table_id: currentTable.tableId,
+    new_table_id: targetTable.tableId,
+    order_edit_count: currentTable.amount, // grand total of existing table order
+  }),
+
+  /**
+   * Transfer food item payload — moves one item from current order to target order
+   * @param {Object} currentTable - Current table entry (source order)
+   * @param {Object} targetOrder  - Order from OrderContext of target table
+   * @param {Object} item         - Cart item being transferred (has id = orderDetails.id)
+   */
+  transferFood: (currentTable, targetOrder, item) => ({
+    source_order_id: currentTable.orderId,
+    target_order_id: targetOrder.orderId,
+    food_item_id: item.id,
+  }),
+
+  /**
+   * Merge table payload — merges sourceOrder INTO currentTable's order
+   * Called once per selected source table (multi-select = multiple API calls)
+   * @param {Object} currentTable  - Current table entry (target/destination — stays)
+   * @param {Object} sourceOrder   - Order from OrderContext of the table being dissolved
+   */
+  mergeTable: (currentTable, sourceOrder) => ({
+    source_order_id: sourceOrder.orderId,  // table being dissolved into current
+    target_order_id: currentTable.orderId, // current table (survives the merge)
+    transfer_note: "Yes",                  // always Yes — transfer all notes
+  }),
 };

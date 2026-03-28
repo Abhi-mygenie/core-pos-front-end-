@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
+import { useOrders } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 
 // Permission mapping for sidebar items
@@ -99,17 +100,26 @@ const sidebarMenuItems = [
 ];
 
 // Sidebar Component
-const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onOpenSettings, onOpenMenu }) => {
+const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onOpenSettings, onOpenMenu, onRefresh, isRefreshing, isOrderEntryOpen }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, logout: authLogout, hasPermission } = useAuth();
-  const { clearRestaurant } = useRestaurant();
+  const { restaurant, clearRestaurant } = useRestaurant();
   const { clearMenu } = useMenu();
   const { clearTables } = useTables();
   const { clearSettings } = useSettings();
+  const { clearOrders } = useOrders();
 
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
+
+  const handleRefreshClick = () => {
+    if (isOrderEntryOpen) {
+      toast({ title: "Close current order first", description: "Please close the open order before refreshing." });
+      return;
+    }
+    onRefresh?.();
+  };
 
   // Filter menu items by permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {
@@ -164,13 +174,16 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
   };
 
   const handleLogout = () => {
-    // Clear all contexts
+    // Clear ALL contexts — prevents mixed session state between account switches
     authLogout();
     clearRestaurant();
     clearMenu();
     clearTables();
     clearSettings();
+    clearOrders();
     sessionStorage.clear();
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('remember_me');
     navigate("/");
   };
 
@@ -310,18 +323,19 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
           )}
         </button>
 
-        {/* Refresh Button - Prominent */}
+        {/* Refresh Button */}
         <button
           data-testid="sidebar-refresh"
-          onClick={() => console.log("TODO: Call API to refresh order details")}
-          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors hover:opacity-90 ${
+          onClick={handleRefreshClick}
+          disabled={isRefreshing}
+          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-1 rounded-lg transition-colors hover:bg-gray-100 disabled:opacity-60 ${
             isExpanded ? "justify-start" : "justify-center"
           }`}
-          style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
-          title={!isExpanded ? "Refresh Orders" : undefined}
+          style={{ color: COLORS.primaryOrange }}
+          title={!isExpanded ? "Refresh Data" : undefined}
         >
-          <RefreshCw className="w-5 h-5 flex-shrink-0" />
-          {isExpanded && <span className="text-sm font-semibold">Refresh</span>}
+          <RefreshCw className={`w-5 h-5 flex-shrink-0 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isExpanded && <span className="text-sm font-medium">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>}
         </button>
 
         {/* Profile */}
@@ -352,10 +366,12 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
           {isExpanded && (
             <div className="flex-1 text-left">
               <div className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>
-                {user?.fullName || 'User'}
+                {user?.firstName
+                  ? `${user.firstName} (${user.roleName || 'Staff'})`
+                  : (user?.roleName || 'Staff')}
               </div>
               <div className="text-xs" style={{ color: COLORS.grayText }}>
-                {user?.roleName || 'Staff'}
+                {restaurant?.id ? `#${restaurant.id}` : (user?.roleName || '')}
               </div>
             </div>
           )}

@@ -15,8 +15,29 @@ export const API_ENDPOINTS = {
   PRODUCTS: '/api/v1/vendoremployee/get-products-list',
   POPULAR_FOOD: '/api/v2/vendoremployee/buffet/buffet-popular-food',
   
-  // Tables
+  // Table Operations (Phase 1C)
   TABLES: '/api/v1/vendoremployee/all-table-list',
+  ORDER_TABLE_SWITCH: '/api/v1/vendoremployee/pos/order-table-room-switch',
+  MERGE_ORDER: '/api/v2/vendoremployee/transfer-order',
+  TRANSFER_FOOD: '/api/v2/vendoremployee/transfer-food-item',
+
+  // Cancel Operations (Phase 1C)
+  CANCEL_ITEM_FULL: '/api/v2/vendoremployee/cancel-food-item',
+  CANCEL_ITEM_PARTIAL: '/api/v2/vendoremployee/partial-cancel-food-item',
+  CANCEL_ORDER: '/api/v2/vendoremployee/food-status-update',
+
+  // Out of Menu Item (Phase 1C)
+  ADD_CUSTOM_ITEM: '/api/v1/vendoremployee/add-single-product',
+
+  // Sprint 3 — Order Taking (endpoints TBD — to be filled when provided)
+  CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
+  PLACE_ORDER:                '/api/v2/vendoremployee/pos/place-order',            // CHG-037
+  PLACE_ORDER_AND_PAYMENT:   '/api/v1/vendoremployee/pos/place-order-and-payment', // CHG-038 Scenario 2
+  UPDATE_ORDER:              '/api/v2/vendoremployee/pos/update-place-order',       // CHG-040 Scenario 1
+  CLEAR_BILL:                '/api/v2/vendoremployee/order-bill-payment',           // CHG-038 Scenario 1
+  COLLECT_PAYMENT:   'TBD',   // Legacy stub — use CLEAR_BILL instead
+  EDIT_ORDER_ITEM:   'TBD',   // CHG-040: Edit placed item qty/notes
+  EDIT_ORDER_ITEM:   'TBD',   // CHG-040 future: Edit placed item qty
   
   // Settings
   CANCELLATION_REASONS: '/api/v1/vendoremployee/cancellation-reasons',
@@ -45,8 +66,8 @@ export const TABLE_STATUS = {
 // Cancellation reason types
 export const CANCELLATION_TYPES = {
   ORDER: 'Order',
-  ITEM: 'Item',
-  BOTH: null, // null in API means both
+  ITEM: 'Food',  // API returns 'Food' for item-level reasons (fix: was 'Item')
+  BOTH: null,    // null in API means both
 };
 
 // Food type mapping
@@ -93,7 +114,7 @@ export const ORDER_TO_TABLE_STATUS = {
   ready: 'occupied',
   running: 'occupied',
   served: 'billReady',
-  paid: 'paid',
+  paid: null,      // skip — table goes back to available (CHG-006)
   cancelled: null, // skip — table goes back to available
 };
 

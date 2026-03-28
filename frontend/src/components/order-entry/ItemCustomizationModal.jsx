@@ -90,7 +90,8 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
   // Handle add to order
   const handleAddToOrder = () => {
     const addonsArray = Object.entries(selectedAddons).map(([addonId, qty]) => {
-      const addon = item.addons?.find(a => a.id === addonId);
+      // Use loose comparison to handle string/number ID mismatch from Object.entries
+      const addon = item.addons?.find(a => String(a.id) === String(addonId));
       return { ...addon, quantity: qty };
     });
 

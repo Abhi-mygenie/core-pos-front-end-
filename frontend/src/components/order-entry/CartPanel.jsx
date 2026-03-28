@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone } from "lucide-react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw } from "lucide-react";
 import { COLORS } from "../../constants";
-import { searchCustomers } from "../../data";
+import { searchCustomers } from "../../api/services/customerService";
 import RePrintButton from "./RePrintButton";
 
 // Get icon, color, and bg for food item status
@@ -13,6 +13,8 @@ const getItemStatusIcon = (status) => {
       return { Icon: UtensilsCrossed, color: COLORS.primaryGreen, bg: `${COLORS.primaryGreen}15` };
     case "served":
       return { Icon: Check, color: COLORS.primaryGreen, bg: `${COLORS.primaryGreen}15` };
+    case "cancelled":
+      return { Icon: XCircle, color: '#9CA3AF', bg: '#F3F4F6' };
     default:
       return { Icon: CookingPot, color: COLORS.primaryOrange, bg: `${COLORS.primaryOrange}15` };
   }
@@ -27,60 +29,124 @@ const getTimeAgo = (isoString) => {
 // Placed item row (sent to kitchen)
 const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
+  const isCancelled = item.status === 'cancelled';
+
   return (
-    <div className="px-3 py-2.5 flex items-start gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
+    <div
+      className="px-3 py-2.5 flex items-start gap-2"
+      style={{ borderBottom: `1px solid ${COLORS.borderGray}`, opacity: isCancelled ? 0.5 : 1 }}
+    >
+      {/* Status icon */}
       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: statusBg }}>
         <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
       </div>
-      <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
-        <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
-      </button>
+
+      {/* Cancel button — hidden for cancelled items */}
+      {!isCancelled && (
+        <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
+          <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+        </button>
+      )}
+
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
-        {item.customizations && (
+        {/* Item name — strikethrough if cancelled */}
+        <div
+          className="font-medium text-sm truncate"
+          style={{ color: isCancelled ? '#9CA3AF' : COLORS.darkText, textDecoration: isCancelled ? 'line-through' : 'none' }}
+        >
+          {item.name}
+          {isCancelled && <span className="ml-2 text-xs font-normal">(Cancelled)</span>}
+        </div>
+        {item.customizations && !isCancelled && (
           <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
             {item.customizations.size && <span>{item.customizations.size}</span>}
             {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
+          </div>
+        )}
+        {/* Fallback for existing API orders — variation/addOns not in customizations */}
+        {!item.customizations && !isCancelled && (item.variation?.length > 0 || item.addOns?.length > 0) && (
+          <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
+            {item.variation?.length > 0 && (
+              <span>{item.variation.map(v => v.name || v.label || '').filter(Boolean).join(', ')}</span>
+            )}
+            {item.addOns?.length > 0 && (
+              <span> + {item.addOns.map(a => a.name || '').filter(Boolean).join(', ')}</span>
+            )}
+          </div>
+        )}
+        {item.notes && item.notes.trim() && !isCancelled && (
+          <div className="text-xs mt-0.5 italic" style={{ color: COLORS.grayText }}>
+            📝 {item.notes}
           </div>
         )}
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-xs" style={{ color: COLORS.grayText }}>
             {item.addedAt ? getTimeAgo(item.addedAt) : `${item.time} mins ago`}
           </span>
-          <button onClick={() => setTransferItem(item)} className="px-2 py-1 text-xs hover:bg-gray-50 rounded transition-colors whitespace-nowrap" style={{ color: COLORS.grayText }} data-testid={`transfer-food-btn-${item.id}`}>
-            Transfer
-          </button>
+          {/* Transfer button — pill with icon, hidden for cancelled items */}
+          {!isCancelled && (
+            <button
+              onClick={() => setTransferItem(item)}
+              className="flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors whitespace-nowrap hover:opacity-80"
+              style={{
+                color: COLORS.primaryOrange,
+                border: `1px solid ${COLORS.primaryOrange}40`,
+                backgroundColor: `${COLORS.primaryOrange}08`,
+              }}
+              data-testid={`transfer-food-btn-${item.id}`}
+            >
+              <ArrowLeftRight className="w-3 h-3" />
+              Transfer
+            </button>
+          )}
         </div>
       </div>
-      {/* Qty - locked with pencil */}
-      <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-        {editingQtyItemId === item.id ? (
-          <>
-            <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
-            <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-            <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
-          </>
-        ) : (
-          <>
-            <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-            <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
-              <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
-            </button>
-          </>
-        )}
-      </div>
+
+      {/* Qty — hidden for cancelled items */}
+      {!isCancelled && (
+        <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+          {editingQtyItemId === item.id ? (
+            <>
+              <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
+              <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+              <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
+            </>
+          ) : (
+            <>
+              <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+              <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
+                <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Price — strikethrough for cancelled */}
       <div className="w-16 text-right pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-        <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
+        <span
+          className="font-bold text-sm"
+          style={{ color: isCancelled ? '#9CA3AF' : COLORS.primaryOrange, textDecoration: isCancelled ? 'line-through' : 'none' }}
+        >
+          ₹{(item.price * item.qty).toLocaleString()}
+        </span>
       </div>
     </div>
   );
 };
 
 // New item row (not yet placed — editable with Customize/Add Note)
-const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote }) => (
+const NewItemRow = ({ item, cartIndex, onDeleteItem, updateQuantity, onAddNote, onCustomize }) => (
   <div className="px-3 py-2.5 flex items-start gap-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-    <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
-      <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+    {/* Trash delete — removes unplaced item directly from cart (no cancel modal) */}
+    <button
+      onClick={() => onDeleteItem(item)}
+      className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-red-50 transition-colors"
+      style={{ backgroundColor: COLORS.sectionBg }}
+      data-testid={`delete-item-btn-${item.id}`}
+      title="Remove item"
+    >
+      <Trash2 className="w-4 h-4" style={{ color: '#EF4444' }} />
     </button>
     <div className="flex-1 min-w-0">
       <div className="font-medium text-sm truncate" style={{ color: COLORS.darkText }}>{item.name}</div>
@@ -90,13 +156,25 @@ const NewItemRow = ({ item, cartIndex, setCancelItem, updateQuantity, onAddNote 
           {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
         </div>
       )}
+      {item.notes && item.notes.trim() && (
+        <div className="text-xs mt-0.5 italic" style={{ color: COLORS.grayText }}>
+          📝 {item.notes}
+        </div>
+      )}
       {item.itemNotes && item.itemNotes.length > 0 && (
         <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
           📝 {item.itemNotes.map(n => n.label).join(", ")}
         </div>
       )}
       <div className="flex items-center gap-1 mt-1 -ml-2">
-        <button className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" style={{ color: COLORS.primaryGreen }}>Customize</button>
+        <button 
+          onClick={() => onCustomize && onCustomize(item)}
+          className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" 
+          style={{ color: COLORS.primaryGreen }}
+          data-testid={`customize-btn-${item.id}`}
+        >
+          Customize
+        </button>
         <button 
           className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" 
           style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
@@ -128,10 +206,15 @@ const CartPanel = ({
   setCancelItem,
   setTransferItem,
   handlePlaceOrder,
+  isPlacingOrder = false,
+  hasPlacedItems = false,
   setShowPaymentPanel,
   onAddNote,
+  onCustomize,
   customer,
   onCustomerChange,
+  onClearCart,
+  onDeleteItem,
 }) => {
   const newItemCount = cartItems.filter(i => !i.placed).length;
   const [customerName, setCustomerName] = useState(customer?.name || "");
@@ -153,36 +236,37 @@ const CartPanel = ({
     }
   }, [customer]);
 
-  // Filter customers based on phone search - don't show if customer already selected
+  // Filter customers based on phone search — async API call
+  // CHG-036: Now calls customerService.searchByPhone() with graceful fallback
   useEffect(() => {
     if (isCustomerSelected) {
-      // Don't show suggestions if customer is already selected
       setFilteredCustomers([]);
       setShowPhoneSuggestions(false);
       return;
     }
     if (customerPhone.trim() && customerPhone.length >= 3) {
-      const filtered = searchCustomers(customerPhone);
-      setFilteredCustomers(filtered);
-      setShowPhoneSuggestions(filtered.length > 0);
+      searchCustomers(customerPhone).then(filtered => {
+        setFilteredCustomers(filtered);
+        setShowPhoneSuggestions(filtered.length > 0);
+      });
     } else {
       setFilteredCustomers([]);
       setShowPhoneSuggestions(false);
     }
   }, [customerPhone, isCustomerSelected]);
 
-  // Filter customers based on name search - don't show if customer already selected
+  // Filter customers based on name search — async API call
   useEffect(() => {
     if (isCustomerSelected) {
-      // Don't show suggestions if customer is already selected
       setFilteredByName([]);
       setShowNameSuggestions(false);
       return;
     }
     if (customerName.trim() && customerName.length >= 2) {
-      const filtered = searchCustomers(customerName);
-      setFilteredByName(filtered);
-      setShowNameSuggestions(filtered.length > 0);
+      searchCustomers(customerName).then(filtered => {
+        setFilteredByName(filtered);
+        setShowNameSuggestions(filtered.length > 0);
+      });
     } else {
       setFilteredByName([]);
       setShowNameSuggestions(false);
@@ -379,9 +463,10 @@ const CartPanel = ({
                   <NewItemRow
                     item={item}
                     cartIndex={index}
-                    setCancelItem={setCancelItem}
+                    onDeleteItem={onDeleteItem}
                     updateQuantity={updateQuantity}
                     onAddNote={onAddNote}
+                    onCustomize={onCustomize}
                   />
                 )}
               </div>
@@ -402,11 +487,20 @@ const CartPanel = ({
         <button
           data-testid="place-order-btn"
           onClick={handlePlaceOrder}
-          disabled={cartItems.length === 0}
-          className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50"
+          disabled={newItemCount === 0 || isPlacingOrder}
+          className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: COLORS.primaryOrange }}
         >
-          Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}
+          {isPlacingOrder ? (
+            <>
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              Placing...
+            </>
+          ) : hasPlacedItems ? (
+            <>Update Order{newItemCount > 0 ? ` (${newItemCount})` : ""}</>
+          ) : (
+            <>Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}</>
+          )}
         </button>
         <button
           data-testid="collect-bill-btn"

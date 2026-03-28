@@ -84,11 +84,20 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           )}
         </div>
 
-        {/* Available - Add order icon centered */}
+        {/* Available - Add order icon centered + Available label at bottom */}
         {!isActive && (
-          <div className="flex-1 flex items-center justify-center">
-            <PlusSquare className="w-6 h-6" style={{ color: COLORS.primaryOrange }} />
-          </div>
+          <>
+            <div className="flex-1 flex items-center justify-center">
+              <PlusSquare className="w-6 h-6" style={{ color: COLORS.primaryOrange }} />
+            </div>
+            <div
+              className="flex items-center justify-center rounded-lg text-xs font-semibold py-3"
+              style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}
+              data-testid={`available-label-${table.id}`}
+            >
+              Available
+            </div>
+          </>
         )}
 
         {/* Active content */}
@@ -135,23 +144,58 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
                 />
               </div>
             ) : hasOrders ? (
-              /* Occupied/BillReady: Print + Bill buttons */
+              /* Button rules (CHG-008 final):
+                 fOrderStatus 1 (preparing) → KOT button (left) + "Preparing" label (right)
+                 fOrderStatus 2 (ready)     → "Ready" label full width
+                 fOrderStatus 5 (served)    → "Served" badge (left) + Bill button (right) */
               <div className="flex gap-2">
-                <IconButton
-                  icon={Printer}
-                  onClick={() => {/* Print bill action - integrate with printer service */}}
-                  backgroundColor={COLORS.borderGray}
-                  testId={`print-btn-${table.id}`}
-                  title="Print Bill"
-                  ariaLabel={`Print bill for table ${table.id}`}
-                />
-                <TextButton
-                  onClick={() => onUpdateStatus?.(table.id, "paid")}
-                  testId={`collect-btn-${table.id}`}
-                  ariaLabel={`Collect payment for table ${table.id}`}
-                >
-                  Bill
-                </TextButton>
+                {table.fOrderStatus === 1 && (
+                  <>
+                    <IconButton
+                      icon={Printer}
+                      onClick={() => {/* Print KOT - integrate with printer service */}}
+                      backgroundColor={COLORS.borderGray}
+                      testId={`print-btn-${table.id}`}
+                      title="Print KOT"
+                      ariaLabel={`Print KOT for table ${table.id}`}
+                    />
+                    <div
+                      className="flex-1 flex items-center justify-center rounded-lg text-xs font-semibold"
+                      style={{ backgroundColor: COLORS.sectionBg, color: COLORS.primaryOrange }}
+                      data-testid={`status-label-${table.id}`}
+                    >
+                      Preparing
+                    </div>
+                  </>
+                )}
+                {table.fOrderStatus === 2 && (
+                  <div
+                    className="flex-1 flex items-center justify-center rounded-lg text-xs font-semibold py-3"
+                    style={{ backgroundColor: COLORS.sectionBg, color: COLORS.primaryGreen }}
+                    data-testid={`status-label-${table.id}`}
+                  >
+                    Ready
+                  </div>
+                )}
+                {table.fOrderStatus === 5 && (
+                  <>
+                    <div
+                      className="p-3 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: COLORS.sectionBg }}
+                      data-testid={`served-badge-${table.id}`}
+                    >
+                      <Check className="w-5 h-5" style={{ color: COLORS.primaryGreen }} />
+                    </div>
+                    <TextButton
+                      onClick={() => onUpdateStatus?.(table.id, "paid")}
+                      testId={`collect-btn-${table.id}`}
+                      ariaLabel={`Collect payment for table ${table.id}`}
+                      fullWidth={true}
+                    >
+                      Bill
+                    </TextButton>
+                  </>
+                )}
               </div>
             ) : table.status === "reserved" ? (
               /* Reserved: Cancel (red X) left + Seat button right */

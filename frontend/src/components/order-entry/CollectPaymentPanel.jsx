@@ -1,10 +1,36 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check } from "lucide-react";
 import { COLORS } from "../../constants";
+import { useRestaurant } from "../../contexts";
 
 const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer }) => {
-  // Use customer from props (passed from Order Entry screen)
   const customer = passedCustomer;
+  const { discountTypes } = useRestaurant();
+
+  // Per-item tax computation — uses product.tax if available, else 0%
+  const taxTotals = useMemo(() => {
+    let sgst = 0, cgst = 0;
+    (cartItems || []).forEach(item => {
+      const tax = item.tax;
+      if (!tax || tax.percentage === 0) return;
+      const linePrice = item.price * (item.qty || 1);
+      let taxAmt;
+      if (tax.isInclusive) {
+        taxAmt = linePrice - (linePrice / (1 + tax.percentage / 100));
+      } else {
+        taxAmt = linePrice * (tax.percentage / 100);
+      }
+      // Split into SGST + CGST for GST type (India dine-in)
+      if ((tax.type || 'GST').toUpperCase() === 'GST') {
+        sgst += taxAmt / 2;
+        cgst += taxAmt / 2;
+      }
+    });
+    return {
+      sgst: Math.round(sgst * 100) / 100,
+      cgst: Math.round(cgst * 100) / 100,
+    };
+  }, [cartItems]);
 
   // Rewards state
   const [useLoyalty, setUseLoyalty] = useState(false);
@@ -39,8 +65,13 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   // Calculate bill
   const itemTotal = (cartItems || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
   
-  // Calculate discounts
-  const manualDiscount = discountType === 'percent' 
+  // Discount from restaurant preset types (from RestaurantContext)
+  const [selectedDiscountType, setSelectedDiscountType] = useState(null);
+  const presetDiscount = selectedDiscountType
+    ? Math.round((itemTotal * selectedDiscountType.discountPercent) / 100)
+    : 0;
+
+  const manualDiscount = discountType === 'percent'
     ? Math.round((itemTotal * parseFloat(discountValue || 0)) / 100)
     : parseFloat(discountValue || 0);
   
@@ -58,13 +89,13 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
     ? Math.min(walletAmount || customer.walletBalance, itemTotal - manualDiscount - loyaltyDiscount - couponDiscount) 
     : 0;
 
-  const totalDiscount = manualDiscount + loyaltyDiscount + couponDiscount + walletDiscount;
+  const totalDiscount = manualDiscount + presetDiscount + loyaltyDiscount + couponDiscount + walletDiscount;
   const subtotalAfterDiscount = Math.max(0, itemTotal - totalDiscount);
-  
-  // SGST and CGST (2.5% each = 5% total)
-  const sgst = Math.round(subtotalAfterDiscount * 0.025 * 100) / 100;
-  const cgst = Math.round(subtotalAfterDiscount * 0.025 * 100) / 100;
-  
+
+  // Tax: use per-item computed totals (from product.tax field)
+  const sgst = taxTotals.sgst;
+  const cgst = taxTotals.cgst;
+
   const finalTotal = Math.round((subtotalAfterDiscount + sgst + cgst) * 100) / 100;
   const change = amountReceived ? Math.max(0, parseFloat(amountReceived) - finalTotal) : 0;
 
@@ -96,23 +127,29 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
     }
   };
 
-  // Handle payment
+  // handlePayment — CHG-038: Collect Payment API
+  // TODO: Wire to API when Flow B (collect payment on existing order) endpoint is provided
   const handlePayment = () => {
     onPaymentComplete({
-      customer,
-      itemTotal,
-      discounts: { 
-        manual: manualDiscount, 
-        loyalty: loyaltyDiscount, 
-        coupon: couponDiscount, 
-        wallet: walletDiscount 
-      },
-      subtotal: subtotalAfterDiscount,
+      method:          showSplit ? 'partial' : paymentMethod,
+      finalTotal,
       sgst,
       cgst,
-      total: finalTotal,
-      paymentMethod: showSplit ? "split" : paymentMethod,
-      splitPayments: showSplit ? splitPayments : null,
+      vatAmount:       0,
+      transactionId:   '',
+      tip:             0,
+      splitPayments:   showSplit ? splitPayments.map(p => ({ method: p.method, amount: parseFloat(p.amount) || 0, transactionId: '' })) : null,
+      tabContact:      null,
+      // discount info
+      discounts: {
+        manual:               manualDiscount,
+        preset:               presetDiscount,
+        total:                totalDiscount,
+        orderDiscountPercent: discountType === 'percent' ? parseFloat(discountValue || 0) : 0,
+      },
+      customer,
+      itemTotal,
+      subtotal: subtotalAfterDiscount,
     });
   };
 

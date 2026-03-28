@@ -4,14 +4,14 @@ import { COLORS, ROOM_COLORS } from "../constants";
 export const TABLE_STATUS_CONFIG = {
   yetToConfirm: {
     label: "YET TO CONFIRM",
-    color: COLORS.amber,
-    borderColor: COLORS.amber,
+    color: COLORS.errorText,
+    borderColor: COLORS.errorText,
     buttonText: null
   },
   occupied: { 
     label: "OCCUPIED", 
-    color: COLORS.primaryOrange,
-    borderColor: COLORS.primaryOrange,
+    color: COLORS.amber,
+    borderColor: COLORS.amber,
     buttonText: "Bill"
   },
   billReady: { 
@@ -71,16 +71,15 @@ export const ROOM_STATUS_CONFIG = {
 
 // Priority order for table statuses (lower = higher priority)
 export const TABLE_STATUS_PRIORITY = {
-  yetToConfirm: 0,
-  paid: 1,
-  billReady: 2,
-  occupied: 3,
-  reserved: 4,
-  available: 5,
+  yetToConfirm: 0,  // f_order_status 7 — highest priority (CHG-009)
+  billReady: 1,     // f_order_status 5
+  occupied: 2,      // f_order_status 1, 2
+  reserved: 3,
+  available: 4,
 };
 
-// Active states for tables
-const TABLE_ACTIVE_STATES = ["yetToConfirm", "paid", "billReady", "occupied", "reserved"];
+// Active states for tables (paid removed — status 6 now frees table) (CHG-009)
+const TABLE_ACTIVE_STATES = ["yetToConfirm", "billReady", "occupied", "reserved"];
 
 // Priority order for room statuses (lower = higher priority)
 export const ROOM_STATUS_PRIORITY = {

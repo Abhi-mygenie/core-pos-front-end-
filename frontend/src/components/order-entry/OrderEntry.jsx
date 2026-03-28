@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed } from "lucide-react";
+import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed, Trash2 } from "lucide-react";
 import { COLORS } from "../../constants";
-import { useMenu } from "../../contexts";
+import { useMenu, useOrders, useSettings, useRestaurant, useAuth } from "../../contexts";
+import { useToast } from "../../hooks/use-toast";
+import api from "../../api/axios";
+import { API_ENDPOINTS } from "../../api/constants";
+import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
+import { toAPI as orderToAPI, customItemFromAPI } from "../../api/transforms/orderTransform";
+import AddCustomItemModal from "./AddCustomItemModal";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
 import ItemCustomizationModal from "./ItemCustomizationModal";
@@ -13,6 +19,7 @@ import TransferFoodModal from "./TransferFoodModal";
 import MergeTableModal from "./MergeTableModal";
 import ShiftTableModal from "./ShiftTableModal";
 import CancelFoodModal from "./CancelFoodModal";
+import CancelOrderModal from "./CancelOrderModal";
 import CollectPaymentPanel from "./CollectPaymentPanel";
 
 const ORDER_TYPES = [
@@ -24,14 +31,25 @@ const ORDER_TYPES = [
 const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady: 3, paid: 4, yetToConfirm: 4 };
 
 // Order Entry Screen Component - 3-Panel Layout
-const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable }) => {
+const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange }) => {
   const { categories, products, popularFood } = useMenu();
+  const { orders, refreshOrders } = useOrders();
+  const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
+  const { restaurant } = useRestaurant();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   // Adapt real product data to the format expected by menu item pills
+  // Maps a MenuContext product to a cart item shape for display
+  // NOTE (Sprint 3 / CHG-037 — Place Order): When Place Order API endpoint is provided,
+  // add categoryId + tax fields here so toAPI.placeOrder() can read them from cartItems.
+  // Fields to add: categoryId: product.categoryId, tax: product.tax
   const adaptProduct = (product) => ({
     id: product.productId,
     name: product.productName,
     price: product.basePrice,
+    tax: product.tax,             // { percentage, type, calculation, isInclusive } — for billing
+    categoryId: product.categoryId,
     type: product.isVeg ? 'veg' : product.hasEgg ? 'egg' : 'nonveg',
     station: product.station || 'kitchen',
     glutenFree: false,
@@ -55,13 +73,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
   const [cancelItem, setCancelItem] = useState(null);
+  const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+  const [placedOrderId, setPlacedOrderId] = useState(table?.orderId || null);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [showPaymentPanel, setShowPaymentPanel] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [editingQtyItemId, setEditingQtyItemId] = useState(null);
   const [flashItemId, setFlashItemId] = useState(null);
+  const [showCustomItemModal, setShowCustomItemModal] = useState(false);
   const [itemNotesModal, setItemNotesModal] = useState(null); // { item, cartIndex }
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customer, setCustomer] = useState(null);
+  // Effective table — merges placedOrderId into table for same-session operations
+  const effectiveTable = { ...table, orderId: placedOrderId || table?.orderId };
+  const cartKeyRef = useRef(null); // tracks previous table key for save-on-switch
   const typeDropdownRef = useRef(null);
 
   // Dietary filter states
@@ -91,20 +116,38 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }
   }, [showTypeDropdown]);
 
-  // Initialize cart and customer data from running order
+  // Per-table cart: save + restore on table/orderType switch
   useEffect(() => {
-    if (orderData) {
-      // Set customer data
+    const newKey = table?.id || orderType;
+    const oldKey = cartKeyRef.current;
+
+    // Save previous table's cart before switching
+    if (oldKey && oldKey !== newKey) {
+      onCartChange?.(oldKey, cartItems);
+    }
+    cartKeyRef.current = newKey;
+
+    // Restore: savedCart takes priority, then API orderData, then empty
+    if (savedCart && savedCart.length > 0) {
+      setCartItems(savedCart);
+      if (orderData?.customer || orderData?.phone) {
+        setCustomer({
+          name: orderData.customer !== 'WC' ? (orderData.customer || '') : '',
+          phone: orderData.phone || '',
+        });
+      }
+    } else if (orderData) {
       if (orderData.customer || orderData.phone) {
         setCustomer({
           name: orderData.customer !== 'WC' ? (orderData.customer || '') : '',
           phone: orderData.phone || '',
         });
       }
-      // Set cart items
       if (orderData.items && orderData.items.length > 0) {
         const existingItems = orderData.items.map(item => ({
           id: item.id,
+          foodId: item.foodId,
+          tax: item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false },
           name: item.name,
           qty: item.qty || 1,
           price: item.unitPrice || item.price || 0,
@@ -116,9 +159,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           notes: item.notes,
         }));
         setCartItems(existingItems);
+      } else {
+        setCartItems([]);
       }
+    } else {
+      setCartItems([]);
     }
-  }, [orderData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table?.id, orderType]);
 
   // Get current menu items based on category, search, and dietary filters
   const getFilteredItems = () => {
@@ -191,39 +239,166 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setCustomizationItem(null);
   };
 
-  const updateQuantity = useCallback((itemId, newQty) => {
+  // updateQuantity — differentiates placed vs unplaced items
+  // Unplaced (placed: false) → local state only (no API)
+  // Placed (placed: true)   → CHG-040: will call editOrderItem API when endpoint provided
+  const updateQuantity = useCallback((itemId, newQty, isPlaced = false) => {
+    if (isPlaced) {
+      // TODO CHG-040: call orderToAPI.editOrderItem() + api.put(EDIT_ORDER_ITEM) when endpoint provided
+      // For now: local state update only (stub)
+    }
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);
 
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const total = cartItems.reduce((sum, item) =>
+    item.status === 'cancelled' ? sum : sum + (item.price * item.qty), 0
+  );
 
-  const handlePlaceOrder = () => {
-    if (cartItems.length === 0) return;
-    setCartItems(prev => prev.map(item => ({ ...item, placed: true })));
-    setEditingQtyItemId(null);
-    setShowOrderPlaced(true);
+  // handlePlaceOrder — CHG-037: Place Order API
+  const handlePlaceOrder = async () => {
+    const unplaced = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
+    if (unplaced.length === 0 || isPlacingOrder) return;
+    setIsPlacingOrder(true);
+    try {
+      const hasPlaced = cartItems.some(i => i.placed);
+
+      if (hasPlaced && placedOrderId) {
+        // Scenario 1 — Update Order (add new items to existing order)
+        const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
+          restaurantId: restaurant?.id,
+          orderNotes,
+          printAllKOT,
+          total: unplaced.reduce((s, i) => s + (i.price * i.qty), 0),
+        });
+        const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
+        console.log('[UpdateOrder] response:', response.data);
+        toast({ title: "Order Updated", description: response.data?.message || "Items added to order" });
+      } else {
+        // Scenario 2 / New Order — Place Order
+        const payload = orderToAPI.placeOrder(
+          { ...table, tableId: table?.tableId },
+          cartItems, customer, orderType,
+          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT }
+        );
+        console.log('[PlaceOrder] table object:', table);
+        console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
+        const formData = new URLSearchParams();
+        formData.append('data', JSON.stringify(payload));
+        const response = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        });
+        console.log('[PlaceOrder] response:', response.data);
+        const newOrderId = response.data?.order_id;
+        if (newOrderId) setPlacedOrderId(newOrderId);
+        toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
+      }
+
+      // Mark unplaced items as placed
+      setCartItems(prev => prev.map(item =>
+        !item.placed ? { ...item, placed: true, status: 'preparing' } : item
+      ));
+      setEditingQtyItemId(null);
+    } catch (err) {
+      console.log('[PlaceOrder] ERROR status:', err?.response?.status);
+      console.log('[PlaceOrder] ERROR response:', err?.response?.data);
+      const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed to place order';
+      if (err?.response?.status === 403) {
+        try { await refreshOrders(user?.roleName || 'Manager'); } catch { /* silent */ }
+        toast({ title: "Order Failed", description: apiMsg });
+      } else {
+        toast({ title: "Order Failed", description: apiMsg });
+      }
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   const handleOrderPlacedClose = () => {
     setShowOrderPlaced(false);
   };
 
-  const handleTransfer = (item, targetTable) => {
-    setCartItems(prev => prev.filter(ci => ci.id !== item.id));
+  const handleTransfer = async ({ toOrder, item: transferredItem }) => {
+    const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
+    const response = await api.post(API_ENDPOINTS.TRANSFER_FOOD, payload);
+    toast({
+      title: "Item Transferred",
+      description: response.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
+    });
     setTransferItem(null);
+    onClose();
   };
 
-  const handleMerge = (targetTable) => {
-    setShowMergeModal(false);
+  const handleMerge = async ({ selectedOrders }) => {
+    // Sequential API calls — one per selected source table
+    for (const sourceOrder of selectedOrders) {
+      const payload = tableToAPI.mergeTable(effectiveTable, sourceOrder);
+      await api.post(API_ENDPOINTS.MERGE_ORDER, payload);
+    }
+    toast({
+      title: "Tables Merged",
+      description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}`,
+    });
+    onClose();
   };
 
-  const handleShift = (targetTable) => {
-    setShowShiftModal(false);
+  const handleShift = async ({ toTable }) => {    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+    const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
+    toast({
+      title: "Table Shifted",
+      description: response.data?.message || `Order moved to ${toTable.displayName}`,
+    });
+    onClose();
   };
 
-  const handleCancelFood = (item, reason) => {
-    setCartItems(prev => prev.filter(ci => ci.id !== item.id));
+  const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
+    const isFullCancel = cancelQuantity >= item.qty;
+    let payload, endpoint;
+    if (isFullCancel) {
+      payload = orderToAPI.cancelItemFull(effectiveTable, item, reason);
+      endpoint = API_ENDPOINTS.CANCEL_ITEM_FULL;
+    } else {
+      payload = orderToAPI.cancelItemPartial(effectiveTable, item, reason, cancelQuantity);
+      endpoint = API_ENDPOINTS.CANCEL_ITEM_PARTIAL;
+    }
+    const response = await api.put(endpoint, payload);
+    toast({
+      title: "Item Cancelled",
+      description: response.data?.message || `${item?.name} cancelled successfully`,
+    });
+    // Update local cart state to reflect cancellation
+    if (isFullCancel) {
+      setCartItems(prev => prev.filter(ci => ci.id !== item.id));
+    } else {
+      setCartItems(prev => prev.map(ci =>
+        ci.id === item.id ? { ...ci, qty: ci.qty - cancelQuantity } : ci
+      ));
+    }
     setCancelItem(null);
+  };
+
+  const handleCancelOrder = async (reason) => {
+    // Get all placed, non-cancelled items
+    const itemsToCancel = cartItems.filter(i => i.placed && i.status !== 'cancelled');
+    // Sequential API calls — one per item, cancel_type based on item status
+    for (const item of itemsToCancel) {
+      const payload = orderToAPI.cancelOrderItem(effectiveTable, item, reason);
+      await api.put(API_ENDPOINTS.CANCEL_ORDER, payload);
+    }
+    toast({
+      title: "Order Cancelled",
+      description: `${itemsToCancel.length} item(s) cancelled for ${table?.label || table?.id}`,
+    });
+    onClose();
+  };
+
+  const handleAddCustomItem = async ({ name, categoryId, price, qty, notes }) => {    const payload = orderToAPI.addCustomItem(name, categoryId, price);
+    const response = await api.post(API_ENDPOINTS.ADD_CUSTOM_ITEM, payload);
+    const cartItem = customItemFromAPI(response.data.data, qty, notes);
+    setCartItems(prev => [...prev, cartItem]);
+    toast({
+      title: "Custom Item Added",
+      description: `${cartItem.name} added to order`,
+    });
   };
 
   return (
@@ -324,6 +499,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
             {/* Add Custom Item */}
             <button
+              onClick={() => setShowCustomItemModal(true)}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
               style={{ border: `1px solid ${COLORS.borderGray}` }}
               title="Add Custom Item"
@@ -380,7 +556,34 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               total={total}
               customer={customer}
               onBack={() => setShowPaymentPanel(false)}
-              onPaymentComplete={() => { setShowPaymentPanel(false); onClose(); }}
+              onPaymentComplete={async (paymentData) => {
+                try {
+                  if (!placedOrderId) {
+                    // Scenario 2 — fresh order: place + pay in one shot
+                    const payload = orderToAPI.collectBill(
+                      effectiveTable, cartItems, customer, orderType, paymentData,
+                      { restaurantId: restaurant?.id, orderNotes, printAllKOT }
+                    );
+                    const formData = new URLSearchParams();
+                    formData.append('data', JSON.stringify(payload));
+                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER_AND_PAYMENT, formData, {
+                      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    });
+                    toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
+                  } else {
+                    // Scenario 1 — existing order: collect payment only
+                    const payload = orderToAPI.clearBill(effectiveTable, paymentData);
+                    const res = await api.post(API_ENDPOINTS.CLEAR_BILL, payload);
+                    toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+                  }
+                  setCartItems([]);
+                  setShowPaymentPanel(false);
+                  onClose();
+                } catch (err) {
+                  const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
+                  toast({ title: "Payment Failed", description: msg });
+                }
+              }}
             />
           ) : (
             <>
@@ -405,12 +608,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                     data-testid="order-type-badge"
                   >
-                    {orderType === "walkIn" && table ? (
+                    {/* Show table label for physical dineIn AND walkIn tables */}
+                    {(orderType === "walkIn" || orderType === "dineIn") && table ? (
                       <span>{table.label || table.id}</span>
                     ) : (
                       <>
                         {(() => { const Icon = ORDER_TYPES.find(t => t.id === orderType)?.icon; return Icon ? <Icon className="w-4 h-4" /> : null; })()}
-                        <span>{ORDER_TYPES.find(t => t.id === orderType)?.label}</span>
+                        <span>{ORDER_TYPES.find(t => t.id === orderType)?.label || orderType}</span>
                       </>
                     )}
                     <ChevronDown className="w-4 h-4" />
@@ -485,9 +689,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   data-testid="customer-info-btn"
                 >
                   <UserPlus className="w-5 h-5" style={{ color: customer ? COLORS.primaryGreen : COLORS.grayText }} />
-                  {customer && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.primaryGreen }} />
-                  )}
                 </button>
 
                 {/* Order Notes */}
@@ -507,6 +708,28 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
                 {/* Spacer */}
                 <div className="flex-1" />
+
+                {/* Trash icon — context-aware:
+                    unplaced items exist → Clear unplaced items (local)
+                    all items placed → Cancel Order (API) */}
+                {(() => {
+                  const hasUnplaced = cartItems.some(i => !i.placed);
+                  const hasPlaced = cartItems.some(i => i.placed && i.status !== 'cancelled');
+                  if (!hasUnplaced && !hasPlaced) return null;
+                  return (
+                    <button
+                      onClick={() => hasUnplaced
+                        ? setCartItems(prev => prev.filter(i => i.placed))
+                        : setShowCancelOrderModal(true)
+                      }
+                      className="p-1.5 rounded-lg hover:bg-red-50 transition-colors flex-shrink-0"
+                      title={hasUnplaced ? "Clear unplaced items" : "Cancel Order"}
+                      data-testid="clear-cart-btn"
+                    >
+                      <Trash2 className="w-4 h-4" style={{ color: '#EF4444' }} />
+                    </button>
+                  );
+                })()}
 
                 {/* KOT Toggle - Right aligned */}
                 <div
@@ -532,10 +755,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 setCancelItem={setCancelItem}
                 setTransferItem={setTransferItem}
                 handlePlaceOrder={handlePlaceOrder}
+                isPlacingOrder={isPlacingOrder}
+                hasPlacedItems={cartItems.some(i => i.placed)}
                 setShowPaymentPanel={setShowPaymentPanel}
                 onAddNote={(item, cartIndex) => setItemNotesModal({ item, cartIndex })}
+                onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
                 onCustomerChange={setCustomer}
+                onClearCart={() => setCartItems(prev => prev.filter(i => i.placed))}
+                onDeleteItem={(item) => setCartItems(prev => {
+                  const idx = prev.indexOf(item);
+                  return idx >= 0 ? [...prev.slice(0, idx), ...prev.slice(idx + 1)] : prev;
+                })}
               />
             </>
           )}
@@ -576,16 +807,33 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         <OrderPlacedModal onClose={handleOrderPlacedClose} autoCloseDelay={2000} />
       )}
       {transferItem && table && (
-        <TransferFoodModal item={transferItem} currentTable={table} onClose={() => setTransferItem(null)} onTransfer={handleTransfer} />
+        <TransferFoodModal item={transferItem} currentTable={table} orders={orders} onClose={() => setTransferItem(null)} onTransfer={handleTransfer} />
       )}
       {showMergeModal && table && (
-        <MergeTableModal currentTable={table} onClose={() => setShowMergeModal(false)} onMerge={handleMerge} />
+        <MergeTableModal currentTable={table} orders={orders} onClose={() => setShowMergeModal(false)} onMerge={handleMerge} />
       )}
       {showShiftModal && table && (
         <ShiftTableModal currentTable={table} onClose={() => setShowShiftModal(false)} onShift={handleShift} />
       )}
       {cancelItem && (
-        <CancelFoodModal item={cancelItem} onClose={() => setCancelItem(null)} onCancel={handleCancelFood} />
+        <CancelFoodModal item={cancelItem} reasons={getItemCancellationReasons()} onClose={() => setCancelItem(null)} onCancel={handleCancelFood} />
+      )}
+      {showCancelOrderModal && (
+        <CancelOrderModal
+          table={table}
+          itemCount={cartItems.filter(i => i.placed && i.status !== 'cancelled').length}
+          reasons={getOrderCancellationReasons()}
+          onClose={() => setShowCancelOrderModal(false)}
+          onCancel={handleCancelOrder}
+        />
+      )}
+      {showCustomItemModal && (
+        <AddCustomItemModal
+          categories={categories}
+          products={products}
+          onClose={() => setShowCustomItemModal(false)}
+          onAdd={handleAddCustomItem}
+        />
       )}
       {showCustomerModal && (
         <CustomerModal

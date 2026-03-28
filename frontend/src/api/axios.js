@@ -42,6 +42,8 @@ api.interceptors.response.use(
       
       // Only redirect if not already on login page
       if (window.location.pathname !== '/') {
+        // Signal intentional navigation so beforeunload doesn't show dialog
+        sessionStorage.setItem('auth_redirect', '1');
         window.location.href = '/';
       }
     }
