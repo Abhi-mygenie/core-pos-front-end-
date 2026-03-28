@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight, ChevronDown } from "lucide-react";
+import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight } from "lucide-react";
 import { COLORS, LOGO_URL } from "../../constants";
 import { useRestaurant } from "../../contexts";
 
-// Multi-selectable channel IDs (excludes Room)
-const MULTI_CHANNEL_IDS = ["delivery", "takeAway", "dineIn"];
+// Multi-selectable channel IDs (includes Room now - same behavior as tables)
+const MULTI_CHANNEL_IDS = ["delivery", "takeAway", "dineIn", "room"];
 
 // Order Type channels with icons and short labels
 const channels = [
@@ -14,7 +14,7 @@ const channels = [
   { id: "room", label: "Room", fullLabel: "Room", icon: DoorOpen },
 ];
 
-// Order Status filters
+// Order Status filters (same for all channels including Room)
 const orderStatuses = [
   { id: "confirm", label: "Confirm" },
   { id: "cooking", label: "Cooking" },
@@ -22,22 +22,6 @@ const orderStatuses = [
   { id: "running", label: "Running" },
   { id: "schedule", label: "Schedule" },
 ];
-
-// Room-specific statuses - split into main and secondary
-const roomStatusesMain = [
-  { id: "available", label: "Available" },
-  { id: "checkedIn", label: "Checked In" },
-  { id: "reserved", label: "Reserved" },
-];
-
-const roomStatusesMore = [
-  { id: "checkedOut", label: "Checked Out" },
-  { id: "housekeeping", label: "Housekeeping" },
-  { id: "maintenance", label: "Maintenance" },
-];
-
-// All room statuses (for reference)
-const roomStatuses = [...roomStatusesMain, ...roomStatusesMore];
 
 // Header Component
 const Header = ({ 
@@ -59,10 +43,8 @@ const Header = ({
   onAddOrder
 }) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [showMoreStatuses, setShowMoreStatuses] = useState(false);
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
-  const moreStatusesRef = useRef(null);
 
   // Filter channels based on restaurant features
   const { features } = useRestaurant();
@@ -85,12 +67,6 @@ const Header = ({
         !dropdownRef.current.contains(event.target)
       ) {
         setIsSearchFocused(false);
-      }
-      if (
-        moreStatusesRef.current &&
-        !moreStatusesRef.current.contains(event.target)
-      ) {
-        setShowMoreStatuses(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -122,17 +98,13 @@ const Header = ({
     return "Walk-in"; // Only for occupied tables without customer
   };
 
-  // Determine which statuses to show based on selected channels and view
-  const isRoomOnly = activeChannels.length === 1 && activeChannels[0] === "room";
-  const isTableView = !isRoomOnly && activeView === "table";
+  // Determine which statuses to show based on view (same for all channels including Room)
+  const isTableView = activeView === "table";
   
   // Context-aware status filters
   let statuses;
-  if (isRoomOnly) {
-    // Room View: Show room-specific statuses
-    statuses = roomStatusesMain;
-  } else if (isTableView) {
-    // Grid/Table View (any channel): Only Schedule and Confirm
+  if (isTableView) {
+    // Grid/Table View: Only Schedule and Confirm
     statuses = [
       { id: "schedule", label: "Schedule" },
       { id: "confirm", label: "Confirm" }
@@ -142,12 +114,9 @@ const Header = ({
     statuses = orderStatuses;
   }
 
-  // Check if any "more" status is active (for room)
-  const hasActiveMoreStatus = isRoomOnly && roomStatusesMore.some(s => activeStatuses.includes(s.id));
-
   // Dynamic search placeholder based on selected channels
   const getSearchPlaceholder = () => {
-    if (isRoomOnly) {
+    if (activeChannels.includes("room") && activeChannels.length === 1) {
       return "Search room, guest...";
     }
     if (isAllChannels) {
@@ -161,14 +130,16 @@ const Header = ({
     // Multiple channels selected (but not all)
     const hasTable = activeChannels.includes("dineIn");
     const hasOrder = activeChannels.includes("delivery") || activeChannels.includes("takeAway");
+    const hasRoom = activeChannels.includes("room");
     if (hasTable && hasOrder) return "Search table, order...";
     if (hasTable) return "Search table, customer...";
     if (hasOrder) return "Search order, customer...";
+    if (hasRoom) return "Search room, guest...";
     return "Search...";
   };
 
-  // "All" means all visible multi-selectable channels are active (no room)
-  const isAllChannels = visibleMultiChannelIds.length > 0 && visibleMultiChannelIds.every(id => activeChannels.includes(id)) && !activeChannels.includes("room");
+  // "All" means all visible multi-selectable channels are active
+  const isAllChannels = visibleMultiChannelIds.length > 0 && visibleMultiChannelIds.every(id => activeChannels.includes(id));
 
   // Dine In is the only selected channel (show table/order toggle)
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
@@ -177,16 +148,6 @@ const Header = ({
     // "All" selects visible multi-selectable channels
     if (channelId === "all") {
       setActiveChannels([...visibleMultiChannelIds]);
-      return;
-    }
-    // Room is exclusive — deselects everything else
-    if (channelId === "room") {
-      setActiveChannels(["room"]);
-      return;
-    }
-    // Clicking non-room while Room is active → select only that channel
-    if (isRoomOnly) {
-      setActiveChannels([channelId]);
       return;
     }
     // Was "All" selected → select only clicked one
@@ -250,10 +211,7 @@ const Header = ({
             </button>
             {visibleChannels.map((channel) => {
               const Icon = channel.icon;
-              const isRoom = channel.id === "room";
-              const isActive = isRoom
-                ? isRoomOnly
-                : !isAllChannels && activeChannels.includes(channel.id);
+              const isActive = !isAllChannels && activeChannels.includes(channel.id);
               return (
                 <button
                   key={channel.id}
@@ -590,53 +548,6 @@ const Header = ({
                 </button>
               );
             })}
-            
-            {/* More dropdown for room statuses */}
-            {isRoomOnly && (
-              <div className="relative" ref={moreStatusesRef}>
-                <button
-                  data-testid="status-more-btn"
-                  onClick={() => setShowMoreStatuses(!showMoreStatuses)}
-                  className="px-3 py-2.5 rounded-md text-xs font-medium transition-all flex items-center gap-1"
-                  style={{
-                    backgroundColor: hasActiveMoreStatus ? COLORS.lightBg : "transparent",
-                    color: hasActiveMoreStatus ? COLORS.primaryOrange : COLORS.grayText,
-                    border: `1px solid ${hasActiveMoreStatus ? COLORS.primaryOrange : COLORS.borderGray}`,
-                  }}
-                >
-                  More
-                  <ChevronDown className={`w-3 h-3 transition-transform ${showMoreStatuses ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {showMoreStatuses && (
-                  <div 
-                    className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border z-50 min-w-[140px]"
-                    style={{ borderColor: COLORS.borderGray }}
-                  >
-                    {roomStatusesMore.map((status) => {
-                      const isActive = activeStatuses.includes(status.id);
-                      return (
-                        <button
-                          key={status.id}
-                          data-testid={`status-${status.id}`}
-                          onClick={() => handleStatusToggle(status.id)}
-                          className="w-full px-3 py-2 text-xs font-medium text-left hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg flex items-center justify-between"
-                          style={{ color: isActive ? COLORS.primaryOrange : COLORS.darkText }}
-                        >
-                          {status.label}
-                          {isActive && (
-                            <div 
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: COLORS.primaryOrange }}
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Divider */}
@@ -652,14 +563,13 @@ const Header = ({
             <PlusSquare className="w-5 h-5" />
           </button>
           
-          {/* View Toggle - Available for all non-room channels */}
-          {!isRoomOnly && (
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
-              <button
-                data-testid="table-view-btn"
-                className={`p-2.5 rounded-md transition-colors ${
-                  activeView === "table" ? "bg-white shadow-sm" : ""
-                }`}
+          {/* View Toggle - Available for all channels including Room */}
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <button
+              data-testid="table-view-btn"
+              className={`p-2.5 rounded-md transition-colors ${
+                activeView === "table" ? "bg-white shadow-sm" : ""
+              }`}
                 style={{ color: activeView === "table" ? COLORS.primaryOrange : COLORS.grayText }}
                 onClick={() => setActiveView("table")}
                 title="Table View"
@@ -678,22 +588,19 @@ const Header = ({
                 <List className="w-4 h-4" />
               </button>
             </div>
-          )}
 
-          {/* Active First Toggle - Show for non-room channels */}
-          {!isRoomOnly && (
-            <div
-              data-testid="active-first-toggle"
-              className="w-8 h-4 rounded-full relative cursor-pointer transition-colors"
-              style={{ backgroundColor: activeFirst ? COLORS.primaryGreen : COLORS.borderGray }}
-              onClick={() => setActiveFirst(!activeFirst)}
-            >
-              <div 
-                className="absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-all"
-                style={activeFirst ? { right: "2px" } : { left: "2px" }}
-              />
-            </div>
-          )}
+          {/* Active First Toggle - Show for all channels */}
+          <div
+            data-testid="active-first-toggle"
+            className="w-8 h-4 rounded-full relative cursor-pointer transition-colors"
+            style={{ backgroundColor: activeFirst ? COLORS.primaryGreen : COLORS.borderGray }}
+            onClick={() => setActiveFirst(!activeFirst)}
+          >
+            <div 
+              className="absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-all"
+              style={activeFirst ? { right: "2px" } : { left: "2px" }}
+            />
+          </div>
 
           {/* Online/Offline Status - Just circle indicator */}
           <div
