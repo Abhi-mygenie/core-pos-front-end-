@@ -6,6 +6,7 @@ const OrderContext = createContext(null);
 
 // Order Provider Component
 export const OrderProvider = ({ children }) => {
+  // Single unified array - includes all orders (tables, walk-ins, rooms)
   const [orders, setOrdersState] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -21,13 +22,13 @@ export const OrderProvider = ({ children }) => {
     setIsLoaded(false);
   }, []);
 
-  // Refresh orders — re-fetch from API and update context (now includes room orders)
+  // Refresh orders — re-fetch from API and update context
   const refreshOrders = useCallback(async (roleName = 'Manager') => {
-    const fresh = await orderService.getRunningOrders(roleName, { includeRooms: true });
+    const fresh = await orderService.getRunningOrders(roleName);
     setOrdersState(fresh || []);
   }, []);
 
-  // --- Computed: orders by type ---
+  // --- Computed: orders by type (filter by isRoom in DashboardPage when needed) ---
   const dineInOrders = useMemo(() =>
     orders.filter(o => o.orderType === 'dineIn' && !o.isRoom),
     [orders]
@@ -43,12 +44,6 @@ export const OrderProvider = ({ children }) => {
     [orders]
   );
 
-  // Room orders
-  const roomOrders = useMemo(() =>
-    orders.filter(o => o.isRoom),
-    [orders]
-  );
-
   // --- Computed: dine-in split by table vs walk-in ---
   const tableOrders = useMemo(() =>
     dineInOrders.filter(o => !o.isWalkIn),
@@ -61,55 +56,22 @@ export const OrderProvider = ({ children }) => {
   );
 
   // --- Helpers ---
-  // Get order by table ID (for enriching table cards)
+  // Get order by table/room ID (works for both - uses tableId field)
   const getOrderByTableId = useCallback((tableId) => {
-    return orders.find(o => o.tableId === tableId && !o.isWalkIn && !o.isRoom) || null;
+    return orders.find(o => o.tableId === tableId && !o.isWalkIn) || null;
   }, [orders]);
 
-  // Get order by room ID (for enriching room cards)
-  const getOrderByRoomId = useCallback((roomId) => {
-    return orders.find(o => o.tableId === roomId && o.isRoom) || null;
-  }, [orders]);
-
-  // Get all orders for a table (multiple orders possible)
+  // Get all orders for a table/room (multiple orders possible)
   const getOrdersByTableId = useCallback((tableId) => {
-    return orders.filter(o => o.tableId === tableId && !o.isWalkIn && !o.isRoom);
+    return orders.filter(o => o.tableId === tableId && !o.isWalkIn);
   }, [orders]);
 
-  // Get all orders for a room
-  const getOrdersByRoomId = useCallback((roomId) => {
-    return orders.filter(o => o.tableId === roomId && o.isRoom);
-  }, [orders]);
-
-  // Build orderItems map keyed by table's API id (for DineInCard compatibility)
+  // Build orderItems map keyed by table/room ID (works for both)
   const orderItemsByTableId = useMemo(() => {
     const map = {};
-    for (const order of dineInOrders) {
+    // Include both table orders and room orders
+    for (const order of orders) {
       if (!order.isWalkIn && order.tableId) {
-        map[order.tableId] = {
-          orderId: order.orderId,
-          orderNumber: order.orderNumber,
-          customer: order.customer,
-          phone: order.phone,
-          waiter: '', // Not available from this API
-          items: order.items,
-          amount: order.amount,
-          time: order.time,
-          status: order.status,
-          tableStatus: order.tableStatus,
-          punchedBy: order.punchedBy,
-          orderNote: order.orderNote,
-        };
-      }
-    }
-    return map;
-  }, [dineInOrders]);
-
-  // Build orderItems map for rooms
-  const orderItemsByRoomId = useMemo(() => {
-    const map = {};
-    for (const order of roomOrders) {
-      if (order.tableId) {
         map[order.tableId] = {
           orderId: order.orderId,
           orderNumber: order.orderNumber,
@@ -123,14 +85,15 @@ export const OrderProvider = ({ children }) => {
           tableStatus: order.tableStatus,
           punchedBy: order.punchedBy,
           orderNote: order.orderNote,
+          isRoom: order.isRoom,
         };
       }
     }
     return map;
-  }, [roomOrders]);
+  }, [orders]);
 
   const value = useMemo(() => ({
-    // State
+    // State (unified - includes all orders)
     orders,
     isLoaded,
 
@@ -143,25 +106,19 @@ export const OrderProvider = ({ children }) => {
     dineInOrders,
     takeAwayOrders,
     deliveryOrders,
-    roomOrders,
     tableOrders,
     walkInOrders,
 
-    // Helpers
+    // Helpers (work for both tables and rooms)
     getOrderByTableId,
-    getOrderByRoomId,
     getOrdersByTableId,
-    getOrdersByRoomId,
     orderItemsByTableId,
-    orderItemsByRoomId,
   }), [
     orders, isLoaded,
     setOrders, clearOrders, refreshOrders,
-    dineInOrders, takeAwayOrders, deliveryOrders, roomOrders,
+    dineInOrders, takeAwayOrders, deliveryOrders,
     tableOrders, walkInOrders,
-    getOrderByTableId, getOrderByRoomId,
-    getOrdersByTableId, getOrdersByRoomId,
-    orderItemsByTableId, orderItemsByRoomId,
+    getOrderByTableId, getOrdersByTableId, orderItemsByTableId,
   ]);
 
   return (

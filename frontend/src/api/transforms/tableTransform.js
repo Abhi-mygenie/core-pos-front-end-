@@ -16,34 +16,15 @@ const toBoolean = (value) => {
 // =============================================================================
 export const fromAPI = {
   /**
- * Transform tables list response
+ * Transform tables list response (includes both tables and rooms)
  * @param {Array} apiTables - Raw API response
- * @param {Object} options - Filter options
- * @param {boolean} options.tablesOnly - If true, return only tables (TB)
- * @param {boolean} options.roomsOnly - If true, return only rooms (RM)
- * @param {boolean} options.includeAll - If true, return both tables and rooms
+ * @returns {Array} - All tables and rooms with isRoom flag
  */
-tableList: (apiTables, options = {}) => {
+tableList: (apiTables) => {
   if (!Array.isArray(apiTables)) return [];
   
-  // Handle legacy boolean param (backward compatibility)
-  let filterOptions = options;
-  if (typeof options === 'boolean') {
-    filterOptions = { tablesOnly: options };
-  }
-  
-  const { tablesOnly = false, roomsOnly = false, includeAll = false } = filterOptions;
-  
-  let tables = apiTables.map(fromAPI.table);
-  
-  // Apply filters
-  if (includeAll) {
-    // Return both tables and rooms - no filter
-  } else if (roomsOnly) {
-    tables = tables.filter((t) => t.tableType === TABLE_TYPES.RM);
-  } else if (tablesOnly) {
-    tables = tables.filter((t) => t.tableType === TABLE_TYPES.TB);
-  }
+  // Transform all - no filtering, isRoom flag distinguishes them
+  const tables = apiTables.map(fromAPI.table);
   
   // Sort by table/room number
   return tables.sort((a, b) => {

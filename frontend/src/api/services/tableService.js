@@ -5,38 +5,12 @@ import { API_ENDPOINTS } from '../constants';
 import { fromAPI } from '../transforms/tableTransform';
 
 /**
- * Fetch all tables
- * @param {Object|boolean} options - Filter options or legacy boolean
- * @param {boolean} options.tablesOnly - If true, return only tables (TB)
- * @param {boolean} options.roomsOnly - If true, return only rooms (RM)
- * @param {boolean} options.includeAll - If true, return both tables and rooms
- * @returns {Promise<Array>} - Transformed tables/rooms list
+ * Fetch all tables and rooms (unified)
+ * @returns {Promise<Array>} - All tables and rooms with isRoom flag
  */
-export const getTables = async (options = { tablesOnly: true }) => {
+export const getTables = async () => {
   const response = await api.get(API_ENDPOINTS.TABLES);
-  return fromAPI.tableList(response.data, options);
-};
-
-/**
- * Fetch only rooms
- * @returns {Promise<Array>} - Transformed rooms list
- */
-export const getRooms = async () => {
-  const response = await api.get(API_ENDPOINTS.TABLES);
-  return fromAPI.tableList(response.data, { roomsOnly: true });
-};
-
-/**
- * Fetch tables and rooms together
- * @returns {Promise<Object>} - { tables: [], rooms: [] }
- */
-export const getTablesAndRooms = async () => {
-  const response = await api.get(API_ENDPOINTS.TABLES);
-  const all = fromAPI.tableList(response.data, { includeAll: true });
-  return {
-    tables: all.filter(t => !t.isRoom),
-    rooms: all.filter(t => t.isRoom),
-  };
+  return fromAPI.tableList(response.data);
 };
 
 /**

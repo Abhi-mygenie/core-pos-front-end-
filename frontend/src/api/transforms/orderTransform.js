@@ -161,24 +161,13 @@ export const fromAPI = {
   },
 
   /**
-   * Transform order list
+   * Transform order list (includes all orders - tables and rooms)
    * @param {Array} apiOrders - Raw API orders
-   * @param {Object} options - Filter options
-   * @param {boolean} options.includeRooms - If true, include room orders
+   * @returns {Array} - All orders with isRoom flag
    */
-  orderList: (apiOrders, options = {}) => {
+  orderList: (apiOrders) => {
     if (!Array.isArray(apiOrders)) return [];
-    
-    const { includeRooms = false } = options;
-    
-    let orders = apiOrders.map(fromAPI.order);
-    
-    // Filter out room orders unless includeRooms is true
-    if (!includeRooms) {
-      orders = orders.filter(order => !order.isRoom);
-    }
-    
-    return orders;
+    return apiOrders.map(fromAPI.order);
   },
 };
 

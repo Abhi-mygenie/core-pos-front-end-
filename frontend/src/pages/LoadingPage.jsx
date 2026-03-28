@@ -22,7 +22,7 @@ const LoadingPage = () => {
   const { setUserData } = useAuth();
   const { setRestaurant } = useRestaurant();
   const { setCategories, setProducts, setPopularFood } = useMenu();
-  const { setTables, setRooms, setTablesAndRooms } = useTables();
+  const { setTables } = useTables();
   const { setCancellationReasons } = useSettings();
   const { setOrders } = useOrders();
   
@@ -157,15 +157,13 @@ const LoadingPage = () => {
 
     if (ctrl.aborted) return;
 
-    // 4. Tables and Rooms
+    // 4. Tables and Rooms (unified)
     updateStatus('tables', LOADING_STATES.LOADING, null, 0, 0);
     try {
-      const { tables: tablesData, rooms: roomsData } = await tableService.getTablesAndRooms();
+      data.tables = await tableService.getTables();
       if (ctrl.aborted) return;
-      data.tables = tablesData;
-      data.rooms = roomsData;
-      const count = (tablesData?.length || 0) + (roomsData?.length || 0);
-      setTablesAndRooms(tablesData, roomsData);
+      const count = data.tables?.length || 0;
+      setTables(data.tables);
       updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count);
     } catch (error) {
       if (ctrl.aborted) return;
@@ -222,12 +220,12 @@ const LoadingPage = () => {
     if (ctrl.aborted) return;
 
     // 7. Running Orders
-    // 7. Running Orders (includes room orders)
+    // 7. Running Orders (unified - includes all)
     updateStatus('runningOrders', LOADING_STATES.LOADING, null, 0, 0);
     try {
       const userRole = data.profile?.user?.roleName || 'Owner';
       const roleParam = orderService.getOrderRoleParam(userRole);
-      data.runningOrders = await orderService.getRunningOrders(roleParam, { includeRooms: true });
+      data.runningOrders = await orderService.getRunningOrders(roleParam);
       if (ctrl.aborted) return;
       const count = data.runningOrders?.length || 0;
       setOrders(data.runningOrders);

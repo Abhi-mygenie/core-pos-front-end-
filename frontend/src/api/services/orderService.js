@@ -5,17 +5,15 @@ import { API_ENDPOINTS } from '../constants';
 import { fromAPI } from '../transforms/orderTransform';
 
 /**
- * Fetch running orders
+ * Fetch running orders (includes all - tables and rooms)
  * @param {string} roleName - 'Manager' for all roles except 'Waiter'
- * @param {Object} options - Transform options
- * @param {boolean} options.includeRooms - If true, include room orders
- * @returns {Promise<Array>} - Transformed orders list
+ * @returns {Promise<Array>} - All orders with isRoom flag
  */
-export const getRunningOrders = async (roleName = 'Manager', options = {}) => {
+export const getRunningOrders = async (roleName = 'Manager') => {
   const response = await api.get(API_ENDPOINTS.RUNNING_ORDERS, {
     params: { role_name: roleName },
   });
-  return fromAPI.orderList(response.data.orders || [], options);
+  return fromAPI.orderList(response.data.orders || []);
 };
 
 /**

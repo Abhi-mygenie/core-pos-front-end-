@@ -7,43 +7,29 @@ const TableContext = createContext(null);
 
 // Table Provider Component
 export const TableProvider = ({ children }) => {
+  // Single unified array - includes both tables (isRoom=false) and rooms (isRoom=true)
   const [tables, setTablesData] = useState([]);
-  const [rooms, setRoomsData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Set tables (called from LoadingPage)
+  // Set tables (called from LoadingPage) - includes both tables and rooms
   const setTables = useCallback((data) => {
     setTablesData(data || []);
     setIsLoaded(true);
   }, []);
 
-  // Set rooms (called from LoadingPage)
-  const setRooms = useCallback((data) => {
-    setRoomsData(data || []);
-  }, []);
-
-  // Set both tables and rooms together
-  const setTablesAndRooms = useCallback((tablesData, roomsData) => {
-    setTablesData(tablesData || []);
-    setRoomsData(roomsData || []);
-    setIsLoaded(true);
-  }, []);
-
-  // Clear tables and rooms data (on logout)
+  // Clear tables data (on logout)
   const clearTables = useCallback(() => {
     setTablesData([]);
-    setRoomsData([]);
     setIsLoaded(false);
   }, []);
 
-  // Refresh tables — re-fetch engage status and update context
+  // Refresh tables — re-fetch and update context
   const refreshTables = useCallback(async () => {
-    const { tables: freshTables, rooms: freshRooms } = await tableService.getTablesAndRooms();
-    setTablesData(freshTables || []);
-    setRoomsData(freshRooms || []);
+    const fresh = await tableService.getTables();
+    setTablesData(fresh || []);
   }, []);
 
-  // Get unique sections from tables
+  // Get unique sections from all tables/rooms
   const sections = useMemo(() => {
     const sectionSet = new Set();
     tables.forEach((table) => {
@@ -52,53 +38,23 @@ export const TableProvider = ({ children }) => {
     return Array.from(sectionSet).sort();
   }, [tables]);
 
-  // Get unique sections from rooms
-  const roomSections = useMemo(() => {
-    const sectionSet = new Set();
-    rooms.forEach((room) => {
-      sectionSet.add(room.sectionName || 'Default');
-    });
-    return Array.from(sectionSet).sort();
-  }, [rooms]);
-
-  // Get table by ID
+  // Get table/room by ID (works for both)
   const getTableById = useCallback((tableId) => {
     return tables.find((t) => t.tableId === tableId) || null;
   }, [tables]);
 
-  // Get room by ID
-  const getRoomById = useCallback((roomId) => {
-    return rooms.find((r) => r.tableId === roomId) || null;
-  }, [rooms]);
-
-  // Get table or room by ID (searches both)
-  const getTableOrRoomById = useCallback((id) => {
-    return tables.find((t) => t.tableId === id) || rooms.find((r) => r.tableId === id) || null;
-  }, [tables, rooms]);
-
-  // Get table by number
+  // Get table/room by number (works for both)
   const getTableByNumber = useCallback((tableNumber) => {
     return tables.find((t) => t.tableNumber === tableNumber) || null;
   }, [tables]);
 
-  // Get room by number
-  const getRoomByNumber = useCallback((roomNumber) => {
-    return rooms.find((r) => r.tableNumber === roomNumber) || null;
-  }, [rooms]);
-
-  // Get tables by section
+  // Get tables/rooms by section (works for both)
   const getTablesBySection = useCallback((sectionName) => {
     if (!sectionName || sectionName === 'All') return tables;
     return tables.filter((t) => (t.sectionName || 'Default') === sectionName);
   }, [tables]);
 
-  // Get rooms by section
-  const getRoomsBySection = useCallback((sectionName) => {
-    if (!sectionName || sectionName === 'All') return rooms;
-    return rooms.filter((r) => (r.sectionName || 'Default') === sectionName);
-  }, [rooms]);
-
-  // Get tables grouped by section
+  // Get tables/rooms grouped by section (works for both)
   const getTablesGroupedBySection = useCallback(() => {
     const grouped = {};
     tables.forEach((table) => {
@@ -111,52 +67,23 @@ export const TableProvider = ({ children }) => {
     return grouped;
   }, [tables]);
 
-  // Get rooms grouped by section
-  const getRoomsGroupedBySection = useCallback(() => {
-    const grouped = {};
-    rooms.forEach((room) => {
-      const section = room.sectionName || 'Default';
-      if (!grouped[section]) {
-        grouped[section] = [];
-      }
-      grouped[section].push(room);
-    });
-    return grouped;
-  }, [rooms]);
-
-  // Filter tables by status
+  // Filter by status (works for both)
   const filterByStatus = useCallback((status) => {
     if (!status || status === 'all') return tables;
     return tables.filter((t) => t.status === status);
   }, [tables]);
 
-  // Filter rooms by status
-  const filterRoomsByStatus = useCallback((status) => {
-    if (!status || status === 'all') return rooms;
-    return rooms.filter((r) => r.status === status);
-  }, [rooms]);
-
-  // Get available (free) tables
+  // Get available (free) tables/rooms (works for both)
   const getAvailableTables = useCallback(() => {
     return tables.filter((t) => t.status === TABLE_STATUS.FREE);
   }, [tables]);
 
-  // Get available (free) rooms
-  const getAvailableRooms = useCallback(() => {
-    return rooms.filter((r) => r.status === TABLE_STATUS.FREE);
-  }, [rooms]);
-
-  // Get occupied tables
+  // Get occupied tables/rooms (works for both)
   const getOccupiedTables = useCallback(() => {
     return tables.filter((t) => t.isOccupied);
   }, [tables]);
 
-  // Get occupied rooms (checked-in)
-  const getOccupiedRooms = useCallback(() => {
-    return rooms.filter((r) => r.isOccupied);
-  }, [rooms]);
-
-  // Search tables by number
+  // Search tables/rooms by number (works for both)
   const searchTables = useCallback((searchTerm) => {
     if (!searchTerm) return tables;
     const term = searchTerm.toLowerCase();
@@ -166,33 +93,19 @@ export const TableProvider = ({ children }) => {
     );
   }, [tables]);
 
-  // Search rooms by number
-  const searchRooms = useCallback((searchTerm) => {
-    if (!searchTerm) return rooms;
-    const term = searchTerm.toLowerCase();
-    return rooms.filter((r) =>
-      r.tableNumber.toLowerCase().includes(term) ||
-      r.displayName.toLowerCase().includes(term)
-    );
-  }, [rooms]);
-
   // Context value
   const value = useMemo(() => ({
-    // State
+    // State (unified - includes tables and rooms)
     tables,
-    rooms,
     sections,
-    roomSections,
     isLoaded,
     
     // Actions
     setTables,
-    setRooms,
-    setTablesAndRooms,
     clearTables,
     refreshTables,
     
-    // Table Helpers
+    // Helpers (work for both tables and rooms)
     getTableById,
     getTableByNumber,
     getTablesBySection,
@@ -201,28 +114,11 @@ export const TableProvider = ({ children }) => {
     getAvailableTables,
     getOccupiedTables,
     searchTables,
-    
-    // Room Helpers
-    getRoomById,
-    getRoomByNumber,
-    getRoomsBySection,
-    getRoomsGroupedBySection,
-    filterRoomsByStatus,
-    getAvailableRooms,
-    getOccupiedRooms,
-    searchRooms,
-    
-    // Combined Helpers
-    getTableOrRoomById,
   }), [
     tables,
-    rooms,
     sections,
-    roomSections,
     isLoaded,
     setTables,
-    setRooms,
-    setTablesAndRooms,
     clearTables,
     refreshTables,
     getTableById,
@@ -233,15 +129,6 @@ export const TableProvider = ({ children }) => {
     getAvailableTables,
     getOccupiedTables,
     searchTables,
-    getRoomById,
-    getRoomByNumber,
-    getRoomsBySection,
-    getRoomsGroupedBySection,
-    filterRoomsByStatus,
-    getAvailableRooms,
-    getOccupiedRooms,
-    searchRooms,
-    getTableOrRoomById,
   ]);
 
   return (
