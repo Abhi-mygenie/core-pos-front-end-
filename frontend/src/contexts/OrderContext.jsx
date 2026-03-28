@@ -21,15 +21,15 @@ export const OrderProvider = ({ children }) => {
     setIsLoaded(false);
   }, []);
 
-  // Refresh orders — re-fetch from API and update context
+  // Refresh orders — re-fetch from API and update context (now includes room orders)
   const refreshOrders = useCallback(async (roleName = 'Manager') => {
-    const fresh = await orderService.getRunningOrders(roleName);
+    const fresh = await orderService.getRunningOrders(roleName, { includeRooms: true });
     setOrdersState(fresh || []);
   }, []);
 
   // --- Computed: orders by type ---
   const dineInOrders = useMemo(() =>
-    orders.filter(o => o.orderType === 'dineIn'),
+    orders.filter(o => o.orderType === 'dineIn' && !o.isRoom),
     [orders]
   );
 
@@ -40,6 +40,12 @@ export const OrderProvider = ({ children }) => {
 
   const deliveryOrders = useMemo(() =>
     orders.filter(o => o.orderType === 'delivery'),
+    [orders]
+  );
+
+  // Room orders
+  const roomOrders = useMemo(() =>
+    orders.filter(o => o.isRoom),
     [orders]
   );
 
@@ -57,12 +63,22 @@ export const OrderProvider = ({ children }) => {
   // --- Helpers ---
   // Get order by table ID (for enriching table cards)
   const getOrderByTableId = useCallback((tableId) => {
-    return orders.find(o => o.tableId === tableId && !o.isWalkIn) || null;
+    return orders.find(o => o.tableId === tableId && !o.isWalkIn && !o.isRoom) || null;
+  }, [orders]);
+
+  // Get order by room ID (for enriching room cards)
+  const getOrderByRoomId = useCallback((roomId) => {
+    return orders.find(o => o.tableId === roomId && o.isRoom) || null;
   }, [orders]);
 
   // Get all orders for a table (multiple orders possible)
   const getOrdersByTableId = useCallback((tableId) => {
-    return orders.filter(o => o.tableId === tableId && !o.isWalkIn);
+    return orders.filter(o => o.tableId === tableId && !o.isWalkIn && !o.isRoom);
+  }, [orders]);
+
+  // Get all orders for a room
+  const getOrdersByRoomId = useCallback((roomId) => {
+    return orders.filter(o => o.tableId === roomId && o.isRoom);
   }, [orders]);
 
   // Build orderItems map keyed by table's API id (for DineInCard compatibility)
@@ -89,6 +105,30 @@ export const OrderProvider = ({ children }) => {
     return map;
   }, [dineInOrders]);
 
+  // Build orderItems map for rooms
+  const orderItemsByRoomId = useMemo(() => {
+    const map = {};
+    for (const order of roomOrders) {
+      if (order.tableId) {
+        map[order.tableId] = {
+          orderId: order.orderId,
+          orderNumber: order.orderNumber,
+          customer: order.customer,
+          phone: order.phone,
+          waiter: '',
+          items: order.items,
+          amount: order.amount,
+          time: order.time,
+          status: order.status,
+          tableStatus: order.tableStatus,
+          punchedBy: order.punchedBy,
+          orderNote: order.orderNote,
+        };
+      }
+    }
+    return map;
+  }, [roomOrders]);
+
   const value = useMemo(() => ({
     // State
     orders,
@@ -103,19 +143,25 @@ export const OrderProvider = ({ children }) => {
     dineInOrders,
     takeAwayOrders,
     deliveryOrders,
+    roomOrders,
     tableOrders,
     walkInOrders,
 
     // Helpers
     getOrderByTableId,
+    getOrderByRoomId,
     getOrdersByTableId,
+    getOrdersByRoomId,
     orderItemsByTableId,
+    orderItemsByRoomId,
   }), [
     orders, isLoaded,
     setOrders, clearOrders, refreshOrders,
-    dineInOrders, takeAwayOrders, deliveryOrders,
+    dineInOrders, takeAwayOrders, deliveryOrders, roomOrders,
     tableOrders, walkInOrders,
-    getOrderByTableId, getOrdersByTableId, orderItemsByTableId,
+    getOrderByTableId, getOrderByRoomId,
+    getOrdersByTableId, getOrdersByRoomId,
+    orderItemsByTableId, orderItemsByRoomId,
   ]);
 
   return (

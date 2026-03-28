@@ -16,27 +16,42 @@ const toBoolean = (value) => {
 // =============================================================================
 export const fromAPI = {
   /**
-   * Transform tables list response
-   * @param {Array} apiTables - Raw API response
-   * @param {boolean} tablesOnly - If true, filter only tables (exclude rooms)
-   */
-  tableList: (apiTables, tablesOnly = true) => {
-    if (!Array.isArray(apiTables)) return [];
-    
-    let tables = apiTables.map(fromAPI.table);
-    
-    // Filter only tables (TB) for Phase 1
-    if (tablesOnly) {
-      tables = tables.filter((t) => t.tableType === TABLE_TYPES.TB);
-    }
-    
-    // Sort by table number
-    return tables.sort((a, b) => {
-      const numA = parseInt(a.tableNumber) || 0;
-      const numB = parseInt(b.tableNumber) || 0;
-      return numA - numB;
-    });
-  },
+ * Transform tables list response
+ * @param {Array} apiTables - Raw API response
+ * @param {Object} options - Filter options
+ * @param {boolean} options.tablesOnly - If true, return only tables (TB)
+ * @param {boolean} options.roomsOnly - If true, return only rooms (RM)
+ * @param {boolean} options.includeAll - If true, return both tables and rooms
+ */
+tableList: (apiTables, options = {}) => {
+  if (!Array.isArray(apiTables)) return [];
+  
+  // Handle legacy boolean param (backward compatibility)
+  let filterOptions = options;
+  if (typeof options === 'boolean') {
+    filterOptions = { tablesOnly: options };
+  }
+  
+  const { tablesOnly = false, roomsOnly = false, includeAll = false } = filterOptions;
+  
+  let tables = apiTables.map(fromAPI.table);
+  
+  // Apply filters
+  if (includeAll) {
+    // Return both tables and rooms - no filter
+  } else if (roomsOnly) {
+    tables = tables.filter((t) => t.tableType === TABLE_TYPES.RM);
+  } else if (tablesOnly) {
+    tables = tables.filter((t) => t.tableType === TABLE_TYPES.TB);
+  }
+  
+  // Sort by table/room number
+  return tables.sort((a, b) => {
+    const numA = parseInt(a.tableNumber) || 0;
+    const numB = parseInt(b.tableNumber) || 0;
+    return numA - numB;
+  });
+},
 
   /**
    * Transform single table

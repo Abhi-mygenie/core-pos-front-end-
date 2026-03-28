@@ -7,13 +7,15 @@ import { fromAPI } from '../transforms/orderTransform';
 /**
  * Fetch running orders
  * @param {string} roleName - 'Manager' for all roles except 'Waiter'
- * @returns {Promise<Array>} - Transformed orders list (room orders excluded)
+ * @param {Object} options - Transform options
+ * @param {boolean} options.includeRooms - If true, include room orders
+ * @returns {Promise<Array>} - Transformed orders list
  */
-export const getRunningOrders = async (roleName = 'Manager') => {
+export const getRunningOrders = async (roleName = 'Manager', options = {}) => {
   const response = await api.get(API_ENDPOINTS.RUNNING_ORDERS, {
     params: { role_name: roleName },
   });
-  return fromAPI.orderList(response.data.orders || []);
+  return fromAPI.orderList(response.data.orders || [], options);
 };
 
 /**
