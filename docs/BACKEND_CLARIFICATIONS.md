@@ -1,7 +1,7 @@
 # Backend Clarifications & Open Questions
 
 > Last Updated: 2026-03-24
-> Status: Phase 1 Part B+ — Running orders integrated, Unified OrderCard built, 3-zone header layout
+> Status: Phase 1C Planning — Table operations, order/item cancel, out-of-menu items
 
 ---
 
@@ -280,7 +280,172 @@ Staff clicks Accept to confirm the entire order.
 
 ---
 
+## Status Field Clarifications
+
+### Q10: Order Status vs Food Status vs F_Order_Status — NEEDS CLARIFICATION
+
+**Observation:** There are multiple "status" fields causing confusion:
+
+| Field | Level | Description | Values |
+|-------|-------|-------------|--------|
+| `order_status` | Order | Lifecycle stage of the entire order | `"queue"` (active), `"delivered"` (completed) |
+| `f_order_status` | Order | Food preparation status for the order | 1-9 (see Q1 above) |
+| `food_status` | Item | Individual item preparation status | 1-7 (same scale as f_order_status) |
+| `b_order_status` | Order | Bar station status | Deferred to Phase 1C |
+| `k_order_status` | Order | Kitchen station status | Deferred to Phase 1C |
+
+**Key Differences:**
+- `order_status` = Is the order active or completed? (queue vs delivered)
+- `f_order_status` = What's the overall food status? (preparing, ready, served, paid)
+- `food_status` = What's THIS item's status? (each item can be at different stage)
+
+**Open Questions:**
+1. When does `order_status` change from `"queue"` to `"delivered"`? After payment? After all items served?
+2. Can `f_order_status` and `food_status` values differ? (e.g., order is "Ready" but some items still "Preparing")?
+3. How do `b_order_status` and `k_order_status` interact with `f_order_status`?
+
+**Status:** NEEDS CLARIFICATION from backend team
+
+---
+
+### Q11: Default Configuration (`def_ord_status` and `configuration`) — NEEDS CLARIFICATION
+
+**Observation:** Two restaurant fields control order/item behavior:
+
+| Field | Sample Value | Purpose |
+|-------|--------------|---------|
+| `def_ord_status` | `2` | Default status for new items |
+| `configuration` | `"Simple"` | Restaurant configuration type |
+
+**`def_ord_status` Values (Hypothesis):**
+| Value | Label | Behavior |
+|-------|-------|----------|
+| 1 | Preparing | Items start as "Preparing", need manual Ready → Serve flow |
+| 2 | Ready | Items start as "Ready", simpler flow (current Mygenie Dev setting) |
+| 5 | Served | Items auto-marked served? (needs confirmation) |
+
+**`configuration` Values (Hypothesis):**
+| Value | Description |
+|-------|-------------|
+| `"Simple"` | Basic flow: Order → Ready → Serve → Bill → Pay |
+| `"Kitchen"` | Kitchen display integration with station-level tracking |
+| `"Full"` | Full workflow with KDS + Bar + Kitchen stations |
+
+**Impact on UI:**
+- `def_ord_status = 2 (Ready)` → Repeat item = increment qty on same row
+- `def_ord_status = 1 (Preparing)` → Repeat item = new row (for stage tracking)
+- `configuration = "Simple"` → Hide KDS/station-level status columns?
+
+**Open Questions:**
+1. What are all possible values for `configuration`?
+2. How does `configuration` affect the UI workflow?
+3. Does `configuration` affect which status fields are used?
+
+**Status:** NEEDS CLARIFICATION from backend team
+
+---
+
+## Parked Changes — Pending Clarification
+
+### P1: CHG-007 — Status 9 Impact on Orders List (PARKED)
+**Context:** f_order_status = 9 is a scheduled order. In table view it should show as:
+- Dine-in → `reserved` table card (amber border, Seat button)
+- TakeAway/Delivery → virtual "Scheduled" card
+
+**Why Parked:**
+Adding `9: 'scheduled'` to the shared `F_ORDER_STATUS` constant would also change `order.status` for status 9 orders in the order view (OrderCard). Need to confirm:
+
+1. Does the `employee-orders-list` API return status 9 (scheduled) orders at all? (If `order_status = 'queue'` filter excludes them, there is no clash)
+2. If status 9 orders DO appear in the orders list — what should the OrderCard show for them?
+3. Safe implementation path confirmed: handle status 9 directly in `mapTableStatus()` only (bypassing shared `F_ORDER_STATUS`) to guarantee zero impact on order view.
+
+**Test Required:** Login with an account that has a scheduled order (f_order_status=9) and verify:
+- Does it appear in the running orders list?
+- Does it appear as a table card?
+
+**Status:** OPEN — Test with real scheduled order data before implementing
+
+---
+
 ## Next Steps
+
+### Phase 1C — Table Operations & Order Management
+
+| # | Feature | API Required | UI Status |
+|---|---------|--------------|-----------|
+| 1 | Merge Table | `POST /api/v1/vendoremployee/pos/merge-tables` | ✅ Modal built |
+| 2 | Shift Table | `POST /api/v1/vendoremployee/pos/shift-table` | ✅ Modal built |
+| 3 | Food Transfer | `POST /api/v1/vendoremployee/pos/transfer-item` | ✅ Modal built |
+| 4 | Cancel Item | `POST /api/v1/vendoremployee/pos/cancel-item` | ✅ Modal built (with qty selector) |
+| 5 | Cancel Order | `POST /api/v1/vendoremployee/pos/cancel-order` | ❌ Modal needed |
+| 6 | Add Out of Menu Item | `POST /api/v1/vendoremployee/pos/add-custom-item` | ❌ UI needed |
+
+**Expected API Payloads:**
+
+**Merge Table:**
+```json
+{
+  "primary_table_id": 123,
+  "merge_table_ids": [124, 125],
+  "order_id": 456
+}
+```
+
+**Shift Table:**
+```json
+{
+  "from_table_id": 123,
+  "to_table_id": 124,
+  "order_id": 456
+}
+```
+
+**Transfer Food:**
+```json
+{
+  "item_id": 789,
+  "from_order_id": 456,
+  "to_order_id": 457,
+  "quantity": 1,
+  "switch_notes": true
+}
+```
+
+**Cancel Item:**
+```json
+{
+  "order_id": 456,
+  "item_id": 789,
+  "cancel_quantity": 1,
+  "reason_id": 1,
+  "notes": "Customer request"
+}
+```
+
+**Cancel Order:**
+```json
+{
+  "order_id": 456,
+  "reason_id": 1,
+  "notes": "Customer left"
+}
+```
+
+**Add Out of Menu Item:**
+```json
+{
+  "order_id": 456,
+  "item_name": "Special Request Dish",
+  "price": 250,
+  "quantity": 1,
+  "notes": "No onions"
+}
+```
+
+---
+
+### Other Pending Items
+### Other Pending Items
 1. ~~Implement Phase 1B: Build orderService.js, orderTransform.js, OrderContext.jsx for running orders~~ DONE
 2. Confirm `f_order_status` values 4 and 9 from user (Q6) — **Status 8 confirmed as "paid via gateway"**
 3. ~~Confirm order_status field purpose~~ DONE (Q2)
@@ -288,10 +453,210 @@ Staff clicks Accept to confirm the entire order.
 5. Audit product `veg` field values for data quality (B7)
 6. Test with non-owner role accounts to verify permission gating
 7. Formalize `add_ons` transform in Phase 2 to avoid fragile raw passthrough (B8)
-8. Provide APIs for Merge Table, Shift Table, and Transfer Food operations (UI already built)
-9. Phase 1C: Map `b_order_status` and `k_order_status` station-level statuses
+8. ~~Provide APIs for Merge Table, Shift Table, and Transfer Food operations~~ → **Phase 1C**
+9. ~~Phase 1C: Map `b_order_status` and `k_order_status` station-level statuses~~ → **Deferred**
 10. Phase 2: Map room orders (`rtype="RM"`) with `associated_order_list` and `room_info`
 11. Fix f_order_status=8 label from "running" to correct label (e.g., "Paid Online")
 12. Verify Swiggy/Zomato `order_in` values with actual aggregator order data (Q8)
 13. Implement POST APIs for item-level actions (Ready, Serve, Cancel) — currently console.log only
 14. Implement POST API for order-level Accept/Reject — currently console.log only
+15. **Clarify Q10: Order Status vs Food Status vs F_Order_Status differences**
+16. **Clarify Q11: `def_ord_status` and `configuration` values and their impact**
+
+
+---
+
+## B25: `isActive` vs `isDisabled` — Product Visibility in POS
+
+**Context:** Two separate boolean fields control product visibility in POS order entry:
+
+| Field | API Field | Value | Meaning | POS Behavior |
+|---|---|---|---|---|
+| `isActive` | `status` | `1`=active, `0`=inactive | Product lifecycle enabled by admin | Only `status=1` products loaded at all |
+| `isDisabled` | `is_disable` | `Y/1`=hidden | Active but hidden from POS (waiter cannot see) | Shown in Menu Mgmt with "Hidden from POS" label, NOT in order screen |
+
+**Combined filter for order screen:** `isActive && !isDisabled`
+
+**Note:** `isDisabled` is different from `stock_out` — stock_out shows item as greyed/unavailable, is_disable hides it entirely.
+
+**Status:** CONFIRMED (see B1b)
+
+---
+
+## B26: `food_for` — POS Menu Type Filter
+
+**Context:** Products have a `food_for` field that indicates which menu they belong to.
+
+| `food_for` | Meaning | Phase 1/2 POS |
+|---|---|---|
+| `"Normal"` | Regular à la carte menu | ✅ Show |
+| `"Buffet"` | Buffet menu items | ❌ Hide |
+| `"HappyHour"` | Happy hour menu | ❌ Hide |
+
+**Current Rule:** Only `food_for === "Normal"` products are loaded into `MenuContext.products`.
+Applied at `productTransform.fromAPI.productList()` — affects ALL consumers (POS, Menu Management, suggestions).
+
+**Phase 3:** Multiple menu support — users will be able to switch between Normal/Buffet/HappyHour menus. `food_for` filter will become dynamic.
+
+**Add Out of Menu Item Rule:** Cannot add an item with the same name as an existing Normal menu item (same `food_for` = same namespace, no duplicates).
+
+**Status:** IMPLEMENTED — filter added to productTransform
+
+
+---
+
+## B24: Real-time Socket + get-single-order-new — PARKED
+
+**Context:** Backend has a `POST /api/v2/vendoremployee/get-single-order-new` endpoint that returns fresh data for a single order (same structure as `employee-orders-list`). A socket fires an event with `order_id` whenever an order is updated.
+
+**Planned Flow:**
+```
+Socket event { order_id } → getSingleOrder(order_id) → updateSingleOrder(fresh) → UI refreshes
+```
+
+**What needs to be built:**
+1. `orderService.getSingleOrder(orderId)` — calls `get-single-order-new`, reuses `fromAPI.order()` transform
+2. `OrderContext.updateSingleOrder(freshOrder)` — replaces specific order in array
+3. Socket listener — connects on login, fires `updateSingleOrder` on each event
+
+**Socket technology:** Not yet confirmed — likely Firebase FCM (`firebase_token` + `zone_wise_topic` in auth response) or Pusher/Laravel Echo. Need backend team to share channel name + event name.
+
+**Solves:** B22 (stale data after table ops), real-time item status, real-time table occupancy
+
+**Status:** PARKED — implement after socket technology confirmed
+
+
+---
+
+## B23: Merge Table — Why We Use OrderContext Instead of `engage` Status
+
+**Context:** For Shift Table, we call `GET /all-table-list` fresh and filter by `engage=No` to show free tables. For Merge Table, we do NOT use `engage` status from the table list API.
+
+**Why NOT `engage` for Merge:**
+The Merge Table API (`POST /api/v2/vendoremployee/transfer-order`) requires `target_order_id` — the **order ID** of the destination table. The `all-table-list` API only returns table configuration (`engage=Yes/No`) but **does NOT return order IDs**.
+
+To get `target_order_id`, we must know which order is running on the target table. This data is already loaded in `OrderContext` (`orders` array, each with `tableId` and `orderId`).
+
+**Decision:** For Merge Table modal, show tables that have a matching entry in `OrderContext` (i.e., tables with a running order), excluding the current table. No additional API call needed.
+
+```js
+// How target_order_id is resolved
+const targetOrder = orders.find(o => o.tableId === selectedTable.tableId);
+const target_order_id = targetOrder?.orderId;
+```
+
+**Why this is safe:**
+- `OrderContext` is loaded fresh at login
+- It reflects the actual running orders at that point in time
+- In a multi-user scenario, stale data risk exists (see B22) — same refresh strategy applies after merge
+
+**Status:** CONFIRMED — design decision logged
+
+
+---
+
+## B22: Get Single Order API After Table Activity — NEEDS CLARIFICATION
+
+**Context:** Phase 1C table operations (Shift, Merge, Transfer Food, Cancel Item, Cancel Order) all POST to the backend and return a simple success message. After these operations, the frontend currently has **stale order data** in `OrderContext`.
+
+**Question:**
+After performing any table operation (shift, merge, transfer, cancel), should the frontend:
+
+**Option A — Call `GET single order` API**
+- Fetch the updated order by `order_id` to refresh only that order in context
+- Requires a dedicated endpoint like `GET /api/v1/vendoremployee/pos/order/{order_id}`
+- More efficient — only refreshes the affected order
+
+**Option B — Re-fetch all running orders**
+- Call `GET /api/v1/vendoremployee/pos/employee-orders-list` again
+- Refreshes entire orders list
+- Simpler but heavier — refetches all orders
+
+**Option C — No refresh (user manually refreshes)**
+- Accept stale data until user navigates away and back
+- Simplest but poor UX in multi-user scenario
+
+**Impact:** Affects UX after every Phase 1C operation. In a multi-user POS environment, stale data can cause incorrect table status display.
+
+**Priority:** P0 — must be resolved before Phase 1C operations go live
+
+**Current workaround:** User must re-login to see updated table state after a shift.
+
+**Status:** OPEN — awaiting backend team response on available endpoint and recommended approach
+
+---
+
+## B27: place-order-and-payment — Missing Fields Discovery (Sprint 3)
+
+**Context:** The original `place-order-and-payment` curl example had minimal fields. During testing, the API returned sequential 500 errors revealing 15+ required fields not in the documentation.
+
+**Discovered Fields (ORDER LEVEL — not cart items):**
+- `vat_tax`, `gst_tax`, `service_tax`, `service_gst_tax_amount`
+- `discount`, `discount_type`, `restaurant_discount_amount`, `order_discount`
+- `comunity_discount`, `discount_value` (NOTE: "comunity" typo in DB)
+- `tip_amount`, `tip_tax_amount`, `round_up`
+- `order_sub_total_amount`, `order_total_tax_amount`
+
+**Critical:** `vat_tax` must be at ORDER level — NOT inside cart items array.
+
+**Status:** RESOLVED — all fields added to `toAPI.collectBill()` transform
+
+---
+
+## B28: order-bill-payment — Missing Discount Fields (Sprint 3)
+
+**Context:** `order-bill-payment` (Clear Bill) original curl did not include discount fields. SQL error revealed they are required (cannot be null).
+
+**Required fields not in original docs:**
+- `restaurant_discount_amount` — manual discount ₹ amount (flat result of % or flat discount)
+- `order_discount` — discount percentage value (e.g., 5 for 5%)
+- `comunity_discount` — community/preset discount ₹ amount
+- `discount_value` — total flat discount ₹ amount
+
+**Mapping confirmed:**
+- `discount_value` = actual flat rupee amount (user confirmed)
+- `order_discount` = percentage value entered (0 if flat mode)
+- `restaurant_discount_amount` = calculated ₹ discount
+- `comunity_discount` = ₹ from restaurant preset discount types
+
+**Status:** RESOLVED — all fields added to `toAPI.clearBill()` transform
+
+---
+
+## B29: Discount UI Modes (Sprint 3)
+
+**Discount UI has 3 modes:**
+1. **% (percentage):** user enters %, frontend calculates ₹ amount → `discount_type: "percent"`, `order_discount: %`, `discount_value: ₹ amount`
+2. **₹ (flat):** user enters ₹ directly → `discount_type: "flat"`, `order_discount: 0`, `discount_value: ₹ amount`
+3. **Community/preset:** fixed % from restaurant discount types backend → `comunity_discount: ₹ amount`
+
+**Status:** CONFIRMED
+
+---
+
+## B30: Payment Mode Mapping — UI vs API (Sprint 3)
+
+| UI Label | API `payment_mode` | Extra fields |
+|---|---|---|
+| Cash | `cash` | none |
+| Card | `card` | `transaction_id` |
+| UPI | `upi` | `transaction_id` |
+| Credit | `TAB` | `mobile` or `email` |
+| Split | `partial` | `partial_payments[]` |
+
+**Status:** CONFIRMED by user
+
+---
+
+## B31: Two Collect Bill Scenarios (Sprint 3)
+
+**Decision logic in `OrderEntry.handlePaymentComplete`:**
+- `placedOrderId` exists → Scenario 1 → `POST /order-bill-payment` (collect on existing order)
+- `placedOrderId` is null → Scenario 2 → `POST /place-order-and-payment` (create order + pay)
+
+**CollectPaymentPanel bill data:**
+- Scenario 1: calculated locally from cart items (existing order's placed items)
+- Scenario 2: calculated locally from unplaced cart items
+- NOT fetching from `get-single-order-new` (Phase 3 via socket)
+
+**Status:** CONFIRMED — both flows implemented and tested

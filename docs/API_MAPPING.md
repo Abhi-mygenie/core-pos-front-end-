@@ -1,7 +1,210 @@
 # API Field Mapping Document
 
-> Last Updated: 2026-03-24
-> Status: Phase 1 Part A+B — All transforms done. Running Orders fully integrated. Unified grid/list views with channel filtering.
+> Last Updated: 2026-03-27
+> Status: Phase 1C — Shift Table, Merge Table, Transfer Food wired to real APIs via toAPI transform layer. Cancel Item code complete (parked — 404 from backend needs investigation).
+
+---
+
+## Phase 1C — New Endpoints Added
+
+### `POST /api/v1/vendoremployee/pos/order-table-room-switch` — Shift Table
+**Transform:** `tableTransform.toAPI.shiftTable(currentTable, targetTable)`
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `order_id` | `currentTable.orderId` | Current order ID |
+| `old_table_id` | `currentTable.tableId` | Table shifting FROM |
+| `new_table_id` | `targetTable.tableId` | Selected free table |
+| `order_edit_count` | `currentTable.amount` | Grand total of existing order (`order_amount`) |
+
+---
+
+### `POST /api/v2/vendoremployee/transfer-order` — Merge Table
+**Transform:** `tableTransform.toAPI.mergeTable(currentTable, sourceOrder)`
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `source_order_id` | `sourceOrder.orderId` | Order being dissolved (selected table) |
+| `target_order_id` | `currentTable.orderId` | Current table — survives merge |
+| `transfer_note` | `"Yes"` (fixed) | Always transfers notes |
+
+Called once per selected source table (multi-select = N sequential calls).
+
+---
+
+### `POST /api/v2/vendoremployee/transfer-food-item` — Transfer Food Item
+**Transform:** `tableTransform.toAPI.transferFood(currentTable, targetOrder, item)`
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `source_order_id` | `currentTable.orderId` | Order item is coming FROM |
+| `target_order_id` | `targetOrder.orderId` (OrderContext lookup) | Order item is going TO |
+| `food_item_id` | `item.id` | `orderDetails[].id` — order line item |
+
+---
+
+### `PUT /api/v2/vendoremployee/cancel-food-item` — Cancel Item (Full) ⏸️ PARKED
+**Transform:** `orderTransform.toAPI.cancelItemFull(currentTable, item, reason)`
+**Status:** Code implemented, API returns 404 — needs backend investigation
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `order_id` | `currentTable.orderId` | Order ID |
+| `order_food_id` | `item.id` | `orderDetails[].id` |
+| `item_id` | `item.foodId` | `food_details.id` (catalog ID) |
+| `order_status` | `"cancelled"` (fixed) | Always cancelled |
+| `reason_type` | `"customer"` (fixed) | Always customer |
+| `reason` | `reason.reasonText` | From cancellation reasons API |
+| `cancel_type` | `"full"` (fixed) | Full cancel |
+
+---
+
+### `POST /api/v2/vendoremployee/restaurant-customer-list` — Customer Search (CHG-036)
+**Transform:** `customerTransform.toAPI.searchCustomer(query)` + `customerTransform.fromAPI.customerList()`
+
+| Direction | Field | Notes |
+|---|---|---|
+| Request | `key: [query]` | Array with search term (phone or name) |
+| Response | `customer_list[].id` → `customerId` | |
+| Response | `customer_list[].customer_name` → `name` | Full name (NOT f_name/l_name) |
+| Response | `customer_list[].phone` → `phone` | |
+| Parked (Phase 3) | loyalty_point, wallet_balance, date_of_birth, anniversary, membership_id | |
+
+---
+
+### `POST /api/v2/vendoremployee/pos/place-order` — Place Order (CHG-037)
+**Transform:** `orderTransform.toAPI.placeOrder(table, cartItems, customer, orderType, options)`
+**CRITICAL:** Uses `application/x-www-form-urlencoded` with `data` key (NOT JSON) — must set explicit Content-Type header in Axios call
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `restaurant_id` | `restaurant.id` from RestaurantContext | |
+| `cust_name` | `customer?.name \|\| (walkIn ? 'Walk-In Customer' : '')` | Empty for dineIn with no customer |
+| `order_type` | `dineIn/walkIn→"dinein"`, `takeAway→"take_away"`, `delivery→"delivery"` | |
+| `order_note` | `orderNotes.map(n => n.label).join(', ')` | |
+| `order_amount` | `total` | Computed in OrderEntry |
+| `payment_method` | `"cash_on_delivery"` | Fixed default |
+| `table_id` | `table.tableId \|\| 0` | 0 for walk-in |
+| `print_kot` | `printAllKOT ? "Yes" : "No"` | From KOT toggle |
+| `cart[].food_id` | `item.id` | Product catalog ID |
+| `cart[].quantity` | `item.qty` | |
+| `cart[].price` | `item.price` | Unit price |
+| `cart[].station` | `item.station.toUpperCase()` | |
+| `cart[].addons_total` | Sum of `addon.price × addon.qty` | 0 if no addons |
+| `cart[].variation_total` | `selectedSize?.price \|\| 0` | 0 if no variations |
+
+**Response:** `{ message: "Order placed successfully!", order_id: 695793 }`
+
+---
+**Transform:** `orderTransform.toAPI.cancelOrderItem(currentTable, item, reason)`
+**Called once per non-cancelled placed item — N items = N calls**
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `order_id` | `currentTable.orderId` | Order ID |
+| `order_food_id` | `item.foodId` | food_details.id (catalog) |
+| `item_id` | `item.id` | orderDetails[].id |
+| `order_status` | `"cancelled"` (fixed) | Always cancelled |
+| `reason_type` | `reason.reasonId` (int) | Order-level reason ID |
+| `reason` | `reason.reasonText` | Reason text |
+| `cancel_type` | `"Pre-Serve"` or `"Post-Serve"` | Based on item.status: preparing→Pre-Serve, ready/served→Post-Serve |
+
+---
+**Transform:** `orderTransform.toAPI.cancelItemPartial(currentTable, item, reason, cancelQty)`
+**Status:** Code implemented, needs backend testing
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `order_id` | `currentTable.orderId` | Order ID |
+| `order_food_id` | `item.id` | `orderDetails[].id` |
+| `cancel_qty` | `cancelQty` | User-selected qty from modal |
+| `order_status` | `"cancelled"` (fixed) | Always cancelled |
+| `reason_type` | `reason.reasonId` (int) | Reason ID from cancellation reasons |
+| `reason` | `reason.reasonText` | From cancellation reasons API |
+| `cancel_type` | `"partial"` (fixed) | Partial cancel |
+
+---
+
+---
+
+## UI Components — Data Requirements
+
+### Table Operation Modals (Currently Mock Data)
+
+These modals are built and functional but use mock data. Backend APIs needed.
+
+#### Transfer Food Modal (`TransferFoodModal.jsx`)
+**Purpose:** Transfer a food item from current table to another occupied table
+**Data Source:** `mockTables` (mock) — needs real table data from `tableService`
+**Tables Shown:** Only `occupied` and `billReady` status
+**Required API:** POST endpoint to transfer item between orders
+
+| UI Element | Data Field | Source |
+|------------|------------|--------|
+| Table card | `table.id`, `table.label` | mockTables |
+| Capacity | `table.capacity` | mockTables |
+| Status dot | `table.status` | mockTables |
+| Order amount | `table.amount` | mockTables |
+| Area section | `area.name` | mockTables |
+
+**Output Payload:**
+```js
+{
+  item: { id, name, ... },
+  toTable: { id, label, ... },
+  switchNotes: boolean
+}
+```
+
+#### Merge Table Modal (`MergeTableModal.jsx`)
+**Purpose:** Combine bills from multiple occupied tables
+**Data Source:** `mockTables` (mock)
+**Tables Shown:** Only `occupied`, `billReady`, `paid` status
+**Selection:** Multi-select
+**Required API:** POST endpoint to merge table orders
+
+**Output Payload:**
+```js
+{
+  primaryTable: { id, ... },
+  mergeTables: [{ id, amount, ... }, ...],
+  combinedBill: number
+}
+```
+
+#### Shift Table Modal (`ShiftTableModal.jsx`)
+**Purpose:** Move entire order to a different (empty) table
+**Data Source:** `mockTables` (mock)
+**Tables Shown:** Only `available` and `reserved` status
+**Selection:** Single select
+**Required API:** POST endpoint to shift order to new table
+
+**Output Payload:**
+```js
+{
+  fromTable: { id, ... },
+  toTable: { id, ... }
+}
+```
+
+#### Cancel Food Modal (`CancelFoodModal.jsx`)
+**Purpose:** Cancel item(s) from order with reason
+**Data Source:** `cancellationReasons` (mock) — needs real data from `settingsService.getCancellationReasons()`
+**Features:** 
+- Quantity selector when `item.qty > 1`
+- Reason dropdown (required)
+- Additional notes (optional)
+
+**Output Payload:**
+```js
+{
+  item: { id, name, qty, ... },
+  reason: { id, label },
+  notes: string,
+  cancelQuantity: number,
+  remainingQuantity: number
+}
+```
 
 ---
 
@@ -423,7 +626,8 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 
 | API Field | Frontend Field | Used in Transform | UI Location | Status |
 |---|---|---|---|---|
-| `id` | `id` | Yes | CartPanel item key + status tracking | Mapped |
+| `id` | `id` | Yes | CartPanel item key + `order_food_id` in cancel APIs | Mapped |
+| `food_details.id` | `foodId` | Yes | `item_id` in full cancel API | Mapped |
 | `food_details.name` | `name` | Yes | CartPanel item name | Mapped |
 | `quantity` | `qty` | Yes | CartPanel item quantity | Mapped |
 | `price` | `price` | Yes | CartPanel total price (qty × unit) | Mapped |
@@ -553,3 +757,46 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | Cancellation Reasons | 8 | 8 | 4 (Settings → Cancellation Reasons) | 0 |
 | Popular Food | (same as Products) | (same) | Used in Order Entry "Popular" tab | 0 |
 | **Running Orders** | **25+ per order** | **25+** | **Dashboard grid/list cards + CartPanel items + customer data** | **3 (b_order_status, k_order_status, associated_order_list)** |
+
+---
+
+## UI Components Status
+
+| Component | Modal Design | Data Source | API Connected | Notes |
+|-----------|--------------|-------------|---------------|-------|
+| ItemCustomizationModal | ✅ Complete | Products API | ✅ Yes | Variants, addons, notes |
+| TransferFoodModal | ✅ Complete | OrderContext | ✅ Yes | `POST /transfer-food-item` |
+| MergeTableModal | ✅ Complete | OrderContext | ✅ Yes | `POST /transfer-order` |
+| ShiftTableModal | ✅ Complete | Table API (live) | ✅ Yes | `POST /order-table-room-switch` |
+| CancelFoodModal | ✅ Complete | SettingsContext | ✅ Yes | `PUT /cancel-food-item` + `partial-cancel-food-item` |
+| CancelOrderModal | ✅ Complete | SettingsContext | ✅ Yes | `PUT /food-status-update` (Pre-Serve/Post-Serve) |
+| AddCustomItemModal | ✅ Complete | MenuContext | ✅ Yes | `POST /add-single-product` |
+| CustomerModal | ✅ Complete | CustomerService | ✅ Yes | `POST /restaurant-customer-list` |
+| CollectPaymentPanel | ✅ Complete | Local calc + API | ✅ Yes | Scenario 1: `POST /order-bill-payment` \| Scenario 2: `POST /place-order-and-payment` |
+| ItemNotesModal | ✅ Complete | Local state | N/A | Item-level notes |
+| OrderNotesModal | ✅ Complete | Local state | N/A | Order-level notes |
+
+---
+
+## Sprint 3 — Order Taking Endpoints
+
+| # | Feature | Endpoint | Method | Status |
+|---|---------|----------|--------|--------|
+| CHG-036 | Customer Lookup | `/api/v2/vendoremployee/restaurant-customer-list` | POST JSON | ✅ Done |
+| CHG-037 | Place Order (new) | `/api/v2/vendoremployee/pos/place-order` | POST form-urlencoded | ✅ Done |
+| CHG-038 Sc1 | Collect Bill (existing) | `/api/v2/vendoremployee/order-bill-payment` | POST JSON | ✅ Done |
+| CHG-038 Sc2 | Place+Pay (fresh) | `/api/v1/vendoremployee/pos/place-order-and-payment` | POST form-urlencoded | ✅ Done |
+| CHG-040 | Update Order | `/api/v2/vendoremployee/pos/update-place-order` | PUT JSON | ✅ Done |
+
+---
+
+## Pending Backend APIs
+
+| Operation | Real Endpoint | Method | Status |
+|-----------|--------------|--------|--------|
+| Cancel Item (Full) | `/api/v2/vendoremployee/cancel-food-item` | PUT | ✅ Done |
+| Cancel Item (Partial) | `/api/v2/vendoremployee/partial-cancel-food-item` | PUT | ✅ Done |
+| Cancel Order | `/api/v2/vendoremployee/food-status-update` | PUT | ✅ Done |
+| Item Ready / Serve | `/api/v2/vendoremployee/food-status-update` | PUT | 🔵 Not wired (same endpoint) |
+| Accept / Reject Order | TBD | TBD | 🔵 Endpoint not provided |
+| Add to Existing Order | TBD | TBD | 🔵 Endpoint not provided |
