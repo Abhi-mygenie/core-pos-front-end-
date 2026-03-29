@@ -103,20 +103,17 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
         {/* Active content */}
         {isActive && (
           <div className="mt-2.5 flex-1 flex flex-col">
-            {/* Customer Name - Show NA if not captured */}
+            {/* Primary name — Rooms: customer, Tables: waiter */}
             <div className="text-lg font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.darkText }}>
               {table.status === "reserved" 
                 ? table.reservedFor 
-                : orderData.customer 
-                  ? orderData.customer 
-                  : "NA"}
+                : table.isRoom
+                  ? (table.customer || 'NA')
+                  : (table.waiter || 'NA')}
             </div>
             
-            {/* Waiter + Time on one line */}
+            {/* Time */}
             <div className="text-sm mt-1 mb-2 whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.grayText }}>
-              {(hasOrders || isYetToConfirm) && orderData.waiter && (
-                <span>{orderData.waiter} · </span>
-              )}
               <span>{table.status === "reserved" ? table.reservedTime : table.time}</span>
             </div>
 

@@ -190,6 +190,7 @@ const DashboardPage = () => {
         orderNumber: hasOrder ? order.orderNumber : undefined,
         fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
         orderId: hasOrder ? order.orderId : undefined,
+        waiter: hasOrder ? order.waiter : undefined,
       };
     };
 
@@ -285,6 +286,7 @@ const DashboardPage = () => {
           orderNumber: hasOrder ? order.orderNumber : undefined,
           fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
           orderId: hasOrder ? order.orderId : undefined,
+          customer: hasOrder ? order.customer : undefined,
         };
       });
   }, [tablesLoaded, apiTables, getOrderByTableId]);
