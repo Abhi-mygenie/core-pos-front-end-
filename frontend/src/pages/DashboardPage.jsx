@@ -741,13 +741,14 @@ const DashboardPage = () => {
           />
         )}
 
-        {/* Room Check-In Modal (Phase 2A — Step 8) */}
+        {/* Room Check-In Panel (Phase 2A — Step 8) */}
         {checkInRoom && (
           <RoomCheckInModal
             room={checkInRoom}
             availableRooms={allRoomsList.filter(r => r.status === 'available')}
             onClose={() => setCheckInRoom(null)}
             onSuccess={() => setCheckInRoom(null)}
+            sidebarWidth={sidebarExpanded ? 280 : 70}
           />
         )}
       </div>

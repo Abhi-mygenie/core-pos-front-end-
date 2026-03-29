@@ -72,7 +72,7 @@ const SectionLabel = ({ children }) => (
  * RoomCheckInPanel — Phase 2A Step 8
  * Full-width overlay panel, 3-column form, zero scroll.
  */
-const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => {
+const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sidebarWidth = 70 }) => {
   const { toast } = useToast();
 
   const [name, setName] = useState('');
@@ -155,8 +155,8 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
   return (
     <div
       data-testid="room-checkin-overlay"
-      className="absolute inset-0 z-30 flex flex-col"
-      style={{ backgroundColor: COLORS.sectionBg }}
+      className="fixed top-0 right-0 bottom-0 z-30 flex flex-col"
+      style={{ left: sidebarWidth, backgroundColor: COLORS.sectionBg }}
     >
       {/* ─── Header ─── */}
       <div
