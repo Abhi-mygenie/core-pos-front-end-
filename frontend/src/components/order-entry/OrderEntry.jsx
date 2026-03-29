@@ -553,6 +553,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               cartItems={cartItems}
               total={total}
               customer={customer}
+              isRoom={table?.isRoom}
               onBack={() => setShowPaymentPanel(false)}
               onPaymentComplete={async (paymentData) => {
                 try {

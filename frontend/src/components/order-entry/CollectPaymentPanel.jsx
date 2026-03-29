@@ -3,7 +3,7 @@ import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check }
 import { COLORS } from "../../constants";
 import { useRestaurant } from "../../contexts";
 
-const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer }) => {
+const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer, isRoom }) => {
   const customer = passedCustomer;
   const { discountTypes } = useRestaurant();
 
@@ -482,10 +482,10 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
             ))}
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
+          <div className={isRoom ? "" : "grid grid-cols-2 gap-2"}>
             <button
               onClick={() => { setShowSplit(!showSplit); if (!showSplit) setSplitType("payment"); }}
-              className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors"
+              className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors w-full"
               style={{
                 borderColor: showSplit ? COLORS.primaryGreen : COLORS.borderGray,
                 backgroundColor: showSplit ? `${COLORS.primaryGreen}10` : "white",
@@ -495,6 +495,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               <Split className="w-4 h-4" style={{ color: showSplit ? COLORS.primaryGreen : COLORS.grayText }} />
               <span className="text-xs" style={{ color: showSplit ? COLORS.primaryGreen : COLORS.darkText }}>Split</span>
             </button>
+            {!isRoom && (
             <button
               onClick={() => { setPaymentMethod("credit"); setShowSplit(false); setSplitType(null); }}
               className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors"
@@ -507,6 +508,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               <FileText className="w-4 h-4" style={{ color: paymentMethod === "credit" && !showSplit ? COLORS.primaryGreen : COLORS.grayText }} />
               <span className="text-xs" style={{ color: paymentMethod === "credit" && !showSplit ? COLORS.primaryGreen : COLORS.darkText }}>Credit</span>
             </button>
+            )}
           </div>
 
           {/* Split Options */}
