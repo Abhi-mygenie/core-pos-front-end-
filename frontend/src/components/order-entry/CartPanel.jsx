@@ -215,6 +215,7 @@ const CartPanel = ({
   onCustomerChange,
   onClearCart,
   onDeleteItem,
+  isRoom,
 }) => {
   const newItemCount = cartItems.filter(i => !i.placed).length;
   const [customerName, setCustomerName] = useState(customer?.name || "");
@@ -509,7 +510,7 @@ const CartPanel = ({
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           style={{ backgroundColor: "#2E7D32" }}
         >
-          <span>Collect Bill</span>
+          <span>{isRoom ? 'Checkout' : 'Collect Bill'}</span>
           <span>₹{total.toLocaleString()}</span>
         </button>
       </div>

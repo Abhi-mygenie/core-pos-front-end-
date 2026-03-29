@@ -168,7 +168,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           <ChevronLeft className="w-5 h-5" style={{ color: COLORS.primaryOrange }} />
         </button>
         <span className="font-semibold" style={{ color: COLORS.darkText }}>
-          Collect Payment
+          {isRoom ? 'Checkout' : 'Collect Payment'}
         </span>
         <span className="ml-auto text-sm" style={{ color: COLORS.grayText }}>
           #D-108219
@@ -705,7 +705,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           style={{ backgroundColor: COLORS.primaryGreen }}
           data-testid="complete-payment-btn"
         >
-          Pay ₹{finalTotal.toLocaleString()}
+          {isRoom ? 'Checkout' : 'Pay'} ₹{finalTotal.toLocaleString()}
         </button>
       </div>
     </div>

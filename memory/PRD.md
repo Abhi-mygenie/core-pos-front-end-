@@ -17,9 +17,9 @@ Rooms behave exactly like Tables (TB), sharing the same Context architecture and
 - ✅ "Check In" order item filtering from cart/UI
 - ✅ Real customer/waiter names on cards
 - ✅ UI/CSS fixes (truncation, alignment, wrapping)
-- ✅ Step 8: RoomCheckInModal — Check-in modal with all API fields, multi-room selection
-- ⬜ Step 9: CollectPaymentPanel — Hide "Credit" & "Transfer to Room" for rooms
-- ⬜ Step 10: OrderEntry/CartPanel — "Collect" → "Checkout" for rooms
+- ✅ Step 8: RoomCheckInModal — Check-in panel with all API fields, multi-room selection
+- ✅ Step 9: CollectPaymentPanel — "Credit" hidden for rooms
+- ✅ Step 10: "Collect Bill" → "Checkout", "Collect Payment" → "Checkout", "Pay" → "Checkout" for rooms
 
 ### Phase 2B (Deferred):
 - Associated order list (transferred orders from tables to rooms)
