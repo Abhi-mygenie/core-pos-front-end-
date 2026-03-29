@@ -144,8 +144,10 @@ export const fromAPI = {
       // Source (own, swiggy, zomato, etc.)
       source: (api.order_in || 'own').toLowerCase(),
 
-      // Items
-      items: (api.orderDetails || []).map(fromAPI.orderItem),
+      // Items — filter out "Check In" system marker (room check-in representation, not a real product)
+      items: (api.orderDetails || [])
+        .filter(d => (d.food_details?.name || '').toLowerCase() !== 'check in')
+        .map(fromAPI.orderItem),
 
       // Notes
       orderNote: api.order_note || '',
