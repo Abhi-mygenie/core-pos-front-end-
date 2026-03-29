@@ -13,13 +13,13 @@ const today = () => new Date().toISOString().split('T')[0];
 
 const InputField = ({ icon: Icon, label, required, ...props }) => (
   <div>
-    <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>
+    <label className="text-[11px] font-medium mb-0.5 block" style={{ color: COLORS.grayText }}>
       {label}{required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
-    <div className="flex items-center gap-2 border rounded-lg px-3 py-2.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
-      {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />}
+    <div className="flex items-center gap-1.5 border rounded-lg px-2.5 py-1.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
+      {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />}
       <input
-        className="flex-1 outline-none text-sm bg-transparent"
+        className="flex-1 outline-none text-sm bg-transparent min-w-0"
         style={{ color: COLORS.darkText }}
         {...props}
       />
@@ -29,11 +29,11 @@ const InputField = ({ icon: Icon, label, required, ...props }) => (
 
 const SelectField = ({ icon: Icon, label, options, ...props }) => (
   <div>
-    <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>{label}</label>
-    <div className="flex items-center gap-2 border rounded-lg px-3 py-2.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
-      {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />}
+    <label className="text-[11px] font-medium mb-0.5 block" style={{ color: COLORS.grayText }}>{label}</label>
+    <div className="flex items-center gap-1.5 border rounded-lg px-2.5 py-1.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
+      {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />}
       <select
-        className="flex-1 outline-none text-sm bg-transparent"
+        className="flex-1 outline-none text-sm bg-transparent min-w-0"
         style={{ color: COLORS.darkText }}
         {...props}
       >
@@ -47,12 +47,12 @@ const SelectField = ({ icon: Icon, label, options, ...props }) => (
 
 const FileField = ({ label, accept, onChange, fileName }) => (
   <div>
-    <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>{label}</label>
+    <label className="text-[11px] font-medium mb-0.5 block" style={{ color: COLORS.grayText }}>{label}</label>
     <label
-      className="flex items-center gap-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+      className="flex items-center gap-1.5 border rounded-lg px-2.5 py-1.5 cursor-pointer hover:bg-gray-50 transition-colors"
       style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}
     >
-      <Camera className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />
+      <Camera className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
       <span className="flex-1 text-sm truncate" style={{ color: fileName ? COLORS.darkText : COLORS.grayText }}>
         {fileName || 'Choose file...'}
       </span>
@@ -62,22 +62,19 @@ const FileField = ({ label, accept, onChange, fileName }) => (
 );
 
 const SectionLabel = ({ children }) => (
-  <div className="flex items-center gap-2 mb-3">
-    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: COLORS.grayText }}>{children}</span>
+  <div className="flex items-center gap-2 mb-2">
+    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: COLORS.grayText }}>{children}</span>
     <div className="flex-1 h-px" style={{ backgroundColor: COLORS.borderGray }} />
   </div>
 );
 
 /**
  * RoomCheckInPanel — Phase 2A Step 8
- * Full-width overlay panel (covers content area, sidebar stays visible).
- * Two-column layout: Guest details left, Booking & Payment right.
- * Room selection grid at top spanning full width.
+ * Full-width overlay panel, 3-column form, zero scroll.
  */
 const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => {
   const { toast } = useToast();
 
-  // Form state
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -98,7 +95,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
   const [showIdSection, setShowIdSection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Multi-room selection
   const [selectedRoomIds, setSelectedRoomIds] = useState([room.tableId]);
 
   const otherRooms = useMemo(() =>
@@ -162,132 +158,119 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
       className="absolute inset-0 z-30 flex flex-col"
       style={{ backgroundColor: COLORS.sectionBg }}
     >
-      {/* ─── Header Bar ─── */}
+      {/* ─── Header ─── */}
       <div
-        className="flex items-center gap-4 px-6 py-4 flex-shrink-0"
+        className="flex items-center gap-3 px-5 py-2.5 flex-shrink-0"
         style={{ backgroundColor: COLORS.lightBg, borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
-        <button
-          data-testid="checkin-close-btn"
-          onClick={onClose}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
+        <button data-testid="checkin-close-btn" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
           <ArrowLeft className="w-5 h-5" style={{ color: COLORS.darkText }} />
         </button>
         <div className="flex-1">
-          <h1 className="text-lg font-bold" style={{ color: COLORS.darkText }}>Room Check-In</h1>
-          <p className="text-xs" style={{ color: COLORS.grayText }}>
-            Room {room.label}
-            {selectedRoomIds.length > 1 && ` + ${selectedRoomIds.length - 1} more`}
+          <h1 className="text-base font-bold leading-tight" style={{ color: COLORS.darkText }}>Room Check-In</h1>
+          <p className="text-[11px]" style={{ color: COLORS.grayText }}>
+            Room {room.label}{selectedRoomIds.length > 1 && ` + ${selectedRoomIds.length - 1} more`}
           </p>
         </div>
-        <button
-          onClick={onClose}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <X className="w-5 h-5" style={{ color: COLORS.grayText }} />
+        <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+          <X className="w-4 h-4" style={{ color: COLORS.grayText }} />
         </button>
       </div>
 
-      {/* ─── Scrollable Body ─── */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto">
+      {/* ─── Body (flex-1, no scroll) ─── */}
+      <div className="flex-1 flex flex-col overflow-hidden px-5 py-3">
 
-          {/* ─── Room Selection Grid (full width) ─── */}
-          {otherRooms.length > 0 && (
-            <div
-              className="rounded-xl p-5 mb-6"
-              style={{ backgroundColor: COLORS.lightBg }}
-              data-testid="room-checkin-modal"
-            >
-              <SectionLabel>Select Rooms</SectionLabel>
-              <div className="flex flex-wrap gap-2">
-                {/* Primary room — always selected */}
-                <span
-                  className="w-16 h-10 rounded-lg text-sm font-bold flex items-center justify-center"
-                  style={{ backgroundColor: COLORS.primaryOrange, color: '#fff' }}
-                >
-                  {room.label}
-                </span>
-                {otherRooms.map(r => {
-                  const sel = selectedRoomIds.includes(r.tableId);
-                  return (
-                    <button
-                      type="button"
-                      key={r.tableId}
-                      data-testid={`room-chip-${r.tableId}`}
-                      onClick={() => toggleRoom(r.tableId)}
-                      className="w-16 h-10 rounded-lg text-sm font-bold flex items-center justify-center border-2 transition-all"
-                      style={{
-                        borderColor: sel ? COLORS.primaryOrange : COLORS.borderGray,
-                        backgroundColor: sel ? COLORS.primaryOrange : '#fff',
-                        color: sel ? '#fff' : COLORS.darkText,
-                      }}
-                    >
-                      {r.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ─── Two-Column Form ─── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* LEFT COLUMN — Guest Details */}
-            <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: COLORS.lightBg }}>
-              <SectionLabel>Guest Details</SectionLabel>
-              <InputField icon={User} label="Guest Name" required placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} data-testid="checkin-name" />
-              <InputField icon={Phone} label="Phone" required placeholder="9876543210" type="tel" value={phone} onChange={e => setPhone(e.target.value)} data-testid="checkin-phone" />
-              <InputField icon={Mail} label="Email" placeholder="guest@example.com" type="email" value={email} onChange={e => setEmail(e.target.value)} data-testid="checkin-email" />
-              <div className="grid grid-cols-2 gap-3">
-                <InputField icon={Users} label="Adults" placeholder="0" type="number" min="0" value={totalAdult} onChange={e => setTotalAdult(e.target.value)} data-testid="checkin-adults" />
-                <InputField icon={Users} label="Children" placeholder="0" type="number" min="0" value={totalChildren} onChange={e => setTotalChildren(e.target.value)} data-testid="checkin-children" />
-              </div>
-
-              {/* ID & Images — collapsible */}
-              <button
-                type="button"
-                onClick={() => setShowIdSection(v => !v)}
-                className="flex items-center gap-1.5 text-xs font-medium pt-2"
-                style={{ color: COLORS.primaryOrange }}
-                data-testid="checkin-advanced-toggle"
+        {/* Room Selection Row */}
+        {otherRooms.length > 0 && (
+          <div className="flex-shrink-0 mb-3" data-testid="room-checkin-modal">
+            <SectionLabel>Select Rooms</SectionLabel>
+            <div className="flex flex-wrap gap-1.5">
+              <span
+                className="w-14 h-8 rounded-md text-xs font-bold flex items-center justify-center"
+                style={{ backgroundColor: COLORS.primaryOrange, color: '#fff' }}
               >
-                {showIdSection ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                {showIdSection ? 'Hide' : 'Show'} ID Verification
-              </button>
-              {showIdSection && (
-                <div className="space-y-4 pt-1">
-                  <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
-                  <div className="grid grid-cols-2 gap-3">
-                    <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
-                    <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
-                  </div>
-                </div>
-              )}
+                {room.label}
+              </span>
+              {otherRooms.map(r => {
+                const sel = selectedRoomIds.includes(r.tableId);
+                return (
+                  <button
+                    type="button"
+                    key={r.tableId}
+                    data-testid={`room-chip-${r.tableId}`}
+                    onClick={() => toggleRoom(r.tableId)}
+                    className="w-14 h-8 rounded-md text-xs font-bold flex items-center justify-center border-2 transition-all"
+                    style={{
+                      borderColor: sel ? COLORS.primaryOrange : COLORS.borderGray,
+                      backgroundColor: sel ? COLORS.primaryOrange : '#fff',
+                      color: sel ? '#fff' : COLORS.darkText,
+                    }}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
             </div>
+          </div>
+        )}
 
-            {/* RIGHT COLUMN — Booking & Payment */}
-            <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: COLORS.lightBg }}>
-              <SectionLabel>Booking</SectionLabel>
-              <div className="grid grid-cols-2 gap-3">
-                <SelectField label="Booking Type" options={BOOKING_TYPES} value={bookingType} onChange={e => setBookingType(e.target.value)} data-testid="checkin-booking-type" />
-                <SelectField label="Booking For" options={BOOKING_FOR} value={bookingFor} onChange={e => setBookingFor(e.target.value)} data-testid="checkin-booking-for" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <InputField icon={Calendar} label="Check-in Date" type="date" value={checkinDate} onChange={e => setCheckinDate(e.target.value)} data-testid="checkin-date" />
-                <InputField icon={Calendar} label="Checkout Date" type="date" value={checkoutDate} onChange={e => setCheckoutDate(e.target.value)} data-testid="checkout-date" />
-              </div>
+        {/* 3-Column Form Grid */}
+        <div className="flex-1 grid grid-cols-3 gap-4 min-h-0">
 
-              <SectionLabel>Payment</SectionLabel>
-              <div className="grid grid-cols-3 gap-3">
-                <InputField icon={CreditCard} label="Amount" placeholder="0" type="number" min="0" value={orderAmount} onChange={e => setOrderAmount(e.target.value)} data-testid="checkin-amount" />
-                <InputField label="Advance" placeholder="0" type="number" min="0" value={advancePayment} onChange={e => setAdvancePayment(e.target.value)} data-testid="checkin-advance" />
-                <InputField label="Balance" placeholder="0" type="number" min="0" value={balancePayment} onChange={e => setBalancePayment(e.target.value)} data-testid="checkin-balance" />
+          {/* COL 1 — Guest Details */}
+          <div className="flex flex-col space-y-2">
+            <SectionLabel>Guest</SectionLabel>
+            <InputField icon={User} label="Guest Name" required placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} data-testid="checkin-name" />
+            <InputField icon={Phone} label="Phone" required placeholder="9876543210" type="tel" value={phone} onChange={e => setPhone(e.target.value)} data-testid="checkin-phone" />
+            <InputField icon={Mail} label="Email" placeholder="guest@example.com" type="email" value={email} onChange={e => setEmail(e.target.value)} data-testid="checkin-email" />
+            <div className="grid grid-cols-2 gap-2">
+              <InputField icon={Users} label="Adults" placeholder="0" type="number" min="0" value={totalAdult} onChange={e => setTotalAdult(e.target.value)} data-testid="checkin-adults" />
+              <InputField icon={Users} label="Children" placeholder="0" type="number" min="0" value={totalChildren} onChange={e => setTotalChildren(e.target.value)} data-testid="checkin-children" />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowIdSection(v => !v)}
+              className="flex items-center gap-1 text-[11px] font-medium pt-1"
+              style={{ color: COLORS.primaryOrange }}
+              data-testid="checkin-advanced-toggle"
+            >
+              {showIdSection ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              {showIdSection ? 'Hide' : 'Show'} ID Verification
+            </button>
+            {showIdSection && (
+              <div className="space-y-2">
+                <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
+                <div className="grid grid-cols-2 gap-2">
+                  <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
+                  <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
+                </div>
               </div>
-              <SelectField icon={CreditCard} label="Payment Mode" options={PAYMENT_MODES} value={paymentMode} onChange={e => setPaymentMode(e.target.value)} data-testid="checkin-payment-mode" />
+            )}
+          </div>
 
+          {/* COL 2 — Booking */}
+          <div className="flex flex-col space-y-2">
+            <SectionLabel>Booking</SectionLabel>
+            <div className="grid grid-cols-2 gap-2">
+              <SelectField label="Booking Type" options={BOOKING_TYPES} value={bookingType} onChange={e => setBookingType(e.target.value)} data-testid="checkin-booking-type" />
+              <SelectField label="Booking For" options={BOOKING_FOR} value={bookingFor} onChange={e => setBookingFor(e.target.value)} data-testid="checkin-booking-for" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <InputField icon={Calendar} label="Check-in Date" type="date" value={checkinDate} onChange={e => setCheckinDate(e.target.value)} data-testid="checkin-date" />
+              <InputField icon={Calendar} label="Checkout Date" type="date" value={checkoutDate} onChange={e => setCheckoutDate(e.target.value)} data-testid="checkout-date" />
+            </div>
+          </div>
+
+          {/* COL 3 — Payment & Note */}
+          <div className="flex flex-col space-y-2">
+            <SectionLabel>Payment</SectionLabel>
+            <div className="grid grid-cols-3 gap-2">
+              <InputField icon={CreditCard} label="Amount" placeholder="0" type="number" min="0" value={orderAmount} onChange={e => setOrderAmount(e.target.value)} data-testid="checkin-amount" />
+              <InputField label="Advance" placeholder="0" type="number" min="0" value={advancePayment} onChange={e => setAdvancePayment(e.target.value)} data-testid="checkin-advance" />
+              <InputField label="Balance" placeholder="0" type="number" min="0" value={balancePayment} onChange={e => setBalancePayment(e.target.value)} data-testid="checkin-balance" />
+            </div>
+            <SelectField icon={CreditCard} label="Payment Mode" options={PAYMENT_MODES} value={paymentMode} onChange={e => setPaymentMode(e.target.value)} data-testid="checkin-payment-mode" />
+            <div className="pt-1">
               <SectionLabel>Note</SectionLabel>
               <InputField icon={FileText} label="Order Note" placeholder="Optional note" value={orderNote} onChange={e => setOrderNote(e.target.value)} data-testid="checkin-note" />
             </div>
@@ -295,15 +278,15 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
         </div>
       </div>
 
-      {/* ─── Sticky Footer ─── */}
+      {/* ─── Footer ─── */}
       <div
-        className="flex items-center justify-end gap-3 px-6 py-4 flex-shrink-0"
+        className="flex items-center justify-end gap-3 px-5 py-2.5 flex-shrink-0"
         style={{ backgroundColor: COLORS.lightBg, borderTop: `1px solid ${COLORS.borderGray}` }}
       >
         <button
           type="button"
           onClick={onClose}
-          className="px-8 py-2.5 rounded-xl text-sm font-semibold border transition-colors hover:bg-gray-50"
+          className="px-6 py-2 rounded-xl text-sm font-semibold border transition-colors hover:bg-gray-50"
           style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}
           data-testid="checkin-cancel-btn"
         >
@@ -312,7 +295,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
         <button
           onClick={handleSubmit}
           disabled={isSubmitting || !name.trim() || !phone.trim()}
-          className="px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-colors flex items-center gap-2 disabled:opacity-50"
+          className="px-6 py-2 rounded-xl text-sm font-bold text-white transition-colors flex items-center gap-2 disabled:opacity-50"
           style={{ backgroundColor: COLORS.primaryOrange }}
           data-testid="checkin-submit-btn"
         >
