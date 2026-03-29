@@ -466,6 +466,20 @@ Adding `9: 'scheduled'` to the shared `F_ORDER_STATUS` constant would also chang
 
 ---
 
+## B33: 403 refreshOrders Disabled — Phase 3 Sockets Will Handle
+**File:** `src/components/order-entry/OrderEntry.jsx` (line ~305)
+**Context:** Previously, a 403 error on Place Order triggered `refreshOrders()` to recover from stale state conflicts (e.g., another employee already placed an order on that table).
+
+**Change:** Commented out the `refreshOrders()` call inside the 403 handler. The toast still shows the error message.
+
+**Why:** Phase 3 sockets will provide real-time state sync, making manual context refreshes unnecessary. Currently NO action in the app (place, update, collect) triggers a context refresh on success — only the manual refresh button does.
+
+**⚠️ RISK:** If 403 stale-state conflicts become frequent before sockets are live, re-enable the refresh at the marked comment (`⚠️ DISABLED (Phase 3 — B33)`).
+
+**Status:** DISABLED — re-enable if issues arise before Phase 3 sockets
+
+---
+
 ## B25: `isActive` vs `isDisabled` — Product Visibility in POS
 
 **Context:** Two separate boolean fields control product visibility in POS order entry:

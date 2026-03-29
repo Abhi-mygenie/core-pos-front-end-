@@ -13,6 +13,7 @@ import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
 import MenuManagementPanel from "../components/panels/MenuManagementPanel";
 import { useRefreshAllData } from "../hooks/useRefreshAllData";
+import RoomCheckInModal from "../components/modals/RoomCheckInModal";
 
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
@@ -151,6 +152,7 @@ const DashboardPage = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [checkInRoom, setCheckInRoom] = useState(null); // Room object for CheckIn modal
 
   const handleRefreshAll = async () => {
     if (isRefreshing) return;
@@ -480,6 +482,11 @@ const DashboardPage = () => {
   };
 
   const handleTableClick = (tableEntry) => {
+    // Step 8: Available room → show CheckIn modal instead of OrderEntry
+    if (tableEntry.orderType === 'room' && tableEntry.status === 'available') {
+      setCheckInRoom(tableEntry);
+      return;
+    }
     setOrderEntryTable(tableEntry);
     if (tableEntry.orderType === 'takeAway') {
       setOrderEntryType('takeAway');
@@ -488,7 +495,7 @@ const DashboardPage = () => {
     } else if (tableEntry.orderType === 'dineIn') {
       setOrderEntryType('dineIn');    // physical table — NOT walkIn
     } else if (tableEntry.orderType === 'room') {
-      setOrderEntryType('dineIn');    // rooms use dineIn flow (check-in modal added in Step 8)
+      setOrderEntryType('dineIn');    // occupied rooms use dineIn flow
     } else {
       setOrderEntryType('walkIn');    // actual walk-in orders (wc-* entries)
     }
@@ -731,6 +738,16 @@ const DashboardPage = () => {
             onSelectTable={handleTableClick}
             savedCart={cartsByTable[orderEntryTable?.id || orderEntryType] || []}
             onCartChange={(key, items) => setCartsByTable(prev => ({ ...prev, [key]: items }))}
+          />
+        )}
+
+        {/* Room Check-In Modal (Phase 2A — Step 8) */}
+        {checkInRoom && (
+          <RoomCheckInModal
+            room={checkInRoom}
+            availableRooms={allRoomsList.filter(r => r.status === 'available')}
+            onClose={() => setCheckInRoom(null)}
+            onSuccess={() => setCheckInRoom(null)}
           />
         )}
       </div>

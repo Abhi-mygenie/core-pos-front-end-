@@ -302,12 +302,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       console.log('[PlaceOrder] ERROR status:', err?.response?.status);
       console.log('[PlaceOrder] ERROR response:', err?.response?.data);
       const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed to place order';
-      if (err?.response?.status === 403) {
-        try { await refreshOrders(user?.roleName || 'Manager'); } catch { /* silent */ }
-        toast({ title: "Order Failed", description: apiMsg });
-      } else {
-        toast({ title: "Order Failed", description: apiMsg });
-      }
+      // ⚠️ DISABLED (Phase 3 — B33): Was refreshOrders on 403 to recover stale state.
+      // Removed because Phase 3 sockets will handle all real-time state sync.
+      // If this causes issues before sockets are live, re-enable: refreshOrders(user?.roleName || 'Manager')
+      toast({ title: "Order Failed", description: apiMsg });
     } finally {
       setIsPlacingOrder(false);
     }
