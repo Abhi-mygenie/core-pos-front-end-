@@ -123,7 +123,6 @@ const DashboardPage = () => {
   // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
-  const [rooms, setRooms] = useState({});
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // Real-time internet connectivity detection
@@ -170,7 +169,9 @@ const DashboardPage = () => {
 
   // --- Seed tables from real API data + enrich with order data ---
   useEffect(() => {
-    if (!tablesLoaded || apiTables.length === 0) return;
+    if (!tablesLoaded) return;
+    const nonRoomTables = apiTables.filter(t => !t.isRoom);
+    if (nonRoomTables.length === 0 && walkInOrders.length === 0) return;
 
     const adaptTable = (t) => {
       // Check if this table has a running order
@@ -192,11 +193,11 @@ const DashboardPage = () => {
       };
     };
 
-    const hasSections = apiTables.some(t => t.sectionName);
+    const hasSections = nonRoomTables.some(t => t.sectionName);
 
     if (hasSections) {
       const grouped = {};
-      apiTables.forEach(table => {
+      nonRoomTables.forEach(table => {
         if (table.status === 'disabled') return;
         const section = table.sectionName || 'Default';
         const key = section.toLowerCase().replace(/[^a-z0-9]+/g, '_');
@@ -231,7 +232,7 @@ const DashboardPage = () => {
       setTables(grouped);
       setFlatTables([]);
     } else {
-      const flat = apiTables
+      const flat = nonRoomTables
         .filter(t => t.status !== 'disabled')
         .map(adaptTable);
 
@@ -266,13 +267,32 @@ const DashboardPage = () => {
   }, [tables, flatTables, hasAreas]);
 
   const allRoomsList = useMemo(() => {
-    return Object.values(rooms).flatMap(s => s.rooms);
-  }, [rooms]);
+    if (!tablesLoaded) return [];
+    return apiTables
+      .filter(t => t.isRoom && t.status !== 'disabled')
+      .map(t => {
+        const order = getOrderByTableId(t.tableId);
+        const hasOrder = !!order;
+        return {
+          id: String(t.tableId),
+          label: `R${t.tableNumber}`,
+          status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
+          tableId: t.tableId,
+          orderType: 'room',
+          isRoom: true,
+          amount: hasOrder ? order.amount : undefined,
+          time: hasOrder ? order.time : undefined,
+          orderNumber: hasOrder ? order.orderNumber : undefined,
+          fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
+          orderId: hasOrder ? order.orderId : undefined,
+        };
+      });
+  }, [tablesLoaded, apiTables, getOrderByTableId]);
 
   // View conditions
-  const isRoomOnly = activeChannels.length === 1 && activeChannels[0] === "room";
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
-  const showGridView = !isRoomOnly && activeView === "table";
+  const isRoomOnly = activeChannels.length === 1 && activeChannels[0] === "room";
+  const showGridView = activeView === "table";
   const showListView = !isRoomOnly && activeView === "order";
 
   // Unified grid items: combine tables + takeaway + delivery based on active channels
@@ -317,17 +337,21 @@ const DashboardPage = () => {
       });
     }
 
+    if (activeChannels.includes('room')) {
+      items.push(...allRoomsList);
+    }
+
     return items;
-  }, [activeChannels, allTablesList, takeAwayOrders, deliveryOrders]);
+  }, [activeChannels, allTablesList, allRoomsList, takeAwayOrders, deliveryOrders]);
 
   // Grid title based on active channels
   const gridTitle = useMemo(() => {
-    const channels = activeChannels.filter(c => c !== 'room');
-    if (channels.length >= 3) return 'All Orders';
-    if (channels.length === 1) {
-      if (channels[0] === 'dineIn') return 'Tables';
-      if (channels[0] === 'takeAway') return 'TakeAway Orders';
-      if (channels[0] === 'delivery') return 'Delivery Orders';
+    if (activeChannels.length >= 4) return 'All Orders';
+    if (activeChannels.length === 1) {
+      if (activeChannels[0] === 'dineIn') return 'Tables';
+      if (activeChannels[0] === 'takeAway') return 'TakeAway Orders';
+      if (activeChannels[0] === 'delivery') return 'Delivery Orders';
+      if (activeChannels[0] === 'room') return 'Rooms';
     }
     return 'Orders';
   }, [activeChannels]);
@@ -395,6 +419,16 @@ const DashboardPage = () => {
   const matchingDeliveryIds = useMemo(() => getMatchingIds(searchQuery, searchResults.delivery), [searchQuery, searchResults]);
   const matchingTakeAwayIds = useMemo(() => getMatchingIds(searchQuery, searchResults.takeAway), [searchQuery, searchResults]);
 
+  // Combined matching IDs for unified grid filtering
+  const matchingGridIds = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const ids = new Set();
+    [matchingTableIds, matchingRoomIds, matchingDeliveryIds, matchingTakeAwayIds].forEach(set => {
+      if (set) set.forEach(id => ids.add(id));
+    });
+    return ids;
+  }, [searchQuery, matchingTableIds, matchingRoomIds, matchingDeliveryIds, matchingTakeAwayIds]);
+
   // --- Handlers ---
   const toggleSnooze = (orderId) => {
     setSnoozedOrders(prev => {
@@ -451,6 +485,8 @@ const DashboardPage = () => {
       setOrderEntryType('delivery');
     } else if (tableEntry.orderType === 'dineIn') {
       setOrderEntryType('dineIn');    // physical table — NOT walkIn
+    } else if (tableEntry.orderType === 'room') {
+      setOrderEntryType('dineIn');    // rooms use dineIn flow (check-in modal added in Step 8)
     } else {
       setOrderEntryType('walkIn');    // actual walk-in orders (wc-* entries)
     }
@@ -586,11 +622,11 @@ const DashboardPage = () => {
                   <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: COLORS.grayText }}>
                     <span className="font-medium" style={{ color: COLORS.darkText }}>{gridTitle}</span>
                     <span style={{ color: COLORS.borderGray }}>|</span>
-                    <span>{filteredGridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)).length} Items</span>
+                    <span>{filteredGridItems.filter(t => matchingGridIds === null || matchingGridIds.has(t.id)).length} Items</span>
                   </div>
                   <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, 160px)' }}>
                     {sortByActiveFirst(
-                      filteredGridItems.filter(t => matchingTableIds === null || matchingTableIds.has(t.id)),
+                      filteredGridItems.filter(t => matchingGridIds === null || matchingGridIds.has(t.id)),
                       TABLE_STATUS_PRIORITY,
                       activeFirst
                     ).map((item) => (
@@ -678,12 +714,7 @@ const DashboardPage = () => {
               </>
             )}
 
-            {/* Room View - TODO: Phase 2A implementation */}
-            {activeChannels.includes("room") && (
-              <div className="flex gap-8 overflow-x-auto">
-                {/* Room integration will use TableSection with room data */}
-              </div>
-            )}
+            {/* Room View - Rooms now render in the unified grid above */}
           </div>
         </main>
 
