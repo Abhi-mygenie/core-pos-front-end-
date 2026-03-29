@@ -670,8 +670,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                               }}
                               onClick={() => { onSelectTable?.(t); setShowTypeDropdown(false); }}
                             >
-                              <span className="font-medium">{t.label || t.id}</span>
-                              <span className="text-xs capitalize" style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}>
+                              <span className="font-medium truncate min-w-0">{t.label || t.id}</span>
+                              <span className="text-xs capitalize whitespace-nowrap flex-shrink-0 ml-2" style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}>
                                 {t.status === "available" ? "Available" : t.status === "paid" ? "Clear" : t.status === "billReady" ? "Bill Ready" : t.status === "yetToConfirm" ? "Clear" : t.status}
                               </span>
                             </button>
