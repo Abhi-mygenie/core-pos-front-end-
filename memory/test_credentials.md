@@ -1,3 +1,8 @@
 # Test Credentials
-# Agent writes here when creating/modifying auth credentials (admin accounts, test users).
-# Testing agent reads this before auth tests. Fork/continuation agents read on startup.
+
+## POS Account (External API)
+- **Email:** owner@18march.com
+- **Password:** Qplazm@10
+- **Role:** Owner
+- **Restaurant ID:** 478
+- **API Base:** https://preprod.mygenie.online
