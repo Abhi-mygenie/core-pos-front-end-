@@ -202,12 +202,41 @@ The `activeFirst` toggle sorts tables by priority. The correct priority order pe
 | CHG-039 | FEATURE | Out of Menu → Add to Order | 🔵 Planned | Low | `OrderEntry.jsx` |
 | CHG-040 | FEATURE | Update Order (add items to existing order) | ✅ Done | Medium | `orderTransform.js`, `OrderEntry.jsx`, `CartPanel.jsx`, `constants.js` |
 | CHG-041 | FEATURE | Update Order (order-level data) | 🔵 Planned | Medium | `OrderEntry.jsx` |
+| CHG-042 | FIX | Dedupe API duplicate records (id=4751) | ✅ Done | Low | `tableTransform.js` |
 
 ---
 
 ---
 
-### CHG-010 | FIX | Active First Toggle — Flat Grid Instead of Area View
+### CHG-042 | FIX | Dedupe Duplicate Records from all-table-list API
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** ✅ Done
+
+**Why (Reason):**
+`GET /api/v1/vendoremployee/all-table-list` returns duplicate records (confirmed: `id=4751` appears twice for account `owner@18march.com`). This causes React `key` collision → ghost DOM elements, UI accumulation on filter toggles, and console errors ("Encountered two children with the same key").
+
+**Root Cause:** Backend API returns the same record twice (server-side data issue — see BACKEND_CLARIFICATIONS B32).
+
+**What (Scope):**
+| Before | After |
+|--------|-------|
+| `fromAPI.tableList()` maps all records as-is — duplicates pass through | Dedupe by `id` before transform — first occurrence kept, duplicates silently dropped |
+| React key collision on duplicate `id` values | Unique `id` values guaranteed in context |
+
+**Where (Files & Lines):**
+| File | Line(s) | What changes |
+|------|---------|--------------|
+| `/app/frontend/src/api/transforms/tableTransform.js` | `fromAPI.tableList()` | Added `Set`-based dedupe filter before `.map(fromAPI.table)` |
+
+**Risk:** Low — defensive filter, no behaviour change for unique records
+**Tested By:** API curl confirmed duplicate exists; Webpack compiles
+**Rollback:** Remove the `seen`/`unique` filter block in `fromAPI.tableList()`
+
+**Backend Action Required:** See BACKEND_CLARIFICATIONS B32 — investigate and fix duplicate `id=4751` in API response.
+
+---
 
 **Date:** 2026-03-26
 **Author:** Agent
