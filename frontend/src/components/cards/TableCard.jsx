@@ -57,15 +57,15 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           style={headerPillStyle}
         >
           <div className="flex items-center gap-2 min-w-0">
-            {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
-            {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
+            {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
+            {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             <span className="text-sm font-bold truncate" title={table.label || table.id}>{table.label || table.id}</span>
-            {table.status === "reserved" ? (
-              <span className="text-xs font-semibold flex-shrink-0" style={{ color: COLORS.primaryOrange }}>Reserved</span>
-            ) : table.amount ? (
-              <span className="text-xs font-semibold flex-shrink-0">{currencySymbol}{table.amount.toLocaleString()}</span>
-            ) : null}
           </div>
+          {table.status === "reserved" ? (
+            <span className="text-xs font-semibold flex-shrink-0" style={{ color: COLORS.primaryOrange }}>Reserved</span>
+          ) : table.amount ? (
+            <span className="text-xs font-semibold flex-shrink-0">{currencySymbol}{table.amount.toLocaleString()}</span>
+          ) : null}
           
           {/* Snooze Button - Only for yetToConfirm orders */}
           {isYetToConfirm && onToggleSnooze && (
