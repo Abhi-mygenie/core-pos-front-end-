@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { X, User, Phone, Mail, Users, Calendar, CreditCard, FileText, Camera, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { X, User, Phone, Mail, Users, Calendar, CreditCard, FileText, Camera, ChevronDown, ChevronUp, Loader2, ArrowLeft } from 'lucide-react';
 import { COLORS } from '../../constants';
 import * as roomService from '../../api/services/roomService';
 import { useToast } from '../../hooks/use-toast';
@@ -16,7 +16,7 @@ const InputField = ({ icon: Icon, label, required, ...props }) => (
     <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>
       {label}{required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
-    <div className="flex items-center gap-2 border rounded-lg px-3 py-2" style={{ borderColor: COLORS.borderGray }}>
+    <div className="flex items-center gap-2 border rounded-lg px-3 py-2.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
       {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />}
       <input
         className="flex-1 outline-none text-sm bg-transparent"
@@ -30,7 +30,7 @@ const InputField = ({ icon: Icon, label, required, ...props }) => (
 const SelectField = ({ icon: Icon, label, options, ...props }) => (
   <div>
     <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>{label}</label>
-    <div className="flex items-center gap-2 border rounded-lg px-3 py-2" style={{ borderColor: COLORS.borderGray }}>
+    <div className="flex items-center gap-2 border rounded-lg px-3 py-2.5" style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}>
       {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />}
       <select
         className="flex-1 outline-none text-sm bg-transparent"
@@ -49,8 +49,8 @@ const FileField = ({ label, accept, onChange, fileName }) => (
   <div>
     <label className="text-xs font-medium mb-1 block" style={{ color: COLORS.grayText }}>{label}</label>
     <label
-      className="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-50 transition-colors"
-      style={{ borderColor: COLORS.borderGray }}
+      className="flex items-center gap-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+      style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}
     >
       <Camera className="w-4 h-4 flex-shrink-0" style={{ color: COLORS.grayText }} />
       <span className="flex-1 text-sm truncate" style={{ color: fileName ? COLORS.darkText : COLORS.grayText }}>
@@ -61,10 +61,18 @@ const FileField = ({ label, accept, onChange, fileName }) => (
   </div>
 );
 
+const SectionLabel = ({ children }) => (
+  <div className="flex items-center gap-2 mb-3">
+    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: COLORS.grayText }}>{children}</span>
+    <div className="flex-1 h-px" style={{ backgroundColor: COLORS.borderGray }} />
+  </div>
+);
+
 /**
- * RoomCheckInModal — Phase 2A Step 8
- * Shows all API fields. Only Name + Phone are mandatory.
- * Supports multi-room selection via chips.
+ * RoomCheckInPanel — Phase 2A Step 8
+ * Full-width overlay panel (covers content area, sidebar stays visible).
+ * Two-column layout: Guest details left, Booking & Payment right.
+ * Room selection grid at top spanning full width.
  */
 const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => {
   const { toast } = useToast();
@@ -87,13 +95,12 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
   const [checkoutDate, setCheckoutDate] = useState('');
   const [frontImage, setFrontImage] = useState(null);
   const [backImage, setBackImage] = useState(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showIdSection, setShowIdSection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Multi-room selection — start with clicked room pre-selected
+  // Multi-room selection
   const [selectedRoomIds, setSelectedRoomIds] = useState([room.tableId]);
 
-  // Other available rooms (exclude already selected)
   const otherRooms = useMemo(() =>
     availableRooms.filter(r => r.tableId !== room.tableId),
     [availableRooms, room.tableId]
@@ -106,7 +113,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     if (!name.trim() || !phone.trim()) {
       toast({ title: 'Missing Fields', description: 'Name and Phone are required' });
       return;
@@ -132,7 +139,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
         orderNote: orderNote.trim() || undefined,
         totalAdult: totalAdult ? parseInt(totalAdult, 10) : undefined,
         totalChildren: totalChildren ? parseInt(totalChildren, 10) : undefined,
-        idType: showAdvanced ? idType : undefined,
+        idType: showIdSection ? idType : undefined,
         checkinDate: checkinDate || undefined,
         checkoutDate: checkoutDate || undefined,
         frontImage: frontImage || undefined,
@@ -152,45 +159,52 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
   return (
     <div
       data-testid="room-checkin-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
-      onClick={onClose}
+      className="absolute inset-0 z-30 flex flex-col"
+      style={{ backgroundColor: COLORS.sectionBg }}
     >
+      {/* ─── Header Bar ─── */}
       <div
-        data-testid="room-checkin-modal"
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col"
-        onClick={e => e.stopPropagation()}
+        className="flex items-center gap-4 px-6 py-4 flex-shrink-0"
+        style={{ backgroundColor: COLORS.lightBg, borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: COLORS.borderGray }}>
-          <div>
-            <h2 className="text-base font-bold" style={{ color: COLORS.darkText }}>Room Check-In</h2>
-            <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-              Room {room.label}
-              {selectedRoomIds.length > 1 && ` +${selectedRoomIds.length - 1} more`}
-            </p>
-          </div>
-          <button
-            data-testid="checkin-close-btn"
-            onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <X className="w-5 h-5" style={{ color: COLORS.grayText }} />
-          </button>
+        <button
+          data-testid="checkin-close-btn"
+          onClick={onClose}
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" style={{ color: COLORS.darkText }} />
+        </button>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold" style={{ color: COLORS.darkText }}>Room Check-In</h1>
+          <p className="text-xs" style={{ color: COLORS.grayText }}>
+            Room {room.label}
+            {selectedRoomIds.length > 1 && ` + ${selectedRoomIds.length - 1} more`}
+          </p>
         </div>
+        <button
+          onClick={onClose}
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <X className="w-5 h-5" style={{ color: COLORS.grayText }} />
+        </button>
+      </div>
 
-        {/* Scrollable Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-          {/* Multi-room chips */}
+      {/* ─── Scrollable Body ─── */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto">
+
+          {/* ─── Room Selection Grid (full width) ─── */}
           {otherRooms.length > 0 && (
-            <div>
-              <label className="text-xs font-medium mb-1.5 block" style={{ color: COLORS.grayText }}>
-                Rooms
-              </label>
+            <div
+              className="rounded-xl p-5 mb-6"
+              style={{ backgroundColor: COLORS.lightBg }}
+              data-testid="room-checkin-modal"
+            >
+              <SectionLabel>Select Rooms</SectionLabel>
               <div className="flex flex-wrap gap-2">
-                {/* Primary room (always selected, non-removable indicator) */}
+                {/* Primary room — always selected */}
                 <span
-                  className="px-3 py-1 rounded-full text-xs font-semibold"
+                  className="w-16 h-10 rounded-lg text-sm font-bold flex items-center justify-center"
                   style={{ backgroundColor: COLORS.primaryOrange, color: '#fff' }}
                 >
                   {room.label}
@@ -203,10 +217,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
                       key={r.tableId}
                       data-testid={`room-chip-${r.tableId}`}
                       onClick={() => toggleRoom(r.tableId)}
-                      className="px-3 py-1 rounded-full text-xs font-semibold border transition-colors"
+                      className="w-16 h-10 rounded-lg text-sm font-bold flex items-center justify-center border-2 transition-all"
                       style={{
                         borderColor: sel ? COLORS.primaryOrange : COLORS.borderGray,
-                        backgroundColor: sel ? COLORS.primaryOrange : 'transparent',
+                        backgroundColor: sel ? COLORS.primaryOrange : '#fff',
                         color: sel ? '#fff' : COLORS.darkText,
                       }}
                     >
@@ -218,85 +232,93 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess }) => 
             </div>
           )}
 
-          {/* Required fields */}
-          <InputField icon={User} label="Guest Name" required placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} data-testid="checkin-name" />
-          <InputField icon={Phone} label="Phone" required placeholder="9876543210" type="tel" value={phone} onChange={e => setPhone(e.target.value)} data-testid="checkin-phone" />
+          {/* ─── Two-Column Form ─── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* Guest count row */}
-          <div className="grid grid-cols-2 gap-3">
-            <InputField icon={Users} label="Adults" placeholder="0" type="number" min="0" value={totalAdult} onChange={e => setTotalAdult(e.target.value)} data-testid="checkin-adults" />
-            <InputField icon={Users} label="Children" placeholder="0" type="number" min="0" value={totalChildren} onChange={e => setTotalChildren(e.target.value)} data-testid="checkin-children" />
-          </div>
-
-          {/* Booking row */}
-          <div className="grid grid-cols-2 gap-3">
-            <SelectField label="Booking Type" options={BOOKING_TYPES} value={bookingType} onChange={e => setBookingType(e.target.value)} data-testid="checkin-booking-type" />
-            <SelectField label="Booking For" options={BOOKING_FOR} value={bookingFor} onChange={e => setBookingFor(e.target.value)} data-testid="checkin-booking-for" />
-          </div>
-
-          {/* Dates row */}
-          <div className="grid grid-cols-2 gap-3">
-            <InputField icon={Calendar} label="Check-in Date" type="date" value={checkinDate} onChange={e => setCheckinDate(e.target.value)} data-testid="checkin-date" />
-            <InputField icon={Calendar} label="Checkout Date" type="date" value={checkoutDate} onChange={e => setCheckoutDate(e.target.value)} data-testid="checkout-date" />
-          </div>
-
-          {/* Payment section */}
-          <div className="grid grid-cols-3 gap-3">
-            <InputField icon={CreditCard} label="Amount" placeholder="0" type="number" min="0" value={orderAmount} onChange={e => setOrderAmount(e.target.value)} data-testid="checkin-amount" />
-            <InputField label="Advance" placeholder="0" type="number" min="0" value={advancePayment} onChange={e => setAdvancePayment(e.target.value)} data-testid="checkin-advance" />
-            <InputField label="Balance" placeholder="0" type="number" min="0" value={balancePayment} onChange={e => setBalancePayment(e.target.value)} data-testid="checkin-balance" />
-          </div>
-          <SelectField icon={CreditCard} label="Payment Mode" options={PAYMENT_MODES} value={paymentMode} onChange={e => setPaymentMode(e.target.value)} data-testid="checkin-payment-mode" />
-
-          {/* Order note */}
-          <InputField icon={FileText} label="Order Note" placeholder="Optional note" value={orderNote} onChange={e => setOrderNote(e.target.value)} data-testid="checkin-note" />
-
-          {/* Advanced toggle */}
-          <button
-            type="button"
-            onClick={() => setShowAdvanced(v => !v)}
-            className="flex items-center gap-1.5 text-xs font-medium py-1"
-            style={{ color: COLORS.primaryOrange }}
-            data-testid="checkin-advanced-toggle"
-          >
-            {showAdvanced ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            {showAdvanced ? 'Hide' : 'Show'} ID & Image fields
-          </button>
-
-          {showAdvanced && (
-            <div className="space-y-4">
+            {/* LEFT COLUMN — Guest Details */}
+            <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: COLORS.lightBg }}>
+              <SectionLabel>Guest Details</SectionLabel>
+              <InputField icon={User} label="Guest Name" required placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} data-testid="checkin-name" />
+              <InputField icon={Phone} label="Phone" required placeholder="9876543210" type="tel" value={phone} onChange={e => setPhone(e.target.value)} data-testid="checkin-phone" />
               <InputField icon={Mail} label="Email" placeholder="guest@example.com" type="email" value={email} onChange={e => setEmail(e.target.value)} data-testid="checkin-email" />
-              <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
               <div className="grid grid-cols-2 gap-3">
-                <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
-                <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
+                <InputField icon={Users} label="Adults" placeholder="0" type="number" min="0" value={totalAdult} onChange={e => setTotalAdult(e.target.value)} data-testid="checkin-adults" />
+                <InputField icon={Users} label="Children" placeholder="0" type="number" min="0" value={totalChildren} onChange={e => setTotalChildren(e.target.value)} data-testid="checkin-children" />
               </div>
-            </div>
-          )}
-        </form>
 
-        {/* Footer */}
-        <div className="px-5 py-4 border-t flex gap-3" style={{ borderColor: COLORS.borderGray }}>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-colors hover:bg-gray-50"
-            style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}
-            data-testid="checkin-cancel-btn"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting || !name.trim() || !phone.trim()}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-            style={{ backgroundColor: COLORS.primaryOrange }}
-            data-testid="checkin-submit-btn"
-          >
-            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Check In{selectedRoomIds.length > 1 ? ` (${selectedRoomIds.length})` : ''}
-          </button>
+              {/* ID & Images — collapsible */}
+              <button
+                type="button"
+                onClick={() => setShowIdSection(v => !v)}
+                className="flex items-center gap-1.5 text-xs font-medium pt-2"
+                style={{ color: COLORS.primaryOrange }}
+                data-testid="checkin-advanced-toggle"
+              >
+                {showIdSection ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                {showIdSection ? 'Hide' : 'Show'} ID Verification
+              </button>
+              {showIdSection && (
+                <div className="space-y-4 pt-1">
+                  <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
+                    <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT COLUMN — Booking & Payment */}
+            <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: COLORS.lightBg }}>
+              <SectionLabel>Booking</SectionLabel>
+              <div className="grid grid-cols-2 gap-3">
+                <SelectField label="Booking Type" options={BOOKING_TYPES} value={bookingType} onChange={e => setBookingType(e.target.value)} data-testid="checkin-booking-type" />
+                <SelectField label="Booking For" options={BOOKING_FOR} value={bookingFor} onChange={e => setBookingFor(e.target.value)} data-testid="checkin-booking-for" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <InputField icon={Calendar} label="Check-in Date" type="date" value={checkinDate} onChange={e => setCheckinDate(e.target.value)} data-testid="checkin-date" />
+                <InputField icon={Calendar} label="Checkout Date" type="date" value={checkoutDate} onChange={e => setCheckoutDate(e.target.value)} data-testid="checkout-date" />
+              </div>
+
+              <SectionLabel>Payment</SectionLabel>
+              <div className="grid grid-cols-3 gap-3">
+                <InputField icon={CreditCard} label="Amount" placeholder="0" type="number" min="0" value={orderAmount} onChange={e => setOrderAmount(e.target.value)} data-testid="checkin-amount" />
+                <InputField label="Advance" placeholder="0" type="number" min="0" value={advancePayment} onChange={e => setAdvancePayment(e.target.value)} data-testid="checkin-advance" />
+                <InputField label="Balance" placeholder="0" type="number" min="0" value={balancePayment} onChange={e => setBalancePayment(e.target.value)} data-testid="checkin-balance" />
+              </div>
+              <SelectField icon={CreditCard} label="Payment Mode" options={PAYMENT_MODES} value={paymentMode} onChange={e => setPaymentMode(e.target.value)} data-testid="checkin-payment-mode" />
+
+              <SectionLabel>Note</SectionLabel>
+              <InputField icon={FileText} label="Order Note" placeholder="Optional note" value={orderNote} onChange={e => setOrderNote(e.target.value)} data-testid="checkin-note" />
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* ─── Sticky Footer ─── */}
+      <div
+        className="flex items-center justify-end gap-3 px-6 py-4 flex-shrink-0"
+        style={{ backgroundColor: COLORS.lightBg, borderTop: `1px solid ${COLORS.borderGray}` }}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-8 py-2.5 rounded-xl text-sm font-semibold border transition-colors hover:bg-gray-50"
+          style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}
+          data-testid="checkin-cancel-btn"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={isSubmitting || !name.trim() || !phone.trim()}
+          className="px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-colors flex items-center gap-2 disabled:opacity-50"
+          style={{ backgroundColor: COLORS.primaryOrange }}
+          data-testid="checkin-submit-btn"
+        >
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          Check In{selectedRoomIds.length > 1 ? ` (${selectedRoomIds.length})` : ''}
+        </button>
       </div>
     </div>
   );
