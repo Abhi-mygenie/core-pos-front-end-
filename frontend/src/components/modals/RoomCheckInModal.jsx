@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { X, User, Phone, Mail, Users, Calendar, CreditCard, FileText, Camera, ChevronDown, ChevronUp, Loader2, ArrowLeft } from 'lucide-react';
+import { X, User, Phone, Mail, Users, Calendar, CreditCard, FileText, Camera, Loader2, ArrowLeft } from 'lucide-react';
 import { COLORS } from '../../constants';
 import * as roomService from '../../api/services/roomService';
 import { useToast } from '../../hooks/use-toast';
@@ -70,7 +70,7 @@ const SectionLabel = ({ children }) => (
 
 /**
  * RoomCheckInPanel — Phase 2A Step 8
- * Full-width overlay panel, 3-column form, zero scroll.
+ * Fixed overlay, 3-column: Guest | Verification | Booking & Payment
  */
 const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sidebarWidth = 70 }) => {
   const { toast } = useToast();
@@ -92,7 +92,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const [checkoutDate, setCheckoutDate] = useState('');
   const [frontImage, setFrontImage] = useState(null);
   const [backImage, setBackImage] = useState(null);
-  const [showIdSection, setShowIdSection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [selectedRoomIds, setSelectedRoomIds] = useState([room.tableId]);
@@ -135,7 +134,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         orderNote: orderNote.trim() || undefined,
         totalAdult: totalAdult ? parseInt(totalAdult, 10) : undefined,
         totalChildren: totalChildren ? parseInt(totalChildren, 10) : undefined,
-        idType: showIdSection ? idType : undefined,
+        idType: idType || undefined,
         checkinDate: checkinDate || undefined,
         checkoutDate: checkoutDate || undefined,
         frontImage: frontImage || undefined,
@@ -177,10 +176,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         </button>
       </div>
 
-      {/* ─── Body (flex-1, no scroll) ─── */}
+      {/* ─── Body ─── */}
       <div className="flex-1 flex flex-col overflow-hidden px-5 py-3">
 
-        {/* Room Selection Row */}
+        {/* Room Selection */}
         {otherRooms.length > 0 && (
           <div className="flex-shrink-0 mb-3" data-testid="room-checkin-modal">
             <SectionLabel>Select Rooms</SectionLabel>
@@ -214,43 +213,34 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
           </div>
         )}
 
-        {/* 3-Column Form Grid */}
+        {/* 3-Column Form: Guest | Verification | Booking & Payment */}
         <div className="flex-1 grid grid-cols-3 gap-4 min-h-0">
 
-          {/* COL 1 — Guest Details */}
+          {/* COL 1 — Guest Identity */}
           <div className="flex flex-col space-y-2">
             <SectionLabel>Guest</SectionLabel>
             <InputField icon={User} label="Guest Name" required placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} data-testid="checkin-name" />
             <InputField icon={Phone} label="Phone" required placeholder="9876543210" type="tel" value={phone} onChange={e => setPhone(e.target.value)} data-testid="checkin-phone" />
-            <InputField icon={Mail} label="Email" placeholder="guest@example.com" type="email" value={email} onChange={e => setEmail(e.target.value)} data-testid="checkin-email" />
             <div className="grid grid-cols-2 gap-2">
               <InputField icon={Users} label="Adults" placeholder="0" type="number" min="0" value={totalAdult} onChange={e => setTotalAdult(e.target.value)} data-testid="checkin-adults" />
               <InputField icon={Users} label="Children" placeholder="0" type="number" min="0" value={totalChildren} onChange={e => setTotalChildren(e.target.value)} data-testid="checkin-children" />
             </div>
-            <button
-              type="button"
-              onClick={() => setShowIdSection(v => !v)}
-              className="flex items-center gap-1 text-[11px] font-medium pt-1"
-              style={{ color: COLORS.primaryOrange }}
-              data-testid="checkin-advanced-toggle"
-            >
-              {showIdSection ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              {showIdSection ? 'Hide' : 'Show'} ID Verification
-            </button>
-            {showIdSection && (
-              <div className="space-y-2">
-                <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
-                <div className="grid grid-cols-2 gap-2">
-                  <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
-                  <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* COL 2 — Booking */}
+          {/* COL 2 — Verification */}
           <div className="flex flex-col space-y-2">
-            <SectionLabel>Booking</SectionLabel>
+            <SectionLabel>Verification</SectionLabel>
+            <InputField icon={Mail} label="Email" placeholder="guest@example.com" type="email" value={email} onChange={e => setEmail(e.target.value)} data-testid="checkin-email" />
+            <SelectField label="ID Type" options={ID_TYPES} value={idType} onChange={e => setIdType(e.target.value)} data-testid="checkin-id-type" />
+            <div className="grid grid-cols-2 gap-2">
+              <FileField label="ID Front" accept="image/*" onChange={e => setFrontImage(e.target.files?.[0] || null)} fileName={frontImage?.name} />
+              <FileField label="ID Back" accept="image/*" onChange={e => setBackImage(e.target.files?.[0] || null)} fileName={backImage?.name} />
+            </div>
+          </div>
+
+          {/* COL 3 — Booking & Payment */}
+          <div className="flex flex-col space-y-2">
+            <SectionLabel>Booking & Payment</SectionLabel>
             <div className="grid grid-cols-2 gap-2">
               <SelectField label="Booking Type" options={BOOKING_TYPES} value={bookingType} onChange={e => setBookingType(e.target.value)} data-testid="checkin-booking-type" />
               <SelectField label="Booking For" options={BOOKING_FOR} value={bookingFor} onChange={e => setBookingFor(e.target.value)} data-testid="checkin-booking-for" />
@@ -259,21 +249,13 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
               <InputField icon={Calendar} label="Check-in Date" type="date" value={checkinDate} onChange={e => setCheckinDate(e.target.value)} data-testid="checkin-date" />
               <InputField icon={Calendar} label="Checkout Date" type="date" value={checkoutDate} onChange={e => setCheckoutDate(e.target.value)} data-testid="checkout-date" />
             </div>
-          </div>
-
-          {/* COL 3 — Payment & Note */}
-          <div className="flex flex-col space-y-2">
-            <SectionLabel>Payment</SectionLabel>
             <div className="grid grid-cols-3 gap-2">
               <InputField icon={CreditCard} label="Amount" placeholder="0" type="number" min="0" value={orderAmount} onChange={e => setOrderAmount(e.target.value)} data-testid="checkin-amount" />
               <InputField label="Advance" placeholder="0" type="number" min="0" value={advancePayment} onChange={e => setAdvancePayment(e.target.value)} data-testid="checkin-advance" />
               <InputField label="Balance" placeholder="0" type="number" min="0" value={balancePayment} onChange={e => setBalancePayment(e.target.value)} data-testid="checkin-balance" />
             </div>
             <SelectField icon={CreditCard} label="Payment Mode" options={PAYMENT_MODES} value={paymentMode} onChange={e => setPaymentMode(e.target.value)} data-testid="checkin-payment-mode" />
-            <div className="pt-1">
-              <SectionLabel>Note</SectionLabel>
-              <InputField icon={FileText} label="Order Note" placeholder="Optional note" value={orderNote} onChange={e => setOrderNote(e.target.value)} data-testid="checkin-note" />
-            </div>
+            <InputField icon={FileText} label="Order Note" placeholder="Optional note" value={orderNote} onChange={e => setOrderNote(e.target.value)} data-testid="checkin-note" />
           </div>
         </div>
       </div>
