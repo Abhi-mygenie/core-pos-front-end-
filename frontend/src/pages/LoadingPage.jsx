@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
@@ -13,6 +13,9 @@ import * as tableService from "../api/services/tableService";
 import * as settingsService from "../api/services/settingsService";
 import * as orderService from "../api/services/orderService";
 
+// Initial status shape per API key
+const mkIdle = () => ({ status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0, elapsed: null, startedAt: null });
+
 // Loading Screen Component - Loads all data after login
 const LoadingPage = () => {
   const navigate = useNavigate();
@@ -25,22 +28,27 @@ const LoadingPage = () => {
   const { setTables } = useTables();
   const { setCancellationReasons } = useSettings();
   const { setOrders } = useOrders();
-  
-  // Loading status for each API with counts
+
+  // Loading status for each API with counts + timing
   const [loadingStatus, setLoadingStatus] = useState(
-    API_LOADING_ORDER.reduce((acc, item) => {
-      acc[item.key] = { status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0 };
-      return acc;
-    }, {})
+    API_LOADING_ORDER.reduce((acc, item) => { acc[item.key] = mkIdle(); return acc; }, {})
   );
-  
+
   // Ref to track loaded data across the async flow
   const loadedDataRef = useRef({});
-  
+
   // Overall progress
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  // Live timer tick — updates every 100ms to show running elapsed on loading items
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (isComplete) return;
+    const id = setInterval(() => setTick(t => t + 1), 100);
+    return () => clearInterval(id);
+  }, [isComplete]);
 
   // Check authentication and load data (with StrictMode abort guard)
   useEffect(() => {
@@ -48,10 +56,10 @@ const LoadingPage = () => {
       navigate("/");
       return;
     }
-    
+
     const ctrl = { aborted: false };
     loadAllData(ctrl);
-    
+
     return () => { ctrl.aborted = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -65,15 +73,14 @@ const LoadingPage = () => {
     const total = statuses.length;
     const newProgress = Math.round((completed / total) * 100);
     setProgress(newProgress);
-    
+
     // Check if all complete
     if (completed === total) {
       const hasAnyError = statuses.some((s) => s.status === LOADING_STATES.ERROR);
       setHasError(hasAnyError);
       setIsComplete(true);
-      
+
       if (!hasAnyError) {
-        // Navigate to dashboard after short delay
         setTimeout(() => {
           navigate("/dashboard", { replace: true });
         }, 500);
@@ -82,146 +89,120 @@ const LoadingPage = () => {
   }, [loadingStatus, navigate]);
 
   // Update status for a specific API
-  const updateStatus = (key, status, error = null, loaded = 0, total = 0) => {
+  const updateStatus = useCallback((key, status, error = null, loaded = 0, total = 0, extra = {}) => {
     setLoadingStatus((prev) => ({
       ...prev,
-      [key]: { status, error, loaded, total },
+      [key]: { ...prev[key], status, error, loaded, total, ...extra },
     }));
-  };
+  }, []);
 
-  // Load all APIs in sequence (ctrl.aborted guards against StrictMode double-invoke)
-  const loadAllData = async (ctrl) => {
-    const data = {};
-    
-    // 1. Profile & Permissions
-    updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1);
+  // ---------- Individual API loaders ----------
+  // Each returns the fetched data so callers can chain
+
+  const loadProfile = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1, { startedAt: t0 });
     try {
       data.profile = await profileService.getProfile();
       if (ctrl.aborted) return;
       setUserData(data.profile.user, data.profile.permissions);
       setRestaurant(data.profile.restaurant);
-      updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1);
+      updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage, 0, 1);
-      toast({
-        title: "Failed to load profile",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('profile', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 1, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load profile", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 2. Categories
-    updateStatus('categories', LOADING_STATES.LOADING, null, 0, 0);
+  const loadCategories = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('categories', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       data.categories = await categoryService.getCategories();
       if (ctrl.aborted) return;
       const count = data.categories?.length || 0;
-      updateStatus('categories', LOADING_STATES.SUCCESS, null, count, count);
+      updateStatus('categories', LOADING_STATES.SUCCESS, null, count, count, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('categories', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
-      toast({
-        title: "Failed to load categories",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('categories', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load categories", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 3. Products
-    updateStatus('products', LOADING_STATES.LOADING, null, 0, 0);
+  const loadProducts = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('products', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
       if (ctrl.aborted) return;
       data.products = productsResponse.products;
       const loadedCount = data.products?.length || 0;
       const totalCount = productsResponse.total || loadedCount;
-      
       if (data.categories) {
         data.categories = categoryService.calculateItemCounts(data.categories, data.products);
       }
-      updateStatus('products', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
+      updateStatus('products', LOADING_STATES.SUCCESS, null, loadedCount, totalCount, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('products', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
-      toast({
-        title: "Failed to load products",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('products', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load products", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 4. Tables and Rooms (unified)
-    updateStatus('tables', LOADING_STATES.LOADING, null, 0, 0);
+  const loadTables = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('tables', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       data.tables = await tableService.getTables();
       if (ctrl.aborted) return;
       const count = data.tables?.length || 0;
       setTables(data.tables);
-      updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count);
+      updateStatus('tables', LOADING_STATES.SUCCESS, null, count, count, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
-      toast({
-        title: "Failed to load tables",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('tables', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load tables", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 5. Cancellation Reasons (Settings)
-    updateStatus('cancellationReasons', LOADING_STATES.LOADING, null, 0, 0);
+  const loadCancellationReasons = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('cancellationReasons', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       const reasonsResponse = await settingsService.getCancellationReasons({ limit: 100, offset: 1 });
       if (ctrl.aborted) return;
       data.cancellationReasons = reasonsResponse.reasons;
       const count = data.cancellationReasons?.length || 0;
       setCancellationReasons(data.cancellationReasons);
-      updateStatus('cancellationReasons', LOADING_STATES.SUCCESS, null, count, count);
+      updateStatus('cancellationReasons', LOADING_STATES.SUCCESS, null, count, count, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
-      toast({
-        title: "Failed to load settings",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('cancellationReasons', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load settings", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 6. Popular Food
-    updateStatus('popularFood', LOADING_STATES.LOADING, null, 0, 0);
+  const loadPopularFood = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('popularFood', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       const popularResponse = await productService.getPopularFood({ limit: 50, offset: 1, type: 'all' });
       if (ctrl.aborted) return;
       data.popularFood = popularResponse.products;
       const loadedCount = data.popularFood?.length || 0;
       const totalCount = popularResponse.total || loadedCount;
-      updateStatus('popularFood', LOADING_STATES.SUCCESS, null, loadedCount, totalCount);
+      updateStatus('popularFood', LOADING_STATES.SUCCESS, null, loadedCount, totalCount, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('popularFood', LOADING_STATES.ERROR, error.readableMessage, 0, 0);
-      toast({
-        title: "Failed to load popular items",
-        description: error.readableMessage,
-        variant: "destructive",
-      });
+      updateStatus('popularFood', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load popular items", description: error.readableMessage, variant: "destructive" });
     }
+  };
 
-    if (ctrl.aborted) return;
-
-    // 7. Running Orders
-    // 7. Running Orders (unified - includes all)
-    updateStatus('runningOrders', LOADING_STATES.LOADING, null, 0, 0);
+  const loadRunningOrders = async (ctrl, data) => {
+    const t0 = Date.now();
+    updateStatus('runningOrders', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
       const userRole = data.profile?.user?.roleName || 'Owner';
       const roleParam = orderService.getOrderRoleParam(userRole);
@@ -229,40 +210,65 @@ const LoadingPage = () => {
       if (ctrl.aborted) return;
       const count = data.runningOrders?.length || 0;
       setOrders(data.runningOrders);
-      updateStatus('runningOrders', LOADING_STATES.SUCCESS, null, count, count);
+      updateStatus('runningOrders', LOADING_STATES.SUCCESS, null, count, count, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
-      updateStatus('runningOrders', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0);
-      toast({
-        title: "Failed to load orders",
-        description: error.readableMessage || error.message,
-        variant: "destructive",
-      });
+      updateStatus('runningOrders', LOADING_STATES.ERROR, error.readableMessage || error.message, 0, 0, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
+      toast({ title: "Failed to load orders", description: error.readableMessage || error.message, variant: "destructive" });
+    }
+  };
+
+  // Map keys → loader functions
+  const loaderMap = {
+    profile: loadProfile,
+    categories: loadCategories,
+    products: loadProducts,
+    tables: loadTables,
+    cancellationReasons: loadCancellationReasons,
+    popularFood: loadPopularFood,
+    runningOrders: loadRunningOrders,
+  };
+
+  // Load all APIs in sequence
+  const loadAllData = async (ctrl, onlyKeys = null) => {
+    const data = loadedDataRef.current;
+
+    const keysToLoad = onlyKeys || API_LOADING_ORDER.map(i => i.key);
+
+    for (const key of keysToLoad) {
+      if (ctrl.aborted) return;
+      const loader = loaderMap[key];
+      if (loader) await loader(ctrl, data);
     }
 
     if (ctrl.aborted) return;
 
-    // Dispatch Menu context
-    setCategories(data.categories);
-    setProducts(data.products);
-    setPopularFood(data.popularFood);
+    // Dispatch Menu context (safe to re-call even on retry)
+    if (data.categories) setCategories(data.categories);
+    if (data.products) setProducts(data.products);
+    if (data.popularFood) setPopularFood(data.popularFood);
 
     loadedDataRef.current = data;
   };
 
-  // Retry loading
+  // Smart retry — only re-run failed APIs
   const handleRetry = () => {
-    setLoadingStatus(
-      API_LOADING_ORDER.reduce((acc, item) => {
-        acc[item.key] = { status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0 };
-        return acc;
-      }, {})
-    );
-    loadedDataRef.current = {};
-    setProgress(0);
+    const failedKeys = API_LOADING_ORDER
+      .map(i => i.key)
+      .filter(key => loadingStatus[key].status === LOADING_STATES.ERROR);
+
+    // Reset only failed items back to IDLE
+    setLoadingStatus(prev => {
+      const next = { ...prev };
+      for (const key of failedKeys) {
+        next[key] = mkIdle();
+      }
+      return next;
+    });
+
     setIsComplete(false);
     setHasError(false);
-    loadAllData({ aborted: false });
+    loadAllData({ aborted: false }, failedKeys);
   };
 
   // Get icon for status
@@ -279,60 +285,62 @@ const LoadingPage = () => {
     }
   };
 
-  // Get count display text
+  // Get count display text with timing
   const getCountText = (statusObj) => {
-    const { status, loaded, total } = statusObj;
-    
+    const { status, loaded, total, elapsed, startedAt } = statusObj;
+
+    // Live timer while loading
+    if (status === LOADING_STATES.LOADING && startedAt) {
+      const live = ((Date.now() - startedAt) / 1000).toFixed(1);
+      const countPart = total > 0 ? `${loaded} of ${total} ` : '';
+      return `${countPart}Loading... ${live}s`;
+    }
+
     if (status === LOADING_STATES.SUCCESS) {
+      const timePart = elapsed ? ` · ${elapsed}s` : '';
       if (total > 0 && loaded !== total) {
-        return `${loaded} of ${total} loaded`;
+        return `${loaded} of ${total} loaded${timePart}`;
       }
-      return `${loaded} loaded`;
+      return `${loaded} loaded${timePart}`;
     }
-    
-    if (status === LOADING_STATES.LOADING) {
-      if (total > 0) {
-        return `${loaded} of ${total} loading...`;
-      }
-      return "Loading...";
-    }
-    
+
     if (status === LOADING_STATES.ERROR) {
-      return "Failed";
+      const timePart = elapsed ? ` · ${elapsed}s` : '';
+      return `Failed${timePart}`;
     }
-    
+
     return "";
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center p-4"
       style={{ backgroundColor: COLORS.sectionBg }}
       data-testid="loading-screen"
     >
-      <div 
+      <div
         className="w-full max-w-md p-8 rounded-2xl shadow-lg"
         style={{ backgroundColor: COLORS.lightBg }}
       >
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <img 
-            src={GENIE_LOGO_URL} 
-            alt="Genie Logo" 
+          <img
+            src={GENIE_LOGO_URL}
+            alt="Genie Logo"
             className="h-20 w-auto"
             data-testid="loading-logo"
           />
         </div>
 
         {/* Title */}
-        <h1 
+        <h1
           className="text-center text-xl font-semibold mb-2"
           style={{ color: COLORS.darkText }}
         >
           Setting up your POS...
         </h1>
-        
-        <p 
+
+        <p
           className="text-center text-sm mb-8"
           style={{ color: COLORS.grayText }}
         >
@@ -344,12 +352,12 @@ const LoadingPage = () => {
           {API_LOADING_ORDER.map((item) => {
             const statusObj = loadingStatus[item.key];
             return (
-              <div 
+              <div
                 key={item.key}
                 className="flex items-center gap-3 p-3 rounded-lg transition-all"
-                style={{ 
-                  backgroundColor: statusObj.status === LOADING_STATES.SUCCESS 
-                    ? 'rgba(34, 197, 94, 0.1)' 
+                style={{
+                  backgroundColor: statusObj.status === LOADING_STATES.SUCCESS
+                    ? 'rgba(34, 197, 94, 0.1)'
                     : statusObj.status === LOADING_STATES.ERROR
                     ? 'rgba(239, 68, 68, 0.1)'
                     : 'transparent'
@@ -357,11 +365,11 @@ const LoadingPage = () => {
                 data-testid={`loading-item-${item.key}`}
               >
                 {getStatusIcon(statusObj.status)}
-                <span 
+                <span
                   className="flex-1 text-sm"
-                  style={{ 
-                    color: statusObj.status === LOADING_STATES.SUCCESS 
-                      ? COLORS.primaryGreen 
+                  style={{
+                    color: statusObj.status === LOADING_STATES.SUCCESS
+                      ? COLORS.primaryGreen
                       : statusObj.status === LOADING_STATES.ERROR
                       ? '#ef4444'
                       : COLORS.darkText
@@ -369,11 +377,11 @@ const LoadingPage = () => {
                 >
                   {item.label}
                 </span>
-                <span 
+                <span
                   className="text-xs"
-                  style={{ 
-                    color: statusObj.status === LOADING_STATES.SUCCESS 
-                      ? COLORS.primaryGreen 
+                  style={{
+                    color: statusObj.status === LOADING_STATES.SUCCESS
+                      ? COLORS.primaryGreen
                       : statusObj.status === LOADING_STATES.ERROR
                       ? '#ef4444'
                       : COLORS.grayText
@@ -392,13 +400,13 @@ const LoadingPage = () => {
             <span style={{ color: COLORS.grayText }}>Progress</span>
             <span style={{ color: COLORS.darkText }}>{progress}%</span>
           </div>
-          <div 
+          <div
             className="h-2 rounded-full overflow-hidden"
             style={{ backgroundColor: COLORS.borderGray }}
           >
-            <div 
+            <div
               className="h-full rounded-full transition-all duration-300"
-              style={{ 
+              style={{
                 width: `${progress}%`,
                 backgroundColor: hasError ? '#ef4444' : COLORS.primaryGreen
               }}
@@ -406,21 +414,30 @@ const LoadingPage = () => {
           </div>
         </div>
 
-        {/* Error State - Retry Button */}
+        {/* Error State — show error detail + Retry button */}
         {isComplete && hasError && (
-          <button
-            onClick={handleRetry}
-            className="w-full py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
-            style={{ backgroundColor: COLORS.primaryOrange }}
-            data-testid="retry-button"
-          >
-            Retry Loading
-          </button>
+          <div className="space-y-3">
+            {/* Show error messages for failed items */}
+            {API_LOADING_ORDER.filter(i => loadingStatus[i.key].status === LOADING_STATES.ERROR).map(item => (
+              <div key={item.key} className="text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', color: '#ef4444' }}>
+                <span className="font-semibold">{item.label}:</span>{' '}
+                {loadingStatus[item.key].error || 'Unknown error'}
+              </div>
+            ))}
+            <button
+              onClick={handleRetry}
+              className="w-full py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+              style={{ backgroundColor: COLORS.primaryOrange }}
+              data-testid="retry-button"
+            >
+              Retry Failed ({API_LOADING_ORDER.filter(i => loadingStatus[i.key].status === LOADING_STATES.ERROR).length})
+            </button>
+          </div>
         )}
 
         {/* Success State */}
         {isComplete && !hasError && (
-          <p 
+          <p
             className="text-center text-sm"
             style={{ color: COLORS.primaryGreen }}
           >

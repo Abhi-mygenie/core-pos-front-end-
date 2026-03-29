@@ -49,6 +49,7 @@ Rooms behave exactly like Tables (TB), sharing the same Context architecture and
 - Multi-room selection via chips
 - API service for `POST /api/v1/vendoremployee/pos/user-group-check-in`
 - JSON and multipart/form-data submission modes
+- Loading screen: per-API timing (live counter + elapsed), smart retry (failed-only), error details, 60s timeout
 
 ## Prioritized Backlog
 ### P0 — Phase 2A Completion
