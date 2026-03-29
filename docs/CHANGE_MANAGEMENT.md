@@ -203,6 +203,12 @@ The `activeFirst` toggle sorts tables by priority. The correct priority order pe
 | CHG-040 | FEATURE | Update Order (add items to existing order) | ✅ Done | Medium | `orderTransform.js`, `OrderEntry.jsx`, `CartPanel.jsx`, `constants.js` |
 | CHG-041 | FEATURE | Update Order (order-level data) | 🔵 Planned | Medium | `OrderEntry.jsx` |
 | CHG-042 | FIX | Dedupe API duplicate records (id=4751) | ✅ Done | Low | `tableTransform.js` |
+| CHG-043 | FEATURE | Phase 2A Step 6 — Rooms in dashboard grid | ✅ Done | High | `DashboardPage.jsx` |
+| CHG-044 | FEATURE | Phase 2A Step 7 — Room card labels + C/Out button | ✅ Done | Medium | `TableCard.jsx`, `DashboardPage.jsx` |
+| CHG-045 | FIX | Filter "Check In" system item from all order UIs | ✅ Done | Medium | `orderTransform.js` |
+| CHG-046 | FEATURE | Real waiter/customer names on cards (rooms→customer, tables→waiter) | ✅ Done | Medium | `DashboardPage.jsx`, `TableCard.jsx` |
+| CHG-047 | FIX | Card label truncation — single row with ellipsis | ✅ Done | Low | `TableCard.jsx` |
+| CHG-048 | FIX | Table selector dropdown truncation | ✅ Done | Low | `OrderEntry.jsx` |
 
 ---
 
