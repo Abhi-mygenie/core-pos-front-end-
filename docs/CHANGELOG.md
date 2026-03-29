@@ -15,6 +15,54 @@
 
 ---
 
+## [2026-03-29] — Phase 2A: Room Integration
+
+### CHG-043 | FEATURE | Rooms in Dashboard Grid
+**Summary:** Tables and Rooms now share the same Context arrays and `TableCard` component. Rooms (`rtype === "RM"`) display on the dashboard grid with `isRoom` flag driving conditional behavior.
+**Files Changed:** `DashboardPage.jsx`, `tableTransform.js`, `orderTransform.js`, `TableContext.jsx`, `OrderContext.jsx`, `Header.jsx`
+
+### CHG-044 | FEATURE | Room Card Labels + Checkout Button
+**Summary:** Room cards show "C/Out" button instead of "Bill". Real customer names displayed on room cards (from order data), waiter names on table cards.
+**Files Changed:** `TableCard.jsx`, `DashboardPage.jsx`
+
+### CHG-045 | FIX | Filter "Check In" System Item
+**Summary:** Filtered out the system-generated "Check In" item from all order UIs (cart, bill, item lists) to prevent confusion.
+**Files Changed:** `orderTransform.js`
+
+### CHG-046 | FEATURE | Real Waiter/Customer Names on Cards
+**Summary:** Room cards show customer name from order; table cards show assigned waiter name. Replaced static labels with live data from order context.
+**Files Changed:** `DashboardPage.jsx`, `TableCard.jsx`
+
+### CHG-047 | FIX | Card Label Truncation
+**Summary:** Long table/room labels now truncate with ellipsis on a single row instead of wrapping and breaking card layout.
+**Files Changed:** `TableCard.jsx`
+
+### CHG-048 | FIX | Table Selector Dropdown Truncation
+**Summary:** Long table names in the OrderEntry dropdown selector now truncate properly.
+**Files Changed:** `OrderEntry.jsx`
+
+### CHG-049 | FEATURE | Room Check-In Modal
+**Summary:** Created full-width 3-column overlay for room check-in. Collects guest name, phone (mandatory), email, ID verification, booking details, and payment info. Supports multi-room selection. Calls `POST /api/v1/vendoremployee/pos/user-group-check-in`.
+**Files Changed:** `RoomCheckInModal.jsx` (new), `roomService.js` (new), `DashboardPage.jsx`, `constants.js`
+
+### CHG-050 | FEATURE | Loading Page Optimization
+**Summary:** Increased Axios timeout to 60s. Added per-API elapsed time display with live ticking. Implemented smart retry that only re-fetches failed APIs instead of restarting everything.
+**Files Changed:** `LoadingPage.jsx`, `axios.js`
+
+### CHG-051 | FEATURE | Hide Credit Payment for Rooms
+**Summary:** "Credit" payment option hidden when `isRoom=true` in CollectPaymentPanel. Grid layout adjusts accordingly.
+**Files Changed:** `CollectPaymentPanel.jsx`
+
+### CHG-052 | FEATURE | Checkout Label for Rooms
+**Summary:** Room orders show "Checkout" instead of "Collect Bill" (CartPanel), "Collect Payment" (header), and "Pay" (submit button) in CollectPaymentPanel.
+**Files Changed:** `CartPanel.jsx`, `CollectPaymentPanel.jsx`
+
+### CHG-053 | CONFIG | Comment Out 403 Auto-Refresh
+**Summary:** Disabled 403 error auto-refresh logic in OrderEntry as prep for Phase 3 WebSocket integration.
+**Files Changed:** `OrderEntry.jsx`
+
+---
+
 ## [2026-03-24]
 
 ### CHG-001 | CONFIG | Initial Setup

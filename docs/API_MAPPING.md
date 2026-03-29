@@ -1,7 +1,7 @@
 # API Field Mapping Document
 
-> Last Updated: 2026-03-27
-> Status: Phase 1C — Shift Table, Merge Table, Transfer Food wired to real APIs via toAPI transform layer. Cancel Item code complete (parked — 404 from backend needs investigation).
+> Last Updated: 2026-03-29
+> Status: Phase 2A — Room Integration complete. Room Check-In API wired. Tables and Rooms unified in Context. Credit payment hidden for rooms. Checkout labels applied.
 
 ---
 
@@ -510,7 +510,7 @@ These modals are built and functional but use mock data. Backend APIs needed.
 | `created_at` | `createdAt` | Yes | Settings display | Pending |
 | `updated_at` | `updatedAt` | Yes | Settings display | Pending |
 
-**Note:** `tableType` filter: `rtype === 'RM'` → Room, else → Table. Phase 1 loads tables only (`tablesOnly = true`).
+**Note:** `tableType` filter: `rtype === 'RM'` → Room (`isRoom: true`), else → Table (`isRoom: false`). Phase 2A unified architecture: both Tables and Rooms are stored in the same Context arrays and rendered via the same `TableCard` component. The `isRoom` boolean drives all conditional behavior (Check-In modal, Checkout labels, Credit payment hiding).
 
 ---
 
@@ -670,7 +670,7 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 
 | Condition | Behavior |
 |---|---|
-| `restaurantTable.rtype === "RM"` or `order_in === "RM"` | **Filtered OUT** — Room orders skipped for POS Phase 1 |
+| `restaurantTable.rtype === "RM"` or `order_in === "RM"` | **Included** — Room orders processed identically to table orders (Phase 2A unified architecture). `isRoom: true` flag set on order |
 | `table_id === 0` | Walk-in / counter order — virtual table entry with customer name |
 | `order_type === "take_away"` | TakeAway channel — grid card with ShoppingBag icon |
 | `order_type === "delivery"` | Delivery channel — grid card with Bike icon |
@@ -787,6 +787,35 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | CHG-038 Sc1 | Collect Bill (existing) | `/api/v2/vendoremployee/order-bill-payment` | POST JSON | ✅ Done |
 | CHG-038 Sc2 | Place+Pay (fresh) | `/api/v1/vendoremployee/pos/place-order-and-payment` | POST form-urlencoded | ✅ Done |
 | CHG-040 | Update Order | `/api/v2/vendoremployee/pos/update-place-order` | PUT JSON | ✅ Done |
+
+---
+
+### `POST /api/v1/vendoremployee/pos/user-group-check-in` — Room Check-In (CHG-049)
+**Service:** `roomService.checkIn(params)`
+**Mode:** JSON body (no images) or multipart/form-data (with ID images)
+
+| Payload Field | Frontend Source | Notes |
+|---|---|---|
+| `phone` | `params.phone` | Required |
+| `name` | `params.name` | Required |
+| `room_id` | `params.roomIds` (array) | One or more room IDs |
+| `booking_type` | `params.bookingType` | Default: `"WalkIn"` |
+| `booking_for` | `params.bookingFor` | Default: `"personal"` |
+| `order_amount` | `params.orderAmount` | Default: `0` |
+| `advance_payment` | `params.advancePayment` | Default: `0` |
+| `balance_payment` | `params.balancePayment` | Default: `0` |
+| `payment_mode` | `params.paymentMode` | Default: `"cash"` |
+| `email` | `params.email` | Optional |
+| `order_note` | `params.orderNote` | Optional |
+| `total_adult` | `params.totalAdult` | Optional |
+| `total_children` | `params.totalChildren` | Optional |
+| `id_type` | `params.idType` | Default: `"Aadhaar"`. Options: Aadhaar, Passport, DrivingLicense, VoterID, PAN |
+| `checkin_date` | `params.checkinDate` | YYYY-MM-DD |
+| `checkout_date` | `params.checkoutDate` | YYYY-MM-DD |
+| `front_image_file` | `params.frontImage` (File) | Only in multipart mode |
+| `back_image_file` | `params.backImage` (File) | Only in multipart mode |
+
+**Note:** When images are attached, all fields are sent as `FormData` with `Content-Type: multipart/form-data`. Without images, sent as JSON.
 
 ---
 

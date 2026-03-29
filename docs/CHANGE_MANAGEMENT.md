@@ -209,8 +209,132 @@ The `activeFirst` toggle sorts tables by priority. The correct priority order pe
 | CHG-046 | FEATURE | Real waiter/customer names on cards (rooms→customer, tables→waiter) | ✅ Done | Medium | `DashboardPage.jsx`, `TableCard.jsx` |
 | CHG-047 | FIX | Card label truncation — single row with ellipsis | ✅ Done | Low | `TableCard.jsx` |
 | CHG-048 | FIX | Table selector dropdown truncation | ✅ Done | Low | `OrderEntry.jsx` |
+|| CHG-049 | FEATURE | Phase 2A Step 8 — Room Check-In Modal | Done | High | `RoomCheckInModal.jsx`, `roomService.js`, `DashboardPage.jsx`, `constants.js` |
+|| CHG-050 | FEATURE | Loading Page Optimization — Timing + Smart Retries | Done | Medium | `LoadingPage.jsx`, `axios.js` |
+|| CHG-051 | FEATURE | Phase 2A Step 9 — Hide Credit payment for rooms | Done | Low | `CollectPaymentPanel.jsx` |
+|| CHG-052 | FEATURE | Phase 2A Step 10 — Checkout label for rooms | Done | Low | `CartPanel.jsx`, `CollectPaymentPanel.jsx` |
+|| CHG-053 | CONFIG | Comment out 403 auto-refresh in OrderEntry | Done | Low | `OrderEntry.jsx` |
 
 ---
+
+---
+
+### CHG-049 | FEATURE | Phase 2A Step 8 — Room Check-In Modal
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** Done
+
+**Why (Reason):**
+Rooms require a guest check-in (Name + Phone mandatory) before orders can be placed. Clicking an available room opens a full-width overlay panel collecting guest details and calling the check-in API.
+
+**What (Scope):**
+|| Before | After |
+||--------|-------|
+|| Clicking an available room opened OrderEntry directly | Available rooms open a full-width 3-column check-in overlay |
+|| No check-in flow existed | Guest Name + Phone required, Verification (email, ID upload), Booking & Payment fields |
+|| Single room check-in only | Multi-room selection supported |
+
+**Where (Files):**
+|| File | What changes |
+||------|--------------|
+|| `RoomCheckInModal.jsx` | Created — Full viewport overlay with 3-column layout. Multi-room chip selector. Submits via `roomService.checkIn()` |
+|| `roomService.js` | Created — `checkIn(params)` function. JSON body when no images; multipart/form-data when ID images attached |
+|| `constants.js` | Added `ROOM_CHECK_IN` endpoint |
+|| `DashboardPage.jsx` | Intercepts clicks on available rooms → renders `RoomCheckInModal` overlay |
+
+**API Endpoint:** `POST /api/v1/vendoremployee/pos/user-group-check-in`
+**Risk:** High
+**Tested By:** Webpack compilation
+**Rollback:** Remove `RoomCheckInModal` import and rendering logic from `DashboardPage.jsx`
+
+---
+
+### CHG-050 | FEATURE | Loading Page Optimization — Timing + Smart Retries
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** Done
+
+**Why (Reason):**
+Large restaurants hit 30s Axios timeout. No per-API timing visibility. Single failure forced full reload of ALL APIs.
+
+**What (Scope):**
+|| Before | After |
+||--------|-------|
+|| Global Axios timeout: 30s | 60s |
+|| No per-API timing visible | Elapsed time shown per API row with live ticking |
+|| Any failure restarted ALL APIs | Smart retry — only re-fetches failed APIs |
+
+**Where (Files):**
+|| File | What changes |
+||------|--------------|
+|| `LoadingPage.jsx` | Added elapsed/startedAt tracking, live tick, "Retry Failed" button |
+|| `axios.js` | Changed timeout from 30000 to 60000 |
+
+**Risk:** Medium
+**Tested By:** Webpack compilation + manual screenshot
+**Rollback:** Revert `axios.js` timeout and remove timing/retry logic
+
+---
+
+### CHG-051 | FEATURE | Phase 2A Step 9 — Hide Credit Payment for Rooms
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** Done
+
+**Why (Reason):**
+Rooms should not offer "Credit" payment option. Credit is a dine-in-only feature.
+
+**What (Scope):**
+|| Before | After |
+||--------|-------|
+|| All payment methods shown for tables and rooms | `isRoom=true` hides "Credit" option |
+
+**Where:** `CollectPaymentPanel.jsx` — `{!isRoom && (...)}` wrapping Credit button
+**Risk:** Low
+**Tested By:** Webpack compilation
+**Rollback:** Remove `isRoom` condition
+
+---
+
+### CHG-052 | FEATURE | Phase 2A Step 10 — Checkout Label for Rooms
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** Done
+
+**Why (Reason):**
+Room orders use "Checkout" terminology instead of "Bill"/"Collect"/"Pay".
+
+**What (Scope):**
+|| Component | Table Label | Room Label |
+||-----------|-------------|------------|
+|| CartPanel button | "Collect Bill" | "Checkout" |
+|| CollectPaymentPanel header | "Collect Payment" | "Checkout" |
+|| CollectPaymentPanel submit | "Pay X" | "Checkout X" |
+
+**Where:** `CartPanel.jsx` (line ~513), `CollectPaymentPanel.jsx` (lines ~171, ~708)
+**Risk:** Low
+**Tested By:** Webpack compilation
+**Rollback:** Replace ternary expressions with static labels
+
+---
+
+### CHG-053 | CONFIG | Comment Out 403 Auto-Refresh in OrderEntry
+
+**Date:** 2026-03-29
+**Author:** Agent
+**Status:** Done
+
+**Why (Reason):**
+Proactively disabled 403 auto-refresh in preparation for Phase 3 WebSocket real-time sync.
+
+**Where:** `OrderEntry.jsx` — Commented out 403 error handling block
+**Risk:** Low
+**Tested By:** Webpack compilation
+**Rollback:** Uncomment the 403 handling block
 
 ---
 
