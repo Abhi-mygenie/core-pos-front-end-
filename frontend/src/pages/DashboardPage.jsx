@@ -171,11 +171,7 @@ const DashboardPage = () => {
   useEffect(() => {
     if (!tablesLoaded) return;
     const nonRoomTables = apiTables.filter(t => !t.isRoom);
-    if (nonRoomTables.length === 0 && walkInOrders.length === 0) {
-      setTables({});
-      setFlatTables([]);
-      return;
-    }
+    if (nonRoomTables.length === 0 && walkInOrders.length === 0) return;
 
     const adaptTable = (t) => {
       // Check if this table has a running order
@@ -360,21 +356,12 @@ const DashboardPage = () => {
     return 'Orders';
   }, [activeChannels]);
 
-  // Filter grid items — channel-type guard + exclusive filter for Schedule/Confirm
+  // Filter grid items — exclusive filter for Schedule/Confirm in table view
   const filteredGridItems = useMemo(() => {
-    // Map each channel to its allowed orderTypes
-    const allowedTypes = new Set();
-    if (activeChannels.includes('dineIn'))   { allowedTypes.add('dineIn'); allowedTypes.add('walkIn'); }
-    if (activeChannels.includes('room'))     { allowedTypes.add('room'); }
-    if (activeChannels.includes('takeAway')) { allowedTypes.add('takeAway'); }
-    if (activeChannels.includes('delivery')) { allowedTypes.add('delivery'); }
-
-    const channelFiltered = gridItems.filter(item => allowedTypes.has(item.orderType));
-
-    if (tableFilter === 'confirm') return channelFiltered.filter(item => item.status === 'yetToConfirm');
-    if (tableFilter === 'schedule') return channelFiltered.filter(item => item.status === 'scheduled');
-    return channelFiltered;
-  }, [gridItems, tableFilter, activeChannels]);
+    if (tableFilter === 'confirm') return gridItems.filter(item => item.status === 'yetToConfirm');
+    if (tableFilter === 'schedule') return gridItems.filter(item => item.status === 'scheduled');
+    return gridItems; // no filter active — show all
+  }, [gridItems, tableFilter]);
 
   // --- Search ---
   const searchResults = useMemo(() => {
