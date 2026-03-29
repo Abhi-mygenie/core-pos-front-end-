@@ -171,7 +171,11 @@ const DashboardPage = () => {
   useEffect(() => {
     if (!tablesLoaded) return;
     const nonRoomTables = apiTables.filter(t => !t.isRoom);
-    if (nonRoomTables.length === 0 && walkInOrders.length === 0) return;
+    if (nonRoomTables.length === 0 && walkInOrders.length === 0) {
+      setTables({});
+      setFlatTables([]);
+      return;
+    }
 
     const adaptTable = (t) => {
       // Check if this table has a running order
