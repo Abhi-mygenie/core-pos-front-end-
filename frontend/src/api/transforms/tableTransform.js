@@ -22,9 +22,17 @@ export const fromAPI = {
  */
 tableList: (apiTables) => {
   if (!Array.isArray(apiTables)) return [];
-  
+
+  // Dedupe by id — API can return duplicate records (see BACKEND_CLARIFICATIONS B32)
+  const seen = new Set();
+  const unique = apiTables.filter(r => {
+    if (seen.has(r.id)) return false;
+    seen.add(r.id);
+    return true;
+  });
+
   // Transform all - no filtering, isRoom flag distinguishes them
-  const tables = apiTables.map(fromAPI.table);
+  const tables = unique.map(fromAPI.table);
   
   // Sort by table/room number
   return tables.sort((a, b) => {

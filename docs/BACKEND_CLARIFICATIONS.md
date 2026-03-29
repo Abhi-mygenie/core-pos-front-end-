@@ -623,6 +623,33 @@ After performing any table operation (shift, merge, transfer, cancel), should th
 
 ---
 
+## B32: Duplicate Records in `all-table-list` API Response — NEEDS BACKEND FIX
+
+**Endpoint:** `GET /api/v1/vendoremployee/all-table-list`
+**Account:** `owner@18march.com` (restaurant 18march, ID: 478)
+
+**Observation:** The API returns **duplicate records** with identical `id`. Confirmed on 2026-03-29:
+```
+id=4751  table_no=1  rtype=TB  title=in  ← appears TWICE in the response
+```
+
+Total records returned: 15, but only 14 are unique (id=4751 is duplicated).
+
+**Impact:**
+- React `key` collision causes rendering bugs (ghost elements, UI accumulation on re-renders)
+- Frontend now deduplicates by `id` in `tableTransform.js → fromAPI.tableList()` as a defensive measure
+
+**Root cause:** Unknown — likely a database-level duplicate or a JOIN producing extra rows.
+
+**Action needed from backend team:**
+1. Investigate why `id=4751` appears twice in the response
+2. Fix the query or data to prevent duplicate records
+3. Verify other restaurant accounts are not affected
+
+**Status:** OPEN — Frontend workaround applied, awaiting backend fix
+
+---
+
 ## B29: Discount UI Modes (Sprint 3)
 
 **Discount UI has 3 modes:**
