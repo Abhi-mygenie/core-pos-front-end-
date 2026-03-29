@@ -180,7 +180,7 @@ const DashboardPage = () => {
 
       return {
         id: String(t.tableId),
-        label: `T${t.tableNumber}`,
+        label: t.tableNumber,
         status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
         tableId: t.tableId,
         orderType: 'dineIn',
@@ -275,7 +275,7 @@ const DashboardPage = () => {
         const hasOrder = !!order;
         return {
           id: String(t.tableId),
-          label: `R${t.tableNumber}`,
+          label: t.tableNumber,
           status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
           tableId: t.tableId,
           orderType: 'room',
