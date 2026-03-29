@@ -59,11 +59,11 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
           <div className="flex items-center gap-2">
             {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
             {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
-            <span className="text-sm font-bold">{table.label || table.id}</span>
+            <span className="text-sm font-bold truncate" title={table.label || table.id}>{table.label || table.id}</span>
             {table.status === "reserved" ? (
-              <span className="text-xs font-semibold" style={{ color: COLORS.primaryOrange }}>Reserved</span>
+              <span className="text-xs font-semibold flex-shrink-0" style={{ color: COLORS.primaryOrange }}>Reserved</span>
             ) : table.amount ? (
-              <span className="text-xs font-semibold">{currencySymbol}{table.amount.toLocaleString()}</span>
+              <span className="text-xs font-semibold flex-shrink-0">{currencySymbol}{table.amount.toLocaleString()}</span>
             ) : null}
           </div>
           
