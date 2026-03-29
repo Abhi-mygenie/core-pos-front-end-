@@ -104,7 +104,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
         {isActive && (
           <div className="mt-2.5 flex-1 flex flex-col">
             {/* Primary name — Rooms: customer, Tables: waiter */}
-            <div className="text-lg font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.darkText }}>
+            <div className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.darkText }}>
               {table.status === "reserved" 
                 ? table.reservedFor 
                 : table.isRoom
@@ -113,7 +113,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
             </div>
             
             {/* Time */}
-            <div className="text-sm mt-1 mb-2 whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.grayText }}>
+            <div className="text-xs mt-1 mb-2 whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.grayText }}>
               <span>{table.status === "reserved" ? table.reservedTime : table.time}</span>
             </div>
 
