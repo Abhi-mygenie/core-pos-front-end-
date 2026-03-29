@@ -53,10 +53,10 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
       <div className="p-2.5 h-full flex flex-col">
         {/* Header Pill */}
         <div
-          className="w-full px-4 py-1.5 rounded-xl flex items-center justify-between font-bold"
+          className="w-full px-4 py-1.5 rounded-xl flex items-center justify-between font-bold overflow-hidden"
           style={headerPillStyle}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
             {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />}
             <span className="text-sm font-bold truncate" title={table.label || table.id}>{table.label || table.id}</span>
