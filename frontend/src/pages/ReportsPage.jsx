@@ -2,20 +2,42 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
-import { COLORS } from "../constants";
+import ReportTabs, { getTabConfig } from "../components/reports/ReportTabs";
+import DatePicker from "../components/reports/DatePicker";
 
 /**
  * ReportsPage — Phase 4A Order Reports
- * Step 1: Foundation shell with sidebar integration
+ * Step 3: Tabs + Date Picker wired
  */
 const ReportsPage = () => {
   const navigate = useNavigate();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isSilentMode, setIsSilentMode] = useState(false);
+  
+  // Report state
+  const [activeTab, setActiveTab] = useState('paid');
+  const [selectedDate, setSelectedDate] = useState(() => {
+    // Default to today
+    return new Date().toISOString().split('T')[0];
+  });
 
   const handleBackToDashboard = () => {
     navigate("/dashboard");
   };
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    // Data will be fetched in Step 5
+    console.log(`Tab changed to: ${tabId}, date: ${selectedDate}`);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    // Data will be fetched in Step 5
+    console.log(`Date changed to: ${date}, tab: ${activeTab}`);
+  };
+
+  const currentTabConfig = getTabConfig(activeTab);
 
   return (
     <div className="flex h-screen bg-white" data-testid="reports-page">
@@ -36,7 +58,7 @@ const ReportsPage = () => {
       <main className="flex-1 flex flex-col overflow-hidden bg-zinc-50">
         {/* Header */}
         <header 
-          className="flex items-center justify-between px-8 py-6 bg-white border-b border-zinc-200"
+          className="flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200"
           data-testid="reports-header"
         >
           <div className="flex items-center gap-4">
@@ -55,36 +77,42 @@ const ReportsPage = () => {
             </h1>
           </div>
 
-          {/* Date Picker + Export Buttons placeholder */}
+          {/* Date Picker + Export Buttons */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-zinc-500">Date picker & Export coming in Step 3/8</span>
+            <DatePicker 
+              value={selectedDate} 
+              onChange={handleDateChange} 
+            />
+            {/* Export buttons coming in Step 8 */}
+            <button 
+              className="px-3 py-2 text-sm border border-zinc-200 rounded-sm hover:bg-zinc-100 transition-colors text-zinc-600"
+              data-testid="export-pdf-button"
+              disabled
+            >
+              ⬇ PDF
+            </button>
+            <button 
+              className="px-3 py-2 text-sm border border-zinc-200 rounded-sm hover:bg-zinc-100 transition-colors text-zinc-600"
+              data-testid="export-csv-button"
+              disabled
+            >
+              ⬇ CSV
+            </button>
           </div>
         </header>
 
+        {/* Tabs */}
+        <div className="px-8 pt-4 bg-white">
+          <ReportTabs 
+            activeTab={activeTab} 
+            onTabChange={handleTabChange}
+            // Tab counts will come from API in Step 5
+            tabCounts={{}}
+          />
+        </div>
+
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-8">
-          {/* Tabs placeholder */}
-          <div 
-            className="mb-6 pb-4 border-b border-zinc-200"
-            data-testid="reports-tabs-placeholder"
-          >
-            <div className="flex items-center gap-6">
-              {['Paid', 'Cancelled', 'Credit', 'On Hold', 'Merged', 'Room Transfer', 'Aggregator'].map((tab, idx) => (
-                <button
-                  key={tab}
-                  className={`pb-2 text-sm font-medium transition-colors ${
-                    idx === 0 
-                      ? 'text-zinc-950 border-b-2 border-zinc-950' 
-                      : 'text-zinc-500 hover:text-zinc-700 border-b-2 border-transparent'
-                  }`}
-                  data-testid={`tab-${tab.toLowerCase().replace(' ', '-')}`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Filters placeholder */}
           <div 
             className="mb-6 p-4 bg-white border border-zinc-200 rounded-sm"
@@ -127,9 +155,14 @@ const ReportsPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-zinc-900 mb-1">Order Reports</h3>
-              <p className="text-sm text-zinc-500">
-                Step 1 complete — API integration coming in Step 2
+              <h3 className="text-lg font-medium text-zinc-900 mb-1">
+                {currentTabConfig.label} Orders
+              </h3>
+              <p className="text-sm text-zinc-500 mb-4">
+                Selected date: <span className="font-mono">{selectedDate}</span>
+              </p>
+              <p className="text-xs text-zinc-400">
+                Step 3 complete — Data fetching coming in Step 5
               </p>
             </div>
           </div>
