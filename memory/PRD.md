@@ -110,7 +110,7 @@ A dedicated reports page for viewing and analyzing orders with filtering, summar
 | 2 | `/api/v2/vendoremployee/cancel-order-list` | GET | 100+ | Richest, has order_type + order_details |
 | 3 | `/api/v2/vendoremployee/paid-in-tab-order-list` | GET | 23 | Leanest, TAB only |
 | 4 | `/api/v2/vendoremployee/paid-paylater-order-list` | GET | 31 | ⚠️ Returns same as paid |
-| 5 | `/api/v1/vendoremployee/urbanpiper/get-complete-order-list` | POST | ? | No test data |
+| 5 | `/api/v1/vendoremployee/urbanpiper/get-complete-order-list` | POST | 70+ nested | Zomato/Swiggy via UrbanPiper |
 | 6 | `/api/v1/vendoremployee/order-shifted-room` | POST | N/A | Action only (Phase 2B) |
 | 7 | `/api/v2/vendoremployee/employee-order-details?order_id=X` | GET | 108+ | Detail drill-down |
 
