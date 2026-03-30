@@ -117,16 +117,18 @@ Grouped by feature area:
 
 ## Sidebar Menu → Permission Mapping
 
-| Sidebar Item | Required Permission(s) | Phase 1 Status |
+> **Note (March 30, 2026):** Per user request, only 3 sidebar items are visible. The remaining 5 are hidden via a `VISIBLE_SECTIONS` whitelist in `Sidebar.jsx`, regardless of permissions.
+
+| Sidebar Item | Required Permission(s) | Current Status |
 |---|---|---|
-| Dashboard | `pos` | Mapped — visibility gated by `hasPermission('pos')` |
-| Orders | `order` | Mapped — visibility gated |
-| Reports | `report` | Mapped — visibility gated |
-| Menu Management | `menu` | Mapped — visibility gated, opens panel (Sub-step 3) |
-| Employees | `employee` | Mapped — "Coming soon" toast on click |
-| Expenses | `expence` | Mapped — "Coming soon" toast on click |
-| Inventory | `inventory` | Mapped — "Coming soon" toast on click |
-| Settings | `restaurant_settings` | Mapped — visibility gated, opens Settings panel |
+| Dashboard | `pos` | **VISIBLE** — gated by `hasPermission('pos')` |
+| Reports | `report` | **VISIBLE** — gated by `hasPermission('report')` |
+| Menu Management | `menu` | **VISIBLE** — gated by `hasPermission('menu')` |
+| Orders | `order` | **HIDDEN** — filtered by `VISIBLE_SECTIONS` whitelist |
+| Employees | `employee` | **HIDDEN** — filtered by `VISIBLE_SECTIONS` whitelist |
+| Expenses | `expence` | **HIDDEN** — filtered by `VISIBLE_SECTIONS` whitelist |
+| Inventory | `inventory` | **HIDDEN** — filtered by `VISIBLE_SECTIONS` whitelist |
+| Settings | `restaurant_settings` | **HIDDEN** — filtered by `VISIBLE_SECTIONS` whitelist |
 
 ---
 

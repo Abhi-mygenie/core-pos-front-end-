@@ -1,7 +1,7 @@
 # API Field Mapping Document
 
-> Last Updated: 2026-03-29
-> Status: Phase 2A — Room Integration complete. Room Check-In API wired. Tables and Rooms unified in Context. Credit payment hidden for rooms. Checkout labels applied.
+> Last Updated: 2026-03-30
+> Status: Phase 4A — Order Reports complete. Room Integration (Phase 2A/2B) complete. All core POS features wired.
 
 ---
 
@@ -816,6 +816,47 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | `back_image_file` | `params.backImage` (File) | Only in multipart mode |
 
 **Note:** When images are attached, all fields are sent as `FormData` with `Content-Type: multipart/form-data`. Without images, sent as JSON.
+
+---
+
+## Phase 4A: Order Reports — Report Endpoints (2026-03-30)
+
+### Report List APIs (All GET except Aggregator)
+
+| # | Endpoint | Method | Param | Tab(s) | Transform |
+|---|---|---|---|---|---|
+| 1 | `/api/v2/vendoremployee/paid-order-list` | GET | `search_date` | Paid, Room Transfer, All Orders | `reportTransform.transformPaidOrders()` |
+| 2 | `/api/v2/vendoremployee/cancel-order-list` | GET | `search_date` | Cancelled, Merged, All Orders | `reportTransform.transformCancelledOrders()` |
+| 3 | `/api/v2/vendoremployee/paid-in-tab-order-list` | GET | `search_date` | Credit, All Orders | `reportTransform.transformCreditOrders()` |
+| 4 | `/api/v2/vendoremployee/paid-paylater-order-list` | GET | `search_date` | On Hold | `reportTransform.transformHoldOrders()` |
+| 5 | `/api/v1/vendoremployee/urbanpiper/get-complete-order-list` | POST | `search_date` (body) | Aggregator | `reportTransform.transformAggregatorOrders()` |
+| 6 | `/api/v2/vendoremployee/employee-order-details` | GET | `order_id` | Detail drill-down | `reportTransform.transformOrderDetail()` |
+
+### Tab → Data Source + Client-Side Filter Mapping
+
+| Tab | API | Client-Side Filter |
+|---|---|---|
+| All Orders | #1 + #2 + #3 (merged) | Combined + gap detection |
+| Paid | #1 `paid-order-list` | Exclude `payment_method in ["ROOM","transferToRoom"]` |
+| Cancelled | #2 `cancel-order-list` | Exclude `payment_method === "Merge"` |
+| Credit | #3 `paid-in-tab-order-list` | Direct |
+| On Hold | #4 `paid-paylater-order-list` | Direct (shows warning banner — ISSUE-001) |
+| Merged | #2 `cancel-order-list` | `payment_method === "Merge"` |
+| Room Transfer | #1 `paid-order-list` | `payment_method in ["ROOM","transferToRoom"]` |
+| Aggregator | #5 `urbanpiper/get-complete-order-list` | Direct |
+
+### Report UI Components
+
+| Component | File | Purpose |
+|---|---|---|
+| `ReportsPage` | `pages/ReportsPage.jsx` | Container: state management, API orchestration, tab switching |
+| `ReportTabs` | `components/reports/ReportTabs.jsx` | 8 tab buttons with count badges |
+| `DatePicker` | `components/reports/DatePicker.jsx` | Calendar popup + prev/next day arrows |
+| `OrderTable` | `components/reports/OrderTable.jsx` | Dense sortable table, gap detection rows |
+| `FilterBar` | `components/reports/FilterBar.jsx` | 2-row layout: filters+stats / breakdown pills |
+| `FilterTags` | `components/reports/FilterTags.jsx` | Active filter tag chips |
+| `OrderDetailSheet` | `components/reports/OrderDetailSheet.jsx` | Side sheet drill-down (glass-morphism) |
+| `ExportButtons` | `components/reports/ExportButtons.jsx` | PDF print + CSV download |
 
 ---
 

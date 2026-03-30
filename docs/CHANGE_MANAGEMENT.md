@@ -214,6 +214,12 @@ The `activeFirst` toggle sorts tables by priority. The correct priority order pe
 || CHG-051 | FEATURE | Phase 2A Step 9 — Hide Credit payment for rooms | Done | Low | `CollectPaymentPanel.jsx` |
 || CHG-052 | FEATURE | Phase 2A Step 10 — Checkout label for rooms | Done | Low | `CartPanel.jsx`, `CollectPaymentPanel.jsx` |
 || CHG-053 | CONFIG | Comment out 403 auto-refresh in OrderEntry | Done | Low | `OrderEntry.jsx` |
+|| CHG-062 | FEATURE | Order Reports Module — Full Implementation | Done | High | `reportService.js`, `reportTransform.js`, `ReportTabs.jsx`, `DatePicker.jsx`, `OrderTable.jsx`, `FilterBar.jsx`, `FilterTags.jsx`, `OrderDetailSheet.jsx`, `ExportButtons.jsx`, `ReportsPage.jsx`, `App.js`, `Sidebar.jsx` |
+|| CHG-063 | FEATURE | All Orders Tab — Gap Detection | Done | Medium | `OrderTable.jsx`, `ReportsPage.jsx` |
+|| CHG-064 | STYLE | Sidebar — Restrict to 3 Items | Done | Low | `Sidebar.jsx` |
+|| CHG-065 | STYLE | FilterBar — Compact 2-Row Layout | Done | Low | `FilterBar.jsx` |
+|| CHG-066 | FEATURE | DatePicker — Prev/Next Day Arrows | Done | Low | `DatePicker.jsx` |
+|| CHG-067 | STYLE | OrderTable — Compact Loading Indicator | Done | Low | `OrderTable.jsx` |
 
 ---
 

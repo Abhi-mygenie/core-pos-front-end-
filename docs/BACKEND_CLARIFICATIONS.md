@@ -1,7 +1,7 @@
 # Backend Clarifications & Open Questions
 
 > Last Updated: 2026-03-30
-> Status: Phase 4A Planning — Order Reports
+> Status: Phase 4A COMPLETE — Order Reports UI implemented, backend gaps documented
 >
 > **Sub-Documents (module-specific):**
 > - [ORDER_REPORT_CLARIFICATIONS.md](./ORDER_REPORT_CLARIFICATIONS.md) — Phase 4A: Order Reports API gaps, missing fields, data issues
@@ -712,6 +712,7 @@ Total records returned: 15, but only 14 are unique (id=4751 is duplicated).
 ## Phase 4A: Order Reports — Backend Gaps Summary
 
 > Full details: [ORDER_REPORT_CLARIFICATIONS.md](./ORDER_REPORT_CLARIFICATIONS.md)
+> **Frontend Status:** COMPLETE — All UI, filtering, export, gap detection implemented.
 
 ### P0 — Blocking Report Filters
 1. **GAP-001:** Add `channel` field (dinein/takeaway/delivery/room) to `paid-order-list`, `paid-in-tab-order-list`, `paid-paylater-order-list`
