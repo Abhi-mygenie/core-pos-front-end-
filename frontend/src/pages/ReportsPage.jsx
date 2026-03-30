@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import ReportTabs, { getTabConfig } from "../components/reports/ReportTabs";
 import DatePicker from "../components/reports/DatePicker";
 import SummaryBar from "../components/reports/SummaryBar";
+import OrderTable from "../components/reports/OrderTable";
+import { getOrdersByTab } from "../api/services/reportService";
+import { calculateSummary } from "../api/transforms/reportTransform";
 
 /**
  * ReportsPage — Phase 4A Order Reports
- * Step 3: Tabs + Date Picker wired
+ * Step 5: Order Table + Data Fetching wired
  */
 const ReportsPage = () => {
   const navigate = useNavigate();
@@ -18,17 +21,45 @@ const ReportsPage = () => {
   // Report state
   const [activeTab, setActiveTab] = useState('paid');
   const [selectedDate, setSelectedDate] = useState(() => {
-    // Default to today
     return new Date().toISOString().split('T')[0];
   });
-  const [isLoading, setIsLoading] = useState(false);
   
-  // Mock summary data (will be replaced with API data in Step 5)
-  const [summary, setSummary] = useState({
-    totalOrders: 88,
-    totalAmount: 156420,
-    avgOrderValue: 1777,
-  });
+  // Data state
+  const [orders, setOrders] = useState([]);
+  const [summary, setSummary] = useState({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [tabCounts, setTabCounts] = useState({});
+
+  // Fetch orders when tab or date changes
+  const fetchOrders = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await getOrdersByTab(activeTab, selectedDate);
+      setOrders(data);
+      
+      // Calculate summary
+      const summaryData = calculateSummary(data);
+      setSummary(summaryData);
+      
+      // Update tab count for current tab
+      setTabCounts(prev => ({ ...prev, [activeTab]: data.length }));
+      
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+      setError(err.message || 'Failed to load orders');
+      setOrders([]);
+      setSummary({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeTab, selectedDate]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleBackToDashboard = () => {
     navigate("/dashboard");
@@ -36,14 +67,15 @@ const ReportsPage = () => {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
-    // Data will be fetched in Step 5
-    console.log(`Tab changed to: ${tabId}, date: ${selectedDate}`);
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    // Data will be fetched in Step 5
-    console.log(`Date changed to: ${date}, tab: ${activeTab}`);
+  };
+
+  const handleRowClick = (order) => {
+    // Side sheet drill-down coming in Step 7
+    console.log('Order clicked:', order.id, order.orderId);
   };
 
   const currentTabConfig = getTabConfig(activeTab);
@@ -115,13 +147,45 @@ const ReportsPage = () => {
           <ReportTabs 
             activeTab={activeTab} 
             onTabChange={handleTabChange}
-            // Tab counts will come from API in Step 5
-            tabCounts={{}}
+            tabCounts={tabCounts}
           />
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-8">
+          {/* Hold Tab Warning Banner */}
+          {activeTab === 'hold' && (
+            <div 
+              className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-sm flex items-center gap-3"
+              data-testid="hold-tab-warning"
+            >
+              <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <div className="text-sm">
+                <span className="font-medium text-amber-800">Note:</span>
+                <span className="text-amber-700 ml-1">
+                  Displaying provisional hold data. Backend returns same data as Paid tab (known issue).
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Error Banner */}
+          {error && (
+            <div 
+              className="mb-4 p-3 bg-red-50 border border-red-200 rounded-sm flex items-center gap-3"
+              data-testid="error-banner"
+            >
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <div className="text-sm text-red-700">{error}</div>
+              <button 
+                onClick={fetchOrders}
+                className="ml-auto text-sm font-medium text-red-700 hover:text-red-900"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {/* Filters placeholder */}
           <div 
             className="mb-6 p-4 bg-white border border-zinc-200 rounded-sm"
@@ -136,28 +200,14 @@ const ReportsPage = () => {
             isLoading={isLoading}
           />
 
-          {/* Order Table placeholder */}
-          <div 
-            className="bg-white border border-zinc-200 rounded-sm"
-            data-testid="reports-table-placeholder"
-          >
-            <div className="p-12 text-center">
-              <div className="text-zinc-300 mb-4">
-                <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-zinc-900 mb-1">
-                {currentTabConfig.label} Orders
-              </h3>
-              <p className="text-sm text-zinc-500 mb-4">
-                Selected date: <span className="font-mono">{selectedDate}</span>
-              </p>
-              <p className="text-xs text-zinc-400">
-                Step 3 complete — Data fetching coming in Step 5
-              </p>
-            </div>
-          </div>
+          {/* Order Table */}
+          <OrderTable
+            orders={orders}
+            tabId={activeTab}
+            tabLabel={currentTabConfig.label}
+            isLoading={isLoading}
+            onRowClick={handleRowClick}
+          />
         </div>
       </main>
     </div>
