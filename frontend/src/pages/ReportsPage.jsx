@@ -6,6 +6,8 @@ import ReportTabs, { getTabConfig } from "../components/reports/ReportTabs";
 import DatePicker from "../components/reports/DatePicker";
 import SummaryBar from "../components/reports/SummaryBar";
 import OrderTable from "../components/reports/OrderTable";
+import FilterBar from "../components/reports/FilterBar";
+import FilterTags from "../components/reports/FilterTags";
 import { getOrdersByTab } from "../api/services/reportService";
 import { calculateSummary } from "../api/transforms/reportTransform";
 
@@ -26,10 +28,19 @@ const ReportsPage = () => {
   
   // Data state
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [summary, setSummary] = useState({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [tabCounts, setTabCounts] = useState({});
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    paymentMethod: null,
+    paymentType: null,
+    channel: null,
+    platform: null,
+  });
 
   // Fetch orders when tab or date changes
   const fetchOrders = useCallback(async () => {
@@ -40,22 +51,51 @@ const ReportsPage = () => {
       const data = await getOrdersByTab(activeTab, selectedDate);
       setOrders(data);
       
-      // Calculate summary
-      const summaryData = calculateSummary(data);
-      setSummary(summaryData);
-      
-      // Update tab count for current tab
+      // Update tab count for current tab (unfiltered count)
       setTabCounts(prev => ({ ...prev, [activeTab]: data.length }));
       
     } catch (err) {
       console.error('Failed to fetch orders:', err);
       setError(err.message || 'Failed to load orders');
       setOrders([]);
-      setSummary({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
     } finally {
       setIsLoading(false);
     }
   }, [activeTab, selectedDate]);
+
+  // Apply filters to orders
+  useEffect(() => {
+    let result = [...orders];
+    
+    // Filter by payment method
+    if (filters.paymentMethod) {
+      result = result.filter(o => 
+        o.paymentMethod?.toLowerCase() === filters.paymentMethod.toLowerCase()
+      );
+    }
+    
+    // Filter by payment type
+    if (filters.paymentType) {
+      result = result.filter(o => 
+        o.paymentType?.toLowerCase() === filters.paymentType.toLowerCase()
+      );
+    }
+    
+    // Channel and Platform filters disabled (GAP-001, GAP-002)
+    // When backend adds these fields, uncomment:
+    // if (filters.channel) {
+    //   result = result.filter(o => o.channel === filters.channel);
+    // }
+    // if (filters.platform) {
+    //   result = result.filter(o => o.platform === filters.platform);
+    // }
+    
+    setFilteredOrders(result);
+    
+    // Calculate summary from filtered orders
+    const summaryData = calculateSummary(result);
+    setSummary(summaryData);
+  }, [orders, filters]);
 
   useEffect(() => {
     fetchOrders();
@@ -67,10 +107,34 @@ const ReportsPage = () => {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+    // Reset filters when tab changes
+    setFilters({
+      paymentMethod: null,
+      paymentType: null,
+      channel: null,
+      platform: null,
+    });
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      paymentMethod: null,
+      paymentType: null,
+      channel: null,
+      platform: null,
+    });
+  };
+
+  const handleRemoveFilter = (key) => {
+    setFilters(prev => ({ ...prev, [key]: null }));
   };
 
   const handleRowClick = (order) => {
@@ -186,13 +250,21 @@ const ReportsPage = () => {
             </div>
           )}
 
-          {/* Filters placeholder */}
-          <div 
-            className="mb-6 p-4 bg-white border border-zinc-200 rounded-sm"
-            data-testid="reports-filters-placeholder"
-          >
-            <span className="text-sm text-zinc-500">Filters coming in Step 6</span>
+          {/* Filters */}
+          <div className="mb-4">
+            <FilterBar 
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onClearAll={handleClearFilters}
+            />
           </div>
+
+          {/* Filter Tags */}
+          <FilterTags 
+            filters={filters}
+            onRemove={handleRemoveFilter}
+            onClearAll={handleClearFilters}
+          />
 
           {/* Summary Bar */}
           <SummaryBar 
@@ -202,7 +274,7 @@ const ReportsPage = () => {
 
           {/* Order Table */}
           <OrderTable
-            orders={orders}
+            orders={filteredOrders}
             tabId={activeTab}
             tabLabel={currentTabConfig.label}
             isLoading={isLoading}
