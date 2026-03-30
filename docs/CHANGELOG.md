@@ -15,6 +15,35 @@
 
 ---
 
+
+## [2026-03-30] — Phase 4A: Order Reports + UI Cleanup
+
+### CHG-062 | FEATURE | Order Reports Module — Full Implementation
+**Summary:** Built complete Order Reports module from scratch. 8 tabs (All Orders, Paid, Cancelled, Credit, On Hold, Merged, Room Transfer, Aggregator) with `reportService.js` (7 API fetchers) and `reportTransform.js` (normalizers per tab). Includes date filtering, payment type filtering, CSV/PDF export, order detail drill-down side sheet.
+**Files Created:** `reportService.js`, `reportTransform.js`, `ReportTabs.jsx`, `DatePicker.jsx`, `OrderTable.jsx`, `FilterBar.jsx`, `FilterTags.jsx`, `OrderDetailSheet.jsx`, `ExportButtons.jsx`, `ReportsPage.jsx`
+
+### CHG-063 | FEATURE | All Orders Tab — Gap Detection
+**Summary:** "All Orders" tab merges Paid + Cancelled + Credit data, sorts by order ID, and detects sequential gaps. Missing orders are highlighted with red rows showing the missing ID range. Missing count shown in red badge.
+**Files Changed:** `OrderTable.jsx`, `ReportsPage.jsx`
+
+### CHG-064 | STYLE | Sidebar — Restrict to 3 Items
+**Summary:** Added `VISIBLE_SECTIONS` whitelist (`dashboard`, `reports`, `menu-management`) to Sidebar. Orders, Employees, Expenses, Inventory, Settings are now hidden regardless of permissions.
+**Files Changed:** `Sidebar.jsx`
+
+### CHG-065 | STYLE | FilterBar — Compact 2-Row Layout
+**Summary:** Redesigned FilterBar from a multi-row layout with wasted space to a 2-row compact toolbar. Row 1: pill-style filter dropdowns (left) + summary stats (right). Row 2: status breakdown pills spread full-width with `flex-1`. Removed dropdown labels (placeholder text is self-explanatory).
+**Files Changed:** `FilterBar.jsx`
+
+### CHG-066 | FEATURE | DatePicker — Prev/Next Day Arrows
+**Summary:** Added `<` prev and `>` next arrow buttons flanking the date display. Next button disabled when selected date is today (can't go to future). Enables quick day-by-day navigation without opening the calendar.
+**Files Changed:** `DatePicker.jsx`
+
+### CHG-067 | STYLE | OrderTable — Compact Loading Indicator
+**Summary:** Replaced the 5-row skeleton loader with a small centered spinner + "Loading orders..." text. Much less visual noise during data fetches.
+**Files Changed:** `OrderTable.jsx`
+
+---
+
 ## [2026-03-30] — Phase 2B: Transfer to Room + Associated Orders
 
 ### CHG-054 | FEATURE | Transfer to Room — API Layer
