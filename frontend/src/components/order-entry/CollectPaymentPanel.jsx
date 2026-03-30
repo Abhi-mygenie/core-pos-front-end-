@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft } from "lucide-react";
+import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables } from "../../contexts";
 
-const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer, isRoom }) => {
+const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer, isRoom, associatedOrders = [] }) => {
   const customer = passedCustomer;
   const { discountTypes } = useRestaurant();
   const { tables } = useTables();
@@ -14,6 +14,13 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
     [tables]
   );
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [showTransferredOrders, setShowTransferredOrders] = useState(false);
+
+  // Associated orders total
+  const associatedTotal = useMemo(() =>
+    associatedOrders.reduce((sum, o) => sum + (o.amount || 0), 0),
+    [associatedOrders]
+  );
 
   // Per-item tax computation — uses product.tax if available, else 0%
   const taxTotals = useMemo(() => {
@@ -214,8 +221,72 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           style={{ borderColor: COLORS.borderGray }}
           data-testid="bill-summary-section"
         >
-          
-          {/* Items List */}
+
+          {/* === ROOM WITH ASSOCIATED ORDERS: Transferred Orders first, then Room Service total === */}
+          {isRoom && associatedOrders.length > 0 ? (
+            <div className="space-y-2 text-sm">
+              {/* Transferred Orders — collapsible */}
+              <div>
+                <button
+                  onClick={() => setShowTransferredOrders(!showTransferredOrders)}
+                  className="w-full flex items-center justify-between py-1"
+                  data-testid="checkout-transferred-toggle"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <ArrowRightLeft className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />
+                    <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
+                      Transferred Orders ({associatedOrders.length})
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold" style={{ color: COLORS.primaryOrange }}>₹{associatedTotal.toLocaleString()}</span>
+                    {showTransferredOrders
+                      ? <ChevronUp className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                      : <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />}
+                  </div>
+                </button>
+                {showTransferredOrders && (
+                  <div className="mt-1 mb-2 max-h-40 overflow-y-auto rounded-lg" style={{ backgroundColor: `${COLORS.primaryOrange}05` }}>
+                    {associatedOrders.map((order) => (
+                      <div
+                        key={order.orderId}
+                        className="px-3 py-1.5 flex items-center justify-between text-xs"
+                        style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+                        data-testid={`checkout-assoc-${order.orderId}`}
+                      >
+                        <div>
+                          <span className="font-medium" style={{ color: COLORS.darkText }}>#{order.orderNumber}</span>
+                          {order.transferredAt && (
+                            <span className="ml-2" style={{ color: COLORS.grayText }}>
+                              {new Date(order.transferredAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                            </span>
+                          )}
+                        </div>
+                        <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{order.amount.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Room Service Total */}
+              <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                <div className="flex justify-between py-1">
+                  <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>Room Service</span>
+                  <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Grand Total */}
+              <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                <div className="flex justify-between font-bold">
+                  <span style={{ color: COLORS.darkText }}>Total</span>
+                  <span style={{ color: COLORS.primaryOrange }}>₹{(itemTotal + associatedTotal).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+          /* === DEFAULT: Table / Room without transfers — show item details === */
           <div className="space-y-2 text-sm">
             <div className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: COLORS.grayText }}>
               Items
@@ -248,6 +319,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               <span style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
             </div>
           </div>
+          )}
 
           {/* Discounts Section */}
           {totalDiscount > 0 && (
