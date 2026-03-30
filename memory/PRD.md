@@ -63,105 +63,79 @@ Transfer table orders to rooms as a payment method. Display transferred (associa
 - **Room Checkout Layout:** Two expandable sections (Transferred Orders first, then Room Service with inline discount/tax controls)
 - **Bill/C-Out Shortcut:** `initialShowPayment` prop bypasses cart view, opens payment panel directly
 
-## Phase 4: Reports — IN PROGRESS
+## Phase 4: Reports — PLANNING COMPLETE
 
-### Phase 4A: Order Reports (Next Up — Awaiting API Endpoints)
-A dedicated reports page/section for viewing and analyzing orders with filtering, summary totals, and export capabilities.
+### Phase 4A: Order Reports
+A dedicated reports page for viewing and analyzing orders with filtering, summary totals, and export.
 
-#### Order Categories / Tabs:
-1. **Paid Orders** — Successfully completed & paid orders
-   - Filters: Payment Method, Channel, Platform
-2. **Canceled Orders** — Orders that were canceled
-3. **Credit Orders** — Orders put on credit (deferred payment)
-4. **Hold / Pending Payment Orders** — Orders on hold awaiting payment
+#### Order Status Tabs (7):
+1. **Paid** — Successfully paid orders
+2. **Cancelled** — Cancelled orders (excluding merged)
+3. **Credit** — Orders put on credit (TAB)
+4. **On Hold** — Pay later + failed online orders
+5. **Merged** — Orders merged into another order
+6. **Room Transfer** — Orders transferred to a room
+7. **Aggregator** — Orders from third-party platforms (UrbanPiper)
+
+#### Filters (apply to active tab):
+- **Payment Method** (dynamic): Cash, Card, UPI, TAB Cash, TAB Card, TAB UPI, Online UPI, Online Card, + dynamic
+- **Channel:** Dine-in, Delivery, Takeaway, Rooms, Aggregator
+- **Platform:** POS, Web (Scan & Order)
+- **Payment Type:** Prepaid, Postpaid
+- **Date Picker:** Today (default), custom date
 
 #### Features:
-- **Date Range Filter** — TBD (to be confirmed with user)
-- **Summary Totals** — Aggregate numbers per category (e.g., "Total Paid: ₹45,000 | 128 orders")
-- **Export** — PDF, Excel/CSV export for all report views
-- **Order Details** — Per-order data display (fields TBD, user will share endpoint details)
+- **Summary Bar** — Total orders, total amount, avg per order
+- **Order Table** — Order #, Customer, Waiter, Table/Room, Amount, Tax, Discount, Payment Method, Time
+- **Detail Drill-down** — Click row → full item-level view
+- **Export** — PDF, Excel/CSV
+
+#### Tab → API Data Source Mapping:
+
+| Tab | Primary API | Filter Logic |
+|---|---|---|
+| Paid | `paid-order-list` | Direct (exclude ROOM/transferToRoom) |
+| Cancelled | `cancel-order-list` | Exclude `payment_method === "Merge"` |
+| Credit | `paid-in-tab-order-list` | Direct |
+| On Hold | `paid-paylater-order-list` | Direct (⚠️ data issue) |
+| Merged | `cancel-order-list` | `payment_method === "Merge"` |
+| Room Transfer | `paid-order-list` | `payment_method in ["ROOM","transferToRoom"]` |
+| Aggregator | `urbanpiper/get-complete-order-list` | Direct |
 
 #### API Endpoints:
 
-**1. Paid Orders:** `GET /api/v2/vendoremployee/paid-order-list`
-- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
-- Auth: Bearer token
-- Response: `{ orders: [...] }`
-- Order fields per item:
-  - `id`, `restaurant_order_id` (display order #)
-  - `order_amount`, `restaurant_discount_amount`, `tip_amount`
-  - `total_vat_tax_amount`, `total_gst_tax_amount`, `total_service_tax_amount`
-  - `payment_method` → values seen: `cash`, `upi`, `card`, `ROOM`, `transferToRoom`
-  - `payment_type` → values seen: `prepaid`, `postpaid`
-  - `payment_status` → `paid`
-  - `user_name`, `waiter_name`, `table_no`
-  - `f_name`, `l_name`, `email`, `phone` (customer details, often null)
-  - `f_order_status` (always 6 for paid), `order_status` (`delivered`/`deliverd`)
-  - `collect_bill` (timestamp), `created_at`, `updated_at`
-  - `transaction_reference`, `loyalty_info`, `coupon_info`, `wallet_info`
-  - `online_pay[]`, `partial_payments[]`
+| # | Endpoint | Method | Fields | Notes |
+|---|---|---|---|---|
+| 1 | `/api/v2/vendoremployee/paid-order-list` | GET | 32 | Missing order_type |
+| 2 | `/api/v2/vendoremployee/cancel-order-list` | GET | 100+ | Richest, has order_type + order_details |
+| 3 | `/api/v2/vendoremployee/paid-in-tab-order-list` | GET | 23 | Leanest, TAB only |
+| 4 | `/api/v2/vendoremployee/paid-paylater-order-list` | GET | 31 | ⚠️ Returns same as paid |
+| 5 | `/api/v1/vendoremployee/urbanpiper/get-complete-order-list` | POST | ? | No test data |
+| 6 | `/api/v1/vendoremployee/order-shifted-room` | POST | N/A | Action only (Phase 2B) |
+| 7 | `/api/v2/vendoremployee/employee-order-details?order_id=X` | GET | 108+ | Detail drill-down |
 
-**2. Canceled Orders:** `GET /api/v2/vendoremployee/cancel-order-list`
-- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
-- Auth: Bearer token
-- Response: `{ orders: [...] }` — MUCH richer than paid-order-list (100+ fields vs 32)
-- Key extra fields vs paid endpoint:
-  - `order_type` → values seen: `pos`, `dinein` (this IS the Channel/Platform field!)
-  - `order_details[]` — full item-level data with food details, variations, cancel info
-  - `cancellation_reason`, `cancellation_note`, `canceled_by` (all null in test data)
-  - `cancel_at` timestamp
-  - `order_note`, `parent_order_id`, lifecycle timestamps
-  - Per-item: `cancel_type` (e.g., "Post-Serve"), `cancel_by`, `cancel_at`
-- Observed data (2026-03-17, 11 orders):
-  - order_type: pos (10), dinein (1)
-  - payment_method: Merge (6), Cancel (3), cash_on_delivery (2)
-  - payment_status: unpaid (9), Merge (2)
-  - f_order_status: always 3 (cancelled)
-  - 3 of 11 orders had item-level order_details
-- NOTE: `order_type` field exists here but NOT in paid-order-list — backend needs to add it there
-- CLARIFICATION: `order_type` mixes Channel + Platform values:
-  - **Channel values:** `dinein`, takeaway, room (how customer is served)
-  - **Platform values:** `pos`, scan_and_order (how order was placed)
-  - Backend should ideally separate these into two distinct fields: `channel` + `platform`
-**3. Credit Orders:** `GET /api/v2/vendoremployee/paid-in-tab-order-list`
-- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
-- Auth: Bearer token
-- Response: `{ orders: [...] }` — **leanest of all** (23 fields)
-- Fields: id, restaurant_order_id, order_amount, user_name, restaurant_discount_amount, total_vat/gst/service_tax_amount, f/b/k_order_status, order_status, payment_status, collect_bill, payment_method, transaction_reference, created_at, updated_at, f_name, l_name, email, phone, waiter_name
-- Key observations:
-  - `payment_method` always `TAB` (all 12 orders)
-  - `payment_status` always `paid`, `f_order_status` always 6
-  - Has customer contact info: `f_name`, `l_name`, `email`, `phone`
-  - **Missing vs paid-order-list:** employee_id, payment_type, tip_amount, table_no, loyalty/coupon/wallet_info, online_pay[], partial_payments[]
-  - **No order_type, no order_details[]** — detail drill-down via `employee-order-details` needed
-- Observed data (2026-03-17, 12 orders): total ₹6,734, range ₹137–₹1,302
-**4. Hold / Pay Later Orders:** `GET /api/v2/vendoremployee/paid-paylater-order-list`
-- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
-- Auth: Bearer token
-- Response: `{ orders: [...] }` — 31 fields (nearly identical to paid-order-list)
-- Fields: Same as paid-order-list MINUS `online_pay[]`
-- ⚠️ **DATA ISSUE:** On 2026-03-17, returns the EXACT same 88 orders as `paid-order-list` (identical IDs, amounts, payment methods). Tested multiple dates — either returns 0 or same as paid.
-  - Possible cause: No actual hold/paylater orders exist in test data, OR endpoint is not filtering correctly
-  - **Needs backend clarification:** Is this endpoint working as intended? What differentiates a "hold/paylater" order from a "paid" order in the DB?
-- Observed: payment_methods (cash:44, upi:20, card:18, ROOM:6), all payment_status: "paid"
+All list endpoints accept `search_date=YYYY-MM-DD` (defaults today). Aggregator uses POST body.
 
-#### Observed Data (2026-03-17, 88 paid orders):
-- payment_methods: cash (44), upi (20), card (18), ROOM (6)
-- payment_types: prepaid, postpaid
-- Total amount: ₹50,329.50
+#### Field Availability Matrix:
 
-#### ⚠️ Missing Fields (Backend team to add):
-- **`channel`** — Order channel: Dine-in, Takeaway, Room Order, etc.
-- **`platform`** — Order source: POS, Scan & Order, etc.
-- Frontend will be built assuming these fields exist. Until backend adds them, filters will show "All" or placeholder values.
+| Field | Paid(32) | Cancel(100+) | Credit(23) | Hold(31) | Detail(108+) |
+|---|---|---|---|---|---|
+| order_type | ❌ | ✅ | ❌ | ❌ | ✅ |
+| order_details[] | ❌ | ✅ | ❌ | ❌ | ✅ |
+| table_no | ✅ | ✅ | ❌ | ✅ | ✅ |
+| payment_type | ✅ | ✅ | ❌ | ✅ | ✅ |
+| tip_amount | ✅ | ✅ | ❌ | ✅ | ✅ |
+| employee_id | ✅ | ✅ | ❌ | ✅ | ✅ |
+| customer info | ✅ | ✅ | ✅ | ✅ | ✅ |
+| cancellation fields | ❌ | ✅ | ❌ | ❌ | ✅ |
+| restaurant_table_area | ❌ | ❌ | ❌ | ❌ | ✅ |
 
-#### Paid Orders Filters (4 total):
-1. **Payment Method** — `cash`, `upi`, `card`, `ROOM`, `transferToRoom` ✅ Available now
-2. **Channel** — Dine-in, Takeaway, Room Order ⏳ Awaiting backend field
-3. **Platform** — POS, Scan & Order ⏳ Awaiting backend field
-4. **Date** — `search_date=YYYY-MM-DD` ✅ Available now
-
-#### Status: PLANNING (Paid endpoint documented, awaiting Canceled/Credit/Hold endpoints)
+#### ⚠️ Backend Clarifications Needed:
+1. Add `order_type` (or separate `channel` + `platform`) to paid-order-list
+2. Channel vs Platform split — `order_type` currently mixes both (channel: dinein/takeaway/room, platform: pos/web)
+3. `paid-paylater-order-list` returns identical data to paid-order-list — is this correct?
+4. Aggregator endpoint — no test data; field structure unknown
+5. `online_pay[]` inconsistency across endpoints
 
 ---
 
