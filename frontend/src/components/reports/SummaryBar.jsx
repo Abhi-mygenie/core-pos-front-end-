@@ -22,7 +22,7 @@ const formatNumber = (num) => {
 /**
  * SummaryCard - Individual stat card
  */
-const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoading }) => {
+const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoading, missingCount }) => {
   // Determine trend icon and color
   const getTrendDisplay = () => {
     if (trend === undefined || trend === null) return null;
@@ -68,11 +68,22 @@ const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoadin
       {isLoading ? (
         <div className="h-9 bg-zinc-100 rounded-sm animate-pulse w-24" />
       ) : (
-        <div 
-          className="text-3xl font-bold text-zinc-950 tabular-nums"
-          style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}
-        >
-          {formattedValue}
+        <div className="flex items-baseline gap-2">
+          <span 
+            className="text-3xl font-bold text-zinc-950 tabular-nums"
+            style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}
+          >
+            {formattedValue}
+          </span>
+          {missingCount > 0 && (
+            <span 
+              className="text-lg font-semibold text-red-600 tabular-nums"
+              style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}
+              data-testid="missing-count"
+            >
+              ({missingCount} missing)
+            </span>
+          )}
         </div>
       )}
       
@@ -93,8 +104,9 @@ const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoadin
  * @param {object} summary - { totalOrders, totalAmount, avgOrderValue }
  * @param {boolean} isLoading - Show loading skeletons
  * @param {object} trends - Optional trend percentages { orders, amount, avg }
+ * @param {number} missingCount - Number of missing orders (for All Orders tab)
  */
-const SummaryBar = ({ summary = {}, isLoading = false, trends = {} }) => {
+const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount = 0 }) => {
   const { totalOrders, totalAmount, avgOrderValue } = summary;
 
   const cards = [
@@ -104,6 +116,7 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {} }) => {
       formattedValue: formatNumber(totalOrders),
       trend: trends.orders,
       trendLabel: 'vs yesterday',
+      missingCount: missingCount, // Only show on Total Orders card
     },
     {
       label: 'Total Amount',
@@ -111,6 +124,7 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {} }) => {
       formattedValue: formatCurrency(totalAmount),
       trend: trends.amount,
       trendLabel: 'vs yesterday',
+      missingCount: 0,
     },
     {
       label: 'Avg Order Value',
@@ -118,6 +132,7 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {} }) => {
       formattedValue: formatCurrency(avgOrderValue),
       trend: trends.avg,
       trendLabel: 'vs yesterday',
+      missingCount: 0,
     },
   ];
 
@@ -135,6 +150,7 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {} }) => {
           trend={card.trend}
           trendLabel={card.trendLabel}
           isLoading={isLoading}
+          missingCount={card.missingCount}
         />
       ))}
     </div>

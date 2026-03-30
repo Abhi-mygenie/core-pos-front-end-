@@ -32,6 +32,7 @@ const ReportsPage = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [summary, setSummary] = useState({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
+  const [missingCount, setMissingCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [tabCounts, setTabCounts] = useState({});
@@ -101,7 +102,30 @@ const ReportsPage = () => {
     // Calculate summary from filtered orders
     const summaryData = calculateSummary(result);
     setSummary(summaryData);
-  }, [orders, filters]);
+    
+    // Calculate missing count for All Orders tab
+    if (activeTab === 'all' && result.length >= 2) {
+      let missing = 0;
+      // Sort by order ID descending
+      const sorted = [...result].sort((a, b) => {
+        const aId = parseInt(String(a.orderId || a.id).replace(/\D/g, '')) || 0;
+        const bId = parseInt(String(b.orderId || b.id).replace(/\D/g, '')) || 0;
+        return bId - aId;
+      });
+      
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const currentId = parseInt(String(sorted[i].orderId || sorted[i].id).replace(/\D/g, '')) || 0;
+        const nextId = parseInt(String(sorted[i + 1].orderId || sorted[i + 1].id).replace(/\D/g, '')) || 0;
+        const gap = currentId - nextId;
+        if (gap > 1 && gap <= 100) {
+          missing += gap - 1;
+        }
+      }
+      setMissingCount(missing);
+    } else {
+      setMissingCount(0);
+    }
+  }, [orders, filters, activeTab]);
 
   useEffect(() => {
     fetchOrders();
@@ -275,6 +299,7 @@ const ReportsPage = () => {
           <SummaryBar 
             summary={summary} 
             isLoading={isLoading}
+            missingCount={activeTab === 'all' ? missingCount : 0}
           />
 
           {/* Order Table */}
