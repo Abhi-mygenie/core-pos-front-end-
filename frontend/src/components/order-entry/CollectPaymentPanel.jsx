@@ -293,7 +293,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                 {showRoomService && (
                   <div className="mt-1 mb-1 text-xs space-y-2" style={{ backgroundColor: `${COLORS.lightBg}` }}>
                     {/* Items list */}
-                    <div className="px-3 pt-2 space-y-1.5">
+                    <div className="px-3 pt-2 space-y-1.5 max-h-48 overflow-y-auto">
                       {(cartItems || []).map((item, idx) => (
                         <div key={idx} className="flex justify-between items-start">
                           <div className="flex-1 min-w-0">
@@ -315,24 +315,131 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                       ))}
                     </div>
                     {/* Item Total */}
-                    <div className="px-3 pt-1 border-t flex justify-between font-medium" style={{ borderColor: COLORS.borderGray }}>
+                    <div className="px-3 pt-2 border-t flex justify-between font-medium" style={{ borderColor: COLORS.borderGray }}>
                       <span style={{ color: COLORS.darkText }}>Item Total</span>
                       <span style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
                     </div>
-                    {/* Discount (if any) */}
+
+                    {/* --- Discount/Coupon/Loyalty/Wallet inside Room Service --- */}
+                    {/* Discount */}
+                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🏷️ Discount</span>
+                        <div className="flex gap-2 flex-1 justify-end">
+                          <select
+                            value={discountType || ""}
+                            onChange={(e) => setDiscountType(e.target.value || null)}
+                            className="px-2 py-1 rounded-lg border text-xs outline-none"
+                            style={{ borderColor: COLORS.borderGray, minWidth: "70px" }}
+                          >
+                            <option value="">None</option>
+                            <option value="percent">%</option>
+                            <option value="flat">₹</option>
+                          </select>
+                          {discountType && (
+                            <input
+                              type="number"
+                              placeholder={discountType === 'percent' ? "%" : "₹"}
+                              value={discountValue}
+                              onChange={(e) => setDiscountValue(e.target.value)}
+                              className="w-16 px-2 py-1 rounded-lg border text-xs outline-none"
+                              style={{ borderColor: COLORS.borderGray }}
+                            />
+                          )}
+                          {manualDiscount > 0 && (
+                            <span className="text-xs font-medium self-center" style={{ color: COLORS.primaryGreen }}>-₹{manualDiscount}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Coupon */}
+                    {customer && (
+                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🎫 Coupon</span>
+                        <input
+                          type="text"
+                          placeholder="Enter code"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          className="flex-1 px-2 py-1 rounded-lg border text-xs outline-none"
+                          style={{ borderColor: COLORS.borderGray }}
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          className="px-2 py-1 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
+                        >
+                          Apply
+                        </button>
+                      </div>
+                      {couponError && <div className="text-xs mt-1 ml-14" style={{ color: "#D32F2F" }}>{couponError}</div>}
+                      {selectedCoupon && (
+                        <div className="flex items-center justify-between mt-1 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
+                          <span className="text-xs" style={{ color: COLORS.primaryGreen }}>✓ {selectedCoupon.code} (-₹{couponDiscount})</span>
+                          <button onClick={() => setSelectedCoupon(null)} className="text-xs" style={{ color: COLORS.grayText }}>Remove</button>
+                        </div>
+                      )}
+                    </div>
+                    )}
+
+                    {/* Loyalty */}
+                    {customer && (
+                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                      <label className="flex items-center justify-between cursor-pointer">
+                        <div className="flex items-center gap-1.5">
+                          <input type="checkbox" checked={useLoyalty} onChange={(e) => setUseLoyalty(e.target.checked)} disabled={!customer?.loyaltyPoints} className="w-3.5 h-3.5 accent-green-600 disabled:opacity-50" />
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>⭐ Loyalty</span>
+                          <span className="text-xs" style={{ color: COLORS.grayText }}>({customer?.loyaltyPoints || 0} pts)</span>
+                        </div>
+                        <span className="text-xs font-medium" style={{ color: useLoyalty && loyaltyDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
+                          {useLoyalty && loyaltyDiscount > 0 ? `-₹${loyaltyDiscount}` : customer?.loyaltyPoints > 0 ? `₹${customer.loyaltyPoints} available` : "No points"}
+                        </span>
+                      </label>
+                    </div>
+                    )}
+
+                    {/* Wallet */}
+                    {customer && (
+                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-1.5 cursor-pointer">
+                          <input type="checkbox" checked={useWallet} onChange={(e) => setUseWallet(e.target.checked)} disabled={!customer?.walletBalance} className="w-3.5 h-3.5 accent-green-600 disabled:opacity-50" />
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>💰 Wallet</span>
+                          <span className="text-xs" style={{ color: COLORS.grayText }}>(₹{customer?.walletBalance || 0})</span>
+                        </label>
+                        <div className="flex items-center gap-1">
+                          {useWallet && customer?.walletBalance > 0 && (
+                            <input type="number" value={walletAmount} onChange={(e) => setWalletAmount(Math.min(parseFloat(e.target.value) || 0, customer.walletBalance))} className="w-14 px-1 py-0.5 text-xs text-right rounded border" style={{ borderColor: COLORS.borderGray }} />
+                          )}
+                          <span className="text-xs font-medium" style={{ color: useWallet && walletDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
+                            {useWallet && walletDiscount > 0 ? `-₹${walletDiscount}` : customer?.walletBalance > 0 ? "" : "No balance"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    )}
+
+                    {/* Discounts summary (if any applied) */}
                     {totalDiscount > 0 && (
-                      <div className="px-3 flex justify-between" style={{ color: COLORS.primaryGreen }}>
-                        <span>Discount</span>
-                        <span>-₹{totalDiscount.toLocaleString()}</span>
+                      <div className="px-3 pt-2 border-t space-y-1" style={{ borderColor: COLORS.borderGray }}>
+                        <div className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>Applied Discounts</div>
+                        {manualDiscount > 0 && <div className="flex justify-between"><span style={{ color: COLORS.darkText }}>Discount ({discountType === 'percent' ? `${discountValue}%` : 'Flat'})</span><span style={{ color: COLORS.primaryGreen }}>-₹{manualDiscount.toLocaleString()}</span></div>}
+                        {couponDiscount > 0 && <div className="flex justify-between"><span style={{ color: COLORS.darkText }}>Coupon: {selectedCoupon?.code}</span><span style={{ color: COLORS.primaryGreen }}>-₹{couponDiscount.toLocaleString()}</span></div>}
+                        {loyaltyDiscount > 0 && <div className="flex justify-between"><span style={{ color: COLORS.darkText }}>Loyalty</span><span style={{ color: COLORS.primaryGreen }}>-₹{loyaltyDiscount.toLocaleString()}</span></div>}
+                        {walletDiscount > 0 && <div className="flex justify-between"><span style={{ color: COLORS.darkText }}>Wallet</span><span style={{ color: COLORS.primaryGreen }}>-₹{walletDiscount.toLocaleString()}</span></div>}
+                        <div className="flex justify-between font-medium" style={{ color: COLORS.primaryGreen }}><span>Total Discount</span><span>-₹{totalDiscount.toLocaleString()}</span></div>
                       </div>
                     )}
+
                     {/* Subtotal */}
-                    <div className="px-3 pt-1 border-t flex justify-between" style={{ borderColor: COLORS.borderGray }}>
+                    <div className="px-3 pt-2 border-t flex justify-between" style={{ borderColor: COLORS.borderGray }}>
                       <span style={{ color: COLORS.grayText }}>Subtotal</span>
                       <span style={{ color: COLORS.darkText }}>₹{subtotalAfterDiscount.toLocaleString()}</span>
                     </div>
                     {/* Taxes */}
-                    <div className="px-3 space-y-1">
+                    <div className="px-3 space-y-1 pt-1">
                       <div className="flex justify-between">
                         <span style={{ color: COLORS.grayText }}>SGST (2.5%)</span>
                         <span style={{ color: COLORS.darkText }}>₹{sgst.toFixed(2)}</span>
@@ -395,6 +502,9 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           </div>
           )}
 
+          {/* Discounts/Subtotal/Taxes — only for tables and rooms WITHOUT transfers */}
+          {!(isRoom && associatedOrders.length > 0) && (
+          <>
           {/* Discounts Section */}
           {totalDiscount > 0 && (
             <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }}>
@@ -470,8 +580,13 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               </div>
             </div>
           </div>
+          </>
+          )}
         </div>
 
+        {/* Discount/Coupon/Loyalty/Wallet controls — only for tables and rooms WITHOUT transfers */}
+        {!(isRoom && associatedOrders.length > 0) && (
+        <>
         {/* 1. Discount Section - Always visible */}
         <div 
           className="p-3 rounded-lg border"
@@ -608,6 +723,8 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               </div>
             </div>
           </div>
+        )}
+        </>
         )}
 
         {/* Payment Method */}
