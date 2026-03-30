@@ -48,6 +48,14 @@ export const API_ENDPOINTS = {
   
   // Orders (Phase 1 Part B)
   RUNNING_ORDERS: '/api/v1/vendoremployee/pos/employee-orders-list',
+
+  // Phase 4A — Order Reports
+  REPORT_PAID_ORDERS: '/api/v2/vendoremployee/paid-order-list',
+  REPORT_CANCELLED_ORDERS: '/api/v2/vendoremployee/cancel-order-list',
+  REPORT_CREDIT_ORDERS: '/api/v2/vendoremployee/paid-in-tab-order-list',
+  REPORT_HOLD_ORDERS: '/api/v2/vendoremployee/paid-paylater-order-list',
+  REPORT_AGGREGATOR_ORDERS: '/api/v1/vendoremployee/urbanpiper/get-complete-order-list',
+  REPORT_ORDER_DETAILS: '/api/v2/vendoremployee/employee-order-details',
 };
 
 // =============================================================================
