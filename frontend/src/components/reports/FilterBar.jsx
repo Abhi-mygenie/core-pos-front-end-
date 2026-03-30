@@ -161,10 +161,11 @@ const FilterBar = ({ filters = {}, onFilterChange, onClearAll, breakdown = null,
 
   return (
     <div 
-      className="px-4 py-2.5 bg-white border border-zinc-200 rounded-sm"
+      className="bg-white border border-zinc-200 rounded-sm"
       data-testid="filter-bar"
     >
-      <div className="flex items-center gap-3 w-full">
+      {/* Row 1: Filters + Summary Stats */}
+      <div className="flex items-center gap-3 px-4 py-2.5">
         {/* Filters */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <Select
@@ -214,7 +215,7 @@ const FilterBar = ({ filters = {}, onFilterChange, onClearAll, breakdown = null,
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Summary Stats (All Orders tab) */}
+        {/* Summary Stats */}
         {summary && (
           <div className="flex items-center gap-4 flex-shrink-0" data-testid="compact-summary">
             <div className="flex items-baseline gap-1">
@@ -244,49 +245,47 @@ const FilterBar = ({ filters = {}, onFilterChange, onClearAll, breakdown = null,
             </div>
           </div>
         )}
-
-        {/* Divider between stats and breakdown */}
-        {summary && breakdown && (
-          <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />
-        )}
-
-        {/* Status Breakdown Pills */}
-        {breakdown && (
-          <div className="flex items-center gap-1.5 flex-shrink-0" data-testid="status-breakdown">
-            {STATUS_CONFIG.map(({ key, label, color }) => {
-              const count = breakdown[key] || 0;
-              const isMissing = key === 'missing';
-              const isAll = key === 'all';
-              return (
-                <div 
-                  key={key}
-                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
-                    isMissing && count > 0 
-                      ? 'bg-red-50 border border-red-200' 
-                      : isAll 
-                        ? 'bg-zinc-100'
-                        : 'bg-zinc-50'
-                  }`}
-                  title={`${label}: ${count}`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${color}`} />
-                  <span 
-                    className={`font-bold tabular-nums ${
-                      isMissing && count > 0 ? 'text-red-600' : isAll ? 'text-zinc-900' : 'text-zinc-700'
-                    }`}
-                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    {count}
-                  </span>
-                  <span className={`${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
+
+      {/* Row 2: Status Breakdown Pills (full width) */}
+      {breakdown && (
+        <div 
+          className="flex items-center gap-2 px-4 py-2 border-t border-zinc-100"
+          data-testid="status-breakdown"
+        >
+          {STATUS_CONFIG.map(({ key, label, color }) => {
+            const count = breakdown[key] || 0;
+            const isMissing = key === 'missing';
+            const isAll = key === 'all';
+            return (
+              <div 
+                key={key}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded text-xs ${
+                  isMissing && count > 0 
+                    ? 'bg-red-50 border border-red-200' 
+                    : isAll 
+                      ? 'bg-zinc-100'
+                      : 'bg-zinc-50'
+                }`}
+                title={`${label}: ${count}`}
+              >
+                <span className={`w-2 h-2 rounded-full ${color}`} />
+                <span 
+                  className={`font-bold tabular-nums ${
+                    isMissing && count > 0 ? 'text-red-600' : isAll ? 'text-zinc-900' : 'text-zinc-700'
+                  }`}
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  {count}
+                </span>
+                <span className={`${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

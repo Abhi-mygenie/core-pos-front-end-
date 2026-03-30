@@ -18,15 +18,17 @@ Pull code from main branch https://github.com/Abhi-mygenie/core-pos-front-end-.g
 ### Phase 4A: Order Reports (Completed - March 2026)
 - 8 tabs: All Orders, Paid, Cancelled, Credit, On Hold, Merged, Room Transfer, Aggregator
 - Date filtering with parallel tab count updates
+- **Date picker with prev/next day arrows** (next disabled on today)
 - Payment type filtering, CSV/PDF export
 - Order sequence gap detection (missing orders highlighted)
 - Order detail drill-down side sheet (glass-morphism)
-- Compact single-row filter toolbar: pill-style filter buttons + summary stats + status breakdown pills — full-width, no wasted space
+- **2-row filter toolbar:**
+  - Row 1: Compact pill-style filter dropdowns (left) + summary stats (right)
+  - Row 2: Status breakdown pills spread full-width (`flex-1`)
 
 ### UI Cleanup (March 30, 2026)
-- Sidebar restricted to 3 items only: Dashboard, Reports, Menu Management
+- Sidebar restricted to 3 items: Dashboard, Reports, Menu Management
 - Hidden: Orders, Employees, Expenses, Inventory, Settings
-- FilterBar redesigned: removed dropdown labels, made everything a single compact row spanning full width
 
 ## Known Backend Issues (Blocked)
 - PHP Fatal Error on preprod (duplicate class declaration) - intermittent

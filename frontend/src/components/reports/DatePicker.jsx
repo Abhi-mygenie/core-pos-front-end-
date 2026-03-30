@@ -148,8 +148,33 @@ const DatePicker = ({ value, onChange }) => {
     return days;
   };
 
+  const isToday = value === getToday();
+
+  const handlePrevDay = () => {
+    const d = new Date(value);
+    d.setDate(d.getDate() - 1);
+    onChange(formatApiDate(d));
+  };
+
+  const handleNextDay = () => {
+    if (isToday) return;
+    const d = new Date(value);
+    d.setDate(d.getDate() + 1);
+    onChange(formatApiDate(d));
+  };
+
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative flex items-center gap-1" ref={containerRef}>
+      {/* Prev Day */}
+      <button
+        onClick={handlePrevDay}
+        data-testid="date-picker-prev-day"
+        className="p-1.5 hover:bg-zinc-100 rounded transition-colors"
+        title="Previous day"
+      >
+        <ChevronLeft className="w-4 h-4 text-zinc-500" />
+      </button>
+
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -165,6 +190,17 @@ const DatePicker = ({ value, onChange }) => {
         <span className="font-medium text-zinc-900">
           {formatDisplayDate(value)}
         </span>
+      </button>
+
+      {/* Next Day */}
+      <button
+        onClick={handleNextDay}
+        disabled={isToday}
+        data-testid="date-picker-next-day"
+        className={`p-1.5 rounded transition-colors ${isToday ? 'opacity-30 cursor-not-allowed' : 'hover:bg-zinc-100'}`}
+        title={isToday ? "Can't go to future" : "Next day"}
+      >
+        <ChevronRight className="w-4 h-4 text-zinc-500" />
       </button>
 
       {/* Dropdown */}
