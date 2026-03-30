@@ -4,13 +4,12 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import ReportTabs, { getTabConfig } from "../components/reports/ReportTabs";
 import DatePicker from "../components/reports/DatePicker";
-import SummaryBar from "../components/reports/SummaryBar";
 import OrderTable from "../components/reports/OrderTable";
 import FilterBar from "../components/reports/FilterBar";
 import FilterTags from "../components/reports/FilterTags";
 import OrderDetailSheet from "../components/reports/OrderDetailSheet";
 import ExportButtons from "../components/reports/ExportButtons";
-import { getOrdersByTab } from "../api/services/reportService";
+import { getOrdersByTab, getPaidOrdersFiltered, getCancelledOrders, getCreditOrders, getMergedOrders, getRoomTransferOrders } from "../api/services/reportService";
 import { calculateSummary } from "../api/transforms/reportTransform";
 
 /**
@@ -71,6 +70,38 @@ const ReportsPage = () => {
     }
   }, [activeTab, selectedDate]);
 
+  // Fetch ALL tab counts when date changes
+  const fetchAllTabCounts = useCallback(async () => {
+    try {
+      const [paid, cancelled, credit, merged, roomTransfer] = await Promise.all([
+        getPaidOrdersFiltered(selectedDate).catch(() => []),
+        getCancelledOrders(selectedDate).catch(() => []),
+        getCreditOrders(selectedDate).catch(() => []),
+        getMergedOrders(selectedDate).catch(() => []),
+        getRoomTransferOrders(selectedDate).catch(() => []),
+      ]);
+      
+      const allCount = paid.length + cancelled.length + credit.length + merged.length + roomTransfer.length;
+      
+      setTabCounts({
+        all: allCount,
+        paid: paid.length,
+        cancelled: cancelled.length,
+        credit: credit.length,
+        merged: merged.length,
+        roomTransfer: roomTransfer.length,
+        // Hold and Aggregator counts fetched on demand
+      });
+    } catch (err) {
+      console.error('Failed to fetch tab counts:', err);
+    }
+  }, [selectedDate]);
+
+  // Fetch tab counts when date changes
+  useEffect(() => {
+    fetchAllTabCounts();
+  }, [fetchAllTabCounts]);
+
   // Apply filters to orders
   useEffect(() => {
     let result = [...orders];
@@ -117,14 +148,33 @@ const ReportsPage = () => {
       }
       setMissingCount(missing);
       
-      // Calculate status breakdown
+      // Calculate status breakdown (including "all" total)
+      const paidCount = result.filter(o => o._status === 'paid').length;
+      const cancelledCount = result.filter(o => o._status === 'cancelled').length;
+      const creditCount = result.filter(o => o._status === 'credit').length;
+      const mergedCount = result.filter(o => o._status === 'merged').length;
+      const roomTransferCount = result.filter(o => o._status === 'roomTransfer').length;
+      
       const breakdown = {
+        all: result.length, // Total count
+        paid: paidCount,
+        cancelled: cancelledCount,
+        credit: creditCount,
+        merged: mergedCount,
+        roomTransfer: roomTransferCount,
+        missing: missing,
+      };
+      setStatusBreakdown(breakdown);
+    } else if (activeTab === 'all' && result.length < 2) {
+      setMissingCount(0);
+      const breakdown = {
+        all: result.length,
         paid: result.filter(o => o._status === 'paid').length,
         cancelled: result.filter(o => o._status === 'cancelled').length,
         credit: result.filter(o => o._status === 'credit').length,
         merged: result.filter(o => o._status === 'merged').length,
         roomTransfer: result.filter(o => o._status === 'roomTransfer').length,
-        missing: missing,
+        missing: 0,
       };
       setStatusBreakdown(breakdown);
     } else {
@@ -285,13 +335,15 @@ const ReportsPage = () => {
             </div>
           )}
 
-          {/* Filters + Status Breakdown */}
+          {/* Filters + Status Breakdown + Summary Stats */}
           <div className="mb-4">
             <FilterBar 
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearAll={handleClearFilters}
               breakdown={activeTab === 'all' ? statusBreakdown : null}
+              summary={activeTab === 'all' ? summary : null}
+              missingCount={activeTab === 'all' ? missingCount : 0}
             />
           </div>
 
@@ -300,13 +352,6 @@ const ReportsPage = () => {
             filters={filters}
             onRemove={handleRemoveFilter}
             onClearAll={handleClearFilters}
-          />
-
-          {/* Summary Bar */}
-          <SummaryBar 
-            summary={summary} 
-            isLoading={isLoading}
-            missingCount={activeTab === 'all' ? missingCount : 0}
           />
 
           {/* Order Table */}

@@ -121,10 +121,14 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
     onRefresh?.();
   };
 
-  // Filter menu items by permission
+  // Only show these sidebar sections (hide the rest)
+  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'menu-management']);
+
+  // Filter menu items by visibility + permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {
+    if (!VISIBLE_SECTIONS.has(item.id)) return false;
     const perm = SIDEBAR_PERMISSIONS[item.id];
-    if (!perm) return true; // No permission required
+    if (!perm) return true;
     return hasPermission(perm);
   });
 
