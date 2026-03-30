@@ -121,14 +121,10 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
     onRefresh?.();
   };
 
-  // Only show these sidebar sections (hide the rest)
-  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'menu-management']);
-
-  // Filter menu items by visibility + permission
+  // Filter menu items by permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {
-    if (!VISIBLE_SECTIONS.has(item.id)) return false;
     const perm = SIDEBAR_PERMISSIONS[item.id];
-    if (!perm) return true;
+    if (!perm) return true; // No permission required
     return hasPermission(perm);
   });
 
@@ -150,13 +146,6 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
     // "Coming soon" items
     if (COMING_SOON_ITEMS.has(item.id)) {
       showComingSoon(item.label);
-      return;
-    }
-
-    // Reports navigates to /reports page
-    if (item.id === 'reports') {
-      setActiveItem(item.id);
-      navigate('/reports');
       return;
     }
 

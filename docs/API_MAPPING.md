@@ -1,7 +1,9 @@
 # API Field Mapping Document
 
-> Last Updated: 2026-03-30
-> Status: Phase 4A — Order Reports complete. Room Integration (Phase 2A/2B) complete. All core POS features wired.
+
+> Last Updated: 2026-03-29
+> Status: Phase 2A — Room Integration complete. Room Check-In API wired. Tables and Rooms unified in Context. Credit payment hidden for rooms. Checkout labels applied.
+
 
 ---
 
@@ -819,7 +821,7 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 
 ---
 
-## Phase 4A: Order Reports — Report Endpoints (2026-03-30)
+
 
 ### Report List APIs (All GET except Aggregator)
 
@@ -859,6 +861,7 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | `ExportButtons` | `components/reports/ExportButtons.jsx` | PDF print + CSV download |
 
 ---
+
 
 ## Pending Backend APIs
 
