@@ -86,6 +86,7 @@ export const OrderProvider = ({ children }) => {
           punchedBy: order.punchedBy,
           orderNote: order.orderNote,
           isRoom: order.isRoom,
+          associatedOrders: order.associatedOrders || [],
         };
       }
     }

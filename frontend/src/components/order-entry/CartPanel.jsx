@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw } from "lucide-react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { COLORS } from "../../constants";
 import { searchCustomers } from "../../api/services/customerService";
 import RePrintButton from "./RePrintButton";
@@ -216,6 +216,7 @@ const CartPanel = ({
   onClearCart,
   onDeleteItem,
   isRoom,
+  associatedOrders = [],
 }) => {
   const newItemCount = cartItems.filter(i => !i.placed).length;
   const [customerName, setCustomerName] = useState(customer?.name || "");
@@ -225,8 +226,15 @@ const CartPanel = ({
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
   const [isCustomerSelected, setIsCustomerSelected] = useState(false); // Track if customer was selected from suggestions
+  const [showAssociatedOrders, setShowAssociatedOrders] = useState(false);
   const phoneInputRef = useRef(null);
   const nameInputRef = useRef(null);
+
+  // Associated orders total
+  const associatedTotal = useMemo(() =>
+    associatedOrders.reduce((sum, o) => sum + (o.amount || 0), 0),
+    [associatedOrders]
+  );
 
   // Sync with customer prop
   useEffect(() => {
@@ -482,6 +490,55 @@ const CartPanel = ({
           </div>
         )}
       </div>
+
+      {/* Associated Orders — transferred table orders (rooms only) */}
+      {isRoom && associatedOrders.length > 0 && (
+        <div style={{ borderTop: `1px solid ${COLORS.borderGray}` }} data-testid="associated-orders-section">
+          <button
+            onClick={() => setShowAssociatedOrders(!showAssociatedOrders)}
+            className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            data-testid="associated-orders-toggle"
+          >
+            <div className="flex items-center gap-2">
+              <ArrowLeftRight className="w-4 h-4" style={{ color: COLORS.primaryOrange }} />
+              <span className="text-xs font-semibold" style={{ color: COLORS.darkText }}>
+                Transferred Orders ({associatedOrders.length})
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }}>
+                ₹{associatedTotal.toLocaleString()}
+              </span>
+              {showAssociatedOrders
+                ? <ChevronUp className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                : <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />
+              }
+            </div>
+          </button>
+          {showAssociatedOrders && (
+            <div className="max-h-40 overflow-y-auto" style={{ backgroundColor: `${COLORS.primaryOrange}05` }}>
+              {associatedOrders.map((order) => (
+                <div
+                  key={order.orderId}
+                  className="px-4 py-2 flex items-center justify-between text-xs"
+                  style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+                  data-testid={`associated-order-${order.orderId}`}
+                >
+                  <div>
+                    <span className="font-medium" style={{ color: COLORS.darkText }}>#{order.orderNumber}</span>
+                    {order.transferredAt && (
+                      <span className="ml-2" style={{ color: COLORS.grayText }}>
+                        {new Date(order.transferredAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{order.amount.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Bottom Action Buttons */}
       <div className="p-4 flex gap-3" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
