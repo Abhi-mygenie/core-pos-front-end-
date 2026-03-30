@@ -101,7 +101,24 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
   - `transaction_reference`, `loyalty_info`, `coupon_info`, `wallet_info`
   - `online_pay[]`, `partial_payments[]`
 
-**2. Canceled Orders:** Awaiting endpoint from user
+**2. Canceled Orders:** `GET /api/v2/vendoremployee/cancel-order-list`
+- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
+- Auth: Bearer token
+- Response: `{ orders: [...] }` — MUCH richer than paid-order-list (100+ fields vs 32)
+- Key extra fields vs paid endpoint:
+  - `order_type` → values seen: `pos`, `dinein` (this IS the Channel/Platform field!)
+  - `order_details[]` — full item-level data with food details, variations, cancel info
+  - `cancellation_reason`, `cancellation_note`, `canceled_by` (all null in test data)
+  - `cancel_at` timestamp
+  - `order_note`, `parent_order_id`, lifecycle timestamps
+  - Per-item: `cancel_type` (e.g., "Post-Serve"), `cancel_by`, `cancel_at`
+- Observed data (2026-03-17, 11 orders):
+  - order_type: pos (10), dinein (1)
+  - payment_method: Merge (6), Cancel (3), cash_on_delivery (2)
+  - payment_status: unpaid (9), Merge (2)
+  - f_order_status: always 3 (cancelled)
+  - 3 of 11 orders had item-level order_details
+- NOTE: `order_type` field exists here but NOT in paid-order-list — confirms backend needs to add it there
 **3. Credit Orders:** Awaiting endpoint from user
 **4. Hold/Pending Orders:** Awaiting endpoint from user
 
