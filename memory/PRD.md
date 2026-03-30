@@ -21,12 +21,12 @@ Pull code from main branch https://github.com/Abhi-mygenie/core-pos-front-end-.g
 - Payment type filtering, CSV/PDF export
 - Order sequence gap detection (missing orders highlighted)
 - Order detail drill-down side sheet (glass-morphism)
-- Compact UI: filters, status breakdown pills, summary stats in single row
-- "All" count badge in status breakdown pills
+- Compact single-row filter toolbar: pill-style filter buttons + summary stats + status breakdown pills — full-width, no wasted space
 
 ### UI Cleanup (March 30, 2026)
 - Sidebar restricted to 3 items only: Dashboard, Reports, Menu Management
 - Hidden: Orders, Employees, Expenses, Inventory, Settings
+- FilterBar redesigned: removed dropdown labels, made everything a single compact row spanning full width
 
 ## Known Backend Issues (Blocked)
 - PHP Fatal Error on preprod (duplicate class declaration) - intermittent

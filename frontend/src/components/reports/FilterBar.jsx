@@ -5,10 +5,9 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 
 /**
- * Dropdown Select Component
+ * Compact inline dropdown
  */
 const Select = ({ 
-  label, 
   value, 
   options, 
   onChange, 
@@ -20,7 +19,6 @@ const Select = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -35,56 +33,41 @@ const Select = ({
 
   return (
     <div className="relative" ref={containerRef}>
-      {/* Label */}
-      <div className="text-xs tracking-[0.05em] uppercase font-semibold text-zinc-500 mb-1.5">
-        {label}
-      </div>
-      
-      {/* Trigger */}
       <button
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         data-testid={testId}
         title={disabled ? disabledTooltip : ''}
         className={`
-          w-full flex items-center justify-between gap-2 px-3 py-2
-          border rounded-sm text-sm transition-colors text-left
+          flex items-center gap-1.5 px-2.5 py-1.5
+          border rounded text-xs font-medium transition-colors whitespace-nowrap
           ${disabled 
             ? 'bg-zinc-50 border-zinc-200 text-zinc-400 cursor-not-allowed opacity-50' 
             : isOpen
               ? 'bg-white border-zinc-950 ring-1 ring-zinc-950'
-              : 'bg-white border-zinc-200 hover:border-zinc-400'
+              : value
+                ? 'bg-zinc-900 border-zinc-900 text-white'
+                : 'bg-white border-zinc-300 hover:border-zinc-400 text-zinc-600'
           }
         `}
       >
-        <span className={value ? 'text-zinc-900' : 'text-zinc-500'}>
-          {selectedOption?.label || placeholder}
-        </span>
-        <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span>{selectedOption?.label || placeholder}</span>
+        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Dropdown */}
       {isOpen && !disabled && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-zinc-200 rounded-sm shadow-lg max-h-48 overflow-y-auto">
-          {/* All/Clear option */}
+        <div className="absolute z-50 min-w-[140px] mt-1 bg-white border border-zinc-200 rounded shadow-lg max-h-48 overflow-y-auto">
           <button
             onClick={() => { onChange(null); setIsOpen(false); }}
-            className={`
-              w-full px-3 py-2 text-sm text-left hover:bg-zinc-50 transition-colors
-              ${!value ? 'bg-zinc-100 font-medium' : ''}
-            `}
+            className={`w-full px-3 py-2 text-xs text-left hover:bg-zinc-50 transition-colors ${!value ? 'bg-zinc-100 font-medium' : ''}`}
           >
             {placeholder}
           </button>
-          
           {options.map((option) => (
             <button
               key={option.value}
               onClick={() => { onChange(option.value); setIsOpen(false); }}
-              className={`
-                w-full px-3 py-2 text-sm text-left hover:bg-zinc-50 transition-colors
-                ${value === option.value ? 'bg-zinc-100 font-medium' : ''}
-              `}
+              className={`w-full px-3 py-2 text-xs text-left hover:bg-zinc-50 transition-colors ${value === option.value ? 'bg-zinc-100 font-medium' : ''}`}
             >
               {option.label}
             </button>
@@ -178,143 +161,131 @@ const FilterBar = ({ filters = {}, onFilterChange, onClearAll, breakdown = null,
 
   return (
     <div 
-      className="p-4 bg-white border border-zinc-200 rounded-sm"
+      className="px-4 py-2.5 bg-white border border-zinc-200 rounded-sm"
       data-testid="filter-bar"
     >
-      <div className="flex items-end justify-between gap-4 flex-wrap">
-        {/* Left: Filters */}
-        <div className="flex items-end gap-4 flex-wrap">
-          {/* Payment Method */}
-          <div className="w-40">
-            <Select
-              label="Payment Method"
-              value={filters.paymentMethod}
-              options={PAYMENT_METHOD_OPTIONS}
-              onChange={(val) => onFilterChange('paymentMethod', val)}
-              placeholder="All Methods"
-              testId="filter-payment-method"
-            />
-          </div>
-
-          {/* Payment Type */}
-          <div className="w-36">
-            <Select
-              label="Payment Type"
-              value={filters.paymentType}
-              options={PAYMENT_TYPE_OPTIONS}
-              onChange={(val) => onFilterChange('paymentType', val)}
-              placeholder="All Types"
-              testId="filter-payment-type"
-            />
-          </div>
-
-          {/* Channel (Disabled - GAP-001) */}
-          <div className="w-36">
-            <Select
-              label="Channel"
-              value={filters.channel}
-              options={CHANNEL_OPTIONS}
-              onChange={(val) => onFilterChange('channel', val)}
-              placeholder="All Channels"
-              disabled={true}
-              disabledTooltip="Coming soon - Backend field missing"
-              testId="filter-channel"
-            />
-          </div>
-
-          {/* Platform (Disabled - GAP-002) */}
-          <div className="w-32">
-            <Select
-              label="Platform"
-              value={filters.platform}
-              options={PLATFORM_OPTIONS}
-              onChange={(val) => onFilterChange('platform', val)}
-              placeholder="All Platforms"
-              disabled={true}
-              disabledTooltip="Coming soon - Backend field missing"
-              testId="filter-platform"
-            />
-          </div>
-
-          {/* Clear All Button */}
+      <div className="flex items-center gap-3 w-full">
+        {/* Filters */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Select
+            value={filters.paymentMethod}
+            options={PAYMENT_METHOD_OPTIONS}
+            onChange={(val) => onFilterChange('paymentMethod', val)}
+            placeholder="All Methods"
+            testId="filter-payment-method"
+          />
+          <Select
+            value={filters.paymentType}
+            options={PAYMENT_TYPE_OPTIONS}
+            onChange={(val) => onFilterChange('paymentType', val)}
+            placeholder="All Types"
+            testId="filter-payment-type"
+          />
+          <Select
+            value={filters.channel}
+            options={CHANNEL_OPTIONS}
+            onChange={(val) => onFilterChange('channel', val)}
+            placeholder="All Channels"
+            disabled={true}
+            disabledTooltip="Coming soon"
+            testId="filter-channel"
+          />
+          <Select
+            value={filters.platform}
+            options={PLATFORM_OPTIONS}
+            onChange={(val) => onFilterChange('platform', val)}
+            placeholder="All Platforms"
+            disabled={true}
+            disabledTooltip="Coming soon"
+            testId="filter-platform"
+          />
           {hasActiveFilters && (
             <button
               onClick={onClearAll}
-              className="px-3 py-2 text-sm text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-sm transition-colors flex items-center gap-1"
+              className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded transition-colors"
               data-testid="filter-clear-all"
+              title="Clear filters"
             >
-              <X className="w-4 h-4" />
-              Clear
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
-        {/* Right: Summary Stats + Status Breakdown (All Orders tab only) */}
-        <div className="flex items-center gap-4">
-          {/* Summary Stats */}
-          {summary && (
-            <div className="flex items-center gap-3 pr-4 border-r border-zinc-200" data-testid="compact-summary">
-              <div className="text-center">
-                <div className="text-xs text-zinc-500 uppercase tracking-wide">Orders</div>
-                <div className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  {summary.totalOrders}
-                  {missingCount > 0 && (
-                    <span className="text-sm text-red-600 ml-1">({missingCount})</span>
-                  )}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-xs text-zinc-500 uppercase tracking-wide">Amount</div>
-                <div className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  {formatCompactCurrency(summary.totalAmount)}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-xs text-zinc-500 uppercase tracking-wide">Avg</div>
-                <div className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  {formatCompactCurrency(summary.avgOrderValue)}
-                </div>
-              </div>
-            </div>
-          )}
+        {/* Spacer */}
+        <div className="flex-1" />
 
-          {/* Status Breakdown */}
-          {breakdown && (
-            <div className="flex items-center gap-2 flex-wrap" data-testid="status-breakdown">
-              {STATUS_CONFIG.map(({ key, label, color }) => {
-                const count = breakdown[key] || 0;
-                const isMissing = key === 'missing';
-                const isAll = key === 'all';
-                return (
-                  <div 
-                    key={key}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-sm ${
-                      isMissing && count > 0 
-                        ? 'bg-red-50 border border-red-200' 
-                        : isAll 
-                          ? 'bg-zinc-100 border border-zinc-300'
-                          : 'bg-zinc-50 border border-zinc-100'
-                    }`}
-                    title={`${label}: ${count}`}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${color}`} />
-                    <span 
-                      className={`text-xs font-bold tabular-nums ${
-                        isMissing && count > 0 ? 'text-red-600' : isAll ? 'text-zinc-900' : 'text-zinc-800'
-                      }`}
-                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      {count}
-                    </span>
-                    <span className={`text-xs ${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-500'}`}>
-                      {label}
-                    </span>
-                  </div>
-                );
-              })}
+        {/* Summary Stats (All Orders tab) */}
+        {summary && (
+          <div className="flex items-center gap-4 flex-shrink-0" data-testid="compact-summary">
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                {summary.totalOrders}
+              </span>
+              {missingCount > 0 && (
+                <span className="text-xs font-bold text-red-600 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  ({missingCount})
+                </span>
+              )}
+              <span className="text-[10px] uppercase text-zinc-400 font-medium tracking-wide">orders</span>
             </div>
-          )}
-        </div>
+            <div className="w-px h-5 bg-zinc-200" />
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                {formatCompactCurrency(summary.totalAmount)}
+              </span>
+              <span className="text-[10px] uppercase text-zinc-400 font-medium tracking-wide">total</span>
+            </div>
+            <div className="w-px h-5 bg-zinc-200" />
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold text-zinc-900 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                {formatCompactCurrency(summary.avgOrderValue)}
+              </span>
+              <span className="text-[10px] uppercase text-zinc-400 font-medium tracking-wide">avg</span>
+            </div>
+          </div>
+        )}
+
+        {/* Divider between stats and breakdown */}
+        {summary && breakdown && (
+          <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />
+        )}
+
+        {/* Status Breakdown Pills */}
+        {breakdown && (
+          <div className="flex items-center gap-1.5 flex-shrink-0" data-testid="status-breakdown">
+            {STATUS_CONFIG.map(({ key, label, color }) => {
+              const count = breakdown[key] || 0;
+              const isMissing = key === 'missing';
+              const isAll = key === 'all';
+              return (
+                <div 
+                  key={key}
+                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                    isMissing && count > 0 
+                      ? 'bg-red-50 border border-red-200' 
+                      : isAll 
+                        ? 'bg-zinc-100'
+                        : 'bg-zinc-50'
+                  }`}
+                  title={`${label}: ${count}`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${color}`} />
+                  <span 
+                    className={`font-bold tabular-nums ${
+                      isMissing && count > 0 ? 'text-red-600' : isAll ? 'text-zinc-900' : 'text-zinc-700'
+                    }`}
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    {count}
+                  </span>
+                  <span className={`${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
