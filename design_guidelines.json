@@ -1,0 +1,131 @@
+{
+  "theme": "Light",
+  "archetype": "Archetype 4: Swiss & High-Contrast",
+  "rationale": "For an admin-level restaurant POS order reports dashboard, absolute clarity and rapid scanning are essential. The existing POS sidebar is dark, so a stark, bright, high-contrast light theme for the main content area will create a 'Control Room' utility feel. Data is prioritized over decoration.",
+  "color_system": {
+    "background": {
+      "primary": "bg-white",
+      "secondary": "bg-zinc-50",
+      "tertiary": "bg-zinc-100"
+    },
+    "text": {
+      "primary": "text-zinc-950",
+      "secondary": "text-zinc-600",
+      "muted": "text-zinc-400"
+    },
+    "border": {
+      "default": "border-zinc-200",
+      "focus": "border-zinc-950"
+    },
+    "status": {
+      "paid": "bg-blue-600 text-white",
+      "cancelled": "bg-red-600 text-white",
+      "hold": "bg-amber-500 text-black",
+      "credit": "bg-purple-600 text-white",
+      "merged": "bg-teal-600 text-white",
+      "room_transfer": "bg-indigo-600 text-white",
+      "aggregator": "bg-orange-500 text-white"
+    },
+    "badges": {
+      "zomato": "bg-red-500 text-white border-red-600",
+      "swiggy": "bg-orange-500 text-white border-orange-600"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk",
+      "body": "IBM Plex Sans",
+      "data_and_numbers": "JetBrains Mono"
+    },
+    "hierarchy": {
+      "h1": "text-4xl tracking-tight font-bold",
+      "h2": "text-2xl tracking-tight font-semibold",
+      "h3": "text-lg font-medium",
+      "body": "text-sm leading-relaxed",
+      "small_labels": "text-xs tracking-[0.05em] uppercase font-semibold text-zinc-500",
+      "table_data": "text-sm font-mono tracking-tight text-zinc-900"
+    },
+    "rules": [
+      "No generic sans (Inter/Roboto) for headings. Never.",
+      "All tabular data (Currency, IDs, Dates, Phone numbers) MUST use the font-mono (JetBrains Mono) for vertical alignment.",
+      "Overlines for filters and categories must be tiny, uppercase, and widely spaced."
+    ]
+  },
+  "layout_and_spacing": {
+    "page_structure": "Mobile-first, but optimized for POS tablets/desktops. Sidebar (existing dark) + Main Area (light). Main Area has generous padding (p-6 to p-12).",
+    "grid_system": "MODE B: THE CONTROL ROOM GRID. Tight gaps (gap-4). Every pixel utilized.",
+    "summary_bar": {
+      "classes": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8",
+      "surface": "Grid Borders: Flat white backgrounds with sharp 1px borders (border-zinc-200), no shadows, rounded-none or rounded-sm max."
+    },
+    "table_container": {
+      "classes": "w-full overflow-auto border border-zinc-200 bg-white rounded-sm",
+      "padding": "p-0"
+    }
+  },
+  "components": {
+    "tabs": {
+      "description": "Radix/Shadcn Tabs",
+      "customization": "Do not use pill-shaped tabs. Use 'Architectural Underline' style. border-b-2 border-transparent hover:border-zinc-300 data-[state=active]:border-zinc-950 data-[state=active]:text-zinc-950 text-zinc-500 font-medium pb-2 transition-colors."
+    },
+    "filters": {
+      "description": "Date Picker & Dropdowns (Select)",
+      "customization": "Flat inputs. border border-zinc-200 bg-white rounded-sm text-sm hover:border-zinc-400 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950. No soft shadows.",
+      "disabled_state": "For missing endpoints (Channel/Platform on most tabs): Render Select as disabled (opacity-50 cursor-not-allowed). Wrap in Shadcn Tooltip displaying 'Coming soon'."
+    },
+    "filter_tags": {
+      "description": "Removable active filters below the filter bar.",
+      "customization": "Shadcn Badge + Phosphor X icon. bg-zinc-100 text-zinc-900 border border-zinc-200 hover:bg-zinc-200 transition-colors px-2 py-1 flex items-center gap-1 rounded-sm."
+    },
+    "table": {
+      "description": "Dense data table for orders",
+      "customization": "Shadcn Table. Flat rows. hover:bg-zinc-50 transition-colors cursor-pointer (for drill-down). Text left-aligned. Currency/Amount column right-aligned using tabular-nums.",
+      "empty_data_handling": "If columns like 'table_no' or 'waiter' are missing (e.g., Credit tab), render '—' gracefully in text-zinc-400."
+    },
+    "sheet_drill_down": {
+      "description": "Side panel for order item details",
+      "surface": "Glassmorphism 'Crystal' Variant: backdrop-blur-xl bg-white/80 border-l border-zinc-200 shadow-2xl. It must feel like a premium overlay, not a basic white box.",
+      "content": "Header: Order # and Status Badge. Body: Item-level breakdown list with variation/add-ons in text-xs text-zinc-500. Bottom: Sticky totals section."
+    },
+    "buttons": {
+      "export": "Ghost or Outline variant. border-zinc-200 hover:bg-zinc-100 hover:text-zinc-950 text-sm flex items-center gap-2 rounded-sm."
+    }
+  },
+  "state_handling": {
+    "empty": {
+      "layout": "Centered flexbox, huge padding (py-32)",
+      "visuals": "Phosphor Receipt icon (size 48, text-zinc-300), heading 'No orders found', subtitle 'Try adjusting your filters or date range.' text-zinc-500."
+    },
+    "loading": {
+      "layout": "Shadcn Skeleton",
+      "customization": "Use sharp rectangles (rounded-sm), avoid generic rounded-full pills. Animate pulse subtly."
+    }
+  },
+  "icons": {
+    "library": "@phosphor-icons/react",
+    "instructions": "Use 'Regular' weight for standard icons. Install via: yarn add @phosphor-icons/react",
+    "usage": "Use for tab icons, export buttons, filter dropdown carets, and the empty state."
+  },
+  "testing": {
+    "instructions": "All interactive elements MUST have data-testid attributes.",
+    "examples": [
+      "data-testid='filter-payment-method'",
+      "data-testid='tab-cancelled'",
+      "data-testid='order-row-12345'",
+      "data-testid='export-pdf-button'"
+    ]
+  },
+  "media_urls": {
+    "default_avatar": {
+      "url": "https://images.unsplash.com/photo-1728218948405-d749e7d1851e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwxfHxkZWZhdWx0JTIwdXNlciUyMGF2YXRhciUyMGdyYXklMjBzaWxob3VldHRlfGVufDB8fHx8MTc3NDg4MzIxN3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Default grayscale avatar silhouette for displaying waiter or customer profiles in the side sheet if photo is needed."
+    }
+  },
+  "specific_ux_fixes": {
+    "aggregator_tab": "Display Zomato/Swiggy UI badges (pure CSS, no images) next to the Order # in the table. Inside the drill-down sheet, prominently display Rider Info and Customer Delivery Address.",
+    "cancelled_tab": "Inside the drill-down sheet, prominently display Cancel Reason, Cancel Type (Pre/Post Serve), and Cancelled By in a red-tinted alert box (bg-red-50 text-red-900 border border-red-200) at the top.",
+    "credit_tab": "Table must prioritize Customer Contact Info. Add 'Customer' column with Name and Phone Number prominently displayed in JetBrains Mono.",
+    "hold_tab": "Even though backend returns Paid data (bug), keep the UX clean. Add a subtle informational Tooltip or Alert: 'Note: Displaying provisional hold data.'",
+    "merged_room_tabs": "Treat visually identical to Paid, but use their specific primary status colors for the detail sheet badge to differentiate context."
+  }
+}
