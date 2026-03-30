@@ -1205,6 +1205,81 @@ Cancel Order cancels the entire active order for a table. No modal exists yet �
 | CHG-040 | Edit Order | Not implemented | P1 | Endpoint + rules needed |
 | CHG-041 | Update Order | Not implemented | P2 | Endpoint needed |
 
+
+---
+
+## Phase 2B Changes (2026-03-30) — Transfer to Room + Associated Orders
+
+### CHG-054 | FEATURE | Transfer to Room — API Layer
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Low
+**Why:** Enable transferring table orders to rooms as a payment method.
+**What:**
+| Before | After |
+|--------|-------|
+| No endpoint constant or transform for room transfer | `ORDER_SHIFTED_ROOM` constant + `orderToAPI.transferToRoom()` |
+**Where:**
+| File | What changes |
+|------|--------------|
+| `constants.js` | Added `ORDER_SHIFTED_ROOM: '/api/v1/vendoremployee/order-shifted-room'` |
+| `orderTransform.js` | Added `transferToRoom(table, paymentData, roomId)` transform |
+
+### CHG-055 | FEATURE | Capture Associated Orders
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Low
+**Why:** Room orders have transferred table orders (`associated_order_list`) that need to be displayed.
+**Where:**
+| File | What changes |
+|------|--------------|
+| `orderTransform.js` | `fromAPI.order()` now maps `associated_order_list` → `associatedOrders` with dedup |
+| `OrderContext.jsx` | `orderItemsByTableId` map now includes `associatedOrders` field |
+
+### CHG-056 | FEATURE | Transfer to Room — UI
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Medium
+**Why:** POS users need ability to transfer table orders to rooms from payment screen.
+**Where:**
+| File | What changes |
+|------|--------------|
+| `CollectPaymentPanel.jsx` | "To Room" button + inline room picker + transfer button |
+
+### CHG-057 | FEATURE | Transfer to Room — API Wiring
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Medium
+**Where:**
+| File | What changes |
+|------|--------------|
+| `OrderEntry.jsx` | Third `onPaymentComplete` branch: `POST /order-shifted-room` |
+
+### CHG-058 | FEATURE | Associated Orders in Cart
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Low
+**Where:**
+| File | What changes |
+|------|--------------|
+| `CartPanel.jsx` | Collapsible "Transferred Orders" section for rooms |
+
+### CHG-059 | FEATURE | Room Checkout — Expandable Sections
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Medium
+**Why:** Room checkout needs clear breakdown: transferred orders + room service (with editable discounts).
+**Where:**
+| File | What changes |
+|------|--------------|
+| `CollectPaymentPanel.jsx` | Two expandable sections (transfers + room service) with controls inside |
+
+### CHG-060 | FIX | Room Checkout — Combined Total
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Low
+**Where:**
+| File | What changes |
+|------|--------------|
+| `CollectPaymentPanel.jsx` | Header, button, payment amount use `finalTotal + associatedTotal` for rooms |
+
+### CHG-061 | FEATURE | Bill/C-Out Direct Navigation
+**Date:** 2026-03-30 | **Status:** Done | **Risk:** Low
+**Why:** "Bill" and "C/Out" card buttons were non-functional. Should shortcut to payment screen.
+**Where:**
+| File | What changes |
+|------|--------------|
+| `TableCard.jsx` | New `onBillClick` prop replaces `onUpdateStatus("paid")` |
+| `TableSection.jsx` | Passes `onBillClick` through |
+| `DashboardPage.jsx` | `handleBillClick` handler + `initialShowPayment` state |
+| `OrderEntry.jsx` | `initialShowPayment` prop sets `showPaymentPanel=true` on mount |
+
 ---
 
 ## Transform Architecture for Sprint 3

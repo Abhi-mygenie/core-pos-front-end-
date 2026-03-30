@@ -829,3 +829,61 @@ The transform outputs a canonical schema consumed by both Menu Management (read-
 | Item Ready / Serve | `/api/v2/vendoremployee/food-status-update` | PUT | 🔵 Not wired (same endpoint) |
 | Accept / Reject Order | TBD | TBD | 🔵 Endpoint not provided |
 | Add to Existing Order | TBD | TBD | 🔵 Endpoint not provided |
+
+---
+
+## Phase 2B — Transfer to Room Endpoints (2026-03-30)
+
+### Transfer Table Order to Room
+
+| Detail | Value |
+|--------|-------|
+| **Endpoint** | `POST /api/v1/vendoremployee/order-shifted-room` |
+| **Auth** | Bearer token |
+| **Content-Type** | `application/json` |
+| **Status** | ✅ Wired |
+| **Constant** | `API_ENDPOINTS.ORDER_SHIFTED_ROOM` |
+| **Transform** | `orderToAPI.transferToRoom(table, paymentData, roomId)` |
+
+**Payload Mapping:**
+
+| API Field | Frontend Source | Notes |
+|-----------|---------------|-------|
+| `order_id` | `table.orderId` | String |
+| `payment_mode` | `paymentData.method` | cash/card/upi |
+| `payment_amount` | `paymentData.finalTotal` | Calculated total |
+| `payment_status` | `"paid"` | Fixed |
+| `room_id` | `roomId` (from picker) | String — destination room |
+| `order_discount` | `discounts.orderDiscountPercent` | |
+| `self_discount` | `discounts.manual` | Restaurant discount |
+| `comm_discount` | `discounts.preset` | Community discount |
+| `tip_amount` | `paymentData.tip` | |
+| `vat_tax` | `paymentData.vatAmount` | |
+| `gst_tax` | `sgst + cgst` | Rounded |
+| `service_tax` | `0` | |
+| `service_gst_tax_amount` | `0` | |
+| `tip_tax_amount` | `0` | |
+
+### Associated Orders (from Running Orders Response)
+
+| API Field | Frontend Field | Notes |
+|-----------|---------------|-------|
+| `associated_order_list[].id` | `associatedOrders[].orderId` | Deduped by ID |
+| `associated_order_list[].restaurant_order_id` | `associatedOrders[].orderNumber` | Display # |
+| `associated_order_list[].order_amount` | `associatedOrders[].amount` | Float |
+| `associated_order_list[].collect_Bill` | `associatedOrders[].transferredAt` | Timestamp |
+
+### Paid Room Order List (History — not yet wired)
+
+| Detail | Value |
+|--------|-------|
+| **Endpoint** | `GET /api/v2/vendoremployee/paid-in-room-order-list?search_date=YYYY-MM-DD` |
+| **Auth** | Bearer token |
+| **Status** | 🔵 Explored, not wired |
+| **Response Structure** | `{ orders: [{ primary_order, associated_orders, room_grand_total }] }` |
+
+| Field | Description |
+|-------|-------------|
+| `primary_order` | Room service order details (id, amount, guest info, payment, taxes) |
+| `associated_orders` | Array of transferred orders (id, amount, user_name, waiter, transfer_date, taxes) |
+| `room_grand_total` | Combined total (primary + transfers) |

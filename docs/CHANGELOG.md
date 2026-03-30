@@ -15,6 +15,43 @@
 
 ---
 
+## [2026-03-30] — Phase 2B: Transfer to Room + Associated Orders
+
+### CHG-054 | FEATURE | Transfer to Room — API Layer
+**Summary:** Added `ORDER_SHIFTED_ROOM` endpoint constant and `orderToAPI.transferToRoom()` transform. Produces payload matching `POST /api/v1/vendoremployee/order-shifted-room` spec (order_id, payment_mode, payment_amount, room_id, discounts, taxes).
+**Files Changed:** `constants.js`, `orderTransform.js`
+
+### CHG-055 | FEATURE | Capture Associated Orders in Order Transform
+**Summary:** `orderTransform.fromAPI.order()` now captures `associated_order_list` from running orders API as `associatedOrders` array. Deduplicates by ID. Each entry mapped to `{ orderId, orderNumber, amount, transferredAt }`. Also added to `orderItemsByTableId` map in `OrderContext`.
+**Files Changed:** `orderTransform.js`, `OrderContext.jsx`
+
+### CHG-056 | FEATURE | "Transfer to Room" Payment Method
+**Summary:** Added "To Room" button in CollectPaymentPanel payment methods row (orange accent, `ArrowRightLeft` icon). Only visible for tables (`!isRoom`). Inline room picker (2-col grid of occupied rooms) appears when selected. Checkout button shows "Transfer ₹X to RoomName" when a room is chosen.
+**Files Changed:** `CollectPaymentPanel.jsx`
+
+### CHG-057 | FEATURE | Transfer to Room — API Wiring
+**Summary:** Wired `POST /order-shifted-room` call in OrderEntry's `onPaymentComplete`. Third payment branch: when `isTransferToRoom && roomId`, calls the new endpoint via `orderToAPI.transferToRoom()`. Toast on success/error, closes OrderEntry, frees table.
+**Files Changed:** `OrderEntry.jsx`
+
+### CHG-058 | FEATURE | Associated Orders Display in CartPanel
+**Summary:** Room CartPanel shows a collapsible "Transferred Orders (N)" section below cart items with order count and total. Each entry shows order #, date, and amount. Read-only. Uses `ArrowLeftRight` icon with orange accent.
+**Files Changed:** `CartPanel.jsx`
+
+### CHG-059 | FEATURE | Room Checkout — Expandable Bill Summary
+**Summary:** For rooms with associated orders, the CollectPaymentPanel bill summary replaces the standard items list with two expandable/collapsible sections: (1) Transferred Orders — order list with total, (2) Room Service — expandable to show all items, item total, discount/coupon/loyalty/wallet controls, subtotal, taxes, and Room Service Grand Total. Discount/coupon controls moved inside Room Service expand for rooms.
+**Files Changed:** `CollectPaymentPanel.jsx`
+
+### CHG-060 | FIX | Room Checkout — Combined Total
+**Summary:** BILL SUMMARY header, Checkout button, and `handlePayment` payment amount now show `finalTotal + associatedTotal` (combined room service + transfers) for rooms with associated orders. Tables unchanged.
+**Files Changed:** `CollectPaymentPanel.jsx`
+
+### CHG-061 | FEATURE | Bill/C-Out Card Buttons → Payment Screen Shortcut
+**Summary:** "Bill" (tables) and "C/Out" (rooms) buttons on TableCard now navigate directly to Collect Payment / Checkout screen respectively. Previously they called `onUpdateStatus("paid")` which did nothing visible. New `onBillClick` callback opens OrderEntry with `initialShowPayment=true`, skipping the cart view.
+**Files Changed:** `TableCard.jsx`, `TableSection.jsx`, `DashboardPage.jsx`, `OrderEntry.jsx`
+
+---
+
+
 ## [2026-03-29] — Phase 2A: Room Integration
 
 ### CHG-043 | FEATURE | Rooms in Dashboard Grid
