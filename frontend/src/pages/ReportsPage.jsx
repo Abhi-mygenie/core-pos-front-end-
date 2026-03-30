@@ -33,6 +33,7 @@ const ReportsPage = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [summary, setSummary] = useState({ totalOrders: 0, totalAmount: 0, avgOrderValue: 0 });
   const [missingCount, setMissingCount] = useState(0);
+  const [statusBreakdown, setStatusBreakdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [tabCounts, setTabCounts] = useState({});
@@ -89,13 +90,6 @@ const ReportsPage = () => {
     }
     
     // Channel and Platform filters disabled (GAP-001, GAP-002)
-    // When backend adds these fields, uncomment:
-    // if (filters.channel) {
-    //   result = result.filter(o => o.channel === filters.channel);
-    // }
-    // if (filters.platform) {
-    //   result = result.filter(o => o.platform === filters.platform);
-    // }
     
     setFilteredOrders(result);
     
@@ -103,7 +97,7 @@ const ReportsPage = () => {
     const summaryData = calculateSummary(result);
     setSummary(summaryData);
     
-    // Calculate missing count for All Orders tab
+    // Calculate missing count and status breakdown for All Orders tab
     if (activeTab === 'all' && result.length >= 2) {
       let missing = 0;
       // Sort by order ID descending
@@ -122,8 +116,20 @@ const ReportsPage = () => {
         }
       }
       setMissingCount(missing);
+      
+      // Calculate status breakdown
+      const breakdown = {
+        paid: result.filter(o => o._status === 'paid').length,
+        cancelled: result.filter(o => o._status === 'cancelled').length,
+        credit: result.filter(o => o._status === 'credit').length,
+        merged: result.filter(o => o._status === 'merged').length,
+        roomTransfer: result.filter(o => o._status === 'roomTransfer').length,
+        missing: missing,
+      };
+      setStatusBreakdown(breakdown);
     } else {
       setMissingCount(0);
+      setStatusBreakdown(null);
     }
   }, [orders, filters, activeTab]);
 
@@ -300,6 +306,7 @@ const ReportsPage = () => {
             summary={summary} 
             isLoading={isLoading}
             missingCount={activeTab === 'all' ? missingCount : 0}
+            breakdown={activeTab === 'all' ? statusBreakdown : null}
           />
 
           {/* Order Table */}
