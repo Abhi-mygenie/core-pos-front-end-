@@ -8,6 +8,7 @@ import SummaryBar from "../components/reports/SummaryBar";
 import OrderTable from "../components/reports/OrderTable";
 import FilterBar from "../components/reports/FilterBar";
 import FilterTags from "../components/reports/FilterTags";
+import OrderDetailSheet from "../components/reports/OrderDetailSheet";
 import { getOrdersByTab } from "../api/services/reportService";
 import { calculateSummary } from "../api/transforms/reportTransform";
 
@@ -41,6 +42,10 @@ const ReportsPage = () => {
     channel: null,
     platform: null,
   });
+  
+  // Side sheet state
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // Fetch orders when tab or date changes
   const fetchOrders = useCallback(async () => {
@@ -138,8 +143,14 @@ const ReportsPage = () => {
   };
 
   const handleRowClick = (order) => {
-    // Side sheet drill-down coming in Step 7
-    console.log('Order clicked:', order.id, order.orderId);
+    setSelectedOrder(order);
+    setIsSheetOpen(true);
+  };
+
+  const handleCloseSheet = () => {
+    setIsSheetOpen(false);
+    // Delay clearing selected order for smooth close animation
+    setTimeout(() => setSelectedOrder(null), 300);
   };
 
   const currentTabConfig = getTabConfig(activeTab);
@@ -282,6 +293,14 @@ const ReportsPage = () => {
           />
         </div>
       </main>
+
+      {/* Order Detail Side Sheet */}
+      <OrderDetailSheet
+        isOpen={isSheetOpen}
+        onClose={handleCloseSheet}
+        order={selectedOrder}
+        tabId={activeTab}
+      />
     </div>
   );
 };
