@@ -63,7 +63,7 @@ Transfer table orders to rooms as a payment method. Display transferred (associa
 - **Room Checkout Layout:** Two expandable sections (Transferred Orders first, then Room Service with inline discount/tax controls)
 - **Bill/C-Out Shortcut:** `initialShowPayment` prop bypasses cart view, opens payment panel directly
 
-## Phase 4: Reports — PLANNING COMPLETE
+## Phase 4: Reports — PLANNING COMPLETE, READY TO BUILD
 
 ### Phase 4A: Order Reports
 A dedicated reports page for viewing and analyzing orders with filtering, summary totals, and export.
@@ -79,25 +79,243 @@ A dedicated reports page for viewing and analyzing orders with filtering, summar
 
 #### Filters (apply to active tab):
 - **Payment Method** (dynamic): Cash, Card, UPI, TAB Cash, TAB Card, TAB UPI, Online UPI, Online Card, + dynamic
-- **Channel:** Dine-in, Delivery, Takeaway, Rooms, Aggregator
-- **Platform:** POS, Web (Scan & Order)
+- **Channel:** Dine-in, Delivery, Takeaway, Rooms, Aggregator — DISABLED until backend adds field (GAP-001)
+- **Platform:** POS, Web (Scan & Order) — DISABLED until backend adds field (GAP-002)
 - **Payment Type:** Prepaid, Postpaid
 - **Date Picker:** Today (default), custom date
 
 #### Features:
-- **Summary Bar** — Total orders, total amount, avg per order
-- **Order Table** — Order #, Customer, Waiter, Table/Room, Amount, Tax, Discount, Payment Method, Time
-- **Detail Drill-down** — Click row → full item-level view
-- **Export** — PDF, Excel/CSV
+- **Summary Bar** — Total orders count, total amount (₹), avg order value
+- **Order Table** — #, Order ID, Customer, Waiter, Table/Room, Amount, Tax, Discount, Payment Method, Time
+- **Detail Drill-down** — Click row → side sheet with full item-level view via `employee-order-details`
+- **Export** — PDF, Excel/CSV of current filtered view
+- **Empty/Loading States** — Skeleton loaders, "No orders found" with icon
+- **Filter Tags** — Active filters shown as removable tags below filter bar
 
-#### Tab → API Data Source Mapping:
+---
+
+### UX SPECIFICATION
+
+#### Page Layout:
+```
+┌─────────────────────────────────────────────────────────────┐
+│ SIDEBAR │            ORDER REPORTS                          │
+│ (dark)  │                                                   │
+│         │  ┌──────────────────────────────────────────────┐ │
+│ [Dash]  │  │  ORDER REPORTS          [Date: Today ▼]     │ │
+│ [Report]│  │                     [⬇ PDF] [⬇ CSV/Excel]   │ │
+│  ←active│  └──────────────────────────────────────────────┘ │
+│         │                                                   │
+│         │  ── Paid ── Cancel ── Credit ── Hold ──           │
+│         │  ── Merged ── Room Transfer ── Aggregator ──      │
+│         │  (underline tabs, color-coded active state)       │
+│         │                                                   │
+│         │  ┌──────────────────────────────────────────────┐ │
+│         │  │ FILTERS ROW:                                 │ │
+│         │  │ [Payment Method ▼] [Channel ▼*] [Platform ▼*]│ │
+│         │  │ [Payment Type ▼]                              │ │
+│         │  │ *disabled with "Coming soon" tooltip          │ │
+│         │  │                                               │ │
+│         │  │ Active: [Cash ✕] [UPI ✕]  ← removable tags   │ │
+│         │  └──────────────────────────────────────────────┘ │
+│         │                                                   │
+│         │  ┌──────────────────────────────────────────────┐ │
+│         │  │ SUMMARY CARDS (3 grid):                      │ │
+│         │  │ ┌──────────┐ ┌──────────┐ ┌──────────┐      │ │
+│         │  │ │Total Ord │ │Total Amt │ │Avg Order │      │ │
+│         │  │ │   88     │ │ ₹50,329  │ │  ₹571    │      │ │
+│         │  │ └──────────┘ └──────────┘ └──────────┘      │ │
+│         │  └──────────────────────────────────────────────┘ │
+│         │                                                   │
+│         │  ┌──────────────────────────────────────────────┐ │
+│         │  │ ORDER TABLE (dense, sortable):               │ │
+│         │  │ #│Order │Customer│Waiter│Table│ Amt │Method  │ │
+│         │  │ 1│11419 │Table 5 │Cntr  │ T5  │₹462 │card    │ │
+│         │  │ 2│11420 │Daisy   │Cntr  │ C-08│₹210 │cash    │ │
+│         │  │ ... click any row → side sheet opens ────►   │ │
+│         │  └──────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Side Sheet (on row click → calls employee-order-details):
+```
+┌──────────────────────────┐
+│  Order #011419      [✕]  │
+│  ■ PAID (blue badge)     │
+│─────────────────────────│
+│  Customer: Table 5       │
+│  Waiter: Counter         │
+│  Table: T5 (area: T)     │
+│  Date: 17 Mar, 09:52     │
+│  Payment: card           │
+│  Ref: 132532421          │
+│─────────────────────────│
+│  ITEMS:                  │
+│  1× Kombucha (plain) ₹100│
+│     └ Choice: Oat       │
+│  1× Iced Latte      ₹200│
+│  1× Toast            ₹150│
+│  1× Vegan Chai       ₹100│
+│─────────────────────────│
+│  Subtotal        ₹550   │
+│  Discount       -₹110   │
+│  GST              ₹22   │
+│  ─────────────────────   │
+│  TOTAL           ₹462   │
+└──────────────────────────┘
+```
+
+#### Tab-Specific UX:
+| Tab | Color | Special Treatment |
+|---|---|---|
+| Paid | Blue (bg-blue-600) | Standard. Channel/Platform filters disabled |
+| Cancelled | Red (bg-red-600) | Sheet shows: cancel reason, cancel type (Pre/Post-Serve), cancelled by in red alert box |
+| Credit | Purple (bg-purple-600) | Table prioritizes customer Name + Phone (monospace). For follow-up |
+| On Hold | Amber (bg-amber-500) | Info banner: "Displaying provisional hold data" (backend bug) |
+| Merged | Teal (bg-teal-600) | Source: cancel-order-list filtered by payment_method=Merge |
+| Room Transfer | Indigo (bg-indigo-600) | Source: paid-order-list filtered by payment_method in [ROOM, transferToRoom] |
+| Aggregator | Orange (bg-orange-500) | Zomato/Swiggy CSS badges. Sheet: rider info + delivery address |
+
+#### Filter Availability Per Tab:
+| Filter | Paid | Cancel | Credit | Hold | Merged | Room Transfer | Aggregator |
+|---|---|---|---|---|---|---|---|
+| Date | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Payment Method | ✅ | ✅ | ✅ (always TAB) | ✅ | ✅ (always Merge) | ✅ (always ROOM) | ✅ |
+| Channel | DISABLED | PARTIAL | DISABLED | DISABLED | PARTIAL | DISABLED | ✅ (delivery) |
+| Platform | DISABLED | PARTIAL | DISABLED | DISABLED | PARTIAL | DISABLED | ✅ (zomato/swiggy) |
+| Payment Type | ✅ | ✅ | HIDDEN | ✅ | ✅ | ✅ | ✅ |
+
+#### Design Specs (from design_guidelines.json):
+- **Theme:** Swiss & High-Contrast Light (white content area against dark sidebar)
+- **Typography:** Monospace for all numbers/currency/IDs/dates/phones (JetBrains Mono or system monospace)
+- **Tabs:** Underline style (not pills). border-b-2 active state
+- **Table:** Dense rows, hover:bg-zinc-50, cursor-pointer for drill-down
+- **Filters:** Flat inputs, rounded-sm, disabled = opacity-50 + "Coming soon" tooltip
+- **Summary Cards:** Flat white bg, sharp 1px border, no shadows
+- **Sheet:** Glass-morphism backdrop-blur-xl bg-white/80 overlay
+- **Empty State:** Centered, large icon, "No orders found" + subtitle
+
+---
+
+### IMPLEMENTATION PLAN (10 Steps)
+
+#### Step 1: Foundation — Route + Page Shell + Sidebar
+**Files to create/modify:**
+- `App.js` — Add `/reports` route
+- `pages/ReportsPage.jsx` — New page shell
+- `pages/index.js` — Export ReportsPage
+- `components/layout/Sidebar.jsx` — Wire "Reports" click → navigate to `/reports`
+**Test:** Click Reports in sidebar → reports page loads
+
+#### Step 2: API Service + Transform Layer
+**Files to create:**
+- `api/services/reportService.js` — 6 API functions (getPaidOrders, getCancelledOrders, getCreditOrders, getHoldOrders, getAggregatorOrders, getOrderDetails)
+- `api/transforms/reportTransform.js` — Normalize 5 different response shapes into common schema
+- `api/constants.js` — Add report endpoint constants
+**Common schema per order:**
+```js
+{ id, orderId, amount, customer, waiter, table, paymentMethod, paymentType, 
+  paymentStatus, tax: { gst, vat, service }, discount, createdAt, collectedAt,
+  channel, platform, orderType, transactionRef, customerContact: { name, phone, email } }
+```
+**Test:** `curl` each endpoint, verify transform output
+
+#### Step 3: Tab Bar + Date Picker
+**Files:**
+- `components/reports/ReportTabs.jsx` — 7 tabs with underline style + color coding
+- `components/reports/DatePicker.jsx` — Date selector (today default, custom)
+- Wire into `ReportsPage.jsx`
+**Test:** Tabs switch, date changes, no API calls yet (just state)
+
+#### Step 4: Summary Bar
+**Files:**
+- `components/reports/SummaryBar.jsx` — 3 cards (Total Orders, Total Amount, Avg Order)
+**Test:** Renders with mock data, numbers formatted correctly
+
+#### Step 5: Order Table + Data Fetching
+**Files:**
+- `components/reports/OrderTable.jsx` — Dense Shadcn table with all columns
+- Wire API calls: tab switch + date change → fetch → display
+- Handle missing columns (show "—" for credit tab's missing table_no etc.)
+- Sortable columns (amount, time)
+**Test:** Switch to Paid tab → 88 orders load for 2026-03-17. Cancelled tab → 11 orders
+
+#### Step 6: Filters
+**Files:**
+- `components/reports/FilterBar.jsx` — Payment Method, Channel, Platform, Payment Type dropdowns
+- `components/reports/FilterTags.jsx` — Active filter removable tags
+- Channel/Platform dropdowns disabled with tooltip
+- Dynamic payment method options (extracted from current data)
+**Test:** Filter Paid by "cash" → 44 orders, summary updates
+
+#### Step 7: Side Sheet — Order Detail Drill-down
+**Files:**
+- `components/reports/OrderDetailSheet.jsx` — Glass-morphism side panel
+- Click row → calls `employee-order-details?order_id=X` → renders items, totals
+- Tab-specific sections:
+  - Cancelled: red alert box (cancel reason, type, by)
+  - Credit: customer phone/email prominent
+  - Aggregator: platform badge, rider info, delivery address
+**Test:** Click order row → sheet opens with correct items
+
+#### Step 8: Export
+**Files:**
+- `components/reports/ExportButtons.jsx` — PDF + CSV/Excel buttons
+- Use browser-side libraries (jspdf + jspdf-autotable for PDF, xlsx/csv for Excel)
+**Test:** Export Paid tab → PDF/CSV downloaded with correct data
+
+#### Step 9: Empty + Loading States
+**Files:**
+- Update `OrderTable.jsx` with skeleton loader
+- Empty state component with icon + message
+- Hold tab info banner
+**Test:** Visual verification
+
+#### Step 10: Polish + Merged/Room Transfer Logic
+- Merged tab: filter cancel-order-list where payment_method === "Merge"
+- Room Transfer tab: filter paid-order-list where payment_method in ["ROOM", "transferToRoom"]
+- Paid tab: EXCLUDE Room Transfer orders from paid total
+- Aggregator Zomato/Swiggy badges
+- Error handling for failed API calls
+**Test:** All 7 tabs show correct data with correct filters
+
+---
+
+### New Files Created (Phase 4A):
+```
+/app/frontend/src/
+├── pages/ReportsPage.jsx                    (NEW)
+├── api/services/reportService.js            (NEW)
+├── api/transforms/reportTransform.js        (NEW)
+├── components/reports/
+│   ├── ReportTabs.jsx                       (NEW)
+│   ├── DatePicker.jsx                       (NEW)
+│   ├── SummaryBar.jsx                       (NEW)
+│   ├── OrderTable.jsx                       (NEW)
+│   ├── FilterBar.jsx                        (NEW)
+│   ├── FilterTags.jsx                       (NEW)
+│   ├── OrderDetailSheet.jsx                 (NEW)
+│   └── ExportButtons.jsx                    (NEW)
+```
+
+### Modified Files:
+```
+├── App.js                                   (ADD /reports route)
+├── pages/index.js                           (ADD ReportsPage export)
+├── api/constants.js                         (ADD report endpoints)
+├── components/layout/Sidebar.jsx            (WIRE Reports navigation)
+```
+
+---
+
+### Tab → API Data Source Mapping:
 
 | Tab | Primary API | Filter Logic |
 |---|---|---|
-| Paid | `paid-order-list` | Direct (exclude ROOM/transferToRoom) |
+| Paid | `paid-order-list` | Exclude `payment_method in ["ROOM","transferToRoom"]` |
 | Cancelled | `cancel-order-list` | Exclude `payment_method === "Merge"` |
 | Credit | `paid-in-tab-order-list` | Direct |
-| On Hold | `paid-paylater-order-list` | Direct (⚠️ data issue) |
+| On Hold | `paid-paylater-order-list` | Direct (⚠️ data issue — ISSUE-001) |
 | Merged | `cancel-order-list` | `payment_method === "Merge"` |
 | Room Transfer | `paid-order-list` | `payment_method in ["ROOM","transferToRoom"]` |
 | Aggregator | `urbanpiper/get-complete-order-list` | Direct |
@@ -130,12 +348,23 @@ All list endpoints accept `search_date=YYYY-MM-DD` (defaults today). Aggregator 
 | cancellation fields | ❌ | ✅ | ❌ | ❌ | ✅ |
 | restaurant_table_area | ❌ | ❌ | ❌ | ❌ | ✅ |
 
-#### ⚠️ Backend Clarifications Needed:
-1. Add `order_type` (or separate `channel` + `platform`) to paid-order-list
-2. Channel vs Platform split — `order_type` currently mixes both (channel: dinein/takeaway/room, platform: pos/web)
-3. `paid-paylater-order-list` returns identical data to paid-order-list — is this correct?
-4. Aggregator endpoint — no test data; field structure unknown
-5. `online_pay[]` inconsistency across endpoints
+#### Backend Clarifications (see ORDER_REPORT_CLARIFICATIONS.md for full details):
+1. **GAP-001:** Add `channel` field to paid, credit, hold list endpoints
+2. **GAP-002:** Add `platform` field to paid, credit, hold list endpoints
+3. **GAP-003:** Split `order_type` into separate `channel` + `platform`
+4. **ISSUE-001:** `paid-paylater-order-list` returns identical data to `paid-order-list`
+5. **INCONSISTENCY-003:** Enrich `paid-in-tab-order-list` with table_no, employee_id, payment_type
+6. Aggregator response has different nested structure (needs separate transform)
+
+#### Test Accounts:
+| Account | Paid | Cancel | Credit | Hold | Aggregator |
+|---|---|---|---|---|---|
+| owner@palmhouse.com / Qplazm@10 | ✅ 88/day | ✅ 11/day | ✅ 12/day | ⚠️ same as paid | ❌ 0 |
+| owner@kunafamahal.com / Qplazm@10 | ? | ? | ? | ? | ✅ 6/day |
+
+#### Reference Documents:
+- `/app/docs/ORDER_REPORT_CLARIFICATIONS.md` — Full backend gaps & action items
+- `/app/design_guidelines.json` — Swiss & High-Contrast design specs
 
 ---
 
