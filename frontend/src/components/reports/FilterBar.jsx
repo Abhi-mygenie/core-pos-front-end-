@@ -137,13 +137,26 @@ const PLATFORM_OPTIONS = [
 ];
 
 /**
+ * Status breakdown pills configuration
+ */
+const STATUS_CONFIG = [
+  { key: 'paid', label: 'Paid', color: 'bg-blue-600' },
+  { key: 'cancelled', label: 'Can', color: 'bg-red-600' },
+  { key: 'credit', label: 'Cre', color: 'bg-purple-600' },
+  { key: 'merged', label: 'Mrg', color: 'bg-teal-600' },
+  { key: 'roomTransfer', label: 'Rm', color: 'bg-indigo-600' },
+  { key: 'missing', label: 'Miss', color: 'bg-red-500' },
+];
+
+/**
  * FilterBar Component
  * 
  * @param {object} filters - Current filter values { paymentMethod, paymentType, channel, platform }
  * @param {function} onFilterChange - Callback when filter changes (key, value)
  * @param {function} onClearAll - Callback to clear all filters
+ * @param {object} breakdown - Status breakdown for All Orders tab { paid, cancelled, credit, merged, roomTransfer, missing }
  */
-const FilterBar = ({ filters = {}, onFilterChange, onClearAll }) => {
+const FilterBar = ({ filters = {}, onFilterChange, onClearAll, breakdown = null }) => {
   const hasActiveFilters = Object.values(filters).some(v => v !== null && v !== undefined);
 
   return (
@@ -151,69 +164,104 @@ const FilterBar = ({ filters = {}, onFilterChange, onClearAll }) => {
       className="p-4 bg-white border border-zinc-200 rounded-sm"
       data-testid="filter-bar"
     >
-      <div className="flex items-end gap-4 flex-wrap">
-        {/* Payment Method */}
-        <div className="w-40">
-          <Select
-            label="Payment Method"
-            value={filters.paymentMethod}
-            options={PAYMENT_METHOD_OPTIONS}
-            onChange={(val) => onFilterChange('paymentMethod', val)}
-            placeholder="All Methods"
-            testId="filter-payment-method"
-          />
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        {/* Left: Filters */}
+        <div className="flex items-end gap-4 flex-wrap">
+          {/* Payment Method */}
+          <div className="w-40">
+            <Select
+              label="Payment Method"
+              value={filters.paymentMethod}
+              options={PAYMENT_METHOD_OPTIONS}
+              onChange={(val) => onFilterChange('paymentMethod', val)}
+              placeholder="All Methods"
+              testId="filter-payment-method"
+            />
+          </div>
+
+          {/* Payment Type */}
+          <div className="w-36">
+            <Select
+              label="Payment Type"
+              value={filters.paymentType}
+              options={PAYMENT_TYPE_OPTIONS}
+              onChange={(val) => onFilterChange('paymentType', val)}
+              placeholder="All Types"
+              testId="filter-payment-type"
+            />
+          </div>
+
+          {/* Channel (Disabled - GAP-001) */}
+          <div className="w-36">
+            <Select
+              label="Channel"
+              value={filters.channel}
+              options={CHANNEL_OPTIONS}
+              onChange={(val) => onFilterChange('channel', val)}
+              placeholder="All Channels"
+              disabled={true}
+              disabledTooltip="Coming soon - Backend field missing"
+              testId="filter-channel"
+            />
+          </div>
+
+          {/* Platform (Disabled - GAP-002) */}
+          <div className="w-32">
+            <Select
+              label="Platform"
+              value={filters.platform}
+              options={PLATFORM_OPTIONS}
+              onChange={(val) => onFilterChange('platform', val)}
+              placeholder="All Platforms"
+              disabled={true}
+              disabledTooltip="Coming soon - Backend field missing"
+              testId="filter-platform"
+            />
+          </div>
+
+          {/* Clear All Button */}
+          {hasActiveFilters && (
+            <button
+              onClick={onClearAll}
+              className="px-3 py-2 text-sm text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-sm transition-colors flex items-center gap-1"
+              data-testid="filter-clear-all"
+            >
+              <X className="w-4 h-4" />
+              Clear
+            </button>
+          )}
         </div>
 
-        {/* Payment Type */}
-        <div className="w-36">
-          <Select
-            label="Payment Type"
-            value={filters.paymentType}
-            options={PAYMENT_TYPE_OPTIONS}
-            onChange={(val) => onFilterChange('paymentType', val)}
-            placeholder="All Types"
-            testId="filter-payment-type"
-          />
-        </div>
-
-        {/* Channel (Disabled - GAP-001) */}
-        <div className="w-36">
-          <Select
-            label="Channel"
-            value={filters.channel}
-            options={CHANNEL_OPTIONS}
-            onChange={(val) => onFilterChange('channel', val)}
-            placeholder="All Channels"
-            disabled={true}
-            disabledTooltip="Coming soon - Backend field missing"
-            testId="filter-channel"
-          />
-        </div>
-
-        {/* Platform (Disabled - GAP-002) */}
-        <div className="w-32">
-          <Select
-            label="Platform"
-            value={filters.platform}
-            options={PLATFORM_OPTIONS}
-            onChange={(val) => onFilterChange('platform', val)}
-            placeholder="All Platforms"
-            disabled={true}
-            disabledTooltip="Coming soon - Backend field missing"
-            testId="filter-platform"
-          />
-        </div>
-
-        {/* Clear All Button */}
-        {hasActiveFilters && (
-          <button
-            onClick={onClearAll}
-            className="px-3 py-2 text-sm text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-sm transition-colors flex items-center gap-1"
-            data-testid="filter-clear-all"
-          >
-            <X className="w-4 h-4" />
-            Clear
-          </button>
+        {/* Right: Status Breakdown (All Orders tab only) */}
+        {breakdown && (
+          <div className="flex items-center gap-2 flex-wrap" data-testid="status-breakdown">
+            {STATUS_CONFIG.map(({ key, label, color }) => {
+              const count = breakdown[key] || 0;
+              const isMissing = key === 'missing';
+              return (
+                <div 
+                  key={key}
+                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded-sm ${
+                    isMissing && count > 0 ? 'bg-red-50 border border-red-200' : 'bg-zinc-50 border border-zinc-100'
+                  }`}
+                  title={`${label}: ${count}`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${color}`} />
+                  <span 
+                    className={`text-xs font-bold tabular-nums ${
+                      isMissing && count > 0 ? 'text-red-600' : 'text-zinc-800'
+                    }`}
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    {count}
+                  </span>
+                  <span className={`text-xs ${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-500'}`}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

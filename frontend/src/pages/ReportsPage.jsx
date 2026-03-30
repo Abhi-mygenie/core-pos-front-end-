@@ -285,12 +285,13 @@ const ReportsPage = () => {
             </div>
           )}
 
-          {/* Filters */}
+          {/* Filters + Status Breakdown */}
           <div className="mb-4">
             <FilterBar 
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearAll={handleClearFilters}
+              breakdown={activeTab === 'all' ? statusBreakdown : null}
             />
           </div>
 
@@ -306,7 +307,6 @@ const ReportsPage = () => {
             summary={summary} 
             isLoading={isLoading}
             missingCount={activeTab === 'all' ? missingCount : 0}
-            breakdown={activeTab === 'all' ? statusBreakdown : null}
           />
 
           {/* Order Table */}

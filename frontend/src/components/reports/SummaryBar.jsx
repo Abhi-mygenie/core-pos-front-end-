@@ -22,7 +22,7 @@ const formatNumber = (num) => {
 /**
  * SummaryCard - Individual stat card
  */
-const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoading, missingCount, breakdown }) => {
+const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoading, missingCount }) => {
   // Determine trend icon and color
   const getTrendDisplay = () => {
     if (trend === undefined || trend === null) return null;
@@ -53,16 +53,6 @@ const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoadin
       );
     }
   };
-
-  // Status breakdown pills configuration
-  const statusConfig = [
-    { key: 'paid', label: 'Paid', color: 'bg-blue-600' },
-    { key: 'cancelled', label: 'Can', color: 'bg-red-600' },
-    { key: 'credit', label: 'Cre', color: 'bg-purple-600' },
-    { key: 'merged', label: 'Mrg', color: 'bg-teal-600' },
-    { key: 'roomTransfer', label: 'Rm', color: 'bg-indigo-600' },
-    { key: 'missing', label: 'Miss', color: 'bg-red-500' },
-  ];
 
   return (
     <div 
@@ -96,40 +86,6 @@ const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoadin
           )}
         </div>
       )}
-
-      {/* Status Breakdown Pills (Only for Total Orders with breakdown data) */}
-      {!isLoading && breakdown && (
-        <div className="mt-4 pt-3 border-t border-zinc-100" data-testid="status-breakdown">
-          <div className="flex flex-wrap gap-2">
-            {statusConfig.map(({ key, label: statusLabel, color }) => {
-              const count = breakdown[key] || 0;
-              const isMissing = key === 'missing';
-              return (
-                <div 
-                  key={key}
-                  className={`flex items-center gap-1.5 px-2 py-1 rounded-sm ${
-                    isMissing && count > 0 ? 'bg-red-50 border border-red-200' : 'bg-zinc-50'
-                  }`}
-                  title={`${statusLabel}: ${count}`}
-                >
-                  <span className={`w-2 h-2 rounded-full ${color}`} />
-                  <span 
-                    className={`text-xs font-semibold tabular-nums ${
-                      isMissing && count > 0 ? 'text-red-600' : 'text-zinc-700'
-                    }`}
-                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    {count}
-                  </span>
-                  <span className={`text-xs ${isMissing && count > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
-                    {statusLabel}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
       
       {/* Trend (optional) */}
       {!isLoading && getTrendDisplay() && (
@@ -149,9 +105,8 @@ const SummaryCard = ({ label, value, formattedValue, trend, trendLabel, isLoadin
  * @param {boolean} isLoading - Show loading skeletons
  * @param {object} trends - Optional trend percentages { orders, amount, avg }
  * @param {number} missingCount - Number of missing orders (for All Orders tab)
- * @param {object} breakdown - Status breakdown { paid, cancelled, credit, merged, roomTransfer, missing }
  */
-const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount = 0, breakdown = null }) => {
+const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount = 0 }) => {
   const { totalOrders, totalAmount, avgOrderValue } = summary;
 
   const cards = [
@@ -162,7 +117,6 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount
       trend: trends.orders,
       trendLabel: 'vs yesterday',
       missingCount: missingCount,
-      breakdown: breakdown, // Only Total Orders card gets breakdown
     },
     {
       label: 'Total Amount',
@@ -171,7 +125,6 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount
       trend: trends.amount,
       trendLabel: 'vs yesterday',
       missingCount: 0,
-      breakdown: null,
     },
     {
       label: 'Avg Order Value',
@@ -180,13 +133,12 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount
       trend: trends.avg,
       trendLabel: 'vs yesterday',
       missingCount: 0,
-      breakdown: null,
     },
   ];
 
   return (
     <div 
-      className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+      className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
       data-testid="summary-bar"
     >
       {cards.map((card) => (
@@ -199,7 +151,6 @@ const SummaryBar = ({ summary = {}, isLoading = false, trends = {}, missingCount
           trendLabel={card.trendLabel}
           isLoading={isLoading}
           missingCount={card.missingCount}
-          breakdown={card.breakdown}
         />
       ))}
     </div>
