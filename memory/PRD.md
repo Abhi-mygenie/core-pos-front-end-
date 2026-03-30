@@ -82,9 +82,35 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
 - **Order Details** — Per-order data display (fields TBD, user will share endpoint details)
 
 #### API Endpoints:
-- **Awaiting from user** — User will provide the Core POS API endpoints for report data
 
-#### Status: PLANNING (Waiting for API endpoint details from user)
+**1. Paid Orders:** `GET /api/v2/vendoremployee/paid-order-list`
+- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
+- Auth: Bearer token
+- Response: `{ orders: [...] }`
+- Order fields per item:
+  - `id`, `restaurant_order_id` (display order #)
+  - `order_amount`, `restaurant_discount_amount`, `tip_amount`
+  - `total_vat_tax_amount`, `total_gst_tax_amount`, `total_service_tax_amount`
+  - `payment_method` → values seen: `cash`, `upi`, `card`, `ROOM`, `transferToRoom`
+  - `payment_type` → values seen: `prepaid`, `postpaid`
+  - `payment_status` → `paid`
+  - `user_name`, `waiter_name`, `table_no`
+  - `f_name`, `l_name`, `email`, `phone` (customer details, often null)
+  - `f_order_status` (always 6 for paid), `order_status` (`delivered`/`deliverd`)
+  - `collect_bill` (timestamp), `created_at`, `updated_at`
+  - `transaction_reference`, `loyalty_info`, `coupon_info`, `wallet_info`
+  - `online_pay[]`, `partial_payments[]`
+
+**2. Canceled Orders:** Awaiting endpoint from user
+**3. Credit Orders:** Awaiting endpoint from user
+**4. Hold/Pending Orders:** Awaiting endpoint from user
+
+#### Observed Data (2026-03-17, 88 orders):
+- payment_methods: cash (44), upi (20), card (18), ROOM (6)
+- payment_types: prepaid, postpaid
+- No explicit "Channel" or "Platform" field in response — needs clarification
+
+#### Status: PLANNING (Paid endpoint documented, awaiting remaining endpoints + Channel/Platform clarification)
 
 ---
 
