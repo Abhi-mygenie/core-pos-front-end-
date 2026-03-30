@@ -63,10 +63,35 @@ Transfer table orders to rooms as a payment method. Display transferred (associa
 - **Room Checkout Layout:** Two expandable sections (Transferred Orders first, then Room Service with inline discount/tax controls)
 - **Bill/C-Out Shortcut:** `initialShowPayment` prop bypasses cart view, opens payment panel directly
 
+## Phase 4: Reports — IN PROGRESS
+
+### Phase 4A: Order Reports (Next Up — Awaiting API Endpoints)
+A dedicated reports page/section for viewing and analyzing orders with filtering, summary totals, and export capabilities.
+
+#### Order Categories / Tabs:
+1. **Paid Orders** — Successfully completed & paid orders
+   - Filters: Payment Method, Channel, Platform
+2. **Canceled Orders** — Orders that were canceled
+3. **Credit Orders** — Orders put on credit (deferred payment)
+4. **Hold / Pending Payment Orders** — Orders on hold awaiting payment
+
+#### Features:
+- **Date Range Filter** — TBD (to be confirmed with user)
+- **Summary Totals** — Aggregate numbers per category (e.g., "Total Paid: ₹45,000 | 128 orders")
+- **Export** — PDF, Excel/CSV export for all report views
+- **Order Details** — Per-order data display (fields TBD, user will share endpoint details)
+
+#### API Endpoints:
+- **Awaiting from user** — User will provide the Core POS API endpoints for report data
+
+#### Status: PLANNING (Waiting for API endpoint details from user)
+
+---
+
 ## Prioritized Backlog
 
 ### P0 — Immediate
-- None (Phase 2B complete)
+- Phase 4A: Order Reports (pending API endpoints from user)
 
 ### P1 — Phase 2B+ Enhancements
 - Wire `paid-in-room-order-list` endpoint for room checkout history page
