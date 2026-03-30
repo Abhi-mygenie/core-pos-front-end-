@@ -135,7 +135,15 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
   - **Missing vs paid-order-list:** employee_id, payment_type, tip_amount, table_no, loyalty/coupon/wallet_info, online_pay[], partial_payments[]
   - **No order_type, no order_details[]** — detail drill-down via `employee-order-details` needed
 - Observed data (2026-03-17, 12 orders): total ₹6,734, range ₹137–₹1,302
-**4. Hold/Pending Orders:** Awaiting endpoint from user
+**4. Hold / Pay Later Orders:** `GET /api/v2/vendoremployee/paid-paylater-order-list`
+- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
+- Auth: Bearer token
+- Response: `{ orders: [...] }` — 31 fields (nearly identical to paid-order-list)
+- Fields: Same as paid-order-list MINUS `online_pay[]`
+- ⚠️ **DATA ISSUE:** On 2026-03-17, returns the EXACT same 88 orders as `paid-order-list` (identical IDs, amounts, payment methods). Tested multiple dates — either returns 0 or same as paid.
+  - Possible cause: No actual hold/paylater orders exist in test data, OR endpoint is not filtering correctly
+  - **Needs backend clarification:** Is this endpoint working as intended? What differentiates a "hold/paylater" order from a "paid" order in the DB?
+- Observed: payment_methods (cash:44, upi:20, card:18, ROOM:6), all payment_status: "paid"
 
 #### Observed Data (2026-03-17, 88 paid orders):
 - payment_methods: cash (44), upi (20), card (18), ROOM (6)
