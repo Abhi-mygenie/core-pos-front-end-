@@ -557,7 +557,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               onBack={() => setShowPaymentPanel(false)}
               onPaymentComplete={async (paymentData) => {
                 try {
-                  if (!placedOrderId) {
+                  // Scenario 3 — Transfer to Room (Phase 2B)
+                  if (paymentData.isTransferToRoom && paymentData.roomId) {
+                    const payload = orderToAPI.transferToRoom(effectiveTable, paymentData, paymentData.roomId);
+                    const res = await api.post(API_ENDPOINTS.ORDER_SHIFTED_ROOM, payload);
+                    toast({ title: "Transferred to Room", description: res.data?.message || "Order transferred successfully" });
+                  } else if (!placedOrderId) {
                     // Scenario 2 — fresh order: place + pay in one shot
                     const payload = orderToAPI.collectBill(
                       effectiveTable, cartItems, customer, orderType, paymentData,

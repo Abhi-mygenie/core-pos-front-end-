@@ -1,11 +1,19 @@
 import { useState, useMemo } from "react";
 import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft } from "lucide-react";
 import { COLORS } from "../../constants";
-import { useRestaurant } from "../../contexts";
+import { useRestaurant, useTables } from "../../contexts";
 
 const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer, isRoom }) => {
   const customer = passedCustomer;
   const { discountTypes } = useRestaurant();
+  const { tables } = useTables();
+
+  // Occupied rooms for "Transfer to Room" picker (exclude current table)
+  const occupiedRooms = useMemo(() => 
+    (tables || []).filter(t => t.isRoom && t.isOccupied),
+    [tables]
+  );
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   // Per-item tax computation — uses product.tax if available, else 0%
   const taxTotals = useMemo(() => {
@@ -130,7 +138,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   // handlePayment — CHG-038: Collect Payment API
   // TODO: Wire to API when Flow B (collect payment on existing order) endpoint is provided
   const handlePayment = () => {
-    onPaymentComplete({
+    const paymentData = {
       method:          showSplit ? 'partial' : paymentMethod,
       finalTotal,
       sgst,
@@ -150,7 +158,15 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
       customer,
       itemTotal,
       subtotal: subtotalAfterDiscount,
-    });
+    };
+
+    // Transfer to Room — attach room selection
+    if (paymentMethod === 'transferToRoom' && selectedRoom) {
+      paymentData.isTransferToRoom = true;
+      paymentData.roomId = selectedRoom.tableId;
+    }
+
+    onPaymentComplete(paymentData);
   };
 
   return (
@@ -707,6 +723,38 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
               )}
             </div>
           )}
+
+          {/* Transfer to Room — Room Picker */}
+          {paymentMethod === "transferToRoom" && !showSplit && (
+            <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }} data-testid="room-picker-section">
+              <div className="text-xs mb-2 font-medium" style={{ color: COLORS.grayText }}>Select Room</div>
+              {occupiedRooms.length === 0 ? (
+                <div className="text-sm py-4 text-center rounded-lg" style={{ backgroundColor: COLORS.lightBg, color: COLORS.grayText }}>
+                  No checked-in rooms available
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                  {occupiedRooms.map((room) => (
+                    <button
+                      key={room.tableId}
+                      onClick={() => setSelectedRoom(room)}
+                      className="p-2 rounded-lg border-2 text-left transition-colors"
+                      style={{
+                        borderColor: selectedRoom?.tableId === room.tableId ? COLORS.primaryOrange : COLORS.borderGray,
+                        backgroundColor: selectedRoom?.tableId === room.tableId ? `${COLORS.primaryOrange}10` : "white",
+                      }}
+                      data-testid={`room-pick-${room.tableNumber}`}
+                    >
+                      <div className="text-sm font-semibold" style={{ color: COLORS.darkText }}>{room.displayName || room.tableNumber}</div>
+                      {room.customerName && (
+                        <div className="text-xs truncate" style={{ color: COLORS.grayText }}>{room.customerName}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -714,12 +762,14 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
       <div className="p-4 border-t" style={{ borderColor: COLORS.borderGray }}>
         <button
           onClick={handlePayment}
-          disabled={(cartItems || []).length === 0}
+          disabled={(cartItems || []).length === 0 || (paymentMethod === 'transferToRoom' && !selectedRoom)}
           className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50"
-          style={{ backgroundColor: COLORS.primaryGreen }}
+          style={{ backgroundColor: paymentMethod === 'transferToRoom' ? COLORS.primaryOrange : COLORS.primaryGreen }}
           data-testid="complete-payment-btn"
         >
-          {isRoom ? 'Checkout' : 'Pay'} ₹{finalTotal.toLocaleString()}
+          {paymentMethod === 'transferToRoom'
+            ? `Transfer ₹${finalTotal.toLocaleString()} to ${selectedRoom?.displayName || selectedRoom?.tableNumber || 'Room'}`
+            : `${isRoom ? 'Checkout' : 'Pay'} ₹${finalTotal.toLocaleString()}`}
         </button>
       </div>
     </div>
