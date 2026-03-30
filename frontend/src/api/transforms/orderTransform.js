@@ -159,6 +159,22 @@ export const fromAPI = {
       // Delivery (basic — detailed mapping deferred)
       deliveryAddress: api.delivery_address || null,
       deliveryCharge: parseFloat(api.delivery_charge) || 0,
+
+      // Associated orders — table orders transferred to this room (Phase 2B)
+      associatedOrders: (() => {
+        const raw = api.associated_order_list || [];
+        const seen = new Set();
+        return raw.filter(item => {
+          if (seen.has(item.id)) return false;
+          seen.add(item.id);
+          return true;
+        }).map(item => ({
+          orderId: item.id,
+          orderNumber: item.restaurant_order_id || '',
+          amount: parseFloat(item.order_amount) || 0,
+          transferredAt: item.collect_Bill || '',
+        }));
+      })(),
     };
   },
 
@@ -517,6 +533,38 @@ export const toAPI = {
     }
 
     return payload;
+  },
+
+  /**
+   * Transfer to Room — Phase 2B (transfer entire table order to a room)
+   * Endpoint: POST /api/v1/vendoremployee/order-shifted-room (JSON)
+   * @param {Object} table       - Table entry (has orderId)
+   * @param {Object} paymentData - { method, finalTotal, sgst, cgst, vatAmount, tip, discounts }
+   * @param {number|string} roomId - Destination room ID
+   */
+  transferToRoom: (table, paymentData, roomId) => {
+    const {
+      method = 'cash', finalTotal = 0,
+      sgst = 0, cgst = 0, vatAmount = 0,
+      tip = 0, discounts = {},
+    } = paymentData;
+
+    return {
+      order_id:                 String(table.orderId),
+      payment_mode:             method,
+      payment_amount:           finalTotal,
+      payment_status:           'paid',
+      room_id:                  String(roomId),
+      order_discount:           discounts.orderDiscountPercent || 0,
+      self_discount:            discounts.manual || 0,
+      comm_discount:            discounts.preset || 0,
+      tip_amount:               tip,
+      vat_tax:                  vatAmount,
+      gst_tax:                  Math.round(((sgst || 0) + (cgst || 0)) * 100) / 100,
+      service_tax:              0,
+      service_gst_tax_amount:   0,
+      tip_tax_amount:           0,
+    };
   },
 };
 

@@ -39,8 +39,9 @@ export const API_ENDPOINTS = {
   EDIT_ORDER_ITEM:   'TBD',   // CHG-040: Edit placed item qty/notes
   EDIT_ORDER_ITEM:   'TBD',   // CHG-040 future: Edit placed item qty
   
-  // Room Operations (Phase 2A)
+  // Room Operations (Phase 2A + 2B)
   ROOM_CHECK_IN: '/api/v1/vendoremployee/pos/user-group-check-in',
+  ORDER_SHIFTED_ROOM: '/api/v1/vendoremployee/order-shifted-room',
 
   // Settings
   CANCELLATION_REASONS: '/api/v1/vendoremployee/cancellation-reasons',

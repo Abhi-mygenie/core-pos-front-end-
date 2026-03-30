@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check } from "lucide-react";
+import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant } from "../../contexts";
 
@@ -482,7 +482,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
             ))}
           </div>
           
-          <div className={isRoom ? "" : "grid grid-cols-2 gap-2"}>
+          <div className={isRoom ? "" : "grid grid-cols-3 gap-2"}>
             <button
               onClick={() => { setShowSplit(!showSplit); if (!showSplit) setSplitType("payment"); }}
               className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors w-full"
@@ -507,6 +507,20 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
             >
               <FileText className="w-4 h-4" style={{ color: paymentMethod === "credit" && !showSplit ? COLORS.primaryGreen : COLORS.grayText }} />
               <span className="text-xs" style={{ color: paymentMethod === "credit" && !showSplit ? COLORS.primaryGreen : COLORS.darkText }}>Credit</span>
+            </button>
+            )}
+            {!isRoom && (
+            <button
+              onClick={() => { setPaymentMethod("transferToRoom"); setShowSplit(false); setSplitType(null); }}
+              className="py-3 px-2 rounded-lg border-2 flex items-center justify-center gap-2 transition-colors"
+              style={{
+                borderColor: paymentMethod === "transferToRoom" && !showSplit ? COLORS.primaryOrange : COLORS.borderGray,
+                backgroundColor: paymentMethod === "transferToRoom" && !showSplit ? `${COLORS.primaryOrange}10` : "white",
+              }}
+              data-testid="payment-transfer-room-btn"
+            >
+              <ArrowRightLeft className="w-4 h-4" style={{ color: paymentMethod === "transferToRoom" && !showSplit ? COLORS.primaryOrange : COLORS.grayText }} />
+              <span className="text-xs" style={{ color: paymentMethod === "transferToRoom" && !showSplit ? COLORS.primaryOrange : COLORS.darkText }}>To Room</span>
             </button>
             )}
           </div>
