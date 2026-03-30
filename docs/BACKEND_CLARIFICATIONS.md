@@ -1,7 +1,11 @@
 # Backend Clarifications & Open Questions
 
-> Last Updated: 2026-03-24
-> Status: Phase 1C Planning — Table operations, order/item cancel, out-of-menu items
+> Last Updated: 2026-03-30
+> Status: Phase 4A Planning — Order Reports
+>
+> **Sub-Documents (module-specific):**
+> - [ORDER_REPORT_CLARIFICATIONS.md](./ORDER_REPORT_CLARIFICATIONS.md) — Phase 4A: Order Reports API gaps, missing fields, data issues
+> - *(Future sub-documents will be added here per module/phase)*
 
 ---
 
@@ -701,3 +705,33 @@ Total records returned: 15, but only 14 are unique (id=4751 is duplicated).
 - NOT fetching from `get-single-order-new` (Phase 3 via socket)
 
 **Status:** CONFIRMED — both flows implemented and tested
+
+
+---
+
+## Phase 4A: Order Reports — Backend Gaps Summary
+
+> Full details: [ORDER_REPORT_CLARIFICATIONS.md](./ORDER_REPORT_CLARIFICATIONS.md)
+
+### P0 — Blocking Report Filters
+1. **GAP-001:** Add `channel` field (dinein/takeaway/delivery/room) to `paid-order-list`, `paid-in-tab-order-list`, `paid-paylater-order-list`
+2. **GAP-002:** Add `platform` field (pos/web) to same endpoints
+3. **ISSUE-001:** `paid-paylater-order-list` returns identical data as `paid-order-list` — endpoint not filtering correctly
+
+### P1 — Data Quality
+4. **GAP-003:** Split `order_type` into separate `channel` + `platform` fields (currently mixes both)
+5. **INCONSISTENCY-003:** Enrich `paid-in-tab-order-list` with: table_no, employee_id, payment_type, tip_amount
+
+### P2 — Cleanup
+6. **ISSUE-003:** Normalize `order_status` typo ("deliverd" → "delivered")
+7. Fix API field typos: `order_plateform`, `aggrigator_id`, `aggrator_ref_id`
+
+### Report Endpoints Inventory:
+| Endpoint | Tab | Status |
+|---|---|---|
+| `paid-order-list` | Paid + Room Transfer | Working (missing channel/platform) |
+| `cancel-order-list` | Cancelled + Merged | Working (richest) |
+| `paid-in-tab-order-list` | Credit | Working (leanest, missing fields) |
+| `paid-paylater-order-list` | On Hold | Bug: returns same as Paid |
+| `urbanpiper/get-complete-order-list` | Aggregator | Working (different nested structure) |
+| `employee-order-details?order_id=X` | Detail drill-down | Working (108+ fields) |
