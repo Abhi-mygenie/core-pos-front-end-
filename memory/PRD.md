@@ -118,7 +118,11 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
   - payment_status: unpaid (9), Merge (2)
   - f_order_status: always 3 (cancelled)
   - 3 of 11 orders had item-level order_details
-- NOTE: `order_type` field exists here but NOT in paid-order-list — confirms backend needs to add it there
+- NOTE: `order_type` field exists here but NOT in paid-order-list — backend needs to add it there
+- CLARIFICATION: `order_type` mixes Channel + Platform values:
+  - **Channel values:** `dinein`, takeaway, room (how customer is served)
+  - **Platform values:** `pos`, scan_and_order (how order was placed)
+  - Backend should ideally separate these into two distinct fields: `channel` + `platform`
 **3. Credit Orders:** Awaiting endpoint from user
 **4. Hold/Pending Orders:** Awaiting endpoint from user
 
