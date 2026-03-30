@@ -7,6 +7,7 @@ import { useState } from 'react';
  * Tab configuration with colors from design_guidelines.json
  */
 const TABS = [
+  { id: 'all', label: 'All Orders', color: 'bg-zinc-800', textColor: 'text-zinc-800', borderColor: 'border-zinc-800' },
   { id: 'paid', label: 'Paid', color: 'bg-blue-600', textColor: 'text-blue-600', borderColor: 'border-blue-600' },
   { id: 'cancelled', label: 'Cancelled', color: 'bg-red-600', textColor: 'text-red-600', borderColor: 'border-red-600' },
   { id: 'credit', label: 'Credit', color: 'bg-purple-600', textColor: 'text-purple-600', borderColor: 'border-purple-600' },

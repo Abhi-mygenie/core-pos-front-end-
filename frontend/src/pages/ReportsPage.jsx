@@ -23,7 +23,7 @@ const ReportsPage = () => {
   const [isSilentMode, setIsSilentMode] = useState(false);
   
   // Report state
-  const [activeTab, setActiveTab] = useState('paid');
+  const [activeTab, setActiveTab] = useState('all');
   const [selectedDate, setSelectedDate] = useState(() => {
     return new Date().toISOString().split('T')[0];
   });

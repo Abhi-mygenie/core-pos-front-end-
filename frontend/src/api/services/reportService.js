@@ -178,12 +178,14 @@ export const getOrderDetails = async (orderId) => {
 
 /**
  * Fetch orders for a specific tab
- * @param {string} tab - Tab name: 'paid', 'cancelled', 'credit', 'hold', 'merged', 'roomTransfer', 'aggregator'
+ * @param {string} tab - Tab name: 'all', 'paid', 'cancelled', 'credit', 'hold', 'merged', 'roomTransfer', 'aggregator'
  * @param {string|Date} date - Date to fetch
  * @returns {Promise<Array>}
  */
 export const getOrdersByTab = async (tab, date) => {
   switch (tab) {
+    case 'all':
+      return getAllOrders(date);
     case 'paid':
       return getPaidOrdersFiltered(date);
     case 'cancelled':
@@ -201,6 +203,68 @@ export const getOrdersByTab = async (tab, date) => {
     default:
       console.warn(`Unknown tab: ${tab}`);
       return [];
+  }
+};
+
+// =============================================================================
+// ALL ORDERS (Tab: All Orders - Combined view for sequence verification)
+// =============================================================================
+
+/**
+ * Fetch all orders from all sources for sequence verification
+ * Combines: Paid, Cancelled, Credit, Hold (excludes Aggregator - different ID format)
+ * Deduplicates by order.id and adds status field
+ * @param {string|Date} date 
+ * @returns {Promise<Array>}
+ */
+export const getAllOrders = async (date) => {
+  try {
+    // Fetch from all sources in parallel
+    const [paidAll, cancelledAll, credit, hold] = await Promise.all([
+      getPaidOrders(date).catch(() => []),
+      getCancelledOrdersRaw(date).catch(() => []),
+      getCreditOrders(date).catch(() => []),
+      getHoldOrders(date).catch(() => []),
+    ]);
+
+    // Add status to each order
+    const paidFiltered = filterPaidOrders(paidAll).map(o => ({ ...o, _status: 'paid' }));
+    const roomTransfer = filterRoomTransferOrders(paidAll).map(o => ({ ...o, _status: 'roomTransfer' }));
+    const cancelledFiltered = filterCancelledOrders(cancelledAll).map(o => ({ ...o, _status: 'cancelled' }));
+    const merged = filterMergedOrders(cancelledAll).map(o => ({ ...o, _status: 'merged' }));
+    const creditOrders = credit.map(o => ({ ...o, _status: 'credit' }));
+    // Note: Hold returns same as Paid (backend bug), but we still include it for completeness
+    const holdOrders = hold.map(o => ({ ...o, _status: 'hold' }));
+
+    // Combine all orders
+    const allOrders = [
+      ...paidFiltered,
+      ...roomTransfer,
+      ...cancelledFiltered,
+      ...merged,
+      ...creditOrders,
+      // Skip holdOrders to avoid duplicates since it returns same as paid (ISSUE-001)
+    ];
+
+    // Deduplicate by order.id (keep first occurrence)
+    const seen = new Set();
+    const deduplicated = allOrders.filter(order => {
+      if (seen.has(order.id)) return false;
+      seen.add(order.id);
+      return true;
+    });
+
+    // Sort by order ID descending (latest first)
+    deduplicated.sort((a, b) => {
+      const aId = parseInt(a.orderId?.replace(/\D/g, '') || a.id) || 0;
+      const bId = parseInt(b.orderId?.replace(/\D/g, '') || b.id) || 0;
+      return bId - aId; // Descending
+    });
+
+    return deduplicated;
+  } catch (err) {
+    console.error('Failed to fetch all orders:', err);
+    throw err;
   }
 };
 

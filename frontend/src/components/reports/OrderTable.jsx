@@ -51,6 +51,38 @@ const getAggregatorBadge = (platform) => {
 };
 
 /**
+ * Get order status badge style (for All Orders tab)
+ */
+const getStatusBadgeStyle = (status) => {
+  const statusStyles = {
+    paid: 'bg-blue-100 text-blue-800 border-blue-200',
+    cancelled: 'bg-red-100 text-red-800 border-red-200',
+    credit: 'bg-purple-100 text-purple-800 border-purple-200',
+    hold: 'bg-amber-100 text-amber-800 border-amber-200',
+    merged: 'bg-teal-100 text-teal-800 border-teal-200',
+    roomTransfer: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+    missing: 'bg-red-500 text-white border-red-600',
+  };
+  return statusStyles[status] || 'bg-zinc-100 text-zinc-800 border-zinc-200';
+};
+
+/**
+ * Get status label
+ */
+const getStatusLabel = (status) => {
+  const labels = {
+    paid: 'Paid',
+    cancelled: 'Cancelled',
+    credit: 'Credit',
+    hold: 'On Hold',
+    merged: 'Merged',
+    roomTransfer: 'Room',
+    missing: 'MISSING',
+  };
+  return labels[status] || status;
+};
+
+/**
  * Column definitions for different tabs
  */
 const getColumns = (tabId) => {
@@ -63,6 +95,19 @@ const getColumns = (tabId) => {
     { id: 'paymentMethod', label: 'Payment', sortable: true, width: 'w-24' },
     { id: 'amount', label: 'Amount', sortable: true, width: 'w-28', align: 'right' },
   ];
+
+  // All Orders tab - includes Status column
+  if (tabId === 'all') {
+    return [
+      { id: 'orderId', label: 'Order #', sortable: true, width: 'w-28' },
+      { id: 'status', label: 'Status', sortable: true, width: 'w-28' },
+      { id: 'createdAt', label: 'Time', sortable: true, width: 'w-24' },
+      { id: 'customer', label: 'Customer', sortable: true, width: 'w-36' },
+      { id: 'table', label: 'Table', sortable: true, width: 'w-20' },
+      { id: 'paymentMethod', label: 'Payment', sortable: true, width: 'w-24' },
+      { id: 'amount', label: 'Amount', sortable: true, width: 'w-28', align: 'right' },
+    ];
+  }
 
   // Tab-specific column adjustments
   if (tabId === 'cancelled') {
@@ -104,11 +149,37 @@ const getColumns = (tabId) => {
  * Render cell value based on column
  */
 const renderCell = (order, columnId, tabId) => {
+  // Handle missing order placeholder
+  if (order._isMissing) {
+    if (columnId === 'orderId') {
+      return (
+        <span className="font-mono text-sm text-red-600 font-semibold">
+          #{order._missingId}
+        </span>
+      );
+    }
+    if (columnId === 'status') {
+      return (
+        <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-sm border ${getStatusBadgeStyle('missing')}`}>
+          MISSING
+        </span>
+      );
+    }
+    return <span className="text-sm text-zinc-300">—</span>;
+  }
+
   switch (columnId) {
     case 'orderId':
       return (
         <span className="font-mono text-sm text-zinc-900">
           {order.orderId || `#${order.id}`}
+        </span>
+      );
+    
+    case 'status':
+      return (
+        <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-sm border ${getStatusBadgeStyle(order._status)}`}>
+          {getStatusLabel(order._status)}
         </span>
       );
     
@@ -222,6 +293,62 @@ const LoadingSkeleton = ({ columns }) => (
 );
 
 /**
+ * Insert missing order placeholders for gap detection
+ * Only used for "All Orders" tab
+ */
+const insertMissingOrders = (orders) => {
+  if (orders.length < 2) return orders;
+
+  const result = [];
+  
+  // Orders are sorted descending (newest first), so we look for gaps going down
+  for (let i = 0; i < orders.length; i++) {
+    const current = orders[i];
+    result.push(current);
+    
+    // Check if there's a next order
+    if (i < orders.length - 1) {
+      const next = orders[i + 1];
+      
+      // Extract numeric IDs
+      const currentId = parseInt(String(current.orderId || current.id).replace(/\D/g, '')) || 0;
+      const nextId = parseInt(String(next.orderId || next.id).replace(/\D/g, '')) || 0;
+      
+      // If gap is more than 1 and less than 100 (reasonable gap), insert missing placeholders
+      const gap = currentId - nextId;
+      if (gap > 1 && gap <= 100) {
+        for (let missingId = currentId - 1; missingId > nextId; missingId--) {
+          result.push({
+            _isMissing: true,
+            _missingId: missingId,
+            id: `missing-${missingId}`,
+          });
+        }
+      } else if (gap > 100) {
+        // Large gap - just show one placeholder indicating many missing
+        result.push({
+          _isMissing: true,
+          _missingId: `${nextId + 1}...${currentId - 1}`,
+          _gapCount: gap - 1,
+          id: `missing-gap-${currentId}-${nextId}`,
+        });
+      }
+    }
+  }
+  
+  return result;
+};
+
+/**
+ * Count missing orders
+ */
+const countMissingOrders = (ordersWithGaps) => {
+  return ordersWithGaps.filter(o => o._isMissing).reduce((count, o) => {
+    return count + (o._gapCount || 1);
+  }, 0);
+};
+
+/**
  * OrderTable Component
  * Dense data table with sorting and row click for drill-down
  * 
@@ -232,7 +359,7 @@ const LoadingSkeleton = ({ columns }) => (
  * @param {function} onRowClick - Callback when row is clicked (receives order)
  */
 const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading = false, onRowClick }) => {
-  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'orderId', direction: 'desc' });
   
   const columns = getColumns(tabId);
 
@@ -260,6 +387,10 @@ const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading 
     } else if (key === 'createdAt') {
       aVal = new Date(aVal || 0).getTime();
       bVal = new Date(bVal || 0).getTime();
+    } else if (key === 'orderId') {
+      // Extract numeric part for proper sorting
+      aVal = parseInt(String(a.orderId || a.id).replace(/\D/g, '')) || 0;
+      bVal = parseInt(String(b.orderId || b.id).replace(/\D/g, '')) || 0;
     } else {
       aVal = String(aVal || '').toLowerCase();
       bVal = String(bVal || '').toLowerCase();
@@ -269,6 +400,9 @@ const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading 
     if (aVal > bVal) return direction === 'asc' ? 1 : -1;
     return 0;
   });
+
+  // For "All Orders" tab, detect gaps and insert missing order placeholders
+  const ordersWithGaps = tabId === 'all' ? insertMissingOrders(sortedOrders) : sortedOrders;
 
   // Render sort icon
   const renderSortIcon = (columnId) => {
@@ -318,14 +452,20 @@ const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading 
       <div className="divide-y divide-zinc-100 max-h-[480px] overflow-y-auto">
         {isLoading ? (
           <LoadingSkeleton columns={columns} />
-        ) : sortedOrders.length === 0 ? (
+        ) : ordersWithGaps.length === 0 ? (
           <EmptyState tabLabel={tabLabel} />
         ) : (
-          sortedOrders.map((order) => (
+          ordersWithGaps.map((order) => (
             <div
               key={order.id}
-              onClick={() => onRowClick?.(order)}
-              className="flex items-center px-4 py-3 hover:bg-zinc-50 transition-colors cursor-pointer"
+              onClick={() => !order._isMissing && onRowClick?.(order)}
+              className={`
+                flex items-center px-4 py-3 transition-colors
+                ${order._isMissing 
+                  ? 'bg-red-50 border-l-4 border-l-red-500 cursor-default' 
+                  : 'hover:bg-zinc-50 cursor-pointer'
+                }
+              `}
               data-testid={`order-row-${order.id}`}
             >
               {columns.map((col) => (
@@ -342,11 +482,16 @@ const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading 
       </div>
 
       {/* Table Footer */}
-      {!isLoading && sortedOrders.length > 0 && (
-        <div className="bg-zinc-50 border-t border-zinc-200 px-4 py-2">
+      {!isLoading && orders.length > 0 && (
+        <div className="bg-zinc-50 border-t border-zinc-200 px-4 py-2 flex items-center justify-between">
           <span className="text-xs text-zinc-500">
-            Showing <span className="font-semibold text-zinc-700">{sortedOrders.length}</span> orders
+            Showing <span className="font-semibold text-zinc-700">{orders.length}</span> orders
           </span>
+          {tabId === 'all' && countMissingOrders(ordersWithGaps) > 0 && (
+            <span className="text-xs text-red-600 font-medium">
+              ⚠️ {countMissingOrders(ordersWithGaps)} missing in sequence
+            </span>
+          )}
         </div>
       )}
     </div>
