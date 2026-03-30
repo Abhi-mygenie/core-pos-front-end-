@@ -9,6 +9,7 @@ import OrderTable from "../components/reports/OrderTable";
 import FilterBar from "../components/reports/FilterBar";
 import FilterTags from "../components/reports/FilterTags";
 import OrderDetailSheet from "../components/reports/OrderDetailSheet";
+import ExportButtons from "../components/reports/ExportButtons";
 import { getOrdersByTab } from "../api/services/reportService";
 import { calculateSummary } from "../api/transforms/reportTransform";
 
@@ -199,21 +200,14 @@ const ReportsPage = () => {
               value={selectedDate} 
               onChange={handleDateChange} 
             />
-            {/* Export buttons coming in Step 8 */}
-            <button 
-              className="px-3 py-2 text-sm border border-zinc-200 rounded-sm hover:bg-zinc-100 transition-colors text-zinc-600"
-              data-testid="export-pdf-button"
-              disabled
-            >
-              ⬇ PDF
-            </button>
-            <button 
-              className="px-3 py-2 text-sm border border-zinc-200 rounded-sm hover:bg-zinc-100 transition-colors text-zinc-600"
-              data-testid="export-csv-button"
-              disabled
-            >
-              ⬇ CSV
-            </button>
+            <ExportButtons
+              orders={filteredOrders}
+              tabId={activeTab}
+              tabLabel={currentTabConfig.label}
+              selectedDate={selectedDate}
+              summary={summary}
+              disabled={isLoading}
+            />
           </div>
         </header>
 
