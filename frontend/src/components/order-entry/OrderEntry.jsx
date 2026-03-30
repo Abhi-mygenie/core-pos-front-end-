@@ -31,7 +31,7 @@ const ORDER_TYPES = [
 const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady: 3, paid: 4, yetToConfirm: 4 };
 
 // Order Entry Screen Component - 3-Panel Layout
-const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange }) => {
+const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false }) => {
   const { categories, products, popularFood } = useMenu();
   const { orders, refreshOrders } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
@@ -76,7 +76,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState(table?.orderId || null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-  const [showPaymentPanel, setShowPaymentPanel] = useState(false);
+  const [showPaymentPanel, setShowPaymentPanel] = useState(initialShowPayment);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [editingQtyItemId, setEditingQtyItemId] = useState(null);
   const [flashItemId, setFlashItemId] = useState(null);

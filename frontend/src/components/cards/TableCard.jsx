@@ -8,7 +8,7 @@ import { IconButton, TextButton } from "./buttons";
 import { CARD_BASE_STYLE } from "./TableCard.styles";
 
 // Table Card Component - Simplified (no expansion, uses modal)
-const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onToggleSnooze, currencySymbol = '₹' }) => {
+const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, isSnoozed, onToggleSnooze, currencySymbol = '₹' }) => {
   const statusConfig = getTableStatusConfig(table.status);
   const isActive = isTableActive(table.status);
   const hasOrders = ["occupied", "billReady"].includes(table.status);
@@ -184,7 +184,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, isSnoozed, onT
                       <Check className="w-5 h-5" style={{ color: COLORS.primaryGreen }} />
                     </div>
                     <TextButton
-                      onClick={() => onUpdateStatus?.(table.id, "paid")}
+                      onClick={() => onBillClick?.(table)}
                       testId={`collect-btn-${table.id}`}
                       ariaLabel={`Collect payment for table ${table.id}`}
                       fullWidth={true}
@@ -252,6 +252,7 @@ TableCard.propTypes = {
   onClick: PropTypes.func.isRequired,
   onOpenModal: PropTypes.func,
   onUpdateStatus: PropTypes.func,
+  onBillClick: PropTypes.func,
   isSnoozed: PropTypes.bool,
   onToggleSnooze: PropTypes.func,
 };
@@ -259,6 +260,7 @@ TableCard.propTypes = {
 TableCard.defaultProps = {
   onOpenModal: null,
   onUpdateStatus: null,
+  onBillClick: null,
   isSnoozed: false,
   onToggleSnooze: null,
 };

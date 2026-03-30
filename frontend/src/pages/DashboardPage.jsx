@@ -144,6 +144,7 @@ const DashboardPage = () => {
   const [activeFirst, setActiveFirst] = useState(true);
   const [orderEntryTable, setOrderEntryTable] = useState(null);
   const [orderEntryType, setOrderEntryType] = useState(null);
+  const [initialShowPayment, setInitialShowPayment] = useState(false);
   const [cartsByTable, setCartsByTable] = useState({});
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -519,6 +520,12 @@ const DashboardPage = () => {
   const handleCloseOrderEntry = () => {
     setOrderEntryTable(null);
     setOrderEntryType(null);
+    setInitialShowPayment(false);
+  };
+
+  const handleBillClick = (tableEntry) => {
+    handleTableClick(tableEntry);
+    setInitialShowPayment(true);
   };
 
   const handleUpdateTableStatus = (tableId, newStatus) => {
@@ -614,6 +621,7 @@ const DashboardPage = () => {
                         onTableClick={handleTableClick}
                         onOpenModal={handleTableClick}
                         onUpdateStatus={handleUpdateTableStatus}
+                        onBillClick={handleBillClick}
                         activeFirst={activeFirst}
                         searchQuery={searchQuery}
                         matchingTableIds={matchingTableIds}
@@ -645,6 +653,7 @@ const DashboardPage = () => {
                         onClick={handleTableClick}
                         onOpenModal={handleTableClick}
                         onUpdateStatus={handleUpdateTableStatus}
+                        onBillClick={handleBillClick}
                         isSnoozed={snoozedOrders?.has(item.id)}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
@@ -738,6 +747,7 @@ const DashboardPage = () => {
             onSelectTable={handleTableClick}
             savedCart={cartsByTable[orderEntryTable?.id || orderEntryType] || []}
             onCartChange={(key, items) => setCartsByTable(prev => ({ ...prev, [key]: items }))}
+            initialShowPayment={initialShowPayment}
           />
         )}
 
