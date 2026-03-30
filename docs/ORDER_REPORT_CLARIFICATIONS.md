@@ -150,7 +150,11 @@ A dedicated `platform` field on ALL list endpoints with values:
 
 ---
 
-### INCONSISTENCY-002: `online_pay[]` field presence
+### INCONSISTENCY-002: `online_pay[]` field presence — CLARIFIED
+
+> **IMPORTANT:** `online_pay[]` does NOT represent partial/split payment breakdown.
+> It indicates the order was placed/paid via an **online payment gateway** (e.g., Razorpay).
+> This is a separate concept from split payments (cash + UPI).
 
 | Endpoint | `online_pay[]` Present |
 |---|---|
@@ -158,6 +162,30 @@ A dedicated `platform` field on ALL list endpoints with values:
 | `cancel-order-list` | NO |
 | `paid-in-tab-order-list` | NO |
 | `paid-paylater-order-list` | NO |
+
+---
+
+### INCONSISTENCY-002b: Partial/Split Payment Breakdown — NEEDS INVESTIGATION
+
+**Context:** Orders with `payment_method: "partial"` are split payments (e.g., ₹200 cash + ₹70 UPI = ₹270 total). The breakdown field is `partial_payments[]`.
+
+**Known from outbound payload (B30):**
+- When sending a split payment via `order-bill-payment`, the payload includes `partial_payments[]` with per-method amounts.
+
+**Unknown — needs verification:**
+- Does `paid-order-list` (32-field summary) return `partial_payments[]` in its response? **Likely NO** (summary endpoint).
+- Does `employee-order-details` (108+ field detail) return `partial_payments[]`? **Likely YES** (full detail endpoint).
+
+**Impact:** If `partial_payments[]` is only in `employee-order-details`, the table row can only show "partial" badge. The actual cash/UPI breakdown would only be visible in the drill-down side sheet.
+
+**Action needed from backend team:**
+1. Confirm whether `paid-order-list` includes `partial_payments[]` for partial orders
+2. If not, consider adding it — or confirm it's available in `employee-order-details`
+3. Expected structure: `partial_payments: [{ payment_mode: "cash", amount: 200 }, { payment_mode: "upi", amount: 70 }]`
+
+**Priority:** P1 — Affects data visibility for split payment orders in reports
+
+**Status:** OPEN — Could not verify with live data (no partial orders found on test accounts palmhouse/kunafamahal for recent dates)
 
 ---
 
