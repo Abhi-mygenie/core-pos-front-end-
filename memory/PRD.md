@@ -105,12 +105,23 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
 **3. Credit Orders:** Awaiting endpoint from user
 **4. Hold/Pending Orders:** Awaiting endpoint from user
 
-#### Observed Data (2026-03-17, 88 orders):
+#### Observed Data (2026-03-17, 88 paid orders):
 - payment_methods: cash (44), upi (20), card (18), ROOM (6)
 - payment_types: prepaid, postpaid
-- No explicit "Channel" or "Platform" field in response — needs clarification
+- Total amount: ₹50,329.50
 
-#### Status: PLANNING (Paid endpoint documented, awaiting remaining endpoints + Channel/Platform clarification)
+#### ⚠️ Missing Fields (Backend team to add):
+- **`channel`** — Order channel: Dine-in, Takeaway, Room Order, etc.
+- **`platform`** — Order source: POS, Scan & Order, etc.
+- Frontend will be built assuming these fields exist. Until backend adds them, filters will show "All" or placeholder values.
+
+#### Paid Orders Filters (4 total):
+1. **Payment Method** — `cash`, `upi`, `card`, `ROOM`, `transferToRoom` ✅ Available now
+2. **Channel** — Dine-in, Takeaway, Room Order ⏳ Awaiting backend field
+3. **Platform** — POS, Scan & Order ⏳ Awaiting backend field
+4. **Date** — `search_date=YYYY-MM-DD` ✅ Available now
+
+#### Status: PLANNING (Paid endpoint documented, awaiting Canceled/Credit/Hold endpoints)
 
 ---
 
