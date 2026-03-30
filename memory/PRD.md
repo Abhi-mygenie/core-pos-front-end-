@@ -123,7 +123,18 @@ A dedicated reports page/section for viewing and analyzing orders with filtering
   - **Channel values:** `dinein`, takeaway, room (how customer is served)
   - **Platform values:** `pos`, scan_and_order (how order was placed)
   - Backend should ideally separate these into two distinct fields: `channel` + `platform`
-**3. Credit Orders:** Awaiting endpoint from user
+**3. Credit Orders:** `GET /api/v2/vendoremployee/paid-in-tab-order-list`
+- Query param: `search_date=YYYY-MM-DD` (optional, defaults to today)
+- Auth: Bearer token
+- Response: `{ orders: [...] }` — **leanest of all** (23 fields)
+- Fields: id, restaurant_order_id, order_amount, user_name, restaurant_discount_amount, total_vat/gst/service_tax_amount, f/b/k_order_status, order_status, payment_status, collect_bill, payment_method, transaction_reference, created_at, updated_at, f_name, l_name, email, phone, waiter_name
+- Key observations:
+  - `payment_method` always `TAB` (all 12 orders)
+  - `payment_status` always `paid`, `f_order_status` always 6
+  - Has customer contact info: `f_name`, `l_name`, `email`, `phone`
+  - **Missing vs paid-order-list:** employee_id, payment_type, tip_amount, table_no, loyalty/coupon/wallet_info, online_pay[], partial_payments[]
+  - **No order_type, no order_details[]** — detail drill-down via `employee-order-details` needed
+- Observed data (2026-03-17, 12 orders): total ₹6,734, range ₹137–₹1,302
 **4. Hold/Pending Orders:** Awaiting endpoint from user
 
 #### Observed Data (2026-03-17, 88 paid orders):
