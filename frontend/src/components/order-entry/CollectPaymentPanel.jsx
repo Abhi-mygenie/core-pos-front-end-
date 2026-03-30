@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables } from "../../contexts";
 
@@ -15,6 +15,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   );
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showTransferredOrders, setShowTransferredOrders] = useState(false);
+  const [showRoomService, setShowRoomService] = useState(false);
 
   // Associated orders total
   const associatedTotal = useMemo(() =>
@@ -269,19 +270,92 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                 )}
               </div>
 
-              {/* Room Service Total */}
+              {/* Room Service — collapsible with full breakdown */}
               <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
-                <div className="flex justify-between py-1">
-                  <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>Room Service</span>
-                  <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
-                </div>
+                <button
+                  onClick={() => setShowRoomService(!showRoomService)}
+                  className="w-full flex items-center justify-between py-1"
+                  data-testid="checkout-room-service-toggle"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <BellRing className="w-3.5 h-3.5" style={{ color: COLORS.darkText }} />
+                    <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
+                      Room Service
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{finalTotal.toLocaleString()}</span>
+                    {showRoomService
+                      ? <ChevronUp className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                      : <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />}
+                  </div>
+                </button>
+                {showRoomService && (
+                  <div className="mt-1 mb-1 text-xs space-y-2" style={{ backgroundColor: `${COLORS.lightBg}` }}>
+                    {/* Items list */}
+                    <div className="px-3 pt-2 space-y-1.5">
+                      {(cartItems || []).map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-start">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between">
+                              <span style={{ color: COLORS.darkText }}>{item.name}</span>
+                              <span className="ml-2" style={{ color: COLORS.grayText }}>x{item.qty}</span>
+                            </div>
+                            {item.customizations && (
+                              <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                                └─ {item.customizations.size}
+                                {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
+                              </div>
+                            )}
+                          </div>
+                          <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
+                            ₹{(item.price * item.qty).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Item Total */}
+                    <div className="px-3 pt-1 border-t flex justify-between font-medium" style={{ borderColor: COLORS.borderGray }}>
+                      <span style={{ color: COLORS.darkText }}>Item Total</span>
+                      <span style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span>
+                    </div>
+                    {/* Discount (if any) */}
+                    {totalDiscount > 0 && (
+                      <div className="px-3 flex justify-between" style={{ color: COLORS.primaryGreen }}>
+                        <span>Discount</span>
+                        <span>-₹{totalDiscount.toLocaleString()}</span>
+                      </div>
+                    )}
+                    {/* Subtotal */}
+                    <div className="px-3 pt-1 border-t flex justify-between" style={{ borderColor: COLORS.borderGray }}>
+                      <span style={{ color: COLORS.grayText }}>Subtotal</span>
+                      <span style={{ color: COLORS.darkText }}>₹{subtotalAfterDiscount.toLocaleString()}</span>
+                    </div>
+                    {/* Taxes */}
+                    <div className="px-3 space-y-1">
+                      <div className="flex justify-between">
+                        <span style={{ color: COLORS.grayText }}>SGST (2.5%)</span>
+                        <span style={{ color: COLORS.darkText }}>₹{sgst.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: COLORS.grayText }}>CGST (2.5%)</span>
+                        <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
+                      </div>
+                    </div>
+                    {/* Room Service Grand Total */}
+                    <div className="px-3 py-2 border-t flex justify-between font-bold" style={{ borderColor: COLORS.borderGray }}>
+                      <span style={{ color: COLORS.darkText }}>Room Service Total</span>
+                      <span style={{ color: COLORS.darkText }}>₹{finalTotal.toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Grand Total */}
               <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
                 <div className="flex justify-between font-bold">
                   <span style={{ color: COLORS.darkText }}>Total</span>
-                  <span style={{ color: COLORS.primaryOrange }}>₹{(itemTotal + associatedTotal).toLocaleString()}</span>
+                  <span style={{ color: COLORS.primaryOrange }}>₹{(finalTotal + associatedTotal).toLocaleString()}</span>
                 </div>
               </div>
             </div>
