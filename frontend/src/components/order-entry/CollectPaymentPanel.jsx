@@ -146,9 +146,11 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   // handlePayment — CHG-038: Collect Payment API
   // TODO: Wire to API when Flow B (collect payment on existing order) endpoint is provided
   const handlePayment = () => {
+    const roomHasTransfers = isRoom && associatedOrders.length > 0;
+    const effectiveTotal = roomHasTransfers ? finalTotal + associatedTotal : finalTotal;
     const paymentData = {
       method:          showSplit ? 'partial' : paymentMethod,
-      finalTotal,
+      finalTotal:      effectiveTotal,
       sgst,
       cgst,
       vatAmount:       0,
@@ -209,7 +211,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
           📋 BILL SUMMARY
         </div>
         <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
-          ₹{finalTotal.toLocaleString()}
+          ₹{(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal).toLocaleString()}
         </div>
       </div>
 
@@ -1032,7 +1034,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
         >
           {paymentMethod === 'transferToRoom'
             ? `Transfer ₹${finalTotal.toLocaleString()} to ${selectedRoom?.displayName || selectedRoom?.tableNumber || 'Room'}`
-            : `${isRoom ? 'Checkout' : 'Pay'} ₹${finalTotal.toLocaleString()}`}
+            : `${isRoom ? 'Checkout' : 'Pay'} ₹${(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal).toLocaleString()}`}
         </button>
       </div>
     </div>
