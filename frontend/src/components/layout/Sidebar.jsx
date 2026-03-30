@@ -149,6 +149,13 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
       return;
     }
 
+    // Reports navigates to /reports page
+    if (item.id === 'reports') {
+      setActiveItem(item.id);
+      navigate('/reports');
+      return;
+    }
+
     // Settings opens its own panel
     if (item.id === 'settings') {
       onOpenSettings?.();
