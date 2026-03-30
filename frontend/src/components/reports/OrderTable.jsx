@@ -275,20 +275,15 @@ const EmptyState = ({ tabLabel }) => (
 );
 
 /**
- * Loading Skeleton
+ * Compact Loading Indicator
  */
-const LoadingSkeleton = ({ columns }) => (
-  <div className="animate-pulse">
-    {[...Array(5)].map((_, rowIdx) => (
-      <div key={rowIdx} className="flex items-center gap-4 px-4 py-3 border-b border-zinc-100">
-        {columns.map((col) => (
-          <div 
-            key={col.id} 
-            className={`h-4 bg-zinc-100 rounded-sm ${col.width}`}
-          />
-        ))}
-      </div>
-    ))}
+const LoadingIndicator = () => (
+  <div className="flex items-center justify-center gap-2 py-10" data-testid="order-table-loading">
+    <svg className="w-5 h-5 animate-spin text-zinc-400" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+    <span className="text-sm text-zinc-400">Loading orders...</span>
   </div>
 );
 
@@ -451,7 +446,7 @@ const OrderTable = ({ orders = [], tabId = 'paid', tabLabel = 'Paid', isLoading 
       {/* Table Body */}
       <div className="divide-y divide-zinc-100 max-h-[480px] overflow-y-auto">
         {isLoading ? (
-          <LoadingSkeleton columns={columns} />
+          <LoadingIndicator />
         ) : ordersWithGaps.length === 0 ? (
           <EmptyState tabLabel={tabLabel} />
         ) : (
