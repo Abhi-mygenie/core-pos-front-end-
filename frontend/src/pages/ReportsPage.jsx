@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import ReportTabs, { getTabConfig } from "../components/reports/ReportTabs";
 import DatePicker from "../components/reports/DatePicker";
+import SummaryBar from "../components/reports/SummaryBar";
 
 /**
  * ReportsPage — Phase 4A Order Reports
@@ -19,6 +20,14 @@ const ReportsPage = () => {
   const [selectedDate, setSelectedDate] = useState(() => {
     // Default to today
     return new Date().toISOString().split('T')[0];
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Mock summary data (will be replaced with API data in Step 5)
+  const [summary, setSummary] = useState({
+    totalOrders: 88,
+    totalAmount: 156420,
+    avgOrderValue: 1777,
   });
 
   const handleBackToDashboard = () => {
@@ -121,28 +130,11 @@ const ReportsPage = () => {
             <span className="text-sm text-zinc-500">Filters coming in Step 6</span>
           </div>
 
-          {/* Summary Bar placeholder */}
-          <div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
-            data-testid="reports-summary-placeholder"
-          >
-            {['Total Orders', 'Total Amount', 'Avg Order Value'].map((label) => (
-              <div 
-                key={label}
-                className="p-6 bg-white border border-zinc-200 rounded-sm"
-              >
-                <div className="text-xs tracking-wide uppercase font-semibold text-zinc-500 mb-2">
-                  {label}
-                </div>
-                <div 
-                  className="text-3xl font-bold text-zinc-950"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  —
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Summary Bar */}
+          <SummaryBar 
+            summary={summary} 
+            isLoading={isLoading}
+          />
 
           {/* Order Table placeholder */}
           <div 
