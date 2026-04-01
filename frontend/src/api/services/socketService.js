@@ -147,6 +147,7 @@ class SocketService {
 
   /**
    * Subscribe to restaurant-specific channels
+   * ⭐ PHASE 3 FIX: Changed to spread args (...args) to capture all Socket.IO arguments
    */
   _subscribeToChannels() {
     if (!this.restaurantId) return;
@@ -156,14 +157,14 @@ class SocketService {
 
     console.log(`[Socket] Subscribing to: ${orderChannel}, ${tableChannel}`);
 
-    // Order channel events
-    this.socket.on(orderChannel, (data) => {
-      this._handleOrderChannelEvent(data);
+    // Order channel events - Socket.IO passes multiple args, not single array
+    this.socket.on(orderChannel, (...args) => {
+      this._handleOrderChannelEvent(args);
     });
 
-    // Table channel events
-    this.socket.on(tableChannel, (data) => {
-      this._handleTableChannelEvent(data);
+    // Table channel events - Socket.IO passes multiple args, not single array
+    this.socket.on(tableChannel, (...args) => {
+      this._handleTableChannelEvent(args);
     });
   }
 
