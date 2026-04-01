@@ -194,10 +194,11 @@ export const SocketProvider = ({ children }) => {
 
   /**
    * Connect to socket when restaurant is loaded
+   * ⭐ PHASE 3 FIX: Changed restaurant.restaurantId to restaurant.id
    */
   useEffect(() => {
-    if (restaurant?.restaurantId && !hasConnectedRef.current) {
-      console.log(`[SocketContext] Restaurant loaded (ID: ${restaurant.restaurantId}), connecting socket...`);
+    if (restaurant?.id && !hasConnectedRef.current) {
+      console.log(`[SocketContext] Restaurant loaded (ID: ${restaurant.id}), connecting socket...`);
       
       // Set up event handlers
       socketService.onConnectionStateChange = handleConnectionStateChange;
@@ -207,7 +208,7 @@ export const SocketProvider = ({ children }) => {
       socketService.onError = handleError;
 
       // Connect
-      socketService.connect(restaurant.restaurantId);
+      socketService.connect(restaurant.id);
       hasConnectedRef.current = true;
     }
 
@@ -216,7 +217,7 @@ export const SocketProvider = ({ children }) => {
       // Don't disconnect on unmount - socket should persist across page navigation
       // Disconnect is handled by logout
     };
-  }, [restaurant?.restaurantId, handleConnectionStateChange, handleNewOrder, handleUpdateOrder, handleUpdateTable, handleError]);
+  }, [restaurant?.id, handleConnectionStateChange, handleNewOrder, handleUpdateOrder, handleUpdateTable, handleError]);
 
   /**
    * Manual reconnect function
