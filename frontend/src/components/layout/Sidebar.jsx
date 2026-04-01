@@ -1,3 +1,9 @@
+/**
+ * ⭐ PHASE 3: Socket.IO Integration
+ * Added: Socket disconnect on logout
+ * Modified: 2026-04-01
+ */
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -6,7 +12,7 @@ import {
   PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff 
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
-import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
+import { useAuth, useRestaurant, useMenu, useTables, useSettings, useSocket } from "../../contexts";
 import { useOrders } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 
@@ -109,6 +115,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
   const { clearTables } = useTables();
   const { clearSettings } = useSettings();
   const { clearOrders } = useOrders();
+  // ⭐ PHASE 3: Get socket disconnect function
+  const { disconnect: disconnectSocket } = useSocket();
 
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -194,6 +202,9 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
   };
 
   const handleLogout = () => {
+    // ⭐ PHASE 3: Disconnect socket on logout
+    disconnectSocket?.();
+    
     // Clear ALL contexts — prevents mixed session state between account switches
     authLogout();
     clearRestaurant();

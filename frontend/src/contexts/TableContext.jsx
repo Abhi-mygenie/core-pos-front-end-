@@ -1,3 +1,9 @@
+/**
+ * ⭐ PHASE 3: Socket.IO Integration
+ * Added: updateTableStatus()
+ * Modified: 2026-04-01
+ */
+
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { TABLE_STATUS } from '../api/constants';
 import * as tableService from '../api/services/tableService';
@@ -27,6 +33,32 @@ export const TableProvider = ({ children }) => {
   const refreshTables = useCallback(async () => {
     const fresh = await tableService.getTables();
     setTablesData(fresh || []);
+  }, []);
+
+  // ⭐ PHASE 3: Socket.IO - Update table engagement status
+  const updateTableStatus = useCallback((tableId, engageStatus) => {
+    if (!tableId) return;
+    
+    setTablesData(prev => {
+      const index = prev.findIndex(t => t.tableId === tableId);
+      if (index === -1) {
+        console.log(`[TableContext] Table ${tableId} not found, skipping update`);
+        return prev;
+      }
+      
+      const isOccupied = engageStatus === 'engage';
+      const newStatus = isOccupied ? TABLE_STATUS.OCCUPIED : TABLE_STATUS.FREE;
+      
+      console.log(`[TableContext] Updating table ${tableId} → ${newStatus}`);
+      
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        status: newStatus,
+        isOccupied,
+      };
+      return updated;
+    });
   }, []);
 
   // Get unique sections from all tables/rooms
@@ -105,6 +137,9 @@ export const TableProvider = ({ children }) => {
     clearTables,
     refreshTables,
     
+    // ⭐ PHASE 3: Socket.IO - New actions
+    updateTableStatus,
+    
     // Helpers (work for both tables and rooms)
     getTableById,
     getTableByNumber,
@@ -121,6 +156,7 @@ export const TableProvider = ({ children }) => {
     setTables,
     clearTables,
     refreshTables,
+    updateTableStatus,
     getTableById,
     getTableByNumber,
     getTablesBySection,

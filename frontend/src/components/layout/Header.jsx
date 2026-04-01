@@ -1,7 +1,13 @@
+/**
+ * ⭐ PHASE 3: Socket.IO Integration
+ * Added: Socket connection indicator (replaces isOnline prop)
+ * Modified: 2026-04-01
+ */
+
 import { useState, useRef, useEffect } from "react";
-import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight } from "lucide-react";
+import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight, Wifi, WifiOff, Loader2 } from "lucide-react";
 import { COLORS, LOGO_URL } from "../../constants";
-import { useRestaurant } from "../../contexts";
+import { useRestaurant, useSocket } from "../../contexts";
 
 // Multi-selectable channel IDs (includes Room now - same behavior as tables)
 const MULTI_CHANNEL_IDS = ["delivery", "takeAway", "dineIn", "room"];
@@ -24,8 +30,8 @@ const orderStatuses = [
 ];
 
 // Header Component
+// ⭐ PHASE 3: Removed isOnline prop, now uses useSocket for connection status
 const Header = ({ 
-  isOnline, 
   activeChannels, 
   setActiveChannels, 
   activeStatuses, 
@@ -45,6 +51,9 @@ const Header = ({
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  // ⭐ PHASE 3: Get socket connection state
+  const { isConnected, isReconnecting, hasError, reconnect } = useSocket();
 
   // Filter channels based on restaurant features
   const { features } = useRestaurant();
@@ -595,16 +604,27 @@ const Header = ({
             />
           </div>
 
-          {/* Online/Offline Status - Just circle indicator */}
+          {/* ⭐ PHASE 3: Socket Connection Status Indicator */}
           <div
-            data-testid="online-status"
-            className="ml-1"
-            title={isOnline ? "Online" : "Offline"}
+            data-testid="socket-status"
+            className="ml-1 cursor-pointer"
+            title={
+              isConnected ? "Connected to server" : 
+              isReconnecting ? "Reconnecting..." : 
+              hasError ? "Connection error - click to retry" : 
+              "Disconnected"
+            }
+            onClick={hasError ? reconnect : undefined}
           >
-            <div 
-              className="w-2.5 h-2.5 rounded-full" 
-              style={{ backgroundColor: isOnline ? "#4CAF50" : "#F44336" }} 
-            />
+            {isReconnecting ? (
+              <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#FFA500" }} />
+            ) : isConnected ? (
+              <Wifi className="w-4 h-4" style={{ color: "#4CAF50" }} />
+            ) : hasError ? (
+              <WifiOff className="w-4 h-4" style={{ color: "#F44336" }} />
+            ) : (
+              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#9E9E9E" }} />
+            )}
           </div>
         </div>
       </div>

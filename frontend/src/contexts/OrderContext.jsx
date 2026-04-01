@@ -1,3 +1,9 @@
+/**
+ * ⭐ PHASE 3: Socket.IO Integration
+ * Added: addOrder(), updateSingleOrder(), removeOrder(), hasOrder()
+ * Modified: 2026-04-01
+ */
+
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import * as orderService from '../api/services/orderService';
 
@@ -27,6 +33,56 @@ export const OrderProvider = ({ children }) => {
     const fresh = await orderService.getRunningOrders(roleName);
     setOrdersState(fresh || []);
   }, []);
+
+  // ⭐ PHASE 3: Socket.IO - Add single order to context
+  const addOrder = useCallback((order) => {
+    if (!order?.orderId) return;
+    setOrdersState(prev => {
+      // Check if order already exists
+      const exists = prev.some(o => o.orderId === order.orderId);
+      if (exists) {
+        console.log(`[OrderContext] Order ${order.orderId} already exists, skipping add`);
+        return prev;
+      }
+      console.log(`[OrderContext] Adding order ${order.orderId}`);
+      return [...prev, order];
+    });
+  }, []);
+
+  // ⭐ PHASE 3: Socket.IO - Update single order in context
+  const updateSingleOrder = useCallback((order) => {
+    if (!order?.orderId) return;
+    setOrdersState(prev => {
+      const index = prev.findIndex(o => o.orderId === order.orderId);
+      if (index === -1) {
+        // Order not found, add it
+        console.log(`[OrderContext] Order ${order.orderId} not found, adding`);
+        return [...prev, order];
+      }
+      // Replace existing order
+      console.log(`[OrderContext] Updating order ${order.orderId}`);
+      const updated = [...prev];
+      updated[index] = order;
+      return updated;
+    });
+  }, []);
+
+  // ⭐ PHASE 3: Socket.IO - Remove order from context
+  const removeOrder = useCallback((orderId) => {
+    if (!orderId) return;
+    setOrdersState(prev => {
+      const filtered = prev.filter(o => o.orderId !== orderId);
+      if (filtered.length !== prev.length) {
+        console.log(`[OrderContext] Removed order ${orderId}`);
+      }
+      return filtered;
+    });
+  }, []);
+
+  // ⭐ PHASE 3: Socket.IO - Check if order exists in context
+  const hasOrder = useCallback((orderId) => {
+    return orders.some(o => o.orderId === orderId);
+  }, [orders]);
 
   // --- Computed: orders by type (filter by isRoom in DashboardPage when needed) ---
   const dineInOrders = useMemo(() =>
@@ -102,6 +158,12 @@ export const OrderProvider = ({ children }) => {
     setOrders,
     clearOrders,
     refreshOrders,
+    
+    // ⭐ PHASE 3: Socket.IO - New actions
+    addOrder,
+    updateSingleOrder,
+    removeOrder,
+    hasOrder,
 
     // Computed
     dineInOrders,
@@ -117,6 +179,7 @@ export const OrderProvider = ({ children }) => {
   }), [
     orders, isLoaded,
     setOrders, clearOrders, refreshOrders,
+    addOrder, updateSingleOrder, removeOrder, hasOrder,
     dineInOrders, takeAwayOrders, deliveryOrders,
     tableOrders, walkInOrders,
     getOrderByTableId, getOrdersByTableId, orderItemsByTableId,

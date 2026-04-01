@@ -1,5 +1,25 @@
 // API Constants - Endpoints, Status Mappings, Field Aliases
 
+// ⭐ PHASE 3: Socket.IO Integration
+// =============================================================================
+// SOCKET CONFIGURATION
+// =============================================================================
+export const SOCKET_CONFIG = {
+  URL: 'https://presocket.mygenie.online',
+  CHANNELS: {
+    ORDER: 'new_order_',      // + restaurantId
+    TABLE: 'update_table_',   // + restaurantId
+  },
+  EVENTS: {
+    NEW_ORDER: 'new-order',
+    SCAN_NEW_ORDER: 'scan-new-order',
+    UPDATE_ORDER: 'update-order',
+    UPDATE_FOOD_STATUS: 'update-food-status',
+    UPDATE_ORDER_STATUS: 'update-order-status',
+    UPDATE_TABLE: 'update-table',
+  },
+};
+
 // =============================================================================
 // API ENDPOINTS
 // =============================================================================

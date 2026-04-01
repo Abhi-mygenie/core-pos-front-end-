@@ -1,3 +1,9 @@
+/**
+ * ⭐ PHASE 3: Socket.IO Integration
+ * Modified: Removed isOnline state and prop (now handled by useSocket in Header)
+ * Date: 2026-04-01
+ */
+
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
@@ -124,19 +130,8 @@ const DashboardPage = () => {
   // --- State ---
   const [tables, setTables] = useState({});
   const [flatTables, setFlatTables] = useState([]);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  // ⭐ PHASE 3: Removed isOnline state - now handled by useSocket in Header
 
-  // Real-time internet connectivity detection
-  useEffect(() => {
-    const handleOnline  = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online',  handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online',  handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn", "room"]);
   const [activeStatuses, setActiveStatuses] = useState(["confirm", "cooking", "ready", "running", "schedule"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
@@ -582,8 +577,8 @@ const DashboardPage = () => {
             </div>
           </div>
         )}
+        {/* ⭐ PHASE 3: Removed isOnline prop - Header now uses useSocket internally */}
         <Header
-          isOnline={isOnline}
           activeChannels={activeChannels}
           setActiveChannels={setActiveChannels}
           activeStatuses={activeStatuses}
