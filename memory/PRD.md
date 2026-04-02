@@ -58,6 +58,12 @@ Pull code from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`, main b
 - [ ] Code splitting / lazy loading (LOW-006)
 - [ ] Remove unnecessary useCallback/useMemo (LOW-007)
 
+## Key Documents
+- `/app/memory/CODE_AUDIT.md` — Full audit report with status tracker (update as fixes are applied)
+- `/app/memory/PRD.md` — This file
+- `/app/memory/API_MAPPING.md` — Legacy API documentation
+- `/app/memory/API_MAPPING_GAP_ANALYSIS.md` — Gap analysis results
+
 ## Key Files Reference
 - `/app/frontend/src/App.js` — Route definitions
 - `/app/frontend/src/api/axios.js` — Axios instance + interceptors
