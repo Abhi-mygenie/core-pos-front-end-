@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import socketService, { CONNECTION_STATUS } from '../api/socket/socketService';
+import { useAuth } from './AuthContext';
 
 // =============================================================================
 // CONTEXT CREATION
@@ -18,16 +19,19 @@ export const SocketProvider = ({ children }) => {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [lastConnectedAt, setLastConnectedAt] = useState(null);
   
+  // Auth state — socket only connects when authenticated
+  const { isAuthenticated } = useAuth();
+  
   // Track if we've initialized to prevent double-connect in StrictMode
   const initializedRef = useRef(false);
 
   // ===========================================================================
-  // CONNECTION LIFECYCLE
+  // CONNECTION LIFECYCLE — auth-gated (T-06)
   // ===========================================================================
 
-  // Connect immediately on mount (no auth required for socket)
+  // Connect when authenticated, disconnect when not
   useEffect(() => {
-    if (!initializedRef.current) {
+    if (isAuthenticated && !initializedRef.current) {
       initializedRef.current = true;
       
       // Connect to socket server
@@ -42,23 +46,32 @@ export const SocketProvider = ({ children }) => {
         }
       });
 
-      // Cleanup on unmount
+      // Cleanup on unmount or when auth changes
       return () => {
         unsubscribe();
         socketService.disconnect();
         initializedRef.current = false;
       };
     }
-  }, []);
+
+    // Disconnect on logout
+    if (!isAuthenticated && initializedRef.current) {
+      socketService.disconnect();
+      initializedRef.current = false;
+      setStatus(CONNECTION_STATUS.DISCONNECTED);
+      setReconnectAttempts(0);
+    }
+  }, [isAuthenticated]);
 
   // ===========================================================================
   // BROWSER VISIBILITY HANDLING
   // ===========================================================================
 
   // Reconnect when tab becomes visible (handles browser sleep/wake)
+  // Only if authenticated (T-06)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === 'visible' && isAuthenticated) {
         // Tab is now visible - check connection
         if (!socketService.isConnected()) {
           console.log('[SocketContext] Tab visible, reconnecting...');
@@ -71,7 +84,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // ===========================================================================
   // NETWORK ONLINE/OFFLINE HANDLING
@@ -79,7 +92,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const handleOnline = () => {
-      if (!socketService.isConnected()) {
+      if (isAuthenticated && !socketService.isConnected()) {
         console.log('[SocketContext] Network online, reconnecting...');
         socketService.connect();
       }
@@ -97,7 +110,7 @@ export const SocketProvider = ({ children }) => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // ===========================================================================
   // EXPOSED METHODS
