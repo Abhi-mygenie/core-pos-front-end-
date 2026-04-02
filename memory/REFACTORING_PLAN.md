@@ -34,7 +34,7 @@
 | T-02 | Add lint-staged + husky pre-commit hooks | P0 | SETUP | — | OPEN | — |
 | T-03 | Enforce @/ absolute imports everywhere | P0 | SETUP | — | OPEN | — |
 | T-04 | Add CONTRIBUTING.md (coding conventions) | P0 | SETUP | — | OPEN | — |
-| T-05 | Remove hardcoded preprod URL fallbacks | P1 | CRITICAL | — | OPEN | CRIT-001 |
+| T-05 | Remove hardcoded preprod URL fallbacks | P1 | CRITICAL | — | DONE | CRIT-001. 4 files fixed (found extra in categoryTransform). 15 tests. |
 | T-06 | Gate socket behind authentication | P1 | CRITICAL | — | OPEN | CRIT-002 |
 | T-07 | Add ProtectedRoute + ErrorBoundary | P1 | CRITICAL | — | OPEN | CRIT-003 |
 | T-08 | Fix duplicate EDIT_ORDER_ITEM key | P1 | CRITICAL | — | OPEN | CRIT-004 |

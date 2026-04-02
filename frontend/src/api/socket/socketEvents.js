@@ -5,7 +5,11 @@
 // SOCKET CONFIGURATION
 // =============================================================================
 export const SOCKET_CONFIG = {
-  URL: process.env.REACT_APP_SOCKET_URL || 'https://presocket.mygenie.online',
+  URL: (() => {
+    const url = process.env.REACT_APP_SOCKET_URL;
+    if (!url) throw new Error('[Config] REACT_APP_SOCKET_URL is not set. Check your .env file.');
+    return url;
+  })(),
   RECONNECTION: true,
   RECONNECTION_ATTEMPTS: 10,
   RECONNECTION_DELAY: 1000,

@@ -14,11 +14,12 @@ const toBoolean = (value) => {
 /**
  * Helper to construct full image URL for categories
  */
-const getCategoryImageUrl = (imagePath, baseUrl = 'https://preprod.mygenie.online/storage/category/') => {
+const getCategoryImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
   if (imagePath === 'def.png') return null; // Default placeholder
-  return `${baseUrl}${imagePath}`;
+  const baseUrl = process.env.REACT_APP_API_BASE_URL;
+  return `${baseUrl}/storage/category/${imagePath}`;
 };
 
 // =============================================================================

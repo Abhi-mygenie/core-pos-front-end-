@@ -2,7 +2,10 @@
 import axios from 'axios';
 
 // Base URL for MyGenie API
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://preprod.mygenie.online';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+if (!API_BASE_URL) {
+  throw new Error('[Config] REACT_APP_API_BASE_URL is not set. Check your .env file.');
+}
 
 // Create axios instance
 const api = axios.create({

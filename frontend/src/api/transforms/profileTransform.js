@@ -14,10 +14,11 @@ const toBoolean = (value) => {
 /**
  * Helper to construct full image URL
  */
-const getImageUrl = (imagePath, baseUrl = 'https://preprod.mygenie.online/storage/') => {
+const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
-  return `${baseUrl}${imagePath}`;
+  const baseUrl = process.env.REACT_APP_API_BASE_URL;
+  return `${baseUrl}/storage/${imagePath}`;
 };
 
 // =============================================================================
