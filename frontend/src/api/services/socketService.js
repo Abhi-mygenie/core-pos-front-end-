@@ -28,6 +28,8 @@ export const SOCKET_EVENTS = {
   UPDATE_FOOD_STATUS: 'update-food-status',
   UPDATE_ORDER_STATUS: 'update-order-status',
   UPDATE_TABLE: 'update-table',
+  // ⭐ PHASE 3: Added delivery-assign-order event
+  DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
 };
 
 // Statuses that mean order should be removed from context
@@ -214,6 +216,12 @@ class SocketService {
         this._handleUpdateOrderStatus(orderId, statusOrData);
         break;
 
+      // ⭐ PHASE 3: Added delivery-assign-order handler
+      case SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER:
+        // Payload: [event, orderId, restaurantId, deliveryManId]
+        this._handleDeliveryAssignOrder(orderId, statusOrData); // statusOrData = deliveryManId
+        break;
+
       default:
         console.log(`[Socket] Unknown event type: ${eventType}`);
     }
@@ -345,6 +353,20 @@ class SocketService {
       tableId,
       isEngaged,
       engageStatus, // 'engage' or 'free'
+    });
+  }
+
+  /**
+   * ⭐ PHASE 3: Handle delivery-assign-order event (needs API call)
+   */
+  _handleDeliveryAssignOrder(orderId, deliveryManId) {
+    console.log(`[Socket] Delivery assigned: order #${orderId} → driver #${deliveryManId}`);
+    
+    this.onUpdateOrder?.({
+      type: 'delivery-assign-order',
+      orderId,
+      deliveryManId,
+      requiresApiCall: true,
     });
   }
 

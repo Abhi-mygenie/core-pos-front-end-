@@ -17,6 +17,7 @@ export const SOCKET_CONFIG = {
     UPDATE_FOOD_STATUS: 'update-food-status',
     UPDATE_ORDER_STATUS: 'update-order-status',
     UPDATE_TABLE: 'update-table',
+    DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
   },
 };
 
