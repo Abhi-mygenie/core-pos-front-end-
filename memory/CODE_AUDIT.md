@@ -489,3 +489,4 @@ EDIT_ORDER_ITEM:   'TBD',   // CHG-040 future: Edit placed item qty
 
 *Last updated: February 2026*
 *Document version: 1.0*
+*Companion document: `/app/memory/REFACTORING_PLAN.md` — Full 45-task, 10-phase refactoring plan with execution priority*
