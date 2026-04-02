@@ -83,9 +83,10 @@ export const SocketProvider = ({ children }) => {
 
   /**
    * Handle order update events (may require API call)
+   * ⭐ PHASE 3: Added isAggregator flag for aggregator orders
    */
   const handleUpdateOrder = useCallback(async (event) => {
-    const { type, orderId, requiresApiCall, shouldRemove, fOrderStatus } = event;
+    const { type, orderId, requiresApiCall, shouldRemove, fOrderStatus, isAggregator } = event;
     setLastEventAt(new Date());
 
     // If should remove (paid/cancelled), remove from context
@@ -106,8 +107,15 @@ export const SocketProvider = ({ children }) => {
       socketService.setOrderInFlight(orderId, true);
 
       try {
-        console.log(`[SocketContext] Fetching order ${orderId}...`);
-        const freshOrder = await orderService.getSingleOrder(orderId);
+        // ⭐ PHASE 3: Use different API for aggregator orders
+        let freshOrder;
+        if (isAggregator) {
+          console.log(`[SocketContext] Fetching aggregator order ${orderId}...`);
+          freshOrder = await orderService.getAggregatorOrderDetails(orderId);
+        } else {
+          console.log(`[SocketContext] Fetching order ${orderId}...`);
+          freshOrder = await orderService.getSingleOrder(orderId);
+        }
         
         if (!freshOrder) {
           // Order not found (404) - remove from context
@@ -138,6 +146,15 @@ export const SocketProvider = ({ children }) => {
               description: `Order #${freshOrder.orderNumber || orderId} from scan`,
               variant: 'warning',
               duration: 5000,
+            });
+          }
+          
+          // ⭐ PHASE 3: Show toast for aggregator order updates
+          if (type === 'aggrigator-order-update') {
+            toast({
+              title: 'Aggregator Order Updated',
+              description: `Order #${freshOrder.orderNumber || orderId} status changed`,
+              duration: 3000,
             });
           }
         }

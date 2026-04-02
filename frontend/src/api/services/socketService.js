@@ -30,6 +30,8 @@ export const SOCKET_EVENTS = {
   UPDATE_TABLE: 'update-table',
   // ⭐ PHASE 3: Added delivery-assign-order event
   DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
+  // ⭐ PHASE 3: Added aggregator order update event (note: backend has typo "aggrigator")
+  AGGRIGATOR_ORDER_UPDATE: 'aggrigator-order-update',
 };
 
 // Statuses that mean order should be removed from context
@@ -150,14 +152,16 @@ class SocketService {
   /**
    * Subscribe to restaurant-specific channels
    * ⭐ PHASE 3 FIX: Changed to spread args (...args) to capture all Socket.IO arguments
+   * ⭐ PHASE 3: Added aggregator_order channel subscription
    */
   _subscribeToChannels() {
     if (!this.restaurantId) return;
 
     const orderChannel = `new_order_${this.restaurantId}`;
     const tableChannel = `update_table_${this.restaurantId}`;
+    const aggregatorChannel = `aggregator_order_${this.restaurantId}`;
 
-    console.log(`[Socket] Subscribing to: ${orderChannel}, ${tableChannel}`);
+    console.log(`[Socket] Subscribing to: ${orderChannel}, ${tableChannel}, ${aggregatorChannel}`);
 
     // Order channel events - Socket.IO passes multiple args, not single array
     this.socket.on(orderChannel, (...args) => {
@@ -167,6 +171,11 @@ class SocketService {
     // Table channel events - Socket.IO passes multiple args, not single array
     this.socket.on(tableChannel, (...args) => {
       this._handleTableChannelEvent(args);
+    });
+
+    // ⭐ PHASE 3: Aggregator channel events (Zomato, Swiggy, etc.)
+    this.socket.on(aggregatorChannel, (...args) => {
+      this._handleAggregatorChannelEvent(args);
     });
   }
 
@@ -367,6 +376,48 @@ class SocketService {
       orderId,
       deliveryManId,
       requiresApiCall: true,
+    });
+  }
+
+  /**
+   * ⭐ PHASE 3: Handle events from aggregator_order_{restaurantId} channel
+   * @param {Array} data - Event payload array
+   */
+  _handleAggregatorChannelEvent(data) {
+    if (!Array.isArray(data) || data.length < 4) {
+      console.warn('[Socket] Invalid aggregator event payload:', data);
+      return;
+    }
+
+    const [eventType, orderId, restaurantId, aggregatorStatus] = data;
+    
+    console.log(`[Socket] ← ${eventType} | order_id: ${orderId} | status: ${aggregatorStatus}`);
+
+    // Deduplicate events
+    if (this._isDuplicate(eventType, orderId)) {
+      console.log(`[Socket] Skipped duplicate: ${eventType}/${orderId}`);
+      return;
+    }
+
+    if (eventType === SOCKET_EVENTS.AGGRIGATOR_ORDER_UPDATE) {
+      this._handleAggregatorOrderUpdate(orderId, aggregatorStatus);
+    } else {
+      console.log(`[Socket] Unknown aggregator event type: ${eventType}`);
+    }
+  }
+
+  /**
+   * ⭐ PHASE 3: Handle aggrigator-order-update event (needs API call)
+   */
+  _handleAggregatorOrderUpdate(orderId, aggregatorStatus) {
+    console.log(`[Socket] Aggregator update: order #${orderId} → ${aggregatorStatus}`);
+    
+    this.onUpdateOrder?.({
+      type: 'aggrigator-order-update',
+      orderId,
+      aggregatorStatus,
+      requiresApiCall: true,
+      isAggregator: true, // Flag to use different API
     });
   }
 

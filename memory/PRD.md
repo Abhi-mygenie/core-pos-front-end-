@@ -78,16 +78,18 @@ A React-based Point of Sale (POS) frontend for restaurant management, connecting
 
 ### ⭐ Real-time Updates (Phase 3) — NEW
 - **Socket.IO Integration**: Connects to `wss://presocket.mygenie.online`
-- **Channels**: `new_order_{restaurantId}`, `update_table_{restaurantId}`
+- **Channels**: `new_order_{restaurantId}`, `update_table_{restaurantId}`, `aggregator_order_{restaurantId}`
 - **Events Handled**:
-  | Event | API Call | Action |
-  |-------|----------|--------|
-  | `new-order` | No | Add order to context (full data in payload) |
-  | `scan-new-order` | Yes | Fetch + add (needs Accept/Reject) |
-  | `update-order` | Yes | Fetch + update/add |
-  | `update-food-status` | Yes | Fetch + update |
-  | `update-order-status` | Yes/No | Remove if paid/cancelled, else fetch |
-  | `update-table` | No | Update table engage status |
+  | Event | Channel | API Call | Action |
+  |-------|---------|----------|--------|
+  | `new-order` | new_order | No | Add order to context (full data in payload) |
+  | `scan-new-order` | new_order | Yes | Fetch + add (needs Accept/Reject) |
+  | `update-order` | new_order | Yes | Fetch + update/add |
+  | `update-food-status` | new_order | Yes | Fetch + update |
+  | `update-order-status` | new_order | Yes/No | Remove if paid/cancelled, else fetch |
+  | `delivery-assign-order` | new_order | Yes | Fetch + update (driver assigned) |
+  | `update-table` | update_table | No | Update table engage status |
+  | `aggrigator-order-update` | aggregator_order | Yes | Fetch via urbanpiper API + update |
 - **Connection Indicator**: Header shows Wifi icon (green/yellow/red)
 - **Auto-reconnect**: 5 attempts with exponential backoff
 - **Debounce**: 500ms per event type + order ID
@@ -96,8 +98,8 @@ A React-based Point of Sale (POS) frontend for restaurant management, connecting
 | File | Changes |
 |------|---------|
 | `api/services/socketService.js` | NEW - Socket connection & event handling |
-| `api/services/orderService.js` | Added `getSingleOrder()` |
-| `api/constants.js` | Added `SOCKET_CONFIG` |
+| `api/services/orderService.js` | Added `getSingleOrder()`, `getAggregatorOrderDetails()` |
+| `api/constants.js` | Added `SOCKET_CONFIG`, `AGGREGATOR_ORDER_DETAILS` endpoint |
 | `contexts/SocketContext.jsx` | NEW - Socket state provider |
 | `contexts/OrderContext.jsx` | Added `addOrder()`, `updateSingleOrder()`, `removeOrder()`, `hasOrder()` |
 | `contexts/TableContext.jsx` | Added `updateTableStatus()` |

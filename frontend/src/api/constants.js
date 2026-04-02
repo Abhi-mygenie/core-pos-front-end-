@@ -7,8 +7,9 @@
 export const SOCKET_CONFIG = {
   URL: 'https://presocket.mygenie.online',
   CHANNELS: {
-    ORDER: 'new_order_',      // + restaurantId
-    TABLE: 'update_table_',   // + restaurantId
+    ORDER: 'new_order_',           // + restaurantId
+    TABLE: 'update_table_',        // + restaurantId
+    AGGREGATOR: 'aggregator_order_', // + restaurantId (NEW)
   },
   EVENTS: {
     NEW_ORDER: 'new-order',
@@ -18,6 +19,7 @@ export const SOCKET_CONFIG = {
     UPDATE_ORDER_STATUS: 'update-order-status',
     UPDATE_TABLE: 'update-table',
     DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
+    AGGRIGATOR_ORDER_UPDATE: 'aggrigator-order-update', // NEW (note: backend typo)
   },
 };
 
@@ -76,6 +78,8 @@ export const API_ENDPOINTS = {
   REPORT_CREDIT_ORDERS: '/api/v2/vendoremployee/paid-in-tab-order-list',
   REPORT_HOLD_ORDERS: '/api/v2/vendoremployee/paid-paylater-order-list',
   REPORT_AGGREGATOR_ORDERS: '/api/v1/vendoremployee/urbanpiper/get-complete-order-list',
+  // ⭐ PHASE 3: Aggregator single order details
+  AGGREGATOR_ORDER_DETAILS: '/api/v1/vendoremployee/urbanpiper/get-order-details',
   REPORT_ORDER_DETAILS: '/api/v2/vendoremployee/employee-order-details',
   DAILY_SALES_REPORT: '/api/v2/vendoremployee/daily-sales-revenue-report',
   ORDER_LOGS_REPORT: '/api/v2/vendoremployee/report/order-logs-report',
