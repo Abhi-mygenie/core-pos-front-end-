@@ -17,7 +17,10 @@ Pull code from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`, main b
 - [x] **Phase 1 Complete (Apr 2026):** All critical security & stability fixes (T-05 to T-11)
 - [x] **Phase 2 Partial (Apr 2026):** Barrel exports added (T-12, T-14), T-13 deferred
 - [x] **BUG-101 Fixed:** Infinite navigation loop on login
-- [x] **58+ test cases** written for all fixes
+- [x] **BUG-105 Fixed:** Missing financial fields in order transform
+- [x] **BUG-106 Fixed:** Cancel item payload issues (cancel_type, order_food_id, item_id)
+- [x] **BUG-107 Fixed:** Single item cancel removes entire order (socket handler)
+- [x] **147 test cases** written for all fixes
 
 ## Audit Findings Summary (Feb 2026)
 - **5 Critical Issues:** ~~Hardcoded preprod URLs~~, ~~unauthenticated socket~~, ~~no route guards/error boundaries~~, ~~duplicate key in constants~~, ~~TBD endpoint called~~ — **ALL FIXED**
@@ -59,7 +62,7 @@ Pull code from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`, main b
 
 ### P3 — Low Priority / Future
 - [ ] TypeScript migration (LOW-001)
-- [x] ~~Add test coverage (LOW-002)~~ — 84+ tests written
+- [x] ~~Add test coverage (LOW-002)~~ — 147 tests written
 - [ ] Integrate monitoring/Sentry (LOW-003) — T-44
 - [ ] Accessibility improvements (LOW-004) — T-45
 - [ ] Audit eslint-disable suppressions (LOW-005) — T-37
