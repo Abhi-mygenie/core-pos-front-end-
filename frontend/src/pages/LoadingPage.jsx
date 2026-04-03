@@ -5,7 +5,6 @@ import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders } from "../contexts";
-import * as authService from "../api/services/authService";
 import * as profileService from "../api/services/profileService";
 import * as categoryService from "../api/services/categoryService";
 import * as productService from "../api/services/productService";
@@ -50,13 +49,8 @@ const LoadingPage = () => {
     return () => clearInterval(id);
   }, [isComplete]);
 
-  // Check authentication and load data (with StrictMode abort guard)
+  // Load data on mount (auth check handled by ProtectedRoute — T-07)
   useEffect(() => {
-    if (!authService.isAuthenticated()) {
-      navigate("/");
-      return;
-    }
-
     const ctrl = { aborted: false };
     loadAllData(ctrl);
 

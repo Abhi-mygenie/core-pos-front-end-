@@ -26,7 +26,7 @@
 |----|-------|----------|--------|-------------|------------|----------|-------|
 | CRIT-001 | Hardcoded Pre-Production URLs as Fallbacks | CRITICAL | FIXED | — | Feb 2026 | 15/15 tests pass | axios.js, socketEvents.js, profileTransform.js, categoryTransform.js (4th location found) |
 | CRIT-002 | Socket Connects Before Authentication | CRITICAL | FIXED | — | Feb 2026 | 13/13 tests pass | SocketContext.jsx — auth-gated via useAuth() |
-| CRIT-003 | No Route Protection / No React Error Boundary | CRITICAL | OPEN | — | — | — | App.js — zero guards |
+| CRIT-003 | No Route Protection / No React Error Boundary | CRITICAL | FIXED | — | Feb 2026 | 18/18 tests pass | ProtectedRoute + ErrorBoundary added, wired in App.js |
 | CRIT-004 | Duplicate Key Definition in API Constants | CRITICAL | OPEN | — | — | — | constants.js lines 39-40 |
 | CRIT-005 | paymentService.js Calls a 'TBD' Endpoint | CRITICAL | OPEN | — | — | — | COLLECT_PAYMENT = 'TBD' |
 
@@ -73,7 +73,7 @@
 | HIGH | 5 | 5 | 0 | 0 | 0 | 0 |
 | MEDIUM | 8 | 8 | 0 | 0 | 0 | 0 |
 | LOW | 7 | 7 | 0 | 0 | 0 | 0 |
-| **TOTAL** | **25** | **23** | **0** | **2** | **0** | **0** |
+| **TOTAL** | **25** | **22** | **0** | **3** | **0** | **0** |
 
 **Current Code Quality Score: 6.5 / 10**  
 **Target Score: 9.5 / 10**

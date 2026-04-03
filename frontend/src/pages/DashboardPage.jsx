@@ -9,7 +9,6 @@ import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
 import { useRestaurant, useTables, useOrders, useAuth, useSettings } from "../contexts";
-import * as authService from "../api/services/authService";
 import SettingsPanel from "../components/panels/SettingsPanel";
 import MenuManagementPanel from "../components/panels/MenuManagementPanel";
 import { useRefreshAllData } from "../hooks/useRefreshAllData";
@@ -106,11 +105,9 @@ const DashboardPage = () => {
   // Socket events - subscribe to real-time updates
   const { isConnected: socketConnected } = useSocketEvents();
 
-  // Redirect to login if not authenticated, or to loading if data not loaded
+  // Redirect to loading if data not loaded (auth check handled by ProtectedRoute — T-07)
   useEffect(() => {
-    if (!authService.isAuthenticated()) {
-      navigate("/");
-    } else if (!restaurantLoaded) {
+    if (!restaurantLoaded) {
       navigate("/loading");
     }
   }, [navigate, restaurantLoaded]);
