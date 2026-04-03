@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
+import { useAuth } from "../contexts/AuthContext";
 import * as authService from "../api/services/authService";
 
 // Login Screen Component
 const LoginPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, isAuthenticated } = useAuth();
+  const hasNavigatedRef = useRef(false);
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +19,7 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check for remembered email on mount
+  // Check for remembered email on mount and redirect if already authenticated
   useEffect(() => {
     const rememberedEmail = authService.getRememberedEmail();
     if (rememberedEmail) {
@@ -24,11 +27,12 @@ const LoginPage = () => {
       setRememberMe(true);
     }
     
-    // If already authenticated, redirect to dashboard directly
-    if (authService.isAuthenticated()) {
-      navigate("/dashboard", { replace: true });
+    // If already authenticated (e.g., page refresh with valid token), redirect to loading
+    if (isAuthenticated && !hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+      navigate("/loading", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,8 +49,8 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      // Call login API
-      await authService.login({ email, password }, rememberMe);
+      // Call login via AuthContext (updates state + localStorage)
+      await login({ email, password }, rememberMe);
       
       // Navigate to loading screen on success
       navigate("/loading", { replace: true });

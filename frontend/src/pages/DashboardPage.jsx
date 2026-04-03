@@ -107,8 +107,8 @@ const DashboardPage = () => {
 
   // Redirect to loading if data not loaded (auth check handled by ProtectedRoute — T-07)
   useEffect(() => {
-    if (!restaurantLoaded) {
-      navigate("/loading");
+    if (!restaurantLoaded && window.location.pathname !== '/loading') {
+      navigate("/loading", { replace: true });
     }
   }, [navigate, restaurantLoaded]);
 
