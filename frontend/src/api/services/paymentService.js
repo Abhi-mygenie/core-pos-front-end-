@@ -8,9 +8,8 @@ import { API_ENDPOINTS } from '../constants';
  * Collect payment for an order
  * @param {Object} payload - Built via orderTransform.toAPI.collectPayment()
  * @returns {Promise<Object>} - API response
- * TODO: Wire endpoint when provided in Sprint 3
  */
 export const collectPayment = async (payload) => {
-  const response = await api.post(API_ENDPOINTS.COLLECT_PAYMENT, payload);
+  const response = await api.post(API_ENDPOINTS.CLEAR_BILL, payload);
   return response.data;
 };
