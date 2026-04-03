@@ -46,7 +46,7 @@
 |----|-------|----------|--------|-------------|------------|----------|-------|
 | MED-001 | reportService.js Breaks Service/Transform Separation | MEDIUM | OPEN | — | — | — | getOrderLogsReport 100+ inline lines |
 | MED-002 | _raw Field Leaks Full API Response in All Transforms | MEDIUM | FIXED | — | Feb 2026 | 3/3 tests pass | 9 locations gated behind NODE_ENV=development |
-| MED-003 | window.__SOCKET_SERVICE__ Exposed Globally | MEDIUM | OPEN | — | — | — | socketService.js:361 |
+| MED-003 | window.__SOCKET_SERVICE__ Exposed Globally | MEDIUM | DONE | T-10 | 2026-04-03 | 2 tests | socketService.js:361 |
 | MED-004 | Duplicate Utility Functions Between Services and Contexts | MEDIUM | OPEN | — | — | — | tableService vs TableContext, etc. |
 | MED-005 | Sequential API Loading on Startup | MEDIUM | OPEN | — | — | — | LoadingPage — for loop |
 | MED-006 | Mock Data Files Ship with Production | MEDIUM | OPEN | — | — | — | src/data/mock*.js |
@@ -75,7 +75,7 @@
 | LOW | 7 | 7 | 0 | 0 | 0 | 0 |
 | **TOTAL** | **25** | **19** | **0** | **6** | **0** | **0** |
 
-**Current Code Quality Score: 7.5 / 10** *(was 6.5 — improved by fixing all 5 critical + 1 medium)*  
+**Current Code Quality Score: 7.5 / 10** *(was 6.5 — improved by fixing all 5 critical + 2 medium)*  
 **Target Score: 9.5 / 10**
 
 ---
@@ -257,7 +257,9 @@ EDIT_ORDER_ITEM:   'TBD',   // CHG-040 future: Edit placed item qty
 
 ---
 
-### MED-003: `window.__SOCKET_SERVICE__` Exposed Globally
+### MED-003: `window.__SOCKET_SERVICE__` Exposed Globally — ✅ FIXED
+
+**Status:** DONE (T-10, 2026-04-03)
 
 **Root cause:** Debug convenience — `socketService.js:361` exposes the entire socket service instance on `window`.
 
@@ -265,7 +267,21 @@ EDIT_ORDER_ITEM:   'TBD',   // CHG-040 future: Edit placed item qty
 
 **Impact:** Any JavaScript in the page (including injected scripts, browser extensions, or XSS payloads) can call `window.__SOCKET_SERVICE__.emit()`, `disconnect()`, or read `getDebugInfo()`. In a restaurant POS, this could be exploited to inject fake orders or disconnect the socket.
 
-**Suggested fix:** Remove or gate behind `process.env.NODE_ENV === 'development'`.
+**Fix Applied:** Gated behind `process.env.NODE_ENV === 'development'`.
+
+```diff
+- // Expose to window for debugging
+- if (typeof window !== 'undefined') {
+-   window.__SOCKET_SERVICE__ = socketService;
+- }
+
++ // Expose to window for debugging (development only — T-10)
++ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
++   window.__SOCKET_SERVICE__ = socketService;
++ }
+```
+
+**Tests:** 2 unit tests in `socketServiceGlobal.test.js`
 
 ---
 
