@@ -6,27 +6,85 @@
 
 ---
 
-## Executive Summary
+## Phase Breakdown
 
-Map 6 new financial fields from API to frontend:
-- `order_sub_total_without_tax` → `subtotalBeforeTax`
-- `order_sub_total_amount` → `subtotalAmount`
-- `total_service_tax_amount` → `serviceTax`
-- `tip_amount` → `tipAmount`
-- `tip_tax_amount` → `tipTaxAmount`
-- `item_type` (orderDetails) → `itemType`
+### Phase 1: Live Order Flow (Socket/Dashboard/Payment)
+- Transform: `orderTransform.js`
+- Service: `orderService.js`
+- Consumers: Dashboard cards, OrderEntry, CollectPaymentPanel
+
+### Phase 2: Report Summary (DEFERRED)
+- Transform: `reportTransform.js`
+- Service: `reportService.js`
+- Consumer: `OrderDetailSheet.jsx`
 
 ---
 
-## Change Locations
+## PHASE 1: Live Order Flow
 
-### 1. Transform Layer Changes
+### Data Flow
 
-#### File: `/app/frontend/src/api/transforms/orderTransform.js`
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     API: get-single-order-new                           │
+│                     (Called by socket handlers)                         │
+└─────────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  orderService.js → fetchSingleOrderForSocket()                          │
+│  Calls API, returns raw response                                        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  orderTransform.js → fromAPI.order()                     ← CHANGE HERE │
+│  Maps API fields to frontend schema                                     │
+└─────────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  socketHandlers.js                                                      │
+│  Receives transformed order, calls OrderContext methods                 │
+└─────────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  OrderContext                                                           │
+│  Stores orders in state, provides to consumers                          │
+└─────────────────────────────────────────────────────────────────────────┘
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        ▼                       ▼                       ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  Dashboard       │  │  Order Entry     │  │  Payment Panel   │
+│  - TableCard     │  │  - CartPanel     │  │  - CollectPayment│
+│  - OrderCard     │  │  - MergeModal    │  │    Panel         │
+│  - DineInCard    │  │  - TransferModal │  │                  │
+│  - DeliveryCard  │  │                  │  │                  │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+```
 
-**Location:** `fromAPI.order()` function (lines 108-178)
+---
 
-**Current:**
+### Phase 1 Changes
+
+#### 1. Transform: `orderTransform.js`
+
+**File:** `/app/frontend/src/api/transforms/orderTransform.js`  
+**Function:** `fromAPI.order()` (lines 108-178)
+
+**Add new field mappings:**
+
+| API Field | Frontend Field | Type |
+|-----------|----------------|------|
+| `order_sub_total_without_tax` | `subtotalBeforeTax` | number |
+| `order_sub_total_amount` | `subtotalAmount` | number |
+| `total_service_tax_amount` | `serviceTax` | number |
+| `tip_amount` | `tipAmount` | number |
+| `tip_tax_amount` | `tipTaxAmount` | number |
+
+**Current code (lines 130-133):**
 ```javascript
 // Financials
 amount: parseFloat(api.order_amount) || 0,
@@ -34,9 +92,9 @@ paymentStatus: api.payment_status || 'unpaid',
 paymentMethod: api.payment_method || '',
 ```
 
-**Proposed:**
+**Proposed code:**
 ```javascript
-// Financials (enhanced with new API fields)
+// Financials
 amount: parseFloat(api.order_amount) || 0,
 subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || parseFloat(api.order_amount) || 0,
 subtotalAmount: parseFloat(api.order_sub_total_amount) || parseFloat(api.order_amount) || 0,
@@ -47,299 +105,147 @@ paymentStatus: api.payment_status || 'unpaid',
 paymentMethod: api.payment_method || '',
 ```
 
-**Also update:** `fromAPI.orderItem()` function (lines 64-90)
+---
 
-**Current:**
+#### 2. Update: `fromAPI.orderItem()` (optional)
+
+**File:** `/app/frontend/src/api/transforms/orderTransform.js`  
+**Function:** `fromAPI.orderItem()` (lines 64-90)
+
+**Add item_type mapping:**
+
+| API Field | Frontend Field |
+|-----------|----------------|
+| `item_type` | `itemType` |
+
+**Add after line 81:**
 ```javascript
 station: detail.station || 'KDS',
-```
-
-**Proposed:**
-```javascript
-station: detail.station || 'KDS',
-itemType: detail.item_type || null,
+itemType: detail.item_type || null,  // NEW: BAR, KDS, etc.
 ```
 
 ---
 
-#### File: `/app/frontend/src/api/transforms/reportTransform.js`
+### Phase 1 UI Consumers (Current Usage)
 
-**Location:** `singleOrderNew()` function (lines 436-615)
+| Component | File | Uses | Change Needed? |
+|-----------|------|------|----------------|
+| **TableCard** | `cards/TableCard.jsx` | `table.amount` | ❌ No |
+| **OrderCard** | `cards/OrderCard.jsx` | `order.amount` | ❌ No |
+| **DineInCard** | `cards/DineInCard.jsx` | `table.amount` | ❌ No |
+| **DeliveryCard** | `cards/DeliveryCard.jsx` | `order.amount` | ❌ No |
+| **CartPanel** | `order-entry/CartPanel.jsx` | `order.amount` | ❌ No |
+| **MergeTableModal** | `order-entry/MergeTableModal.jsx` | `order.amount` | ❌ No |
+| **TransferFoodModal** | `order-entry/TransferFoodModal.jsx` | `order.amount` | ❌ No |
+| **CollectPaymentPanel** | `order-entry/CollectPaymentPanel.jsx` | `order.amount`, calculates own tax | 🟡 Optional |
+| **DashboardPage** | `pages/DashboardPage.jsx` | `order.amount` | ❌ No |
 
-**Current (line 449, 501-502):**
-```javascript
-// Calculate subtotal from items
-const subtotal = items.reduce((sum, item) => sum + formatAmount(item.price), 0);
-
-// ... later ...
-amount: formatAmount(order.order_amount),
-subtotal,
-```
-
-**Proposed:**
-```javascript
-// Use API-provided financial values (more accurate than client-side calculation)
-const subtotalBeforeTax = formatAmount(order.order_sub_total_without_tax || order.order_amount);
-const serviceTax = formatAmount(order.total_service_tax_amount || 0);
-const tipAmount = formatAmount(order.tip_amount || 0);
-const tipTaxAmount = formatAmount(order.tip_tax_amount || 0);
-
-// Fallback to item calculation only if API field missing
-const calculatedSubtotal = items.reduce((sum, item) => sum + formatAmount(item.price), 0);
-
-// ... later ...
-amount: formatAmount(order.order_amount),
-subtotal: subtotalBeforeTax || calculatedSubtotal,
-subtotalBeforeTax,
-subtotalAmount: formatAmount(order.order_sub_total_amount || order.order_amount),
-serviceTax,
-tipAmount,
-tipTaxAmount,
-```
+**Summary:** UI components currently only use `amount`. New fields are available for future use but no UI changes required in Phase 1.
 
 ---
 
-### 2. UI Component Changes
+### Phase 1 Optional Enhancement: CollectPaymentPanel
 
-#### File: `/app/frontend/src/components/reports/OrderDetailSheet.jsx`
+**File:** `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx`
 
-**Location:** Footer Bill Summary (lines 718-738)
+**Current behavior:**
+- Calculates `itemTotal` from cart items (client-side)
+- Calculates `sgst/cgst` from item-level tax (client-side)
+- Shows payment breakdown based on calculations
 
-**Current:**
-```jsx
-<div className="flex justify-between text-sm">
-  <span className="text-zinc-500">Subtotal ({displayData.itemCount || 0} items)</span>
-  <span className="font-mono text-zinc-700">{formatCurrency(displayData.subtotal)}</span>
-</div>
-{displayData.amount !== displayData.subtotal && (
-  <div className="flex justify-between text-sm">
-    <span className="text-zinc-500">Tax (GST)</span>
-    <span className="font-mono text-zinc-700">
-      {formatCurrency((displayData.amount || 0) - (displayData.subtotal || 0))}
-    </span>
-  </div>
-)}
-```
+**Optional enhancement:**
+- Could display API-provided totals for verification
+- Could show warning if client calculation differs from API
 
-**Proposed:**
-```jsx
-<div className="flex justify-between text-sm">
-  <span className="text-zinc-500">Subtotal ({displayData.itemCount || 0} items)</span>
-  <span className="font-mono text-zinc-700">{formatCurrency(displayData.subtotalBeforeTax || displayData.subtotal)}</span>
-</div>
-{displayData.serviceTax > 0 && (
-  <div className="flex justify-between text-sm">
-    <span className="text-zinc-500">Tax (GST)</span>
-    <span className="font-mono text-zinc-700">{formatCurrency(displayData.serviceTax)}</span>
-  </div>
-)}
-{displayData.tipAmount > 0 && (
-  <div className="flex justify-between text-sm">
-    <span className="text-zinc-500">Tip</span>
-    <span className="font-mono text-zinc-700">{formatCurrency(displayData.tipAmount)}</span>
-  </div>
-)}
-```
+**Decision:** Leave for Phase 2 or as separate enhancement.
 
 ---
 
-#### File: `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx`
+### Phase 1 Test Cases
 
-**Current Behavior:**
-- Calculates `itemTotal` from cart items (line 82)
-- Calculates `sgst/cgst` from item-level tax (lines 28-47)
-- Uses client-side calculation for everything
+#### Transform Tests (`orderTransform.test.js`)
 
-**Consideration:**
-- For NEW orders: Keep using cart-based calculation (cart is source of truth)
-- For EXISTING orders (viewing/editing): Could use API values as reference
+| # | Test Case | Input | Expected |
+|---|-----------|-------|----------|
+| 1 | Map subtotalBeforeTax | `order_sub_total_without_tax: 100` | `subtotalBeforeTax: 100` |
+| 2 | Map serviceTax | `total_service_tax_amount: "5.00"` | `serviceTax: 5` |
+| 3 | Map tipAmount | `tip_amount: "10.00"` | `tipAmount: 10` |
+| 4 | Map tipTaxAmount | `tip_tax_amount: "1.00"` | `tipTaxAmount: 1` |
+| 5 | Fallback subtotal to amount | `order_sub_total_without_tax: undefined` | `subtotalBeforeTax: order_amount` |
+| 6 | Zero tax handling | `total_service_tax_amount: "0.00"` | `serviceTax: 0` |
+| 7 | Missing tip | `tip_amount: undefined` | `tipAmount: 0` |
+| 8 | Map itemType | `item_type: "BAR"` | `itemType: "BAR"` |
 
-**Proposed Change (minimal):**
-- Add display of API-provided totals for verification
-- Keep calculation logic as-is (cart is source of truth for payment)
+#### Integration Tests
 
-**OR (if validation needed):**
-```jsx
-// Add at top of component
-const apiFinancials = order ? {
-  subtotal: order.subtotalBeforeTax,
-  tax: order.serviceTax,
-  tip: order.tipAmount,
-  total: order.amount,
-} : null;
-
-// Add validation warning if mismatch
-{apiFinancials && Math.abs(apiFinancials.total - finalTotal) > 1 && (
-  <div className="text-amber-600 text-xs">
-    Note: Calculated total differs from order total
-  </div>
-)}
-```
+| # | Test Case | Validation |
+|---|-----------|------------|
+| 1 | Socket update-order event | Order in context has new fields |
+| 2 | Dashboard displays order | Amount shows correctly |
+| 3 | Table card shows amount | Backward compatible |
 
 ---
 
-#### File: `/app/frontend/src/components/cards/TableCard.jsx`
+### Phase 1 Summary
 
-**Current (line 66-67):**
-```jsx
-) : table.amount ? (
-  <span className="text-xs font-semibold">{currencySymbol}{table.amount.toLocaleString()}</span>
-```
-
-**No change needed** - `amount` is still the display value.
-
----
-
-#### File: `/app/frontend/src/components/cards/OrderCard.jsx`
-
-**Current (line 134):**
-```jsx
-₹{(order.amount || 0).toLocaleString()}
-```
-
-**No change needed** - `amount` is still the display value.
+| Item | Details |
+|------|---------|
+| **Files to change** | 1 (`orderTransform.js`) |
+| **Lines to add** | ~6 lines |
+| **UI changes** | None (fields available for future) |
+| **Risk** | 🟢 LOW (additive only) |
+| **Effort** | ~30 minutes |
+| **Tests** | 8 unit tests |
 
 ---
 
-#### File: `/app/frontend/src/components/reports/OrderTable.jsx`
+## PHASE 2: Report Summary (DEFERRED)
 
-**Current (line 278):**
-```jsx
-{formatCurrency(order.amount)}
-```
+### Scope
+- `reportTransform.js` → `singleOrderNew()`
+- `reportService.js` → `getSingleOrderNew()`
+- `OrderDetailSheet.jsx` → Bill summary display
 
-**No change needed** - `amount` is still the display value.
+### Current State
+- Already calculates subtotal from items
+- Shows tax as `amount - subtotal`
+- Does NOT show tip
 
----
+### Future Changes
+- Use API-provided `total_service_tax_amount` instead of calculation
+- Add tip display if `tip_amount > 0`
+- Use `order_sub_total_without_tax` for accuracy
 
-### 3. Summary of Changes by File
-
-| File | Change Type | Lines Affected | Risk |
-|------|-------------|----------------|------|
-| `orderTransform.js` | Add fields | ~10 lines | 🟢 LOW |
-| `reportTransform.js` | Add fields + use API values | ~15 lines | 🟡 MEDIUM |
-| `OrderDetailSheet.jsx` | Update bill summary | ~20 lines | 🟡 MEDIUM |
-| `CollectPaymentPanel.jsx` | Optional validation | ~5 lines | 🟢 LOW |
-| `TableCard.jsx` | None | 0 | ✅ N/A |
-| `OrderCard.jsx` | None | 0 | ✅ N/A |
-| `OrderTable.jsx` | None | 0 | ✅ N/A |
-| `ExportButtons.jsx` | None | 0 | ✅ N/A |
+### Deferred Because
+- Report summary works currently
+- Focus on live order flow first
+- Can be done as separate enhancement
 
 ---
 
-## Data Flow Diagram
+## Implementation Checklist
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        API Response                                      │
-│  get-single-order-new                                                   │
-├─────────────────────────────────────────────────────────────────────────┤
-│  order_amount: 15                                                       │
-│  order_sub_total_without_tax: 15      ←── NEW                          │
-│  order_sub_total_amount: 15           ←── NEW                          │
-│  total_service_tax_amount: 0.00       ←── NEW                          │
-│  tip_amount: 0.00                     ←── NEW                          │
-│  tip_tax_amount: 0.00                 ←── NEW                          │
-└─────────────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     Transform Layer                                      │
-│  orderTransform.js / reportTransform.js                                 │
-├─────────────────────────────────────────────────────────────────────────┤
-│  amount: 15                           (existing)                        │
-│  subtotalBeforeTax: 15                ←── NEW MAPPING                  │
-│  subtotalAmount: 15                   ←── NEW MAPPING                  │
-│  serviceTax: 0                        ←── NEW MAPPING                  │
-│  tipAmount: 0                         ←── NEW MAPPING                  │
-│  tipTaxAmount: 0                      ←── NEW MAPPING                  │
-└─────────────────────────────────────────────────────────────────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                ▼               ▼               ▼
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│ OrderDetailSheet │  │ CollectPayment   │  │ Cards/Tables     │
-│                  │  │ Panel            │  │ (unchanged)      │
-├──────────────────┤  ├──────────────────┤  ├──────────────────┤
-│ Shows:           │  │ Uses:            │  │ Uses:            │
-│ - subtotal       │  │ - cart items     │  │ - amount only    │
-│ - tax (from API) │  │ - client calc    │  │                  │
-│ - tip (NEW)      │  │ - (optional      │  │                  │
-│ - total          │  │   validation)    │  │                  │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
-```
+### Phase 1
+- [ ] Update `orderTransform.js` - add 6 new fields
+- [ ] Add test cases for new fields
+- [ ] Run existing tests to ensure no regression
+- [ ] Manual test: socket order update
+- [ ] Manual test: dashboard displays correctly
+- [ ] Update BUG_MANAGEMENT.md
+- [ ] Update REFACTORING_PLAN.md
 
----
-
-## Test Cases Required
-
-### Transform Tests
-
-| Test | Input | Expected Output |
-|------|-------|-----------------|
-| Map subtotalBeforeTax | `order_sub_total_without_tax: 100` | `subtotalBeforeTax: 100` |
-| Map serviceTax | `total_service_tax_amount: "5.00"` | `serviceTax: 5` |
-| Map tipAmount | `tip_amount: "10.00"` | `tipAmount: 10` |
-| Fallback when missing | `order_sub_total_without_tax: undefined` | `subtotalBeforeTax: order_amount` |
-| Zero values | `tip_amount: "0.00"` | `tipAmount: 0` |
-
-### UI Tests
-
-| Test | Component | Expected |
-|------|-----------|----------|
-| Show tax row when serviceTax > 0 | OrderDetailSheet | Tax row visible |
-| Hide tax row when serviceTax = 0 | OrderDetailSheet | Tax row hidden |
-| Show tip row when tipAmount > 0 | OrderDetailSheet | Tip row visible |
-| Hide tip row when tipAmount = 0 | OrderDetailSheet | Tip row hidden |
-| Total still correct | OrderDetailSheet | `amount` displayed |
-
----
-
-## Backward Compatibility
-
-| Field | Old Code Uses | New Code Still Works? |
-|-------|---------------|----------------------|
-| `order.amount` | ✅ Everywhere | ✅ Yes (unchanged) |
-| `order.subtotal` | ✅ OrderDetailSheet | ✅ Yes (fallback) |
-| `order.paymentStatus` | ✅ Multiple | ✅ Yes (unchanged) |
-
-**All existing code continues to work.** New fields are additive.
-
----
-
-## Implementation Order
-
-| Step | Task | Effort |
-|------|------|--------|
-| 1 | Update `orderTransform.js` - add new fields | 10 min |
-| 2 | Update `reportTransform.js` - use API values | 15 min |
-| 3 | Update `OrderDetailSheet.jsx` - show tip/tax from API | 15 min |
-| 4 | Add test cases | 20 min |
-| 5 | Manual testing | 15 min |
-| **Total** | | **~1.25 hours** |
-
----
-
-## Questions Before Implementation
-
-1. **Should tip be shown in OrderDetailSheet?**
-   - Currently not displayed anywhere
-   - New field `tip_amount` available
-
-2. **Should CollectPaymentPanel validate against API totals?**
-   - Currently uses client-side calculation only
-   - Could add warning if mismatch
-
-3. **Are there other endpoints returning these fields?**
-   - `get-running-orders`?
-   - `get-complete-order-list`?
+### Phase 2 (Later)
+- [ ] Update `reportTransform.js`
+- [ ] Update `OrderDetailSheet.jsx`
+- [ ] Add tests
+- [ ] Manual test report view
 
 ---
 
 ## Approval
 
-| Role | Name | Date | Approved |
-|------|------|------|----------|
-| Developer | | | ☐ |
-| Reviewer | | | ☐ |
-| Product | | | ☐ |
+| Role | Name | Date | Phase 1 | Phase 2 |
+|------|------|------|---------|---------|
+| Developer | | | ☐ | ☐ |
+| Reviewer | | | ☐ | ☐ |
+| Product | | | ☐ | ☐ |
