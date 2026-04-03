@@ -202,6 +202,7 @@ export const fromAPI = {
 export const toAPI = {
   /**
    * Full cancel — cancels all quantity of an item
+   * cancel_type: "Pre-Serve" (item still cooking) | "Post-Serve" (item cooked/served)
    * Endpoint: PUT /api/v2/vendoremployee/cancel-food-item
    * @param {Object} currentTable - Table entry (has orderId)
    * @param {Object} item         - Order item (has id=order_food_id, foodId=item_id)
@@ -214,25 +215,27 @@ export const toAPI = {
     order_status:  'cancelled',
     reason_type:   reason.reasonId,  // integer reason ID (same as partial)
     reason:        reason.reasonText,
-    cancel_type:   'full',
+    cancel_type:   item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
   }),
 
   /**
    * Partial cancel — cancels specific quantity of an item
+   * cancel_type: "Pre-Serve" (item still cooking) | "Post-Serve" (item cooked/served)
    * Endpoint: PUT /api/v2/vendoremployee/partial-cancel-food-item
    * @param {Object} currentTable - Table entry (has orderId)
-   * @param {Object} item         - Order item (has id=order_food_id)
+   * @param {Object} item         - Order item (has id=order_food_id, foodId=item_id)
    * @param {Object} reason       - Cancellation reason (has reasonId, reasonText)
    * @param {number} cancelQty    - Number of items to cancel
    */
   cancelItemPartial: (currentTable, item, reason, cancelQty) => ({
     order_id:      currentTable.orderId,
-    order_food_id: item.id,
+    order_food_id: item.foodId,      // food catalog ID (food_details.id)
+    item_id:       item.id,          // order line item ID (orderDetails[].id)
     cancel_qty:    cancelQty,
     order_status:  'cancelled',
     reason_type:   reason.reasonId,
     reason:        reason.reasonText,
-    cancel_type:   'partial',
+    cancel_type:   item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
   }),
 
   /**

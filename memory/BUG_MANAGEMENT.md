@@ -484,13 +484,98 @@ git revert <commit-hash>
 
 | Metric | Count |
 |--------|-------|
-| Total Bugs Logged | 14 |
+| Total Bugs Logged | 15 |
 | Critical | 5 |
 | High | 3 |
-| Medium | 4 |
+| Medium | 5 |
 | Low | 1 |
-| Fixed | 14 |
+| Fixed | 15 |
 | Open | 0 |
+
+---
+
+### BUG-106: Cancel Item Payload Issues
+
+| Field | Details |
+|-------|---------|
+| **Bug ID** | BUG-106 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | User |
+| **Fixed By** | E1 Agent |
+| **Severity** | Medium |
+| **Status** | ✅ Fixed |
+| **Related Task** | Cancel Item API |
+
+#### Files Changed
+- `/app/frontend/src/api/transforms/orderTransform.js`
+
+#### Bug Description
+Cancel item payloads (`cancelItemFull` and `cancelItemPartial`) were sending incorrect values:
+1. `cancel_type` was `'full'` or `'partial'` instead of `'Pre-Serve'`/`'Post-Serve'`
+2. `cancelItemPartial` sent wrong `order_food_id` (item.id instead of item.foodId)
+3. `cancelItemPartial` was missing `item_id` field entirely
+
+#### Expected Payload
+```json
+{
+  "order_id": 730154,
+  "item_id": 1900357,
+  "order_food_id": 96557,
+  "order_status": "cancelled",
+  "reason_type": 2,
+  "reason": "",
+  "cancel_type": "Post-Serve"
+}
+```
+
+#### Root Cause
+- `cancelItemFull`: Hardcoded `cancel_type: 'full'` instead of status-based value
+- `cancelItemPartial`: Wrong mapping (`order_food_id: item.id`) and missing `item_id`
+
+#### Fix Applied
+
+**cancelItemFull:**
+```diff
+- cancel_type: 'full',
++ cancel_type: item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
+```
+
+**cancelItemPartial:**
+```diff
+- order_food_id: item.id,
++ order_food_id: item.foodId,
++ item_id: item.id,
+- cancel_type: 'partial',
++ cancel_type: item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
+```
+
+#### Testing
+
+**Test file:** `/app/frontend/src/__tests__/api/transforms/cancelItemPayload.test.js`
+
+| Category | Tests | Status |
+|----------|-------|--------|
+| cancelItemFull - cancel_type | 5 | ✅ Pass |
+| cancelItemFull - other fields | 6 | ✅ Pass |
+| cancelItemFull - complete payload | 2 | ✅ Pass |
+| cancelItemPartial - cancel_type | 4 | ✅ Pass |
+| cancelItemPartial - order_food_id/item_id | 2 | ✅ Pass |
+| cancelItemPartial - cancel_qty | 2 | ✅ Pass |
+| cancelItemPartial - other fields | 4 | ✅ Pass |
+| cancelItemPartial - complete payload | 2 | ✅ Pass |
+| Consistency tests | 4 | ✅ Pass |
+| **Total** | **31** | ✅ **All Pass** |
+
+**Before fix:** 18 failed, 13 passed
+**After fix:** 31 passed, 0 failed
+
+**Total project tests:** 133 passing
+
+#### Rollback Plan
+```bash
+git revert <commit-hash>
+```
 | Low | 1 |
 | Fixed | 13 |
 | Open | 0 |
