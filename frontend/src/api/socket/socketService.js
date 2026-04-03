@@ -356,8 +356,8 @@ class SocketService {
 // =============================================================================
 const socketService = new SocketService();
 
-// Expose to window for debugging
-if (typeof window !== 'undefined') {
+// Expose to window for debugging (development only — T-10)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   window.__SOCKET_SERVICE__ = socketService;
 }
 

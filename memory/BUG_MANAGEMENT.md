@@ -236,7 +236,99 @@ These bugs were fixed in a previous session and are already in the April- branch
 
 | Bug ID | Task | Description | Severity | Status |
 |--------|------|-------------|----------|--------|
-| BUG-010 | T-10 | window.__SOCKET_SERVICE__ exposed in production | Medium | 🔴 Open |
+| - | - | No open bugs | - | - |
+
+---
+
+### BUG-103: Socket Service Exposed Globally in Production
+
+| Field | Details |
+|-------|---------|
+| **Bug ID** | BUG-103 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | Code Audit |
+| **Fixed By** | E1 Agent |
+| **Severity** | Medium |
+| **Status** | ✅ Fixed |
+| **Related Task** | T-10 |
+
+#### Files Changed
+- `/app/frontend/src/api/socket/socketService.js`
+
+#### Bug Description
+The socket service singleton was exposed on `window.__SOCKET_SERVICE__` in ALL environments including production. This is a security risk as malicious scripts could manipulate the socket connection.
+
+#### Steps to Reproduce
+1. Open browser console in production
+2. Type `window.__SOCKET_SERVICE__`
+3. Observe the socket service object is accessible
+4. Attacker could call `emit()`, `disconnect()`, or `getDebugInfo()`
+
+#### Root Cause
+The code exposed the socket service globally without checking the environment:
+```javascript
+if (typeof window !== 'undefined') {
+  window.__SOCKET_SERVICE__ = socketService;  // Always exposed!
+}
+```
+
+#### Fix Applied
+Added `NODE_ENV` check to only expose in development:
+```javascript
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  window.__SOCKET_SERVICE__ = socketService;
+}
+```
+
+#### Code Changes
+
+**File: `/app/frontend/src/api/socket/socketService.js`**
+
+```diff
+- // Expose to window for debugging
+- if (typeof window !== 'undefined') {
+-   window.__SOCKET_SERVICE__ = socketService;
+- }
+
++ // Expose to window for debugging (development only — T-10)
++ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
++   window.__SOCKET_SERVICE__ = socketService;
++ }
+```
+
+#### Testing
+
+**Unit Tests (socketServiceGlobal.test.js):**
+| Test | Description | Result |
+|------|-------------|--------|
+| T1 | NODE_ENV guard exists in source | ✅ Pass |
+| T2 | Guard wraps __SOCKET_SERVICE__ assignment | ✅ Pass |
+
+**Runtime Tests:**
+| Test | Environment | Expected | Result |
+|------|-------------|----------|--------|
+| `typeof window.__SOCKET_SERVICE__` | Development | `"object"` | ✅ Pass |
+| `grep __SOCKET_SERVICE__ build/static/js/*.js` | Production Build | 0 matches | ✅ Pass |
+
+**Manual Verification:**
+```bash
+# 1. Run unit tests
+cd /app/frontend && yarn test --testPathPattern="socketServiceGlobal" --watchAll=false
+# Result: 2 passed
+
+# 2. Build production
+yarn build
+
+# 3. Verify removal in production bundle
+grep -o "__SOCKET_SERVICE__" build/static/js/main.*.js | wc -l
+# Result: 0 (completely removed by dead code elimination)
+```
+
+#### Rollback Plan
+```bash
+git revert <commit-hash>
+```
 
 ---
 
@@ -244,13 +336,13 @@ These bugs were fixed in a previous session and are already in the April- branch
 
 | Metric | Count |
 |--------|-------|
-| Total Bugs Logged | 11 |
+| Total Bugs Logged | 12 |
 | Critical | 5 |
 | High | 3 |
-| Medium | 2 |
+| Medium | 3 |
 | Low | 0 |
-| Fixed | 10 |
-| Open | 1 |
+| Fixed | 12 |
+| Open | 0 |
 
 ---
 
