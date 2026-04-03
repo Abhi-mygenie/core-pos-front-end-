@@ -197,6 +197,9 @@ export const handleUpdateFoodStatus = async (message, { updateOrder }) => {
  * Handle update-order-status event
  * Message: [update-order-status, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
+ * 
+ * BUG-107 Fix: For cancelled status (3), fetch order first to check if
+ * only some items are cancelled (single item cancel) vs all items cancelled.
  */
 export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder }) => {
   const parsed = parseMessage(message);
@@ -209,20 +212,33 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
   const { orderId, status: fOrderStatus } = parsed;
   log('INFO', `update-order-status received: ${orderId}, status: ${fOrderStatus}`);
   
-  // Check if order is paid (f_order_status = 6) or cancelled (f_order_status = 3)
-  // These orders should be removed from running orders
-  if (fOrderStatus === 6 || fOrderStatus === 3) {
-    log('INFO', `update-order-status: Order ${orderId} is ${fOrderStatus === 6 ? 'paid' : 'cancelled'}, removing`);
+  // Paid orders (status 6) - remove immediately without fetching
+  if (fOrderStatus === 6) {
+    log('INFO', `update-order-status: Order ${orderId} is paid, removing`);
     removeOrder(orderId);
     return;
   }
   
+  // For all other statuses (including cancelled=3), fetch fresh order data
+  // This handles single item cancellation - order still exists with remaining items
   const order = await fetchOrderWithRetry(orderId);
+  
   if (order) {
-    updateOrder(order.orderId, order);
-    log('INFO', `update-order-status: Updated order ${order.orderId}`);
+    // Check if ALL items are cancelled (order is truly cancelled)
+    const allItemsCancelled = !order.items?.length || 
+      order.items.every(item => item.status === 'cancelled');
+    
+    if (allItemsCancelled) {
+      log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
+      removeOrder(orderId);
+    } else {
+      updateOrder(order.orderId, order);
+      log('INFO', `update-order-status: Updated order ${orderId}`);
+    }
   } else {
-    log('WARN', `update-order-status: Could not fetch order ${orderId}, skipping`);
+    // Order not found in API - might be fully cancelled/deleted
+    log('WARN', `update-order-status: Order ${orderId} not found, removing from context`);
+    removeOrder(orderId);
   }
 };
 

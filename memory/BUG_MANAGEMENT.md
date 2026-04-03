@@ -484,13 +484,96 @@ git revert <commit-hash>
 
 | Metric | Count |
 |--------|-------|
-| Total Bugs Logged | 15 |
+| Total Bugs Logged | 16 |
 | Critical | 5 |
-| High | 3 |
+| High | 4 |
 | Medium | 5 |
 | Low | 1 |
-| Fixed | 15 |
+| Fixed | 16 |
 | Open | 0 |
+
+---
+
+### BUG-107: Single Item Cancel Removes Entire Order
+
+| Field | Details |
+|-------|---------|
+| **Bug ID** | BUG-107 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | User |
+| **Fixed By** | E1 Agent |
+| **Severity** | High |
+| **Status** | ✅ Fixed |
+| **Related Task** | Socket Handler |
+
+#### Files Changed
+- `/app/frontend/src/api/socket/socketHandlers.js`
+
+#### Bug Description
+When cancelling a single item from an order, the socket handler received `update-order-status` with `status=3` (cancelled) and immediately removed the entire order from the dashboard. The order should only be removed if ALL items are cancelled.
+
+#### Steps to Reproduce
+1. Create an order with multiple items
+2. Cancel one item
+3. Observe: Entire order disappears from dashboard
+4. Expected: Order remains with remaining items
+
+#### Root Cause
+The `handleUpdateOrderStatus` handler had logic that immediately removed orders when `status === 3`:
+
+```javascript
+if (fOrderStatus === 6 || fOrderStatus === 3) {
+  removeOrder(orderId);  // ❌ Removed entire order!
+  return;
+}
+```
+
+This didn't account for single item cancellation where the order still has active items.
+
+#### Fix Applied
+Changed to fetch order data first when status is 3, then check if ALL items are cancelled:
+
+```javascript
+// For cancelled status (3), fetch order first
+const order = await fetchOrderWithRetry(orderId);
+
+if (order) {
+  // Check if ALL items are cancelled
+  const allItemsCancelled = !order.items?.length || 
+    order.items.every(item => item.status === 'cancelled');
+  
+  if (allItemsCancelled) {
+    removeOrder(orderId);  // ✅ Only remove if truly cancelled
+  } else {
+    updateOrder(order.orderId, order);  // ✅ Update with remaining items
+  }
+}
+```
+
+#### Testing
+
+**Test file:** `/app/frontend/src/__tests__/api/socket/updateOrderStatus.test.js`
+
+| Category | Tests | Status |
+|----------|-------|--------|
+| Paid orders (status 6) - remove immediately | 1 | ✅ Pass |
+| Single item cancel - should UPDATE | 3 | ✅ Pass |
+| All items cancelled - should REMOVE | 2 | ✅ Pass |
+| Order not found - should REMOVE | 1 | ✅ Pass |
+| Other statuses - fetch and update | 5 | ✅ Pass |
+| Edge cases | 2 | ✅ Pass |
+| **Total** | **14** | ✅ **All Pass** |
+
+**Before fix:** 11 passed, 3 failed
+**After fix:** 14 passed, 0 failed
+
+**Total project tests:** 147 passing
+
+#### Rollback Plan
+```bash
+git revert <commit-hash>
+```
 
 ---
 
