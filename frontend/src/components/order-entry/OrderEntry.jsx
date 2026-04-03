@@ -264,11 +264,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
       if (hasPlaced && placedOrderId) {
         // Scenario 1 — Update Order (add new items to existing order)
+        // Note: total is calculated internally by updateOrder with proper tax breakup
         const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
           restaurantId: restaurant?.id,
           orderNotes,
           printAllKOT,
-          total: unplaced.reduce((s, i) => s + (i.price * i.qty), 0),
         });
         const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
         console.log('[UpdateOrder] response:', response.data);

@@ -451,44 +451,90 @@ export const toAPI = {
    * @param {Array}  newItems   - Only UNPLACED cart items (placed: false)
    * @param {Object} customer   - { name, phone }
    * @param {string} orderType  - 'dineIn' | 'takeAway' | 'delivery' | 'walkIn'
-   * @param {Object} options    - { restaurantId, orderNotes, printAllKOT, total }
+   * @param {Object} options    - { restaurantId, orderNotes, printAllKOT }
    */
   updateOrder: (table, newItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, total = 0 } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true } = options;
     const ORDER_TYPE_MAP = {
       dineIn: 'dinein', walkIn: 'dinein',
       takeAway: 'take_away', delivery: 'delivery',
     };
 
-    const cartUpdate = newItems.map(item => {
-      const addons = item.selectedAddons || [];
+    // Per-item tax calculation (same as collectBill)
+    const buildCartItem = (item) => {
+      const tax = item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false };
+      const qty = item.qty || 1;
+      const foodAmount = item.price * qty;
+
+      let taxAmount = 0;
+      if (tax.isInclusive) {
+        taxAmount = foodAmount - (foodAmount / (1 + tax.percentage / 100));
+      } else {
+        taxAmount = foodAmount * (tax.percentage / 100);
+      }
+      taxAmount = Math.round(taxAmount * 100) / 100;
+
+      const isGst = (tax.type || 'GST').toUpperCase() === 'GST';
+      const totalPrice = Math.round((foodAmount + (tax.isInclusive ? 0 : taxAmount)) * 100) / 100;
+
+      const addons = (item.selectedAddons || []);
+      const addonIds = addons.map(a => a.id);
+      const addonQtys = addons.map(a => a.quantity);
+      const addonAmount = addons.reduce((s, a) => s + (parseFloat(a.price) || 0) * (a.quantity || 1), 0);
+      const variationAmount = parseFloat(item.selectedSize?.price) || 0;
+
       return {
-        food_id:         item.id,
-        quantity:        item.qty,
-        price:           item.price,
-        station:         (item.station || 'KITCHEN').toUpperCase(),
-        add_on_ids:      addons.map(a => a.id),
-        add_ons:         addons.map(a => a.id),
-        addons_total:    addons.reduce((s, a) => s + (parseFloat(a.price) || 0) * (a.quantity || 1), 0),
-        variations:      [],
-        variation_total: parseFloat(item.selectedSize?.price) || 0,
+        food_id:          item.id,
+        quantity:         qty,
+        price:            item.price,
+        food_amount:      foodAmount,
+        station:          (item.station || 'KITCHEN').toUpperCase(),
+        variation_amount: variationAmount,
+        addon_amount:     addonAmount,
+        add_on_price:     addonAmount,
+        gst_amount:       isGst ? taxAmount : 0,
+        vat_amount:       !isGst ? taxAmount : 0,
+        vat_tax:          !isGst ? tax.percentage : 0,
+        tax_amount:       taxAmount,
+        total_price:      totalPrice,
+        discount_amount:  0,
+        discount:         0,
+        add_on_ids:       addonIds,
+        add_ons:          addonIds,
+        add_on_qtys:      addonQtys,
+        addons_total:     addonAmount,
+        variations:       [],
+        variation_total:  variationAmount,
+        food_level_notes: item.notes || '',
       };
-    });
+    };
+
+    const cartUpdate = newItems.map(buildCartItem);
+    
+    // Calculate order totals from cart items
+    const orderAmount = cartUpdate.reduce((s, i) => s + i.total_price + i.addon_amount + i.variation_amount, 0);
+    const orderTotalTax = cartUpdate.reduce((s, i) => s + i.tax_amount, 0);
 
     return {
-      order_id:         table.orderId,
-      restaurant_id:    restaurantId,
-      payment_method:   'cash_on_delivery',
-      order_type:       ORDER_TYPE_MAP[orderType] || 'dinein',
-      cust_name:        customer?.name || '',
-      cust_mobile:      customer?.phone || '',
-      order_note:       orderNotes.map(n => n.label).join(', '),
-      order_amount:     total,
-      print_kot:        printAllKOT ? 'Yes' : 'No',
-      table_id:         table.tableId || 0,
-      inventory:        'Yes',
-      inventory_negative: 'No',
-      'cart-update':    cartUpdate,
+      order_id:               table.orderId,
+      restaurant_id:          restaurantId,
+      payment_method:         'cash_on_delivery',
+      order_type:             ORDER_TYPE_MAP[orderType] || 'dinein',
+      cust_name:              customer?.name || '',
+      cust_mobile:            customer?.phone || '',
+      order_note:             orderNotes.map(n => n.label).join(', '),
+      order_amount:           Math.round(orderAmount * 100) / 100,
+      order_sub_total_amount: Math.round(orderAmount * 100) / 100,
+      order_total_tax_amount: Math.round(orderTotalTax * 100) / 100,
+      gst_tax:                0,
+      vat_tax:                0,
+      service_tax:            0,
+      service_gst_tax_amount: 0,
+      print_kot:              printAllKOT ? 'Yes' : 'No',
+      table_id:               table.tableId || 0,
+      inventory:              'Yes',
+      inventory_negative:     'No',
+      'cart-update':          cartUpdate,
     };
   },
 
