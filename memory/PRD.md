@@ -28,6 +28,21 @@
    - REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 5. App running successfully on port 3000
 
+### Bug Fix: Update Order Tax Calculation (April 3, 2026)
+**Issue:** When editing an order (adding new items), only the final total amount was being sent without proper tax breakup.
+
+**Root Cause:** `toAPI.updateOrder()` in `orderTransform.js` was sending a simplified payload without per-item tax calculations.
+
+**Fix Applied:**
+- Updated `toAPI.updateOrder()` to include proper tax calculation (same as `collectBill`)
+- Now sends per-item breakup: `food_amount`, `gst_amount`, `vat_amount`, `tax_amount`, `total_price`
+- Now sends order-level fields: `order_sub_total_amount`, `order_total_tax_amount`
+- Removed manual `total` calculation from `OrderEntry.jsx` - transform handles it internally
+
+**Files Modified:**
+- `/app/frontend/src/api/transforms/orderTransform.js` - `toAPI.updateOrder()` function
+- `/app/frontend/src/components/order-entry/OrderEntry.jsx` - `handlePlaceOrder()` function
+
 ## Current Status
 - Frontend: RUNNING (localhost:3000)
 - App displays MyGenie Restaurant POS login page
@@ -51,3 +66,38 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 ## Next Steps
 - Login with valid credentials to test full functionality
 - Preview URL routing issue may need platform support
+
+---
+
+## Changelog
+
+### April 3, 2026 - Update Order Tax Calculation Fix
+
+#### Problem
+When editing an existing order (adding new items), the API was receiving incorrect data:
+- Only final `order_amount` was sent as a raw total
+- Missing per-item tax breakup (`food_amount`, `gst_amount`, `tax_amount`, `total_price`)
+- Missing order-level tax fields (`order_sub_total_amount`, `order_total_tax_amount`)
+
+#### Solution
+Updated `toAPI.updateOrder()` in `orderTransform.js` to mirror the calculation logic from `collectBill()`:
+
+**Per-item fields now included:**
+| Field | Description |
+|-------|-------------|
+| `food_amount` | Base price × quantity |
+| `gst_amount` | GST tax amount (if GST type) |
+| `vat_amount` | VAT tax amount (if VAT type) |
+| `tax_amount` | Total tax for the item |
+| `total_price` | food_amount + tax (for exclusive) |
+
+**Order-level fields now included:**
+| Field | Description |
+|-------|-------------|
+| `order_amount` | Calculated from cart items |
+| `order_sub_total_amount` | Sum of all item totals |
+| `order_total_tax_amount` | Sum of all item taxes |
+
+#### Files Modified
+1. `src/api/transforms/orderTransform.js` - Added `buildCartItem()` helper with tax logic to `updateOrder()`
+2. `src/components/order-entry/OrderEntry.jsx` - Removed manual `total` calculation from `handlePlaceOrder()`

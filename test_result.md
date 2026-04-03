@@ -101,3 +101,48 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Fix order update (edit item) to send proper tax calculation breakup instead of just final total"
+
+frontend:
+  - task: "Update Order Tax Calculation"
+    implemented: true
+    working: "NA"
+    file: "src/api/transforms/orderTransform.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed toAPI.updateOrder() to include proper tax breakup. Added buildCartItem() helper with tax calculations (same as collectBill). Now sends food_amount, gst_amount, vat_amount, tax_amount, total_price per item, and order_sub_total_amount, order_total_tax_amount at order level."
+
+  - task: "Remove Manual Total from OrderEntry"
+    implemented: true
+    working: "NA"
+    file: "src/components/order-entry/OrderEntry.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Removed manual total calculation from handlePlaceOrder(). The updateOrder transform now handles total calculation internally with proper tax breakup."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Update Order Tax Calculation"
+    - "Remove Manual Total from OrderEntry"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Fixed the update order tax calculation issue. The toAPI.updateOrder() function now includes proper per-item tax breakup (food_amount, gst_amount, vat_amount, tax_amount, total_price) and order-level totals (order_sub_total_amount, order_total_tax_amount). This mirrors the logic from collectBill(). Manual total calculation removed from OrderEntry.jsx as the transform now handles it internally."
