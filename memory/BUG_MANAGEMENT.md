@@ -1,4 +1,4 @@
-# MyGenie POS - Change Management Document
+# MyGenie POS - Bug Management Document
 
 **Project:** MyGenie Restaurant POS Frontend  
 **Repository:** https://github.com/Abhi-mygenie/core-pos-front-end-.git  
@@ -8,48 +8,58 @@
 
 ---
 
-## Change Log Format
+## Bug Log Format
 
 | Field | Description |
 |-------|-------------|
-| **Change ID** | Unique identifier (CM-XXX) |
-| **Date** | Date of change |
-| **Author** | Who made the change |
-| **Type** | Bug Fix / Feature / Refactor / Security / Performance |
-| **Priority** | Critical / High / Medium / Low |
+| **Bug ID** | Unique identifier (BUG-XXX) |
+| **Date Reported** | Date bug was identified |
+| **Date Fixed** | Date bug was resolved |
+| **Reported By** | Who reported the bug |
+| **Fixed By** | Who fixed the bug |
+| **Severity** | Critical / High / Medium / Low |
+| **Status** | Open / In Progress / Fixed / Verified / Closed |
 | **Related Task** | Reference to task ID (T-XX) if applicable |
 | **Files Changed** | List of modified files |
-| **Problem Statement** | What was the issue |
-| **Root Cause** | Why the issue occurred |
-| **Solution** | What was changed |
+| **Bug Description** | What was the issue |
+| **Steps to Reproduce** | How to reproduce the bug |
+| **Root Cause** | Why the bug occurred |
+| **Fix Applied** | What was changed to fix it |
 | **Code Changes** | Specific code modifications |
-| **Testing** | How the change was validated |
+| **Testing** | How the fix was validated |
 | **Rollback Plan** | How to revert if needed |
 
 ---
 
-## Change History
+## Bug History
 
 ---
 
-### CM-101: Fix Infinite Navigation Loop on Login
+### BUG-101: Infinite Navigation Loop on Login
 
 | Field | Details |
 |-------|---------|
-| **Change ID** | CM-101 |
-| **Date** | 2026-04-03 |
-| **Author** | E1 Agent |
-| **Type** | Bug Fix |
-| **Priority** | Critical |
+| **Bug ID** | BUG-101 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | User |
+| **Fixed By** | E1 Agent |
+| **Severity** | Critical |
+| **Status** | ✅ Fixed |
 | **Related Task** | N/A (Pre-existing bug) |
-| **Status** | ✅ Completed |
 
 #### Files Changed
 - `/app/frontend/src/pages/LoginPage.jsx`
 - `/app/frontend/src/pages/DashboardPage.jsx`
 
-#### Problem Statement
+#### Bug Description
 Application crashed with "Maximum update depth exceeded" error after login. Users could not access the dashboard. The browser console showed repeated navigation attempts causing React to crash.
+
+#### Steps to Reproduce
+1. Open the application
+2. Enter valid credentials (owner@18march.com / Qplazm@10)
+3. Click "LOG IN"
+4. Observe browser freezing and console errors
 
 #### Root Cause
 Three interconnected issues caused an infinite navigation loop:
@@ -70,7 +80,7 @@ Three interconnected issues caused an infinite navigation loop:
    - No check if already on `/loading` path
    - Created navigation ping-pong between pages
 
-#### Solution
+#### Fix Applied
 Fix all three issues to break the infinite loop:
 
 1. Use AuthContext's `login()` function to update both localStorage AND state
@@ -157,30 +167,36 @@ git revert <commit-hash>
 
 ---
 
-### CM-102: [TEMPLATE - Copy for new changes]
+### BUG-102: [TEMPLATE - Copy for new bugs]
 
 | Field | Details |
 |-------|---------|
-| **Change ID** | CM-102 |
-| **Date** | YYYY-MM-DD |
-| **Author** | Name |
-| **Type** | Bug Fix / Feature / Refactor / Security / Performance |
-| **Priority** | Critical / High / Medium / Low |
+| **Bug ID** | BUG-102 |
+| **Date Reported** | YYYY-MM-DD |
+| **Date Fixed** | YYYY-MM-DD |
+| **Reported By** | Name |
+| **Fixed By** | Name |
+| **Severity** | Critical / High / Medium / Low |
+| **Status** | 🔴 Open / 🟡 In Progress / ✅ Fixed / ✔️ Verified / 🟢 Closed |
 | **Related Task** | T-XX |
-| **Status** | 🔄 In Progress / ✅ Completed / ❌ Reverted |
 
 #### Files Changed
 - `/path/to/file1.jsx`
 - `/path/to/file2.js`
 
-#### Problem Statement
-[Describe what was broken or what needed to be added]
+#### Bug Description
+[Describe what was broken]
+
+#### Steps to Reproduce
+1. Step 1
+2. Step 2
+3. Step 3
 
 #### Root Cause
-[Explain why the issue occurred]
+[Explain why the bug occurred]
 
-#### Solution
-[Describe the fix or implementation approach]
+#### Fix Applied
+[Describe the fix]
 
 #### Code Changes
 ```diff
@@ -194,58 +210,69 @@ git revert <commit-hash>
 | Test 1 | Expected result | ✅ Pass / ❌ Fail |
 
 #### Rollback Plan
-[Steps to revert the change if needed]
+[Steps to revert if needed]
 
 ---
 
-## Previously Completed Changes (T-05 to T-11)
+## Previously Fixed Bugs (T-05 to T-11)
 
-These changes were completed in a previous session and are already in the April- branch:
+These bugs were fixed in a previous session and are already in the April- branch:
 
-| Change ID | Task | Description | Status |
-|-----------|------|-------------|--------|
-| CM-001 | T-05 | Remove hardcoded preprod URL fallbacks | ✅ In Branch |
-| CM-002 | T-05 | Remove presocket URL fallback | ✅ In Branch |
-| CM-003 | T-05 | Remove preprod storage URL in transforms | ✅ In Branch |
-| CM-004 | T-06 | Gate socket connection behind authentication | ✅ In Branch |
-| CM-005 | T-07 | Add ProtectedRoute guard component | ✅ In Branch |
-| CM-006 | T-07 | Add ErrorBoundary component | ✅ In Branch |
-| CM-007 | T-07 | Wrap routes with guards in App.js | ✅ In Branch |
-| CM-008 | T-08 | Fix duplicate EDIT_ORDER_ITEM key | ✅ In Branch |
-| CM-009 | T-09 | Fix TBD endpoint in paymentService | ✅ In Branch |
-| CM-010 | T-11 | Gate _raw field behind NODE_ENV | ✅ In Branch |
-
----
-
-## Pending Changes
-
-| Change ID | Task | Description | Priority | Status |
-|-----------|------|-------------|----------|--------|
-| CM-103 | T-10 | Remove window.__SOCKET_SERVICE__ in production | Medium | 🔄 Pending |
+| Bug ID | Task | Description | Severity | Status |
+|--------|------|-------------|----------|--------|
+| BUG-001 | T-05 | Hardcoded preprod URL fallback in axios.js | Critical | ✅ Fixed |
+| BUG-002 | T-05 | Hardcoded presocket URL fallback | Critical | ✅ Fixed |
+| BUG-003 | T-05 | Hardcoded preprod storage URL in transforms | Critical | ✅ Fixed |
+| BUG-004 | T-06 | Socket connects before authentication | Critical | ✅ Fixed |
+| BUG-005 | T-07 | No route protection for authenticated pages | Critical | ✅ Fixed |
+| BUG-006 | T-07 | No error boundary for crash recovery | High | ✅ Fixed |
+| BUG-007 | T-08 | Duplicate EDIT_ORDER_ITEM key in constants | High | ✅ Fixed |
+| BUG-008 | T-09 | TBD endpoint in paymentService | High | ✅ Fixed |
+| BUG-009 | T-11 | _raw field exposed in production | Medium | ✅ Fixed |
 
 ---
 
-## Change Statistics
+## Open Bugs
+
+| Bug ID | Task | Description | Severity | Status |
+|--------|------|-------------|----------|--------|
+| BUG-010 | T-10 | window.__SOCKET_SERVICE__ exposed in production | Medium | 🔴 Open |
+
+---
+
+## Bug Statistics
 
 | Metric | Count |
 |--------|-------|
-| Total Changes Logged | 11 |
-| Critical Fixes | 6 |
-| High Priority | 5 |
-| Medium Priority | 1 |
-| Pending | 1 |
+| Total Bugs Logged | 11 |
+| Critical | 5 |
+| High | 3 |
+| Medium | 2 |
+| Low | 0 |
+| Fixed | 10 |
+| Open | 1 |
 
 ---
 
-## Approval & Sign-off
+## Severity Definitions
+
+| Severity | Definition | Response Time |
+|----------|------------|---------------|
+| **Critical** | App crash, data loss, security breach, complete feature failure | Immediate |
+| **High** | Major feature broken, significant user impact, workaround exists | < 24 hours |
+| **Medium** | Minor feature issue, cosmetic bugs, edge cases | < 1 week |
+| **Low** | Nice-to-have fixes, minor UI issues | Next sprint |
+
+---
+
+## Sign-off
 
 | Role | Name | Date | Signature |
 |------|------|------|-----------|
 | Developer | | | |
-| Reviewer | | | |
 | QA | | | |
 | Product Owner | | | |
 
 ---
 
-*Document maintained by the development team. All changes must be logged before deployment.*
+*Document maintained by the development team. All bugs must be logged and tracked here.*
