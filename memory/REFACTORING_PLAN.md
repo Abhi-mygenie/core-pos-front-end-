@@ -39,7 +39,7 @@
 | T-07 | Add ProtectedRoute + ErrorBoundary | P1 | CRITICAL | — | DONE | CRIT-003. 18 tests. Wired in App.js, cleaned DashboardPage + LoadingPage. |
 | T-08 | Fix duplicate EDIT_ORDER_ITEM key | P1 | CRITICAL | — | DONE | CRIT-004. 4 tests (incl. duplicate guard for all keys). |
 | T-09 | Fix TBD endpoint in paymentService | P1 | CRITICAL | — | DONE | CRIT-005. 3 tests. Removed COLLECT_PAYMENT, wired collectPayment() to CLEAR_BILL. |
-| T-10 | Remove window.__SOCKET_SERVICE__ in prod | P1 | MEDIUM | — | OPEN | MED-003 |
+| T-10 | Remove window.__SOCKET_SERVICE__ in prod | P1 | MEDIUM | — | DONE | MED-003. 2 tests. Gated behind NODE_ENV === 'development'. |
 | T-11 | Remove _raw fields or gate behind NODE_ENV | P1 | MEDIUM | — | DONE | MED-002. 3 tests. 9 locations in reportTransform + reportService. |
 | T-12 | Create missing barrel exports (index.js) | P2 | HIGH | — | OPEN | modals, panels, reports |
 | T-13 | Restructure features/ directory | P2 | HIGH | — | OPEN | See Phase 2 |
