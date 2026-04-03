@@ -71,11 +71,11 @@
 |----------|-------|------|-------------|-------|-----------|----------|
 | CRITICAL | 5 | 0 | 0 | 5 | 0 | 0 |
 | HIGH | 5 | 5 | 0 | 0 | 0 | 0 |
-| MEDIUM | 8 | 8 | 0 | 0 | 0 | 0 |
+| MEDIUM | 8 | 7 | 0 | 1 | 0 | 0 |
 | LOW | 7 | 7 | 0 | 0 | 0 | 0 |
-| **TOTAL** | **25** | **20** | **0** | **5** | **0** | **0** |
+| **TOTAL** | **25** | **19** | **0** | **6** | **0** | **0** |
 
-**Current Code Quality Score: 6.5 / 10**  
+**Current Code Quality Score: 7.5 / 10** *(was 6.5 — improved by fixing all 5 critical + 1 medium)*  
 **Target Score: 9.5 / 10**
 
 ---
