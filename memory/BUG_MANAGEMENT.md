@@ -410,14 +410,87 @@ git checkout -- /app/frontend/src/pages/index.js
 
 ---
 
+### BUG-105: Missing Financial Fields in Order Transform
+
+| Field | Details |
+|-------|---------|
+| **Bug ID** | BUG-105 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | User |
+| **Fixed By** | E1 Agent |
+| **Severity** | Medium |
+| **Status** | ✅ Fixed |
+| **Related Task** | Phase 1 - Financial Fields |
+
+#### Files Changed
+- `/app/frontend/src/api/transforms/orderTransform.js`
+
+#### Bug Description
+New API fields for financial data (`order_sub_total_without_tax`, `total_service_tax_amount`, `tip_amount`, etc.) were not being mapped in the order transform, making them unavailable to UI components.
+
+#### Root Cause
+The `fromAPI.order()` function only mapped `order_amount` to `amount`. New API fields for subtotal, tax, and tip were not included.
+
+#### Fix Applied
+Added 6 new field mappings to `orderTransform.js`:
+
+```javascript
+// fromAPI.order()
+subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || parseFloat(api.order_amount) || 0,
+subtotalAmount: parseFloat(api.order_sub_total_amount) || parseFloat(api.order_amount) || 0,
+serviceTax: parseFloat(api.total_service_tax_amount) || 0,
+tipAmount: parseFloat(api.tip_amount) || 0,
+tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,
+
+// fromAPI.orderItem()
+itemType: detail.item_type || null,
+```
+
+#### Testing
+**18 test cases added** - `/app/frontend/src/__tests__/api/transforms/orderTransformFinancials.test.js`
+
+| Test | Result |
+|------|--------|
+| Map subtotalBeforeTax | ✅ Pass |
+| Map subtotalAmount | ✅ Pass |
+| Map serviceTax | ✅ Pass |
+| Map tipAmount | ✅ Pass |
+| Map tipTaxAmount | ✅ Pass |
+| Fallback subtotalBeforeTax | ✅ Pass |
+| Fallback subtotalAmount | ✅ Pass |
+| Handle zero serviceTax | ✅ Pass |
+| Default tipAmount | ✅ Pass |
+| Default tipTaxAmount | ✅ Pass |
+| Backward compatibility | ✅ Pass |
+| Handle null values | ✅ Pass |
+| Handle numeric values | ✅ Pass |
+| Map itemType | ✅ Pass |
+| Default itemType | ✅ Pass |
+| KDS itemType | ✅ Pass |
+| Station compatibility | ✅ Pass |
+| Full integration | ✅ Pass |
+
+**Total project tests: 102 passing**
+
+#### Rollback Plan
+```bash
+git revert <commit-hash>
+```
+
+---
+
 ## Bug Statistics
 
 | Metric | Count |
 |--------|-------|
-| Total Bugs Logged | 13 |
+| Total Bugs Logged | 14 |
 | Critical | 5 |
 | High | 3 |
-| Medium | 3 |
+| Medium | 4 |
+| Low | 1 |
+| Fixed | 14 |
+| Open | 0 |
 | Low | 1 |
 | Fixed | 13 |
 | Open | 0 |

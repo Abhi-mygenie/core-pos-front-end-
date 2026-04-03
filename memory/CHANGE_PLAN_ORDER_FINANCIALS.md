@@ -8,10 +8,12 @@
 
 ## Phase Breakdown
 
-### Phase 1: Live Order Flow (Socket/Dashboard/Payment)
-- Transform: `orderTransform.js`
-- Service: `orderService.js`
-- Consumers: Dashboard cards, OrderEntry, CollectPaymentPanel
+### Phase 1: Live Order Flow (Socket/Dashboard/Payment) ✅ COMPLETE
+- Transform: `orderTransform.js` ✅ DONE
+- Service: `orderService.js` (no changes needed)
+- Consumers: Dashboard cards, OrderEntry, CollectPaymentPanel (no UI changes needed)
+- **Tests: 18 new tests added, all passing**
+- **Total tests: 102 passing**
 
 ### Phase 2: Report Summary (DEFERRED)
 - Transform: `reportTransform.js`
@@ -190,12 +192,60 @@ itemType: detail.item_type || null,  // NEW: BAR, KDS, etc.
 
 | Item | Details |
 |------|---------|
-| **Files to change** | 1 (`orderTransform.js`) |
-| **Lines to add** | ~6 lines |
+| **Files changed** | 1 (`orderTransform.js`) |
+| **Lines added** | 6 lines |
 | **UI changes** | None (fields available for future) |
 | **Risk** | 🟢 LOW (additive only) |
 | **Effort** | ~30 minutes |
-| **Tests** | 8 unit tests |
+| **Tests** | 18 new tests (all passing) |
+| **Status** | ✅ COMPLETE |
+
+---
+
+## Phase 1 Implementation Details (Completed 2026-04-03)
+
+### Changes Made
+
+**File: `/app/frontend/src/api/transforms/orderTransform.js`**
+
+1. **fromAPI.order()** - Added 5 new financial fields:
+```javascript
+subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || parseFloat(api.order_amount) || 0,
+subtotalAmount: parseFloat(api.order_sub_total_amount) || parseFloat(api.order_amount) || 0,
+serviceTax: parseFloat(api.total_service_tax_amount) || 0,
+tipAmount: parseFloat(api.tip_amount) || 0,
+tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,
+```
+
+2. **fromAPI.orderItem()** - Added itemType field:
+```javascript
+itemType: detail.item_type || null,  // BAR, KDS, etc.
+```
+
+### Test Coverage
+
+**File: `/app/frontend/src/__tests__/api/transforms/orderTransformFinancials.test.js`**
+
+| # | Test Case | Status |
+|---|-----------|--------|
+| 1 | Map subtotalBeforeTax | ✅ Pass |
+| 2 | Map subtotalAmount | ✅ Pass |
+| 3 | Map serviceTax (string to number) | ✅ Pass |
+| 4 | Map tipAmount (string to number) | ✅ Pass |
+| 5 | Map tipTaxAmount (string to number) | ✅ Pass |
+| 6 | Fallback subtotalBeforeTax to order_amount | ✅ Pass |
+| 7 | Fallback subtotalAmount to order_amount | ✅ Pass |
+| 8 | Handle zero serviceTax | ✅ Pass |
+| 9 | Default tipAmount to 0 when missing | ✅ Pass |
+| 10 | Default tipTaxAmount to 0 when missing | ✅ Pass |
+| 11 | Backward compatibility (amount) | ✅ Pass |
+| 12 | Handle null values | ✅ Pass |
+| 13 | Handle numeric values | ✅ Pass |
+| 14 | Map itemType | ✅ Pass |
+| 15 | Default itemType to null | ✅ Pass |
+| 16 | Map KDS itemType | ✅ Pass |
+| 17 | Station backward compatibility | ✅ Pass |
+| 18 | Full order integration | ✅ Pass |
 
 ---
 

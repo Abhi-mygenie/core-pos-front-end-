@@ -79,6 +79,7 @@ export const fromAPI = {
       unitPrice: parseFloat(detail.unit_price) || 0,
       status: mapOrderStatus(detail.food_status),
       station: detail.station || 'KDS',
+      itemType: detail.item_type || null,  // Phase 1: BAR, KDS, etc.
       variation: detail.variation || [],
       addOns: detail.add_ons || [],
       notes: detail.food_level_notes || '',
@@ -127,8 +128,13 @@ export const fromAPI = {
       customer: isWalkIn ? (customer || 'WC') : (customer || ''),
       phone: user.phone || '',
 
-      // Financials
+      // Financials (Phase 1: Enhanced with new API fields)
       amount: parseFloat(api.order_amount) || 0,
+      subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || parseFloat(api.order_amount) || 0,
+      subtotalAmount: parseFloat(api.order_sub_total_amount) || parseFloat(api.order_amount) || 0,
+      serviceTax: parseFloat(api.total_service_tax_amount) || 0,
+      tipAmount: parseFloat(api.tip_amount) || 0,
+      tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,
       paymentStatus: api.payment_status || 'unpaid',
       paymentMethod: api.payment_method || '',
 
