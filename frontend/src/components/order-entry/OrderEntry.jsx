@@ -7,6 +7,7 @@ import api from "../../api/axios";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI } from "../../api/transforms/orderTransform";
+import { fetchSingleOrderForSocket } from "../../api/services/orderService";
 import AddCustomItemModal from "./AddCustomItemModal";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
@@ -261,6 +262,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setIsPlacingOrder(true);
     try {
       const hasPlaced = cartItems.some(i => i.placed);
+      let orderIdToRefresh = null;
 
       if (hasPlaced && placedOrderId) {
         // Scenario 1 — Update Order (add new items to existing order)
@@ -273,6 +275,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
         console.log('[UpdateOrder] response:', response.data);
         toast({ title: "Order Updated", description: response.data?.message || "Items added to order" });
+        orderIdToRefresh = placedOrderId;
       } else {
         // Scenario 2 / New Order — Place Order
         const payload = orderToAPI.placeOrder(
@@ -289,14 +292,43 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         });
         console.log('[PlaceOrder] response:', response.data);
         const newOrderId = response.data?.order_id;
-        if (newOrderId) setPlacedOrderId(newOrderId);
+        if (newOrderId) {
+          setPlacedOrderId(newOrderId);
+          orderIdToRefresh = newOrderId;
+        }
         toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
       }
 
-      // Mark unplaced items as placed
-      setCartItems(prev => prev.map(item =>
-        !item.placed ? { ...item, placed: true, status: 'preparing' } : item
-      ));
+      // Refresh cart items from API to get proper IDs (order line item ID + food catalog ID)
+      // This ensures cancel operations have correct item_id and order_food_id
+      if (orderIdToRefresh) {
+        try {
+          const freshOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
+          if (freshOrder?.items && freshOrder.items.length > 0) {
+            setCartItems(freshOrder.items.map(item => ({
+              ...item,
+              placed: true,
+            })));
+            console.log('[PlaceOrder] Cart refreshed with proper IDs from API');
+          } else {
+            // Fallback: mark items as placed if refresh fails
+            setCartItems(prev => prev.map(item =>
+              !item.placed ? { ...item, placed: true, status: 'preparing' } : item
+            ));
+          }
+        } catch (refreshErr) {
+          console.warn('[PlaceOrder] Failed to refresh order, using local state:', refreshErr);
+          // Fallback: mark items as placed
+          setCartItems(prev => prev.map(item =>
+            !item.placed ? { ...item, placed: true, status: 'preparing' } : item
+          ));
+        }
+      } else {
+        // Fallback: mark items as placed
+        setCartItems(prev => prev.map(item =>
+          !item.placed ? { ...item, placed: true, status: 'preparing' } : item
+        ));
+      }
       setEditingQtyItemId(null);
     } catch (err) {
       console.log('[PlaceOrder] ERROR status:', err?.response?.status);

@@ -141,6 +141,18 @@ frontend:
           agent: "main"
           comment: "Fixed handleCancelFood() to use CANCEL_ITEM_FULL endpoint for both full and partial cancel. Partial cancel was using a non-existent endpoint (partial-cancel-food-item) causing 404. Now both use cancel-food-item endpoint, with cancel_qty field added for partial cancel."
 
+  - task: "Cart Items Missing Proper IDs After Place Order"
+    implemented: true
+    working: "NA"
+    file: "src/components/order-entry/OrderEntry.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed handlePlaceOrder() to refresh cart items from API after successful place/update order. This ensures items have proper order line item ID (id) and food catalog ID (foodId) for cancel operations. Previously, items retained menu productId which caused partial cancel to fail with 'order_food_id field is required'."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"

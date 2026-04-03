@@ -55,6 +55,19 @@
 **File Modified:**
 - `/app/frontend/src/components/order-entry/OrderEntry.jsx` - `handleCancelFood()` function
 
+### Bug Fix: Cart Items Missing Proper IDs After Place/Update Order (April 3, 2026)
+**Issue:** After placing/updating an order, newly placed items retained their menu `productId` as `id` instead of getting the proper `order line item ID` from the API. This caused partial cancel to fail with "order_food_id field is required".
+
+**Root Cause:** When items are added from menu, they have `id = productId` (food catalog ID). After placing order, the code only marked `placed: true` but didn't fetch the proper `orderDetails[].id` from the API.
+
+**Fix Applied:**
+- After successful place/update order, fetch fresh order data from API using `fetchSingleOrderForSocket()`
+- Replace cart items with API-returned items that have proper `id` (order line item ID) and `foodId` (food catalog ID)
+- Added fallback to mark items as placed if API refresh fails
+
+**File Modified:**
+- `/app/frontend/src/components/order-entry/OrderEntry.jsx` - `handlePlaceOrder()` function
+
 ## Current Status
 - Frontend: RUNNING (localhost:3000)
 - App displays MyGenie Restaurant POS login page
@@ -130,3 +143,26 @@ The only difference is the payload - partial cancel includes `cancel_qty` field.
 
 #### File Modified
 - `src/components/order-entry/OrderEntry.jsx` - Updated `handleCancelFood()` to use `CANCEL_ITEM_FULL` endpoint for both scenarios
+
+### April 3, 2026 - Cart Items Missing Proper IDs After Place Order
+
+#### Problem
+After placing/updating an order, partial cancel failed with "order_food_id field is required" error.
+
+#### Root Cause
+When items are added from menu, they have:
+- `id` = productId (food catalog ID like 146566)
+- `foodId` = undefined
+
+After placing order, the code only marked `placed: true` but didn't fetch the proper IDs from API:
+- `id` should be order line item ID (like 1900414)
+- `foodId` should be food catalog ID (like 146564)
+
+#### Solution
+After successful place/update order:
+1. Fetch fresh order data from API using `fetchSingleOrderForSocket(orderId)`
+2. Replace cart items with API-returned items that have proper `id` and `foodId`
+3. Added fallback to mark items as placed if API refresh fails
+
+#### File Modified
+- `src/components/order-entry/OrderEntry.jsx` - Updated `handlePlaceOrder()` to refresh cart items from API after success
