@@ -41,9 +41,9 @@
 | T-09 | Fix TBD endpoint in paymentService | P1 | CRITICAL | — | DONE | CRIT-005. 3 tests. Removed COLLECT_PAYMENT, wired collectPayment() to CLEAR_BILL. |
 | T-10 | Remove window.__SOCKET_SERVICE__ in prod | P1 | MEDIUM | — | DONE | MED-003. 2 tests. Gated behind NODE_ENV === 'development'. |
 | T-11 | Remove _raw fields or gate behind NODE_ENV | P1 | MEDIUM | — | DONE | MED-002. 3 tests. 9 locations in reportTransform + reportService. |
-| T-12 | Create missing barrel exports (index.js) | P2 | HIGH | — | OPEN | modals, panels, reports |
-| T-13 | Restructure features/ directory | P2 | HIGH | — | OPEN | See Phase 2 |
-| T-14 | Add pages/index.js barrel | P2 | MEDIUM | — | OPEN | — |
+| T-12 | Create missing barrel exports (index.js) | P2 | HIGH | — | DONE | modals, panels, reports. 26 tests. |
+| T-13 | Restructure features/ directory | P2 | HIGH | — | DEFERRED | High risk, skipped for now |
+| T-14 | Add pages/index.js barrel | P2 | MEDIUM | — | DONE | Added AllOrdersReportPage |
 | T-15 | Decompose CollectPaymentPanel (1044L) | P3 | HIGH | — | OPEN | Biggest file |
 | T-16 | Decompose DashboardPage (845L) | P3 | HIGH | — | OPEN | HIGH-001 |
 | T-17 | Decompose OrderEntry (857L) | P3 | HIGH | — | OPEN | HIGH-001 |

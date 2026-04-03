@@ -332,16 +332,94 @@ git revert <commit-hash>
 
 ---
 
+### BUG-104: Missing Barrel Exports in Component Folders
+
+| Field | Details |
+|-------|---------|
+| **Bug ID** | BUG-104 |
+| **Date Reported** | 2026-04-03 |
+| **Date Fixed** | 2026-04-03 |
+| **Reported By** | Code Audit |
+| **Fixed By** | E1 Agent |
+| **Severity** | Low |
+| **Status** | ✅ Fixed |
+| **Related Task** | T-12, T-14 |
+
+#### Files Changed
+- `/app/frontend/src/components/modals/index.js` (NEW)
+- `/app/frontend/src/components/panels/index.js` (NEW)
+- `/app/frontend/src/components/reports/index.js` (NEW)
+- `/app/frontend/src/pages/index.js` (UPDATED)
+
+#### Bug Description
+Component folders `modals/`, `panels/`, and `reports/` were missing barrel exports (`index.js`), forcing verbose imports. Also `pages/index.js` was missing `AllOrdersReportPage`.
+
+#### Steps to Reproduce
+1. Try `import { FilterBar } from '@/components/reports'`
+2. Build fails - no index.js to resolve
+
+#### Root Cause
+Barrel export files were never created for these folders.
+
+#### Fix Applied
+Created `index.js` barrel exports for:
+- `modals/` - exports RoomCheckInModal
+- `panels/` - exports MenuManagementPanel, SettingsPanel, and sub-components
+- `reports/` - exports all 8 report components
+- `pages/` - added missing AllOrdersReportPage export
+
+#### Testing
+| Test | Description | Result |
+|------|-------------|--------|
+| modals/index.js exists | File exists check | ✅ Pass |
+| exports RoomCheckInModal | Export check | ✅ Pass |
+| can import from barrel | Runtime import | ✅ Pass |
+| panels/index.js exists | File exists check | ✅ Pass |
+| exports MenuManagementPanel | Export check | ✅ Pass |
+| exports SettingsPanel | Export check | ✅ Pass |
+| exports menu sub-components | CategoryList, ProductCard, etc. | ✅ Pass |
+| exports settings sub-components | TableManagementView | ✅ Pass |
+| reports/index.js exists | File exists check | ✅ Pass |
+| exports DatePicker | Export check | ✅ Pass |
+| exports ExportButtons | Export check | ✅ Pass |
+| exports FilterBar | Export check | ✅ Pass |
+| exports FilterTags | Export check | ✅ Pass |
+| exports OrderDetailSheet | Export check | ✅ Pass |
+| exports OrderTable | Export check | ✅ Pass |
+| exports ReportTabs | Export check | ✅ Pass |
+| exports SummaryBar | Export check | ✅ Pass |
+| all report components match files | Directory scan | ✅ Pass |
+| pages/index.js exists | File exists check | ✅ Pass |
+| exports LoginPage | Export check | ✅ Pass |
+| exports LoadingPage | Export check | ✅ Pass |
+| exports DashboardPage | Export check | ✅ Pass |
+| exports OrderSummaryPage | Export check | ✅ Pass |
+| exports AllOrdersReportPage | Export check | ✅ Pass |
+| all page files exported | Directory scan | ✅ Pass |
+| no duplicate exports | Uniqueness check | ✅ Pass |
+
+**Total: 26 tests passed**
+
+#### Rollback Plan
+```bash
+rm /app/frontend/src/components/modals/index.js
+rm /app/frontend/src/components/panels/index.js
+rm /app/frontend/src/components/reports/index.js
+git checkout -- /app/frontend/src/pages/index.js
+```
+
+---
+
 ## Bug Statistics
 
 | Metric | Count |
 |--------|-------|
-| Total Bugs Logged | 12 |
+| Total Bugs Logged | 13 |
 | Critical | 5 |
 | High | 3 |
 | Medium | 3 |
-| Low | 0 |
-| Fixed | 12 |
+| Low | 1 |
+| Fixed | 13 |
 | Open | 0 |
 
 ---
