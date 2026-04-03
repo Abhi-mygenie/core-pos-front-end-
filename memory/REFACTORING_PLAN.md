@@ -37,7 +37,7 @@
 | T-05 | Remove hardcoded preprod URL fallbacks | P1 | CRITICAL | — | DONE | CRIT-001. 4 files fixed (found extra in categoryTransform). 15 tests. |
 | T-06 | Gate socket behind authentication | P1 | CRITICAL | — | DONE | CRIT-002. 13 tests (4 auth-gate + 6 existing behavior + 3 hook contracts). |
 | T-07 | Add ProtectedRoute + ErrorBoundary | P1 | CRITICAL | — | DONE | CRIT-003. 18 tests. Wired in App.js, cleaned DashboardPage + LoadingPage. |
-| T-08 | Fix duplicate EDIT_ORDER_ITEM key | P1 | CRITICAL | — | OPEN | CRIT-004 |
+| T-08 | Fix duplicate EDIT_ORDER_ITEM key | P1 | CRITICAL | — | DONE | CRIT-004. 4 tests (incl. duplicate guard for all keys). |
 | T-09 | Fix TBD endpoint in paymentService | P1 | CRITICAL | — | OPEN | CRIT-005 |
 | T-10 | Remove window.__SOCKET_SERVICE__ in prod | P1 | MEDIUM | — | OPEN | MED-003 |
 | T-11 | Remove _raw fields or gate behind NODE_ENV | P1 | MEDIUM | — | OPEN | MED-002 |

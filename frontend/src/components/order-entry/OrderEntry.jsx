@@ -244,7 +244,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // Placed (placed: true)   → CHG-040: will call editOrderItem API when endpoint provided
   const updateQuantity = useCallback((itemId, newQty, isPlaced = false) => {
     if (isPlaced) {
-      // TODO CHG-040: call orderToAPI.editOrderItem() + api.put(EDIT_ORDER_ITEM) when endpoint provided
+      // TODO CHG-040: call orderToAPI.editOrderItem() + api.put(EDIT_ORDER_ITEM) or api.put(EDIT_ORDER_ITEM_QTY) when endpoint provided
       // For now: local state update only (stub)
     }
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
