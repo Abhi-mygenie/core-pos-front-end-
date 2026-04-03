@@ -43,6 +43,18 @@
 - `/app/frontend/src/api/transforms/orderTransform.js` - `toAPI.updateOrder()` function
 - `/app/frontend/src/components/order-entry/OrderEntry.jsx` - `handlePlaceOrder()` function
 
+### Bug Fix: Partial Cancel 404 Error (April 3, 2026)
+**Issue:** Partial item cancellation was returning 404 error.
+
+**Root Cause:** `handleCancelFood()` was using a separate endpoint for partial cancel (`/api/v2/vendoremployee/partial-cancel-food-item`) which doesn't exist.
+
+**Fix Applied:**
+- Both full and partial cancel now use the same endpoint: `/api/v2/vendoremployee/cancel-food-item`
+- Partial cancel includes the `cancel_qty` field in the payload to differentiate from full cancel
+
+**File Modified:**
+- `/app/frontend/src/components/order-entry/OrderEntry.jsx` - `handleCancelFood()` function
+
 ## Current Status
 - Frontend: RUNNING (localhost:3000)
 - App displays MyGenie Restaurant POS login page
@@ -101,3 +113,20 @@ Updated `toAPI.updateOrder()` in `orderTransform.js` to mirror the calculation l
 #### Files Modified
 1. `src/api/transforms/orderTransform.js` - Added `buildCartItem()` helper with tax logic to `updateOrder()`
 2. `src/components/order-entry/OrderEntry.jsx` - Removed manual `total` calculation from `handlePlaceOrder()`
+
+### April 3, 2026 - Partial Cancel 404 Fix
+
+#### Problem
+Partial item cancellation (cancelling some but not all quantity) was returning a 404 error.
+
+#### Root Cause
+The code was using two different endpoints:
+- Full cancel: `/api/v2/vendoremployee/cancel-food-item` ✅
+- Partial cancel: `/api/v2/vendoremployee/partial-cancel-food-item` ❌ (404 - doesn't exist)
+
+#### Solution
+Both full and partial cancel now use the same endpoint (`/api/v2/vendoremployee/cancel-food-item`).
+The only difference is the payload - partial cancel includes `cancel_qty` field.
+
+#### File Modified
+- `src/components/order-entry/OrderEntry.jsx` - Updated `handleCancelFood()` to use `CANCEL_ITEM_FULL` endpoint for both scenarios

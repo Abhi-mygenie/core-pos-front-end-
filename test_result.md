@@ -129,6 +129,18 @@ frontend:
           agent: "main"
           comment: "Removed manual total calculation from handlePlaceOrder(). The updateOrder transform now handles total calculation internally with proper tax breakup."
 
+  - task: "Partial Cancel 404 Fix"
+    implemented: true
+    working: "NA"
+    file: "src/components/order-entry/OrderEntry.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed handleCancelFood() to use CANCEL_ITEM_FULL endpoint for both full and partial cancel. Partial cancel was using a non-existent endpoint (partial-cancel-food-item) causing 404. Now both use cancel-food-item endpoint, with cancel_qty field added for partial cancel."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
@@ -139,10 +151,11 @@ test_plan:
   current_focus:
     - "Update Order Tax Calculation"
     - "Remove Manual Total from OrderEntry"
+    - "Partial Cancel 404 Fix"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
-      message: "Fixed the update order tax calculation issue. The toAPI.updateOrder() function now includes proper per-item tax breakup (food_amount, gst_amount, vat_amount, tax_amount, total_price) and order-level totals (order_sub_total_amount, order_total_tax_amount). This mirrors the logic from collectBill(). Manual total calculation removed from OrderEntry.jsx as the transform now handles it internally."
+      message: "Fixed two issues: 1) Update order tax calculation - toAPI.updateOrder() now includes proper per-item tax breakup. 2) Partial cancel 404 - handleCancelFood() now uses CANCEL_ITEM_FULL endpoint for both full and partial cancel (partial just adds cancel_qty field)."
