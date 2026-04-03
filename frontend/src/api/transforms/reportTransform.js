@@ -176,7 +176,7 @@ export const reportFromAPI = {
       orderType: api.order_type || null,
       transactionRef: api.transection_id || api.transaction_id || '',
       // Raw API data for debugging
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -224,7 +224,7 @@ export const reportFromAPI = {
         price: formatAmount(item.price),
         status: item.food_status,
       })),
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -258,7 +258,7 @@ export const reportFromAPI = {
       platform: null, // GAP-002
       orderType: null,
       transactionRef: '',
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -293,7 +293,7 @@ export const reportFromAPI = {
       platform: null, // GAP-002
       orderType: api.order_type || null,
       transactionRef: api.transection_id || '',
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -354,7 +354,7 @@ export const reportFromAPI = {
         qty: item.quantity || 1,
         price: formatAmount(item.price),
       })),
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -424,7 +424,7 @@ export const reportFromAPI = {
       loyaltyPoints: formatAmount(order.loyalty_points_used || 0),
       couponDiscount: formatAmount(order.coupon_discount || 0),
       walletAmount: formatAmount(order.wallet_amount || 0),
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 
@@ -616,7 +616,7 @@ export const reportFromAPI = {
       totalQuantity: items.reduce((sum, item) => sum + (item.quantity || 1), 0),
       
       // Raw for debugging
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   },
 };

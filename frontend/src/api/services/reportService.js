@@ -337,7 +337,7 @@ export const getDailySalesReport = async (date) => {
     },
     
     // Raw data for any additional needs
-    _raw: data,
+    ...(process.env.NODE_ENV === 'development' ? { _raw: data } : {}),
   };
 };
 
@@ -474,7 +474,7 @@ export const getOrderLogsReport = async (date, schedules, sortBy = 'created_at')
       discount: toNum(api.restaurant_discount_amount || api.discount_value || 0),
       tax: toNum(api.gst_tax) + toNum(api.vat_tax) + toNum(api.service_tax),
       tip: toNum(api.tip_amount || 0),
-      _raw: api,
+      ...(process.env.NODE_ENV === 'development' ? { _raw: api } : {}),
     };
   });
   

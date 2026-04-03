@@ -45,7 +45,7 @@
 | ID | Title | Severity | Status | Assigned To | Fixed Date | Verified | Notes |
 |----|-------|----------|--------|-------------|------------|----------|-------|
 | MED-001 | reportService.js Breaks Service/Transform Separation | MEDIUM | OPEN | — | — | — | getOrderLogsReport 100+ inline lines |
-| MED-002 | _raw Field Leaks Full API Response in All Transforms | MEDIUM | OPEN | — | — | — | Double memory, potential PII leak |
+| MED-002 | _raw Field Leaks Full API Response in All Transforms | MEDIUM | FIXED | — | Feb 2026 | 3/3 tests pass | 9 locations gated behind NODE_ENV=development |
 | MED-003 | window.__SOCKET_SERVICE__ Exposed Globally | MEDIUM | OPEN | — | — | — | socketService.js:361 |
 | MED-004 | Duplicate Utility Functions Between Services and Contexts | MEDIUM | OPEN | — | — | — | tableService vs TableContext, etc. |
 | MED-005 | Sequential API Loading on Startup | MEDIUM | OPEN | — | — | — | LoadingPage — for loop |
