@@ -301,33 +301,31 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
       // Refresh cart items from API to get proper IDs (order line item ID + food catalog ID)
       // This ensures cancel operations have correct item_id and order_food_id
+      // IMPORTANT: Always update cart from API response, never locally
       if (orderIdToRefresh) {
-        try {
-          const freshOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
-          if (freshOrder?.items && freshOrder.items.length > 0) {
-            setCartItems(freshOrder.items.map(item => ({
+        // Small delay to allow API to process the new items
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        const freshOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
+        if (freshOrder?.items && freshOrder.items.length > 0) {
+          setCartItems(freshOrder.items.map(item => ({
+            ...item,
+            placed: true,
+          })));
+          console.log('[PlaceOrder] Cart refreshed with proper IDs from API');
+        } else {
+          console.warn('[PlaceOrder] API returned no items, retrying...');
+          // Retry once after another delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const retryOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
+          if (retryOrder?.items && retryOrder.items.length > 0) {
+            setCartItems(retryOrder.items.map(item => ({
               ...item,
               placed: true,
             })));
-            console.log('[PlaceOrder] Cart refreshed with proper IDs from API');
-          } else {
-            // Fallback: mark items as placed if refresh fails
-            setCartItems(prev => prev.map(item =>
-              !item.placed ? { ...item, placed: true, status: 'preparing' } : item
-            ));
+            console.log('[PlaceOrder] Cart refreshed on retry');
           }
-        } catch (refreshErr) {
-          console.warn('[PlaceOrder] Failed to refresh order, using local state:', refreshErr);
-          // Fallback: mark items as placed
-          setCartItems(prev => prev.map(item =>
-            !item.placed ? { ...item, placed: true, status: 'preparing' } : item
-          ));
         }
-      } else {
-        // Fallback: mark items as placed
-        setCartItems(prev => prev.map(item =>
-          !item.placed ? { ...item, placed: true, status: 'preparing' } : item
-        ));
       }
       setEditingQtyItemId(null);
     } catch (err) {
@@ -398,13 +396,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       title: "Item Cancelled",
       description: response.data?.message || `${item?.name} cancelled successfully`,
     });
-    // Update local cart state to reflect cancellation
-    if (isFullCancel) {
-      setCartItems(prev => prev.filter(ci => ci.id !== item.id));
-    } else {
-      setCartItems(prev => prev.map(ci =>
-        ci.id === item.id ? { ...ci, qty: ci.qty - cancelQuantity } : ci
-      ));
+    
+    // Refresh cart from API to ensure proper sync (qty, status, IDs)
+    // IMPORTANT: Always update cart from API response, never locally
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    if (orderId) {
+      try {
+        const freshOrder = await fetchSingleOrderForSocket(orderId);
+        if (freshOrder?.items) {
+          setCartItems(freshOrder.items.map(i => ({ ...i, placed: true })));
+          console.log('[CancelFood] Cart refreshed from API');
+        }
+      } catch (refreshErr) {
+        console.warn('[CancelFood] Failed to refresh cart from API:', refreshErr);
+      }
     }
     setCancelItem(null);
   };

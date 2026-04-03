@@ -166,3 +166,28 @@ After successful place/update order:
 
 #### File Modified
 - `src/components/order-entry/OrderEntry.jsx` - Updated `handlePlaceOrder()` to refresh cart items from API after success
+
+### April 3, 2026 - Cart Always Update from API (Final Fix)
+
+#### Problem
+After place/update order, cart was falling back to local updates when API refresh failed, causing items to retain wrong IDs.
+
+#### Root Cause
+The previous fix had fallback logic that just marked items as `placed: true` locally without getting proper IDs from API. This meant:
+- `item.id` stayed as productId (food catalog ID)
+- `item.foodId` remained undefined
+- Cancel operations failed
+
+#### Solution
+1. **Removed all local fallbacks** - Cart now ONLY updates from API response
+2. **Added 500ms delay** before fetching to allow API to process new items
+3. **Added retry logic** if first fetch returns no items
+4. **Updated `handleCancelFood()`** to refresh cart from API after cancel success (instead of local filter/update)
+
+#### Key Principle
+> Cart items should ONLY be updated from API response, never locally (except for adding unplaced items from menu)
+
+#### Files Modified
+- `src/components/order-entry/OrderEntry.jsx`:
+  - `handlePlaceOrder()` - Removed local fallbacks, added delay + retry
+  - `handleCancelFood()` - Refresh cart from API after cancel success
