@@ -207,3 +207,30 @@ After cancelling all items, call `removeOrder(orderId)` to immediately remove th
 - `src/components/order-entry/OrderEntry.jsx`:
   - Added `removeOrder` to useOrders import
   - Updated `handleCancelOrder()` to call `removeOrder(orderId)` after API calls
+
+### April 3, 2026 - API Financials for Bill Summary
+
+#### Problem
+Bill Summary (CollectPaymentPanel) was calculating totals locally from cartItems, including cancelled items. This caused:
+- Wrong item total (₹120 instead of ₹0 after cancellation)
+- Cancelled items shown without strikethrough
+- Totals not matching API values
+
+#### Solution
+1. **OrderEntry.jsx:**
+   - Added `orderFinancials` state to store API values (amount, subtotalAmount, subtotalBeforeTax)
+   - Initialize from orderData when opening existing order
+   - Update after place/update order API refresh
+   - Update after cancel item API refresh
+   - Pass `orderFinancials` and `hasPlacedItems` to CollectPaymentPanel
+
+2. **CollectPaymentPanel.jsx:**
+   - Added `orderFinancials` and `hasPlacedItems` props
+   - Filter `activeItems` (non-cancelled) and `cancelledItems` separately
+   - Use `activeItems` for all calculations (tax, bar/kitchen totals)
+   - For placed orders, use API `orderFinancials.subtotalBeforeTax` for itemTotal
+   - Show cancelled items with strikethrough styling
+
+#### Files Modified
+- `src/components/order-entry/OrderEntry.jsx`
+- `src/components/order-entry/CollectPaymentPanel.jsx`

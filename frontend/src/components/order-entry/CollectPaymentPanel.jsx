@@ -3,10 +3,30 @@ import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, 
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables } from "../../contexts";
 
-const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, customer: passedCustomer, isRoom, associatedOrders = [] }) => {
+const CollectPaymentPanel = ({ 
+  cartItems, 
+  total, 
+  onBack, 
+  onPaymentComplete, 
+  customer: passedCustomer, 
+  isRoom, 
+  associatedOrders = [],
+  orderFinancials = {},
+  hasPlacedItems = false,
+}) => {
   const customer = passedCustomer;
   const { discountTypes } = useRestaurant();
   const { tables } = useTables();
+
+  // Filter out cancelled items for calculations, keep for display
+  const activeItems = useMemo(() => 
+    (cartItems || []).filter(item => item.status !== 'cancelled'),
+    [cartItems]
+  );
+  const cancelledItems = useMemo(() => 
+    (cartItems || []).filter(item => item.status === 'cancelled'),
+    [cartItems]
+  );
 
   // Occupied rooms for "Transfer to Room" picker (exclude current table)
   const occupiedRooms = useMemo(() => 
@@ -24,9 +44,10 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
   );
 
   // Per-item tax computation — uses product.tax if available, else 0%
+  // Only calculate for active (non-cancelled) items
   const taxTotals = useMemo(() => {
     let sgst = 0, cgst = 0;
-    (cartItems || []).forEach(item => {
+    activeItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
       const linePrice = item.price * (item.qty || 1);
@@ -46,7 +67,7 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
       sgst: Math.round(sgst * 100) / 100,
       cgst: Math.round(cgst * 100) / 100,
     };
-  }, [cartItems]);
+  }, [activeItems]);
 
   // Rewards state
   const [useLoyalty, setUseLoyalty] = useState(false);
@@ -72,14 +93,17 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
     kitchen: { method: "cash", paid: false },
   });
 
-  // Group items by station
-  const barItems = (cartItems || []).filter(item => item.station === "bar");
-  const kitchenItems = (cartItems || []).filter(item => item.station === "kitchen" || !item.station);
+  // Group items by station (only active items)
+  const barItems = activeItems.filter(item => item.station === "bar");
+  const kitchenItems = activeItems.filter(item => item.station === "kitchen" || !item.station);
   const barTotal = barItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
   const kitchenTotal = kitchenItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
   // Calculate bill
-  const itemTotal = (cartItems || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
+  // For placed orders, use API values; for new orders, calculate locally
+  const itemTotal = hasPlacedItems && orderFinancials.subtotalBeforeTax > 0
+    ? orderFinancials.subtotalBeforeTax
+    : activeItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
   
   // Discount from restaurant preset types (from RestaurantContext)
   const [selectedDiscountType, setSelectedDiscountType] = useState(null);
@@ -947,6 +971,21 @@ const CollectPaymentPanel = ({ cartItems, total, onBack, onPaymentComplete, cust
                         >
                           {stationPayments.kitchen.paid ? "✓ Paid" : `Pay ₹${kitchenTotal}`}
                         </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cancelled Items - Show strikethrough */}
+                  {cancelledItems.length > 0 && (
+                    <div className="p-3 rounded-lg opacity-60" style={{ backgroundColor: COLORS.lightBg }}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium line-through" style={{ color: COLORS.grayText }}>❌ Cancelled ({cancelledItems.length} items)</span>
+                        <span className="text-sm font-bold line-through" style={{ color: COLORS.grayText }}>₹0</span>
+                      </div>
+                      <div className="text-xs space-y-0.5" style={{ color: COLORS.grayText }}>
+                        {cancelledItems.map((item, idx) => (
+                          <div key={idx} className="line-through">{item.name} x{item.qty} - ₹{item.price * item.qty}</div>
+                        ))}
                       </div>
                     </div>
                   )}

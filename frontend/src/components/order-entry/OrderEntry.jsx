@@ -78,6 +78,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [placedOrderId, setPlacedOrderId] = useState(table?.orderId || null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [showPaymentPanel, setShowPaymentPanel] = useState(initialShowPayment);
+  
+  // API financials for placed orders (amount, subtotal from server)
+  const [orderFinancials, setOrderFinancials] = useState({
+    amount: orderData?.amount || 0,
+    subtotalAmount: orderData?.subtotalAmount || 0,
+    subtotalBeforeTax: orderData?.subtotalBeforeTax || 0,
+  });
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [editingQtyItemId, setEditingQtyItemId] = useState(null);
   const [flashItemId, setFlashItemId] = useState(null);
@@ -137,6 +144,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           phone: orderData.phone || '',
         });
       }
+      // Initialize financials from orderData
+      if (orderData) {
+        setOrderFinancials({
+          amount: orderData.amount || 0,
+          subtotalAmount: orderData.subtotalAmount || 0,
+          subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
+        });
+      }
     } else if (orderData) {
       if (orderData.customer || orderData.phone) {
         setCustomer({
@@ -144,6 +159,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           phone: orderData.phone || '',
         });
       }
+      // Initialize financials from orderData
+      setOrderFinancials({
+        amount: orderData.amount || 0,
+        subtotalAmount: orderData.subtotalAmount || 0,
+        subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
+      });
       if (orderData.items && orderData.items.length > 0) {
         const existingItems = orderData.items.map(item => ({
           id: item.id,
@@ -312,6 +333,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             ...item,
             placed: true,
           })));
+          // Update financials from API
+          setOrderFinancials({
+            amount: freshOrder.amount || 0,
+            subtotalAmount: freshOrder.subtotalAmount || 0,
+            subtotalBeforeTax: freshOrder.subtotalBeforeTax || 0,
+          });
           console.log('[PlaceOrder] Cart refreshed with proper IDs from API');
         } else {
           console.warn('[PlaceOrder] API returned no items, retrying...');
@@ -323,6 +350,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               ...item,
               placed: true,
             })));
+            // Update financials from API
+            setOrderFinancials({
+              amount: retryOrder.amount || 0,
+              subtotalAmount: retryOrder.subtotalAmount || 0,
+              subtotalBeforeTax: retryOrder.subtotalBeforeTax || 0,
+            });
             console.log('[PlaceOrder] Cart refreshed on retry');
           }
         }
@@ -405,6 +438,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const freshOrder = await fetchSingleOrderForSocket(orderId);
         if (freshOrder?.items) {
           setCartItems(freshOrder.items.map(i => ({ ...i, placed: true })));
+          // Update financials from API
+          setOrderFinancials({
+            amount: freshOrder.amount || 0,
+            subtotalAmount: freshOrder.subtotalAmount || 0,
+            subtotalBeforeTax: freshOrder.subtotalBeforeTax || 0,
+          });
           console.log('[CancelFood] Cart refreshed from API');
         }
       } catch (refreshErr) {
@@ -603,6 +642,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               customer={customer}
               isRoom={table?.isRoom}
               associatedOrders={orderData?.associatedOrders || []}
+              orderFinancials={orderFinancials}
+              hasPlacedItems={cartItems.some(i => i.placed)}
               onBack={() => setShowPaymentPanel(false)}
               onPaymentComplete={async (paymentData) => {
                 try {
