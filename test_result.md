@@ -153,6 +153,57 @@ frontend:
           agent: "main"
           comment: "Fixed handlePlaceOrder() to refresh cart items from API after successful place/update order. This ensures items have proper order line item ID (id) and food catalog ID (foodId) for cancel operations. Previously, items retained menu productId which caused partial cancel to fail with 'order_food_id field is required'."
 
+  - task: "BUG-201: Remove Duplicate API Call on Update Order"
+    implemented: true
+    working: "NA"
+    file: "src/components/order-entry/OrderEntry.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Removed fetchSingleOrderForSocket from handlePlaceOrder Update Order path. Replaced with optimistic local marking. Expanded useEffect to sync from OrderContext on any financial change (not just when local is 0). User reported still seeing 2 calls - may be cached JS or duplicate socket listener registration."
+        - working: false
+          agent: "user"
+          comment: "User screenshot shows 2 get-single-order-new calls still happening after update order. Needs hard refresh confirmation or socket listener investigation."
+
+  - task: "BUG-202: Remove Duplicate API Call on Cancel Item"
+    implemented: false
+    working: "NA"
+    file: "src/components/order-entry/OrderEntry.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Same pattern as BUG-201. handleCancelFood calls fetchSingleOrderForSocket directly. Needs removal. Will be done after BUG-201 is confirmed fixed."
+
+  - task: "BUG-203: Redundant update-table Socket"
+    implemented: false
+    working: "NA"
+    file: "src/api/socket/useSocketEvents.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "update-table socket fires twice. Table status should be derived from OrderContext. Not started yet."
+
+  - task: "BUG-204: order_sub_total_without_tax returns 0"
+    implemented: false
+    working: "NA"
+    file: "backend API"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Backend bug. get-single-order-new API returns order_sub_total_without_tax: 0. Blocked on backend team."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
@@ -161,9 +212,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Update Order Tax Calculation"
-    - "Remove Manual Total from OrderEntry"
-    - "Partial Cancel 404 Fix"
+    - "BUG-201: Remove Duplicate API Call on Update Order"
+    - "BUG-202: Remove Duplicate API Call on Cancel Item"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -171,3 +221,5 @@ test_plan:
 agent_communication:
     - agent: "main"
       message: "Fixed two issues: 1) Update order tax calculation - toAPI.updateOrder() now includes proper per-item tax breakup. 2) Partial cancel 404 - handleCancelFood() now uses CANCEL_ITEM_FULL endpoint for both full and partial cancel (partial just adds cancel_qty field)."
+    - agent: "main"
+      message: "BUG-201: Removed fetchSingleOrderForSocket from Update Order path in handlePlaceOrder. Expanded useEffect to sync from OrderContext on any financial change. User still reports 2 calls - pending hard refresh confirmation. Created /app/memory/BUGS.md with full bug tracker."

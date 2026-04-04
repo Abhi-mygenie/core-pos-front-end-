@@ -294,3 +294,36 @@ After placing a new order, we were calling `get-single-order-new` API to refresh
   - Removed `fetchSingleOrderForSocket` call after place order
   - Added useEffect to sync from OrderContext when socket updates
   - Kept API refresh for Update Order only
+
+### April 4, 2026 - Update Order: Remove Duplicate API Call (BUG-201)
+
+#### Problem
+When adding items to an existing order, `get-single-order-new` was called **twice**:
+- Call 1: `OrderEntry.jsx` called `fetchSingleOrderForSocket` directly after API success (500ms delay + retry)
+- Call 2: Socket handler (`handleUpdateOrder`) called `fetchSingleOrderForSocket` after receiving `update-order` event
+
+#### Solution
+1. **Removed** direct `fetchSingleOrderForSocket` call from `handlePlaceOrder`'s Update Order path
+2. **Added** optimistic local marking: unplaced items get `placed: true` immediately
+3. **Expanded `useEffect`** to sync from OrderContext on any financial change (not just when local is 0)
+   - Before: `contextHasFinancials && localMissingFinancials` (new order only)
+   - After: `contextAmount !== localAmount || contextSubtotal !== localSubtotal` (new + update)
+4. **Added** unplaced item preservation during sync
+
+#### Key Learning
+- For Update Order: server emits ONLY `update-order` socket (NOT `update-food-status`)
+- `update-food-status` is for kitchen status changes only
+
+#### Current Status
+Fix applied. If user still sees 2 calls, it's either cached JS (needs hard refresh) or duplicate socket listener registration (needs investigation in `useSocketEvents.js`).
+
+#### Files Modified
+- `src/components/order-entry/OrderEntry.jsx`:
+  - `handlePlaceOrder()` — removed `fetchSingleOrderForSocket` for update path
+  - `useEffect` — expanded sync condition to cover update order
+
+### Open Bugs (see /app/memory/BUGS.md for full details)
+- **BUG-201**: Duplicate API calls on Update Order (P0, IN PROGRESS)
+- **BUG-202**: Duplicate API calls on Cancel Item (P0, NOT STARTED)
+- **BUG-203**: Redundant `update-table` socket handling (P1, NOT STARTED)
+- **BUG-204**: `order_sub_total_without_tax` returns 0 from backend (P1, BLOCKED on backend team)
