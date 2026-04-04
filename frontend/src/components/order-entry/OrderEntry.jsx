@@ -190,29 +190,43 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table?.id, orderType]);
 
-  // Sync from OrderContext when socket's new-order event updates the order
-  // This provides proper IDs (order line item ID, food catalog ID) and financials
-  // Note: get-single-order API does NOT return financial data for new orders
+  // Sync from OrderContext when socket updates the order (new-order, update-order, update-food-status)
+  // Provides proper IDs (order line item ID, food catalog ID) and financials
+  // Handles: Place New Order (financials go from 0 → value)
+  //          Update Order   (financials change after adding items)
   useEffect(() => {
     if (!placedOrderId) return;
     
     const orderFromContext = orders.find(o => o.orderId === placedOrderId);
-    
-    if (orderFromContext && orderFromContext.items?.length > 0) {
-      // Check if we need to sync (context has newer/more complete data)
-      const contextHasFinancials = orderFromContext.amount > 0 || orderFromContext.subtotalBeforeTax > 0;
-      const localMissingFinancials = orderFinancials.amount === 0 && orderFinancials.subtotalBeforeTax === 0;
-      
-      if (contextHasFinancials && localMissingFinancials) {
-        console.log('[OrderEntry] Syncing from OrderContext (socket new-order)');
-        setCartItems(orderFromContext.items.map(i => ({ ...i, placed: true })));
-        setOrderFinancials({
-          amount: orderFromContext.amount || 0,
-          subtotalAmount: orderFromContext.subtotalAmount || 0,
-          subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
-        });
-      }
-    }
+    if (!orderFromContext || !orderFromContext.items?.length) return;
+
+    const contextAmount = orderFromContext.amount || 0;
+    const contextSubtotal = orderFromContext.subtotalBeforeTax || 0;
+
+    // Sync when context financials differ from local (covers new order + update order)
+    const needsSync =
+      contextAmount !== orderFinancials.amount ||
+      contextSubtotal !== orderFinancials.subtotalBeforeTax;
+
+    if (!needsSync) return;
+
+    console.log('[OrderEntry] Syncing from OrderContext (socket)', {
+      contextAmount, localAmount: orderFinancials.amount,
+      contextSubtotal, localSubtotal: orderFinancials.subtotalBeforeTax,
+    });
+
+    // Preserve any unplaced items the user is currently adding
+    setCartItems(prev => {
+      const unplaced = prev.filter(i => !i.placed);
+      const placed = orderFromContext.items.map(i => ({ ...i, placed: true }));
+      return [...placed, ...unplaced];
+    });
+
+    setOrderFinancials({
+      amount: contextAmount,
+      subtotalAmount: orderFromContext.subtotalAmount || 0,
+      subtotalBeforeTax: contextSubtotal,
+    });
   }, [placedOrderId, orders, orderFinancials.amount, orderFinancials.subtotalBeforeTax]);
 
   // Get current menu items based on category, search, and dietary filters
@@ -352,44 +366,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         setCartItems(prev => prev.map(item => ({ ...item, placed: true, status: 'preparing' })));
       }
 
-      // For Update Order only: Refresh from API to get updated data
-      // (Place Order uses socket's new-order event instead - API doesn't have financial data)
+      // For Update Order: mark unplaced items as placed (optimistic UI)
+      // Socket's update-order event will update OrderContext with proper IDs + financials
+      // useEffect below will sync local state from OrderContext
       if (hasPlaced && placedOrderId && orderIdToRefresh) {
-        // Small delay to allow API to process the new items
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        const freshOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
-        if (freshOrder?.items && freshOrder.items.length > 0) {
-          setCartItems(freshOrder.items.map(item => ({
-            ...item,
-            placed: true,
-          })));
-          // Update financials from API
-          setOrderFinancials({
-            amount: freshOrder.amount || 0,
-            subtotalAmount: freshOrder.subtotalAmount || 0,
-            subtotalBeforeTax: freshOrder.subtotalBeforeTax || 0,
-          });
-          console.log('[UpdateOrder] Cart refreshed with proper IDs from API');
-        } else {
-          console.warn('[UpdateOrder] API returned no items, retrying...');
-          // Retry once after another delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          const retryOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
-          if (retryOrder?.items && retryOrder.items.length > 0) {
-            setCartItems(retryOrder.items.map(item => ({
-              ...item,
-              placed: true,
-            })));
-            // Update financials from API
-            setOrderFinancials({
-              amount: retryOrder.amount || 0,
-              subtotalAmount: retryOrder.subtotalAmount || 0,
-              subtotalBeforeTax: retryOrder.subtotalBeforeTax || 0,
-            });
-            console.log('[UpdateOrder] Cart refreshed on retry');
-          }
-        }
+        setCartItems(prev => prev.map(item => item.placed ? item : { ...item, placed: true, status: 'preparing' }));
+        console.log('[UpdateOrder] Items marked as placed, waiting for socket sync');
       }
       setEditingQtyItemId(null);
     } catch (err) {
