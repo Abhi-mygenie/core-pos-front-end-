@@ -253,3 +253,44 @@ When editing an existing order (adding new items), the update order payload was 
 #### Files Modified
 - `src/components/order-entry/OrderEntry.jsx` - Pass `orderFinancials` to updateOrder
 - `src/api/transforms/orderTransform.js` - Calculate complete order totals in updateOrder
+
+---
+
+## Backend Clarifications / Known Limitations
+
+### 1. Get Single Order API Does NOT Return Financial Data for New Orders
+**Issue:** After placing a new order, `get-single-order-new` API returns `order_amount: 0`, `order_sub_total_amount: 0` etc.
+
+**Root Cause:** The API doesn't have the financial data populated immediately after order creation.
+
+**Solution:** Use socket's `new-order` event payload instead of API call. Socket contains complete order data including:
+- `order_amount`
+- `order_sub_total_amount`
+- `order_sub_total_without_tax`
+- `orderDetails` with proper item IDs
+
+**Impact:**
+- ❌ Cannot use API fallback for place order
+- ✅ Socket `new-order` is the ONLY source of truth for newly placed orders
+- ✅ Update Order and Cancel Item can still use API (order already exists)
+
+### April 4, 2026 - Place Order Uses Socket Instead of API
+
+#### Problem
+After placing a new order, we were calling `get-single-order-new` API to refresh cart with proper IDs and financials. But API returns `order_amount: 0` for newly placed orders.
+
+#### Solution
+1. **Place Order:** Use socket's `new-order` event (contains complete data)
+   - Mark items as placed locally after API success
+   - Add useEffect to sync from OrderContext when socket updates
+   - Socket payload has proper IDs and financials
+
+2. **Update Order:** Keep using API (order already exists, API has data)
+
+3. **Cancel Item:** Keep using API (order already exists)
+
+#### Files Modified
+- `src/components/order-entry/OrderEntry.jsx`:
+  - Removed `fetchSingleOrderForSocket` call after place order
+  - Added useEffect to sync from OrderContext when socket updates
+  - Kept API refresh for Update Order only

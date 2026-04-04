@@ -190,6 +190,31 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table?.id, orderType]);
 
+  // Sync from OrderContext when socket's new-order event updates the order
+  // This provides proper IDs (order line item ID, food catalog ID) and financials
+  // Note: get-single-order API does NOT return financial data for new orders
+  useEffect(() => {
+    if (!placedOrderId) return;
+    
+    const orderFromContext = orders.find(o => o.orderId === placedOrderId);
+    
+    if (orderFromContext && orderFromContext.items?.length > 0) {
+      // Check if we need to sync (context has newer/more complete data)
+      const contextHasFinancials = orderFromContext.amount > 0 || orderFromContext.subtotalBeforeTax > 0;
+      const localMissingFinancials = orderFinancials.amount === 0 && orderFinancials.subtotalBeforeTax === 0;
+      
+      if (contextHasFinancials && localMissingFinancials) {
+        console.log('[OrderEntry] Syncing from OrderContext (socket new-order)');
+        setCartItems(orderFromContext.items.map(i => ({ ...i, placed: true })));
+        setOrderFinancials({
+          amount: orderFromContext.amount || 0,
+          subtotalAmount: orderFromContext.subtotalAmount || 0,
+          subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
+        });
+      }
+    }
+  }, [placedOrderId, orders, orderFinancials.amount, orderFinancials.subtotalBeforeTax]);
+
   // Get current menu items based on category, search, and dietary filters
   const getFilteredItems = () => {
     let items;
@@ -318,15 +343,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const newOrderId = response.data?.order_id;
         if (newOrderId) {
           setPlacedOrderId(newOrderId);
-          orderIdToRefresh = newOrderId;
         }
         toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
+        
+        // Mark items as placed locally
+        // Socket's new-order event will update OrderContext with proper IDs and financials
+        // Note: get-single-order API does NOT return financial data for new orders
+        setCartItems(prev => prev.map(item => ({ ...item, placed: true, status: 'preparing' })));
       }
 
-      // Refresh cart items from API to get proper IDs (order line item ID + food catalog ID)
-      // This ensures cancel operations have correct item_id and order_food_id
-      // IMPORTANT: Always update cart from API response, never locally
-      if (orderIdToRefresh) {
+      // For Update Order only: Refresh from API to get updated data
+      // (Place Order uses socket's new-order event instead - API doesn't have financial data)
+      if (hasPlaced && placedOrderId && orderIdToRefresh) {
         // Small delay to allow API to process the new items
         await new Promise(resolve => setTimeout(resolve, 500));
         
@@ -342,9 +370,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             subtotalAmount: freshOrder.subtotalAmount || 0,
             subtotalBeforeTax: freshOrder.subtotalBeforeTax || 0,
           });
-          console.log('[PlaceOrder] Cart refreshed with proper IDs from API');
+          console.log('[UpdateOrder] Cart refreshed with proper IDs from API');
         } else {
-          console.warn('[PlaceOrder] API returned no items, retrying...');
+          console.warn('[UpdateOrder] API returned no items, retrying...');
           // Retry once after another delay
           await new Promise(resolve => setTimeout(resolve, 1000));
           const retryOrder = await fetchSingleOrderForSocket(orderIdToRefresh);
@@ -359,7 +387,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               subtotalAmount: retryOrder.subtotalAmount || 0,
               subtotalBeforeTax: retryOrder.subtotalBeforeTax || 0,
             });
-            console.log('[PlaceOrder] Cart refreshed on retry');
+            console.log('[UpdateOrder] Cart refreshed on retry');
           }
         }
       }
