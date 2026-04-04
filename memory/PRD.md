@@ -191,3 +191,19 @@ The previous fix had fallback logic that just marked items as `placed: true` loc
 - `src/components/order-entry/OrderEntry.jsx`:
   - `handlePlaceOrder()` - Removed local fallbacks, added delay + retry
   - `handleCancelFood()` - Refresh cart from API after cancel success
+
+### April 3, 2026 - Cancel Order Clears Table Immediately
+
+#### Problem
+After cancelling a complete order, the table remained occupied because the order was not removed from context.
+
+#### Root Cause
+`handleCancelOrder()` only cancelled items via API and closed the modal. It did not update the `OrderContext`, so the order still existed in memory.
+
+#### Solution
+After cancelling all items, call `removeOrder(orderId)` to immediately remove the order from context. This clears the table right away without waiting for socket events.
+
+#### File Modified
+- `src/components/order-entry/OrderEntry.jsx`:
+  - Added `removeOrder` to useOrders import
+  - Updated `handleCancelOrder()` to call `removeOrder(orderId)` after API calls

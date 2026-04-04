@@ -34,7 +34,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders } = useOrders();
+  const { orders, refreshOrders, removeOrder } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
@@ -426,6 +426,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       title: "Order Cancelled",
       description: `${itemsToCancel.length} item(s) cancelled for ${table?.label || table?.id}`,
     });
+    
+    // Remove order from context to clear table immediately
+    // (Socket will also fire but this ensures immediate UI update)
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    if (orderId) {
+      removeOrder(orderId);
+    }
+    
     onClose();
   };
 
