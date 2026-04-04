@@ -454,7 +454,13 @@ export const toAPI = {
    * @param {Object} options    - { restaurantId, orderNotes, printAllKOT }
    */
   updateOrder: (table, newItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true } = options;
+    const { 
+      restaurantId, 
+      orderNotes = [], 
+      printAllKOT = true,
+      existingOrderTotal = 0,    // Existing order amount from API
+      existingSubtotal = 0,      // Existing subtotal from API
+    } = options;
     const ORDER_TYPE_MAP = {
       dineIn: 'dinein', walkIn: 'dinein',
       takeAway: 'take_away', delivery: 'delivery',
@@ -511,9 +517,13 @@ export const toAPI = {
 
     const cartUpdate = newItems.map(buildCartItem);
     
-    // Calculate order totals from cart items
-    const orderAmount = cartUpdate.reduce((s, i) => s + i.total_price + i.addon_amount + i.variation_amount, 0);
-    const orderTotalTax = cartUpdate.reduce((s, i) => s + i.tax_amount, 0);
+    // Calculate NEW items totals
+    const newItemsTotal = cartUpdate.reduce((s, i) => s + i.total_price + i.addon_amount + i.variation_amount, 0);
+    const newItemsTax = cartUpdate.reduce((s, i) => s + i.tax_amount, 0);
+    
+    // Complete order totals = existing (from API) + new items
+    const orderAmount = existingOrderTotal + newItemsTotal;
+    const orderSubtotal = existingSubtotal + newItemsTotal;
 
     return {
       order_id:               table.orderId,
@@ -524,8 +534,8 @@ export const toAPI = {
       cust_mobile:            customer?.phone || '',
       order_note:             orderNotes.map(n => n.label).join(', '),
       order_amount:           Math.round(orderAmount * 100) / 100,
-      order_sub_total_amount: Math.round(orderAmount * 100) / 100,
-      order_total_tax_amount: Math.round(orderTotalTax * 100) / 100,
+      order_sub_total_amount: Math.round(orderSubtotal * 100) / 100,
+      order_total_tax_amount: Math.round(newItemsTax * 100) / 100,
       gst_tax:                0,
       vat_tax:                0,
       service_tax:            0,

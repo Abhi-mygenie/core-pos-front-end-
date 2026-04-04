@@ -234,3 +234,22 @@ Bill Summary (CollectPaymentPanel) was calculating totals locally from cartItems
 #### Files Modified
 - `src/components/order-entry/OrderEntry.jsx`
 - `src/components/order-entry/CollectPaymentPanel.jsx`
+
+### April 4, 2026 - Update Order Complete Totals
+
+#### Problem
+When editing an existing order (adding new items), the update order payload was only sending the NEW items' totals, not the complete order totals.
+
+**Example:**
+- Existing order: ₹150
+- New item added: ₹75
+- Payload was sending: `order_amount: 75` ❌
+- Should send: `order_amount: 225` ✅
+
+#### Solution
+1. **OrderEntry.jsx:** Pass `existingOrderTotal` and `existingSubtotal` from `orderFinancials` to the `updateOrder` transform
+2. **orderTransform.js:** Calculate complete order totals = existing (from API) + new items
+
+#### Files Modified
+- `src/components/order-entry/OrderEntry.jsx` - Pass `orderFinancials` to updateOrder
+- `src/api/transforms/orderTransform.js` - Calculate complete order totals in updateOrder
