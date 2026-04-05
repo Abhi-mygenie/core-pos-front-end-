@@ -674,8 +674,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   setShowPaymentPanel(false);
                   setPlacedOrderId(null);
                   setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
-                  // Prepaid: stay on screen, clear table context so user can select next table
-                  // Socket + GET enrichment happen in background
+                  // Prepaid: stay on order screen, clear table so user can select next table
+                  if (onSelectTable) onSelectTable(null);
                 } catch (err) {
                   const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
                   toast({ title: "Payment Failed", description: msg });
