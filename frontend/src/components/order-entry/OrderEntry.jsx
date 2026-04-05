@@ -219,6 +219,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       subtotalAmount: orderFromContext.subtotalAmount || 0,
       subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
     });
+
+    // Socket synced — order is confirmed, unlock the UI
+    setIsPlacingOrder(false);
   }, [placedOrderId, orders]);
 
   // Get current menu items based on category, search, and dietary filters
@@ -263,6 +266,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // Add item to cart with flash feedback
   const addToCart = (item) => {
+    if (isPlacingOrder) return; // Block while placing/updating order
     const existingIndex = cartItems.findIndex(ci => ci.id === item.id && !ci.customizations && !ci.placed);
     if (existingIndex >= 0 && !item.customizations) {
       const updated = [...cartItems];
@@ -403,8 +407,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       // Removed because Phase 3 sockets will handle all real-time state sync.
       // If this causes issues before sockets are live, re-enable: refreshOrders(user?.roleName || 'Manager')
       toast({ title: "Order Failed", description: apiMsg });
-    } finally {
       setIsPlacingOrder(false);
+    } finally {
+      // Don't reset isPlacingOrder here — wait for socket sync in useEffect
+      // Only reset on error (above)
     }
   };
 
@@ -608,7 +614,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           </div>
 
           {/* Menu Items - Pill Layout */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4" style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
             <div className="flex flex-wrap gap-3">
               {getFilteredItems().map(item => {
                 const cartCount = cartCountMap[item.id] || 0;
@@ -617,7 +623,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   <button
                     key={item.id}
                     data-testid={`menu-item-${item.id}`}
-                    onClick={() => item.customizable ? setCustomizationItem(item) : addToCart(item)}
+                    onClick={() => isPlacingOrder ? null : (item.customizable ? setCustomizationItem(item) : addToCart(item))}
                     className="relative px-5 py-3 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-2"
                     style={{
                       backgroundColor: isFlashing ? `${COLORS.primaryGreen}20` : "white",
