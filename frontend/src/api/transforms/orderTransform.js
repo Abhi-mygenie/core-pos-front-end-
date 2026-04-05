@@ -221,13 +221,33 @@ const buildCartItem = (item) => {
     return sum + (price * qty);
   }, 0);
 
-  // Variation data — customized items have selectedVariants (object); API items have variation (array)
-  const variation = item.selectedVariants
-    ? Object.values(item.selectedVariants).filter(Boolean)
-    : (item.variation || []);
+  // Variation data — rebuild full group structure with only selected value
+  // selectedVariants: { groupId: { id, name, price } }
+  // variantGroups: [{ id, name, type, required, min, max, options: [...] }]
+  const variantGroups = item.variantGroups || [];
+  let variations = [];
+  let variationTotal = 0;
 
-  // Calculate variation total price
-  const variationTotal = variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
+  if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
+    variations = Object.entries(item.selectedVariants)
+      .filter(([, option]) => option)
+      .map(([groupId, option]) => {
+        const group = variantGroups.find(g => g.id === groupId) || {};
+        variationTotal += parseFloat(option.price) || 0;
+        return {
+          name: group.name || '',
+          type: group.type || 'single',
+          min: group.min || 0,
+          max: group.max || 0,
+          required: group.required ? 'on' : 'off',
+          values: [{ label: option.name, optionPrice: String(option.price || 0) }],
+        };
+      });
+  } else if (item.variation?.length > 0) {
+    // Fallback for items from API that already have variation array
+    variations = item.variation;
+    variationTotal = item.variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
+  }
 
   // Full unit price = base + addons + variations (for order total calculation)
   const fullUnitPrice = (item.price || 0) + addonTotal + variationTotal;
@@ -244,7 +264,7 @@ const buildCartItem = (item) => {
     add_on_ids:        addonIds,              // flat array [id1, id2]
     add_on_qtys:       addonQtys,             // flat array [qty1, qty2]
     add_ons:           [],                    // unused per working curl
-    variations:        variation,
+    variations:        variations,
     food_level_notes:  Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
   };
 };
