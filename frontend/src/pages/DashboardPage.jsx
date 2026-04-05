@@ -544,6 +544,11 @@ const DashboardPage = () => {
   };
 
   const handleTableClick = (tableEntry) => {
+    // Allow null to clear table selection (used after prepaid payment)
+    if (!tableEntry) {
+      setOrderEntryTable(null);
+      return;
+    }
     // Step 8: Available room → show CheckIn modal instead of OrderEntry
     if (tableEntry.orderType === 'room' && tableEntry.status === 'available') {
       setCheckInRoom(tableEntry);
