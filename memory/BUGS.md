@@ -214,52 +214,29 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 
 ## BUG-208: Socket orderDetails returns empty `variation` and `add_ons`
 
-**Status:** OPEN — Backend Team
-**Priority:** P0 CRITICAL
+**Status:** PARTIALLY FIXED (addons now returned, variations still empty)
+**Priority:** P1 (downgraded from P0 — addons working)
 **Reported:** April 6, 2026
+**Updated:** April 6, 2026
 
 ### Problem
-After placing an order with addons and variations, the socket `new-order` event returns `variation: []` and `add_ons: []` at the order detail level, despite the frontend sending them correctly.
+After placing an order with addons and variations, the socket `new-order` event originally returned `variation: []` and `add_ons: []`.
 
-### Evidence
-**Frontend sends (verified correct):**
+### UPDATE (April 6): Addons now returned by socket!
 ```json
-{
-  "add_on_ids": [10728, 10729],
-  "add_on_qtys": [1, 1],
-  "variations": [{"label": "Large", "optionPrice": "40"}],
-  "variation_amount": 40,
-  "addon_amount": 35
-}
+"add_ons": [{"id": 10730, "name": "lemon pepper Sprinkler", "price": 15, "quantity": 1}]
 ```
+**Variations still empty:** `"variation": []`
 
-**Socket returns:**
-```json
-{
-  "variation": [],
-  "add_ons": [],
-  "unit_price": "119.00",
-  "price": 119
-}
-```
+### Key socket data discovery:
+- `unit_price: "129.00"` = per-unit base price
+- `price: 387` = total line price (unit_price × quantity) — NOT per-unit
+- `fromAPI.orderItem` now normalizes `price` to `unit_price` (BUG-209 fix)
 
-Note: `food_details.add_ons` and `food_details.variations` contain the full **catalog** (all available options), not what was selected.
+### Remaining Impact:
+1. ~~Addon names & quantities lost~~ **FIXED by backend**
+2. **Variation names still lost** — placed items show no variant info
+3. Per-item price correct for base + addons, but missing variation costs
 
-### CRITICAL Impact — All of these break after placing:
-1. **Addon names & quantities lost** — placed items show no addon info
-2. **Variation names lost** — placed items show no variant info (e.g. "Large", "Meal")
-3. **Per-item price incorrect** — shows base price (₹119) instead of full price (₹194 with addons+variations)
-4. **Per-item total incorrect** — no `totalPrice` field returned
-5. **Collect Bill panel line items wrong** — individual prices don't add up to order total
-6. **Collect Bill total correct ONLY because** we use `orderFinancials.amount` (from `order_amount`) as workaround
-
-### Frontend Workaround in place:
-- Collect Bill button/panel total uses `orderFinancials.amount` from socket `order_amount`
-- `food_level_notes` and `order_note` display correctly (these ARE returned by socket)
-- Notes display in orange (consistent before/after placing)
-
-### Backend Action Required
-Store and return per-order-detail:
-- `add_ons`: array of selected addon objects with `{id, name, price, quantity}`
-- `variation`: array of selected variation objects with `{label, optionPrice}`
-- `unit_price`: should reflect full price including addons + variations (not just base)
+### Backend Action Still Required:
+- `variation`: return selected variation objects with `{label, optionPrice}`
