@@ -226,17 +226,9 @@ const buildCartItem = (item) => {
   if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
     variations = Object.entries(item.selectedVariants)
       .filter(([, option]) => option)
-      .map(([groupId, option]) => {
-        const group = variantGroups.find(g => g.id === groupId) || {};
+      .map(([, option]) => {
         variationAmount += parseFloat(option.price) || 0;
-        return {
-          name: group.name || '',
-          type: group.type || 'single',
-          min: group.min || 0,
-          max: group.max || 0,
-          required: group.required ? 'on' : 'off',
-          values: [{ label: option.name, optionPrice: String(option.price || 0) }],
-        };
+        return { label: option.name, optionPrice: String(option.price || 0) };
       });
   } else if (item.variation?.length > 0) {
     variations = item.variation;
