@@ -672,7 +672,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   }
                   setCartItems([]);
                   setShowPaymentPanel(false);
-                  // Prepaid: stay on screen after payment (user navigates back manually)
+                  setPlacedOrderId(null);
+                  setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
+                  // Prepaid: stay on screen, clear table context so user can select next table
                   // Socket + GET enrichment happen in background
                 } catch (err) {
                   const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
