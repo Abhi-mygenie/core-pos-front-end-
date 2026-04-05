@@ -506,14 +506,16 @@ const CartPanel = ({
                     updateQuantity={updateQuantity}
                   />
                 ) : (
-                  <NewItemRow
-                    item={item}
-                    cartIndex={index}
-                    onDeleteItem={onDeleteItem}
-                    updateQuantity={updateQuantity}
-                    onAddNote={onAddNote}
-                    onCustomize={onCustomize}
-                  />
+                  <div style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
+                    <NewItemRow
+                      item={item}
+                      cartIndex={index}
+                      onDeleteItem={onDeleteItem}
+                      updateQuantity={updateQuantity}
+                      onAddNote={onAddNote}
+                      onCustomize={onCustomize}
+                    />
+                  </div>
                 )}
               </div>
             );

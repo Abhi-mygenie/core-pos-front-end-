@@ -601,7 +601,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           </div>
 
           {/* Menu Items - Pill Layout */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4" style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
             <div className="flex flex-wrap gap-3">
               {getFilteredItems().map(item => {
                 const cartCount = cartCountMap[item.id] || 0;
