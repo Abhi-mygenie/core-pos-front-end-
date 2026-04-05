@@ -48,7 +48,13 @@ const CollectPaymentPanel = ({
     if (item.totalPrice) return item.totalPrice;
     const base = (item.price || 0) * (item.qty || 1);
     const addonSum = (item.addOns || []).reduce((s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)), 0);
-    const varSum = (item.variation || []).reduce((s, v) => s + (parseFloat(v.price) || 0), 0);
+    const varSum = (item.variation || []).reduce((s, group) => {
+      // variation format: {name, values: [{label, optionPrice}]}
+      const groupSum = Array.isArray(group.values)
+        ? group.values.reduce((gs, val) => gs + (parseFloat(val.optionPrice) || 0), 0)
+        : (parseFloat(group.price) || 0);
+      return s + groupSum;
+    }, 0);
     return base + ((addonSum + varSum) * (item.qty || 1));
   };
 
