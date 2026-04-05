@@ -386,12 +386,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           setPlacedOrderId(newOrderId);
         }
         toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
-        // Socket new-order event will sync cart from OrderContext (source of truth)
+        // Clear local items — socket will repopulate with placed items from server
+        setCartItems([]);
       }
 
-      // For Update Order: socket update-order event will sync
+      // For Update Order: clear unplaced items — socket will bring back all placed items
       if (hasPlaced && placedOrderId && orderIdToRefresh) {
-        console.log('[UpdateOrder] Waiting for socket sync');
+        setCartItems(prev => prev.filter(i => i.placed));
       }
       setEditingQtyItemId(null);
     } catch (err) {
