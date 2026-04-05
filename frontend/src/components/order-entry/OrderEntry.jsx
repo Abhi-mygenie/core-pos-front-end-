@@ -311,18 +311,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);
 
-  // Cart total: use orderFinancials.amount for placed orders (socket prices lack addon/variation),
-  // fall back to local cart calculation for unplaced items
+  // Cart total: include tax for Collect Bill button display
+  // Before placing: calculate locally (subtotal + tax)
+  // After placing: use orderFinancials.amount from socket (already includes tax)
   const hasPlacedItems = cartItems.some(i => i.placed);
-  const localTotal = cartItems.reduce((sum, item) =>
+  const localSubtotal = cartItems.reduce((sum, item) =>
     item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
   const unplacedTotal = cartItems
     .filter(i => !i.placed && i.status !== 'cancelled')
     .reduce((sum, item) => sum + (item.totalPrice || (item.price * item.qty)), 0);
+  // total = final amount including tax (for Collect Bill button)
   const total = hasPlacedItems
     ? (orderFinancials.amount || 0) + unplacedTotal
-    : localTotal;
+    : localSubtotal;
 
   // handlePlaceOrder — CHG-037: Place Order API
   const handlePlaceOrder = async () => {
