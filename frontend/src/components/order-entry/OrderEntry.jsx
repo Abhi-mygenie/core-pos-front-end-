@@ -37,7 +37,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
-  const { updateTableStatus, setTableEngaged } = useTables();
+  const { updateTableStatus, setTableEngaged, waitForTableEngaged } = useTables();
   const { toast } = useToast();
 
   // Adapt real product data to the format expected by menu item pills
@@ -351,7 +351,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const hasPlaced = cartItems.some(i => i.placed);
 
       if (hasPlaced && placedOrderId) {
-        // Scenario 1 — Update Order (add new items to existing order)
+        // Scenario 1 — Update Order: await API + wait for socket engage before redirect
         const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
           restaurantId: restaurant?.id,
           orderNotes,
@@ -359,16 +359,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           existingOrderTotal: orderFinancials.amount || 0,
           existingSubtotal: orderFinancials.subtotalBeforeTax || 0,
         });
-        // Fire and forget — redirect immediately, API completes in background
-        api.put(API_ENDPOINTS.UPDATE_ORDER, payload)
-          .then(res => console.log('[UpdateOrder] response:', res.data))
-          .catch(err => {
-            console.log('[UpdateOrder] ERROR:', err?.response?.data);
-            toast({ title: "Order Update Failed", description: err?.response?.data?.message || err?.message });
-          });
+        const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
+        console.log('[UpdateOrder] response:', response.data);
         toast({ title: "Order Updated", description: "Items sent to kitchen" });
+
+        // Wait for socket update-table (engage) before redirect
+        const tableId = Number(effectiveTable?.tableId);
+        if (tableId) {
+          await waitForTableEngaged(tableId, 5000);
+        }
       } else {
-        // Scenario 2 / New Order — Place Order
+        // Scenario 2 / New Order — Place Order: fire and forget
         const payload = orderToAPI.placeOrder(
           { ...table, tableId: table?.tableId },
           cartItems, customer, orderType,
@@ -377,7 +378,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
         const formData = new FormData();
         formData.append('data', JSON.stringify(payload));
-        // Fire and forget — redirect immediately, API completes in background
         api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
@@ -389,8 +389,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         toast({ title: "Order Placed", description: "Order sent to kitchen" });
       }
 
-      // Redirect to dashboard immediately — API call continues in background
+      // Redirect to dashboard
       onClose();
+    } catch (err) {
+      console.log('[PlaceOrder] ERROR status:', err?.response?.status);
+      console.log('[PlaceOrder] ERROR response:', err?.response?.data);
+      const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed';
+      toast({ title: "Order Failed", description: apiMsg });
     } finally {
       setIsPlacingOrder(false);
     }

@@ -12,6 +12,7 @@ export const TableProvider = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   // Engaged tables — temporarily locked during update-order transactions
   const [engagedTables, setEngagedTables] = useState(new Set());
+  const engagedTablesRef = useRef(new Set());
 
   // Set tables (called from LoadingPage) - includes both tables and rooms
   const setTables = useCallback((data) => {
@@ -43,15 +44,14 @@ export const TableProvider = ({ children }) => {
   const setTableEngaged = useCallback((tableId, engaged) => {
     if (!tableId || tableId === 0) return;
     console.log(`[TableContext] setTableEngaged: ${tableId} → ${engaged}`);
-    setEngagedTables(prev => {
-      const next = new Set(prev);
-      if (engaged) {
-        next.add(tableId);
-      } else {
-        next.delete(tableId);
-      }
-      return next;
-    });
+    const next = new Set(engagedTablesRef.current);
+    if (engaged) {
+      next.add(tableId);
+    } else {
+      next.delete(tableId);
+    }
+    engagedTablesRef.current = next;
+    setEngagedTables(next);
   }, []);
 
   /**
@@ -62,6 +62,29 @@ export const TableProvider = ({ children }) => {
   const isTableEngaged = useCallback((tableId) => {
     return engagedTables.has(tableId);
   }, [engagedTables]);
+
+  /**
+   * Wait for a table to become engaged (poll ref, not state)
+   * @param {number} tableId
+   * @param {number} timeoutMs
+   * @returns {Promise<boolean>}
+   */
+  const waitForTableEngaged = useCallback((tableId, timeoutMs = 5000) => {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const check = () => {
+        if (engagedTablesRef.current.has(tableId)) {
+          resolve(true);
+        } else if (Date.now() - start > timeoutMs) {
+          console.log(`[TableContext] waitForTableEngaged: timeout for ${tableId}`);
+          resolve(false);
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
+    });
+  }, []);
 
   /**
    * Update table status from socket event
@@ -185,6 +208,7 @@ export const TableProvider = ({ children }) => {
     updateTableStatus,
     setTableEngaged,
     isTableEngaged,
+    waitForTableEngaged,
     
     // Helpers (work for both tables and rooms)
     getTableById,
@@ -205,6 +229,7 @@ export const TableProvider = ({ children }) => {
     updateTableStatus,
     setTableEngaged,
     isTableEngaged,
+    waitForTableEngaged,
     getTableById,
     getTableByNumber,
     getTablesBySection,
