@@ -506,7 +506,6 @@ const CartPanel = ({
                     updateQuantity={updateQuantity}
                   />
                 ) : (
-                  <div style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
                   <NewItemRow
                     item={item}
                     cartIndex={index}
@@ -515,7 +514,6 @@ const CartPanel = ({
                     onAddNote={onAddNote}
                     onCustomize={onCustomize}
                   />
-                  </div>
                 )}
               </div>
             );

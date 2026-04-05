@@ -219,9 +219,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       subtotalAmount: orderFromContext.subtotalAmount || 0,
       subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
     });
-
-    // Socket synced — order is confirmed, unlock the UI
-    setIsPlacingOrder(false);
   }, [placedOrderId, orders]);
 
   // Get current menu items based on category, search, and dietary filters
@@ -266,7 +263,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // Add item to cart with flash feedback
   const addToCart = (item) => {
-    if (isPlacingOrder) return; // Block while placing/updating order
     const existingIndex = cartItems.findIndex(ci => ci.id === item.id && !ci.customizations && !ci.placed);
     if (existingIndex >= 0 && !item.customizations) {
       const updated = [...cartItems];
@@ -353,12 +349,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setIsPlacingOrder(true);
     try {
       const hasPlaced = cartItems.some(i => i.placed);
-      let orderIdToRefresh = null;
 
       if (hasPlaced && placedOrderId) {
         // Scenario 1 — Update Order (add new items to existing order)
-        // Note: total is calculated internally by updateOrder with proper tax breakup
-        // Pass existing order totals so complete order amount is sent
         const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
           restaurantId: restaurant?.id,
           orderNotes,
@@ -369,7 +362,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
         console.log('[UpdateOrder] response:', response.data);
         toast({ title: "Order Updated", description: response.data?.message || "Items added to order" });
-        orderIdToRefresh = placedOrderId;
       } else {
         // Scenario 2 / New Order — Place Order
         const payload = orderToAPI.placeOrder(
@@ -377,7 +369,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           cartItems, customer, orderType,
           { restaurantId: restaurant?.id, orderNotes, total, printAllKOT }
         );
-        console.log('[PlaceOrder] table object:', table);
         console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
         const formData = new FormData();
         formData.append('data', JSON.stringify(payload));
@@ -385,32 +376,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('[PlaceOrder] response:', response.data);
-        const newOrderId = response.data?.order_id;
-        if (newOrderId) {
-          setPlacedOrderId(newOrderId);
-        }
-        toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
-        // Clear local items — socket will repopulate with placed items from server
-        setCartItems([]);
       }
 
-      // For Update Order: clear unplaced items — socket will bring back all placed items
-      if (hasPlaced && placedOrderId && orderIdToRefresh) {
-        setCartItems(prev => prev.filter(i => i.placed));
-      }
-      setEditingQtyItemId(null);
+      // Success — redirect to dashboard. Socket + GET enrichment happen in background.
+      toast({ title: hasPlaced ? "Order Updated" : "Order Placed", description: "Redirecting to dashboard..." });
+      onClose();
     } catch (err) {
       console.log('[PlaceOrder] ERROR status:', err?.response?.status);
       console.log('[PlaceOrder] ERROR response:', err?.response?.data);
       const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed to place order';
-      // ⚠️ DISABLED (Phase 3 — B33): Was refreshOrders on 403 to recover stale state.
-      // Removed because Phase 3 sockets will handle all real-time state sync.
-      // If this causes issues before sockets are live, re-enable: refreshOrders(user?.roleName || 'Manager')
       toast({ title: "Order Failed", description: apiMsg });
-      setIsPlacingOrder(false);
     } finally {
-      // Don't reset isPlacingOrder here — wait for socket sync in useEffect
-      // Only reset on error (above)
+      setIsPlacingOrder(false);
     }
   };
 
@@ -614,7 +591,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           </div>
 
           {/* Menu Items - Pill Layout */}
-          <div className="flex-1 overflow-y-auto p-4" style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
+          <div className="flex-1 overflow-y-auto p-4">
             <div className="flex flex-wrap gap-3">
               {getFilteredItems().map(item => {
                 const cartCount = cartCountMap[item.id] || 0;
@@ -623,7 +600,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   <button
                     key={item.id}
                     data-testid={`menu-item-${item.id}`}
-                    onClick={() => isPlacingOrder ? null : (item.customizable ? setCustomizationItem(item) : addToCart(item))}
+                    onClick={() => item.customizable ? setCustomizationItem(item) : addToCart(item)}
                     className="relative px-5 py-3 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-2"
                     style={{
                       backgroundColor: isFlashing ? `${COLORS.primaryGreen}20` : "white",
