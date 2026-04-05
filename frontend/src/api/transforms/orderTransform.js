@@ -241,8 +241,9 @@ const buildCartItem = (item) => {
     tax:               item.tax?.percentage || 0,
     tax_type:          item.tax?.type || 'GST',
     tax_calc:          item.tax?.calculation || 'Exclusive',
-    add_ons:           addonIds.length > 0 ? [addonIds] : [],
-    add_on_qtys:       addonQtys.length > 0 ? [addonQtys] : [],
+    add_on_ids:        addonIds,              // flat array [id1, id2]
+    add_on_qtys:       addonQtys,             // flat array [qty1, qty2]
+    add_ons:           [],                    // unused per working curl
     variation:         variation,
     food_level_notes:  Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
   };
