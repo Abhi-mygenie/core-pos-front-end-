@@ -425,19 +425,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
-    const isFullCancel = cancelQuantity >= item.qty;
-    let payload;
-    
-    // Both full and partial cancel use the same endpoint
-    // Partial cancel includes cancel_qty field
-    if (isFullCancel) {
-      payload = orderToAPI.cancelItemFull(effectiveTable, item, reason);
-    } else {
-      payload = orderToAPI.cancelItemPartial(effectiveTable, item, reason, cancelQuantity);
-    }
-    
-    // Same endpoint for both - CANCEL_ITEM_FULL
-    const response = await api.put(API_ENDPOINTS.CANCEL_ITEM_FULL, payload);
+    // Always use partial-cancel endpoint with cancel_qty
+    // Full cancel = cancel_qty equals item.qty
+    const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
+    const response = await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
     toast({
       title: "Item Cancelled",
       description: response.data?.message || `${item?.name} cancelled successfully`,

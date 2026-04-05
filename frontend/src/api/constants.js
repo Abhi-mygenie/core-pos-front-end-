@@ -22,8 +22,7 @@ export const API_ENDPOINTS = {
   TRANSFER_FOOD: '/api/v2/vendoremployee/transfer-food-item',
 
   // Cancel Operations (Phase 1C)
-  CANCEL_ITEM_FULL: '/api/v2/vendoremployee/cancel-food-item',
-  CANCEL_ITEM_PARTIAL: '/api/v2/vendoremployee/partial-cancel-food-item',
+  CANCEL_ITEM: '/api/v2/vendoremployee/partial-cancel-food-item',
   ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order-status-update',
   FOOD_STATUS_UPDATE: '/api/v2/vendoremployee/food-status-update',
 
