@@ -885,15 +885,21 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           item={itemNotesModal.item}
           onClose={() => setItemNotesModal(null)}
           onSave={(notes) => {
-            // Update the cart item with notes
+            // Update the cart item with notes (clear legacy item.notes, use itemNotes array)
             setCartItems(prev => prev.map((item, idx) => 
               idx === itemNotesModal.cartIndex 
-                ? { ...item, itemNotes: notes }
+                ? { ...item, itemNotes: notes, notes: '' }
                 : item
             ));
             setItemNotesModal(null);
           }}
-          initialNotes={itemNotesModal.item?.itemNotes || []}
+          initialNotes={
+            itemNotesModal.item?.itemNotes?.length > 0
+              ? itemNotesModal.item.itemNotes
+              : itemNotesModal.item?.notes
+                ? [{ id: `custom-legacy`, label: itemNotesModal.item.notes, type: 'custom' }]
+                : []
+          }
           customerId={customer?.id || null}
         />
       )}
