@@ -165,6 +165,12 @@ export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStat
       const transformedOrder = orderFromAPI.order(apiOrder);
       addOrder(transformedOrder);
       syncTableStatus(transformedOrder, updateTableStatus);
+      // Engage table immediately so waitForTableEngaged resolves in OrderEntry
+      // (Backend does NOT send update-table engage for new orders, unlike update-order)
+      if (setTableEngaged && transformedOrder.tableId) {
+        setTableEngaged(transformedOrder.tableId, true);
+        log('INFO', `new-order: Table ${transformedOrder.tableId} ENGAGED (locked)`);
+      }
       log('INFO', `new-order: Added order ${transformedOrder.orderId} (socket data)`);
 
       // Enrich with GET single order (fills missing 16 fields: subtotal, tax, etc.)
