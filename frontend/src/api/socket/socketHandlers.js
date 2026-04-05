@@ -176,7 +176,7 @@ export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
  * Message: [update-order, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus }) => {
+export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus, getOrderById }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -186,6 +186,12 @@ export const handleUpdateOrder = async (message, { updateOrder, updateTableStatu
   
   const { orderId } = parsed;
   log('INFO', `update-order received: ${orderId}`);
+  
+  // Guard: skip if order was already removed (cancelled/paid)
+  if (getOrderById && !getOrderById(orderId)) {
+    log('INFO', `update-order: Order ${orderId} already removed, skipping`);
+    return;
+  }
   
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
@@ -202,7 +208,7 @@ export const handleUpdateOrder = async (message, { updateOrder, updateTableStatu
  * Message: [update-food-status, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleUpdateFoodStatus = async (message, { updateOrder, updateTableStatus }) => {
+export const handleUpdateFoodStatus = async (message, { updateOrder, updateTableStatus, getOrderById }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -212,6 +218,12 @@ export const handleUpdateFoodStatus = async (message, { updateOrder, updateTable
   
   const { orderId } = parsed;
   log('INFO', `update-food-status received: ${orderId}`);
+  
+  // Guard: skip if order was already removed (cancelled/paid)
+  if (getOrderById && !getOrderById(orderId)) {
+    log('INFO', `update-food-status: Order ${orderId} already removed, skipping`);
+    return;
+  }
   
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
@@ -254,26 +266,48 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
     return;
   }
   
-  // For all other statuses (including cancelled=3), fetch fresh order data
-  // This handles single item cancellation - order still exists with remaining items
+  // Cancelled orders (status 3) — could be full order cancel or single item cancel
+  // Check if order was already removed by UI (full cancel via OrderEntry/DashboardPage)
+  if (fOrderStatus === 3) {
+    const existingOrder = getOrderById ? getOrderById(orderId) : null;
+    if (!existingOrder) {
+      log('INFO', `update-order-status: Order ${orderId} already removed (full cancel), skipping`);
+      return;
+    }
+    
+    // Order still in context — could be single item cancel. Fetch to check.
+    const order = await fetchOrderWithRetry(orderId);
+    if (order) {
+      const allItemsCancelled = !order.items?.length || 
+        order.items.every(item => item.status === 'cancelled');
+      
+      if (allItemsCancelled) {
+        log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
+        syncTableStatus(order, updateTableStatus, 'available');
+        removeOrder(orderId);
+      } else {
+        updateOrder(order.orderId, order);
+        syncTableStatus(order, updateTableStatus);
+        log('INFO', `update-order-status: Updated order ${orderId} (single item cancel)`);
+      }
+    } else {
+      log('WARN', `update-order-status: Order ${orderId} not found in API, removing`);
+      if (existingOrder?.tableId && existingOrder.tableId !== 0) {
+        syncTableStatus(existingOrder, updateTableStatus, 'available');
+      }
+      removeOrder(orderId);
+    }
+    return;
+  }
+  
+  // For all other statuses, fetch fresh order data
   const order = await fetchOrderWithRetry(orderId);
   
   if (order) {
-    // Check if ALL items are cancelled (order is truly cancelled)
-    const allItemsCancelled = !order.items?.length || 
-      order.items.every(item => item.status === 'cancelled');
-    
-    if (allItemsCancelled) {
-      log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
-      syncTableStatus(order, updateTableStatus, 'available');
-      removeOrder(orderId);
-    } else {
-      updateOrder(order.orderId, order);
-      syncTableStatus(order, updateTableStatus);
-      log('INFO', `update-order-status: Updated order ${orderId}`);
-    }
+    updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
+    log('INFO', `update-order-status: Updated order ${orderId}`);
   } else {
-    // Order not found in API - might be fully cancelled/deleted
     log('WARN', `update-order-status: Order ${orderId} not found, removing from context`);
     const existingOrder = getOrderById ? getOrderById(orderId) : null;
     if (existingOrder?.tableId && existingOrder.tableId !== 0) {

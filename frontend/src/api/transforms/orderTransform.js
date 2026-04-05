@@ -239,21 +239,18 @@ export const toAPI = {
   }),
 
   /**
-   * Cancel order item — called once per non-cancelled item to cancel entire order
-   * cancel_type: "Pre-Serve" (item still cooking) | "Post-Serve" (item cooked/served)
-   * Endpoint: PUT /api/v2/vendoremployee/food-status-update
-   * @param {Object} currentTable - Table entry (has orderId)
-   * @param {Object} item         - Cart item (has id, foodId, status)
-   * @param {Object} reason       - Order-level cancellation reason
+   * Cancel entire order — single API call
+   * Endpoint: PUT /api/v2/vendoremployee/order-status-update
+   * @param {number} orderId   - Order ID
+   * @param {string} roleName  - User role from profile (e.g. 'Manager')
+   * @param {Object} reason    - { reasonText, reasonNote? }
    */
-  cancelOrderItem: (currentTable, item, reason) => ({
-    order_id:      currentTable.orderId,
-    order_food_id: item.foodId,
-    item_id:       item.id,
-    order_status:  'cancelled',
-    reason_type:   reason.reasonId,
-    reason:        reason.reasonText,
-    cancel_type:   item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
+  cancelOrder: (orderId, roleName, reason) => ({
+    order_id:            orderId,
+    role_name:           roleName,
+    order_status:        'cancelled',
+    cancellation_reason: reason.reasonText,
+    cancellation_note:   reason.reasonNote || reason.reasonText,
   }),
 
   /**

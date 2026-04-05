@@ -98,9 +98,10 @@ const DashboardPage = () => {
   const { getOrderCancellationReasons } = useSettings();
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
-    orderItemsByTableId, getOrderByTableId,
+    orderItemsByTableId, getOrderByTableId, removeOrder,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
+  const { updateTableStatus } = useTables();
 
   // Socket events - subscribe to real-time updates
   const { isConnected: socketConnected } = useSocketEvents();
@@ -496,7 +497,7 @@ const DashboardPage = () => {
           order_status: 'preparing',
           cancel_type: null,
         };
-        await api.put(API_ENDPOINTS.CANCEL_ORDER, payload);
+        await api.put(API_ENDPOINTS.FOOD_STATUS_UPDATE, payload);
       }
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);
@@ -513,18 +514,20 @@ const DashboardPage = () => {
     if (!cancelOrderEntry) return;
 
     const order = getOrderDataForEntry(cancelOrderEntry);
-    if (!order || !order.items) return;
+    if (!order) return;
 
-    const itemsToCancel = order.items.filter(i => i.status !== 'cancelled');
-    for (const item of itemsToCancel) {
-      const payload = orderToAPI.cancelOrderItem(
-        { orderId: order.orderId },
-        item,
-        reason
-      );
-      await api.put(API_ENDPOINTS.CANCEL_ORDER, payload);
+    const payload = orderToAPI.cancelOrder(order.orderId, user?.roleName || 'Manager', reason);
+    await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+
+    // Immediate UI update
+    removeOrder(order.orderId);
+    const tableId = cancelOrderEntry?.id;
+    if (tableId) {
+      updateTableStatus(tableId, 'available');
     }
-  }, [cancelOrderEntry, getOrderDataForEntry]);
+
+    setCancelOrderEntry(null);
+  }, [cancelOrderEntry, getOrderDataForEntry, user, removeOrder, updateTableStatus]);
 
   const handleSearchSelect = (selection) => {
     const { type, data } = selection;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed, Trash2 } from "lucide-react";
 import { COLORS } from "../../constants";
-import { useMenu, useOrders, useSettings, useRestaurant, useAuth } from "../../contexts";
+import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
 import { API_ENDPOINTS } from "../../api/constants";
@@ -38,6 +38,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
+  const { updateTableStatus } = useTables();
   const { toast } = useToast();
 
   // Adapt real product data to the format expected by menu item pills
@@ -467,25 +468,24 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const handleCancelOrder = async (reason) => {
-    // Get all placed, non-cancelled items
-    const itemsToCancel = cartItems.filter(i => i.placed && i.status !== 'cancelled');
-    // Sequential API calls — one per item, cancel_type based on item status
-    for (const item of itemsToCancel) {
-      const payload = orderToAPI.cancelOrderItem(effectiveTable, item, reason);
-      await api.put(API_ENDPOINTS.CANCEL_ORDER, payload);
-    }
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    if (!orderId) return;
+
+    const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
+    await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+
     toast({
       title: "Order Cancelled",
-      description: `${itemsToCancel.length} item(s) cancelled for ${table?.label || table?.id}`,
+      description: `Order cancelled for ${table?.label || table?.id}`,
     });
-    
-    // Remove order from context to clear table immediately
-    // (Socket will also fire but this ensures immediate UI update)
-    const orderId = effectiveTable?.orderId || placedOrderId;
-    if (orderId) {
-      removeOrder(orderId);
+
+    // Immediate UI update — socket will also fire but this ensures instant feedback
+    removeOrder(orderId);
+    const tableId = effectiveTable?.id || table?.id;
+    if (tableId) {
+      updateTableStatus(tableId, 'available');
     }
-    
+
     onClose();
   };
 
