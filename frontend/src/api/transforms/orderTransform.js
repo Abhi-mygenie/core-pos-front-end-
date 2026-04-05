@@ -279,7 +279,7 @@ const buildCartItem = (item) => {
   const isGst = taxType === 'GST';
 
   return {
-    food_id:             item.id,
+    food_id:             item.foodId || item.id,
     quantity:            item.qty || 1,
     price:               basePrice,
     variant:             '',
