@@ -43,6 +43,15 @@ const CollectPaymentPanel = ({
     [associatedOrders]
   );
 
+  // Helper: get full line price for an item (includes addons + variations)
+  const getItemLinePrice = (item) => {
+    if (item.totalPrice) return item.totalPrice;
+    const base = (item.price || 0) * (item.qty || 1);
+    const addonSum = (item.addOns || []).reduce((s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)), 0);
+    const varSum = (item.variation || []).reduce((s, v) => s + (parseFloat(v.price) || 0), 0);
+    return base + ((addonSum + varSum) * (item.qty || 1));
+  };
+
   // Per-item tax computation — uses product.tax if available, else 0%
   // Only calculate for active (non-cancelled) items
   const taxTotals = useMemo(() => {
@@ -50,7 +59,7 @@ const CollectPaymentPanel = ({
     activeItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
-      const linePrice = item.price * (item.qty || 1);
+      const linePrice = getItemLinePrice(item);
       let taxAmt;
       if (tax.isInclusive) {
         taxAmt = linePrice - (linePrice / (1 + tax.percentage / 100));
@@ -96,14 +105,14 @@ const CollectPaymentPanel = ({
   // Group items by station (only active items)
   const barItems = activeItems.filter(item => item.station === "bar");
   const kitchenItems = activeItems.filter(item => item.station === "kitchen" || !item.station);
-  const barTotal = barItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  const kitchenTotal = kitchenItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const barTotal = barItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
+  const kitchenTotal = kitchenItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
 
   // Calculate bill
   // For placed orders, use API values; for new orders, calculate locally
   const itemTotal = hasPlacedItems && orderFinancials.subtotalBeforeTax > 0
     ? orderFinancials.subtotalBeforeTax
-    : activeItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    : activeItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
   
   // Discount from restaurant preset types (from RestaurantContext)
   const [selectedDiscountType, setSelectedDiscountType] = useState(null);
@@ -330,12 +339,13 @@ const CollectPaymentPanel = ({
                             {item.customizations && (
                               <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
                                 └─ {item.customizations.size}
+                                {item.customizations.variants?.length > 0 && (item.customizations.size ? ', ' : '') + item.customizations.variants.join(", ")}
                                 {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
                               </div>
                             )}
                           </div>
                           <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
-                            ₹{(item.price * item.qty).toLocaleString()}
+                            ₹{getItemLinePrice(item).toLocaleString()}
                           </span>
                         </div>
                       ))}
@@ -509,12 +519,13 @@ const CollectPaymentPanel = ({
                     {item.customizations && (
                       <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
                         └─ {item.customizations.size}
+                        {item.customizations.variants?.length > 0 && (item.customizations.size ? ', ' : '') + item.customizations.variants.join(", ")}
                         {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
                       </div>
                     )}
                   </div>
                   <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
-                    ₹{(item.price * item.qty).toLocaleString()}
+                    ₹{getItemLinePrice(item).toLocaleString()}
                   </span>
                 </div>
               ))}
@@ -984,7 +995,7 @@ const CollectPaymentPanel = ({
                       </div>
                       <div className="text-xs space-y-0.5" style={{ color: COLORS.grayText }}>
                         {cancelledItems.map((item, idx) => (
-                          <div key={idx} className="line-through">{item.name} x{item.qty} - ₹{item.price * item.qty}</div>
+                          <div key={idx} className="line-through">{item.name} x{item.qty} - ₹{getItemLinePrice(item)}</div>
                         ))}
                       </div>
                     </div>
