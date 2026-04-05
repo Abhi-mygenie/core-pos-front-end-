@@ -1,6 +1,6 @@
 # POS Frontend - Bug Tracker & Audit Document
 
-**Last Updated:** April 5, 2026
+**Last Updated:** Feb 2026
 
 ---
 
@@ -231,6 +231,27 @@ Backend now returns both fields correctly:
 
 ---
 
+## BUG-209: Placed Item Prices Double-Multiplied
+
+**Status:** FIXED ✅
+**Priority:** P0
+**Reported:** April 6, 2026
+**Fixed:** April 6, 2026
+
+### Symptom
+Placed items showed ₹1,904 instead of ₹476 for qty=4. The socket `detail.price` returns the **total** line price (unit × qty), but display code multiplied by qty again.
+
+### Root Cause
+`fromAPI.orderItem()` mapped `detail.price` directly. Display then did `price × qty` = double multiplication.
+
+### Fix Applied
+`fromAPI.orderItem()` now normalizes `price` to use `unit_price` (per-unit base). Display formula `unit_price × qty` is correct.
+
+### Files Changed
+- `orderTransform.js` — `fromAPI.orderItem()`: `price: parseFloat(detail.unit_price) || detail.food_details?.price || 0`
+
+---
+
 ## BUG-210: No table engage check before placing order (MULTI-DEVICE RACE CONDITION)
 
 **Status:** OPEN — CRITICAL
@@ -258,6 +279,52 @@ Before calling place-order API:
 ### Impact
 Two orders on same table → billing confusion, order conflicts, data corruption.
 
+---
+
+## BUG-211: Backend does NOT send `update-table engage` for new orders
+
+**Status:** WORKAROUND IMPLEMENTED ✅
+**Priority:** P1
+**Reported:** Feb 2026
+**Workaround:** Feb 2026
+
+### Problem
+When placing a **new order**, the backend sends:
+- `new-order` on the order channel ✅
+- But **NO** `update-table engage` on the table channel ❌
+
+For **update order**, the backend correctly sends:
+- `update-order` on the order channel ✅
+- `update-table engage` on the table channel ✅
+
+This asymmetry caused `waitForTableEngaged(tableId)` to **timeout** (5s) for new orders, because nobody ever set the table as engaged.
+
+### Evidence (User Console Logs)
+```
+[SocketHandler] new-order received: 730440
+[OrderContext] addOrder: Adding new order 730440
+[TableContext] updateTableStatus: 4259 → occupied
+[SocketHandler] Fetching order 730440 (attempt 1)
+[PlaceOrder] response: {message: 'Order placed successfully', order_id: 730440}
+[SocketHandler] Fetched order 730440 successfully
+[OrderContext] updateOrder: Updating order 730440
+[SocketHandler] new-order: Enriched order 730440 (GET API data)
+[TableContext] setTableEngaged: 4259 → false          ← Released, but never engaged!
+[TableContext] waitForTableEngaged: timeout for 4259   ← TIMED OUT because never engaged
+```
+
+### Workaround Applied (Frontend)
+In `socketHandlers.js` → `handleNewOrder`:
+1. Immediately call `setTableEngaged(tableId, true)` when `new-order` arrives
+2. This triggers `waitForTableEngaged()` in `OrderEntry.jsx` to resolve
+3. After GET enrichment completes, release via `requestAnimationFrame × 2 → setTableEngaged(false)`
+
+### Backend Action Suggested
+Send `update-table engage` on the table channel for new orders, same as update orders, for consistency.
+
+---
+
+## BUG-204 (Extended): Socket `new-order` Missing Financial Fields
 
 **Status:** WORKAROUND IMPLEMENTED (GET single order enrichment)
 **Priority:** P1

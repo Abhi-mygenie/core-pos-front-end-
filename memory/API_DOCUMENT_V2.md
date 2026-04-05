@@ -1,7 +1,7 @@
 # API Document v2 — Place Order Endpoint
 
-**Version:** 2.0
-**Last Updated:** April 6, 2026
+**Version:** 2.1
+**Last Updated:** Feb 2026
 **Endpoint:** `POST /api/v1/vendoremployee/order/place-order`
 
 ---
@@ -312,23 +312,37 @@ Each item in the `cart` array:
 ```
 Socket event: new_order_{restaurant_id}
   → Extract orderObject from payload
-  → Log RAW orderDetails (debug)
   → Transform: orderFromAPI.order(apiOrder) → transformedOrder
   → OrderContext.addOrder(transformedOrder)
   → TableContext.updateTableStatus(tableId, derivedStatus)
+  → TableContext.setTableEngaged(tableId, true)      ← NEW: Engage immediately
+  → Background: fetchSingleOrderForSocket(orderId)
+    → OrderContext.updateOrder(fullOrder)             ← Enrichment (51 keys)
+    → requestAnimationFrame × 2
+    → TableContext.setTableEngaged(tableId, false)    ← Release lock after paint
 ```
 
-### 2. OrderContext (`OrderContext.jsx` → `addOrder`)
+### 2. Socket Handler (`socketHandlers.js` → `handleUpdateOrder`)
+```
+Socket event: update_order_{restaurant_id}
+  → fetchSingleOrderForSocket(orderId)
+  → OrderContext.updateOrder(fullOrder)
+  → TableContext.updateTableStatus(tableId, derivedStatus)
+  → requestAnimationFrame × 2
+  → TableContext.setTableEngaged(tableId, false)      ← Release lock after paint
+```
+
+### 3. OrderContext (`OrderContext.jsx` → `addOrder`)
 - Adds transformed order to `orders` state array
 - If order already exists (by orderId), replaces it
 - Triggers re-render of all consumers
 
-### 3. TableContext (`TableContext.jsx` → `updateTableStatus`)
+### 4. TableContext (`TableContext.jsx` → `updateTableStatus`)
 - Updates table status based on order status
 - `order_status: "queue"` → table becomes `"occupied"`
 - `payment_status: "paid"` → table becomes `"billReady"`
 
-### 4. OrderEntry Sync (`OrderEntry.jsx` → useEffect)
+### 5. OrderEntry Sync (`OrderEntry.jsx` → useEffect)
 ```
 Watches: placedOrderId, orders array
   → Finds order in OrderContext by placedOrderId
@@ -352,6 +366,69 @@ Watches: placedOrderId, orders array
 - `item.totalPrice` → **undefined** (not returned by socket)
 - `item.selectedAddons` / `item.selectedVariants` → **undefined**
 - Only `item.notes` (from `food_level_notes`), `item.price` (base), `item.qty`, `item.addOns` (empty), `item.variation` (empty) survive
+
+---
+
+## Table Engaged Lock Mechanism (Feb 2026)
+
+### Purpose
+Prevents users from clicking a table on the Dashboard while its background GET enrichment is still running. Without this, clicking a table before `OrderContext` is fully populated shows stale/incomplete data.
+
+### Architecture
+```
+TableContext.jsx:
+  engagedTables: Set<number>          — React state (triggers re-render)
+  engagedTablesRef: Ref<Set<number>>  — Mutable ref (for polling without re-render)
+
+  setTableEngaged(tableId, true/false) — Updates both state + ref
+  isTableEngaged(tableId)              — Reads from state (for UI blocking)
+  waitForTableEngaged(tableId, ms)     — Polls ref every 50ms until engaged or timeout
+```
+
+### Flow: Place New Order
+```
+OrderEntry.handlePlaceOrder:
+  1. setIsPlacingOrder(true)                         ← UI overlay (disabled)
+  2. await api.post(PLACE_ORDER, formData)           ← Await HTTP response
+  3. await waitForTableEngaged(tableId, 5000)        ← Poll until socket engages
+  4. onClose() → redirect to Dashboard               ← Table shows as engaged (locked)
+
+socketHandlers.handleNewOrder:                        (runs in parallel after step 2)
+  1. addOrder(transformedOrder)                       ← 35-key socket data
+  2. setTableEngaged(tableId, true)                   ← Engage (triggers waitFor resolve)
+  3. fetchSingleOrderForSocket(orderId)               ← Background GET (51 keys)
+  4. updateOrder(fullOrder)                           ← Enrichment
+  5. requestAnimationFrame × 2                        ← Wait for React paint
+  6. setTableEngaged(tableId, false)                  ← Release lock
+```
+
+### Flow: Update Existing Order
+```
+OrderEntry.handlePlaceOrder (update path):
+  1. setIsPlacingOrder(true)                         ← UI overlay
+  2. await api.put(UPDATE_ORDER, payload)            ← Await HTTP response
+  3. await waitForTableEngaged(tableId, 5000)        ← Poll until socket engages
+
+socketHandlers.handleUpdateTable:                     (backend sends update-table engage)
+  1. setTableEngaged(tableId, true)                   ← Triggers waitFor resolve
+
+OrderEntry:
+  4. onClose() → redirect to Dashboard               ← Table shows as engaged
+
+socketHandlers.handleUpdateOrder:                     (runs after update-table)
+  1. fetchSingleOrderForSocket(orderId)               ← Full GET
+  2. updateOrder(fullOrder)                           ← Context updated
+  3. requestAnimationFrame × 2
+  4. setTableEngaged(tableId, false)                  ← Release lock
+```
+
+### KEY LEARNING: Socket Behavior Difference
+| Action | `update-table engage` sent by backend? | Table engage source |
+|--------|---------------------------------------|-------------------|
+| **Place New Order** | **NO** | Frontend `handleNewOrder` sets engage locally |
+| **Update Order** | **YES** (via `update_table_{restaurantId}` channel) | Socket `handleUpdateTable` |
+
+This asymmetry required implementing the engage inside `handleNewOrder` directly, rather than relying on the socket `update-table` channel.
 
 ---
 

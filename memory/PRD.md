@@ -30,11 +30,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - Frontend: RUNNING (localhost:3000)
 - Connected to external MyGenie API (preprod environment)
 - All core flows migrated to v1 endpoints
-- New Order flow now mirrors Update Order flow (await API → await socket engage → redirect)
-
-## Bugs - Fixed ✅ (Recent)
-- **BUG-209**: Placed item prices showed double-multiplied amounts (₹1,904 instead of ₹476 for qty=4). Root cause: socket `detail.price` returns total (unit × qty), but display code multiplied by qty again. Fixed by normalizing `fromAPI.orderItem.price` to use `unit_price`.
-- **Variation format fix**: Changed from `{label, optionPrice}` to `{name: "GroupName", values: {label: ["Option1"]}}` matching backend's expected structure per user-provided working curl.
+- Place Order + Update Order both use engaged table locking (await socket → redirect → release after enrichment)
 
 ## Key Features
 - Login/Authentication
@@ -44,6 +40,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - Payment processing (collect bill, place+pay)
 - Real-time updates via Socket.io
 - Reports (paid orders, cancelled orders, credit orders, etc.)
+- **Table Engaged Locking** — prevents race conditions between order placement and dashboard navigation
 
 ## Code Architecture
 ```
@@ -52,7 +49,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 │   ├── constants.js            (API Endpoints)
 │   ├── axios.js                (Axios instance)
 │   ├── socket/
-│   │   ├── socketHandlers.js   (Socket event handlers)
+│   │   ├── socketHandlers.js   (Socket event handlers + table engage/release logic)
 │   │   ├── socketEvents.js     (Event constants)
 │   │   └── useSocketEvents.js  (Socket hook)
 │   ├── transforms/
@@ -63,14 +60,14 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 │       └── orderService.js     (API service layer)
 ├── components/
 │   └── order-entry/
-│       ├── OrderEntry.jsx      (Main order screen)
+│       ├── OrderEntry.jsx      (Main order screen — handlePlaceOrder with engaged locking)
 │       ├── CollectPaymentPanel.jsx (Payment UI)
 │       ├── CartPanel.jsx       (Cart UI)
 │       ├── CategoryPanel.jsx   (Category sidebar)
 │       └── ...                 (Modals)
 ├── contexts/
-│   ├── OrderContext.jsx
-│   ├── TableContext.jsx
+│   ├── OrderContext.jsx        (Order state, addOrder/updateOrder/removeOrder)
+│   ├── TableContext.jsx        (Table state, engaged lock: setTableEngaged/waitForTableEngaged)
 │   ├── MenuContext.jsx
 │   └── ...
 └── constants.js                (UI constants/colors)
@@ -87,24 +84,54 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 | Cancel Item | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `application/json` | `cancelItem()` |
 | Cancel Order | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` | `cancelOrder()` |
 | Transfer to Room | `/api/v1/vendoremployee/order-shifted-room` | POST | `application/json` | `transferToRoom()` |
+| Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | POST | `application/json` | `fromAPI.order()` |
 
-## Bugs - Fixed ✅
+## Bugs - Fixed
 - **BUG-201**: Duplicate API calls on Update Order
 - **BUG-202**: Duplicate API calls on Cancel Item
 - **BUG-203**: Redundant `update-table` socket handling
 - **BUG-205**: Cancel order race condition (order re-added)
 - **BUG-206**: Partial cancel cancels all items (wrong endpoint)
 - **BUG-207**: Place Order payload & endpoint migration (8 critical bugs fixed)
-- **BUG-209**: Placed item prices double-multiplied (socket `price` = total, display did `price × qty` again)
+- **BUG-208**: Socket returns empty `variation`/`add_ons` — backend fixed, frontend parser updated
+- **BUG-209**: Placed item prices double-multiplied (socket `price` = total, display did `price * qty` again)
+- **BUG-211**: Backend doesn't send `update-table engage` for new orders — workaround: frontend engages locally in `handleNewOrder`
 
 ## Bugs - Open / Blocked
 - **NOTE-200**: StrictMode double-log — dev-only, verify in production
-- **BUG-204**: `order_sub_total_without_tax` returns 0 — blocked on backend team
+- **BUG-204**: Socket `new-order` missing 16 financial fields — workaround: GET single order enrichment
+- **BUG-210**: No table availability pre-check before placing order (multi-device race condition) — blocked on backend team
+
+## Key Technical Learnings
+
+### Socket Behavior Asymmetry
+| Action | `update-table engage` sent? | Frontend engage source |
+|--------|---------------------------|----------------------|
+| Place New Order | NO | `handleNewOrder` → `setTableEngaged(true)` locally |
+| Update Order | YES (via table channel) | `handleUpdateTable` → `setTableEngaged(true)` from socket |
+
+### Engaged Lock Release Pattern
+Both `handleNewOrder` and `handleUpdateOrder` use double `requestAnimationFrame` to release the engaged lock:
+```js
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    setTableEngaged(tableId, false);
+  });
+});
+```
+This guarantees React has committed state + browser has painted before the table becomes clickable.
+
+### No Optimistic UI
+After placing/updating, the cart is NOT updated locally. It is cleared and rebuilt exclusively from socket data → GET enrichment. This prevents stale/duplicate items.
 
 ## Pending User Verification
-- All 4 order flows need user testing against external preprod API (Place, Update, Place+Pay, Collect Bill)
+- Place Order flow with engaged locking (tested once — user confirmed redirect + lock working)
+- Place+Pay, Collect Bill flows
 
 ## Backlog
+- End-to-end testing of `partial_payments` mapping (P1)
 - Edit placed item qty/notes (CHG-040) — awaiting endpoint from backend team
 - Race condition mitigation (debounce per orderId) for concurrent multi-user scenarios
-- Follow up on backend bug fixes documented in BUGS.md
+- Backend: send full 51-key payload in socket `new-order` (removes GET enrichment workaround)
+- Backend: send `update-table engage` for new orders (removes frontend workaround in BUG-211)
+- Backend: implement table availability pre-check (BUG-210)
