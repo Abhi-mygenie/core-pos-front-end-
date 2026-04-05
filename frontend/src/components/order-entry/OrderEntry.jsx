@@ -311,20 +311,37 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);
 
-  // Cart total: include tax for Collect Bill button display
+  // Cart total: final payable amount including tax (for Collect Bill button)
   // Before placing: calculate locally (subtotal + tax)
   // After placing: use orderFinancials.amount from socket (already includes tax)
   const hasPlacedItems = cartItems.some(i => i.placed);
   const localSubtotal = cartItems.reduce((sum, item) =>
     item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
-  const unplacedTotal = cartItems
+  // Calculate local tax for unplaced items
+  const localTax = cartItems.reduce((sum, item) => {
+    if (item.status === 'cancelled' || item.placed) return sum;
+    const linePrice = item.totalPrice || (item.price * item.qty);
+    const taxPct = parseFloat(item.tax?.percentage) || 0;
+    if (taxPct === 0) return sum;
+    const isInclusive = item.tax?.calculation === 'Inclusive';
+    return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
+  }, 0);
+  const unplacedSubtotal = cartItems
     .filter(i => !i.placed && i.status !== 'cancelled')
     .reduce((sum, item) => sum + (item.totalPrice || (item.price * item.qty)), 0);
+  const unplacedTax = cartItems.reduce((sum, item) => {
+    if (item.status === 'cancelled' || item.placed) return sum;
+    const linePrice = item.totalPrice || (item.price * item.qty);
+    const taxPct = parseFloat(item.tax?.percentage) || 0;
+    if (taxPct === 0) return sum;
+    const isInclusive = item.tax?.calculation === 'Inclusive';
+    return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
+  }, 0);
   // total = final amount including tax (for Collect Bill button)
   const total = hasPlacedItems
-    ? (orderFinancials.amount || 0) + unplacedTotal
-    : localSubtotal;
+    ? (orderFinancials.amount || 0) + Math.round((unplacedSubtotal + unplacedTax) * 100) / 100
+    : Math.round((localSubtotal + localTax) * 100) / 100;
 
   // handlePlaceOrder — CHG-037: Place Order API
   const handlePlaceOrder = async () => {
