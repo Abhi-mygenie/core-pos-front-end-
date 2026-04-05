@@ -1,0 +1,400 @@
+# API Document v2 — Place Order Endpoint
+
+**Version:** 2.0
+**Last Updated:** April 6, 2026
+**Endpoint:** `POST /api/v1/vendoremployee/order/place-order`
+
+---
+
+## Overview
+
+This single endpoint handles **3 flows**:
+
+| Flow | Trigger | Key Differentiator |
+|------|---------|-------------------|
+| **Place New Order** (unpaid) | User clicks "Place Order" on new items | `payment_status: "unpaid"`, `payment_type: "postpaid"` |
+| **Place + Pay** (fresh order) | User clicks "Pay" on new items without placing first | `payment_status: "paid"`, `payment_type: "prepaid"`, includes `partial_payments` |
+| **Collect Bill** (existing order) | User clicks "Pay" on already-placed order | `payment_status: "paid"`, includes `order_id` of existing order, includes `partial_payments` |
+
+**Content-Type:** `multipart/form-data`
+**Auth:** `Bearer <token>` in Authorization header
+
+### Form Fields
+| Key | Type | Description |
+|-----|------|-------------|
+| `data` | string (JSON) | Stringified JSON payload (all order data) |
+| `audiofile` | file (optional) | Audio file attachment — NOT IMPLEMENTED in frontend, always omitted |
+
+### Code Reference
+- **Transform functions:** `/app/frontend/src/api/transforms/orderTransform.js`
+  - `toAPI.placeOrder()` — Flow 1: Place New Order
+  - `toAPI.placeOrderWithPayment()` — Flow 2: Place + Pay
+  - `toAPI.collectBillExisting()` — Flow 3: Collect Bill
+- **HTTP call:** `/app/frontend/src/components/order-entry/OrderEntry.jsx`
+  - `handlePlaceOrder()` — wraps payload in `FormData`, posts to endpoint
+  - `onPaymentComplete()` — wraps payment payload in `FormData`, posts to same endpoint
+
+---
+
+## Request Payload — Order Level Fields
+
+### Customer Fields
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `user_id` | string | `""` | `customer?.id \|\| ""` | Customer ID from customer search/selection. Empty for walk-in |
+| `cust_name` | string | `""` | `customer?.name \|\| ""` | Customer name. Empty for walk-in |
+| `cust_mobile` | string | `""` | `customer?.mobile \|\| ""` | Customer mobile. Empty for walk-in |
+| `cust_email` | string | `""` | `customer?.email \|\| ""` | Customer email. Empty for walk-in |
+| `cust_dob` | string | `""` | `customer?.dob \|\| ""` | Customer date of birth. Empty if not set |
+| `cust_anniversary` | string | `""` | `customer?.anniversary \|\| ""` | Customer anniversary date. Empty if not set |
+| `cust_membership_id` | string | `""` | `customer?.membershipId \|\| ""` | Loyalty membership ID. Empty if no membership |
+
+### Order Identity & Type
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `restaurant_id` | number | `475` | `restaurant?.id` from context | **REQUIRED.** Restaurant ID from auth/context |
+| `table_id` | string | `"4271"` | `String(table.tableId)` | **REQUIRED for dine-in.** Table ID. `"0"` for takeaway/delivery |
+| `order_type` | string | `"pos"` | Hardcoded `"pos"` | Always `"pos"` for POS orders. Other values: `"delivery"`, `"takeaway"` |
+| `order_id` | string | `"730319"` | `String(placedOrderId)` | **Only for Collect Bill flow (Flow 3).** Existing order ID to attach payment. NOT sent for new orders |
+| `order_note` | string | `"Birthday"` | `orderNotes.map(n => n.label).join(', ')` | Order-level notes. Comma-separated string from OrderNotesModal presets/custom notes |
+
+### Payment Fields
+| Field | Type | Example (unpaid) | Example (paid) | Source in Code | Comments |
+|-------|------|-----------------|----------------|---------------|----------|
+| `payment_method` | string | `"pending"` | `"cash"` / `"card"` / `"upi"` / `"partial"` | From paymentData or `"pending"` | `"pending"` = unpaid. For paid: method selected in CollectPaymentPanel. `"partial"` when split payment |
+| `payment_status` | string | `"unpaid"` | `"paid"` | `"unpaid"` or `"paid"` | Determines if order is placed without payment or with payment |
+| `payment_type` | string | `"postpaid"` | `"prepaid"` | `"postpaid"` (unpaid) or `"prepaid"` (paid) | `postpaid` = pay later, `prepaid` = pay now |
+| `transaction_id` | string | `""` | `"TXN123"` | `paymentData.transactionId \|\| ""` | Transaction reference for card/UPI payments. Empty for cash |
+
+### Financial — Order Totals
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `order_sub_total_amount` | number | `586` | `calcOrderTotals(cart).order_sub_total_amount` | Sum of all cart items' full prices (base + addons + variations) × quantity. **Includes addons & variations** |
+| `order_sub_total_without_tax` | number | `586` | `calcOrderTotals(cart).order_sub_total_without_tax` | Currently same as `order_sub_total_amount`. **BUG-204: Backend returns 0 for this field** |
+| `tax_amount` | number | `29.3` | `calcOrderTotals(cart).tax_amount` | Total tax = `gst_tax` + `vat_tax` |
+| `gst_tax` | number | `29.3` | `calcOrderTotals(cart).gst_tax` | Sum of all cart items' `gst_amount`. GST items only |
+| `vat_tax` | number | `0` | `calcOrderTotals(cart).vat_tax` | Sum of all cart items' `vat_amount`. VAT items only |
+| `order_amount` | number | `616` | `calcOrderTotals(cart).order_amount` | Final payable = subtotal + tax + round_up. **This is what customer pays** |
+| `round_up` | string | `"0.70"` | `calcOrderTotals(cart).round_up` | Round-off amount. Applied when `ceil(rawTotal) - rawTotal >= 0.10`. String format |
+
+### Financial — Service & Tips
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `service_tax` | number | `0` | Hardcoded `0` | Service tax amount. **NOT IMPLEMENTED** in frontend. Working curl shows `8.0` — may need future implementation |
+| `service_gst_tax_amount` | number | `0` | Hardcoded `0` | GST on service tax. **NOT IMPLEMENTED**. Working curl shows `0.4` |
+| `tip_amount` | number | `0` | `paymentData.tip \|\| 0` | Tip amount from payment panel. `0` for unpaid orders |
+| `tip_tax_amount` | number | `0` | Hardcoded `0` | Tax on tip. Always 0 currently |
+| `delivery_charge` | number | `0` | `paymentData.deliveryCharge \|\| 0` | Delivery charge. `0` for dine-in POS |
+
+### Financial — Discounts
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `discount_type` | string/null | `null` | `discounts.type \|\| null` | Discount type: `"percent"`, `"amount"`, or `null` |
+| `self_discount` | number | `0` | `discounts.manual \|\| 0` | Manual discount by staff |
+| `coupon_discount` | number | `0` | `discounts.coupon \|\| 0` | Coupon discount amount |
+| `coupon_title` | string/null | `null` | `discounts.couponTitle \|\| null` | Coupon code/title |
+| `coupon_type` | string/null | `null` | `discounts.couponType \|\| null` | Coupon type |
+| `order_discount` | number | `0` | `discounts.orderDiscountPercent \|\| 0` | Order-level discount percentage |
+
+### Financial — Loyalty & Wallet
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `used_loyalty_point` | number | `0` | Hardcoded `0` | Loyalty points redeemed. **NOT IMPLEMENTED** in frontend |
+| `use_wallet_balance` | number | `0` | Hardcoded `0` | Wallet balance used. **NOT IMPLEMENTED** in frontend |
+
+### Scheduling
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `scheduled` | number | `0` | Hardcoded `0` | `0` = immediate, `1` = scheduled order. **NOT IMPLEMENTED** in frontend |
+| `schedule_at` | string/null | `null` | Hardcoded `null` | Schedule datetime. `null` for immediate. **MUST be null, not empty string** — MySQL datetime column rejects `""` |
+
+### Printing & Dispatch
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `print_kot` | string | `"Yes"` | `printAllKOT ? 'Yes' : 'No'` | Whether to print Kitchen Order Ticket. Toggleable in cart header |
+| `auto_dispatch` | string | `"No"` | Hardcoded `"No"` | Auto-dispatch to delivery. Always `"No"` for POS |
+
+### Room & Address
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `paid_room` | string/null | `null` | Hardcoded `null` | Paid room reference. Used for room service billing |
+| `room_id` | string/null | `null` | Hardcoded `null` | Room ID for room service orders |
+| `address_id` | string/null | `null` | Hardcoded `null` | Delivery address ID. `null` for dine-in |
+
+### Membership & Misc
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `discount_member_category_id` | number | `0` | Hardcoded `0` | Member category for discount. **NOT IMPLEMENTED** |
+| `discount_member_category_name` | string/null | `null` | Hardcoded `null` | Member category name. **NOT IMPLEMENTED** |
+| `usage_id` | string/null | `null` | Hardcoded `null` | Usage tracking ID. **NOT IMPLEMENTED** |
+
+---
+
+## Request Payload — Cart Item Fields
+
+**Key name:** `cart` (array of objects) for Place Order / Place+Pay
+**Key name:** `cart-update` (array of objects) for Update Order (different endpoint)
+
+Each item in the `cart` array:
+
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `food_id` | number | `86754` | `item.id` | **REQUIRED.** Food/product ID from menu |
+| `quantity` | number | `2` | `item.qty \|\| 1` | **REQUIRED.** Number of units |
+| `price` | number | `119` | `item.price \|\| 0` | **REQUIRED.** Base unit price (WITHOUT addons/variations). Backend uses this as base |
+| `variant` | string | `""` | Hardcoded `""` | Legacy field. Always empty string. Variations are sent in `variations` array instead |
+| `add_on_ids` | array | `[10728, 10729]` | `addons.map(a => a.id)` | **Flat array** of selected addon IDs. Empty `[]` if no addons. Previously was `add_ons` (wrong key) |
+| `add_on_qtys` | array | `[1, 2]` | `addons.map(a => a.quantity)` | **Flat array** of addon quantities. Must match order/length of `add_on_ids`. Empty `[]` if no addons |
+| `variations` | array | `[{"label":"Large","optionPrice":"40"}]` | Built from `item.selectedVariants` | Array of selected variation values. Each object: `{label: string, optionPrice: string}`. **NOT the full group structure** — just the selected value. Empty `[]` if no variations |
+| `add_ons` | array | `[]` | Hardcoded `[]` | **Always empty.** Selected addons go in `add_on_ids`/`add_on_qtys` instead. This field exists for backend compatibility |
+| `station` | string | `"KDS"` | `item.station \|\| "KDS"` | Kitchen station. Default `"KDS"`. Other possible: `"BAR"` |
+| `food_amount` | number | `119` | `item.price * item.qty` | Base food cost = `price × quantity`. Does NOT include addons/variations |
+| `variation_amount` | number | `40` | Sum of selected variation `optionPrice` values | Total variation price for the item (not multiplied by quantity) |
+| `addon_amount` | number | `35` | Sum of `(addon.price × addon.qty)` for selected addons | Total addon price for the item (not multiplied by quantity) |
+| `gst_amount` | string | `"8.95"` | Calculated per-item | GST tax on full unit price `(price + addon + variation) × qty × gst%`. String format with 2 decimals. Only for items with `tax_type: "GST"` |
+| `vat_amount` | string | `"0.00"` | Calculated per-item | VAT tax on full unit price. String format. Only for items with `tax_type: "VAT"` |
+| `discount_amount` | string | `"0.00"` | Hardcoded `"0.00"` | Per-item discount. **NOT IMPLEMENTED** — always "0.00" |
+| `complementary_price` | number | `0` | Hardcoded `0` | Complementary (free) item price. **NOT IMPLEMENTED** |
+| `is_complementary` | string | `"No"` | Hardcoded `"No"` | Whether item is complementary. **NOT IMPLEMENTED** |
+| `food_level_notes` | string | `"item, No Garlic"` | `Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes \|\| '')` | Per-item notes. Comma-separated string from ItemNotesModal presets or customization modal text |
+
+### Variation Object Format
+```json
+{
+  "label": "Large",        // Selected option label (from variantGroup.options[].name)
+  "optionPrice": "40"      // Price as STRING (from variantGroup.options[].price)
+}
+```
+**Source:** `item.selectedVariants` (object keyed by group ID) → mapped in `buildCartItem()`
+**Note:** Backend requires `label` key (not `name`). Sending `{name, price}` causes `Undefined array key "label"` PHP error.
+
+---
+
+## Request Payload — Partial Payments (Flow 2 & 3 only)
+
+**Key name:** `partial_payments` (array of objects)
+**When sent:** Only when `payment_method` is `"partial"` (split payment) or for any paid flow.
+
+| Field | Type | Example | Source in Code | Comments |
+|-------|------|---------|---------------|----------|
+| `payment_mode` | string | `"cash"` | From CollectPaymentPanel | Payment method: `"cash"`, `"card"`, `"upi"` |
+| `payment_amount` | number | `50` | Amount paid via this method | The amount tendered |
+| `grant_amount` | number | `50` | Same as payment_amount usually | Amount granted/applied to order |
+| `transaction_id` | string | `""` | Transaction ref for card/UPI | Empty for cash |
+
+**Example — Split payment (cash + UPI):**
+```json
+"partial_payments": [
+  {"payment_mode": "cash", "payment_amount": 50, "grant_amount": 50, "transaction_id": ""},
+  {"payment_mode": "card", "payment_amount": 0, "grant_amount": 0, "transaction_id": ""},
+  {"payment_mode": "upi", "payment_amount": 50, "grant_amount": 50, "transaction_id": ""}
+]
+```
+
+**Status:** `partial_payments` is **NOT YET IMPLEMENTED** in the frontend transform functions. Currently only single payment method is sent via `payment_method` field.
+
+---
+
+## API Response
+
+### Success Response
+```json
+{
+  "message": "Order placed successfully",
+  "order_id": 730319,
+  "restaurant_order_id": "003095",
+  "payment_status": "unpaid"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message` | string | Success message |
+| `order_id` | number | Backend-generated order ID — used for all subsequent operations (update, cancel, pay) |
+| `restaurant_order_id` | string | Human-readable order number (restaurant-specific sequence) |
+| `payment_status` | string | Echoes back the payment status |
+
+### Error Responses
+| HTTP Code | Error | Cause |
+|-----------|-------|-------|
+| 403 | `"Invalid cart data"` | Malformed cart or missing required fields |
+| 500 | `"Undefined array key \"label\""` | Variations sent in wrong format (e.g., `{name, price}` instead of `{label, optionPrice}`) |
+| 500 | `"Incorrect datetime value: ''"` | `schedule_at` sent as `""` instead of `null` — MySQL rejects empty string for datetime |
+
+---
+
+## Socket Event — After Successful Place Order
+
+### Event Name
+`new_order_{restaurant_id}` (e.g., `new_order_475`)
+
+### Event Payload
+```
+['new-order', order_id, restaurant_id, employee_count, orderObject]
+```
+
+### Socket Order Object — Top Level
+| Field | Type | Example | Mapped to (fromAPI.order) | Comments |
+|-------|------|---------|--------------------------|----------|
+| `id` | number | `730319` | `orderId` | Order ID |
+| `restaurant_id` | number | `475` | `restaurantId` | Restaurant ID |
+| `table_id` | number | `4271` | `tableId` | Table ID |
+| `order_type` | string | `"pos"` | `orderType` | Order type |
+| `order_status` | string | `"queue"` | `status` → mapped to internal status | `"queue"` = new |
+| `payment_status` | string | `"unpaid"` | `paymentStatus` | Payment status |
+| `payment_type` | string | `"postpaid"` | `paymentType` | Payment type |
+| `order_amount` | number | `616` | `amount` | **Final payable amount (with tax + rounding).** Used for Collect Bill total |
+| `order_note` | string | `"Birthday"` | `orderNote` | Order-level notes |
+| `tip_amount` | string | `"0.00"` | `tip` | Tip amount (string from backend) |
+| `tip_tax_amount` | string | `"0.00"` | (not mapped) | Tip tax |
+| `print_kot` | string | `"Yes"` | `printKot` | Print KOT flag |
+| `order_dispatch_status` | string | `"No"` | `dispatchStatus` | Dispatch status |
+| `delivery_man_status` | string | `"No"` | (not mapped) | Delivery person assignment |
+| `delivery_address` | null | `null` | (not mapped) | Delivery address |
+| `schedule_at` | null | `null` | `scheduleAt` | Schedule time |
+| `f_order_status` | number | `1` | `foodStatus` | Food preparation status |
+| `k_order_status` | number | `0` | `kitchenStatus` | Kitchen status |
+| `b_order_status` | number | `0` | `barStatus` | Bar status |
+| `checked` | number | `0` | (not mapped) | Checked flag |
+| `audio_file` | null | `null` | (not mapped) | Audio attachment |
+| `employee_id` | number | `1448` | `employeeId` | Employee who placed |
+| `waiter_id` | number | `1448` | `waiterId` | Assigned waiter |
+| `user_id` | null | `null` | `userId` | Customer ID |
+| `user_name` | string | `""` | `userName` | Customer name |
+| `created_at` | string | `"2026-04-05 19:01:07"` | `createdAt` | Creation timestamp |
+| `updated_at` | string | `"2026-04-05 19:01:07"` | `updatedAt` | Last update timestamp |
+| `restaurant_order_id` | string | `"016790"` | `restaurantOrderId` | Display order number |
+| `orderDetails` | array | `[{...}]` | → `fromAPI.orderItem()` per item | Array of order items |
+| `ready_order_details` | array | `[]` | (not mapped) | Ready items |
+| `serve_order_details` | array | `[]` | (not mapped) | Served items |
+| `restaurantTable` | object | `{id, table_no, ...}` | Used for table status derivation | Table metadata |
+| `room_info` | object | `{}` | (not mapped) | Room info |
+| `user` | null | `null` | (not mapped) | Full user object |
+| `vendorEmployee` | object | `{id, f_name, l_name}` | `employeeName` | Employee details |
+
+### Socket Order Object — `orderDetails[]` (Per-Item)
+| Field | Type | Example | Mapped to (fromAPI.orderItem) | Comments |
+|-------|------|---------|-------------------------------|----------|
+| `id` | number | `1900596` | `detailId` | Order detail row ID |
+| `order_id` | number | `730332` | `orderId` | Parent order ID |
+| `food_details` | object | `{id, name, price, ...}` | → `id`, `name`, `price` extracted | Full food catalog object (see below) |
+| `food_details.id` | number | `86754` | `id` | Food/product ID |
+| `food_details.name` | string | `"Pop Corn"` | `name` | Product name |
+| `food_details.price` | number | `119` | `price` (if `detail.price` missing) | Base price from catalog |
+| `food_details.tax` | number | `5` | `tax.percentage` | Tax percentage |
+| `food_details.tax_type` | string | `"GST"` | `tax.type` | Tax type |
+| `food_details.tax_calc` | string | `"Exclusive"` | `tax.calculation`, `tax.isInclusive` | Tax calculation method |
+| `food_details.variations` | array | `[{name:"Size", values:[...]}]` | (not mapped) | **CATALOG** — all available variations, NOT selected. Do not use for display |
+| `food_details.add_ons` | array | `[{id, name, price, ...}]` | (not mapped) | **CATALOG** — all available addons, NOT selected. Do not use for display |
+| `variation` | array | `[]` | `variation` | **BUG-208: ALWAYS EMPTY.** Should contain selected variations. Backend doesn't persist |
+| `add_ons` | array | `[]` | `addOns` | **BUG-208: ALWAYS EMPTY.** Should contain selected addons. Backend doesn't persist |
+| `unit_price` | string | `"119.00"` | `unitPrice` | **Base price only.** Does NOT include addon/variation costs. String format |
+| `price` | number | `119` | `price` | **Base price only.** Same as unit_price but number format |
+| `quantity` | number | `2` | `qty` | Quantity ordered |
+| `food_status` | number | `1` | `foodStatus` → mapped to status string | 1=queue, 2=preparing, 3=ready, 4=served, 5=cancelled |
+| `food_level_notes` | string | `"item, No Garlic"` | `notes` | Per-item notes. **Works correctly** |
+| `item_type` | string | `"KDS"` | `station` | Kitchen station |
+| `station` | string | `"KDS"` | `station` (fallback) | Same as item_type |
+| `ready_at` | null | `null` | `readyAt` | Timestamp when marked ready |
+| `serve_at` | null | `null` | `serveAt` | Timestamp when served |
+| `cancel_at` | null | `null` | `cancelAt` | Timestamp when cancelled |
+| `created_at` | string | `"2026-04-05 19:01:07"` | `createdAt` | Creation timestamp |
+| `updated_at` | string | `"2026-04-05 19:01:07"` | `updatedAt` | Last update timestamp |
+
+---
+
+## Context Update Chain — After Socket Event
+
+### 1. Socket Handler (`socketHandlers.js` → `handleNewOrder`)
+```
+Socket event: new_order_{restaurant_id}
+  → Extract orderObject from payload
+  → Log RAW orderDetails (debug)
+  → Transform: orderFromAPI.order(apiOrder) → transformedOrder
+  → OrderContext.addOrder(transformedOrder)
+  → TableContext.updateTableStatus(tableId, derivedStatus)
+```
+
+### 2. OrderContext (`OrderContext.jsx` → `addOrder`)
+- Adds transformed order to `orders` state array
+- If order already exists (by orderId), replaces it
+- Triggers re-render of all consumers
+
+### 3. TableContext (`TableContext.jsx` → `updateTableStatus`)
+- Updates table status based on order status
+- `order_status: "queue"` → table becomes `"occupied"`
+- `payment_status: "paid"` → table becomes `"billReady"`
+
+### 4. OrderEntry Sync (`OrderEntry.jsx` → useEffect)
+```
+Watches: placedOrderId, orders array
+  → Finds order in OrderContext by placedOrderId
+  → Replaces ALL cart items with socket data:
+      setCartItems(prev => {
+        const unplaced = prev.filter(i => !i.placed);
+        const placed = orderFromContext.items.map(i => ({ ...i, placed: true }));
+        return [...placed, ...unplaced];
+      });
+  → Updates orderFinancials from socket:
+      setOrderFinancials({
+        amount: order.amount,              // order_amount (with tax+rounding)
+        subtotalAmount: order.subtotalAmount,
+        subtotalBeforeTax: order.subtotalBeforeTax,
+      });
+```
+
+**CRITICAL:** After sync, ALL cart item data comes from socket. No local data is preserved for placed items. This means:
+- `item.customizations` → **undefined** (not returned by socket)
+- `item.itemNotes` → **undefined** (not returned by socket)
+- `item.totalPrice` → **undefined** (not returned by socket)
+- `item.selectedAddons` / `item.selectedVariants` → **undefined**
+- Only `item.notes` (from `food_level_notes`), `item.price` (base), `item.qty`, `item.addOns` (empty), `item.variation` (empty) survive
+
+---
+
+## Known Bugs Affecting This Endpoint
+
+### BUG-204 (P1) — `order_sub_total_without_tax` returns 0
+- **Status:** OPEN — Backend Team
+- **Impact:** Backend always returns `order_sub_total_without_tax: 0` in socket response
+- **Workaround:** Frontend uses `order_sub_total_amount` as fallback
+
+### BUG-207 (P0) — FIXED
+- **Status:** FIXED
+- **Was:** Place Order payload used wrong field names, wrong content-type, missing per-item financial fields
+- **Fix:** Rewrote `buildCartItem()` with correct field names (`add_on_ids`, `variations`, `food_amount`, etc.) and `multipart/form-data`
+
+### BUG-208 (P0 CRITICAL) — Socket returns empty `variation` and `add_ons`
+- **Status:** OPEN — Backend Team
+- **Impact:**
+  1. Addon names & quantities lost after placing
+  2. Variation names lost after placing
+  3. Per-item price shows base only (e.g., ₹119 instead of ₹194)
+  4. Collect Bill panel line item breakdown is incorrect
+  5. Only order-level `order_amount` is correct (used as workaround for Collect Bill total)
+- **Frontend sends correctly:**
+  ```json
+  {"add_on_ids": [10728], "add_on_qtys": [1], "addon_amount": 20}
+  {"variations": [{"label":"Large","optionPrice":"40"}], "variation_amount": 40}
+  ```
+- **Socket returns:**
+  ```json
+  {"add_ons": [], "variation": [], "price": 119}
+  ```
+- **Workaround:** Collect Bill button/panel total uses `orderFinancials.amount` from socket `order_amount`
+
+---
+
+## Not Yet Implemented (Frontend)
+
+| Feature | Curl Field | Status |
+|---------|-----------|--------|
+| Audio file attachment | `audiofile` form field | Not implemented — field omitted |
+| Partial payments (split pay) | `partial_payments` array | Not implemented — only single payment method sent |
+| Scheduled orders | `scheduled: 1`, `schedule_at: datetime` | Not implemented — always `0` / `null` |
+| Service tax | `service_tax`, `service_gst_tax_amount` | Not implemented — always `0` |
+| Loyalty points | `used_loyalty_point` | Not implemented — always `0` |
+| Wallet balance | `use_wallet_balance` | Not implemented — always `0` |
+| Member discounts | `discount_member_category_id/name` | Not implemented — always `0` / `null` |
+| Complementary items | `complementary_price`, `is_complementary` | Not implemented — always `0` / `"No"` |
+| Per-item discounts | `discount_amount` | Not implemented — always `"0.00"` |
