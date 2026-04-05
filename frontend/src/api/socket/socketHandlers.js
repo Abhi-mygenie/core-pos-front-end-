@@ -161,6 +161,7 @@ export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
   const orders = payload.orders;
   for (const apiOrder of orders) {
     try {
+      console.log('[SocketHandler] RAW orderDetails:', JSON.stringify(apiOrder.orderDetails, null, 2));
       const transformedOrder = orderFromAPI.order(apiOrder);
       addOrder(transformedOrder);
       syncTableStatus(transformedOrder, updateTableStatus);
