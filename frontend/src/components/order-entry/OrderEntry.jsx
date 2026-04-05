@@ -859,6 +859,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   const idx = prev.indexOf(item);
                   return idx >= 0 ? [...prev.slice(0, idx), ...prev.slice(idx + 1)] : prev;
                 })}
+                orderNotes={orderNotes}
+                onEditOrderNotes={() => setShowNotesModal(true)}
               />
             </>
           )}

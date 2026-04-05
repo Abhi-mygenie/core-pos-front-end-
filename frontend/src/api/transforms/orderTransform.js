@@ -230,7 +230,7 @@ const buildCartItem = (item) => {
     add_ons:           addonIds.length > 0 ? [addonIds] : [],
     add_on_qtys:       addonQtys.length > 0 ? [addonQtys] : [],
     variation:         variation,
-    food_level_notes:  item.itemNotes || item.notes || '',
+    food_level_notes:  Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
   };
 };
 

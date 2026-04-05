@@ -192,7 +192,7 @@ const NewItemRow = ({ item, cartIndex, onDeleteItem, updateQuantity, onAddNote, 
       <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }} data-testid={`qty-plus-${item.id}`}>+</button>
     </div>
     <div className="w-16 text-right pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-      <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>₹{(item.price * item.qty).toLocaleString()}</span>
+      <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>₹{(item.totalPrice || (item.price * item.qty)).toLocaleString()}</span>
     </div>
   </div>
 );
@@ -217,6 +217,8 @@ const CartPanel = ({
   onDeleteItem,
   isRoom,
   associatedOrders = [],
+  orderNotes = [],
+  onEditOrderNotes,
 }) => {
   const newItemCount = cartItems.filter(i => !i.placed).length;
   const [customerName, setCustomerName] = useState(customer?.name || "");
@@ -536,6 +538,32 @@ const CartPanel = ({
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Order Notes Banner */}
+      {orderNotes.length > 0 && (
+        <div
+          className="px-4 py-2.5 flex items-center justify-between"
+          style={{ borderTop: `1px solid ${COLORS.borderGray}`, backgroundColor: `${COLORS.primaryGreen}08` }}
+          data-testid="order-notes-banner"
+        >
+          <div className="flex-1 min-w-0">
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>Order Notes</span>
+            <p className="text-sm truncate mt-0.5" style={{ color: COLORS.darkText }}>
+              {orderNotes.map(n => n.label).join(', ')}
+            </p>
+          </div>
+          {onEditOrderNotes && (
+            <button
+              onClick={onEditOrderNotes}
+              className="ml-2 px-3 py-1 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+              style={{ color: COLORS.primaryGreen }}
+              data-testid="edit-order-notes-btn"
+            >
+              Edit
+            </button>
           )}
         </div>
       )}
