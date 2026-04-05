@@ -206,12 +206,15 @@ export const handleUpdateOrder = async (message, { updateOrder, updateTableStatu
   if (order) {
     updateOrder(order.orderId, order);
     syncTableStatus(order, updateTableStatus);
-    // Release engaged — context is fully updated, table is clickable
-    if (setTableEngaged && order.tableId) {
-      setTableEngaged(order.tableId, false);
-      log('INFO', `update-order: Table ${order.tableId} released from ENGAGED`);
-    }
     log('INFO', `update-order: Updated order ${order.orderId}`);
+    // Release engaged AFTER context updates have been queued
+    // setTimeout lets React batch and commit the state updates first
+    if (setTableEngaged && order.tableId) {
+      setTimeout(() => {
+        setTableEngaged(order.tableId, false);
+        log('INFO', `update-order: Table ${order.tableId} released from ENGAGED`);
+      }, 0);
+    }
   } else {
     log('WARN', `update-order: Could not fetch order ${orderId}, skipping`);
   }
