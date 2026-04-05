@@ -14,6 +14,7 @@ import socketService from './socketService';
 import { 
   SOCKET_EVENTS,
   getOrderChannel,
+  getTableChannel,
 } from './socketEvents';
 import {
   handleNewOrder,
@@ -22,6 +23,7 @@ import {
   handleUpdateOrderStatus,
   handleScanNewOrder,
   handleDeliveryAssignOrder,
+  handleUpdateTable,
 } from './socketHandlers';
 
 /**
@@ -80,6 +82,18 @@ export const useSocketEvents = () => {
     }
   }, []);
 
+  // Table channel handler
+  const handleTableChannelEvent = useCallback((...args) => {
+    const eventName = args[0];
+    console.log(`[useSocketEvents] Table channel event: ${eventName}`, args);
+    
+    if (eventName === SOCKET_EVENTS.UPDATE_TABLE) {
+      handleUpdateTable(args, actionsRef.current);
+    } else {
+      console.log(`[useSocketEvents] Unknown table event: ${eventName}`);
+    }
+  }, []);
+
   // ===========================================================================
   // SUBSCRIBE TO ORDER CHANNEL ONLY
   // BUG-203: Table channel removed — table status derived from order data
@@ -99,12 +113,15 @@ export const useSocketEvents = () => {
       return;
     }
     
-    // Subscribe to order channel only (table status derived from order data)
+    // Subscribe to order channel
     const orderChannel = getOrderChannel(restaurantId);
+    // Subscribe to table channel (for immediate table status updates)
+    const tableChannel = getTableChannel(restaurantId);
     
-    console.log(`[useSocketEvents] Subscribing to order channel for restaurant ${restaurantId}: ${orderChannel}`);
+    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}: ${orderChannel}, ${tableChannel}`);
     
     const unsubscribeOrder = subscribe(orderChannel, handleOrderChannelEvent);
+    const unsubscribeTable = subscribe(tableChannel, handleTableChannelEvent);
     
     if (unsubscribeOrder) {
       console.log(`[useSocketEvents] Subscribed to order channel successfully`);
@@ -112,16 +129,24 @@ export const useSocketEvents = () => {
       console.warn('[useSocketEvents] Order channel subscription failed, will retry on next connection');
     }
     
+    if (unsubscribeTable) {
+      console.log(`[useSocketEvents] Subscribed to table channel successfully`);
+    } else {
+      console.warn('[useSocketEvents] Table channel subscription failed');
+    }
+    
     // Cleanup on unmount or when restaurantId changes
     return () => {
-      console.log('[useSocketEvents] Unsubscribing from order channel');
+      console.log('[useSocketEvents] Unsubscribing from channels');
       unsubscribeOrder && unsubscribeOrder();
+      unsubscribeTable && unsubscribeTable();
     };
   }, [
     isConnected,
     restaurantId,
     subscribe,
     handleOrderChannelEvent,
+    handleTableChannelEvent,
   ]);
 
   // Return connection status and restaurantId for UI feedback
