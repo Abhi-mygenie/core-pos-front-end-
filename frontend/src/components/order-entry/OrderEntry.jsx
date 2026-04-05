@@ -471,22 +471,28 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     const orderId = effectiveTable?.orderId || placedOrderId;
     if (!orderId) return;
 
-    const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
-    await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+    // Remove BEFORE api call — socket is faster than HTTP response
+    // If we await api.put first, socket arrives, handler finds order still in context, re-adds it
+    removeOrder(orderId);
+    const tableId = effectiveTable?.tableId || table?.tableId;
+    if (tableId) {
+      updateTableStatus(tableId, 'available');
+    }
 
     toast({
       title: "Order Cancelled",
       description: `Order cancelled for ${table?.label || table?.id}`,
     });
 
-    // Immediate UI update — socket will also fire but this ensures instant feedback
-    removeOrder(orderId);
-    const tableId = effectiveTable?.id || table?.id;
-    if (tableId) {
-      updateTableStatus(tableId, 'available');
-    }
-
     onClose();
+
+    // Fire API call after removing from context
+    try {
+      const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
+      await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+    } catch (err) {
+      console.error('[CancelOrder] API call failed:', err);
+    }
   };
 
   const handleAddCustomItem = async ({ name, categoryId, price, qty, notes }) => {    const payload = orderToAPI.addCustomItem(name, categoryId, price);

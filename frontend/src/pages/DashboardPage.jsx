@@ -516,17 +516,21 @@ const DashboardPage = () => {
     const order = getOrderDataForEntry(cancelOrderEntry);
     if (!order) return;
 
-    const payload = orderToAPI.cancelOrder(order.orderId, user?.roleName || 'Manager', reason);
-    await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
-
-    // Immediate UI update
+    // Remove BEFORE api call — socket is faster than HTTP response
     removeOrder(order.orderId);
-    const tableId = cancelOrderEntry?.id;
-    if (tableId) {
-      updateTableStatus(tableId, 'available');
+    if (order.tableId) {
+      updateTableStatus(order.tableId, 'available');
     }
 
     setCancelOrderEntry(null);
+
+    // Fire API call after removing from context
+    try {
+      const payload = orderToAPI.cancelOrder(order.orderId, user?.roleName || 'Manager', reason);
+      await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+    } catch (err) {
+      console.error('[CancelOrder] API call failed:', err);
+    }
   }, [cancelOrderEntry, getOrderDataForEntry, user, removeOrder, updateTableStatus]);
 
   const handleSearchSelect = (selection) => {
