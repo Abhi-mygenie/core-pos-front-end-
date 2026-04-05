@@ -674,8 +674,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   setShowPaymentPanel(false);
                   setPlacedOrderId(null);
                   setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
-                  // Prepaid: stay on order screen, clear table so user can select next table
+                  setOrderNotes([]);
+                  setCustomer({ name: '', phone: '' });
+                  // Prepaid: stay on order screen, clear table, switch to walkIn
                   if (onSelectTable) onSelectTable(null);
+                  if (onOrderTypeChange) onOrderTypeChange('walkIn');
                 } catch (err) {
                   const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
                   toast({ title: "Payment Failed", description: msg });
