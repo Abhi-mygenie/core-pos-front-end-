@@ -151,6 +151,16 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           subtotalAmount: orderData.subtotalAmount || 0,
           subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
         });
+        // Restore order-level notes from placed order
+        if (orderData.orderNote) {
+          setOrderNotes(
+            orderData.orderNote.split(',').map((note, i) => ({
+              id: `existing-${i}`,
+              label: note.trim(),
+              type: 'custom',
+            })).filter(n => n.label)
+          );
+        }
       }
     } else if (orderData) {
       if (orderData.customer || orderData.phone) {
@@ -165,6 +175,16 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         subtotalAmount: orderData.subtotalAmount || 0,
         subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
       });
+      // Restore order-level notes from placed order
+      if (orderData.orderNote) {
+        setOrderNotes(
+          orderData.orderNote.split(',').map((note, i) => ({
+            id: `existing-${i}`,
+            label: note.trim(),
+            type: 'custom',
+          })).filter(n => n.label)
+        );
+      }
       if (orderData.items && orderData.items.length > 0) {
         const existingItems = orderData.items.map(item => ({
           id: item.id,
