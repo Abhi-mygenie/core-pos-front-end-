@@ -231,7 +231,33 @@ Backend now returns both fields correctly:
 
 ---
 
-## BUG-204: Socket `new-order` missing 16 financial fields
+## BUG-210: No table engage check before placing order (MULTI-DEVICE RACE CONDITION)
+
+**Status:** OPEN — CRITICAL
+**Priority:** P0 CRITICAL
+**Reported:** April 6, 2026
+
+### Problem
+When user clicks "Place Order", there is no pre-check to verify the table is free on the server. On multi-device setups, two users can place orders on the same table simultaneously.
+
+### Required Fix
+Before calling place-order API:
+1. Call `GET /api/v1/vendoremployee/all-table-list`
+2. Find table by ID → check `engage` field
+3. If `engage === "Yes"` → toast "Table already occupied" → redirect to dashboard
+4. If `engage === "No"` → proceed with place order
+
+### API Reference
+**Endpoint:** `GET /api/v1/vendoremployee/all-table-list`
+**Response:** Array of tables, each with `engage: "Yes"` or `"No"`
+```json
+{"id": 4252, "table_no": "1", "engage": "Yes", "rtype": "TB"}
+```
+**Note:** No single-table endpoint available — must filter from full list.
+
+### Impact
+Two orders on same table → billing confusion, order conflicts, data corruption.
+
 
 **Status:** WORKAROUND IMPLEMENTED (GET single order enrichment)
 **Priority:** P1
