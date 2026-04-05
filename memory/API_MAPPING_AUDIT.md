@@ -175,6 +175,18 @@ Mark unplaced as placed locally      emit update-order
 ```
 **API calls to `get-single-order-new`: 1** (socket handler only)
 
+#### Update Order — Verified Console Flow (April 5, 2026)
+Server emits on **2 channels** simultaneously for a single update-order action:
+```
+T+0ms:    [ORDER channel]  update-order 730308        → handleUpdateOrder → fetchSingleOrderForSocket (API call)
+T+0ms:    [TABLE channel]  update-table 6238 engage   → handleUpdateTable → updateTableStatus (local only)
+T+200ms:  [OrderEntry]     PUT response arrives        → marks items placed locally
+T+800ms:  [socketHandlers] API response arrives        → OrderContext.updateOrder(freshOrder)
+T+800ms:  [OrderEntry]     useEffect detects change    → syncs cart (190 → 310)
+```
+**Key finding:** `update-table` is redundant — the order data from `get-single-order-new` already contains `table_id` and `f_order_status`. Table status can be derived.
+**NOTE:** Socket arrives BEFORE HTTP response (socket ~0ms, HTTP ~200ms).
+
 #### Update Order — BEFORE fix (BUG-201)
 ```
 OrderEntry → PUT /update-place-order → Server
@@ -259,3 +271,73 @@ setCartItems + setFinancials        handleXxx → fetchSingleOrderForSocket (CAL
 | `settingsTransform.js` | API → FE | Cancellation reasons | `SettingsContext.jsx` |
 | `customerTransform.js` | API → FE | Customer search results | `CustomerModal.jsx` |
 | `reportTransform.js` | API → FE | Report data mapping | Report pages |
+
+
+---
+
+## 7. Race Condition Analysis (Multi-User Concurrent Access)
+
+**Updated:** April 5, 2026
+
+### The Window
+Between socket event received → `get-single-order-new` API in-flight → context updated, there is a ~1 second window where other users (waiters, kitchen, another POS terminal) can act on the **same order**.
+
+### Scenarios
+
+| # | Another user's action | Socket event fired | What happens | Risk level |
+|---|----------------------|-------------------|-------------|------------|
+| 1 | Kitchen marks item ready | `update-food-status` | 2 API calls for same order in-flight. Last response wins in context. If older response arrives LAST, it overwrites the newer kitchen status. | **HIGH — stale data overwrites** |
+| 2 | Another waiter adds items | `update-order` | 2 `get-single-order-new` calls. Last response wins. Could temporarily overwrite other waiter's additions. | **MEDIUM — self-corrects on next event** |
+| 3 | Another waiter cancels item | `update-order-status` | Cancelled item status could be overwritten by stale response from earlier call. | **MEDIUM — self-corrects on next event** |
+| 4 | Customer pays | `update-order-status` (status=6) | `removeOrder` fires. But in-flight API call returns and calls `updateOrder` — re-adds paid order to context. | **HIGH — paid order reappears** |
+| 5 | Table shifted | `update-table` | Marks OLD table occupied even though order moved. | **LOW — cosmetic, corrects on refresh** |
+
+### Why This Happens
+Every socket event handler for the same order independently calls `get-single-order-new`. There is **no sequencing, deduplication, or staleness check**.
+
+```
+T+0ms:    update-order fires     → API call #1 starts
+T+200ms:  update-food-status fires → API call #2 starts
+T+400ms:  API call #2 returns (NEWER data) → context updated ✅
+T+600ms:  API call #1 returns (OLDER data) → context updated ❌ overwrites newer
+```
+
+### Backend Team Recommendations
+1. **Include full order payload** in `update-order` event (like `new-order` already does) — eliminates the API call and the race entirely
+2. **Include `updated_at` timestamp** in socket message — frontend can discard stale API responses
+3. **Coalesce events** — if multiple events fire for same order within 500ms, send only final state
+
+### Frontend Mitigations (without backend changes)
+1. **Debounce per orderId** — multiple events within 500ms → single API fetch
+2. **Timestamp comparison** — compare `updatedAt` before writing to context, reject older
+3. **AbortController** — cancel in-flight API request when newer event arrives for same order
+4. **Sequential queue per order** — process events one at a time per orderId
+
+### Current Priority
+For now, the ~1 second window is small and real-world collisions are rare. **Scenario #4 (paid order reappears)** is the highest risk. A simple debounce per orderId would address most cases.
+
+---
+
+## 8. Dual-Channel Redundancy (Backend Team Clarification Needed)
+
+**Updated:** April 5, 2026
+
+### Current Behavior
+When the server processes an order action (place/update/cancel/pay), it emits on **2 channels simultaneously**:
+
+| Channel | Event | Data | Handler action |
+|---------|-------|------|---------------|
+| `new_order_{restaurantId}` | `update-order` | `[event, orderId, restaurantId, status]` | Calls API → updates `OrderContext` |
+| `update_table_{restaurantId}` | `update-table` | `[event, tableId, restaurantId, 'engage'/'free']` | Maps status → updates `TableContext` |
+
+The `update-order` handler fetches the full order from API, which already contains `table_id` and `f_order_status` — everything needed to derive table status.
+
+### Questions for Backend Team
+1. **Is there ANY situation where a table status changes WITHOUT an order event being emitted?** (e.g., manual table reservation, table disable from admin panel)
+2. **If a table goes available (order paid/cancelled), does `update-order-status` ALWAYS fire?** Or does only `update-table` fire in some edge cases?
+3. **Can the frontend safely ignore `update-table` and derive table status entirely from order data?**
+
+If the answer is "order events always accompany table changes," then the frontend can:
+- Stop listening to `update_table_{restaurantId}` channel entirely
+- Derive table status from `OrderContext` (active order exists → occupied, no order → available)
+- Eliminate one entire socket subscription and the dual-source table status problem

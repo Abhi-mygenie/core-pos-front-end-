@@ -130,10 +130,23 @@ Same approach as BUG-201:
 **Status:** NOT STARTED
 **Priority:** P1
 **Reported:** April 4, 2026
+**Updated:** April 5, 2026 (added backend team clarification + race condition analysis)
 **Reported by:** User (Console screenshots showing `update-table` logging twice)
 
 ### Symptom
 The `update-table` socket event fires and is logged twice in the console after order operations.
+
+### Verified Console Flow (Update Order — April 5, 2026)
+When a user adds items to an existing order, the server emits on **2 channels simultaneously**:
+
+```
+[Socket] Event received: new_order_690   ['update-order', 730308, 690, 5]   ← ORDER channel
+[Socket] Event received: update_table_690 ['update-table', 6238, 690, 'engage'] ← TABLE channel
+```
+
+Both arrive within the same second. The `update-order` handler fetches the full order from API (which includes `table_id`, `f_order_status` — everything needed to derive table status). The `update-table` handler separately sets table 6238 → occupied.
+
+**Result:** Table status is written from 2 independent sources for the same user action.
 
 ### Root Cause Analysis
 The `update-table` socket updates `TableContext` with table status (occupied/available). But `OrderContext` already contains `table_id` and `f_order_status` — meaning table status can be **derived** from order data without a separate socket channel.
@@ -141,6 +154,41 @@ The `update-table` socket updates `TableContext` with table status (occupied/ava
 Currently, table status is set from two sources:
 1. `update-table` socket → `handleUpdateTable()` → `updateTableStatus()` in `TableContext`
 2. `OrderContext` data — orders contain `tableId`, and table status can be derived (order exists + not cancelled = occupied)
+
+### Backend Team Clarification Required
+
+**Question for backend:** When the server processes an order update (e.g., `PUT /update-place-order`), it emits BOTH `update-order` on the order channel AND `update-table` on the table channel. Since the order data already contains `table_id` and `f_order_status`, is the `update-table` event necessary? Can the frontend safely ignore it and derive table status from the order data?
+
+**Specific scenarios to clarify:**
+1. Is there ANY situation where a table status changes WITHOUT an order event being emitted? (e.g., manual table reservation, table disable)
+2. If a table goes from occupied → available (order paid/cancelled), does the `update-order-status` event always fire? Or does ONLY `update-table` fire in some cases?
+
+If the answer to both is "order events always fire alongside table changes," then `update-table` is fully redundant for the POS frontend.
+
+### Race Condition Analysis (Multi-User Scenarios)
+
+**Context:** Between socket event received → API call in-flight → context updated, there is a ~1 second window where other users can act on the same order.
+
+| # | Another user's action during window | Socket event that fires | Risk |
+|---|-------------------------------------|------------------------|------|
+| 1 | **Kitchen marks item ready** | `update-food-status` | 2 API calls for same order in-flight. Last response wins. If the older response arrives LAST, it **overwrites** the newer kitchen status. **Race condition — stale data.** |
+| 2 | **Another waiter adds items to same order** | `update-order` | 2 `get-single-order-new` calls for same order. Last response wins. Could temporarily overwrite the other waiter's additions. |
+| 3 | **Another waiter cancels an item** | `update-order-status` | Cancelled item status could be overwritten by stale API response from earlier in-flight call. |
+| 4 | **Customer pays** | `update-order-status` (status=6) | `handleUpdateOrderStatus` calls `removeOrder`. But the in-flight `get-single-order-new` from `update-order` could return and call `updateOrder` — **re-adding a paid order back into context.** |
+| 5 | **Table shifted by another waiter** | `update-table` | Marks OLD table as occupied even though order moved to new table. |
+
+**Core problem:** Every socket event for the same order independently calls `get-single-order-new` with no sequencing or deduplication.
+
+**Backend team recommendation:** Consider one of:
+1. **Include full order payload** in `update-order` event (like `new-order` already does) — eliminates the API call entirely
+2. **Include a `updated_at` timestamp** in the socket message — frontend can compare and discard stale API responses
+3. **Coalesce events** — if multiple events fire for the same order within 500ms, server sends only the final state
+
+**Frontend mitigations possible without backend changes:**
+1. Debounce per orderId — multiple socket events within 500ms → single API fetch
+2. Timestamp comparison — compare `updatedAt` before writing to context
+3. AbortController — cancel in-flight API requests when a newer socket event arrives for the same order
+4. Queue per orderId — process socket events sequentially per order
 
 ### Recommendation
 Deprecate the `update-table` socket handler entirely. Derive table status from `OrderContext`:
