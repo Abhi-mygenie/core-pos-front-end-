@@ -367,8 +367,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             toast({ title: "Order Update Failed", description: err?.response?.data?.message || err?.message });
           });
         toast({ title: "Order Updated", description: "Items sent to kitchen" });
-        // Lock table immediately before redirect — released when context fully updates
-        if (effectiveTable?.tableId) setTableEngaged(Number(effectiveTable.tableId), true);
       } else {
         // Scenario 2 / New Order — Place Order
         const payload = orderToAPI.placeOrder(
