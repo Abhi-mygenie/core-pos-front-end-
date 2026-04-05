@@ -101,7 +101,7 @@ const DashboardPage = () => {
     orderItemsByTableId, getOrderByTableId, removeOrder,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
-  const { updateTableStatus } = useTables();
+  const { updateTableStatus, isTableEngaged } = useTables();
 
   // Socket events - subscribe to real-time updates
   const { isConnected: socketConnected } = useSocketEvents();
@@ -547,6 +547,10 @@ const DashboardPage = () => {
     // Allow null to clear table selection (used after prepaid payment)
     if (!tableEntry) {
       setOrderEntryTable(null);
+      return;
+    }
+    // Block clicks on engaged tables (update-order in progress)
+    if (isTableEngaged(tableEntry.id)) {
       return;
     }
     // Step 8: Available room → show CheckIn modal instead of OrderEntry

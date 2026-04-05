@@ -10,6 +10,8 @@ export const TableProvider = ({ children }) => {
   // Single unified array - includes both tables (isRoom=false) and rooms (isRoom=true)
   const [tables, setTablesData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  // Engaged tables — temporarily locked during update-order transactions
+  const [engagedTables, setEngagedTables] = useState(new Set());
 
   // Set tables (called from LoadingPage) - includes both tables and rooms
   const setTables = useCallback((data) => {
@@ -32,6 +34,34 @@ export const TableProvider = ({ children }) => {
   // ===========================================================================
   // SOCKET UPDATE FUNCTIONS
   // ===========================================================================
+
+  /**
+   * Set table engaged state (locked during update-order transactions)
+   * @param {number} tableId
+   * @param {boolean} engaged
+   */
+  const setTableEngaged = useCallback((tableId, engaged) => {
+    if (!tableId || tableId === 0) return;
+    console.log(`[TableContext] setTableEngaged: ${tableId} → ${engaged}`);
+    setEngagedTables(prev => {
+      const next = new Set(prev);
+      if (engaged) {
+        next.add(tableId);
+      } else {
+        next.delete(tableId);
+      }
+      return next;
+    });
+  }, []);
+
+  /**
+   * Check if a table is engaged
+   * @param {number} tableId
+   * @returns {boolean}
+   */
+  const isTableEngaged = useCallback((tableId) => {
+    return engagedTables.has(tableId);
+  }, [engagedTables]);
 
   /**
    * Update table status from socket event
@@ -153,6 +183,8 @@ export const TableProvider = ({ children }) => {
 
     // Socket Update Actions
     updateTableStatus,
+    setTableEngaged,
+    isTableEngaged,
     
     // Helpers (work for both tables and rooms)
     getTableById,
@@ -171,6 +203,8 @@ export const TableProvider = ({ children }) => {
     clearTables,
     refreshTables,
     updateTableStatus,
+    setTableEngaged,
+    isTableEngaged,
     getTableById,
     getTableByNumber,
     getTablesBySection,

@@ -33,7 +33,7 @@ import {
 export const useSocketEvents = () => {
   const { subscribe, isConnected } = useSocket();
   const { addOrder, updateOrder, removeOrder, getOrderById } = useOrders();
-  const { updateTableStatus } = useTables();
+  const { updateTableStatus, setTableEngaged } = useTables();
   const { restaurant } = useRestaurant();
   
   // Get restaurant ID for dynamic channel names
@@ -41,12 +41,12 @@ export const useSocketEvents = () => {
   
   // Use refs to avoid stale closures in event handlers
   // All handlers now receive both order + table actions (BUG-203)
-  const actionsRef = useRef({ addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus });
+  const actionsRef = useRef({ addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged });
   
   // Update ref when context functions change
   useEffect(() => {
-    actionsRef.current = { addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus };
-  }, [addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus]);
+    actionsRef.current = { addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged };
+  }, [addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged]);
 
   // ===========================================================================
   // CHANNEL EVENT HANDLER

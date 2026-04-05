@@ -185,7 +185,7 @@ export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStat
  * Message: [update-order, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus, getOrderById }) => {
+export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus, getOrderById, setTableEngaged }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -206,6 +206,11 @@ export const handleUpdateOrder = async (message, { updateOrder, updateTableStatu
   if (order) {
     updateOrder(order.orderId, order);
     syncTableStatus(order, updateTableStatus);
+    // Release engaged — context is fully updated, table is clickable
+    if (setTableEngaged && order.tableId) {
+      setTableEngaged(order.tableId, false);
+      log('INFO', `update-order: Table ${order.tableId} released from ENGAGED`);
+    }
     log('INFO', `update-order: Updated order ${order.orderId}`);
   } else {
     log('WARN', `update-order: Could not fetch order ${orderId}, skipping`);
@@ -383,7 +388,7 @@ export const handleDeliveryAssignOrder = async (message, { updateOrder, updateTa
  * Message: [update-table, table_id, restaurant_id, status]
  * Action: Update TableContext locally (no API call)
  */
-export const handleUpdateTable = (message, { updateTableStatus }) => {
+export const handleUpdateTable = (message, { updateTableStatus, setTableEngaged }) => {
   const parsed = parseTableMessage(message);
   
   if (!parsed) {
@@ -400,15 +405,21 @@ export const handleUpdateTable = (message, { updateTableStatus }) => {
     return;
   }
   
-  // Map socket status to frontend status
-  const frontendStatus = TABLE_STATUS_MAP[socketStatus] || socketStatus;
-  
-  if (!TABLE_STATUS_MAP[socketStatus]) {
-    log('WARN', `update-table: Unknown status "${socketStatus}", using as-is`);
+  if (socketStatus === 'engage' && setTableEngaged) {
+    // Engage = lock table during transaction (not clickable)
+    setTableEngaged(tableId, true);
+    log('INFO', `update-table: Table ${tableId} ENGAGED (locked)`);
+  } else if (socketStatus === 'free') {
+    // Free = release engaged + set available
+    if (setTableEngaged) setTableEngaged(tableId, false);
+    updateTableStatus(tableId, 'available');
+    log('INFO', `update-table: Table ${tableId} released → available`);
+  } else {
+    // Other statuses: map and update
+    const frontendStatus = TABLE_STATUS_MAP[socketStatus] || socketStatus;
+    updateTableStatus(tableId, frontendStatus);
+    log('INFO', `update-table: Updated table ${tableId} to "${frontendStatus}"`);
   }
-  
-  updateTableStatus(tableId, frontendStatus);
-  log('INFO', `update-table: Updated table ${tableId} to "${frontendStatus}"`);
 };
 
 // =============================================================================
