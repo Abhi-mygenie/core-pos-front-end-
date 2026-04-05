@@ -208,32 +208,27 @@ export const fromAPI = {
  * @returns {Object} - API cart item
  */
 const buildCartItem = (item) => {
-  // Addon IDs and quantities — nested arrays for PHP backend
-  // Customized items have selectedAddons; placed items from API have addOns
+  // Addon IDs and quantities — flat arrays
   const addons = item.selectedAddons || item.addOns || [];
   const addonIds = addons.map(a => a.id).filter(Boolean);
   const addonQtys = addons.map(a => a.quantity || a.qty || 1);
 
-  // Calculate addon total price
-  const addonTotal = addons.reduce((sum, a) => {
-    const price = parseFloat(a.price) || 0;
-    const qty = a.quantity || a.qty || 1;
-    return sum + (price * qty);
+  // Addon total price
+  const addonAmount = addons.reduce((sum, a) => {
+    return sum + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1));
   }, 0);
 
   // Variation data — rebuild full group structure with only selected value
-  // selectedVariants: { groupId: { id, name, price } }
-  // variantGroups: [{ id, name, type, required, min, max, options: [...] }]
   const variantGroups = item.variantGroups || [];
   let variations = [];
-  let variationTotal = 0;
+  let variationAmount = 0;
 
   if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
     variations = Object.entries(item.selectedVariants)
       .filter(([, option]) => option)
       .map(([groupId, option]) => {
         const group = variantGroups.find(g => g.id === groupId) || {};
-        variationTotal += parseFloat(option.price) || 0;
+        variationAmount += parseFloat(option.price) || 0;
         return {
           name: group.name || '',
           type: group.type || 'single',
@@ -244,28 +239,49 @@ const buildCartItem = (item) => {
         };
       });
   } else if (item.variation?.length > 0) {
-    // Fallback for items from API that already have variation array
     variations = item.variation;
-    variationTotal = item.variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
+    variationAmount = item.variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
   }
 
-  // Full unit price = base + addons + variations (for order total calculation)
-  const fullUnitPrice = (item.price || 0) + addonTotal + variationTotal;
+  // Per-item financials
+  const basePrice = item.price || 0;
+  const foodAmount = basePrice * (item.qty || 1);
+  const fullUnitPrice = basePrice + addonAmount + variationAmount;
+
+  // Tax calculation
+  const taxPct = parseFloat(item.tax?.percentage) || 0;
+  const taxType = (item.tax?.type || 'GST').toUpperCase();
+  const taxCalc = item.tax?.calculation || 'Exclusive';
+  const isInclusive = taxCalc === 'Inclusive';
+  const lineTotal = fullUnitPrice * (item.qty || 1);
+  let taxAmount = 0;
+  if (taxPct > 0) {
+    taxAmount = isInclusive
+      ? lineTotal - (lineTotal / (1 + taxPct / 100))
+      : lineTotal * (taxPct / 100);
+  }
+  const isGst = taxType === 'GST';
 
   return {
-    food_id:           item.id,
-    quantity:          item.qty || 1,
-    price:             item.price || 0,       // base unit price for API
-    _fullUnitPrice:    fullUnitPrice,          // internal: used by calcOrderTotals only
-    food_name:         item.name || '',
-    tax:               item.tax?.percentage || 0,
-    tax_type:          item.tax?.type || 'GST',
-    tax_calc:          item.tax?.calculation || 'Exclusive',
-    add_on_ids:        addonIds,              // flat array [id1, id2]
-    add_on_qtys:       addonQtys,             // flat array [qty1, qty2]
-    add_ons:           [],                    // unused per working curl
-    variations:        variations,
-    food_level_notes:  Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
+    food_id:             item.id,
+    quantity:            item.qty || 1,
+    price:               basePrice,
+    variant:             '',
+    add_on_ids:          addonIds,
+    add_on_qtys:         addonQtys,
+    variations:          variations,
+    add_ons:             [],
+    station:             (item.station || 'KDS').toUpperCase(),
+    food_amount:         foodAmount,
+    variation_amount:    variationAmount,
+    addon_amount:        addonAmount,
+    gst_amount:          String((isGst ? taxAmount : 0).toFixed(2)),
+    vat_amount:          String((!isGst ? taxAmount : 0).toFixed(2)),
+    discount_amount:     '0.00',
+    complementary_price: 0.0,
+    is_complementary:    'No',
+    food_level_notes:    Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
+    _fullUnitPrice:      fullUnitPrice,
   };
 };
 
@@ -282,23 +298,8 @@ const calcOrderTotals = (cart) => {
   cart.forEach(item => {
     const lineTotal = (item._fullUnitPrice || item.price || 0) * (item.quantity || 1);
     subtotal += lineTotal;
-
-    const taxPct = parseFloat(item.tax) || 0;
-    if (taxPct === 0) return;
-
-    const isInclusive = item.tax_calc === 'Inclusive';
-    let taxAmt;
-    if (isInclusive) {
-      taxAmt = lineTotal - (lineTotal / (1 + taxPct / 100));
-    } else {
-      taxAmt = lineTotal * (taxPct / 100);
-    }
-
-    if ((item.tax_type || 'GST').toUpperCase() === 'GST') {
-      gstTax += taxAmt;
-    } else {
-      vatTax += taxAmt;
-    }
+    gstTax += parseFloat(item.gst_amount) || 0;
+    vatTax += parseFloat(item.vat_amount) || 0;
   });
 
   const totalTax = Math.round((gstTax + vatTax) * 100) / 100;
@@ -386,8 +387,8 @@ export const toAPI = {
     const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
-    const cart = unplacedItems.map(buildCartItem);
-    const totals = calcOrderTotals(cart);
+    const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
+    const totals = calcOrderTotals(unplacedItems.map(buildCartItem));
 
     return {
       user_id:                    userId,
@@ -451,8 +452,9 @@ export const toAPI = {
       existingSubtotal = 0,
     } = options;
 
-    const cartUpdate = newItems.map(buildCartItem);
-    const newTotals = calcOrderTotals(cartUpdate);
+    const cartUpdateRaw = newItems.map(buildCartItem);
+    const newTotals = calcOrderTotals(cartUpdateRaw);
+    const cartUpdate = cartUpdateRaw.map(({ _fullUnitPrice, ...item }) => item);
 
     // Complete order totals = existing (from API) + new items
     const combinedSubtotal = existingSubtotal + newTotals.order_sub_total_amount;
@@ -516,8 +518,8 @@ export const toAPI = {
     const { method = 'cash', transactionId = '', splitPayments = [], deliveryCharge = 0, discounts = {} } = paymentData;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
-    const cart = unplacedItems.map(buildCartItem);
-    const totals = calcOrderTotals(cart);
+    const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
+    const totals = calcOrderTotals(unplacedItems.map(buildCartItem));
 
     const payload = {
       user_id:                    userId,
