@@ -78,6 +78,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [placedOrderId, setPlacedOrderId] = useState(table?.orderId || null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [showPaymentPanel, setShowPaymentPanel] = useState(initialShowPayment);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   
   // API financials for placed orders (amount, subtotal from server)
   const [orderFinancials, setOrderFinancials] = useState({
@@ -671,8 +672,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               associatedOrders={orderData?.associatedOrders || []}
               orderFinancials={orderFinancials}
               hasPlacedItems={cartItems.some(i => i.placed)}
+              isProcessingPayment={isProcessingPayment}
               onBack={() => setShowPaymentPanel(false)}
               onPaymentComplete={async (paymentData) => {
+                if (isProcessingPayment) return;
+                setIsProcessingPayment(true);
                 try {
                   // Scenario 3 — Transfer to Room (Phase 2B)
                   if (paymentData.isTransferToRoom && paymentData.roomId) {
@@ -713,6 +717,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 } catch (err) {
                   const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
                   toast({ title: "Payment Failed", description: msg });
+                } finally {
+                  setIsProcessingPayment(false);
                 }
               }}
             />

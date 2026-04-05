@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing } from "lucide-react";
+import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing, RefreshCw } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables } from "../../contexts";
 
@@ -13,6 +13,7 @@ const CollectPaymentPanel = ({
   associatedOrders = [],
   orderFinancials = {},
   hasPlacedItems = false,
+  isProcessingPayment = false,
 }) => {
   const customer = passedCustomer;
   const { discountTypes } = useRestaurant();
@@ -1127,12 +1128,17 @@ const CollectPaymentPanel = ({
       <div className="p-4 border-t" style={{ borderColor: COLORS.borderGray }}>
         <button
           onClick={handlePayment}
-          disabled={(cartItems || []).length === 0 || (paymentMethod === 'transferToRoom' && !selectedRoom)}
-          className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50"
+          disabled={(cartItems || []).length === 0 || (paymentMethod === 'transferToRoom' && !selectedRoom) || isProcessingPayment}
+          className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: paymentMethod === 'transferToRoom' ? COLORS.primaryOrange : COLORS.primaryGreen }}
           data-testid="complete-payment-btn"
         >
-          {paymentMethod === 'transferToRoom'
+          {isProcessingPayment ? (
+            <>
+              <RefreshCw className="w-5 h-5 animate-spin" />
+              Processing...
+            </>
+          ) : paymentMethod === 'transferToRoom'
             ? `Transfer ₹${finalTotal.toLocaleString()} to ${selectedRoom?.displayName || selectedRoom?.tableNumber || 'Room'}`
             : `${isRoom ? 'Checkout' : 'Pay'} ₹${(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal).toLocaleString()}`}
         </button>
