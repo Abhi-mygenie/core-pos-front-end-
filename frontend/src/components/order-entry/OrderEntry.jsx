@@ -311,9 +311,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);
 
-  const total = cartItems.reduce((sum, item) =>
+  // Cart total: use orderFinancials.amount for placed orders (socket prices lack addon/variation),
+  // fall back to local cart calculation for unplaced items
+  const hasPlacedItems = cartItems.some(i => i.placed);
+  const localTotal = cartItems.reduce((sum, item) =>
     item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
+  const unplacedTotal = cartItems
+    .filter(i => !i.placed && i.status !== 'cancelled')
+    .reduce((sum, item) => sum + (item.totalPrice || (item.price * item.qty)), 0);
+  const total = hasPlacedItems
+    ? (orderFinancials.amount || 0) + unplacedTotal
+    : localTotal;
 
   // handlePlaceOrder — CHG-037: Place Order API
   const handlePlaceOrder = async () => {
