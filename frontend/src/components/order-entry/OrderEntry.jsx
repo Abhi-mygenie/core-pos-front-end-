@@ -359,9 +359,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           existingOrderTotal: orderFinancials.amount || 0,
           existingSubtotal: orderFinancials.subtotalBeforeTax || 0,
         });
-        const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
-        console.log('[UpdateOrder] response:', response.data);
-        toast({ title: "Order Updated", description: response.data?.message || "Items added to order" });
+        // Fire and forget — redirect immediately, API completes in background
+        api.put(API_ENDPOINTS.UPDATE_ORDER, payload)
+          .then(res => console.log('[UpdateOrder] response:', res.data))
+          .catch(err => {
+            console.log('[UpdateOrder] ERROR:', err?.response?.data);
+            toast({ title: "Order Update Failed", description: err?.response?.data?.message || err?.message });
+          });
+        toast({ title: "Order Updated", description: "Items sent to kitchen" });
       } else {
         // Scenario 2 / New Order — Place Order
         const payload = orderToAPI.placeOrder(
@@ -372,20 +377,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
         const formData = new FormData();
         formData.append('data', JSON.stringify(payload));
-        const response = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+        // Fire and forget — redirect immediately, API completes in background
+        api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        console.log('[PlaceOrder] response:', response.data);
+        })
+          .then(res => console.log('[PlaceOrder] response:', res.data))
+          .catch(err => {
+            console.log('[PlaceOrder] ERROR:', err?.response?.data);
+            toast({ title: "Order Failed", description: err?.response?.data?.message || err?.message });
+          });
+        toast({ title: "Order Placed", description: "Order sent to kitchen" });
       }
 
-      // Success — redirect to dashboard. Socket + GET enrichment happen in background.
-      toast({ title: hasPlaced ? "Order Updated" : "Order Placed", description: "Redirecting to dashboard..." });
+      // Redirect to dashboard immediately — API call continues in background
       onClose();
-    } catch (err) {
-      console.log('[PlaceOrder] ERROR status:', err?.response?.status);
-      console.log('[PlaceOrder] ERROR response:', err?.response?.data);
-      const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed to place order';
-      toast({ title: "Order Failed", description: apiMsg });
     } finally {
       setIsPlacingOrder(false);
     }
