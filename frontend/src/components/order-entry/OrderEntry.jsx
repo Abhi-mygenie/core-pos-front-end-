@@ -191,31 +191,23 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   }, [table?.id, orderType]);
 
   // Sync from OrderContext when socket updates the order (new-order, update-order, update-food-status)
-  // Provides proper IDs (order line item ID, food catalog ID) and financials
-  // Handles: Place New Order (financials go from 0 → value)
-  //          Update Order   (financials change after adding items)
+  // Also fires when GET single order enriches the order with missing financial fields
+  // Dependencies: only placedOrderId and orders — NOT orderFinancials (would cause infinite loop)
   useEffect(() => {
     if (!placedOrderId) return;
     
     const orderFromContext = orders.find(o => o.orderId === placedOrderId);
     if (!orderFromContext || !orderFromContext.items?.length) return;
 
-    const contextAmount = orderFromContext.amount || 0;
-    const contextSubtotal = orderFromContext.subtotalBeforeTax || 0;
-
-    // Sync when context financials differ from local (covers new order + update order)
-    const needsSync =
-      contextAmount !== orderFinancials.amount ||
-      contextSubtotal !== orderFinancials.subtotalBeforeTax;
-
-    if (!needsSync) return;
-
-    console.log('[OrderEntry] Syncing from OrderContext (socket)', {
-      contextAmount, localAmount: orderFinancials.amount,
-      contextSubtotal, localSubtotal: orderFinancials.subtotalBeforeTax,
+    console.log('[OrderEntry] Syncing from OrderContext', {
+      orderId: placedOrderId,
+      amount: orderFromContext.amount,
+      subtotalBeforeTax: orderFromContext.subtotalBeforeTax,
+      subtotalAmount: orderFromContext.subtotalAmount,
+      itemCount: orderFromContext.items?.length,
     });
 
-    // Preserve any unplaced items the user is currently adding
+    // Always sync cart items from context (socket = source of truth)
     setCartItems(prev => {
       const unplaced = prev.filter(i => !i.placed);
       const placed = orderFromContext.items.map(i => ({ ...i, placed: true }));
@@ -223,11 +215,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     });
 
     setOrderFinancials({
-      amount: contextAmount,
+      amount: orderFromContext.amount || 0,
       subtotalAmount: orderFromContext.subtotalAmount || 0,
-      subtotalBeforeTax: contextSubtotal,
+      subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
     });
-  }, [placedOrderId, orders, orderFinancials.amount, orderFinancials.subtotalBeforeTax]);
+  }, [placedOrderId, orders]);
 
   // Get current menu items based on category, search, and dietary filters
   const getFilteredItems = () => {
@@ -394,19 +386,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           setPlacedOrderId(newOrderId);
         }
         toast({ title: "Order Placed", description: response.data?.message || "Order placed successfully" });
-        
-        // Mark items as placed locally
-        // Socket's new-order event will update OrderContext with proper IDs and financials
-        // Note: get-single-order API does NOT return financial data for new orders
-        setCartItems(prev => prev.map(item => ({ ...item, placed: true, status: 'preparing' })));
+        // Socket new-order event will sync cart from OrderContext (source of truth)
       }
 
-      // For Update Order: mark unplaced items as placed (optimistic UI)
-      // Socket's update-order event will update OrderContext with proper IDs + financials
-      // useEffect below will sync local state from OrderContext
+      // For Update Order: socket update-order event will sync
       if (hasPlaced && placedOrderId && orderIdToRefresh) {
-        setCartItems(prev => prev.map(item => item.placed ? item : { ...item, placed: true, status: 'preparing' }));
-        console.log('[UpdateOrder] Items marked as placed, waiting for socket sync');
+        console.log('[UpdateOrder] Waiting for socket sync');
       }
       setEditingQtyItemId(null);
     } catch (err) {

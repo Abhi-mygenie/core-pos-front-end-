@@ -132,9 +132,10 @@ export const fromAPI = {
       phone: user.phone || '',
 
       // Financials (Phase 1: Enhanced with new API fields)
+      // No fallback — if socket doesn't send subtotal, keep as 0 (GET single order will fill it)
       amount: parseFloat(api.order_amount) || 0,
-      subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || parseFloat(api.order_amount) || 0,
-      subtotalAmount: parseFloat(api.order_sub_total_amount) || parseFloat(api.order_amount) || 0,
+      subtotalBeforeTax: parseFloat(api.order_sub_total_without_tax) || 0,
+      subtotalAmount: parseFloat(api.order_sub_total_amount) || 0,
       serviceTax: parseFloat(api.total_service_tax_amount) || 0,
       tipAmount: parseFloat(api.tip_amount) || 0,
       tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,

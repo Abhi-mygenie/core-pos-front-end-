@@ -139,8 +139,9 @@ const syncTableStatus = (order, updateTableStatus, overrideStatus = null) => {
  * Handle new-order event
  * Message: [new-order, order_id, restaurant_id, f_order_status, {orders: [...]}]
  * Action: Parse payload, transform, ADD to OrderContext
+ *         Then fetch full order via GET API to fill missing financial fields
  */
-export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
+export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -161,16 +162,18 @@ export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
   const orders = payload.orders;
   for (const apiOrder of orders) {
     try {
-      console.log('[SocketHandler] RAW orderDetails:', JSON.stringify(apiOrder.orderDetails, null, 2));
-      console.log('[SocketHandler] RAW order ALL KEYS:', Object.keys(apiOrder));
-      console.log('[SocketHandler] RAW order FULL (excl orderDetails):', JSON.stringify(
-        Object.fromEntries(Object.entries(apiOrder).filter(([k]) => k !== 'orderDetails' && k !== 'restaurantTable' && k !== 'vendorEmployee' && k !== 'user')),
-        null, 2
-      ));
       const transformedOrder = orderFromAPI.order(apiOrder);
       addOrder(transformedOrder);
       syncTableStatus(transformedOrder, updateTableStatus);
-      log('INFO', `new-order: Added order ${transformedOrder.orderId}`);
+      log('INFO', `new-order: Added order ${transformedOrder.orderId} (socket data)`);
+
+      // Enrich with GET single order (fills missing 16 fields: subtotal, tax, etc.)
+      fetchOrderWithRetry(transformedOrder.orderId).then(fullOrder => {
+        if (fullOrder) {
+          updateOrder(fullOrder.orderId, fullOrder);
+          log('INFO', `new-order: Enriched order ${fullOrder.orderId} (GET API data)`);
+        }
+      });
     } catch (error) {
       log('ERROR', `new-order: Transform failed for order`, error.message);
     }

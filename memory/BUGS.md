@@ -203,7 +203,7 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 
 | Action | Socket Event | Status |
 |--------|-------------|--------|
-| Place New Order | `new-order` (with payload) | ✅ 0 API calls |
+| Place New Order | `new-order` (with payload) | ✅ 0→1 API call (GET single order enrichment) |
 | Update Order | `update-order` | ✅ 1 API call |
 | Cancel Single Item | `update-order-status` (status=3) | ✅ 1 API call |
 | Cancel Partial Item | `update-order-status` (status=3) | ✅ 1 API call |
@@ -214,29 +214,74 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 
 ## BUG-208: Socket orderDetails returns empty `variation` and `add_ons`
 
-**Status:** PARTIALLY FIXED (addons now returned, variations still empty)
-**Priority:** P1 (downgraded from P0 — addons working)
+**Status:** FIXED ✅ (both addons and variations now returned by backend)
+**Priority:** CLOSED
+**Reported:** April 6, 2026
+**Fixed:** April 6, 2026
+
+### Resolution
+Backend now returns both fields correctly:
+- `variation`: `[{name: "Size", values: [{label: "Large", optionPrice: "40"}]}]`
+- `add_ons`: `[{id: 10730, name: "lemon pepper Sprinkler", price: 15, quantity: 1}]`
+
+### Frontend fixes applied:
+- `fromAPI.orderItem` normalizes `price` to `unit_price` (BUG-209)
+- PlacedItemRow + CollectPaymentPanel parse nested `variation[].values[].optionPrice`
+- Display shows "Size: Large" format (handles both array and object `values`)
+
+---
+
+## BUG-204: Socket `new-order` missing 16 financial fields
+
+**Status:** WORKAROUND IMPLEMENTED (GET single order enrichment)
+**Priority:** P1
 **Reported:** April 6, 2026
 **Updated:** April 6, 2026
 
 ### Problem
-After placing an order with addons and variations, the socket `new-order` event originally returned `variation: []` and `add_ons: []`.
+Socket `new-order` event sends only 35 keys. GET single order API returns 51 keys. The 16 missing fields include critical financial data needed for Collect Bill.
 
-### UPDATE (April 6): Addons now returned by socket!
-```json
-"add_ons": [{"id": 10730, "name": "lemon pepper Sprinkler", "price": 15, "quantity": 1}]
+### Evidence (verified April 6)
+
+**Socket `new-order` payload (35 keys):**
 ```
-**Variations still empty:** `"variation": []`
+order_amount: 166                    ✅ Present
+order_sub_total_amount:              ❌ MISSING
+order_sub_total_without_tax:         ❌ MISSING
+total_service_tax_amount:            ❌ MISSING
+payment_method:                      ❌ MISSING
+delivery_charge:                     ❌ MISSING
+order_edit_count:                    ❌ MISSING
+print_bill_status:                   ❌ MISSING
+payment_id:                          ❌ MISSING
+parent_order_id:                     ❌ MISSING
+canceled_by:                         ❌ MISSING
+cancel_at:                           ❌ MISSING
+send_payment_link:                   ❌ MISSING
+tablepart:                           ❌ MISSING
+associated_order_list:               ❌ MISSING
+delivery_man / delivery_man_id:      ❌ MISSING
+```
 
-### Key socket data discovery:
-- `unit_price: "129.00"` = per-unit base price
-- `price: 387` = total line price (unit_price × quantity) — NOT per-unit
-- `fromAPI.orderItem` now normalizes `price` to `unit_price` (BUG-209 fix)
+**GET `/api/v2/vendoremployee/get-single-order-new` (51 keys):**
+```
+order_amount: 166                    ✅
+order_sub_total_amount: 159          ✅
+order_sub_total_without_tax: 159     ✅
+total_service_tax_amount: 0.00       ✅
+(all 51 keys present)
+```
 
-### Remaining Impact:
-1. ~~Addon names & quantities lost~~ **FIXED by backend**
-2. **Variation names still lost** — placed items show no variant info
-3. Per-item price correct for base + addons, but missing variation costs
+### Frontend Workaround (April 6)
+After socket `new-order`, immediately call GET single order API to enrich the order with missing fields. Flow:
+1. Socket → addOrder (35 keys, cart items render)
+2. GET API → updateOrder (51 keys, financials render)
+3. When backend adds fields to socket, remove step 2.
 
-### Backend Action Still Required:
-- `variation`: return selected variation objects with `{label, optionPrice}`
+### Backend Action Required
+Add these fields to socket `new-order` event payload to match GET single order:
+- `order_sub_total_amount`
+- `order_sub_total_without_tax`
+- `total_service_tax_amount`
+- (ideally all 16 missing fields for full parity)
+
