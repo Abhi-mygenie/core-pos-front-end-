@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { TABLE_STATUS } from '../api/constants';
 import * as tableService from '../api/services/tableService';
 
