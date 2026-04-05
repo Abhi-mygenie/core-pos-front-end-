@@ -161,12 +161,15 @@ Each item in the `cart` array:
 ### Variation Object Format
 ```json
 {
-  "label": "Large",        // Selected option label (from variantGroup.options[].name)
-  "optionPrice": "40"      // Price as STRING (from variantGroup.options[].price)
+  "name": "FANCY ITEM",              // Variant group name (from variantGroup.name)
+  "values": {
+    "label": ["CHEESE GOTALO", "PANEER"]  // Array of selected option labels
+  }
 }
 ```
-**Source:** `item.selectedVariants` (object keyed by group ID) → mapped in `buildCartItem()`
-**Note:** Backend requires `label` key (not `name`). Sending `{name, price}` causes `Undefined array key "label"` PHP error.
+**Source:** `item.selectedVariants` (object keyed by group ID) → grouped by group name in `buildCartItem()`
+**Structure:** Each variation group becomes one object. Multiple selected options within a group become multiple entries in the `label` array.
+**Note:** Previous format `{label, optionPrice}` was INCORRECT. Backend expects the group-level structure above.
 
 ---
 

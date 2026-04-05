@@ -221,19 +221,32 @@ const buildCartItem = (item) => {
     return sum + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1));
   }, 0);
 
-  // Variation data — rebuild full group structure with only selected value
+  // Variation data — group-level structure: {name: "GroupName", values: {label: ["Option1"]}}
+  // Backend expects variations grouped by variant group with selected option labels
   const variantGroups = item.variantGroups || [];
   let variations = [];
   let variationAmount = 0;
 
   if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
-    variations = Object.entries(item.selectedVariants)
+    // Build group map: groupName → [selected option labels]
+    const groupMap = {};
+    Object.entries(item.selectedVariants)
       .filter(([, option]) => option)
-      .map(([, option]) => {
+      .forEach(([groupId, option]) => {
         variationAmount += parseFloat(option.price) || 0;
-        return { label: option.name, optionPrice: String(option.price || 0) };
+        // Look up group name from variantGroups
+        const group = variantGroups.find(g => String(g.id) === String(groupId));
+        const groupName = group?.name || option.groupName || `Variant`;
+        if (!groupMap[groupName]) groupMap[groupName] = [];
+        groupMap[groupName].push(option.name);
       });
+    // Convert to API format: [{name, values: {label: [...]}}]
+    variations = Object.entries(groupMap).map(([name, labels]) => ({
+      name,
+      values: { label: labels },
+    }));
   } else if (item.variation?.length > 0) {
+    // Fallback for placed items from socket (already in API format or empty)
     variations = item.variation;
     variationAmount = item.variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
   }

@@ -33,6 +33,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 
 ## Bugs - Fixed ✅ (Recent)
 - **BUG-209**: Placed item prices showed double-multiplied amounts (₹1,904 instead of ₹476 for qty=4). Root cause: socket `detail.price` returns total (unit × qty), but display code multiplied by qty again. Fixed by normalizing `fromAPI.orderItem.price` to use `unit_price`.
+- **Variation format fix**: Changed from `{label, optionPrice}` to `{name: "GroupName", values: {label: ["Option1"]}}` matching backend's expected structure per user-provided working curl.
 
 ## Key Features
 - Login/Authentication
