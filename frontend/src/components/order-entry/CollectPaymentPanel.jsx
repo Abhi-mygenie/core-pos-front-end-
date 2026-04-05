@@ -1070,9 +1070,9 @@ const CollectPaymentPanel = ({
                 data-testid="cash-received-input"
               />
               <div className="flex gap-2">
-                {[finalTotal, Math.ceil(finalTotal / 100) * 100, Math.ceil(finalTotal / 500) * 500].map((amt) => (
+                {[finalTotal, Math.ceil(finalTotal / 100) * 100, Math.ceil(finalTotal / 500) * 500].map((amt, idx) => (
                   <button
-                    key={amt}
+                    key={`cash-${idx}`}
                     onClick={() => setAmountReceived(amt.toString())}
                     className="flex-1 py-2 rounded-lg border text-sm transition-colors hover:bg-gray-50"
                     style={{ borderColor: COLORS.borderGray }}
