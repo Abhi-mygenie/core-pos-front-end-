@@ -7,7 +7,6 @@ import api from "../../api/axios";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI } from "../../api/transforms/orderTransform";
-import { fetchSingleOrderForSocket } from "../../api/services/orderService";
 import AddCustomItemModal from "./AddCustomItemModal";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
@@ -444,26 +443,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       description: response.data?.message || `${item?.name} cancelled successfully`,
     });
     
-    // Refresh cart from API to ensure proper sync (qty, status, IDs)
-    // IMPORTANT: Always update cart from API response, never locally
-    const orderId = effectiveTable?.orderId || placedOrderId;
-    if (orderId) {
-      try {
-        const freshOrder = await fetchSingleOrderForSocket(orderId);
-        if (freshOrder?.items) {
-          setCartItems(freshOrder.items.map(i => ({ ...i, placed: true })));
-          // Update financials from API
-          setOrderFinancials({
-            amount: freshOrder.amount || 0,
-            subtotalAmount: freshOrder.subtotalAmount || 0,
-            subtotalBeforeTax: freshOrder.subtotalBeforeTax || 0,
-          });
-          console.log('[CancelFood] Cart refreshed from API');
-        }
-      } catch (refreshErr) {
-        console.warn('[CancelFood] Failed to refresh cart from API:', refreshErr);
-      }
-    }
+    // Socket update-order-status will update OrderContext
+    // useEffect will sync cartItems + orderFinancials from context
+    console.log('[CancelFood] Waiting for socket sync');
     setCancelItem(null);
   };
 
