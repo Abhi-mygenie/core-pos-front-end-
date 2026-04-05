@@ -156,8 +156,8 @@ const NewItemRow = ({ item, cartIndex, onDeleteItem, updateQuantity, onAddNote, 
           {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
         </div>
       )}
-      {item.notes && item.notes.trim() && (
-        <div className="text-xs mt-0.5 italic" style={{ color: COLORS.grayText }}>
+      {item.notes && item.notes.trim() && !(item.itemNotes?.length > 0) && (
+        <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
           📝 {item.notes}
         </div>
       )}
@@ -177,11 +177,11 @@ const NewItemRow = ({ item, cartIndex, onDeleteItem, updateQuantity, onAddNote, 
         </button>
         <button 
           className="px-2 py-1.5 text-xs hover:bg-gray-50 rounded-lg transition-colors whitespace-nowrap" 
-          style={{ color: item.itemNotes?.length > 0 ? COLORS.primaryOrange : COLORS.grayText }}
+          style={{ color: (item.itemNotes?.length > 0 || item.notes?.trim()) ? COLORS.primaryOrange : COLORS.grayText }}
           onClick={() => onAddNote(item, cartIndex)}
           data-testid={`add-note-btn-${item.id}`}
         >
-          {item.itemNotes?.length > 0 ? "Edit Note" : "Add Note"}
+          {(item.itemNotes?.length > 0 || item.notes?.trim()) ? "Edit Note" : "Add Note"}
         </button>
       </div>
     </div>
