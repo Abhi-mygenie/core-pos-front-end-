@@ -97,10 +97,14 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - **BUG-209**: Placed item prices double-multiplied (socket `price` = total, display did `price * qty` again)
 - **BUG-211**: Backend doesn't send `update-table engage` for new orders — workaround: frontend engages locally in `handleNewOrder`
 
+- **BUG-213**: Collect Bill summary showed only placed items' totals, ignoring new unplaced items in cart
+
 ## Bugs - Open / Blocked
 - **NOTE-200**: StrictMode double-log — dev-only, verify in production
 - **BUG-204**: Socket `new-order` missing 16 financial fields — workaround: GET single order enrichment
 - **BUG-210**: No table availability pre-check before placing order (multi-device race condition) — blocked on backend team
+- **BUG-212**: Addon names mismatch between product catalog API and order response API — blocked on backend team
+- **BUG-214**: **CRITICAL** — Collect Bill on existing order returns "Table is already occupied". All 3 payload variations tried. Blocked on backend clarification. See BUGS.md for full details.
 
 ## Key Technical Learnings
 

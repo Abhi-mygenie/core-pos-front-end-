@@ -474,3 +474,86 @@ Ensure both APIs return the **same name** for the same addon ID. Either:
 1. Product API should resolve addon name from the same source as the Order API, OR
 2. Order API should use the addon catalog name, OR
 3. Normalize the names in both tables to be identical
+
+
+## BUG-214: Collect Bill on Existing Order — "Table is already occupied" Error
+
+**Status:** BLOCKED — Awaiting Backend Clarification
+**Priority:** P0 CRITICAL
+**Reported:** Feb 2026
+**Component:** Backend API — `POST /api/v1/vendoremployee/order/place-order`
+
+### Problem
+When attempting to collect payment on an existing placed order (postpaid → paid), the backend returns:
+```
+{"error": "Table is already occupied by a running order. Please choose another table or wait until it is free."}
+```
+
+### All Attempts Made
+
+| # | Payload Variation | Result |
+|---|-------------------|--------|
+| 1 | `order_id` + financials, **NO `cart`** | `{"error": "Cart is required"}` |
+| 2 | `cart` + financials, **NO `order_id`** | Creates a **duplicate new order** (not payment) |
+| 3 | `order_id` + `cart` + `payment_status: "paid"` + `payment_type: "postpaid"` | `"Table is already occupied by a running order"` |
+
+### Payload Sent (Attempt 3)
+```json
+{
+  "order_id": "730461",
+  "user_id": "",
+  "restaurant_id": 475,
+  "table_id": "4259",
+  "order_type": "pos",
+  "cust_name": "",
+  "cust_mobile": "",
+  "payment_method": "cash",
+  "payment_status": "paid",
+  "payment_type": "postpaid",
+  "transaction_id": null,
+  "print_kot": "Yes",
+  "auto_dispatch": "No",
+  "scheduled": 0,
+  "schedule_at": null,
+  "order_sub_total_amount": 149,
+  "order_sub_total_without_tax": 149,
+  "tax_amount": 7.46,
+  "gst_tax": 7.46,
+  "vat_tax": 0,
+  "order_amount": 157,
+  "round_up": "0.55",
+  "cart": [
+    {
+      "food_id": 116608,
+      "quantity": 1,
+      "price": 129,
+      "variant": "",
+      "add_on_ids": [10726],
+      "add_on_qtys": [1],
+      "variations": [],
+      "add_ons": [],
+      "station": "KDS",
+      "food_amount": 129,
+      "variation_amount": 0,
+      "addon_amount": 20,
+      "gst_amount": "7.45",
+      "vat_amount": "0.00",
+      "discount_amount": "0.00",
+      "complementary_price": 0,
+      "is_complementary": "No",
+      "food_level_notes": ""
+    }
+  ]
+}
+```
+
+### Questions for Backend Team
+1. What is the correct payload structure to collect payment on an existing running order?
+2. Does the endpoint differentiate "create new order" vs "collect payment on existing" by `order_id`, by `payment_status`, or by another mechanism?
+3. Is there a separate endpoint for collecting payment on existing orders?
+4. Is the table occupancy check ignoring the `order_id` field entirely — i.e., it always rejects if the table has a running order regardless?
+
+### Impact
+- **Collect Bill flow is completely non-functional** for postpaid (dine-in) orders
+- Users cannot close out tables that have running orders
+- Only prepaid (Place+Pay) flow works currently

@@ -1,6 +1,6 @@
 # API Document v2 — Place Order Endpoint
 
-**Version:** 2.1
+**Version:** 2.2
 **Last Updated:** Feb 2026
 **Endpoint:** `POST /api/v1/vendoremployee/order/place-order`
 
@@ -14,7 +14,50 @@ This single endpoint handles **3 flows**:
 |------|---------|-------------------|
 | **Place New Order** (unpaid) | User clicks "Place Order" on new items | `payment_status: "unpaid"`, `payment_type: "postpaid"` |
 | **Place + Pay** (fresh order) | User clicks "Pay" on new items without placing first | `payment_status: "paid"`, `payment_type: "prepaid"`, includes `partial_payments` |
-| **Collect Bill** (existing order) | User clicks "Pay" on already-placed order | `payment_status: "paid"`, includes `order_id` of existing order, includes `partial_payments` |
+| **Collect Bill** (existing order) | User clicks "Pay" on already-placed order | `payment_status: "paid"`, `payment_type: "postpaid"`, includes `order_id`, includes `cart` + full payload |
+
+### BLOCKED: Collect Bill Flow (BUG-214)
+
+**Status:** BLOCKED — Awaiting backend clarification
+
+The "Collect Bill on existing order" flow (Flow 3) returns:
+```
+{"error": "Table is already occupied by a running order. Please choose another table or wait until it is free."}
+```
+
+**What we've tried:**
+1. Sending payload WITHOUT `cart` → `{"error": "Cart is required"}`
+2. Sending payload WITH `cart` + WITHOUT `order_id` → Creates a duplicate new order instead of marking existing as paid
+3. Sending payload WITH `cart` + WITH `order_id` + `payment_status: "paid"` + `payment_type: "postpaid"` → `"Table is already occupied by a running order"`
+
+**Current payload sent:**
+```json
+{
+  "order_id": "730461",
+  "user_id": "",
+  "restaurant_id": 475,
+  "table_id": "4259",
+  "order_type": "pos",
+  "cust_name": "",
+  "cust_mobile": "",
+  "payment_method": "cash",
+  "payment_status": "paid",
+  "payment_type": "postpaid",
+  "order_sub_total_amount": 149,
+  "order_sub_total_without_tax": 149,
+  "tax_amount": 7.46,
+  "gst_tax": 7.46,
+  "order_amount": 157,
+  "cart": [{"food_id": 116608, "quantity": 1, ...}],
+  ...
+}
+```
+
+**Questions for backend team:**
+1. What is the correct payload structure to collect payment on an existing running order?
+2. Does the endpoint differentiate between "create new order" and "collect payment on existing" by `order_id` presence, or by another field?
+3. Is there a separate endpoint for collecting payment on existing orders?
+4. Should `payment_type` be `"prepaid"` instead of `"postpaid"` for collect bill?
 
 **Content-Type:** `multipart/form-data`
 **Auth:** `Bearer <token>` in Authorization header
