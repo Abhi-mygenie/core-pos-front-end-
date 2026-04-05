@@ -68,7 +68,14 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         {!item.customizations && !isCancelled && (item.variation?.length > 0 || item.addOns?.length > 0) && (
           <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
             {item.variation?.length > 0 && (
-              <span>{item.variation.map(v => v.name || v.label || '').filter(Boolean).join(', ')}</span>
+              <span>{item.variation.map(v => {
+                // Format: {name: "Size", values: {label: ["Large"]}} → "Size: Large"
+                const labels = v.values?.label;
+                if (Array.isArray(labels) && labels.length > 0) {
+                  return `${v.name}: ${labels.join(', ')}`;
+                }
+                return v.name || v.label || '';
+              }).filter(Boolean).join(', ')}</span>
             )}
             {item.addOns?.length > 0 && (
               <span>{item.variation?.length > 0 ? ' + ' : '+ '}{item.addOns.map(a => {
