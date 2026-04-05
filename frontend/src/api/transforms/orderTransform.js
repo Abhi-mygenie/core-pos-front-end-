@@ -244,7 +244,7 @@ const buildCartItem = (item) => {
     add_on_ids:        addonIds,              // flat array [id1, id2]
     add_on_qtys:       addonQtys,             // flat array [qty1, qty2]
     add_ons:           [],                    // unused per working curl
-    variation:         variation,
+    variations:        variation,
     food_level_notes:  Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
   };
 };
