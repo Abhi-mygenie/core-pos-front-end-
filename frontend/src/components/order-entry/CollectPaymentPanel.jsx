@@ -363,6 +363,20 @@ const CollectPaymentPanel = ({
                                 {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
                               </div>
                             )}
+                            {!item.customizations && (item.variation?.length > 0 || item.addOns?.length > 0) && (
+                              <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                                └─ {item.variation?.map(v => {
+                                  const labels = Array.isArray(v.values)
+                                    ? v.values.map(val => val.label).filter(Boolean)
+                                    : (Array.isArray(v.values?.label) ? v.values.label : []);
+                                  return labels.length > 0 ? `${v.name}: ${labels.join(', ')}` : v.name;
+                                }).filter(Boolean).join(', ')}
+                                {item.addOns?.length > 0 && `${item.variation?.length > 0 ? ' + ' : ''}${item.addOns.map(a => {
+                                  const qty = a.quantity || a.qty || 1;
+                                  return qty > 1 ? `${a.name} x${qty}` : a.name;
+                                }).filter(Boolean).join(', ')}`}
+                              </div>
+                            )}
                           </div>
                           <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
                             ₹{getItemLinePrice(item).toLocaleString()}
@@ -547,6 +561,20 @@ const CollectPaymentPanel = ({
                         └─ {item.customizations.size}
                         {item.customizations.variants?.length > 0 && (item.customizations.size ? ', ' : '') + item.customizations.variants.join(", ")}
                         {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
+                      </div>
+                    )}
+                    {!item.customizations && (item.variation?.length > 0 || item.addOns?.length > 0) && (
+                      <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
+                        └─ {item.variation?.map(v => {
+                          const labels = Array.isArray(v.values)
+                            ? v.values.map(val => val.label).filter(Boolean)
+                            : (Array.isArray(v.values?.label) ? v.values.label : []);
+                          return labels.length > 0 ? `${v.name}: ${labels.join(', ')}` : v.name;
+                        }).filter(Boolean).join(', ')}
+                        {item.addOns?.length > 0 && `${item.variation?.length > 0 ? ' + ' : ''}${item.addOns.map(a => {
+                          const qty = a.quantity || a.qty || 1;
+                          return qty > 1 ? `${a.name} x${qty}` : a.name;
+                        }).filter(Boolean).join(', ')}`}
                       </div>
                     )}
                   </div>
