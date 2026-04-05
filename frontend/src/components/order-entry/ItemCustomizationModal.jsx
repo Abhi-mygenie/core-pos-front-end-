@@ -10,13 +10,21 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
   const [notes, setNotes] = useState("");
   const [showNotes, setShowNotes] = useState(false);
 
-  // Initialize with first size/variant options if available
+  // Initialize with saved selections (re-edit from cart) or defaults (fresh from menu)
   useEffect(() => {
-    if (item?.sizes?.length > 0) {
+    if (!item) return;
+
+    // Size: restore saved or default to first
+    if (item.selectedSize) {
+      setSelectedSize(item.selectedSize);
+    } else if (item.sizes?.length > 0) {
       setSelectedSize(item.sizes[0]);
     }
-    // Initialize variant groups with first option
-    if (item?.variantGroups?.length > 0) {
+
+    // Variant groups: restore saved or default to first option per group
+    if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
+      setSelectedVariants(item.selectedVariants);
+    } else if (item.variantGroups?.length > 0) {
       const initialVariants = {};
       item.variantGroups.forEach(group => {
         if (group.options?.length > 0) {
@@ -24,6 +32,27 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
         }
       });
       setSelectedVariants(initialVariants);
+    }
+
+    // Addons: restore saved (array → map) or empty
+    if (item.selectedAddons?.length > 0) {
+      const addonMap = {};
+      item.selectedAddons.forEach(a => { addonMap[a.id] = a.quantity || 1; });
+      setSelectedAddons(addonMap);
+    } else {
+      setSelectedAddons({});
+    }
+
+    // Quantity: restore saved or default to 1
+    setQuantity(item.qty || item.quantity || 1);
+
+    // Notes: restore saved
+    if (item.notes || item.itemNotes) {
+      setNotes(item.notes || item.itemNotes || '');
+      setShowNotes(true);
+    } else {
+      setNotes('');
+      setShowNotes(false);
     }
   }, [item]);
 
