@@ -1,5 +1,9 @@
 // Socket Event Handlers
 // Business logic for handling each socket event
+//
+// BUG-203 (April 5, 2026): All order handlers now also update TableContext.
+// Table status is derived from order data (tableId + tableStatus fields).
+// The update-table socket channel is no longer subscribed to.
 
 import { 
   SOCKET_EVENTS, 
@@ -105,6 +109,29 @@ const fetchOrderWithRetry = async (orderId, retries = 1) => {
 };
 
 // =============================================================================
+// TABLE STATUS HELPER (BUG-203)
+// Derives and updates table status from order data
+// =============================================================================
+
+/**
+ * Update table status from order data
+ * Skip walk-in/takeaway/delivery orders (tableId = 0)
+ * @param {Object} order - Transformed order with tableId and tableStatus
+ * @param {Function} updateTableStatus - From TableContext
+ * @param {string} [overrideStatus] - Override table status (e.g., 'available' for paid/cancelled)
+ */
+const syncTableStatus = (order, updateTableStatus, overrideStatus = null) => {
+  if (!updateTableStatus) return;
+  if (!order?.tableId || order.tableId === 0) return; // skip walk-in/takeaway/delivery
+  
+  const status = overrideStatus || order.tableStatus;
+  if (!status) return;
+  
+  updateTableStatus(order.tableId, status);
+  log('INFO', `Table ${order.tableId} → "${status}" (derived from order ${order.orderId})`);
+};
+
+// =============================================================================
 // EVENT HANDLERS
 // =============================================================================
 
@@ -113,7 +140,7 @@ const fetchOrderWithRetry = async (orderId, retries = 1) => {
  * Message: [new-order, order_id, restaurant_id, f_order_status, {orders: [...]}]
  * Action: Parse payload, transform, ADD to OrderContext
  */
-export const handleNewOrder = (message, { addOrder }) => {
+export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -136,6 +163,7 @@ export const handleNewOrder = (message, { addOrder }) => {
     try {
       const transformedOrder = orderFromAPI.order(apiOrder);
       addOrder(transformedOrder);
+      syncTableStatus(transformedOrder, updateTableStatus);
       log('INFO', `new-order: Added order ${transformedOrder.orderId}`);
     } catch (error) {
       log('ERROR', `new-order: Transform failed for order`, error.message);
@@ -148,7 +176,7 @@ export const handleNewOrder = (message, { addOrder }) => {
  * Message: [update-order, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleUpdateOrder = async (message, { updateOrder }) => {
+export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -162,6 +190,7 @@ export const handleUpdateOrder = async (message, { updateOrder }) => {
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
     updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
     log('INFO', `update-order: Updated order ${order.orderId}`);
   } else {
     log('WARN', `update-order: Could not fetch order ${orderId}, skipping`);
@@ -173,7 +202,7 @@ export const handleUpdateOrder = async (message, { updateOrder }) => {
  * Message: [update-food-status, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleUpdateFoodStatus = async (message, { updateOrder }) => {
+export const handleUpdateFoodStatus = async (message, { updateOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -187,6 +216,7 @@ export const handleUpdateFoodStatus = async (message, { updateOrder }) => {
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
     updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
     log('INFO', `update-food-status: Updated order ${order.orderId}`);
   } else {
     log('WARN', `update-food-status: Could not fetch order ${orderId}, skipping`);
@@ -201,7 +231,7 @@ export const handleUpdateFoodStatus = async (message, { updateOrder }) => {
  * BUG-107 Fix: For cancelled status (3), fetch order first to check if
  * only some items are cancelled (single item cancel) vs all items cancelled.
  */
-export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder }) => {
+export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder, updateTableStatus, getOrderById }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -213,8 +243,13 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
   log('INFO', `update-order-status received: ${orderId}, status: ${fOrderStatus}`);
   
   // Paid orders (status 6) - remove immediately without fetching
+  // Look up tableId from context first so we can mark table as available
   if (fOrderStatus === 6) {
     log('INFO', `update-order-status: Order ${orderId} is paid, removing`);
+    const existingOrder = getOrderById ? getOrderById(orderId) : null;
+    if (existingOrder?.tableId && existingOrder.tableId !== 0) {
+      syncTableStatus(existingOrder, updateTableStatus, 'available');
+    }
     removeOrder(orderId);
     return;
   }
@@ -230,14 +265,20 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
     
     if (allItemsCancelled) {
       log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
+      syncTableStatus(order, updateTableStatus, 'available');
       removeOrder(orderId);
     } else {
       updateOrder(order.orderId, order);
+      syncTableStatus(order, updateTableStatus);
       log('INFO', `update-order-status: Updated order ${orderId}`);
     }
   } else {
     // Order not found in API - might be fully cancelled/deleted
     log('WARN', `update-order-status: Order ${orderId} not found, removing from context`);
+    const existingOrder = getOrderById ? getOrderById(orderId) : null;
+    if (existingOrder?.tableId && existingOrder.tableId !== 0) {
+      syncTableStatus(existingOrder, updateTableStatus, 'available');
+    }
     removeOrder(orderId);
   }
 };
@@ -247,7 +288,7 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
  * Message: [scan-new-order, order_id, restaurant_id, f_order_status]
  * Action: Fetch order from API, ADD to OrderContext
  */
-export const handleScanNewOrder = async (message, { addOrder }) => {
+export const handleScanNewOrder = async (message, { addOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -261,6 +302,7 @@ export const handleScanNewOrder = async (message, { addOrder }) => {
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
     addOrder(order);
+    syncTableStatus(order, updateTableStatus);
     log('INFO', `scan-new-order: Added order ${orderId}`);
   } else {
     log('WARN', `scan-new-order: Could not fetch order ${orderId}, skipping`);
@@ -272,7 +314,7 @@ export const handleScanNewOrder = async (message, { addOrder }) => {
  * Message: [delivery-assign-order, order_id, restaurant_id, rider_id]
  * Action: Fetch order from API, UPDATE in OrderContext
  */
-export const handleDeliveryAssignOrder = async (message, { updateOrder }) => {
+export const handleDeliveryAssignOrder = async (message, { updateOrder, updateTableStatus }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -286,6 +328,7 @@ export const handleDeliveryAssignOrder = async (message, { updateOrder }) => {
   const order = await fetchOrderWithRetry(orderId);
   if (order) {
     updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
     log('INFO', `delivery-assign-order: Updated order ${order.orderId}`);
   } else {
     log('WARN', `delivery-assign-order: Could not fetch order ${orderId}, skipping`);

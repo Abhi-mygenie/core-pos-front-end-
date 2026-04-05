@@ -1,5 +1,9 @@
 // useSocketEvents Hook
 // Wires socket events to handlers and context updates
+// 
+// BUG-203 (April 5, 2026): Removed update-table channel subscription.
+// Table status is now derived from order data inside order event handlers.
+// Single source of truth: OrderContext → table status derived from order.
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useSocket } from '../../contexts/SocketContext';
@@ -10,7 +14,6 @@ import socketService from './socketService';
 import { 
   SOCKET_EVENTS,
   getOrderChannel,
-  getTableChannel,
 } from './socketEvents';
 import {
   handleNewOrder,
@@ -19,7 +22,6 @@ import {
   handleUpdateOrderStatus,
   handleScanNewOrder,
   handleDeliveryAssignOrder,
-  handleUpdateTable,
 } from './socketHandlers';
 
 /**
@@ -28,7 +30,7 @@ import {
  */
 export const useSocketEvents = () => {
   const { subscribe, isConnected } = useSocket();
-  const { addOrder, updateOrder, removeOrder } = useOrders();
+  const { addOrder, updateOrder, removeOrder, getOrderById } = useOrders();
   const { updateTableStatus } = useTables();
   const { restaurant } = useRestaurant();
   
@@ -36,17 +38,13 @@ export const useSocketEvents = () => {
   const restaurantId = restaurant?.id;
   
   // Use refs to avoid stale closures in event handlers
-  const orderActionsRef = useRef({ addOrder, updateOrder, removeOrder });
-  const tableActionsRef = useRef({ updateTableStatus });
+  // All handlers now receive both order + table actions (BUG-203)
+  const actionsRef = useRef({ addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus });
   
-  // Update refs when context functions change
+  // Update ref when context functions change
   useEffect(() => {
-    orderActionsRef.current = { addOrder, updateOrder, removeOrder };
-  }, [addOrder, updateOrder, removeOrder]);
-  
-  useEffect(() => {
-    tableActionsRef.current = { updateTableStatus };
-  }, [updateTableStatus]);
+    actionsRef.current = { addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus };
+  }, [addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus]);
 
   // ===========================================================================
   // CHANNEL EVENT HANDLER
@@ -60,42 +58,31 @@ export const useSocketEvents = () => {
     
     switch (eventName) {
       case SOCKET_EVENTS.NEW_ORDER:
-        handleNewOrder(args, orderActionsRef.current);
+        handleNewOrder(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.UPDATE_ORDER:
-        handleUpdateOrder(args, orderActionsRef.current);
+        handleUpdateOrder(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.UPDATE_FOOD_STATUS:
-        handleUpdateFoodStatus(args, orderActionsRef.current);
+        handleUpdateFoodStatus(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.UPDATE_ORDER_STATUS:
-        handleUpdateOrderStatus(args, orderActionsRef.current);
+        handleUpdateOrderStatus(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.SCAN_NEW_ORDER:
-        handleScanNewOrder(args, orderActionsRef.current);
+        handleScanNewOrder(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER:
-        handleDeliveryAssignOrder(args, orderActionsRef.current);
+        handleDeliveryAssignOrder(args, actionsRef.current);
         break;
       default:
         console.log(`[useSocketEvents] Unknown order event: ${eventName}`);
     }
   }, []);
-  
-  const handleTableChannelEvent = useCallback((...args) => {
-    // args is the message array: [eventName, tableId, restaurantId, status]
-    const eventName = args[0];
-    console.log(`[useSocketEvents] Table channel event: ${eventName}`, args);
-    
-    if (eventName === SOCKET_EVENTS.UPDATE_TABLE) {
-      handleUpdateTable(args, tableActionsRef.current);
-    } else {
-      console.log(`[useSocketEvents] Unknown table event: ${eventName}`);
-    }
-  }, []);
 
   // ===========================================================================
-  // SUBSCRIBE TO DYNAMIC CHANNELS
+  // SUBSCRIBE TO ORDER CHANNEL ONLY
+  // BUG-203: Table channel removed — table status derived from order data
   // ===========================================================================
   
   useEffect(() => {
@@ -112,38 +99,29 @@ export const useSocketEvents = () => {
       return;
     }
     
-    // Generate channel names based on restaurant ID
+    // Subscribe to order channel only (table status derived from order data)
     const orderChannel = getOrderChannel(restaurantId);
-    const tableChannel = getTableChannel(restaurantId);
     
-    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}:`);
-    console.log(`  - Order channel: ${orderChannel}`);
-    console.log(`  - Table channel: ${tableChannel}`);
+    console.log(`[useSocketEvents] Subscribing to order channel for restaurant ${restaurantId}: ${orderChannel}`);
     
-    // Subscribe to channels
     const unsubscribeOrder = subscribe(orderChannel, handleOrderChannelEvent);
-    const unsubscribeTable = subscribe(tableChannel, handleTableChannelEvent);
     
-    // Check if subscriptions were successful
-    const successCount = [unsubscribeOrder, unsubscribeTable].filter(Boolean).length;
-    console.log(`[useSocketEvents] Subscribed to ${successCount}/2 channels`);
-    
-    if (successCount < 2) {
-      console.warn('[useSocketEvents] Some subscriptions failed, will retry on next connection');
+    if (unsubscribeOrder) {
+      console.log(`[useSocketEvents] Subscribed to order channel successfully`);
+    } else {
+      console.warn('[useSocketEvents] Order channel subscription failed, will retry on next connection');
     }
     
     // Cleanup on unmount or when restaurantId changes
     return () => {
-      console.log('[useSocketEvents] Unsubscribing from channels');
+      console.log('[useSocketEvents] Unsubscribing from order channel');
       unsubscribeOrder && unsubscribeOrder();
-      unsubscribeTable && unsubscribeTable();
     };
   }, [
     isConnected,
     restaurantId,
     subscribe,
     handleOrderChannelEvent,
-    handleTableChannelEvent,
   ]);
 
   // Return connection status and restaurantId for UI feedback
