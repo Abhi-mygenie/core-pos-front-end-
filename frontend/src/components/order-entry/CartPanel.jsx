@@ -158,6 +158,7 @@ const NewItemRow = ({ item, cartIndex, onDeleteItem, updateQuantity, onAddNote, 
       {item.customizations && (
         <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
           {item.customizations.size && <span>{item.customizations.size}</span>}
+          {item.customizations.variants?.length > 0 && <span>{item.customizations.size ? ', ' : ''}{item.customizations.variants.join(", ")}</span>}
           {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
         </div>
       )}
