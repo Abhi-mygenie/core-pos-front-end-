@@ -39,7 +39,7 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
     
     // Add addons price
     const addonsPrice = Object.entries(selectedAddons).reduce((sum, [addonId, qty]) => {
-      const addon = item.addons?.find(a => a.id === addonId);
+      const addon = item.addons?.find(a => String(a.id) === String(addonId));
       return sum + (addon?.price || 0) * qty;
     }, 0);
     

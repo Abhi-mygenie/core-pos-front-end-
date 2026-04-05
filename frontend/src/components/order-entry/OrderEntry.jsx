@@ -312,7 +312,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   }, []);
 
   const total = cartItems.reduce((sum, item) =>
-    item.status === 'cancelled' ? sum : sum + (item.price * item.qty), 0
+    item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
 
   // handlePlaceOrder — CHG-037: Place Order API
