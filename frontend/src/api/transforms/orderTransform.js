@@ -252,326 +252,266 @@ export const toAPI = {
   }),
 
   // ==========================================================================
-  // Sprint 3 — Order Taking (stubs — to be filled when endpoints are provided)
+  // SHARED: Cart Item Builder & Order Totals Calculator
   // ==========================================================================
 
-  /**
-   * Place Order — CHG-037
-   * Endpoint: POST /api/v2/vendoremployee/pos/place-order
-   * IMPORTANT: Uses application/x-www-form-urlencoded — wrap in URLSearchParams
-   *
-   * @param {Object} table       - Table entry (tableId, orderId, orderType)
-   * @param {Array}  cartItems   - All cart items (placed + unplaced; API needs unplaced only)
-   * @param {Object} customer    - { name, phone } from OrderEntry state
-   * @param {string} orderType   - 'dineIn' | 'takeAway' | 'delivery' | 'walkIn'
-   * @param {Object} options     - { restaurantId, orderNotes, total, printAllKOT }
-   */
+  // ==========================================================================
+  // Flow 1: Place New Order (unpaid)
+  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // ==========================================================================
+
   placeOrder: (table, cartItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], total = 0, printAllKOT = true } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
 
-    // Map frontend orderType → API order_type string
-    const ORDER_TYPE_MAP = {
-      dineIn:   'dinein',
-      walkIn:   'dinein',
-      takeAway: 'take_away',
-      delivery: 'delivery',
-    };
-
-    // Only send unplaced items
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
-
-    const cart = unplacedItems.map(item => {
-      // Addon IDs and quantities (from ItemCustomizationModal selectedAddons)
-      const addons    = (item.selectedAddons || []).map(a => a.id);
-      const addonQtys = (item.selectedAddons || []).map(a => a.quantity);
-      const addonsTotal = (item.selectedAddons || []).reduce(
-        (sum, a) => sum + ((parseFloat(a.price) || 0) * (a.quantity || 1)), 0
-      );
-
-      // Variation total (from selectedSize price + variant prices)
-      const variationTotal = parseFloat(item.selectedSize?.price) || 0;
-
-      return {
-        food_id:         item.id,
-        quantity:        item.qty,
-        price:           item.price,
-        station:         (item.station || 'KITCHEN').toUpperCase(),
-        add_ons:         addons,
-        add_on_qtys:     addonQtys,
-        variations:      [],     // Phase 3: map item.selectedVariants when API format confirmed
-        addons_total:    addonsTotal,
-        variation_total: variationTotal,
-      };
-    });
+    const cart = unplacedItems.map(buildCartItem);
+    const totals = calcOrderTotals(cart);
 
     return {
-      restaurant_id:  restaurantId,
-      cust_name:      customer?.name || (orderType === 'walkIn' ? 'Walk-In Customer' : ''),
-      order_type:     ORDER_TYPE_MAP[orderType] || 'dinein',
-      order_note:     orderNotes.map(n => n.label).join(', '),
-      order_amount:   total,
-      payment_method: 'cash_on_delivery',
-      table_id:       table?.tableId || 0,
-      print_kot:      printAllKOT ? 'Yes' : 'No',
+      user_id:                    userId,
+      restaurant_id:              restaurantId,
+      table_id:                   String(table?.tableId || 0),
+      order_type:                 'pos',
+      cust_name:                  customer?.name || '',
+      cust_mobile:                customer?.phone || '',
+      cust_email:                 '',
+      cust_dob:                   '',
+      cust_anniversary:           '',
+      cust_membership_id:         '',
+      order_note:                 orderNotes.map(n => n.label).join(', '),
+      payment_method:             'pending',
+      payment_status:             'unpaid',
+      payment_type:               'postpaid',
+      transaction_id:             '',
+      print_kot:                  printAllKOT ? 'Yes' : 'No',
+      auto_dispatch:              'No',
+      scheduled:                  0,
+      schedule_at:                '',
+      // Financial
+      ...totals,
+      service_tax:                0,
+      service_gst_tax_amount:     0,
+      tip_amount:                 '0',
+      tip_tax_amount:             0,
+      delivery_charge:            '0.0',
+      // Discount
+      discount_type:              '',
+      self_discount:              0.0,
+      coupon_discount:            0,
+      coupon_title:               '',
+      coupon_type:                '',
+      order_discount:             0.0,
+      // Loyalty & Wallet
+      used_loyalty_point:         0,
+      use_wallet_balance:         0,
+      // Room & Address
+      paid_room:                  '',
+      room_id:                    '',
+      address_id:                 '',
+      // Misc
+      discount_member_category_id:   0,
+      discount_member_category_name: '',
+      usage_id:                   '',
       cart,
     };
   },
 
-  /**
-   * Collect Bill (Place Order + Payment) — CHG-038
-   * Endpoint: POST /api/v1/vendoremployee/pos/place-order-and-payment (form-urlencoded)
-   *
-   * Used for quick service flow: creates new order AND processes payment together.
-   * Frontend MUST pre-calculate all tax and discount amounts per item.
-   *
-   * @param {Object} table       - Table entry (tableId, orderType)
-   * @param {Array}  cartItems   - Cart items (must have tax field from adaptProduct)
-   * @param {Object} customer    - { name, phone }
-   * @param {string} orderType   - 'dineIn' | 'takeAway' | 'delivery' | 'walkIn'
-   * @param {Object} paymentData - From CollectPaymentPanel (method, type, status, transactionId, deliveryCharge, discount)
-   * @param {Object} options     - { restaurantId, orderNotes, printAllKOT }
-   */
-  collectBill: (table, cartItems, customer, orderType, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true } = options;
-    const { method = 'cash', paymentType = 'postpaid', paymentStatus = 'paid', transactionId = '', deliveryCharge = 0 } = paymentData;
-    const discount = paymentData.discounts?.total || 0;
+  // ==========================================================================
+  // Flow 2: Update Existing Order (add items)
+  // Endpoint: PUT /api/v1/vendoremployee/order/update-place-order (application/json)
+  // ==========================================================================
 
-    const ORDER_TYPE_MAP = {
-      dineIn: 'dinein', walkIn: 'dinein',
-      takeAway: 'take_away', delivery: 'delivery',
-    };
-
-    // Per-item tax calculation (Exclusive: tax added on top; Inclusive: tax in price)
-    const buildCartItem = (item) => {
-      const tax = item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false };
-      const qty = item.qty || 1;
-      const foodAmount = item.price * qty;
-
-      let taxAmount = 0;
-      if (tax.isInclusive) {
-        taxAmount = foodAmount - (foodAmount / (1 + tax.percentage / 100));
-      } else {
-        taxAmount = foodAmount * (tax.percentage / 100);
-      }
-      taxAmount = Math.round(taxAmount * 100) / 100;
-
-      const isGst = (tax.type || 'GST').toUpperCase() === 'GST';
-      const totalPrice = Math.round((foodAmount + (tax.isInclusive ? 0 : taxAmount)) * 100) / 100;
-
-      const addons = (item.selectedAddons || []);
-      const addonIds = addons.map(a => a.id);
-      const addonQtys = addons.map(a => a.quantity);
-      const addonAmount = addons.reduce((s, a) => s + (parseFloat(a.price) || 0) * (a.quantity || 1), 0);
-      const variationAmount = parseFloat(item.selectedSize?.price) || 0;
-
-      return {
-        food_id:          item.id,
-        quantity:         qty,
-        price:            item.price,
-        food_amount:      foodAmount,
-        variation_amount: variationAmount,
-        addon_amount:     addonAmount,
-        add_on_price:     addonAmount,
-        gst_amount:       isGst ? taxAmount : 0,
-        vat_amount:       !isGst ? taxAmount : 0,
-        vat_tax:          !isGst ? tax.percentage : 0,
-        tax_amount:       taxAmount,
-        total_price:      totalPrice,
-        discount_amount:  0,
-        discount:         0,
-        add_on_ids:       addonIds,
-        add_on_qtys:      addonQtys,
-        variations:       [],
-        food_level_notes: item.notes || '',
-      };
-    };
-
-    const cart = cartItems.filter(i => !i.placed && i.status !== 'cancelled').map(buildCartItem);
-    const orderAmount = cart.reduce((s, i) => s + i.total_price + i.addon_amount + i.variation_amount, 0);
-
-    return {
-      restaurant_id:            restaurantId,
-      cust_name:                customer?.name || (orderType === 'walkIn' ? 'Walk-In Customer' : ''),
-      cust_mobile:              customer?.phone || '',
-      order_type:               ORDER_TYPE_MAP[orderType] || 'dinein',
-      order_note:               orderNotes.map(n => n.label).join(', '),
-      order_amount:             Math.round(orderAmount * 100) / 100,
-      delivery_charge:          deliveryCharge,
-      payment_method:           method,
-      payment_type:             paymentType,
-      payment_status:           paymentStatus,
-      transaction_id:           transactionId,
-      print_kot:                printAllKOT ? 'Yes' : 'No',
-      table_id:                 table?.tableId || 0,
-      // Order-level tax + discount (required fields)
-      vat_tax:                  0,
-      gst_tax:                  0,
-      service_tax:              0,
-      service_gst_tax_amount:   0,
-      discount:                 discount,
-      discount_type:            'percent',
-      restaurant_discount_amount: discount,
-      order_discount:           0,
-      comunity_discount:        0,
-      discount_value:           discount,
-      tip_amount:               0,
-      tip_tax_amount:           0,
-      round_up:                 0,
-      order_sub_total_amount:   Math.round(orderAmount * 100) / 100,
-      order_total_tax_amount:   0,
-      cart,
-    };
-  },
-
-  /**
-   * Update/Edit Order — CHG-040 (Scenario 1: add new items to existing order)
-   * Endpoint: PUT /api/v2/vendoremployee/pos/update-place-order (JSON, not form-urlencoded)
-   * @param {Object} table      - Table entry (has orderId, tableId)
-   * @param {Array}  newItems   - Only UNPLACED cart items (placed: false)
-   * @param {Object} customer   - { name, phone }
-   * @param {string} orderType  - 'dineIn' | 'takeAway' | 'delivery' | 'walkIn'
-   * @param {Object} options    - { restaurantId, orderNotes, printAllKOT }
-   */
   updateOrder: (table, newItems, customer, orderType, options = {}) => {
     const { 
-      restaurantId, 
       orderNotes = [], 
       printAllKOT = true,
-      existingOrderTotal = 0,    // Existing order amount from API
-      existingSubtotal = 0,      // Existing subtotal from API
+      existingOrderTotal = 0,
+      existingSubtotal = 0,
     } = options;
-    const ORDER_TYPE_MAP = {
-      dineIn: 'dinein', walkIn: 'dinein',
-      takeAway: 'take_away', delivery: 'delivery',
-    };
-
-    // Per-item tax calculation (same as collectBill)
-    const buildCartItem = (item) => {
-      const tax = item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false };
-      const qty = item.qty || 1;
-      const foodAmount = item.price * qty;
-
-      let taxAmount = 0;
-      if (tax.isInclusive) {
-        taxAmount = foodAmount - (foodAmount / (1 + tax.percentage / 100));
-      } else {
-        taxAmount = foodAmount * (tax.percentage / 100);
-      }
-      taxAmount = Math.round(taxAmount * 100) / 100;
-
-      const isGst = (tax.type || 'GST').toUpperCase() === 'GST';
-      const totalPrice = Math.round((foodAmount + (tax.isInclusive ? 0 : taxAmount)) * 100) / 100;
-
-      const addons = (item.selectedAddons || []);
-      const addonIds = addons.map(a => a.id);
-      const addonQtys = addons.map(a => a.quantity);
-      const addonAmount = addons.reduce((s, a) => s + (parseFloat(a.price) || 0) * (a.quantity || 1), 0);
-      const variationAmount = parseFloat(item.selectedSize?.price) || 0;
-
-      return {
-        food_id:          item.id,
-        quantity:         qty,
-        price:            item.price,
-        food_amount:      foodAmount,
-        station:          (item.station || 'KITCHEN').toUpperCase(),
-        variation_amount: variationAmount,
-        addon_amount:     addonAmount,
-        add_on_price:     addonAmount,
-        gst_amount:       isGst ? taxAmount : 0,
-        vat_amount:       !isGst ? taxAmount : 0,
-        vat_tax:          !isGst ? tax.percentage : 0,
-        tax_amount:       taxAmount,
-        total_price:      totalPrice,
-        discount_amount:  0,
-        discount:         0,
-        add_on_ids:       addonIds,
-        add_ons:          addonIds,
-        add_on_qtys:      addonQtys,
-        addons_total:     addonAmount,
-        variations:       [],
-        variation_total:  variationAmount,
-        food_level_notes: item.notes || '',
-      };
-    };
 
     const cartUpdate = newItems.map(buildCartItem);
-    
-    // Calculate NEW items totals
-    const newItemsTotal = cartUpdate.reduce((s, i) => s + i.total_price + i.addon_amount + i.variation_amount, 0);
-    const newItemsTax = cartUpdate.reduce((s, i) => s + i.tax_amount, 0);
-    
+    const newTotals = calcOrderTotals(cartUpdate);
+
     // Complete order totals = existing (from API) + new items
-    const orderAmount = existingOrderTotal + newItemsTotal;
-    const orderSubtotal = existingSubtotal + newItemsTotal;
+    const combinedSubtotal = existingSubtotal + newTotals.order_sub_total_amount;
+    const combinedTax = newTotals.tax_amount; // new items tax only for update
+    const combinedRaw = existingOrderTotal + newTotals.order_sub_total_amount + combinedTax;
+    const ceilTotal = Math.ceil(combinedRaw);
+    const diff = Math.round((ceilTotal - combinedRaw) * 100) / 100;
+    const roundUp = diff >= 0.10 ? diff : 0;
+    const orderAmount = roundUp > 0 ? ceilTotal : Math.floor(combinedRaw);
 
     return {
-      order_id:               table.orderId,
-      restaurant_id:          restaurantId,
-      payment_method:         'cash_on_delivery',
-      order_type:             ORDER_TYPE_MAP[orderType] || 'dinein',
-      cust_name:              customer?.name || '',
-      cust_mobile:            customer?.phone || '',
-      order_note:             orderNotes.map(n => n.label).join(', '),
-      order_amount:           Math.round(orderAmount * 100) / 100,
-      order_sub_total_amount: Math.round(orderSubtotal * 100) / 100,
-      order_total_tax_amount: Math.round(newItemsTax * 100) / 100,
-      gst_tax:                0,
-      vat_tax:                0,
-      service_tax:            0,
-      service_gst_tax_amount: 0,
-      print_kot:              printAllKOT ? 'Yes' : 'No',
-      table_id:               table.tableId || 0,
-      inventory:              'Yes',
-      inventory_negative:     'No',
-      'cart-update':          cartUpdate,
+      order_id:                   String(table.orderId),
+      order_type:                 'pos',
+      cust_name:                  customer?.name || '',
+      order_note:                 orderNotes.map(n => n.label).join(', '),
+      payment_method:             'pending',
+      payment_status:             'unpaid',
+      payment_type:               'postpaid',
+      print_kot:                  printAllKOT ? 'Yes' : 'No',
+      auto_dispatch:              'No',
+      // Financial
+      order_sub_total_amount:     Math.round(combinedSubtotal * 100) / 100,
+      order_sub_total_without_tax: Math.round(combinedSubtotal * 100) / 100,
+      tax_amount:                 combinedTax,
+      gst_tax:                    newTotals.gst_tax,
+      vat_tax:                    newTotals.vat_tax,
+      order_amount:               orderAmount,
+      round_up:                   String(roundUp.toFixed(2)),
+      service_tax:                0,
+      service_gst_tax_amount:     0,
+      tip_amount:                 '0',
+      tip_tax_amount:             0,
+      delivery_charge:            '0.0',
+      // Discount
+      discount_type:              '',
+      self_discount:              0.0,
+      coupon_discount:            0,
+      coupon_title:               '',
+      coupon_type:                '',
+      order_discount:             0.0,
+      // Loyalty & Wallet
+      used_loyalty_point:         0,
+      use_wallet_balance:         0,
+      // Room
+      room_id:                    '',
+      // Misc
+      discount_member_category_id:   0,
+      discount_member_category_name: '',
+      usage_id:                   '',
+      'cart-update':              cartUpdate,
     };
   },
 
-  /**
-   * Clear Bill — CHG-038 Scenario 1 (collect payment on existing order)
-   * Endpoint: POST /api/v2/vendoremployee/order-bill-payment (JSON)
-   * @param {Object} table       - Table entry (has orderId)
-   * @param {Object} paymentData - { method, finalTotal, sgst, cgst, vatAmount, transactionId, tip, splitPayments, tabContact }
-   */
-  clearBill: (table, paymentData) => {
-    const {
-      method = 'cash', finalTotal = 0,
-      sgst = 0, cgst = 0, vatAmount = 0,
-      transactionId = '', tip = 0,
-      splitPayments = null, tabContact = null,
-      discounts = {},
-    } = paymentData;
+  // ==========================================================================
+  // Flow 3: Place New Order + Collect Payment (prepaid)
+  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // ==========================================================================
+
+  placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
+    const { method = 'cash', transactionId = '', splitPayments = [], deliveryCharge = 0, discounts = {} } = paymentData;
+
+    const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
+    const cart = unplacedItems.map(buildCartItem);
+    const totals = calcOrderTotals(cart);
 
     const payload = {
-      order_id:                 String(table.orderId),
-      payment_mode:             method,
-      payment_amount:           finalTotal,
-      payment_status:           'paid',
-      transaction_id:           transactionId,
-      service_tax:              0,
-      service_gst_tax_amount:   0,
-      tip_amount:               tip,
-      tip_tax_amount:           0,
-      vat_tax:                  vatAmount,
-      gst_tax:                  Math.round((sgst + cgst) * 100) / 100,
-      // Discount fields — required by API even when 0
-      restaurant_discount_amount: discounts.manual || 0,
-      order_discount:             discounts.orderDiscountPercent || 0,
-      comunity_discount:          discounts.preset || 0,
-      discount_value:             discounts.total || 0,
+      user_id:                    userId,
+      restaurant_id:              restaurantId,
+      table_id:                   String(table?.tableId || 0),
+      order_type:                 'pos',
+      cust_name:                  customer?.name || '',
+      cust_mobile:                customer?.phone || '',
+      cust_email:                 '',
+      cust_dob:                   '',
+      cust_anniversary:           '',
+      cust_membership_id:         '',
+      order_note:                 orderNotes.map(n => n.label).join(', '),
+      payment_method:             method,
+      payment_status:             'paid',
+      payment_type:               'prepaid',
+      transaction_id:             transactionId,
+      print_kot:                  printAllKOT ? 'Yes' : 'No',
+      auto_dispatch:              'No',
+      scheduled:                  0,
+      schedule_at:                '',
+      // Financial
+      ...totals,
+      service_tax:                0,
+      service_gst_tax_amount:     0,
+      tip_amount:                 '0',
+      tip_tax_amount:             0,
+      delivery_charge:            String(deliveryCharge || '0.0'),
+      // Discount
+      discount_type:              discounts.type || '',
+      self_discount:              discounts.manual || 0.0,
+      coupon_discount:            discounts.coupon || 0,
+      coupon_title:               discounts.couponTitle || '',
+      coupon_type:                discounts.couponType || '',
+      order_discount:             discounts.orderDiscountPercent || 0.0,
+      // Loyalty & Wallet
+      used_loyalty_point:         0,
+      use_wallet_balance:         0,
+      // Room & Address
+      paid_room:                  '',
+      room_id:                    '',
+      address_id:                 '',
+      // Misc
+      discount_member_category_id:   0,
+      discount_member_category_name: '',
+      usage_id:                   '',
+      cart,
     };
 
-    // TAB payment → include contact
-    if (method === 'TAB' && tabContact) {
-      if (tabContact.includes('@')) payload.email = tabContact;
-      else payload.mobile = tabContact;
-    }
-
-    // Partial payment → include split breakdown
-    if (method === 'partial' && splitPayments?.length) {
+    // Partial payments (split payment)
+    if (splitPayments?.length) {
       payload.partial_payments = splitPayments.map(p => ({
         payment_mode:   p.method,
         payment_amount: p.amount,
+        grant_amount:   p.amount,
+        transaction_id: p.transactionId || '',
+      }));
+    }
+
+    return payload;
+  },
+
+  // ==========================================================================
+  // Flow 4: Collect Payment on Existing Order (postpaid → paid)
+  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // ==========================================================================
+
+  collectBillExisting: (table, paymentData, orderFinancials = {}) => {
+    const { 
+      method = 'cash', transactionId = '', 
+      splitPayments = [], tip = 0, discounts = {},
+      finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
+    } = paymentData;
+
+    const payload = {
+      order_id:                   String(table.orderId),
+      order_type:                 'pos',
+      payment_method:             method,
+      payment_status:             'paid',
+      payment_type:               'postpaid',
+      transaction_id:             transactionId,
+      // Financial (from order context)
+      order_amount:               finalTotal || orderFinancials.amount || 0,
+      order_sub_total_amount:     orderFinancials.subtotalAmount || 0,
+      order_sub_total_without_tax: orderFinancials.subtotalBeforeTax || 0,
+      gst_tax:                    Math.round((sgst + cgst) * 100) / 100,
+      vat_tax:                    vatAmount,
+      tax_amount:                 Math.round((sgst + cgst + vatAmount) * 100) / 100,
+      round_up:                   '0.00',
+      service_tax:                0,
+      service_gst_tax_amount:     0,
+      tip_amount:                 String(tip || 0),
+      tip_tax_amount:             0,
+      // Discount
+      discount_type:              discounts.type || '',
+      self_discount:              discounts.manual || 0.0,
+      order_discount:             discounts.orderDiscountPercent || 0.0,
+      coupon_discount:            discounts.coupon || 0,
+      coupon_title:               discounts.couponTitle || '',
+      coupon_type:                discounts.couponType || '',
+      // Defaults
+      used_loyalty_point:         0,
+      use_wallet_balance:         0,
+      auto_dispatch:              'No',
+      room_id:                    '',
+      discount_member_category_id:   0,
+      discount_member_category_name: '',
+      usage_id:                   '',
+    };
+
+    // Partial payments
+    if (splitPayments?.length) {
+      payload.partial_payments = splitPayments.map(p => ({
+        payment_mode:   p.method,
+        payment_amount: p.amount,
+        grant_amount:   p.amount,
         transaction_id: p.transactionId || '',
       }));
     }

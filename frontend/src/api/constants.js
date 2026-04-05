@@ -29,13 +29,10 @@ export const API_ENDPOINTS = {
   // Out of Menu Item (Phase 1C)
   ADD_CUSTOM_ITEM: '/api/v1/vendoremployee/add-single-product',
 
-  // Sprint 3 — Order Taking (endpoints TBD — to be filled when provided)
+  // Sprint 3 — Order Taking
   CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
-  PLACE_ORDER:                '/api/v2/vendoremployee/pos/place-order',            // CHG-037
-  PLACE_ORDER_AND_PAYMENT:   '/api/v1/vendoremployee/pos/place-order-and-payment', // CHG-038 Scenario 2
-  UPDATE_ORDER:              '/api/v2/vendoremployee/pos/update-place-order',       // CHG-040 Scenario 1
-  CLEAR_BILL:                '/api/v2/vendoremployee/order-bill-payment',           // CHG-038 Scenario 1
-  // COLLECT_PAYMENT removed — migrated to CLEAR_BILL (CHG-038)
+  PLACE_ORDER:       '/api/v1/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
+  UPDATE_ORDER:      '/api/v1/vendoremployee/order/update-place-order',   // Update existing order (add items)
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes
   EDIT_ORDER_ITEM_QTY:   'TBD',   // CHG-040 future: Edit placed item qty only
   
