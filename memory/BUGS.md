@@ -215,7 +215,7 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 ## BUG-208: Socket orderDetails returns empty `variation` and `add_ons`
 
 **Status:** OPEN — Backend Team
-**Priority:** P1
+**Priority:** P0 CRITICAL
 **Reported:** April 6, 2026
 
 ### Problem
@@ -245,15 +245,21 @@ After placing an order with addons and variations, the socket `new-order` event 
 
 Note: `food_details.add_ons` and `food_details.variations` contain the full **catalog** (all available options), not what was selected.
 
-### Impact
-- After placing, cart line items lose addon/variation display and prices
-- Per-item price drops to base price only (e.g. ₹119 instead of ₹194)
-- Order-level `order_amount` IS correct (backend calculates total correctly)
-- Collect Bill total uses `orderFinancials.amount` as workaround
+### CRITICAL Impact — All of these break after placing:
+1. **Addon names & quantities lost** — placed items show no addon info
+2. **Variation names lost** — placed items show no variant info (e.g. "Large", "Meal")
+3. **Per-item price incorrect** — shows base price (₹119) instead of full price (₹194 with addons+variations)
+4. **Per-item total incorrect** — no `totalPrice` field returned
+5. **Collect Bill panel line items wrong** — individual prices don't add up to order total
+6. **Collect Bill total correct ONLY because** we use `orderFinancials.amount` (from `order_amount`) as workaround
 
-### Frontend Workaround
-- Collect Bill button/panel uses `orderFinancials.amount` from socket's `order_amount` (correct total)
-- Per-item display is incomplete after placing (no addon/variation info)
+### Frontend Workaround in place:
+- Collect Bill button/panel total uses `orderFinancials.amount` from socket `order_amount`
+- `food_level_notes` and `order_note` display correctly (these ARE returned by socket)
+- Notes display in orange (consistent before/after placing)
 
 ### Backend Action Required
-Store and return selected `add_ons` (with IDs, names, prices, quantities) and `variation` (selected label + price) at the `orderDetails[]` level in the socket response.
+Store and return per-order-detail:
+- `add_ons`: array of selected addon objects with `{id, name, price, quantity}`
+- `variation`: array of selected variation objects with `{label, optionPrice}`
+- `unit_price`: should reflect full price including addons + variations (not just base)
