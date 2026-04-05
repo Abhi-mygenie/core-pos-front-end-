@@ -592,12 +592,19 @@ export const toAPI = {
   // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
   // ==========================================================================
 
-  collectBillExisting: (table, paymentData, orderFinancials = {}) => {
+  collectBillExisting: (table, cartItems, paymentData, orderFinancials = {}) => {
     const { 
       method = 'cash', transactionId = '', 
       splitPayments = [], tip = 0, discounts = {},
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
+      itemTotal = 0, subtotal = 0,
     } = paymentData;
+
+    // Build cart from ALL active (non-cancelled) items for the backend
+    const activeItems = (cartItems || []).filter(i => i.status !== 'cancelled');
+    const cartRaw = activeItems.map(buildCartItem);
+    const cart = cartRaw.map(({ _fullUnitPrice, ...item }) => item);
+    const computedTotals = calcOrderTotals(cartRaw);
 
     const payload = {
       order_id:                   String(table.orderId),
@@ -606,14 +613,14 @@ export const toAPI = {
       payment_status:             'paid',
       payment_type:               'postpaid',
       transaction_id:             transactionId || null,
-      // Financial (from order context)
-      order_amount:               finalTotal || orderFinancials.amount || 0,
-      order_sub_total_amount:     orderFinancials.subtotalAmount || 0,
-      order_sub_total_without_tax: orderFinancials.subtotalBeforeTax || 0,
-      gst_tax:                    Math.round((sgst + cgst) * 100) / 100,
-      vat_tax:                    vatAmount,
-      tax_amount:                 Math.round((sgst + cgst + vatAmount) * 100) / 100,
-      round_up:                   0,
+      // Financial — use computed totals from cart items
+      order_amount:               finalTotal || computedTotals.order_amount || 0,
+      order_sub_total_amount:     itemTotal || computedTotals.order_sub_total_amount || 0,
+      order_sub_total_without_tax: itemTotal || computedTotals.order_sub_total_without_tax || 0,
+      gst_tax:                    Math.round((sgst + cgst) * 100) / 100 || computedTotals.gst_tax,
+      vat_tax:                    vatAmount || computedTotals.vat_tax,
+      tax_amount:                 Math.round((sgst + cgst + vatAmount) * 100) / 100 || computedTotals.tax_amount,
+      round_up:                   computedTotals.round_up || '0.00',
       service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 tip || 0,
@@ -633,6 +640,8 @@ export const toAPI = {
       discount_member_category_id:   0,
       discount_member_category_name: null,
       usage_id:                   null,
+      // Cart — required by backend
+      cart,
     };
 
     // Partial payments

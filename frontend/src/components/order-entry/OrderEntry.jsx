@@ -697,7 +697,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
                   } else {
                     // Scenario 1 — existing order: collect payment only (same endpoint with order_id)
-                    const payload = orderToAPI.collectBillExisting(effectiveTable, paymentData, orderFinancials);
+                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, paymentData, orderFinancials);
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
                     const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
