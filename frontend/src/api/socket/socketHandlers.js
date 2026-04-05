@@ -141,7 +141,7 @@ const syncTableStatus = (order, updateTableStatus, overrideStatus = null) => {
  * Action: Parse payload, transform, ADD to OrderContext
  *         Then fetch full order via GET API to fill missing financial fields
  */
-export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStatus }) => {
+export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStatus, setTableEngaged }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -172,6 +172,15 @@ export const handleNewOrder = (message, { addOrder, updateOrder, updateTableStat
         if (fullOrder) {
           updateOrder(fullOrder.orderId, fullOrder);
           log('INFO', `new-order: Enriched order ${fullOrder.orderId} (GET API data)`);
+        }
+        // Release engaged lock after React commits the enriched data
+        if (setTableEngaged && transformedOrder.tableId) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              setTableEngaged(transformedOrder.tableId, false);
+              log('INFO', `new-order: Table ${transformedOrder.tableId} released from ENGAGED`);
+            });
+          });
         }
       });
     } catch (error) {

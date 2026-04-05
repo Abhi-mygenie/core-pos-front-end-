@@ -26,10 +26,11 @@ REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
 REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 ```
 
-## Current Status (April 6, 2026)
+## Current Status (Feb 2026)
 - Frontend: RUNNING (localhost:3000)
 - Connected to external MyGenie API (preprod environment)
 - All core flows migrated to v1 endpoints
+- New Order flow now mirrors Update Order flow (await API → await socket engage → redirect)
 
 ## Bugs - Fixed ✅ (Recent)
 - **BUG-209**: Placed item prices showed double-multiplied amounts (₹1,904 instead of ₹476 for qty=4). Root cause: socket `detail.price` returns total (unit × qty), but display code multiplied by qty again. Fixed by normalizing `fromAPI.orderItem.price` to use `unit_price`.
