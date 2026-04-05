@@ -324,6 +324,44 @@ Send `update-table engage` on the table channel for new orders, same as update o
 
 ---
 
+## BUG-213: Collect Bill Summary Shows Only Placed Items When New Items in Cart
+
+**Status:** FIXED ✅
+**Priority:** P0
+**Reported:** Feb 2026
+**Fixed:** Feb 2026
+
+### Symptom
+When reopening a placed order and adding a new item (e.g., 4 PC Fried Wings ₹149 to existing Pop Corn ₹199), the "Collect Bill" panel showed:
+- Item Total: ₹199 (only Pop Corn)
+- SGST/CGST: ₹4.50 each (tax on ₹199 only)
+- Pay: ₹208
+
+**Expected:** Item Total ₹348, tax on ₹348, Pay ≈₹365
+
+### Root Cause
+`CollectPaymentPanel.jsx` had a conditional shortcut:
+```js
+const itemTotal = hasPlacedItems && orderFinancials.subtotalAmount > 0
+    ? orderFinancials.subtotalAmount   // ← Only placed items' total from context
+    : activeItems.reduce(...)          // ← All items (never reached when placed exist)
+```
+When `hasPlacedItems=true`, it used `orderFinancials.subtotalAmount` (from the API response for placed items only), completely ignoring any NEW unplaced items in the cart. Same pattern for tax calculation using `orderFinancials.amount`.
+
+### Fix Applied
+Removed the `hasPlacedItems && orderFinancials` branching. Both `itemTotal` and tax are now **always** computed from ALL active cart items (placed + unplaced):
+```js
+const itemTotal = activeItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
+const sgst = taxTotals.sgst;  // computed from ALL activeItems
+const cgst = taxTotals.cgst;
+```
+
+### Files Changed
+- `CollectPaymentPanel.jsx` — Lines 119, 152-161
+
+---
+
+
 ## BUG-204 (Extended): Socket `new-order` Missing Financial Fields
 
 **Status:** WORKAROUND IMPLEMENTED (GET single order enrichment)
