@@ -607,6 +607,7 @@ export const toAPI = {
     const totals = calcOrderTotals(cartRaw);
 
     const payload = {
+      order_id:                   String(table.orderId),
       user_id:                    userId,
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
@@ -619,8 +620,7 @@ export const toAPI = {
       cust_membership_id:         '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
-      payment_status:             'paid',
-      payment_type:               'prepaid',
+      payment_type:               'postpaid',
       transaction_id:             transactionId || null,
       print_kot:                  'Yes',
       auto_dispatch:              'No',
