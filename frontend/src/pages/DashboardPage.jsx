@@ -551,8 +551,10 @@ const DashboardPage = () => {
     }
     // Block clicks on engaged tables (update-order in progress)
     if (isTableEngaged(tableEntry.id)) {
+      console.log(`[Dashboard] Blocked click on engaged table ${tableEntry.id}`);
       return;
     }
+    console.log(`[Dashboard] Table click allowed: ${tableEntry.id}, engaged check: ${isTableEngaged(tableEntry.id)}, type: ${typeof tableEntry.id}`);
     // Step 8: Available room → show CheckIn modal instead of OrderEntry
     if (tableEntry.orderType === 'room' && tableEntry.status === 'available') {
       setCheckInRoom(tableEntry);
