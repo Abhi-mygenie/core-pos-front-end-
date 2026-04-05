@@ -31,12 +31,19 @@
 ### Order Operations
 | Endpoint | Method | Constant | Transform | Called From |
 |----------|--------|----------|-----------|-------------|
-| `/api/v2/vendoremployee/pos/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.placeOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` |
+| `/api/v2/vendoremployee/pos/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.placeOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` | **NEEDS VERIFICATION — may have changed** |
 | `/api/v2/vendoremployee/pos/update-place-order` | PUT | `UPDATE_ORDER` | `orderTransform.js` (`toAPI.updateOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` (update path) |
-| `/api/v2/vendoremployee/cancel-food-item` | PUT | `CANCEL_ITEM_FULL` | `orderTransform.js` (`toAPI.cancelItemFull/Partial`) | `OrderEntry.jsx` → `handleCancelFood` |
-| `/api/v2/vendoremployee/food-status-update` | PUT | `CANCEL_ORDER` | `orderTransform.js` (`toAPI.cancelOrderItem`) | `OrderEntry.jsx` → `handleCancelOrder` |
+| `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `CANCEL_ITEM` | `orderTransform.js` (`toAPI.cancelItem`) | `OrderEntry.jsx` → `handleCancelFood` |
+| `/api/v2/vendoremployee/order-status-update` | PUT | `ORDER_STATUS_UPDATE` | `orderTransform.js` (`toAPI.cancelOrder`) | `OrderEntry.jsx` → `handleCancelOrder`, `DashboardPage` → `handleCancelOrderConfirm` |
+| `/api/v2/vendoremployee/food-status-update` | PUT | `FOOD_STATUS_UPDATE` | `orderTransform.js` (`toAPI.cancelOrderItem`) | `DashboardPage` → `handleConfirmOrder` (accept scanner) |
 | `/api/v1/vendoremployee/pos/employee-orders-list` | GET | `RUNNING_ORDERS` | `orderTransform.js` (`fromAPI.orderList`) | `orderService.js` → `getRunningOrders` |
 | `/api/v2/vendoremployee/get-single-order-new` | POST | `SINGLE_ORDER_NEW` | `orderTransform.js` (`fromAPI.order`) | `orderService.js` → `fetchSingleOrderForSocket` |
+
+### Deprecated Endpoints (removed from codebase April 5, 2026)
+| Endpoint | Old Constant | Replaced By |
+|----------|-------------|-------------|
+| `/api/v2/vendoremployee/cancel-food-item` | `CANCEL_ITEM_FULL` | `CANCEL_ITEM` (`/api/v1/vendoremployee/order/cancel-food-item`) |
+| `/api/v2/vendoremployee/partial-cancel-food-item` | `CANCEL_ITEM_PARTIAL` | `CANCEL_ITEM` (same endpoint, `cancel_qty` field differentiates) |
 
 ### Payment Operations
 | Endpoint | Method | Constant | Transform | Called From |

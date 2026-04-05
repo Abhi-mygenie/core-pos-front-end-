@@ -1,5 +1,7 @@
 # POS Frontend - Bug Tracker & Audit Document
 
+**Last Updated:** April 5, 2026
+
 ---
 
 ## NOTE-200: `addOrder` Console Log Appears Twice on New Order (React StrictMode)
@@ -32,176 +34,67 @@ Every log outside a state updater appears once. Only the log inside the state up
 
 ## BUG-201: Duplicate `get-single-order-new` API Calls on Update Order
 
-**Status:** IN PROGRESS
+**Status:** FIXED ✅
 **Priority:** P0
 **Reported:** April 4, 2026
-**Reported by:** User (Network tab screenshots)
+**Fixed:** April 5, 2026
+**Verified:** April 5, 2026 (User console logs confirmed 1 API call)
 
-### Symptom
-When adding items to an existing order (Update Order), the `get-single-order-new` API is called **twice**. Visible in browser Network tab as two separate XHR requests to `get-single-order-new`, both returning 200.
+### Root Cause
+Both `OrderEntry.jsx` and `socketHandlers.js` called `fetchSingleOrderForSocket()` after update order.
 
-### Timeline of Calls (from Network tab)
-| # | Request | Type | Time |
-|---|---------|------|------|
-| 1 | `update-place-order` | preflight | 334ms |
-| 2 | `update-place-order` | xhr | 653ms |
-| 3 | `get-single-order-new` | preflight | 452ms |
-| 4 | `get-single-order-new` | **xhr (call 1)** | **352ms** |
-| 5 | `get-single-order-new` | preflight | 334ms |
-| 6 | `get-single-order-new` | **xhr (call 2)** | **337ms** |
+### Fix Applied
+1. Removed `fetchSingleOrderForSocket` from `handlePlaceOrder` update path in `OrderEntry.jsx`
+2. Added optimistic local marking (items set to `placed: true`)
+3. Expanded `useEffect` to sync from `OrderContext` on any financial change
+4. Socket handler remains the only caller of `fetchSingleOrderForSocket`
 
-### Root Cause Analysis
-
-**Source of duplicate calls:**
-
-Previously, both `OrderEntry.jsx` and `socketHandlers.js` called `fetchSingleOrderForSocket()` after an update:
-
-- **Call A (OrderEntry.jsx):** After `PUT /update-place-order` API returned success, the UI immediately called `fetchSingleOrderForSocket(orderId)` with a 500ms delay + retry logic.
-- **Call B (socketHandlers.js):** Server emits `update-order` socket event. `handleUpdateOrder()` calls `fetchOrderWithRetry(orderId)` which calls `fetchSingleOrderForSocket(orderId)`.
-
-**Fix applied (April 4, 2026):** Removed Call A from `OrderEntry.jsx`. Now only the socket handler fetches the order, and the `useEffect` in `OrderEntry.jsx` syncs from `OrderContext`.
-
-**Current status (post-fix):** User screenshot still shows 2 calls. Two possible explanations:
-
-1. **Cached JS** — User's browser may still be running old bundled code. A hard refresh (`Ctrl+Shift+R`) is required to pick up webpack changes.
-2. **Duplicate socket listener registration** — The `update-order` socket event listener might be registered twice, causing `handleUpdateOrder` to fire twice for a single server emit. This would need investigation in:
-   - `useSocketEvents.js` — where `subscribe(orderChannel, handleOrderChannelEvent)` is called
-   - `SocketContext.jsx` — the `useSocketEvent` hook and cleanup logic
-   - `socketService.js` — the `on()` method's handler wrapping/storage
-
-### Key learning from user
-- **For Update Order (adding items):** Server emits ONLY `update-order` socket. NOT `update-food-status`.
-- `update-food-status` is for kitchen status changes (preparing -> ready, etc.)
-- `update-order-status` is for order-level status changes (cancelled, paid, etc.)
-
-### Files Involved
-| File | Role |
-|------|------|
-| `src/components/order-entry/OrderEntry.jsx` | UI component — was calling `fetchSingleOrderForSocket` directly (REMOVED) |
-| `src/api/socket/socketHandlers.js` | `handleUpdateOrder()` — calls `fetchOrderWithRetry` → `fetchSingleOrderForSocket` |
-| `src/api/socket/useSocketEvents.js` | Subscribes to order channel, routes events to handlers |
-| `src/contexts/SocketContext.jsx` | `useSocketEvent` hook — manages subscribe/unsubscribe lifecycle |
-| `src/api/socket/socketService.js` | Core `on()`/`off()` — wraps handlers, stores in Map |
-| `src/api/services/orderService.js` | `fetchSingleOrderForSocket()` — the actual API call |
-
-### Changes Applied So Far
-1. **`OrderEntry.jsx` — `handlePlaceOrder` (Update Order path):**
-   - Removed: `fetchSingleOrderForSocket` call with 500ms delay + retry
-   - Added: Optimistic local marking (`placed: true, status: 'preparing'`)
-
-2. **`OrderEntry.jsx` — `useEffect` sync:**
-   - Before: Only synced when local financials were 0 (new order only)
-   - After: Syncs whenever context financials differ from local (covers new order + update order)
-   - Added: Preserves unplaced items during sync
-
-### Next Steps
-- Confirm hard refresh resolves the issue (cached JS hypothesis)
-- If still 2 calls after hard refresh: investigate duplicate socket listener registration in `useSocketEvents.js` and `socketService.js`
+### Verified Console Flow (Update Order)
+```
+update-order socket → handleUpdateOrder → fetchSingleOrderForSocket (1 call only)
+    → OrderContext.updateOrder → useEffect sync → cartItems + financials updated
+```
 
 ---
 
 ## BUG-202: Duplicate `get-single-order-new` API Calls on Cancel Item
 
-**Status:** NOT STARTED
+**Status:** FIXED ✅
 **Priority:** P0
 **Reported:** April 4, 2026
-
-### Symptom
-Same pattern as BUG-201 but for item cancellation. When cancelling an item, `get-single-order-new` is called twice.
+**Fixed:** April 5, 2026
+**Verified:** April 5, 2026 (User console logs confirmed 1 API call, `[CancelFood] Waiting for socket sync`)
 
 ### Root Cause
-Same dual-source pattern:
-- **Call A (OrderEntry.jsx):** `handleCancelFood()` calls `fetchSingleOrderForSocket(orderId)` after `PUT /cancel-food-item` success (lines 466-483).
-- **Call B (socketHandlers.js):** Server emits `update-food-status` or `update-order-status` socket → handler calls `fetchOrderWithRetry` → `fetchSingleOrderForSocket`.
+`handleCancelFood` in `OrderEntry.jsx` called `fetchSingleOrderForSocket` directly after cancel API success.
 
-### Fix Plan
-Same approach as BUG-201:
-1. Remove `fetchSingleOrderForSocket` from `handleCancelFood()` in `OrderEntry.jsx`
-2. Let socket handler update `OrderContext`
-3. The expanded `useEffect` (from BUG-201 fix) will auto-sync cancelled item status + updated financials to local state
-
-### Files to Modify
-- `src/components/order-entry/OrderEntry.jsx` — `handleCancelFood()`
+### Fix Applied
+1. Removed `fetchSingleOrderForSocket` from `handleCancelFood`
+2. Socket `update-order-status` handler fetches and updates OrderContext
+3. `useEffect` syncs cartItems + financials from context
+4. `fetchSingleOrderForSocket` import fully removed from `OrderEntry.jsx`
 
 ---
 
 ## BUG-203: Redundant `update-table` Socket Event Handling
 
-**Status:** NOT STARTED
+**Status:** FIXED ✅
 **Priority:** P1
 **Reported:** April 4, 2026
-**Updated:** April 5, 2026 (added backend team clarification + race condition analysis)
-**Reported by:** User (Console screenshots showing `update-table` logging twice)
+**Fixed:** April 5, 2026
+**Verified:** April 5, 2026 (Console shows no `update-table` events, table status derived from order data)
 
-### Symptom
-The `update-table` socket event fires and is logged twice in the console after order operations.
+### Root Cause
+Server emits on 2 channels for every order action. `update-table` on table channel was redundant — order data already has `table_id` and `f_order_status`.
 
-### Verified Console Flow (Update Order — April 5, 2026)
-When a user adds items to an existing order, the server emits on **2 channels simultaneously**:
+### Fix Applied
+1. Removed table channel subscription from `useSocketEvents.js`
+2. Added `syncTableStatus()` helper in `socketHandlers.js`
+3. All order handlers now derive and update table status from order data
+4. Single source of truth: OrderContext → table status derived from order
 
-```
-[Socket] Event received: new_order_690   ['update-order', 730308, 690, 5]   ← ORDER channel
-[Socket] Event received: update_table_690 ['update-table', 6238, 690, 'engage'] ← TABLE channel
-```
-
-Both arrive within the same second. The `update-order` handler fetches the full order from API (which includes `table_id`, `f_order_status` — everything needed to derive table status). The `update-table` handler separately sets table 6238 → occupied.
-
-**Result:** Table status is written from 2 independent sources for the same user action.
-
-### Root Cause Analysis
-The `update-table` socket updates `TableContext` with table status (occupied/available). But `OrderContext` already contains `table_id` and `f_order_status` — meaning table status can be **derived** from order data without a separate socket channel.
-
-Currently, table status is set from two sources:
-1. `update-table` socket → `handleUpdateTable()` → `updateTableStatus()` in `TableContext`
-2. `OrderContext` data — orders contain `tableId`, and table status can be derived (order exists + not cancelled = occupied)
-
-### Backend Team Clarification Required
-
-**Question for backend:** When the server processes an order update (e.g., `PUT /update-place-order`), it emits BOTH `update-order` on the order channel AND `update-table` on the table channel. Since the order data already contains `table_id` and `f_order_status`, is the `update-table` event necessary? Can the frontend safely ignore it and derive table status from the order data?
-
-**Specific scenarios to clarify:**
-1. Is there ANY situation where a table status changes WITHOUT an order event being emitted? (e.g., manual table reservation, table disable)
-2. If a table goes from occupied → available (order paid/cancelled), does the `update-order-status` event always fire? Or does ONLY `update-table` fire in some cases?
-
-If the answer to both is "order events always fire alongside table changes," then `update-table` is fully redundant for the POS frontend.
-
-### Race Condition Analysis (Multi-User Scenarios)
-
-**Context:** Between socket event received → API call in-flight → context updated, there is a ~1 second window where other users can act on the same order.
-
-| # | Another user's action during window | Socket event that fires | Risk |
-|---|-------------------------------------|------------------------|------|
-| 1 | **Kitchen marks item ready** | `update-food-status` | 2 API calls for same order in-flight. Last response wins. If the older response arrives LAST, it **overwrites** the newer kitchen status. **Race condition — stale data.** |
-| 2 | **Another waiter adds items to same order** | `update-order` | 2 `get-single-order-new` calls for same order. Last response wins. Could temporarily overwrite the other waiter's additions. |
-| 3 | **Another waiter cancels an item** | `update-order-status` | Cancelled item status could be overwritten by stale API response from earlier in-flight call. |
-| 4 | **Customer pays** | `update-order-status` (status=6) | `handleUpdateOrderStatus` calls `removeOrder`. But the in-flight `get-single-order-new` from `update-order` could return and call `updateOrder` — **re-adding a paid order back into context.** |
-| 5 | **Table shifted by another waiter** | `update-table` | Marks OLD table as occupied even though order moved to new table. |
-
-**Core problem:** Every socket event for the same order independently calls `get-single-order-new` with no sequencing or deduplication.
-
-**Backend team recommendation:** Consider one of:
-1. **Include full order payload** in `update-order` event (like `new-order` already does) — eliminates the API call entirely
-2. **Include a `updated_at` timestamp** in the socket message — frontend can compare and discard stale API responses
-3. **Coalesce events** — if multiple events fire for the same order within 500ms, server sends only the final state
-
-**Frontend mitigations possible without backend changes:**
-1. Debounce per orderId — multiple socket events within 500ms → single API fetch
-2. Timestamp comparison — compare `updatedAt` before writing to context
-3. AbortController — cancel in-flight API requests when a newer socket event arrives for the same order
-4. Queue per orderId — process socket events sequentially per order
-
-### Recommendation
-Deprecate the `update-table` socket handler entirely. Derive table status from `OrderContext`:
-- If an active order exists for a `tableId` → table is `occupied`
-- If no active order → table is `available`
-- If order is paid → table transitions to `available`
-
-This establishes `OrderContext` as the **single source of truth** for both order and table status.
-
-### Files to Modify
-- `src/api/socket/useSocketEvents.js` — bypass or remove `update-table` subscription
-- `src/api/socket/socketHandlers.js` — `handleUpdateTable()` can be deprecated
-- `src/contexts/TableContext.jsx` — derive status from `OrderContext` instead of standalone updates
+### Backend Team Note
+Server still emits `update-table` on `update_table_{restaurantId}` channel — we just don't subscribe to it anymore. Questions documented in API_MAPPING_AUDIT.md Section 8.
 
 ---
 
@@ -210,64 +103,123 @@ This establishes `OrderContext` as the **single source of truth** for both order
 **Status:** BLOCKED (Backend team required)
 **Priority:** P1
 **Reported:** April 4, 2026
-**Reported by:** User (Console response of `get-single-order-new`)
 
 ### Symptom
-The `get-single-order-new` API response always returns `order_sub_total_without_tax: 0`, regardless of the actual order items and their base prices.
-
-### Evidence
-User shared raw console response showing:
-```json
-{
-  "order_sub_total_without_tax": 0,
-  "order_amount": 190,
-  "order_sub_total_amount": 190
-}
-```
-
-### Impact
-- Frontend cannot display accurate pre-tax subtotal on the Collect Bill screen
-- Tax breakdown calculations are unreliable if based on this field
-
-### Current Workaround
-Frontend uses `order_sub_total_amount` (which works correctly) instead of `order_sub_total_without_tax` for display. Local calculation from item base prices can serve as a fallback if needed.
+`get-single-order-new` API always returns `order_sub_total_without_tax: 0`. Frontend uses `order_sub_total_amount` as fallback.
 
 ### Action Required
-- **Backend team** must investigate and fix `order_sub_total_without_tax` calculation in the `get-single-order-new` API response
-- The `new-order` socket payload has the same issue — needs to be verified
+Backend team must fix. Documented for handover.
 
 ---
 
-## Architecture Decision: Socket as Source of Truth
+## BUG-205: Cancel Complete Order — Race Condition (Order Re-added)
 
-**Date:** April 4, 2026
+**Status:** FIXED ✅
+**Priority:** P0
+**Reported:** April 5, 2026
+**Fixed:** April 5, 2026
+**Verified:** April 5, 2026 (Console: `Order 730308 already removed (full cancel), skipping`)
 
-### Principle
-After placing/updating/cancelling an order, the UI component (`OrderEntry.jsx`) must NOT call `get-single-order-new` directly. Instead:
+### Root Cause
+Old flow used per-item `PUT /food-status-update` loop (N API calls, N socket events). Socket arrived before HTTP response → handler found order still in context → re-added after `removeOrder`.
 
-1. **API call** (PUT/POST) → sends the action to the server
-2. **Server processes** → emits the appropriate socket event
-3. **Socket handler** (`socketHandlers.js`) → fetches fresh order data via `get-single-order-new` and updates `OrderContext`
-4. **`useEffect`** in `OrderEntry.jsx` → detects `OrderContext` change and syncs local state (cartItems, orderFinancials)
+### Fix Applied
+1. New endpoint: `PUT /order-status-update` (single call for full order cancel)
+2. `removeOrder` + `updateTableStatus('available')` called BEFORE `api.put` (socket can't re-add)
+3. Socket handler: `update-order-status` (status=3) → `getOrderById` → null → skip
+4. Added `useTables` to `OrderEntry.jsx` for `updateTableStatus`
+5. Fixed `tableId` type mismatch (string vs number in TableContext)
 
-### Socket Events per Action
-| Action | Socket Event Emitted | Handler |
-|--------|---------------------|---------|
-| Place New Order | `new-order` | `handleNewOrder` (uses payload directly, no API call) |
-| Update Order (add items) | `update-order` | `handleUpdateOrder` (fetches from API) |
-| Cancel Item | `update-food-status` or `update-order-status` | `handleUpdateFoodStatus` / `handleUpdateOrderStatus` |
-| Cancel Full Order | `update-order-status` | `handleUpdateOrderStatus` |
-| Payment Collected | `update-order-status` (status=6) | `handleUpdateOrderStatus` (removes order) |
+### Files Changed
+- `constants.js` — Added `ORDER_STATUS_UPDATE`, `FOOD_STATUS_UPDATE`
+- `orderTransform.js` — Added `toAPI.cancelOrder`, removed `cancelOrderItem`
+- `OrderEntry.jsx` — `handleCancelOrder` → single API call, immediate remove
+- `DashboardPage.jsx` — `handleCancelOrderConfirm` → same fix
+- `socketHandlers.js` — `handleUpdateOrderStatus` → immediate skip for removed orders
 
-### Data Flow Diagram
+---
+
+## BUG-206: Partial Item Cancel Cancels All Items
+
+**Status:** FIXED ✅
+**Priority:** P0
+**Reported:** April 5, 2026
+**Fixed:** April 5, 2026
+
+### Root Cause
+Old endpoint `PUT /cancel-food-item` (v2) ignores `cancel_qty` — cancels all quantity regardless.
+
+### Fix Applied
+Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item`
+- Handles both full and partial via `cancel_qty` field
+- Full cancel = `cancel_qty: item.qty`
+- Unified `cancelItem` transform replaces `cancelItemFull` + `cancelItemPartial`
+
+### Endpoint Testing Results
+| Endpoint | cancel_qty respected? |
+|----------|----------------------|
+| `v2 /partial-cancel-food-item` | NO — "Order item not found" error |
+| `v2 /cancel-food-item` | NO — ignores cancel_qty, cancels all |
+| `v1 /order/cancel-food-item` | **YES — works correctly** ✅ |
+
+---
+
+## BUG-207: Place Order Payload — Price Field & Addon Format
+
+**Status:** IN PROGRESS
+**Priority:** P0
+**Reported:** April 5, 2026
+
+### Symptom 1: Price sends unit price instead of total
+Payload: `price: 120, quantity: 5` but should be `price: 600` (120 × 5)?
+The `order_amount` is correct (600), but per-item `price` may need to be total.
+
+### Symptom 2: Addon format causes "Cannot use a scalar value as an array"
+Current payload:
+```json
+{
+  "add_ons": [10773],
+  "add_on_qtys": [5]
+}
 ```
-User Action → API Call → Server → Socket Event → socketHandlers.js
-                                                      ↓
-                                               fetchSingleOrderForSocket()
-                                                      ↓
-                                               OrderContext.updateOrder()
-                                                      ↓
-                                               useEffect in OrderEntry.jsx
-                                                      ↓
-                                               setCartItems + setOrderFinancials
+Backend (PHP) error suggests it expects nested arrays:
+```json
+{
+  "add_ons": [[10773]],
+  "add_on_qtys": [[5]]
+}
 ```
+
+### Symptom 3: Place order endpoint may have changed
+Current: `POST /api/v2/vendoremployee/pos/place-order`
+May need to be a different endpoint. User to confirm.
+
+### Next Steps
+- User to share correct endpoint for place order
+- User to share working payload from production POS (with addons) for format reference
+- Confirm if `price` should be unit or total
+
+---
+
+## Updated Endpoint Mapping (April 5, 2026)
+
+| Action | Endpoint | Status |
+|--------|----------|--------|
+| Place New Order | `POST /api/v2/vendoremployee/pos/place-order` | **NEEDS VERIFICATION** |
+| Update Order | `PUT /api/v2/vendoremployee/pos/update-place-order` | Working ✅ |
+| Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working ✅ |
+| Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working ✅ |
+| Get Single Order | `POST /api/v2/vendoremployee/pos/get-single-order-new` | Working ✅ |
+| Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working ✅ |
+
+---
+
+## Socket Event → User Action (Verified April 5, 2026)
+
+| Action | Socket Event | Status |
+|--------|-------------|--------|
+| Place New Order | `new-order` (with payload) | ✅ 0 API calls |
+| Update Order | `update-order` | ✅ 1 API call |
+| Cancel Single Item | `update-order-status` (status=3) | ✅ 1 API call |
+| Cancel Partial Item | `update-order-status` (status=3) | ✅ 1 API call |
+| Cancel Full Order | `update-order-status` (status=3) | ✅ 0 API calls (skipped, already removed) |

@@ -322,9 +322,47 @@ Fix applied. If user still sees 2 calls, it's either cached JS (needs hard refre
   - `handlePlaceOrder()` — removed `fetchSingleOrderForSocket` for update path
   - `useEffect` — expanded sync condition to cover update order
 
-### Open Bugs (see /app/memory/BUGS.md for full details)
-- **NOTE-200**: `addOrder` log appears twice on New Order — React StrictMode dev-only artifact. No action needed. **Must verify in production** that it does not appear.
-- **BUG-201**: Duplicate API calls on Update Order (P0, IN PROGRESS)
-- **BUG-202**: Duplicate API calls on Cancel Item (P0, NOT STARTED)
-- **BUG-203**: Redundant `update-table` socket handling (P1, NOT STARTED)
-- **BUG-204**: `order_sub_total_without_tax` returns 0 from backend (P1, BLOCKED on backend team)
+### Open Bugs & Status (see /app/memory/BUGS.md for full details)
+
+#### Fixed ✅
+- **BUG-201**: Duplicate API calls on Update Order — FIXED, verified
+- **BUG-202**: Duplicate API calls on Cancel Item — FIXED, verified
+- **BUG-203**: Redundant `update-table` socket handling — FIXED, verified
+- **BUG-205**: Cancel order race condition (order re-added) — FIXED, verified
+- **BUG-206**: Partial cancel cancels all items (wrong endpoint) — FIXED
+
+#### In Progress
+- **BUG-207**: Place Order payload issues (P0)
+  - `price` field sends unit price instead of total
+  - Addon format (`add_ons`/`add_on_qtys`) causes PHP "scalar as array" error
+  - Place order endpoint may have changed
+  - **Blocked on:** User to confirm correct endpoint + working payload format
+
+#### Open / Blocked
+- **NOTE-200**: StrictMode double-log — dev-only, verify in production
+- **BUG-204**: `order_sub_total_without_tax` returns 0 — blocked on backend team
+
+### April 5, 2026 - Socket Architecture Refactor (BUG-201, 202, 203)
+
+#### Changes
+1. `fetchSingleOrderForSocket` completely removed from `OrderEntry.jsx`
+2. Only socket handlers call `fetchSingleOrderForSocket`
+3. `useEffect` in OrderEntry syncs from OrderContext on any financial change
+4. Table channel subscription removed — table status derived from order data
+5. Guards added: `handleUpdateFoodStatus` and `handleUpdateOrder` skip if order already removed
+
+### April 5, 2026 - Cancel Order Refactor (BUG-205, 206)
+
+#### Changes
+1. Full order cancel: single `PUT /order-status-update` (was N × `PUT /food-status-update`)
+2. `removeOrder` + `updateTableStatus` called BEFORE api.put (prevents socket race)
+3. Socket handler skips cancelled orders already removed from context
+4. Item cancel: unified to `PUT /api/v1/vendoremployee/order/cancel-food-item` with `cancel_qty`
+5. Removed `cancelItemFull`, `cancelItemPartial`, `cancelOrderItem` — replaced with single `cancelItem` + `cancelOrder`
+
+#### Corrected Endpoint Mapping
+| Action | Old Endpoint | New Endpoint |
+|--------|-------------|-------------|
+| Cancel full order | N × `PUT /food-status-update` | 1 × `PUT /order-status-update` |
+| Cancel item (full/partial) | `PUT /cancel-food-item` (v2) | `PUT /order/cancel-food-item` (v1) |
+| Accept scanner order | `PUT /food-status-update` | `PUT /food-status-update` (unchanged) |
