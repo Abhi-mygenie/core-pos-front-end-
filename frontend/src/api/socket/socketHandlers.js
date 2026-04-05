@@ -162,14 +162,11 @@ export const handleNewOrder = (message, { addOrder, updateTableStatus }) => {
   for (const apiOrder of orders) {
     try {
       console.log('[SocketHandler] RAW orderDetails:', JSON.stringify(apiOrder.orderDetails, null, 2));
-      console.log('[SocketHandler] RAW order financials:', JSON.stringify({
-        order_amount: apiOrder.order_amount,
-        order_sub_total_amount: apiOrder.order_sub_total_amount,
-        order_sub_total_without_tax: apiOrder.order_sub_total_without_tax,
-        total_tax_amount: apiOrder.total_tax_amount,
-        gst_tax: apiOrder.gst_tax,
-        vat_tax: apiOrder.vat_tax,
-      }, null, 2));
+      console.log('[SocketHandler] RAW order ALL KEYS:', Object.keys(apiOrder));
+      console.log('[SocketHandler] RAW order FULL (excl orderDetails):', JSON.stringify(
+        Object.fromEntries(Object.entries(apiOrder).filter(([k]) => k !== 'orderDetails' && k !== 'restaurantTable' && k !== 'vendorEmployee' && k !== 'user')),
+        null, 2
+      ));
       const transformedOrder = orderFromAPI.order(apiOrder);
       addOrder(transformedOrder);
       syncTableStatus(transformedOrder, updateTableStatus);
