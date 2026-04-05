@@ -46,9 +46,12 @@ const ItemCustomizationModal = ({ item, onClose, onAddToOrder }) => {
     // Quantity: restore saved or default to 1
     setQuantity(item.qty || item.quantity || 1);
 
-    // Notes: restore saved
-    if (item.notes || item.itemNotes) {
-      setNotes(item.notes || item.itemNotes || '');
+    // Notes: restore saved (convert itemNotes array to string if needed)
+    const notesStr = item.notes
+      || (Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : '')
+      || '';
+    if (notesStr) {
+      setNotes(notesStr);
       setShowNotes(true);
     } else {
       setNotes('');
