@@ -12,6 +12,8 @@ export const TableProvider = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   // Engaged tables — temporarily locked during update-order transactions
   const [engagedTables, setEngagedTables] = useState(new Set());
+  // Track when each table was engaged (for minimum lock duration)
+  const engagedTimestamps = useRef(new Map());
 
   // Set tables (called from LoadingPage) - includes both tables and rooms
   const setTables = useCallback((data) => {
@@ -43,15 +45,37 @@ export const TableProvider = ({ children }) => {
   const setTableEngaged = useCallback((tableId, engaged) => {
     if (!tableId || tableId === 0) return;
     console.log(`[TableContext] setTableEngaged: ${tableId} → ${engaged}`);
-    setEngagedTables(prev => {
-      const next = new Set(prev);
-      if (engaged) {
+    if (engaged) {
+      engagedTimestamps.current.set(tableId, Date.now());
+      setEngagedTables(prev => {
+        const next = new Set(prev);
         next.add(tableId);
+        return next;
+      });
+    } else {
+      // Release with minimum 5s lock: if less than 5s since engaged, delay the release
+      const engagedAt = engagedTimestamps.current.get(tableId) || 0;
+      const elapsed = Date.now() - engagedAt;
+      const MIN_LOCK_MS = 5000;
+      const remaining = MIN_LOCK_MS - elapsed;
+
+      const doRelease = () => {
+        console.log(`[TableContext] setTableEngaged: ${tableId} → false (released)`);
+        engagedTimestamps.current.delete(tableId);
+        setEngagedTables(prev => {
+          const next = new Set(prev);
+          next.delete(tableId);
+          return next;
+        });
+      };
+
+      if (remaining > 0) {
+        console.log(`[TableContext] setTableEngaged: ${tableId} → delaying release by ${remaining}ms`);
+        setTimeout(doRelease, remaining);
       } else {
-        next.delete(tableId);
+        doRelease();
       }
-      return next;
-    });
+    }
   }, []);
 
   /**
