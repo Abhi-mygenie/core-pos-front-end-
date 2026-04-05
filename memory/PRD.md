@@ -323,6 +323,7 @@ Fix applied. If user still sees 2 calls, it's either cached JS (needs hard refre
   - `useEffect` — expanded sync condition to cover update order
 
 ### Open Bugs (see /app/memory/BUGS.md for full details)
+- **NOTE-200**: `addOrder` log appears twice on New Order — React StrictMode dev-only artifact. No action needed. **Must verify in production** that it does not appear.
 - **BUG-201**: Duplicate API calls on Update Order (P0, IN PROGRESS)
 - **BUG-202**: Duplicate API calls on Cancel Item (P0, NOT STARTED)
 - **BUG-203**: Redundant `update-table` socket handling (P1, NOT STARTED)

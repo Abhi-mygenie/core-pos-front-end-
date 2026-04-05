@@ -2,6 +2,34 @@
 
 ---
 
+## NOTE-200: `addOrder` Console Log Appears Twice on New Order (React StrictMode)
+
+**Status:** NO ACTION NEEDED (Dev-only artifact)
+**Priority:** P3 (Informational)
+**Reported:** April 5, 2026
+
+### Symptom
+After placing a new order, `[OrderContext] addOrder: Adding new order 730305` appears **twice** in the console.
+
+### Root Cause
+**React StrictMode** (development mode only). React 18+ intentionally double-invokes state updater functions to detect impure logic. The `console.log` inside `setOrdersState(prev => { ... })` in `OrderContext.jsx` runs twice, but the second run is discarded — state is only updated once.
+
+### Evidence
+- `[Socket] Event received` — logs **once** (server sends event once)
+- `[useSocketEvents] Order channel event` — logs **once** (listener registered once)
+- `[SocketHandler] new-order received` — logs **once** (handler called once)
+- `[SocketHandler] new-order: Added order` — logs **once** (loop runs once)
+- `[OrderContext] addOrder: Adding new order` — logs **twice** (inside state updater → StrictMode double-invoke)
+
+Every log outside a state updater appears once. Only the log inside the state updater appears twice.
+
+### Action
+- No code change needed
+- **Must verify in production** — this double-log should NOT appear in production builds (StrictMode is dev-only)
+- If it still appears in production, the investigation should shift to duplicate socket listener registration
+
+---
+
 ## BUG-201: Duplicate `get-single-order-new` API Calls on Update Order
 
 **Status:** IN PROGRESS
