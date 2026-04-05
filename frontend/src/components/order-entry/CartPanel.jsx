@@ -60,6 +60,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         {item.customizations && !isCancelled && (
           <div className="text-xs mt-0.5 leading-relaxed" style={{ color: COLORS.primaryGreen }}>
             {item.customizations.size && <span>{item.customizations.size}</span>}
+            {item.customizations.variants?.length > 0 && <span>{item.customizations.size ? ', ' : ''}{item.customizations.variants.join(", ")}</span>}
             {item.customizations.addons?.length > 0 && <span> + {item.customizations.addons.join(", ")}</span>}
           </div>
         )}
@@ -70,13 +71,22 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
               <span>{item.variation.map(v => v.name || v.label || '').filter(Boolean).join(', ')}</span>
             )}
             {item.addOns?.length > 0 && (
-              <span> + {item.addOns.map(a => a.name || '').filter(Boolean).join(', ')}</span>
+              <span>{item.variation?.length > 0 ? ' + ' : '+ '}{item.addOns.map(a => {
+                const name = a.name || '';
+                const qty = a.quantity || a.qty || 1;
+                return qty > 1 ? `${name} x${qty}` : name;
+              }).filter(Boolean).join(', ')}</span>
             )}
           </div>
         )}
-        {item.notes && item.notes.trim() && !isCancelled && (
-          <div className="text-xs mt-0.5 italic" style={{ color: COLORS.grayText }}>
+        {item.notes && item.notes.trim() && !(item.itemNotes?.length > 0) && !isCancelled && (
+          <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
             📝 {item.notes}
+          </div>
+        )}
+        {item.itemNotes && item.itemNotes.length > 0 && !isCancelled && (
+          <div className="text-xs mt-0.5" style={{ color: COLORS.primaryOrange }}>
+            📝 {item.itemNotes.map(n => n.label).join(", ")}
           </div>
         )}
         <div className="flex items-center gap-2 mt-0.5">
