@@ -348,10 +348,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         );
         console.log('[PlaceOrder] table object:', table);
         console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
-        const formData = new URLSearchParams();
+        const formData = new FormData();
         formData.append('data', JSON.stringify(payload));
         const response = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log('[PlaceOrder] response:', response.data);
         const newOrderId = response.data?.order_id;
@@ -645,21 +645,25 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     const res = await api.post(API_ENDPOINTS.ORDER_SHIFTED_ROOM, payload);
                     toast({ title: "Transferred to Room", description: res.data?.message || "Order transferred successfully" });
                   } else if (!placedOrderId) {
-                    // Scenario 2 — fresh order: place + pay in one shot
-                    const payload = orderToAPI.collectBill(
+                    // Scenario 2 — fresh order: place + pay in one shot (same endpoint, payment_status=paid)
+                    const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
                       { restaurantId: restaurant?.id, orderNotes, printAllKOT }
                     );
-                    const formData = new URLSearchParams();
+                    const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
-                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER_AND_PAYMENT, formData, {
-                      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+                      headers: { 'Content-Type': 'multipart/form-data' },
                     });
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
                   } else {
-                    // Scenario 1 — existing order: collect payment only
-                    const payload = orderToAPI.clearBill(effectiveTable, paymentData);
-                    const res = await api.post(API_ENDPOINTS.CLEAR_BILL, payload);
+                    // Scenario 1 — existing order: collect payment only (same endpoint with order_id)
+                    const payload = orderToAPI.collectBillExisting(effectiveTable, paymentData, orderFinancials);
+                    const formData = new FormData();
+                    formData.append('data', JSON.stringify(payload));
+                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+                      headers: { 'Content-Type': 'multipart/form-data' },
+                    });
                     toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
                   }
                   setCartItems([]);

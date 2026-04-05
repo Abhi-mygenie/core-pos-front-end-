@@ -31,8 +31,8 @@
 ### Order Operations
 | Endpoint | Method | Constant | Transform | Called From |
 |----------|--------|----------|-----------|-------------|
-| `/api/v2/vendoremployee/pos/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.placeOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` | **NEEDS VERIFICATION — may have changed** |
-| `/api/v2/vendoremployee/pos/update-place-order` | PUT | `UPDATE_ORDER` | `orderTransform.js` (`toAPI.updateOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` (update path) |
+| `/api/v1/vendoremployee/order/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.placeOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` |
+| `/api/v1/vendoremployee/order/update-place-order` | PUT | `UPDATE_ORDER` | `orderTransform.js` (`toAPI.updateOrder`) | `OrderEntry.jsx` → `handlePlaceOrder` (update path) |
 | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `CANCEL_ITEM` | `orderTransform.js` (`toAPI.cancelItem`) | `OrderEntry.jsx` → `handleCancelFood` |
 | `/api/v2/vendoremployee/order-status-update` | PUT | `ORDER_STATUS_UPDATE` | `orderTransform.js` (`toAPI.cancelOrder`) | `OrderEntry.jsx` → `handleCancelOrder`, `DashboardPage` → `handleCancelOrderConfirm` |
 | `/api/v2/vendoremployee/food-status-update` | PUT | `FOOD_STATUS_UPDATE` | `orderTransform.js` (`toAPI.cancelOrderItem`) | `DashboardPage` → `handleConfirmOrder` (accept scanner) |
@@ -48,8 +48,8 @@
 ### Payment Operations
 | Endpoint | Method | Constant | Transform | Called From |
 |----------|--------|----------|-----------|-------------|
-| `/api/v1/vendoremployee/pos/place-order-and-payment` | POST | `PLACE_ORDER_AND_PAYMENT` | `orderTransform.js` (`toAPI.collectBill`) | `OrderEntry.jsx` → `CollectPaymentPanel` |
-| `/api/v2/vendoremployee/order-bill-payment` | POST | `CLEAR_BILL` | `orderTransform.js` (`toAPI.clearBill`) | `OrderEntry.jsx` → `CollectPaymentPanel` |
+| `/api/v1/vendoremployee/order/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.placeOrderWithPayment`) | `OrderEntry.jsx` → `CollectPaymentPanel` (fresh order + pay) |
+| `/api/v1/vendoremployee/order/place-order` | POST | `PLACE_ORDER` | `orderTransform.js` (`toAPI.collectBillExisting`) | `OrderEntry.jsx` → `CollectPaymentPanel` (existing order + pay) |
 
 ### Room Operations
 | Endpoint | Method | Constant | Transform | Called From |
@@ -267,7 +267,7 @@ setCartItems + setFinancials        handleXxx → fetchSingleOrderForSocket (CAL
 | File | Direction | Functions | Used By |
 |------|-----------|-----------|---------|
 | `orderTransform.js` | API → FE | `fromAPI.order`, `fromAPI.orderItem`, `fromAPI.orderList` | `orderService.js`, `socketHandlers.js` |
-| `orderTransform.js` | FE → API | `toAPI.placeOrder`, `toAPI.updateOrder`, `toAPI.cancelItemFull`, `toAPI.cancelItemPartial`, `toAPI.cancelOrderItem`, `toAPI.clearBill`, `toAPI.collectBill`, `toAPI.transferToRoom`, `toAPI.addCustomItem` | `OrderEntry.jsx` |
+| `orderTransform.js` | FE → API | `toAPI.placeOrder`, `toAPI.updateOrder`, `toAPI.placeOrderWithPayment`, `toAPI.collectBillExisting`, `toAPI.cancelItem`, `toAPI.cancelOrder`, `toAPI.transferToRoom`, `toAPI.addCustomItem` | `OrderEntry.jsx` |
 | `orderTransform.js` | API → Cart | `customItemFromAPI` | `OrderEntry.jsx` |
 | `tableTransform.js` | FE → API | `toAPI.transferFood`, `toAPI.mergeTable`, `toAPI.shiftTable` | `OrderEntry.jsx` |
 | `tableTransform.js` | API → FE | `fromAPI.table`, `fromAPI.tableList` | `LoadingPage.jsx` |

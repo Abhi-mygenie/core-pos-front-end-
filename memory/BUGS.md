@@ -166,38 +166,21 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 
 ## BUG-207: Place Order Payload — Price Field & Addon Format
 
-**Status:** IN PROGRESS
+**Status:** FIXED ✅
 **Priority:** P0
 **Reported:** April 5, 2026
+**Fixed:** April 6, 2026
 
-### Symptom 1: Price sends unit price instead of total
-Payload: `price: 120, quantity: 5` but should be `price: 600` (120 × 5)?
-The `order_amount` is correct (600), but per-item `price` may need to be total.
+### Symptoms Fixed
+1. `price` field now sends unit price (correct — backend expects unit price, calculates total internally)
+2. Addon format now uses nested arrays: `add_ons: [[id1, id2]]`, `add_on_qtys: [[qty1, qty2]]`
+3. Endpoint migrated to `POST /api/v1/vendoremployee/order/place-order` with `multipart/form-data`
+4. `buildCartItem` + `calcOrderTotals` helper functions implemented
+5. All 4 flows updated: Place Order, Update Order, Place+Pay, Collect Bill (existing)
 
-### Symptom 2: Addon format causes "Cannot use a scalar value as an array"
-Current payload:
-```json
-{
-  "add_ons": [10773],
-  "add_on_qtys": [5]
-}
-```
-Backend (PHP) error suggests it expects nested arrays:
-```json
-{
-  "add_ons": [[10773]],
-  "add_on_qtys": [[5]]
-}
-```
-
-### Symptom 3: Place order endpoint may have changed
-Current: `POST /api/v2/vendoremployee/pos/place-order`
-May need to be a different endpoint. User to confirm.
-
-### Next Steps
-- User to share correct endpoint for place order
-- User to share working payload from production POS (with addons) for format reference
-- Confirm if `price` should be unit or total
+### Files Modified
+- `orderTransform.js` — Added `buildCartItem()`, `calcOrderTotals()` helpers
+- `OrderEntry.jsx` — Fixed FormData wrapping, corrected function/endpoint references
 
 ---
 
@@ -205,11 +188,13 @@ May need to be a different endpoint. User to confirm.
 
 | Action | Endpoint | Status |
 |--------|----------|--------|
-| Place New Order | `POST /api/v2/vendoremployee/pos/place-order` | **NEEDS VERIFICATION** |
-| Update Order | `PUT /api/v2/vendoremployee/pos/update-place-order` | Working ✅ |
+| Place New Order | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data) | Updated ✅ |
+| Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated ✅ |
+| Collect Bill (existing order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, with order_id) | Updated ✅ |
+| Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated ✅ |
 | Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working ✅ |
 | Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working ✅ |
-| Get Single Order | `POST /api/v2/vendoremployee/pos/get-single-order-new` | Working ✅ |
+| Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | Working ✅ |
 | Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working ✅ |
 
 ---

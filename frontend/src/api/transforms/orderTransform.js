@@ -197,6 +197,97 @@ export const fromAPI = {
 
 
 // =============================================================================
+// SHARED HELPERS: Cart Item Builder & Order Totals Calculator
+// Used by placeOrder, updateOrder, placeOrderWithPayment
+// =============================================================================
+
+/**
+ * Build a single cart item for the API payload
+ * Maps frontend cart item → backend cart[] item shape
+ * @param {Object} item - Frontend cart item (from addToCart or addCustomizedItemToCart)
+ * @returns {Object} - API cart item
+ */
+const buildCartItem = (item) => {
+  // Addon IDs and quantities — nested arrays for PHP backend
+  // Customized items have selectedAddons; placed items from API have addOns
+  const addons = item.selectedAddons || item.addOns || [];
+  const addonIds = addons.map(a => a.id).filter(Boolean);
+  const addonQtys = addons.map(a => a.quantity || a.qty || 1);
+
+  // Variation data — customized items have selectedVariants (object); API items have variation (array)
+  const variation = item.selectedVariants
+    ? Object.values(item.selectedVariants).filter(Boolean)
+    : (item.variation || []);
+
+  return {
+    food_id:           item.id,
+    quantity:          item.qty || 1,
+    price:             item.price || 0,       // unit price
+    food_name:         item.name || '',
+    tax:               item.tax?.percentage || 0,
+    tax_type:          item.tax?.type || 'GST',
+    tax_calc:          item.tax?.calculation || 'Exclusive',
+    add_ons:           addonIds.length > 0 ? [addonIds] : [],
+    add_on_qtys:       addonQtys.length > 0 ? [addonQtys] : [],
+    variation:         variation,
+    food_level_notes:  item.itemNotes || item.notes || '',
+  };
+};
+
+/**
+ * Calculate order-level financial totals from built cart items
+ * @param {Array} cart - Array of items returned by buildCartItem
+ * @returns {Object} - Financial totals for the order payload
+ */
+const calcOrderTotals = (cart) => {
+  let subtotal = 0;
+  let gstTax = 0;
+  let vatTax = 0;
+
+  cart.forEach(item => {
+    const lineTotal = (item.price || 0) * (item.quantity || 1);
+    subtotal += lineTotal;
+
+    const taxPct = parseFloat(item.tax) || 0;
+    if (taxPct === 0) return;
+
+    const isInclusive = item.tax_calc === 'Inclusive';
+    let taxAmt;
+    if (isInclusive) {
+      taxAmt = lineTotal - (lineTotal / (1 + taxPct / 100));
+    } else {
+      taxAmt = lineTotal * (taxPct / 100);
+    }
+
+    if ((item.tax_type || 'GST').toUpperCase() === 'GST') {
+      gstTax += taxAmt;
+    } else {
+      vatTax += taxAmt;
+    }
+  });
+
+  const totalTax = Math.round((gstTax + vatTax) * 100) / 100;
+  subtotal = Math.round(subtotal * 100) / 100;
+
+  // Rounding logic matching backend
+  const rawTotal = subtotal + totalTax;
+  const ceilTotal = Math.ceil(rawTotal);
+  const diff = Math.round((ceilTotal - rawTotal) * 100) / 100;
+  const roundUp = diff >= 0.10 ? diff : 0;
+  const orderAmount = roundUp > 0 ? ceilTotal : Math.floor(rawTotal);
+
+  return {
+    order_sub_total_amount:      subtotal,
+    order_sub_total_without_tax: subtotal,
+    tax_amount:                  totalTax,
+    gst_tax:                     Math.round(gstTax * 100) / 100,
+    vat_tax:                     Math.round(vatTax * 100) / 100,
+    order_amount:                orderAmount,
+    round_up:                    String(roundUp.toFixed(2)),
+  };
+};
+
+// =============================================================================
 // Frontend → API (Request) - Phase 1C Order Operations
 // =============================================================================
 export const toAPI = {
@@ -250,10 +341,6 @@ export const toAPI = {
     tax_type: 'GST',
     tax_calc: 'Exclusive',
   }),
-
-  // ==========================================================================
-  // SHARED: Cart Item Builder & Order Totals Calculator
-  // ==========================================================================
 
   // ==========================================================================
   // Flow 1: Place New Order (unpaid)
