@@ -592,48 +592,66 @@ export const toAPI = {
   // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
   // ==========================================================================
 
-  collectBillExisting: (table, cartItems, paymentData, orderFinancials = {}) => {
+  collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
+    const { restaurantId, orderNotes = [], userId = '' } = options;
     const { 
       method = 'cash', transactionId = '', 
       splitPayments = [], tip = 0, discounts = {},
-      finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
-      itemTotal = 0, subtotal = 0,
+      finalTotal = 0, deliveryCharge = 0,
     } = paymentData;
 
+    // Build cart from ALL active (non-cancelled) placed items
+    const activeItems = (cartItems || []).filter(i => i.status !== 'cancelled');
+    const cartRaw = activeItems.map(buildCartItem);
+    const cart = cartRaw.map(({ _fullUnitPrice, ...item }) => item);
+    const totals = calcOrderTotals(cartRaw);
+
     const payload = {
-      order_id:                   String(table.orderId),
+      user_id:                    userId,
+      restaurant_id:              restaurantId,
+      table_id:                   String(table?.tableId || 0),
       order_type:                 'pos',
+      cust_name:                  customer?.name || '',
+      cust_mobile:                customer?.phone || '',
+      cust_email:                 '',
+      cust_dob:                   '',
+      cust_anniversary:           '',
+      cust_membership_id:         '',
+      order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
       payment_status:             'paid',
-      payment_type:               'postpaid',
+      payment_type:               'prepaid',
       transaction_id:             transactionId || null,
-      // Financial — use values computed by CollectPaymentPanel from ALL cart items
-      order_amount:               finalTotal || 0,
-      order_sub_total_amount:     itemTotal || 0,
-      order_sub_total_without_tax: itemTotal || 0,
-      gst_tax:                    Math.round((sgst + cgst) * 100) / 100,
-      vat_tax:                    vatAmount,
-      tax_amount:                 Math.round((sgst + cgst + vatAmount) * 100) / 100,
-      round_up:                   0,
+      print_kot:                  'Yes',
+      auto_dispatch:              'No',
+      scheduled:                  0,
+      schedule_at:                null,
+      // Financial
+      ...totals,
       service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 tip || 0,
       tip_tax_amount:             0,
+      delivery_charge:            deliveryCharge || 0,
       // Discount
       discount_type:              discounts.type || null,
       self_discount:              discounts.manual || 0,
-      order_discount:             discounts.orderDiscountPercent || 0,
       coupon_discount:            discounts.coupon || 0,
       coupon_title:               discounts.couponTitle || null,
       coupon_type:                discounts.couponType || null,
-      // Defaults
+      order_discount:             discounts.orderDiscountPercent || 0,
+      // Loyalty & Wallet
       used_loyalty_point:         0,
       use_wallet_balance:         0,
-      auto_dispatch:              'No',
+      // Room & Address
+      paid_room:                  null,
       room_id:                    null,
+      address_id:                 null,
+      // Misc
       discount_member_category_id:   0,
       discount_member_category_name: null,
       usage_id:                   null,
+      cart,
     };
 
     // Partial payments
