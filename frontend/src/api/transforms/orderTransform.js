@@ -620,6 +620,7 @@ export const toAPI = {
       cust_membership_id:         '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
+      payment_status:             'paid',
       payment_type:               'postpaid',
       transaction_id:             transactionId || null,
       print_kot:                  'Yes',
