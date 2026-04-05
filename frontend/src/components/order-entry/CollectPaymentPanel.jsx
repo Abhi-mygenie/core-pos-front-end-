@@ -114,11 +114,8 @@ const CollectPaymentPanel = ({
   const barTotal = barItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
   const kitchenTotal = kitchenItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
 
-  // Calculate bill
-  // For placed orders, use API values; for new orders, calculate locally
-  const itemTotal = hasPlacedItems && orderFinancials.subtotalAmount > 0
-    ? orderFinancials.subtotalAmount
-    : activeItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
+  // Calculate bill — always from ALL active cart items (placed + unplaced)
+  const itemTotal = activeItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
   
   // Discount from restaurant preset types (from RestaurantContext)
   const [selectedDiscountType, setSelectedDiscountType] = useState(null);
@@ -147,18 +144,11 @@ const CollectPaymentPanel = ({
   const totalDiscount = manualDiscount + presetDiscount + loyaltyDiscount + couponDiscount + walletDiscount;
   const subtotalAfterDiscount = Math.max(0, itemTotal - totalDiscount);
 
-  // Tax: use orderFinancials when placed (to avoid double-taxing order_amount),
-  // otherwise use per-item computed totals
-  const sgst = hasPlacedItems && orderFinancials.amount > 0
-    ? Math.round(((orderFinancials.amount - orderFinancials.subtotalAmount) / 2) * 100) / 100
-    : taxTotals.sgst;
-  const cgst = hasPlacedItems && orderFinancials.amount > 0
-    ? Math.round(((orderFinancials.amount - orderFinancials.subtotalAmount) / 2) * 100) / 100
-    : taxTotals.cgst;
+  // Tax: always use per-item computed totals from ALL active items
+  const sgst = taxTotals.sgst;
+  const cgst = taxTotals.cgst;
 
-  const rawFinalTotal = hasPlacedItems && orderFinancials.amount > 0
-    ? Math.round((Math.max(0, itemTotal - totalDiscount) + sgst + cgst) * 100) / 100
-    : Math.round((subtotalAfterDiscount + sgst + cgst) * 100) / 100;
+  const rawFinalTotal = Math.round((subtotalAfterDiscount + sgst + cgst) * 100) / 100;
 
   // Round-off: ceil if diff >= 0.10, else floor
   const ceilTotal = Math.ceil(rawFinalTotal);
