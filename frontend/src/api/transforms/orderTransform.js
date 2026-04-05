@@ -249,7 +249,14 @@ const buildCartItem = (item) => {
   } else if (item.variation?.length > 0) {
     // Fallback for placed items from socket (already in API format or empty)
     variations = item.variation;
-    variationAmount = item.variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
+    // Socket format: [{name, values: [{label, optionPrice}]}] or [{name, values: {label: []}}]
+    variationAmount = item.variation.reduce((sum, v) => {
+      // Try direct price (legacy)
+      if (v.price) return sum + (parseFloat(v.price) || 0);
+      // Parse nested values array: values[].optionPrice
+      const vals = Array.isArray(v.values) ? v.values : (v.values?.label ? [] : []);
+      return sum + vals.reduce((s, opt) => s + (parseFloat(opt.optionPrice) || 0), 0);
+    }, 0);
   }
 
   // Per-item financials
@@ -457,22 +464,17 @@ export const toAPI = {
     const { 
       orderNotes = [], 
       printAllKOT = true,
-      existingOrderTotal = 0,
-      existingSubtotal = 0,
+      allCartItems = [],
     } = options;
 
+    // cart-update payload: only NEW (unplaced) items
     const cartUpdateRaw = newItems.map(buildCartItem);
-    const newTotals = calcOrderTotals(cartUpdateRaw);
     const cartUpdate = cartUpdateRaw.map(({ _fullUnitPrice, ...item }) => item);
 
-    // Complete order totals = existing (from API) + new items
-    const combinedSubtotal = existingSubtotal + newTotals.order_sub_total_amount;
-    const combinedTax = newTotals.tax_amount; // new items tax only for update
-    const combinedRaw = existingOrderTotal + newTotals.order_sub_total_amount + combinedTax;
-    const ceilTotal = Math.ceil(combinedRaw);
-    const diff = Math.round((ceilTotal - combinedRaw) * 100) / 100;
-    const roundUp = diff >= 0.10 ? diff : 0;
-    const orderAmount = roundUp > 0 ? ceilTotal : Math.floor(combinedRaw);
+    // COMBINED financial totals: ALL items (placed + unplaced, excluding cancelled)
+    const allActiveItems = allCartItems.filter(i => i.status !== 'cancelled');
+    const allBuilt = allActiveItems.map(buildCartItem);
+    const combinedTotals = calcOrderTotals(allBuilt);
 
     return {
       order_id:                   String(table.orderId),
@@ -484,14 +486,8 @@ export const toAPI = {
       payment_type:               'postpaid',
       print_kot:                  printAllKOT ? 'Yes' : 'No',
       auto_dispatch:              'No',
-      // Financial
-      order_sub_total_amount:     Math.round(combinedSubtotal * 100) / 100,
-      order_sub_total_without_tax: Math.round(combinedSubtotal * 100) / 100,
-      tax_amount:                 combinedTax,
-      gst_tax:                    newTotals.gst_tax,
-      vat_tax:                    newTotals.vat_tax,
-      order_amount:               orderAmount,
-      round_up:                   String(roundUp.toFixed(2)),
+      // Financial — COMBINED totals (existing placed + new unplaced)
+      ...combinedTotals,
       service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 0,

@@ -356,8 +356,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           restaurantId: restaurant?.id,
           orderNotes,
           printAllKOT,
-          existingOrderTotal: orderFinancials.amount || 0,
-          existingSubtotal: orderFinancials.subtotalBeforeTax || 0,
+          allCartItems: cartItems,
         });
         const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
         console.log('[UpdateOrder] response:', response.data);
