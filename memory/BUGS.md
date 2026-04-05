@@ -378,3 +378,61 @@ Add these fields to socket `new-order` event payload to match GET single order:
 - `total_service_tax_amount`
 - (ideally all 16 missing fields for full parity)
 
+
+
+## BUG-212: Addon Names Mismatch Between Product Catalog API and Order Response API
+
+**Status:** OPEN — CRITICAL (Backend)
+**Priority:** P0 CRITICAL
+**Reported:** Feb 2026
+**Component:** Backend API — Data Consistency
+
+### Problem
+The **same addon ID** returns **different names** depending on which API is called:
+- **Product Listing API** (`GET /api/v1/vendoremployee/all-product-list`) → `add_ons[].name` = catalog name
+- **Order Details API** (`POST /api/v2/vendoremployee/get-single-order-new`) → `add_ons[].name` = different name
+
+### Evidence (Same Restaurant, Same Addons)
+
+| Addon ID | Product Catalog Name | Order Response Name |
+|----------|---------------------|---------------------|
+| **10725** | Garlic mayo | Garlic Sauce |
+| **10728** | Thandoori sauce | Tandoori sauce |
+| **10729** | Peri peri | Peri peri Sprinkler |
+| **10730** | lemon pepper | lemon pepper Sprinkler |
+| **10731** | chipotle | chipotle Sprinkler |
+
+### Reproduction Steps
+1. Load product catalog → note addon names for a product (e.g., Pop Corn)
+2. Place order with those addons (frontend sends correct `add_on_ids: [10725, 10728, 10729, 10730, 10731]`)
+3. Fetch placed order via GET single order API
+4. Compare addon names → **they differ**
+
+### Frontend Debug Log (Raw Addon Object from Product API)
+```json
+{
+  "allKeys": ["id", "name", "price", "show_type", "veg", "inventory_id", "recipe_id", "has_inventory", "created_at", "updated_at", "restaurant_id", "status", "quantity"],
+  "id": 10725,
+  "name": "Garlic mayo"
+}
+```
+- No `food_id`, `add_on_id`, or alternate ID field exists — `id` is the only identifier
+- Frontend sends `add_on_ids: [10725, ...]` which IS the correct ID from the product catalog
+
+### Impact
+- **User confusion:** Addon names change visually after placing an order (e.g., "Garlic mayo" becomes "Garlic Sauce")
+- **Data integrity:** If the product catalog and order system reference different name sources for the same addon ID, reporting/analytics may be inconsistent
+- **KOT printing:** Kitchen may see different addon names than what the POS user selected
+
+### Root Cause (Suspected)
+The product listing API and the order details API likely resolve addon names from **different database tables or columns**:
+- Product API: reads from the `add_ons` master table (catalog name)
+- Order API: reads from the `food` table using the addon's `food_id` foreign key (food item name)
+
+If the addon master record has `name: "Garlic mayo"` but the linked food item has `name: "Garlic Sauce"`, the mismatch occurs.
+
+### Backend Action Required
+Ensure both APIs return the **same name** for the same addon ID. Either:
+1. Product API should resolve addon name from the same source as the Order API, OR
+2. Order API should use the addon catalog name, OR
+3. Normalize the names in both tables to be identical

@@ -214,17 +214,6 @@ export const fromAPI = {
 const buildCartItem = (item) => {
   // Addon IDs and quantities — flat arrays
   const addons = item.selectedAddons || item.addOns || [];
-  // DEBUG: Log raw addon structure to verify correct ID field
-  if (addons.length > 0) {
-    console.log('[buildCartItem] addon raw keys:', JSON.stringify(addons.map(a => ({
-      allKeys: Object.keys(a),
-      id: a.id,
-      food_id: a.food_id,
-      add_on_id: a.add_on_id,
-      addon_id: a.addon_id,
-      name: a.name,
-    }))));
-  }
   const addonIds = addons.map(a => a.id).filter(Boolean);
   const addonQtys = addons.map(a => a.quantity || a.qty || 1);
 
