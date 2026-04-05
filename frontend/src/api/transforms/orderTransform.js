@@ -75,8 +75,11 @@ export const fromAPI = {
         isInclusive: foodDetails.tax_calc === 'Inclusive',
       },
       qty: detail.quantity || 1,
-      price: parseFloat(detail.price) || 0,
-      unitPrice: parseFloat(detail.unit_price) || 0,
+      // Use unit_price (per-unit) as canonical price — detail.price from socket
+      // contains total (unit_price × quantity), which causes double-multiplication
+      // in display calculations that do price × qty
+      price: parseFloat(detail.unit_price) || parseFloat(detail.price) || 0,
+      unitPrice: parseFloat(detail.unit_price) || parseFloat(detail.price) || 0,
       status: mapOrderStatus(detail.food_status),
       station: detail.station || 'KDS',
       itemType: detail.item_type || null,  // Phase 1: BAR, KDS, etc.

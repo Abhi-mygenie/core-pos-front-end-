@@ -288,8 +288,8 @@ Each item in the `cart` array:
 | `food_details.add_ons` | array | `[{id, name, price, ...}]` | (not mapped) | **CATALOG** — all available addons, NOT selected. Do not use for display |
 | `variation` | array | `[]` | `variation` | **BUG-208: ALWAYS EMPTY.** Should contain selected variations. Backend doesn't persist |
 | `add_ons` | array | `[]` | `addOns` | **BUG-208: ALWAYS EMPTY.** Should contain selected addons. Backend doesn't persist |
-| `unit_price` | string | `"119.00"` | `unitPrice` | **Base price only.** Does NOT include addon/variation costs. String format |
-| `price` | number | `119` | `price` | **Base price only.** Same as unit_price but number format |
+| `unit_price` | string | `"119.00"` | `unitPrice`, `price` | **Per-unit base price.** Does NOT include addon/variation costs. String format. **Canonical source for per-unit price** |
+| `price` | number | `476` (for qty=4) | (not used directly) | **TOTAL line price** = unit_price × quantity. `fromAPI.orderItem` normalizes `price` to `unit_price` to prevent double-multiplication |
 | `quantity` | number | `2` | `qty` | Quantity ordered |
 | `food_status` | number | `1` | `foodStatus` → mapped to status string | 1=queue, 2=preparing, 3=ready, 4=served, 5=cancelled |
 | `food_level_notes` | string | `"item, No Garlic"` | `notes` | Per-item notes. **Works correctly** |

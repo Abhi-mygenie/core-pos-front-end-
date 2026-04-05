@@ -31,6 +31,9 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - Connected to external MyGenie API (preprod environment)
 - All core flows migrated to v1 endpoints
 
+## Bugs - Fixed ✅ (Recent)
+- **BUG-209**: Placed item prices showed double-multiplied amounts (₹1,904 instead of ₹476 for qty=4). Root cause: socket `detail.price` returns total (unit × qty), but display code multiplied by qty again. Fixed by normalizing `fromAPI.orderItem.price` to use `unit_price`.
+
 ## Key Features
 - Login/Authentication
 - Menu management (categories, products)
@@ -90,6 +93,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - **BUG-205**: Cancel order race condition (order re-added)
 - **BUG-206**: Partial cancel cancels all items (wrong endpoint)
 - **BUG-207**: Place Order payload & endpoint migration (8 critical bugs fixed)
+- **BUG-209**: Placed item prices double-multiplied (socket `price` = total, display did `price × qty` again)
 
 ## Bugs - Open / Blocked
 - **NOTE-200**: StrictMode double-log — dev-only, verify in production
