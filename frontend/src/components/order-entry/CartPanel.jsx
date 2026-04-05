@@ -81,7 +81,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         )}
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-xs" style={{ color: COLORS.grayText }}>
-            {item.addedAt ? getTimeAgo(item.addedAt) : `${item.time} mins ago`}
+            {item.addedAt || item.createdAt ? getTimeAgo(item.addedAt || item.createdAt) : ''}
           </span>
           {/* Transfer button — pill with icon, hidden for cancelled items */}
           {!isCancelled && (
@@ -128,7 +128,12 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
           className="font-bold text-sm"
           style={{ color: isCancelled ? '#9CA3AF' : COLORS.primaryOrange, textDecoration: isCancelled ? 'line-through' : 'none' }}
         >
-          ₹{(item.price * item.qty).toLocaleString()}
+          ₹{(item.totalPrice || (() => {
+            const base = (item.price || 0) * (item.qty || 1);
+            const addonSum = (item.addOns || []).reduce((s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)), 0);
+            const varSum = (item.variation || []).reduce((s, v) => s + (parseFloat(v.price) || 0), 0);
+            return base + ((addonSum + varSum) * (item.qty || 1));
+          })()).toLocaleString()}
         </span>
       </div>
     </div>

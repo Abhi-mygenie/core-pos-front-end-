@@ -214,15 +214,29 @@ const buildCartItem = (item) => {
   const addonIds = addons.map(a => a.id).filter(Boolean);
   const addonQtys = addons.map(a => a.quantity || a.qty || 1);
 
+  // Calculate addon total price
+  const addonTotal = addons.reduce((sum, a) => {
+    const price = parseFloat(a.price) || 0;
+    const qty = a.quantity || a.qty || 1;
+    return sum + (price * qty);
+  }, 0);
+
   // Variation data — customized items have selectedVariants (object); API items have variation (array)
   const variation = item.selectedVariants
     ? Object.values(item.selectedVariants).filter(Boolean)
     : (item.variation || []);
 
+  // Calculate variation total price
+  const variationTotal = variation.reduce((sum, v) => sum + (parseFloat(v.price) || 0), 0);
+
+  // Full unit price = base + addons + variations (for order total calculation)
+  const fullUnitPrice = (item.price || 0) + addonTotal + variationTotal;
+
   return {
     food_id:           item.id,
     quantity:          item.qty || 1,
-    price:             item.price || 0,       // unit price
+    price:             item.price || 0,       // base unit price for API
+    _fullUnitPrice:    fullUnitPrice,          // internal: used by calcOrderTotals only
     food_name:         item.name || '',
     tax:               item.tax?.percentage || 0,
     tax_type:          item.tax?.type || 'GST',
@@ -245,7 +259,7 @@ const calcOrderTotals = (cart) => {
   let vatTax = 0;
 
   cart.forEach(item => {
-    const lineTotal = (item.price || 0) * (item.quantity || 1);
+    const lineTotal = (item._fullUnitPrice || item.price || 0) * (item.quantity || 1);
     subtotal += lineTotal;
 
     const taxPct = parseFloat(item.tax) || 0;
