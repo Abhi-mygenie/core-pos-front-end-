@@ -150,9 +150,16 @@ const CollectPaymentPanel = ({
     ? Math.round(((orderFinancials.amount - orderFinancials.subtotalAmount) / 2) * 100) / 100
     : taxTotals.cgst;
 
-  const finalTotal = hasPlacedItems && orderFinancials.amount > 0
+  const rawFinalTotal = hasPlacedItems && orderFinancials.amount > 0
     ? Math.round((Math.max(0, itemTotal - totalDiscount) + sgst + cgst) * 100) / 100
     : Math.round((subtotalAfterDiscount + sgst + cgst) * 100) / 100;
+
+  // Round-off: ceil if diff >= 0.10, else floor
+  const ceilTotal = Math.ceil(rawFinalTotal);
+  const roundDiff = Math.round((ceilTotal - rawFinalTotal) * 100) / 100;
+  const roundOff = roundDiff >= 0.10 ? roundDiff : rawFinalTotal > 0 ? -Math.round((rawFinalTotal - Math.floor(rawFinalTotal)) * 100) / 100 : 0;
+  const finalTotal = roundDiff >= 0.10 ? ceilTotal : Math.floor(rawFinalTotal);
+
   const change = amountReceived ? Math.max(0, parseFloat(amountReceived) - finalTotal) : 0;
 
   // Apply coupon code
@@ -491,6 +498,12 @@ const CollectPaymentPanel = ({
                         <span style={{ color: COLORS.grayText }}>CGST (2.5%)</span>
                         <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
                       </div>
+                      {roundOff !== 0 && (
+                        <div className="flex justify-between">
+                          <span style={{ color: COLORS.grayText }}>Round Off</span>
+                          <span style={{ color: COLORS.darkText }}>{roundOff > 0 ? '+' : ''}₹{roundOff.toFixed(2)}</span>
+                        </div>
+                      )}
                     </div>
                     {/* Room Service Grand Total */}
                     <div className="px-3 py-2 border-t flex justify-between font-bold" style={{ borderColor: COLORS.borderGray }}>
@@ -622,6 +635,12 @@ const CollectPaymentPanel = ({
                 <span style={{ color: COLORS.grayText }}>CGST (2.5%)</span>
                 <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
               </div>
+              {roundOff !== 0 && (
+                <div className="flex justify-between">
+                  <span style={{ color: COLORS.grayText }}>Round Off</span>
+                  <span style={{ color: COLORS.darkText }}>{roundOff > 0 ? '+' : ''}₹{roundOff.toFixed(2)}</span>
+                </div>
+              )}
             </div>
           </div>
           </>

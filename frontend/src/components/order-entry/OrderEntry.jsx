@@ -338,10 +338,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     const isInclusive = item.tax?.calculation === 'Inclusive';
     return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
   }, 0);
-  // total = final amount including tax (for Collect Bill button)
+  // total = final amount including tax + round-off (for Collect Bill button)
+  const rawLocalTotal = Math.round((localSubtotal + localTax) * 100) / 100;
+  const rawUnplacedTotal = Math.round((unplacedSubtotal + unplacedTax) * 100) / 100;
+  const applyRoundOff = (raw) => {
+    const ceil = Math.ceil(raw);
+    const diff = Math.round((ceil - raw) * 100) / 100;
+    return diff >= 0.10 ? ceil : Math.floor(raw);
+  };
   const total = hasPlacedItems
-    ? (orderFinancials.amount || 0) + Math.round((unplacedSubtotal + unplacedTax) * 100) / 100
-    : Math.round((localSubtotal + localTax) * 100) / 100;
+    ? (orderFinancials.amount || 0) + (unplacedSubtotal > 0 ? applyRoundOff(rawUnplacedTotal) : 0)
+    : applyRoundOff(rawLocalTotal);
 
   // handlePlaceOrder — CHG-037: Place Order API
   const handlePlaceOrder = async () => {
