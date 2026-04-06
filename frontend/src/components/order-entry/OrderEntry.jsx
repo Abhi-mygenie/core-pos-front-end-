@@ -691,6 +691,15 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     const payload = orderToAPI.transferToRoom(effectiveTable, paymentData, paymentData.roomId);
                     const res = await api.post(API_ENDPOINTS.ORDER_SHIFTED_ROOM, payload);
                     toast({ title: "Transferred to Room", description: res.data?.message || "Order transferred successfully" });
+                    // Prepaid cleanup — stay on order screen
+                    setCartItems([]);
+                    setShowPaymentPanel(false);
+                    setPlacedOrderId(null);
+                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
+                    setOrderNotes([]);
+                    setCustomer({ name: '', phone: '' });
+                    if (onSelectTable) onSelectTable(null);
+                    if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else if (!placedOrderId) {
                     // Scenario 2 — fresh order: place + pay in one shot (same endpoint, payment_status=paid)
                     const payload = orderToAPI.placeOrderWithPayment(
@@ -703,26 +712,36 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       headers: { 'Content-Type': 'multipart/form-data' },
                     });
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
+                    // Prepaid cleanup — stay on order screen
+                    setCartItems([]);
+                    setShowPaymentPanel(false);
+                    setPlacedOrderId(null);
+                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
+                    setOrderNotes([]);
+                    setCustomer({ name: '', phone: '' });
+                    if (onSelectTable) onSelectTable(null);
+                    if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
+                    // Engage table locally, call API, redirect to dashboard
+                    const tableId = Number(effectiveTable?.tableId || table?.tableId);
+                    if (tableId) setTableEngaged(tableId, true);
+                    setIsPlacingOrder(true);
+
                     const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
                     const res = await api.post(API_ENDPOINTS.BILL_PAYMENT, payload);
                     console.log('[CollectBill] response:', res.data);
                     toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+
+                    // Redirect to dashboard — socket will removeOrder + release table
+                    onClose();
+                    return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   }
-                  setCartItems([]);
-                  setShowPaymentPanel(false);
-                  setPlacedOrderId(null);
-                  setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
-                  setOrderNotes([]);
-                  setCustomer({ name: '', phone: '' });
-                  // Prepaid: stay on order screen, clear table, switch to walkIn
-                  if (onSelectTable) onSelectTable(null);
-                  if (onOrderTypeChange) onOrderTypeChange('walkIn');
                 } catch (err) {
                   const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
                   toast({ title: "Payment Failed", description: msg });
+                  setIsPlacingOrder(false);
                 } finally {
                   setIsProcessingPayment(false);
                 }
