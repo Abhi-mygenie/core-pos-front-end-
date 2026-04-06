@@ -597,20 +597,34 @@ export const toAPI = {
       method = 'cash', transactionId = '',
       splitPayments = [], tip = 0,
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
+      itemTotal = 0,
     } = paymentData;
 
+    const gstTax = Math.round((sgst + cgst) * 100) / 100;
+
     const payload = {
-      order_id:                   String(table.orderId),
-      payment_mode:               method,
-      payment_amount:             finalTotal || 0,
-      payment_status:             'paid',
-      transaction_id:             transactionId || '',
-      service_tax:                0,
-      service_gst_tax_amount:     0,
-      tip_amount:                 tip || 0,
-      tip_tax_amount:             0,
-      vat_tax:                    vatAmount || 0,
-      gst_tax:                    Math.round((sgst + cgst) * 100) / 100,
+      order_id:                     String(table.orderId),
+      payment_mode:                 method,
+      payment_amount:               finalTotal || 0,
+      payment_status:               'paid',
+      transaction_id:               transactionId || '',
+      // Financial totals
+      order_sub_total_amount:       itemTotal || 0,
+      order_sub_total_without_tax:  itemTotal || 0,
+      total_gst_tax_amount:         gstTax,
+      gst_tax:                      gstTax,
+      vat_tax:                      vatAmount || 0,
+      round_up:                     0,
+      // Tax & Tip
+      service_tax:                  0,
+      service_gst_tax_amount:       0,
+      tip_amount:                   tip || 0,
+      tip_tax_amount:               0,
+      // Discounts
+      restaurant_discount_amount:   0,
+      order_discount:               0,
+      comunity_discount:            0,
+      discount_value:               0,
     };
 
     // Partial payments
