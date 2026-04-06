@@ -1,7 +1,25 @@
-# API Document v2 — Place Order Endpoint
+# API Document v2 — POS Frontend API Reference
 
-**Version:** 2.2
-**Last Updated:** Feb 2026
+**Version:** 3.0
+**Last Updated:** April 6, 2026
+
+## Endpoint Summary
+
+| # | Action | Endpoint | Method | Content-Type |
+|---|--------|----------|--------|-------------|
+| 1 | Place New Order | `/api/v1/vendoremployee/order/place-order` | POST | `multipart/form-data` |
+| 2 | Place + Pay (prepaid) | `/api/v1/vendoremployee/order/place-order` | POST | `multipart/form-data` |
+| 3 | Update Order (add items) | `/api/v1/vendoremployee/order/update-place-order` | PUT | `application/json` |
+| 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order-bill-payment` | POST | `application/json` |
+| 5 | Cancel Item (full/partial) | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
+| 6 | Cancel Full Order | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
+| 7 | Get Single Order | `/api/v2/vendoremployee/get-single-order-new` | POST | `application/json` |
+| 8 | Food Status Update | `/api/v2/vendoremployee/food-status-update` | PUT | `application/json` |
+
+---
+
+## 1. Place Order Endpoint
+
 **Endpoint:** `POST /api/v1/vendoremployee/order/place-order`
 
 ---
@@ -538,6 +556,331 @@ socketHandlers.handleUpdateOrderStatus (status=6):
 | Creates new order | Yes | No (updates existing) |
 | `order_id` field | Optional (only for collect bill — broken) | Required |
 | Payment fields | `payment_method`, `payment_status`, `payment_type` | `payment_mode`, `payment_amount`, `payment_status` |
+
+---
+
+## Update Order Endpoint
+
+**Endpoint:** `PUT /api/v1/vendoremployee/order/update-place-order`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Adds new items to an existing placed order. Only sends NEW (unplaced) items in `cart-update`. Financial totals are recalculated from ALL items (placed + new).
+
+### Request Payload
+```json
+{
+  "order_id": "730498",
+  "order_type": "pos",
+  "cust_name": "",
+  "order_note": "",
+  "payment_method": "pending",
+  "payment_status": "unpaid",
+  "payment_type": "postpaid",
+  "print_kot": "Yes",
+  "auto_dispatch": "No",
+  "order_sub_total_amount": 348,
+  "order_sub_total_without_tax": 348,
+  "tax_amount": 17.4,
+  "gst_tax": 17.4,
+  "vat_tax": 0,
+  "order_amount": 366,
+  "round_up": "0.60",
+  "service_tax": 0,
+  "service_gst_tax_amount": 0,
+  "tip_amount": 0,
+  "tip_tax_amount": 0,
+  "delivery_charge": 0,
+  "discount_type": null,
+  "self_discount": 0,
+  "coupon_discount": 0,
+  "coupon_title": null,
+  "coupon_type": null,
+  "order_discount": 0,
+  "used_loyalty_point": 0,
+  "use_wallet_balance": 0,
+  "room_id": null,
+  "discount_member_category_id": 0,
+  "discount_member_category_name": null,
+  "usage_id": null,
+  "cart-update": [
+    {
+      "food_id": 116608,
+      "quantity": 1,
+      "price": 129,
+      "variant": "",
+      "add_on_ids": [],
+      "add_on_qtys": [],
+      "variations": [],
+      "add_ons": [],
+      "station": "KDS",
+      "food_amount": 129,
+      "variation_amount": 0,
+      "addon_amount": 0,
+      "gst_amount": "6.45",
+      "vat_amount": "0.00",
+      "discount_amount": "0.00",
+      "complementary_price": 0,
+      "is_complementary": "No",
+      "food_level_notes": ""
+    }
+  ]
+}
+```
+
+### Field Reference
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | string | Existing order ID | `String(table.orderId)` |
+| `order_type` | string | Always `"pos"` | Hardcoded |
+| `cust_name` | string | Customer name | `customer?.name \|\| ''` |
+| `order_note` | string | Order-level notes | `orderNotes.map(n => n.label).join(', ')` |
+| `payment_method` | string | Always `"pending"` for updates | Hardcoded |
+| `payment_status` | string | Always `"unpaid"` | Hardcoded |
+| `payment_type` | string | Always `"postpaid"` | Hardcoded |
+| `print_kot` | string | `"Yes"` or `"No"` | `printAllKOT ? 'Yes' : 'No'` |
+| `auto_dispatch` | string | Always `"No"` | Hardcoded |
+| `cart-update` | array | **Only NEW (unplaced) items** | `newItems.map(buildCartItem)` |
+| *(financial fields)* | | **COMBINED totals from ALL items (placed + new)** | `calcOrderTotals(allActiveItems)` |
+
+### Key Differences from Place Order
+| Aspect | Place Order | Update Order |
+|--------|------------|--------------|
+| Method | `POST` | `PUT` |
+| Content-Type | `multipart/form-data` | `application/json` |
+| Cart key | `cart` (all items) | `cart-update` (new items only) |
+| Financial totals | From new items only | From ALL items (placed + new) |
+| `order_id` | Not sent | Required |
+| `restaurant_id` / `table_id` | Required | Not sent |
+
+### Success Response
+```json
+{
+  "message": "Items added to order successfully!",
+  "order_id": 730498,
+  "total_amount": 366
+}
+```
+
+### Socket Events After Update Order
+1. `update-table engage` — on table channel (locks table)
+2. `update-order` — on order channel (order data refreshed)
+
+### Frontend Flow
+```
+OrderEntry.handlePlaceOrder (update path):
+  1. setIsPlacingOrder(true)
+  2. await api.put(UPDATE_ORDER, payload)
+  3. await waitForTableEngaged(tableId, 5000)
+  4. onClose() → redirect to Dashboard
+
+socketHandlers.handleUpdateTable:
+  1. setTableEngaged(tableId, true)       ← Triggers waitFor resolve
+
+socketHandlers.handleUpdateOrder:
+  1. fetchSingleOrderForSocket(orderId)   ← GET full order
+  2. updateOrder(fullOrder)
+  3. requestAnimationFrame × 2
+  4. setTableEngaged(tableId, false)       ← Release lock
+```
+
+### Transform Function
+- **`toAPI.updateOrder()`** in `orderTransform.js`
+- Called from `OrderEntry.jsx` → `handlePlaceOrder()` (update branch, when `placedOrderId` exists)
+
+---
+
+## Cancel Item Endpoint
+
+**Endpoint:** `PUT /api/v1/vendoremployee/order/cancel-food-item`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Cancels a specific quantity of a single item in an order. Supports both full cancel (all qty) and partial cancel (some qty).
+
+### Request Payload
+```json
+{
+  "order_id": 730498,
+  "order_food_id": 86754,
+  "item_id": 1900596,
+  "cancel_qty": 2,
+  "order_status": "cancelled",
+  "reason_type": 5,
+  "reason": "Customer changed mind",
+  "cancel_type": "Pre-Serve"
+}
+```
+
+### Field Reference
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | number | Parent order ID | `currentTable.orderId` |
+| `order_food_id` | number | Food catalog ID (`food_details.id`) | `item.foodId` |
+| `item_id` | number | Order line item ID (`orderDetails[].id`) | `item.id` |
+| `cancel_qty` | number | Qty to cancel (full = `item.qty`) | `cancelQuantity` from CancelFoodModal |
+| `order_status` | string | Always `"cancelled"` | Hardcoded |
+| `reason_type` | number | Cancellation reason ID | `reason.reasonId` from cancellation reasons API |
+| `reason` | string | Reason text | `reason.reasonText` |
+| `cancel_type` | string | `"Pre-Serve"` or `"Post-Serve"` | Based on `item.status === 'preparing'` |
+
+### Cancel Type Logic
+| Item Status | cancel_type | Meaning |
+|-------------|------------|---------|
+| `preparing` | `"Pre-Serve"` | Item still being cooked |
+| `ready`, `served`, other | `"Post-Serve"` | Item already cooked/served |
+
+### Endpoint History (BUG-206)
+| Endpoint | cancel_qty respected? | Status |
+|----------|----------------------|--------|
+| `v2 /partial-cancel-food-item` | NO — "Order item not found" error | Rejected |
+| `v2 /cancel-food-item` | NO — ignores cancel_qty, cancels all | Rejected |
+| **`v1 /order/cancel-food-item`** | **YES — works correctly** | **In use** |
+
+### Socket Events After Cancel Item
+1. `update-table free` — on table channel (BUG-216: should be `engage`, see BUGS.md)
+2. `update-order-status` with `f_order_status: 3` — on order channel
+
+### Frontend Flow
+```
+OrderEntry.handleCancelFood:
+  1. setIsPlacingOrder(true)
+  2. await api.put(CANCEL_ITEM, payload)
+  3. await waitForTableEngaged(tableId, 5000)
+  4. onClose() → redirect to Dashboard
+
+socketHandlers.handleUpdateOrderStatus (status=3):
+  1. fetchOrderWithRetry(orderId)
+  2. If all items cancelled → removeOrder + table available
+  3. If partial → updateOrder + table stays occupied
+  4. requestAnimationFrame × 2
+  5. setTableEngaged(tableId, false)
+```
+
+### Transform Function
+- **`toAPI.cancelItem()`** in `orderTransform.js`
+- Called from `OrderEntry.jsx` → `handleCancelFood()`
+
+### Known Issue
+BUG-216: Backend sends `update-table free` (not `engage`) after cancel item. Current workaround treats all `free` as `engage` in `handleUpdateTable`, but this breaks Shift Table flow. Parked as P1.
+
+---
+
+## Get Single Order Endpoint
+
+**Endpoint:** `POST /api/v2/vendoremployee/get-single-order-new`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Fetches the complete order with all 51 fields. Used for background enrichment after socket events (which only carry 35 keys). This is the canonical source of truth for order data.
+
+### Request Payload
+```json
+{
+  "order_id": 730522
+}
+```
+
+### Field Reference
+| Field | Type | Description |
+|-------|------|-------------|
+| `order_id` | number | Order ID to fetch |
+
+### Success Response
+```json
+{
+  "orders": [
+    {
+      "id": 730522,
+      "restaurant_id": 475,
+      "table_id": 6244,
+      "order_type": "pos",
+      "order_status": "queue",
+      "payment_status": "unpaid",
+      "payment_type": "postpaid",
+      "order_amount": 190,
+      "order_sub_total_amount": 190,
+      "order_sub_total_without_tax": 190,
+      "total_service_tax_amount": 0,
+      "f_order_status": 1,
+      "orderDetails": [ ... ],
+      "restaurantTable": { "id": 6244, "table_no": "5" },
+      "vendorEmployee": { "id": 1448, "f_name": "John" },
+      ...
+    }
+  ]
+}
+```
+
+### Response: 51 keys vs Socket's 35 keys
+The GET response includes 16 additional fields not present in socket events (BUG-204):
+- `order_sub_total_amount`, `order_sub_total_without_tax`, `total_service_tax_amount`
+- `payment_method`, `delivery_charge`, `order_edit_count`, `print_bill_status`
+- `payment_id`, `parent_order_id`, `canceled_by`, `cancel_at`
+- `send_payment_link`, `tablepart`, `associated_order_list`
+- `delivery_man`, `delivery_man_id`
+
+### Frontend Usage
+- **Service function:** `fetchSingleOrderForSocket(orderId)` in `api/services/orderService.js`
+- Applies `fromAPI.order()` transform → returns canonical order shape
+- Called from `socketHandlers.js` after every socket event (new-order, update-order, update-order-status)
+
+### When It's Called
+| Socket Event | When GET is called |
+|-------------|-------------------|
+| `new-order` | Immediately after `addOrder` (background enrichment) |
+| `update-order` | As the primary data source (socket has no payload) |
+| `update-order-status` | To check full cancel vs partial cancel |
+
+---
+
+## Food Status Update Endpoint
+
+**Endpoint:** `PUT /api/v2/vendoremployee/food-status-update`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Updates the preparation status of a single order item (e.g., queue → preparing, preparing → ready, ready → served). Used by the "Confirm Order" (green tick) action on Dashboard.
+
+### Request Payload
+```json
+{
+  "order_id": 730498,
+  "order_food_id": 86754,
+  "item_id": 1900596,
+  "order_status": "preparing",
+  "cancel_type": null
+}
+```
+
+### Field Reference
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | number | Parent order ID | `order.orderId` |
+| `order_food_id` | number | Food catalog ID (`food_details.id`) | `item.foodId` |
+| `item_id` | number | Order line item ID (`orderDetails[].id`) | `item.id` |
+| `order_status` | string | New status: `"preparing"`, `"ready"`, `"served"` | From action context |
+| `cancel_type` | null | Always `null` (not a cancellation) | Hardcoded |
+
+### Status Transitions
+| From | To | Action |
+|------|----|--------|
+| `queue` (1) | `preparing` (1) | Confirm order (green tick on Dashboard) |
+| `preparing` (1) | `ready` (2) | Mark item ready (KDS) |
+| `ready` (2) | `served` (5) | Mark item served |
+
+### Frontend Usage
+- Called from `DashboardPage.jsx` → `handleConfirmOrder()`
+- Iterates over all non-cancelled items in the order and sets each to `"preparing"`
+- No transform function — payload built inline
+
+### Socket Events After Status Update
+- `update-order-status` with updated `f_order_status` — on order channel
+- Socket handler fetches the order via GET single order and updates context
 
 ---
 
