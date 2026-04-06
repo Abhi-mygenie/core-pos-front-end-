@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import * as orderService from '../api/services/orderService';
 
 // Create Order Context
@@ -9,16 +9,22 @@ export const OrderProvider = ({ children }) => {
   // Single unified array - includes all orders (tables, walk-ins, rooms)
   const [orders, setOrdersState] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Mutable ref for polling (same pattern as engagedTablesRef in TableContext)
+  const ordersRef = useRef([]);
 
   // Set orders from LoadingPage
   const setOrders = useCallback((ordersList) => {
-    setOrdersState(ordersList || []);
+    const list = ordersList || [];
+    setOrdersState(list);
+    ordersRef.current = list;
     setIsLoaded(true);
   }, []);
 
   // Clear orders (e.g. on logout)
   const clearOrders = useCallback(() => {
     setOrdersState([]);
+    ordersRef.current = [];
     setIsLoaded(false);
   }, []);
 
@@ -54,12 +60,16 @@ export const OrderProvider = ({ children }) => {
     setOrdersState(prev => {
       // Check if order already exists (prevent duplicates)
       const exists = prev.some(o => o.orderId === order.orderId);
+      let next;
       if (exists) {
         console.log('[OrderContext] addOrder: Order already exists, updating instead', order.orderId);
-        return prev.map(o => o.orderId === order.orderId ? order : o);
+        next = prev.map(o => o.orderId === order.orderId ? order : o);
+      } else {
+        console.log('[OrderContext] addOrder: Adding new order', order.orderId);
+        next = [...prev, order];
       }
-      console.log('[OrderContext] addOrder: Adding new order', order.orderId);
-      return [...prev, order];
+      ordersRef.current = next;
+      return next;
     });
   }, []);
 
@@ -76,12 +86,16 @@ export const OrderProvider = ({ children }) => {
 
     setOrdersState(prev => {
       const exists = prev.some(o => o.orderId === orderId);
+      let next;
       if (!exists) {
         console.log('[OrderContext] updateOrder: Order not found, adding', orderId);
-        return [...prev, updatedOrder];
+        next = [...prev, updatedOrder];
+      } else {
+        console.log('[OrderContext] updateOrder: Updating order', orderId);
+        next = prev.map(o => o.orderId === orderId ? updatedOrder : o);
       }
-      console.log('[OrderContext] updateOrder: Updating order', orderId);
-      return prev.map(o => o.orderId === orderId ? updatedOrder : o);
+      ordersRef.current = next;
+      return next;
     });
   }, []);
 
@@ -97,7 +111,9 @@ export const OrderProvider = ({ children }) => {
     
     setOrdersState(prev => {
       console.log('[OrderContext] removeOrder: Removing order', orderId);
-      return prev.filter(o => o.orderId !== orderId);
+      const next = prev.filter(o => o.orderId !== orderId);
+      ordersRef.current = next;
+      return next;
     });
   }, []);
 
@@ -137,6 +153,31 @@ export const OrderProvider = ({ children }) => {
   const getOrderByTableId = useCallback((tableId) => {
     return orders.find(o => o.tableId === tableId && !o.isWalkIn) || null;
   }, [orders]);
+
+  /**
+   * Poll until an order is removed from context (by socket handler)
+   * Same pattern as waitForTableEngaged in TableContext
+   */
+  const waitForOrderRemoval = useCallback((orderId, timeout = 5000) => {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const check = () => {
+        const exists = ordersRef.current.some(o => o.orderId === orderId);
+        if (!exists) {
+          console.log(`[OrderContext] waitForOrderRemoval: Order ${orderId} removed`);
+          resolve(true);
+          return;
+        }
+        if (Date.now() - start > timeout) {
+          console.warn(`[OrderContext] waitForOrderRemoval: timeout for ${orderId}`);
+          resolve(false);
+          return;
+        }
+        setTimeout(check, 50);
+      };
+      check();
+    });
+  }, []);
 
   // Get all orders for a table/room (multiple orders possible)
   const getOrdersByTableId = useCallback((tableId) => {
@@ -185,6 +226,7 @@ export const OrderProvider = ({ children }) => {
     updateOrder,
     removeOrder,
     getOrderById,
+    waitForOrderRemoval,
 
     // Computed
     dineInOrders,
@@ -200,7 +242,7 @@ export const OrderProvider = ({ children }) => {
   }), [
     orders, isLoaded,
     setOrders, clearOrders, refreshOrders,
-    addOrder, updateOrder, removeOrder, getOrderById,
+    addOrder, updateOrder, removeOrder, getOrderById, waitForOrderRemoval,
     dineInOrders, takeAwayOrders, deliveryOrders,
     tableOrders, walkInOrders,
     getOrderByTableId, getOrdersByTableId, orderItemsByTableId,

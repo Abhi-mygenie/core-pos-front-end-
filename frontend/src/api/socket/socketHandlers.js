@@ -300,15 +300,11 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
   }
   
   // Cancelled orders (status 3) — could be full order cancel or single item cancel
-  // Check if order was already removed by UI (full cancel via OrderEntry/DashboardPage)
+  // Fetch from API to determine which case
   if (fOrderStatus === 3) {
     const existingOrder = getOrderById ? getOrderById(orderId) : null;
-    if (!existingOrder) {
-      log('INFO', `update-order-status: Order ${orderId} already removed (full cancel), skipping`);
-      return;
-    }
     
-    // Order still in context — could be single item cancel. Fetch to check.
+    // Order still in context — fetch to check if full or partial cancel
     const order = await fetchOrderWithRetry(orderId);
     if (order) {
       const allItemsCancelled = !order.items?.length || 

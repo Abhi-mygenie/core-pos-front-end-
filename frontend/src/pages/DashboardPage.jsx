@@ -98,7 +98,7 @@ const DashboardPage = () => {
   const { getOrderCancellationReasons } = useSettings();
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
-    orderItemsByTableId, getOrderByTableId, removeOrder,
+    orderItemsByTableId, getOrderByTableId, removeOrder, waitForOrderRemoval,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged } = useTables();
@@ -516,22 +516,19 @@ const DashboardPage = () => {
     const order = getOrderDataForEntry(cancelOrderEntry);
     if (!order) return;
 
-    // Remove BEFORE api call — socket is faster than HTTP response
-    removeOrder(order.orderId);
-    if (order.tableId) {
-      updateTableStatus(order.tableId, 'available');
-    }
-
-    setCancelOrderEntry(null);
-
-    // Fire API call after removing from context
+    // Await API call, then socket handler does removeOrder + updateTableStatus
     try {
       const payload = orderToAPI.cancelOrder(order.orderId, user?.roleName || 'Manager', reason);
       await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+      
+      // Wait for socket to confirm removal
+      await waitForOrderRemoval(order.orderId, 5000);
     } catch (err) {
-      console.error('[CancelOrder] API call failed:', err);
+      console.error('[CancelOrder] Failed:', err);
     }
-  }, [cancelOrderEntry, getOrderDataForEntry, user, removeOrder, updateTableStatus]);
+
+    setCancelOrderEntry(null);
+  }, [cancelOrderEntry, getOrderDataForEntry, user, waitForOrderRemoval]);
 
   const handleSearchSelect = (selection) => {
     const { type, data } = selection;

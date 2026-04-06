@@ -33,7 +33,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders, removeOrder } = useOrders();
+  const { orders, refreshOrders, removeOrder, waitForOrderRemoval } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
@@ -480,27 +480,25 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     const orderId = effectiveTable?.orderId || placedOrderId;
     if (!orderId) return;
 
-    // Remove BEFORE api call — socket is faster than HTTP response
-    // If we await api.put first, socket arrives, handler finds order still in context, re-adds it
-    removeOrder(orderId);
-    const tableId = effectiveTable?.tableId || table?.tableId;
-    if (tableId) {
-      updateTableStatus(tableId, 'available');
-    }
+    setIsPlacingOrder(true); // Reuse overlay to block UI
 
-    toast({
-      title: "Order Cancelled",
-      description: `Order cancelled for ${table?.label || table?.id}`,
-    });
-
-    onClose();
-
-    // Fire API call after removing from context
     try {
       const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
       await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
+      
+      // Wait for socket update-order-status to remove the order from context
+      await waitForOrderRemoval(orderId, 5000);
+
+      toast({
+        title: "Order Cancelled",
+        description: `Order cancelled for ${table?.label || table?.id}`,
+      });
+      onClose();
     } catch (err) {
-      console.error('[CancelOrder] API call failed:', err);
+      console.error('[CancelOrder] Failed:', err);
+      toast({ title: "Cancel Failed", description: err?.response?.data?.message || err?.message });
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
