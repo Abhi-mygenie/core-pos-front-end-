@@ -739,3 +739,71 @@ No `update-table 5521 engage` socket event was received from backend.
 
 ### Backend Action Required
 Send `update-table engage` for prepaid orders, same as Update Order flow.
+
+
+## BUG-221: Merge Order — Source Table Permanently Locked After Merge
+
+**Status:** OPEN — CRITICAL
+**Priority:** P0 CRITICAL
+**Reported:** April 6, 2026
+**Component:** Frontend (BUG-216 workaround) + Backend (missing engage for source table)
+
+### Problem
+After merging order 730506 from table 6476 (source) → table 6235 (destination), the source table 6476 gets permanently stuck with a spinner overlay and cannot be clicked.
+
+### Console Evidence (Timestamped)
+
+```
+18:01:19  [Dashboard] Table click: 6476 (source, has order 730506)
+18:01:19  [OrderEntry] Syncing from OrderContext {orderId: 730506, amount: 120}
+
+--- Merge API called, socket events arrive ---
+
+18:01:19  update-table 6235 engage           ← Destination locked ✅
+18:01:19  update-order 730506, status 5       ← Order updated (now on 6235), triggers GET
+18:01:19  update-table 6476 free              ← Source should be freed
+18:01:19  setTableEngaged: 6476 → true        ← ❌ BUG-216 workaround converts free→engage
+18:01:19  "Table 6476 ENGAGED (free→engage workaround, BUG-216)"
+18:01:19  update-table 6235 engage            ← Duplicate, harmless
+18:01:19  Fetched order 730506 successfully
+18:01:19  updateTableStatus: 6235 → billReady ← Destination gets correct status
+18:01:20  setTableEngaged: 6235 → false       ← Destination released ✅
+          — Table 6476: NEVER RELEASED —       ← ❌ Permanent spinner
+```
+
+### Root Cause (Two-Part)
+
+**1. Frontend (BUG-216 workaround):** `handleUpdateTable` in `socketHandlers.js` converts ALL `update-table free` events to `engage`. When the backend sends `update-table 6476 free` to release the source table, the workaround intercepts it and locks 6476 instead.
+
+**2. Backend (missing engage pattern):** Backend sends `free` for the source table without a prior `engage`. The ideal flow would be `engage → process → free` for both tables.
+
+**3. No release path for source:** After the merge, order 730506 now belongs to table 6235. The `update-order` handler only releases the NEW table (6235) via `setTableEngaged(6235, false)`. Nobody calls `setTableEngaged(6476, false)` because no order references 6476 anymore.
+
+### Socket Events Received (Actual)
+```
+1. update-table 6235 engage     ← Destination locked
+2. update-order 730506          ← Order moved to 6235
+3. update-table 6476 free       ← Source freed (intercepted by BUG-216 workaround → locked)
+4. update-table 6235 engage     ← Duplicate destination lock
+```
+
+### Socket Events Expected (Ideal)
+```
+1. update-table 6476 engage     ← Lock source
+2. update-table 6235 engage     ← Lock destination
+3. update-order 730506          ← Order moved to 6235
+4. update-table 6476 free       ← Release source (now available)
+5. update-table 6235 free       ← Release destination (now occupied, clickable)
+```
+
+### Frontend Fix Required
+Remove the blanket `free→engage` workaround in `handleUpdateTable` (`socketHandlers.js`). Let `free` genuinely free the table. Handle cancel-item locking locally in `handleCancelFood` instead (same pattern as `handleNewOrder` for BUG-211). This also fixes Shift Table (BUG-216).
+
+### Backend Fix Suggested
+1. Send `update-table engage` for source table BEFORE processing merge
+2. Follow the `engage → process → free` pattern for BOTH source and destination tables
+
+### Impact
+- Source table permanently stuck with spinner after every merge — unusable until page refresh
+- Same root cause as Shift Table (BUG-216) — both broken by the `free→engage` workaround
+- Blocks production use of merge/shift flows
