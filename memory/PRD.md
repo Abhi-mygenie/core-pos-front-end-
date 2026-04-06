@@ -96,8 +96,8 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - **BUG-208**: Socket returns empty `variation`/`add_ons` — backend fixed, frontend parser updated
 - **BUG-209**: Placed item prices double-multiplied (socket `price` = total, display did `price * qty` again)
 - **BUG-211**: Backend doesn't send `update-table engage` for new orders — workaround: frontend engages locally in `handleNewOrder`
-
 - **BUG-213**: Collect Bill summary showed only placed items' totals, ignoring new unplaced items in cart
+- **BUG-215**: TableCard stale data after Collect Bill — `DashboardPage` used `useEffect+setState` (async) to derive table data from OrderContext, causing stale intermediate renders. Converted to `useMemo` (synchronous derivation). Also changed `handleUpdateTableStatus` to flow through `TableContext` instead of local state.
 
 ## Bugs - Open / Blocked
 - **NOTE-200**: StrictMode double-log — dev-only, verify in production
@@ -105,6 +105,7 @@ REACT_APP_SOCKET_URL=https://presocket.mygenie.online
 - **BUG-210**: No table availability pre-check before placing order (multi-device race condition) — blocked on backend team
 - **BUG-212**: Addon names mismatch between product catalog API and order response API — blocked on backend team
 - **BUG-214**: **CRITICAL** — Collect Bill on existing order returns "Table is already occupied". All 3 payload variations tried. Blocked on backend clarification. See BUGS.md for full details.
+- **BUG-216**: Shift Table flow broken — `socketHandlers.js` has `free→engage` workaround that locks old table permanently. Fix: remove workaround, add local `setTableEngaged` in `handleCancelFood` instead.
 
 ## Key Technical Learnings
 

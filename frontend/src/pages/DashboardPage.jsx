@@ -129,8 +129,6 @@ const DashboardPage = () => {
   }, []);
 
   // --- State ---
-  const [tables, setTables] = useState({});
-  const [flatTables, setFlatTables] = useState([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // Real-time internet connectivity detection
@@ -178,11 +176,11 @@ const DashboardPage = () => {
     }
   };
 
-  // --- Seed tables from real API data + enrich with order data ---
-  useEffect(() => {
-    if (!tablesLoaded) return;
+  // --- Derive tables from API data + order enrichment (synchronous with render) ---
+  const { tables, flatTables } = useMemo(() => {
+    if (!tablesLoaded) return { tables: {}, flatTables: [] };
     const nonRoomTables = apiTables.filter(t => !t.isRoom);
-    if (nonRoomTables.length === 0 && walkInOrders.length === 0) return;
+    if (nonRoomTables.length === 0 && walkInOrders.length === 0) return { tables: {}, flatTables: [] };
 
     const adaptTable = (t) => {
       // Check if this table has a running order
@@ -224,7 +222,7 @@ const DashboardPage = () => {
         grouped['walk_in'] = {
           name: 'Walk-In',
           prefix: 'WC',
-          tables: walkInOrders.map((order, idx) => ({
+          tables: walkInOrders.map((order) => ({
             id: `wc-${order.orderId}`,
             label: order.customer || 'WC',
             status: order.tableStatus,
@@ -241,8 +239,7 @@ const DashboardPage = () => {
         };
       }
 
-      setTables(grouped);
-      setFlatTables([]);
+      return { tables: grouped, flatTables: [] };
     } else {
       const flat = nonRoomTables
         .filter(t => t.status !== 'disabled')
@@ -266,14 +263,14 @@ const DashboardPage = () => {
         });
       });
 
-      setTables({});
-      setFlatTables(flat);
+      return { tables: {}, flatTables: flat };
     }
   }, [tablesLoaded, apiTables, getOrderByTableId, walkInOrders]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- tables/flatTables are useMemo outputs, valid deps
   const allTablesList = useMemo(() => {
     return hasAreas ? Object.values(tables).flatMap(s => s.tables) : flatTables;
   }, [tables, flatTables, hasAreas]);
@@ -597,18 +594,10 @@ const DashboardPage = () => {
     setInitialShowPayment(true);
   };
 
-  const handleUpdateTableStatus = (tableId, newStatus) => {
-    if (hasAreas) {
-      setTables(prev => Object.fromEntries(
-        Object.entries(prev).map(([key, section]) => [key, {
-          ...section,
-          tables: section.tables.map(t => t.id === tableId ? { ...t, status: newStatus } : t),
-        }])
-      ));
-    } else {
-      setFlatTables(prev => prev.map(t => t.id === tableId ? { ...t, status: newStatus } : t));
-    }
-  };
+  const handleUpdateTableStatus = useCallback((tableStringId, newStatus) => {
+    // Update through TableContext — useMemo derivation picks up the change
+    updateTableStatus(Number(tableStringId), newStatus);
+  }, [updateTableStatus]);
 
   return (
     <div
