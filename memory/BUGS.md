@@ -610,3 +610,53 @@ Previously, `handleCancelOrder` in `OrderEntry.jsx` and `DashboardPage.jsx` pre-
 
 ### Backend Note
 The GET single order API should ideally mark individual item statuses as `cancelled` when the entire order is cancelled, for consistency.
+
+## BUG-214 (Updated): Collect Bill — Backend Does Not Mark Order as Paid
+
+**Status:** OPEN — Backend Bug
+**Priority:** P0 CRITICAL
+**Reported:** Feb 2026
+**Updated:** Feb 2026
+
+### Progress
+- **Fixed endpoint:** Now correctly uses `PUT /api/v1/vendoremployee/order/update-place-order` (was wrongly using `POST place-order`)
+- **Fixed payload:** Uses `cart-update: []` (empty), `payment_status: "paid"`, `payment_type: "postpaid"`, `payment_method: "cash"`, correct financials
+- **API accepts the payload** — returns `{message: "Items added to order successfully!", order_id: 730498, total_amount: 263}`
+- **But order is NOT marked as paid** — GET single order still returns the order with `occupied` status, not `paid`
+
+### Payload Sent (Working — No Errors)
+```json
+{
+  "order_id": "730498",
+  "order_type": "pos",
+  "payment_method": "cash",
+  "payment_status": "paid",
+  "payment_type": "postpaid",
+  "print_kot": "No",
+  "auto_dispatch": "No",
+  "order_sub_total_amount": 250,
+  "order_sub_total_without_tax": 250,
+  "tax_amount": 12.5,
+  "gst_tax": 12.5,
+  "order_amount": 263,
+  "round_up": "0.50",
+  "cart-update": []
+}
+```
+
+### Console Evidence
+```
+[CollectBill] response: {message: 'Items added to order successfully!', order_id: 730498, total_amount: 263}
+[SocketHandler] Fetched order 730498 successfully
+[TableContext] updateTableStatus: 5502 → occupied    ← Still occupied, NOT paid/available
+```
+
+### Questions for Backend Team
+1. Does `PUT update-place-order` support changing `payment_status` from `unpaid` to `paid`?
+2. Is there a separate endpoint for collecting payment on existing orders?
+3. The response says "Items added to order successfully!" even with `cart-update: []` — is `payment_status` being ignored?
+
+### Impact
+- Collect Bill flow does not actually collect payment — order stays unpaid
+- Tables cannot be freed through payment
+- Only Place+Pay (prepaid) works for payment
