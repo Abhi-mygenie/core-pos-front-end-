@@ -461,19 +461,29 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
-    // Always use partial-cancel endpoint with cancel_qty
-    // Full cancel = cancel_qty equals item.qty
-    const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
-    const response = await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
-    toast({
-      title: "Item Cancelled",
-      description: response.data?.message || `${item?.name} cancelled successfully`,
-    });
-    
-    // Socket update-order-status will update OrderContext
-    // useEffect will sync cartItems + orderFinancials from context
-    console.log('[CancelFood] Waiting for socket sync');
-    setCancelItem(null);
+    setIsPlacingOrder(true); // Show overlay — same pattern as all other flows
+    try {
+      const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
+      await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
+      toast({
+        title: "Item Cancelled",
+        description: `${item?.name} cancelled successfully`,
+      });
+
+      // Wait for socket update-table (engage) before redirect
+      const tableId = Number(effectiveTable?.tableId || table?.tableId);
+      if (tableId) {
+        await waitForTableEngaged(tableId, 5000);
+      }
+
+      setCancelItem(null);
+      onClose(); // Redirect to dashboard — table is locked, socket will enrich + release
+    } catch (err) {
+      const msg = err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || err?.message || 'Cancellation failed';
+      toast({ title: "Cancel Failed", description: msg });
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   const handleCancelOrder = async (reason) => {

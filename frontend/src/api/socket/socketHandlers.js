@@ -271,12 +271,14 @@ export const handleUpdateFoodStatus = async (message, { updateOrder, updateTable
 /**
  * Handle update-order-status event
  * Message: [update-order-status, order_id, restaurant_id, f_order_status]
- * Action: Fetch order from API, UPDATE in OrderContext
  * 
- * BUG-107 Fix: For cancelled status (3), fetch order first to check if
- * only some items are cancelled (single item cancel) vs all items cancelled.
+ * Unified handler: ignore socket's fOrderStatus entirely.
+ * Use orderId as trigger → fetch GET single order → decide from API response.
+ * 
+ * BUG-217: Backend sends status 6 (paid) for cancel item — should send update-order.
+ * We don't branch on socket status at all.
  */
-export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder, updateTableStatus, getOrderById }) => {
+export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder, updateTableStatus, getOrderById, setTableEngaged }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -285,65 +287,36 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
   }
   
   const { orderId, status: fOrderStatus } = parsed;
-  log('INFO', `update-order-status received: ${orderId}, status: ${fOrderStatus}`);
+  log('INFO', `update-order-status received: ${orderId}, socket status: ${fOrderStatus} (ignored — fetching API)`);
   
-  // Paid orders (status 6) - remove immediately without fetching
-  // Look up tableId from context first so we can mark table as available
-  if (fOrderStatus === 6) {
-    log('INFO', `update-order-status: Order ${orderId} is paid, removing`);
-    const existingOrder = getOrderById ? getOrderById(orderId) : null;
-    if (existingOrder?.tableId && existingOrder.tableId !== 0) {
-      syncTableStatus(existingOrder, updateTableStatus, 'available');
-    }
-    removeOrder(orderId);
-    return;
-  }
-  
-  // Cancelled orders (status 3) — could be full order cancel or single item cancel
-  // Fetch from API to determine which case
-  if (fOrderStatus === 3) {
-    const existingOrder = getOrderById ? getOrderById(orderId) : null;
-    
-    // Order still in context — fetch to check if full or partial cancel
-    const order = await fetchOrderWithRetry(orderId);
-    if (order) {
-      const allItemsCancelled = !order.items?.length || 
-        order.items.every(item => item.status === 'cancelled') ||
-        order.status === 'cancelled';  // order-level status from API (items may not reflect it)
-      
-      if (allItemsCancelled) {
-        log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
-        syncTableStatus(order, updateTableStatus, 'available');
-        removeOrder(orderId);
-      } else {
-        updateOrder(order.orderId, order);
-        syncTableStatus(order, updateTableStatus);
-        log('INFO', `update-order-status: Updated order ${orderId} (single item cancel)`);
-      }
-    } else {
-      log('WARN', `update-order-status: Order ${orderId} not found in API, removing`);
-      if (existingOrder?.tableId && existingOrder.tableId !== 0) {
-        syncTableStatus(existingOrder, updateTableStatus, 'available');
-      }
-      removeOrder(orderId);
-    }
-    return;
-  }
-  
-  // For all other statuses, fetch fresh order data
+  // Fetch the actual order state from GET single order API
   const order = await fetchOrderWithRetry(orderId);
   
   if (order) {
-    updateOrder(order.orderId, order);
-    syncTableStatus(order, updateTableStatus);
-    log('INFO', `update-order-status: Updated order ${orderId}`);
-  } else {
-    log('WARN', `update-order-status: Order ${orderId} not found, removing from context`);
-    const existingOrder = getOrderById ? getOrderById(orderId) : null;
-    if (existingOrder?.tableId && existingOrder.tableId !== 0) {
-      syncTableStatus(existingOrder, updateTableStatus, 'available');
+    // Use order-level status from API response to decide
+    if (order.status === 'cancelled' || order.status === 'paid') {
+      log('INFO', `update-order-status: Order ${orderId} is ${order.status}, removing`);
+      removeOrder(orderId);
+    } else {
+      // Order still active (cancel item case — remaining items exist)
+      updateOrder(order.orderId, order);
+      log('INFO', `update-order-status: Updated order ${orderId} (status: ${order.status})`);
     }
+  } else {
+    // Order not found in API — remove from context
+    log('WARN', `update-order-status: Order ${orderId} not found in API, removing`);
     removeOrder(orderId);
+  }
+
+  // Release engaged lock after React commits
+  const tableId = order?.tableId || (getOrderById ? getOrderById(orderId)?.tableId : null);
+  if (setTableEngaged && tableId) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTableEngaged(tableId, false);
+        log('INFO', `update-order-status: Table ${tableId} released from ENGAGED`);
+      });
+    });
   }
 };
 
@@ -426,10 +399,11 @@ export const handleUpdateTable = (message, { updateTableStatus, setTableEngaged 
     setTableEngaged(tableId, true);
     log('INFO', `update-table: Table ${tableId} ENGAGED (locked)`);
   } else if (socketStatus === 'free') {
-    // Free = release engaged + set available
-    if (setTableEngaged) setTableEngaged(tableId, false);
-    updateTableStatus(tableId, 'available');
-    log('INFO', `update-table: Table ${tableId} released → available`);
+    // BUG-216 workaround: Backend sends 'free' for cancel-item but should send 'engage'
+    // Treat 'free' as 'engage' — lock the table until GET enrichment completes
+    // Backend will fix to send 'engage'; once fixed, this becomes a normal engage
+    if (setTableEngaged) setTableEngaged(tableId, true);
+    log('INFO', `update-table: Table ${tableId} ENGAGED (free→engage workaround, BUG-216)`);
   } else {
     // Other statuses: map and update
     const frontendStatus = TABLE_STATUS_MAP[socketStatus] || socketStatus;
