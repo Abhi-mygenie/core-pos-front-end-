@@ -161,6 +161,5 @@ export const toAPI = {
   mergeTable: (currentTable, sourceOrder) => ({
     source_order_id: sourceOrder.orderId,  // table being dissolved into current
     target_order_id: currentTable.orderId, // current table (survives the merge)
-    transfer_note: "Yes",                  // always Yes — transfer all notes
   }),
 };

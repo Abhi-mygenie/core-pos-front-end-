@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
   // Table Operations (Phase 1C)
   TABLES: '/api/v1/vendoremployee/all-table-list',
   ORDER_TABLE_SWITCH: '/api/v1/vendoremployee/pos/order-table-room-switch',
-  MERGE_ORDER: '/api/v2/vendoremployee/transfer-order',
+  MERGE_ORDER: '/api/v1/vendoremployee/order/transfer-order',
   TRANSFER_FOOD: '/api/v1/vendoremployee/order/transfer-food-item',
 
   // Cancel Operations (Phase 1C)
