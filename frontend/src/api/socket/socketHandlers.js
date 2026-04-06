@@ -308,7 +308,8 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
     const order = await fetchOrderWithRetry(orderId);
     if (order) {
       const allItemsCancelled = !order.items?.length || 
-        order.items.every(item => item.status === 'cancelled');
+        order.items.every(item => item.status === 'cancelled') ||
+        order.status === 'cancelled';  // order-level status from API (items may not reflect it)
       
       if (allItemsCancelled) {
         log('INFO', `update-order-status: Order ${orderId} has all items cancelled, removing`);
