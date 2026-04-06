@@ -600,10 +600,9 @@ export const toAPI = {
       deliveryCharge = 0,
     } = paymentData;
 
-    // Build cart-update from ALL active (non-cancelled) placed items
+    // Compute totals from ALL active items (for financial fields only)
     const activeItems = (cartItems || []).filter(i => i.status !== 'cancelled');
     const cartRaw = activeItems.map(buildCartItem);
-    const cartUpdate = cartRaw.map(({ _fullUnitPrice, ...item }) => item);
     const totals = calcOrderTotals(cartRaw);
 
     const payload = {
@@ -641,7 +640,8 @@ export const toAPI = {
       discount_member_category_id:   0,
       discount_member_category_name: '',
       usage_id:                   '',
-      'cart-update':              cartUpdate,
+      // Empty cart-update — items already exist, only updating payment
+      'cart-update':              [],
     };
 
     // Partial payments
