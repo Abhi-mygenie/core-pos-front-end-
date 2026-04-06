@@ -593,66 +593,55 @@ export const toAPI = {
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], userId = '' } = options;
+    const { orderNotes = [] } = options;
     const { 
       method = 'cash', transactionId = '', 
       splitPayments = [], tip = 0, discounts = {},
-      finalTotal = 0, deliveryCharge = 0,
+      deliveryCharge = 0,
     } = paymentData;
 
-    // Build cart from ALL active (non-cancelled) placed items
+    // Build cart-update from ALL active (non-cancelled) placed items
     const activeItems = (cartItems || []).filter(i => i.status !== 'cancelled');
     const cartRaw = activeItems.map(buildCartItem);
-    const cart = cartRaw.map(({ _fullUnitPrice, ...item }) => item);
+    const cartUpdate = cartRaw.map(({ _fullUnitPrice, ...item }) => item);
     const totals = calcOrderTotals(cartRaw);
 
     const payload = {
       order_id:                   String(table.orderId),
-      user_id:                    userId,
-      restaurant_id:              restaurantId,
-      table_id:                   String(table?.tableId || 0),
       order_type:                 'pos',
       cust_name:                  customer?.name || '',
-      cust_mobile:                customer?.phone || '',
       cust_email:                 '',
-      cust_dob:                   '',
-      cust_anniversary:           '',
-      cust_membership_id:         '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
       payment_status:             'paid',
       payment_type:               'postpaid',
-      transaction_id:             transactionId || null,
-      print_kot:                  'Yes',
+      print_kot:                  'No',
       auto_dispatch:              'No',
-      scheduled:                  0,
-      schedule_at:                null,
       // Financial
       ...totals,
       service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 tip || 0,
       tip_tax_amount:             0,
-      delivery_charge:            deliveryCharge || 0,
+      delivery_charge:            String(deliveryCharge || 0),
       // Discount
-      discount_type:              discounts.type || null,
+      discount_type:              discounts.type || '',
       self_discount:              discounts.manual || 0,
       coupon_discount:            discounts.coupon || 0,
-      coupon_title:               discounts.couponTitle || null,
-      coupon_type:                discounts.couponType || null,
+      coupon_title:               discounts.couponTitle || '',
+      coupon_type:                discounts.couponType || '',
       order_discount:             discounts.orderDiscountPercent || 0,
       // Loyalty & Wallet
       used_loyalty_point:         0,
       use_wallet_balance:         0,
-      // Room & Address
-      paid_room:                  null,
-      room_id:                    null,
-      address_id:                 null,
+      // Room
+      paid_room:                  '',
+      room_id:                    '',
       // Misc
       discount_member_category_id:   0,
-      discount_member_category_name: null,
-      usage_id:                   null,
-      cart,
+      discount_member_category_name: '',
+      usage_id:                   '',
+      'cart-update':              cartUpdate,
     };
 
     // Partial payments

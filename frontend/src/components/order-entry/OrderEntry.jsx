@@ -704,16 +704,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     });
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
                   } else {
-                    // Scenario 1 — existing order: collect bill (re-submit full payload with payment_status=paid)
+                    // Scenario 1 — existing order: collect bill via PUT update-place-order (same as update order, with payment fields)
                     const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, {
-                      restaurantId: restaurant?.id,
                       orderNotes,
                     });
-                    const formData = new FormData();
-                    formData.append('data', JSON.stringify(payload));
-                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
-                      headers: { 'Content-Type': 'multipart/form-data' },
-                    });
+                    console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
+                    const res = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
+                    console.log('[CollectBill] response:', res.data);
                     toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
                   }
                   setCartItems([]);
