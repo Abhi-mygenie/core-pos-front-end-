@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
   CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
   PLACE_ORDER:       '/api/v1/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
   UPDATE_ORDER:      '/api/v1/vendoremployee/order/update-place-order',   // Update existing order (add items)
+  BILL_PAYMENT:      '/api/v2/vendoremployee/order-bill-payment',        // Collect bill on existing order
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes
   EDIT_ORDER_ITEM_QTY:   'TBD',   // CHG-040 future: Edit placed item qty only
   

@@ -593,63 +593,31 @@ export const toAPI = {
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
-    const { orderNotes = [] } = options;
     const { 
-      method = 'cash', transactionId = '', 
-      splitPayments = [], tip = 0, discounts = {},
-      deliveryCharge = 0,
+      method = 'cash', transactionId = '',
+      splitPayments = [], tip = 0,
+      finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
     } = paymentData;
-
-    // Compute totals from ALL active items (for financial fields only)
-    const activeItems = (cartItems || []).filter(i => i.status !== 'cancelled');
-    const cartRaw = activeItems.map(buildCartItem);
-    const totals = calcOrderTotals(cartRaw);
 
     const payload = {
       order_id:                   String(table.orderId),
-      order_type:                 'pos',
-      cust_name:                  customer?.name || '',
-      cust_email:                 '',
-      order_note:                 orderNotes.map(n => n.label).join(', '),
-      payment_method:             method,
+      payment_mode:               method,
+      payment_amount:             finalTotal || 0,
       payment_status:             'paid',
-      payment_type:               'postpaid',
-      print_kot:                  'No',
-      auto_dispatch:              'No',
-      // Financial
-      ...totals,
+      transaction_id:             transactionId || '',
       service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 tip || 0,
       tip_tax_amount:             0,
-      delivery_charge:            String(deliveryCharge || 0),
-      // Discount
-      discount_type:              discounts.type || '',
-      self_discount:              discounts.manual || 0,
-      coupon_discount:            discounts.coupon || 0,
-      coupon_title:               discounts.couponTitle || '',
-      coupon_type:                discounts.couponType || '',
-      order_discount:             discounts.orderDiscountPercent || 0,
-      // Loyalty & Wallet
-      used_loyalty_point:         0,
-      use_wallet_balance:         0,
-      // Room
-      paid_room:                  '',
-      room_id:                    '',
-      // Misc
-      discount_member_category_id:   0,
-      discount_member_category_name: '',
-      usage_id:                   '',
-      // Empty cart-update — items already exist, only updating payment
-      'cart-update':              [],
+      vat_tax:                    vatAmount || 0,
+      gst_tax:                    Math.round((sgst + cgst) * 100) / 100,
     };
 
     // Partial payments
-    if (splitPayments?.length) {
+    if (method === 'partial' && splitPayments?.length) {
       payload.partial_payments = splitPayments.map(p => ({
         payment_mode:   p.method,
         payment_amount: p.amount,
-        grant_amount:   p.amount,
         transaction_id: p.transactionId || '',
       }));
     }

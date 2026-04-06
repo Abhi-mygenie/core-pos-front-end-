@@ -704,12 +704,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     });
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
                   } else {
-                    // Scenario 1 — existing order: collect bill via PUT update-place-order (same as update order, with payment fields)
-                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, {
-                      orderNotes,
-                    });
+                    // Scenario 1 — existing order: collect bill via POST order-bill-payment
+                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
-                    const res = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
+                    const res = await api.post(API_ENDPOINTS.BILL_PAYMENT, payload);
                     console.log('[CollectBill] response:', res.data);
                     toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
                   }
