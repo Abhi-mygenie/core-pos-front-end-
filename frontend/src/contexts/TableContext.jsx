@@ -113,11 +113,22 @@ export const TableProvider = ({ children }) => {
       console.log('[TableContext] updateTableStatus:', tableId, '→', status);
       return prev.map(t => {
         if (t.tableId === tableId) {
-          return {
+          const updated = {
             ...t,
             status: status,
             isOccupied: status === 'occupied',
           };
+          // Clear order display fields when table becomes available
+          if (status === 'available') {
+            updated.orderId = null;
+            updated.amount = 0;
+            updated.customer = '';
+            updated.phone = '';
+            updated.orderTime = null;
+            updated.itemCount = 0;
+            updated.isOccupied = false;
+          }
+          return updated;
         }
         return t;
       });
