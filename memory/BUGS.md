@@ -660,3 +660,99 @@ The GET single order API should ideally mark individual item statuses as `cancel
 - Collect Bill flow does not actually collect payment — order stays unpaid
 - Tables cannot be freed through payment
 - Only Place+Pay (prepaid) works for payment
+
+
+## BUG-216 (Updated): Backend Table Socket Events — Missing Engage, Incorrect Free
+
+**Status:** OPEN — CRITICAL (Backend)
+**Priority:** P0 CRITICAL
+**Reported:** Feb 2026
+**Updated:** Feb 2026
+
+### Problem Summary
+The backend does not send consistent `update-table engage`/`free` socket events across all flows. Some flows send `free` without a prior `engage`, some don't send any table event at all, and the shift table flow doesn't lock/release both tables.
+
+### Current Behavior Per Flow
+
+| Flow | Source Table | Destination Table | Issue |
+|------|-------------|-------------------|-------|
+| **Place New Order** | — | No `engage` sent | BUG-211: Frontend workaround — engages locally in `handleNewOrder` |
+| **Place+Pay (prepaid)** | — | No `engage` sent | BUG-219: Frontend workaround — same as Place New Order |
+| **Update Order** | — | `engage` ✅ then released by frontend after GET | ✅ Working |
+| **Cancel Item** | — | `free` sent (no prior `engage`) | BUG-216: Frontend workaround needed — engage locally in `handleCancelFood` |
+| **Cancel Full Order** | — | `free` sent (no prior `engage`) | Currently works with BUG-216 workaround but workaround causes other issues |
+| **Shift Table** | `free` only (no `engage`) | `engage` ✅ | ❌ Source table never locked, `free` is mishandled |
+
+### Shift Table — Detailed Analysis
+
+**Order 730482 shifted from table 5507 → table 5510**
+
+**Socket events received:**
+```
+14:38:19  update-table 5510 engage    ← Destination locked ✅
+14:38:19  update-order 730482         ← Order updated
+14:38:20  update-table 5507 free      ← Source freed (no prior engage) ❌
+```
+
+**What backend SHOULD send:**
+```
+1. update-table 5507 engage     ← Lock source table
+2. update-table 5510 engage     ← Lock destination table
+3. update-order 730482          ← Order updated (now on destination)
+4. update-table 5507 free       ← Release source (now available)
+5. update-table 5510 free       ← Release destination (now occupied, clickable)
+```
+
+**Currently:** Backend only controls engage/free for destination. Source table gets a `free` without prior `engage`. The frontend's BUG-216 workaround (treating `free` as `engage`) causes the source table to get LOCKED instead of freed — stuck with a spinner forever.
+
+### Frontend Workaround Status
+
+**Current workaround (BUG-216):** Treat ALL `update-table free` as `engage` in `handleUpdateTable`.
+
+**This workaround breaks:**
+- **Shift table:** Old (source) table gets engaged instead of freed → spinner stuck forever
+- **Cancel full order:** Table gets engaged instead of freed (but `update-order-status` handler eventually releases it)
+
+**Correct workaround (to be implemented):**
+1. **Revert** the blanket `free→engage` workaround — let `free` genuinely free the table
+2. **Cancel item:** Engage table locally in `handleCancelFood` before API call (same pattern as `handleNewOrder` for BUG-211)
+3. **Shift table:** `free` on source table works correctly (table becomes available)
+4. **Cancel full order:** `free` on table works correctly (table becomes available)
+
+### Backend Action Required
+1. Send `update-table engage` for ALL flows that modify orders (not just Update Order)
+2. For Shift Table: send engage for BOTH source and destination tables, then free both after processing
+3. For Cancel Item: send `engage` instead of `free` (or send `engage` first, then `free` after processing)
+4. Ensure all flows follow the pattern: `engage → process → free`
+
+### Impact
+- Shift table leaves source table with permanent spinner (unusable)
+- Inconsistent locking behavior across flows
+- Frontend needs per-flow workarounds instead of one unified socket-based locking mechanism
+
+## BUG-219: Backend Does NOT Send `update-table engage` for Place+Pay (prepaid)
+
+**Status:** OPEN — Backend Bug
+**Priority:** P1
+**Reported:** Feb 2026
+
+### Problem
+Same as BUG-211 (Place New Order). The backend does not send `update-table engage` for prepaid orders. Frontend workaround: `handleNewOrder` engages locally (same handler as unpaid new orders).
+
+### Console Evidence
+```
+[SocketHandler] new-order received: 730494
+[OrderContext] addOrder: Adding new order 730494
+[TableContext] updateTableStatus: 5521 → occupied
+[TableContext] setTableEngaged: 5521 → true          ← Frontend local engage (workaround)
+[SocketHandler] new-order: Table 5521 ENGAGED (locked)
+[SocketHandler] Fetching order 730494 (attempt 1)
+[SocketHandler] Fetched order 730494 successfully
+[OrderContext] updateOrder: Updating order 730494
+[TableContext] setTableEngaged: 5521 → false          ← Released after enrichment
+```
+
+No `update-table 5521 engage` socket event was received from backend.
+
+### Backend Action Required
+Send `update-table engage` for prepaid orders, same as Update Order flow.
