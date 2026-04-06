@@ -44,7 +44,8 @@ export const OrderProvider = ({ children }) => {
    * @returns {object|null}
    */
   const getOrderById = useCallback((orderId) => {
-    return orders.find(o => o.orderId === orderId) || null;
+    const numericId = Number(orderId);
+    return orders.find(o => o.orderId === numericId) || null;
   }, [orders]);
 
   /**
@@ -109,9 +110,12 @@ export const OrderProvider = ({ children }) => {
       return;
     }
     
+    // Normalize to number — socket sends string, orders store number
+    const numericId = Number(orderId);
+    
     setOrdersState(prev => {
-      console.log('[OrderContext] removeOrder: Removing order', orderId);
-      const next = prev.filter(o => o.orderId !== orderId);
+      console.log('[OrderContext] removeOrder: Removing order', numericId);
+      const next = prev.filter(o => o.orderId !== numericId);
       ordersRef.current = next;
       return next;
     });

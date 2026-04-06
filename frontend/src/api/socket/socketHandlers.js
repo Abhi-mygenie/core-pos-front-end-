@@ -45,7 +45,7 @@ const parseMessage = (message) => {
   
   return {
     event: message[MSG_INDEX.EVENT_NAME],
-    orderId: message[MSG_INDEX.ORDER_ID],
+    orderId: Number(message[MSG_INDEX.ORDER_ID]),
     restaurantId: message[MSG_INDEX.RESTAURANT_ID],
     status: message[MSG_INDEX.STATUS],
     payload: message[MSG_INDEX.PAYLOAD] || null,
