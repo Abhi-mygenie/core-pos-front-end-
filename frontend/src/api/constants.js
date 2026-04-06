@@ -111,12 +111,12 @@ export const F_ORDER_STATUS = {
   1: 'preparing',
   2: 'ready',
   3: 'cancelled',
-  // 4: TBD — user will provide later
+  // 4: TBD — needs team clarification
   5: 'served',
   6: 'paid',
   7: 'pending',
-  8: 'running',   // active/running order on dashboard
-  // 9: TBD — needs team clarification
+  8: 'running',
+  9: 'pendingPayment',
 };
 
 // Frontend status → table card status (for enriching table grid)
@@ -126,8 +126,9 @@ export const ORDER_TO_TABLE_STATUS = {
   ready: 'occupied',
   running: 'occupied',
   served: 'billReady',
-  paid: null,      // skip — table goes back to available (CHG-006)
-  cancelled: null, // skip — table goes back to available
+  paid: 'available',
+  cancelled: 'available',
+  pendingPayment: 'occupied',
 };
 
 // Order type values from API

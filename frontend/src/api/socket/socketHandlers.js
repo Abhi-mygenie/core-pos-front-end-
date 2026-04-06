@@ -296,6 +296,7 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
     // Use order-level status from API response to decide
     if (order.status === 'cancelled' || order.status === 'paid') {
       log('INFO', `update-order-status: Order ${orderId} is ${order.status}, removing`);
+      syncTableStatus(order, updateTableStatus);
       removeOrder(orderId);
     } else {
       // Order still active (cancel item case — remaining items exist)
