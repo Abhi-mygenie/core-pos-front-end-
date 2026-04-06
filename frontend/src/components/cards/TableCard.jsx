@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Printer, Clock, X, Check, PlusSquare, ShoppingBag, Bike } from "lucide-react";
+import { Printer, Clock, X, Check, PlusSquare, ShoppingBag, Bike, Loader2 } from "lucide-react";
 import PropTypes from 'prop-types';
 import { COLORS, CONFIG } from "../../constants";
 import { mockOrderItems } from "../../data";
@@ -8,7 +8,7 @@ import { IconButton, TextButton } from "./buttons";
 import { CARD_BASE_STYLE } from "./TableCard.styles";
 
 // Table Card Component - Simplified (no expansion, uses modal)
-const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, isSnoozed, onToggleSnooze, currencySymbol = '₹' }) => {
+const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, isSnoozed, onToggleSnooze, currencySymbol = '₹', isEngaged = false }) => {
   const statusConfig = getTableStatusConfig(table.status);
   const isActive = isTableActive(table.status);
   const hasOrders = ["occupied", "billReady"].includes(table.status);
@@ -45,10 +45,16 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   return (
     <div
       data-testid={`table-card-${table.id}`}
-      onClick={handleCardClick}
-      className={`rounded-2xl cursor-pointer transition-all duration-200 hover:shadow-md ${isSnoozed ? 'opacity-60' : ''}`}
+      onClick={isEngaged ? undefined : handleCardClick}
+      className={`relative rounded-2xl transition-all duration-200 ${isEngaged ? 'pointer-events-none' : 'cursor-pointer hover:shadow-md'} ${isSnoozed ? 'opacity-60' : ''}`}
       style={cardStyle}
     >
+      {/* Engaged spinner overlay */}
+      {isEngaged && (
+        <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}>
+          <Loader2 className="w-6 h-6 animate-spin" style={{ color: COLORS.primaryOrange }} />
+        </div>
+      )}
       {/* Card Content */}
       <div className="p-2.5 h-full flex flex-col">
         {/* Header Pill */}
@@ -257,6 +263,7 @@ TableCard.propTypes = {
   onCancelOrder: PropTypes.func,
   isSnoozed: PropTypes.bool,
   onToggleSnooze: PropTypes.func,
+  isEngaged: PropTypes.bool,
 };
 
 TableCard.defaultProps = {
@@ -267,6 +274,7 @@ TableCard.defaultProps = {
   onCancelOrder: null,
   isSnoozed: false,
   onToggleSnooze: null,
+  isEngaged: false,
 };
 
 export default TableCard;

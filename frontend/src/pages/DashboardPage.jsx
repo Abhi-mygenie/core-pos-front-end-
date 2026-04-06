@@ -730,6 +730,7 @@ const DashboardPage = () => {
                         isSnoozed={snoozedOrders?.has(item.id)}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
+                        isEngaged={isTableEngaged(item.tableId)}
                       />
                     ))}
                   </div>
