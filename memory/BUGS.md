@@ -184,30 +184,65 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 
 ---
 
-## Updated Endpoint Mapping (April 5, 2026)
+## Updated Endpoint Mapping (April 6, 2026)
 
 | Action | Endpoint | Status |
 |--------|----------|--------|
-| Place New Order | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data) | Updated ✅ |
-| Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated ✅ |
-| Collect Bill (existing order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, with order_id) | Updated ✅ |
-| Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated ✅ |
-| Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working ✅ |
-| Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working ✅ |
-| Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | Working ✅ |
-| Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working ✅ |
+| Place New Order | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data) | Updated |
+| Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated |
+| Collect Bill (existing order) | `POST /api/v2/vendoremployee/order-bill-payment` (JSON) | Working |
+| Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated |
+| Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working |
+| Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working |
+| Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | Working |
+| Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working |
 
 ---
 
-## Socket Event → User Action (Verified April 5, 2026)
+## Socket Event → User Action (Verified April 6, 2026)
 
 | Action | Socket Event | Status |
 |--------|-------------|--------|
-| Place New Order | `new-order` (with payload) | ✅ 0→1 API call (GET single order enrichment) |
-| Update Order | `update-order` | ✅ 1 API call |
-| Cancel Single Item | `update-order-status` (status=3) | ✅ 1 API call |
-| Cancel Partial Item | `update-order-status` (status=3) | ✅ 1 API call |
-| Cancel Full Order | `update-order-status` (status=3) | ✅ 0 API calls (skipped, already removed) |
+| Place New Order | `new-order` (with payload) | 0→1 API call (GET single order enrichment) |
+| Update Order | `update-order` | 1 API call |
+| Cancel Single Item | `update-order-status` (status=3) | 1 API call |
+| Cancel Partial Item | `update-order-status` (status=3) | 1 API call |
+| Cancel Full Order | `update-order-status` (status=3) | 0 API calls (skipped, already removed) |
+| Collect Bill | `update-order-status` (status=6) + `update-table free` | 1 API call (GET for status check) |
+
+
+---
+
+## BUG-220: Socket orderId Type Mismatch — `removeOrder` / `getOrderById` Never Match
+
+**Status:** FIXED
+**Priority:** P0 CRITICAL
+**Reported:** April 6, 2026
+**Fixed:** April 6, 2026
+
+### Symptom
+After Collect Bill (or any socket-driven order removal), the table card kept showing stale order data (amount, waiter, time, bill button) even though console logs showed `removeOrder` being called. The order was never actually removed from `OrderContext`.
+
+### Root Cause
+Socket messages send `orderId` as a **string** (e.g., `'730522'`), but `OrderContext` stores orders with **numeric** `orderId` (e.g., `730522`). 
+
+- `removeOrder('730522')` → `prev.filter(o => o.orderId !== '730522')` → `730522 !== '730522'` is `true` (strict equality, different types) → **order NOT removed**
+- `getOrderById('730522')` → `orders.find(o => o.orderId === '730522')` → `730522 === '730522'` is `false` → **always returns null**
+
+This also broke the "already removed" guard in `handleUpdateOrder`, causing it to skip ALL socket updates for existing orders.
+
+### Fix Applied (3 locations)
+1. **`socketHandlers.js` → `parseMessage()`**: Convert `orderId` to `Number()` at the source — fixes all downstream handlers
+2. **`OrderContext.jsx` → `removeOrder()`**: Safety net `Number()` conversion before filter
+3. **`OrderContext.jsx` → `getOrderById()`**: Safety net `Number()` conversion before find
+
+### Additional Fix (same session)
+Converted `DashboardPage.jsx` table derivation from `useEffect+setState` (async, 2-render-cycle) to `useMemo` (synchronous). This ensures table card data clears in the same render cycle as context updates — no intermediate stale frame.
+
+### Files Changed
+- `socketHandlers.js` — `parseMessage()`: `orderId: Number(message[1])`
+- `OrderContext.jsx` — `removeOrder()`, `getOrderById()`: `Number()` safety net
+- `DashboardPage.jsx` — `useEffect → useMemo` for table data derivation; `handleUpdateTableStatus` now flows through `TableContext` instead of local state
 
 
 ---
@@ -476,87 +511,66 @@ Ensure both APIs return the **same name** for the same addon ID. Either:
 3. Normalize the names in both tables to be identical
 
 
-## BUG-214: Collect Bill on Existing Order — "Table is already occupied" Error
+## BUG-214: Collect Bill on Existing Order — Resolved with V2 Endpoint
 
-**Status:** BLOCKED — Awaiting Backend Clarification
-**Priority:** P0 CRITICAL
+**Status:** FIXED
+**Priority:** P0 CRITICAL (was BLOCKED)
 **Reported:** Feb 2026
-**Component:** Backend API — `POST /api/v1/vendoremployee/order/place-order`
+**Fixed:** April 6, 2026
 
-### Problem
-When attempting to collect payment on an existing placed order (postpaid → paid), the backend returns:
-```
-{"error": "Table is already occupied by a running order. Please choose another table or wait until it is free."}
-```
+### Resolution
+The original `POST /api/v1/vendoremployee/order/place-order` endpoint could not handle postpaid collect bill (returned "Table is already occupied"). User provided the correct dedicated endpoint:
 
-### All Attempts Made
+**New Endpoint:** `POST /api/v2/vendoremployee/order-bill-payment`
+**Content-Type:** `application/json`
 
-| # | Payload Variation | Result |
-|---|-------------------|--------|
-| 1 | `order_id` + financials, **NO `cart`** | `{"error": "Cart is required"}` |
-| 2 | `cart` + financials, **NO `order_id`** | Creates a **duplicate new order** (not payment) |
-| 3 | `order_id` + `cart` + `payment_status: "paid"` + `payment_type: "postpaid"` | `"Table is already occupied by a running order"` |
-
-### Payload Sent (Attempt 3)
+### Working Payload
 ```json
 {
-  "order_id": "730461",
-  "user_id": "",
-  "restaurant_id": 475,
-  "table_id": "4259",
-  "order_type": "pos",
-  "cust_name": "",
-  "cust_mobile": "",
-  "payment_method": "cash",
+  "order_id": "730522",
+  "payment_mode": "cash",
+  "payment_amount": 190,
   "payment_status": "paid",
-  "payment_type": "postpaid",
-  "transaction_id": null,
-  "print_kot": "Yes",
-  "auto_dispatch": "No",
-  "scheduled": 0,
-  "schedule_at": null,
-  "order_sub_total_amount": 149,
-  "order_sub_total_without_tax": 149,
-  "tax_amount": 7.46,
-  "gst_tax": 7.46,
+  "transaction_id": "",
+  "order_sub_total_amount": 190,
+  "order_sub_total_without_tax": 190,
+  "total_gst_tax_amount": 0,
+  "gst_tax": 0,
   "vat_tax": 0,
-  "order_amount": 157,
-  "round_up": "0.55",
-  "cart": [
-    {
-      "food_id": 116608,
-      "quantity": 1,
-      "price": 129,
-      "variant": "",
-      "add_on_ids": [10726],
-      "add_on_qtys": [1],
-      "variations": [],
-      "add_ons": [],
-      "station": "KDS",
-      "food_amount": 129,
-      "variation_amount": 0,
-      "addon_amount": 20,
-      "gst_amount": "7.45",
-      "vat_amount": "0.00",
-      "discount_amount": "0.00",
-      "complementary_price": 0,
-      "is_complementary": "No",
-      "food_level_notes": ""
-    }
-  ]
+  "round_up": 0,
+  "service_tax": 0,
+  "service_gst_tax_amount": 0,
+  "tip_amount": 0,
+  "tip_tax_amount": 0,
+  "restaurant_discount_amount": 0,
+  "order_discount": 0,
+  "comunity_discount": 0,
+  "discount_value": 0
 }
 ```
 
-### Questions for Backend Team
-1. What is the correct payload structure to collect payment on an existing running order?
-2. Does the endpoint differentiate "create new order" vs "collect payment on existing" by `order_id`, by `payment_status`, or by another mechanism?
-3. Is there a separate endpoint for collecting payment on existing orders?
-4. Is the table occupancy check ignoring the `order_id` field entirely — i.e., it always rejects if the table has a running order regardless?
+### Success Response
+```json
+{"message": "Bill cleared via cash"}
+```
 
-### Impact
-- **Collect Bill flow is completely non-functional** for postpaid (dine-in) orders
-- Users cannot close out tables that have running orders
-- Only prepaid (Place+Pay) flow works currently
+### Socket Events After Collect Bill
+1. `update-order-status` with `f_order_status: 6` (paid) — order channel
+2. `update-table free` — table channel
+
+### Frontend Flow
+```
+CollectPaymentPanel → onPaymentComplete:
+  1. setTableEngaged(tableId, true)
+  2. await api.post(BILL_PAYMENT, payload)
+  3. toast("Bill cleared via cash")
+  4. onClose() → redirect to Dashboard
+
+socketHandlers.handleUpdateOrderStatus (status=6):
+  1. fetchOrderWithRetry(orderId)
+  2. order.status === 'paid' → syncTableStatus('available') + removeOrder(orderId)
+  3. requestAnimationFrame × 2 → setTableEngaged(false)
+```
 
 
 ## BUG-215: Full Order Cancel — Socket Handler Treated Cancelled Order as Partial Cancel
@@ -611,55 +625,24 @@ Previously, `handleCancelOrder` in `OrderEntry.jsx` and `DashboardPage.jsx` pre-
 ### Backend Note
 The GET single order API should ideally mark individual item statuses as `cancelled` when the entire order is cancelled, for consistency.
 
-## BUG-214 (Updated): Collect Bill — Backend Does Not Mark Order as Paid
+## BUG-214 (History): Collect Bill — Previous Attempts Before V2 Endpoint
 
-**Status:** OPEN — Backend Bug
-**Priority:** P0 CRITICAL
-**Reported:** Feb 2026
-**Updated:** Feb 2026
+**Status:** CLOSED — Superseded by V2 endpoint fix above
+**Historical Reference Only**
 
-### Progress
-- **Fixed endpoint:** Now correctly uses `PUT /api/v1/vendoremployee/order/update-place-order` (was wrongly using `POST place-order`)
-- **Fixed payload:** Uses `cart-update: []` (empty), `payment_status: "paid"`, `payment_type: "postpaid"`, `payment_method: "cash"`, correct financials
-- **API accepts the payload** — returns `{message: "Items added to order successfully!", order_id: 730498, total_amount: 263}`
-- **But order is NOT marked as paid** — GET single order still returns the order with `occupied` status, not `paid`
+### Attempt 1: `POST /api/v1/vendoremployee/order/place-order`
+- Returned "Table is already occupied" with `order_id` + `cart` + `payment_status: "paid"`
+- Returned "Cart is required" without `cart`
+- Created duplicate order without `order_id`
 
-### Payload Sent (Working — No Errors)
-```json
-{
-  "order_id": "730498",
-  "order_type": "pos",
-  "payment_method": "cash",
-  "payment_status": "paid",
-  "payment_type": "postpaid",
-  "print_kot": "No",
-  "auto_dispatch": "No",
-  "order_sub_total_amount": 250,
-  "order_sub_total_without_tax": 250,
-  "tax_amount": 12.5,
-  "gst_tax": 12.5,
-  "order_amount": 263,
-  "round_up": "0.50",
-  "cart-update": []
-}
-```
+### Attempt 2: `PUT /api/v1/vendoremployee/order/update-place-order`
+- API accepted payload with `cart-update: []`, `payment_status: "paid"`, `payment_type: "postpaid"`
+- Returned `{message: "Items added to order successfully!", order_id: 730498, total_amount: 263}`
+- **But order was NOT marked as paid** — GET single order still returned `occupied` status
+- `payment_status` field was silently ignored by the update endpoint
 
-### Console Evidence
-```
-[CollectBill] response: {message: 'Items added to order successfully!', order_id: 730498, total_amount: 263}
-[SocketHandler] Fetched order 730498 successfully
-[TableContext] updateTableStatus: 5502 → occupied    ← Still occupied, NOT paid/available
-```
-
-### Questions for Backend Team
-1. Does `PUT update-place-order` support changing `payment_status` from `unpaid` to `paid`?
-2. Is there a separate endpoint for collecting payment on existing orders?
-3. The response says "Items added to order successfully!" even with `cart-update: []` — is `payment_status` being ignored?
-
-### Impact
-- Collect Bill flow does not actually collect payment — order stays unpaid
-- Tables cannot be freed through payment
-- Only Place+Pay (prepaid) works for payment
+### Resolution
+User provided dedicated V2 endpoint: `POST /api/v2/vendoremployee/order-bill-payment` — works correctly
 
 
 ## BUG-216 (Updated): Backend Table Socket Events — Missing Engage, Incorrect Free

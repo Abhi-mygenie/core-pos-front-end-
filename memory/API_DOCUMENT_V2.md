@@ -8,56 +8,24 @@
 
 ## Overview
 
-This single endpoint handles **3 flows**:
+This single endpoint handles **2 flows**:
 
 | Flow | Trigger | Key Differentiator |
 |------|---------|-------------------|
 | **Place New Order** (unpaid) | User clicks "Place Order" on new items | `payment_status: "unpaid"`, `payment_type: "postpaid"` |
 | **Place + Pay** (fresh order) | User clicks "Pay" on new items without placing first | `payment_status: "paid"`, `payment_type: "prepaid"`, includes `partial_payments` |
-| **Collect Bill** (existing order) | User clicks "Pay" on already-placed order | `payment_status: "paid"`, `payment_type: "postpaid"`, includes `order_id`, includes `cart` + full payload |
 
-### BLOCKED: Collect Bill Flow (BUG-214)
+> **Note:** Collect Bill (existing order) now uses a separate dedicated endpoint: `POST /api/v2/vendoremployee/order-bill-payment`. See dedicated section below.
 
-**Status:** BLOCKED — Awaiting backend clarification
+### RESOLVED: Collect Bill Flow (BUG-214)
 
-The "Collect Bill on existing order" flow (Flow 3) returns:
-```
-{"error": "Table is already occupied by a running order. Please choose another table or wait until it is free."}
-```
+**Status:** FIXED — Uses dedicated V2 endpoint
 
-**What we've tried:**
-1. Sending payload WITHOUT `cart` → `{"error": "Cart is required"}`
-2. Sending payload WITH `cart` + WITHOUT `order_id` → Creates a duplicate new order instead of marking existing as paid
-3. Sending payload WITH `cart` + WITH `order_id` + `payment_status: "paid"` + `payment_type: "postpaid"` → `"Table is already occupied by a running order"`
+The original `POST /api/v1/vendoremployee/order/place-order` could NOT handle postpaid collect bill (returned "Table is already occupied"). The correct endpoint is:
 
-**Current payload sent:**
-```json
-{
-  "order_id": "730461",
-  "user_id": "",
-  "restaurant_id": 475,
-  "table_id": "4259",
-  "order_type": "pos",
-  "cust_name": "",
-  "cust_mobile": "",
-  "payment_method": "cash",
-  "payment_status": "paid",
-  "payment_type": "postpaid",
-  "order_sub_total_amount": 149,
-  "order_sub_total_without_tax": 149,
-  "tax_amount": 7.46,
-  "gst_tax": 7.46,
-  "order_amount": 157,
-  "cart": [{"food_id": 116608, "quantity": 1, ...}],
-  ...
-}
-```
+**`POST /api/v2/vendoremployee/order-bill-payment`** (JSON, `application/json`)
 
-**Questions for backend team:**
-1. What is the correct payload structure to collect payment on an existing running order?
-2. Does the endpoint differentiate between "create new order" and "collect payment on existing" by `order_id` presence, or by another field?
-3. Is there a separate endpoint for collecting payment on existing orders?
-4. Should `payment_type` be `"prepaid"` instead of `"postpaid"` for collect bill?
+See dedicated "Collect Bill V2 Endpoint" section below for full payload documentation.
 
 **Content-Type:** `multipart/form-data`
 **Auth:** `Bearer <token>` in Authorization header
@@ -72,7 +40,6 @@ The "Collect Bill on existing order" flow (Flow 3) returns:
 - **Transform functions:** `/app/frontend/src/api/transforms/orderTransform.js`
   - `toAPI.placeOrder()` — Flow 1: Place New Order
   - `toAPI.placeOrderWithPayment()` — Flow 2: Place + Pay
-  - `toAPI.collectBillExisting()` — Flow 3: Collect Bill
 - **HTTP call:** `/app/frontend/src/components/order-entry/OrderEntry.jsx`
   - `handlePlaceOrder()` — wraps payload in `FormData`, posts to endpoint
   - `onPaymentComplete()` — wraps payment payload in `FormData`, posts to same endpoint
@@ -332,8 +299,8 @@ Each item in the `cart` array:
 | `food_details.tax_calc` | string | `"Exclusive"` | `tax.calculation`, `tax.isInclusive` | Tax calculation method |
 | `food_details.variations` | array | `[{name:"Size", values:[...]}]` | (not mapped) | **CATALOG** — all available variations, NOT selected. Do not use for display |
 | `food_details.add_ons` | array | `[{id, name, price, ...}]` | (not mapped) | **CATALOG** — all available addons, NOT selected. Do not use for display |
-| `variation` | array | `[]` | `variation` | **BUG-208: ALWAYS EMPTY.** Should contain selected variations. Backend doesn't persist |
-| `add_ons` | array | `[]` | `addOns` | **BUG-208: ALWAYS EMPTY.** Should contain selected addons. Backend doesn't persist |
+| `variation` | array | `[{name:"Size", values:[{label:"Large", optionPrice:"40"}]}]` | `variation` | Selected variations. Backend now returns correctly (BUG-208 FIXED) |
+| `add_ons` | array | `[{id:10730, name:"lemon pepper", price:15, quantity:1}]` | `addOns` | Selected addons. Backend now returns correctly (BUG-208 FIXED) |
 | `unit_price` | string | `"119.00"` | `unitPrice`, `price` | **Per-unit base price.** Does NOT include addon/variation costs. String format. **Canonical source for per-unit price** |
 | `price` | number | `476` (for qty=4) | (not used directly) | **TOTAL line price** = unit_price × quantity. `fromAPI.orderItem` normalizes `price` to `unit_price` to prevent double-multiplication |
 | `quantity` | number | `2` | `qty` | Quantity ordered |
@@ -475,6 +442,105 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 
 ---
 
+## Collect Bill V2 Endpoint (Existing Order Payment)
+
+**Endpoint:** `POST /api/v2/vendoremployee/order-bill-payment`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Collects payment on an existing placed order (postpaid → paid). Marks the order as paid, frees the table.
+
+### Request Payload
+```json
+{
+  "order_id": "730522",
+  "payment_mode": "cash",
+  "payment_amount": 190,
+  "payment_status": "paid",
+  "transaction_id": "",
+  "order_sub_total_amount": 190,
+  "order_sub_total_without_tax": 190,
+  "total_gst_tax_amount": 0,
+  "gst_tax": 0,
+  "vat_tax": 0,
+  "round_up": 0,
+  "service_tax": 0,
+  "service_gst_tax_amount": 0,
+  "tip_amount": 0,
+  "tip_tax_amount": 0,
+  "restaurant_discount_amount": 0,
+  "order_discount": 0,
+  "comunity_discount": 0,
+  "discount_value": 0
+}
+```
+
+### Field Reference
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | string | Existing order ID | `String(placedOrderId)` |
+| `payment_mode` | string | `"cash"`, `"card"`, `"upi"` | From CollectPaymentPanel selection |
+| `payment_amount` | number | Total payment amount | `orderFinancials.amount` or computed total |
+| `payment_status` | string | Always `"paid"` | Hardcoded |
+| `transaction_id` | string | Transaction ref for card/UPI, empty for cash | `paymentData.transactionId \|\| ""` |
+| `order_sub_total_amount` | number | Subtotal with tax | From `orderFinancials` or cart computation |
+| `order_sub_total_without_tax` | number | Subtotal before tax | From `orderFinancials` or cart computation |
+| `total_gst_tax_amount` | number | Total GST | Computed from cart items |
+| `gst_tax` | number | GST amount (same as total_gst_tax_amount) | Computed from cart items |
+| `vat_tax` | number | VAT amount | Computed from cart items |
+| `round_up` | number | Round-off amount | From cart total rounding |
+| `service_tax` | number | Service tax | Hardcoded `0` (not implemented) |
+| `service_gst_tax_amount` | number | GST on service tax | Hardcoded `0` (not implemented) |
+| `tip_amount` | number | Tip | `paymentData.tip \|\| 0` |
+| `tip_tax_amount` | number | Tax on tip | Hardcoded `0` |
+| `restaurant_discount_amount` | number | Restaurant discount | Hardcoded `0` (not implemented) |
+| `order_discount` | number | Order-level discount | Hardcoded `0` (not implemented) |
+| `comunity_discount` | number | Community discount (note: typo in API) | Hardcoded `0` |
+| `discount_value` | number | Discount value | Hardcoded `0` |
+
+### Success Response
+```json
+{"message": "Bill cleared via cash"}
+```
+
+### Socket Events After Collect Bill (in order)
+1. `update-order-status` with `f_order_status: 6` (paid) — on order channel `new_order_{restaurantId}`
+2. `update-table free` — on table channel `update_table_{restaurantId}`
+
+### Frontend Flow
+```
+CollectPaymentPanel → onPaymentComplete(paymentData):
+  1. setTableEngaged(tableId, true)              ← Lock table
+  2. await api.post(BILL_PAYMENT, payload)       ← JSON, not FormData
+  3. toast("Bill cleared via cash")
+  4. onClose() → redirect to Dashboard           ← Table shows engaged spinner
+
+socketHandlers.handleUpdateOrderStatus (status=6):
+  1. fetchOrderWithRetry(orderId)                ← GET single order
+  2. order.status === 'paid'
+  3. syncTableStatus(order, updateTableStatus)    → 'available'
+  4. removeOrder(orderId)                         ← Order removed from context
+  5. requestAnimationFrame × 2
+  6. setTableEngaged(tableId, false)              ← Release table
+```
+
+### Transform Function
+- **`toAPI.collectBillExisting()`** in `orderTransform.js`
+- Builds the flat JSON payload (no FormData wrapping needed)
+- Called from `OrderEntry.jsx` → `onPaymentComplete` handler
+
+### Key Differences from Place Order Endpoint
+| Aspect | Place Order (`/place-order`) | Collect Bill (`/order-bill-payment`) |
+|--------|------|------|
+| Content-Type | `multipart/form-data` | `application/json` |
+| Cart required | Yes (`cart` array) | No (order already placed) |
+| Creates new order | Yes | No (updates existing) |
+| `order_id` field | Optional (only for collect bill — broken) | Required |
+| Payment fields | `payment_method`, `payment_status`, `payment_type` | `payment_mode`, `payment_amount`, `payment_status` |
+
+---
+
 ## Known Bugs Affecting This Endpoint
 
 ### BUG-204 (P1) — `order_sub_total_without_tax` returns 0
@@ -487,24 +553,10 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 - **Was:** Place Order payload used wrong field names, wrong content-type, missing per-item financial fields
 - **Fix:** Rewrote `buildCartItem()` with correct field names (`add_on_ids`, `variations`, `food_amount`, etc.) and `multipart/form-data`
 
-### BUG-208 (P0 CRITICAL) — Socket returns empty `variation` and `add_ons`
-- **Status:** OPEN — Backend Team
-- **Impact:**
-  1. Addon names & quantities lost after placing
-  2. Variation names lost after placing
-  3. Per-item price shows base only (e.g., ₹119 instead of ₹194)
-  4. Collect Bill panel line item breakdown is incorrect
-  5. Only order-level `order_amount` is correct (used as workaround for Collect Bill total)
-- **Frontend sends correctly:**
-  ```json
-  {"add_on_ids": [10728], "add_on_qtys": [1], "addon_amount": 20}
-  {"variations": [{"label":"Large","optionPrice":"40"}], "variation_amount": 40}
-  ```
-- **Socket returns:**
-  ```json
-  {"add_ons": [], "variation": [], "price": 119}
-  ```
-- **Workaround:** Collect Bill button/panel total uses `orderFinancials.amount` from socket `order_amount`
+### BUG-208 (P0 CRITICAL) — Socket `variation` and `add_ons` — FIXED
+- **Status:** FIXED (backend now returns both fields)
+- **Resolution:** Backend now returns both `variation` and `add_ons` correctly in socket payload and GET API
+- **Frontend:** `fromAPI.orderItem` normalizes `price` to `unit_price`, PlacedItemRow + CollectPaymentPanel parse nested `variation[].values[].optionPrice`
 
 ---
 
