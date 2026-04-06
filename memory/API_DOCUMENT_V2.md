@@ -521,3 +521,114 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 | Member discounts | `discount_member_category_id/name` | Not implemented — always `0` / `null` |
 | Complementary items | `complementary_price`, `is_complementary` | Not implemented — always `0` / `"No"` |
 | Per-item discounts | `discount_amount` | Not implemented — always `"0.00"` |
+
+
+---
+
+## Cancel Item Endpoint
+
+**Endpoint:** `PUT /api/v1/vendoremployee/order/cancel-food-item`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Cancels a specific quantity of a single item from an existing order. Full item cancel = pass `cancel_qty` equal to item's total quantity.
+
+### Request Payload
+```json
+{
+  "order_id":      730481,
+  "order_food_id": 116608,
+  "item_id":       1900850,
+  "cancel_qty":    2,
+  "order_status":  "cancelled",
+  "reason_type":   5,
+  "reason":        "Customer changed mind",
+  "cancel_type":   "Pre-Serve"
+}
+```
+
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | number | Order ID | `effectiveTable.orderId` |
+| `order_food_id` | number | Food catalog ID (product ID) | `item.foodId` (from `food_details.id`) |
+| `item_id` | number | Order line item ID (order detail ID) | `item.id` (from `orderDetails[].id`) |
+| `cancel_qty` | number | Quantity to cancel (full cancel = item.qty) | User input from CancelFoodModal |
+| `order_status` | string | Always `"cancelled"` | Hardcoded |
+| `reason_type` | number | Cancellation reason ID | `reason.reasonId` from settings |
+| `reason` | string | Cancellation reason text | `reason.reasonText` from settings |
+| `cancel_type` | string | `"Pre-Serve"` (still cooking) or `"Post-Serve"` (already served) | Derived from `item.status` |
+
+### Transform
+- **Function:** `orderToAPI.cancelItem(currentTable, item, reason, cancelQty)`
+- **File:** `/app/frontend/src/api/transforms/orderTransform.js`
+
+### Socket Events After Cancel
+1. `update-table` — `free` (if full order cancel) or status unchanged (partial)
+2. `update-order-status` — status `3` (cancelled)
+
+### Frontend Flow (Socket-first, no optimistic updates)
+```
+OrderEntry.handleCancelFood:
+  1. await api.put(CANCEL_ITEM, payload)
+  2. Socket update-order-status arrives
+  3. Handler fetches GET single order
+  4. If all items cancelled → removeOrder + table available
+  5. If partial → updateOrder with fresh data
+```
+
+---
+
+## Cancel Full Order Endpoint
+
+**Endpoint:** `PUT /api/v2/vendoremployee/order-status-update`
+**Content-Type:** `application/json`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Cancels an entire order (all items). Table becomes available.
+
+### Request Payload
+```json
+{
+  "order_id":            730481,
+  "role_name":           "Manager",
+  "order_status":        "cancelled",
+  "cancellation_reason": "Customer left",
+  "cancellation_note":   "Customer left"
+}
+```
+
+| Field | Type | Description | Source in Code |
+|-------|------|-------------|----------------|
+| `order_id` | number | Order ID | `effectiveTable.orderId` or `placedOrderId` |
+| `role_name` | string | User's role name | `user.roleName` (e.g., "Manager") |
+| `order_status` | string | Always `"cancelled"` | Hardcoded |
+| `cancellation_reason` | string | Reason text | `reason.reasonText` from CancelOrderModal |
+| `cancellation_note` | string | Additional note | `reason.reasonNote` or falls back to `reasonText` |
+
+### Transform
+- **Function:** `orderToAPI.cancelOrder(orderId, roleName, reason)`
+- **File:** `/app/frontend/src/api/transforms/orderTransform.js`
+
+### Socket Events After Cancel (in order)
+1. `update-table free` (×2 due to StrictMode in dev) — table channel
+2. `update-order-status` with `f_order_status: 3` — order channel
+
+### Frontend Flow (Socket-first, no optimistic updates)
+```
+OrderEntry.handleCancelOrder / DashboardPage.handleCancelOrderConfirm:
+  1. setIsPlacingOrder(true)              ← Show loading overlay
+  2. await api.put(ORDER_STATUS_UPDATE)   ← Wait for backend
+  3. await waitForOrderRemoval(orderId)   ← Poll ordersRef until socket removes order
+  4. toast + redirect                     ← Only after socket confirms
+
+socketHandlers.handleUpdateOrderStatus (status=3):
+  1. fetchOrderWithRetry(orderId)         ← GET single order
+  2. Check: order.status === 'cancelled' OR all items cancelled
+  3. syncTableStatus → available
+  4. removeOrder(orderId)                 ← Triggers waitForOrderRemoval resolve
+```
+
+### KEY LEARNING: Backend GET API returns cancelled order with non-cancelled items
+When a full order is cancelled (status=3), the GET single order API still returns the order with individual `item.status` values that may NOT be `'cancelled'`. The order-level `f_order_status` IS `3` (cancelled), which transforms to `order.status === 'cancelled'`. The fix (BUG-215) checks order-level status in addition to item-level statuses.

@@ -557,3 +557,56 @@ When attempting to collect payment on an existing placed order (postpaid → pai
 - **Collect Bill flow is completely non-functional** for postpaid (dine-in) orders
 - Users cannot close out tables that have running orders
 - Only prepaid (Place+Pay) flow works currently
+
+
+## BUG-215: Full Order Cancel — Socket Handler Treated Cancelled Order as Partial Cancel
+
+**Status:** FIXED ✅
+**Priority:** P0
+**Reported:** Feb 2026
+**Fixed:** Feb 2026
+
+### Symptom
+After cancelling a full order, the table stayed "occupied" and the order was never removed. `waitForOrderRemoval` timed out after 5s. The loading overlay stayed visible indefinitely.
+
+### Console Evidence
+```
+[SocketHandler] update-order-status received: 730480, status: 3
+[SocketHandler] Fetching order 730480 (attempt 1)
+[SocketHandler] Fetched order 730480 successfully
+[OrderContext] updateOrder: Updating order 730480              ← WRONG: should remove, not update
+[TableContext] updateTableStatus: 5583 → occupied              ← WRONG: should be available
+[SocketHandler] update-order-status: Updated order 730480 (single item cancel)  ← Misidentified!
+[OrderContext] waitForOrderRemoval: timeout for 730480         ← Never removed
+```
+
+### Root Cause
+The `handleUpdateOrderStatus` handler (for status=3) fetched the order from the GET API and checked:
+```js
+const allItemsCancelled = !order.items?.length || 
+  order.items.every(item => item.status === 'cancelled');
+```
+But the backend's GET single order API returns a fully cancelled order with **individual items still showing non-cancelled statuses** (e.g., `preparing`, `ready`). Only the order-level `f_order_status` is `3` (cancelled). So `allItemsCancelled` was `false`, and the handler treated it as a partial cancel — calling `updateOrder` instead of `removeOrder`.
+
+### Fix Applied
+Added order-level status check:
+```js
+const allItemsCancelled = !order.items?.length || 
+  order.items.every(item => item.status === 'cancelled') ||
+  order.status === 'cancelled';  // order-level status from API
+```
+
+### Additional Fix: Removed Optimistic Cancel
+Previously, `handleCancelOrder` in `OrderEntry.jsx` and `DashboardPage.jsx` pre-emptively called `removeOrder` + `updateTableStatus` locally BEFORE the API call. This violated the socket-first principle. Replaced with:
+1. `await api.put(cancel)` — wait for backend
+2. `await waitForOrderRemoval(orderId)` — wait for socket to confirm
+3. Socket handler does the actual `removeOrder` + `updateTableStatus`
+
+### Files Changed
+- `socketHandlers.js` — Added `order.status === 'cancelled'` check
+- `OrderEntry.jsx` — Rewrote `handleCancelOrder` to socket-first pattern
+- `DashboardPage.jsx` — Rewrote `handleCancelOrderConfirm` to socket-first pattern
+- `OrderContext.jsx` — Added `ordersRef` + `waitForOrderRemoval(orderId, timeout)`
+
+### Backend Note
+The GET single order API should ideally mark individual item statuses as `cancelled` when the entire order is cancelled, for consistency.
