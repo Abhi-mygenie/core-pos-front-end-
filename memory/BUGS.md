@@ -28,6 +28,8 @@
 | 18 | BUG-221 | Merge Order - Source Table Locked | P0 | 🔄 Will be fixed by BUG-216 workaround removal |
 | 19 | BUG-222 | waitForTableEngaged timeout on Update Order | P1 | ✅ FIXED (order-engage) |
 | 20 | **BUG-223** | **All local locking must be removed** | **P0** | **❌ TODO** |
+| 21 | **BUG-224** | **Manual Bill: `gst_tax` always 0** | **P1** | **❌ OPEN** |
+| 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
 
 #### v2 Endpoint Payload Test (April 11, 2026)
 All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
@@ -922,3 +924,79 @@ Remove the blanket `free→engage` workaround in `handleUpdateTable` (`socketHan
 - Source table permanently stuck with spinner after every merge — unusable until page refresh
 - Same root cause as Shift Table (BUG-216) — both broken by the `free→engage` workaround
 - Blocks production use of merge/shift flows
+
+
+---
+
+## BUG-224: Manual Bill `gst_tax` Always 0
+
+**Priority:** P1
+**Status:** ❌ OPEN
+**Filed:** April 11, 2026
+
+### Symptom
+When manual bill is printed from TableCard or OrderCard, the payload sends `gst_tax: 0` regardless of actual tax on items.
+
+### Root Cause
+`buildBillPrintPayload()` in `orderTransform.js` computes GST from:
+```js
+parseFloat(item.gst_tax_amount || item.tax_amount || 0)
+```
+
+But `rawOrderDetails` items (from socket) **do NOT have `gst_tax_amount` or `tax_amount` fields**. These are computed fields that the socket doesn't return at item level.
+
+### Evidence
+- Place order payload sends `gst_tax: 43.65` (computed by frontend before sending)
+- Socket payload does NOT include `gst_tax` or `vat_tax` at order level
+- Socket `orderDetails` items do NOT include `gst_tax_amount` or `tax_amount`
+- What IS available per item: `food_details.tax` (percentage), `food_details.tax_type` ("GST"/"VAT"), `food_details.tax_calc` ("Exclusive"/"Inclusive"), `unit_price`, `quantity`, `total_add_on_price`
+
+### Fix
+Compute from available percentage + price data instead of reading pre-computed fields:
+```
+For each rawOrderDetails item:
+  taxable = (unit_price × quantity) + total_add_on_price
+  tax_percent = food_details.tax (e.g., 5)
+  
+  if Exclusive: item_tax = taxable × (tax_percent / 100)
+  if Inclusive: item_tax = taxable - (taxable / (1 + tax_percent / 100))
+  
+  Route to gst_tax or vat_tax sum based on food_details.tax_type
+```
+
+### Verification
+Compare computed `gst_tax` in bill payload against place order's `gst_tax` for the same order — should match exactly.
+
+### Files
+- `api/transforms/orderTransform.js` → `toAPI.buildBillPrintPayload()` lines 750-758
+
+---
+
+## BUG-225: Manual Bill `custName` Sends Label Instead of Real Name
+
+**Priority:** P2
+**Status:** ❌ OPEN
+**Filed:** April 11, 2026
+
+### Symptom
+Bill payload sends `custName: "Walk-In"` for walk-in orders. The backend/printer expects an empty string `""` when there's no real customer name. Labels like "Walk-In", "TA", "Del" are UI display labels, not customer names.
+
+### Root Cause
+`fromAPI.order()` maps customer to `customerLabel`:
+```js
+// If no customer name, defaults:
+// walk-in → "Walk-In", takeaway → "TA", delivery → "Del"
+```
+
+`buildBillPrintPayload` reads `order.customer` which is the label, not the raw name.
+
+### Fix
+Store raw customer name separately in `fromAPI.order()`:
+```js
+rawCustomerName: customer,  // actual name or empty string
+customer: customerLabel,     // display label (existing)
+```
+Then in `buildBillPrintPayload`: use `order.rawCustomerName || ''` for `custName`.
+
+### Files
+- `api/transforms/orderTransform.js` → `fromAPI.order()` line 165 + `buildBillPrintPayload()` line 796
