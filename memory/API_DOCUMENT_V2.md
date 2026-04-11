@@ -62,7 +62,7 @@
 
 ---
 
-## 13. Print KOT/Bill API (NEW - April 10, 2026)
+## 13. Print KOT/Bill API (Updated - April 11, 2026)
 
 **Endpoint:** `POST /api/v1/vendoremployee/order-temp-store`
 
@@ -70,19 +70,80 @@
 
 **Content-Type:** `application/json`
 
-### Payload
+### KOT Payload (simple)
 
 ```json
 {
-  "order_id": 730650,
-  "print_type": "kot"
+  "order_id": 730790,
+  "print_type": "kot",
+  "station_kot": "KDS"
 }
 ```
 
-| Field | Type | Values | Description |
+### Bill Payload (full — requires financial data + billFoodList)
+
+```json
+{
+  "order_id": 730790,
+  "restaurant_order_id": "002359",
+  "print_type": "bill",
+  "payment_amount": 287.5,
+  "grant_amount": 287.5,
+  "order_subtotal": 250.0,
+  "discount_amount": 0.0,
+  "coupon_code": "",
+  "loyalty_dicount_amount": 0.0,
+  "wallet_used_amount": 0.0,
+  "Date": "11/Apr/2026 12:33 PM",
+  "waiterName": "",
+  "tablename": "WC",
+  "custName": "",
+  "custPhone": "",
+  "custGSTName": "",
+  "custGST": "",
+  "billFoodList": [ /* raw orderDetails items with full food_details */ ],
+  "orderNote": "",
+  "serviceChargeAmount": 25.0,
+  "roomRemainingPay": 0.0,
+  "roomAdvancePay": 0.0,
+  "roomGst": 0,
+  "deliveryCustName": "",
+  "deliveryAddressType": "",
+  "deliveryCustAddress": "",
+  "deliveryCustPincode": "",
+  "deliveryCustPhone": "",
+  "Tip": 0.0,
+  "station_kot": "",
+  "order_type": "dinein",
+  "gst_tax": 12.5,
+  "vat_tax": 0.0,
+  "delivery_charge": 0.0
+}
+```
+
+### Bill Payload Field Reference
+
+| Field | Type | Source | Description |
 |-------|------|--------|-------------|
-| `order_id` | number | Order ID | The order to print |
-| `print_type` | string | `"kot"` \| `"bill"` | Type of print job |
+| `order_id` | number | `order.orderId` | Order ID |
+| `restaurant_order_id` | string | `order.orderNumber` | Restaurant-side order ID |
+| `print_type` | string | `"bill"` | Always "bill" |
+| `payment_amount` | number | `order.amount` | Total payment amount |
+| `grant_amount` | number | `order.amount` | Same as payment_amount |
+| `order_subtotal` | number | `order.subtotalBeforeTax` | Subtotal before tax |
+| `Date` | string | Formatted `order.createdAt` | Format: `DD/MMM/YYYY HH:MM AM/PM` |
+| `waiterName` | string | `order.waiter` | Staff who punched order |
+| `tablename` | string | Derived | `WC` (walk-in), `TA` (takeaway), `Del` (delivery), or table number |
+| `custName` | string | `order.customer` | Customer name |
+| `custPhone` | string | `order.phone` | Customer phone |
+| `billFoodList` | array | `order.rawOrderDetails` | Raw orderDetails with full `food_details` |
+| `gst_tax` | number | Computed | Sum of `gst_tax_amount` from items where `food_details.tax_type === 'GST'` |
+| `vat_tax` | number | Computed | Sum of `gst_tax_amount` from items where `food_details.tax_type === 'VAT'` |
+| `station_kot` | string | `""` | Always empty string for bill |
+| `order_type` | string | `order.rawOrderType` | `dinein`, `takeaway`, `delivery` |
+| `Tip` | number | `order.tipAmount` | Tip amount |
+| `serviceChargeAmount` | number | `order.serviceTax` | Service charge |
+| `delivery_charge` | number | `order.deliveryCharge` | Delivery charge |
 
 ### Response
 
@@ -94,17 +155,19 @@
 
 ### Frontend Usage
 
-| Location | Button | print_type |
-|----------|--------|------------|
-| TableCard / OrderCard | 🖨️ Printer icon | `"kot"` |
-| TableCard / OrderCard | Bill (green button) | `"bill"` |
-| OrderEntry Cart Panel | Re-Print | `"kot"` |
+| Location | Button | print_type | Payload |
+|----------|--------|------------|---------|
+| TableCard / OrderCard | Printer icon | `"kot"` | Simple (order_id + station_kot) |
+| TableCard / OrderCard | Bill (green button) | `"bill"` | Full (financial + billFoodList) |
+| OrderEntry Cart Panel | Re-Print | `"kot"` | Simple (order_id + station_kot) |
 
-### Notes
-- This API sends the print request to backend
-- Backend emits socket event to printer agent
-- Actual print confirmation is not returned (Phase 2 feature)
-- Frontend shows toast: "KOT request sent" / "Bill request sent"
+### Implementation Notes
+- **KOT:** `printOrder(orderId, 'kot', stationKot)` — simple payload
+- **Bill:** `printOrder(orderId, 'bill', null, orderData)` — full payload built via `toAPI.buildBillPrintPayload(order)`
+- Bill payload requires `rawOrderDetails` stored in OrderContext (preserved from `fromAPI.order()`)
+- `gst_tax` and `vat_tax` computed at send time from item-level `gst_tax_amount` grouped by `food_details.tax_type`
+- TableCard gets order via `useOrders().getOrderById(table.orderId)`
+- OrderCard passes `order` prop directly
 
 ---
 

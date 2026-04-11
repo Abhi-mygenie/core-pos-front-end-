@@ -1,5 +1,40 @@
 # Changelog
 
+## Apr 11, 2026 — Session 11 (Manual Bill Payload + Firebase SW Fix + Sound Fix)
+
+### Manual Bill Print — Full Payload (COMPLETE ✅)
+- **Problem:** Manual bill (`order-temp-store` API) was sending only `{order_id, print_type: "bill"}` — missing financial data, billFoodList, customer info, GST/VAT
+- **Fix:** Bill now sends full payload matching backend expectation: `billFoodList` (raw orderDetails with `food_details`), computed `gst_tax`/`vat_tax`, `payment_amount`, `order_subtotal`, `Date`, `waiterName`, `tablename`, `custName`, `custPhone`, `order_type`, `Tip`, `serviceChargeAmount`, `delivery_charge`, etc.
+- **KOT unchanged** — still sends simple `{order_id, print_type: "kot", station_kot: "KDS"}`
+- **`station_kot`** now always included: `"KDS"` for KOT, `""` for Bill
+
+#### Files Modified
+- `api/transforms/orderTransform.js` — Added `rawOrderDetails` to `fromAPI.order()` return; added `toAPI.buildBillPrintPayload(order)` that builds full bill payload with computed GST/VAT
+- `api/services/orderService.js` — `printOrder()` now accepts optional 4th param `orderData`; for bill builds full payload, for KOT keeps simple payload
+- `components/cards/TableCard.jsx` — Added `useOrders` import, gets order via `getOrderById(table.orderId)`, passes to `printOrder`
+- `components/cards/OrderCard.jsx` — Passes existing `order` prop to `printOrder` for bill
+
+#### Bill Payload Key Mapping
+| Payload Field | Source |
+|---------------|--------|
+| `billFoodList` | `order.rawOrderDetails` (preserved raw from API) |
+| `gst_tax` | Computed: sum of `gst_tax_amount` where `food_details.tax_type === 'GST'` |
+| `vat_tax` | Computed: sum of `gst_tax_amount` where `food_details.tax_type === 'VAT'` |
+| `tablename` | `WC` (walk-in), `TA` (takeaway), `Del` (delivery), or `tableNumber` |
+| `Date` | Formatted from `createdAt` as `DD/MMM/YYYY HH:MM AM/PM` |
+
+### Firebase Service Worker — Activation Wait Fix (COMPLETE ✅)
+- **Problem:** `getToken()` called immediately after `navigator.serviceWorker.register()` — SW still in `installing` state → `PushManager.subscribe()` fails with "no active Service Worker"
+- **Fix:** Added wait for SW to reach `activated` state before calling `getToken()`
+- **File Modified:** `config/firebase.js`
+
+### Notification Sound — Second Play Fix (IDENTIFIED)
+- **Problem:** `SoundManager.play()` uses `cloneNode()` on cached Audio elements — works first time, fails on subsequent plays due to stale media state
+- **Fix approach:** Replace `cloneNode()` with `new Audio(path)` — browser HTTP-caches the `.wav` files so no performance impact
+- **File:** `utils/soundManager.js` — NOT YET IMPLEMENTED (parked)
+
+---
+
 ## Apr 11, 2026 — Session 10 (Socket Event Audit & Local Locking Analysis)
 
 ### Socket Event Audit — COMPLETE ✅

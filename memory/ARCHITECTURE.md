@@ -645,6 +645,7 @@ export const fromAPI = {
     tableId: api.table_id || 0,
     amount: parseFloat(api.order_amount) || 0,
     items: (api.orderDetails || []).map(fromAPI.orderItem),
+    rawOrderDetails: api.orderDetails || [],  // Preserved for bill printing
     // ... more mappings
   }),
 
@@ -670,13 +671,27 @@ export const toAPI = {
     cart: data.items.map(buildCartItem),
     // ... more fields
   }),
+
+  // Build full bill print payload (order-temp-store API)
+  buildBillPrintPayload: (order) => ({
+    order_id: order.orderId,
+    restaurant_order_id: order.orderNumber,
+    print_type: 'bill',
+    payment_amount: order.amount,
+    order_subtotal: order.subtotalBeforeTax,
+    billFoodList: order.rawOrderDetails,  // Raw items with food_details
+    gst_tax: /* computed from items */,
+    vat_tax: /* computed from items */,
+    station_kot: '',
+    // ... full financial + customer fields (see API_DOCUMENT_V2.md §13)
+  }),
 };
 ```
 
 ### 8.3 Transform Files Summary
 | File | Direction | Key Functions |
 |------|-----------|---------------|
-| `orderTransform.js` | Both | `fromAPI.order`, `toAPI.placeOrder`, `toAPI.updateOrder` |
+| `orderTransform.js` | Both | `fromAPI.order`, `toAPI.placeOrder`, `toAPI.updateOrder`, `toAPI.buildBillPrintPayload` |
 | `tableTransform.js` | Both | `fromAPI.table`, `toAPI.shiftTable`, `toAPI.mergeTable` |
 | `productTransform.js` | fromAPI | `fromAPI.product`, `fromAPI.productList` |
 | `categoryTransform.js` | fromAPI | `fromAPI.category`, `fromAPI.categoryList` |

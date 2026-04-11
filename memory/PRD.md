@@ -34,13 +34,14 @@ REACT_APP_FIREBASE_VAPID_KEY=<in .env>
 1. **Login + Firebase FCM** - Login page with FCM token sent in payload, push notification support
 2. **Dashboard Dual-View** - Channel View (by channel) and Status View (by status) with filter swap
 3. **Order Entry** - Place, Update, Cancel (full/partial), Collect Bill, Split Bill
-4. **KOT & Bill Manual Printing** - Print KOT/Bill via API with station picker for multi-station
+4. **KOT & Bill Manual Printing** - KOT: simple payload with station_kot. Bill: full payload with billFoodList, financials, computed gst/vat
 5. **Socket-First Architecture** - New Order and Update Order use socket-first (v2 API payloads)
 6. **Status Configuration Page** - Enable/disable statuses visible on dashboard
 7. **Order Timeline** - Dot visualization showing Placed -> Ready -> Served with durations
 8. **Header UX** - Labeled dropdowns, filter pills, compact layout
 9. **Sidebar Toggles** - View (Table/Order) and Group (Channel/Status) toggles
 10. **Auto Print Checkboxes** - KOT/Bill checkboxes in cart panel
+11. **Firebase SW Activation Wait** - Service Worker waits for `active` state before `getToken()` to prevent PushManager subscription failure
 
 ### Socket-First Migration Status
 | Flow | Status |
@@ -100,6 +101,21 @@ REACT_APP_FIREBASE_VAPID_KEY=<in .env>
 #### Fix `handleTableClick` Type Mismatch (GAP 4)
 - String vs Number comparison prevents engaged table click detection
 
+### P1.5 - Identified, Parked
+
+#### Auto Bill Print (Gap Analysis Done — PARKED)
+- `autoBill` setting loaded from API and shown in checkbox UI, but never wired to any action
+- Missing: `print_bill` flag in `collectBillExisting` and `placeOrderWithPayment` payloads
+- Missing: `printOrder(orderId, 'bill', null, order)` call after successful payment
+- Missing: `KotBillCheckboxes` bill checkbox state not consumed by any handler
+- **Fix options:** Backend-driven (send flag in payload), Frontend-driven (call printOrder after payment), or both
+- **Parked** — will implement when ready
+
+#### Notification Sound — Second Play Fix (PARKED)
+- `soundManager.js` uses `cloneNode()` on cached Audio — works first time, fails on subsequent
+- Fix: replace `cloneNode()` with `new Audio(path)` 
+- **Parked** — will implement when ready
+
 ### P2 - Future/Backlog
 - Drag-to-Resize columns
 - Wire `onMergeOrder`/`onTableShift` in Channel Layout
@@ -111,8 +127,9 @@ REACT_APP_FIREBASE_VAPID_KEY=<in .env>
 - Bill collection during Preparing stage (awaiting product decision)
 
 ## Test Credentials
-- Email: `owner@pav2.com`
-- Password: `Qplazm@10`
+- Email: `owner@pav2.com` / Password: `Qplazm@10`
+- Email: `owner@18march` / Password: `Qplazm@10` (Restaurant 478)
 
 ## Session Log
 - **Jan 2026**: Pulled `10-april-gyan-` branch, built and ran application, summarized pending work
+- **Apr 11, 2026**: Manual bill full payload, Firebase SW fix, notification sound analysis, auto bill gap analysis

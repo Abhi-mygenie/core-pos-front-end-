@@ -2,6 +2,19 @@
 
 ## Completed ✅
 
+### Session 11 — Manual Bill Payload + Firebase SW Fix (April 11, 2026) ✅
+
+#### Manual Bill Print Full Payload ✅
+- Bill now sends complete payload to `order-temp-store`: billFoodList, financials, GST/VAT, customer info
+- KOT payload unchanged (simple: order_id + station_kot)
+- `station_kot` always included: actual value for KOT, empty string for Bill
+- Files: `orderTransform.js`, `orderService.js`, `TableCard.jsx`, `OrderCard.jsx`
+
+#### Firebase Service Worker Activation Wait ✅
+- Fixed `getToken()` failing with "no active Service Worker" on first visit
+- Added SW activation wait between `register()` and `getToken()`
+- File: `config/firebase.js`
+
 ### Session 6 — Header UX & Layout Settings (April 9, 2026) ✅
 
 #### Filter Pills Light Tint Style ✅
