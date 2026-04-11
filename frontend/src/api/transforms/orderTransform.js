@@ -231,6 +231,9 @@ export const fromAPI = {
           transferredAt: item.collect_Bill || '',
         }));
       })(),
+
+      // Raw orderDetails preserved for bill printing (order-temp-store API)
+      rawOrderDetails: api.orderDetails || [],
     };
   },
 
@@ -732,6 +735,87 @@ export const toAPI = {
     role_name: roleName,
     order_status: status,
   }),
+
+  // ==========================================================================
+  // Manual Bill Print — full payload for order-temp-store API
+  // ==========================================================================
+  buildBillPrintPayload: (order) => {
+    const rawDetails = order.rawOrderDetails || [];
+
+    // Filter out system marker items
+    const billFoodList = rawDetails.filter(d =>
+      (d.food_details?.name || '').toLowerCase() !== 'check in'
+    );
+
+    // Compute GST and VAT totals from item-level tax
+    let gst_tax = 0, vat_tax = 0;
+    billFoodList.forEach(item => {
+      const taxType = (item.food_details?.tax_type || 'GST').toUpperCase();
+      const taxAmt = parseFloat(item.gst_tax_amount || item.tax_amount || 0);
+      if (taxType === 'VAT') vat_tax += taxAmt;
+      else gst_tax += taxAmt;
+    });
+    gst_tax = Math.round(gst_tax * 100) / 100;
+    vat_tax = Math.round(vat_tax * 100) / 100;
+
+    // Format date as DD/MMM/YYYY HH:MM AM/PM
+    const formatBillDate = (dateStr) => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      let hours = d.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const mins = String(d.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${mins} ${ampm}`;
+    };
+
+    // Derive table name label
+    const tablename = order.isWalkIn ? 'WC'
+      : order.orderType === 'takeAway' ? 'TA'
+      : order.orderType === 'delivery' ? 'Del'
+      : order.tableNumber || '';
+
+    return {
+      order_id: order.orderId,
+      restaurant_order_id: order.orderNumber || '',
+      print_type: 'bill',
+      payment_amount: order.amount || 0,
+      grant_amount: order.amount || 0,
+      order_subtotal: order.subtotalBeforeTax || order.subtotalAmount || 0,
+      discount_amount: 0,
+      coupon_code: '',
+      loyalty_dicount_amount: 0,
+      wallet_used_amount: 0,
+      Date: formatBillDate(order.createdAt),
+      waiterName: order.waiter || '',
+      tablename,
+      custName: order.customer || '',
+      custPhone: order.phone || '',
+      custGSTName: '',
+      custGST: '',
+      billFoodList,
+      orderNote: order.orderNote || '',
+      serviceChargeAmount: order.serviceTax || 0,
+      roomRemainingPay: 0,
+      roomAdvancePay: 0,
+      roomGst: 0,
+      deliveryCustName: order.orderType === 'delivery' ? (order.customer || '') : '',
+      deliveryAddressType: '',
+      deliveryCustAddress: order.orderType === 'delivery' ? (order.deliveryAddress?.formatted || order.deliveryAddress?.address || '') : '',
+      deliveryCustPincode: '',
+      deliveryCustPhone: order.orderType === 'delivery' ? (order.phone || '') : '',
+      Tip: order.tipAmount || 0,
+      station_kot: '',
+      order_type: order.rawOrderType || 'dinein',
+      gst_tax,
+      vat_tax,
+      delivery_charge: order.deliveryCharge || 0,
+    };
+  },
 };
 
 // =============================================================================

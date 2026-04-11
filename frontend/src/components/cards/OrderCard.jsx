@@ -113,7 +113,7 @@ const OrderCard = ({
     
     setIsPrintingBill(true);
     try {
-      await printOrder(orderId, 'bill');
+      await printOrder(orderId, 'bill', null, order);
       toast({ title: "Bill request sent", description: `Order #${orderId}` });
     } catch (error) {
       console.error('[OrderCard] Bill print error:', error);
