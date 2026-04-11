@@ -70,6 +70,18 @@ export const requestFCMToken = async () => {
     );
     console.log('[Firebase] Service Worker registered');
 
+    // Wait for SW to become active before requesting token
+    if (!registration.active) {
+      await new Promise((resolve) => {
+        const sw = registration.installing || registration.waiting;
+        if (!sw) { resolve(); return; }
+        sw.addEventListener('statechange', (e) => {
+          if (e.target.state === 'activated') resolve();
+        });
+      });
+      console.log('[Firebase] Service Worker now active');
+    }
+
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: registration,
