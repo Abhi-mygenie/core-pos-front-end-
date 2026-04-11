@@ -97,10 +97,8 @@ export const printOrder = async (orderId, printType, stationKot = null) => {
     print_type: printType,
   };
   
-  // Add station_kot for KOT print type
-  if (printType === 'kot' && stationKot) {
-    payload.station_kot = stationKot;
-  }
+  // KOT: send actual station value; Bill: send empty string
+  payload.station_kot = (printType === 'kot' && stationKot) ? stationKot : '';
   
   console.log('[PrintOrder] payload:', payload);
   const response = await api.post(API_ENDPOINTS.PRINT_ORDER, payload);
