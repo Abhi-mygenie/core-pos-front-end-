@@ -57,6 +57,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   const orderData = mockOrderItems[table.id] || { waiter: "", items: [] };
   const { toast } = useToast();
   const { getProductById } = useMenu();
+  const { getOrderById } = useOrders();
   
   // Loading states for print buttons
   const [isPrintingKot, setIsPrintingKot] = useState(false);
