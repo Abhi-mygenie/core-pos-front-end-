@@ -33,6 +33,7 @@
 | 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
 | 24 | **BUG-227** | **Order-level Ready/Serve does not update item-level `food_status`** | **P0** | **❌ OPEN (Backend — Critical)** |
 | 25 | **BUG-228** | **`update-order-target` not sent when source is walk-in in merge** | **P0** | **❌ OPEN (Backend — Critical)** |
+| 26 | **BUG-229** | **Confirm Order (order-status-update with "paid") — `$orderstatus` undefined** | **P0** | **❌ OPEN (Backend — Critical)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 
@@ -166,6 +167,44 @@ When merge API is called with walk-in source merging INTO a table order, backend
 **API endpoint:** `POST /api/v2/vendoremployee/order/transfer-order`
 **Socket events:** `update-order-target` + `update-order-source` on `new_order_{restaurantId}` channel
 
+
+---
+
+### BUG-229: Confirm Order — `$orderstatus` Undefined in Backend (Backend — CRITICAL)
+
+**Status:** ❌ OPEN — Backend Team
+**Priority:** P0 — Critical (blocks order confirmation flow)
+**Reported:** April 13, 2026
+
+**Problem:** When calling `PUT /api/v2/vendoremployee/order/order-status-update` with `order_status: "paid"` to confirm a YTC order, the backend throws an `ErrorException: Undefined variable $orderstatus`.
+
+**Request payload:**
+```json
+{
+    "order_id": "730927",
+    "role_name": "Owner",
+    "order_status": "paid"
+}
+```
+
+**Backend response:**
+```json
+{
+    "message": "Undefined variable $orderstatus",
+    "exception": "ErrorException",
+    "file": "/var/www/html/app/Http/Controllers/Api/V2/Vendoremployee/OrderController.php",
+    "line": 3643
+}
+```
+
+**Root cause:** Likely a typo in `OrderController.php` line 3643 — `$orderstatus` vs `$orderStatus` or `$order_status`.
+
+**Impact:** Order confirmation from YTC tab is completely broken. Cannot move orders from YTC → Preparing.
+
+**Frontend status:** Frontend sends correct payload. Zero frontend change needed — once backend fixes the variable reference, it will work.
+
+**API endpoint:** `PUT /api/v2/vendoremployee/order/order-status-update`
+**Socket events expected (after fix):** `order-engage` + `update-order-paid` (with f_order_status=1, preparing)
 #### v2 Endpoint Payload Test (April 11, 2026)
 All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
 
