@@ -125,6 +125,7 @@ const DashboardPage = () => {
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
     orderItemsByTableId, getOrderByTableId, removeOrder, waitForOrderRemoval,
+    isOrderEngaged,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged, setTableEngaged } = useTables();
@@ -905,12 +906,12 @@ const DashboardPage = () => {
       setOrderEntryTable(null);
       return;
     }
-    // Block clicks on engaged tables (update-order in progress)
-    if (isTableEngaged(tableEntry.id)) {
-      console.log(`[Dashboard] Blocked click on engaged table ${tableEntry.id}`);
+    // Block clicks on engaged tables/orders (update in progress)
+    if (isTableEngaged(tableEntry.id) || isOrderEngaged(tableEntry.orderId)) {
+      console.log(`[Dashboard] Blocked click on engaged table/order ${tableEntry.id}`);
       return;
     }
-    console.log(`[Dashboard] Table click allowed: ${tableEntry.id}, engaged check: ${isTableEngaged(tableEntry.id)}, type: ${typeof tableEntry.id}`);
+    console.log(`[Dashboard] Table click allowed: ${tableEntry.id}, tableEngaged: ${isTableEngaged(tableEntry.id)}, orderEngaged: ${isOrderEngaged(tableEntry.orderId)}`);
     // Step 8: Available room → show CheckIn modal instead of OrderEntry
     if (tableEntry.orderType === 'room' && tableEntry.status === 'available') {
       setCheckInRoom(tableEntry);
@@ -968,39 +969,27 @@ const DashboardPage = () => {
   const handleMarkReady = useCallback(async (tableEntry) => {
     if (!tableEntry?.orderId) return;
     
-    const tableId = Number(tableEntry.tableId);
-    
     try {
-      // Lock table before API call
-      if (tableId) setTableEngaged(tableId, true);
-      
+      // No local table engage — order-engage socket handles locking
       await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'ready');
-      // Socket handler will release lock via update-order-status event
+      // Socket handler will release lock via update-order-paid event
     } catch (error) {
-      // Release lock on error
-      if (tableId) setTableEngaged(tableId, false);
       console.error('[handleMarkReady] Error:', error);
     }
-  }, [user?.roleName, setTableEngaged]);
+  }, [user?.roleName]);
 
   // Handler for marking order as served
   const handleMarkServed = useCallback(async (tableEntry) => {
     if (!tableEntry?.orderId) return;
     
-    const tableId = Number(tableEntry.tableId);
-    
     try {
-      // Lock table before API call
-      if (tableId) setTableEngaged(tableId, true);
-      
+      // No local table engage — order-engage socket handles locking
       await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'serve');
-      // Socket handler will release lock via update-order-status event
+      // Socket handler will release lock via update-order-paid event
     } catch (error) {
-      // Release lock on error
-      if (tableId) setTableEngaged(tableId, false);
       console.error('[handleMarkServed] Error:', error);
     }
-  }, [user?.roleName, setTableEngaged]);
+  }, [user?.roleName]);
 
   // Handler for item-level status change (Ready/Serve per item) from OrderCard
   const handleItemStatusChange = useCallback(async (order, item, newStatus) => {
@@ -1145,6 +1134,7 @@ const DashboardPage = () => {
                 snoozedOrders={snoozedOrders}
                 currencySymbol={currencySymbol}
                 isTableEngaged={isTableEngaged}
+                isOrderEngaged={isOrderEngaged}
                 searchQuery={searchQuery}
                 matchingIds={matchingTableIds}
                 onHideColumn={(columnId) => {
@@ -1215,7 +1205,7 @@ const DashboardPage = () => {
                         isSnoozed={snoozedOrders?.has(item.id)}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
-                        isEngaged={isTableEngaged(item.tableId)}
+                        isEngaged={isOrderEngaged(orderItemsByTableId[item.tableId]?.orderId) || isTableEngaged(item.tableId)}
                         orderItems={orderItemsByTableId[item.tableId]}
                       />
                     ))}
@@ -1261,7 +1251,7 @@ const DashboardPage = () => {
                           orderType="dineIn"
                           tableLabel={table.label}
                           isSnoozed={snoozedOrders.has(table.id)}
-                          isEngaged={isTableEngaged(table.tableId)}
+                          isEngaged={isOrderEngaged(order.orderId) || isTableEngaged(table.tableId)}
                           canCancelOrder={hasPermission('order_cancel')}
                           canMergeOrder={hasPermission('merge_table')}
                           canShiftTable={hasPermission('transfer_table')}
@@ -1292,7 +1282,7 @@ const DashboardPage = () => {
                         order={order}
                         orderType="delivery"
                         isSnoozed={snoozedOrders.has(String(order.orderId))}
-                        isEngaged={false}
+                        isEngaged={isOrderEngaged(order.orderId)}
                         canCancelOrder={hasPermission('order_cancel')}
                         canMergeOrder={false}
                         canShiftTable={false}
@@ -1319,7 +1309,7 @@ const DashboardPage = () => {
                         order={order}
                         orderType="takeAway"
                         isSnoozed={snoozedOrders.has(String(order.orderId))}
-                        isEngaged={false}
+                        isEngaged={isOrderEngaged(order.orderId)}
                         canCancelOrder={hasPermission('order_cancel')}
                         canMergeOrder={false}
                         canShiftTable={false}

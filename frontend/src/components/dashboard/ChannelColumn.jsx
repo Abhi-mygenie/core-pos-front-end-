@@ -47,6 +47,7 @@ const ChannelColumn = ({
   snoozedOrders,
   currencySymbol,
   isTableEngaged,
+  isOrderEngaged,
   searchQuery,
   matchingIds,
   onHideColumn,      // Handler to hide this column
@@ -168,7 +169,7 @@ const ChannelColumn = ({
                     isSnoozed={snoozedOrders?.has(item.id)}
                     onToggleSnooze={onToggleSnooze}
                     currencySymbol={currencySymbol}
-                    isEngaged={isTableEngaged?.(item.tableId)}
+                    isEngaged={isOrderEngaged?.(item.orderId) || isTableEngaged?.(item.tableId)}
                   />
                 );
               }
@@ -182,7 +183,7 @@ const ChannelColumn = ({
                   orderType={item.orderType || channel.id}
                   tableLabel={item.label || item.tableNumber}
                   isSnoozed={snoozedOrders?.has(item.id)}
-                  isEngaged={isTableEngaged?.(item.tableId)}
+                  isEngaged={isOrderEngaged?.(order.orderId) || isTableEngaged?.(item.tableId)}
                   canCancelOrder={hasPermission?.('order_cancel')}
                   canMergeOrder={channel.id === 'dineIn' && hasPermission?.('merge_table')}
                   canShiftTable={channel.id === 'dineIn' && hasPermission?.('transfer_table')}

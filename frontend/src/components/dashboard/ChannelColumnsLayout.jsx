@@ -69,6 +69,7 @@ const ChannelColumnsLayout = ({
   snoozedOrders,
   currencySymbol,
   isTableEngaged,
+  isOrderEngaged,
   searchQuery,
   matchingIds,
   onHideColumn,      // Handler to hide a column
@@ -188,6 +189,7 @@ const ChannelColumnsLayout = ({
           snoozedOrders={snoozedOrders}
           currencySymbol={currencySymbol}
           isTableEngaged={isTableEngaged}
+          isOrderEngaged={isOrderEngaged}
           searchQuery={searchQuery}
           matchingIds={matchingIds}
           onHideColumn={onHideColumn}
