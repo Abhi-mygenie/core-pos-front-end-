@@ -843,26 +843,16 @@ const DashboardPage = () => {
   // --- Confirm scan order (green tick) ---
   const handleConfirmOrder = useCallback(async (tableEntry) => {
     const order = getOrderDataForEntry(tableEntry);
-    if (!order || !order.items) return;
-
-    const itemsToConfirm = order.items.filter(i => i.status !== 'cancelled');
-    if (itemsToConfirm.length === 0) return;
+    if (!order?.orderId) return;
 
     try {
-      for (const item of itemsToConfirm) {
-        const payload = {
-          order_id: order.orderId,
-          order_food_id: item.foodId,
-          item_id: item.id,
-          order_status: 'preparing',
-          cancel_type: null,
-        };
-        await api.put(API_ENDPOINTS.FOOD_STATUS_UPDATE, payload);
-      }
+      // Single API call to confirm order (YTC → Preparing)
+      await updateOrderStatus(order.orderId, user?.roleName || 'Manager', 'preparing');
+      // Socket handler will process order-engage + update-order-paid
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);
     }
-  }, [getOrderDataForEntry]);
+  }, [getOrderDataForEntry, user?.roleName]);
 
   // --- Cancel scan order (red cross) → open modal ---
   const handleCancelOrder = useCallback((tableEntry) => {
