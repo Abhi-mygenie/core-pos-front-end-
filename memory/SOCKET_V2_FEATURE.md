@@ -1,444 +1,886 @@
-# Socket v2 Architecture — Feature Spec & Test Plan
+# Socket v2 Architecture — Complete Implementation Spec
 
 **Created:** April 13, 2026
 **Last Updated:** April 13, 2026
-**Status:** TESTING COMPLETE — Ready for implementation + backend changes for remaining 3 flows
+**Status:** APPROVED — Ready for implementation
+**Blocker:** `food_details: null` in socket payloads (backend fix pending, frontend can proceed)
 
 ---
 
-## 1. Summary
+## 1. Executive Summary
 
-### What We Verified
-- Tested ALL 10 order mutation flows via console logs
-- 8 flows are v2 CLEAN (lock → payload → process → release, zero GET API)
-- 3 flows remain v1 DIRTY (Cancel Order, Mark Ready, Mark Served) — all share one endpoint `order-status-update`
-- Cancel Food Item upgraded to v2 during testing — now CLEAN
-- 3 NEW socket events discovered and verified: `update-order-target`, `update-order-source`, `update-order-paid`
-- `update-table free` is a v1 artifact — no v2 flow sends it — safe to ignore entirely
-- BUG-216 workaround can be removed — cancel food v2 doesn't trigger it
+### What
+Upgrade the POS frontend socket event handling to support v2 backend socket events. All 10 order mutation flows now send `order-engage` lock + data events with full payloads. Frontend needs to handle 3 NEW event names and refactor locking/wait logic.
 
-### Architecture Principle
-Every v2 flow follows one pattern:
+### Why
+- 3 new socket events (`update-order-target`, `update-order-source`, `update-order-paid`) are silently dropped — Switch Table, Merge, Transfer Food, Collect Bill, Mark Ready/Served, Cancel Order all broken on v2
+- BUG-216 workaround (`free→engage`) causes permanently stuck tables
+- GET API calls (1-3 sec each) can be eliminated — socket payloads have complete data
+
+### Scope
+- 5 files changed, 0 new files
+- No backend changes needed (already done)
+- No UI/visual changes — purely socket handler + locking logic
+
+---
+
+## 2. Background — How Socket Events Work
+
+### 3 Socket Channels
 ```
-1. Lock (order-engage OR update-table engage)
-2. Data event WITH complete payload
-3. Frontend transforms payload → context update → derive table status
-4. Release lock
-5. Zero GET API calls
-6. No update-table free
+Channel: new_order_{restaurantId}     ← All order data events
+Channel: update_table_{restaurantId}  ← Table engage/free events
+Channel: order-engage_{restaurantId}  ← Order-level lock events
+```
+
+### Message Format (order channel)
+```javascript
+// All data events follow this structure:
+[eventName, orderId, restaurantId, f_order_status, { orders: [orderObject] }]
+
+// Examples:
+['new-order',           730881, 478, 1, { orders: [{...}] }]
+['update-order',        730865, 478, 7, { orders: [{...}] }]
+['update-order-target', 730883, 478, 1, { orders: [{...}] }]
+['update-order-source', 730884, 478, 3, { orders: [{...}] }]
+['update-order-paid',   730880, 478, 5, { orders: [{...}] }]
+```
+
+### Message Format (table channel)
+```javascript
+['update-table', tableId, restaurantId, 'engage'|'free']
+```
+
+### Message Format (order-engage channel — DIFFERENT: no event name at index 0)
+```javascript
+[orderId, restaurantOrderId, restaurantId, 'engage'|'free']
+```
+
+### Transform Chain
+```
+Socket payload → orderFromAPI.order(apiOrder) → transformed order object
+                                                  ├── orderId
+                                                  ├── tableId
+                                                  ├── status (from f_order_status → F_ORDER_STATUS map)
+                                                  ├── tableStatus (from status → ORDER_TO_TABLE_STATUS map)
+                                                  ├── items[]
+                                                  └── ... (51 fields total)
+```
+
+### f_order_status → status → tableStatus mapping
+```
+f_order_status=1 → 'preparing'     → 'occupied'
+f_order_status=2 → 'ready'         → 'occupied'
+f_order_status=3 → 'cancelled'     → 'available'
+f_order_status=5 → 'served'        → 'billReady'
+f_order_status=6 → 'paid'          → 'available'
+f_order_status=7 → 'pending'       → 'yetToConfirm'
 ```
 
 ---
 
-## 2. Complete Flow Map (All 10 Flows Verified)
+## 3. All 10 Flows — Verified Socket Events
 
-| Flow | Endpoint | Version | Lock Event | Data Event | Payload? | `update-table free`? | GET API? | Status |
-|------|----------|---------|-----------|-----------|----------|---------------------|----------|--------|
-| New Order | `order/place-order` | v2 | `update-table engage` | `new-order` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Update Order | `order/update-place-order` | v2 | `order-engage` | `update-order` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Switch Table | `order/order-table-room-switch` | v2 | 2× `update-table engage` | `update-order-target` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Merge Table | `order/transfer-order` | v2 | 2× `order-engage` | `update-order-target` + `update-order-source` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Transfer Food | `order/transfer-food-item` | v2 | 2× `order-engage` | `update-order-target` + `update-order-source` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Collect Bill | `order/order-bill-payment` | v2 | `order-engage` | `update-order-paid` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Cancel Food | `order/cancel-food-item` | v2 | `order-engage` | `update-order` | ✅ | ❌ | ❌ | **v2 CLEAN** |
-| Cancel Order | `order-status-update` | v2 | ❌ none | `update-order-status` | ❌ | ⚠️ Yes (×2) | ✅ 2-3s | **v1 DIRTY** |
-| Mark Ready | `order-status-update` | v2 | ❌ none | `update-order-status` | ❌ | ❌ | ✅ 1s | **v1 DIRTY** |
-| Mark Served | `order-status-update` / `food-status-update` | v2 | ❌ none | `update-order-status` / `update-food-status` | ❌ | ❌ | ✅ | **v1 DIRTY** |
+Every flow was tested via console logs on April 13, 2026, restaurant 478.
 
-**8 CLEAN. 3 DIRTY — all 3 share `order-status-update` endpoint. Backend fix needed for that one endpoint.**
+### Flow 1: New Order
+```
+Endpoint: POST /api/v2/vendoremployee/order/place-order
+Events:
+  1. update-table {destTableId} engage       ← table locked (dine-in only)
+  2. new-order {orderId} {f_order_status} {payload}  ← complete order data
+Handler: handleNewOrder (EXISTING — no change needed)
+Release: setTableEngaged(tableId, false) via requestAnimationFrame × 2
+Walk-in: No update-table engage. 0.5s delay for UX.
+```
 
----
+### Flow 2: Update Order (Add Items)
+```
+Endpoint: PUT /api/v2/vendoremployee/order/update-place-order
+Events:
+  1. order-engage {orderId} engage           ← order locked
+  2. update-order {orderId} {f_order_status} {payload}  ← complete order data
+Handler: handleOrderDataEvent (NEW unified handler)
+Release: setOrderEngaged(orderId, false) via requestAnimationFrame × 2
+```
 
-## 3. New Socket Events
+### Flow 3: Cancel Food Item
+```
+Endpoint: PUT /api/v2/vendoremployee/order/cancel-food-item
+Events:
+  1. order-engage {orderId} engage
+  2. update-order {orderId} {f_order_status} {payload}
+Handler: handleOrderDataEvent — SAME as Update Order (reuses update-order event)
+Release: setOrderEngaged(orderId, false)
+Note: Partial cancel → order stays. Last item cancel → check status in payload.
+```
 
-| Event | Channel | Used By | Payload? | Currently Handled? |
-|-------|---------|---------|----------|-------------------|
-| `update-order-target` | `new_order_{restaurantId}` | Switch Table, Merge, Transfer Food | ✅ Yes | ❌ Dropped ("Unknown") |
-| `update-order-source` | `new_order_{restaurantId}` | Merge, Transfer Food | ✅ Yes | ❌ Dropped ("Unknown") |
-| `update-order-paid` | `new_order_{restaurantId}` | Collect Bill | ✅ Yes | ❌ Dropped ("Unknown") |
+### Flow 4: Switch Table
+```
+Endpoint: POST /api/v2/vendoremployee/order/order-table-room-switch
+Events:
+  1. update-table {destTableId} engage       ← dest table locked
+  2. update-table {sourceTableId} engage     ← source table locked
+  3. update-order-target {orderId} {f_order_status} {payload}  ← order now on dest
+Handler: handleOrderDataEvent with detectTableChange=true
+Release: setTableEngaged(destTableId, false) + setTableEngaged(sourceTableId, false)
+Note: Only 1 data event (no update-order-source). Same order, just moved tables.
+Walk-in→Table: sourceTableId=0, skipped by guard.
+```
 
-**Existing events already handled correctly:**
-| Event | Used By (v2) | Handler |
-|-------|-------------|---------|
-| `new-order` | New Order | `handleNewOrder` ✅ |
-| `update-order` | Update Order, Cancel Food (v2) | `handleUpdateOrder` ✅ |
-| `update-table` (engage) | New Order, Switch Table | `handleUpdateTable` ✅ |
-| `order-engage` | Update, Merge, Transfer, Bill, Cancel Food | `handleOrderEngage` ✅ |
+### Flow 5: Merge Table
+```
+Endpoint: POST /api/v2/vendoremployee/order/transfer-order
+Events:
+  1. order-engage {sourceOrderId} engage     ← source order locked
+  2. order-engage {targetOrderId} engage     ← target order locked
+  3. update-order-target {targetOrderId} {1} {payload}  ← target gets merged items
+  4. update-order-source {sourceOrderId} {3} {payload}  ← source cancelled (f_order_status=3)
+Handler: handleOrderDataEvent — target updates, source removes
+Release: setOrderEngaged for both orders
+```
 
----
+### Flow 6: Transfer Food Item
+```
+Endpoint: POST /api/v2/vendoremployee/order/transfer-food-item
+Events:
+  1. order-engage {sourceOrderId} engage
+  2. order-engage {targetOrderId} engage
+  3. update-order-target {targetOrderId} {1} {payload}  ← target gets item
+  4. update-order-source {sourceOrderId} {1 or 3} {payload}
+     ← f_order_status=1: source still active (partial transfer)
+     ← f_order_status=3: source cancelled (last item transferred)
+Handler: handleOrderDataEvent — SAME pattern as Merge
+Release: setOrderEngaged for both orders
+```
 
-## 4. Verified Console Log Evidence
+### Flow 7: Collect Bill
+```
+Endpoint: POST /api/v2/vendoremployee/order/order-bill-payment
+Events:
+  1. order-engage {orderId} engage
+  2. update-order-paid {orderId} {6} {payload}  ← f_order_status=6 (paid)
+Handler: handleOrderDataEvent — status=paid → removeOrder + free table
+Release: setOrderEngaged(orderId, false)
+Walk-in: No table operations (tableId=0).
+```
 
-### 4.1 Collect Bill — Dine-in (Order 730862, Table 3239)
+### Flow 8: Cancel Order
 ```
-14:22:36  order-engage 730862 engage
-14:22:37  update-order-paid 730862, f_order_status=6, {payload}
-— no update-order-status, no update-table free —
+Endpoint: PUT /api/v2/vendoremployee/order/order-status-update
+Events:
+  1. order-engage {orderId} engage
+  2. update-order-paid {orderId} {oldStatus} {payload}  ← echoes previous status (e.g. 5=served)
+  3. update-table 0 free                                 ← walk-in only, skipped
+  4. update-order-paid {orderId} {3} {payload}           ← f_order_status=3 (cancelled)
+Handler: handleOrderDataEvent — first event updateOrder (harmless), second removeOrder (correct)
+Note: Backend sends 2× update-order-paid. Handler is idempotent — second corrects first.
+Dine-in: May also send update-table {tableId} free — ignored by frontend.
 ```
-**Result:** CLEAN. Only 2 events. No double fire.
 
-### 4.2 Collect Bill — Walk-in (Order 730843)
+### Flow 9: Mark Ready
 ```
-14:28:14  order-engage 730843 engage
-14:28:15  update-order-paid 730843, f_order_status=6, {payload}
+Endpoint: PUT /api/v2/vendoremployee/order/order-status-update
+Events:
+  1. order-engage {orderId} engage
+  2. update-order-paid {orderId} {2} {payload}  ← f_order_status=2 (ready)
+Handler: handleOrderDataEvent — status=ready → updateOrder
+Release: setOrderEngaged(orderId, false)
 ```
-**Result:** Identical to dine-in. No table events.
 
-### 4.3 Collect Bill — Delivery (Order 730852)
+### Flow 10: Mark Served
 ```
-14:28:50  order-engage 730852 engage
-14:28:52  update-order-paid 730852, f_order_status=6, {payload}
+Endpoint: PUT /api/v2/vendoremployee/order/order-status-update
+Events:
+  1. order-engage {orderId} engage
+  2. update-order-paid {orderId} {5} {payload}  ← f_order_status=5 (served)
+Handler: handleOrderDataEvent — status=served → updateOrder
+Release: setOrderEngaged(orderId, false)
 ```
-**Result:** Identical. 2 sec gap between HTTP response and socket (not a problem).
-
-### 4.4 Cancel Food — Partial, Walk-in (Order 730851, v1 endpoint)
-```
-14:33:24  update-table 0 free (skipped — tableId=0)
-14:33:24  update-order-status 730851, f_order_status=6 (wrong — should be preparing)
-14:33:26  GET API → order still "preparing" → updateOrder
-```
-**Result:** v1 DIRTY. Wrong f_order_status, GET needed. Walk-in safe (tableId=0 skipped).
-
-### 4.5 Cancel Food — Full, Walk-in (Order 730848, v1 endpoint)
-```
-14:32:14  update-table 0 free (skipped)
-14:32:14  update-order-status 730848, f_order_status=6 (wrong — order is "paid"?)
-14:32:17  GET API → order is "paid" → removeOrder
-```
-**Result:** v1 DIRTY. 3 sec GET.
-
-### 4.6 Cancel Food — Partial, Dine-in (Order 730849, Table 3239, v1 endpoint)
-```
-14:35:27  update-table 3239 free → BUG-216 converts to engage
-14:35:27  update-order-status 730849, f_order_status=6 (wrong)
-14:35:28  GET API → order "preparing" → updateOrder
-14:35:28  setTableEngaged(3239, false) → released
-```
-**Result:** v1 DIRTY. BUG-216 workaround saves it. Without workaround: 1 sec window where table shows "available".
-
-### 4.7 Cancel Food — Partial, Dine-in (Order 730865, v2 endpoint!)
-```
-14:56:11  order-engage 730865 engage
-14:56:11  update-order 730865, f_order_status=7, {payload}
-14:56:11  setOrderEngaged(730865, false) → released
-```
-**Result:** v2 CLEAN! Uses existing `update-order` event + `order-engage`. No `update-table free`. No GET API. Existing handler works perfectly.
-
-### 4.8 Cancel Full Order — Dine-in (Order 730849, Table 3239)
-```
-14:43:33  update-table 3239 free → BUG-216 converts to engage
-14:43:34  update-table 3239 free → BUG-216 converts to engage (duplicate)
-14:43:35  update-order-status 730849, f_order_status=3 (correct!)
-14:43:37  GET API → order "cancelled" → removeOrder → table available
-14:43:37  setTableEngaged(3239, false) → released
-```
-**Result:** v1 DIRTY. Uses `order-status-update` endpoint. Double `update-table free`. GET takes 2 sec.
-
-### 4.9 Cancel Food — Last Item, Walk-in (Order 730863, v1 endpoint)
-```
-14:39:09  update-table 0 free (skipped)
-14:39:09  update-order-status 730863, f_order_status=6
-14:39:10  GET API → order "cancelled" → removeOrder
-```
-**Result:** v1 DIRTY. Walk-in safe.
-
-### 4.10 Mark Ready (Order 730850, Table 4086)
-```
-14:45:21  update-order-status 730850, f_order_status=2 (ready)
-14:45:22  GET API → order "ready" → updateOrder
-14:45:22  setTableEngaged(4086, false) → released
-```
-**Result:** v1 DIRTY. No lock, no payload, GET needed.
-
-### 4.11 Switch Table — Table→Table (Order 730850, Table 4086→3237)
-```
-13:36:31  update-table 3237 engage (dest)
-13:36:31  update-table 4086 engage (source)
-13:36:31  update-order-target 730850, f_order_status=1, {payload}
-```
-**Result:** v2 CLEAN. Both tables engaged. No `update-table free`.
-
-### 4.12 Switch Table — Walk-in→Table (Order 730850, 0→3239)
-```
-12:55:15  update-table 3239 engage (dest)
-12:55:15  update-order 730850 (no payload — was v1 at this time)
-12:55:15  update-table 0 free (skipped)
-12:55:15  update-table 3239 engage (duplicate)
-```
-**Result:** Was v1 at time of test. Now on v2 — expect clean pattern.
-
-### 4.13 Merge Table (Order 730850→730849)
-```
-13:21:14  order-engage 730850 engage (source)
-13:21:14  order-engage 730849 engage (target)
-13:21:15  update-order-target 730849, f_order_status=1, {payload}
-13:21:15  update-order-source 730850, f_order_status=3, {payload}
-```
-**Result:** v2 CLEAN. Both orders locked. Source cancelled.
-
-### 4.14 Transfer Food (Order 730849→730850)
-```
-13:28:17  order-engage 730849 engage (source)
-13:28:17  order-engage 730850 engage (target)
-13:28:17  update-order-target 730850, f_order_status=1, {payload}
-13:28:17  update-order-source 730849, f_order_status=1, {payload}
-```
-**Result:** v2 CLEAN. Both locked. Source stays active (fewer items).
 
 ---
 
-## 5. Risk Register (Final)
+## 4. Implementation — Step by Step
+
+### Step 1: `socketEvents.js` — Add 3 new event constants
+
+**File:** `/app/frontend/src/api/socket/socketEvents.js`
+
+**What to add** in the `SOCKET_EVENTS` object (after `UPDATE_ORDER_STATUS`):
+
+```javascript
+// New v2 events (April 2026)
+UPDATE_ORDER_TARGET: 'update-order-target',
+UPDATE_ORDER_SOURCE: 'update-order-source',
+UPDATE_ORDER_PAID: 'update-order-paid',
+```
+
+**Also update** the `EVENTS_WITH_PAYLOAD` array — add all 3 new events (they all have payloads):
+
+```javascript
+export const EVENTS_WITH_PAYLOAD = [
+  SOCKET_EVENTS.NEW_ORDER,
+  SOCKET_EVENTS.UPDATE_ORDER,           // already has payload
+  SOCKET_EVENTS.UPDATE_ORDER_TARGET,    // NEW
+  SOCKET_EVENTS.UPDATE_ORDER_SOURCE,    // NEW
+  SOCKET_EVENTS.UPDATE_ORDER_PAID,      // NEW
+];
+```
+
+**Update** `EVENTS_REQUIRING_ORDER_API` — remove `UPDATE_ORDER` from this list (it now has payload):
+```javascript
+export const EVENTS_REQUIRING_ORDER_API = [
+  // UPDATE_ORDER removed — now has payload in v2
+  SOCKET_EVENTS.UPDATE_FOOD_STATUS,
+  SOCKET_EVENTS.UPDATE_ORDER_STATUS,
+  SOCKET_EVENTS.SCAN_NEW_ORDER,
+  SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER,
+];
+```
+
+---
+
+### Step 2: `socketHandlers.js` — Add unified handler
+
+**File:** `/app/frontend/src/api/socket/socketHandlers.js`
+
+#### 2a. Add new function `handleOrderDataEvent`
+
+This ONE function handles 4 events: `update-order`, `update-order-target`, `update-order-source`, `update-order-paid`.
+
+```javascript
+/**
+ * Unified handler for all v2 order data events
+ * Events: update-order, update-order-target, update-order-source, update-order-paid
+ * 
+ * All share the same message format:
+ * [eventName, orderId, restaurantId, f_order_status, { orders: [...] }]
+ * 
+ * Strategy per event:
+ * - update-order:        updateOrder()
+ * - update-order-target: updateOrder() + detect table change (switch table)
+ * - update-order-source: auto — if cancelled/paid → removeOrder(), else updateOrder()
+ * - update-order-paid:   auto — if cancelled/paid → removeOrder(), else updateOrder()
+ */
+export const handleOrderDataEvent = async (message, context, eventName) => {
+  const { updateOrder, removeOrder, updateTableStatus, getOrderById, setOrderEngaged, setTableEngaged } = context;
+  
+  const parsed = parseMessage(message);
+  if (!parsed) {
+    log('ERROR', `Invalid ${eventName} message format`, message);
+    return;
+  }
+  
+  const { orderId, payload } = parsed;
+  log('INFO', `${eventName} received: ${orderId}`);
+  
+  // Guard: skip if order already removed (by a previous event in same batch)
+  if (eventName !== 'update-order-target' && getOrderById && !getOrderById(orderId)) {
+    log('INFO', `${eventName}: Order ${orderId} already removed, skipping`);
+    return;
+  }
+  
+  // --- Transform payload ---
+  let order = null;
+  
+  if (payload && payload.orders && Array.isArray(payload.orders) && payload.orders.length > 0) {
+    try {
+      order = orderFromAPI.order(payload.orders[0]);
+      log('INFO', `${eventName}: Using socket payload for order ${orderId}`);
+    } catch (error) {
+      log('ERROR', `${eventName}: Transform failed`, error.message);
+    }
+  }
+  
+  // Fallback to GET API if no payload (backwards compat for v1)
+  if (!order) {
+    log('INFO', `${eventName}: No socket payload, fetching from API`);
+    order = await fetchOrderWithRetry(orderId);
+  }
+  
+  if (!order) {
+    log('WARN', `${eventName}: Could not get order ${orderId}, skipping`);
+    return;
+  }
+  
+  // --- Detect table change (Switch Table: update-order-target) ---
+  if (eventName === 'update-order-target') {
+    const oldOrder = getOrderById ? getOrderById(orderId) : null;
+    const oldTableId = oldOrder?.tableId || 0;
+    const newTableId = order.tableId || 0;
+    
+    if (oldTableId !== newTableId) {
+      log('INFO', `${eventName}: Table changed ${oldTableId} → ${newTableId} (switch table)`);
+      
+      // Free old table
+      if (oldTableId && oldTableId !== 0) {
+        updateTableStatus(oldTableId, 'available');
+        if (setTableEngaged) setTableEngaged(oldTableId, false);
+        log('INFO', `${eventName}: Old table ${oldTableId} → available + released`);
+      }
+    }
+  }
+  
+  // --- Decide action: update or remove ---
+  const isTerminal = (order.status === 'cancelled' || order.status === 'paid');
+  const shouldRemove = isTerminal && (eventName === 'update-order-source' || eventName === 'update-order-paid');
+  
+  if (shouldRemove) {
+    // Remove order + free table
+    log('INFO', `${eventName}: Order ${orderId} is ${order.status}, removing`);
+    syncTableStatus(order, updateTableStatus, 'available');
+    removeOrder(orderId);
+  } else {
+    // Update order + sync table status
+    updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
+    log('INFO', `${eventName}: Updated order ${order.orderId} (status: ${order.status})`);
+  }
+  
+  // --- Release engage after React paints ---
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // Release order engage
+      if (setOrderEngaged) {
+        setOrderEngaged(orderId, false);
+        log('INFO', `${eventName}: Order ${orderId} released from ENGAGED`);
+      }
+      
+      // Release table engage (for switch table — new table)
+      if (eventName === 'update-order-target' && order.tableId && order.tableId !== 0 && setTableEngaged) {
+        setTableEngaged(order.tableId, false);
+        log('INFO', `${eventName}: Table ${order.tableId} released from ENGAGED`);
+      }
+    });
+  });
+};
+```
+
+**Key logic explained:**
+
+1. **Parse + transform:** Same for all 4 events. Fallback to GET if no payload.
+2. **Guard (already removed):** If previous event in same batch already removed this order, skip. Exception: `update-order-target` should NOT skip — it might be a new order on this table.
+3. **Table change detection:** Only for `update-order-target`. Compare old tableId vs new tableId. If different → free old table (switch table flow). Guard: skip if tableId=0 (walk-in).
+4. **Update vs Remove:** `update-order-source` and `update-order-paid` check if status is terminal (cancelled/paid) → `removeOrder()`. Otherwise → `updateOrder()`. This handles:
+   - Merge: source cancelled → remove
+   - Transfer food partial: source active → update
+   - Transfer food last item: source cancelled → remove
+   - Collect bill: paid → remove
+   - Mark ready: ready → update
+   - Mark served: served → update
+   - Cancel order: cancelled → remove (second `update-order-paid` event)
+   - Cancel order first event: old status (served) → update (harmless, corrected by second event)
+5. **Release:** Always release `orderEngaged`. For `update-order-target`, also release `tableEngaged` on the new table.
+
+#### 2b. Fix BUG-216 in `handleUpdateTable`
+
+**Current code (lines 458-463):**
+```javascript
+} else if (socketStatus === 'free') {
+    // BUG-216 workaround: Backend sends 'free' for cancel-item but should send 'engage'
+    if (setTableEngaged) setTableEngaged(tableId, true);
+    log('INFO', `update-table: Table ${tableId} ENGAGED (free→engage workaround, BUG-216)`);
+}
+```
+
+**Replace with:**
+```javascript
+} else if (socketStatus === 'free') {
+    // v2: No flow sends update-table free. Ignore it.
+    // Table status is derived from order data in order event handlers.
+    log('INFO', `update-table: Table ${tableId} free received — ignoring (v2: table status from order data)`);
+}
+```
+
+**Why this is safe:** Every v2 flow that was tested sends NO `update-table free`. Only old v1 cancel flows sent it (incorrectly). Cancel food is now v2 (sends `order-engage` + `update-order`). Cancel order sends `update-order-paid` which handles table status. Mark Ready/Served don't send table events at all.
+
+#### 2c. Add guard to `handleUpdateOrderStatus`
+
+**At the top of the function (after parsing), add:**
+```javascript
+// Guard: skip if order was already handled by update-order-paid
+if (getOrderById && !getOrderById(orderId)) {
+    log('INFO', `update-order-status: Order ${orderId} already removed (handled by update-order-paid), skipping GET`);
+    return;
+}
+```
+
+This prevents wasted GET API calls when `update-order-paid` has already processed the order.
+
+#### 2d. Update handler registry
+
+In the `getHandler` function and `isAsyncHandler` function, add the new events:
+
+```javascript
+// In getHandler:
+[SOCKET_EVENTS.UPDATE_ORDER_TARGET]: handleOrderDataEvent,
+[SOCKET_EVENTS.UPDATE_ORDER_SOURCE]: handleOrderDataEvent,
+[SOCKET_EVENTS.UPDATE_ORDER_PAID]: handleOrderDataEvent,
+
+// In isAsyncHandler — add all 3 (they can await GET fallback):
+SOCKET_EVENTS.UPDATE_ORDER_TARGET,
+SOCKET_EVENTS.UPDATE_ORDER_SOURCE,
+SOCKET_EVENTS.UPDATE_ORDER_PAID,
+```
+
+#### 2e. Export the new function
+
+Add to exports:
+```javascript
+export { handleOrderDataEvent };
+```
+
+---
+
+### Step 3: `useSocketEvents.js` — Wire new events
+
+**File:** `/app/frontend/src/api/socket/useSocketEvents.js`
+
+#### 3a. Import new handler
+
+Add to imports:
+```javascript
+import {
+  handleNewOrder,
+  handleUpdateOrder,          // keep for reference but will route through unified
+  handleOrderDataEvent,       // NEW
+  handleUpdateFoodStatus,
+  handleUpdateOrderStatus,
+  handleScanNewOrder,
+  handleDeliveryAssignOrder,
+  handleUpdateTable,
+  handleOrderEngage,
+} from './socketHandlers';
+```
+
+#### 3b. Update switch statement in `handleOrderChannelEvent`
+
+**Current:**
+```javascript
+case SOCKET_EVENTS.UPDATE_ORDER:
+    handleUpdateOrder(args, actionsRef.current);
+    break;
+```
+
+**Replace with:**
+```javascript
+case SOCKET_EVENTS.UPDATE_ORDER:
+    handleOrderDataEvent(args, actionsRef.current, 'update-order');
+    break;
+case SOCKET_EVENTS.UPDATE_ORDER_TARGET:
+    handleOrderDataEvent(args, actionsRef.current, 'update-order-target');
+    break;
+case SOCKET_EVENTS.UPDATE_ORDER_SOURCE:
+    handleOrderDataEvent(args, actionsRef.current, 'update-order-source');
+    break;
+case SOCKET_EVENTS.UPDATE_ORDER_PAID:
+    handleOrderDataEvent(args, actionsRef.current, 'update-order-paid');
+    break;
+```
+
+**Note:** `SOCKET_EVENTS.UPDATE_ORDER` now routes to `handleOrderDataEvent` instead of `handleUpdateOrder`. The old `handleUpdateOrder` function can be kept in `socketHandlers.js` for reference but is no longer called.
+
+**Do NOT change** the following cases — they stay as-is:
+- `SOCKET_EVENTS.NEW_ORDER` → `handleNewOrder` (different flow — addOrder, different message structure)
+- `SOCKET_EVENTS.UPDATE_FOOD_STATUS` → `handleUpdateFoodStatus` (v1, no payload, keep GET)
+- `SOCKET_EVENTS.UPDATE_ORDER_STATUS` → `handleUpdateOrderStatus` (v1 fallback, keep GET)
+- `SOCKET_EVENTS.SCAN_NEW_ORDER` → `handleScanNewOrder` (v1)
+- `SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER` → `handleDeliveryAssignOrder` (v1)
+
+#### 3c. Import SOCKET_EVENTS additions
+
+Make sure the new constants are imported:
+```javascript
+import {
+  SOCKET_EVENTS,
+  getOrderChannel,
+  getTableChannel,
+  getOrderEngageChannel,
+} from './socketEvents';
+```
+(No change needed if importing `SOCKET_EVENTS` as object — new keys are automatically available.)
+
+---
+
+### Step 4: `OrderContext.jsx` — Add `waitForOrderEngaged`
+
+**File:** `/app/frontend/src/contexts/OrderContext.jsx`
+
+#### 4a. Add `waitForOrderEngaged` function
+
+Same pattern as `waitForTableEngaged` in `TableContext.jsx`. Polls `engagedOrdersRef` until the orderId appears in the engaged set.
+
+```javascript
+/**
+ * Wait for an order to become engaged (locked) via socket
+ * Used by OrderEntry to wait for socket confirmation before redirect
+ * @param {number} orderId - Order ID to wait for
+ * @param {number} timeout - Max wait time in ms (default 5000)
+ * @returns {Promise<boolean>} - true if engaged, false if timeout
+ */
+const waitForOrderEngaged = useCallback((orderId, timeout = 5000) => {
+    return new Promise((resolve) => {
+        const start = Date.now();
+        const check = () => {
+            if (engagedOrdersRef.current.has(orderId)) {
+                resolve(true);
+            } else if (Date.now() - start > timeout) {
+                console.warn(`[OrderContext] waitForOrderEngaged: timeout for order ${orderId}`);
+                resolve(false);
+            } else {
+                setTimeout(check, 50);
+            }
+        };
+        check();
+    });
+}, []);
+```
+
+**Requires:** `engagedOrdersRef` — a ref that mirrors the `engagedOrders` state (same pattern as `engagedTablesRef` in TableContext). Check if this already exists in OrderContext. If not, add:
+
+```javascript
+const engagedOrdersRef = useRef(new Set());
+
+// Keep ref in sync with state (in setOrderEngaged):
+const setOrderEngaged = useCallback((orderId, engaged) => {
+    const next = new Set(engagedOrdersRef.current);
+    engaged ? next.add(orderId) : next.delete(orderId);
+    engagedOrdersRef.current = next;
+    setEngagedOrders(next);
+}, []);
+```
+
+#### 4b. Export `waitForOrderEngaged`
+
+Add to the context value and the `useOrders` hook return:
+```javascript
+const value = useMemo(() => ({
+    orders,
+    isLoaded,
+    addOrder,
+    updateOrder,
+    removeOrder,
+    getOrderById,
+    getOrderByTableId,
+    waitForOrderRemoval,
+    engagedOrders,
+    setOrderEngaged,
+    isOrderEngaged,
+    waitForOrderEngaged,    // NEW
+}), [...]);
+```
+
+---
+
+### Step 5: `OrderEntry.jsx` — Update 6 handlers
+
+**File:** `/app/frontend/src/components/order-entry/OrderEntry.jsx`
+
+#### 5a. Import `waitForOrderEngaged`
+
+Update the destructure from `useOrders()`:
+```javascript
+const { orders, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
+```
+
+#### 5b. `handlePlaceOrder` — Update Order path (line ~423)
+
+**Current:**
+```javascript
+// Wait for socket update-table (engage) before redirect
+const tableId = Number(effectiveTable?.tableId);
+if (tableId) {
+    await waitForTableEngaged(tableId, 5000);
+}
+```
+
+**Replace with:**
+```javascript
+// Wait for socket order-engage before redirect
+if (placedOrderId) {
+    await waitForOrderEngaged(placedOrderId, 5000);
+}
+```
+
+**Why:** Update Order sends `order-engage` (order-level), not `update-table engage` (table-level).
+
+#### 5c. `handleShift` (line ~518)
+
+**Current:**
+```javascript
+const handleShift = async ({ toTable }) => {
+    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+    const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
+    toast({ title: "Table Shifted", description: response.data?.message || `Order moved to ${toTable.displayName}` });
+    onClose();
+};
+```
+
+**Replace with:**
+```javascript
+const handleShift = async ({ toTable }) => {
+    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+    const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
+    toast({ title: "Table Shifted", description: response.data?.message || `Order moved to ${toTable.displayName}` });
+    
+    // Wait for socket update-table engage (dest) before redirect
+    const destTableId = Number(toTable?.tableId);
+    if (destTableId) {
+        await waitForTableEngaged(destTableId, 5000);
+    }
+    
+    onClose();
+};
+```
+
+**Why:** Switch Table sends `update-table engage` for dest table. Wait for it before redirect so dashboard shows correct state.
+
+#### 5d. `handleMerge` (line ~505)
+
+**Current:**
+```javascript
+const handleMerge = async ({ selectedOrders }) => {
+    for (const sourceOrder of selectedOrders) {
+        const payload = tableToAPI.mergeTable(effectiveTable, sourceOrder);
+        await api.post(API_ENDPOINTS.MERGE_ORDER, payload);
+    }
+    toast({ title: "Tables Merged", description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}` });
+    onClose();
+};
+```
+
+**Replace with:**
+```javascript
+const handleMerge = async ({ selectedOrders }) => {
+    for (const sourceOrder of selectedOrders) {
+        const payload = tableToAPI.mergeTable(effectiveTable, sourceOrder);
+        await api.post(API_ENDPOINTS.MERGE_ORDER, payload);
+    }
+    toast({ title: "Tables Merged", description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}` });
+    
+    // Wait for socket order-engage before redirect
+    const targetOrderId = effectiveTable?.orderId;
+    if (targetOrderId) {
+        await waitForOrderEngaged(targetOrderId, 5000);
+    }
+    
+    onClose();
+};
+```
+
+#### 5e. `handleTransfer` (line ~494)
+
+**Current:**
+```javascript
+const handleTransfer = async ({ toOrder, item: transferredItem }) => {
+    const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
+    const response = await api.post(API_ENDPOINTS.TRANSFER_FOOD, payload);
+    toast({ title: "Item Transferred", description: response.data?.message || `...` });
+    setTransferItem(null);
+    onClose();
+};
+```
+
+**Replace with:**
+```javascript
+const handleTransfer = async ({ toOrder, item: transferredItem }) => {
+    const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
+    const response = await api.post(API_ENDPOINTS.TRANSFER_FOOD, payload);
+    toast({ title: "Item Transferred", description: response.data?.message || `...` });
+    setTransferItem(null);
+    
+    // Wait for socket order-engage (source order) before redirect
+    const sourceOrderId = effectiveTable?.orderId;
+    if (sourceOrderId) {
+        await waitForOrderEngaged(sourceOrderId, 5000);
+    }
+    
+    onClose();
+};
+```
+
+#### 5f. Collect bill `onPaymentComplete` (line ~792)
+
+**Current:**
+```javascript
+// Scenario 1 — existing order: collect bill via POST order-bill-payment
+const tableId = Number(effectiveTable?.tableId || table?.tableId);
+if (tableId) setTableEngaged(tableId, true);    // ← LOCAL table engage (REMOVE THIS)
+setIsPlacingOrder(true);
+```
+
+**Replace with:**
+```javascript
+// Scenario 1 — existing order: collect bill via POST order-bill-payment
+// No local table engage — order-engage socket handles locking
+setIsPlacingOrder(true);
+```
+
+**Remove the line:** `if (tableId) setTableEngaged(tableId, true);`
+
+**Why:** Backend sends `order-engage` (order-level lock). Local `setTableEngaged` creates a permanent lock because no `update-table free` arrives to undo it. The `update-order-paid` handler now handles table freeing.
+
+#### 5g. `handleCancelFood` (line ~527)
+
+**Current:**
+```javascript
+const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
+    setIsPlacingOrder(true);
+    try {
+        const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
+        await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
+        toast({ title: "Item Cancelled", description: `${item?.name} cancelled successfully` });
+        
+        // Wait for socket update-table (engage) before redirect
+        const tableId = Number(effectiveTable?.tableId || table?.tableId);
+        if (tableId) {
+            await waitForTableEngaged(tableId, 5000);
+        }
+        
+        setCancelItem(null);
+        onClose();
+    } catch (err) { ... }
+};
+```
+
+**Replace wait logic with:**
+```javascript
+// Wait for socket order-engage before redirect
+const orderId = effectiveTable?.orderId || placedOrderId;
+if (orderId) {
+    await waitForOrderEngaged(orderId, 5000);
+}
+```
+
+**Why:** Cancel food v2 sends `order-engage` (order-level), not `update-table engage`.
+
+---
+
+## 5. What Stays Unchanged
+
+| Handler/Component | File | Why No Change |
+|-------------------|------|---------------|
+| `handleNewOrder` | socketHandlers.js | Different flow: `addOrder()`, different message structure (table_info at index 5), already v2 clean |
+| `handleUpdateFoodStatus` | socketHandlers.js | Still v1 for item-level status. Local table engage workaround kept. Backend needs to upgrade |
+| `handleUpdateOrderStatus` | socketHandlers.js | Kept as v1 fallback. Guard added (Step 2c) to skip if already handled. Still called for any stray v1 events |
+| `handleScanNewOrder` | socketHandlers.js | v1, external trigger, no change |
+| `handleDeliveryAssignOrder` | socketHandlers.js | v1, external trigger, no change |
+| `handleOrderEngage` | socketHandlers.js | Lock-only, no data — works correctly |
+| `handleUpdateTable` (engage) | socketHandlers.js | Table engage handling unchanged. Only `free` behavior changes (ignore instead of convert to engage) |
+| `handleNewOrder` in useSocketEvents | useSocketEvents.js | Case unchanged |
+| `handlePlaceOrder` (new order path) | OrderEntry.jsx | New order wait logic unchanged (waitForTableEngaged for dine-in, 0.5s for walk-in) |
+| `handleCancelOrder` | OrderEntry.jsx | Uses `waitForOrderRemoval` — works with removeOrder in update-order-paid handler |
+
+---
+
+## 6. Files Changed — Summary
+
+| File | What Changes |
+|------|-------------|
+| `socketEvents.js` | Add 3 constants (`UPDATE_ORDER_TARGET`, `UPDATE_ORDER_SOURCE`, `UPDATE_ORDER_PAID`). Update `EVENTS_WITH_PAYLOAD` and `EVENTS_REQUIRING_ORDER_API` arrays |
+| `socketHandlers.js` | Add `handleOrderDataEvent()`. Fix `handleUpdateTable` free→ignore. Add guard to `handleUpdateOrderStatus`. Export new function. Update handler registry |
+| `useSocketEvents.js` | Import `handleOrderDataEvent`. Replace `update-order` case + add 3 new cases in switch |
+| `OrderContext.jsx` | Add `waitForOrderEngaged()` + `engagedOrdersRef` (if not exists). Export in context value |
+| `OrderEntry.jsx` | Update 6 handlers: handlePlaceOrder (update path), handleShift, handleMerge, handleTransfer, collect bill, handleCancelFood |
+
+---
+
+## 7. Risks & Mitigations — All Verified
 
 | # | Risk | Level | Status | Evidence |
 |---|------|-------|--------|----------|
-| R1 | Double fire: `update-order-paid` + `update-order-status` for collect bill | LOW | ✅ **ELIMINATED** | Test 4.1, 4.2, 4.3 — no `update-order-status` fires |
-| R2 | `update-table free` on collect bill | UNKNOWN | ✅ **ELIMINATED** | Test 4.1, 4.2, 4.3 — no table events at all |
-| R3 | BUG-216 removal breaks cancel food | MEDIUM | ✅ **ELIMINATED** | Test 4.7 — cancel food v2 is CLEAN, no `update-table free` |
-| R4 | Collect bill local `setTableEngaged` → permanent lock | HIGH | ⚠️ **CONFIRMED but fixable** | No `update-table free` to undo local lock. Fix: remove local engage, handle in `update-order-paid` handler |
-| R5 | Transfer food last item → source cancelled | LOW | ❓ **NOT YET TESTED** | Need test with single-item order |
-| R6 | Walk-in collect bill table events | LOW | ✅ **ELIMINATED** | Test 4.2, 4.3 — identical to dine-in |
+| R1 | Double fire: paid + order-status | LOW | ✅ ELIMINATED | Only update-order-paid fires for collect bill |
+| R2 | update-table free on collect bill | LOW | ✅ ELIMINATED | No table events for collect bill |
+| R3 | BUG-216 removal breaks cancel food | MEDIUM | ✅ ELIMINATED | Cancel food v2 sends order-engage + update-order. No update-table free |
+| R4 | Collect bill local engage → perm lock | HIGH | ✅ MITIGATED | Remove local setTableEngaged. order-engage handles lock. update-order-paid frees table |
+| R5 | Transfer food last item → source cancelled | LOW | ✅ VERIFIED | update-order-source f_order_status=3 → removeOrder. Auto logic handles both partial and full |
+| R6 | Walk-in table events | LOW | ✅ ELIMINATED | No table events for walk-in. syncTableStatus guards tableId=0 |
+| R7 | Cancel Order double update-order-paid | LOW | ✅ VERIFIED | First event: updateOrder (harmless). Second event: removeOrder (correct). Idempotent |
+| R8 | food_details: null in socket payload | HIGH | 🔴 BLOCKER (backend) | All items show "Unknown Item". Backend must populate food_details. Frontend transform already reads it correctly |
 
 ---
 
-## 6. Backend Changes Needed
+## 8. Test Plan (Post-Implementation)
 
-### One Endpoint to Fix: `order-status-update`
+### Phase 1: Socket Handlers (Steps 1-3) — 15 tests
 
-Used by 3 flows that are still v1 DIRTY:
-- Cancel Order (`order_status: "cancelled"`)
-- Mark Ready (`order_status: "ready"`)
-- Mark Served (`order_status: "serve"`)
+| # | Test | Action | Expected Console Logs | Pass Criteria |
+|---|------|--------|----------------------|--------------|
+| 1 | New Order (dine-in) | Place order on table | `handleNewOrder` — no change | Order appears on dashboard |
+| 2 | New Order (walk-in) | Place walk-in | `handleNewOrder` — no change | Order card appears |
+| 3 | Update Order | Add items to existing | `handleOrderDataEvent: update-order` → `updateOrder` | Items added, order updated |
+| 4 | Cancel Food (partial) | Cancel 1 of 3 items | `handleOrderDataEvent: update-order` → `updateOrder` | Item removed, order stays |
+| 5 | Cancel Food (last item) | Cancel only item | `handleOrderDataEvent: update-order` → check status | Order removed if cancelled |
+| 6 | Switch Table (table→table) | Shift 3240→3237 | `handleOrderDataEvent: update-order-target` → detect table change → free 3240, occupy 3237 | Old table available, new table occupied |
+| 7 | Switch Table (walk-in→table) | Shift walk-in to table | `handleOrderDataEvent: update-order-target` → old=0 skip, new occupied | Walk-in becomes dine-in |
+| 8 | Merge Table | Merge source into target | `update-order-target` → updateOrder. `update-order-source` → removeOrder (status=3) | Source removed, target updated |
+| 9 | Transfer Food (partial) | Move 1 item | `update-order-target` + `update-order-source` (status=1) → both updateOrder | Both orders updated |
+| 10 | Transfer Food (last item) | Move last item | `update-order-source` (status=3) → removeOrder | Source removed |
+| 11 | Collect Bill (dine-in) | Pay cash | `update-order-paid` (status=6) → removeOrder | Order removed, table available |
+| 12 | Collect Bill (walk-in) | Pay walk-in | `update-order-paid` (status=6) → removeOrder, no table ops | Order card removed |
+| 13 | Mark Ready | Mark order ready | `update-order-paid` (status=2) → updateOrder | Order status changes to ready |
+| 14 | Mark Served | Mark order served | `update-order-paid` (status=5) → updateOrder | Order status changes to served |
+| 15 | Cancel Order | Cancel entire order | 2× `update-order-paid` → first update, second removeOrder | Order removed |
 
-**Current behavior:**
-```
-Socket: update-table free (cancel only, wrong)
-Socket: update-order-status {orderId} {f_order_status} — no payload
-Frontend: GET API call (1-3 seconds)
-```
+### Phase 2: OrderEntry Wait Logic (Steps 4-5) — 6 tests
 
-**Required behavior (match v2 pattern):**
-```
-Socket: order-engage {orderId} engage
-Socket: update-order {orderId} {f_order_status} {full_payload}
-   OR: update-order-cancelled / update-order-ready / update-order-served (dedicated events)
-No update-table free
-No GET API needed
-```
+| # | Test | Action | Expected | Pass Criteria |
+|---|------|--------|----------|--------------|
+| 16 | Update Order redirect | Add items, check timing | Waits for order-engage → then redirect | No premature redirect |
+| 17 | Shift Table redirect | Shift, check timing | Waits for update-table engage (dest) → then redirect | Dashboard shows correct state |
+| 18 | Merge Table redirect | Merge, check timing | Waits for order-engage → then redirect | No stale data flash |
+| 19 | Transfer Food redirect | Transfer, check timing | Waits for order-engage → then redirect | No stale data flash |
+| 20 | Collect Bill no perm lock | Pay dine-in, check table | Table available after bill, NOT stuck spinner | Table clickable after payment |
+| 21 | Cancel Food redirect | Cancel item, check timing | Waits for order-engage → then redirect | No premature redirect |
 
-### `food-status-update` Endpoint
+### Phase 3: Edge Cases — 5 tests
 
-Used for item-level status changes (confirm order, mark item ready/served).
-
-**Current behavior:** `update-food-status` or `update-order-status` — no payload, GET API required.
-
-**Required:** Same v2 pattern — `order-engage` + data event with payload.
-
-### Summary for Backend Team
-
-| Endpoint | Current Socket | Needed Socket | Priority |
-|----------|---------------|--------------|----------|
-| `order-status-update` (cancel/ready/serve) | `update-order-status` (no payload) + `update-table free` (cancel) | `order-engage` + `update-order` (with payload). No `update-table free` | **P0** — 3 flows depend on this |
-| `food-status-update` (item-level) | `update-food-status` (no payload) | `order-engage` + `update-order` (with payload) | **P1** |
-
----
-
-## 7. Frontend Implementation Plan
-
-### What Needs to Be Built (for 8 v2 CLEAN flows)
-
-#### Step 1: `socketEvents.js` — Add 3 event constants
-```
-UPDATE_ORDER_TARGET: 'update-order-target'
-UPDATE_ORDER_SOURCE: 'update-order-source'
-UPDATE_ORDER_PAID:   'update-order-paid'
-```
-
-#### Step 2: `socketHandlers.js` — Unified handler
-
-One `handleOrderDataEvent(message, context, eventName)` covering all v2 data events:
-
-**Strategy per event:**
-
-| Event | Transform | Action | Table Change Detection | Release |
-|-------|-----------|--------|----------------------|---------|
-| `update-order` | payload → order | `updateOrder()` | No | `setOrderEngaged(false)` |
-| `update-order-target` | payload → order | `updateOrder()` | Yes — compare old vs new tableId | `setTableEngaged(false)` or `setOrderEngaged(false)` |
-| `update-order-source` | payload → order | If cancelled/paid → `removeOrder()`. Else → `updateOrder()` | No | `setOrderEngaged(false)` |
-| `update-order-paid` | payload → order | `removeOrder()` + `updateTableStatus('available')` | No | `setOrderEngaged(false)` |
-
-**Table change detection (for Switch Table):**
-```
-oldOrder = getOrderById(orderId)
-newOrder = transform(payload)
-if (oldOrder.tableId !== newOrder.tableId):
-  if (oldOrder.tableId && oldOrder.tableId !== 0):
-    updateTableStatus(oldTableId, 'available')
-    setTableEngaged(oldTableId, false)
-```
-
-**tableId=0 guard:** All `updateTableStatus` and `setTableEngaged` calls skip tableId=0.
-
-**GET API fallback:** If no payload in message, fall back to `fetchOrderWithRetry()` (backwards compat for any v1 events).
-
-#### Step 3: `socketHandlers.js` — BUG-216 fix
-
-`handleUpdateTable` for `free` status:
-```
-if (status === 'free'):
-  → Log and ignore. Table status derived from order data.
-```
-
-No v2 flow sends `update-table free`. Only v1 cancel sends it (incorrectly). Once backend fixes `order-status-update`, no flow will send it.
-
-#### Step 4: `useSocketEvents.js` — Wire new events
-
-```
-case 'update-order':
-case 'update-order-target':
-case 'update-order-source':
-case 'update-order-paid':
-  handleOrderDataEvent(args, actionsRef.current, eventName);
-  break;
-```
-
-#### Step 5: `OrderContext.jsx` — Add `waitForOrderEngaged()`
-
-Same pattern as `waitForTableEngaged` — poll `engagedOrdersRef` until orderId appears.
-
-#### Step 6: `OrderEntry.jsx` — Update wait/engage logic
-
-| Handler | Current | New |
-|---------|---------|-----|
-| `handlePlaceOrder` (update, line 423) | `waitForTableEngaged(tableId)` | `waitForOrderEngaged(orderId)` |
-| `handleShift` (line 518) | Fire & close | `waitForTableEngaged(destTableId)` |
-| `handleMerge` (line 505) | Fire & close | `waitForOrderEngaged(targetOrderId)` |
-| `handleTransfer` (line 494) | Fire & close | `waitForOrderEngaged(sourceOrderId)` |
-| Collect bill (line 792) | `setTableEngaged(tableId, true)` (local) | Remove local engage — `order-engage` handles lock |
-| `handleCancelFood` (line 540) | `waitForTableEngaged(tableId)` | `waitForOrderEngaged(orderId)` — now v2, order-level |
+| # | Test | Action | Expected | Pass Criteria |
+|---|------|--------|----------|--------------|
+| 22 | BUG-216 gone | Cancel order dine-in | update-table free ignored. No stuck table | Table available after cancel |
+| 23 | Walk-in merge | Merge walk-in into table | Source removed (no table ops), target updated | No errors for tableId=0 |
+| 24 | Table→walk-in merge | Merge table into walk-in | Source table freed, target updated | Source table available |
+| 25 | Cancel Order double fire | Cancel order, check logs | No GET API call. update-order-paid handles both | No "Fetching order" in console |
+| 26 | Stale handleUpdateOrderStatus | Collect bill, check logs | Guard skips GET (order already removed) | No wasted GET API call |
 
 ---
 
-## 8. What Stays Unchanged (v1 handlers for remaining 3 dirty flows)
+## 9. Rollback Plan
 
-| Handler | File | Why Keep |
-|---------|------|----------|
-| `handleUpdateOrderStatus` | `socketHandlers.js` | Cancel Order, Mark Ready, Mark Served still v1 — need GET API |
-| `handleUpdateFoodStatus` | `socketHandlers.js` | Item-level status still v1 — need GET API |
-| `handleScanNewOrder` | `socketHandlers.js` | QR orders — v1, need GET API |
-| `handleDeliveryAssignOrder` | `socketHandlers.js` | Delivery — v1, need GET API |
-| `fetchOrderWithRetry` | `socketHandlers.js` | Used by all v1 handlers + GET fallback in unified handler |
-
----
-
-## 9. Files to Change
-
-| File | Phase | Changes |
-|------|-------|---------|
-| `socketEvents.js` | 1 | Add 3 new event constants |
-| `socketHandlers.js` | 1 | New unified `handleOrderDataEvent()` + BUG-216 fix (ignore `free`) |
-| `useSocketEvents.js` | 1 | Wire 4 events to unified handler |
-| `OrderContext.jsx` | 2 | Add `waitForOrderEngaged()` |
-| `OrderEntry.jsx` | 2 | Update wait/engage patterns in 6 handlers |
+| Component | How to Rollback | Impact |
+|-----------|----------------|--------|
+| `handleOrderDataEvent` | Remove new cases from switch. Re-add `handleUpdateOrder` case. Old events still work | New events silently dropped (current behavior) |
+| BUG-216 fix | Restore `free→engage` line in handleUpdateTable | Tables stuck on shift/merge (current known bug) |
+| `waitForOrderEngaged` | Revert to `waitForTableEngaged` or fire-and-close | May redirect before socket confirms (current behavior) |
+| Collect bill local engage | Add back `if (tableId) setTableEngaged(tableId, true)` | Permanent table lock (current known bug) |
+| Each phase independently rollbackable | Phase 1 (handlers) and Phase 2 (OrderEntry) are separate changes | Can rollback one without the other |
 
 ---
 
-## 10. Rollback Plan
+## 10. Endpoints Reference
 
-- Phase 1 (socket handlers) and Phase 2 (OrderEntry) are independently deployable
-- BUG-216 fix: if any v1 cancel flow breaks, restore `free→engage` line (1-line revert)
-- New event handlers: old events still processed by existing handlers — additive change
-- `waitForOrderEngaged`: if timeouts occur, revert to fire-and-close (existing behavior)
-
----
-
-## 11. Endpoints Reference (Current)
-
-| Flow | Constant | Endpoint | Version | Method |
-|------|----------|----------|---------|--------|
-| Place Order | `PLACE_ORDER` | `/api/v2/vendoremployee/order/place-order` | v2 | POST |
-| Update Order | `UPDATE_ORDER` | `/api/v2/vendoremployee/order/update-place-order` | v2 | PUT |
-| Switch Table | `ORDER_TABLE_SWITCH` | `/api/v2/vendoremployee/order/order-table-room-switch` | v2 | POST |
-| Merge Table | `MERGE_ORDER` | `/api/v2/vendoremployee/order/transfer-order` | v2 | POST |
-| Transfer Food | `TRANSFER_FOOD` | `/api/v2/vendoremployee/order/transfer-food-item` | v2 | POST |
-| Collect Bill | `BILL_PAYMENT` | `/api/v2/vendoremployee/order/order-bill-payment` | v2 | POST |
-| Cancel Food | `CANCEL_ITEM` | `/api/v2/vendoremployee/order/cancel-food-item` | v2 | PUT |
-| Cancel Order / Ready / Served | `ORDER_STATUS_UPDATE` | `/api/v2/vendoremployee/order-status-update` | v2 | PUT |
-| Food Status | `FOOD_STATUS_UPDATE` | `/api/v2/vendoremployee/food-status-update` | v2 | PUT |
-| Get Single Order | `SINGLE_ORDER_NEW` | `/api/v2/vendoremployee/get-single-order-new` | v2 | POST |
+| Flow | Constant | Path | Method |
+|------|----------|------|--------|
+| Place Order | `PLACE_ORDER` | `/api/v2/vendoremployee/order/place-order` | POST |
+| Update Order | `UPDATE_ORDER` | `/api/v2/vendoremployee/order/update-place-order` | PUT |
+| Switch Table | `ORDER_TABLE_SWITCH` | `/api/v2/vendoremployee/order/order-table-room-switch` | POST |
+| Merge Table | `MERGE_ORDER` | `/api/v2/vendoremployee/order/transfer-order` | POST |
+| Transfer Food | `TRANSFER_FOOD` | `/api/v2/vendoremployee/order/transfer-food-item` | POST |
+| Collect Bill | `BILL_PAYMENT` | `/api/v2/vendoremployee/order/order-bill-payment` | POST |
+| Cancel Food | `CANCEL_ITEM` | `/api/v2/vendoremployee/order/cancel-food-item` | PUT |
+| Cancel Order / Ready / Served | `ORDER_STATUS_UPDATE` | `/api/v2/vendoremployee/order/order-status-update` | PUT |
+| Food Status | `FOOD_STATUS_UPDATE` | `/api/v2/vendoremployee/order/food-status-update` | PUT |
+| Get Single Order | `SINGLE_ORDER_NEW` | `/api/v2/vendoremployee/get-single-order-new` | POST |
 
 ---
 
-## 12. GET Single Order Callers
+## 11. Known Blocker
 
-| # | Caller | File | Trigger | Needed After v2? |
-|---|--------|------|---------|-----------------|
-| 1 | `handleOrderDataEvent` (fallback) | `socketHandlers.js` | Any data event without payload | Keep (backwards compat) |
-| 2 | `handleUpdateFoodStatus` | `socketHandlers.js` | `update-food-status` | Keep until backend adds payload |
-| 3 | `handleUpdateOrderStatus` | `socketHandlers.js` | `update-order-status` | Keep until backend fixes `order-status-update` |
-| 4 | `handleScanNewOrder` | `socketHandlers.js` | `scan-new-order` | Keep until backend adds payload |
-| 5 | `handleDeliveryAssignOrder` | `socketHandlers.js` | `delivery-assign-order` | Keep until backend adds payload |
-| 6 | OrderEntry (Split Bill) | `OrderEntry.jsx` | After split API response | Keep (deliberate fetch, not socket) |
-| 7 | Report Detail Sheet | `reportService.js` | UI detail view | Keep (not socket related) |
-
----
-
-## 13. Test Execution Tracker
-
-| # | Test | Date | Logs? | Result | Risks |
-|---|------|------|-------|--------|-------|
-| 1 | Collect Bill dine-in (cash) | Apr 13 | ✅ | CLEAN — `order-engage` + `update-order-paid`. No double fire. | R1 ✅, R2 ✅ |
-| 2 | Collect Bill walk-in (cash) | Apr 13 | ✅ | CLEAN — identical to dine-in. | R6 ✅ |
-| 2b | Collect Bill delivery (cash) | Apr 13 | ✅ | CLEAN — identical. | R6 ✅ |
-| 3 | Cancel food partial (walk-in, v1) | Apr 13 | ✅ | v1 DIRTY — `update-table 0 free` + `update-order-status` + GET. | R3 partial |
-| 3b | Cancel food full (walk-in, v1) | Apr 13 | ✅ | v1 DIRTY — same pattern. | R3 partial |
-| 3c | Cancel food partial (dine-in, v1) | Apr 13 | ✅ | v1 DIRTY — BUG-216 saves it. 1 sec GET. | R3 confirmed |
-| 3d | Cancel food partial (dine-in, v2!) | Apr 13 | ✅ | **v2 CLEAN!** `order-engage` + `update-order` with payload. No `update-table free`. No GET. | R3 ✅ ELIMINATED |
-| 4 | Cancel food last item (walk-in, v1) | Apr 13 | ✅ | v1 DIRTY — GET returns cancelled, removeOrder. | — |
-| 5 | Cancel full order (dine-in) | Apr 13 | ✅ | v1 DIRTY — 2× `update-table free` + `update-order-status` + GET. | — |
-| 6 | Transfer food last item | — | ❌ | Not yet tested | R5 |
-| 7 | Mark Ready | Apr 13 | ✅ | v1 DIRTY — `update-order-status` only, no lock, GET 1 sec. | — |
-| 8 | Switch Table table→table | Apr 13 | ✅ | v2 CLEAN — 2× `update-table engage` + `update-order-target`. | — |
-| 9 | Switch Table walk-in→table | Apr 13 | ✅ | v1 at test time, now v2. | — |
-| 10 | Merge Table | Apr 13 | ✅ | v2 CLEAN — 2× `order-engage` + `target` + `source`. | — |
-| 11 | Transfer Food | Apr 13 | ✅ | v2 CLEAN — identical to merge pattern. | — |
-
-
----
-
-## 14. BLOCKER BUG: `food_details: null` in ALL Socket Payloads
+### `food_details: null` in ALL Socket Payloads
 
 **Status:** P0 BLOCKER — Backend Socket Team
-**Found:** April 13, 2026
-**Affects:** ALL v2 socket events (`new-order`, `update-order`, `update-order-target`, `update-order-source`, `update-order-paid`)
-
-### Problem
-Socket payload `orderDetails[].food_details` is `null` for every item. GET single order API returns it correctly. This causes "Unknown Item" on all order cards populated from socket data.
-
-### Evidence (Order 730885)
-```
-Socket:  orderDetails[0].food_details = null
-GET API: orderDetails[0].food_details = { id: 62170, name: "3 pc FRIED WINGS", price: 297, tax: 5, tax_type: "GST", ... }
-```
-
-All 5 items in the order have `food_details: null`.
-
-### Impact
-- Item names show "Unknown Item"
-- Item tax info missing (percentage, type, calculation)
-- Item food_id missing (needed for cancel, transfer)
-- Available variations/addons from catalog missing
-- ALL v2 socket-first flows affected — every order card populated from socket
-
-### What Frontend Transform Expects
-```
-detail.food_details?.name    → item name
-detail.food_details?.id      → food catalog ID
-detail.food_details?.tax     → tax percentage
-detail.food_details?.tax_type → "GST" / "VAT"
-```
-
-### Backend Action Required
-Populate `food_details` object in socket payload `orderDetails[]` — same data structure as GET single order API response (`/api/v2/vendoremployee/get-single-order-new`).
-
-### Frontend Workaround (Parked)
-If backend fix is delayed: background GET API call after socket payload to enrich `food_details`. This defeats the zero-GET purpose but restores item names. Not implementing until backend confirms timeline.
+**Impact:** All items show "Unknown Item" on dashboard
+**Cause:** Socket `orderDetails[].food_details` is `null`. GET API returns it correctly.
+**Backend fix:** Populate `food_details` in socket payload — same object as GET API.
+**Frontend:** No change needed once backend fixes this. Transform already reads `food_details?.name`.
+**Workaround (if needed):** Add background GET enrichment after socket payload. Defeats zero-GET goal but restores display.
