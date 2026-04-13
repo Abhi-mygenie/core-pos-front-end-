@@ -847,7 +847,7 @@ const DashboardPage = () => {
 
     try {
       // Single API call to confirm order (YTC → Preparing)
-      await updateOrderStatus(order.orderId, user?.roleName || 'Manager', 'preparing');
+      await updateOrderStatus(order.orderId, user?.roleName || 'Manager', 'paid');
       // Socket handler will process order-engage + update-order-paid
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);
