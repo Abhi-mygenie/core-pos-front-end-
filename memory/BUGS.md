@@ -147,19 +147,19 @@ update-order-source 730882 (3)    ✅ source removed
 | Source → Target | `update-order-source` | `update-order-target` | Works? |
 |----------------|----------------------|----------------------|--------|
 | Table → Table | ✅ | ✅ | ✅ |
+| Walk-in → Walk-in | ✅ | ✅ | ✅ |
+| Table → Walk-in | ✅ | ✅ | ✅ |
 | Walk-in → Table | ✅ | ❌ | ❌ |
-| Walk-in → Walk-in | ✅ | ❌ | ❌ |
-| Table → Walk-in | ✅ | ? (not tested) | ? |
 
 **Impact:**
-1. Target order has stale data — merged items from source never reflected
+1. Target table order has stale data — merged items from walk-in source never reflected
 2. Target order card spinner stuck permanently — `setOrderEngaged(targetId)` never released
 3. Only fix is page refresh
 
 **Expected backend behavior:**
-When merge API is called, backend must send BOTH:
+When merge API is called with walk-in source merging INTO a table order, backend must send BOTH:
 1. `update-order-source {sourceOrderId} {3} {payload}` — source cancelled ✅ Already sent
-2. `update-order-target {targetOrderId} {f_status} {payload}` — target updated with merged items ❌ MISSING for walk-in source
+2. `update-order-target {targetOrderId} {f_status} {payload}` — target updated with merged items ❌ MISSING only for walk-in → table
 
 **Frontend status:** Handler for `update-order-target` is implemented and working (confirmed with table-to-table merge). Zero frontend change needed — once backend sends the event, it will work automatically.
 

@@ -1484,19 +1484,22 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 
 ### 19.1 Complete Socket Event Map (Verified from Console Logs)
 
-| Flow | HTTP Verb | Endpoint | Socket Events | Has Payload? |
-|------|-----------|----------|---------------|-------------|
-| New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes |
-| Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes |
-| Switch Table | POST | v2 order/order-table-room-switch | 2x `update-table engage` (src+dest) + `update-order-target` | ✅ Yes |
-| Merge Table | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
-| Transfer Food | POST | v2 order/transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
-| Collect Bill | POST | v2 order/order-bill-payment | `order-engage` + `update-order-paid` | ✅ Yes |
-| Cancel Food Item | PUT | v2 order/cancel-food-item | `order-engage` + `update-order` | ✅ Yes |
-| Cancel Full Order | PUT | v2 order-status-update | `order-engage` + 2x `update-order-paid` | ✅ Yes |
-| Mark Ready (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes |
-| Mark Served (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes |
-| Item Ready/Serve | PUT | v2 food-status-update | `order-engage` + `update-item-status` | ✅ Yes |
+| Flow | HTTP Verb | Endpoint | Socket Events | Has Payload? | Verified? |
+|------|-----------|----------|---------------|-------------|-----------|
+| New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes | ✅ |
+| Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes | ✅ |
+| Switch Table | POST | v2 order/order-table-room-switch | 2x `update-table engage` (src+dest) + `update-order-target` | ✅ Yes | ✅ |
+| Merge (Table→Table) | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes | ✅ |
+| Merge (WI→WI) | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes | ✅ |
+| Merge (Table→WI) | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes | ✅ |
+| Merge (WI→Table) | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-source` (NO target!) | ✅ Yes | ❌ BUG-228 |
+| Transfer Food | POST | v2 order/transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes | ✅ |
+| Collect Bill | POST | v2 order/order-bill-payment | `order-engage` + `update-order-paid` | ✅ Yes | Needs testing |
+| Cancel Food Item | PUT | v2 order/cancel-food-item | `order-engage` + `update-order` | ✅ Yes | ✅ |
+| Cancel Full Order | PUT | v2 order-status-update | `order-engage` + 2x `update-order-paid` | ✅ Yes | ✅ |
+| Mark Ready (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes | ✅ |
+| Mark Served (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes | ✅ |
+| Item Ready/Serve | PUT | v2 food-status-update | `order-engage` + `update-item-status` | ✅ Yes | ✅ |
 
 ### 19.2 Locking Architecture (Implemented)
 

@@ -913,7 +913,24 @@ Original plan covered 5 files. During testing discovered:
 | `socketHandlers.js` | `handleOrderDataEvent` unified handler, BUG-216 fix, handler registry updated |
 | `useSocketEvents.js` | 5 new switch cases, import updated |
 | `OrderContext.jsx` | `waitForOrderEngaged` added |
-| `OrderEntry.jsx` | 8 handlers updated to fire-and-forget + wait-for-engage pattern |
+| `OrderEntry.jsx` | 8 handlers updated to fire-and-forget + wait-for-engage pattern, console log identifiers |
 | `DashboardPage.jsx` | Removed local `setTableEngaged` from markReady/markServed, added `isOrderEngaged` props |
 | `ChannelColumnsLayout.jsx` | `isOrderEngaged` prop pass-through |
 | `ChannelColumn.jsx` | `isOrderEngaged` prop usage for spinner |
+
+### Merge Matrix (Verified April 13, 2026)
+
+| Source → Target | `update-order-target` | `update-order-source` | Works? |
+|----------------|----------------------|----------------------|--------|
+| Table → Table | ✅ | ✅ | ✅ |
+| Walk-in → Walk-in | ✅ | ✅ | ✅ |
+| Table → Walk-in | ✅ | ✅ | ✅ |
+| Walk-in → Table | ❌ (BUG-228) | ✅ | ❌ |
+
+### Open Backend Bugs (Filed During Implementation)
+
+| Bug | Title | Status |
+|-----|-------|--------|
+| BUG-226 | `order-engage` missing before `update-item-status` | ✅ FIXED (same day) |
+| BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | ❌ OPEN |
+| BUG-228 | `update-order-target` not sent for Walk-in → Table merge | ❌ OPEN |

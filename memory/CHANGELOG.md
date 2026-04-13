@@ -65,6 +65,39 @@
 - Backend deployed fix same day — `order-engage` now sent before `update-item-status`
 - Marked as ✅ FIXED (Backend)
 
+### BUG-227: Order-level Ready/Serve does not update item-level `food_status`
+- Filed as P0 Backend bug
+- When order-level Mark Ready/Serve is triggered, `f_order_status` updates but `food_status` per item stays unchanged
+- `ready_order_details` / `serve_order_details` stay empty
+- Frontend displays correctly what backend sends — zero frontend change needed
+
+### BUG-228: `update-order-target` not sent when walk-in merged into table
+- Filed as P0 Backend bug
+- Only affects Walk-in → Table merge. All other combinations work:
+  - Table → Table ✅, Walk-in → Walk-in ✅, Table → Walk-in ✅, Walk-in → Table ❌
+- Target table order has stale data + permanent spinner
+
+### Verified Flow Matrix (Console Log Validated)
+
+| Flow | Status | Notes |
+|------|--------|-------|
+| New Order (dine-in) | ✅ | No regression |
+| New Order (walk-in) | ✅ | No regression |
+| Update Order | ✅ | Fire-and-forget, instant redirect |
+| Cancel Food Item | ✅ | Fire-and-forget, instant redirect |
+| Transfer Food (partial) | ✅ | Both orders updated |
+| Shift Table | ✅ | Table change detection works, old table freed |
+| Merge (Table → Table) | ✅ | Target updated, source removed |
+| Merge (Walk-in → Walk-in) | ✅ | Both events received |
+| Merge (Table → Walk-in) | ✅ | Source table freed, target updated |
+| Merge (Walk-in → Table) | ❌ | Backend BUG-228 — `update-order-target` missing |
+| Mark Ready (order-level, table) | ✅ | No spinner stuck |
+| Mark Ready (order-level, walk-in) | ✅ | No spinner stuck |
+| Item Ready (item-level) | ✅ | `update-item-status` handled |
+| Item Serve (item-level) | ✅ | `update-item-status` handled |
+| Cancel Full Order | ✅ | Double-fire idempotent, order removed |
+| Collect Bill | Needs testing | Fire-and-forget pattern implemented |
+
 ---
 
 
