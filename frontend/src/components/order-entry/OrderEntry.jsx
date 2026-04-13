@@ -434,6 +434,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         // Wait for socket order-engage then redirect
         await engagePromise;
         if (apiFailed) return; // API failed — stay on screen, toast shown
+        console.log('[UpdateOrder] Socket engaged — redirecting to dashboard');
       } else {
         // Scenario 2 / New Order — Fire HTTP, redirect immediately
         // Socket events (update-table engage → new-order) handle all state updates
@@ -523,6 +524,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
     setTransferItem(null);
     if (engagePromise) await engagePromise;
+    console.log('[TransferFood] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
@@ -548,6 +550,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }
 
     if (engagePromise) await engagePromise;
+    console.log('[MergeTable] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
@@ -570,6 +573,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       });
 
     if (engagePromise) await engagePromise;
+    console.log('[ShiftTable] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
@@ -594,6 +598,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       });
 
     if (engagePromise) await engagePromise;
+    console.log('[CancelFood] Socket engaged — redirecting to dashboard');
     setCancelItem(null);
     onClose();
   };
@@ -614,6 +619,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       });
 
     await engagePromise;
+    console.log('[CancelOrder] Socket engaged — redirecting to dashboard');
     toast({
       title: "Order Cancelled",
       description: `Order cancelled for ${table?.label || table?.id}`,
@@ -853,6 +859,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       });
 
                     if (engagePromise) await engagePromise;
+                    console.log('[CollectBill] Socket engaged — redirecting to dashboard');
                     onClose();
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   }
