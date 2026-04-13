@@ -35,7 +35,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders, removeOrder, waitForOrderRemoval } = useOrders();
+  const { orders, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant, cancellation } = useRestaurant();
   const { user, hasPermission } = useAuth();
@@ -417,10 +417,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
         console.log('[UpdateOrder] response:', response.data);
 
-        // Wait for socket update-table (engage) before redirect
-        const tableId = Number(effectiveTable?.tableId);
-        if (tableId) {
-          await waitForTableEngaged(tableId, 5000);
+        // Wait for socket order-engage before redirect
+        if (placedOrderId) {
+          await waitForOrderEngaged(placedOrderId, 5000);
         }
       } else {
         // Scenario 2 / New Order — Fire HTTP, redirect immediately
@@ -499,6 +498,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       description: response.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
     });
     setTransferItem(null);
+    
+    // Wait for socket order-engage (source order) before redirect
+    const sourceOrderId = effectiveTable?.orderId;
+    if (sourceOrderId) {
+      await waitForOrderEngaged(sourceOrderId, 5000);
+    }
+    
     onClose();
   };
 
@@ -512,15 +518,30 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       title: "Tables Merged",
       description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}`,
     });
+    
+    // Wait for socket order-engage before redirect
+    const targetOrderId = effectiveTable?.orderId;
+    if (targetOrderId) {
+      await waitForOrderEngaged(targetOrderId, 5000);
+    }
+    
     onClose();
   };
 
-  const handleShift = async ({ toTable }) => {    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+  const handleShift = async ({ toTable }) => {
+    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
     const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
     toast({
       title: "Table Shifted",
       description: response.data?.message || `Order moved to ${toTable.displayName}`,
     });
+    
+    // Wait for socket update-table engage (dest) before redirect
+    const destTableId = Number(toTable?.tableId);
+    if (destTableId) {
+      await waitForTableEngaged(destTableId, 5000);
+    }
+    
     onClose();
   };
 
@@ -534,10 +555,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         description: `${item?.name} cancelled successfully`,
       });
 
-      // Wait for socket update-table (engage) before redirect
-      const tableId = Number(effectiveTable?.tableId || table?.tableId);
-      if (tableId) {
-        await waitForTableEngaged(tableId, 5000);
+      // Wait for socket order-engage before redirect
+      const orderId = effectiveTable?.orderId || placedOrderId;
+      if (orderId) {
+        await waitForOrderEngaged(orderId, 5000);
       }
 
       setCancelItem(null);
@@ -787,9 +808,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
-                    // Engage table locally, call API, redirect to dashboard
-                    const tableId = Number(effectiveTable?.tableId || table?.tableId);
-                    if (tableId) setTableEngaged(tableId, true);
+                    // No local table engage — order-engage socket handles locking
                     setIsPlacingOrder(true);
 
                     const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
