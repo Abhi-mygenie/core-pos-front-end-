@@ -198,65 +198,94 @@ export const handleNewOrder = (message, { addOrder, updateTableStatus, setTableE
 };
 
 /**
- * Handle update-order event
- * Message: [update-order, order_id, restaurant_id, f_order_status, payload?]
- * Action: Use socket payload to UPDATE OrderContext (no GET API needed)
- * Auto-release: setOrderEngaged(orderId, false) after context update
+ * Handle update-order event (LEGACY — kept for rollback reference)
+ * Replaced by handleOrderDataEvent for all 4 data events
  */
-export const handleUpdateOrder = async (message, { updateOrder, updateTableStatus, getOrderById, setOrderEngaged }) => {
-  const parsed = parseMessage(message);
+export const handleUpdateOrder = async (message, context) => {
+  // Routed to handleOrderDataEvent — this function is no longer called
+  return handleOrderDataEvent(message, context, 'update-order');
+};
+
+/**
+ * Unified handler for all v2 order data events
+ * Events: update-order, update-order-target, update-order-source, update-order-paid
+ * 
+ * Message format: [eventName, orderId, restaurantId, f_order_status, { orders: [...] }]
+ * 
+ * Strategy per event:
+ * - update-order:        updateOrder()
+ * - update-order-target: updateOrder() + detect table change (switch table)
+ * - update-order-source: if cancelled/paid → removeOrder(), else updateOrder()
+ * - update-order-paid:   if cancelled/paid → removeOrder(), else updateOrder()
+ */
+export const handleOrderDataEvent = async (message, context, eventName) => {
+  const { updateOrder, removeOrder, updateTableStatus, getOrderById, setOrderEngaged, setTableEngaged } = context;
   
+  const parsed = parseMessage(message);
   if (!parsed) {
-    log('ERROR', 'Invalid update-order message format', message);
+    log('ERROR', `Invalid ${eventName} message format`, message);
     return;
   }
   
   const { orderId, payload } = parsed;
-  log('INFO', `update-order received: ${orderId}`);
+  log('INFO', `${eventName} received: ${orderId}`);
   
-  // Guard: skip if order was already removed (cancelled/paid)
-  if (getOrderById && !getOrderById(orderId)) {
-    log('INFO', `update-order: Order ${orderId} already removed, skipping`);
+  // Transform payload — v2 only, no GET fallback
+  if (!payload || !payload.orders || !Array.isArray(payload.orders) || payload.orders.length === 0) {
+    log('ERROR', `${eventName}: No payload in v2 event — backend issue. orderId=${orderId}`);
     return;
   }
   
-  let order = null;
+  let order;
+  try {
+    order = orderFromAPI.order(payload.orders[0]);
+    log('INFO', `${eventName}: Transformed order ${orderId}`);
+  } catch (error) {
+    log('ERROR', `${eventName}: Transform failed`, error.message);
+    return;
+  }
   
-  // Check if socket has payload (v2 API provides complete order data)
-  if (payload && payload.orders && Array.isArray(payload.orders) && payload.orders.length > 0) {
-    // Use socket payload directly - no GET API needed
-    try {
-      order = orderFromAPI.order(payload.orders[0]);
-      log('INFO', `update-order: Using socket payload for order ${orderId}`);
-    } catch (error) {
-      log('ERROR', `update-order: Transform failed for socket payload`, error.message);
+  // Detect table change (Switch Table: update-order-target only)
+  if (eventName === 'update-order-target') {
+    const oldOrder = getOrderById ? getOrderById(orderId) : null;
+    const oldTableId = oldOrder?.tableId || 0;
+    const newTableId = order.tableId || 0;
+    
+    if (oldTableId !== newTableId && oldTableId !== 0) {
+      updateTableStatus(oldTableId, 'available');
+      if (setTableEngaged) setTableEngaged(oldTableId, false);
+      log('INFO', `${eventName}: Table changed ${oldTableId} → ${newTableId}, old table freed`);
     }
   }
   
-  // Fallback to GET API if no payload (backwards compatibility)
-  if (!order) {
-    log('INFO', `update-order: No socket payload, fetching from API`);
-    order = await fetchOrderWithRetry(orderId);
-  }
+  // Decide: remove or update
+  const isTerminal = (order.status === 'cancelled' || order.status === 'paid');
+  const shouldRemove = isTerminal && (eventName === 'update-order-source' || eventName === 'update-order-paid');
   
-  if (order) {
+  if (shouldRemove) {
+    syncTableStatus(order, updateTableStatus, 'available');
+    removeOrder(orderId);
+    log('INFO', `${eventName}: Order ${orderId} is ${order.status}, removed`);
+  } else {
     updateOrder(order.orderId, order);
     syncTableStatus(order, updateTableStatus);
-    log('INFO', `update-order: Updated order ${order.orderId}`);
-    
-    // Auto-release order engaged after context update
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        // Release order engage only (table engage handled by order-engage channel)
-        if (setOrderEngaged) {
-          setOrderEngaged(order.orderId, false);
-          log('INFO', `update-order: Order ${order.orderId} released from ENGAGED`);
-        }
-      });
-    });
-  } else {
-    log('WARN', `update-order: Could not get order ${orderId}, skipping`);
+    log('INFO', `${eventName}: Updated order ${order.orderId} (status: ${order.status})`);
   }
+  
+  // Release engage after React paints
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (setOrderEngaged) {
+        setOrderEngaged(orderId, false);
+        log('INFO', `${eventName}: Order ${orderId} released from ENGAGED`);
+      }
+      // Switch table: also release new table engage
+      if (eventName === 'update-order-target' && order.tableId && order.tableId !== 0 && setTableEngaged) {
+        setTableEngaged(order.tableId, false);
+        log('INFO', `${eventName}: Table ${order.tableId} released from ENGAGED`);
+      }
+    });
+  });
 };
 
 /**
@@ -456,11 +485,9 @@ export const handleUpdateTable = (message, { updateTableStatus, setTableEngaged 
     setTableEngaged(tableId, true);
     log('INFO', `update-table: Table ${tableId} ENGAGED (locked)`);
   } else if (socketStatus === 'free') {
-    // BUG-216 workaround: Backend sends 'free' for cancel-item but should send 'engage'
-    // Treat 'free' as 'engage' — lock the table until GET enrichment completes
-    // Backend will fix to send 'engage'; once fixed, this becomes a normal engage
-    if (setTableEngaged) setTableEngaged(tableId, true);
-    log('INFO', `update-table: Table ${tableId} ENGAGED (free→engage workaround, BUG-216)`);
+    // v2: No flow sends update-table free. Ignore it.
+    // Table status is derived from order data in order event handlers.
+    log('INFO', `update-table: Table ${tableId} free received — ignoring (v2: table status from order data)`);
   } else {
     // Other statuses: map and update
     const frontendStatus = TABLE_STATUS_MAP[socketStatus] || socketStatus;
@@ -524,6 +551,9 @@ export const getHandler = (eventName) => {
   const handlers = {
     [SOCKET_EVENTS.NEW_ORDER]: handleNewOrder,
     [SOCKET_EVENTS.UPDATE_ORDER]: handleUpdateOrder,
+    [SOCKET_EVENTS.UPDATE_ORDER_TARGET]: handleOrderDataEvent,
+    [SOCKET_EVENTS.UPDATE_ORDER_SOURCE]: handleOrderDataEvent,
+    [SOCKET_EVENTS.UPDATE_ORDER_PAID]: handleOrderDataEvent,
     [SOCKET_EVENTS.UPDATE_FOOD_STATUS]: handleUpdateFoodStatus,
     [SOCKET_EVENTS.UPDATE_ORDER_STATUS]: handleUpdateOrderStatus,
     [SOCKET_EVENTS.SCAN_NEW_ORDER]: handleScanNewOrder,
@@ -543,6 +573,9 @@ export const getHandler = (eventName) => {
 export const isAsyncHandler = (eventName) => {
   const asyncEvents = [
     SOCKET_EVENTS.UPDATE_ORDER,
+    SOCKET_EVENTS.UPDATE_ORDER_TARGET,
+    SOCKET_EVENTS.UPDATE_ORDER_SOURCE,
+    SOCKET_EVENTS.UPDATE_ORDER_PAID,
     SOCKET_EVENTS.UPDATE_FOOD_STATUS,
     SOCKET_EVENTS.UPDATE_ORDER_STATUS,
     SOCKET_EVENTS.SCAN_NEW_ORDER,
