@@ -860,12 +860,20 @@ Send `update-table engage` for prepaid orders, same as Update Order flow.
 
 ## BUG-221: Merge Order — Source Table Permanently Locked After Merge
 
-**Status:** OPEN — CRITICAL
-**Priority:** P0 CRITICAL
+**Status:** RESOLVED — v2 endpoint fixes this
+**Priority:** P0 CRITICAL → RESOLVED
 **Reported:** April 6, 2026
+**Resolved:** April 13, 2026
 **Component:** Frontend (BUG-216 workaround) + Backend (missing engage for source table)
 
-### Problem
+### Resolution
+Merge endpoint upgraded to v2 (`POST /api/v2/vendoremployee/order/transfer-order`). v2 uses:
+- **Order-level locking** (`order-engage`) instead of table-level (`update-table`)
+- **New events:** `update-order-target` + `update-order-source` with full payloads
+- **No `update-table free`** sent → BUG-216 workaround no longer triggers
+- **Frontend TODO:** Add handlers for `update-order-target` and `update-order-source`
+
+### Original Problem (v1)
 After merging order 730506 from table 6476 (source) → table 6235 (destination), the source table 6476 gets permanently stuck with a spinner overlay and cannot be clicked.
 
 ### Console Evidence (Timestamped)

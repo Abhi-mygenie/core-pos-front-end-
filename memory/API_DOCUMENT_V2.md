@@ -25,6 +25,68 @@
 
 ---
 
+## April 13, 2026 Updates — Merge Table v2 Socket Events
+
+### New Socket Events (Merge Table v2)
+
+| Event Name | Channel | Purpose |
+|-----------|---------|---------|
+| `update-order-target` | `new_order_{restaurantId}` | Target order updated (items merged in). Has full payload |
+| `update-order-source` | `new_order_{restaurantId}` | Source order updated (cancelled). Has full payload |
+
+### Merge Table v2 — Complete Socket Flow
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/transfer-order`
+
+**Verified from console logs (April 13, 2026):**
+
+**Scenario:** Order 730850 (source, table 3240) merged INTO Order 730849 (target, table 3239)
+
+```
+13:21:14  order-engage  730850 engage             ← Source order LOCKED
+13:21:14  order-engage  730849 engage             ← Target order LOCKED
+13:21:15  update-order-target  730849, 478, 1, {payload}  ← Target updated (f_order_status=1, preparing)
+13:21:15  update-order-source  730850, 478, 3, {payload}  ← Source cancelled (f_order_status=3)
+```
+
+| # | Event | Order | f_order_status | tableStatus (derived) | Payload? |
+|---|-------|-------|---------------|----------------------|----------|
+| 1 | `order-engage` | 730850 (source) | — | — | N/A (lock only) |
+| 2 | `order-engage` | 730849 (target) | — | — | N/A (lock only) |
+| 3 | `update-order-target` | 730849 (target) | 1 (preparing) | `occupied` | ✅ Yes (complete) |
+| 4 | `update-order-source` | 730850 (source) | 3 (cancelled) | `available` | ✅ Yes (complete) |
+
+### Table Status Derivation (Confirmed)
+
+```
+f_order_status → F_ORDER_STATUS map → statusKey → ORDER_TO_TABLE_STATUS → tableStatus
+
+Target: f_order_status=1 → 'preparing' → 'occupied'
+Source: f_order_status=3 → 'cancelled' → 'available'
+```
+
+### v2 vs v1 Comparison (Merge Table)
+
+| Aspect | v1 (old) | v2 (verified) |
+|--------|----------|---------------|
+| Locking | `update-table` (table-level) | `order-engage` (order-level) |
+| Both orders locked? | ❌ Only destination table | ✅ Both orders locked |
+| Payload in socket? | ❌ No, GET API required | ✅ Full payload, zero GET API |
+| Event names | Single `update-order` | **`update-order-target`** + **`update-order-source`** |
+| Table events? | `update-table engage` + `free` | **None** — table status derived from order |
+| Source table stuck? | ❌ Yes (BUG-221) | ✅ No — order-level engage, released after context update |
+
+### Frontend Implementation Required
+
+| # | What | File |
+|---|------|------|
+| 1 | Add `UPDATE_ORDER_TARGET` and `UPDATE_ORDER_SOURCE` to `SOCKET_EVENTS` | `socketEvents.js` |
+| 2 | Add handler for `update-order-target`: transform payload → `updateOrder()` → release engage | `socketHandlers.js` |
+| 3 | Add handler for `update-order-source`: transform payload → if cancelled `removeOrder()` + free table, else `updateOrder()` → release engage | `socketHandlers.js` |
+| 4 | Wire new events in switch statement | `useSocketEvents.js` |
+
+---
+
 ## April 10, 2026 Updates
 
 ### Endpoint Version Changes

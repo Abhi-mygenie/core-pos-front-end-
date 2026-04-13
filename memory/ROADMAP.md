@@ -142,6 +142,7 @@
 | New Order + table | `update-table engage` | Wait for table engage |
 | New Order + walk-in | None | No wait (0.5s delay) |
 | Update Order | `order-engage` | Wait for order engage |
+| Merge Table (v2) | 2x `order-engage` (source + target) | Wait for order engage |
 | Transfer Order | `update-table engage` (dest) + `free` (source) | Fire & close — no wait |
 | Transfer Food Item | None (2x `update-order` only) | Fire & close — no wait |
 | Cancel Food Item + table | `update-table engage` (currently `free`) | Wait for table engage |
@@ -151,17 +152,19 @@
 
 - **Status:** TODO
 
-### TASK-C: Transfer Order Socket-First (PARKED)
-- **What:** Validate and refactor Transfer Order flow after backend sends socket payload
-- **Current state:** Backend v1 sends `update-order` WITHOUT payload → HTTP GET fallback
-- **Endpoint:** `POST /api/v1/vendoremployee/order/transfer-order` (stays v1)
-- **Scenarios tested:**
-  - Table→Table (5583→5535, 5509→5511)
-  - Walk-in→Table (0→5510)
-  - Takeaway→Takeaway — logs pending
-- **Socket events received:** `update-table engage` (dest) + `update-table free` (source) + `update-order` (no payload)
-- **Transfer-aware logic needed:** Detect old tableId vs new tableId, free source, set dest occupied
-- **Status:** PARKED — waiting for backend v2 or further testing
+### TASK-C: Transfer Order Socket-First — PARTIALLY DONE
+- **What:** Validate and refactor Transfer/Merge Order flows after backend sends socket payload
+- **Merge Table (v2):** ✅ VERIFIED — Backend sends `order-engage` (both) + `update-order-target` + `update-order-source` with full payload
+  - New events: `update-order-target`, `update-order-source`
+  - Order-level locking (not table-level)
+  - Zero GET API calls needed
+  - **Frontend implementation needed:** Add handlers for new events in `socketEvents.js`, `socketHandlers.js`, `useSocketEvents.js`
+- **Switch Table (v1):** Still v1 behavior — `update-table engage/free` + `update-order` (no payload). GET API still required
+  - Endpoint: `POST /api/v1/vendoremployee/pos/order-table-room-switch`
+  - Tested Walk-in→Table and Table→Table (Apr 13 logs)
+  - Source table BUG-216 still applies for table-to-table
+- **Transfer Food (v2):** Upgraded to v2, awaiting log verification
+- **Status:** IN PROGRESS
 
 ---
 

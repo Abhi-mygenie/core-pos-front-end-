@@ -1488,7 +1488,7 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 |------|-----------|----------|---------------|-------------|
 | New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes |
 | Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes |
-| Transfer Order | POST | v2 transfer-order | `update-table engage/free` + `update-order` | Testing |
+| Transfer Order | POST | v2 transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes (v2 verified) |
 | Transfer Food Item | POST | v2 transfer-food-item | 2x `update-order` | Testing |
 | Cancel Food Item | PUT | v1 cancel-food-item | `update-table free` + `update-order-status` | ❌ No |
 | Cancel Full Order | PUT | v2 order-status-update | `update-table free` + `update-order-status` | ❌ No |
@@ -1507,6 +1507,8 @@ order-engage engage         → setOrderEngaged(orderId, true)
 order-engage free           → setOrderEngaged(orderId, false)
 update-order (after lock)   → auto-release via requestAnimationFrame
 new-order (after lock)      → auto-release via requestAnimationFrame
+update-order-target         → updateOrder() from payload + release engage (NEW: merge v2)
+update-order-source         → removeOrder() if cancelled, else updateOrder() + release engage (NEW: merge v2)
 ```
 
 **What to wait for before redirect (per flow):**
@@ -1516,6 +1518,7 @@ new-order (after lock)      → auto-release via requestAnimationFrame
 | New Order + table | Wait for `update-table engage` |
 | New Order + walk-in | 0.5s delay (no socket lock) |
 | Update Order | Wait for `order-engage` |
+| Merge Table | Wait for `order-engage` (source or target) |
 | Transfer Order/Food | Fire & close (no wait) |
 | Cancel Food Item | Wait for `update-table engage` (when backend sends it) |
 
@@ -1525,7 +1528,7 @@ new-order (after lock)      → auto-release via requestAnimationFrame
 |--------|-----------------|----------------------|
 | Place Order | **v2** | ✅ Yes |
 | Update Order | **v2** | ✅ Yes |
-| Transfer Order | **v2** | Testing |
+| Transfer Order | **v2** | ✅ Yes (verified — `update-order-target` + `update-order-source`) |
 | Transfer Food Item | **v2** | Testing |
 | Cancel Food Item | **v1** | ❌ No |
 | Order Status Update | **v2** | ❌ No |

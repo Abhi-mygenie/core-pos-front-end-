@@ -1,5 +1,57 @@
 # Changelog
 
+## Apr 13, 2026 — Session 12 (Merge Table v2 Socket Verification + Endpoint Upgrades)
+
+### Endpoint Upgrades (3 endpoints changed)
+
+| Constant | Old | New |
+|----------|-----|-----|
+| `MERGE_ORDER` | `/api/v1/.../transfer-order` | `/api/v2/.../transfer-order` |
+| `TRANSFER_FOOD` | `/api/v1/.../transfer-food-item` | `/api/v2/.../transfer-food-item` |
+| `BILL_PAYMENT` | `/api/v2/.../order-bill-payment` | `/api/v2/.../order/order-bill-payment` |
+
+### Merge Table v2 — Socket Events Verified ✅
+
+**Tested:** Order 730850 (source) merged INTO Order 730849 (target) @ restaurant 478
+
+**New socket behavior (v2):**
+1. `order-engage 730850 engage` — source order locked
+2. `order-engage 730849 engage` — target order locked
+3. `update-order-target 730849 {payload}` — target updated (f_order_status=1, occupied) — **NEW EVENT**
+4. `update-order-source 730850 {payload}` — source cancelled (f_order_status=3, available) — **NEW EVENT**
+
+**Key improvements over v1:**
+- Order-level locking (not table-level) — works for all order types
+- Both orders locked before processing
+- Full payload — zero GET API calls
+- No `update-table` events — BUG-221 (permanent spinner) resolved
+
+### Switch Table v1 — Socket Events Logged
+
+**Tested:** Table→Table (3240→3239) and Walk-in→Table (0→3239)
+
+**Socket behavior (v1, unchanged):**
+1. `update-table {dest} engage`
+2. `update-order {orderId}` (no payload)
+3. `update-table {src} free`
+
+Still requires GET API call. BUG-216 workaround still affects table-to-table transfers.
+
+### Frontend Implementation Pending
+- Add `update-order-target` and `update-order-source` to socket event constants
+- Add handlers for both new events
+- Wire in `useSocketEvents.js` switch statement
+
+### Files Modified
+- `api/constants.js` — 3 endpoint URLs updated
+- `memory/API_DOCUMENT_V2.md` — Merge v2 socket events documented, endpoint URLs updated
+- `memory/ARCHITECTURE.md` — Socket event map, endpoint version map, locking architecture updated
+- `memory/CLARIFICATIONS.md` — Socket event map updated with Merge v2
+- `memory/ROADMAP.md` — TASK-B and TASK-C updated with verified merge v2 flow
+- `memory/BUGS.md` — BUG-221 marked RESOLVED, endpoint references updated
+
+---
+
 ## Apr 11, 2026 — Session 11 (Manual Bill Payload + Firebase SW Fix + Sound Fix)
 
 ### Manual Bill Print — Full Payload (COMPLETE ✅)
