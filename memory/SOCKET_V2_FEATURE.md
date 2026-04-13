@@ -250,8 +250,10 @@ update-order-{something} {orderId} {payload}
 | 1 | Collect Bill dine-in (cash) | Apr 13 | ✅ | CLEAN — only `order-engage` + `update-order-paid`. No `update-order-status`, no `update-table free` | R1 eliminated, R2 eliminated, R4 confirmed (local engage = permanent lock) |
 | 2 | Collect Bill walk-in (cash) | Apr 13 | ✅ | CLEAN — identical to dine-in. `order-engage` + `update-order-paid` only. No table events. | R6 eliminated |
 | 2b | Collect Bill delivery (cash) | Apr 13 | ✅ | CLEAN — identical pattern. 2 sec gap between HTTP response and `update-order-paid` (not a problem). | R6 eliminated |
-| 3 | Cancel food partial (dine-in) | | ❌ | — | R3 |
-| 4 | Cancel food last item (dine-in) | | ❌ | — | R3 |
+| 3 | Cancel food partial (walk-in) | Apr 13 | ✅ | v1 pattern: `update-table 0 free` (skipped) + `update-order-status` (f_order_status=6, wrong) + GET API (2 sec). No v2 events. Walk-in safe. | R3 partial — walk-in safe, dine-in NOT YET TESTED |
+| 3b | Cancel food full (walk-in) | Apr 13 | ✅ | Same v1 pattern. GET returns "paid" → removeOrder. 3 sec GET. | R3 partial |
+| 3c | Cancel food partial (DINE-IN) | | ❌ NEEDED | — | R3 critical test |
+| 3d | Cancel food last item (DINE-IN) | | ❌ NEEDED | — | R3 critical test |
 | 5 | Cancel full order (dine-in) | | ❌ | — | R3 |
 | 6 | Transfer food last item | | ❌ | — | R5 |
 | 7 | Collect bill dine-in (UPI) | | ❌ | — | R1 |
