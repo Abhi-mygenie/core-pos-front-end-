@@ -32,6 +32,7 @@
 | 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
 | 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
 | 24 | **BUG-227** | **Order-level Ready/Serve does not update item-level `food_status`** | **P0** | **❌ OPEN (Backend — Critical)** |
+| 25 | **BUG-228** | **`update-order-target` not sent when source is walk-in in merge** | **P0** | **❌ OPEN (Backend — Critical)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 
@@ -102,6 +103,68 @@ update-item-status {orderId} {f_status} {payload}    ← data arrives
 **Affected flows:** Item-level Ready, Item-level Serve (via OrderCard toggles on dashboard)
 **API endpoint:** `PUT /api/v2/vendoremployee/food-status-update`
 **Socket event:** `update-item-status` on `new_order_{restaurantId}` channel
+
+---
+
+### BUG-228: `update-order-target` Not Sent When Source is Walk-In in Merge (Backend — CRITICAL)
+
+**Status:** ❌ OPEN — Backend Socket Team
+**Priority:** P0 — Critical
+**Reported:** April 13, 2026
+
+**Problem:** When merging orders where the SOURCE is a walk-in (tableId=0), the backend sends `update-order-source` (source cancelled) but does NOT send `update-order-target` (target updated with merged items). Table-to-table merge works correctly.
+
+**Evidence:**
+
+Test 1 — Walk-in → T1 merge (Order 730902 source, 730917 target):
+```
+order-engage 730902 engage        ✅ source locked
+order-engage 730917 engage        ✅ target locked
+update-order-source 730902 (3)    ✅ source cancelled, removed
+update-order-target 730917        ❌ NEVER RECEIVED
+setOrderEngaged 730917 → false    ❌ NEVER RELEASED
+```
+
+Test 2 — Walk-in → Walk-in merge (Order 730917 source, 730919 target):
+```
+order-engage 730917 engage        ✅ source locked
+order-engage 730919 engage        ✅ target locked
+update-order-source 730917 (3)    ✅ source cancelled, removed
+update-order-target 730919        ❌ NEVER RECEIVED
+setOrderEngaged 730919 → false    ❌ NEVER RELEASED
+```
+
+Test 3 — Table → Table merge (730882 source, 730902 target) — WORKS:
+```
+order-engage 730882 engage        ✅
+order-engage 730902 engage        ✅
+update-order-target 730902        ✅ RECEIVED — target updated
+update-order-source 730882 (3)    ✅ source removed
+```
+
+**Merge scenario matrix:**
+
+| Source → Target | `update-order-source` | `update-order-target` | Works? |
+|----------------|----------------------|----------------------|--------|
+| Table → Table | ✅ | ✅ | ✅ |
+| Walk-in → Table | ✅ | ❌ | ❌ |
+| Walk-in → Walk-in | ✅ | ❌ | ❌ |
+| Table → Walk-in | ✅ | ? (not tested) | ? |
+
+**Impact:**
+1. Target order has stale data — merged items from source never reflected
+2. Target order card spinner stuck permanently — `setOrderEngaged(targetId)` never released
+3. Only fix is page refresh
+
+**Expected backend behavior:**
+When merge API is called, backend must send BOTH:
+1. `update-order-source {sourceOrderId} {3} {payload}` — source cancelled ✅ Already sent
+2. `update-order-target {targetOrderId} {f_status} {payload}` — target updated with merged items ❌ MISSING for walk-in source
+
+**Frontend status:** Handler for `update-order-target` is implemented and working (confirmed with table-to-table merge). Zero frontend change needed — once backend sends the event, it will work automatically.
+
+**API endpoint:** `POST /api/v2/vendoremployee/order/transfer-order`
+**Socket events:** `update-order-target` + `update-order-source` on `new_order_{restaurantId}` channel
 
 #### v2 Endpoint Payload Test (April 11, 2026)
 All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
