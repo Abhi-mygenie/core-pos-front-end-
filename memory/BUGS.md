@@ -31,8 +31,52 @@
 | 21 | **BUG-224** | **Manual Bill: `gst_tax` always 0** | **P1** | **❌ OPEN** |
 | 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
 | 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
+| 24 | **BUG-227** | **Order-level Ready/Serve does not update item-level `food_status`** | **P0** | **❌ OPEN (Backend — Critical)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
+
+**Status:** ✅ FIXED (Backend — deployed same day)
+
+---
+
+### BUG-227: Order-Level Ready/Serve Does Not Update Item-Level `food_status` (Backend — CRITICAL)
+
+**Status:** ❌ OPEN — Backend Team
+**Priority:** P0 — Critical
+**Reported:** April 13, 2026
+
+**Problem:** When order-level Mark Ready or Mark Served is triggered (via `PUT /api/v2/vendoremployee/order-status-update`), the backend updates `f_order_status` but does NOT update individual items' `food_status`. This causes a visual mismatch: order card appears in Ready/Served tab, but items still show "Preparing".
+
+**Evidence (Order 730451, Mark Ready):**
+```
+Socket payload: update-order-paid
+├── f_order_status: 2          ← Order-level = READY ✅
+├── orderDetails[0].food_status: 1   ← Item-level = PREPARING ❌ (should be 2)
+├── ready_order_details: []    ← Empty (should contain the item)
+└── serve_order_details: []    ← Empty
+```
+
+**Visual impact:**
+- Screenshot 1 (before): Order in Preparing tab, item shows "Preparing", button = "Ready"
+- Screenshot 2 (after): Order moved to Ready tab, button = "Serve", BUT item STILL shows "Preparing"
+- User expects: item should also show "Ready" when order is marked Ready
+
+**Expected backend behavior:**
+When `order-status-update` is called with `order_status: "ready"`:
+1. Set `f_order_status = 2` (ready) ✅ Already done
+2. Set ALL non-cancelled items' `food_status = 2` (ready) ❌ Missing
+3. Populate `ready_order_details` with those items ❌ Missing
+
+Same for `order_status: "serve"`:
+1. Set `f_order_status = 5` (served) ✅ Already done
+2. Set ALL non-cancelled items' `food_status = 4` (served) ❌ Missing
+3. Populate `serve_order_details` with those items ❌ Missing
+
+**Frontend status:** No frontend change needed. Frontend correctly displays what backend sends. Once backend updates `food_status` in the socket payload, items will show correct status automatically.
+
+**Affected flows:** Order-level Mark Ready, Order-level Mark Served (dashboard buttons)
+**API endpoint:** `PUT /api/v2/vendoremployee/order-status-update`
+**Socket event:** `update-order-paid` on `new_order_{restaurantId}` channel
 
 **Status:** ❌ OPEN — Backend Socket Team
 **Priority:** P1
