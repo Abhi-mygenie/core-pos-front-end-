@@ -407,20 +407,33 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const hasPlaced = cartItems.some(i => i.placed);
 
       if (hasPlaced && placedOrderId) {
-        // Scenario 1 — Update Order: await API + wait for socket engage before redirect
+        // Scenario 1 — Update Order: fire HTTP, wait for socket engage, redirect
+        // Socket is source of truth — API response not used
         const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
           restaurantId: restaurant?.id,
           orderNotes,
           printAllKOT,
           allCartItems: cartItems,
         });
-        const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
-        console.log('[UpdateOrder] response:', response.data);
 
-        // Wait for socket order-engage before redirect
-        if (placedOrderId) {
-          await waitForOrderEngaged(placedOrderId, 5000);
-        }
+        // Start listening for socket engage BEFORE firing API
+        const engagePromise = waitForOrderEngaged(placedOrderId);
+
+        // Fire API — don't await response
+        let apiFailed = false;
+        api.put(API_ENDPOINTS.UPDATE_ORDER, payload)
+          .then(res => console.log('[UpdateOrder] response:', res.data))
+          .catch(err => {
+            apiFailed = true;
+            console.error('[UpdateOrder] CRITICAL:', err?.response?.status, err?.response?.data);
+            const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed';
+            toast({ title: "Order Update Failed", description: apiMsg, variant: "destructive" });
+            setIsPlacingOrder(false);
+          });
+
+        // Wait for socket order-engage then redirect
+        await engagePromise;
+        if (apiFailed) return; // API failed — stay on screen, toast shown
       } else {
         // Scenario 2 / New Order — Fire HTTP, redirect immediately
         // Socket events (update-table engage → new-order) handle all state updates
