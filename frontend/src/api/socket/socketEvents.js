@@ -61,6 +61,11 @@ export const SOCKET_EVENTS = {
   SCAN_NEW_ORDER: 'scan-new-order',
   DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
 
+  // v2 order data events (April 2026) - come through new_order_${restaurantId} channel
+  UPDATE_ORDER_TARGET: 'update-order-target',
+  UPDATE_ORDER_SOURCE: 'update-order-source',
+  UPDATE_ORDER_PAID: 'update-order-paid',
+
   // Table event - comes through update_table_${restaurantId} channel
   UPDATE_TABLE: 'update-table',
   
@@ -97,11 +102,14 @@ export const CONNECTION_EVENTS = {
 // Events that include full payload (no API call needed)
 export const EVENTS_WITH_PAYLOAD = [
   SOCKET_EVENTS.NEW_ORDER,
+  SOCKET_EVENTS.UPDATE_ORDER,
+  SOCKET_EVENTS.UPDATE_ORDER_TARGET,
+  SOCKET_EVENTS.UPDATE_ORDER_SOURCE,
+  SOCKET_EVENTS.UPDATE_ORDER_PAID,
 ];
 
 // Events that require regular order API call
 export const EVENTS_REQUIRING_ORDER_API = [
-  SOCKET_EVENTS.UPDATE_ORDER,
   SOCKET_EVENTS.UPDATE_FOOD_STATUS,
   SOCKET_EVENTS.UPDATE_ORDER_STATUS,
   SOCKET_EVENTS.SCAN_NEW_ORDER,
