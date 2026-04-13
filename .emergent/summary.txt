@@ -1,0 +1,155 @@
+<analysis>**original_problem_statement**: 
+Pull code from  branch . React front end only. Run as-is. Set specified environment variables (Firebase Auth keys and PREPROD URLs). Initially, do not run the testing agent. 
+PRODUCT REQUIREMENTS: Complete the Socket v2 Architecture migration to eliminate GET API calls by consuming real-time socket payloads, fix UI race conditions during order updates, and ensure correct data sync across the dashboard.
+
+**User's preferred language**: English (INSTRUCT next agent to respond in English only)
+
+**what currently exists?** 
+A fully functional React-based POS frontend running against a preprod backend and socket server. The application has been successfully migrated to the Socket v2 architecture. The frontend now correctly processes real-time socket payloads (, , , ) to update the UI instantly without fallback GET API polling. UI race conditions (timeouts/stuck spinners) during order updates have been fixed by implementing an optimized  polling mechanism.
+
+**Last working item**:
+- Last item agent was working: Modifying the  endpoint to use  with  instead of looping item-level endpoints, followed by updating all architectural and bug-tracking markdown documentation.
+- Status: BLOCKED (Blocked by a Backend PHP error)
+- Agent Testing Done: Y
+- Which testing method agent to use? manual testing by browser console validation / screenshot tool.
+- User Testing Done: Y (User actively validated via detailed browser console logs).
+
+**All Pending/In progress Issue list**:
+  Issue 1: BUG-229: Confirm Order API throws Backend Error (P0)
+  Issue 2: BUG-228:  Socket Event Missing on Walk-in -> Table Merge (P0)
+  Issue 3: BUG-227: Order-Level Ready/Serve Does Not Update Item-Level  (P1)
+  
+  Issues Detail:
+  - Issue 1: BUG-229: Confirm Order API throws Backend Error
+     - Attempted fixes: Updated 's  to use the correct  endpoint with payload  as requested by user.
+     - Next debug checklist: Check with the backend team. The backend returns a 500 Error:  at .
+     - Why fix this issue and what will be achieved with the fix? Unblocks the ability to Confirm a Yet to Confirm (YTC) order.
+     - Status: BLOCKED (Backend Team Fix Required)
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? Backend
+     - Blocked on other issue: Backend PHP Error
+
+  - Issue 2: BUG-228:  Socket Event Missing on Walk-in -> Table Merge
+     - Attempted fixes: Investigated frontend data models. Frontend code is correct; it successfully handles Table->Table, Table->Walk-in, and Walk-in->Walk-in merges.
+     - Next debug checklist: Await backend fix. Backend fails to emit the  event specifically when a walk-in order (tableId=0) is merged *into* a table order.
+     - Why fix this issue and what will be achieved with the fix? Prevents the target order from displaying stale data and a permanently stuck loading spinner after merging.
+     - Status: BLOCKED (Backend Team Fix Required)
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? Both
+     - Blocked on other issue: Backend Event Emission Bug
+
+  - Issue 3: BUG-227: Order-Level Ready/Serve Does Not Update Item-Level 
+     - Attempted fixes: Analyzed socket payloads. The frontend correctly parses what the backend sends.
+     - Next debug checklist: Await backend fix. When an order is marked Ready via the order-level button, the backend updates  to 2 but leaves individual items'  at 1 (Preparing).
+     - Why fix this issue and what will be achieved with the fix? Ensures the UI doesn't show a mismatch where an order is in the Ready tab but all its items still say Preparing.
+     - Status: BLOCKED (Backend Team Fix Required)
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? Both
+     - Blocked on other issue: Backend Data Sync Bug
+
+**In progress Task List**:
+*All Frontend tasks for the Socket v2 integration are complete. The remaining tasks are backend fixes.*
+
+**Upcoming and Future Tasks**:
+  Future Tasks:
+  - Clean up dead v1 socket code (P2): Remove  and the old  from  once the v2 socket endpoints are 100% stabilized and verified in production.
+
+**Completed work in this session**:
+- Implemented  in  to process new socket events (, , , ). (DONE)
+- Replaced the arbitrary 5-second  delays in  (Transfer, Merge, Shift, Cancel, Update) with an optimized  Promise race pattern that intercepts the socket lock before API completion. (DONE)
+- Fixed stuck dashboard spinners by replacing local  locks with socket-driven  checks in , , and . (DONE)
+- Updated  to use the batch  endpoint instead of looping item-level endpoints. (DONE)
+- Updated architecture mapping and comprehensive bug tracking in  markdown files. (DONE)
+
+**Earlier issues found/mentioned but not fixed**:
+  - Issue 1: Ghost Cards appearing in the Table grid view after an order is canceled/merged. Analyzed and found that  includes all physical tables regardless of active orders, and  permits rendering them empty. *User stated no code update for this, so it was left as an analysis only.*
+
+**Known issue recurrence from previous fork**:
+  - Issue recurrence in previous fork: N/A
+  - Recurrence count: 0
+  - Status: NONE
+
+**Code Architecture**:
+
+
+**Key Technical Concepts**:
+Frontend: React.js, Context API for global state, Socket.io-client for real-time synchronization, Tailwind CSS.
+
+**key DB schema**: N/A (Frontend Only)
+
+**changes in tech stack**: 
+Added  components, , , and  dependencies.
+
+**All files of reference**:
+1. , ,  (Core of the new Socket v2 logic)
+2.  (Optimized asynchronous wait patterns intercepting socket events)
+3.  ( polling loop utilizing )
+4.  (Spinner UI and Confirmation endpoints)
+5.  (Comprehensive Architectural context, Changelog, and Bug Tracking)
+
+**Areas that need refactoring**:
+: Contains dead code block () which was kept strictly for immediate rollback reference in case the v2 socket migration failed. It can be purged later.
+
+**key api endpoints**:
+- 
+- 
+
+**Critical Info for New Agent**:
+1. **The socket is the source of truth.** When performing order mutations (Cancel, Update, Transfer, Merge), the API call should be executed as a fire-and-forget with  error handling. The UI should *only* redirect/resolve when the  promise resolves (meaning the Socket server has locked and processed the order). Do NOT await API responses before checking socket status, as the socket acts faster than the HTTP response and you will create a race condition.
+2. Do NOT add localized UI locks (like ). All spinner UI locks are handled globally by listening to  socket events.
+3. The project currently has 3 blocked Backend P0/P1 bugs preventing specific edge cases (Confirming orders, walk-in to table merges, item-level statuses). **Do not attempt to fix these in the React frontend.** 
+
+**documents and test reports created in this job**:
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+
+**Last 10 User Messages and any pending HUMAN messages**:
+1. User provided the correct curl request for Order Confirmation ().
+2. Agent acknowledged and explained the change in payload logic.
+3. User asked where to change the endpoint and promised to share logs.
+4. Agent specified  in .
+5. User confirmed to proceed (yes).
+6. Agent asked if  was definitively the correct string for Confirm.
+7. User insisted it must be .
+8. Agent updated the code.
+9. User shared a backend PHP error log ().
+10. Agent identified it as a backend typo bug and asked to log it.
+11. User said yes pls and requested all documents be updated.
+
+**Project Health Check**:
+- Broken:  flow (Blocked by Backend PHP Error: ). Walk-in to Table Merges (Blocked by Backend Socket Emission bug).
+- Mocked: None.
+
+**3rd Party Integrations**:
+- Firebase Auth — requires User API Config (Passed via ENV)
+- Socket.io — internally routed
+
+**Testing status**:
+- Testing agent used after significant changes: YES
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: 
+- Known regressions: None on frontend.
+
+**Credentials to test flow**:
+- URL:  (Value of )
+- Login: 
+- Password: 
+
+**What agent forgot to execute**:
+N/A. All requested tasks, UI validations, edge case optimizations, and documentation requirements were completed.
+
+**Debugging checklist for current issue**
+    Issue: BUG-229: Backend  exception during Order Confirmation
+    
+    Frontend files to check: 
+    -  (line ~844, verify payload dispatch)
+    
+    Backend files to check: 
+    -  (line 3643 - Note: *Requires access to backend repository, not present in this workspace*)
+    
+    Database to check: N/A</analysis>
