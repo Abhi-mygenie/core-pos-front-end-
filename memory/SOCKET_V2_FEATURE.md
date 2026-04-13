@@ -2,8 +2,8 @@
 
 **Created:** April 13, 2026
 **Last Updated:** April 13, 2026
-**Status:** APPROVED — Ready for implementation
-**Blocker:** `food_details: null` in socket payloads (backend fix pending, frontend can proceed)
+**Status:** ✅ IMPLEMENTED — All phases complete, live testing in progress
+**Blocker:** `food_details: null` — ✅ RESOLVED (backend fix deployed)
 
 ---
 
@@ -878,9 +878,42 @@ if (orderId) {
 
 ### `food_details: null` in ALL Socket Payloads
 
-**Status:** P0 BLOCKER — Backend Socket Team
-**Impact:** All items show "Unknown Item" on dashboard
-**Cause:** Socket `orderDetails[].food_details` is `null`. GET API returns it correctly.
-**Backend fix:** Populate `food_details` in socket payload — same object as GET API.
-**Frontend:** No change needed once backend fixes this. Transform already reads `food_details?.name`.
-**Workaround (if needed):** Add background GET enrichment after socket payload. Defeats zero-GET goal but restores display.
+**Status:** ✅ RESOLVED — Backend fix deployed April 13, 2026
+**Impact:** Was: All items show "Unknown Item" on dashboard. Now: Fixed, item names display correctly.
+
+---
+
+## 12. Implementation Notes (April 13, 2026)
+
+### Deviations from Original Plan
+
+| Item | Original Plan | Actual Implementation | Reason |
+|------|--------------|----------------------|--------|
+| Step 2 Guard | Skip if already removed | Deferred to Phase 2 | Not needed if sockets work correctly |
+| Step 3 GET fallback | Fallback to GET API | Removed — fail fast with ERROR log | Production v2 only, fallback masks bugs |
+| Redirect pattern | Wait after API response | Wait BEFORE API (fire-and-forget) | Socket is faster than API response — race condition fix |
+| `handleUpdateFoodStatus` | Keep as v1 fallback | Dead code — backend sends `update-item-status` now | New v2 event discovered during testing |
+
+### New Discovery: `update-item-status` Event
+
+Not in original plan. Backend sends `update-item-status` (v2 with payload) for item-level Ready/Serve instead of old `update-food-status` (v1 no payload). Added to `handleOrderDataEvent` — same pattern as other v2 events.
+
+### Dashboard Engage Fix (Not in Original Plan)
+
+Original plan covered 5 files. During testing discovered:
+- `DashboardPage.jsx`: `handleMarkReady`/`handleMarkServed` had local `setTableEngaged` — caused permanent spinner on table orders
+- All OrderCard/TableCard checked `isTableEngaged(tableId)` only — walk-in/delivery/takeaway never showed spinner
+- Fix: Added `isOrderEngaged(orderId)` to all card components via DashboardPage → ChannelColumnsLayout → ChannelColumn prop chain
+
+### Files Changed (Final — 8 total)
+
+| File | Changes |
+|------|---------|
+| `socketEvents.js` | 4 new constants (UPDATE_ORDER_TARGET, UPDATE_ORDER_SOURCE, UPDATE_ORDER_PAID, UPDATE_ITEM_STATUS) |
+| `socketHandlers.js` | `handleOrderDataEvent` unified handler, BUG-216 fix, handler registry updated |
+| `useSocketEvents.js` | 5 new switch cases, import updated |
+| `OrderContext.jsx` | `waitForOrderEngaged` added |
+| `OrderEntry.jsx` | 8 handlers updated to fire-and-forget + wait-for-engage pattern |
+| `DashboardPage.jsx` | Removed local `setTableEngaged` from markReady/markServed, added `isOrderEngaged` props |
+| `ChannelColumnsLayout.jsx` | `isOrderEngaged` prop pass-through |
+| `ChannelColumn.jsx` | `isOrderEngaged` prop usage for spinner |

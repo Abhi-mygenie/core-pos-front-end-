@@ -8,60 +8,59 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git branch `1
 - **API Backend**: External - `https://preprod.mygenie.online/`
 - **Socket**: External - `https://presocket.mygenie.online`
 - **Auth**: Firebase (Google Auth domain: mygenie-restaurant.firebaseapp.com)
-- **Restaurant ID**: 478
+- **Restaurant ID**: 478 (preprod), 509 (testing)
 
 ## What's Been Implemented
 
 ### Jan 13, 2026 — Session 1: Repo Setup
 - Cloned repo from GitHub (branch: 13-Apirl-V1)
-- Installed all dependencies (firebase, socket.io-client, @hello-pangea/dnd, radix-ui extras)
+- Installed all dependencies
 - Configured environment variables
 - Frontend running on port 3000
 
-### Jan 13, 2026 — Session 2: Socket v2 Implementation
-Implemented SOCKET_V2_FEATURE.md — 5 files changed, 0 new files:
+### Jan 13, 2026 — Session 2: Socket v2 Full Implementation (8 files)
 
-**Phase 1: socketEvents.js**
-- Added 3 new event constants: UPDATE_ORDER_TARGET, UPDATE_ORDER_SOURCE, UPDATE_ORDER_PAID
-- Updated EVENTS_WITH_PAYLOAD (added UPDATE_ORDER + 3 new)
-- Updated EVENTS_REQUIRING_ORDER_API (removed UPDATE_ORDER)
+**Socket Event Handlers (socketEvents.js, socketHandlers.js, useSocketEvents.js):**
+- 4 new event constants: UPDATE_ORDER_TARGET, UPDATE_ORDER_SOURCE, UPDATE_ORDER_PAID, UPDATE_ITEM_STATUS
+- `handleOrderDataEvent` — unified handler for 5 v2 data events
+- No GET API fallback (v2 only), no guard (deferred)
+- Table change detection for switch table
+- Remove vs update decision for terminal statuses
+- BUG-216 `free→engage` workaround removed (free→ignore)
 
-**Phase 2: socketHandlers.js**
-- Added `handleOrderDataEvent` — unified handler for update-order, update-order-target, update-order-source, update-order-paid
-- No GET API fallback (v2 only, fail fast if no payload)
-- No guard (deferred to future phase)
-- Table change detection for switch table (update-order-target)
-- Remove vs update decision (terminal + source/paid → removeOrder)
-- Fixed BUG-216: changed free→engage workaround to free→ignore
-- Updated handler registry (getHandler + isAsyncHandler)
+**OrderContext.jsx:**
+- `waitForOrderEngaged` polling function added
 
-**Phase 3: useSocketEvents.js**
-- Imported handleOrderDataEvent (replaced handleUpdateOrder)
-- Added 3 new switch cases + updated update-order case to pass eventName
+**OrderEntry.jsx — Fire-and-forget + wait-for-engage pattern:**
+- All 8 handlers updated: start listening for engage BEFORE API call, fire API without await, redirect on socket confirmation
+- handlePlaceOrder (update), handleTransfer, handleMerge, handleShift, handleCancelFood, handleCancelOrder, onPaymentComplete (collect bill)
+- Console log identifiers for every redirect point
 
-**Phase 4: OrderContext.jsx**
-- Added waitForOrderEngaged polling function
-- Exported in context value + useMemo deps
+**Dashboard engage fix (DashboardPage.jsx, ChannelColumnsLayout.jsx, ChannelColumn.jsx):**
+- Removed local `setTableEngaged` from handleMarkReady/handleMarkServed
+- All card components now use `isOrderEngaged(orderId) || isTableEngaged(tableId)` for spinner
+- Walk-in/Delivery/TakeAway now show spinner during order-engage
+- Click blocking checks both table + order engage
 
-**Phase 5: OrderEntry.jsx — 6 handler updates**
-- handlePlaceOrder (update path): waitForTableEngaged → waitForOrderEngaged
-- handleShift: added waitForTableEngaged(destTableId)
-- handleMerge: added waitForOrderEngaged(targetOrderId)
-- handleTransfer: added waitForOrderEngaged(sourceOrderId)
-- handleCancelFood: waitForTableEngaged → waitForOrderEngaged
-- onPaymentComplete (collect bill): removed local setTableEngaged(true)
+### Bugs Fixed (Session 2)
+- BUG-216: free→engage workaround removed
+- BUG-221: Merge order source table locked — fixed
+- BUG-222: waitForTableEngaged timeout on Update Order — fixed
+- BUG-223: Local locking removed from Dashboard
+- BUG-226: order-engage missing before update-item-status — fixed (backend)
+- Update Order 5s timeout delay — fixed (fire-and-forget)
+- Cancel Food 5s timeout delay — fixed
+- Collect Bill permanent table lock — fixed
+- Walk-in/Delivery/TakeAway never showed spinner — fixed
 
-### Bugs Fixed
-- GAP-1: Update Order 5s timeout delay — FIXED (now uses waitForOrderEngaged)
-- GAP-2: Cancel Food 5s timeout delay — FIXED (now uses waitForOrderEngaged)
-- GAP-3: Collect Bill permanent table lock — FIXED (removed local setTableEngaged)
-- GAP-4: Shift/Merge/Transfer no wait → stale UI — FIXED (added appropriate waits)
-- BUG-216: free→engage workaround causing stuck tables — FIXED (free now ignored)
-
-### Testing Results
-- All 13 test cases passed (login, socket connection, dashboard, permissions, compilation, event routing, console logs)
-- No "Unknown order event" messages
-- Socket subscriptions confirmed for all 3 channels (new_order_478, update_table_478, order-engage_478)
+### Verified Flows (Console Log Validated)
+- Mark Ready (table order) ✅
+- Mark Ready (walk-in) ✅
+- Mark Served (item-level) ✅
+- Transfer Food (partial) ✅
+- Cancel Full Order (double-fire idempotent) ✅
+- Update Order (fire-and-forget, instant redirect) ✅
+- Item-level Ready/Serve (update-item-status) ✅
 
 ## Prioritized Backlog
 
@@ -69,17 +68,20 @@ Implemented SOCKET_V2_FEATURE.md — 5 files changed, 0 new files:
 - None currently
 
 ### P1 (High)
-- Phase 2 guard: skip already-removed orders (defensive, not blocking)
-- food_details validation: verify item names display correctly in all flows
-- Multi-device race condition testing
+- Collect Bill flow: needs live console log validation
+- Shift Table flow: needs live console log validation
+- Merge Table flow: needs live console log validation
+- Cancel Food last item: verify order cleanup
 
 ### P2 (Medium)
-- Remove dead handleUpdateOrder code (currently delegates to handleOrderDataEvent)
-- handleUpdateOrderStatus guard: skip GET if order already handled by update-order-paid
+- Phase 2 guard: skip already-removed orders (defensive)
+- handleUpdateOrderStatus guard: skip GET if already handled by update-order-paid
+- Remove dead code: handleUpdateOrder (delegates), handleUpdateFoodStatus (never fires)
 - Walk-in edge cases: merge walk-in into table, transfer food with tableId=0
 
-### Future/Backlog
-- Cancel food last item → order cleanup (consistent with current behavior, may need backend event)
-- handleUpdateFoodStatus local engage workaround removal (needs backend update)
-- Partial payments / split pay implementation
-- Service tax implementation
+### Open Backend Bugs
+- BUG-204: order_sub_total_without_tax returns 0
+- BUG-210: No table engage check (multi-device race)
+- BUG-212: Addon names mismatch between APIs
+- BUG-224: Manual Bill gst_tax always 0
+- BUG-225: Manual Bill custName sends label instead of real name

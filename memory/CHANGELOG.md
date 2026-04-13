@@ -1,5 +1,75 @@
 # Changelog
 
+## Apr 13, 2026 — Session 13 (Socket v2 Full Implementation)
+
+### Socket v2 Event Handlers — IMPLEMENTED
+
+**8 files changed, 0 new files.**
+
+#### Phase 1: socketEvents.js
+- Added 4 new event constants: `UPDATE_ORDER_TARGET`, `UPDATE_ORDER_SOURCE`, `UPDATE_ORDER_PAID`, `UPDATE_ITEM_STATUS`
+- `EVENTS_WITH_PAYLOAD`: added `UPDATE_ORDER` + 4 new events (total 6)
+- `EVENTS_REQUIRING_ORDER_API`: removed `UPDATE_ORDER` (v2 has payload)
+
+#### Phase 2: socketHandlers.js
+- Added `handleOrderDataEvent` — unified handler for 5 events (update-order, update-order-target, update-order-source, update-order-paid, update-item-status)
+- No GET API fallback — v2 only, fail fast if no payload
+- No guard — deferred to future phase
+- Table change detection for switch table (update-order-target: old table freed)
+- Remove vs update decision: terminal + (source|paid) → removeOrder(), else updateOrder()
+- BUG-216: `free→engage` workaround removed → `free→ignore`
+- Handler registry + async list updated
+
+#### Phase 3: useSocketEvents.js
+- Import `handleOrderDataEvent` (replaces `handleUpdateOrder`)
+- 5 new switch cases: update-order, update-order-target, update-order-source, update-order-paid, update-item-status
+
+#### Phase 4: OrderContext.jsx
+- Added `waitForOrderEngaged(orderId, timeout)` polling function
+- Exported in context value + useMemo deps
+
+#### Phase 5: OrderEntry.jsx — All handlers updated to fire-and-forget + wait-for-engage
+- `handlePlaceOrder` (update path): start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- `handleTransfer`: start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- `handleMerge`: start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- `handleShift`: start `waitForTableEngaged` BEFORE api call, fire-and-forget API
+- `handleCancelFood`: start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- `handleCancelOrder`: start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- `onPaymentComplete` (collect bill): start `waitForOrderEngaged` BEFORE api call, fire-and-forget API
+- All handlers: redirect log `[FlowName] Socket engaged — redirecting to dashboard`
+
+#### Phase 6: Dashboard Engage Fix
+- `DashboardPage.jsx`: removed local `setTableEngaged` from `handleMarkReady` + `handleMarkServed`
+- `DashboardPage.jsx`: all `isEngaged` props now use `isOrderEngaged(orderId) || isTableEngaged(tableId)`
+- Delivery/TakeAway OrderCards: `isEngaged={false}` → `isEngaged={isOrderEngaged(orderId)}`
+- Click blocking: checks both `isTableEngaged` and `isOrderEngaged`
+- `ChannelColumnsLayout.jsx`: `isOrderEngaged` prop pass-through
+- `ChannelColumn.jsx`: `isOrderEngaged` prop usage for spinner
+
+### Bugs Fixed
+- BUG-216: `free→engage` workaround removed (free now ignored)
+- BUG-221: Merge order source table locked — fixed by BUG-216 removal
+- BUG-222: `waitForTableEngaged` timeout on Update Order — fixed (uses `waitForOrderEngaged`)
+- BUG-223: Local locking removed from Mark Ready/Served in Dashboard
+- Update Order 5s timeout delay — fixed (engage starts before API)
+- Cancel Food 5s timeout delay — fixed (engage starts before API)
+- Collect Bill permanent table lock — fixed (removed local `setTableEngaged`)
+- Walk-in/Delivery/TakeAway never showed spinner — fixed (`isOrderEngaged`)
+
+### New Discovery
+- `update-item-status`: new v2 event for item-level Ready/Serve (replaces `update-food-status`)
+- `handleUpdateFoodStatus`: now dead code — backend only sends `update-item-status`
+
+### BUG-226: `order-engage` missing before `update-item-status`
+- Filed as P1 Backend bug
+- Backend deployed fix same day — `order-engage` now sent before `update-item-status`
+- Marked as ✅ FIXED (Backend)
+
+---
+
+
+# Changelog
+
 ## Apr 13, 2026 — Session 12 (v2 Socket Architecture Verification + Endpoint Upgrades)
 
 ### Endpoint Upgrades (5 endpoints changed)

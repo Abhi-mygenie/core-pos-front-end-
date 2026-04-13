@@ -1,6 +1,6 @@
 # POS Frontend - Bug Tracker & Audit Document
 
-**Last Updated:** April 11, 2026 (v5 — Socket Event Audit + Local Locking Removal Plan)
+**Last Updated:** April 13, 2026 (v6 — Socket v2 Implementation Complete)
 
 ---
 
@@ -24,14 +24,13 @@
 | 14 | BUG-213 | Collect Bill Shows Only Placed Items | P0 | ✅ FIXED |
 | 15 | BUG-214 | Collect Bill on Existing Order | P0 | ✅ FIXED (V2 Endpoint) |
 | 16 | BUG-215 | Full Order Cancel Treated as Partial | P0 | ✅ FIXED |
-| 17 | BUG-216 | Missing Table Engage, Incorrect Free | P0 | 🔄 Backend Fixed — Workaround Removal Pending |
-| 18 | BUG-221 | Merge Order - Source Table Locked | P0 | 🔄 Will be fixed by BUG-216 workaround removal |
-| 19 | BUG-222 | waitForTableEngaged timeout on Update Order | P1 | ✅ FIXED (order-engage) |
-| 20 | **BUG-223** | **All local locking must be removed** | **P0** | **❌ TODO** |
+| 17 | BUG-216 | Missing Table Engage, Incorrect Free | P0 | ✅ FIXED (Frontend — workaround removed, free→ignore) |
+| 18 | BUG-221 | Merge Order - Source Table Locked | P0 | ✅ FIXED (by BUG-216 workaround removal) |
+| 19 | BUG-222 | waitForTableEngaged timeout on Update Order | P1 | ✅ FIXED (waitForOrderEngaged + fire-and-forget) |
+| 20 | BUG-223 | All local locking must be removed | P0 | ✅ FIXED (Dashboard Mark Ready/Served local engage removed) |
 | 21 | **BUG-224** | **Manual Bill: `gst_tax` always 0** | **P1** | **❌ OPEN** |
 | 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
-| 23 | **BUG-226** | **`order-engage` missing before `update-item-status`** | **P1** | **❌ OPEN (Backend)** |
-| 24 | **BUG-216** | **BUG-216 workaround removed** | **P0** | **✅ FIXED (Frontend)** |
+| 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 

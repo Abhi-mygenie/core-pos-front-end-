@@ -1491,11 +1491,14 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 | Switch Table | POST | v2 order/order-table-room-switch | 2x `update-table engage` (src+dest) + `update-order-target` | ✅ Yes |
 | Merge Table | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
 | Transfer Food | POST | v2 order/transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
-| Collect Bill | POST | v2 order/order-bill-payment | TBD (path updated, socket behavior pending verification) | TBD |
-| Cancel Food Item | PUT | v1 cancel-food-item | `update-table free` + `update-order-status` | ❌ No |
-| Cancel Full Order | PUT | v2 order-status-update | `update-table free` + `update-order-status` | ❌ No |
+| Collect Bill | POST | v2 order/order-bill-payment | `order-engage` + `update-order-paid` | ✅ Yes |
+| Cancel Food Item | PUT | v2 order/cancel-food-item | `order-engage` + `update-order` | ✅ Yes |
+| Cancel Full Order | PUT | v2 order-status-update | `order-engage` + 2x `update-order-paid` | ✅ Yes |
+| Mark Ready (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes |
+| Mark Served (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes |
+| Item Ready/Serve | PUT | v2 food-status-update | `order-engage` + `update-item-status` | ✅ Yes |
 
-### 19.2 Locking Architecture (Target State)
+### 19.2 Locking Architecture (Implemented)
 
 **Principle:** ALL UI locking comes from socket events. Zero local locking.
 
@@ -1503,41 +1506,77 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 Socket Event                → Frontend Action
 ─────────────────────────────────────────────
 update-table engage         → setTableEngaged(tableId, true)
-update-table free           → setTableEngaged(tableId, false) + updateTableStatus('available')
+update-table free           → IGNORED (v2: table status from order data)
 order-engage engage         → setOrderEngaged(orderId, true)
 order-engage free           → setOrderEngaged(orderId, false)
 new-order (after lock)      → addOrder() + syncTableStatus + release table engage
-update-order (after lock)   → updateOrder() + syncTableStatus + release order engage
-update-order-target         → updateOrder() from payload + detect table change + release engage
-update-order-source         → removeOrder() if cancelled, else updateOrder() + release engage
+update-order                → updateOrder() + syncTableStatus + release order engage
+update-order-target         → detect table change + updateOrder() + release order + table engage
+update-order-source         → removeOrder() if cancelled, else updateOrder() + release order engage
+update-order-paid           → removeOrder() if cancelled/paid, else updateOrder() + release order engage
+update-item-status          → updateOrder() + syncTableStatus + release order engage
+```
+
+### 19.3 Redirect Pattern (Fire-and-Forget + Wait-for-Engage)
+
+**All OrderEntry handlers follow the same pattern:**
+```
+const engagePromise = waitForOrderEngaged(orderId);  // start listening BEFORE API
+api.post/put(endpoint, payload)                      // fire-and-forget
+    .catch(err => toast + unlock UI);                // error handling
+await engagePromise;                                 // redirect when socket confirms
+onClose();                                           // go to dashboard
 ```
 
 **What to wait for before redirect (per flow):**
 
-| Flow | Wait Type |
-|------|-----------|
-| New Order + table | Wait for `update-table engage` |
-| New Order + walk-in | 0.5s delay (no socket lock) |
-| Update Order | Wait for `order-engage` |
-| Switch Table | Wait for `update-table engage` (dest) |
-| Merge Table | Wait for `order-engage` (source or target) |
-| Transfer Food | Wait for `order-engage` (source or target) |
-| Cancel Food Item | Wait for `order-engage` |
-| Collect Bill | Wait for `order-engage` |
+| Flow | Wait Type | Redirect Log |
+|------|-----------|-------------|
+| New Order + table | `waitForTableEngaged(tableId)` | `[PlaceOrder] Table engaged, now redirecting` |
+| New Order + walk-in | 0.5s delay | `[PlaceOrder] Redirecting to dashboard` |
+| Update Order | `waitForOrderEngaged(orderId)` | `[UpdateOrder] Socket engaged — redirecting` |
+| Switch Table | `waitForTableEngaged(destTableId)` | `[ShiftTable] Socket engaged — redirecting` |
+| Merge Table | `waitForOrderEngaged(targetOrderId)` | `[MergeTable] Socket engaged — redirecting` |
+| Transfer Food | `waitForOrderEngaged(sourceOrderId)` | `[TransferFood] Socket engaged — redirecting` |
+| Cancel Food | `waitForOrderEngaged(orderId)` | `[CancelFood] Socket engaged — redirecting` |
+| Cancel Order | `waitForOrderEngaged(orderId)` | `[CancelOrder] Socket engaged — redirecting` |
+| Collect Bill | `waitForOrderEngaged(orderId)` | `[CollectBill] Socket engaged — redirecting` |
 
-### 19.3 Endpoint Version Map
+### 19.4 Dashboard Engage Architecture
 
-| Action | Endpoint Version | Sends Socket Payload? |
-|--------|-----------------|----------------------|
-| Place Order | **v2** | ✅ Yes |
-| Update Order | **v2** | ✅ Yes |
-| Switch Table | **v2** (order/order-table-room-switch) | ✅ Yes (`update-order-target`) |
-| Merge Table | **v2** (order/transfer-order) | ✅ Yes (`update-order-target` + `update-order-source`) |
-| Transfer Food | **v2** (order/transfer-food-item) | ✅ Yes (`update-order-target` + `update-order-source`) |
-| Collect Bill | **v2** (order/order-bill-payment) | ✅ Yes (`update-order-paid`) |
-| Cancel Food Item | **v2** (order/cancel-food-item) | ✅ Yes (`order-engage` + `update-order`) |
-| Cancel Order / Ready / Served | **v2** (order-status-update) | ❌ No — backend change needed |
-| Food Status Update | **v2** (food-status-update) | ❌ No — backend change needed |
+**Spinner source:** `isOrderEngaged(orderId) || isTableEngaged(tableId)`
+
+| Component | isEngaged prop source |
+|-----------|---------------------|
+| TableCard (Table View) | `isOrderEngaged(orderId) \|\| isTableEngaged(tableId)` |
+| OrderCard (Dine-In List View) | `isOrderEngaged(orderId) \|\| isTableEngaged(tableId)` |
+| OrderCard (Delivery) | `isOrderEngaged(orderId)` |
+| OrderCard (TakeAway) | `isOrderEngaged(orderId)` |
+| ChannelColumn (TableCard) | `isOrderEngaged(item.orderId) \|\| isTableEngaged(item.tableId)` |
+| ChannelColumn (OrderCard) | `isOrderEngaged(order.orderId) \|\| isTableEngaged(item.tableId)` |
+
+**Zero local engage:** `handleMarkReady` and `handleMarkServed` in DashboardPage no longer call `setTableEngaged`. Socket `order-engage` handles all locking.
+
+### 19.5 Endpoint Version Map
+
+| Action | Endpoint Version | Socket Events | Handler |
+|--------|-----------------|---------------|---------|
+| Place Order | **v2** | `update-table engage` + `new-order` | `handleNewOrder` |
+| Update Order | **v2** | `order-engage` + `update-order` | `handleOrderDataEvent` |
+| Switch Table | **v2** | 2x `update-table engage` + `update-order-target` | `handleOrderDataEvent` |
+| Merge Table | **v2** | 2x `order-engage` + `update-order-target` + `update-order-source` | `handleOrderDataEvent` |
+| Transfer Food | **v2** | 2x `order-engage` + `update-order-target` + `update-order-source` | `handleOrderDataEvent` |
+| Collect Bill | **v2** | `order-engage` + `update-order-paid` | `handleOrderDataEvent` |
+| Cancel Food | **v2** | `order-engage` + `update-order` | `handleOrderDataEvent` |
+| Cancel Order / Ready / Served | **v2** | `order-engage` + `update-order-paid` | `handleOrderDataEvent` |
+| Item Ready / Serve | **v2** | `order-engage` + `update-item-status` | `handleOrderDataEvent` |
+
+### 19.6 Dead Code
+
+| Handler | Status | Reason |
+|---------|--------|--------|
+| `handleUpdateOrder` | Delegates to `handleOrderDataEvent` | Kept for rollback reference |
+| `handleUpdateFoodStatus` | Dead — never fires | Backend sends `update-item-status` instead of `update-food-status` |
 
 ---
 
