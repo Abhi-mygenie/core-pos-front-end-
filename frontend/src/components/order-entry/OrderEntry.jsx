@@ -504,110 +504,121 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const handleTransfer = async ({ toOrder, item: transferredItem }) => {
-    const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
-    const response = await api.post(API_ENDPOINTS.TRANSFER_FOOD, payload);
-    toast({
-      title: "Item Transferred",
-      description: response.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
-    });
-    setTransferItem(null);
-    
-    // Wait for socket order-engage (source order) before redirect
     const sourceOrderId = effectiveTable?.orderId;
-    if (sourceOrderId) {
-      await waitForOrderEngaged(sourceOrderId, 5000);
-    }
-    
+    const engagePromise = sourceOrderId ? waitForOrderEngaged(sourceOrderId) : null;
+
+    const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
+    api.post(API_ENDPOINTS.TRANSFER_FOOD, payload)
+      .then(res => {
+        toast({
+          title: "Item Transferred",
+          description: res.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
+        });
+      })
+      .catch(err => {
+        console.error('[TransferFood] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.message || err?.message || 'Transfer failed';
+        toast({ title: "Transfer Failed", description: msg, variant: "destructive" });
+      });
+
+    setTransferItem(null);
+    if (engagePromise) await engagePromise;
     onClose();
   };
 
   const handleMerge = async ({ selectedOrders }) => {
+    const targetOrderId = effectiveTable?.orderId;
+    const engagePromise = targetOrderId ? waitForOrderEngaged(targetOrderId) : null;
+
     // Sequential API calls — one per selected source table
     for (const sourceOrder of selectedOrders) {
       const payload = tableToAPI.mergeTable(effectiveTable, sourceOrder);
-      await api.post(API_ENDPOINTS.MERGE_ORDER, payload);
+      api.post(API_ENDPOINTS.MERGE_ORDER, payload)
+        .then(() => {
+          toast({
+            title: "Tables Merged",
+            description: `Merged into ${table?.label || table?.id}`,
+          });
+        })
+        .catch(err => {
+          console.error('[MergeTable] CRITICAL:', err?.response?.status, err?.response?.data);
+          const msg = err?.response?.data?.message || err?.message || 'Merge failed';
+          toast({ title: "Merge Failed", description: msg, variant: "destructive" });
+        });
     }
-    toast({
-      title: "Tables Merged",
-      description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}`,
-    });
-    
-    // Wait for socket order-engage before redirect
-    const targetOrderId = effectiveTable?.orderId;
-    if (targetOrderId) {
-      await waitForOrderEngaged(targetOrderId, 5000);
-    }
-    
+
+    if (engagePromise) await engagePromise;
     onClose();
   };
 
   const handleShift = async ({ toTable }) => {
-    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
-    const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
-    toast({
-      title: "Table Shifted",
-      description: response.data?.message || `Order moved to ${toTable.displayName}`,
-    });
-    
-    // Wait for socket update-table engage (dest) before redirect
     const destTableId = Number(toTable?.tableId);
-    if (destTableId) {
-      await waitForTableEngaged(destTableId, 5000);
-    }
-    
+    const engagePromise = destTableId ? waitForTableEngaged(destTableId) : null;
+
+    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+    api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload)
+      .then(res => {
+        toast({
+          title: "Table Shifted",
+          description: res.data?.message || `Order moved to ${toTable.displayName}`,
+        });
+      })
+      .catch(err => {
+        console.error('[ShiftTable] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.message || err?.message || 'Shift failed';
+        toast({ title: "Shift Failed", description: msg, variant: "destructive" });
+      });
+
+    if (engagePromise) await engagePromise;
     onClose();
   };
 
   const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
-    setIsPlacingOrder(true); // Show overlay — same pattern as all other flows
-    try {
-      const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
-      await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
-      toast({
-        title: "Item Cancelled",
-        description: `${item?.name} cancelled successfully`,
+    setIsPlacingOrder(true);
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    const engagePromise = orderId ? waitForOrderEngaged(orderId) : null;
+
+    const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
+    api.put(API_ENDPOINTS.CANCEL_ITEM, payload)
+      .then(() => {
+        toast({
+          title: "Item Cancelled",
+          description: `${item?.name} cancelled successfully`,
+        });
+      })
+      .catch(err => {
+        console.error('[CancelFood] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || err?.message || 'Cancellation failed';
+        toast({ title: "Cancel Failed", description: msg, variant: "destructive" });
+        setIsPlacingOrder(false);
       });
 
-      // Wait for socket order-engage before redirect
-      const orderId = effectiveTable?.orderId || placedOrderId;
-      if (orderId) {
-        await waitForOrderEngaged(orderId, 5000);
-      }
-
-      setCancelItem(null);
-      onClose(); // Redirect to dashboard — table is locked, socket will enrich + release
-    } catch (err) {
-      const msg = err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || err?.message || 'Cancellation failed';
-      toast({ title: "Cancel Failed", description: msg });
-    } finally {
-      setIsPlacingOrder(false);
-    }
+    if (engagePromise) await engagePromise;
+    setCancelItem(null);
+    onClose();
   };
 
   const handleCancelOrder = async (reason) => {
     const orderId = effectiveTable?.orderId || placedOrderId;
     if (!orderId) return;
 
-    setIsPlacingOrder(true); // Reuse overlay to block UI
+    setIsPlacingOrder(true);
+    const engagePromise = waitForOrderEngaged(orderId);
 
-    try {
-      const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
-      await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
-      
-      // Wait for socket update-order-status to remove the order from context
-      await waitForOrderRemoval(orderId, 5000);
-
-      toast({
-        title: "Order Cancelled",
-        description: `Order cancelled for ${table?.label || table?.id}`,
+    const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
+    api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload)
+      .catch(err => {
+        console.error('[CancelOrder] CRITICAL:', err?.response?.status, err?.response?.data);
+        toast({ title: "Cancel Failed", description: err?.response?.data?.message || err?.message, variant: "destructive" });
+        setIsPlacingOrder(false);
       });
-      onClose();
-    } catch (err) {
-      console.error('[CancelOrder] Failed:', err);
-      toast({ title: "Cancel Failed", description: err?.response?.data?.message || err?.message });
-    } finally {
-      setIsPlacingOrder(false);
-    }
+
+    await engagePromise;
+    toast({
+      title: "Order Cancelled",
+      description: `Order cancelled for ${table?.label || table?.id}`,
+    });
+    onClose();
   };
 
   const handleAddCustomItem = async ({ name, categoryId, price, qty, notes }) => {    const payload = orderToAPI.addCustomItem(name, categoryId, price);
@@ -824,13 +835,24 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     // No local table engage — order-engage socket handles locking
                     setIsPlacingOrder(true);
 
+                    const collectOrderId = effectiveTable?.orderId || placedOrderId;
+                    const engagePromise = collectOrderId ? waitForOrderEngaged(collectOrderId) : null;
+
                     const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
-                    const res = await api.post(API_ENDPOINTS.BILL_PAYMENT, payload);
-                    console.log('[CollectBill] response:', res.data);
-                    toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+                    api.post(API_ENDPOINTS.BILL_PAYMENT, payload)
+                      .then(res => {
+                        console.log('[CollectBill] response:', res.data);
+                        toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+                      })
+                      .catch(err => {
+                        console.error('[CollectBill] CRITICAL:', err?.response?.status, err?.response?.data);
+                        const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
+                        toast({ title: "Payment Failed", description: msg, variant: "destructive" });
+                        setIsPlacingOrder(false);
+                      });
 
-                    // Redirect to dashboard — socket will removeOrder + release table
+                    if (engagePromise) await engagePromise;
                     onClose();
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   }
