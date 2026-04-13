@@ -64,8 +64,8 @@ All 3 mutation endpoints confirmed to stay on v1:
 
 | Action | Endpoint | Status |
 |--------|----------|--------|
-| Transfer Order | `POST /api/v1/vendoremployee/order/transfer-order` | ✅ Confirmed v1 |
-| Transfer Food Item | `POST /api/v1/vendoremployee/order/transfer-food-item` | ✅ Confirmed v1 |
+| Transfer Order | `POST /api/v2/vendoremployee/order/transfer-order` | Upgraded to v2 |
+| Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | Upgraded to v2 |
 | Cancel Food Item | `PUT /api/v1/vendoremployee/order/cancel-food-item` | ✅ Confirmed v1 |
 
 #### Socket Event Audit Results (Verified via User Console Logs)
@@ -307,7 +307,7 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 |--------|----------|--------|
 | Place New Order | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data) | Updated |
 | Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated |
-| Collect Bill (existing order) | `POST /api/v2/vendoremployee/order-bill-payment` (JSON) | Working |
+| Collect Bill (existing order) | `POST /api/v2/vendoremployee/order/order-bill-payment` (JSON) | Working |
 | Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated |
 | Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working |
 | Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working |

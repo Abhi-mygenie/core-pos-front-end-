@@ -10,7 +10,7 @@
 | 1 | Place New Order | `/api/v2/vendoremployee/order/place-order` | POST | `multipart/form-data` |
 | 2 | Place + Pay (prepaid) | `/api/v2/vendoremployee/order/place-order` | POST | `multipart/form-data` |
 | 3 | Update Order (add items) | `/api/v2/vendoremployee/order/update-place-order` | PUT | `application/json` |
-| 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order-bill-payment` | POST | `application/json` |
+| 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order/order-bill-payment` | POST | `application/json` |
 | 5 | Cancel Item (full/partial) | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
 | 6 | Cancel Full Order | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | 7 | Get Single Order | `/api/v2/vendoremployee/get-single-order-new` | POST | `application/json` |
@@ -18,6 +18,8 @@
 | **9** | **Order Status Update (Ready/Served)** | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | **10** | **Profile + Permissions + Restaurant Config** | `/api/v2/vendoremployee/vendor-profile/profile` | GET | — |
 | **11** | **Split Bill** | `/api/v1/vendoremployee/pos/split-order` | POST | `application/json` |
+| **14** | **Transfer Order (Merge)** | `/api/v2/vendoremployee/order/transfer-order` | POST | `application/json` |
+| **15** | **Transfer Food Item** | `/api/v2/vendoremployee/order/transfer-food-item` | POST | `application/json` |
 | **12** | **Payment Methods Mapping** | — | — | See Section 12 |
 | **13** | **Print KOT/Bill** | `/api/v1/vendoremployee/order-temp-store` | POST | `application/json` |
 
@@ -747,7 +749,7 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 
 ## Collect Bill V2 Endpoint (Existing Order Payment)
 
-**Endpoint:** `POST /api/v2/vendoremployee/order-bill-payment`
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-bill-payment`
 **Content-Type:** `application/json`
 **Auth:** `Bearer <token>`
 
@@ -834,7 +836,7 @@ socketHandlers.handleUpdateOrderStatus (status=6):
 - Called from `OrderEntry.jsx` → `onPaymentComplete` handler
 
 ### Key Differences from Place Order Endpoint
-| Aspect | Place Order (`/place-order`) | Collect Bill (`/order-bill-payment`) |
+| Aspect | Place Order (`/place-order`) | Collect Bill (`/order/order-bill-payment`) |
 |--------|------|------|
 | Content-Type | `multipart/form-data` | `application/json` |
 | Cart required | Yes (`cart` array) | No (order already placed) |

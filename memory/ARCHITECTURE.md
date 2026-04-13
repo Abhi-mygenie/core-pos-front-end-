@@ -506,7 +506,7 @@ export const API_ENDPOINTS = {
   // Orders
   PLACE_ORDER: '/api/v1/vendoremployee/order/place-order',
   UPDATE_ORDER: '/api/v1/vendoremployee/order/update-place-order',
-  BILL_PAYMENT: '/api/v2/vendoremployee/order-bill-payment',
+  BILL_PAYMENT: '/api/v2/vendoremployee/order/order-bill-payment',
   CANCEL_ITEM: '/api/v1/vendoremployee/order/cancel-food-item',
   
   // ... more endpoints
@@ -1072,7 +1072,7 @@ User Action: Click "Collect Bill" → Select payment method → Confirm
    │
    ├─► Build payload: toAPI.collectBillExisting(...)
    │
-   ├─► POST /api/v2/vendoremployee/order-bill-payment
+   ├─► POST /api/v2/vendoremployee/order/order-bill-payment
    │   (JSON, application/json)
    │
    └─► setTableEngaged(tableId, true)
@@ -1488,11 +1488,11 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 |------|-----------|----------|---------------|-------------|
 | New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes |
 | Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes |
-| Transfer Order | POST | v1 transfer-order | `update-table engage/free` + `update-order` | ❌ No |
-| Transfer Food Item | POST | v1 transfer-food-item | 2x `update-order` | ❌ No |
+| Transfer Order | POST | v2 transfer-order | `update-table engage/free` + `update-order` | Testing |
+| Transfer Food Item | POST | v2 transfer-food-item | 2x `update-order` | Testing |
 | Cancel Food Item | PUT | v1 cancel-food-item | `update-table free` + `update-order-status` | ❌ No |
 | Cancel Full Order | PUT | v2 order-status-update | `update-table free` + `update-order-status` | ❌ No |
-| Collect Bill | POST | v2 order-bill-payment | `update-order-status` + `update-table free` | ❌ No |
+| Collect Bill | POST | v2 order/order-bill-payment | `update-order-status` + `update-table free` | ❌ No |
 
 ### 19.2 Locking Architecture (Target State)
 
@@ -1525,11 +1525,11 @@ new-order (after lock)      → auto-release via requestAnimationFrame
 |--------|-----------------|----------------------|
 | Place Order | **v2** | ✅ Yes |
 | Update Order | **v2** | ✅ Yes |
-| Transfer Order | **v1** | ❌ No |
-| Transfer Food Item | **v1** | ❌ No |
+| Transfer Order | **v2** | Testing |
+| Transfer Food Item | **v2** | Testing |
 | Cancel Food Item | **v1** | ❌ No |
 | Order Status Update | **v2** | ❌ No |
-| Bill Payment | **v2** | ❌ No |
+| Bill Payment | **v2** (order/order-bill-payment) | ❌ No |
 
 ---
 

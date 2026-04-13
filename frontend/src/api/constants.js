@@ -18,8 +18,8 @@ export const API_ENDPOINTS = {
   // Table Operations (Phase 1C)
   TABLES: '/api/v1/vendoremployee/all-table-list',
   ORDER_TABLE_SWITCH: '/api/v1/vendoremployee/pos/order-table-room-switch',
-  MERGE_ORDER: '/api/v1/vendoremployee/order/transfer-order',
-  TRANSFER_FOOD: '/api/v1/vendoremployee/order/transfer-food-item',
+  MERGE_ORDER: '/api/v2/vendoremployee/order/transfer-order',
+  TRANSFER_FOOD: '/api/v2/vendoremployee/order/transfer-food-item',
 
   // Cancel Operations (Phase 1C)
   CANCEL_ITEM: '/api/v1/vendoremployee/order/cancel-food-item',
@@ -33,7 +33,7 @@ export const API_ENDPOINTS = {
   CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
   PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
-  BILL_PAYMENT:      '/api/v2/vendoremployee/order-bill-payment',        // Collect bill on existing order
+  BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes
   EDIT_ORDER_ITEM_QTY:   'TBD',   // CHG-040 future: Edit placed item qty only
   
