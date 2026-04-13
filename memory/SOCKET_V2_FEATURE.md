@@ -252,7 +252,7 @@ update-order-{something} {orderId} {payload}
 | 2b | Collect Bill delivery (cash) | Apr 13 | ✅ | CLEAN — identical pattern. 2 sec gap between HTTP response and `update-order-paid` (not a problem). | R6 eliminated |
 | 3 | Cancel food partial (walk-in) | Apr 13 | ✅ | v1 pattern: `update-table 0 free` (skipped) + `update-order-status` (f_order_status=6, wrong) + GET API (2 sec). No v2 events. Walk-in safe. | R3 partial — walk-in safe, dine-in NOT YET TESTED |
 | 3b | Cancel food full (walk-in) | Apr 13 | ✅ | Same v1 pattern. GET returns "paid" → removeOrder. 3 sec GET. | R3 partial |
-| 3c | Cancel food partial (DINE-IN) | | ❌ NEEDED | — | R3 critical test |
+| 3c | Cancel food partial (DINE-IN) | Apr 13 | ✅ | v1 pattern: `update-table 3239 free` + `update-order-status` (6). GET takes 1 sec. BUG-216 workaround currently saves it. Without workaround: 1 sec window where table shows "available". Mitigation: re-engage in handleUpdateOrderStatus before GET. | R3 CONFIRMED — 1 sec window, mitigatable |
 | 3d | Cancel food last item (DINE-IN) | | ❌ NEEDED | — | R3 critical test |
 | 5 | Cancel full order (dine-in) | | ❌ | — | R3 |
 | 6 | Transfer food last item | | ❌ | — | R5 |
