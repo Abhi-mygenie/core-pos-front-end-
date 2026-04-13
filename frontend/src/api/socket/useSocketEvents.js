@@ -76,6 +76,9 @@ export const useSocketEvents = () => {
       case SOCKET_EVENTS.UPDATE_ORDER_PAID:
         handleOrderDataEvent(args, actionsRef.current, 'update-order-paid');
         break;
+      case SOCKET_EVENTS.UPDATE_ITEM_STATUS:
+        handleOrderDataEvent(args, actionsRef.current, 'update-item-status');
+        break;
       case SOCKET_EVENTS.UPDATE_FOOD_STATUS:
         handleUpdateFoodStatus(args, actionsRef.current);
         break;
