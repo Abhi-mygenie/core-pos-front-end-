@@ -1480,7 +1480,7 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 
 ---
 
-## 19. April 11, 2026 Architecture Updates — Socket Event Audit
+## 19. April 13, 2026 Architecture Updates — v2 Socket Architecture
 
 ### 19.1 Complete Socket Event Map (Verified from Console Logs)
 
@@ -1488,11 +1488,12 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 |------|-----------|----------|---------------|-------------|
 | New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes |
 | Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes |
-| Transfer Order | POST | v2 transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes (v2 verified) |
-| Transfer Food Item | POST | v2 transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes (v2 verified) |
+| Switch Table | POST | v2 order/order-table-room-switch | 2x `update-table engage` (src+dest) + `update-order-target` | ✅ Yes |
+| Merge Table | POST | v2 order/transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
+| Transfer Food | POST | v2 order/transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes |
+| Collect Bill | POST | v2 order/order-bill-payment | TBD (path updated, socket behavior pending verification) | TBD |
 | Cancel Food Item | PUT | v1 cancel-food-item | `update-table free` + `update-order-status` | ❌ No |
 | Cancel Full Order | PUT | v2 order-status-update | `update-table free` + `update-order-status` | ❌ No |
-| Collect Bill | POST | v2 order/order-bill-payment | `update-order-status` + `update-table free` | ❌ No |
 
 ### 19.2 Locking Architecture (Target State)
 
@@ -1505,10 +1506,10 @@ update-table engage         → setTableEngaged(tableId, true)
 update-table free           → setTableEngaged(tableId, false) + updateTableStatus('available')
 order-engage engage         → setOrderEngaged(orderId, true)
 order-engage free           → setOrderEngaged(orderId, false)
-update-order (after lock)   → auto-release via requestAnimationFrame
-new-order (after lock)      → auto-release via requestAnimationFrame
-update-order-target         → updateOrder() from payload + release engage (NEW: merge v2)
-update-order-source         → removeOrder() if cancelled, else updateOrder() + release engage (NEW: merge v2)
+new-order (after lock)      → addOrder() + syncTableStatus + release table engage
+update-order (after lock)   → updateOrder() + syncTableStatus + release order engage
+update-order-target         → updateOrder() from payload + detect table change + release engage
+update-order-source         → removeOrder() if cancelled, else updateOrder() + release engage
 ```
 
 **What to wait for before redirect (per flow):**
@@ -1518,10 +1519,11 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 | New Order + table | Wait for `update-table engage` |
 | New Order + walk-in | 0.5s delay (no socket lock) |
 | Update Order | Wait for `order-engage` |
+| Switch Table | Wait for `update-table engage` (dest) |
 | Merge Table | Wait for `order-engage` (source or target) |
 | Transfer Food | Wait for `order-engage` (source or target) |
-| Transfer Order/Food | Fire & close (no wait) |
 | Cancel Food Item | Wait for `update-table engage` (when backend sends it) |
+| Collect Bill | TBD |
 
 ### 19.3 Endpoint Version Map
 
@@ -1529,11 +1531,12 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 |--------|-----------------|----------------------|
 | Place Order | **v2** | ✅ Yes |
 | Update Order | **v2** | ✅ Yes |
-| Transfer Order | **v2** | ✅ Yes (`update-order-target` + `update-order-source`) |
-| Transfer Food Item | **v2** | ✅ Yes (`update-order-target` + `update-order-source`) |
+| Switch Table | **v2** (order/order-table-room-switch) | ✅ Yes (`update-order-target`) |
+| Merge Table | **v2** (order/transfer-order) | ✅ Yes (`update-order-target` + `update-order-source`) |
+| Transfer Food | **v2** (order/transfer-food-item) | ✅ Yes (`update-order-target` + `update-order-source`) |
+| Collect Bill | **v2** (order/order-bill-payment) | TBD |
 | Cancel Food Item | **v1** | ❌ No |
 | Order Status Update | **v2** | ❌ No |
-| Bill Payment | **v2** (order/order-bill-payment) | ❌ No |
 
 ---
 

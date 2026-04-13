@@ -152,23 +152,13 @@
 
 - **Status:** TODO
 
-### TASK-C: Transfer Order Socket-First — PARTIALLY DONE
-- **What:** Validate and refactor Transfer/Merge Order flows after backend sends socket payload
-- **Merge Table (v2):** ✅ VERIFIED — Backend sends `order-engage` (both) + `update-order-target` + `update-order-source` with full payload
-  - New events: `update-order-target`, `update-order-source`
-  - Order-level locking (not table-level)
-  - Zero GET API calls needed
-  - **Frontend implementation needed:** Add handlers for new events in `socketEvents.js`, `socketHandlers.js`, `useSocketEvents.js`
-- **Transfer Food (v2):** ✅ VERIFIED — Identical socket pattern to Merge Table
-  - Same events: `order-engage` (both) + `update-order-target` + `update-order-source`
-  - Key difference: source `f_order_status=1` (still active, fewer items) vs merge source `f_order_status=3` (cancelled)
-  - Same handlers cover both flows — source handler checks status to decide `updateOrder()` vs `removeOrder()`
-- **Switch Table (v1):** Still v1 behavior — `update-table engage/free` + `update-order` (no payload). GET API still required
-  - Endpoint: `POST /api/v1/vendoremployee/pos/order-table-room-switch`
-  - Tested Walk-in→Table and Table→Table (Apr 13 logs)
-  - Source table BUG-216 still applies for table-to-table
-- **Transfer Food (v2):** Upgraded to v2, awaiting log verification
-- **Status:** IN PROGRESS
+### TASK-C: Transfer/Merge/Switch Socket-First — VERIFIED
+- **What:** All transfer flows upgraded to v2 with full socket payloads
+- **Merge Table (v2):** ✅ VERIFIED — `order-engage` (both) + `update-order-target` + `update-order-source`
+- **Transfer Food (v2):** ✅ VERIFIED — Identical pattern to Merge. Source `f_order_status=1` (active) vs merge source `f_order_status=3` (cancelled)
+- **Switch Table (v2):** ✅ VERIFIED — `update-table engage` (both tables) + `update-order-target`. No source event (same order moves). Both tables get `engage` (v1 only engaged dest, fixing BUG-216 for this flow)
+- **Frontend implementation needed:** Add `update-order-target`/`update-order-source` handlers. `update-order-target` needs old-vs-new tableId comparison for switch table.
+- **Status:** VERIFIED — ready for implementation
 
 ---
 

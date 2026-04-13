@@ -101,7 +101,7 @@
 
 ---
 
-## 11. Socket Event Map Per Flow (April 11, 2026)
+## 11. Socket Event Map Per Flow (Updated April 13, 2026)
 
 **Verified from user console logs across all order mutation flows:**
 
@@ -110,13 +110,13 @@
 | **New Order (table)** | `update-table engage` → `new-order` (payload) | `update-table engage` | ✅ Yes (51 keys) |
 | **New Order (walk-in)** | `new-order` (payload) | None | ✅ Yes |
 | **Update Order** | `order-engage` → `update-order` (payload) | `order-engage` | ✅ Yes |
-| **Merge Table (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes (verified Apr 13) |
-| **Transfer Food (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes (verified Apr 13) |
-| **Transfer Order** | `update-table engage` (dest) + `update-table free` (src) + `update-order` | `update-table engage` (dest only) | ❌ No (v1) |
-| **Transfer Food Item** | 2x `update-order` (source + target) | None | ❌ No (v1) |
+| **Switch Table (v2)** | 2x `update-table engage` (src+dest) → `update-order-target` (payload) | `update-table engage` (both tables) | ✅ Yes |
+| **Merge Table (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes |
+| **Transfer Food (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes |
+| **Collect Bill** | Path updated to v2, socket behavior TBD | TBD | TBD |
 | **Cancel Food Item** | `update-table free` + `update-order-status` | `update-table free` (should be engage) | ❌ No (v1) |
 
-**Key insight:** v2 endpoints send payloads in socket, v1 endpoints do not. Merge Table and Transfer Food now on v2 with shared events `update-order-target`/`update-order-source`. Switch Table still v1.
+**Key insight:** All transfer/merge flows now on v2 with full payloads. Switch Table uses table-level locking; Merge/Transfer Food use order-level locking. Cancel Food Item remains v1.
 
 ---
 

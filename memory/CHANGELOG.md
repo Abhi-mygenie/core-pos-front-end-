@@ -2,13 +2,28 @@
 
 ## Apr 13, 2026 — Session 12 (Merge Table v2 Socket Verification + Endpoint Upgrades)
 
-### Endpoint Upgrades (3 endpoints changed)
+### Endpoint Upgrades (4 endpoints changed)
 
 | Constant | Old | New |
 |----------|-----|-----|
-| `MERGE_ORDER` | `/api/v1/.../transfer-order` | `/api/v2/.../transfer-order` |
-| `TRANSFER_FOOD` | `/api/v1/.../transfer-food-item` | `/api/v2/.../transfer-food-item` |
+| `ORDER_TABLE_SWITCH` | `/api/v1/.../pos/order-table-room-switch` | `/api/v2/.../order/order-table-room-switch` |
+| `MERGE_ORDER` | `/api/v1/.../order/transfer-order` | `/api/v2/.../order/transfer-order` |
+| `TRANSFER_FOOD` | `/api/v1/.../order/transfer-food-item` | `/api/v2/.../order/transfer-food-item` |
 | `BILL_PAYMENT` | `/api/v2/.../order-bill-payment` | `/api/v2/.../order/order-bill-payment` |
+
+### Switch Table v2 — Socket Events Verified ✅
+
+**Tested:** Order 730850 switched FROM Table 4086 (source) TO Table 3237 (dest) @ restaurant 478
+
+**Socket behavior (v2):**
+1. `update-table 3237 engage` — dest table locked
+2. `update-table 4086 engage` — source table locked (NEW — v1 only locked dest)
+3. `update-order-target 730850 {payload}` — order updated (f_order_status=1, now on dest table)
+
+**Key differences from Merge/Transfer Food:**
+- Uses table-level locking (`update-table engage`) not order-level (`order-engage`)
+- Only one data event (`update-order-target`) — no source event (same order, just moved)
+- Both tables get `engage` — BUG-216 workaround no longer triggers for this flow
 
 ### Merge Table v2 — Socket Events Verified ✅
 

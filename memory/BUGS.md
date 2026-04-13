@@ -63,11 +63,20 @@ All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted t
 
 | Action | Endpoint | Status |
 |--------|----------|--------|
-| Transfer Order (Merge) | `POST /api/v2/vendoremployee/order/transfer-order` | ✅ v2 verified — `update-order-target` + `update-order-source` with payload |
+| Switch Table | `POST /api/v2/vendoremployee/order/order-table-room-switch` | ✅ v2 verified — `update-table engage` (both) + `update-order-target` with payload |
+| Transfer Order (Merge) | `POST /api/v2/vendoremployee/order/transfer-order` | ✅ v2 verified — `order-engage` (both) + `update-order-target` + `update-order-source` |
 | Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | ✅ v2 verified — same events as merge |
+| Collect Bill | `POST /api/v2/vendoremployee/order/order-bill-payment` | Path updated, socket behavior TBD |
 | Cancel Food Item | `PUT /api/v1/vendoremployee/order/cancel-food-item` | ✅ Confirmed v1 |
 
 #### Socket Event Audit Results (Updated April 13, 2026)
+
+**Switch Table v2** (verified):
+- 2x `update-table engage` (source + dest tables locked)
+- `update-order-target` with full payload (order now on dest table)
+- No `update-order-source` (same order, just moved)
+- No `update-table free` — frontend releases both after context update
+- Both tables get `engage` (v1 only engaged dest — BUG-216 no longer triggers)
 
 **Transfer Order / Merge Table v2** (verified):
 - 2x `order-engage` (source + target orders locked)

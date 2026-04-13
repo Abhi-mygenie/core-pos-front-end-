@@ -25,16 +25,62 @@
 
 ---
 
-## April 13, 2026 Updates — Merge Table v2 Socket Events
+## April 13, 2026 Updates — v2 Socket Architecture for Transfer/Merge/Bill Flows
 
-### New Socket Events (Merge Table & Transfer Food v2)
+### Endpoint Upgrades (April 13, 2026)
 
-| Event Name | Channel | Purpose |
+| Action | Old Endpoint | New Endpoint |
+|--------|-------------|-------------|
+| Switch Table | `/api/v1/.../pos/order-table-room-switch` | `/api/v2/.../order/order-table-room-switch` |
+| Merge Table | `/api/v1/.../order/transfer-order` | `/api/v2/.../order/transfer-order` |
+| Transfer Food | `/api/v1/.../order/transfer-food-item` | `/api/v2/.../order/transfer-food-item` |
+| Collect Bill | `/api/v2/.../order-bill-payment` | `/api/v2/.../order/order-bill-payment` |
+
+### New Socket Events (v2)
+
+| Event Name | Channel | Used By |
 |-----------|---------|---------|
-| `update-order-target` | `new_order_{restaurantId}` | Target order updated (items added). Has full payload |
-| `update-order-source` | `new_order_{restaurantId}` | Source order updated (cancelled or reduced). Has full payload |
+| `update-order-target` | `new_order_{restaurantId}` | Switch Table, Merge Table, Transfer Food |
+| `update-order-source` | `new_order_{restaurantId}` | Merge Table, Transfer Food (not Switch Table) |
 
-**Used by both:** Merge Table and Transfer Food Item — identical socket pattern.
+### Switch Table v2 — Complete Socket Flow
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-table-room-switch`
+
+**Verified from console logs (April 13, 2026):**
+
+**Scenario:** Order 730850 switched FROM Table 4086 (source) TO Table 3237 (dest)
+
+```
+13:36:31  update-table  3237  engage                      ← Dest table LOCKED
+13:36:31  update-table  4086  engage                      ← Source table LOCKED
+13:36:31  update-order-target  730850, 478, 1, {payload}  ← Order updated (now on dest table)
+```
+
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `update-table engage` | Table 3237 (dest) | — | N/A (lock only) |
+| 2 | `update-table engage` | Table 4086 (source) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730850 | 1 (preparing) | ✅ Yes (complete) |
+
+**Key differences from Merge/Transfer Food:**
+- Uses **table-level locking** (`update-table engage`) not order-level (`order-engage`)
+- Only **one data event** (`update-order-target`) — no `update-order-source` (same order, just moved)
+- Both source AND dest tables get `engage` (v1 only engaged dest)
+- No `update-table free` — frontend releases both after context update
+
+**Frontend handler logic:**
+```
+update-order-target handler:
+  → oldOrder = getOrderById(orderId) → oldTableId (source)
+  → newOrder = transform(payload) → newTableId (dest)
+  → if oldTableId !== newTableId:
+      updateOrder(orderId, newOrder)
+      syncTableStatus(newTableId, derived from f_order_status)
+      updateTableStatus(oldTableId, 'available')
+      setTableEngaged(newTableId, false)
+      setTableEngaged(oldTableId, false)
+```
 
 ### Merge Table v2 — Complete Socket Flow
 
@@ -42,21 +88,21 @@
 
 **Verified from console logs (April 13, 2026):**
 
-**Scenario:** Order 730850 (source, table 3240) merged INTO Order 730849 (target, table 3239)
+**Scenario:** Order 730850 (source) merged INTO Order 730849 (target)
 
 ```
-13:21:14  order-engage  730850 engage             ← Source order LOCKED
-13:21:14  order-engage  730849 engage             ← Target order LOCKED
-13:21:15  update-order-target  730849, 478, 1, {payload}  ← Target updated (f_order_status=1, preparing)
+13:21:14  order-engage  730850  engage                    ← Source order LOCKED
+13:21:14  order-engage  730849  engage                    ← Target order LOCKED
+13:21:15  update-order-target  730849, 478, 1, {payload}  ← Target updated (items merged in)
 13:21:15  update-order-source  730850, 478, 3, {payload}  ← Source cancelled (f_order_status=3)
 ```
 
-| # | Event | Order | f_order_status | tableStatus (derived) | Payload? |
-|---|-------|-------|---------------|----------------------|----------|
-| 1 | `order-engage` | 730850 (source) | — | — | N/A (lock only) |
-| 2 | `order-engage` | 730849 (target) | — | — | N/A (lock only) |
-| 3 | `update-order-target` | 730849 (target) | 1 (preparing) | `occupied` | ✅ Yes (complete) |
-| 4 | `update-order-source` | 730850 (source) | 3 (cancelled) | `available` | ✅ Yes (complete) |
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `order-engage` | Order 730850 (source) | — | N/A (lock only) |
+| 2 | `order-engage` | Order 730849 (target) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730849 (target) | 1 (preparing) | ✅ Yes |
+| 4 | `update-order-source` | Order 730850 (source) | 3 (cancelled) | ✅ Yes |
 
 ### Transfer Food Item v2 — Complete Socket Flow
 
@@ -67,67 +113,56 @@
 **Scenario:** Food item transferred FROM Order 730849 (source) TO Order 730850 (target)
 
 ```
-13:28:17  order-engage  730849 engage             ← Source order LOCKED
-13:28:17  order-engage  730850 engage             ← Target order LOCKED
-13:28:17  update-order-target  730850, 478, 1, {payload}  ← Target updated (f_order_status=1, item added)
-13:28:17  update-order-source  730849, 478, 1, {payload}  ← Source updated (f_order_status=1, item removed)
+13:28:17  order-engage  730849  engage                    ← Source order LOCKED
+13:28:17  order-engage  730850  engage                    ← Target order LOCKED
+13:28:17  update-order-target  730850, 478, 1, {payload}  ← Target updated (item added)
+13:28:17  update-order-source  730849, 478, 1, {payload}  ← Source updated (item removed, still active)
 ```
 
-| # | Event | Order | f_order_status | tableStatus (derived) | Payload? |
-|---|-------|-------|---------------|----------------------|----------|
-| 1 | `order-engage` | 730849 (source) | — | — | N/A (lock only) |
-| 2 | `order-engage` | 730850 (target) | — | — | N/A (lock only) |
-| 3 | `update-order-target` | 730850 (target) | 1 (preparing) | `occupied` | ✅ Yes (complete) |
-| 4 | `update-order-source` | 730849 (source) | 1 (preparing) | `occupied` | ✅ Yes (complete) |
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `order-engage` | Order 730849 (source) | — | N/A (lock only) |
+| 2 | `order-engage` | Order 730850 (target) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730850 (target) | 1 (preparing) | ✅ Yes |
+| 4 | `update-order-source` | Order 730849 (source) | 1 (preparing) | ✅ Yes |
 
-### Merge vs Transfer Food — Source Order Difference
+### Collect Bill — Endpoint Path Change
 
-| Aspect | Merge Table | Transfer Food |
-|--------|-------------|---------------|
-| Source `f_order_status` | **3** (cancelled) — order dissolved | **1** (preparing) — order still active |
-| Source action | `removeOrder()` + table → available | `updateOrder()` — fewer items, stays active |
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-bill-payment`
 
-### Handler Logic (Shared for Both Flows)
+Path changed from `/order-bill-payment` to `/order/order-bill-payment`. Socket behavior TBD (awaiting log verification).
+
+### All 3 Transfer Flows — Comparison Table
+
+| Aspect | Switch Table v2 | Merge Table v2 | Transfer Food v2 |
+|--------|----------------|----------------|-----------------|
+| Lock type | `update-table` (table) | `order-engage` (order) | `order-engage` (order) |
+| What's locked | Both tables | Both orders | Both orders |
+| Data events | `update-order-target` only | `update-order-target` + `update-order-source` | `update-order-target` + `update-order-source` |
+| Source event? | ❌ No (same order moves) | ✅ Yes (source cancelled) | ✅ Yes (source reduced) |
+| Source f_order_status | N/A | 3 (cancelled) | 1 (still active) |
+| Payload? | ✅ Yes | ✅ Yes | ✅ Yes |
+| GET API needed? | ❌ No | ❌ No | ❌ No |
+| `update-table free`? | ❌ No | ❌ No | ❌ No |
+
+### Source Handler Decision Logic
 
 ```
-update-order-target:
-  → transform payload → updateOrder(targetId) → syncTableStatus → release engage
-
-update-order-source:
+update-order-source handler:
   → transform payload
-  → if status === 'cancelled' → removeOrder(sourceId) + table available  (merge)
-  → else → updateOrder(sourceId) + syncTableStatus                       (transfer food)
+  → if status === 'cancelled' → removeOrder() + table available  (merge case)
+  → else → updateOrder() + syncTableStatus                       (transfer food case)
   → release engage
 ```
 
-### Table Status Derivation (Confirmed)
+### Table Status Derivation (Confirmed for all flows)
 
 ```
 f_order_status → F_ORDER_STATUS map → statusKey → ORDER_TO_TABLE_STATUS → tableStatus
 
-Target: f_order_status=1 → 'preparing' → 'occupied'
-Source (merge):         f_order_status=3 → 'cancelled' → 'available'
-Source (transfer food): f_order_status=1 → 'preparing' → 'occupied'
+f_order_status=1 → 'preparing' → 'occupied'
+f_order_status=3 → 'cancelled' → 'available'
 ```
-
-### v2 vs v1 Comparison
-
-| Aspect | v1 (old — both flows) | v2 (verified — both flows) |
-|--------|----------------------|---------------------------|
-| Locking | Merge: `update-table` only dest. Transfer: None | `order-engage` both orders ✅ |
-| Payload? | ❌ No, GET API required | ✅ Full payload, zero GET API |
-| Event names | `update-order` (generic, 1 or 2) | `update-order-target` + `update-order-source` (specific) |
-| Table events? | Merge: engage+free. Transfer: None | **None** — table status derived from order |
-| Source table stuck? | Merge: ❌ Yes (BUG-221). Transfer: N/A | ✅ No — order-level engage |
-
-### Frontend Implementation Required
-
-| # | What | File |
-|---|------|------|
-| 1 | Add `UPDATE_ORDER_TARGET` and `UPDATE_ORDER_SOURCE` to `SOCKET_EVENTS` | `socketEvents.js` |
-| 2 | Add handler for `update-order-target`: transform payload → `updateOrder()` → release engage | `socketHandlers.js` |
-| 3 | Add handler for `update-order-source`: transform payload → if cancelled `removeOrder()` + free table, else `updateOrder()` → release engage | `socketHandlers.js` |
-| 4 | Wire new events in switch statement | `useSocketEvents.js` |
 
 ---
 
