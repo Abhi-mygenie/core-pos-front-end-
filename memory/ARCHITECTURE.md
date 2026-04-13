@@ -507,7 +507,7 @@ export const API_ENDPOINTS = {
   PLACE_ORDER: '/api/v1/vendoremployee/order/place-order',
   UPDATE_ORDER: '/api/v1/vendoremployee/order/update-place-order',
   BILL_PAYMENT: '/api/v2/vendoremployee/order/order-bill-payment',
-  CANCEL_ITEM: '/api/v1/vendoremployee/order/cancel-food-item',
+  CANCEL_ITEM: '/api/v2/vendoremployee/order/cancel-food-item',
   
   // ... more endpoints
 };
@@ -1522,8 +1522,8 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 | Switch Table | Wait for `update-table engage` (dest) |
 | Merge Table | Wait for `order-engage` (source or target) |
 | Transfer Food | Wait for `order-engage` (source or target) |
-| Cancel Food Item | Wait for `update-table engage` (when backend sends it) |
-| Collect Bill | TBD |
+| Cancel Food Item | Wait for `order-engage` |
+| Collect Bill | Wait for `order-engage` |
 
 ### 19.3 Endpoint Version Map
 
@@ -1534,9 +1534,10 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 | Switch Table | **v2** (order/order-table-room-switch) | ✅ Yes (`update-order-target`) |
 | Merge Table | **v2** (order/transfer-order) | ✅ Yes (`update-order-target` + `update-order-source`) |
 | Transfer Food | **v2** (order/transfer-food-item) | ✅ Yes (`update-order-target` + `update-order-source`) |
-| Collect Bill | **v2** (order/order-bill-payment) | TBD |
-| Cancel Food Item | **v1** | ❌ No |
-| Order Status Update | **v2** | ❌ No |
+| Collect Bill | **v2** (order/order-bill-payment) | ✅ Yes (`update-order-paid`) |
+| Cancel Food Item | **v2** (order/cancel-food-item) | ✅ Yes (`order-engage` + `update-order`) |
+| Cancel Order / Ready / Served | **v2** (order-status-update) | ❌ No — backend change needed |
+| Food Status Update | **v2** (food-status-update) | ❌ No — backend change needed |
 
 ---
 

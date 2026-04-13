@@ -11,7 +11,7 @@
 | 2 | Place + Pay (prepaid) | `/api/v2/vendoremployee/order/place-order` | POST | `multipart/form-data` |
 | 3 | Update Order (add items) | `/api/v2/vendoremployee/order/update-place-order` | PUT | `application/json` |
 | 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order/order-bill-payment` | POST | `application/json` |
-| 5 | Cancel Item (full/partial) | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
+| 5 | Cancel Item (full/partial) | `/api/v2/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
 | 6 | Cancel Full Order | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | 7 | Get Single Order | `/api/v2/vendoremployee/get-single-order-new` | POST | `application/json` |
 | 8 | Food Status Update | `/api/v2/vendoremployee/food-status-update` | PUT | `application/json` |
@@ -1121,7 +1121,7 @@ socketHandlers.handleUpdateOrder:
 
 ## Cancel Item Endpoint
 
-**Endpoint:** `PUT /api/v1/vendoremployee/order/cancel-food-item`
+**Endpoint:** `PUT /api/v2/vendoremployee/order/cancel-food-item`
 **Content-Type:** `application/json`
 **Auth:** `Bearer <token>`
 
@@ -1164,8 +1164,9 @@ Cancels a specific quantity of a single item in an order. Supports both full can
 | Endpoint | cancel_qty respected? | Status |
 |----------|----------------------|--------|
 | `v2 /partial-cancel-food-item` | NO — "Order item not found" error | Rejected |
-| `v2 /cancel-food-item` | NO — ignores cancel_qty, cancels all | Rejected |
-| **`v1 /order/cancel-food-item`** | **YES — works correctly** | **In use** |
+| `v2 /cancel-food-item` (old path) | NO — ignores cancel_qty, cancels all | Rejected |
+| `v1 /order/cancel-food-item` | YES — works correctly | Was in use (v1) |
+| **`v2 /order/cancel-food-item`** | **YES — works correctly + v2 socket payload** | **Current (Apr 13)** |
 
 ### Socket Events After Cancel Item
 1. `update-table free` — on table channel (BUG-216: should be `engage`, see BUGS.md)

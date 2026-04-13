@@ -38,9 +38,9 @@ All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted t
 |----------|------------|------------|---------|
 | transfer-order | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
 | transfer-food-item | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
-| cancel-food-item | ❌ No | ❌ No | Stay v1 |
+| cancel-food-item | ❌ No | ✅ Yes (`order-engage` + `update-order` with payload) | **Upgraded to v2** (Apr 13) |
 
-**Conclusion (Updated Apr 13):** Backend v2 now provides full socket payloads for transfer-order and transfer-food-item via new events `update-order-target`/`update-order-source`. Cancel-food-item stays v1. GET single order API still needed for cancel-food-item only.
+**Conclusion (Updated Apr 13):** Backend v2 now provides full socket payloads for transfer-order, transfer-food-item, and cancel-food-item. Cancel Order / Mark Ready / Mark Served (all via `order-status-update` endpoint) remain v1 — backend change needed for that one endpoint.
 
 ### April 11, 2026 Updates (Session 10 — Socket Event Audit)
 
@@ -67,7 +67,7 @@ All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted t
 | Transfer Order (Merge) | `POST /api/v2/vendoremployee/order/transfer-order` | ✅ v2 verified — `order-engage` (both) + `update-order-target` + `update-order-source` |
 | Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | ✅ v2 verified — same events as merge |
 | Collect Bill | `POST /api/v2/vendoremployee/order/order-bill-payment` | Path updated, socket behavior TBD |
-| Cancel Food Item | `PUT /api/v1/vendoremployee/order/cancel-food-item` | ✅ Confirmed v1 |
+| Cancel Food Item | `PUT /api/v2/vendoremployee/order/cancel-food-item` | ✅ v2 verified — `order-engage` + `update-order` with payload. No `update-table free`. No GET API. |
 
 #### Socket Event Audit Results (Updated April 13, 2026)
 
@@ -324,7 +324,7 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 | Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated |
 | Collect Bill (existing order) | `POST /api/v2/vendoremployee/order/order-bill-payment` (JSON) | Working |
 | Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated |
-| Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working |
+| Cancel Item (full/partial) | `PUT /api/v2/vendoremployee/order/cancel-food-item` | Working (v2) |
 | Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working |
 | Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | Working |
 | Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working |

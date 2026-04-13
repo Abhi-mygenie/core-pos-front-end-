@@ -114,9 +114,13 @@
 | **Merge Table (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes |
 | **Transfer Food (v2)** | 2x `order-engage` → `update-order-target` (payload) + `update-order-source` (payload) | `order-engage` (both orders) | ✅ Yes |
 | **Collect Bill** | Path updated to v2, socket behavior TBD | TBD | TBD |
+| **Cancel Food (v2)** | `order-engage` → `update-order` (payload) | `order-engage` | ✅ Yes (verified Apr 13) |
+| **Cancel Order** | 2× `update-table free` + `update-order-status` (no payload) | ❌ None | ❌ No — backend needs `order-status-update` fix |
+| **Mark Ready** | `update-order-status` (no payload) | ❌ None | ❌ No — same endpoint |
+| **Mark Served** | `update-order-status` / `update-food-status` (no payload) | ❌ None | ❌ No — same endpoint |
 | **Cancel Food Item** | `update-table free` + `update-order-status` | `update-table free` (should be engage) | ❌ No (v1) |
 
-**Key insight:** All transfer/merge flows now on v2 with full payloads. Switch Table uses table-level locking; Merge/Transfer Food use order-level locking. Cancel Food Item remains v1.
+**Key insight:** 8 flows are v2 CLEAN with full payloads. 3 remaining dirty flows (Cancel Order, Mark Ready, Mark Served) all share one backend endpoint `order-status-update` — one backend fix covers all 3.
 
 ---
 

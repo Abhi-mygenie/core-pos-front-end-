@@ -1,8 +1,8 @@
 # Changelog
 
-## Apr 13, 2026 — Session 12 (Merge Table v2 Socket Verification + Endpoint Upgrades)
+## Apr 13, 2026 — Session 12 (v2 Socket Architecture Verification + Endpoint Upgrades)
 
-### Endpoint Upgrades (4 endpoints changed)
+### Endpoint Upgrades (5 endpoints changed)
 
 | Constant | Old | New |
 |----------|-----|-----|
@@ -10,6 +10,26 @@
 | `MERGE_ORDER` | `/api/v1/.../order/transfer-order` | `/api/v2/.../order/transfer-order` |
 | `TRANSFER_FOOD` | `/api/v1/.../order/transfer-food-item` | `/api/v2/.../order/transfer-food-item` |
 | `BILL_PAYMENT` | `/api/v2/.../order-bill-payment` | `/api/v2/.../order/order-bill-payment` |
+| `CANCEL_ITEM` | `/api/v1/.../order/cancel-food-item` | `/api/v2/.../order/cancel-food-item` |
+
+### Cancel Food Item v2 — Socket Events Verified ✅
+
+**Tested:** Cancel 1 of 3 items from dine-in order 730865 @ restaurant 478
+
+**Socket behavior (v2 — uses existing events!):**
+1. `order-engage 730865 engage` — order locked
+2. `update-order 730865 {payload}` — order updated with cancelled item removed (f_order_status=7)
+
+**Key discovery:** Cancel food v2 reuses `update-order` event — no new event needed. Existing `handleUpdateOrder` handles it perfectly. No `update-table free`. No GET API. BUG-216 is irrelevant.
+
+### Remaining v1 Dirty Flows — Backend Change Needed
+
+3 flows still v1 dirty, all sharing one endpoint `order-status-update`:
+- Cancel Order: 2× `update-table free` + `update-order-status` (no payload) + GET API
+- Mark Ready: `update-order-status` (no payload) + GET API
+- Mark Served: `update-order-status`/`update-food-status` (no payload) + GET API
+
+**One backend fix for `order-status-update` covers all 3.**
 
 ### Switch Table v2 — Socket Events Verified ✅
 
