@@ -247,7 +247,7 @@ update-order-{something} {orderId} {payload}
 
 | # | Test | Date | Logs Shared? | Result | Risks Resolved |
 |---|------|------|-------------|--------|---------------|
-| 1 | Collect Bill dine-in (cash) | | ❌ | — | R1, R2 |
+| 1 | Collect Bill dine-in (cash) | Apr 13 | ✅ | CLEAN — only `order-engage` + `update-order-paid`. No `update-order-status`, no `update-table free` | R1 eliminated, R2 eliminated, R4 confirmed (local engage = permanent lock) |
 | 2 | Collect Bill walk-in (cash) | | ❌ | — | R6 |
 | 3 | Cancel food partial (dine-in) | | ❌ | — | R3 |
 | 4 | Cancel food last item (dine-in) | | ❌ | — | R3 |
