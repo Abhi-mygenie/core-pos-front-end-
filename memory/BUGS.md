@@ -30,6 +30,35 @@
 | 20 | **BUG-223** | **All local locking must be removed** | **P0** | **❌ TODO** |
 | 21 | **BUG-224** | **Manual Bill: `gst_tax` always 0** | **P1** | **❌ OPEN** |
 | 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
+| 23 | **BUG-226** | **`order-engage` missing before `update-item-status`** | **P1** | **❌ OPEN (Backend)** |
+| 24 | **BUG-216** | **BUG-216 workaround removed** | **P0** | **✅ FIXED (Frontend)** |
+
+### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
+
+**Status:** ❌ OPEN — Backend Socket Team
+**Priority:** P1
+**Reported:** April 13, 2026
+
+**Problem:** All v2 flows send `order-engage {orderId} engage` before the data event — except `update-item-status`. This breaks the architectural principle that ALL order locking comes from socket events.
+
+**Current behavior:**
+```
+update-item-status {orderId} {f_status} {payload}   ← data arrives, no lock
+```
+
+**Expected behavior (consistent with all other v2 flows):**
+```
+order-engage {orderId} engage                        ← lock order card
+update-item-status {orderId} {f_status} {payload}    ← data arrives
+```
+
+**Impact:** Currently sub-second so no visible issue. But on slow networks or under load, the order card is clickable during processing — could cause race conditions on multi-device setups.
+
+**Frontend status:** Handler already releases `setOrderEngaged(orderId, false)` after processing. Once backend sends `order-engage`, locking will work automatically — zero frontend change needed.
+
+**Affected flows:** Item-level Ready, Item-level Serve (via OrderCard toggles on dashboard)
+**API endpoint:** `PUT /api/v2/vendoremployee/food-status-update`
+**Socket event:** `update-item-status` on `new_order_{restaurantId}` channel
 
 #### v2 Endpoint Payload Test (April 11, 2026)
 All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
