@@ -401,3 +401,44 @@ Same pattern as `waitForTableEngaged` — poll `engagedOrdersRef` until orderId 
 | 9 | Switch Table walk-in→table | Apr 13 | ✅ | v1 at test time, now v2. | — |
 | 10 | Merge Table | Apr 13 | ✅ | v2 CLEAN — 2× `order-engage` + `target` + `source`. | — |
 | 11 | Transfer Food | Apr 13 | ✅ | v2 CLEAN — identical to merge pattern. | — |
+
+
+---
+
+## 14. BLOCKER BUG: `food_details: null` in ALL Socket Payloads
+
+**Status:** P0 BLOCKER — Backend Socket Team
+**Found:** April 13, 2026
+**Affects:** ALL v2 socket events (`new-order`, `update-order`, `update-order-target`, `update-order-source`, `update-order-paid`)
+
+### Problem
+Socket payload `orderDetails[].food_details` is `null` for every item. GET single order API returns it correctly. This causes "Unknown Item" on all order cards populated from socket data.
+
+### Evidence (Order 730885)
+```
+Socket:  orderDetails[0].food_details = null
+GET API: orderDetails[0].food_details = { id: 62170, name: "3 pc FRIED WINGS", price: 297, tax: 5, tax_type: "GST", ... }
+```
+
+All 5 items in the order have `food_details: null`.
+
+### Impact
+- Item names show "Unknown Item"
+- Item tax info missing (percentage, type, calculation)
+- Item food_id missing (needed for cancel, transfer)
+- Available variations/addons from catalog missing
+- ALL v2 socket-first flows affected — every order card populated from socket
+
+### What Frontend Transform Expects
+```
+detail.food_details?.name    → item name
+detail.food_details?.id      → food catalog ID
+detail.food_details?.tax     → tax percentage
+detail.food_details?.tax_type → "GST" / "VAT"
+```
+
+### Backend Action Required
+Populate `food_details` object in socket payload `orderDetails[]` — same data structure as GET single order API response (`/api/v2/vendoremployee/get-single-order-new`).
+
+### Frontend Workaround (Parked)
+If backend fix is delayed: background GET API call after socket payload to enrich `food_details`. This defeats the zero-GET purpose but restores item names. Not implementing until backend confirms timeline.
