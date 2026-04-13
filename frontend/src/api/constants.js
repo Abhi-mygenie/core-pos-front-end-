@@ -23,8 +23,8 @@ export const API_ENDPOINTS = {
 
   // Cancel Operations (Phase 1C)
   CANCEL_ITEM: '/api/v2/vendoremployee/order/cancel-food-item',
-  ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order-status-update',
-  FOOD_STATUS_UPDATE: '/api/v2/vendoremployee/food-status-update',
+  ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order/order-status-update',
+  FOOD_STATUS_UPDATE: '/api/v2/vendoremployee/order/food-status-update',
 
   // Out of Menu Item (Phase 1C)
   ADD_CUSTOM_ITEM: '/api/v1/vendoremployee/add-single-product',
