@@ -19,7 +19,7 @@ import {
 } from './socketEvents';
 import {
   handleNewOrder,
-  handleUpdateOrder,
+  handleOrderDataEvent,
   handleUpdateFoodStatus,
   handleUpdateOrderStatus,
   handleScanNewOrder,
@@ -65,7 +65,16 @@ export const useSocketEvents = () => {
         handleNewOrder(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.UPDATE_ORDER:
-        handleUpdateOrder(args, actionsRef.current);
+        handleOrderDataEvent(args, actionsRef.current, 'update-order');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_TARGET:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-target');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_SOURCE:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-source');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_PAID:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-paid');
         break;
       case SOCKET_EVENTS.UPDATE_FOOD_STATUS:
         handleUpdateFoodStatus(args, actionsRef.current);
