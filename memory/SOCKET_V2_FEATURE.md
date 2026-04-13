@@ -934,3 +934,4 @@ Original plan covered 5 files. During testing discovered:
 | BUG-226 | `order-engage` missing before `update-item-status` | ✅ FIXED (same day) |
 | BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | ❌ OPEN |
 | BUG-228 | `update-order-target` not sent for Walk-in → Table merge | ❌ OPEN |
+| BUG-229 | Confirm Order — backend `$orderstatus` undefined at OrderController.php:3643 | ❌ OPEN |

@@ -39,6 +39,7 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git branch `1
 - Removed local `setTableEngaged` from handleMarkReady/handleMarkServed
 - All card components now use `isOrderEngaged(orderId) || isTableEngaged(tableId)` for spinner
 - Walk-in/Delivery/TakeAway now show spinner during order-engage
+- `handleConfirmOrder`: changed from N item-level `FOOD_STATUS_UPDATE` calls to single `ORDER_STATUS_UPDATE` with `order_status: "paid"`
 
 ### Verified Flow Matrix (Console Log Validated)
 
@@ -58,6 +59,7 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git branch `1
 | Item Ready (item-level) | ✅ | `update-item-status` |
 | Cancel Full Order | ✅ | Double-fire idempotent |
 | Collect Bill | Needs testing | Pattern implemented |
+| Confirm Order (YTC→Preparing) | ❌ | Backend BUG-229 — `$orderstatus` undefined |
 
 ### Bugs Fixed (Frontend)
 - BUG-216: free→engage workaround removed
@@ -72,6 +74,7 @@ Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git branch `1
 - BUG-226: order-engage missing before update-item-status → ✅ FIXED same day
 - BUG-227: Order-level Ready/Serve does not update item-level food_status → ❌ OPEN
 - BUG-228: update-order-target not sent for Walk-in → Table merge → ❌ OPEN
+- BUG-229: Confirm Order — backend `$orderstatus` undefined at OrderController.php:3643 → ❌ OPEN
 
 ## Prioritized Backlog
 

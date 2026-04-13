@@ -77,6 +77,16 @@
   - Table → Table ✅, Walk-in → Walk-in ✅, Table → Walk-in ✅, Walk-in → Table ❌
 - Target table order has stale data + permanent spinner
 
+### Confirm Order — Endpoint Fix
+- `handleConfirmOrder` in DashboardPage.jsx: changed from N item-level `FOOD_STATUS_UPDATE` calls to single `ORDER_STATUS_UPDATE` call with `order_status: "paid"`
+- Old: loop through items, call `PUT food-status-update` per item
+- New: single `PUT order-status-update` with `{ order_id, role_name, order_status: "paid" }`
+
+### BUG-229: Confirm Order — backend `$orderstatus` undefined
+- Filed as P0 Backend bug
+- `PUT order-status-update` with `order_status: "paid"` throws `ErrorException: Undefined variable $orderstatus` at OrderController.php:3643
+- Frontend payload is correct — backend variable name typo
+
 ### Verified Flow Matrix (Console Log Validated)
 
 | Flow | Status | Notes |

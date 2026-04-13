@@ -1500,6 +1500,7 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 | Mark Ready (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes | ✅ |
 | Mark Served (order) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes | ✅ |
 | Item Ready/Serve | PUT | v2 food-status-update | `order-engage` + `update-item-status` | ✅ Yes | ✅ |
+| Confirm Order (YTC→Preparing) | PUT | v2 order-status-update | `order-engage` + `update-order-paid` | ✅ Yes | ❌ BUG-229 (backend $orderstatus undefined) |
 
 ### 19.2 Locking Architecture (Implemented)
 
@@ -1544,6 +1545,7 @@ onClose();                                           // go to dashboard
 | Cancel Food | `waitForOrderEngaged(orderId)` | `[CancelFood] Socket engaged — redirecting` |
 | Cancel Order | `waitForOrderEngaged(orderId)` | `[CancelOrder] Socket engaged — redirecting` |
 | Collect Bill | `waitForOrderEngaged(orderId)` | `[CollectBill] Socket engaged — redirecting` |
+| Confirm Order | N/A (dashboard action, no redirect) | Socket handles update via `update-order-paid` |
 
 ### 19.4 Dashboard Engage Architecture
 
@@ -1573,6 +1575,7 @@ onClose();                                           // go to dashboard
 | Cancel Food | **v2** | `order-engage` + `update-order` | `handleOrderDataEvent` |
 | Cancel Order / Ready / Served | **v2** | `order-engage` + `update-order-paid` | `handleOrderDataEvent` |
 | Item Ready / Serve | **v2** | `order-engage` + `update-item-status` | `handleOrderDataEvent` |
+| Confirm Order (YTC→Preparing) | **v2** | `order-engage` + `update-order-paid` | `handleOrderDataEvent` |
 
 ### 19.6 Dead Code
 
