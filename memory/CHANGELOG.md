@@ -26,6 +26,18 @@
 - Full payload — zero GET API calls
 - No `update-table` events — BUG-221 (permanent spinner) resolved
 
+### Transfer Food Item v2 — Socket Events Verified ✅
+
+**Tested:** Food item transferred FROM Order 730849 (source) TO Order 730850 (target) @ restaurant 478
+
+**Socket behavior (identical pattern to Merge Table v2):**
+1. `order-engage 730849 engage` — source order locked
+2. `order-engage 730850 engage` — target order locked
+3. `update-order-target 730850 {payload}` — target updated (f_order_status=1, item added) — **SAME EVENT AS MERGE**
+4. `update-order-source 730849 {payload}` — source updated (f_order_status=1, item removed) — **SAME EVENT AS MERGE**
+
+**Key difference from Merge:** Source `f_order_status=1` (still active) vs Merge source `f_order_status=3` (cancelled). Same handler checks status to decide `updateOrder()` vs `removeOrder()`.
+
 ### Switch Table v1 — Socket Events Logged
 
 **Tested:** Table→Table (3240→3239) and Walk-in→Table (0→3239)
@@ -39,7 +51,8 @@ Still requires GET API call. BUG-216 workaround still affects table-to-table tra
 
 ### Frontend Implementation Pending
 - Add `update-order-target` and `update-order-source` to socket event constants
-- Add handlers for both new events
+- Add shared handlers for both new events (covers Merge + Transfer Food)
+- `update-order-source` handler: check `f_order_status` — if 3 (cancelled) → `removeOrder()`, else → `updateOrder()`
 - Wire in `useSocketEvents.js` switch statement
 
 ### Files Modified

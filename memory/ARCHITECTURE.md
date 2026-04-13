@@ -1489,7 +1489,7 @@ SOCKET: update-order [orderId, restaurantId, status, {payload}]
 | New Order | POST | v2 place-order | `update-table engage` + `new-order` | ✅ Yes |
 | Update Order | PUT | v2 update-place-order | `order-engage` + `update-order` | ✅ Yes |
 | Transfer Order | POST | v2 transfer-order | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes (v2 verified) |
-| Transfer Food Item | POST | v2 transfer-food-item | 2x `update-order` | Testing |
+| Transfer Food Item | POST | v2 transfer-food-item | 2x `order-engage` + `update-order-target` + `update-order-source` | ✅ Yes (v2 verified) |
 | Cancel Food Item | PUT | v1 cancel-food-item | `update-table free` + `update-order-status` | ❌ No |
 | Cancel Full Order | PUT | v2 order-status-update | `update-table free` + `update-order-status` | ❌ No |
 | Collect Bill | POST | v2 order/order-bill-payment | `update-order-status` + `update-table free` | ❌ No |
@@ -1519,6 +1519,7 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 | New Order + walk-in | 0.5s delay (no socket lock) |
 | Update Order | Wait for `order-engage` |
 | Merge Table | Wait for `order-engage` (source or target) |
+| Transfer Food | Wait for `order-engage` (source or target) |
 | Transfer Order/Food | Fire & close (no wait) |
 | Cancel Food Item | Wait for `update-table engage` (when backend sends it) |
 
@@ -1528,8 +1529,8 @@ update-order-source         → removeOrder() if cancelled, else updateOrder() +
 |--------|-----------------|----------------------|
 | Place Order | **v2** | ✅ Yes |
 | Update Order | **v2** | ✅ Yes |
-| Transfer Order | **v2** | ✅ Yes (verified — `update-order-target` + `update-order-source`) |
-| Transfer Food Item | **v2** | Testing |
+| Transfer Order | **v2** | ✅ Yes (`update-order-target` + `update-order-source`) |
+| Transfer Food Item | **v2** | ✅ Yes (`update-order-target` + `update-order-source`) |
 | Cancel Food Item | **v1** | ❌ No |
 | Order Status Update | **v2** | ❌ No |
 | Bill Payment | **v2** (order/order-bill-payment) | ❌ No |

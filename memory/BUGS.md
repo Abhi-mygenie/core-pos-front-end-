@@ -36,11 +36,11 @@ All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted t
 
 | Endpoint | v1 Payload? | v2 Payload? | Verdict |
 |----------|------------|------------|---------|
-| transfer-order | ❌ No | ❌ No | Stay v1 |
-| transfer-food-item | ❌ No | ❌ No | Stay v1 |
+| transfer-order | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
+| transfer-food-item | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
 | cancel-food-item | ❌ No | ❌ No | Stay v1 |
 
-**Conclusion:** Backend v2 does not add socket payloads for these flows. GET single order API will continue to be called until backend adds payload support.
+**Conclusion (Updated Apr 13):** Backend v2 now provides full socket payloads for transfer-order and transfer-food-item via new events `update-order-target`/`update-order-source`. Cancel-food-item stays v1. GET single order API still needed for cancel-food-item only.
 
 ### April 11, 2026 Updates (Session 10 — Socket Event Audit)
 
@@ -59,29 +59,35 @@ All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted t
 
 **Flow-specific wait logic:** See ROADMAP.md TASK-B for socket event map.
 
-#### Endpoint Verification (April 11, 2026)
-All 3 mutation endpoints confirmed to stay on v1:
+#### Endpoint Verification (Updated April 13, 2026)
 
 | Action | Endpoint | Status |
 |--------|----------|--------|
-| Transfer Order | `POST /api/v2/vendoremployee/order/transfer-order` | Upgraded to v2 |
-| Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | Upgraded to v2 |
+| Transfer Order (Merge) | `POST /api/v2/vendoremployee/order/transfer-order` | ✅ v2 verified — `update-order-target` + `update-order-source` with payload |
+| Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | ✅ v2 verified — same events as merge |
 | Cancel Food Item | `PUT /api/v1/vendoremployee/order/cancel-food-item` | ✅ Confirmed v1 |
 
-#### Socket Event Audit Results (Verified via User Console Logs)
+#### Socket Event Audit Results (Updated April 13, 2026)
 
-**Transfer Order** (3 scenarios tested):
-- Table→Table: `update-table engage` (dest) + `update-order` (no payload) + `update-table free` (source)
-- Walk-in→Table: `update-table engage` (dest) + `update-order` (no payload) + `update-table free` (table 0, skipped)
-- Source table always gets `free` (not `engage` as expected)
-- No `order-engage` event fired
+**Transfer Order / Merge Table v2** (verified):
+- 2x `order-engage` (source + target orders locked)
+- `update-order-target` with full payload (target updated)
+- `update-order-source` with full payload (source cancelled, f_order_status=3)
+- No `update-table` events — order-level locking only
+- Zero GET API calls needed
 
-**Transfer Food Item** (2 scenarios tested):
-- 2x `update-order` events (source + target order), both status codes differ
-- NO `update-table` events, NO `order-engage` events
-- Both orders fetch via HTTP GET (no socket payload)
+**Transfer Food Item v2** (verified):
+- Identical socket pattern to Merge Table
+- 2x `order-engage` (source + target orders locked)
+- `update-order-target` with full payload (target gets item)
+- `update-order-source` with full payload (source loses item, f_order_status=1, still active)
+- Zero GET API calls needed
 
-**Cancel Food Item** (1 scenario tested):
+**Switch Table v1** (unchanged):
+- `update-table engage` (dest) + `update-order` (no payload) + `update-table free` (source)
+- GET API still required
+
+**Cancel Food Item v1** (unchanged):
 - `update-table free` (table) + `update-order-status` (status 6, but API returns "ready")
 - BUG-216 workaround currently converts `free` → `engage`
 - No `order-engage` event

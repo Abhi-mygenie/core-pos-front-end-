@@ -159,6 +159,10 @@
   - Order-level locking (not table-level)
   - Zero GET API calls needed
   - **Frontend implementation needed:** Add handlers for new events in `socketEvents.js`, `socketHandlers.js`, `useSocketEvents.js`
+- **Transfer Food (v2):** ✅ VERIFIED — Identical socket pattern to Merge Table
+  - Same events: `order-engage` (both) + `update-order-target` + `update-order-source`
+  - Key difference: source `f_order_status=1` (still active, fewer items) vs merge source `f_order_status=3` (cancelled)
+  - Same handlers cover both flows — source handler checks status to decide `updateOrder()` vs `removeOrder()`
 - **Switch Table (v1):** Still v1 behavior — `update-table engage/free` + `update-order` (no payload). GET API still required
   - Endpoint: `POST /api/v1/vendoremployee/pos/order-table-room-switch`
   - Tested Walk-in→Table and Table→Table (Apr 13 logs)
