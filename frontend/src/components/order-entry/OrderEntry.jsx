@@ -501,7 +501,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const payload = orderToAPI.placeOrder(
           { ...table, tableId: table?.tableId },
           cartItems, effectiveCustomer, orderType,
-          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT }
+          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT, addressId: selectedAddress?.id || null }
         );
         
         // Log station info for Auto KOT debugging
@@ -874,7 +874,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     // Scenario 2 — fresh order: place + pay in one shot (same endpoint, payment_status=paid)
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
-                      { restaurantId: restaurant?.id, orderNotes, printAllKOT }
+                      { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));

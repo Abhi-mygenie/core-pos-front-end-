@@ -449,7 +449,7 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrder: (table, cartItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
@@ -462,10 +462,10 @@ export const toAPI = {
       order_type:                 mapOrderTypeToAPI(orderType),
       cust_name:                  customer?.name || '',
       cust_mobile:                customer?.phone || '',
-      cust_email:                 '',
-      cust_dob:                   '',
-      cust_anniversary:           '',
-      cust_membership_id:         '',
+      cust_email:                 customer?.email || '',
+      cust_dob:                   customer?.dob || '',
+      cust_anniversary:           customer?.anniversary || '',
+      cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             'pending',
       payment_status:             'unpaid',
@@ -495,7 +495,7 @@ export const toAPI = {
       // Room & Address
       paid_room:                  null,
       room_id:                    null,
-      address_id:                 null,
+      address_id:                 addressId,
       // Misc
       discount_member_category_id:   0,
       discount_member_category_name: null,
@@ -568,7 +568,7 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
     const { method = 'cash', transactionId = '', splitPayments = [], deliveryCharge = 0, discounts = {} } = paymentData;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
@@ -582,10 +582,10 @@ export const toAPI = {
       order_type:                 mapOrderTypeToAPI(orderType),
       cust_name:                  customer?.name || '',
       cust_mobile:                customer?.phone || '',
-      cust_email:                 '',
-      cust_dob:                   '',
-      cust_anniversary:           '',
-      cust_membership_id:         '',
+      cust_email:                 customer?.email || '',
+      cust_dob:                   customer?.dob || '',
+      cust_anniversary:           customer?.anniversary || '',
+      cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
       payment_status:             'paid',
@@ -615,7 +615,7 @@ export const toAPI = {
       // Room & Address
       paid_room:                  null,
       room_id:                    null,
-      address_id:                 null,
+      address_id:                 addressId,
       // Misc
       discount_member_category_id:   0,
       discount_member_category_name: null,
