@@ -1,100 +1,72 @@
-# MyGenie POS Frontend - PRD
+# MyGenie POS Frontend — PRD
 
-## Original Problem Statement
-Pull code from https://github.com/Abhi-mygenie/core-pos-front-end-.git branch `13-Apirl-V1`. React frontend only. Run as-is, then implement SOCKET_V2_FEATURE.md plan.
+**Last Updated:** April 14, 2026
+**Repo:** https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch: 13-april-v2-)
+**Stack:** React 19 + CRA + Craco + Tailwind + Radix UI + Socket.io
+
+---
 
 ## Architecture
-- **Frontend**: React 19 with Craco, Tailwind CSS, Radix UI components, Firebase, Socket.io
-- **API Backend**: External - `https://preprod.mygenie.online/`
-- **Socket**: External - `https://presocket.mygenie.online`
-- **Auth**: Firebase (Google Auth domain: mygenie-restaurant.firebaseapp.com)
-- **Restaurant ID**: 478 (preprod), 509 (testing)
+
+- **Frontend:** React SPA on port 3000
+- **POS API:** https://preprod.mygenie.online/ (menu, orders, tables, auth)
+- **CRM API:** TBD base URL with X-API-Key auth (customers, addresses, loyalty, coupons)
+- **Socket:** https://presocket.mygenie.online (real-time order updates)
+- **Firebase:** Push notifications (FCM)
+
+## Core Requirements
+
+- Multi-channel POS: Dine-in, Walk-in, Takeaway, Delivery, Room
+- Real-time dashboard with socket-driven order updates
+- Order lifecycle: YTC → Preparing → Ready → Served → Paid
+- Customer management via CRM API
+- Delivery order flow with address management
+- Firebase push notifications
+- KOT/Bill printing
 
 ## What's Been Implemented
 
-### Jan 13, 2026 — Session 1: Repo Setup
-- Cloned repo from GitHub (branch: 13-Apirl-V1)
-- Installed all dependencies
-- Configured environment variables
-- Frontend running on port 3000
+### Session 14 (April 14, 2026)
+- Confirm Order: Separate endpoint `waiter-dinein-order-status-update`
+- Dynamic order status from profile API `def_ord_status`
+- Socket handler `handleUpdateOrderStatus` upgraded to v2 (payload-based, no GET API)
+- OrderCard Accept button wired in list view
+- CRM POS API analyzed, tracker created
 
-### Jan 13, 2026 — Session 2: Socket v2 Full Implementation (8 files)
+### Session 13 (April 13, 2026)
+- Socket v2 full implementation (8 files, 5 new events)
+- Fire-and-forget + wait-for-engage pattern
+- Dashboard engage fix for all order types
 
-**Socket Event Handlers (socketEvents.js, socketHandlers.js, useSocketEvents.js):**
-- 5 new event constants: UPDATE_ORDER_TARGET, UPDATE_ORDER_SOURCE, UPDATE_ORDER_PAID, UPDATE_ITEM_STATUS
-- `handleOrderDataEvent` — unified handler for 5 v2 data events
-- No GET API fallback (v2 only), no guard (deferred)
-- Table change detection for switch table
-- Remove vs update decision for terminal statuses
-- BUG-216 `free→engage` workaround removed (free→ignore)
-
-**OrderContext.jsx:**
-- `waitForOrderEngaged` polling function added
-
-**OrderEntry.jsx — Fire-and-forget + wait-for-engage pattern:**
-- All 8 handlers: start listening for engage BEFORE API call, fire API without await, redirect on socket confirmation
-- Console log identifiers for every redirect point
-
-**Dashboard engage fix (DashboardPage.jsx, ChannelColumnsLayout.jsx, ChannelColumn.jsx):**
-- Removed local `setTableEngaged` from handleMarkReady/handleMarkServed
-- All card components now use `isOrderEngaged(orderId) || isTableEngaged(tableId)` for spinner
-- Walk-in/Delivery/TakeAway now show spinner during order-engage
-- `handleConfirmOrder`: changed from N item-level `FOOD_STATUS_UPDATE` calls to single `ORDER_STATUS_UPDATE` with `order_status: "paid"`
-
-### Verified Flow Matrix (Console Log Validated)
-
-| Flow | Status | Notes |
-|------|--------|-------|
-| New Order (dine-in) | ✅ | No regression |
-| Update Order | ✅ | Fire-and-forget, instant redirect, no 5s delay |
-| Cancel Food Item | ✅ | Instant redirect |
-| Transfer Food (partial) | ✅ | Both orders updated |
-| Shift Table | ✅ | Table change detection, old table freed |
-| Merge (Table → Table) | ✅ | Target updated, source removed |
-| Merge (Walk-in → Walk-in) | ✅ | Both events received |
-| Merge (Table → Walk-in) | ✅ | Source table freed, target updated |
-| Merge (Walk-in → Table) | ❌ | Backend BUG-228 |
-| Mark Ready (order-level) | ✅ | Table + walk-in |
-| Mark Served (item-level) | ✅ | `update-item-status` |
-| Item Ready (item-level) | ✅ | `update-item-status` |
-| Cancel Full Order | ✅ | Double-fire idempotent |
-| Collect Bill | Needs testing | Pattern implemented |
-| Confirm Order (YTC→Preparing) | ❌ | Backend BUG-229 — `$orderstatus` undefined |
-
-### Bugs Fixed (Frontend)
-- BUG-216: free→engage workaround removed
-- BUG-221: Merge order source table locked
-- BUG-222: waitForTableEngaged timeout on Update Order
-- BUG-223: Local locking removed from Dashboard
-- Update Order / Cancel Food 5s timeout delay
-- Collect Bill permanent table lock
-- Walk-in/Delivery/TakeAway never showed spinner
-
-### Backend Bugs Filed
-- BUG-226: order-engage missing before update-item-status → ✅ FIXED same day
-- BUG-227: Order-level Ready/Serve does not update item-level food_status → ❌ OPEN
-- BUG-228: update-order-target not sent for Walk-in → Table merge → ❌ OPEN
-- BUG-229: Confirm Order — backend `$orderstatus` undefined at OrderController.php:3643 → ❌ OPEN
+### Sessions 1-12
+- Full POS frontend: dashboard, order entry, cart, payment
+- Dual-view system (channel/status), visibility settings
+- Socket architecture with 3 channels
+- Firebase FCM notifications
+- KOT/Bill printing with station picker
+- Split bill feature
 
 ## Prioritized Backlog
 
-### P0 (Critical)
-- Collect Bill flow: needs live console log validation
+### P0 — In Progress
+- CRM Integration Phase 1-4 (customer search, addresses, delivery)
 
-### P1 (High)
-- Phase 2 guard: skip already-removed orders (defensive)
-- Cancel Food last item: verify order cleanup
-- Ghost cards in Table View (channelData statusMatchesFilter includes empty tables)
+### P1 — Next
+- CRM Integration Phase 5 (loyalty, coupons, notes, WhatsApp)
+- BUG-230: Unify F_ORDER_STATUS vs F_ORDER_STATUS_API
 
-### P2 (Medium)
-- handleUpdateOrderStatus guard: skip GET if already handled by update-order-paid
-- Remove dead code: handleUpdateOrder (delegates), handleUpdateFoodStatus (never fires)
+### P2 — Future
+- BUG-210: Multi-device race condition (table engage check)
+- BUG-212: Addon name mismatch (backend)
+- BUG-224: Manual bill gst_tax always 0
+- BUG-225: Manual bill custName sends label
+- BUG-227: Order-level Ready/Serve item food_status (backend)
+- BUG-228: Walk-in → Table merge missing update-order-target (backend)
 
-### Open Backend Bugs
-- BUG-204: order_sub_total_without_tax returns 0
-- BUG-210: No table engage check (multi-device race)
-- BUG-212: Addon names mismatch between APIs
-- BUG-224: Manual Bill gst_tax always 0
-- BUG-225: Manual Bill custName sends label instead of real name
-- BUG-227: Order-level Ready/Serve does not update item-level food_status
-- BUG-228: update-order-target not sent for Walk-in → Table merge
+## Key Documents
+- `/app/memory/CRM_INTEGRATION_TRACKER.md` — CRM integration checklist & plan
+- `/app/memory/CRM_POS_API.md` — CRM POS API reference (23 endpoints)
+- `/app/memory/SOCKET_V2_FEATURE.md` — Socket v2 architecture spec
+- `/app/memory/CHANGELOG.md` — Full session history
+- `/app/memory/BUGS.md` — Bug tracker
+- `/app/memory/ARCHITECTURE.md` — System architecture
