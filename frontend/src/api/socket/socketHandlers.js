@@ -363,7 +363,7 @@ export const handleUpdateFoodStatus = async (message, { updateOrder, updateTable
  * BUG-217: Backend sends status 6 (paid) for cancel item — should send update-order.
  * We don't branch on socket status at all.
  */
-export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder, updateTableStatus, getOrderById, setTableEngaged }) => {
+export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrder, updateTableStatus, getOrderById, setTableEngaged, setOrderEngaged }) => {
   const parsed = parseMessage(message);
   
   if (!parsed) {
@@ -371,39 +371,44 @@ export const handleUpdateOrderStatus = async (message, { updateOrder, removeOrde
     return;
   }
   
-  const { orderId, status: fOrderStatus } = parsed;
-  log('INFO', `update-order-status received: ${orderId}, socket status: ${fOrderStatus} (ignored — fetching API)`);
+  const { orderId, payload } = parsed;
+  log('INFO', `update-order-status received: ${orderId}`);
   
-  // Fetch the actual order state from GET single order API
-  const order = await fetchOrderWithRetry(orderId);
+  // Use socket payload directly (v2 pattern — no GET API call)
+  if (!payload || !payload.orders || !Array.isArray(payload.orders) || payload.orders.length === 0) {
+    log('ERROR', `update-order-status: No payload in event — backend issue. orderId=${orderId}`);
+    return;
+  }
   
-  if (order) {
-    // Use order-level status from API response to decide
-    if (order.status === 'cancelled' || order.status === 'paid') {
-      log('INFO', `update-order-status: Order ${orderId} is ${order.status}, removing`);
-      syncTableStatus(order, updateTableStatus);
-      removeOrder(orderId);
-    } else {
-      // Order still active (cancel item case — remaining items exist)
-      updateOrder(order.orderId, order);
-      log('INFO', `update-order-status: Updated order ${orderId} (status: ${order.status})`);
-    }
-  } else {
-    // Order not found in API — remove from context
-    log('WARN', `update-order-status: Order ${orderId} not found in API, removing`);
+  let order;
+  try {
+    order = orderFromAPI.order(payload.orders[0]);
+    log('INFO', `update-order-status: Transformed order ${orderId}`);
+  } catch (error) {
+    log('ERROR', `update-order-status: Transform failed`, error.message);
+    return;
+  }
+  
+  // Decide: remove or update
+  if (order.status === 'cancelled' || order.status === 'paid') {
+    log('INFO', `update-order-status: Order ${orderId} is ${order.status}, removing`);
+    syncTableStatus(order, updateTableStatus, 'available');
     removeOrder(orderId);
+  } else {
+    updateOrder(order.orderId, order);
+    syncTableStatus(order, updateTableStatus);
+    log('INFO', `update-order-status: Updated order ${orderId} (status: ${order.status})`);
   }
 
-  // Release engaged lock after React commits
-  const tableId = order?.tableId || (getOrderById ? getOrderById(orderId)?.tableId : null);
-  if (setTableEngaged && tableId) {
+  // Release order engage after React paints
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setTableEngaged(tableId, false);
-        log('INFO', `update-order-status: Table ${tableId} released from ENGAGED`);
-      });
+      if (setOrderEngaged) {
+        setOrderEngaged(orderId, false);
+        log('INFO', `update-order-status: Order ${orderId} released from ENGAGED`);
+      }
     });
-  }
+  });
 };
 
 /**
