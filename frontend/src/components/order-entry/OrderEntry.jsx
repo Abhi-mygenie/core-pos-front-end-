@@ -1151,6 +1151,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onClose={() => setShowCustomerModal(false)}
           onSave={(customerData) => setCustomer(customerData)}
           initialData={customer}
+          restaurantId={restaurant?.id}
         />
       )}
       {showSplitBillModal && (
