@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { crmGetProfile } from '../api/services/crmService';
 import logger from '../utils/logger';
 const AuthContext = createContext(null);
 
@@ -7,25 +8,40 @@ const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userType, setUserType] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('auth_token'));
+  const [token, setToken] = useState(null);
+  const [crmToken, setCrmToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check token on mount
+  // Check tokens on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const storedToken = localStorage.getItem('auth_token');
-      if (storedToken) {
+      // Priority 1: Check CRM token (customer)
+      const storedCrmToken = localStorage.getItem('crm_token');
+      if (storedCrmToken) {
+        try {
+          const profile = await crmGetProfile(storedCrmToken);
+          setUser(profile);
+          setUserType('customer');
+          setCrmToken(storedCrmToken);
+          setToken(storedCrmToken);
+          setLoading(false);
+          return;
+        } catch (error) {
+          logger.error('auth', 'CRM token validation failed:', error);
+          localStorage.removeItem('crm_token');
+        }
+      }
+
+      // Priority 2: Check admin token (restaurant)
+      const storedAdminToken = localStorage.getItem('auth_token');
+      if (storedAdminToken) {
         try {
           const response = await fetch(`${API_URL}/api/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${storedToken}`
-            }
+            headers: { 'Authorization': `Bearer ${storedAdminToken}` }
           });
           
-          // Handle non-JSON responses
           const contentType = response.headers.get('content-type');
           if (!contentType || !contentType.includes('application/json')) {
-            // Server unavailable, keep token but don't validate
             logger.auth('Auth check: Server returned non-JSON response');
             setLoading(false);
             return;
@@ -35,62 +51,25 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             setUser(data.user);
             setUserType(data.user_type);
-            setToken(storedToken);
+            setToken(storedAdminToken);
           } else {
-            // Token invalid
             localStorage.removeItem('auth_token');
-            setToken(null);
           }
         } catch (error) {
-          logger.error('auth', 'Auth check failed:', error);
+          logger.error('auth', 'Admin auth check failed:', error);
           localStorage.removeItem('auth_token');
-          setToken(null);
         }
       }
+
       setLoading(false);
     };
 
     checkAuth();
   }, []);
 
-  const sendOTP = async (phone, restaurantContext = null) => {
-    const body = { phone };
-    
-    // Add restaurant context if available
-    if (restaurantContext) {
-      body.restaurant_id = restaurantContext.restaurant_id;
-      body.pos_id = restaurantContext.pos_id || "0001";
-    }
-    
-    const response = await fetch(`${API_URL}/api/auth/send-otp`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
-
-    // Handle non-JSON responses
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
-      logger.error('auth', 'Non-JSON response:', text);
-      throw new Error('Server is temporarily unavailable. Please try again.');
-    }
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.detail || 'Failed to send OTP');
-    }
-    
-    return data;
-  };
-
+  // Admin login (used by Login.jsx — our backend, admin only)
   const login = async (phoneOrEmail, otpOrPassword, isOTP = true, restaurantContext = null) => {
-    const body = {
-      phone_or_email: phoneOrEmail
-    };
+    const body = { phone_or_email: phoneOrEmail };
 
     if (isOTP) {
       body.otp = otpOrPassword;
@@ -98,7 +77,6 @@ export const AuthProvider = ({ children }) => {
       body.password = otpOrPassword;
     }
     
-    // Add restaurant context if available
     if (restaurantContext) {
       body.restaurant_id = restaurantContext.restaurant_id;
       body.pos_id = restaurantContext.pos_id || "0001";
@@ -106,13 +84,10 @@ export const AuthProvider = ({ children }) => {
 
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
 
-    // Handle non-JSON responses (e.g., 404 page not found, 502 gateway error)
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       const text = await response.text();
@@ -126,13 +101,11 @@ export const AuthProvider = ({ children }) => {
       throw new Error(data.detail || 'Login failed');
     }
 
-    // Save to state and localStorage
     setUser(data.user);
     setUserType(data.user_type);
     setToken(data.token);
     localStorage.setItem('auth_token', data.token);
     
-    // Store restaurant context if available
     if (data.restaurant_context) {
       localStorage.setItem('restaurant_context', JSON.stringify(data.restaurant_context));
     }
@@ -140,15 +113,7 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const logout = () => {
-    setUser(null);
-    setUserType(null);
-    setToken(null);
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('pos_token');  // Clear POS token on logout
-  };
-
-  // Direct setter for auth state (used when Login.jsx handles its own fetch)
+  // Admin auth setter (used by Login.jsx for direct admin login)
   const setAuth = (newToken, newUser, newUserType) => {
     setUser(newUser);
     setUserType(newUserType);
@@ -156,10 +121,59 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('auth_token', newToken);
   };
 
+  // CRM customer auth setter (used by PasswordSetup.jsx)
+  const setCrmAuth = (newCrmToken, customerProfile) => {
+    setUser(customerProfile);
+    setUserType('customer');
+    setCrmToken(newCrmToken);
+    setToken(newCrmToken);
+    localStorage.setItem('crm_token', newCrmToken);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setUserType(null);
+    setToken(null);
+    setCrmToken(null);
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('crm_token');
+    localStorage.removeItem('pos_token');
+    localStorage.removeItem('restaurant_context');
+  };
+
+  // sendOTP kept for backward compat (if anything still calls it)
+  const sendOTP = async (phone, restaurantContext = null) => {
+    const body = { phone };
+    if (restaurantContext) {
+      body.restaurant_id = restaurantContext.restaurant_id;
+      body.pos_id = restaurantContext.pos_id || "0001";
+    }
+    
+    const response = await fetch(`${API_URL}/api/auth/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      logger.error('auth', 'Non-JSON response:', text);
+      throw new Error('Server is temporarily unavailable. Please try again.');
+    }
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || 'Failed to send OTP');
+    }
+    return data;
+  };
+
   const value = {
     user,
     userType,
     token,
+    crmToken,
     loading,
     isAuthenticated: !!token,
     isCustomer: userType === 'customer',
@@ -167,6 +181,7 @@ export const AuthProvider = ({ children }) => {
     sendOTP,
     login,
     setAuth,
+    setCrmAuth,
     logout
   };
 

@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { crmRegister, crmLogin, crmForgotPassword, crmResetPassword, buildUserId } from '../api/services/crmService';
 import { IoEyeOutline, IoEyeOffOutline, IoArrowBack } from 'react-icons/io5';
 import './PasswordSetup.css';
-
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const PasswordSetup = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login: authLogin } = useAuth();
+  const { setCrmAuth } = useAuth();
 
   // Data passed from LandingPage
   const {
@@ -34,9 +33,11 @@ const PasswordSetup = () => {
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
+  const [devOtp, setDevOtp] = useState('');
 
   const displayName = customerName || name || '';
   const needsSetPassword = !customerExists || !hasPassword;
+  const userId = buildUserId(restaurantId);
 
   const navigateToMenu = () => {
     if (restaurantId) {
@@ -47,12 +48,12 @@ const PasswordSetup = () => {
   };
 
   const handleSkip = () => {
-    // Save as guest and continue
     const guestData = { name: displayName, phone, restaurantId };
     localStorage.setItem('guestCustomer', JSON.stringify(guestData));
     navigateToMenu();
   };
 
+  // Set password (new customer or existing without password) → CRM /customer/register
   const handleSetPassword = async () => {
     setError('');
     if (password.length < 6) {
@@ -66,39 +67,24 @@ const PasswordSetup = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/set-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone,
-          password,
-          confirm_password: confirmPassword,
-          restaurant_id: String(restaurantId),
-          name: displayName,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        const detail = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
-        throw new Error(detail || 'Failed to set password');
-      }
+      const data = await crmRegister(phone, password, userId, displayName);
 
       if (data.token) {
-        localStorage.setItem('auth_token', data.token);
+        setCrmAuth(data.token, data.customer);
       }
-      // Save customer details so ReviewOrder can pre-fill them
+      // Save customer details for ReviewOrder pre-fill
       const guestData = { name: displayName, phone, restaurantId };
       localStorage.setItem('guestCustomer', JSON.stringify(guestData));
       toast.success('Password set successfully!');
       navigateToMenu();
     } catch (err) {
-      const msg = typeof err.message === 'string' ? err.message : JSON.stringify(err.message);
-      setError(msg);
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Login with existing password → CRM /customer/login
   const handleLogin = async () => {
     setError('');
     if (!password) {
@@ -108,52 +94,33 @@ const PasswordSetup = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/verify-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone,
-          password,
-          restaurant_id: String(restaurantId),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        const detail = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
-        throw new Error(detail || 'Invalid password');
-      }
+      const data = await crmLogin(phone, password, userId);
 
       if (data.token) {
-        localStorage.setItem('auth_token', data.token);
+        setCrmAuth(data.token, data.customer);
       }
-      // Save customer details so ReviewOrder can pre-fill them
       const loginName = data.customer?.name || displayName;
       const guestData = { name: loginName, phone, restaurantId };
       localStorage.setItem('guestCustomer', JSON.stringify(guestData));
       toast.success(`Welcome back, ${loginName}!`);
       navigateToMenu();
     } catch (err) {
-      const msg = typeof err.message === 'string' ? err.message : JSON.stringify(err.message);
-      setError(msg);
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Forgot password — send OTP → CRM /customer/forgot-password
   const handleSendOtp = async () => {
     setSendingOtp(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, restaurant_id: String(restaurantId) }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        const detail = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
-        throw new Error(detail || 'Failed to send OTP');
-      }
+      const data = await crmForgotPassword(phone, userId);
       setOtpSent(true);
+      // CRM may return debug_otp in dev mode
+      if (data.debug_otp) {
+        setDevOtp(data.debug_otp);
+      }
       toast.success('OTP sent to your phone');
     } catch (err) {
       toast.error(err.message);
@@ -162,6 +129,7 @@ const PasswordSetup = () => {
     }
   };
 
+  // Reset password with OTP → CRM /customer/reset-password
   const handleResetPassword = async () => {
     setError('');
     if (password.length < 6) {
@@ -179,31 +147,16 @@ const PasswordSetup = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone,
-          new_password: password,
-          confirm_password: confirmPassword,
-          otp,
-          restaurant_id: String(restaurantId),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        const detail = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
-        throw new Error(detail || 'Failed to reset password');
-      }
+      await crmResetPassword(phone, otp, userId, password);
       toast.success('Password reset! Please login.');
       setForgotMode(false);
       setPassword('');
       setConfirmPassword('');
       setOtp('');
       setOtpSent(false);
+      setDevOtp('');
     } catch (err) {
-      const msg = typeof err.message === 'string' ? err.message : JSON.stringify(err.message);
-      setError(msg);
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -231,6 +184,11 @@ const PasswordSetup = () => {
             </button>
           ) : (
             <>
+              {devOtp && (
+                <div className="login-dev-otp" data-testid="dev-otp-display">
+                  Dev OTP: <strong>{devOtp}</strong>
+                </div>
+              )}
               <div className="password-input-group">
                 <input
                   type="text"
