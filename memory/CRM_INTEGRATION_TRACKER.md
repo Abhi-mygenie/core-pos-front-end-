@@ -29,21 +29,21 @@
 | # | Endpoint | Method | Status | Consumed In (File) | Purpose |
 |---|----------|--------|--------|-------------------|---------|
 | **Search & Lookup** | | | | | |
-| 1.1 | `/pos/customers?search=` | GET | Planning | `customerService.js` → `CartPanel.jsx`, `CustomerModal.jsx` | Typeahead search (name or phone) |
-| 1.2 | `/pos/customer-lookup` | POST | Planning | `customerService.js` → `OrderEntry.jsx` | Exact phone match → profile + loyalty |
-| 1.3 | `/pos/customers/{id}` | GET | Planning | `customerService.js` → `OrderEntry.jsx` | Full customer details after selection |
+| 1.1 | `/pos/customers?search=` | GET | **Done** | `customerService.js` → `CartPanel.jsx`, `CustomerModal.jsx` | Typeahead search (name or phone) |
+| 1.2 | `/pos/customer-lookup` | POST | **Done** (service ready) | `customerService.js` → `OrderEntry.jsx` | Exact phone match → profile + loyalty |
+| 1.3 | `/pos/customers/{id}` | GET | **Done** (service ready) | `customerService.js` → `OrderEntry.jsx` | Full customer details after selection |
 | **Customer CRUD** | | | | | |
-| 2.1 | `/pos/customers` | POST | Planning | `customerService.js` → `CustomerModal.jsx` | Create new customer |
-| 2.2 | `/pos/customers/{id}` | PUT | Planning | `customerService.js` → `CustomerModal.jsx` | Update customer details |
+| 2.1 | `/pos/customers` | POST | **Done** (service ready) | `customerService.js` → `CustomerModal.jsx` | Create new customer |
+| 2.2 | `/pos/customers/{id}` | PUT | **Done** (service ready) | `customerService.js` → `CustomerModal.jsx` | Update customer details |
 | 2.3 | `/pos/customers/{id}` | DELETE | Backlog | — | Deactivate customer (not needed in POS MVP) |
 | **Addresses** | | | | | |
 | 3.1 | `/pos/customers/{id}/addresses` | GET | Backlog | — | List addresses (not needed — address-lookup covers this) |
-| 3.2 | `/pos/customers/{id}/addresses` | POST | Planning | `customerService.js` → `AddressFormModal.jsx` | Add new address during delivery |
-| 3.3 | `/pos/customers/{id}/addresses/{addr_id}` | PUT | Planning | `customerService.js` → `AddressFormModal.jsx` | Edit address |
-| 3.4 | `/pos/customers/{id}/addresses/{addr_id}` | DELETE | Planning | `customerService.js` → `AddressPickerModal.jsx` | Delete address |
-| 3.5 | `/pos/customers/{id}/addresses/{addr_id}/default` | PUT | Planning | `customerService.js` → `AddressPickerModal.jsx` | Set default address |
+| 3.2 | `/pos/customers/{id}/addresses` | POST | **Done** (service ready) | `customerService.js` → `AddressFormModal.jsx` | Add new address during delivery |
+| 3.3 | `/pos/customers/{id}/addresses/{addr_id}` | PUT | **Done** (service ready) | `customerService.js` → `AddressFormModal.jsx` | Edit address |
+| 3.4 | `/pos/customers/{id}/addresses/{addr_id}` | DELETE | **Done** (service ready) | `customerService.js` → `AddressPickerModal.jsx` | Delete address |
+| 3.5 | `/pos/customers/{id}/addresses/{addr_id}/default` | PUT | **Done** (service ready) | `customerService.js` → `AddressPickerModal.jsx` | Set default address |
 | **Cross-Restaurant** | | | | | |
-| 4.1 | `/pos/address-lookup` | POST | Planning | `customerService.js` → `AddressPickerModal.jsx` | All addresses by phone (all restaurants) |
+| 4.1 | `/pos/address-lookup` | POST | **Done** (service ready) | `customerService.js` → `AddressPickerModal.jsx` | All addresses by phone (all restaurants) |
 | **Orders** | | | | | |
 | 5.1 | `/pos/orders` | POST | Backlog | — | Order webhook to CRM (Phase 5) |
 | 5.2 | `/pos/customers/{id}/orders` | GET | Backlog | — | Order history (Phase 5) |
@@ -70,7 +70,7 @@
 
 | Old POS Endpoint | Old File | Replaced By | Status |
 |-----------------|----------|-------------|--------|
-| `POST /api/v2/vendoremployee/restaurant-customer-list` | `customerService.js` | `GET /pos/customers?search=` (1.1) | Planning — will be removed |
+| `POST /api/v2/vendoremployee/restaurant-customer-list` | `customerService.js` | `GET /pos/customers?search=` (1.1) | **Done** — old endpoint removed |
 
 ---
 

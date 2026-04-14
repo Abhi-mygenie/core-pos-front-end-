@@ -31,7 +31,13 @@ export const API_ENDPOINTS = {
   ADD_CUSTOM_ITEM: '/api/v1/vendoremployee/add-single-product',
 
   // Sprint 3 — Order Taking
-  CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
+  CUSTOMER_SEARCH:   '/pos/customers',                                       // CRM: GET /pos/customers?search=
+  CUSTOMER_LOOKUP:   '/pos/customer-lookup',                                  // CRM: POST /pos/customer-lookup
+  CUSTOMER_DETAIL:   '/pos/customers',                                        // CRM: GET /pos/customers/{id}
+  CUSTOMER_CREATE:   '/pos/customers',                                        // CRM: POST /pos/customers
+  CUSTOMER_UPDATE:   '/pos/customers',                                        // CRM: PUT /pos/customers/{id}
+  ADDRESS_LOOKUP:    '/pos/address-lookup',                                   // CRM: POST /pos/address-lookup
+  CUSTOMER_ADDRESSES: '/pos/customers',                                       // CRM: /pos/customers/{id}/addresses
   PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
   BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
