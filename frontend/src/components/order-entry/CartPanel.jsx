@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp, LayoutGrid } from "lucide-react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, MapPin } from "lucide-react";
 import { COLORS } from "../../constants";
 import { searchCustomers } from "../../api/services/customerService";
 import { RePrintOnlyButton, KotBillCheckboxes } from "./RePrintButton";
@@ -266,6 +266,8 @@ const CartPanel = ({
   walkInTableName = "",
   onWalkInTableNameChange,
   orderId = null,
+  selectedAddress = null,
+  onAddressClick,
 }) => {
   const { enableDynamicTables } = useSettings();
   const newItemCount = cartItems.filter(i => !i.placed).length;
@@ -521,6 +523,36 @@ const CartPanel = ({
           )}
         </div>
       </div>
+
+      {/* Delivery Address Strip — only for delivery orders */}
+      {orderType === "delivery" && (
+        <button
+          onClick={onAddressClick}
+          className="w-full px-3 py-2.5 flex items-center gap-2 text-left transition-colors hover:bg-gray-50"
+          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+          data-testid="delivery-address-strip"
+        >
+          <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: selectedAddress ? COLORS.primaryGreen : COLORS.primaryOrange }} />
+          {selectedAddress ? (
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>{selectedAddress.addressType || 'Address'}</span>
+                {selectedAddress.isDefault && (
+                  <span className="text-[9px] px-1 py-0.5 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}20`, color: COLORS.primaryGreen }}>Default</span>
+                )}
+              </div>
+              <p className="text-xs truncate" style={{ color: COLORS.grayText }}>
+                {[selectedAddress.address, selectedAddress.city, selectedAddress.pincode].filter(Boolean).join(', ')}
+              </p>
+            </div>
+          ) : (
+            <span className="text-xs flex-1" style={{ color: COLORS.primaryOrange }}>
+              Tap to select delivery address
+            </span>
+          )}
+          <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
+        </button>
+      )}
 
       {/* Column Headers */}
       <div className="px-4 py-2 flex items-center text-xs font-medium" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>

@@ -4,6 +4,7 @@ import { COLORS } from "../../constants";
 import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
+import { lookupAddresses, addAddress } from "../../api/services/customerService";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI, fromAPI as orderFromAPI } from "../../api/transforms/orderTransform";
@@ -15,6 +16,8 @@ import ItemCustomizationModal from "./ItemCustomizationModal";
 import OrderNotesModal from "./OrderNotesModal";
 import ItemNotesModal from "./ItemNotesModal";
 import CustomerModal from "./CustomerModal";
+import AddressPickerModal from "./AddressPickerModal";
+import AddressFormModal from "./AddressFormModal";
 import OrderPlacedModal from "./OrderPlacedModal";
 import TransferFoodModal from "./TransferFoodModal";
 import MergeTableModal from "./MergeTableModal";
@@ -98,8 +101,60 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [itemNotesModal, setItemNotesModal] = useState(null); // { item, cartIndex }
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customer, setCustomer] = useState(null);
+  // Delivery address state
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddressPicker, setShowAddressPicker] = useState(false);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [deliveryAddresses, setDeliveryAddresses] = useState([]);
+  const [addressLoading, setAddressLoading] = useState(false);
+  const [addressSaving, setAddressSaving] = useState(false);
   // Effective table — merges placedOrderId into table for same-session operations
   const effectiveTable = { ...table, orderId: placedOrderId || table?.orderId };
+
+  // Fetch delivery addresses when customer phone is available and orderType is delivery
+  const fetchDeliveryAddresses = async (phone) => {
+    if (!phone?.trim()) return;
+    setAddressLoading(true);
+    try {
+      const addresses = await lookupAddresses(phone.trim());
+      setDeliveryAddresses(addresses);
+      // Auto-select default if available
+      const defaultAddr = addresses.find(a => a.isDefault);
+      if (defaultAddr && !selectedAddress) setSelectedAddress(defaultAddr);
+    } catch (err) {
+      console.error('[OrderEntry] Address lookup failed:', err);
+    } finally {
+      setAddressLoading(false);
+    }
+  };
+
+  // Handle adding new address via CRM
+  const handleAddAddress = async (formData) => {
+    if (!customer?.id || customer.id.startsWith('CUST-')) {
+      // Local-only customer — store address locally
+      const localAddr = { ...formData, id: `local_${Date.now()}`, isDefault: true };
+      setDeliveryAddresses(prev => [...prev, localAddr]);
+      setSelectedAddress(localAddr);
+      setShowAddressForm(false);
+      return;
+    }
+    setAddressSaving(true);
+    try {
+      const result = await addAddress(customer.id, formData);
+      if (result?.address_id) {
+        // Re-fetch addresses to get updated list
+        await fetchDeliveryAddresses(customer.phone);
+        // Select the newly added address
+        const newAddr = { ...formData, id: result.address_id, isDefault: formData.isDefault };
+        setSelectedAddress(newAddr);
+      }
+      setShowAddressForm(false);
+    } catch (err) {
+      console.error('[OrderEntry] Add address failed:', err);
+    } finally {
+      setAddressSaving(false);
+    }
+  };
   const cartKeyRef = useRef(null); // tracks previous table key for save-on-switch
   const typeDropdownRef = useRef(null);
 
@@ -1056,6 +1111,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
                 onCustomerChange={setCustomer}
+                selectedAddress={selectedAddress}
+                onAddressClick={() => {
+                  if (customer?.phone) fetchDeliveryAddresses(customer.phone);
+                  setShowAddressPicker(true);
+                }}
                 onClearCart={() => setCartItems(prev => prev.filter(i => i.placed))}
                 onDeleteItem={(item) => setCartItems(prev => {
                   const idx = prev.indexOf(item);
@@ -1152,6 +1212,23 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onSave={(customerData) => setCustomer(customerData)}
           initialData={customer}
           restaurantId={restaurant?.id}
+        />
+      )}
+      {showAddressPicker && (
+        <AddressPickerModal
+          onClose={() => setShowAddressPicker(false)}
+          onSelect={(addr) => { setSelectedAddress(addr); setShowAddressPicker(false); }}
+          onAddNew={() => { setShowAddressPicker(false); setShowAddressForm(true); }}
+          addresses={deliveryAddresses}
+          customerId={customer?.id}
+          loading={addressLoading}
+        />
+      )}
+      {showAddressForm && (
+        <AddressFormModal
+          onClose={() => setShowAddressForm(false)}
+          onSave={handleAddAddress}
+          saving={addressSaving}
         />
       )}
       {showSplitBillModal && (

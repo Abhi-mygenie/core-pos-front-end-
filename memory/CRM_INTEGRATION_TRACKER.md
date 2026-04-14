@@ -12,7 +12,7 @@
 |-------|-------------|--------|
 | Phase 1 | CRM axios setup + customer search replacement | Planning |
 | Phase 2 | Customer lookup + create/update | **Done** |
-| Phase 3 | Address lookup + picker + CRUD (Delivery) | Planning |
+| Phase 3 | Address lookup + picker + CRUD (Delivery) | **Done** |
 | Phase 4 | Wire address into place-order payload | Planning |
 | Phase 5 | Loyalty, coupons, notes, WhatsApp | Planning |
 
