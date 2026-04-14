@@ -218,7 +218,7 @@ Legend:
 
 | # | API Field | Value | Transform Key | UI Usage | Status |
 |---|-----------|-------|---------------|----------|--------|
-| 100 | `def_ord_status` | `5` | — | Default order status on creation | **MISSING** |
+| 100 | `def_ord_status` | `5` | `restaurant.defaultOrderStatus` | Default order status for confirm action (mapped via `F_ORDER_STATUS_API`) | **MAPPED** |
 | 101 | `discount_type` | `"Percent"` | — | Default discount type | **MISSING** |
 | 102 | `discount_text` | `"Discount"` | — | Discount label text | **MISSING** |
 | 103 | `off_day` | `" "` | — | Restaurant off days | **MISSING** |

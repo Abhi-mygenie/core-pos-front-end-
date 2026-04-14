@@ -33,7 +33,8 @@
 | 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
 | 24 | **BUG-227** | **Order-level Ready/Serve does not update item-level `food_status`** | **P0** | **❌ OPEN (Backend — Critical)** |
 | 25 | **BUG-228** | **`update-order-target` not sent when source is walk-in in merge** | **P0** | **❌ OPEN (Backend — Critical)** |
-| 26 | **BUG-229** | **Confirm Order (order-status-update with "paid") — `$orderstatus` undefined** | **P0** | **❌ OPEN (Backend — Critical)** |
+| 26 | **BUG-229** | **Confirm Order (order-status-update with "paid") — `$orderstatus` undefined** | **P0** | **✅ BYPASSED (Frontend — new endpoint)** |
+| 27 | **BUG-230** | **`F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch (preparing vs cooking)** | **P2** | **❌ OPEN (Workaround in place)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 
@@ -172,39 +173,30 @@ When merge API is called with walk-in source merging INTO a table order, backend
 
 ### BUG-229: Confirm Order — `$orderstatus` Undefined in Backend (Backend — CRITICAL)
 
-**Status:** ❌ OPEN — Backend Team
-**Priority:** P0 — Critical (blocks order confirmation flow)
+**Status:** ✅ BYPASSED — Frontend now uses dedicated `waiter-dinein-order-status-update` endpoint
+**Priority:** P0 → Resolved
 **Reported:** April 13, 2026
+**Bypassed:** April 14, 2026
 
-**Problem:** When calling `PUT /api/v2/vendoremployee/order/order-status-update` with `order_status: "paid"` to confirm a YTC order, the backend throws an `ErrorException: Undefined variable $orderstatus`.
+**Original Problem:** `PUT /api/v2/vendoremployee/order/order-status-update` with `order_status: "paid"` threw `ErrorException: Undefined variable $orderstatus` at OrderController.php:3643.
 
-**Request payload:**
-```json
-{
-    "order_id": "730927",
-    "role_name": "Owner",
-    "order_status": "paid"
-}
-```
+**Resolution:** Frontend now uses dedicated confirm endpoint: `PUT /api/v2/vendoremployee/order/waiter-dinein-order-status-update`. This endpoint works correctly. The original `order-status-update` bug still exists in backend but is no longer hit by the confirm flow.
 
-**Backend response:**
-```json
-{
-    "message": "Undefined variable $orderstatus",
-    "exception": "ErrorException",
-    "file": "/var/www/html/app/Http/Controllers/Api/V2/Vendoremployee/OrderController.php",
-    "line": 3643
-}
-```
+---
 
-**Root cause:** Likely a typo in `OrderController.php` line 3643 — `$orderstatus` vs `$orderStatus` or `$order_status`.
+### BUG-230: `F_ORDER_STATUS` vs `F_ORDER_STATUS_API` Mismatch (preparing vs cooking)
 
-**Impact:** Order confirmation from YTC tab is completely broken. Cannot move orders from YTC → Preparing.
+**Status:** ❌ OPEN — Workaround in place
+**Priority:** P2
+**Reported:** April 14, 2026
 
-**Frontend status:** Frontend sends correct payload. Zero frontend change needed — once backend fixes the variable reference, it will work.
+**Problem:** Two separate status maps exist because frontend display uses `preparing` (status 1) but the `waiter-dinein-order-status-update` API expects `cooking` for the same status.
 
-**API endpoint:** `PUT /api/v2/vendoremployee/order/order-status-update`
-**Socket events expected (after fix):** `order-engage` + `update-order-paid` (with f_order_status=1, preparing)
+**Current workaround:** `F_ORDER_STATUS_API` map added in `constants.js` — used only for API payloads via `profileTransform.js`. `F_ORDER_STATUS` (display map) unchanged.
+
+**Fix needed:** Unify to a single map. Either:
+1. Backend accepts both `preparing` and `cooking`, OR
+2. Frontend uses `cooking` everywhere and displays it as "Preparing" via a display label map
 #### v2 Endpoint Payload Test (April 11, 2026)
 All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
 

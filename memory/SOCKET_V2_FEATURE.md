@@ -198,6 +198,18 @@ Handler: handleOrderDataEvent — status=served → updateOrder
 Release: setOrderEngaged(orderId, false)
 ```
 
+### Flow 11: Confirm Order (NEW — April 14, 2026)
+```
+Endpoint: PUT /api/v2/vendoremployee/order/waiter-dinein-order-status-update
+Payload: { order_id, role_name, order_status: <def_ord_status mapped via F_ORDER_STATUS_API> }
+Events:
+  1. order-engage {orderId} engage           ← order locked
+  2. update-order-status {orderId} {f_order_status} {orders: [...]}  ← complete order data
+Handler: handleUpdateOrderStatus (UPGRADED to v2 pattern — uses socket payload, no GET API)
+Release: setOrderEngaged(orderId, false) via requestAnimationFrame × 2
+Note: order_status value comes from profile API def_ord_status field, mapped through F_ORDER_STATUS_API
+```
+
 ---
 
 ## 4. Implementation — Step by Step
@@ -762,7 +774,7 @@ if (orderId) {
 |-------------------|------|---------------|
 | `handleNewOrder` | socketHandlers.js | Different flow: `addOrder()`, different message structure (table_info at index 5), already v2 clean |
 | `handleUpdateFoodStatus` | socketHandlers.js | Still v1 for item-level status. Local table engage workaround kept. Backend needs to upgrade |
-| `handleUpdateOrderStatus` | socketHandlers.js | Kept as v1 fallback. Guard added (Step 2c) to skip if already handled. Still called for any stray v1 events |
+| `handleUpdateOrderStatus` | socketHandlers.js | ✅ UPGRADED to v2 (Apr 14): uses socket payload directly, releases order engage. No GET API call |
 | `handleScanNewOrder` | socketHandlers.js | v1, external trigger, no change |
 | `handleDeliveryAssignOrder` | socketHandlers.js | v1, external trigger, no change |
 | `handleOrderEngage` | socketHandlers.js | Lock-only, no data — works correctly |
@@ -869,6 +881,7 @@ if (orderId) {
 | Collect Bill | `BILL_PAYMENT` | `/api/v2/vendoremployee/order/order-bill-payment` | POST |
 | Cancel Food | `CANCEL_ITEM` | `/api/v2/vendoremployee/order/cancel-food-item` | PUT |
 | Cancel Order / Ready / Served | `ORDER_STATUS_UPDATE` | `/api/v2/vendoremployee/order/order-status-update` | PUT |
+| Confirm Order (YTC) | `CONFIRM_ORDER` | `/api/v2/vendoremployee/order/waiter-dinein-order-status-update` | PUT |
 | Food Status | `FOOD_STATUS_UPDATE` | `/api/v2/vendoremployee/order/food-status-update` | PUT |
 | Get Single Order | `SINGLE_ORDER_NEW` | `/api/v2/vendoremployee/get-single-order-new` | POST |
 
@@ -934,4 +947,4 @@ Original plan covered 5 files. During testing discovered:
 | BUG-226 | `order-engage` missing before `update-item-status` | ✅ FIXED (same day) |
 | BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | ❌ OPEN |
 | BUG-228 | `update-order-target` not sent for Walk-in → Table merge | ❌ OPEN |
-| BUG-229 | Confirm Order — backend `$orderstatus` undefined at OrderController.php:3643 | ❌ OPEN |
+| BUG-229 | Confirm Order — backend `$orderstatus` undefined at OrderController.php:3643 | ✅ BYPASSED (new endpoint) |

@@ -1,6 +1,108 @@
 # Changelog
 
-## Apr 13, 2026 — Session 13 (Socket v2 Full Implementation)
+## Apr 14, 2026 — Session 14 (Confirm Order Endpoint + Dynamic Status + Socket v2 Handler)
+
+### Confirm Order — Separate Endpoint (COMPLETE ✅)
+
+**Problem:** Confirm/Accept action on "Yet to Confirm" orders was using `PUT order-status-update` (same as Ready/Served). Backend expects a dedicated endpoint.
+
+**Fix:** 3 changes:
+1. Added `CONFIRM_ORDER: '/api/v2/vendoremployee/order/waiter-dinein-order-status-update'` in `constants.js`
+2. Created `confirmOrder(orderId, roleName, orderStatus)` in `orderService.js` — calls `PUT CONFIRM_ORDER`
+3. `DashboardPage.jsx` → `handleConfirmOrder` now calls `confirmOrder()` instead of `updateOrderStatus()`
+
+**Endpoint mapping after fix:**
+
+| Action | Endpoint | Method |
+|--------|----------|--------|
+| Confirm/Accept (YTC → next) | `waiter-dinein-order-status-update` | PUT |
+| Ready | `order-status-update` | PUT |
+| Served | `order-status-update` | PUT |
+
+#### Files Modified
+- `api/constants.js` — Added `CONFIRM_ORDER` endpoint
+- `api/services/orderService.js` — Added `confirmOrder()` function
+- `pages/DashboardPage.jsx` — Import + usage of `confirmOrder()`, destructure `defaultOrderStatus`
+
+### Dynamic Order Status from Profile API (COMPLETE ✅)
+
+**Problem:** Confirm order was hardcoding `order_status: "paid"`. Should use `def_ord_status` from profile API, mapped to backend-expected string.
+
+**Fix:**
+1. `profileTransform.js` — Extract `def_ord_status` from `restaurants[0]`, map via `F_ORDER_STATUS_API` → `defaultOrderStatus`
+2. `RestaurantContext.jsx` — Expose `defaultOrderStatus` via `useMemo` (fallback: `'paid'`)
+3. `orderService.js` — `confirmOrder()` accepts 3rd param `orderStatus` (default: `'paid'`)
+4. `DashboardPage.jsx` — Pass `defaultOrderStatus` from context to `confirmOrder()`
+
+**Fallback chain:** `def_ord_status` missing → `F_ORDER_STATUS_API[undefined]` → `null` → context fallback `'paid'` → same as before
+
+#### `F_ORDER_STATUS_API` Map (NEW — separate from display map)
+
+| Numeric | API Value | Display Value (`F_ORDER_STATUS`) |
+|---------|-----------|----------------------------------|
+| 1 | `cooking` | `preparing` |
+| 2 | `ready` | `ready` |
+| 3 | `cancelled` | `cancelled` |
+| 5 | `served` | `served` |
+| 6 | `paid` | `paid` |
+| 7 | `pending` | `pending` |
+
+**Known Bug:** `F_ORDER_STATUS` (display) uses `preparing` but API expects `cooking` for status 1. Two separate maps used as workaround. To be unified later.
+
+#### Files Modified
+- `api/constants.js` — Added `F_ORDER_STATUS_API` map
+- `api/transforms/profileTransform.js` — Import `F_ORDER_STATUS_API`, extract `defaultOrderStatus`
+- `contexts/RestaurantContext.jsx` — Added `defaultOrderStatus` to context value
+- `pages/DashboardPage.jsx` — Destructure + pass `defaultOrderStatus`
+
+### `handleUpdateOrderStatus` — Upgraded to v2 Pattern (COMPLETE ✅)
+
+**Problem:** `handleUpdateOrderStatus` in `socketHandlers.js` was using legacy pattern:
+1. Ignored socket payload (even though `{orders: Array(1)}` is present)
+2. Made unnecessary GET API call to fetch order data
+3. Never released order engage (`setOrderEngaged` not called)
+
+**Fix:** Rewrote to match `handleOrderDataEvent` v2 pattern:
+1. Uses socket payload directly (`payload.orders[0]`) — zero API calls
+2. Transform → update/remove in OrderContext
+3. `syncTableStatus()` from order data
+4. Releases order engage via `requestAnimationFrame` → `setOrderEngaged(orderId, false)`
+
+**Before vs After:**
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| Data source | GET API call (+1s latency) | Socket payload (instant) |
+| Order engage release | ❌ Never released | ✅ Released after context update |
+| Architecture | Legacy v1 pattern | Matches v2 pattern |
+
+#### Files Modified
+- `api/socket/socketHandlers.js` — Rewrote `handleUpdateOrderStatus`
+
+### OrderCard Accept Button — Wired (COMPLETE ✅)
+
+**Problem:** `onAccept` prop in `OrderCard.jsx` existed but was never passed from `ChannelColumn.jsx`. Accept button in Order/List view did nothing for YTC orders.
+
+**Fix:** Wired `onAccept` → `onConfirmOrder` in `ChannelColumn.jsx`
+
+#### Files Modified
+- `components/dashboard/ChannelColumn.jsx` — Added `onAccept` prop to OrderCard
+
+### Verified Flow (Console Logs from User)
+
+```
+16:04:58  order-engage_478: [730958, '002456', 478, 'engage']
+          → setOrderEngaged(730958, true)
+
+16:05:01  new_order_478: ['update-order-status', 730958, 478, 1, {orders: Array(1)}]
+          → handleUpdateOrderStatus: uses socket payload directly
+          → transform order → updateOrder(730958)
+          → syncTableStatus → setOrderEngaged(730958, false)
+```
+
+**Result:** Order moves from YTC → Preparing, no GET API call, order engage released.
+
+---
 
 ### Socket v2 Event Handlers — IMPLEMENTED
 
