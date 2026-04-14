@@ -6,6 +6,7 @@ import { useToast } from "../hooks/use-toast";
 import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders, useStations } from "../contexts";
 import * as profileService from "../api/services/profileService";
+import { setCrmRestaurantId } from "../api/crmAxios";
 import * as categoryService from "../api/services/categoryService";
 import * as productService from "../api/services/productService";
 import * as tableService from "../api/services/tableService";
@@ -187,6 +188,10 @@ const LoadingPage = () => {
       
       setUserData(data.profile.user, data.profile.permissions);
       setRestaurant(data.profile.restaurant);
+      // Set CRM API key based on restaurant ID
+      if (data.profile.restaurant?.id) {
+        setCrmRestaurantId(data.profile.restaurant.id);
+      }
       updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
