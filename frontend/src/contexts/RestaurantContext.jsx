@@ -45,6 +45,11 @@ export const RestaurantProvider = ({ children }) => {
     };
   }, [restaurant]);
 
+  // Get default order status for confirm action
+  const defaultOrderStatus = useMemo(() => {
+    return restaurant?.defaultOrderStatus || 'paid';
+  }, [restaurant]);
+
   // Get settings (auto print, etc.)
   const settings = useMemo(() => {
     return restaurant?.settings || {
@@ -78,6 +83,7 @@ export const RestaurantProvider = ({ children }) => {
     currencySymbol,
     features,
     cancellation,
+    defaultOrderStatus,
     settings,
     paymentTypes,
     discountTypes,
@@ -92,6 +98,7 @@ export const RestaurantProvider = ({ children }) => {
     currencySymbol,
     features,
     cancellation,
+    defaultOrderStatus,
     settings,
     paymentTypes,
     discountTypes,

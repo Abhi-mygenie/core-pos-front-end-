@@ -71,8 +71,8 @@ export const updateOrderStatus = async (orderId, roleName, status) => {
  * @param {string} roleName - User's role name
  * @returns {Promise<Object>} - API response
  */
-export const confirmOrder = async (orderId, roleName) => {
-  const payload = toAPI.updateOrderStatus(orderId, roleName, 'paid');
+export const confirmOrder = async (orderId, roleName, orderStatus = 'paid') => {
+  const payload = toAPI.updateOrderStatus(orderId, roleName, orderStatus);
   const response = await api.put(API_ENDPOINTS.CONFIRM_ORDER, payload);
   return response.data;
 };

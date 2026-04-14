@@ -1,6 +1,6 @@
 // Profile Transform - Vendor Profile API response mapping
 
-import { YES_NO_MAP } from '../constants';
+import { YES_NO_MAP, F_ORDER_STATUS } from '../constants';
 
 /**
  * Helper to convert Yes/No/Y/N strings to boolean
@@ -114,6 +114,9 @@ export const fromAPI = {
         orderCancelWindowMinutes: parseInt(api.cancel_order_time) || 0,
         itemCancelWindowMinutes: parseInt(api.cancel_food_timings) || 0,
       },
+
+      // Default order status (from def_ord_status numeric → mapped string)
+      defaultOrderStatus: F_ORDER_STATUS[api.def_ord_status] || null,
 
       // Search options
       searchOptions: api.search_by || ['order id', 'table no', 'user id'],

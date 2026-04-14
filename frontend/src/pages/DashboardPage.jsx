@@ -108,7 +108,7 @@ const OrderListSection = ({ title, orders, orderType, matchingIds, snoozedOrders
 const DashboardPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoaded: restaurantLoaded, currencySymbol, cancellation, features } = useRestaurant();
+  const { isLoaded: restaurantLoaded, currencySymbol, cancellation, features, defaultOrderStatus } = useRestaurant();
   const { tables: apiTables, isLoaded: tablesLoaded } = useTables();
   const { user, hasPermission, permissions } = useAuth();
   
@@ -846,14 +846,15 @@ const DashboardPage = () => {
     if (!order?.orderId) return;
 
     try {
-      // Single API call to confirm order (YTC → Preparing)
+      // Single API call to confirm order (YTC → next status)
       // Uses dedicated waiter-dinein-order-status-update endpoint
-      await confirmOrder(order.orderId, user?.roleName || 'Manager');
+      // order_status comes from profile API def_ord_status (mapped via F_ORDER_STATUS)
+      await confirmOrder(order.orderId, user?.roleName || 'Manager', defaultOrderStatus);
       // Socket handler will process order-engage + update-order-paid
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);
     }
-  }, [getOrderDataForEntry, user?.roleName]);
+  }, [getOrderDataForEntry, user?.roleName, defaultOrderStatus]);
 
   // --- Cancel scan order (red cross) → open modal ---
   const handleCancelOrder = useCallback((tableEntry) => {
