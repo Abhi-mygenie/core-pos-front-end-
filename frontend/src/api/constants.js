@@ -128,6 +128,19 @@ export const F_ORDER_STATUS = {
   10: 'reserved',
 };
 
+// f_order_status (API) → backend API payload value for confirm endpoint
+export const F_ORDER_STATUS_API = {
+  1: 'cooking',
+  2: 'ready',
+  3: 'cancelled',
+  5: 'served',
+  6: 'paid',
+  7: 'pending',
+  8: 'running',
+  9: 'pendingPayment',
+  10: 'reserved',
+};
+
 // Status columns for "By Status" dashboard view
 // Order determines column display order
 export const STATUS_COLUMNS = [
