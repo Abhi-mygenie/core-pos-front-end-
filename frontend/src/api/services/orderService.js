@@ -64,6 +64,20 @@ export const updateOrderStatus = async (orderId, roleName, status) => {
 };
 
 /**
+ * Confirm/Accept a "Yet to Confirm" order (waiter dine-in flow)
+ * Uses separate endpoint from ready/served status updates
+ * Socket handler will process order-engage + update-order-paid events
+ * @param {number|string} orderId - Order ID
+ * @param {string} roleName - User's role name
+ * @returns {Promise<Object>} - API response
+ */
+export const confirmOrder = async (orderId, roleName) => {
+  const payload = toAPI.updateOrderStatus(orderId, roleName, 'paid');
+  const response = await api.put(API_ENDPOINTS.CONFIRM_ORDER, payload);
+  return response.data;
+};
+
+/**
  * Split order among multiple people
  * @param {number|string} orderId - Original order ID
  * @param {number} splitCount - Number of splits

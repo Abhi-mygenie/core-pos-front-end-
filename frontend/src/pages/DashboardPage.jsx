@@ -18,7 +18,7 @@ import { useSocketEvents } from "../api/socket";
 import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
-import { updateOrderStatus } from "../api/services/orderService";
+import { updateOrderStatus, confirmOrder } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
 import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
@@ -847,7 +847,8 @@ const DashboardPage = () => {
 
     try {
       // Single API call to confirm order (YTC → Preparing)
-      await updateOrderStatus(order.orderId, user?.roleName || 'Manager', 'paid');
+      // Uses dedicated waiter-dinein-order-status-update endpoint
+      await confirmOrder(order.orderId, user?.roleName || 'Manager');
       // Socket handler will process order-engage + update-order-paid
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);

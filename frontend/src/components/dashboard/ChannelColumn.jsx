@@ -195,6 +195,7 @@ const ChannelColumn = ({
                   onMarkReady={() => onMarkReady?.(item)}
                   onMarkServed={() => onMarkServed?.(item)}
                   onBillClick={() => onBillClick?.(item)}
+                  onAccept={(order) => onConfirmOrder?.(item)}
                   onCancelOrder={onCancelOrder}
                   onItemStatusChange={onItemStatusChange}
                   onFoodTransfer={onFoodTransfer ? (order, foodItem) => onFoodTransfer(order, foodItem, item) : undefined}
