@@ -19,11 +19,16 @@ import { fromAPI, toAPI } from '../transforms/customerTransform';
  */
 export const searchCustomers = async (query, limit = 10) => {
   if (!query || query.trim().length < 2) return [];
-  const response = await crmApi.get(API_ENDPOINTS.CUSTOMER_SEARCH, {
-    params: { search: query.trim(), limit },
-  });
-  if (!response.data?.success) return [];
-  return fromAPI.searchResults(response.data?.data?.customers || []);
+  try {
+    const response = await crmApi.get(API_ENDPOINTS.CUSTOMER_SEARCH, {
+      params: { search: query.trim(), limit },
+    });
+    if (!response.data?.success) return [];
+    return fromAPI.searchResults(response.data?.data?.customers || []);
+  } catch (err) {
+    console.warn('[CRM] Customer search failed:', err.readableMessage || err.message);
+    return [];
+  }
 };
 
 /**
@@ -34,9 +39,14 @@ export const searchCustomers = async (query, limit = 10) => {
  */
 export const lookupCustomer = async (phone) => {
   if (!phone?.trim()) return null;
-  const response = await crmApi.post(API_ENDPOINTS.CUSTOMER_LOOKUP, { phone: phone.trim() });
-  if (!response.data?.success || !response.data?.data?.registered) return null;
-  return fromAPI.customerLookup(response.data.data);
+  try {
+    const response = await crmApi.post(API_ENDPOINTS.CUSTOMER_LOOKUP, { phone: phone.trim() });
+    if (!response.data?.success || !response.data?.data?.registered) return null;
+    return fromAPI.customerLookup(response.data.data);
+  } catch (err) {
+    console.warn('[CRM] Customer lookup failed:', err.readableMessage || err.message);
+    return null;
+  }
 };
 
 /**
@@ -97,9 +107,14 @@ export const updateCustomer = async (customerId, data, restaurantId) => {
  */
 export const lookupAddresses = async (phone) => {
   if (!phone?.trim()) return [];
-  const response = await crmApi.post(API_ENDPOINTS.ADDRESS_LOOKUP, { phone: phone.trim() });
-  if (!response.data?.success) return [];
-  return fromAPI.crossRestaurantAddresses(response.data?.data?.addresses || []);
+  try {
+    const response = await crmApi.post(API_ENDPOINTS.ADDRESS_LOOKUP, { phone: phone.trim() });
+    if (!response.data?.success) return [];
+    return fromAPI.crossRestaurantAddresses(response.data?.data?.addresses || []);
+  } catch (err) {
+    console.warn('[CRM] Address lookup failed:', err.readableMessage || err.message);
+    return [];
+  }
 };
 
 /**
