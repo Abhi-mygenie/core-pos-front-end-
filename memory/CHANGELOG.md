@@ -1,5 +1,70 @@
 # Changelog
 
+## Apr 14, 2026 — Session 14b (CRM Integration + Delivery Address + Google Places)
+
+### CRM POS API Integration — Phases 1-4 (COMPLETE ✅)
+
+**Problem:** Customer search was using old POS endpoint (`restaurant-customer-list`). No delivery address management existed. Need full CRM integration for customers, addresses, and delivery orders.
+
+#### Phase 1: CRM Axios Setup + Customer Search
+- Created `api/crmAxios.js` — CRM axios instance with dynamic X-API-Key per restaurant
+- CRM API keys stored as JSON map in `.env` (`REACT_APP_CRM_API_KEYS`)
+- Key resolved dynamically via `setCrmRestaurantId()` called after login
+- Replaced `POST restaurant-customer-list` with `GET /pos/customers?search=`
+- Added try/catch with graceful fallback to all CRM service functions
+
+#### Phase 2: Customer Lookup + Create/Update
+- `CustomerModal.jsx` rewritten — Save flow: check if existing CRM customer → update, else lookup by phone → create if new
+- `lookupCustomer()` via `POST /pos/customer-lookup`
+- `createCustomer()` via `POST /pos/customers`
+- `updateCustomer()` via `PUT /pos/customers/{id}`
+- `restaurantId` passed from OrderEntry to CustomerModal for CRM scoping
+
+#### Phase 3: Address Lookup + Picker + CRUD
+- Created `AddressPickerModal.jsx` — shows addresses from cross-restaurant lookup, select/delete/set-default
+- Created `AddressFormModal.jsx` — full address form with Google Places Autocomplete
+- `lookupAddresses()` via `POST /pos/address-lookup` — single source for all addresses across restaurants
+- Address CRUD: add, update, delete, set-default via CRM endpoints
+- Delivery address strip in `CartPanel.jsx` — visible only for delivery orders
+- OrderEntry manages address state, auto-selects default address
+
+#### Phase 4: Wire Address into Place Order Payload
+- `orderTransform.js` — both `placeOrder` and `placeOrderWithPayment` now pass `address_id` from selected address
+- Customer fields (email, dob, anniversary, membership_id) now populated from CRM data instead of empty strings
+
+#### Google Places Autocomplete
+- Address input in AddressFormModal uses Google Places Autocomplete (India-restricted)
+- On selection: auto-fills city, state, pincode, road, latitude, longitude
+- Auto-filled fields show green border + "(auto)" label
+- Google Maps JS SDK loaded dynamically on first open
+
+#### Auth: Dynamic CRM API Key per Restaurant
+- `REACT_APP_CRM_API_KEYS` = JSON map { restaurantId: apiKey }
+- 15 restaurants configured with live API keys
+- `crmAxios.js` resolves key per request via `setCrmRestaurantId()` (called from LoadingPage after profile load)
+- No multi-user problem — one key per restaurant, all POS users share it
+
+#### Files Created
+- `api/crmAxios.js` — CRM axios instance
+- `components/order-entry/AddressPickerModal.jsx` — Address picker
+- `components/order-entry/AddressFormModal.jsx` — Address form with Google Places
+
+#### Files Modified
+- `.env` — Added CRM base URL, API keys, Google Maps key
+- `api/constants.js` — Added 7 CRM endpoint constants
+- `api/services/customerService.js` — Rewritten: 10 CRM service functions
+- `api/transforms/customerTransform.js` — Rewritten: CRM response mapping
+- `api/transforms/orderTransform.js` — address_id + customer fields in payload
+- `components/order-entry/CartPanel.jsx` — Delivery address strip
+- `components/order-entry/CustomerModal.jsx` — CRM create/update flow
+- `components/order-entry/OrderEntry.jsx` — Address state, modals, pass addressId
+- `pages/LoadingPage.jsx` — setCrmRestaurantId after profile load
+
+#### CRM Base URL Change
+- Changed from `https://crm.mygenie.online/api` (405 on GET search) to `https://react-mongo-crm.preview.emergentagent.com/api` (working)
+
+---
+
 ## Apr 14, 2026 — Session 14 (Confirm Order Endpoint + Dynamic Status + Socket v2 Handler)
 
 ### Confirm Order — Separate Endpoint (COMPLETE ✅)

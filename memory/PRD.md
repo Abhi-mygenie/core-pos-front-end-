@@ -26,6 +26,12 @@
 
 ## What's Been Implemented
 
+### Session 14b (April 14, 2026)
+- CRM POS API Integration Phases 1-4: customer search, lookup, create/update, address CRUD
+- Dynamic CRM API key per restaurant (15 restaurants configured)
+- Delivery address flow: address picker, cross-restaurant lookup, Google Places Autocomplete
+- Place-order payload now includes address_id + full customer fields from CRM
+
 ### Session 14 (April 14, 2026)
 - Confirm Order: Separate endpoint `waiter-dinein-order-status-update`
 - Dynamic order status from profile API `def_ord_status`
@@ -49,7 +55,7 @@
 ## Prioritized Backlog
 
 ### P0 — In Progress
-- CRM Integration Phase 1-4 (customer search, addresses, delivery)
+- CRM Integration Phase 5 (loyalty, coupons, notes, WhatsApp)
 
 ### P1 — Next
 - CRM Integration Phase 5 (loyalty, coupons, notes, WhatsApp)

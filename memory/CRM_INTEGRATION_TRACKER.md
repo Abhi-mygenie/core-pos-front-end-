@@ -78,10 +78,12 @@
 
 | Item | Value |
 |------|-------|
-| Method | `X-API-Key` header (per restaurant) |
-| Key source | CRM Dashboard → Settings → POS Integration |
-| Env var | `REACT_APP_CRM_API_KEY` |
-| CRM base URL | `REACT_APP_CRM_BASE_URL` |
+| Method | `X-API-Key` header (per restaurant, dynamic) |
+| Key source | `.env` → `REACT_APP_CRM_API_KEYS` (JSON map: restaurantId → apiKey) |
+| Key resolution | `setCrmRestaurantId()` called from `LoadingPage.jsx` after profile load |
+| Env var (keys) | `REACT_APP_CRM_API_KEYS` |
+| Env var (base URL) | `REACT_APP_CRM_BASE_URL` |
+| Env var (Google Maps) | `REACT_APP_GOOGLE_MAPS_KEY` |
 | Multi-user safe | Yes — one key for all POS users |
 
 ---
