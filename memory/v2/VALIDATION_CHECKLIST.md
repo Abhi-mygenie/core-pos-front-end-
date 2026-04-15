@@ -51,12 +51,18 @@
 | 1.4d | Update Order → PUT JSON body | ⚠️ | Wrong version — we use v2 |
 | 1.4e | Content-Type asymmetry between Place (multipart) and Update (JSON) is intentional | ⬜ | |
 | 1.4f | Single Order fetch → POST JSON to `/get-single-order-new` (v2) | ⬜ | |
-| 1.5 | **Engaged Lock Mechanism — Complete Behavior** | ⬜ | |
-| 1.5a | 4 LOCK sources: handleNewOrder, handleUpdateTable 'engage', handleUpdateTable 'free' (BUG-216), OrderEntry collectBill | ⬜ | |
-| 1.5b | 3 UNLOCK sources: all via double requestAnimationFrame after GET enrich | ⬜ | |
-| 1.5c | Block check in DashboardPage.handleTableClick via isTableEngaged() | ⬜ | |
-| 1.5d | Timeout: waitForTableEngaged resolves false after 5000ms | ⬜ | |
-| 1.5e | GAP: handleUpdateFoodStatus, handleScanNewOrder, handleDeliveryAssignOrder do NOT interact with engaged lock | ⬜ | |
+| 1.5 | **Engaged Lock Mechanism — Complete Behavior** | 🔍 | Multiple items need runtime validation |
+| 1.5a-L1 | LOCK: handleNewOrder → setTableEngaged(tableId, true) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5a-L2 | LOCK: handleUpdateTable 'engage' → setTableEngaged(true) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5a-L3 | LOCK: handleUpdateTable 'free' → setTableEngaged(true) (BUG-216) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5a-L4 | LOCK: OrderEntry collectBill → setTableEngaged(tableId, true) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5b-U1 | UNLOCK: handleNewOrder after GET enrich (double rAF) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5b-U2 | UNLOCK: handleUpdateOrder after GET enrich (double rAF) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5b-U3 | UNLOCK: handleUpdateOrderStatus after GET+decide (double rAF) | 🔍 | **Need runtime validation** — there should be one lock and one unlock source |
+| 1.5c | Block check: DashboardPage.handleTableClick checks isTableEngaged() | 🔍 | **Need validation** — why is this needed since we are on socket architecture? |
+| 1.5d | Timeout: waitForTableEngaged resolves false after 5000ms | 🔍 | **Need validation** — it should be order engaged, not table engaged |
+| 1.5e-proceed | OrderEntry proceeds with onClose() REGARDLESS of timeout result | 🔍 | **Need validation** — after socket response, order entry happens |
+| 1.5f | GAP: handleUpdateFoodStatus, handleScanNewOrder, handleDeliveryAssignOrder have no engage lock interaction | ⬜ | |
 | 1.6 | **Authentication — Complete** | ⬜ | |
 | 1.6a | Token in localStorage['auth_token'] | ⬜ | |
 | 1.6b | Injected as `Authorization: Bearer ${token}` via axios interceptor | ⬜ | |
