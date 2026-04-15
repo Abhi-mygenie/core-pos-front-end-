@@ -228,7 +228,7 @@ const CollectPaymentPanel = ({
     const roomHasTransfers = isRoom && associatedOrders.length > 0;
     const effectiveTotal = roomHasTransfers ? finalTotal + associatedTotal : finalTotal;
     const paymentData = {
-      method:          showSplit ? 'partial' : paymentMethod,
+      method:          paymentMethod,
       finalTotal:      effectiveTotal,
       sgst,
       cgst,
