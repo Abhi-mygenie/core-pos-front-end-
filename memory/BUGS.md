@@ -42,6 +42,7 @@
 | 32 | **BUG-233** | **Prepaid orders have no visual indicator on dashboard (looks same as unpaid)** | **P3** | **❌ OPEN (UX)** |
 | 33 | **BUG-234** | **No validation: TakeAway/Delivery orders allow missing required customer fields** | **P1** | **✅ FIXED (Frontend) / ❌ OPEN (Backend)** |
 | 34 | **BUG-235** | **Shift Table modal shows rooms — cannot shift to rooms** | **P2** | **✅ FIXED (Frontend)** |
+| 35 | **BUG-236** | **Collect Bill / Edit rules not enforced per order type (postpaid/prepaid)** | **P1** | **✅ FIXED (Frontend)** |
 
 ### BUG-234: No Validation for TakeAway/Delivery Required Fields
 
@@ -76,7 +77,30 @@ The backend (`/api/v2/vendoremployee/order/place-order`) currently accepts order
 
 ---
 
-### BUG-227: Order-Level Ready/Serve Does Not Update Item-Level `food_status` (Backend — CRITICAL)
+### BUG-236: Collect Bill / Edit Rules Not Enforced Per Order Type
+
+**Status:** ✅ FIXED (Frontend — April 15, 2026)
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:**
+Collect Bill button was always enabled regardless of order status or payment type. No rules enforced for when editing or billing should be allowed.
+
+**Rules Implemented:**
+
+| Scenario | Update Order | Collect Bill |
+|---|---|---|
+| Postpaid + new unplaced items | Enabled | Disabled (must Update Order first) |
+| Postpaid + no new items + status < served | Enabled | Disabled (must be served first) |
+| Postpaid + no new items + status = served | — | Enabled |
+| Prepaid existing order (any state) | Hidden | Hidden (already paid, cannot edit) |
+| Fresh order (no placedOrderId) | Enabled | Enabled (Place+Pay flow) |
+
+**Files Changed:**
+- `OrderEntry.jsx`: Derived live `orderStatus`/`orderPaymentType` from OrderContext. Added prepaid guard on `addToCart`/`addCustomizedItemToCart`. Passed `isPrepaid`, `isServed`, `hasUnplacedItems` to CartPanel.
+- `CartPanel.jsx`: Updated button visibility (hidden for prepaid existing) and disabled logic (postpaid: unplaced items or not served).
+
+---
 
 **Status:** ❌ OPEN — Backend Team
 **Priority:** P0 — Critical

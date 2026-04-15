@@ -266,6 +266,9 @@ const CartPanel = ({
   walkInTableName = "",
   onWalkInTableNameChange,
   orderId = null,
+  isPrepaid = false,
+  isServed = false,
+  hasUnplacedItems = false,
   selectedAddress = null,
   onAddressClick,
 }) => {
@@ -717,6 +720,8 @@ const CartPanel = ({
 
       {/* Bottom Action Buttons */}
       <div className="p-4 flex gap-3" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
+        {/* Update Order / Place Order — hidden for prepaid existing orders */}
+        {!(isPrepaid && hasPlacedItems) && (
         <button
           data-testid="place-order-btn"
           onClick={handlePlaceOrder}
@@ -735,11 +740,24 @@ const CartPanel = ({
             <>Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}</>
           )}
         </button>
-        {canBill && (
+        )}
+        {/* Collect Bill — Rules:
+             - Fresh order (no placed items): enabled (Place+Pay flow), subject to validation
+             - Prepaid existing order: hidden (already paid)
+             - Postpaid existing order + unplaced items: disabled (must Update Order first)
+             - Postpaid existing order + status !== served: disabled (must be served first)
+             - Postpaid existing order + served + no unplaced items: enabled
+        */}
+        {canBill && !(isPrepaid && hasPlacedItems) && (
         <button
           data-testid="collect-bill-btn"
           onClick={() => setShowPaymentPanel(true)}
-          disabled={cartItems.length === 0 || (!hasPlacedItems && hasValidationErrors)}
+          disabled={
+            cartItems.length === 0 ||
+            (!hasPlacedItems && hasValidationErrors) ||
+            (hasPlacedItems && hasUnplacedItems) ||
+            (hasPlacedItems && !isServed)
+          }
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           style={{ backgroundColor: "#2E7D32" }}
         >

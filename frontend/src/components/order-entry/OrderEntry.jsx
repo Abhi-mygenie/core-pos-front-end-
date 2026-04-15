@@ -393,6 +393,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const addCustomizedItemToCart = (item) => {
+    // Case 3: Prepaid orders cannot be edited
+    if (isPrepaid && placedOrderId) {
+      toast({ title: "Cannot Edit", description: "Prepaid orders cannot be modified", variant: "destructive" });
+      return;
+    }
     setCartItems([...cartItems, {
       ...item,
       qty: item.quantity || 1,
@@ -418,6 +423,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // Before placing: calculate locally (subtotal + tax)
   // After placing: use orderFinancials.amount from socket (already includes tax)
   const hasPlacedItems = cartItems.some(i => i.placed);
+  const hasUnplacedItems = cartItems.some(i => !i.placed && i.status !== 'cancelled');
+
+  // Live order status & payment type from OrderContext (socket-synced)
+  const liveOrder = placedOrderId ? orders.find(o => o.orderId === placedOrderId) : null;
+  const orderStatus = liveOrder?.status || orderData?.status || null;
+  const orderPaymentType = liveOrder?.paymentType || orderData?.paymentType || '';
+  const isPrepaid = orderPaymentType === 'prepaid';
+  const isServed = orderStatus === 'served';
   const localSubtotal = cartItems.reduce((sum, item) =>
     item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
@@ -1197,6 +1210,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 walkInTableName={walkInTableName}
                 onWalkInTableNameChange={setWalkInTableName}
                 orderId={placedOrderId}
+                isPrepaid={isPrepaid}
+                isServed={isServed}
+                hasUnplacedItems={hasUnplacedItems}
               />
             </>
           )}
