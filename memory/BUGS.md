@@ -44,6 +44,7 @@
 | 34 | **BUG-235** | **Shift Table modal shows rooms — cannot shift to rooms** | **P2** | **✅ FIXED (Frontend)** |
 | 35 | **BUG-236** | **Collect Bill / Edit rules not enforced per order type (postpaid/prepaid)** | **P1** | **✅ FIXED (Frontend)** |
 | 36 | **BUG-237** | **Placed item qty edit: Update Order disabled, delta not sent to kitchen** | **P1** | **✅ FIXED (Frontend)** |
+| 37 | **BUG-238** | **Status view shows "No channels configured" when no orders exist** | **P3** | **✅ FIXED (Frontend)** |
 
 ### BUG-234: No Validation for TakeAway/Delivery Required Fields
 
@@ -78,6 +79,22 @@ The backend (`/api/v2/vendoremployee/order/place-order`) currently accepts order
 
 ---
 
+### BUG-235: Shift Table Modal Shows Rooms
+
+**Status:** ✅ FIXED (Frontend — April 15, 2026)
+**Priority:** P2
+**Reported:** April 15, 2026
+
+**Problem:** ShiftTableModal displayed rooms (Rr1, Rr2, Re3, etc.) alongside regular tables. Orders cannot be shifted to rooms — rooms have a different check-in flow.
+
+**Root Cause:** `getTables()` returns all tables AND rooms. The `tablesOnly=true` parameter comment was wrong — `getTables` doesn't accept parameters. No `isRoom` filter was applied.
+
+**Fix:** Added `&& !t.isRoom` filter in `ShiftTableModal.jsx` line 28 to exclude rooms from the available tables list.
+
+**File Changed:** `ShiftTableModal.jsx`
+
+---
+
 ### BUG-236: Collect Bill / Edit Rules Not Enforced Per Order Type
 
 **Status:** ✅ FIXED (Frontend — April 15, 2026)
@@ -100,6 +117,34 @@ Collect Bill button was always enabled regardless of order status or payment typ
 **Files Changed:**
 - `OrderEntry.jsx`: Derived live `orderStatus`/`orderPaymentType` from OrderContext. Added prepaid guard on `addToCart`/`addCustomizedItemToCart`. Passed `isPrepaid`, `isServed`, `hasUnplacedItems` to CartPanel.
 - `CartPanel.jsx`: Updated button visibility (hidden for prepaid existing) and disabled logic (postpaid: unplaced items or not served).
+
+---
+
+### BUG-237: Placed Item Qty Edit — Update Order Disabled, Delta Not Sent
+
+**Status:** ✅ FIXED (Frontend — April 15, 2026)
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:** When user increases qty on a placed item (e.g. 1→3), Update Order button stays disabled because `newItemCount` only counts unplaced items. The qty delta is never sent to the kitchen. Collect Bill shows stale server amount.
+
+**Root Cause:**
+- `updateQuantity` for placed items only did a local `setCartItems` — no tracking of original vs current qty
+- `handlePlaceOrder` guard: `cartItems.filter(i => !i.placed).length === 0` → blocks submission
+- CartPanel button: `disabled={newItemCount === 0}` → stays disabled
+
+**Fix — "Delta as unplaced item" approach:**
+1. Placed items store `_originalQty` (server qty) when loaded from socket/API
+2. Qty increase on placed item → creates hidden **unplaced delta item** (`_deltaForId` links to placed item)
+3. Delta item flows through existing Update Order pipeline (`newItemCount > 0` → button enabled → `cart-update` includes delta)
+4. PlacedItemRow shows combined qty (`displayQty` = original + delta), price recalculated with `shownQty`
+5. `-` button blocked at original qty (decrease = Cancel Item flow, not edit)
+6. Socket sync clears delta items and replaces placed items with merged server data
+7. Delta items hidden from cart rendering (user sees one row with combined qty)
+
+**Files Changed:**
+- `OrderEntry.jsx`: `updateQuantity` rewritten for placed items, `_originalQty` tracking on init + socket sync, delta cleanup on sync
+- `CartPanel.jsx`: `PlacedItemRow` — `displayQty`/`shownQty` prop, `-` respects original qty, delta items hidden, price uses `shownQty`
 
 ---
 
