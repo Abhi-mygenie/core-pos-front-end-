@@ -69,10 +69,10 @@
 | 1.6c | 401 → clear token → redirect to `/` | ⬜ | |
 | 1.6d | ProtectedRoute checks `!!token` synchronously | ⬜ | |
 | 1.6e | No refresh token, no token expiry check, no silent renewal | ⬜ | |
-| 1.7 | **Printing — Confirmed NOT in Frontend** | ⬜ | |
-| 1.7a | `print_kot` is a flag sent in payloads, not actual print logic | ⬜ | |
-| 1.7b | `kotPrinted`, `billPrinted` are read-only booleans from API | ⬜ | |
-| 1.7c | No `window.print()`, no PDF generation, no receipt template in codebase | ⬜ | |
+| 1.7 | **Printing — Confirmed NOT in Frontend** | 🔍 | Need runtime validation |
+| 1.7a | `print_kot` is a flag sent in payloads, not actual print logic | 🔍 | **Need runtime validation** |
+| 1.7b | `kotPrinted`, `billPrinted` are read-only booleans from API | 🔍 | **Need runtime validation** |
+| 1.7c | No `window.print()`, no PDF generation, no receipt template in codebase | 🔍 | **Need runtime validation** |
 
 ---
 
