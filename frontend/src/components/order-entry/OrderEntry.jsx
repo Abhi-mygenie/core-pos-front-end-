@@ -1073,8 +1073,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   );
                 })()}
 
-                {/* Split Bill Button - Only for placed orders with 2+ items */}
-                {placedOrderId && cartItems.filter(i => i.placed).length >= 2 && (
+                {/* Split Bill Button - Only for dine-in/walk-in placed orders with 2+ items (not takeaway/delivery) */}
+                {placedOrderId && cartItems.filter(i => i.placed).length >= 2 && orderType !== 'takeAway' && orderType !== 'delivery' && (
                   <button
                     onClick={() => setShowSplitBillModal(true)}
                     className="px-3 py-2 rounded-lg transition-colors flex-shrink-0 flex items-center gap-1.5 font-medium text-sm"
