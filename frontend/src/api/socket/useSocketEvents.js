@@ -15,15 +15,17 @@ import {
   SOCKET_EVENTS,
   getOrderChannel,
   getTableChannel,
+  getOrderEngageChannel,
 } from './socketEvents';
 import {
   handleNewOrder,
-  handleUpdateOrder,
+  handleOrderDataEvent,
   handleUpdateFoodStatus,
   handleUpdateOrderStatus,
   handleScanNewOrder,
   handleDeliveryAssignOrder,
   handleUpdateTable,
+  handleOrderEngage,
 } from './socketHandlers';
 
 /**
@@ -32,7 +34,7 @@ import {
  */
 export const useSocketEvents = () => {
   const { subscribe, isConnected } = useSocket();
-  const { addOrder, updateOrder, removeOrder, getOrderById } = useOrders();
+  const { addOrder, updateOrder, removeOrder, getOrderById, setOrderEngaged } = useOrders();
   const { updateTableStatus, setTableEngaged } = useTables();
   const { restaurant } = useRestaurant();
   
@@ -41,12 +43,12 @@ export const useSocketEvents = () => {
   
   // Use refs to avoid stale closures in event handlers
   // All handlers now receive both order + table actions (BUG-203)
-  const actionsRef = useRef({ addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged });
+  const actionsRef = useRef({ addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged, setOrderEngaged });
   
   // Update ref when context functions change
   useEffect(() => {
-    actionsRef.current = { addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged };
-  }, [addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged]);
+    actionsRef.current = { addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged, setOrderEngaged };
+  }, [addOrder, updateOrder, removeOrder, getOrderById, updateTableStatus, setTableEngaged, setOrderEngaged]);
 
   // ===========================================================================
   // CHANNEL EVENT HANDLER
@@ -63,7 +65,19 @@ export const useSocketEvents = () => {
         handleNewOrder(args, actionsRef.current);
         break;
       case SOCKET_EVENTS.UPDATE_ORDER:
-        handleUpdateOrder(args, actionsRef.current);
+        handleOrderDataEvent(args, actionsRef.current, 'update-order');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_TARGET:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-target');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_SOURCE:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-source');
+        break;
+      case SOCKET_EVENTS.UPDATE_ORDER_PAID:
+        handleOrderDataEvent(args, actionsRef.current, 'update-order-paid');
+        break;
+      case SOCKET_EVENTS.UPDATE_ITEM_STATUS:
+        handleOrderDataEvent(args, actionsRef.current, 'update-item-status');
         break;
       case SOCKET_EVENTS.UPDATE_FOOD_STATUS:
         handleUpdateFoodStatus(args, actionsRef.current);
@@ -94,6 +108,15 @@ export const useSocketEvents = () => {
     }
   }, []);
 
+  // Order-engage channel handler
+  // Message format: [orderId, restaurantOrderId, restaurantId, status]
+  // Note: No event name at index 0, different from other channels
+  const handleOrderEngageChannelEvent = useCallback((...args) => {
+    console.log(`[useSocketEvents] Order-engage channel event:`, args);
+    // Pass directly to handler - format is different (no event name prefix)
+    handleOrderEngage(args, actionsRef.current);
+  }, []);
+
   // ===========================================================================
   // SUBSCRIBE TO ORDER CHANNEL ONLY
   // BUG-203: Table channel removed — table status derived from order data
@@ -117,11 +140,14 @@ export const useSocketEvents = () => {
     const orderChannel = getOrderChannel(restaurantId);
     // Subscribe to table channel (for immediate table status updates)
     const tableChannel = getTableChannel(restaurantId);
+    // Subscribe to order-engage channel (for order-level locking)
+    const orderEngageChannel = getOrderEngageChannel(restaurantId);
     
-    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}: ${orderChannel}, ${tableChannel}`);
+    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}: ${orderChannel}, ${tableChannel}, ${orderEngageChannel}`);
     
     const unsubscribeOrder = subscribe(orderChannel, handleOrderChannelEvent);
     const unsubscribeTable = subscribe(tableChannel, handleTableChannelEvent);
+    const unsubscribeOrderEngage = subscribe(orderEngageChannel, handleOrderEngageChannelEvent);
     
     if (unsubscribeOrder) {
       console.log(`[useSocketEvents] Subscribed to order channel successfully`);
@@ -135,11 +161,18 @@ export const useSocketEvents = () => {
       console.warn('[useSocketEvents] Table channel subscription failed');
     }
     
+    if (unsubscribeOrderEngage) {
+      console.log(`[useSocketEvents] Subscribed to order-engage channel successfully`);
+    } else {
+      console.warn('[useSocketEvents] Order-engage channel subscription failed');
+    }
+    
     // Cleanup on unmount or when restaurantId changes
     return () => {
       console.log('[useSocketEvents] Unsubscribing from channels');
       unsubscribeOrder && unsubscribeOrder();
       unsubscribeTable && unsubscribeTable();
+      unsubscribeOrderEngage && unsubscribeOrderEngage();
     };
   }, [
     isConnected,
@@ -147,6 +180,7 @@ export const useSocketEvents = () => {
     subscribe,
     handleOrderChannelEvent,
     handleTableChannelEvent,
+    handleOrderEngageChannelEvent,
   ]);
 
   // Return connection status and restaurantId for UI feedback

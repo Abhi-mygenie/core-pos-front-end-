@@ -5,6 +5,7 @@ import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../contexts/AuthContext";
 import * as authService from "../api/services/authService";
+import { requestFCMToken } from "../config/firebase";
 
 // Login Screen Component
 const LoginPage = () => {
@@ -49,8 +50,37 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      // Call login via AuthContext (updates state + localStorage)
-      await login({ email, password }, rememberMe);
+      // Get FCM token before login (permission prompt shows here)
+      let fcmToken = null;
+      try {
+        const fcmResult = await requestFCMToken();
+        console.log('[Login] FCM result:', fcmResult);
+        
+        // Handle new response format { error, token }
+        if (fcmResult && typeof fcmResult === 'object') {
+          fcmToken = fcmResult.token;
+          
+          // Warn user if notifications are denied
+          if (fcmResult.error === 'denied') {
+            toast({
+              title: "Notifications Disabled",
+              description: "You won't receive order alerts. Enable in browser settings (🔒 icon → Notifications → Allow)",
+              variant: "destructive",
+              duration: 8000,
+            });
+          }
+        } else {
+          // Backward compatibility: old format returned token directly
+          fcmToken = fcmResult;
+        }
+      } catch (fcmErr) {
+        console.warn('[Login] FCM token request failed, proceeding without it:', fcmErr.message);
+      }
+
+      console.log('[Login] Proceeding with FCM token:', fcmToken ? 'YES' : 'NO');
+      
+      // Call login via AuthContext with FCM token in payload
+      await login({ email, password, fcmToken }, rememberMe);
       
       // Navigate to loading screen on success
       navigate("/loading", { replace: true });
@@ -102,12 +132,20 @@ const LoginPage = () => {
         </div>
 
         {/* Title */}
-        <h1 
-          className="text-center text-xl font-semibold mb-8"
-          style={{ color: COLORS.darkText }}
-        >
-          Restaurant POS System
-        </h1>
+        <div className="text-center mb-8">
+          <h1 
+            className="text-xl font-semibold"
+            style={{ color: COLORS.primaryOrange }}
+          >
+            Streamlined Hospitality.
+          </h1>
+          <h2 
+            className="text-xl font-semibold"
+            style={{ color: COLORS.primaryGreen }}
+          >
+            Exceptional Experience.
+          </h2>
+        </div>
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-5">
@@ -221,32 +259,12 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px" style={{ backgroundColor: COLORS.borderGray }} />
-          <span className="text-sm" style={{ color: COLORS.grayText }}>OR</span>
-          <div className="flex-1 h-px" style={{ backgroundColor: COLORS.borderGray }} />
-        </div>
-
-        {/* Request Demo Button */}
-        <button
-          onClick={handleRequestDemo}
-          className="w-full py-3 rounded-lg font-semibold border transition-all hover:bg-gray-50"
-          style={{ 
-            borderColor: COLORS.borderGray, 
-            color: COLORS.darkText 
-          }}
-          data-testid="request-demo"
-        >
-          Request for Demo
-        </button>
-
         {/* Footer */}
         <p 
           className="text-center text-xs mt-8"
           style={{ color: COLORS.grayText }}
         >
-          © 2026 MyGenie Restaurant POS. All rights reserved.
+          © Mygenie 2025. HOSIGENIE HOSPITALITY SERVICES PRIVATE LIMITED. All Rights Reserved.
         </p>
       </div>
     </div>

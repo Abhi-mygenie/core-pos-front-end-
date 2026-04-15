@@ -17,29 +17,42 @@ export const API_ENDPOINTS = {
   
   // Table Operations (Phase 1C)
   TABLES: '/api/v1/vendoremployee/all-table-list',
-  ORDER_TABLE_SWITCH: '/api/v1/vendoremployee/pos/order-table-room-switch',
-  MERGE_ORDER: '/api/v1/vendoremployee/order/transfer-order',
-  TRANSFER_FOOD: '/api/v1/vendoremployee/order/transfer-food-item',
+  ORDER_TABLE_SWITCH: '/api/v2/vendoremployee/order/order-table-room-switch',
+  MERGE_ORDER: '/api/v2/vendoremployee/order/transfer-order',
+  TRANSFER_FOOD: '/api/v2/vendoremployee/order/transfer-food-item',
 
   // Cancel Operations (Phase 1C)
-  CANCEL_ITEM: '/api/v1/vendoremployee/order/cancel-food-item',
-  ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order-status-update',
-  FOOD_STATUS_UPDATE: '/api/v2/vendoremployee/food-status-update',
+  CANCEL_ITEM: '/api/v2/vendoremployee/order/cancel-food-item',
+  ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order/order-status-update',
+  CONFIRM_ORDER:      '/api/v2/vendoremployee/order/waiter-dinein-order-status-update',
+  FOOD_STATUS_UPDATE: '/api/v2/vendoremployee/order/food-status-update',
 
   // Out of Menu Item (Phase 1C)
   ADD_CUSTOM_ITEM: '/api/v1/vendoremployee/add-single-product',
 
   // Sprint 3 — Order Taking
-  CUSTOMER_SEARCH:   '/api/v2/vendoremployee/restaurant-customer-list',   // CHG-036
-  PLACE_ORDER:       '/api/v1/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
-  UPDATE_ORDER:      '/api/v1/vendoremployee/order/update-place-order',   // Update existing order (add items)
-  BILL_PAYMENT:      '/api/v2/vendoremployee/order-bill-payment',        // Collect bill on existing order
+  CUSTOMER_SEARCH:   '/pos/customers',                                       // CRM: GET /pos/customers?search=
+  CUSTOMER_LOOKUP:   '/pos/customer-lookup',                                  // CRM: POST /pos/customer-lookup
+  CUSTOMER_DETAIL:   '/pos/customers',                                        // CRM: GET /pos/customers/{id}
+  CUSTOMER_CREATE:   '/pos/customers',                                        // CRM: POST /pos/customers
+  CUSTOMER_UPDATE:   '/pos/customers',                                        // CRM: PUT /pos/customers/{id}
+  ADDRESS_LOOKUP:    '/pos/address-lookup',                                   // CRM: POST /pos/address-lookup
+  CUSTOMER_ADDRESSES: '/pos/customers',                                       // CRM: /pos/customers/{id}/addresses
+  PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // Unified: new order, new order+pay, existing order+pay
+  UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
+  BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes
   EDIT_ORDER_ITEM_QTY:   'TBD',   // CHG-040 future: Edit placed item qty only
   
   // Room Operations (Phase 2A + 2B)
   ROOM_CHECK_IN: '/api/v1/vendoremployee/pos/user-group-check-in',
   ORDER_SHIFTED_ROOM: '/api/v1/vendoremployee/order-shifted-room',
+  
+  // Split Bill
+  SPLIT_ORDER: '/api/v1/vendoremployee/pos/split-order',
+
+  // Print Operations (KOT/Bill)
+  PRINT_ORDER: '/api/v1/vendoremployee/order-temp-store',
 
   // Settings
   CANCELLATION_REASONS: '/api/v1/vendoremployee/cancellation-reasons',
@@ -112,13 +125,41 @@ export const F_ORDER_STATUS = {
   1: 'preparing',
   2: 'ready',
   3: 'cancelled',
-  // 4: TBD — needs team clarification
+  // 4: reserved for future development
   5: 'served',
   6: 'paid',
   7: 'pending',
   8: 'running',
   9: 'pendingPayment',
+  10: 'reserved',
 };
+
+// f_order_status (API) → backend API payload value for confirm endpoint
+export const F_ORDER_STATUS_API = {
+  1: 'cooking',
+  2: 'ready',
+  3: 'cancelled',
+  5: 'served',
+  6: 'paid',
+  7: 'pending',
+  8: 'running',
+  9: 'pendingPayment',
+  10: 'reserved',
+};
+
+// Status columns for "By Status" dashboard view
+// Order determines column display order
+export const STATUS_COLUMNS = [
+  { id: 7, fOrderStatus: 7, name: 'Yet to Confirm', key: 'pending' },
+  { id: 1, fOrderStatus: 1, name: 'Preparing', key: 'preparing' },
+  { id: 2, fOrderStatus: 2, name: 'Ready', key: 'ready' },
+  { id: 8, fOrderStatus: 8, name: 'Running', key: 'running' },
+  { id: 5, fOrderStatus: 5, name: 'Served', key: 'served' },
+  { id: 9, fOrderStatus: 9, name: 'Pending Payment', key: 'pendingPayment' },
+  { id: 6, fOrderStatus: 6, name: 'Paid', key: 'paid' },
+  { id: 3, fOrderStatus: 3, name: 'Cancelled', key: 'cancelled' },
+  { id: 10, fOrderStatus: 10, name: 'Reserved', key: 'reserved' },
+];
 
 // Frontend status → table card status (for enriching table grid)
 export const ORDER_TO_TABLE_STATUS = {
@@ -130,6 +171,7 @@ export const ORDER_TO_TABLE_STATUS = {
   paid: 'available',
   cancelled: 'available',
   pendingPayment: 'occupied',
+  reserved: 'reserved',
 };
 
 // Order type values from API
@@ -137,7 +179,7 @@ export const ORDER_TYPES = {
   POS: 'pos',
   DINE_IN: 'dinein',
   WALK_IN: 'WalkIn',
-  TAKE_AWAY: 'take_away',
+  TAKE_AWAY: 'takeaway',
   DELIVERY: 'delivery',
 };
 

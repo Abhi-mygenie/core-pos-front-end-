@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { PlusSquare, Grid3X3, Bike, ShoppingBag, Utensils, DoorOpen, List, LayoutGrid, Search, X, ChevronRight } from "lucide-react";
-import { COLORS, LOGO_URL } from "../../constants";
+import { PlusSquare, Bike, ShoppingBag, Utensils, DoorOpen, Search, X, ChevronRight, ChevronDown, Check } from "lucide-react";
+import { COLORS, LOGO_URL, USE_STATUS_VIEW } from "../../constants";
 import { useRestaurant } from "../../contexts";
 
 // Multi-selectable channel IDs (includes Room now - same behavior as tables)
 const MULTI_CHANNEL_IDS = ["delivery", "takeAway", "dineIn", "room"];
 
-// Order Type channels with icons and short labels
+// Order Type channels with icons and short labels (for Status View filters)
 const channels = [
   { id: "delivery", label: "Del", fullLabel: "Delivery", icon: Bike },
   { id: "takeAway", label: "Take", fullLabel: "TakeAway", icon: ShoppingBag },
@@ -14,13 +14,18 @@ const channels = [
   { id: "room", label: "Room", fullLabel: "Room", icon: DoorOpen },
 ];
 
-// Order Status filters (same for all channels including Room)
-const orderStatuses = [
-  { id: "confirm", label: "Confirm" },
-  { id: "cooking", label: "Cooking" },
-  { id: "ready", label: "Ready" },
-  { id: "running", label: "Running" },
-  { id: "schedule", label: "Schedule" },
+// All 9 Order Status filters (for Channel View filters)
+// Maps to fOrderStatus values from API
+const allStatusFilters = [
+  { id: "pending", fOrderStatus: 7, label: "YTC" },           // Yet to Confirm
+  { id: "preparing", fOrderStatus: 1, label: "Preparing" },
+  { id: "ready", fOrderStatus: 2, label: "Ready" },
+  { id: "running", fOrderStatus: 8, label: "Running" },
+  { id: "served", fOrderStatus: 5, label: "Served" },
+  { id: "pendingPayment", fOrderStatus: 9, label: "Pending Pay" },
+  { id: "paid", fOrderStatus: 6, label: "Paid" },
+  { id: "cancelled", fOrderStatus: 3, label: "Cancelled" },
+  { id: "reserved", fOrderStatus: 10, label: "Reserved" },
 ];
 
 // Header Component
@@ -33,9 +38,13 @@ const Header = ({
   tableFilter,
   setTableFilter,
   activeView, 
-  setActiveView, 
-  activeFirst, 
-  setActiveFirst,
+  setActiveView,
+  dashboardView = 'channel',
+  setDashboardView,
+  hiddenChannels = [],
+  hiddenStatuses = [],
+  enabledStatuses = [],
+  onRestoreHidden,
   searchQuery,
   setSearchQuery,
   searchResults,
@@ -98,21 +107,32 @@ const Header = ({
     return "Walk-in"; // Only for occupied tables without customer
   };
 
+  // Helper to get order status label from fOrderStatus
+  const getOrderStatusLabel = (fOrderStatus) => {
+    switch (fOrderStatus) {
+      case 1: return "Preparing";
+      case 2: return "Ready";
+      case 3: return "Served";
+      default: return null;
+    }
+  };
+
+  // Helper to format amount
+  const formatAmount = (amount) => {
+    if (!amount && amount !== 0) return null;
+    return `₹${Number(amount).toLocaleString('en-IN')}`;
+  };
+
   // Determine which statuses to show based on view (same for all channels including Room)
   const isTableView = activeView === "table";
   
-  // Context-aware status filters
-  let statuses;
-  if (isTableView) {
-    // Grid/Table View: Only Schedule and Confirm
-    statuses = [
-      { id: "schedule", label: "Schedule" },
-      { id: "confirm", label: "Confirm" }
-    ];
-  } else {
-    // Order/List View: Show all order statuses
-    statuses = orderStatuses;
-  }
+  // Get visible status filters: filter by enabled, then limit to max 6
+  const visibleStatusFilters = allStatusFilters
+    .filter(s => enabledStatuses.length === 0 || enabledStatuses.includes(s.id))  // Filter by enabled (if configured)
+    .slice(0, 6);  // Max 6 filters in header
+  
+  // Get visible channel filters for Status View (max 6)
+  const visibleChannelFilters = visibleChannels.slice(0, 6);
 
   // Dynamic search placeholder based on selected channels
   const getSearchPlaceholder = () => {
@@ -171,11 +191,11 @@ const Header = ({
   return (
     <header
       data-testid="pos-header"
-      className="px-6 py-3"
+      className="px-3 py-2"
       style={{ backgroundColor: COLORS.lightBg, borderBottom: `1px solid ${COLORS.borderGray}` }}
     >
-      <div className="flex items-center justify-between">
-        {/* Left Section - Logo + Order Types */}
+      <div className="flex items-center">
+        {/* Left Section - Logo + Filters */}
         <div className="flex items-center gap-4">
           {/* Logo */}
           <div data-testid="logo" className="flex items-center">
@@ -186,52 +206,67 @@ const Header = ({
             />
           </div>
 
-          {/* Order Type Pills - Multi-select with All */}
+          {/* Filter Pills - Swap based on dashboardView (max 6) */}
+          {/* Status View → Channel filters | Channel View → Status filters */}
           <nav className="flex items-center gap-1 ml-4">
-            {/* All pill */}
-            <button
-              data-testid="channel-all"
-              onClick={() => handleChannelToggle("all")}
-              className="flex items-center gap-1.5 py-3 px-3 rounded-lg transition-colors"
-              style={{
-                backgroundColor: isAllChannels ? COLORS.primaryOrange : "transparent",
-                color: isAllChannels ? "white" : COLORS.grayText,
-              }}
-              title="All Channels"
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span className="text-sm font-medium">All</span>
-            </button>
-            {visibleChannels.map((channel) => {
-              const Icon = channel.icon;
-              const isActive = !isAllChannels && activeChannels.includes(channel.id);
-              return (
-                <button
-                  key={channel.id}
-                  data-testid={`channel-${channel.id}`}
-                  onClick={() => handleChannelToggle(channel.id)}
-                  className="flex items-center gap-1.5 py-3 px-3 rounded-lg transition-colors"
-                  style={{
-                    backgroundColor: isActive ? COLORS.primaryOrange : "transparent",
-                    color: isActive ? "white" : COLORS.grayText,
-                  }}
-                  title={channel.fullLabel}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{channel.label}</span>
-                </button>
-              );
-            })}
+            {dashboardView === 'status' ? (
+              /* Channel Filter Pills (for Status View - filter within status columns) */
+              visibleChannelFilters.map((channel) => {
+                const Icon = channel.icon;
+                const isActive = activeChannels.includes(channel.id);
+                return (
+                  <button
+                    key={channel.id}
+                    data-testid={`filter-channel-${channel.id}`}
+                    onClick={() => {
+                      if (isActive) {
+                        const next = activeChannels.filter(c => c !== channel.id);
+                        if (next.length > 0) setActiveChannels(next);
+                      } else {
+                        setActiveChannels([...activeChannels, channel.id]);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 py-2 px-2.5 rounded-lg text-sm font-medium transition-colors"
+                    style={{
+                      backgroundColor: isActive ? "#F5F5F5" : "transparent",
+                      color: isActive ? COLORS.darkText : COLORS.grayText,
+                    }}
+                    title={channel.fullLabel}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{channel.label}</span>
+                  </button>
+                );
+              })
+            ) : (
+              /* Status Filter Pills (for Channel View - filter within channel columns) */
+              visibleStatusFilters.map((status) => {
+                const isActive = activeStatuses.includes(status.id);
+                return (
+                  <button
+                    key={status.id}
+                    data-testid={`filter-status-${status.id}`}
+                    onClick={() => handleStatusToggle(status.id)}
+                    className="py-2 px-2.5 rounded-lg text-sm font-medium transition-colors"
+                    style={{
+                      backgroundColor: isActive ? "#F5F5F5" : "transparent",
+                      color: isActive ? COLORS.darkText : COLORS.grayText,
+                    }}
+                  >
+                    {status.label}
+                  </button>
+                );
+              })
+            )}
           </nav>
         </div>
 
-        {/* Right Section - Search + Status Filters + Actions */}
-        <div className="flex items-center gap-3">
-          {/* Search Input with Dropdown */}
+        {/* Center Section - Search (flex-1 to take available space) */}
+        <div className="flex-1 flex justify-end px-4">
           <div className="relative">
             <div 
               ref={searchRef}
-              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
                 isSearchFocused ? "w-64" : "w-48"
               }`}
               style={{ 
@@ -270,7 +305,7 @@ const Header = ({
               <div
                 ref={dropdownRef}
                 data-testid="search-dropdown"
-                className="absolute top-full left-0 mt-1 w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-50 max-h-96 overflow-y-auto"
+                className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-50 max-h-96 overflow-y-auto"
                 style={{ borderColor: COLORS.borderGray }}
               >
                 {/* Tables - Exact Matches */}
@@ -293,7 +328,16 @@ const Header = ({
                         >
                           {getTableDisplayText(item)}
                         </span>
-                        {item.phone && <span className="text-xs" style={{ color: COLORS.grayText }}>{item.phone}</span>}
+                        {getOrderStatusLabel(item.fOrderStatus) && (
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
+                            {getOrderStatusLabel(item.fOrderStatus)}
+                          </span>
+                        )}
+                        {formatAmount(item.amount) && (
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>
+                            {formatAmount(item.amount)}
+                          </span>
+                        )}
                         <button
                           onClick={() => handleSearchSelect({ type: 'table', data: item })}
                           className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
@@ -326,7 +370,16 @@ const Header = ({
                         >
                           {getTableDisplayText(item)}
                         </span>
-                        {item.phone && <span className="text-xs" style={{ color: COLORS.grayText }}>{item.phone}</span>}
+                        {getOrderStatusLabel(item.fOrderStatus) && (
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
+                            {getOrderStatusLabel(item.fOrderStatus)}
+                          </span>
+                        )}
+                        {formatAmount(item.amount) && (
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>
+                            {formatAmount(item.amount)}
+                          </span>
+                        )}
                         <button
                           onClick={() => handleSearchSelect({ type: 'table', data: item })}
                           className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
@@ -467,8 +520,18 @@ const Header = ({
                         className="w-full px-3 py-2 flex items-center gap-3 hover:bg-gray-50 transition-colors border-l-2"
                         style={{ borderColor: COLORS.primaryGreen }}
                       >
-                        <span className="font-semibold text-sm" style={{ color: COLORS.primaryOrange }}>{item.id}</span>
-                        <span className="text-sm flex-1" style={{ color: COLORS.darkText }}>{item.guest || "Available"}</span>
+                        <span className="font-semibold text-sm" style={{ color: COLORS.primaryOrange }}>{item.label || item.id}</span>
+                        <span className="text-sm flex-1" style={{ color: item.guest && item.guest !== 'Available' ? COLORS.darkText : COLORS.grayText }}>{item.guest || "Available"}</span>
+                        {getOrderStatusLabel(item.fOrderStatus) && (
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
+                            {getOrderStatusLabel(item.fOrderStatus)}
+                          </span>
+                        )}
+                        {formatAmount(item.amount) && (
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>
+                            {formatAmount(item.amount)}
+                          </span>
+                        )}
                         <button
                           onClick={() => handleSearchSelect({ type: 'room', data: item })}
                           className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
@@ -494,8 +557,18 @@ const Header = ({
                         data-testid={`search-result-${item.id}`}
                         className="w-full px-3 py-2 flex items-center gap-3 hover:bg-gray-50 transition-colors"
                       >
-                        <span className="font-medium text-sm" style={{ color: COLORS.primaryOrange }}>{item.id}</span>
-                        <span className="text-sm flex-1" style={{ color: COLORS.darkText }}>{item.guest || "Available"}</span>
+                        <span className="font-medium text-sm" style={{ color: COLORS.primaryOrange }}>{item.label || item.id}</span>
+                        <span className="text-sm flex-1" style={{ color: item.guest && item.guest !== 'Available' ? COLORS.darkText : COLORS.grayText }}>{item.guest || "Available"}</span>
+                        {getOrderStatusLabel(item.fOrderStatus) && (
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
+                            {getOrderStatusLabel(item.fOrderStatus)}
+                          </span>
+                        )}
+                        {formatAmount(item.amount) && (
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>
+                            {formatAmount(item.amount)}
+                          </span>
+                        )}
                         <button
                           onClick={() => handleSearchSelect({ type: 'room', data: item })}
                           className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
@@ -511,94 +584,24 @@ const Header = ({
               </div>
             )}
           </div>
+        </div>
 
-          {/* Divider */}
-          <div className="w-px h-6" style={{ backgroundColor: COLORS.borderGray }} />
-
-          {/* Status Filter Pills */}
-          <div className="flex items-center gap-2">
-            {statuses.map((status) => {
-              // Table view: exclusive single-select filter
-              const isActive = isTableView
-                ? tableFilter === status.id
-                : activeStatuses.includes(status.id);
-              const handleClick = isTableView
-                ? () => setTableFilter(prev => prev === status.id ? null : status.id)
-                : () => handleStatusToggle(status.id);
-              return (
-                <button
-                  key={status.id}
-                  data-testid={`status-${status.id}`}
-                  onClick={handleClick}
-                  className="px-3 py-2.5 rounded-md text-xs font-medium transition-all"
-                  style={{
-                    backgroundColor: isActive ? COLORS.lightBg : "transparent",
-                    color: isActive ? COLORS.primaryOrange : COLORS.grayText,
-                    border: `1px solid ${isActive ? COLORS.primaryOrange : COLORS.borderGray}`,
-                  }}
-                >
-                  {status.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Divider */}
-          <div className="w-px h-6" style={{ backgroundColor: COLORS.borderGray }} />
-
-          {/* Add Order Button - Prominent Orange */}
+        {/* Right Section - Add Button + Online Status */}
+        <div className="flex items-center gap-3">
+          {/* Add Order Button */}
           <button
             data-testid="add-table-btn"
-            className="p-3 rounded-lg transition-colors hover:opacity-80"
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg transition-colors hover:opacity-80"
             style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
             onClick={onAddOrder}
           >
-            <PlusSquare className="w-5 h-5" />
+            <PlusSquare className="w-4 h-4" />
+            <span className="text-sm font-medium">Add</span>
           </button>
-          
-          {/* View Toggle - Available for all channels including Room */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
-            <button
-              data-testid="table-view-btn"
-              className={`p-2.5 rounded-md transition-colors ${
-                activeView === "table" ? "bg-white shadow-sm" : ""
-              }`}
-                style={{ color: activeView === "table" ? COLORS.primaryOrange : COLORS.grayText }}
-                onClick={() => setActiveView("table")}
-                title="Table View"
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </button>
-              <button
-                data-testid="order-view-btn"
-                className={`p-2.5 rounded-md transition-colors ${
-                  activeView === "order" ? "bg-white shadow-sm" : ""
-                }`}
-                style={{ color: activeView === "order" ? COLORS.primaryOrange : COLORS.grayText }}
-                onClick={() => setActiveView("order")}
-                title="Order View"
-              >
-                <List className="w-4 h-4" />
-              </button>
-            </div>
 
-          {/* Active First Toggle - Show for all channels */}
-          <div
-            data-testid="active-first-toggle"
-            className="w-8 h-4 rounded-full relative cursor-pointer transition-colors"
-            style={{ backgroundColor: activeFirst ? COLORS.primaryGreen : COLORS.borderGray }}
-            onClick={() => setActiveFirst(!activeFirst)}
-          >
-            <div 
-              className="absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-all"
-              style={activeFirst ? { right: "2px" } : { left: "2px" }}
-            />
-          </div>
-
-          {/* Online/Offline Status - Just circle indicator */}
+          {/* Online/Offline Status - Circle indicator after Add button */}
           <div
             data-testid="online-status"
-            className="ml-1"
             title={isOnline ? "Online" : "Offline"}
           >
             <div 

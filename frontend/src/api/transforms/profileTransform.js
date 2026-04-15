@@ -1,6 +1,6 @@
 // Profile Transform - Vendor Profile API response mapping
 
-import { YES_NO_MAP } from '../constants';
+import { YES_NO_MAP, F_ORDER_STATUS_API } from '../constants';
 
 /**
  * Helper to convert Yes/No/Y/N strings to boolean
@@ -107,6 +107,17 @@ export const fromAPI = {
       // Settings
       settings: fromAPI.settings(api.settings),
       
+      // Cancellation rules
+      cancellation: {
+        allowPostServeCancel: toBoolean(api.cancle_post_serve),
+        allowPostServeCancel2: toBoolean(api.allow_cancel_post_server),
+        orderCancelWindowMinutes: parseInt(api.cancel_order_time) || 0,
+        itemCancelWindowMinutes: parseInt(api.cancel_food_timings) || 0,
+      },
+
+      // Default order status for confirm endpoint (mapped via F_ORDER_STATUS_API)
+      defaultOrderStatus: F_ORDER_STATUS_API[api.def_ord_status] || null,
+
       // Search options
       searchOptions: api.search_by || ['order id', 'table no', 'user id'],
     };
@@ -176,6 +187,8 @@ export const fromAPI = {
       isLoyalty: toBoolean(apiSettings.is_loyality),
       isCustomerWallet: toBoolean(apiSettings.is_customer_wallet),
       aggregatorAutoKot: toBoolean(apiSettings.aggregator_auto_kot),
+      autoKot: toBoolean(apiSettings.aggregator_auto_kot),  // Auto print KOT
+      autoBill: toBoolean(apiSettings.billing_auto_bill_print),  // Auto print Bill
       defaultPrepTime: parseInt(apiSettings.default_prep_time) || 15,
     };
   },

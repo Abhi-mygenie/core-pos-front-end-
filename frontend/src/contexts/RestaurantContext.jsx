@@ -35,6 +35,29 @@ export const RestaurantProvider = ({ children }) => {
     };
   }, [restaurant]);
 
+  // Get cancellation rules
+  const cancellation = useMemo(() => {
+    return restaurant?.cancellation || {
+      allowPostServeCancel: false,
+      allowPostServeCancel2: false,
+      orderCancelWindowMinutes: 0,
+      itemCancelWindowMinutes: 0,
+    };
+  }, [restaurant]);
+
+  // Get default order status for confirm action
+  const defaultOrderStatus = useMemo(() => {
+    return restaurant?.defaultOrderStatus || 'paid';
+  }, [restaurant]);
+
+  // Get settings (auto print, etc.)
+  const settings = useMemo(() => {
+    return restaurant?.settings || {
+      autoKot: false,
+      autoBill: false,
+    };
+  }, [restaurant]);
+
   // Get payment types
   const paymentTypes = useMemo(() => {
     return restaurant?.paymentTypes || [];
@@ -59,6 +82,9 @@ export const RestaurantProvider = ({ children }) => {
     // Derived
     currencySymbol,
     features,
+    cancellation,
+    defaultOrderStatus,
+    settings,
     paymentTypes,
     discountTypes,
     printers,
@@ -71,6 +97,9 @@ export const RestaurantProvider = ({ children }) => {
     isLoaded,
     currencySymbol,
     features,
+    cancellation,
+    defaultOrderStatus,
+    settings,
     paymentTypes,
     discountTypes,
     printers,

@@ -1,20 +1,448 @@
 # API Document v2 — POS Frontend API Reference
 
-**Version:** 3.0
-**Last Updated:** April 6, 2026
+**Version:** 3.6 (Socket-First Architecture Updates)
+**Last Updated:** April 10, 2026
 
 ## Endpoint Summary
 
 | # | Action | Endpoint | Method | Content-Type |
 |---|--------|----------|--------|-------------|
-| 1 | Place New Order | `/api/v1/vendoremployee/order/place-order` | POST | `multipart/form-data` |
-| 2 | Place + Pay (prepaid) | `/api/v1/vendoremployee/order/place-order` | POST | `multipart/form-data` |
-| 3 | Update Order (add items) | `/api/v1/vendoremployee/order/update-place-order` | PUT | `application/json` |
-| 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order-bill-payment` | POST | `application/json` |
-| 5 | Cancel Item (full/partial) | `/api/v1/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
+| 1 | Place New Order | `/api/v2/vendoremployee/order/place-order` | POST | `multipart/form-data` |
+| 2 | Place + Pay (prepaid) | `/api/v2/vendoremployee/order/place-order` | POST | `multipart/form-data` |
+| 3 | Update Order (add items) | `/api/v2/vendoremployee/order/update-place-order` | PUT | `application/json` |
+| 4 | Collect Bill (existing order) | `/api/v2/vendoremployee/order/order-bill-payment` | POST | `application/json` |
+| 5 | Cancel Item (full/partial) | `/api/v2/vendoremployee/order/cancel-food-item` | PUT | `application/json` |
 | 6 | Cancel Full Order | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | 7 | Get Single Order | `/api/v2/vendoremployee/get-single-order-new` | POST | `application/json` |
 | 8 | Food Status Update | `/api/v2/vendoremployee/food-status-update` | PUT | `application/json` |
+| **9** | **Order Status Update (Ready/Served)** | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
+| **10** | **Profile + Permissions + Restaurant Config** | `/api/v2/vendoremployee/vendor-profile/profile` | GET | — |
+| **11** | **Split Bill** | `/api/v1/vendoremployee/pos/split-order` | POST | `application/json` |
+| **14** | **Transfer Order (Merge)** | `/api/v2/vendoremployee/order/transfer-order` | POST | `application/json` |
+| **15** | **Transfer Food Item** | `/api/v2/vendoremployee/order/transfer-food-item` | POST | `application/json` |
+| **12** | **Payment Methods Mapping** | — | — | See Section 12 |
+| **13** | **Print KOT/Bill** | `/api/v1/vendoremployee/order-temp-store` | POST | `application/json` |
+
+---
+
+## April 13, 2026 Updates — v2 Socket Architecture for Transfer/Merge/Bill Flows
+
+### Endpoint Upgrades (April 13, 2026)
+
+| Action | Old Endpoint | New Endpoint |
+|--------|-------------|-------------|
+| Switch Table | `/api/v1/.../pos/order-table-room-switch` | `/api/v2/.../order/order-table-room-switch` |
+| Merge Table | `/api/v1/.../order/transfer-order` | `/api/v2/.../order/transfer-order` |
+| Transfer Food | `/api/v1/.../order/transfer-food-item` | `/api/v2/.../order/transfer-food-item` |
+| Collect Bill | `/api/v2/.../order-bill-payment` | `/api/v2/.../order/order-bill-payment` |
+
+### New Socket Events (v2)
+
+| Event Name | Channel | Used By |
+|-----------|---------|---------|
+| `update-order-target` | `new_order_{restaurantId}` | Switch Table, Merge Table, Transfer Food |
+| `update-order-source` | `new_order_{restaurantId}` | Merge Table, Transfer Food (not Switch Table) |
+
+### Switch Table v2 — Complete Socket Flow
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-table-room-switch`
+
+**Verified from console logs (April 13, 2026):**
+
+**Scenario:** Order 730850 switched FROM Table 4086 (source) TO Table 3237 (dest)
+
+```
+13:36:31  update-table  3237  engage                      ← Dest table LOCKED
+13:36:31  update-table  4086  engage                      ← Source table LOCKED
+13:36:31  update-order-target  730850, 478, 1, {payload}  ← Order updated (now on dest table)
+```
+
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `update-table engage` | Table 3237 (dest) | — | N/A (lock only) |
+| 2 | `update-table engage` | Table 4086 (source) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730850 | 1 (preparing) | ✅ Yes (complete) |
+
+**Key differences from Merge/Transfer Food:**
+- Uses **table-level locking** (`update-table engage`) not order-level (`order-engage`)
+- Only **one data event** (`update-order-target`) — no `update-order-source` (same order, just moved)
+- Both source AND dest tables get `engage` (v1 only engaged dest)
+- No `update-table free` — frontend releases both after context update
+
+**Frontend handler logic:**
+```
+update-order-target handler:
+  → oldOrder = getOrderById(orderId) → oldTableId (source)
+  → newOrder = transform(payload) → newTableId (dest)
+  → if oldTableId !== newTableId:
+      updateOrder(orderId, newOrder)
+      syncTableStatus(newTableId, derived from f_order_status)
+      updateTableStatus(oldTableId, 'available')
+      setTableEngaged(newTableId, false)
+      setTableEngaged(oldTableId, false)
+```
+
+### Merge Table v2 — Complete Socket Flow
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/transfer-order`
+
+**Verified from console logs (April 13, 2026):**
+
+**Scenario:** Order 730850 (source) merged INTO Order 730849 (target)
+
+```
+13:21:14  order-engage  730850  engage                    ← Source order LOCKED
+13:21:14  order-engage  730849  engage                    ← Target order LOCKED
+13:21:15  update-order-target  730849, 478, 1, {payload}  ← Target updated (items merged in)
+13:21:15  update-order-source  730850, 478, 3, {payload}  ← Source cancelled (f_order_status=3)
+```
+
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `order-engage` | Order 730850 (source) | — | N/A (lock only) |
+| 2 | `order-engage` | Order 730849 (target) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730849 (target) | 1 (preparing) | ✅ Yes |
+| 4 | `update-order-source` | Order 730850 (source) | 3 (cancelled) | ✅ Yes |
+
+### Transfer Food Item v2 — Complete Socket Flow
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/transfer-food-item`
+
+**Verified from console logs (April 13, 2026):**
+
+**Scenario:** Food item transferred FROM Order 730849 (source) TO Order 730850 (target)
+
+```
+13:28:17  order-engage  730849  engage                    ← Source order LOCKED
+13:28:17  order-engage  730850  engage                    ← Target order LOCKED
+13:28:17  update-order-target  730850, 478, 1, {payload}  ← Target updated (item added)
+13:28:17  update-order-source  730849, 478, 1, {payload}  ← Source updated (item removed, still active)
+```
+
+| # | Event | Target | f_order_status | Payload? |
+|---|-------|--------|---------------|----------|
+| 1 | `order-engage` | Order 730849 (source) | — | N/A (lock only) |
+| 2 | `order-engage` | Order 730850 (target) | — | N/A (lock only) |
+| 3 | `update-order-target` | Order 730850 (target) | 1 (preparing) | ✅ Yes |
+| 4 | `update-order-source` | Order 730849 (source) | 1 (preparing) | ✅ Yes |
+
+### Collect Bill — Endpoint Path Change
+
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-bill-payment`
+
+Path changed from `/order-bill-payment` to `/order/order-bill-payment`. Socket behavior TBD (awaiting log verification).
+
+### All 3 Transfer Flows — Comparison Table
+
+| Aspect | Switch Table v2 | Merge Table v2 | Transfer Food v2 |
+|--------|----------------|----------------|-----------------|
+| Lock type | `update-table` (table) | `order-engage` (order) | `order-engage` (order) |
+| What's locked | Both tables | Both orders | Both orders |
+| Data events | `update-order-target` only | `update-order-target` + `update-order-source` | `update-order-target` + `update-order-source` |
+| Source event? | ❌ No (same order moves) | ✅ Yes (source cancelled) | ✅ Yes (source reduced) |
+| Source f_order_status | N/A | 3 (cancelled) | 1 (still active) |
+| Payload? | ✅ Yes | ✅ Yes | ✅ Yes |
+| GET API needed? | ❌ No | ❌ No | ❌ No |
+| `update-table free`? | ❌ No | ❌ No | ❌ No |
+
+### Source Handler Decision Logic
+
+```
+update-order-source handler:
+  → transform payload
+  → if status === 'cancelled' → removeOrder() + table available  (merge case)
+  → else → updateOrder() + syncTableStatus                       (transfer food case)
+  → release engage
+```
+
+### Table Status Derivation (Confirmed for all flows)
+
+```
+f_order_status → F_ORDER_STATUS map → statusKey → ORDER_TO_TABLE_STATUS → tableStatus
+
+f_order_status=1 → 'preparing' → 'occupied'
+f_order_status=3 → 'cancelled' → 'available'
+```
+
+---
+
+## April 10, 2026 Updates
+
+### Endpoint Version Changes
+
+| Action | Old (v1) | New (v2) |
+|--------|----------|----------|
+| Place New Order | `/api/v1/.../place-order` | `/api/v2/.../place-order` |
+| Update Order | `/api/v1/.../update-place-order` | `/api/v2/.../update-place-order` |
+
+### Socket Payload Changes
+
+**v2 endpoints now include complete order data in socket events:**
+
+| Event | v1 Behavior | v2 Behavior |
+|-------|-------------|-------------|
+| `new-order` | Partial data, GET API required | ✅ Complete payload, no GET API |
+| `update-order` | No payload, GET API required | ✅ Complete payload, no GET API |
+
+### New Socket Channel: `order-engage_{restaurantId}`
+
+**Purpose:** Order-level locking for update operations
+
+**Message Format:**
+```javascript
+[orderId, restaurantOrderId, restaurantId, status]
+// Example: [730762, '008639', 644, 'engage']
+```
+
+| Field | Index | Type | Description |
+|-------|-------|------|-------------|
+| orderId | 0 | number | Order ID |
+| restaurantOrderId | 1 | string | Restaurant's order number |
+| restaurantId | 2 | number | Restaurant ID |
+| status | 3 | string | `'engage'` or `'free'` |
+
+**Note:** Unlike other channels, `order-engage` does NOT have an event name at index 0.
+
+---
+
+## 13. Print KOT/Bill API (Updated - April 11, 2026)
+
+**Endpoint:** `POST /api/v1/vendoremployee/order-temp-store`
+
+**Purpose:** Send print request (KOT or Bill) to the printer agent via backend socket
+
+**Content-Type:** `application/json`
+
+### KOT Payload (simple)
+
+```json
+{
+  "order_id": 730790,
+  "print_type": "kot",
+  "station_kot": "KDS"
+}
+```
+
+### Bill Payload (full — requires financial data + billFoodList)
+
+```json
+{
+  "order_id": 730790,
+  "restaurant_order_id": "002359",
+  "print_type": "bill",
+  "payment_amount": 287.5,
+  "grant_amount": 287.5,
+  "order_subtotal": 250.0,
+  "discount_amount": 0.0,
+  "coupon_code": "",
+  "loyalty_dicount_amount": 0.0,
+  "wallet_used_amount": 0.0,
+  "Date": "11/Apr/2026 12:33 PM",
+  "waiterName": "",
+  "tablename": "WC",
+  "custName": "",
+  "custPhone": "",
+  "custGSTName": "",
+  "custGST": "",
+  "billFoodList": [ /* raw orderDetails items with full food_details */ ],
+  "orderNote": "",
+  "serviceChargeAmount": 25.0,
+  "roomRemainingPay": 0.0,
+  "roomAdvancePay": 0.0,
+  "roomGst": 0,
+  "deliveryCustName": "",
+  "deliveryAddressType": "",
+  "deliveryCustAddress": "",
+  "deliveryCustPincode": "",
+  "deliveryCustPhone": "",
+  "Tip": 0.0,
+  "station_kot": "",
+  "order_type": "dinein",
+  "gst_tax": 12.5,
+  "vat_tax": 0.0,
+  "delivery_charge": 0.0
+}
+```
+
+### Bill Payload Field Reference
+
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `order_id` | number | `order.orderId` | Order ID |
+| `restaurant_order_id` | string | `order.orderNumber` | Restaurant-side order ID |
+| `print_type` | string | `"bill"` | Always "bill" |
+| `payment_amount` | number | `order.amount` | Total payment amount |
+| `grant_amount` | number | `order.amount` | Same as payment_amount |
+| `order_subtotal` | number | `order.subtotalBeforeTax` | Subtotal before tax |
+| `Date` | string | Formatted `order.createdAt` | Format: `DD/MMM/YYYY HH:MM AM/PM` |
+| `waiterName` | string | `order.waiter` | Staff who punched order |
+| `tablename` | string | Derived | `WC` (walk-in), `TA` (takeaway), `Del` (delivery), or table number |
+| `custName` | string | `order.customer` | Customer name |
+| `custPhone` | string | `order.phone` | Customer phone |
+| `billFoodList` | array | `order.rawOrderDetails` | Raw orderDetails with full `food_details` |
+| `gst_tax` | number | Computed | Sum of `gst_tax_amount` from items where `food_details.tax_type === 'GST'` |
+| `vat_tax` | number | Computed | Sum of `gst_tax_amount` from items where `food_details.tax_type === 'VAT'` |
+| `station_kot` | string | `""` | Always empty string for bill |
+| `order_type` | string | `order.rawOrderType` | `dinein`, `takeaway`, `delivery` |
+| `Tip` | number | `order.tipAmount` | Tip amount |
+| `serviceChargeAmount` | number | `order.serviceTax` | Service charge |
+| `delivery_charge` | number | `order.deliveryCharge` | Delivery charge |
+
+### Response
+
+```json
+{
+  "message": "Print job sent successfully"
+}
+```
+
+### Frontend Usage
+
+| Location | Button | print_type | Payload |
+|----------|--------|------------|---------|
+| TableCard / OrderCard | Printer icon | `"kot"` | Simple (order_id + station_kot) |
+| TableCard / OrderCard | Bill (green button) | `"bill"` | Full (financial + billFoodList) |
+| OrderEntry Cart Panel | Re-Print | `"kot"` | Simple (order_id + station_kot) |
+
+### Implementation Notes
+- **KOT:** `printOrder(orderId, 'kot', stationKot)` — simple payload
+- **Bill:** `printOrder(orderId, 'bill', null, orderData)` — full payload built via `toAPI.buildBillPrintPayload(order)`
+- Bill payload requires `rawOrderDetails` stored in OrderContext (preserved from `fromAPI.order()`)
+- `gst_tax` and `vat_tax` computed at send time from item-level `gst_tax_amount` grouped by `food_details.tax_type`
+- TableCard gets order via `useOrders().getOrderById(table.orderId)`
+- OrderCard passes `order` prop directly
+
+---
+
+## 11. Split Bill API (NEW - April 9, 2026)
+
+**Endpoint:** `POST /api/v1/vendoremployee/pos/split-order`
+
+**Purpose:** Split an order among multiple people (e.g., friends sharing a meal, one person leaving early)
+
+**Content-Type:** `application/json`
+
+### Use Cases
+1. **By Person**: Select specific items for each person
+2. **Equal Split**: Divide items evenly among N people
+3. **Quantity Split**: Split item quantity (e.g., 1 of 3 pizzas to Person A)
+
+### Payload - Move Whole Items
+
+```json
+{
+  "order_id": 12345,
+  "split_count": 2,
+  "splits": [
+    [469922],
+    [469923]
+  ]
+}
+```
+
+### Payload - Split with Quantity
+
+```json
+{
+  "order_id": 12345,
+  "split_count": 2,
+  "splits": [
+    [{ "id": 469922, "qty": 1 }],
+    [{ "id": 469923, "qty": 2 }]
+  ]
+}
+```
+
+### Field Reference
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `order_id` | number | ✅ | Original order ID |
+| `split_count` | number | ✅ | Number of splits |
+| `splits` | array | ✅ | Array of arrays, each containing items for that split |
+
+### Expected Response
+- Creates new order(s) for split portions
+- Original order retains unassigned items
+- Returns new order IDs for payment collection
+
+### Frontend Implementation
+- **Entry Point**: Scissors icon in OrderEntry header
+- **Modal**: `SplitBillModal.jsx` with two modes (By Person / Equal Split)
+- **Service**: `orderService.splitOrder(orderId, splitCount, splits)`
+
+---
+
+## 9. Order Status Update Endpoint (NEW - April 7, 2026)
+
+**Endpoint:** `PUT /api/v2/vendoremployee/order-status-update`
+
+**Purpose:** Update entire order status (ready/served/cancelled)
+
+**Content-Type:** `application/json`
+
+### Payload for Ready
+
+```json
+{
+  "order_id": "730522",
+  "role_name": "Manager",
+  "order_status": "ready"
+}
+```
+
+### Payload for Served
+
+```json
+{
+  "order_id": "730522",
+  "role_name": "Manager",
+  "order_status": "serve"
+}
+```
+
+### Payload for Cancelled (already documented in #6)
+
+```json
+{
+  "order_id": "730522",
+  "role_name": "Manager",
+  "order_status": "cancelled",
+  "cancellation_reason": "Customer requested cancellation",
+  "cancellation_note": "Customer asked to cancel the whole order"
+}
+```
+
+### Field Reference
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `order_id` | string | ✅ | Order ID |
+| `role_name` | string | ✅ | User's role (e.g., "Manager", "Owner", "Waiter") |
+| `order_status` | string | ✅ | New status: `"ready"`, `"serve"`, `"cancelled"` |
+| `cancellation_reason` | string | Only for cancelled | Reason for cancellation |
+| `cancellation_note` | string | Only for cancelled | Additional notes |
+
+### Status Mapping
+
+| API `order_status` | DB `f_order_status` | UI Display |
+|--------------------|---------------------|------------|
+| `"ready"` | 2 | Ready |
+| `"serve"` | 5 | Served |
+| `"cancelled"` | 3 | Cancelled |
+
+### Frontend Implementation
+
+**Files:**
+- `orderTransform.js` → `toAPI.updateOrderStatus(orderId, roleName, status)`
+- `orderService.js` → `updateOrderStatus(orderId, roleName, status)`
+- `DashboardPage.jsx` → `handleMarkReady()`, `handleMarkServed()`
+- `TableCard.jsx` → Ready/Serve/Bill buttons
+
+**Button Flow:**
+```
+Preparing (1)  ──[Ready]──►  Ready (2)  ──[Serve]──►  Served (5)  ──[Bill]──►  Paid (6)
+```
 
 ---
 
@@ -462,7 +890,7 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 
 ## Collect Bill V2 Endpoint (Existing Order Payment)
 
-**Endpoint:** `POST /api/v2/vendoremployee/order-bill-payment`
+**Endpoint:** `POST /api/v2/vendoremployee/order/order-bill-payment`
 **Content-Type:** `application/json`
 **Auth:** `Bearer <token>`
 
@@ -549,7 +977,7 @@ socketHandlers.handleUpdateOrderStatus (status=6):
 - Called from `OrderEntry.jsx` → `onPaymentComplete` handler
 
 ### Key Differences from Place Order Endpoint
-| Aspect | Place Order (`/place-order`) | Collect Bill (`/order-bill-payment`) |
+| Aspect | Place Order (`/place-order`) | Collect Bill (`/order/order-bill-payment`) |
 |--------|------|------|
 | Content-Type | `multipart/form-data` | `application/json` |
 | Cart required | Yes (`cart` array) | No (order already placed) |
@@ -693,7 +1121,7 @@ socketHandlers.handleUpdateOrder:
 
 ## Cancel Item Endpoint
 
-**Endpoint:** `PUT /api/v1/vendoremployee/order/cancel-food-item`
+**Endpoint:** `PUT /api/v2/vendoremployee/order/cancel-food-item`
 **Content-Type:** `application/json`
 **Auth:** `Bearer <token>`
 
@@ -736,8 +1164,9 @@ Cancels a specific quantity of a single item in an order. Supports both full can
 | Endpoint | cancel_qty respected? | Status |
 |----------|----------------------|--------|
 | `v2 /partial-cancel-food-item` | NO — "Order item not found" error | Rejected |
-| `v2 /cancel-food-item` | NO — ignores cancel_qty, cancels all | Rejected |
-| **`v1 /order/cancel-food-item`** | **YES — works correctly** | **In use** |
+| `v2 /cancel-food-item` (old path) | NO — ignores cancel_qty, cancels all | Rejected |
+| `v1 /order/cancel-food-item` | YES — works correctly | Was in use (v1) |
+| **`v2 /order/cancel-food-item`** | **YES — works correctly + v2 socket payload** | **Current (Apr 13)** |
 
 ### Socket Events After Cancel Item
 1. `update-table free` — on table channel (BUG-216: should be `engage`, see BUGS.md)
@@ -973,3 +1402,264 @@ socketHandlers.handleUpdateOrderStatus (status=3):
 
 ### KEY LEARNING: Backend GET API returns cancelled order with non-cancelled items
 When a full order is cancelled (status=3), the GET single order API still returns the order with individual `item.status` values that may NOT be `'cancelled'`. The order-level `f_order_status` IS `3` (cancelled), which transforms to `order.status === 'cancelled'`. The fix (BUG-215) checks order-level status in addition to item-level statuses.
+
+
+
+---
+
+## 10. Profile API — Permissions & Cancellation Settings (NEW — April 7, 2026)
+
+**Endpoint:** `GET /api/v2/vendoremployee/vendor-profile/profile`
+**Auth:** `Bearer <token>`
+
+### Purpose
+Returns logged-in employee's identity, role permissions, and full restaurant configuration.
+
+### Response Shape (Key Fields)
+```json
+{
+  "emp_id": 3592,
+  "role_name": "Owner",
+  "role": ["Manager", "food", "pos", "order", "bill", "order_cancel", "serve", ...],
+  "restaurants": [{
+    "cancel_order_time": 5,
+    "cancel_food_timings": 5,
+    "cancle_post_serve": "Yes",
+    "allow_cancel_post_server": "Yes",
+    ...
+  }]
+}
+```
+
+### Permission Strings (Verified from actual API — April 7, 2026)
+
+| Permission | UI Action | Gated In |
+|-----------|-----------|----------|
+| `order_cancel` | Cancel entire order | OrderCard, OrderEntry |
+| `food` | Cancel individual item | CartPanel → PlacedItemRow |
+| `transfer_table` | Shift order to another table | OrderCard, CategoryPanel |
+| `merge_table` | Merge two table orders | OrderCard, CategoryPanel |
+| `food_transfer` | Transfer item between tables | OrderCard, CartPanel → PlacedItemRow |
+| `bill` | Collect payment / settle bill | CartPanel (Collect Bill button) |
+| `customer_management` | Customer search/add | OrderEntry (UserPlus button) |
+| `discount` | Apply discounts | OrderEntry (computed, not yet gated in UI) |
+| `order_edit` | Edit/update existing order | Not yet gated |
+| `Ready` (capital R) | Mark items/order ready | Not yet gated |
+| `serve` | Mark items/order served | Not yet gated |
+| `print_icon` | Print KOT/Bill | Phase 2 |
+
+### Cancellation Settings (Restaurant-Level)
+
+| API Field | Type | Example | Transform Key | Description |
+|-----------|------|---------|---------------|-------------|
+| `cancel_order_time` | number | `5` | `cancellation.orderCancelWindowMinutes` | Minutes after order creation to allow full cancel (0=unlimited). **Pre-ready only.** |
+| `cancel_food_timings` | number | `5` | `cancellation.itemCancelWindowMinutes` | Minutes after item added to allow item cancel (0=unlimited). **Pre-ready only.** |
+| `cancle_post_serve` | string | `"Yes"` | `cancellation.allowPostServeCancel` | Allow cancel after food is ready/served. No time check. |
+| `allow_cancel_post_server` | string | `"Yes"` | `cancellation.allowPostServeCancel2` | Redundant gate (both must be "Yes"). |
+
+### Cancellation Decision Logic
+```
+Pre-Ready (item not ready/served):
+  Permission check + time window (cancel_order_time / cancel_food_timings)
+
+Post-Ready (item ready or served):
+  Permission check + cancle_post_serve flag (no time window)
+```
+
+### Transform & Context
+- **Transform:** `profileTransform.js` → `fromAPI.restaurant()` → `cancellation` object
+- **Context:** `RestaurantContext` → `cancellation` (via `useRestaurant()`)
+- **Auth:** `AuthContext` → `permissions` array → `hasPermission(string)` check
+
+### Auto Print Settings (Added April 9, 2026)
+Profile API provides auto-print settings, now mapped in `profileTransform.js`:
+
+| API Field | Frontend Field | Description |
+|-----------|----------------|-------------|
+| `aggregator_auto_kot` | `settings.autoKot` | Auto-print KOT for orders |
+| `billing_auto_bill_print` | `settings.autoBill` | Auto-print Bill for orders |
+
+**Usage:** 
+- Exposed via `RestaurantContext` → `settings`
+- Used in `RePrintButton.jsx` to default checkbox states
+- Actual print binding to be implemented later
+
+### Full Field Audit
+See `/app/memory/PROFILE_API_FIELD_AUDIT.md` for complete 240-field mapping with MAPPED/MISSING status.
+
+---
+
+## 12. Payment Methods - API Mapping (Added April 9, 2026)
+
+### Overview
+
+This section describes how the frontend maps API payment types to UI elements.
+
+---
+
+### API Data Structure
+
+#### Source: `useRestaurant().paymentTypes`
+
+```javascript
+// API Response: restaurantPaymentTypes
+[
+  { id: 1, name: 'cash', displayName: 'Cash' },
+  { id: 3, name: 'upi', displayName: 'UPI' },
+  { id: 6, name: 'dineout', displayName: 'Dineout' },
+  { id: 7, name: 'zomato_gold', displayName: 'Zomato Gold' },
+  { id: 8, name: 'easy_dinner', displayName: 'Easy Dinner' },
+  { id: 9, name: 'partial', displayName: 'Partial Payment' },
+  { id: 11, name: 'OTHER', displayName: 'OTHERS' }
+]
+```
+
+---
+
+### API Name → UI Mapping
+
+#### Primary Methods (Row 1 Buttons)
+
+| API `name` | UI Method ID | UI Label | Button |
+|------------|--------------|----------|--------|
+| `cash` | `cash` | Cash | Row 1, Slot 1 |
+| `upi` | `upi` | UPI | Row 1, Slot 2 |
+| `card` | `card` | Card | Row 1, Slot 3 (if exists) |
+
+#### Action Methods (Row 2)
+
+| API `name` | UI Method ID | UI Label | Position |
+|------------|--------------|----------|----------|
+| `partial` | `split` | Split | Row 2, Slot 1 |
+| *(first dynamic)* | *(from API)* | *(from displayName)* | Row 2, Slot 2 |
+| *(remaining)* | - | - | Dropdown |
+
+#### Dynamic Types (From API, not hardcoded)
+
+| API `name` | Where Shown |
+|------------|-------------|
+| `dineout` | Row 2, Slot 2 (first dynamic) |
+| `zomato_gold` | Dropdown |
+| `easy_dinner` | Dropdown |
+| `OTHER` | Dropdown |
+
+---
+
+### Payment API Values (Sent to Backend)
+
+When completing payment, the `payment_method` sent to API:
+
+| UI Selection | API `payment_method` Value |
+|--------------|---------------------------|
+| Cash | `cash` |
+| UPI | `upi` |
+| Card | `card` |
+| Credit/Tab | `TAB` |
+| Split | `partial` |
+| To Room | `ROOM` |
+| Dineout | `dineout` |
+| Zomato Gold | `zomato_gold` |
+| Easy Dinner | `easy_dinner` |
+| OTHERS | `OTHER` |
+
+---
+
+### Filter Logic
+
+#### `getDynamicPaymentTypes(apiPaymentTypes)`
+
+**Purpose:** Extract dynamic payment types that go in Row 2 button + dropdown
+
+**Filters OUT:**
+- `cash` (shown in Row 1)
+- `upi` (shown in Row 1)
+- `card` (shown in Row 1)
+- `partial` (mapped to Split button)
+
+**Includes:**
+- `dineout`
+- `zomato_gold`
+- `easy_dinner`
+- `OTHER`
+- Any other custom types from API
+
+#### `filterLayoutByApiTypes(layoutConfig, apiPaymentTypes, hasRooms)`
+
+**Purpose:** Filter configured layout by what's actually available in API
+
+**Logic:**
+1. Row 1 methods: Only show if exists in API paymentTypes
+2. Split: Only show if `partial` exists in API
+3. To Room: Only show if restaurant has rooms
+4. Credit: Only show if `tab` or `credit` exists in API
+
+---
+
+### UI Layout Structure
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  💳 PAYMENT METHOD                                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ROW 1: [ Cash ]  [ UPI ]  [ Card* ]                       │
+│         └── From API: cash, upi, card ──┘                  │
+│                                                             │
+│  ROW 2: [ Split ]  [ Dineout ]  [ More ▼ ]                 │
+│         └── partial ─┘ └─ 1st dynamic ─┘ └─ rest ─┘        │
+│                                           ├─ Zomato Gold    │
+│                                           ├─ Easy Dinner    │
+│                                           └─ OTHERS         │
+│                                                             │
+│         [ To Room** ]                                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+* Card shown only if in API paymentTypes
+** To Room shown only if restaurant has rooms
+```
+
+---
+
+### Payment Methods Code References
+
+#### Registry File
+`/app/frontend/src/config/paymentMethods.js`
+
+#### Key Functions
+- `PAYMENT_METHODS` - Registry of known payment methods
+- `getDynamicPaymentTypes()` - Extract dynamic types from API
+- `filterLayoutByApiTypes()` - Filter layout by API availability
+- `isMethodInApiTypes()` - Check if method exists in API
+
+#### Component
+`/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx`
+
+#### Context
+`/app/frontend/src/contexts/SettingsContext.jsx` - Stores `paymentLayoutConfig`
+
+---
+
+### Payment Debug Logging
+
+Console log in CollectPaymentPanel shows:
+```javascript
+console.log('[CollectPaymentPanel] Payment Debug:', {
+  restaurantPaymentMethods,   // undefined (not used)
+  restaurantPaymentTypes,     // Array from API
+  paymentLayoutConfig,        // {row1, row2, dropdown}
+  hasRooms,                   // boolean
+  enabledLayout,              // Filtered layout
+  dynamicPaymentTypes,        // Dynamic types array
+});
+```
+
+---
+
+### Payment Known Issues & Solutions
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Method not showing | Not in API paymentTypes | Add to API or use dynamic types |
+| Wrong API value sent | Mapping mismatch | Check `apiValue` in PAYMENT_METHODS |
+| OTHERS was missing | Filtered as "known" | Fixed: Only filter primary methods |

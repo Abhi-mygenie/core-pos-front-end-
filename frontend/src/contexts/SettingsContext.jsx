@@ -1,4 +1,8 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { DEFAULT_PAYMENT_LAYOUT } from '../config/paymentMethods';
+
+// Local storage key for dynamic tables setting
+const DYNAMIC_TABLES_STORAGE_KEY = 'mygenie_enable_dynamic_tables';
 
 // Create Settings Context
 const SettingsContext = createContext(null);
@@ -6,7 +10,20 @@ const SettingsContext = createContext(null);
 // Settings Provider Component
 export const SettingsProvider = ({ children }) => {
   const [cancellationReasons, setCancellationReasonsData] = useState([]);
+  const [paymentLayoutConfig, setPaymentLayoutConfigData] = useState(DEFAULT_PAYMENT_LAYOUT);
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Dynamic tables setting - default OFF, persisted in localStorage
+  const [enableDynamicTables, setEnableDynamicTablesData] = useState(() => {
+    const stored = localStorage.getItem(DYNAMIC_TABLES_STORAGE_KEY);
+    return stored === 'true';
+  });
+
+  // Set dynamic tables setting
+  const setEnableDynamicTables = useCallback((enabled) => {
+    setEnableDynamicTablesData(enabled);
+    localStorage.setItem(DYNAMIC_TABLES_STORAGE_KEY, String(enabled));
+  }, []);
 
   // Set cancellation reasons (called from LoadingPage)
   const setCancellationReasons = useCallback((data) => {
@@ -14,9 +31,15 @@ export const SettingsProvider = ({ children }) => {
     setIsLoaded(true);
   }, []);
 
+  // Set payment layout config (can be loaded from API or set manually)
+  const setPaymentLayoutConfig = useCallback((config) => {
+    setPaymentLayoutConfigData(config || DEFAULT_PAYMENT_LAYOUT);
+  }, []);
+
   // Clear settings data (on logout)
   const clearSettings = useCallback(() => {
     setCancellationReasonsData([]);
+    setPaymentLayoutConfigData(DEFAULT_PAYMENT_LAYOUT);
     setIsLoaded(false);
   }, []);
 
@@ -39,11 +62,15 @@ export const SettingsProvider = ({ children }) => {
   const value = useMemo(() => ({
     // State
     cancellationReasons,
+    paymentLayoutConfig,
     isLoaded,
+    enableDynamicTables,
     
     // Actions
     setCancellationReasons,
+    setPaymentLayoutConfig,
     clearSettings,
+    setEnableDynamicTables,
     
     // Helpers
     getOrderCancellationReasons,
@@ -51,9 +78,13 @@ export const SettingsProvider = ({ children }) => {
     getReasonById,
   }), [
     cancellationReasons,
+    paymentLayoutConfig,
     isLoaded,
+    enableDynamicTables,
     setCancellationReasons,
+    setPaymentLayoutConfig,
     clearSettings,
+    setEnableDynamicTables,
     getOrderCancellationReasons,
     getItemCancellationReasons,
     getReasonById,

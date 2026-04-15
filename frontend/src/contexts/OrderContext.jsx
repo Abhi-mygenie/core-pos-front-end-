@@ -13,6 +13,10 @@ export const OrderProvider = ({ children }) => {
   // Mutable ref for polling (same pattern as engagedTablesRef in TableContext)
   const ordersRef = useRef([]);
 
+  // Engaged orders state - for order-level locking during updates
+  const [engagedOrders, setEngagedOrders] = useState(new Set());
+  const engagedOrdersRef = useRef(new Set());
+
   // Set orders from LoadingPage
   const setOrders = useCallback((ordersList) => {
     const list = ordersList || [];
@@ -37,6 +41,34 @@ export const OrderProvider = ({ children }) => {
   // ===========================================================================
   // SOCKET UPDATE FUNCTIONS
   // ===========================================================================
+
+  /**
+   * Set order engaged state (locked during update transactions)
+   * @param {number} orderId
+   * @param {boolean} engaged
+   */
+  const setOrderEngaged = useCallback((orderId, engaged) => {
+    if (!orderId) return;
+    const numericId = Number(orderId);
+    console.log(`[OrderContext] setOrderEngaged: ${numericId} → ${engaged}`);
+    const next = new Set(engagedOrdersRef.current);
+    if (engaged) {
+      next.add(numericId);
+    } else {
+      next.delete(numericId);
+    }
+    engagedOrdersRef.current = next;
+    setEngagedOrders(next);
+  }, []);
+
+  /**
+   * Check if an order is engaged
+   * @param {number} orderId
+   * @returns {boolean}
+   */
+  const isOrderEngaged = useCallback((orderId) => {
+    return engagedOrders.has(Number(orderId));
+  }, [engagedOrders]);
 
   /**
    * Get order by orderId
@@ -183,6 +215,31 @@ export const OrderProvider = ({ children }) => {
     });
   }, []);
 
+  /**
+   * Poll until an order becomes engaged (locked) via socket
+   * Used by OrderEntry to wait for socket confirmation before redirect
+   * @param {number} orderId - Order ID to wait for
+   * @param {number} timeout - Max wait time in ms (default 5000)
+   * @returns {Promise<boolean>} - true if engaged, false if timeout
+   */
+  const waitForOrderEngaged = useCallback((orderId, timeout = 5000) => {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const check = () => {
+        if (engagedOrdersRef.current.has(Number(orderId))) {
+          console.log(`[OrderContext] waitForOrderEngaged: Order ${orderId} engaged`);
+          resolve(true);
+        } else if (Date.now() - start > timeout) {
+          console.warn(`[OrderContext] waitForOrderEngaged: timeout for order ${orderId}`);
+          resolve(false);
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
+    });
+  }, []);
+
   // Get all orders for a table/room (multiple orders possible)
   const getOrdersByTableId = useCallback((tableId) => {
     return orders.filter(o => o.tableId === tableId && !o.isWalkIn);
@@ -209,6 +266,7 @@ export const OrderProvider = ({ children }) => {
           orderNote: order.orderNote,
           isRoom: order.isRoom,
           associatedOrders: order.associatedOrders || [],
+          fOrderStatus: order.fOrderStatus,
         };
       }
     }
@@ -231,6 +289,12 @@ export const OrderProvider = ({ children }) => {
     removeOrder,
     getOrderById,
     waitForOrderRemoval,
+    waitForOrderEngaged,
+
+    // Order Engage (for order-level locking)
+    engagedOrders,
+    setOrderEngaged,
+    isOrderEngaged,
 
     // Computed
     dineInOrders,
@@ -246,7 +310,8 @@ export const OrderProvider = ({ children }) => {
   }), [
     orders, isLoaded,
     setOrders, clearOrders, refreshOrders,
-    addOrder, updateOrder, removeOrder, getOrderById, waitForOrderRemoval,
+    addOrder, updateOrder, removeOrder, getOrderById, waitForOrderRemoval, waitForOrderEngaged,
+    engagedOrders, setOrderEngaged, isOrderEngaged,
     dineInOrders, takeAwayOrders, deliveryOrders,
     tableOrders, walkInOrders,
     getOrderByTableId, getOrdersByTableId, orderItemsByTableId,

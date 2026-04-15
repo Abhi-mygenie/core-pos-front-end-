@@ -42,6 +42,13 @@ export const getTableChannel = (restaurantId) => `update_table_${restaurantId}`;
  */
 export const getAggregatorChannel = (restaurantId) => `aggregator_order_${restaurantId}`;
 
+/**
+ * Generate channel name for order-engage events
+ * @param {number} restaurantId 
+ * @returns {string} e.g., 'order-engage_510'
+ */
+export const getOrderEngageChannel = (restaurantId) => `order-engage_${restaurantId}`;
+
 // =============================================================================
 // EVENT NAMES (sent within the channel message)
 // =============================================================================
@@ -54,8 +61,17 @@ export const SOCKET_EVENTS = {
   SCAN_NEW_ORDER: 'scan-new-order',
   DELIVERY_ASSIGN_ORDER: 'delivery-assign-order',
 
+  // v2 order data events (April 2026) - come through new_order_${restaurantId} channel
+  UPDATE_ORDER_TARGET: 'update-order-target',
+  UPDATE_ORDER_SOURCE: 'update-order-source',
+  UPDATE_ORDER_PAID: 'update-order-paid',
+  UPDATE_ITEM_STATUS: 'update-item-status',
+
   // Table event - comes through update_table_${restaurantId} channel
   UPDATE_TABLE: 'update-table',
+  
+  // Order engage event - comes through order-engage_${restaurantId} channel
+  ORDER_ENGAGE: 'order-engage',
 };
 
 // =============================================================================
@@ -87,11 +103,15 @@ export const CONNECTION_EVENTS = {
 // Events that include full payload (no API call needed)
 export const EVENTS_WITH_PAYLOAD = [
   SOCKET_EVENTS.NEW_ORDER,
+  SOCKET_EVENTS.UPDATE_ORDER,
+  SOCKET_EVENTS.UPDATE_ORDER_TARGET,
+  SOCKET_EVENTS.UPDATE_ORDER_SOURCE,
+  SOCKET_EVENTS.UPDATE_ORDER_PAID,
+  SOCKET_EVENTS.UPDATE_ITEM_STATUS,
 ];
 
 // Events that require regular order API call
 export const EVENTS_REQUIRING_ORDER_API = [
-  SOCKET_EVENTS.UPDATE_ORDER,
   SOCKET_EVENTS.UPDATE_FOOD_STATUS,
   SOCKET_EVENTS.UPDATE_ORDER_STATUS,
   SOCKET_EVENTS.SCAN_NEW_ORDER,

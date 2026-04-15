@@ -1,21 +1,22 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Search, User, Calendar, CreditCard } from "lucide-react";
+import { X, Search, User, Calendar, CreditCard, Loader2 } from "lucide-react";
 import { COLORS } from "../../constants";
-import { searchCustomers } from "../../api/services/customerService";
+import { searchCustomers, createCustomer, updateCustomer, lookupCustomer } from "../../api/services/customerService";
 
-const CustomerModal = ({ onClose, onSave, initialData = null }) => {
+const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' }) => {
   const [name, setName] = useState(initialData?.name || "");
   const [phone, setPhone] = useState(initialData?.phone || "");
-  const [birthday, setBirthday] = useState(initialData?.birthday || "");
+  const [birthday, setBirthday] = useState(initialData?.birthday || initialData?.dob || "");
   const [anniversary, setAnniversary] = useState(initialData?.anniversary || "");
-  const [memberId, setMemberId] = useState(initialData?.memberId || "");
+  const [memberId, setMemberId] = useState(initialData?.id || "");
   const [memberSearch, setMemberSearch] = useState("");
   const [showMemberSuggestions, setShowMemberSuggestions] = useState(false);
   const [filteredMembers, setFilteredMembers] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
   const memberInputRef = useRef(null);
 
-  // Filter members based on search — async API call
-  // CHG-036: Now calls customerService.searchByPhone() with graceful fallback
+  // Filter members based on search — CRM API call
   useEffect(() => {
     if (memberSearch.trim()) {
       searchCustomers(memberSearch).then(filtered => {
@@ -51,21 +52,70 @@ const CustomerModal = ({ onClose, onSave, initialData = null }) => {
   // Validate form
   const isValid = name.trim() && phone.trim();
 
-  // Handle save
-  const handleSave = () => {
-    if (!isValid) return;
-    
-    const customerData = {
-      id: memberId || `CUST-${Date.now()}`,
-      name: name.trim(),
-      phone: phone.trim(),
-      birthday: birthday || null,
-      anniversary: anniversary || null,
-      memberId: memberId || null,
-    };
-    
-    onSave(customerData);
-    onClose();
+  // Handle save — create or update in CRM
+  const handleSave = async () => {
+    if (!isValid || saving) return;
+    setSaving(true);
+    setError(null);
+
+    try {
+      let customerId = memberId;
+
+      if (customerId && !customerId.startsWith('CUST-')) {
+        // Existing CRM customer — update
+        await updateCustomer(customerId, {
+          name: name.trim(),
+          phone: phone.trim(),
+          dob: birthday || undefined,
+          anniversary: anniversary || undefined,
+        }, restaurantId);
+      } else {
+        // New customer — first check if phone exists in CRM
+        const existing = await lookupCustomer(phone.trim());
+        if (existing) {
+          // Phone already registered — use existing, update details
+          customerId = existing.id;
+          await updateCustomer(customerId, {
+            name: name.trim(),
+            phone: phone.trim(),
+            dob: birthday || undefined,
+            anniversary: anniversary || undefined,
+          }, restaurantId);
+        } else {
+          // Truly new customer — create in CRM
+          const result = await createCustomer({
+            name: name.trim(),
+            phone: phone.trim(),
+            dob: birthday || undefined,
+            anniversary: anniversary || undefined,
+          }, restaurantId);
+
+          if (result?.existing) {
+            // Duplicate phone — CRM returned existing customer
+            customerId = result.customer_id;
+          } else {
+            customerId = result?.customer_id || `CUST-${Date.now()}`;
+          }
+        }
+      }
+
+      const customerData = {
+        id: customerId,
+        name: name.trim(),
+        phone: phone.trim(),
+        birthday: birthday || null,
+        dob: birthday || null,
+        anniversary: anniversary || null,
+      };
+
+      onSave(customerData);
+      onClose();
+    } catch (err) {
+      console.error('[CustomerModal] Save failed:', err);
+      setError(err.readableMessage || 'Failed to save customer');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -102,6 +152,13 @@ const CustomerModal = ({ onClose, onSave, initialData = null }) => {
 
         {/* Content */}
         <div className="p-5 space-y-4">
+          {/* Error message */}
+          {error && (
+            <div className="px-3 py-2 rounded-xl text-sm" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }} data-testid="customer-error">
+              {error}
+            </div>
+          )}
+
           {/* Primary Fields - Name & Phone */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -230,14 +287,14 @@ const CustomerModal = ({ onClose, onSave, initialData = null }) => {
           </div>
 
           {/* Member badge if selected */}
-          {memberId && (
+          {memberId && !memberId.startsWith('CUST-') && (
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-xl"
               style={{ backgroundColor: `${COLORS.primaryGreen}15` }}
             >
               <CreditCard className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
               <span className="text-sm font-medium" style={{ color: COLORS.primaryGreen }}>
-                Member: {memberId}
+                Member: {memberId.substring(0, 8)}...
               </span>
               <button
                 onClick={() => {
@@ -256,12 +313,13 @@ const CustomerModal = ({ onClose, onSave, initialData = null }) => {
         <div className="p-4 border-t" style={{ borderColor: COLORS.borderGray, backgroundColor: COLORS.sectionBg }}>
           <button
             onClick={handleSave}
-            disabled={!isValid}
-            className="w-full py-3.5 font-semibold text-white text-base rounded-xl transition-colors disabled:opacity-50"
+            disabled={!isValid || saving}
+            className="w-full py-3.5 font-semibold text-white text-base rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             style={{ backgroundColor: COLORS.primaryGreen }}
             data-testid="customer-save-btn"
           >
-            Save
+            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {saving ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>

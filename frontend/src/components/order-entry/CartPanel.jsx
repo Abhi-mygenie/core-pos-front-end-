@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, MapPin } from "lucide-react";
 import { COLORS } from "../../constants";
 import { searchCustomers } from "../../api/services/customerService";
-import RePrintButton from "./RePrintButton";
+import { RePrintOnlyButton, KotBillCheckboxes } from "./RePrintButton";
+import { useSettings } from "../../contexts/SettingsContext";
 
 // Get icon, color, and bg for food item status
 const getItemStatusIcon = (status) => {
@@ -27,9 +28,11 @@ const getTimeAgo = (isoString) => {
 };
 
 // Placed item row (sent to kitchen)
-const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity }) => {
+const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   const isCancelled = item.status === 'cancelled';
+  const showCancelBtn = !isCancelled && canCancelItem && (!isItemCancelAllowed || isItemCancelAllowed(item));
+  const showTransferBtn = !isCancelled && canFoodTransfer;
 
   return (
     <div
@@ -41,8 +44,8 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
       </div>
 
-      {/* Cancel button — hidden for cancelled items */}
-      {!isCancelled && (
+      {/* Cancel button — hidden for cancelled items and permission/cancellation-gated */}
+      {showCancelBtn && (
         <button onClick={() => setCancelItem(item)} className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100" style={{ backgroundColor: COLORS.sectionBg }} data-testid={`cancel-item-btn-${item.id}`}>
           <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
         </button>
@@ -106,8 +109,8 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
           <span className="text-xs" style={{ color: COLORS.grayText }}>
             {item.addedAt || item.createdAt ? getTimeAgo(item.addedAt || item.createdAt) : ''}
           </span>
-          {/* Transfer button — pill with icon, hidden for cancelled items */}
-          {!isCancelled && (
+          {/* Transfer button — pill with icon, hidden for cancelled items and permission-gated */}
+          {showTransferBtn && (
             <button
               onClick={() => setTransferItem(item)}
               className="flex items-center gap-1 px-2 py-1 text-xs rounded-full transition-colors whitespace-nowrap hover:opacity-80"
@@ -254,7 +257,19 @@ const CartPanel = ({
   associatedOrders = [],
   orderNotes = [],
   onEditOrderNotes,
+  canCancelItem = true,
+  canFoodTransfer = true,
+  canBill = true,
+  canPrintBill = true,
+  isItemCancelAllowed,
+  orderType,
+  walkInTableName = "",
+  onWalkInTableNameChange,
+  orderId = null,
+  selectedAddress = null,
+  onAddressClick,
 }) => {
+  const { enableDynamicTables } = useSettings();
   const newItemCount = cartItems.filter(i => !i.placed).length;
   const [customerName, setCustomerName] = useState(customer?.name || "");
   const [customerPhone, setCustomerPhone] = useState(customer?.phone || "");
@@ -386,13 +401,43 @@ const CartPanel = ({
 
   return (
     <>
+      {/* Walk-In Table Name Field */}
+      {/* Dynamic Table Name - Only shown for walk-in orders AND when enabled in settings */}
+      {orderType === "walkIn" && enableDynamicTables && (
+        <div 
+          className="px-3 py-3"
+          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+        >
+          <div className="relative">
+            <LayoutGrid className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10" style={{ color: COLORS.primaryOrange }} />
+            <input
+              type="text"
+              placeholder="Table name (e.g., Patio 1, Garden)"
+              value={walkInTableName}
+              onChange={(e) => onWalkInTableNameChange?.(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border-2 focus:outline-none focus:ring-2"
+              style={{ 
+                borderColor: COLORS.primaryOrange,
+                fontSize: "13px",
+                backgroundColor: "white",
+                boxShadow: "0 2px 4px rgba(249, 115, 22, 0.15)"
+              }}
+              data-testid="walkin-table-name"
+            />
+          </div>
+          <p className="text-xs mt-1.5" style={{ color: COLORS.grayText }}>
+            Optional: If empty, customer name will be used as table label
+          </p>
+        </div>
+      )}
+
       {/* Quick Customer Fields */}
       <div 
-        className="px-3 py-3 grid grid-cols-2 gap-2"
+        className="px-3 py-4 grid grid-cols-2 gap-3"
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
         <div className="relative" ref={nameInputRef}>
-          <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 z-10" style={{ color: COLORS.grayText }} />
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10" style={{ color: COLORS.grayText }} />
           <input
             type="text"
             placeholder="Customer name"
@@ -400,8 +445,13 @@ const CartPanel = ({
             onChange={handleNameChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
-            className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
-            style={{ borderColor: COLORS.borderGray, fontSize: "13px" }}
+            className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: COLORS.borderGray, 
+              fontSize: "13px",
+              backgroundColor: "#f9fafb",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
+            }}
             data-testid="quick-customer-name"
           />
           {/* Name Auto-suggest */}
@@ -431,7 +481,7 @@ const CartPanel = ({
           )}
         </div>
         <div className="relative" ref={phoneInputRef}>
-          <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: COLORS.grayText }} />
           <input
             type="tel"
             placeholder="Phone number"
@@ -439,8 +489,13 @@ const CartPanel = ({
             onChange={handlePhoneChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerPhone.length >= 3 && setShowPhoneSuggestions(filteredCustomers.length > 0)}
-            className="w-full pl-8 pr-2 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
-            style={{ borderColor: COLORS.borderGray, fontSize: "13px" }}
+            className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
+            style={{ 
+              borderColor: COLORS.borderGray, 
+              fontSize: "13px",
+              backgroundColor: "#f9fafb",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
+            }}
             data-testid="quick-customer-phone"
           />
           {/* Phone Auto-suggest */}
@@ -469,6 +524,36 @@ const CartPanel = ({
         </div>
       </div>
 
+      {/* Delivery Address Strip — only for delivery orders */}
+      {orderType === "delivery" && (
+        <button
+          onClick={onAddressClick}
+          className="w-full px-3 py-2.5 flex items-center gap-2 text-left transition-colors hover:bg-gray-50"
+          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+          data-testid="delivery-address-strip"
+        >
+          <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: selectedAddress ? COLORS.primaryGreen : COLORS.primaryOrange }} />
+          {selectedAddress ? (
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>{selectedAddress.addressType || 'Address'}</span>
+                {selectedAddress.isDefault && (
+                  <span className="text-[9px] px-1 py-0.5 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}20`, color: COLORS.primaryGreen }}>Default</span>
+                )}
+              </div>
+              <p className="text-xs truncate" style={{ color: COLORS.grayText }}>
+                {[selectedAddress.address, selectedAddress.city, selectedAddress.pincode].filter(Boolean).join(', ')}
+              </p>
+            </div>
+          ) : (
+            <span className="text-xs flex-1" style={{ color: COLORS.primaryOrange }}>
+              Tap to select delivery address
+            </span>
+          )}
+          <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
+        </button>
+      )}
+
       {/* Column Headers */}
       <div className="px-4 py-2 flex items-center text-xs font-medium" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
         <span className="flex-1">Items</span>
@@ -491,9 +576,9 @@ const CartPanel = ({
 
             return (
               <div key={`${item.id}-${index}`}>
-                {showKotSeparator && (
+                {showKotSeparator && canPrintBill && (
                   <div className="px-4 py-2" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-                    <RePrintButton />
+                    <RePrintOnlyButton orderId={orderId} cartItems={cartItems} />
                   </div>
                 )}
                 {item.placed ? (
@@ -504,6 +589,9 @@ const CartPanel = ({
                     editingQtyItemId={editingQtyItemId}
                     setEditingQtyItemId={setEditingQtyItemId}
                     updateQuantity={updateQuantity}
+                    canCancelItem={canCancelItem}
+                    canFoodTransfer={canFoodTransfer}
+                    isItemCancelAllowed={isItemCancelAllowed}
                   />
                 ) : (
                   <div style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
@@ -522,10 +610,17 @@ const CartPanel = ({
           })
         )}
 
-        {/* Re-Print at end of placed items */}
-        {cartItems.some(i => i.placed) && (
+        {/* Re-Print at end of placed items - ONLY if there are placed items and NO new items after */}
+        {canPrintBill && cartItems.some(i => i.placed) && !cartItems.some(i => !i.placed) && (
           <div className="px-4 py-3">
-            <RePrintButton />
+            <RePrintOnlyButton orderId={orderId} cartItems={cartItems} />
+          </div>
+        )}
+
+        {/* KOT/Bill checkboxes - ONLY if there are new (unplaced) items */}
+        {cartItems.some(i => !i.placed) && (
+          <div className="px-4 py-3" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
+            <KotBillCheckboxes />
           </div>
         )}
       </div>
@@ -625,6 +720,7 @@ const CartPanel = ({
             <>Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}</>
           )}
         </button>
+        {canBill && (
         <button
           data-testid="collect-bill-btn"
           onClick={() => setShowPaymentPanel(true)}
@@ -635,6 +731,7 @@ const CartPanel = ({
           <span>{isRoom ? 'Checkout' : 'Collect Bill'}</span>
           <span>₹{total.toLocaleString()}</span>
         </button>
+        )}
       </div>
     </>
   );

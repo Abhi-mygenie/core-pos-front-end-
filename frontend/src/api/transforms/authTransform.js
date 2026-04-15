@@ -33,5 +33,6 @@ export const toAPI = {
   loginRequest: (form) => ({
     email: form.email,
     password: form.password,
+    ...(form.fcmToken && { fcm_token: form.fcmToken }),
   }),
 };

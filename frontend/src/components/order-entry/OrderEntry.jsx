@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { ChevronLeft, ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed, Trash2 } from "lucide-react";
+import { ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed, Scissors, ArrowRightLeft, GitMerge, X } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
+import { lookupAddresses, addAddress } from "../../api/services/customerService";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
-import { toAPI as orderToAPI, customItemFromAPI } from "../../api/transforms/orderTransform";
+import { toAPI as orderToAPI, customItemFromAPI, fromAPI as orderFromAPI } from "../../api/transforms/orderTransform";
+import { fetchSingleOrderForSocket } from "../../api/services/orderService";
 import AddCustomItemModal from "./AddCustomItemModal";
 import CategoryPanel from "./CategoryPanel";
 import CartPanel from "./CartPanel";
@@ -14,6 +16,8 @@ import ItemCustomizationModal from "./ItemCustomizationModal";
 import OrderNotesModal from "./OrderNotesModal";
 import ItemNotesModal from "./ItemNotesModal";
 import CustomerModal from "./CustomerModal";
+import AddressPickerModal from "./AddressPickerModal";
+import AddressFormModal from "./AddressFormModal";
 import OrderPlacedModal from "./OrderPlacedModal";
 import TransferFoodModal from "./TransferFoodModal";
 import MergeTableModal from "./MergeTableModal";
@@ -21,6 +25,7 @@ import ShiftTableModal from "./ShiftTableModal";
 import CancelFoodModal from "./CancelFoodModal";
 import CancelOrderModal from "./CancelOrderModal";
 import CollectPaymentPanel from "./CollectPaymentPanel";
+import SplitBillModal from "../modals/SplitBillModal";
 
 const ORDER_TYPES = [
   { id: "delivery", label: "Delivery", icon: Truck },
@@ -31,12 +36,12 @@ const ORDER_TYPES = [
 const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady: 3, paid: 4, yetToConfirm: 4 };
 
 // Order Entry Screen Component - 3-Panel Layout
-const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false }) => {
+const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders, removeOrder, waitForOrderRemoval } = useOrders();
+  const { orders, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
-  const { restaurant } = useRestaurant();
-  const { user } = useAuth();
+  const { restaurant, cancellation } = useRestaurant();
+  const { user, hasPermission } = useAuth();
   const { updateTableStatus, setTableEngaged, waitForTableEngaged } = useTables();
   const { toast } = useToast();
 
@@ -70,15 +75,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [orderNotes, setOrderNotes] = useState([]);
   const [showOrderPlaced, setShowOrderPlaced] = useState(false);
-  const [transferItem, setTransferItem] = useState(null);
+  const [transferItem, setTransferItem] = useState(initialTransferItem);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
   const [cancelItem, setCancelItem] = useState(null);
   const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+  const [showSplitBillModal, setShowSplitBillModal] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState(table?.orderId || null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [showPaymentPanel, setShowPaymentPanel] = useState(initialShowPayment);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [walkInTableName, setWalkInTableName] = useState(""); // For Walk-In dynamic table name
   
   // API financials for placed orders (amount, subtotal from server)
   const [orderFinancials, setOrderFinancials] = useState({
@@ -87,16 +94,99 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     subtotalBeforeTax: orderData?.subtotalBeforeTax || 0,
   });
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [tableSearchQuery, setTableSearchQuery] = useState(""); // Search filter for tables dropdown
   const [editingQtyItemId, setEditingQtyItemId] = useState(null);
   const [flashItemId, setFlashItemId] = useState(null);
   const [showCustomItemModal, setShowCustomItemModal] = useState(false);
   const [itemNotesModal, setItemNotesModal] = useState(null); // { item, cartIndex }
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customer, setCustomer] = useState(null);
+  // Delivery address state
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddressPicker, setShowAddressPicker] = useState(false);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [deliveryAddresses, setDeliveryAddresses] = useState([]);
+  const [addressLoading, setAddressLoading] = useState(false);
+  const [addressSaving, setAddressSaving] = useState(false);
   // Effective table — merges placedOrderId into table for same-session operations
   const effectiveTable = { ...table, orderId: placedOrderId || table?.orderId };
+
+  // Fetch delivery addresses when customer phone is available and orderType is delivery
+  const fetchDeliveryAddresses = async (phone) => {
+    if (!phone?.trim()) return;
+    setAddressLoading(true);
+    try {
+      const addresses = await lookupAddresses(phone.trim());
+      setDeliveryAddresses(addresses);
+      // Auto-select default if available
+      const defaultAddr = addresses.find(a => a.isDefault);
+      if (defaultAddr && !selectedAddress) setSelectedAddress(defaultAddr);
+    } catch (err) {
+      console.error('[OrderEntry] Address lookup failed:', err);
+    } finally {
+      setAddressLoading(false);
+    }
+  };
+
+  // Handle adding new address via CRM
+  const handleAddAddress = async (formData) => {
+    if (!customer?.id || customer.id.startsWith('CUST-')) {
+      // Local-only customer — store address locally
+      const localAddr = { ...formData, id: `local_${Date.now()}`, isDefault: true };
+      setDeliveryAddresses(prev => [...prev, localAddr]);
+      setSelectedAddress(localAddr);
+      setShowAddressForm(false);
+      return;
+    }
+    setAddressSaving(true);
+    try {
+      const result = await addAddress(customer.id, formData);
+      if (result?.address_id) {
+        // Re-fetch addresses to get updated list
+        await fetchDeliveryAddresses(customer.phone);
+        // Select the newly added address
+        const newAddr = { ...formData, id: result.address_id, isDefault: formData.isDefault };
+        setSelectedAddress(newAddr);
+      }
+      setShowAddressForm(false);
+    } catch (err) {
+      console.error('[OrderEntry] Add address failed:', err);
+    } finally {
+      setAddressSaving(false);
+    }
+  };
   const cartKeyRef = useRef(null); // tracks previous table key for save-on-switch
   const typeDropdownRef = useRef(null);
+
+  // Filter tables based on search query
+  const filteredTables = useMemo(() => {
+    if (!tableSearchQuery.trim()) return allTables;
+    const query = tableSearchQuery.toLowerCase();
+    return allTables.filter(t => 
+      (t.label || t.id || '').toLowerCase().includes(query)
+    );
+  }, [allTables, tableSearchQuery]);
+
+  // ── Permission flags ──
+  const canCancelOrder = hasPermission('order_cancel');
+  const canCancelItem = hasPermission('food');
+  const canShiftTable = hasPermission('transfer_table');
+  const canMergeOrder = hasPermission('merge_table');
+  const canFoodTransfer = hasPermission('food_transfer');
+  const canCustomerManage = hasPermission('customer_management');
+  const canBill = hasPermission('bill');
+  const canDiscount = hasPermission('discount');
+  const canPrintBill = hasPermission('print_icon');
+
+  // ── Permission-only checks ──
+  // Order Card shows action if user has permission; restaurant settings validation removed
+  // Actual business rules should be enforced by backend API
+  const isOrderCancelAllowed = canCancelOrder;
+
+  // Item-level cancel: permission only
+  const isItemCancelAllowed = useCallback((item) => {
+    return canCancelItem;
+  }, [canCancelItem]);
 
   // Dietary filter states
   const [primaryFilter, setPrimaryFilter] = useState(null); // "veg" | "egg" | "nonveg" | null
@@ -372,46 +462,88 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const hasPlaced = cartItems.some(i => i.placed);
 
       if (hasPlaced && placedOrderId) {
-        // Scenario 1 — Update Order: await API + wait for socket engage before redirect
+        // Scenario 1 — Update Order: fire HTTP, wait for socket engage, redirect
+        // Socket is source of truth — API response not used
         const payload = orderToAPI.updateOrder(effectiveTable, unplaced, customer, orderType, {
           restaurantId: restaurant?.id,
           orderNotes,
           printAllKOT,
           allCartItems: cartItems,
         });
-        const response = await api.put(API_ENDPOINTS.UPDATE_ORDER, payload);
-        console.log('[UpdateOrder] response:', response.data);
-        toast({ title: "Order Updated", description: "Items sent to kitchen" });
 
-        // Wait for socket update-table (engage) before redirect
-        const tableId = Number(effectiveTable?.tableId);
-        if (tableId) {
-          await waitForTableEngaged(tableId, 5000);
-        }
+        // Start listening for socket engage BEFORE firing API
+        const engagePromise = waitForOrderEngaged(placedOrderId);
+
+        // Fire API — don't await response
+        let apiFailed = false;
+        api.put(API_ENDPOINTS.UPDATE_ORDER, payload)
+          .then(res => console.log('[UpdateOrder] response:', res.data))
+          .catch(err => {
+            apiFailed = true;
+            console.error('[UpdateOrder] CRITICAL:', err?.response?.status, err?.response?.data);
+            const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed';
+            toast({ title: "Order Update Failed", description: apiMsg, variant: "destructive" });
+            setIsPlacingOrder(false);
+          });
+
+        // Wait for socket order-engage then redirect
+        await engagePromise;
+        if (apiFailed) return; // API failed — stay on screen, toast shown
+        console.log('[UpdateOrder] Socket engaged — redirecting to dashboard');
       } else {
-        // Scenario 2 / New Order — Place Order: await API + wait for socket engage before redirect
+        // Scenario 2 / New Order — Fire HTTP, redirect immediately
+        // Socket events (update-table engage → new-order) handle all state updates
+        // For Walk-In orders: use walkInTableName as customer name if provided (for table label)
+        const effectiveCustomer = orderType === 'walkIn' && walkInTableName
+          ? { ...customer, name: walkInTableName }
+          : customer;
+        
         const payload = orderToAPI.placeOrder(
           { ...table, tableId: table?.tableId },
-          cartItems, customer, orderType,
-          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT }
+          cartItems, effectiveCustomer, orderType,
+          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT, addressId: selectedAddress?.id || null }
         );
+        
+        // Log station info for Auto KOT debugging
+        const cartStations = payload.cart?.map(item => ({ food_id: item.food_id, station: item.station }));
+        console.log('[PlaceOrder] Auto KOT - Cart stations:', cartStations);
         console.log('[PlaceOrder] payload:', JSON.stringify(payload, null, 2));
         const formData = new FormData();
         formData.append('data', JSON.stringify(payload));
-        const response = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+        
+        // Fire HTTP request (don't await response) - sockets handle state
+        console.log('[PlaceOrder] Firing HTTP request...');
+        api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        console.log('[PlaceOrder] response:', response.data);
-        toast({ title: "Order Placed", description: "Order sent to kitchen" });
-
-        // Wait for socket update-table (engage) before redirect — same pattern as Update Order
+        })
+          .then(res => console.log('[PlaceOrder] HTTP response:', res.data))
+          .catch(err => {
+            console.log('[PlaceOrder] ERROR status:', err?.response?.status);
+            console.log('[PlaceOrder] ERROR response:', err?.response?.data);
+            const apiMsg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Failed';
+            toast({ title: "Order Failed", description: apiMsg });
+          });
+        
+        // Wait for socket update-table engage before redirect
         const tableId = Number(table?.tableId);
         if (tableId) {
-          await waitForTableEngaged(tableId, 5000);
+          // Physical table - wait for engage socket
+          console.log('[PlaceOrder] Waiting for update-table engage socket...');
+          await waitForTableEngaged(tableId, 10000);
+          console.log('[PlaceOrder] Table engaged, now redirecting to dashboard');
+        } else {
+          // Walk-in/TakeAway/Delivery - no physical table, brief delay for UX
+          console.log('[PlaceOrder] No physical table (walk-in/takeaway/delivery), adding 0.5s delay for UX...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+          console.log('[PlaceOrder] Redirecting to dashboard...');
         }
+        
+        setIsPlacingOrder(false);
+        onClose();
+        return; // Exit early
       }
 
-      // Redirect to dashboard
+      // Redirect to dashboard (for Update Order path)
       onClose();
     } catch (err) {
       console.log('[PlaceOrder] ERROR status:', err?.response?.status);
@@ -428,88 +560,126 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const handleTransfer = async ({ toOrder, item: transferredItem }) => {
+    const sourceOrderId = effectiveTable?.orderId;
+    const engagePromise = sourceOrderId ? waitForOrderEngaged(sourceOrderId) : null;
+
     const payload = tableToAPI.transferFood(effectiveTable, toOrder, transferredItem);
-    const response = await api.post(API_ENDPOINTS.TRANSFER_FOOD, payload);
-    toast({
-      title: "Item Transferred",
-      description: response.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
-    });
+    api.post(API_ENDPOINTS.TRANSFER_FOOD, payload)
+      .then(res => {
+        toast({
+          title: "Item Transferred",
+          description: res.data?.message || `${transferredItem?.name} transferred to ${toOrder.isWalkIn ? toOrder.customer || 'WC' : `T${toOrder.tableNumber}`}`,
+        });
+      })
+      .catch(err => {
+        console.error('[TransferFood] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.message || err?.message || 'Transfer failed';
+        toast({ title: "Transfer Failed", description: msg, variant: "destructive" });
+      });
+
     setTransferItem(null);
+    if (engagePromise) await engagePromise;
+    console.log('[TransferFood] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
   const handleMerge = async ({ selectedOrders }) => {
+    const targetOrderId = effectiveTable?.orderId;
+    const engagePromise = targetOrderId ? waitForOrderEngaged(targetOrderId) : null;
+
     // Sequential API calls — one per selected source table
     for (const sourceOrder of selectedOrders) {
       const payload = tableToAPI.mergeTable(effectiveTable, sourceOrder);
-      await api.post(API_ENDPOINTS.MERGE_ORDER, payload);
+      api.post(API_ENDPOINTS.MERGE_ORDER, payload)
+        .then(() => {
+          toast({
+            title: "Tables Merged",
+            description: `Merged into ${table?.label || table?.id}`,
+          });
+        })
+        .catch(err => {
+          console.error('[MergeTable] CRITICAL:', err?.response?.status, err?.response?.data);
+          const msg = err?.response?.data?.message || err?.message || 'Merge failed';
+          toast({ title: "Merge Failed", description: msg, variant: "destructive" });
+        });
     }
-    toast({
-      title: "Tables Merged",
-      description: `${selectedOrders.length} table(s) merged into ${table?.label || table?.id}`,
-    });
+
+    if (engagePromise) await engagePromise;
+    console.log('[MergeTable] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
-  const handleShift = async ({ toTable }) => {    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
-    const response = await api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload);
-    toast({
-      title: "Table Shifted",
-      description: response.data?.message || `Order moved to ${toTable.displayName}`,
-    });
+  const handleShift = async ({ toTable }) => {
+    const destTableId = Number(toTable?.tableId);
+    const engagePromise = destTableId ? waitForTableEngaged(destTableId) : null;
+
+    const payload = tableToAPI.shiftTable(effectiveTable, toTable);
+    api.post(API_ENDPOINTS.ORDER_TABLE_SWITCH, payload)
+      .then(res => {
+        toast({
+          title: "Table Shifted",
+          description: res.data?.message || `Order moved to ${toTable.displayName}`,
+        });
+      })
+      .catch(err => {
+        console.error('[ShiftTable] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.message || err?.message || 'Shift failed';
+        toast({ title: "Shift Failed", description: msg, variant: "destructive" });
+      });
+
+    if (engagePromise) await engagePromise;
+    console.log('[ShiftTable] Socket engaged — redirecting to dashboard');
     onClose();
   };
 
   const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
-    setIsPlacingOrder(true); // Show overlay — same pattern as all other flows
-    try {
-      const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
-      await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
-      toast({
-        title: "Item Cancelled",
-        description: `${item?.name} cancelled successfully`,
+    setIsPlacingOrder(true);
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    const engagePromise = orderId ? waitForOrderEngaged(orderId) : null;
+
+    const payload = orderToAPI.cancelItem(effectiveTable, item, reason, cancelQuantity);
+    api.put(API_ENDPOINTS.CANCEL_ITEM, payload)
+      .then(() => {
+        toast({
+          title: "Item Cancelled",
+          description: `${item?.name} cancelled successfully`,
+        });
+      })
+      .catch(err => {
+        console.error('[CancelFood] CRITICAL:', err?.response?.status, err?.response?.data);
+        const msg = err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || err?.message || 'Cancellation failed';
+        toast({ title: "Cancel Failed", description: msg, variant: "destructive" });
+        setIsPlacingOrder(false);
       });
 
-      // Wait for socket update-table (engage) before redirect
-      const tableId = Number(effectiveTable?.tableId || table?.tableId);
-      if (tableId) {
-        await waitForTableEngaged(tableId, 5000);
-      }
-
-      setCancelItem(null);
-      onClose(); // Redirect to dashboard — table is locked, socket will enrich + release
-    } catch (err) {
-      const msg = err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || err?.message || 'Cancellation failed';
-      toast({ title: "Cancel Failed", description: msg });
-    } finally {
-      setIsPlacingOrder(false);
-    }
+    if (engagePromise) await engagePromise;
+    console.log('[CancelFood] Socket engaged — redirecting to dashboard');
+    setCancelItem(null);
+    onClose();
   };
 
   const handleCancelOrder = async (reason) => {
     const orderId = effectiveTable?.orderId || placedOrderId;
     if (!orderId) return;
 
-    setIsPlacingOrder(true); // Reuse overlay to block UI
+    setIsPlacingOrder(true);
+    const engagePromise = waitForOrderEngaged(orderId);
 
-    try {
-      const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
-      await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
-      
-      // Wait for socket update-order-status to remove the order from context
-      await waitForOrderRemoval(orderId, 5000);
-
-      toast({
-        title: "Order Cancelled",
-        description: `Order cancelled for ${table?.label || table?.id}`,
+    const payload = orderToAPI.cancelOrder(orderId, user?.roleName || 'Manager', reason);
+    api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload)
+      .catch(err => {
+        console.error('[CancelOrder] CRITICAL:', err?.response?.status, err?.response?.data);
+        toast({ title: "Cancel Failed", description: err?.response?.data?.message || err?.message, variant: "destructive" });
+        setIsPlacingOrder(false);
       });
-      onClose();
-    } catch (err) {
-      console.error('[CancelOrder] Failed:', err);
-      toast({ title: "Cancel Failed", description: err?.response?.data?.message || err?.message });
-    } finally {
-      setIsPlacingOrder(false);
-    }
+
+    await engagePromise;
+    console.log('[CancelOrder] Socket engaged — redirecting to dashboard');
+    toast({
+      title: "Order Cancelled",
+      description: `Order cancelled for ${table?.label || table?.id}`,
+    });
+    onClose();
   };
 
   const handleAddCustomItem = async ({ name, categoryId, price, qty, notes }) => {    const payload = orderToAPI.addCustomItem(name, categoryId, price);
@@ -533,101 +703,101 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         <CategoryPanel
           activeCategory={activeCategory}
           onCategoryChange={(id) => setActiveCategory(id)}
-          onShiftTable={() => setShowShiftModal(true)}
-          onMergeTable={() => setShowMergeModal(true)}
           onBack={onClose}
           categories={categories}
         />
 
         {/* MIDDLE PANEL - Menu Items */}
         <div className="flex-1 flex flex-col overflow-hidden" style={{ borderRight: `1px solid ${COLORS.borderGray}` }}>
-          {/* Search + Dietary Filters (Header Row) */}
+          {/* Single Compact Header Row: Search + Action Icons */}
           <div className="px-4 py-3 flex-shrink-0 flex items-center gap-3" style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}>
-            {/* Compact Search */}
-            <div className="relative w-48 flex-shrink-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: COLORS.grayText }} />
+            {/* Search Input - Limited width */}
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: COLORS.primaryOrange }} />
               <input
                 data-testid="menu-search-input"
                 type="text"
-                placeholder="Search..."
+                placeholder="Search items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                style={{ backgroundColor: COLORS.sectionBg, color: COLORS.darkText }}
+                className="w-full pl-10 pr-4 py-2 rounded-lg text-sm border-2 focus:outline-none focus:ring-2"
+                style={{ 
+                  backgroundColor: "white", 
+                  color: COLORS.darkText,
+                  borderColor: COLORS.primaryOrange,
+                  boxShadow: "0 2px 4px rgba(249, 115, 22, 0.15)",
+                  fontSize: "13px"
+                }}
               />
-            </div>
-
-            {/* Divider */}
-            <div className="h-6 w-px" style={{ backgroundColor: COLORS.borderGray }} />
-
-            {/* Primary Dietary Filters */}
-            <div className="flex items-center gap-2">
-              {[
-                { key: "veg", label: "Veg" },
-                { key: "nonveg", label: "Non-Veg" },
-                { key: "egg", label: "Egg" }
-              ].map(filter => {
-                const isActive = primaryFilter === filter.key;
-                return (
-                  <button
-                    key={filter.key}
-                    data-testid={`filter-${filter.key}`}
-                    onClick={() => togglePrimaryFilter(filter.key)}
-                    className="px-4 py-3 rounded-full text-xs font-medium transition-colors"
-                    style={{
-                      backgroundColor: isActive ? COLORS.primaryGreen : "transparent",
-                      color: isActive ? "white" : COLORS.darkText,
-                      border: `1px solid ${isActive ? COLORS.primaryGreen : COLORS.borderGray}`,
-                    }}
-                  >
-                    {filter.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Divider */}
-            <div className="h-6 w-px" style={{ backgroundColor: COLORS.borderGray }} />
-
-            {/* Secondary Dietary Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {[
-                { key: "glutenFree", label: "Gluten Free" },
-                { key: "jain", label: "Jain" },
-                { key: "vegan", label: "Vegan" }
-              ].map(filter => {
-                const isActive = secondaryFilters[filter.key];
-                return (
-                  <button
-                    key={filter.key}
-                    data-testid={`filter-${filter.key}`}
-                    onClick={() => toggleSecondaryFilter(filter.key)}
-                    className="px-4 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors"
-                    style={{
-                      backgroundColor: isActive ? COLORS.primaryGreen : "transparent",
-                      color: isActive ? "white" : COLORS.grayText,
-                      border: `1px solid ${isActive ? COLORS.primaryGreen : COLORS.borderGray}`,
-                    }}
-                  >
-                    {filter.label}
-                  </button>
-                );
-              })}
             </div>
 
             {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Add Custom Item */}
-            <button
-              onClick={() => setShowCustomItemModal(true)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
-              style={{ border: `1px solid ${COLORS.borderGray}` }}
-              title="Add Custom Item"
-              data-testid="add-custom-item-btn"
-            >
-              <Plus className="w-5 h-5" style={{ color: COLORS.primaryOrange }} />
-            </button>
+            {/* Action Icons: Add Custom, Shift, Merge, Notes, Customer */}
+            <div className="flex items-center gap-3">
+              {/* Add Custom Item - First icon */}
+              <button
+                onClick={() => setShowCustomItemModal(true)}
+                className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+                style={{ border: `1px solid ${COLORS.borderGray}` }}
+                title="Add Custom Item"
+                data-testid="add-custom-item-btn"
+              >
+                <Plus className="w-5 h-5" style={{ color: COLORS.primaryOrange }} />
+              </button>
+
+              {/* Shift/Transfer Table */}
+              {canShiftTable && (
+                <button
+                  onClick={() => setShowShiftModal(true)}
+                  className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Shift Table"
+                  data-testid="shift-table-btn"
+                >
+                  <ArrowRightLeft className="w-5 h-5" style={{ color: COLORS.grayText }} />
+                </button>
+              )}
+
+              {/* Merge Tables */}
+              {canMergeOrder && (
+                <button
+                  onClick={() => setShowMergeModal(true)}
+                  className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Merge Tables"
+                  data-testid="merge-tables-btn"
+                >
+                  <GitMerge className="w-5 h-5" style={{ color: COLORS.grayText }} />
+                </button>
+              )}
+
+              {/* Order Notes */}
+              <button
+                className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors relative"
+                title="Order Notes"
+                onClick={() => setShowNotesModal(true)}
+                data-testid="order-notes-btn"
+              >
+                <StickyNote className="w-5 h-5" style={{ color: orderNotes.length > 0 ? COLORS.primaryGreen : COLORS.grayText }} />
+                {orderNotes.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-xs flex items-center justify-center text-white" style={{ backgroundColor: COLORS.primaryGreen }}>
+                    {orderNotes.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Customer Info */}
+              {canCustomerManage && (
+                <button 
+                  className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors" 
+                  title="Customer Info"
+                  onClick={() => setShowCustomerModal(true)}
+                  data-testid="customer-info-btn"
+                >
+                  <UserPlus className="w-5 h-5" style={{ color: customer ? COLORS.primaryGreen : COLORS.grayText }} />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Menu Items - Pill Layout */}
@@ -704,7 +874,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     // Scenario 2 — fresh order: place + pay in one shot (same endpoint, payment_status=paid)
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
-                      { restaurantId: restaurant?.id, orderNotes, printAllKOT }
+                      { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
@@ -723,18 +893,28 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
-                    // Engage table locally, call API, redirect to dashboard
-                    const tableId = Number(effectiveTable?.tableId || table?.tableId);
-                    if (tableId) setTableEngaged(tableId, true);
+                    // No local table engage — order-engage socket handles locking
                     setIsPlacingOrder(true);
+
+                    const collectOrderId = effectiveTable?.orderId || placedOrderId;
+                    const engagePromise = collectOrderId ? waitForOrderEngaged(collectOrderId) : null;
 
                     const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
-                    const res = await api.post(API_ENDPOINTS.BILL_PAYMENT, payload);
-                    console.log('[CollectBill] response:', res.data);
-                    toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+                    api.post(API_ENDPOINTS.BILL_PAYMENT, payload)
+                      .then(res => {
+                        console.log('[CollectBill] response:', res.data);
+                        toast({ title: "Payment Collected", description: res.data?.message || "Bill cleared successfully" });
+                      })
+                      .catch(err => {
+                        console.error('[CollectBill] CRITICAL:', err?.response?.status, err?.response?.data);
+                        const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
+                        toast({ title: "Payment Failed", description: msg, variant: "destructive" });
+                        setIsPlacingOrder(false);
+                      });
 
-                    // Redirect to dashboard — socket will removeOrder + release table
+                    if (engagePromise) await engagePromise;
+                    console.log('[CollectBill] Socket engaged — redirecting to dashboard');
                     onClose();
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   }
@@ -749,19 +929,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             />
           ) : (
             <>
-              {/* Header Row: Back + Table Selector + KOT Toggle */}
+              {/* Header Row: Table Selector + Split */}
               <div
-                className="px-4 py-3 flex items-center gap-4"
+                className="px-4 py-4 flex items-center gap-3"
                 style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
               >
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  data-testid="order-entry-back-btn"
-                >
-                  <ChevronLeft className="w-6 h-6" style={{ color: COLORS.primaryOrange }} />
-                </button>
-
                 {/* Order Type Selector */}
                 <div className="relative" ref={typeDropdownRef}>
                   <button
@@ -808,10 +980,37 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       })}
 
                       <div className="h-px mx-3" style={{ backgroundColor: COLORS.borderGray }} />
+                      
+                      {/* Table Search */}
                       <div className="px-3 py-2">
+                        <div className="relative">
+                          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
+                          <input
+                            type="text"
+                            placeholder="Search tables..."
+                            value={tableSearchQuery}
+                            onChange={(e) => setTableSearchQuery(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full pl-8 pr-3 py-2 rounded-lg text-sm border focus:outline-none focus:ring-1"
+                            style={{ 
+                              borderColor: COLORS.borderGray,
+                              backgroundColor: "#f9fafb",
+                              fontSize: "12px"
+                            }}
+                            data-testid="table-search-input"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="px-3 py-1">
                         <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>Tables</span>
                       </div>
-                      {[...allTables]
+                      {filteredTables.length === 0 ? (
+                        <div className="px-4 py-3 text-sm text-center" style={{ color: COLORS.grayText }}>
+                          No tables found
+                        </div>
+                      ) : (
+                        [...filteredTables]
                         .sort((a, b) => {
                           const aPri = DROPDOWN_TABLE_SORT[a.status] ?? 5;
                           const bPri = DROPDOWN_TABLE_SORT[b.status] ?? 5;
@@ -830,7 +1029,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                                 color: isSelected ? COLORS.primaryOrange : isAvailable ? COLORS.darkText : COLORS.grayText,
                                 backgroundColor: isSelected ? `${COLORS.primaryOrange}10` : "transparent",
                               }}
-                              onClick={() => { onSelectTable?.(t); setShowTypeDropdown(false); }}
+                              onClick={() => { onSelectTable?.(t); setShowTypeDropdown(false); setTableSearchQuery(""); }}
                             >
                               <span className="font-medium truncate min-w-0">{t.label || t.id}</span>
                               <span className="text-xs capitalize whitespace-nowrap flex-shrink-0 ml-2" style={{ color: isAvailable ? COLORS.primaryGreen : COLORS.grayText }}>
@@ -838,73 +1037,59 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                               </span>
                             </button>
                           );
-                        })}
+                        })
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* Customer Info */}
-                <button 
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative" 
-                  title="Customer Info"
-                  onClick={() => setShowCustomerModal(true)}
-                  data-testid="customer-info-btn"
-                >
-                  <UserPlus className="w-5 h-5" style={{ color: customer ? COLORS.primaryGreen : COLORS.grayText }} />
-                </button>
-
-                {/* Order Notes */}
-                <button
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative"
-                  title="Order Notes"
-                  onClick={() => setShowNotesModal(true)}
-                  data-testid="order-notes-btn"
-                >
-                  <StickyNote className="w-5 h-5" style={{ color: orderNotes.length > 0 ? COLORS.primaryGreen : COLORS.grayText }} />
-                  {orderNotes.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-xs flex items-center justify-center text-white" style={{ backgroundColor: COLORS.primaryGreen }}>
-                      {orderNotes.length}
-                    </span>
-                  )}
-                </button>
-
                 {/* Spacer */}
                 <div className="flex-1" />
 
-                {/* Trash icon — context-aware:
-                    unplaced items exist → Clear unplaced items (local)
-                    all items placed → Cancel Order (API) */}
+                {/* Cancel Order/Clear Cart - Prominent styling */}
                 {(() => {
                   const hasUnplaced = cartItems.some(i => !i.placed);
                   const hasPlaced = cartItems.some(i => i.placed && i.status !== 'cancelled');
                   if (!hasUnplaced && !hasPlaced) return null;
+                  if (!hasUnplaced && hasPlaced && !isOrderCancelAllowed) return null;
                   return (
                     <button
                       onClick={() => hasUnplaced
                         ? setCartItems(prev => prev.filter(i => i.placed))
                         : setShowCancelOrderModal(true)
                       }
-                      className="p-1.5 rounded-lg hover:bg-red-50 transition-colors flex-shrink-0"
+                      className="px-3 py-2 rounded-lg transition-colors flex-shrink-0 flex items-center gap-1.5 font-medium text-sm"
+                      style={{ 
+                        backgroundColor: '#FEE2E2',
+                        color: '#DC2626',
+                        border: '1px solid #FECACA'
+                      }}
                       title={hasUnplaced ? "Clear unplaced items" : "Cancel Order"}
-                      data-testid="clear-cart-btn"
+                      data-testid="cancel-order-btn"
                     >
-                      <Trash2 className="w-4 h-4" style={{ color: '#EF4444' }} />
+                      <X className="w-4 h-4" />
+                      <span>Cancel</span>
                     </button>
                   );
                 })()}
 
-                {/* KOT Toggle - Right aligned */}
-                <div
-                  onClick={() => setPrintAllKOT(!printAllKOT)}
-                  className="w-10 h-5 rounded-full relative cursor-pointer transition-colors flex-shrink-0"
-                  style={{ backgroundColor: printAllKOT ? COLORS.primaryGreen : COLORS.borderGray }}
-                  title="Print All KOT's"
-                >
-                  <div
-                    className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all"
-                    style={{ left: printAllKOT ? "22px" : "2px" }}
-                  />
-                </div>
+                {/* Split Bill Button - Only for placed orders with 2+ items */}
+                {placedOrderId && cartItems.filter(i => i.placed).length >= 2 && (
+                  <button
+                    onClick={() => setShowSplitBillModal(true)}
+                    className="px-3 py-2 rounded-lg transition-colors flex-shrink-0 flex items-center gap-1.5 font-medium text-sm"
+                    style={{ 
+                      backgroundColor: '#FFF7ED',
+                      color: COLORS.primaryOrange,
+                      border: '1px solid #FED7AA'
+                    }}
+                    title="Split Bill"
+                    data-testid="split-bill-btn"
+                  >
+                    <Scissors className="w-4 h-4" />
+                    <span>Split</span>
+                  </button>
+                )}
               </div>
 
               {/* Cart Panel */}
@@ -926,6 +1111,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
                 onCustomerChange={setCustomer}
+                selectedAddress={selectedAddress}
+                onAddressClick={() => {
+                  if (customer?.phone) fetchDeliveryAddresses(customer.phone);
+                  setShowAddressPicker(true);
+                }}
                 onClearCart={() => setCartItems(prev => prev.filter(i => i.placed))}
                 onDeleteItem={(item) => setCartItems(prev => {
                   const idx = prev.indexOf(item);
@@ -933,6 +1123,15 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 })}
                 orderNotes={orderNotes}
                 onEditOrderNotes={() => setShowNotesModal(true)}
+                canCancelItem={canCancelItem}
+                canFoodTransfer={canFoodTransfer}
+                canBill={canBill}
+                canPrintBill={canPrintBill}
+                isItemCancelAllowed={isItemCancelAllowed}
+                orderType={orderType}
+                walkInTableName={walkInTableName}
+                onWalkInTableNameChange={setWalkInTableName}
+                orderId={placedOrderId}
               />
             </>
           )}
@@ -1012,6 +1211,84 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onClose={() => setShowCustomerModal(false)}
           onSave={(customerData) => setCustomer(customerData)}
           initialData={customer}
+          restaurantId={restaurant?.id}
+        />
+      )}
+      {showAddressPicker && (
+        <AddressPickerModal
+          onClose={() => setShowAddressPicker(false)}
+          onSelect={(addr) => { setSelectedAddress(addr); setShowAddressPicker(false); }}
+          onAddNew={() => { setShowAddressPicker(false); setShowAddressForm(true); }}
+          addresses={deliveryAddresses}
+          customerId={customer?.id}
+          loading={addressLoading}
+        />
+      )}
+      {showAddressForm && (
+        <AddressFormModal
+          onClose={() => setShowAddressForm(false)}
+          onSave={handleAddAddress}
+          saving={addressSaving}
+        />
+      )}
+      {showSplitBillModal && (
+        <SplitBillModal
+          isOpen={showSplitBillModal}
+          onClose={() => setShowSplitBillModal(false)}
+          orderId={placedOrderId}
+          items={cartItems.filter(i => i.placed && i.status !== 'cancelled').map(item => ({
+            id: item.id,
+            name: item.name,
+            qty: item.qty,
+            price: item.price || (item.unitPrice * item.qty),
+            unitPrice: item.unitPrice || item.price / item.qty,
+          }))}
+          onSplitSuccess={async (response) => {
+            // After split, open payment for the NEW order (selected items)
+            // The API response should contain the new order ID(s)
+            console.log('[SplitSuccess] response:', response);
+            
+            try {
+              // Get new order ID from response - API may return it in different formats
+              const newOrderId = response?.new_order_ids?.[0] || response?.order_id || response?.data?.new_order_ids?.[0];
+              
+              if (newOrderId) {
+                // Fetch the new order details
+                const newOrder = await fetchSingleOrderForSocket(newOrderId);
+                
+                if (newOrder) {
+                  // Update cart with new order's items
+                  const newCartItems = (newOrder.items || []).map(item => ({
+                    ...item,
+                    placed: true,
+                  }));
+                  
+                  setCartItems(newCartItems);
+                  setPlacedOrderId(newOrderId);
+                  setOrderFinancials({
+                    amount: newOrder.amount || 0,
+                    subtotalAmount: newOrder.subtotalAmount || 0,
+                    subtotalBeforeTax: newOrder.subtotalBeforeTax || 0,
+                  });
+                  
+                  // Open payment panel for the new order (selected items)
+                  setShowPaymentPanel(true);
+                  toast({ title: "Bill Split", description: "Opening payment for selected items..." });
+                } else {
+                  toast({ title: "Bill Split", description: "Bill split successfully. Please select the new order from dashboard." });
+                }
+              } else {
+                toast({ title: "Bill Split", description: "Bill split successfully. Please select the new order from dashboard." });
+              }
+            } catch (err) {
+              console.error('[SplitSuccess] Error fetching new order:', err);
+              toast({ title: "Bill Split", description: "Bill split successfully. Please select the new order from dashboard." });
+            }
+            
+            // Refresh orders list
+            refreshOrders();
+            setShowSplitBillModal(false);
+          }}
         />
       )}
     </div>

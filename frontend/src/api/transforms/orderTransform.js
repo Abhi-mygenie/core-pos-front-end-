@@ -44,13 +44,31 @@ const normalizeOrderType = (orderType) => {
     case ORDER_TYPES.POS:
     case ORDER_TYPES.DINE_IN:
     case ORDER_TYPES.WALK_IN:
+    case 'dinein':  // Direct match from API
       return 'dineIn';
     case ORDER_TYPES.TAKE_AWAY:
+    case 'takeaway':  // Direct match from API
       return 'takeAway';
     case ORDER_TYPES.DELIVERY:
+    case 'delivery':  // Direct match from API
       return 'delivery';
     default:
       return 'dineIn';
+  }
+};
+
+/**
+ * Map frontend orderType to API order_type value
+ */
+const mapOrderTypeToAPI = (orderType) => {
+  switch (orderType) {
+    case 'takeAway':
+      return 'takeaway';
+    case 'delivery':
+      return 'delivery';
+    case 'dineIn':
+    default:
+      return 'dinein';
   }
 };
 
@@ -102,17 +120,33 @@ export const fromAPI = {
     const user = api.user || {};
     const isRoom = table.rtype === 'RM' || api.order_in === 'RM';
     const isWalkIn = !api.table_id || api.table_id === 0;
+    const orderType = normalizeOrderType(api.order_type);
 
     // Build customer display name
     let customer = api.user_name || '';
     if (!customer && user.f_name) {
       customer = [user.f_name, user.l_name].filter(Boolean).join(' ');
     }
+    
+    // Default customer label based on order type (only if no actual customer name)
+    let customerLabel = customer;
+    if (!customer) {
+      switch (orderType) {
+        case 'takeAway':
+          customerLabel = 'TA';
+          break;
+        case 'delivery':
+          customerLabel = 'Del';
+          break;
+        default:
+          customerLabel = isWalkIn ? 'Walk-In' : '';
+      }
+    }
 
     return {
       orderId: api.id,
       orderNumber: api.restaurant_order_id || '',
-      orderType: normalizeOrderType(api.order_type),
+      orderType,
       rawOrderType: api.order_type,
       orderIn: api.order_in,
       status: mapOrderStatus(api.f_order_status),
@@ -128,7 +162,7 @@ export const fromAPI = {
       isRoom,
 
       // Customer
-      customer: isWalkIn ? (customer || 'WC') : (customer || ''),
+      customer: customerLabel,
       phone: user.phone || '',
 
       // Financials (Phase 1: Enhanced with new API fields)
@@ -146,6 +180,18 @@ export const fromAPI = {
       time: computeElapsedTime(api.created_at),
       createdAt: api.created_at,
       updatedAt: api.updated_at,
+
+      // Computed order-level timestamps from items (for timeline)
+      readyAt: (() => {
+        const items = api.orderDetails || [];
+        const readyTimes = items.map(d => d.ready_at).filter(Boolean);
+        return readyTimes.length > 0 ? readyTimes.sort()[0] : null; // First item ready
+      })(),
+      servedAt: (() => {
+        const items = api.orderDetails || [];
+        const serveTimes = items.map(d => d.serve_at).filter(Boolean);
+        return serveTimes.length > 0 ? serveTimes.sort().pop() : null; // Last item served
+      })(),
 
       // Staff
       punchedBy: employee.f_name || '',
@@ -185,6 +231,9 @@ export const fromAPI = {
           transferredAt: item.collect_Bill || '',
         }));
       })(),
+
+      // Raw orderDetails preserved for bill printing (order-temp-store API)
+      rawOrderDetails: api.orderDetails || [],
     };
   },
 
@@ -287,7 +336,7 @@ const buildCartItem = (item) => {
     add_on_qtys:         addonQtys,
     variations:          variations,
     add_ons:             [],
-    station:             (item.station || 'KDS').toUpperCase(),
+    station:             item.station ? item.station.toUpperCase() : null,  // null if no station (no KOT)
     food_amount:         foodAmount,
     variation_amount:    variationAmount,
     addon_amount:        addonAmount,
@@ -396,11 +445,11 @@ export const toAPI = {
 
   // ==========================================================================
   // Flow 1: Place New Order (unpaid)
-  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // Endpoint: POST /api/v2/vendoremployee/order/place-order (multipart/form-data)
   // ==========================================================================
 
   placeOrder: (table, cartItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
@@ -410,13 +459,13 @@ export const toAPI = {
       user_id:                    userId,
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
-      order_type:                 'pos',
+      order_type:                 mapOrderTypeToAPI(orderType),
       cust_name:                  customer?.name || '',
       cust_mobile:                customer?.phone || '',
-      cust_email:                 '',
-      cust_dob:                   '',
-      cust_anniversary:           '',
-      cust_membership_id:         '',
+      cust_email:                 customer?.email || '',
+      cust_dob:                   customer?.dob || '',
+      cust_anniversary:           customer?.anniversary || '',
+      cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             'pending',
       payment_status:             'unpaid',
@@ -446,7 +495,7 @@ export const toAPI = {
       // Room & Address
       paid_room:                  null,
       room_id:                    null,
-      address_id:                 null,
+      address_id:                 addressId,
       // Misc
       discount_member_category_id:   0,
       discount_member_category_name: null,
@@ -478,7 +527,7 @@ export const toAPI = {
 
     return {
       order_id:                   String(table.orderId),
-      order_type:                 'pos',
+      order_type:                 mapOrderTypeToAPI(orderType),
       cust_name:                  customer?.name || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             'pending',
@@ -515,11 +564,11 @@ export const toAPI = {
 
   // ==========================================================================
   // Flow 3: Place New Order + Collect Payment (prepaid)
-  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // Endpoint: POST /api/v2/vendoremployee/order/place-order (multipart/form-data)
   // ==========================================================================
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '' } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
     const { method = 'cash', transactionId = '', splitPayments = [], deliveryCharge = 0, discounts = {} } = paymentData;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
@@ -530,13 +579,13 @@ export const toAPI = {
       user_id:                    userId,
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
-      order_type:                 'pos',
+      order_type:                 mapOrderTypeToAPI(orderType),
       cust_name:                  customer?.name || '',
       cust_mobile:                customer?.phone || '',
-      cust_email:                 '',
-      cust_dob:                   '',
-      cust_anniversary:           '',
-      cust_membership_id:         '',
+      cust_email:                 customer?.email || '',
+      cust_dob:                   customer?.dob || '',
+      cust_anniversary:           customer?.anniversary || '',
+      cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             method,
       payment_status:             'paid',
@@ -566,7 +615,7 @@ export const toAPI = {
       // Room & Address
       paid_room:                  null,
       room_id:                    null,
-      address_id:                 null,
+      address_id:                 addressId,
       // Misc
       discount_member_category_id:   0,
       discount_member_category_name: null,
@@ -589,7 +638,7 @@ export const toAPI = {
 
   // ==========================================================================
   // Flow 4: Collect Payment on Existing Order (postpaid → paid)
-  // Endpoint: POST /api/v1/vendoremployee/order/place-order (multipart/form-data)
+  // Endpoint: POST /api/v2/vendoremployee/order/place-order (multipart/form-data)
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
@@ -668,6 +717,103 @@ export const toAPI = {
       service_tax:              0,
       service_gst_tax_amount:   0,
       tip_tax_amount:           0,
+    };
+  },
+
+  // ==========================================================================
+  // Update Order Status (Ready / Served)
+  // Endpoint: PUT /api/v2/vendoremployee/order-status-update
+  // ==========================================================================
+  /**
+   * Build payload for updating order status (ready/served)
+   * @param {number|string} orderId - Order ID
+   * @param {string} roleName - User's role name (e.g., "Owner", "Manager")
+   * @param {string} status - New status: "ready" | "served"
+   */
+  updateOrderStatus: (orderId, roleName, status) => ({
+    order_id: String(orderId),
+    role_name: roleName,
+    order_status: status,
+  }),
+
+  // ==========================================================================
+  // Manual Bill Print — full payload for order-temp-store API
+  // ==========================================================================
+  buildBillPrintPayload: (order) => {
+    const rawDetails = order.rawOrderDetails || [];
+
+    // Filter out system marker items
+    const billFoodList = rawDetails.filter(d =>
+      (d.food_details?.name || '').toLowerCase() !== 'check in'
+    );
+
+    // Compute GST and VAT totals from item-level tax
+    let gst_tax = 0, vat_tax = 0;
+    billFoodList.forEach(item => {
+      const taxType = (item.food_details?.tax_type || 'GST').toUpperCase();
+      const taxAmt = parseFloat(item.gst_tax_amount || item.tax_amount || 0);
+      if (taxType === 'VAT') vat_tax += taxAmt;
+      else gst_tax += taxAmt;
+    });
+    gst_tax = Math.round(gst_tax * 100) / 100;
+    vat_tax = Math.round(vat_tax * 100) / 100;
+
+    // Format date as DD/MMM/YYYY HH:MM AM/PM
+    const formatBillDate = (dateStr) => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      let hours = d.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const mins = String(d.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${mins} ${ampm}`;
+    };
+
+    // Derive table name label
+    const tablename = order.isWalkIn ? 'WC'
+      : order.orderType === 'takeAway' ? 'TA'
+      : order.orderType === 'delivery' ? 'Del'
+      : order.tableNumber || '';
+
+    return {
+      order_id: order.orderId,
+      restaurant_order_id: order.orderNumber || '',
+      print_type: 'bill',
+      payment_amount: order.amount || 0,
+      grant_amount: order.amount || 0,
+      order_subtotal: order.subtotalBeforeTax || order.subtotalAmount || 0,
+      discount_amount: 0,
+      coupon_code: '',
+      loyalty_dicount_amount: 0,
+      wallet_used_amount: 0,
+      Date: formatBillDate(order.createdAt),
+      waiterName: order.waiter || '',
+      tablename,
+      custName: order.customer || '',
+      custPhone: order.phone || '',
+      custGSTName: '',
+      custGST: '',
+      billFoodList,
+      orderNote: order.orderNote || '',
+      serviceChargeAmount: order.serviceTax || 0,
+      roomRemainingPay: 0,
+      roomAdvancePay: 0,
+      roomGst: 0,
+      deliveryCustName: order.orderType === 'delivery' ? (order.customer || '') : '',
+      deliveryAddressType: '',
+      deliveryCustAddress: order.orderType === 'delivery' ? (order.deliveryAddress?.formatted || order.deliveryAddress?.address || '') : '',
+      deliveryCustPincode: '',
+      deliveryCustPhone: order.orderType === 'delivery' ? (order.phone || '') : '',
+      Tip: order.tipAmount || 0,
+      station_kot: '',
+      order_type: order.rawOrderType || 'dinein',
+      gst_tax,
+      vat_tax,
+      delivery_charge: order.deliveryCharge || 0,
     };
   },
 };

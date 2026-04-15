@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { 
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
-  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff 
+  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye,
+  LayoutGrid, List, Columns, Rows
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
 import { useOrders } from "../../contexts";
+import { useNotifications } from "../../contexts/NotificationContext";
 import { useToast } from "../../hooks/use-toast";
 
 // Permission mapping for sidebar items
@@ -69,6 +71,14 @@ const sidebarMenuItems = [
     ],
   },
   {
+    id: "visibility-settings",
+    label: "Visibility Settings",
+    icon: Eye,
+    children: [
+      { id: "status-config", label: "Status Configuration", path: "/visibility/status-config" },
+    ],
+  },
+  {
     id: "employees",
     label: "Employees",
     icon: Users,
@@ -99,7 +109,20 @@ const sidebarMenuItems = [
 ];
 
 // Sidebar Component
-const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onOpenSettings, onOpenMenu, onRefresh, isRefreshing, isOrderEntryOpen }) => {
+const Sidebar = ({ 
+  isExpanded, 
+  setIsExpanded, 
+  onOpenSettings, 
+  onOpenMenu, 
+  onRefresh, 
+  isRefreshing, 
+  isOrderEntryOpen,
+  // View toggle props
+  activeView,
+  setActiveView,
+  dashboardView,
+  setDashboardView,
+}) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, logout: authLogout, hasPermission } = useAuth();
@@ -108,6 +131,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
   const { clearTables } = useTables();
   const { clearSettings } = useSettings();
   const { clearOrders } = useOrders();
+  const { soundEnabled, setSoundEnabled } = useNotifications();
 
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -121,7 +145,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
   };
 
   // Only show these sidebar sections (hide the rest)
-  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'menu-management']);
+  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'menu-management', 'visibility-settings']);
 
   // Filter menu items by visibility + permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {
@@ -188,6 +212,17 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
       return;
     }
     
+    // Visibility Settings children - navigate to actual routes
+    if (parentId === 'visibility-settings') {
+      if (child.id === 'status-config') {
+        setActiveItem(child.id);
+        navigate(child.path);
+        return;
+      }
+      showComingSoon(child.label);
+      return;
+    }
+    
     // All other children are "Coming soon" in Phase 1
     showComingSoon(child.label);
   };
@@ -246,6 +281,80 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
           </button>
         )}
       </div>
+
+      {/* View Toggle Section */}
+      {(activeView !== undefined || dashboardView !== undefined) && (
+        <div 
+          className="px-3 py-3"
+          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+        >
+          {/* View Type: Table / Order */}
+          {activeView !== undefined && setActiveView && (
+            <div className={`flex items-center ${isExpanded ? 'gap-2' : 'flex-col gap-1'}`}>
+              {isExpanded && <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>View:</span>}
+              <div className={`flex ${isExpanded ? 'gap-1' : 'flex-col gap-1'}`}>
+                <button
+                  data-testid="view-toggle-table"
+                  onClick={() => setActiveView('table')}
+                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
+                  style={{
+                    backgroundColor: activeView === 'table' ? `${COLORS.primaryGreen}15` : 'transparent',
+                    color: activeView === 'table' ? COLORS.primaryGreen : COLORS.grayText,
+                  }}
+                  title="Table View"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  data-testid="view-toggle-order"
+                  onClick={() => setActiveView('order')}
+                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
+                  style={{
+                    backgroundColor: activeView === 'order' ? `${COLORS.primaryGreen}15` : 'transparent',
+                    color: activeView === 'order' ? COLORS.primaryGreen : COLORS.grayText,
+                  }}
+                  title="Order View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Dashboard Grouping: Channel / Status */}
+          {dashboardView !== undefined && setDashboardView && (
+            <div className={`flex items-center ${isExpanded ? 'gap-2 mt-2' : 'flex-col gap-1 mt-2'}`}>
+              {isExpanded && <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>Group:</span>}
+              <div className={`flex ${isExpanded ? 'gap-1' : 'flex-col gap-1'}`}>
+                <button
+                  data-testid="dash-toggle-channel"
+                  onClick={() => setDashboardView('channel')}
+                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
+                  style={{
+                    backgroundColor: dashboardView === 'channel' ? `${COLORS.primaryGreen}15` : 'transparent',
+                    color: dashboardView === 'channel' ? COLORS.primaryGreen : COLORS.grayText,
+                  }}
+                  title="By Channel"
+                >
+                  <Columns className="w-4 h-4" />
+                </button>
+                <button
+                  data-testid="dash-toggle-status"
+                  onClick={() => setDashboardView('status')}
+                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
+                  style={{
+                    backgroundColor: dashboardView === 'status' ? `${COLORS.primaryGreen}15` : 'transparent',
+                    color: dashboardView === 'status' ? COLORS.primaryGreen : COLORS.grayText,
+                  }}
+                  title="By Status"
+                >
+                  <Rows className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto py-4">
@@ -320,24 +429,24 @@ const Sidebar = ({ isExpanded, setIsExpanded, isSilentMode, setIsSilentMode, onO
         {/* Silent Mode Toggle */}
         <button
           data-testid="sidebar-silent-toggle"
-          onClick={() => setIsSilentMode(!isSilentMode)}
+          onClick={() => setSoundEnabled(!soundEnabled)}
           className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors ${
             isExpanded ? "justify-start" : "justify-center"
           }`}
           style={{ 
-            backgroundColor: isSilentMode ? `${COLORS.grayText}15` : `${COLORS.primaryGreen}15`,
-            color: isSilentMode ? COLORS.grayText : COLORS.primaryGreen,
+            backgroundColor: !soundEnabled ? `${COLORS.grayText}15` : `${COLORS.primaryGreen}15`,
+            color: !soundEnabled ? COLORS.grayText : COLORS.primaryGreen,
           }}
-          title={!isExpanded ? (isSilentMode ? "Silent Mode" : "Ringer On") : undefined}
+          title={!isExpanded ? (!soundEnabled ? "Silent Mode" : "Ringer On") : undefined}
         >
-          {isSilentMode ? (
+          {!soundEnabled ? (
             <BellOff className="w-5 h-5 flex-shrink-0" />
           ) : (
             <Bell className="w-5 h-5 flex-shrink-0" />
           )}
           {isExpanded && (
             <span className="text-sm font-medium">
-              {isSilentMode ? "Silent Mode" : "Ringer On"}
+              {!soundEnabled ? "Silent Mode" : "Ringer On"}
             </span>
           )}
         </button>

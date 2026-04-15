@@ -3,7 +3,7 @@ import TableCard from "../cards/TableCard";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../../utils";
 
 // Section Component for Table View
-const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, activeFirst, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol, tableFilter }) => {
+const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol, tableFilter }) => {
   // Filter tables based on search
   const filteredTables = matchingTableIds === null 
     ? section.tables 
@@ -16,8 +16,8 @@ const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, onBi
     return true;
   });
 
-  // Sort tables using priority-based utility
-  const sortedTables = sortByActiveFirst(statusFiltered, TABLE_STATUS_PRIORITY, activeFirst);
+  // Sort tables using priority-based utility (always applies)
+  const sortedTables = sortByActiveFirst(statusFiltered, TABLE_STATUS_PRIORITY);
 
   // Don't render section if no tables to show (after all filters applied)
   if (sortedTables.length === 0) {

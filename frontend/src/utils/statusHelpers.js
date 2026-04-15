@@ -70,16 +70,31 @@ export const ROOM_STATUS_CONFIG = {
 };
 
 // Priority order for table statuses (lower = higher priority)
+// Based on fOrderStatus: 7→5→2→1→10→8→9→available(last)
 export const TABLE_STATUS_PRIORITY = {
-  yetToConfirm: 0,  // f_order_status 7 — highest priority (CHG-009)
-  billReady: 1,     // f_order_status 5
-  occupied: 2,      // f_order_status 1, 2
-  reserved: 3,
-  available: 4,
+  yetToConfirm: 0,  // fOrderStatus 7 — highest priority (needs confirmation)
+  billReady: 1,     // fOrderStatus 5 — customer waiting to pay
+  ready: 2,         // fOrderStatus 2 — food ready, needs serving
+  occupied: 3,      // fOrderStatus 1 — preparing, in progress
+  reserved: 4,      // fOrderStatus 10 — upcoming reservation
+  running: 5,       // fOrderStatus 8 — active but not urgent
+  pendingPayment: 6,// fOrderStatus 9 — awaiting payment
+  available: 99,    // No order — always last for Dine-In
+};
+
+// fOrderStatus to priority mapping (for direct fOrderStatus-based sorting)
+export const F_ORDER_STATUS_PRIORITY = {
+  7: 0,   // YTC - highest
+  5: 1,   // Served/Bill Ready
+  2: 2,   // Ready
+  1: 3,   // Preparing
+  10: 4,  // Reserved
+  8: 5,   // Running
+  9: 6,   // Pending Payment
 };
 
 // Active states for tables (paid removed — status 6 now frees table) (CHG-009)
-const TABLE_ACTIVE_STATES = ["yetToConfirm", "billReady", "occupied", "reserved"];
+const TABLE_ACTIVE_STATES = ["yetToConfirm", "billReady", "ready", "occupied", "reserved", "running", "pendingPayment"];
 
 // Priority order for room statuses (lower = higher priority)
 export const ROOM_STATUS_PRIORITY = {
@@ -124,23 +139,25 @@ export const getRoomStatusConfig = (status) => {
 
 /**
  * Sort items by status priority, then by number
+ * Priority order based on fOrderStatus: 7→5→2→1→10→8→9→available(last)
  * @param {Array} items - Array of items to sort
  * @param {Object} priorityMap - Map of status → priority rank (lower = higher priority)
- * @param {boolean} activeFirst - Whether to sort by priority
  * @returns {Array} Sorted array
  */
-export const sortByActiveFirst = (items, priorityMap, activeFirst = true) => {
-  const maxPriority = Object.keys(priorityMap).length;
+export const sortByActiveFirst = (items, priorityMap) => {
+  const maxPriority = 99; // Available tables go last
   return [...items].sort((a, b) => {
-    if (activeFirst) {
-      const aPriority = priorityMap[a.status] ?? maxPriority;
-      const bPriority = priorityMap[b.status] ?? maxPriority;
-      if (aPriority !== bPriority) return aPriority - bPriority;
-    }
-    const aStr = a.label || a.id;
-    const bStr = b.label || b.id;
-    const aNum = parseInt(aStr.replace(/\D/g, ''), 10) || 0;
-    const bNum = parseInt(bStr.replace(/\D/g, ''), 10) || 0;
+    // Get priority from status or fOrderStatus
+    const aPriority = priorityMap[a.status] ?? F_ORDER_STATUS_PRIORITY[a.fOrderStatus] ?? F_ORDER_STATUS_PRIORITY[a.order?.fOrderStatus] ?? maxPriority;
+    const bPriority = priorityMap[b.status] ?? F_ORDER_STATUS_PRIORITY[b.fOrderStatus] ?? F_ORDER_STATUS_PRIORITY[b.order?.fOrderStatus] ?? maxPriority;
+    
+    if (aPriority !== bPriority) return aPriority - bPriority;
+    
+    // Secondary sort by table/order number
+    const aStr = a.label || a.tableNumber || a.id || '';
+    const bStr = b.label || b.tableNumber || b.id || '';
+    const aNum = parseInt(String(aStr).replace(/\D/g, ''), 10) || 0;
+    const bNum = parseInt(String(bStr).replace(/\D/g, ''), 10) || 0;
     return aNum - bNum;
   });
 };

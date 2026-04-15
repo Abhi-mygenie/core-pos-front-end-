@@ -1,6 +1,304 @@
 # POS Frontend - Bug Tracker & Audit Document
 
-**Last Updated:** Feb 2026
+**Last Updated:** April 13, 2026 (v6 — Socket v2 Implementation Complete)
+
+---
+
+## Quick Summary Table
+
+| S.No | Bug ID | Title | Priority | Status |
+|------|--------|-------|----------|--------|
+| 1 | NOTE-200 | `addOrder` Console Log Appears Twice (React StrictMode) | P3 | ℹ️ No Action |
+| 2 | BUG-201 | Duplicate API Calls on Update Order | P0 | ✅ FIXED |
+| 3 | BUG-202 | Duplicate API Calls on Cancel Item | P0 | ✅ FIXED |
+| 4 | BUG-203 | Redundant Table Socket Handling | P1 | ✅ FIXED |
+| 5 | BUG-204 | `order_sub_total_without_tax` Returns 0 | P1 | ⏳ BLOCKED (Backend) |
+| 6 | BUG-205 | Cancel Order Race Condition | P0 | ✅ FIXED |
+| 7 | BUG-206 | Partial Cancel Cancels All Items | P0 | ✅ FIXED |
+| 8 | BUG-207 | Place Order Payload Format | P0 | ✅ FIXED |
+| 9 | BUG-208 | Socket Missing Variations/Addons | P0 | ✅ FIXED |
+| 10 | BUG-209 | Placed Item Prices Double-Multiplied | P0 | ✅ FIXED |
+| 11 | BUG-210 | No Table Engage Check (Multi-Device Race) | P0 | ❌ OPEN |
+| 12 | BUG-211 | No `update-table engage` for New Orders | P1 | ✅ FIXED (v2 API) |
+| 13 | BUG-212 | Addon Names Mismatch Between APIs | P0 | ❌ OPEN (Backend) |
+| 14 | BUG-213 | Collect Bill Shows Only Placed Items | P0 | ✅ FIXED |
+| 15 | BUG-214 | Collect Bill on Existing Order | P0 | ✅ FIXED (V2 Endpoint) |
+| 16 | BUG-215 | Full Order Cancel Treated as Partial | P0 | ✅ FIXED |
+| 17 | BUG-216 | Missing Table Engage, Incorrect Free | P0 | ✅ FIXED (Frontend — workaround removed, free→ignore) |
+| 18 | BUG-221 | Merge Order - Source Table Locked | P0 | ✅ FIXED (by BUG-216 workaround removal) |
+| 19 | BUG-222 | waitForTableEngaged timeout on Update Order | P1 | ✅ FIXED (waitForOrderEngaged + fire-and-forget) |
+| 20 | BUG-223 | All local locking must be removed | P0 | ✅ FIXED (Dashboard Mark Ready/Served local engage removed) |
+| 21 | **BUG-224** | **Manual Bill: `gst_tax` always 0** | **P1** | **❌ OPEN** |
+| 22 | **BUG-225** | **Manual Bill: `custName` sends label instead of real name** | **P2** | **❌ OPEN** |
+| 23 | BUG-226 | `order-engage` missing before `update-item-status` | P1 | ✅ FIXED (Backend — deployed same day) |
+| 24 | **BUG-227** | **Order-level Ready/Serve does not update item-level `food_status`** | **P0** | **❌ OPEN (Backend — Critical)** |
+| 25 | **BUG-228** | **`update-order-target` not sent when source is walk-in in merge** | **P0** | **❌ OPEN (Backend — Critical)** |
+| 26 | **BUG-229** | **Confirm Order (order-status-update with "paid") — `$orderstatus` undefined** | **P0** | **✅ BYPASSED (Frontend — new endpoint)** |
+| 27 | **BUG-230** | **`F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch (preparing vs cooking)** | **P2** | **❌ OPEN (Workaround in place)** |
+
+### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
+
+**Status:** ✅ FIXED (Backend — deployed same day)
+
+---
+
+### BUG-227: Order-Level Ready/Serve Does Not Update Item-Level `food_status` (Backend — CRITICAL)
+
+**Status:** ❌ OPEN — Backend Team
+**Priority:** P0 — Critical
+**Reported:** April 13, 2026
+
+**Problem:** When order-level Mark Ready or Mark Served is triggered (via `PUT /api/v2/vendoremployee/order-status-update`), the backend updates `f_order_status` but does NOT update individual items' `food_status`. This causes a visual mismatch: order card appears in Ready/Served tab, but items still show "Preparing".
+
+**Evidence (Order 730451, Mark Ready):**
+```
+Socket payload: update-order-paid
+├── f_order_status: 2          ← Order-level = READY ✅
+├── orderDetails[0].food_status: 1   ← Item-level = PREPARING ❌ (should be 2)
+├── ready_order_details: []    ← Empty (should contain the item)
+└── serve_order_details: []    ← Empty
+```
+
+**Visual impact:**
+- Screenshot 1 (before): Order in Preparing tab, item shows "Preparing", button = "Ready"
+- Screenshot 2 (after): Order moved to Ready tab, button = "Serve", BUT item STILL shows "Preparing"
+- User expects: item should also show "Ready" when order is marked Ready
+
+**Expected backend behavior:**
+When `order-status-update` is called with `order_status: "ready"`:
+1. Set `f_order_status = 2` (ready) ✅ Already done
+2. Set ALL non-cancelled items' `food_status = 2` (ready) ❌ Missing
+3. Populate `ready_order_details` with those items ❌ Missing
+
+Same for `order_status: "serve"`:
+1. Set `f_order_status = 5` (served) ✅ Already done
+2. Set ALL non-cancelled items' `food_status = 4` (served) ❌ Missing
+3. Populate `serve_order_details` with those items ❌ Missing
+
+**Frontend status:** No frontend change needed. Frontend correctly displays what backend sends. Once backend updates `food_status` in the socket payload, items will show correct status automatically.
+
+**Affected flows:** Order-level Mark Ready, Order-level Mark Served (dashboard buttons)
+**API endpoint:** `PUT /api/v2/vendoremployee/order-status-update`
+**Socket event:** `update-order-paid` on `new_order_{restaurantId}` channel
+
+**Status:** ❌ OPEN — Backend Socket Team
+**Priority:** P1
+**Reported:** April 13, 2026
+
+**Problem:** All v2 flows send `order-engage {orderId} engage` before the data event — except `update-item-status`. This breaks the architectural principle that ALL order locking comes from socket events.
+
+**Current behavior:**
+```
+update-item-status {orderId} {f_status} {payload}   ← data arrives, no lock
+```
+
+**Expected behavior (consistent with all other v2 flows):**
+```
+order-engage {orderId} engage                        ← lock order card
+update-item-status {orderId} {f_status} {payload}    ← data arrives
+```
+
+**Impact:** Currently sub-second so no visible issue. But on slow networks or under load, the order card is clickable during processing — could cause race conditions on multi-device setups.
+
+**Frontend status:** Handler already releases `setOrderEngaged(orderId, false)` after processing. Once backend sends `order-engage`, locking will work automatically — zero frontend change needed.
+
+**Affected flows:** Item-level Ready, Item-level Serve (via OrderCard toggles on dashboard)
+**API endpoint:** `PUT /api/v2/vendoremployee/food-status-update`
+**Socket event:** `update-item-status` on `new_order_{restaurantId}` channel
+
+---
+
+### BUG-228: `update-order-target` Not Sent When Source is Walk-In in Merge (Backend — CRITICAL)
+
+**Status:** ❌ OPEN — Backend Socket Team
+**Priority:** P0 — Critical
+**Reported:** April 13, 2026
+
+**Problem:** When merging orders where the SOURCE is a walk-in (tableId=0), the backend sends `update-order-source` (source cancelled) but does NOT send `update-order-target` (target updated with merged items). Table-to-table merge works correctly.
+
+**Evidence:**
+
+Test 1 — Walk-in → T1 merge (Order 730902 source, 730917 target):
+```
+order-engage 730902 engage        ✅ source locked
+order-engage 730917 engage        ✅ target locked
+update-order-source 730902 (3)    ✅ source cancelled, removed
+update-order-target 730917        ❌ NEVER RECEIVED
+setOrderEngaged 730917 → false    ❌ NEVER RELEASED
+```
+
+Test 2 — Walk-in → Walk-in merge (Order 730917 source, 730919 target):
+```
+order-engage 730917 engage        ✅ source locked
+order-engage 730919 engage        ✅ target locked
+update-order-source 730917 (3)    ✅ source cancelled, removed
+update-order-target 730919        ❌ NEVER RECEIVED
+setOrderEngaged 730919 → false    ❌ NEVER RELEASED
+```
+
+Test 3 — Table → Table merge (730882 source, 730902 target) — WORKS:
+```
+order-engage 730882 engage        ✅
+order-engage 730902 engage        ✅
+update-order-target 730902        ✅ RECEIVED — target updated
+update-order-source 730882 (3)    ✅ source removed
+```
+
+**Merge scenario matrix:**
+
+| Source → Target | `update-order-source` | `update-order-target` | Works? |
+|----------------|----------------------|----------------------|--------|
+| Table → Table | ✅ | ✅ | ✅ |
+| Walk-in → Walk-in | ✅ | ✅ | ✅ |
+| Table → Walk-in | ✅ | ✅ | ✅ |
+| Walk-in → Table | ✅ | ❌ | ❌ |
+
+**Impact:**
+1. Target table order has stale data — merged items from walk-in source never reflected
+2. Target order card spinner stuck permanently — `setOrderEngaged(targetId)` never released
+3. Only fix is page refresh
+
+**Expected backend behavior:**
+When merge API is called with walk-in source merging INTO a table order, backend must send BOTH:
+1. `update-order-source {sourceOrderId} {3} {payload}` — source cancelled ✅ Already sent
+2. `update-order-target {targetOrderId} {f_status} {payload}` — target updated with merged items ❌ MISSING only for walk-in → table
+
+**Frontend status:** Handler for `update-order-target` is implemented and working (confirmed with table-to-table merge). Zero frontend change needed — once backend sends the event, it will work automatically.
+
+**API endpoint:** `POST /api/v2/vendoremployee/order/transfer-order`
+**Socket events:** `update-order-target` + `update-order-source` on `new_order_{restaurantId}` channel
+
+
+---
+
+### BUG-229: Confirm Order — `$orderstatus` Undefined in Backend (Backend — CRITICAL)
+
+**Status:** ✅ BYPASSED — Frontend now uses dedicated `waiter-dinein-order-status-update` endpoint
+**Priority:** P0 → Resolved
+**Reported:** April 13, 2026
+**Bypassed:** April 14, 2026
+
+**Original Problem:** `PUT /api/v2/vendoremployee/order/order-status-update` with `order_status: "paid"` threw `ErrorException: Undefined variable $orderstatus` at OrderController.php:3643.
+
+**Resolution:** Frontend now uses dedicated confirm endpoint: `PUT /api/v2/vendoremployee/order/waiter-dinein-order-status-update`. This endpoint works correctly. The original `order-status-update` bug still exists in backend but is no longer hit by the confirm flow.
+
+---
+
+### BUG-230: `F_ORDER_STATUS` vs `F_ORDER_STATUS_API` Mismatch (preparing vs cooking)
+
+**Status:** ❌ OPEN — Workaround in place
+**Priority:** P2
+**Reported:** April 14, 2026
+
+**Problem:** Two separate status maps exist because frontend display uses `preparing` (status 1) but the `waiter-dinein-order-status-update` API expects `cooking` for the same status.
+
+**Current workaround:** `F_ORDER_STATUS_API` map added in `constants.js` — used only for API payloads via `profileTransform.js`. `F_ORDER_STATUS` (display map) unchanged.
+
+**Fix needed:** Unify to a single map. Either:
+1. Backend accepts both `preparing` and `cooking`, OR
+2. Frontend uses `cooking` everywhere and displays it as "Preparing" via a display label map
+#### v2 Endpoint Payload Test (April 11, 2026)
+All 3 endpoints tested on v2 — **no socket payload benefit found**. Reverted to v1.
+
+| Endpoint | v1 Payload? | v2 Payload? | Verdict |
+|----------|------------|------------|---------|
+| transfer-order | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
+| transfer-food-item | ❌ No | ✅ Yes (`update-order-target` + `update-order-source`) | **Upgraded to v2** (Apr 13) |
+| cancel-food-item | ❌ No | ✅ Yes (`order-engage` + `update-order` with payload) | **Upgraded to v2** (Apr 13) |
+
+**Conclusion (Updated Apr 13):** Backend v2 now provides full socket payloads for transfer-order, transfer-food-item, and cancel-food-item. Cancel Order / Mark Ready / Mark Served (all via `order-status-update` endpoint) remain v1 — backend change needed for that one endpoint.
+
+### April 11, 2026 Updates (Session 10 — Socket Event Audit)
+
+#### BUG-216 — Backend Fix Confirmed → Workaround Removal Pending
+- User confirmed BUG-216 backend fix is deployed
+- `free→engage` workaround in `handleUpdateTable` to be REMOVED
+- `free` should genuinely free/release the table
+- This also fixes BUG-221 (Merge Order source table locked)
+
+#### BUG-223 — NEW: Remove All Local Locking
+**Problem:** Multiple places in the frontend set `setTableEngaged` or call `waitForTableEngaged` locally, without socket events driving the lock. This creates inconsistencies, timeouts, and stuck spinners.
+
+**Principle:** ALL locking must come from socket events only. Zero local locking.
+
+**10 locations to clean:** See ROADMAP.md TASK-A for full list.
+
+**Flow-specific wait logic:** See ROADMAP.md TASK-B for socket event map.
+
+#### Endpoint Verification (Updated April 13, 2026)
+
+| Action | Endpoint | Status |
+|--------|----------|--------|
+| Switch Table | `POST /api/v2/vendoremployee/order/order-table-room-switch` | ✅ v2 verified — `update-table engage` (both) + `update-order-target` with payload |
+| Transfer Order (Merge) | `POST /api/v2/vendoremployee/order/transfer-order` | ✅ v2 verified — `order-engage` (both) + `update-order-target` + `update-order-source` |
+| Transfer Food Item | `POST /api/v2/vendoremployee/order/transfer-food-item` | ✅ v2 verified — same events as merge |
+| Collect Bill | `POST /api/v2/vendoremployee/order/order-bill-payment` | Path updated, socket behavior TBD |
+| Cancel Food Item | `PUT /api/v2/vendoremployee/order/cancel-food-item` | ✅ v2 verified — `order-engage` + `update-order` with payload. No `update-table free`. No GET API. |
+
+#### Socket Event Audit Results (Updated April 13, 2026)
+
+**Switch Table v2** (verified):
+- 2x `update-table engage` (source + dest tables locked)
+- `update-order-target` with full payload (order now on dest table)
+- No `update-order-source` (same order, just moved)
+- No `update-table free` — frontend releases both after context update
+- Both tables get `engage` (v1 only engaged dest — BUG-216 no longer triggers)
+
+**Transfer Order / Merge Table v2** (verified):
+- 2x `order-engage` (source + target orders locked)
+- `update-order-target` with full payload (target updated)
+- `update-order-source` with full payload (source cancelled, f_order_status=3)
+- No `update-table` events — order-level locking only
+- Zero GET API calls needed
+
+**Transfer Food Item v2** (verified):
+- Identical socket pattern to Merge Table
+- 2x `order-engage` (source + target orders locked)
+- `update-order-target` with full payload (target gets item)
+- `update-order-source` with full payload (source loses item, f_order_status=1, still active)
+- Zero GET API calls needed
+
+**Switch Table v1** (unchanged):
+- `update-table engage` (dest) + `update-order` (no payload) + `update-table free` (source)
+- GET API still required
+
+**Cancel Food Item v1** (unchanged):
+- `update-table free` (table) + `update-order-status` (status 6, but API returns "ready")
+- BUG-216 workaround currently converts `free` → `engage`
+- No `order-engage` event
+
+### April 10, 2026 Updates
+
+#### BUG-211 - FIXED
+- v2 API now sends `update-table engage` socket BEFORE HTTP response
+- New Order flow now waits for socket before redirect
+
+#### BUG-222 - NEW & FIXED
+**Problem:** `waitForTableEngaged: timeout` on Update Order because backend no longer sends `update-table engage` for updates.
+
+**Solution:** New `order-engage` channel handles order-level locking:
+- Backend sends `order-engage [orderId, restaurantOrderId, restaurantId, 'engage']`
+- Frontend uses `setOrderEngaged()` instead of `setTableEngaged()`
+- Works for ALL order types (dine-in, walk-in, takeaway, delivery)
+
+### Open Bug Notes (April 11, 2026)
+- **BUG-210**: Multi-device race condition — needs `isTableEngaged` check BEFORE opening OrderEntry. Low risk now that permission gating prevents unauthorized operations.
+- **BUG-212**: Backend addon name mismatch — frontend workaround possible but not clean. Waiting on backend.
+- **BUG-216**: Backend fix confirmed by user (April 11). `free→engage` workaround to be REMOVED. `free` should genuinely free the table.
+- **BUG-223**: All local locking (without socket events) to be removed. See ROADMAP TASK-A.
+
+### Status Legend
+- ✅ FIXED - Issue resolved and verified
+- ❌ OPEN - Needs fix (frontend or backend)
+- ⏳ BLOCKED - Waiting on backend fix
+- ⚠️ Workaround - Temporary fix in place
+- ℹ️ No Action - Informational only
+
+### Priority Legend
+- **P0** - Critical/Blocking
+- **P1** - High Priority
+- **P2** - Medium Priority
+- **P3** - Low Priority
 
 ---
 
@@ -190,9 +488,9 @@ Switched to correct endpoint: `PUT /api/v1/vendoremployee/order/cancel-food-item
 |--------|----------|--------|
 | Place New Order | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data) | Updated |
 | Update Order | `PUT /api/v1/vendoremployee/order/update-place-order` (JSON) | Updated |
-| Collect Bill (existing order) | `POST /api/v2/vendoremployee/order-bill-payment` (JSON) | Working |
+| Collect Bill (existing order) | `POST /api/v2/vendoremployee/order/order-bill-payment` (JSON) | Working |
 | Place + Pay (new order) | `POST /api/v1/vendoremployee/order/place-order` (multipart/form-data, payment_status=paid) | Updated |
-| Cancel Item (full/partial) | `PUT /api/v1/vendoremployee/order/cancel-food-item` | Working |
+| Cancel Item (full/partial) | `PUT /api/v2/vendoremployee/order/cancel-food-item` | Working (v2) |
 | Cancel Full Order | `PUT /api/v2/vendoremployee/order-status-update` | Working |
 | Get Single Order | `POST /api/v2/vendoremployee/get-single-order-new` | Working |
 | Food Status Update | `PUT /api/v2/vendoremployee/food-status-update` | Working |
@@ -743,12 +1041,20 @@ Send `update-table engage` for prepaid orders, same as Update Order flow.
 
 ## BUG-221: Merge Order — Source Table Permanently Locked After Merge
 
-**Status:** OPEN — CRITICAL
-**Priority:** P0 CRITICAL
+**Status:** RESOLVED — v2 endpoint fixes this
+**Priority:** P0 CRITICAL → RESOLVED
 **Reported:** April 6, 2026
+**Resolved:** April 13, 2026
 **Component:** Frontend (BUG-216 workaround) + Backend (missing engage for source table)
 
-### Problem
+### Resolution
+Merge endpoint upgraded to v2 (`POST /api/v2/vendoremployee/order/transfer-order`). v2 uses:
+- **Order-level locking** (`order-engage`) instead of table-level (`update-table`)
+- **New events:** `update-order-target` + `update-order-source` with full payloads
+- **No `update-table free`** sent → BUG-216 workaround no longer triggers
+- **Frontend TODO:** Add handlers for `update-order-target` and `update-order-source`
+
+### Original Problem (v1)
 After merging order 730506 from table 6476 (source) → table 6235 (destination), the source table 6476 gets permanently stuck with a spinner overlay and cannot be clicked.
 
 ### Console Evidence (Timestamped)
@@ -807,3 +1113,79 @@ Remove the blanket `free→engage` workaround in `handleUpdateTable` (`socketHan
 - Source table permanently stuck with spinner after every merge — unusable until page refresh
 - Same root cause as Shift Table (BUG-216) — both broken by the `free→engage` workaround
 - Blocks production use of merge/shift flows
+
+
+---
+
+## BUG-224: Manual Bill `gst_tax` Always 0
+
+**Priority:** P1
+**Status:** ❌ OPEN
+**Filed:** April 11, 2026
+
+### Symptom
+When manual bill is printed from TableCard or OrderCard, the payload sends `gst_tax: 0` regardless of actual tax on items.
+
+### Root Cause
+`buildBillPrintPayload()` in `orderTransform.js` computes GST from:
+```js
+parseFloat(item.gst_tax_amount || item.tax_amount || 0)
+```
+
+But `rawOrderDetails` items (from socket) **do NOT have `gst_tax_amount` or `tax_amount` fields**. These are computed fields that the socket doesn't return at item level.
+
+### Evidence
+- Place order payload sends `gst_tax: 43.65` (computed by frontend before sending)
+- Socket payload does NOT include `gst_tax` or `vat_tax` at order level
+- Socket `orderDetails` items do NOT include `gst_tax_amount` or `tax_amount`
+- What IS available per item: `food_details.tax` (percentage), `food_details.tax_type` ("GST"/"VAT"), `food_details.tax_calc` ("Exclusive"/"Inclusive"), `unit_price`, `quantity`, `total_add_on_price`
+
+### Fix
+Compute from available percentage + price data instead of reading pre-computed fields:
+```
+For each rawOrderDetails item:
+  taxable = (unit_price × quantity) + total_add_on_price
+  tax_percent = food_details.tax (e.g., 5)
+  
+  if Exclusive: item_tax = taxable × (tax_percent / 100)
+  if Inclusive: item_tax = taxable - (taxable / (1 + tax_percent / 100))
+  
+  Route to gst_tax or vat_tax sum based on food_details.tax_type
+```
+
+### Verification
+Compare computed `gst_tax` in bill payload against place order's `gst_tax` for the same order — should match exactly.
+
+### Files
+- `api/transforms/orderTransform.js` → `toAPI.buildBillPrintPayload()` lines 750-758
+
+---
+
+## BUG-225: Manual Bill `custName` Sends Label Instead of Real Name
+
+**Priority:** P2
+**Status:** ❌ OPEN
+**Filed:** April 11, 2026
+
+### Symptom
+Bill payload sends `custName: "Walk-In"` for walk-in orders. The backend/printer expects an empty string `""` when there's no real customer name. Labels like "Walk-In", "TA", "Del" are UI display labels, not customer names.
+
+### Root Cause
+`fromAPI.order()` maps customer to `customerLabel`:
+```js
+// If no customer name, defaults:
+// walk-in → "Walk-In", takeaway → "TA", delivery → "Del"
+```
+
+`buildBillPrintPayload` reads `order.customer` which is the label, not the raw name.
+
+### Fix
+Store raw customer name separately in `fromAPI.order()`:
+```js
+rawCustomerName: customer,  // actual name or empty string
+customer: customerLabel,     // display label (existing)
+```
+Then in `buildBillPrintPayload`: use `order.rawCustomerName || ''` for `custName`.
+
+### Files
+- `api/transforms/orderTransform.js` → `fromAPI.order()` line 165 + `buildBillPrintPayload()` line 796

@@ -4,13 +4,15 @@ import { Check, Loader2, AlertCircle } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
-import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders } from "../contexts";
+import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders, useStations } from "../contexts";
 import * as profileService from "../api/services/profileService";
+import { setCrmRestaurantId } from "../api/crmAxios";
 import * as categoryService from "../api/services/categoryService";
 import * as productService from "../api/services/productService";
 import * as tableService from "../api/services/tableService";
 import * as settingsService from "../api/services/settingsService";
 import * as orderService from "../api/services/orderService";
+import * as stationService from "../api/services/stationService";
 
 // Initial status shape per API key
 const mkIdle = () => ({ status: LOADING_STATES.IDLE, error: null, loaded: 0, total: 0, elapsed: null, startedAt: null });
@@ -27,6 +29,13 @@ const LoadingPage = () => {
   const { setTables } = useTables();
   const { setCancellationReasons } = useSettings();
   const { setOrders } = useOrders();
+  const { 
+    setAvailableStations, 
+    initializeConfig, 
+    setAllStationData,
+    enabledStations,
+    stationViewEnabled 
+  } = useStations();
 
   // Loading status for each API with counts + timing
   const [loadingStatus, setLoadingStatus] = useState(
@@ -58,6 +67,9 @@ const LoadingPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Ref to track station loading status
+  const stationLoadingRef = useRef(false);
+
   // Update progress when status changes
   useEffect(() => {
     const statuses = Object.values(loadingStatus);
@@ -69,18 +81,84 @@ const LoadingPage = () => {
     setProgress(newProgress);
 
     // Check if all complete
-    if (completed === total) {
+    if (completed === total && !stationLoadingRef.current) {
       const hasAnyError = statuses.some((s) => s.status === LOADING_STATES.ERROR);
       setHasError(hasAnyError);
-      setIsComplete(true);
 
       if (!hasAnyError) {
-        setTimeout(() => {
-          navigate("/dashboard", { replace: true });
-        }, 500);
+        // Load station data before navigating
+        stationLoadingRef.current = true;
+        loadStationData().then(() => {
+          setIsComplete(true);
+          setTimeout(() => {
+            navigate("/dashboard", { replace: true });
+          }, 500);
+        });
+      } else {
+        setIsComplete(true);
       }
     }
   }, [loadingStatus, navigate]);
+
+  // Load station data (called after all APIs complete)
+  const loadStationData = async () => {
+    try {
+      const data = loadedDataRef.current;
+      const products = data.products || [];
+      
+      // Extract unique stations from products
+      const uniqueStations = stationService.extractUniqueStations(products);
+      console.log('[LoadingPage] Available stations:', uniqueStations);
+      
+      if (uniqueStations.length > 0) {
+        // Set available stations in context
+        setAvailableStations(uniqueStations);
+        
+        // Initialize config (loads from localStorage or defaults to all stations)
+        initializeConfig(uniqueStations);
+        
+        // Get enabled stations (wait for state update)
+        const savedConfig = stationService.getStationViewConfig();
+        const stationsToLoad = savedConfig.stations?.length > 0 
+          ? savedConfig.stations.filter(s => uniqueStations.includes(s))
+          : uniqueStations;
+        
+        console.log('[LoadingPage] Loading station data for:', stationsToLoad);
+        
+        // Build categories map for lookup (category_id -> category_name)
+        const categories = data.categories || [];
+        const categoriesMap = {};
+        categories.forEach(cat => {
+          if (cat.categoryId) {
+            categoriesMap[cat.categoryId] = cat.categoryName;  // Use categoryName, not name
+            categoriesMap[String(cat.categoryId)] = cat.categoryName;
+          }
+        });
+        console.log('[LoadingPage] Categories map:', categoriesMap);
+        console.log('[LoadingPage] Sample categories:', categories.slice(0, 3));
+        
+        // Fetch data for each enabled station in parallel
+        if (savedConfig.enabled !== false && stationsToLoad.length > 0) {
+          const stationDataPromises = stationsToLoad.map(station => 
+            stationService.fetchStationData(station, categoriesMap)
+          );
+          const stationResults = await Promise.all(stationDataPromises);
+          
+          // Build station data object
+          const stationDataObj = {};
+          stationsToLoad.forEach((station, idx) => {
+            stationDataObj[station] = stationResults[idx];
+          });
+          
+          console.log('[LoadingPage] Station data loaded:', stationDataObj);
+          setAllStationData(stationDataObj);
+        }
+      }
+    } catch (error) {
+      console.error('[LoadingPage] Error loading station data:', error);
+      // Don't block navigation on station error
+    }
+  };
 
   // Update status for a specific API
   const updateStatus = useCallback((key, status, error = null, loaded = 0, total = 0, extra = {}) => {
@@ -99,8 +177,21 @@ const LoadingPage = () => {
     try {
       data.profile = await profileService.getProfile();
       if (ctrl.aborted) return;
+      
+      // Debug: Log permissions for analysis
+      console.log('[LoadingPage] User Profile:', {
+        user: data.profile.user,
+        roleName: data.profile.user?.roleName,
+        permissions: data.profile.permissions,
+      });
+      console.table(data.profile.permissions?.map((p, i) => ({ index: i, permission: p })) || []);
+      
       setUserData(data.profile.user, data.profile.permissions);
       setRestaurant(data.profile.restaurant);
+      // Set CRM API key based on restaurant ID
+      if (data.profile.restaurant?.id) {
+        setCrmRestaurantId(data.profile.restaurant.id);
+      }
       updateStatus('profile', LOADING_STATES.SUCCESS, null, 1, 1, { elapsed: ((Date.now() - t0) / 1000).toFixed(1), startedAt: null });
     } catch (error) {
       if (ctrl.aborted) return;
@@ -326,19 +417,11 @@ const LoadingPage = () => {
           />
         </div>
 
-        {/* Title */}
-        <h1
-          className="text-center text-xl font-semibold mb-2"
-          style={{ color: COLORS.darkText }}
-        >
-          Setting up your POS...
-        </h1>
-
         <p
           className="text-center text-sm mb-8"
           style={{ color: COLORS.grayText }}
         >
-          Please wait while we load your data
+          Please wait while we set up your system
         </p>
 
         {/* Loading Checklist */}

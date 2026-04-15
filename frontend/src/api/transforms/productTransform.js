@@ -101,8 +101,8 @@ export const fromAPI = {
       delivery: toBoolean(api.delivery),
     },
     
-    // Station routing (for KOT)
-    station: api.station_name || STATION_TYPES.KDS,
+    // Station routing (for KOT) - null if not set (no KOT for items without station)
+    station: api.station_name || null,
 
     // Menu type — Phase 1/2: only 'Normal' shown in POS. Phase 3: multiple menus
     foodFor: api.food_for || 'Normal',

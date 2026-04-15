@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   X, ArrowLeft, Store, Clock, Receipt, CreditCard, Percent,
-  Tags, Printer, Ban, LayoutGrid, Truck, SlidersHorizontal,
+  Tags, Printer, Ban, LayoutGrid, Truck, SlidersHorizontal, Bell,
 } from "lucide-react";
 import { COLORS } from "../../constants";
 
@@ -11,6 +11,8 @@ import { RestaurantInfoView, TaxGstView, ServiceChargeView, DeliverySettingsView
 import { OperatingHoursView, PaymentMethodsView, DiscountTypesView, PrintersView, CancellationReasonsView } from "./settings/ListFormViews";
 // Pattern C: Master-Detail
 import { TableManagementView } from "./settings/TableManagementView";
+// Notification Tester
+import NotificationTester from "../layout/NotificationTester";
 
 // ─── Tile Definitions ───────────────────────────────────────────────────────
 const TILES = [
@@ -25,6 +27,7 @@ const TILES = [
   { id: "delivery-settings", label: "Delivery Settings", icon: Truck },
   { id: "general-settings", label: "General Settings", icon: SlidersHorizontal },
   { id: "service-charge", label: "Service Charge", icon: Percent },
+  { id: "notification-test", label: "Test Notifications", icon: Bell },
 ];
 
 // ─── Detail View Map ────────────────────────────────────────────────────────
@@ -40,6 +43,7 @@ const DETAIL_VIEWS = {
   "delivery-settings": DeliverySettingsView,
   "general-settings": GeneralSettingsView,
   "service-charge": ServiceChargeView,
+  "notification-test": NotificationTester,
 };
 
 // ─── Main Panel ─────────────────────────────────────────────────────────────

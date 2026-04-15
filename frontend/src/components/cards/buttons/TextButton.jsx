@@ -12,6 +12,7 @@ const TextButton = ({
   onClick, 
   backgroundColor = COLORS.primaryGreen,
   textColor = "white",
+  borderColor = null,
   testId, 
   ariaLabel,
   fullWidth = false,
@@ -27,8 +28,9 @@ const TextButton = ({
   // Memoize button style to prevent recreation on every render
   const buttonStyle = useMemo(() => ({ 
     backgroundColor, 
-    color: textColor 
-  }), [backgroundColor, textColor]);
+    color: textColor,
+    border: borderColor ? `1px solid ${borderColor}` : 'none'
+  }), [backgroundColor, textColor, borderColor]);
 
   return (
     <button
@@ -48,6 +50,7 @@ TextButton.propTypes = {
   onClick: PropTypes.func,
   backgroundColor: PropTypes.string,
   textColor: PropTypes.string,
+  borderColor: PropTypes.string,
   testId: PropTypes.string,
   ariaLabel: PropTypes.string,
   fullWidth: PropTypes.bool,
@@ -58,6 +61,7 @@ TextButton.defaultProps = {
   onClick: null,
   backgroundColor: COLORS.primaryGreen,
   textColor: "white",
+  borderColor: null,
   testId: undefined,
   ariaLabel: undefined,
   fullWidth: false,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { COLORS } from "../../../constants";
-import { useRestaurant } from "../../../contexts";
+import { useRestaurant, useSettings } from "../../../contexts";
 import {
   Field, BoolBadge, SectionTitle, EditBar,
   TextInput, NumberInput, ToggleSwitch,
@@ -219,6 +219,7 @@ export const DeliverySettingsView = () => {
 // ─── General Settings ───────────────────────────────────────────────────────
 export const GeneralSettingsView = () => {
   const { restaurant } = useRestaurant();
+  const { enableDynamicTables, setEnableDynamicTables } = useSettings();
   const settings = restaurant?.settings || {};
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({});
@@ -230,8 +231,9 @@ export const GeneralSettingsView = () => {
       isCustomerWallet: settings.isCustomerWallet ?? false,
       aggregatorAutoKot: settings.aggregatorAutoKot ?? false,
       defaultPrepTime: settings.defaultPrepTime || 15,
+      enableDynamicTables: enableDynamicTables ?? false,
     });
-  }, [settings.isCoupon, settings.isLoyalty, settings.isCustomerWallet, settings.aggregatorAutoKot, settings.defaultPrepTime]);
+  }, [settings.isCoupon, settings.isLoyalty, settings.isCustomerWallet, settings.aggregatorAutoKot, settings.defaultPrepTime, enableDynamicTables]);
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
 
@@ -240,7 +242,11 @@ export const GeneralSettingsView = () => {
       <EditBar
         isEditing={isEditing}
         onEdit={() => setIsEditing(true)}
-        onSave={() => setIsEditing(false)}
+        onSave={() => {
+          // Save dynamic tables setting to localStorage
+          setEnableDynamicTables(form.enableDynamicTables);
+          setIsEditing(false);
+        }}
         onCancel={() => {
           setIsEditing(false);
           setForm({
@@ -248,9 +254,27 @@ export const GeneralSettingsView = () => {
             isCustomerWallet: settings.isCustomerWallet,
             aggregatorAutoKot: settings.aggregatorAutoKot,
             defaultPrepTime: settings.defaultPrepTime || 15,
+            enableDynamicTables: enableDynamicTables,
           });
         }}
       />
+      
+      {/* Local Settings Section */}
+      <SectionTitle>Order Entry</SectionTitle>
+      {isEditing ? (
+        <ToggleSwitch 
+          label="Dynamic Table Names" 
+          checked={form.enableDynamicTables} 
+          onChange={(v) => update("enableDynamicTables", v)} 
+        />
+      ) : (
+        <Field label="Dynamic Table Names"><BoolBadge value={enableDynamicTables} /></Field>
+      )}
+      <p className="text-xs mb-4 -mt-2" style={{ color: COLORS.grayText }}>
+        Show custom table name input for walk-in orders
+      </p>
+
+      <SectionTitle>General</SectionTitle>
       {isEditing ? (
         <>
           <ToggleSwitch label="Coupons" checked={form.isCoupon} onChange={(v) => update("isCoupon", v)} />
