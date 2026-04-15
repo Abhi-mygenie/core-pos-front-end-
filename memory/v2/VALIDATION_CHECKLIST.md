@@ -63,8 +63,8 @@
 | 1.5d | Timeout: waitForTableEngaged resolves false after 5000ms | 🔍 | **Need validation** — it should be order engaged, not table engaged |
 | 1.5e-proceed | OrderEntry proceeds with onClose() REGARDLESS of timeout result | 🔍 | **Need validation** — after socket response, order entry happens |
 | 1.5f | GAP: handleUpdateFoodStatus, handleScanNewOrder, handleDeliveryAssignOrder have no engage lock interaction | ⬜ | |
-| 1.6 | **Authentication — Complete** | ⬜ | |
-| 1.6a | Token in localStorage['auth_token'] | ⬜ | |
+| 1.6 | **Authentication — Complete** | 🔍 | **Need validation** — why localStorage? Token should expire on logout |
+| 1.6a | Token in localStorage['auth_token'] | 🔍 | **Need validation** — why localStorage instead of sessionStorage? Should expire on logout |
 | 1.6b | Injected as `Authorization: Bearer ${token}` via axios interceptor | ⬜ | |
 | 1.6c | 401 → clear token → redirect to `/` | ⬜ | |
 | 1.6d | ProtectedRoute checks `!!token` synchronously | ⬜ | |
