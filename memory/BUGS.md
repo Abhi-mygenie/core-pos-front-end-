@@ -35,6 +35,8 @@
 | 25 | **BUG-228** | **`update-order-target` not sent when source is walk-in in merge** | **P0** | **❌ OPEN (Backend — Critical)** |
 | 26 | **BUG-229** | **Confirm Order (order-status-update with "paid") — `$orderstatus` undefined** | **P0** | **✅ BYPASSED (Frontend — new endpoint)** |
 | 27 | **BUG-230** | **`F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch (preparing vs cooking)** | **P2** | **❌ OPEN (Workaround in place)** |
+| 28 | **BUG-218** | **Split Order uses v1 endpoint** | **P1** | **✅ FIXED (Frontend — changed to v2)** |
+| 29 | **BUG-219** | **Second split order not visible on dashboard (1:1 mapping)** | **P0** | **✅ FIXED (Frontend — 1:N refactor)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 

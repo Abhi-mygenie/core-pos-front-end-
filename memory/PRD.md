@@ -1,7 +1,7 @@
 # MyGenie POS Frontend — PRD
 
-**Last Updated:** April 14, 2026
-**Repo:** https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch: 13-april-v2-)
+**Last Updated:** April 15, 2026
+**Repo:** https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch: main)
 **Stack:** React 19 + CRA + Craco + Tailwind + Radix UI + Socket.io
 
 ---
@@ -25,6 +25,17 @@
 - KOT/Bill printing
 
 ## What's Been Implemented
+
+### Session 15 (April 15, 2026)
+- BUG-218 FIXED: Split order endpoint migrated from v1 to v2
+- BUG-219 FIXED: Split order 1:1 table→order mapping refactored to 1:N
+  - `orderItemsByTableId` now stores arrays (not single object)
+  - `adaptTable()` returns N entries per table for split orders (labeled "T5 (1/2)", "T5 (2/2)")
+  - `allRoomsList` same 1:N support
+  - Channel view, Status view, List view, Search — all updated
+  - `getOrderDataForEntry` handles array lookup by orderId
+  - `DineInCard` handles array-based orderItemsByTableId
+  - Files changed: constants.js, OrderContext.jsx, DashboardPage.jsx, DineInCard.jsx
 
 ### Session 14b (April 14, 2026)
 - CRM POS API Integration Phases 1-4: customer search, lookup, create/update, address CRUD

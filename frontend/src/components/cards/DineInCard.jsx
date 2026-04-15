@@ -10,7 +10,11 @@ const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
   const { orderItemsByTableId } = useOrders();
 
   // Get real order data from context (by tableId), or use walk-in order data from table prop
-  const orderData = orderItemsByTableId[table.tableId] || {
+  // orderItemsByTableId is array-based (split support) — find by orderId if available
+  const ordersForTable = orderItemsByTableId[table.tableId] || [];
+  const orderData = (table.orderId 
+    ? ordersForTable.find(o => o.orderId === table.orderId) 
+    : ordersForTable[0]) || {
     waiter: "", customer: table.label || "", phone: "", items: [],
     amount: table.amount, time: table.time, status: table.status,
   };
