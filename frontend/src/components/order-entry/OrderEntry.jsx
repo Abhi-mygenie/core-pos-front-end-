@@ -872,6 +872,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else if (!placedOrderId) {
                     // Scenario 2 — fresh order + pay in one shot (prepaid via place-order with payment fields)
+                    // Same pattern as Place Order: fire HTTP, wait for table engage, redirect
+                    setIsPlacingOrder(true);
+
+                    const tableId = Number(effectiveTable?.tableId || table?.tableId);
+                    const engagePromise = tableId ? waitForTableEngaged(tableId, 10000) : null;
+
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
                       { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
@@ -879,20 +885,36 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
                     console.log('[Prepaid] payload:', JSON.stringify(payload, null, 2));
-                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+
+                    let apiFailed = false;
+                    api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
-                    });
-                    console.log('[Prepaid] response:', res.data);
-                    toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
-                    // Prepaid cleanup — stay on order screen
-                    setCartItems([]);
-                    setShowPaymentPanel(false);
-                    setPlacedOrderId(null);
-                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
-                    setOrderNotes([]);
-                    setCustomer({ name: '', phone: '' });
-                    if (onSelectTable) onSelectTable(null);
-                    if (onOrderTypeChange) onOrderTypeChange('walkIn');
+                    })
+                      .then(res => {
+                        console.log('[Prepaid] response:', res.data);
+                        toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
+                      })
+                      .catch(err => {
+                        apiFailed = true;
+                        console.error('[Prepaid] CRITICAL:', err?.response?.status, err?.response?.data);
+                        const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
+                        toast({ title: "Payment Failed", description: msg, variant: "destructive" });
+                        setIsPlacingOrder(false);
+                      });
+
+                    if (engagePromise) {
+                      console.log('[Prepaid] Waiting for update-table engage socket...');
+                      await engagePromise;
+                    } else {
+                      // Walk-in/TakeAway/Delivery — no physical table, brief delay for UX
+                      console.log('[Prepaid] No physical table, adding 0.5s delay...');
+                      await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+
+                    if (apiFailed) return;
+                    console.log('[Prepaid] Table engaged — redirecting to dashboard');
+                    onClose();
+                    return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
                     // No local table engage — order-engage socket handles locking
