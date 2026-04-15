@@ -61,7 +61,7 @@
 - `pages/LoadingPage.jsx` — setCrmRestaurantId after profile load
 
 #### CRM Base URL Change
-- Changed from `https://crm.mygenie.online/api` (405 on GET search) to `https://react-mongo-crm.preview.emergentagent.com/api` (working)
+- Changed from `https://crm.mygenie.online/api` (405 on GET search) to `https://pos-split-bill.preview.emergentagent.com/api` (working)
 
 ---
 
