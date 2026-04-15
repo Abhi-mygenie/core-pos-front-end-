@@ -18,7 +18,7 @@ import { useSocketEvents } from "../api/socket";
 import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
-import { updateOrderStatus, confirmOrder } from "../api/services/orderService";
+import { updateOrderStatus, confirmOrder, completePrepaidOrder } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
 import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
@@ -124,8 +124,8 @@ const DashboardPage = () => {
   const { getOrderCancellationReasons } = useSettings();
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
-    orderItemsByTableId, getOrderByTableId, removeOrder, waitForOrderRemoval,
-    isOrderEngaged,
+    orderItemsByTableId, getOrderByTableId, getOrdersByTableId, removeOrder, waitForOrderRemoval,
+    isOrderEngaged, getOrderById,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged, setTableEngaged } = useTables();
@@ -285,28 +285,39 @@ const DashboardPage = () => {
     if (nonRoomTables.length === 0 && walkInOrders.length === 0) return { tables: {}, flatTables: [] };
 
     const adaptTable = (t) => {
-      // Check if this table has a running order
-      const order = getOrderByTableId(t.tableId);
-      const hasOrder = !!order;
+      // Check if this table has running orders (supports split: 1 table → N orders)
+      const tableOrders = getOrdersByTableId(t.tableId);
 
-      return {
-        id: String(t.tableId),
-        label: t.tableNumber,
-        status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
+      if (tableOrders.length === 0) {
+        // No orders — single available entry
+        return [{
+          id: String(t.tableId),
+          label: t.tableNumber,
+          status: t.isOccupied ? 'occupied' : 'available',
+          tableId: t.tableId,
+          orderType: 'dineIn',
+        }];
+      }
+
+      // One entry per order (split support)
+      return tableOrders.map((order, idx) => ({
+        id: tableOrders.length > 1 ? `${t.tableId}-${order.orderId}` : String(t.tableId),
+        label: tableOrders.length > 1 ? `${t.tableNumber} (${idx + 1}/${tableOrders.length})` : t.tableNumber,
+        status: order.tableStatus,
         tableId: t.tableId,
         orderType: 'dineIn',
-        // Order enrichment (only if order exists)
-        amount: hasOrder ? order.amount : undefined,
-        time: hasOrder ? order.time : undefined,
-        orderNumber: hasOrder ? order.orderNumber : undefined,
-        fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
-        orderId: hasOrder ? order.orderId : undefined,
-        waiter: hasOrder ? order.waiter : undefined,
+        // Order enrichment
+        amount: order.amount,
+        time: order.time,
+        orderNumber: order.orderNumber,
+        fOrderStatus: order.fOrderStatus,
+        orderId: order.orderId,
+        waiter: order.waiter,
         // Timeline timestamps
-        createdAt: hasOrder ? order.createdAt : undefined,
-        readyAt: hasOrder ? order.readyAt : undefined,
-        servedAt: hasOrder ? order.servedAt : undefined,
-      };
+        createdAt: order.createdAt,
+        readyAt: order.readyAt,
+        servedAt: order.servedAt,
+      }));
     };
 
     const hasSections = nonRoomTables.some(t => t.sectionName);
@@ -320,7 +331,7 @@ const DashboardPage = () => {
         if (!grouped[key]) {
           grouped[key] = { name: section, prefix: 'T', tables: [] };
         }
-        grouped[key].tables.push(adaptTable(table));
+        grouped[key].tables.push(...adaptTable(table));
       });
 
       // Add walk-in orders as virtual table entries in a "Walk-In" section
@@ -354,7 +365,7 @@ const DashboardPage = () => {
     } else {
       const flat = nonRoomTables
         .filter(t => t.status !== 'disabled')
-        .map(adaptTable);
+        .flatMap(adaptTable);
 
       // Append walk-in orders as virtual entries
       walkInOrders.forEach((order) => {
@@ -381,7 +392,7 @@ const DashboardPage = () => {
 
       return { tables: {}, flatTables: flat };
     }
-  }, [tablesLoaded, apiTables, getOrderByTableId, walkInOrders]);
+  }, [tablesLoaded, apiTables, getOrdersByTableId, walkInOrders]);
 
   // --- Derived values ---
   const hasAreas = Object.keys(tables).length > 0;
@@ -395,29 +406,37 @@ const DashboardPage = () => {
     if (!tablesLoaded) return [];
     return apiTables
       .filter(t => t.isRoom && t.status !== 'disabled')
-      .map(t => {
-        const order = getOrderByTableId(t.tableId);
-        const hasOrder = !!order;
-        return {
-          id: String(t.tableId),
-          label: t.tableNumber,
-          status: hasOrder ? order.tableStatus : (t.isOccupied ? 'occupied' : 'available'),
+      .flatMap(t => {
+        const roomOrders = getOrdersByTableId(t.tableId);
+        if (roomOrders.length === 0) {
+          return [{
+            id: String(t.tableId),
+            label: t.tableNumber,
+            status: t.isOccupied ? 'occupied' : 'available',
+            tableId: t.tableId,
+            orderType: 'room',
+            isRoom: true,
+          }];
+        }
+        return roomOrders.map((order, idx) => ({
+          id: roomOrders.length > 1 ? `${t.tableId}-${order.orderId}` : String(t.tableId),
+          label: roomOrders.length > 1 ? `${t.tableNumber} (${idx + 1}/${roomOrders.length})` : t.tableNumber,
+          status: order.tableStatus,
           tableId: t.tableId,
           orderType: 'room',
           isRoom: true,
-          amount: hasOrder ? order.amount : undefined,
-          time: hasOrder ? order.time : undefined,
-          orderNumber: hasOrder ? order.orderNumber : undefined,
-          fOrderStatus: hasOrder ? order.fOrderStatus : undefined,
-          orderId: hasOrder ? order.orderId : undefined,
-          customer: hasOrder ? order.customer : undefined,
-          // Timeline timestamps
-          createdAt: hasOrder ? order.createdAt : undefined,
-          readyAt: hasOrder ? order.readyAt : undefined,
-          servedAt: hasOrder ? order.servedAt : undefined,
-        };
+          amount: order.amount,
+          time: order.time,
+          orderNumber: order.orderNumber,
+          fOrderStatus: order.fOrderStatus,
+          orderId: order.orderId,
+          customer: order.customer,
+          createdAt: order.createdAt,
+          readyAt: order.readyAt,
+          servedAt: order.servedAt,
+        }));
       });
-  }, [tablesLoaded, apiTables, getOrderByTableId]);
+  }, [tablesLoaded, apiTables, getOrdersByTableId]);
 
   // === Channel-Based Layout Data (USE_CHANNEL_LAYOUT feature flag) ===
   const channelData = useMemo(() => {
@@ -465,14 +484,14 @@ const DashboardPage = () => {
       servedAt: order.servedAt,
     });
 
-    // Helper to enrich dine-in tables with order data
+    // Helper to enrich dine-in tables with order data (supports split: 1 table → N entries)
     const enrichTable = (table) => {
-      const order = getOrderByTableId(table.tableId);
-      if (order) {
-        return {
-          ...table,
-          order: order,
-        };
+      // If table already has an orderId (from adaptTable split), use it directly
+      if (table.orderId) {
+        const order = dineInOrders.find(o => o.orderId === table.orderId);
+        if (order) {
+          return { ...table, order: order };
+        }
       }
       return table;
     };
@@ -531,7 +550,7 @@ const DashboardPage = () => {
         enabled: features.room !== false,
       },
     };
-  }, [allTablesList, allRoomsList, takeAwayOrders, deliveryOrders, walkInOrders, features, getOrderByTableId, activeStatuses]);
+  }, [allTablesList, allRoomsList, takeAwayOrders, deliveryOrders, walkInOrders, features, dineInOrders, activeStatuses]);
 
   // === Status-Based Layout Data (USE_STATUS_VIEW feature flag) ===
   const statusData = useMemo(() => {
@@ -563,14 +582,17 @@ const DashboardPage = () => {
     // Dine-In tables with orders (include if dineIn is in activeChannels)
     if (activeChannels.includes('dineIn')) {
       allTablesList.filter(t => !t.isRoom && !t.isWalkIn).forEach(table => {
-        const order = getOrderByTableId(table.tableId);
-        if (order) {
-          allOrders.push({
-            ...table,
-            order: order,
-            fOrderStatus: order.fOrderStatus,
-            orderType: 'dineIn',
-          });
+        // adaptTable already created per-order entries with orderId
+        if (table.orderId) {
+          const order = dineInOrders.find(o => o.orderId === table.orderId);
+          if (order) {
+            allOrders.push({
+              ...table,
+              order: order,
+              fOrderStatus: order.fOrderStatus,
+              orderType: 'dineIn',
+            });
+          }
         }
       });
       
@@ -597,14 +619,20 @@ const DashboardPage = () => {
     // Room orders
     if (activeChannels.includes('room')) {
       allRoomsList.forEach(room => {
-        const order = getOrderByTableId(room.tableId);
-        if (order) {
-          allOrders.push({
-            ...room,
-            order: order,
-            fOrderStatus: order.fOrderStatus,
-            orderType: 'room',
-          });
+        // allRoomsList already has per-order entries with orderId from flatMap
+        if (room.orderId) {
+          const order = dineInOrders.find(o => o.orderId === room.orderId) 
+            || takeAwayOrders.find(o => o.orderId === room.orderId);
+          // Use the order from the room's enriched data if not found in dineIn
+          const roomOrder = order || (room.fOrderStatus ? room : null);
+          if (roomOrder) {
+            allOrders.push({
+              ...room,
+              order: roomOrder,
+              fOrderStatus: room.fOrderStatus || roomOrder.fOrderStatus,
+              orderType: 'room',
+            });
+          }
         }
       });
     }
@@ -633,7 +661,7 @@ const DashboardPage = () => {
     });
 
     return statusGroups;
-  }, [allTablesList, allRoomsList, takeAwayOrders, deliveryOrders, walkInOrders, getOrderByTableId, activeChannels, enabledStatuses]);
+  }, [allTablesList, allRoomsList, takeAwayOrders, deliveryOrders, walkInOrders, dineInOrders, activeChannels, enabledStatuses]);
 
   // View conditions
   const isDineInOnly = activeChannels.length === 1 && activeChannels[0] === "dineIn";
@@ -739,7 +767,11 @@ const DashboardPage = () => {
       }));
 
       const enrichedTables = allTablesList.filter(t => !t.isWalkIn).map(table => {
-        const orderData = orderItemsByTableId[table.tableId] || {};
+        const ordersForTable = orderItemsByTableId[table.tableId] || [];
+        // For search, find the specific order matching this table entry's orderId
+        const orderData = table.orderId 
+          ? (ordersForTable.find(o => o.orderId === table.orderId) || {})
+          : (ordersForTable[0] || {});
         return {
           ...table,
           customer: orderData.customer || table.label || "",
@@ -832,9 +864,15 @@ const DashboardPage = () => {
       if (order) return order;
     }
 
-    // Physical table
+    // Physical table — orderItemsByTableId is now array-based
     if (tableEntry.tableId) {
-      return orderItemsByTableId[tableEntry.tableId] || null;
+      const ordersForTable = orderItemsByTableId[tableEntry.tableId] || [];
+      if (ordersForTable.length === 0) return null;
+      // If tableEntry has orderId, find the specific order (split support)
+      if (tableEntry.orderId) {
+        return ordersForTable.find(o => o.orderId === tableEntry.orderId) || ordersForTable[0];
+      }
+      return ordersForTable[0];
     }
 
     return null;
@@ -975,13 +1013,20 @@ const DashboardPage = () => {
     if (!tableEntry?.orderId) return;
     
     try {
-      // No local table engage — order-engage socket handles locking
-      await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'serve');
+      // Check if order is prepaid — use paid-prepaid-order endpoint instead
+      const order = getOrderById(tableEntry.orderId);
+      if (order?.paymentType === 'prepaid') {
+        console.log('[handleMarkServed] Prepaid order — calling paid-prepaid-order:', tableEntry.orderId);
+        await completePrepaidOrder(tableEntry.orderId, order.serviceTax || 0, order.tipAmount || 0);
+      } else {
+        // No local table engage — order-engage socket handles locking
+        await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'serve');
+      }
       // Socket handler will release lock via update-order-paid event
     } catch (error) {
       console.error('[handleMarkServed] Error:', error);
     }
-  }, [user?.roleName]);
+  }, [user?.roleName, getOrderById]);
 
   // Handler for item-level status change (Ready/Serve per item) from OrderCard
   const handleItemStatusChange = useCallback(async (order, item, newStatus) => {
@@ -1197,8 +1242,8 @@ const DashboardPage = () => {
                         isSnoozed={snoozedOrders?.has(item.id)}
                         onToggleSnooze={toggleSnooze}
                         currencySymbol={currencySymbol}
-                        isEngaged={isOrderEngaged(orderItemsByTableId[item.tableId]?.orderId) || isTableEngaged(item.tableId)}
-                        orderItems={orderItemsByTableId[item.tableId]}
+                        isEngaged={isOrderEngaged(item.orderId) || isTableEngaged(item.tableId)}
+                        orderItems={(orderItemsByTableId[item.tableId] || []).find(o => o.orderId === item.orderId) || null}
                       />
                     ))}
                   </div>
@@ -1234,7 +1279,7 @@ const DashboardPage = () => {
                     .map((table) => {
                       const order = table.isWalkIn
                         ? walkInOrders.find(o => o.orderId === table.walkInOrderId)
-                        : getOrderByTableId(table.tableId);
+                        : (table.orderId ? dineInOrders.find(o => o.orderId === table.orderId) : null);
                       if (!order) return null;
                       return (
                         <OrderCard

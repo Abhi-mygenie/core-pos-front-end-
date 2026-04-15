@@ -23,10 +23,11 @@
   - `update-order-source` + cancelled/paid → remove
   - `update-order-paid` + cancelled/paid → remove  
   - `update-order-status` + cancelled/paid → remove
+  - `split-order` → **always update** (reduces original order's items, never removes)
   - Other events with cancelled/paid → update (not remove)
 - **Question**: Why does `update-order` (handleOrderDataEvent with 'update-order' event name) NOT remove cancelled/paid orders? Is this intentional?
 - **Impact**: Cancelled/paid orders might persist on dashboard in certain event sequences
-- **Evidence**: `socketHandlers.js` lines 262-263 — `shouldRemove` only for source/paid events
+- **Evidence**: `socketHandlers.js` lines 262-263 — `shouldRemove` only for source/paid events; `handleSplitOrder` always calls `updateOrder`
 
 ### OQ-003: What determines a "Walk-In" order?
 
@@ -171,3 +172,42 @@
 | Technical | 6 | OQ-007 (dead code), OQ-010 (branch), OQ-012 (Google Maps) |
 | Integration | 4 | OQ-014 (aggregator channel), OQ-015 (print flow), OQ-016 (service worker) |
 | Data Model | 4 | OQ-017 (state machine), OQ-018 (dual status), OQ-019 (payment methods) |
+| **New (July 2025)** | **4** | **OQ-021 (prepaid lifecycle), OQ-022 (split socket), OQ-023 (delta items), OQ-024 (split bill validation)** |
+
+---
+
+## New Questions (July 2025 Update)
+
+### OQ-021: What is the full prepaid order lifecycle?
+
+- **Context**: Orders with `payment_type === 'prepaid'` are now detected in `OrderEntry.jsx`. When such an order is marked "Served", `completePrepaidOrder()` is called (POST to `/api/v2/vendoremployee/order/paid-prepaid-order`) instead of the normal `updateOrderStatus()`.
+- **Questions**:
+  - When exactly does an order get `payment_type: 'prepaid'`? Only through `placeOrderWithPayment`?
+  - Can a prepaid order be cancelled? The code blocks item edits but doesn't explicitly block order cancellation.
+  - What socket event does the backend emit after `paid-prepaid-order`? Is it `update-order-paid` (which would remove it)?
+  - What happens if the served mark fails? The order stays on dashboard in "served" state?
+- **Evidence**: `OrderEntry.jsx` `isPrepaid` logic, `DashboardPage.jsx` `handleMarkServed`, `orderService.js` `completePrepaidOrder`
+
+### OQ-022: How do other devices learn about new split orders?
+
+- **Context**: The `split-order` socket event only sends the **original order** (with reduced items after split). The **new split order** is added to OrderContext only on the initiating device (via `addOrder(newOrder)` in `OrderEntry.jsx` after API response). Code comment states: "Other devices get the new order on next `refreshOrders()`."
+- **Questions**:
+  - Is there a separate `new-order` socket event for the split result? Or do other devices truly only see it on refresh?
+  - If there's no socket, this creates a **temporary inconsistency** where different POS terminals show different orders.
+  - How long can this inconsistency last? What triggers `refreshOrders()` on other devices?
+- **Evidence**: `socketHandlers.js` `handleSplitOrder` (only updates original), `OrderEntry.jsx` split bill response handler (line ~1376: `addOrder(newOrder)`)
+
+### OQ-023: What happens to delta items when socket updates the placed item?
+
+- **Context**: BUG-237 introduces delta items (`_deltaForId`) for placed item qty increases. When a socket update arrives, the cart sync logic filters out delta items: `prev.filter(i => !i.placed && !i._deltaForId)`.
+- **Questions**:
+  - If the user increases qty (creates delta) then a socket update arrives before "Update Order" is clicked, the delta is **silently discarded**. Is this the intended behavior?
+  - What if two users both increase qty on the same item simultaneously?
+  - The `_originalQty` is set once at cart init — if the server qty changes via another device's update, `_originalQty` may be stale.
+- **Evidence**: `OrderEntry.jsx` cart sync: `prev.filter(i => !i.placed && !i._deltaForId)`, `updateQuantity` callback
+
+### OQ-024: Why is split bill restricted to dine-in/walk-in?
+
+- **Context**: The split bill button is now hidden for `takeAway` and `delivery` order types: `orderType !== 'takeAway' && orderType !== 'delivery'`
+- **Question**: Is this a business rule (takeaway/delivery can't be split) or a technical limitation? What if a delivery order needs to be split among roommates?
+- **Evidence**: `OrderEntry.jsx` — split bill button conditional

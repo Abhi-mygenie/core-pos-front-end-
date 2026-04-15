@@ -246,12 +246,13 @@ export const OrderProvider = ({ children }) => {
   }, [orders]);
 
   // Build orderItems map keyed by table/room ID (works for both)
+  // Returns ARRAY of orders per tableId to support split orders (1:N)
   const orderItemsByTableId = useMemo(() => {
     const map = {};
     // Include both table orders and room orders
     for (const order of orders) {
       if (!order.isWalkIn && order.tableId) {
-        map[order.tableId] = {
+        const entry = {
           orderId: order.orderId,
           orderNumber: order.orderNumber,
           customer: order.customer,
@@ -268,6 +269,10 @@ export const OrderProvider = ({ children }) => {
           associatedOrders: order.associatedOrders || [],
           fOrderStatus: order.fOrderStatus,
         };
+        if (!map[order.tableId]) {
+          map[order.tableId] = [];
+        }
+        map[order.tableId].push(entry);
       }
     }
     return map;

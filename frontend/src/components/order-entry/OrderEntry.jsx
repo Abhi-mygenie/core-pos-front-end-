@@ -38,7 +38,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
+  const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant, cancellation } = useRestaurant();
   const { user, hasPermission } = useAuth();
@@ -283,6 +283,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           tax: item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false },
           name: item.name,
           qty: item.qty || 1,
+          _originalQty: item.qty || 1, // BUG-237: track server qty for delta detection
           price: item.unitPrice || item.price || 0,
           status: item.status || 'preparing',
           placed: true,
@@ -320,8 +321,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
     // Always sync cart items from context (socket = source of truth)
     setCartItems(prev => {
-      const unplaced = prev.filter(i => !i.placed);
-      const placed = orderFromContext.items.map(i => ({ ...i, placed: true }));
+      // Keep unplaced items that are NOT delta items (delta items are invalidated by server update)
+      const unplaced = prev.filter(i => !i.placed && !i._deltaForId);
+      const placed = orderFromContext.items.map(i => ({ ...i, placed: true, _originalQty: i.qty || 1 }));
       return [...placed, ...unplaced];
     });
 
@@ -393,6 +395,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   };
 
   const addCustomizedItemToCart = (item) => {
+    // Case 3: Prepaid orders cannot be edited
+    if (isPrepaid && placedOrderId) {
+      toast({ title: "Cannot Edit", description: "Prepaid orders cannot be modified", variant: "destructive" });
+      return;
+    }
     setCartItems([...cartItems, {
       ...item,
       qty: item.quantity || 1,
@@ -405,11 +412,47 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // updateQuantity — differentiates placed vs unplaced items
   // Unplaced (placed: false) → local state only (no API)
-  // Placed (placed: true)   → CHG-040: will call editOrderItem API when endpoint provided
+  // Placed (placed: true)   → BUG-237: create unplaced delta item for qty increase
   const updateQuantity = useCallback((itemId, newQty, isPlaced = false) => {
     if (isPlaced) {
-      // TODO CHG-040: call orderToAPI.editOrderItem() + api.put(EDIT_ORDER_ITEM) or api.put(EDIT_ORDER_ITEM_QTY) when endpoint provided
-      // For now: local state update only (stub)
+      // BUG-237: For placed items, qty increase creates an unplaced delta item
+      // that flows through the normal Update Order pipeline
+      setCartItems(prev => {
+        const placedItem = prev.find(i => i.id === itemId && i.placed);
+        if (!placedItem) return prev;
+
+        const originalQty = placedItem._originalQty || placedItem.qty;
+        
+        // Block decrease below original qty (use Cancel Item for that)
+        if (newQty < originalQty) return prev;
+
+        // If back to original qty, remove any delta item
+        if (newQty === originalQty) {
+          return prev.filter(i => !(i._deltaForId === itemId && !i.placed));
+        }
+
+        const deltaQty = newQty - originalQty;
+        const existingDelta = prev.find(i => i._deltaForId === itemId && !i.placed);
+
+        if (existingDelta) {
+          // Update existing delta item qty
+          return prev.map(i => i._deltaForId === itemId && !i.placed ? { ...i, qty: deltaQty } : i);
+        } else {
+          // Create new unplaced delta item
+          const deltaItem = {
+            ...placedItem,
+            id: placedItem.foodId || placedItem.id, // use foodId for cart-update (food catalog ID)
+            qty: deltaQty,
+            placed: false,
+            _deltaForId: itemId, // link back to placed item
+            _originalQty: undefined,
+            status: 'preparing',
+            addedAt: new Date().toISOString(),
+          };
+          return [...prev, deltaItem];
+        }
+      });
+      return;
     }
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);
@@ -418,6 +461,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // Before placing: calculate locally (subtotal + tax)
   // After placing: use orderFinancials.amount from socket (already includes tax)
   const hasPlacedItems = cartItems.some(i => i.placed);
+  const hasUnplacedItems = cartItems.some(i => !i.placed && i.status !== 'cancelled');
+
+  // Live order status & payment type from OrderContext (socket-synced)
+  const liveOrder = placedOrderId ? orders.find(o => o.orderId === placedOrderId) : null;
+  const orderStatus = liveOrder?.status || orderData?.status || null;
+  const orderPaymentType = liveOrder?.paymentType || orderData?.paymentType || '';
+  const isPrepaid = orderPaymentType === 'prepaid';
+  const isServed = orderStatus === 'served';
   const localSubtotal = cartItems.reduce((sum, item) =>
     item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
@@ -457,6 +508,27 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const handlePlaceOrder = async () => {
     const unplaced = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     if (unplaced.length === 0 || isPlacingOrder) return;
+
+    // Validation: TakeAway requires name, Delivery requires name + phone + address
+    if (orderType === 'takeAway' && !customer?.name?.trim()) {
+      toast({ title: "Name Required", description: "Customer name is mandatory for TakeAway orders", variant: "destructive" });
+      return;
+    }
+    if (orderType === 'delivery') {
+      if (!customer?.name?.trim()) {
+        toast({ title: "Name Required", description: "Customer name is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+      if (!customer?.phone?.trim()) {
+        toast({ title: "Phone Required", description: "Customer phone is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+      if (!selectedAddress) {
+        toast({ title: "Address Required", description: "Delivery address is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+    }
+
     setIsPlacingOrder(true);
     try {
       const hasPlaced = cartItems.some(i => i.placed);
@@ -871,26 +943,70 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onSelectTable) onSelectTable(null);
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else if (!placedOrderId) {
-                    // Scenario 2 — fresh order: place + pay in one shot (same endpoint, payment_status=paid)
+                    // Scenario 2 — fresh order + pay in one shot (prepaid via place-order with payment fields)
+                    // Validation: TakeAway requires name, Delivery requires name + phone + address
+                    if (orderType === 'takeAway' && !customer?.name?.trim()) {
+                      toast({ title: "Name Required", description: "Customer name is mandatory for TakeAway orders", variant: "destructive" });
+                      return;
+                    }
+                    if (orderType === 'delivery') {
+                      if (!customer?.name?.trim()) {
+                        toast({ title: "Name Required", description: "Customer name is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                      if (!customer?.phone?.trim()) {
+                        toast({ title: "Phone Required", description: "Customer phone is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                      if (!selectedAddress) {
+                        toast({ title: "Address Required", description: "Delivery address is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                    }
+
+                    // Same pattern as Place Order: fire HTTP, wait for table engage, redirect
+                    setIsPlacingOrder(true);
+
+                    const tableId = Number(effectiveTable?.tableId || table?.tableId);
+                    const engagePromise = tableId ? waitForTableEngaged(tableId, 10000) : null;
+
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
                       { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
-                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+                    console.log('[Prepaid] payload:', JSON.stringify(payload, null, 2));
+
+                    let apiFailed = false;
+                    api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
-                    });
-                    toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
-                    // Prepaid cleanup — stay on order screen
-                    setCartItems([]);
-                    setShowPaymentPanel(false);
-                    setPlacedOrderId(null);
-                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
-                    setOrderNotes([]);
-                    setCustomer({ name: '', phone: '' });
-                    if (onSelectTable) onSelectTable(null);
-                    if (onOrderTypeChange) onOrderTypeChange('walkIn');
+                    })
+                      .then(res => {
+                        console.log('[Prepaid] response:', res.data);
+                        toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
+                      })
+                      .catch(err => {
+                        apiFailed = true;
+                        console.error('[Prepaid] CRITICAL:', err?.response?.status, err?.response?.data);
+                        const msg = err?.response?.data?.error || err?.response?.data?.message || err?.message || 'Payment failed';
+                        toast({ title: "Payment Failed", description: msg, variant: "destructive" });
+                        setIsPlacingOrder(false);
+                      });
+
+                    if (engagePromise) {
+                      console.log('[Prepaid] Waiting for update-table engage socket...');
+                      await engagePromise;
+                    } else {
+                      // Walk-in/TakeAway/Delivery — no physical table, brief delay for UX
+                      console.log('[Prepaid] No physical table, adding 0.5s delay...');
+                      await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+
+                    if (apiFailed) return;
+                    console.log('[Prepaid] Table engaged — redirecting to dashboard');
+                    onClose();
+                    return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
                     // No local table engage — order-engage socket handles locking
@@ -1073,8 +1189,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   );
                 })()}
 
-                {/* Split Bill Button - Only for placed orders with 2+ items */}
-                {placedOrderId && cartItems.filter(i => i.placed).length >= 2 && (
+                {/* Split Bill Button - Only for dine-in/walk-in placed orders with 2+ items (not takeaway/delivery) */}
+                {placedOrderId && cartItems.filter(i => i.placed).length >= 2 && orderType !== 'takeAway' && orderType !== 'delivery' && (
                   <button
                     onClick={() => setShowSplitBillModal(true)}
                     className="px-3 py-2 rounded-lg transition-colors flex-shrink-0 flex items-center gap-1.5 font-medium text-sm"
@@ -1132,6 +1248,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 walkInTableName={walkInTableName}
                 onWalkInTableNameChange={setWalkInTableName}
                 orderId={placedOrderId}
+                isPrepaid={isPrepaid}
+                isServed={isServed}
+                hasUnplacedItems={hasUnplacedItems}
               />
             </>
           )}
@@ -1257,6 +1376,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 const newOrder = await fetchSingleOrderForSocket(newOrderId);
                 
                 if (newOrder) {
+                  // Add new order to OrderContext so dashboard renders it immediately
+                  addOrder(newOrder);
+                  
                   // Update cart with new order's items
                   const newCartItems = (newOrder.items || []).map(item => ({
                     ...item,

@@ -26,6 +26,7 @@ import {
   handleDeliveryAssignOrder,
   handleUpdateTable,
   handleOrderEngage,
+  handleSplitOrder,
 } from './socketHandlers';
 
 /**
@@ -90,6 +91,9 @@ export const useSocketEvents = () => {
         break;
       case SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER:
         handleDeliveryAssignOrder(args, actionsRef.current);
+        break;
+      case SOCKET_EVENTS.SPLIT_ORDER:
+        handleSplitOrder(args, actionsRef.current);
         break;
       default:
         console.log(`[useSocketEvents] Unknown order event: ${eventName}`);

@@ -136,9 +136,19 @@ const CollectPaymentPanel = ({
   const [showSplit, setShowSplit] = useState(false);
   const [splitType, setSplitType] = useState(null); // 'payment' or 'station'
   const [splitPayments, setSplitPayments] = useState([
-    { method: "cash", amount: "" },
-    { method: "card", amount: "" },
+    { method: "cash", amount: "", transactionId: "" },
+    { method: "card", amount: "", transactionId: "" },
   ]);
+
+  // BUG-239: TAB/Credit customer info
+  const [tabName, setTabName] = useState(customer?.name || "");
+  const [tabPhone, setTabPhone] = useState(customer?.phone || "");
+
+  // BUG-240: Card transaction ID (last 4 digits)
+  const [cardTxnId, setCardTxnId] = useState("");
+
+  // Helper: TAB can arrive as 'credit' (internal) or 'tab'/'TAB' (API dynamic name)
+  const isTabPayment = paymentMethod === 'credit' || paymentMethod.toLowerCase() === 'tab';
   const [stationPayments, setStationPayments] = useState({
     bar: { method: "cash", paid: false },
     kitchen: { method: "cash", paid: false },
@@ -228,15 +238,15 @@ const CollectPaymentPanel = ({
     const roomHasTransfers = isRoom && associatedOrders.length > 0;
     const effectiveTotal = roomHasTransfers ? finalTotal + associatedTotal : finalTotal;
     const paymentData = {
-      method:          showSplit ? 'partial' : paymentMethod,
+      method:          paymentMethod,
       finalTotal:      effectiveTotal,
       sgst,
       cgst,
       vatAmount:       0,
-      transactionId:   '',
+      transactionId:   paymentMethod === 'card' ? cardTxnId : '',
       tip:             0,
-      splitPayments:   showSplit ? splitPayments.map(p => ({ method: p.method, amount: parseFloat(p.amount) || 0, transactionId: '' })) : null,
-      tabContact:      null,
+      splitPayments:   showSplit ? splitPayments.map(p => ({ method: p.method, amount: parseFloat(p.amount) || 0, transactionId: p.method === 'card' ? (p.transactionId || '') : '' })) : null,
+      tabContact:      isTabPayment ? { name: tabName, phone: tabPhone } : null,
       // discount info
       discounts: {
         manual:               manualDiscount,
@@ -1008,33 +1018,65 @@ const CollectPaymentPanel = ({
               {splitType === "payment" && (
                 <div className="space-y-2">
                   {splitPayments.map((sp, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <select
-                        value={sp.method}
-                        onChange={(e) => {
-                          const newSplit = [...splitPayments];
-                          newSplit[idx].method = e.target.value;
-                          setSplitPayments(newSplit);
-                        }}
-                        className="px-2 py-1.5 rounded-lg border text-sm outline-none"
-                        style={{ borderColor: COLORS.borderGray }}
-                      >
-                        <option value="cash">Cash</option>
-                        <option value="card">Card</option>
-                        <option value="upi">UPI</option>
-                      </select>
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        value={sp.amount}
-                        onChange={(e) => {
-                          const newSplit = [...splitPayments];
-                          newSplit[idx].amount = e.target.value;
-                          setSplitPayments(newSplit);
-                        }}
-                        className="flex-1 px-2 py-1.5 rounded-lg border text-sm outline-none"
-                        style={{ borderColor: COLORS.borderGray }}
-                      />
+                    <div key={idx} className="space-y-1.5">
+                      <div className="flex gap-2">
+                        <select
+                          value={sp.method}
+                          onChange={(e) => {
+                            const newSplit = [...splitPayments];
+                            newSplit[idx].method = e.target.value;
+                            if (e.target.value !== 'card') newSplit[idx].transactionId = '';
+                            setSplitPayments(newSplit);
+                          }}
+                          className="px-2 py-1.5 rounded-lg border text-sm outline-none"
+                          style={{ borderColor: COLORS.borderGray }}
+                        >
+                          <option value="cash">Cash</option>
+                          <option value="card">Card</option>
+                          <option value="upi">UPI</option>
+                        </select>
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          value={sp.amount}
+                          onChange={(e) => {
+                            const newSplit = [...splitPayments];
+                            newSplit[idx].amount = e.target.value;
+                            setSplitPayments(newSplit);
+                          }}
+                          className="flex-1 px-2 py-1.5 rounded-lg border text-sm outline-none"
+                          style={{ borderColor: COLORS.borderGray }}
+                        />
+                      </div>
+                      {/* BUG-241: Inline Txn ID for card split rows */}
+                      {sp.method === 'card' && (
+                        <div className="ml-1 flex items-center gap-2">
+                          <span className="text-xs whitespace-nowrap" style={{ color: COLORS.grayText }}>Txn ID:</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength={4}
+                            placeholder="Last 4"
+                            value={sp.transactionId || ''}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                              const newSplit = [...splitPayments];
+                              newSplit[idx].transactionId = val;
+                              setSplitPayments(newSplit);
+                            }}
+                            className="w-20 px-2 py-1 rounded-lg border text-sm outline-none tracking-widest text-center"
+                            style={{
+                              borderColor: (sp.transactionId || '').length === 4 ? COLORS.primaryGreen : '#ef4444',
+                              backgroundColor: (sp.transactionId || '').length === 4 ? `${COLORS.primaryGreen}08` : '#fef2f2',
+                            }}
+                            data-testid={`split-txn-id-${idx}`}
+                          />
+                          {(sp.transactionId || '').length > 0 && (sp.transactionId || '').length < 4 && (
+                            <span className="text-xs" style={{ color: COLORS.primaryOrange }}>4 digits</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                   <div className="text-xs text-right" style={{ color: COLORS.grayText }}>
@@ -1175,6 +1217,80 @@ const CollectPaymentPanel = ({
             </div>
           )}
 
+          {/* BUG-240: Card — Transaction ID (last 4 digits) */}
+          {paymentMethod === "card" && !showSplit && (
+            <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }} data-testid="card-txn-section">
+              <div className="text-xs mb-2 font-medium" style={{ color: COLORS.grayText }}>Transaction ID (last 4 digits)</div>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+                placeholder="_ _ _ _"
+                value={cardTxnId}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                  setCardTxnId(val);
+                }}
+                className="w-full px-4 py-3 rounded-lg border text-lg outline-none tracking-widest text-center"
+                style={{
+                  borderColor: cardTxnId.length === 4 ? COLORS.primaryGreen : cardTxnId.length > 0 ? COLORS.primaryOrange : COLORS.borderGray,
+                  backgroundColor: cardTxnId.length === 4 ? `${COLORS.primaryGreen}08` : 'white',
+                }}
+                data-testid="card-txn-id-input"
+              />
+              {cardTxnId.length > 0 && cardTxnId.length < 4 && (
+                <div className="text-xs mt-1.5" style={{ color: COLORS.primaryOrange }}>
+                  Enter all 4 digits to proceed
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* BUG-239: Credit/TAB — Customer Name + Phone */}
+          {isTabPayment && !showSplit && (
+            <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }} data-testid="tab-customer-section">
+              <div className="text-xs mb-2 font-medium" style={{ color: COLORS.grayText }}>Credit Customer Details</div>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="Customer Name *"
+                  value={tabName}
+                  onChange={(e) => setTabName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border text-sm outline-none"
+                  style={{
+                    borderColor: !tabName.trim() ? '#ef4444' : COLORS.primaryGreen,
+                    backgroundColor: !tabName.trim() ? '#fef2f2' : `${COLORS.primaryGreen}08`,
+                  }}
+                  data-testid="tab-customer-name-input"
+                />
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
+                  placeholder="Phone Number * (10 digits)"
+                  value={tabPhone}
+                  onChange={(e) => setTabPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="w-full px-4 py-3 rounded-lg border text-sm outline-none"
+                  style={{
+                    borderColor: tabPhone.replace(/\D/g, '').length === 10 ? COLORS.primaryGreen : '#ef4444',
+                    backgroundColor: tabPhone.replace(/\D/g, '').length === 10 ? `${COLORS.primaryGreen}08` : '#fef2f2',
+                  }}
+                  data-testid="tab-customer-phone-input"
+                />
+              </div>
+              {(!tabName.trim() || tabPhone.replace(/\D/g, '').length !== 10) && (
+                <div className="text-xs mt-1.5" style={{ color: '#ef4444' }}>
+                  {!tabName.trim() && tabPhone.replace(/\D/g, '').length !== 10
+                    ? 'Name and 10-digit phone are required for credit/TAB orders'
+                    : !tabName.trim()
+                    ? 'Name is required for credit/TAB orders'
+                    : `Enter 10-digit phone number (${tabPhone.replace(/\D/g, '').length}/10)`}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Transfer to Room — Room Picker */}
           {paymentMethod === "transferToRoom" && !showSplit && (
             <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }} data-testid="room-picker-section">
@@ -1213,7 +1329,14 @@ const CollectPaymentPanel = ({
       <div className="p-4 border-t" style={{ borderColor: COLORS.borderGray }}>
         <button
           onClick={handlePayment}
-          disabled={(cartItems || []).length === 0 || (paymentMethod === 'transferToRoom' && !selectedRoom) || isProcessingPayment}
+          disabled={
+            (cartItems || []).length === 0 ||
+            (paymentMethod === 'transferToRoom' && !selectedRoom) ||
+            (paymentMethod === 'card' && !showSplit && cardTxnId.length !== 4) ||
+            (isTabPayment && !showSplit && (!tabName.trim() || tabPhone.replace(/\D/g, '').length !== 10)) ||
+            (showSplit && splitType === 'payment' && splitPayments.some(sp => sp.method === 'card' && (!sp.transactionId || sp.transactionId.length !== 4))) ||
+            isProcessingPayment
+          }
           className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: paymentMethod === 'transferToRoom' ? COLORS.primaryOrange : COLORS.primaryGreen }}
           data-testid="complete-payment-btn"

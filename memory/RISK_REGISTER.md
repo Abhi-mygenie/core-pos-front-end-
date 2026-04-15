@@ -92,6 +92,30 @@
 - **Impact**: HIGH — This non-standard pattern will be lost if the array is spread (`[...arr]`), mapped, or serialized. Any consumer that doesn't know about this convention will miss the data.
 - **Recommendation**: Return `{ orders: [...], runningOrdersMap: {...} }` object instead
 
+### RISK-010a: `orderItemsByTableId` Breaking Change — Single Object → Array (July 2025)
+
+- **Finding**: `OrderContext.orderItemsByTableId` changed from returning a **single object** per tableId to an **array of objects** per tableId (to support split orders — 1 table → N concurrent orders)
+- **Evidence**: `OrderContext.jsx` lines 249-278 — `map[order.tableId].push(entry)` instead of `map[order.tableId] = entry`
+- **Confidence**: HIGH
+- **Impact**: HIGH — Any consumer still accessing `orderItemsByTableId[tableId].orderId` (object access) will get `undefined` since it's now an array. Known updated consumers: `DashboardPage.jsx`, `DineInCard.jsx`. Any custom or future component that wasn't updated will silently break.
+- **Recommendation**: Search codebase for all `orderItemsByTableId` consumers and verify array handling. Consider a TypeScript type or JSDoc annotation.
+
+### RISK-010b: `partial_payments` Always Sent in Prepaid Orders (July 2025)
+
+- **Finding**: `placeOrderWithPayment` now **always** includes `partial_payments` array with all 3 modes (cash, card, upi), even for single-method payments. Unused modes get `payment_amount: 0`.
+- **Evidence**: `orderTransform.js` `placeOrderWithPayment` lines 578-607
+- **Confidence**: HIGH
+- **Impact**: MEDIUM — Backend must accept 0-amount partial payment entries without error. If backend validates that partial_payments amounts sum to total, single-method payments may fail.
+- **Recommendation**: Verify backend handles 0-amount partial payment entries correctly
+
+### RISK-010c: `null` → Empty String in Prepaid Payload (July 2025)
+
+- **Finding**: Multiple optional fields in `placeOrderWithPayment` changed from `null` to `''`: `transaction_id`, `discount_type`, `coupon_title`, `coupon_type`, `paid_room`, `room_id`, `address_id`, `discount_member_category_name`, `usage_id`. Also `tip_amount` changed from numeric `0` to string `'0'`, `delivery_charge` now stringified.
+- **Evidence**: `orderTransform.js` diff lines 618-648
+- **Confidence**: HIGH
+- **Impact**: MEDIUM — Backend SQL/NoSQL queries checking `IS NULL` will behave differently with empty string. Type coercion issues possible for `tip_amount` string.
+- **Recommendation**: Verify backend handles `''` and `'0'` correctly for these fields
+
 ---
 
 ## MEDIUM Risks
@@ -151,6 +175,7 @@
 - **Confidence**: HIGH
 - **Impact**: MEDIUM — Backend should validate, but defense-in-depth is missing on frontend
 - **Recommendation**: Add basic sanitization for user inputs
+- **PARTIAL MITIGATION (July 2025)**: Phone fields now capped to 10 numeric digits via `.replace(/\D/g, '').slice(0, 10)` in `CartPanel.jsx`, `CustomerModal.jsx`, `AddressFormModal.jsx`. TakeAway/Delivery orders now require name/phone/address before submission. Card payments require 4-digit transaction ID. TAB/Credit requires name + 10-digit phone. However, **name fields still have no sanitization** (no XSS filtering, no length cap).
 
 ### RISK-018: Google Maps Key Exposed But Unused
 
@@ -203,6 +228,6 @@
 | Severity | Count | Key Concerns |
 |---|---|---|
 | CRITICAL | 4 | Broken endpoint, XSS token storage, no token refresh, hard redirect |
-| HIGH | 6 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation |
-| MEDIUM | 8 | Monolithic components, hardcoded URLs, known backend bugs, sanitization |
+| HIGH | 9 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, **orderItemsByTableId breaking change (new)**, **partial_payments always sent (new)**, **null→'' payload change (new)** |
+| MEDIUM | 8 | Monolithic components (growing larger), hardcoded URLs, known backend bugs, sanitization (partially mitigated) |
 | LOW | 4 | Mock data, console logging, token validation, dev dependencies |

@@ -174,6 +174,7 @@ export const fromAPI = {
       tipAmount: parseFloat(api.tip_amount) || 0,
       tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,
       paymentStatus: api.payment_status || 'unpaid',
+      paymentType: api.payment_type || '',
       paymentMethod: api.payment_method || '',
 
       // Timing
@@ -574,8 +575,35 @@ export const toAPI = {
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
     const totals = calcOrderTotals(unplacedItems.map(buildCartItem));
+    const finalTotal = paymentData.finalTotal || totals.order_amount || 0;
 
-    const payload = {
+    // Build partial_payments — always include all 3 modes
+    let partialPayments;
+    if (splitPayments?.length) {
+      // Split payment: use provided amounts
+      partialPayments = splitPayments.map(p => ({
+        payment_mode:   p.method,
+        payment_amount: parseFloat(p.amount) || 0,
+        grant_amount:   parseFloat(p.amount) || 0,
+        transaction_id: p.transactionId || '',
+      }));
+      // Ensure all 3 modes are present (add missing with 0)
+      ['cash', 'card', 'upi'].forEach(mode => {
+        if (!partialPayments.find(p => p.payment_mode === mode)) {
+          partialPayments.push({ payment_mode: mode, payment_amount: 0, grant_amount: 0, transaction_id: '' });
+        }
+      });
+    } else {
+      // Single payment: selected method gets full amount, others get 0
+      partialPayments = ['cash', 'card', 'upi'].map(mode => ({
+        payment_mode:   mode,
+        payment_amount: mode === method ? finalTotal : 0,
+        grant_amount:   mode === method ? finalTotal : 0,
+        transaction_id: mode === method ? (transactionId || '') : '',
+      }));
+    }
+
+    return {
       user_id:                    userId,
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
@@ -590,50 +618,39 @@ export const toAPI = {
       payment_method:             method,
       payment_status:             'paid',
       payment_type:               'prepaid',
-      transaction_id:             transactionId || null,
+      transaction_id:             transactionId || '',
       print_kot:                  printAllKOT ? 'Yes' : 'No',
       auto_dispatch:              'No',
       scheduled:                  0,
       schedule_at:                null,
       // Financial
       ...totals,
-      service_tax:                0,
-      service_gst_tax_amount:     0,
-      tip_amount:                 0,
+      service_tax:                0,       // BUG-232: needs restaurant-level service charge rate
+      service_gst_tax_amount:     0,       // BUG-232: needs GST on service charge
+      tip_amount:                 '0',
       tip_tax_amount:             0,
-      delivery_charge:            deliveryCharge || 0,
+      delivery_charge:            String(parseFloat(deliveryCharge || 0).toFixed(1)),
       // Discount
-      discount_type:              discounts.type || null,
+      discount_type:              discounts.type || '',
       self_discount:              discounts.manual || 0,
       coupon_discount:            discounts.coupon || 0,
-      coupon_title:               discounts.couponTitle || null,
-      coupon_type:                discounts.couponType || null,
+      coupon_title:               discounts.couponTitle || '',
+      coupon_type:                discounts.couponType || '',
       order_discount:             discounts.orderDiscountPercent || 0,
       // Loyalty & Wallet
       used_loyalty_point:         0,
       use_wallet_balance:         0,
       // Room & Address
-      paid_room:                  null,
-      room_id:                    null,
-      address_id:                 addressId,
+      paid_room:                  '',
+      room_id:                    '',
+      address_id:                 addressId || '',
       // Misc
       discount_member_category_id:   0,
-      discount_member_category_name: null,
-      usage_id:                   null,
+      discount_member_category_name: '',
+      usage_id:                   '',
       cart,
+      partial_payments:           partialPayments,
     };
-
-    // Partial payments (split payment)
-    if (splitPayments?.length) {
-      payload.partial_payments = splitPayments.map(p => ({
-        payment_mode:   p.method,
-        payment_amount: p.amount,
-        grant_amount:   p.amount,
-        transaction_id: p.transactionId || '',
-      }));
-    }
-
-    return payload;
   },
 
   // ==========================================================================

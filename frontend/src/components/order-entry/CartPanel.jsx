@@ -28,11 +28,13 @@ const getTimeAgo = (isoString) => {
 };
 
 // Placed item row (sent to kitchen)
-const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed }) => {
+const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   const isCancelled = item.status === 'cancelled';
   const showCancelBtn = !isCancelled && canCancelItem && (!isItemCancelAllowed || isItemCancelAllowed(item));
   const showTransferBtn = !isCancelled && canFoodTransfer;
+  const originalQty = item._originalQty || item.qty; // BUG-237: min qty for placed items
+  const shownQty = displayQty || item.qty; // BUG-237: combined qty (original + delta)
 
   return (
     <div
@@ -133,13 +135,13 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
           {editingQtyItemId === item.id ? (
             <>
-              <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
-              <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-              <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
+              <button onClick={() => { if (shownQty > originalQty) updateQuantity(item.id, shownQty - 1, true); }} disabled={shownQty <= originalQty} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold disabled:opacity-30" style={{ color: COLORS.grayText }}>−</button>
+              <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{shownQty}</span>
+              <button onClick={() => updateQuantity(item.id, shownQty + 1, true)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
             </>
           ) : (
             <>
-              <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+              <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{shownQty}</span>
               <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
                 <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
               </button>
@@ -154,8 +156,8 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
           className="font-bold text-sm"
           style={{ color: isCancelled ? '#9CA3AF' : COLORS.primaryOrange, textDecoration: isCancelled ? 'line-through' : 'none' }}
         >
-          ₹{(item.totalPrice || (() => {
-            const base = (item.price || 0) * (item.qty || 1);
+          ₹{(item.totalPrice ? Math.round(item.totalPrice / (item.qty || 1) * shownQty) : (() => {
+            const base = (item.price || 0) * (shownQty || 1);
             const addonSum = (item.addOns || []).reduce((s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)), 0);
             const varSum = (item.variation || []).reduce((s, group) => {
               // variation format: {name, values: [{label, optionPrice}]}
@@ -164,7 +166,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
                 : (parseFloat(group.price) || 0);
               return s + groupSum;
             }, 0);
-            return base + ((addonSum + varSum) * (item.qty || 1));
+            return base + ((addonSum + varSum) * (shownQty || 1));
           })()).toLocaleString()}
         </span>
       </div>
@@ -266,11 +268,20 @@ const CartPanel = ({
   walkInTableName = "",
   onWalkInTableNameChange,
   orderId = null,
+  isPrepaid = false,
+  isServed = false,
+  hasUnplacedItems = false,
   selectedAddress = null,
   onAddressClick,
 }) => {
   const { enableDynamicTables } = useSettings();
   const newItemCount = cartItems.filter(i => !i.placed).length;
+
+  // Validation: required fields per order type
+  const isNameRequired = orderType === 'takeAway' || orderType === 'delivery';
+  const isPhoneRequired = orderType === 'delivery';
+  const isAddressRequired = orderType === 'delivery';
+
   const [customerName, setCustomerName] = useState(customer?.name || "");
   const [customerPhone, setCustomerPhone] = useState(customer?.phone || "");
   const [showPhoneSuggestions, setShowPhoneSuggestions] = useState(false);
@@ -278,6 +289,12 @@ const CartPanel = ({
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
   const [isCustomerSelected, setIsCustomerSelected] = useState(false); // Track if customer was selected from suggestions
+
+  // Check if required fields are missing (for button disable + visual hints)
+  const nameMissing = isNameRequired && !customerName.trim();
+  const phoneMissing = isPhoneRequired && customerPhone.replace(/\D/g, '').length !== 10;
+  const addressMissing = isAddressRequired && !selectedAddress;
+  const hasValidationErrors = nameMissing || phoneMissing || addressMissing;
   const [showAssociatedOrders, setShowAssociatedOrders] = useState(false);
   const phoneInputRef = useRef(null);
   const nameInputRef = useRef(null);
@@ -377,7 +394,7 @@ const CartPanel = ({
 
   // Handle phone change - if customer was selected and phone is cleared, clear name too
   const handlePhoneChange = (e) => {
-    const newPhone = e.target.value;
+    const newPhone = e.target.value.replace(/\D/g, '').slice(0, 10);
     setCustomerPhone(newPhone);
     
     // If phone is cleared and a customer was previously selected, clear name too
@@ -437,20 +454,20 @@ const CartPanel = ({
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
         <div className="relative" ref={nameInputRef}>
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10" style={{ color: COLORS.grayText }} />
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10" style={{ color: nameMissing ? '#ef4444' : COLORS.grayText }} />
           <input
             type="text"
-            placeholder="Customer name"
+            placeholder={isNameRequired ? "Customer name *" : "Customer name"}
             value={customerName}
             onChange={handleNameChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
             className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
             style={{ 
-              borderColor: COLORS.borderGray, 
+              borderColor: nameMissing ? '#ef4444' : COLORS.borderGray, 
               fontSize: "13px",
-              backgroundColor: "#f9fafb",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
+              backgroundColor: nameMissing ? '#fef2f2' : "#f9fafb",
+              boxShadow: nameMissing ? "0 1px 3px rgba(239,68,68,0.15)" : "0 1px 3px rgba(0,0,0,0.08)"
             }}
             data-testid="quick-customer-name"
           />
@@ -481,20 +498,22 @@ const CartPanel = ({
           )}
         </div>
         <div className="relative" ref={phoneInputRef}>
-          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: COLORS.grayText }} />
+          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: phoneMissing ? '#ef4444' : COLORS.grayText }} />
           <input
             type="tel"
-            placeholder="Phone number"
+            inputMode="numeric"
+            maxLength={10}
+            placeholder={isPhoneRequired ? "Phone number * (10 digits)" : "Phone number"}
             value={customerPhone}
             onChange={handlePhoneChange}
             onBlur={handleFieldBlur}
             onFocus={() => customerPhone.length >= 3 && setShowPhoneSuggestions(filteredCustomers.length > 0)}
             className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
             style={{ 
-              borderColor: COLORS.borderGray, 
+              borderColor: phoneMissing ? '#ef4444' : COLORS.borderGray, 
               fontSize: "13px",
-              backgroundColor: "#f9fafb",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
+              backgroundColor: phoneMissing ? '#fef2f2' : "#f9fafb",
+              boxShadow: phoneMissing ? "0 1px 3px rgba(239,68,68,0.15)" : "0 1px 3px rgba(0,0,0,0.08)"
             }}
             data-testid="quick-customer-phone"
           />
@@ -529,10 +548,13 @@ const CartPanel = ({
         <button
           onClick={onAddressClick}
           className="w-full px-3 py-2.5 flex items-center gap-2 text-left transition-colors hover:bg-gray-50"
-          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+          style={{ 
+            borderBottom: `1px solid ${COLORS.borderGray}`,
+            backgroundColor: addressMissing ? '#fef2f2' : 'transparent',
+          }}
           data-testid="delivery-address-strip"
         >
-          <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: selectedAddress ? COLORS.primaryGreen : COLORS.primaryOrange }} />
+          <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: selectedAddress ? COLORS.primaryGreen : addressMissing ? '#ef4444' : COLORS.primaryOrange }} />
           {selectedAddress ? (
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
@@ -546,8 +568,8 @@ const CartPanel = ({
               </p>
             </div>
           ) : (
-            <span className="text-xs flex-1" style={{ color: COLORS.primaryOrange }}>
-              Tap to select delivery address
+            <span className="text-xs flex-1" style={{ color: addressMissing ? '#ef4444' : COLORS.primaryOrange }}>
+              Tap to select delivery address *
             </span>
           )}
           <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
@@ -571,8 +593,11 @@ const CartPanel = ({
           </div>
         ) : (
           cartItems.map((item, index) => {
+            // BUG-237: Hide delta items — their qty is shown on the placed item row
+            if (item._deltaForId && !item.placed) return null;
+
             const prevItem = index > 0 ? cartItems[index - 1] : null;
-            const showKotSeparator = prevItem && prevItem.placed && !item.placed;
+            const showKotSeparator = prevItem && prevItem.placed && !item.placed && !item._deltaForId;
 
             return (
               <div key={`${item.id}-${index}`}>
@@ -584,6 +609,7 @@ const CartPanel = ({
                 {item.placed ? (
                   <PlacedItemRow
                     item={item}
+                    displayQty={item.qty + (cartItems.find(d => d._deltaForId === item.id && !d.placed)?.qty || 0)}
                     setCancelItem={setCancelItem}
                     setTransferItem={setTransferItem}
                     editingQtyItemId={editingQtyItemId}
@@ -702,10 +728,12 @@ const CartPanel = ({
 
       {/* Bottom Action Buttons */}
       <div className="p-4 flex gap-3" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
+        {/* Update Order / Place Order — hidden for prepaid existing orders */}
+        {!(isPrepaid && hasPlacedItems) && (
         <button
           data-testid="place-order-btn"
           onClick={handlePlaceOrder}
-          disabled={newItemCount === 0 || isPlacingOrder}
+          disabled={newItemCount === 0 || isPlacingOrder || hasValidationErrors}
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: COLORS.primaryOrange }}
         >
@@ -720,11 +748,24 @@ const CartPanel = ({
             <>Place Order{newItemCount > 0 ? ` (${newItemCount})` : ""}</>
           )}
         </button>
-        {canBill && (
+        )}
+        {/* Collect Bill — Rules:
+             - Fresh order (no placed items): enabled (Place+Pay flow), subject to validation
+             - Prepaid existing order: hidden (already paid)
+             - Postpaid existing order + unplaced items: disabled (must Update Order first)
+             - Postpaid existing order + status !== served: disabled (must be served first)
+             - Postpaid existing order + served + no unplaced items: enabled
+        */}
+        {canBill && !(isPrepaid && hasPlacedItems) && (
         <button
           data-testid="collect-bill-btn"
           onClick={() => setShowPaymentPanel(true)}
-          disabled={cartItems.length === 0}
+          disabled={
+            cartItems.length === 0 ||
+            (!hasPlacedItems && hasValidationErrors) ||
+            (hasPlacedItems && hasUnplacedItems) ||
+            (hasPlacedItems && !isServed)
+          }
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           style={{ backgroundColor: "#2E7D32" }}
         >

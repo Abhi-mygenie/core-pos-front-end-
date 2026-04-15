@@ -69,7 +69,7 @@
 | MenuContext | `contexts/MenuContext.jsx` | 132 | categories, products, popularFood | OrderEntry (CategoryPanel), StationService | Provides search, filter, lookup helpers |
 | TableContext | `contexts/TableContext.jsx` | 271 | tables[] (unified tables+rooms), engagedTables | DashboardPage, OrderEntry, socketHandlers | Engaged table pattern with refs |
 | SettingsContext | `contexts/SettingsContext.jsx` | 110 | cancellationReasons, paymentLayoutConfig, enableDynamicTables | OrderEntry (cancel modals), CollectPaymentPanel | Dynamic tables toggle persisted in localStorage |
-| OrderContext | `contexts/OrderContext.jsx` | 337 | orders[] (unified), engagedOrders | DashboardPage, socketHandlers | Computed: dineIn/takeAway/delivery/table/walkIn orders |
+| OrderContext | `contexts/OrderContext.jsx` | 344 | orders[] (unified), engagedOrders | DashboardPage, socketHandlers | Computed: dineIn/takeAway/delivery/table/walkIn orders. **`orderItemsByTableId` returns ARRAY per tableId (July 2025 — split order support)** |
 | StationContext | `contexts/StationContext.jsx` | 162 | stationData, availableStations, enabledStations | DashboardPage (StationPanel) | Config persisted in localStorage |
 
 ### 2.3 API Services
@@ -81,7 +81,7 @@
 | categoryService | `services/categoryService.js` | — | api | CATEGORIES | categoryTransform |
 | productService | `services/productService.js` | — | api | PRODUCTS, POPULAR_FOOD | productTransform |
 | tableService | `services/tableService.js` | 110 | api | TABLES | tableTransform |
-| orderService | `services/orderService.js` | 128 | api | RUNNING_ORDERS, SINGLE_ORDER_NEW, ORDER_STATUS_UPDATE, CONFIRM_ORDER, SPLIT_ORDER, PRINT_ORDER | orderTransform |
+| orderService | `services/orderService.js` | 147 | api | RUNNING_ORDERS, SINGLE_ORDER_NEW, ORDER_STATUS_UPDATE, CONFIRM_ORDER, **PREPAID_ORDER (new)**, SPLIT_ORDER (v2), PRINT_ORDER | orderTransform |
 | customerService | `services/customerService.js` | 179 | **crmApi** | CUSTOMER_SEARCH/LOOKUP/CREATE/UPDATE, ADDRESS_* | customerTransform |
 | paymentService | `services/paymentService.js` | 16 | api | ⚠️ **CLEAR_BILL (undefined!)** | — |
 | reportService | `services/reportService.js` | 589 | api | 8 report endpoints | reportTransform |
@@ -99,6 +99,10 @@
 | productTransform | `transforms/productTransform.js` | — | — | — |
 | tableTransform | `transforms/tableTransform.js` | 166 | tableList, table, groupBySection, getSections | shiftTable, transferFood, mergeTable |
 | orderTransform | `transforms/orderTransform.js` | 843 | order, orderItem, orderList | cancelItem, cancelOrder, addCustomItem, placeOrder, updateOrder, placeOrderWithPayment, collectBillExisting, transferToRoom, updateOrderStatus, buildBillPrintPayload |
+
+**July 2025 changes to orderTransform**:
+- `fromAPI.order` now extracts `paymentType` from `api.payment_type` (for prepaid detection)
+- `toAPI.placeOrderWithPayment`: `partial_payments` always included (all 3 modes), `null`→`''` for optional fields, `tip_amount` now string
 | customerTransform | `transforms/customerTransform.js` | — | searchResults, customerLookup, customerDetail, crossRestaurantAddresses | createCustomer, updateCustomer, addAddress |
 | reportTransform | `transforms/reportTransform.js` | — | paidOrders, cancelledOrders, creditOrders, holdOrders, aggregatorOrders, orderDetails, singleOrderNew | — |
 | settingsTransform | `transforms/settingsTransform.js` | — | — | — |
@@ -109,8 +113,8 @@
 |---|---|---|---|
 | socketService | `socket/socketService.js` | 365 | Connection singleton, event pub/sub, reconnection |
 | socketEvents | `socket/socketEvents.js` | 151 | Event name constants, channel name generators, config |
-| socketHandlers | `socket/socketHandlers.js` | 594 | Business logic for each event type |
-| useSocketEvents | `socket/useSocketEvents.js` | 191 | React hook: channel subscription wiring |
+| socketHandlers | `socket/socketHandlers.js` | 652 | Business logic for each event type, **includes `handleSplitOrder` (July 2025)** |
+| useSocketEvents | `socket/useSocketEvents.js` | 195 | React hook: channel subscription wiring (12 event types) |
 
 ### 2.6 Components (non-UI primitives)
 
@@ -216,11 +220,11 @@ DashboardPage (1376 lines) is the **largest module** and the central nervous sys
 
 | File | Lines | Assessment |
 |---|---|---|
-| `pages/DashboardPage.jsx` | 1376 | **🔴 Too large** — Mixes layout, state, operations, search |
-| `components/order-entry/OrderEntry.jsx` | 1298 | **🔴 Too large** — Full order taking flow in one component |
-| `components/order-entry/CollectPaymentPanel.jsx` | 1235 | **🔴 Too large** — Payment, split, room transfer, tax calc |
+| `pages/DashboardPage.jsx` | 1421 | **🔴 Too large** — Mixes layout, state, operations, search. Grew +45 lines (split order support + prepaid flow) |
+| `components/order-entry/OrderEntry.jsx` | 1420 | **🔴 Too large** — Full order taking flow. Grew +122 lines (delta items, validations, prepaid) |
+| `components/order-entry/CollectPaymentPanel.jsx` | 1358 | **🔴 Too large** — Payment, split, room transfer, tax calc. Grew +123 lines (card txn ID, TAB customer, validation) |
 | `api/transforms/orderTransform.js` | 843 | **🟡 Large but justified** — Complex domain mapping |
-| `components/order-entry/CartPanel.jsx` | 740 | **🟡 Large** — Cart display + item operations |
+| `components/order-entry/CartPanel.jsx` | 781 | **🟡 Large** — Cart display + item operations. Grew +41 lines (delta display, validation hints) |
 | `api/services/reportService.js` | 589 | **🟡 Large** — 8+ report types + business day filtering |
 | `api/socket/socketHandlers.js` | 594 | **🟡 Large but well-organized** — One handler per event |
 | `pages/LoadingPage.jsx` | 530 | **🟡 Large** — 7 loaders + station data + UI |

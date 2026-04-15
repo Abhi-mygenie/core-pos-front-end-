@@ -22,10 +22,10 @@ const ShiftTableModal = ({ currentTable, onClose, onShift }) => {
       try {
         setLoading(true);
         setError(null);
-        const tables = await getTables(true); // tablesOnly=true excludes rooms
-        // Filter: only free tables (engage=No), exclude current table
+        const tables = await getTables();
+        // Filter: only free tables (engage=No), exclude current table and rooms
         const free = tables.filter(
-          (t) => t.status === TABLE_STATUS.FREE && t.tableId !== currentTable?.tableId
+          (t) => t.status === TABLE_STATUS.FREE && t.tableId !== currentTable?.tableId && !t.isRoom
         );
         setAvailableTables(free);
         // Auto-expand all areas

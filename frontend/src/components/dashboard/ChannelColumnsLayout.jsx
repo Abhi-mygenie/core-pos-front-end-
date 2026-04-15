@@ -206,7 +206,7 @@ const ChannelColumnsLayout = ({
         className="flex items-center justify-center h-64 text-sm"
         style={{ color: COLORS.grayText }}
       >
-        No channels configured
+        No active orders
       </div>
     );
   }

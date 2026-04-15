@@ -72,8 +72,8 @@
 | Pages | 6 |
 | Custom components (non-UI) | ~40 |
 | UI primitives (shadcn/ui) | ~40 |
-| Socket event types handled | 11 |
-| API endpoints defined | 34 |
+| Socket event types handled | 12 |
+| API endpoints defined | 35 |
 
 ---
 
@@ -212,9 +212,13 @@ frontend/src/
 
 ## 7. External API Dependencies
 
-### Main API (preprod.mygenie.online) — 28 endpoints
+### Main API (preprod.mygenie.online) — 29 endpoints
 
 Authentication, Menu, Tables, Orders, Payments, Reports, Settings, Rooms, Printing, Station
+
+**Notable endpoint changes (July 2025 update):**
+- **NEW**: `PREPAID_ORDER` = `/api/v2/vendoremployee/order/paid-prepaid-order` — marks prepaid order as completed on served
+- **CHANGED**: `SPLIT_ORDER` upgraded from v1 to v2: `/api/v2/vendoremployee/order/split-order`
 
 ### CRM API (crm.mygenie.online) — 6+ endpoints
 
@@ -222,7 +226,7 @@ Customer search/lookup/CRUD, Address management — authenticated via per-restau
 
 ### Socket Server (presocket.mygenie.online) — 3 channels
 
-- `new_order_{restaurantId}` — 10 event types
+- `new_order_{restaurantId}` — 11 event types (includes `split-order` added July 2025)
 - `update_table_{restaurantId}` — 1 event type
 - `order-engage_{restaurantId}` — 1 event type
 

@@ -181,9 +181,11 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
               </label>
               <input
                 type="tel"
-                placeholder="+91 98765 43210"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="10-digit mobile number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                 className="w-full px-4 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2"
                 style={{ borderColor: COLORS.borderGray }}
                 data-testid="customer-phone-input"

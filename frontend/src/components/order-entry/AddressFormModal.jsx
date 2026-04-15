@@ -328,9 +328,11 @@ const AddressFormModal = ({ onClose, onSave, initialData = null, saving = false 
               <label className="text-xs font-medium mb-1.5 block" style={{ color: COLORS.grayText }}>Contact Phone</label>
               <input
                 type="tel"
-                placeholder="Phone number"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="10-digit phone number"
                 value={form.contactPersonNumber}
-                onChange={(e) => updateField('contactPersonNumber', e.target.value)}
+                onChange={(e) => updateField('contactPersonNumber', e.target.value.replace(/\D/g, '').slice(0, 10))}
                 className="w-full px-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2"
                 style={{ borderColor: COLORS.borderGray }}
                 data-testid="addr-contact-phone-input"

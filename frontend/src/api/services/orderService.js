@@ -78,6 +78,25 @@ export const confirmOrder = async (orderId, roleName, orderStatus = 'paid') => {
 };
 
 /**
+ * Complete a prepaid order (called when prepaid order is marked Served)
+ * Uses paid-prepaid-order endpoint instead of order-status-update
+ * @param {number|string} orderId - Order ID
+ * @param {number} serviceTax - Service tax amount
+ * @param {number} tipAmount - Tip amount
+ * @returns {Promise<Object>} - API response
+ */
+export const completePrepaidOrder = async (orderId, serviceTax = 0, tipAmount = 0) => {
+  const payload = {
+    order_id: String(orderId),
+    payment_status: 'paid',
+    service_tax: serviceTax,
+    tip_amount: tipAmount,
+  };
+  const response = await api.post(API_ENDPOINTS.PREPAID_ORDER, payload);
+  return response.data;
+};
+
+/**
  * Split order among multiple people
  * @param {number|string} orderId - Original order ID
  * @param {number} splitCount - Number of splits

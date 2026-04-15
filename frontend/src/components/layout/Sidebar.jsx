@@ -288,71 +288,51 @@ const Sidebar = ({
           className="px-3 py-3"
           style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
         >
-          {/* View Type: Table / Order */}
-          {activeView !== undefined && setActiveView && (
-            <div className={`flex items-center ${isExpanded ? 'gap-2' : 'flex-col gap-1'}`}>
-              {isExpanded && <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>View:</span>}
-              <div className={`flex ${isExpanded ? 'gap-1' : 'flex-col gap-1'}`}>
-                <button
-                  data-testid="view-toggle-table"
-                  onClick={() => setActiveView('table')}
-                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
-                  style={{
-                    backgroundColor: activeView === 'table' ? `${COLORS.primaryGreen}15` : 'transparent',
-                    color: activeView === 'table' ? COLORS.primaryGreen : COLORS.grayText,
-                  }}
-                  title="Table View"
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
-                <button
-                  data-testid="view-toggle-order"
-                  onClick={() => setActiveView('order')}
-                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
-                  style={{
-                    backgroundColor: activeView === 'order' ? `${COLORS.primaryGreen}15` : 'transparent',
-                    color: activeView === 'order' ? COLORS.primaryGreen : COLORS.grayText,
-                  }}
-                  title="Order View"
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
+          <div className={`flex ${isExpanded ? 'flex-col gap-2' : 'flex-col gap-2'}`}>
+            {/* Toggle 1: Table ↔ Order View */}
+            {activeView !== undefined && setActiveView && (
+              <button
+                data-testid="view-toggle"
+                onClick={() => setActiveView(activeView === 'table' ? 'order' : 'table')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${isExpanded ? 'w-full' : 'mx-auto px-2'}`}
+                style={{
+                  backgroundColor: `${COLORS.primaryGreen}10`,
+                  color: COLORS.primaryGreen,
+                  border: `1px solid ${COLORS.primaryGreen}30`,
+                }}
+                title={activeView === 'table' ? 'Switch to Order View' : 'Switch to Table View'}
+              >
+                {activeView === 'table' ? <LayoutGrid className="w-4 h-4 flex-shrink-0" /> : <List className="w-4 h-4 flex-shrink-0" />}
+                {isExpanded && (
+                  <span className="text-xs font-medium truncate">
+                    {activeView === 'table' ? 'Table View' : 'Order View'}
+                  </span>
+                )}
+              </button>
+            )}
 
-          {/* Dashboard Grouping: Channel / Status */}
-          {dashboardView !== undefined && setDashboardView && (
-            <div className={`flex items-center ${isExpanded ? 'gap-2 mt-2' : 'flex-col gap-1 mt-2'}`}>
-              {isExpanded && <span className="text-xs font-medium" style={{ color: COLORS.grayText }}>Group:</span>}
-              <div className={`flex ${isExpanded ? 'gap-1' : 'flex-col gap-1'}`}>
-                <button
-                  data-testid="dash-toggle-channel"
-                  onClick={() => setDashboardView('channel')}
-                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
-                  style={{
-                    backgroundColor: dashboardView === 'channel' ? `${COLORS.primaryGreen}15` : 'transparent',
-                    color: dashboardView === 'channel' ? COLORS.primaryGreen : COLORS.grayText,
-                  }}
-                  title="By Channel"
-                >
-                  <Columns className="w-4 h-4" />
-                </button>
-                <button
-                  data-testid="dash-toggle-status"
-                  onClick={() => setDashboardView('status')}
-                  className={`p-2 rounded-lg transition-colors ${isExpanded ? '' : 'mx-auto'}`}
-                  style={{
-                    backgroundColor: dashboardView === 'status' ? `${COLORS.primaryGreen}15` : 'transparent',
-                    color: dashboardView === 'status' ? COLORS.primaryGreen : COLORS.grayText,
-                  }}
-                  title="By Status"
-                >
-                  <Rows className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
+            {/* Toggle 2: Channel ↔ Status Grouping */}
+            {dashboardView !== undefined && setDashboardView && (
+              <button
+                data-testid="group-toggle"
+                onClick={() => setDashboardView(dashboardView === 'status' ? 'channel' : 'status')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${isExpanded ? 'w-full' : 'mx-auto px-2'}`}
+                style={{
+                  backgroundColor: `${COLORS.primaryGreen}10`,
+                  color: COLORS.primaryGreen,
+                  border: `1px solid ${COLORS.primaryGreen}30`,
+                }}
+                title={dashboardView === 'status' ? 'Switch to Channel Group' : 'Switch to Status Group'}
+              >
+                {dashboardView === 'channel' ? <Columns className="w-4 h-4 flex-shrink-0" /> : <Rows className="w-4 h-4 flex-shrink-0" />}
+                {isExpanded && (
+                  <span className="text-xs font-medium truncate">
+                    {dashboardView === 'channel' ? 'By Channel' : 'By Status'}
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
         </div>
       )}
 

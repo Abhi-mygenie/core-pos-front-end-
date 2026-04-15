@@ -191,10 +191,11 @@ Restaurant ID (from profile) → Channel names:
 | `update-order-status` | order | handleUpdateOrderStatus | Transform payload → update/remove |
 | `scan-new-order` | order | handleScanNewOrder | **Fetch from API** → addOrder |
 | `delivery-assign-order` | order | handleDeliveryAssignOrder | **Fetch from API** → updateOrder |
+| `split-order` | order | handleSplitOrder | Transform payload → updateOrder (original order with reduced items) |
 | `update-table` | table | handleUpdateTable | Local table status update |
 | `order-engage` | order-engage | handleOrderEngage | Lock/unlock order card |
 
-**Key Pattern**: v2 events (update-order-target/source/paid, update-item-status) use **inline payload** (no API call). Legacy events (update-food-status, scan-new-order, delivery-assign) still **fetch from API**.
+**Key Pattern**: v2 events (update-order-target/source/paid, update-item-status, split-order) use **inline payload** (no API call). Legacy events (update-food-status, scan-new-order, delivery-assign) still **fetch from API**.
 
 **Evidence**: `api/socket/socketHandlers.js` entire file (594 lines)
 
@@ -303,6 +304,107 @@ Rounding:
 
 ---
 
+## 7a. `placeOrderWithPayment` Payload Structure (July 2025 Update)
+
+### `partial_payments` Now Mandatory
+
+Previously, `partial_payments` was only included for split payments. Now it is **always sent**, with all 3 modes (cash, card, upi):
+
+```
+Single payment (e.g., cash):
+  partial_payments: [
+    { payment_mode: "cash", payment_amount: 500, grant_amount: 500, transaction_id: "" },
+    { payment_mode: "card", payment_amount: 0,   grant_amount: 0,   transaction_id: "" },
+    { payment_mode: "upi",  payment_amount: 0,   grant_amount: 0,   transaction_id: "" },
+  ]
+
+Split payment:
+  partial_payments: [user-specified amounts, missing modes filled with 0]
+```
+
+**Evidence**: `orderTransform.js` `placeOrderWithPayment` lines 578-607
+
+### Null → Empty String Migration
+
+Multiple optional fields changed from `null` to `''`:
+- `transaction_id`, `discount_type`, `coupon_title`, `coupon_type`, `paid_room`, `room_id`, `address_id`, `discount_member_category_name`, `usage_id`
+
+`tip_amount` changed from numeric `0` to string `'0'`.
+`delivery_charge` now stringified: `String(parseFloat(...).toFixed(1))`.
+
+**Evidence**: `orderTransform.js` diff, lines 618-648
+**Confidence**: HIGH
+**Impact**: MEDIUM — Backend must handle empty string the same as null for these fields
+
+---
+
+## 7b. Prepaid Order Flow (July 2025 — New)
+
+```
+Place Order with payment_status=paid, payment_type=prepaid
+  → Order created with paymentType='prepaid'
+  → Dashboard shows order normally
+  → OrderEntry detects isPrepaid → blocks item edits, hides Place/Bill buttons
+  → On "Mark Served":
+      if paymentType === 'prepaid':
+        → POST /api/v2/vendoremployee/order/paid-prepaid-order
+           { order_id, payment_status: 'paid', service_tax, tip_amount }
+      else:
+        → PUT /api/v2/vendoremployee/order/order-status-update (normal flow)
+```
+
+**Evidence**:
+- Detection: `OrderEntry.jsx` — `isPrepaid = orderPaymentType === 'prepaid'`
+- Block edits: `OrderEntry.jsx` — `addCustomizedItemToCart` returns early for prepaid
+- Mark Served: `DashboardPage.jsx` `handleMarkServed` — calls `completePrepaidOrder()`
+- Endpoint: `orderService.js` `completePrepaidOrder()` → `API_ENDPOINTS.PREPAID_ORDER`
+- CartPanel: hides Place Order + Collect Bill buttons when `isPrepaid && hasPlacedItems`
+
+**Confidence**: HIGH
+**Impact**: HIGH — New order lifecycle path that bypasses normal status update endpoint
+
+---
+
+## 7c. Delta Item Pattern for Placed Item Qty Editing (July 2025 — BUG-237)
+
+Previously, editing a placed item's quantity was a stub (`TODO CHG-040`). Now implemented via delta items:
+
+```
+Placed item (qty=2, _originalQty=2) → User clicks + to make qty 3
+  → Creates unplaced delta item: { ...placedItem, qty: 1, placed: false, _deltaForId: placedItemId }
+  → CartPanel shows combined qty (2+1=3) on placed item row
+  → Delta item hidden from display
+  → On "Update Order": delta item flows through normal unplaced→API pipeline
+  → On socket update: delta items invalidated (filtered by !_deltaForId in cart sync)
+
+Constraints:
+  - Cannot decrease below _originalQty (use Cancel Item for that)
+  - If qty returns to original, delta item is removed
+```
+
+**Evidence**: `OrderEntry.jsx` `updateQuantity` callback, `CartPanel.jsx` `PlacedItemRow` `displayQty` prop
+**Confidence**: HIGH
+**Impact**: MEDIUM — New item lifecycle pattern that interacts with socket sync
+
+---
+
+## 7d. `orderItemsByTableId` Data Model Change (July 2025 — Breaking)
+
+Previously returned **single object** per tableId. Now returns **array of order objects** per tableId, to support split orders (1 table → N concurrent orders).
+
+```
+Before: orderItemsByTableId[tableId] = { orderId, items, amount, ... }
+After:  orderItemsByTableId[tableId] = [ { orderId, items, amount, ... }, ... ]
+```
+
+All consumers updated: `DashboardPage.jsx` (adaptTable returns array, uses flatMap), `DineInCard.jsx` (find in array by orderId).
+
+**Evidence**: `OrderContext.jsx` lines 249-278
+**Confidence**: HIGH
+**Impact**: HIGH — Breaking change for any consumer not updated to handle arrays
+
+---
+
 ## 8. Print Flow
 
 ```
@@ -399,3 +501,7 @@ Both are currently **ON**. No runtime toggle mechanism — requires code deploy 
 | Feature flags (static) | `featureFlags.js` | No runtime toggle — deploy-only |
 | Anti-corruption layer (transforms) | `api/transforms/*` | Isolates API changes from UI |
 | Engaged/locked state | Tables + Orders | Prevents concurrent UI updates during socket transactions |
+| Delta items for qty editing | `OrderEntry.jsx` | Unplaced delta item linked to placed item via `_deltaForId` |
+| Split order: 1 table → N cards | `OrderContext.jsx`, `DashboardPage.jsx` | `orderItemsByTableId` returns array, `adaptTable` returns array |
+| Input validation (order-type specific) | `OrderEntry.jsx`, `CartPanel.jsx` | TakeAway→name required, Delivery→name+phone+address required |
+| Payment validation | `CollectPaymentPanel.jsx` | Card→4-digit txn ID, TAB→name+phone, Split card→per-row txn ID |
