@@ -38,6 +38,8 @@
 | 28 | **BUG-218** | **Split Order uses v1 endpoint** | **P1** | **✅ FIXED (Frontend — changed to v2)** |
 | 29 | **BUG-219** | **Second split order not visible on dashboard (1:1 mapping)** | **P0** | **✅ FIXED (Frontend — 1:N refactor)** |
 | 30 | **BUG-231** | **Split Bill allows assigning 100% items to one person (no actual split)** | **P2** | **❌ OPEN (UX validation)** |
+| 31 | **BUG-232** | **Prepaid: `service_tax` hardcoded 0 — needs restaurant-level config** | **P2** | **❌ OPEN** |
+| 32 | **BUG-233** | **Prepaid orders have no visual indicator on dashboard (looks same as unpaid)** | **P3** | **❌ OPEN (UX)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 
