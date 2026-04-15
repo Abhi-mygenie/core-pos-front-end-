@@ -28,11 +28,13 @@ const getTimeAgo = (isoString) => {
 };
 
 // Placed item row (sent to kitchen)
-const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed }) => {
+const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   const isCancelled = item.status === 'cancelled';
   const showCancelBtn = !isCancelled && canCancelItem && (!isItemCancelAllowed || isItemCancelAllowed(item));
   const showTransferBtn = !isCancelled && canFoodTransfer;
+  const originalQty = item._originalQty || item.qty; // BUG-237: min qty for placed items
+  const shownQty = displayQty || item.qty; // BUG-237: combined qty (original + delta)
 
   return (
     <div
@@ -133,13 +135,13 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
         <div className="flex items-center gap-0.5 pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
           {editingQtyItemId === item.id ? (
             <>
-              <button onClick={() => { if (item.qty > 1) updateQuantity(item.id, item.qty - 1); }} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.grayText }}>−</button>
-              <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
-              <button onClick={() => updateQuantity(item.id, item.qty + 1)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
+              <button onClick={() => { if (shownQty > originalQty) updateQuantity(item.id, shownQty - 1, true); }} disabled={shownQty <= originalQty} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold disabled:opacity-30" style={{ color: COLORS.grayText }}>−</button>
+              <span className="font-bold w-5 text-center" style={{ color: COLORS.primaryGreen }}>{shownQty}</span>
+              <button onClick={() => updateQuantity(item.id, shownQty + 1, true)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 text-lg font-bold" style={{ color: COLORS.primaryGreen }}>+</button>
             </>
           ) : (
             <>
-              <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{item.qty}</span>
+              <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{shownQty}</span>
               <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
                 <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
               </button>
@@ -154,8 +156,8 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
           className="font-bold text-sm"
           style={{ color: isCancelled ? '#9CA3AF' : COLORS.primaryOrange, textDecoration: isCancelled ? 'line-through' : 'none' }}
         >
-          ₹{(item.totalPrice || (() => {
-            const base = (item.price || 0) * (item.qty || 1);
+          ₹{(item.totalPrice ? Math.round(item.totalPrice / (item.qty || 1) * shownQty) : (() => {
+            const base = (item.price || 0) * (shownQty || 1);
             const addonSum = (item.addOns || []).reduce((s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)), 0);
             const varSum = (item.variation || []).reduce((s, group) => {
               // variation format: {name, values: [{label, optionPrice}]}
@@ -164,7 +166,7 @@ const PlacedItemRow = ({ item, setCancelItem, setTransferItem, editingQtyItemId,
                 : (parseFloat(group.price) || 0);
               return s + groupSum;
             }, 0);
-            return base + ((addonSum + varSum) * (item.qty || 1));
+            return base + ((addonSum + varSum) * (shownQty || 1));
           })()).toLocaleString()}
         </span>
       </div>
@@ -589,8 +591,11 @@ const CartPanel = ({
           </div>
         ) : (
           cartItems.map((item, index) => {
+            // BUG-237: Hide delta items — their qty is shown on the placed item row
+            if (item._deltaForId && !item.placed) return null;
+
             const prevItem = index > 0 ? cartItems[index - 1] : null;
-            const showKotSeparator = prevItem && prevItem.placed && !item.placed;
+            const showKotSeparator = prevItem && prevItem.placed && !item.placed && !item._deltaForId;
 
             return (
               <div key={`${item.id}-${index}`}>
@@ -602,6 +607,7 @@ const CartPanel = ({
                 {item.placed ? (
                   <PlacedItemRow
                     item={item}
+                    displayQty={item.qty + (cartItems.find(d => d._deltaForId === item.id && !d.placed)?.qty || 0)}
                     setCancelItem={setCancelItem}
                     setTransferItem={setTransferItem}
                     editingQtyItemId={editingQtyItemId}

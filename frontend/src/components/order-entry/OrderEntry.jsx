@@ -283,6 +283,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           tax: item.tax || { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false },
           name: item.name,
           qty: item.qty || 1,
+          _originalQty: item.qty || 1, // BUG-237: track server qty for delta detection
           price: item.unitPrice || item.price || 0,
           status: item.status || 'preparing',
           placed: true,
@@ -320,8 +321,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
     // Always sync cart items from context (socket = source of truth)
     setCartItems(prev => {
-      const unplaced = prev.filter(i => !i.placed);
-      const placed = orderFromContext.items.map(i => ({ ...i, placed: true }));
+      // Keep unplaced items that are NOT delta items (delta items are invalidated by server update)
+      const unplaced = prev.filter(i => !i.placed && !i._deltaForId);
+      const placed = orderFromContext.items.map(i => ({ ...i, placed: true, _originalQty: i.qty || 1 }));
       return [...placed, ...unplaced];
     });
 
@@ -410,11 +412,47 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // updateQuantity — differentiates placed vs unplaced items
   // Unplaced (placed: false) → local state only (no API)
-  // Placed (placed: true)   → CHG-040: will call editOrderItem API when endpoint provided
+  // Placed (placed: true)   → BUG-237: create unplaced delta item for qty increase
   const updateQuantity = useCallback((itemId, newQty, isPlaced = false) => {
     if (isPlaced) {
-      // TODO CHG-040: call orderToAPI.editOrderItem() + api.put(EDIT_ORDER_ITEM) or api.put(EDIT_ORDER_ITEM_QTY) when endpoint provided
-      // For now: local state update only (stub)
+      // BUG-237: For placed items, qty increase creates an unplaced delta item
+      // that flows through the normal Update Order pipeline
+      setCartItems(prev => {
+        const placedItem = prev.find(i => i.id === itemId && i.placed);
+        if (!placedItem) return prev;
+
+        const originalQty = placedItem._originalQty || placedItem.qty;
+        
+        // Block decrease below original qty (use Cancel Item for that)
+        if (newQty < originalQty) return prev;
+
+        // If back to original qty, remove any delta item
+        if (newQty === originalQty) {
+          return prev.filter(i => !(i._deltaForId === itemId && !i.placed));
+        }
+
+        const deltaQty = newQty - originalQty;
+        const existingDelta = prev.find(i => i._deltaForId === itemId && !i.placed);
+
+        if (existingDelta) {
+          // Update existing delta item qty
+          return prev.map(i => i._deltaForId === itemId && !i.placed ? { ...i, qty: deltaQty } : i);
+        } else {
+          // Create new unplaced delta item
+          const deltaItem = {
+            ...placedItem,
+            id: placedItem.foodId || placedItem.id, // use foodId for cart-update (food catalog ID)
+            qty: deltaQty,
+            placed: false,
+            _deltaForId: itemId, // link back to placed item
+            _originalQty: undefined,
+            status: 'preparing',
+            addedAt: new Date().toISOString(),
+          };
+          return [...prev, deltaItem];
+        }
+      });
+      return;
     }
     setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
   }, []);

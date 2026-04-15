@@ -43,6 +43,7 @@
 | 33 | **BUG-234** | **No validation: TakeAway/Delivery orders allow missing required customer fields** | **P1** | **✅ FIXED (Frontend) / ❌ OPEN (Backend)** |
 | 34 | **BUG-235** | **Shift Table modal shows rooms — cannot shift to rooms** | **P2** | **✅ FIXED (Frontend)** |
 | 35 | **BUG-236** | **Collect Bill / Edit rules not enforced per order type (postpaid/prepaid)** | **P1** | **✅ FIXED (Frontend)** |
+| 36 | **BUG-237** | **Placed item qty edit: Update Order disabled, delta not sent to kitchen** | **P1** | **✅ FIXED (Frontend)** |
 
 ### BUG-234: No Validation for TakeAway/Delivery Required Fields
 
