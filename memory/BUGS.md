@@ -45,6 +45,9 @@
 | 35 | **BUG-236** | **Collect Bill / Edit rules not enforced per order type (postpaid/prepaid)** | **P1** | **✅ FIXED (Frontend)** |
 | 36 | **BUG-237** | **Placed item qty edit: Update Order disabled, delta not sent to kitchen** | **P1** | **✅ FIXED (Frontend)** |
 | 37 | **BUG-238** | **Status view shows "No channels configured" when no orders exist** | **P3** | **✅ FIXED (Frontend)** |
+| 38 | **BUG-239** | **TAB (Credit) payment: no customer name/phone validation** | **P1** | **❌ OPEN** |
+| 39 | **BUG-240** | **Card payment: no card last-4 or transaction ID capture** | **P1** | **❌ OPEN** |
+| 40 | **BUG-241** | **Split payment with Card: no transaction ID per card row** | **P1** | **❌ OPEN** |
 
 ### BUG-234: No Validation for TakeAway/Delivery Required Fields
 
@@ -145,6 +148,65 @@ Collect Bill button was always enabled regardless of order status or payment typ
 **Files Changed:**
 - `OrderEntry.jsx`: `updateQuantity` rewritten for placed items, `_originalQty` tracking on init + socket sync, delta cleanup on sync
 - `CartPanel.jsx`: `PlacedItemRow` — `displayQty`/`shownQty` prop, `-` respects original qty, delta items hidden, price uses `shownQty`
+
+---
+
+### BUG-239: TAB (Credit) Payment — No Customer Name/Phone Validation
+
+**Status:** ❌ OPEN
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:** When TAB (Credit) is selected as payment method, customer name and phone are mandatory (it's a credit/tab — you need to know WHO to collect from later). Currently no validation exists — Pay button is always clickable.
+
+**Current state:** `handlePayment` sends `tabContact: null`. No UI fields for TAB-specific customer info. `customer` prop from CartPanel may be empty if user skipped customer entry.
+
+**Proposed UX:**
+- When `paymentMethod === 'credit'` (TAB): show a **"Credit Customer"** section below payment buttons.
+- Two fields: Name (text) + Phone (tel) — pre-filled from `customer` prop if available.
+- Red required indicators if empty. Pay button disabled until both filled.
+- Values passed as `paymentData.tabContact = { name, phone }`.
+
+**Implementation plan:**
+- `CollectPaymentPanel.jsx`: Add state `tabName` / `tabPhone` (init from `customer` prop). Add conditional section when `paymentMethod === 'credit'`. Update Pay button disabled logic. Include in `paymentData`.
+
+---
+
+### BUG-240: Card Payment — No Card Last-4 or Transaction ID Capture
+
+**Status:** ❌ OPEN
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:** When Card is selected as payment method, the last 4 digits of the card and the transaction ID are mandatory for reconciliation. Currently no input fields appear (unlike Cash which shows "Cash Received"). `handlePayment` hardcodes `transactionId: ''`.
+
+**Proposed UX:**
+- When `paymentMethod === 'card'`: show a **"Card Details"** section below payment buttons (same position as Cash "Cash Received").
+- Two fields: Card Last 4 Digits (number, maxlength 4) + Transaction ID (text).
+- Pay button disabled until both filled.
+- Values passed as `paymentData.cardLast4` and `paymentData.transactionId`.
+
+**Implementation plan:**
+- `CollectPaymentPanel.jsx`: Add state `cardLast4` / `transactionId`. Add conditional section when `paymentMethod === 'card'`. Update Pay button disabled logic. Include in `paymentData`.
+
+---
+
+### BUG-241: Split Payment with Card — No Transaction ID Per Row
+
+**Status:** ❌ OPEN
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:** In split (partial) payment, each row has a method dropdown + amount. When a row uses Card, the transaction ID is compulsory for reconciliation. Currently no transaction ID field exists per split row. `handlePayment` hardcodes `transactionId: ''` for all splits.
+
+**Proposed UX:**
+- For each split row where `method === 'card'`: show an **inline Transaction ID input** below that row.
+- Only appears for card rows — cash/UPI rows stay as-is.
+- Pay button disabled if any card split row has empty transaction ID.
+- Values passed in `paymentData.splitPayments[].transactionId` per row.
+
+**Implementation plan:**
+- `CollectPaymentPanel.jsx`: Extend `splitPayments` state to include `transactionId` per row. Show conditional input when row method = 'card'. Update Pay button disabled logic. Already passes `transactionId` per split in `handlePayment` (currently hardcoded `''`).
 
 ---
 
