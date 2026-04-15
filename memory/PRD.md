@@ -1,89 +1,109 @@
-# MyGenie POS Frontend — PRD
+# MyGenie POS Frontend — PRD & Session Log
 
-**Last Updated:** April 15, 2026
-**Repo:** https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch: main)
-**Stack:** React 19 + CRA + Craco + Tailwind + Radix UI + Socket.io
+**Project:** MyGenie Restaurant POS Frontend
+**Repo:** `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
+**Branch:** `bugs-v1-15-april-`
+**Stack:** React 19, Tailwind CSS, CRACO, Socket.io, Firebase
+**Backend API:** `https://preprod.mygenie.online/`
+**Socket:** `https://presocket.mygenie.online`
 
 ---
 
 ## Architecture
 
-- **Frontend:** React SPA on port 3000
-- **POS API:** https://preprod.mygenie.online/ (menu, orders, tables, auth)
-- **CRM API:** TBD base URL with X-API-Key auth (customers, addresses, loyalty, coupons)
-- **Socket:** https://presocket.mygenie.online (real-time order updates)
-- **Firebase:** Push notifications (FCM)
+- **Frontend-only** React SPA (no local backend)
+- Connects to external preprod backend API + socket server
+- Firebase for auth/notifications
+- CRM integration for customer management
+- Google Maps for delivery addresses
 
-## Core Requirements
+## User Personas
 
-- Multi-channel POS: Dine-in, Walk-in, Takeaway, Delivery, Room
-- Real-time dashboard with socket-driven order updates
-- Order lifecycle: YTC → Preparing → Ready → Served → Paid
-- Customer management via CRM API
-- Delivery order flow with address management
-- Firebase push notifications
+- **Restaurant Owner/Manager** — Full access, can cancel orders, manage settings
+- **Waiter/Staff** — Place/update orders, limited permissions based on profile API
+- **Cashier** — Collect payments, print bills
+
+## Core Features
+
+- Login/Auth (Firebase)
+- Dashboard with Table View / Order View / Channel / Status grouping
+- Order Entry: Place, Update, Cancel, Split Bill
+- Payment: Collect Bill, Prepaid, Partial Payments
+- Table Management: Shift Table, Merge Table, Transfer Food
+- Socket-first architecture (v2) — real-time multi-device sync
 - KOT/Bill printing
+- CRM customer search
+- Delivery address management
 
-## What's Been Implemented
+---
 
-### Session 15 (April 15, 2026)
-- BUG-218 FIXED: Split order endpoint migrated from v1 to v2
-- BUG-219 FIXED: Split order 1:1 table→order mapping refactored to 1:N
-  - `orderItemsByTableId` now stores arrays (not single object)
-  - `adaptTable()` returns N entries per table for split orders (labeled "T5 (1/2)", "T5 (2/2)")
-  - `allRoomsList` same 1:N support
-  - Channel view, Status view, List view, Search — all updated
-  - `getOrderDataForEntry` handles array lookup by orderId
-  - `DineInCard` handles array-based orderItemsByTableId
-  - Files changed: constants.js, OrderContext.jsx, DashboardPage.jsx, DineInCard.jsx
+## Session Log — April 15, 2026
 
-### Session 14b (April 14, 2026)
-- CRM POS API Integration Phases 1-4: customer search, lookup, create/update, address CRUD
-- Dynamic CRM API key per restaurant (15 restaurants configured)
-- Delivery address flow: address picker, cross-restaurant lookup, Google Places Autocomplete
-- Place-order payload now includes address_id + full customer fields from CRM
+### Setup
+- Cloned repo (branch `bugs-v1-15-april-`), installed dependencies, configured 16 env variables
+- Frontend running on port 3000
 
-### Session 14 (April 14, 2026)
-- Confirm Order: Separate endpoint `waiter-dinein-order-status-update`
-- Dynamic order status from profile API `def_ord_status`
-- Socket handler `handleUpdateOrderStatus` upgraded to v2 (payload-based, no GET API)
-- OrderCard Accept button wired in list view
-- CRM POS API analyzed, tracker created
+### Changes Made
 
-### Session 13 (April 13, 2026)
-- Socket v2 full implementation (8 files, 5 new events)
-- Fire-and-forget + wait-for-engage pattern
-- Dashboard engage fix for all order types
+#### 1. Prepaid Place+Pay — Redirect Fix (Issue 1)
+**File:** `OrderEntry.jsx`
+**What:** Scenario 2 (fresh order + pay) was awaiting HTTP response and staying on screen. Now follows fire-and-forget + `waitForTableEngaged` + `onClose()` redirect pattern (same as Place Order and Collect Bill).
+**Endpoint:** Uses `PLACE_ORDER` (`/api/v2/vendoremployee/order/place-order`) — NOT `PREPAID_ORDER`.
 
-### Sessions 1-12
-- Full POS frontend: dashboard, order entry, cart, payment
-- Dual-view system (channel/status), visibility settings
-- Socket architecture with 3 channels
-- Firebase FCM notifications
-- KOT/Bill printing with station picker
-- Split bill feature
+#### 2. PREPAID_ORDER Endpoint Clarification (Issue 2)
+**No code change** — analysis only.
+`/api/v2/vendoremployee/order/paid-prepaid-order` is exclusively for `DashboardPage.handleMarkServed` (completing existing prepaid orders). Was previously misrouted for Place+Pay in commit `0e4870a` — now corrected by Issue 1 fix.
 
-## Prioritized Backlog
+#### 3. Sidebar Toggle Simplification
+**File:** `Sidebar.jsx`
+**What:** Reduced 4 confusing buttons to 2 toggle buttons:
+- Button 1: Table View ↔ Order View
+- Button 2: By Channel ↔ By Status
 
-### P0 — In Progress
-- CRM Integration Phase 5 (loyalty, coupons, notes, WhatsApp)
+#### 4. TakeAway/Delivery Validation (BUG-234)
+**Files:** `OrderEntry.jsx`, `CartPanel.jsx`
+**Rules:**
+- TakeAway: Customer name required
+- Delivery: Customer name + phone + address all required
+**Implementation:**
+- Validation guard in `handlePlaceOrder` + `onPaymentComplete` with toast messages
+- Place Order / Collect Bill buttons disabled when required fields missing
+- Visual indicators: red border, red icon, red bg, asterisk on required fields
+**Backend:** ❌ OPEN — needs server-side validation (filed as BUG-234)
 
-### P1 — Next
-- CRM Integration Phase 5 (loyalty, coupons, notes, WhatsApp)
-- BUG-230: Unify F_ORDER_STATUS vs F_ORDER_STATUS_API
+#### 5. Shift Table — Rooms Excluded (BUG-235)
+**File:** `ShiftTableModal.jsx`
+**What:** Added `!t.isRoom` filter to exclude rooms from Shift Table modal. `getTables()` doesn't accept params — the `tablesOnly=true` comment was wrong.
 
-### P2 — Future
-- BUG-210: Multi-device race condition (table engage check)
-- BUG-212: Addon name mismatch (backend)
-- BUG-224: Manual bill gst_tax always 0
-- BUG-225: Manual bill custName sends label
-- BUG-227: Order-level Ready/Serve item food_status (backend)
-- BUG-228: Walk-in → Table merge missing update-order-target (backend)
+### Documents Updated
+- `API_DOCUMENT_V2.md` — Redirect behavior table, PREPAID_ORDER clarification, Switch Table room exclusion note
+- `SOCKET_V2_FEATURE.md` — Flow 1 (Place+Pay redirect), Flow 4 (room exclusion), Flow 13 (exclusive endpoint note), Endpoints Reference table
+- `BUGS.md` — Added BUG-234 (validation) and BUG-235 (shift table rooms)
 
-## Key Documents
-- `/app/memory/CRM_INTEGRATION_TRACKER.md` — CRM integration checklist & plan
-- `/app/memory/CRM_POS_API.md` — CRM POS API reference (23 endpoints)
-- `/app/memory/SOCKET_V2_FEATURE.md` — Socket v2 architecture spec
-- `/app/memory/CHANGELOG.md` — Full session history
-- `/app/memory/BUGS.md` — Bug tracker
-- `/app/memory/ARCHITECTURE.md` — System architecture
+---
+
+## Open Backend Bugs (Action Required)
+
+| Bug | Title | Priority |
+|-----|-------|----------|
+| BUG-204 | `order_sub_total_without_tax` returns 0 | P1 |
+| BUG-212 | Addon names mismatch between APIs | P0 |
+| BUG-224 | Manual Bill: `gst_tax` always 0 | P1 |
+| BUG-225 | Manual Bill: `custName` sends label instead of real name | P2 |
+| BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | P0 |
+| BUG-228 | `update-order-target` not sent when source is walk-in in merge | P0 |
+| BUG-230 | `F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch | P2 |
+| BUG-231 | Split Bill allows assigning 100% items to one person | P2 |
+| BUG-232 | Prepaid: `service_tax` hardcoded 0 | P2 |
+| BUG-233 | Prepaid orders have no visual indicator on dashboard | P3 |
+| **BUG-234** | **No server-side validation for TakeAway/Delivery required fields** | **P1** |
+
+## Backlog / Next Tasks
+
+- P0: BUG-227 backend fix (item-level food_status on order-level Ready/Serve)
+- P0: BUG-228 backend fix (walk-in→table merge missing update-order-target)
+- P1: BUG-234 backend validation for TakeAway/Delivery required fields
+- P1: Partial payments (split pay) — `partial_payments` array not yet implemented
+- P2: Service tax from restaurant config (not hardcoded 0)
+- P2: Prepaid visual indicator on dashboard
+- P3: Scheduled orders support

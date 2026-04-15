@@ -132,6 +132,7 @@ Handler: handleOrderDataEvent with detectTableChange=true
 Release: setTableEngaged(destTableId, false) + setTableEngaged(sourceTableId, false)
 Note: Only 1 data event (no update-order-source). Same order, just moved tables.
 Walk-in→Table: sourceTableId=0, skipped by guard.
+Frontend: ShiftTableModal filters rooms out (isRoom=true excluded). Only physical tables shown.
 ```
 
 ### Flow 5: Merge Table

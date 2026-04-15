@@ -41,6 +41,7 @@
 | 31 | **BUG-232** | **Prepaid: `service_tax` hardcoded 0 — needs restaurant-level config** | **P2** | **❌ OPEN** |
 | 32 | **BUG-233** | **Prepaid orders have no visual indicator on dashboard (looks same as unpaid)** | **P3** | **❌ OPEN (UX)** |
 | 33 | **BUG-234** | **No validation: TakeAway/Delivery orders allow missing required customer fields** | **P1** | **✅ FIXED (Frontend) / ❌ OPEN (Backend)** |
+| 34 | **BUG-235** | **Shift Table modal shows rooms — cannot shift to rooms** | **P2** | **✅ FIXED (Frontend)** |
 
 ### BUG-234: No Validation for TakeAway/Delivery Required Fields
 

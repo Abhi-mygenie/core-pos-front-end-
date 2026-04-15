@@ -71,6 +71,7 @@
 - Only **one data event** (`update-order-target`) — no `update-order-source` (same order, just moved)
 - Both source AND dest tables get `engage` (v1 only engaged dest)
 - No `update-table free` — frontend releases both after context update
+- **ShiftTableModal excludes rooms** (`!t.isRoom` filter) — can only shift to physical tables (April 15, 2026)
 
 **Frontend handler logic:**
 ```
