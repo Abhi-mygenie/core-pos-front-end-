@@ -10,15 +10,24 @@
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| 1.1 | **Order Lifecycle — End-to-End** | ⬜ | State transitions: No Order → running/preparing → cancelled/paid/removed |
-| 1.1a | Place Order → POST `/place-order` (multipart/form-data) | ⬜ | |
-| 1.1b | Update Order → PUT `/update-place-order` (JSON) | ⬜ | |
-| 1.1c | Cancel Item → PUT `/cancel-food-item` | ⬜ | |
-| 1.1d | Cancel Order → PUT `/order-status-update` (v2) | ⬜ | |
-| 1.1e | Collect Bill → POST `/order-bill-payment` (v2) | ⬜ | |
-| 1.1f | Place+Pay → same `/place-order` endpoint with `payment_status='paid'` | ⬜ | |
-| 1.1g | Order Removal Rule — only via `handleUpdateOrderStatus` socket handler (status cancelled/paid or order not found) | ⬜ | |
-| 1.1h | No other code path removes orders; socket handler is sole removal mechanism | ⬜ | |
+| 1.1 | **Order Lifecycle — End-to-End** | ⚠️ | See sub-items — some transitions incorrect |
+| 1.1-T1 | State: No Order → Place Order → [running/preparing] | ⬜ | |
+| 1.1-T2 | State: [running/preparing] → Update Order (add items) → [running/preparing] | ⬜ | |
+| 1.1-T3 | State: Cancel Item → [running] (if items remain) | ⬜ | |
+| 1.1-T4 | State: Cancel Item → [cancelled] (if last item) | ⚠️ | **PARTIALLY CORRECT** — reviewer flagged |
+| 1.1-T5 | State: Cancel Order → [cancelled] → REMOVED from context | ⬜ | |
+| 1.1-T6 | State: Collect Bill → [paid] → REMOVED from context | ⬜ | |
+| 1.1-T7 | State: Place+Pay → [paid] → REMOVED from context (no intermediate state) | ❌ | **WRONG ASSUMPTION** — reviewer flagged |
+| 1.1a | Place Order → POST `/place-order` | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1b | Update Order → PUT `/update-place-order` | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1c | Cancel Item → PUT `/cancel-food-item` | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1d | Cancel Order → PUT `/order-status-update` (v2) | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1e | Collect Bill → POST `/order-bill-payment` (v2) | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1f | Place+Pay → same `/place-order` endpoint with `payment_status='paid'` | 🔍 | We use v2 API per latest code — need runtime validation |
+| 1.1g | Order Removal: `handleUpdateOrderStatus` status cancelled/paid → removeOrder | ⬜ | |
+| 1.1h | Order Removal: `handleUpdateOrderStatus` fetch returns null → removeOrder | 🔍 | **Need runtime validation** — reviewer flagged |
+| 1.1i | Order Removal: `handleCancelOrder` awaits `waitForOrderRemoval(orderId, 5000)` | 🔍 | **Need runtime validation** — reviewer flagged |
+| 1.1j | No other code path removes orders; socket handler is sole removal mechanism | ⬜ | |
 | 1.2 | **Socket Event Flow — Complete Map** | ⬜ | |
 | 1.2a | Channel subscription: `new_order_{restaurantId}` and `update_table_{restaurantId}` | ⬜ | |
 | 1.2b | 7 events mapped: new-order, update-order, update-food-status, update-order-status, scan-new-order, delivery-assign-order, update-table | ⬜ | |
@@ -174,7 +183,7 @@
 
 | Section | Total Items | ✅ Passed | ⚠️ Partial | ❌ Wrong | 🔍 Runtime | ⬜ Pending |
 |---------|------------|-----------|------------|---------|-----------|-----------|
-| 1. Confirmed Architecture | 33 | | | | | 33 |
+| 1. Confirmed Architecture | 42 | | | | | 42 |
 | 2. Runtime Validation | 5 | | | | | 5 |
 | 3. Backend Confirmation | 7 | | | | | 7 |
 | 4. Operating Rules | 7 | | | | | 7 |
@@ -182,5 +191,5 @@
 | 6. System Invariants | 17 | | | | | 17 |
 | 7. Definitions | 9 | | | | | 9 |
 | 8. Financial Rules | 10 | | | | | 10 |
-| **TOTAL** | **93** | | | | | **93** |
+| **TOTAL** | **102** | | | | | **102** |
 
