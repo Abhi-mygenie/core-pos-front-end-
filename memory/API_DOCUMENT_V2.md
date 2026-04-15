@@ -17,7 +17,7 @@
 | 8 | Food Status Update | `/api/v2/vendoremployee/food-status-update` | PUT | `application/json` |
 | **9** | **Order Status Update (Ready/Served)** | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | **10** | **Profile + Permissions + Restaurant Config** | `/api/v2/vendoremployee/vendor-profile/profile` | GET | — |
-| **11** | **Split Bill** | `/api/v1/vendoremployee/pos/split-order` | POST | `application/json` |
+| **11** | **Split Bill** | `/api/v2/vendoremployee/order/split-order` | POST | `application/json` |
 | **14** | **Transfer Order (Merge)** | `/api/v2/vendoremployee/order/transfer-order` | POST | `application/json` |
 | **15** | **Transfer Food Item** | `/api/v2/vendoremployee/order/transfer-food-item` | POST | `application/json` |
 | **12** | **Payment Methods Mapping** | — | — | See Section 12 |
@@ -314,41 +314,31 @@ f_order_status=3 → 'cancelled' → 'available'
 
 ---
 
-## 11. Split Bill API (NEW - April 9, 2026)
+## 11. Split Bill API (Updated — April 15, 2026)
 
-**Endpoint:** `POST /api/v1/vendoremployee/pos/split-order`
+**Endpoint:** `POST /api/v2/vendoremployee/order/split-order`
 
 **Purpose:** Split an order among multiple people (e.g., friends sharing a meal, one person leaving early)
 
 **Content-Type:** `application/json`
+
+**Availability:** Dine-In, Walk-In, Room orders ONLY (NOT available for TakeAway or Delivery)
 
 ### Use Cases
 1. **By Person**: Select specific items for each person
 2. **Equal Split**: Divide items evenly among N people
 3. **Quantity Split**: Split item quantity (e.g., 1 of 3 pizzas to Person A)
 
-### Payload - Move Whole Items
+### Payload Format (always use object format with id + qty)
 
 ```json
 {
-  "order_id": 12345,
-  "split_count": 2,
+  "order_id": 731025,
+  "split_count": 1,
   "splits": [
-    [469922],
-    [469923]
-  ]
-}
-```
-
-### Payload - Split with Quantity
-
-```json
-{
-  "order_id": 12345,
-  "split_count": 2,
-  "splits": [
-    [{ "id": 469922, "qty": 1 }],
-    [{ "id": 469923, "qty": 2 }]
+    [
+      { "id": 1901825, "qty": 1 }
+    ]
   ]
 }
 ```
@@ -358,18 +348,42 @@ f_order_status=3 → 'cancelled' → 'available'
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `order_id` | number | ✅ | Original order ID |
-| `split_count` | number | ✅ | Number of splits |
-| `splits` | array | ✅ | Array of arrays, each containing items for that split |
+| `split_count` | number | ✅ | Number of NEW orders to create |
+| `splits` | array | ✅ | Array of arrays — each inner array = items for one new order |
+| `splits[][].id` | number | ✅ | `orderDetails[].id` (order line item ID, NOT food catalog ID) |
+| `splits[][].qty` | number | ✅ | Quantity to move to new order |
 
 ### Expected Response
+```json
+{
+  "message": "Order split successfully (quantity-aware move).",
+  "original_order_id": 731025,
+  "new_order_ids": [731034],
+  "mapping": {...},
+  "tableparts": []
+}
+```
 - Creates new order(s) for split portions
 - Original order retains unassigned items
-- Returns new order IDs for payment collection
+- Returns `new_order_ids` array for payment collection
+
+### Socket Events After Split
+
+| # | Event | Channel | Payload | Description |
+|---|-------|---------|---------|-------------|
+| 1 | `order-engage` | `order-engage_{restaurantId}` | `[orderId, restaurantOrderId, restaurantId, 'engage']` | Locks original order during split |
+| 2 | `split-order` | `new_order_{restaurantId}` | `[split-order, orderId, restaurantId, fOrderStatus, { orders: [...] }]` | Original order with reduced items (same v2 payload format) |
+
+**Note:** Socket only sends the updated original order. The NEW split order is NOT in the socket event — frontend fetches it via `fetchSingleOrderForSocket(newOrderId)` from API response and adds via `addOrder()`.
+
+**Known gap:** Other devices don't receive a `new-order` socket event for the split order. They see it on next `refreshOrders()` call.
 
 ### Frontend Implementation
-- **Entry Point**: Scissors icon in OrderEntry header
+- **Entry Point**: Scissors icon in OrderEntry header (hidden for TakeAway/Delivery)
 - **Modal**: `SplitBillModal.jsx` with two modes (By Person / Equal Split)
 - **Service**: `orderService.splitOrder(orderId, splitCount, splits)`
+- **Post-split**: `addOrder(newOrder)` adds to OrderContext, `refreshOrders()` as backup
+- **Dashboard**: 1:N table-to-order mapping — split tables render as "T5 (1/2)", "T5 (2/2)"
 
 ---
 

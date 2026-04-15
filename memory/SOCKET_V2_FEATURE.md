@@ -44,6 +44,7 @@ Channel: order-engage_{restaurantId}  ← Order-level lock events
 ['update-order-target', 730883, 478, 1, { orders: [{...}] }]
 ['update-order-source', 730884, 478, 3, { orders: [{...}] }]
 ['update-order-paid',   730880, 478, 5, { orders: [{...}] }]
+['split-order',         731025, 478, 1, { orders: [{...}] }]
 ```
 
 ### Message Format (table channel)
@@ -210,6 +211,28 @@ Release: setOrderEngaged(orderId, false) via requestAnimationFrame × 2
 Note: order_status value comes from profile API def_ord_status field, mapped through F_ORDER_STATUS_API
 ```
 
+### Flow 12: Split Order (NEW — April 15, 2026)
+```
+Endpoint: POST /api/v2/vendoremployee/order/split-order
+Payload: { order_id, split_count, splits: [[{ id, qty }]] }
+Availability: Dine-In, Walk-In, Room ONLY (NOT TakeAway/Delivery)
+Events:
+  1. order-engage {orderId} engage                              ← original order locked
+  2. split-order {orderId} {f_order_status} {orders: [...]}     ← original order with reduced items
+Handler: handleSplitOrder — updateOrder() for original, release engage
+New order: NOT in socket — fetched via fetchSingleOrderForSocket(newOrderId) from API response, added via addOrder()
+Release: setOrderEngaged(orderId, false) via requestAnimationFrame × 2
+
+Dashboard rendering: 1:N table-to-order mapping
+  - adaptTable() returns N entries per table (flatMap)
+  - orderItemsByTableId stores arrays per tableId
+  - Split table cards labeled "T5 (1/2)", "T5 (2/2)"
+  - Walk-in splits: no issue (keyed by orderId, not tableId)
+
+Known gap: Other devices don't receive new-order socket for the split order.
+  They see it on next refreshOrders() call.
+```
+
 ---
 
 ## 4. Implementation — Step by Step
@@ -225,9 +248,12 @@ Note: order_status value comes from profile API def_ord_status field, mapped thr
 UPDATE_ORDER_TARGET: 'update-order-target',
 UPDATE_ORDER_SOURCE: 'update-order-source',
 UPDATE_ORDER_PAID: 'update-order-paid',
+
+// Split order event (April 15, 2026)
+SPLIT_ORDER: 'split-order',
 ```
 
-**Also update** the `EVENTS_WITH_PAYLOAD` array — add all 3 new events (they all have payloads):
+**Also update** the `EVENTS_WITH_PAYLOAD` array — add all new events (they all have payloads):
 
 ```javascript
 export const EVENTS_WITH_PAYLOAD = [
@@ -236,6 +262,7 @@ export const EVENTS_WITH_PAYLOAD = [
   SOCKET_EVENTS.UPDATE_ORDER_TARGET,    // NEW
   SOCKET_EVENTS.UPDATE_ORDER_SOURCE,    // NEW
   SOCKET_EVENTS.UPDATE_ORDER_PAID,      // NEW
+  SOCKET_EVENTS.SPLIT_ORDER,            // NEW (April 15)
 ];
 ```
 
