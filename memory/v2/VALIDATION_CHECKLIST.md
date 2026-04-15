@@ -28,10 +28,10 @@
 | 1.1h | Order Removal: `handleUpdateOrderStatus` fetch returns null → removeOrder | 🔍 | **Need runtime validation** — reviewer flagged |
 | 1.1i | Order Removal: `handleCancelOrder` awaits `waitForOrderRemoval(orderId, 5000)` | 🔍 | **Need runtime validation** — reviewer flagged |
 | 1.1j | No other code path removes orders; socket handler is sole removal mechanism | ⬜ | |
-| 1.2 | **Socket Event Flow — Complete Map** | ⬜ | |
+| 1.2 | **Socket Event Flow — Complete Map** | ⚠️ | **PARTIALLY CORRECT** — we don't call API, payload comes in socket |
 | 1.2a | Channel subscription: `new_order_{restaurantId}` and `update_table_{restaurantId}` | ⬜ | |
 | 1.2b | 7 events mapped: new-order, update-order, update-food-status, update-order-status, scan-new-order, delivery-assign-order, update-table | ⬜ | |
-| 1.2c | `update-order-status` IGNORES socket's `fOrderStatus` — always fetches from GET API | ⬜ | |
+| 1.2c | `update-order-status` IGNORES socket's `fOrderStatus` — always fetches from GET API | 🔍 | **Need runtime validation** — verify so this can be reported to backend if needed |
 | 1.2d | `new-order` is the ONLY event with inline order payload; all others are trigger-only | ⬜ | |
 | 1.3 | **State Ownership — Definitive Map** | ⬜ | |
 | 1.3a | Auth token owned by AuthContext | ⬜ | |
