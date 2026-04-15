@@ -44,11 +44,11 @@
 | 1.3h | Cancellation reasons owned by SettingsContext | ⬜ | |
 | 1.3i | Socket connection status owned by SocketContext | ⬜ | |
 | 1.3j | No context cross-writes — each context mutated only through own setters | ⬜ | |
-| 1.4 | **API Interaction Patterns** | ⬜ | |
-| 1.4a | Login → POST JSON to `/auth/vendoremployee/login` | ⬜ | |
+| 1.4 | **API Interaction Patterns** | ⚠️ | **PARTIALLY CORRECT** — wrong API versions listed, we use v2 |
+| 1.4a | Login → POST JSON to `/auth/vendoremployee/login` | ⚠️ | Wrong version — we use v2 |
 | 1.4b | Profile → GET `/vendor-profile/profile` (v2) | ⬜ | |
-| 1.4c | Place Order → POST multipart/form-data (FormData.append('data', JSON.stringify)) | ⬜ | |
-| 1.4d | Update Order → PUT JSON body | ⬜ | |
+| 1.4c | Place Order → POST multipart/form-data (FormData.append('data', JSON.stringify)) | ⚠️ | Wrong version — we use v2 |
+| 1.4d | Update Order → PUT JSON body | ⚠️ | Wrong version — we use v2 |
 | 1.4e | Content-Type asymmetry between Place (multipart) and Update (JSON) is intentional | ⬜ | |
 | 1.4f | Single Order fetch → POST JSON to `/get-single-order-new` (v2) | ⬜ | |
 | 1.5 | **Engaged Lock Mechanism — Complete Behavior** | ⬜ | |
