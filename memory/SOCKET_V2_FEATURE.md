@@ -197,6 +197,19 @@ Events:
   2. update-order-paid {orderId} {5} {payload}  ← f_order_status=5 (served)
 Handler: handleOrderDataEvent — status=served → updateOrder
 Release: setOrderEngaged(orderId, false)
+Note: For PREPAID orders (payment_type=prepaid), use Flow 13 instead.
+```
+
+### Flow 13: Complete Prepaid Order — Mark Served (NEW — April 15, 2026)
+```
+Endpoint: POST /api/v2/vendoremployee/order/paid-prepaid-order
+Payload: { order_id: "731054", payment_status: "paid", service_tax: 0, tip_amount: 0 }
+Trigger: When a prepaid order (payment_type=prepaid) is marked Served
+Events: TBD — expected same as Flow 10 (order-engage + update-order-paid)
+Handler: handleOrderDataEvent — status depends on backend response
+Note: Frontend checks order.paymentType === 'prepaid' in handleMarkServed.
+  If prepaid → POST paid-prepaid-order (JSON).
+  If not prepaid → PUT order-status-update (regular Flow 10).
 ```
 
 ### Flow 11: Confirm Order (NEW — April 14, 2026)

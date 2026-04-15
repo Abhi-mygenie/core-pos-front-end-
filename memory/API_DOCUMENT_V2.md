@@ -18,6 +18,7 @@
 | **9** | **Order Status Update (Ready/Served)** | `/api/v2/vendoremployee/order-status-update` | PUT | `application/json` |
 | **10** | **Profile + Permissions + Restaurant Config** | `/api/v2/vendoremployee/vendor-profile/profile` | GET | — |
 | **11** | **Split Bill** | `/api/v2/vendoremployee/order/split-order` | POST | `application/json` |
+| **16** | **Complete Prepaid Order (Mark Served)** | `/api/v2/vendoremployee/order/paid-prepaid-order` | POST | `application/json` |
 | **14** | **Transfer Order (Merge)** | `/api/v2/vendoremployee/order/transfer-order` | POST | `application/json` |
 | **15** | **Transfer Food Item** | `/api/v2/vendoremployee/order/transfer-food-item` | POST | `application/json` |
 | **12** | **Payment Methods Mapping** | — | — | See Section 12 |
