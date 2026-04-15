@@ -24,6 +24,8 @@
 | **12** | **Payment Methods Mapping** | — | — | See Section 12 |
 | **13** | **Print KOT/Bill** | `/api/v1/vendoremployee/order-temp-store` | POST | `application/json` |
 
+> **Endpoint Clarification (April 15, 2026):** `paid-prepaid-order` (#16) is EXCLUSIVELY for completing existing prepaid orders (Dashboard → Mark Served). Place+Pay (#2) uses `place-order` (#1) — same endpoint, same socket events. Previously Place+Pay was incorrectly routed to `paid-prepaid-order` — now fixed.
+
 ---
 
 ## April 13, 2026 Updates — v2 Socket Architecture for Transfer/Merge/Bill Flows
@@ -503,7 +505,17 @@ See dedicated "Collect Bill V2 Endpoint" section below for full payload document
   - `toAPI.placeOrderWithPayment()` — Flow 2: Place + Pay
 - **HTTP call:** `/app/frontend/src/components/order-entry/OrderEntry.jsx`
   - `handlePlaceOrder()` — wraps payload in `FormData`, posts to endpoint
-  - `onPaymentComplete()` — wraps payment payload in `FormData`, posts to same endpoint
+  - `onPaymentComplete()` — Scenario 2 (Place+Pay): wraps payment payload in `FormData`, posts to **`PLACE_ORDER`** endpoint. Uses fire-and-forget + `waitForTableEngaged` + `onClose()` redirect pattern (same as Place Order). For walk-in: 0.5s delay then redirect.
+
+### Redirect Behavior (Updated April 15, 2026)
+
+| Scenario | Endpoint | Redirect Pattern |
+|----------|----------|-----------------|
+| Place New Order | `PLACE_ORDER` | Fire HTTP (don't await) → `waitForTableEngaged` → `onClose()` |
+| Place + Pay (prepaid) | `PLACE_ORDER` | Fire HTTP (don't await) → `waitForTableEngaged` → `onClose()` |
+| Collect Bill (existing) | `BILL_PAYMENT` | Fire HTTP (don't await) → `waitForOrderEngaged` → `onClose()` |
+
+> **Note (April 15, 2026):** Place+Pay (Scenario 2) previously awaited the full HTTP response and stayed on the order screen. Now follows the same fire-and-forget + wait-for-engage + redirect pattern as Place Order and Collect Bill. The `PREPAID_ORDER` endpoint (`/api/v2/vendoremployee/order/paid-prepaid-order`) is NOT used here — it is exclusively for completing existing prepaid orders via `DashboardPage.handleMarkServed` (see Section 16).
 
 ---
 

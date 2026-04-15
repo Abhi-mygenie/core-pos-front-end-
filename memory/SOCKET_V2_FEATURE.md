@@ -84,15 +84,20 @@ f_order_status=7 → 'pending'       → 'yetToConfirm'
 
 Every flow was tested via console logs on April 13, 2026, restaurant 478.
 
-### Flow 1: New Order
+### Flow 1: New Order (includes Place+Pay prepaid)
 ```
 Endpoint: POST /api/v2/vendoremployee/order/place-order
+Covers: Place New Order (unpaid) AND Place+Pay (prepaid) — same endpoint, same socket events
 Events:
   1. update-table {destTableId} engage       ← table locked (dine-in only)
   2. new-order {orderId} {f_order_status} {payload}  ← complete order data
 Handler: handleNewOrder (EXISTING — no change needed)
 Release: setTableEngaged(tableId, false) via requestAnimationFrame × 2
 Walk-in: No update-table engage. 0.5s delay for UX.
+Redirect: Fire HTTP (don't await) → waitForTableEngaged → onClose() (both unpaid and prepaid)
+Note (April 15, 2026): Place+Pay previously awaited HTTP response and stayed on order screen.
+  Now uses fire-and-forget + waitForTableEngaged + redirect (same as Place New Order).
+  Uses PLACE_ORDER endpoint — NOT paid-prepaid-order (that is exclusively for Flow 13).
 ```
 
 ### Flow 2: Update Order (Add Items)
@@ -204,12 +209,15 @@ Note: For PREPAID orders (payment_type=prepaid), use Flow 13 instead.
 ```
 Endpoint: POST /api/v2/vendoremployee/order/paid-prepaid-order
 Payload: { order_id: "731054", payment_status: "paid", service_tax: 0, tip_amount: 0 }
-Trigger: When a prepaid order (payment_type=prepaid) is marked Served
+Trigger: When a prepaid order (payment_type=prepaid) is marked Served on Dashboard
 Events: TBD — expected same as Flow 10 (order-engage + update-order-paid)
 Handler: handleOrderDataEvent — status depends on backend response
 Note: Frontend checks order.paymentType === 'prepaid' in handleMarkServed.
   If prepaid → POST paid-prepaid-order (JSON).
   If not prepaid → PUT order-status-update (regular Flow 10).
+IMPORTANT (April 15, 2026): This endpoint is EXCLUSIVELY for completing existing prepaid orders
+  (DashboardPage.handleMarkServed → completePrepaidOrder()). It must NOT be used for placing
+  new orders — Place+Pay (prepaid) uses PLACE_ORDER endpoint (Flow 1).
 ```
 
 ### Flow 11: Confirm Order (NEW — April 14, 2026)
@@ -913,7 +921,7 @@ if (orderId) {
 
 | Flow | Constant | Path | Method |
 |------|----------|------|--------|
-| Place Order | `PLACE_ORDER` | `/api/v2/vendoremployee/order/place-order` | POST |
+| Place Order (incl. Place+Pay prepaid) | `PLACE_ORDER` | `/api/v2/vendoremployee/order/place-order` | POST |
 | Update Order | `UPDATE_ORDER` | `/api/v2/vendoremployee/order/update-place-order` | PUT |
 | Switch Table | `ORDER_TABLE_SWITCH` | `/api/v2/vendoremployee/order/order-table-room-switch` | POST |
 | Merge Table | `MERGE_ORDER` | `/api/v2/vendoremployee/order/transfer-order` | POST |
@@ -921,6 +929,7 @@ if (orderId) {
 | Collect Bill | `BILL_PAYMENT` | `/api/v2/vendoremployee/order/order-bill-payment` | POST |
 | Cancel Food | `CANCEL_ITEM` | `/api/v2/vendoremployee/order/cancel-food-item` | PUT |
 | Cancel Order / Ready / Served | `ORDER_STATUS_UPDATE` | `/api/v2/vendoremployee/order/order-status-update` | PUT |
+| Complete Prepaid (Mark Served) | `PREPAID_ORDER` | `/api/v2/vendoremployee/order/paid-prepaid-order` | POST |
 | Confirm Order (YTC) | `CONFIRM_ORDER` | `/api/v2/vendoremployee/order/waiter-dinein-order-status-update` | PUT |
 | Food Status | `FOOD_STATUS_UPDATE` | `/api/v2/vendoremployee/order/food-status-update` | PUT |
 | Get Single Order | `SINGLE_ORDER_NEW` | `/api/v2/vendoremployee/get-single-order-new` | POST |
