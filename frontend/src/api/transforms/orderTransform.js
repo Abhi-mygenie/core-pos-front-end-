@@ -621,7 +621,7 @@ export const toAPI = {
       print_kot:                  printAllKOT ? 'Yes' : 'No',
       auto_dispatch:              'No',
       scheduled:                  0,
-      schedule_at:                '',
+      schedule_at:                null,
       // Financial
       ...totals,
       service_tax:                0,       // BUG-232: needs restaurant-level service charge rate
