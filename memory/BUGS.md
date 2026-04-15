@@ -37,6 +37,7 @@
 | 27 | **BUG-230** | **`F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch (preparing vs cooking)** | **P2** | **❌ OPEN (Workaround in place)** |
 | 28 | **BUG-218** | **Split Order uses v1 endpoint** | **P1** | **✅ FIXED (Frontend — changed to v2)** |
 | 29 | **BUG-219** | **Second split order not visible on dashboard (1:1 mapping)** | **P0** | **✅ FIXED (Frontend — 1:N refactor)** |
+| 30 | **BUG-231** | **Split Bill allows assigning 100% items to one person (no actual split)** | **P2** | **❌ OPEN (UX validation)** |
 
 ### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
 
