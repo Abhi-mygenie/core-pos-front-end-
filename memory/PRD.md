@@ -16,6 +16,7 @@
 - Firebase for auth/notifications
 - CRM integration for customer management
 - Google Maps for delivery addresses
+- Socket v2 architecture — real-time multi-device sync with order-engage locking
 
 ## User Personas
 
@@ -40,70 +41,82 @@
 ## Session Log — April 15, 2026
 
 ### Setup
-- Cloned repo (branch `bugs-v1-15-april-`), installed dependencies, configured 16 env variables
+- Cloned repo (branch `bugs-v1-15-april-`), installed dependencies (firebase, socket.io-client, @hello-pangea/dnd, etc.), configured 16 env variables
 - Frontend running on port 3000
+- Pulled all 18 memory docs from repo
 
-### Changes Made
+### Bugs Fixed (7 total)
 
-#### 1. Prepaid Place+Pay — Redirect Fix (Issue 1)
-**File:** `OrderEntry.jsx`
-**What:** Scenario 2 (fresh order + pay) was awaiting HTTP response and staying on screen. Now follows fire-and-forget + `waitForTableEngaged` + `onClose()` redirect pattern (same as Place Order and Collect Bill).
-**Endpoint:** Uses `PLACE_ORDER` (`/api/v2/vendoremployee/order/place-order`) — NOT `PREPAID_ORDER`.
-
-#### 2. PREPAID_ORDER Endpoint Clarification (Issue 2)
-**No code change** — analysis only.
-`/api/v2/vendoremployee/order/paid-prepaid-order` is exclusively for `DashboardPage.handleMarkServed` (completing existing prepaid orders). Was previously misrouted for Place+Pay in commit `0e4870a` — now corrected by Issue 1 fix.
-
-#### 3. Sidebar Toggle Simplification
-**File:** `Sidebar.jsx`
-**What:** Reduced 4 confusing buttons to 2 toggle buttons:
-- Button 1: Table View ↔ Order View
-- Button 2: By Channel ↔ By Status
-
-#### 4. TakeAway/Delivery Validation (BUG-234)
-**Files:** `OrderEntry.jsx`, `CartPanel.jsx`
-**Rules:**
-- TakeAway: Customer name required
-- Delivery: Customer name + phone + address all required
-**Implementation:**
-- Validation guard in `handlePlaceOrder` + `onPaymentComplete` with toast messages
-- Place Order / Collect Bill buttons disabled when required fields missing
-- Visual indicators: red border, red icon, red bg, asterisk on required fields
-**Backend:** ❌ OPEN — needs server-side validation (filed as BUG-234)
-
-#### 5. Shift Table — Rooms Excluded (BUG-235)
-**File:** `ShiftTableModal.jsx`
-**What:** Added `!t.isRoom` filter to exclude rooms from Shift Table modal. `getTables()` doesn't accept params — the `tablesOnly=true` comment was wrong.
+| # | Bug ID | Title | Files Changed |
+|---|--------|-------|---------------|
+| 1 | — | Prepaid Place+Pay redirect: awaited HTTP instead of fire-and-forget + waitForTableEngaged | `OrderEntry.jsx` |
+| 2 | — | Sidebar 4 buttons → 2 toggle buttons (Table/Order + Channel/Status) | `Sidebar.jsx` |
+| 3 | BUG-234 | TakeAway/Delivery missing required field validation (name, phone, address) | `OrderEntry.jsx`, `CartPanel.jsx` |
+| 4 | BUG-235 | Shift Table modal shows rooms — rooms excluded via `!t.isRoom` filter | `ShiftTableModal.jsx` |
+| 5 | BUG-236 | Collect Bill / Edit rules not enforced (postpaid status check + prepaid lock) | `OrderEntry.jsx`, `CartPanel.jsx` |
+| 6 | BUG-237 | Placed item qty edit: Update Order disabled, delta not sent — "delta as unplaced item" approach | `OrderEntry.jsx`, `CartPanel.jsx` |
+| 7 | BUG-238 | "No channels configured" → "No active orders" in empty status view | `ChannelColumnsLayout.jsx` |
 
 ### Documents Updated
-- `API_DOCUMENT_V2.md` — Redirect behavior table, PREPAID_ORDER clarification, Switch Table room exclusion note
-- `SOCKET_V2_FEATURE.md` — Flow 1 (Place+Pay redirect), Flow 4 (room exclusion), Flow 13 (exclusive endpoint note), Endpoints Reference table
-- `BUGS.md` — Added BUG-234 (validation) and BUG-235 (shift table rooms)
+- `API_DOCUMENT_V2.md` — Redirect behavior table, PREPAID_ORDER clarification, Collect Bill button rules, Switch Table room exclusion
+- `SOCKET_V2_FEATURE.md` — Flow 1 (Place+Pay redirect), Flow 4 (room filter), Flow 7 (Collect Bill rules), Flow 13 (exclusive endpoint), Endpoints Reference
+- `BUGS.md` — Added BUG-234 through BUG-241 (7 new entries, 5 fixed + 3 open)
+
+### Analysis & Documentation Only (no code change)
+- PREPAID_ORDER endpoint usage audit (commit trail `0e4870a` → `197596e`)
+- Status view empty state behavior (decided: no change, status view is order-centric)
+- BUG-239/240/241: Payment validation gaps documented with proposed UX
 
 ---
 
-## Open Backend Bugs (Action Required)
+## Open Bugs — Backend Action Required
 
-| Bug | Title | Priority |
-|-----|-------|----------|
-| BUG-204 | `order_sub_total_without_tax` returns 0 | P1 |
-| BUG-212 | Addon names mismatch between APIs | P0 |
-| BUG-224 | Manual Bill: `gst_tax` always 0 | P1 |
-| BUG-225 | Manual Bill: `custName` sends label instead of real name | P2 |
-| BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | P0 |
-| BUG-228 | `update-order-target` not sent when source is walk-in in merge | P0 |
-| BUG-230 | `F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch | P2 |
-| BUG-231 | Split Bill allows assigning 100% items to one person | P2 |
-| BUG-232 | Prepaid: `service_tax` hardcoded 0 | P2 |
-| BUG-233 | Prepaid orders have no visual indicator on dashboard | P3 |
-| **BUG-234** | **No server-side validation for TakeAway/Delivery required fields** | **P1** |
+| Bug | Title | Priority | Owner |
+|-----|-------|----------|-------|
+| BUG-204 | `order_sub_total_without_tax` returns 0 | P1 | Backend |
+| BUG-212 | Addon names mismatch between APIs | P0 | Backend |
+| BUG-224 | Manual Bill: `gst_tax` always 0 | P1 | Backend |
+| BUG-225 | Manual Bill: `custName` sends label instead of real name | P2 | Backend |
+| BUG-227 | Order-level Ready/Serve does not update item-level `food_status` | P0 | Backend |
+| BUG-228 | `update-order-target` not sent when source is walk-in in merge | P0 | Backend |
+| BUG-230 | `F_ORDER_STATUS` vs `F_ORDER_STATUS_API` mismatch | P2 | Backend |
+| BUG-234 | No server-side validation for TakeAway/Delivery required fields | P1 | Backend |
 
-## Backlog / Next Tasks
+## Open Bugs — Frontend (Ready to Implement)
 
-- P0: BUG-227 backend fix (item-level food_status on order-level Ready/Serve)
-- P0: BUG-228 backend fix (walk-in→table merge missing update-order-target)
-- P1: BUG-234 backend validation for TakeAway/Delivery required fields
-- P1: Partial payments (split pay) — `partial_payments` array not yet implemented
-- P2: Service tax from restaurant config (not hardcoded 0)
-- P2: Prepaid visual indicator on dashboard
-- P3: Scheduled orders support
+| Bug | Title | Priority | Proposed UX |
+|-----|-------|----------|-------------|
+| BUG-239 | TAB (Credit): customer name/phone mandatory | P1 | "Credit Customer" section with pre-filled name+phone fields when TAB selected |
+| BUG-240 | Card: last 4 digits + transaction ID mandatory | P1 | "Card Details" section with 2 inputs when Card selected |
+| BUG-241 | Split with Card: transaction ID per card row | P1 | Inline transaction ID input below card split rows |
+
+## Open UX Items
+
+| Item | Priority | Notes |
+|------|----------|-------|
+| BUG-231 | P2 | Split Bill allows assigning 100% items to one person |
+| BUG-232 | P2 | Prepaid: `service_tax` hardcoded 0 — needs restaurant config |
+| BUG-233 | P3 | Prepaid orders have no visual indicator on dashboard |
+
+---
+
+## Backlog / Next Tasks (Prioritized)
+
+### P0 — Critical
+- BUG-227: Backend fix — item-level food_status on order-level Ready/Serve
+- BUG-228: Backend fix — walk-in→table merge missing update-order-target
+
+### P1 — High
+- BUG-239/240/241: Payment field validation (TAB customer, Card details, Split card txn ID)
+- BUG-234: Backend validation for TakeAway/Delivery required fields
+- Partial payments (`partial_payments` array) — not yet implemented in frontend
+
+### P2 — Medium
+- Service tax from restaurant config (not hardcoded 0)
+- Prepaid visual indicator on dashboard
+- Split Bill 100% assignment validation
+
+### P3 — Low
+- Scheduled orders support
+- Audio file attachment
+- Loyalty points / Wallet balance integration
