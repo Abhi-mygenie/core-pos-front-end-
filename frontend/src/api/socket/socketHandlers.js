@@ -544,6 +544,62 @@ export const handleOrderEngage = (message, context) => {
 };
 
 // =============================================================================
+// SPLIT ORDER HANDLER
+// =============================================================================
+
+/**
+ * Handle split-order event
+ * Message: [split-order, orderId, restaurantId, fOrderStatus, { orders: [...] }]
+ * 
+ * Socket sends the ORIGINAL order (with reduced items after split).
+ * The NEW split order is NOT in this socket — handled by API response on initiating device.
+ * Other devices get the new order on next refreshOrders().
+ * 
+ * Action: updateOrder() for the original order + release engage
+ */
+export const handleSplitOrder = async (message, context) => {
+  const { updateOrder, updateTableStatus, setOrderEngaged } = context;
+  
+  const parsed = parseMessage(message);
+  if (!parsed) {
+    log('ERROR', 'Invalid split-order message format', message);
+    return;
+  }
+  
+  const { orderId, payload } = parsed;
+  log('INFO', `split-order received: ${orderId}`);
+  
+  if (!payload || !payload.orders || !Array.isArray(payload.orders) || payload.orders.length === 0) {
+    log('ERROR', `split-order: No payload in event — backend issue. orderId=${orderId}`);
+    return;
+  }
+  
+  let order;
+  try {
+    order = orderFromAPI.order(payload.orders[0]);
+    log('INFO', `split-order: Transformed original order ${orderId}`);
+  } catch (error) {
+    log('ERROR', `split-order: Transform failed`, error.message);
+    return;
+  }
+  
+  // Update the original order (reduced items)
+  updateOrder(order.orderId, order);
+  syncTableStatus(order, updateTableStatus);
+  log('INFO', `split-order: Updated original order ${order.orderId} (items reduced)`);
+  
+  // Release engage after React paints
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (setOrderEngaged) {
+        setOrderEngaged(orderId, false);
+        log('INFO', `split-order: Order ${orderId} released from ENGAGED`);
+      }
+    });
+  });
+};
+
+// =============================================================================
 // HANDLER REGISTRY
 // =============================================================================
 
@@ -566,6 +622,7 @@ export const getHandler = (eventName) => {
     [SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER]: handleDeliveryAssignOrder,
     [SOCKET_EVENTS.UPDATE_TABLE]: handleUpdateTable,
     [SOCKET_EVENTS.ORDER_ENGAGE]: handleOrderEngage,
+    [SOCKET_EVENTS.SPLIT_ORDER]: handleSplitOrder,
   };
   
   return handlers[eventName] || null;
@@ -587,6 +644,7 @@ export const isAsyncHandler = (eventName) => {
     SOCKET_EVENTS.UPDATE_ORDER_STATUS,
     SOCKET_EVENTS.SCAN_NEW_ORDER,
     SOCKET_EVENTS.DELIVERY_ASSIGN_ORDER,
+    SOCKET_EVENTS.SPLIT_ORDER,
   ];
   
   return asyncEvents.includes(eventName);

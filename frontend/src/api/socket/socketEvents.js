@@ -67,6 +67,9 @@ export const SOCKET_EVENTS = {
   UPDATE_ORDER_PAID: 'update-order-paid',
   UPDATE_ITEM_STATUS: 'update-item-status',
 
+  // Split order event - comes through new_order_${restaurantId} channel
+  SPLIT_ORDER: 'split-order',
+
   // Table event - comes through update_table_${restaurantId} channel
   UPDATE_TABLE: 'update-table',
   
@@ -108,6 +111,7 @@ export const EVENTS_WITH_PAYLOAD = [
   SOCKET_EVENTS.UPDATE_ORDER_SOURCE,
   SOCKET_EVENTS.UPDATE_ORDER_PAID,
   SOCKET_EVENTS.UPDATE_ITEM_STATUS,
+  SOCKET_EVENTS.SPLIT_ORDER,
 ];
 
 // Events that require regular order API call
