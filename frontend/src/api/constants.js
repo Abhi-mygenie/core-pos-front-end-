@@ -38,8 +38,8 @@ export const API_ENDPOINTS = {
   CUSTOMER_UPDATE:   '/pos/customers',                                        // CRM: PUT /pos/customers/{id}
   ADDRESS_LOOKUP:    '/pos/address-lookup',                                   // CRM: POST /pos/address-lookup
   CUSTOMER_ADDRESSES: '/pos/customers',                                       // CRM: /pos/customers/{id}/addresses
-  PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // New order (unpaid)
-  PREPAID_ORDER:     '/api/v2/vendoremployee/order/paid-prepaid-order',    // New order + pay (prepaid)
+  PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // New order (unpaid + prepaid via payment_status=paid)
+  PREPAID_ORDER:     '/api/v2/vendoremployee/order/paid-prepaid-order',    // Mark existing order as paid (JSON: {order_id, payment_status})
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
   BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes

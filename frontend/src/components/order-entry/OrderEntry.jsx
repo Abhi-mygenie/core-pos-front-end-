@@ -871,26 +871,19 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onSelectTable) onSelectTable(null);
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else if (!placedOrderId) {
-                    // Scenario 2 — fresh order: Step 1) place order, Step 2) mark paid via prepaid endpoint
+                    // Scenario 2 — fresh order + pay in one shot (prepaid via place-order with payment fields)
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
                       { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
-                    // Step 1: Place the order
-                    const placeRes = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+                    console.log('[Prepaid] payload:', JSON.stringify(payload, null, 2));
+                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
                     });
-                    const newOrderId = placeRes.data?.order_id;
-                    console.log('[Prepaid] Step 1 — order placed:', newOrderId);
-                    // Step 2: Mark as paid
-                    if (newOrderId) {
-                      const prepaidPayload = { order_id: String(newOrderId), payment_status: 'paid' };
-                      const paidRes = await api.post(API_ENDPOINTS.PREPAID_ORDER, prepaidPayload);
-                      console.log('[Prepaid] Step 2 — marked paid:', paidRes.data);
-                    }
-                    toast({ title: "Payment Collected", description: placeRes.data?.message || "Order placed and payment collected" });
+                    console.log('[Prepaid] response:', res.data);
+                    toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
                     // Prepaid cleanup — stay on order screen
                     setCartItems([]);
                     setShowPaymentPanel(false);
