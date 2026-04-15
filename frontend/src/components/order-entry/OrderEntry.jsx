@@ -878,7 +878,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
-                    const res = await api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
+                    const res = await api.post(API_ENDPOINTS.PREPAID_ORDER, formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
                     });
                     toast({ title: "Payment Collected", description: res.data?.message || "Order placed and payment collected" });
