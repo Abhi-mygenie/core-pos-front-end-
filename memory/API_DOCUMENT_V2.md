@@ -925,6 +925,22 @@ This asymmetry required implementing the engage inside `handleNewOrder` directly
 ### Purpose
 Collects payment on an existing placed order (postpaid → paid). Marks the order as paid, frees the table.
 
+### Frontend Button Rules (Updated April 15, 2026 — BUG-236)
+
+Collect Bill and Update Order buttons have strict enable/disable rules based on order state:
+
+| Scenario | Update Order | Collect Bill |
+|---|---|---|
+| **Postpaid + new unplaced items** | Enabled | **Disabled** (must Update Order first) |
+| **Postpaid + no new items + status < served** | Enabled | **Disabled** (order must be served first) |
+| **Postpaid + no new items + status = served** | — | **Enabled** |
+| **Prepaid existing order (any state)** | **Hidden** | **Hidden** (already paid, cannot edit) |
+| **Fresh order (no placedOrderId)** | Enabled | Enabled (Place+Pay flow) |
+
+**Implementation:**
+- `OrderEntry.jsx`: Derives live `orderStatus`/`orderPaymentType` from OrderContext (socket-synced). Blocks `addToCart`/`addCustomizedItemToCart` for prepaid orders with toast.
+- `CartPanel.jsx`: Both buttons hidden for prepaid existing orders. Collect Bill disabled when unplaced items exist or order status !== "served".
+
 ### Request Payload
 ```json
 {

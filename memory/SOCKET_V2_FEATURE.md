@@ -170,6 +170,20 @@ Events:
 Handler: handleOrderDataEvent — status=paid → removeOrder + free table
 Release: setOrderEngaged(orderId, false)
 Walk-in: No table operations (tableId=0).
+
+Frontend Button Rules (BUG-236, April 15, 2026):
+  Collect Bill is ONLY enabled when:
+    - Existing postpaid order + status === "served" + no unplaced items in cart
+  Collect Bill is DISABLED when:
+    - Order has unplaced items (must Update Order first)
+    - Order status is not "served" (preparing/ready)
+  Collect Bill is HIDDEN when:
+    - Order is prepaid (already paid, cannot edit or re-bill)
+  Fresh orders (no placedOrderId): Collect Bill always enabled (Place+Pay flow)
+
+  Prepaid orders: Both Update Order and Collect Bill hidden.
+    addToCart/addCustomizedItemToCart blocked with toast.
+    Order is view-only.
 ```
 
 ### Flow 8: Cancel Order
