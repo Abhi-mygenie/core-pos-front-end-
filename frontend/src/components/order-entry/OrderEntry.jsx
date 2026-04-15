@@ -38,7 +38,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
+  const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant, cancellation } = useRestaurant();
   const { user, hasPermission } = useAuth();
@@ -1257,6 +1257,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 const newOrder = await fetchSingleOrderForSocket(newOrderId);
                 
                 if (newOrder) {
+                  // Add new order to OrderContext so dashboard renders it immediately
+                  addOrder(newOrder);
+                  
                   // Update cart with new order's items
                   const newCartItems = (newOrder.items || []).map(item => ({
                     ...item,
