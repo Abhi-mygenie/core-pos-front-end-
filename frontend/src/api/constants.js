@@ -49,7 +49,7 @@ export const API_ENDPOINTS = {
   ORDER_SHIFTED_ROOM: '/api/v1/vendoremployee/order-shifted-room',
   
   // Split Bill
-  SPLIT_ORDER: '/api/v1/vendoremployee/pos/split-order',
+  SPLIT_ORDER: '/api/v2/vendoremployee/order/split-order',
 
   // Print Operations (KOT/Bill)
   PRINT_ORDER: '/api/v1/vendoremployee/order-temp-store',
