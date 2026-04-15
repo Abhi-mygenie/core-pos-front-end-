@@ -174,6 +174,7 @@ export const fromAPI = {
       tipAmount: parseFloat(api.tip_amount) || 0,
       tipTaxAmount: parseFloat(api.tip_tax_amount) || 0,
       paymentStatus: api.payment_status || 'unpaid',
+      paymentType: api.payment_type || '',
       paymentMethod: api.payment_method || '',
 
       // Timing

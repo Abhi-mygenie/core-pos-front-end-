@@ -18,7 +18,7 @@ import { useSocketEvents } from "../api/socket";
 import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
-import { updateOrderStatus, confirmOrder } from "../api/services/orderService";
+import { updateOrderStatus, confirmOrder, completePrepaidOrder } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
 import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
@@ -125,7 +125,7 @@ const DashboardPage = () => {
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
     orderItemsByTableId, getOrderByTableId, getOrdersByTableId, removeOrder, waitForOrderRemoval,
-    isOrderEngaged,
+    isOrderEngaged, getOrderById,
   } = useOrders();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged, setTableEngaged } = useTables();
@@ -1013,13 +1013,20 @@ const DashboardPage = () => {
     if (!tableEntry?.orderId) return;
     
     try {
-      // No local table engage — order-engage socket handles locking
-      await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'serve');
+      // Check if order is prepaid — use paid-prepaid-order endpoint instead
+      const order = getOrderById(tableEntry.orderId);
+      if (order?.paymentType === 'prepaid') {
+        console.log('[handleMarkServed] Prepaid order — calling paid-prepaid-order:', tableEntry.orderId);
+        await completePrepaidOrder(tableEntry.orderId, order.serviceTax || 0, order.tipAmount || 0);
+      } else {
+        // No local table engage — order-engage socket handles locking
+        await updateOrderStatus(tableEntry.orderId, user?.roleName || 'Manager', 'serve');
+      }
       // Socket handler will release lock via update-order-paid event
     } catch (error) {
       console.error('[handleMarkServed] Error:', error);
     }
-  }, [user?.roleName]);
+  }, [user?.roleName, getOrderById]);
 
   // Handler for item-level status change (Ready/Serve per item) from OrderCard
   const handleItemStatusChange = useCallback(async (order, item, newStatus) => {
