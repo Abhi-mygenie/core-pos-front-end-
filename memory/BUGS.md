@@ -40,8 +40,36 @@
 | 30 | **BUG-231** | **Split Bill allows assigning 100% items to one person (no actual split)** | **P2** | **❌ OPEN (UX validation)** |
 | 31 | **BUG-232** | **Prepaid: `service_tax` hardcoded 0 — needs restaurant-level config** | **P2** | **❌ OPEN** |
 | 32 | **BUG-233** | **Prepaid orders have no visual indicator on dashboard (looks same as unpaid)** | **P3** | **❌ OPEN (UX)** |
+| 33 | **BUG-234** | **No validation: TakeAway/Delivery orders allow missing required customer fields** | **P1** | **✅ FIXED (Frontend) / ❌ OPEN (Backend)** |
 
-### BUG-226: `order-engage` Missing Before `update-item-status` (Backend)
+### BUG-234: No Validation for TakeAway/Delivery Required Fields
+
+**Status:** ✅ FIXED (Frontend — April 15, 2026) / ❌ OPEN (Backend — needs server-side validation)
+**Priority:** P1
+**Reported:** April 15, 2026
+
+**Problem:**
+TakeAway and Delivery orders could be placed with empty customer name, phone, and delivery address. No frontend or backend validation existed.
+
+**Validation Rules Implemented (Frontend):**
+| Order Type | Name | Phone | Address |
+|---|---|---|---|
+| TakeAway | Required | - | - |
+| Delivery | Required | Required | Required |
+| Dine-In | - | - | - |
+| Walk-In | - | - | - |
+
+**Frontend Fix:**
+- `OrderEntry.jsx`: Validation guard in `handlePlaceOrder` + `onPaymentComplete` (Scenario 2 prepaid). Shows toast with specific error message and blocks submission.
+- `CartPanel.jsx`: Place Order + Collect Bill buttons disabled when required fields are missing. Visual indicators (red border, red icon, `*` in placeholder, red background) on name/phone inputs and address strip.
+
+**Backend (OPEN — needs server-side validation):**
+The backend (`/api/v2/vendoremployee/order/place-order`) currently accepts orders with empty `cust_name`, `cust_mobile`, and `address_id: null` for all order types without any validation. Backend MUST enforce:
+- `order_type: "takeaway"` → reject if `cust_name` is empty
+- `order_type: "delivery"` → reject if `cust_name`, `cust_mobile`, or `address_id` is empty/null
+- Return `403` with clear error message (e.g., `"Customer name is required for takeaway orders"`)
+
+---
 
 **Status:** ✅ FIXED (Backend — deployed same day)
 

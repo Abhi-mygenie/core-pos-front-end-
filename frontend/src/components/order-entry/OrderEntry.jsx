@@ -457,6 +457,27 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const handlePlaceOrder = async () => {
     const unplaced = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     if (unplaced.length === 0 || isPlacingOrder) return;
+
+    // Validation: TakeAway requires name, Delivery requires name + phone + address
+    if (orderType === 'takeAway' && !customer?.name?.trim()) {
+      toast({ title: "Name Required", description: "Customer name is mandatory for TakeAway orders", variant: "destructive" });
+      return;
+    }
+    if (orderType === 'delivery') {
+      if (!customer?.name?.trim()) {
+        toast({ title: "Name Required", description: "Customer name is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+      if (!customer?.phone?.trim()) {
+        toast({ title: "Phone Required", description: "Customer phone is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+      if (!selectedAddress) {
+        toast({ title: "Address Required", description: "Delivery address is mandatory for Delivery orders", variant: "destructive" });
+        return;
+      }
+    }
+
     setIsPlacingOrder(true);
     try {
       const hasPlaced = cartItems.some(i => i.placed);
@@ -872,6 +893,26 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     if (onOrderTypeChange) onOrderTypeChange('walkIn');
                   } else if (!placedOrderId) {
                     // Scenario 2 — fresh order + pay in one shot (prepaid via place-order with payment fields)
+                    // Validation: TakeAway requires name, Delivery requires name + phone + address
+                    if (orderType === 'takeAway' && !customer?.name?.trim()) {
+                      toast({ title: "Name Required", description: "Customer name is mandatory for TakeAway orders", variant: "destructive" });
+                      return;
+                    }
+                    if (orderType === 'delivery') {
+                      if (!customer?.name?.trim()) {
+                        toast({ title: "Name Required", description: "Customer name is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                      if (!customer?.phone?.trim()) {
+                        toast({ title: "Phone Required", description: "Customer phone is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                      if (!selectedAddress) {
+                        toast({ title: "Address Required", description: "Delivery address is mandatory for Delivery orders", variant: "destructive" });
+                        return;
+                      }
+                    }
+
                     // Same pattern as Place Order: fire HTTP, wait for table engage, redirect
                     setIsPlacingOrder(true);
 
