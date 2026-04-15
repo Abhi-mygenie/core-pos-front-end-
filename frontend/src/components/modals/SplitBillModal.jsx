@@ -159,12 +159,8 @@ const SplitBillModal = ({
       Object.entries(assignments).forEach(([itemId, { personId, qty }]) => {
         const item = items.find(i => String(i.id) === String(itemId));
         if (item && personId) {
-          // Use qty format if splitting quantity, otherwise just ID
-          if (qty < item.qty) {
-            personItems[personId].push({ id: Number(item.id), qty });
-          } else {
-            personItems[personId].push(Number(item.id));
-          }
+          // Always send object format { id, qty } — backend expects this
+          personItems[personId].push({ id: Number(item.id), qty });
         }
       });
       
