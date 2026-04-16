@@ -186,10 +186,25 @@ const SplitBillModal = ({
 
   // Handle split confirmation
   const handleSplit = async () => {
+    // BUG-262: Equal split is calculation-only — no API call
+    if (mode === 'equal') {
+      toast({ title: "Equal Split", description: `Each person pays ₹${Math.round(totalBill / equalSplitCount)}` });
+      onClose();
+      return;
+    }
+
     const splits = buildSplitsPayload();
     
     if (splits.length < 1) {
       toast({ title: "Error", description: "Please assign items to at least one person", variant: "destructive" });
+      return;
+    }
+
+    // BUG-231: Prevent moving ALL items — at least one must remain in original order
+    const movedQty = splits.flat().reduce((sum, item) => sum + item.qty, 0);
+    const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+    if (movedQty >= totalQty) {
+      toast({ title: "Error", description: "At least one item must remain in the original order", variant: "destructive" });
       return;
     }
     
@@ -458,7 +473,7 @@ const SplitBillModal = ({
                   Split among how many people?
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  {[2, 3, 4, 5, 6].map(n => (
+                  {[2, 3, 4, 5, 6, 7, 8].map(n => (
                     <button
                       key={n}
                       onClick={() => setEqualSplitCount(n)}
@@ -515,7 +530,7 @@ const SplitBillModal = ({
               style={{ backgroundColor: COLORS.primaryGreen }}
               data-testid="split-confirm-btn"
             >
-              {isLoading ? 'Splitting...' : mode === 'byPerson' ? 'Split & Pay' : 'Split Equally'}
+              {isLoading ? 'Splitting...' : mode === 'byPerson' ? 'Split & Pay' : 'Done'}
             </button>
           </div>
         )}

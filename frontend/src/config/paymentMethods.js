@@ -224,8 +224,9 @@ export const filterLayoutByApiTypes = (layoutConfig, apiPaymentTypes = [], hasRo
  * @returns {Array} Dynamic types with {id, name, displayName, apiValue}
  */
 export const getDynamicPaymentTypes = (apiPaymentTypes = []) => {
-  // Only filter out primary methods that are shown as buttons in Row 1 + Split
-  const primaryApiNames = ['cash', 'upi', 'card', 'partial'];
+  // Only filter out primary methods that are shown as buttons in Row 1 + Split + Room
+  // BUG-257: 'room' excluded — room billing handled separately via "To Room" transfer action
+  const primaryApiNames = ['cash', 'upi', 'card', 'partial', 'room'];
   
   return apiPaymentTypes
     .filter(pt => !primaryApiNames.includes((pt.name || '').toLowerCase()))

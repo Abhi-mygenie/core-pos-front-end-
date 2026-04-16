@@ -177,6 +177,7 @@
 | **New (July 2025 v3)** | **3** | **OQ-025 (autoServiceCharge unused), OQ-026 (avg GST legality), OQ-027 (bill recomputes subtotal)** |
 | **New (July 2025 v4)** | **2** | **OQ-028 (collectBillExisting duplicates buildCartItem), OQ-029 (TAB payment_status 'success')** |
 | **New (July 2025 v5)** | **1** | **OQ-030 ("Check In" as food product — system marker in catalog)** |
+| **New (July 2025 v6)** | **1** | **OQ-031 (equal split is display-only — how do people pay individually?)** |
 
 ---
 
@@ -267,3 +268,13 @@
   - If the marker name changes or new markers are added, all 3 transform files need updating — is there a backend-side indicator (e.g., a `is_system` flag) that could be used instead of name matching?
   - The filter is case-insensitive (`toLowerCase() !== 'check in'`) — could a real product named "Check In Burger" be accidentally filtered?
 - **Evidence**: `categoryTransform.js`, `productTransform.js`, `orderTransform.js` line 204
+
+### OQ-031: If equal split doesn't create separate orders, how does each person pay? (July 2025 v6 — BUG-262)
+
+- **Context**: The "Equal Split" mode in `SplitBillModal` is **display-only** — it calculates `₹{total / count}` and shows a toast, but does NOT call the split API. The bill remains as a single order. Only "By Person" (item assignment) mode creates actual split orders.
+- **Questions**:
+  - Is this intentional? If so, what's the expected payment workflow? (Waiter manually collects per-person amount against one bill?)
+  - Can the POS accept multiple partial payments on a single order? If yes, could equal split trigger N partial payments instead of creating N orders?
+  - What does the printed bill show? One total or per-person breakdowns?
+  - Are there plans to make equal split transactional (creating separate orders)?
+- **Evidence**: `SplitBillModal.jsx` lines 189-194 — early return without API call for `mode === 'equal'`

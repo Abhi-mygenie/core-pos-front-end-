@@ -176,6 +176,14 @@
 - **Impact**: LOW-MEDIUM — If the system marker name changes (e.g., "Check Out", "Room Service"), or a new system marker is added, all 3 files must be updated. Easy to miss one.
 - **Recommendation**: Extract `'check in'` to a shared constant (e.g., `SYSTEM_MARKER_NAMES` array in `constants.js`) and use it in all 3 filters.
 
+### RISK-011g: Equal Split is Display-Only — No Backend Order Split (July 2025 v6 — BUG-262)
+
+- **Finding**: The "Equal Split" mode in `SplitBillModal` does **not** call the split API. It only calculates `₹{total / personCount}`, shows a toast, and closes the modal. No separate orders or bills are created. Only "By Person" (item assignment) mode actually calls the split endpoint.
+- **Evidence**: `SplitBillModal.jsx` lines 189-194 — `if (mode === 'equal') { toast(...); onClose(); return; }`
+- **Confidence**: HIGH
+- **Impact**: MEDIUM — User expectation mismatch. Staff may expect equal split to create separate bills for each person (e.g., for individual card payments). Currently it's just an informational calculator — the waiter must manually collect the per-person amount against a single bill.
+- **Recommendation**: Clarify UX intent. If equal split should create separate orders, implement API call. If display-only is intentional, add in-app messaging (e.g., "This calculates the per-person amount. The bill remains as one order.").
+
 ### RISK-012: stationService Hardcodes API URL
 
 - **Finding**: `stationService.fetchStationData` uses a hardcoded URL string `/api/v1/vendoremployee/station-order-list` instead of `API_ENDPOINTS`
@@ -277,5 +285,5 @@
 |---|---|---|
 | CRITICAL | 4 | Broken endpoint, XSS token storage, no token refresh, hard redirect |
 | HIGH | 10 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, orderItemsByTableId breaking change, partial_payments always sent, null→'' payload change, **`collectBillExisting` duplicates `buildCartItem` (new v4)** |
-| MEDIUM | 13 | Monolithic components (growing), hardcoded URLs, known backend bugs, sanitization (partially mitigated), service charge avg GST rate, customerName vs customer divergence, autoServiceCharge unused, TAB payment_status 'success' special case, **"Check In" filter in 3 files (new v5)** |
+| MEDIUM | 14 | Monolithic components (growing), hardcoded URLs, known backend bugs, sanitization (partially mitigated), service charge avg GST rate, customerName vs customer divergence, autoServiceCharge unused, TAB payment_status 'success' special case, "Check In" filter in 3 files, **equal split display-only (new v6)** |
 | LOW | 4 | Mock data, console logging, token validation, dev dependencies |

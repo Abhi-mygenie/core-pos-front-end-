@@ -5,7 +5,42 @@
 
 ---
 
-## v5 — July 2025 (Latest)
+## v6 — July 2025 (Latest)
+
+**Git range**: `d592aee` → `875fcbf` (branch `main`)
+**Trigger**: BUG-262 equal split display-only, BUG-231 split item guard, BUG-257 room payment dedup
+**Files changed in repo**: 2 source files (+20 lines)
+
+### PROJECT_INVENTORY.md
+| Section | Change | Reason |
+|---|---|---|
+| No changes | — | — |
+
+### ARCHITECTURE_CURRENT_STATE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW §7d-ii | Split Bill behavior: equal split = display-only calculator (no API), by-person = actual API split with BUG-231 validation | Significant behavioral clarification |
+
+### MODULE_MAP.md
+| Section | Change | Reason |
+|---|---|---|
+| No changes | — | Behavior changes within existing modules |
+
+### RISK_REGISTER.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW RISK-011g | Equal split display-only — user expectation mismatch (MEDIUM) | No backend split for equal mode |
+| Risk Summary | MEDIUM 13→14 | 1 new risk |
+
+### OPEN_QUESTIONS_FROM_CODE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW OQ-031 | Equal split payment workflow — how do individuals pay? | Business flow gap |
+| Summary table | Added "New (July 2025 v6)" row | New category |
+
+---
+
+## v5 — July 2025
 
 **Git range**: `6928b49` → `d592aee` (branch `main`)
 **Trigger**: "Check In" system marker filtering, cross-restaurant address ID fix, prepaid badge on cards

@@ -453,6 +453,30 @@ All consumers updated: `DashboardPage.jsx` (adaptTable returns array, uses flatM
 
 ---
 
+## 7d-ii. Split Bill Behavior (v6 — BUG-262, BUG-231)
+
+The SplitBillModal has **two modes** with fundamentally different behavior:
+
+```
+"Equal Split" mode:
+  → Display-only calculator: shows ₹{total / personCount} per person
+  → NO API call, NO backend order split
+  → Toast message + modal close
+  → Single bill remains — one payment collects everything
+
+"By Person" mode (item assignment):
+  → API call: POST /api/v2/vendoremployee/order/split-order
+  → Creates new order(s) in backend with assigned items
+  → Original order reduced (handled by split-order socket event)
+  → BUG-231 validation: at least 1 item must remain in original order
+```
+
+**Evidence**: `SplitBillModal.jsx` lines 189-194 (equal split early return), lines 197-202 (BUG-231 validation)
+**Confidence**: HIGH
+**Impact**: MEDIUM — "Equal Split" is informational only. Users expecting separate bills/orders for equal splits will not get them.
+
+---
+
 ## 7e. Service Charge Flow (v3 — July 2025)
 
 End-to-end service charge implementation:
