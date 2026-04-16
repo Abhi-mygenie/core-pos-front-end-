@@ -9,13 +9,14 @@
 
 ### OQ-001: What is the rounding rule for order totals?
 
-- **Context**: `orderTransform.js` `calcOrderTotals` (lines 374-388) uses a specific rounding logic:
+- **Context**: `orderTransform.js` `calcOrderTotals` (lines 374-403) uses a specific rounding logic:
   - If `(Math.ceil(rawTotal) - rawTotal) >= 0.10` → round UP to ceiling
   - Otherwise → round DOWN with `Math.floor`
+- **v3 update**: `rawTotal` now includes service charge: `rawTotal = subtotal + serviceCharge + totalTax`
 - **Question**: Is the 0.10 threshold a business decision? Why not standard rounding? Does the backend use the same threshold?
 - **Impact**: Financial discrepancy if frontend and backend disagree
 - **Confidence in understanding**: MEDIUM
-- **Evidence**: `orderTransform.js` lines 374-388
+- **Evidence**: `orderTransform.js` lines 388-403
 
 ### OQ-002: When should orders be removed vs updated?
 
@@ -168,11 +169,12 @@
 
 | Category | Count | Priority Questions |
 |---|---|---|
-| Business Logic | 6 | OQ-001 (rounding), OQ-002 (remove vs update), OQ-006 (default status) |
+| Business Logic | 6 | OQ-001 (rounding, updated v3), OQ-002 (remove vs update), OQ-006 (default status) |
 | Technical | 6 | OQ-007 (dead code), OQ-010 (branch), OQ-012 (Google Maps) |
 | Integration | 4 | OQ-014 (aggregator channel), OQ-015 (print flow), OQ-016 (service worker) |
 | Data Model | 4 | OQ-017 (state machine), OQ-018 (dual status), OQ-019 (payment methods) |
-| **New (July 2025)** | **4** | **OQ-021 (prepaid lifecycle), OQ-022 (split socket), OQ-023 (delta items), OQ-024 (split bill validation)** |
+| **New (July 2025 v2)** | **4** | **OQ-021 (prepaid lifecycle), OQ-022 (split socket), OQ-023 (delta items), OQ-024 (split bill validation)** |
+| **New (July 2025 v3)** | **3** | **OQ-025 (autoServiceCharge unused), OQ-026 (avg GST legality), OQ-027 (bill recomputes subtotal)** |
 
 ---
 
@@ -211,3 +213,27 @@
 - **Context**: The split bill button is now hidden for `takeAway` and `delivery` order types: `orderType !== 'takeAway' && orderType !== 'delivery'`
 - **Question**: Is this a business rule (takeaway/delivery can't be split) or a technical limitation? What if a delivery order needs to be split among roommates?
 - **Evidence**: `OrderEntry.jsx` — split bill button conditional
+
+### OQ-025: How does `autoServiceCharge` interact with `serviceChargePercentage`? (July 2025 v3)
+
+- **Context**: `profileTransform.js` extracts both `serviceChargePercentage` (number) and `autoServiceCharge` (boolean) from the restaurant profile. However, **only `serviceChargePercentage` is used** in the codebase. The service charge is always applied when `serviceChargePercentage > 0`, regardless of `autoServiceCharge`.
+- **Question**: Should `autoServiceCharge === false` disable the service charge even when the percentage is set? Is `autoServiceCharge` a toggle for making it mandatory vs optional? Or is it for a different purpose entirely (e.g., auto-adding to bill vs manual)?
+- **Evidence**: `profileTransform.js` lines 78-81 (extracted), no consumer found in `src/` for `autoServiceCharge`
+
+### OQ-026: Is average GST rate for service charge legally compliant? (July 2025 v3)
+
+- **Context**: GST on service charge is computed as `serviceCharge × (gstTax / subtotal)` — an average rate across all items. For a restaurant with both 5% GST items (beverages) and 18% GST items (food), this produces a blended rate that is neither 5% nor 18%.
+- **Questions**:
+  - Is this legally acceptable under Indian GST rules?
+  - Does the backend compute service charge GST the same way?
+  - Should service charge GST use the restaurant's standard GST slab instead?
+- **Evidence**: `orderTransform.js` `calcOrderTotals` lines 378-381, `CollectPaymentPanel.jsx` lines 206-209
+
+### OQ-027: Why does `buildBillPrintPayload` recompute subtotal independently? (July 2025 v3 — BUG-246)
+
+- **Context**: The bill print payload builder now recomputes `computedSubtotal` from `rawOrderDetails` using `unit_price × qty` per item, because `item.price` was actually the line total (not unit price). It also recomputes tax from `food_details` if pre-computed tax is 0.
+- **Questions**:
+  - Why does the bill print need to recompute everything from raw data instead of using the order's stored financial fields (`subtotalBeforeTax`, etc.)?
+  - Does this mean the order's stored financials are unreliable?
+  - The fallback chain `unit_price → food_details.price → price` — when would `unit_price` be missing?
+- **Evidence**: `orderTransform.js` `buildBillPrintPayload` lines 780-830

@@ -526,7 +526,7 @@ const DashboardPage = () => {
         id: 'dineIn',
         name: 'Dine-In',
         items: [
-          ...allTablesList.filter(t => !t.isRoom && !t.isWalkIn).map(enrichTable).filter(statusMatchesFilter),
+          ...allTablesList.filter(t => !t.isRoom && !t.isWalkIn).map(enrichTable).filter(t => t.order || t.orderId).filter(statusMatchesFilter),
           ...walkInOrders.map(adaptWalkIn).filter(statusMatchesFilter),
         ],
         enabled: features.dineIn !== false,
@@ -546,7 +546,7 @@ const DashboardPage = () => {
       room: {
         id: 'room',
         name: 'Room',
-        items: allRoomsList.filter(statusMatchesFilter),
+        items: allRoomsList.filter(t => t.order || t.orderId).filter(statusMatchesFilter),
         enabled: features.room !== false,
       },
     };

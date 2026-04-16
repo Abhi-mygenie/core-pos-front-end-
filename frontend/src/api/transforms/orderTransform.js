@@ -163,6 +163,7 @@ export const fromAPI = {
 
       // Customer
       customer: customerLabel,
+      customerName: customer,
       phone: user.phone || '',
 
       // Financials (Phase 1: Enhanced with new API fields)
@@ -354,9 +355,10 @@ const buildCartItem = (item) => {
 /**
  * Calculate order-level financial totals from built cart items
  * @param {Array} cart - Array of items returned by buildCartItem
+ * @param {number} serviceChargePercentage - Service charge rate (e.g. 10 for 10%)
  * @returns {Object} - Financial totals for the order payload
  */
-const calcOrderTotals = (cart) => {
+const calcOrderTotals = (cart, serviceChargePercentage = 0) => {
   let subtotal = 0;
   let gstTax = 0;
   let vatTax = 0;
@@ -368,11 +370,23 @@ const calcOrderTotals = (cart) => {
     vatTax += parseFloat(item.vat_amount) || 0;
   });
 
-  const totalTax = Math.round((gstTax + vatTax) * 100) / 100;
   subtotal = Math.round(subtotal * 100) / 100;
 
+  // Service charge on food subtotal
+  const serviceCharge = serviceChargePercentage > 0
+    ? Math.round(subtotal * serviceChargePercentage / 100 * 100) / 100
+    : 0;
+
+  // GST on service charge — use average GST rate from items
+  if (serviceCharge > 0 && subtotal > 0) {
+    const avgGstRate = gstTax / subtotal;
+    gstTax += Math.round(serviceCharge * avgGstRate * 100) / 100;
+  }
+
+  const totalTax = Math.round((gstTax + vatTax) * 100) / 100;
+
   // Rounding logic matching backend
-  const rawTotal = subtotal + totalTax;
+  const rawTotal = subtotal + serviceCharge + totalTax;
   const ceilTotal = Math.ceil(rawTotal);
   const diff = Math.round((ceilTotal - rawTotal) * 100) / 100;
   const roundUp = diff >= 0.10 ? diff : 0;
@@ -386,6 +400,7 @@ const calcOrderTotals = (cart) => {
     vat_tax:                     Math.round(vatTax * 100) / 100,
     order_amount:                orderAmount,
     round_up:                    String(roundUp.toFixed(2)),
+    service_tax:                 serviceCharge,
   };
 };
 
@@ -450,11 +465,11 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrder: (table, cartItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, serviceChargePercentage = 0 } = options;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
-    const totals = calcOrderTotals(unplacedItems.map(buildCartItem));
+    const totals = calcOrderTotals(unplacedItems.map(buildCartItem), serviceChargePercentage);
 
     return {
       user_id:                    userId,
@@ -478,7 +493,6 @@ export const toAPI = {
       schedule_at:                null,
       // Financial
       ...totals,
-      service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 0,
       tip_tax_amount:             0,
@@ -515,6 +529,7 @@ export const toAPI = {
       orderNotes = [], 
       printAllKOT = true,
       allCartItems = [],
+      serviceChargePercentage = 0,
     } = options;
 
     // cart-update payload: only NEW (unplaced) items
@@ -524,7 +539,7 @@ export const toAPI = {
     // COMBINED financial totals: ALL items (placed + unplaced, excluding cancelled)
     const allActiveItems = allCartItems.filter(i => i.status !== 'cancelled');
     const allBuilt = allActiveItems.map(buildCartItem);
-    const combinedTotals = calcOrderTotals(allBuilt);
+    const combinedTotals = calcOrderTotals(allBuilt, serviceChargePercentage);
 
     return {
       order_id:                   String(table.orderId),
@@ -538,7 +553,6 @@ export const toAPI = {
       auto_dispatch:              'No',
       // Financial — COMBINED totals (existing placed + new unplaced)
       ...combinedTotals,
-      service_tax:                0,
       service_gst_tax_amount:     0,
       tip_amount:                 0,
       tip_tax_amount:             0,
@@ -569,12 +583,12 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, serviceChargePercentage = 0, autoBill = false } = options;
     const { method = 'cash', transactionId = '', splitPayments = [], deliveryCharge = 0, discounts = {} } = paymentData;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     const cart = unplacedItems.map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item);
-    const totals = calcOrderTotals(unplacedItems.map(buildCartItem));
+    const totals = calcOrderTotals(unplacedItems.map(buildCartItem), serviceChargePercentage);
     const finalTotal = paymentData.finalTotal || totals.order_amount || 0;
 
     // Build partial_payments — always include all 3 modes
@@ -620,13 +634,13 @@ export const toAPI = {
       payment_type:               'prepaid',
       transaction_id:             transactionId || '',
       print_kot:                  printAllKOT ? 'Yes' : 'No',
+      billing_auto_bill_print:    autoBill ? 'Yes' : 'No',
       auto_dispatch:              'No',
       scheduled:                  0,
       schedule_at:                null,
       // Financial
       ...totals,
-      service_tax:                0,       // BUG-232: needs restaurant-level service charge rate
-      service_gst_tax_amount:     0,       // BUG-232: needs GST on service charge
+      service_gst_tax_amount:     0,       // BUG-232: service charge GST not used
       tip_amount:                 '0',
       tip_tax_amount:             0,
       delivery_charge:            String(parseFloat(deliveryCharge || 0).toFixed(1)),
@@ -659,11 +673,12 @@ export const toAPI = {
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
+    const { autoBill = false } = options;
     const { 
       method = 'cash', transactionId = '',
       splitPayments = [], tip = 0,
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
-      itemTotal = 0,
+      itemTotal = 0, serviceCharge = 0,
     } = paymentData;
 
     const gstTax = Math.round((sgst + cgst) * 100) / 100;
@@ -674,6 +689,7 @@ export const toAPI = {
       payment_amount:               finalTotal || 0,
       payment_status:               'paid',
       transaction_id:               transactionId || '',
+      billing_auto_bill_print:      autoBill ? 'Yes' : 'No',
       // Financial totals
       order_sub_total_amount:       itemTotal || 0,
       order_sub_total_without_tax:  itemTotal || 0,
@@ -682,7 +698,7 @@ export const toAPI = {
       vat_tax:                      vatAmount || 0,
       round_up:                     0,
       // Tax & Tip
-      service_tax:                  0,
+      service_tax:                  serviceCharge || 0,
       service_gst_tax_amount:       0,
       tip_amount:                   tip || 0,
       tip_tax_amount:               0,
@@ -716,7 +732,7 @@ export const toAPI = {
     const {
       method = 'cash', finalTotal = 0,
       sgst = 0, cgst = 0, vatAmount = 0,
-      tip = 0, discounts = {},
+      tip = 0, discounts = {}, serviceCharge = 0,
     } = paymentData;
 
     return {
@@ -731,7 +747,7 @@ export const toAPI = {
       tip_amount:               tip,
       vat_tax:                  vatAmount,
       gst_tax:                  Math.round(((sgst || 0) + (cgst || 0)) * 100) / 100,
-      service_tax:              0,
+      service_tax:              serviceCharge || 0,
       service_gst_tax_amount:   0,
       tip_tax_amount:           0,
     };
@@ -756,7 +772,7 @@ export const toAPI = {
   // ==========================================================================
   // Manual Bill Print — full payload for order-temp-store API
   // ==========================================================================
-  buildBillPrintPayload: (order) => {
+  buildBillPrintPayload: (order, serviceChargePercentage = 0) => {
     const rawDetails = order.rawOrderDetails || [];
 
     // Filter out system marker items
@@ -764,14 +780,46 @@ export const toAPI = {
       (d.food_details?.name || '').toLowerCase() !== 'check in'
     );
 
-    // Compute GST and VAT totals from item-level tax
-    let gst_tax = 0, vat_tax = 0;
+    // Compute GST and VAT totals + subtotal from item-level data
+    // BUG-246: item.price from rawOrderDetails is the LINE TOTAL (unit_price × qty),
+    // NOT the unit price. Use unit_price or food_details.price to avoid double-counting.
+    let gst_tax = 0, vat_tax = 0, computedSubtotal = 0;
     billFoodList.forEach(item => {
+      const qty = parseFloat(item.quantity) || 1;
+      const unitPrice = parseFloat(item.unit_price) || parseFloat(item.food_details?.price) || 0;
+      const price = unitPrice > 0 ? unitPrice : (parseFloat(item.price) || 0);
+      const lineTotal = price * qty;
+      computedSubtotal += lineTotal;
+
+      // Try pre-computed item-level tax first, then compute from food_details
+      let taxAmt = parseFloat(item.gst_tax_amount || item.tax_amount || 0);
+      if (!taxAmt && item.food_details) {
+        const taxPct = parseFloat(item.food_details.tax) || 0;
+        if (taxPct > 0) {
+          const isInclusive = (item.food_details.tax_calc || '').toLowerCase() === 'inclusive';
+          taxAmt = isInclusive
+            ? lineTotal * taxPct / (100 + taxPct)
+            : lineTotal * taxPct / 100;
+        }
+      }
+
       const taxType = (item.food_details?.tax_type || 'GST').toUpperCase();
-      const taxAmt = parseFloat(item.gst_tax_amount || item.tax_amount || 0);
       if (taxType === 'VAT') vat_tax += taxAmt;
       else gst_tax += taxAmt;
     });
+    computedSubtotal = Math.round(computedSubtotal * 100) / 100;
+
+    // Service charge on food subtotal
+    const serviceChargeAmount = serviceChargePercentage > 0
+      ? Math.round(computedSubtotal * serviceChargePercentage / 100 * 100) / 100
+      : (order.serviceTax || 0);
+
+    // GST on service charge (use average GST rate from items)
+    if (serviceChargeAmount > 0 && computedSubtotal > 0) {
+      const avgGstRate = gst_tax / computedSubtotal;
+      gst_tax += Math.round(serviceChargeAmount * avgGstRate * 100) / 100;
+    }
+
     gst_tax = Math.round(gst_tax * 100) / 100;
     vat_tax = Math.round(vat_tax * 100) / 100;
 
@@ -802,7 +850,7 @@ export const toAPI = {
       print_type: 'bill',
       payment_amount: order.amount || 0,
       grant_amount: order.amount || 0,
-      order_subtotal: order.subtotalBeforeTax || order.subtotalAmount || 0,
+      order_subtotal: order.subtotalBeforeTax || order.subtotalAmount || computedSubtotal || 0,
       discount_amount: 0,
       coupon_code: '',
       loyalty_dicount_amount: 0,
@@ -810,13 +858,13 @@ export const toAPI = {
       Date: formatBillDate(order.createdAt),
       waiterName: order.waiter || '',
       tablename,
-      custName: order.customer || '',
+      custName: order.customerName || '',
       custPhone: order.phone || '',
       custGSTName: '',
       custGST: '',
       billFoodList,
       orderNote: order.orderNote || '',
-      serviceChargeAmount: order.serviceTax || 0,
+      serviceChargeAmount,
       roomRemainingPay: 0,
       roomAdvancePay: 0,
       roomGst: 0,

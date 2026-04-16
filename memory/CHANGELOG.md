@@ -5,7 +5,54 @@
 
 ---
 
-## v2 — July 2025 (Latest)
+## v3 — July 2025 (Latest)
+
+**Git range**: `f494ad3` → `c3f1eef` (branch `main`)
+**Trigger**: Service charge feature, auto bill print, BUG-246 fix, delivery address fix
+**Files changed in repo**: 8 source files
+
+### PROJECT_INVENTORY.md
+| Section | Change | Reason |
+|---|---|---|
+| No changes | — | No new endpoints, events, routes, or env vars |
+
+### ARCHITECTURE_CURRENT_STATE.md
+| Section | Change | Reason |
+|---|---|---|
+| §7 Order-Level Financial Totals | `calcOrderTotals` now includes service charge + GST on service charge in computation | Core financial calculation modified |
+| §7a Null→Empty String Migration | Added `service_tax` no longer hardcoded 0, `billing_auto_bill_print` new field | Payload structure changes |
+| NEW §7e | Service Charge Flow end-to-end: profile → options → calcOrderTotals → CollectPaymentPanel UI → print | Major new feature |
+| §8 Print Flow | `printOrder` signature expanded, BUG-246 fix (unit_price vs price), `customerName` for bill | Print payload changes |
+
+### MODULE_MAP.md
+| Section | Change | Reason |
+|---|---|---|
+| §2.4 profileTransform | New fields: `serviceChargePercentage`, `autoServiceCharge` | Restaurant profile expanded |
+| §2.4 orderTransform (notes) | `calcOrderTotals` + `buildBillPrintPayload` signatures changed, `customerName` field, `autoBill` option | Multiple function signatures changed |
+| §2.3 orderService (note) | `printOrder` signature expanded with `serviceChargePercentage` | Function signature changed |
+| §6 Module Sizes | OrderEntry 1420→1429, CollectPaymentPanel 1358→1390 | Service charge UI added |
+
+### RISK_REGISTER.md
+| Section | Change | Reason |
+|---|---|---|
+| RISK-011 | Updated line counts | Components still growing |
+| NEW RISK-011a | Service charge GST uses average rate approximation (MEDIUM) | Inaccurate for mixed-tax menus |
+| NEW RISK-011b | `customerName` vs `customer` field divergence (LOW-MEDIUM) | Two name fields, consumers may use wrong one |
+| NEW RISK-011c | `autoServiceCharge` extracted but unused (LOW) | Dead field, possibly incomplete feature |
+| Risk Summary | Updated: MEDIUM 8→11 | 3 new medium risks |
+
+### OPEN_QUESTIONS_FROM_CODE.md
+| Section | Change | Reason |
+|---|---|---|
+| OQ-001 | Updated: rawTotal now includes serviceCharge | Rounding input changed |
+| NEW OQ-025 | `autoServiceCharge` extracted but unused — toggle or dead code? | Unclear business intent |
+| NEW OQ-026 | Average GST rate for service charge — legally compliant? | Financial accuracy concern |
+| NEW OQ-027 | Bill print recomputes subtotal from raw data — why not use stored fields? | BUG-246 reveals unreliable stored financials |
+| Summary table | Added "New (July 2025 v3)" row with 3 questions | New category |
+
+---
+
+## v2 — July 2025
 
 **Git range**: `9beb08f` → `f494ad3` (branch `main`)
 **Trigger**: User reported endpoint changes, bug fixes, and validations pushed to `main`

@@ -286,8 +286,16 @@ For each cart item:
   gstTax += gst_amount
   vatTax += vat_amount
 
+subtotal = round(subtotal, 2)
+
+Service charge (v3 — July 2025):
+  serviceCharge = subtotal × serviceChargePercentage / 100
+  GST on service charge:
+    avgGstRate = gstTax / subtotal
+    gstTax += serviceCharge × avgGstRate
+
 totalTax = gstTax + vatTax
-rawTotal = subtotal + totalTax
+rawTotal = subtotal + serviceCharge + totalTax
 
 Rounding:
   ceilTotal = Math.ceil(rawTotal)
@@ -296,7 +304,8 @@ Rounding:
   else: roundUp = 0, orderAmount = Math.floor(rawTotal)
 ```
 
-**Evidence**: `orderTransform.js` lines 358-389 (`calcOrderTotals` function)
+**Evidence**: `orderTransform.js` lines 355-403 (`calcOrderTotals` function)
+**v3 change**: `calcOrderTotals` now accepts `serviceChargePercentage` parameter. Service charge computed on food subtotal, with GST added using average item GST rate. `service_tax` field now returned in totals object instead of being hardcoded to 0.
 
 **Confidence: HIGH** — Direct code reading
 
@@ -331,8 +340,10 @@ Multiple optional fields changed from `null` to `''`:
 
 `tip_amount` changed from numeric `0` to string `'0'`.
 `delivery_charge` now stringified: `String(parseFloat(...).toFixed(1))`.
+`service_tax` no longer hardcoded to 0 — now uses computed service charge from `calcOrderTotals` (v3).
+New field `billing_auto_bill_print: 'Yes'/'No'` added to `placeOrderWithPayment` and `collectBillExisting` (v3, from `settings.autoBill`).
 
-**Evidence**: `orderTransform.js` diff, lines 618-648
+**Evidence**: `orderTransform.js` diff, lines 618-648 (v2), lines 634, 689 (v3)
 **Confidence**: HIGH
 **Impact**: MEDIUM — Backend must handle empty string the same as null for these fields
 
@@ -405,23 +416,70 @@ All consumers updated: `DashboardPage.jsx` (adaptTable returns array, uses flatM
 
 ---
 
+## 7e. Service Charge Flow (v3 — July 2025)
+
+End-to-end service charge implementation:
+
+```
+Restaurant Profile API
+  → profileTransform.js extracts:
+      serviceChargePercentage (number, e.g. 10 for 10%)
+      autoServiceCharge (boolean — NOT currently used in code)
+  → RestaurantContext.restaurant.serviceChargePercentage
+
+OrderEntry.jsx
+  → reads restaurant?.serviceChargePercentage
+  → passes to placeOrder / updateOrder / placeOrderWithPayment options
+
+orderTransform.js calcOrderTotals(cart, serviceChargePercentage)
+  → serviceCharge = subtotal × rate / 100
+  → GST on service charge = serviceCharge × (gstTax / subtotal)  ← avg rate approximation
+  → service_tax field in API payload = serviceCharge
+
+CollectPaymentPanel.jsx (UI display)
+  → Reads restaurant?.serviceChargePercentage
+  → Computes serviceCharge = itemTotal × rate / 100
+  → GST on service charge split evenly: SGST += half, CGST += half
+  → finalTotal = subtotalAfterDiscount + serviceCharge + sgst + cgst
+  → Passes serviceCharge in paymentData for collectBillExisting/transferToRoom
+
+Bill Print (orderService.printOrder → buildBillPrintPayload)
+  → serviceChargePercentage passed through
+  → Computed on bill's food subtotal independently
+  → serviceChargeAmount shown on printed bill
+```
+
+**Evidence**: `profileTransform.js` lines 78-81, `orderTransform.js` `calcOrderTotals`, `CollectPaymentPanel.jsx` lines 196-212, `OrderEntry.jsx` lines 549, 582, 981
+**Confidence**: HIGH
+**Impact**: HIGH — Affects all order financial calculations, bill display, and print output
+
+**NOTE**: `autoServiceCharge` is extracted from the profile but **no code currently reads it**. Only `serviceChargePercentage` is used. See OQ-025.
+
+---
+
+
 ## 8. Print Flow
 
 ```
-orderService.printOrder(orderId, printType, stationKot, orderData)
+orderService.printOrder(orderId, printType, stationKot, orderData, serviceChargePercentage)
        │
        ├── printType === 'kot'
        │     → { order_id, print_type: 'kot', station_kot: 'KDS,BAR' }
        │
        └── printType === 'bill' && orderData
-             → toAPI.buildBillPrintPayload(orderData)
+             → toAPI.buildBillPrintPayload(orderData, serviceChargePercentage)
              → Full bill payload with billFoodList, financial data,
                customer info, table label, formatted date
+             → BUG-246 fix (v3): uses unit_price not price (was line total, caused double-counting)
+             → Service charge computed from serviceChargePercentage on food subtotal
+             → GST on service charge using average item GST rate
+             → custName uses order.customerName (raw) not order.customer (display label)
 
 Both → POST /api/v1/vendoremployee/order-temp-store
 ```
 
-**Evidence**: `api/services/orderService.js` lines 108-127
+**Evidence**: `api/services/orderService.js` lines 124-141, `orderTransform.js` `buildBillPrintPayload`
+**v3 changes**: `printOrder` signature expanded with `serviceChargePercentage`. `buildBillPrintPayload` fixed BUG-246 (unit_price vs price), added service charge computation, uses `customerName` for bill.
 
 ### Key Detail: KOT Station Routing
 

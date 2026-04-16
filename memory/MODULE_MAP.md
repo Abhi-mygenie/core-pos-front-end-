@@ -81,7 +81,9 @@
 | categoryService | `services/categoryService.js` | — | api | CATEGORIES | categoryTransform |
 | productService | `services/productService.js` | — | api | PRODUCTS, POPULAR_FOOD | productTransform |
 | tableService | `services/tableService.js` | 110 | api | TABLES | tableTransform |
-| orderService | `services/orderService.js` | 147 | api | RUNNING_ORDERS, SINGLE_ORDER_NEW, ORDER_STATUS_UPDATE, CONFIRM_ORDER, **PREPAID_ORDER (new)**, SPLIT_ORDER (v2), PRINT_ORDER | orderTransform |
+| orderService | `services/orderService.js` | 147 | api (main) | RUNNING_ORDERS, SINGLE_ORDER_NEW, ORDER_STATUS_UPDATE, CONFIRM_ORDER, **PREPAID_ORDER (new)**, SPLIT_ORDER (v2), PRINT_ORDER | orderTransform |
+
+**v3 change to orderService**: `printOrder` signature expanded: `(orderId, printType, stationKot, orderData, serviceChargePercentage)` — passes service charge rate to bill print payload builder.
 | customerService | `services/customerService.js` | 179 | **crmApi** | CUSTOMER_SEARCH/LOOKUP/CREATE/UPDATE, ADDRESS_* | customerTransform |
 | paymentService | `services/paymentService.js` | 16 | api | ⚠️ **CLEAR_BILL (undefined!)** | — |
 | reportService | `services/reportService.js` | 589 | api | 8 report endpoints | reportTransform |
@@ -94,7 +96,9 @@
 | Transform | File | Lines | fromAPI Methods | toAPI Methods |
 |---|---|---|---|---|
 | authTransform | `transforms/authTransform.js` | 39 | loginResponse | loginRequest |
-| profileTransform | `transforms/profileTransform.js` | 203 | profileResponse, user, restaurant, paymentTypes, discountTypes, printers, schedules, settings | — (Phase 2) |
+| profileTransform | `transforms/profileTransform.js` | 207 | profileResponse, user, restaurant, paymentTypes, discountTypes, printers, schedules, settings | — (Phase 2) |
+
+**v3 change to profileTransform**: New fields extracted in `restaurant`: `serviceChargePercentage` (from `api.service_charge_percentage`), `autoServiceCharge` (from `api.auto_service_charge`). Evidence: `profileTransform.js` lines 78-81.
 | categoryTransform | `transforms/categoryTransform.js` | — | — | — |
 | productTransform | `transforms/productTransform.js` | — | — | — |
 | tableTransform | `transforms/tableTransform.js` | 166 | tableList, table, groupBySection, getSections | shiftTable, transferFood, mergeTable |
@@ -102,7 +106,12 @@
 
 **July 2025 changes to orderTransform**:
 - `fromAPI.order` now extracts `paymentType` from `api.payment_type` (for prepaid detection)
+- `fromAPI.order` now extracts `customerName` (raw name, v3) separate from `customer` (display label with fallback)
 - `toAPI.placeOrderWithPayment`: `partial_payments` always included (all 3 modes), `null`→`''` for optional fields, `tip_amount` now string
+- `calcOrderTotals` signature changed: now `(cart, serviceChargePercentage=0)` — service charge computed on food subtotal (v3)
+- `buildBillPrintPayload` signature changed: now `(order, serviceChargePercentage=0)` — BUG-246 fix: uses `unit_price` not `price`, computes service charge (v3)
+- `placeOrder/updateOrder/placeOrderWithPayment/collectBillExisting` accept `serviceChargePercentage` and `autoBill` options (v3)
+- New field `billing_auto_bill_print` in prepaid and collect bill payloads (v3)
 | customerTransform | `transforms/customerTransform.js` | — | searchResults, customerLookup, customerDetail, crossRestaurantAddresses | createCustomer, updateCustomer, addAddress |
 | reportTransform | `transforms/reportTransform.js` | — | paidOrders, cancelledOrders, creditOrders, holdOrders, aggregatorOrders, orderDetails, singleOrderNew | — |
 | settingsTransform | `transforms/settingsTransform.js` | — | — | — |
@@ -220,9 +229,9 @@ DashboardPage (1376 lines) is the **largest module** and the central nervous sys
 
 | File | Lines | Assessment |
 |---|---|---|
-| `pages/DashboardPage.jsx` | 1421 | **🔴 Too large** — Mixes layout, state, operations, search. Grew +45 lines (split order support + prepaid flow) |
-| `components/order-entry/OrderEntry.jsx` | 1420 | **🔴 Too large** — Full order taking flow. Grew +122 lines (delta items, validations, prepaid) |
-| `components/order-entry/CollectPaymentPanel.jsx` | 1358 | **🔴 Too large** — Payment, split, room transfer, tax calc. Grew +123 lines (card txn ID, TAB customer, validation) |
+| `pages/DashboardPage.jsx` | 1421 | **🔴 Too large** — Mixes layout, state, operations, search. Grew +45 lines (v2: split order support + prepaid flow) |
+| `components/order-entry/OrderEntry.jsx` | 1429 | **🔴 Too large** — Full order taking flow. Grew +131 lines (v2: delta items, validations, prepaid; v3: service charge, autoBill, BUG-267) |
+| `components/order-entry/CollectPaymentPanel.jsx` | 1390 | **🔴 Too large** — Payment, split, room transfer, tax calc. Grew +155 lines (v2: card txn ID, TAB customer; v3: service charge UI + computation) |
 | `api/transforms/orderTransform.js` | 843 | **🟡 Large but justified** — Complex domain mapping |
 | `components/order-entry/CartPanel.jsx` | 781 | **🟡 Large** — Cart display + item operations. Grew +41 lines (delta display, validation hints) |
 | `api/services/reportService.js` | 589 | **🟡 Large** — 8+ report types + business day filtering |

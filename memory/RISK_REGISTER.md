@@ -122,11 +122,35 @@
 
 ### RISK-011: Monolithic Components (3 files > 1000 lines)
 
-- **Finding**: DashboardPage (1376), OrderEntry (1298), CollectPaymentPanel (1235) are all > 1000 lines
-- **Evidence**: File line counts
+- **Finding**: DashboardPage (1421), OrderEntry (1429), CollectPaymentPanel (1390) are all > 1000 lines and growing each version
+- **Evidence**: File line counts (v1→v3: Dashboard 1376→1421, OrderEntry 1298→1429, CollectPaymentPanel 1235→1390)
 - **Confidence**: HIGH
 - **Impact**: MEDIUM — Hard to maintain, test, and reason about. Merge conflicts likely with multiple developers.
 - **Recommendation**: Extract sub-components and custom hooks
+
+### RISK-011a: Service Charge GST Uses Average Rate Approximation (July 2025 v3)
+
+- **Finding**: GST on service charge is computed using the **average GST rate** across all cart items: `avgGstRate = gstTax / subtotal`. For mixed-tax menus (e.g., some items at 5% GST, others at 18%), this produces an approximation, not the legally correct rate.
+- **Evidence**: `orderTransform.js` `calcOrderTotals` lines 378-381, `CollectPaymentPanel.jsx` lines 206-209
+- **Confidence**: HIGH
+- **Impact**: MEDIUM — Financial accuracy concern for restaurants with mixed GST slabs. Tax filings may not match.
+- **Recommendation**: Clarify with business whether average rate is acceptable or if service charge GST should use a fixed rate (e.g., 18%)
+
+### RISK-011b: `customerName` vs `customer` Field Divergence (July 2025 v3)
+
+- **Finding**: Order objects now have TWO name fields: `customer` (display label with fallback: "Walk-In", "TA", "Del") and `customerName` (raw name without fallback). Bill print uses `customerName`, dashboard cards use `customer`.
+- **Evidence**: `orderTransform.js` `fromAPI.order` lines 164-165, `buildBillPrintPayload` line 858
+- **Confidence**: HIGH
+- **Impact**: LOW-MEDIUM — Consumers may use the wrong field. Bill shows empty name for walk-ins (correct), but developers may not know which field to use.
+- **Recommendation**: Add JSDoc or comment clarifying: `customer` = display, `customerName` = raw
+
+### RISK-011c: `autoServiceCharge` Extracted But Unused (July 2025 v3)
+
+- **Finding**: `profileTransform.js` extracts `autoServiceCharge` from `api.auto_service_charge`, but **no component or service reads this value**. Service charge is always computed when `serviceChargePercentage > 0`.
+- **Evidence**: `profileTransform.js` line 81 (extracted), grep of entire `src/` shows no consumer
+- **Confidence**: HIGH
+- **Impact**: LOW — Dead field. May indicate incomplete feature (should service charge only apply when `autoServiceCharge` is true?)
+- **Recommendation**: Clarify business intent. If it's a toggle, add conditional logic. If always-on when percentage > 0, remove the field.
 
 ### RISK-012: stationService Hardcodes API URL
 
@@ -228,6 +252,6 @@
 | Severity | Count | Key Concerns |
 |---|---|---|
 | CRITICAL | 4 | Broken endpoint, XSS token storage, no token refresh, hard redirect |
-| HIGH | 9 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, **orderItemsByTableId breaking change (new)**, **partial_payments always sent (new)**, **null→'' payload change (new)** |
-| MEDIUM | 8 | Monolithic components (growing larger), hardcoded URLs, known backend bugs, sanitization (partially mitigated) |
+| HIGH | 9 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, orderItemsByTableId breaking change, partial_payments always sent, null→'' payload change |
+| MEDIUM | 11 | Monolithic components (growing larger), hardcoded URLs, known backend bugs, sanitization (partially mitigated), **service charge avg GST rate (new)**, **customerName vs customer divergence (new)**, **autoServiceCharge unused (new)** |
 | LOW | 4 | Mock data, console logging, token validation, dev dependencies |

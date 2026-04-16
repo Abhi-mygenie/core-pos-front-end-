@@ -40,7 +40,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const { categories, products, popularFood } = useMenu();
   const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
-  const { restaurant, cancellation } = useRestaurant();
+  const { restaurant, cancellation, settings } = useRestaurant();
   const { user, hasPermission } = useAuth();
   const { updateTableStatus, setTableEngaged, waitForTableEngaged } = useTables();
   const { toast } = useToast();
@@ -252,6 +252,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             })).filter(n => n.label)
           );
         }
+        // BUG-267: Restore delivery address from existing order
+        if (orderData.deliveryAddress) {
+          setSelectedAddress(orderData.deliveryAddress);
+        }
       }
     } else if (orderData) {
       if (orderData.customer || orderData.phone) {
@@ -275,6 +279,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             type: 'custom',
           })).filter(n => n.label)
         );
+      }
+      // BUG-267: Restore delivery address from existing order
+      if (orderData.deliveryAddress) {
+        setSelectedAddress(orderData.deliveryAddress);
       }
       if (orderData.items && orderData.items.length > 0) {
         const existingItems = orderData.items.map(item => ({
@@ -541,6 +549,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           orderNotes,
           printAllKOT,
           allCartItems: cartItems,
+          serviceChargePercentage: restaurant?.serviceChargePercentage || 0,
         });
 
         // Start listening for socket engage BEFORE firing API
@@ -573,7 +582,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const payload = orderToAPI.placeOrder(
           { ...table, tableId: table?.tableId },
           cartItems, effectiveCustomer, orderType,
-          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT, addressId: selectedAddress?.id || null }
+          { restaurantId: restaurant?.id, orderNotes, total, printAllKOT, addressId: selectedAddress?.id || null, serviceChargePercentage: restaurant?.serviceChargePercentage || 0 }
         );
         
         // Log station info for Auto KOT debugging
@@ -972,7 +981,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
                     const payload = orderToAPI.placeOrderWithPayment(
                       effectiveTable, cartItems, customer, orderType, paymentData,
-                      { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null }
+                      { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null, serviceChargePercentage: restaurant?.serviceChargePercentage || 0, autoBill: settings?.autoBill || false }
                     );
                     const formData = new FormData();
                     formData.append('data', JSON.stringify(payload));
@@ -1015,7 +1024,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     const collectOrderId = effectiveTable?.orderId || placedOrderId;
                     const engagePromise = collectOrderId ? waitForOrderEngaged(collectOrderId) : null;
 
-                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData);
+                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, { autoBill: settings?.autoBill || false });
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
                     api.post(API_ENDPOINTS.BILL_PAYMENT, payload)
                       .then(res => {

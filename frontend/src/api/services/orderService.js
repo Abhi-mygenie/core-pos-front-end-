@@ -124,12 +124,12 @@ export const splitOrder = async (orderId, splitCount, splits) => {
  * @param {string} stationKot - Comma-separated station names (e.g., "KDS,BAR") - required for KOT
  * @returns {Promise<Object>} - API response
  */
-export const printOrder = async (orderId, printType, stationKot = null, orderData = null) => {
+export const printOrder = async (orderId, printType, stationKot = null, orderData = null, serviceChargePercentage = 0) => {
   let payload;
 
   if (printType === 'bill' && orderData) {
     // Full bill payload with financial data + billFoodList
-    payload = toAPI.buildBillPrintPayload(orderData);
+    payload = toAPI.buildBillPrintPayload(orderData, serviceChargePercentage);
   } else {
     payload = {
       order_id: Number(orderId),

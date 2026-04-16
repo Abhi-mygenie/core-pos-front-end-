@@ -8,7 +8,7 @@ import { IconButton, TextButton } from "./buttons";
 import { CARD_BASE_STYLE } from "./TableCard.styles";
 import { printOrder } from "../../api/services/orderService";
 import { useToast } from "../../hooks/use-toast";
-import { useMenu, useOrders } from "../../contexts";
+import { useMenu, useOrders, useRestaurant } from "../../contexts";
 import { getStationsFromOrderItems } from "../../api/services/stationService";
 import StationPickerModal from "../modals/StationPickerModal";
 
@@ -58,6 +58,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   const { toast } = useToast();
   const { getProductById } = useMenu();
   const { getOrderById } = useOrders();
+  const { restaurant } = useRestaurant();
   
   // Loading states for print buttons
   const [isPrintingKot, setIsPrintingKot] = useState(false);
@@ -141,7 +142,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
     setIsPrintingBill(true);
     try {
       const order = getOrderById(table.orderId);
-      await printOrder(table.orderId, 'bill', null, order);
+      await printOrder(table.orderId, 'bill', null, order, restaurant?.serviceChargePercentage || 0);
       toast({ title: "Bill request sent", description: `Order #${table.orderId}` });
     } catch (error) {
       console.error('[TableCard] Bill print error:', error);

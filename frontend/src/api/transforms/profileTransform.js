@@ -77,6 +77,10 @@ export const fromAPI = {
         serviceCharge: toBoolean(api.service_charge),
       },
       
+      // Service charge settings
+      serviceChargePercentage: parseFloat(api.service_charge_percentage) || 0,
+      autoServiceCharge: toBoolean(api.auto_service_charge),
+
       // Tax settings
       tax: {
         percentage: parseFloat(api.tax) || 0,

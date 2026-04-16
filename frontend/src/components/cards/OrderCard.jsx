@@ -4,7 +4,7 @@ import { COLORS, SOURCE_COLORS } from "../../constants";
 import OrderTimeline from "./OrderTimeline";
 import { printOrder } from "../../api/services/orderService";
 import { useToast } from "../../hooks/use-toast";
-import { useMenu } from "../../contexts";
+import { useMenu, useRestaurant } from "../../contexts";
 import { getStationsFromOrderItems } from "../../api/services/stationService";
 import StationPickerModal from "../modals/StationPickerModal";
 
@@ -52,6 +52,7 @@ const OrderCard = ({
   const [availableStations, setAvailableStations] = useState([]);
   const { toast } = useToast();
   const { getProductById } = useMenu();
+  const { restaurant } = useRestaurant();
 
   if (!order) return null;
 
@@ -113,7 +114,7 @@ const OrderCard = ({
     
     setIsPrintingBill(true);
     try {
-      await printOrder(orderId, 'bill', null, order);
+      await printOrder(orderId, 'bill', null, order, restaurant?.serviceChargePercentage || 0);
       toast({ title: "Bill request sent", description: `Order #${orderId}` });
     } catch (error) {
       console.error('[OrderCard] Bill print error:', error);

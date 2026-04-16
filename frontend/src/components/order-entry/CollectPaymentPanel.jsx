@@ -18,9 +18,12 @@ const CollectPaymentPanel = ({
   isProcessingPayment = false,
 }) => {
   const customer = passedCustomer;
-  const { discountTypes, paymentMethods: restaurantPaymentMethods, paymentTypes: restaurantPaymentTypes } = useRestaurant();
+  const { discountTypes, paymentMethods: restaurantPaymentMethods, paymentTypes: restaurantPaymentTypes, restaurant } = useRestaurant();
   const { tables } = useTables();
   const { paymentLayoutConfig } = useSettings();
+
+  // Service charge from restaurant profile
+  const serviceChargePercentage = (restaurant?.features?.serviceCharge && restaurant?.serviceChargePercentage) || 0;
 
   // Check if restaurant has rooms
   const hasRooms = useMemo(() => 
@@ -190,11 +193,22 @@ const CollectPaymentPanel = ({
   const totalDiscount = manualDiscount + presetDiscount + loyaltyDiscount + couponDiscount + walletDiscount;
   const subtotalAfterDiscount = Math.max(0, itemTotal - totalDiscount);
 
-  // Tax: always use per-item computed totals from ALL active items
-  const sgst = taxTotals.sgst;
-  const cgst = taxTotals.cgst;
+  // Service charge on food subtotal (before discount, after items)
+  const serviceCharge = serviceChargePercentage > 0
+    ? Math.round(itemTotal * serviceChargePercentage / 100 * 100) / 100
+    : 0;
 
-  const rawFinalTotal = Math.round((subtotalAfterDiscount + sgst + cgst) * 100) / 100;
+  // Tax: per-item computed totals + GST on service charge
+  const itemSgst = taxTotals.sgst;
+  const itemCgst = taxTotals.cgst;
+  // GST on service charge — use average item GST rate
+  const serviceChargeGst = (serviceCharge > 0 && itemTotal > 0)
+    ? Math.round(serviceCharge * ((itemSgst + itemCgst) / itemTotal) * 100) / 100
+    : 0;
+  const sgst = Math.round((itemSgst + serviceChargeGst / 2) * 100) / 100;
+  const cgst = Math.round((itemCgst + serviceChargeGst / 2) * 100) / 100;
+
+  const rawFinalTotal = Math.round((subtotalAfterDiscount + serviceCharge + sgst + cgst) * 100) / 100;
 
   // Round-off: ceil if diff >= 0.10, else floor
   const ceilTotal = Math.ceil(rawFinalTotal);
@@ -257,6 +271,7 @@ const CollectPaymentPanel = ({
       customer,
       itemTotal,
       subtotal: subtotalAfterDiscount,
+      serviceCharge,
     };
 
     // Transfer to Room — attach room selection
@@ -544,14 +559,21 @@ const CollectPaymentPanel = ({
                       <span style={{ color: COLORS.grayText }}>Subtotal</span>
                       <span style={{ color: COLORS.darkText }}>₹{subtotalAfterDiscount.toLocaleString()}</span>
                     </div>
+                    {/* Service Charge */}
+                    {serviceCharge > 0 && (
+                      <div className="px-3 pt-1 flex justify-between">
+                        <span style={{ color: COLORS.grayText }}>Service Charge ({serviceChargePercentage}%)</span>
+                        <span style={{ color: COLORS.darkText }}>₹{serviceCharge.toFixed(2)}</span>
+                      </div>
+                    )}
                     {/* Taxes */}
                     <div className="px-3 space-y-1 pt-1">
                       <div className="flex justify-between">
-                        <span style={{ color: COLORS.grayText }}>SGST (2.5%)</span>
+                        <span style={{ color: COLORS.grayText }}>SGST</span>
                         <span style={{ color: COLORS.darkText }}>₹{sgst.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span style={{ color: COLORS.grayText }}>CGST (2.5%)</span>
+                        <span style={{ color: COLORS.grayText }}>CGST</span>
                         <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
                       </div>
                       {roundOff !== 0 && (
@@ -691,6 +713,16 @@ const CollectPaymentPanel = ({
             </div>
           </div>
 
+          {/* Service Charge */}
+          {serviceCharge > 0 && (
+            <div className="mt-2" data-testid="service-charge-row">
+              <div className="flex justify-between text-sm">
+                <span style={{ color: COLORS.grayText }}>Service Charge ({serviceChargePercentage}%)</span>
+                <span style={{ color: COLORS.darkText }}>₹{serviceCharge.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+
           {/* Taxes */}
           <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }}>
             <div className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: COLORS.grayText }}>
@@ -698,11 +730,11 @@ const CollectPaymentPanel = ({
             </div>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span style={{ color: COLORS.grayText }}>SGST (2.5%)</span>
+                <span style={{ color: COLORS.grayText }}>SGST</span>
                 <span style={{ color: COLORS.darkText }}>₹{sgst.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span style={{ color: COLORS.grayText }}>CGST (2.5%)</span>
+                <span style={{ color: COLORS.grayText }}>CGST</span>
                 <span style={{ color: COLORS.darkText }}>₹{cgst.toFixed(2)}</span>
               </div>
               {roundOff !== 0 && (
