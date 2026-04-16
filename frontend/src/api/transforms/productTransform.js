@@ -44,7 +44,8 @@ export const fromAPI = {
     if (!Array.isArray(apiProducts)) return [];
     return apiProducts
       .map(fromAPI.product)
-      .filter(p => p.foodFor === 'Normal');
+      .filter(p => p.foodFor === 'Normal')
+      .filter(p => p.productName.toLowerCase() !== 'check in');
   },
 
   /**

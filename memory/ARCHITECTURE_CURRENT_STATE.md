@@ -242,6 +242,18 @@ Each domain has its own transform file. The largest is `orderTransform.js` (843 
 
 **Evidence**: `api/transforms/orderTransform.js`
 
+### "Check In" System Item Filtering (v5)
+
+The backend stores room check-in as a product/category named "Check In" in the food catalog. This system marker is filtered out at **3 levels** to prevent it appearing in UI:
+
+1. `categoryTransform.js` `fromAPI.categoryList` — hides "Check In" category from CategoryPanel
+2. `productTransform.js` `fromAPI.productList` — hides "Check In" product from product search/grid
+3. `orderTransform.js` `fromAPI.order` — hides "Check In" items from order item lists
+
+**Evidence**: `categoryTransform.js` `.filter(cat => cat.categoryName.toLowerCase() !== 'check in')`, `productTransform.js` `.filter(p => p.productName.toLowerCase() !== 'check in')`, `orderTransform.js` line 204
+**Confidence**: HIGH
+**Impact**: LOW — Cosmetic, but the 3-location pattern means a new system marker name would need changes in all 3 files
+
 ### CRM Per-Restaurant Key Resolution
 
 ```

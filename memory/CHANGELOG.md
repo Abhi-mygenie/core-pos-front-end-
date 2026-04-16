@@ -5,7 +5,45 @@
 
 ---
 
-## v4 — July 2025 (Latest)
+## v5 — July 2025 (Latest)
+
+**Git range**: `6928b49` → `d592aee` (branch `main`)
+**Trigger**: "Check In" system marker filtering, cross-restaurant address ID fix, prepaid badge on cards
+**Files changed in repo**: 6 source files (+17 lines)
+
+### PROJECT_INVENTORY.md
+| Section | Change | Reason |
+|---|---|---|
+| No changes | — | No new endpoints, events, routes, or env vars |
+
+### ARCHITECTURE_CURRENT_STATE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW "Check In" filtering note (after Transform Layer) | 3-level filtering: categoryTransform, productTransform, orderTransform | System marker now filtered at catalog level too |
+
+### MODULE_MAP.md
+| Section | Change | Reason |
+|---|---|---|
+| §2.4 categoryTransform | Now filters "Check In" category | Transform behavior changed |
+| §2.4 productTransform | Now filters "Check In" product | Transform behavior changed |
+| §2.4 customerTransform (note) | `crossRestaurantAddress` now extracts `id` field | Missing field fixed |
+| §4 Duplicate Logic | Added "Check In" 3-location filtering as LOW-MEDIUM duplication | New triplication |
+
+### RISK_REGISTER.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW RISK-011f | "Check In" filter in 3 separate transforms with hardcoded string (LOW-MEDIUM) | Maintenance burden |
+| Risk Summary | MEDIUM 12→13 | 1 new risk |
+
+### OPEN_QUESTIONS_FROM_CODE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW OQ-030 | Why is "Check In" stored as a food product/category? System marker in data model. | Unusual pattern, substring match risk |
+| Summary table | Added "New (July 2025 v5)" row with 1 question | New category |
+
+---
+
+## v4 — July 2025
 
 **Git range**: `c3f1eef` → `6928b49` (branch `main`)
 **Trigger**: BUG-252 collectBillExisting rewrite for Old POS parity, table operation guards for takeaway/delivery

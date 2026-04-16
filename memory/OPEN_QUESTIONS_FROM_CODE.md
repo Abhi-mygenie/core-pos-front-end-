@@ -176,6 +176,7 @@
 | **New (July 2025 v2)** | **4** | **OQ-021 (prepaid lifecycle), OQ-022 (split socket), OQ-023 (delta items), OQ-024 (split bill validation)** |
 | **New (July 2025 v3)** | **3** | **OQ-025 (autoServiceCharge unused), OQ-026 (avg GST legality), OQ-027 (bill recomputes subtotal)** |
 | **New (July 2025 v4)** | **2** | **OQ-028 (collectBillExisting duplicates buildCartItem), OQ-029 (TAB payment_status 'success')** |
+| **New (July 2025 v5)** | **1** | **OQ-030 ("Check In" as food product — system marker in catalog)** |
 
 ---
 
@@ -256,3 +257,13 @@
   - Do report endpoints filter by `payment_status`? If so, TAB orders may be excluded from 'paid' queries.
   - Does the socket send back `payment_status: 'success'` too? How does the frontend handle it on receipt?
 - **Evidence**: `orderTransform.js` line 741 — `isTab ? 'success' : 'paid'`
+
+### OQ-030: What is "Check In" and why is it stored as a food product/category? (July 2025 v5)
+
+- **Context**: The backend stores room check-in events as a product named "Check In" in the food catalog, with a matching "Check In" category. The frontend now filters this out at **3 levels**: category list, product list, and order items. The order transform comment says "Check In = room check-in system marker, not a real product."
+- **Questions**:
+  - Why is a room check-in represented as a food product? Is this a legacy data model constraint?
+  - Are there other system markers stored as products (e.g., "Check Out", "Room Service")?
+  - If the marker name changes or new markers are added, all 3 transform files need updating — is there a backend-side indicator (e.g., a `is_system` flag) that could be used instead of name matching?
+  - The filter is case-insensitive (`toLowerCase() !== 'check in'`) — could a real product named "Check In Burger" be accidentally filtered?
+- **Evidence**: `categoryTransform.js`, `productTransform.js`, `orderTransform.js` line 204

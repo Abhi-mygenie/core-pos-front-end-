@@ -274,6 +274,11 @@ const OrderCard = ({
           ₹{(order.amount || 0).toLocaleString()}
         </span>
 
+        {/* Prepaid badge */}
+        {order.paymentType === 'prepaid' && (
+          <span data-testid={`prepaid-badge-${orderId}`} className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: '#E8F5E9', color: COLORS.primaryGreen }}>PAID</span>
+        )}
+
         {/* Right Section: Action Buttons */}
         <div className="flex items-center gap-1 flex-shrink-0">
           {/* Snooze Button - Only for Yet to Confirm orders */}

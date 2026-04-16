@@ -205,6 +205,8 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
           </div>
           {table.status === "reserved" ? (
             <span className="text-xs font-semibold flex-shrink-0" style={{ color: COLORS.primaryOrange }}>Reserved</span>
+          ) : table.paymentType === 'prepaid' ? (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0" style={{ backgroundColor: '#E8F5E9', color: COLORS.primaryGreen }}>PAID</span>
           ) : table.amount ? (
             <span className="text-xs font-semibold flex-shrink-0">{currencySymbol}{table.amount.toLocaleString()}</span>
           ) : null}

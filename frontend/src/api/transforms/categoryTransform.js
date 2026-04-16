@@ -34,6 +34,7 @@ export const fromAPI = {
     return apiCategories
       .map(fromAPI.category)
       .filter((cat) => cat.isActive) // Only active categories
+      .filter((cat) => cat.categoryName.toLowerCase() !== 'check in') // Hide system "Check In" category
       .sort((a, b) => a.sortOrder - b.sortOrder); // Sort by cat_order
   },
 

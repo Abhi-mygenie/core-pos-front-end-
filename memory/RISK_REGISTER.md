@@ -168,6 +168,14 @@
 - **Impact**: MEDIUM — Any code (frontend or backend) that checks `payment_status === 'paid'` for completed orders will miss TAB orders. Report filters, status checks, and socket handlers may be affected.
 - **Recommendation**: Document the business reason. Verify all status-checking code handles both 'paid' and 'success'.
 
+### RISK-011f: "Check In" System Item Filtered in 3 Separate Transform Files (July 2025 v5)
+
+- **Finding**: The "Check In" system marker (room check-in product) is filtered out by **3 hardcoded string comparisons** across 3 different transform files: `categoryTransform.js`, `productTransform.js`, and `orderTransform.js`. The filter string `'check in'` is not extracted to a constant.
+- **Evidence**: `categoryTransform.js` `.filter(cat => cat.categoryName.toLowerCase() !== 'check in')`, `productTransform.js` `.filter(p => p.productName.toLowerCase() !== 'check in')`, `orderTransform.js` line 204 `.filter(d => (d.food_details?.name || '').toLowerCase() !== 'check in')`
+- **Confidence**: HIGH
+- **Impact**: LOW-MEDIUM — If the system marker name changes (e.g., "Check Out", "Room Service"), or a new system marker is added, all 3 files must be updated. Easy to miss one.
+- **Recommendation**: Extract `'check in'` to a shared constant (e.g., `SYSTEM_MARKER_NAMES` array in `constants.js`) and use it in all 3 filters.
+
 ### RISK-012: stationService Hardcodes API URL
 
 - **Finding**: `stationService.fetchStationData` uses a hardcoded URL string `/api/v1/vendoremployee/station-order-list` instead of `API_ENDPOINTS`
@@ -269,5 +277,5 @@
 |---|---|---|
 | CRITICAL | 4 | Broken endpoint, XSS token storage, no token refresh, hard redirect |
 | HIGH | 10 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, orderItemsByTableId breaking change, partial_payments always sent, null→'' payload change, **`collectBillExisting` duplicates `buildCartItem` (new v4)** |
-| MEDIUM | 12 | Monolithic components (growing), hardcoded URLs, known backend bugs, sanitization (partially mitigated), service charge avg GST rate, customerName vs customer divergence, autoServiceCharge unused, **TAB payment_status 'success' special case (new v4)** |
+| MEDIUM | 13 | Monolithic components (growing), hardcoded URLs, known backend bugs, sanitization (partially mitigated), service charge avg GST rate, customerName vs customer divergence, autoServiceCharge unused, TAB payment_status 'success' special case, **"Check In" filter in 3 files (new v5)** |
 | LOW | 4 | Mock data, console logging, token validation, dev dependencies |

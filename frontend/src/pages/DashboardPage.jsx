@@ -317,6 +317,7 @@ const DashboardPage = () => {
         createdAt: order.createdAt,
         readyAt: order.readyAt,
         servedAt: order.servedAt,
+        paymentType: order.paymentType || '',
       }));
     };
 
@@ -357,6 +358,7 @@ const DashboardPage = () => {
             createdAt: order.createdAt,
             readyAt: order.readyAt,
             servedAt: order.servedAt,
+            paymentType: order.paymentType || '',
           })),
         };
       }
@@ -387,6 +389,7 @@ const DashboardPage = () => {
           createdAt: order.createdAt,
           readyAt: order.readyAt,
           servedAt: order.servedAt,
+          paymentType: order.paymentType || '',
         });
       });
 
@@ -462,6 +465,7 @@ const DashboardPage = () => {
       createdAt: order.createdAt,
       readyAt: order.readyAt,
       servedAt: order.servedAt,
+      paymentType: order.paymentType || '',
     });
 
     // Helper to adapt takeaway/delivery orders
@@ -482,6 +486,7 @@ const DashboardPage = () => {
       createdAt: order.createdAt,
       readyAt: order.readyAt,
       servedAt: order.servedAt,
+      paymentType: order.paymentType || '',
     });
 
     // Helper to enrich dine-in tables with order data (supports split: 1 table → N entries)
@@ -574,6 +579,7 @@ const DashboardPage = () => {
       createdAt: order.createdAt,
       readyAt: order.readyAt,
       servedAt: order.servedAt,
+      paymentType: order.paymentType || '',
     });
 
     // Collect ALL orders from all channels

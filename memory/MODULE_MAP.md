@@ -99,8 +99,8 @@
 | profileTransform | `transforms/profileTransform.js` | 207 | profileResponse, user, restaurant, paymentTypes, discountTypes, printers, schedules, settings | — (Phase 2) |
 
 **v3 change to profileTransform**: New fields extracted in `restaurant`: `serviceChargePercentage` (from `api.service_charge_percentage`), `autoServiceCharge` (from `api.auto_service_charge`). Evidence: `profileTransform.js` lines 78-81.
-| categoryTransform | `transforms/categoryTransform.js` | — | — | — |
-| productTransform | `transforms/productTransform.js` | — | — | — |
+| categoryTransform | `transforms/categoryTransform.js` | — | categoryList (filters "Check In" category, v5) | — |
+| productTransform | `transforms/productTransform.js` | — | productList (filters "Check In" product, v5) | — |
 | tableTransform | `transforms/tableTransform.js` | 166 | tableList, table, groupBySection, getSections | shiftTable, transferFood, mergeTable |
 | orderTransform | `transforms/orderTransform.js` | 843 | order, orderItem, orderList | cancelItem, cancelOrder, addCustomItem, placeOrder, updateOrder, placeOrderWithPayment, collectBillExisting, transferToRoom, updateOrderStatus, buildBillPrintPayload |
 
@@ -114,6 +114,8 @@
 - New field `billing_auto_bill_print` in prepaid and collect bill payloads (v3)
 - `collectBillExisting` **major rewrite** (v4 — BUG-252): builds `food_detail[]` from cart items, 12 discount fields, TAB `payment_status: 'success'`, `waiter_id`/`restaurant_name`, `name`/`mobile` for TAB. **Duplicates `buildCartItem` logic** for item-level financial computation.
 | customerTransform | `transforms/customerTransform.js` | — | searchResults, customerLookup, customerDetail, crossRestaurantAddresses | createCustomer, updateCustomer, addAddress |
+
+**v5 change to customerTransform**: `crossRestaurantAddress` now extracts `id` field (`api.id || api.address_id || ''`). Was missing — addresses had no ID for selection/reference.
 | reportTransform | `transforms/reportTransform.js` | — | paidOrders, cancelledOrders, creditOrders, holdOrders, aggregatorOrders, orderDetails, singleOrderNew | — |
 | settingsTransform | `transforms/settingsTransform.js` | — | — | — |
 
@@ -203,6 +205,7 @@ DashboardPage (1376 lines) is the **largest module** and the central nervous sys
 | Station default config | `stationService.DEFAULT_STATION_VIEW_CONFIG` (enabled: true) | `StationContext` (stationViewEnabled: false) | **HIGH** — Contradicting defaults! |
 | Order role determination | `orderService.getOrderRoleParam()` | LoadingPage inline logic | Low |
 | **Per-item financial computation** | **`buildCartItem()` (lines 263-351)** | **`collectBillExisting` `food_detail` builder (lines 680-730)** | **HIGH — Both compute variation_amount, addon_amount, gst/vat per item. Not shared. Tax fix in one will not propagate to the other. (v4 — BUG-252)** |
+| **"Check In" system item filtering** | **`orderTransform.js` line 204** | **`categoryTransform.js` categoryList filter + `productTransform.js` productList filter** | **LOW-MEDIUM — 3 separate hardcoded `'check in'` string comparisons. A rename or new system marker requires 3 changes. (v5)** |
 
 ---
 

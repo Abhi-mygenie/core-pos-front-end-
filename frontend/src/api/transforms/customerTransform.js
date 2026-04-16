@@ -113,6 +113,7 @@ export const fromAPI = {
    * Source: POST /pos/address-lookup
    */
   crossRestaurantAddress: (api) => ({
+    id:                api.id || api.address_id || '',
     address:           api.address || '',
     city:              api.city || '',
     state:             api.state || '',
