@@ -152,6 +152,22 @@
 - **Impact**: LOW — Dead field. May indicate incomplete feature (should service charge only apply when `autoServiceCharge` is true?)
 - **Recommendation**: Clarify business intent. If it's a toggle, add conditional logic. If always-on when percentage > 0, remove the field.
 
+### RISK-011d: `collectBillExisting` Duplicates `buildCartItem` Per-Item Financial Logic (July 2025 v4 — BUG-252)
+
+- **Finding**: The BUG-252 rewrite of `collectBillExisting` builds a `food_detail` array that computes per-item `variation_amount`, `addon_amount`, `gst_amount`, `vat_amount` using **its own inline logic** (lines 680-730). This duplicates the existing shared helper `buildCartItem()` (lines 263-351) which computes the exact same fields. The two implementations are **not shared** — they have similar but independently written code.
+- **Evidence**: `orderTransform.js` lines 680-730 (`food_detail` builder) vs lines 263-351 (`buildCartItem`)
+- **Confidence**: HIGH
+- **Impact**: HIGH — Any bug fix or calculation change to item-level financials (tax, variation pricing, addon pricing) must be applied in **both** locations. This is the most significant code duplication in the codebase. If one is fixed and the other is not, place-order and collect-bill will compute different item totals.
+- **Recommendation**: Extract shared item-financial computation into a single helper used by both `buildCartItem` and the `food_detail` builder
+
+### RISK-011e: TAB `payment_status: 'success'` Special Case (July 2025 v4 — BUG-252)
+
+- **Finding**: When collecting payment via TAB/Credit, `collectBillExisting` sets `payment_status: 'success'` instead of `'paid'` (used by all other payment methods). This is a special case with no comment explaining the business reason.
+- **Evidence**: `orderTransform.js` line 741 — `payment_status: isTab ? 'success' : 'paid'`
+- **Confidence**: HIGH
+- **Impact**: MEDIUM — Any code (frontend or backend) that checks `payment_status === 'paid'` for completed orders will miss TAB orders. Report filters, status checks, and socket handlers may be affected.
+- **Recommendation**: Document the business reason. Verify all status-checking code handles both 'paid' and 'success'.
+
 ### RISK-012: stationService Hardcodes API URL
 
 - **Finding**: `stationService.fetchStationData` uses a hardcoded URL string `/api/v1/vendoremployee/station-order-list` instead of `API_ENDPOINTS`
@@ -252,6 +268,6 @@
 | Severity | Count | Key Concerns |
 |---|---|---|
 | CRITICAL | 4 | Broken endpoint, XSS token storage, no token refresh, hard redirect |
-| HIGH | 9 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, orderItemsByTableId breaking change, partial_payments always sent, null→'' payload change |
-| MEDIUM | 11 | Monolithic components (growing larger), hardcoded URLs, known backend bugs, sanitization (partially mitigated), **service charge avg GST rate (new)**, **customerName vs customer divergence (new)**, **autoServiceCharge unused (new)** |
+| HIGH | 10 | TBD endpoints, sequential loading, socket reconnect limit, stale closures, array mutation, orderItemsByTableId breaking change, partial_payments always sent, null→'' payload change, **`collectBillExisting` duplicates `buildCartItem` (new v4)** |
+| MEDIUM | 12 | Monolithic components (growing), hardcoded URLs, known backend bugs, sanitization (partially mitigated), service charge avg GST rate, customerName vs customer divergence, autoServiceCharge unused, **TAB payment_status 'success' special case (new v4)** |
 | LOW | 4 | Mock data, console logging, token validation, dev dependencies |

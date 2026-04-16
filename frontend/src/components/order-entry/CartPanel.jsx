@@ -616,7 +616,7 @@ const CartPanel = ({
                     setEditingQtyItemId={setEditingQtyItemId}
                     updateQuantity={updateQuantity}
                     canCancelItem={canCancelItem}
-                    canFoodTransfer={canFoodTransfer}
+                    canFoodTransfer={canFoodTransfer && orderType !== 'takeAway' && orderType !== 'delivery'}
                     isItemCancelAllowed={isItemCancelAllowed}
                   />
                 ) : (

@@ -261,12 +261,19 @@ const CollectPaymentPanel = ({
       tip:             0,
       splitPayments:   showSplit ? splitPayments.map(p => ({ method: p.method, amount: parseFloat(p.amount) || 0, transactionId: p.method === 'card' ? (p.transactionId || '') : '' })) : null,
       tabContact:      isTabPayment ? { name: tabName, phone: tabPhone } : null,
-      // discount info
+      // discount info — all fields needed by collect bill payload (OLD POS parity)
       discounts: {
         manual:               manualDiscount,
         preset:               presetDiscount,
         total:                totalDiscount,
         orderDiscountPercent: discountType === 'percent' ? parseFloat(discountValue || 0) : 0,
+        couponDiscount:       couponDiscount,
+        couponTitle:          selectedCoupon?.code || '',
+        couponType:           selectedCoupon?.type || '',
+        discountType:         discountType || '',
+        orderDiscountType:    discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : '',
+        loyaltyPoints:        loyaltyDiscount,
+        walletBalance:        walletDiscount,
       },
       customer,
       itemTotal,

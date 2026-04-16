@@ -669,44 +669,127 @@ export const toAPI = {
 
   // ==========================================================================
   // Flow 4: Collect Payment on Existing Order (postpaid → paid)
-  // Endpoint: POST /api/v2/vendoremployee/order/place-order (multipart/form-data)
+  // Endpoint: POST /api/v2/vendoremployee/order/order-bill-payment
+  // BUG-252: Aligned with OLD POS payload structure
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
-    const { autoBill = false } = options;
+    const { autoBill = false, waiterId = '', restaurantName = '' } = options;
     const { 
       method = 'cash', transactionId = '',
       splitPayments = [], tip = 0,
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
       itemTotal = 0, serviceCharge = 0,
+      tabContact = null, discounts = {},
     } = paymentData;
 
     const gstTax = Math.round((sgst + cgst) * 100) / 100;
+
+    // BUG-252: Detect TAB payment (can arrive as 'credit' internal ID or 'tab'/'TAB' API name)
+    const isTab = method === 'credit' || (typeof method === 'string' && method.toLowerCase() === 'tab');
+
+    // BUG-252: Build food_detail from placed cart items (matches OLD POS structure)
+    const food_detail = (cartItems || [])
+      .filter(item => item.placed && item.status !== 'cancelled')
+      .map(item => {
+        const unitPrice = item.unitPrice || item.price || 0;
+        const qty = item.qty || 1;
+
+        // Compute variation amount from item.variation array
+        let variationAmount = 0;
+        if (item.variation?.length > 0) {
+          variationAmount = item.variation.reduce((sum, v) => {
+            if (v.price) return sum + (parseFloat(v.price) || 0);
+            const vals = Array.isArray(v.values) ? v.values : [];
+            return sum + vals.reduce((s, opt) => s + (parseFloat(opt.optionPrice) || 0), 0);
+          }, 0);
+        }
+
+        // Compute addon amount from item.addOns array
+        let addonAmount = 0;
+        if (item.addOns?.length > 0) {
+          addonAmount = item.addOns.reduce((sum, a) => {
+            return sum + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1));
+          }, 0);
+        }
+
+        // Compute per-item tax
+        const taxPct = parseFloat(item.tax?.percentage) || 0;
+        const taxType = (item.tax?.type || 'GST').toUpperCase();
+        const isInclusive = item.tax?.isInclusive || false;
+        const fullUnitPrice = unitPrice + addonAmount + variationAmount;
+        const lineTotal = fullUnitPrice * qty;
+        let taxAmount = 0;
+        if (taxPct > 0) {
+          taxAmount = isInclusive
+            ? lineTotal - (lineTotal / (1 + taxPct / 100))
+            : lineTotal * (taxPct / 100);
+        }
+        const isGst = taxType === 'GST';
+
+        return {
+          food_id:            item.foodId || item.id,
+          quantity:           qty,
+          item_id:            item.id,
+          unit_price:         unitPrice,
+          is_complementary:   'No',
+          food_amount:        unitPrice * qty,
+          variation_amount:   variationAmount,
+          addon_amount:       addonAmount,
+          gst_amount:         String((isGst ? taxAmount : 0).toFixed(2)),
+          vat_amount:         String((!isGst ? taxAmount : 0).toFixed(2)),
+          discount_amount:    '0.00',
+          complementary_total: 0,
+        };
+      });
 
     const payload = {
       order_id:                     String(table.orderId),
       payment_mode:                 method,
       payment_amount:               finalTotal || 0,
-      payment_status:               'paid',
+      payment_status:               isTab ? 'success' : 'paid',
       transaction_id:               transactionId || '',
       billing_auto_bill_print:      autoBill ? 'Yes' : 'No',
+      // Item details (BUG-252: required by backend for all payment types)
+      food_detail,
+      // Employee & restaurant
+      waiter_id:                    waiterId,
+      restaurant_name:              restaurantName,
+      email:                        '',
       // Financial totals
       order_sub_total_amount:       itemTotal || 0,
       order_sub_total_without_tax:  itemTotal || 0,
       total_gst_tax_amount:         gstTax,
       gst_tax:                      gstTax,
       vat_tax:                      vatAmount || 0,
+      grand_amount:                 finalTotal || 0,
       round_up:                     0,
       // Tax & Tip
       service_tax:                  serviceCharge || 0,
       service_gst_tax_amount:       0,
       tip_amount:                   tip || 0,
       tip_tax_amount:               0,
-      // Discounts
-      restaurant_discount_amount:   0,
-      order_discount:               0,
-      comunity_discount:            0,
-      discount_value:               0,
+      // Discounts (BUG-252: field names aligned with OLD POS)
+      self_discount:                discounts.manual || 0,
+      coupon_discount:              discounts.couponDiscount || 0,
+      coupon_title:                 discounts.couponTitle || '',
+      coupon_type:                  discounts.couponType || '',
+      comm_discount:                discounts.preset || 0,
+      discount_type:                discounts.discountType || '',
+      order_discount_type:          discounts.orderDiscountType || 'Percent',
+      order_discount:               discounts.orderDiscountPercent || 0,
+      discount_value:               discounts.total || 0,
+      discount_member_category_id:  0,
+      discount_member_category_name: '',
+      // Loyalty & Wallet
+      used_loyalty_point:           discounts.loyaltyPoints || 0,
+      use_wallet_balance:           discounts.walletBalance || 0,
+      // Room & Misc
+      paid_room:                    '',
+      usage_id:                     '',
+      // TAB-specific fields (BUG-252: customer info for credit tracking)
+      name:                         tabContact?.name || '',
+      mobile:                       tabContact?.phone || '',
     };
 
     // Partial payments

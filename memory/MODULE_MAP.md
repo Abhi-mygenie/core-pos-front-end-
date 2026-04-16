@@ -112,6 +112,7 @@
 - `buildBillPrintPayload` signature changed: now `(order, serviceChargePercentage=0)` — BUG-246 fix: uses `unit_price` not `price`, computes service charge (v3)
 - `placeOrder/updateOrder/placeOrderWithPayment/collectBillExisting` accept `serviceChargePercentage` and `autoBill` options (v3)
 - New field `billing_auto_bill_print` in prepaid and collect bill payloads (v3)
+- `collectBillExisting` **major rewrite** (v4 — BUG-252): builds `food_detail[]` from cart items, 12 discount fields, TAB `payment_status: 'success'`, `waiter_id`/`restaurant_name`, `name`/`mobile` for TAB. **Duplicates `buildCartItem` logic** for item-level financial computation.
 | customerTransform | `transforms/customerTransform.js` | — | searchResults, customerLookup, customerDetail, crossRestaurantAddresses | createCustomer, updateCustomer, addAddress |
 | reportTransform | `transforms/reportTransform.js` | — | paidOrders, cancelledOrders, creditOrders, holdOrders, aggregatorOrders, orderDetails, singleOrderNew | — |
 | settingsTransform | `transforms/settingsTransform.js` | — | — | — |
@@ -134,7 +135,9 @@
 | Guards | `components/guards/` | 2 | ProtectedRoute, ErrorBoundary |
 | Layout | `components/layout/` | 4 | Header, Sidebar, NotificationBanner, NotificationTester |
 | Modals | `components/modals/` | 3 | RoomCheckInModal, SplitBillModal, StationPickerModal |
-| Order Entry | `components/order-entry/` | 17 | **OrderEntry** (1298 lines), CartPanel (740), CollectPaymentPanel (1235), CategoryPanel, CustomerModal, ItemCustomizationModal, CancelFoodModal, CancelOrderModal, ShiftTableModal, MergeTableModal, TransferFoodModal, AddressPickerModal, AddressFormModal, AddCustomItemModal, ItemNotesModal, OrderNotesModal, OrderPlacedModal, PaymentMethodButton, RePrintButton |
+| Order Entry | `components/order-entry/` | 17 | **OrderEntry** (1429 lines), CartPanel (781), CollectPaymentPanel (1390), CategoryPanel, CustomerModal, ItemCustomizationModal, CancelFoodModal, CancelOrderModal, ShiftTableModal, MergeTableModal, TransferFoodModal, AddressPickerModal, AddressFormModal, AddCustomItemModal, ItemNotesModal, OrderNotesModal, OrderPlacedModal, PaymentMethodButton, RePrintButton |
+
+**v4 note**: Shift Table, Merge Table, and Food Transfer actions are now **hidden for TakeAway/Delivery orders** (no physical table). Evidence: `OrderEntry.jsx` lines 831, 843; `CartPanel.jsx` line 619.
 | Panels | `components/panels/` | 6 | SettingsPanel, MenuManagementPanel, CategoryList, ProductCard, ProductForm, ProductList, TableManagementView |
 | Reports | `components/reports/` | 8 | OrderTable, OrderDetailSheet, FilterBar, FilterTags, DatePicker, ExportButtons, ReportTabs, SummaryBar |
 | Sections | `components/sections/` | 2 | TableSection, OrderSection |
@@ -199,6 +202,7 @@ DashboardPage (1376 lines) is the **largest module** and the central nervous sys
 | Station config storage key | `stationService.STATION_VIEW_STORAGE_KEY` | `StationContext.STATION_VIEW_STORAGE_KEY` | **MEDIUM** — Two sources of truth for same key name |
 | Station default config | `stationService.DEFAULT_STATION_VIEW_CONFIG` (enabled: true) | `StationContext` (stationViewEnabled: false) | **HIGH** — Contradicting defaults! |
 | Order role determination | `orderService.getOrderRoleParam()` | LoadingPage inline logic | Low |
+| **Per-item financial computation** | **`buildCartItem()` (lines 263-351)** | **`collectBillExisting` `food_detail` builder (lines 680-730)** | **HIGH — Both compute variation_amount, addon_amount, gst/vat per item. Not shared. Tax fix in one will not propagate to the other. (v4 — BUG-252)** |
 
 ---
 

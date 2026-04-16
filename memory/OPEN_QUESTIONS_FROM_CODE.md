@@ -175,6 +175,7 @@
 | Data Model | 4 | OQ-017 (state machine), OQ-018 (dual status), OQ-019 (payment methods) |
 | **New (July 2025 v2)** | **4** | **OQ-021 (prepaid lifecycle), OQ-022 (split socket), OQ-023 (delta items), OQ-024 (split bill validation)** |
 | **New (July 2025 v3)** | **3** | **OQ-025 (autoServiceCharge unused), OQ-026 (avg GST legality), OQ-027 (bill recomputes subtotal)** |
+| **New (July 2025 v4)** | **2** | **OQ-028 (collectBillExisting duplicates buildCartItem), OQ-029 (TAB payment_status 'success')** |
 
 ---
 
@@ -237,3 +238,21 @@
   - Does this mean the order's stored financials are unreliable?
   - The fallback chain `unit_price → food_details.price → price` — when would `unit_price` be missing?
 - **Evidence**: `orderTransform.js` `buildBillPrintPayload` lines 780-830
+
+### OQ-028: Why does `collectBillExisting` rebuild food_detail instead of reusing `buildCartItem`? (July 2025 v4 — BUG-252)
+
+- **Context**: The BUG-252 rewrite of `collectBillExisting` builds a `food_detail` array with per-item financial computation (variation_amount, addon_amount, gst/vat). This logic is **nearly identical** to the shared `buildCartItem()` helper (lines 263-351) but is written independently inline.
+- **Questions**:
+  - Why wasn't `buildCartItem` reused? Is the output shape different enough to warrant duplication?
+  - The `food_detail` builder uses `item.unitPrice || item.price` while `buildCartItem` uses `item.price` — could these diverge?
+  - If a tax calculation bug is found, will developers know to fix both locations?
+- **Evidence**: `orderTransform.js` lines 680-730 (food_detail) vs lines 263-351 (buildCartItem)
+
+### OQ-029: Why is TAB `payment_status` set to `'success'` instead of `'paid'`? (July 2025 v4 — BUG-252)
+
+- **Context**: When collecting payment via TAB/Credit method, `collectBillExisting` sets `payment_status: 'success'`. All other payment methods use `'paid'`. No code comment explains the reason.
+- **Questions**:
+  - Is this a backend requirement for TAB orders? Does the backend treat 'success' differently from 'paid'?
+  - Do report endpoints filter by `payment_status`? If so, TAB orders may be excluded from 'paid' queries.
+  - Does the socket send back `payment_status: 'success'` too? How does the frontend handle it on receipt?
+- **Evidence**: `orderTransform.js` line 741 — `isTab ? 'success' : 'paid'`

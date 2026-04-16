@@ -5,7 +5,46 @@
 
 ---
 
-## v3 — July 2025 (Latest)
+## v4 — July 2025 (Latest)
+
+**Git range**: `c3f1eef` → `6928b49` (branch `main`)
+**Trigger**: BUG-252 collectBillExisting rewrite for Old POS parity, table operation guards for takeaway/delivery
+**Files changed in repo**: 4 source files
+
+### PROJECT_INVENTORY.md
+| Section | Change | Reason |
+|---|---|---|
+| No changes | — | No new endpoints, events, routes, or env vars |
+
+### ARCHITECTURE_CURRENT_STATE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW subsection in §7a | `collectBillExisting` payload rewrite: food_detail[], 12 discount fields, TAB payment_status:'success', waiter_id/restaurant_name, duplicate logic warning | Major payload expansion (BUG-252) |
+
+### MODULE_MAP.md
+| Section | Change | Reason |
+|---|---|---|
+| §2.4 orderTransform notes | `collectBillExisting` major rewrite noted, `food_detail` builder duplicates `buildCartItem` | Function change + duplication |
+| §2.6 Order Entry components | Shift/Merge/Transfer hidden for takeaway/delivery noted | UI behavior change |
+| §4 Duplicate Logic | Added `buildCartItem` vs `food_detail` builder as HIGH duplication | New significant duplication |
+
+### RISK_REGISTER.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW RISK-011d | `collectBillExisting` food_detail builder duplicates `buildCartItem` (HIGH) | Two separate per-item financial implementations |
+| NEW RISK-011e | TAB `payment_status: 'success'` special case (MEDIUM) | Easy to overlook, affects status filtering |
+| Risk Summary | HIGH 9→10, MEDIUM 11→12 | 2 new risks |
+
+### OPEN_QUESTIONS_FROM_CODE.md
+| Section | Change | Reason |
+|---|---|---|
+| NEW OQ-028 | Why does collectBillExisting rebuild food_detail instead of reusing buildCartItem? | Duplicate logic concern |
+| NEW OQ-029 | Why is TAB payment_status 'success' instead of 'paid'? | Backend contract question |
+| Summary table | Added "New (July 2025 v4)" row with 2 questions | New category |
+
+---
+
+## v3 — July 2025
 
 **Git range**: `f494ad3` → `c3f1eef` (branch `main`)
 **Trigger**: Service charge feature, auto bill print, BUG-246 fix, delivery address fix

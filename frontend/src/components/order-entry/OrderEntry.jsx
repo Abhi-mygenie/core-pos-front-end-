@@ -828,8 +828,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 <Plus className="w-5 h-5" style={{ color: COLORS.primaryOrange }} />
               </button>
 
-              {/* Shift/Transfer Table */}
-              {canShiftTable && (
+              {/* Shift/Transfer Table — hidden for TakeAway/Delivery (no physical table) */}
+              {canShiftTable && orderType !== 'takeAway' && orderType !== 'delivery' && (
                 <button
                   onClick={() => setShowShiftModal(true)}
                   className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
@@ -840,8 +840,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 </button>
               )}
 
-              {/* Merge Tables */}
-              {canMergeOrder && (
+              {/* Merge Tables — hidden for TakeAway/Delivery (no physical table) */}
+              {canMergeOrder && orderType !== 'takeAway' && orderType !== 'delivery' && (
                 <button
                   onClick={() => setShowMergeModal(true)}
                   className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
@@ -1024,7 +1024,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     const collectOrderId = effectiveTable?.orderId || placedOrderId;
                     const engagePromise = collectOrderId ? waitForOrderEngaged(collectOrderId) : null;
 
-                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, { autoBill: settings?.autoBill || false });
+                    const payload = orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, {
+                      autoBill: settings?.autoBill || false,
+                      waiterId: user?.employeeId || '',
+                      restaurantName: restaurant?.name || '',
+                    });
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
                     api.post(API_ENDPOINTS.BILL_PAYMENT, payload)
                       .then(res => {

@@ -347,6 +347,31 @@ New field `billing_auto_bill_print: 'Yes'/'No'` added to `placeOrderWithPayment`
 **Confidence**: HIGH
 **Impact**: MEDIUM — Backend must handle empty string the same as null for these fields
 
+### `collectBillExisting` Payload Rewrite (v4 — BUG-252)
+
+The `collectBillExisting` transform (Flow 4: postpaid → paid) was **significantly rewritten** for Old POS payload parity:
+
+```
+Before (v1-v3):  ~15 fields — order_id, payment_mode, amounts, taxes, basic discounts
+After  (v4):     ~35 fields — adds food_detail[], waiter_id, restaurant_name,
+                   full discount breakdown (12 fields), loyalty, wallet, room,
+                   TAB-specific name/mobile, grand_amount
+```
+
+Key changes:
+1. **`food_detail` array** built from placed cart items — per-item: `food_id`, `unit_price`, `quantity`, `variation_amount`, `addon_amount`, `gst_amount`, `vat_amount`, `discount_amount`
+2. **TAB payment**: `payment_status` is `'success'` (not `'paid'` like all other methods)
+3. **TAB-specific**: `name` + `mobile` fields from `tabContact` for credit tracking
+4. **Full discounts**: 12 fields (was 4) — `self_discount`, `coupon_discount`, `coupon_title`, `coupon_type`, `comm_discount`, `discount_type`, `order_discount_type`, `order_discount`, `discount_value`, `used_loyalty_point`, `use_wallet_balance`, `discount_member_category_*`
+5. **Employee/restaurant**: `waiter_id` (from `user.employeeId`), `restaurant_name`
+6. **Endpoint comment fixed**: was incorrectly noted as "place-order", now correctly "order-bill-payment"
+
+**Evidence**: `orderTransform.js` `collectBillExisting` lines 669-780
+**Confidence**: HIGH
+**Impact**: HIGH — Major payload expansion. Backend dependency on these exact field names.
+
+**⚠ DUPLICATE LOGIC**: The `food_detail` builder in `collectBillExisting` **duplicates** the `buildCartItem` helper (lines 263-351) — both compute per-item variation_amount, addon_amount, tax. They are NOT shared. Any tax calculation fix must be applied in both places.
+
 ---
 
 ## 7b. Prepaid Order Flow (July 2025 — New)
