@@ -141,17 +141,46 @@ backend:
         - working: true
           agent: "testing"
           comment: "GET /api/ endpoint responding correctly with {message: 'Hello World'}. CORS configured properly, no errors in network requests."
+        - working: true
+          agent: "testing"
+          comment: "Re-verified during comprehensive backend surface verification. Endpoint working correctly."
+
+  - task: "Status check API endpoints (MongoDB integration)"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "GET /api/status and POST /api/status endpoints working correctly. MongoDB integration functional - data persists between requests. GET returns list of status checks, POST creates new entries with UUID and timestamp. Tested data persistence successfully."
+
+  - task: "Backend surface verification (auth, websockets, printing, orders)"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Comprehensive verification completed. Backend surface limited to starter FastAPI implementation as expected: 3 endpoints total (GET /api/, GET/POST /api/status). Confirmed absence of auth-protected routes, websocket/socket endpoints, printing endpoints, and order-calculation endpoints. CORS properly configured. MongoDB integration only for status checks."
 
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: true
 
 test_plan:
   current_focus:
     - "Landing page UI verification"
     - "Backend hello-world API integration"
+    - "Status check API endpoints (MongoDB integration)"
+    - "Backend surface verification (auth, websockets, printing, orders)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -159,3 +188,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Documentation-only verification completed successfully. All checks passed: (1) Landing page renders with centered logo and text 'Building something incredible ~!', (2) No login/auth forms, cart UI, print controls, or socket updates present, (3) Backend hello-world API call successful with response logged to console, (4) No frontend errors detected. Screenshot captured at .screenshots/landing_page.png. The app is in a clean initial state matching the repository snapshot."
+    - agent: "testing"
+      message: "Comprehensive backend surface verification completed. Confirmed backend is limited to starter FastAPI implementation with exactly 3 endpoints: GET /api/ (hello world), GET /api/status, POST /api/status (MongoDB integration). Verified absence of auth-protected routes, websocket/socket endpoints, printing endpoints, and order-calculation endpoints. All implemented endpoints working correctly with proper CORS configuration and MongoDB persistence."
