@@ -13,6 +13,7 @@ const CollectPaymentPanel = ({
   onPrintBill,
   onOpenSplitBill, // BUG-004: null when not eligible; called with live finalTotal on click
   onToggleComplimentary, // BUG-018 Part 2: (itemId) => toggle runtime-complimentary flag
+  initialDeliveryCharge = 0, // BUG-019: seeded delivery charge from backend; field becomes readOnly when > 0
   customer: passedCustomer, 
   isRoom, 
   associatedOrders = [],
@@ -88,7 +89,11 @@ const CollectPaymentPanel = ({
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showTransferredOrders, setShowTransferredOrders] = useState(false);
   const [showRoomService, setShowRoomService] = useState(false);
-  const [deliveryChargeInput, setDeliveryChargeInput] = useState('');
+  const [deliveryChargeInput, setDeliveryChargeInput] = useState(
+    // BUG-019 (Apr-2026): lazy-init from backend-seeded value (scan orders / re-engage).
+    // Empty string when no backend value so placeholder shows for fresh in-POS delivery.
+    initialDeliveryCharge > 0 ? String(initialDeliveryCharge) : ''
+  );
 
   // Associated orders total
   const associatedTotal = useMemo(() =>
@@ -680,7 +685,12 @@ const CollectPaymentPanel = ({
                   value={deliveryChargeInput}
                   onChange={(e) => setDeliveryChargeInput(e.target.value)}
                   min="0"
-                  className="w-24 px-2 py-1.5 rounded-lg border text-sm outline-none text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  // BUG-019 (Apr-2026): auto-lock when delivery charge is supplied by backend
+                  // (scan orders / re-engaged orders). Cashier retains entry for fresh in-POS
+                  // delivery orders where no backend charge exists.
+                  readOnly={initialDeliveryCharge > 0}
+                  title={initialDeliveryCharge > 0 ? 'Delivery charge set by order source — not editable' : 'Enter delivery charge'}
+                  className={`w-24 px-2 py-1.5 rounded-lg border text-sm outline-none text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${initialDeliveryCharge > 0 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                   style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
                   data-testid="delivery-charge-input"
                 />

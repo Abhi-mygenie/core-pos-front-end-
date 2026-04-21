@@ -102,6 +102,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     amount: orderData?.amount || 0,
     subtotalAmount: orderData?.subtotalAmount || 0,
     subtotalBeforeTax: orderData?.subtotalBeforeTax || 0,
+    // BUG-019 (Apr-2026): propagate backend-echoed delivery_charge so Collect Bill
+    // maps the scan/re-engage delivery charge instead of defaulting to 0.
+    deliveryCharge: orderData?.deliveryCharge || 0,
   });
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [tableSearchQuery, setTableSearchQuery] = useState(""); // Search filter for tables dropdown
@@ -256,6 +259,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           amount: orderData.amount || 0,
           subtotalAmount: orderData.subtotalAmount || 0,
           subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
+          // BUG-019 (Apr-2026): propagate delivery_charge on savedCart restore.
+          deliveryCharge: orderData.deliveryCharge || 0,
         });
         // Restore order-level notes from placed order
         if (orderData.orderNote) {
@@ -287,6 +292,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         amount: orderData.amount || 0,
         subtotalAmount: orderData.subtotalAmount || 0,
         subtotalBeforeTax: orderData.subtotalBeforeTax || 0,
+        // BUG-019 (Apr-2026): propagate delivery_charge on existing-order re-engage.
+        deliveryCharge: orderData.deliveryCharge || 0,
       });
       // Restore order-level notes from placed order
       if (orderData.orderNote) {
@@ -357,6 +364,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       amount: orderFromContext.amount || 0,
       subtotalAmount: orderFromContext.subtotalAmount || 0,
       subtotalBeforeTax: orderFromContext.subtotalBeforeTax || 0,
+      // BUG-019 (Apr-2026): socket context refresh must also propagate delivery_charge.
+      deliveryCharge: orderFromContext.deliveryCharge || 0,
     });
   }, [placedOrderId, orders]);
 
@@ -1003,6 +1012,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               // BUG-018 Part 2 (Apr-2026): runtime-complimentary toggle callback.
               // Cashier-driven per-item marking; catalog-complimentary items locked.
               onToggleComplimentary={toggleItemComplimentary}
+              // BUG-019 (Apr-2026): seed delivery-charge input from backend-echoed value
+              // (scan orders / re-engaged delivery orders). CollectPaymentPanel renders
+              // the field readOnly when this value > 0.
+              initialDeliveryCharge={orderFinancials.deliveryCharge}
               // BUG-004 (QA, Apr 2026): expose Split Bill trigger from the Collect
               // Payment screen. Only provided when eligible: postpaid placed
               // dine-in/walk-in order with 2+ placed items.
@@ -1153,7 +1166,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     setCartItems([]);
                     setShowPaymentPanel(false);
                     setPlacedOrderId(null);
-                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0 });
+                    setOrderFinancials({ amount: 0, subtotalAmount: 0, subtotalBeforeTax: 0, deliveryCharge: 0 });
                     setOrderNotes([]);
                     setCustomer({ name: '', phone: '' });
                     if (onSelectTable) onSelectTable(null);
@@ -1704,6 +1717,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     amount: newOrder.amount || 0,
                     subtotalAmount: newOrder.subtotalAmount || 0,
                     subtotalBeforeTax: newOrder.subtotalBeforeTax || 0,
+                    // BUG-019 (Apr-2026): split-bill new order must also propagate delivery_charge.
+                    deliveryCharge: newOrder.deliveryCharge || 0,
                   });
                   
                   // Open payment panel for the new order (selected items)
