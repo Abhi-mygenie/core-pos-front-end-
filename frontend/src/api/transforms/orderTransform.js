@@ -108,6 +108,13 @@ export const fromAPI = {
       serveAt: detail.serve_at,
       cancelAt: detail.cancel_at,
       createdAt: detail.created_at,
+      // BUG-018 Part 1 (Apr-2026): propagate catalog-complimentary flags from
+      // backend-echoed food_details so re-engaged / reloaded cart items carry the
+      // same flags that freshly-added items get from adaptProduct. Without this,
+      // Step 1's conditional in buildCartItem / collectBillExisting falls dormant
+      // on any order opened from the dashboard (vs placed within the current session).
+      isComplementary: (foodDetails.complementary || '').toLowerCase() === 'yes',
+      complementaryPrice: parseFloat(foodDetails.complementary_price) || 0,
     };
   },
 
