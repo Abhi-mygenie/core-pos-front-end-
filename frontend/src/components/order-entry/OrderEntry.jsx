@@ -474,7 +474,26 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       });
       return;
     }
-    setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
+    setCartItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item;
+      // BUG-017 (Apr-2026): Recompute totalPrice on qty change for customized items.
+      // Plain items (no customization) have no `totalPrice` — the render fallback
+      // `item.price * item.qty` already handles them correctly.
+      if (item.totalPrice !== undefined && item.totalPrice !== null) {
+        const basePrice = (item.selectedSize?.price ?? item.price) || 0;
+        const variantsPrice = item.selectedVariants
+          ? Object.values(item.selectedVariants).reduce((s, opt) => s + (parseFloat(opt?.price) || 0), 0)
+          : 0;
+        const addonsArr = Array.isArray(item.selectedAddons) ? item.selectedAddons : [];
+        const addonsPrice = addonsArr.reduce(
+          (s, a) => s + ((parseFloat(a.price) || 0) * (a.quantity || a.qty || 1)),
+          0
+        );
+        const unitPrice = basePrice + variantsPrice + addonsPrice;
+        return { ...item, qty: newQty, totalPrice: unitPrice * newQty };
+      }
+      return { ...item, qty: newQty };
+    }));
   }, []);
 
   // Cart total: final payable amount including tax (for Collect Bill button)
