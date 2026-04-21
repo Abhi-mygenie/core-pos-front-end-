@@ -65,6 +65,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     variantGroups: product.variations || [],
     addons: product.addOns || [],
     productImage: product.productImage,
+    // BUG-018 Part 1 (Apr-2026): propagate catalog-complimentary flags into the
+    // cart-item shape so buildCartItem / collectBillExisting can emit the actual
+    // product price in complementary_price / complementary_total. Without these
+    // two lines, the Step 1 conditional always evaluates to false and emits 0.
+    isComplementary: product.isComplementary,
+    complementaryPrice: product.complementaryPrice,
   });
 
   const [activeCategory, setActiveCategory] = useState("popular");
