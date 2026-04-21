@@ -394,6 +394,11 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
   let vatTax = 0;
 
   cart.forEach(item => {
+    // BUG-018 Part 2 (Apr-2026): exclude runtime-marked complimentary lines from
+    // billable subtotal and tax aggregation. Catalog-complimentary lines already
+    // contribute 0 naturally via price:0 — this guard only affects runtime-marked
+    // lines (where price > 0 but is_complementary is flipped to "Yes").
+    if (item.is_complementary === 'Yes') return;
     const lineTotal = (item._fullUnitPrice || item.price || 0) * (item.quantity || 1);
     subtotal += lineTotal;
     gstTax += parseFloat(item.gst_amount) || 0;
