@@ -19,7 +19,7 @@
 | BUG-013 | Service Charge Applied to Takeaway and Delivery (Should Be Dine-In and Room Only) | **FIXED (Apr-2026)** — SC gated by orderType (dineIn/walkIn/room only) | Close | `CollectPaymentPanel.jsx`, `orderTransform.js`, `OrderEntry.jsx` |
 | BUG-014 | GST Not Applied on Tip Amount | **Closed — confirmed working by user (Apr-2026)** | Close | `CollectPaymentPanel.jsx`, `orderTransform.js` |
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
-| BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | Partially Confirmed — `delivery_address` OBJECT correctly gated; scalars `delivery_charge`/`address_id`/`paid_room`/`room_id` always emitted as 0/null | Open | `api/transforms/orderTransform.js` |
+| BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | **FIXED frontend workaround (Apr-2026)** — `delivery_address: null` always emitted; backend `isset()` guard pending | Close (backend open) | `api/transforms/orderTransform.js` |
 | BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | Confirmed — stale `item.totalPrice` baked at add-time is not recomputed on qty change; affects display + local subtotal/tax previews | Open | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/ItemCustomizationModal.jsx` |
 
 
@@ -1296,74 +1296,79 @@ Path C (dine-in TableCard — unrelated but similar shape)
 ```
 
 **QA Status**
-- Partially Confirmed — no delivery-specific **object** leaks (the richer `delivery_address` object is correctly gated to delivery orders only), but several fields that are conceptually tied to delivery/room are currently sent unconditionally on every order type as zero/empty/null placeholders (`delivery_charge`, `address_id`, `paid_room`, `room_id`). Whether the user's bug report covers these placeholder fields or only true delivery-only objects depends on the backend contract.
+- **Runtime Root Cause Confirmed (Apr-2026) — Backend bug, frontend workaround applied.** The preprod PHP backend at `POST /api/v2/vendoremployee/order/place-order` unconditionally accesses `$payload['delivery_address']` without an `isset()` guard. When the frontend correctly omitted this key for non-delivery orders (BUG-007 gating), PHP threw:
+  ```
+  { "error": "Undefined array key \"delivery_address\"" }  → HTTP 500
+  ```
+  Evidence captured by user (Apr-21-2026):
+  - Console: `[Prepaid] CRITICAL: 500 {error: 'Undefined array key "delivery_address"'}` (stack → `handlePayment` @ `CollectPaymentPanel.jsx:336` → `onPaymentComplete`).
+  - UI toast: `Payment Failed — Undefined array key "delivery_address"`.
+  - Request payload (walk-in → mapped to `order_type: "dinein"`): no `delivery_address` key present.
+- **Original frontend expectation (from user's first report) — redirected.** User's initial ask was to *remove* delivery fields from non-delivery payloads. Runtime shows the opposite: backend requires the key to always be present (even as `null`). Implementing the original ask would have worsened the regression.
+- Partially Confirmed overall: `delivery_address` object gating intent is correct, but the strict omission causes backend crash. Scalar fields `delivery_charge`, `address_id`, `paid_room`, `room_id` remain always-emitted as neutral values (no backend error observed for these).
 
-**Current Code Behavior**
-- Payload for the captured dine-in scenario is produced by `toAPI.placeOrderWithPayment(...)` in `frontend/src/api/transforms/orderTransform.js` (Flow 3, lines 637–729).
-- The returned payload always includes the following fields, regardless of `orderType`:
-  - `delivery_charge: parseFloat(deliveryCharge || 0)` (line 703) → always present, `0` for non-delivery.
-  - `address_id: addressId` (line 717) → always present, `null` for non-delivery.
-  - `paid_room: ''` (line 715) → always present, empty for non-room.
-  - `room_id: ''` (line 716) → always present, empty for non-room.
-- The only true delivery-only object IS conditionally gated (lines 724–727):
-  ```
-  ...(orderType === 'delivery' && deliveryAddress
-      ? { delivery_address: buildDeliveryAddress(deliveryAddress) }
-      : {})
-  ```
-  i.e. the full `delivery_address` object (street/city/etc.) is **not** leaked into non-delivery payloads. This matches the sample payload the user provided, which contains no `delivery_address` key.
-- The same "always-included, zeroed-out" pattern is present in:
-  - `toAPI.placeOrder` (Flow 1, lines 508–568): `delivery_charge: 0` (540), `address_id` (554), `paid_room: null` (552), `room_id: null` (553).
-  - `toAPI.updateOrder` (Flow 2, lines 575–630): `delivery_charge: 0` (608), `address_id` (623), `room_id: null` (620).
-- Conclusion: the "delivery_address" OBJECT is correctly gated. The scalar "delivery/room-ish" fields (`delivery_charge`, `address_id`, `paid_room`, `room_id`) are emitted on every payload as neutral placeholders.
+**Current Code Behavior (post-fix, Apr-2026)**
+- `frontend/src/api/transforms/orderTransform.js`:
+  - `placeOrder` (Flow 1, lines ~562–567): always emits `payload.delivery_address = (orderType === 'delivery' && deliveryAddress) ? buildDeliveryAddress(deliveryAddress) : null;`.
+  - `placeOrderWithPayment` (Flow 3, lines ~724–733): same pattern — always emits `delivery_address` key with full object for delivery orders or `null` for all other order types.
+  - `updateOrder` (Flow 2, lines 575–630) — unchanged. It never emitted `delivery_address` historically and targets a different endpoint (`PUT /api/v1/vendoremployee/order/update-place-order`); no runtime error reported for this flow. If the same backend guard gap exists for update-order endpoint, a follow-up patch will be needed.
+- Result: non-delivery Place Order / Place + Pay now succeed end-to-end against preprod backend.
 
 **Expected Behavior**
-- Per user input: fields specific to delivery orders should not appear in non-delivery (dine-in / takeaway / walk-in / room-service) place-order payloads. By implication this includes `delivery_charge`, and possibly `address_id`, `paid_room`, `room_id` depending on backend tolerance.
+- Non-delivery order placement (walk-in, dine-in, takeaway, room) must not fail due to backend misreading an optional field. Either:
+  - (short-term / current state) frontend always emits `delivery_address: null` for non-delivery orders, OR
+  - (long-term / proper) backend uses `$payload['delivery_address'] ?? null` / `isset()` and frontend can safely omit the key for non-delivery orders.
 
 **Gap Observed**
-- Gap between user expectation and code: the frontend currently always emits `delivery_charge`, `address_id`, `paid_room`, `room_id` (as `0` / `null` / `''`). There is no conditional guard tied to `orderType` for these four scalar fields.
-- No gap for `delivery_address` (already correctly omitted on non-delivery).
+- **Backend gap (primary, still open):** Preprod PHP backend does not guard the `delivery_address` key access. This is the real bug; frontend workaround only masks it.
+- **Frontend gap (resolved by this fix):** Was correctly gating the key per BUG-007 intent, but unaware of the unguarded backend access. Now emits `null` for non-delivery as a defensive compatibility measure.
 
 **Impacted Areas**
 - Modules: Order Placement, Payload Construction, Billing
-- Screens / Flows: OrderEntry → Place Order (Flow 1), Add Items (Flow 2 — update-order), Place + Pay (Flow 3 — prepaid), Collect Bill (Flow 4 — postpaid; to be verified separately)
+- Screens / Flows: OrderEntry → Place + Pay (Prepaid), Place Order (Postpaid) — all non-delivery order types (walk-in / dine-in / takeaway / room)
 - Components / Hooks / Utilities:
-  - `toAPI.placeOrder` (lines 508–568)
-  - `toAPI.updateOrder` (lines 575–630)
-  - `toAPI.placeOrderWithPayment` (lines 637–729)
-  - `buildDeliveryAddress` helper (referenced ~line 564, 725)
+  - `toAPI.placeOrder` (lines 508–571) — patched
+  - `toAPI.placeOrderWithPayment` (lines 637–733) — patched
+  - `toAPI.updateOrder` (lines 575–630) — NOT patched; different endpoint, no reported failure
+  - `buildDeliveryAddress` helper (lines 431–449) — unchanged
 
 **Files Reviewed**
-- `frontend/src/api/transforms/orderTransform.js` (lines 40–65 `mapOrderTypeToAPI`, 265–353 `buildCartItem`, 508–729 all three write-flows)
-- Reference to BUG-007 comment (line 562–564, 724–727) confirming the existing intentional delivery-gating applies only to the `delivery_address` object.
+- `frontend/src/api/transforms/orderTransform.js` (lines 508–733)
+- Runtime evidence: DevTools Network payload + Console error at `CollectPaymentPanel.jsx:336` → `onPaymentComplete` → `orderService.placeOrderWithPayment`
 
 **Code Evidence Summary**
-- `placeOrderWithPayment` (Flow 3 — matches the sample prepaid dine-in payload the user captured): unconditionally writes `delivery_charge`, `address_id`, `paid_room`, `room_id` keys. Only the richer `delivery_address` object is spread in conditionally based on `orderType === 'delivery' && deliveryAddress`.
-- `placeOrder` and `updateOrder` follow the same "always present, zero/null value" pattern.
-- `mapOrderTypeToAPI` is used to set `order_type` but is NOT used to gate any other field other than `delivery_address`.
+- Pre-fix: two call-sites used conditional spread / `if` block, so the `delivery_address` key was completely absent from non-delivery payloads.
+- Post-fix: both call-sites unconditionally assign the key; value is full object for delivery orders, `null` otherwise.
+- `buildCartItem` and all other payload-building logic untouched.
 
 **Dependencies / External Validation Needed**
-- Backend dependency: Confirm backend contract for `/api/v2/vendoremployee/order/place-order` — whether omitting `delivery_charge`, `address_id`, `paid_room`, `room_id` for non-delivery / non-room order types is accepted without side effects, or whether the backend requires these keys to always be present (even as neutral values). This decides whether the fix is "omit the keys" vs. "the current behavior is already compliant".
-- API dependency: Same endpoint contract.
-- Socket dependency: None for payload-out; payload is composed purely frontend-side.
-- Payload dependency: `options.deliveryAddress` and `options.addressId` are the only delivery-typed inputs. Currently the frontend writes them even when they are null/empty for non-delivery.
+- Backend dependency (still open): Backend team must add `isset()` / `??` guards in the PHP controller so the frontend can eventually revert to strict gating if desired. Tracked in `AD_UPDATES_PENDING.md` Entry #6 (extended).
+- API dependency: `/api/v2/vendoremployee/order/place-order` — behavior with `delivery_address: null` confirmed acceptable (same contract as pre-BUG-007). Behavior with key completely absent rejects with HTTP 500.
+- Socket dependency: None.
+- Payload dependency: None — fix is a one-key addition.
 - Config dependency: None.
 
-**Reproduction Understanding**
-- Step 1: Open OrderEntry, choose Dine-In (or Takeaway / Walk-In / Room) order type — i.e. anything other than Delivery.
-- Step 2: Add items, go to Collect Payment, complete Place + Pay (prepaid), or Place Order (postpaid).
-- Step 3: Inspect outgoing HTTP request body for `POST /api/v2/vendoremployee/order/place-order`.
-- Observed: keys `delivery_charge`, `address_id`, `paid_room`, `room_id` are present in the payload (matching the user's sample).
-- Observed: key `delivery_address` is correctly absent (correct behavior — not a gap).
+**Reproduction Understanding (pre-fix)**
+- Step 1: Open OrderEntry, choose Walk-In (or Dine-In / Takeaway / Room).
+- Step 2: Add items → Collect Payment → Place + Pay (Prepaid, any payment mode).
+- Step 3: Observe `POST /api/v2/vendoremployee/order/place-order` → HTTP 500 with body `{"error":"Undefined array key \"delivery_address\""}`.
+- Step 4: UI toast shows "Payment Failed — Undefined array key 'delivery_address'".
+
+**Verification (post-fix)**
+- Step 1: Open OrderEntry, choose Walk-In.
+- Step 2: Add items → Collect Payment → Place + Pay with Cash.
+- Step 3: Observe payload now contains `"delivery_address": null` for non-delivery orders.
+- Step 4: Expect HTTP 200, order placed, auto-print fires (if enabled), order engages via socket.
 
 **Open Questions / Unknowns**
-- User did not explicitly list which keys they consider "delivery fields". The sample they provided contains only the four scalar placeholders (`delivery_charge`, `address_id`, `paid_room`, `room_id`) — the richer `delivery_address` object is already absent. Clarification needed on whether the user's complaint is about these four scalar fields or about a different field that they believe is present but is not.
-- Does backend reject requests when these keys are omitted for non-delivery orders? (Informs whether current "always-include-as-zero" is a bug or a safe default.)
-- Do Flow 4 (`collectBillExisting`, lines ~737+) and auto-print `buildBillPrintPayload` (lines 867–1004) exhibit the same pattern? Not inspected in this pass; should be verified if scope expands.
+- Does the same backend handler crash on `PUT /api/v1/vendoremployee/order/update-place-order` if the update payload omits `delivery_address`? The update-order payload (Flow 2) does NOT emit the key. If affected, extend the same null-default fix to `updateOrder`.
+- Does the CollectBill / order-bill-payment flow (Flow 4) also access `delivery_address`? If so, extend the fix.
+- Should scalar fields (`delivery_charge`, `address_id`, `paid_room`, `room_id`) eventually be gated by order type, per user's original BUG-016 intent? Blocked on the same backend-guard prerequisite.
 
 **Notes**
-- This bug touches the already-fixed BUG-007 (delivery-address object emission). BUG-007's fix is intact — it does not re-introduce leakage of the `delivery_address` object.
-- The behavior is consistent across `placeOrder`, `updateOrder`, and `placeOrderWithPayment` — they all use the "always-include-with-zero-value" pattern for `delivery_charge`, `address_id`, `paid_room`, `room_id`. Any future remediation would need to be applied consistently to all three.
+- This fix is a **backward-compatibility workaround** to unblock production payment collection on non-delivery prepaid orders. The true fix is on the backend (`isset()` / `??` guard).
+- BUG-007's design intent (sending the full object only on delivery) remains partially preserved: the object is still only emitted with real data for delivery orders; non-delivery orders send a sentinel `null`.
+- Once the backend is patched, a follow-up ticket can revert frontend to strict omission to fully honor the original BUG-016 user intent.
 
 
 ---

@@ -559,10 +559,13 @@ export const toAPI = {
       cart,
     };
 
-    // BUG-007: emit full delivery_address object for delivery orders only.
-    if (orderType === 'delivery' && deliveryAddress) {
-      payload.delivery_address = buildDeliveryAddress(deliveryAddress);
-    }
+    // BUG-007 / BUG-016 (Apr-2026): emit full delivery_address object for
+    // delivery orders only; for non-delivery orders emit `null` so the preprod
+    // PHP backend's unguarded `$payload['delivery_address']` access does not
+    // throw "Undefined array key". See AD_UPDATES_PENDING.md Entry #6.
+    payload.delivery_address = (orderType === 'delivery' && deliveryAddress)
+      ? buildDeliveryAddress(deliveryAddress)
+      : null;
 
     return payload;
   },
@@ -721,10 +724,13 @@ export const toAPI = {
       usage_id:                   '',
       cart,
       partial_payments:           partialPayments,
-      // BUG-007: full delivery_address object for delivery orders only (spread-in).
-      ...(orderType === 'delivery' && deliveryAddress
-          ? { delivery_address: buildDeliveryAddress(deliveryAddress) }
-          : {}),
+      // BUG-007 / BUG-016 (Apr-2026): always emit `delivery_address` key — full
+      // object for delivery orders, `null` otherwise — so the preprod PHP
+      // backend's unguarded `$payload['delivery_address']` access does not throw
+      // "Undefined array key" on non-delivery Place+Pay. See AD_UPDATES_PENDING.md Entry #6.
+      delivery_address: (orderType === 'delivery' && deliveryAddress)
+        ? buildDeliveryAddress(deliveryAddress)
+        : null,
     };
   },
 

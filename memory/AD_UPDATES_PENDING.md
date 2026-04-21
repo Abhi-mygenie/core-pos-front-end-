@@ -119,6 +119,20 @@ The frontend now sends a structured `delivery_address` object in `place-order` p
 - Adjust `buildDeliveryAddress` in `frontend/src/api/transforms/orderTransform.js` to match whatever backend confirms.
 - No other files need to change; helper is the single point of contact.
 
+**Update — Apr-21-2026 (BUG-016 runtime finding, second backend gap)**
+Non-delivery (walk-in / dine-in / takeaway / room) prepaid Place + Pay fails at runtime with:
+```
+HTTP 500 — { "error": "Undefined array key \"delivery_address\"" }
+```
+Root cause: the same preprod PHP handler for `POST /api/v2/vendoremployee/order/place-order` unconditionally reads `$payload['delivery_address']` without an `isset()` / `??` guard. When the frontend correctly omits the key for non-delivery orders (per the BUG-007 gated emission above), PHP throws.
+
+**Frontend workaround shipped (BUG-016)**: `placeOrder` and `placeOrderWithPayment` in `orderTransform.js` now always emit `delivery_address` — full object for delivery orders, `null` otherwise. This preserves BUG-007's intent (no real delivery data leaked to non-delivery orders) while preventing the PHP crash.
+
+**Additional action required by backend team**
+1. Add `isset()` / `??` guard (or `?? null` coalescing) everywhere the `place-order`, `update-place-order`, and `order-bill-payment` controllers read `delivery_address`. This is independent of, and should be shipped alongside, the persistence fix above.
+2. Once the guard is in place, the frontend can (optionally, future-dated) revert to strict gating per the original BUG-016 user intent — where `delivery_address` is completely omitted for non-delivery orders.
+3. Confirm whether `PUT /api/v1/vendoremployee/order/update-place-order` (Flow 2) and `POST /api/v2/vendoremployee/order/order-bill-payment` (Flow 4) exhibit the same unguarded access pattern. The frontend fix currently covers only the two flows that reach `/place-order` endpoint.
+
 ---
 
 ## Entry #5 — BUG-006 UX v1 + v2 (Collect Bill layout reorganization, Apr-2026)
