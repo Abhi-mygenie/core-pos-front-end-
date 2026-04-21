@@ -20,6 +20,7 @@
 | BUG-014 | GST Not Applied on Tip Amount | **Closed — confirmed working by user (Apr-2026)** | Close | `CollectPaymentPanel.jsx`, `orderTransform.js` |
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
 | BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | | | |
+| BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | | | |
 
 
 
@@ -1326,4 +1327,50 @@ Path C (dine-in TableCard — unrelated but similar shape)
 
 **Notes**
 - _TBD_
+
+
+---
+
+## BUG-017 / Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons)
+
+**User Reported Issue**
+- When the quantity for a cart item is increased by typing/inputting the value directly into the Qty field, the item's amount (price) is not updated accordingly. This appears to happen specifically on items that have variants and/or add-ons.
+- Observed in screenshot:
+  - `Vada Pav` — Qty `8`, Price shown as `₹280` (amount does not reflect qty 8).
+  - `Chai Vada Pav` (Options: Without Sugar, variant-based) — Qty `98`, Price shown as `₹45` (amount clearly not recalculated for qty 98).
+
+**QA Status**
+- _TBD_
+
+**Current Code Behavior**
+- _TBD_
+
+**Expected Behavior**
+- When quantity is changed by direct input (not just via `+` / `-` buttons), the item's line amount must recalculate correctly, including for items with variants and/or add-ons.
+
+**Gap Observed**
+- _TBD_
+
+**Impacted Areas**
+- _TBD_
+
+**Files Reviewed**
+- _TBD_
+
+**Code Evidence Summary**
+- _TBD_
+
+**Dependencies / External Validation Needed**
+- _TBD_
+
+**Reproduction Understanding**
+- Add an item that has variants/add-ons (e.g., `Chai Vada Pav` with "Options: Without Sugar") to the cart.
+- Change the quantity by typing a value directly into the Qty input (instead of using +/-).
+- Observed: the price/amount column does not update to reflect the new quantity.
+
+**Open Questions / Unknowns**
+- _TBD_
+
+**Notes**
+- Screenshot reference provided by user (Screenshot 2026-04-21 at 11.45.42 AM).
 
