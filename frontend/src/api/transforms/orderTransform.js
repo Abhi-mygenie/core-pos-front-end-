@@ -974,16 +974,55 @@ export const toAPI = {
   buildBillPrintPayload: (order, serviceChargePercentage = 0, overrides = {}) => {
     const rawDetails = order.rawOrderDetails || [];
 
-    // Filter out system marker items
-    const billFoodList = rawDetails.filter(d =>
-      (d.food_details?.name || '').toLowerCase() !== 'check in'
-    );
+    // BUG-018 Part 3 (Apr-2026): Complimentary carve-out for print payload.
+    // `billFoodList` previously passed rawOrderDetails through unchanged, which
+    // meant catalog-complimentary and runtime-marked complimentary lines
+    // printed with their actual unit_price / tax values (customer appeared to
+    // be charged for the free item), and the default-branch subtotal/gst
+    // aggregation below summed gross — inflating prepaid totals when overrides
+    // were absent.
+    //
+    // Predicate matches fromAPI.orderItem hydration (lines 116, 122):
+    //   - catalog:  food_details.complementary === 'Yes' (case-insensitive)
+    //   - runtime:  detail.is_complementary === 'Yes'   (case-insensitive)
+    const isDetailComplimentary = (d) => {
+      const catalog = (d?.food_details?.complementary || '').toLowerCase() === 'yes';
+      const runtime = (d?.is_complementary || '').toLowerCase() === 'yes';
+      return catalog || runtime;
+    };
+
+    // Step 1: Zero-out price / tax on complimentary lines in billFoodList so the
+    // printed receipt shows the line at ₹0 (item name preserved). Non-
+    // complimentary lines pass through unchanged. Also filters the 'Check In'
+    // system marker.
+    const billFoodList = rawDetails
+      .filter(d => (d.food_details?.name || '').toLowerCase() !== 'check in')
+      .map(d => {
+        if (!isDetailComplimentary(d)) return d;
+        return {
+          ...d,
+          price:          0,
+          unit_price:     0,
+          food_amount:    0,
+          variation_amount: 0,
+          addon_amount:   0,
+          gst_tax_amount: 0,
+          vat_tax_amount: 0,
+          tax_amount:     0,
+          // complementary_price preserved from original detail for print reference.
+        };
+      });
 
     // Compute GST and VAT totals + subtotal from item-level data
     // BUG-246: item.price from rawOrderDetails is the LINE TOTAL (unit_price × qty),
     // NOT the unit price. Use unit_price or food_details.price to avoid double-counting.
+    // BUG-018 Part 3: skip complimentary lines from the aggregation so the
+    // default-branch (no-override) fallback — used by dashboard printer icons
+    // and any path that omits orderItemTotal/orderSubtotal/gstTax overrides —
+    // does not inflate subtotal or tax.
     let gst_tax = 0, vat_tax = 0, computedSubtotal = 0;
     billFoodList.forEach(item => {
+      if (isDetailComplimentary(item)) return;
       const qty = parseFloat(item.quantity) || 1;
       const unitPrice = parseFloat(item.unit_price) || parseFloat(item.food_details?.price) || 0;
       const price = unitPrice > 0 ? unitPrice : (parseFloat(item.price) || 0);
