@@ -21,6 +21,7 @@
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
 | BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | **FIXED frontend workaround (Apr-2026)** — `delivery_address: null` always emitted; backend `isset()` guard pending | Close (backend open) | `api/transforms/orderTransform.js` |
 | BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | Confirmed — stale `item.totalPrice` baked at add-time is not recomputed on qty change; affects display + local subtotal/tax previews | Open | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/ItemCustomizationModal.jsx` |
+| BUG-018 | Collect Bill UI — Ability to Mark an Item as Complimentary | | | |
 
 
 
@@ -1461,4 +1462,59 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - The bug is specific to unplaced items added through `ItemCustomizationModal` (customized items). Plain items routed through `addToCart` are unaffected because `item.totalPrice` is never set — the display falls back to the live `item.price * item.qty` expression.
 - Placed-item rows (`PlacedItemRow`) use a different proportional formula (`totalPrice / item.qty * shownQty`) and are not part of this bug.
 - Screenshot reference provided by user (Screenshot 2026-04-21 at 11.45.42 AM).
+
+
+---
+
+## BUG-018 / Collect Bill UI — Ability to Mark an Item as Complimentary
+
+**User Reported Issue**
+- On the Collect Bill (Collect Order) UI, the user wants the ability to mark any individual item in the order as **complimentary** (i.e., given free of charge).
+- Per user: *"in collect order UI we should be able to mark any item complimentary. Since we have already finalized our computing logic yesterday in one of bug fixing, we need to ensure it doesn't break the code for calculation and print payloads."*
+- Screenshot reference: Collect Bill → ITEMS section showing `Chocolate Delight Cake x1 ₹350`, `mater panneer x1 ₹325`, `mater panneer x2 ₹650` — user expects a UI affordance on each of these rows to toggle "Complimentary" status.
+
+**Business Constraint (user-stated, to be preserved during implementation)**
+- Must not break the already-finalized billing-calculation logic (BUG-006 / AD-101 / AD-105 chain — post-discount SC base, GST-everywhere addendum, UI-as-source-of-truth for tax in both `order-bill-payment` and `order-temp-store` payloads).
+- Must not break the print payload (`order-temp-store`) contract.
+
+**QA Status**
+- _TBD_
+
+**Current Code Behavior**
+- _TBD_
+
+**Expected Behavior**
+- User must be able to mark any item in the Collect Bill items list as complimentary (free). Once marked:
+  - That item's contribution to the billable subtotal / tax / service charge / discount / final amount must be excluded (or accounted for as complementary per existing `complementary_price` / `is_complementary` cart-item fields already present in the API contract).
+  - UI must clearly indicate the item is complimentary.
+  - Print payload and collect-bill payment payload must reflect the complimentary status without regressing the BUG-006 billing rules.
+
+**Gap Observed**
+- _TBD_
+
+**Impacted Areas**
+- _TBD_
+
+**Files Reviewed**
+- _TBD_
+
+**Code Evidence Summary**
+- _TBD_
+
+**Dependencies / External Validation Needed**
+- _TBD_
+
+**Reproduction Understanding**
+- Step 1: Open an existing order → Collect Bill.
+- Step 2: Observe the ITEMS section showing all order items.
+- Step 3: Attempt to mark one specific item (e.g., one of the `mater panneer` rows) as complimentary.
+- Observed: there is no UI affordance on Collect Bill items to mark an item complimentary.
+- Expected: an inline toggle / action on each item row to flag it as complimentary.
+
+**Open Questions / Unknowns**
+- _TBD_
+
+**Notes**
+- Screenshot reference provided by user (Screenshot 2026-04-21 at 12.38.59 PM).
+- Related to AD-101 (billing calculation order), AD-105 (UI-vs-print tax consistency), and the BUG-006 fix chain — all must remain intact when complimentary logic is introduced.
 
