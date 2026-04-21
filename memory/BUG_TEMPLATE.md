@@ -19,8 +19,8 @@
 | BUG-013 | Service Charge Applied to Takeaway and Delivery (Should Be Dine-In and Room Only) | **FIXED (Apr-2026)** — SC gated by orderType (dineIn/walkIn/room only) | Close | `CollectPaymentPanel.jsx`, `orderTransform.js`, `OrderEntry.jsx` |
 | BUG-014 | GST Not Applied on Tip Amount | **Closed — confirmed working by user (Apr-2026)** | Close | `CollectPaymentPanel.jsx`, `orderTransform.js` |
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
-| BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | | | |
-| BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | | | |
+| BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | Partially Confirmed — `delivery_address` OBJECT correctly gated; scalars `delivery_charge`/`address_id`/`paid_room`/`room_id` always emitted as 0/null | Open | `api/transforms/orderTransform.js` |
+| BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | Confirmed — stale `item.totalPrice` baked at add-time is not recomputed on qty change; affects display + local subtotal/tax previews | Open | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/ItemCustomizationModal.jsx` |
 
 
 
@@ -1296,37 +1296,74 @@ Path C (dine-in TableCard — unrelated but similar shape)
 ```
 
 **QA Status**
-- _TBD_
+- Partially Confirmed — no delivery-specific **object** leaks (the richer `delivery_address` object is correctly gated to delivery orders only), but several fields that are conceptually tied to delivery/room are currently sent unconditionally on every order type as zero/empty/null placeholders (`delivery_charge`, `address_id`, `paid_room`, `room_id`). Whether the user's bug report covers these placeholder fields or only true delivery-only objects depends on the backend contract.
 
 **Current Code Behavior**
-- _TBD_
+- Payload for the captured dine-in scenario is produced by `toAPI.placeOrderWithPayment(...)` in `frontend/src/api/transforms/orderTransform.js` (Flow 3, lines 637–729).
+- The returned payload always includes the following fields, regardless of `orderType`:
+  - `delivery_charge: parseFloat(deliveryCharge || 0)` (line 703) → always present, `0` for non-delivery.
+  - `address_id: addressId` (line 717) → always present, `null` for non-delivery.
+  - `paid_room: ''` (line 715) → always present, empty for non-room.
+  - `room_id: ''` (line 716) → always present, empty for non-room.
+- The only true delivery-only object IS conditionally gated (lines 724–727):
+  ```
+  ...(orderType === 'delivery' && deliveryAddress
+      ? { delivery_address: buildDeliveryAddress(deliveryAddress) }
+      : {})
+  ```
+  i.e. the full `delivery_address` object (street/city/etc.) is **not** leaked into non-delivery payloads. This matches the sample payload the user provided, which contains no `delivery_address` key.
+- The same "always-included, zeroed-out" pattern is present in:
+  - `toAPI.placeOrder` (Flow 1, lines 508–568): `delivery_charge: 0` (540), `address_id` (554), `paid_room: null` (552), `room_id: null` (553).
+  - `toAPI.updateOrder` (Flow 2, lines 575–630): `delivery_charge: 0` (608), `address_id` (623), `room_id: null` (620).
+- Conclusion: the "delivery_address" OBJECT is correctly gated. The scalar "delivery/room-ish" fields (`delivery_charge`, `address_id`, `paid_room`, `room_id`) are emitted on every payload as neutral placeholders.
 
 **Expected Behavior**
-- Delivery-related payload fields must be included only when `order_type === "delivery"`. For all other order types (dine-in, takeaway, walk-in, room), these fields should be omitted from the request.
+- Per user input: fields specific to delivery orders should not appear in non-delivery (dine-in / takeaway / walk-in / room-service) place-order payloads. By implication this includes `delivery_charge`, and possibly `address_id`, `paid_room`, `room_id` depending on backend tolerance.
 
 **Gap Observed**
-- _TBD_
+- Gap between user expectation and code: the frontend currently always emits `delivery_charge`, `address_id`, `paid_room`, `room_id` (as `0` / `null` / `''`). There is no conditional guard tied to `orderType` for these four scalar fields.
+- No gap for `delivery_address` (already correctly omitted on non-delivery).
 
 **Impacted Areas**
-- _TBD_
+- Modules: Order Placement, Payload Construction, Billing
+- Screens / Flows: OrderEntry → Place Order (Flow 1), Add Items (Flow 2 — update-order), Place + Pay (Flow 3 — prepaid), Collect Bill (Flow 4 — postpaid; to be verified separately)
+- Components / Hooks / Utilities:
+  - `toAPI.placeOrder` (lines 508–568)
+  - `toAPI.updateOrder` (lines 575–630)
+  - `toAPI.placeOrderWithPayment` (lines 637–729)
+  - `buildDeliveryAddress` helper (referenced ~line 564, 725)
 
 **Files Reviewed**
-- _TBD_
+- `frontend/src/api/transforms/orderTransform.js` (lines 40–65 `mapOrderTypeToAPI`, 265–353 `buildCartItem`, 508–729 all three write-flows)
+- Reference to BUG-007 comment (line 562–564, 724–727) confirming the existing intentional delivery-gating applies only to the `delivery_address` object.
 
 **Code Evidence Summary**
-- _TBD_
+- `placeOrderWithPayment` (Flow 3 — matches the sample prepaid dine-in payload the user captured): unconditionally writes `delivery_charge`, `address_id`, `paid_room`, `room_id` keys. Only the richer `delivery_address` object is spread in conditionally based on `orderType === 'delivery' && deliveryAddress`.
+- `placeOrder` and `updateOrder` follow the same "always present, zero/null value" pattern.
+- `mapOrderTypeToAPI` is used to set `order_type` but is NOT used to gate any other field other than `delivery_address`.
 
 **Dependencies / External Validation Needed**
-- _TBD_
+- Backend dependency: Confirm backend contract for `/api/v2/vendoremployee/order/place-order` — whether omitting `delivery_charge`, `address_id`, `paid_room`, `room_id` for non-delivery / non-room order types is accepted without side effects, or whether the backend requires these keys to always be present (even as neutral values). This decides whether the fix is "omit the keys" vs. "the current behavior is already compliant".
+- API dependency: Same endpoint contract.
+- Socket dependency: None for payload-out; payload is composed purely frontend-side.
+- Payload dependency: `options.deliveryAddress` and `options.addressId` are the only delivery-typed inputs. Currently the frontend writes them even when they are null/empty for non-delivery.
+- Config dependency: None.
 
 **Reproduction Understanding**
-- _TBD_
+- Step 1: Open OrderEntry, choose Dine-In (or Takeaway / Walk-In / Room) order type — i.e. anything other than Delivery.
+- Step 2: Add items, go to Collect Payment, complete Place + Pay (prepaid), or Place Order (postpaid).
+- Step 3: Inspect outgoing HTTP request body for `POST /api/v2/vendoremployee/order/place-order`.
+- Observed: keys `delivery_charge`, `address_id`, `paid_room`, `room_id` are present in the payload (matching the user's sample).
+- Observed: key `delivery_address` is correctly absent (correct behavior — not a gap).
 
 **Open Questions / Unknowns**
-- _TBD_
+- User did not explicitly list which keys they consider "delivery fields". The sample they provided contains only the four scalar placeholders (`delivery_charge`, `address_id`, `paid_room`, `room_id`) — the richer `delivery_address` object is already absent. Clarification needed on whether the user's complaint is about these four scalar fields or about a different field that they believe is present but is not.
+- Does backend reject requests when these keys are omitted for non-delivery orders? (Informs whether current "always-include-as-zero" is a bug or a safe default.)
+- Do Flow 4 (`collectBillExisting`, lines ~737+) and auto-print `buildBillPrintPayload` (lines 867–1004) exhibit the same pattern? Not inspected in this pass; should be verified if scope expands.
 
 **Notes**
-- _TBD_
+- This bug touches the already-fixed BUG-007 (delivery-address object emission). BUG-007's fix is intact — it does not re-introduce leakage of the `delivery_address` object.
+- The behavior is consistent across `placeOrder`, `updateOrder`, and `placeOrderWithPayment` — they all use the "always-include-with-zero-value" pattern for `delivery_charge`, `address_id`, `paid_room`, `room_id`. Any future remediation would need to be applied consistently to all three.
 
 
 ---
@@ -1334,43 +1371,89 @@ Path C (dine-in TableCard — unrelated but similar shape)
 ## BUG-017 / Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons)
 
 **User Reported Issue**
-- When the quantity for a cart item is increased by typing/inputting the value directly into the Qty field, the item's amount (price) is not updated accordingly. This appears to happen specifically on items that have variants and/or add-ons.
-- Observed in screenshot:
-  - `Vada Pav` — Qty `8`, Price shown as `₹280` (amount does not reflect qty 8).
-  - `Chai Vada Pav` (Options: Without Sugar, variant-based) — Qty `98`, Price shown as `₹45` (amount clearly not recalculated for qty 98).
+- When the quantity for a cart item is increased by typing a value directly into the Qty input field, the item's line amount (₹) does not update accordingly. The user reports this happens specifically for items that have variants and/or add-ons.
+- Observed in screenshot (Screenshot 2026-04-21 at 11.45.42 AM):
+  - `Vada Pav` — Qty `8`, Price shown as `₹280` (plain item, no variant row).
+  - `Chai Vada Pav` (Options: Without Sugar) — Qty `98`, Price shown as `₹45` (clearly stale — still showing the unit price at qty 1).
 
 **QA Status**
-- _TBD_
+- Confirmed — for unplaced cart items added via the ItemCustomizationModal (items with selected variants, add-ons, or chosen size), the displayed line amount and the pre-placement cart subtotal/tax previews use a stale `item.totalPrice` that was fixed at add-time and is not recomputed when the cart quantity changes.
+- Plain items added via the `addToCart` fast-path (no customization) are not affected — their display falls back to `item.price * item.qty` and updates correctly. This matches the screenshot (Vada Pav qty 8 × ~₹35 = ₹280 — correct; Chai Vada Pav qty 98 × ~₹45 = should be ₹4,410, but display shows ₹45 — incorrect).
 
 **Current Code Behavior**
-- _TBD_
+- Item is added to the cart via one of two paths:
+  1. **Plain (no customization):** `OrderEntry.addToCart` (`OrderEntry.jsx` lines 398–415) spreads the catalog item into the cart item. It does **not** set a `totalPrice` field — so `item.totalPrice` remains undefined.
+  2. **Customized (with size / variants / add-ons):** `ItemCustomizationModal.handleAddToOrder` (`ItemCustomizationModal.jsx` lines 123–150) calls `calculateTotal()` (lines 63–79) and stores the result as `customizedItem.totalPrice`. `calculateTotal` returns `(basePrice + variantsPrice + addonsPrice) * quantity` — baked in at add-time for the modal's then-current `quantity`.
+     Then `OrderEntry.addCustomizedItemToCart` (`OrderEntry.jsx` lines 417–431) spreads the customized item into the cart, preserving `totalPrice`.
+- Qty changes from the cart UI route through `OrderEntry.updateQuantity` (`OrderEntry.jsx` lines 436–478). For unplaced items (the "New Item" path) the entire body is:
+  ```
+  setCartItems(prev => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
+  ```
+  Only `qty` is updated. `totalPrice` is **not** recomputed. There is no hook that watches `qty` changes and recalculates `totalPrice` from `price + variant + addon` amounts.
+- The cart row renders the amount at `CartPanel.jsx` line 235 (`NewItemRow`):
+  ```
+  ₹{(item.totalPrice || (item.price * item.qty)).toLocaleString()}
+  ```
+  `item.totalPrice` is truthy for customized items → the stale value is displayed. For plain items `item.totalPrice` is undefined/0 → fallback `item.price * item.qty` uses the live `qty` → updates correctly.
 
 **Expected Behavior**
-- When quantity is changed by direct input (not just via `+` / `-` buttons), the item's line amount must recalculate correctly, including for items with variants and/or add-ons.
+- When the cart quantity for a customized item changes (via +, −, or direct input into the Qty field), the displayed line amount must recompute to reflect `(basePrice + variantsPrice + addonsPrice) × newQty`.
+- The pre-placement cart subtotal, tax preview, and Collect Payment grand-total previews that rely on line amounts must also reflect the updated quantity before the order is placed.
 
 **Gap Observed**
-- _TBD_
+- Stale `totalPrice` is not invalidated/recomputed when `qty` changes. No line of code in `updateQuantity` (or a reactive selector) recalculates it for customized items.
+- Downstream cart-level aggregates in `OrderEntry.jsx` also use the same stale-prone expression `item.totalPrice || (item.price * item.qty)`:
+  - `localSubtotal` (line 492–494)
+  - `localTax` (lines 496–503) — uses `linePrice = item.totalPrice || (item.price * item.qty)`
+  - `unplacedSubtotal` (lines 504–506)
+  - `unplacedTax` (line 507+)
+  These all under-report for customized items when qty is increased post-add.
 
 **Impacted Areas**
-- _TBD_
+- Modules: Cart / Order Entry, Item Customization, Billing preview (pre-placement)
+- Screens / Flows: OrderEntry → Add Customized Item → change Qty in cart → observe line amount + subtotal + tax preview
+- Components / Hooks / Utilities:
+  - `OrderEntry.addToCart` (lines 398–415)
+  - `OrderEntry.addCustomizedItemToCart` (lines 417–431)
+  - `OrderEntry.updateQuantity` (lines 436–478) — unplaced path is line 477
+  - `OrderEntry.localSubtotal` / `localTax` / `unplacedSubtotal` / `unplacedTax` (lines 492–513)
+  - `CartPanel.NewItemRow` (lines 178–238) — rendering at line 235
+  - `CartPanel.PlacedItemRow` (lines 30–175) — renders a different proportional formula at line 159, `Math.round(item.totalPrice / (item.qty || 1) * shownQty)`; separate code path and not the same bug
+  - `ItemCustomizationModal.calculateTotal` (lines 63–79) and `handleAddToOrder` (lines 123–150) — source of the baked-in `totalPrice`
 
 **Files Reviewed**
-- _TBD_
+- `frontend/src/components/order-entry/OrderEntry.jsx` (lines 395–513 — add/update cart item and local totals)
+- `frontend/src/components/order-entry/CartPanel.jsx` (lines 30–238 — PlacedItemRow + NewItemRow rendering)
+- `frontend/src/components/order-entry/ItemCustomizationModal.jsx` (lines 60–150 — calculateTotal + handleAddToOrder)
+- `frontend/src/api/transforms/orderTransform.js` (lines 265–353 — `buildCartItem` for API payload)
 
 **Code Evidence Summary**
-- _TBD_
+- `ItemCustomizationModal.calculateTotal()` returns `(basePrice + variantsPrice + addonsPrice) * quantity` and is stamped into `totalPrice` at add time only. No recomputation is wired to cart qty changes.
+- `OrderEntry.updateQuantity` (line 477) only updates `qty`; `totalPrice` is preserved verbatim.
+- `CartPanel.NewItemRow` line 235 displays `item.totalPrice || (item.price * item.qty)` — truthy `totalPrice` short-circuits the fallback, showing the stale amount.
+- For the API payload (`buildCartItem`, lines 265–353), `food_amount = basePrice * (item.qty || 1)` and `lineTotal = fullUnitPrice * (item.qty || 1)` — these DO use the fresh `item.qty`. So once Place Order fires, the amount sent to backend is correct (for food_amount; variation/addon amounts are unit-level — not multiplied by qty).
+- **Additional finding inside `buildCartItem` (requires validation):** for customized lines the qty multiplication for variation/addon is performed at the **total** computation step only. `variation_amount` (line 343) and `addon_amount` (line 344) are unit values (not × qty), while the line tax at lines 323–329 uses `fullUnitPrice * item.qty` — so tax is correct, but the per-line `food_amount + variation_amount + addon_amount` composition the backend may sum does not match qty-multiplied totals. This is outside BUG-017 scope but noted as a potential related gap; requires backend contract check.
 
 **Dependencies / External Validation Needed**
-- _TBD_
+- Backend dependency: None for the display bug — it is purely a frontend state-derivation issue.
+- API dependency: `buildCartItem` already uses `item.qty` for `food_amount` — the actual placed-order amount is correct; verify whether backend recomputes line totals from `food_amount + (variation_amount * qty) + (addon_amount * qty)` or takes `food_amount` as-is.
+- Socket dependency: None — bug is pre-placement (unplaced cart items).
+- Payload dependency: None.
+- Config dependency: None.
 
 **Reproduction Understanding**
-- Add an item that has variants/add-ons (e.g., `Chai Vada Pav` with "Options: Without Sugar") to the cart.
-- Change the quantity by typing a value directly into the Qty input (instead of using +/-).
-- Observed: the price/amount column does not update to reflect the new quantity.
+- Step 1: Open OrderEntry, select any table (e.g., dine-in).
+- Step 2: Add an item that has a variant (e.g., `Chai Vada Pav` with "Options: Without Sugar") via the Customize modal; click Add to Order with qty 1.
+- Step 3: Back in the Cart panel, either click the pencil-edit icon for the qty control (or use +/-/input) and type a new quantity (e.g., 98) into the Qty input — or press `+` repeatedly to increase qty.
+- Step 4: Observe the line amount column — it does NOT update; it continues to show the unit price from the modal (e.g., `₹45` when qty=98, instead of `₹45 × 98 = ₹4,410`).
+- Step 5: Repeat with a plain (non-customized) item — observed amount DOES update correctly (fallback path).
 
 **Open Questions / Unknowns**
-- _TBD_
+- None for the display/preview bug — root cause confirmed in code.
+- Potential related question (outside BUG-017 core): confirm backend handling of variation/addon amounts when `quantity > 1` — `buildCartItem` emits them as unit values; if backend expects per-line totals (unit × qty), there may be a separate payload bug. This should be tracked separately if confirmed with backend.
 
 **Notes**
+- The bug is specific to unplaced items added through `ItemCustomizationModal` (customized items). Plain items routed through `addToCart` are unaffected because `item.totalPrice` is never set — the display falls back to the live `item.price * item.qty` expression.
+- Placed-item rows (`PlacedItemRow`) use a different proportional formula (`totalPrice / item.qty * shownQty`) and are not part of this bug.
 - Screenshot reference provided by user (Screenshot 2026-04-21 at 11.45.42 AM).
 
