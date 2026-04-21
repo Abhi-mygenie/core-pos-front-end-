@@ -20,8 +20,9 @@
 | BUG-014 | GST Not Applied on Tip Amount | **Closed — confirmed working by user (Apr-2026)** | Close | `CollectPaymentPanel.jsx`, `orderTransform.js` |
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
 | BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | **FIXED frontend workaround (Apr-2026)** — `delivery_address: null` always emitted; backend `isset()` guard pending | Close (backend open) | `api/transforms/orderTransform.js` |
-| BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | Confirmed — stale `item.totalPrice` baked at add-time is not recomputed on qty change; affects display + local subtotal/tax previews | Open | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/ItemCustomizationModal.jsx` |
-| BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill | Confirmed — 2 parts: (1) catalog-complimentary emits price-carrying key as `0` — must carry actual product price (`complementary_price` on place-order, `complementary_total` on order-bill-payment; `is_complementary` stays `"No"` — correct); (2) runtime per-item checkbox on Collect Bill is missing — on mark: `is_complementary: "Yes"` + price key = `<actual price>` + `food_amount: 0`. Full-line only. Catalog-complimentary checkbox LOCKED ON (cannot uncheck). Frontend authoritative for totals. | Open | `components/order-entry/CollectPaymentPanel.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/OrderEntry.jsx`, `api/transforms/orderTransform.js` (`buildCartItem` 348–349, `collectBillExisting` 802/809, `fromAPI.order()` 117–180) |
+| BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | **FIXED (Apr-2026)** — `totalPrice` recomputed on qty change for customized items in `OrderEntry.updateQuantity` | Close | `components/order-entry/OrderEntry.jsx` |
+| BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill | **FIXED (Apr-2026)** — 6 sub-steps shipped: (1) Step 1 `buildCartItem` + `collectBillExisting` conditional on catalog flag; (1.5) `adaptProduct` propagation; (1.6) `YES_NO_MAP` lowercase aliases; (1.75) `fromAPI.orderItem` hydrator propagation for reloaded orders; (2) runtime checkbox UI + state flag + carve-out in `CollectPaymentPanel`; (2.5) `calcOrderTotals` guard for runtime-marked lines. Catalog checkbox LOCKED ON. Frontend authoritative for totals. | Close | `api/transforms/orderTransform.js`, `api/constants.js`, `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
+| BUG-019 | Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill (cashier under-collects) | **FIXED (Apr-2026)** — `orderFinancials` now carries `deliveryCharge` across 6 call sites; `CollectPaymentPanel` seeds `deliveryChargeInput` from prop and auto-locks field (`readOnly`) when backend-seeded (> 0). Fresh in-POS delivery orders remain editable. | Close | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
 
 
 
@@ -1691,4 +1692,142 @@ Path C (dine-in TableCard — unrelated but similar shape)
   - On the new Collect Bill complimentary checkbox (Part 2 feature), a product that is catalog-complimentary (`item.isComplementary === true` from `productTransform`) must render the checkbox as **LOCKED / DISABLED in the ON state**. A cashier cannot uncheck a catalog-complimentary item and convert it back to billable at runtime.
   - Only products with `item.isComplementary === false` (i.e., normally billable products) have an interactive checkbox that can be toggled ON/OFF at runtime.
   - This rule must be enforced at the UI layer (`CollectPaymentPanel.jsx` items render) so no amount of cashier clicking can flip a catalog-complimentary product to billable.
+
+
+---
+
+## BUG-018 / IMPLEMENTATION RECORD — FIXED (Apr-2026)
+
+**Shipped across 6 sub-steps. All sub-step changes are minimal, additive, and backward-compatible.**
+
+### Sub-step 1 — Payload emits actual catalog price
+- `frontend/src/api/transforms/orderTransform.js`:
+  - `buildCartItem` (lines 332–358): `complementary_price` now derives from `item.complementaryPrice` (or fallback to `item.price`) when `item.isComplementary === true`. `is_complementary` stays `"No"` for catalog-complimentary.
+  - `collectBillExisting` item mapper (lines 797–822): same logic on `complementary_total` key (order-bill-payment contract).
+
+### Sub-step 1.5 — Propagate catalog flag from product → cart item (fresh add)
+- `frontend/src/components/order-entry/OrderEntry.jsx` → `adaptProduct` (lines 53–70): added `isComplementary: product.isComplementary` + `complementaryPrice: product.complementaryPrice`.
+
+### Sub-step 1.6 — Accept lowercase `"yes"/"no"/"y"/"n"` from backend
+- `frontend/src/api/constants.js` → `YES_NO_MAP`: added lowercase aliases. Backend sends `complementary: "yes"`; before fix, `toBoolean` mapped through `YES_NO_MAP["yes"]` → `undefined` → `false`. Now correctly resolves to `true`.
+
+### Sub-step 1.75 — Propagate catalog flag from backend → cart item (reload / re-engage)
+- `frontend/src/api/transforms/orderTransform.js` → `fromAPI.orderItem` (lines 108–115): parse `foodDetails.complementary` → `isComplementary` and `foodDetails.complementary_price` → `complementaryPrice`. Ensures Step 1's conditional fires on reloaded / socket-hydrated cart items.
+
+### Sub-step 2 — Runtime marking feature (checkbox on Collect Bill)
+- `frontend/src/api/transforms/orderTransform.js`:
+  - `fromAPI.orderItem`: additional line — parses `detail.is_complementary` → `isComplementaryRuntime` (enables reload persistence of runtime-marked state).
+  - `buildCartItem`: runtime branch — when `isComplementaryRuntime === true`, emits `is_complementary: "Yes"`, `complementary_price: fullUnitPrice`, and zeroes `food_amount`, `variation_amount`, `addon_amount`, `gst_amount`, `vat_amount`.
+  - `collectBillExisting` item mapper: same runtime branch but using `complementary_total` key.
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx`:
+  - New prop `onToggleComplimentary`.
+  - New helper `isLineComplimentary(item) = item.isComplementary === true || item.isComplementaryRuntime === true`.
+  - New memo `billableItems = activeItems.filter(i => !isLineComplimentary(i))`.
+  - `itemTotal` + `taxTotals` now iterate `billableItems` (AD-101 addendum preserved; `avgGstRate` computed from billable-only).
+  - Two items-list render sites (Default + Room Service) now render a per-row checkbox with: `checked` = `isLineComplimentary(item)`, `disabled` = `item.isComplementary === true` (catalog lock), struck-through price + "(Complimentary)" label when checked.
+- `frontend/src/components/order-entry/OrderEntry.jsx`:
+  - New callback `toggleItemComplimentary(itemId)` — guarded against catalog items (`if (item.isComplementary === true) return item`).
+  - Passed `onToggleComplimentary={toggleItemComplimentary}` to `<CollectPaymentPanel>`.
+
+### Sub-step 2.5 — Order-level totals carve-out for runtime-marked lines
+- `frontend/src/api/transforms/orderTransform.js` → `calcOrderTotals` (line 396 forEach): added `if (item.is_complementary === 'Yes') return;` to skip runtime-marked lines from billable `subtotal`/`gstTax`/`vatTax` aggregation. Fixes order-level `order_sub_total_amount`, `service_tax`, `order_amount` on `place-order` flows 1/2/3 (flow 4 `order-bill-payment` already correct via UI-provided `orderFinancials`). Catalog-complimentary case unaffected (price is already 0 → contributes 0 naturally).
+
+### Runtime Validation Evidence (Apr-21-2026)
+- **Payload A** postpaid Place Order catalog-comp alone: `complementary_price: 10`, `is_complementary: "No"` ✅
+- **Payload B** prepaid Place+Pay (1 cat-comp + ₹120 billable): `cart[0].complementary_price: 10`; order totals `120/12/132` ✅
+- **Payload C** postpaid → Collect Bill runtime-marked ₹220 + billable ₹242: `food_detail[0].is_complementary: "Yes"`, `complementary_total: 220`, food_amount 0; order totals `242/24.2/13.3/280` ✅
+- **Payload D** prepaid Place+Pay runtime-marked ₹220 + billable ₹297: after Step 2.5 → `order_sub_total_amount: 297`, `service_tax: 29.7`, `order_amount: 343` ✅
+
+### Architecture Compliance (Verified)
+- AD-101 / addendum — SC on post-discount billable; GST on items/SC/tip/delivery at `avgGstRate` (billable-only denominator). ✅
+- AD-105 — UI values flow into both `order-bill-payment` and `order-temp-store`. ✅
+- AD-402 — Frontend-computed totals persisted as-is. ✅
+- BUG-013 SC order-type gating, BUG-016 delivery_address null, BUG-017 `totalPrice` recompute — all preserved.
+
+### Known Open Items (not blockers)
+- Print payload for complimentary lines: inherits from `buildCartItem` via transforms — verified no regression, but an explicit "Complimentary" line label on the printed bill would be polish (not scope for this bug).
+- Backend reload echo of `is_complementary: "Yes"` for runtime-marked items: user-confirmed behavior; not explicitly runtime-tested end-to-end in this session (Test 2.4 deferred by user).
+- KOT visibility of complimentary items: unchanged (items still prepared, still on KOT). Business confirmed implicit OK.
+
+
+---
+
+## BUG-019 / Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill
+
+**User Reported Issue (Apr-21-2026)**
+- When a delivery order arrives via customer scan (QR / app), the socket payload carries `delivery_charge` correctly — and Dashboard tile + Order Detail view show the correct grand total including delivery (e.g., ₹57 = ₹44 items + ₹10 delivery + taxes/round).
+- However, on the Collect Bill screen for the same order, the grand total shows ₹47 — the delivery charge input renders as `0`, causing cashier to under-collect by exactly the delivery charge amount.
+- Screenshots: `Screenshot 2026-04-21 at 6.48.54 PM.png` (dashboard tile ₹57), `Screenshot 2026-04-21 at 6.49.22 PM.png` (detail ₹57), `Screenshot 2026-04-21 at 6.50.20 PM.png` (Collect Bill ₹47 with delivery charge 0).
+- User-preferred fix: map the backend delivery charge into the Collect Bill field; make the field **read-only** when backend has provided the value (scan order / re-engage), keep it editable for fresh in-POS cashier-created delivery orders.
+
+**QA Status**
+- **FIXED (Apr-2026) — Option B2 applied.**
+
+**Current Code Behavior (post-fix)**
+- `frontend/src/api/transforms/orderTransform.js` → `fromAPI.order()` line 231 already parsed `api.delivery_charge` → `orderData.deliveryCharge` correctly (no gap on hydrator side).
+- `frontend/src/components/order-entry/OrderEntry.jsx` → `orderFinancials` state (lines 101–108) now carries `deliveryCharge`. Propagation added across 6 call sites: initial state, savedCart re-seed, existing-order re-seed, socket context refresh `useEffect`, split-bill new-order, reset-on-clear.
+- `<CollectPaymentPanel initialDeliveryCharge={orderFinancials.deliveryCharge} />` prop passes the seeded value.
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx`:
+  - Destructures `initialDeliveryCharge = 0` prop.
+  - `deliveryChargeInput` state lazy-init: `initialDeliveryCharge > 0 ? String(initialDeliveryCharge) : ''`.
+  - Input element `readOnly={initialDeliveryCharge > 0}` + `bg-gray-100 cursor-not-allowed` + tooltip "Delivery charge set by order source — not editable".
+  - For fresh in-POS delivery orders (`initialDeliveryCharge === 0`): input remains editable; cashier typing works as before.
+
+**Expected Behavior (matched by fix)**
+- Scan orders / re-engaged delivery orders: delivery-charge field seeded from backend value and read-only. Grand total matches Dashboard/Detail tile.
+- Fresh in-POS delivery orders: field editable with `placeholder="0"`. Existing cashier workflow preserved.
+- Delivery charge flows through to all downstream payloads: `order-bill-payment.delivery_charge`, `order-temp-store` print, grand-total display, GST-on-delivery computation (AD-101 addendum).
+
+**Gap Observed (before fix)**
+- Layer 1 — `fromAPI.order` hydrator: ✅ already parsing correctly.
+- Layer 2 — `OrderEntry.orderFinancials`: ❌ dropped `deliveryCharge` during state seed (all 6 sites).
+- Layer 3 — `CollectPaymentPanel.deliveryChargeInput`: ❌ initialized to empty string; never seeded from a prop.
+- Net effect: seeded value never reached the state that drives grand-total math → cashier under-collects by the delivery-charge amount per scan order.
+
+**Impacted Areas**
+- Modules: Collect Bill, Delivery Order handling, Payload Construction, Socket Hydration Consumer
+- Screens / Flows: Dashboard → Open Order → Collect Bill (for any delivery order arriving with a pre-set charge)
+- Components / Hooks / Utilities:
+  - `OrderEntry.orderFinancials` state (6 call sites)
+  - `OrderEntry` → `<CollectPaymentPanel>` prop wiring
+  - `CollectPaymentPanel.deliveryChargeInput` state + input element
+
+**Files Reviewed / Modified**
+- `frontend/src/components/order-entry/OrderEntry.jsx` — 7 edits across state and prop wiring
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — 3 edits (prop, state seed, readOnly)
+
+**Code Evidence Summary**
+- Pre-fix: `deliveryCharge = orderType === 'delivery' ? parseFloat(deliveryChargeInput) || 0 : 0` resolved to `0` because `deliveryChargeInput` was always empty on mount.
+- Post-fix: `deliveryChargeInput` lazy-initialized from `initialDeliveryCharge` prop → grand total correctly includes delivery + GST-on-delivery → `order-bill-payment.delivery_charge` emits the correct value.
+- Auto-lock prevents accidental cashier edit of an authoritative scan-order value; fresh in-POS orders remain editable.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: None — hydrator already received `delivery_charge` correctly (verified via runtime payload captures).
+- API dependency: `order-bill-payment.delivery_charge` must reflect correct value (now does).
+- Socket dependency: `new-order`, `update-order`, `order-engage` — already carried `delivery_charge` (parsed by `fromAPI.order` line 231).
+- Payload dependency: `fromAPI.order()` line 231 — unchanged.
+- Config dependency: None.
+
+**Reproduction Understanding**
+- Step 1: Create a scan delivery order (customer app / QR) with `delivery_charge > 0` (e.g., ₹10).
+- Step 2: From POS Dashboard, open the order → click Collect Bill.
+- **Pre-fix:** delivery input showed `0` (empty); grand total ₹47 vs ₹57 on Dashboard.
+- **Post-fix:** delivery input shows `10` in a muted/gray read-only field; grand total ₹57 matches Dashboard/Detail; settling sends `delivery_charge: 10` to `/order-bill-payment`.
+
+**Open Questions / Unknowns**
+- If cashier needs to waive a scan-order delivery charge (e.g., customer-comp for service recovery), an explicit "Override" button may be needed. Not in scope; deferred unless a real workflow surfaces.
+
+**Notes**
+- Regression risk is very low: additive state propagation; `readOnly` gated on non-zero seed; no socket / API / billing-math / payload-shape change.
+- Preserves all prior fixes: BUG-007 (delivery_address shape), BUG-013 (SC order-type gating), BUG-016 (delivery_address null on non-delivery), BUG-018 (complimentary items across all sub-steps).
+- Reference: Screenshots captured Apr-21-2026 — `Screenshot 2026-04-21 at 6.48.54 PM.png`, `6.49.22 PM.png`, `6.50.20 PM.png`, and `6.55.47 PM.png` (user's annotated expectation).
+
+**Summary table row (verbatim mirror of BUG-019 status in the top Bug Summary Table)**
+| Field | Value |
+|---|---|
+| Bug ID | BUG-019 |
+| Title | Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill |
+| QA Status | FIXED (Apr-2026) — Option B2: `orderFinancials.deliveryCharge` propagated across all seed sites; `CollectPaymentPanel` lazy-initializes input state and renders `readOnly` when backend value is present. Fresh in-POS delivery orders remain editable. |
+| Impl Status | Close |
+| Key Files | `components/order-entry/OrderEntry.jsx` (6 `setOrderFinancials` call sites + prop wiring), `components/order-entry/CollectPaymentPanel.jsx` (prop + state seed + `readOnly` input) |
 
