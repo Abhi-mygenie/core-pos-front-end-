@@ -502,6 +502,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }));
   }, []);
 
+  // BUG-018 Part 2 (Apr-2026): toggle runtime-complimentary flag on a cart item.
+  // Catalog-complimentary items (item.isComplementary === true) are locked — the
+  // callback refuses to flip them back to billable. UI layer also disables the
+  // checkbox for these items (double-guard).
+  const toggleItemComplimentary = useCallback((itemId) => {
+    setCartItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item;
+      if (item.isComplementary === true) return item; // catalog lock
+      return { ...item, isComplementaryRuntime: !item.isComplementaryRuntime };
+    }));
+  }, []);
+
   // Cart total: final payable amount including tax (for Collect Bill button)
   // Before placing: calculate locally (subtotal + tax)
   // After placing: use orderFinancials.amount from socket (already includes tax)
@@ -988,6 +1000,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               isProcessingPayment={isProcessingPayment}
               orderType={orderType}
               onBack={() => setShowPaymentPanel(false)}
+              // BUG-018 Part 2 (Apr-2026): runtime-complimentary toggle callback.
+              // Cashier-driven per-item marking; catalog-complimentary items locked.
+              onToggleComplimentary={toggleItemComplimentary}
               // BUG-004 (QA, Apr 2026): expose Split Bill trigger from the Collect
               // Payment screen. Only provided when eligible: postpaid placed
               // dine-in/walk-in order with 2+ placed items.

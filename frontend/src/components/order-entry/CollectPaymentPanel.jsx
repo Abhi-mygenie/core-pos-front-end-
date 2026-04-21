@@ -12,6 +12,7 @@ const CollectPaymentPanel = ({
   onPaymentComplete, 
   onPrintBill,
   onOpenSplitBill, // BUG-004: null when not eligible; called with live finalTotal on click
+  onToggleComplimentary, // BUG-018 Part 2: (itemId) => toggle runtime-complimentary flag
   customer: passedCustomer, 
   isRoom, 
   associatedOrders = [],
@@ -65,6 +66,15 @@ const CollectPaymentPanel = ({
     (cartItems || []).filter(item => item.status !== 'cancelled'),
     [cartItems]
   );
+  // BUG-018 Part 2 (Apr-2026): complimentary lines (catalog OR runtime-marked)
+  // carved out of billable math. Plain orders have billableItems === activeItems
+  // → zero arithmetic drift vs pre-fix.
+  const isLineComplimentary = (item) =>
+    item.isComplementary === true || item.isComplementaryRuntime === true;
+  const billableItems = useMemo(
+    () => activeItems.filter(item => !isLineComplimentary(item)),
+    [activeItems]
+  );
   const cancelledItems = useMemo(() => 
     (cartItems || []).filter(item => item.status === 'cancelled'),
     [cartItems]
@@ -103,9 +113,11 @@ const CollectPaymentPanel = ({
 
   // Per-item tax computation — uses product.tax if available, else 0%
   // Only calculate for active (non-cancelled) items
+  // BUG-018 Part 2 (Apr-2026): iterate `billableItems` so complimentary lines are
+  // carved out of the tax base; `avgGstRate` downstream picks this up automatically.
   const taxTotals = useMemo(() => {
     let sgst = 0, cgst = 0;
-    activeItems.forEach(item => {
+    billableItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
       const linePrice = getItemLinePrice(item);
@@ -125,7 +137,7 @@ const CollectPaymentPanel = ({
       sgst: Math.round(sgst * 100) / 100,
       cgst: Math.round(cgst * 100) / 100,
     };
-  }, [activeItems]);
+  }, [billableItems]);
 
   // Rewards state
   const [useLoyalty, setUseLoyalty] = useState(false);
@@ -178,7 +190,9 @@ const CollectPaymentPanel = ({
   const kitchenTotal = kitchenItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
 
   // Calculate bill — always from ALL active cart items (placed + unplaced)
-  const itemTotal = activeItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
+  // BUG-018 Part 2 (Apr-2026): itemTotal now sums billable (non-complimentary) items
+  // only so SC base, discount base, and avgGstRate all carve out complimentary lines.
+  const itemTotal = billableItems.reduce((sum, item) => sum + getItemLinePrice(item), 0);
   
   // Discount from restaurant preset types (from RestaurantContext)
   const [selectedDiscountType, setSelectedDiscountType] = useState(null);
@@ -759,11 +773,31 @@ const CollectPaymentPanel = ({
                   <div className="mt-1 mb-1 text-xs space-y-2" style={{ backgroundColor: `${COLORS.lightBg}` }}>
                     {/* Items list */}
                     <div className="px-3 pt-2 space-y-1.5 max-h-48 overflow-y-auto">
-                      {(cartItems || []).map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-start">
+                      {(cartItems || []).map((item, idx) => {
+                        const isComp = isLineComplimentary(item);
+                        const isCatalogLocked = item.isComplementary === true;
+                        return (
+                        <div key={idx} className="flex justify-between items-start gap-2">
+                          {/* BUG-018 Part 2: complimentary checkbox (locked for catalog items) */}
+                          <input
+                            type="checkbox"
+                            className="mt-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                            checked={isComp}
+                            disabled={isCatalogLocked || !onToggleComplimentary}
+                            onChange={() => onToggleComplimentary && onToggleComplimentary(item.id)}
+                            data-testid={`complimentary-checkbox-${item.id}`}
+                            title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
+                          />
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between">
-                              <span style={{ color: COLORS.darkText }}>{item.name}</span>
+                              <span style={{ color: COLORS.darkText }}>
+                                {item.name}
+                                {isComp && (
+                                  <span className="ml-1 text-[10px] font-semibold" style={{ color: COLORS.primaryGreen }}>
+                                    (Complimentary)
+                                  </span>
+                                )}
+                              </span>
                               <span className="ml-2" style={{ color: COLORS.grayText }}>x{item.qty}</span>
                             </div>
                             {item.customizations && (
@@ -788,11 +822,15 @@ const CollectPaymentPanel = ({
                               </div>
                             )}
                           </div>
-                          <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
+                          <span
+                            className={`ml-4 font-medium ${isComp ? 'line-through' : ''}`}
+                            style={{ color: isComp ? COLORS.grayText : COLORS.darkText }}
+                          >
                             ₹{getItemLinePrice(item).toLocaleString()}
                           </span>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                     {/* Item Total */}
                     <div className="px-3 pt-2 border-t flex justify-between font-medium" style={{ borderColor: COLORS.borderGray }}>
@@ -990,11 +1028,31 @@ const CollectPaymentPanel = ({
               Items
             </div>
             <div className="space-y-2 pb-3 border-b" style={{ borderColor: COLORS.borderGray }}>
-              {(cartItems || []).map((item, idx) => (
-                <div key={idx} className="flex justify-between items-start">
+              {(cartItems || []).map((item, idx) => {
+                const isComp = isLineComplimentary(item);
+                const isCatalogLocked = item.isComplementary === true;
+                return (
+                <div key={idx} className="flex justify-between items-start gap-2">
+                  {/* BUG-018 Part 2: complimentary checkbox (locked for catalog items) */}
+                  <input
+                    type="checkbox"
+                    className="mt-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                    checked={isComp}
+                    disabled={isCatalogLocked || !onToggleComplimentary}
+                    onChange={() => onToggleComplimentary && onToggleComplimentary(item.id)}
+                    data-testid={`complimentary-checkbox-${item.id}`}
+                    title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between">
-                      <span style={{ color: COLORS.darkText }}>{item.name}</span>
+                      <span style={{ color: COLORS.darkText }}>
+                        {item.name}
+                        {isComp && (
+                          <span className="ml-1 text-[10px] font-semibold" style={{ color: COLORS.primaryGreen }}>
+                            (Complimentary)
+                          </span>
+                        )}
+                      </span>
                       <span className="ml-2" style={{ color: COLORS.grayText }}>x{item.qty}</span>
                     </div>
                     {item.customizations && (
@@ -1019,11 +1077,15 @@ const CollectPaymentPanel = ({
                       </div>
                     )}
                   </div>
-                  <span className="ml-4 font-medium" style={{ color: COLORS.darkText }}>
+                  <span
+                    className={`ml-4 font-medium ${isComp ? 'line-through' : ''}`}
+                    style={{ color: isComp ? COLORS.grayText : COLORS.darkText }}
+                  >
                     ₹{getItemLinePrice(item).toLocaleString()}
                   </span>
                 </div>
-              ))}
+                );
+              })}
             </div>
             
             {/* Item Total */}

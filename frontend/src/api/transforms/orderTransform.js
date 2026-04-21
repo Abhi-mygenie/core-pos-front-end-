@@ -115,6 +115,11 @@ export const fromAPI = {
       // on any order opened from the dashboard (vs placed within the current session).
       isComplementary: (foodDetails.complementary || '').toLowerCase() === 'yes',
       complementaryPrice: parseFloat(foodDetails.complementary_price) || 0,
+      // BUG-018 Part 2 (Apr-2026): runtime-marked complimentary flag, echoed back
+      // by backend on the order-detail record itself (not on the catalog record).
+      // Enables runtime-marked state to survive reload / socket re-engage. Defaults
+      // to false when backend omits the field — backward-compatible.
+      isComplementaryRuntime: (detail.is_complementary || '').toLowerCase() === 'yes',
     };
   },
 
@@ -336,6 +341,11 @@ const buildCartItem = (item) => {
   }
   const isGst = taxType === 'GST';
 
+  // BUG-018 Part 2 (Apr-2026): runtime-marked complimentary lines carve out all
+  // billable amounts and flip the flag. Catalog-complimentary Step 1 path is
+  // preserved in the else branch below.
+  const isRuntimeComp = item.isComplementaryRuntime === true;
+
   return {
     food_id:             item.foodId || item.id,
     quantity:            item.qty || 1,
@@ -346,20 +356,22 @@ const buildCartItem = (item) => {
     variations:          variations,
     add_ons:             [],
     station:             item.station ? item.station.toUpperCase() : null,  // null if no station (no KOT)
-    food_amount:         foodAmount,
-    variation_amount:    variationAmount,
-    addon_amount:        addonAmount,
-    gst_amount:          String((isGst ? taxAmount : 0).toFixed(2)),
-    vat_amount:          String((!isGst ? taxAmount : 0).toFixed(2)),
+    food_amount:         isRuntimeComp ? 0 : foodAmount,
+    variation_amount:    isRuntimeComp ? 0 : variationAmount,
+    addon_amount:        isRuntimeComp ? 0 : addonAmount,
+    gst_amount:          isRuntimeComp ? '0.00' : String((isGst ? taxAmount : 0).toFixed(2)),
+    vat_amount:          isRuntimeComp ? '0.00' : String((!isGst ? taxAmount : 0).toFixed(2)),
     discount_amount:     '0.00',
-    // BUG-018 Part 1 (Apr-2026): catalog-complimentary items must carry actual
-    // product price in `complementary_price` (for audit/reporting). `is_complementary`
-    // stays "No" for catalog-complimentary — the "Yes" flag is reserved for
-    // runtime-marked items (Part 2, to follow). See /app/memory/BUG_TEMPLATE.md BUG-018.
-    complementary_price: item.isComplementary
-      ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
-      : 0.0,
-    is_complementary:    'No',
+    // BUG-018 Part 1 (Apr-2026) — catalog-complimentary: actual price in
+    // complementary_price, is_complementary stays "No".
+    // BUG-018 Part 2 (Apr-2026) — runtime-marked: is_complementary = "Yes",
+    // complementary_price = actual line unit price (fullUnitPrice = base + variant + addon).
+    complementary_price: isRuntimeComp
+      ? fullUnitPrice
+      : (item.isComplementary
+          ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
+          : 0.0),
+    is_complementary:    isRuntimeComp ? 'Yes' : 'No',
     food_level_notes:    Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
     _fullUnitPrice:      fullUnitPrice,
   };
@@ -807,25 +819,33 @@ export const toAPI = {
         }
         const isGst = taxType === 'GST';
 
+        // BUG-018 Part 2 (Apr-2026): runtime-marked complimentary lines carve
+        // out all billable amounts and flip the flag. Catalog-complimentary
+        // Step 1 path is preserved in the else branch.
+        const isRuntimeComp = item.isComplementaryRuntime === true;
+
         return {
           food_id:            item.foodId || item.id,
           quantity:           qty,
           item_id:            item.id,
           unit_price:         unitPrice,
-          is_complementary:   'No',
-          food_amount:        unitPrice * qty,
-          variation_amount:   variationAmount,
-          addon_amount:       addonAmount,
-          gst_amount:         String((isGst ? taxAmount : 0).toFixed(2)),
-          vat_amount:         String((!isGst ? taxAmount : 0).toFixed(2)),
+          is_complementary:   isRuntimeComp ? 'Yes' : 'No',
+          food_amount:        isRuntimeComp ? 0 : (unitPrice * qty),
+          variation_amount:   isRuntimeComp ? 0 : variationAmount,
+          addon_amount:       isRuntimeComp ? 0 : addonAmount,
+          gst_amount:         isRuntimeComp ? '0.00' : String((isGst ? taxAmount : 0).toFixed(2)),
+          vat_amount:         isRuntimeComp ? '0.00' : String((!isGst ? taxAmount : 0).toFixed(2)),
           discount_amount:    '0.00',
-          // BUG-018 Part 1 (Apr-2026): catalog-complimentary items must carry actual
-          // product price in `complementary_total` (order-bill-payment key; distinct
-          // from `complementary_price` used on place-order). `is_complementary` stays
-          // "No" for catalog-complimentary. See /app/memory/BUG_TEMPLATE.md BUG-018.
-          complementary_total: item.isComplementary
-            ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
-            : 0,
+          // BUG-018 Part 1 (Apr-2026) — catalog-complimentary: actual price in
+          // complementary_total (order-bill-payment key; distinct from place-order's
+          // complementary_price). is_complementary stays "No".
+          // BUG-018 Part 2 (Apr-2026) — runtime-marked: is_complementary = "Yes",
+          // complementary_total = actual line unit price (base + variation + addon).
+          complementary_total: isRuntimeComp
+            ? (unitPrice + variationAmount + addonAmount)
+            : (item.isComplementary
+                ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
+                : 0),
         };
       });
 
