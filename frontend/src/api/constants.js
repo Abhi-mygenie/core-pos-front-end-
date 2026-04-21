@@ -205,6 +205,14 @@ export const YES_NO_MAP = {
   No: false,
   Y: true,
   N: false,
+  // BUG-018 Part 1 (Apr-2026): backend sometimes emits lowercase for certain fields
+  // (e.g., `complementary: "yes"` on the product/profile API). Add lowercase aliases
+  // so toBoolean returns true. Safe: no existing truthy field was at risk of false-
+  // negatives, and false-values ("no", "n") still resolve correctly.
+  yes: true,
+  no: false,
+  y: true,
+  n: false,
 };
 
 // =============================================================================
