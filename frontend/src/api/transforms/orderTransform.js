@@ -345,7 +345,13 @@ const buildCartItem = (item) => {
     gst_amount:          String((isGst ? taxAmount : 0).toFixed(2)),
     vat_amount:          String((!isGst ? taxAmount : 0).toFixed(2)),
     discount_amount:     '0.00',
-    complementary_price: 0.0,
+    // BUG-018 Part 1 (Apr-2026): catalog-complimentary items must carry actual
+    // product price in `complementary_price` (for audit/reporting). `is_complementary`
+    // stays "No" for catalog-complimentary — the "Yes" flag is reserved for
+    // runtime-marked items (Part 2, to follow). See /app/memory/BUG_TEMPLATE.md BUG-018.
+    complementary_price: item.isComplementary
+      ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
+      : 0.0,
     is_complementary:    'No',
     food_level_notes:    Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
     _fullUnitPrice:      fullUnitPrice,
@@ -806,7 +812,13 @@ export const toAPI = {
           gst_amount:         String((isGst ? taxAmount : 0).toFixed(2)),
           vat_amount:         String((!isGst ? taxAmount : 0).toFixed(2)),
           discount_amount:    '0.00',
-          complementary_total: 0,
+          // BUG-018 Part 1 (Apr-2026): catalog-complimentary items must carry actual
+          // product price in `complementary_total` (order-bill-payment key; distinct
+          // from `complementary_price` used on place-order). `is_complementary` stays
+          // "No" for catalog-complimentary. See /app/memory/BUG_TEMPLATE.md BUG-018.
+          complementary_total: item.isComplementary
+            ? (parseFloat(item.complementaryPrice) || parseFloat(item.price) || 0)
+            : 0,
         };
       });
 
