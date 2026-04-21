@@ -1574,6 +1574,28 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - **Must preserve the BUG-006 chain** (AD-101 / AD-105 / AD-302 / AD-401 / AD-402): complimentary items must be carved out of the same `subtotalAfterDiscount`, `avgGstRate`, and SC base that BUG-006 hardened — not re-introduced through a parallel path. Any implementation that forks print vs UI math would regress AD-105.
 - **Must preserve BUG-013** (SC order-type gating): complimentary math should not accidentally re-enable SC for takeaway/delivery or change the gating.
 - **Must preserve BUG-017** (just-shipped `totalPrice` recomputation on qty change for customized items): a complimentary flag attached to a customized item must not defeat or short-circuit the `totalPrice` refresh.
-- Screenshot reference: user-provided `Screenshot 2026-04-21 at 12.38.59 PM.png` showing ITEMS: `Chocolate Delight Cake x1 ₹350`, `mater panneer x1 ₹325`, `mater panneer x2 ₹650`.
+- Screenshot reference: user-provided `Screenshot 2026-04-21 at 12.38.59 PM.png` and follow-up `Screenshot 2026-04-21 at 12.48.23 PM.png` showing ITEMS: `Chocolate Delight Cake x1 ₹350`, `mater panneer x1 ₹325`, `mater panneer x2 ₹650`.
 - Related to AD-101, AD-105, AD-302, BUG-006, BUG-013, BUG-017 — all must remain intact when complimentary logic is introduced.
+
+**User Clarifications (Apr-21-2026 follow-up)**
+- *Clarification 1 — catalog-level complimentary is already excluded from the bill at runtime (user assertion).* User states: "If an item is already marked as complimentary in the product API, we are not including it in the bill." User offered to share browser console logs as evidence.
+  - **Frontend code evidence does NOT corroborate this.** Text-search across all `/app/frontend/src/**/*.{js,jsx}` (excluding tests and admin Menu panels) finds zero call-sites that filter, discount, or zero out cart lines based on `isComplementary` / `complementary` / `complementary_price` / `is_complementary`. Specifically:
+    - `productTransform.js` parses `api.complementary` → `isComplementary` and `api.complementary_price` → `complementaryPrice`, but these fields are consumed ONLY in `ProductCard.jsx` / `ProductForm.jsx` (admin catalog side).
+    - `OrderEntry.addToCart` (`OrderEntry.jsx` 398–415) spreads the full product into the cart with no price-zeroing branch for catalog-complimentary items.
+    - `CollectPaymentPanel.getItemLinePrice` (lines 90–102), `taxTotals` (106–125), `activeItems` filter (65–67), `itemTotal` (181) — none reference any complimentary field.
+    - `orderTransform.buildCartItem` lines 348–349 hardcode `complementary_price: 0.0` and `is_complementary: 'No'` regardless of `item.isComplementary` coming in from the product catalog; i.e., even if the cart item carries the catalog flag, the outbound payload flattens it to `'No'`.
+  - **Most plausible code-consistent explanations** (each requires runtime validation):
+    1. The exclusion is backend-side — complimentary items are either returned with `price: 0` (so `getItemLinePrice` multiplies to 0 and they contribute nothing to `itemTotal`), OR they are stripped from `get-single-order-new` / socket `new-order` / `order-engage` payloads, so the frontend never sees them as billable lines.
+    2. User may be observing a specific flow (e.g., items added via a promo / combo engine that zeroes price before cart) and not the generic menu-add flow.
+    3. User's observation may be from a different environment where a different frontend or backend rule applies.
+  - **Action required (runtime validation)**: please share the browser console log and Network payload for `get-single-order-new` / `new-order` socket event for an order containing a catalog-complimentary item so this can be confirmed.
+
+- *Clarification 2 — the new feature: runtime checkbox per item on Collect Bill.* User confirms "marking an item as complimentary at runtime is a new feature. As shown in the attached screenshot, on the Collect Bill page, we can have a checkbox next to the item." — this is the BUG-018 feature request as documented above. Reproduction / Expected Behavior / Impacted Areas sections already reflect this intent.
+
+- *Clarification 3 — backend contract uses exactly two keys: `is_complementary` and `complementary_price`.* User confirms: "There are two keys used for this purpose: complementary_price and is_complementary."
+  - **Frontend code currently emits three distinct key names across flows** — this is an inconsistency that implementation must reconcile with backend:
+    - `buildCartItem` (line 348–349) → `complementary_price`, `is_complementary` ✅ matches user-stated contract.
+    - `collectBillExisting` item mapper (lines 802, 809) → `is_complementary`, `complementary_total` ⚠ the `complementary_total` key does not match the user-stated contract (`complementary_price`).
+  - **Open question for implementation agent (documented here for visibility, not to be fixed in this QA pass)**: Is `complementary_total` a legacy / wrong key name in `collectBillExisting` that was never validated against backend, or does the `order-bill-payment` endpoint genuinely accept a different key? Runtime payload capture on a `order-bill-payment` call (once complimentary UI exists) will confirm.
+  - This inconsistency is not introduced by BUG-018; it is pre-existing in the codebase and surfaces because BUG-018 is the first feature that would actually populate these fields with non-zero values.
 
