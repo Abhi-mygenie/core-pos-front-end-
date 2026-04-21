@@ -19,6 +19,7 @@
 | BUG-013 | Service Charge Applied to Takeaway and Delivery (Should Be Dine-In and Room Only) | **FIXED (Apr-2026)** — SC gated by orderType (dineIn/walkIn/room only) | Close | `CollectPaymentPanel.jsx`, `orderTransform.js`, `OrderEntry.jsx` |
 | BUG-014 | GST Not Applied on Tip Amount | **Closed — confirmed working by user (Apr-2026)** | Close | `CollectPaymentPanel.jsx`, `orderTransform.js` |
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
+| BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | | | |
 
 
 
@@ -1280,3 +1281,49 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - The fix is straightforward: destructure `isCoupon`, `isLoyalty`, `isCustomerWallet` from `useSettings()` and add them to the render conditionals (e.g., `{customer && settings.isCoupon && (...coupon section...)}`).
 - Both the default table/walkIn branch and the Room Service branch need the same gating applied.
 - The hardcoded coupon list (`FLAT50`, `SAVE10`) at lines 261-264 should likely be replaced with API-driven coupons or removed if the `isCoupon` flag is false.
+
+---
+
+## BUG-016 / Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.)
+
+**User Reported Issue**
+- Delivery-specific payload fields are being passed in the place-order request for non-delivery order types as well. Delivery-related fields should only be sent when `order_type` is `delivery`, and must not appear in dine-in, takeaway, walk-in, or room-service payloads.
+
+**Sample Payload (captured from a dine-in order — should not contain delivery fields)**
+```json
+{"user_id":"","restaurant_id":478,"table_id":"0","order_type":"dinein","cust_name":"","cust_mobile":"","cust_email":"","cust_dob":"","cust_anniversary":"","cust_membership_id":"","order_note":"","payment_method":"cash","payment_status":"paid","payment_type":"prepaid","transaction_id":"","print_kot":"Yes","billing_auto_bill_print":"Yes","auto_dispatch":"No","scheduled":0,"schedule_at":null,"order_sub_total_amount":683,"order_sub_total_without_tax":683,"tax_amount":37.57,"gst_tax":37.57,"vat_tax":0,"order_amount":789,"round_up":"0.13","service_tax":68.3,"service_gst_tax_amount":0,"tip_amount":0,"tip_tax_amount":0,"delivery_charge":0,"discount_type":"","self_discount":0,"coupon_discount":0,"coupon_title":"","coupon_type":"","order_discount":0,"used_loyalty_point":0,"use_wallet_balance":0,"paid_room":"","room_id":"","address_id":null,"discount_member_category_id":0,"discount_member_category_name":"","usage_id":"","cart":[{"food_id":62167,"quantity":1,"price":386,"variant":"","add_on_ids":[],"add_on_qtys":[],"variations":[],"add_ons":[],"station":"KDS","food_amount":386,"variation_amount":0,"addon_amount":0,"gst_amount":"19.30","vat_amount":"0.00","discount_amount":"0.00","complementary_price":0,"is_complementary":"No","food_level_notes":""},{"food_id":62170,"quantity":1,"price":297,"variant":"","add_on_ids":[],"add_on_qtys":[],"variations":[],"add_ons":[],"station":"KDS","food_amount":297,"variation_amount":0,"addon_amount":0,"gst_amount":"14.85","vat_amount":"0.00","discount_amount":"0.00","complementary_price":0,"is_complementary":"No","food_level_notes":""}],"partial_payments":[{"payment_mode":"cash","payment_amount":789,"grant_amount":789,"transaction_id":""},{"payment_mode":"card","payment_amount":0,"grant_amount":0,"transaction_id":""},{"payment_mode":"upi","payment_amount":0,"grant_amount":0,"transaction_id":""}]}
+```
+
+**QA Status**
+- _TBD_
+
+**Current Code Behavior**
+- _TBD_
+
+**Expected Behavior**
+- Delivery-related payload fields must be included only when `order_type === "delivery"`. For all other order types (dine-in, takeaway, walk-in, room), these fields should be omitted from the request.
+
+**Gap Observed**
+- _TBD_
+
+**Impacted Areas**
+- _TBD_
+
+**Files Reviewed**
+- _TBD_
+
+**Code Evidence Summary**
+- _TBD_
+
+**Dependencies / External Validation Needed**
+- _TBD_
+
+**Reproduction Understanding**
+- _TBD_
+
+**Open Questions / Unknowns**
+- _TBD_
+
+**Notes**
+- _TBD_
+
