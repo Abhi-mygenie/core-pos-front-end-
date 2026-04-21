@@ -21,7 +21,7 @@
 | BUG-015 | Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility | **FIXED (Apr-2026)** — gated by profile settings | Close | `CollectPaymentPanel.jsx` |
 | BUG-016 | Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.) | **FIXED frontend workaround (Apr-2026)** — `delivery_address: null` always emitted; backend `isset()` guard pending | Close (backend open) | `api/transforms/orderTransform.js` |
 | BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | Confirmed — stale `item.totalPrice` baked at add-time is not recomputed on qty change; affects display + local subtotal/tax previews | Open | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/ItemCustomizationModal.jsx` |
-| BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill | Confirmed — 2 parts: (1) catalog-complimentary payload emits `complementary_price: 0` and `is_complementary: "No"` — should carry actual price and `"Yes"`; (2) runtime per-item checkbox on Collect Bill is missing. Contract: `is_complementary: "Yes"` + `complementary_price: <actual price>` + `food_amount: 0`. | Open | `components/order-entry/CollectPaymentPanel.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/OrderEntry.jsx`, `api/transforms/orderTransform.js` (`buildCartItem` 348–349, `collectBillExisting` 802/809) |
+| BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill | Confirmed — 2 parts: (1) catalog-complimentary payload emits `complementary_price: 0` — should carry actual product price (`is_complementary` stays `"No"` — correct); (2) runtime per-item checkbox on Collect Bill is missing — on mark: `is_complementary: "Yes"` + `complementary_price: <actual price>` + `food_amount: 0`. Full-line only (no partial qty). Backend echoes `is_complementary` back. Frontend authoritative for totals. | Open | `components/order-entry/CollectPaymentPanel.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/OrderEntry.jsx`, `api/transforms/orderTransform.js` (`buildCartItem` 348–349, `collectBillExisting` 802/809, `fromAPI.order()` 117–180) |
 
 
 
@@ -1478,13 +1478,23 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - Must not break the print payload (`order-temp-store`) contract.
 
 **QA Status**
-- **Confirmed — has TWO related parts, both requiring code work:**
-  - **Part 1 (existing defect in today's code, for catalog-level complimentary items):** When a product that is marked complimentary in the product/profile API is ordered, the outbound `place-order` / `order-bill-payment` payloads emit `complementary_price: 0` and `is_complementary: "No"`. Per user: `complementary_price` must carry the **actual product price** (not `0`), and effectively the catalog-complimentary case should also emit `is_complementary: "Yes"`. The current code incidentally produces the right *visible* outcome only because the product catalog returns `price: 0` for complimentary products, so `food_amount`, taxes, and totals all arithmetically collapse to zero — the `is_complementary` flag and `complementary_price` field are never meaningfully populated.
-  - **Part 2 (missing feature — runtime marking at Collect Bill):** There is no UI affordance on the Collect Bill items list to mark an ordered item as complimentary at runtime. When implemented, marking an item must:
-    - Flip the cart line's `is_complementary` from `"No"` → `"Yes"` in the outbound payload.
+- **Confirmed — has TWO distinct parts, both requiring code work:**
+  - **Part 1 (existing defect in today's code, for catalog-level complimentary items):** When a product that is marked complimentary in the product/profile API is ordered, the outbound payload emits `complementary_price: 0`. Per user, `complementary_price` must carry the **actual product price** (for audit / reporting). `is_complementary` for catalog-complimentary items **correctly stays `"No"`** — the catalog-complimentary case is represented by the product being served at `price: 0`, not by flipping the runtime flag.
+  - **Part 2 (missing feature — runtime marking at Collect Bill):** There is no UI affordance on the Collect Bill items list to mark an ordered (normally billable) item as complimentary at runtime. When implemented, the runtime-mark action must:
+    - Flip the cart line's `is_complementary` from `"No"` → `"Yes"` in the outbound payload (this is what distinguishes runtime-marked from catalog-complimentary).
     - Write the **actual food (unit/line) price** into `complementary_price`.
-    - Drive `food_amount` (and downstream `variation_amount`, `addon_amount`, `gst_amount`, `vat_amount`) to `0` for that line so order-level totals (`order_sub_total_amount`, `tax_amount`, `grand_amount` / `order_amount`, etc.) carve out the complimentary line.
+    - Drive `food_amount` (and downstream `variation_amount`, `addon_amount`, `gst_amount`, `vat_amount`) to `0` for that line so order-level totals carve out the complimentary line.
 - Both parts require the same frontend touch-points (UI gate + local-math carve-out + payload writers in all flows), so they are treated together as BUG-018. Backend contract slots are reserved and proven live in runtime payloads captured Apr-21-2026.
+
+**Semantic distinction (user-confirmed Apr-21-2026)**
+| Dimension | Catalog-complimentary (Part 1) | Runtime-complimentary (Part 2) |
+|---|---|---|
+| Source of truth | Product/profile API (`complementary`, `complementary_price`) | Cashier action on Collect Bill checkbox |
+| `price` in catalog | `0` | > 0 |
+| Outbound `is_complementary` | `"No"` (stays No — current code correct on this) | `"Yes"` (flipped on mark) |
+| Outbound `complementary_price` | **Actual product price** (currently `0` — this is the Part 1 bug) | Actual unit/line price at mark time |
+| Outbound `food_amount` | `0` (incidentally, via `price: 0`) | `0` (explicitly zeroed by the mark action) |
+| Granularity | Per product (catalog-defined) | Per cart line — **complete line only**; no partial-qty marking supported |
 
 **Current Code Behavior**
 - **Items list in Collect Bill** (`CollectPaymentPanel.jsx`):
@@ -1504,18 +1514,25 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - **Net result**: a cashier/operator cannot mark any specific item (e.g., a single `mater panneer` row from the screenshot) as complimentary on the Collect Bill screen. Attempting to do so would require code changes across UI, local-math, and all four outbound payload flows.
 
 **Expected Behavior**
-- **For every complimentary item (whether catalog-level OR runtime-marked):** outbound payload contract must be:
-  - `is_complementary: "Yes"`
-  - `complementary_price: <actual unit/line price of the item>` (the real product price — NOT `0`)
-  - `food_amount: 0` (and by extension `variation_amount: 0`, `addon_amount: 0`, `gst_amount: "0.00"`, `vat_amount: "0.00"`, `discount_amount: "0.00"`)
-  - Order-level totals (`order_sub_total_amount`, `order_sub_total_without_tax`, `tax_amount`, `gst_tax`, `vat_tax`, `service_tax`, `order_amount`, `grand_amount`) must carve out this line entirely — i.e., the complimentary line contributes `0` to all of these.
-- **UI (feature gap — Part 2):** each row in the ITEMS section of the Collect Bill UI must expose a per-item checkbox (per screenshot references). Toggling it ON marks that line as complimentary at runtime with the contract above; toggling OFF reverts the line to its normal billable state.
+- **For catalog-complimentary items (Part 1):** outbound payload must be:
+  - `is_complementary: "No"` (unchanged — catalog-complimentary is represented by catalog `price: 0`, not by flipping this flag).
+  - `complementary_price: <actual product price>` (currently `0` — this is the bug).
+  - `food_amount: 0` (already correct via catalog `price: 0`).
+- **For runtime-marked complimentary items (Part 2):** outbound payload must be:
+  - `is_complementary: "Yes"` (flipped by the cashier's checkbox action).
+  - `complementary_price: <actual unit/line price of the item at mark time>`.
+  - `food_amount: 0` (and by extension `variation_amount: 0`, `addon_amount: 0`, `gst_amount: "0.00"`, `vat_amount: "0.00"`, `discount_amount: "0.00"`).
+  - Granularity is **full line only** — a cart line is either entirely complimentary or entirely billable. No partial-qty complimentary marking is supported.
+- **For both parts — order-level totals carve-out:** `order_sub_total_amount`, `order_sub_total_without_tax`, `tax_amount`, `gst_tax`, `vat_tax`, `service_tax`, `service_gst_tax_amount`, `round_up`, `order_amount` (place-order) / `grand_amount` (order-bill-payment) must all be computed on the billable subtotal — i.e., the complimentary line contributes `0` to each of these.
+- **UI (feature gap — Part 2 only):** each row in the ITEMS section of the Collect Bill UI must expose a per-item checkbox (per screenshot references). Toggling it ON marks that line as complimentary at runtime with the contract above; toggling OFF reverts the line to its normal billable state.
 - **Billing math constraints (must not break):**
   - AD-101 calculation order `items → discounts → SC → tip → tax → delivery → round-off` applies to the *billable* subtotal after complimentary carve-out.
   - AD-101 addendum (GST-everywhere at `avgGstRate`) — `avgGstRate` must be computed from billable (non-complimentary) items only; otherwise the weighted rate skews.
   - AD-105 / AD-302: UI numbers remain the single source of truth for both `order-bill-payment` and `order-temp-store` (print) payloads.
+  - AD-402: Frontend-computed settlement values are persisted as-is by the backend (confirmed again by user Apr-21-2026). This means the frontend must compute correct carve-out totals; backend will trust and persist them.
   - BUG-013 SC order-type gating unchanged.
   - BUG-017 customized-item `totalPrice` recomputation unchanged.
+- **Persistence / reload (user-confirmed Apr-21-2026):** backend **does** persist `is_complementary: "Yes"` and echoes it back via `get-single-order-new` / `new-order` / `order-engage` socket events. Frontend's `fromAPI.order()` in `orderTransform.js` (lines 117–180) does NOT currently parse `is_complementary` off incoming items, so implementation must extend the hydrator so runtime-marked state survives reload / multi-device re-engagement.
 - **Print payload (`order-temp-store`):** complimentary lines must appear with the complimentary flag and `0` billable amount, so the printed bill matches what the cashier sees on screen (AD-302).
 
 **Gap Observed**
@@ -1569,12 +1586,20 @@ Path C (dine-in TableCard — unrelated but similar shape)
 - Observed: billing totals (Item Total, Service Charge, GST, Grand Total) are computed from every non-cancelled item's full price — there is no path to exclude an item from the bill short of fully cancelling it (which changes KOT/kitchen semantics, not desired here).
 
 **Open Questions / Unknowns**
-- Semantic clarification from business: When an item is marked complimentary, is the expected amount `0` (fully free) or `complementary_price` from the catalog (discounted but not free)? The backend contract has two distinct fields (`complementary_price` on place-order vs `complementary_total` on order-bill-payment); implementation direction depends on business answer.
-- Should complimentary apply at the line-item level (entire line free regardless of qty) or at the qty-split level (e.g., 1 out of x2 mater panneer free)? The screenshot shows `x2 ₹650` — user intent on partial-qty complimentary unclear.
-- Must complimentary items still appear on the KOT / kitchen ticket? (Likely yes — they're still prepared — but the payload `food_amount`/`gst_amount`/`vat_amount` treatment differs.)
-- Does complimentary need to be reversible in the same session (un-mark), or once applied is it committed on next save?
+- Semantic clarification from business: When a runtime-marked item has qty > 1, the full line is marked complimentary (confirmed: no partial-qty per Clarification 4 / Q3). Implementation should therefore treat complimentary as a per-line boolean, not a per-unit state.
+- Collect-bill payload key: is `complementary_total` (currently emitted by `collectBillExisting` line 809) valid, or should it be renamed to `complementary_price`? Open per Clarification 4 / Q1 — requires backend team confirmation at implementation time.
+- Does backend round-trip `complementary_price` value on `get-single-order-new` / socket events so the UI can display the original price struck through? Needs backend confirmation alongside Q2 of Clarification 4.
+- Must complimentary items still appear on the KOT / kitchen ticket? (Likely yes — they're still prepared — business to confirm explicitly.)
 - Role-based gating (manager-only? PIN gate? audit trail?) — policy question.
-- Does backend currently respect a non-`'No'` value for `is_complementary` today, or will it silently discard like the BUG-007 `delivery_address` gap? Needs an explicit contract check before any frontend work is undertaken.
+
+**Summary table row (verbatim mirror of BUG-018 status in the top Bug Summary Table)**
+| Field | Value |
+|---|---|
+| Bug ID | BUG-018 |
+| Title | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill |
+| QA Status | Confirmed — 2 parts: (1) `complementary_price: 0` for catalog-complimentary must carry actual product price (`is_complementary: "No"` is correct and stays "No"); (2) runtime per-item checkbox on Collect Bill is missing — on mark, flip `is_complementary` → `"Yes"`, write actual price to `complementary_price`, zero out `food_amount` and related fields. |
+| Impl Status | Open |
+| Key Files | `components/order-entry/CollectPaymentPanel.jsx`, `components/order-entry/CartPanel.jsx`, `components/order-entry/OrderEntry.jsx`, `api/transforms/orderTransform.js` (`buildCartItem` 348–349, `collectBillExisting` 802/809, `fromAPI.order()` 117–180) |
 
 **Notes**
 - **Scope is sizable**: this is a feature addition, not a single-line fix. It crosses UI (Collect Bill items list), local state (cart item schema), billing math (five aggregates: `activeItems`, `itemTotal`, `taxTotals`, `subtotalAfterDiscount`, `avgGstRate`), four outbound payloads (`place-order` postpaid + prepaid, `update-place-order`, `order-bill-payment`), and the `order-temp-store` print payload.
@@ -1595,8 +1620,8 @@ Path C (dine-in TableCard — unrelated but similar shape)
              "gst_amount":"0.00","vat_amount":"0.00",
              "complementary_price":0,"is_complementary":"No"}]
     ```
-  - **Defect identified by user (Part 1 of BUG-018):** `complementary_price: 0` is wrong — it must carry the **actual product price**, and by extension `is_complementary` should be `"Yes"` for catalog-complimentary lines (not `"No"`).
-  - **Code site for the fix (documentation only — for implementation agent):** `orderTransform.buildCartItem` lines 348–349 currently hardcode `complementary_price: 0.0` and `is_complementary: 'No'`. These must derive from the cart item's catalog flags (`item.isComplementary`, `item.complementaryPrice`, and/or the item's unit/line price).
+  - **Defect identified by user (Part 1 of BUG-018):** `complementary_price: 0` is wrong — it must carry the **actual product price** (for audit/reporting). `is_complementary: "No"` is **correct** for catalog-complimentary items and must remain `"No"` — the catalog-complimentary case is represented by the catalog serving `price: 0`, not by the `is_complementary` flag. The flag flipping to `"Yes"` is reserved exclusively for runtime-marked items (Part 2).
+  - **Code site for the fix (documentation only — for implementation agent):** `orderTransform.buildCartItem` lines 348–349 currently hardcode `complementary_price: 0.0` (bug — should derive from the cart item's unit price when the item is catalog-complimentary) and `is_complementary: 'No'` (correct for catalog-complimentary; will need a runtime-flag branch for Part 2).
 
 - *Clarification 2 — runtime marking feature contract (Part 2 of BUG-018):*
   - User spec: *"if run time we mark, `is_complementary: 'No'` should go `Yes`, and in `complementary_price` actual food price will go, `food_amount: 0`."*
@@ -1628,8 +1653,9 @@ Path C (dine-in TableCard — unrelated but similar shape)
   - **Pre-existing frontend inconsistency (surfaced by this QA pass):** `orderTransform.collectBillExisting` item mapper (line 809) emits `complementary_total: 0` — a key name that does NOT match the user-stated contract (`complementary_price`). Since backend runtime payload captures show `complementary_total` going over the wire today without causing a visible failure, backend either (a) accepts `complementary_total` silently or (b) ignores it entirely (and reads elsewhere). Implementation must resolve this: either rename `complementary_total` → `complementary_price` in `collectBillExisting`, or keep both — subject to backend confirmation.
   - Additional collect-bill-only keys that differ from place-order: `item_id` (backend-assigned line id) and `unit_price` (place-order uses `price`). These are pre-existing shape differences, not BUG-018 scope.
 
-- *Clarification 4 — open backend questions (unchanged, but restated for clarity):*
-  - Does backend persist `is_complementary: "Yes"` so it echoes back via `get-single-order-new` / `new-order` / `order-engage` socket events? If not, runtime-marked complimentary state is lost on reload/re-engage.
-  - Does backend recompute order totals itself, or does it trust the frontend-supplied `order_sub_total_amount` / `grand_amount`? (AD-402 says frontend settlement values are persisted as-is; needs explicit re-confirmation for complimentary carve-outs.)
-  - Partial-qty complimentary (e.g., 1 of x2 `mater panneer` free) — supported by backend contract? Or only full-line?
+- *Clarification 4 — backend questions resolved (user answers Apr-21-2026):*
+  - Q1: Is `complementary_total` (in `collectBillExisting` line 809) a valid key, or should it be `complementary_price`? → **User: "not sure."** Still open — implementation agent to confirm with backend team before renaming. For now, assume it is a pre-existing frontend inconsistency to be reconciled at implementation time.
+  - Q2: Does backend persist `is_complementary: "Yes"` and echo it back via `get-single-order-new` / socket events? → **User: Yes.** Backend persists and echoes back. Frontend `fromAPI.order()` hydrator (`orderTransform.js` lines 117–180) must be extended to parse this back onto cart items so runtime-marked state survives reload / re-engage.
+  - Q3: Partial-qty complimentary supported? → **User: No — complete item only.** Granularity is the full cart line; there is no split-by-qty. If a cashier wants "1 of x2 free", the implementation should not attempt to honor partial-qty — it's out of scope.
+  - Q4: Does backend recompute order totals itself, or trust frontend-supplied values? → **User: Yes, frontend.** Backend trusts the frontend-supplied `order_sub_total_amount` / `grand_amount` / tax fields. This aligns with AD-402. Frontend is therefore fully responsible for computing correct carve-out totals when complimentary lines are present; backend will persist whatever the frontend submits.
 
