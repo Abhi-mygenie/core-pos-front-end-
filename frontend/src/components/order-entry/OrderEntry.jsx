@@ -1323,15 +1323,19 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                             tip:                 paymentData?.tip || 0,
                             // BUG-012: inject delivery address for print
                             ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
-                            // BUG-021 (Apr-2026): forward runtime-complimentary food IDs so
-                            // buildBillPrintPayload can zero their price/tax on the printed
-                            // bill. `rawOrderDetails[].is_complementary` is stale on the
-                            // postpaid auto-print path (no socket re-engage between
-                            // order-bill-payment and print); overrides make the carve-out
-                            // frontend-authoritative.
+                            // BUG-021 (Apr-2026, v2): forward runtime-complimentary
+                            // row IDs (+ catalog IDs as secondary) so
+                            // buildBillPrintPayload can zero their price/tax on the
+                            // printed bill. `rawOrderDetails[].is_complementary` is
+                            // stale on the postpaid auto-print path (no socket
+                            // re-engage between order-bill-payment and print);
+                            // overrides make the carve-out frontend-authoritative.
+                            // Row ID (cartItem.id === detail.id) ensures only the
+                            // exact ticked row is zeroed, not all rows with the same
+                            // catalog food.
                             runtimeComplimentaryFoodIds: (cartItems || [])
                               .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled')
-                              .map(i => i.foodId || i.id),
+                              .flatMap(i => [i.id, i.foodId].filter(v => v !== undefined && v !== null && v !== '')),
                           };
                           console.log('[AutoPrintCollectBill] overrides:', collectBillOverrides);
                           await printOrder(

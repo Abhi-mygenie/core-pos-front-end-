@@ -384,12 +384,14 @@ const CollectPaymentPanel = ({
         gstTax:              Math.round((sgst + cgst) * 100) / 100, // BUG-006: UI tax value
         vatTax:              0,                                     // VAT not aggregated in UI
         tip,                                                        // BUG-281: was hardcoded 0
-        // BUG-021 (Apr-2026): forward runtime-complimentary food IDs so the
-        // manual Print Bill output zeros complimentary lines even if the
-        // backend-hydrated rawOrderDetails still show them as priced.
+        // BUG-021 (Apr-2026, v2): forward runtime-complimentary row IDs
+        // (+ catalog IDs as secondary) so the manual Print Bill output zeros
+        // complimentary lines even if the backend-hydrated rawOrderDetails
+        // still show them as priced. Row ID ensures only the exact ticked row
+        // is zeroed, not all rows sharing the same catalog food.
         runtimeComplimentaryFoodIds: (cartItems || [])
           .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled')
-          .map(i => i.foodId || i.id),
+          .flatMap(i => [i.id, i.foodId].filter(v => v !== undefined && v !== null && v !== '')),
       };
       await onPrintBill(overrides);
     } finally {

@@ -975,21 +975,21 @@ export const toAPI = {
     const rawDetails = order.rawOrderDetails || [];
 
     // BUG-018 Part 3 (Apr-2026): Complimentary carve-out for print payload.
-    // BUG-021 (Apr-2026): `overrides.runtimeComplimentaryFoodIds` lets the caller
-    // (CollectPaymentPanel / OrderEntry auto-print) mark lines as complimentary
-    // even when the backend-hydrated `rawOrderDetails[].is_complementary` is stale
-    // (e.g., the postpaid collect-bill auto-print path fires before socket re-engage).
-    // `billFoodList` previously passed rawOrderDetails through unchanged, which
-    // meant catalog-complimentary and runtime-marked complimentary lines
-    // printed with their actual unit_price / tax values (customer appeared to
-    // be charged for the free item), and the default-branch subtotal/gst
-    // aggregation below summed gross — inflating prepaid totals when overrides
-    // were absent.
+    // BUG-021 (Apr-2026, v2): `overrides.runtimeComplimentaryFoodIds` lets the
+    // caller (CollectPaymentPanel / OrderEntry auto-print) mark lines as
+    // complimentary even when the backend-hydrated
+    // `rawOrderDetails[].is_complementary` is stale (e.g., the postpaid collect-bill
+    // auto-print path fires before socket re-engage). The override list carries
+    // two kinds of IDs and `isDetailComplimentary` matches either:
+    //   - order_details row IDs (preferred, unique per cart row) vs `d.id`
+    //   - catalog food IDs (fallback / secondary match)         vs `d.food_details.id`
+    // This mirrors `fromAPI.orderItem` (line 85-86) where
+    //   cartItem.id      = detail.id              (order_details row ID)
+    //   cartItem.foodId  = detail.food_details.id (catalog food ID)
     //
-    // Predicate matches fromAPI.orderItem hydration (lines 116, 122):
+    // Predicate also matches existing BUG-018 sources:
     //   - catalog:  food_details.complementary === 'Yes' (case-insensitive)
     //   - runtime:  detail.is_complementary === 'Yes'   (case-insensitive)
-    //   - override: detail.food_id OR detail.item_id in runtimeComplimentaryFoodIds
     const runtimeCompIds = Array.isArray(overrides.runtimeComplimentaryFoodIds)
       ? overrides.runtimeComplimentaryFoodIds.map(v => String(v))
       : [];
@@ -997,7 +997,8 @@ export const toAPI = {
       const catalog = (d?.food_details?.complementary || '').toLowerCase() === 'yes';
       const runtime = (d?.is_complementary || '').toLowerCase() === 'yes';
       const override = runtimeCompIds.length > 0
-        && (runtimeCompIds.includes(String(d?.food_id)) || runtimeCompIds.includes(String(d?.item_id)));
+        && (runtimeCompIds.includes(String(d?.id))
+            || runtimeCompIds.includes(String(d?.food_details?.id)));
       return catalog || runtime || override;
     };
 
