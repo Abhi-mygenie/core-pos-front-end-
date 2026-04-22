@@ -23,9 +23,9 @@
 | BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | **FIXED (Apr-2026)** — `totalPrice` recomputed on qty change for customized items in `OrderEntry.updateQuantity` | Close | `components/order-entry/OrderEntry.jsx` |
 | BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill, (3) Print payload regression (line prices + default-branch totals) | **FIXED (Apr-2026)** — 7 sub-steps shipped: (1) Step 1 `buildCartItem` + `collectBillExisting` conditional on catalog flag; (1.5) `adaptProduct` propagation; (1.6) `YES_NO_MAP` lowercase aliases; (1.75) `fromAPI.orderItem` hydrator propagation for reloaded orders; (2) runtime checkbox UI + state flag + carve-out in `CollectPaymentPanel`; (2.5) `calcOrderTotals` guard for runtime-marked lines; (3) `buildBillPrintPayload` zeroes price/tax on complimentary lines in `billFoodList` AND excludes them from default-branch `computedSubtotal` / `gst_tax` aggregation so dashboard printer-icon / no-override flows don't inflate prepaid totals. Catalog checkbox LOCKED ON. Frontend authoritative for totals. | Close | `api/transforms/orderTransform.js`, `api/constants.js`, `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
 | BUG-019 | Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill (cashier under-collects) | **FIXED (Apr-2026)** — `orderFinancials` now carries `deliveryCharge` across 6 call sites; `CollectPaymentPanel` seeds `deliveryChargeInput` from prop and auto-locks field (`readOnly`) when backend-seeded (> 0). Fresh in-POS delivery orders remain editable. | Close | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
-| BUG-020 | Service Charge / Final Bill — Unwanted Rounding on 10% of ₹45 (prints ₹5 instead of ₹4.50; Sub Total ₹49.50 shown but Total rounded to ₹50) | Open | Open | tbd |
-| BUG-021 | Complimentary Item — Runtime (Collect Bill) Complimentary Price Not Zeroed on Postpaid Print; Prepaid Prints Correctly as 0 | Open | Open | tbd |
-| BUG-022 | Cancelled Item (e.g., "matar paneer") — Not Shown as Strikethrough on Collect Bill Page; Order Page Shows It Correctly | Open | Open | tbd |
+| BUG-020 | Final Bill Total — Unwanted Round-Off (₹49.50 shown as ₹50 on printed Total); user wants no rounding anywhere | **Confirmed** — directly contradicts BUG-009 fix; `finalTotal` in `CollectPaymentPanel` and `orderAmount` in `calcOrderTotals` both apply fractional-based ceil/floor (>0.10 → ceil). Service Charge line itself is NOT rounded (preserves 4.50); only the Grand Total is integer-rounded. | Open | `components/order-entry/CollectPaymentPanel.jsx` (lines 266-274), `api/transforms/orderTransform.js` `calcOrderTotals` (lines 427-435), `buildBillPrintPayload` `payment_amount` (line 1129) |
+| BUG-021 | Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly) | **Confirmed** — `AutoPrintCollectBill` uses stale `getOrderById(collectOrderId)` whose `rawOrderDetails[].is_complementary` still reads `"No"` (order was placed without the flag; backend persistence of flag from `order-bill-payment` not guaranteed; no `waitForOrderReady` re-engage before print). `buildBillPrintPayload` has no override channel for runtime-complimentary flags. | Open | `components/order-entry/OrderEntry.jsx` (lines 1302-1343, `AutoPrintCollectBill` block; contrast lines 1085-1157 prepaid path), `api/transforms/orderTransform.js` `buildBillPrintPayload` (lines 974-1014, `isDetailComplimentary` reads `rawDetails[].is_complementary` only), `api/transforms/orderTransform.js` `collectBillExisting` (lines 788-855, sends `is_complementary: 'Yes'` on request but backend persistence uncertain) |
+| BUG-022 | Cancelled Item — Not Shown as Strikethrough in Collect Bill Page "ITEMS" List (Order page correctly strikes it through) | **Confirmed** — `CollectPaymentPanel.jsx` main Bill Summary items loop iterates raw `cartItems` (includes cancelled) but only applies `line-through` class for complimentary items; no `status === 'cancelled'` check on the row styling. `CartPanel.jsx` (Order page) correctly applies strikethrough. Cancelled item is also re-listed in a separate "Cancelled Items" strikethrough block below station payments, but not in the primary items list seen in the user's screenshot. | Open | `components/order-entry/CollectPaymentPanel.jsx` (lines 1040-1098 main items loop; lines 785-844 room-service items loop; lines 1547-1560 separate Cancelled block), `components/order-entry/CartPanel.jsx` (lines 33, 57-60, 153-157 — reference strikethrough implementation) |
 
 
 
@@ -1837,40 +1837,235 @@ Path C (dine-in TableCard — unrelated but similar shape)
 
 ---
 
-## BUG-020 / Service Charge / Final Bill — Unwanted Rounding on 10% of ₹45 (prints ₹5 instead of ₹4.50; Sub Total ₹49.50 shown but Total rounded to ₹50)
+## BUG-020 / Final Bill Total — Unwanted Round-Off on Grand Total (₹49.50 → ₹50); user wants no rounding anywhere
 
 **User Reported Issue**
-- In the attached printed bill, 10% of ₹45 is being printed as ₹5 on the Service Charge line — it should be ₹4.50. Because the service charge itself is rounded, the final bill is also wrong.
-- Sub Total is printed correctly as ₹49.50, but the Total at the bottom is printed as ₹50 (rounded up from ₹49.50).
-- Expectation: No such round-off should happen. Service Charge, Sub Total, and Total must all preserve the exact two-decimal values (₹4.50 and ₹49.50 respectively).
+- User says 10% of ₹45 is "coming at ₹5, it should be ₹4.50" and claims service charge is calculated wrong, leading to a wrong final bill.
+- On the attached printed bill (Bill No. 002754 / 002755, dated 22/Apr/2026): Item "namkin-kg" ₹45 → Service Charge line prints **4.50**, Sub Total line prints **49.50**, but the Grand "Total" line prints **50** (rounded up from 49.50).
+- Expectation: No round-off should happen anywhere on the bill. Service Charge, Sub Total, and Total must all carry the exact two-decimal value (₹4.50 / ₹49.50).
 
-**Reference**
-- Screenshot of printed bills (Bill No. 002754 and 002755, dated 22/Apr/2026, Item "namkin-kg" ₹45, Service Charge printed as "4.50" but Total printed as "50").
+**QA Status**
+- Partially Confirmed.
+  - **Confirmed:** Grand Total round-off (₹49.50 → ₹50) on both UI and printed bill — matches user's visible bill.
+  - **Not Confirmed (code evidence contradicts user wording):** The Service Charge line itself is NOT rounded to integer in code — both `CollectPaymentPanel.jsx` (line 240-242) and `calcOrderTotals` (`orderTransform.js` line 412-414) preserve two decimals via `Math.round(x * 100) / 100`, and the printed-bill value of "4.50" in the screenshot supports that. User's statement "10% of 45 is coming at ₹5" appears to conflate the rounded Grand Total with the Service Charge row. Primary defect is the Grand-Total rounding.
+
+**Current Code Behavior**
+- `CollectPaymentPanel.jsx` lines 268-274 (computes UI final total):
+  - `rawFinalTotal = subtotal + sgst + cgst + deliveryCharge` (two-decimal precise).
+  - `fractional = rawFinalTotal - floor(rawFinalTotal)` rounded to 2 dp.
+  - `finalTotal = fractional > 0.10 ? Math.ceil(rawFinalTotal) : Math.floor(rawFinalTotal)` — **integer-only** output.
+  - For rawTotal = 49.50 → fractional = 0.50 → 0.50 > 0.10 → `Math.ceil(49.50) = 50`.
+  - `roundOff = finalTotal - rawFinalTotal` = +0.50.
+- `orderTransform.js` `calcOrderTotals` lines 427-435 replicates the same fractional-ceil/floor logic into `orderAmount` (the order-level total echoed to backend / placed-order payload).
+- `buildBillPrintPayload` (`orderTransform.js` line 1129) sets `payment_amount: finalPaymentAmount = overrides.paymentAmount ?? order.amount`. When caller supplies `paymentAmount: paymentData.finalTotal` (which it always does for auto-print and manual print — see `OrderEntry.jsx` lines 1131 and 1314), the integer-rounded total propagates to the printed bill's "Total" line.
+- Service Charge row in UI and print uses `serviceCharge` / `serviceChargeAmount` which are rounded to **2 dp only** (not integer). For ₹45 × 10% = ₹4.50 → prints "4.50". No integer rounding applied on this specific line.
+- `order_subtotal` on the printed bill (`finalOrderSubtotal`, line 1112-1118) is also 2 dp — prints "49.50".
+
+**Expected Behavior**
+- Per user's explicit statement in this session: "we are not suppose to do any such round off" — expectation is that Grand Total equals `rawFinalTotal` exactly (e.g., ₹49.50), with no ceil/floor applied.
+- No corresponding directive found in `AD_UPDATES_PENDING.md` or `ARCHITECTURE_DECISIONS_FINAL.md` yet; user directive supersedes BUG-009 (see Gap below).
+
+**Gap Observed**
+- Current code intentionally rounds Grand Total (both UI `finalTotal` and order-level `orderAmount`) to an integer using fractional-part ceil/floor. This was introduced under **BUG-009** (labelled "Rounding Off — Inverted Logic (₹1.06 Rounds to ₹2 Instead of ₹1) — FIXED (Apr-2026) — fractional-part-based rounding"). BUG-009 corrected the direction of rounding; it did not remove rounding altogether.
+- BUG-020 directly conflicts with BUG-009's "old POS parity" rationale. Product direction change (old POS behavior → no round-off) is implied but not yet captured in AD docs.
+- On the Service-Charge line specifically, there is no code defect — user's wording is imprecise.
+
+**Impacted Areas**
+- **Modules:** Billing / Collect Payment, Print.
+- **Screens / Flows:** Collect Payment panel (UI Grand Total + round-off display row), Prepaid auto-print, Postpaid collect-bill auto-print, Manual "Print Bill", Dashboard printer icon (via `calcOrderTotals` seeding `order.amount` through socket-hydrated order).
+- **Components / Hooks / Utilities:**
+  - `CollectPaymentPanel` (final-total computation, `roundOff` display at lines 1012-1013, 1229-1232).
+  - `orderTransform.js` `calcOrderTotals` (order-level total echoed to backend).
+  - `orderTransform.js` `buildBillPrintPayload` (inherits integer `payment_amount` via `overrides.paymentAmount` or `order.amount`).
+
+**Files Reviewed**
+- `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx` (lines 235-276)
+- `/app/frontend/src/api/transforms/orderTransform.js` (lines 400-446 `calcOrderTotals`; lines 974-1174 `buildBillPrintPayload`)
+- `/app/frontend/src/components/order-entry/OrderEntry.jsx` (lines 1128-1152 prepaid auto-print overrides; lines 1311-1334 postpaid auto-print overrides — confirms `paymentAmount: paymentData.finalTotal` propagation)
+
+**Code Evidence Summary**
+- Integer round-off is implemented identically in **two** places (UI and order-level). Both must be reverted to preserve two-decimal output for Grand Total.
+- Service Charge line and Sub Total line are already two-decimal precise — no change expected there, contrary to user's wording.
+- `roundOff` display row (`CollectPaymentPanel.jsx` lines 1012-1013 / 1229-1232) is only visible when `roundOff !== 0`, which can only happen while rounding logic is active.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: None direct. Backend receives `order_amount` from `calcOrderTotals` output; it stores whatever frontend sends. Removing rounding on frontend will send ₹49.50 instead of ₹50 to place-order / order-bill-payment.
+- API dependency: `POST /api/v2/vendoremployee/order/place-order`, `POST /api/v1/vendoremployee/order-bill-payment`, `POST /api/v1/vendoremployee/order-temp-store` — all accept decimal `payment_amount` / `order_amount` (already 2 dp for other numeric fields).
+- Socket dependency: None.
+- Payload dependency: `order_amount`, `round_up`, `payment_amount`, `grant_amount`, `order_subtotal` — if rounding is removed, `round_up` will always emit `"0.00"`.
+- Config dependency: None. No feature flag gates BUG-009 rounding today.
+
+**Reproduction Understanding**
+- Step 1: Open any order type with Service Charge enabled (default 10%).
+- Step 2: Add a single item priced such that post-discount subtotal × (1 + serviceChargePercentage/100) has a fractional part > 0.10 (e.g., item ₹45 → SC 4.50 → raw total 49.50).
+- Step 3: Open Collect Payment. Observe UI "Total" reads ₹50 and a "Round Off" row shows `+₹0.50`.
+- Step 4: Complete payment (prepaid) OR click "Collect Bill" (postpaid). Auto-print fires.
+- Step 5: Printed bill shows: Item Total 45.00, Service Charge 4.50, Sub Total 49.50, **Total 50** (rounded).
+
+**Open Questions / Unknowns**
+- Is the expected behavior "exact two-decimal total with no round-off anywhere" universal, or restricted to specific restaurants / order types? (BUG-009 rationale was "old POS parity" — new directive may need tenant gating.)
+- Should the `round_up` field in place-order / collect-bill payloads be preserved as a hard `"0.00"` or removed entirely?
+- Should the "Round Off" UI row in `CollectPaymentPanel` be removed or hidden when rounding is disabled?
+- Is BUG-009 to be formally reversed / marked superseded, or coexist with a new feature flag? (AD document update required.)
+
+**Notes**
+- Direct conflict with BUG-009's "FIXED" status. Any fix for BUG-020 must explicitly supersede or feature-flag BUG-009.
+- Service Charge row itself needs no change — user's wording ("₹5 instead of ₹4.50") does not match current code. Only the Grand Total round-off is a real defect against user's expectation.
+- Reference: Screenshot of printed bills (Bill No. 002754 and 002755, dated 22/Apr/2026) — Service Charge prints "4.50", Sub Total prints "49.50", Total prints "50".
 
 ---
 
-## BUG-021 / Complimentary Item — Runtime (Collect Bill) Complimentary Price Not Zeroed on Postpaid Print; Prepaid Prints Correctly as 0
+## BUG-021 / Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly)
 
 **User Reported Issue**
-- In the attached printed bills, an item ("Chocolate Delight Cake") was marked as complimentary at **Collect Bill / Postpaid** time (runtime complimentary).
-- On the **Prepaid** bill (Bill No. 002755), the complimentary item correctly prints with Price = 0 and Total = 0.
-- On the **Postpaid / Collect Bill** printed bill (Bill No. 002754), the same complimentary "Chocolate Delight Cake" is printing with Price = 350 and Total = 350 instead of 0. User has circled the line and annotated "Complimentary → 0".
-- Expectation: When an item is marked complimentary at Collect Bill time (runtime), the printed bill must show its Price and Total as 0, identically to the prepaid flow.
+- An item ("Chocolate Delight Cake", ₹350) was marked complimentary via the runtime checkbox on the Collect Bill screen.
+- **Prepaid** printed bill (Bill No. 002755): item correctly prints Price 0 / Total 0.
+- **Postpaid Collect-Bill** printed bill (Bill No. 002754): same item prints Price 350 / Total 350 — user annotated "Complimentary → 0".
+- Expectation: Runtime-complimentary item must print at ₹0 on postpaid auto-print, identical to prepaid behavior.
 
-**Reference**
-- Annotated printed-bill photograph (two receipts side-by-side: left = Prepaid 002755 showing 0/0, right = Postpaid Collect Bill 002754 showing 350/350 circled with "Complimentary → 0" annotation).
-- Related prior work: BUG-018 (Complimentary Items — catalog + runtime marking + print payload regression).
+**QA Status**
+- Confirmed — divergence between prepaid and postpaid print paths is reproducible from code.
+
+**Current Code Behavior**
+- Runtime complimentary flag is held in local cart state only:
+  - `OrderEntry.jsx` line 522: `toggleItemComplimentary` flips `isComplementaryRuntime` on the in-memory cart item.
+  - `CollectPaymentPanel.jsx` line 73-78 uses it to carve out `billableItems` for UI math (this part works — UI totals exclude runtime-comp lines).
+- **Prepaid path** (`OrderEntry.jsx` lines 1085-1157, `autoPrintNewOrderIfEnabled`):
+  1. `placeOrderWithPayment` is called. `buildCartItem` (`orderTransform.js` lines 344-374) emits `is_complementary: 'Yes'` + `complementary_price: fullUnitPrice` on the place-order payload.
+  2. Backend stores the order with `order_details[].is_complementary === 'Yes'`.
+  3. `waitForOrderReady(newOrderId, 3000)` (line 1106) waits for socket engagement, so `order.rawOrderDetails` is fresh.
+  4. `printOrder(...)` → `buildBillPrintPayload` (line 974) → `isDetailComplimentary(d)` returns `true` because `d.is_complementary === 'Yes'` on the hydrated detail.
+  5. `billFoodList` zeros `price` / `unit_price` / `food_amount` / tax fields on the complimentary line (lines 998-1014) → printed bill shows 0/0.
+- **Postpaid path** (`OrderEntry.jsx` lines 1302-1343, `AutoPrintCollectBill`):
+  1. `collectBillExisting` (`orderTransform.js` lines 788-855) DOES send `is_complementary: 'Yes'` in `food_detail[]` for runtime-marked items.
+  2. Bill-payment response is `await`ed (line 1284). On success, code proceeds to auto-print **without** re-engaging the order — there is **no `waitForOrderReady` / engage gate** before `getOrderById(collectOrderId)` at line 1304.
+  3. `orderForPrint = getOrderById(Number(collectOrderId))` returns the order snapshot from `ordersRef`, whose `rawOrderDetails` still reflect the pre-bill-payment state (originally placed order had `is_complementary: 'No'`).
+  4. `buildBillPrintPayload` iterates `rawOrderDetails`. `isDetailComplimentary(d)` returns `false` because `d.is_complementary` is still `"No"`. Line prices / taxes are **not** zeroed → printed bill shows ₹350.
+  5. `collectBillOverrides` passed to print (lines 1311-1326) contains `orderItemTotal`, `serviceChargeAmount`, `gstTax`, `tip`, etc., but **no override channel exists** in `buildBillPrintPayload` to mark individual lines as runtime-complimentary.
+- `engagePromise` (line 1273, 1345) is `await`ed **after** auto-print, so even if the socket eventually re-engages with the updated flag, it arrives too late for this print call.
+- Additionally, whether the backend actually persists the `is_complementary: 'Yes'` update coming through `order-bill-payment` request is **not observable from frontend code alone** — see Dependencies.
+
+**Expected Behavior**
+- Per BUG-018 (Apr-2026, closed) and user's current directive: runtime-marked complimentary lines must render price 0 on the printed bill on **all** print paths (prepaid auto-print, postpaid auto-print, manual Print Bill, dashboard printer icon).
+
+**Gap Observed**
+- BUG-018 Part 3 installed the zeroing logic in `buildBillPrintPayload`, but the predicate `isDetailComplimentary(d)` only consults `rawOrderDetails[].is_complementary`. This works for prepaid (new-order) where the runtime flag is baked into place-order. It does not cover the postpaid path because:
+  - The stale `rawOrderDetails` snapshot is used (no re-engage between bill-payment and auto-print).
+  - Even a fresh re-engage depends on backend persisting `is_complementary` updates received via `order-bill-payment`, which is not guaranteed.
+  - `overrides` has no per-line "mark these item IDs as runtime-complimentary" channel.
+
+**Impacted Areas**
+- **Modules:** Billing (postpaid), Print, Complimentary items (runtime marking subsystem).
+- **Screens / Flows:** Collect Bill → Collect Payment → "Collect Bill" / payment-method button → auto-print (postpaid). Dashboard printer icon on postpaid orders that had runtime-complimentary marking before payment (if any).
+- **Components / Hooks / Utilities:**
+  - `OrderEntry.jsx` → `AutoPrintCollectBill` block.
+  - `orderTransform.js` → `buildBillPrintPayload` (override channel).
+  - `orderTransform.js` → `collectBillExisting` (already sends flag; backend persistence unverified).
+
+**Files Reviewed**
+- `/app/frontend/src/components/order-entry/OrderEntry.jsx` (lines 522 `toggleItemComplimentary`, 1085-1157 prepaid auto-print, 1260-1345 postpaid collect-bill + auto-print)
+- `/app/frontend/src/api/transforms/orderTransform.js` (lines 277-378 `buildCartItem`; lines 788-855 `collectBillExisting.food_detail`; lines 974-1014 `buildBillPrintPayload` / `isDetailComplimentary` / `billFoodList` zeroing)
+- `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx` (lines 70-82 `isLineComplimentary` / `billableItems`; lines 1046-1098 UI checkbox wiring via `onToggleComplimentary`)
+
+**Code Evidence Summary**
+- Prepaid success path relies on backend persistence of `is_complementary` at place-order time + socket re-engage via `waitForOrderReady`.
+- Postpaid failure path has **both** a timing gap (no re-engage before print) **and** a data-source gap (no override channel for runtime flag in `buildBillPrintPayload`).
+- `collectBillExisting` request payload (lines 837, 849-853) correctly carries the flag and `complementary_total`. The downstream visibility depends on backend behavior on `order-bill-payment`.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: Does `POST /api/v1/vendoremployee/order-bill-payment` persist `food_detail[].is_complementary` back to the `order_details` table and re-emit the updated order via socket engagement? Not observable from frontend; needs backend team confirmation.
+- API dependency: `/api/v1/vendoremployee/order-bill-payment`, `/api/v1/vendoremployee/order-temp-store`.
+- Socket dependency: `orderEngaged` / single-order refresh signal after `order-bill-payment`. Current code does not await it prior to `AutoPrintCollectBill`.
+- Payload dependency: `food_detail[].is_complementary`, `food_detail[].complementary_total` (outgoing). On incoming socket payload: `order_details[].is_complementary`, `order_details[].complementary_price` (consumed by `fromAPI.orderItem` → `isComplementaryRuntime` at `orderTransform.js` line 122).
+- Config dependency: None.
+
+**Reproduction Understanding**
+- Step 1: Place a regular (non-prepaid) order with an item like "Chocolate Delight Cake" ₹350 and another priced item (e.g., namkin-kg ₹45). Confirm KOT.
+- Step 2: Open Collect Payment. Tick the runtime-complimentary checkbox next to "Chocolate Delight Cake" (leaving the other item un-ticked). UI `itemTotal` updates to exclude ₹350.
+- Step 3: Ensure `settings.autoBill` is ON.
+- Step 4: Click "Collect Bill" / complete payment. `order-bill-payment` returns success; auto-print fires.
+- Step 5: Printed bill shows "Chocolate Delight Cake x1 Price 350 Total 350" (instead of 0/0).
+- Step 6 (control): Repeat for a prepaid order — "Chocolate Delight Cake" correctly prints 0/0.
+
+**Open Questions / Unknowns**
+- Backend persistence behavior of `is_complementary` on bill-payment (critical — determines whether the fix needs frontend-only override or also backend change).
+- Whether subsequent socket re-engage after `order-bill-payment` carries the updated flag within a reasonable timeout (≤3 s like `waitForOrderReady`).
+- Whether a client-side override (pass runtime-complimentary item IDs into `buildBillPrintPayload` overrides) is acceptable as a frontend-only workaround.
+- Dashboard printer-icon path: does it suffer the same regression for orders whose runtime-comp flag was applied only at collect-bill and the backend didn't persist?
+
+**Notes**
+- Directly relates to BUG-018 (closed). BUG-018 Part 3 solved the prepaid and manual-print paths but did not cover the postpaid auto-print timing/data-freshness gap. BUG-021 is effectively "Part 4".
+- Reference: Annotated printed-bill photograph (left = Prepaid 002755 showing 0/0, right = Postpaid Collect Bill 002754 showing 350/350 circled with "Complimentary → 0" arrow).
 
 ---
 
-## BUG-022 / Cancelled Item (e.g., "matar paneer") — Not Shown as Strikethrough on Collect Bill Page; Order Page Shows It Correctly
+## BUG-022 / Cancelled Item — Not Shown as Strikethrough in Collect Bill Page "ITEMS" List (Order page correctly strikes it through)
 
 **User Reported Issue**
-- An item ("matar paneer") was cancelled on the order.
-- On the **Order page / Order Entry page**, the cancellation is correctly indicated (item shown as cancelled).
-- On the **Collect Bill / Collect Payment page**, there is **no indication** that the item is cancelled — it appears in the Bill Summary items list alongside non-cancelled items (e.g., shown as "mater panneer x1 ₹325" in the Collect Payment side-panel with no strike-through or cancelled styling).
-- Expectation: If an item is cancelled, it must be displayed as **strikethrough** (struck-out) on **both** the Order page and the Collect Bill page, so the cashier can clearly see it has been cancelled.
+- User cancelled an item ("matar paneer").
+- On the Order Entry / Order page, the cancelled item is visibly struck through (expected).
+- On the Collect Bill / Collect Payment page, the same item appears in the items list (e.g., "mater panneer x1 ₹325") with no strike-through or cancelled styling — cashier cannot tell it is cancelled.
+- Expectation: Cancelled item must render as **strikethrough** on both the Order page and the Collect Bill page.
 
-**Reference**
-- Screenshot of Collect Payment screen (#D-108219) showing "mater panneer x1 ₹325" listed in Bill Summary without any strikethrough / cancelled indicator, alongside Chocolate Delight Cake and namkin-kg.
+**QA Status**
+- Confirmed.
+
+**Current Code Behavior**
+- `CartPanel.jsx` (Order page) correctly handles cancelled items:
+  - Line 33: `const isCancelled = item.status === 'cancelled';`
+  - Line 60 (item name) and line 157 (price): `textDecoration: isCancelled ? 'line-through' : 'none'` applied. Gray color `#9CA3AF` used. Quantity hidden, cancel/transfer buttons hidden (lines 49, 114, 133).
+- `CollectPaymentPanel.jsx` (Collect Bill page) — main Bill Summary items list at lines 1040-1098:
+  - Line 1041: `(cartItems || []).map((item, idx) => {...})` — iterates the **full raw cart** (including cancelled items, because no `.filter` applied on this render loop).
+  - Line 1042: `const isComp = isLineComplimentary(item);` — only checks complimentary flag. No `isCancelled` variable computed here.
+  - Line 1091: `className={`ml-4 font-medium ${isComp ? 'line-through' : ''}`}` — strikethrough class applied **only** for complimentary items. No branch for `item.status === 'cancelled'`.
+  - Lines 1058, 1094: item name and price rendered with normal `COLORS.darkText`; no conditional styling for cancelled status.
+- Room-service items list at lines 785-843 has the same defect (iterates `cartItems`, only respects `isComp`).
+- A **separate** "Cancelled Items" block exists at lines 1547-1560, rendering cancelled items in a gray strikethrough container below station payments. This block shows cancelled items as strikethrough but is positioned lower on the page and duplicates the item (the same cancelled item also appears un-struck in the main Items list above).
+- Item-total computation at line 67 (`activeItems = cartItems.filter(item => item.status !== 'cancelled')`) correctly excludes cancelled items from `itemTotal`, `billableItems`, `taxTotals`, `serviceCharge`, and `finalTotal`. Only the rendering of the cancelled line in the main items list is missing the strikethrough style — the pricing math is correct (user's screenshot confirms: 350 + 45 = 395 Item Total excludes the 325 mater panneer).
+
+**Expected Behavior**
+- Main Bill Summary items list must distinguish cancelled items visually (strikethrough, gray color) — same treatment as `CartPanel.jsx` on the Order page.
+- May or may not be appropriate to keep the separate "Cancelled Items" block; product decision required (out of scope for this bug entry).
+
+**Gap Observed**
+- `CollectPaymentPanel.jsx` main items loop (lines 1040-1098) and room-service items loop (lines 785-843) do not compute or honor `item.status === 'cancelled'` for per-row styling — only `isLineComplimentary`.
+- `CartPanel.jsx` has the pattern implemented correctly; `CollectPaymentPanel.jsx` has not adopted the same convention.
+
+**Impacted Areas**
+- **Modules:** Collect Payment UI (display layer only; calculations are unaffected).
+- **Screens / Flows:** Collect Payment panel — both default (table/room without transfers) layout and room-with-associated-orders room-service breakdown.
+- **Components / Hooks / Utilities:**
+  - `CollectPaymentPanel` — items rendering blocks.
+  - (Reference only) `CartPanel` — correct implementation template.
+
+**Files Reviewed**
+- `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx` (lines 65-82 filter definitions; lines 785-843 room-service items loop; lines 1040-1098 main items loop; lines 1547-1560 separate Cancelled block)
+- `/app/frontend/src/components/order-entry/CartPanel.jsx` (lines 17, 33, 49, 57-60, 114, 133, 153-157 — canonical strikethrough pattern)
+
+**Code Evidence Summary**
+- The missing strikethrough is a pure display-layer gap. There is no downstream calculation impact because `activeItems`, `billableItems`, and `taxTotals` already exclude cancelled items.
+- Any fix would touch only the two render blocks (default items list + room-service items list) in `CollectPaymentPanel.jsx`; no transforms, services, or socket handlers involved.
+- The duplicate display (cancelled item appears in both the main items list **and** the separate "Cancelled Items" block) is a secondary UX concern — user's primary complaint is the missing visual indicator in the main list.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: None. `item.status === 'cancelled'` is already populated on the cart item by the existing cancel flow (`CancelFoodModal` / socket refresh).
+- API dependency: None.
+- Socket dependency: None.
+- Payload dependency: None.
+- Config dependency: None.
+
+**Reproduction Understanding**
+- Step 1: Create a dine-in/room/walk-in/delivery order with at least two items (one will be cancelled, one kept).
+- Step 2: Cancel one item (e.g., "matar paneer") using the cancel flow from the Order page.
+- Step 3: Confirm on the Order page that the cancelled item renders with strikethrough and gray color (expected).
+- Step 4: Click through to "Collect Payment" / Collect Bill panel.
+- Step 5: Observe the "ITEMS" list inside Bill Summary — cancelled item still appears with normal styling (no strikethrough, regular color, price shown as if active).
+- Step 6: Scroll further — the cancelled item is also listed under a dedicated "❌ Cancelled (N items)" strikethrough block below the station payments (this is the existing, separate block).
+
+**Open Questions / Unknowns**
+- Product decision: should the cancelled item continue to be shown in the main items list at all, or should it be filtered out and shown only in the existing "Cancelled Items" block below? User's ask ("shown as stricken out in order and collect bill page") implies **same list**, with strikethrough style.
+
+**Notes**
+- No math / payload regression risk; purely CSS class / inline-style addition to existing render loops.
+- Reference: Screenshot of Collect Payment screen (#D-108219) showing "mater panneer x1 ₹325" listed in Bill Summary without strikethrough, alongside Chocolate Delight Cake (₹350) and namkin-kg (₹45). Item Total = ₹395 confirms cancelled item is already excluded from math; only display styling is missing.
 
