@@ -201,12 +201,16 @@ const CollectPaymentPanel = ({
   
   // Discount from restaurant preset types (from RestaurantContext)
   const [selectedDiscountType, setSelectedDiscountType] = useState(null);
+  // BUG-020 (Apr-2026): Discount amounts retain 2-decimal precision.
+  // Prior code used `Math.round((itemTotal * pct) / 100)` which rounded to INTEGER
+  // (e.g. 10% of ₹45 = 4.5 → Math.round(4.5) = 5). Corrected to 2-dp so that
+  // `subtotalAfterDiscount` (SC base) and downstream GST / Sub Total stay accurate.
   const presetDiscount = selectedDiscountType
-    ? Math.round((itemTotal * selectedDiscountType.discountPercent) / 100)
+    ? Math.round((itemTotal * selectedDiscountType.discountPercent)) / 100
     : 0;
 
   const manualDiscount = discountType === 'percent'
-    ? Math.round((itemTotal * parseFloat(discountValue || 0)) / 100)
+    ? Math.round((itemTotal * parseFloat(discountValue || 0))) / 100
     : parseFloat(discountValue || 0);
   
   const loyaltyDiscount = useLoyalty && customer?.loyaltyPoints 
@@ -215,7 +219,8 @@ const CollectPaymentPanel = ({
   
   const couponDiscount = selectedCoupon
     ? selectedCoupon.type === "percent"
-      ? Math.min(Math.round((itemTotal * selectedCoupon.discount) / 100), selectedCoupon.maxDiscount || Infinity)
+      // BUG-020 (Apr-2026): 2-decimal precision (was Math.round(x / 100) → integer).
+      ? Math.min(Math.round((itemTotal * selectedCoupon.discount)) / 100, selectedCoupon.maxDiscount || Infinity)
       : selectedCoupon.discount
     : 0;
   
@@ -379,6 +384,12 @@ const CollectPaymentPanel = ({
         gstTax:              Math.round((sgst + cgst) * 100) / 100, // BUG-006: UI tax value
         vatTax:              0,                                     // VAT not aggregated in UI
         tip,                                                        // BUG-281: was hardcoded 0
+        // BUG-021 (Apr-2026): forward runtime-complimentary food IDs so the
+        // manual Print Bill output zeros complimentary lines even if the
+        // backend-hydrated rawOrderDetails still show them as priced.
+        runtimeComplimentaryFoodIds: (cartItems || [])
+          .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled')
+          .map(i => i.foodId || i.id),
       };
       await onPrintBill(overrides);
     } finally {
@@ -786,6 +797,8 @@ const CollectPaymentPanel = ({
                       {(cartItems || []).map((item, idx) => {
                         const isComp = isLineComplimentary(item);
                         const isCatalogLocked = item.isComplementary === true;
+                        // BUG-022 (Apr-2026): cancelled lines must render strikethrough + gray.
+                        const isCancelled = item.status === 'cancelled';
                         return (
                         <div key={idx} className="flex justify-between items-start gap-2">
                           {/* BUG-018 Part 2: complimentary checkbox (locked for catalog items) */}
@@ -793,18 +806,28 @@ const CollectPaymentPanel = ({
                             type="checkbox"
                             className="mt-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                             checked={isComp}
-                            disabled={isCatalogLocked || !onToggleComplimentary}
+                            disabled={isCatalogLocked || !onToggleComplimentary || isCancelled}
                             onChange={() => onToggleComplimentary && onToggleComplimentary(item.id)}
                             data-testid={`complimentary-checkbox-${item.id}`}
                             title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between">
-                              <span style={{ color: COLORS.darkText }}>
+                              <span
+                                style={{
+                                  color: isCancelled ? '#9CA3AF' : COLORS.darkText,
+                                  textDecoration: isCancelled ? 'line-through' : 'none',
+                                }}
+                              >
                                 {item.name}
                                 {isComp && (
                                   <span className="ml-1 text-[10px] font-semibold" style={{ color: COLORS.primaryGreen }}>
                                     (Complimentary)
+                                  </span>
+                                )}
+                                {isCancelled && (
+                                  <span className="ml-1 text-[10px] font-semibold" style={{ color: '#9CA3AF' }}>
+                                    (Cancelled)
                                   </span>
                                 )}
                               </span>
@@ -833,8 +856,8 @@ const CollectPaymentPanel = ({
                             )}
                           </div>
                           <span
-                            className={`ml-4 font-medium ${isComp ? 'line-through' : ''}`}
-                            style={{ color: isComp ? COLORS.grayText : COLORS.darkText }}
+                            className={`ml-4 font-medium ${(isComp || isCancelled) ? 'line-through' : ''}`}
+                            style={{ color: (isComp || isCancelled) ? COLORS.grayText : COLORS.darkText }}
                           >
                             ₹{getItemLinePrice(item).toLocaleString()}
                           </span>
@@ -1041,6 +1064,10 @@ const CollectPaymentPanel = ({
               {(cartItems || []).map((item, idx) => {
                 const isComp = isLineComplimentary(item);
                 const isCatalogLocked = item.isComplementary === true;
+                // BUG-022 (Apr-2026): cancelled lines must render strikethrough + gray,
+                // matching CartPanel.jsx behaviour on the Order page. Math already
+                // excludes cancelled via activeItems/billableItems; this is display-only.
+                const isCancelled = item.status === 'cancelled';
                 return (
                 <div key={idx} className="flex justify-between items-start gap-2">
                   {/* BUG-018 Part 2: complimentary checkbox (locked for catalog items) */}
@@ -1048,18 +1075,28 @@ const CollectPaymentPanel = ({
                     type="checkbox"
                     className="mt-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     checked={isComp}
-                    disabled={isCatalogLocked || !onToggleComplimentary}
+                    disabled={isCatalogLocked || !onToggleComplimentary || isCancelled}
                     onChange={() => onToggleComplimentary && onToggleComplimentary(item.id)}
                     data-testid={`complimentary-checkbox-${item.id}`}
                     title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between">
-                      <span style={{ color: COLORS.darkText }}>
+                      <span
+                        style={{
+                          color: isCancelled ? '#9CA3AF' : COLORS.darkText,
+                          textDecoration: isCancelled ? 'line-through' : 'none',
+                        }}
+                      >
                         {item.name}
                         {isComp && (
                           <span className="ml-1 text-[10px] font-semibold" style={{ color: COLORS.primaryGreen }}>
                             (Complimentary)
+                          </span>
+                        )}
+                        {isCancelled && (
+                          <span className="ml-1 text-[10px] font-semibold" style={{ color: '#9CA3AF' }}>
+                            (Cancelled)
                           </span>
                         )}
                       </span>
@@ -1088,8 +1125,8 @@ const CollectPaymentPanel = ({
                     )}
                   </div>
                   <span
-                    className={`ml-4 font-medium ${isComp ? 'line-through' : ''}`}
-                    style={{ color: isComp ? COLORS.grayText : COLORS.darkText }}
+                    className={`ml-4 font-medium ${(isComp || isCancelled) ? 'line-through' : ''}`}
+                    style={{ color: (isComp || isCancelled) ? COLORS.grayText : COLORS.darkText }}
                   >
                     ₹{getItemLinePrice(item).toLocaleString()}
                   </span>

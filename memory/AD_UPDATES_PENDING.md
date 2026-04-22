@@ -199,6 +199,65 @@ Rationale:
 
 ---
 
+## Entry #9 — New guidance: discount precision is 2-decimal (BUG-020)
+
+**Source**: BUG-020 fix (Apr-2026)
+**Status**: Pending doc-agent validation + possibly a new AD for discount precision (no existing AD governs this; AD-001 is only about final-total round-off and remains unchanged).
+
+**Relation to AD-001**
+- AD-001 (final-total rounding: fractional > 0.10 → ceil, else floor) is UNCHANGED. BUG-020 is a separate precision concern for the per-component discount amounts that feed `subtotalAfterDiscount`.
+
+**What changed in code**
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — three discount expressions that previously rounded to integer have been switched to 2-decimal precision.
+  - Line ~205 (preset discount): `Math.round((itemTotal * pct) / 100)` → `Math.round((itemTotal * pct)) / 100`.
+  - Line ~209 (manual percent discount): same pattern.
+  - Line ~218 (coupon percent discount): same pattern, inside existing `Math.min(…, maxDiscount)`.
+- Effect: 10% of ₹45 now yields ₹4.50 (was ₹5). `subtotalAfterDiscount` is now 2-dp precise, which correctly cascades into Service Charge base, GST base, and pre-tax Subtotal.
+- User directive (Apr-2026): "no round off in discount". Grand-Total ceil/floor per AD-001 is explicitly still in force.
+
+**Requested AD change**
+- Consider adding a new AD (e.g. AD-001A or under billing-calculation section) stating: *"Discount amounts (preset, manual percent, coupon percent) must be computed at 2-decimal precision. Integer rounding must not be applied to any discount component. Final-total rounding per AD-001 applies only at the end of the calculation chain."*
+- Validation tag: `[CONFIRMED FROM CODE]` post-fix.
+
+**Code evidence doc-agent must verify**
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — lines ~202-227 (discount computation block) + BUG-020 comment at top of that block.
+
+---
+
+## Entry #10 — New frontend-authoritative channel for runtime complimentary on print (BUG-021)
+
+**Source**: BUG-021 fix (Apr-2026)
+**Status**: Pending doc-agent review; does not change any existing AD but extends the BUG-018 complimentary contract.
+
+**What changed in code**
+- `frontend/src/api/transforms/orderTransform.js` — `buildBillPrintPayload` now accepts a new override key `runtimeComplimentaryFoodIds` (array of food IDs / item IDs). The `isDetailComplimentary(d)` predicate was extended to treat a raw detail as complimentary when its `food_id` or `item_id` is in this array — in addition to the existing catalog (`food_details.complementary === 'Yes'`) and raw runtime (`is_complementary === 'Yes'`) checks.
+- `frontend/src/components/order-entry/OrderEntry.jsx` — `AutoPrintCollectBill` now forwards this list from `cartItems` (items with `isComplementaryRuntime === true` and `status !== 'cancelled'`).
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — `handlePrintBill` (manual Print Bill) forwards the same list for consistency.
+- Rationale: the postpaid auto-print path fires before any socket re-engage after `order-bill-payment`, so `rawOrderDetails[].is_complementary` is stale even though `collectBillExisting` sent the updated flag. The override makes the carve-out frontend-authoritative on the print payload, mirroring the approach taken for subtotal / tax overrides under BUG-006 / BUG-018 Part 3.
+
+**Backend notes**
+- No API contract change. The override travels inside `overrides` to `buildBillPrintPayload` only; the outgoing `order-temp-store` payload shape is unchanged (prices/tax simply zeroed on the flagged lines, same as catalog-complimentary behaviour).
+- Backend persistence of `is_complementary` through `order-bill-payment` remains a separate open item; this fix does not depend on it.
+
+**Requested AD change**
+- Optional: append to the BUG-018 "Complimentary Items" section (if one is created in AD) to document that print-time complimentary carve-out now has three equivalent sources (catalog flag, raw-detail flag, frontend override list).
+
+---
+
+## Entry #11 — Display parity for cancelled items on Collect Bill page (BUG-022)
+
+**Source**: BUG-022 fix (Apr-2026)
+**Status**: Display-only; no AD changes required.
+
+**What changed in code**
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — the main Bill Summary items loop (default table/room layout) and the Room Service items loop (room-with-associated-orders layout) now compute `isCancelled = item.status === 'cancelled'` and apply `textDecoration: line-through` + gray color (`#9CA3AF`) to the item name and price, matching the existing pattern in `CartPanel.jsx` on the Order page. A small "(Cancelled)" label is shown next to the item name for accessibility.
+- Complimentary checkbox is disabled for cancelled lines.
+- No math / payload / socket changes. `activeItems` / `billableItems` already excluded cancelled lines from totals; this fix is purely display-parity.
+
+**Requested AD change**
+- None. (Could optionally document "cancelled items must render with strikethrough on any page that lists items" as a UX invariant.)
+
+
 
 # Completed
 _(none yet — doc-agent to move entries here after AD file is updated)_

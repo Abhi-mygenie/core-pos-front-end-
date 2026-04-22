@@ -975,6 +975,10 @@ export const toAPI = {
     const rawDetails = order.rawOrderDetails || [];
 
     // BUG-018 Part 3 (Apr-2026): Complimentary carve-out for print payload.
+    // BUG-021 (Apr-2026): `overrides.runtimeComplimentaryFoodIds` lets the caller
+    // (CollectPaymentPanel / OrderEntry auto-print) mark lines as complimentary
+    // even when the backend-hydrated `rawOrderDetails[].is_complementary` is stale
+    // (e.g., the postpaid collect-bill auto-print path fires before socket re-engage).
     // `billFoodList` previously passed rawOrderDetails through unchanged, which
     // meant catalog-complimentary and runtime-marked complimentary lines
     // printed with their actual unit_price / tax values (customer appeared to
@@ -985,10 +989,16 @@ export const toAPI = {
     // Predicate matches fromAPI.orderItem hydration (lines 116, 122):
     //   - catalog:  food_details.complementary === 'Yes' (case-insensitive)
     //   - runtime:  detail.is_complementary === 'Yes'   (case-insensitive)
+    //   - override: detail.food_id OR detail.item_id in runtimeComplimentaryFoodIds
+    const runtimeCompIds = Array.isArray(overrides.runtimeComplimentaryFoodIds)
+      ? overrides.runtimeComplimentaryFoodIds.map(v => String(v))
+      : [];
     const isDetailComplimentary = (d) => {
       const catalog = (d?.food_details?.complementary || '').toLowerCase() === 'yes';
       const runtime = (d?.is_complementary || '').toLowerCase() === 'yes';
-      return catalog || runtime;
+      const override = runtimeCompIds.length > 0
+        && (runtimeCompIds.includes(String(d?.food_id)) || runtimeCompIds.includes(String(d?.item_id)));
+      return catalog || runtime || override;
     };
 
     // Step 1: Zero-out price / tax on complimentary lines in billFoodList so the

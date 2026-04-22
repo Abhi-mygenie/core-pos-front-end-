@@ -1323,6 +1323,15 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                             tip:                 paymentData?.tip || 0,
                             // BUG-012: inject delivery address for print
                             ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
+                            // BUG-021 (Apr-2026): forward runtime-complimentary food IDs so
+                            // buildBillPrintPayload can zero their price/tax on the printed
+                            // bill. `rawOrderDetails[].is_complementary` is stale on the
+                            // postpaid auto-print path (no socket re-engage between
+                            // order-bill-payment and print); overrides make the carve-out
+                            // frontend-authoritative.
+                            runtimeComplimentaryFoodIds: (cartItems || [])
+                              .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled')
+                              .map(i => i.foodId || i.id),
                           };
                           console.log('[AutoPrintCollectBill] overrides:', collectBillOverrides);
                           await printOrder(
