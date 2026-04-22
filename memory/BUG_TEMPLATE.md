@@ -23,6 +23,9 @@
 | BUG-017 | Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons) | **FIXED (Apr-2026)** — `totalPrice` recomputed on qty change for customized items in `OrderEntry.updateQuantity` | Close | `components/order-entry/OrderEntry.jsx` |
 | BUG-018 | Complimentary Items — (1) Payload defect on catalog-complimentary items, (2) Runtime marking via checkbox on Collect Bill, (3) Print payload regression (line prices + default-branch totals) | **FIXED (Apr-2026)** — 7 sub-steps shipped: (1) Step 1 `buildCartItem` + `collectBillExisting` conditional on catalog flag; (1.5) `adaptProduct` propagation; (1.6) `YES_NO_MAP` lowercase aliases; (1.75) `fromAPI.orderItem` hydrator propagation for reloaded orders; (2) runtime checkbox UI + state flag + carve-out in `CollectPaymentPanel`; (2.5) `calcOrderTotals` guard for runtime-marked lines; (3) `buildBillPrintPayload` zeroes price/tax on complimentary lines in `billFoodList` AND excludes them from default-branch `computedSubtotal` / `gst_tax` aggregation so dashboard printer-icon / no-override flows don't inflate prepaid totals. Catalog checkbox LOCKED ON. Frontend authoritative for totals. | Close | `api/transforms/orderTransform.js`, `api/constants.js`, `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
 | BUG-019 | Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill (cashier under-collects) | **FIXED (Apr-2026)** — `orderFinancials` now carries `deliveryCharge` across 6 call sites; `CollectPaymentPanel` seeds `deliveryChargeInput` from prop and auto-locks field (`readOnly`) when backend-seeded (> 0). Fresh in-POS delivery orders remain editable. | Close | `components/order-entry/OrderEntry.jsx`, `components/order-entry/CollectPaymentPanel.jsx` |
+| BUG-020 | Service Charge / Final Bill — Unwanted Rounding on 10% of ₹45 (prints ₹5 instead of ₹4.50; Sub Total ₹49.50 shown but Total rounded to ₹50) | Open | Open | tbd |
+| BUG-021 | Complimentary Item — Runtime (Collect Bill) Complimentary Price Not Zeroed on Postpaid Print; Prepaid Prints Correctly as 0 | Open | Open | tbd |
+| BUG-022 | Cancelled Item (e.g., "matar paneer") — Not Shown as Strikethrough on Collect Bill Page; Order Page Shows It Correctly | Open | Open | tbd |
 
 
 
@@ -1830,4 +1833,44 @@ Path C (dine-in TableCard — unrelated but similar shape)
 | QA Status | FIXED (Apr-2026) — Option B2: `orderFinancials.deliveryCharge` propagated across all seed sites; `CollectPaymentPanel` lazy-initializes input state and renders `readOnly` when backend value is present. Fresh in-POS delivery orders remain editable. |
 | Impl Status | Close |
 | Key Files | `components/order-entry/OrderEntry.jsx` (6 `setOrderFinancials` call sites + prop wiring), `components/order-entry/CollectPaymentPanel.jsx` (prop + state seed + `readOnly` input) |
+
+
+---
+
+## BUG-020 / Service Charge / Final Bill — Unwanted Rounding on 10% of ₹45 (prints ₹5 instead of ₹4.50; Sub Total ₹49.50 shown but Total rounded to ₹50)
+
+**User Reported Issue**
+- In the attached printed bill, 10% of ₹45 is being printed as ₹5 on the Service Charge line — it should be ₹4.50. Because the service charge itself is rounded, the final bill is also wrong.
+- Sub Total is printed correctly as ₹49.50, but the Total at the bottom is printed as ₹50 (rounded up from ₹49.50).
+- Expectation: No such round-off should happen. Service Charge, Sub Total, and Total must all preserve the exact two-decimal values (₹4.50 and ₹49.50 respectively).
+
+**Reference**
+- Screenshot of printed bills (Bill No. 002754 and 002755, dated 22/Apr/2026, Item "namkin-kg" ₹45, Service Charge printed as "4.50" but Total printed as "50").
+
+---
+
+## BUG-021 / Complimentary Item — Runtime (Collect Bill) Complimentary Price Not Zeroed on Postpaid Print; Prepaid Prints Correctly as 0
+
+**User Reported Issue**
+- In the attached printed bills, an item ("Chocolate Delight Cake") was marked as complimentary at **Collect Bill / Postpaid** time (runtime complimentary).
+- On the **Prepaid** bill (Bill No. 002755), the complimentary item correctly prints with Price = 0 and Total = 0.
+- On the **Postpaid / Collect Bill** printed bill (Bill No. 002754), the same complimentary "Chocolate Delight Cake" is printing with Price = 350 and Total = 350 instead of 0. User has circled the line and annotated "Complimentary → 0".
+- Expectation: When an item is marked complimentary at Collect Bill time (runtime), the printed bill must show its Price and Total as 0, identically to the prepaid flow.
+
+**Reference**
+- Annotated printed-bill photograph (two receipts side-by-side: left = Prepaid 002755 showing 0/0, right = Postpaid Collect Bill 002754 showing 350/350 circled with "Complimentary → 0" annotation).
+- Related prior work: BUG-018 (Complimentary Items — catalog + runtime marking + print payload regression).
+
+---
+
+## BUG-022 / Cancelled Item (e.g., "matar paneer") — Not Shown as Strikethrough on Collect Bill Page; Order Page Shows It Correctly
+
+**User Reported Issue**
+- An item ("matar paneer") was cancelled on the order.
+- On the **Order page / Order Entry page**, the cancellation is correctly indicated (item shown as cancelled).
+- On the **Collect Bill / Collect Payment page**, there is **no indication** that the item is cancelled — it appears in the Bill Summary items list alongside non-cancelled items (e.g., shown as "mater panneer x1 ₹325" in the Collect Payment side-panel with no strike-through or cancelled styling).
+- Expectation: If an item is cancelled, it must be displayed as **strikethrough** (struck-out) on **both** the Order page and the Collect Bill page, so the cashier can clearly see it has been cancelled.
+
+**Reference**
+- Screenshot of Collect Payment screen (#D-108219) showing "mater panneer x1 ₹325" listed in Bill Summary without any strikethrough / cancelled indicator, alongside Chocolate Delight Cake and namkin-kg.
 
