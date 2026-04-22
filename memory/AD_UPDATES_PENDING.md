@@ -226,21 +226,39 @@ Rationale:
 
 ## Entry #10 — New frontend-authoritative channel for runtime complimentary on print (BUG-021)
 
-**Source**: BUG-021 fix (Apr-2026)
+**Source**: BUG-021 fix (Apr-2026, v2 correction)
 **Status**: Pending doc-agent review; does not change any existing AD but extends the BUG-018 complimentary contract.
 
 **What changed in code**
-- `frontend/src/api/transforms/orderTransform.js` — `buildBillPrintPayload` now accepts a new override key `runtimeComplimentaryFoodIds` (array of food IDs / item IDs). The `isDetailComplimentary(d)` predicate was extended to treat a raw detail as complimentary when its `food_id` or `item_id` is in this array — in addition to the existing catalog (`food_details.complementary === 'Yes'`) and raw runtime (`is_complementary === 'Yes'`) checks.
+- `frontend/src/api/transforms/orderTransform.js` — `buildBillPrintPayload` now accepts a new override key `runtimeComplimentaryFoodIds` (array of stringifiable IDs). The `isDetailComplimentary(d)` predicate was extended to treat a raw detail as complimentary when its row ID or catalog ID appears in this array — in addition to the existing catalog (`food_details.complementary === 'Yes'`) and raw runtime (`is_complementary === 'Yes'`) checks.
 - `frontend/src/components/order-entry/OrderEntry.jsx` — `AutoPrintCollectBill` now forwards this list from `cartItems` (items with `isComplementaryRuntime === true` and `status !== 'cancelled'`).
 - `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — `handlePrintBill` (manual Print Bill) forwards the same list for consistency.
 - Rationale: the postpaid auto-print path fires before any socket re-engage after `order-bill-payment`, so `rawOrderDetails[].is_complementary` is stale even though `collectBillExisting` sent the updated flag. The override makes the carve-out frontend-authoritative on the print payload, mirroring the approach taken for subtotal / tax overrides under BUG-006 / BUG-018 Part 3.
 
+**Exact field names (v1 → v2 iteration — IMPORTANT to avoid re-introducing the bug)**
+- v1 (incorrect — did not work in production) compared the override list to `d.food_id` / `d.item_id`. Those names are used ONLY on OUTGOING payloads (see `buildCartItem`, `collectBillExisting.food_detail`, `cancelItem`) and do not exist on incoming `rawOrderDetails`. Predicate always matched against `undefined` → zeroing never activated.
+- v2 (final, verified in production on order 731571) compares against the real incoming fields:
+  - `String(d.id)` — the order_details row ID (top-level on the raw detail).
+  - `String(d.food_details.id)` — the catalog food ID (nested).
+  - Source of truth: `fromAPI.orderItem` (line 85-86) hydrates `cartItem.id = detail.id` and `cartItem.foodId = detail.food_details.id`; `cancelItem` (line 493-494) documents the same convention (`order_food_id: item.foodId /* food_details.id */`, `item_id: item.id /* orderDetails[].id */`).
+- Emitter: the two call sites forward BOTH identifiers via `flatMap([i.id, i.foodId].filter(Boolean))` — row ID first (unique per cart row, so only the exact ticked row is zeroed when the same catalog food appears multiple times), catalog ID as secondary match.
+
+**Verification evidence (production payload, Apr-22-2026)**
+- Order 731571 / restaurant bill #002768, dine-in, 3 items; the ticked line "4 pc FRIED WINGS + 4 pc STRIPS + 2 CRISPY BURGER" (row `id: 1902714`, catalog `food_details.id: 62167`, `food_details.complementary: "No"`).
+- `order-temp-store` request body shows `billFoodList[0]` with `price: 0`, `unit_price: 0`, `food_amount: 0`, `variation_amount: 0`, `addon_amount: 0`, `gst_tax_amount: 0`, `tax_amount: 0`, `vat_tax_amount: 0`.
+- Because `food_details.complementary === "No"` and `is_complementary` on the raw detail is not `"Yes"`, the zeroing could only have come from the v2 override match — confirming the predicate now works end-to-end.
+- Downstream totals also correct: `order_item_total: 517` (= 220 + 297; excludes 386), `serviceChargeAmount: 51.7` (10% of 517), `gst_tax: 28.44`, `payment_amount: 598`.
+
 **Backend notes**
-- No API contract change. The override travels inside `overrides` to `buildBillPrintPayload` only; the outgoing `order-temp-store` payload shape is unchanged (prices/tax simply zeroed on the flagged lines, same as catalog-complimentary behaviour).
+- No API contract change. The override travels inside `overrides` to `buildBillPrintPayload` only; the outgoing `order-temp-store` payload shape is unchanged (prices/tax simply zeroed on the flagged lines, same as catalog-complimentary behaviour under BUG-018 Part 3).
 - Backend persistence of `is_complementary` through `order-bill-payment` remains a separate open item; this fix does not depend on it.
 
 **Requested AD change**
-- Optional: append to the BUG-018 "Complimentary Items" section (if one is created in AD) to document that print-time complimentary carve-out now has three equivalent sources (catalog flag, raw-detail flag, frontend override list).
+- Optional: append to the BUG-018 "Complimentary Items" section (if one is created in AD) to document that print-time complimentary carve-out now has three equivalent signals, and codify the exact field names each signal reads:
+  - Catalog flag: `d.food_details.complementary`
+  - Raw runtime flag: `d.is_complementary`
+  - Frontend override: `overrides.runtimeComplimentaryFoodIds` matched against `d.id` + `d.food_details.id`
+- Codifying the field names prevents future regressions from someone re-using the outgoing names (`food_id`, `item_id`) on the incoming-detail path.
 
 ---
 
