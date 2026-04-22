@@ -9,6 +9,41 @@
 
 # ARCHITECTURE_DECISIONS_FINAL — v2
 
+## Architecture Decision Summary
+
+| S.No. | Decision ID | Description | Status | Next Step |
+|---|---|---|---|---|
+| 1 | AD-001 | Final total rounding rule | Partially Implemented | Replace the old wording with: fractional part `> 0.10` → ceil, otherwise floor. |
+| 2 | AD-002 | Remove vs update behavior for socket order events | Verified | Remove business-contract certainty language and keep the code-observed rule. |
+| 3 | AD-006 | `def_ord_status` / `defaultOrderStatus` usage | Verified | Keep as verified and reference the confirm-order path. |
+| 4 | AD-007 | Terminal order statuses in current frontend logic | Verified | Keep as code-verified, but avoid claiming backend-global authority. |
+| 5 | AD-008 | Role values used for order API scoping | Verified | Keep the two-value mapping as frontend behavior; do not overstate backend semantics. |
+| 6 | AD-009 | Permissions authority and frontend usage model | Verified | Keep backend authority wording, but document that frontend permission usage remains decentralized. |
+| 7 | AD-101 | Service charge application point in billing | Verified | Flip this AD to verified. |
+| 8 | AD-102 | Handling socket data events when `payload.orders` is missing | Verified | Keep the code-backed fail-fast statement, but mark long-term contract intent as not confirmable from frontend alone. |
+| 9 | AD-103 | `update-item-status` vs `update-food-status` | Verified | Keep as verified. |
+| 10 | AD-105 | Tax consistency between collect-bill UI and printed bill | Partially Implemented | Absorb the implementation learning, but keep status as partial rather than fully verified. |
+| 11 | AD-106 | `update-table` channel usage | Verified | Keep as verified and explicitly call out stale comments as legacy drift. |
+| 12 | AD-108 | Engage-lock recovery after reload/reconnect | Verified | Keep as verified, but note reconnect leak/staleness risk separately in risk docs. |
+| 13 | AD-201 | Notification and toast system ownership | Verified | State explicitly that realtime notification ingress is FCM-based in current code. |
+| 14 | AD-202 | `order_id` response-shape handling for place-order related flows | Verified | Keep as verified, but avoid assigning semantic certainty to each backend response shape. |
+| 15 | AD-204 | `mock*` data files | Partially Implemented | Document the split: |
+| 16 | AD-206 | Legacy `handleUpdateOrder` handler | Superseded | Reframe as **legacy wrapper still wired in, behavior delegated to `handleOrderDataEvent()`**. |
+| 17 | AD-302 | Bill print consistency with collect-bill edits | Partially Implemented | Keep as partial, not fully verified. |
+| 18 | AD-003 | Walk-in order definition | Verified in code / Not Confirmed as business definition | Mark business definition as not confirmed from code. |
+| 19 | AD-107 | WebSocket authentication model | Verified as implementation / Not Confirmed as intentional architecture | Rephrase to: “current frontend socket handshake is unauthenticated from the client side.” |
+| 20 | AD-111A | Notification source-of-truth | Superseded by implementation | Replace with: current notification ingress is FCM/service-worker based, and a manual simulation path exists in settings. |
+| 21 | AD-502 | Default state of `serviceChargeEnabled` | Partially Implemented | Keep the remaining gap explicit. |
+| 22 | AD-013A | Service charge order-type gating | Verified | Add as a new verified decision. |
+| 23 | AD-303 | Prepaid order bill-print availability on collect-bill page | Not Confirmed from code as a runtime bug | Replace with: current component code does not exclude prepaid from print-bill visibility; any runtime gap would need runtime/backend validation. |
+| 24 | AD-503 | Mobile / touch / keyboard UX support | Not Confirmed from code | Move to non-confirmed section. |
+| 25 | AD-603 | Test coverage for v2 socket handlers | Verified as partial coverage, with stale tests | Keep as partial and explicitly call out stale expectations. |
+| 26 | AD-701 | `.env.example` contract | Not Implemented | Retain as unresolved. |
+| 27 | AD-703 | `backend/server.py` presence in frontend-focused repo | Partially Verified | Remove certainty about planned removal. |
+| 28 | AD-801 | History rewrite / force-push governance | Not Confirmed from code | Keep only as non-code governance note if needed. |
+
+---
+
 ## Audit Scope
 This file finalizes only what can be supported by the current frontend codebase.
 
