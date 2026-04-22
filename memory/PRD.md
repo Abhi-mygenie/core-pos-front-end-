@@ -34,3 +34,7 @@ Finalize v3 documentation for the React frontend codebase using current code as 
 ## Next Tasks
 - Review `/app/v3/*` with product/backend owners for items marked Not Confirmed or Needs Clarification.
 - Use v3 docs as the trusted documentation baseline for future engineering/AI-agent work.
+
+## Owner Review Packet Added
+- Created `/app/v3/OWNER_REVIEW_PACKET.md` to support backend/product owner review of all v3 Needs Clarification / Not Confirmed items.
+- Packet groups questions by Backend, Product, and Documentation/Repository owners with decision options and target docs to update after answers.
