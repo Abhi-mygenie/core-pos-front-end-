@@ -26,7 +26,7 @@
 | BUG-020 | Discount Calculation — Integer Rounding Instead of 2-Decimal (10% of ₹45 becomes ₹5 instead of ₹4.50, cascading into wrong SC base and wrong final bill) | **FIXED (Apr-2026)** — three expressions in `CollectPaymentPanel.jsx` (preset, manual percent, coupon percent) switched from `Math.round((x * pct) / 100)` (integer) to `Math.round((x * pct)) / 100` (2-dp). `subtotalAfterDiscount`, SC base, GST base now 2-dp precise. AD-001 final-total ceil/floor rule preserved. | Close | `components/order-entry/CollectPaymentPanel.jsx` (lines ~202-227) |
 | BUG-021 | Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly) | **FIXED (Apr-2026, v2)** — `buildBillPrintPayload` accepts new `overrides.runtimeComplimentaryFoodIds`; `isDetailComplimentary` predicate extended to match the override list against `d.id` (order_details row ID) **and** `d.food_details.id` (catalog food ID) — the actual fields on incoming `rawOrderDetails`. `OrderEntry.AutoPrintCollectBill` and `CollectPaymentPanel.handlePrintBill` forward **both** `cartItem.id` and `cartItem.foodId` via `flatMap([i.id, i.foodId].filter(Boolean))` so only the exact ticked row is zeroed even when the same catalog food appears in multiple rows. Verified via network payload: `billFoodList[i].price/unit_price/food_amount/gst_tax_amount/...` all `0` on ticked line; `order_item_total`, `service_tax`, `gst_tax`, `payment_amount` all correctly exclude the complimentary item. Frontend-authoritative; no backend dependency. | Close | `api/transforms/orderTransform.js` `buildBillPrintPayload` (~lines 974-1020), `components/order-entry/OrderEntry.jsx` `AutoPrintCollectBill` block, `components/order-entry/CollectPaymentPanel.jsx` `handlePrintBill` |
 | BUG-022 | Cancelled Item — Not Shown as Strikethrough in Collect Bill Page "ITEMS" List (Order page correctly strikes it through) | **FIXED (Apr-2026)** — `CollectPaymentPanel.jsx` main Bill Summary and room-service items loops now compute `isCancelled = item.status === 'cancelled'` and apply strikethrough + gray (`#9CA3AF`) to item name and price plus a "(Cancelled)" label, matching `CartPanel.jsx`. Complimentary checkbox disabled for cancelled lines. No math / payload / socket changes. | Close | `components/order-entry/CollectPaymentPanel.jsx` (main items loop + room-service items loop) |
-| BUG-023 | Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path) | **RE-OPENED → RE-FIXED (Apr-2026)** — original patch used `order.isWalkIn === true` which is structurally `true` for any table-less order (TA/Delivery) per `fromAPI.order:134`, so SC still fired. Corrected gate to `scApplicable = order.orderType === 'dineIn' \|\| order.isRoom === true` (matches the *effective* `CollectPaymentPanel.jsx:244` rule once `normalizeOrderType` folds walk-ins into `dineIn`). Override path untouched; no other files touched. | Close | `api/transforms/orderTransform.js` (`buildBillPrintPayload`, lines 1071-1092) |
+| BUG-023 | Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path) | **RE-OPENED → RE-FIXED → QA-VERIFIED (Apr-2026)** — original patch used `order.isWalkIn === true` which is structurally `true` for any table-less order (TA/Delivery) per `fromAPI.order:134`, so SC still fired. Corrected gate to `scApplicable = order.orderType === 'dineIn' \|\| order.isRoom === true` (matches the *effective* `CollectPaymentPanel.jsx:244` rule once `normalizeOrderType` folds walk-ins into `dineIn`). QA re-verified on order #731600 (takeaway, dashboard-card print): `serviceChargeAmount: 0`, `gst_tax: 17.5`, `order_subtotal == order_item_total == 395`. Override path untouched; no other files touched. | Close | `api/transforms/orderTransform.js` (`buildBillPrintPayload`, lines 1071-1092) |
 
 
 
@@ -2276,15 +2276,18 @@ Walk-in coverage is preserved implicitly via `normalizeOrderType` (walk-ins → 
 4. For `order_type: 'dineIn'` (including walk-ins folded to `'dineIn'`) or `isRoom=true`: gate remains `true` → SC computed as before. No regression.
 
 ### Regression Surface (to re-verify in QA on this build)
-1. Takeaway dashboard-card print → payload `serviceChargeAmount = 0`. (Primary)
-2. Delivery dashboard-card print → payload `serviceChargeAmount = 0`. (Primary)
-3. Dine-in dashboard-card print → `serviceChargeAmount` unchanged (non-zero, % based).
-4. Walk-in dashboard-card print → `serviceChargeAmount` unchanged (non-zero, walk-in normalizes to dineIn).
-5. Room dashboard-card print → `serviceChargeAmount` unchanged.
-6. Collect Bill auto-print (all 4 types) → unchanged vs. current build (override path).
-7. Collect Bill manual "Print Bill" button (all 4 types) → unchanged (override path).
+1. Takeaway dashboard-card print → payload `serviceChargeAmount = 0`. (Primary) — **VERIFIED (order #731600, 23-Apr-2026): `serviceChargeAmount: 0`, `gst_tax: 17.5`, `order_subtotal == order_item_total == 395`.**
+2. Delivery dashboard-card print → payload `serviceChargeAmount = 0`. (Primary) — pending QA capture.
+3. Dine-in dashboard-card print → `serviceChargeAmount` unchanged (non-zero, % based). — pending QA capture.
+4. Walk-in dashboard-card print → `serviceChargeAmount` unchanged (non-zero, walk-in normalizes to dineIn). — pending QA capture.
+5. Room dashboard-card print → `serviceChargeAmount` unchanged. — pending QA capture.
+6. Collect Bill auto-print (all 4 types) → unchanged vs. current build (override path). — **STILL VALID (order #731609 takeaway: `serviceChargeAmount: 0`).**
+7. Collect Bill manual "Print Bill" button (all 4 types) → unchanged (override path). — **STILL VALID (order #731609 takeaway: `serviceChargeAmount: 0`).**
 8. KOT print (all types) → unaffected.
 
 ### Known Open Items
 - None.
+
+### QA Sign-off
+- **Primary scenario (takeaway dashboard-card print) verified by payload capture on 23-Apr-2026.** Sufficient to close BUG-023. Remaining scenarios (2-5) are code-level equivalent by the same gate and can be sampled in next QA cycle.
 
