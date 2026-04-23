@@ -1068,11 +1068,20 @@ export const toAPI = {
       ? parseFloat(overrides.deliveryCharge) || 0 : 0;
     const postDiscountSubtotal = Math.max(0, computedSubtotal - overrideDiscount);
 
+    // BUG-023 (Apr-2026): Mirror CollectPaymentPanel SC-applicability rule
+    // (CollectPaymentPanel.jsx:244) in the default branch so dashboard-card
+    // manual print (OrderCard/TableCard) does not emit service charge for
+    // takeaway / delivery. Override path is untouched.
+    const scApplicable =
+      order.orderType === 'dineIn' || order.isWalkIn === true || order.isRoom === true;
+
     const serviceChargeAmount = overrides.serviceChargeAmount !== undefined
       ? overrides.serviceChargeAmount
-      : (serviceChargePercentage > 0
-          ? Math.round(postDiscountSubtotal * serviceChargePercentage / 100 * 100) / 100
-          : (order.serviceTax || 0));
+      : (scApplicable
+          ? (serviceChargePercentage > 0
+              ? Math.round(postDiscountSubtotal * serviceChargePercentage / 100 * 100) / 100
+              : (order.serviceTax || 0))
+          : 0);
 
     // GST on SC / tip / delivery — only when we computed SC ourselves; otherwise the
     // caller (CollectPaymentPanel) has already baked these into overrides.gstTax.

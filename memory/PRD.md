@@ -38,3 +38,8 @@ Finalize v3 documentation for the React frontend codebase using current code as 
 ## Owner Review Packet Added
 - Created `/app/v3/OWNER_REVIEW_PACKET.md` to support backend/product owner review of all v3 Needs Clarification / Not Confirmed items.
 - Packet groups questions by Backend, Product, and Documentation/Repository owners with decision options and target docs to update after answers.
+
+## Selective Remote File Pull
+- Applied only selected files from remote `piyush_QA` FETCH_HEAD: `frontend/src/api/transforms/orderTransform.js` plus five new `memory/*` documentation files.
+- Did not pull the full branch or apply broad v1/v2/v3 path renames.
+- Verified `orderTransform.js` lint passes and `yarn build` succeeds with the existing `LoadingPage.jsx` hook warning.
