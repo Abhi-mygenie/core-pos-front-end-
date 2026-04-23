@@ -1072,8 +1072,17 @@ export const toAPI = {
     // (CollectPaymentPanel.jsx:244) in the default branch so dashboard-card
     // manual print (OrderCard/TableCard) does not emit service charge for
     // takeaway / delivery. Override path is untouched.
+    //
+    // BUG-023 defect-in-fix (Apr-2026, follow-up): Previous implementation
+    // also checked `order.isWalkIn === true`. In `fromAPI.order` (line 134)
+    // `isWalkIn` is derived as `!api.table_id || api.table_id === 0`, which
+    // is TRUE for every takeaway/delivery order (no table_id). That caused
+    // the gate to evaluate true for exactly the two types the fix was meant
+    // to exempt — SC was still emitted. `normalizeOrderType` folds walk-ins
+    // into `'dineIn'` anyway, so the first clause covers them. Effective
+    // rule matches CollectPaymentPanel: dineIn || isRoom.
     const scApplicable =
-      order.orderType === 'dineIn' || order.isWalkIn === true || order.isRoom === true;
+      order.orderType === 'dineIn' || order.isRoom === true;
 
     const serviceChargeAmount = overrides.serviceChargeAmount !== undefined
       ? overrides.serviceChargeAmount
