@@ -1,45 +1,34 @@
-# PRD / Audit Handoff
+# PRD — core-pos-front-end- (Deployment Record)
 
 ## Original Problem Statement
-Finalize v3 documentation for the React frontend codebase using current code as the only source of truth. Do not modify code or run testing agent. Build/run the project, read memory/v1/v2 docs, inspect code, and create v3 versions of the required documents without overwriting originals.
+Deploy the frontend project from `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch `main`) into the Emergent environment. Clone directly into `/app`. Use yarn only. React 19 + CRACO 7 + Node 20. No test agents, no test suites, minimum changes necessary to get the frontend running.
 
-## Architecture Decisions
-- Current checkout: remote branch available/used was `piyush_QA` at commit `32d91748ff963c7ecb8b9c98c102f1280a2fc179`; requested casing `Piyush_QA` was not present remotely.
-- React frontend only; production build succeeded with one `LoadingPage.jsx` hook dependency warning.
-- Code was treated as source of truth; backend/product assumptions were explicitly marked as not confirmed.
+## Deployment Task — Done (2026-04-23)
+- Repo cloned at branch `main` (HEAD `62c647e`) directly into `/app`.
+- `/app/frontend/.env` populated with all 16 variables supplied by user (CRM API keys JSON preserved as single line).
+- `yarn install` completed (1.22.22).
+- Frontend supervisor service RUNNING; compiled successfully.
+- Preview URL `https://restaurant-pos-v2-1.preview.emergentagent.com` returns HTTP 200, login page renders.
+- Backend supervisor program stopped (repo is frontend-only per user).
 
-## Implemented Documentation Output
-- Created `/app/v3/ARCHITECTURE_DECISIONS_FINAL.md`.
-- Created `/app/v3/DOC_VS_CODE_GAP.md`.
-- Created `/app/v3/OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md`.
-- Created `/app/v3/RISK_REGISTER.md`.
-- Created `/app/v3/DOCUMENTATION_AUDIT_SUMMARY.md`.
-- Created `/app/v3/COMPARISON_SUMMARY.md`.
+## Architecture (as received)
+- React 19.0.0 + CRACO 7.1.0 + TailwindCSS + shadcn/ui
+- Firebase SDK (v12) for auth/analytics/messaging
+- socket.io-client for realtime
+- Google Maps JS SDK
+- Talks to: `REACT_APP_API_BASE_URL`, `REACT_APP_SOCKET_URL`, `REACT_APP_CRM_BASE_URL` (external Mygenie services).
 
-## Prioritized Backlog
-### P0
-- Backend clarification: websocket auth/security model, settlement authority, delivery-address persistence.
-- Address critical frontend latent risk: undefined `API_ENDPOINTS.CLEAR_BILL` in `paymentService.collectPayment()`.
+## What's Implemented (by this agent)
+- Clean clone + env wiring + yarn install + supervisor start. Nothing else.
 
-### P1
-- Align `OrderEntry.applyRoundOff()` with canonical fractional `> 0.10` rounding rule.
-- Update stale socket comments/tests around `update-table` and `update-order-status`.
-- Resolve missing health-check plugin files or remove conditional config.
+## Next Action Items (Backlog / For Next Agent)
+- P1: Decide on `/app/backend/server.py` — start it, or keep the backend supervisor program disabled permanently.
+- P1: Dismiss "Wake up servers" banner source (it is driven by `ENABLE_HEALTH_CHECK`/backend reachability inside the app code).
+- P2: Clean up ESLint warning in `src/pages/LoadingPage.jsx:101`.
+- P2: Evaluate upgrading `react-day-picker` for React 19 compatibility.
 
-### P2
-- Add/maintain `.env.example` for required frontend environment variables.
-- Reduce oversized hotspot files and centralize billing calculations.
-- Confirm prepaid runtime complimentary auto-print parity and service-charge default policy.
-
-## Next Tasks
-- Review `/app/v3/*` with product/backend owners for items marked Not Confirmed or Needs Clarification.
-- Use v3 docs as the trusted documentation baseline for future engineering/AI-agent work.
-
-## Owner Review Packet Added
-- Created `/app/v3/OWNER_REVIEW_PACKET.md` to support backend/product owner review of all v3 Needs Clarification / Not Confirmed items.
-- Packet groups questions by Backend, Product, and Documentation/Repository owners with decision options and target docs to update after answers.
-
-## Selective Remote File Pull
-- Applied only selected files from remote `piyush_QA` FETCH_HEAD: `frontend/src/api/transforms/orderTransform.js` plus five new `memory/*` documentation files.
-- Did not pull the full branch or apply broad v1/v2/v3 path renames.
-- Verified `orderTransform.js` lint passes and `yarn build` succeeds with the existing `LoadingPage.jsx` hook warning.
+## File Locations
+- Repo root: `/app`
+- Frontend: `/app/frontend`
+- Frontend env: `/app/frontend/.env`
+- Deployment handover: `/app/memory/deployment_handover.md`
