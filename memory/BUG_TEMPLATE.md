@@ -26,6 +26,7 @@
 | BUG-020 | Discount Calculation — Integer Rounding Instead of 2-Decimal (10% of ₹45 becomes ₹5 instead of ₹4.50, cascading into wrong SC base and wrong final bill) | **FIXED (Apr-2026)** — three expressions in `CollectPaymentPanel.jsx` (preset, manual percent, coupon percent) switched from `Math.round((x * pct) / 100)` (integer) to `Math.round((x * pct)) / 100` (2-dp). `subtotalAfterDiscount`, SC base, GST base now 2-dp precise. AD-001 final-total ceil/floor rule preserved. | Close | `components/order-entry/CollectPaymentPanel.jsx` (lines ~202-227) |
 | BUG-021 | Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly) | **FIXED (Apr-2026, v2)** — `buildBillPrintPayload` accepts new `overrides.runtimeComplimentaryFoodIds`; `isDetailComplimentary` predicate extended to match the override list against `d.id` (order_details row ID) **and** `d.food_details.id` (catalog food ID) — the actual fields on incoming `rawOrderDetails`. `OrderEntry.AutoPrintCollectBill` and `CollectPaymentPanel.handlePrintBill` forward **both** `cartItem.id` and `cartItem.foodId` via `flatMap([i.id, i.foodId].filter(Boolean))` so only the exact ticked row is zeroed even when the same catalog food appears in multiple rows. Verified via network payload: `billFoodList[i].price/unit_price/food_amount/gst_tax_amount/...` all `0` on ticked line; `order_item_total`, `service_tax`, `gst_tax`, `payment_amount` all correctly exclude the complimentary item. Frontend-authoritative; no backend dependency. | Close | `api/transforms/orderTransform.js` `buildBillPrintPayload` (~lines 974-1020), `components/order-entry/OrderEntry.jsx` `AutoPrintCollectBill` block, `components/order-entry/CollectPaymentPanel.jsx` `handlePrintBill` |
 | BUG-022 | Cancelled Item — Not Shown as Strikethrough in Collect Bill Page "ITEMS" List (Order page correctly strikes it through) | **FIXED (Apr-2026)** — `CollectPaymentPanel.jsx` main Bill Summary and room-service items loops now compute `isCancelled = item.status === 'cancelled'` and apply strikethrough + gray (`#9CA3AF`) to item name and price plus a "(Cancelled)" label, matching `CartPanel.jsx`. Complimentary checkbox disabled for cancelled lines. No math / payload / socket changes. | Close | `components/order-entry/CollectPaymentPanel.jsx` (main items loop + room-service items loop) |
+| BUG-023 | Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path) | **FIXED (Apr-2026)** — `buildBillPrintPayload` default branch now gates SC by `scApplicable = order.orderType === 'dineIn' \|\| order.isWalkIn \|\| order.isRoom`; override path untouched; no other files touched. | Close | `api/transforms/orderTransform.js` (`buildBillPrintPayload`, lines 1071-1085) |
 
 
 
@@ -2087,4 +2088,132 @@ Path C (dine-in TableCard — unrelated but similar shape)
 **Notes**
 - No math / payload regression risk; purely CSS class / inline-style addition to existing render loops.
 - Reference: Screenshot of Collect Payment screen (#D-108219) showing "mater panneer x1 ₹325" listed in Bill Summary without strikethrough, alongside Chocolate Delight Cake (₹350) and namkin-kg (₹45). Item Total = ₹395 confirms cancelled item is already excluded from math; only display styling is missing.
+
+
+---
+
+## BUG-023 / Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path)
+
+**User Reported Issue**
+- Service charge is not applicable to takeaway and delivery orders. Bill *collection* is correct (Collect Bill screen already shows SC = 0 for those types, per BUG-013).
+- However, when the operator prints the bill by clicking the **printer icon on an order / table card on the dashboard** (i.e. outside the Collect Payment flow), the outgoing `order-temp-store` payload still contains a non-zero `serviceChargeAmount` for takeaway and delivery orders.
+- Auto bill print (Collect Bill → auto print) and manual "Print Bill" button inside the Collect Payment screen are both correct.
+
+**QA Status**
+- Confirmed by code trace. Regression surface isolated to the manual-print-from-card path.
+
+**Current Code Behavior**
+- Two dashboard-card print entry points call `printOrder` without an `overrides` object:
+  - `OrderCard.handlePrintBill` (`components/cards/OrderCard.jsx:112-126`, line 118):
+    ```
+    await printOrder(orderId, 'bill', null, order, restaurant?.serviceChargePercentage || 0);
+    ```
+  - `TableCard.handlePrintBill` (`components/cards/TableCard.jsx:139-154`, line 146):
+    ```
+    await printOrder(table.orderId, 'bill', null, order, restaurant?.serviceChargePercentage || 0);
+    ```
+- `orderService.printOrder` (`api/services/orderService.js:132-151`) forwards to `toAPI.buildBillPrintPayload(orderData, serviceChargePercentage, overrides={})`.
+- Inside `buildBillPrintPayload` (`api/transforms/orderTransform.js:1071-1075`), default branch:
+  ```
+  const serviceChargeAmount = overrides.serviceChargeAmount !== undefined
+    ? overrides.serviceChargeAmount
+    : (serviceChargePercentage > 0
+        ? Math.round(postDiscountSubtotal * serviceChargePercentage / 100 * 100) / 100
+        : (order.serviceTax || 0));
+  ```
+  The fallback has **no `order.orderType` / `order.isWalkIn` / `order.isRoom` check** — SC is computed for every order type.
+- Result: for TA / Delivery orders printed from the dashboard card, `serviceChargeAmount` goes out non-zero in the `order-temp-store` payload.
+
+**Expected Behavior**
+- `serviceChargeAmount` in the print-bill payload must be `0` when order is takeaway or delivery. It should remain non-zero only for dine-in, walk-in, and room orders (mirroring the SC rule already enforced in `CollectPaymentPanel.jsx:244-246`).
+
+**Gap Observed**
+- BUG-013 fixed SC gating in `CollectPaymentPanel` and `calcOrderTotals` (bill-collection path) and for any print path that passes `overrides.serviceChargeAmount`.
+- The **default branch** of `buildBillPrintPayload` (used only when `overrides.serviceChargeAmount` is omitted) was not updated and still re-derives SC from `serviceChargePercentage` without order-type awareness.
+- The two callers that hit this default branch are the dashboard card printer icons (`OrderCard`, `TableCard`) — the Collect Bill flow always passes a pre-gated override and therefore is unaffected.
+- Why the working flows work: `CollectPaymentPanel.handlePrintBill` (line 368-400), `OrderEntry.autoPrintNewOrderIfEnabled` (line 1085-1157), and `AutoPrintCollectBill` (line 1341) all forward `serviceChargeAmount: paymentData.serviceCharge` (or the locally computed `serviceCharge`), which was already zeroed at source by `scApplicable = orderType === 'dineIn' || orderType === 'walkIn' || isRoom` (`CollectPaymentPanel.jsx:244`). `buildBillPrintPayload` takes the override path → SC = 0 for TA/Del. The dashboard card printer icons do not have a payment-panel context; they call `printOrder` with no overrides → `buildBillPrintPayload` falls into the default branch → SC is re-computed unconditionally → bug.
+
+**Impacted Areas**
+- Modules: Bill Print (only), Service Charge
+- Screens / Flows: Dashboard → click order/table card printer icon → manual print bill for TA / Delivery
+- Components / Hooks / Utilities (central fix site):
+  - `api/transforms/orderTransform.js` → `buildBillPrintPayload` default branch (lines 1071-1075)
+- Not impacted (correct as-is):
+  - `components/order-entry/CollectPaymentPanel.jsx:244-246, 368-400` (SC already gated, overrides forwarded)
+  - `components/order-entry/OrderEntry.jsx:1034-1157, 1334-1350` (auto-print + manual-from-payment, overrides forwarded)
+  - `api/services/orderService.js:132-151` (pure pass-through)
+  - `components/cards/OrderCard.jsx:112-126` and `components/cards/TableCard.jsx:139-154` (acceptable to keep no-overrides call — central fix compensates)
+
+**Files Reviewed**
+- `frontend/src/components/cards/OrderCard.jsx` (lines 100-126)
+- `frontend/src/components/cards/TableCard.jsx` (lines 125-155)
+- `frontend/src/components/order-entry/OrderEntry.jsx` (lines 1034-1158, 1334-1350)
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` (lines 244-246, 368-400)
+- `frontend/src/api/services/orderService.js` (lines 120-152)
+- `frontend/src/api/transforms/orderTransform.js` (lines 42-58 normalizeOrderType, 133-174 fromAPI.order, 974-1185 buildBillPrintPayload — focus 1071-1075)
+
+**Code Evidence Summary**
+- `buildBillPrintPayload` default-branch SC fallback (lines 1071-1075) lacks order-type gate.
+- `order.orderType` in the hydrated order is already one of `'dineIn' | 'takeAway' | 'delivery'` (`normalizeOrderType`, orderTransform.js:42-58); walk-ins are normalized to `'dineIn'`.
+- `order.isWalkIn` (boolean) and `order.isRoom` (boolean) are present on the hydrated order (orderTransform.js:133, 173, 174) and can be used in the gate.
+
+**Dependencies / External Validation Needed**
+- None. Backend is correct; it honours whatever the frontend sends. Fix is purely frontend UI-payload mapping.
+
+**Reproduction Understanding**
+- Step 1: Configure restaurant with service charge enabled (e.g., 10%).
+- Step 2: Create a takeaway (or delivery) order with items. Do NOT open Collect Payment.
+- Step 3: On the dashboard, click the printer (Bill) icon on the order card / table card for that order.
+- Step 4: Inspect the outgoing `POST /api/v1/vendoremployee/order-temp-store` request.
+- Observed: `serviceChargeAmount` is non-zero (e.g., `subtotal × 10%`).
+- Expected: `serviceChargeAmount = 0`.
+
+**Open Questions / Unknowns**
+- None. BUG-013 already defined the canonical SC-applicability rule; this bug is a residual of that rule not being mirrored into the print-payload default branch.
+
+**Notes**
+- This is effectively BUG-013 Part 2 (print-payload default branch). Minimal, localized fix.
+- Exact fix location (single point): `api/transforms/orderTransform.js` → `buildBillPrintPayload` → lines 1071-1075 (the `serviceChargeAmount` fallback only). Introduce `scApplicable = order.orderType === 'dineIn' || order.isWalkIn === true || order.isRoom === true`; when `overrides.serviceChargeAmount` is undefined AND `!scApplicable`, return `0`. Downstream GST-on-SC block (lines 1079-1087) contributes 0 naturally once `serviceChargeAmount` is 0 — no other change required.
+- Must NOT change: bill-collection logic (`calcOrderTotals`, `placeOrder*`, `collectBillExisting`, `CollectPaymentPanel.serviceCharge`) — already correct per BUG-013; backend; KOT print path; override-consuming callers (`CollectPaymentPanel.handlePrintBill`, `OrderEntry.autoPrint*`); `OrderCard.handlePrintBill` / `TableCard.handlePrintBill` (central fix at `buildBillPrintPayload` covers them).
+- Regression surface to verify: (a) TA / Delivery manual print from card → SC = 0; (b) Dine-In / Walk-In / Room manual print from card → SC unchanged; (c) Collect Bill auto-print + manual-in-payment print for all four types → unchanged; (d) KOT print → unchanged.
+
+---
+
+## BUG-023 / IMPLEMENTATION RECORD — FIXED (Apr-2026)
+
+**Shipped as a single minimal, localized edit. No files outside `orderTransform.js` were touched.**
+
+### Edit — Default-branch SC gate in `buildBillPrintPayload`
+- `frontend/src/api/transforms/orderTransform.js` → `buildBillPrintPayload` (lines 1071-1084, was 1071-1075):
+  - Introduced `scApplicable = order.orderType === 'dineIn' || order.isWalkIn === true || order.isRoom === true` mirroring `CollectPaymentPanel.jsx:244-246`.
+  - Wrapped the percentage-based SC fallback (`Math.round(postDiscountSubtotal * serviceChargePercentage / 100 * 100) / 100`) and the `order.serviceTax` fallback so both return `0` when `!scApplicable`.
+  - Override path (`overrides.serviceChargeAmount !== undefined`) is byte-identical to pre-fix — Collect Bill auto-print and manual-in-payment print flows unaffected.
+  - Downstream GST-on-SC block (now lines 1088-1096) unchanged; the `serviceChargeAmount * avgGstRate` term collapses to `0` naturally when SC is 0.
+
+### Files NOT changed (by design)
+- `components/cards/OrderCard.jsx`, `components/cards/TableCard.jsx` — still call `printOrder` without overrides; central fix compensates.
+- `components/order-entry/CollectPaymentPanel.jsx`, `components/order-entry/OrderEntry.jsx` — override-forwarding paths already correct (BUG-013).
+- `api/services/orderService.js` — pure pass-through.
+- `calcOrderTotals` and bill-collection logic — already correct per BUG-013.
+- Backend — no change.
+
+### Architecture Compliance (Verified)
+- BUG-013 (parent) — SC applicability rule (`dineIn | walkIn | isRoom`) now mirrored into the print-payload default branch. ✅
+- AD-101 / addendum — SC-on-post-discount + GST-on-SC math unchanged; collapses correctly when SC = 0. ✅
+- BUG-021 runtime-complimentary override path — untouched. ✅
+
+### Regression Surface (to verify in QA)
+1. Takeaway manual print from dashboard order/table card → payload `serviceChargeAmount = 0`.
+2. Delivery manual print from dashboard order/table card → payload `serviceChargeAmount = 0`.
+3. Dine-in manual print from dashboard card → `serviceChargeAmount` unchanged (percentage-based as before).
+4. Walk-in manual print from dashboard card → unchanged.
+5. Room manual print from dashboard card → unchanged.
+6. Collect Bill auto-print (all 4 types) → unchanged (override path).
+7. Collect Bill manual "Print Bill" button (all 4 types) → unchanged (override path).
+8. KOT print (all types) → unaffected.
+
+### Known Open Items (not blockers)
+- None.
+
+
 
