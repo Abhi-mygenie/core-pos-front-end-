@@ -214,10 +214,24 @@ export const fromAPI = {
       // Source (own, swiggy, zomato, etc.)
       source: (api.order_in || 'own').toLowerCase(),
 
-      // Items — filter out "Check In" system marker (room check-in representation, not a real product)
-      items: (api.orderDetails || [])
-        .filter(d => (d.food_details?.name || '').toLowerCase() !== 'check in')
-        .map(fromAPI.orderItem),
+      // Items — keep backend "Check In" system marker in the cart (required for
+      // Update-Order vs Place-Order branching on checked-in rooms). Consumers MUST
+      // filter `!isCheckInMarker` before rendering or running bill math. The
+      // marker is neutralised to price 0 / tax 0 so any accidental consumer that
+      // sums it remains arithmetically inert. See
+      // /app/memory/ROOM_CHECKIN_UPDATE_ORDER_FIX_V2.md.
+      items: (api.orderDetails || []).map((d) => {
+        const isCheckIn = (d.food_details?.name || '').toLowerCase() === 'check in';
+        const mapped = fromAPI.orderItem(d);
+        if (!isCheckIn) return mapped;
+        return {
+          ...mapped,
+          isCheckInMarker: true,
+          price: 0,
+          unitPrice: 0,
+          tax: { percentage: 0, type: 'GST', calculation: 'Exclusive', isInclusive: false },
+        };
+      }),
 
       // Notes
       orderNote: api.order_note || '',

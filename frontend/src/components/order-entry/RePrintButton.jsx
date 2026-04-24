@@ -18,8 +18,8 @@ export const RePrintOnlyButton = ({ orderId, cartItems = [] }) => {
   const handlePrintKot = async () => {
     if (!orderId || isPrinting) return;
     
-    // Get placed items only
-    const placedItems = cartItems.filter(item => item.placed);
+    // Get placed items only (ROOM_CHECKIN_FIX_V2: exclude synthetic Check-In marker)
+    const placedItems = cartItems.filter(item => item.placed && !item.isCheckInMarker);
     
     // Get stations from placed items
     const stations = getStationsFromOrderItems(placedItems, getProductById);

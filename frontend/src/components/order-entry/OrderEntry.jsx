@@ -324,6 +324,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           variation: item.variation,
           addOns: item.addOns,
           notes: item.notes,
+          // ROOM_CHECKIN_FIX_V2: propagate synthetic "Check In" marker so UI/math
+          // consumers can filter it out (see ROOM_CHECKIN_UPDATE_ORDER_FIX_V2.md).
+          isCheckInMarker: item.isCheckInMarker === true,
         }));
         setCartItems(existingItems);
       } else {
@@ -405,7 +408,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // Cart item counts by item id (for badge on pills)
   const cartCountMap = useMemo(() => {
     const map = {};
-    cartItems.forEach(ci => { map[ci.id] = (map[ci.id] || 0) + ci.qty; });
+    cartItems.forEach(ci => {
+      // ROOM_CHECKIN_FIX_V2: synthetic Check-In marker never counted.
+      if (ci.isCheckInMarker) return;
+      map[ci.id] = (map[ci.id] || 0) + ci.qty;
+    });
     return map;
   }, [cartItems]);
 
@@ -536,11 +543,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const isPrepaid = orderPaymentType === 'prepaid';
   const isServed = orderStatus === 'served';
   const localSubtotal = cartItems.reduce((sum, item) =>
-    item.status === 'cancelled' ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
+    (item.status === 'cancelled' || item.isCheckInMarker) ? sum : sum + (item.totalPrice || (item.price * item.qty)), 0
   );
   // Calculate local tax for unplaced items
   const localTax = cartItems.reduce((sum, item) => {
-    if (item.status === 'cancelled' || item.placed) return sum;
+    if (item.status === 'cancelled' || item.placed || item.isCheckInMarker) return sum;
     const linePrice = item.totalPrice || (item.price * item.qty);
     const taxPct = parseFloat(item.tax?.percentage) || 0;
     if (taxPct === 0) return sum;
@@ -548,10 +555,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
   }, 0);
   const unplacedSubtotal = cartItems
-    .filter(i => !i.placed && i.status !== 'cancelled')
+    .filter(i => !i.placed && i.status !== 'cancelled' && !i.isCheckInMarker)
     .reduce((sum, item) => sum + (item.totalPrice || (item.price * item.qty)), 0);
   const unplacedTax = cartItems.reduce((sum, item) => {
-    if (item.status === 'cancelled' || item.placed) return sum;
+    if (item.status === 'cancelled' || item.placed || item.isCheckInMarker) return sum;
     const linePrice = item.totalPrice || (item.price * item.qty);
     const taxPct = parseFloat(item.tax?.percentage) || 0;
     if (taxPct === 0) return sum;

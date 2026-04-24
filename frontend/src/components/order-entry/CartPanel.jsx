@@ -275,7 +275,10 @@ const CartPanel = ({
   onAddressClick,
 }) => {
   const { enableDynamicTables } = useSettings();
-  const newItemCount = cartItems.filter(i => !i.placed).length;
+  // ROOM_CHECKIN_FIX_V2: synthetic "Check In" marker must never be counted,
+  // rendered, or gate any cart-screen action (see ROOM_CHECKIN_UPDATE_ORDER_FIX_V2.md).
+  const visibleCartItems = cartItems.filter(i => !i.isCheckInMarker);
+  const newItemCount = cartItems.filter(i => !i.placed && !i.isCheckInMarker).length;
 
   // Validation: required fields per order type
   const isNameRequired = orderType === 'takeAway' || orderType === 'delivery';
@@ -609,18 +612,18 @@ const CartPanel = ({
 
       {/* Cart Items */}
       <div className="flex-1 overflow-y-auto">
-        {cartItems.length === 0 ? (
+        {visibleCartItems.length === 0 ? (
           <div className="p-8 text-center" style={{ color: COLORS.grayText }}>
             <Utensils className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p>No items in order</p>
             <p className="text-sm mt-1">Tap menu items to add</p>
           </div>
         ) : (
-          cartItems.map((item, index) => {
+          visibleCartItems.map((item, index) => {
             // BUG-237: Hide delta items — their qty is shown on the placed item row
             if (item._deltaForId && !item.placed) return null;
 
-            const prevItem = index > 0 ? cartItems[index - 1] : null;
+            const prevItem = index > 0 ? visibleCartItems[index - 1] : null;
             const showKotSeparator = prevItem && prevItem.placed && !item.placed && !item._deltaForId;
 
             return (
@@ -661,7 +664,7 @@ const CartPanel = ({
         )}
 
         {/* Re-Print at end of placed items - ONLY if there are placed items and NO new items after */}
-        {canPrintBill && cartItems.some(i => i.placed) && !cartItems.some(i => !i.placed) && (
+        {canPrintBill && cartItems.some(i => i.placed && !i.isCheckInMarker) && !cartItems.some(i => !i.placed) && (
           <div className="px-4 py-3">
             <RePrintOnlyButton orderId={orderId} cartItems={cartItems} />
           </div>
@@ -785,7 +788,7 @@ const CartPanel = ({
           data-testid="collect-bill-btn"
           onClick={() => setShowPaymentPanel(true)}
           disabled={
-            cartItems.length === 0 ||
+            visibleCartItems.length === 0 ||
             (!hasPlacedItems && hasValidationErrors) ||
             (hasPlacedItems && hasUnplacedItems) ||
             (hasPlacedItems && !isServed)
