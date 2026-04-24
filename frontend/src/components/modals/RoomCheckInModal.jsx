@@ -286,7 +286,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const [checkoutTime, setCheckoutTime] = useState(nowTimeStr());
   const [checkoutPulse, setCheckoutPulse] = useState(false);
   const [roomPrice, setRoomPrice] = useState('');
-  const [orderAmount, setOrderAmount] = useState('');
   const [advancePayment, setAdvancePayment] = useState('');
   const [orderNote, setOrderNote] = useState('');
 
@@ -311,10 +310,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const maxAdults = 4 * roomsCount;
   const maxChildren = 4 * roomsCount;
   const balancePayment = useMemo(() => {
-    const o = Number(orderAmount) || 0;
+    const o = Number(roomPrice) || 0;
     const a = Number(advancePayment) || 0;
     return (o - a).toFixed(2);
-  }, [orderAmount, advancePayment]);
+  }, [roomPrice, advancePayment]);
   const totalAdult = 1 + extraAdults.length;
   const totalChildren = childNames.length;
   const gstBlockVisible = !!(flags.showUserGst && bookingFor === 'Corporate');
@@ -324,11 +323,11 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       name || phone || email ||
       frontImage || backImage ||
       extraAdults.length || childNames.length ||
-      roomPrice || orderAmount || advancePayment || orderNote ||
+      roomPrice || advancePayment || orderNote ||
       firmName || firmGst
     );
   }, [name, phone, email, frontImage, backImage, extraAdults, childNames,
-      roomPrice, orderAmount, advancePayment, orderNote, firmName, firmGst]);
+      roomPrice, advancePayment, orderNote, firmName, firmGst]);
 
   // ── Effects ──
 
@@ -466,11 +465,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       if (checkinDate < yesterdayStr()) next.checkin = 'Check-in date cannot be more than 24 hours in the past.';
       if (checkoutDate < checkinDate) next.checkout = 'Check-out must be on or after check-in';
       if (roomPrice === '' || Number(roomPrice) < 0) next.roomPrice = 'Required';
-      if (orderAmount === '' || Number(orderAmount) < 0) next.orderAmount = 'Required';
       const adv = Number(advancePayment) || 0;
-      const ord = Number(orderAmount) || 0;
+      const ord = Number(roomPrice) || 0;
       if (adv < 0) next.advance = 'Cannot be negative';
-      else if (advancePayment !== '' && adv > ord) next.advance = 'Advance cannot be greater than booking amount';
+      else if (advancePayment !== '' && adv > ord) next.advance = 'Advance cannot be greater than Room Price';
 
       if (gstBlockVisible) {
         if (!firmName.trim()) next.firmName = 'Required';
@@ -528,7 +526,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         checkinDate: flags.bookingDetails ? toPayloadDateTime(checkinDate, checkinTime) : undefined,
         checkoutDate: flags.bookingDetails ? toPayloadDateTime(checkoutDate, checkoutTime) : undefined,
         roomPrice: flags.bookingDetails ? roomPrice : undefined,
-        orderAmount: flags.bookingDetails ? orderAmount : undefined,
         advancePayment: flags.bookingDetails ? (advancePayment || 0) : undefined,
         balancePayment: flags.bookingDetails ? balancePayment : undefined,
         orderNote: flags.bookingDetails ? (orderNote.trim() || undefined) : undefined,
@@ -664,65 +661,203 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
           </div>
         )}
 
-        {/* 3-Column grid */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* 2-Column grid: Guest Panel (left) / Booking & Payment (right) */}
+        <div className="grid grid-cols-[1.5fr_1fr] gap-4">
 
-          {/* ─── COL 1 — Guest ─── */}
-          <div className="flex flex-col space-y-2">
+          {/* ─── LEFT — Guest Panel (unified Guest Cards) ─── */}
+          <div className="flex flex-col space-y-3">
             <SectionLabel>Guest</SectionLabel>
-            <InputField
-              icon={User}
-              label="Guest Name"
-              required
-              placeholder="John Doe"
-              value={name}
-              onChange={(e) => { setName(e.target.value); if (e.target.value.trim()) clearErr('name'); }}
-              data-testid="checkin-name"
-              error={errors.name}
-            />
 
-            {/* Phone with country-code selector */}
-            <div>
-              <FieldLabel required>Phone</FieldLabel>
-              <div
-                className="rcm-phone-wrap border rounded-lg px-2.5 py-1.5 flex items-center"
-                style={{
-                  borderColor: errors.phone ? COLORS.errorText : COLORS.borderGray,
-                  backgroundColor: '#fff',
-                }}
-              >
-                <Phone className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
-                <PhoneInput
-                  data-testid="checkin-phone"
-                  defaultCountry="IN"
-                  value={phone}
-                  onChange={(val) => { setPhone(val || ''); if (val) clearErr('phone'); }}
-                  className="flex-1 rcm-phone-input"
-                  countrySelectProps={{ 'data-testid': 'checkin-country-code' }}
-                  numberInputProps={{
-                    'data-testid': 'checkin-phone-input',
-                    className: 'outline-none text-sm bg-transparent min-w-0 w-full',
-                    style: { color: COLORS.darkText },
-                    placeholder: '98765 43210',
-                  }}
+            {/* ── Primary Guest Card (#1) ── */}
+            <div
+              className="p-3 rounded-lg space-y-2"
+              style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
+              data-testid="checkin-guest-card-1"
+            >
+              <div className="flex items-center gap-2">
+                <Badge>#1</Badge>
+                <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: COLORS.grayText }}>Primary Guest</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <InputField
+                  icon={User}
+                  label="Guest Name"
+                  required
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); if (e.target.value.trim()) clearErr('name'); }}
+                  data-testid="checkin-name"
+                  error={errors.name}
+                />
+                {/* Phone with country-code selector */}
+                <div>
+                  <FieldLabel required>Phone</FieldLabel>
+                  <div
+                    className="rcm-phone-wrap border rounded-lg px-2.5 py-1.5 flex items-center"
+                    style={{
+                      borderColor: errors.phone ? COLORS.errorText : COLORS.borderGray,
+                      backgroundColor: '#fff',
+                    }}
+                  >
+                    <Phone className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
+                    <PhoneInput
+                      data-testid="checkin-phone"
+                      defaultCountry="IN"
+                      value={phone}
+                      onChange={(val) => { setPhone(val || ''); if (val) clearErr('phone'); }}
+                      className="flex-1 rcm-phone-input"
+                      countrySelectProps={{ 'data-testid': 'checkin-country-code' }}
+                      numberInputProps={{
+                        'data-testid': 'checkin-phone-input',
+                        className: 'outline-none text-sm bg-transparent min-w-0 w-full',
+                        style: { color: COLORS.darkText },
+                        placeholder: '98765 43210',
+                      }}
+                    />
+                  </div>
+                  {errors.phone && <div className="text-[10px] mt-0.5" style={{ color: COLORS.errorText }}>{errors.phone}</div>}
+                </div>
+                <InputField
+                  icon={Mail}
+                  label="Email"
+                  placeholder="guest@example.com"
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); if (errors.email) clearErr('email'); }}
+                  data-testid="checkin-email"
+                  error={errors.email}
                 />
               </div>
-              {errors.phone && <div className="text-[10px] mt-0.5" style={{ color: COLORS.errorText }}>{errors.phone}</div>}
-            </div>
 
-            <InputField
-              icon={Mail}
-              label="Email"
-              placeholder="guest@example.com"
-              type="email"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); if (errors.email) clearErr('email'); }}
-              data-testid="checkin-email"
-              error={errors.email}
-            />
+              {flags.guestDetails ? (
+                <div className="grid grid-cols-3 gap-2">
+                  <SelectField
+                    label="ID Type"
+                    options={ID_TYPES}
+                    value={idType}
+                    onChange={(e) => setIdType(e.target.value)}
+                    testId="checkin-id-type"
+                  />
+                  <FileField
+                    label="ID Front"
+                    required
+                    file={frontImage}
+                    busy={frontBusy}
+                    error={frontError || errors.front}
+                    onChange={(e) => handleImagePicked(setFrontImage, setFrontBusy, setFrontError, e, 'front')}
+                    testId="checkin-front-image"
+                  />
+                  <FileField
+                    label="ID Back"
+                    file={backImage}
+                    busy={backBusy}
+                    error={backError}
+                    onChange={(e) => handleImagePicked(setBackImage, setBackBusy, setBackError, e)}
+                    testId="checkin-back-image"
+                  />
+                </div>
+              ) : (
+                <div className="text-[11px]" style={{ color: COLORS.grayText }}>
+                  Verification not required for this restaurant configuration.
+                </div>
+              )}
+            </div>
 
             {flags.guestDetails && (
               <>
+                {/* ── Additional Adult Cards (#2, #3, …) ── */}
+                {extraAdults.length > 0 && (
+                  <div className="space-y-2">
+                    {extraAdults.map((row, i) => (
+                      <div
+                        key={i}
+                        className="p-3 rounded-lg space-y-2 group"
+                        style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
+                        data-testid={`checkin-adult-row-${i + 2}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Badge>#{i + 2}</Badge>
+                          <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: COLORS.grayText }}>Additional Adult</span>
+                          <div className="flex-1" />
+                          <RemoveXBtn
+                            onClick={() => removeAdultRow(i)}
+                            testId={`checkin-remove-adult-${i + 2}`}
+                            ariaLabel={`Remove adult ${i + 2}`}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <InputField
+                            label="Name"
+                            required
+                            placeholder="Full name"
+                            value={row.name}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, name: v } : r)));
+                              if (v.trim()) clearErr(`adult${i}_name`);
+                            }}
+                            data-testid={`checkin-adult-${i + 2}-name`}
+                            error={errors[`adult${i}_name`]}
+                          />
+                          <SelectField
+                            label="ID Type"
+                            options={ID_TYPES}
+                            value={row.idType}
+                            onChange={(e) =>
+                              setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, idType: e.target.value } : r)))
+                            }
+                            testId={`checkin-adult-${i + 2}-id-type`}
+                          />
+                          <div />
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <FileField
+                            label="ID Front"
+                            required
+                            file={row.frontImage}
+                            busy={row.frontBusy}
+                            error={row.frontErr || errors[`adult${i}_front`]}
+                            onChange={(e) => handleAdultFile(i, 'frontImage', e)}
+                            testId={`checkin-adult-${i + 2}-front`}
+                          />
+                          <FileField
+                            label="ID Back"
+                            file={row.backImage}
+                            busy={row.backBusy}
+                            error={row.backErr}
+                            onChange={(e) => handleAdultFile(i, 'backImage', e)}
+                            testId={`checkin-adult-${i + 2}-back`}
+                          />
+                          <div />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* ── + Add Adult button with inline hint ── */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={addAdultRow}
+                    disabled={totalAdult >= maxAdults}
+                    data-testid="checkin-add-adult-btn"
+                    title={totalAdult >= maxAdults ? `Maximum ${maxAdults} adults` : ''}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                    style={{
+                      border: `1px dashed ${COLORS.borderGray}`,
+                      color: totalAdult >= maxAdults ? COLORS.grayText : COLORS.primaryOrange,
+                      opacity: totalAdult >= maxAdults ? 0.5 : 1,
+                      cursor: totalAdult >= maxAdults ? 'not-allowed' : 'pointer',
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Adult
+                  </button>
+                  <span className="text-[11px]" style={{ color: COLORS.grayText }}>Primary guest is Adult #1.</span>
+                </div>
+
+                {/* ── Adults / Children counts ── */}
                 <div className="grid grid-cols-2 gap-2">
                   <InputField
                     icon={Users}
@@ -742,7 +877,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                   />
                 </div>
 
-                {/* Children rows */}
+                {/* ── Children rows (after Adults) ── */}
                 {childNames.length > 0 && (
                   <div className="space-y-1.5 pt-1">
                     <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: COLORS.grayText }}>Children</div>
@@ -797,46 +932,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
             )}
           </div>
 
-          {/* ─── COL 2 — Verification ─── */}
-          <div className="flex flex-col space-y-2">
-            <SectionLabel>Verification</SectionLabel>
-            {flags.guestDetails ? (
-              <>
-                <SelectField
-                  label="ID Type"
-                  options={ID_TYPES}
-                  value={idType}
-                  onChange={(e) => setIdType(e.target.value)}
-                  testId="checkin-id-type"
-                />
-                <div className="grid grid-cols-2 gap-2">
-                  <FileField
-                    label="ID Front"
-                    required
-                    file={frontImage}
-                    busy={frontBusy}
-                    error={frontError || errors.front}
-                    onChange={(e) => handleImagePicked(setFrontImage, setFrontBusy, setFrontError, e, 'front')}
-                    testId="checkin-front-image"
-                  />
-                  <FileField
-                    label="ID Back"
-                    file={backImage}
-                    busy={backBusy}
-                    error={backError}
-                    onChange={(e) => handleImagePicked(setBackImage, setBackBusy, setBackError, e)}
-                    testId="checkin-back-image"
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="text-[11px]" style={{ color: COLORS.grayText }}>
-                Verification not required for this restaurant configuration.
-              </div>
-            )}
-          </div>
-
-          {/* ─── COL 3 — Booking & Payment ─── */}
+          {/* ─── RIGHT — Booking & Payment ─── */}
           <div className="flex flex-col space-y-2">
             {flags.bookingDetails ? (
               <>
@@ -845,7 +941,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                 <div className="grid grid-cols-2 gap-2">
                   <RadioPillGroup
                     label="Booking Type"
-                    required
                     options={BOOKING_TYPES}
                     value={bookingType}
                     onChange={setBookingType}
@@ -863,11 +958,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
 
                 <div className="grid grid-cols-[1fr_60px_1fr] gap-2 items-end">
                   <div>
-                    <div className="flex items-center justify-between mb-0.5">
+                    <div className="mb-0.5">
                       <span className="text-[11px] font-medium" style={{ color: COLORS.grayText }}>
                         Check-in Date<span className="ml-0.5 font-bold" style={{ color: COLORS.errorText }}>*</span>
                       </span>
-                      <EditTimePopover timeVal={checkinTime} setTimeVal={setCheckinTime} testId="checkin-edit-time-btn" />
                     </div>
                     <InputField
                       icon={Calendar}
@@ -878,6 +972,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       data-testid="checkin-date"
                       error={errors.checkin}
                     />
+                    <div className="mt-0.5 text-[10px]" style={{ color: COLORS.grayText }}>
+                      at {checkinTime || '--:--'} · <EditTimePopover timeVal={checkinTime} setTimeVal={setCheckinTime} testId="checkin-edit-time-btn" />
+                    </div>
                   </div>
                   <InputField
                     label="Nights"
@@ -889,11 +986,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     data-testid="checkin-nights"
                   />
                   <div>
-                    <div className="flex items-center justify-between mb-0.5">
+                    <div className="mb-0.5">
                       <span className="text-[11px] font-medium" style={{ color: COLORS.grayText }}>
                         Check-out Date<span className="ml-0.5 font-bold" style={{ color: COLORS.errorText }}>*</span>
                       </span>
-                      <EditTimePopover timeVal={checkoutTime} setTimeVal={setCheckoutTime} testId="checkout-edit-time-btn" />
                     </div>
                     <div style={{
                       transition: 'background-color 300ms ease-out',
@@ -909,6 +1005,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                         data-testid="checkout-date"
                         error={errors.checkout}
                       />
+                    </div>
+                    <div className="mt-0.5 text-[10px]" style={{ color: COLORS.grayText }}>
+                      at {checkoutTime || '--:--'} · <EditTimePopover timeVal={checkoutTime} setTimeVal={setCheckoutTime} testId="checkout-edit-time-btn" />
                     </div>
                   </div>
                 </div>
@@ -928,22 +1027,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     error={errors.roomPrice}
                   />
                   <InputField
-                    icon={CreditCard}
-                    label="Order Amount"
-                    required
-                    placeholder="0.00"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={orderAmount}
-                    onChange={(e) => { setOrderAmount(e.target.value); if (e.target.value !== '' && Number(e.target.value) >= 0) clearErr('orderAmount'); }}
-                    data-testid="checkin-amount"
-                    error={errors.orderAmount}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <InputField
                     label="Advance"
                     placeholder="0.00"
                     type="number"
@@ -954,12 +1037,16 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     data-testid="checkin-advance"
                     error={errors.advance}
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
                   <InputField
                     label="Balance"
                     readOnly
                     value={balancePayment}
                     data-testid="checkin-balance"
                   />
+                  <div />
                 </div>
 
                 <InputField
@@ -1016,91 +1103,6 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
             )}
           </div>
         </div>
-
-        {/* ─── Additional Adults section (spans full width) ─── */}
-        {flags.guestDetails && (
-          <div className="mt-4">
-            <SectionLabel>Additional Adults</SectionLabel>
-            {extraAdults.length === 0 && (
-              <div className="text-[11px] mb-2" style={{ color: COLORS.grayText }}>
-                Primary guest counts as Adult #1. Add rows for additional adults staying in the room(s).
-              </div>
-            )}
-            <div className="space-y-2">
-              {extraAdults.map((row, i) => (
-                <div
-                  key={i}
-                  className="group grid grid-cols-[auto_1.2fr_1fr_1fr_1fr_auto] gap-2 items-end p-2 rounded-lg"
-                  style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
-                  data-testid={`checkin-adult-row-${i + 2}`}
-                >
-                  <Badge>#{i + 2}</Badge>
-                  <InputField
-                    label="Name"
-                    required
-                    placeholder="Full name"
-                    value={row.name}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, name: v } : r)));
-                      if (v.trim()) clearErr(`adult${i}_name`);
-                    }}
-                    data-testid={`checkin-adult-${i + 2}-name`}
-                    error={errors[`adult${i}_name`]}
-                  />
-                  <SelectField
-                    label="ID Type"
-                    options={ID_TYPES}
-                    value={row.idType}
-                    onChange={(e) =>
-                      setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, idType: e.target.value } : r)))
-                    }
-                    testId={`checkin-adult-${i + 2}-id-type`}
-                  />
-                  <FileField
-                    label="Front"
-                    required
-                    file={row.frontImage}
-                    busy={row.frontBusy}
-                    error={row.frontErr || errors[`adult${i}_front`]}
-                    onChange={(e) => handleAdultFile(i, 'frontImage', e)}
-                    testId={`checkin-adult-${i + 2}-front`}
-                  />
-                  <FileField
-                    label="Back"
-                    file={row.backImage}
-                    busy={row.backBusy}
-                    error={row.backErr}
-                    onChange={(e) => handleAdultFile(i, 'backImage', e)}
-                    testId={`checkin-adult-${i + 2}-back`}
-                  />
-                  <RemoveXBtn
-                    onClick={() => removeAdultRow(i)}
-                    testId={`checkin-remove-adult-${i + 2}`}
-                    ariaLabel={`Remove adult ${i + 2}`}
-                  />
-                </div>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={addAdultRow}
-              disabled={totalAdult >= maxAdults}
-              data-testid="checkin-add-adult-btn"
-              title={totalAdult >= maxAdults ? `Maximum ${maxAdults} adults` : ''}
-              className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-              style={{
-                border: `1px dashed ${COLORS.borderGray}`,
-                color: totalAdult >= maxAdults ? COLORS.grayText : COLORS.primaryOrange,
-                opacity: totalAdult >= maxAdults ? 0.5 : 1,
-                cursor: totalAdult >= maxAdults ? 'not-allowed' : 'pointer',
-                backgroundColor: 'transparent',
-              }}
-            >
-              <Plus className="w-3.5 h-3.5" /> Add Adult
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ─── Footer ─── */}

@@ -91,13 +91,15 @@ export const checkIn = async (params) => {
 
   // ── booking_details=Yes ────────────────────────────────────────────────────
   if (params.bookingDetailsEnabled) {
-    if (params.bookingType) fd.append('booking_type', params.bookingType);
+    // Booking Type is OPTIONAL — default to "Individual" when operator doesn't pick.
+    fd.append('booking_type', params.bookingType || 'Individual');
     if (params.bookingFor) fd.append('booking_for', params.bookingFor);
     if (params.checkinDate) fd.append('checkin_date', params.checkinDate);
     if (params.checkoutDate) fd.append('checkout_date', params.checkoutDate);
 
-    fd.append('room_price', to2dp(params.roomPrice));
-    fd.append('order_amount', to2dp(params.orderAmount));
+    // Single "Room Price" field in UI maps to backend key `order_amount`.
+    // Legacy `room_price` key is intentionally NOT sent (backend does not consume it).
+    fd.append('order_amount', to2dp(params.roomPrice));
     fd.append('advance_payment', to2dp(params.advancePayment));
     fd.append('balance_payment', to2dp(params.balancePayment));
 
