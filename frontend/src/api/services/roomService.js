@@ -1,11 +1,15 @@
-// Room Service — Room Module V2 Check-In API call
-// Always uses multipart/form-data per V2 §8.3.
-// Public export `checkIn` is preserved per V2 §13.3.
+// Room Service — Room Check-In API call
+// Always uses multipart/form-data.
+// Payload shape mirrors the preprod reference curl exactly: every key is always
+// appended, with empty-string / "0" / default placeholders when the user hasn't
+// provided a value. Flag gating (guest_details / booking_details) is intentionally
+// NOT applied at the payload level — the backend receives the full field set on
+// every submission.
 
 import api from '../axios';
 import { API_ENDPOINTS } from '../constants';
 
-/** Normalize a numeric value to a 2-decimal string per V2 §7.5. */
+/** Normalize a numeric value to a 2-decimal string. */
 const to2dp = (value) => {
   const n = Number(value);
   if (!Number.isFinite(n)) return '0.00';
@@ -13,109 +17,104 @@ const to2dp = (value) => {
 };
 
 /**
- * V2 Group Room Check-In.
+ * Group Room Check-In.
  *
  * @param {Object} params
- * // Always
  * @param {string}   params.name
- * @param {string}   params.phone                — full E.164 string (e.g., "+919876543210")
+ * @param {string}   params.phone               — full E.164 string (e.g., "+919876543210")
  * @param {string}   [params.email]
- * @param {Array<number|string>} params.roomIds  — one or more selected room IDs
- *
- * // Profile-flag gating (booleans read from restaurant.checkInFlags)
- * @param {boolean}  params.guestDetailsEnabled
- * @param {boolean}  params.bookingDetailsEnabled
- *
- * // guest_details=Yes
- * @param {string}   [params.idType]             — primary guest ID type (enum per V2 §5.7)
- * @param {File}     [params.frontImage]         — primary guest front (mandatory when enabled)
- * @param {File}     [params.backImage]          — primary guest back (optional)
+ * @param {Array<number|string>} params.roomIds — one or more selected room IDs
+ * @param {string}   [params.idType]            — primary guest ID type
+ * @param {File}     [params.frontImage]
+ * @param {File}     [params.backImage]
  * @param {Array<{name:string,idType:string,frontImage:File,backImage?:File}>} [params.extraAdults]
- * @param {string[]} [params.childNames]         — child name rows
- *
- * // booking_details=Yes
- * @param {string}   [params.bookingType]        — "WalkIn" | "Online"
- * @param {string}   [params.bookingFor]         — "Individual" | "Corporate"
- * @param {string}   [params.checkinDate]        — "YYYY-MM-DD HH:mm:ss"
- * @param {string}   [params.checkoutDate]       — "YYYY-MM-DD HH:mm:ss"
+ * @param {string[]} [params.childNames]
+ * @param {string}   [params.bookingType]       — "WalkIn" | "Online" (default "Individual")
+ * @param {string}   [params.bookingFor]        — "Individual" | "Corporate" (default "Individual")
+ * @param {string}   [params.checkinDate]       — "YYYY-MM-DD HH:mm:ss"
+ * @param {string}   [params.checkoutDate]      — "YYYY-MM-DD HH:mm:ss"
  * @param {number|string} [params.roomPrice]
- * @param {number|string} [params.orderAmount]
  * @param {number|string} [params.advancePayment]
  * @param {number|string} [params.balancePayment]
- * @param {string}   [params.orderNote]          — UI "Special Request"
- * @param {string}   [params.firmName]           — GST block
- * @param {string}   [params.firmGst]            — GST block
+ * @param {string}   [params.orderNote]
+ * @param {string}   [params.firmName]
+ * @param {string}   [params.firmGst]
  *
  * @returns {Promise<Object>} response.data from the server
  */
 export const checkIn = async (params) => {
   const fd = new FormData();
 
-  // ── Always sent ────────────────────────────────────────────────────────────
-  fd.append('name', params.name);
-  fd.append('phone', params.phone);
-  if (params.email) fd.append('email', params.email);
+  const extraAdults = params.extraAdults || [];
+  const childNames = (params.childNames || []).filter((n) => n && n.trim());
+  const hasPrimaryGuest = !!(params.name && String(params.name).trim());
 
-  // Bracket-indexed per V2 §5.6
+  // ── Identity ────────────────────────────────────────────────────────────────
+  fd.append('name', params.name || '');
+  fd.append('phone', params.phone || '');
+  fd.append('email', params.email || '');
+
+  // ── Rooms (bracket-indexed) ─────────────────────────────────────────────────
   (params.roomIds || []).forEach((id, i) => {
     fd.append(`room_id[${i}]`, String(id));
   });
 
-  // ── guest_details=Yes ──────────────────────────────────────────────────────
-  if (params.guestDetailsEnabled) {
-    const extraAdults = params.extraAdults || [];
-    const childNames = (params.childNames || []).filter((n) => n && n.trim());
+  // ── Counts ──────────────────────────────────────────────────────────────────
+  fd.append('total_adult', String(hasPrimaryGuest ? 1 + extraAdults.length : 0));
+  fd.append('total_children', String(childNames.length));
 
-    // Primary adult counts as #1; total_adult = 1 + extra adult rows
-    fd.append('total_adult', String(1 + extraAdults.length));
-    fd.append('total_children', String(childNames.length));
+  // ── Primary ID ──────────────────────────────────────────────────────────────
+  fd.append('id_type', params.idType || 'Select document type');
+  if (params.frontImage) fd.append('front_image_file', params.frontImage);
+  if (params.backImage) fd.append('back_image_file', params.backImage);
 
-    if (params.idType) fd.append('id_type', params.idType);
-    if (params.frontImage) fd.append('front_image_file', params.frontImage);
-    if (params.backImage) fd.append('back_image_file', params.backImage);
-
-    // Extra adult rows: indexed from 2 upward per V2 §4.4
-    extraAdults.forEach((row, idx) => {
-      const n = idx + 2;
-      if (row?.name) fd.append(`name${n}`, row.name);
-      if (row?.idType) fd.append(`id_type${n}`, row.idType);
-      if (row?.frontImage) fd.append(`front_image_file${n}`, row.frontImage);
-      if (row?.backImage) fd.append(`back_image_file${n}`, row.backImage);
-    });
-
-    // Children collapsed to comma-joined string per V2 §4.5
-    if (childNames.length > 0) {
-      fd.append('children_name', childNames.map((n) => n.trim()).join(','));
-    }
+  // ── Additional adult slots 2, 3, 4 — always present (reference curl shape) ──
+  for (let i = 0; i < 3; i++) {
+    const slot = i + 2;
+    const row = extraAdults[i];
+    fd.append(`name${slot}`, row?.name || '');
+    fd.append(`id_type${slot}`, row?.idType || '');
+    if (row?.frontImage) fd.append(`front_image_file${slot}`, row.frontImage);
+    if (row?.backImage) fd.append(`back_image_file${slot}`, row.backImage);
+  }
+  // Extra slots 5+ (only when operator actually added more — rare per V2 §11 R1)
+  for (let i = 3; i < extraAdults.length; i++) {
+    const slot = i + 2;
+    const row = extraAdults[i];
+    fd.append(`name${slot}`, row?.name || '');
+    fd.append(`id_type${slot}`, row?.idType || '');
+    if (row?.frontImage) fd.append(`front_image_file${slot}`, row.frontImage);
+    if (row?.backImage) fd.append(`back_image_file${slot}`, row.backImage);
   }
 
-  // ── booking_details=Yes ────────────────────────────────────────────────────
-  if (params.bookingDetailsEnabled) {
-    // Booking Type is OPTIONAL — default to "Individual" when operator doesn't pick.
-    fd.append('booking_type', params.bookingType || 'Individual');
-    if (params.bookingFor) fd.append('booking_for', params.bookingFor);
-    if (params.checkinDate) fd.append('checkin_date', params.checkinDate);
-    if (params.checkoutDate) fd.append('checkout_date', params.checkoutDate);
+  // ── Children (comma-joined, empty string if none) ──────────────────────────
+  fd.append('children_name', childNames.length > 0 ? childNames.map((n) => n.trim()).join(',') : '');
 
-    // Single "Room Price" field in UI maps to backend key `order_amount`.
-    // Legacy `room_price` key is intentionally NOT sent (backend does not consume it).
-    fd.append('order_amount', to2dp(params.roomPrice));
-    fd.append('advance_payment', to2dp(params.advancePayment));
-    fd.append('balance_payment', to2dp(params.balancePayment));
+  // ── Booking block — always sent ─────────────────────────────────────────────
+  fd.append('checkin_date', params.checkinDate || '');
+  fd.append('checkout_date', params.checkoutDate || '');
+  fd.append('booking_details', '');
+  fd.append('booking_type', params.bookingType || 'Individual');
+  fd.append('booking_for', params.bookingFor || 'Individual');
 
-    if (params.orderNote) fd.append('order_note', params.orderNote);
+  // ── Money — always sent. UI "Room Price" maps to both `room_price` and
+  //    `order_amount` per product rule + reference curl shape. ────────────────
+  fd.append('room_price', to2dp(params.roomPrice));
+  fd.append('order_amount', to2dp(params.roomPrice));
+  fd.append('advance_payment', to2dp(params.advancePayment));
+  fd.append('balance_payment', to2dp(params.balancePayment));
+  fd.append('order_note', params.orderNote || '');
 
-    // Always send empty string when booking_details flag is Yes per V2 §11 R2.
-    fd.append('booking_details', '');
+  // ── GST / Firm block — always sent (empty when not Corporate) ──────────────
+  fd.append('gst_tax', '0.00');
+  fd.append('firm_name', params.firmName || '');
+  fd.append('firm_gst', params.firmGst || '');
 
-    // GST / Firm block — only present when Corporate + show_user_gst visible.
-    if (params.firmName) fd.append('firm_name', params.firmName);
-    if (params.firmGst) fd.append('firm_gst', params.firmGst);
-  }
-
-  // NOTE: payment_mode, gst_tax, and X-localization are intentionally NEVER sent per V2.
   const res = await api.post(API_ENDPOINTS.ROOM_CHECK_IN, fd, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'X-localization': 'en',
+    },
   });
   return res.data;
 };

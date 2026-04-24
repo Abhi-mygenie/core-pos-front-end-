@@ -504,34 +504,31 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       await roomService.checkIn({
         name: name.trim(),
         phone: phone.trim(),
-        email: email.trim() || undefined,
+        email: email.trim(),
         roomIds: selectedRoomIds,
 
-        guestDetailsEnabled: !!flags.guestDetails,
-        bookingDetailsEnabled: !!flags.bookingDetails,
-
-        idType: flags.guestDetails ? idType : undefined,
-        frontImage: flags.guestDetails ? frontImage : undefined,
-        backImage: flags.guestDetails ? (backImage || undefined) : undefined,
-        extraAdults: flags.guestDetails ? extraAdults.map((r) => ({
+        idType: idType,
+        frontImage: frontImage || undefined,
+        backImage: backImage || undefined,
+        extraAdults: extraAdults.map((r) => ({
           name: r.name.trim(),
           idType: r.idType,
           frontImage: r.frontImage,
           backImage: r.backImage || undefined,
-        })) : undefined,
-        childNames: flags.guestDetails ? childNames : undefined,
+        })),
+        childNames: childNames,
 
-        bookingType: flags.bookingDetails ? bookingType : undefined,
-        bookingFor: flags.bookingDetails ? bookingFor : undefined,
-        checkinDate: flags.bookingDetails ? toPayloadDateTime(checkinDate, checkinTime) : undefined,
-        checkoutDate: flags.bookingDetails ? toPayloadDateTime(checkoutDate, checkoutTime) : undefined,
-        roomPrice: flags.bookingDetails ? roomPrice : undefined,
-        advancePayment: flags.bookingDetails ? (advancePayment || 0) : undefined,
-        balancePayment: flags.bookingDetails ? balancePayment : undefined,
-        orderNote: flags.bookingDetails ? (orderNote.trim() || undefined) : undefined,
+        bookingType: bookingType,
+        bookingFor: bookingFor,
+        checkinDate: toPayloadDateTime(checkinDate, checkinTime),
+        checkoutDate: toPayloadDateTime(checkoutDate, checkoutTime),
+        roomPrice: roomPrice,
+        advancePayment: advancePayment || 0,
+        balancePayment: balancePayment,
+        orderNote: orderNote.trim(),
 
-        firmName: gstBlockVisible ? firmName.trim() : undefined,
-        firmGst: gstBlockVisible ? firmGst.trim() : undefined,
+        firmName: firmName.trim(),
+        firmGst: firmGst.trim(),
       });
 
       const successMsg = 'Group check-in completed successfully';
