@@ -20,6 +20,7 @@
 10. [Edge Cases](#10-edge-cases)
 11. [Risks / Assumptions / Clarifications Required](#11-risks--assumptions--clarifications-required)
 12. [Final Implementation Checklist](#12-final-implementation-checklist)
+13. [Regression-Safety Guardrails (MANDATORY)](#13-regression-safety-guardrails-mandatory)
 
 ---
 
@@ -725,12 +726,109 @@ The following items are **not** part of V2 and must **not** be implemented:
 
 ---
 
+## 13. Regression-Safety Guardrails (MANDATORY)
+
+> These rules protect existing functionality and test suites from being broken during V2 implementation. **Violating any of these is treated as a defect, not a valid refactor.**
+
+### 13.1 Allowed scope of modification
+The Implementation Agent may modify **only** these files:
+
+| File | Change type |
+|------|-------------|
+| `/app/frontend/src/components/modals/RoomCheckInModal.jsx` | Full rewrite allowed (internal implementation) — **public props preserved** (see §13.2) |
+| `/app/frontend/src/api/services/roomService.js` | Full rewrite allowed (internal implementation) — **export name preserved** (see §13.3) |
+| `/app/frontend/src/api/transforms/profileTransform.js` | **Additive only** — extend `fromAPI.restaurant` with `checkInFlags`. Do NOT remove, rename, or restructure any existing key in the returned object. |
+| `/app/frontend/src/__tests__/api/transforms/profileTransform.test.js` | Add new tests for `checkInFlags` mapping. Do NOT modify or remove existing test cases. |
+| `/app/frontend/package.json` | Add new dependencies only via `yarn add`. Do NOT bump or downgrade existing package versions unless a compatibility issue is proven and documented. |
+| `/app/frontend/yarn.lock` | Auto-updated by `yarn add`. Do not hand-edit. |
+
+**Files explicitly off-limits** (must not be touched for this V2 work):
+- `/app/frontend/src/pages/DashboardPage.jsx` — consumer code; V2 guarantees modal prop signature is preserved.
+- `/app/frontend/src/components/modals/index.js` — barrel file; default-export name must remain `RoomCheckInModal`.
+- `/app/frontend/src/api/constants.js` — `API_ENDPOINTS.ROOM_CHECK_IN` path must NOT change.
+- `/app/frontend/src/api/axios.js` — shared request pipeline; no Room-Module-specific changes here.
+- Any other transform file, service file, page, or component outside the Allowed list above.
+
+### 13.2 `RoomCheckInModal` public prop signature — LOCKED
+The component must continue to accept **exactly** these props, with these names and default behaviours:
+
+```jsx
+<RoomCheckInModal
+  room={...}                // required; room object with at least { tableId, label }
+  availableRooms={[...]}    // required; array of room objects (status='available')
+  onClose={() => {...}}     // required; no-arg callback
+  onSuccess={() => {...}}   // required; no-arg callback (may be called with args, but consumer ignores them)
+  sidebarWidth={70}         // optional; number; default 70
+/>
+```
+
+- Additional props MAY be added (backwards-compatible extension) but the above 5 MUST remain with identical semantics.
+- Renaming, removing, or changing the required/optional status of any existing prop is forbidden.
+
+### 13.3 `roomService.checkIn` export — LOCKED
+- The module at `/app/frontend/src/api/services/roomService.js` must continue to export a function named **`checkIn`**.
+- The function MUST accept a single object argument and return a `Promise<responseData>`.
+- Internal parameter shape MAY change (V2 expands the param object significantly — see §8.4). However, the exported function name and call pattern `roomService.checkIn({...})` must remain callable by the modal.
+
+### 13.4 Default export — LOCKED
+- `RoomCheckInModal.jsx` must continue to have `export default RoomCheckInModal`.
+- `components/modals/index.js` must continue to re-export it under the same name: `export { default as RoomCheckInModal } from './RoomCheckInModal'`.
+- This is enforced by `/app/frontend/src/__tests__/structure/barrelExports.test.js`.
+
+### 13.5 `profileTransform.js` — additive only
+- The new `checkInFlags` object must be added alongside existing keys in `fromAPI.restaurant`'s return.
+- Do NOT rename, remove, or move any existing key (`id`, `name`, `phone`, `features`, `paymentTypes`, `tax`, `cancellation`, `settings`, `schedules`, etc.).
+- Existing test cases in `profileTransform.test.js` must pass unchanged.
+
+### 13.6 Endpoint & env vars — LOCKED
+- `API_ENDPOINTS.ROOM_CHECK_IN` value (`/api/v1/vendoremployee/pos/user-group-check-in`) must not be modified.
+- `REACT_APP_API_BASE_URL` usage must not be replaced with a hardcoded URL.
+- `REACT_APP_BACKEND_URL` is not used by this module and must not be referenced.
+
+### 13.7 Package manager
+- **Use `yarn add <pkg>` ONLY.** `npm install`, `npm i`, `pnpm`, and editing `package.json` by hand are forbidden — they will corrupt the lockfile and break the deployment pipeline.
+- After adding dependencies, verify `yarn.lock` was updated and commit both files together.
+
+### 13.8 Regression testing — MANDATORY before declaring done
+Before declaring V2 implementation complete:
+1. Run the full existing test suite: `cd /app/frontend && yarn test --watchAll=false`.
+2. Verify **zero test failures** in:
+   - `__tests__/api/transforms/profileTransform.test.js`
+   - `__tests__/structure/barrelExports.test.js`
+   - All other test files in `__tests__/**`.
+3. Run lint: `yarn lint` (if a lint script exists) — no new errors introduced.
+4. Manual smoke test of non-Room flows (dine-in order flow, delivery flow, settings page) to confirm the `profileTransform` extension did not destabilise unrelated consumers.
+
+### 13.9 Existing behaviour preserved
+| Behaviour | V2 action |
+|-----------|-----------|
+| Dashboard refresh after successful check-in (currently only closes modal, no data re-fetch) | Preserved as-is per §8.10 |
+| `setCheckInRoom(null)` called on close/success | Preserved (modal calls `onClose()` / `onSuccess()` same as today) |
+| Bearer-token auth via global axios interceptor | Preserved — do not re-implement per-request auth |
+| 401 handling (interceptor redirects to `/`) | Preserved — do not override in roomService |
+| `X-localization` not sent | Preserved — continue not to send |
+
+### 13.10 Forbidden actions (anti-patterns)
+The Implementation Agent MUST NOT:
+- Remove unrelated data-testids from the modal (existing testids like `checkin-name`, `checkin-phone` must be preserved even if the field moves).
+- Change the JSX component names of shadcn/ui components (toast, button, etc.) — reuse them.
+- Introduce a new state-management library (Redux, Zustand, etc.) for this feature — use local component state + existing context.
+- Add a second HTTP client (`fetch`, new axios instance) — reuse the existing `api` from `/app/frontend/src/api/axios.js`.
+- Change the backend endpoint URL, auth scheme, or request timeout policy.
+- Delete or rename any existing file.
+- Modify files outside the Allowed list in §13.1.
+
+---
+
+
+
 ## Document History
 
 | Version | Date | Notes |
 |---------|------|-------|
 | V2 (this) | 2026-04-23 | Initial V2 — consolidated PO inputs + clarified Q&A; replaces legacy implementation requirements doc. |
 | V2.1 | 2026-04-24 | Post-validation patches: (a) `profileTransform.js` extension plan added to §9.3 + §12.1 (C1); (b) Payment Mode / Edit flow / `X-localization` fully removed as out-of-scope (C2); (c) Check-out time picker↔payload sync rule clarified in §7.9 (C3); (d) All currency fields always 2 decimals (§7.5, M9); (e) Child name comma-validation added (§4.2, M3); (f) Dependency install steps explicit in §12.4/§12.5 (M4); (g) `order_amount = 0` explicitly allowed (§7.5, M5); (h) Email validation uses `zod.email()` (§12.5-bis, M6); (i) §8.10 current-behaviour note added (M8); (j) Empty adult slots not sent (§4.4, §12.9, M1). |
+| V2.2 | 2026-04-24 | Regression-safety guardrails added as §13 (MANDATORY): locked prop signatures, export names, scope fence (allowed vs off-limits files), additive-only transform rule, yarn-only package manager, mandatory regression test run, forbidden anti-patterns list. |
 
 ---
 
