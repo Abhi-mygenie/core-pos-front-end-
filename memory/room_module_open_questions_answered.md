@@ -132,7 +132,7 @@ Allowed up to 24 hours in the past; default = today.
 ### Q20: Default times?
 - Check-in: date only (time in payload = current time at submission; user can override via Edit-time link — see O6).
 - Check-out date: auto-calc from nights; manually editable.
-- Check-out time: defaults 12:00 noon; manually editable. **See remaining open item O7 for payload reconciliation with cURL time `09:32:00`.**
+- Check-out time: payload sends **current time at submission**; UI default display = 12:00 noon but operator can manually edit.
 
 ---
 
@@ -236,17 +236,17 @@ Read-only in v1. **Edit flow deferred to v2.**
 
 ---
 
-## ⚠ Remaining Open Item (1)
+## ✅ All Open Items Resolved
 
-| # | Item | Priority | Notes |
-|---|------|----------|-------|
-| **O7** | Check-out time in payload — cURL shows `09:32:00`, Q20 says default is 12:00 noon. Which value should UI actually send? | Medium | To be resolved at implementation time with backend team. |
+| Ref | Resolution |
+|-----|-----------|
+| O7 | Check-out time in payload = **current time at submission**. UI still displays 12:00 noon as default but payload carries current timestamp; user can override via time edit. |
 
 ---
 
 ## Session Summary
 
 - **40/40** original questions finalised.
-- **15/16** Session-2 open items resolved.
-- **1** remaining open item: **O7** (check-out time payload reconciliation).
-- Clarification session closed. Document ready for the Implementation Agent.
+- **16/16** Session-2 open items resolved.
+- **0** remaining open items.
+- **Clarification session closed.** Document ready for the Implementation Agent.
