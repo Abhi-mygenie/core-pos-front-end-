@@ -298,6 +298,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dirtyDialog, setDirtyDialog] = useState(null); // null | 'close'
   const [errors, setErrors] = useState({}); // field-level errors {phone, email, advance, firmGst, checkin}
+  // M-02: clear a single inline error when the user edits that field
+  const clearErr = (key) =>
+    setErrors((prev) => (prev[key] == null ? prev : { ...prev, [key]: undefined }));
 
   // ── Derived ──
   const otherRooms = useMemo(
@@ -392,7 +395,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
     });
   };
 
-  const handleImagePicked = async (setFile, setBusy, setErr, e) => {
+  const handleImagePicked = async (setFile, setBusy, setErr, e, errKey) => {
     const picked = e.target.files?.[0];
     e.target.value = ''; // allow re-selecting the same file
     if (!picked) return;
@@ -401,6 +404,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
     setBusy(false);
     if (error) { setFile(null); setErr(error); return; }
     setFile(file);
+    if (errKey) clearErr(errKey);
   };
 
   const handleAdultFile = async (rowIdx, slot, e) => {
@@ -417,6 +421,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       else { next[slot] = file; next[`${slot}Err`] = ''; }
       return next;
     }));
+    if (!error && slot === 'frontImage') clearErr(`adult${rowIdx}_front`);
   };
 
   const addAdultRow = () => {
@@ -671,7 +676,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
               required
               placeholder="John Doe"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => { setName(e.target.value); if (e.target.value.trim()) clearErr('name'); }}
               data-testid="checkin-name"
               error={errors.name}
             />
@@ -689,10 +694,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                 <Phone className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" style={{ color: COLORS.grayText }} />
                 <PhoneInput
                   data-testid="checkin-phone"
-                  international
                   defaultCountry="IN"
                   value={phone}
-                  onChange={(val) => setPhone(val || '')}
+                  onChange={(val) => { setPhone(val || ''); if (val) clearErr('phone'); }}
                   className="flex-1 rcm-phone-input"
                   countrySelectProps={{ 'data-testid': 'checkin-country-code' }}
                   numberInputProps={{
@@ -712,7 +716,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
               placeholder="guest@example.com"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); if (errors.email) clearErr('email'); }}
               data-testid="checkin-email"
               error={errors.email}
             />
@@ -753,9 +757,11 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                           <InputField
                             placeholder="Child name"
                             value={c}
-                            onChange={(e) =>
-                              setChildNames((rows) => rows.map((x, j) => (j === i ? e.target.value : x)))
-                            }
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setChildNames((rows) => rows.map((x, j) => (j === i ? v : x)));
+                              if (v.trim() && !v.includes(',')) clearErr(`child${i}`);
+                            }}
                             data-testid={`checkin-child-${i}-name`}
                             error={errors[`child${i}`]}
                           />
@@ -810,7 +816,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     file={frontImage}
                     busy={frontBusy}
                     error={frontError || errors.front}
-                    onChange={(e) => handleImagePicked(setFrontImage, setFrontBusy, setFrontError, e)}
+                    onChange={(e) => handleImagePicked(setFrontImage, setFrontBusy, setFrontError, e, 'front')}
                     testId="checkin-front-image"
                   />
                   <FileField
@@ -868,7 +874,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       type="date"
                       min={yesterdayStr()}
                       value={checkinDate}
-                      onChange={(e) => setCheckinDate(e.target.value)}
+                      onChange={(e) => { setCheckinDate(e.target.value); if (e.target.value) clearErr('checkin'); }}
                       data-testid="checkin-date"
                       error={errors.checkin}
                     />
@@ -899,7 +905,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                         type="date"
                         min={checkinDate}
                         value={checkoutDate}
-                        onChange={(e) => { setManualCheckout(true); setCheckoutDate(e.target.value); }}
+                        onChange={(e) => { setManualCheckout(true); setCheckoutDate(e.target.value); if (e.target.value) clearErr('checkout'); }}
                         data-testid="checkout-date"
                         error={errors.checkout}
                       />
@@ -917,7 +923,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     min="0"
                     step="0.01"
                     value={roomPrice}
-                    onChange={(e) => setRoomPrice(e.target.value)}
+                    onChange={(e) => { setRoomPrice(e.target.value); if (e.target.value !== '' && Number(e.target.value) >= 0) clearErr('roomPrice'); }}
                     data-testid="checkin-room-price"
                     error={errors.roomPrice}
                   />
@@ -930,7 +936,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     min="0"
                     step="0.01"
                     value={orderAmount}
-                    onChange={(e) => setOrderAmount(e.target.value)}
+                    onChange={(e) => { setOrderAmount(e.target.value); if (e.target.value !== '' && Number(e.target.value) >= 0) clearErr('orderAmount'); }}
                     data-testid="checkin-amount"
                     error={errors.orderAmount}
                   />
@@ -944,7 +950,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     min="0"
                     step="0.01"
                     value={advancePayment}
-                    onChange={(e) => setAdvancePayment(e.target.value)}
+                    onChange={(e) => { setAdvancePayment(e.target.value); if (errors.advance) clearErr('advance'); }}
                     data-testid="checkin-advance"
                     error={errors.advance}
                   />
@@ -984,7 +990,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       required
                       placeholder="Acme Pvt Ltd"
                       value={firmName}
-                      onChange={(e) => setFirmName(e.target.value)}
+                      onChange={(e) => { setFirmName(e.target.value); if (e.target.value.trim()) clearErr('firmName'); }}
                       data-testid="checkin-firm-name"
                       error={errors.firmName}
                     />
@@ -993,7 +999,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       required
                       placeholder="15-char GSTIN"
                       value={firmGst}
-                      onChange={(e) => setFirmGst(e.target.value.toUpperCase())}
+                      onChange={(e) => { setFirmGst(e.target.value.toUpperCase()); if (errors.firmGst) clearErr('firmGst'); }}
                       data-testid="checkin-firm-gst"
                       error={errors.firmGst}
                     />
@@ -1034,9 +1040,11 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     required
                     placeholder="Full name"
                     value={row.name}
-                    onChange={(e) =>
-                      setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, name: e.target.value } : r)))
-                    }
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setExtraAdults((rows) => rows.map((r, j) => (j === i ? { ...r, name: v } : r)));
+                      if (v.trim()) clearErr(`adult${i}_name`);
+                    }}
                     data-testid={`checkin-adult-${i + 2}-name`}
                     error={errors[`adult${i}_name`]}
                   />
