@@ -97,7 +97,7 @@ Layout, field visibility, and section visibility are driven **entirely** by **tw
 | Profile flag | Type | Effect when `"Yes"` |
 |--------------|------|---------------------|
 | `guest_details` | "Yes" / "No" | Adds: No. of adults, No. of children, dynamic per-adult document capture rows, dynamic child-name rows |
-| `booking_details` | "Yes" / "No" | Adds: Booking Type, Booking For (Personal / Corporate), Check-in date, Check-out date, Room Price, Order Amount, Advance Payment, Balance Payment, Payment Mode (V2 phase 2 — see §7.7), Special Request, GST / Firm block (when conditions met) |
+| `booking_details` | "Yes" / "No" | Adds: Booking Type, Booking For (Personal / Corporate), Check-in date, Check-out date, Room Price, Order Amount, Advance Payment, Balance Payment, Special Request, GST / Firm block (when conditions met) |
 
 **Important — flags that are NOT used for layout in V2:**
 - `restaurants[].configuration` — **ignored**. Not in payload, not in layout logic.
@@ -121,8 +121,7 @@ Adds **Column 3 — Booking & Payment** with:
 - Room Price (single combined total for all selected rooms; backend splits per-room)
 - Order Amount (operator-entered manually)
 - Advance Payment (optional; ≤ Order Amount)
-- Balance Payment (auto-computed = Order Amount − Advance Payment; sent in payload as a string)
-- Payment Mode (**V2 Phase 2** — see §7.7)
+- Balance Payment (auto-computed = Order Amount − Advance Payment; sent in payload as a string with 2 decimals)
 - Special Request (free-text optional, payload key `order_note`)
 - GST / Firm block (gated — see §7.6)
 
@@ -167,6 +166,8 @@ The `gst_tax` payload field is **never sent** by the UI in V2.
 - Each child row contains:
   - Name (mandatory)
 - No DOB, no age, no documents for children.
+- **Name character restriction:** Child Name must **not contain commas**. Commas are the delimiter used to join all child names into the `children_name` payload string (§4.5). A name containing a comma would corrupt the payload.
+   - UI validation: inline error *"Name cannot contain a comma."* shown under the offending row; submit disabled until corrected.
 - The total `total_children` field auto-syncs with the rendered row count.
 - **Submit-blocking rule:** if `total_children > 0`, all child name rows must be filled before submit is enabled.
 
@@ -249,11 +250,9 @@ Legend:
 | Firm GSTIN | text | Required when block visible | Match regex: `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$` | `firm_gst` |
 | `gst_tax` | — | — | **NEVER sent** by UI in V2 (omit entirely from payload) | (omitted) |
 
-### 5.5 Payment Mode (V2 Phase 2 — see §7.7)
-
-| UI Field | Input | Mandatory | Validation | Payload key |
-|----------|-------|-----------|------------|-------------|
-| Payment Mode | select (Cash / Card / UPI) | Required when Advance > 0 (Phase 2) | Subset of `restaurants[].payment_types[]` filtered to `Cash`, `Card`, `UPI` | `payment_mode` |
+### 5.5 Payment Mode — **Out of Scope for V2**
+- The `payment_mode` field is **not implemented** in V2. It is neither shown in the UI nor sent in the payload.
+- The current code's hard-coded `PAYMENT_MODES = ['cash', 'card', 'upi']` must be removed.
 
 ### 5.6 `room_id[]` payload format
 - When **exactly 1 room** is selected: send a single `room_id[0]` entry.
@@ -315,28 +314,29 @@ Legend:
 ### 7.3 Balance payment
 - **Auto-computed:** `balance_payment = order_amount − advance_payment`.
 - Recomputed on every keystroke of either Order Amount or Advance Payment.
-- Sent in the payload as a string (mirror cURL format — e.g., `"1500.0"`).
+- Display is read-only.
+- Because §7.4 blocks submit whenever `advance_payment > order_amount`, the balance shown to the operator will never go negative in a submittable state. During an invalid state, the formula is still applied (balance may render as a negative number transiently) but submit remains disabled.
+- Payload format: see §7.5.
 
 ### 7.4 Advance payment validation
 - `advance_payment >= 0`.
-- `advance_payment ≤ order_amount`. If violated → **inline error** under the field; submit button disabled until corrected.
+- `advance_payment ≤ order_amount`. If violated → **inline error** under the field ("Advance cannot be greater than booking amount"); submit button disabled until corrected.
 
-### 7.5 Numeric format
+### 7.5 Numeric / currency format (ALL currency fields)
 - The `food_price_with_paisa` Profile flag is **not used** in V2.
-- Send numeric strings in the **same format as the reference cURL** (no client-side normalization).
-   - Examples observed: `room_price="2000"`, `advance_payment="500"`, `balance_payment="1500.0"`, `order_amount="2000"`.
+- **All currency-valued payload fields** (`room_price`, `order_amount`, `advance_payment`, `balance_payment`) are sent as strings formatted to **exactly 2 decimal places** by default.
+   - Examples: `room_price="2000.00"`, `advance_payment="500.00"`, `balance_payment="1500.00"`, `order_amount="2000.00"`.
+- Applies regardless of whether the operator typed an integer (`2000`) or a decimal (`2000.5`) — the service normalises to `.00` / 2-decimals before POST.
+- `order_amount = 0` is a valid value (e.g., complimentary stay); `0.00` is sent in that case.
 
 ### 7.6 GST handling
 - `gst_tax` field: **never sent** by UI in V2.
 - GST / Firm block visibility: only when `show_user_gst === "Yes"` AND `booking_for === "Corporate"`.
 - `firm_gst` validation regex: `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$` (standard 15-char Indian GSTIN).
 
-### 7.7 Payment Mode (V2 — Phase 2)
-- **Phase 2 of V2** scope: payment-mode dropdown is added to the Booking & Payment section.
-- Source values: dynamically built from `restaurants[0].payment_types[]`, filtered to **only** `Cash`, `Card`, `UPI` (other types like TAB, ROOM, Pay Later are excluded for room check-in).
-- Required when `advance_payment > 0`. Optional / can be defaulted otherwise.
-- Payload key: `payment_mode`.
-- **Phase 2 deliverable** — not part of V2 Phase 1; revised cURL with `payment_mode` field will be shared by backend before Phase 2 implementation.
+### 7.7 Payment Mode — Out of Scope
+- Payment Mode is **explicitly out of scope** for V2 — not implemented in UI, not sent in payload.
+- See §5.5.
 
 ### 7.8 Booking Type & Booking For
 | Field | UI Label | Backend value |
@@ -348,10 +348,11 @@ Legend:
 
 ### 7.9 Date / time handling
 - **Check-in date:** date picker only. Defaults to today. Operator may back-date **up to 24 hours** in the past.
-- **Check-in time component (in payload):** auto-fills with the **current time at submission**. Operator may override the time via an "Edit time" link if desired.
+- **Check-in time component (in payload):** auto-fills with the **current time at submission**. Operator may override via an "Edit time" link.
 - **Number of nights:** operator-entered (≥ 1). Same-day check-in/check-out is allowed (counts as 1 night).
-- **Check-out date:** auto-calculated as `checkin_date + nights`. The auto value is shown in the picker but the operator can manually edit the date.
-- **Check-out time component (in payload):** **current time at submission** (mirrors check-in handling). Display default in the picker shows 12:00 noon, but the payload value is current time unless the operator manually edits it.
+- **Check-out date:** auto-calculated as `checkin_date + nights`. The auto-calculated value is shown in the picker and the operator can manually edit the date.
+- **Check-out time component (in payload):** defaults to the **current time at submission** (same as check-in). Operator may override via an "Edit time" link.
+- **Picker ↔ payload sync rule:** Whatever the operator sees in the picker is exactly what is sent in the payload. No hidden 12:00-noon display default; no deviation between UI value and payload value.
 - **Payload format for both dates:** `YYYY-MM-DD HH:mm:ss`.
 
 ---
@@ -369,13 +370,13 @@ Where `REACT_APP_API_BASE_URL` = `https://preprod.mygenie.online/` (per current 
 Authorization: Bearer <auth_token>
 Content-Type: multipart/form-data
 ```
-- **Do NOT send `X-localization`** in V2. (Phase 2 / future iteration may add it when multi-language is enabled.)
+- **Do NOT send `X-localization`** in V2. Out of scope; revisit only if multi-language support is formally requested later.
 
 ### 8.3 Request body
 - Always `multipart/form-data` (since image / PDF uploads are part of the payload).
 - The legacy "JSON when no images" mode in current code is removed in V2 — every check-in submission is multipart.
 
-### 8.4 Full payload schema (V2 Phase 1)
+### 8.4 Full payload schema (V2)
 
 | Form key | Type | Sent when | Notes |
 |----------|------|-----------|-------|
@@ -388,25 +389,25 @@ Content-Type: multipart/form-data
 | `id_type` | string | When `guest_details=Yes` | Primary guest; enum per §5.7 |
 | `front_image_file` | file | When `guest_details=Yes` | Primary guest, mandatory |
 | `back_image_file` | file | When `guest_details=Yes` | Primary guest, optional (omit if not provided) |
-| `name{N}` | string | Per extra adult row | N = 2..MAX |
-| `id_type{N}` | string | Per extra adult row | N = 2..MAX |
-| `front_image_file{N}` | file | Per extra adult row | Mandatory |
+| `name{N}` | string | Per extra adult row, **only when the row exists** | N = 2..MAX. Empty / unused slots are NOT sent. |
+| `id_type{N}` | string | Per extra adult row, **only when the row exists** | N = 2..MAX. Empty / unused slots are NOT sent. |
+| `front_image_file{N}` | file | Per extra adult row | Mandatory per row |
 | `back_image_file{N}` | file | Per extra adult row | Optional (omit if not provided) |
-| `children_name` | string | When `guest_details=Yes` AND children rows exist | Comma-joined names |
+| `children_name` | string | When `guest_details=Yes` AND children rows exist | Comma-joined names; see §4.5 |
 | `booking_type` | string | When `booking_details=Yes` | `WalkIn` / `Online` |
 | `booking_for` | string | When `booking_details=Yes` | `Individual` / `Corporate` |
 | `checkin_date` | string | When `booking_details=Yes` | `YYYY-MM-DD HH:mm:ss` |
 | `checkout_date` | string | When `booking_details=Yes` | `YYYY-MM-DD HH:mm:ss` |
-| `room_price` | numeric-string | When `booking_details=Yes` | Single combined total for all rooms |
-| `order_amount` | numeric-string | When `booking_details=Yes` | Operator-entered |
-| `advance_payment` | numeric-string | When `booking_details=Yes` | Default `"0"` if blank |
-| `balance_payment` | numeric-string | When `booking_details=Yes` | Auto-computed (`order_amount − advance_payment`) |
+| `room_price` | numeric-string | When `booking_details=Yes` | 2 decimals, e.g. `"2000.00"`; single combined total for all rooms |
+| `order_amount` | numeric-string | When `booking_details=Yes` | 2 decimals, e.g. `"2000.00"`; operator-entered |
+| `advance_payment` | numeric-string | When `booking_details=Yes` | 2 decimals, default `"0.00"` if blank |
+| `balance_payment` | numeric-string | When `booking_details=Yes` | 2 decimals; auto-computed (`order_amount − advance_payment`) |
 | `order_note` | string | If non-empty | UI-labelled "Special Request" |
-| `booking_details` | string | When `booking_details=Yes` | Sent as empty string `""` (purpose pending — see §11) |
+| `booking_details` | string | When `booking_details=Yes` | Sent as empty string `""` (purpose to be verified at runtime — see §11 R2) |
 | `firm_name` | string | When GST/Firm block visible | Required when sent |
 | `firm_gst` | string | When GST/Firm block visible | GSTIN regex per §7.6 |
 | `gst_tax` | — | **NEVER** | Omitted entirely in V2 |
-| `payment_mode` | string | **V2 Phase 2 only** | Cash / Card / UPI |
+| `payment_mode` | — | **NEVER** | Out of scope for V2; omitted entirely |
 
 ### 8.5 Reference cURL (PO source-of-truth)
 
@@ -450,7 +451,9 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 --form 'back_image_file4=@"/path/img.jpeg"'
 ```
 
-> The above cURL still contains `gst_tax="0.00"` — this is **removed for V2** per §7.6.
+> The above cURL is the **PO-provided reference** (verbatim from backend). V2 normalises any differences per this document:
+> - `gst_tax="0.00"` → **removed** (§7.6, never sent).
+> - All currency-valued fields (`room_price`, `order_amount`, `advance_payment`, `balance_payment`) are always sent with exactly 2 decimals in V2 — e.g., `room_price="2000.00"`, `advance_payment="500.00"`, `balance_payment="1500.00"`, `order_amount="2000.00"` (per §7.5), even though the PO reference cURL shows mixed formats.
 
 ### 8.6 Success response
 ```json
@@ -472,7 +475,8 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 - **No role-based gating** for V2. Any authenticated POS user can perform Room Check-In.
 
 ### 8.10 Dashboard refresh after success
-- **No change from current behaviour.** The existing dashboard refresh pattern is preserved (whatever the current modal `onSuccess` callback does today).
+- **No change from current behaviour.** The existing `onSuccess` callback in `DashboardPage.jsx:1408` runs — currently this only closes the modal (`setCheckInRoom(null)`) and does NOT re-fetch TABLES / RUNNING_ORDERS. V2 explicitly preserves this; the room card will flip from `available` → `occupied` only after the next polling tick or socket push.
+- **PO-confirmed:** this current behaviour is acceptable and must not be changed in V2.
 
 ---
 
@@ -483,7 +487,7 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 ### 9.1 Current code — `/app/frontend/src/components/modals/RoomCheckInModal.jsx`
 | Observation | V2 Requirement |
 |-------------|----------------|
-| Hard-coded `PAYMENT_MODES = ['cash', 'card', 'upi']` (line 7) | Phase 2: derived dynamically from `restaurants[0].payment_types[]` filtered to Cash/Card/UPI. Not in Phase 1. |
+| Hard-coded `PAYMENT_MODES = ['cash', 'card', 'upi']` (line 7) | **Remove entirely.** Payment Mode is out of scope for V2 (§5.5, §7.7). |
 | Hard-coded `BOOKING_TYPES = ['WalkIn', 'PreBooked']` (line 8) | Update to `['WalkIn', 'Online']` per §7.8 |
 | Hard-coded `BOOKING_FOR = ['personal', 'business']` (line 9) | Replace with UI labels "Personal"/"Corporate" mapping to backend `Individual`/`Corporate` per §7.8 |
 | Hard-coded `ID_TYPES = ['Aadhaar', 'Passport', 'DrivingLicense', 'VoterID', 'PAN']` (line 10) | Update to enum in §5.7 (note value-string differences: `Aadhar card`, `PAN card`, `License`, `Voter ID`) |
@@ -513,11 +517,26 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 | Default `booking_for: 'personal'` (lines 42, 68) | Default to `Individual` (UI "Personal") per §7.8 |
 | No `room_price`, `firm_name`, `firm_gst`, `booking_details`, additional adult fields, or per-adult file fields appended | Add all per §8.4 |
 | No `Authorization` header explicitly set (relies on global `api` interceptor) | Verify and keep — no change |
-| Sends `payment_mode` always (line 46) | Phase 1: omit `payment_mode` entirely (Phase 2: include conditionally per §7.7) |
+| Sends `payment_mode` always (line 46) | **Remove entirely.** `payment_mode` is out of scope for V2 — never append to FormData. |
 | `X-localization` header is **not** currently sent | Keep as-is — V2 explicitly does not send it |
 
 ### 9.3 Profile / config integration
-- The current code has **no** Profile-flag wiring. V2 must read `restaurants[0]` from the existing profile context/store and route visibility through `guest_details`, `booking_details` per §3.
+- The current code has **no** Profile-flag wiring. V2 must read `restaurants[0]` from the existing profile store and route visibility through `guest_details`, `booking_details` per §3.
+- **Architectural decision:** Extend the existing `/app/frontend/src/api/transforms/profileTransform.js` — do NOT create a separate transform.
+- The current transform (`fromAPI.restaurant`, lines 56–127) strips the V2-critical flags. They must be exposed by adding the following block to the `restaurant` object:
+  ```js
+  // Inside fromAPI.restaurant, alongside features/tax/paymentTypes:
+  checkInFlags: {
+    guestDetails: toBoolean(api.guest_details),
+    bookingDetails: toBoolean(api.booking_details),
+    showUserGst: toBoolean(api.show_user_gst),
+    roomGstApplicable: toBoolean(api.room_gst_applicable),
+    foodPriceWithPaisa: toBoolean(api.food_price_with_paisa),
+    billDateFormat: api.bill_date_format || 'dd/MMM/yyyy hh:mm a',
+  },
+  ```
+- The Profile-selector hook (§12.1) reads `profile.restaurant.checkInFlags` plus `profile.restaurant.features.room` and other already-exposed restaurant fields.
+- A corresponding unit test must be added to `/app/frontend/src/__tests__/api/transforms/profileTransform.test.js` verifying the new `checkInFlags` mapping.
 
 ### 9.4 No existing Code → V2 alignment
 - No existing implementation of: per-adult document rows, per-child name rows, country-code phone selector, GST/Firm block, Room Price, nights-based check-out auto-calc, back-dating guard, browser-navigation guard, dirty-form confirmation, image compression. All are new for V2.
@@ -566,10 +585,13 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 - If operator switches `booking_for` from Corporate → Personal, the GST block hides AND its values are cleared so they are not sent in the payload.
 
 ### 10.13 Successful check-in
-- Toast with backend `message` field (or fallback). Modal closes. Dashboard refresh follows existing behaviour (no change in V2).
+- Toast with backend `message` field (or fallback "Check-in successful"). Modal closes. Dashboard refresh follows existing behaviour per §8.10 (no change in V2 — room card updates on next polling tick / socket push).
 
 ### 10.14 Submit with all blocking validations satisfied but only optional fields blank
-- Submit proceeds normally. Optional fields are omitted from the payload (or sent as empty string per the cURL contract — see §11 for `booking_details`).
+- Submit proceeds normally. Optional fields are omitted from the payload (empty slots for adults #2..#4 NOT sent per §4.4). Exception: `booking_details=""` (empty string) is always sent when the flag is "Yes" — see §11 R2.
+
+### 10.15 Child name containing a comma
+- Rejected inline with error *"Name cannot contain a comma."* before submit (see §4.2). A comma would break the comma-joined `children_name` payload.
 
 ---
 
@@ -580,13 +602,12 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 | # | Risk / Item | Status / Mitigation |
 |---|-------------|---------------------|
 | R1 | **Adult slot keys beyond #4** — cURL only confirms `name2..name4`. For multi-room cases requiring 5+ adults, the assumed pattern is `name5`, `id_type5`, `front_image_file5`, `back_image_file5` (continued indexed suffix). Confirm with backend before shipping multi-room support beyond a single room. | Implement with the assumed pattern; flag for backend confirmation in QA. |
-| R2 | **`booking_details=""` form field purpose** — the cURL sends this as a form field (empty string), but the backend's intended use is unclear (could be a free-text booking-notes field, or a passthrough of the Profile flag value). | V2 sends `booking_details=""` always when `booking_details` flag is "Yes". Verify at runtime; promote to a UI input if backend confirms it's a notes field. |
+| R2 | **`booking_details=""` form field purpose** — the cURL sends this as a form field (empty string). PO-confirmed: always send empty string when `booking_details` flag is "Yes". Backend purpose will be observed at runtime. | V2 sends `booking_details=""` always when `booking_details` flag is "Yes". |
 | R3 | **Error envelope shape** — multiple shapes possible. | Implement extraction order per §8.7; observe in QA. |
-| R4 | **`food_price_with_paisa` numeric format** — flag is unused in V2; payload mirrors cURL formats verbatim. Risk: backend may strictly require a single canonical format (e.g., always 2 decimals). | Mirror the cURL format. If backend rejects mixed formats during QA, normalise to 2-decimal strings. |
-| R5 | **Voter ID exact backend string** — Voter ID confirmed in scope, but the exact backend value (e.g., `"Voter ID"` vs `"VoterID"`) is not in the cURL. | Implement as `"Voter ID"` (with space, matching the spacing convention of `"Aadhar card"` / `"PAN card"`). Verify at runtime. |
-| R6 | **Multi-room payment** — in multi-room case, operator enters one combined total Room Price. UI does not show per-room breakdown. | Acceptable per PO. Backend handles per-room split. |
-| R7 | **Backend acceptance of always-multipart submissions** | Current code splits JSON vs multipart. Switching to always-multipart for V2 — confirm backend tolerance during integration. |
-| R8 | **Browser-navigation guard inside SPA** | React Router 7 (per `package.json`) does not expose the legacy Prompt API directly. Use the v7 `useBlocker` hook (or equivalent) for in-app routing; use `beforeunload` for tab-close/reload. |
+| R4 | **Voter ID exact backend string** — Voter ID confirmed in scope, but the exact backend value (e.g., `"Voter ID"` vs `"VoterID"`) is not in the cURL. | Implement as `"Voter ID"` (with space, matching the spacing convention of `"Aadhar card"` / `"PAN card"`). Verify at runtime. |
+| R5 | **Multi-room payment** — in multi-room case, operator enters one combined total Room Price. UI does not show per-room breakdown. | Acceptable per PO. Backend handles per-room split. |
+| R6 | **Backend acceptance of always-multipart submissions** — current code splits JSON vs multipart. Switching to always-multipart for V2. | Confirm backend tolerance during integration. |
+| R7 | **Browser-navigation guard inside SPA** | React Router 7 (per `package.json`) — use the v7 `useBlocker` hook for in-app routing; use `beforeunload` for tab-close/reload. |
 
 ### Assumptions explicitly adopted
 - A1. The Profile API response is already cached / accessible in a context or store from which `restaurants[0]` can be read synchronously.
@@ -601,7 +622,9 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 ### Phase 1 — Core V2
 
 #### 12.1 Profile-flag wiring
-- [ ] Implement a Profile selector hook that returns `{ guestDetails, bookingDetails, showUserGst, paymentTypes, currency, billDateFormat }` from `restaurants[0]`.
+- [ ] **Extend `profileTransform.js`** (`fromAPI.restaurant`) to expose a `checkInFlags` object with: `guestDetails`, `bookingDetails`, `showUserGst`, `roomGstApplicable`, `foodPriceWithPaisa`, `billDateFormat`. Use `toBoolean` for Yes/No flags. See §9.3 for the exact block to add.
+- [ ] Add a unit test in `/app/frontend/src/__tests__/api/transforms/profileTransform.test.js` that asserts `checkInFlags` mapping for both `"Yes"` and `"No"` input values.
+- [ ] Implement a Profile selector hook that returns `{ guestDetails, bookingDetails, showUserGst, roomGstApplicable, currency, billDateFormat }` derived from `profile.restaurant.checkInFlags` plus `profile.restaurant.currency`.
 - [ ] Use the hook in `RoomCheckInModal` to drive section visibility per §3.
 
 #### 12.2 Layout — baseline & extensions
@@ -616,15 +639,21 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 - [ ] Auto-sync `total_adult` / `total_children` counts.
 
 #### 12.4 ID & document upload
+- [ ] **Install dependency:** `yarn add browser-image-compression` (client-side compression library).
 - [ ] Replace ID-Type enum with values from §5.7.
 - [ ] Validate file MIME types (jpg/jpeg/png/webp/pdf).
-- [ ] Integrate `browser-image-compression` (or equivalent) to compress images ≤ 5 MB before upload.
+- [ ] Integrate `browser-image-compression` to compress images ≤ 5 MB before upload.
 - [ ] Reject PDFs > 5 MB inline.
 - [ ] Front image mandatory per slot; back image optional.
 
 #### 12.5 Phone validation
+- [ ] **Install dependencies:** `yarn add libphonenumber-js` (phone validation). Evaluate and add a country-code picker (e.g., `react-phone-number-input` or equivalent that is compatible with React 19).
 - [ ] Add country-code selector defaulting to India (+91).
-- [ ] Validate phone per selected country (libphonenumber-style).
+- [ ] Validate phone per selected country using `libphonenumber-js.isValidPhoneNumber`.
+
+#### 12.5-bis Email validation
+- [ ] Validate email using the existing project's `zod` schema (`z.string().email()`). Already installed in `package.json`.
+- [ ] Email remains **optional**; only when provided must it pass `zod.email()` validation.
 
 #### 12.6 Date / time
 - [ ] Replace `type="date"` inputs with date pickers + "Edit time" override link.
@@ -634,8 +663,10 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 
 #### 12.7 Payment
 - [ ] Make Balance Payment read-only; auto-recompute on every keystroke.
-- [ ] Validate `advance_payment ≤ order_amount` with inline error + submit disable.
-- [ ] **Phase 1: do NOT send `payment_mode`** (deferred to Phase 2 per §7.7).
+- [ ] Validate `advance_payment ≤ order_amount` with inline error ("Advance cannot be greater than booking amount") + submit disable.
+- [ ] Format all currency fields to exactly 2 decimal places in payload (e.g., `"2000.00"`, `"0.00"`) per §7.5.
+- [ ] `order_amount = 0.00` is a valid value (do not reject).
+- [ ] **Do NOT send `payment_mode`** — out of scope for V2 (remove from `roomService`).
 
 #### 12.8 GST / Firm block
 - [ ] Show only when `show_user_gst=Yes` AND `booking_for=Corporate`.
@@ -646,9 +677,12 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 #### 12.9 Payload service (`roomService.checkIn`)
 - [ ] Always use `multipart/form-data`.
 - [ ] Use bracket-indexed `room_id[i]` keys.
-- [ ] Append all fields per §8.4 (omit `payment_mode` in Phase 1).
-- [ ] Always send `booking_details=""` when the section is visible (until R2 is resolved).
-- [ ] Do NOT send `X-localization`.
+- [ ] Append all fields per §8.4.
+- [ ] **Do not append** unused adult slot keys (`name2`, `id_type2`, etc.) when those rows don't exist (dynamic/only-filled-rows per §4.4).
+- [ ] Always send `booking_details=""` (empty string) when the `booking_details` flag is "Yes".
+- [ ] **Do NOT send `payment_mode`** — out of scope for V2.
+- [ ] **Do NOT send `gst_tax`** — out of scope for V2.
+- [ ] **Do NOT send `X-localization`** header.
 
 #### 12.10 Children payload
 - [ ] Join all child names into a single `children_name` string (comma-separated).
@@ -682,20 +716,12 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 - [ ] `checkin-cancel-btn`, `checkin-submit-btn`
 - [ ] `checkin-dirty-confirm-modal`
 
-### Phase 2 — V2 enhancements (in scope of V2 module, separate sprint)
+### Out of Scope for V2 (explicitly)
+The following items are **not** part of V2 and must **not** be implemented:
 
-#### 12.15 Payment Mode integration
-- [ ] Once backend ships revised cURL with `payment_mode` field, add UI dropdown (Cash / Card / UPI) per §7.7.
-- [ ] Required when `advance_payment > 0`.
-
-#### 12.16 Edit / Reopen Check-In
-- [ ] Implement post-submit Edit flow: ability to reopen a submitted check-in and edit fields (e.g., correct phone, add an adult).
-- [ ] Define which fields are editable post-submit (PO input required before this sprint).
-- [ ] Endpoint and payload for Edit submissions (PO/backend input required).
-
-#### 12.17 Multi-language support — `X-localization` header
-- [ ] When multi-language is enabled in the application, send `X-localization: <locale>` header with all Room Check-In requests.
-- [ ] Determine locale source (Profile / user preference / browser).
+1. **Payment Mode field / dropdown** — do not add any UI; do not send `payment_mode` in payload; remove the existing hard-coded `PAYMENT_MODES` constant.
+2. **Post-submit Edit / Reopen flow** — check-ins are read-only once submitted. No edit UI.
+3. **`X-localization` header** — never send on any Room Check-In request.
 
 ---
 
@@ -704,7 +730,9 @@ curl --location 'https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-g
 | Version | Date | Notes |
 |---------|------|-------|
 | V2 (this) | 2026-04-23 | Initial V2 — consolidated PO inputs + clarified Q&A; replaces legacy implementation requirements doc. |
+| V2.1 | 2026-04-24 | Post-validation patches: (a) `profileTransform.js` extension plan added to §9.3 + §12.1 (C1); (b) Payment Mode / Edit flow / `X-localization` fully removed as out-of-scope (C2); (c) Check-out time picker↔payload sync rule clarified in §7.9 (C3); (d) All currency fields always 2 decimals (§7.5, M9); (e) Child name comma-validation added (§4.2, M3); (f) Dependency install steps explicit in §12.4/§12.5 (M4); (g) `order_amount = 0` explicitly allowed (§7.5, M5); (h) Email validation uses `zod.email()` (§12.5-bis, M6); (i) §8.10 current-behaviour note added (M8); (j) Empty adult slots not sent (§4.4, §12.9, M1). |
 
 ---
 
 *End of `ROOM_MODULE_REQUIREMENTS_V2.md`. This document is the FINAL source of truth for Room Module V2 implementation.*
+urce of truth for Room Module V2 implementation.*
