@@ -19,6 +19,7 @@
 | 4 | Additional Adults helper text | Replace the multi-line paragraph with a short inline hint next to the "+ Add Adult" button. | P3 |
 | 5 | Time chip on dates | Move the "16:57" time pill out of the date label row into a subtle "at 16:57 · Edit" link **beneath** the date field. | P3 |
 | 6 | Balance display | Balance should live-update to `(Room Price − Advance)` the moment Room Price has a value, not wait for Advance input. | P2 |
+| 7 | Booking Type default | **Booking Type is an OPTIONAL field.** If the operator does not select Walk-in / Online, the payload must always send `booking_type=Individual`. Validation must NOT flag this field. | P1 |
 
 ---
 
@@ -183,7 +184,39 @@ Whenever `roomPrice` has any non-empty numeric value, Balance renders `(roomPric
 
 ---
 
-## 7. Out of scope (explicitly not changing)
+## 7. Booking Type — optional with Individual default (NEW)
+
+### 7.1 Current (wrong)
+Booking Type radio pills (`Walk-in` / `Online`) are shown as required-looking. The current payload builder only appends `booking_type` when the operator explicitly picks one.
+
+### 7.2 Correct behavior (per product)
+- Booking Type is **OPTIONAL**. Operator may leave it unselected.
+- When unselected at submit time, the payload **must always send `booking_type=Individual`**.
+- No required-asterisk, no inline validation error, no form-blocking when unselected.
+- When the operator explicitly picks `Walk-in` or `Online`, send that literal value as today.
+
+### 7.3 Implementation notes
+- UI: remove the `*` indicator (if any) from the Booking Type label. Keep the two pills selectable and mutually exclusive, but also allow a "none selected" state at mount time.
+- Payload builder (`roomService.js`): replace the current conditional
+  ```
+  if (params.bookingType) fd.append('booking_type', params.bookingType);
+  ```
+  with
+  ```
+  fd.append('booking_type', params.bookingType || 'Individual');
+  ```
+  Only when `booking_details=Yes` (same gating as today).
+- Do **not** touch `booking_for` (Personal / Corporate). That is a separate field with its own rules.
+
+### 7.4 Acceptance criteria
+- Open the modal → neither Booking Type pill is pre-selected; no validation error appears.
+- Submit the form without touching Booking Type → network request multipart body contains `booking_type=Individual`.
+- Explicitly select `Walk-in` → payload contains `booking_type=Walk-in`. Same for `Online`.
+- No change in `booking_for` behavior.
+
+---
+
+## 8. Out of scope (explicitly not changing)
 
 - Backend payload key names (`order_amount`, `room_id[0]`, bracket-indexed adult slots, `booking_details`, `firm_name`, `firm_gst`, etc.) remain **exactly** as documented in V2 §8.
 - Date format on the wire stays `YYYY-MM-DD HH:mm:ss`.
@@ -196,7 +229,7 @@ Whenever `roomPrice` has any non-empty numeric value, Balance renders `(roomPric
 
 ---
 
-## 8. Test plan (manual, for the implementation agent)
+## 9. Test plan (manual, for the implementation agent)
 
 Run against preprod tenant `478 "18march"`, account `owner@18march.com`, room `e3`.
 
@@ -228,9 +261,16 @@ Run against preprod tenant `478 "18march"`, account `owner@18march.com`, room `e
    - GST block still gates on Corporate + `show_user_gst=Yes`, values cleared when hidden (V2 §10.12).
    - Existing testids from QA automation still resolve (see §2.3 list).
 
+6. **Booking Type optional default (§7)**
+   - Open modal → neither `Walk-in` nor `Online` is pre-selected.
+   - Submit without touching → captured multipart body contains `booking_type=Individual`.
+   - Pick `Walk-in` → submit → body contains `booking_type=Walk-in`.
+   - Pick `Online` → submit → body contains `booking_type=Online`.
+   - `booking_for` (Personal / Corporate) behavior is unchanged in all three runs.
+
 ---
 
-## 9. Files expected to change
+## 10. Files expected to change
 
 1. `/app/frontend/src/components/modals/RoomCheckInModal.jsx` — all 6 changes above.
 2. `/app/frontend/src/api/services/roomService.js` — only if it currently sends a separate `room_price` key or sources `order_amount` from the removed `orderAmount` state; update to read from `roomPrice` instead. Do not touch any other keys.
@@ -242,13 +282,13 @@ No changes expected to:
 
 ---
 
-## 10. Rollout
+## 11. Rollout
 
 - Branch from current `roomv1-` head.
 - Implement all 6 items in a single small commit.
 - Lint: `mcp_lint_javascript` on the modal file must pass clean.
 - Manual verification per §8. No new automated tests required.
-- Update `/app/memory/PRD.md` after merge with a one-liner: "Room Check-In modal V2.1 UX pass: single Room Price field, unified Guest Cards, section reorder, inline helpers, live Balance."
+- Update `/app/memory/PRD.md` after merge with a one-liner: "Room Check-In modal V2.1 UX pass: single Room Price field, unified Guest Cards, section reorder, inline helpers, live Balance, Booking Type optional (defaults to Individual)."
 
 ---
 
