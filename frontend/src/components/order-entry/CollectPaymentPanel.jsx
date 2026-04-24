@@ -84,6 +84,23 @@ const CollectPaymentPanel = ({
     [cartItems]
   );
 
+  // ROOM_CHECKIN_GAP2 (Step C): marker-only room (checked-in with no real food
+  // items) must keep the Pay button enabled so the operator can complete the
+  // ₹0 / associated-orders-only checkout. Bypasses ONLY the visible-cart
+  // length===0 disable clause below; other gates (tab-name, card-txn,
+  // processing flag) remain intact. `visibleCartItemCount` mirrors the
+  // CartPanel.jsx visibleCartItems semantics (marker filtered, cancelled
+  // retained). See /app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md.
+  const visibleCartItemCount = useMemo(
+    () => (cartItems || []).filter(i => !i.isCheckInMarker).length,
+    [cartItems]
+  );
+  const hasCheckInMarker = useMemo(
+    () => (cartItems || []).some(i => i.isCheckInMarker),
+    [cartItems]
+  );
+  const isMarkerOnlyRoom = isRoom && hasCheckInMarker && visibleCartItemCount === 0;
+
   // Occupied rooms for "Transfer to Room" picker (exclude current table)
   const occupiedRooms = useMemo(() => 
     (tables || []).filter(t => t.isRoom && t.isOccupied),
@@ -1752,7 +1769,7 @@ const CollectPaymentPanel = ({
         <button
           onClick={handlePayment}
           disabled={
-            (cartItems || []).filter(i => !i.isCheckInMarker).length === 0 ||
+            (!isMarkerOnlyRoom && (cartItems || []).filter(i => !i.isCheckInMarker).length === 0) ||
             (paymentMethod === 'transferToRoom' && !selectedRoom) ||
             (paymentMethod === 'card' && !showSplit && cardTxnId.length !== 4) ||
             (isTabPayment && !showSplit && (!tabName.trim() || tabPhone.replace(/\D/g, '').length !== 10)) ||
