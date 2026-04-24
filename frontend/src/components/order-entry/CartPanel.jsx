@@ -279,6 +279,13 @@ const CartPanel = ({
   // rendered, or gate any cart-screen action (see ROOM_CHECKIN_UPDATE_ORDER_FIX_V2.md).
   const visibleCartItems = cartItems.filter(i => !i.isCheckInMarker);
   const newItemCount = cartItems.filter(i => !i.placed && !i.isCheckInMarker).length;
+  // ROOM_CHECKIN_GAP2 (Step B): marker-only room (checked-in with no real food items)
+  // must remain checkoutable. Used to bypass the `visibleCartItems.length === 0`
+  // and `hasPlacedItems && !isServed` disable gates below. Covers both Case A
+  // (₹0 pure checkout) and Case B (marker + transferred associated orders).
+  // See /app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md.
+  const hasCheckInMarker = cartItems.some(i => i.isCheckInMarker);
+  const isMarkerOnlyRoom = isRoom && hasCheckInMarker && visibleCartItems.length === 0;
 
   // Validation: required fields per order type
   const isNameRequired = orderType === 'takeAway' || orderType === 'delivery';
@@ -788,10 +795,10 @@ const CartPanel = ({
           data-testid="collect-bill-btn"
           onClick={() => setShowPaymentPanel(true)}
           disabled={
-            visibleCartItems.length === 0 ||
+            (!isMarkerOnlyRoom && visibleCartItems.length === 0) ||
             (!hasPlacedItems && hasValidationErrors) ||
             (hasPlacedItems && hasUnplacedItems) ||
-            (hasPlacedItems && !isServed)
+            (hasPlacedItems && !isServed && !isMarkerOnlyRoom)
           }
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           style={{ backgroundColor: "#2E7D32" }}
