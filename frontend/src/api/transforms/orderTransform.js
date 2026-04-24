@@ -633,7 +633,9 @@ export const toAPI = {
     const cartUpdate = cartUpdateRaw.map(({ _fullUnitPrice, ...item }) => item);
 
     // COMBINED financial totals: ALL items (placed + unplaced, excluding cancelled)
-    const allActiveItems = allCartItems.filter(i => i.status !== 'cancelled');
+    // ROOM_CHECKIN_FIX_V2 (Step 3): also exclude the synthetic Check-In marker
+    // so the combined totals aggregation does not loop over a zero-priced noise row.
+    const allActiveItems = allCartItems.filter(i => i.status !== 'cancelled' && !i.isCheckInMarker);
     const allBuilt = allActiveItems.map(buildCartItem);
     const combinedTotals = calcOrderTotals(allBuilt, serviceChargePercentage);
 
@@ -800,8 +802,11 @@ export const toAPI = {
     const isTab = method === 'credit' || (typeof method === 'string' && method.toLowerCase() === 'tab');
 
     // BUG-252: Build food_detail from placed cart items (matches OLD POS structure)
+    // ROOM_CHECKIN_FIX_V2 (Step 3): exclude synthetic Check-In marker so the
+    // order-bill-payment payload never leaks a zero-priced marker row. This
+    // preserves pre-fix behavior (transform used to strip the marker upstream).
     const food_detail = (cartItems || [])
-      .filter(item => item.placed && item.status !== 'cancelled')
+      .filter(item => item.placed && item.status !== 'cancelled' && !item.isCheckInMarker)
       .map(item => {
         const unitPrice = item.unitPrice || item.price || 0;
         const qty = item.qty || 1;
