@@ -1,0 +1,225 @@
+{
+  "theme": "Light Theme",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "instructions_to_main_agent": "Strictly follow the COLORS tokens from /app/frontend/src/constants/colors.js. Do not introduce new hex codes. Keep the 3-column modal layout. Use only lucide-react icons. Do not introduce new fonts. Follow the structure of existing InputField, SelectField, and FileField. Use shadcn/ui for Dialog, Popover, Tooltip, and Toast. Implement data-testid on every interactive element.",
+  "colors": {
+    "primary": "COLORS.primaryOrange",
+    "success": "COLORS.primaryGreen",
+    "warning": "COLORS.amber",
+    "text_dark": "COLORS.darkText",
+    "text_light": "COLORS.grayText",
+    "border": "COLORS.borderGray",
+    "background_main": "COLORS.sectionBg",
+    "background_surface": "COLORS.lightBg",
+    "error_background": "COLORS.errorBg",
+    "error_text": "COLORS.errorText"
+  },
+  "typography": {
+    "heading": "text-base font-bold",
+    "subheading": "text-[11px] font-medium text-[COLORS.grayText]",
+    "body": "text-sm text-[COLORS.darkText]",
+    "small": "text-xs",
+    "micro": "text-[10px] tracking-wider uppercase font-bold"
+  },
+  "patterns": [
+    {
+      "name": "Country-code selector + phone input",
+      "anatomy": "[Flag Dropdown (Lucide ChevronDown)] | [Input Field]",
+      "tokens": {
+        "container": "border border-[COLORS.borderGray] rounded-lg flex",
+        "input": "text-sm text-[COLORS.darkText] bg-transparent outline-none flex-1 min-w-0",
+        "error_border": "border-[COLORS.errorText]",
+        "error_text": "text-[COLORS.errorText] text-xs mt-0.5"
+      },
+      "interactions": {
+        "focus_within": "focus-within:border-[COLORS.primaryOrange] focus-within:ring-1 focus-within:ring-[COLORS.primaryOrange]/20"
+      },
+      "icons": [
+        "ChevronDown"
+      ],
+      "accessibility": {
+        "aria_label": "Phone number with country code",
+        "test_id": "checkin-phone, checkin-country-code"
+      }
+    },
+    {
+      "name": "Dynamic Add-Row button",
+      "anatomy": "[Lucide Plus] Add Adult/Child",
+      "tokens": {
+        "default": "border-dashed border-[COLORS.borderGray] text-[COLORS.primaryOrange] bg-transparent rounded-lg px-3 py-1.5 text-xs flex items-center gap-1.5 w-fit",
+        "disabled": "opacity-50 text-[COLORS.grayText] cursor-not-allowed border-dashed border-[COLORS.borderGray]"
+      },
+      "interactions": {
+        "hover": "hover:bg-[COLORS.primaryOrange]/10 border-solid hover:border-[COLORS.primaryOrange]"
+      },
+      "icons": [
+        "Plus"
+      ],
+      "accessibility": {
+        "tooltip": "Maximum X adults/children",
+        "test_id": "checkin-add-adult-btn, checkin-add-child-btn"
+      }
+    },
+    {
+      "name": "Additional Adult Row",
+      "anatomy": "[#2] [Name Input] [ID Type Select] [Front Upload*] [Back Upload] [X]",
+      "layout": "grid grid-cols-5 gap-2 items-end col-span-2 pt-3 mt-3 border-t border-[COLORS.borderGray]",
+      "tokens": {
+        "badge": "bg-[COLORS.borderGray] text-[COLORS.darkText] text-[10px] rounded px-1.5 py-0.5 font-bold shrink-0"
+      },
+      "icons": [
+        "Camera",
+        "X"
+      ],
+      "accessibility": {
+        "test_id": "checkin-adult-row-{index}"
+      }
+    },
+    {
+      "name": "Child Row",
+      "anatomy": "[#1] [Name Input] [X]",
+      "layout": "flex items-end gap-2 col-span-1 pt-2 mt-2 border-t border-[COLORS.borderGray]",
+      "tokens": {
+        "badge": "bg-[COLORS.borderGray] text-[COLORS.darkText] text-[10px] rounded px-1.5 py-0.5 font-bold shrink-0"
+      },
+      "icons": [
+        "X"
+      ],
+      "accessibility": {
+        "test_id": "checkin-child-row-{index}"
+      }
+    },
+    {
+      "name": "Remove-row X button",
+      "anatomy": "Small icon-only button",
+      "tokens": {
+        "default": "text-[COLORS.grayText] bg-transparent p-1 rounded-md",
+        "hover": "hover:text-[COLORS.errorText] hover:bg-[COLORS.errorBg]"
+      },
+      "interactions": {
+        "desktop": "opacity-0 group-hover:opacity-100 transition-opacity duration-150",
+        "mobile": "opacity-100"
+      },
+      "icons": [
+        "X"
+      ],
+      "accessibility": {
+        "tooltip": "Remove",
+        "test_id": "checkin-remove-adult-{index}, checkin-remove-child-{index}"
+      }
+    },
+    {
+      "name": "Edit time override link",
+      "anatomy": "Small text link beside date picker label",
+      "tokens": {
+        "default": "text-[10px] text-[COLORS.primaryOrange] font-medium cursor-pointer ml-auto float-right",
+        "hover": "hover:underline"
+      },
+      "accessibility": {
+        "test_id": "checkin-edit-time-btn"
+      }
+    },
+    {
+      "name": "Nights helper input",
+      "anatomy": "w-16 centered input next to date",
+      "tokens": {
+        "default": "text-center w-16 text-sm"
+      },
+      "interactions": {
+        "pulse_effect_on_checkout_date": "transition-colors duration-300 bg-[COLORS.amber]/20"
+      },
+      "accessibility": {
+        "test_id": "checkin-nights"
+      }
+    },
+    {
+      "name": "Gated GST / Firm block reveal",
+      "anatomy": "Expandable container in Column 3",
+      "tokens": {
+        "hidden": "max-h-0 opacity-0 overflow-hidden mb-0",
+        "visible": "max-h-[200px] opacity-100 mb-2 overflow-visible"
+      },
+      "interactions": {
+        "transition": "transition-all duration-200 ease-out"
+      },
+      "accessibility": {
+        "test_id": "checkin-gst-block"
+      }
+    },
+    {
+      "name": "Dirty-form confirmation dialog",
+      "anatomy": "shadcn/ui Dialog component centered on screen",
+      "tokens": {
+        "overlay": "bg-[COLORS.darkText]/50 backdrop-blur-sm",
+        "discard_btn": "bg-[COLORS.errorText] text-white hover:bg-[COLORS.errorText]/90 font-medium px-4 py-2 rounded-md",
+        "cancel_btn": "border border-[COLORS.borderGray] text-[COLORS.grayText] hover:bg-[COLORS.sectionBg] font-medium px-4 py-2 rounded-md"
+      },
+      "accessibility": {
+        "test_id": "dirty-dialog-discard, dirty-dialog-cancel"
+      }
+    },
+    {
+      "name": "File rejection inline error state",
+      "anatomy": "Red bordered file input with inline text below",
+      "tokens": {
+        "error_border": "border-[COLORS.errorText] bg-[COLORS.errorBg]/20",
+        "error_text": "text-[COLORS.errorText] text-[10px] mt-0.5 leading-tight",
+        "success_text": "text-[COLORS.primaryGreen] text-xs truncate flex items-center gap-1"
+      },
+      "icons": [
+        "CheckCircle",
+        "Camera"
+      ],
+      "accessibility": {
+        "aria_invalid": "true",
+        "test_id": "checkin-file-error"
+      }
+    },
+    {
+      "name": "409 Conflict toast",
+      "anatomy": "shadcn/ui destructive Toast",
+      "tokens": {
+        "default": "bg-[COLORS.errorText] text-white border-none shadow-lg"
+      },
+      "interactions": {
+        "duration": "4000ms"
+      }
+    },
+    {
+      "name": "Radio-button group visual (Booking Type & Booking For)",
+      "anatomy": "Segmented pill control replacing dropdown",
+      "tokens": {
+        "container": "flex bg-[COLORS.sectionBg] p-0.5 rounded-lg border border-[COLORS.borderGray]",
+        "selected": "bg-[COLORS.primaryOrange] text-white shadow-sm flex-1 text-center py-1 rounded-md text-xs font-medium transition-colors",
+        "unselected": "text-[COLORS.grayText] hover:text-[COLORS.darkText] flex-1 text-center py-1 rounded-md text-xs font-medium transition-colors"
+      },
+      "accessibility": {
+        "role": "radiogroup",
+        "test_id": "checkin-booking-type-{value}"
+      }
+    },
+    {
+      "name": "Read-only Balance Payment field",
+      "tokens": {
+        "default": "bg-[COLORS.sectionBg] text-[COLORS.darkText] font-medium border-transparent cursor-not-allowed opacity-80"
+      },
+      "accessibility": {
+        "test_id": "checkin-balance"
+      }
+    },
+    {
+      "name": "Image-compression loading indicator",
+      "anatomy": "Spinner replacing Camera icon in file field",
+      "tokens": {
+        "default": "text-[COLORS.primaryOrange] w-3.5 h-3.5"
+      },
+      "icons": [
+        "Loader2"
+      ],
+      "interactions": {
+        "animation": "animate-spin"
+      }
+    }
+  ],
+  "image_urls": {}
+}

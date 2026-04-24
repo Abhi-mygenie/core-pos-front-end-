@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"BAR\",\"def_order_status\":\"1\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"KDS\",\"def_order_status\":\"1\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/order-temp-store",
+    "body": "{\"order_id\":731638,\"restaurant_order_id\":\"002802\",\"print_type\":\"bill\",\"payment_amount\":405,\"grant_amount\":405,\"order_item_total\":350,\"order_subtotal\":385,\"discount_amount\":0,\"coupon_code\":\"\",\"loyalty_dicount_amount\":0,\"wallet_used_amount\":0,\"Date\":\"24/Apr/2026 5:59 PM\",\"waiterName\":\"Owner\",\"tablename\":\"e3\",\"custName\":\"sss\",\"custPhone\":\"+917595242126\",\"custGSTName\":\"\",\"custGST\":\"\",\"billFoodList\":[{\"id\":1902866,\"order_id\":731638,\"food_details\":{\"id\":70955,\"name\":\"Chocolate Delight Cake\",\"description\":\"Testing\",\"image\":\"1.png\",\"category_id\":1138,\"category_ids\":[{\"id\":\"1138\",\"position\":0},{\"id\":\"0\",\"position\":1}],\"variations\":[],\"add_ons\":[],\"attributes\":\"[]\",\"choice_options\":\"[]\",\"price\":350,\"portion_size\":null,\"tax\":5,\"tax_type\":\"GST\",\"tax_calc\":\"Exclusive\",\"discount\":0,\"discount_type\":\"Percent\",\"available_time_starts\":\"00:00:00\",\"available_time_ends\":\"23:59:59\",\"web_available_time_starts\":null,\"web_available_time_ends\":null,\"veg\":1,\"allergen\":null,\"egg\":0,\"jain\":0,\"status\":1,\"restaurant_id\":478,\"order_count\":67,\"avg_rating\":0,\"rating_count\":0,\"recommended\":1,\"slug\":\"chocolate-delight-cake-1766250251\",\"food_status\":0,\"food_stock\":0,\"food_for\":\"Normal\",\"dinein\":\"Yes\",\"takeaway\":\"Yes\",\"delivery\":\"Yes\",\"takeaway_charge\":\"0.00\",\"delivery_charge\":\"0.00\",\"food_order\":0,\"prepration_time_min\":0,\"serve_time_in_min\":0,\"give_discount\":\"Yes\",\"is_disable\":\"N\",\"complementary\":\"No\",\"complementary_price\":\"0\",\"item_code\":\"\",\"is_inventory\":\"No\",\"packed_food\":\"No\",\"is_recipe\":\"N\",\"recipe_id\":null,\"live_web\":\"Y\",\"stock_out\":\"N\",\"pack_charges\":\"0.00\",\"created_at\":\"2025-12-20T17:04:11.000000Z\",\"updated_at\":\"2026-04-02T15:00:09.000000Z\",\"kcal\":null,\"restaurant_name\":\"18march\",\"restaurant_status\":1,\"restaurant_discount\":0,\"restaurant_opening_time\":\"10:00\",\"restaurant_closing_time\":\"23:00\",\"schedule_order\":false,\"free_delivery\":0,\"min_delivery_time\":10,\"max_delivery_time\":57,\"cuisines\":[],\"recipe_status\":\"No\",\"recipe\":null},\"variation\":[],\"add_ons\":[],\"unit_price\":\"350.00\",\"price\":350,\"item_type\":\"BAR\",\"quantity\":1,\"station\":\"BAR\",\"food_level_notes\":\"\",\"table_id_seq\":null,\"ready_at\":null,\"serve_at\":null,\"cancel_at\":null,\"item_update_count\":1,\"food_status\":1,\"created_at\":\"2026-04-24 19:45:19\",\"updated_at\":\"2026-04-24 19:45:19\"}],\"orderNote\":\"\",\"serviceChargeAmount\":35,\"roomRemainingPay\":0,\"roomAdvancePay\":0,\"roomGst\":0,\"deliveryCustName\":\"\",\"deliveryAddressType\":\"\",\"deliveryCustAddress\":\"\",\"deliveryCustPincode\":\"\",\"deliveryCustPhone\":\"\",\"Tip\":0,\"station_kot\":\"\",\"order_type\":\"pos\",\"gst_tax\":19.25,\"vat_tax\":0,\"delivery_charge\":0}"
+  }
+]

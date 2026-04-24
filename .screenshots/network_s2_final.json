@@ -1,0 +1,12 @@
+[
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"BAR\",\"def_order_status\":\"1\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"KDS\",\"def_order_status\":\"1\"}"
+  }
+]

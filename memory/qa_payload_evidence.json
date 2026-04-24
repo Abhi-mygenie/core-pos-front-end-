@@ -1,0 +1,26 @@
+{
+  "reqs": [
+    {
+      "url": "https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer HyL1FQDdO917JZNMiIfuVcskk7GAPKf5785XkBzFUXp65vRM4zQFx56bH5HsY9VkrGj6lovnDnPuHGTNNdWNWW8zmlno7pcyLYPSI784uUh2kxdCSyZ1oUfX",
+        "referer": "https://71564da1-69db-4cb5-9dac-be85ea6811d0.preview.emergentagent.com/",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+        "accept": "application/json",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundary5gdxSO0DqxIXngSM"
+      },
+      "post_data": ""
+    }
+  ],
+  "resps": [
+    {
+      "status": 200,
+      "url": "https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in",
+      "body_head": "{\"message\":\"Group check-in completed successfully\"}"
+    }
+  ]
+}

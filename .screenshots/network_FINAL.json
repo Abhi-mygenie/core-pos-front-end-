@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"BAR\",\"def_order_status\":\"1\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+    "body": "{\"role_name\":\"KDS\",\"def_order_status\":\"1\"}"
+  },
+  {
+    "method": "PUT",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/order/update-place-order",
+    "body": "{\"order_id\":\"731620\",\"order_type\":\"dinein\",\"cust_name\":\"\",\"order_note\":\"provide extra bed sheet\",\"payment_method\":\"pending\",\"payment_status\":\"unpaid\",\"payment_type\":\"postpaid\",\"print_kot\":\"Yes\",\"auto_dispatch\":\"No\",\"order_sub_total_amount\":610,\"order_sub_total_without_tax\":610,\"tax_amount\":0,\"gst_tax\":0,\"vat_tax\":0,\"order_amount\":671,\"round_up\":\"0.00\",\"service_tax\":61,\"service_gst_tax_amount\":0,\"tip_amount\":0,\"tip_tax_amount\":0,\"delivery_charge\":0,\"discount_type\":null,\"self_discount\":0,\"coupon_discount\":0,\"coupon_title\":null,\"coupon_type\":null,\"order_discount\":0,\"used_loyalty_point\":0,\"use_wallet_balance\":0,\"room_id\":null,\"address_id\":null,\"discount_member_category_id\":0,\"discount_member_category_name\":null,\"usage_id\":null,\"cart-update\":[{\"food_id\":62166,\"quantity\":1,\"price\":305,\"variant\":\"\",\"add_on_ids\":[],\"add_on_qtys\":[],\"variations\":[],\"add_ons\":[],\"station\":\"KDS\",\"food_amount\":305,\"variation_amount\":0,\"addon_amount\":0,\"gst_amount\":\"0.00\",\"vat_amount\":\"0.00\",\"discount_amount\":\"0.00\",\"complementary_price\":0,\"is_complementary\":\"No\",\"food_level_notes\":\"\"}]}"
+  }
+]
