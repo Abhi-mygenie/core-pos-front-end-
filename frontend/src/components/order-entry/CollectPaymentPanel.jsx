@@ -63,8 +63,11 @@ const CollectPaymentPanel = ({
   });
 
   // Filter out cancelled items for calculations, keep for display
+  // ROOM_CHECKIN_FIX_V2 (Step 2): exclude synthetic "Check In" marker from every
+  // billable/display derivation. Marker has price:0/tax:0 so math already stays
+  // correct, but the row would otherwise render in the items list.
   const activeItems = useMemo(() => 
-    (cartItems || []).filter(item => item.status !== 'cancelled'),
+    (cartItems || []).filter(item => item.status !== 'cancelled' && !item.isCheckInMarker),
     [cartItems]
   );
   // BUG-018 Part 2 (Apr-2026): complimentary lines (catalog OR runtime-marked)
@@ -77,7 +80,7 @@ const CollectPaymentPanel = ({
     [activeItems]
   );
   const cancelledItems = useMemo(() => 
-    (cartItems || []).filter(item => item.status === 'cancelled'),
+    (cartItems || []).filter(item => item.status === 'cancelled' && !item.isCheckInMarker),
     [cartItems]
   );
 
@@ -390,7 +393,7 @@ const CollectPaymentPanel = ({
         // still show them as priced. Row ID ensures only the exact ticked row
         // is zeroed, not all rows sharing the same catalog food.
         runtimeComplimentaryFoodIds: (cartItems || [])
-          .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled')
+          .filter(i => i.isComplementaryRuntime === true && i.status !== 'cancelled' && !i.isCheckInMarker)
           .flatMap(i => [i.id, i.foodId].filter(v => v !== undefined && v !== null && v !== '')),
       };
       await onPrintBill(overrides);
@@ -796,7 +799,7 @@ const CollectPaymentPanel = ({
                   <div className="mt-1 mb-1 text-xs space-y-2" style={{ backgroundColor: `${COLORS.lightBg}` }}>
                     {/* Items list */}
                     <div className="px-3 pt-2 space-y-1.5 max-h-48 overflow-y-auto">
-                      {(cartItems || []).map((item, idx) => {
+                      {(cartItems || []).filter(i => !i.isCheckInMarker).map((item, idx) => {
                         const isComp = isLineComplimentary(item);
                         const isCatalogLocked = item.isComplementary === true;
                         // BUG-022 (Apr-2026): cancelled lines must render strikethrough + gray.
@@ -1063,7 +1066,7 @@ const CollectPaymentPanel = ({
               Items
             </div>
             <div className="space-y-2 pb-3 border-b" style={{ borderColor: COLORS.borderGray }}>
-              {(cartItems || []).map((item, idx) => {
+              {(cartItems || []).filter(i => !i.isCheckInMarker).map((item, idx) => {
                 const isComp = isLineComplimentary(item);
                 const isCatalogLocked = item.isComplementary === true;
                 // BUG-022 (Apr-2026): cancelled lines must render strikethrough + gray,
@@ -1749,7 +1752,7 @@ const CollectPaymentPanel = ({
         <button
           onClick={handlePayment}
           disabled={
-            (cartItems || []).length === 0 ||
+            (cartItems || []).filter(i => !i.isCheckInMarker).length === 0 ||
             (paymentMethod === 'transferToRoom' && !selectedRoom) ||
             (paymentMethod === 'card' && !showSplit && cardTxnId.length !== 4) ||
             (isTabPayment && !showSplit && (!tabName.trim() || tabPhone.replace(/\D/g, '').length !== 10)) ||
