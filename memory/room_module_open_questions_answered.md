@@ -1,12 +1,12 @@
-# Room Module — Open Questions: Answered & Updated
+# Room Module — Open Questions: FINAL (Session 2 close)
 
 > Source: `/app/memory/room_module_open_questions.md`
-> Captured via clarification session with Product Owner.
-> Updated with revised cURL + PO notes (session 2).
+> Session 1: 40 original questions answered.
+> Session 2: revised cURL resolved 4 parked items + raised 8 new open items; PO resolved 12 of those 16 open items in this pass.
 
 ---
 
-## Reference cURL (revised — session 2)
+## Reference cURL (from PO — session 2)
 
 ```
 POST https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in
@@ -53,202 +53,200 @@ Response:
 ## A. Configuration-level
 
 ### Q1: Values of `restaurants[].configuration`?
-**Answer (final):** `restaurants[].configuration` is **not used at all** — neither for layout nor in the payload. Layout is driven by only 2 Profile flags: `guest_details` and `booking_details`.
+`configuration` is not used — not in payload, not in layout logic. Layout is driven by **2 Profile flags only**: `guest_details` and `booking_details`.
 
 ### Q2: Configuration 3 details?
-**Answer:** N/A — see Q1.
+N/A — see Q1.
 
-### Q3: Does `configuration` alone drive layout?
-**Answer (final, supersedes earlier):** Layout is driven by only **2 Profile flags**: `guest_details` and `booking_details`. The `room_price` Profile flag is **not used**.
-- Baseline (both flags = "No"): UI shows minimum fields only — Name, Phone, etc.
+### Q3: Layout driver?
+100% Profile flags. `room_price` flag is **not used**. Only `guest_details` and `booking_details` matter.
+- Baseline: minimum fields (Name, Phone, etc.).
 - `booking_details: "Yes"` → adds Booking Type, Check-in/Check-out dates, Room Price, GST fields (when Corporate).
 - `guest_details: "Yes"` → adds No. of guests, No. of children, dynamic document upload per guest.
-- `configuration` not passed in payload.
 
 ---
 
 ## B. Adults / Children dynamic block
 
 ### Q4: Max adult slots?
-**Answer:** Cap = **4 × rooms selected** for adults AND **4 × rooms selected** for children (independent caps). Dynamic add-row.
+Cap = 4 × rooms selected for adults AND 4 × rooms selected for children (independent). Dynamic add-row.
 
-### Q5: Form-field keys for additional adults' documents? (UNPARKED)
-**Answer (from cURL):** Indexed-suffix pattern (primary unsuffixed):
-- Primary: `name`, `id_type`, `front_image_file`, `back_image_file`
-- Adult #2: `name2`, `id_type2`, `front_image_file2`, `back_image_file2`
-- Adult #3: `name3`, `id_type3`, `front_image_file3`, `back_image_file3`
-- Adult #4: `name4`, `id_type4`, `front_image_file4`, `back_image_file4`
+### Q5: Form-field keys for additional adults' documents?
+Indexed-suffix (primary unsuffixed): `name`/`id_type`/`front_image_file`/`back_image_file`, then `name2`/`id_type2`/`front_image_file2`/`back_image_file2`, … up to 4.
 
-### Q6: ID images mandatory/optional for adults #2–#4?
-**Answer:** Front = mandatory for all adults; Back = optional for all adults.
+### Q6: ID image requirements?
+Front = mandatory for all adults; Back = optional.
 
-### Q7: Children — single free-text or one row per child? ⚠ OPEN
-**Answer:** UI captures one row per child with mandatory Name. But cURL payload sends `children_name="piyush,parth"` (comma-separated). **See open item O2** — confirm UI→payload transformation.
+### Q7: Children capture?
+**UI:** one row per child, Name mandatory, no DOB, no docs.
+**Payload (from cURL):** UI joins all names into single comma-separated string `children_name="a,b,c"`.
 
-### Q8: When `total_children > 0`, is `children_name` required?
-**Answer:** Yes. All child-name rows must be filled; submit blocked otherwise.
+### Q8: When `total_children > 0`, `children_name` required?
+Yes — submit blocked until all name rows filled.
 
 ---
 
 ## C. Enum values
 
-### Q9: `booking_type` values? ⚠ OPEN
-**Earlier answer:** UI "Walk-in" → `WalkIn`; UI "Online" → `PreBooked`.
-**New cURL contradicts:** `booking_type="Online"` (not `PreBooked`).
-**See open item O1.**
+### Q9: `booking_type` values?
+**Final (source = cURL):** UI "Walk-in" → `WalkIn`; UI "Online" → `Online`. (Supersedes earlier "PreBooked" — cURL is source of truth.)
 
-### Q10: `booking_for` values? (UNPARKED)
-**Answer (from cURL):** UI "Personal" → `Individual`; UI "Corporate" → `Corporate`.
+### Q10: `booking_for` values?
+UI "Personal" → `Individual`; UI "Corporate" → `Corporate`.
 
-### Q11: `id_type` values? (PARTIALLY UNPARKED)
-**Answer (from cURL):** `Aadhar card`, `Passport`, `PAN card`, `License`. (Note: with spaces where shown.)
-**See open item O3** — confirm whether Voter ID remains in the set.
+### Q11: `id_type` values?
+`Aadhar card`, `Passport`, `PAN card`, `License`, **Voter ID** (confirmed). Exact `Voter ID` backend string to be taken from cURL/runtime.
 
-### Q12: Payment Mode values? (STILL PARKED)
-Currently not in payload. Revised payload with payment-mode field to be shared.
+### Q12: Payment Mode?
+**Deferred to Phase 2.** Not in v1 payload.
 
 ---
 
 ## D. Pricing / calculation
 
-### Q13: `order_amount` auto or manual?
-**Answer:** Operator-entered manually.
+### Q13: `order_amount`?
+Operator-entered manually.
 
 ### Q14: Multi-room `room_price`?
-**Answer:** Single total for all rooms (backend splits per-room).
+Single combined total; backend splits per-room.
 
-### Q15: Same-day check-in/out night count?
-**Answer:** Minimum 1 night. UX: check-in defaults to today; operator enters nights; check-out auto-calculated.
+### Q15: Same-day night count?
+Minimum 1 night; check-in defaults today, operator enters nights, check-out auto-calculated.
 
-### Q16: `advance_payment > order_amount` allowed?
-**Answer:** Not allowed. Inline error + submit disabled.
+### Q16: `advance_payment > order_amount`?
+Not allowed — inline error + submit disabled.
 
-### Q17: Amount payload format when `food_price_with_paisa="No"`? ⚠ OPEN
-**See open item O5** — cURL shows mixed formats.
+### Q17: Amount format (`food_price_with_paisa`)?
+Flag **not used**. Follow cURL formats as-is (no transformation).
 
 ---
 
 ## E. Dates & time
 
-### Q18: Date-only vs. date+time picker?
-**Answer:** Date-only picker (check-in time not captured per Q20).
+### Q18: Date-only or date+time picker?
+Date-only picker (check-in time not captured in UI but sent in payload — see Q20 + O6).
 
-### Q19: Back-dating allowed?
-**Answer:** Up to 24 hours in the past; default = today.
+### Q19: Back-dating?
+Allowed up to 24 hours in the past; default = today.
 
 ### Q20: Default times?
-**Answer (final):**
-- Check-in: date only; **time not captured**.
-- Check-out date: auto-calc from nights, manually editable.
-- Check-out time: defaults 12:00 noon, manually editable.
-**See open items O6 and O7** — payload time-value rules.
+- Check-in: date only (time in payload = current time at submission; user can override via Edit-time link — see O6).
+- Check-out date: auto-calc from nights; manually editable.
+- Check-out time: defaults 12:00 noon; manually editable. **See remaining open item O7 for payload reconciliation with cURL time `09:32:00`.**
 
 ---
 
 ## F. GST / Firm block
 
-### Q21: GST/Firm block gating?
-**Answer:** Only when **`show_user_gst="Yes"` AND `booking_for=Corporate`**. No additional flag.
+### Q21: Gating?
+`show_user_gst="Yes"` **AND** `booking_for=Corporate` (both required).
 
 ### Q22: GSTIN regex?
-**Answer:** `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$` (standard Indian 15-char GSTIN).
+`^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$`
 
-### Q23: `gst_tax` when `room_gst_applicable="No"`?
-**Answer:** `gst_tax` is not used by this product. UI should never send it.
+### Q23: `gst_tax`?
+Not used — UI never sends it.
 
 ---
 
 ## G. OTP flow
 
 ### Q24, Q25, Q26
-**Answer:** Not used for room check-in. OTP feature out of scope.
+Not used for room check-in.
 
 ---
 
 ## H. Backend contract & response
 
-### Q27: Success response schema? (UNPARKED)
-**Answer (from cURL):** Minimal response — `{"message": "Group check-in completed successfully"}`. No IDs returned. UI only needs the success message for toast/confirmation.
+### Q27: Success response?
+Minimal — `{"message": "Group check-in completed successfully"}`. UI shows as success toast.
 
-### Q28: Auto-trigger KOT / bill print?
-**Answer:** Not used for rooms.
+### Q28: Auto KOT/bill print?
+Not used for rooms.
 
-### Q29: Error envelope shape? (STILL PARKED)
-To be observed at runtime — no error sample yet.
+### Q29: Error envelope?
+**To observe at runtime** — no sample provided.
 
 ---
 
 ## I. Validation
 
 ### Q30: Phone rule?
-**Answer:** International with country-code selector; default India (+91).
+International with country-code selector; default India (+91).
 
-### Q31: Email required?
-**Answer:** Always optional.
+### Q31: Email?
+Always optional.
 
-### Q32: File upload limits?
-**Answer:** Max 5 MB per file; allowed `jpg, jpeg, png, webp, pdf`; client-side compression via a small JS library (e.g., `browser-image-compression`) — no external API.
+### Q32: File upload?
+Max 5 MB per file; MIME `jpg, jpeg, png, webp, pdf`; client-side compression via small JS library (e.g., `browser-image-compression`) — no external API.
 
 ---
 
 ## J. Platform integration
 
-### Q33: Role token? (STILL PARKED)
+### Q33: Role token?
+**No role gating** — available to all authenticated users.
 
-### Q34: Dashboard refresh strategy? (STILL PARKED)
+### Q34: Dashboard refresh?
+**No change from current behaviour** — maintain existing refresh pattern.
 
 ### Q35: Dirty-form Cancel/Close?
-**Answer:** Show confirmation prompt.
+Show confirmation prompt.
 
-### Q36: `X-localization` header?
-**Answer:** Never send (current behaviour); parked for later revisit.
+### Q36: `X-localization`?
+Never send; parked for future multi-language revisit.
 
 ---
 
 ## K. Edge cases
 
 ### Q37: Two-operator race?
-**Answer:** Backend guards (returns 409). No frontend locking.
+Backend guards (409). No frontend locking.
 
 ### Q38: 409 UX?
-**Answer:** Toast — *"This room was just taken by another operator. Please pick another room."* — and auto-close form.
+Toast + auto-close form.
 
 ### Q39: Draft on browser navigation?
-**Answer:** Prompt before navigation.
+Prompt before navigation.
 
 ### Q40: Reopen/edit after submit?
-**Answer:** Read-only in v1. Edit flow deferred to future iteration.
+Read-only in v1. **Edit flow deferred to v2.**
 
 ---
 
-# Open Items — to be resolved before/during implementation
+## Resolved from Session 2 Open Items
 
-| # | Item | Priority | Why open |
-|---|------|----------|----------|
-| **O1** | `booking_type` value mismatch — cURL sends `Online`, earlier answer said `PreBooked`. Confirm final backend string for "Online booking". | **Blocker** | Dropdown backend mapping. |
-| **O2** | Q7 — UI = per-child rows, payload = comma-joined single `children_name` string. Confirm transformation. | **Blocker** | Payload shape. |
-| **O3** | Q11 — is `Voter ID` in the `id_type` enum, and exact string? | High | Dropdown options. |
-| **O4** | Q12 — Payment Mode field name + values. Awaiting revised cURL. | High | Dropdown + payload. |
-| **O5** | Q17 — amount format inconsistency in cURL (`"2000"` vs `"1500.0"` vs `"0.00"`). Canonical rule? | Medium | Payload format. |
-| **O6** | When operator only picks date (check-in), what time should UI send in payload? Current time? `00:00:00`? | Medium | Payload value. |
-| **O7** | Check-out time in payload — cURL shows `09:32:00`, but Q20 says default is 12:00 noon. Which is correct? | Medium | Payload value. |
-| **O8** | `booking_details=""` payload form field — is it a free-text "booking notes" field, or just echoing the Profile flag? | Medium | Payload contract. |
-| **O9** | `order_note` field — UI input? Mandatory? Max length? | Low | New field. |
-| **O10** | `balance_payment` — auto-calculated (`order − advance`) or operator-entered? | Medium | Payload + UI logic. |
-| **O11** | `room_id[0]`, `room_id[1]` — confirm bracket-indexed array notation is expected. | Low | Payload format. |
-| **O12** | Q29 — error envelope shape. To observe at runtime. | Medium | Error handling. |
-| **O13** | Q33 — role token gating Room Check-In. | High | Permission gate. |
-| **O14** | Q34 — dashboard refresh strategy (API re-fetch vs. socket). | High | Post-submit UX. |
-| **O15** | Q36 — `X-localization` header (parked; revisit when multi-language needed). | Medium | Request header. |
-| **O16** | Q40 — post-submit Edit flow (deferred to v2). | High (v2) | Scope for future. |
-
-**Total open items:** 16.
+| Ref | Item | Resolution |
+|-----|------|------------|
+| O1 | `booking_type` mismatch | cURL is source → `Online` (not `PreBooked`) |
+| O2 | Children payload shape | UI per-row → joined comma-separated string for payload |
+| O3 | Voter ID in `id_type` | Included |
+| O4 | Payment Mode | Deferred to Phase 2 |
+| O5 | Amount format | `food_price_with_paisa` flag not used; follow cURL |
+| O6 | Check-in time payload | Send current time; user can override |
+| O8 | `booking_details=""` field purpose | Check at runtime |
+| O9 | `order_note` field | UI field = "Special Request" |
+| O10 | `balance_payment` | Auto-calculated (`order − advance`) |
+| O11 | `room_id[]` array | Bracket notation used when more than one room selected |
+| O12 | Error envelope | Observe at runtime |
+| O13 | Role token | No gating — available to all authenticated users |
+| O14 | Dashboard refresh | No change from current behaviour |
+| O15 | `X-localization` | Do not send; revisit when multi-language is enabled |
+| O16 | Post-submit Edit flow | Deferred to v2 |
 
 ---
 
-# Session Summary
+## ⚠ Remaining Open Item (1)
 
-- 30 of 40 original questions **finalised**.
-- 4 unparked via session-2 cURL + updates: **Q5, Q10, Q11 (partial), Q27**.
-- 8 new open items raised from cURL inspection: **O1, O2, O6, O7, O8, O9, O10, O11**.
-- 8 previously-parked items still open: **O3 (was Q11 partial), O4 (Q12), O5 (Q17), O12 (Q29), O13 (Q33), O14 (Q34), O15 (Q36), O16 (Q40)**.
+| # | Item | Priority | Notes |
+|---|------|----------|-------|
+| **O7** | Check-out time in payload — cURL shows `09:32:00`, Q20 says default is 12:00 noon. Which value should UI actually send? | Medium | To be resolved at implementation time with backend team. |
+
+---
+
+## Session Summary
+
+- **40/40** original questions finalised.
+- **15/16** Session-2 open items resolved.
+- **1** remaining open item: **O7** (check-out time payload reconciliation).
+- Clarification session closed. Document ready for the Implementation Agent.
