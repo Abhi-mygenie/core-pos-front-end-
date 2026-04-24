@@ -29,7 +29,7 @@
 
 All variables from the handover spec have been written verbatim:
 
-- `REACT_APP_BACKEND_URL=https://restaurant-pos-v2-1.preview.emergentagent.com`
+- `REACT_APP_BACKEND_URL=https://roomv1-build.preview.emergentagent.com`
 - `WDS_SOCKET_PORT=443`
 - `ENABLE_HEALTH_CHECK=false`
 - `REACT_APP_API_BASE_URL=https://preprod.mygenie.online/`
@@ -58,7 +58,7 @@ All variables from the handover spec have been written verbatim:
 8. Verified compilation (`Compiled successfully` / `webpack compiled with 1 warning`).
 9. Verified HTTP reachability:
    - `curl http://localhost:3000/` → **HTTP 200**
-   - `curl https://restaurant-pos-v2-1.preview.emergentagent.com/` → **HTTP 200**
+   - `curl https://roomv1-build.preview.emergentagent.com/` → **HTTP 200**
 10. Verified UI renders — Mygenie login screen (email/password + "LOG IN") loads correctly.
 
 ## 5. Supervisor State (post-deploy)
@@ -72,7 +72,7 @@ All variables from the handover spec have been written verbatim:
 
 ## 6. Public URL
 
-https://restaurant-pos-v2-1.preview.emergentagent.com/
+https://roomv1-build.preview.emergentagent.com/
 
 ## 7. Caveats / Open Items for Next Deployment Agent
 
@@ -98,5 +98,5 @@ tail -n 100 /var/log/supervisor/frontend.err.log
 cd /app/frontend && yarn install
 
 # Smoke test
-curl -o /dev/null -w "%{http_code}\n" https://restaurant-pos-v2-1.preview.emergentagent.com/
+curl -o /dev/null -w "%{http_code}\n" https://roomv1-build.preview.emergentagent.com/
 ```

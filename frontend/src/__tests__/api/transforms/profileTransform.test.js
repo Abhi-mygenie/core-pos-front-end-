@@ -40,3 +40,76 @@ describe('T-05 | profileTransform.js — No hardcoded preprod storage URL', () =
     expect(result.restaurant.logo).toContain('images/logo.png');
   });
 });
+
+describe('Room Module V2 | profileTransform.js — checkInFlags exposure', () => {
+  test('maps all Yes flags to booleans + preserves bill_date_format', () => {
+    jest.resetModules();
+    const { fromAPI } = require('../../../api/transforms/profileTransform');
+
+    const result = fromAPI.profileResponse({
+      restaurants: [{
+        id: 1,
+        name: 'Test',
+        guest_details: 'Yes',
+        booking_details: 'Yes',
+        show_user_gst: 'Yes',
+        room_gst_applicable: 'Yes',
+        food_price_with_paisa: 'Yes',
+        bill_date_format: 'dd-MM-yyyy HH:mm',
+      }],
+    });
+
+    expect(result.restaurant.checkInFlags).toEqual({
+      guestDetails: true,
+      bookingDetails: true,
+      showUserGst: true,
+      roomGstApplicable: true,
+      foodPriceWithPaisa: true,
+      billDateFormat: 'dd-MM-yyyy HH:mm',
+    });
+  });
+
+  test('maps all No flags to booleans + default bill_date_format when missing', () => {
+    jest.resetModules();
+    const { fromAPI } = require('../../../api/transforms/profileTransform');
+
+    const result = fromAPI.profileResponse({
+      restaurants: [{
+        id: 1,
+        name: 'Test',
+        guest_details: 'No',
+        booking_details: 'No',
+        show_user_gst: 'No',
+        room_gst_applicable: 'No',
+        food_price_with_paisa: 'No',
+      }],
+    });
+
+    expect(result.restaurant.checkInFlags).toEqual({
+      guestDetails: false,
+      bookingDetails: false,
+      showUserGst: false,
+      roomGstApplicable: false,
+      foodPriceWithPaisa: false,
+      billDateFormat: 'dd/MMM/yyyy hh:mm a',
+    });
+  });
+
+  test('defaults all booleans to false and billDateFormat to default when keys are absent', () => {
+    jest.resetModules();
+    const { fromAPI } = require('../../../api/transforms/profileTransform');
+
+    const result = fromAPI.profileResponse({
+      restaurants: [{ id: 1, name: 'Test' }],
+    });
+
+    expect(result.restaurant.checkInFlags).toEqual({
+      guestDetails: false,
+      bookingDetails: false,
+      showUserGst: false,
+      roomGstApplicable: false,
+      foodPriceWithPaisa: false,
+      billDateFormat: 'dd/MMM/yyyy hh:mm a',
+    });
+  });
+});

@@ -124,6 +124,17 @@ export const fromAPI = {
 
       // Search options
       searchOptions: api.search_by || ['order id', 'table no', 'user id'],
+
+      // Room Module V2 — Profile flags driving Room Check-In layout/visibility.
+      // Additive per V2 §9.3 / §13.5 — do not rename or remove existing keys above.
+      checkInFlags: {
+        guestDetails: toBoolean(api.guest_details),
+        bookingDetails: toBoolean(api.booking_details),
+        showUserGst: toBoolean(api.show_user_gst),
+        roomGstApplicable: toBoolean(api.room_gst_applicable),
+        foodPriceWithPaisa: toBoolean(api.food_price_with_paisa),
+        billDateFormat: api.bill_date_format || 'dd/MMM/yyyy hh:mm a',
+      },
     };
   },
 
