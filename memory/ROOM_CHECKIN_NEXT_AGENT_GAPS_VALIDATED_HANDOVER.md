@@ -20,10 +20,10 @@ Two follow-up gaps after the completed "Check-In → Update-Order routing" fix:
 
 | Gap | Status |
 |---|---|
-| Gap 1 — customer autopopulate | **Approved with Changes** (backend-dependent; frontend-fallback path contains an unverified assumption) |
-| Gap 2 — ₹0 checkout for marker-only room | **Approved with Changes** (one edge case missing; backend pre-flight is mandatory, not optional) |
+| Gap 1 — customer autopopulate | **DEFERRED** — scope expands to CRM reconciliation (see §12); re-analysis pending |
+| Gap 2 — marker-only room checkout | **Approved with Changes** — input doc under-scoped; two stranding cases (A: ₹0, B: associated-orders-only) must be fixed together using split predicates |
 
-Overall document is **technically sound, code-verified, and safe to implement** with the clarifications in §5.
+Gap 2 is the focus of this validation pass. Gap 1 will receive a separate validation document once CRM dependency is mapped.
 
 ---
 
@@ -56,6 +56,22 @@ All line references in the input document were checked against the working tree.
 ### Marker contract — CONFIRMED
 - Marker is injected at `orderTransform.js:223-234` with `isCheckInMarker:true, price:0, unitPrice:0, tax.percentage:0`.
 - 17 consumer filters exist (`grep isCheckInMarker` → 19 hits across 6 files). Marker is already invisible in UI, billing, and print. This is consistent with the four architectural rules about the check-in item.
+
+### End-to-end payment routing — CONFIRMED by tracing `handlePayment` → `onPaymentComplete`
+For a marker-only room, the handler at `OrderEntry.jsx:1067` will take **Scenario 1 — existing order** branch (L1264-1302) because `placedOrderId` is seeded from `table?.orderId` at `OrderEntry.jsx:94` and is truthy for any checked-in room. Scenario 1 fires:
+- `orderToAPI.collectBillExisting(effectiveTable, cartItems, customer, paymentData, {...})` → `POST /api/v2/vendoremployee/order/order-bill-payment`
+- Payload fields at `orderTransform.js:876-924`: `food_detail:[]` (marker filtered at L808-810), `order_sub_total_amount:0`, `grand_amount:0`, `payment_amount:0`, `payment_status:'paid'` for cash.
+- `order_id: String(table.orderId)` — **REQUIRES** `effectiveTable.orderId` to exist. Confirmed present for checked-in rooms (set by room hydration).
+
+### Associated-orders plumbing — CONFIRMED
+- `associatedOrders` prop flows from `OrderEntry.jsx:1013, 1546` → `CartPanel` + `CollectPaymentPanel`.
+- `CollectPaymentPanel.jsx:317-318`: `handlePayment` already computes `effectiveTotal = finalTotal + associatedTotal` for rooms with transfers.
+- `CollectPaymentPanel.jsx:1773`: button label already shows combined total.
+- **But** the disable gates at `CartPanel.jsx:790-795` and `CollectPaymentPanel.jsx:1755` do NOT consider `associatedOrders`. This creates Case B stranding (see §5.4).
+
+### Auto-print for marker-only room — verified inert
+- `billFoodList` filter at `orderTransform.js:1029` excludes `'check in'` rows → print payload has empty `billFoodList` for marker-only rooms.
+- Auto-print block at `OrderEntry.jsx:1309-1363` is wrapped in try/catch and is non-blocking on failure — payment will still succeed even if print barfs on an empty food list. Implementation agent should still eyeball the first live test to confirm no visible error toast.
 
 ---
 
@@ -92,12 +108,49 @@ The input doc references `/app/memory/v3/ARCHITECTURE_DECISIONS_FINAL.md`. The a
 ### 5.3 Gap 1 — backend dependency not de-risked
 The document correctly identifies backend as root cause but proposes a frontend fallback that assumes an endpoint `roomService.getCheckInDetails(roomId)` exists. **This endpoint was not found in the codebase** (`grep -rn "getCheckInDetails" /app/frontend/src` returns 0 hits — needs confirmation). Treat the frontend fallback as **Needs Confirmation**, not ready-to-ship.
 
-### 5.4 Gap 2 — missing edge case (BLOCKING for implementation quality)
-The proposed `isZeroCheckoutRoom = isRoom && hasCheckInMarker && visibleCartItems.length === 0` override **does not account for associated table orders transferred to the room** (`associatedOrders[]`). A checked-in room with zero food items but with transferred table orders has `associatedTotal > 0` and is **not** a zero-checkout case.
+### 5.4 Gap 2 — missing stranding case + predicate must be SPLIT (BLOCKING)
 
-Current code at `CollectPaymentPanel.jsx:1773` computes `finalTotal + associatedTotal` for the button amount. The implementation must ensure:
-- The "₹0 skip payment-method selector / auto-Cash" branch fires **only** when `visibleCartItems.length === 0 AND associatedOrders.length === 0`.
-- When associated orders exist, the standard (non-zero) payment flow must still execute.
+**After deeper code trace, the input document understates the problem. There are actually TWO distinct stranding cases, not one:**
+
+- **Case A — true ₹0 checkout:** checked-in room, no own food, no associated orders → button DISABLED → stranded.
+- **Case B — associated-orders-only room:** checked-in room, no own food, but has transferred table orders (`associatedOrders.length > 0`) with non-zero `associatedTotal` → button ALSO DISABLED → also stranded.
+
+**Code evidence for Case B:**
+- `CartPanel.jsx:790-795` disable gate uses `visibleCartItems.length === 0` — this does NOT consider `associatedOrders`, so associated-orders-only rooms are equally blocked.
+- `CollectPaymentPanel.jsx:1755` Pay-button gate uses `(cartItems || []).filter(i => !i.isCheckInMarker).length === 0` — same blind spot.
+- But the button label at `CollectPaymentPanel.jsx:1773` and `handlePayment` at `:317-318` both already know how to compute `finalTotal + associatedTotal`. The plumbing for Case B exists; only the disable gates are wrong.
+
+**Implication:** The input doc's single predicate `isZeroCheckoutRoom` conflates two concerns that must be separated:
+
+```js
+// Concern 1 — which rooms have a stuck-disabled Checkout button?
+const isMarkerOnlyRoom =
+  isRoom && hasCheckInMarker && visibleCartItems.length === 0;
+// ↑ covers BOTH Case A and Case B. Use this to bypass the disable gates.
+
+// Concern 2 — which rooms should get the ₹0 UX polish (skip selector, auto-Cash, confirmation modal)?
+const isZeroPaymentRoom =
+  isMarkerOnlyRoom && (associatedOrders?.length || 0) === 0;
+// ↑ covers ONLY Case A. Use this to gate the UX polish in Step D.
+```
+
+**Corrected gate (replaces the input doc's version):**
+```js
+disabled={
+  (!isMarkerOnlyRoom && visibleCartItems.length === 0) ||
+  (!hasPlacedItems && hasValidationErrors) ||
+  (hasPlacedItems && hasUnplacedItems) ||
+  (hasPlacedItems && !isServed && !isMarkerOnlyRoom)
+}
+```
+
+Mirror the same `isMarkerOnlyRoom` bypass in `CollectPaymentPanel.jsx:1755`. Use `isZeroPaymentRoom` only for the Step D UX polish.
+
+**Without this split:**
+- Using input doc's predicate as-is → associated-orders-only rooms stay stranded (Case B bug persists).
+- Using my original §5.4 guard (`... && associatedOrders.length === 0`) → the button-enable predicate is over-restricted; Case B still stranded.
+
+This correction makes Gap 2 a complete fix for all marker-only room stranding, not just the ₹0 subset.
 
 ### 5.5 Gap 2 — backend pre-flight is mandatory, not optional
 The doc labels the backend check as "Step D". For a zero-payment call with `food_detail: []` the backend contract is the single biggest unknown. The implementation agent **must** run the curl / dev-team confirmation **before** writing the UX polish; otherwise the fix ships a button that fails on POST.
@@ -112,39 +165,42 @@ The doc states "marker status = 'preparing'". Actually the marker inherits `stat
 
 ## 6. Final Implementation Scope
 
-### 6.1 Gap 2 (do FIRST — CRITICAL)
+### 6.1 Gap 2 — four steps, strictly sequential
 
-**Scope:** 2 disable-gate overrides + conditional UX branch + backend contract confirmation.
+**Scope:** 2 disable-gate overrides + conditional UX branch + backend contract confirmation. Covers BOTH stranding cases (Case A ₹0, Case B associated-orders-only).
 
-Step A — Backend pre-flight (BEFORE any code):
-- Run a live POST against `/api/v2/vendoremployee/order/order-bill-payment` with `food_detail:[]`, `payment_amount:0`, `grand_amount:0`, `payment_mode:'cash'`, `payment_status:'paid'` on a test checked-in room in tenant 478.
-- If backend rejects → STOP. Open a ticket with backend team for tolerance fix or dedicated `/room-checkout-zero` endpoint. Do not proceed with frontend disable-gate changes until this is resolved.
+**Step A — Backend pre-flight (BEFORE any code):**
+- Run live POST against `/api/v2/vendoremployee/order/order-bill-payment` with `food_detail:[]`, `payment_amount:0`, `grand_amount:0`, `payment_mode:'cash'`, `payment_status:'paid'` on a test checked-in room in tenant 478.
+- If backend rejects → STOP. Open backend ticket for tolerance fix or dedicated `/room-checkout-zero` endpoint. Do not proceed.
 - If backend accepts → proceed.
 
-Step B — CartPanel disable-gate override (`CartPanel.jsx:790-795`):
+**Step B — CartPanel disable-gate override (`CartPanel.jsx:790-795`):**
 ```js
 const hasCheckInMarker = cartItems.some(i => i.isCheckInMarker);
-const isZeroCheckoutRoom =
-  isRoom &&
-  hasCheckInMarker &&
-  visibleCartItems.length === 0 &&
-  (associatedOrders?.length || 0) === 0;   // ← §5.4 edge-case guard
+const isMarkerOnlyRoom =
+  isRoom && hasCheckInMarker && visibleCartItems.length === 0;
 
 disabled={
-  (!isZeroCheckoutRoom && visibleCartItems.length === 0) ||
+  (!isMarkerOnlyRoom && visibleCartItems.length === 0) ||
   (!hasPlacedItems && hasValidationErrors) ||
   (hasPlacedItems && hasUnplacedItems) ||
-  (hasPlacedItems && !isServed && !isZeroCheckoutRoom)
+  (hasPlacedItems && !isServed && !isMarkerOnlyRoom)
 }
 ```
 
-Step C — CollectPaymentPanel Pay-button override (`CollectPaymentPanel.jsx:1755`):
-Mirror the same `isZeroCheckoutRoom` computation and allow through the `length === 0` gate. Keep all other gates (tab-name, card-txn, processing flag) intact.
+**Step C — CollectPaymentPanel Pay-button override (`CollectPaymentPanel.jsx:1755`):**
+Mirror the same `isMarkerOnlyRoom` computation (uses `!i.isCheckInMarker` filter for visibleCartItems equivalent). Bypass ONLY the `length === 0` clause. Keep all other gates (tab-name, card-txn, processing flag) intact.
 
-Step D — UX polish (only after Step A confirms backend):
-- Confirmation modal: *"Check out room with no outstanding bill? (₹0)"* → Yes/No.
-- When `isZeroCheckoutRoom && (associatedOrders?.length || 0) === 0`, default `paymentMethod = 'cash'` and skip the method selector.
-- Standard success flow (room → Available).
+**Step D — UX polish (only after Step A confirms backend + Steps B+C pass testing):**
+Use the narrower `isZeroPaymentRoom` predicate here:
+```js
+const isZeroPaymentRoom =
+  isMarkerOnlyRoom && (associatedOrders?.length || 0) === 0;
+```
+- If `isZeroPaymentRoom`: show confirmation modal *"Check out room with no outstanding bill? (₹0)"* → Yes/No.
+- If `isZeroPaymentRoom`: default `paymentMethod = 'cash'` and hide/skip the payment-method selector.
+- If `isMarkerOnlyRoom && !isZeroPaymentRoom` (Case B — associated orders only): run the standard payment flow unchanged. `handlePayment` already computes `effectiveTotal = finalTotal + associatedTotal` at `CollectPaymentPanel.jsx:317-318`.
+- On success: standard room-to-Available flow.
 
 ### 6.2 Gap 1 (do SECOND — HIGH, non-blocking)
 
@@ -182,10 +238,14 @@ No changes to: `orderTransform.js`, socket handlers, print payload builders, Roo
 
 1. **Read** `/app/memory/ROOM_CHECKIN_UPDATE_ORDER_IMPLEMENTATION_NOTE.md` and `/app/v3/ARCHITECTURE_DECISIONS_FINAL.md`. Understand the marker contract (price 0, tax 0, `isCheckInMarker:true`, `placed:true`).
 2. **Gap 2 Step A first.** Run the backend curl against tenant 478. If it rejects, stop and raise backend ticket.
-3. **Gap 2 Step B & C second.** Apply the two `disabled={…}` override blocks using `search_replace` with surrounding context. Include the `(associatedOrders?.length || 0) === 0` clause.
-4. **Gate via testing agent** after Step B+C: verify (a) marker-only room with zero associated orders → Checkout button enabled at ₹0; (b) marker-only room with ≥1 associated order → Checkout button shows `finalTotal + associatedTotal` and routes through the normal flow; (c) non-room orders with empty cart still DISABLED (regression).
-5. **Gap 2 Step D** after testing agent passes B+C. Implement modal + auto-Cash + skip-selector. Re-run testing agent.
-6. **Gap 1** only after Gap 2 is shipped. Follow §6.2.
+3. **Gap 2 Step B & C second.** Apply the two `disabled={…}` override blocks using `search_replace` with surrounding context. Use `isMarkerOnlyRoom` (covers both Case A and Case B). Do NOT include `associatedOrders.length === 0` in this predicate.
+4. **Gate via testing agent** after Step B+C. Verify:
+   - (a) Case A: marker-only room, no associated orders → Checkout button ENABLED at ₹0.
+   - (b) Case B: marker-only room, ≥1 associated order → Checkout button ENABLED with `finalTotal + associatedTotal`, routes through normal payment-method flow.
+   - (c) Room with marker + placed-but-unserved food (no associated) → Checkout still DISABLED (`hasPlacedItems && !isServed` unchanged by `!isMarkerOnlyRoom` because visibleCartItems > 0).
+   - (d) Non-room empty cart → button DISABLED (regression guard).
+5. **Gap 2 Step D** after testing agent passes B+C. Implement Case A UX polish (confirmation modal + auto-Cash + skip selector) gated by `isZeroPaymentRoom`. Case B must NOT trigger the modal or method-override. Re-run testing agent.
+6. **Gap 1 is DEFERRED** (see §12). Do not implement from this document.
 7. Do NOT touch `orderTransform.js`, `RePrintButton.jsx`, or any print payload path.
 8. Do NOT remove, rename, or modify the `isCheckInMarker` field or any existing filter based on it.
 9. Do NOT add a second path that includes the marker in billing/print/UI under any condition.
@@ -196,12 +256,17 @@ No changes to: `orderTransform.js`, socket handlers, print payload builders, Roo
 ## 9. Safeguards for Implementation Agent
 
 1. **Marker invariants (non-negotiable):** marker must remain hidden in UI, absent from billing math, absent from print payload, absent from `food_detail[]`. Re-grep `isCheckInMarker` after your edits — the hit-count in consumer filters must not decrease.
-2. **Gate-widening must be narrow:** the override must require `isRoom && hasCheckInMarker && visibleCartItems.length === 0 && associatedOrders.length === 0`. Any broader condition risks enabling Collect Bill on genuinely empty non-room carts.
+2. **Two predicates, not one:**
+   - `isMarkerOnlyRoom = isRoom && hasCheckInMarker && visibleCartItems.length === 0` → controls **button enable** (covers both stranding cases).
+   - `isZeroPaymentRoom = isMarkerOnlyRoom && (associatedOrders?.length || 0) === 0` → controls **UX polish only** (modal, auto-Cash, skip selector).
+   Do not collapse these back into a single predicate.
 3. **Do not alter existing non-room disable behavior.** Run the testing agent with a dine-in empty cart to confirm button stays DISABLED.
-4. **No payload shape changes** (AD-401/402). `food_detail:[]` is already produced cleanly by `orderTransform.js:808-810`; rely on it. Do not build a new payload.
-5. **Default payment method to `'cash'` only inside the ₹0 branch.** Do not mutate the global default.
-6. **Use `search_replace`, not file rewrites.** Preserve surrounding comments referencing `ROOM_CHECKIN_FIX_V2`.
-7. **Observe V3 AD-001 rounding:** ₹0.00 grand total must emit as integer 0, not 0.0, per AD-001.
+4. **No payload shape changes** (AD-401/402). `food_detail:[]` is already produced cleanly by `orderTransform.js:808-810`; rely on it. Do not build a new payload path.
+5. **Do not short-circuit Case B.** If `isMarkerOnlyRoom && !isZeroPaymentRoom` (i.e. associated orders exist), run the standard payment flow unchanged. `handlePayment` already sums `finalTotal + associatedTotal` at `CollectPaymentPanel.jsx:317-318`.
+6. **Default payment method to `'cash'` only inside the zero-payment branch.** Do not mutate the global default.
+7. **Use `search_replace`, not file rewrites.** Preserve surrounding comments referencing `ROOM_CHECKIN_FIX_V2`.
+8. **Observe V3 AD-001 rounding:** ₹0.00 grand total must emit as integer 0, not 0.0.
+9. **`effectiveTable.orderId` dependency:** `collectBillExisting` requires `table.orderId`. Confirmed present for checked-in rooms via `OrderEntry.jsx:94`. Do not regress this.
 
 ---
 
@@ -209,16 +274,18 @@ No changes to: `orderTransform.js`, socket handlers, print payload builders, Roo
 
 | # | Scenario | Expected |
 |---|---|---|
-| E1 | Marker-only room, no associated orders → tap Checkout | Modal (if Step D) → Cash → ₹0 bill-payment POST → room flips to Available |
-| E2 | Marker-only room, 1+ associated orders | Button shows `₹associatedTotal`, standard payment flow, no zero-branch |
-| E3 | Room with marker + 1 unplaced food item | Button DISABLED due to `hasPlacedItems && hasUnplacedItems` (existing rule) — must still trigger |
-| E4 | Room with marker + placed food, not served | Existing gate `hasPlacedItems && !isServed` must still disable — the `isZeroCheckoutRoom` override must not apply because `visibleCartItems.length > 0` |
-| E5 | Dine-in / walk-in / takeaway / delivery with empty cart | Button DISABLED (no regression) |
+| E1 | **Case A** — marker-only room, no associated orders → tap Checkout | `isZeroPaymentRoom=true` → modal (if Step D) → Cash auto-selected → POST `/order-bill-payment` with `food_detail:[]`, `payment_amount:0` → room flips to Available |
+| E2 | **Case B** — marker-only room, 1+ associated orders → tap Checkout | `isMarkerOnlyRoom=true, isZeroPaymentRoom=false` → button ENABLED with `₹(finalTotal+associatedTotal)` → standard payment-method selector → standard POST flow; no ₹0 modal |
+| E3 | Room with marker + 1 unplaced food item | Button DISABLED via `hasPlacedItems && hasUnplacedItems` (existing rule unchanged) |
+| E4 | Room with marker + placed food, not served, no associated | `visibleCartItems.length > 0` → `isMarkerOnlyRoom=false` → existing `hasPlacedItems && !isServed` gate fires → button DISABLED (unchanged) |
+| E5 | Dine-in / walk-in / takeaway / delivery with empty cart | `isRoom=false` → `isMarkerOnlyRoom=false` → existing `length === 0` clause fires → button DISABLED (no regression) |
 | E6 | Re-open a ₹0-checked-out room next day | Room shows Available, no stale marker, no stuck state |
-| E7 | Backend rejects ₹0 POST (if Step A was skipped) | Frontend shows payment error toast — must not leave room in partial state |
+| E7 | Backend rejects ₹0 POST (if Step A was skipped) | Existing catch block at `OrderEntry.jsx:1296-1302` shows error toast; room remains occupied; no partial-state corruption |
 | E8 | Socket emits `update-order-paid` after ₹0 checkout | Room removed from occupied list, standard path |
-| E9 | Gap 1 — guest info present on GET | Cart fields pre-populate; field remains editable |
-| E10 | Gap 1 — guest info absent on GET | Cart fields empty; no crash, no stale "Walk-In" leakage |
+| E9 | Auto-print fires on ₹0 checkout (if `settings.autoBill=true`) | Auto-print block at `OrderEntry.jsx:1309-1363` is try/catch-wrapped; empty `billFoodList` should be handled gracefully; payment succeeds regardless |
+| E10 | Dashboard "Bill" button on a marker-only room card | Currently routes to `/order-temp-store` (per iteration-4 note) — NOT affected by this fix. Out of scope. |
+| E11 | Gap 1 — guest info present on GET | Cart fields pre-populate; field remains editable |
+| E12 | Gap 1 — guest info absent on GET | Cart fields empty; no crash, no stale `'Walk-In'` leakage |
 
 ---
 
@@ -238,16 +305,28 @@ No changes to: `orderTransform.js`, socket handlers, print payload builders, Roo
 
 ## 12. Final Handover Note
 
-The input document is **technically correct and safe to implement** with two qualifications:
+The input document is **technically correct but under-scoped**. After deeper code trace, Gap 2 has TWO distinct stranding cases, not one:
 
-1. Gap 2 implementation MUST include the `associatedOrders.length === 0` guard in the `isZeroCheckoutRoom` predicate (see §5.4). This is the only substantive gap in the input document.
-2. Backend pre-flight (§6.1 Step A) MUST run before any UX polish code is written.
+- **Case A:** marker-only, zero associated → needs ₹0 flow.
+- **Case B:** marker-only, non-zero associated → also stranded today, and the input doc missed this entirely. The full plumbing to pay this (`effectiveTotal = finalTotal + associatedTotal`) already exists at `CollectPaymentPanel.jsx:317-318, 1773`; only the disable gates block it.
 
-Both fixes are small, surgical, and V3-AD-compliant. No architecture deviation. Check-in item invariants are preserved end-to-end (no UI leak, no billing leak, no print leak). Recommended order of work: **Gap 2 → Gap 1.** Use the same testing-agent-gated, step-by-step pattern proven in `ROOM_CHECKIN_UPDATE_ORDER_IMPLEMENTATION_NOTE.md`.
+Both cases must be fixed in the same pass using two predicates:
+- `isMarkerOnlyRoom` — enables the button in both cases.
+- `isZeroPaymentRoom` — triggers ₹0 UX polish only for Case A.
+
+Other qualifications (unchanged):
+1. Backend pre-flight (§6.1 Step A) MUST run before any UX polish code is written.
+2. Step D (modal + auto-Cash) applies only to Case A.
+3. Standard payment flow for Case B must remain unchanged.
+
+All fixes remain small, surgical, and V3-AD-compliant. No architecture deviation. Check-in item invariants preserved end-to-end. Recommended order of work: **Gap 2 → Gap 1.** Use the same testing-agent-gated stepped pattern proven in `ROOM_CHECKIN_UPDATE_ORDER_IMPLEMENTATION_NOTE.md`.
 
 **Open items requiring confirmation before coding:**
 - Does backend tolerate `food_detail:[]` + ₹0 payment on `/order-bill-payment`? (§5.5 — MUST)
-- Does product want a confirmation modal for ₹0 checkout? (§5.6 — SHOULD)
-- Does `roomService.getCheckInDetails(roomId)` exist? (§5.3 — only if Gap 1 frontend fallback is pursued)
+- Does product want a confirmation modal for Case A ₹0 checkout? (§5.6 — SHOULD)
+- Does `roomService.getCheckInDetails(roomId)` exist? (§5.3 — only if Gap 1 frontend fallback is pursued; Gap 1 has a separate CRM dependency — see note below)
+
+**Note on Gap 1 (deferred — to be re-analyzed separately):**
+User has flagged that the guest's phone number must be reconciled against the CRM before the guest is treated as an existing customer; otherwise the frontend fallback risks creating duplicate customer records. This changes Gap 1's scope from "auto-populate cart fields" to "auto-populate *and* reconcile against CRM." Deeper analysis of `REACT_APP_CRM_BASE_URL` + `REACT_APP_CRM_API_KEYS` usage and CRM lookup endpoints will be produced in a separate validation pass. **Do not implement Gap 1 from this document.**
 
 **End of validated handover.**
