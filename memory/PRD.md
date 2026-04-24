@@ -1,73 +1,133 @@
-# PRD — Mygenie Core POS Frontend
+# Deployment Handover — Core POS Frontend (roomv1-)
 
-## Latest Session (2026-04-24) — Room Module V2 Implementation
+## Objective (from Deployment Agent task)
+Deploy the `roomv1-` branch of `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
+directly into `/app`, make the frontend run successfully under supervisor, and hand
+over a clean note for the next Deployment Agent.
 
-### Status: V2 IMPLEMENTED · regression-safe · awaits runtime/backend QA
-
-### Scope delivered (per `/app/memory/ROOM_MODULE_REQUIREMENTS_V2.md`)
-
-**Files modified (5, all within V2 §13.1 Allowed list):**
-| File | Change |
-|------|--------|
-| `frontend/src/api/transforms/profileTransform.js` | Additive — new `checkInFlags` block on `fromAPI.restaurant` |
-| `frontend/src/__tests__/api/transforms/profileTransform.test.js` | Additive — 3 new test cases (existing 4 untouched) |
-| `frontend/src/api/services/roomService.js` | Internal rewrite — always-multipart, V2 §8.4 schema, bracket-indexed `room_id[i]`, currency → 2dp strings, `payment_mode`/`gst_tax` removed, `booking_details=""` always sent when flag Yes |
-| `frontend/src/components/modals/RoomCheckInModal.jsx` | Internal rewrite — all 12 checklist items from V2 §12 + 17 design patterns from `ROOM_MODULE_V2_DESIGN_ADDENDUM.md` |
-| `frontend/package.json` + `yarn.lock` | +`browser-image-compression`, +`libphonenumber-js`, +`react-phone-number-input` via `yarn add` only |
-
-**Feature highlights:**
-- Profile-flag wiring: visibility driven by `restaurant.checkInFlags.guestDetails` / `.bookingDetails` / `.showUserGst` via `useRestaurant()` context
-- Dynamic per-adult rows (#2…N) with caps `4 × rooms_selected`, comma-forbidden child name rows
-- Country-code phone picker (`react-phone-number-input` default IN +91, `libphonenumber-js` validation)
-- Client-side image compression (`browser-image-compression`) ≤5MB for jpg/jpeg/png/webp; PDFs up to 5MB accepted as-is; inline errors for size/type rejections
-- Dates serialized as `YYYY-MM-DD HH:mm:ss` with "Edit time" popovers; 24h back-dating cap; Nights input auto-computes checkout date with amber pulse
-- Radio-pill Booking Type (WalkIn/Online) & Booking For (Personal→Individual / Corporate→Corporate)
-- Read-only Balance Payment auto-computed each keystroke; all currency fields serialized as `"N.00"`
-- Gated GST/Firm block (expand animation, max-height 200ms ease-out) — GSTIN regex validated; cleared on hide
-- Dirty-form confirmation dialog (inline-implemented; triggered on Cancel/X/overlay-click)
-- `beforeunload` guard on tab-close/reload when form is dirty
-- 409 Conflict → destructive toast + auto-close 500ms; other errors preserve form with 4-level error-message extraction (`errors[0].message` → `message` → `error` → fallback)
-- Full `data-testid` coverage per V2 §12.14
-
-**Removed (out of scope per V2):**
-- `payment_mode` field and `PAYMENT_MODES` constant
-- `gst_tax` payload field
-- `X-localization` header
-- JSON-body mode in `roomService` (always multipart now)
-
-### Test/build results
-| Check | Result |
-|-------|--------|
-| ESLint (all 5 edited files) | ✅ Clean |
-| Webpack compile | ✅ Clean (only pre-existing warning on `LoadingPage.jsx:101`, untouched) |
-| `profileTransform.test.js` (4 existing + 3 new) | ✅ 7/7 pass |
-| `barrelExports.test.js` — RoomCheckInModal barrel | ✅ Pass |
-| Full test suite delta | **0 new failures introduced**. All 64 remaining failures are **pre-existing** (`updateOrderStatus.test.js` BUG-107, `StatusConfigPage` missing from `pages/index.js`, etc.) — none in scope of Room Module work. |
-| Render smoke (login page) | ✅ HTTP 200, title "Emergent \| Fullstack App" |
-
-### Known deviations from V2 spec (documented, non-blocking)
-1. **React Router `useBlocker` omitted.** V2 §11 R7 recommends it, but the app uses legacy `<BrowserRouter>` (`App.js:15`) which does NOT support `useBlocker` (v7 data-router only). `App.js` is off-limits per §13.1. In-app navigation is effectively covered by the fixed-overlay modal + Cancel/X confirmation (operator must close the modal to navigate). Tab-close/reload covered by `beforeunload`.
-2. **Shadcn `Dialog`/`Popover` inlined.** Jest cannot resolve the `@/lib/utils` alias used by `components/ui/*` (only configured in webpack, not in Jest moduleNameMapper — `craco.config.js` is off-limits per §13.1). The dirty-form dialog and Edit-time popover are implemented inline (fixed overlay + conditional render). Visual parity preserved using design addendum tokens.
-3. **Voter ID backend string** (V2 §11 R4) used as `"Voter ID"` (with space) — verify at runtime.
-4. **Adult slot keys ≥ #5** (V2 §11 R1) use assumed extension pattern `name5`, `id_type5`, `front_image_file5`, `back_image_file5` — verify with backend during multi-room QA.
-5. **Always-multipart** (V2 §11 R6) — confirm backend tolerance in integration QA.
-
-### Runtime items still needing verification
-- End-to-end API call against `https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in` — cannot be exercised in this pod without valid POS operator credentials. User must QA by logging in through the POS and performing an actual check-in.
-- Image compression on large camera uploads (≥10MB) — library installed but needs real-device exercise.
-- 409 path — requires two operators hitting the same room (backend guard).
+Scope was strictly: clone → configure env → install deps → run → verify.
+No code changes, no bug fixes, no tests, no refactoring were performed.
 
 ---
 
-## Previous Session (2026-04-24) — Deployment
-
-Source: `Abhi-mygenie/core-pos-front-end-` branch `roomv1-` cloned into `/app`. Yarn 1.22.22 + Node v20.20.2 + React 19 + CRACO 7.1. All env vars written to `/app/frontend/.env` verbatim. Both supervisors RUNNING; frontend serves at `https://71564da1-69db-4cb5-9dac-be85ea6811d0.preview.emergentagent.com` (login page verified via screenshot). Full deployment handover at `/app/memory/DEPLOYMENT_HANDOVER.md`.
+## What was done (2026-04-24)
+1. Stopped `frontend` + `backend` under supervisor.
+2. Wiped `/app` completely (as instructed by user) — backed up `.emergent/` to
+   `/tmp/.emergent_backup` before wiping (user approved wipe).
+3. Cloned repo into `/app` directly (single-branch):
+   ```
+   git clone --branch 'roomv1-' --single-branch \
+     https://github.com/Abhi-mygenie/core-pos-front-end-.git .
+   ```
+   - Current branch (verified): `roomv1-`
+   - Head commit: `45bd3c3 Auto-generated changes`
+4. Created `/app/frontend/.env` with all provided env values (see below).
+5. Installed deps using **Yarn only**: `cd /app/frontend && yarn install`
+   (72.9s, lockfile written; no npm used).
+6. Started frontend via supervisor: `sudo supervisorctl start frontend`.
+7. Verified:
+   - `curl http://localhost:3000` → `HTTP 200`
+   - `curl https://restaurant-pos-v2-1.preview.emergentagent.com` → `HTTP 200`
+   - Visual screenshot load: Mygenie login page renders correctly
+     ("Streamlined Hospitality. Exceptional Experience." + Email/Password/Login).
+   - Webpack: `Compiled with warnings` (one non-blocking ESLint warning in
+     `src/pages/LoadingPage.jsx:101` — `react-hooks/exhaustive-deps`. Not fixed
+     because task is strictly deployment-only.)
 
 ---
 
-## Next Action Items (for next session)
+## Stack (verified on this pod)
+| Item | Version |
+|------|---------|
+| Node.js | v20.20.2 |
+| Yarn | 1.22.22 |
+| React | 19.0.0 |
+| CRACO | 7.1.0 |
+| Package manager | yarn (enforced — do NOT use npm) |
 
-1. **Authenticated runtime QA of Room Check-In** — operator logs in, triggers modal on an available room, exercises every flag combination (both off / guest only / booking only / both on) + GST visibility conditions.
-2. **Backend confirmation for R1 & R6** — multi-room ≥5-adult submit; always-multipart acceptance.
-3. **Optional: fix pre-existing test failures** (BUG-107 `updateOrderStatus` + StatusConfigPage barrel) — out of Room Module scope; user to decide if in scope next.
-4. **Optional: migrate to React Router v7 data-router** to enable `useBlocker` for full in-SPA navigation guard (currently covered indirectly by modal overlay).
+---
+
+## Services / Supervisor
+- `frontend` (yarn start / craco start) — **RUNNING** on `0.0.0.0:3000`.
+- `backend` — stopped by this agent as part of the wipe; NOT required for this
+  deployment (frontend-only task). The scaffold `/app/backend` was wiped;
+  the repo shipped its own minimal `/app/backend/{server.py,requirements.txt}`
+  but the backend was **not** installed or started (out of scope).
+  The preview banner "Frontend Preview Only. Please wake servers…" is expected.
+- Logs:
+  - `/var/log/supervisor/frontend.out.log` — shows `webpack compiled successfully`.
+  - `/var/log/supervisor/frontend.err.log` — only standard webpack-dev-server
+    deprecation warnings.
+
+Restart commands (for next agent):
+```
+sudo supervisorctl restart frontend
+sudo supervisorctl status
+```
+
+---
+
+## Environment variables (file: `/app/frontend/.env`)
+All values were set exactly as provided by the user.
+
+| Variable | Value |
+|----------|-------|
+| REACT_APP_BACKEND_URL | https://restaurant-pos-v2-1.preview.emergentagent.com |
+| WDS_SOCKET_PORT | 443 |
+| ENABLE_HEALTH_CHECK | false |
+| REACT_APP_API_BASE_URL | https://preprod.mygenie.online/ |
+| REACT_APP_SOCKET_URL | https://presocket.mygenie.online |
+| REACT_APP_FIREBASE_API_KEY | AIzaSyCvn7MctrSgULjgiHqQSl4QfeP3dWxITwY |
+| REACT_APP_FIREBASE_AUTH_DOMAIN | mygenie-restaurant.firebaseapp.com |
+| REACT_APP_FIREBASE_PROJECT_ID | mygenie-restaurant |
+| REACT_APP_FIREBASE_STORAGE_BUCKET | mygenie-restaurant.firebasestorage.app |
+| REACT_APP_FIREBASE_MESSAGING_SENDER_ID | 969625631640 |
+| REACT_APP_FIREBASE_APP_ID | 1:969625631640:web:2f2a2987f740b6fc8e09ed |
+| REACT_APP_FIREBASE_MEASUREMENT_ID | G-WFK75QN54E |
+| REACT_APP_FIREBASE_VAPID_KEY | BEvFMTX767yCa4YgfuPjfTyZGD0fp34WkWjW3SPDqS3NRRWSYfqT8m9TA4S-nssyqNG-EIJUu6WIA0MWJaouSUI |
+| REACT_APP_CRM_BASE_URL | https://crm.mygenie.online/api |
+| REACT_APP_CRM_API_KEYS | `{ "364": "...", ..., "716": "..." }` (15 tenant keys, see /app/frontend/.env) |
+| REACT_APP_GOOGLE_MAPS_KEY | AIzaSyCS9rZcttTxbair3abltZ3Fm1vEnmY0mj4 |
+
+Note on `REACT_APP_FIREBASE_VAPID_KEY`: the value in the problem statement had
+stray tab/`2` characters before the key (`\t2\tBEvFMTX...`). User approved using
+the cleaned value `BEvFMTX767yCa4YgfuPjfTyZGD0fp34WkWjW3SPDqS3NRRWSYfqT8m9TA4S-nssyqNG-EIJUu6WIA0MWJaouSUI`.
+If push notifications fail in runtime, please re-confirm this key with the user.
+
+---
+
+## Missing / blocking values
+None at this time. Deployment completed end-to-end without any missing secret.
+- All provided env values were accepted.
+- Repo cloned publicly (no PAT required, as confirmed by user).
+- VAPID key cleaning was confirmed by user in chat.
+
+---
+
+## Access URLs
+- Preview (external): https://restaurant-pos-v2-1.preview.emergentagent.com
+- Internal dev: http://localhost:3000
+
+---
+
+## Out of scope / NOT done (by design)
+- No test suites were run.
+- No testing_agent was invoked.
+- No lint fixes / ESLint warning fix.
+- No backend install/start.
+- No code refactor, no dependency upgrade.
+- No production build (`yarn build`) — running as dev server via supervisor
+  per existing supervisor config.
+
+---
+
+## Next Action Items (for next Deployment Agent)
+1. If the app must serve production assets instead of CRACO dev server, switch
+   supervisor `frontend` command to run `yarn build` + a static server
+   (e.g., `serve -s build -l 3000`). Current config is dev-server only.
+2. If backend functionality is later required, install `/app/backend/requirements.txt`
+   and start the `backend` supervisor program (currently stopped).
+3. Optional cleanup: fix the single ESLint warning in
+   `src/pages/LoadingPage.jsx:101` (missing dep `loadStationData`) — non-blocking.
+4. Re-verify `REACT_APP_FIREBASE_VAPID_KEY` with the user if FCM push flows
+   misbehave at runtime.
