@@ -809,6 +809,7 @@ export const toAPI = {
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
       itemTotal = 0, serviceCharge = 0, deliveryCharge = 0,
       tabContact = null, discounts = {},
+      roomBalance = 0,  // ROOM_CHECKIN_GAP3 (Stage 2): outstanding room booking balance, pass-through ₹ — no SC/GST/discount applied (L2 rule).
     } = paymentData;
 
     const gstTax = Math.round((sgst + cgst) * 100) / 100;
@@ -908,6 +909,13 @@ export const toAPI = {
       gst_tax:                      gstTax,
       vat_tax:                      vatAmount || 0,
       grand_amount:                 finalTotal || 0,
+      // ROOM_CHECKIN_GAP3 (Stage 2): `grand_total` carries the full payable
+      // amount (food + associated + room balance) for room orders with a
+      // pending room balance. Backend interpretation (i), verified via curl
+      // on preprod 2026-04-25 (room r1/731653, balance ₹22 → 200 OK,
+      // "Bill cleared via cash"). Emitted only when roomBalance > 0 to keep
+      // non-room flows byte-identical to pre-Stage-2 payloads.
+      ...(roomBalance > 0 ? { grand_total: finalTotal || 0 } : {}),
       round_up:                     0,
       // Tax & Tip
       service_tax:                  serviceCharge || 0,

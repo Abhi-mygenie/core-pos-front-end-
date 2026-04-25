@@ -17,6 +17,7 @@ const CollectPaymentPanel = ({
   customer: passedCustomer, 
   isRoom, 
   associatedOrders = [],
+  roomInfo = null, // ROOM_CHECKIN_GAP3 (Stage 2): room booking financials (price/advance/balance) for the Room section + grand_total payload field. NULL for non-room orders.
   orderFinancials = {},
   hasPlacedItems = false,
   isProcessingPayment = false,
@@ -101,6 +102,16 @@ const CollectPaymentPanel = ({
   );
   const isMarkerOnlyRoom = isRoom && hasCheckInMarker && visibleCartItemCount === 0;
 
+  // ROOM_CHECKIN_GAP3 (Stage 2): outstanding room balance (clamped ≥0). Pure
+  // pass-through ₹ amount — NO GST, NO service charge, NO discount applies to
+  // it (see L2 rule in handover). Added to grand total at payload level via
+  // the `grand_total` field (interpretation i: combined payable). Always 0
+  // when isRoom is false or roomInfo is null.
+  const roomBalance = useMemo(
+    () => (isRoom && roomInfo ? Math.max(0, roomInfo.balancePayment || 0) : 0),
+    [isRoom, roomInfo]
+  );
+
   // Occupied rooms for "Transfer to Room" picker (exclude current table)
   const occupiedRooms = useMemo(() => 
     (tables || []).filter(t => t.isRoom && t.isOccupied),
@@ -109,6 +120,8 @@ const CollectPaymentPanel = ({
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showTransferredOrders, setShowTransferredOrders] = useState(false);
   const [showRoomService, setShowRoomService] = useState(false);
+  // ROOM_CHECKIN_GAP3 (Stage 2): collapsible state for the Room booking section.
+  const [showRoomBooking, setShowRoomBooking] = useState(false);
   const [deliveryChargeInput, setDeliveryChargeInput] = useState(
     // BUG-019 (Apr-2026): lazy-init from backend-seeded value (scan orders / re-engage).
     // Empty string when no backend value so placeholder shows for fresh in-POS delivery.
@@ -331,11 +344,25 @@ const CollectPaymentPanel = ({
   // handlePayment — CHG-038: Collect Payment API
   // TODO: Wire to API when Flow B (collect payment on existing order) endpoint is provided
   const handlePayment = () => {
+    // ROOM_CHECKIN_GAP3 (Stage 2): grand total payable to backend now includes
+    // the room outstanding balance (`roomBalance`) for room orders. Backend
+    // field convention (interpretation i, verified on preprod 2026-04-25):
+    //   grand_amount = food-grand only (pre-existing semantics)
+    //   grand_total  = full payable = food-grand + associatedTotal + roomBalance
+    //   payment_amount = grand_total (what cashier collects)
+    // roomBalance carries NO SC, NO GST, NO discount (L2 rule).
     const roomHasTransfers = isRoom && associatedOrders.length > 0;
-    const effectiveTotal = roomHasTransfers ? finalTotal + associatedTotal : finalTotal;
+    const effectiveTotal = (roomHasTransfers ? finalTotal + associatedTotal : finalTotal) + roomBalance;
     const paymentData = {
       method:          paymentMethod,
       finalTotal:      effectiveTotal,
+      // ROOM_CHECKIN_GAP3 (Stage 2): pass roomBalance through so the
+      // collect-bill payload builder (orderTransform.collectBillExisting)
+      // emits the `grand_total` field correctly. `finalTotal` above already
+      // contains the combined number for the cashier UI; `roomBalance`
+      // surfaces the room-only carve-out separately for any consumer that
+      // needs it (split detection, audit log, etc.).
+      roomBalance,
       sgst,
       cgst,
       vatAmount:       0,
@@ -470,7 +497,7 @@ const CollectPaymentPanel = ({
           {onOpenSplitBill && (
             <button
               onClick={() => onOpenSplitBill(
-                isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal
+                (isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal) + roomBalance
               )}
               className="flex items-center gap-1 px-2 py-1 rounded-md border text-xs font-medium transition-opacity hover:opacity-80"
               style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
@@ -482,7 +509,7 @@ const CollectPaymentPanel = ({
             </button>
           )}
           <div className="text-xl font-bold" style={{ color: COLORS.primaryOrange }}>
-            ₹{(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal).toLocaleString()}
+            ₹{((isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal) + roomBalance).toLocaleString()}
           </div>
         </div>
       </div>
@@ -744,6 +771,58 @@ const CollectPaymentPanel = ({
           style={{ borderColor: COLORS.borderGray }}
           data-testid="bill-summary-section"
         >
+
+          {/* ROOM_CHECKIN_GAP3 (Stage 2): Room booking section — first block in
+              the bill summary whenever the order is a checked-in room with
+              room_info hydrated from backend. Renders independently of
+              associatedOrders presence (Case A: marker-only ₹balance only;
+              Case B: full room+transfers+food). Architectural rule (L2):
+              roomBalance carries NO SC, NO GST, NO discount — values are
+              displayed as-is from backend `room_info`. */}
+          {isRoom && roomInfo && (
+            <div className="pb-2 mb-2 border-b" style={{ borderColor: COLORS.borderGray }}>
+              <button
+                onClick={() => setShowRoomBooking(!showRoomBooking)}
+                className="w-full flex items-center justify-between py-1"
+                data-testid="checkout-room-booking-toggle"
+              >
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5" style={{ color: COLORS.primaryOrange }} />
+                  <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
+                    Room
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold" style={{ color: COLORS.primaryOrange }} data-testid="checkout-room-balance">
+                    ₹{roomBalance.toLocaleString()}
+                  </span>
+                  {showRoomBooking
+                    ? <ChevronUp className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                    : <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />}
+                </div>
+              </button>
+              {showRoomBooking && (
+                <div className="mt-1 mb-1 px-3 py-2 text-xs space-y-1 rounded-lg" style={{ backgroundColor: `${COLORS.primaryOrange}05` }}>
+                  <div className="flex justify-between">
+                    <span style={{ color: COLORS.grayText }}>Room Charge</span>
+                    <span style={{ color: COLORS.darkText }} data-testid="checkout-room-price">
+                      ₹{(roomInfo.roomPrice || 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span style={{ color: COLORS.grayText }}>Advance Paid</span>
+                    <span style={{ color: COLORS.darkText }} data-testid="checkout-room-advance">
+                      −₹{(roomInfo.advancePayment || 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between font-bold pt-1 border-t" style={{ borderColor: COLORS.borderGray }}>
+                    <span style={{ color: COLORS.darkText }}>Balance</span>
+                    <span style={{ color: COLORS.primaryOrange }}>₹{roomBalance.toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* === ROOM WITH ASSOCIATED ORDERS: Transferred Orders first, then Room Service total === */}
           {isRoom && associatedOrders.length > 0 ? (
@@ -1072,7 +1151,7 @@ const CollectPaymentPanel = ({
               <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
                 <div className="flex justify-between font-bold">
                   <span style={{ color: COLORS.darkText }}>Total</span>
-                  <span style={{ color: COLORS.primaryOrange }}>₹{(finalTotal + associatedTotal).toLocaleString()}</span>
+                  <span style={{ color: COLORS.primaryOrange }}>₹{(finalTotal + associatedTotal + roomBalance).toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -1787,7 +1866,7 @@ const CollectPaymentPanel = ({
             </>
           ) : paymentMethod === 'transferToRoom'
             ? `Transfer ₹${finalTotal.toLocaleString()} to ${selectedRoom?.displayName || selectedRoom?.tableNumber || 'Room'}`
-            : `${isRoom ? 'Checkout' : 'Pay'} ₹${(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal).toLocaleString()}`}
+            : `${isRoom ? 'Checkout' : 'Pay'} ₹${((isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal) + roomBalance).toLocaleString()}`}
         </button>
       </div>
     </div>

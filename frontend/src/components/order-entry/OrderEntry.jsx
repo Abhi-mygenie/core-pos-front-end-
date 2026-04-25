@@ -1011,6 +1011,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               customer={customer}
               isRoom={table?.isRoom}
               associatedOrders={orderData?.associatedOrders || []}
+              roomInfo={orderData?.roomInfo || null}
               orderFinancials={orderFinancials}
               hasPlacedItems={cartItems.some(i => i.placed)}
               isProcessingPayment={isProcessingPayment}
