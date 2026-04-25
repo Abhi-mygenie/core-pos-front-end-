@@ -187,22 +187,42 @@
 
 ---
 
-### Task 3: Old-POS Takeaway/Delivery Mapping
+### Task 3: Old-POS Takeaway Mapping
 
-- **Status:** Skipped (per user approval in chat: *"1 skip 3 for now"*)
-- **Reason:** Validation doc marks Task 3 as NEEDS CLARIFICATION. User has not yet supplied the actual `order_type` strings old POS emits for takeaway and delivery. Cannot implement authoritatively without sample.
-- **Files changed:** None.
-- **What changed:** Nothing.
-- **API / payload / socket changes:** N/A.
-- **UI changes:** N/A.
-- **Documentation gaps found:** N/A.
-- **Code vs `/app/v3/` gaps found:** N/A.
-- **Edge cases handled:** N/A.
-- **Risks remaining:** Old-POS takeaway/delivery orders may still be misclassified or display the literal raw string until this is implemented. Open ticket.
-- **Testing done:** N/A.
+- **Status:** Implemented
+- **Reason:** User confirmed old POS emits `'take_away'` for takeaway and "rest is fine" (delivery / dinein already handled correctly in normalizer).
+- **Files changed:**
+  - `frontend/src/api/transforms/orderTransform.js`
+  - `frontend/src/components/cards/OrderCard.jsx`
+- **What changed:**
+  - `orderTransform.js:42-58` — added one new `case 'take_away':` to the takeaway branch of `normalizeOrderType` so old-POS takeaway orders normalise to the canonical frontend value `'takeAway'` instead of falling through to `default: 'dineIn'`.
+  - `OrderCard.jsx:167` — changed the visible label from `"Take Away"` → `"Takeaway"`.
+- **API / payload / socket changes:**
+  - **Inbound only.** `normalizeOrderType` is consumed by `fromAPI.order` (line 135).
+  - **Outbound payload format unchanged** — `mapOrderTypeToAPI` (lines 63-72) still returns `'takeaway'` for outbound place-order/update-order. Untouched.
+- **UI changes:** Order cards / channel cards for takeaway orders now display `"Takeaway"` (single word). Old-POS takeaway orders now classify into the TakeAway channel column instead of the dineIn fallback.
+- **Documentation gaps found:** None against `/app/v3/`.
+- **Code vs `/app/v3/` gaps found:** None.
+- **Edge cases handled:**
+  - Old POS `order_type === 'take_away'` → normalises to `'takeAway'` ✅
+  - New POS `order_type === 'takeaway'` → still works (existing case) ✅
+  - Empty / undefined `order_type` → still falls through to `'dineIn'` (unchanged) ✅
+- **Risks remaining:**
+  - A pre-existing unit test at `__tests__/api/transforms/updateOrderPayload.test.js:323` asserts outbound `order_type === 'take_away'` for a `'takeAway'` input, but `mapOrderTypeToAPI` returns `'takeaway'`. This is **pre-existing test drift** (not introduced by this change) — outbound mapping was not touched. Out of scope for Task 3.
+- **Testing done:**
+  - ESLint clean on both files.
+  - Webpack compiles.
 - **Testing pending:**
-  - User provides sample `order_type` for old-POS takeaway and delivery.
-  - Implement `normalizeOrderType` extension + change OrderCard label `"Take Away"` → `"Takeaway"`.
+  - Manual: takeaway order created on old POS → confirm it appears in TakeAway channel column on new POS dashboard with label `"Takeaway"`.
+  - Manual: takeaway order created on new POS → confirm no regression.
+  - Manual: visible label across cards reads `"Takeaway"` (not `"Take Away"`).
+
+---
+
+### Task 3 (PREVIOUSLY DEFERRED): Old-POS Takeaway/Delivery Mapping
+
+- **Status:** Superseded — see Task 3 entry above for the implemented version.
+- **Original deferral reason:** Validation doc marked NEEDS CLARIFICATION; user later supplied `'take_away'` as the old-POS string in chat, unblocking implementation.
 
 ---
 
@@ -231,12 +251,14 @@
 ## Files Changed (final list)
 
 ```
-frontend/public/index.html
-frontend/src/App.js
-frontend/src/pages/StatusConfigPage.jsx
-frontend/src/pages/DashboardPage.jsx
-frontend/src/components/layout/Sidebar.jsx
-frontend/src/components/order-entry/CollectPaymentPanel.jsx
+frontend/public/index.html                                    (Task 5)
+frontend/src/App.js                                           (Task 5)
+frontend/src/pages/StatusConfigPage.jsx                       (Task 1)
+frontend/src/pages/DashboardPage.jsx                          (Tasks 1, 4)
+frontend/src/components/layout/Sidebar.jsx                    (Task 1)
+frontend/src/components/order-entry/CollectPaymentPanel.jsx   (Task 2)
+frontend/src/api/transforms/orderTransform.js                 (Task 3)
+frontend/src/components/cards/OrderCard.jsx                   (Task 3)
 ```
 
 ## Documentation / Code Gaps Found Against `/app/v3/`
@@ -245,9 +267,9 @@ None blocking. Read all 7 docs in `/app/v3/`; no AD-* decision constrains any of
 
 ## Remaining Risks
 
-1. **Task 3 unimplemented** — old-POS takeaway/delivery orders still misclassify until the user supplies a payload sample.
-2. **Task 2 button gate** — if a tenant doesn't include `'room'`/`'transfer_room'` in `restaurantPaymentTypes`, the "To Room" button will be hidden by the existing `filterLayoutByApiTypes` gate. Out of scope per user directive.
-3. **Task 5 platform preview wrapper** — the Emergent preview wrapper page (which hosts the iframe) sets its own `<title>Loading...</title>`. That wrapper is platform-managed; the inner-iframe app correctly shows MyGenie branding.
+1. **Task 2 button-visibility gate** untouched per user's "rest no changes" — if a tenant's `restaurantPaymentTypes` lacks `'room'`/`'transfer_room'`, the "To Room" button itself stays hidden (`config/paymentMethods.js:185-208`). Out of scope.
+2. **Emergent platform preview wrapper** sets its own browser title around the iframe; cosmetic only.
+3. **Pre-existing test drift** in `__tests__/api/transforms/updateOrderPayload.test.js:323` (asserts outbound `'take_away'` while `mapOrderTypeToAPI` returns `'takeaway'`). Not introduced by these changes; outbound mapping was not touched. Out of scope.
 
 ## Next Step for QA Agent
 

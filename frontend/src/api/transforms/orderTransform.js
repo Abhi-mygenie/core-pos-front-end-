@@ -48,6 +48,7 @@ const normalizeOrderType = (orderType) => {
       return 'dineIn';
     case ORDER_TYPES.TAKE_AWAY:
     case 'takeaway':  // Direct match from API
+    case 'take_away': // OLD_POS_NORMALIZE (Task 3, Apr-2026): old POS emits this variant
       return 'takeAway';
     case ORDER_TYPES.DELIVERY:
     case 'delivery':  // Direct match from API

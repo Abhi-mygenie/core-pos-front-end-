@@ -164,7 +164,7 @@ const OrderCard = ({
   const getOrderTypeLabel = () => {
     if (isRoom) return "Room";
     if (isDineIn) return "Dine In";
-    if (isTakeAway) return "Take Away";
+    if (isTakeAway) return "Takeaway";
     if (isDelivery) return "Delivery";
     return "";
   };
