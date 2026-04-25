@@ -1,0 +1,44 @@
+{
+  "summary": "Req 4 (Default View Setting) — Re-test of 5 cases (T-2, T-6, T-9, T-10, T-12) flagged as INCONCLUSIVE/LIKELY-FAIL in iteration_6.json. Owner-approved fix at StatusConfigPage.jsx:209-225 (hydration backfill of factory defaults to localStorage when key absent) verified end-to-end. Used data-testid='login-email/password/button' to login as owner@18march.com, then performed each retest with single hard reload + DevTools localStorage manipulation + console-log signal '[Layout] viewType changed to <value>' as authoritative activeView readout. ALL 5 RETESTS PASS. Combined with the 8 already-passing tests from iteration 6 (T-1, T-3, T-4, T-5, T-7, T-8, T-11, T-13), Req 4 acceptance is now 13/13 PASS.",
+  "results_per_test_case": {
+    "T-10 RETEST (hydration backfill on /visibility/status-config)": "PASS — Pre-state: defPos=null, defDash=null with parent locks both='both'. After navigating to /visibility/status-config and waiting for hydration (NO Save click), localStorage now holds mygenie_default_pos_view='table' AND mygenie_default_dashboard_view='channel'. Backfill block at StatusConfigPage.jsx:213-217 and 221-223 fired correctly.",
+    "T-2 RETEST (CS=both, defDash=channel → dashboardView=channel)": "PASS — After single hard reload of /dashboard with mygenie_view_mode_channel_status='both' and mygenie_default_dashboard_view='channel', [data-testid='group-toggle'] is present in DOM (channel-grouped layout active). Sidebar view-toggle also rendered.",
+    "T-6 RETEST (nav-back from settings re-applies admin default)": "PASS — Init reload with TO=both, defPos=table → console: viewType='table'. Click [data-testid='view-toggle'] → console: viewType='order'. Navigate to /visibility/status-config, then back to /dashboard → console: viewType='table' (admin default re-applied via path-nav effect at DashboardPage.jsx:256-279).",
+    "T-9 RETEST (synthetic StorageEvent flips activeView)": "PASS — Init reload with TO=both, defPos=order → console: viewType='order'. Same-tab dispatch of StorageEvent({key:'mygenie_default_pos_view', newValue:'table', oldValue:'order', storageArea:localStorage}) → console: viewType='table'. Cross-tab listener at DashboardPage.jsx:316-330 responds correctly to synthetic dispatch (no fallback needed).",
+    "T-12 RETEST (sidebar toggle is in-memory only, never writes default key)": "PASS — Pre-click localStorage.mygenie_default_pos_view='table'. Click [data-testid='view-toggle'] → console: viewType='order' (UI flipped). Post-click localStorage.mygenie_default_pos_view STILL 'table' (Sidebar toggle is in-memory only, never writes the default key)."
+  },
+  "test_evidence": {
+    "console_signal_captured": "Captured authoritative '[Layout] viewType changed to <value>' logs at every state transition (init, post-flip, post-nav, post-StorageEvent).",
+    "ls_state_per_test": "Pre/post localStorage captured via page.evaluate for every test.",
+    "loading_stall_mitigation": "Logged in fresh ONCE, waited 15s for full dashboard render, then performed one hard reload per test with 15-18s settle. No back-to-back reloads. No loading-screen stalls observed.",
+    "browser_test_login_route": "NOTE: /login route renders blank; the live login screen renders on '/' (root). Test uses '/' as login entry."
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/login route", "issues": ["Direct navigation to /login renders a blank page (root '/' renders the login form correctly). Not a Req-4 blocker — flag for follow-up routing audit."]}
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json", "/app/test_reports/iteration_6.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "OK — StatusConfigPage.jsx:209-225 backfill block correctly handles both DEFAULT_POS_VIEW_KEY and DEFAULT_DASHBOARD_VIEW_KEY independently and only writes when localStorage.getItem(...) === null (existing valid stored values are preserved).",
+    "OK — Backfill writes do not need to flip hasChanges because the localStorage write happens directly inside the hydration effect; this avoids the original T-10 gap (Save-button gating).",
+    "OK — All localStorage writes in the backfill block are wrapped inside the existing try/catch alongside the hydration parsing, so localStorage failures will be logged but won't crash mount.",
+    "MINOR (out of Req-4 scope) — /login route renders blank; root '/' renders the login form. Worth a routing audit in a separate task."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "frontend_acceptance_tests_this_iteration": "5/5 retests PASS (100%)",
+    "frontend_acceptance_tests_combined_iter6_iter7": "13/13 PASS (100%)"
+  },
+  "test_credentials": "owner@18march.com / Qplazm@10 — tenant 18march — preview at https://sidebar-config-test.preview.emergentagent.com (login via root '/' not '/login')",
+  "seed_data_creation": "None — pure localStorage state manipulation.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Req 4 acceptance fully green. Login via root '/'; the /login direct route is blank-screen (likely an unrelated routing bug worth flagging, but does NOT affect Req-4 acceptance). Use '[Layout] viewType changed to <value>' console log as authoritative activeView indicator. Hydration backfill at StatusConfigPage.jsx:209-225 means a fresh visit to /visibility/status-config persists factory defaults to localStorage automatically — no Save click required.",
+  "rca_of_t10_followup": "Original iteration_6 root cause was that saveConfiguration's setItem was effectively gated by hasChanges. The applied fix (Option A from iteration_6 RCA, refined) writes the factory default directly inside the mount-hydration block, bypassing the Save-button gate entirely. This is verified PASS in iteration_7."
+}

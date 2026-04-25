@@ -210,10 +210,16 @@ const StatusConfigPage = () => {
       const storedDefPos = localStorage.getItem(DEFAULT_POS_VIEW_KEY);
       if (storedDefPos === 'table' || storedDefPos === 'order') {
         setDefaultPosView(storedDefPos);
+      } else if (storedDefPos === null) {
+        // Req 4 backfill: persist factory default on first load if key absent,
+        // so localStorage shape stays consistent without requiring user action.
+        localStorage.setItem(DEFAULT_POS_VIEW_KEY, DEFAULT_POS_VIEW_FACTORY);
       }
       const storedDefDash = localStorage.getItem(DEFAULT_DASHBOARD_VIEW_KEY);
       if (storedDefDash === 'channel' || storedDefDash === 'status') {
         setDefaultDashboardView(storedDefDash);
+      } else if (storedDefDash === null) {
+        localStorage.setItem(DEFAULT_DASHBOARD_VIEW_KEY, DEFAULT_DASHBOARD_VIEW_FACTORY);
       }
     } catch (e) {
       console.error('Failed to parse stored default views:', e);
