@@ -33,6 +33,17 @@ const VIEW_MODE_CHANNEL_STATUS_KEY = 'mygenie_view_mode_channel_status'; // 'cha
 const DEFAULT_VIEW_MODE_TO = 'both';
 const DEFAULT_VIEW_MODE_CS = 'both';
 
+// DEFAULT_VIEW (Req 4): admin-controlled default view that activates only
+// when the corresponding axis lock above is 'both'. Allowed values:
+//   'table'   | 'order'    for the POS axis
+//   'channel' | 'status'   for the Dashboard axis
+// When the parent axis is locked ('table'/'order' or 'channel'/'status'),
+// these keys are PRESERVED in localStorage but ignored at runtime.
+const DEFAULT_POS_VIEW_KEY = 'mygenie_default_pos_view';                // 'table' | 'order'
+const DEFAULT_DASHBOARD_VIEW_KEY = 'mygenie_default_dashboard_view';    // 'channel' | 'status'
+const DEFAULT_POS_VIEW_FACTORY = 'table';
+const DEFAULT_DASHBOARD_VIEW_FACTORY = 'channel';
+
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
 const DEFAULT_LAYOUT_ORDER = { dineIn: 1, takeAway: 1, delivery: 1, room: 1 };
@@ -121,6 +132,10 @@ const StatusConfigPage = () => {
   const [viewModeTableOrder, setViewModeTableOrder] = useState(DEFAULT_VIEW_MODE_TO);
   const [viewModeChannelStatus, setViewModeChannelStatus] = useState(DEFAULT_VIEW_MODE_CS);
 
+  // DEFAULT_VIEW (Req 4): defaults active only when parent axis = 'both'
+  const [defaultPosView, setDefaultPosView] = useState(DEFAULT_POS_VIEW_FACTORY);
+  const [defaultDashboardView, setDefaultDashboardView] = useState(DEFAULT_DASHBOARD_VIEW_FACTORY);
+
   // Load from localStorage on mount
   useEffect(() => {
     // Load status config
@@ -189,6 +204,20 @@ const StatusConfigPage = () => {
     } catch (e) {
       console.error('Failed to parse stored view modes:', e);
     }
+
+    // DEFAULT_VIEW (Req 4): hydrate per-axis default-view values
+    try {
+      const storedDefPos = localStorage.getItem(DEFAULT_POS_VIEW_KEY);
+      if (storedDefPos === 'table' || storedDefPos === 'order') {
+        setDefaultPosView(storedDefPos);
+      }
+      const storedDefDash = localStorage.getItem(DEFAULT_DASHBOARD_VIEW_KEY);
+      if (storedDefDash === 'channel' || storedDefDash === 'status') {
+        setDefaultDashboardView(storedDefDash);
+      }
+    } catch (e) {
+      console.error('Failed to parse stored default views:', e);
+    }
   }, []);
 
   // Toggle a status
@@ -233,6 +262,9 @@ const StatusConfigPage = () => {
     setLayoutOrderView(DEFAULT_LAYOUT_ORDER);
     setViewModeTableOrder(DEFAULT_VIEW_MODE_TO);
     setViewModeChannelStatus(DEFAULT_VIEW_MODE_CS);
+    // DEFAULT_VIEW (Req 4): also reset per-axis defaults to factory
+    setDefaultPosView(DEFAULT_POS_VIEW_FACTORY);
+    setDefaultDashboardView(DEFAULT_DASHBOARD_VIEW_FACTORY);
     setHasChanges(true);
   };
 
@@ -337,6 +369,9 @@ const StatusConfigPage = () => {
     // VIEW_MODE_LOCK (Task 1): persist single-pick view modes
     localStorage.setItem(VIEW_MODE_TABLE_ORDER_KEY, viewModeTableOrder);
     localStorage.setItem(VIEW_MODE_CHANNEL_STATUS_KEY, viewModeChannelStatus);
+    // DEFAULT_VIEW (Req 4): persist per-axis default-view selections
+    localStorage.setItem(DEFAULT_POS_VIEW_KEY, defaultPosView);
+    localStorage.setItem(DEFAULT_DASHBOARD_VIEW_KEY, defaultDashboardView);
     setHasChanges(false);
     toast({
       title: "Configuration saved",
@@ -760,7 +795,7 @@ const StatusConfigPage = () => {
                 style={{ backgroundColor: `${COLORS.primaryOrange}10`, border: `1px solid ${COLORS.primaryOrange}30` }}
               >
                 <p className="text-sm" style={{ color: COLORS.darkText }}>
-                  By default, cashiers see both view toggles in the sidebar and can switch on the fly. Pick a specific view here only if you want to lock the dashboard to that view for this device. Choose <strong>Both</strong> to keep the default.
+                  By default, cashiers see both view toggles in the sidebar and can switch on the fly. Pick a specific view to lock the dashboard. Choose <strong>Both</strong> to let cashiers switch freely — you can also set which view opens first when both are enabled.
                 </p>
               </div>
 
@@ -810,6 +845,57 @@ const StatusConfigPage = () => {
                     );
                   })}
                 </div>
+                {/* DEFAULT_POS_VIEW (Req 4): sub-row picker visible only when parent axis = 'both' */}
+                {viewModeTableOrder === 'both' && (
+                  <div className="mt-4 ml-2 pl-4" style={{ borderLeft: `2px solid ${COLORS.borderGray}` }}>
+                    <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
+                      Default POS View
+                      <span className="text-xs ml-2" style={{ color: COLORS.grayText }}>
+                        Which view opens first when cashier loads the dashboard
+                      </span>
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        { id: 'table', label: 'Table View', description: 'Open Table View first on load' },
+                        { id: 'order', label: 'Order View', description: 'Open Order View first on load' },
+                      ].map((opt) => {
+                        const isSelected = defaultPosView === opt.id;
+                        return (
+                          <div
+                            key={opt.id}
+                            data-testid={`default-pos-view-${opt.id}`}
+                            onClick={() => { setDefaultPosView(opt.id); setHasChanges(true); }}
+                            className="p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm"
+                            style={{
+                              backgroundColor: isSelected ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
+                              borderColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray,
+                            }}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <span
+                                  className="font-medium text-sm"
+                                  style={{ color: isSelected ? COLORS.primaryOrange : COLORS.darkText }}
+                                >
+                                  {opt.label}
+                                </span>
+                                <p className="text-xs mt-1" style={{ color: COLORS.grayText }}>
+                                  {opt.description}
+                                </p>
+                              </div>
+                              <div
+                                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray }}
+                              >
+                                {isSelected && <Check className="w-3 h-3 text-white" />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Axis B — Channel or Status View */}
@@ -858,6 +944,57 @@ const StatusConfigPage = () => {
                     );
                   })}
                 </div>
+                {/* DEFAULT_DASHBOARD_VIEW (Req 4): sub-row picker visible only when parent axis = 'both' */}
+                {viewModeChannelStatus === 'both' && (
+                  <div className="mt-4 ml-2 pl-4" style={{ borderLeft: `2px solid ${COLORS.borderGray}` }}>
+                    <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
+                      Default Dashboard View
+                      <span className="text-xs ml-2" style={{ color: COLORS.grayText }}>
+                        Which grouping opens first when cashier loads the dashboard
+                      </span>
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        { id: 'channel', label: 'By Channel', description: 'Open Channel grouping first' },
+                        { id: 'status', label: 'By Status', description: 'Open Status grouping first' },
+                      ].map((opt) => {
+                        const isSelected = defaultDashboardView === opt.id;
+                        return (
+                          <div
+                            key={opt.id}
+                            data-testid={`default-dashboard-view-${opt.id}`}
+                            onClick={() => { setDefaultDashboardView(opt.id); setHasChanges(true); }}
+                            className="p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm"
+                            style={{
+                              backgroundColor: isSelected ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                              borderColor: isSelected ? COLORS.primaryGreen : COLORS.borderGray,
+                            }}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <span
+                                  className="font-medium text-sm"
+                                  style={{ color: isSelected ? COLORS.primaryGreen : COLORS.darkText }}
+                                >
+                                  {opt.label}
+                                </span>
+                                <p className="text-xs mt-1" style={{ color: COLORS.grayText }}>
+                                  {opt.description}
+                                </p>
+                              </div>
+                              <div
+                                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: isSelected ? COLORS.primaryGreen : COLORS.borderGray }}
+                              >
+                                {isSelected && <Check className="w-3 h-3 text-white" />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

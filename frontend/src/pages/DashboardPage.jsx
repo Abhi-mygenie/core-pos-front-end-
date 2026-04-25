@@ -39,6 +39,22 @@ const computeRoomCardAmount = (order) => {
   return food + transfers + roomBal;
 };
 
+// DEFAULT_VIEW (Req 4): resolve initial view per axis with precedence
+//   1) lock value (table|order or channel|status)
+//   2) admin default (when lock = 'both')
+//   3) factory default
+const resolveInitialView = (lockKey, defaultKey, lockValues, defaultValues, factory) => {
+  try {
+    const lock = localStorage.getItem(lockKey);
+    if (lockValues.includes(lock)) return lock;
+    if (lock === 'both') {
+      const def = localStorage.getItem(defaultKey);
+      if (defaultValues.includes(def)) return def;
+    }
+  } catch (e) { /* localStorage unavailable */ }
+  return factory;
+};
+
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
   const exact = [];
@@ -241,12 +257,24 @@ const DashboardPage = () => {
       const storedTO = localStorage.getItem('mygenie_view_mode_table_order');
       const isLockedTO = storedTO === 'table' || storedTO === 'order';
       setLockTableOrder(isLockedTO);
-      if (isLockedTO) setActiveView(storedTO);
+      if (isLockedTO) {
+        setActiveView(storedTO);
+      } else if (storedTO === 'both') {
+        // Req 4: when lock = 'both', re-resolve from admin default on nav-back
+        const defPos = localStorage.getItem('mygenie_default_pos_view');
+        if (defPos === 'table' || defPos === 'order') setActiveView(defPos);
+      }
 
       const storedCS = localStorage.getItem('mygenie_view_mode_channel_status');
       const isLockedCS = storedCS === 'channel' || storedCS === 'status';
       setLockChannelStatus(isLockedCS);
-      if (isLockedCS) setDashboardView(storedCS);
+      if (isLockedCS) {
+        setDashboardView(storedCS);
+      } else if (storedCS === 'both') {
+        // Req 4: when lock = 'both', re-resolve from admin default on nav-back
+        const defDash = localStorage.getItem('mygenie_default_dashboard_view');
+        if (defDash === 'channel' || defDash === 'status') setDashboardView(defDash);
+      }
     } catch (e) { /* localStorage unavailable */ }
   }, [location.pathname]);
   
@@ -282,6 +310,25 @@ const DashboardPage = () => {
         setLockChannelStatus(isLocked);
         if (isLocked) setDashboardView(e.newValue);
       }
+      // Req 4: cross-tab sync for default-view keys (only effective when
+      // parent axis is 'both' — admin saving a new default in another tab
+      // updates the dashboard view immediately if not currently locked)
+      if (e.key === 'mygenie_default_pos_view') {
+        try {
+          const lock = localStorage.getItem('mygenie_view_mode_table_order');
+          if (lock === 'both' && (e.newValue === 'table' || e.newValue === 'order')) {
+            setActiveView(e.newValue);
+          }
+        } catch (err) { /* ignore */ }
+      }
+      if (e.key === 'mygenie_default_dashboard_view') {
+        try {
+          const lock = localStorage.getItem('mygenie_view_mode_channel_status');
+          if (lock === 'both' && (e.newValue === 'channel' || e.newValue === 'status')) {
+            setDashboardView(e.newValue);
+          }
+        } catch (err) { /* ignore */ }
+      }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
@@ -290,24 +337,24 @@ const DashboardPage = () => {
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn", "room"]);
   const [activeStatuses, setActiveStatuses] = useState(["pending", "preparing", "ready", "running", "served", "pendingPayment", "paid", "cancelled", "reserved"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
-  const [activeView, setActiveView] = useState(() => {
-    // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): if storage holds an
-    // explicit lock ('table' or 'order') use it; otherwise (storage holds
-    // 'both' or is absent) start at the legacy default 'table' so the
-    // sidebar runtime toggle starts there.
-    try {
-      const stored = localStorage.getItem('mygenie_view_mode_table_order');
-      if (stored === 'table' || stored === 'order') return stored;
-    } catch (e) { /* localStorage unavailable */ }
-    return 'table';
-  });
-  const [dashboardView, setDashboardView] = useState(() => {
-    try {
-      const stored = localStorage.getItem('mygenie_view_mode_channel_status');
-      if (stored === 'channel' || stored === 'status') return stored;
-    } catch (e) { /* localStorage unavailable */ }
-    return 'status';
-  });
+  const [activeView, setActiveView] = useState(() =>
+    resolveInitialView(
+      'mygenie_view_mode_table_order',
+      'mygenie_default_pos_view',
+      ['table', 'order'],
+      ['table', 'order'],
+      'table'
+    )
+  );
+  const [dashboardView, setDashboardView] = useState(() =>
+    resolveInitialView(
+      'mygenie_view_mode_channel_status',
+      'mygenie_default_dashboard_view',
+      ['channel', 'status'],
+      ['channel', 'status'],
+      'channel'  // Req 4: factory default changed from 'status' to 'channel'
+    )
+  );
   // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): lock flags drive whether
   // the Sidebar runtime toggle is shown for each axis. true = admin has
   // locked this axis; false (incl. 'both' / absent) = cashier may switch
