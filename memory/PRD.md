@@ -14,7 +14,7 @@
 | Project | MyGenie Core POS — React frontend |
 | Repo | https://github.com/Abhi-mygenie/core-pos-front-end-.git |
 | Active branch deployed | `roomv2` |
-| Public preview URL | https://restaurant-pos-v2-1.preview.emergentagent.com |
+| Public preview URL | https://sidebar-config-test.preview.emergentagent.com |
 | Real backend (out of scope here) | https://preprod.mygenie.online (CRM/POS) + https://presocket.mygenie.online (sockets) |
 | Auth-provider | Customer's own (vendoremployee Bearer token) |
 | Tech stack | React 19.0.0 · CRACO 7.1.0 · Yarn 1.22.22 · Node 20.20.2 · react-scripts 5.0.1 |
@@ -183,7 +183,7 @@ Memory artefacts written:
 1. **`__tests__/api/transforms/updateOrderPayload.test.js:323`** asserts outbound `order_type === 'take_away'` for `'takeAway'` input, but `mapOrderTypeToAPI` returns `'takeaway'`. **Pre-existing test drift** — not introduced by Task 3 (which only touched the inbound parser). Outbound mapping stays intact. Out of scope.
 2. **`/app/v3/DOC_VS_CODE_GAP.md` GAP-N3** — service-charge UI guard differs between default and room-with-associated-orders branches in CollectPaymentPanel. Orthogonal to Task 4 (which is display-only, no SC math). Documented, not addressed.
 3. **`LoadingPage.jsx:101`** missing `loadStationData` dep in useEffect. Cosmetic ESLint warning; left untouched per "no unrelated cleanup" rule.
-4. **Emergent platform preview wrapper** (`https://restaurant-pos-v2-1.preview.emergentagent.com`) hosts the app inside an iframe and serves its own `<title>Loading...</title>`. Cosmetic only; the inner-iframe app shows MyGenie branding correctly. Cannot be changed from this codebase.
+4. **Emergent platform preview wrapper** (`https://sidebar-config-test.preview.emergentagent.com`) hosts the app inside an iframe and serves its own `<title>Loading...</title>`. Cosmetic only; the inner-iframe app shows MyGenie branding correctly. Cannot be changed from this codebase.
 5. **`https://restaurant-pos-v2-1.preview.static.emergentagent.com`** serves a stale pre-built backup snapshot — title/branding there will continue to look "Emergent". This is platform-managed infrastructure, not the live dev server. Live `localhost:3000` and the iframe at the dev-preview URL are correct.
 6. **Task 2 button-visibility gate** (`config/paymentMethods.js:185-208`) still gates "To Room" behind `restaurantPaymentTypes` containing `'room'`/`'transfer_room'`. If a tenant doesn't include this in their API config, the button itself stays hidden. **Out of scope per user directive "rest no changes"**; revisit only if reported.
 7. **Backend supervisor program** is configured to autostart but `/app/backend/server.py` is a placeholder. State is BACKEND running with placeholder responses — frontend ignores it (real backend lives at `preprod.mygenie.online`). Untouched.
@@ -283,7 +283,7 @@ sudo supervisorctl start frontend
 sleep 25
 sudo supervisorctl status frontend
 tail -n 30 /var/log/supervisor/frontend.out.log   # expect "webpack compiled with 1 warning"
-curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com | head -5  # expect HTTP/2 200
+curl -sI https://sidebar-config-test.preview.emergentagent.com | head -5  # expect HTTP/2 200
 ```
 
 Full handover with gotchas and 8-point health checklist: `/app/memory/DEPLOYMENT_HANDOVER.md`.
@@ -314,3 +314,66 @@ Full handover with gotchas and 8-point health checklist: `/app/memory/DEPLOYMENT
 - ⚠ Manual QA pass deferred to next QA agent — full plan in §10.
 - ⚠ On-disk edits **not committed**. If next agent wants a snapshot in git, run a Save-to-GitHub before continuing or ask the user to do so.
 - ⚠ Old-POS `'take_away'` is the only legacy `order_type` variant handled; user confirmed delivery / dinein from old POS already work.
+
+---
+
+## Task 1 v2 — View Mode Lock revision (2026-04-25)
+
+> Pointer: full spec in `/app/memory/TASK_1_REVISION_GAPS.md`.
+> Pointer: stepwise implementation log in `/app/memory/REVISION_IMPLEMENTATION_SUMMARY.md`.
+
+### Why
+The original Task 1 implementation removed the legacy "both views with runtime sidebar toggle" default. User clarified the intent: **default = Both views visible (legacy); Visibility Settings is an admin OVERRIDE only**. Without the override, cashiers must keep their runtime toggle. The original code did the opposite — it forced a single-pick lock on every user (including users who never opened Settings) and deleted the sidebar toggle entirely.
+
+### What changed (5-step plan, all completed)
+
+| Step | File(s) | Change |
+|---|---|---|
+| 0 | — | Backed up the 3 target files to `/tmp/task1_revision_backups/` for byte-exact rollback. |
+| 1 | `Sidebar.jsx`, `DashboardPage.jsx` | Restored the runtime toggle block in Sidebar (`view-toggle`, `group-toggle`); re-imported lucide icons; re-passed view setters from DashboardPage. Toggles always visible at this step. |
+| 2 | `StatusConfigPage.jsx` | Default constants flipped from `'table'` / `'status'` → `'both'`. Hydrate effect accepts `'both'` as a valid stored value. |
+| 3 | `StatusConfigPage.jsx` | Replaced View Mode `<label>` + `sr-only <input type="radio">` pattern with the page's existing checkbox-card pattern (`<div onClick>`). 3 cards per axis: Table / Order / Both, Channel / Status / Both. **Bug fix:** the old radio pattern caused a `position: fixed` toast to remain visible while the rest of the page scrolled to (0,0) on click — root cause was the browser focusing the hidden `sr-only` input and running `scrollIntoView`. Pattern A has no hidden input → no scroll jump. |
+| 3b (bonus) | `StatusConfigPage.jsx` | Same fix applied to the latently-buggy **Display Mode** (Stacked / Accordion) radios under Station View. Page is now `sr-only`-radio free. |
+| 4 | `DashboardPage.jsx`, `Sidebar.jsx` | Added `lockTableOrder` / `lockChannelStatus` state derived from localStorage. Path-nav effect + cross-tab `storage` listener re-derive on demand. Sidebar conditionally hides each toggle (and the wrapper container if both would be hidden). |
+| 5 | docs | Appended this revision section to PRD + FIVE_TASK_VALIDATION_HANDOVER + FIVE_TASK_IMPLEMENTATION_SUMMARY. Created `/app/memory/REVISION_IMPLEMENTATION_SUMMARY.md` per QA spec. |
+
+### Behavioural matrix (target state)
+
+| localStorage `mygenie_view_mode_table_order` | localStorage `mygenie_view_mode_channel_status` | Sidebar `view-toggle` | Sidebar `group-toggle` |
+|---|---|---|---|
+| `'both'` / unset (default) | `'both'` / unset (default) | ✅ visible | ✅ visible |
+| `'table'` or `'order'` (locked) | `'both'` / unset | ❌ hidden | ✅ visible |
+| `'both'` / unset | `'channel'` or `'status'` (locked) | ✅ visible | ❌ hidden |
+| `'table'` or `'order'` (locked) | `'channel'` or `'status'` (locked) | ❌ hidden | ❌ hidden (container also hidden) |
+
+Cross-tab `storage` events trigger live re-render. Path-nav (returning from Settings to Dashboard) also re-derives the lock flags.
+
+### Migration strategy
+**No version key bump.** Existing users with a saved lock keep that lock (treated as deliberate). The "Both" radio + Reset-to-Default give an explicit revert path. If field reports show confusion, fall back to a one-time soft migration (detect saved lock → write `'both'` → log info). Hold off until needed.
+
+### Test coverage (all passed by manual gate per step)
+- Step 1: Sidebar toggles flip dashboard view at runtime (passed).
+- Step 2: Settings page renders without crashing; existing saved values still display (intermediate state, passed).
+- Step 3: Pattern A cards click without blank-page bug; all 6 cards render (3 per axis); selection persists (passed).
+- Step 3b: Display Mode (Stacked/Accordion) clicks without blank-page bug (passed).
+- Step 4: Lock flags hide the corresponding axis only; both-locked = both hidden + container hidden; path-nav and cross-tab sync work (passed by user via gate).
+
+### Files touched (final summary)
+| File | Change scope |
+|---|---|
+| `frontend/src/pages/StatusConfigPage.jsx` | 4 sections rewritten (defaults, hydrate, View Mode, Display Mode). Net +30 lines. |
+| `frontend/src/pages/DashboardPage.jsx` | Lazy init clarified, 2 lock states added, path-nav and storage effects extended, Sidebar invocation grew by 2 props. Net +35 lines. |
+| `frontend/src/components/layout/Sidebar.jsx` | 4 lucide icons re-imported, 6 props in destructure, conditional toggle block restored. Net +60 lines vs the (broken) "deleted" baseline. |
+
+### Out of scope (left as P3 backlog per original PRD)
+- Per-role override (manager sees toggle, cashier locked).
+- Split-screen / dual-pane (literal "both at the same time").
+- Soft localStorage migration (only if field issues surface).
+
+### Rollback (still safe — does not touch other tasks)
+```bash
+cp /tmp/task1_revision_backups/StatusConfigPage.jsx.bak /app/frontend/src/pages/StatusConfigPage.jsx && \
+cp /tmp/task1_revision_backups/DashboardPage.jsx.bak    /app/frontend/src/pages/DashboardPage.jsx && \
+cp /tmp/task1_revision_backups/Sidebar.jsx.bak          /app/frontend/src/components/layout/Sidebar.jsx
+```
+

@@ -32,7 +32,7 @@
   - Static fallback `MyGenie POS` shows when no restaurant context (login screen, offline).
   - Favicon points to existing `GENIE_LOGO_URL` so no asset upload required.
 - **Risks remaining:**
-  - The Emergent **preview proxy** (`https://restaurant-pos-v2-1.preview.emergentagent.com`) wraps the dev server in an iframe and serves its OWN wrapper HTML with `<title>Loading...</title>` from `app.emergent.sh`. That wrapper is platform-managed and outside our control. Inside the iframe (the actual app), the title/favicon/description are correct as verified via direct dev-server curl.
+  - The Emergent **preview proxy** (`https://sidebar-config-test.preview.emergentagent.com`) wraps the dev server in an iframe and serves its OWN wrapper HTML with `<title>Loading...</title>` from `app.emergent.sh`. That wrapper is platform-managed and outside our control. Inside the iframe (the actual app), the title/favicon/description are correct as verified via direct dev-server curl.
   - When tested against `restaurant-pos-v2-1.preview.static.emergentagent.com` (a stale platform-managed pre-built backup snapshot), the title still shows `Emergent | Fullstack App`. This is a backup snapshot, not the live dev server. The fresh build on `localhost:3000` is correct (verified).
 - **Testing done:**
   - `curl http://localhost:3000/` returns the new `<title>`, `<meta>`, `<link rel="icon">`, and contains zero `emergent.sh`/`posthog` references.
@@ -304,3 +304,64 @@ Manual smoke pass against the live dev preview, in this order:
    - Cancel order flow on a room order — confirm bulk-cancel still hidden (Option C from earlier).
 
 If any of the above fails, file a separate ticket with the exact reproduction steps; do not bundle into this implementation summary.
+
+---
+
+## Task 1 v2 — intent revision (2026-04-25)
+
+> **§Task 1 (above) is now superseded.** That entry described the original (incorrect) implementation. The summary below is the corrected, final state.
+
+### Why the revision happened
+Original Task 1 interpreted "Drop Both, no runtime toggle" literally — locking every user. User clarified the actual intent: **default = both views available with runtime sidebar toggle (legacy); Visibility Settings is purely an admin override**. Without an explicit override the cashier MUST keep the runtime toggle.
+
+### Corrected implementation (5-step plan + 1 bonus step)
+
+| Step | What was done |
+|---|---|
+| 0 | Backed up the 3 target files to `/tmp/task1_revision_backups/` for rollback safety. |
+| 1 | Restored Sidebar runtime toggle block (`view-toggle`, `group-toggle`); re-imported lucide icons; re-passed view setters from DashboardPage. (Always visible at this step.) |
+| 2 | Default constants in `StatusConfigPage.jsx` flipped from `'table'` / `'status'` → `'both'`. Hydrate accepts `'both'` as a valid stored value. |
+| 3 | View Mode section rewritten using the page's existing checkbox-card pattern (`<div onClick>`). 3 cards per axis (Table / Order / Both, Channel / Status / Both). Same pattern as Status / Station / Channel cards on the same page. **Eliminated the scroll-jump bug** caused by the previous `<label>` + `sr-only <input type="radio">` pattern. |
+| 3b (bonus) | Same checkbox-card refactor applied to Display Mode (Stacked / Accordion) under Station View — same root cause. Page is now `sr-only`-radio free. |
+| 4 | DashboardPage gained `lockTableOrder` / `lockChannelStatus` state. Path-nav effect and cross-tab `storage` listener now re-derive lock flags. Sidebar conditionally hides each toggle per lock flag (and hides the wrapper container if both are hidden). |
+| 5 | Documentation: appended this revision section to PRD, FIVE_TASK_VALIDATION_HANDOVER, and this file. Created `/app/memory/REVISION_IMPLEMENTATION_SUMMARY.md` per the QA spec. |
+
+### Behavioural matrix (final)
+
+| Stored Table/Order axis | Stored Channel/Status axis | `view-toggle` | `group-toggle` |
+|---|---|---|---|
+| `'both'` / unset (default) | `'both'` / unset (default) | ✅ visible | ✅ visible |
+| `'table'` / `'order'` (locked) | `'both'` / unset | ❌ hidden | ✅ visible |
+| `'both'` / unset | `'channel'` / `'status'` (locked) | ✅ visible | ❌ hidden |
+| Locked | Locked | ❌ hidden | ❌ hidden (container also hidden) |
+
+### Files changed (final, supersedes earlier list)
+- `frontend/src/pages/StatusConfigPage.jsx`
+- `frontend/src/pages/DashboardPage.jsx`
+- `frontend/src/components/layout/Sidebar.jsx`
+
+### Test IDs (final)
+- Sidebar: `view-toggle`, `group-toggle`, `view-toggles-container` (all restored).
+- Settings (View Mode): `view-mode-to-table`, `view-mode-to-order`, `view-mode-to-both`, `view-mode-cs-channel`, `view-mode-cs-status`, `view-mode-cs-both` (3 per axis).
+- Settings (Display Mode, refactored as bonus): `display-mode-stacked`, `display-mode-accordion`.
+
+### Validation status
+- All 4 implementation steps individually verified by user (manual gate per step).
+- ESLint clean across the 3 files.
+- Webpack compiles with the same single pre-existing `LoadingPage.jsx:101` warning — no new warnings introduced.
+- No `sr-only` form inputs remain on `StatusConfigPage.jsx`.
+- Tasks 2, 3, 4, 5 unaffected (no edits in those areas).
+
+### Source of truth
+- Pre-implementation gap analysis: `/app/memory/TASK_1_REVISION_GAPS.md`
+- Stepwise implementation log: `/app/memory/REVISION_IMPLEMENTATION_SUMMARY.md`
+- Behavioural spec: this section + the matching section in PRD.
+
+### Rollback
+Single command, byte-exact restore of all 3 files:
+```bash
+cp /tmp/task1_revision_backups/StatusConfigPage.jsx.bak /app/frontend/src/pages/StatusConfigPage.jsx && \
+cp /tmp/task1_revision_backups/DashboardPage.jsx.bak    /app/frontend/src/pages/DashboardPage.jsx && \
+cp /tmp/task1_revision_backups/Sidebar.jsx.bak          /app/frontend/src/components/layout/Sidebar.jsx
+```
+

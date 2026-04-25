@@ -35,7 +35,7 @@ You are a Senior Deployment Agent. Your work is STRICTLY limited to deployment, 
 
 ### 4. `/app/frontend/.env` — required variables
 ```
-REACT_APP_BACKEND_URL=https://roomv1-build.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://sidebar-config-test.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ENABLE_HEALTH_CHECK=false
 REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
@@ -82,7 +82,7 @@ REACT_APP_GOOGLE_MAPS_KEY=AIzaSyCS9rZcttTxbair3abltZ3Fm1vEnmY0mj4
 ### 7. Verification checklist before handover
 - [ ] `sudo supervisorctl status frontend` → `RUNNING`
 - [ ] `curl -s -o /dev/null -w "%{http_code}" http://localhost:3000` → `200`
-- [ ] Screenshot at `https://roomv1-build.preview.emergentagent.com` shows the Mygenie login screen.
+- [ ] Screenshot at `https://sidebar-config-test.preview.emergentagent.com` shows the Mygenie login screen.
 - [ ] `tail /var/log/supervisor/frontend.out.log` shows `Compiled with warnings.` or `Compiled successfully.` (not errors).
 - [ ] `/app/memory/` contains `v1/`, `v2/`, `v3/`, `PRD.md`, `BUG_TEMPLATE.md`.
 - [ ] `/app/frontend/.env` exists with all 16 variables, VAPID key is a full ~88-char string.

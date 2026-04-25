@@ -14,7 +14,7 @@
 - (Newer than the documented baseline `10ed08e`; accepted per "or newer intended commit" rule.)
 
 ## 5. Preview URL
-- https://restaurant-pos-v2-1.preview.emergentagent.com
+- https://sidebar-config-test.preview.emergentagent.com
 
 ## 6. Stack Versions (locked, unchanged)
 - Node: v20.20.2
@@ -48,7 +48,7 @@ sudo supervisorctl status frontend
 tail -n 30 /var/log/supervisor/frontend.out.log
 tail -n 30 /var/log/supervisor/frontend.err.log
 curl -sI http://localhost:3000 | head -5
-curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com | head -5
+curl -sI https://sidebar-config-test.preview.emergentagent.com | head -5
 ```
 
 ## 8. Env File Status
@@ -69,7 +69,7 @@ curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com | head -5
 
 ## 10. Smoke Test Results
 - `curl -sI http://localhost:3000` → `HTTP/1.1 200 OK`
-- `curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com` → `HTTP/2 200`
+- `curl -sI https://sidebar-config-test.preview.emergentagent.com` → `HTTP/2 200`
 
 ## 11. Browser Render Result
 - Mygenie login screen renders correctly:

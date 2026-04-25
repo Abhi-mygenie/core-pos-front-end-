@@ -603,3 +603,44 @@ Files **never to touch** during this batch:
 6. Yarn build to confirm production bundle still compiles
 7. Run the existing __tests__ suite — fix only the test file references to removed data-testids; do NOT add new tests in this batch.
 ```
+
+---
+
+## Task 1 v2 — intent revision (2026-04-25)
+
+> **The §2.1 spec above is OBSOLETE.** Read this section as the new source of truth for Task 1.
+
+### What was wrong with the original interpretation
+> §2.1 of this handover instructed: *"Drop the 'Both' option; user picks exactly one mode per axis; remove the runtime sidebar toggle entirely."*
+This interpretation removed the legacy default behaviour (cashier sees both toggles in the sidebar and can switch on the fly). It locked every user — including users who never opened Settings — to a frozen single-pick view.
+
+### Corrected intent (user clarification)
+> *"Both was the default behaviour and was supposed to be preserved. Admin can override in Visibility Settings."*
+
+That is:
+- **Default** (no admin override) = legacy. Cashier sees both Sidebar toggles and may switch views at runtime.
+- **Override** = admin opens Visibility / Status Configuration → "View Mode" → picks a specific value per axis. The corresponding Sidebar toggle then hides for that axis only.
+- **"Both"** is the explicit no-override choice.
+
+### Final state (after the 5-step revision)
+
+| localStorage value | Sidebar toggle for that axis |
+|---|---|
+| `'both'` or absent | **visible** (legacy runtime toggle) |
+| `'table'` / `'order'` | **hidden**; dashboard renders the locked view |
+| `'channel'` / `'status'` | **hidden**; dashboard renders the locked grouping |
+
+### Files actually touched (final, supersedes §2.1's claimed list)
+- `frontend/src/pages/StatusConfigPage.jsx` — defaults, hydrate, View Mode section (rewritten as Pattern A checkbox-cards, 3 per axis), Display Mode section (same Pattern A treatment to fix a latent scroll-jump bug class).
+- `frontend/src/pages/DashboardPage.jsx` — lazy init, 2 new lock-flag state hooks, path-nav effect extended, cross-tab `storage` listener extended, Sidebar invocation grew by 6 props (4 view + 2 lock).
+- `frontend/src/components/layout/Sidebar.jsx` — 4 lucide icons re-imported, 6 props added to destructure, runtime toggle block restored with conditional hide per lock flag.
+
+### Pattern A bug fix (Steps 3 + 3b)
+The original Task 1 implementation copied an existing on-page radio pattern: `<label>` wrapping a hidden `<input type="radio" className="sr-only">`. Clicking the label focused the hidden input; the browser then ran `scrollIntoView` on it; because `sr-only` clips the input to (0,0), the page scrolled to the document origin. The "Save Now" toast survived (it is `position: fixed`), creating the misleading symptom of a "blank page with surviving toast". The same bug also lurked in the Display Mode radios under Station View. Both are now using the page's `<div onClick>` checkbox-card pattern — no hidden input → no scroll jump.
+
+### Pointer to detailed handover
+Full pre-implementation gap analysis with file/line evidence is at `/app/memory/TASK_1_REVISION_GAPS.md` (still valid as the spec; this handover's §2.1 is now obsolete and only kept for history).
+
+### Migration / backwards compatibility
+No version-key bump. Users with an existing saved lock keep it (treated as deliberate). The "Both" card + Reset-to-Default give an explicit revert path. Soft migration to be added only if field issues surface.
+
