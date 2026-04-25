@@ -755,7 +755,14 @@ const StatusConfigPage = () => {
               )}
             </div>
 
-            {/* ============== VIEW MODE LOCK (Task 1, Apr-2026) ============== */}
+            {/* ============== VIEW MODE LOCK v2 (Task 1 revision, Step 3) ==============
+                Re-implemented using the page's existing checkbox-card pattern
+                (div onClick, no hidden form input). The previous radio
+                implementation used <label> + sr-only <input type="radio">,
+                which on click focused the hidden input and caused the browser
+                to scroll the document to (0,0), making the section appear blank.
+                This pattern is identical to the Status / Station / Channel
+                cards above and is known to work reliably. */}
             <div className="mt-10 pt-8" style={{ borderTop: `2px solid ${COLORS.borderGray}` }}>
               <div className="flex items-center justify-between mb-6">
                 <div>
@@ -763,7 +770,7 @@ const StatusConfigPage = () => {
                     View Mode
                   </h2>
                   <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
-                    Lock the dashboard to one view per axis. No runtime toggle.
+                    Override the default view mode (optional).
                   </p>
                 </div>
               </div>
@@ -773,7 +780,7 @@ const StatusConfigPage = () => {
                 style={{ backgroundColor: `${COLORS.primaryOrange}10`, border: `1px solid ${COLORS.primaryOrange}30` }}
               >
                 <p className="text-sm" style={{ color: COLORS.darkText }}>
-                  Pick exactly one option per axis. The dashboard renders that view directly — there is no toggle button.
+                  By default, cashiers see both view toggles in the sidebar and can switch on the fly. Pick a specific view here only if you want to lock the dashboard to that view for this device. Choose <strong>Both</strong> to keep the default.
                 </p>
               </div>
 
@@ -782,70 +789,46 @@ const StatusConfigPage = () => {
                 <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
                   Table or Order View
                 </label>
-                <div className="flex gap-4">
-                  <label
-                    data-testid="view-mode-to-table"
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                    style={{
-                      borderColor: viewModeTableOrder === 'table' ? COLORS.primaryOrange : COLORS.borderGray,
-                      backgroundColor: viewModeTableOrder === 'table' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="viewModeTableOrder"
-                      value="table"
-                      checked={viewModeTableOrder === 'table'}
-                      onChange={() => { setViewModeTableOrder('table'); setHasChanges(true); }}
-                      className="sr-only"
-                    />
-                    <div
-                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                      style={{ borderColor: viewModeTableOrder === 'table' ? COLORS.primaryOrange : COLORS.borderGray }}
-                    >
-                      {viewModeTableOrder === 'table' && (
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium" style={{ color: COLORS.darkText }}>Table View</span>
-                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                        Show tables grid (with table numbers/sections)
-                      </p>
-                    </div>
-                  </label>
-
-                  <label
-                    data-testid="view-mode-to-order"
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                    style={{
-                      borderColor: viewModeTableOrder === 'order' ? COLORS.primaryOrange : COLORS.borderGray,
-                      backgroundColor: viewModeTableOrder === 'order' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="viewModeTableOrder"
-                      value="order"
-                      checked={viewModeTableOrder === 'order'}
-                      onChange={() => { setViewModeTableOrder('order'); setHasChanges(true); }}
-                      className="sr-only"
-                    />
-                    <div
-                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                      style={{ borderColor: viewModeTableOrder === 'order' ? COLORS.primaryOrange : COLORS.borderGray }}
-                    >
-                      {viewModeTableOrder === 'order' && (
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium" style={{ color: COLORS.darkText }}>Order View</span>
-                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                        Show flat order list (one row per order)
-                      </p>
-                    </div>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { id: 'table', label: 'Table View', description: 'Lock to tables grid (with table numbers/sections)' },
+                    { id: 'order', label: 'Order View', description: 'Lock to flat order list (one row per order)' },
+                    { id: 'both',  label: 'Both (default)', description: 'Cashier can switch from the sidebar' },
+                  ].map((opt) => {
+                    const isSelected = viewModeTableOrder === opt.id;
+                    return (
+                      <div
+                        key={opt.id}
+                        data-testid={`view-mode-to-${opt.id}`}
+                        onClick={() => { setViewModeTableOrder(opt.id); setHasChanges(true); }}
+                        className="p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md"
+                        style={{
+                          backgroundColor: isSelected ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
+                          borderColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray,
+                        }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span
+                              className="font-semibold"
+                              style={{ color: isSelected ? COLORS.primaryOrange : COLORS.darkText }}
+                            >
+                              {opt.label}
+                            </span>
+                            <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
+                              {opt.description}
+                            </p>
+                          </div>
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray }}
+                          >
+                            {isSelected && <Check className="w-4 h-4 text-white" />}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -854,70 +837,46 @@ const StatusConfigPage = () => {
                 <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
                   Channel or Status View
                 </label>
-                <div className="flex gap-4">
-                  <label
-                    data-testid="view-mode-cs-channel"
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                    style={{
-                      borderColor: viewModeChannelStatus === 'channel' ? COLORS.primaryGreen : COLORS.borderGray,
-                      backgroundColor: viewModeChannelStatus === 'channel' ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="viewModeChannelStatus"
-                      value="channel"
-                      checked={viewModeChannelStatus === 'channel'}
-                      onChange={() => { setViewModeChannelStatus('channel'); setHasChanges(true); }}
-                      className="sr-only"
-                    />
-                    <div
-                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                      style={{ borderColor: viewModeChannelStatus === 'channel' ? COLORS.primaryGreen : COLORS.borderGray }}
-                    >
-                      {viewModeChannelStatus === 'channel' && (
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryGreen }} />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium" style={{ color: COLORS.darkText }}>By Channel</span>
-                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                        Group columns by channel (Dine-In, TakeAway, Delivery, Room)
-                      </p>
-                    </div>
-                  </label>
-
-                  <label
-                    data-testid="view-mode-cs-status"
-                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                    style={{
-                      borderColor: viewModeChannelStatus === 'status' ? COLORS.primaryGreen : COLORS.borderGray,
-                      backgroundColor: viewModeChannelStatus === 'status' ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="viewModeChannelStatus"
-                      value="status"
-                      checked={viewModeChannelStatus === 'status'}
-                      onChange={() => { setViewModeChannelStatus('status'); setHasChanges(true); }}
-                      className="sr-only"
-                    />
-                    <div
-                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                      style={{ borderColor: viewModeChannelStatus === 'status' ? COLORS.primaryGreen : COLORS.borderGray }}
-                    >
-                      {viewModeChannelStatus === 'status' && (
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryGreen }} />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium" style={{ color: COLORS.darkText }}>By Status</span>
-                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                        Group columns by order status (YTC, Preparing, Ready, ...)
-                      </p>
-                    </div>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { id: 'channel', label: 'By Channel', description: 'Lock columns grouped by channel (Dine-In, TakeAway, Delivery, Room)' },
+                    { id: 'status',  label: 'By Status',  description: 'Lock columns grouped by order status (YTC, Preparing, Ready, ...)' },
+                    { id: 'both',    label: 'Both (default)', description: 'Cashier can switch from the sidebar' },
+                  ].map((opt) => {
+                    const isSelected = viewModeChannelStatus === opt.id;
+                    return (
+                      <div
+                        key={opt.id}
+                        data-testid={`view-mode-cs-${opt.id}`}
+                        onClick={() => { setViewModeChannelStatus(opt.id); setHasChanges(true); }}
+                        className="p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md"
+                        style={{
+                          backgroundColor: isSelected ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                          borderColor: isSelected ? COLORS.primaryGreen : COLORS.borderGray,
+                        }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span
+                              className="font-semibold"
+                              style={{ color: isSelected ? COLORS.primaryGreen : COLORS.darkText }}
+                            >
+                              {opt.label}
+                            </span>
+                            <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
+                              {opt.description}
+                            </p>
+                          </div>
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: isSelected ? COLORS.primaryGreen : COLORS.borderGray }}
+                          >
+                            {isSelected && <Check className="w-4 h-4 text-white" />}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
