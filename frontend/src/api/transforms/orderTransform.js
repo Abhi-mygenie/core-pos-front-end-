@@ -260,6 +260,21 @@ export const fromAPI = {
         }));
       })(),
 
+      // ROOM_CHECKIN_GAP3 (Stage 1): expose room-booking financials so the
+      // Checkout screen can render a Room section and roll the outstanding
+      // balance into the grand total. Backend delivers `room_info` on both
+      // running-orders and socket frames. Strings are coerced to numbers;
+      // missing field collapses to null so non-room orders are unaffected.
+      // Per architecture: room balance has NO SC, NO GST, NO discount applied
+      // — it is a pass-through ₹ amount added to grand_total via the
+      // collect-bill payload `grand_total` field. Marker remains an exception.
+      // See /app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md.
+      roomInfo: api.room_info ? {
+        roomPrice:      parseFloat(api.room_info.room_price)      || 0,
+        advancePayment: parseFloat(api.room_info.advance_payment) || 0,
+        balancePayment: parseFloat(api.room_info.balance_payment) || 0,
+      } : null,
+
       // Raw orderDetails preserved for bill printing (order-temp-store API)
       rawOrderDetails: api.orderDetails || [],
     };
