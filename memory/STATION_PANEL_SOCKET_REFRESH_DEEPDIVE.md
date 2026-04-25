@@ -3,7 +3,49 @@
 - **Type:** Read-only deep-dive + plan + gap analysis. NO code changes.
 - **Scope:** Trace the existing initial-POS-load flow that powers the left-side BAR / KDS preparing-count panel, identify the exact files, functions and data shapes, then propose how to reuse the same pipeline on socket events.
 - **Source of truth:** Current `roomv2` branch under `/app/frontend/src`.
-- **Status:** STOP — Owner approval needed on Section §10 questions before drafting the implementation handover.
+- **Status:** ⏸️ **PARKED** by owner pending endpoint verification.
+
+## ⏸️ Parked Notes (latest session)
+
+**Why parked:** Endpoint mismatch between owner-provided curl and current code.
+- Owner says the panel is fed by `GET /api/v1/vendoremployee/employee-menu` (Bearer-auth only, no params).
+- Current `roomv2` code uses `POST /api/v1/vendoremployee/station-order-list` (form-data: `role_name`, `def_order_status=1`).
+- `grep` confirmed: string `employee-menu` does NOT appear anywhere under `/app/frontend/src`.
+- Live curl with the supplied token returned `{"errors":[{"code":"auth-001","message":"Unauthorized."}]}` → could not capture response shape.
+- Owner will recheck and come back with: (a) fresh token, (b) sample response body, OR (c) a final decision to stick with `station-order-list`.
+
+**Decisions already locked (when work resumes, do NOT re-ask these):**
+
+| Setting | Locked value |
+|---|---|
+| GAP-C — unify `categoriesMap` derivation | (a) YES, single shared helper |
+| GAP-D — extend `fetchMultipleStationsData` to take `categoriesMap` and reuse | (a) YES |
+| GAP-G — refresh granularity | resolved by Q-3 = (a) refresh all `enabledStations` |
+| Q-3 — refresh all enabled stations | (a) |
+| Q-5 — concurrent in-flight handling | (a) debounce covers it |
+| Q-6 — skip refresh while `stationViewEnabled === false` | (a) |
+| Q-7 — silent auto-refresh (no spinner) | (a) |
+| Q-8 — no cross-tab dedup | (a) |
+| Q-9 — fix GAP-B (Settings save → live update) in same patch | (a) |
+| Q-12 — V3 doc update | NOT inline; queued in `/app/memory/V3_DOC_UPDATES_PENDING.md` |
+| Event matrix | STRICT rule per owner: refresh ONLY when status flips to **Ready (fOS=2)** or **Cancelled (fOS=3)**. Applies to: `NEW_ORDER`, `UPDATE_ORDER`, `UPDATE_ITEM_STATUS`, `UPDATE_FOOD_STATUS`. All other events → no refresh. Acknowledged consequence: new orders / item-additions / Served / Paid will NOT auto-refresh; manual ↻ button is the fallback. |
+
+**Decisions still open when work resumes:**
+
+| Open item | What's needed |
+|---|---|
+| Endpoint identity | Owner to confirm `employee-menu` vs `station-order-list` (with sample response if `employee-menu`) |
+| Q-4 — debounce window | Owner to pick: (a) 400 ms only / (b) 400 ms + 2 s maxWait / (c) no debounce |
+| Q-11 — failure handling | Owner to pick: (a) silent / (b) toast / (c) inline badge |
+
+**Restart instructions for next session:**
+1. Re-read this whole doc.
+2. Resolve the endpoint identity first — without it, no implementation can be written safely.
+3. Confirm Q-4 and Q-11.
+4. Skip everything already in the locked-decisions table above.
+5. Roll into `/app/memory/FOUR_REQUIREMENTS_IMPLEMENTATION_HANDOVER.md` once Reqs 2, 3, 4 are also locked.
+
+---
 
 ---
 
