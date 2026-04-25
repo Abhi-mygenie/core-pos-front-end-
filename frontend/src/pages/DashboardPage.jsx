@@ -55,6 +55,20 @@ const resolveInitialView = (lockKey, defaultKey, lockValues, defaultValues, fact
   return factory;
 };
 
+// Req 2 enhancement: when Order Taking is OFF, force Order + Status views
+// on initial mount and on flag flip. Sidebar runtime toggles remain visible
+// (Option B per owner) so kitchen staff can flip if they choose.
+const isOrderTakingDisabledFromStorage = () => {
+  try {
+    const stored = localStorage.getItem('mygenie_order_taking_enabled');
+    if (stored === null) return false;
+    const parsed = JSON.parse(stored);
+    return parsed?.enabled === false;
+  } catch (e) {
+    return false;
+  }
+};
+
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
   const exact = [];
@@ -254,6 +268,18 @@ const DashboardPage = () => {
     // If a lock is now active we also align the visible view to the locked
     // value so the Header pills and dashboard content match immediately.
     try {
+      // Req 2: order-taking OFF forces order + status, overriding lock/default
+      if (isOrderTakingDisabledFromStorage()) {
+        setActiveView('order');
+        setDashboardView('status');
+        // still update lock flags for Sidebar visibility (Option B keeps toggles visible)
+        const storedTO_ot = localStorage.getItem('mygenie_view_mode_table_order');
+        setLockTableOrder(storedTO_ot === 'table' || storedTO_ot === 'order');
+        const storedCS_ot = localStorage.getItem('mygenie_view_mode_channel_status');
+        setLockChannelStatus(storedCS_ot === 'channel' || storedCS_ot === 'status');
+        return;
+      }
+
       const storedTO = localStorage.getItem('mygenie_view_mode_table_order');
       const isLockedTO = storedTO === 'table' || storedTO === 'order';
       setLockTableOrder(isLockedTO);
@@ -337,24 +363,28 @@ const DashboardPage = () => {
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn", "room"]);
   const [activeStatuses, setActiveStatuses] = useState(["pending", "preparing", "ready", "running", "served", "pendingPayment", "paid", "cancelled", "reserved"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
-  const [activeView, setActiveView] = useState(() =>
-    resolveInitialView(
+  const [activeView, setActiveView] = useState(() => {
+    // Req 2: order-taking OFF forces 'order' regardless of lock/default
+    if (isOrderTakingDisabledFromStorage()) return 'order';
+    return resolveInitialView(
       'mygenie_view_mode_table_order',
       'mygenie_default_pos_view',
       ['table', 'order'],
       ['table', 'order'],
       'table'
-    )
-  );
-  const [dashboardView, setDashboardView] = useState(() =>
-    resolveInitialView(
+    );
+  });
+  const [dashboardView, setDashboardView] = useState(() => {
+    // Req 2: order-taking OFF forces 'status' regardless of lock/default
+    if (isOrderTakingDisabledFromStorage()) return 'status';
+    return resolveInitialView(
       'mygenie_view_mode_channel_status',
       'mygenie_default_dashboard_view',
       ['channel', 'status'],
       ['channel', 'status'],
       'channel'  // Req 4: factory default changed from 'status' to 'channel'
-    )
-  );
+    );
+  });
   // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): lock flags drive whether
   // the Sidebar runtime toggle is shown for each axis. true = admin has
   // locked this axis; false (incl. 'both' / absent) = cashier may switch
@@ -416,6 +446,30 @@ const DashboardPage = () => {
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
+
+  // Req 2 enhancement: react to order-taking flag flips (mount + cross-tab).
+  // OFF → force order + status; ON → re-resolve from admin lock/default.
+  useEffect(() => {
+    if (!orderTakingEnabled) {
+      setActiveView('order');
+      setDashboardView('status');
+    } else {
+      setActiveView(resolveInitialView(
+        'mygenie_view_mode_table_order',
+        'mygenie_default_pos_view',
+        ['table', 'order'],
+        ['table', 'order'],
+        'table'
+      ));
+      setDashboardView(resolveInitialView(
+        'mygenie_view_mode_channel_status',
+        'mygenie_default_dashboard_view',
+        ['channel', 'status'],
+        ['channel', 'status'],
+        'channel'
+      ));
+    }
+  }, [orderTakingEnabled]);
 
   const handleRefreshAll = async () => {
     if (isRefreshing) return;
