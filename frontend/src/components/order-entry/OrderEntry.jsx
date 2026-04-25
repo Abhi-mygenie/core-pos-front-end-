@@ -1104,6 +1104,15 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.warn('[AutoPrintBill] SKIPPED — settings.autoBill is falsy. Value:', settings?.autoBill, 'full settings:', settings);
                       return;
                     }
+                    // REQ3 (Apr-2026, AD-302A): suppress auto-bill for room orders
+                    // even when settings.autoBill=true. Manual `Print Bill` remains
+                    // available. Applies to both Scenario 1 (postpaid) below and
+                    // Scenario 2 (prepaid place+pay) here. See
+                    // /app/memory/REQ3_ROOM_BILL_PRINT_DEEPDIVE.md §10 Q-3A.
+                    if (effectiveTable?.isRoom) {
+                      console.log('[AutoPrintBill] SKIPPED — isRoom (Req 3 / AD-302A). orderId:', newOrderId);
+                      return;
+                    }
                     if (!newOrderId) {
                       console.error('[AutoPrintBill] SKIPPED — no order_id returned from place-order response (capture returned null)');
                       return;
@@ -1307,7 +1316,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     // BUG-002 (QA, Apr 2026): fire auto-print AFTER successful collect-bill.
                     // Non-blocking (wrapped in try/catch); if print fails, payment remains
                     // collected and manual "Print Bill" stays available as fallback.
-                    if (settings?.autoBill && collectOrderId) {
+                    // REQ3 (Apr-2026, AD-302A): suppress for room orders — manual
+                    // `Print Bill` button remains the supported path for rooms.
+                    if (settings?.autoBill && collectOrderId && !effectiveTable?.isRoom) {
                       try {
                         const orderForPrint = getOrderById(Number(collectOrderId));
                         if (orderForPrint && orderForPrint.rawOrderDetails) {

@@ -246,6 +246,13 @@ export const fromAPI = {
       deliveryCharge: parseFloat(api.delivery_charge) || 0,
 
       // Associated orders — table orders transferred to this room (Phase 2B)
+      // REQ3 (Apr-2026): preserve the full raw API item under `_raw` so that
+      // buildBillPrintPayload can emit the backend-expected `associated_orders[]`
+      // schema (id, room_id, restaurant_id, user_id, order_id, restaurant_order_id,
+      // order_amount, order_status, created_at, updated_at). Existing camelCase
+      // fields (orderId/orderNumber/amount/transferredAt) are kept unchanged so
+      // existing consumers (CartPanel, CollectPaymentPanel, DashboardPage) are
+      // not affected.
       associatedOrders: (() => {
         const raw = api.associated_order_list || [];
         const seen = new Set();
@@ -258,6 +265,7 @@ export const fromAPI = {
           orderNumber: item.restaurant_order_id || '',
           amount: parseFloat(item.order_amount) || 0,
           transferredAt: item.collect_Bill || '',
+          _raw: item,
         }));
       })(),
 
@@ -1194,12 +1202,61 @@ export const toAPI = {
     const finalGstTax = overrides.gstTax !== undefined ? overrides.gstTax : gst_tax;
     const finalVatTax = overrides.vatTax !== undefined ? overrides.vatTax : vat_tax;
 
+    // ==========================================================================
+    // REQ3 (Apr-2026): Room order bill print enrichment.
+    // - Replaces the hardcoded 0s for `roomRemainingPay` / `roomAdvancePay`
+    //   with real values from `order.roomInfo` when isRoom.
+    // - Emits `associated_orders[]` matching the backend schema (sourced from
+    //   `_raw` preserved in fromAPI.order).
+    // - Rolls associatedTotal + roomBalance into `payment_amount` / `grant_amount`
+    //   when the override path supplies a food-only `paymentAmount`, so the
+    //   printed bill total matches the cashier-visible total
+    //   (CollectPaymentPanel.jsx:543 / 555 / 1986).
+    // - Architectural rule preserved: SC / discount / tip / GST apply ONLY to
+    //   food-subtotal — NOT to roomBalance, NOT to associatedTotal.
+    // - `roomGst` stays 0 per Q-3E.
+    // ==========================================================================
+    const isRoomPrint = order.isRoom === true;
+    const associatedOrdersForPrint = isRoomPrint
+      ? (order.associatedOrders || []).map(ao => {
+          const r = ao._raw || {};
+          return {
+            id: r.id ?? ao.orderId ?? 0,
+            room_id: r.room_id ?? 0,
+            restaurant_id: r.restaurant_id ?? 0,
+            user_id: r.user_id ?? null,
+            order_id: r.order_id ?? 0,
+            restaurant_order_id: r.restaurant_order_id ?? ao.orderNumber ?? '',
+            order_amount: r.order_amount !== undefined ? Number(r.order_amount) : (ao.amount ?? 0),
+            order_status: r.order_status ?? 0,
+            created_at: r.created_at ?? '',
+            updated_at: r.updated_at ?? '',
+          };
+        })
+      : [];
+    const associatedTotalForPrint = associatedOrdersForPrint.reduce(
+      (s, o) => s + (Number(o.order_amount) || 0), 0
+    );
+    const roomBalanceForPrint = isRoomPrint && order.roomInfo
+      ? Math.max(0, Number(order.roomInfo.balancePayment) || 0)
+      : 0;
+    const roomAdvanceForPrint = isRoomPrint && order.roomInfo
+      ? (Number(order.roomInfo.advancePayment) || 0)
+      : 0;
+    // Roll room-side amounts into the final payable when the override path
+    // supplied a food-only `paymentAmount`. Default branch (no override)
+    // already trusts `order.amount`, which is room-inclusive per Task 4
+    // (computeRoomCardAmount in DashboardPage.jsx).
+    const roomFinalPaymentAmount = (isRoomPrint && overrides.paymentAmount !== undefined)
+      ? Math.round((Number(finalPaymentAmount) + associatedTotalForPrint + roomBalanceForPrint) * 100) / 100
+      : finalPaymentAmount;
+
     return {
       order_id: order.orderId,
       restaurant_order_id: order.orderNumber || '',
       print_type: 'bill',
-      payment_amount: finalPaymentAmount,
-      grant_amount: finalPaymentAmount,
+      payment_amount: roomFinalPaymentAmount,
+      grant_amount: roomFinalPaymentAmount,
       order_item_total: finalOrderItemTotal,
       order_subtotal: finalOrderSubtotal,
       discount_amount: overrides.discountAmount !== undefined ? overrides.discountAmount : 0,
@@ -1216,9 +1273,13 @@ export const toAPI = {
       billFoodList,
       orderNote: order.orderNote || '',
       serviceChargeAmount,
-      roomRemainingPay: 0,
-      roomAdvancePay: 0,
+      roomRemainingPay: roomBalanceForPrint,
+      roomAdvancePay: roomAdvanceForPrint,
       roomGst: 0,
+      // REQ3: associated dine-in/walk-in bills transferred to this room.
+      // Empty array for non-room orders. Schema mirrors backend
+      // `associated_order_list` items (see /app/memory/REQ3_*).
+      associated_orders: associatedOrdersForPrint,
       // BUG-012: Use overrides.deliveryAddress (from selectedAddress in OrderEntry)
       // when available; fallback to order.deliveryAddress (from socket, often null).
       deliveryCustName: order.orderType === 'delivery'

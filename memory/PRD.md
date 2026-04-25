@@ -2,7 +2,7 @@
 
 > **Purpose**: implementation-ready handover for the next agent. Captures everything done across deployment, validation, and implementation in this session.
 > **Codebase**: `/app` (cloned from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch **`roomv2`**).
-> **Last session date**: 2026-04-25.
+> **Last session date**: 2026-04-25 (Req 3 implementation).
 > **Last commit at session end**: `10ed08e Auto-generated changes` (branch `roomv2` HEAD at clone time; on-disk has uncommitted edits per §6).
 
 ---
@@ -376,4 +376,73 @@ cp /tmp/task1_revision_backups/StatusConfigPage.jsx.bak /app/frontend/src/pages/
 cp /tmp/task1_revision_backups/DashboardPage.jsx.bak    /app/frontend/src/pages/DashboardPage.jsx && \
 cp /tmp/task1_revision_backups/Sidebar.jsx.bak          /app/frontend/src/components/layout/Sidebar.jsx
 ```
+
+
+
+---
+
+## Req 3 — Room Order Bill Print Payload (2026-04-25, IMPLEMENTED)
+
+> **Pointer:** full deep-dive in `/app/memory/REQ3_ROOM_BILL_PRINT_DEEPDIVE.md`.
+> **Pointer:** standalone V3 doc notes in `/app/memory/REQ3_V3_DOC_NOTES.md` (per owner: NOT applied to existing `/app/v3/*` docs).
+
+### Decisions locked
+
+| Q | Answer |
+|---|---|
+| Q-3A | strict — suppress auto-bill for ANY `isRoom` order (Scenarios 1 & 2) |
+| Q-3B | a — keep manual `Print Bill` enabled for rooms with enriched payload |
+| Q-3C | c — conservative; only existing keys (`roomRemainingPay`/`roomAdvancePay`) populated + `associated_orders[]` (schema confirmed via curl sample) |
+| Q-3D | confirmed defaults |
+| Q-3E | a — `roomGst = 0` |
+| Q-3F | a — food-only SC/discount/tip/GST/VAT |
+| Q-3G | use existing `tablename` (carries room number) |
+| Q-3H | a — trust live overrides; no extra refetch |
+| Q-3I | a — no print on Transfer to Room |
+| Q-3J | a — no special ₹0 receipt |
+| Q-3K | separate doc (`REQ3_V3_DOC_NOTES.md`); existing V3 untouched |
+| Q-3L | a — hard-coded behavior |
+
+### Code changes
+
+| File | Change |
+|---|---|
+| `frontend/src/api/transforms/orderTransform.js` | **`fromAPI.order`** (line 248-272): `associatedOrders[]` items now preserve full raw API item under `_raw` for downstream snake_case schema mapping. **`toAPI.buildBillPrintPayload`** (line 1205-1252, 1276-1282): added REQ3 enrichment block — populates `roomRemainingPay` / `roomAdvancePay` from `order.roomInfo` when isRoom (was hardcoded 0); emits `associated_orders[]` with backend schema (`id, room_id, restaurant_id, user_id, order_id, restaurant_order_id, order_amount, order_status, created_at, updated_at`) for room orders, empty array otherwise; `payment_amount` / `grant_amount` rolls in `associatedTotal + roomBalance` when override branch supplies food-only `paymentAmount` (so printed total matches cashier-visible total in CollectPaymentPanel). `roomGst` stays 0 per Q-3E. |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | **Path A** `autoPrintNewOrderIfEnabled` (line 1103-1118): added `if (effectiveTable?.isRoom) return;` short-circuit with explanatory log. **Path B** postpaid auto-print gate (line 1313): inline `&& !effectiveTable?.isRoom`. Manual `onPrintBill` path untouched. |
+
+### Tests added
+
+`frontend/src/api/transforms/__tests__/req3-room-bill-print.test.js` — 6 unit tests covering:
+- Non-room baseline (regression)
+- Room with no transfers/balance (zeros)
+- Room with transfers + balance + advance (default branch, trusts `order.amount`)
+- Room with override branch (rolls `assoc + balance` into `payment_amount`)
+- Non-room override branch (no inflation)
+- `_raw` preservation in `fromAPI.order`
+
+**Result:** 6/6 new + 7/7 existing roomInfo tests pass. Wider suite has 13 pre-existing drift failures (unrelated — `cancelItemFull`/`Partial`, `take_away`/`takeaway` outbound — see §8).
+
+### Behavior matrix
+
+| Order type | autoBill flag | Auto-print fires? | Manual Print Bill | New keys in payload |
+|---|---|---|---|---|
+| Dine-in / Takeaway / Delivery (non-room) | true | YES (regression OK) | YES | `associated_orders=[]`, `roomRemainingPay=0`, `roomAdvancePay=0` |
+| Room order, place+pay (Scenario 2) | true | **NO** (suppressed, log emitted) | YES | `associated_orders[]` populated, room values populated |
+| Room order, postpaid collect-bill (Scenario 1) | true | **NO** (suppressed) | YES | same as above |
+| Transfer to Room (Scenario 3) | any | NO (unchanged) | n/a | n/a |
+
+### Rollback
+
+```bash
+cd /app/frontend
+git diff src/api/transforms/orderTransform.js src/components/order-entry/OrderEntry.jsx
+git checkout -- src/api/transforms/orderTransform.js src/components/order-entry/OrderEntry.jsx
+rm src/api/transforms/__tests__/req3-room-bill-print.test.js
+```
+
+### Remaining backlog
+
+- **Req 1 — Station Panel Socket Refresh:** PARKED. Endpoint mismatch (`employee-menu` vs `station-order-list`). Awaiting a working token/sample for `GET /api/v1/vendoremployee/employee-menu`.
+- **Q-3G follow-up:** if cashiers report room number missing on receipts, verify `tablename` is correctly rendering on backend printer template. Otherwise add top-level `room_id`/`paid_room`.
+- **Pre-existing test drift** `updateOrderPayload.test.js:323` (`take_away` vs `takeaway` outbound) — out of scope.
 
