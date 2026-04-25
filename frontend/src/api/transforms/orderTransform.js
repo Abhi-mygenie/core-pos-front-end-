@@ -909,13 +909,13 @@ export const toAPI = {
       gst_tax:                      gstTax,
       vat_tax:                      vatAmount || 0,
       grand_amount:                 finalTotal || 0,
-      // ROOM_CHECKIN_GAP3 (Stage 2): `grand_total` carries the full payable
-      // amount (food + associated + room balance) for room orders with a
-      // pending room balance. Backend interpretation (i), verified via curl
-      // on preprod 2026-04-25 (room r1/731653, balance ₹22 → 200 OK,
-      // "Bill cleared via cash"). Emitted only when roomBalance > 0 to keep
-      // non-room flows byte-identical to pre-Stage-2 payloads.
-      ...(roomBalance > 0 ? { grand_total: finalTotal || 0 } : {}),
+      // ROOM_CHECKIN_GAP3 (Stage 2, revised 2026-04-25): `order_amount` carries
+      // the full payable amount (food + associated + room balance) for room
+      // orders with a pending room balance. User-confirmed field name on
+      // 2026-04-25 (replaces earlier `grand_total` candidate). Emitted only
+      // when roomBalance > 0 to keep non-room flows byte-identical to
+      // pre-Stage-2 payloads.
+      ...(roomBalance > 0 ? { order_amount: finalTotal || 0 } : {}),
       round_up:                     0,
       // Tax & Tip
       service_tax:                  serviceCharge || 0,

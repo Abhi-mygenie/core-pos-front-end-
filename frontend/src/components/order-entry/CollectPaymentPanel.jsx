@@ -1147,13 +1147,9 @@ const CollectPaymentPanel = ({
                 )}
               </div>
 
-              {/* Grand Total */}
-              <div className="pt-2 border-t" style={{ borderColor: COLORS.borderGray }}>
-                <div className="flex justify-between font-bold">
-                  <span style={{ color: COLORS.darkText }}>Total</span>
-                  <span style={{ color: COLORS.primaryOrange }}>₹{(finalTotal + associatedTotal + roomBalance).toLocaleString()}</span>
-                </div>
-              </div>
+              {/* ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): single
+                  "Total" row removed — replaced by the Grand-Total Stack
+                  rendered below the bill-summary card via <GrandTotalStack/>. */}
             </div>
           ) : (
           /* === DEFAULT: Table / Room without transfers — show item details === */
@@ -1374,6 +1370,52 @@ const CollectPaymentPanel = ({
           </div>
           </>
           )}
+        </div>
+
+        {/* ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): Grand-Total Stack
+            — Variant α (clean). Sub-rows render only for room flows; non-room
+            flows show only the GRAND TOTAL line (single row, hide all sub-rows
+            when only Food is non-zero). For rooms, sub-rows auto-hide when
+            their value is 0 — Architecture rule L2 (no SC/GST/discount on
+            room balance) is preserved because Food Total already contains all
+            food-side modifiers, and Room Balance is added flat. */}
+        <div
+          className="p-4 rounded-lg border"
+          style={{ borderColor: COLORS.borderGray }}
+          data-testid="bill-grand-total-stack"
+        >
+          {isRoom && (
+            <>
+              {finalTotal > 0 && (
+                <div className="flex justify-between text-sm py-1" data-testid="bill-stack-food">
+                  <span style={{ color: COLORS.grayText }}>Food Total</span>
+                  <span style={{ color: COLORS.darkText, fontWeight: 600 }}>₹{finalTotal.toLocaleString()}</span>
+                </div>
+              )}
+              {associatedTotal > 0 && (
+                <div className="flex justify-between text-sm py-1" data-testid="bill-stack-transferred">
+                  <span style={{ color: COLORS.grayText }}>Transferred Total</span>
+                  <span style={{ color: COLORS.darkText, fontWeight: 600 }}>₹{associatedTotal.toLocaleString()}</span>
+                </div>
+              )}
+              {roomBalance > 0 && (
+                <div className="flex justify-between text-sm py-1" data-testid="bill-stack-room-balance">
+                  <span style={{ color: COLORS.grayText }}>Room Balance</span>
+                  <span style={{ color: COLORS.darkText, fontWeight: 600 }}>₹{roomBalance.toLocaleString()}</span>
+                </div>
+              )}
+            </>
+          )}
+          <div
+            className={`flex justify-between font-bold ${isRoom ? 'pt-2 mt-1 border-t' : ''}`}
+            style={{ borderColor: COLORS.borderGray }}
+            data-testid="bill-grand-total"
+          >
+            <span style={{ color: COLORS.darkText, textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '13px' }}>Grand Total</span>
+            <span style={{ color: COLORS.primaryOrange, fontSize: '16px' }}>
+              ₹{(finalTotal + (isRoom ? associatedTotal + roomBalance : 0)).toLocaleString()}
+            </span>
+          </div>
         </div>
 
         {/* BUG-006 UX (Apr-2026): Discount/Coupon/Loyalty/Wallet controls moved ABOVE the Bill Summary card — see "ADJUSTMENTS" section earlier in this render tree. Former location kept as empty placeholder for diff readability. */}

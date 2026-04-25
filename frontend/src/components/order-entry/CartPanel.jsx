@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, MapPin } from "lucide-react";
+import { Utensils, XCircle, Pencil, CookingPot, UtensilsCrossed, Check, User, Phone, Trash2, ArrowLeftRight, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, MapPin, FileText } from "lucide-react";
 import { COLORS } from "../../constants";
 import { searchCustomers } from "../../api/services/customerService";
 import { RePrintOnlyButton, KotBillCheckboxes } from "./RePrintButton";
@@ -257,6 +257,7 @@ const CartPanel = ({
   onDeleteItem,
   isRoom,
   associatedOrders = [],
+  roomInfo = null, // ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): room booking financials for the flat Room indicator pill + Checkout button amount.
   orderNotes = [],
   onEditOrderNotes,
   canCancelItem = true,
@@ -305,7 +306,9 @@ const CartPanel = ({
   const phoneMissing = isPhoneRequired && customerPhone.replace(/\D/g, '').length !== 10;
   const addressMissing = isAddressRequired && !selectedAddress;
   const hasValidationErrors = nameMissing || phoneMissing || addressMissing;
-  const [showAssociatedOrders, setShowAssociatedOrders] = useState(false);
+  // ROOM_CHECKIN_GAP3 (2026-04-25): showAssociatedOrders state previously
+  // gated the cart-level Transferred Orders expansion. The pill was flattened
+  // to amount-only (no chevron); state hook removed.
   const phoneInputRef = useRef(null);
   const nameInputRef = useRef(null);
 
@@ -685,52 +688,48 @@ const CartPanel = ({
         )}
       </div>
 
-      {/* Associated Orders — transferred table orders (rooms only) */}
+      {/* Associated Orders — flat row showing transferred-orders total
+          (rooms only). User decision 2026-04-25: no expansion / chevron on
+          the Order Entry screen, just amount indication. Detail expansion
+          remains on the Collect Bill screen. */}
       {isRoom && associatedOrders.length > 0 && (
-        <div style={{ borderTop: `1px solid ${COLORS.borderGray}` }} data-testid="associated-orders-section">
-          <button
-            onClick={() => setShowAssociatedOrders(!showAssociatedOrders)}
-            className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-            data-testid="associated-orders-toggle"
-          >
-            <div className="flex items-center gap-2">
-              <ArrowLeftRight className="w-4 h-4" style={{ color: COLORS.primaryOrange }} />
-              <span className="text-xs font-semibold" style={{ color: COLORS.darkText }}>
-                Transferred Orders ({associatedOrders.length})
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }}>
-                ₹{associatedTotal.toLocaleString()}
-              </span>
-              {showAssociatedOrders
-                ? <ChevronUp className="w-4 h-4" style={{ color: COLORS.grayText }} />
-                : <ChevronDown className="w-4 h-4" style={{ color: COLORS.grayText }} />
-              }
-            </div>
-          </button>
-          {showAssociatedOrders && (
-            <div className="max-h-40 overflow-y-auto" style={{ backgroundColor: `${COLORS.primaryOrange}05` }}>
-              {associatedOrders.map((order) => (
-                <div
-                  key={order.orderId}
-                  className="px-4 py-2 flex items-center justify-between text-xs"
-                  style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
-                  data-testid={`associated-order-${order.orderId}`}
-                >
-                  <div>
-                    <span className="font-medium" style={{ color: COLORS.darkText }}>#{order.orderNumber}</span>
-                    {order.transferredAt && (
-                      <span className="ml-2" style={{ color: COLORS.grayText }}>
-                        {new Date(order.transferredAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                      </span>
-                    )}
-                  </div>
-                  <span className="font-semibold" style={{ color: COLORS.darkText }}>₹{order.amount.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          )}
+        <div
+          style={{ borderTop: `1px solid ${COLORS.borderGray}` }}
+          className="px-4 py-2.5 flex items-center justify-between"
+          data-testid="associated-orders-section"
+        >
+          <div className="flex items-center gap-2">
+            <ArrowLeftRight className="w-4 h-4" style={{ color: COLORS.primaryOrange }} />
+            <span className="text-xs font-semibold" style={{ color: COLORS.darkText }}>
+              Transferred Orders ({associatedOrders.length})
+            </span>
+          </div>
+          <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }}>
+            ₹{associatedTotal.toLocaleString()}
+          </span>
+        </div>
+      )}
+
+      {/* ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): Room booking
+          balance — flat indicator below Transferred Orders on the Order
+          Entry screen. Same flat treatment as Transferred Orders (no
+          chevron, no expansion). Detailed breakdown is on the Collect Bill
+          screen only. Renders only for rooms with a hydrated room_info. */}
+      {isRoom && roomInfo && (
+        <div
+          style={{ borderTop: `1px solid ${COLORS.borderGray}` }}
+          className="px-4 py-2.5 flex items-center justify-between"
+          data-testid="cart-room-section"
+        >
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" style={{ color: COLORS.primaryOrange }} />
+            <span className="text-xs font-semibold" style={{ color: COLORS.darkText }}>
+              Room
+            </span>
+          </div>
+          <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }} data-testid="cart-room-balance">
+            ₹{(roomInfo.balancePayment || 0).toLocaleString()}
+          </span>
         </div>
       )}
 
@@ -804,7 +803,10 @@ const CartPanel = ({
           style={{ backgroundColor: "#2E7D32" }}
         >
           <span>{isRoom ? 'Checkout' : 'Collect Bill'}</span>
-          <span>₹{total.toLocaleString()}</span>
+          {/* ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): combined total
+              for rooms = food + associated + room balance. Non-room flows
+              keep `total` as-is. */}
+          <span>₹{(total + (isRoom ? associatedTotal + Math.max(0, roomInfo?.balancePayment || 0) : 0)).toLocaleString()}</span>
         </button>
         )}
       </div>

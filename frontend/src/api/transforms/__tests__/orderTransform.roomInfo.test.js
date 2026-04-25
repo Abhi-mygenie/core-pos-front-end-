@@ -3,7 +3,7 @@
  * Verifies:
  *  - fromAPI.order exposes roomInfo struct when api.room_info present
  *  - fromAPI.order returns roomInfo:null when api.room_info absent
- *  - collectBillExisting payload emits `grand_total` ONLY when roomBalance > 0
+ *  - collectBillExisting payload emits `order_amount` ONLY when roomBalance > 0
  */
 import { fromAPI, toAPI } from '../orderTransform';
 const orderTransform = { fromAPI, toAPI };
@@ -37,34 +37,34 @@ describe('Stage 1 — fromAPI.order roomInfo exposure', () => {
   });
 });
 
-describe('Stage 2 — collectBillExisting grand_total emission', () => {
+describe('Stage 2 — collectBillExisting order_amount emission', () => {
   const table = { orderId: 731700 };
   const customer = {};
 
-  test('grand_total ABSENT when roomBalance = 0 (non-room)', () => {
+  test('order_amount ABSENT when roomBalance = 0 (non-room)', () => {
     const payload = orderTransform.toAPI.collectBillExisting(
       table, [], customer,
       { method: 'cash', finalTotal: 500, roomBalance: 0 }
     );
-    expect('grand_total' in payload).toBe(false);
+    expect('order_amount' in payload).toBe(false);
     expect(payload.payment_amount).toBe(500);
     expect(payload.grand_amount).toBe(500);
   });
 
-  test('grand_total ABSENT when roomBalance unset', () => {
+  test('order_amount ABSENT when roomBalance unset', () => {
     const payload = orderTransform.toAPI.collectBillExisting(
       table, [], customer,
       { method: 'cash', finalTotal: 500 }
     );
-    expect('grand_total' in payload).toBe(false);
+    expect('order_amount' in payload).toBe(false);
   });
 
-  test('grand_total PRESENT when roomBalance > 0', () => {
+  test('order_amount PRESENT when roomBalance > 0', () => {
     const payload = orderTransform.toAPI.collectBillExisting(
       table, [], customer,
       { method: 'cash', finalTotal: 1234, roomBalance: 100 }
     );
-    expect(payload.grand_total).toBe(1234);
+    expect(payload.order_amount).toBe(1234);
     expect(payload.payment_amount).toBe(1234);
   });
 

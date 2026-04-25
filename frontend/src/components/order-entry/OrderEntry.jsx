@@ -1545,6 +1545,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 setShowPaymentPanel={setShowPaymentPanel}
                 isRoom={table?.isRoom}
                 associatedOrders={orderData?.associatedOrders || []}
+                roomInfo={orderData?.roomInfo || null}
                 onAddNote={(item, cartIndex) => setItemNotesModal({ item, cartIndex })}
                 onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
