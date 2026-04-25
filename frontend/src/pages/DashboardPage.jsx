@@ -232,6 +232,22 @@ const DashboardPage = () => {
         }
       } catch (e) { /* ignore */ }
     }
+
+    // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): re-derive view mode locks
+    // when navigating back to the Dashboard (e.g. from the Settings page).
+    // If a lock is now active we also align the visible view to the locked
+    // value so the Header pills and dashboard content match immediately.
+    try {
+      const storedTO = localStorage.getItem('mygenie_view_mode_table_order');
+      const isLockedTO = storedTO === 'table' || storedTO === 'order';
+      setLockTableOrder(isLockedTO);
+      if (isLockedTO) setActiveView(storedTO);
+
+      const storedCS = localStorage.getItem('mygenie_view_mode_channel_status');
+      const isLockedCS = storedCS === 'channel' || storedCS === 'status';
+      setLockChannelStatus(isLockedCS);
+      if (isLockedCS) setDashboardView(storedCS);
+    } catch (e) { /* localStorage unavailable */ }
   }, [location.pathname]);
   
   // Listen for localStorage changes (cross-tab: when config page saves in another tab)
@@ -253,6 +269,19 @@ const DashboardPage = () => {
           }
         } catch (err) { /* ignore */ }
       }
+      // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): cross-tab sync for
+      // view mode locks. When admin saves a new lock in another tab,
+      // the dashboard reacts immediately without requiring a reload.
+      if (e.key === 'mygenie_view_mode_table_order') {
+        const isLocked = e.newValue === 'table' || e.newValue === 'order';
+        setLockTableOrder(isLocked);
+        if (isLocked) setActiveView(e.newValue);
+      }
+      if (e.key === 'mygenie_view_mode_channel_status') {
+        const isLocked = e.newValue === 'channel' || e.newValue === 'status';
+        setLockChannelStatus(isLocked);
+        if (isLocked) setDashboardView(e.newValue);
+      }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
@@ -262,9 +291,10 @@ const DashboardPage = () => {
   const [activeStatuses, setActiveStatuses] = useState(["pending", "preparing", "ready", "running", "served", "pendingPayment", "paid", "cancelled", "reserved"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
   const [activeView, setActiveView] = useState(() => {
-    // VIEW_MODE_LOCK (Task 1, Apr-2026): single-pick mode per axis (no Both,
-    // no runtime toggle). Initial value comes from StatusConfigPage's
-    // localStorage key; falls back to historical default 'table'.
+    // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): if storage holds an
+    // explicit lock ('table' or 'order') use it; otherwise (storage holds
+    // 'both' or is absent) start at the legacy default 'table' so the
+    // sidebar runtime toggle starts there.
     try {
       const stored = localStorage.getItem('mygenie_view_mode_table_order');
       if (stored === 'table' || stored === 'order') return stored;
@@ -277,6 +307,23 @@ const DashboardPage = () => {
       if (stored === 'channel' || stored === 'status') return stored;
     } catch (e) { /* localStorage unavailable */ }
     return 'status';
+  });
+  // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): lock flags drive whether
+  // the Sidebar runtime toggle is shown for each axis. true = admin has
+  // locked this axis; false (incl. 'both' / absent) = cashier may switch
+  // freely. These are state (not derived) so the path-nav and cross-tab
+  // storage effects below can update them at runtime.
+  const [lockTableOrder, setLockTableOrder] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mygenie_view_mode_table_order');
+      return stored === 'table' || stored === 'order';
+    } catch (e) { return false; }
+  });
+  const [lockChannelStatus, setLockChannelStatus] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mygenie_view_mode_channel_status');
+      return stored === 'channel' || stored === 'status';
+    } catch (e) { return false; }
   });
   const [hiddenChannels, setHiddenChannels] = useState([]); // Hidden channel IDs (dineIn, delivery, etc.)
   const [hiddenStatuses, setHiddenStatuses] = useState([]); // Hidden status IDs (preparing, ready, etc.)
@@ -1121,13 +1168,16 @@ const DashboardPage = () => {
         onRefresh={handleRefreshAll}
         isRefreshing={isRefreshing}
         isOrderEntryOpen={orderEntryType !== null}
-        // VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): pass runtime view
-        // state so Sidebar can render the legacy view toggles. Step 4 will
-        // add lock flags to hide them when an admin override is active.
+        // VIEW_MODE_LOCK v2 (Task 1 revision, Steps 1 & 4): pass runtime
+        // view state PLUS lock flags. Sidebar shows each toggle by default
+        // and hides it only when the corresponding axis is locked by the
+        // admin (StatusConfigPage).
         activeView={activeView}
         setActiveView={setActiveView}
         dashboardView={dashboardView}
         setDashboardView={setDashboardView}
+        lockTableOrder={lockTableOrder}
+        lockChannelStatus={lockChannelStatus}
       />
 
       <SettingsPanel

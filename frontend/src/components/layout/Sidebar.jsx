@@ -117,13 +117,15 @@ const Sidebar = ({
   onRefresh, 
   isRefreshing, 
   isOrderEntryOpen,
-  // VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): runtime view toggles are
-  // restored. These are optional — pages that don't manage view state (e.g.
-  // StatusConfigPage) simply don't pass them and the toggles won't render.
+  // VIEW_MODE_LOCK v2 (Task 1 revision, Steps 1 & 4): runtime view toggles
+  // are restored as the legacy default. Each axis is hidden only when the
+  // corresponding lock flag is true (admin override active).
   activeView,
   setActiveView,
   dashboardView,
   setDashboardView,
+  lockTableOrder = false,
+  lockChannelStatus = false,
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -284,18 +286,19 @@ const Sidebar = ({
         )}
       </div>
 
-      {/* VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): runtime view toggles
-          restored as the legacy default. Each toggle renders only when the
-          parent page actually manages that axis (i.e. passes its setter).
-          Step 4 of the revision will additionally hide each axis when an
-          admin lock is active. */}
-      {(setActiveView || setDashboardView) && (
+      {/* VIEW_MODE_LOCK v2 (Task 1 revision, Steps 1 & 4): runtime view
+          toggles. Default behaviour = both toggles visible (legacy).
+          Each toggle hides only when its axis is locked by an admin
+          override saved on StatusConfigPage. The outer container also
+          hides if every individual toggle would be hidden, to avoid
+          rendering an empty bordered div. */}
+      {((setActiveView && !lockTableOrder) || (setDashboardView && !lockChannelStatus)) && (
         <div
           data-testid="view-toggles-container"
           className="px-3 py-3 flex flex-col gap-2"
           style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
         >
-          {setActiveView && (
+          {setActiveView && !lockTableOrder && (
             <button
               data-testid="view-toggle"
               onClick={() => setActiveView(activeView === 'table' ? 'order' : 'table')}
@@ -321,7 +324,7 @@ const Sidebar = ({
             </button>
           )}
 
-          {setDashboardView && (
+          {setDashboardView && !lockChannelStatus && (
             <button
               data-testid="group-toggle"
               onClick={() => setDashboardView(dashboardView === 'channel' ? 'status' : 'channel')}
