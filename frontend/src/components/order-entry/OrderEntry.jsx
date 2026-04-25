@@ -1502,6 +1502,19 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   const hasPlaced = cartItems.some(i => i.placed && i.status !== 'cancelled');
                   if (!hasUnplaced && !hasPlaced) return null;
                   if (!hasUnplaced && hasPlaced && !isOrderCancelAllowed) return null;
+                  // ROOM_CHECKIN_GAP4 (2026-04-25): for rooms, the bulk
+                  // "Cancel Order" path would wipe the entire order_id —
+                  // including the check-in marker — destroying the room
+                  // booking. Backend models marker + room-service food under
+                  // a single order_id, so a single cancel = full cancel.
+                  // Per-item cancel (`cancelItem`) preserves the marker
+                  // correctly, so for rooms we hide the bulk-cancel API
+                  // path and force operators to use the per-item X buttons.
+                  // The "Clear unplaced items" frontend-only cleanup branch
+                  // (hasUnplaced=true) is preserved because it does not call
+                  // the cancel API. See
+                  // /app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md.
+                  if (!hasUnplaced && hasPlaced && table?.isRoom) return null;
                   return (
                     <button
                       onClick={() => hasUnplaced
