@@ -1,118 +1,316 @@
-# Deployment Handover – Core POS Frontend (roomv1-)
+# Core POS Frontend — Session PRD & Handover
 
-**Scope:** Deployment-only task. No code analysis, refactoring, bug-fixing, or test execution was performed.
+> **Purpose**: implementation-ready handover for the next agent. Captures everything done across deployment, validation, and implementation in this session.
+> **Codebase**: `/app` (cloned from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch **`roomv2`**).
+> **Last session date**: 2026-04-25.
+> **Last commit at session end**: `10ed08e Auto-generated changes` (branch `roomv2` HEAD at clone time; on-disk has uncommitted edits per §6).
 
 ---
 
-## 1. Source Repository
+## 1. Project Snapshot
 
-| Item | Value |
+| Attribute | Value |
 |---|---|
-| Git URL | https://github.com/Abhi-mygenie/core-pos-front-end-.git |
-| Branch | `roomv1-` |
-| Cloned commit | `b59c410 Auto-generated changes` |
-| Clone destination | `/app` (repo contents placed directly in `/app`; `/app/.git` and `/app/.emergent` preserved) |
-
-Everything previously present in `/app` (default backend/frontend scaffold, test_reports, memory, tests, README, etc.) was wiped before cloning, as instructed. The repo's own `.git` and `.emergent` folders were excluded during copy so the platform's existing `/app/.git` and `/app/.emergent` remain intact.
-
----
-
-## 2. Tech Stack (as deployed)
-
-- React 19.0.0
-- CRACO v7.1.0
-- Yarn 1.22.22
-- Node.js v20.20.2
-- Frontend-only project (no backend service in this branch – a stub `backend/` folder exists in the repo but is not part of the deployment)
+| Project | MyGenie Core POS — React frontend |
+| Repo | https://github.com/Abhi-mygenie/core-pos-front-end-.git |
+| Active branch deployed | `roomv2` |
+| Public preview URL | https://restaurant-pos-v2-1.preview.emergentagent.com |
+| Real backend (out of scope here) | https://preprod.mygenie.online (CRM/POS) + https://presocket.mygenie.online (sockets) |
+| Auth-provider | Customer's own (vendoremployee Bearer token) |
+| Tech stack | React 19.0.0 · CRACO 7.1.0 · Yarn 1.22.22 · Node 20.20.2 · react-scripts 5.0.1 |
+| Package manager rule | **YARN ONLY** (npm corrupts the lockfile) |
+| Deployment model | CRACO dev server on `0.0.0.0:3000` via supervisor (`yarn start`) |
+| Backend (in this repo) | Placeholder `/app/backend/server.py` — unused, do not touch |
 
 ---
 
-## 3. Install & Run
+## 2. User Personas
+
+1. **Cashier / waitstaff** — primary daily user; uses the dashboard to take orders, print KOTs/bills, collect payment.
+2. **Floor manager** — uses dashboard + reports + audit; performs cancellations and bill collection across tables.
+3. **Restaurant owner / admin** — configures Visibility Settings, channels, and reviews reports.
+4. **Hotel guest with room booking** — indirect; check-in handled by hotel front-desk system, food orders attach to room folio via "Transfer to Room".
+
+---
+
+## 3. Core Static Requirements (steady-state product)
+
+- Dashboard with multi-channel order visibility (DineIn / TakeAway / Delivery / Room).
+- Two view-mode axes: **Table View** ↔ **Order View**, and **By Channel** ↔ **By Status**.
+- Per-table / per-order card with KOT print, bill print, status update, cancel.
+- "Collect Payment" panel with cash/card/UPI/split/credit/transfer-to-room methods, discount, SC, tax, tip, delivery charge.
+- Room module: check-in marker, room booking (price/advance/balance), room-service food, transferred dine-in bills (associated orders).
+- Old-POS interoperability — orders created on legacy POS must surface correctly here.
+- Visibility Settings: enable/disable order statuses, station view, channel visibility, default column layouts.
+- Reports: paid, pending, cancelled, audit, summary.
+- Firebase push notifications via service worker.
+
+---
+
+## 4. Session Timeline — what happened, in order
+
+### Phase A — Deployment (start of session)
+
+1. Wiped `/app` contents (preserved `.emergent/`).
+2. Cloned `core-pos-front-end-` branch **`roomv2`** directly into `/app` (commit `10ed08e`).
+3. Wrote `/app/frontend/.env` with all 17 variables supplied by user (FCM VAPID key cleaned of stray `2` + tab).
+4. `yarn install` (~73s) — completed cleanly with expected peer-dep warnings.
+5. Stopped/started frontend via supervisor; verified `webpack compiled with 1 warning` (pre-existing exhaustive-deps in `LoadingPage.jsx:101`).
+6. Verified preview URL returns HTTP 200 and renders the Mygenie login page.
+7. Wrote handover at `/app/memory/DEPLOYMENT_HANDOVER.md`.
+
+### Phase B — Cancel-Gap validation (Option C verification)
+
+User had a previous agent implement **Option C** for the bulk-Cancel button (hide bulk-cancel for rooms with placed items; force operators to use per-item X). Validated read-only:
+
+- Implementation lives at `OrderEntry.jsx:1499-1537` with the guard `if (!hasUnplaced && hasPlaced && table?.isRoom) return null;` at line 1517.
+- The `handleCancelOrder` (line 824) function is left intact for non-room flows.
+- Verdict: **correctly implemented per Option C**, no further action.
+- A forward-pointing comment references `ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md` but that file does not yet contain a Gap-4 entry — minor doc drift, optional clean-up for later.
+
+### Phase C — Five-task analysis (read-only validation)
+
+Author: validation agent (this session).
+
+1. **Visibility View Configuration** — make view-mode (Table/Order, Channel/Status) admin-configurable instead of always-on toggle.
+2. **Room Transfer from Collect Bill** — picker shows "No checked-in rooms available" because `useTables()` context goes stale across socket events from other POS clients.
+3. **Old-POS Takeaway Mapping** — old POS sends `'take_away'` but new POS classifier doesn't recognise it.
+4. **Table Order Card Price for Rooms** — card amount excludes room balance + transferred bills.
+5. **Strip Emergent Branding** — title, description, favicon, PostHog, `emergent-main.js`.
+
+User clarifications captured in chat:
+- Task 1 ⇒ pick exactly **one** mode per axis; **no "Both"**, **no runtime toggle**.
+- Task 2 ⇒ rooms = tables with `rtype === 'RM'`; reuse existing `/api/v1/vendoremployee/all-table-list`; "rest no changes".
+- Task 3 ⇒ deferred for payload sample (later confirmed: old POS emits `'take_away'`).
+- Task 4 ⇒ room-only fix; do not break current calculation.
+- Task 5 ⇒ favicon = MyGenie logo; PostHog + `emergent-main.js` → **remove entirely**.
+
+Validation report saved at `/app/memory/FIVE_TASK_VALIDATION_HANDOVER.md`. Validation against `/app/v3/` decisions confirmed no AD-* conflict for any of the five tasks.
+
+### Phase D — Five-task implementation
+
+All 5 tasks implemented per validation doc, in the order **5 → 1 → 4 → 2 → 3**.
+
+Implementation summary saved at `/app/memory/FIVE_TASK_IMPLEMENTATION_SUMMARY.md`.
+
+---
+
+## 5. What's Been Implemented in this Session (canonical list)
+
+### 5.1 Task 5 — Strip Emergent branding
+
+| File | Change |
+|---|---|
+| `frontend/public/index.html` | Title `Emergent | Fullstack App` → `MyGenie POS`; meta description → "MyGenie restaurant point-of-sale"; added `<link rel="icon" type="image/svg+xml" href="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" />`; **removed** `<script src="https://assets.emergent.sh/scripts/emergent-main.js">` and the entire PostHog init block (key `phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs`). |
+| `frontend/src/App.js` | Added `AppTitleSync` component inside `AppProviders` that does `document.title = restaurant?.name ? \`${restaurant.name} · MyGenie POS\` : 'MyGenie POS'` via `useEffect` on `restaurant?.name`. |
+
+### 5.2 Task 1 — Visibility view-mode lock
+
+| File | Change |
+|---|---|
+| `frontend/src/pages/StatusConfigPage.jsx` | Added 2 localStorage keys (`mygenie_view_mode_table_order`, `mygenie_view_mode_channel_status`) with defaults `'table'` and `'status'`. Added 2 state vars + load/save/reset wiring. Added a new "View Mode" UI section with two radio-card blocks (no "Both" option) between "Channel Visibility" and "Default Column Layout". Test IDs: `view-mode-to-table`, `view-mode-to-order`, `view-mode-cs-channel`, `view-mode-cs-status`. |
+| `frontend/src/pages/DashboardPage.jsx` | `useState("table")` / `useState("status")` replaced with lazy-init readers from the two new localStorage keys (with `try/catch` and same defaults). Removed the four view-toggle props (`activeView`, `setActiveView`, `dashboardView`, `setDashboardView`) from the `<Sidebar>` invocation. |
+| `frontend/src/components/layout/Sidebar.jsx` | Removed the entire "View Toggle Section" block (was lines 285-337) including `data-testid="view-toggle"` and `data-testid="group-toggle"` buttons. Removed unused props from destructure. Pruned now-unused icons (`LayoutGrid`, `List`, `Columns`, `Rows`) from lucide-react import. |
+
+### 5.3 Task 4 — Room card total
+
+| File | Change |
+|---|---|
+| `frontend/src/pages/DashboardPage.jsx` | Added inline helper `computeRoomCardAmount(order)` near top of file. It returns `food + Σ(associatedOrders.amount) + max(0, roomInfo.balancePayment)`. Replaced `amount: order.amount` with `amount: computeRoomCardAmount(order)` inside `allRoomsList` (line 462). All other room-render branches spread `...room` from `allRoomsList`, so they inherit the fixed amount with no further edits. Non-room paths untouched. |
+
+### 5.4 Task 2 — Fresh rooms fetch on "To Room" click
+
+| File | Change |
+|---|---|
+| `frontend/src/components/order-entry/CollectPaymentPanel.jsx` | Imports: added `useEffect`, `useRef`, and `tableService`. Added local state `freshRooms` / `roomsLoading` / `roomsError` and a `fetchReqIdRef` for race protection. Replaced the `useMemo(occupiedRooms)` with a hybrid: cached-context value as immediate fallback, fresh fetch state as authoritative once resolved. `fetchOccupiedRooms()` calls `tableService.getTables()` (the existing `/api/v1/vendoremployee/all-table-list` endpoint) and filters `t.isRoom && t.isOccupied`. `useEffect` triggers it when `paymentMethod === 'transferToRoom'` and `freshRooms === null`. Picker JSX gains four states: loading (spinner), error (red banner with Retry), empty ("No checked-in rooms available"), success (existing grid). Added a Refresh affordance. **Context is NOT updated**; fresh state is panel-local per user directive. |
+
+### 5.5 Task 3 — Old-POS `take_away` normalisation
+
+| File | Change |
+|---|---|
+| `frontend/src/api/transforms/orderTransform.js:42-58` | Added one new `case 'take_away':` to the takeaway branch of `normalizeOrderType` so old-POS takeaway orders normalise to `'takeAway'` instead of falling through to `'dineIn'`. **Inbound only.** Outbound `mapOrderTypeToAPI` (lines 63-72) untouched — backend contract preserved. |
+| `frontend/src/components/cards/OrderCard.jsx:167` | Visible label `"Take Away"` → `"Takeaway"`. |
+
+### 5.6 Validation only (no code change)
+
+| Subject | Result |
+|---|---|
+| Cancel-gap Option C in `OrderEntry.jsx:1517` | Verified correctly implemented |
+
+---
+
+## 6. Files Changed in this Session (final list)
+
+```
+frontend/public/index.html                                    (Task 5)
+frontend/src/App.js                                           (Task 5)
+frontend/src/pages/StatusConfigPage.jsx                       (Task 1)
+frontend/src/pages/DashboardPage.jsx                          (Tasks 1, 4)
+frontend/src/components/layout/Sidebar.jsx                    (Task 1)
+frontend/src/components/order-entry/CollectPaymentPanel.jsx   (Task 2)
+frontend/src/api/transforms/orderTransform.js                 (Task 3)
+frontend/src/components/cards/OrderCard.jsx                   (Task 3)
+```
+
+These are uncommitted on-disk edits at session end. The branch tip in git remains `10ed08e` (the auto-commit at clone time).
+
+Memory artefacts written:
+```
+/app/memory/DEPLOYMENT_HANDOVER.md                  (deployment recipe + gotchas)
+/app/memory/FIVE_TASK_VALIDATION_HANDOVER.md        (read-only validation pass)
+/app/memory/FIVE_TASK_IMPLEMENTATION_SUMMARY.md     (per-task implementation log)
+/app/memory/PRD.md                                  (this document)
+```
+
+---
+
+## 7. Validation Performed in this Session
+
+| Check | Result |
+|---|---|
+| ESLint clean on all 8 changed files | ✅ |
+| Webpack compile via supervisor | ✅ `webpack compiled with 1 warning` (pre-existing `LoadingPage.jsx:101` exhaustive-deps; unrelated) |
+| `curl http://localhost:3000/` shows new `<title>`, meta description, favicon link | ✅ |
+| `curl http://localhost:3000/` contains zero `emergent.sh` / `posthog` references | ✅ |
+| Preview URL returns HTTP 200 | ✅ |
+| Manual full-app smoke walkthrough | ❌ deferred to QA agent — see §10 |
+| Automated test agent invocation | ❌ explicitly skipped per user instruction |
+
+---
+
+## 8. Known Gaps, Risks, and Pre-existing Issues (DO NOT silently fix)
+
+1. **`__tests__/api/transforms/updateOrderPayload.test.js:323`** asserts outbound `order_type === 'take_away'` for `'takeAway'` input, but `mapOrderTypeToAPI` returns `'takeaway'`. **Pre-existing test drift** — not introduced by Task 3 (which only touched the inbound parser). Outbound mapping stays intact. Out of scope.
+2. **`/app/v3/DOC_VS_CODE_GAP.md` GAP-N3** — service-charge UI guard differs between default and room-with-associated-orders branches in CollectPaymentPanel. Orthogonal to Task 4 (which is display-only, no SC math). Documented, not addressed.
+3. **`LoadingPage.jsx:101`** missing `loadStationData` dep in useEffect. Cosmetic ESLint warning; left untouched per "no unrelated cleanup" rule.
+4. **Emergent platform preview wrapper** (`https://restaurant-pos-v2-1.preview.emergentagent.com`) hosts the app inside an iframe and serves its own `<title>Loading...</title>`. Cosmetic only; the inner-iframe app shows MyGenie branding correctly. Cannot be changed from this codebase.
+5. **`https://restaurant-pos-v2-1.preview.static.emergentagent.com`** serves a stale pre-built backup snapshot — title/branding there will continue to look "Emergent". This is platform-managed infrastructure, not the live dev server. Live `localhost:3000` and the iframe at the dev-preview URL are correct.
+6. **Task 2 button-visibility gate** (`config/paymentMethods.js:185-208`) still gates "To Room" behind `restaurantPaymentTypes` containing `'room'`/`'transfer_room'`. If a tenant doesn't include this in their API config, the button itself stays hidden. **Out of scope per user directive "rest no changes"**; revisit only if reported.
+7. **Backend supervisor program** is configured to autostart but `/app/backend/server.py` is a placeholder. State is BACKEND running with placeholder responses — frontend ignores it (real backend lives at `preprod.mygenie.online`). Untouched.
+
+---
+
+## 9. Open / Backlog Items for Next Agent
+
+### P0 — None
+
+### P1 — Manual QA pass (next agent's first task; see §10)
+
+### P2 — Backlog
+1. **Task 2 button-gate review** — if QA reports "To Room" button missing on a tenant that has rooms, look at `filterLayoutByApiTypes` and `restaurantPaymentTypes` for that tenant.
+2. **Cancel-gap doc back-fill** — append a Gap-4 entry to `ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md` to match the inline comment in `OrderEntry.jsx:1505-1516`.
+3. **Pre-existing test drift** in `updateOrderPayload.test.js:323` — coordinate with backend team whether outbound should send `'takeaway'` (current code) or `'take_away'` (legacy test expectation).
+4. **GAP-N3** (room-with-associated-orders SC guard) — separate ticket per `/app/v3/DOC_VS_CODE_GAP.md`.
+5. **Old POS old-format check for additional `order_type` values** — currently only `'take_away'` is added. If `'walk_in'`, `'dine_in'`, `'home_delivery'` etc. are emitted by old POS, extend `normalizeOrderType` similarly. User confirmed only takeaway needed in this session.
+6. **Favicon hosting** — currently the favicon link points to the existing CDN-hosted `GENIE_LOGO_URL` SVG on `customer-assets.emergentagent.com`. If that asset is moved or the customer wants to self-host, swap the URL.
+
+### P3 — Future
+- Migrate the localStorage-based visibility settings to user-role permissions (already noted in `StatusConfigPage.jsx:389`).
+- Add a `manifest.json` for PWA support.
+
+---
+
+## 10. QA Test Plan (handover to QA agent)
+
+Run a manual smoke pass against the live dev preview, in this order:
+
+### Branding (Task 5)
+- [ ] Pre-login: browser tab title shows `MyGenie POS`.
+- [ ] Post-login (with restaurant context loaded): tab title shows `<RestaurantName> · MyGenie POS`.
+- [ ] Browser tab favicon shows MyGenie logo (orange/green acorn-bell), not Chrome default.
+- [ ] DevTools Network tab: zero requests to `emergent.sh` or PostHog.
+- [ ] DevTools Console: `window.posthog` is `undefined`.
+
+### View Mode Lock (Task 1)
+- [ ] Open `Visibility / Status Configuration` (sidebar → Settings → Visibility, or direct route `/visibility/status-config`).
+- [ ] Confirm new "View Mode" section visible with two pairs of radio cards (no "Both" option).
+- [ ] Pick `Order View` + `By Channel` → Save → reload Dashboard → opens directly in Order View / By Channel; sidebar has NO view-toggle / group-toggle buttons.
+- [ ] Pick `Table View` + `By Status` → Save → reload → confirm.
+- [ ] Header filter pills swap correctly (Channel pills under By Status, Status pills under By Channel).
+- [ ] Reset-to-Default → values revert.
+- [ ] Clear localStorage entirely → reload → defaults apply (Table View / By Status).
+
+### Room Card Total (Task 4)
+- [ ] Available room (no order) → no amount on card.
+- [ ] Marker-only checked-in room (no food, only room booking outstanding) → card shows `roomInfo.balancePayment`.
+- [ ] Room with food only, no transfers, no balance → card unchanged vs prod.
+- [ ] Room with food + transferred dine-in bill + room balance → card shows sum of all three.
+- [ ] Click into the room card → CollectPaymentPanel opens → "Pay" button total matches the card number (within rounding).
+- [ ] Non-room cards (dine-in, takeaway, delivery, walkIn) → no regression.
+
+### Fresh Rooms Picker (Task 2)
+- [ ] Dine-in order → Collect Bill → click "To Room": loading spinner appears, then list populates with checked-in rooms.
+- [ ] Stress test: check-in a new room from a different POS while panel is open → click "Refresh" → newly-checked-in room appears.
+- [ ] Network throttle / disconnect → red error banner + Retry button visible.
+- [ ] Click Retry → refetches; on success, list populates.
+- [ ] Toggle rapidly between cash → To Room → cash → To Room: no duplicate calls, no race rendering an old response on top of new selection.
+- [ ] Select a room → click "Transfer" → existing transferToRoom payload submitted unchanged; backend receives `roomId`/`isTransferToRoom` correctly.
+- [ ] Tenant without rooms → "To Room" button hidden (existing gate preserved).
+
+### Old-POS Takeaway (Task 3)
+- [ ] Create a takeaway order on the old POS → confirm it appears in the TakeAway channel column on new POS dashboard (not the dineIn column).
+- [ ] All takeaway cards across the app read **"Takeaway"** (single word).
+- [ ] Takeaway orders created on the new POS still classify correctly (regression).
+
+### Regression Sanity (broad)
+- [ ] Place a normal dine-in order, take-away order, and delivery order — confirm no regression.
+- [ ] Cancel order flow on a non-room order — bulk-cancel still works.
+- [ ] Cancel order flow on a room order — bulk-cancel still hidden, per-item X works (Option C from earlier).
+
+File any failures as separate tickets with exact reproduction steps. Do **not** bundle them into the existing summary docs.
+
+---
+
+## 11. Quick redeploy recipe (for future deployment agents)
 
 ```bash
-cd /app/frontend
-yarn install          # installs against existing yarn.lock
-sudo supervisorctl restart frontend
-```
+# 1. Stop services and preserve .emergent
+sudo supervisorctl stop frontend backend
+mv /app/.emergent /tmp/.emergent_backup
+rm -rf /app/* /app/.git /app/.gitignore
 
-Start script (from `package.json`): `craco start` → binds to `0.0.0.0:3000` (managed by supervisor).
+# 2. Clone target branch directly into /app
+cd /app
+git clone --branch roomv2 --single-branch \
+  https://github.com/Abhi-mygenie/core-pos-front-end-.git .
+mv /tmp/.emergent_backup /app/.emergent
 
-Supervisor status after deploy:
+# 3. Write /app/frontend/.env (values per /app/memory/DEPLOYMENT_HANDOVER.md §3.4)
 
-```
-frontend          RUNNING
-mongodb           RUNNING
-code-server       RUNNING
-nginx-code-proxy  RUNNING
-backend           FATAL   (intentional – no backend in this branch)
-```
-
----
-
-## 4. Environment Variables (`/app/frontend/.env`)
-
-All values as supplied in the deployment brief. The `REACT_APP_FIREBASE_VAPID_KEY` leading `2` + whitespace was stripped per instruction, and only the actual key is stored.
-
-| Variable | Value |
-|---|---|
-| REACT_APP_BACKEND_URL | https://restaurant-pos-v2-1.preview.emergentagent.com |
-| WDS_SOCKET_PORT | 443 |
-| ENABLE_HEALTH_CHECK | false |
-| REACT_APP_API_BASE_URL | https://preprod.mygenie.online/ |
-| REACT_APP_SOCKET_URL | https://presocket.mygenie.online |
-| REACT_APP_FIREBASE_API_KEY | AIzaSyCvn7MctrSgULjgiHqQSl4QfeP3dWxITwY |
-| REACT_APP_FIREBASE_AUTH_DOMAIN | mygenie-restaurant.firebaseapp.com |
-| REACT_APP_FIREBASE_PROJECT_ID | mygenie-restaurant |
-| REACT_APP_FIREBASE_STORAGE_BUCKET | mygenie-restaurant.firebasestorage.app |
-| REACT_APP_FIREBASE_MESSAGING_SENDER_ID | 969625631640 |
-| REACT_APP_FIREBASE_APP_ID | 1:969625631640:web:2f2a2987f740b6fc8e09ed |
-| REACT_APP_FIREBASE_MEASUREMENT_ID | G-WFK75QN54E |
-| REACT_APP_FIREBASE_VAPID_KEY | BEvFMTX767yCa4YgfuPjfTyZGD0fp34WkWjW3SPDqS3NRRWSYfqT8m9TA4S-nssyqNG-EIJUu6WIA0MWJaouSUI |
-| REACT_APP_CRM_BASE_URL | https://crm.mygenie.online/api |
-| REACT_APP_CRM_API_KEYS | JSON map (15 outlet ids → `dp_live_*` keys) – stored single-line in `.env` |
-| REACT_APP_GOOGLE_MAPS_KEY | AIzaSyCS9rZcttTxbair3abltZ3Fm1vEnmY0mj4 |
-
----
-
-## 5. Verification
-
-- `curl localhost:3000` → **HTTP 200**
-- `curl https://restaurant-pos-v2-1.preview.emergentagent.com/` → **HTTP 200**
-- Browser screenshot confirmed: **Mygenie login page** (Email / Password / Remember me / Forgot Password? / LOG IN) renders correctly; footer shows `© Mygenie 2025. HOSIGENIE HOSPITALITY SERVICES PRIVATE LIMITED.`
-- Webpack reports `Compiled successfully!` with no errors (only deprecation warnings from upstream CRA/Workbox chain – non-blocking).
-
----
-
-## 6. Known / Non-blocking Items for Next Agent
-
-1. **No backend service in this branch.** Supervisor's `backend` program is in `FATAL` state because `/app/backend` only contains a placeholder `server.py` + `requirements.txt` from the repo. This is expected for a frontend-only deploy. If a backend is later required, supervisor config and `/app/backend` would need to be provisioned separately.
-2. **Firebase VAPID key** was stored after stripping a stray `2` + whitespace prefix from the original brief value. If push-notifications fail in prod, confirm the correct VAPID key with the product owner.
-3. **`REACT_APP_CRM_API_KEYS`** is a long JSON map stored as a single line in `.env`. CRA loads it verbatim into `process.env`; consuming code must `JSON.parse` it.
-4. Yarn install produced several peer-dependency warnings (react-day-picker, recharts, craco ts-loader, etc.). None blocked compilation; left untouched per "no unnecessary changes" directive.
-5. No secrets appear truncated in the brief after stripping – **no missing values are blocking deployment.**
-
----
-
-## 7. Quick Redeploy Recipe (for next agent)
-
-```bash
-# 1. Wipe /app (keep .git + .emergent)
-cd /app && find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name '.emergent' -exec rm -rf {} +
-
-# 2. Clone target branch
-git clone --branch roomv1- --single-branch \
-  https://github.com/Abhi-mygenie/core-pos-front-end-.git /tmp/core-pos-clone
-
-# 3. Copy contents (preserve platform .git/.emergent)
-rsync -a --exclude='.git' --exclude='.emergent' /tmp/core-pos-clone/ /app/
-
-# 4. Put /app/frontend/.env in place (values in §4)
-
-# 5. Install & start
+# 4. Install + start
 cd /app/frontend && yarn install
-sudo supervisorctl restart frontend
+sudo supervisorctl start frontend
+sleep 25
+sudo supervisorctl status frontend
+tail -n 30 /var/log/supervisor/frontend.out.log   # expect "webpack compiled with 1 warning"
+curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com | head -5  # expect HTTP/2 200
 ```
+
+Full handover with gotchas and 8-point health checklist: `/app/memory/DEPLOYMENT_HANDOVER.md`.
 
 ---
 
-**Status:** Deployment successful, frontend live at https://restaurant-pos-v2-1.preview.emergentagent.com/.
+## 12. Cross-references
+
+| Topic | Document |
+|---|---|
+| Deployment recipe + gotchas | `/app/memory/DEPLOYMENT_HANDOVER.md` |
+| Five-task validation (read-only analysis) | `/app/memory/FIVE_TASK_VALIDATION_HANDOVER.md` |
+| Five-task implementation log | `/app/memory/FIVE_TASK_IMPLEMENTATION_SUMMARY.md` |
+| Architecture decisions catalog (AD-001…AD-901) | `/app/v3/ARCHITECTURE_DECISIONS_FINAL.md` |
+| Doc vs code gaps | `/app/v3/DOC_VS_CODE_GAP.md` |
+| Risks | `/app/v3/RISK_REGISTER.md` |
+| Cancel-gap Option C inline comment | `frontend/src/components/order-entry/OrderEntry.jsx:1505-1517` |
+| Room-checkin reference | `/app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md` |
+
+---
+
+## 13. Status at session end
+
+- ✅ Frontend deployed and running (`webpack compiled with 1 warning`).
+- ✅ All 5 tasks implemented, lint-clean.
+- ✅ Cancel-gap Option C verified.
+- ✅ Documentation: validation, implementation summary, deployment handover, and this PRD all written.
+- ⚠ Manual QA pass deferred to next QA agent — full plan in §10.
+- ⚠ On-disk edits **not committed**. If next agent wants a snapshot in git, run a Save-to-GitHub before continuing or ask the user to do so.
+- ⚠ Old-POS `'take_away'` is the only legacy `order_type` variant handled; user confirmed delivery / dinein from old POS already work.
