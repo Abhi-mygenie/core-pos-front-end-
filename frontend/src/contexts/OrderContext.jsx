@@ -313,6 +313,12 @@ export const OrderProvider = ({ children }) => {
           isRoom: order.isRoom,
           associatedOrders: order.associatedOrders || [],
           fOrderStatus: order.fOrderStatus,
+          // ROOM_CHECKIN_GAP3 (Stage 2 follow-up, 2026-04-25): preserve room
+          // booking financials through the orderItemsByTableId memo whitelist
+          // so OrderEntry → CartPanel + CollectPaymentPanel can render the
+          // Room pill, Room block, Grand-Total Stack row, and combined
+          // Checkout amount. Null for non-room orders.
+          roomInfo: order.roomInfo || null,
         };
         if (!map[order.tableId]) {
           map[order.tableId] = [];
