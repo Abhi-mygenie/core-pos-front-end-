@@ -1121,6 +1121,13 @@ const DashboardPage = () => {
         onRefresh={handleRefreshAll}
         isRefreshing={isRefreshing}
         isOrderEntryOpen={orderEntryType !== null}
+        // VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): pass runtime view
+        // state so Sidebar can render the legacy view toggles. Step 4 will
+        // add lock flags to hide them when an admin override is active.
+        activeView={activeView}
+        setActiveView={setActiveView}
+        dashboardView={dashboardView}
+        setDashboardView={setDashboardView}
       />
 
       <SettingsPanel

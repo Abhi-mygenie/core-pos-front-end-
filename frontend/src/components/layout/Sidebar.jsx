@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { 
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
-  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye
+  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye,
+  LayoutGrid, List, Columns, Rows
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
@@ -116,6 +117,13 @@ const Sidebar = ({
   onRefresh, 
   isRefreshing, 
   isOrderEntryOpen,
+  // VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): runtime view toggles are
+  // restored. These are optional — pages that don't manage view state (e.g.
+  // StatusConfigPage) simply don't pass them and the toggles won't render.
+  activeView,
+  setActiveView,
+  dashboardView,
+  setDashboardView,
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -276,8 +284,70 @@ const Sidebar = ({
         )}
       </div>
 
-      {/* View toggles removed (visibility view-mode is now locked at config-time
-          via StatusConfigPage; users pick exactly one mode per axis). */}
+      {/* VIEW_MODE_LOCK v2 (Task 1 revision, Step 1): runtime view toggles
+          restored as the legacy default. Each toggle renders only when the
+          parent page actually manages that axis (i.e. passes its setter).
+          Step 4 of the revision will additionally hide each axis when an
+          admin lock is active. */}
+      {(setActiveView || setDashboardView) && (
+        <div
+          data-testid="view-toggles-container"
+          className="px-3 py-3 flex flex-col gap-2"
+          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
+        >
+          {setActiveView && (
+            <button
+              data-testid="view-toggle"
+              onClick={() => setActiveView(activeView === 'table' ? 'order' : 'table')}
+              className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors hover:opacity-90 ${
+                isExpanded ? "justify-start" : "justify-center"
+              }`}
+              style={{
+                backgroundColor: `${COLORS.primaryOrange}15`,
+                color: COLORS.primaryOrange,
+              }}
+              title={!isExpanded ? (activeView === 'table' ? "Switch to Order View" : "Switch to Table View") : undefined}
+            >
+              {activeView === 'table' ? (
+                <LayoutGrid className="w-5 h-5 flex-shrink-0" />
+              ) : (
+                <List className="w-5 h-5 flex-shrink-0" />
+              )}
+              {isExpanded && (
+                <span className="text-sm font-medium">
+                  {activeView === 'table' ? 'Table View' : 'Order View'}
+                </span>
+              )}
+            </button>
+          )}
+
+          {setDashboardView && (
+            <button
+              data-testid="group-toggle"
+              onClick={() => setDashboardView(dashboardView === 'channel' ? 'status' : 'channel')}
+              className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors hover:opacity-90 ${
+                isExpanded ? "justify-start" : "justify-center"
+              }`}
+              style={{
+                backgroundColor: `${COLORS.primaryGreen}15`,
+                color: COLORS.primaryGreen,
+              }}
+              title={!isExpanded ? (dashboardView === 'channel' ? "Switch to Status View" : "Switch to Channel View") : undefined}
+            >
+              {dashboardView === 'channel' ? (
+                <Columns className="w-5 h-5 flex-shrink-0" />
+              ) : (
+                <Rows className="w-5 h-5 flex-shrink-0" />
+              )}
+              {isExpanded && (
+                <span className="text-sm font-medium">
+                  {dashboardView === 'channel' ? 'By Channel' : 'By Status'}
+                </span>
+              )}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto py-4">
