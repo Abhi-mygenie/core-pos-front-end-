@@ -1,405 +1,441 @@
-# Three Requirements — V3 Validation & Gap Analysis
+# Three Requirements — V3 Validation & Gap Analysis (v2)
 
 - **Validation Type:** Read-only product + technical validation against V3 documentation set and current frontend code.
-- **Repo branch:** `roomv2` (current checkout); cross-referenced V3 baseline commit `32d91748ff963c7ecb8b9c98c102f1280a2fc179` per `/app/v3/*`.
-- **Source of truth:** `/app/v3/ARCHITECTURE_DECISIONS_FINAL.md`, `/app/v3/DOC_VS_CODE_GAP.md`, `/app/v3/OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md`, `/app/v3/RISK_REGISTER.md`, `/app/v3/OWNER_REVIEW_PACKET.md`, `/app/v3/COMPARISON_SUMMARY.md`.
-- **Cross-references:** `/app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md`, `/app/memory/ROOM_MODULE_REQUIREMENTS_V2.md`, `/app/memory/PRD.md`, `/app/memory/BUG_TEMPLATE.md`.
-- **Status:** STOP — Owner approval required before any implementation handover is created. Gaps and conflicts found in all 3 requirements.
+- **Repo branch:** `roomv2`; cross-referenced V3 baseline commit `32d91748ff963c7ecb8b9c98c102f1280a2fc179`.
+- **Source of truth:** `/app/v3/*` and selected `/app/memory/*` docs.
+- **Status:** STOP — Owner approval required before implementation handover. Each gap below has explicit lettered questions; answer each.
+- **v2 update vs v1 of this doc:**
+  - Req 1 understanding **corrected**: `employee-menu` is confirmed by Abhishek as a **real, separate** endpoint, **NOT** the same as `station-order-list` (which powers `StationPanel` / the KDS/BAR station view). `employee-menu` is currently NOT being recalled on socket order activity. New gaps added accordingly.
+  - Req 2 + 3 elaborated with sub-questions Q-#a/b/c/d so answers can be given inline.
 
 ---
 
-## Executive Summary
+## Updated Learning About Employee-Menu Panel (Req 1)
 
-| # | Requirement | Code Behavior | V3 Coverage | Status |
-|---|---|---|---|---|
-| 1 | Employee Menu Count refresh on socket activity | Panel data fetched ONCE on `LoadingPage` via `POST /api/v1/vendoremployee/station-order-list`; no socket-driven refresh exists | Not covered by V3 (no AD/OQ/RISK entry) | **GAP — endpoint name mismatch + missing socket→refresh wiring** |
-| 2 | Add button visibility setting | Add button is rendered unconditionally in `Header.jsx`; precedent visibility patterns exist (Channel, Status, Station, View Mode lock) | Not covered by V3; future P3 (`PRD.md`) flags localStorage→role-permission migration | **GAP — pattern is established, but storage authority and admin-vs-user gating not decided in V3** |
-| 3 | Room order bill print payload | (a) `OrderEntry.jsx` auto-fires `printOrder()` for postpaid + prepaid paths whenever `settings.autoBill=true`, including for `isRoom` orders. No room-specific suppression exists. (b) `buildBillPrintPayload()` emits `roomRemainingPay: 0`, `roomAdvancePay: 0`, `roomGst: 0` hardcoded; does **not** include `associatedOrders`, `roomPrice`, `totalRoomAmount`, or a `final payable amount` | Partially covered: AD-105 (tax/print consistency), AD-302 (collect-bill ↔ print parity), AD-013A (SC/room caveat) — none decide room-specific auto-bill suppression or room-print payload contract | **MAJOR GAP — V3 silent on (i) auto-bill suppression for rooms and (ii) required print fields for rooms** |
+| Item | Current state in code | Per Abhishek |
+|---|---|---|
+| `GET /api/v1/vendoremployee/employee-menu` | Not present anywhere in frontend (`grep` confirmed: zero hits in `/app/frontend/src/`, `/app/v3/*`, `/app/memory/*` except this validation doc) | Real endpoint. Not for station view. Powers the left-side Kitchen/BAR preparing-count panel. |
+| `POST /api/v1/vendoremployee/station-order-list` | In use by `StationPanel` (`stationService.fetchStationData` → `LoadingPage.jsx:143`) — drives the KDS/BAR aggregated category view | Different concern. Out of scope for this requirement. |
+| Socket-driven refresh of `employee-menu` | Does not exist | Required behavior — fire on new/edited/made/ready/served events. |
 
-All three items are blocked pending Abhishek's clarifications below.
+**Implication:** `employee-menu` is either:
+- (a) a brand-new endpoint to be wired into a brand-new or existing UI element, OR
+- (b) wired in another sibling repo/branch and the consumer needs to be brought into `roomv2`, OR
+- (c) intended to populate a panel that hasn't been built yet.
+
+We need Abhishek's answer in **Q-1G** below before we can pick a concrete consumer.
 
 ---
 
-## Requirement 1 — Employee Menu Count Refresh on Socket Order Activity
+## Requirement 1 — Employee Menu Refresh on Socket Order Activity
 
-### 1.1 Requirement (as stated)
-> The left-side Kitchen/BAR preparing count panel comes from `GET /api/v1/vendoremployee/employee-menu`. Whenever order activity happens through sockets (new order taken, order edited/updated, item/order marked ready, item/order marked served), this API should be re-called and the panel refreshed.
+### 1.1 Requirement
+> The left-side Kitchen/BAR preparing count panel comes from `GET /api/v1/vendoremployee/employee-menu`. Whenever order activity happens through sockets, this API should be re-called and the panel refreshed. Events: new order taken, order edited/updated, item/order marked ready, item/order marked served.
 
-### 1.2 V3 Documents Checked
-- `ARCHITECTURE_DECISIONS_FINAL.md` — no AD covers station-panel refresh on socket events.
-- `OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md` — no OQ on Kitchen/BAR panel.
-- `RISK_REGISTER.md` — no risk on station/menu-count refresh staleness.
-- `DOC_VS_CODE_GAP.md` — no GAP on this surface.
-- Memory `ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md` and `PRD.md` — silent on the panel.
+### 1.2 V3 Coverage
+- **None.** No AD/OQ/RISK/GAP entry exists in `/app/v3/*` for this surface. Adding this behavior will need a new AD (e.g., `AD-Employee-Menu-Refresh`) post-approval.
 
-### 1.3 Existing Code Behavior
-- **Panel component:** `frontend/src/components/station-view/StationPanel.jsx`.
-- **Service:** `frontend/src/api/services/stationService.js`
-  - `fetchStationData(stationName, categoriesMap)` calls **`POST /api/v1/vendoremployee/station-order-list`** (line 131) with `role_name` and `def_order_status='1'` (Preparing).
-  - Builds aggregated `categories[]` with item counts from `orders[].order_details_food[]`.
-- **Initial load:** `frontend/src/pages/LoadingPage.jsx:143` calls `stationService.fetchStationData(station, categoriesMap)` for each enabled station and stores in `StationContext` via `setAllStationData`.
-- **Refresh trigger today:** none. The panel never re-fetches after initial mount. There is no socket→station refresh wiring in `frontend/src/api/socket/socketHandlers.js` or `useSocketEvents.js`.
-- **Socket events fully wired** (file: `frontend/src/api/socket/useSocketEvents.js`):
+### 1.3 Current Code Behavior
+- Endpoint `employee-menu`: not referenced anywhere in `/app/frontend/src/`.
+- Socket events fully wired (`useSocketEvents.js`):
   - `NEW_ORDER` → `handleNewOrder`
-  - `UPDATE_ORDER`, `UPDATE_ORDER_TARGET`, `UPDATE_ORDER_SOURCE`, `UPDATE_ORDER_PAID` → `handleOrderDataEvent`
-  - `UPDATE_ITEM_STATUS` → `handleOrderDataEvent` (with `'update-item-status'`)
+  - `UPDATE_ORDER` / `UPDATE_ORDER_TARGET` / `UPDATE_ORDER_SOURCE` / `UPDATE_ORDER_PAID` → `handleOrderDataEvent`
+  - `UPDATE_ITEM_STATUS` → `handleOrderDataEvent`
   - `UPDATE_FOOD_STATUS` → `handleUpdateFoodStatus`
   - `UPDATE_ORDER_STATUS` → `handleUpdateOrderStatus`
-  - All update OrderContext/TableContext but never touch `StationContext` or `stationService`.
+  - `SCAN_NEW_ORDER` → `handleScanNewOrder`
+  - `DELIVERY_ASSIGN_ORDER` → `handleDeliveryAssignOrder`
+  - `SPLIT_ORDER` → `handleSplitOrder`
+- Each handler updates `OrderContext` / `TableContext`. None touch `employee-menu`.
 
-### 1.4 Alignment With V3 Architecture Decisions
-- AD-002 (event-semantic remove vs update) is unaffected; the new behavior is additive (pure read-after-write panel refresh).
-- AD-101 / AD-105 / AD-302 (billing & print) are unrelated.
-- No conflict with any V3 decision.
+### 1.4 Existing Patterns Available to Reuse
+- `useRefreshAllData` hook — used by Sidebar Refresh button.
+- `axios` via `frontend/src/api/axios.js` — for the HTTP call.
+- Service file pattern — e.g., `frontend/src/api/services/stationService.js` is a good template; we'd add `employeeMenuService.js`.
+- A debounce util — none ready-made; small `setTimeout`/`clearTimeout` ref is fine.
 
-### 1.5 Gaps / Questions
+### 1.5 Gaps & Questions (Answer Each)
 
-**GAP-1A — Endpoint name mismatch (BLOCKING).**
-- Requirement says: `GET /api/v1/vendoremployee/employee-menu`.
-- Code uses: `POST /api/v1/vendoremployee/station-order-list` (form-data: `role_name`, `def_order_status=1`).
-- No reference to `employee-menu` exists anywhere under `/app/frontend/src/`, `/app/v3/`, or `/app/memory/`.
-- **Question for Abhishek:** Is the canonical endpoint:
-  - (a) `GET /api/v1/vendoremployee/employee-menu` — a NEW endpoint to be wired, replacing or supplementing `station-order-list`?
-  - (b) `POST /api/v1/vendoremployee/station-order-list` — the current one, and the spec document is using a colloquial label?
-  - (c) Both — and they serve different surfaces?
-- A wrong choice here will silently break the Kitchen/BAR panel.
+#### Q-1A — Endpoint contract
+- (a) HTTP method: `GET` confirmed?
+- (b) Authentication: standard Bearer (same as other vendoremployee APIs, via `frontend/src/api/axios.js`)?
+- (c) Query params or path params: any? (e.g., `restaurant_id`, `role_name`, `def_order_status`?) — please paste a sample successful request URL.
+- (d) Response shape: please share an example response body so we know the field names to render.
 
-**GAP-1B — Refresh granularity not specified.**
-- Should the refresh fire **once per socket event** (simple but chatty), or **debounced/throttled** (e.g., 300–500 ms collapse window) to avoid flooding `station-order-list` during burst events?
-- Should it refresh **only the affected station(s)** (derive station from `payload.orders[].order_details_food[].station`) or **all enabled stations** in one shot via `fetchMultipleStationsData`?
-- Should `NEW_ORDER` trigger a refresh even when the new order has zero KDS/BAR items (i.e., all `station: null`)?
+> **Your answer:** _______________________________________
 
-**GAP-1C — Server vs client load impact unconfirmed.**
-- `station-order-list` returns the full preparing-orders list; in a busy tenant a 5–10 events/min event rate could mean an extra 5–10 calls/min. RISK-006 already calls out "sequential loading"; this risks compounding HTTP pressure.
-- `useRefreshAllData` in code is invoked for all-data refresh — should the station refresh be folded into that, or kept independent?
+#### Q-1B — Consumer (which UI panel renders this data)
+The "left-side Kitchen/BAR preparing count panel" is ambiguous in current code:
+- (a) Is the consumer the **existing `StationPanel`** at `frontend/src/components/station-view/StationPanel.jsx` (currently fed by `station-order-list`)? If yes, do we **replace** `station-order-list` with `employee-menu`, or do **both** coexist?
+- (b) Is the consumer a **different existing component** I have not located? If yes, file path?
+- (c) Is the consumer a **new component to be created**? If yes, please describe its visual layout (Kitchen count + BAR count side-by-side? Stacked? Inside Sidebar? Inside Header? On dashboard left rail?).
 
-**GAP-1D — Map of socket events → refresh decision not formalized.**
-- Requirement enumerates: new, update, ready, served. Mapping to current event names is:
+> **Your answer:** _______________________________________
 
-| Requirement event | Closest socket event(s) | Wired today |
-|---|---|---|
-| New order taken | `NEW_ORDER` (`new-order`) | YES (handler updates OrderContext) |
-| Order edited/updated | `UPDATE_ORDER`, `UPDATE_ORDER_TARGET`, `UPDATE_ORDER_SOURCE` | YES |
-| Item/order marked ready | `UPDATE_ITEM_STATUS` (item) + `UPDATE_FOOD_STATUS` (legacy) + `UPDATE_ORDER_STATUS` (order) | YES |
-| Item/order marked served | Same family as "ready"; status payload differs (`fOrderStatus=5` vs `2`) | YES |
+#### Q-1C — Initial fetch
+- (a) Should `employee-menu` be fetched once on app load (e.g., from `LoadingPage.jsx`, similar to how `station-order-list` is fetched today)?
+- (b) Or only on socket activity (lazy)?
+- (c) Or both — initial load + socket refresh?
 
-  - Should `SCAN_NEW_ORDER`, `DELIVERY_ASSIGN_ORDER`, `SPLIT_ORDER`, `UPDATE_ORDER_PAID` (paid removes order from preparing → reduces count) also trigger refresh? Each represents a state transition that affects the preparing count.
-  - Should `update-table` (engage/release) trigger a refresh? Likely no, but worth confirming.
+> **Your answer:** _______________________________________
 
-### 1.6 Suggested Options
-- **Option A (Lean, recommended pending GAP-1A answer):** Add a thin `refreshStationData()` helper in `StationContext` that calls `fetchMultipleStationsData(enabledStations, …)` and `setAllStationData(result)`; trigger it from `socketHandlers.js` for `NEW_ORDER`, `UPDATE_ORDER*`, `UPDATE_ITEM_STATUS`, `UPDATE_FOOD_STATUS`, `UPDATE_ORDER_STATUS`, `UPDATE_ORDER_PAID`, `SPLIT_ORDER`. Wrap in a 500 ms trailing debounce to coalesce bursts. Skip when `stationViewEnabled=false`.
-- **Option B (Targeted):** Same as A, but compute the affected stations from `payload.orders[].order_details_food[].station` and call `fetchStationData` only for those — keeps load minimal but adds derivation logic and could miss the case where a station is removed from a payload.
-- **Option C (Server-driven push):** Backend pushes a synthetic `update-station` socket event with the station deltas. Clean, but requires backend work outside this repo's scope.
+#### Q-1D — Set of socket events that must trigger refresh
+For each event, mark **YES** (refresh) or **NO** (skip):
 
-### 1.7 Recommendation (pending answers)
-Adopt **Option A** with a 500 ms debounce, gated on `stationViewEnabled`. Single, idempotent code path, no derivation logic, easy to test, low maintenance. Switch to Option B only if Abhishek requires per-station targeting or if station load proves excessive in QA.
+| Socket event | Triggered when | Default suggestion | Your call |
+|---|---|---|---|
+| `NEW_ORDER` (`new-order`) | new order taken | YES | ___ |
+| `UPDATE_ORDER` (`update-order`) | items added / order edited | YES | ___ |
+| `UPDATE_ORDER_TARGET` | merge/transfer destination updated | YES | ___ |
+| `UPDATE_ORDER_SOURCE` | merge/transfer source updated | YES | ___ |
+| `UPDATE_ORDER_PAID` (`update-order-paid`) | order moves to paid (off preparing) | YES | ___ |
+| `UPDATE_ITEM_STATUS` | item-level status flip (preparing→ready→served) | YES | ___ |
+| `UPDATE_FOOD_STATUS` (legacy) | item status flip via legacy event | YES | ___ |
+| `UPDATE_ORDER_STATUS` | order-level status flip | YES | ___ |
+| `SCAN_NEW_ORDER` | aggregator (Swiggy/Zomato) scan new order | YES | ___ |
+| `DELIVERY_ASSIGN_ORDER` | delivery-only assignment change | NO (no impact on KDS/BAR prep count) | ___ |
+| `SPLIT_ORDER` | order split into two | YES (item distribution changed) | ___ |
+| `UPDATE_TABLE` (`update-table`) | table engage/release only | NO | ___ |
+| `ORDER_ENGAGE` (`order-engage`) | UI lock event only | NO | ___ |
 
-### 1.8 Risk / Impact
-- LOW–MEDIUM if endpoint and event mapping are correct.
-- HIGH if endpoint mismatch (GAP-1A) is not resolved before code lands — silent panel staleness or 404s.
-- Compounding RISK-006 (sequential loading) without debounce.
+> **Your answer:** _______________________________________
 
-### 1.9 Files / Components Likely Involved (no edits in this validation)
-- `frontend/src/api/services/stationService.js` (helper additions if needed)
-- `frontend/src/contexts/StationContext.jsx` (`refreshStationData` action)
-- `frontend/src/api/socket/socketHandlers.js` (invoke debounced refresh after order actions)
-- `frontend/src/api/socket/useSocketEvents.js` (only if a new top-level subscriber is needed)
+#### Q-1E — Refresh granularity & debounce
+- (a) Should the refresh fire on **every** matching socket event (simple, chatty), or **debounced** to coalesce bursts? If debounced, suggested window: 300–500 ms trailing. Confirm or override.
+- (b) Should the refresh run in **parallel** with regular order/table updates (independent fire-and-forget), or be **sequenced** (await debounce, then call)?
+- (c) Should the panel show a "loading" / "refreshing" indicator during the fetch, or stay on stale-data with no visible indicator?
+
+> **Your answer:** _______________________________________
+
+#### Q-1F — Failure handling
+- (a) On HTTP failure (5xx, network), should the panel: (i) keep stale data silently, (ii) show an error indicator, (iii) toast the user, (iv) retry once?
+- (b) On 401, do we log the user out (consistent with the existing `axios.js` 401 redirect), or quietly fail this background call?
+
+> **Your answer:** _______________________________________
+
+#### Q-1G — Initial load + visibility gating
+- (a) Should the panel always be rendered, or gated behind a feature flag / restaurant flag / permission?
+- (b) Should refreshing be skipped while the panel is hidden (e.g., visibility-settings disabled), to avoid wasted HTTP?
+
+> **Your answer:** _______________________________________
+
+#### Q-1H — Cross-tab / multi-window behavior
+- If two tabs/windows are open for the same operator, both will receive the same socket events. Both will refresh. Acceptable? Or should we suppress duplicate fetches (e.g., via `BroadcastChannel`)?
+
+> **Your answer:** _______________________________________
+
+### 1.6 Files Likely Involved (no edits in this validation cycle)
+- New: `frontend/src/api/services/employeeMenuService.js` (helper).
+- New or extended: `frontend/src/contexts/EmployeeMenuContext.jsx` (or extend `StationContext`).
+- `frontend/src/api/socket/socketHandlers.js` (call refresh after order updates).
+- `frontend/src/api/socket/useSocketEvents.js` (only if a top-level subscriber is needed).
+- `frontend/src/pages/LoadingPage.jsx` (initial fetch, if Q-1C answer is initial load).
+- The consumer component (per Q-1B answer).
+
+### 1.7 Risk / Impact
+- LOW once endpoint contract (Q-1A) and consumer (Q-1B) are confirmed.
+- HIGH if the consumer is misidentified — silent data staleness, blank panel.
+- MEDIUM if no debounce — call rate could spike during burst events.
 
 ---
 
 ## Requirement 2 — Add Button Visibility Setting
 
-### 2.1 Requirement (as stated)
+### 2.1 Requirement
 > The top-right Add button used for taking/adding orders should be controlled from Visibility Settings — add a configuration to show/hide this Add button.
 
-### 2.2 V3 Documents Checked
-- `ARCHITECTURE_DECISIONS_FINAL.md` — no AD on Add-button visibility.
-- `OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md` — no OQ.
-- `RISK_REGISTER.md` — no risk; precedent risks RISK-009 (permissions decentralized in frontend) is informational.
-- `DOC_VS_CODE_GAP.md` — silent.
-- `PRD.md` — Future P3: "Migrate localStorage-based visibility settings to user-role permissions."
-- `TASK_1_REVISION_GAPS.md` + `REVISION_IMPLEMENTATION_SUMMARY.md` — establish the existing visibility settings pattern (Channel / Status / Station / View Mode locks via localStorage).
+### 2.2 V3 Coverage
+- **None.** No AD/OQ/RISK/GAP entry exists. The PRD lists a P3 future task: "Migrate localStorage-based visibility settings to user-role permissions."
 
-### 2.3 Existing Code Behavior
-- **Add button (target):** `frontend/src/components/layout/Header.jsx:592-600`
-  ```jsx
-  <button
-    data-testid="add-table-btn"
-    className="..."
-    onClick={onAddOrder}
-  >
-    <PlusSquare className="w-4 h-4" />
-    <span className="text-sm font-medium">Add</span>
-  </button>
+### 2.3 Current Code Behavior
+- Add button: `frontend/src/components/layout/Header.jsx:592-600`. Rendered unconditionally (no visibility flag).
+- Wired: `Header.jsx onAddOrder` → `DashboardPage.jsx handleAddOrder` (line 1053).
+- Existing visibility-settings infrastructure (all in `frontend/src/pages/StatusConfigPage.jsx`):
+  - `STORAGE_KEY = 'mygenie_enabled_statuses'` (which statuses appear in Header filters).
+  - `STATION_VIEW_STORAGE_KEY = 'mygenie_station_view_config'` (StationPanel on/off + which stations).
+  - `CHANNEL_VISIBILITY_STORAGE_KEY = 'mygenie_channel_visibility'` (which channels appear).
+  - `LAYOUT_TABLE_VIEW_KEY` / `LAYOUT_ORDER_VIEW_KEY` (column counts per channel).
+  - `VIEW_MODE_TABLE_ORDER_KEY` / `VIEW_MODE_CHANNEL_STATUS_KEY` (admin-locks Sidebar view-mode toggles).
+- Sidebar already has a "Visibility Settings" group (`Sidebar.jsx:74-80`) → opens `/visibility/status-config`.
+
+### 2.4 Gaps & Questions (Answer Each)
+
+#### Q-2A — Authority model
+Pick ONE that matches the desired behavior:
+- (a) **Admin-locked single value** — owner sets `visible | hidden` in Settings; cashier cannot toggle live. Mirrors `VIEW_MODE_TABLE_ORDER_KEY` Task-1 lock.
+- (b) **Cashier-toggleable** — show a quick toggle in Header (or Sidebar) so any logged-in user can flip it live. Mirrors Channel filter chip.
+- (c) **Hybrid** — admin can either set a hard lock (`visible` / `hidden`) or leave it `cashier-toggle`. Cashier toggle visible only when admin chose `cashier-toggle`.
+- (d) **Permission-backed** — gate by an existing permission key (e.g., `pos.add` or `order.create`) and skip the visibility-settings UI altogether.
+
+> **Your answer:** _______________________________________
+
+#### Q-2B — Granularity
+Pick ONE:
+- (a) **Global toggle** — one switch for the entire Add button regardless of channel.
+- (b) **Per-channel toggle** — separate switches for Add button when channel = dineIn, takeAway, delivery, room. (Note: channels are themselves visibility-controlled — this would compound.)
+- (c) **Per-order-type** — separate switches for the 4 ORDER_TYPES inside the Add button's order-type dropdown.
+- (d) **Per-role** — different visibility per `userRole` (Waiter / Manager / Owner).
+
+> **Your answer:** _______________________________________
+
+#### Q-2C — Default value
+- (a) Default `visible` (preserves current behavior for tenants who don't open Settings)? Recommended.
+- (b) Default `hidden`?
+
+> **Your answer:** _______________________________________
+
+#### Q-2D — Storage key & shape
+- (a) Localstorage key name — propose: `mygenie_add_button_visibility`. Acceptable, or prefer something else?
+- (b) Shape — propose for Q-2A=(a) and Q-2B=(a):
+  ```json
+  { "enabled": true }
   ```
-  Rendered unconditionally; `onAddOrder` is wired from `DashboardPage.jsx:1229` → `handleAddOrder` (`DashboardPage.jsx:1053`).
+  For Q-2A=(c) + Q-2B=(b):
+  ```json
+  {
+    "lockMode": "cashier-toggle",
+    "channels": { "dineIn": true, "takeAway": true, "delivery": true, "room": true }
+  }
+  ```
+  Confirm or revise.
 
-- **Existing visibility-settings pattern** (`frontend/src/pages/StatusConfigPage.jsx`):
-  - `STORAGE_KEY = 'mygenie_enabled_statuses'` (status-filter visibility).
-  - `STATION_VIEW_STORAGE_KEY = 'mygenie_station_view_config'`.
-  - `CHANNEL_VISIBILITY_STORAGE_KEY = 'mygenie_channel_visibility'`.
-  - `LAYOUT_TABLE_VIEW_KEY`, `LAYOUT_ORDER_VIEW_KEY`.
-  - `VIEW_MODE_TABLE_ORDER_KEY`, `VIEW_MODE_CHANNEL_STATUS_KEY` (Task 1 revision).
-  - All loaded on mount, mutated via toggles, persisted on Save, and read by `Header.jsx`/`Sidebar.jsx`/`DashboardPage.jsx`.
-- **Sidebar nav anchor:** `frontend/src/components/layout/Sidebar.jsx:74-80` already includes a `visibility-settings` group with one child (`status-config`) → opens `StatusConfigPage`.
+> **Your answer:** _______________________________________
 
-### 2.4 Alignment With V3 Architecture Decisions
-- No conflict. The proposal extends the **same** visibility-settings pattern that `StatusConfigPage` already uses.
-- Does NOT touch billing/socket/print — orthogonal to all current V3 ADs.
+#### Q-2E — Cross-tab sync
+- The Task-1 view-mode lock uses `storage` event listening so changes in one tab propagate to others. Should the Add button visibility also use `storage` event sync? (Recommended: YES.)
 
-### 2.5 Gaps / Questions
+> **Your answer:** _______________________________________
 
-**GAP-2A — Storage authority (BLOCKING for design choice).**
-- Existing patterns split into:
-  - **Cashier-controllable** (Channel filter, Status filter, view-mode runtime toggle) — toggled live from Sidebar/Header.
-  - **Admin-locked** (View Mode lock — `'table'|'order'|'both'`) — set in `StatusConfigPage`, read elsewhere.
-- For the Add button, which authority applies?
-  - (a) Admin-only lock (set once in Settings; cashier cannot override). Aligns with "control point" semantics.
-  - (b) Cashier-toggleable (similar to channel filter visibility).
-  - (c) Both — admin sets a hard lock; if unlocked, cashier can toggle.
-- The storage shape and UI affordance differ substantially across these.
+#### Q-2F — Sidebar Visibility Settings UI placement
+- The new toggle should appear inside `StatusConfigPage.jsx`. Where exactly?
+  - (a) New row at top, above "Status Configuration".
+  - (b) New section "UI Elements" with sub-rows (Add button, others later).
+  - (c) Inside the existing "Channel Visibility" card.
 
-**GAP-2B — Granularity per channel.**
-- Should the toggle be **global** ("hide Add button entirely"), or **per channel** (hide for room only, hide for delivery only, etc.)?
-- Per-channel may be useful for tenants that disable specific intake methods, but adds 4× toggles and storage.
-- The Header already filters channels via `restaurant.features.{delivery|takeaway|dineIn|room}` — a hide-Add-button toggle that overrides at the global level vs. an additional per-channel mask need to be reconciled.
+> **Your answer:** _______________________________________
 
-**GAP-2C — Default value.**
-- Default = visible (preserves current behavior). Confirm Abhishek wants this default.
+#### Q-2G — Edge case: Add Order entry alternatives
+- If the Add button is hidden, are there OTHER ways to start a new order today (e.g., clicking an empty table card)? Should those alternates also be hidden, or remain available as escape hatches?
 
-**GAP-2D — Permission interplay.**
-- `Sidebar.jsx` already maps permissions (`SIDEBAR_PERMISSIONS`) to backend permission keys. Should the Add-button visibility ride **only** on the new visibility setting, or **also** be gated by an existing permission key (e.g., `pos`/`order`)?
-- V3 `AD-009` (decentralized frontend permission usage) keeps frontend authoritative for UI gating; either choice is consistent, but mixing the two without a clear precedence rule will be confusing.
+> **Your answer:** _______________________________________
 
-**GAP-2E — V3 future-state mismatch.**
-- `PRD.md` Future P3 says "Migrate localStorage-based visibility settings to user-role permissions."
-- Adding another localStorage key today increases the migration surface. Acceptable, but worth flagging — the new key should be migration-friendly (e.g., reuse existing namespace and have a clean shape).
+#### Q-2H — Permissions interaction
+- Today there's no permission gate on this button. If we add a visibility flag, should it be ANDed with a permission (e.g., `hasPermission('order')`)? Pure visibility flag wins, even if user has permission?
 
-### 2.6 Suggested Options
-- **Option A (Recommended):** New localStorage key `mygenie_add_button_visibility` with shape `{ enabled: boolean }` (default `true`). Toggle lives in `StatusConfigPage` under the existing "Visibility" surface. `Header.jsx` reads this key on mount + listens for `storage` event for cross-tab sync (mirrors Task-1 view-mode lock pattern). Single global toggle.
-- **Option B:** Per-channel granularity: `{ enabled: { dineIn: true, takeAway: true, delivery: true, room: true } }`. Reuses the existing channel filter path in `Header.jsx`.
-- **Option C:** Hybrid admin-lock pattern: store both `lockMode: 'visible' | 'hidden' | 'cashier-toggle'`. If locked, cashier cannot override; if cashier-toggle, expose a quick toggle in the Header dropdown.
+> **Your answer:** _______________________________________
 
-### 2.7 Recommendation (pending answers)
-Start with **Option A** (global, admin-set, default `true`). It mirrors the Channel Visibility toggle's UX precisely, lowest surface area, and easy to migrate later to a permission-backed flag. Escalate to Option B/C only if product needs them.
+### 2.5 Files Likely Involved
+- `frontend/src/components/layout/Header.jsx` (gate render at lines 591–600).
+- `frontend/src/pages/StatusConfigPage.jsx` (add toggle row + persist).
+- `frontend/src/pages/DashboardPage.jsx` (only if we choose to thread a flag prop down; not required if `Header.jsx` reads localStorage directly).
 
-### 2.8 Risk / Impact
-- LOW. Pure additive UI gating. No payload or socket impact.
-- Minor regression risk if `Header.jsx` does not subscribe to `storage` events (Add button stuck visible in another tab after change in Settings) — same pattern fix already used for view-mode lock.
-
-### 2.9 Files / Components Likely Involved (no edits in this validation)
-- `frontend/src/components/layout/Header.jsx` (gate the existing button render block at lines 591–600).
-- `frontend/src/pages/StatusConfigPage.jsx` (add the new toggle row + Save logic).
-- `frontend/src/pages/DashboardPage.jsx` (no change required if Header reads localStorage directly; alternatively pass a flag down).
+### 2.6 Risk / Impact
+- LOW. Pure UI gating, no payload/socket impact.
+- One pitfall: if `Header.jsx` doesn't subscribe to `storage` events, change-in-Settings won't propagate to other open tabs.
 
 ---
 
 ## Requirement 3 — Room Order Bill Print Payload
 
-### 3.1 Requirement (as stated)
+### 3.1 Requirement
 > For room orders:
-> - Auto bill print should NOT be applicable, even if the auto bill flag is passed.
+> - Auto bill print should NOT be applicable, even if auto bill flag is passed.
 > - Room bill print payload must be compared against Collect Bill data; payload must include: room details, advance payment, balance payment, total room amount, associated orders, room service orders, total associated order amount, and final payable amount.
 
-### 3.2 V3 Documents Checked
-- `ARCHITECTURE_DECISIONS_FINAL.md`
-  - **AD-013A** — SC order-type gating: "Default collect-bill branch gates to dine-in/walk-in/room; room-with-associated-orders UI still shows SC toggle by percentage without the same visible `scApplicable` guard." (room-checkout branch flagged as nuance, NOT a print-payload decision).
-  - **AD-105** — tax/print parity: override paths align; fallback recomputation remains; **no room-specific clause**.
-  - **AD-302** — collect-bill ↔ print parity: postpaid auto-print improved, but **no room exclusion**.
-- `DOC_VS_CODE_GAP.md` — `GAP-N3` (room-with-associated-orders SC UI nuance only).
-- `OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md` — `OQ-013A` (SC), `OQ-302A` (postpaid auto-print) → no room-specific carve-out.
-- `RISK_REGISTER.md` — `RISK-018` (tax/SC consistency), `RISK-036` (runtime complimentary parity), `RISK-037` (delivery-address persistence). No `RISK-Room-AutoBill` or `RISK-Room-PrintPayload`.
-- `OWNER_REVIEW_PACKET.md` — Backend B-02 (settlement authority) is a related open question but not a room-print decision.
-- `/app/memory/ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md`
-  - Notes "Auto-print fires on ₹0 checkout (if `settings.autoBill=true`). Auto-print block at `OrderEntry.jsx:1309-1363` is try/catch-wrapped; empty `billFoodList` should be handled gracefully" — i.e., the Room ₹0 case is **inert** today, NOT suppressed.
-  - "Print receipt for ₹0 room not in scope of this fix (already handled by existing `billFoodList` filter). ✅" — confirms there is **no** explicit decision to disable auto-print for rooms; the team accepted the inert behavior.
-- `/app/memory/ROOM_MODULE_REQUIREMENTS_V2.md` — covers room module structure, profile flags, but **does not specify a room-bill print contract**.
-- `/app/memory/PRD.md` — Lists Task 4 (room card total = food + transfers + balance) but no print-payload spec.
+### 3.2 V3 Coverage
+- `AD-013A` SC gating room caveat — partial.
+- `AD-105` tax/print parity — silent on rooms.
+- `AD-302` collect-bill ↔ print parity — assumes auto-print fires when `settings.autoBill=true`; **direct conflict** with Req 3 auto-bill suppression.
+- `RISK-018` tax/SC consistency — related but not room-specific.
+- `OWNER_REVIEW_PACKET.md B-02` (settlement authority) — related but doesn't decide print contract.
 
-### 3.3 Existing Code Behavior
+### 3.3 Current Code Behavior
 
-#### 3.3.a Auto-bill suppression for rooms — DOES NOT EXIST
-- `frontend/src/components/order-entry/OrderEntry.jsx`:
-  - **Postpaid (Scenario 1, line 1310):**
-    ```js
-    if (settings?.autoBill && collectOrderId) { … await printOrder(…); }
-    ```
-    No `isRoom` guard.
-  - **Prepaid (Scenario 2, line 1262):**
-    ```js
-    await autoPrintNewOrderIfEnabled(newOrderId);
-    ```
-    Inside, checks `settings?.autoBill` only — no `isRoom` guard.
-  - **Transfer to Room (Scenario 3, lines 1168-1181):** does not auto-print — but also does not run collect-bill.
-- Therefore: today, a postpaid Room checkout with `settings.autoBill=true` WILL fire `printOrder(...)` for the room, regardless of any "auto bill is not applicable for room orders" intent.
+**Auto-bill suppression for rooms — DOES NOT EXIST today.**
+- `OrderEntry.jsx:1310` (Scenario 1, postpaid): `if (settings?.autoBill && collectOrderId) { ... await printOrder(...); }` — no `isRoom` guard.
+- `OrderEntry.jsx:1262` (Scenario 2, prepaid): `await autoPrintNewOrderIfEnabled(newOrderId);` — no `isRoom` guard.
+- `OrderEntry.jsx:1093` (`autoPrintNewOrderIfEnabled`): only checks `settings?.autoBill` — no `isRoom` guard.
 
-#### 3.3.b Room print payload — current shape
-`frontend/src/api/transforms/orderTransform.js:1017` (`buildBillPrintPayload(order, serviceChargePercentage, overrides)`) emits the following fields. Reference: lines 1197-1245.
+**Room print payload — current `buildBillPrintPayload()` shape** (`orderTransform.js:1017-1245`):
 
 | Field | Current value | Source |
 |---|---|---|
-| `order_id` | `order.orderId` | from order |
-| `restaurant_order_id` | `order.orderNumber` | from order |
+| `order_id`, `restaurant_order_id` | from order | order |
 | `print_type` | `'bill'` | constant |
-| `payment_amount` | `overrides.paymentAmount` ?? `order.amount` | order/overrides |
-| `grant_amount` | `finalPaymentAmount` (= `payment_amount`) | derived |
-| `order_item_total` | `overrides.orderItemTotal` ?? subtotal | overrides |
-| `order_subtotal` | `overrides.orderSubtotal` ?? `itemBase + SC + tip` | overrides |
-| `discount_amount` | `overrides.discountAmount` ?? **0 (hardcoded)** | overrides |
-| `coupon_code` | `overrides.couponCode` ?? `''` | overrides |
-| `loyalty_dicount_amount` | `overrides.loyaltyAmount` ?? 0 | overrides |
-| `wallet_used_amount` | `overrides.walletAmount` ?? 0 | overrides |
-| `serviceChargeAmount` | computed/overridden, gated on `dineIn || isRoom` | overrides |
-| `roomRemainingPay` | **`0` (hardcoded)** | constant |
-| `roomAdvancePay` | **`0` (hardcoded)** | constant |
-| `roomGst` | **`0` (hardcoded)** | constant |
-| `gst_tax`, `vat_tax` | computed/overridden | overrides |
-| `delivery_charge` | overrides ?? `order.deliveryCharge` | overrides |
-| `Tip` | overrides ?? `order.tipAmount` | overrides |
+| `payment_amount`, `grant_amount` | overrides ?? `order.amount` | overrides |
+| `order_item_total`, `order_subtotal` | overrides ?? computed | overrides |
+| `discount_amount`, `coupon_code`, `loyalty_dicount_amount`, `wallet_used_amount` | overrides ?? 0/'' | overrides |
+| `serviceChargeAmount` | overrides ?? computed (gated `dineIn||isRoom`) | overrides |
+| `gst_tax`, `vat_tax`, `delivery_charge`, `Tip` | overrides ?? computed | overrides |
 | `billFoodList` | rawDetails minus 'check in' marker | derived |
-| `tablename` | derived (`'WC'`/`'TA'`/`'Del'`/`tableNumber`) | derived |
-| **NOT EMITTED** | `associatedOrders` / room-service split / `totalRoomAmount` / `finalPayable` (single grand) | n/a |
+| `tablename` | `'WC'` / `'TA'` / `'Del'` / tableNumber | derived |
+| **`roomRemainingPay`** | **`0` HARDCODED** | constant |
+| **`roomAdvancePay`** | **`0` HARDCODED** | constant |
+| **`roomGst`** | **`0` HARDCODED** | constant |
+| **NOT EMITTED** | `associatedOrders[]`, `roomPrice`, `associatedOrdersTotal`, `finalPayable` | n/a |
 
-The hardcoded zeros for `roomRemainingPay`, `roomAdvancePay`, `roomGst` are direct evidence the print contract was **stubbed but never wired**. Backend may already accept these keys, but the frontend never populates them.
-
-#### 3.3.c Collect Bill (CollectPaymentPanel) actually computes & displays
-`frontend/src/components/order-entry/CollectPaymentPanel.jsx`:
-- `roomBalance` = `Math.max(0, roomInfo.balancePayment || 0)` (lines 110-113).
-- `roomInfo.roomPrice`, `roomInfo.advancePayment`, `roomInfo.balancePayment` rendered (lines 854-866).
+**CollectPaymentPanel actually computes the values that should be on the print** (`CollectPaymentPanel.jsx`):
+- `roomBalance` (line 110-113): from `roomInfo.balancePayment`.
+- `roomInfo.roomPrice / advancePayment / balancePayment` rendered (lines 854-866).
 - `associatedOrders[]` rendered with count + `associatedTotal` (lines 874-915).
-- Final grand: `(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal) + roomBalance` (line 543).
-- These values are **not** propagated into the auto-print override object (`OrderEntry.jsx` lines 1136-1151 prepaid; 1319-1347 postpaid). Auto-print currently uses generic `paymentData.itemTotal/subtotal/finalTotal/discounts/...`.
+- Grand total formula (line 543): `(isRoom && associatedOrders.length > 0 ? finalTotal + associatedTotal : finalTotal) + roomBalance`.
+- Architectural rule (`orderTransform.js:269-271`): "room balance has NO SC, NO GST, NO discount applied — pass-through ₹ amount added to grand_total via `grand_total` field."
 
-#### 3.3.d Source: `fromAPI.order` (lines 248-277) populates:
-- `associatedOrders[]` from `api.associated_order_list` with `{ orderId, orderNumber, amount, transferredAt }`.
-- `roomInfo: { roomPrice, advancePayment, balancePayment }` from `api.room_info`.
+**Source of room data** (`fromAPI.order` lines 248-277): `associatedOrders[]` from `api.associated_order_list[]`; `roomInfo` from `api.room_info`. Both available in the `order` arg passed to `buildBillPrintPayload`.
 
-Both are available in the `order` argument passed to `buildBillPrintPayload`, so populating the payload with them is purely additive frontend work.
+### 3.4 Gaps & Questions (Answer Each)
 
-### 3.4 Alignment With V3 Architecture Decisions
-- **AD-105 (tax/print consistency):** the requirement is consistent with this AD's spirit — "Collect-bill UI must equal printed bill." Today the room sub-block (room balance, advance, transferred orders) is in the UI but absent in print payload; that is an AD-105-spirit violation, but V3 did not explicitly call it out.
-- **AD-302 (collect-bill ↔ print parity, postpaid auto-print):** decision says auto-print is implemented when `settings.autoBill=true`. The new requirement EXEMPTS rooms from this — direct conflict that needs an AD update.
-- **AD-013A (SC gating room caveat):** acknowledges room-with-associated-orders branch differs but did not extend to print-payload contract.
-- This is a **substantive product/architecture change** requiring a new AD or AD amendment.
+#### Q-3A — Auto-bill suppression scope
+Pick ONE:
+- (a) **Strict** — block auto-bill for ANY order where `isRoom===true`, both Scenario 1 (postpaid collect-bill) and Scenario 2 (prepaid place+pay).
+- (b) **Postpaid-only** — block only Scenario 1; allow Scenario 2 to print (rare path for fresh prepaid against a room).
+- (c) **Balance-conditional** — block only when `roomInfo.balancePayment > 0` (real room booking); allow auto-print when room order has no booking (food-only).
+- (d) **Other** — describe.
 
-### 3.5 Gaps / Questions
+> **Your answer:** _______________________________________
 
-**GAP-3A — Auto-bill suppression for rooms (BLOCKING).**
-- Should suppression apply to:
-  - (a) BOTH postpaid (Scenario 1) and prepaid (Scenario 2) when the order `isRoom`?
-  - (b) Only postpaid Room checkout?
-  - (c) Only Room checkout WITH balance/advance > 0 (i.e., real room booking), but allow auto-print for "Room Service food only" cases (no balance, no advance)?
-- The requirement language says "even if auto bill flag is passed", suggesting (a). Confirm.
-- Conflicts with **AD-302** as currently written. AD-302 must be amended/superseded with a Room exclusion clause.
+#### Q-3B — Manual Print Bill button for rooms
+- The `Print Bill` button in `CollectPaymentPanel` calls the same `buildBillPrintPayload`. Should it:
+  - (a) Stay enabled for rooms (recommended, gives cashier a print path), and emit the enriched payload (per Q-3D-Q-3F).
+  - (b) Be disabled for rooms.
+  - (c) Stay enabled but emit a different payload than auto-bill (advanced; not recommended).
 
-**GAP-3B — Manual print parity for rooms.**
-- Is **manual** Print Bill from CollectPaymentPanel still allowed for rooms (the `Print Bill` button)? Manual print uses the same `buildBillPrintPayload` with overrides.
-- Today: yes. Confirm Abhishek expects manual print to remain available, with the enriched room fields.
-- If both manual and auto are blocked for rooms → no print path remains at all for rooms (likely undesired).
+> **Your answer:** _______________________________________
 
-**GAP-3C — Room print payload contract — exact field shape (BLOCKING).**
-The requirement enumerates eight fields. Need exact key names + types since backend may already accept `room*` keys. Proposed mapping (needs Abhishek confirmation):
+#### Q-3C — Backend printer template knowledge
+- Does the backend printer template / `order-temp-store` already understand any of the proposed new keys (e.g., `roomPrice`, `associatedOrders`, `finalPayable`)? Please confirm — this drives whether we (i) populate existing keys (`roomRemainingPay` / `roomAdvancePay` already in payload as `0`) or (ii) add new keys.
 
-| Requirement | Suggested key | Type | Source |
-|---|---|---|---|
-| Room details | reuse existing `tablename` (room number) + new `roomName` or reuse `tablename` only? | string | `order.tableNumber` / `roomInfo` |
-| Advance payment | `roomAdvancePay` (key already exists, currently `0`) | number | `order.roomInfo.advancePayment` |
-| Balance payment | `roomRemainingPay` (key already exists, currently `0`) | number | `order.roomInfo.balancePayment` |
-| Total room amount | new key `roomPrice` or `roomTotalAmount` | number | `order.roomInfo.roomPrice` |
-| Associated orders | new key `associatedOrders` | array of `{order_id, restaurant_order_id, amount, transferredAt}` | `order.associatedOrders` |
-| Room service orders | clarify — is this the cart/`billFoodList` of the room order itself? Or a separate entity? | array | `order.rawOrderDetails` (= same as `billFoodList`) ? |
-| Total associated order amount | new key `associatedOrdersTotal` | number | sum of `associatedOrders[].amount` |
-| Final payable amount | reuse `payment_amount` / `grant_amount`, OR new key `finalPayable`? | number | `(finalTotal + associatedTotal) + roomBalance` |
+> **Your answer:** _______________________________________
 
-**Specific clarifications needed:**
-- (i) Does backend printer template already understand any of these keys?
-- (ii) Should `serviceChargeAmount`, `gst_tax`, `vat_tax` continue to apply ONLY to the room-service food portion (per architectural rule "room balance has NO SC, NO GST, NO discount" — see `orderTransform.js:269-271`)? The current `CollectPaymentPanel` adds room balance as a flat pass-through with no tax. Confirm the print payload follows the same rule.
-- (iii) For `roomGst` (currently `0`), should it stay `0` or carry the GST on room balance if the tenant has `room_gst_applicable=Yes` (per `room_module_implementation_requirements.md` A6)?
+#### Q-3D — Exact print-payload key contract
+For each requirement field, confirm key name + type. Defaults are my proposals; override if backend expects different names.
 
-**GAP-3D — Discount / SC / tip applicability on the merged total.**
-- `CollectPaymentPanel` applies SC/discount/tip ONLY on the room-service food subtotal, never on `roomBalance` or `associatedTotal`. The print payload contract should encode this clearly so the backend printer doesn't double-charge.
+| Requirement field | Proposed key | Type | Source field | Confirm? |
+|---|---|---|---|---|
+| Room details (label/number) | `tablename` (existing) — room number string | string | `order.tableNumber` | (Y / change to `roomLabel`?) ___ |
+| Advance payment | `roomAdvancePay` (existing key, currently `0`) | number | `order.roomInfo.advancePayment` | ___ |
+| Balance payment | `roomRemainingPay` (existing key, currently `0`) | number | `order.roomInfo.balancePayment` | ___ |
+| Total room amount | NEW key `roomPrice` (or `roomTotalAmount`?) | number | `order.roomInfo.roomPrice` | ___ |
+| Associated orders | NEW key `associatedOrders[]`: `[{ order_id, restaurant_order_id, amount, transferred_at }]` | array | `order.associatedOrders` | ___ |
+| Room service orders | reuse existing `billFoodList` (food items in this room order) | array | `order.rawOrderDetails` | (Y / different?) ___ |
+| Total associated order amount | NEW key `associatedOrdersTotal` | number | sum of `associatedOrders[].amount` | ___ |
+| Final payable amount | reuse `payment_amount` and `grant_amount` (already populated)? OR new key `finalPayable`? | number | `(finalTotal + associatedTotal) + roomBalance` | ___ |
 
-**GAP-3E — Source of associated orders for print.**
-- `order.associatedOrders[]` is hydrated from `api.associated_order_list[]`. Verify (with backend owner) that this list is **complete** at the moment of print (right after `order-bill-payment` returns) — there is a known race where socket re-engage may lag the HTTP collect-bill response (RISK-009 / `OrderEntry.jsx:1281-1366`). If lag matters, a fresh `GET /get-single-order-new` may be required before printing.
+> **Your answer:** _______________________________________
 
-**GAP-3F — Compatibility with `paid_room` / `room_id` keys.**
-- `orderToAPI.collectBillExisting` already sends `paid_room`, `room_id`, etc. on the **collect-bill** payload (lines 780-781). The **print** payload does NOT carry these. Confirm whether print needs them too (some printer backends key off them).
+#### Q-3E — `roomGst` semantics
+- Currently `roomGst: 0` is hardcoded. Should it:
+  - (a) Stay `0` always (room balance has no GST, per architectural rule at `orderTransform.js:269-271`).
+  - (b) Carry GST on the room balance when `room_gst_applicable === 'Yes'` (per `room_module_implementation_requirements.md` A6).
 
-**GAP-3G — V3 AD update path.**
-- This requirement requires either:
-  - A new AD: `AD-Room-Print` / `AD-302A — room auto-print suppression`.
-  - Or amendments to AD-302 + AD-105 + AD-013A to encode the room-specific carve-out.
-- Without one of these updates, the change will silently regress V3's "collect-bill ↔ print parity" claim.
+> **Your answer:** _______________________________________
 
-### 3.6 Suggested Options
+#### Q-3F — Tax/SC/Tip applicability
+- `CollectPaymentPanel` applies SC, discount, tip ONLY on the room-service food subtotal — NOT on `roomBalance` or `associatedTotal`.
+- The print payload must encode this clearly. Confirm:
+  - (a) `serviceChargeAmount` = SC on `billFoodList` only (current behavior). YES/NO.
+  - (b) `discount_amount` = applies to food subtotal only, not to room balance or associated orders. YES/NO.
+  - (c) `Tip` = applies once at the bill level (not duplicated across associated orders). YES/NO.
+  - (d) `gst_tax` / `vat_tax` = on food subtotal + SC + tip (current); does NOT include tax on room balance unless Q-3E=(b). Confirm.
 
-**Option A — Hard suppression + enriched payload (recommended):**
-- Add an `isRoom` short-circuit at the top of both auto-print blocks in `OrderEntry.jsx` (Scenario 1 line 1310; Scenario 2 line 1262). Skip `printOrder()` entirely.
-- Manual `Print Bill` button remains functional.
-- Extend `buildBillPrintPayload` with room-aware fields populated from `order.roomInfo` and `order.associatedOrders`. Keep all existing keys; populate `roomRemainingPay` / `roomAdvancePay` from real values; add `roomPrice`, `associatedOrders`, `associatedOrdersTotal`, `finalPayable`. Wire CollectPaymentPanel's manual print to forward these via overrides if needed.
+> **Your answer:** _______________________________________
 
-**Option B — Soft suppression (config flag):**
-- Introduce a `restaurant.features.roomAutoBill` flag (or similar). Default: false (suppressed). Allows tenants to opt-in later. More flexible, more surface.
+#### Q-3G — `paid_room` / `room_id` in print payload
+- `orderToAPI.collectBillExisting` already sends `paid_room`, `room_id` on the **collect-bill** payload (lines 780-781). The **print** payload does NOT carry these today. Should print payload also include them?
+- (a) YES — add `paid_room` and `room_id` to print payload.
+- (b) NO — keep print payload focused on display fields only.
 
-**Option C — Conditional suppression by balance:**
-- Skip auto-print only when `roomBalance > 0` (real room booking) but allow auto-print for room-service-food-only cases. Closer to current ROOM_CHECKIN_NEXT_AGENT_GAPS handover language. Adds a runtime check.
+> **Your answer:** _______________________________________
 
-### 3.7 Recommendation (pending answers)
-**Option A** — definitive product behavior, lowest ambiguity, easiest to test, and direct match to the requirement statement. Accompanied by an AD-302A amendment in V3.
+#### Q-3H — Source-of-truth race condition
+- `OrderEntry.jsx` Scenario 1 (postpaid collect-bill) prints right after `order-bill-payment` returns, before socket re-engage. The `order` snapshot in context may not yet reflect the just-collected bill.
+- Today this is mitigated by passing live overrides from `paymentData`.
+- For room print:
+  - (a) Trust live `CollectPaymentPanel` values (passed via `overrides`) — same model as today. Recommended.
+  - (b) Force a fresh `GET /api/v2/vendoremployee/get-single-order-new` BEFORE printing to refresh `associated_order_list` and `room_info`.
 
-### 3.8 Risk / Impact
-- HIGH if the print payload keys don't match what the backend printer template expects → blank/garbled receipts on rooms.
-- HIGH if auto-bill suppression is partial (e.g., only Scenario 1) → tenants will see inconsistent behavior between prepaid and postpaid rooms.
-- MEDIUM if discount/SC/tax rules are not explicitly encoded for rooms → potential mis-billing when a cashier applies a discount on a room collect-bill.
+> **Your answer:** _______________________________________
 
-### 3.9 Files / Components Likely Involved (no edits in this validation)
-- `frontend/src/components/order-entry/OrderEntry.jsx` (Scenario 1 auto-print block at ~line 1310; Scenario 2 `autoPrintNewOrderIfEnabled` at ~line 1093).
-- `frontend/src/api/transforms/orderTransform.js` (`buildBillPrintPayload` at line 1017; `fromAPI.order` at lines 248-277 already provides `associatedOrders` + `roomInfo`).
-- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` (manual `handlePrintBill` overrides — ensure room values forwarded for manual print parity, lines 875-915, ~1290-1462).
-- `frontend/src/api/services/orderService.js` (printOrder helper).
-- V3 doc updates: `ARCHITECTURE_DECISIONS_FINAL.md` (new AD or AD-302 amendment), `DOC_VS_CODE_GAP.md` (close room-print gap once landed).
+#### Q-3I — Scenario 3 (Transfer to Room) print
+- When dine-in cashier picks "To Room" in `CollectPaymentPanel`, the order gets transferred to the room. No bill printed today. Should this flow:
+  - (a) Continue without printing (current behavior).
+  - (b) Print a transfer-receipt for the source order.
+  - (c) Print the room's updated bill including the new associated order.
+
+> **Your answer:** _______________________________________
+
+#### Q-3J — Empty-room (₹0 marker-only) print
+- For a checked-in room with only the "Check In" marker and no food/transfers/balance, today auto-print fires (per `ROOM_CHECKIN_NEXT_AGENT_GAPS_VALIDATED_HANDOVER.md:285`) but is "inert" (empty `billFoodList`).
+- After Q-3A=strict suppression, this case is automatically suppressed. Confirm acceptable, or do you want a special "checkout receipt" with ₹0 balance?
+
+> **Your answer:** _______________________________________
+
+#### Q-3K — V3 documentation update
+- Should V3 docs be amended as part of this change?
+  - (a) YES — add new AD `AD-302A` (room auto-print suppression) + new AD `AD-Room-Print-Payload`. Update `RISK-018`. Mark relevant `OWNER_REVIEW_PACKET` items resolved.
+  - (b) NO — implementation only, no V3 doc changes (treat as undocumented current behavior).
+
+> **Your answer:** _______________________________________
+
+#### Q-3L — Feature flag / rollback
+- Should auto-bill suppression be behind a feature flag (e.g., `restaurant.features.roomAutoBillEnabled` defaulting to `false`) so a tenant can opt back in?
+- (a) YES — flag-controlled.
+- (b) NO — hard-coded behavior.
+
+> **Your answer:** _______________________________________
+
+### 3.5 Files Likely Involved
+- `frontend/src/components/order-entry/OrderEntry.jsx`:
+  - Scenario 1 auto-print block at ~line 1310.
+  - Scenario 2 `autoPrintNewOrderIfEnabled` at ~line 1093.
+- `frontend/src/api/transforms/orderTransform.js`:
+  - `buildBillPrintPayload` at line 1017 — populate room fields.
+  - `fromAPI.order` lines 248-277 — already provides `associatedOrders` + `roomInfo` (no change needed unless Q-3H=(b)).
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx`:
+  - `handlePrintBill` overrides (lines 875-915, ~1290-1462) — forward room values for manual print parity.
+- `frontend/src/api/services/orderService.js`:
+  - `printOrder` helper, only if signature changes.
+- V3 doc updates per Q-3K.
+
+### 3.6 Risk / Impact
+- HIGH if print payload keys don't match backend printer template (Q-3C, Q-3D) → blank/garbled receipts.
+- HIGH if auto-bill suppression is partial (Q-3A=(b) by mistake) → inconsistent UX between prepaid and postpaid rooms.
+- MEDIUM if discount/SC/tax rules aren't pinned (Q-3F) → mis-billing on rooms with discounts applied.
+- LOW for V3 doc churn (Q-3K).
 
 ---
 
-## Cross-Cutting Notes
+## Cross-Cutting
 
-### V3 Documents That Will Need Update Post-Approval
-- `ARCHITECTURE_DECISIONS_FINAL.md` — add/amend ADs:
-  - AD-Station-Refresh (Req 1) — new.
-  - AD-Visibility-Add-Button (Req 2) — new.
-  - AD-302A — Room auto-print suppression (Req 3) — new, supersedes AD-302 for rooms.
-  - AD-Room-Print-Payload (Req 3) — new.
-- `DOC_VS_CODE_GAP.md` — close gaps once implementation lands.
-- `RISK_REGISTER.md` — re-classify `RISK-018` if auto-print room exclusion is implemented.
+### V3 Docs To Be Amended Post-Approval
+- `ARCHITECTURE_DECISIONS_FINAL.md`:
+  - `AD-Employee-Menu-Refresh` (new, Req 1).
+  - `AD-Visibility-Add-Button` (new, Req 2).
+  - `AD-302A — Room auto-print suppression` (new, Req 3).
+  - `AD-Room-Print-Payload` (new, Req 3).
+- `DOC_VS_CODE_GAP.md` — close after implementation.
+- `RISK_REGISTER.md` — re-classify `RISK-018` if Q-3A lands.
+- `OPEN_QUESTIONS_DECISION_STATUS_SUMMARY.md` — mark `OQ-302A` superseded for rooms.
 
 ### Test Credentials
-- `/app/memory/test_credentials.md` is empty per handoff. Manual end-to-end QA on Tasks 2–5 (PRD §10) cannot be performed by the testing agent without credentials — flag this for the next QA pass.
+- `/app/memory/test_credentials.md` is empty (per fork handoff). End-to-end QA on these requirements will require credentials. Please provide owner/cashier credentials for tenant 478 (`18march`) or equivalent test tenant before the implementation handover is executed.
 
-### Out of Scope for This Validation
-- No code changes were made. No file under `/app/frontend` or `/app/v3` was edited in this validation cycle.
+### Out of Scope For This Validation
+- No code changes were made.
+- No file under `/app/frontend` or `/app/v3` was edited.
 
 ---
 
-## Approval Gate (STOP)
+## How To Respond
 
-The following BLOCKING questions must be answered by Abhishek before `/app/memory/THREE_REQUIREMENTS_IMPLEMENTATION_HANDOVER.md` is created:
+For the fastest implementation handover, please paste your answers under each `> **Your answer:**` line above. Even short answers (e.g., `(a)` or `Q-3A: a, Q-3B: a, Q-3D: confirm all defaults`) are sufficient for any question whose recommended default is acceptable. For Q-1A (endpoint contract) and Q-1B (consumer panel), please share full details — those are the highest-blocking unknowns.
 
-1. **GAP-1A** — Confirm endpoint name for the Kitchen/BAR preparing count panel: `employee-menu` (new) vs `station-order-list` (current) vs both.
-2. **GAP-1B** — Refresh granularity (per-station targeted vs all-stations) and debounce window.
-3. **GAP-1D** — Final list of socket events that must trigger refresh (specifically: `UPDATE_ORDER_PAID`, `SCAN_NEW_ORDER`, `DELIVERY_ASSIGN_ORDER`, `SPLIT_ORDER` — include or exclude?).
-4. **GAP-2A** — Visibility authority for Add button: admin-locked vs cashier-toggleable vs hybrid.
-5. **GAP-2B** — Granularity: global vs per-channel.
-6. **GAP-3A** — Auto-bill suppression scope: postpaid-only, prepaid-only, both, or balance-conditional.
-7. **GAP-3B** — Manual `Print Bill` for rooms: keep enabled or also block?
-8. **GAP-3C** — Exact print payload key names (per the table in §3.5) and tax rule for room balance / `roomGst`.
-9. **GAP-3F** — Whether `paid_room` / `room_id` need to also flow into the print payload.
-10. **GAP-3G** — Confirm Abhishek wants V3 ADs amended (AD-302A + AD-Room-Print-Payload), or treated as implementation-only without architecture-doc revision.
-
-Once answered, the implementation handover will be drafted with:
-- exact file ranges to edit,
+Once received, I will produce `/app/memory/THREE_REQUIREMENTS_IMPLEMENTATION_HANDOVER.md` with:
+- exact file ranges to edit (per requirement),
 - AD/risk-register update plan,
-- sequenced test cases (manual + automated),
-- rollback/feature-flag strategy if applicable.
+- sequenced manual + automated test cases,
+- rollback strategy,
+- and an explicit acceptance checklist tied to your answers above.
 
 ---
 
