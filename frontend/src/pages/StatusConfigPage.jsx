@@ -545,73 +545,53 @@ const StatusConfigPage = () => {
                     </p>
                   </div>
 
-                  {/* Display Mode Selection */}
+                  {/* Display Mode Selection
+                      Re-implemented (Task 1 revision) using the page's
+                      checkbox-card pattern to avoid the sr-only-radio
+                      scroll-jump bug. Same fix as View Mode below. */}
                   <div className="mb-6">
                     <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
                       Display Mode
                     </label>
-                    <div className="flex gap-4">
-                      <label 
-                        className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                        style={{
-                          borderColor: stationViewConfig.displayMode === 'stacked' ? COLORS.primaryOrange : COLORS.borderGray,
-                          backgroundColor: stationViewConfig.displayMode === 'stacked' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="displayMode"
-                          value="stacked"
-                          checked={stationViewConfig.displayMode === 'stacked'}
-                          onChange={() => setDisplayMode('stacked')}
-                          className="sr-only"
-                        />
-                        <div 
-                          className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                          style={{ borderColor: stationViewConfig.displayMode === 'stacked' ? COLORS.primaryOrange : COLORS.borderGray }}
-                        >
-                          {stationViewConfig.displayMode === 'stacked' && (
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
-                          )}
-                        </div>
-                        <div>
-                          <span className="font-medium" style={{ color: COLORS.darkText }}>Stacked</span>
-                          <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                            All stations visible, scroll to see more
-                          </p>
-                        </div>
-                      </label>
-
-                      <label 
-                        className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
-                        style={{
-                          borderColor: stationViewConfig.displayMode === 'accordion' ? COLORS.primaryOrange : COLORS.borderGray,
-                          backgroundColor: stationViewConfig.displayMode === 'accordion' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name="displayMode"
-                          value="accordion"
-                          checked={stationViewConfig.displayMode === 'accordion'}
-                          onChange={() => setDisplayMode('accordion')}
-                          className="sr-only"
-                        />
-                        <div 
-                          className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-                          style={{ borderColor: stationViewConfig.displayMode === 'accordion' ? COLORS.primaryOrange : COLORS.borderGray }}
-                        >
-                          {stationViewConfig.displayMode === 'accordion' && (
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
-                          )}
-                        </div>
-                        <div>
-                          <span className="font-medium" style={{ color: COLORS.darkText }}>Accordion</span>
-                          <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
-                            Click to expand/collapse each station
-                          </p>
-                        </div>
-                      </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { id: 'stacked',   label: 'Stacked',   description: 'All stations visible, scroll to see more' },
+                        { id: 'accordion', label: 'Accordion', description: 'Click to expand/collapse each station' },
+                      ].map((opt) => {
+                        const isSelected = stationViewConfig.displayMode === opt.id;
+                        return (
+                          <div
+                            key={opt.id}
+                            data-testid={`display-mode-${opt.id}`}
+                            onClick={() => setDisplayMode(opt.id)}
+                            className="p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md"
+                            style={{
+                              backgroundColor: isSelected ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
+                              borderColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray,
+                            }}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: isSelected ? COLORS.primaryOrange : COLORS.darkText }}
+                                >
+                                  {opt.label}
+                                </span>
+                                <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
+                                  {opt.description}
+                                </p>
+                              </div>
+                              <div
+                                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: isSelected ? COLORS.primaryOrange : COLORS.borderGray }}
+                              >
+                                {isSelected && <Check className="w-4 h-4 text-white" />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
