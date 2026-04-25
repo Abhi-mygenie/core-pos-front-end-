@@ -520,8 +520,11 @@ const CollectPaymentPanel = ({
         {/* BUG-006 UX (Apr-2026): ADJUSTMENTS — all editable controls grouped
             ABOVE the Bill Summary so cashier edits and computed results share a
             natural top-to-bottom flow. Previously Discount/Coupon/Loyalty/Wallet
-            sat below Bill Summary, forcing a scroll-back to verify. */}
-        {!(isRoom && associatedOrders.length > 0) && (
+            sat below Bill Summary, forcing a scroll-back to verify.
+            ROOM_CHECKIN_GAP3 (2026-04-25): also hide when a room has zero
+            food/room-service items in cart — adjustments do not apply to
+            room-balance-only or transferred-only checkouts. */}
+        {!(isRoom && (associatedOrders.length > 0 || visibleCartItemCount === 0)) && (
         <>
         <div className="text-xs font-bold uppercase tracking-wider px-1 -mb-2" style={{ color: COLORS.grayText }}>
           🎛 Adjustments
@@ -881,7 +884,7 @@ const CollectPaymentPanel = ({
                   <div className="flex items-center gap-1.5">
                     <BellRing className="w-3.5 h-3.5" style={{ color: COLORS.darkText }} />
                     <span className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>
-                      Room Service
+                      Room Orders
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1140,7 +1143,7 @@ const CollectPaymentPanel = ({
                     </div>
                     {/* Room Service Grand Total */}
                     <div className="px-3 py-2 border-t flex justify-between font-bold" style={{ borderColor: COLORS.borderGray }}>
-                      <span style={{ color: COLORS.darkText }}>Room Service Total</span>
+                      <span style={{ color: COLORS.darkText }}>Room Orders Total</span>
                       <span style={{ color: COLORS.darkText }}>₹{finalTotal.toLocaleString()}</span>
                     </div>
                   </div>
