@@ -19,13 +19,19 @@ const CHANNEL_VISIBILITY_STORAGE_KEY = 'mygenie_channel_visibility';
 const LAYOUT_TABLE_VIEW_KEY = 'mygenie_layout_table_view';
 const LAYOUT_ORDER_VIEW_KEY = 'mygenie_layout_order_view';
 
-// VIEW_MODE_LOCK (Task 1, Apr-2026): user picks exactly one mode per axis;
-// no "Both", no runtime toggle. Defaults preserve historical DashboardPage
-// behaviour for users with no saved value.
-const VIEW_MODE_TABLE_ORDER_KEY = 'mygenie_view_mode_table_order';     // 'table' | 'order'
-const VIEW_MODE_CHANNEL_STATUS_KEY = 'mygenie_view_mode_channel_status'; // 'channel' | 'status'
-const DEFAULT_VIEW_MODE_TO = 'table';
-const DEFAULT_VIEW_MODE_CS = 'status';
+// VIEW_MODE_LOCK v2 (Task 1 revision, Step 2): the default behaviour is the
+// LEGACY runtime toggle (Sidebar shows both view-mode toggles). The two
+// localStorage keys below now live in an extended value domain:
+//   'table'   | 'order'   | 'both'  for the Table/Order axis
+//   'channel' | 'status'  | 'both'  for the Channel/Status axis
+// 'both' = no admin override; cashier sees the legacy runtime toggle.
+// A specific value ('table' | 'order' | 'channel' | 'status') means
+// the admin has chosen to lock that axis — DashboardPage will then hide
+// the corresponding sidebar toggle (Step 4).
+const VIEW_MODE_TABLE_ORDER_KEY = 'mygenie_view_mode_table_order';     // 'table' | 'order' | 'both'
+const VIEW_MODE_CHANNEL_STATUS_KEY = 'mygenie_view_mode_channel_status'; // 'channel' | 'status' | 'both'
+const DEFAULT_VIEW_MODE_TO = 'both';
+const DEFAULT_VIEW_MODE_CS = 'both';
 
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
@@ -173,12 +179,13 @@ const StatusConfigPage = () => {
       }
     }
 
-    // VIEW_MODE_LOCK (Task 1): hydrate single-pick view modes
+    // VIEW_MODE_LOCK v2 (Task 1 revision, Step 2): hydrate view modes,
+    // accepting 'both' as a valid stored value alongside the per-axis locks.
     try {
       const storedTO = localStorage.getItem(VIEW_MODE_TABLE_ORDER_KEY);
-      if (storedTO === 'table' || storedTO === 'order') setViewModeTableOrder(storedTO);
+      if (storedTO === 'table' || storedTO === 'order' || storedTO === 'both') setViewModeTableOrder(storedTO);
       const storedCS = localStorage.getItem(VIEW_MODE_CHANNEL_STATUS_KEY);
-      if (storedCS === 'channel' || storedCS === 'status') setViewModeChannelStatus(storedCS);
+      if (storedCS === 'channel' || storedCS === 'status' || storedCS === 'both') setViewModeChannelStatus(storedCS);
     } catch (e) {
       console.error('Failed to parse stored view modes:', e);
     }
