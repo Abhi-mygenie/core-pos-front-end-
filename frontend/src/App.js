@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, LoadingPage, DashboardPage, OrderSummaryPage } from "./pages";
@@ -5,12 +6,26 @@ import AllOrdersReportPage from "./pages/AllOrdersReportPage";
 import StatusConfigPage from "./pages/StatusConfigPage";
 import { Toaster } from "./components/ui/toaster";
 import { AppProviders } from "./contexts";
+import { useRestaurant } from "./contexts";
 import { ProtectedRoute, ErrorBoundary } from "./components/guards";
+
+// Sync browser tab title with restaurant context.
+// Falls back to "MyGenie POS" before login / when restaurant has no name.
+function AppTitleSync() {
+  const { restaurant } = useRestaurant();
+  useEffect(() => {
+    document.title = restaurant?.name
+      ? `${restaurant.name} · MyGenie POS`
+      : "MyGenie POS";
+  }, [restaurant?.name]);
+  return null;
+}
 
 function App() {
   return (
     <ErrorBoundary>
       <AppProviders>
+        <AppTitleSync />
         <div className="App">
           <BrowserRouter>
             <Routes>

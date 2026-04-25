@@ -23,6 +23,22 @@ import { ChannelColumnsLayout } from "../components/dashboard";
 import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
 
+// ROOM_CARD_TOTAL (Task 4, Apr-2026): card amount for ROOM orders must reflect
+// the full checkout value the cashier will see — i.e., room food/room-service
+// plus any transferred dine-in/walk-in bills plus the outstanding room
+// booking balance. Mirrors CollectPaymentPanel's `effectiveTotal` math
+// (line 355 there) but without discount/SC/tax sensitivity, which is
+// intentional — table cards across the app show a flat post-tax order amount,
+// not the discount-aware finalTotal. Non-room orders are untouched and keep
+// using `order.amount` directly.
+const computeRoomCardAmount = (order) => {
+  const food = Number(order?.amount) || 0;
+  const transfers = (order?.associatedOrders || [])
+    .reduce((sum, o) => sum + (Number(o?.amount) || 0), 0);
+  const roomBal = Math.max(0, Number(order?.roomInfo?.balancePayment) || 0);
+  return food + transfers + roomBal;
+};
+
 // Helper: search a list of items by id, customer/guest, and phone fields
 const searchItems = (items, query, getFields) => {
   const exact = [];
@@ -245,8 +261,23 @@ const DashboardPage = () => {
   const [activeChannels, setActiveChannels] = useState(["delivery", "takeAway", "dineIn", "room"]);
   const [activeStatuses, setActiveStatuses] = useState(["pending", "preparing", "ready", "running", "served", "pendingPayment", "paid", "cancelled", "reserved"]);
   const [tableFilter, setTableFilter] = useState(null); // null | 'confirm' | 'schedule'
-  const [activeView, setActiveView] = useState("table");
-  const [dashboardView, setDashboardView] = useState("status"); // 'channel' | 'status' - for dual-view toggle (default: status)
+  const [activeView, setActiveView] = useState(() => {
+    // VIEW_MODE_LOCK (Task 1, Apr-2026): single-pick mode per axis (no Both,
+    // no runtime toggle). Initial value comes from StatusConfigPage's
+    // localStorage key; falls back to historical default 'table'.
+    try {
+      const stored = localStorage.getItem('mygenie_view_mode_table_order');
+      if (stored === 'table' || stored === 'order') return stored;
+    } catch (e) { /* localStorage unavailable */ }
+    return 'table';
+  });
+  const [dashboardView, setDashboardView] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mygenie_view_mode_channel_status');
+      if (stored === 'channel' || stored === 'status') return stored;
+    } catch (e) { /* localStorage unavailable */ }
+    return 'status';
+  });
   const [hiddenChannels, setHiddenChannels] = useState([]); // Hidden channel IDs (dineIn, delivery, etc.)
   const [hiddenStatuses, setHiddenStatuses] = useState([]); // Hidden status IDs (preparing, ready, etc.)
   const [orderEntryTable, setOrderEntryTable] = useState(null);
@@ -428,7 +459,8 @@ const DashboardPage = () => {
           tableId: t.tableId,
           orderType: 'room',
           isRoom: true,
-          amount: order.amount,
+          // ROOM_CARD_TOTAL (Task 4): include room balance + transferred bills.
+          amount: computeRoomCardAmount(order),
           time: order.time,
           orderNumber: order.orderNumber,
           fOrderStatus: order.fOrderStatus,
@@ -1089,10 +1121,6 @@ const DashboardPage = () => {
         onRefresh={handleRefreshAll}
         isRefreshing={isRefreshing}
         isOrderEntryOpen={orderEntryType !== null}
-        activeView={activeView}
-        setActiveView={setActiveView}
-        dashboardView={dashboardView}
-        setDashboardView={setDashboardView}
       />
 
       <SettingsPanel

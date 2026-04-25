@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing, RefreshCw, MoreHorizontal, Printer, Scissors } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables, useSettings } from "../../contexts";
 import { PAYMENT_METHODS, filterLayoutByApiTypes, getDynamicPaymentTypes, DEFAULT_PAYMENT_LAYOUT } from "../../config/paymentMethods";
+import * as tableService from "../../api/services/tableService";
 import PaymentMethodButton, { PaymentMethodButtonInline } from "./PaymentMethodButton";
 
 const CollectPaymentPanel = ({ 
@@ -112,11 +113,24 @@ const CollectPaymentPanel = ({
     [isRoom, roomInfo]
   );
 
-  // Occupied rooms for "Transfer to Room" picker (exclude current table)
-  const occupiedRooms = useMemo(() => 
+  // Occupied rooms for "Transfer to Room" picker.
+  // ROOM_TRANSFER_FRESH_FETCH (Task 2, Apr-2026): the cached `tables` from
+  // useTables() can go stale because socket events for room check-in are not
+  // always delivered to every client. To avoid showing "No checked-in rooms
+  // available" when a room IS in fact checked-in via another POS, we hit the
+  // existing all-table-list endpoint on demand the first time the user picks
+  // "To Room", and use that response (filtered to isRoom && isOccupied)
+  // instead of the cached context. Context is left untouched — fresh state is
+  // panel-local. See /app/memory/FIVE_TASK_VALIDATION_HANDOVER.md §Task 2.
+  const occupiedRoomsCached = useMemo(() =>
     (tables || []).filter(t => t.isRoom && t.isOccupied),
     [tables]
   );
+  const [freshRooms, setFreshRooms] = useState(null);   // null = not fetched yet
+  const [roomsLoading, setRoomsLoading] = useState(false);
+  const [roomsError, setRoomsError] = useState(null);
+  const fetchReqIdRef = useRef(0);                       // ignore stale resolves
+  const occupiedRooms = freshRooms !== null ? freshRooms : occupiedRoomsCached;
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showTransferredOrders, setShowTransferredOrders] = useState(false);
   const [showRoomService, setShowRoomService] = useState(false);
@@ -206,6 +220,35 @@ const CollectPaymentPanel = ({
     { method: "cash", amount: "", transactionId: "" },
     { method: "card", amount: "", transactionId: "" },
   ]);
+
+  // ROOM_TRANSFER_FRESH_FETCH (Task 2): when "To Room" is selected for the
+  // first time in this panel mount, refetch the rooms list from the server
+  // (via the existing all-table-list endpoint) so we don't rely on stale
+  // socket-driven context state. Race-safe via reqId guard.
+  const fetchOccupiedRooms = async () => {
+    const reqId = fetchReqIdRef.current + 1;
+    fetchReqIdRef.current = reqId;
+    setRoomsLoading(true);
+    setRoomsError(null);
+    try {
+      const fresh = await tableService.getTables();
+      // ignore stale response if user toggled away and back
+      if (reqId !== fetchReqIdRef.current) return;
+      const rooms = (fresh || []).filter(t => t.isRoom && t.isOccupied);
+      setFreshRooms(rooms);
+    } catch (err) {
+      if (reqId !== fetchReqIdRef.current) return;
+      setRoomsError(err?.response?.data?.message || err?.message || 'Unable to fetch rooms');
+    } finally {
+      if (reqId === fetchReqIdRef.current) setRoomsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (paymentMethod === 'transferToRoom' && freshRooms === null && !roomsLoading && !roomsError) {
+      fetchOccupiedRooms();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentMethod]);
 
   // BUG-239: TAB/Credit customer info
   const [tabName, setTabName] = useState(customer?.name || "");
@@ -1857,8 +1900,37 @@ const CollectPaymentPanel = ({
           {/* Transfer to Room — Room Picker */}
           {paymentMethod === "transferToRoom" && !showSplit && (
             <div className="mt-3 pt-3 border-t" style={{ borderColor: COLORS.borderGray }} data-testid="room-picker-section">
-              <div className="text-xs mb-2 font-medium" style={{ color: COLORS.grayText }}>Select Room</div>
-              {occupiedRooms.length === 0 ? (
+              <div className="text-xs mb-2 font-medium flex items-center justify-between" style={{ color: COLORS.grayText }}>
+                <span>Select Room</span>
+                <button
+                  type="button"
+                  onClick={() => { setFreshRooms(null); setRoomsError(null); fetchOccupiedRooms(); }}
+                  data-testid="rooms-refresh-btn"
+                  disabled={roomsLoading}
+                  className="text-xs hover:underline disabled:opacity-50"
+                  style={{ color: COLORS.primaryOrange }}
+                >
+                  {roomsLoading ? 'Loading…' : 'Refresh'}
+                </button>
+              </div>
+              {roomsLoading && freshRooms === null ? (
+                <div className="text-sm py-4 text-center rounded-lg flex items-center justify-center gap-2" style={{ backgroundColor: COLORS.lightBg, color: COLORS.grayText }} data-testid="rooms-loading">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Loading rooms…
+                </div>
+              ) : roomsError ? (
+                <div className="text-sm py-3 px-3 rounded-lg flex items-center justify-between gap-2" style={{ backgroundColor: '#FEE2E2', color: '#B91C1C' }} data-testid="rooms-error">
+                  <span className="truncate">Couldn't load rooms — {roomsError}</span>
+                  <button
+                    type="button"
+                    onClick={() => { setFreshRooms(null); setRoomsError(null); fetchOccupiedRooms(); }}
+                    data-testid="rooms-retry-btn"
+                    className="text-xs font-semibold underline whitespace-nowrap"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : occupiedRooms.length === 0 ? (
                 <div className="text-sm py-4 text-center rounded-lg" style={{ backgroundColor: COLORS.lightBg, color: COLORS.grayText }}>
                   No checked-in rooms available
                 </div>

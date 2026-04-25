@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { 
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
-  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye,
-  LayoutGrid, List, Columns, Rows
+  PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
@@ -117,11 +116,6 @@ const Sidebar = ({
   onRefresh, 
   isRefreshing, 
   isOrderEntryOpen,
-  // View toggle props
-  activeView,
-  setActiveView,
-  dashboardView,
-  setDashboardView,
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -282,59 +276,8 @@ const Sidebar = ({
         )}
       </div>
 
-      {/* View Toggle Section */}
-      {(activeView !== undefined || dashboardView !== undefined) && (
-        <div 
-          className="px-3 py-3"
-          style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
-        >
-          <div className={`flex ${isExpanded ? 'flex-col gap-2' : 'flex-col gap-2'}`}>
-            {/* Toggle 1: Table ↔ Order View */}
-            {activeView !== undefined && setActiveView && (
-              <button
-                data-testid="view-toggle"
-                onClick={() => setActiveView(activeView === 'table' ? 'order' : 'table')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${isExpanded ? 'w-full' : 'mx-auto px-2'}`}
-                style={{
-                  backgroundColor: `${COLORS.primaryGreen}10`,
-                  color: COLORS.primaryGreen,
-                  border: `1px solid ${COLORS.primaryGreen}30`,
-                }}
-                title={activeView === 'table' ? 'Switch to Order View' : 'Switch to Table View'}
-              >
-                {activeView === 'table' ? <LayoutGrid className="w-4 h-4 flex-shrink-0" /> : <List className="w-4 h-4 flex-shrink-0" />}
-                {isExpanded && (
-                  <span className="text-xs font-medium truncate">
-                    {activeView === 'table' ? 'Table View' : 'Order View'}
-                  </span>
-                )}
-              </button>
-            )}
-
-            {/* Toggle 2: Channel ↔ Status Grouping */}
-            {dashboardView !== undefined && setDashboardView && (
-              <button
-                data-testid="group-toggle"
-                onClick={() => setDashboardView(dashboardView === 'status' ? 'channel' : 'status')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${isExpanded ? 'w-full' : 'mx-auto px-2'}`}
-                style={{
-                  backgroundColor: `${COLORS.primaryGreen}10`,
-                  color: COLORS.primaryGreen,
-                  border: `1px solid ${COLORS.primaryGreen}30`,
-                }}
-                title={dashboardView === 'status' ? 'Switch to Channel Group' : 'Switch to Status Group'}
-              >
-                {dashboardView === 'channel' ? <Columns className="w-4 h-4 flex-shrink-0" /> : <Rows className="w-4 h-4 flex-shrink-0" />}
-                {isExpanded && (
-                  <span className="text-xs font-medium truncate">
-                    {dashboardView === 'channel' ? 'By Channel' : 'By Status'}
-                  </span>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      {/* View toggles removed (visibility view-mode is now locked at config-time
+          via StatusConfigPage; users pick exactly one mode per axis). */}
 
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto py-4">

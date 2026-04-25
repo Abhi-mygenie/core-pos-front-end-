@@ -19,6 +19,14 @@ const CHANNEL_VISIBILITY_STORAGE_KEY = 'mygenie_channel_visibility';
 const LAYOUT_TABLE_VIEW_KEY = 'mygenie_layout_table_view';
 const LAYOUT_ORDER_VIEW_KEY = 'mygenie_layout_order_view';
 
+// VIEW_MODE_LOCK (Task 1, Apr-2026): user picks exactly one mode per axis;
+// no "Both", no runtime toggle. Defaults preserve historical DashboardPage
+// behaviour for users with no saved value.
+const VIEW_MODE_TABLE_ORDER_KEY = 'mygenie_view_mode_table_order';     // 'table' | 'order'
+const VIEW_MODE_CHANNEL_STATUS_KEY = 'mygenie_view_mode_channel_status'; // 'channel' | 'status'
+const DEFAULT_VIEW_MODE_TO = 'table';
+const DEFAULT_VIEW_MODE_CS = 'status';
+
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
 const DEFAULT_LAYOUT_ORDER = { dineIn: 1, takeAway: 1, delivery: 1, room: 1 };
@@ -103,6 +111,10 @@ const StatusConfigPage = () => {
   const [layoutTableView, setLayoutTableView] = useState(DEFAULT_LAYOUT_TABLE);
   const [layoutOrderView, setLayoutOrderView] = useState(DEFAULT_LAYOUT_ORDER);
 
+  // VIEW_MODE_LOCK (Task 1): single-pick view mode per axis
+  const [viewModeTableOrder, setViewModeTableOrder] = useState(DEFAULT_VIEW_MODE_TO);
+  const [viewModeChannelStatus, setViewModeChannelStatus] = useState(DEFAULT_VIEW_MODE_CS);
+
   // Load from localStorage on mount
   useEffect(() => {
     // Load status config
@@ -160,6 +172,16 @@ const StatusConfigPage = () => {
         console.error('Failed to parse stored order view layout:', e);
       }
     }
+
+    // VIEW_MODE_LOCK (Task 1): hydrate single-pick view modes
+    try {
+      const storedTO = localStorage.getItem(VIEW_MODE_TABLE_ORDER_KEY);
+      if (storedTO === 'table' || storedTO === 'order') setViewModeTableOrder(storedTO);
+      const storedCS = localStorage.getItem(VIEW_MODE_CHANNEL_STATUS_KEY);
+      if (storedCS === 'channel' || storedCS === 'status') setViewModeChannelStatus(storedCS);
+    } catch (e) {
+      console.error('Failed to parse stored view modes:', e);
+    }
   }, []);
 
   // Toggle a status
@@ -202,6 +224,8 @@ const StatusConfigPage = () => {
     setChannelConfig(DEFAULT_CHANNEL_CONFIG);
     setLayoutTableView(DEFAULT_LAYOUT_TABLE);
     setLayoutOrderView(DEFAULT_LAYOUT_ORDER);
+    setViewModeTableOrder(DEFAULT_VIEW_MODE_TO);
+    setViewModeChannelStatus(DEFAULT_VIEW_MODE_CS);
     setHasChanges(true);
   };
 
@@ -303,6 +327,9 @@ const StatusConfigPage = () => {
     localStorage.setItem(CHANNEL_VISIBILITY_STORAGE_KEY, JSON.stringify(channelConfig));
     localStorage.setItem(LAYOUT_TABLE_VIEW_KEY, JSON.stringify(layoutTableView));
     localStorage.setItem(LAYOUT_ORDER_VIEW_KEY, JSON.stringify(layoutOrderView));
+    // VIEW_MODE_LOCK (Task 1): persist single-pick view modes
+    localStorage.setItem(VIEW_MODE_TABLE_ORDER_KEY, viewModeTableOrder);
+    localStorage.setItem(VIEW_MODE_CHANNEL_STATUS_KEY, viewModeChannelStatus);
     setHasChanges(false);
     toast({
       title: "Configuration saved",
@@ -719,6 +746,173 @@ const StatusConfigPage = () => {
                   </div>
                 </>
               )}
+            </div>
+
+            {/* ============== VIEW MODE LOCK (Task 1, Apr-2026) ============== */}
+            <div className="mt-10 pt-8" style={{ borderTop: `2px solid ${COLORS.borderGray}` }}>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
+                    View Mode
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
+                    Lock the dashboard to one view per axis. No runtime toggle.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="p-4 rounded-lg mb-6"
+                style={{ backgroundColor: `${COLORS.primaryOrange}10`, border: `1px solid ${COLORS.primaryOrange}30` }}
+              >
+                <p className="text-sm" style={{ color: COLORS.darkText }}>
+                  Pick exactly one option per axis. The dashboard renders that view directly — there is no toggle button.
+                </p>
+              </div>
+
+              {/* Axis A — Table or Order View */}
+              <div className="mb-6">
+                <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
+                  Table or Order View
+                </label>
+                <div className="flex gap-4">
+                  <label
+                    data-testid="view-mode-to-table"
+                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
+                    style={{
+                      borderColor: viewModeTableOrder === 'table' ? COLORS.primaryOrange : COLORS.borderGray,
+                      backgroundColor: viewModeTableOrder === 'table' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="viewModeTableOrder"
+                      value="table"
+                      checked={viewModeTableOrder === 'table'}
+                      onChange={() => { setViewModeTableOrder('table'); setHasChanges(true); }}
+                      className="sr-only"
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                      style={{ borderColor: viewModeTableOrder === 'table' ? COLORS.primaryOrange : COLORS.borderGray }}
+                    >
+                      {viewModeTableOrder === 'table' && (
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium" style={{ color: COLORS.darkText }}>Table View</span>
+                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
+                        Show tables grid (with table numbers/sections)
+                      </p>
+                    </div>
+                  </label>
+
+                  <label
+                    data-testid="view-mode-to-order"
+                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
+                    style={{
+                      borderColor: viewModeTableOrder === 'order' ? COLORS.primaryOrange : COLORS.borderGray,
+                      backgroundColor: viewModeTableOrder === 'order' ? `${COLORS.primaryOrange}05` : COLORS.lightBg,
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="viewModeTableOrder"
+                      value="order"
+                      checked={viewModeTableOrder === 'order'}
+                      onChange={() => { setViewModeTableOrder('order'); setHasChanges(true); }}
+                      className="sr-only"
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                      style={{ borderColor: viewModeTableOrder === 'order' ? COLORS.primaryOrange : COLORS.borderGray }}
+                    >
+                      {viewModeTableOrder === 'order' && (
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryOrange }} />
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium" style={{ color: COLORS.darkText }}>Order View</span>
+                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
+                        Show flat order list (one row per order)
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Axis B — Channel or Status View */}
+              <div>
+                <label className="text-sm font-medium mb-3 block" style={{ color: COLORS.darkText }}>
+                  Channel or Status View
+                </label>
+                <div className="flex gap-4">
+                  <label
+                    data-testid="view-mode-cs-channel"
+                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
+                    style={{
+                      borderColor: viewModeChannelStatus === 'channel' ? COLORS.primaryGreen : COLORS.borderGray,
+                      backgroundColor: viewModeChannelStatus === 'channel' ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="viewModeChannelStatus"
+                      value="channel"
+                      checked={viewModeChannelStatus === 'channel'}
+                      onChange={() => { setViewModeChannelStatus('channel'); setHasChanges(true); }}
+                      className="sr-only"
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                      style={{ borderColor: viewModeChannelStatus === 'channel' ? COLORS.primaryGreen : COLORS.borderGray }}
+                    >
+                      {viewModeChannelStatus === 'channel' && (
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryGreen }} />
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium" style={{ color: COLORS.darkText }}>By Channel</span>
+                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
+                        Group columns by channel (Dine-In, TakeAway, Delivery, Room)
+                      </p>
+                    </div>
+                  </label>
+
+                  <label
+                    data-testid="view-mode-cs-status"
+                    className="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all flex-1"
+                    style={{
+                      borderColor: viewModeChannelStatus === 'status' ? COLORS.primaryGreen : COLORS.borderGray,
+                      backgroundColor: viewModeChannelStatus === 'status' ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="viewModeChannelStatus"
+                      value="status"
+                      checked={viewModeChannelStatus === 'status'}
+                      onChange={() => { setViewModeChannelStatus('status'); setHasChanges(true); }}
+                      className="sr-only"
+                    />
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                      style={{ borderColor: viewModeChannelStatus === 'status' ? COLORS.primaryGreen : COLORS.borderGray }}
+                    >
+                      {viewModeChannelStatus === 'status' && (
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primaryGreen }} />
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium" style={{ color: COLORS.darkText }}>By Status</span>
+                      <p className="text-xs mt-0.5" style={{ color: COLORS.grayText }}>
+                        Group columns by order status (YTC, Preparing, Ready, ...)
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
             {/* ============== DEFAULT COLUMN LAYOUT ============== */}
