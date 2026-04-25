@@ -41,7 +41,7 @@
 - "Collect Payment" panel with cash/card/UPI/split/credit/transfer-to-room methods, discount, SC, tax, tip, delivery charge.
 - Room module: check-in marker, room booking (price/advance/balance), room-service food, transferred dine-in bills (associated orders).
 - Old-POS interoperability — orders created on legacy POS must surface correctly here.
-- Visibility Settings: enable/disable order statuses, station view, channel visibility, default column layouts, default view (Req 4 — admin-controlled default-when-Both per axis; factory defaults Table + Channel).
+- Visibility Settings: enable/disable order statuses, station view, channel visibility, default column layouts, default view (Req 4 — admin-controlled default-when-Both per axis; factory defaults Table + Channel), order taking (Req 2 — admin can disable order creation/editing on a device; in-card service buttons keep working).
 - Reports: paid, pending, cancelled, audit, summary.
 - Firebase push notifications via service worker.
 

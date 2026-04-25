@@ -67,11 +67,66 @@
 
 When Reqs 1, 2, 3 lock in their decisions, additional entries will be appended here:
 
-- **Entry 2 — `AD-Station-Refresh`** (Req 1: Station Panel Socket Refresh) — pending owner answers in `/app/memory/STATION_PANEL_SOCKET_REFRESH_DEEPDIVE.md`.
-- **Entry 3 — `AD-Visibility-Add-Button`** (Req 2: Add Button Visibility) — pending owner answers in `/app/memory/THREE_REQUIREMENTS_V3_VALIDATION_GAPS.md` §2.
-- **Entry 4 — `AD-302A` (Room Auto-Print Suppression)** + **Entry 5 — `AD-Room-Print-Payload`** (Req 3: Room Bill Print) — pending owner answers in `/app/memory/THREE_REQUIREMENTS_V3_VALIDATION_GAPS.md` §3.
+- **Entry 2 — `AD-Order-Taking-Toggle`** (Req 2: Order Taking Visibility) — see below.
+- **Entry 3 — `AD-Station-Refresh`** (Req 1: Station Panel Socket Refresh) — pending owner answers in `/app/memory/STATION_PANEL_SOCKET_REFRESH_DEEPDIVE.md`.
+- **Entry 4 — `AD-302A` (Room Auto-Print Suppression)** + **Entry 5 — `AD-Room-Print-Payload`** (Req 3: Room Bill Print) — pending owner answers in `/app/memory/REQ3_ROOM_BILL_PRINT_DEEPDIVE.md`.
 
 Each entry will follow the same shape as Entry 1 above.
+
+---
+
+## Entry 2 — `AD-Order-Taking-Toggle` (from Req 2: Order Taking Visibility)
+
+**Source requirement:** Owner ask to add an admin-controlled toggle that disables order creation and editing on a specific device, while keeping in-card service buttons functional. Locked decisions are captured in `/app/memory/REQ2_ORDER_TAKING_DECISIONS_LOCKED.md`.
+
+**Proposed AD entry:**
+
+> ### AD-Order-Taking-Toggle — Per-Device Disable of Order Creation/Editing
+>
+> **Decision**
+> A new master switch in `StatusConfigPage` ("UI Elements" → "Order Taking") allows admins to disable two flows on a specific device:
+> 1. The top-right Add button in the Header.
+> 2. All card body clicks that would open OrderEntry or the Room Check-In modal.
+>
+> When disabled, in-card action buttons (Mark Ready, Mark Served, Print KOT, Print Bill, Confirm Order, Cancel Order, snooze) continue working because they call dedicated handlers and bypass `handleTableClick`. Sidebar nav, Header status filters, Settings access, and Station Panel are also unaffected.
+>
+> **Storage contract**
+>
+> | Key | Allowed values | Default | Active when |
+> |---|---|---|---|
+> | `mygenie_order_taking_enabled` (new) | JSON object `{ enabled: true \| false }` | `{ enabled: true }` | Always |
+>
+> **Implementation details**
+> - Header (`Header.jsx`) and Dashboard (`DashboardPage.jsx`) read the flag on mount and subscribe to the `storage` event for cross-tab sync.
+> - `DashboardPage.handleTableClick` short-circuits with an early return when the flag is false. Action buttons inside cards bypass this handler by design.
+> - Visual feedback: a `.order-taking-disabled` class on the dashboard content wrapper applies `cursor: default` to cards while preserving `cursor: pointer` on buttons inside cards.
+> - First-visit backfill: when an admin opens Status Configuration and the key is absent, the factory default is written to localStorage automatically (mirrors the Req 4 backfill pattern).
+> - `Reset to Default` clears the flag back to factory.
+>
+> **Code areas affected**
+> - `frontend/src/pages/StatusConfigPage.jsx` — new "UI Elements" section card; constants, state, hydrate-with-backfill, persist, reset.
+> - `frontend/src/components/layout/Header.jsx` — state + storage listener + conditional Add button render.
+> - `frontend/src/pages/DashboardPage.jsx` — state + storage listener + early return in `handleTableClick`; conditional class on dashboard wrapper.
+> - `frontend/src/index.css` — CSS rules for `.order-taking-disabled`.
+>
+> **Status**
+> - Verified in code (iteration_8 — 10/10 acceptance tests PASS; T-3 in-card-button check is environment-limited but code-correct by design).
+>
+> **Required V3 update**
+> - Add new AD row to the Architecture Decision Summary table in `/app/v3/ARCHITECTURE_DECISIONS_FINAL.md`.
+> - Append AD body in the "Verified Decisions" section.
+> - No `RISK_REGISTER.md` change required.
+> - No conflicts with existing ADs.
+
+**Validation checklist for the agent that will merge this:**
+- [ ] Confirm `mygenie_order_taking_enabled` key is present in code.
+- [ ] Confirm Header conditionally renders the Add button.
+- [ ] Confirm `handleTableClick` returns early when flag is false.
+- [ ] Confirm in-card action buttons (Mark Ready, Print, etc.) bypass `handleTableClick` and continue working when flag is false.
+- [ ] Confirm CSS rule `.order-taking-disabled` exists and scopes cursor correctly.
+- [ ] Confirm first-visit backfill writes `{enabled: true}` if key is absent.
+- [ ] Confirm `Reset to Default` resets flag to factory.
+- [ ] Confirm cross-tab `storage` event listener is wired in both Header and DashboardPage.
 
 ---
 

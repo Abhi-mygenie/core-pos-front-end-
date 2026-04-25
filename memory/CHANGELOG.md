@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-04-25 — Req 2: Order Taking Visibility Toggle
+
+**What:** New admin-controlled toggle in Status Configuration that disables ALL paths to OrderEntry (cart panel) on a device. When OFF: top-right Add button hidden; all card body clicks become silent no-ops; cursor on cards changes to `default`. In-card action buttons (Mark Ready, Mark Served, Print KOT/Bill, Confirm, Cancel) continue working.
+
+**Storage:** `mygenie_order_taking_enabled = {"enabled": true | false}`. Factory default `{"enabled": true}`. First-visit backfill on Status Configuration page.
+
+**Files changed:**
+- `frontend/src/pages/StatusConfigPage.jsx` — 2 const + 1 state + hydrate w/ backfill + extended resetToDefault + extended saveConfiguration + new "UI Elements" section card with toggle.
+- `frontend/src/components/layout/Header.jsx` — `orderTakingEnabled` state + `storage` event listener + conditional render of Add button.
+- `frontend/src/pages/DashboardPage.jsx` — `orderTakingEnabled` state + `storage` event listener + early return at top of `handleTableClick`; conditional `order-taking-disabled` className on dashboard wrapper.
+- `frontend/src/index.css` — CSS rules for `.order-taking-disabled` (cursor:default on cards; preserves cursor:pointer on buttons inside cards).
+
+**Test-IDs:** `order-taking-toggle`. Existing `add-table-btn` is now conditionally rendered.
+
+**E2E QA:** iteration_8.json — 10/10 PASS (T-3 in-card buttons code-verified due to test tenant having no Preparing orders; code path is correct).
+
+**Out of scope (intentional):** No backend changes. No new permission keys. No socket/print/KOT changes. No toast notifications (silent no-op per owner). No V3 doc inline update — `AD-Order-Taking-Toggle` queued in `/app/memory/V3_DOC_UPDATES_PENDING.md`.
+
+**Backward compat:** Tenants with no key get factory backfill on first Settings visit. Existing flows for tenants who never disable it are unchanged.
+
+**References:**
+- Implementation handover: `/app/memory/REQ2_ORDER_TAKING_IMPLEMENTATION_HANDOVER.md`
+- Locked decisions: `/app/memory/REQ2_ORDER_TAKING_DECISIONS_LOCKED.md`
+- Deep-dive: `/app/memory/REQ2_ADD_BUTTON_VISIBILITY_DEEPDIVE.md`
+- Test report: `/app/test_reports/iteration_8.json`
+
+---
+
 ## 2026-04-25 — Req 4: Default View Setting
 
 **What:** Admin-controlled "Default View" sub-setting for the View Mode lock when an axis is set to `'both'`. Replaces hardcoded fallbacks in `DashboardPage.jsx` (POS axis: kept `'table'`; Dashboard axis: changed `'status'` → `'channel'`) with two new localStorage-backed admin settings.
