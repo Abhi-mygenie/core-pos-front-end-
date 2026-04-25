@@ -388,6 +388,35 @@ const DashboardPage = () => {
   const [checkInRoom, setCheckInRoom] = useState(null); // Room object for CheckIn modal
   const [cancelOrderEntry, setCancelOrderEntry] = useState(null); // Table entry for CancelOrderModal
 
+  // Req 2: Order Taking flag — when false, all card body clicks no-op via
+  // early return in handleTableClick. Action buttons inside cards (Mark
+  // Ready/Served, Print, Confirm, Cancel) bypass handleTableClick and
+  // continue working.
+  const [orderTakingEnabled, setOrderTakingEnabled] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mygenie_order_taking_enabled');
+      if (stored === null) return true;
+      const parsed = JSON.parse(stored);
+      return parsed?.enabled !== false;
+    } catch (e) {
+      return true;
+    }
+  });
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'mygenie_order_taking_enabled') {
+        try {
+          const parsed = e.newValue ? JSON.parse(e.newValue) : null;
+          setOrderTakingEnabled(parsed?.enabled !== false);
+        } catch (err) {
+          setOrderTakingEnabled(true);
+        }
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   const handleRefreshAll = async () => {
     if (isRefreshing) return;
     // Guard: block refresh when OrderEntry is open
@@ -1072,6 +1101,12 @@ const DashboardPage = () => {
       setOrderEntryTable(null);
       return;
     }
+    // Req 2: Order Taking disabled — silent no-op on all card body clicks.
+    // Action buttons within cards (Mark Ready/Served, Print, Confirm, Cancel)
+    // bypass this handler and continue working.
+    if (!orderTakingEnabled) {
+      return;
+    }
     // Block clicks on engaged tables/orders (update in progress)
     if (isTableEngaged(tableEntry.id) || isOrderEngaged(tableEntry.orderId)) {
       console.log(`[Dashboard] Blocked click on engaged table/order ${tableEntry.id}`);
@@ -1239,7 +1274,7 @@ const DashboardPage = () => {
         sidebarWidth={sidebarExpanded ? 280 : 70}
       />
 
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden relative">
+      <div className={`flex-1 flex flex-col min-h-screen overflow-hidden relative${!orderTakingEnabled ? ' order-taking-disabled' : ''}`}>
         {/* Refresh overlay — dims content while refreshing */}
         {isRefreshing && (
           <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"

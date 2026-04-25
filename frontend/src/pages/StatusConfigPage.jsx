@@ -44,6 +44,13 @@ const DEFAULT_DASHBOARD_VIEW_KEY = 'mygenie_default_dashboard_view';    // 'chan
 const DEFAULT_POS_VIEW_FACTORY = 'table';
 const DEFAULT_DASHBOARD_VIEW_FACTORY = 'channel';
 
+// Req 2: Order Taking master switch — when disabled, all paths to
+// OrderEntry / Room Check-In modal are silently no-op'd. In-card action
+// buttons (Mark Ready, Mark Served, Print KOT/Bill, Confirm, Cancel) are
+// unaffected because they bypass `handleTableClick`.
+const ORDER_TAKING_KEY = 'mygenie_order_taking_enabled';
+const ORDER_TAKING_FACTORY = true;
+
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
 const DEFAULT_LAYOUT_ORDER = { dineIn: 1, takeAway: 1, delivery: 1, room: 1 };
@@ -136,6 +143,9 @@ const StatusConfigPage = () => {
   const [defaultPosView, setDefaultPosView] = useState(DEFAULT_POS_VIEW_FACTORY);
   const [defaultDashboardView, setDefaultDashboardView] = useState(DEFAULT_DASHBOARD_VIEW_FACTORY);
 
+  // Req 2: Order Taking master switch (default enabled — preserves legacy behavior)
+  const [orderTakingEnabled, setOrderTakingEnabled] = useState(ORDER_TAKING_FACTORY);
+
   // Load from localStorage on mount
   useEffect(() => {
     // Load status config
@@ -224,6 +234,20 @@ const StatusConfigPage = () => {
     } catch (e) {
       console.error('Failed to parse stored default views:', e);
     }
+
+    // Req 2: hydrate Order Taking flag with first-visit backfill
+    try {
+      const storedOT = localStorage.getItem(ORDER_TAKING_KEY);
+      if (storedOT === null) {
+        // Backfill factory default so storage shape stays consistent.
+        localStorage.setItem(ORDER_TAKING_KEY, JSON.stringify({ enabled: ORDER_TAKING_FACTORY }));
+      } else {
+        const parsed = JSON.parse(storedOT);
+        setOrderTakingEnabled(parsed?.enabled !== false);
+      }
+    } catch (e) {
+      console.error('Failed to parse Order Taking flag:', e);
+    }
   }, []);
 
   // Toggle a status
@@ -271,6 +295,8 @@ const StatusConfigPage = () => {
     // DEFAULT_VIEW (Req 4): also reset per-axis defaults to factory
     setDefaultPosView(DEFAULT_POS_VIEW_FACTORY);
     setDefaultDashboardView(DEFAULT_DASHBOARD_VIEW_FACTORY);
+    // Req 2: also reset Order Taking to factory (enabled)
+    setOrderTakingEnabled(ORDER_TAKING_FACTORY);
     setHasChanges(true);
   };
 
@@ -378,6 +404,8 @@ const StatusConfigPage = () => {
     // DEFAULT_VIEW (Req 4): persist per-axis default-view selections
     localStorage.setItem(DEFAULT_POS_VIEW_KEY, defaultPosView);
     localStorage.setItem(DEFAULT_DASHBOARD_VIEW_KEY, defaultDashboardView);
+    // Req 2: persist Order Taking flag
+    localStorage.setItem(ORDER_TAKING_KEY, JSON.stringify({ enabled: orderTakingEnabled }));
     setHasChanges(false);
     toast({
       title: "Configuration saved",
@@ -541,6 +569,63 @@ const StatusConfigPage = () => {
                   </div>
                 );
               })}
+            </div>
+
+            {/* ============== UI ELEMENTS (Req 2: Order Taking) ============== */}
+            <div className="mt-10 pt-8" style={{ borderTop: `2px solid ${COLORS.borderGray}` }}>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
+                    UI Elements
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
+                    Control which dashboard actions are available on this device.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="rounded-lg p-4 border-2 flex items-start justify-between gap-4"
+                style={{
+                  backgroundColor: orderTakingEnabled ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                  borderColor: orderTakingEnabled ? COLORS.primaryGreen : COLORS.borderGray,
+                }}
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium" style={{ color: COLORS.darkText }}>
+                      Order Taking
+                    </span>
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: orderTakingEnabled ? COLORS.primaryGreen : COLORS.grayText,
+                        color: '#fff',
+                      }}
+                    >
+                      {orderTakingEnabled ? 'ON' : 'OFF'}
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: COLORS.grayText }}>
+                    When OFF, this device cannot create new orders or open existing orders for
+                    editing. Staff can still mark items ready/served and print bills/KOTs. Useful
+                    for kitchen-floor staff or service-only terminals.
+                  </p>
+                </div>
+                <button
+                  data-testid="order-taking-toggle"
+                  onClick={() => { setOrderTakingEnabled(v => !v); setHasChanges(true); }}
+                  className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors focus:outline-none"
+                  style={{ backgroundColor: orderTakingEnabled ? COLORS.primaryGreen : COLORS.borderGray }}
+                  role="switch"
+                  aria-checked={orderTakingEnabled}
+                >
+                  <span
+                    className="inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform"
+                    style={{ transform: orderTakingEnabled ? 'translateX(22px)' : 'translateX(2px)', marginTop: '2px' }}
+                  />
+                </button>
+              </div>
             </div>
 
             {/* ============== STATION VIEW CONFIGURATION ============== */}

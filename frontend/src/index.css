@@ -113,3 +113,19 @@ code {
         border-bottom-color: inherit;
     }
 }
+
+/* Req 2: Order Taking disabled — cursor feedback for non-clickable cards.
+   Keeps in-card action buttons (Mark Ready, Mark Served, Print, Confirm,
+   Cancel) interactive (they have explicit cursor styling and pointer-events). */
+.order-taking-disabled [data-testid^="table-card-"],
+.order-taking-disabled [data-testid^="dinein-card-"],
+.order-taking-disabled [data-testid^="delivery-card-"],
+.order-taking-disabled [data-testid^="order-card-"] {
+  cursor: default !important;
+}
+.order-taking-disabled [data-testid^="table-card-"] button,
+.order-taking-disabled [data-testid^="dinein-card-"] button,
+.order-taking-disabled [data-testid^="delivery-card-"] button,
+.order-taking-disabled [data-testid^="order-card-"] button {
+  cursor: pointer !important;
+}

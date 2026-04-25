@@ -82,6 +82,33 @@ const Header = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Req 2: Order Taking flag — when false, hide the Add button. Cross-tab sync
+  // via storage event listener.
+  const [orderTakingEnabled, setOrderTakingEnabled] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mygenie_order_taking_enabled');
+      if (stored === null) return true;
+      const parsed = JSON.parse(stored);
+      return parsed?.enabled !== false;
+    } catch (e) {
+      return true;
+    }
+  });
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'mygenie_order_taking_enabled') {
+        try {
+          const parsed = e.newValue ? JSON.parse(e.newValue) : null;
+          setOrderTakingEnabled(parsed?.enabled !== false);
+        } catch (err) {
+          setOrderTakingEnabled(true);
+        }
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   const handleSearchSelect = (item) => {
     onSearchSelect(item);
     setSearchQuery("");
@@ -588,16 +615,18 @@ const Header = ({
 
         {/* Right Section - Add Button + Online Status */}
         <div className="flex items-center gap-3">
-          {/* Add Order Button */}
-          <button
-            data-testid="add-table-btn"
-            className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg transition-colors hover:opacity-80"
-            style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
-            onClick={onAddOrder}
-          >
-            <PlusSquare className="w-4 h-4" />
-            <span className="text-sm font-medium">Add</span>
-          </button>
+          {/* Add Order Button — Req 2: hidden when Order Taking is OFF */}
+          {orderTakingEnabled && (
+            <button
+              data-testid="add-table-btn"
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg transition-colors hover:opacity-80"
+              style={{ backgroundColor: COLORS.primaryOrange, color: "white" }}
+              onClick={onAddOrder}
+            >
+              <PlusSquare className="w-4 h-4" />
+              <span className="text-sm font-medium">Add</span>
+            </button>
+          )}
 
           {/* Online/Offline Status - Circle indicator after Add button */}
           <div
