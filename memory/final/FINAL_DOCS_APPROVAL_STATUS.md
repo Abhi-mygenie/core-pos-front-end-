@@ -1,15 +1,15 @@
 # FINAL_DOCS_APPROVAL_STATUS
 
 ## 1. Approval status
-`CONDITIONALLY_APPROVED_WITH_OPEN_DECISIONS`
+`APPROVED_BASELINE`
 
 ## 2. Executive summary
-The final documentation set under `/app/memory/final/` is usable as the documentation baseline for future work, with one important condition: future agents must treat **current code in `/app` on branch `step3` as the implementation source of truth** wherever wording, branch labels, or historical trace notes differ.
+The final documentation set under `/app/memory/final/` is now approved as the baseline documentation set for future work on this codebase.
 
-Main reason for conditional approval:
-- The six final documents are largely consistent on architecture, module boundaries, change-analysis workflow, and implementation guardrails.
-- Most previously open questions now have owner-clarified baseline answers, while a small number remain explicitly deferred or subject to future verification.
-- Archived materials are historical only and are not part of the mandatory future-agent baseline reading path.
+Main reason for approval:
+- The final documents are aligned on baseline identity (`/app` on branch `step3`), architecture rules, module boundaries, change-analysis workflow, and implementation guardrails.
+- Owner clarifications have now been propagated into the final documentation set.
+- The remaining non-finalized areas are explicitly visible as either deferred or verification-sensitive, rather than being left ambiguous.
 
 Major warnings:
 - Future agents must still respect the remaining deferred/verification-sensitive items and must not invent policy.
@@ -26,14 +26,14 @@ Major warnings:
 - **Notes:** Updated to reflect owner clarifications/frozen baseline decisions and the remaining deferred item.
 
 ### 3.2 `/app/memory/final/ARCHITECTURE_DECISIONS_FINAL.md`
-- **Purpose:** Current architecture baseline, rules, guardrails, hotspots, and unresolved decision framing.
+- **Purpose:** Current architecture baseline, rules, guardrails, hotspots, and deferred/verification-sensitive items.
 - **Status:** Approved
-- **Notes:** Baseline wording normalized to `step3`. Use current code in `/app` as implementation truth.
+- **Notes:** Baseline wording normalized to `step3`. Core owner decisions have been propagated.
 
 ### 3.3 `/app/memory/final/MODULE_DECISIONS_FINAL.md`
 - **Purpose:** Defines module boundaries, responsibilities, dependencies, and module-level change rules.
 - **Status:** Approved
-- **Notes:** Baseline wording normalized to `step3`. Practical module map for future work.
+- **Notes:** Baseline wording normalized to `step3`. Workflow ownership and module usage rules are clarified.
 
 ### 3.4 `/app/memory/final/CHANGE_REQUEST_PLAYBOOK.md`
 - **Purpose:** Required analysis workflow for bugs, enhancements, and behavior changes.
@@ -46,7 +46,7 @@ Major warnings:
 - **Notes:** Strongly aligned with the playbook and architecture/module docs. Its internal reading order is also superseded by this approval document.
 
 ### 3.6 `/app/memory/final/FINAL_DOCS_SUMMARY.md`
-- **Purpose:** Team handoff summary of what the final docs cover and the main risks/open decisions.
+- **Purpose:** Team handoff summary of what the final docs cover and the main risks/deferred items.
 - **Status:** Approved
 - **Notes:** Baseline identity clarified to `step3`; archived materials explicitly excluded from mandatory future-agent reading.
 
@@ -78,10 +78,10 @@ Additional usage note:
 ### OD-01
 - **Decision ID:** OQ-07
 - **Topic:** Reporting ownership wording verification
-- **Current known position:** Owner clarified that backend APIs own report aggregation and frontend is primarily representation/presentation. Some older wording may still overstate frontend-heavy aggregation.
+- **Current known position:** Owner clarified that backend APIs own report aggregation and frontend is primarily representation/presentation. Some wording may still need to be highlighted and verified during future report-related work.
 - **Owner:** Tech / API / Business
 - **Risk if assumed:** Future agents may preserve or introduce the wrong aggregation ownership assumptions.
-- **What future agents must do:** During the next report-related change, highlight and verify any doc wording that implies frontend aggregation ownership.
+- **What future agents must do:** During the next report-related change, highlight and verify any doc/code wording that implies frontend aggregation ownership.
 
 ### OD-02
 - **Decision ID:** OQ-12
@@ -146,9 +146,9 @@ Additional usage note:
 ---
 
 ## 8. Final recommendation
-**Future agents can proceed only with listed deferred/verification warnings.**
+**Future agents can proceed using these docs, with the listed deferred/verification warnings.**
 
-Use these final docs as the documentation baseline, but always:
+Use these final docs as the approved documentation baseline, but always:
 - read this approval document first,
 - verify implementation against current code in `/app`, and
 - stop for clarification or explicit review when a request overlaps the deferred or verification-sensitive items in the register above.
