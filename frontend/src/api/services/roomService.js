@@ -36,6 +36,7 @@ const to2dp = (value) => {
  * @param {number|string} [params.roomPrice]
  * @param {number|string} [params.advancePayment]
  * @param {number|string} [params.balancePayment]
+ * @param {string}   [params.paymentMethod]     — BUG-027: "cash" | "card" | "upi" (advance tender)
  * @param {string}   [params.orderNote]
  * @param {string}   [params.firmName]
  * @param {string}   [params.firmGst]
@@ -103,6 +104,9 @@ export const checkIn = async (params) => {
   fd.append('order_amount', to2dp(params.roomPrice));
   fd.append('advance_payment', to2dp(params.advancePayment));
   fd.append('balance_payment', to2dp(params.balancePayment));
+  // BUG-027: Capture how the advance was tendered (cash / card / upi).
+  // Empty string when advance is 0 or operator hasn't picked yet.
+  fd.append('payment_method', params.paymentMethod || '');
   fd.append('order_note', params.orderNote || '');
 
   // ── GST / Firm block — always sent (empty when not Corporate) ──────────────

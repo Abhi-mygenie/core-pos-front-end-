@@ -112,6 +112,63 @@ export const getStationViewConfig = () => {
 };
 
 /**
+ * BUG-026: Parse variation array → stable signature + display label.
+ * Canonical shape from CartPanel.jsx:75–88 (matches live socket payload):
+ *   [{ name: "varrient", values: [{ label: "30ML", optionPrice: "0" }] }]
+ * Sorted signature ensures reorderings don't split aggregation.
+ */
+const parseVariants = (variations) => {
+  if (!Array.isArray(variations) || variations.length === 0) return { sig: '', label: '' };
+  const parts = variations.map((v) => {
+    if (typeof v === 'string') return { sig: v, label: v };
+    const name = v.name || v.variant_name || v.variant_group || '';
+
+    let labels = [];
+    if (Array.isArray(v.values)) {
+      labels = v.values.map((val) => val?.label).filter(Boolean);
+    } else if (Array.isArray(v.values?.label)) {
+      labels = v.values.label;
+    } else if (Array.isArray(v.labels) && v.labels.length > 0) {
+      labels = v.labels;
+    } else {
+      const fallback = v.value || v.option_label || v.label || v.selected_option;
+      if (fallback) labels = [fallback];
+    }
+
+    return {
+      sig: `${name}=${labels.join('|')}`,
+      label: labels.join(', ') || name,
+    };
+  });
+  parts.sort((a, b) => a.sig.localeCompare(b.sig));
+  return {
+    sig: parts.map((p) => p.sig).join(';'),
+    label: parts.map((p) => p.label).filter(Boolean).join(', '),
+  };
+};
+
+/**
+ * BUG-026: Parse add_ons array → stable signature + display label.
+ * Quantity is part of the signature so "1 raita" and "2 raita" rows do NOT merge.
+ */
+const parseAddOns = (addOns) => {
+  if (!Array.isArray(addOns) || addOns.length === 0) return { sig: '', label: '' };
+  const parts = addOns.map((a) => {
+    const name = a.name || a.addon_name || '';
+    const qty = Number(a.quantity || a.qty || 1);
+    return {
+      sig: `${name}=${qty}`,
+      label: qty > 1 ? `+ ${qty}× ${name}` : `+ ${name}`,
+    };
+  });
+  parts.sort((a, b) => a.sig.localeCompare(b.sig));
+  return {
+    sig: parts.map((p) => p.sig).join(';'),
+    label: parts.map((p) => p.label).filter(Boolean).join(', '),
+  };
+};
+
+/**
  * Fetch aggregated station data (station-order-list API)
  * Returns categories with item counts per station
  * 
@@ -164,21 +221,44 @@ export const fetchStationData = async (stationName = 'KDS', categoriesMap = null
           }
           
           const quantity = item.quantity || 1;
-          
+
+          // BUG-026: split rows by variant/add-on/notes signature.
+          // Notes are part of the signature per locked decision Q6.
+          const variant = parseVariants(item.variation);
+          const addons = parseAddOns(item.add_ons);
+          const noteSig = (item.food_level_notes || '').trim();
+          const signatureKey = `${foodName}∷${variant.sig}∷${addons.sig}∷${noteSig}`;
+
           if (!categoryMap.has(categoryName)) {
             categoryMap.set(categoryName, new Map());
           }
-          
+
           const itemsMap = categoryMap.get(categoryName);
-          const currentCount = itemsMap.get(foodName) || 0;
-          itemsMap.set(foodName, currentCount + quantity);
+          const existing = itemsMap.get(signatureKey);
+          if (existing) {
+            existing.count += quantity;
+          } else {
+            itemsMap.set(signatureKey, {
+              name: foodName,
+              variantLabel: variant.label,
+              addonLabel: addons.label,
+              notes: noteSig,
+              count: quantity,
+            });
+          }
         }
       });
     });
     
     // Convert to array format
     const categories = Array.from(categoryMap.entries()).map(([catName, itemsMap]) => {
-      const items = Array.from(itemsMap.entries()).map(([name, count]) => ({ name, count }));
+      const items = Array.from(itemsMap.values()).map((entry) => ({
+        name: entry.name,
+        variantLabel: entry.variantLabel,
+        addonLabel: entry.addonLabel,
+        notes: entry.notes,
+        count: entry.count,
+      }));
       const totalCount = items.reduce((sum, item) => sum + item.count, 0);
       return {
         name: catName,

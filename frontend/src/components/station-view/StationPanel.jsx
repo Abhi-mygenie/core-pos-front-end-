@@ -21,6 +21,7 @@ const DENSITY = {
     itemPad: 'py-1.5 px-3 pl-6', itemName: 'text-sm', itemCount: 'text-sm',
     itemCountW: 'min-w-[32px]', itemDivMx: 'mx-2',
     catGap: 'mb-1',
+    showModifiers: true,
   },
   compact: {
     label: 'Compact',
@@ -32,6 +33,7 @@ const DENSITY = {
     itemPad: 'py-0.5 px-2 pl-3', itemName: 'text-xs', itemCount: 'text-xs',
     itemCountW: 'min-w-[24px]', itemDivMx: 'mx-1.5',
     catGap: 'mb-0.5',
+    showModifiers: false,
   },
   ultra: {
     label: 'Ultra',
@@ -43,6 +45,7 @@ const DENSITY = {
     itemPad: 'py-0 px-2 pl-2.5', itemName: 'text-[11px]', itemCount: 'text-[11px]',
     itemCountW: 'min-w-[20px]', itemDivMx: 'mx-1',
     catGap: 'mb-0',
+    showModifiers: false,
   },
 };
 
@@ -77,33 +80,59 @@ const getCategoryColor = (index) => {
 };
 
 /**
- * Station Item Row - Single item with dotted line and count
+ * Station Item Row - Single item with dotted line and count.
+ * BUG-026: Variant inline on main line + addon/notes sub-lines, but ONLY in
+ * comfortable density. Compact/Ultra render name-only (rows still split by
+ * signature so counts remain correct).
  */
-const StationItemRow = ({ itemName, count, density }) => (
-  <div 
-    className={`flex items-center ${density.itemPad}`}
-    style={{ borderBottom: `1px solid ${COLORS.borderGray}20` }}
-  >
-    {/* Item Name — never truncated; wraps if needed so the count column stays aligned */}
-    <span className={`${density.itemName} break-words`} style={{ color: COLORS.darkText }}>
-      {itemName}
-    </span>
-    
-    {/* Dotted line — fills remaining space; shrinks to 0 if name is long */}
-    <div 
-      className={`flex-1 ${density.itemDivMx} border-b border-dotted`} 
-      style={{ borderColor: COLORS.grayText, minWidth: '8px' }}
-    />
-    
-    {/* Quantity */}
-    <span 
-      className={`${density.itemCount} font-semibold ${density.itemCountW} text-center flex-shrink-0`}
-      style={{ color: COLORS.primaryGreen }}
+const StationItemRow = ({ itemName, count, density, variantLabel, addonLabel, notes }) => {
+  const showModifiers = density.showModifiers;
+  const mainLabel = (showModifiers && variantLabel)
+    ? `${itemName} — ${variantLabel}`
+    : itemName;
+
+  return (
+    <div
+      className={`flex flex-col ${density.itemPad}`}
+      style={{ borderBottom: `1px solid ${COLORS.borderGray}20` }}
     >
-      {count}
-    </span>
-  </div>
-);
+      <div className="flex items-center">
+        {/* Item Name (with optional variant inline in comfortable density) */}
+        <span className={`${density.itemName} break-words`} style={{ color: COLORS.darkText }}>
+          {mainLabel}
+        </span>
+
+        {/* Dotted line — fills remaining space; shrinks to 0 if name is long */}
+        <div
+          className={`flex-1 ${density.itemDivMx} border-b border-dotted`}
+          style={{ borderColor: COLORS.grayText, minWidth: '8px' }}
+        />
+
+        {/* Quantity */}
+        <span
+          className={`${density.itemCount} font-semibold ${density.itemCountW} text-center flex-shrink-0`}
+          style={{ color: COLORS.primaryGreen }}
+        >
+          {count}
+        </span>
+      </div>
+
+      {/* Add-on sub-line (comfortable only) */}
+      {showModifiers && addonLabel && (
+        <div className="text-[11px] italic mt-0.5" style={{ color: COLORS.grayText }}>
+          {addonLabel}
+        </div>
+      )}
+
+      {/* Notes sub-line (comfortable only) */}
+      {showModifiers && notes && (
+        <div className="text-[11px] italic mt-0.5" style={{ color: COLORS.grayText }}>
+          Note: {notes}
+        </div>
+      )}
+    </div>
+  );
+};
 
 /**
  * Category Section - Category header + items (Option C style)
@@ -157,10 +186,13 @@ const CategorySection = ({ category, categoryIndex, displayMode, density }) => {
       {isExpanded && (
         <div>
           {category.items.map((item, idx) => (
-            <StationItemRow 
-              key={idx} 
-              itemName={item.name} 
+            <StationItemRow
+              key={idx}
+              itemName={item.name}
               count={item.count}
+              variantLabel={item.variantLabel}
+              addonLabel={item.addonLabel}
+              notes={item.notes}
               density={density}
             />
           ))}

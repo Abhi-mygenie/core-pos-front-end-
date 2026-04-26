@@ -7,6 +7,7 @@ import { getTableStatusConfig } from "../../utils";
 // Dine-In Order Card Component - Neutral design with full functionality
 const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
   const [showServedItems, setShowServedItems] = useState(false);
+  const [showCancelledItems, setShowCancelledItems] = useState(false);
   const { orderItemsByTableId } = useOrders();
 
   // Get real order data from context (by tableId), or use walk-in order data from table prop
@@ -21,6 +22,8 @@ const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
   const preparingItems = orderData.items.filter(item => item.status === "preparing");
   const readyItems = orderData.items.filter(item => item.status === "ready");
   const servedItems = orderData.items.filter(item => item.status === "served");
+  // BUG-025: cancelled items shown in their own dropdown (mirrors Served Items block).
+  const cancelledItems = orderData.items.filter(item => item.status === "cancelled");
 
   const statusConfig = getTableStatusConfig(table.status);
 
@@ -179,6 +182,41 @@ const DineInCard = ({ table, onEdit, isSnoozed, onToggleSnooze }) => {
                   <CheckCircle className="w-3 h-3" style={{ color: COLORS.primaryGreen }} />
                   <span className="text-xs" style={{ color: COLORS.grayText }}>
                     {item.name} ({item.qty})
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* BUG-025: Cancelled Items - Collapsible (separate dropdown, mirrors Served block) */}
+      {cancelledItems.length > 0 && (
+        <div className="px-4 py-2 border-b" style={{ borderColor: COLORS.borderGray }}>
+          <button
+            data-testid={`cancelled-toggle-${table.id}`}
+            className="w-full flex items-center justify-between text-sm"
+            style={{ color: COLORS.grayText }}
+            onClick={() => setShowCancelledItems(!showCancelledItems)}
+          >
+            <span>Cancelled Items ({cancelledItems.length})</span>
+            {showCancelledItems ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {showCancelledItems && (
+            <div className="mt-2 pl-3 border-l-2" style={{ borderColor: '#9CA3AF' }}>
+              {cancelledItems.map(item => (
+                <div key={item.id} className="py-1 flex items-center gap-2">
+                  <X className="w-3 h-3" style={{ color: '#9CA3AF' }} />
+                  <span
+                    data-testid={`cancelled-item-${item.id}`}
+                    className="text-xs line-through flex-1"
+                    style={{ color: '#9CA3AF' }}
+                  >
+                    {item.name} ({item.qty})
+                  </span>
+                  <span className="text-[10px]" style={{ color: '#9CA3AF' }}>
+                    (Cancelled)
                   </span>
                 </div>
               ))}
