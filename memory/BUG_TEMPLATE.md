@@ -2427,3 +2427,185 @@ Captured socket payload (`update-order-paid`, order 731704):
 - Until backend ships fix, the kitchen panel will show stale data after Mark Ready / Cancel. Operational workaround: kitchen can be advised to ignore the panel briefly after a Ready action and trust the order-card Ready tab as truth.
 - Recommendation for backend team: write a single transactional service method that atomically flips order header AND cascades item-level fields AND moves items into the correct relations (`ready_order_details` / `cancel_order_details`), then emit a unified `update-order-status` socket event with the final state. Apply to Mark Ready, Mark Cancel, and any other order-level lifecycle action.
 
+
+## BUG-025 / Cancelled Item — Not Shown in Order Card's Collapsible "Served" Dropdown (Order detail screen correctly shows it strikethrough)
+
+**Status: OPEN — Frontend bug** (Apr-2026, captured during station-panel realtime work)
+
+**User Reported Issue**
+- A cashier cancels an item on an active order from the order detail screen.
+- The order detail / order entry screen renders the cancelled item correctly with strikethrough text and crossed-out price (e.g., `6 pc FRIED WINGS + 3 pc PERI PERI…  ₹359` struck through).
+- However, the dashboard order card collapses Served items behind a `▼ Served (n)` toggle — but there is **no equivalent section for cancelled items**. The cancelled line is silently dropped from the order card view.
+- Net effect: cashier or kitchen looking at the order card cannot see that an item was cancelled. Only the order detail screen exposes the truth.
+
+**QA Status**
+- Visually confirmed via screenshots (Apr-26-2026):
+  - Screenshot A (order card, partial state): shows 3 Ready items + collapsed `▼ Served (1)` toggle. No mention of the cancelled item.
+  - Screenshot B (same card, expanded): expanded `▼ Served (1)` reveals the served item (`2 PC FRIED CHICKEN + CRISPY CHICKEN BURGER`). Still no cancelled item visible.
+  - Screenshot C (order detail screen of the same order): shows 3 active rows + 1 strikethrough row `6 pc FRIED WINGS + 3 pc PERI PERI… ₹359`. Backend clearly knows about the cancelled line; only the card render hides it.
+- Order in question: postpaid dinein, restaurant 478, 2026-04-26 ~15:10 IST.
+
+**Current Code Behavior (frontend — likely root cause)**
+- `frontend/src/components/cards/OrderCard.jsx` partitions items into:
+  - `activeItems` (rendered in the main section, lines 398-505) — items with `status === 'preparing'` or `'ready'`.
+  - `servedItems` (rendered in the collapsible `▼ Served (n)` section, lines 508-547) — items with `status === 'served'`.
+- There is **no third bucket** for `status === 'cancelled'`. Cancelled items are filtered out of both collections and never reach the order card render.
+- `DineInCard.jsx:21-23` shows the same partitioning pattern (`preparingItems`, `readyItems`, `servedItems`) — also missing cancelled.
+- Order detail screen (`OrderEntry.jsx` / cart panels) DOES render cancelled items via `item.status === 'cancelled'` checks (e.g., `CartPanel.jsx:33`, `CollectPaymentPanel.jsx:85`) — proving the data carries `status: 'cancelled'`, only the card view ignores it.
+
+**Expected Behavior**
+- The order card should expose cancelled items via a parallel collapsible section, e.g., `▼ Cancelled (n)` styled similarly to `▼ Served (n)` but with a red/grey indicator instead of green check.
+- Each cancelled row should render with strikethrough text and a Cancel reason if available (`item.cancelReason`, `item.reasonType` already present in transform — see `orderTransform.js:537`).
+- The cancelled section should be expandable on demand to keep the card compact (same UX pattern as Served).
+- This makes it possible for kitchen / waiter / cashier looking at the card alone to know an item was cancelled without opening the order detail screen.
+
+**Gap Observed**
+- `OrderCard.jsx` and `DineInCard.jsx` filter only for `preparing` / `ready` / `served`. The `cancelled` status is not partitioned anywhere in the card render path.
+- Visual asymmetry vs. order detail screen, which faithfully shows cancelled items strikethrough.
+
+**Impacted Areas**
+- `frontend/src/components/cards/OrderCard.jsx` — primary fix location (~lines 397-547). Add a `cancelledItems` filter mirroring `servedItems` and a parallel collapsible block.
+- `frontend/src/components/cards/DineInCard.jsx` — same pattern; add `cancelledItems` filter at line 21-23 and matching render block.
+- All order types affected in card view: dinein, walk-in, takeaway, delivery, room.
+- Item-level chip already gated correctly by `actionConfig` (`OrderCard.jsx:233-237`) — for cancelled items it returns null, so no Mark-Ready button needs to render in the new section. Just text + strikethrough.
+
+**Files Reviewed**
+- `frontend/src/components/cards/OrderCard.jsx` — partitioning logic, served collapse block (lines 398-547).
+- `frontend/src/components/cards/DineInCard.jsx` — same partitioning pattern (lines 21-23).
+- `frontend/src/components/order-entry/CartPanel.jsx` — confirms `status: 'cancelled'` exists at runtime (line 33).
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — same (lines 85, 948, 1213).
+- `frontend/src/api/transforms/orderTransform.js` — `cancel_type` derived at line 537; transform faithfully preserves cancellation metadata.
+- `frontend/src/api/constants.js` — `F_ORDER_STATUS = { 3: 'cancelled' }` (line 127).
+
+**Code Evidence Summary (transform layer faithful, render layer gap)**
+- The transform layer correctly maps `food_status: 3` → `status: 'cancelled'` via `mapOrderStatus(F_ORDER_STATUS)`. So `order.items` contains cancelled items with the right metadata.
+- The render layer in `OrderCard.jsx` (and `DineInCard.jsx`) chooses NOT to show them. Pure UI omission, not a data issue.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: **none**. Data is already available in the order object.
+- Pure frontend fix.
+
+**Reproduction Understanding**
+- Step 1: Place a postpaid dinein order with 4 items.
+- Step 2: From the order detail screen, cancel one item (e.g., open the order, click the X next to an item, confirm cancel).
+- Step 3: Return to the dashboard. Locate the order card.
+- Observed: card shows 3 active items + (optional) `▼ Served (n)`. The cancelled item is invisible.
+- Expected: card should additionally show `▼ Cancelled (1)` collapsible section listing the cancelled item with strikethrough text.
+
+**Open Questions / Unknowns**
+- Should the cancel reason be shown in the collapsed section, or only on expand? UX call.
+- Should Served + Cancelled be merged into a single `▼ Completed (n)` toggle, or stay as two distinct toggles? Owner preference required.
+- Should the cancel timestamp (`cancel_at`) be displayed, similar to how `serve_at` may be?
+
+**Notes**
+- Out of scope for the current Station Panel realtime work (HANDOVER_v3 / v3.1). Filed as a separate frontend ticket.
+- Estimated effort: ~30 minutes — symmetric to the existing Served collapse block; mostly a copy-paste-and-style change in two files.
+- Recommendation: implement after BUG-024 backend cascade lands, so both Served and Cancelled buckets reflect real-time data correctly.
+
+---
+
+## BUG-026 / Station Panel — Items With Different Variants/Add-Ons Aggregated Under Same Name; Variant Info Not Visible to Chef
+
+**Status: OPEN — Frontend bug** (Apr-2026, captured during station-panel realtime work)
+
+**User Reported Issue**
+- Cashier places a dinein order with two units of `Test Biryani`, each with a different size variant (e.g., one Half, one Full).
+- Order card on dashboard shows two distinct `Test Biryani (1)` rows, each with an italic `Size` subtitle — but the actual variant value (Half / Full) is missing; only the variant name renders.
+- Station Panel KDS aggregator shows `Test Biryani  2` under the `Mains` category — collapsing both variants into a single row with no way for the chef to distinguish what to cook.
+- Net effect: chef sees `Test Biryani × 2` and has no information about size, add-ons, or any modifier. Production risk — wrong food item produced.
+
+**QA Status**
+- Visually confirmed via screenshot (Apr-26-2026, restaurant 478).
+- Two issues observed in one session:
+  1. **Order card variant-label rendering**: shows variant *name* (`Size`) but not the *value* (`Half` / `Full`). Variant parsing logic at `OrderCard.jsx:408-420` may not be matching the data shape sent by backend for this catalog item.
+  2. **Station panel aggregation key**: items aggregated by `food_details.name` only, so two visually-identical names collapse into one row regardless of variant or add-on differences.
+
+**Current Code Behavior**
+
+*Issue 2.1 — Order card variant label not showing the value*
+- `OrderCard.jsx:408-420` parses variants:
+  ```js
+  const variantStr = variants.map(v => {
+    if (typeof v === 'string') return v;
+    if (v.labels && Array.isArray(v.labels) && v.labels.length > 0) {
+      const name = v.name || v.variant_name || v.variant_group || '';
+      return `${name}: ${v.labels.join(', ')}`;
+    }
+    const name = v.name || v.variant_name || v.variant_group || '';
+    const value = v.value || v.option_label || v.label || v.selected_option || '';
+    if (name && value) return `${name}: ${value}`;
+    return name || value || '';     // ← falls through to name-only when value field is missing
+  }).filter(Boolean).join(', ');
+  ```
+- The current backend payload for Test Biryani appears to send variant entries with a `name` field but no recognised `value`/`label`/`option_label`/`selected_option`/`labels[]`. The parser falls through to the last branch and returns the name only ("Size").
+- Need to capture an actual `variation` array from the live socket / REST payload for Test Biryani to identify the missing field name.
+
+*Issue 2.2 — Station panel aggregation collapses different variants*
+- `frontend/src/api/services/stationService.js:142-168` aggregates kitchen items into a category map using `food_details.name` as the inner key:
+  ```js
+  const foodName = item.food_details?.name || 'Unknown Item';
+  // ...
+  const itemsMap = categoryMap.get(categoryName);
+  const currentCount = itemsMap.get(foodName) || 0;
+  itemsMap.set(foodName, currentCount + quantity);
+  ```
+- Two items with the same `name` but different `variation[]` / `add_ons[]` / `food_level_notes` end up under the same map key → counted together → displayed as a single row.
+- Chef has no way to see which one is Half vs Full, or which has add-on X.
+
+**Expected Behavior**
+1. **Order card variant label (Issue 2.1):** the variant value MUST display next to the name, e.g., `Test Biryani (1) — Half` or `Size: Half`. If the variant has no value, fall back to suppressing the variant subtitle entirely (do NOT show a bare `Size` label that confuses more than it helps).
+2. **Station panel aggregation (Issue 2.2):** items with different variants OR different add-ons OR different `food_level_notes` should be displayed as **separate rows** in the kitchen panel:
+   - `Test Biryani — Half  1`
+   - `Test Biryani — Full  1`
+   (instead of `Test Biryani  2`)
+3. **Inline variant/add-on display in panel:** the variant value and add-on names should be embedded in the displayed item name so the chef can read it without expanding anything. Suggested format: `Test Biryani (Half) [+ Extra Raita]` or similar — owner to confirm exact format.
+4. **Item-level notes (`food_level_notes`):** if present, should also be visible to the chef — currently dropped.
+
+**Gap Observed**
+- Aggregation key in `stationService.js` is too coarse (`name` only).
+- Variant parsing in `OrderCard.jsx` does not handle the actual payload field that backend sends for this catalog item — silent fallback to name-only.
+- No display path for `add_ons`, `food_level_notes`, or per-item modifiers in the station panel rendering chain.
+
+**Impacted Areas**
+- `frontend/src/api/services/stationService.js` — aggregation key construction (lines 140-168). Must include variant + add-on fingerprint.
+- `frontend/src/api/transforms/orderTransform.js` — `fromAPI.orderItem` (line 102 area) currently passes `variation` and `addOns` arrays through; transform may need to expose a normalised "variant label" string for downstream consumers.
+- `frontend/src/components/cards/OrderCard.jsx` — variant/addOn parser (lines 408-426); needs additional field-name probes once the actual backend shape is captured.
+- `frontend/src/components/station-view/StationPanel.jsx` — render path for category items; may need extended display columns to show variant/add-on inline rather than bare name.
+- All kitchen-relevant orders affected: dinein, walk-in, takeaway, delivery, room.
+
+**Files Reviewed**
+- `frontend/src/api/services/stationService.js` (aggregation lines 140-168)
+- `frontend/src/api/transforms/orderTransform.js` (`fromAPI.orderItem` lines 83-115)
+- `frontend/src/components/cards/OrderCard.jsx` (variant/addOn parser lines 408-426)
+- `frontend/src/components/station-view/StationPanel.jsx` (item render path, density toggle)
+- Captured screenshot — Test Biryani × 2 with `Size` variant, restaurant 478, 2026-04-26.
+
+**Code Evidence Summary**
+- Data layer DOES carry per-item variation / add_ons / notes (visible in captured payloads — e.g., order #731715's `orderDetails[*]` had `variation: []` and `add_ons: []` arrays present even when empty).
+- The data is preserved through transforms.
+- The aggregation step in `stationService.fetchStationData` discards everything except the catalog name when building the kitchen-display map.
+- Variant parser in OrderCard fails to recognise the field shape backend sends for this catalog item — root cause of `Size`-without-value display.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: **probably none**. Need a captured live payload of Test Biryani (with variation + add_ons populated) to know the exact field names backend sends. Once known, the frontend parser can be extended to match.
+- Pure frontend fix once payload shape is confirmed.
+
+**Reproduction Understanding**
+- Step 1: Pick a catalog item with size variants (e.g., Test Biryani — Half / Full).
+- Step 2: Place a dinein order with 1 unit Half + 1 unit Full.
+- Step 3: Open dashboard order card → observe `Test Biryani (1)` rows with bare `Size` italic subtitle (no value).
+- Step 4: Open Station Panel KDS → observe `Test Biryani  2` aggregated row.
+- Expected: card shows variant value inline; panel shows two distinct rows.
+
+**Open Questions / Unknowns**
+- What is the exact field name in the `variation[]` element that carries the value (Half/Full)? Need a live capture of the `update-order` or `new-order` socket payload for a Test-Biryani-style order.
+- For add-ons, should the chef see `+ Extra Raita` inline or in a separate sub-line?
+- For food-level notes (`food_level_notes`), how should they appear in the panel — separate row, sub-line, or icon?
+- Aggregation strategy: combine variant + add-ons + notes into a fingerprint (hash) for the map key, OR display every item individually (one row per item) regardless of duplication?
+
+**Notes**
+- Out of scope for the current Station Panel realtime work (HANDOVER_v3 / v3.1). Filed as a separate frontend ticket.
+- Estimated effort: ~1.5 hours total — 30 min capture & parser fix in `OrderCard.jsx`; 30 min aggregation key change in `stationService.js`; 30 min station-panel render extension + manual verification.
+- High operational priority — chef misreading variants leads to wrong food sent out, customer complaints, and waste. Recommend prioritising once the current station-panel realtime work is signed off.
+- Cross-reference: BUG-024 (backend cascade) is independent. This bug exists regardless of cascade state.
+
