@@ -31,7 +31,7 @@
 
 | Item | Value |
 |---|---|
-| Frontend URL (this pod) | `https://sidebar-config-test.preview.emergentagent.com` |
+| Frontend URL (this pod) | `https://req2-req3-req4-qa.preview.emergentagent.com` |
 | Configured backend | `https://preprod.mygenie.online/` |
 | Check-in endpoint | `POST /api/v1/vendoremployee/pos/user-group-check-in` |
 | Browser / driver | Chromium via Playwright (1920 × 900) |

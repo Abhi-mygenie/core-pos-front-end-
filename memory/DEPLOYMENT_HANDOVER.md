@@ -7,7 +7,7 @@
 | Branch | `roomv2` |
 | Commit | `10ed08e Auto-generated changes` |
 | Repo | https://github.com/Abhi-mygenie/core-pos-front-end-.git |
-| Preview URL | https://sidebar-config-test.preview.emergentagent.com |
+| Preview URL | https://req2-req3-req4-qa.preview.emergentagent.com |
 | Status | SUCCESS — login page renders, HTTP 200 from Cloudflare edge |
 
 Previous deploys: see §8 changelog at the bottom.
@@ -85,7 +85,7 @@ Rules:
 
 Current verified values (2026-04-25):
 ```
-REACT_APP_BACKEND_URL=https://sidebar-config-test.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://req2-req3-req4-qa.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ENABLE_HEALTH_CHECK=false
 REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
@@ -197,8 +197,8 @@ If all 8 are ticked: write your dated row in §8 and stop. Do NOT run testing ag
 
 | Date | Branch | Commit | Preview URL | Notes |
 |------|--------|--------|-------------|-------|
-| 2026-04-23 | `main` | `4bd90a8` | https://sidebar-config-test.preview.emergentagent.com | Initial deploy. VAPID key was supplied wrong (matched Firebase API key); user provided corrected value during handover. Backend supervisor stopped manually (won't survive container restart). |
-| 2026-04-25 | `roomv2` | `10ed08e` | https://sidebar-config-test.preview.emergentagent.com | Wiped `/app` (preserved `.emergent`), reclone into `/app`, yarn install OK, frontend up, login page renders. VAPID key cleaned (leading `2` + tab stripped). |
+| 2026-04-23 | `main` | `4bd90a8` | https://req2-req3-req4-qa.preview.emergentagent.com | Initial deploy. VAPID key was supplied wrong (matched Firebase API key); user provided corrected value during handover. Backend supervisor stopped manually (won't survive container restart). |
+| 2026-04-25 | `roomv2` | `10ed08e` | https://req2-req3-req4-qa.preview.emergentagent.com | Wiped `/app` (preserved `.emergent`), reclone into `/app`, yarn install OK, frontend up, login page renders. VAPID key cleaned (leading `2` + tab stripped). |
 
 ---
 
@@ -216,7 +216,7 @@ sudo supervisorctl restart frontend
 cd /app/frontend && yarn install
 
 # Smoke test
-curl -o /dev/null -w "%{http_code}\n" https://sidebar-config-test.preview.emergentagent.com/
+curl -o /dev/null -w "%{http_code}\n" https://req2-req3-req4-qa.preview.emergentagent.com/
 
 # Check branch / commit currently deployed
 git -C /app branch && git -C /app log -1 --oneline

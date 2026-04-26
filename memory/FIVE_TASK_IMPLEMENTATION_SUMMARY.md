@@ -32,7 +32,7 @@
   - Static fallback `MyGenie POS` shows when no restaurant context (login screen, offline).
   - Favicon points to existing `GENIE_LOGO_URL` so no asset upload required.
 - **Risks remaining:**
-  - The Emergent **preview proxy** (`https://sidebar-config-test.preview.emergentagent.com`) wraps the dev server in an iframe and serves its OWN wrapper HTML with `<title>Loading...</title>` from `app.emergent.sh`. That wrapper is platform-managed and outside our control. Inside the iframe (the actual app), the title/favicon/description are correct as verified via direct dev-server curl.
+  - The Emergent **preview proxy** (`https://req2-req3-req4-qa.preview.emergentagent.com`) wraps the dev server in an iframe and serves its OWN wrapper HTML with `<title>Loading...</title>` from `app.emergent.sh`. That wrapper is platform-managed and outside our control. Inside the iframe (the actual app), the title/favicon/description are correct as verified via direct dev-server curl.
   - When tested against `restaurant-pos-v2-1.preview.static.emergentagent.com` (a stale platform-managed pre-built backup snapshot), the title still shows `Emergent | Fullstack App`. This is a backup snapshot, not the live dev server. The fresh build on `localhost:3000` is correct (verified).
 - **Testing done:**
   - `curl http://localhost:3000/` returns the new `<title>`, `<meta>`, `<link rel="icon">`, and contains zero `emergent.sh`/`posthog` references.

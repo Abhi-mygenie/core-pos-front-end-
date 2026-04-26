@@ -50,7 +50,7 @@
     "/app/frontend/src/api/transforms/__tests__/orderTransform.roomInfo.test.js"
   ],
   "action_items": [
-    "MAIN_AGENT — Live UI smoke: open https://sidebar-config-test.preview.emergentagent.com/, log in, check-in a fresh room with non-zero balance, open Checkout, and DevTools-capture the POST /order-bill-payment payload. Expect `grand_total` field equal to (foodFinalTotal + associatedTotal + roomBalance). Verify a non-room dine-in checkout has NO `grand_total` key.",
+    "MAIN_AGENT — Live UI smoke: open https://req2-req3-req4-qa.preview.emergentagent.com/, log in, check-in a fresh room with non-zero balance, open Checkout, and DevTools-capture the POST /order-bill-payment payload. Expect `grand_total` field equal to (foodFinalTotal + associatedTotal + roomBalance). Verify a non-room dine-in checkout has NO `grand_total` key.",
     "MAIN_AGENT — Visual sanity on a real fresh room: confirm Room section is the FIRST block in bill summary, chevron toggle reveals Room Charge + Advance Paid + Balance lines, and Pay button label says `Checkout ₹{combined}`.",
     "OPTIONAL — Consider splitting `grand_amount` (food-only) from `grand_total` (full payable) in collectBillExisting for explicit semantics — see critical_code_review_comments[0]."
   ],
