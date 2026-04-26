@@ -442,7 +442,58 @@ rm src/api/transforms/__tests__/req3-room-bill-print.test.js
 
 ### Remaining backlog
 
-- **Req 1 — Station Panel Socket Refresh:** PARKED. Endpoint mismatch (`employee-menu` vs `station-order-list`). Awaiting a working token/sample for `GET /api/v1/vendoremployee/employee-menu`.
 - **Q-3G follow-up:** if cashiers report room number missing on receipts, verify `tablename` is correctly rendering on backend printer template. Otherwise add top-level `room_id`/`paid_room`.
 - **Pre-existing test drift** `updateOrderPayload.test.js:323` (`take_away` vs `takeaway` outbound) — out of scope.
+
+---
+
+## 9. Session Update — Station Panel Realtime + roomv3 Deploy (Feb 2026)
+
+**Branch deployed:** `roomv3` → `/app/frontend` (preview at `REACT_APP_BACKEND_URL`).
+
+### Shipped this session
+
+1. **Station Panel real-time refresh fixes** (`useStationSocketRefresh.js`):
+   - Dropped status filters on `update-order`, `update-item-status`, `update-food-status` (always refresh; targeted fetch handles state).
+   - Added `{2,3}` status gate on `update-order-paid` to filter noise.
+   - Switched payload reading to `orderDetails` (v2 shape).
+   - Tagged debug logs added for live tracing.
+2. **OrderCard chip visibility widening** (`OrderCard.jsx`):
+   - Replaced strict `isDineIn` gate with `isItemActionable = !isTakeAway && !isDelivery` so Walk-In and POS-created orders also expose the per-item action chips.
+   - Core `isDineIn` definition left untouched (other call sites depend on it).
+3. **B2 defensive filter** (`stationService.js`):
+   - Skip ghost items where `item.food_status !== 1` to mask backend BUG-024/B1 leaking Ready items into "Preparing" station-list responses. Frontend-only mitigation; backend fix still pending.
+
+### New bugs logged (P1 — frontend, NOT YET FIXED)
+
+| ID | Title | Files likely involved |
+|---|---|---|
+| BUG-025 | Cancelled items missing from Order Card "Served" dropdown | `OrderCard.jsx`, `DineInCard.jsx` |
+| BUG-026 | Station Panel aggregates items with different variants/add-ons under the same name (should split per variant/add-on combo) | `StationContext.jsx`, `stationService.js`, station card view |
+| BUG-027 | Room Check-In: payment method NOT captured for "Advance" amount (logged as Phase-2 carryover) | Room check-in flow + backend payload |
+
+### Backend dependencies (P2)
+
+- **BUG-024 / B1:** backend does not cascade `food_status` and returns Ready orders on Preparing queries. Frontend B2 filter currently masks this — revalidate once backend ships fix.
+
+### Files of reference (current session)
+
+- `/app/frontend/src/hooks/useStationSocketRefresh.js`
+- `/app/frontend/src/api/services/stationService.js`
+- `/app/frontend/src/components/cards/OrderCard.jsx`
+- `/app/memory/STATION_PANEL_REALTIME_HANDOVER_v3.md`
+- `/app/memory/DEPLOYMENT_HANDOVER_ROOMV2.md`
+- `/app/memory/BUG_TEMPLATE.md` (BUG-025/026/027 appended)
+
+### Next agent — prioritized backlog
+
+- **P1**: BUG-025 (cancelled items in Served dropdown — frontend-only fix in OrderCard/DineInCard)
+- **P1**: BUG-026 (split aggregated items by variant/add-on signature in Station Panel)
+- **P1**: BUG-027 (capture payment method for room check-in advance amount)
+- **P2**: re-validate B1/BUG-024 once backend ships, then remove B2 defensive filter in `stationService.js`
+
+### Testing notes
+
+- No automated frontend tests run this session; user performed live manual testing via the preview URL with console payload captures.
+- **YARN ONLY** — never run `npm install`.
 
