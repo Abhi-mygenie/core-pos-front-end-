@@ -2609,3 +2609,89 @@ Captured socket payload (`update-order-paid`, order 731704):
 - High operational priority — chef misreading variants leads to wrong food sent out, customer complaints, and waste. Recommend prioritising once the current station-panel realtime work is signed off.
 - Cross-reference: BUG-024 (backend cascade) is independent. This bug exists regardless of cascade state.
 
+
+---
+
+## BUG-027 / Room Check-In — Payment Method Not Captured for "Advance" Amount (deferred to Phase 2 but never tracked as a bug)
+
+**Status: OPEN — Frontend gap (originally Phase-2 backlog, formally logged Apr-2026)**
+
+**User Reported Issue**
+- During room check-in (hospitality flow), the front-desk operator can enter an `Advance` amount alongside `Room Price`.
+- However, the form has **no field to capture HOW the advance was collected** (Cash / Card / UPI / Wallet / Bank Transfer / etc.).
+- Net effect: backend records the advance numerically but loses the payment-method context — accounting/audit trail is incomplete; daily cash reconciliation cannot tell whether the ₹X advance came from cash drawer, card terminal, or UPI.
+- This was knowingly deferred to Phase 2 during initial implementation but never filed as a tracked ticket — surfaced again during station-panel realtime work as a "missed item to log".
+
+**QA Status**
+- Visually confirmed via screenshot (Apr-26-2026, room check-in modal):
+  - Top toggles: `Walk-in / Online`, `Personal / Corporate` (booking source + guest type).
+  - Date row: Check-in `26/04/2026`, Nights `1`, Check-out `27/04/2026` with timestamps.
+  - Money row: `Room Price *` (mandatory) + `Advance` (optional).
+  - `Balance` field (auto-computed read-only).
+  - `Special Request` (optional textarea).
+  - **No payment-method selector anywhere** between the `Advance` field and the rest of the form.
+- Compared to in-restaurant Collect Bill flow (Settle Bill / Take Payment), which DOES enforce payment-method selection (Cash / Card / UPI / etc.) — confirming the convention exists elsewhere; only the room module skipped it.
+
+**Current Code Behavior (frontend — for reference)**
+- Room check-in form schema (component to be located, likely under `frontend/src/components/room-check-in/` or similar) submits a body with `roomPrice`, `advance`, `balance`, `checkIn`, `checkOut`, etc., but no `advancePaymentMethod` / `paymentType` / equivalent field.
+- Backend receives the advance amount and stores it as a single number against the booking/folio; downstream payment-summary reports cannot break it down by tender.
+- Restaurant payment screens (`CollectPaymentPanel.jsx`, etc.) already have a robust payment-method picker with `cash`, `card`, `upi`, `wallet`, `bank`, `pending` options — pattern can be reused.
+
+**Expected Behavior**
+- When `Advance > 0`, form MUST require the operator to pick a payment method.
+- Suggested UI: a single-select group placed directly under the `Advance` input (or to its right) with the same option set used in restaurant Collect Bill: `Cash`, `Card`, `UPI`, `Wallet`, `Bank Transfer`, plus optional `Pending` if hospitality requires deferred capture.
+- Submit payload should include the chosen method (e.g., `advancePaymentMethod: 'cash'`).
+- Backend should persist the payment-method against the advance line so daily reconciliation reports can break advances down by tender, identical to how dine-in payments are split today.
+- If `Advance === 0`, payment-method picker is hidden / not required.
+- Validation: when `Advance > 0` and method is empty → block submit with inline error (mirrors how Collect Bill blocks settle without method).
+
+**Gap Observed**
+- Form-level: payment-method picker is missing entirely from the room check-in form.
+- Schema-level: submit body has no field for advance payment-method.
+- Backend contract: needs to accept and persist the new field; API endpoint signature must be updated.
+- Reporting: hospitality daily-summary / shift-close reports cannot bucket advances by tender.
+
+**Impacted Areas**
+- Frontend room check-in form component (location to be confirmed — likely under `frontend/src/components/` or `frontend/src/pages/` for the room/hospitality module).
+- Frontend room check-in submit handler / API service.
+- Backend room-check-in endpoint — payload schema + persistence.
+- Daily reconciliation / shift-close reports — need to surface the new tender breakdown.
+- All booking sources (`Walk-in`, `Online`) and guest types (`Personal`, `Corporate`) — applies uniformly.
+
+**Files Reviewed**
+- Visual evidence only — captured screenshot of the check-in modal (Apr-26-2026).
+- Reference pattern (where payment-method capture works correctly): `frontend/src/components/order-entry/CollectPaymentPanel.jsx` — payment-method picker UX + validation flow.
+- Reference pattern (transform): `frontend/src/api/transforms/orderTransform.js` — how `payment_method` is normalised on existing flows.
+
+**Code Evidence Summary**
+- Pattern for payment-method capture already exists and is battle-tested in restaurant flows.
+- Reuse, do NOT reinvent — pick up the same option list, same validation rule (block submit when amount > 0 and method missing), same submit-body field name.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: **MEDIUM** — endpoint contract change. Need to confirm with backend team:
+  - Field name (`advance_payment_method`? `payment_method`? `advance_pay_type`?).
+  - Whether the field can be added to the existing check-in endpoint, or requires a versioned API.
+  - Whether existing bookings without the field should default to `'unknown'` / `'cash'` for backward compatibility.
+- Reporting dependency: hospitality daily-summary and shift-close logic must be extended to surface the new tender bucket.
+
+**Reproduction Understanding**
+- Step 1: Open room check-in modal from the hospitality dashboard.
+- Step 2: Choose `Walk-in` + `Personal` (or any combination — the gap is universal).
+- Step 3: Fill in dates, room price, and a non-zero `Advance` amount.
+- Step 4: Submit the form.
+- Observed: booking is created with the advance amount but **no record of how it was paid**. Daily report shows the advance as an undifferentiated number.
+- Expected: form should require payment-method selection when advance > 0; booking record carries the method; reports break advances down by tender.
+
+**Open Questions / Unknowns**
+- Should the payment-method picker also appear on the `Online` booking source (where advance might come from a payment gateway)? Probably yes, but defaulting to `Online`/`Gateway` rather than asking.
+- For corporate bookings, should advance be implicitly `Bank Transfer` or `Credit`? Owner to confirm.
+- Should the picker support split-tender (advance partly cash + partly card) like Collect Bill does, or is a single tender enough for Phase 1?
+- For check-out (settle final bill), the pattern likely applies again — out of scope for this ticket but worth confirming whether check-out already captures method.
+
+**Notes**
+- Originally deferred to Phase 2 during initial hospitality module build; was never formally logged as a bug ticket. Surfaced as a "missed item" by owner during Apr-2026 station-panel realtime work and filed retroactively to ensure it is tracked.
+- Out of scope for the current Station Panel realtime work (HANDOVER_v3 / v3.1). Filed as a separate frontend ticket for the hospitality module.
+- Estimated effort: ~2 hours total — 30 min UI addition (reuse existing payment-method picker component); 15 min form schema + submit-body update; 30 min backend endpoint contract change (with backend team coordination); 15 min report extension; 30 min manual verification across booking-source × guest-type combinations.
+- Priority: HIGH for hospitality customers — accounting integrity issue. Reconciliation pain compounds daily until fixed.
+- Cross-reference: BUG-024, BUG-025, BUG-026 are restaurant-module concerns; BUG-027 is the first hospitality-module ticket logged in this template. Expect more hospitality items to surface as that module gets active testing.
+
