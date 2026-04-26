@@ -140,6 +140,14 @@ export const fetchStationData = async (stationName = 'KDS', categoriesMap = null
     orders.forEach(order => {
       const foodItems = order.order_details_food || [];
       foodItems.forEach(item => {
+        // B2 defensive filter (HANDOVER_v3.1, 2026-04-26):
+        // Backend currently returns Ready/Cancelled items on
+        // `def_order_status=1` queries (B1, backend bug — see captured payload
+        // for order #731715). Skip any item whose item-level food_status is
+        // not 1 (Preparing) to keep the kitchen panel honest. Items without a
+        // food_status field at all still pass through for legacy safety.
+        if (item.food_status !== undefined && item.food_status !== 1) return;
+
         // Only count items for this station
         if (item.station === stationName || !item.station) {
           const foodName = item.food_details?.name || 'Unknown Item';
