@@ -287,6 +287,8 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const [checkoutPulse, setCheckoutPulse] = useState(false);
   const [roomPrice, setRoomPrice] = useState('');
   const [advancePayment, setAdvancePayment] = useState('');
+  // BUG-027: capture how the advance was tendered. Empty when Advance = 0.
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [orderNote, setOrderNote] = useState('');
 
   // ── State: GST block ──
@@ -314,6 +316,16 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
     const a = Number(advancePayment) || 0;
     return (o - a).toFixed(2);
   }, [roomPrice, advancePayment]);
+  // BUG-027: dynamic option list filtered to {cash, card, upi} per locked Q8.
+  // Source: restaurant.paymentMethods (top-level on profile transform).
+  const paymentMethodOptions = useMemo(() => {
+    const enabled = restaurant?.paymentMethods || {};
+    return [
+      { value: 'cash', label: 'Cash', flag: enabled.cash },
+      { value: 'card', label: 'Card', flag: enabled.card },
+      { value: 'upi',  label: 'UPI',  flag: enabled.upi },
+    ].filter((o) => o.flag).map(({ value, label }) => ({ value, label }));
+  }, [restaurant?.paymentMethods]);
   const totalAdult = 1 + extraAdults.length;
   const totalChildren = childNames.length;
   const gstBlockVisible = !!(flags.showUserGst && bookingFor === 'Corporate');
@@ -323,11 +335,11 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       name || phone || email ||
       frontImage || backImage ||
       extraAdults.length || childNames.length ||
-      roomPrice || advancePayment || orderNote ||
+      roomPrice || advancePayment || paymentMethod || orderNote ||
       firmName || firmGst
     );
   }, [name, phone, email, frontImage, backImage, extraAdults, childNames,
-      roomPrice, advancePayment, orderNote, firmName, firmGst]);
+      roomPrice, advancePayment, paymentMethod, orderNote, firmName, firmGst]);
 
   // ── Effects ──
 
@@ -525,6 +537,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         roomPrice: roomPrice,
         advancePayment: advancePayment || 0,
         balancePayment: balancePayment,
+        paymentMethod: paymentMethod,  // BUG-027
         orderNote: orderNote.trim(),
 
         firmName: firmName.trim(),
@@ -1030,11 +1043,36 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                     min="0"
                     step="0.01"
                     value={advancePayment}
-                    onChange={(e) => { setAdvancePayment(e.target.value); if (errors.advance) clearErr('advance'); }}
+                    onChange={(e) => {
+                      setAdvancePayment(e.target.value);
+                      if (errors.advance) clearErr('advance');
+                      // BUG-027: clear stale method if advance drops to 0.
+                      if (Number(e.target.value) <= 0) {
+                        setPaymentMethod('');
+                        if (errors.paymentMethod) clearErr('paymentMethod');
+                      }
+                    }}
                     data-testid="checkin-advance"
                     error={errors.advance}
                   />
                 </div>
+
+                {/* BUG-027: Payment method picker — shown only when Advance > 0 */}
+                {Number(advancePayment) > 0 && (
+                  <div data-testid="checkin-payment-method-block">
+                    <RadioPillGroup
+                      label="Payment Method"
+                      required
+                      options={paymentMethodOptions}
+                      value={paymentMethod}
+                      onChange={(v) => {
+                        setPaymentMethod(v);
+                        if (errors.paymentMethod) clearErr('paymentMethod');
+                      }}
+                      testIdPrefix="checkin-payment-method"
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-2">
                   <InputField
