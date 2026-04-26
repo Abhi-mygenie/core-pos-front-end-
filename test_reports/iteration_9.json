@@ -1,0 +1,37 @@
+{
+  "summary": "Code-review-based verification of P1 BUG-025/026/027 frontend fixes. End-to-end Playwright UI testing was BLOCKED by sleeping preprod backend (wake-up button does not reliably bring up the live login flow in the preview wrapper — input elements are not directly queryable from the outer frame). All 5 implementation files were read line-by-line against the locked owner spec; every required data-testid, state, filter, signature key, density flag, validation rule, FormData append, and auto-clear behavior is present and correctly wired. ESLint clean on all 5 files.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Live preprod backend was asleep during this run; clicking 'Wake up servers' did not bring login form inputs into a queryable state (page wrapper hides them from outer frame). Main agent or owner should manually log into https://restaurant-pos-v2-1.preview.emergentagent.com after backend wake and execute the 3 acceptance scenarios from the review request: (a) BUG-025 cancel one item on a multi-item dinein order and confirm `▼ Cancelled (1)` toggle renders below `▼ Served`, (b) BUG-026 place a multi-variant Fried Chicken 4pc + jainss order and verify Station Panel shows 4 separate rows with variant inline + addon italic sub-line in Comfortable density and name-only in Compact/Ultra, (c) BUG-027 open RoomCheckInModal on a vacant room, advance=1000, submit empty → inline error visible, then pick Cash → submit, verify Network tab shows FormData payment_method=cash on POST /api/v1/vendoremployee/group-add."
+  ],
+  "critical_code_review_comments": [
+    "BUG-025 OrderCard.jsx: showCancelled state @L48, cancelledItems filter @L158, ▼ Cancelled collapsible block @L558-599 — all locked-spec items present: data-testid=`cancelled-toggle-${orderId}` (L562), data-testid=`cancelled-item-${item.id}` (L583), `line-through` class (L584), color #9CA3AF inline (L585,589), trailing `(Cancelled)` label (L590), no Mark-Ready/Serve chip rendered, no food-transfer button. Two SEPARATE dropdowns — `▼ Served (n)` retained and new `▼ Cancelled (n)` is independent (separate useState toggle). Order amount math untouched. ✅",
+    "BUG-025 DineInCard.jsx: showCancelledItems state @L10, cancelledItems filter @L26, Cancelled Items collapsible block @L193-226 — data-testid=`cancelled-toggle-${table.id}` (L197), X icon grey #9CA3AF (L210), strikethrough name+qty (L213-217), `(Cancelled)` label (L218-220). Mirrors Served block correctly. ✅",
+    "BUG-026 stationService.js: parseVariants helper L120-148 (handles canonical `[{name:'varrient', values:[{label:'30ML',...}]}]` shape from CartPanel.jsx + legacy `{labels[]}` + scalar fallbacks; sorted for stable signature). parseAddOns helper L154-169 (quantity included in sig so 1 raita ≠ 2 raita). signatureKey assembled L227-230 as `${foodName}∷${variant.sig}∷${addons.sig}∷${noteSig}` — notes ARE part of signature per locked Q6. Output shape extended L241-247 to {name, variantLabel, addonLabel, notes, count}. ✅",
+    "BUG-026 StationPanel.jsx: DENSITY presets L13-50 each carry `showModifiers` flag (true for comfortable, false for compact and ultra). StationItemRow L88-135 reads density.showModifiers — main line shows `${name} — ${variantLabel}` only when showModifiers && variantLabel, else name-only; addon italic sub-line + notes italic sub-line gated by showModifiers. CategorySection L188-198 passes variantLabel/addonLabel/notes through. data-testid=`station-density-toggle` present at L412. ✅",
+    "BUG-027 RoomCheckInModal.jsx: paymentMethod state @L291, paymentMethodOptions useMemo @L321-328 dynamically reads restaurant.paymentMethods and filters to {cash,card,upi} per locked Q8 (wallet/bank/online/pending hidden). isDirty includes paymentMethod (L338,342). validate() rule @L486 — `if (adv > 0 && !paymentMethod) next.paymentMethod = 'Required when Advance > 0'`. Picker block @L1063-1087 — gated by `Number(advancePayment) > 0`, data-testid=`checkin-payment-method-block`, RadioPillGroup with testIdPrefix=`checkin-payment-method` (so individual pills become checkin-payment-method-cash/-card/-upi), error display data-testid=`checkin-payment-method-error`. Auto-clear on advance dropping to 0 @L1052-1056 — sets payment method='' AND clears the error. handleSubmit @L543 passes paymentMethod through.  ✅",
+    "BUG-027 roomService.js: FormData append @L109 — `fd.append('payment_method', params.paymentMethod || '')` — exact field name per locked Q7. Empty-string fallback for advance=0 case is safe. ✅",
+    "OUT-OF-SCOPE confirmed not touched: OrderCard.jsx variant parser (BUG-026 sub-issue 2.1 deferred), reload-hydration / Collect Bill / Print for BUG-027 (Phase 2-3 deferred). No coupling found.",
+    "MINOR observations (non-blocking): (1) DineInCard cancelled label is `Cancelled Items (n)` (no leading ▼) while OrderCard uses `▼ Cancelled (n)` — visually inconsistent across the two cards, but both meet the locked spec which requires only the data-testid + behavior. (2) The `(Cancelled)` trailing label uses `text-[10px]` while the strikethrough name uses `text-xs` — readable but very small in OrderCard at 1280px. Owner may want to bump to `text-[11px]`. Both items are cosmetic — not regressions."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only request)",
+    "frontend": "100% on static code review; 0% on live E2E (blocked by sleeping preprod backend)"
+  },
+  "test_credentials": "owner@18march.com / Qplazm@10 (restaurant 18march, id 478) — read from /app/memory/test_credentials.md",
+  "seed_data_creation": "None — review request explicitly forbids destructive bookings on preprod.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 3 P1 fixes (BUG-025/026/027 Phase 1) are correctly implemented per the locked spec — verified by exhaustive line-by-line code review. ESLint clean on all 5 files. The blocker for live E2E was the sleeping preprod backend in this preview wrapper: clicking the platform's 'Wake up servers' button did not produce queryable input elements on the login form (likely inside an iframe of the wrapper, not directly visible to Playwright). Two retry attempts both timed out on `input` selector. If a future testing agent has a stable backend session, the 3 acceptance scenarios in `action_items[0]` should be run as-is. No code changes were made by this agent.",
+  "rca of the issue": "N/A — no functional bug surfaced. Static review against the locked owner decisions in /app/memory/P1_BUG_025_026_027_IMPLEMENTATION_HANDOVER.md confirms all three fixes match spec line-for-line."
+}

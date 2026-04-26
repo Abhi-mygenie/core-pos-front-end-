@@ -482,6 +482,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
       if (adv < 0) next.advance = 'Cannot be negative';
       else if (advancePayment !== '' && adv > ord) next.advance = 'Advance cannot be greater than Room Price';
 
+      // BUG-027: payment method required when advance > 0
+      if (adv > 0 && !paymentMethod) next.paymentMethod = 'Required when Advance > 0';
+
       if (gstBlockVisible) {
         if (!firmName.trim()) next.firmName = 'Required';
         if (!firmGst.trim()) next.firmGst = 'Required';
@@ -1071,6 +1074,15 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       }}
                       testIdPrefix="checkin-payment-method"
                     />
+                    {errors.paymentMethod && (
+                      <p
+                        className="text-[11px] mt-0.5"
+                        style={{ color: COLORS.errorText }}
+                        data-testid="checkin-payment-method-error"
+                      >
+                        {errors.paymentMethod}
+                      </p>
+                    )}
                   </div>
                 )}
 
