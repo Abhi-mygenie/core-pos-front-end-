@@ -94,7 +94,7 @@ Do not reorder providers without explicit dependency analysis. Auth/socket/profi
 `DashboardPage`, `OrderEntry`, `CollectPaymentPanel`, `RoomCheckInModal`, `StatusConfigPage`, `orderTransform`, and `reportService` already hold concentrated business logic. Future work should prefer extraction over further inline growth.
 
 ### Rule FA-04 — Distinguish implemented module, embedded workflow, panel utility, and placeholder
-Route map in `App.js` is the actual routed surface. Sidebar labels alone do not establish a real module boundary.
+Route map in `App.js` is the actual routed surface. Sidebar labels alone do not establish a real module boundary. Only routed pages and explicit runtime panels count as implemented modules in the current baseline.
 
 ### Rule FA-05 — Treat current code as implementation truth
 When current-state/analysis docs summarize implementation, code still wins if details diverge.
@@ -113,15 +113,20 @@ Current code mixes service wrappers with direct `api.*` usage. Future changes sh
 ### Rule API-02 — Preserve transform-mediated payload shaping for order/financial/report flows
 Order, room, profile, report, table, and CRM payloads/responses are strongly transform-driven.
 
-### Rule API-03 — Current active payment implementation lives in OrderEntry/CollectPaymentPanel flows
-The active bill/payment behavior is implemented there. `paymentService.collectPayment()` is stale from a code perspective and must not be treated as canonical for new work.
+### Rule API-03 — Order composition lives in OrderEntry; final settlement lives in Collect Bill flows
+The active workflow split is:
+- `OrderEntry` owns order composition, carting, update, and transactional entry flow
+- `CollectPaymentPanel` / collect-bill flow owns final settlement and payment completion
+
+`paymentService.collectPayment()` is stale from a code perspective and must not be treated as canonical for new work.
 
 **Code reference**
 - `/app/frontend/src/api/services/paymentService.js:12-14`
 - `/app/frontend/src/components/order-entry/OrderEntry.jsx`
+- `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx`
 
 ### Rule API-04 — Distinguish empty state from degraded state
-Station, CRM, and parts of reporting use soft-fail return patterns (`[]`, `null`, fallback objects). Future work must preserve that distinction explicitly.
+Station, CRM, and parts of reporting use soft-fail return patterns (`[]`, `null`, fallback objects). Future work must preserve that distinction explicitly unless an owner-approved rule overrides it.
 
 ### Rule API-05 — Keep known stale/unclear API surfaces documented until deliberately cleaned
 - stale payment service entry
@@ -142,27 +147,20 @@ Current room check-in behavior now treats advance-payment method as part of the 
 
 ## External dependency rules
 
-### Rule EP-01 — Current code-level env dependencies
-Current code depends on:
-- `REACT_APP_API_BASE_URL`
-- `REACT_APP_SOCKET_URL`
-- `REACT_APP_CRM_BASE_URL`
-- `REACT_APP_CRM_API_KEYS`
-- Firebase env set
-- `REACT_APP_GOOGLE_MAPS_KEY`
-- `ENABLE_HEALTH_CHECK`
+### Rule EP-01 — Approved frontend env contract is multi-variable
+The approved frontend environment contract includes the API/backend URL, socket URL, CRM config, Firebase config, Google Maps key, health-check flag, and related frontend runtime variables. Future agents must not rename or consolidate this contract without explicit approval.
 
-### Rule EP-02 — CRM is soft-optional in current implementation
-Missing CRM base URL/key mapping does not hard-stop the app; CRM flows degrade softly.
+### Rule EP-02 — CRM is required by default, except where customer-detail workflows do not exist
+CRM is required for restaurants by default. The only exception is a restaurant workflow that does not capture customer details.
 
-### Rule EP-03 — Firebase push is active implementation, not a settled strategy
-Current code uses app runtime Firebase plus service-worker compat imports. This is a current implementation fact, not a final architecture policy.
+### Rule EP-03 — Firebase is the canonical notification platform
+Firebase should be used for all notifications. Any discrepancy should be highlighted by future agents and corrected on priority.
 
 ### Rule EP-04 — Google Maps is a real dependency for delivery address form behavior
 Address autocomplete relies on `REACT_APP_GOOGLE_MAPS_KEY` and dynamic Maps Places script loading.
 
-### Rule EP-05 — Backend scaffold exists in repo, but intent is not documented in allowed sources
-The `/app/backend` folder is present and must be acknowledged, but not assumed to be the real product backend.
+### Rule EP-05 — Repo backend is not part of the active deployment/runtime path
+The `/app/backend` folder is present in the repo, but it is not part of the active deployment/runtime path for this app baseline. Deployment agents must not use it unless explicitly instructed.
 
 ---
 
@@ -184,8 +182,8 @@ The app materially depends on localStorage for:
 - dynamic tables flag
 - some debug behavior
 
-### Rule SM-04 — Current persistence scope is device-local unless explicitly changed
-Allowed sources do not establish user-level or restaurant-level persistence for those settings.
+### Rule SM-04 — Current persistence scope is Phase 1 device-local behavior
+The current baseline remains device-local/localStorage-based. A later phase may convert these controls into role-based behavior, but that is not part of the current baseline.
 
 ### Rule SM-05 — Orders and tables are live runtime sources; engage locks are transient
 `OrderContext` and `TableContext` own live runtime state. Engage locks are in-memory and not durable.
@@ -197,9 +195,18 @@ Current station behavior no longer aggregates solely by item name. Station rows 
 - notes
 This is important when validating kitchen counts or debugging “merged” station rows.
 
+### Rule SM-07 — Table status is derived from order-socket `f_order_status`
+The current baseline rule is:
+- table status is derived from `f_order_status`
+- `f_order_status` comes from the order socket
+
+Future agents may validate this behavior in code and must explicitly highlight any deviation.
+
 **Code reference**
 - `/app/frontend/src/api/services/stationService.js`
 - `/app/frontend/src/components/station-view/StationPanel.jsx`
+- `/app/frontend/src/api/socket/useSocketEvents.js`
+- `/app/frontend/src/api/socket/socketHandlers.js`
 
 ---
 
@@ -256,6 +263,9 @@ OrderEntry coordinates carting, customer/address handling, place/update order, t
 ### Rule MC-05 — Room logic is cross-cutting
 Room behavior spans dashboard cards, room check-in, order transforms, collect payment, and print payloads.
 
+### Rule MC-06 — Report aggregation ownership belongs to backend APIs
+Backend APIs own report aggregation in the current baseline. Frontend reporting responsibilities are representation, display, filtering, and presentation-layer formatting. If any doc wording implies otherwise, that must be highlighted and verified during the next report-related work.
+
 ---
 
 ## Error handling rules
@@ -272,12 +282,15 @@ This is especially important in station and CRM flows.
 ### Rule EH-04 — Bootstrap errors must remain visible and retryable
 `LoadingPage` uses per-API status tracking and retry behavior that should be preserved.
 
+### Rule EH-05 — Station failures should be explicit operational failures
+Station/API failure should be shown explicitly so operators know immediately when the system is not performing as expected. Do not mask station failure as normal empty-state success.
+
 ---
 
 ## Environment/configuration rules
 
-### Rule ENV-01 — Code-level env contract for this branch is multi-variable
-Allowed sources do not define any owner-approved simplification beyond what code already uses.
+### Rule ENV-01 — Code-level env contract for this branch is approved and multi-variable
+The approved frontend env contract is multi-variable and must be treated as a real runtime contract, not a temporary convenience.
 
 ### Rule ENV-02 — No committed `.env.example` is evidenced in allowed sources
 This is a documentation/setup gap, not permission to invent alternate variable names.
@@ -313,17 +326,9 @@ Realtime comments in particular contain documented ambiguity or drift. Prefer ex
 
 ---
 
-## Unresolved decisions
-1. Canonical frontend environment contract
-2. Table-status source-of-truth precedence
-3. Device-local vs user/admin/server persistence scope
-4. Intent of `/app/backend`
-5. CRM policy: required vs optional vs tiered
-6. Reporting strategy: frontend vs backend aggregation
-7. Station failure UX policy
-8. Firebase long-term version strategy
-9. Whether local workflow settings should become auditable admin controls
-10. Room billing/print lifecycle ownership
+## Deferred or verification-sensitive items
+1. Report wording/ownership must be highlighted and verified during the next report-related work if any doc implies frontend aggregation ownership.
+2. Room billing/print lifecycle ownership is deferred until the next room billing / room print related change.
 
 **Supporting source**
 - `/app/memory/final/OPEN_QUESTIONS_FINAL_RESOLUTION.md`
@@ -345,14 +350,14 @@ Realtime comments in particular contain documented ambiguity or drift. Prefer ex
 - Preserve context ownership boundaries.
 - Preserve degraded-mode behavior unless policy changes are approved.
 - Do not widen route map and sidebar scope together without reclassifying real modules vs placeholders.
-- Reporting scale work should start with an owner decision on aggregation ownership.
-- Settings scale work should start with an owner decision on persistence scope.
+- Reporting changes should respect backend aggregation ownership unless explicitly changed by approved requirements.
+- Settings migration beyond device-local behavior should start only with explicit later-phase approval.
 
 ---
 
 ## Final usage directive
 Use this document to:
 - understand the real current architecture
-- separate code-backed rules from unresolved policy
+- separate code-backed rules from deferred or verification-sensitive items
 - avoid accidental rewrites of brittle operational surfaces
 - plan future changes with explicit module, API, state, UI, and regression mapping

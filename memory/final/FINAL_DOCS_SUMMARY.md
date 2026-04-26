@@ -10,8 +10,8 @@
 
 ## What each document is used for
 - **OPEN_QUESTIONS_FINAL_RESOLUTION.md**
-  - final status of each open question from Step 2 analysis inputs
-  - tells future agents what is unresolved vs code-backed
+  - final status of each open question from Step 2 analysis inputs plus owner clarifications
+  - tells future agents what is frozen, deferred, or verification-sensitive
 - **ARCHITECTURE_DECISIONS_FINAL.md**
   - final architecture rules and guardrails
 - **MODULE_DECISIONS_FINAL.md**
@@ -27,11 +27,16 @@
 - app shell remains `ErrorBoundary -> AppProviders -> BrowserRouter -> Routes -> Toaster`
 - React Context is the primary shared-state pattern
 - dashboard/order entry/payment/report/socket files are current architecture hotspots
-- current API integration is mixed, but service-layer entry points should be preferred for future work
-- current env contract in code is multi-variable (API, socket, CRM, Firebase, Maps, health-check)
-- localStorage is a real device-level runtime dependency
+- approved env contract remains multi-variable and should not be renamed casually
+- table status is derived from order-socket `f_order_status`
+- localStorage is the current Phase 1 settings/runtime dependency
 - socket + context mutation remains the live runtime model
-- room, print, financial, and bootstrap behavior are high-risk change surfaces
+- CRM is required by default except for restaurants that do not capture customer details
+- backend APIs own report aggregation; frontend reporting is presentation/representation
+- station failures should be explicit, not silently treated as normal empty state
+- Firebase is the canonical notifications platform
+- repo `/app/backend` is not part of the active deployment/runtime path
+- room, print, financial, and bootstrap behavior remain high-risk change surfaces
 - room check-in now includes advance-payment method capture when advance > 0
 - station aggregation now distinguishes variant/add-on/note signatures in current implementation
 
@@ -39,25 +44,18 @@
 - authentication/session remains separate from loading/bootstrap
 - loading/bootstrap is the startup hydration boundary
 - dashboard is the operational orchestration boundary
-- order entry is the transactional workflow boundary
+- order entry owns order composition/update workflow
+- collect bill owns final settlement/payment workflow
 - rooms are a cross-cutting specialized domain, not just another table type
-- CRM is a separate capability surface embedded inside ordering workflows
+- CRM is a required capability for customer-detail workflows
 - realtime socket handling is its own cross-cutting runtime module
 - station/kitchen panel is a distinct embedded module with service + config coupling
-- reports remain a frontend-heavy aggregation module
-- visibility settings remain a device-configuration module, not an audited admin-control system
+- only routed pages and explicit runtime panels count as implemented modules
+- visibility settings remain temporary phase-1 device configuration behavior
 
-## Pending decisions
-- canonical frontend environment contract
-- table-status source-of-truth precedence
-- device-local vs user/admin/server persistence of settings
-- whether `/app/backend` is in-scope product backend or just scaffold
-- CRM required vs optional vs tiered capability
-- reporting strategy: frontend-composed vs backend-aggregated vs hybrid
-- station failure UX policy
-- Firebase long-term version strategy
-- whether local workflow settings become auditable admin controls
-- room billing/print lifecycle ownership
+## Deferred or verification-sensitive items
+- report wording implying frontend aggregation ownership should be highlighted and verified during the next report-related work
+- room billing/print lifecycle ownership is deferred until the next room billing / room print related change
 
 ## High-risk areas for future change requests
 - `frontend/src/pages/DashboardPage.jsx`
@@ -77,7 +75,7 @@
 1. Read `FINAL_DOCS_APPROVAL_STATUS.md`
 2. Read `ARCHITECTURE_DECISIONS_FINAL.md`
 3. Read `MODULE_DECISIONS_FINAL.md`
-4. Check `OPEN_QUESTIONS_FINAL_RESOLUTION.md` whenever the request may touch unresolved behavior or policy
+4. Check `OPEN_QUESTIONS_FINAL_RESOLUTION.md` whenever the request may touch deferred or verification-sensitive behavior/policy
 5. Use `CHANGE_REQUEST_PLAYBOOK.md` to analyze the request
 6. Follow `IMPLEMENTATION_AGENT_RULES.md` before coding
 7. Use `/app/memory/BUG_TEMPLATE.md` when documenting bugs

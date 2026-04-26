@@ -141,9 +141,9 @@ Renders and orchestrates the main operational POS screen.
 - Any change requires review of filters, permissions, localStorage keys, and socket effects.
 - Card-level display changes may affect kitchen/cashier/waiter visibility expectations even when no payload math changes.
 ### Open decisions, if any
-- final table-status precedence
-- local config governance
-- future module scope behind sidebar placeholders
+- current table status should be validated against order-socket `f_order_status` if any deviation is suspected
+- local config governance remains phase-based
+- future module scope behind sidebar placeholders is constrained by routed-pages-and-panels-only rule
 
 ---
 
@@ -202,9 +202,9 @@ Owns transactional order creation, update, payment, cancellation, transfer, spli
 - room transfer behavior
 ### Future change rules
 - Every change must identify whether it affects place-order, update-order, collect-bill, prepaid flow, split, room, or print behavior.
+- Preserve the workflow split: `OrderEntry` for order composition/update; `CollectPaymentPanel` for final settlement/payment.
 ### Open decisions, if any
-- official payment surface policy
-- room billing/print lifecycle policy
+- room billing/print lifecycle policy remains deferred until the next room billing / room print related change.
 
 ---
 
@@ -252,7 +252,7 @@ Supports room occupancy, room check-in, room orders, and room-specific payment/p
 ### Future change rules
 - Any room change requires impact review across dashboard, payment, transforms, print, and room check-in payload rules.
 ### Open decisions, if any
-- lifecycle ownership of room billing/print semantics remains unresolved.
+- lifecycle ownership of room billing/print semantics is deferred until the next room billing / room print related change.
 
 ---
 
@@ -281,7 +281,7 @@ Supports customer search/lookup/create/update and delivery-address management.
 - CRM base URL + restaurant-key map
 - Google Maps Places for address entry
 ### What this module must not do
-- Must not assume CRM is mandatory in product policy.
+- Must not treat CRM as optional for workflows that capture customer details.
 ### Dependencies on other modules
 - Loading/profile for CRM restaurant id
 - Order Entry as UX surface
@@ -293,7 +293,7 @@ Supports customer search/lookup/create/update and delivery-address management.
 ### Future change rules
 - Any CRM UX tightening must explicitly define missing-config behavior.
 ### Open decisions, if any
-- CRM required/optional/tiered capability remains unresolved.
+- CRM is required by default; exception applies only where restaurant workflows do not capture customer details.
 
 ---
 
@@ -332,8 +332,8 @@ Maintains live updates for orders, tables, and engage locks.
 ### Future change rules
 - Socket changes require channel/event inventory and downstream state review.
 ### Open decisions, if any
-- table-status precedence
-- socket auth/security intent
+- table status should be validated against the order-socket `f_order_status` model if future work detects deviation.
+- socket auth/security intent remains unresolved.
 
 ---
 
@@ -367,8 +367,9 @@ Handles push notification setup, foreground/background delivery, and sound behav
 - sound toggle behavior
 ### Future change rules
 - Preserve foreground/background distinction.
+- Treat Firebase as the canonical notifications platform and prioritize correction of discrepancies.
 ### Open decisions, if any
-- long-term Firebase version strategy remains unresolved.
+- none beyond implementation verification of Firebase-only usage.
 
 ---
 
@@ -411,10 +412,11 @@ Shows station-wise aggregated kitchen workload and refresh behavior.
 - hardcoded endpoint risk
 - item aggregation collisions when variants/add-ons/notes differ
 ### Future change rules
-- Review service soft-failure behavior, config sync, bootstrap, and socket refresh together.
+- Review service failure behavior, config sync, bootstrap, and socket refresh together.
 - Treat variant/add-on/note-aware station grouping as current implementation truth.
+- If the station system is not performing as expected, failure should be explicit.
 ### Open decisions, if any
-- failure UX policy remains unresolved.
+- station items belong only where the item has a station defined; explicit failure visibility must be preserved.
 
 ---
 
@@ -441,7 +443,7 @@ Provides historical reporting and summary dashboards using multiple report endpo
 ### External dependency responsibility
 - report endpoint shape and business-day semantics
 ### What this module must not do
-- Must not be treated as display-only; it carries business-day aggregation logic.
+- Must not take ownership of backend aggregation rules unless explicitly required.
 ### Dependencies on other modules
 - Restaurant/profile schedules/currency/features
 - shared layout/report components
@@ -452,8 +454,9 @@ Provides historical reporting and summary dashboards using multiple report endpo
 - payment bucket interpretation
 ### Future change rules
 - Changes must identify whether they alter fetching, normalization, business-day policy, or presentation only.
+- Backend APIs own report aggregation in the current baseline; frontend reporting work should remain representation/presentation unless explicit new requirements say otherwise.
 ### Open decisions, if any
-- long-term aggregation ownership remains unresolved.
+- next report-related agent should highlight and verify any wording that implies frontend aggregation ownership.
 
 ---
 
@@ -475,7 +478,7 @@ Controls device-local dashboard visibility, station display, view modes, default
 ### External dependency responsibility
 - localStorage only in current implementation
 ### What this module must not do
-- Must not be presented as centrally governed admin policy today.
+- Must not be presented as a completed centrally governed admin policy today.
 ### Dependencies on other modules
 - Dashboard
 - Station module
@@ -486,9 +489,9 @@ Controls device-local dashboard visibility, station display, view modes, default
 - default-view behavior
 - order-taking restrictions
 ### Future change rules
-- Any persistence-scope change requires migration planning from device-local state.
+- Any persistence-scope change requires migration planning from current device-local Phase 1 behavior.
 ### Open decisions, if any
-- whether these should become auditable administrative controls remains unresolved.
+- current local/device-level behavior is temporary Phase 1 behavior; later role-based/admin control work is separate future-phase scope.
 
 ---
 
@@ -604,7 +607,7 @@ Prepares and sends print payloads for KOT and bill flows.
 ### Future change rules
 - Print changes require review of manual print, auto-print, room print, and fallback payload behavior together.
 ### Open decisions, if any
-- room billing/print policy remains unresolved.
+- room billing/print policy remains deferred until the next room billing / room print related change.
 
 ---
 
