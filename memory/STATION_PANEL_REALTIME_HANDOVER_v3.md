@@ -382,17 +382,132 @@ Single file changed. Revert with `git checkout` on `useStationSocketRefresh.js`.
 
 ---
 
-## 13. Verified (to be filled by implementation agent after QA)
+## 13. Verified (filled by implementation agent after QA)
 
 ```
-Date:
-Implementation agent:
+Date:                          2026-04-26
+Implementation agent:          E1 (deployment-agent → implementation-agent flow)
 Files changed:
-QA scenarios passed: __ / 9
-BUG-024 status at QA time: [pending / fixed]
-Lint: [clean / errors]
+  - frontend/src/hooks/useStationSocketRefresh.js  (v3 — 4 edits per §3.2-§3.5)
+  - frontend/src/components/cards/OrderCard.jsx    (v3.1 — see §14)
+  - frontend/src/api/services/stationService.js    (v3.1 — see §14)
+QA scenarios passed:           Quick smoke only (owner request)
+                               NOT all 9 scenarios run; full QA parked.
+                               Owner accepted as-is.
+BUG-024 status at QA time:     OPEN — backend cascade still pending
+                               (defended by v3.1 B2 filter — see §14)
+Lint:                          clean (1 pre-existing warning in
+                               LoadingPage.jsx unrelated to our changes)
+Compile:                       clean (webpack compiled successfully via
+                               hot-reload throughout the session)
 Notes:
+  - Empirical validation done DURING discovery, not after implementation:
+    captured 4 distinct socket events on order #731715 (new-order,
+    update-item-status, update-order-paid, update-order). Each event
+    pre-fix logged "skip" / "ignore" with 100% miss rate; post-fix
+    confirmed by matching tagged log lines (PASS-ALWAYS / PASS-STATUS).
+  - Two scope expansions shipped beyond strict v3 — see §14.
+  - Three new bugs filed during this session: BUG-025 (cancelled-item
+    not in order card), BUG-026 (variant aggregation in station panel),
+    BUG-027 (room check-in advance payment-method missing). All in
+    /app/memory/BUG_TEMPLATE.md. None block this handover.
+  - Backend-side BUG-024 and B1 (def_order_status filter) remain open
+    on backend team. Frontend hook + B2 filter are correct independently.
 ```
+
+---
+
+## 14. Scope Amendment Log (v3.1 — Apr-26-2026)
+
+Two changes shipped **outside the strict v3 scope** of "useStationSocketRefresh.js only", explicitly approved by owner during the same session. Both are surgical, low-risk, and address gaps surfaced by empirical capture that the v3 spec did not anticipate.
+
+### 14.1 OrderCard per-item status chip — gate widened (v3.1.A)
+
+**File:** `frontend/src/components/cards/OrderCard.jsx`
+
+**Problem (empirically captured)**
+- Per-item status chip (orange "Preparing ○" / green "Ready ⊙") missing on order cards in dashboard Preparing/Ready columns.
+- Root cause: chip gate `showItemAction = isDineIn && actionConfig` (L434) where `isDineIn = orderType === "dineIn"` (strict equality, L62).
+- When `orderType` arrived as raw `'WalkIn'` / `'walkIn'` / `'pos'` (un-normalized in some paths), the gate failed silently → no chip rendered.
+- Asymmetry confirmed: same file at L218 already had a `walkIn` fallback for the order-type icon — proving the codebase had previously seen this issue, only patched icon, not the chip gate.
+
+**Owner-approved spec**
+- Show per-item chip for any order type EXCEPT takeaway and delivery (i.e., dine-in, walk-in, POS, room, and any unknown future value get the chip).
+
+**Fix applied (Option B — surgical, minimal blast radius)**
+- Added new flag at L66-69: `const isItemActionable = !isTakeAway && !isDelivery;`
+- Changed L434 gate from `isDineIn && actionConfig` → `isItemActionable && actionConfig`.
+- **`isDineIn` definition itself NOT touched** — preserved for label (L166), merge button (L320), shift-table (L335), food-transfer (L441), padding (L397/L437). Strict `dineIn` semantics intact for those.
+
+**Effect**
+| Order type | Before | After |
+|---|---|---|
+| Dine-In | chip shown | chip shown |
+| Walk-In (raw or normalized) | chip missing | chip shown |
+| POS | chip missing | chip shown |
+| Room | chip missing | chip shown |
+| Takeaway | chip hidden | chip hidden |
+| Delivery | chip hidden | chip hidden |
+
+### 14.2 stationService — defensive item-level filter (v3.1.B)
+
+**File:** `frontend/src/api/services/stationService.js`
+
+**Problem (empirically captured — order #731715)**
+- After Mark Order Ready, kitchen panel showed 4 ghost items (should be 0).
+- Root cause chain (TWO bugs together):
+  - **B1 (backend):** `POST /api/v1/vendoremployee/station-order-list?def_order_status=1` returned a fully-Ready order. Captured payload showed `f_order_status: 2`, `station_order_status: { KDS: 2 }`, `status_counts: { Cooking: 0, Ready: 1 }` — backend's own counts confirm the order shouldn't have been in the response.
+  - **B2 (frontend):** `stationService.fetchStationData` aggregation (L142+) had only `item.station === stationName` filter; no `item.food_status === 1` filter. Every returned item got counted regardless of state.
+- Either fix alone breaks the ghost. Frontend B2 ships now; backend B1 remains open for backend team.
+
+**Owner-approved spec**
+- Apply frontend defensive filter only. Skip B1 backend coordination for now; revalidate after B2 ships.
+
+**Fix applied**
+- Added one conditional at the top of `foodItems.forEach` callback (L143-150):
+  ```js
+  if (item.food_status !== undefined && item.food_status !== 1) return;
+  ```
+- Items with `food_status: 2` (Ready), `3` (Cancelled), `5` (Served), etc. are silently skipped from kitchen aggregation.
+- Items WITHOUT a `food_status` field at all (theoretical legacy edge-case) still pass — preserves backward compatibility.
+
+**Effect**
+| `food_status` value | Before | After |
+|---|---|---|
+| 1 (Preparing) | counted | counted |
+| 2 (Ready) | counted (ghost) | skipped |
+| 3 (Cancelled) | counted (ghost) | skipped |
+| 5 (Served) | counted (ghost) | skipped |
+| undefined (legacy) | counted | counted (legacy safety) |
+
+**Defence-in-depth note**: the filter is correct even if backend ships B1 perfectly — the defensive layer adds zero functional cost and protects the kitchen panel from any future backend regression.
+
+### 14.3 What v3.1 explicitly does NOT change
+
+- ❌ `isDineIn` definition itself (preserved strict, only the chip gate uses the new flag)
+- ❌ Transform layer (`orderTransform.js`)
+- ❌ Socket layer (`socketEvents.js`, `socketHandlers.js`, `socketService.js`, `SocketContext.jsx`, `useSocketEvents.js`)
+- ❌ StationContext, LoadingPage, StatusConfigPage
+- ❌ Density toggle (owner-approved earlier, untouched)
+- ❌ Any other order-card field (price, customer name, address, KOT print, transfer, merge, etc.)
+- ❌ BUG-024 backend cascade (stays out of scope)
+- ❌ BUG-025 (cancelled item not in card), BUG-026 (variant aggregation), BUG-027 (room advance payment-method) — all filed as separate tickets
+
+### 14.4 Rollback
+
+- v3.1.A: `git checkout` `OrderCard.jsx` (2 lines change)
+- v3.1.B: `git checkout` `stationService.js` (1 conditional + comment)
+- v3 hook: `git checkout` `useStationSocketRefresh.js` (~30 LOC change)
+- Each independently revertable. No state migration, no localStorage keys touched, no API contract change.
+
+### 14.5 Final file change summary
+
+| File | Lines changed | Scope |
+|---|---|---|
+| `frontend/src/hooks/useStationSocketRefresh.js` | ~30 (4 edits per v3 §3.2-§3.5) | v3 |
+| `frontend/src/components/cards/OrderCard.jsx` | ~6 (1 new const + 1 gate update) | v3.1.A |
+| `frontend/src/api/services/stationService.js` | ~9 (1 conditional + 8-line comment) | v3.1.B |
+| **Total** | **3 files, ~45 LOC** | v3 + v3.1 |
 
 ---
 
