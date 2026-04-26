@@ -128,6 +128,16 @@ Station, CRM, and parts of reporting use soft-fail return patterns (`[]`, `null`
 - `EDIT_ORDER_ITEM*` placeholders
 - hardcoded station endpoint in `stationService`
 
+### Rule API-06 — Room check-in payload now includes advance payment tender when applicable
+Current room check-in behavior now treats advance-payment method as part of the room workflow contract:
+- when advance amount is greater than zero, payment method is required in the UI
+- `roomService.checkIn()` sends `payment_method` in multipart payload
+- accepted frontend values are constrained to enabled restaurant payment methods among `cash`, `card`, and `upi`
+
+**Code reference**
+- `/app/frontend/src/components/modals/RoomCheckInModal.jsx`
+- `/app/frontend/src/api/services/roomService.js`
+
 ---
 
 ## External dependency rules
@@ -179,6 +189,17 @@ Allowed sources do not establish user-level or restaurant-level persistence for 
 
 ### Rule SM-05 — Orders and tables are live runtime sources; engage locks are transient
 `OrderContext` and `TableContext` own live runtime state. Engage locks are in-memory and not durable.
+
+### Rule SM-06 — Station aggregation is signature-sensitive in current implementation
+Current station behavior no longer aggregates solely by item name. Station rows are now split by item signature components including:
+- variant selection
+- add-ons
+- notes
+This is important when validating kitchen counts or debugging “merged” station rows.
+
+**Code reference**
+- `/app/frontend/src/api/services/stationService.js`
+- `/app/frontend/src/components/station-view/StationPanel.jsx`
 
 ---
 
@@ -288,6 +309,7 @@ Realtime comments in particular contain documented ambiguity or drift. Prefer ex
 6. Socket event handling in `socketHandlers.js` / `useSocketEvents.js`
 7. Room billing/print behavior across dashboard/order/payment/print flows
 8. Existing localStorage key names already used by runtime logic
+9. Station aggregation behavior once variant/add-on/note splitting is relied on by kitchen users
 
 ---
 

@@ -32,6 +32,8 @@
 - localStorage is a real device-level runtime dependency
 - socket + context mutation remains the live runtime model
 - room, print, financial, and bootstrap behavior are high-risk change surfaces
+- room check-in now includes advance-payment method capture when advance > 0
+- station aggregation now distinguishes variant/add-on/note signatures in current implementation
 
 ## Confirmed module decisions
 - authentication/session remains separate from loading/bootstrap
@@ -81,3 +83,10 @@
 
 ## Review note
 These final docs were rebuilt using only `/app/memory/current-state/*`, `/app/memory/analysis/*`, and current code in `/app`. No `/app/v3/*` documents were used in this final pass.
+
+## Delta refresh note
+After the initial final-doc pass, a targeted Option-A refresh was applied based on three localized bug-fix changes pulled from `roomv3` into local `step2`:
+- BUG-025: cancelled items visible in card dropdowns
+- BUG-026: station aggregation/detail split by variant/add-on/note signature
+- BUG-027: room check-in advance-payment method capture and payload support
+Only the architecture, module, and summary final docs were refreshed for that delta.

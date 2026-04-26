@@ -136,8 +136,10 @@ Renders and orchestrates the main operational POS screen.
 - view mode locks/defaults
 - room card totals
 - channel/status rendering
+- served/cancelled item visibility in card summaries
 ### Future change rules
 - Any change requires review of filters, permissions, localStorage keys, and socket effects.
+- Card-level display changes may affect kitchen/cashier/waiter visibility expectations even when no payload math changes.
 ### Open decisions, if any
 - final table-status precedence
 - local config governance
@@ -224,10 +226,12 @@ Supports room occupancy, room check-in, room orders, and room-specific payment/p
 - available/occupied room opening behavior
 - room check-in form
 - room card totals
+- advance-payment capture rules in room check-in flow
 ### State responsibility
 - room entries in `TableContext`
 - room orders in `OrderContext`
 - room financial rendering through order data + transforms
+- room check-in local form state including advance payment method when applicable
 ### External dependency responsibility
 - backend room payloads and room workflow contract
 ### What this module must not do
@@ -244,8 +248,9 @@ Supports room occupancy, room check-in, room orders, and room-specific payment/p
 - room billing stack
 - associated order handling
 - room print output
+- advance amount vs payment-method validation rules
 ### Future change rules
-- Any room change requires impact review across dashboard, payment, transforms, and print.
+- Any room change requires impact review across dashboard, payment, transforms, print, and room check-in payload rules.
 ### Open decisions, if any
 - lifecycle ownership of room billing/print semantics remains unresolved.
 
@@ -382,6 +387,7 @@ Shows station-wise aggregated kitchen workload and refresh behavior.
 - station panel rendering
 - display mode selection
 - station grouping
+- density-aware item detail rendering
 ### State responsibility
 - available stations
 - enabled stations
@@ -403,8 +409,10 @@ Shows station-wise aggregated kitchen workload and refresh behavior.
 - stale data after settings save
 - category mapping
 - hardcoded endpoint risk
+- item aggregation collisions when variants/add-ons/notes differ
 ### Future change rules
 - Review service soft-failure behavior, config sync, bootstrap, and socket refresh together.
+- Treat variant/add-on/note-aware station grouping as current implementation truth.
 ### Open decisions, if any
 - failure UX policy remains unresolved.
 
