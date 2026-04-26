@@ -63,6 +63,10 @@ const OrderCard = ({
   const isDelivery = orderType === "delivery";
   const isTakeAway = orderType === "takeAway";
   const isRoom = orderType === "room" || order.isRoom;
+  // In-house service flag — covers dine-in, walk-in, POS, room, and any
+  // un-normalized variant. Used by the per-item status chip ONLY (line ~434).
+  // Strict isDineIn is preserved for label/merge/shift/transfer/padding gates.
+  const isItemActionable = !isTakeAway && !isDelivery;
   const orderId = order.orderId || order.id;
   const fOrderStatus = order.fOrderStatus || 1;
   const items = order.items || [];
@@ -430,8 +434,9 @@ const OrderCard = ({
             // Item-level notes
             const itemNote = item.notes || '';
             
-            // Item-level actions only for Dine-In (not TakeAway/Delivery)
-            const showItemAction = isDineIn && actionConfig;
+            // Item-level actions for in-house service orders (dine-in, walk-in,
+            // POS, room) — hidden only for takeaway and delivery. See L62-65.
+            const showItemAction = isItemActionable && actionConfig;
             
             return (
               <div key={item.id} className={isDineIn ? "py-1" : "py-0.5"}>
