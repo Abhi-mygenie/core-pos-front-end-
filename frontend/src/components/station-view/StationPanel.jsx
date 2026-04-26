@@ -83,20 +83,20 @@ const StationItemRow = ({ itemName, count, density }) => (
     className={`flex items-center ${density.itemPad}`}
     style={{ borderBottom: `1px solid ${COLORS.borderGray}20` }}
   >
-    {/* Item Name */}
-    <span className={`${density.itemName} flex-1 truncate`} style={{ color: COLORS.darkText }}>
+    {/* Item Name — never truncated; wraps if needed so the count column stays aligned */}
+    <span className={`${density.itemName} break-words`} style={{ color: COLORS.darkText }}>
       {itemName}
     </span>
     
-    {/* Dotted line */}
+    {/* Dotted line — fills remaining space; shrinks to 0 if name is long */}
     <div 
       className={`flex-1 ${density.itemDivMx} border-b border-dotted`} 
-      style={{ borderColor: COLORS.grayText, minWidth: '16px' }}
+      style={{ borderColor: COLORS.grayText, minWidth: '8px' }}
     />
     
     {/* Quantity */}
     <span 
-      className={`${density.itemCount} font-semibold ${density.itemCountW} text-center`}
+      className={`${density.itemCount} font-semibold ${density.itemCountW} text-center flex-shrink-0`}
       style={{ color: COLORS.primaryGreen }}
     >
       {count}
@@ -137,7 +137,7 @@ const CategorySection = ({ category, categoryIndex, displayMode, density }) => {
               ? <ChevronDown className="w-3 h-3 flex-shrink-0" style={{ color: categoryColor }} />
               : <ChevronRight className="w-3 h-3 flex-shrink-0" style={{ color: COLORS.grayText }} />
           )}
-          <span className={`${density.catName} font-semibold truncate`} style={{ color: categoryColor }}>
+          <span className={`${density.catName} font-semibold break-words`} style={{ color: categoryColor }}>
             {category.name}
           </span>
         </div>
@@ -191,7 +191,7 @@ const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, di
       >
         <div className="flex items-center gap-1.5 min-w-0">
           <span className={density.headerIcon}>{stationIcon}</span>
-          <span className={`font-bold ${density.headerName} truncate`} style={{ color: COLORS.darkText }}>
+          <span className={`font-bold ${density.headerName} break-words`} style={{ color: COLORS.darkText }}>
             {stationName}
           </span>
           {data?.totalItems > 0 && (
