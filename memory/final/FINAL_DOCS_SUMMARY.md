@@ -10,43 +10,43 @@
 
 ## What each document is used for
 - **OPEN_QUESTIONS_FINAL_RESOLUTION.md**
-  - Final status of each open question from Step 2
-  - Tells future agents what is answered, partial, conflicting, or owner-dependent
+  - final status of each open question from Step 2
+  - tells future agents what is unresolved vs code-backed
 - **ARCHITECTURE_DECISIONS_FINAL.md**
-  - Final source-of-truth architecture rules and guardrails
+  - final architecture rules and guardrails
 - **MODULE_DECISIONS_FINAL.md**
-  - Module boundaries, ownership, responsibilities, dependencies, and change rules
+  - module boundaries, responsibilities, dependencies, and change rules
 - **CHANGE_REQUEST_PLAYBOOK.md**
-  - Step-by-step workflow for analyzing any bug or feature request
+  - step-by-step workflow for analyzing bugs/features/changes
 - **IMPLEMENTATION_AGENT_RULES.md**
-  - Mandatory pre-coding, planning, testing, handover, and documentation rules
+  - mandatory pre-coding, planning, testing, handover, and doc-update rules
 - **FINAL_DOCS_SUMMARY.md**
-  - Review-friendly summary for Abhishek/team
+  - short review summary for team handoff
 
 ## Confirmed architecture decisions
-- App shell remains `ErrorBoundary -> AppProviders -> BrowserRouter -> Routes -> Toaster`
+- app shell remains `ErrorBoundary -> AppProviders -> BrowserRouter -> Routes -> Toaster`
 - React Context is the primary shared-state pattern
-- Dashboard and Order Entry remain the main orchestration hotspots
-- Current API pattern is mixed, but future work should prefer service-layer entry points
-- Current env contract in code uses split envs (`API_BASE_URL`, `SOCKET_URL`, CRM, Firebase, Maps, health-check)
-- localStorage is a real device-level configuration dependency
-- socket + context mutation remains the live runtime update model
-- payment canonical path is the order-entry workflow, not stale `paymentService.collectPayment()`
+- dashboard/order entry/payment/report/socket files are current architecture hotspots
+- current API integration is mixed, but service-layer entry points should be preferred for future work
+- current env contract in code is multi-variable (API, socket, CRM, Firebase, Maps, health-check)
+- localStorage is a real device-level runtime dependency
+- socket + context mutation remains the live runtime model
+- room, print, financial, and bootstrap behavior are high-risk change surfaces
 
 ## Confirmed module decisions
-- Authentication/session remains separate from loading/bootstrap
-- Loading/bootstrap is the startup hydration boundary
-- Dashboard is the operational orchestration boundary
-- Order Entry is the transactional workflow boundary
-- Rooms remain a cross-cutting specialized domain, not just “another table type”
-- CRM is a separate capability surface embedded in order entry
-- Realtime socket handling is its own cross-cutting runtime module
-- Station/kitchen panel is a distinct embedded module with local config + service coupling
-- Reports are their own frontend-heavy aggregation module
-- Visibility Settings is a device-configuration module, not yet an admin-governed platform module
+- authentication/session remains separate from loading/bootstrap
+- loading/bootstrap is the startup hydration boundary
+- dashboard is the operational orchestration boundary
+- order entry is the transactional workflow boundary
+- rooms are a cross-cutting specialized domain, not just another table type
+- CRM is a separate capability surface embedded inside ordering workflows
+- realtime socket handling is its own cross-cutting runtime module
+- station/kitchen panel is a distinct embedded module with service + config coupling
+- reports remain a frontend-heavy aggregation module
+- visibility settings remain a device-configuration module, not an audited admin-control system
 
 ## Pending decisions
-- canonical frontend env contract vs ops guidance
+- canonical frontend environment contract
 - table-status source-of-truth precedence
 - device-local vs user/admin/server persistence of settings
 - whether `/app/backend` is in-scope product backend or just scaffold
@@ -57,15 +57,12 @@
 - whether local workflow settings become auditable admin controls
 - room billing/print lifecycle ownership
 
-## Code vs V3 conflicts
-- task brief points to `/app/memory/v3/`, but repo contains `/app/v3/`
-- current branch includes health-check plugin files, while `/app/v3/` says those files were absent in the audited branch
-- V3 branch/commit traceability does not match current `step2` branch
-
 ## High-risk areas for future change requests
 - `frontend/src/pages/DashboardPage.jsx`
 - `frontend/src/components/order-entry/OrderEntry.jsx`
 - `frontend/src/components/order-entry/CollectPaymentPanel.jsx`
+- `frontend/src/components/modals/RoomCheckInModal.jsx`
+- `frontend/src/pages/StatusConfigPage.jsx`
 - `frontend/src/api/transforms/orderTransform.js`
 - `frontend/src/api/services/reportService.js`
 - `frontend/src/api/socket/socketHandlers.js`
@@ -83,4 +80,4 @@
 6. Inspect actual code files for final confirmation
 
 ## Review note
-These final docs are documentation-only outputs based on the current `step2` branch code. They intentionally avoid inventing business/API decisions where code and existing docs do not provide reliable evidence.
+These final docs were rebuilt using only `/app/memory/current-state/*`, `/app/memory/analysis/*`, and current code in `/app`. No `/app/v3/*` documents were used in this final pass.

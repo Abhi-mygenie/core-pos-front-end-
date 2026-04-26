@@ -1,16 +1,18 @@
 # CHANGE_REQUEST_PLAYBOOK
 
 ## Purpose
-Use this playbook for every bug report, change request, enhancement, or feature addition affecting this frontend.
+Use this playbook for every bug report, enhancement, feature request, or behavior change affecting this frontend.
 
-## Documents to read first
+## Allowed documentation sources for analysis
 Read in this order:
 1. `/app/memory/final/ARCHITECTURE_DECISIONS_FINAL.md`
 2. `/app/memory/final/MODULE_DECISIONS_FINAL.md`
 3. `/app/memory/final/OPEN_QUESTIONS_FINAL_RESOLUTION.md`
-4. Relevant current-state docs in `/app/memory/current-state/`
-5. Relevant analysis docs in `/app/memory/analysis/`
-6. Relevant `/app/v3/*` document only if you need prior audited context and it does not conflict with code
+4. relevant files in `/app/memory/current-state/*`
+5. relevant files in `/app/memory/analysis/*`
+6. actual code files in `/app`
+
+Do **not** rely on `/app/v3/*` for this playbook.
 
 ---
 
@@ -21,55 +23,51 @@ Document:
 - user-visible problem/request
 - affected workflow
 - likely module(s)
-- whether this is a bug, behavior change, policy change, or refactor
+- whether it is a bug, behavior change, policy change, or refactor
 
 ### Step 2 — Identify affected module
-Use `/app/memory/final/MODULE_DECISIONS_FINAL.md` to classify the request into one or more modules.
+Use `/app/memory/final/MODULE_DECISIONS_FINAL.md`.
+Answer:
+- Is it a routed page, embedded workflow, context/runtime issue, integration issue, or configuration issue?
+- Is the visible symptom only an entry point while the root cause lives elsewhere?
 
-Questions to answer:
-- Is it a routed page, embedded workflow, context/runtime module, or external integration issue?
-- Is the visible symptom only the entry point while the real issue lives elsewhere?
-
-### Step 3 — Check if the request touches an unresolved owner decision
+### Step 3 — Check unresolved questions first
 Open `/app/memory/final/OPEN_QUESTIONS_FINAL_RESOLUTION.md`.
-
-If the request overlaps with a `NEEDS_OWNER_DECISION` item:
-- do not proceed as if policy is settled
-- document the owner dependency
-- ask for clarification before coding
+If the request overlaps a `NEEDS_OWNER_DECISION` or `NOT_ANSWERED` item:
+- do not invent policy
+- document the dependency
+- ask for clarification before coding if policy affects implementation
 
 ### Step 4 — Confirm code truth
-Open the actual implementation files.
-Do not trust old docs over code.
-
+Inspect the actual implementation files.
 Minimum required inspection:
 - route/page file
 - related context file(s)
 - related service file(s)
 - related transform file(s)
-- related layout/modal/panel files if the flow is embedded
+- related embedded modal/panel/card files if applicable
 
 ### Step 5 — Check related APIs
 Use `/app/memory/current-state/API_USAGE_MAP.md` plus code to identify:
 - endpoint(s)
 - payload builder(s)
 - response consumer(s)
-- whether the flow is socket-followed
+- whether state sync depends on socket after HTTP
 - whether failures soft-return or throw
 
 ### Step 6 — Check state impact
 Document:
-- which context(s) read/write the affected data
-- which local component states gate the flow
-- whether localStorage is part of the behavior
+- which context(s) own the shared state
+- which local component/page states gate the flow
+- whether localStorage is part of behavior
 - whether socket handlers mutate the same state
 
 ### Step 7 — Check UI impact
 Document:
-- screens/pages where the issue appears
-- shared components impacted
-- permission-gated UI branches
-- room/station/report/print impacts if relevant
+- routes/pages involved
+- shared components involved
+- permission-gated branches
+- room/station/report/print implications if relevant
 
 ### Step 8 — Check regression risk
 Ask:
@@ -77,26 +75,29 @@ Ask:
 - Does it change financial logic?
 - Does it change socket behavior?
 - Does it change localStorage contract?
-- Does it change print payloads?
 - Does it change room behavior?
+- Does it change print payloads?
 - Does it change startup/bootstrap?
 
-### Step 9 — Classify change type
+### Step 9 — Classify the change type
 Use one of:
 - local UI fix
 - API integration fix
-- state flow fix
+- state-flow fix
 - socket/realtime fix
-- financial rule change
-- room rule change
+- financial-rule change
+- room-rule change
 - configuration/governance change
 - documentation-only clarification
 
 ### Step 10 — Prepare handover note before implementation
-Before any coding, prepare a handover note containing:
+Before any coding, write a handover note with:
 - request summary
 - affected modules
-- files to inspect/change
+- affected files
+- related APIs
+- state impact
+- UI impact
 - unresolved decisions
 - regression checklist
 - tests to run
@@ -104,7 +105,7 @@ Before any coding, prepare a handover note containing:
 ---
 
 ## How to identify affected module
-Use this quick mapping:
+Quick mapping:
 - login/permission/logout → Authentication & Session
 - loading/progress/bootstrap → Loading & Initial Data Bootstrap
 - main POS screen/cards/filters/views → Dashboard / POS Workspace
@@ -117,18 +118,20 @@ Use this quick mapping:
 - reports/audit/summary → Reports module
 - status config/channel/view/order-taking settings → Visibility Settings / Device Configuration
 
-If the issue spans more than one module, note a primary module and downstream impact modules.
+If more than one module is involved, identify:
+- primary module
+- downstream impacted modules
 
 ---
 
 ## How to check related APIs
-For every affected flow, capture:
-- endpoint name and path
+Capture for every affected flow:
+- endpoint name/path
 - caller file
 - payload builder file
 - response-shape assumptions
-- whether state sync depends on socket after HTTP
-- whether there is stale or alternate API surface in tree
+- whether socket follow-up is part of state sync
+- whether there is stale/alternate API surface still present in code
 
 Special caution areas:
 - payment/billing
@@ -143,8 +146,8 @@ Special caution areas:
 For every request, answer:
 - Which context owns the shared state?
 - Which page/component owns local orchestration state?
-- Are there engage locks involved?
-- Are there localStorage keys involved?
+- Are engage locks involved?
+- Are localStorage keys involved?
 - Does the flow start from bootstrap data or live socket state?
 
 ---
@@ -154,39 +157,41 @@ For every request, answer:
 - Which route/page surfaces this?
 - Which embedded modals/panels/cards are involved?
 - Which permission gates apply?
-- Which hidden branch might still be affected (room, delivery, prepaid, station, report, manual print, auto-print)?
+- Which hidden branch may still be affected (room, delivery, prepaid, station, report, manual print, auto-print)?
 
 ---
 
 ## How to check regression risk
-Mark a request as **high regression risk** if any of the below are true:
+Mark as **high regression risk** if any are true:
 - touches `DashboardPage.jsx`
 - touches `OrderEntry.jsx`
 - touches `CollectPaymentPanel.jsx`
+- touches `RoomCheckInModal.jsx`
+- touches `StatusConfigPage.jsx`
 - touches `orderTransform.js`
 - touches `reportService.js`
-- touches socket handlers or subscriptions
+- touches socket handlers/subscriptions
 - touches localStorage key behavior
-- touches payment, tax, discount, service charge, round-off, room billing, or print payloads
+- touches payment/tax/discount/service charge/round-off/room billing/print logic
 
 ---
 
 ## How to handle code vs document conflict
 When docs and code disagree:
 1. prefer code for current implementation truth
-2. record the conflicting doc path
-3. note whether the conflict came from current-state, analysis, or V3 docs
-4. update the implementation plan/handover with the conflict note
-5. if the conflict is business/policy-related rather than implementation-related, escalate to owner instead of guessing
+2. note the conflicting doc path
+3. identify whether conflict came from current-state or analysis docs
+4. update planning/handover with the conflict note
+5. if the conflict is business/policy-related, escalate instead of guessing
 
 ---
 
 ## How to document unresolved questions
-If new ambiguity appears:
-- add a short “Unresolved Decision” note to the handover packet
+If ambiguity appears:
+- add an “Unresolved Decision” note to the handover packet
 - include why it matters
 - list likely owners: Product / Tech / API / Business
-- state whether implementation can proceed safely without that decision
+- state whether implementation can proceed safely without the decision
 
 Suggested format:
 - Question:
@@ -213,4 +218,4 @@ Every implementation handover must include:
 ---
 
 ## Final rule
-No future agent should start coding from the user request alone. Every request must be translated into module, API, state, UI, and regression terms first.
+No future agent should start coding from the user request alone. Every request must first be translated into module, API, state, UI, and regression terms.

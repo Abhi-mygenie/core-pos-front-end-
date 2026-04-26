@@ -1,37 +1,36 @@
 # IMPLEMENTATION_AGENT_RULES
 
 ## Purpose
-These are mandatory rules for any agent or developer implementing changes in this codebase after this documentation pass.
+These are mandatory rules for any developer or agent implementing changes in this codebase after this documentation pass.
 
 ---
 
 ## Mandatory rules before coding
-1. **Read the final docs first**
+1. Read these files first:
    - `/app/memory/final/ARCHITECTURE_DECISIONS_FINAL.md`
    - `/app/memory/final/MODULE_DECISIONS_FINAL.md`
    - `/app/memory/final/CHANGE_REQUEST_PLAYBOOK.md`
    - `/app/memory/final/OPEN_QUESTIONS_FINAL_RESOLUTION.md`
-2. **Map the request to affected module(s)** before touching code.
-3. **Check for unresolved owner decisions** before assuming behavior.
-4. **Use code as current implementation truth** when docs and code differ.
-5. **Do not implement without an impact analysis.**
-6. **Do not change financial, room, socket, or bootstrap behavior casually.**
-7. **No implementation without clear affected-module mapping.**
+2. Map the request to affected module(s) before touching code.
+3. Check unresolved owner decisions before assuming behavior.
+4. Use code as current implementation truth when docs and code differ.
+5. Do not implement without impact analysis.
+6. Do not casually change financial, room, socket, bootstrap, or localStorage behavior.
+7. Strict rule: no implementation without clear affected-module mapping.
 
 ---
 
 ## Required documents to read
 Minimum required reading per task:
 - final docs in `/app/memory/final/`
-- relevant current-state doc(s) in `/app/memory/current-state/`
-- relevant analysis doc(s) in `/app/memory/analysis/`
-- relevant code files
-- relevant `/app/v3/*` files only if they help clarify prior branch-level reasoning and do not override current code
+- relevant current-state docs in `/app/memory/current-state/`
+- relevant analysis docs in `/app/memory/analysis/`
+- relevant code files in `/app`
 
 ---
 
 ## Required impact analysis
-Before coding, document all of the following:
+Before coding, document:
 - affected module(s)
 - affected route(s)/screen(s)
 - affected context(s)
@@ -45,7 +44,7 @@ Before coding, document all of the following:
 ---
 
 ## Approval gate format
-Use this exact structure before implementation:
+Use this format before implementation:
 
 ### Approval Gate
 - Request Summary:
@@ -78,7 +77,7 @@ Repeat for each file.
 ---
 
 ## Testing checklist format
-Use this checklist structure after implementation:
+Use this checklist after implementation:
 
 ### Testing Checklist
 - Happy path tested:
@@ -126,10 +125,10 @@ After implementation, hand over with:
 
 ## Documentation update rule after implementation
 After any implemented change:
-1. update final docs only if architecture/module/playbook/rule truth changed
-2. if not architecture-changing, add a concise implementation note elsewhere as appropriate
-3. if the change resolves an open decision, update the open-question resolution file and cite the owner/source
-4. if the change reveals a new conflict, document it explicitly
+1. update final docs only if architecture/module/rule truth changed
+2. if not architecture-changing, add concise implementation notes where appropriate
+3. if a change resolves an open decision, update the open-question file with cited source/owner
+4. if a change reveals a new conflict, document it explicitly
 
 ---
 
@@ -138,9 +137,8 @@ Implementation must not begin until the request is mapped to one or more modules
 
 If a request cannot be mapped cleanly:
 - stop
-- identify why
 - inspect code deeper
-- or escalate as an unresolved architecture question
+- or escalate as unresolved architecture question
 
 ---
 
@@ -149,15 +147,17 @@ Extra caution is mandatory for changes affecting:
 - `DashboardPage.jsx`
 - `OrderEntry.jsx`
 - `CollectPaymentPanel.jsx`
+- `RoomCheckInModal.jsx`
+- `StatusConfigPage.jsx`
 - `orderTransform.js`
 - `reportService.js`
 - `socketHandlers.js`
 - `useSocketEvents.js`
-- room billing/room print logic
-- localStorage view/config keys
-- startup/bootstrap flow in `LoadingPage.jsx`
+- room billing / room print logic
+- localStorage configuration keys
+- bootstrap flow in `LoadingPage.jsx`
 
 High-risk changes require:
 - explicit file-level plan
 - explicit regression checklist
-- explicit note of what behavior must remain unchanged
+- explicit note of behavior that must remain unchanged
