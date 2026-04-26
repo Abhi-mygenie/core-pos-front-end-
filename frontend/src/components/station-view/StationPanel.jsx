@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronRight, RefreshCw, AlertCircle } from 'lucide-react';
 import { fetchStationData } from '../../api/services/stationService';
 import { useStations, useMenu } from '../../contexts';
+import { useStationSocketRefresh } from '../../hooks/useStationSocketRefresh';
 
 // DENSITY_PROTOTYPE (Apr-2026): runtime A/B between three vertical-density
 // presets. Pure visual — no logic change. User picks one; we'll lock it
@@ -341,6 +342,11 @@ const StationPanel = ({ className = '' }) => {
 // DENSITY_PROTOTYPE (Apr-2026): inner component owns the density toggle so
 // hooks aren't called conditionally above the early-return guard.
 const StationPanelInner = ({ className, stationIcons, enabledStations, stationData, isLoading, displayMode, handleRefresh }) => {
+  // Subscribe to socket events for live station data refresh.
+  // Hook self-guards (isConnected / stationViewEnabled / enabledStations) and
+  // is colocated with the panel so listeners only exist while panel is rendered.
+  useStationSocketRefresh();
+
   const [densityKey, setDensityKey] = useState(() => {
     try {
       const stored = localStorage.getItem(DENSITY_KEY);

@@ -91,7 +91,7 @@ export const extractAffectedStations = (args, enabledStations) => {
 // Hook
 // ---------------------------------------------------------------------------
 export const useStationSocketRefresh = () => {
-  const { isConnected } = useSocket();
+  const { isConnected, subscribe } = useSocket();
   const { restaurant } = useRestaurant();
   const { enabledStations, stationViewEnabled, updateStationData } = useStations();
   const { categories } = useMenu();
@@ -190,14 +190,71 @@ export const useStationSocketRefresh = () => {
   }, [enabledStations, scheduleFlush]);
 
   // -------------------------------------------------------------------------
-  // STEP 5 (next checkpoint) — channel subscription will be wired here.
-  // STEP 6 (next checkpoint) — reconnect-driven full refresh will be wired here.
-  // For now, these dependencies are touched only to keep the hook future-proof.
+  // STEP 5 — Channel subscription
+  // Subscribe ONCE to the order channel; route inside handleOrderChannelEvent.
+  // Re-subscribes when isConnected/restaurantId/enabledStations change.
   // -------------------------------------------------------------------------
-  // eslint-disable-next-line no-unused-expressions
-  void [isConnected, restaurantId, stationViewEnabled, handleOrderChannelEvent];
+  useEffect(() => {
+    // Skip when disabled
+    if (!stationViewEnabled || !enabledStations?.length) {
+      debugLog('subscription skipped — disabled or no stations', {
+        stationViewEnabled,
+        enabledStationsLen: enabledStations?.length,
+      });
+      return;
+    }
 
-  // Cleanup any pending timer on unmount even before subscription wiring lands.
+    // Wait for socket + restaurantId
+    const socketReallyConnected = isConnected && socketService.isConnected();
+    if (!socketReallyConnected || !restaurantId) {
+      debugLog('subscription deferred — socket/restaurant not ready', {
+        isConnected,
+        socketReallyConnected,
+        restaurantId,
+      });
+      return;
+    }
+
+    const channel = getOrderChannel(restaurantId);
+    debugLog('subscribing to channel', channel);
+    const unsubscribe = subscribe(channel, handleOrderChannelEvent);
+
+    if (!unsubscribe) {
+      debugLog('subscribe returned null — will retry on next deps change');
+      return;
+    }
+
+    return () => {
+      debugLog('unsubscribing from channel', channel);
+      unsubscribe();
+    };
+  }, [
+    isConnected,
+    restaurantId,
+    stationViewEnabled,
+    enabledStations,
+    subscribe,
+    handleOrderChannelEvent,
+  ]);
+
+  // -------------------------------------------------------------------------
+  // STEP 6 — Reconnect-driven full refresh
+  // On isConnected transition false → true, mark all enabled stations dirty
+  // and flush. Catches events missed during the disconnect window.
+  // -------------------------------------------------------------------------
+  const prevConnectedRef = useRef(isConnected);
+  useEffect(() => {
+    const wasConnected = prevConnectedRef.current;
+    prevConnectedRef.current = isConnected;
+
+    if (!wasConnected && isConnected && stationViewEnabled && enabledStations?.length) {
+      debugLog('reconnect detected — full refresh', enabledStations);
+      enabledStations.forEach((s) => dirtyRef.current.add(s));
+      scheduleFlush();
+    }
+  }, [isConnected, stationViewEnabled, enabledStations, scheduleFlush]);
+
+  // Cleanup any pending timer on unmount.
   useEffect(() => {
     return () => {
       if (timerRef.current) {
