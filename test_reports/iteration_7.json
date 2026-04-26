@@ -34,7 +34,7 @@
     "frontend_acceptance_tests_this_iteration": "5/5 retests PASS (100%)",
     "frontend_acceptance_tests_combined_iter6_iter7": "13/13 PASS (100%)"
   },
-  "test_credentials": "owner@18march.com / Qplazm@10 — tenant 18march — preview at https://pos-station-realtime.preview.emergentagent.com (login via root '/' not '/login')",
+  "test_credentials": "owner@18march.com / Qplazm@10 — tenant 18march — preview at https://dine-payment-flow-1.preview.emergentagent.com (login via root '/' not '/login')",
   "seed_data_creation": "None — pure localStorage state manipulation.",
   "retest_needed": false,
   "main_agent_can_self_test": true,

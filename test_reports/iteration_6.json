@@ -66,7 +66,7 @@
     "frontend_acceptance_tests": "10/13 PASS, 2 INCONCLUSIVE, 1 LIKELY-FAIL (≈77% pass, 100% of conclusive tests pass except T-10)",
     "code_review_anchors": "100% (all anchor points correctly placed and lint-compliant)"
   },
-  "test_credentials": "owner@18march.com / Qplazm@10 — tenant 478 — preview at https://pos-station-realtime.preview.emergentagent.com",
+  "test_credentials": "owner@18march.com / Qplazm@10 — tenant 478 — preview at https://dine-payment-flow-1.preview.emergentagent.com",
   "seed_data_creation": "None — pure localStorage state manipulation.",
   "retest_needed": true,
   "main_agent_can_self_test": true,

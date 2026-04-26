@@ -48,7 +48,7 @@ cp /tmp/pos-frontend/memory/.gitkeep /app/memory/
 
 ### Step 4: Create `.env` file at `/app/frontend/.env`
 ```env
-REACT_APP_BACKEND_URL=https://pos-station-realtime.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://dine-payment-flow-1.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ENABLE_HEALTH_CHECK=false
 REACT_APP_API_BASE_URL=https://preprod.mygenie.online/

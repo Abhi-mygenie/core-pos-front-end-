@@ -31,7 +31,7 @@
 
 | Item | Value |
 |---|---|
-| Frontend URL (this pod) | `https://pos-station-realtime.preview.emergentagent.com` |
+| Frontend URL (this pod) | `https://dine-payment-flow-1.preview.emergentagent.com` |
 | Configured backend | `https://preprod.mygenie.online/` |
 | Check-in endpoint | `POST /api/v1/vendoremployee/pos/user-group-check-in` |
 | Browser / driver | Chromium via Playwright (1920 × 900) |

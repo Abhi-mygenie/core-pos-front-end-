@@ -14,7 +14,7 @@
 | Project | MyGenie Core POS — React frontend |
 | Repo | https://github.com/Abhi-mygenie/core-pos-front-end-.git |
 | Active branch deployed | `roomv2` |
-| Public preview URL | https://pos-station-realtime.preview.emergentagent.com |
+| Public preview URL | https://dine-payment-flow-1.preview.emergentagent.com |
 | Real backend (out of scope here) | https://preprod.mygenie.online (CRM/POS) + https://presocket.mygenie.online (sockets) |
 | Auth-provider | Customer's own (vendoremployee Bearer token) |
 | Tech stack | React 19.0.0 · CRACO 7.1.0 · Yarn 1.22.22 · Node 20.20.2 · react-scripts 5.0.1 |
@@ -183,7 +183,7 @@ Memory artefacts written:
 1. **`__tests__/api/transforms/updateOrderPayload.test.js:323`** asserts outbound `order_type === 'take_away'` for `'takeAway'` input, but `mapOrderTypeToAPI` returns `'takeaway'`. **Pre-existing test drift** — not introduced by Task 3 (which only touched the inbound parser). Outbound mapping stays intact. Out of scope.
 2. **`/app/v3/DOC_VS_CODE_GAP.md` GAP-N3** — service-charge UI guard differs between default and room-with-associated-orders branches in CollectPaymentPanel. Orthogonal to Task 4 (which is display-only, no SC math). Documented, not addressed.
 3. **`LoadingPage.jsx:101`** missing `loadStationData` dep in useEffect. Cosmetic ESLint warning; left untouched per "no unrelated cleanup" rule.
-4. **Emergent platform preview wrapper** (`https://pos-station-realtime.preview.emergentagent.com`) hosts the app inside an iframe and serves its own `<title>Loading...</title>`. Cosmetic only; the inner-iframe app shows MyGenie branding correctly. Cannot be changed from this codebase.
+4. **Emergent platform preview wrapper** (`https://dine-payment-flow-1.preview.emergentagent.com`) hosts the app inside an iframe and serves its own `<title>Loading...</title>`. Cosmetic only; the inner-iframe app shows MyGenie branding correctly. Cannot be changed from this codebase.
 5. **`https://restaurant-pos-v2-1.preview.static.emergentagent.com`** serves a stale pre-built backup snapshot — title/branding there will continue to look "Emergent". This is platform-managed infrastructure, not the live dev server. Live `localhost:3000` and the iframe at the dev-preview URL are correct.
 6. **Task 2 button-visibility gate** (`config/paymentMethods.js:185-208`) still gates "To Room" behind `restaurantPaymentTypes` containing `'room'`/`'transfer_room'`. If a tenant doesn't include this in their API config, the button itself stays hidden. **Out of scope per user directive "rest no changes"**; revisit only if reported.
 7. **Backend supervisor program** is configured to autostart but `/app/backend/server.py` is a placeholder. State is BACKEND running with placeholder responses — frontend ignores it (real backend lives at `preprod.mygenie.online`). Untouched.
@@ -283,7 +283,7 @@ sudo supervisorctl start frontend
 sleep 25
 sudo supervisorctl status frontend
 tail -n 30 /var/log/supervisor/frontend.out.log   # expect "webpack compiled with 1 warning"
-curl -sI https://pos-station-realtime.preview.emergentagent.com | head -5  # expect HTTP/2 200
+curl -sI https://dine-payment-flow-1.preview.emergentagent.com | head -5  # expect HTTP/2 200
 ```
 
 Full handover with gotchas and 8-point health checklist: `/app/memory/DEPLOYMENT_HANDOVER.md`.

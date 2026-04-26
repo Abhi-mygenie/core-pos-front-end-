@@ -13,7 +13,7 @@
 
 | Item | Value |
 |---|---|
-| Preview URL | https://restaurant-pos-v2-1.preview.emergentagent.com |
+| Preview URL | https://dine-payment-flow-1.preview.emergentagent.com |
 | Login email | `owner@18march.com` |
 | Login password | `Qplazm@10` |
 | Restaurant | `18march` (id 478) |
