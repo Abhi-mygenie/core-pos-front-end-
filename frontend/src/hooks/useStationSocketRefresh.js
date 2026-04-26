@@ -3,16 +3,18 @@
 // Subscribes to the order-channel socket events and triggers a debounced
 // refetch of station data when a relevant event arrives.
 //
-// LOCKED RULES (per /app/memory/STATION_PANEL_REALTIME_HANDOVER.md §2.2):
-//   ALWAYS REFRESH:
+// LOCKED RULES (per /app/memory/STATION_PANEL_REALTIME_HANDOVER_v3.md §3.1):
+//   ALWAYS REFRESH (drop status filter — empirically validated 2026-04-26):
 //     - new-order
 //     - scan-new-order
 //     - update-order-status
-//   REFRESH ONLY WHEN status === 2 (Ready) or 3 (Cancelled):
-//     - update-order
-//     - update-food-status
-//     - update-item-status
-//   ALL OTHER EVENTS ARE IGNORED.
+//     - update-order            (fires with status=1 on add-item-to-Ready flow)
+//     - update-item-status      (args[3] is order-level, not item-level)
+//     - update-food-status      (defensive — wired but not observed today)
+//   REFRESH ONLY WHEN args[3] === 2 (Ready) OR === 3 (Cancelled):
+//     - update-order-paid       (NEW — actual Mark-Ready event on current backend;
+//                                {2,3} gate skips genuine Settle-Bill status=6)
+//   ALL OTHER EVENTS ARE IGNORED (split-order, update-order-target, etc.).
 //
 // IMPORTANT: order events are multiplexed onto ONE channel
 // `new_order_${restaurantId}`; messages arrive as variadic args:
@@ -34,22 +36,31 @@ import {
 import socketService from '../api/socket/socketService';
 
 // ---------------------------------------------------------------------------
-// Constants — locked per handover §2.2
+// Constants — locked per HANDOVER_v3 §3.1
+// Empirically validated against captured payloads (order #731715, 2026-04-26).
 // ---------------------------------------------------------------------------
 const DEBOUNCE_MS = 500;
 const READY = 2;
 const CANCELLED = 3;
 
+// Always refresh — drop status filter for these.
+// `args[3]` is order-level f_order_status; for item events it does not reflect
+// the actual item-level change. For order events it can carry status=1
+// (Preparing) on legitimate flows like add-item-to-Ready-order.
 const REFRESH_ALWAYS = [
-  SOCKET_EVENTS.NEW_ORDER,           // 'new-order'
-  SOCKET_EVENTS.SCAN_NEW_ORDER,      // 'scan-new-order'
-  SOCKET_EVENTS.UPDATE_ORDER_STATUS, // 'update-order-status'
+  SOCKET_EVENTS.NEW_ORDER,            // 'new-order'
+  SOCKET_EVENTS.SCAN_NEW_ORDER,       // 'scan-new-order'
+  SOCKET_EVENTS.UPDATE_ORDER_STATUS,  // 'update-order-status'
+  SOCKET_EVENTS.UPDATE_ORDER,         // 'update-order'        — was status-gated, now always
+  SOCKET_EVENTS.UPDATE_ITEM_STATUS,   // 'update-item-status'  — was status-gated, now always
+  SOCKET_EVENTS.UPDATE_FOOD_STATUS,   // 'update-food-status'  — was status-gated, now always
 ];
 
+// Refresh only when args[3] is Ready (2) or Cancelled (3).
+// `update-order-paid` is the ONLY event that carries a meaningful order-level
+// status distinction today (status=6 means real payment → kitchen unaffected).
 const REFRESH_ON_READY_OR_CANCEL = [
-  SOCKET_EVENTS.UPDATE_ORDER,        // 'update-order'
-  SOCKET_EVENTS.UPDATE_FOOD_STATUS,  // 'update-food-status'
-  SOCKET_EVENTS.UPDATE_ITEM_STATUS,  // 'update-item-status'
+  SOCKET_EVENTS.UPDATE_ORDER_PAID,    // 'update-order-paid' — NEW addition
 ];
 
 // ---------------------------------------------------------------------------
@@ -75,7 +86,10 @@ export const extractAffectedStations = (args, enabledStations) => {
   const orders = payload?.orders || [];
 
   orders.forEach((order) => {
-    const items = order?.order_details_food || [];
+    // v2 socket payload field. REST API still uses `order_details_food` —
+    // that is consumed by stationService.fetchStationData, NOT here.
+    // Confirmed via captured payloads on 2026-04-26 (order #731715).
+    const items = order?.orderDetails || [];
     items.forEach((food) => {
       if (food?.station && enabledStations.includes(food.station)) {
         affected.add(food.station);
@@ -165,27 +179,33 @@ export const useStationSocketRefresh = () => {
     const fOrderStatus = args?.[3];
 
     const isAlways = REFRESH_ALWAYS.includes(eventName);
-    const isReadyOrCancelEvent = REFRESH_ON_READY_OR_CANCEL.includes(eventName);
+    const isStatusGated = REFRESH_ON_READY_OR_CANCEL.includes(eventName);
 
-    if (!isAlways && !isReadyOrCancelEvent) {
-      // Ignored event (split-order, update-order-paid, target/source, etc.)
-      debugLog('ignore (not in refresh set)', eventName);
+    if (!isAlways && !isStatusGated) {
+      // Ignored event (split-order, update-order-target, update-order-source,
+      // delivery-assign-order, etc.)
+      debugLog('DROP-IGNORED', eventName);
       return;
     }
 
-    if (isReadyOrCancelEvent && fOrderStatus !== READY && fOrderStatus !== CANCELLED) {
-      debugLog('skip (status filter)', eventName, 'status=', fOrderStatus);
+    if (isStatusGated && fOrderStatus !== READY && fOrderStatus !== CANCELLED) {
+      debugLog('DROP-STATUS', eventName, 'status=' + fOrderStatus);
       return;
     }
 
     const affected = extractAffectedStations(args, enabledStations);
     if (affected.length === 0) {
-      debugLog('skip (no affected stations)', eventName);
+      debugLog('DROP-NOSTATIONS', eventName);
       return;
     }
 
     affected.forEach((s) => dirtyRef.current.add(s));
-    debugLog('mark dirty', eventName, 'status=', fOrderStatus, 'stations=', affected);
+    if (isAlways) {
+      debugLog('PASS-ALWAYS', eventName, '→ stations=' + JSON.stringify(affected));
+    } else {
+      debugLog('PASS-STATUS', eventName, 'status=' + fOrderStatus,
+               '→ stations=' + JSON.stringify(affected));
+    }
     scheduleFlush();
   }, [enabledStations, scheduleFlush]);
 
