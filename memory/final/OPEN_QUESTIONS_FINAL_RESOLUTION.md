@@ -13,9 +13,10 @@
 - Total questions reviewed: 12
 - ANSWERED_IN_V3: 0
 - PARTIALLY_ANSWERED_IN_V3: 0
-- NOT_ANSWERED: 3
+- NOT_ANSWERED: 1
 - CONFLICTING_WITH_CODE: 0
-- NEEDS_OWNER_DECISION: 9
+- NEEDS_OWNER_DECISION: 1
+- OWNER_CLARIFIED_OR_FROZEN: 10
 
 ---
 
@@ -25,13 +26,13 @@
 - **Area/module:** App bootstrap / configuration / deployment
 - **Why it matters:** Deployment/setup will remain fragile unless the required env names and ownership are explicitly defined.
 - **Recommended owner:** Tech / API
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/axios.js:5-8`, `/app/frontend/src/api/socket/socketEvents.js`, `/app/frontend/src/api/crmAxios.js:8-20`, `/app/frontend/src/config/firebase.js:5-15`, `/app/frontend/src/components/order-entry/AddressFormModal.jsx:5`, `/app/frontend/craco.config.js:11`
-- **Conflict note, if any:** None carried from excluded sources. The code clearly uses multiple env variables, but no owner-approved canonical contract is documented in allowed sources.
-- **Whether it can be included in final architecture docs:** Yes, as current implementation truth plus unresolved policy.
-- **What future agents should do:** Use current code-level env names as implementation truth. Do not rename or consolidate env variables without explicit owner approval.
+- **Conflict note, if any:** Owner supplied the approved frontend environment contract for this baseline.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat the owner-provided env variable set as the canonical frontend env contract. Do not rename, consolidate, or deprecate env variables without explicit owner approval. Highlight any code deviation from the approved env contract.
 
 ---
 
@@ -41,13 +42,13 @@
 - **Area/module:** Realtime / tables / orders
 - **Why it matters:** Future bug fixes and refactors depend on whether table occupancy is authoritative from table events, order events, or both.
 - **Recommended owner:** Tech / API
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/socket/useSocketEvents.js:143-179`, `/app/frontend/src/api/socket/socketHandlers.js:123-132,266-272,466-502`
-- **Conflict note, if any:** Current code uses both table-channel updates and order-derived table updates. Allowed docs identify the ambiguity but do not resolve precedence.
-- **Whether it can be included in final architecture docs:** Yes, as a current implementation warning and unresolved decision.
-- **What future agents should do:** Treat both paths as live implementation. Do not remove either path without full socket/order/table contract review.
+- **Conflict note, if any:** Owner clarified that the source-of-truth option is the order socket path.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat table status as derived from `f_order_status`, with `f_order_status` coming from the order socket. Future agents may validate this behavior in code and must explicitly highlight any deviation.
 
 ---
 
@@ -57,13 +58,13 @@
 - **Area/module:** Status config / dashboard preferences / station config
 - **Why it matters:** Settings scope affects operational consistency and future admin governance.
 - **Recommended owner:** Product / Tech / Business
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/pages/StatusConfigPage.jsx`, `/app/frontend/src/pages/DashboardPage.jsx`, `/app/frontend/src/contexts/StationContext.jsx`, `/app/frontend/src/contexts/SettingsContext.jsx`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as current-state device-local behavior plus unresolved future scope.
-- **What future agents should do:** Preserve device-local behavior unless Product/Tech/Business define a different persistence model.
+- **Conflict note, if any:** Owner clarified a phased model: Phase 1 remains localStorage/device-local; Phase 2 may convert these settings into role-based behavior.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Preserve localStorage/device-local behavior in the current baseline. Do not convert to role-based persistence unless explicit Phase 2 work is requested.
 
 ---
 
@@ -73,13 +74,13 @@
 - **Area/module:** Repo architecture / backend boundary
 - **Why it matters:** Repo-boundary decisions affect architecture ownership, deployment assumptions, and future documentation.
 - **Recommended owner:** Tech / Business
-- **Resolution status:** `NOT_ANSWERED`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/backend/server.py`, `/app/backend/requirements.txt`
-- **Conflict note, if any:** None. Allowed sources confirm the backend folder exists but do not define intent.
-- **Whether it can be included in final architecture docs:** Yes, with explicit limitation language.
-- **What future agents should do:** Treat `/app/backend` as present-in-repo but not confirmed product backend. Do not assume ownership or production relevance.
+- **Conflict note, if any:** Owner clarified that this repo backend is not used for the app and next deployment agents should not use it.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat `/app/backend` as present in the repo but not part of the active deployment/runtime path. Do not deploy or rely on it unless explicitly instructed.
 
 ---
 
@@ -89,13 +90,13 @@
 - **Area/module:** Payment / billing / order entry
 - **Why it matters:** Revenue-critical changes need a single canonical entry point.
 - **Recommended owner:** Tech / API
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/constants.js:43-46`, `/app/frontend/src/components/order-entry/OrderEntry.jsx`, `/app/frontend/src/api/transforms/orderTransform.js:813-968`, `/app/frontend/src/api/services/paymentService.js:12-14`
-- **Conflict note, if any:** Code strongly suggests OrderEntry/CollectPaymentPanel is the active path and `paymentService.collectPayment()` is stale, but allowed sources do not provide an owner-approved canonical declaration.
-- **Whether it can be included in final architecture docs:** Yes, as implementation guardrail.
-- **What future agents should do:** Treat OrderEntry/CollectPaymentPanel flows as the active implementation surface and avoid reusing `paymentService.collectPayment()` unless deliberately repaired and approved.
+- **Conflict note, if any:** Owner clarified the workflow split: order entry belongs in OrderEntry; final settlement/payment belongs in Collect Bill.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat `OrderEntry` as the order composition/update workflow surface and `CollectPaymentPanel` / collect-bill flow as the final settlement/payment surface. Avoid reusing `paymentService.collectPayment()` as a canonical new-work entry point.
 
 ---
 
@@ -105,13 +106,13 @@
 - **Area/module:** CRM / customer / delivery address
 - **Why it matters:** This affects UX exposure, onboarding, and degraded-mode expectations.
 - **Recommended owner:** Product / API / Business
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/crmAxios.js:18-20,55-60`, `/app/frontend/src/api/services/customerService.js`, `/app/frontend/src/components/order-entry/OrderEntry.jsx:127-169`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as current soft-optional implementation plus unresolved policy.
-- **What future agents should do:** Preserve current degraded-mode handling unless Product/API/Business define capability tiers or mandatory CRM.
+- **Conflict note, if any:** Owner clarified CRM is required for all restaurants except where the restaurant does not take any customer details.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat CRM as required by default. Only apply exception handling where a restaurant genuinely does not use customer-detail workflows.
 
 ---
 
@@ -121,13 +122,13 @@
 - **Area/module:** Reports / audit / summary
 - **Why it matters:** Reporting scale, performance, and maintainability depend on aggregation ownership.
 - **Recommended owner:** Tech / API / Business
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/services/reportService.js`, `/app/frontend/src/pages/AllOrdersReportPage.jsx`, `/app/frontend/src/pages/OrderSummaryPage.jsx`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as current implementation plus unresolved long-term strategy.
-- **What future agents should do:** Treat `reportService.js` as current orchestration surface. Do not move aggregation boundaries without owner decision.
+- **Conflict note, if any:** Owner clarified that aggregation ownership belongs to backend APIs; frontend responsibility is representation/presentation. Any doc wording implying frontend aggregation ownership should be highlighted and verified during the next report-related change.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat backend APIs as the owner of report aggregation. Treat frontend reporting work as representation/presentation unless explicit new requirements say otherwise. During the next report-related change, highlight and verify any contradictory wording in docs.
 
 ---
 
@@ -137,13 +138,13 @@
 - **Area/module:** Station / kitchen panel
 - **Why it matters:** Silent failure can hide kitchen-facing operational issues.
 - **Recommended owner:** Product / Tech
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/api/services/stationService.js:201-209`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as a risk/guardrail.
-- **What future agents should do:** Do not reinterpret station empty data as a confirmed success state during bug analysis.
+- **Conflict note, if any:** Owner clarified that station failures should be explicit so operators know immediately when the system is not performing as expected.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Do not reinterpret station failures as normal empty state. Failure should be explicit and visible.
 
 ---
 
@@ -153,13 +154,13 @@
 - **Area/module:** Notifications / Firebase
 - **Why it matters:** Version divergence increases maintenance and runtime risk.
 - **Recommended owner:** Tech
-- **Resolution status:** `NOT_ANSWERED`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/package.json`, `/app/frontend/public/firebase-messaging-sw.js:7-8`
-- **Conflict note, if any:** None. Allowed sources identify the implementation mismatch but do not document intended long-term strategy.
-- **Whether it can be included in final architecture docs:** Yes, as current implementation risk.
-- **What future agents should do:** Document current mixed-version implementation accurately and avoid presenting it as an approved long-term strategy.
+- **Conflict note, if any:** Owner clarified that only Firebase should be used for all notifications and any discrepancy should be highlighted and corrected on priority.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat Firebase as the canonical notification platform. Highlight and prioritize correction of any discrepancy.
 
 ---
 
@@ -169,13 +170,13 @@
 - **Area/module:** Navigation / information architecture / module surface
 - **Why it matters:** Planning and permissions depend on whether nav items are real modules, panels, or placeholders.
 - **Recommended owner:** Product / Business / Tech
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/components/layout/Sidebar.jsx:31-109,151-231`, `/app/frontend/src/App.js:31-41`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as a current-state classification warning.
-- **What future agents should do:** Treat only routed pages and explicitly opened panels as implemented modules; treat other nav items as placeholders until owner-approved.
+- **Conflict note, if any:** Owner clarified that only routed pages and explicit runtime panels count as implemented modules.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat only routed pages and explicitly opened panels as implemented modules.
 
 ---
 
@@ -185,13 +186,13 @@
 - **Area/module:** Device controls / permissions / governance
 - **Why it matters:** These settings affect cashier workflow but are currently local and unaudited.
 - **Recommended owner:** Product / Business / Tech
-- **Resolution status:** `NEEDS_OWNER_DECISION`
+- **Resolution status:** `OWNER_CLARIFIED_OR_FROZEN`
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/pages/StatusConfigPage.jsx:47-53,147-157,403-417`, `/app/frontend/src/pages/DashboardPage.jsx:421-472`, `/app/frontend/src/components/layout/Header.jsx`
-- **Conflict note, if any:** None.
-- **Whether it can be included in final architecture docs:** Yes, as current-state governance gap.
-- **What future agents should do:** Treat these as local terminal settings in current implementation; do not present them as centrally governed controls.
+- **Conflict note, if any:** Owner clarified this is temporary Phase 1 behavior and aligns with the earlier phased localStorage answer.
+- **Whether it can be included in final architecture docs:** Yes.
+- **What future agents should do:** Treat these as temporary Phase 1 local/device-level settings. Do not convert them into centrally governed admin controls unless explicit later-phase work is requested.
 
 ---
 
@@ -205,14 +206,15 @@
 - **Answer found in V3, if any:** Not used by instruction.
 - **V3 document reference:** Not applicable.
 - **Code reference, if applicable:** `/app/frontend/src/components/order-entry/OrderEntry.jsx`, `/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx`, `/app/frontend/src/api/transforms/orderTransform.js`, `/app/frontend/src/pages/DashboardPage.jsx:26-39,632-649`, `/app/frontend/src/api/transforms/__tests__/req3-room-bill-print.test.js`
-- **Conflict note, if any:** None from allowed sources. Current code shows room-specific logic, but allowed sources do not define policy lifecycle or owner-approved semantics.
-- **Whether it can be included in final architecture docs:** Yes, as implementation guardrail only.
-- **What future agents should do:** Preserve current room billing/print behavior unless Product/API/Business explicitly redefine it. Any room-related change requires cross-flow impact analysis.
+- **Conflict note, if any:** Owner chose to defer this until the next room billing / room print related change.
+- **Whether it can be included in final architecture docs:** Yes, as implementation guardrail plus explicit deferral note.
+- **What future agents should do:** Preserve current room billing/print behavior for now. Revisit and verify this area during the next room billing / room print related change. Any room-related change requires cross-flow impact analysis.
 
 ---
 
 ## Usage rule for future agents
 - Use this file first when a request touches unresolved architecture or product behavior.
+- `OWNER_CLARIFIED_OR_FROZEN` means the owner has provided enough direction to freeze the current baseline rule.
 - `NEEDS_OWNER_DECISION` means implementation may be possible, but policy must not be invented.
-- `NOT_ANSWERED` means allowed documentation sources do not settle the question at all.
+- `NOT_ANSWERED` means allowed documentation sources do not settle the question at all, or the owner explicitly deferred the decision.
 - Prefer current code for implementation truth, and carry unresolved notes into planning/handover.
