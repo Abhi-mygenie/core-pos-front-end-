@@ -27,6 +27,7 @@
 | BUG-021 | Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly) | **FIXED (Apr-2026, v2)** — `buildBillPrintPayload` accepts new `overrides.runtimeComplimentaryFoodIds`; `isDetailComplimentary` predicate extended to match the override list against `d.id` (order_details row ID) **and** `d.food_details.id` (catalog food ID) — the actual fields on incoming `rawOrderDetails`. `OrderEntry.AutoPrintCollectBill` and `CollectPaymentPanel.handlePrintBill` forward **both** `cartItem.id` and `cartItem.foodId` via `flatMap([i.id, i.foodId].filter(Boolean))` so only the exact ticked row is zeroed even when the same catalog food appears in multiple rows. Verified via network payload: `billFoodList[i].price/unit_price/food_amount/gst_tax_amount/...` all `0` on ticked line; `order_item_total`, `service_tax`, `gst_tax`, `payment_amount` all correctly exclude the complimentary item. Frontend-authoritative; no backend dependency. | Close | `api/transforms/orderTransform.js` `buildBillPrintPayload` (~lines 974-1020), `components/order-entry/OrderEntry.jsx` `AutoPrintCollectBill` block, `components/order-entry/CollectPaymentPanel.jsx` `handlePrintBill` |
 | BUG-022 | Cancelled Item — Not Shown as Strikethrough in Collect Bill Page "ITEMS" List (Order page correctly strikes it through) | **FIXED (Apr-2026)** — `CollectPaymentPanel.jsx` main Bill Summary and room-service items loops now compute `isCancelled = item.status === 'cancelled'` and apply strikethrough + gray (`#9CA3AF`) to item name and price plus a "(Cancelled)" label, matching `CartPanel.jsx`. Complimentary checkbox disabled for cancelled lines. No math / payload / socket changes. | Close | `components/order-entry/CollectPaymentPanel.jsx` (main items loop + room-service items loop) |
 | BUG-023 | Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path) | **RE-OPENED → RE-FIXED → QA-VERIFIED (Apr-2026)** — original patch used `order.isWalkIn === true` which is structurally `true` for any table-less order (TA/Delivery) per `fromAPI.order:134`, so SC still fired. Corrected gate to `scApplicable = order.orderType === 'dineIn' \|\| order.isRoom === true` (matches the *effective* `CollectPaymentPanel.jsx:244` rule once `normalizeOrderType` folds walk-ins into `dineIn`). QA re-verified on order #731600 (takeaway, dashboard-card print): `serviceChargeAmount: 0`, `gst_tax: 17.5`, `order_subtotal == order_item_total == 395`. Override path untouched; no other files touched. | Close | `api/transforms/orderTransform.js` (`buildBillPrintPayload`, lines 1071-1092) |
+| BUG-024 | Mark Order Ready — Item-level `food_status` not cascaded by backend (items remain `food_status=1` while order moves to `f_order_status=2`); event also misnamed `update-order-paid` for Mark Ready of complementary/zero-amount orders | **OPEN — Backend bug** | Backend | (frontend untouched) — Backend: order/order-status-update endpoint + socket emitter |
 
 
 
@@ -2290,4 +2291,139 @@ Walk-in coverage is preserved implicitly via `normalizeOrderType` (walk-ins → 
 
 ### QA Sign-off
 - **Primary scenario (takeaway dashboard-card print) verified by payload capture on 23-Apr-2026.** Sufficient to close BUG-023. Remaining scenarios (2-5) are code-level equivalent by the same gate and can be sampled in next QA cycle.
+
+
+---
+
+## BUG-024 / Mark Order Ready — Backend does not cascade `food_status` to items; order header flips but items stuck in Cooking
+
+**Status: OPEN — Backend bug** (Apr-2026, captured during station-panel realtime work)
+
+**User Reported Issue**
+- Cashier clicks "Mark Order Ready" on a postpaid dinein order containing a complementary (zero-amount) item.
+- Order card on dashboard correctly moves to "Ready" tab.
+- Station Panel (kitchen view) continues to show the item as still cooking — kitchen receives a stale signal.
+- Manual ⟳ refresh on the station panel does NOT clear the item, ruling out frontend cache staleness.
+- API `/api/v1/vendoremployee/station-order-list?def_order_status=1` returns the item with `food_status: 1`.
+
+**QA Status**
+- Confirmed via captured live socket payload (event name `update-order-paid`, order 731704, restaurant 478, 2026-04-26 11:37:11).
+
+**Current Code Behavior (frontend — for reference, NOT the bug)**
+- `orderService.updateOrderStatus(orderId, roleName, 'ready')` → `PUT /api/v2/vendoremployee/order/order-status-update` (`orderService.js:60`, `constants.js:26`).
+- Backend responds 200 and emits a socket event on `new_order_${restaurantId}` channel.
+- `useSocketEvents.handleOrderChannelEvent` routes the event to `handleOrderDataEvent` / `handleUpdateOrderStatus` (`useSocketEvents.js:59-101`).
+- Handler calls `orderFromAPI.order(payload.orders[0])` and `updateOrder(orderId, order)` — frontend faithfully reflects payload contents.
+
+**Backend Behavior Observed (THE BUG)**
+
+Captured socket payload (`update-order-paid`, order 731704):
+
+```jsonc
+[
+  "update-order-paid",
+  731704,
+  478,
+  2,                          // args[3] = order-level f_order_status (Ready) ✓
+  {
+    "orders": [{
+      "id": 731704,
+      "f_order_status": 2,                         // ✓ order header is Ready
+      "payment_status": "unpaid",                  // ⚠ event is named *-paid but order is unpaid
+      "payment_method": "pending",
+      "payment_id": null,
+      "order_amount": 0,                           // complementary item, zero total
+      "created_at": "2026-04-26 11:35:29",
+      "updated_at": "2026-04-26 11:37:11",         // ✓ order touched at Mark Ready time
+
+      "orderDetails": [{                            // ⚠ note: v2 uses `orderDetails`, not `order_details_food`
+        "id": 1902994,
+        "order_id": 731704,
+        "food_status": 1,                          // 🔴 STUCK at Cooking — should be 2
+        "ready_at": null,                          // 🔴 should be timestamp
+        "serve_at": null,
+        "cancel_at": null,
+        "created_at": "2026-04-26 11:35:29",
+        "updated_at": "2026-04-26 11:35:29",       // 🔴 NEVER touched — order updated 2 min later
+        "station": "KDS",
+        "item_type": "KDS",
+        "quantity": 1,
+        "price": 0,
+        "food_details": {
+          "name": "hokage",
+          "complementary": "Yes",
+          "complementary_price": "34"
+        }
+      }],
+
+      "ready_order_details": [],                   // 🔴 should contain the item that was Ready'd
+      "serve_order_details": []
+    }]
+  }
+]
+```
+
+**Three smoking guns confirming backend ownership:**
+1. `order.updated_at = 11:37:11` (touched), `item.updated_at = 11:35:29` (untouched, equals `created_at`). Order was modified, item was not.
+2. `item.food_status = 1` (Cooking) when order is Ready.
+3. `ready_order_details: []` — the backend's own data model expects items to move from `orderDetails[]` → `ready_order_details[]` on Mark Ready, but the move did not happen.
+
+**Side Bug Discovered (BUG-024-B): Misnamed Socket Event for Mark Ready of Zero-Amount Orders**
+- Event name emitted: `update-order-paid`
+- Actual semantics: Mark Order Ready (NOT a payment event)
+- `payment_status: "unpaid"`, `payment_method: "pending"`, `payment_id: null`
+- Hypothesis: backend reuses `update-order-paid` for Mark Ready when `order_amount === 0` (complementary / zero-amount path). For paid orders it likely emits `update-order-status`. This conflates two distinct lifecycle events and misleads anyone reading socket logs.
+
+**Expected Behavior**
+1. **`food_status` cascade:** When an order is marked Ready (`f_order_status: 1 → 2`), every item still in `orderDetails[]` (i.e., `food_status === 1`) must transition to `food_status: 2`, get a `ready_at` timestamp, and move to `ready_order_details[]`.
+2. **Same for cancel:** If an order is cancelled (`f_order_status: 1 → 3`), items should be cancelled with `cancel_at` timestamp and moved appropriately.
+3. **Event naming:** Mark Ready (any order, any payment status) should emit `update-order-status`, not `update-order-paid`. `update-order-paid` should be reserved for actual payment-status transitions.
+
+**Gap Observed**
+- Backend `order/order-status-update` endpoint flips order-level status only. Item-level cascade is missing.
+- Socket emitter on backend uses event-name shortcut for zero-amount orders (`update-order-paid`).
+
+**Impacted Areas**
+- Backend modules: order status update endpoint, socket emitter for order lifecycle.
+- Downstream frontend impact: Station Panel (kitchen view) shows stale "still cooking" items; kitchen may re-cook already-Ready items. Critical operational bug.
+- All order types affected (dinein, takeaway, delivery, room).
+- All Mark Ready paths affected: dashboard order card "Mark Ready" button, server-side bulk Mark Ready actions.
+
+**Files Reviewed**
+- `frontend/src/api/services/orderService.js` (`updateOrderStatus`, lines 53-64)
+- `frontend/src/api/constants.js` (`ORDER_STATUS_UPDATE` endpoint, line 26)
+- `frontend/src/api/socket/socketEvents.js` (lines 55-78, 107-123, 148-154 — event taxonomy and message indices)
+- `frontend/src/api/socket/socketHandlers.js` (`handleUpdateOrderStatus` lines 358-412, `handleOrderDataEvent` lines 220-290)
+- `frontend/src/api/socket/useSocketEvents.js` (lines 59-101 — channel routing)
+- Captured live payload — order 731704, channel `new_order_478`, 2026-04-26.
+
+**Code Evidence Summary (frontend is faithful)**
+- Frontend handler uses `orderFromAPI.order(payload.orders[0])` to transform whatever payload the backend sends. If `food_status` is `1` in the payload, the resulting order object will have its items at status=Cooking, and the UI will render that. Frontend has NO mechanism to "infer" or "force" item-level status from the order-level status.
+- Station Panel is also faithful: it calls `/station-order-list?def_order_status=1` which apparently filters orders/items where item-level `food_status === 1`. Returns this item correctly given the data state — the data itself is the lie.
+
+**Dependencies / External Validation Needed**
+- Backend dependency: **HIGH (and entirely backend-owned)**. No frontend fix can fully resolve this without masking truth.
+- API dependency: `PUT /api/v2/vendoremployee/order/order-status-update` (status flip endpoint) + the socket emitter that fires after.
+- Socket dependency: `new_order_${restaurantId}` channel, `update-order-paid` and `update-order-status` events.
+- Payload dependency: Item-level cascade fields — `food_status`, `ready_at`, `serve_at`, `cancel_at`, plus relocation across `orderDetails[]` / `ready_order_details[]` / `serve_order_details[]` / cancel buckets.
+- Config dependency: None — this is a defect, not a feature flag.
+
+**Reproduction Understanding**
+- Step 1: Create a postpaid dinein order with one complementary item (`complementary: "Yes"`, price 0) — e.g., add a "hokage" complementary item to an order on table 1.
+- Step 2: Place the order.
+- Step 3: Click "Mark Order Ready" on the order card.
+- Step 4: Inspect backend response / socket payload (capture from console, or `select * from orders, order_details where order_id = ...`).
+- Observed: `orders.f_order_status = 2`, `order_details.food_status = 1` (mismatch).
+- Expected: Both flip to 2; `ready_at` populated on item; item moves into `ready_order_details[]` in any subsequent socket emission.
+
+**Open Questions / Unknowns**
+- Does this bug also affect non-complementary orders that are Place+Pay-then-Ready? Captured sample is complementary-specific; need backend team to verify across order types.
+- Is the cascade missing on Cancel as well? Likely yes given the pattern, but not yet captured live.
+- How many other socket events (`update-order`, `update-food-status`, `update-item-status`) suffer from the same partial-update issue?
+- Existing data integrity: are there historical orders in DB stuck with `f_order_status=2` and `food_status=1`? Migration may be needed once backend ships fix.
+
+**Notes**
+- Cross-reference: Frontend Station Panel realtime refresh hook (`useStationSocketRefresh.js`, Apr-2026) was developed alongside this discovery. Hook will refetch correctly the moment backend fixes the cascade — no further frontend change required for resolution. See `/app/memory/STATION_PANEL_REALTIME_HANDOVER.md` and `/app/memory/STATION_PANEL_REALTIME_HANDOVER_v2.md` for hook context.
+- Until backend ships fix, the kitchen panel will show stale data after Mark Ready / Cancel. Operational workaround: kitchen can be advised to ignore the panel briefly after a Ready action and trust the order-card Ready tab as truth.
+- Recommendation for backend team: write a single transactional service method that atomically flips order header AND cascades item-level fields AND moves items into the correct relations (`ready_order_details` / `cancel_order_details`), then emit a unified `update-order-status` socket event with the final state. Apply to Mark Ready, Mark Cancel, and any other order-level lifecycle action.
 
