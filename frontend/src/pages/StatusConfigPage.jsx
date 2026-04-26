@@ -4,7 +4,8 @@ import { ArrowLeft, Check, RotateCcw, Save, Eye, EyeOff } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import { COLORS } from "../constants";
 import { useToast } from "../hooks/use-toast";
-import { useStations } from "../contexts";
+import { useStations, useMenu } from "../contexts";
+import { fetchStationData } from "../api/services/stationService";
 
 // LocalStorage key for enabled statuses
 const STORAGE_KEY = 'mygenie_enabled_statuses';
@@ -111,7 +112,15 @@ const StatusConfigPage = () => {
   const [isSilentMode, setIsSilentMode] = useState(false);
   
   // Get available stations from context (loaded from products)
-  const { availableStations, saveConfig: saveStationConfig } = useStations();
+  const {
+    availableStations,
+    setStationViewEnabled,
+    setEnabledStations,
+    setDisplayMode: setContextDisplayMode,
+    setAllStationData,
+  } = useStations();
+  // Categories needed to build categoriesMap for fetchStationData
+  const { categories } = useMenu();
   
   // Build station list with icons
   const AVAILABLE_STATIONS = availableStations.map(station => ({
@@ -392,7 +401,7 @@ const StatusConfigPage = () => {
   };
 
   // Save to localStorage
-  const saveConfiguration = () => {
+  const saveConfiguration = async () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(enabledStatuses));
     localStorage.setItem(STATION_VIEW_STORAGE_KEY, JSON.stringify(stationViewConfig));
     localStorage.setItem(CHANNEL_VISIBILITY_STORAGE_KEY, JSON.stringify(channelConfig));
@@ -406,6 +415,43 @@ const StatusConfigPage = () => {
     localStorage.setItem(DEFAULT_DASHBOARD_VIEW_KEY, defaultDashboardView);
     // Req 2: persist Order Taking flag
     localStorage.setItem(ORDER_TAKING_KEY, JSON.stringify({ enabled: orderTakingEnabled }));
+
+    // STATION_VIEW_SYNC (Apr-2026): localStorage write alone leaves StationContext
+    // stale until a full reload, so the dashboard's StationPanel renders nothing
+    // when the user navigates back via React Router. Sync context state from the
+    // form state, then refetch station data so the panel populates immediately.
+    const nextEnabled = stationViewConfig.enabled !== false;
+    const nextStations = Array.isArray(stationViewConfig.stations)
+      ? stationViewConfig.stations.filter(s => availableStations.includes(s))
+      : [];
+    const nextDisplayMode = stationViewConfig.displayMode || 'stacked';
+    setStationViewEnabled(nextEnabled);
+    setEnabledStations(nextStations);
+    setContextDisplayMode(nextDisplayMode);
+
+    if (nextEnabled && nextStations.length > 0) {
+      try {
+        const categoriesMap = {};
+        (categories || []).forEach(cat => {
+          if (cat.categoryId) {
+            categoriesMap[cat.categoryId] = cat.categoryName || cat.name;
+            categoriesMap[String(cat.categoryId)] = cat.categoryName || cat.name;
+          }
+        });
+        const results = await Promise.all(
+          nextStations.map(s => fetchStationData(s, categoriesMap))
+        );
+        const dataObj = {};
+        nextStations.forEach((s, i) => { dataObj[s] = results[i]; });
+        setAllStationData(dataObj);
+      } catch (e) {
+        console.error('[StatusConfigPage] Failed to refresh station data after save:', e);
+      }
+    } else {
+      // Reset station data when disabled or no stations selected
+      setAllStationData({});
+    }
+
     setHasChanges(false);
     toast({
       title: "Configuration saved",

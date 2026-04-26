@@ -5,6 +5,46 @@ import { ChevronDown, ChevronRight, RefreshCw, AlertCircle } from 'lucide-react'
 import { fetchStationData } from '../../api/services/stationService';
 import { useStations, useMenu } from '../../contexts';
 
+// DENSITY_PROTOTYPE (Apr-2026): runtime A/B between three vertical-density
+// presets. Pure visual — no logic change. User picks one; we'll lock it
+// as the default and remove the toggle once chosen.
+const DENSITY_KEY = 'mygenie_station_density';
+const DENSITY = {
+  comfortable: {
+    label: 'Comfortable',
+    panelW: '280px', panelMinW: '280px', panelMaxW: '320px',
+    headerPad: 'p-3', headerIcon: 'text-xl', headerName: 'text-lg',
+    headerCount: 'text-sm', headerCountPad: 'px-2 py-0.5',
+    catPad: 'py-2 px-3', catName: 'text-sm', catCount: 'text-xs',
+    catCountPad: 'px-2 py-0.5', catTint: '10', catBorder: '3px',
+    itemPad: 'py-1.5 px-3 pl-6', itemName: 'text-sm', itemCount: 'text-sm',
+    itemCountW: 'min-w-[32px]', itemDivMx: 'mx-2',
+    catGap: 'mb-1',
+  },
+  compact: {
+    label: 'Compact',
+    panelW: '240px', panelMinW: '220px', panelMaxW: '260px',
+    headerPad: 'p-2', headerIcon: 'text-base', headerName: 'text-sm',
+    headerCount: 'text-xs', headerCountPad: 'px-1.5 py-0',
+    catPad: 'py-1 px-2', catName: 'text-xs', catCount: 'text-[10px]',
+    catCountPad: 'px-1.5 py-0', catTint: '08', catBorder: '2px',
+    itemPad: 'py-0.5 px-2 pl-3', itemName: 'text-xs', itemCount: 'text-xs',
+    itemCountW: 'min-w-[24px]', itemDivMx: 'mx-1.5',
+    catGap: 'mb-0.5',
+  },
+  ultra: {
+    label: 'Ultra',
+    panelW: '210px', panelMinW: '200px', panelMaxW: '230px',
+    headerPad: 'px-2 py-1', headerIcon: 'text-sm', headerName: 'text-xs',
+    headerCount: 'text-[10px]', headerCountPad: 'px-1 py-0',
+    catPad: 'py-0.5 px-2', catName: 'text-[11px]', catCount: 'text-[9px]',
+    catCountPad: 'px-1 py-0', catTint: '06', catBorder: '2px',
+    itemPad: 'py-0 px-2 pl-2.5', itemName: 'text-[11px]', itemCount: 'text-[11px]',
+    itemCountW: 'min-w-[20px]', itemDivMx: 'mx-1',
+    catGap: 'mb-0',
+  },
+};
+
 // Color scheme matching the app
 const COLORS = {
   primaryOrange: '#F27329',
@@ -38,25 +78,25 @@ const getCategoryColor = (index) => {
 /**
  * Station Item Row - Single item with dotted line and count
  */
-const StationItemRow = ({ itemName, count }) => (
+const StationItemRow = ({ itemName, count, density }) => (
   <div 
-    className="flex items-center py-1.5 px-3 pl-6"
+    className={`flex items-center ${density.itemPad}`}
     style={{ borderBottom: `1px solid ${COLORS.borderGray}20` }}
   >
     {/* Item Name */}
-    <span className="text-sm flex-1" style={{ color: COLORS.darkText }}>
+    <span className={`${density.itemName} flex-1 truncate`} style={{ color: COLORS.darkText }}>
       {itemName}
     </span>
     
     {/* Dotted line */}
     <div 
-      className="flex-1 mx-2 border-b border-dotted" 
-      style={{ borderColor: COLORS.grayText, minWidth: '20px' }}
+      className={`flex-1 ${density.itemDivMx} border-b border-dotted`} 
+      style={{ borderColor: COLORS.grayText, minWidth: '16px' }}
     />
     
     {/* Quantity */}
     <span 
-      className="text-sm font-semibold min-w-[32px] text-center"
+      className={`${density.itemCount} font-semibold ${density.itemCountW} text-center`}
       style={{ color: COLORS.primaryGreen }}
     >
       {count}
@@ -67,7 +107,7 @@ const StationItemRow = ({ itemName, count }) => (
 /**
  * Category Section - Category header + items (Option C style)
  */
-const CategorySection = ({ category, categoryIndex, displayMode }) => {
+const CategorySection = ({ category, categoryIndex, displayMode, density }) => {
   const [expanded, setExpanded] = useState(true);
   const categoryColor = getCategoryColor(categoryIndex);
 
@@ -81,28 +121,28 @@ const CategorySection = ({ category, categoryIndex, displayMode }) => {
   };
 
   return (
-    <div className="mb-1">
+    <div className={density.catGap}>
       {/* Category Header Row */}
       <div 
-        className={`flex items-center justify-between py-2 px-3 ${displayMode === 'accordion' ? 'cursor-pointer' : ''}`}
+        className={`flex items-center justify-between ${density.catPad} ${displayMode === 'accordion' ? 'cursor-pointer' : ''}`}
         style={{ 
-          backgroundColor: `${categoryColor}10`,
-          borderLeft: `3px solid ${categoryColor}`,
+          backgroundColor: `${categoryColor}${density.catTint}`,
+          borderLeft: `${density.catBorder} solid ${categoryColor}`,
         }}
         onClick={handleToggle}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           {displayMode === 'accordion' && (
             isExpanded 
-              ? <ChevronDown className="w-4 h-4" style={{ color: categoryColor }} />
-              : <ChevronRight className="w-4 h-4" style={{ color: COLORS.grayText }} />
+              ? <ChevronDown className="w-3 h-3 flex-shrink-0" style={{ color: categoryColor }} />
+              : <ChevronRight className="w-3 h-3 flex-shrink-0" style={{ color: COLORS.grayText }} />
           )}
-          <span className="text-sm font-semibold" style={{ color: categoryColor }}>
+          <span className={`${density.catName} font-semibold truncate`} style={{ color: categoryColor }}>
             {category.name}
           </span>
         </div>
         <span 
-          className="text-xs font-bold px-2 py-0.5 rounded-full"
+          className={`${density.catCount} font-bold ${density.catCountPad} rounded-full flex-shrink-0`}
           style={{ 
             backgroundColor: categoryColor,
             color: COLORS.white,
@@ -120,6 +160,7 @@ const CategorySection = ({ category, categoryIndex, displayMode }) => {
               key={idx} 
               itemName={item.name} 
               count={item.count}
+              density={density}
             />
           ))}
         </div>
@@ -131,7 +172,7 @@ const CategorySection = ({ category, categoryIndex, displayMode }) => {
 /**
  * Single Station Panel
  */
-const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, displayMode, onRefresh }) => {
+const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, displayMode, onRefresh, density }) => {
   return (
     <div 
       className="flex flex-col"
@@ -142,20 +183,20 @@ const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, di
     >
       {/* Station Header */}
       <div 
-        className="flex items-center justify-between p-3 sticky top-0 z-10"
+        className={`flex items-center justify-between ${density.headerPad} sticky top-0 z-10`}
         style={{ 
           backgroundColor: COLORS.white,
           borderBottom: `2px solid ${COLORS.primaryOrange}`,
         }}
       >
-        <div className="flex items-center gap-2">
-          <span className="text-xl">{stationIcon}</span>
-          <span className="font-bold text-lg" style={{ color: COLORS.darkText }}>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className={density.headerIcon}>{stationIcon}</span>
+          <span className={`font-bold ${density.headerName} truncate`} style={{ color: COLORS.darkText }}>
             {stationName}
           </span>
           {data?.totalItems > 0 && (
             <span 
-              className="text-sm font-bold px-2 py-0.5 rounded-full"
+              className={`${density.headerCount} font-bold ${density.headerCountPad} rounded-full flex-shrink-0`}
               style={{ 
                 backgroundColor: COLORS.primaryOrange,
                 color: COLORS.white,
@@ -167,11 +208,11 @@ const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, di
         </div>
         <button
           onClick={onRefresh}
-          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-1 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
           disabled={loading}
         >
           <RefreshCw 
-            className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+            className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} 
             style={{ color: COLORS.grayText }}
           />
         </button>
@@ -180,28 +221,28 @@ const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, di
       {/* Content */}
       <div className="overflow-y-auto">
         {loading && !data?.categories?.length && (
-          <div className="flex items-center justify-center h-20">
-            <RefreshCw className="w-6 h-6 animate-spin" style={{ color: COLORS.primaryOrange }} />
+          <div className="flex items-center justify-center h-16">
+            <RefreshCw className="w-5 h-5 animate-spin" style={{ color: COLORS.primaryOrange }} />
           </div>
         )}
 
         {error && (
           <div 
-            className="flex items-center gap-2 p-3 rounded-lg m-2"
+            className="flex items-center gap-2 p-2 rounded m-1"
             style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}
           >
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-sm">Failed to load station data</span>
+            <AlertCircle className="w-3 h-3" />
+            <span className="text-xs">Failed to load station data</span>
           </div>
         )}
 
         {!loading && !error && data?.categories?.length === 0 && (
           <div 
-            className="flex flex-col items-center justify-center h-20 text-center"
+            className="flex flex-col items-center justify-center h-16 text-center"
             style={{ color: COLORS.grayText }}
           >
-            <span className="text-2xl mb-1">✓</span>
-            <span className="text-sm">No pending items</span>
+            <span className="text-lg mb-0.5">✓</span>
+            <span className="text-xs">No pending items</span>
           </div>
         )}
 
@@ -211,6 +252,7 @@ const SingleStationPanel = ({ stationName, stationIcon, data, loading, error, di
             category={category}
             categoryIndex={idx}
             displayMode={displayMode}
+            density={density}
           />
         ))}
       </div>
@@ -284,16 +326,65 @@ const StationPanel = ({ className = '' }) => {
   }
 
   return (
+    <StationPanelInner
+      className={className}
+      stationIcons={stationIcons}
+      enabledStations={enabledStations}
+      stationData={stationData}
+      isLoading={isLoading}
+      displayMode={displayMode}
+      handleRefresh={handleRefresh}
+    />
+  );
+};
+
+// DENSITY_PROTOTYPE (Apr-2026): inner component owns the density toggle so
+// hooks aren't called conditionally above the early-return guard.
+const StationPanelInner = ({ className, stationIcons, enabledStations, stationData, isLoading, displayMode, handleRefresh }) => {
+  const [densityKey, setDensityKey] = useState(() => {
+    try {
+      const stored = localStorage.getItem(DENSITY_KEY);
+      if (stored && DENSITY[stored]) return stored;
+    } catch (e) { /* ignore */ }
+    return 'compact';
+  });
+  const density = DENSITY[densityKey] || DENSITY.compact;
+
+  const cycleDensity = () => {
+    const order = ['comfortable', 'compact', 'ultra'];
+    const next = order[(order.indexOf(densityKey) + 1) % order.length];
+    setDensityKey(next);
+    try { localStorage.setItem(DENSITY_KEY, next); } catch (e) { /* ignore */ }
+  };
+
+  return (
     <div 
       className={`flex flex-col overflow-y-auto ${className}`}
       style={{ 
-        width: '280px',
-        minWidth: '280px',
-        maxWidth: '320px',
+        width: density.panelW,
+        minWidth: density.panelMinW,
+        maxWidth: density.panelMaxW,
         borderRight: `1px solid ${COLORS.borderGray}`,
       }}
       data-testid="station-panel"
     >
+      {/* Density toggle (prototype A/B) — pick one and we'll lock it */}
+      <button
+        onClick={cycleDensity}
+        data-testid="station-density-toggle"
+        className="flex items-center justify-between gap-2 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide hover:bg-gray-100 transition-colors sticky top-0 z-20"
+        style={{
+          backgroundColor: '#FFF8F0',
+          color: COLORS.primaryOrange,
+          borderBottom: `1px solid ${COLORS.borderGray}`,
+        }}
+        title="Tap to cycle density"
+      >
+        <span>Density</span>
+        <span className="px-1.5 py-0.5 rounded" style={{ backgroundColor: COLORS.primaryOrange, color: COLORS.white }}>
+          {density.label}
+        </span>
+      </button>
       {enabledStations.map((stationName) => (
         <SingleStationPanel
           key={stationName}
@@ -304,6 +395,7 @@ const StationPanel = ({ className = '' }) => {
           error={null}
           displayMode={displayMode}
           onRefresh={handleRefresh}
+          density={density}
         />
       ))}
     </div>
