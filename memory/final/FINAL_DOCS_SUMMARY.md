@@ -10,7 +10,7 @@
 
 ## What each document is used for
 - **OPEN_QUESTIONS_FINAL_RESOLUTION.md**
-  - final status of each open question from Step 2
+  - final status of each open question from Step 2 analysis inputs
   - tells future agents what is unresolved vs code-backed
 - **ARCHITECTURE_DECISIONS_FINAL.md**
   - final architecture rules and guardrails
@@ -74,18 +74,25 @@
 - startup bootstrap in `LoadingPage.jsx`
 
 ## Recommended usage flow for future agents
-1. Read `ARCHITECTURE_DECISIONS_FINAL.md`
-2. Read `MODULE_DECISIONS_FINAL.md`
-3. Read `OPEN_QUESTIONS_FINAL_RESOLUTION.md`
-4. Use `CHANGE_REQUEST_PLAYBOOK.md` to analyze the request
-5. Follow `IMPLEMENTATION_AGENT_RULES.md` before coding
-6. Inspect actual code files for final confirmation
+1. Read `FINAL_DOCS_APPROVAL_STATUS.md`
+2. Read `ARCHITECTURE_DECISIONS_FINAL.md`
+3. Read `MODULE_DECISIONS_FINAL.md`
+4. Check `OPEN_QUESTIONS_FINAL_RESOLUTION.md` whenever the request may touch unresolved behavior or policy
+5. Use `CHANGE_REQUEST_PLAYBOOK.md` to analyze the request
+6. Follow `IMPLEMENTATION_AGENT_RULES.md` before coding
+7. Use `/app/memory/BUG_TEMPLATE.md` when documenting bugs
+8. Inspect actual code files for final confirmation
 
 ## Review note
 These final docs were rebuilt using only `/app/memory/current-state/*`, `/app/memory/analysis/*`, and current code in `/app`. No `/app/v3/*` documents were used in this final pass.
 
-## Delta refresh note
-After the initial final-doc pass, a targeted Option-A refresh was applied based on three localized bug-fix changes pulled from `roomv3` into local `step2`:
+## Baseline identity note
+- The approved working code baseline for this documentation set is `/app` on branch `step3`.
+- Some analysis inputs originated during Step 2 work, but the baseline identity for future agents is `step3`.
+- Archived materials are historical only and are not part of the mandatory future-agent reading path unless a future request explicitly asks for historical comparison.
+
+## Historical delta note
+A targeted delta refresh was previously applied for three localized bug-fix areas now reflected in the current code baseline:
 - BUG-025: cancelled items visible in card dropdowns
 - BUG-026: station aggregation/detail split by variant/add-on/note signature
 - BUG-027: room check-in advance-payment method capture and payload support

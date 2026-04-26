@@ -1,7 +1,7 @@
 # ARCHITECTURE_DECISIONS_FINAL
 
 ## Executive summary
-This document is the final source-of-truth architecture guide for the current `step2` codebase in `/app`, rebuilt using only these allowed evidence sources:
+This document is the final source-of-truth architecture guide for the current `step3` codebase in `/app`, rebuilt using only these allowed evidence sources:
 - current code in `/app`
 - `/app/memory/current-state/*`
 - `/app/memory/analysis/*`

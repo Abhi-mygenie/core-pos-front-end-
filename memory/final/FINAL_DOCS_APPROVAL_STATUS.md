@@ -8,7 +8,8 @@ The final documentation set under `/app/memory/final/` is usable as the document
 
 Main reason for conditional approval:
 - The six final documents are largely consistent on architecture, module boundaries, change-analysis workflow, and implementation guardrails.
-- However, there is a **traceability inconsistency**: some final docs describe the baseline as a `step2` codebase / `local step2`, while this approval pass was executed against the required repo branch `step3` in `/app`.
+- Open questions remain visible and intentionally unresolved.
+- Archived materials are historical only and are not part of the mandatory future-agent baseline reading path.
 
 Major warnings:
 - Open questions remain and must **not** be assumed by future implementation agents.
@@ -26,28 +27,28 @@ Major warnings:
 
 ### 3.2 `/app/memory/final/ARCHITECTURE_DECISIONS_FINAL.md`
 - **Purpose:** Current architecture baseline, rules, guardrails, hotspots, and unresolved decision framing.
-- **Status:** Conditional
-- **Notes:** Substantively usable and mostly code-backed. Conditional only because it refers to the current codebase as `step2` while this approval baseline is being frozen against branch `step3`.
+- **Status:** Approved
+- **Notes:** Baseline wording normalized to `step3`. Use current code in `/app` as implementation truth.
 
 ### 3.3 `/app/memory/final/MODULE_DECISIONS_FINAL.md`
 - **Purpose:** Defines module boundaries, responsibilities, dependencies, and module-level change rules.
-- **Status:** Conditional
-- **Notes:** Practical and aligned with architecture/playbook docs. Conditional because it also refers to the frontend as `step2`, creating branch/baseline ambiguity.
+- **Status:** Approved
+- **Notes:** Baseline wording normalized to `step3`. Practical module map for future work.
 
 ### 3.4 `/app/memory/final/CHANGE_REQUEST_PLAYBOOK.md`
 - **Purpose:** Required analysis workflow for bugs, enhancements, and behavior changes.
 - **Status:** Approved
-- **Notes:** Consistent with architecture and module docs. Its reading order should now be superseded by the mandatory reading order in this approval document.
+- **Notes:** Consistent with architecture and module docs. Its reading order is superseded by the mandatory reading order in this approval document.
 
 ### 3.5 `/app/memory/final/IMPLEMENTATION_AGENT_RULES.md`
 - **Purpose:** Mandatory pre-coding, planning, testing, handover, and doc-update rules.
 - **Status:** Approved
-- **Notes:** Strongly aligned with the playbook and architecture/module docs. Its internal reading order should also now be superseded by this approval document.
+- **Notes:** Strongly aligned with the playbook and architecture/module docs. Its internal reading order is also superseded by this approval document.
 
 ### 3.6 `/app/memory/final/FINAL_DOCS_SUMMARY.md`
 - **Purpose:** Team handoff summary of what the final docs cover and the main risks/open decisions.
-- **Status:** Conditional
-- **Notes:** Useful summary, but conditional due to explicit historical wording that references a `step2` baseline and a delta refresh from `roomv3` into local `step2`, which is not the same branch naming as this approval run.
+- **Status:** Approved
+- **Notes:** Baseline identity clarified to `step3`; archived materials explicitly excluded from mandatory future-agent reading.
 
 ### 3.7 `/app/memory/BUG_TEMPLATE.md`
 - **Purpose:** Existing reusable bug-documentation template and historical bug register.
@@ -68,6 +69,7 @@ All future agents must use the following reading order before bug fixing, implem
 
 Additional usage note:
 - `/app/memory/final/OPEN_QUESTIONS_FINAL_RESOLUTION.md` must be checked early in analysis whenever a request may touch architecture, policy, environment contract, room behavior, CRM policy, reporting ownership, station failure UX, or any other unresolved area.
+- `/app/archived/*` is historical only and is not part of the baseline reading order unless a future request explicitly requires historical comparison.
 
 ---
 
@@ -181,33 +183,15 @@ Additional usage note:
 
 ### CF-01
 - **Conflict ID:** CF-01
-- **Conflict summary:** Final architecture and module docs identify the baseline as `step2`, while this approval pass and required repo baseline are on branch `step3`.
-- **Source A:** `/app/memory/final/ARCHITECTURE_DECISIONS_FINAL.md` (`current step2 codebase`), `/app/memory/final/MODULE_DECISIONS_FINAL.md` (`step2 frontend`)
-- **Source B:** Actual repo checkout requirement and current code baseline in `/app` on branch `step3`
-- **Which source to trust now:** Trust current code in `/app` on branch `step3`
-- **Required action:** Future agents must treat the docs as baseline guidance, but validate all implementation facts against current code.
-- **Owner required:** No
-
-### CF-02
-- **Conflict ID:** CF-02
-- **Conflict summary:** Summary doc references a targeted refresh “pulled from `roomv3` into local `step2`,” which creates historical trace ambiguity for the approved baseline.
-- **Source A:** `/app/memory/final/FINAL_DOCS_SUMMARY.md` delta refresh note
-- **Source B:** Current approved baseline is the code currently present in `/app` on `step3`
-- **Which source to trust now:** Trust current code in `/app`; treat the summary note as historical context only
-- **Required action:** Do not rely on that note alone for traceability; verify relevant code paths directly.
-- **Owner required:** No
-
-### CF-03
-- **Conflict ID:** CF-03
-- **Conflict summary:** Future-agent reading order in existing final docs starts with architecture/module/playbook, but this baseline requires reading the approval document first.
+- **Conflict summary:** Future-agent reading order in some existing final docs starts with architecture/module/playbook, but this baseline requires reading the approval document first.
 - **Source A:** `/app/memory/final/CHANGE_REQUEST_PLAYBOOK.md`, `/app/memory/final/IMPLEMENTATION_AGENT_RULES.md`, `/app/memory/final/FINAL_DOCS_SUMMARY.md`
 - **Source B:** This approval baseline document
 - **Which source to trust now:** Trust this approval baseline document for mandatory reading order
 - **Required action:** All future agents must follow the reading order defined here.
 - **Owner required:** No
 
-### CF-04
-- **Conflict ID:** CF-04
+### CF-02
+- **Conflict ID:** CF-02
 - **Conflict summary:** Bug template contains references to final-doc locations such as `app/memory/ARCHITECTURE_DECISIONS_FINAL.md` in historical bug text, while the approved final docs are under `/app/memory/final/`.
 - **Source A:** Historical narrative content inside `/app/memory/BUG_TEMPLATE.md`
 - **Source B:** Actual approved final-doc paths under `/app/memory/final/`
@@ -217,11 +201,11 @@ Additional usage note:
 
 ### V3/docs review note
 - No direct `/app/v3/*` conflict was validated in this approval pass because the final-doc set explicitly excludes `/app/v3/*` as an allowed source for the final baseline.
-- Therefore, **V3/docs vs final-doc conflicts remain out of scope unless a future request explicitly asks for a V3 comparison**.
+- Archived `/app/archived/v3/*` materials are historical only and remain out of scope unless a future request explicitly asks for historical comparison.
 
 ### Code vs final-doc review note
 - No material code-vs-final-doc contradiction was found in the sampled architecture-critical references checked during this review.
-- The main issues found are baseline-label / traceability conflicts, not implementation-fact contradictions.
+- The remaining issues are governance/open-decision issues rather than baseline-label ambiguity.
 
 ---
 
@@ -235,7 +219,7 @@ Additional usage note:
 7. Must update docs if implementation changes architecture, module boundaries, or API behavior.
 8. Must use current code in `/app` as implementation truth if a document and code differ.
 9. Must explicitly check room, payment, print, socket, bootstrap, and localStorage effects when a change touches those surfaces.
-10. Must not treat sidebar labels, historical notes, or stale helper files as canonical implementation without code verification.
+10. Must not treat sidebar labels, historical notes, stale helper files, or archived materials as canonical implementation without code verification.
 
 ---
 

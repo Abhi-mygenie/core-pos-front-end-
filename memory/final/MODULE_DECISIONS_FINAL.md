@@ -1,7 +1,7 @@
 # MODULE_DECISIONS_FINAL
 
 ## Purpose
-This document defines the current module boundaries for the `step2` frontend using only:
+This document defines the current module boundaries for the `step3` frontend using only:
 - current code in `/app`
 - `/app/memory/current-state/*`
 - `/app/memory/analysis/*`
