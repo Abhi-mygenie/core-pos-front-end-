@@ -6,7 +6,7 @@
       "headers": {
         "sec-ch-ua-platform": "\"Linux\"",
         "authorization": "Bearer HyL1FQDdO917JZNMiIfuVcskk7GAPKf5785XkBzFUXp65vRM4zQFx56bH5HsY9VkrGj6lovnDnPuHGTNNdWNWW8zmlno7pcyLYPSI784uUh2kxdCSyZ1oUfX",
-        "referer": "https://req2-req3-req4-qa.preview.emergentagent.com/",
+        "referer": "https://pos-station-realtime.preview.emergentagent.com/",
         "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
         "sec-ch-ua-mobile": "?0",
         "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",

@@ -36,7 +36,7 @@ All values provided by user were written verbatim:
 
 | Key                                    | Value / Notes                                                      |
 |----------------------------------------|--------------------------------------------------------------------|
-| `REACT_APP_BACKEND_URL`                | `https://req2-req3-req4-qa.preview.emergentagent.com`            |
+| `REACT_APP_BACKEND_URL`                | `https://pos-station-realtime.preview.emergentagent.com`            |
 | `WDS_SOCKET_PORT`                      | `443`                                                              |
 | `ENABLE_HEALTH_CHECK`                  | `false`                                                            |
 | `REACT_APP_API_BASE_URL`               | `https://preprod.mygenie.online/`                                  |
@@ -77,7 +77,7 @@ No secrets are missing or truncated.
 | Webpack compile                                           | Compiled successfully (1 non-blocking ESLint warning in `src/pages/LoadingPage.jsx` line 101) |
 | `supervisorctl status frontend`                           | RUNNING                    |
 | `curl http://localhost:3000/`                             | HTTP 200                   |
-| `curl https://req2-req3-req4-qa.preview.emergentagent.com/` | HTTP 200               |
+| `curl https://pos-station-realtime.preview.emergentagent.com/` | HTTP 200               |
 | Browser screenshot                                        | Mygenie login page renders correctly with logo and form |
 
 ---
@@ -131,4 +131,4 @@ cd /app/frontend && yarn install && sudo supervisorctl restart frontend
 
 ## 10. Public URL
 
-🔗 **https://req2-req3-req4-qa.preview.emergentagent.com**
+🔗 **https://pos-station-realtime.preview.emergentagent.com**

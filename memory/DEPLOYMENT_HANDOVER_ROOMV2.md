@@ -18,7 +18,7 @@
 - Full ref: `refs/heads/roomv3` → `8708ee7ff82723f46f998c4ebd31896ede17bfce`
 
 ## 5. Preview URL
-- https://restaurant-pos-v2-1.preview.emergentagent.com
+- https://pos-station-realtime.preview.emergentagent.com
 
 ## 6. Stack Versions (locked, unchanged)
 - Node: **v20.20.2**
@@ -74,7 +74,7 @@ sudo supervisorctl start frontend
 sudo supervisorctl status frontend         # RUNNING
 tail -n 30 /var/log/supervisor/frontend.out.log   # Compiled successfully + webpack compiled successfully
 curl -sI http://localhost:3000 | head -5          # HTTP/1.1 200 OK
-curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com | head -5  # HTTP/2 200
+curl -sI https://pos-station-realtime.preview.emergentagent.com | head -5  # HTTP/2 200
 ```
 
 ## 8. Env File Status
@@ -95,7 +95,7 @@ frontend                         RUNNING   pid 619, uptime 0:01:07+
 | Check | Result |
 |---|---|
 | `curl -sI http://localhost:3000` | **HTTP/1.1 200 OK** |
-| `curl -sI https://restaurant-pos-v2-1.preview.emergentagent.com` | **HTTP/2 200** |
+| `curl -sI https://pos-station-realtime.preview.emergentagent.com` | **HTTP/2 200** |
 | Frontend supervisor status | **RUNNING** |
 | Compile state | **Compiled successfully / webpack compiled successfully** |
 | CRM JSON parse | **Valid** (15 tenant keys) |
@@ -158,4 +158,4 @@ All of the above are explicitly listed as non-blocking in the deployment spec an
 - **Re-validate CRM JSON**:
   `python3 -c "import json; [json.loads(l.split('=',1)[1].strip()) for l in open('/app/frontend/.env') if l.startswith('REACT_APP_CRM_API_KEYS=')]; print('ok')"`
 - **Logs**: `tail -n 50 /var/log/supervisor/frontend.out.log /var/log/supervisor/frontend.err.log`
-- **Preview**: https://restaurant-pos-v2-1.preview.emergentagent.com
+- **Preview**: https://pos-station-realtime.preview.emergentagent.com
