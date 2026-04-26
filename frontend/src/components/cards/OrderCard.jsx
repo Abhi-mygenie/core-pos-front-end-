@@ -45,6 +45,7 @@ const OrderCard = ({
   onFoodTransfer,
 }) => {
   const [showServed, setShowServed] = useState(false);
+  const [showCancelled, setShowCancelled] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
   const [isPrintingKot, setIsPrintingKot] = useState(false);
   const [isPrintingBill, setIsPrintingBill] = useState(false);
@@ -151,6 +152,10 @@ const OrderCard = ({
   // Items grouped by status (items already defined above)
   const activeItems = items.filter(i => i.status !== "served" && i.status !== "cancelled");
   const servedItems = items.filter(i => i.status === "served");
+  // BUG-025: surface cancelled items in their own dropdown so cashier/kitchen/waiter
+  // can see them without opening the order detail screen. Cancelled items are
+  // already excluded from order totals at the transform layer; this is purely visual.
+  const cancelledItems = items.filter(i => i.status === "cancelled");
 
   const isYetToConfirm = order.status === "yetToConfirm" || order.status === "pending";
 
@@ -543,6 +548,49 @@ const OrderCard = ({
                   <div className="min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2">
                     <Check className="w-5 h-5" style={{ color: COLORS.grayText }} strokeWidth={2.5} />
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── BUG-025: CANCELLED ITEMS COLLAPSED — separate dropdown, mirrors Served block ── */}
+      {cancelledItems.length > 0 && (
+        <div className="border-b" style={{ borderColor: COLORS.borderGray }}>
+          <button
+            data-testid={`cancelled-toggle-${orderId}`}
+            className="w-full px-3 min-h-[40px] flex items-center justify-between text-xs hover:bg-gray-50"
+            style={{ color: COLORS.grayText }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowCancelled(!showCancelled);
+            }}
+          >
+            <span>▼ Cancelled ({cancelledItems.length})</span>
+            {showCancelled ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {showCancelled && (
+            <div className="px-3 pb-2">
+              {cancelledItems.map((item) => (
+                <div key={item.id} className="flex items-center gap-2 py-1.5">
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: '#9CA3AF' }}
+                  />
+                  <span
+                    data-testid={`cancelled-item-${item.id}`}
+                    className="flex-1 text-xs line-through"
+                    style={{ color: '#9CA3AF' }}
+                  >
+                    {item.name} ({item.qty})
+                  </span>
+                  <span className="text-[10px] flex-shrink-0" style={{ color: '#9CA3AF' }}>
+                    (Cancelled)
+                  </span>
+                  {/* Spacer to align with Served block's checkmark column */}
+                  <div className="min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2" />
                 </div>
               ))}
             </div>
