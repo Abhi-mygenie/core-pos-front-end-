@@ -33,9 +33,9 @@
 
 export const BUG108_FLAGS = {
   couponLive: false,
-  loyaltyRatioLive: false,
-  loyaltyPreviewLive: true,   // Phase B: show real CRM loyalty data (read-only preview)
-  loyaltyRedeemLive: false,   // Phase C C-FE-1: kill-switched. Flip to `true` on preprod after C-FE-2 lands.
+  loyaltyRatioLive: true,     // C-FE-2 LIVE WIRING (2026-05-23): preview→commit gate enabled
+  loyaltyPreviewLive: true,
+  loyaltyRedeemLive: true,    // C-FE-2 LIVE WIRING (2026-05-23): redeem service call enabled
   walletDebitLive: false,
 };
 

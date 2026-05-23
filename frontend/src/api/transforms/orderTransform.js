@@ -1353,9 +1353,17 @@ export const toAPI = {
       discount_member_category_id:  0,
       discount_member_category_name: '',
       // Loyalty & Wallet — BUG-108 P1 force-zero per flag.
-      // C-FE-1 (2026-05-23): defense-in-depth — also require `loyaltyRedeemLive`.
-      // At kill-switch off this stays 0 regardless of `loyaltyRatioLive`.
-      used_loyalty_point:           (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive) ? (discounts.loyaltyPoints || 0) : 0,
+      // C-FE-2 (2026-05-23): when both flags are on AND a committed
+      // redemption exists, send the server-returned CAPPED `points_redeemed`
+      // (preferred) + the new `loyalty_redemption_id` for future reverse.
+      // Falls back to `discounts.loyaltyPoints` (rupee value, legacy) when
+      // the capped int is absent (e.g. P1 mock paths).
+      used_loyalty_point:           (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive)
+                                      ? (discounts.loyaltyPointsRedeemed ?? discounts.loyaltyPoints ?? 0)
+                                      : 0,
+      loyalty_redemption_id:        (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive)
+                                      ? (discounts.loyaltyRedemptionId || null)
+                                      : null,
       use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
       // Room & Misc
       paid_room:                    '',

@@ -252,6 +252,15 @@ const CollectPaymentPanel = ({
 
   // Rewards state
   const [useLoyalty, setUseLoyalty] = useState(false);
+  // BUG-108 Phase C C-FE-2: live redemption state.
+  // `redemption` is set on a successful POST /pos/loyalty/redeem (mapped via
+  // fromAPI.redeemSuccess in loyaltyTransform). Once set, the loyalty section
+  // is locked — there is NO reverse endpoint in this phase, so the cashier
+  // cannot untick. `redeemState` drives UI affordances; `redeemError` carries
+  // user-facing copy when a business failure or transport error occurs.
+  const [redemption, setRedemption] = useState(null);
+  const [redeemState, setRedeemState] = useState(LOYALTY_REDEEM_STATES.IDLE);
+  const [redeemError, setRedeemError] = useState(null);
   const [useWallet, setUseWallet] = useState(false);
   const [walletAmount, setWalletAmount] = useState(customer?.walletBalance || 0);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
@@ -504,16 +513,22 @@ const CollectPaymentPanel = ({
     ? Math.round((itemTotal * parseFloat(discountValue || 0))) / 100
     : parseFloat(discountValue || 0);
   
-  // BUG-108 Phase B / Phase C C-FE-1 (2026-05-23):
+  // BUG-108 Phase B / Phase C C-FE-2 (2026-05-23):
   // Legacy `customer?.loyaltyPoints` (singular, rupee value) is no longer
   // populated by `customerTransform.js`. Read from the Phase B contract:
   // `customer.loyalty.points_value` (rupees) with `customer.pointsValue` as
-  // a flat-shape fallback. Behavior at flag-off is byte-identical (the gate
-  // already force-zeros via `loyaltyRatioLive=false`).
+  // a flat-shape fallback.
+  //
+  // C-FE-2 (live wiring): when the server returns a committed redemption
+  // (`redemption.redeemedValue`), use that authoritative value. Until commit,
+  // we show the cashier a PREVIEW computed from LX-A tier ratio. The preview
+  // never goes into the payload — only the server-returned value does (gated
+  // below in the payload section).
   const customerPointsValue = customer?.loyalty?.points_value ?? customer?.pointsValue ?? 0;
-  const loyaltyDiscount = (BUG108_FLAGS.loyaltyRatioLive && useLoyalty && customerPointsValue > 0)
+  const previewLoyaltyDiscount = (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive && useLoyalty && customerPointsValue > 0)
     ? Math.min(customerPointsValue, itemTotal - manualDiscount)
     : 0;
+  const loyaltyDiscount = redemption?.redeemedValue ?? previewLoyaltyDiscount;
   
   const couponDiscount = (BUG108_FLAGS.couponLive && selectedCoupon)
     ? selectedCoupon.type === "percent"
@@ -669,8 +684,14 @@ const CollectPaymentPanel = ({
   };
 
   // handlePayment — CHG-038: Collect Payment API
-  // TODO: Wire to API when Flow B (collect payment on existing order) endpoint is provided
-  const handlePayment = () => {
+  // BUG-108 Phase C C-FE-2 (2026-05-23): now ASYNC. If the cashier has ticked
+  // the Loyalty checkbox and no `redemption` is yet committed for this order,
+  // fire `POST /pos/loyalty/redeem` BEFORE building the payload (A-resolved
+  // sequence per Phase C plan §10). On success we use the server-returned
+  // `redeemed_value` + `transaction_id`; on business failure we surface the
+  // inline error, reset `useLoyalty`, and abort the Pay click so the cashier
+  // can retry or pay without loyalty.
+  const handlePayment = async () => {
     // BUG-CASH-UNDERPAY (Apr-2026): hard guard — cash received cannot be less
     // than the full payable. UI Pay button is already disabled in this state
     // (see disabled-clause at the bottom of this component); this is a
@@ -685,6 +706,128 @@ const CollectPaymentPanel = ({
         return;
       }
     }
+
+    // BUG-108 Phase C C-FE-2: redeem-on-confirm.
+    // We commit the redeem ONLY if: (a) the cashier ticked the box,
+    // (b) no redemption is already committed, (c) the customer has positive
+    // points, and (d) both flags are on. Server auto-caps; we send the
+    // desired points count and trust the server's response.
+    let committedRedemption = redemption;
+    if (
+      BUG108_FLAGS.loyaltyRatioLive
+      && BUG108_FLAGS.loyaltyRedeemLive
+      && useLoyalty
+      && !committedRedemption
+      && customer?.id
+      && customerPointsValue > 0
+    ) {
+      const ratio = Number(customer?.loyalty?.ratio_per_point) || 0.25;
+      const eligibleRupees = Math.max(0, itemTotal - manualDiscount - presetDiscount);
+      const desiredRupees = Math.min(customerPointsValue, eligibleRupees);
+      const customerTotalPoints = Number(customer?.loyalty?.total_points || customer?.totalPoints || 0);
+      const computedPoints = Math.floor(desiredRupees / ratio);
+      const pointsToRedeem = Math.max(1, Math.min(customerTotalPoints, computedPoints));
+      const orderIdForRedeem = String(
+        orderFinancials?.orderId
+        || effectiveTable?.orderId
+        || `pos_${restaurant?.id || 'r'}_${Date.now()}`
+      );
+      const idempotencyKey = buildRedeemIdempotencyKey({
+        restaurantId: restaurant?.id,
+        orderId: orderIdForRedeem,
+        points: pointsToRedeem,
+      });
+
+      setRedeemState(LOYALTY_REDEEM_STATES.APPLYING);
+      setRedeemError(null);
+      try {
+        const result = await redeemLoyalty({
+          customerId: customer.id,
+          pointsToRedeem,
+          orderId: orderIdForRedeem,
+          orderTotal: subtotal,            // pre-tax, pre-loyalty bill amount
+          idempotencyKey,
+        });
+        if (!result.ok) {
+          setRedeemError({ code: result.error.code, copy: result.copy });
+          setRedeemState(LOYALTY_REDEEM_STATES.ERROR);
+          setUseLoyalty(false);
+          return; // abort Pay — cashier sees inline error
+        }
+        committedRedemption = { ...result.data, orderId: orderIdForRedeem, idempotencyKey };
+        setRedemption(committedRedemption);
+        setRedeemState(LOYALTY_REDEEM_STATES.APPLIED);
+
+        // Persist orphan trail to localStorage immediately AFTER redeem
+        // succeeds. If the downstream order/payment commit fails (network,
+        // backend error), the admin can locate the redemption via this
+        // record for manual recovery (owner Q4=A). The record is removed
+        // when the cashier explicitly dismisses (future C-FE-3) — for now
+        // we just append.
+        try {
+          const lsKey = LOYALTY_LS_KEYS.ORPHAN_DEBITS;
+          const existing = JSON.parse(window.localStorage.getItem(lsKey) || '[]');
+          existing.push({
+            transactionId:  committedRedemption.transactionId,
+            orderId:        orderIdForRedeem,
+            customerId:     customer.id,
+            customerName:   customer.name,
+            pointsRedeemed: committedRedemption.pointsRedeemed,
+            redeemedValue:  committedRedemption.redeemedValue,
+            idempotencyKey,
+            stagedAt:       new Date().toISOString(),
+            // `paymentCommitted` flips true in onPaymentComplete; if it
+            // stays false past a refresh, it's an orphan candidate.
+            paymentCommitted: false,
+          });
+          window.localStorage.setItem(lsKey, JSON.stringify(existing));
+        } catch (_e) { /* localStorage may be unavailable; ignore */ }
+      } catch (err) {
+        // Network / 5xx / 401 / 422.  Per the contract, retryable=true means
+        // the caller MAY retry with the SAME key. We try once more for the
+        // cashier's convenience; persistent failure surfaces the error.
+        const retryable = err?.retryable === true;
+        if (retryable) {
+          try {
+            const result = await redeemLoyalty({
+              customerId: customer.id,
+              pointsToRedeem,
+              orderId: orderIdForRedeem,
+              orderTotal: subtotal,
+              idempotencyKey,
+            });
+            if (result.ok) {
+              committedRedemption = { ...result.data, orderId: orderIdForRedeem, idempotencyKey };
+              setRedemption(committedRedemption);
+              setRedeemState(LOYALTY_REDEEM_STATES.APPLIED);
+            } else {
+              setRedeemError({ code: result.error.code, copy: result.copy });
+              setRedeemState(LOYALTY_REDEEM_STATES.ERROR);
+              setUseLoyalty(false);
+              return;
+            }
+          } catch (err2) {
+            setRedeemError({ code: err2?.type || 'NETWORK_ERROR', copy: 'Network error. Please retry or pay without loyalty.' });
+            setRedeemState(LOYALTY_REDEEM_STATES.ERROR);
+            setUseLoyalty(false);
+            return;
+          }
+        } else {
+          setRedeemError({ code: err?.type || 'UNKNOWN_ERROR', copy: err?.message || 'Redemption failed.' });
+          setRedeemState(LOYALTY_REDEEM_STATES.ERROR);
+          setUseLoyalty(false);
+          return;
+        }
+      }
+    }
+
+    // Recompute final loyalty fields using the (possibly fresh) server-
+    // authoritative redemption result. This shadows the stateful
+    // `loyaltyDiscount` for THIS Pay click, ensuring the payload uses real
+    // server values even though React state has not re-rendered yet.
+    const finalLoyaltyDiscount = committedRedemption?.redeemedValue ?? loyaltyDiscount;
+    const finalLoyaltyPoints   = committedRedemption?.pointsRedeemed ?? 0;
+    const finalRedemptionId    = committedRedemption?.transactionId ?? null;
 
     // ROOM_CHECKIN_GAP3 (Stage 2): grand total payable to backend now includes
     // the room outstanding balance (`roomBalance`) for room orders. Backend
@@ -724,7 +867,13 @@ const CollectPaymentPanel = ({
         couponType:           selectedCoupon?.type || '',
         discountType:         discountType || '',
         orderDiscountType:    discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : '',
-        loyaltyPoints:        loyaltyDiscount,
+        loyaltyPoints:        finalLoyaltyDiscount,
+        // BUG-108 Phase C C-FE-2: pass server-returned identifiers through
+        // the existing payload route. `loyaltyPointsRedeemed` carries the
+        // CAPPED int (auto-cap may have reduced it); `loyaltyRedemptionId`
+        // is the PT row id from CRM — POS persists for future manual reverse.
+        loyaltyPointsRedeemed: finalLoyaltyPoints,
+        loyaltyRedemptionId:   finalRedemptionId,
         walletBalance:        walletDiscount,
       },
       customer,
@@ -756,6 +905,25 @@ const CollectPaymentPanel = ({
     }
 
     onPaymentComplete(paymentData);
+
+    // BUG-108 Phase C C-FE-2: mark the orphan-trail record as
+    // payment-dispatched. The downstream save is fire-and-forget from this
+    // panel's perspective; if the parent's commit truly fails, the record
+    // stays at `paymentCommitted: true` but the cashier will see the
+    // error toast / order-not-saved indicator on the parent screen and
+    // can use the persisted `transactionId` for manual recovery.
+    if (finalRedemptionId) {
+      try {
+        const lsKey = LOYALTY_LS_KEYS.ORPHAN_DEBITS;
+        const existing = JSON.parse(window.localStorage.getItem(lsKey) || '[]');
+        const updated = existing.map(rec =>
+          rec.transactionId === finalRedemptionId
+            ? { ...rec, paymentCommitted: true, paymentDispatchedAt: new Date().toISOString() }
+            : rec
+        );
+        window.localStorage.setItem(lsKey, JSON.stringify(updated));
+      } catch (_e) { /* ignore */ }
+    }
   };
 
   // BUG-277 + BUG-006: Manual "Print Bill" — sends current CollectPaymentPanel values
@@ -1058,7 +1226,7 @@ const CollectPaymentPanel = ({
                   type="checkbox"
                   checked={useLoyalty}
                   onChange={(e) => setUseLoyalty(e.target.checked)}
-                  disabled={!BUG108_FLAGS.loyaltyRatioLive || !displayPoints}
+                  disabled={!BUG108_FLAGS.loyaltyRatioLive || !BUG108_FLAGS.loyaltyRedeemLive || !displayPoints || redeemState === LOYALTY_REDEEM_STATES.APPLYING || redeemState === LOYALTY_REDEEM_STATES.APPLIED}
                   className="w-4 h-4 accent-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   data-testid="use-loyalty-checkbox"
                 />
@@ -1074,11 +1242,24 @@ const CollectPaymentPanel = ({
             </label>
             {hasLoyaltyData ? (
               <div className="text-xs mt-1 ml-6 italic" style={{ color: COLORS.grayText }} data-testid="loyalty-helper-text">
-                {BUG108_COPY.loyaltyPreviewHelper}
+                {/* BUG-108 Phase C C-FE-2: drive helper copy off the state machine. */}
+                {redeemState === LOYALTY_REDEEM_STATES.APPLIED && redemption
+                  ? `✓ Redeemed ${redemption.pointsRedeemed} pts → ₹${redemption.redeemedValue} (txn: ${String(redemption.transactionId).slice(0, 8)})`
+                  : redeemState === LOYALTY_REDEEM_STATES.APPLYING
+                    ? BUG108_COPY.loyaltyRedeemApplyingHelper
+                    : useLoyalty
+                      ? BUG108_COPY.loyaltyRedeemArmedHelper
+                      : 'Tick to redeem points on Pay.'}
               </div>
             ) : (
               <div className="text-xs mt-1 ml-6 italic" style={{ color: COLORS.grayText }} data-testid="loyalty-helper-text">
                 {BUG108_COPY.loyaltyDisabledHelper}
+              </div>
+            )}
+            {/* BUG-108 Phase C C-FE-2: inline error band */}
+            {redeemError && (
+              <div className="text-xs mt-1 ml-6" style={{ color: '#D32F2F' }} data-testid="loyalty-error-text">
+                {redeemError.copy} <span style={{ opacity: 0.7 }}>({redeemError.code})</span>
               </div>
             )}
           </div>
