@@ -1,0 +1,90 @@
+// CRM Axios instance — all customer/address/loyalty calls go through this
+// Auth: X-API-Key header (token from login API response)
+// Base URL: REACT_APP_CRM_BASE_URL from .env
+// BUG-098: CRM token sourced from login response `crm_token` field.
+//          Env-based REACT_APP_CRM_API_KEYS mapping removed per owner directive.
+
+import axios from 'axios';
+
+const CRM_BASE_URL = process.env.REACT_APP_CRM_BASE_URL;
+
+if (!CRM_BASE_URL) {
+  console.warn('[CRM Config] REACT_APP_CRM_BASE_URL is not set. CRM features will not work.');
+}
+
+// BUG-098: Single CRM token from login response (replaces per-restaurant env map)
+let currentCrmToken = null;
+let currentRestaurantId = null;
+
+/**
+ * Set the CRM API token from the login response
+ * Called once from authService.login() after successful authentication
+ */
+export const setCrmToken = (token) => {
+  currentCrmToken = token || null;
+  console.log(`[CRM Config] Token ${currentCrmToken ? 'set from login response' : 'NOT FOUND in login response'}`);
+};
+
+/**
+ * Clear the CRM token (called on logout)
+ */
+export const clearCrmToken = () => {
+  currentCrmToken = null;
+  currentRestaurantId = null;
+};
+
+/**
+ * Set the active restaurant ID for CRM context/logging
+ * Called once after profile load from LoadingPage
+ */
+export const setCrmRestaurantId = (restaurantId) => {
+  currentRestaurantId = String(restaurantId);
+  console.log(`[CRM Config] Restaurant ${currentRestaurantId} — Token ${currentCrmToken ? 'available' : 'NOT SET'}`);
+};
+
+/**
+ * Get the CRM API key (now returns the login-provided token)
+ */
+export const getCrmApiKey = () => {
+  return currentCrmToken;
+};
+
+const crmApi = axios.create({
+  baseURL: CRM_BASE_URL || '',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  timeout: 15000,
+});
+
+// Request interceptor — attach X-API-Key from login token
+crmApi.interceptors.request.use(
+  (config) => {
+    const apiKey = getCrmApiKey();
+    if (apiKey) {
+      config.headers['X-API-Key'] = apiKey;
+    } else {
+      console.warn('[CRM] No API key — crm_token missing from login response. Restaurant:', currentRestaurantId);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor — extract readable error
+crmApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.detail ||
+      error.message ||
+      'CRM request failed';
+
+    error.readableMessage = errorMessage;
+    return Promise.reject(error);
+  }
+);
+
+export default crmApi;
