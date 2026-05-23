@@ -1353,7 +1353,9 @@ export const toAPI = {
       discount_member_category_id:  0,
       discount_member_category_name: '',
       // Loyalty & Wallet — BUG-108 P1 force-zero per flag.
-      used_loyalty_point:           BUG108_FLAGS.loyaltyRatioLive ? (discounts.loyaltyPoints || 0) : 0,
+      // C-FE-1 (2026-05-23): defense-in-depth — also require `loyaltyRedeemLive`.
+      // At kill-switch off this stays 0 regardless of `loyaltyRatioLive`.
+      used_loyalty_point:           (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive) ? (discounts.loyaltyPoints || 0) : 0,
       use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
       // Room & Misc
       paid_room:                    '',
@@ -1765,7 +1767,7 @@ export const toAPI = {
       // when their CRM endpoints are not yet live. UI keeps these sections
       // disabled; this prevents any stale override value from printing on the bill.
       coupon_code: BUG108_FLAGS.couponLive ? (overrides.couponCode !== undefined ? overrides.couponCode : '') : '',
-      loyalty_dicount_amount: BUG108_FLAGS.loyaltyRatioLive ? (overrides.loyaltyAmount !== undefined ? overrides.loyaltyAmount : 0) : 0,
+      loyalty_dicount_amount: (BUG108_FLAGS.loyaltyRatioLive && BUG108_FLAGS.loyaltyRedeemLive) ? (overrides.loyaltyAmount !== undefined ? overrides.loyaltyAmount : 0) : 0,
       wallet_used_amount: BUG108_FLAGS.walletDebitLive ? (overrides.walletAmount !== undefined ? overrides.walletAmount : 0) : 0,
       Date: formatBillDate(order.createdAt),
       waiterName: order.waiter || '',

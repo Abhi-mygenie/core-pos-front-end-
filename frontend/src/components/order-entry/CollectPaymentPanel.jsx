@@ -504,8 +504,15 @@ const CollectPaymentPanel = ({
     ? Math.round((itemTotal * parseFloat(discountValue || 0))) / 100
     : parseFloat(discountValue || 0);
   
-  const loyaltyDiscount = (BUG108_FLAGS.loyaltyRatioLive && useLoyalty && customer?.loyaltyPoints)
-    ? Math.min(customer.loyaltyPoints, itemTotal - manualDiscount) 
+  // BUG-108 Phase B / Phase C C-FE-1 (2026-05-23):
+  // Legacy `customer?.loyaltyPoints` (singular, rupee value) is no longer
+  // populated by `customerTransform.js`. Read from the Phase B contract:
+  // `customer.loyalty.points_value` (rupees) with `customer.pointsValue` as
+  // a flat-shape fallback. Behavior at flag-off is byte-identical (the gate
+  // already force-zeros via `loyaltyRatioLive=false`).
+  const customerPointsValue = customer?.loyalty?.points_value ?? customer?.pointsValue ?? 0;
+  const loyaltyDiscount = (BUG108_FLAGS.loyaltyRatioLive && useLoyalty && customerPointsValue > 0)
+    ? Math.min(customerPointsValue, itemTotal - manualDiscount)
     : 0;
   
   const couponDiscount = (BUG108_FLAGS.couponLive && selectedCoupon)
@@ -1792,7 +1799,7 @@ const CollectPaymentPanel = ({
                   <div className="flex justify-between items-center">
                     <span className="flex items-center gap-1" style={{ color: COLORS.darkText }}>
                       <Check className="w-3 h-3" style={{ color: COLORS.primaryGreen }} />
-                      Loyalty Points ({customer?.loyaltyPoints} pts)
+                      Loyalty Points ({customer?.loyalty?.total_points ?? customer?.totalPoints ?? 0} pts)
                     </span>
                     <span style={{ color: COLORS.primaryGreen }}>-₹{loyaltyDiscount.toLocaleString()}</span>
                   </div>

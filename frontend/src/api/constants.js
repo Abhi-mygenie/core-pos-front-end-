@@ -43,6 +43,9 @@ export const API_ENDPOINTS = {
   CUSTOMER_UPDATE:   '/pos/customers',                                        // CRM: PUT /pos/customers/{id}
   ADDRESS_LOOKUP:    '/pos/address-lookup',                                   // CRM: POST /pos/address-lookup
   CUSTOMER_ADDRESSES: '/pos/customers',                                       // CRM: /pos/customers/{id}/addresses
+  // BUG-108 Phase C (CR-001C-LR, 2026-05-23) — loyalty redemption at billing.
+  // Live in CRM preview; POS calls gated by `BUG108_FLAGS.loyaltyRedeemLive`.
+  LOYALTY_REDEEM:    '/pos/loyalty/redeem',                                   // CRM: POST /pos/loyalty/redeem
   PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // CR-POS2-003-REOPEN-B (May-2026): reverted v1 → v2 per owner directive 2026-05-09. v2 confirmed deployed (HTTP 405 for GET, identical Laravel route shape as v1). Multipart shape unchanged. New order (unpaid + prepaid via payment_status=paid)
   PREPAID_ORDER:     '/api/v2/vendoremployee/order/paid-prepaid-order',    // Mark existing order as paid (JSON: {order_id, payment_status})
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)

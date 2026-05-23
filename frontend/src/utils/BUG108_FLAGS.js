@@ -9,6 +9,7 @@
 // is verified live:
 //   - couponLive       → `GET /pos/coupons/available` + `POST /pos/coupons/validate`
 //   - loyaltyRatioLive → per-tier ratio from `customer.loyalty.ratio_per_point`
+//   - loyaltyRedeemLive→ `POST /pos/loyalty/redeem` (CR-001C-LR, Phase C redeem-only)
 //   - walletDebitLive  → separate Wallet CR (out of BUG-108 scope)
 //
 // Owner-locked decisions (see FINAL_OWNER_APPROVALS doc):
@@ -16,11 +17,25 @@
 //   Q5=B  — Loyalty input disabled with helper text
 //   Q6=B  — Wallet input disabled with helper text
 //   Q7=B  — CRM-unavailable banner copy: "loyalty program unavailable"
+//
+// Phase C Redeem-Only (CR-001C-LR) owner-locked answers:
+//   Q1=A — Redeem after payment success / on cashier confirm (A-resolved)
+//   Q2=A — Apply max available capped amount (server auto-caps)
+//   Q3=C — Pre-tax slot, follow current POS discount convention
+//   Q4=A — On orphan (redeem succeeds but payment/order fails), surface
+//          persistent manual-recovery warning with `transaction_id`
+//   Q5=A — Production release not approved until preprod QA + owner smoke
+//
+// C-FE-1 (kill-switched wiring): `loyaltyRedeemLive=false` means
+//   * `loyaltyService.redeemLoyalty()` throws `LOYALTY_REDEEM_DISABLED`
+//   * `orderTransform.js` payload fields stay force-zeroed
+//   * Redeem UI state machine remains at `idle`; no API call possible
 
 export const BUG108_FLAGS = {
   couponLive: false,
   loyaltyRatioLive: false,
   loyaltyPreviewLive: true,   // Phase B: show real CRM loyalty data (read-only preview)
+  loyaltyRedeemLive: false,   // Phase C C-FE-1: kill-switched. Flip to `true` on preprod after C-FE-2 lands.
   walletDebitLive: false,
 };
 
@@ -33,4 +48,11 @@ export const BUG108_COPY = {
   loyaltyPreviewHelper:       'Redemption will be enabled in a future update.',
   walletDisabledHelper:       'Wallet payments will be available after the next update.',
   crmUnavailableBanner:       'loyalty program unavailable',
+  // Phase C Redeem-Only — cashier-facing copy (used once `loyaltyRedeemLive=true`).
+  loyaltyRedeemArmedHelper:   'Loyalty discount will apply when you confirm payment.',
+  loyaltyRedeemApplyingHelper:'Redeeming loyalty points…',
+  loyaltyRedeemAppliedHelper: 'Loyalty discount applied.',
+  loyaltyRedeemCappedHelper:  'Capped to maximum allowed.',
+  loyaltyRedeemRetryHelper:   'Redemption failed. Please retry or pay without loyalty.',
+  loyaltyRedeemOrphanWarning: 'Loyalty was redeemed but the order did not complete. Admin must reconcile manually. Reference: ',
 };
