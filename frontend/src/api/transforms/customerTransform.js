@@ -51,6 +51,17 @@ export const fromAPI = {
     favorites:     api.favorites || [],
     lastVisit:     api.last_visit || null,
     addresses:     (api.addresses || []).map(fromAPI.address),
+    // BUG-108 Phase B: loyalty blob not returned by customer-lookup (flat fields only).
+    // Build a synthetic loyalty object from the flat fields so CollectPaymentPanel
+    // has a uniform shape regardless of which endpoint populated the customer.
+    loyalty: {
+      tier:             api.tier || 'Bronze',
+      tier_label:       `${api.tier || 'Bronze'} Member`,
+      total_points:     api.total_points || 0,
+      ratio_per_point:  (api.total_points && api.points_value) ? Math.round((api.points_value / api.total_points) * 100) / 100 : 0,
+      points_value:     api.points_value || 0,
+      loyalty_enabled:  true,  // lookup endpoint doesn't carry this; default true (settings gate handles visibility)
+    },
   }),
 
   /**
@@ -72,7 +83,10 @@ export const fromAPI = {
     dob:           api.dob || null,
     anniversary:   api.anniversary || null,
     addresses:     (api.addresses || []).map(fromAPI.address),
+    // BUG-108 Phase B: pass through the strict 6-key loyalty blob from CRM LX-A.
     loyalty:       api.loyalty || null,
+    // Convenience: extract loyalty_enabled for UI gating
+    loyaltyEnabled: api.loyalty?.loyalty_enabled ?? null,
     recentOrders:  api.recent_orders || [],
   }),
 

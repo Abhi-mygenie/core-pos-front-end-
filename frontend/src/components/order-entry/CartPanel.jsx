@@ -768,7 +768,8 @@ const CartPanel = ({
     setShowPhoneSuggestions(false);
     setShowNameSuggestions(false);
     setIsCustomerSelected(true);
-    onCustomerChange?.({ id: c.id, name: c.name, phone: c.phone });
+    // BUG-108 Phase B: pass CRM loyalty/wallet data so CollectPaymentPanel can display preview
+    onCustomerChange?.({ id: c.id, name: c.name, phone: c.phone, tier: c.tier, totalPoints: c.totalPoints, pointsValue: c.pointsValue, walletBalance: c.walletBalance, loyalty: c.loyalty });
   };
 
   // Handle name change - if customer was selected and name is cleared, clear phone too

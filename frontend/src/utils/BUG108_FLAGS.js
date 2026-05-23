@@ -20,6 +20,7 @@
 export const BUG108_FLAGS = {
   couponLive: false,
   loyaltyRatioLive: false,
+  loyaltyPreviewLive: true,   // Phase B: show real CRM loyalty data (read-only preview)
   walletDebitLive: false,
 };
 
@@ -29,6 +30,7 @@ export const BUG108_COPY = {
   couponBlockedByDiscount:    'Remove the manual discount to apply a coupon.',
   discountBlockedByCoupon:    'Remove the coupon to apply a manual discount.',
   loyaltyDisabledHelper:      'Loyalty program unavailable',
+  loyaltyPreviewHelper:       'Redemption will be enabled in a future update.',
   walletDisabledHelper:       'Wallet payments will be available after the next update.',
   crmUnavailableBanner:       'loyalty program unavailable',
 };

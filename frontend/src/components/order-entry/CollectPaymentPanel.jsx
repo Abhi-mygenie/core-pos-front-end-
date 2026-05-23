@@ -1028,12 +1028,21 @@ const CollectPaymentPanel = ({
         })()}
 
         {/* 3. Loyalty Section - Only if customer selected and loyalty enabled in profile */}
-        {/* BUG-108 P1: Visible read-only when `loyaltyRatioLive=false`. Helper
-            text "Loyalty program unavailable". */}
+        {/* BUG-108 Phase B: Show real CRM loyalty data as read-only preview when
+            `loyaltyPreviewLive=true`. Checkbox stays disabled (loyaltyRatioLive=false).
+            Redemption is display-only — does NOT affect totals or payload. */}
         {customer && restaurantSettings?.isLoyalty && (
+          (() => {
+            const loyaltyBlob = customer?.loyalty;
+            const hasLoyaltyData = BUG108_FLAGS.loyaltyPreviewLive && loyaltyBlob && loyaltyBlob.loyalty_enabled !== false;
+            const displayPoints = loyaltyBlob?.total_points || customer?.totalPoints || 0;
+            const displayValue = loyaltyBlob?.points_value || customer?.pointsValue || 0;
+            const displayTier = loyaltyBlob?.tier || customer?.tier || '';
+            const previewAmount = Math.min(displayValue, itemTotal - manualDiscount - presetDiscount);
+            return (
           <div
             className="p-3 rounded-lg border"
-            style={{ borderColor: COLORS.borderGray, opacity: BUG108_FLAGS.loyaltyRatioLive ? 1 : 0.7 }}
+            style={{ borderColor: COLORS.borderGray, opacity: hasLoyaltyData ? 0.85 : 0.7 }}
             data-testid="loyalty-section"
           >
             <label className="flex items-center justify-between cursor-pointer">
@@ -1042,23 +1051,32 @@ const CollectPaymentPanel = ({
                   type="checkbox"
                   checked={useLoyalty}
                   onChange={(e) => setUseLoyalty(e.target.checked)}
-                  disabled={!BUG108_FLAGS.loyaltyRatioLive || !customer?.loyaltyPoints}
+                  disabled={!BUG108_FLAGS.loyaltyRatioLive || !displayPoints}
                   className="w-4 h-4 accent-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   data-testid="use-loyalty-checkbox"
                 />
-                <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>⭐ Loyalty</span>
-                <span className="text-xs" style={{ color: COLORS.grayText }}>({customer?.loyaltyPoints || 0} pts)</span>
+                <span className="text-sm font-medium" style={{ color: COLORS.darkText }}>Loyalty</span>
+                {hasLoyaltyData && displayTier && (
+                  <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f0f0f0', color: COLORS.grayText }}>{displayTier}</span>
+                )}
+                <span className="text-xs" style={{ color: COLORS.grayText }}>({displayPoints} pts)</span>
               </div>
-              <span className="text-sm font-medium" style={{ color: useLoyalty && loyaltyDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
-                {useLoyalty && loyaltyDiscount > 0 ? `-₹${loyaltyDiscount}` : customer?.loyaltyPoints > 0 ? `₹${customer.loyaltyPoints} available` : "No points"}
+              <span className="text-sm font-medium" style={{ color: hasLoyaltyData && displayValue > 0 ? COLORS.primaryGreen : COLORS.grayText }} data-testid="loyalty-preview-value">
+                {hasLoyaltyData && displayValue > 0 ? `₹${previewAmount > 0 ? previewAmount : displayValue} available` : "No points"}
               </span>
             </label>
-            {!BUG108_FLAGS.loyaltyRatioLive && (
+            {hasLoyaltyData ? (
+              <div className="text-xs mt-1 ml-6 italic" style={{ color: COLORS.grayText }} data-testid="loyalty-helper-text">
+                {BUG108_COPY.loyaltyPreviewHelper}
+              </div>
+            ) : (
               <div className="text-xs mt-1 ml-6 italic" style={{ color: COLORS.grayText }} data-testid="loyalty-helper-text">
                 {BUG108_COPY.loyaltyDisabledHelper}
               </div>
             )}
           </div>
+            );
+          })()
         )}
 
         {/* 4. Wallet Section - Only if customer selected and wallet enabled in profile */}
@@ -1525,25 +1543,42 @@ const CollectPaymentPanel = ({
                     })()}
 
                     {/* Loyalty */}
-                    {/* BUG-108 P1: Inline-mirror parity — disabled until per-tier ratio is live. */}
+                    {/* BUG-108 Phase B: Inline-mirror parity — read-only preview with real CRM data. */}
                     {customer && restaurantSettings?.isLoyalty && (
-                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray, opacity: BUG108_FLAGS.loyaltyRatioLive ? 1 : 0.7 }}>
+                    (() => {
+                      const loyaltyBlobInline = customer?.loyalty;
+                      const hasLoyaltyDataInline = BUG108_FLAGS.loyaltyPreviewLive && loyaltyBlobInline && loyaltyBlobInline.loyalty_enabled !== false;
+                      const displayPointsInline = loyaltyBlobInline?.total_points || customer?.totalPoints || 0;
+                      const displayValueInline = loyaltyBlobInline?.points_value || customer?.pointsValue || 0;
+                      const displayTierInline = loyaltyBlobInline?.tier || customer?.tier || '';
+                      const previewAmountInline = Math.min(displayValueInline, itemTotal - manualDiscount - presetDiscount);
+                      return (
+                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray, opacity: hasLoyaltyDataInline ? 0.85 : 0.7 }}>
                       <label className="flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-1.5">
-                          <input type="checkbox" checked={useLoyalty} onChange={(e) => setUseLoyalty(e.target.checked)} disabled={!BUG108_FLAGS.loyaltyRatioLive || !customer?.loyaltyPoints} className="w-3.5 h-3.5 accent-green-600 disabled:opacity-50 disabled:cursor-not-allowed" />
-                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>⭐ Loyalty</span>
-                          <span className="text-xs" style={{ color: COLORS.grayText }}>({customer?.loyaltyPoints || 0} pts)</span>
+                          <input type="checkbox" checked={useLoyalty} onChange={(e) => setUseLoyalty(e.target.checked)} disabled={!BUG108_FLAGS.loyaltyRatioLive || !displayPointsInline} className="w-3.5 h-3.5 accent-green-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+                          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>Loyalty</span>
+                          {hasLoyaltyDataInline && displayTierInline && (
+                            <span className="text-xs px-1 py-0.5 rounded" style={{ backgroundColor: '#f0f0f0', color: COLORS.grayText }}>{displayTierInline}</span>
+                          )}
+                          <span className="text-xs" style={{ color: COLORS.grayText }}>({displayPointsInline} pts)</span>
                         </div>
-                        <span className="text-xs font-medium" style={{ color: useLoyalty && loyaltyDiscount > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
-                          {useLoyalty && loyaltyDiscount > 0 ? `-₹${loyaltyDiscount}` : customer?.loyaltyPoints > 0 ? `₹${customer.loyaltyPoints} available` : "No points"}
+                        <span className="text-xs font-medium" style={{ color: hasLoyaltyDataInline && displayValueInline > 0 ? COLORS.primaryGreen : COLORS.grayText }}>
+                          {hasLoyaltyDataInline && displayValueInline > 0 ? `₹${previewAmountInline > 0 ? previewAmountInline : displayValueInline} available` : "No points"}
                         </span>
                       </label>
-                      {!BUG108_FLAGS.loyaltyRatioLive && (
+                      {hasLoyaltyDataInline ? (
+                        <div className="text-xs mt-1 ml-5 italic" style={{ color: COLORS.grayText }}>
+                          {BUG108_COPY.loyaltyPreviewHelper}
+                        </div>
+                      ) : (
                         <div className="text-xs mt-1 ml-5 italic" style={{ color: COLORS.grayText }}>
                           {BUG108_COPY.loyaltyDisabledHelper}
                         </div>
                       )}
                     </div>
+                      );
+                    })()
                     )}
 
                     {/* Wallet */}
