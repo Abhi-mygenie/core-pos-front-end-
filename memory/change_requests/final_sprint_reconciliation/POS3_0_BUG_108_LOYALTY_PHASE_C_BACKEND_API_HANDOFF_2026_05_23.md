@@ -1,5 +1,26 @@
 # POS 3.0 BUG-108 — Loyalty Phase C Backend API Handoff
 
+> **⚠️ DRAFT / NON-AUTHORITATIVE — DO NOT TREAT AS A CRM COMMITMENT.**
+>
+> This document was authored by the POS planning agent on 2026-05-23 before
+> reconciling against the authoritative CRM contract. It is a **proposal**
+> for the API shape **if and when** the redemption CR is re-commissioned.
+>
+> Authoritative loyalty contract (read-only, GREEN-LIGHT):
+> `/app/memory/crm/crm_1_0/handoff/CR_001C_LX_POS_BUG_108_LOYALTY_API_HANDOFF_TO_POS.md`
+>
+> Per the authoritative source §1 and §8.2:
+> - `POST /pos/loyalty/redeem` — **deferred indefinitely per owner sign-off** (Q4).
+> - `POST /pos/loyalty/reverse` — **declared "not needed" by CRM** (Q5).
+>
+> Reconciliation: `POS3_0_BUG_108_LOYALTY_PHASE_C_API_RECONCILIATION_UPDATE_2026_05_23.md`
+>
+> Phase C3 implementation status: **`deferred_per_crm_handoff_owner_signoff`**,
+> not `backend_blocked`. Owner must re-commission the redemption CR (Q9) and
+> re-decide the reverse endpoint (Q10) before any backend work is chartered.
+
+---
+
 **Date:** 2026-05-23
 **From:** POS 3.0 Frontend Team
 **To:** CRM / Backend Team
