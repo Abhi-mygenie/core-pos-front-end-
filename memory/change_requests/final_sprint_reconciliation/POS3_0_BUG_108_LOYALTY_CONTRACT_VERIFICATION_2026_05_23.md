@@ -11,10 +11,10 @@
 ## 1. Status
 
 ```
-bug_108_loyalty_contract_partially_verified_waiting_api_gaps
+bug_108_loyalty_contract_verified_ready_for_frontend_plan
 ```
 
-**Reason for "partially":** The CRM loyalty API contract is **complete and well-documented** (GREEN-LIGHT). However, 4 POS frontend code gaps and 1 environment gap must be resolved before implementation can begin. See §9 (API Gap Register) for details.
+**CRM loyalty API contract is complete and GREEN-LIGHT.** Owner answered all 5 questions (Q-L1 through Q-L5) on 2026-05-23. GAP-L1 (API key) was a false alarm — CRM key comes from POS login response per BUG-098, not `.env`. Remaining gaps (GAP-L2 through GAP-L6) are POS frontend code changes to be addressed in the implementation plan. No external blockers remain.
 
 ---
 
@@ -191,7 +191,7 @@ Owner has directed:
 
 | Gap ID | Missing Item | Why Needed | Blocks Read-Only Display? | Blocks Redemption? | Priority |
 |--------|-------------|------------|---------------------------|--------------------|---------| 
-| **GAP-L1** | **CRM API key for test pod** — POS `.env` keys (`dp_live_*`) return "Invalid API key" against `crm-integration-test-3.preview.emergentagent.com` | Cannot call any CRM endpoint from POS preview | **YES** | YES | **P0 — BLOCKER** |
+| **GAP-L1** | ~~**CRM API key for test pod**~~ | ~~POS `.env` keys return "Invalid API key"~~ | ~~**YES**~~ | ~~YES~~ | ~~**P0**~~ **RESOLVED** — CRM key comes from POS login response per BUG-098, not `.env`. False alarm. |
 | **GAP-L2** | **Customer data pipeline broken** — `CartPanel.selectCustomer()` passes only `{ id, name, phone }` via `onCustomerChange`, dropping `totalPoints`, `walletBalance`, `tier`, `pointsValue`, and entire `loyalty` blob | Loyalty section will always show "0 pts" / "No points" | **YES** | YES | **P0 — BLOCKER** |
 | **GAP-L3** | **Field name mismatch** — `CollectPaymentPanel.jsx` reads `customer?.loyaltyPoints` but customer object has `totalPoints` (from transform) or no such field (from CartPanel) | Loyalty display and discount calculation will always be 0 | **YES** | YES | **P0 — BLOCKER** |
 | **GAP-L4** | **Loyalty blob fields not consumed** — `customerTransform.js` maps `api.loyalty || null` but does NOT extract `ratio_per_point`, `points_value`, `loyalty_enabled`, `tier_label` from the blob | Per-tier ratio unavailable; `loyalty_enabled` gate missing | **YES** | YES | **P1 — Required for implementation** |
@@ -238,31 +238,27 @@ Owner has directed:
 
 ---
 
-## 12. Owner / CRM Questions
+## 12. Owner / CRM Questions — ANSWERED (2026-05-23)
 
 ### Q-L1. Loyalty first phase should be:
-- **A.** Read-only display only (show points/tier, everything disabled)
-- **B.** Read-only + "estimated redeemable amount" preview (show "₹720 available", checkbox disabled) ← **Recommended**
-- **C.** Real redemption (requires `POST /pos/loyalty/redeem` — not available yet)
-- **D.** Wait until redemption API exists
+**Owner answer: B** — Read-only + "estimated redeemable amount" preview (show "₹720 available", checkbox disabled).
 
-### Q-L2. CRM test pod API key — which key should POS use?
-The current `.env` keys (`dp_live_*`) return "Invalid API key" against `crm-integration-test-3.preview.emergentagent.com`. **Owner/CRM team must provide a valid API key for the test CRM pod, OR confirm the mapping for an existing restaurant.**
+### Q-L2. CRM test pod API key
+**Owner answer:** Not applicable — CRM key is NOT sourced from `.env`. Per BUG-098, the CRM API key (`crm_token`) comes from the POS backend login response and is set via `setCrmToken()` in `crmAxios.js`. The `.env` `REACT_APP_CRM_API_KEYS` is legacy/unused. **GAP-L1 was a false alarm — RESOLVED.**
 
-### Q-L3. Should `used_loyalty_point` and `loyalty_dicount_amount` remain zero until real redemption API exists?
-- **A.** Yes — keep zero until `POST /pos/loyalty/redeem` is live ← **Recommended**
-- **B.** No, send preview values (display-only amounts in payload)
-- **C.** Backend to decide
+**Code evidence:**
+- `src/api/crmAxios.js:4` — "BUG-098: CRM token sourced from login response `crm_token` field."
+- `src/api/transforms/authTransform.js:21` — `crmToken: api.crm_token || null`
+- `src/api/services/authService.js:24` — `setCrmToken(authData.crmToken)`
+
+### Q-L3. Should `used_loyalty_point` and `loyalty_dicount_amount` remain zero?
+**Owner answer: A** — Yes, keep zero until `POST /pos/loyalty/redeem` is live.
 
 ### Q-L4. Is there a max usable points/amount cap per order?
-- **A.** No cap — full `points_value` is always redeemable (up to order total)
-- **B.** Cap exists — specify: max points ___ / max amount ₹___ / max % of order ___
-- **C.** CRM backend will enforce cap and return `max_usable_amount` (requires contract update)
+**Owner answer: C** — CRM backend enforces cap. Owner noted this should already be in the contract. **Verification:** Current 6-key blob has no separate `max_usable_amount` field. `points_value` is pre-calculated by CRM (`total_points * ratio_per_point`). POS frontend caps at `min(points_value, subtotal_after_discounts)`. If a per-order % cap is needed, CRM adds it in a future iteration.
 
 ### Q-L5. Does loyalty discount apply before or after tax?
-- **A.** Before tax (on `itemTotal`) ← **Current code behavior**
-- **B.** After tax (on grand total)
-- **C.** Backend decides (not frontend's concern)
+**Owner answer: A** — Before tax (on item total). Treated as a discount. Already covered in baseline business rules.
 
 ---
 
@@ -272,23 +268,28 @@ The current `.env` keys (`dp_live_*`) return "Invalid API key" against `crm-inte
 |-----------|--------|--------|
 | CRM API contract documented | **YES** | Handoff doc GREEN-LIGHT, 3 endpoints, 6-key blob, 3-tier samples |
 | CRM endpoints live in preview | **YES** | Health check passes, routes registered |
-| CRM API key for POS preview | **NO** | GAP-L1 — current keys don't authenticate against test CRM |
-| Customer data pipeline (POS) | **NO** | GAP-L2 — CartPanel drops CRM data; GAP-L3 — field name mismatch |
-| Loyalty blob consumption (POS) | **NO** | GAP-L4 — customerTransform doesn't extract blob fields |
-| Loyalty math formula (POS) | **NO** | GAP-L5 — hardcoded 1:1 ratio, needs points_value |
-| `loyalty_enabled` gate (POS) | **NO** | GAP-L6 — UI doesn't check CRM's loyalty_enabled flag |
-| Redemption API | **NO** | GAP-L8 — deferred to future CR (does NOT block read-only/preview) |
+| CRM API key for POS preview | **YES** | GAP-L1 RESOLVED — key comes from POS login response per BUG-098 |
+| Owner decisions | **YES** | Q-L1=B, Q-L2=resolved, Q-L3=A, Q-L4=C, Q-L5=A — all answered |
+| Customer data pipeline (POS) | **NO — code fix needed** | GAP-L2 — CartPanel drops CRM data; GAP-L3 — field name mismatch |
+| Loyalty blob consumption (POS) | **NO — code fix needed** | GAP-L4 — customerTransform doesn't extract blob fields |
+| Loyalty math formula (POS) | **NO — code fix needed** | GAP-L5 — hardcoded 1:1 ratio, needs points_value |
+| `loyalty_enabled` gate (POS) | **NO — code fix needed** | GAP-L6 — UI doesn't check CRM's loyalty_enabled flag |
+| Redemption API | **N/A** | GAP-L8 — deferred to future CR (does NOT block read-only/preview) |
 
 ### Verdict
 
-**Frontend planning CAN begin** — the CRM contract is complete and sufficient for loyalty read-only + preview.
+**Frontend planning CAN begin** — the CRM contract is complete, owner decisions are locked, and no external blockers remain.
 
-**Frontend implementation CANNOT begin** until:
-1. **GAP-L1** resolved (valid API key for test CRM) — **owner/CRM team action**
-2. **GAP-L2 through GAP-L6** scoped in the implementation plan — **POS frontend team action**
-3. **Q-L1 through Q-L5** answered by owner — **owner action**
+**Frontend implementation CAN begin** — the remaining gaps (GAP-L2 through GAP-L6, GAP-L9) are all POS frontend code changes that the implementation agent will address in the CR Playbook file-level plan:
 
-Once these are resolved, the implementation agent can produce a CR Playbook-compliant file-level plan and begin coding.
+1. **GAP-L2** — Fix CartPanel to pass CRM loyalty fields upstream via `onCustomerChange`
+2. **GAP-L3** — Reconcile field name (`loyaltyPoints` → use `totalPoints` or loyalty blob fields)
+3. **GAP-L4** — Expand `customerTransform.js` to extract 6-key loyalty blob
+4. **GAP-L5** — Update loyalty math to use `points_value` / `ratio_per_point`
+5. **GAP-L6** — Add `loyalty_enabled` gate alongside existing `restaurantSettings?.isLoyalty`
+6. **GAP-L9** — Verify no code reads removed CRM keys before flipping flag
+
+**No owner or CRM team action is needed to begin implementation.**
 
 ---
 
