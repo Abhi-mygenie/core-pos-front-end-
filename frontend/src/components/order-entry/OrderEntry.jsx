@@ -4,7 +4,7 @@ import { COLORS } from "../../constants";
 import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
-import { lookupAddresses, addAddress } from "../../api/services/customerService";
+import { lookupAddresses, addAddress, lookupCustomer } from "../../api/services/customerService";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI, fromAPI as orderFromAPI, calculateSelectedVariantsPrice } from "../../api/transforms/orderTransform";
@@ -167,6 +167,35 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // the Collect Bill button total (CartPanel). Re-seeded on savedCart / re-engage /
   // socket refresh paths (same sites as BUG-019 orderFinancials.deliveryCharge).
   const [deliveryCharge, setDeliveryCharge] = useState(orderData?.deliveryCharge || 0);
+  // BUG-108 Loyalty Pipeline Fix (2026-05-23): when restoring an existing
+  // order/table the upstream payload only carries { name, phone } (no CRM
+  // loyalty fields). Fire-and-forget a CRM lookup so the Collect Bill loyalty
+  // preview can populate. `lookupCustomer` returns null on most failures and
+  // throws on CRM_TIMEOUT (BUG-078) — both are intentionally swallowed here;
+  // the loyalty section gracefully falls back to "Loyalty program unavailable"
+  // when the blob is missing. Re-`setCustomer` uses the callback form to merge
+  // with whatever the user may have edited between the initial restore and the
+  // lookup resolving.
+  const enrichCustomerLoyaltyFromCRM = (phone) => {
+    if (!phone?.trim()) return;
+    lookupCustomer(phone.trim())
+      .then((enriched) => {
+        if (!enriched) return;
+        setCustomer((prev) => ({
+          ...(prev || {}),
+          id:            enriched.id || prev?.id || null,
+          tier:          enriched.tier ?? prev?.tier,
+          totalPoints:   enriched.totalPoints ?? prev?.totalPoints,
+          pointsValue:   enriched.pointsValue ?? prev?.pointsValue,
+          walletBalance: enriched.walletBalance ?? prev?.walletBalance,
+          loyalty:       enriched.loyalty ?? prev?.loyalty,
+        }));
+      })
+      .catch(() => {
+        // Silent: lookupCustomer already logs CRM timeouts via [CRM] warning.
+        // Loyalty section will render the "Loyalty program unavailable" fallback.
+      });
+  };
   // Effective table — merges placedOrderId into table for same-session operations
   const effectiveTable = { ...table, orderId: placedOrderId || table?.orderId };
 
@@ -309,6 +338,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           name: resolvedName,
           phone: rawPhone,
         });
+        // BUG-108 Loyalty Pipeline Fix (2026-05-23): fire-and-forget CRM
+        // enrichment so the Collect Bill loyalty section shows real tier /
+        // points / ₹ available for the restored customer. Non-blocking;
+        // failures silently fall back to "Loyalty program unavailable".
+        enrichCustomerLoyaltyFromCRM(rawPhone);
       }
       // Initialize financials from orderData
       if (orderData) {
@@ -348,6 +382,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           name: resolvedName,
           phone: rawPhone,
         });
+        // BUG-108 Loyalty Pipeline Fix (2026-05-23): same fire-and-forget CRM
+        // enrichment as the savedCart branch above. Non-blocking; silent on
+        // failure. See `enrichCustomerLoyaltyFromCRM` definition above.
+        enrichCustomerLoyaltyFromCRM(rawPhone);
       }
       // Initialize financials from orderData
       setOrderFinancials({

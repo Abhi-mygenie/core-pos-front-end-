@@ -799,10 +799,17 @@ const CartPanel = ({
   };
 
   // Handle field blur - update customer (no delay needed with onMouseDown)
+  // BUG-108 Loyalty Pipeline Fix (2026-05-23): merge with existing `customer`
+  // prop instead of overwriting it. Previously this branch shipped only
+  // `{ id, name, phone }`, which clobbered the loyalty/tier/totalPoints/
+  // pointsValue/loyalty blob established by `selectCustomer` on any subsequent
+  // focus loss (e.g. when the cashier clicked the menu or Place Order). The
+  // merge preserves enrichment while still propagating user edits to name/phone.
   const handleFieldBlur = () => {
     if (customerName.trim() || customerPhone.trim()) {
       onCustomerChange?.({
-        id: customer?.id || null,
+        ...(customer || {}),
+        id: customer?.id ?? null,
         name: customerName.trim(),
         phone: customerPhone.trim(),
       });

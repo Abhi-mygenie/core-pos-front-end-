@@ -62,6 +62,13 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
 
     try {
       let customerId = memberId;
+      // BUG-108 Loyalty Pipeline Fix (2026-05-23): hold CRM loyalty fields
+      // resolved during this save flow so they can be forwarded to onSave().
+      // Previously the modal called `lookupCustomer(phone)` to detect
+      // duplicates but discarded the returned tier/totalPoints/pointsValue/
+      // loyalty blob, causing the Collect Bill loyalty section to fall back
+      // to "Loyalty program unavailable" after saving an existing customer.
+      let crmLoyaltyFields = null;
 
       if (customerId && !customerId.startsWith('CUST-')) {
         // Existing CRM customer — update
@@ -71,6 +78,18 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
           dob: birthday || undefined,
           anniversary: anniversary || undefined,
         }, restaurantId);
+        // BUG-108 Loyalty Pipeline Fix: existing CRM customer selected via
+        // the member-search typeahead carries loyalty fields on initialData /
+        // the upstream search result. Use those directly.
+        if (initialData) {
+          crmLoyaltyFields = {
+            tier:          initialData.tier,
+            totalPoints:   initialData.totalPoints,
+            pointsValue:   initialData.pointsValue,
+            walletBalance: initialData.walletBalance,
+            loyalty:       initialData.loyalty,
+          };
+        }
       } else {
         // New customer — first check if phone exists in CRM
         let existing = null;
@@ -93,6 +112,16 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
         if (existing) {
           // Phone already registered — use existing, update details
           customerId = existing.id;
+          // BUG-108 Loyalty Pipeline Fix (2026-05-23): preserve the synthetic
+          // loyalty blob and flat fields produced by `customerLookup` so the
+          // Collect Bill loyalty section is populated immediately after save.
+          crmLoyaltyFields = {
+            tier:          existing.tier,
+            totalPoints:   existing.totalPoints,
+            pointsValue:   existing.pointsValue,
+            walletBalance: existing.walletBalance,
+            loyalty:       existing.loyalty,
+          };
           await updateCustomer(customerId, {
             name: name.trim(),
             phone: phone.trim(),
@@ -124,6 +153,11 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
         birthday: birthday || null,
         dob: birthday || null,
         anniversary: anniversary || null,
+        // BUG-108 Loyalty Pipeline Fix (2026-05-23): forward any CRM loyalty
+        // fields we resolved above so CollectPaymentPanel can render the
+        // loyalty preview without a follow-up lookup. Spread is last so it
+        // overrides only the loyalty-related keys when present.
+        ...(crmLoyaltyFields || {}),
       };
 
       onSave(customerData);

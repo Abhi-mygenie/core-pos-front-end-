@@ -3,23 +3,65 @@
 // Auth: X-API-Key
 
 // =============================================================================
+// Shared helpers
+// =============================================================================
+
+/**
+ * BUG-108 Loyalty Pipeline Fix (2026-05-23):
+ * Single source of truth for the synthetic loyalty blob shape used when the
+ * upstream CRM response only carries flat loyalty fields (tier, total_points,
+ * points_value). Both `searchResult` (GET /pos/customers?search=) and
+ * `customerLookup` (POST /pos/customer-lookup) feed CollectPaymentPanel via
+ * the same `customer.loyalty` shape, so the synthetic blob construction lives
+ * here to prevent drift.
+ *
+ * `loyalty_enabled` defaults to `true` — the lookup/search endpoints do not
+ * carry this field, and restaurant-level visibility is gated by
+ * `restaurantSettings.isLoyalty` upstream in CollectPaymentPanel.
+ */
+const buildSyntheticLoyalty = ({ tier, totalPoints, pointsValue }) => ({
+  tier:             tier || 'Bronze',
+  tier_label:       `${tier || 'Bronze'} Member`,
+  total_points:     totalPoints || 0,
+  ratio_per_point:  (totalPoints && pointsValue)
+                      ? Math.round((pointsValue / totalPoints) * 100) / 100
+                      : 0,
+  points_value:     pointsValue || 0,
+  loyalty_enabled:  true,
+});
+
+// =============================================================================
 // API → Frontend (Response)
 // =============================================================================
 export const fromAPI = {
   /**
    * Transform single customer from CRM search (lightweight)
    * Source: GET /pos/customers?search=
-   * Returns: id, name, phone, tier, total_points, wallet_balance, last_visit
+   * Returns: id, name, phone, tier, total_points, points_value, wallet_balance,
+   *          last_visit + synthetic loyalty blob.
+   *
+   * BUG-108 Loyalty Pipeline Fix (2026-05-23): typeahead-selected customers
+   * must reach CollectPaymentPanel with the same loyalty shape as customerLookup
+   * provides. `pointsValue` and the synthetic `loyalty` blob were missing,
+   * causing the loyalty section to fall back to "Loyalty program unavailable"
+   * even when the customer had points.
    */
-  searchResult: (api) => ({
-    id:            api.id || '',
-    name:          (api.name || '').trim(),
-    phone:         api.phone || '',
-    tier:          api.tier || 'Bronze',
-    totalPoints:   api.total_points || 0,
-    walletBalance: api.wallet_balance || 0,
-    lastVisit:     api.last_visit || null,
-  }),
+  searchResult: (api) => {
+    const tier = api.tier || 'Bronze';
+    const totalPoints = api.total_points || 0;
+    const pointsValue = api.points_value || 0;
+    return {
+      id:            api.id || '',
+      name:          (api.name || '').trim(),
+      phone:         api.phone || '',
+      tier,
+      totalPoints,
+      pointsValue,
+      walletBalance: api.wallet_balance || 0,
+      lastVisit:     api.last_visit || null,
+      loyalty:       buildSyntheticLoyalty({ tier, totalPoints, pointsValue }),
+    };
+  },
 
   /**
    * Transform search results list
@@ -51,17 +93,16 @@ export const fromAPI = {
     favorites:     api.favorites || [],
     lastVisit:     api.last_visit || null,
     addresses:     (api.addresses || []).map(fromAPI.address),
-    // BUG-108 Phase B: loyalty blob not returned by customer-lookup (flat fields only).
-    // Build a synthetic loyalty object from the flat fields so CollectPaymentPanel
-    // has a uniform shape regardless of which endpoint populated the customer.
-    loyalty: {
-      tier:             api.tier || 'Bronze',
-      tier_label:       `${api.tier || 'Bronze'} Member`,
-      total_points:     api.total_points || 0,
-      ratio_per_point:  (api.total_points && api.points_value) ? Math.round((api.points_value / api.total_points) * 100) / 100 : 0,
-      points_value:     api.points_value || 0,
-      loyalty_enabled:  true,  // lookup endpoint doesn't carry this; default true (settings gate handles visibility)
-    },
+    // BUG-108 Phase B + Loyalty Pipeline Fix (2026-05-23):
+    // customer-lookup endpoint returns flat loyalty fields only — build the
+    // synthetic loyalty blob via the shared helper so searchResult and
+    // customerLookup stay in lockstep on the shape consumed by
+    // CollectPaymentPanel (customer?.loyalty?.{tier|total_points|points_value|loyalty_enabled}).
+    loyalty: buildSyntheticLoyalty({
+      tier:        api.tier,
+      totalPoints: api.total_points,
+      pointsValue: api.points_value,
+    }),
   }),
 
   /**
