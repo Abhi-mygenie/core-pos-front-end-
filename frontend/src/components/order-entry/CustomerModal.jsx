@@ -107,11 +107,17 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
   // `handleSave` reads to forward CRM loyalty fields. Birthday/anniversary
   // are NOT auto-filled because `searchResult` transform does not return
   // them; owner can edit those manually.
+  //
+  // Member ID Auto-Derived Hide (2026-05-23 — Option C): `memberSearch` is
+  // intentionally NOT set here. Setting it would re-surface the Member ID
+  // field via the auto-derived-hide rule (see `isMemberIdAutoDerived` below),
+  // which the owner asked us to hide for the auto-attached customer case.
+  // `memberId` is still set so `handleSave` continues to route to the correct
+  // existing-CRM-customer update branch.
   const selectModalCustomer = (c) => {
     setName(c.name || "");
     setPhone(c.phone || "");
     setMemberId(c.id || "");
-    setMemberSearch(c.id || "");
     setIsCustomerSelected(true);
     setSelectedCRMCustomer(c);
     setShowNameSuggestions(false);
@@ -157,6 +163,23 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
 
   // Validate form
   const isValid = name.trim() && phone.trim();
+
+  // Member ID Auto-Derived Hide (2026-05-23 — Option C, owner-approved):
+  // When `memberId` is present but the cashier never typed into the
+  // Member-ID search input (`memberSearch` is empty), the value was auto-
+  // attached either via `initialData?.id` (modal opened with a customer
+  // already on the cart) or via `selectModalCustomer` (typeahead pick on
+  // the new Name/Phone fields). In both cases the Member ID field and its
+  // green confirmation pill add visual noise — the cashier did not search
+  // for a member, the CRM ID is just bookkeeping. Hide the field and pill.
+  // Cashier interactions:
+  //   • Manually search by Member ID  → memberSearch non-empty → field shown
+  //   • Pick from Name/Phone typeahead → memberSearch stays empty → hidden
+  //   • Open modal with cart customer → memberSearch stays empty → hidden
+  //   • Open modal blank             → memberId empty → field shown
+  // handleSave behavior is unchanged — `customerId = memberId` still routes
+  // the existing-CRM-customer update path correctly when memberId is set.
+  const isMemberIdAutoDerived = !!memberId && !memberSearch.trim();
 
   // Handle save — create or update in CRM
   const handleSave = async () => {
@@ -427,7 +450,10 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
           </div>
 
           {/* Secondary Fields - Birthday, Anniversary, Member ID */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Member ID Auto-Derived Hide (2026-05-23 — Option C): grid drops
+              from 3 to 2 cols when the Member ID block is hidden, so Birthday
+              and Anniversary still align neatly. */}
+          <div className={`grid ${isMemberIdAutoDerived ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
             <div>
               <label className="text-xs font-medium mb-1.5 block" style={{ color: COLORS.grayText }}>
                 Birthday
@@ -466,63 +492,70 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '' 
                 />
               </div>
             </div>
-            <div ref={memberInputRef}>
-              <label className="text-xs font-medium mb-1.5 block" style={{ color: COLORS.grayText }}>
-                Member ID
-              </label>
-              <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                  style={{ color: COLORS.grayText }}
-                />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={memberSearch || memberId}
-                  onChange={(e) => {
-                    setMemberSearch(e.target.value);
-                    setMemberId("");
-                  }}
-                  onFocus={() => memberSearch && setShowMemberSuggestions(filteredMembers.length > 0)}
-                  className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2"
-                  style={{ borderColor: COLORS.borderGray }}
-                  data-testid="customer-member-input"
-                />
+            {/* Member ID Auto-Derived Hide (2026-05-23 — Option C): wrap the
+                whole grid cell so it only renders when the cashier actually
+                interacted with the Member-ID search input. See
+                `isMemberIdAutoDerived` derivation above for rules. */}
+            {!isMemberIdAutoDerived && (
+              <div ref={memberInputRef}>
+                <label className="text-xs font-medium mb-1.5 block" style={{ color: COLORS.grayText }}>
+                  Member ID
+                </label>
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                    style={{ color: COLORS.grayText }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={memberSearch || memberId}
+                    onChange={(e) => {
+                      setMemberSearch(e.target.value);
+                      setMemberId("");
+                    }}
+                    onFocus={() => memberSearch && setShowMemberSuggestions(filteredMembers.length > 0)}
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2"
+                    style={{ borderColor: COLORS.borderGray }}
+                    data-testid="customer-member-input"
+                  />
 
-                {/* Auto-suggest dropdown */}
-                {showMemberSuggestions && (
-                  <div
-                    className="absolute top-full left-0 right-0 mt-1 rounded-xl shadow-lg z-50 overflow-hidden max-h-48 overflow-y-auto"
-                    style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}` }}
-                  >
-                    {filteredMembers.map((member) => (
-                      <button
-                        key={member.id}
-                        onClick={() => selectMember(member)}
-                        className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
-                        style={{ borderColor: COLORS.borderGray }}
-                      >
-                        <div className="font-medium" style={{ color: COLORS.darkText }}>
-                          {member.name}
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs" style={{ color: COLORS.primaryGreen }}>
-                            {member.id}
-                          </span>
-                          <span className="text-xs" style={{ color: COLORS.grayText }}>
-                            {member.phone}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  {/* Auto-suggest dropdown */}
+                  {showMemberSuggestions && (
+                    <div
+                      className="absolute top-full left-0 right-0 mt-1 rounded-xl shadow-lg z-50 overflow-hidden max-h-48 overflow-y-auto"
+                      style={{ backgroundColor: "white", border: `1px solid ${COLORS.borderGray}` }}
+                    >
+                      {filteredMembers.map((member) => (
+                        <button
+                          key={member.id}
+                          onClick={() => selectMember(member)}
+                          className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors border-b last:border-b-0"
+                          style={{ borderColor: COLORS.borderGray }}
+                        >
+                          <div className="font-medium" style={{ color: COLORS.darkText }}>
+                            {member.name}
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs" style={{ color: COLORS.primaryGreen }}>
+                              {member.id}
+                            </span>
+                            <span className="text-xs" style={{ color: COLORS.grayText }}>
+                              {member.phone}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Member badge if selected */}
-          {memberId && !memberId.startsWith('CUST-') && (
+          {/* Member badge — also hidden when Member ID was auto-derived
+              from the cart / Name-Phone typeahead pick (Option C). */}
+          {!isMemberIdAutoDerived && memberId && !memberId.startsWith('CUST-') && (
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-xl"
               style={{ backgroundColor: `${COLORS.primaryGreen}15` }}
