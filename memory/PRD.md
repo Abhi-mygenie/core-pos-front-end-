@@ -1,81 +1,49 @@
-# MyGenie Core POS Frontend - PRD & Deployment Handover
+# POS 3.0 — PRD & Sprint Status
 
 ## Project Overview
 - **App**: MyGenie Core POS Frontend (Restaurant/Hospitality POS system)
 - **Source Repo**: https://github.com/Abhi-mygenie/core-pos-front-end-.git
 - **Branch**: 23-may
-- **Deployed Date**: 2026-01-23
+- **Tech Stack**: React 19.0.0, CRACO v7.1.0, Yarn 1.22.22, Node v20.20.2, Tailwind CSS 3.4.17
 
-## Tech Stack
-- React 19.0.0
-- CRACO v7.1.0 (Create React App Configuration Override)
-- Yarn 1.22.22
-- Node.js v20.20.2
-- Tailwind CSS 3.4.17
-- Radix UI components
-- Firebase (auth, analytics, messaging)
-- Socket.io client
-- React Router DOM v7
-- Recharts for data viz
-- Axios for HTTP
+## What's Been Implemented
 
-## Architecture
-- **Frontend Only** deployment on Emergent platform
-- Backend API: `https://preprod.mygenie.online/` (external)
-- Socket: `https://presocket.mygenie.online` (external)
-- CRM: `https://crm.mygenie.online/api` (external)
-- Firebase for auth/notifications
-- Google Maps integration
+### BUG-108 P1 — Coupon/Loyalty/Wallet UI Shell (2026-05-22, verified 2026-05-23)
+**Status:** `bug_108_p1_ui_shell_implemented_waiting_owner_smoke`
 
-## Deployment Details
+- Removed hardcoded FLAT50/SAVE10 mock coupons
+- Created `BUG108_FLAGS.js` with all flags `false` (couponLive, loyaltyRatioLive, walletDebitLive)
+- Force-zero payload safety in `orderTransform.js` for coupon/loyalty/wallet fields
+- Coupon section disabled with "Coming soon" helper text
+- Loyalty section read-only with disabled checkbox
+- Wallet section read-only with disabled checkbox + hidden amount input
+- Q10 mutual exclusivity gating (manual discount vs coupon)
+- CRM unavailable banner copy stored (render deferred to P2)
+- Inline error styling only (no toast)
+- Standard + room-service inline mirror synced
 
-### Agent URL
-`https://704bf705-5ffc-46a9-a11f-112676a8f379.preview.emergentagent.com`
+**Build:** PASS (0 errors, 1 pre-existing unrelated warning)
+**Files changed:** `BUG108_FLAGS.js` (new), `CollectPaymentPanel.jsx` (modified), `orderTransform.js` (modified)
 
-### Services Running
-| Service | Status | Port |
-|---------|--------|------|
-| Frontend (craco start) | RUNNING | 3000 |
-| Backend (FastAPI) | RUNNING | 8001 (default, unused by POS app) |
-| MongoDB | RUNNING | 27017 (default, unused by POS app) |
+## Prioritized Backlog
 
-### Environment Variables Set
-All env variables configured in `/app/frontend/.env`:
-- REACT_APP_BACKEND_URL (Emergent agent URL)
-- WDS_SOCKET_PORT=443
-- ENABLE_HEALTH_CHECK=false
-- REACT_APP_API_BASE_URL (preprod.mygenie.online)
-- REACT_APP_SOCKET_URL (presocket.mygenie.online)
-- Firebase config (API key, auth domain, project ID, storage bucket, messaging sender ID, app ID, measurement ID, VAPID key)
-- REACT_APP_CRM_BASE_URL
-- REACT_APP_CRM_API_KEYS (JSON with 27 restaurant keys)
-- REACT_APP_GOOGLE_MAPS_KEY
+### P0 — Pending Owner Smoke
+- Owner must run 10-step smoke test from QA handoff doc
 
-### What Was Done
-1. Cloned repo from GitHub (branch: 23-may)
-2. Copied frontend source files to `/app/frontend/`
-3. Configured all environment variables in `.env`
-4. Installed dependencies via `yarn install`
-5. Started frontend via supervisor (`craco start`)
-6. Verified: webpack compiled successfully, login page loads
+### P1 — CRM API Integration (BUG-108 P2)
+- Wire `GET /pos/coupons/available` when CRM endpoint live
+- Wire `POST /pos/coupons/validate` when confirmed
+- Loyalty tier→ratio from CRM team
+- Flip BUG108_FLAGS to true per endpoint
 
-### No Code Changes Required
-The app compiled and ran without any code modifications.
+### P2 — Deferred CRs
+- Wallet debit/credit lifecycle (separate Wallet CR)
+- Coupon redemption/mark-used (separate Coupon CR)
+- Per-coupon ROI report (ticket 108-ROI)
+- Credit ↔ Wallet linkage (Q11 deferred)
 
-### Known Warnings (Non-blocking)
-- Webpack deprecation warnings for `onAfterSetupMiddleware`/`onBeforeSetupMiddleware` (standard with react-scripts 5.0.1)
-- Peer dependency warnings for react-day-picker (expects React 18, using React 19)
-- Missing TypeScript peer dependencies (project doesn't use TypeScript)
-
-## What's Implemented
-- Login page renders correctly with MyGenie branding
-- All API endpoints point to preprod environment
-- Firebase configured for authentication and push notifications
-- Google Maps API key configured
-- CRM API keys for 27 restaurants configured
-
-## Backlog / Next Steps
-- P0: Verify login flow works with valid credentials against preprod API
-- P1: Test all POS flows (orders, billing, menu management)
-- P2: Production deployment configuration
-- P3: Performance optimization (production build)
+## Key Documents
+- Implementation Report: `POS3_0_BUG_108_P1_UI_SHELL_IMPLEMENTATION_REPORT_2026_05_22.md`
+- QA Handoff: `POS3_0_BUG_108_P1_UI_SHELL_QA_HANDOFF_2026_05_22.md`
+- BUG-099 Hotspot Check: `POS3_0_BUG_108_P1_BUG_099_HOTSPOT_CHECK_AND_CR_PLAYBOOK_HANDOFF_2026_05_22.md`
+- Owner Approvals: `POS3_0_BUG_108_FINAL_OWNER_APPROVALS_2026_05_22.md`
