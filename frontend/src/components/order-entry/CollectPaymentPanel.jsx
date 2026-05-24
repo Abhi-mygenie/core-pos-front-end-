@@ -14,6 +14,9 @@ import PaymentMethodButton, { PaymentMethodButtonInline } from "./PaymentMethodB
 // `orderTransform.js` force-zeros corresponding payload fields. See
 // `POS3_0_BUG_108_P1_BUG_099_HOTSPOT_CHECK_AND_CR_PLAYBOOK_HANDOFF_2026_05_22.md`.
 import { BUG108_FLAGS, BUG108_COPY } from "../../utils/BUG108_FLAGS";
+// BUG-108 Phase C C-FE-2 (2026-05-23): live redeem wiring.
+import { redeemLoyalty, buildRedeemIdempotencyKey } from "../../api/services/loyaltyService";
+import { LOYALTY_REDEEM_STATES, LOYALTY_LS_KEYS } from "../../api/transforms/loyaltyTransform";
 
 const CollectPaymentPanel = ({ 
   cartItems, 
