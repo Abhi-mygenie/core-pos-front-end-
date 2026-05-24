@@ -394,6 +394,8 @@ const QsrBillingSection = ({
         discountType: discountType || '',
         orderDiscountType: discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : '',
         loyaltyPoints: 0,
+        loyaltyPointsRedeemed: 0,
+        loyaltyRedemptionId: null,
         walletBalance: 0,
       },
       customer: null,

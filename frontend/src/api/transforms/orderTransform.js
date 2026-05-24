@@ -906,6 +906,7 @@ export const toAPI = {
       order_discount:             0,
       // Loyalty & Wallet
       used_loyalty_point:         0,
+      loyalty_points_used:        0,
       use_wallet_balance:         0,
       // Room & Address
       paid_room:                  null,
@@ -1024,6 +1025,7 @@ export const toAPI = {
       order_discount_type:        '',
       // Loyalty & Wallet
       used_loyalty_point:         0,
+      loyalty_points_used:        0,
       use_wallet_balance:         0,
       // Room
       room_id:                    null,
@@ -1149,9 +1151,17 @@ export const toAPI = {
       order_discount:             discounts.orderDiscountPercent || 0,
       // BUG-055: payload parity with collectBillExisting (L1273).
       order_discount_type:        discounts.orderDiscountType || '',
-      // Loyalty & Wallet
-      used_loyalty_point:         0,
-      use_wallet_balance:         0,
+      // Loyalty & Wallet — BUG-108 Phase C all-paths fix (2026-05-24):
+      // Prepaid/place+pay now carries CRM-calculated values (mirrors collectBillExisting).
+      // POS Backend handles actual CRM redemption.
+      used_loyalty_point:           BUG108_FLAGS.loyaltyRatioLive
+                                      ? (discounts.loyaltyPointsRedeemed || 0)
+                                      : 0,
+      loyalty_points_used:          BUG108_FLAGS.loyaltyRatioLive
+                                      ? (discounts.loyaltyPointsRedeemed || 0)
+                                      : 0,
+      loyalty_redemption_id:        null,  // POS Backend generates during CRM call
+      use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
       // Room & Address
       paid_room:                  '',
       room_id:                    '',
@@ -1356,6 +1366,9 @@ export const toAPI = {
       // Payload carries CRM-calculated values from /pos/max-redeemable.
       // POS Backend handles actual redemption. No direct CRM redeem call.
       used_loyalty_point:           BUG108_FLAGS.loyaltyRatioLive
+                                      ? (discounts.loyaltyPointsRedeemed || 0)
+                                      : 0,
+      loyalty_points_used:          BUG108_FLAGS.loyaltyRatioLive
                                       ? (discounts.loyaltyPointsRedeemed || 0)
                                       : 0,
       loyalty_redemption_id:        null,  // POS Backend generates during CRM call
