@@ -10,8 +10,15 @@
 ## 1. Status
 
 ```
-bug_108_loyalty_phase_c_flow_decision_reconciled_waiting_owner_final_scope_approval
+bug_108_loyalty_phase_c_flow_decision_reconciled_implemented_and_verified
 ```
+
+**Update 2026-05-24 (post-implementation):**
+- Owner confirmed backend WILL process `used_loyalty_point` on place-order (prepaid).
+- Flow 3 fix implemented and verified with owner-provided payload (prepaid: `used_loyalty_point: 1052`, `loyalty_points_used: 1052`).
+- Flow 4 verified with owner-provided payload (postpaid: `used_loyalty_point: 663`, `loyalty_points_used: 663`).
+- Both `used_loyalty_point` and `loyalty_points_used` now emitted on all flows.
+- See implementation report: `POS3_0_BUG_108_LOYALTY_PHASE_C_ALL_PATHS_PAYLOAD_FIX_IMPLEMENTATION_REPORT_2026_05_24.md`.
 
 ---
 

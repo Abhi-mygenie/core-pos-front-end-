@@ -151,9 +151,11 @@ Gate: `loyaltyRatioLive ? value : 0` (simplified — `loyaltyRedeemLive` removed
 | Service charge | UNCHANGED |
 | Delivery charge | UNCHANGED |
 | Tip | UNCHANGED |
-| Place Order payload | UNCHANGED — `used_loyalty_point: 0` hardcoded |
-| Prepaid Payment payload | UNCHANGED — hardcoded `0` |
-| Update Order payload | UNCHANGED — hardcoded `0` |
+| Place Order payload | UPDATED (all-paths fix) — added `loyalty_points_used: 0` for schema consistency |
+| Prepaid Payment payload | **FIXED (all-paths fix)** — `used_loyalty_point` + `loyalty_points_used` now read CRM values via BUG108_FLAGS gate. `loyalty_redemption_id: null` added. Owner-verified 2026-05-24. |
+| Update Order payload | UPDATED (all-paths fix) — added `loyalty_points_used: 0` for schema consistency |
+
+**Note:** The all-paths fix (2026-05-24) addressed the prepaid payload gap identified during payload verification. See `POS3_0_BUG_108_LOYALTY_PHASE_C_ALL_PATHS_PAYLOAD_FIX_IMPLEMENTATION_REPORT_2026_05_24.md`.
 
 ---
 

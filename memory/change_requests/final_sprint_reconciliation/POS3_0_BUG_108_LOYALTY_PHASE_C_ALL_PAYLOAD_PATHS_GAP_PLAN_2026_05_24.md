@@ -10,8 +10,10 @@
 ## 1. Status
 
 ```
-bug_108_loyalty_phase_c_all_payload_paths_planned_waiting_owner_fix_approval
+bug_108_loyalty_phase_c_all_payload_paths_fixed_and_verified
 ```
+
+**Update 2026-05-24 (post-implementation):** All broken paths fixed. Owner-provided payloads verified for both Flow 3 (prepaid) and Flow 4 (postpaid). `loyalty_points_used` field added to all flows. See implementation report: `POS3_0_BUG_108_LOYALTY_PHASE_C_ALL_PATHS_PAYLOAD_FIX_IMPLEMENTATION_REPORT_2026_05_24.md`.
 
 ---
 
