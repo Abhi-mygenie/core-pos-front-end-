@@ -113,3 +113,31 @@ code {
         border-bottom-color: inherit;
     }
 }
+
+/* Req 2: Order Taking disabled — cursor feedback for non-clickable cards.
+   Keeps in-card action buttons (Mark Ready, Mark Served, Print, Confirm,
+   Cancel) interactive (they have explicit cursor styling and pointer-events). */
+.order-taking-disabled [data-testid^="table-card-"],
+.order-taking-disabled [data-testid^="dinein-card-"],
+.order-taking-disabled [data-testid^="delivery-card-"],
+.order-taking-disabled [data-testid^="order-card-"] {
+  cursor: default !important;
+}
+.order-taking-disabled [data-testid^="table-card-"] button,
+.order-taking-disabled [data-testid^="dinein-card-"] button,
+.order-taking-disabled [data-testid^="delivery-card-"] button,
+.order-taking-disabled [data-testid^="order-card-"] button {
+  cursor: pointer !important;
+}
+
+/* BUG-103 (POS3.0): Hide native browser spinner arrows on all number inputs.
+   Covers Chrome/Edge/Safari (webkit) and Firefox (moz). Replaces inconsistent
+   per-input Tailwind classes — 2 inputs already had the fix, 6 did not. */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}

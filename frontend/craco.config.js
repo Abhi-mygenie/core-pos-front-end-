@@ -23,6 +23,23 @@ if (config.enableHealthCheck) {
 }
 
 let webpackConfig = {
+  jest: {
+    configure: (jestConfig) => {
+      // React Router v7 uses subpath exports which Jest can't resolve by default
+      jestConfig.moduleNameMapper = {
+        ...jestConfig.moduleNameMapper,
+        '^react-router/dom$': '<rootDir>/node_modules/react-router/dist/production/dom-export.js',
+        '^react-router-dom$': '<rootDir>/node_modules/react-router-dom/dist/index.js',
+        '^react-router$': '<rootDir>/node_modules/react-router/dist/production/index.js',
+      };
+      // Add polyfill setup for TextEncoder/TextDecoder (React Router v7)
+      jestConfig.setupFiles = [
+        ...(jestConfig.setupFiles || []),
+        '<rootDir>/src/setupTests.polyfills.js',
+      ];
+      return jestConfig;
+    },
+  },
   eslint: {
     configure: {
       extends: ["plugin:react-hooks/recommended"],
@@ -81,20 +98,20 @@ webpackConfig.devServer = (devServerConfig) => {
   return devServerConfig;
 };
 
-// Wrap with visual edits (automatically adds babel plugin, dev server, and overlay in dev mode)
-if (isDevServer) {
-  try {
-    const { withVisualEdits } = require("@emergentbase/visual-edits/craco");
-    webpackConfig = withVisualEdits(webpackConfig);
-  } catch (err) {
-    if (err.code === 'MODULE_NOT_FOUND' && err.message.includes('@emergentbase/visual-edits/craco')) {
-      console.warn(
-        "[visual-edits] @emergentbase/visual-edits not installed — visual editing disabled."
-      );
-    } else {
-      throw err;
-    }
-  }
-}
+// Visual edits disabled to avoid webpack resolution issues
+// if (isDevServer) {
+//   try {
+//     const { withVisualEdits } = require("@emergentbase/visual-edits/craco");
+//     webpackConfig = withVisualEdits(webpackConfig);
+//   } catch (err) {
+//     if (err.code === 'MODULE_NOT_FOUND' && err.message.includes('@emergentbase/visual-edits/craco')) {
+//       console.warn(
+//         "[visual-edits] @emergentbase/visual-edits not installed — visual editing disabled."
+//       );
+//     } else {
+//       throw err;
+//     }
+//   }
+// }
 
 module.exports = webpackConfig;
