@@ -49,6 +49,11 @@ export const API_ENDPOINTS = {
   // BUG-108 Phase C corrected (2026-05-24): non-mutating CRM calculation endpoint.
   // POS calls this from Collect Bill to get CRM-calculated max redeemable discount.
   MAX_REDEEMABLE:    '/pos/max-redeemable',                                   // CRM: POST /pos/max-redeemable
+  // BUG-108 V1A Coupon CRM (CR-001C-C, 2026-05-25). Read-only, non-mutating.
+  // POS Frontend calls these directly via crmApi (X-API-Key). Gated by
+  // restaurantSettings.isCoupon + BUG108_FLAGS.couponLive at the caller site.
+  COUPONS_AVAILABLE: '/pos/coupons/available',                                // CRM: GET  /pos/coupons/available
+  COUPONS_VALIDATE:  '/pos/coupons/validate',                                 // CRM: POST /pos/coupons/validate
   PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // CR-POS2-003-REOPEN-B (May-2026): reverted v1 → v2 per owner directive 2026-05-09. v2 confirmed deployed (HTTP 405 for GET, identical Laravel route shape as v1). Multipart shape unchanged. New order (unpaid + prepaid via payment_status=paid)
   PREPAID_ORDER:     '/api/v2/vendoremployee/order/paid-prepaid-order',    // Mark existing order as paid (JSON: {order_id, payment_status})
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
