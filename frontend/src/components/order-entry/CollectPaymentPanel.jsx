@@ -269,6 +269,15 @@ const CollectPaymentPanel = ({
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
+  // BUG-108 V1B (2026-05-25): coupon type-ahead state.
+  // `availableCoupons`    – cached list from GET /pos/coupons/available
+  // `couponLoading`       – /validate in-flight indicator (disables Apply)
+  // `couponInstruction`   – CRM `pos_instruction` text (rendered below error)
+  // `showCouponDropdown`  – focus-driven dropdown visibility
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponInstruction, setCouponInstruction] = useState(null);
+  const [showCouponDropdown, setShowCouponDropdown] = useState(false);
   const [discountType, setDiscountType] = useState(null); // 'percent' or 'flat'
   const [discountValue, setDiscountValue] = useState("");
 
