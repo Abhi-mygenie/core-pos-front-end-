@@ -698,4 +698,77 @@ bug_108_coupon_v1b_ui_mapping_complete_ready_for_implementation_pending_owner_re
 
 ---
 
+## 12. Final V1B Decisions (2026-05-25) — Implementation Contract
+
+This section consolidates owner answers to the 6 blockers raised during V1B mapping review. **These supersede any default mentioned earlier in this document where they differ.**
+
+| # | Decision | Owner answer | Implementation impact |
+|---|----------|--------------|----------------------|
+| **B-1** | Cashier-cancel warning toast trigger paths | **(c) Post-commit + post-Hold only.** Deferred to V1B end (not initial code merge). | Toast NOT shown when CollectPaymentPanel closes without Pay (no allowance consumed). Toast shown only after CRM has committed the coupon — i.e., (1) cashier cancels order from OrderEntry after payment success, OR (2) cashier Holds an order that already carries a committed coupon. Implementation scheduled as the LAST item in V1B Step 1, after all UI + payload edits land. |
+| **B-2** | Loyalty + non-stackable coupon — reverse direction (cashier toggles loyalty ON after coupon applied) | **(a) Auto-remove coupon** + toast "Coupon removed — incompatible with loyalty" | `useEffect` on `[useLoyalty]` change: if `selectedCoupon && !selectedCoupon.stackableWithLoyalty && useLoyalty`, call `setSelectedCoupon(null)` + show toast via existing `sonner` import. NO Pay-button block. NO "remove one to proceed" warning render. |
+| **B-3** | Dropdown row click behavior | **(b) Apply silently** — do NOT populate input field | On click of a dropdown suggestion row, directly call `validateCoupon({ code: row.code, ... })`. Leave `couponCode` state empty (or whatever cashier already typed). Applied chip displays the code — that's the confirmation feedback. |
+| **B-4** | Multiple coupons match typed prefix | **(a) Auto-apply highest `expectedDiscount`** regardless of match count | Simplest rule preserved. Cashier always retains override path: type the exact unwanted code's full alternative, OR Remove-and-reselect via dropdown. |
+| **B-5** | `/available` refetch frequency per panel session | **(c) Every focus event, cached, capped at MAX 3 calls per session** | Implement a `couponAvailableCallCount` ref initialized to 0 on panel mount. Each coupon-input focus: if `couponAvailableCallCount < 3` AND cache is stale (customer changed OR no prior fetch), call `/available` and increment. After 3, focus events use cached `availableCoupons` only. Reset to 0 when CollectPaymentPanel unmounts/remounts. |
+| **B-6** | `orderType` → CRM `channel` mapping | **Never send `'pos'`.** Mapping below: | See §12.1. |
+
+### 12.1 Final Channel Map (B-6 resolved)
+
+CRM's `'pos'` channel value is reserved for the future web/pos platform (separate POS surface). **This POS Frontend must NEVER send `'pos'`.**
+
+```js
+// V1B will REPLACE couponTransform.js CHANNEL_MAP + toAPI.channel fallback:
+const CHANNEL_MAP = {
+  dineIn:      'dine_in',
+  walkIn:      'dine_in',   // counter-order, in-premises consumption
+  takeAway:    'takeaway',
+  delivery:    'delivery',
+  roomService: 'dine_in',   // in-premises consumption (room-dining)
+};
+
+// Fallback for any unknown / future orderType — defensive default:
+toAPI.channel = (orderType) => CHANNEL_MAP[orderType] || 'dine_in';
+```
+
+**Notes:**
+- `isRoom=true` orders (room-service via `transferToRoom`) — V1 does NOT emit coupon fields on the `transferToRoom` Flow 6 payload (out of V1 scope per V1 plan §1). But if a room-service order goes through the Collect Bill path (Flow 4 — e.g., guest pays at checkout), the `/validate` call sends `channel='dine_in'`. Owner-confirmed.
+- `walkIn` — counter-orders treated as `'dine_in'` (consumed in-premises). Owner-confirmed.
+- `'pos'` channel deferred to future contract extension when web/pos platform is added. Not a V1B concern.
+
+### 12.2 V1A `couponTransform.js` channel-map gap
+
+The V1A file (`src/api/transforms/couponTransform.js`) currently has the old mapping with `'pos'` fallback. **V1B Step 1 will edit it surgically** as part of the same PR — this is a 3-line `search_replace` and does NOT count as scope creep from V1A:
+
+```diff
+ const CHANNEL_MAP = {
+-  dineIn:   'dine_in',
+-  takeAway: 'takeaway',
+-  delivery: 'delivery',
++  dineIn:      'dine_in',
++  walkIn:      'dine_in',
++  takeAway:    'takeaway',
++  delivery:    'delivery',
++  roomService: 'dine_in',
+ };
+ ...
+-  channel: (orderType) => CHANNEL_MAP[orderType] || 'pos',
++  channel: (orderType) => CHANNEL_MAP[orderType] || 'dine_in',
+```
+
+### 12.3 Decisions explicitly NOT made (carried as implementer choice)
+
+- **C-1 to C-8** in the blocker assessment (helper location, Portal vs absolute, debounce ref pattern, max-height, blur delay, loading spinner pattern, toast library) — implementer picks at code time.
+- Cashier-cancel toast wording — defaults to `"Coupon allowance consumed — cannot be refunded"` per Owner Q3 = A from Contract Freeze §5.
+
+### 12.4 V1B Implementation Readiness — final verdict
+
+```
+bug_108_coupon_v1b_planning_clean_ready_for_implementation
+```
+
+Manual rollback acknowledged: if anything breaks post-Step-2 flag-flip, `BUG108_FLAGS.couponLive = false` one-line revert restores pre-V1B behavior. No formal owner-smoke gate required; implementer proceeds when ready.
+
+**External team coordination items (I-1..I-6 from blocker assessment)** can be chased in parallel — they affect Step 2 user-visible feature claims but do NOT block Step 1 code merge with `couponLive=false`.
+
+---
+
 **End of BUG-108 Coupon V1B UI Mapping Plan.**
