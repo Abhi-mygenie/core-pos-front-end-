@@ -69,6 +69,7 @@ export const validateCoupon = async ({
   orderTotal,
   channel = 'pos',
   loyaltyPointsUsed = 0,
+  items,
 }) => {
   try {
     const body = toAPI.validateRequest({
@@ -77,6 +78,7 @@ export const validateCoupon = async ({
       orderTotal,
       channel,
       loyaltyPointsUsed,
+      items,
     });
     const response = await crmApi.post(API_ENDPOINTS.COUPONS_VALIDATE, body);
     return fromAPI.validateCoupon(response.data);
