@@ -912,6 +912,7 @@ export const toAPI = {
       // Loyalty & Wallet
       used_loyalty_point:         0,
       loyalty_points_used:        0,
+      loyalty_discount:           0,
       use_wallet_balance:         0,
       // Room & Address
       paid_room:                  null,
@@ -1035,6 +1036,7 @@ export const toAPI = {
       // Loyalty & Wallet
       used_loyalty_point:         0,
       loyalty_points_used:        0,
+      loyalty_discount:           0,
       use_wallet_balance:         0,
       // Room
       room_id:                    null,
@@ -1178,6 +1180,9 @@ export const toAPI = {
                                       : 0,
       loyalty_points_used:          BUG108_FLAGS.loyaltyRatioLive
                                       ? (discounts.loyaltyPointsRedeemed || 0)
+                                      : 0,
+      loyalty_discount:             BUG108_FLAGS.loyaltyRatioLive
+                                      ? (discounts.loyaltyPoints || 0)
                                       : 0,
       loyalty_redemption_id:        null,  // POS Backend generates during CRM call
       use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
@@ -1392,6 +1397,9 @@ export const toAPI = {
                                       : 0,
       loyalty_points_used:          BUG108_FLAGS.loyaltyRatioLive
                                       ? (discounts.loyaltyPointsRedeemed || 0)
+                                      : 0,
+      loyalty_discount:             BUG108_FLAGS.loyaltyRatioLive
+                                      ? (discounts.loyaltyPoints || 0)
                                       : 0,
       loyalty_redemption_id:        null,  // POS Backend generates during CRM call
       use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
