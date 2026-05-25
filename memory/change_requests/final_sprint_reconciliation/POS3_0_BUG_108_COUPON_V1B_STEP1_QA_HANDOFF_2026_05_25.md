@@ -107,6 +107,33 @@ These don't block QA but should be tracked for Step 2 production readiness:
 
 ---
 
+## 4.5 Live Session Outcomes (2026-05-25)
+
+### Session timeline
+| Time (UTC) | Event |
+|------------|-------|
+| 08:16 | `couponLive` flipped to `true`; transform-layer edits applied |
+| 08:25 | CollectPaymentPanel UI rewrite landed (initial parallel batch — H-1 latent) |
+| ~08:30 | Owner reports `ReferenceError: availableCoupons is not defined` error boundary |
+| ~08:35 | H-1 hotfix: missing `useState` declarations restored at L277–280 |
+| ~08:40 | Owner reports Coupon section header not rendering on kunafamahal (Loyalty IS rendering) |
+| ~08:45 | CRM smoke S-1 — production CRM endpoint reachable + auth valid |
+
+### S-1 production CRM smoke
+```bash
+curl 'https://crm.mygenie.online/api/pos/coupons/available?customer_id=&order_total=1728&channel=dine_in' \
+  -H 'X-API-Key: dp_live_-…'
+# HTTP 200 — { "success": true, "data": { "count": 0, "coupons": [] } }
+```
+Verified: ✅ URL reachable, ✅ X-API-Key auth valid, ✅ response envelope matches `couponTransform.fromAPI.availableCoupons` contract.
+
+### Open carry-forward items for owner verification
+1. **Hard-refresh the POS browser tab** (`Cmd+Shift+R` / `Ctrl+Shift+R`) to clear the post-error-boundary state and any cached pre-H-1 JS chunk. Then re-open Collect Bill on kunafamahal and check whether the Coupon section header appears.
+2. If section still hidden after hard-refresh: open DevTools Network tab → inspect the profile API response → confirm exact JSON path of `is_coupon` (expected: `restaurants[0].is_coupon`, NOT `restaurants[0].settings.is_coupon`).
+3. Retrieve the customer_id of the test customer (Gold, 4619 pts) and ping `/api/pos/coupons/available` with that ID + the production X-API-Key to confirm whether THIS customer has eligible coupons configured in CRM. Empty result is NOT the same bug as the section-hidden bug — empty coupons should still render the section header with an empty-hint.
+
+---
+
 ## 5. Sign-Off Criteria
 
 QA may sign off V1B Step 1 when:

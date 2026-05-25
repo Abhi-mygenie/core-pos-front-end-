@@ -154,6 +154,43 @@ Per V1B plan §8 — these now matter because `couponLive=true`:
 
 ---
 
+## 6.5 Post-Merge Session Notes (2026-05-25, same-day)
+
+### Hotfix H-1 — Missing useState declarations (Runtime ReferenceError)
+**Symptom:** Owner-reported error boundary on Collect Bill: `ReferenceError: availableCoupons is not defined`.
+**Root cause:** In the initial V1B parallel `search_replace` batch, the state-additions edit (4 new `useState` calls: `availableCoupons`, `couponLoading`, `couponInstruction`, `showCouponDropdown`) reported "Edit was successful" but the change silently did not persist to the file — likely a race-condition during the parallel write batch. All other edits landed correctly, so the file referenced 4 undefined variables at render time.
+**Fix:** Re-ran the state declarations as a single targeted `search_replace`. Now present at L277–280 of `CollectPaymentPanel.jsx`. Verified via grep:
+```
+277: const [availableCoupons, setAvailableCoupons] = useState([]);
+278: const [couponLoading, setCouponLoading] = useState(false);
+279: const [couponInstruction, setCouponInstruction] = useState(null);
+280: const [showCouponDropdown, setShowCouponDropdown] = useState(false);
+```
+**Verification:** Hot-reload picked up cleanly. Frontend → HTTP 200. Login page renders. No error boundary.
+**Lesson for future passes:** After parallel `search_replace` batches, grep for the new markers before declaring success — especially for state additions, which are the foundation of every downstream reference.
+
+### Smoke S-1 — CRM coupon endpoint reachability + auth
+**Test:** `curl https://crm.mygenie.online/api/pos/coupons/available?customer_id=&order_total=1728&channel=dine_in -H 'X-API-Key: <production CRM token>'`
+**Result:** HTTP 200, contract-shaped response (`success: true, data: { count: 0, coupons: [] }`).
+**Confirms:**
+- Production CRM URL (`crm.mygenie.online/api`) is reachable from this environment.
+- The X-API-Key auth (`dp_live_-…`) is valid against production CRM.
+- Response envelope matches `couponTransform.fromAPI.availableCoupons` expected shape.
+**Does NOT confirm:** Whether kunafamahal restaurant or any specific customer has coupons configured in CRM admin. That requires a customer-scoped call (pending owner-side customer-id retrieval).
+
+### Owner-reported open item — Coupon section header not rendering for kunafamahal
+**Reported:** 2026-05-25, after H-1 fix. Owner login `owner@kunafamahal.com`. Profile API shows `is_coupon: "Yes"`, `is_loyality: "Yes"`, `is_customer_wallet: "Yes"`.
+**Observation:** Loyalty section renders correctly (proves `customer` + `restaurantSettings.isLoyalty` are both truthy and the profile transform is reaching the UI). Coupon section header is completely hidden.
+**Render gate (CollectPaymentPanel L1201):** `customer && restaurantSettings?.isCoupon`. Since loyalty's gate (which uses identical `customer &&` predicate) passes, the only failing predicate is `restaurantSettings?.isCoupon`.
+**Most-likely causes (in priority order):**
+1. **Browser cache** carrying the pre-H-1 broken JS chunk or the error-boundary state. → Hard-refresh.
+2. **Field nesting mismatch** in the profile API response — `is_coupon` may be at a different path than `is_loyality` despite both being `"Yes"`. The profile transform (`profileTransform.js:314`) expects `restaurants[0].is_coupon`.
+3. **Backend serialization** specific to kunafamahal — same field returns `"Yes"` in JSON but maps differently when nested in `restaurants[0].settings.is_coupon` (which the transform does NOT read).
+**Status:** Pending owner verification via hard-refresh + DevTools Network inspection of `restaurants[0]` JSON path.
+**NOT a V1B implementation bug** — V1B coupon UI is correctly wired. The gate is intentional pre-existing behavior; the issue is upstream profile-field plumbing or browser cache.
+
+---
+
 ## 7. Verification Commands
 
 ```bash
