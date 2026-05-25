@@ -32,7 +32,7 @@
 //   * Redeem UI state machine remains at `idle`; no API call possible
 
 export const BUG108_FLAGS = {
-  couponLive: false,
+  couponLive: true,  // V1B Step 1 (2026-05-25): coupon module live. Manual rollback: set back to false.
   loyaltyRatioLive: true,     // Phase C corrected (2026-05-24): gates payload + max-redeemable display
   loyaltyPreviewLive: true,
   loyaltyRedeemLive: false,   // Phase C corrected (2026-05-24): direct CRM redeem call REMOVED. Flag kept for dead-code safety but no longer gates anything active.

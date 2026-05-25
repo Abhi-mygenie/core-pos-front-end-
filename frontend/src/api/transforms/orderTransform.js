@@ -900,6 +900,10 @@ export const toAPI = {
       // Discount
       discount_type:              null,
       self_discount:              0,
+      // BUG-108 V1B (2026-05-25, E-11): coupon_code parity field — Flow 1 never
+      // carries a coupon (unpaid placement), but the field is emitted so POS BE
+      // schema is uniform across all 4 commit flows.
+      coupon_code:                '',
       coupon_discount:            0,
       coupon_title:               null,
       coupon_type:                null,
@@ -1016,6 +1020,10 @@ export const toAPI = {
       // Discount
       discount_type:              null,
       self_discount:              0,
+      // BUG-108 V1B (2026-05-25, E-12): coupon_code parity field — Flow 2 never
+      // carries a coupon (item-add only), but the field is emitted so POS BE
+      // schema is uniform across all 4 commit flows.
+      coupon_code:                '',
       coupon_discount:            0,
       coupon_title:               null,
       coupon_type:                null,
@@ -1145,9 +1153,17 @@ export const toAPI = {
       // Discount
       discount_type:              discounts.type || '',
       self_discount:              discounts.manual || 0,
-      coupon_discount:            discounts.coupon || 0,
-      coupon_title:               discounts.couponTitle || '',
-      coupon_type:                discounts.couponType || '',
+      // BUG-108 V1B (2026-05-25, E-13 + E-14) — Flow 3 coupon fields:
+      //   1. KEY-MISMATCH FIX: read `discounts.couponDiscount` (correct key),
+      //      NOT `discounts.coupon` (pre-V1B latent bug — masked while
+      //      `couponLive=false` zeroed everything upstream).
+      //   2. Add `coupon_code` field per Owner SQ-1 = A.
+      //   3. Add `couponLive` gate for symmetry with Flow 4 collectBillExisting.
+      //   On V1 closure (Step 4) the `couponLive` ternaries become unconditional.
+      coupon_code:                BUG108_FLAGS.couponLive ? (discounts.couponCode || '') : '',
+      coupon_discount:            BUG108_FLAGS.couponLive ? (discounts.couponDiscount || 0) : 0,
+      coupon_title:               BUG108_FLAGS.couponLive ? (discounts.couponTitle || '') : '',
+      coupon_type:                BUG108_FLAGS.couponLive ? (discounts.couponType || '') : '',
       order_discount:             discounts.orderDiscountPercent || 0,
       // BUG-055: payload parity with collectBillExisting (L1273).
       order_discount_type:        discounts.orderDiscountType || '',
@@ -1352,6 +1368,9 @@ export const toAPI = {
       // when their CRM endpoints are not yet live. UI keeps these sections
       // disabled, but this is defense-in-depth in case any caller passes a
       // stale value through.
+      // BUG-108 V1B (2026-05-25, E-15): add `coupon_code` to Flow 4 commit
+      // payload (Owner SQ-1 = A). Mirrors Flow 3 (E-13) gating discipline.
+      coupon_code:                  BUG108_FLAGS.couponLive ? (discounts.couponCode || '') : '',
       coupon_discount:              BUG108_FLAGS.couponLive ? (discounts.couponDiscount || 0) : 0,
       coupon_title:                 BUG108_FLAGS.couponLive ? (discounts.couponTitle || '') : '',
       coupon_type:                  BUG108_FLAGS.couponLive ? (discounts.couponType || '') : '',
@@ -1783,6 +1802,12 @@ export const toAPI = {
       // when their CRM endpoints are not yet live. UI keeps these sections
       // disabled; this prevents any stale override value from printing on the bill.
       coupon_code: BUG108_FLAGS.couponLive ? (overrides.couponCode !== undefined ? overrides.couponCode : '') : '',
+      // BUG-108 V1B (2026-05-25, E-16, Owner Q5 = A): print payload now carries
+      // the coupon discount ₹ amount so the bill template can render a
+      // "Coupon <CODE>  −₹X" line beneath the existing "Discount" line
+      // (mirrors the `loyalty_dicount_amount` pattern below). Force-zero when
+      // `couponLive=false` for symmetry with the `coupon_code` field above.
+      coupon_discount: BUG108_FLAGS.couponLive ? (overrides.couponDiscount !== undefined ? overrides.couponDiscount : 0) : 0,
       loyalty_dicount_amount: BUG108_FLAGS.loyaltyRatioLive ? (overrides.loyaltyAmount !== undefined ? overrides.loyaltyAmount : 0) : 0,
       wallet_used_amount: BUG108_FLAGS.walletDebitLive ? (overrides.walletAmount !== undefined ? overrides.walletAmount : 0) : 0,
       Date: formatBillDate(order.createdAt),

@@ -16,10 +16,16 @@
  * POS internal orderType → CRM channel (strict snake_case per Owner Q1).
  * Fallback: 'pos' for unknown orderTypes (matches CRM's accepted generic channel).
  */
+// BUG-108 V1B (2026-05-25, owner decision B-6): NEVER send `'pos'` channel.
+// CRM `'pos'` is reserved for the future web/pos platform. All POS Frontend
+// orderTypes must pin to one of dine_in / takeaway / delivery. Unknown types
+// default to `'dine_in'` (safest in-premises default per owner B-6 follow-up).
 const CHANNEL_MAP = {
-  dineIn:   'dine_in',
-  takeAway: 'takeaway',
-  delivery: 'delivery',
+  dineIn:      'dine_in',
+  walkIn:      'dine_in',   // counter-order, in-premises consumption (Owner B-6)
+  takeAway:    'takeaway',
+  delivery:    'delivery',
+  roomService: 'dine_in',   // in-premises consumption (room-dining) (Owner B-6)
 };
 
 export const fromAPI = {
@@ -101,7 +107,7 @@ export const toAPI = {
    * @param {string} orderType - 'dineIn' | 'takeAway' | 'delivery' | other
    * @returns {string} CRM channel string
    */
-  channel: (orderType) => CHANNEL_MAP[orderType] || 'pos',
+  channel: (orderType) => CHANNEL_MAP[orderType] || 'dine_in',
 
   /**
    * Build GET /api/pos/coupons/available query params.

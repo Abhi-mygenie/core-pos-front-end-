@@ -16,6 +16,11 @@ import PaymentMethodButton, { PaymentMethodButtonInline } from "./PaymentMethodB
 import { BUG108_FLAGS, BUG108_COPY } from "../../utils/BUG108_FLAGS";
 // BUG-108 Phase C corrected (2026-05-24): non-mutating CRM calculation.
 import { getMaxRedeemable } from "../../api/services/loyaltyService";
+// BUG-108 V1B (2026-05-25): coupon CRM wiring — type-ahead /available +
+// debounced auto-apply /validate. Mirrors the Phase C loyalty pattern.
+import { getAvailableCoupons, validateCoupon } from "../../api/services/couponService";
+import { toAPI as couponToAPI } from "../../api/transforms/couponTransform";
+import { toast } from "sonner";
 
 const CollectPaymentPanel = ({ 
   cartItems, 
@@ -518,11 +523,13 @@ const CollectPaymentPanel = ({
     ? maxRedeemable.maxDiscountValue
     : 0;
   
+  // BUG-108 V1B (2026-05-25, E-2): CRM is now the source of truth for the
+  // coupon discount value. POS no longer recomputes % vs flat math — the
+  // pre-V1B selectedCoupon.{type, discount, maxDiscount} legacy shape is
+  // retired. `selectedCoupon.computedDiscount` comes from
+  // `couponTransform.fromAPI.validateCoupon` (CRM /validate response).
   const couponDiscount = (BUG108_FLAGS.couponLive && selectedCoupon)
-    ? selectedCoupon.type === "percent"
-      // BUG-020 (Apr-2026): 2-decimal precision (was Math.round(x / 100) → integer).
-      ? Math.min(Math.round((itemTotal * selectedCoupon.discount)) / 100, selectedCoupon.maxDiscount || Infinity)
-      : selectedCoupon.discount
+    ? Math.max(0, parseFloat(selectedCoupon.computedDiscount) || 0)
     : 0;
   
   const walletDiscount = (BUG108_FLAGS.walletDebitLive && useWallet && customer?.walletBalance)
@@ -650,25 +657,149 @@ const CollectPaymentPanel = ({
 
   const change = amountReceived ? Math.max(0, parseFloat(amountReceived) - effectiveTotal) : 0;
 
-  // Apply coupon code
-  // BUG-108 P1 (May-2026): Hardcoded FLAT50/SAVE10 mock catalog removed.
-  // When CRM coupon endpoint (`POST /pos/coupons/validate`) is live in P2,
-  // flip `BUG108_FLAGS.couponLive=true` and replace the early-return below
-  // with the real validate call. Until then, this is a guarded no-op so the
-  // disabled Apply button cannot accidentally apply anything.
-  const handleApplyCoupon = () => {
-    setCouponError("");
-    if (!BUG108_FLAGS.couponLive) {
-      // P1: no live validation endpoint yet. Apply button is disabled in UI;
-      // this is a belt-and-braces guard in case the handler is invoked
-      // programmatically.
-      return;
+  // BUG-108 V1B (2026-05-25, B-4, B-5): coupon CRM wiring.
+  //   • `/available` is fetched on coupon-input focus (max 3 calls per
+  //     panel mount per B-5). Cached in `availableCoupons` state.
+  //   • `/validate` is called by two paths:
+  //       1. Debounced auto-apply (500ms) — picks highest `expectedDiscount`
+  //          match for the typed prefix per B-4.
+  //       2. Manual Apply button — for unknown / out-of-list codes (SQ-3).
+  //   • Outside-window coupons are skipped in auto-apply but remain visible
+  //     in the dropdown (greyed) so cashier can see why they're unavailable.
+  const couponAvailableCallCountRef = useRef(0);
+  const couponAvailableFetchedForRef = useRef(null);  // tracks {customerId} of last fetch
+  const couponDebounceRef = useRef(null);
+
+  const fetchAvailableCoupons = async () => {
+    if (!BUG108_FLAGS.couponLive) return;
+    if (!customer?.id || !restaurantSettings?.isCoupon) return;
+    // Cap: max 3 calls per panel session per Owner B-5.
+    if (couponAvailableCallCountRef.current >= 3) return;
+    // Skip if we already fetched for this customer this session.
+    if (couponAvailableFetchedForRef.current === customer.id) return;
+    couponAvailableCallCountRef.current += 1;
+    couponAvailableFetchedForRef.current = customer.id;
+    try {
+      const orderTotalForAvail = Math.max(0, itemTotal - manualDiscount - presetDiscount);
+      const result = await getAvailableCoupons({
+        customerId: customer.id,
+        orderTotal: orderTotalForAvail,
+        channel:    couponToAPI.channel(orderType),
+      });
+      // Sort by expectedDiscount desc (CRM already sorts, but be defensive).
+      const sorted = (result.coupons || []).slice().sort(
+        (a, b) => (b.expectedDiscount || 0) - (a.expectedDiscount || 0)
+      );
+      setAvailableCoupons(sorted);
+      if (result.error?.code === 'NETWORK') {
+        setCouponInstruction('Unable to load coupons. Try again.');
+      }
+    } catch (e) {
+      // Defensive — couponService already handles network errors.
+      // eslint-disable-next-line no-console
+      console.warn('[Coupon] fetchAvailableCoupons error:', e);
     }
-    if (!couponCode) return;
-    // [P2 placeholder] Real validation will call CRM `POST /pos/coupons/validate`
-    // and set `selectedCoupon` from the response, or `couponError` from the
-    // typed error code (INVALID_CODE / EXPIRED / MIN_ORDER_NOT_MET /
-    // NOT_ENTITLED / ALREADY_USED / INACTIVE) per FINAL_OWNER_APPROVALS §2.1.
+  };
+
+  // Reset coupon-available cache when customer changes.
+  useEffect(() => {
+    setAvailableCoupons([]);
+    couponAvailableFetchedForRef.current = null;
+    couponAvailableCallCountRef.current = 0;
+  }, [customer?.id]);
+
+  // BUG-108 V1B (B-2): auto-remove a non-stackable coupon when cashier
+  // enables loyalty redemption — silent removal + toast (no Pay-button block).
+  useEffect(() => {
+    if (
+      BUG108_FLAGS.couponLive &&
+      useLoyalty &&
+      selectedCoupon &&
+      selectedCoupon.stackableWithLoyalty === false
+    ) {
+      setSelectedCoupon(null);
+      setCouponCode('');
+      setCouponError('');
+      setCouponInstruction(null);
+      try {
+        toast('Coupon removed — incompatible with loyalty', { duration: 4000 });
+      } catch (_e) { /* toast surface unavailable in some test envs */ }
+    }
+  }, [useLoyalty, selectedCoupon]);
+
+  // BUG-108 V1B error-code → cashier copy (covers all 9 V1 CRM codes + 2 POS).
+  const errorCodeToCopy = (code) => ({
+    INVALID_CODE:                  'Invalid coupon code',
+    EXPIRED:                       'Coupon has expired',
+    INACTIVE:                      'Coupon is no longer active',
+    MIN_ORDER_NOT_MET:             'Minimum order value not met',
+    USAGE_LIMIT_REACHED:           'Coupon fully redeemed',
+    CUSTOMER_USAGE_LIMIT_REACHED:  'You have used this coupon the maximum number of times',
+    CUSTOMER_NOT_ELIGIBLE:         'Coupon not available for this customer',
+    CHANNEL_NOT_VALID:             'Coupon not valid for this order type',
+    STACKING_NOT_ALLOWED:          'Cannot combine coupon with loyalty points',
+    OUTSIDE_TIME_WINDOW:           'Coupon not active right now',
+    NETWORK:                       'Unable to validate coupon. Try again.',
+  }[code] || 'Coupon could not be applied');
+
+  const runValidate = async (codeToValidate) => {
+    if (!codeToValidate) return;
+    setCouponLoading(true);
+    setCouponError('');
+    setCouponInstruction(null);
+    try {
+      const orderTotalForValidate = Math.max(0, itemTotal - manualDiscount - presetDiscount);
+      const result = await validateCoupon({
+        code:              codeToValidate,
+        customerId:        customer?.id,
+        orderTotal:        orderTotalForValidate,
+        channel:           couponToAPI.channel(orderType),
+        loyaltyPointsUsed: (useLoyalty && maxRedeemable?.maxPointsRedeemable > 0)
+          ? maxRedeemable.maxPointsRedeemable
+          : 0,
+      });
+      if (result.valid) {
+        setSelectedCoupon(result);
+      } else {
+        setSelectedCoupon(null);
+        setCouponError(errorCodeToCopy(result.error?.code));
+        setCouponInstruction(result.posInstruction || null);
+      }
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  // Debounced auto-apply (500ms) on typed prefix per B-4.
+  useEffect(() => {
+    if (!BUG108_FLAGS.couponLive) return;
+    if (couponDebounceRef.current) clearTimeout(couponDebounceRef.current);
+    if (!couponCode || selectedCoupon || availableCoupons.length === 0) return;
+    couponDebounceRef.current = setTimeout(() => {
+      const typed = couponCode.trim().toUpperCase();
+      if (!typed) return;
+      const filtered = availableCoupons
+        .filter(c => c.withinWindowNow === true)
+        .filter(c => (c.code || '').startsWith(typed))
+        .sort((a, b) => (b.expectedDiscount || 0) - (a.expectedDiscount || 0));
+      const best = filtered[0];
+      if (best) {
+        runValidate(best.code);
+      }
+    }, 500);
+    return () => { if (couponDebounceRef.current) clearTimeout(couponDebounceRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [couponCode, availableCoupons, selectedCoupon]);
+
+  // Apply coupon code (manual Apply button or dropdown row click).
+  // BUG-108 V1B (2026-05-25, E-3): real /validate call replaces the no-op.
+  const handleApplyCoupon = async (codeOverride) => {
+    if (!BUG108_FLAGS.couponLive) return;
+    if (!customer?.id) return;
+    const code = (typeof codeOverride === 'string' ? codeOverride : couponCode).trim();
+    if (!code) return;
+    if (couponDebounceRef.current) clearTimeout(couponDebounceRef.current);
+    await runValidate(code);
   };
 
   // BUG-108 Phase C corrected (2026-05-24): call POST /pos/max-redeemable
@@ -780,8 +911,15 @@ const CollectPaymentPanel = ({
         total:                totalDiscount,
         orderDiscountPercent: discountType === 'percent' ? parseFloat(discountValue || 0) : 0,
         couponDiscount:       couponDiscount,
-        couponTitle:          selectedCoupon?.code || '',
-        couponType:           selectedCoupon?.type || '',
+        // BUG-108 V1B (2026-05-25, E-6): emit canonical CRM-shape fields.
+        //   - `couponCode`  → CRM `coupon_code` (NEW per Owner SQ-1 = A)
+        //   - `couponTitle` → CRM `coupon_title` (informational display name,
+        //                     was incorrectly carrying `selectedCoupon.code`)
+        //   - `couponType`  → CRM `coupon_type` ('order'|'item'|'category';
+        //                     was the legacy `'percent'|'flat'` mock value)
+        couponCode:           selectedCoupon?.code || '',
+        couponTitle:          selectedCoupon?.title || '',
+        couponType:           selectedCoupon?.couponType || '',
         discountType:         discountType || '',
         orderDiscountType:    discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : '',
         loyaltyPoints:        finalLoyaltyDiscount,
@@ -849,6 +987,10 @@ const CollectPaymentPanel = ({
         grantAmount:         effectiveTotal,
         discountAmount,
         couponCode:          selectedCoupon?.code || '',
+        // BUG-108 V1B (2026-05-25, E-7, Owner Q5 = A): forward coupon discount
+        // ₹ amount to the print payload so the bill template renders a
+        // "Coupon <CODE>  −₹X" line (mirrors loyalty_dicount_amount pattern).
+        couponDiscount:      couponDiscount,
         loyaltyAmount:       loyaltyDiscount,
         walletAmount:        walletDiscount,
         serviceChargeAmount: serviceCharge,
@@ -1044,8 +1186,9 @@ const CollectPaymentPanel = ({
         </div>
 
         {/* 2. Coupon Section - Only if customer entered and coupons enabled in profile */}
-        {/* BUG-108 P1: Visible-but-disabled when `couponLive=false` ("Coming soon") and
-            mutually exclusive with manual/preset discount per Q10 (no auto-clear). */}
+        {/* BUG-108 V1B (2026-05-25): full type-ahead dropdown UX (E-8).
+            Helper text "Coming soon" path retained for safety when
+            `couponLive=false` — removed at V1 closure (Step 4). */}
         {customer && restaurantSettings?.isCoupon && (() => {
           const isManualActive = (manualDiscount > 0 || presetDiscount > 0);
           const couponBlocked = !BUG108_FLAGS.couponLive || isManualActive;
@@ -1054,9 +1197,17 @@ const CollectPaymentPanel = ({
             : isManualActive
               ? BUG108_COPY.couponBlockedByDiscount
               : null;
+          const showDropdown = showCouponDropdown && !couponBlocked && !selectedCoupon && availableCoupons.length > 0;
+          const showEmptyHint = showCouponDropdown && !couponBlocked && !selectedCoupon && availableCoupons.length === 0 && couponAvailableFetchedForRef.current === customer?.id;
+          const formatWindowTime = (iso) => {
+            if (!iso) return '';
+            try {
+              return new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+            } catch (_e) { return ''; }
+          };
           return (
           <div
-            className="p-3 rounded-lg border"
+            className="p-3 rounded-lg border relative"
             style={{ borderColor: COLORS.borderGray, opacity: couponBlocked ? 0.6 : 1 }}
             data-testid="coupon-section"
           >
@@ -1064,34 +1215,79 @@ const CollectPaymentPanel = ({
               <span className="text-sm font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🎫 Coupon</span>
               <input
                 type="text"
-                placeholder="Enter code"
+                placeholder="Enter code or pick…"
                 value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                disabled={couponBlocked}
+                onChange={(e) => {
+                  setCouponCode(e.target.value.toUpperCase());
+                  if (couponError) setCouponError('');
+                  if (couponInstruction) setCouponInstruction(null);
+                }}
+                onFocus={() => {
+                  setShowCouponDropdown(true);
+                  fetchAvailableCoupons();
+                }}
+                onBlur={() => { setTimeout(() => setShowCouponDropdown(false), 150); }}
+                disabled={couponBlocked || couponLoading}
                 className="flex-1 px-2 py-1.5 rounded-lg border text-sm outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 style={{ borderColor: COLORS.borderGray }}
                 data-testid="coupon-input"
               />
               <button
-                onClick={handleApplyCoupon}
-                disabled={couponBlocked}
+                onClick={() => handleApplyCoupon()}
+                disabled={couponBlocked || couponLoading || !couponCode}
                 className="px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
                 data-testid="apply-coupon-btn"
               >
-                Apply
+                {couponLoading ? '…' : 'Apply'}
               </button>
             </div>
+            {/* Type-ahead dropdown (max 5 visible, scrollable) */}
+            {showDropdown && (
+              <div
+                className="absolute left-3 right-3 mt-1 rounded-lg border bg-white shadow-lg max-h-48 overflow-y-auto"
+                style={{ borderColor: COLORS.borderGray, zIndex: 50 }}
+                data-testid="coupon-suggestions-dropdown"
+              >
+                {availableCoupons.slice(0, 5).map((c) => {
+                  const inWindow = c.withinWindowNow !== false;
+                  return (
+                    <div
+                      key={c.id || c.code}
+                      onMouseDown={() => { if (inWindow) handleApplyCoupon(c.code); }}
+                      className={`px-3 py-2 text-sm flex items-center justify-between ${inWindow ? 'cursor-pointer hover:bg-gray-50' : 'cursor-not-allowed'}`}
+                      style={{ opacity: inWindow ? 1 : 0.5 }}
+                      data-testid={`coupon-suggestion-${c.code}`}
+                    >
+                      <span style={{ color: COLORS.darkText }}>{c.code}</span>
+                      {inWindow ? (
+                        <span style={{ color: COLORS.primaryGreen }}>−₹{Math.round((c.expectedDiscount || 0) * 100) / 100}</span>
+                      ) : (
+                        <span className="text-xs" style={{ color: COLORS.grayText }} data-testid="coupon-outside-window-hint">
+                          {c.nextWindowStart ? `Available from ${formatWindowTime(c.nextWindowStart)}` : 'Not active'}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {showEmptyHint && (
+              <div className="text-xs mt-1 ml-16 italic" style={{ color: COLORS.grayText }} data-testid="coupon-empty-hint">
+                No coupons available for this customer
+              </div>
+            )}
             {helperText && (
               <div className="text-xs mt-1 ml-16 italic" style={{ color: COLORS.grayText }} data-testid="coupon-helper-text">
                 {helperText}
               </div>
             )}
             {couponError && <div className="text-xs mt-1 ml-16" style={{ color: "#D32F2F" }} data-testid="coupon-error-text">{couponError}</div>}
+            {couponInstruction && <div className="text-xs mt-1 ml-16" style={{ color: COLORS.grayText }} data-testid="coupon-pos-instruction-text">{couponInstruction}</div>}
             {selectedCoupon && (
-              <div className="flex items-center justify-between mt-2 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
+              <div className="flex items-center justify-between mt-2 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }} data-testid="applied-coupon-chip">
                 <span className="text-sm" style={{ color: COLORS.primaryGreen }}>✓ {selectedCoupon.code} (-₹{couponDiscount})</span>
-                <button onClick={() => setSelectedCoupon(null)} className="text-xs" style={{ color: COLORS.grayText }}>Remove</button>
+                <button onClick={() => { setSelectedCoupon(null); setCouponCode(''); setCouponError(''); setCouponInstruction(null); }} className="text-xs" style={{ color: COLORS.grayText }} data-testid="remove-coupon-btn">Remove</button>
               </div>
             )}
           </div>
@@ -1584,8 +1780,8 @@ const CollectPaymentPanel = ({
                     </div>
 
                     {/* Coupon */}
-                    {/* BUG-108 P1: Inline-mirror parity with standard view —
-                        disabled when `couponLive=false` or Q10 manual-active. */}
+                    {/* BUG-108 V1B (2026-05-25): inline-mirror parity with main coupon UI.
+                        Smaller text classes; shares the same state hooks. */}
                     {customer && restaurantSettings?.isCoupon && (() => {
                       const isManualActiveInline = (manualDiscount > 0 || presetDiscount > 0);
                       const couponBlockedInline = !BUG108_FLAGS.couponLive || isManualActiveInline;
@@ -1594,38 +1790,84 @@ const CollectPaymentPanel = ({
                         : isManualActiveInline
                           ? BUG108_COPY.couponBlockedByDiscount
                           : null;
+                      const showDropdownInline = showCouponDropdown && !couponBlockedInline && !selectedCoupon && availableCoupons.length > 0;
+                      const showEmptyHintInline = showCouponDropdown && !couponBlockedInline && !selectedCoupon && availableCoupons.length === 0 && couponAvailableFetchedForRef.current === customer?.id;
+                      const formatWindowTimeInline = (iso) => {
+                        if (!iso) return '';
+                        try { return new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }); }
+                        catch (_e) { return ''; }
+                      };
                       return (
-                    <div className="px-3 pt-2 border-t" style={{ borderColor: COLORS.borderGray, opacity: couponBlockedInline ? 0.6 : 1 }}>
+                    <div className="px-3 pt-2 border-t relative" style={{ borderColor: COLORS.borderGray, opacity: couponBlockedInline ? 0.6 : 1 }}>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium whitespace-nowrap" style={{ color: COLORS.darkText }}>🎫 Coupon</span>
                         <input
                           type="text"
-                          placeholder="Enter code"
+                          placeholder="Enter code or pick…"
                           value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          disabled={couponBlockedInline}
+                          onChange={(e) => {
+                            setCouponCode(e.target.value.toUpperCase());
+                            if (couponError) setCouponError('');
+                            if (couponInstruction) setCouponInstruction(null);
+                          }}
+                          onFocus={() => { setShowCouponDropdown(true); fetchAvailableCoupons(); }}
+                          onBlur={() => { setTimeout(() => setShowCouponDropdown(false), 150); }}
+                          disabled={couponBlockedInline || couponLoading}
                           className="flex-1 px-2 py-1 rounded-lg border text-xs outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                           style={{ borderColor: COLORS.borderGray }}
                         />
                         <button
-                          onClick={handleApplyCoupon}
-                          disabled={couponBlockedInline}
+                          onClick={() => handleApplyCoupon()}
+                          disabled={couponBlockedInline || couponLoading || !couponCode}
                           className="px-2 py-1 rounded-lg text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ backgroundColor: COLORS.primaryGreen, color: "white" }}
                         >
-                          Apply
+                          {couponLoading ? '…' : 'Apply'}
                         </button>
                       </div>
+                      {showDropdownInline && (
+                        <div
+                          className="absolute left-3 right-3 mt-1 rounded-lg border bg-white shadow-lg max-h-40 overflow-y-auto"
+                          style={{ borderColor: COLORS.borderGray, zIndex: 50 }}
+                        >
+                          {availableCoupons.slice(0, 5).map((c) => {
+                            const inWindow = c.withinWindowNow !== false;
+                            return (
+                              <div
+                                key={c.id || c.code}
+                                onMouseDown={() => { if (inWindow) handleApplyCoupon(c.code); }}
+                                className={`px-3 py-1.5 text-xs flex items-center justify-between ${inWindow ? 'cursor-pointer hover:bg-gray-50' : 'cursor-not-allowed'}`}
+                                style={{ opacity: inWindow ? 1 : 0.5 }}
+                              >
+                                <span style={{ color: COLORS.darkText }}>{c.code}</span>
+                                {inWindow ? (
+                                  <span style={{ color: COLORS.primaryGreen }}>−₹{Math.round((c.expectedDiscount || 0) * 100) / 100}</span>
+                                ) : (
+                                  <span style={{ color: COLORS.grayText }}>
+                                    {c.nextWindowStart ? `From ${formatWindowTimeInline(c.nextWindowStart)}` : 'Not active'}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {showEmptyHintInline && (
+                        <div className="text-xs mt-1 ml-14 italic" style={{ color: COLORS.grayText }}>
+                          No coupons available for this customer
+                        </div>
+                      )}
                       {helperTextInline && (
                         <div className="text-xs mt-1 ml-14 italic" style={{ color: COLORS.grayText }}>
                           {helperTextInline}
                         </div>
                       )}
                       {couponError && <div className="text-xs mt-1 ml-14" style={{ color: "#D32F2F" }}>{couponError}</div>}
+                      {couponInstruction && <div className="text-xs mt-1 ml-14" style={{ color: COLORS.grayText }}>{couponInstruction}</div>}
                       {selectedCoupon && (
                         <div className="flex items-center justify-between mt-1 px-2 py-1 rounded" style={{ backgroundColor: `${COLORS.primaryGreen}10` }}>
                           <span className="text-xs" style={{ color: COLORS.primaryGreen }}>✓ {selectedCoupon.code} (-₹{couponDiscount})</span>
-                          <button onClick={() => setSelectedCoupon(null)} className="text-xs" style={{ color: COLORS.grayText }}>Remove</button>
+                          <button onClick={() => { setSelectedCoupon(null); setCouponCode(''); setCouponError(''); setCouponInstruction(null); }} className="text-xs" style={{ color: COLORS.grayText }}>Remove</button>
                         </div>
                       )}
                     </div>
