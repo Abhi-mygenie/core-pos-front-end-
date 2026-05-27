@@ -63,7 +63,7 @@ Deploy and maintain the MyGenie POS frontend from GitHub repo `https://github.co
 ### BUG-108 Carryover
 | Item | Priority | Status |
 |---|---|---|
-| BC-01 POS BE items[] forwarding | P0 | BACKEND TEAM — not frontend (POS FE sends correctly) |
+| BC-01 POS BE items[] forwarding | P0 | ✅ CLOSED — owner confirmed |
 | BC-02 loyalty_idempotency_key null | P1 | ✅ CLOSED — backend now sends the key |
 | BC-05 Wallet (re-scoped CR-005) | P1 | DEFERRED |
 

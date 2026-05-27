@@ -25,7 +25,7 @@ In-scope here = the slice that a CRM 2.0 agent might need to look at; out-of-sco
 
 | Carryover ID | Source ID (POS3.0) | Area | Description | Current Status | Owner | Why it's a CRM 2.0 carryover |
 |---|---|---|---|---|---|---|
-| **BC-01** | G-08 (P0) | POS BE mapper — `items[]` forwarding at commit | POS Backend forwarding of `items[]` (OrderItem schema) to CRM `/api/pos/orders` UNVERIFIED. Hard blocker for full V2/V3 coupon commit-time revalidation. | BACKEND_BLOCKED | POS BE team | Blocks any commit-payload regression run (CG-01) from being a *complete* CR-002 evidence. POS frontend already emits correctly. |
+| **BC-01** | G-08 (P0) | POS BE mapper — `items[]` forwarding at commit | POS Backend forwarding of `items[]` (OrderItem schema) to CRM `/api/pos/orders`. **CLOSED 2026-05-27 — owner confirmed.** | ✅ CLOSED | POS BE team | Verified. |
 | **BC-02** | G-11 (P1) | Loyalty idempotency key | POS BE owns generation of `"order_{id}_loyalty"` per Owner 2026-05-25 Option B. **CLOSED 2026-05-27 — backend now sends this key. Owner confirmed.** | ✅ CLOSED | POS BE team | Verified — backend generates the key correctly. |
 | **BC-03** | G-15 (P2) | CRM admin UI for V3-B / V3-C coupons | BOGO/BXG/Nth coupons must be seeded via DB/API; no CRM admin UI. | CRM_BLOCKED (admin) | CRM team | Future CRM admin sprint inside CRM 2.0 scope (not a POS frontend deliverable). |
 | **BC-04** | G-17 (P3) | Coupon reversal / refund | No CRM reversal endpoint; cancel/refund of committed coupon usage impossible. | DEFERRED (CRM Phase 2) | CRM Phase 2 | Pre-condition for any future cancel-coupon CR in CRM 2.0. |
