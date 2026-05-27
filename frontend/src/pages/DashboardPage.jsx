@@ -1381,6 +1381,10 @@ const DashboardPage = () => {
   // enough because these are not derived from props.
   const [orderEntryResetNonce, setOrderEntryResetNonce] = useState(0);
   const handleCollectBillStayOnOrder = () => {
+    // PROD-HOTFIX (2026-05-27): Clear saved cart for current order context.
+    // Walk-in cart key ('walkIn') persists across remount — old items reappear without this.
+    const cartKey = orderEntryTable?.id || orderEntryType;
+    if (cartKey) setCartsByTable(prev => ({ ...prev, [cartKey]: [] }));
     setOrderEntryTable(null);
     setOrderEntryType('walkIn');
     setInitialShowPayment(false);
