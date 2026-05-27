@@ -261,79 +261,90 @@ This is the **exact same pattern** that Full Mode uses upstream (L788-792 ternar
 |---|---|---|
 | Gate A — Plan approval | ✅ APPROVED 2026-05-27 |
 | Gate B — Diff 1 (effectiveTotal swap) | ✅ APPLIED `CartPanel.jsx` L362 |
-| Gate C — Diff 2 (breakdown hide on placed) | ✅ APPLIED `CartPanel.jsx` L492 |
+| Gate C — Diff 2 (breakdown hide on placed) | ✅ APPLIED `CartPanel.jsx` L492 → **SUPERSEDED by Phase 2** |
 | Gate D — Build + lint | ✅ PASSED exit 0, no new ESLint errors, bundle -45B |
-| Gate E — Combined QA doc (109/110/111) | ⏳ PENDING (next session) |
-| Gate F — Close-out | ⏳ PENDING |
+| Gate E — Combined QA doc (109/110/111) | ✅ INCLUDED in Phase 2 closure |
+| Gate F — Close-out | ✅ CLOSED — Phase 2 shipped |
 
 **Owner-confirmed live observation (2026-05-27 screenshot, order with ₹675 Grand Total):**
 - ✅ Grand Total now correctly reads ₹675 (server-authoritative `total` prop) instead of locally-recomputed ₹1,200+
 - ✅ Pay button + Cash Received auto-fill cascade correctly
-- ❌ **Open issue surfaced:** breakdown rows (Item Total, Discount, Subtotal, Tax) are completely hidden on placed orders — owner wants them VISIBLE but populated from server data → **see Phase 2 below**
+- ❌ **Open issue surfaced:** breakdown rows (Item Total, Discount, Subtotal, Tax) are completely hidden on placed orders — owner wants them VISIBLE but populated from server data → **RESOLVED in Phase 2**
 
 ---
 
-## 13. PHASE 2 PLAN — SERVER-DRIVEN BREAKDOWN (PROPOSED, AWAITING APPROVAL)
+## 13. PHASE 2 — SERVER-DRIVEN BREAKDOWN — SHIPPED (2026-05-27)
 
-**Status:** Stage 5 PROPOSED — awaiting Gate A approval next session.
+**Status:** ✅ SHIPPED & OWNER-VERIFIED (live test with discount ₹999 + loyalty ₹244 = aggregated ₹1,243)
 
-**One-line scope:** Replace the "hide breakdown on placed orders" wrap (Phase 1 Diff 2) with a server-driven breakdown branch that renders Item Total / Discount (aggregated) / Subtotal / Tax / Round-off from `orderFromContext`/`orderData` fields. Unplaced orders keep local recompute (interactive QSR Discount selector).
+### Phase 2 — Corrected approach (supersedes original §13 plan)
 
-### Phase 2 — Diffs (3 files, ~+32 lines net)
+**Key corrections from first attempt:**
+1. **No `orderTransform.js` changes** — all socket mapping already exists in `fromAPI.order`
+2. **Corrected gate:** `hasPlacedItems && placedOrderData && subtotalAmount > 0` — ensures breakdown only shows when server financial data is available (not the socket-only state where fields are 0)
+3. **Derived values from existing fields** — no new transform fields needed:
+   - Item Total = `subtotalAmount`
+   - Discount = `subtotalAmount - subtotalBeforeTax + serviceTax + tipAmount + deliveryCharge` (single aggregated row)
+   - Subtotal = `subtotalBeforeTax`
+   - Tax = `amount - subtotalBeforeTax` (includes round-off)
+4. **3 states:** placed+paid (server breakdown) / placed+unpaid (hidden) / unplaced (local compute)
+
+### Phase 2 — Final Diffs (2 files, ~+26 lines net)
 
 | Diff | File | Change | Net lines |
 |---|---|---|---|
-| **3** | `orderTransform.js fromAPI.order` (after L227) | Surface 6 missing server fields: `couponDiscount`, `loyaltyDiscount`, `walletDebit`, `gstTax`, `vatTax`, `roundUp` (all `parseFloat \|\| 0`, missing → 0 → row hidden by `> 0` guard) | +8 |
-| **4** | `OrderEntry.jsx` L2147 `<CartPanel>` prop list | Add 1 prop: `placedOrderData={orderFromContext \|\| orderData}` (uses the socket-synced order when present, falls back to initial transform) | +3 |
-| **5** | `CartPanel.jsx` outer destructure + `QsrBillingSection` destructure (L244-252) + call site (L1256-1275) | Forward `placedOrderData` prop through both layers | +3 |
-| **6** | `CartPanel.jsx` L492-501 (replaces Phase 1 Diff 2 wrapper) | Add 2-branch ternary: `hasPlacedItems && placedOrderData` → render server-driven breakdown block (8 rows reading from `placedOrderData.*`); else → existing local-recompute block (unchanged) | ~+21 net (~+30 add, -9 wrapper removal) |
-| **Total** | 3 files | | **~+35 lines, 3 files, 0 logic rewrites** |
+| **A** | `OrderEntry.jsx` L2213 | Add 1 prop: `placedOrderData={placedOrderId ? orders.find(...) \|\| orderData : null}` | +1 |
+| **B** | `CartPanel.jsx` (QsrBillingSection destructure + outer destructure + call site) | Wire `placedOrderData` prop through both layers | +3 |
+| **C** | `CartPanel.jsx` L498-513 (replaces Phase 1 Diff 2 wrapper) | 3-branch ternary: server-driven / hidden / local-compute with 7 rows: Item Total, Discount, Subtotal, Service Charge, Delivery, Tip, Tax | ~+22 net |
+| **Total** | 2 files | | **~+26 lines, 0 transform changes** |
 
-### Phase 2 — Frozen Acceptance Criteria
+### Phase 2 — Acceptance Criteria (VERIFIED)
 
-| AC | Rule |
-|---|---|
-| **AC-111-P2-1** | When `hasPlacedItems === true` AND `placedOrderData !== null` → breakdown rows render from server fields: `Item Total = placedOrderData.subtotalAmount`; **`Discount = sum(discount + couponDiscount + loyaltyDiscount + walletDebit)`** (single aggregated row per owner directive 2026-05-27); `Subtotal = placedOrderData.subtotalBeforeTax`; `Service Charge = placedOrderData.serviceTax`; `Delivery = placedOrderData.deliveryCharge`; `Tax (GST) = placedOrderData.gstTax`; `VAT = placedOrderData.vatTax`; `Round-off = placedOrderData.roundUp`. |
-| **AC-111-P2-2** | Grand Total still reads `effectiveTotal` (Phase 1 Diff 1) → byte-identical to today. |
-| **AC-111-P2-3** | `> 0` (or `> 0.01` for VAT, `!== 0` for round-off) guards on each row → server-zero fields hide cleanly. |
-| **AC-111-P2-4** | Unplaced order or `placedOrderData === null` → fallback to local-recompute block (today's behaviour). |
-| **AC-111-P2-5** | Single aggregated "Discount" row — owner directive 2026-05-27: "loyalty + coupon + other discounts all shd club in single discount for qsr view". |
-| **AC-111-P2-6** | No outbound payload change. No `orderFinancials` state extension. No new prop besides `placedOrderData`. |
-| **AC-111-P2-7** | Phase 1 fix retained (effectiveTotal uses server `total` prop). |
+| AC | Rule | Status |
+|---|---|---|
+| **AC-111-P2-1** | Placed + paid order → breakdown from server fields (Item Total, Discount, Subtotal, Tax) | ✅ VERIFIED |
+| **AC-111-P2-2** | Grand Total still reads `effectiveTotal` (Phase 1 Diff 1) | ✅ VERIFIED |
+| **AC-111-P2-3** | `> 0` guards on each row → server-zero fields hide cleanly | ✅ VERIFIED |
+| **AC-111-P2-4** | Unplaced order → local-recompute (unchanged) | ✅ VERIFIED |
+| **AC-111-P2-5** | Single aggregated Discount row (owner directive) | ✅ VERIFIED — ₹999 + ₹244 = -₹1,243 single row |
+| **AC-111-P2-6** | No outbound payload change. No `orderFinancials` change. No transform change. | ✅ VERIFIED |
+| **AC-111-P2-7** | Phase 1 fix retained | ✅ VERIFIED |
+| **AC-111-P2-8** | Subtotal row visible between Discount and Tax | ✅ VERIFIED — ₹387 |
 
-### Phase 2 — Critical live test (BLOCKING for Phase 2 close-out)
+### Phase 2 — Live Test T-DISCOUNT-CLUB (PASSED)
 
-**Test scenario T-DISCOUNT-CLUB (owner directive 2026-05-27):**
-1. Open a fresh order in Full Mode → add items totalling, say, ₹1,200.
-2. Apply **all four** discount sources in Full Mode `CollectPaymentPanel`:
-   - Restaurant discount (e.g. ₹50 manual)
-   - Coupon (e.g. WELCOME10, ₹100 off)
-   - Loyalty redemption (e.g. 300 pts = ₹30 off)
-   - Wallet debit (e.g. ₹50 off)
-3. Submit Collect Bill → server returns single-order-new with `restaurant_discount_amount=50, coupon_discount=100, loyalty_discount=30, use_wallet_balance=50, order_amount=...`.
-4. Navigate back to the order in QSR mode.
-5. **Expected:** QSR Billing summary shows:
-   - `Item Total ₹1,200`
-   - `Discount -₹230` ← **single aggregated row** (50 + 100 + 30 + 50)
-   - `Service Charge ₹X`
-   - `Subtotal ₹X`
-   - `Tax (GST) ₹X`
-   - `Round-off ₹X`
-   - `Grand Total ₹X` (server-authoritative)
-6. **FAIL if:** discount rows appear separated, OR any single source is missed, OR breakdown values don't match Full Mode's Collect Bill summary for the same order.
+**Owner-verified (2026-05-27, order with 3 items ₹1,630):**
+- Full Mode: Discount (Flat) -₹999 + Loyalty (244 pts) -₹244 = Total Discount -₹1,243
+- Full Mode: Subtotal ₹387, CGST ₹9.67, SGST ₹9.67, Round Off ₹0.66
+- QSR Billing correctly shows:
+  - Item Total ₹1,630 ✅
+  - Discount -₹1,243.00 ✅ (single aggregated row)
+  - Subtotal ₹387 ✅
+  - Tax ₹20.00 ✅ (CGST + SGST + round-off)
+  - Grand Total ₹407 ✅
+- **PASS** — all values match Full Mode bill summary
 
-### Phase 2 — Approval gates
+### Phase 2 — Gate Status
 
 ```
-Gate A-P2 — APPROVE PHASE 2 PLAN                              [PENDING next session]
-Gate B-P2 — APPROVE DIFF 3 (orderTransform.js +8 lines)        [HOLD]
-Gate C-P2 — APPROVE DIFF 4 (OrderEntry.jsx +3 lines)           [HOLD]
-Gate D-P2 — APPROVE DIFF 5 (CartPanel.jsx wire-through +3)     [HOLD]
-Gate E-P2 — APPROVE DIFF 6 (server-driven breakdown render)    [HOLD]
-Gate F-P2 — Build + lint summary shown                         [auto after edit]
-Gate G-P2 — Live test T-DISCOUNT-CLUB executed                 [HOLD — needs preprod order]
-Gate H-P2 — APPROVE combined QA doc (109/110/111-P1/P2)         [HOLD]
-Gate I-P2 — APPROVE close-out                                   [HOLD]
+Gate A-P2 — APPROVE PHASE 2 PLAN                              [✅ APPROVED]
+Gate B-P2 — APPROVE DIFFS (collapsed)                          [✅ APPROVED — all diffs approved in single message]
+Gate F-P2 — Build + lint                                       [✅ PASSED — exit 0, no new warnings]
+Gate G-P2 — Live test T-DISCOUNT-CLUB                          [✅ PASSED — owner verified]
+Gate H-P2 — Close-out                                          [✅ CLOSED]
 ```
 
-**End of POS3.1 BUG-111 Plan (Phase 1 SHIPPED + Phase 2 PROPOSED). Awaiting next session for Phase 2 Gate A-P2 approval.**
+### Phase 2 — Gaps identified and corrected during implementation
+
+7 gaps were found in the original Phase 2 plan (§13). See session investigation notes:
+1. Plan never verified socket event lifecycle (which event carries which fields)
+2. Single gate `hasPlacedItems` conflated placed-unpaid and placed-paid states
+3. Wrong/ambiguous field for Item Total (subtotalAmount vs subtotalBeforeTax)
+4. Competing plans with contradicting discount display (separate vs aggregated)
+5. `fromAPI.order` extension unnecessary — existing fields sufficient for derived values
+6. Third branch rendered null — silent breakdown disappearance
+7. Missing test for placed-but-unpaid QSR state
+
+All 7 corrected in final implementation.
+
+**End of POS3.1 BUG-111 Plan — Phase 1 + Phase 2 SHIPPED.**
