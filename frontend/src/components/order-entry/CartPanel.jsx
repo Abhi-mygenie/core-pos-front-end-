@@ -249,6 +249,7 @@ const QsrBillingSection = ({
   onQsrCollectBill, onFullBilling, isPlacingOrder,
   hasPlacedItems = false,
   hasValidationErrors = false,
+  placedOrderData = null,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [discountType, setDiscountType] = useState(null);
@@ -495,12 +496,23 @@ const QsrBillingSection = ({
         )}
 
 
-        {/* Bill summary rows — POS3.1 BUG-111 (2026-05-27): hidden on placed orders.
-            The breakdown is locally recomputed and would mismatch the server's
-            authoritative Grand Total (which already reflects Full Mode discount /
-            coupon / loyalty / wallet). Only Grand Total + payment buttons remain
-            on placed orders. Unplaced orders show the full breakdown as today. */}
-        {!hasPlacedItems && (
+        {/* Bill summary rows — POS3.1 BUG-111 Phase 2 (2026-05-27):
+            3 states: (A) placed + server data available → server-derived breakdown,
+            (B) placed + no server data yet → hidden (Phase 1 behaviour),
+            (C) unplaced → local compute (unchanged).
+            Gate: subtotalAmount > 0 proves socket carried financial breakdown.
+            Discount = single aggregated row derived from existing fields.
+            Owner directive: "loyalty coupon and other discounts all shd club in single discount for qsr view". */}
+        {hasPlacedItems && placedOrderData && (placedOrderData.subtotalAmount || 0) > 0 ? (
+        <div className="pt-1.5 space-y-1" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
+          <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Item Total</span><span style={{ color: COLORS.darkText }}>₹{(placedOrderData.subtotalAmount || 0).toLocaleString()}</span></div>
+          {(() => { const d = (placedOrderData.subtotalAmount || 0) - (placedOrderData.subtotalBeforeTax || 0) + (placedOrderData.serviceTax || 0) + (placedOrderData.tipAmount || 0) + (placedOrderData.deliveryCharge || 0); return d > 0 ? <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Discount</span><span style={{ color: COLORS.primaryGreen }}>-₹{d.toFixed(2)}</span></div> : null; })()}
+          {(placedOrderData.serviceTax || 0) > 0 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Service Charge</span><span style={{ color: COLORS.darkText }}>₹{(placedOrderData.serviceTax || 0).toFixed(2)}</span></div>}
+          {(placedOrderData.deliveryCharge || 0) > 0 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Delivery</span><span style={{ color: COLORS.darkText }}>₹{(placedOrderData.deliveryCharge || 0).toFixed(2)}</span></div>}
+          {(placedOrderData.tipAmount || 0) > 0 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Tip</span><span style={{ color: COLORS.darkText }}>₹{(placedOrderData.tipAmount || 0).toFixed(2)}</span></div>}
+          {(() => { const tax = (placedOrderData.amount || 0) - (placedOrderData.subtotalBeforeTax || 0); return tax > 0 ? <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Tax</span><span style={{ color: COLORS.darkText }}>₹{tax.toFixed(2)}</span></div> : null; })()}
+        </div>
+        ) : !hasPlacedItems ? (
         <div className="pt-1.5 space-y-1" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
           <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Item Total</span><span style={{ color: COLORS.darkText }}>₹{itemTotal.toLocaleString()}</span></div>
           {totalDiscount > 0 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Discount</span><span style={{ color: COLORS.primaryGreen }}>-₹{totalDiscount.toFixed(2)}</span></div>}
@@ -510,7 +522,7 @@ const QsrBillingSection = ({
           {vatAmount > 0.01 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>VAT</span><span style={{ color: COLORS.darkText }}>₹{vatAmount.toFixed(2)}</span></div>}
           {roundOff !== 0 && <div className="flex justify-between"><span style={{ color: COLORS.grayText }}>Round-off</span><span style={{ color: COLORS.darkText }}>₹{roundOff.toFixed(2)}</span></div>}
         </div>
-        )}
+        ) : null}
 
         {/* Grand Total */}
         <div className="flex justify-between pt-1.5 font-bold" style={{ borderTop: `1px solid ${COLORS.darkText}` }}>
@@ -675,6 +687,7 @@ const CartPanel = ({
   onQsrCollectBill,
   restaurant = null,
   onFullBilling,
+  placedOrderData = null,
 }) => {
   const { enableDynamicTables } = useSettings();
   // ROOM_CHECKIN_FIX_V2: synthetic "Check In" marker must never be counted,
@@ -1285,6 +1298,7 @@ const CartPanel = ({
           isPlacingOrder={isPlacingOrder}
           hasPlacedItems={hasPlacedItems}
           hasValidationErrors={hasValidationErrors}
+          placedOrderData={placedOrderData}
         />
       ) : null
       ) : (
