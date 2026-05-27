@@ -1192,43 +1192,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           console.log('[QSR PlaceAndPay] Waiting for table engage socket...');
           await engagePromise;
         } else {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          // PROD-HOTFIX-005 (2026-05-27): reduced from 500ms to 200ms for faster cashier turnaround
+          await new Promise(resolve => setTimeout(resolve, 200));
         }
-        await placePromise;
         if (apiFailed) return;
 
-        // Inline auto-print for QSR fresh order (mirrors autoPrintNewOrderIfEnabled at L1532)
-        if (qsrAutoBill && newOrderId && !effectiveTable?.isRoom) {
-          try {
-            const order = await waitForOrderReady(Number(newOrderId), 3000);
-            if (order?.rawOrderDetails) {
-              const discountAmount = Math.round(
-                ((paymentData?.discounts?.manual || 0)
-                  + (paymentData?.discounts?.preset || 0)
-                  + (paymentData?.discounts?.couponDiscount || 0)) * 100
-              ) / 100;
-              const overrides = {
-                orderItemTotal:      paymentData?.itemTotal,
-                orderSubtotal:       paymentData?.subtotal,
-                paymentAmount:       paymentData?.finalTotal,
-                discountAmount,
-                couponCode:          paymentData?.discounts?.couponCode || '',
-                couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
-                serviceChargeAmount: paymentData?.serviceCharge || 0,
-                deliveryCharge:      paymentData?.deliveryCharge || 0,
-                gstTax:              paymentData?.printGstTax,
-                vatTax:              paymentData?.printVatTax,
-                tip:                 paymentData?.tip || 0,
-                ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
-              };
-              await printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || []);
-              console.log('[QSR PlaceAndPay] auto-print completed for order:', newOrderId);
-            }
-          } catch (err) {
-            console.error('[QSR PlaceAndPay] auto-print non-blocking error:', err?.message);
-          }
-        }
-
+        // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
+        // API response + auto-print run in background (fire-and-forget).
+        // Matches normal Place Order pattern (L940-968).
         if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
           console.log('[QSR PlaceAndPay] staying on Order Entry');
           onCollectBillStayOnOrder();
@@ -1236,6 +1207,38 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           console.log('[QSR PlaceAndPay] redirecting to dashboard');
           onClose();
         }
+
+        // Background: wait for API response then auto-print (non-blocking)
+        placePromise.then(() => {
+          if (qsrAutoBill && newOrderId && !effectiveTable?.isRoom) {
+            waitForOrderReady(Number(newOrderId), 3000).then(order => {
+              if (order?.rawOrderDetails) {
+                const discountAmount = Math.round(
+                  ((paymentData?.discounts?.manual || 0)
+                    + (paymentData?.discounts?.preset || 0)
+                    + (paymentData?.discounts?.couponDiscount || 0)) * 100
+                ) / 100;
+                const overrides = {
+                  orderItemTotal:      paymentData?.itemTotal,
+                  orderSubtotal:       paymentData?.subtotal,
+                  paymentAmount:       paymentData?.finalTotal,
+                  discountAmount,
+                  couponCode:          paymentData?.discounts?.couponCode || '',
+                  couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
+                  serviceChargeAmount: paymentData?.serviceCharge || 0,
+                  deliveryCharge:      paymentData?.deliveryCharge || 0,
+                  gstTax:              paymentData?.printGstTax,
+                  vatTax:              paymentData?.printVatTax,
+                  tip:                 paymentData?.tip || 0,
+                  ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
+                };
+                printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || [])
+                  .then(() => console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId))
+                  .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
+              }
+            }).catch(err => console.error('[QSR PlaceAndPay] background waitForOrderReady error:', err?.message));
+          }
+        }).catch(() => {}); // API error already handled by .catch above
       } else {
         // === ALREADY-PLACED ORDER (edge case): Collect Bill on existing order ===
         const collectOrderId = effectiveTable?.orderId || placedOrderId;
@@ -1801,29 +1804,31 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       await engagePromise;
                     } else {
                       // Walk-in/TakeAway/Delivery — no physical table, brief delay for UX
-                      console.log('[Prepaid] No physical table, adding 0.5s delay...');
-                      await new Promise(resolve => setTimeout(resolve, 500));
+                      console.log('[Prepaid] No physical table, adding 0.2s delay...');
+                      // PROD-HOTFIX-005 (2026-05-27): reduced from 500ms to 200ms for faster cashier turnaround
+                      await new Promise(resolve => setTimeout(resolve, 200));
                     }
-
-                    // BUG-273: block on HTTP response so newOrderId is populated before auto-print.
-                    // Engage socket typically arrives first; we must also wait for HTTP to capture order_id.
-                    await placePromise;
 
                     if (apiFailed) return;
-                    // BUG-273: auto-print bill for fresh new-order (event-driven wait on context settle).
-                    // Scope: new-order ONLY. Scenario 1 (collect-bill) intentionally does NOT auto-print.
-                    await autoPrintNewOrderIfEnabled(newOrderId);
-                    // CR-008 #4 Phase A / Bucket D1 (May-2026): same branch as
-                    // Scenario 1 below (L1509). Place+Pay is a payment-success
-                    // path too — honour the toggle uniformly so walk-in / counter
-                    // rapid-fire flows also keep the cashier on OrderEntry.
+
+                    // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
+                    // API response + auto-print run in background (fire-and-forget).
                     if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
-                      console.log('[Prepaid] Table engaged + HTTP resolved — staying on Order Entry (walk-in)');
+                      console.log('[Prepaid] Socket/delay done — staying on Order Entry');
                       onCollectBillStayOnOrder();
                     } else {
-                      console.log('[Prepaid] Table engaged + HTTP resolved — redirecting to dashboard');
+                      console.log('[Prepaid] Socket/delay done — redirecting to dashboard');
                       onClose();
                     }
+
+                    // Background: wait for API response then auto-print (non-blocking)
+                    placePromise.then(() => {
+                      if (!apiFailed && newOrderId) {
+                        autoPrintNewOrderIfEnabled(newOrderId)
+                          .catch(err => console.error('[Prepaid] background auto-print error:', err?.message));
+                      }
+                    }).catch(() => {}); // API error already handled by .catch above
+
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   } else {
                     // Scenario 1 — existing order: collect bill via POST order-bill-payment
