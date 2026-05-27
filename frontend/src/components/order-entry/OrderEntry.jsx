@@ -2211,7 +2211,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onQsrCollectBill={handleQsrCollectBill}
                 restaurant={restaurant}
                 onFullBilling={() => setShowPaymentPanel(true)}
-                placedOrderData={placedOrderId ? orders.find(o => o.orderId === placedOrderId) || orderData : null}
               />
             </>
           )}

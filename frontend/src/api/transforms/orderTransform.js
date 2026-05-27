@@ -223,13 +223,6 @@ export const fromAPI = {
       // with `discount_value` as legacy fallback). Missing field → 0 (no
       // regression vs current behavior).
       discount: parseFloat(api.restaurant_discount_amount || api.discount_value || 0) || 0,
-      // POS3.1 BUG-111 Phase 2 (2026-05-27): expose coupon/loyalty/wallet/round
-      // fields so QSR bill summary can render server-sourced breakdown.
-      couponDiscount: parseFloat(api.coupon_discount) || 0,
-      couponCode: api.coupon_code || '',
-      loyaltyDiscount: parseFloat(api.loyalty_discount) || 0,
-      walletDebit: parseFloat(api.use_wallet_balance) || 0,
-      roundUp: parseFloat(api.round_up) || 0,
       paymentStatus: api.payment_status || 'unpaid',
       paymentType: api.payment_type || '',
       paymentMethod: api.payment_method || api.payment_mode || '',
