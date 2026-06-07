@@ -54,6 +54,7 @@
 | BUG-111 | QSR bill parity (Grand Total + breakdown) | — | CLOSED | POS 3.1 | — |
 | **BUG-112** | **Auto-print (order-temp-store) blocked by Place Order API response — should fire in parallel** | **P1** | **INTAKE** | **POS 4.0** | **FE architecture change** |
 | **BUG-113** | **Partial payment UI stuck — auto-fill locks Cash/Card/UPI amount fields, cannot re-enter** | **P1** | **INTAKE** | **POS 4.0** | **FE investigation needed** |
+| **BUG-114** | **discount_type, discount_member_category_id/name sent as empty/0 when category discount applied** | **P1** | **INTAKE** | **POS 4.0** | **FE payload bug** |
 
 ---
 
