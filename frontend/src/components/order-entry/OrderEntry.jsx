@@ -46,7 +46,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null, onCollectBillStayOnOrder }) => {
   const { categories, products, popularFood } = useMenu();
-  const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged, waitForOrderReady, findNewOrderInRef, getOrderByTableId, getOrderById } = useOrders();
+  const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged, waitForOrderReady, getOrderByTableId, getOrderById } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant, cancellation, settings, printerAgents } = useRestaurant();
   const { user, hasPermission, permissions } = useAuth();
@@ -1170,9 +1170,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
         let apiFailed = false;
         let newOrderId = null;
-        // BUG-112: snapshot existing order IDs BEFORE HTTP fires
-        const knownOrderIds = orders.map(o => o.orderId);
-
         const placePromise = api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
@@ -1195,30 +1192,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           console.log('[QSR PlaceAndPay] Waiting for table engage socket...');
           await engagePromise;
         } else {
+          // PROD-HOTFIX-005 (2026-05-27): reduced from 500ms to 200ms for faster cashier turnaround
           await new Promise(resolve => setTimeout(resolve, 200));
         }
         if (apiFailed) return;
 
-        // BUG-112 (POS 4.0): Fire auto-print at redirect point — socket has
-        // already delivered the order during engage/delay wait.
-        if (qsrAutoBill && !effectiveTable?.isRoom) {
-          const socketOrder = findNewOrderInRef(knownOrderIds);
-          if (socketOrder) {
-            console.log('[QSR PlaceAndPay][BUG-112] Socket-delivered order found:', socketOrder.orderId, '— firing auto-print at redirect point');
-            autoPrintNewOrderIfEnabled(socketOrder.orderId)
-              .catch(err => console.error('[QSR PlaceAndPay] auto-print error:', err?.message));
-          } else {
-            // Fallback: socket hasn't arrived yet (rare) — wait for HTTP response
-            console.log('[QSR PlaceAndPay][BUG-112] No socket order yet — falling back to HTTP-gated print');
-            placePromise.then(() => {
-              if (newOrderId) {
-                autoPrintNewOrderIfEnabled(newOrderId)
-                  .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
-              }
-            }).catch(() => {});
-          }
-        }
-
+        // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
+        // API response + auto-print run in background (fire-and-forget).
+        // Matches normal Place Order pattern (L940-968).
         if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
           console.log('[QSR PlaceAndPay] staying on Order Entry');
           onCollectBillStayOnOrder();
@@ -1226,6 +1207,38 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           console.log('[QSR PlaceAndPay] redirecting to dashboard');
           onClose();
         }
+
+        // Background: wait for API response then auto-print (non-blocking)
+        placePromise.then(() => {
+          if (qsrAutoBill && newOrderId && !effectiveTable?.isRoom) {
+            waitForOrderReady(Number(newOrderId), 3000).then(order => {
+              if (order?.rawOrderDetails) {
+                const discountAmount = Math.round(
+                  ((paymentData?.discounts?.manual || 0)
+                    + (paymentData?.discounts?.preset || 0)
+                    + (paymentData?.discounts?.couponDiscount || 0)) * 100
+                ) / 100;
+                const overrides = {
+                  orderItemTotal:      paymentData?.itemTotal,
+                  orderSubtotal:       paymentData?.subtotal,
+                  paymentAmount:       paymentData?.finalTotal,
+                  discountAmount,
+                  couponCode:          paymentData?.discounts?.couponCode || '',
+                  couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
+                  serviceChargeAmount: paymentData?.serviceCharge || 0,
+                  deliveryCharge:      paymentData?.deliveryCharge || 0,
+                  gstTax:              paymentData?.printGstTax,
+                  vatTax:              paymentData?.printVatTax,
+                  tip:                 paymentData?.tip || 0,
+                  ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
+                };
+                printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || [])
+                  .then(() => console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId))
+                  .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
+              }
+            }).catch(err => console.error('[QSR PlaceAndPay] background waitForOrderReady error:', err?.message));
+          }
+        }).catch(() => {}); // API error already handled by .catch above
       } else {
         // === ALREADY-PLACED ORDER (edge case): Collect Bill on existing order ===
         const collectOrderId = effectiveTable?.orderId || placedOrderId;
@@ -1295,7 +1308,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     } finally {
       setIsProcessingPayment(false);
     }
-  }, [effectiveTable, table, placedOrderId, cartItems, customer, restaurant, user, orderType, orderNotes, selectedAddress, printerAgents, isProcessingPayment, toast, onClose, onCollectBillStayOnOrder, getOrderById, waitForOrderEngaged, waitForTableEngaged, waitForOrderReady, findNewOrderInRef, orders, printOrder]);
+  }, [effectiveTable, table, placedOrderId, cartItems, customer, restaurant, user, orderType, orderNotes, selectedAddress, printerAgents, isProcessingPayment, toast, onClose, onCollectBillStayOnOrder, getOrderById, waitForOrderEngaged, waitForTableEngaged, waitForOrderReady, printOrder]);
 
   return (
     <div
@@ -1762,15 +1775,16 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
                     let apiFailed = false;
                     let newOrderId = null;
-                    // BUG-112: snapshot existing order IDs BEFORE HTTP fires.
-                    // After engage/delay, socket will have delivered the new order to ordersRef.
-                    const knownOrderIds = orders.map(o => o.orderId);
-
+                    // BUG-273 (Session 16 fix-up): HTTP promise must be captured and awaited
+                    // before auto-print. Previously fire-and-forget .then() caused newOrderId
+                    // to remain null when autoPrintNewOrderIfEnabled ran, because engage socket
+                    // arrives BEFORE HTTP response (per CLARIFICATIONS §8). Result: print skipped.
                     const placePromise = api.post(API_ENDPOINTS.PLACE_ORDER, formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
                     })
                       .then(res => {
                         console.log('[Prepaid] response:', res.data);
+                        // [BUG-273 diag] Explicit multi-shape capture log
                         const o1 = res?.data?.order_id;
                         const o2 = res?.data?.data?.order_id;
                         const o3 = res?.data?.new_order_ids?.[0];
@@ -1789,32 +1803,16 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.log('[Prepaid] Waiting for update-table engage socket...');
                       await engagePromise;
                     } else {
+                      // Walk-in/TakeAway/Delivery — no physical table, brief delay for UX
                       console.log('[Prepaid] No physical table, adding 0.2s delay...');
+                      // PROD-HOTFIX-005 (2026-05-27): reduced from 500ms to 200ms for faster cashier turnaround
                       await new Promise(resolve => setTimeout(resolve, 200));
                     }
 
                     if (apiFailed) return;
 
-                    // BUG-112 (POS 4.0): Fire auto-print at redirect point — socket has
-                    // already delivered the order to ordersRef during engage/delay wait.
-                    // No need to wait for HTTP response. findNewOrderInRef reads ordersRef
-                    // (always fresh, no closure staleness).
-                    const socketOrder = findNewOrderInRef(knownOrderIds);
-                    if (socketOrder) {
-                      console.log('[Prepaid][BUG-112] Socket-delivered order found:', socketOrder.orderId, '— firing auto-print at redirect point');
-                      autoPrintNewOrderIfEnabled(socketOrder.orderId)
-                        .catch(err => console.error('[Prepaid] auto-print error:', err?.message));
-                    } else {
-                      // Fallback: socket hasn't arrived yet (rare) — wait for HTTP response
-                      console.log('[Prepaid][BUG-112] No socket order yet — falling back to HTTP-gated print');
-                      placePromise.then(() => {
-                        if (!apiFailed && newOrderId) {
-                          autoPrintNewOrderIfEnabled(newOrderId)
-                            .catch(err => console.error('[Prepaid] background auto-print error:', err?.message));
-                        }
-                      }).catch(() => {});
-                    }
-
+                    // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
+                    // API response + auto-print run in background (fire-and-forget).
                     if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
                       console.log('[Prepaid] Socket/delay done — staying on Order Entry');
                       onCollectBillStayOnOrder();
@@ -1822,6 +1820,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.log('[Prepaid] Socket/delay done — redirecting to dashboard');
                       onClose();
                     }
+
+                    // Background: wait for API response then auto-print (non-blocking)
+                    placePromise.then(() => {
+                      if (!apiFailed && newOrderId) {
+                        autoPrintNewOrderIfEnabled(newOrderId)
+                          .catch(err => console.error('[Prepaid] background auto-print error:', err?.message));
+                      }
+                    }).catch(() => {}); // API error already handled by .catch above
 
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   } else {
