@@ -52,7 +52,7 @@
 | BUG-109 | QSR takeaway/delivery validation parity | — | CLOSED | POS 3.1 | — |
 | BUG-110 | QSR prepaid lock parity | — | CLOSED | POS 3.1 | — |
 | BUG-111 | QSR bill parity (Grand Total + breakdown) | — | CLOSED | POS 3.1 | — |
-| **BUG-112** | **Auto-print (order-temp-store) blocked by Place Order API response — should fire in parallel** | **P1** | **DISCOVERY COMPLETE** | **POS 4.0** | **Owner decision needed: Q-112-CRITICAL** |
+| **BUG-112** | **Auto-print (order-temp-store) blocked by Place Order API response — should fire in parallel** | **P1** | **IMPLEMENTED — Phase 1** | **POS 4.0** | **waitForOrderReady 3000→500ms + early HTTP check at redirect point. Phase 2 (table-matching for socket-first) deferred.** |
 | **BUG-113** | **Partial payment UI stuck — auto-fill locks Cash/Card/UPI amount fields, cannot re-enter** | **P1** | **DISCOVERY COMPLETE** | **POS 4.0** | **FE fix: 2-row auto-fill circular override (L2639). Confirmed by owner: happens with 2 methods.** |
 | **BUG-114** | **discount_type, discount_member_category_id/name sent as empty/0 when category discount applied** | **P1** | **DISCOVERY COMPLETE** | **POS 4.0** | **FE fix: 2 gaps — hardcoded 0 in transform + not threaded from CollectPayment** |
 | **BUG-115** | **Audit Report — cancelled item/order not rendering correctly in some cases; full production validation needed** | **P1** | **NEEDS RUNTIME VALIDATION** | **POS 4.0** | **Code-read found TAB_FILTERS gap (OG-FE-01), but actual failing case needs preprod validation. Compare with Order Ledger S6 cancelled logic.** |
