@@ -1,8 +1,8 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-07 — **CR-013-AUDIT Gate ④ wired + proportional distribution implemented**. Food Court Audit: per-order station pivot, 5 metrics (Item Total/Discount/Sub Total/Tax/Total), drift column, proportional discount/subtotal/total distribution. All 174 orders ₹0 drift on Jun 1. 3 backend gaps flagged (BE-ADDON-001, BE-CANCELLED-TAX-001, FE-PROPORTIONAL-001). S-FC-AUDIT at Gate ④ (awaiting owner data validation).
-**Deployment Reconciliation:** 2026-06-07 — branch `5-june`; preview URL: https://106387a4-113a-472d-8a75-c96e251cbec0.preview.emergentagent.com
+**Last Updated:** 2026-06-07 (Session 2) — **Bug triage + CR intake session.** 7 new bugs registered (BUG-112..118): auto-print latency, partial payment UI stuck, discount category null, audit report cancel edge case, custom item socket, side-sheet discount text, coupon issues. 2 new CRs (CR-014 Menu API Migration, CR-015 Settlement Module). Discovery complete on BUG-112/113/114/116. BUG-113+114 have Gate 3+4 plans ready for owner GO. BUG-115/117 need preprod runtime validation. BUG-118 needs test coupon codes.
+**Deployment Reconciliation:** 2026-06-07 — branch `5-june`; preview URL: https://cafaeb0a-695e-4680-9d60-b07d29857f98.preview.emergentagent.com
 
 ---
 
