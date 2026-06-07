@@ -1,81 +1,137 @@
-# BUG-114 — Discount Type & Category Fields Not Passed to Backend on Category Discount
+# BUG-114 — Discount Type & Category Fields Not Passed to Backend
 
-**Status:** INTAKE
+**Status:** DISCOVERY COMPLETE
 **Priority:** P1
 **Sprint:** POS 4.0
 **Opened:** 2026-06-07
 **Reporter:** Owner
-**Component:** CollectPaymentPanel.jsx / orderTransform.js (likely)
+**Component:** CollectPaymentPanel.jsx, orderTransform.js, profileTransform.js
 
 ---
 
-## 1. Problem Statement (Owner Verbatim)
+## 1. Problem Statement (Owner Verbatim + Screenshot)
 
 > Discount type as well as category — discount category is coming null to the backend. It's not getting passed from the frontend when any category discount is applied.
 
+Evidence (Order #939399): `discount_type: ""`, `discount_member_category_id: 0`, `discount_member_category_name: ""` despite `comm_discount: 13.5` being correctly calculated.
+
 ---
 
-## 2. Evidence (Owner Screenshot — Order #939399)
+## 2. Root Cause (Code-Traced) — TWO gaps
 
-Payload sent to backend (highlighted fields are the problem):
+### Gap 1: `discount_member_category_id` and `discount_member_category_name` are HARDCODED
 
-```json
-{
-  "order_id": "939399",
-  "payment_mode": "cash",
-  "payment_amount": 16,
-  "payment_status": "paid",
-  "comm_discount": 13.5,
-  "discount_type": "",                        // ← SHOULD have a value (e.g., "category" or "member")
-  "order_discount_type": "Percent",           // ← This IS populated
-  "order_discount": 0,
-  "discount_value": 13.5,
-  "discount_member_category_id": 0,           // ← SHOULD be the category ID
-  "discount_member_category_name": "",        // ← SHOULD be the category name
-  "self_discount": 0,
-  "coupon_code": "",
-  "coupon_discount": 0
+**File:** `orderTransform.js`
+
+| Payload Builder | Lines | Value |
+|---|---|---|
+| `placeOrderWithPayment` | L1194–1195 | `discount_member_category_id: 0`, `discount_member_category_name: ''` |
+| `collectBillExisting` | L1390–1391 | `discount_member_category_id: 0`, `discount_member_category_name: ''` |
+| `placeOrder` | L922–923 | `discount_member_category_id: 0`, `discount_member_category_name: null` |
+| `updateOrder` | L1047–1048 | `discount_member_category_id: 0`, `discount_member_category_name: null` |
+
+**None of these read from `discounts` object.** They're all hardcoded to 0/''.
+
+### Gap 2: `discountType` is empty when preset category discount is selected
+
+**File:** `CollectPaymentPanel.jsx` L1212–1229
+
+When user selects a preset category discount from the dropdown:
+```js
+} else if (val.startsWith('preset_')) {
+  const found = (discountTypes || []).find(dt => String(dt.id) === presetId);
+  setSelectedDiscountType(found || null);  // ← stores { id, name, discountPercent }
+  setDiscountType(null);                   // ← CLEARS discountType to null
+  setDiscountValue("");
 }
 ```
 
-**Key observations:**
-- `comm_discount: 13.5` and `discount_value: 13.5` are correctly populated — the discount amount IS being calculated
-- `order_discount_type: "Percent"` is populated — the discount method IS known
-- But `discount_type: ""` — the discount source/category type is **empty**
-- `discount_member_category_id: 0` — the category ID is **not threaded**
-- `discount_member_category_name: ""` — the category name is **not threaded**
+Then in paymentData (L1020-1021):
+```js
+discountType: discountType || '',           // ← '' (null was set above)
+orderDiscountType: discountType === 'percent' ? 'Percent' : ... // ← '' (same)
+```
+
+**Result:** `discount_type` and `order_discount_type` are empty in the payload even though a category discount IS applied.
+
+### Gap 3: `selectedDiscountType` data NOT threaded to `paymentData.discounts`
+
+The `selectedDiscountType` object has `{ id, name, discountPercent }` (from `profileTransform.js` L260-264), but these fields are **never included** in `paymentData.discounts` (L1005-1028). So even though the data exists in React state, it never reaches the payload builder.
 
 ---
 
-## 3. Expected Behavior
+## 3. Data Flow Trace
 
-When a **category discount** is applied (e.g., member/staff/VIP category), the payload should include:
-
-```json
-{
-  "discount_type": "<category_type>",
-  "discount_member_category_id": <actual_category_id>,
-  "discount_member_category_name": "<actual_category_name>"
+```
+Profile API → profileTransform.discountTypes() → { id, name, discountPercent }
+                                                        ↓
+RestaurantContext.discountTypes → CollectPaymentPanel.selectedDiscountType
+                                                        ↓
+paymentData.discounts = {
+  preset: presetDiscount (calculated ✅),
+  discountType: '' (❌ null because setDiscountType(null)),
+  orderDiscountType: '' (❌ derived from null discountType),
+  // selectedDiscountType.id → NEVER THREADED ❌
+  // selectedDiscountType.name → NEVER THREADED ❌
 }
+                                                        ↓
+orderTransform.collectBillExisting / placeOrderWithPayment:
+  comm_discount: discounts.preset ✅ (13.5 — correct)
+  discount_type: discounts.discountType ❌ ('' — empty)
+  discount_member_category_id: 0 ❌ (HARDCODED)
+  discount_member_category_name: '' ❌ (HARDCODED)
 ```
 
 ---
 
-## 4. Likely Affected Files
+## 4. Fix Plan
 
-| File | Role |
-|---|---|
-| `CollectPaymentPanel.jsx` | Discount selection UI, category picker, state management |
-| `orderTransform.js` | `collectBillExisting` / `placeOrderWithPayment` payload builders |
-| `CartPanel.jsx` | If discount state is managed here before passing to payment |
+### Step 1: Thread category info through `paymentData.discounts` (CollectPaymentPanel.jsx)
+
+At L1005-1028, add to the `discounts` object:
+```js
+discounts: {
+  ...existing fields,
+  // NEW — category discount metadata
+  discountMemberCategoryId:   selectedDiscountType?.id || 0,
+  discountMemberCategoryName: selectedDiscountType?.name || '',
+  discountType:               selectedDiscountType
+                                ? selectedDiscountType.name    // or a fixed type string
+                                : (discountType || ''),
+  orderDiscountType:          selectedDiscountType
+                                ? 'Percent'                    // presets are always percentage
+                                : (discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : ''),
+}
+```
+
+### Step 2: Read from `discounts` in payload builders (orderTransform.js)
+
+Replace hardcoded values in ALL 4 builders:
+```js
+// BEFORE (all 4 builders):
+discount_member_category_id:  0,
+discount_member_category_name: '',
+
+// AFTER:
+discount_member_category_id:  discounts.discountMemberCategoryId || 0,
+discount_member_category_name: discounts.discountMemberCategoryName || '',
+```
+
+### Step 3: Fix `discount_type` to carry category name when preset selected
+
+Already handled by Step 1 — `discountType` will carry `selectedDiscountType.name` when a preset is selected.
 
 ---
 
-## 5. Suspected Root Cause (To Investigate)
+## 5. Affected Files
 
-- Category discount selection stores the amount (`comm_discount`, `discount_value`) but does NOT propagate `discount_type`, `category_id`, `category_name` into the payment payload builder
-- The payload transform function may not have fields mapped for these 3 properties
-- Or the discount state object in React doesn't carry category metadata through to the payment submission
+| File | Lines | Change |
+|---|---|---|
+| `CollectPaymentPanel.jsx` | L1005–1028 | Add `discountMemberCategoryId`, `discountMemberCategoryName` to `discounts` object; fix `discountType` for preset mode |
+| `orderTransform.js` | L922–923 | `placeOrder`: read from `discounts` instead of hardcoded 0 |
+| `orderTransform.js` | L1047–1048 | `updateOrder`: same |
+| `orderTransform.js` | L1194–1195 | `placeOrderWithPayment`: same |
+| `orderTransform.js` | L1390–1391 | `collectBillExisting`: same |
 
 ---
 
@@ -83,15 +139,5 @@ When a **category discount** is applied (e.g., member/staff/VIP category), the p
 
 | # | Question |
 |---|---|
-| Q-114-1 | What are the valid values for `discount_type`? (e.g., "category", "member", "manual", "preset") |
-| Q-114-2 | Where does the category list come from — profile API / CRM API? |
-| Q-114-3 | Is this affecting all discount types or only category-based discounts? |
-
----
-
-## 7. Next Steps
-
-1. Trace discount category selection flow in `CollectPaymentPanel.jsx`
-2. Check how `discount_type` / `discount_member_category_id` / `discount_member_category_name` are (or aren't) threaded into the payment payload in `orderTransform.js`
-3. Wire the missing fields into the payload builder
-4. Verify with a test order
+| Q-114-1 | What value should `discount_type` carry for category discounts? The category `name` (e.g., "Staff Discount"), or a fixed type string (e.g., "category", "member")? |
+| Q-114-2 | Does the `placeOrder` (non-payment) path also need category info, or only payment paths? |
