@@ -1208,10 +1208,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onClose();
         }
 
-        // Background: wait for API response then auto-print (non-blocking)
-        placePromise.then(() => {
+        // BUG-112 (POS 4.0): Background auto-print — direct context lookup
+        // instead of 3s waitForOrderReady poll. Socket new-order delivers the
+        // order to context before/around the same time HTTP responds.
+        placePromise.then(async () => {
           if (qsrAutoBill && newOrderId && !effectiveTable?.isRoom) {
-            waitForOrderReady(Number(newOrderId), 3000).then(order => {
+            try {
+              let order = getOrderById(Number(newOrderId));
+              if (!order || !order.rawOrderDetails) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                order = getOrderById(Number(newOrderId));
+              }
               if (order?.rawOrderDetails) {
                 const discountAmount = Math.round(
                   ((paymentData?.discounts?.manual || 0)
@@ -1232,11 +1239,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   tip:                 paymentData?.tip || 0,
                   ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
                 };
-                printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || [])
-                  .then(() => console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId))
-                  .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
+                await printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || []);
+                console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId);
+              } else {
+                console.error('[QSR PlaceAndPay] SKIPPED auto-print — order not in context after 500ms fallback');
               }
-            }).catch(err => console.error('[QSR PlaceAndPay] background waitForOrderReady error:', err?.message));
+            } catch (err) {
+              console.error('[QSR PlaceAndPay] background auto-print error:', err?.message);
+            }
           }
         }).catch(() => {}); // API error already handled by .catch above
       } else {
@@ -1634,13 +1644,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.error('[AutoPrintBill] SKIPPED — no order_id returned from place-order response (capture returned null)');
                       return;
                     }
-                    console.log(`[AutoPrintBill] waiting for order ${newOrderId} to settle in context (3000ms cap)...`);
-                    // BUG-273 (Session 16b): waitForOrderReady now returns the order object
-                    // directly from ordersRef (bypasses React closure staleness on getOrderById).
-                    const order = await waitForOrderReady(Number(newOrderId), 3000);
-                    console.log(`[AutoPrintBill] waitForOrderReady(${newOrderId}) resolved:`, order ? { orderId: order.orderId, hasRawOrderDetails: !!order.rawOrderDetails } : null);
+                    // BUG-112 (POS 4.0): Direct context lookup instead of 3s poll.
+                    // Socket new-order typically delivers the order to context BEFORE
+                    // HTTP responds, so getOrderById should find it immediately.
+                    // 500ms fallback covers the rare race where HTTP is faster than socket.
+                    console.log(`[AutoPrintBill] direct context lookup for order ${newOrderId}...`);
+                    let order = getOrderById(Number(newOrderId));
+                    if (!order || !order.rawOrderDetails) {
+                      console.log(`[AutoPrintBill] order ${newOrderId} not yet in context, 500ms fallback...`);
+                      await new Promise(resolve => setTimeout(resolve, 500));
+                      order = getOrderById(Number(newOrderId));
+                    }
+                    console.log(`[AutoPrintBill] lookup result for ${newOrderId}:`, order ? { orderId: order.orderId, hasRawOrderDetails: !!order.rawOrderDetails } : null);
                     if (!order) {
-                      console.error(`[AutoPrintBill] SKIPPED — order ${newOrderId} did not settle in context within 3000ms`);
+                      console.error(`[AutoPrintBill] SKIPPED — order ${newOrderId} not in context after fallback`);
                       return;
                     }
                     if (!order.rawOrderDetails) {
