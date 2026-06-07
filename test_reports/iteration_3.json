@@ -1,0 +1,54 @@
+{
+  "summary": "Completed S6 Order Ledger freeze prep testing. All major features verified: (1) Header shows 'Order Ledger' without S6 Hybrid badge, (2) Attribution toggle (By Paid Date/By Punched Date) removed, (3) Audit and Ledger Audit tabs visible (env-gated), (4) Download menu has no Phase 2B badges with Excel/PDF enabled and Email/WhatsApp/SMS disabled, (5) Tab counts populate correctly. One minor issue: FY preset button still has 'Coming soon' tooltip in title attribute.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "OrderLedgerMockup.jsx - FY preset button",
+        "issue": "FY button still has 'Coming soon — max 60 days' in title attribute. Per requirements, 'Coming soon tooltips' should be removed.",
+        "selector": "button[data-testid='order-ledger-preset-fy']",
+        "priority": "LOW",
+        "line_number": 577
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_3.json"
+  ],
+  "action_items": [
+    "Remove 'Coming soon — max 60 days' from FY preset button title attribute in OrderLedgerMockup.jsx line 577"
+  ],
+  "critical_code_review_comments": [
+    "FY preset button at line 577 still has title={dis ? 'Coming soon — max 60 days' : ''} - should be removed per freeze prep requirements"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "95% (6/6 tests passed, 1 minor tooltip issue)"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "S6 Order Ledger freeze prep changes verified. All major changes implemented correctly: no S6 Hybrid badge, no attribution toggle, audit tabs visible, no Phase 2B badges in download menu. Only minor issue is FY button tooltip still says 'Coming soon'. Frontend connects to external preprod.mygenie.online API. Login takes 12-15 seconds due to loading page.",
+  "features_tested": {
+    "order_ledger_page_loads": "PASS - Page loads at /reports-module/order-ledger after login",
+    "header_no_s6_hybrid_badge": "PASS - Header shows 'Order Ledger' only, no S6 Hybrid chip",
+    "attribution_toggle_removed": "PASS - No 'By Paid Date / By Punched Date' toggle visible",
+    "audit_tabs_visible": "PASS - Both 'Audit' and 'Ledger Audit' tabs visible (REACT_APP_SHOW_AUDIT_TAB=true)",
+    "tab_counts_populate": "PASS - All Orders 335, Settled 311, Added to Credit 7, Running 6, etc.",
+    "download_menu_no_phase2b": "PASS - No Phase 2B badge text in download menu",
+    "download_excel_enabled": "PASS - Excel download option enabled",
+    "download_pdf_enabled": "PASS - PDF download option enabled",
+    "download_email_disabled": "PASS - Email option disabled",
+    "download_whatsapp_disabled": "PASS - WhatsApp option disabled",
+    "download_sms_disabled": "PASS - SMS option disabled",
+    "fy_preset_disabled": "PASS - FY button is disabled",
+    "fy_preset_tooltip": "MINOR ISSUE - Still has 'Coming soon — max 60 days' tooltip"
+  }
+}

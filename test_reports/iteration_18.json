@@ -1,0 +1,90 @@
+{
+  "summary": "Verified Room Occupancy Heatmap feature addition to S-ROOM (Room Orders Insights) page. All features working correctly: heatmap renders with data-testid='chart-occupancy-heatmap', shows rooms on Y-axis (10 rooms: 101, 103, 104, 105, 106, 107, 108, 109, 204, 206), Mon-Sun on X-axis, color-coded cells (20 green, 50 gray out of 70 total), number overlays for check-in counts, Low-High legend, and CSS-only tooltips showing room/day/check-ins/revenue on hover. All existing features (KPIs, charts, tabs, table) and Gate ⑤ fixes remain intact.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_18.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Heatmap implementation is clean - uses useMemo for data aggregation (lines 365-398)",
+    "Zero additional API calls - heatmap data computed from existing filtered rows",
+    "CSS-only tooltips using group-hover pattern work correctly",
+    "Color intensity calculation is correct: rgba(22, 163, 74, intensity) for green cells",
+    "Gray cells (#f4f4f5) for empty days",
+    "Room sorting is natural (numeric sort for room numbers)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test, app uses external API at preprod.mygenie.online)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "welcome_resort": {
+      "email": "owner@welcomeresort.com",
+      "password": "Qplazm@10",
+      "description": "Has rooms with advance + lodging + food - used for testing"
+    }
+  },
+  "seed_data_creation": "None - uses live API data from preprod.mygenie.online",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Room Occupancy Heatmap feature verified working. Page loads at /reports-module/room-orders. Login takes ~25s. Heatmap shows check-in density across rooms by day of week with color-coded cells and tooltips.",
+  "features_tested": {
+    "page_loads": {
+      "status": "PASS",
+      "details": "Room Orders page loads at /reports-module/room-orders with data-testid='room-orders-insights-page'"
+    },
+    "existing_features": {
+      "status": "PASS",
+      "details": {
+        "kpi_strip": "✅ Total Rooms (25), Room Revenue (₹32,250), Room Collected (₹32,050), Room Outstanding (₹200)",
+        "daily_revenue_chart": "✅ Renders with data-testid='chart-daily-revenue'",
+        "collection_status_chart": "✅ Renders with data-testid='chart-collection-status'",
+        "top_rooms_chart": "✅ Renders with data-testid='chart-top-rooms'",
+        "tabs": "✅ All Rooms, Settled, In-House/Unpaid tabs working",
+        "table": "✅ Table header and room rows render correctly"
+      }
+    },
+    "new_occupancy_heatmap": {
+      "status": "PASS",
+      "details": {
+        "renders": "✅ Heatmap renders with data-testid='chart-occupancy-heatmap'",
+        "title": "✅ 'Room Occupancy Heatmap' with subtitle 'Check-in density across rooms by day of week'",
+        "y_axis_rooms": "✅ 10 rooms displayed: 101, 103, 104, 105, 106, 107, 108, 109, 204, 206",
+        "x_axis_days": "✅ Mon, Tue, Wed, Thu, Fri, Sat, Sun columns",
+        "color_intensity": "✅ 20 green cells (with check-ins), 50 gray cells (empty)",
+        "number_overlays": "✅ Check-in counts displayed in cells (1, 2, etc.)",
+        "legend": "✅ Low-High legend with gradient colors in top right",
+        "tooltips": "✅ CSS-only tooltips show room number, day, check-in count on hover"
+      }
+    },
+    "gate_5_fixes_intact": {
+      "status": "PASS",
+      "details": {
+        "issue_1_header": "✅ Cabinet Grotesk font, bordered date container with FROM/TO, green Apply, grouped presets, orange Download with chevron",
+        "issue_2_loading_shield": "✅ ReportLoadingShield props correct (isLoading, hasLoadedOnce, error, onRetry)",
+        "issue_3_single_call": "✅ No per-row API calls, data pre-populated from service"
+      }
+    },
+    "frontend_compiles": {
+      "status": "PASS",
+      "details": "No compilation errors, page loads successfully"
+    }
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All live API calls to preprod.mygenie.online - no mocked APIs"
+  },
+  "screenshots": [
+    ".screenshots/room_orders_complete.png",
+    ".screenshots/heatmap_focused.png"
+  ]
+}

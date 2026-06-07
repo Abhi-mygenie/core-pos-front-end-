@@ -1,0 +1,81 @@
+{
+  "summary": "VAT-FIX verification complete. All 6 test cases PASSED. The fix correctly derives pure GST = total_gst_tax_amount - total_vat_tax_amount at both header and item level. Lafetta (bar restaurant with GST+VAT) now shows 0 Ledger Audit flags (was 110 before fix). Tax header pill shows ~₹18,606 (not double-counted). cafe103 (pure GST restaurant) unchanged with ~4 legitimate flags.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_14.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "VAT-FIX correctly implemented in reportTransform.js (lines 953-959, 766-768): pure GST = rawGstAmount - vatAmount",
+    "orderLedgerService.js (lines 48-54) correctly passes rawGstAmount for audit engine grand total check",
+    "insightsService.js (lines 116-120) correctly derives per-line tax: gst = rawGst - vat",
+    "orderLedgerAuditEngine.js FE-83 now checks item-level both-tax (not order-level), FE-86 uses combined header tax, FE-88 uses rawGst+vat",
+    "CancellationsMockup.jsx (lines 253-256) correctly applies VAT-FIX for cancelled items"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% (all 6 VAT-FIX test cases passed)"
+  },
+  "test_credentials": {
+    "lafetta": "owner@lafetta.com / Qplazm@10",
+    "cafe103": "owner@cafe103.com / Qplazm@10"
+  },
+  "seed_data_creation": "None - using live API data",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "VAT-FIX verified working. Key test results: (1) Lafetta Order Ledger May 25-31: 0 Ledger Audit flags (was 110 before fix), (2) Lafetta Tax (GST+VAT) header pill: ₹18,606 (not double-counted), (3) Lafetta Sales Tax Collected KPI: ₹18,606.44 (matches S6 Tax pill), (4) cafe103 Order Ledger May 1-31: 4 flags only (legitimate FE-82R SubTotal formula issues, not VAT-related).",
+  "features_tested": {
+    "lafetta_order_ledger_may25_31": {
+      "status": "PASS",
+      "details": "192 orders, Tax (GST+VAT) = ₹18,606, Ledger Audit = 0 flags (was 110 before fix)"
+    },
+    "lafetta_tax_header_pill": {
+      "status": "PASS",
+      "details": "Tax (GST+VAT) header pill shows ₹18,606 - not double-counted"
+    },
+    "lafetta_sales_tax_collected": {
+      "status": "PASS",
+      "details": "Tax Collected KPI = ₹18,606.44 - matches S6 Tax pill"
+    },
+    "lafetta_gst_amount_column": {
+      "status": "PASS",
+      "details": "GST Amount column shows pure GST (not total tax) - verified in code review"
+    },
+    "cafe103_order_ledger_may1_31": {
+      "status": "PASS",
+      "details": "248 orders, Ledger Audit = 4 flags (FE-82R SubTotal formula issues, not VAT-related)"
+    },
+    "cafe103_tax_unchanged": {
+      "status": "PASS",
+      "details": "Pure GST restaurant unchanged - Tax (GST+VAT) = ₹12,528"
+    }
+  },
+  "vat_fix_verification": {
+    "lafetta_before_fix": "110 Ledger Audit flags (false positives from FE-83 + FE-86)",
+    "lafetta_after_fix": "0 Ledger Audit flags",
+    "cafe103_before_fix": "~4 flags (legitimate backend bugs)",
+    "cafe103_after_fix": "4 flags (unchanged, as expected)",
+    "key_changes_verified": [
+      "reportTransform.js: pure GST = rawGstAmount - vatAmount at header level (lines 953-959)",
+      "reportTransform.js: pure GST = gst_tax_amount - vat_tax_amount at item level (lines 766-768)",
+      "orderLedgerService.js: passes rawGstAmount for audit engine (lines 48-54)",
+      "insightsService.js: per-line tax derivation gst = rawGst - vat (lines 116-120)",
+      "orderLedgerAuditEngine.js: FE-83 checks item-level both-tax (not order-level)",
+      "orderLedgerAuditEngine.js: FE-86 uses combined header tax (gst + vat)",
+      "orderLedgerAuditEngine.js: FE-88 uses rawGst + vat for grand total check"
+    ]
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All data from live external APIs at preprod.mygenie.online"
+  }
+}

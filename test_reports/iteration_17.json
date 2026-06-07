@@ -1,0 +1,125 @@
+{
+  "summary": "Gate ⑤ verification complete for S-ROOM (Room Orders Insights). All 3 issues fixed and verified: (1) Header matches S7 pattern with Cabinet Grotesk font, bordered date container with FROM/TO labels, green Apply button with Check icon, grouped presets in bg-zinc-100, outlined orange Download button with ChevronDown. (2) ReportLoadingShield receives correct props (isLoading, hasLoadedOnce, error, onRetry=refetch). (3) Single-call approach implemented - no getSingleOrderRoom import/usage, no detailCacheRef/resolvedTick/handleDetailResolved, data pre-populated from service.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_17.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ISSUE 1 VERIFIED: Header JSX at lines 457-516 matches S7 pattern exactly - Cabinet Grotesk font via inline style, bordered date container with CalendarIcon + FROM/TO labels, green Apply (#329937) with Check icon, presets in bg-zinc-100 rounded-lg, Download with border-[#F26B33] text-[#F26B33] and ChevronDown",
+    "ISSUE 2 VERIFIED: Line 519 shows correct ReportLoadingShield props: isLoading={isLoading} hasLoadedOnce={hasLoadedOnce} error={error} onRetry={refetch}",
+    "ISSUE 3 VERIFIED: roomOrdersService.js has NO getSingleOrderRoom import, pre-scans raw wrappers for room_info and SRM grouping before transform. RoomOrdersMockup.jsx has NO detailCacheRef, resolvedTick, or handleDetailResolved",
+    "ESLint warnings present (react-hooks/exhaustive-deps) but no errors - frontend compiles successfully"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (app uses external API at preprod.mygenie.online)",
+    "frontend": "100% (all 3 Gate ⑤ issues verified fixed)"
+  },
+  "test_credentials": {
+    "welcome_resort": {
+      "email": "owner@welcomeresort.com",
+      "password": "Qplazm@10",
+      "description": "Has rooms with advance + lodging + food"
+    },
+    "palm_house": {
+      "email": "owner@palmhouse.com",
+      "password": "Qplazm@10",
+      "description": "Transfer-to-room only"
+    },
+    "cafe103": {
+      "email": "owner@cafe103.com",
+      "password": "Qplazm@10",
+      "description": "No rooms - empty state test"
+    }
+  },
+  "seed_data_creation": "None - uses live API data from preprod.mygenie.online",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Gate ⑤ fixes verified for S-ROOM. All 3 issues confirmed fixed via code review and UI testing. Page loads at /reports-module/room-orders. Login takes ~25s, data loads quickly with single-call approach.",
+  "features_tested": {
+    "issue_1_header_pattern": {
+      "status": "PASS",
+      "details": {
+        "cabinet_grotesk_font": "✅ Applied via inline style: font-family: 'Cabinet Grotesk', sans-serif",
+        "bordered_date_container": "✅ Has border border-zinc-200 with CalendarIcon",
+        "from_to_labels": "✅ FROM and TO labels present in date range",
+        "green_apply_button": "✅ bg-[#329937] when active, bg-zinc-100 when disabled, has Check icon",
+        "grouped_presets": "✅ Presets in bg-zinc-100 rounded-lg container",
+        "orange_download_button": "✅ border-[#F26B33] text-[#F26B33] with ChevronDown icon"
+      }
+    },
+    "issue_2_report_loading_shield": {
+      "status": "PASS",
+      "details": {
+        "props_passed": "isLoading, hasLoadedOnce, error, onRetry=refetch",
+        "first_load_splash": "✅ Shows when isLoading && !hasLoadedOnce",
+        "content_area": "✅ Visible after data loads (hasLoadedOnce=true)",
+        "error_banner": "✅ Would show with Retry button when error is set"
+      }
+    },
+    "issue_3_single_call_approach": {
+      "status": "PASS",
+      "details": {
+        "no_getSingleOrderRoom": "✅ Not imported or used in roomOrdersService.js or RoomOrdersMockup.jsx",
+        "no_detailCacheRef": "✅ Not present in RoomOrdersMockup.jsx",
+        "no_resolvedTick": "✅ Not present in RoomOrdersMockup.jsx",
+        "no_handleDetailResolved": "✅ Not present in RoomOrdersMockup.jsx",
+        "pre_scan_room_info": "✅ roomOrdersService.js pre-scans raw wrappers for room_info (RM rows)",
+        "pre_scan_srm": "✅ roomOrdersService.js pre-scans for SRM grouping by parent_order_id",
+        "data_pre_populated": "✅ Room Billing and Associated Orders visible immediately on row expand"
+      }
+    },
+    "page_loads": {
+      "status": "PASS",
+      "details": "Room Orders page loads at /reports-module/room-orders"
+    },
+    "frontend_compiles": {
+      "status": "PASS",
+      "details": "webpack compiled with only ESLint warnings (react-hooks/exhaustive-deps), no errors"
+    },
+    "kpi_pills": {
+      "status": "PASS",
+      "details": "Total Rooms (25), Room Revenue (₹32,250 - room charges only), Room Collected (₹32,050), Room Outstanding (₹200)"
+    },
+    "charts": {
+      "status": "PASS",
+      "details": "Daily Room Revenue, Collection Status (donut), Top Rooms by Revenue all render"
+    },
+    "tabs": {
+      "status": "PASS",
+      "details": "All Rooms (25), Settled (21), In-House/Unpaid (4)"
+    },
+    "row_expansion": {
+      "status": "PASS",
+      "details": "Room Billing card and Associated Orders section visible on expand"
+    }
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All live API calls to preprod.mygenie.online - no mocked APIs"
+  },
+  "code_review_verification": {
+    "roomOrdersService_js": {
+      "file": "/app/frontend/src/api/services/roomOrdersService.js",
+      "getSingleOrderRoom_import": "NOT FOUND (correct)",
+      "pre_scan_room_info": "Lines 89-97 - roomInfoMap populated from RM wrappers",
+      "pre_scan_srm": "Lines 99-107 - associatedMap populated from SRM rows"
+    },
+    "RoomOrdersMockup_jsx": {
+      "file": "/app/frontend/src/pages/reports-module/RoomOrdersMockup.jsx",
+      "detailCacheRef": "NOT FOUND (correct)",
+      "resolvedTick": "NOT FOUND (correct)",
+      "handleDetailResolved": "NOT FOUND (correct)",
+      "ReportLoadingShield_props": "Line 519 - isLoading, hasLoadedOnce, error, onRetry=refetch (correct)"
+    }
+  }
+}

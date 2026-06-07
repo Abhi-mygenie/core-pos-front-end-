@@ -1,0 +1,103 @@
+{
+  "summary": "CR-011-ROOM Room Orders page testing complete. All core features working correctly with Welcome Resort login. Page loads at /reports-module/room-orders, KPI pills show room-only revenue (not lodging+food combined), date presets work, tabs filter correctly, room rows load with per-row detail, expanding rows shows Room Billing + Associated Orders, charts render after data resolves, summary bar shows full folio totals, download button shows Excel/PDF options, empty state shown for Cafe103 (no rooms).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_16.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "KPI pills correctly show room-only revenue (roomPrice only, NOT lodging+food combined) as per Gate ② owner-locked rule",
+    "Per-row detail fetches lazily via getSingleOrderRoom - charts and KPIs progressively update as details resolve",
+    "Summary bar correctly shows full folio totals (not room-only) for operational view",
+    "Tab labels use 'Settled' for fOrderStatus=6 and 'In-House / Unpaid' for fOrderStatus!=6 as specified"
+  ],
+  "updated_files": [
+    "/app/memory/test_credentials.md"
+  ],
+  "success_rate": {
+    "backend": "100% (health check passed)",
+    "frontend": "100% (all Room Orders features working)"
+  },
+  "test_credentials": {
+    "welcome_resort": {
+      "email": "owner@welcomeresort.com",
+      "password": "Qplazm@10",
+      "description": "Has rooms with advance payments"
+    },
+    "cafe103": {
+      "email": "owner@cafe103.com",
+      "password": "Qplazm@10",
+      "description": "No rooms - empty state test"
+    }
+  },
+  "seed_data_creation": "None - uses live API data from preprod.mygenie.online",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Room Orders page (CR-011-ROOM Gate ④) fully tested. All features working: KPI pills (room-only revenue), date presets (Today/7D/30D/MTD), tabs (All/Settled/In-House), charts (Daily Revenue/Collection Status/Top Rooms), room row expansion (Room Billing + Associated Orders), download (Excel/PDF), empty state for no-room restaurants. Login takes ~25s, data resolution takes ~15-20s for per-row details.",
+  "features_tested": {
+    "page_loads": {
+      "status": "PASS",
+      "details": "Room Orders page loads at /reports-module/room-orders with Welcome Resort login"
+    },
+    "kpi_pills": {
+      "status": "PASS",
+      "details": "Total Rooms (25), Room Revenue (₹32,250 - room charges only), Room Collected (₹32,050), Room Outstanding (₹200)"
+    },
+    "date_presets": {
+      "status": "PASS",
+      "details": "Today, 7D, 30D, MTD presets all working"
+    },
+    "tabs": {
+      "status": "PASS",
+      "details": "All Rooms (25), Settled (21), In-House/Unpaid (4) - filters correctly"
+    },
+    "room_rows": {
+      "status": "PASS",
+      "details": "Room rows load with room number, guest name, check-in date, total, paid, outstanding"
+    },
+    "row_expansion": {
+      "status": "PASS",
+      "details": "Expanding row shows Room Billing card (Total/Advance/Balance) + Associated Orders table"
+    },
+    "charts": {
+      "status": "PASS",
+      "details": "Daily Room Revenue (stacked bar), Collection Status (donut), Top Rooms by Revenue"
+    },
+    "summary_bar": {
+      "status": "PASS",
+      "details": "Shows full folio totals: Rooms 25 | Total ₹42,364 | Paid ₹40,564 | Outstanding ₹1,800"
+    },
+    "total_footer": {
+      "status": "PASS",
+      "details": "TOTAL row sums correctly"
+    },
+    "download_button": {
+      "status": "PASS",
+      "details": "Shows Excel (.xlsx) and PDF options"
+    },
+    "empty_state": {
+      "status": "PASS",
+      "details": "Cafe103 (no rooms) shows 'No room orders found' with 0 in all KPIs"
+    },
+    "backend_health": {
+      "status": "PASS",
+      "details": "/api/ returns 200 with 'Hello World'"
+    },
+    "sidebar_navigation": {
+      "status": "PASS",
+      "details": "Room Orders entry visible under Insights menu in sidebar"
+    }
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All live API calls to preprod.mygenie.online - no mocked APIs"
+  }
+}
