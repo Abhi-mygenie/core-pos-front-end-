@@ -253,6 +253,20 @@ export const OrderProvider = ({ children }) => {
    * @param {number} timeout - Max wait time in ms (default 3000)
    * @returns {Promise<object|null>} - the order object when ready, null on timeout
    */
+  /**
+   * BUG-112 (POS 4.0): Find a new order in ordersRef that wasn't there before.
+   * Reads from ordersRef (always fresh, no closure staleness).
+   * Used at redirect point to fire auto-print without waiting for HTTP response.
+   * @param {number[]} excludeOrderIds - Order IDs that existed before place-order
+   * @returns {object|null} - The new order object, or null
+   */
+  const findNewOrderInRef = useCallback((excludeOrderIds = []) => {
+    const excludeSet = new Set(excludeOrderIds.map(Number));
+    return ordersRef.current.find(o =>
+      !excludeSet.has(Number(o.orderId)) && o.rawOrderDetails
+    ) || null;
+  }, []);
+
   const waitForOrderReady = useCallback((orderId, timeout = 3000) => {
     return new Promise((resolve) => {
       const start = Date.now();
@@ -364,6 +378,7 @@ export const OrderProvider = ({ children }) => {
     waitForOrderRemoval,
     waitForOrderEngaged,
     waitForOrderReady,
+    findNewOrderInRef,
 
     // Order Engage (for order-level locking)
     engagedOrders,
