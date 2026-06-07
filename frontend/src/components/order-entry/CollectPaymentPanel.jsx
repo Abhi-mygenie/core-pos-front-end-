@@ -2624,22 +2624,36 @@ const CollectPaymentPanel = ({
                           placeholder="Amount"
                           value={sp.amount}
                           onChange={(e) => {
+                            // BUG-113 (POS 4.0): Free typing — no real-time capping,
+                            // no auto-fill on keystroke. User can type any amount.
+                            // Validation + auto-fill happens on blur only.
                             const typedVal = e.target.value;
-                            const typedNum = parseFloat(typedVal) || 0;
                             setSplitPayments(prev => {
                               const newSplit = prev.map(s => ({ ...s }));
-                              // BUG-080 validation: cap at effectiveTotal minus other rows' amounts
+                              newSplit[idx].amount = typedVal;
+                              return newSplit;
+                            });
+                          }}
+                          onBlur={() => {
+                            // BUG-113 (POS 4.0): On blur — clamp to max, auto-fill
+                            // the other row if exactly 2 rows and other is empty.
+                            setSplitPayments(prev => {
+                              const newSplit = prev.map(s => ({ ...s }));
+                              const typedNum = parseFloat(newSplit[idx].amount) || 0;
                               const othersSum = newSplit.reduce((sum, s, i) => i !== idx ? sum + (parseFloat(s.amount) || 0) : sum, 0);
                               const maxForThisRow = Math.max(0, Math.round((effectiveTotal - othersSum) * 100) / 100);
-                              const cappedNum = Math.min(typedNum, maxForThisRow);
-                              const cappedVal = typedNum > maxForThisRow ? String(cappedNum) : typedVal;
-                              newSplit[idx].amount = cappedVal;
-                              // BUG-080 enhancement: when exactly 2 split rows,
-                              // auto-fill the other row with the remaining amount.
+                              // Clamp if over max
+                              if (typedNum > maxForThisRow) {
+                                newSplit[idx].amount = String(maxForThisRow);
+                              }
+                              const clampedNum = Math.min(typedNum, maxForThisRow);
+                              // Auto-fill other row only if 2 rows and other row is empty
                               if (newSplit.length === 2) {
                                 const otherIdx = idx === 0 ? 1 : 0;
-                                const remaining = Math.max(0, Math.round((effectiveTotal - cappedNum) * 100) / 100);
-                                newSplit[otherIdx].amount = remaining > 0 ? String(remaining) : "";
+                                if (!newSplit[otherIdx].amount || newSplit[otherIdx].amount === '0') {
+                                  const remaining = Math.max(0, Math.round((effectiveTotal - clampedNum) * 100) / 100);
+                                  newSplit[otherIdx].amount = remaining > 0 ? String(remaining) : "";
+                                }
                               }
                               return newSplit;
                             });
