@@ -1,7 +1,7 @@
 # Layer 4 — Bug Tracker
 
-**Status:** POPULATED — RECONCILED 2026-05-30
-**Last Updated:** 2026-05-30 (Phase B of AUDIT-CLOSURE-DRIFT-001)
+**Status:** POPULATED — RECONCILED 2026-05-30, UPDATED 2026-06-07
+**Last Updated:** 2026-06-07 (BUG-112 Phase 1 implemented, BUG-113 implemented, BUG-114 implemented)
 **Source:** Canonical sprint summaries + `/memory/bugs/` artifact docs + `BUG_TEMPLATE.md`
 **Reconciliation report:** `change_requests/AUDIT_CLOSURE_DRIFT_001_PHASE_A_RECONCILIATION_2026_05_30.md`
 

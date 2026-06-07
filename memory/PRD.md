@@ -1,7 +1,7 @@
-# MyGenie POS Frontend - PRD
+# MyGenie POS Frontend — PRD
 
 ## Original Problem Statement
-Deploy the MyGenie POS frontend React application from GitHub repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: `5-june`) to the Emergent preview environment. Frontend-only deployment connecting to external APIs.
+Deploy the MyGenie POS frontend React application from GitHub repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: `5-june`) to the Emergent preview environment. Frontend-only deployment connecting to external APIs. Then implement POS 4.0 bug fixes.
 
 ## Architecture
 - **Frontend**: React 19 + Craco + Tailwind CSS + Radix UI (shadcn/ui)
@@ -9,28 +9,31 @@ Deploy the MyGenie POS frontend React application from GitHub repo `https://gith
 - **Firebase**: Push notifications, analytics
 - **Backend**: Default FastAPI placeholder (not used by the app)
 
-## What's Been Implemented (June 7, 2026)
-- Cloned repo from GitHub (branch: 5-june) into /app
-- Configured all environment variables (Firebase, API URLs, Socket URL, CRM URL)
-- Installed dependencies via yarn
-- Frontend compiles and runs successfully on port 3000
-- Login page renders with MyGenie branding, email/password form, remember me, forgot password
+## What's Been Implemented
 
-## Key Environment Variables
-- REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
-- REACT_APP_SOCKET_URL=https://presocket.mygenie.online
-- REACT_APP_CRM_BASE_URL=https://crm.mygenie.online/api
-- Firebase config (API key, auth domain, project ID, etc.)
+### Session 1 — 2026-06-07: Deployment + POS 4.0 Bugs
+- Cloned repo from GitHub (branch: 5-june), configured all env variables, app running
+- Synced CR Registry (CR-014, CR-015) and Bug Tracker (BUG-112 to BUG-118) from intake branch
+- **BUG-112** (Phase 1): Auto-print timing — waitForOrderReady 3000→500ms + early HTTP check
+- **BUG-113**: Split payment UI — removed circular auto-fill, moved to onBlur
+- **BUG-114**: Category discount fields — threaded id/name through paymentData, validated on preprod
 
-## Routes
-- `/` - Login page
-- `/loading` - Loading page (protected)
-- `/dashboard` - Main dashboard (protected)
-- `/reports/*` - Various report pages (protected)
-- `/reports-module/*` - Reports module mockups (protected)
+## Prioritized Backlog
 
-## Backlog
-- P0: None - deployment complete
-- P1: Test login flow with actual credentials against preprod API
-- P2: Verify WebSocket connection to presocket.mygenie.online
-- P2: Verify Firebase push notifications
+### P0 — Next Session
+- BUG-115: Audit Report cancelled rendering (needs runtime validation)
+- BUG-116: Out-of-kitchen socket realtime (discovery complete)
+- BUG-117: Audit side-sheet discount text (needs runtime validation)
+- BUG-118: Nth-item/BOGO coupon (intake, needs investigation)
+
+### P1 — Deferred
+- BUG-112 Phase 2: Socket-first print for table orders (table matching approach)
+- CR-014: Menu Management API Migration
+- CR-015: Settlement Module
+
+## Key Files
+- `OrderEntry.jsx` — payment flows, auto-print logic
+- `CollectPaymentPanel.jsx` — payment UI, split payments, discounts
+- `orderTransform.js` — API payload builders
+- `OrderContext.jsx` — order state management, ordersRef
+- Handover: `/app/memory/control/NEXT_AGENT_HANDOVER_2026_06_07_POS4_BUG_SESSION.md`
