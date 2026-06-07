@@ -1,0 +1,57 @@
+{
+  "summary": "S9 Cancellations Screen Gate 4 Live API Testing - All 12 test cases PASSED. Frontend-only testing completed successfully across 3 restaurant accounts (cafe103, Pav & Pages, Kunafa Mahal). The cancellations page loads real data from the order-logs-report API, displays all required components, and all interactive elements work correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Code is well-structured with proper data-testid attributes for all key elements",
+    "Live API integration working correctly - fetches from ORDER_LOGS_REPORT endpoint",
+    "cancel_type normalization working: preparing→Before Cooking, serve/Pre-Serve→Before Serving, ready/Post-Serve→After Serving, Order→Order",
+    "Stage donut chart, daily trend chart, and top reasons chart all render with real data",
+    "Scope tabs (All/Order-Level/Item-Level) filter correctly with matching counts",
+    "Empty state displays correctly when no cancellations in date range",
+    "Loading shield component present during API fetch"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing - live API from preprod.mygenie.online)",
+    "frontend": "100% (12/12 tests passed)"
+  },
+  "test_credentials": {
+    "cafe103": "owner@cafe103.com / Qplazm@10 (26 cancellations in 7D, standard serve flow)",
+    "pav_and_pages": "vishal@pav.com / Qplazm@10 (20 cancellations, mixed stations KDS+PACKAGED, item-level cancels with notes)",
+    "kunafa_mahal": "owner@kunafamahal.com / Qplazm@10 (6 cancellations in 30D, Post-Serve cancels, direct billing)"
+  },
+  "seed_data_creation": "None - uses live data from preprod.mygenie.online order-logs-report API",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "S9 Cancellations Gate 4 live API wiring fully tested. All features working: KPI strip (4 cards), scope tabs (All/Order-Level/Item-Level), stage donut chart, daily trend chart, top reasons chart, employee section, detail table with all columns. Date presets (Today, 7D, 30D, MTD) reload data correctly. Empty state shows when no cancellations. Loading shield displays during API fetch. Preview URL: https://3c073107-9450-4dc2-9c67-2b4870f6c979.preview.emergentagent.com/reports-module/cancellations",
+  "features_tested": {
+    "cafe103_login_and_navigate": "PASS - Login as cafe103, navigate to /reports-module/cancellations",
+    "cafe103_kpi_strip": "PASS - Total: 26 (24 order-level, 2 item-level), Revenue Loss: ₹1,56,716, Before Cooking: 7.7%, After Serving: 0.0%",
+    "cafe103_stage_donut": "PASS - Shows Before Cooking (34%), Before Serving (66%), Order stages",
+    "cafe103_daily_trend": "PASS - Bar chart with real dates (02/06, 04/06, 05/06)",
+    "cafe103_top_reasons": "PASS - Wrong item punched, Guest Changed the order, Late preparation, Others, Taste not good",
+    "cafe103_scope_tabs": "PASS - All/Order-Level/Item-Level tabs work, counts match KPI",
+    "cafe103_date_presets": "PASS - Today, 7D, 30D, MTD presets reload data",
+    "pav_pages_data_loads": "PASS - Total: 20 (9 order-level, 11 item-level), Revenue Loss: ₹2,505, After Serving: 30.0%",
+    "pav_pages_notes": "PASS - Found expected notes in table (Well Cooked, Extra Spicy)",
+    "kunafa_30d_preset": "PASS - Total: 6 (3 order-level, 3 item-level), Revenue Loss: ₹2,024, After Serving: 66.7%",
+    "kunafa_empty_state": "PASS - Empty state shown for 7D preset (No cancellations found)",
+    "detail_table_columns": "PASS - All 10 columns present: Order#, Item, Date, Amount, Stage, Scope, Reason, Notes, Cancelled By, Station",
+    "loading_shield": "PASS - ReportLoadingShield component present during API fetch",
+    "employee_section": "PASS - Cancellations by Employee cards show real employee names"
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All data from live preprod.mygenie.online order-logs-report endpoint"
+  }
+}

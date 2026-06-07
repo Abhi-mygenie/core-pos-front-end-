@@ -1,0 +1,98 @@
+{
+  "summary": "Frontend testing for insightsService.js fixes (3C merge exclusion, 3E-a/3E-b business-day filters). S0 Dashboard and S5 Item Sales both load correctly. S5 Pending Billing shows NON-ZERO count (7 items for today). S5 Cancelled tab shows correct count (78 items for May 2026 with ₹34,756.00 revenue loss). No JavaScript compilation errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "S0 Dashboard",
+        "issues": ["Minor: Recharts console warnings about chart dimensions (-1 width/height) - cosmetic only, charts render correctly"]
+      }
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_10.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "insightsService.js: getItemSalesAggregated correctly imports and uses getBusinessDayRange/isWithinBusinessDay for business-day filtering",
+    "insightsService.js: getItemSalesAggregated correctly excludes merged orders (payment_method === 'merge')",
+    "insightsService.js: getDashboardAggregated correctly imports and uses getBusinessDayRange/isWithinBusinessDay for business-day filtering",
+    "insightsService.js: getDashboardAggregated correctly excludes merged orders in bdFilter function",
+    "ItemSalesHybridMockup.jsx: Line 176 correctly passes schedules to getItemSalesAggregated",
+    "DashboardMockup.jsx: Correctly imports useRestaurant, extracts schedules, and passes to getDashboardAggregated",
+    "Minor ESLint warnings in ItemSalesHybridMockup.jsx (line 254) and DashboardMockup.jsx - react-hooks/exhaustive-deps - not blocking"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "cafe103": "owner@cafe103.com / Qplazm@10"
+  },
+  "seed_data_creation": "None - uses live data from preprod.mygenie.online",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "S0 Dashboard and S5 Item Sales verified working. S5 Pending Billing shows 7 items for today (June 6, 2026). S5 Cancelled shows 78 items for May 2026 with ₹34,756.00 revenue loss. Business-day filter and merge exclusion implemented in insightsService.js. REACT_APP_SHOW_AUDIT_TAB=true is set in .env (Audit tab visible).",
+  "features_tested": {
+    "s0_dashboard_loads": {
+      "status": "PASS",
+      "details": "Dashboard loads at /reports-module/dashboard with all 6 KPI tiles (Net Sales, Channel Mix, Top Items, Payment Mix, Cancellations, Discounts)"
+    },
+    "s5_item_sales_loads": {
+      "status": "PASS",
+      "details": "Item Sales loads at /reports-module/items with all tabs (All Items, Sold, Cancelled, Complimentary, Pending Billing, Top Sellers, Slow Movers, Audit)"
+    },
+    "s5_cancelled_tab": {
+      "status": "PASS",
+      "details": "Cancelled tab shows 0 items for today, 78 items for May 2026 with ₹34,756.00 REVENUE LOSS"
+    },
+    "s5_pending_billing_tab": {
+      "status": "PASS",
+      "details": "Pending Billing tab shows 7 items for today (NON-ZERO as expected), 0 items for May 2026"
+    },
+    "s0_dashboard_kpi_tiles": {
+      "status": "PASS",
+      "details": "All KPI tiles load correctly - Net Sales ₹5,791, Cancellations 0, Discounts ₹85, etc."
+    },
+    "no_js_errors": {
+      "status": "PASS",
+      "details": "No JavaScript compilation errors in insightsService.js, DashboardMockup.jsx, or ItemSalesHybridMockup.jsx. Only minor ESLint warnings (react-hooks/exhaustive-deps)"
+    },
+    "business_day_filter_implemented": {
+      "status": "PASS",
+      "details": "getBusinessDayRange and isWithinBusinessDay imported and used in both getItemSalesAggregated and getDashboardAggregated"
+    },
+    "merge_exclusion_implemented": {
+      "status": "PASS",
+      "details": "Both functions exclude orders with payment_method === 'merge'"
+    }
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All data from live preprod.mygenie.online order-logs-report endpoint"
+  },
+  "test_data_observed": {
+    "today_june_6_2026": {
+      "s5_all_items": 22,
+      "s5_sold": 15,
+      "s5_cancelled": 0,
+      "s5_complimentary": 0,
+      "s5_pending_billing": 7,
+      "s0_net_sales": "₹5,791",
+      "s0_cancellations": 0
+    },
+    "may_2026": {
+      "s5_all_items": 416,
+      "s5_sold": 338,
+      "s5_cancelled": 78,
+      "s5_cancelled_revenue_loss": "₹34,756.00",
+      "s5_complimentary": 0,
+      "s5_pending_billing": 0,
+      "s5_audit": "9 items with 9A (9 AMBER flags)"
+    }
+  }
+}

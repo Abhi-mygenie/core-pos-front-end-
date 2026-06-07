@@ -1,0 +1,171 @@
+# BUG-104 — Credit / Tab Management — Updated Analysis — 2026-05-20
+
+## 1. Bug Summary
+
+| Field | Value |
+|---|---|
+| Bug | BUG-104 |
+| Priority | P1 |
+| Sprint | POS3.0 |
+| Title | Credit / Tab Management Module |
+| Status | **Analysis updated with owner screenshots** — scope clarified |
+| Size | XL (New Module) |
+
+---
+
+## 2. Owner-Provided Scope (from old POS screenshots)
+
+### Screen 1 — Customer Credit List (Main Screen)
+
+**Header**: "Credit Management" + global download icon
+**Filters**: Dropdown (Default / other filters) + Search by phone / name / email
+**Table columns**:
+- Phone number
+- Customer name
+- Balance (outstanding credit amount)
+
+**Additional fields needed (owner request)**:
+- Total tab money till now (lifetime credit)
+- Total paid
+- Balance (already shown)
+
+**Row action icons** (3 per customer):
+- Download — download credit statement for that customer
+- WhatsApp — share statement via WhatsApp
+- Edit (pencil) — opens credit clearance screen (SS4)
+
+---
+
+### Screen 2 — Customer Tab Detail (clicking Detail/WhatsApp icon)
+
+**Header**: Customer name + phone
+**Filter**: Dropdown ("All" / date filter)
+**Table columns**:
+- No. (serial number)
+- Order Id
+- Amount
+- Order Date
+- Details button (opens bill detail — SS3)
+
+**Footer**: Print icon
+
+---
+
+### Screen 3 — Bill Detail (clicking Details button on a tab order)
+
+**Header**: Customer name + phone
+**Content**: Single order bill
+- Order Id (e.g., "000050")
+- Item name + quantity + price (e.g., "Masala Tea (2) — 40.0")
+- Sub Total
+- **Total** (highlighted in orange)
+- Print icon
+
+---
+
+### Screen 4 — Credit Clearance (clicking Edit/pencil icon)
+
+**Layout**: Inline expansion on the main list (not a separate page)
+**Shows**:
+- Customer row (phone, name, balance) with same action icons
+- **Select Payment Method**: Cash / Card / UPI pills (respects restaurant payment config)
+- **Total payable**: full outstanding amount
+- **Paid**: input field (how much cashier is collecting now)
+- **Balance**: auto-calculated (total - paid)
+- **"Update Credit"** button (orange)
+
+---
+
+## 3. Reports Feature (Owner-described)
+
+**Per-customer downloadable report** with date range:
+- Day / Week / Month / Custom date range
+- Output:
+  - Opening credit (as of start date)
+  - Credit as of end date
+  - All bills between start and end date
+
+**Multi-customer PDF download**:
+- Select multiple customers → single PDF
+- Contains Customer 1 section → Customer 2 section → Customer 3 section
+- Each section includes full bill details for that customer in the date range
+
+---
+
+## 4. What Exists in Current POS
+
+| Item | Where | Status |
+|---|---|---|
+| Tab as payment method | `CollectPaymentPanel.jsx` | Working — select Credit/Tab → enter customer name + mobile → settle |
+| Credit orders report endpoint | `constants.js` L71 — `GET /api/v2/vendoremployee/paid-in-tab-order-list` | Exists |
+| Business rule PAY-008 | Baseline | Tab sends customer name + mobile only, no `customer_id`. Mobile = unique key. |
+
+---
+
+## 5. What Needs to Be Built
+
+| # | Feature | Complexity |
+|---|---|---|
+| 1 | Credit Management page (new route, sidebar entry) | Medium |
+| 2 | Customer credit list with search + filter | Medium |
+| 3 | Per-customer tab detail view (all orders on credit) | Medium |
+| 4 | Bill detail view (single order breakdown) | Low |
+| 5 | Credit clearance — payment pills + partial payment | Medium |
+| 6 | Per-customer report download (date range, opening/closing credit) | Medium-High |
+| 7 | Multi-customer PDF download | High |
+| 8 | WhatsApp share (statement) | Low |
+| 9 | New API service functions + endpoint constants | Medium |
+
+---
+
+## 6. APIs Needed
+
+| # | API | Purpose | Status |
+|---|---|---|---|
+| 1 | List credit customers with balances | Main screen data | **Existing?** — may be `paid-in-tab-order-list` or new endpoint |
+| 2 | Customer tab orders (by phone/customer) | SS2 detail view | Unknown |
+| 3 | Single order detail | SS3 bill detail | May use existing `get-single-order-new` |
+| 4 | Update credit / partial payment | SS4 clearance action | Unknown |
+| 5 | Download report (date range, per customer) | Report feature | Unknown |
+| 6 | Download multi-customer PDF | Bulk report | Unknown |
+
+---
+
+## 7. Open Questions
+
+| # | Question | Status |
+|---|---|---|
+| 1 | What APIs exist for credit management? (list customers, update credit, reports) | **Unanswered** — need endpoint documentation |
+| 2 | Should Credit module use CRM `customer_id` or remain mobile-based (PAY-008)? | **Unanswered** |
+| 3 | What does the "Default" filter dropdown contain? (All / Paid / Unpaid / Overdue?) | **Unanswered** |
+| 4 | WhatsApp share — is this a backend API or client-side `wa.me` link? | **Unanswered** |
+| 5 | Is credit clearance always full balance, or can cashier do partial payment? | **Answered by SS4** — partial payment supported (Paid field is editable, Balance auto-calculates) |
+| 6 | Multi-customer PDF — is this generated by backend or FE? | **Unanswered** |
+
+---
+
+## 8. Stages
+
+| Stage | Status |
+|---|---|
+| Impact Analysis | **DONE** |
+| CR Master Planning | **DONE** — Wave CR-D, XL |
+| Owner Scope Screenshots | **RECEIVED** (4 screens documented) |
+| API Documentation | **NOT DONE** — need endpoints |
+| Planning | **NOT STARTED** |
+| Implementation | **NOT STARTED** |
+
+---
+
+## 9. Key Design Decisions from Screenshots
+
+- Credit clearance is **inline** (expands on the main list) — not a separate page
+- Payment methods for clearance respect restaurant config (Cash / Card / UPI)
+- Partial payment supported (Paid ≠ Total payable)
+- Customer identifier = phone number (consistent with PAY-008)
+- Reports are downloadable PDFs with date range
+- Multi-customer PDF is a bulk export
+
+---
+
+*— End of BUG-104 Updated Analysis — 2026-05-20 —*

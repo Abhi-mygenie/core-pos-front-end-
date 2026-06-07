@@ -1,0 +1,63 @@
+{
+  "summary": "S9 Cancellations Screen - All 3 fixes verified successfully. Tested with Cafe103 (May 2026 custom dates) and Pav & Pages (7D default). All expected values match: Cafe103 May shows Total=161, 17 orders, 107 items. Pav & Pages 7D shows Total=28, 1 order, 24 items. Merged orders excluded, order-level shows distinct orders, all counts use qty.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_8.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix 1 VERIFIED: Merged orders (payment_method='merge') are excluded - line 235 filters them out",
+    "Fix 2 VERIFIED: Order-level count shows distinct cancelled orders using Set(orderNumber) - line 293",
+    "Fix 3 VERIFIED: All counts use item.qty instead of line count - lines 282-287, 298-300, 310-312, 320-325, 330-334",
+    "Stage cards correctly show 'qty cancelled' labels",
+    "KPI subtitle correctly shows 'X orders · Y items' format"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% (6/6 tests passed)"
+  },
+  "test_credentials": {
+    "cafe103": "owner@cafe103.com / Qplazm@10",
+    "pav_and_pages": "vishal@pav.com / Qplazm@10"
+  },
+  "seed_data_creation": "None - uses live data from preprod.mygenie.online",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "S9 Cancellations 3 fixes fully verified. For Cafe103 May 2026: Total=161, 17 orders, 107 items. For Pav & Pages 7D: Total=28, 1 order, 24 items. All fixes working: (1) merged orders excluded, (2) order-level shows distinct orders, (3) all counts use qty.",
+  "features_tested": {
+    "cafe103_may_total_cancellations": "PASS - Total=161 (expected 161)",
+    "cafe103_may_subtitle": "PASS - Shows '17 orders · 107 items' (expected '17 orders · 107 items')",
+    "cafe103_may_order_level_scope": "PASS - Order-Level=17 (expected 17)",
+    "cafe103_may_item_level_scope": "PASS - Item-Level=107 (expected 107)",
+    "pav_pages_7d_data_loads": "PASS - Total=28, 1 order, 24 items",
+    "stage_cards_qty_based": "PASS - Stage cards show 'X qty cancelled' format"
+  },
+  "verification_details": {
+    "fix_1_merged_orders_excluded": {
+      "status": "VERIFIED",
+      "code_location": "CancellationsMockup.jsx line 235",
+      "implementation": "if (pm === 'merge') continue; - skips orders with payment_method='merge'"
+    },
+    "fix_2_order_level_distinct_count": {
+      "status": "VERIFIED",
+      "code_location": "CancellationsMockup.jsx lines 293-294",
+      "implementation": "const cancelledOrderNumbers = new Set(orderItems.map(i => i.orderNumber)); const cancelledOrderCount = cancelledOrderNumbers.size;"
+    },
+    "fix_3_qty_based_counts": {
+      "status": "VERIFIED",
+      "code_location": "CancellationsMockup.jsx lines 282-287, 298-300, 310-312, 320-325, 330-334",
+      "implementation": "All aggregations use i.qty instead of counting 1 per line"
+    }
+  },
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "All data from live preprod.mygenie.online order-logs-report endpoint"
+  }
+}
