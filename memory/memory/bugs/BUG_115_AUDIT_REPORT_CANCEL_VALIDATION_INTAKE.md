@@ -1,71 +1,102 @@
-# BUG-115 — Audit Report: Cancelled Item/Order Edge Case + Production Validation Freeze
+# BUG-115 — Audit Report: Cancelled Order Edge Case + Production Validation
 
-**Status:** INTAKE
+**Status:** DISCOVERY COMPLETE
 **Priority:** P1
 **Sprint:** POS 4.0
 **Opened:** 2026-06-07
 **Reporter:** Owner
-**Component:** AllOrdersReportPage / OrderDetailSheet / reportTransform
+**Component:** AllOrdersReportPage.jsx, reportTransform.js
 
 ---
 
 ## 1. Problem Statement (Owner Verbatim)
 
-> Few corrections need to be done in the audit report. If the item is canceled or the order is canceled, sometimes for one of the cases it is not coming right in the audit report. During discovery we'll check that case. Basically — validate the audit report and freeze for production.
+> If the item is canceled or the order is canceled, sometimes for one of the cases it is not coming right in the audit report. Validate the audit report and freeze for production.
 
 ---
 
-## 2. Symptom
+## 2. Root Cause Found — TAB_FILTERS.cancelled Misses Pre-Billing Cancellations
 
-Cancelled items or cancelled orders are **not rendering correctly** in the Audit Report in at least one edge case. The specific case is unknown at intake — needs discovery to identify which cancellation scenario is broken (item-level cancel, order-level cancel, partial cancel, pre-serve vs post-serve, etc.).
+### File: `AllOrdersReportPage.jsx` L84
 
----
+```js
+cancelled: (o) => o.paymentMethod === 'Cancel',
+```
 
-## 3. Scope of Work
+This filter ONLY checks for the exact string `'Cancel'` in `paymentMethod`. But there are cancelled orders where this doesn't match:
 
-This is a **two-part task:**
+| Scenario | paymentMethod | fOrderStatus | Matches Filter? | Visible in Cancelled tab? |
+|---|---|---|---|---|
+| Normal cancel (post-billing) | `'Cancel'` | 3 | ✅ YES | ✅ YES |
+| Cancel before billing | `'pending'` or `'cash'` | 3 | ❌ NO | ❌ MISSING |
+| Cancel with lowercase | `'cancelled'` | 3 | ❌ NO | ❌ MISSING |
+| All items cancelled, order not | varies | varies (not 3) | ❌ NO | ❌ MISSING |
 
-### Part A — Bug Fix
-Identify and fix the specific cancelled item/order rendering issue in the Audit Report.
+### The transform DOES identify these correctly (`reportTransform.js` L972):
+```js
+const isCancelled = paymentMethod === 'Cancel' || paymentMethodLower === 'cancelled' || fStatus === 3;
+```
 
-### Part B — Production Validation & Freeze
-Full end-to-end validation of the Audit Report against production data before freezing for production deployment. This includes:
-- All order statuses render correctly (Paid, Cancelled, Hold, Merged, Running, Credit, Aggregator)
-- Cancelled items vs cancelled orders display correctly
-- Financial totals (subtotal, tax, discount, grand total) are accurate
-- Filters (date, payment type, status, channel, platform) work correctly
-- Side-sheet drill (OrderDetailSheet) shows correct data
-- Export (Excel/PDF) matches on-screen data
-- Edge cases: partial cancellations, complementary items, room orders, split orders
+But the **tab filter** at L84 is narrower than the transform's `isCancelled` flag. The row gets `isCancelled: true` but the tab filter doesn't match it → the order falls through all tabs into "All" but is invisible in "Cancelled".
 
----
-
-## 4. Likely Affected Files
-
-| File | Role |
-|---|---|
-| `AllOrdersReportPage.jsx` | Main audit report page, tab filters, table rendering |
-| `OrderDetailSheet.jsx` | Side-sheet drill for order details |
-| `reportTransform.js` | API response → UI row transform (order status, cancellation fields) |
-| `reportService.js` | API fetch for order-logs-report |
+### Already identified as OG-FE-01 in OPEN_GAPS_REGISTER.md:
+> **OG-FE-01 — Cancelled tab classifier misses pre-billing cancellations.** 12 orders in May. `paymentMethod = 'pending'` + `fOrderStatus = 3` → fall through all filters → "Unmatched". Waiting owner decision: existing Cancelled tab or new "Voided" tab?
 
 ---
 
-## 5. Open Questions (Discovery Phase)
+## 3. Fix
+
+### Change `TAB_FILTERS.cancelled` (L84):
+
+**BEFORE:**
+```js
+cancelled: (o) => o.paymentMethod === 'Cancel',
+```
+
+**AFTER:**
+```js
+cancelled: (o) => o.paymentMethod === 'Cancel' || o.isCancelled,
+```
+
+The `isCancelled` flag is already computed by the transform (L972) and includes all 3 cases: `payment_method === 'Cancel'`, lowercase `'cancelled'`, and `fOrderStatus === 3`.
+
+### Also update exclusions in other tabs (L70, L107):
+
+Other tab filters exclude `paymentMethod === 'Cancel'` but don't exclude `isCancelled` orders:
+- `paid` L70: `if (o.paymentMethod === 'Cancel') return false;` → add `|| o.isCancelled`
+- `running` L107: same pattern
+
+---
+
+## 4. Affected Files
+
+| File | Lines | Change |
+|---|---|---|
+| `AllOrdersReportPage.jsx` | L84 | Expand cancelled filter to use `isCancelled` flag |
+| `AllOrdersReportPage.jsx` | L70, L107 | Update exclusions in paid + running tabs |
+
+---
+
+## 5. Part B — Production Validation Scope
+
+Full validation checklist before freezing the Audit Report for production:
+
+| # | Check | Status |
+|---|---|---|
+| 1 | All order statuses render in correct tab | TBD |
+| 2 | Pre-billing cancelled orders appear in Cancelled tab | TBD |
+| 3 | Merged orders appear in Merged tab (not Cancelled) | TBD |
+| 4 | Financial totals match (subtotal, tax, discount, total) | TBD |
+| 5 | Date filters work correctly | TBD |
+| 6 | Payment type/status filters work | TBD |
+| 7 | Side-sheet drill shows correct data | TBD |
+| 8 | Export Excel/PDF matches on-screen data | TBD |
+| 9 | Edge cases: partial cancellations, comp items, room orders, split orders | TBD |
+
+---
+
+## 6. Open Questions
 
 | # | Question |
 |---|---|
-| Q-115-1 | Which specific cancellation case is broken? (item-level, order-level, partial, specific cancel_type?) |
-| Q-115-2 | Is the issue in the table row rendering, the side-sheet drill, or both? |
-| Q-115-3 | Which restaurant/date range reproduces the issue? |
-| Q-115-4 | Any specific order IDs that demonstrate the problem? |
-
----
-
-## 6. Next Steps
-
-1. Discovery session: reproduce the broken cancellation case on preprod
-2. Identify root cause in reportTransform / AllOrdersReportPage
-3. Fix the specific edge case
-4. Full production validation pass across all order statuses and edge cases
-5. Owner sign-off → freeze for production
+| Q-115-1 | Should pre-billing cancellations go in the existing Cancelled tab, or a new "Voided" tab? (OG-FE-01 from gaps register) |
