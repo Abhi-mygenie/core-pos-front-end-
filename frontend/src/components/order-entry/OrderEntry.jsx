@@ -1197,21 +1197,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         }
         if (apiFailed) return;
 
-        // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
-        // API response + auto-print run in background (fire-and-forget).
-        // Matches normal Place Order pattern (L940-968).
-        if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
-          console.log('[QSR PlaceAndPay] staying on Order Entry');
-          onCollectBillStayOnOrder();
-        } else {
-          console.log('[QSR PlaceAndPay] redirecting to dashboard');
-          onClose();
-        }
-
-        // Background: wait for API response then auto-print (non-blocking)
-        placePromise.then(() => {
-          if (qsrAutoBill && newOrderId && !effectiveTable?.isRoom) {
-            waitForOrderReady(Number(newOrderId), 3000).then(order => {
+        // BUG-112 (POS 4.0): If HTTP already responded during engage/delay,
+        // fire auto-print NOW. Otherwise fall back to background path.
+        if (qsrAutoBill && !effectiveTable?.isRoom) {
+          if (newOrderId) {
+            console.log('[QSR PlaceAndPay][BUG-112] HTTP responded during engage/delay — firing auto-print immediately');
+            waitForOrderReady(Number(newOrderId), 500).then(order => {
               if (order?.rawOrderDetails) {
                 const discountAmount = Math.round(
                   ((paymentData?.discounts?.manual || 0)
@@ -1233,12 +1224,53 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
                 };
                 printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || [])
-                  .then(() => console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId))
-                  .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
+                  .then(() => console.log('[QSR PlaceAndPay] auto-print completed for order:', newOrderId))
+                  .catch(err => console.error('[QSR PlaceAndPay] auto-print error:', err?.message));
               }
-            }).catch(err => console.error('[QSR PlaceAndPay] background waitForOrderReady error:', err?.message));
+            }).catch(err => console.error('[QSR PlaceAndPay] waitForOrderReady error:', err?.message));
+          } else {
+            // HTTP still pending — background wait
+            placePromise.then(() => {
+              if (newOrderId) {
+                console.log('[QSR PlaceAndPay][BUG-112] HTTP responded after redirect — firing auto-print from background');
+                waitForOrderReady(Number(newOrderId), 500).then(order => {
+                  if (order?.rawOrderDetails) {
+                    const discountAmount = Math.round(
+                      ((paymentData?.discounts?.manual || 0)
+                        + (paymentData?.discounts?.preset || 0)
+                        + (paymentData?.discounts?.couponDiscount || 0)) * 100
+                    ) / 100;
+                    const overrides = {
+                      orderItemTotal:      paymentData?.itemTotal,
+                      orderSubtotal:       paymentData?.subtotal,
+                      paymentAmount:       paymentData?.finalTotal,
+                      discountAmount,
+                      couponCode:          paymentData?.discounts?.couponCode || '',
+                      couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
+                      serviceChargeAmount: paymentData?.serviceCharge || 0,
+                      deliveryCharge:      paymentData?.deliveryCharge || 0,
+                      gstTax:              paymentData?.printGstTax,
+                      vatTax:              paymentData?.printVatTax,
+                      tip:                 paymentData?.tip || 0,
+                      ...(orderType === 'delivery' && selectedAddress ? { deliveryAddress: selectedAddress } : {}),
+                    };
+                    printOrder(Number(newOrderId), 'bill', null, order, restaurant?.serviceChargePercentage || 0, overrides, printerAgents || [])
+                      .then(() => console.log('[QSR PlaceAndPay] background auto-print completed for order:', newOrderId))
+                      .catch(err => console.error('[QSR PlaceAndPay] background auto-print error:', err?.message));
+                  }
+                }).catch(err => console.error('[QSR PlaceAndPay] background waitForOrderReady error:', err?.message));
+              }
+            }).catch(() => {});
           }
-        }).catch(() => {}); // API error already handled by .catch above
+        }
+
+        if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
+          console.log('[QSR PlaceAndPay] staying on Order Entry');
+          onCollectBillStayOnOrder();
+        } else {
+          console.log('[QSR PlaceAndPay] redirecting to dashboard');
+          onClose();
+        }
       } else {
         // === ALREADY-PLACED ORDER (edge case): Collect Bill on existing order ===
         const collectOrderId = effectiveTable?.orderId || placedOrderId;
@@ -1634,10 +1666,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.error('[AutoPrintBill] SKIPPED — no order_id returned from place-order response (capture returned null)');
                       return;
                     }
-                    console.log(`[AutoPrintBill] waiting for order ${newOrderId} to settle in context (3000ms cap)...`);
-                    // BUG-273 (Session 16b): waitForOrderReady now returns the order object
-                    // directly from ordersRef (bypasses React closure staleness on getOrderById).
-                    const order = await waitForOrderReady(Number(newOrderId), 3000);
+                    console.log(`[AutoPrintBill] waiting for order ${newOrderId} to settle in context (500ms cap)...`);
+                    // BUG-112 (POS 4.0): reduced from 3000ms to 500ms. Socket new-order delivers
+                    // the order to ordersRef before HTTP responds, so waitForOrderReady resolves
+                    // instantly (~50ms for engage release). 500ms is safety-only.
+                    const order = await waitForOrderReady(Number(newOrderId), 500);
                     console.log(`[AutoPrintBill] waitForOrderReady(${newOrderId}) resolved:`, order ? { orderId: order.orderId, hasRawOrderDetails: !!order.rawOrderDetails } : null);
                     if (!order) {
                       console.error(`[AutoPrintBill] SKIPPED — order ${newOrderId} did not settle in context within 3000ms`);
@@ -1811,8 +1844,24 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
                     if (apiFailed) return;
 
-                    // PROD-HOTFIX-005 (2026-05-27): Screen clears immediately on socket/delay.
-                    // API response + auto-print run in background (fire-and-forget).
+                    // BUG-112 (POS 4.0): If HTTP already responded during engage/delay,
+                    // fire auto-print NOW (socket has already delivered the order to context).
+                    // Otherwise fall back to background placePromise.then() path.
+                    if (!apiFailed && newOrderId) {
+                      console.log('[Prepaid][BUG-112] HTTP responded during engage/delay — firing auto-print immediately');
+                      autoPrintNewOrderIfEnabled(newOrderId)
+                        .catch(err => console.error('[Prepaid] auto-print error:', err?.message));
+                    } else {
+                      // HTTP still pending — background wait
+                      placePromise.then(() => {
+                        if (!apiFailed && newOrderId) {
+                          console.log('[Prepaid][BUG-112] HTTP responded after redirect — firing auto-print from background');
+                          autoPrintNewOrderIfEnabled(newOrderId)
+                            .catch(err => console.error('[Prepaid] background auto-print error:', err?.message));
+                        }
+                      }).catch(() => {});
+                    }
+
                     if (getStayOnOrderAfterBill() && typeof onCollectBillStayOnOrder === 'function') {
                       console.log('[Prepaid] Socket/delay done — staying on Order Entry');
                       onCollectBillStayOnOrder();
@@ -1820,14 +1869,6 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       console.log('[Prepaid] Socket/delay done — redirecting to dashboard');
                       onClose();
                     }
-
-                    // Background: wait for API response then auto-print (non-blocking)
-                    placePromise.then(() => {
-                      if (!apiFailed && newOrderId) {
-                        autoPrintNewOrderIfEnabled(newOrderId)
-                          .catch(err => console.error('[Prepaid] background auto-print error:', err?.message));
-                      }
-                    }).catch(() => {}); // API error already handled by .catch above
 
                     return; // Skip finally cleanup — isPlacingOrder cleared by onClose unmount
                   } else {
