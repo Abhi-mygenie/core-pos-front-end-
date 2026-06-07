@@ -1154,7 +1154,7 @@ export const toAPI = {
       tip_amount:                 parseFloat(tip || 0),   // BUG-006: actual tip (was hardcoded '0')
       delivery_charge:            parseFloat(deliveryCharge || 0),
       // Discount
-      discount_type:              discounts.type || '',
+      discount_type:              discounts.discountType || discounts.type || '',
       self_discount:              discounts.manual || 0,
       // BUG-108 V1B (2026-05-25, E-13 + E-14) — Flow 3 coupon fields:
       //   1. KEY-MISMATCH FIX: read `discounts.couponDiscount` (correct key),
@@ -1191,12 +1191,12 @@ export const toAPI = {
       room_id:                    '',
       address_id:                 addressId,
       // Misc
-      discount_member_category_id:   0,
-      discount_member_category_name: '',
+      // BUG-114 (POS 4.0): read from discounts (threaded from CollectPaymentPanel)
+      discount_member_category_id:   discounts.discountMemberCategoryId || 0,
+      discount_member_category_name: discounts.discountMemberCategoryName || '',
       usage_id:                   '',
       cart,
       partial_payments:           partialPayments,
-      // CR-POS2-003 (May-2026): printer_agent additive field (place-order v1).
       // OQ-PA-13: empty when print_kot:'No'. OQ-PA-9: never omit the key.
       printer_agent:              printerAgentForPlace,
       // BUG-007 / BUG-016 (Apr-2026): always emit `delivery_address` key — full
@@ -1387,8 +1387,9 @@ export const toAPI = {
       order_discount_type:          discounts.orderDiscountType || 'Percent',
       order_discount:               discounts.orderDiscountPercent || 0,
       discount_value:               discounts.total || 0,
-      discount_member_category_id:  0,
-      discount_member_category_name: '',
+      // BUG-114 (POS 4.0): read from discounts (threaded from CollectPaymentPanel)
+      discount_member_category_id:  discounts.discountMemberCategoryId || 0,
+      discount_member_category_name: discounts.discountMemberCategoryName || '',
       // Loyalty & Wallet — BUG-108 Phase C corrected (2026-05-24):
       // Payload carries CRM-calculated values from /pos/max-redeemable.
       // POS Backend handles actual redemption. No direct CRM redeem call.

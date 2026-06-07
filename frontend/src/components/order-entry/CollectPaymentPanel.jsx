@@ -1017,8 +1017,18 @@ const CollectPaymentPanel = ({
         couponCode:           selectedCoupon?.code || '',
         couponTitle:          selectedCoupon?.title || '',
         couponType:           selectedCoupon?.couponType || '',
-        discountType:         discountType || '',
-        orderDiscountType:    discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : '',
+        // BUG-114 (POS 4.0): thread category discount metadata so transform
+        // builders can emit discount_type, discount_member_category_id/name.
+        // When preset selected: discountType = category name, orderDiscountType = 'Percent'.
+        // When manual: original logic preserved.
+        discountType:         selectedDiscountType
+                                ? selectedDiscountType.name
+                                : (discountType || ''),
+        orderDiscountType:    selectedDiscountType
+                                ? 'Percent'
+                                : (discountType === 'percent' ? 'Percent' : discountType === 'flat' ? 'Amount' : ''),
+        discountMemberCategoryId:   selectedDiscountType?.id || 0,
+        discountMemberCategoryName: selectedDiscountType?.name || '',
         loyaltyPoints:        finalLoyaltyDiscount,
         // BUG-108 Phase C corrected (2026-05-24): CRM max-redeemable values.
         // POS Backend handles actual redemption. No redemption ID from POS Frontend.
