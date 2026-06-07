@@ -57,11 +57,22 @@
 
 ---
 
-## 6. Open Questions
+## 6. Backend API Endpoint (Owner-Provided)
+
+**Endpoint that needs socket emission added:**
+```
+POST https://preprod.mygenie.online/api/v2/vendoremployee/product/add-single-product
+```
+
+This is the API called when adding/toggling an out-of-kitchen item. Backend must emit a socket event after this call succeeds so all connected POS clients receive the menu update in realtime.
+
+---
+
+## 7. Open Questions
 
 | # | Question | Owner |
 |---|---|---|
-| Q-116-1 | What is the current API endpoint for toggling out-of-kitchen? | Backend |
+| ~~Q-116-1~~ | ~~What is the current API endpoint for toggling out-of-kitchen?~~ | **ANSWERED: `/api/v2/vendoremployee/product/add-single-product`** |
 | Q-116-2 | What socket event name should backend emit? (aligns with BUG-096 BQ-CR-01/02/03) | Backend |
 | Q-116-3 | Should the socket payload include the full item object or just food_id + status? | Backend |
 | Q-116-4 | Does this also apply to "out of stock" for variations/addons, or only main items? | Owner |
