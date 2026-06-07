@@ -57,6 +57,7 @@
 | **BUG-114** | **discount_type, discount_member_category_id/name sent as empty/0 when category discount applied** | **P1** | **INTAKE** | **POS 4.0** | **FE payload bug** |
 | **BUG-115** | **Audit Report — cancelled item/order not rendering correctly in some cases; full production validation needed** | **P1** | **INTAKE** | **POS 4.0** | **FE investigation needed** |
 | **BUG-116** | **Out-of-kitchen/out-of-menu item toggle — API change needed so socket fires and realtime menu updates** | **P1** | **INTAKE** | **POS 4.0** | **Backend API change + FE socket handler** |
+| **BUG-117** | **Audit Report side-sheet (right panel) — discount showing in text instead of proper format/value** | **P2** | **INTAKE** | **POS 4.0** | **FE display bug** |
 
 ---
 
