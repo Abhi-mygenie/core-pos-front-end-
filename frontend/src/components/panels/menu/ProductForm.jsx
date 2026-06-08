@@ -164,10 +164,7 @@ const ProductForm = ({ product, categories, addons: allAddons, currencySymbol, m
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <InputField label="Item Code" value={form.itemCode} onChange={(v) => update("itemCode", v)} />
-          <InputField label={`Price (${currencySymbol}) *`} value={form.basePrice} onChange={(v) => update("basePrice", v)} type="number" min={0} step={0.01} />
-        </div>
+        <InputField label="Item Code" value={form.itemCode} onChange={(v) => update("itemCode", v)} />
 
         {/* Food Type */}
         <div className="py-3">
