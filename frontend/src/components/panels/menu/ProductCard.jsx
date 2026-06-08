@@ -1,28 +1,12 @@
 import { useState } from "react";
 import { GripVertical, Zap, Pencil, Trash2, Power } from "lucide-react";
 import { COLORS } from "../../../constants";
-import { isFieldPending } from "../../../api/transforms/menuManagementTransform";
 
 const getFoodDot = (product) => {
   if (product.hasEgg) return { color: "#F59E0B", label: "Egg" };
   if (product.isJain) return { color: "#8B5CF6", label: "Jain" };
   if (product.isVeg) return { color: COLORS.primaryGreen, label: "Veg" };
   return { color: "#EF4444", label: "Non-Veg" };
-};
-
-const StationBadge = ({ station }) => {
-  if (!station) return null;
-  const colors = {
-    KDS: { bg: "rgba(59,130,246,0.1)", text: "#3B82F6" },
-    BAR: { bg: "rgba(168,85,247,0.1)", text: "#A855F7" },
-    BILL: { bg: "rgba(34,197,94,0.1)", text: "#22C55E" },
-  };
-  const c = colors[station] || { bg: COLORS.borderGray, text: COLORS.grayText };
-  return (
-    <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ backgroundColor: c.bg, color: c.text }}>
-      {station}
-    </span>
-  );
 };
 
 const ChannelChip = ({ label, active }) => (
@@ -38,15 +22,6 @@ const ChannelChip = ({ label, active }) => (
   </span>
 );
 
-// Disabled field helper
-const DisabledCheckbox = ({ label, checked, testId }) => (
-  <label className="flex items-center gap-2 py-2 opacity-50 cursor-not-allowed" data-testid={testId} title="Waiting for backend to add this field">
-    <input type="checkbox" checked={checked} disabled className="w-4 h-4 rounded border" />
-    <span className="text-sm" style={{ color: COLORS.grayText }}>{label}</span>
-    <span className="text-xs italic" style={{ color: COLORS.grayText }}>(pending)</span>
-  </label>
-);
-
 // ─── Quick Edit Form (inline) ──────────────────────────────────────────────
 const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }) => {
   const [form, setForm] = useState({
@@ -57,8 +32,6 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
     isComplementary: product.isComplementary || false,
     taxType: product.tax?.type || "GST",
     taxPercentage: product.tax?.percentage || 0,
-    isInventory: product.isInventoryLinked || false,
-    isPackagedFood: product.isPackagedFood || false,
     // Pass through all existing product fields for the API call
     description: product.description || "",
     discount: product.discount || 0,
@@ -76,8 +49,6 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
   });
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
-  const inventoryPending = isFieldPending('is_inventory');
-  const packagingPending = isFieldPending('packed_food');
 
   return (
     <div className="p-4 rounded-xl border-2" style={{ borderColor: COLORS.primaryOrange, backgroundColor: "rgba(242,107,51,0.02)" }} data-testid="quick-edit-form">
@@ -184,38 +155,6 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
         </div>
       </div>
 
-      {/* Row 5: Inventory + Packaging Item */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {inventoryPending ? (
-          <DisabledCheckbox label="Inventory Item" checked={form.isInventory} testId="quick-edit-inventory" />
-        ) : (
-          <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-inventory">
-            <input
-              type="checkbox"
-              checked={form.isInventory}
-              onChange={(e) => update("isInventory", e.target.checked)}
-              className="w-4 h-4 rounded border"
-              style={{ accentColor: COLORS.primaryOrange }}
-            />
-            <span className="text-sm" style={{ color: COLORS.darkText }}>Inventory Item</span>
-          </label>
-        )}
-        {packagingPending ? (
-          <DisabledCheckbox label="Packaging Item" checked={form.isPackagedFood} testId="quick-edit-packaging" />
-        ) : (
-          <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-packaging">
-            <input
-              type="checkbox"
-              checked={form.isPackagedFood}
-              onChange={(e) => update("isPackagedFood", e.target.checked)}
-              className="w-4 h-4 rounded border"
-              style={{ accentColor: COLORS.primaryOrange }}
-            />
-            <span className="text-sm" style={{ color: COLORS.darkText }}>Packaging Item</span>
-          </label>
-        )}
-      </div>
-
       {/* Actions */}
       <div className="flex justify-end gap-2">
         <button onClick={onCancel} className="px-4 py-2 text-sm rounded-lg border" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}>
@@ -239,8 +178,6 @@ const ProductCard = ({
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
   const food = getFoodDot(product);
-  const isDisabled = product.isDisabled;
-  const isOutOfStock = product.isOutOfStock;
 
   if (isQuickEditing) {
     return (
@@ -258,10 +195,9 @@ const ProductCard = ({
     <div
       className="rounded-xl border transition-all group"
       style={{
-        borderColor: isDragging ? COLORS.primaryOrange : isDisabled ? "#CBD5E1" : COLORS.borderGray,
-        borderStyle: isDisabled ? "dashed" : "solid",
-        backgroundColor: isDragging ? "rgba(242,107,51,0.05)" : isOutOfStock ? "#FAFAFA" : isDisabled ? "#F8FAFC" : "#fff",
-        opacity: isOutOfStock ? 0.7 : 1,
+        borderColor: isDragging ? COLORS.primaryOrange : COLORS.borderGray,
+        backgroundColor: isDragging ? "rgba(242,107,51,0.05)" : product.isActive ? "#fff" : "#F8FAFC",
+        opacity: product.isActive ? 1 : 0.7,
       }}
       data-testid={`product-card-${product.productId}`}
     >
@@ -279,7 +215,7 @@ const ProductCard = ({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold truncate" style={{ color: isDisabled ? "#94A3B8" : COLORS.darkText }}>
+            <span className="text-sm font-semibold truncate" style={{ color: product.isActive ? COLORS.darkText : "#94A3B8" }}>
               {product.productName}
             </span>
             {!product.isActive && (
@@ -287,20 +223,10 @@ const ProductCard = ({
                 Inactive
               </span>
             )}
-            {isOutOfStock && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
-                Out of Stock
-              </span>
-            )}
-            {isDisabled && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(148,163,184,0.15)", color: "#64748B" }}>
-                Hidden from POS
-              </span>
-            )}
           </div>
 
           <div className="text-xs mb-1.5" style={{ color: COLORS.grayText }}>
-            {categoryName} &middot; {isOutOfStock ? "Out of Stock" : "In Stock"} &middot; {food.label}
+            {categoryName} &middot; {food.label}
             {product.isComplementary && " · Complementary"}
           </div>
 
@@ -308,23 +234,12 @@ const ProductCard = ({
             <ChannelChip label="Dine-In" active={product.availability?.dineIn} />
             <ChannelChip label="Delivery" active={product.availability?.delivery} />
             <ChannelChip label="Takeaway" active={product.availability?.takeaway} />
-            {product.isInventoryLinked && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(59,130,246,0.08)", color: "#3B82F6", border: "1px solid rgba(59,130,246,0.2)" }}>
-                Inventory
-              </span>
-            )}
-            {product.isPackagedFood && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(168,85,247,0.08)", color: "#A855F7", border: "1px solid rgba(168,85,247,0.2)" }}>
-                Packaged
-              </span>
-            )}
           </div>
         </div>
 
         {/* Right side: Station + Price + Actions */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <StationBadge station={product.station} />
-          <span className="text-sm font-bold min-w-[60px] text-right" style={{ color: isDisabled ? "#94A3B8" : COLORS.darkText }}>
+          <span className="text-sm font-bold min-w-[60px] text-right" style={{ color: product.isActive ? COLORS.darkText : "#94A3B8" }}>
             {currencySymbol}{product.basePrice}
           </span>
           <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">

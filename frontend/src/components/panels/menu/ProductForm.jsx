@@ -3,7 +3,7 @@ import { ArrowLeft, Upload, X as XIcon } from "lucide-react";
 import { COLORS } from "../../../constants";
 import { useToast } from "../../../hooks/use-toast";
 import * as menuService from "../../../api/services/menuManagementService";
-import { toAPI, isFieldPending } from "../../../api/transforms/menuManagementTransform";
+import { toAPI } from "../../../api/transforms/menuManagementTransform";
 
 const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, onSave }) => {
   const isNew = !product;
@@ -18,25 +18,19 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
         description: product.description || "",
         basePrice: product.basePrice || 0,
         categoryId: product.categoryId || "",
-        station: product.station || "KDS",
         itemCode: product.itemCode || "",
         foodType: product.hasEgg ? "egg" : product.isJain ? "jain" : product.isVeg ? "veg" : "nonveg",
         dineIn: product.availability?.dineIn ?? true,
         delivery: product.availability?.delivery ?? true,
         takeaway: product.availability?.takeaway ?? true,
-        isOutOfStock: product.isOutOfStock || false,
-        isDisabled: product.isDisabled || false,
         isComplementary: product.isComplementary || false,
         complementaryPrice: product.complementaryPrice || 0,
         taxPercentage: product.tax?.percentage || 0,
         taxType: product.tax?.type || "GST",
-        taxIsInclusive: product.tax?.isInclusive || false,
         discount: product.discount || 0,
         discountType: product.discountType || "percent",
         prepTimeMin: product.prepTimeMin || 15,
         serveTimeMin: product.serveTimeMin || 10,
-        isInventory: product.isInventoryLinked || false,
-        isPackagedFood: product.isPackagedFood || false,
         allergens: product.allergen || "",
         kcal: product.kcal || 0,
         giveDiscount: product.giveDiscount ?? true,
@@ -47,12 +41,11 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
     } else {
       setForm({
         productName: "", description: "", basePrice: 0, categoryId: categories?.[0]?.categoryId || "",
-        station: "KDS", itemCode: "", foodType: "veg",
+        itemCode: "", foodType: "veg",
         dineIn: true, delivery: true, takeaway: true,
-        isOutOfStock: false, isDisabled: false, isComplementary: false, complementaryPrice: 0,
-        taxPercentage: 0, taxType: "GST", taxIsInclusive: false,
+        isComplementary: false, complementaryPrice: 0,
+        taxPercentage: 0, taxType: "GST",
         discount: 0, discountType: "percent", prepTimeMin: 15, serveTimeMin: 10,
-        isInventory: false, isPackagedFood: false,
         allergens: "", kcal: 0, giveDiscount: true, liveWeb: true,
         imageFile: null, imagePreview: null,
       });
@@ -168,13 +161,8 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <SelectField
-            label="Station *"
-            value={form.station}
-            onChange={(v) => update("station", v)}
-            options={[{ value: "KDS", label: "KDS (Kitchen)" }, { value: "BAR", label: "BAR" }, { value: "BILL", label: "BILL" }]}
-          />
           <InputField label="Item Code" value={form.itemCode} onChange={(v) => update("itemCode", v)} />
+          <InputField label={`Price (${currencySymbol}) *`} value={form.basePrice} onChange={(v) => update("basePrice", v)} type="number" min={0} step={0.01} />
         </div>
 
         {/* Food Type */}
@@ -222,15 +210,6 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
           <ToggleField label="Live Web (Online Ordering)" checked={form.liveWeb} onChange={(v) => update("liveWeb", v)} />
         </div>
 
-        {/* Status */}
-        <div className="py-2">
-          <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>Status</label>
-          <ToggleField label="Stock Out" checked={form.isOutOfStock} onChange={(v) => update("isOutOfStock", v)} />
-          <ToggleField label="Disabled (hidden from POS)" checked={form.isDisabled} onChange={(v) => update("isDisabled", v)} />
-          <ToggleField label="Inventory Item" checked={form.isInventory} onChange={(v) => update("isInventory", v)} />
-          <ToggleField label="Packaging Item" checked={form.isPackagedFood} onChange={(v) => update("isPackagedFood", v)} />
-        </div>
-
         {/* Complementary */}
         <div className="py-2">
           <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>Complementary</label>
@@ -252,7 +231,6 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
             />
             <InputField label="Tax %" value={form.taxPercentage} onChange={(v) => update("taxPercentage", v)} type="number" min={0} max={100} step={0.01} />
           </div>
-          <ToggleField label="Tax Inclusive" checked={form.taxIsInclusive} onChange={(v) => update("taxIsInclusive", v)} />
         </div>
 
         {/* Discount */}

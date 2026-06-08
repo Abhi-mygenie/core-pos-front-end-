@@ -1,10 +1,11 @@
 // Menu Management Transform — CR-014
 // Maps between Menu Management API (foods-list) and existing UI component shapes.
-// The foods-list API has a DIFFERENT shape from the old Product API (get-products-list).
-//
-// Missing keys from foods-list (backend will add later):
-//   egg, jain, stock_out, is_disable, station_name, tax_calc, is_inventory, packed_food
-// These are defaulted here and marked with BACKEND_PENDING comments.
+// Resolved gaps (per backend developer 2026-06-08):
+// - egg, jain: mapped via item_type (0=NonVeg, 1=Veg, 2=Egg, 3=Jain)
+// - stock_out, is_disable: not used in menu management (status via Status API)
+// - station_name: managed at category level
+// - tax_calc: not used in menu management
+// - is_inventory, packed_food: not used in menu management
 
 const toBoolean = (value) => {
   if (typeof value === 'boolean') return value;
@@ -12,14 +13,6 @@ const toBoolean = (value) => {
   if (value === 'Yes' || value === 'yes' || value === 'Y' || value === 'y') return true;
   return false;
 };
-
-// Fields missing from foods-list — flagged so UI can disable them
-export const BACKEND_PENDING_FIELDS = [
-  'egg', 'jain', 'stock_out', 'is_disable', 'station_name',
-  'tax_calc', 'is_inventory', 'packed_food',
-];
-
-export const isFieldPending = (fieldName) => BACKEND_PENDING_FIELDS.includes(fieldName);
 
 // =============================================================================
 // API → Frontend (Response)
@@ -58,27 +51,21 @@ export const fromAPI = {
     tax: {
       percentage: parseFloat(api.tax) || 0,
       type: api.tax_type || 'GST',
-      // BACKEND_PENDING: tax_calc not in foods-list
-      calculation: api.tax_calc || 'Exclusive',
-      isInclusive: api.tax_calc === 'Inclusive',
     },
 
-    // Food type — foods-list uses `item_type` instead of `veg`
-    isVeg: api.item_type === 1 || api.veg === 1,
-    // BACKEND_PENDING: egg, jain not in foods-list
-    hasEgg: toBoolean(api.egg),
-    isJain: toBoolean(api.jain),
+    // Food type — single `item_type` field: 0=Non-Veg, 1=Veg, 2=Egg, 3=Jain
+    isVeg: api.item_type === 1,
+    hasEgg: api.item_type === 2,
+    isJain: api.item_type === 3,
+    itemType: api.item_type ?? 0,
 
     // Variations + Add-ons (key names differ from old API)
     variations: fromAPI.variations(api.variation || api.variations),
     hasVariations: Array.isArray(api.variation || api.variations) && (api.variation || api.variations).length > 0,
     addOns: api.addons || api.add_ons || [],
 
-    // Availability
+    // Status — only active/inactive via Status API
     isActive: api.status === 1,
-    // BACKEND_PENDING: stock_out, is_disable not in foods-list
-    isOutOfStock: toBoolean(api.stock_out),
-    isDisabled: toBoolean(api.is_disable),
     availableTimeStart: api.available_time_starts,
     availableTimeEnd: api.available_time_ends,
 
@@ -89,8 +76,7 @@ export const fromAPI = {
       delivery: toBoolean(api.delivery),
     },
 
-    // BACKEND_PENDING: station_name not in foods-list
-    station: api.station_name || null,
+    // Station — managed at category level, not food level
 
     // Menu type
     foodFor: api.food_for || 'Normal',
@@ -101,10 +87,6 @@ export const fromAPI = {
     // Complementary
     isComplementary: toBoolean(api.complementary),
     complementaryPrice: parseFloat(api.complementary_price) || 0,
-
-    // BACKEND_PENDING: is_inventory, packed_food not in foods-list
-    isInventoryLinked: toBoolean(api.is_inventory),
-    isPackagedFood: toBoolean(api.packed_food),
 
     // Additional fields
     itemCode: api.item_code || '',
@@ -208,7 +190,7 @@ export const toAPI = {
     item_code: form.itemCode || '',
     kcal: Number(form.kcal) || 0,
     allergens: form.allergens || '',
-    veg: form.foodType === 'veg' ? 1 : 0,
+    item_type: form.foodType === 'veg' ? 1 : form.foodType === 'egg' ? 2 : form.foodType === 'jain' ? 3 : 0,
     ...(form.variations ? { variations: form.variations } : {}),
     ...(form.addonIds ? { addon_ids: form.addonIds } : {}),
   }),

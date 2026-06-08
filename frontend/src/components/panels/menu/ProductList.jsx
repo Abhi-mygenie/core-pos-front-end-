@@ -13,8 +13,6 @@ const STATUS_FILTERS = [
   { id: "all", label: "All" },
   { id: "active", label: "Active" },
   { id: "inactive", label: "Inactive" },
-  { id: "outOfStock", label: "Out of Stock" },
-  { id: "disabled", label: "Disabled" },
 ];
 
 const FOOD_FILTERS = [
@@ -50,10 +48,8 @@ const ProductList = ({ foods, categories, selectedCategoryId, deleteReasons, men
     }
     if (statusFilter !== "all") {
       items = items.filter((p) => {
-        if (statusFilter === "active") return p.isActive && !p.isOutOfStock && !p.isDisabled;
+        if (statusFilter === "active") return p.isActive;
         if (statusFilter === "inactive") return !p.isActive;
-        if (statusFilter === "outOfStock") return p.isOutOfStock;
-        if (statusFilter === "disabled") return p.isDisabled;
         return true;
       });
     }
