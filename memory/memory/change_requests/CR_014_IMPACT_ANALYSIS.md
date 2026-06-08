@@ -304,4 +304,112 @@ MISSING in new API (vs old):
 
 ---
 
+---
+
+## 13. Verified Missing Keys (Scanned 2 restaurants: Lafetta rid=78, Kunafa Mahal)
+
+All 98 items on Kunafa Mahal + 231 items on Lafetta scanned. Results identical.
+
+| Key | Old Product API | New Foods-list API | Needed for UI? |
+|-----|----------------|-------------------|----------------|
+| `egg` | `0` (int) | ❌ MISSING | Yes — Food Type Egg option |
+| `jain` | `0` (int) | ❌ MISSING | Yes — Food Type Jain option |
+| `veg` | `0` (int) | ❌ MISSING (replaced by `item_type`) | Renamed — mapped |
+| `stock_out` | `'N'` (str) | ❌ MISSING | Yes — Out of Stock badge + toggle |
+| `is_disable` | `'N'` (str) | ❌ MISSING | Yes — Hidden from POS badge + toggle |
+| `station_name` | `'KDS'` (str) | ❌ MISSING | Yes — Station badge + dropdown |
+| `tax_calc` | `'Exclusive'` (str) | ❌ MISSING | Yes — Tax Inclusive toggle |
+| `is_inventory` | `'No'` (str) | ❌ MISSING | Yes — **NEW: Inventory checkbox** |
+| `packed_food` | `'No'` (str) | ❌ MISSING | Yes — **NEW: Packaging Item checkbox** |
+| `slug` | `'test455'` (str) | ❌ MISSING | No — not needed for menu mgmt |
+| `food_status` | `0` (int) | ❌ MISSING | No — not needed for menu mgmt |
+
+**Owner decision (2026-06-08):** Backend team will add all missing keys to foods-list response.
+
+---
+
+## 14. UI Changes Required (Owner-Approved 2026-06-08)
+
+### 14.1 Quick Edit Form (`ProductCard.jsx` — QuickEditForm)
+
+**Current fields (7):** Name, Category, Price, Food Type, Complementary, Tax Type, Tax %
+
+**Add (2 new fields):**
+
+| Field | Type | Maps to API | Placement |
+|-------|------|-------------|-----------|
+| Inventory | Checkbox (Yes/No) | `is_inventory` | New row below Tax Type/Tax % |
+| Packaging Item | Checkbox (Yes/No) | `packed_food` | Same row as Inventory |
+
+### 14.2 Full Edit Form (`ProductForm.jsx`)
+
+**Existing fields stay. Add (7 new fields):**
+
+| Field | Type | Maps to API | Section |
+|-------|------|-------------|---------|
+| Image upload | File picker + preview | `image` form field | Top (below Name) |
+| Inventory | Toggle (Yes/No) | `is_inventory` | Status section |
+| Packaging Item | Toggle (Yes/No) | `packed_food` | Status section |
+| Allergens | Text input or chips | `allergens[]` | Below Food Type |
+| Kcal | Number input | `kcal` | Below Allergens |
+| Give Discount | Toggle (Yes/No) | `give_discount` | Discount section |
+| Live Web (Online visibility) | Toggle (Yes/No) | `live_web` | Availability section |
+
+### 14.3 Product Card Display (`ProductCard.jsx`)
+
+| Element | Change | Condition |
+|---------|--------|-----------|
+| Inventory badge | Show "Inventory" chip | `is_inventory = "Yes"` |
+| Packaging badge | Show "Packaged" chip | `packed_food = "Yes"` |
+| Status toggle button | Active/Inactive toggle icon on hover | Calls API #6 |
+
+### 14.4 Menu Management Panel Header (`MenuManagementPanel.jsx`)
+
+| Element | Purpose |
+|---------|---------|
+| Menu Type dropdown | Normal / Party / Premium (from menu-master API #7). Passes `food_for` to foods-list |
+
+### 14.5 No Changes Needed
+
+| Component | Reason |
+|-----------|--------|
+| `CategoryList.jsx` | Reads categories from foods-list. CRUD wiring when APIs provided |
+| `ProductList.jsx` | Structure stays. Data source changes from MenuContext to local service |
+| Sidebar / DashboardPage | Already wired |
+
+---
+
+## 15. Pending from Owner / Backend Team
+
+| Item | Status | Blocks |
+|------|--------|--------|
+| Backend: Add 9 missing keys to `foods-list` response | REQUESTED | Full edit form fields |
+| Owner: Category CRUD API curls | PENDING | CategoryList write operations |
+| Owner: Add-on CRUD API curls | PENDING | Add-on management in ProductForm |
+| Owner: Drag & drop reorder API (or backend build) | PENDING | DnD persistence |
+| Suggested reorder API shape: `POST /product/reorder` with `{ type, items: [{id, position}] }` | SUGGESTED | — |
+
+---
+
+## 16. Phasing (Owner-Approved 2026-06-08)
+
+### Phase 1 (Ship with available APIs)
+- Service + Transform (food CRUD: APIs #1-7)
+- Wire foods-list → ProductList + CategoryList (read)
+- Wire add/edit food → ProductForm
+- Wire delete → ProductCard (with delete-reasons dropdown)
+- Wire status toggle → ProductCard
+- Menu type selector (menu-master dropdown)
+- Image upload in ProductForm
+- UI additions: Inventory checkbox, Packaging checkbox, Allergens, Kcal, Give Discount, Live Web
+- Quick Edit: +2 checkboxes (Inventory, Packaging)
+
+### Phase 2 (When APIs arrive / deferred)
+- Bulk import/export/template (APIs #8-10)
+- Category CRUD (APIs TBD)
+- Add-on CRUD (APIs TBD)
+- Drag & drop reorder persistence (API TBD)
+
+---
+
 *End of Impact Analysis — Gate 2 Complete. Ready for Gate 3 (Implementation Plan) on owner GO.*
