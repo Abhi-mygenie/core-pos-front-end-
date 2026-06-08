@@ -5,14 +5,18 @@ import { useToast } from "../../../hooks/use-toast";
 import * as menuService from "../../../api/services/menuManagementService";
 import { toAPI } from "../../../api/transforms/menuManagementTransform";
 
-const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, onSave }) => {
+const ProductForm = ({ product, categories, addons: allAddons, currencySymbol, menuType, onBack, onSave, onRefreshAddons }) => {
   const isNew = !product;
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [selectedAddonIds, setSelectedAddonIds] = useState([]);
+  const [newAddonName, setNewAddonName] = useState("");
+  const [newAddonPrice, setNewAddonPrice] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
     if (product) {
+      setSelectedAddonIds((product.addOns || []).map((a) => a.id).filter(Boolean));
       setForm({
         productName: product.productName || "",
         description: product.description || "",
@@ -277,21 +281,82 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
           </div>
         )}
 
-        {/* Add-Ons (read-only) */}
-        {product?.addOns?.length > 0 && (
-          <div className="py-3">
-            <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>
-              Add-Ons ({product.addOns.length})
-              <span className="ml-2 text-xs font-normal italic">Read-only — separate API coming later</span>
-            </label>
-            {product.addOns.map((a, i) => (
-              <div key={i} className="p-2 mb-1 rounded border text-xs flex justify-between" style={{ borderColor: COLORS.borderGray }}>
-                <span className="font-medium" style={{ color: COLORS.darkText }}>{a.name}</span>
-                <span style={{ color: COLORS.grayText }}>{currencySymbol}{a.price}</span>
-              </div>
-            ))}
+        {/* Add-Ons — select from global list + inline create */}
+        <div className="py-3">
+          <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>
+            Add-Ons ({selectedAddonIds.length} selected)
+          </label>
+          {/* Existing addons — toggle selection */}
+          <div className="max-h-40 overflow-y-auto mb-2 space-y-1">
+            {(allAddons || []).map((a) => {
+              const isSelected = selectedAddonIds.includes(a.id);
+              return (
+                <label key={a.id} className="flex items-center gap-2 p-1.5 rounded cursor-pointer hover:bg-gray-50" data-testid={`addon-option-${a.id}`}>
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {
+                      setSelectedAddonIds((prev) =>
+                        isSelected ? prev.filter((id) => id !== a.id) : [...prev, a.id]
+                      );
+                    }}
+                    className="w-3.5 h-3.5 rounded"
+                    style={{ accentColor: COLORS.primaryOrange }}
+                  />
+                  <span className="text-sm flex-1" style={{ color: COLORS.darkText }}>{a.name}</span>
+                  <span className="text-xs" style={{ color: COLORS.grayText }}>{currencySymbol}{a.price}</span>
+                </label>
+              );
+            })}
+            {(!allAddons || allAddons.length === 0) && (
+              <div className="text-xs py-2 text-center" style={{ color: COLORS.grayText }}>No add-ons available</div>
+            )}
           </div>
-        )}
+          {/* Inline add new addon */}
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <input
+                value={newAddonName}
+                onChange={(e) => setNewAddonName(e.target.value)}
+                placeholder="New add-on name"
+                className="w-full px-2 py-1.5 text-xs rounded border outline-none"
+                style={{ borderColor: COLORS.borderGray }}
+                data-testid="new-addon-name"
+              />
+            </div>
+            <div className="w-20">
+              <input
+                type="number"
+                value={newAddonPrice}
+                onChange={(e) => setNewAddonPrice(e.target.value)}
+                placeholder="Price"
+                className="w-full px-2 py-1.5 text-xs rounded border outline-none"
+                style={{ borderColor: COLORS.borderGray }}
+                min={0}
+                data-testid="new-addon-price"
+              />
+            </div>
+            <button
+              onClick={async () => {
+                if (!newAddonName.trim() || !newAddonPrice) return;
+                try {
+                  await menuService.addAddon(newAddonName.trim(), newAddonPrice);
+                  toast({ title: "Added", description: `Add-on "${newAddonName}" created.` });
+                  setNewAddonName("");
+                  setNewAddonPrice("");
+                  if (onRefreshAddons) onRefreshAddons();
+                } catch (err) {
+                  toast({ title: "Error", description: "Failed to create add-on." });
+                }
+              }}
+              className="px-3 py-1.5 text-xs rounded text-white"
+              style={{ backgroundColor: COLORS.primaryOrange }}
+              data-testid="add-addon-btn"
+            >
+              Add
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Footer Actions */}
@@ -303,7 +368,7 @@ const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, on
           onClick={async () => {
             setSaving(true);
             try {
-              const foodInfo = toAPI.foodInfo({ ...form, foodFor: menuType || 'Normal' });
+              const foodInfo = toAPI.foodInfo({ ...form, foodFor: menuType || 'Normal', addonIds: selectedAddonIds });
               if (isNew) {
                 await menuService.addFood(foodInfo, form.imageFile);
               } else {

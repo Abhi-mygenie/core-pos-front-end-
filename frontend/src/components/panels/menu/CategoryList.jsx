@@ -6,18 +6,22 @@ import { useToast } from "../../../hooks/use-toast";
 import * as menuService from "../../../api/services/menuManagementService";
 import { toAPI } from "../../../api/transforms/menuManagementTransform";
 
-const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelectCategory }) => {
+const CategoryList = ({ categories: propCategories, stations, selectedCategoryId, onSelectCategory, onRefresh }) => {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [localCategories, setLocalCategories] = useState(null);
   const [addingCategory, setAddingCategory] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formName, setFormName] = useState("");
+  const [formStation, setFormStation] = useState("KDS");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const cats = localCategories || propCategories || [];
   const filtered = search ? cats.filter((c) => c.categoryName.toLowerCase().includes(search.toLowerCase())) : cats;
   const totalItems = cats.reduce((sum, c) => sum + (c.itemCount || 0), 0);
+
+  const stationOptions = stations?.length > 0 ? stations : [{ id: 0, name: 'KDS' }];
 
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
@@ -36,31 +40,58 @@ const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelect
     }
   };
 
-  const handleAdd = () => {
-    if (formName.trim()) {
-      // Category add API deferred — toast only
+  const handleAdd = async () => {
+    if (!formName.trim()) return;
+    setSaving(true);
+    try {
+      await menuService.addCategory({ name: formName.trim(), stationName: formStation, catOrder: cats.length });
       toast({ title: "Saved", description: `Category "${formName}" added.` });
+      setAddingCategory(false);
+      setFormName("");
+      setFormStation("KDS");
+      onRefresh();
+    } catch (err) {
+      console.error('[CategoryList] Add failed:', err);
+      toast({ title: "Error", description: err?.response?.data?.message || "Failed to add category." });
+    } finally {
+      setSaving(false);
     }
-    setAddingCategory(false);
-    setFormName("");
   };
 
   const handleEdit = (cat) => {
     setEditingId(cat.categoryId);
     setFormName(cat.categoryName);
+    setFormStation(cat.stationName || "KDS");
   };
 
-  const handleSaveEdit = () => {
-    // Category edit API deferred — toast only
-    toast({ title: "Saved", description: "Category updated." });
-    setEditingId(null);
-    setFormName("");
+  const handleSaveEdit = async () => {
+    if (!formName.trim()) return;
+    setSaving(true);
+    try {
+      const cat = cats.find((c) => c.categoryId === editingId);
+      await menuService.editCategory(editingId, { name: formName.trim(), stationName: formStation, catOrder: cat?.catOrder || 0 });
+      toast({ title: "Saved", description: "Category updated." });
+      setEditingId(null);
+      setFormName("");
+      onRefresh();
+    } catch (err) {
+      console.error('[CategoryList] Edit failed:', err);
+      toast({ title: "Error", description: err?.response?.data?.message || "Failed to update category." });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = (cat) => {
-    // Category delete API deferred — toast only
-    toast({ title: "Deleted", description: `Category "${cat.categoryName}" removed.` });
-    setDeleteConfirm(null);
+  const handleDelete = async (cat) => {
+    try {
+      await menuService.deleteCategory(cat.categoryId);
+      toast({ title: "Deleted", description: `Category "${cat.categoryName}" removed.` });
+      setDeleteConfirm(null);
+      onRefresh();
+    } catch (err) {
+      console.error('[CategoryList] Delete failed:', err);
+      toast({ title: "Error", description: err?.response?.data?.message || "Failed to delete category." });
+    }
   };
 
   return (
@@ -117,9 +148,21 @@ const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelect
                         style={{ borderColor: COLORS.primaryOrange }}
                         onKeyDown={(e) => { if (e.key === "Enter") handleSaveEdit(); if (e.key === "Escape") setEditingId(null); }}
                       />
+                      <select
+                        value={formStation}
+                        onChange={(e) => setFormStation(e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs rounded border outline-none bg-white mb-1"
+                        style={{ borderColor: COLORS.borderGray }}
+                      >
+                        {stationOptions.map((s) => (
+                          <option key={s.id || s.name} value={s.name}>{s.name}</option>
+                        ))}
+                      </select>
                       <div className="flex gap-1 justify-end">
                         <button onClick={() => setEditingId(null)} className="px-2 py-0.5 text-xs rounded border" style={{ borderColor: COLORS.borderGray }}>Cancel</button>
-                        <button onClick={handleSaveEdit} className="px-2 py-0.5 text-xs rounded text-white" style={{ backgroundColor: COLORS.primaryGreen }}>Save</button>
+                        <button onClick={handleSaveEdit} disabled={saving} className="px-2 py-0.5 text-xs rounded text-white" style={{ backgroundColor: COLORS.primaryGreen }}>
+                          {saving ? "..." : "Save"}
+                        </button>
                       </div>
                     </div>
                   );
@@ -141,9 +184,14 @@ const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelect
                           <div {...provided.dragHandleProps} className="p-1 cursor-grab opacity-30 group-hover:opacity-100">
                             <GripVertical className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
                           </div>
-                          <span className="flex-1 text-sm font-medium truncate" style={{ color: isSelected ? COLORS.primaryOrange : COLORS.darkText }}>
-                            {cat.categoryName}
-                          </span>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-sm font-medium truncate block" style={{ color: isSelected ? COLORS.primaryOrange : COLORS.darkText }}>
+                              {cat.categoryName}
+                            </span>
+                            {cat.stationName && (
+                              <span className="text-xs" style={{ color: COLORS.grayText }}>{cat.stationName}</span>
+                            )}
+                          </div>
                           <span className="text-xs px-1.5 py-0.5 rounded-full mr-1" style={{ backgroundColor: COLORS.borderGray, color: COLORS.grayText }}>
                             {cat.itemCount || 0}
                           </span>
@@ -190,14 +238,27 @@ const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelect
             onKeyDown={(e) => { if (e.key === "Enter") handleAdd(); if (e.key === "Escape") { setAddingCategory(false); setFormName(""); } }}
             data-testid="new-category-input"
           />
+          <select
+            value={formStation}
+            onChange={(e) => setFormStation(e.target.value)}
+            className="w-full px-2 py-1.5 text-xs rounded border outline-none bg-white mb-2"
+            style={{ borderColor: COLORS.borderGray }}
+            data-testid="new-category-station"
+          >
+            {stationOptions.map((s) => (
+              <option key={s.id || s.name} value={s.name}>{s.name}</option>
+            ))}
+          </select>
           <div className="flex gap-1 justify-end">
             <button onClick={() => { setAddingCategory(false); setFormName(""); }} className="px-3 py-1 text-xs rounded border" style={{ borderColor: COLORS.borderGray }}>Cancel</button>
-            <button onClick={handleAdd} className="px-3 py-1 text-xs rounded text-white" style={{ backgroundColor: COLORS.primaryGreen }}>Add</button>
+            <button onClick={handleAdd} disabled={saving} className="px-3 py-1 text-xs rounded text-white" style={{ backgroundColor: COLORS.primaryGreen }}>
+              {saving ? "..." : "Add"}
+            </button>
           </div>
         </div>
       ) : (
         <button
-          onClick={() => { setAddingCategory(true); setFormName(""); }}
+          onClick={() => { setAddingCategory(true); setFormName(""); setFormStation("KDS"); }}
           className="mt-2 w-full flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium rounded-lg border border-dashed transition-colors hover:bg-orange-50"
           style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
           data-testid="add-category-btn"

@@ -155,6 +155,50 @@ export const fromAPI = {
    * Transform delete reasons response
    */
   deleteReasons: (data) => data.reason || [],
+
+  /**
+   * Transform categories list response (API #12)
+   */
+  categoryList: (data) => {
+    const cats = data.categories || data.data || data || [];
+    if (!Array.isArray(cats)) return [];
+    return cats.map((c) => ({
+      categoryId: c.id,
+      categoryName: c.name,
+      image: c.image || null,
+      stationName: c.station_name || 'KDS',
+      printerId: c.restaurant_printer_id || '',
+      catOrder: c.cat_order || 0,
+      catType: c.cat_type || 'food',
+      itemCount: c.products_count ?? c.item_count ?? 0,
+    }));
+  },
+
+  /**
+   * Transform station printer list response (API #16)
+   */
+  stationPrinterList: (data) => {
+    const list = data.stations || data.data || data || [];
+    if (!Array.isArray(list)) return [];
+    return list.map((s) => ({
+      id: s.id,
+      name: s.station_name || s.name,
+      printerId: s.printer_id || s.restaurant_printer_id || '',
+    }));
+  },
+
+  /**
+   * Transform addon list response (API #17)
+   */
+  addonList: (data) => {
+    const addons = data.addons || data.data || data || [];
+    if (!Array.isArray(addons)) return [];
+    return addons.map((a) => ({
+      id: a.id,
+      name: a.name,
+      price: parseFloat(a.price) || 0,
+    }));
+  },
 };
 
 // =============================================================================

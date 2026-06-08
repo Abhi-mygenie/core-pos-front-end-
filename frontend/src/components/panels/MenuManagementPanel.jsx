@@ -14,19 +14,19 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
   const [menuTypes, setMenuTypes] = useState([{ id: 0, name: "Normal" }]);
   const [foods, setFoods] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [stations, setStations] = useState([]);
+  const [addons, setAddons] = useState([]);
   const [deleteReasons, setDeleteReasons] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch foods list from Menu Management API
+  // Fetch foods list
   const fetchFoods = useCallback(async () => {
     setLoading(true);
     try {
       const res = await menuService.getFoodsList(menuType);
       const rawFoods = res.data?.foods ? res.data : res.data?.data || res.data;
       const { foods: transformed } = fromAPI.foodsListResponse(rawFoods);
-      const cats = fromAPI.categoriesFromFoods(rawFoods.foods || []);
       setFoods(transformed);
-      setCategories(cats);
     } catch (err) {
       console.error('[MenuMgmt] Failed to fetch foods:', err);
       toast({ title: "Error", description: "Failed to load menu items." });
@@ -35,25 +35,52 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
     }
   }, [menuType, toast]);
 
-  // Fetch menu types + delete reasons on mount
+  // Fetch categories from dedicated API
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await menuService.getCategories();
+      const rawData = res.data?.categories ? res.data : res.data?.data || res.data;
+      setCategories(fromAPI.categoryList(rawData));
+    } catch (err) {
+      console.error('[MenuMgmt] Failed to fetch categories:', err);
+    }
+  }, []);
+
+  // Fetch addons
+  const fetchAddons = useCallback(async () => {
+    try {
+      const res = await menuService.getAddonList();
+      const rawData = res.data?.addons ? res.data : res.data?.data || res.data;
+      setAddons(fromAPI.addonList(rawData));
+    } catch (err) {
+      console.error('[MenuMgmt] Failed to fetch addons:', err);
+    }
+  }, []);
+
+  // Fetch meta on mount (menu types, delete reasons, stations, categories, addons)
   useEffect(() => {
     if (!isOpen) return;
     const fetchMeta = async () => {
       try {
-        const [masterRes, reasonsRes] = await Promise.all([
+        const [masterRes, reasonsRes, stationsRes] = await Promise.all([
           menuService.getMenuMaster(),
           menuService.getDeleteReasons(),
+          menuService.getStationPrinterList(),
         ]);
         const masterData = masterRes.data?.menus ? masterRes.data : masterRes.data?.data || masterRes.data;
         const reasonsData = reasonsRes.data?.reason ? reasonsRes.data : reasonsRes.data?.data || reasonsRes.data;
+        const stationsData = stationsRes.data?.stations ? stationsRes.data : stationsRes.data?.data || stationsRes.data;
         setMenuTypes(fromAPI.menuMaster(masterData));
         setDeleteReasons(fromAPI.deleteReasons(reasonsData));
+        setStations(fromAPI.stationPrinterList(stationsData));
       } catch (err) {
         console.error('[MenuMgmt] Failed to fetch meta:', err);
       }
     };
     fetchMeta();
-  }, [isOpen]);
+    fetchCategories();
+    fetchAddons();
+  }, [isOpen, fetchCategories, fetchAddons]);
 
   // Re-fetch foods when panel opens or menu type changes
   useEffect(() => {
@@ -117,8 +144,10 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
         >
           <CategoryList
             categories={categories}
+            stations={stations}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
+            onRefresh={fetchCategories}
           />
         </div>
 
@@ -127,10 +156,12 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
           <ProductList
             foods={foods}
             categories={categories}
+            addons={addons}
             selectedCategoryId={selectedCategoryId}
             deleteReasons={deleteReasons}
             menuType={menuType}
             onRefresh={fetchFoods}
+            onRefreshAddons={fetchAddons}
           />
         </div>
       </div>

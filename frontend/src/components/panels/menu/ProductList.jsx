@@ -23,7 +23,7 @@ const FOOD_FILTERS = [
   { id: "jain", label: "Jain", color: "#8B5CF6" },
 ];
 
-const ProductList = ({ foods, categories, selectedCategoryId, deleteReasons, menuType, onRefresh }) => {
+const ProductList = ({ foods, categories, addons, selectedCategoryId, deleteReasons, menuType, onRefresh, onRefreshAddons }) => {
   const { currencySymbol } = useRestaurant();
   const { toast } = useToast();
 
@@ -140,6 +140,7 @@ const ProductList = ({ foods, categories, selectedCategoryId, deleteReasons, men
       <ProductForm
         product={editingProduct === "new" ? null : editingProduct}
         categories={categories}
+        addons={addons}
         currencySymbol={currencySymbol}
         menuType={menuType}
         onBack={() => setEditingProduct(null)}
@@ -147,6 +148,7 @@ const ProductList = ({ foods, categories, selectedCategoryId, deleteReasons, men
           setEditingProduct(null);
           onRefresh();
         }}
+        onRefreshAddons={onRefreshAddons}
       />
     );
   }
