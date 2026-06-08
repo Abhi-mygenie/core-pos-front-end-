@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GripVertical, Zap, Pencil, Trash2 } from "lucide-react";
+import { GripVertical, Zap, Pencil, Trash2, Power } from "lucide-react";
 import { COLORS } from "../../../constants";
 
 // Food type helpers
@@ -48,6 +48,8 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
     isComplementary: product.isComplementary || false,
     taxType: product.tax?.type || "GST",
     taxPercentage: product.tax?.percentage || 0,
+    isInventory: product.isInventoryLinked || false,
+    isPackagedFood: product.isPackagedFood || false,
   });
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
@@ -130,7 +132,7 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
       </div>
 
       {/* Row 4: Tax Type + Tax % */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
           <label className="text-xs mb-1 block" style={{ color: COLORS.grayText }}>Tax Type</label>
           <select
@@ -155,6 +157,30 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
             step="0.01"
           />
         </div>
+      </div>
+
+      {/* Row 5: Inventory + Packaging Item */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-inventory">
+          <input
+            type="checkbox"
+            checked={form.isInventory}
+            onChange={(e) => update("isInventory", e.target.checked)}
+            className="w-4 h-4 rounded border accent-current"
+            style={{ accentColor: COLORS.primaryOrange }}
+          />
+          <span className="text-sm" style={{ color: COLORS.darkText }}>Inventory Item</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-packaging">
+          <input
+            type="checkbox"
+            checked={form.isPackagedFood}
+            onChange={(e) => update("isPackagedFood", e.target.checked)}
+            className="w-4 h-4 rounded border accent-current"
+            style={{ accentColor: COLORS.primaryOrange }}
+          />
+          <span className="text-sm" style={{ color: COLORS.darkText }}>Packaging Item</span>
+        </label>
       </div>
 
       {/* Actions */}
@@ -244,6 +270,16 @@ const ProductCard = ({
             <ChannelChip label="Dine-In" active={product.availability?.dineIn} />
             <ChannelChip label="Delivery" active={product.availability?.delivery} />
             <ChannelChip label="Takeaway" active={product.availability?.takeaway} />
+            {product.isInventoryLinked && (
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(59,130,246,0.08)", color: "#3B82F6", border: "1px solid rgba(59,130,246,0.2)" }} data-testid={`inventory-badge-${product.productId}`}>
+                Inventory
+              </span>
+            )}
+            {product.isPackagedFood && (
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(168,85,247,0.08)", color: "#A855F7", border: "1px solid rgba(168,85,247,0.2)" }} data-testid={`packaged-badge-${product.productId}`}>
+                Packaged
+              </span>
+            )}
           </div>
         </div>
 
@@ -254,6 +290,14 @@ const ProductCard = ({
             {currencySymbol}{product.basePrice}
           </span>
           <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => { e.stopPropagation(); /* API #6 status toggle - will be wired */ }}
+              className="p-1.5 rounded hover:bg-green-50 transition-colors"
+              title={product.isActive ? "Deactivate" : "Activate"}
+              data-testid={`status-toggle-${product.productId}`}
+            >
+              <Power className="w-3.5 h-3.5" style={{ color: product.isActive ? COLORS.primaryGreen : "#94A3B8" }} />
+            </button>
             <button
               onClick={onQuickEdit}
               className="p-1.5 rounded hover:bg-amber-50 transition-colors"

@@ -6,6 +6,7 @@ import ProductList from "./menu/ProductList";
 
 const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [menuType, setMenuType] = useState("Normal");
 
   const handleClose = () => {
     setSelectedCategoryId(null);
@@ -27,9 +28,22 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
         className="flex items-center justify-between px-6 py-4 flex-shrink-0"
         style={{ borderBottom: `1px solid ${COLORS.borderGray}` }}
       >
-        <h2 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
-          Menu Management
-        </h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-lg font-semibold" style={{ color: COLORS.darkText }}>
+            Menu Management
+          </h2>
+          <select
+            value={menuType}
+            onChange={(e) => setMenuType(e.target.value)}
+            className="px-3 py-1.5 text-sm rounded-lg border outline-none bg-white"
+            style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
+            data-testid="menu-type-selector"
+          >
+            <option value="Normal">Normal</option>
+            <option value="Party">Party</option>
+            <option value="Premium">Premium</option>
+          </select>
+        </div>
         <button
           data-testid="menu-close-btn"
           onClick={handleClose}

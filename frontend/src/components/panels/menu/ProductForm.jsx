@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Upload, X as XIcon } from "lucide-react";
 import { COLORS } from "../../../constants";
 
 const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) => {
@@ -30,6 +30,14 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
         discountType: product.discountType || "percent",
         prepTimeMin: product.prepTimeMin || 15,
         serveTimeMin: product.serveTimeMin || 10,
+        isInventory: product.isInventoryLinked || false,
+        isPackagedFood: product.isPackagedFood || false,
+        allergens: product.allergen || "",
+        kcal: product.kcal || 0,
+        giveDiscount: product.giveDiscount ?? true,
+        liveWeb: product.liveWeb ?? true,
+        imageFile: null,
+        imagePreview: product.productImage || null,
       });
     } else {
       setForm({
@@ -39,6 +47,9 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
         isOutOfStock: false, isDisabled: false, isComplementary: false, complementaryPrice: 0,
         taxPercentage: 0, taxType: "GST", taxIsInclusive: false,
         discount: 0, discountType: "percent", prepTimeMin: 15, serveTimeMin: 10,
+        isInventory: false, isPackagedFood: false,
+        allergens: "", kcal: 0, giveDiscount: true, liveWeb: true,
+        imageFile: null, imagePreview: null,
       });
     }
   }, [product, categories]);
@@ -103,6 +114,44 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
         <InputField label="Name *" value={form.productName} onChange={(v) => update("productName", v)} />
         <InputField label="Description" value={form.description} onChange={(v) => update("description", v)} />
 
+        {/* Image Upload */}
+        <div className="py-2">
+          <label className="block text-xs font-medium mb-1" style={{ color: COLORS.grayText }}>Product Image</label>
+          <div className="flex items-center gap-3">
+            {form.imagePreview && (
+              <div className="relative w-16 h-16 rounded-lg overflow-hidden border" style={{ borderColor: COLORS.borderGray }}>
+                <img src={form.imagePreview} alt="preview" className="w-full h-full object-cover" />
+                <button
+                  onClick={() => update("imagePreview", null)}
+                  className="absolute top-0 right-0 p-0.5 bg-white/80 rounded-bl"
+                >
+                  <XIcon className="w-3 h-3" style={{ color: "#EF4444" }} />
+                </button>
+              </div>
+            )}
+            <label
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg border cursor-pointer hover:bg-gray-50 transition-colors"
+              style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}
+              data-testid="image-upload-btn"
+            >
+              <Upload className="w-4 h-4" />
+              {form.imagePreview ? "Change" : "Upload"}
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    update("imageFile", file);
+                    update("imagePreview", URL.createObjectURL(file));
+                  }
+                }}
+              />
+            </label>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <InputField label={`Price (${currencySymbol}) *`} value={form.basePrice} onChange={(v) => update("basePrice", v)} type="number" min={0} step={0.01} />
           <SelectField
@@ -153,12 +202,19 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
           </div>
         </div>
 
+        {/* Allergens + Kcal */}
+        <div className="grid grid-cols-2 gap-4">
+          <InputField label="Allergens" value={form.allergens} onChange={(v) => update("allergens", v)} placeholder="e.g. Milk, Nuts" />
+          <InputField label="Kcal" value={form.kcal} onChange={(v) => update("kcal", v)} type="number" min={0} />
+        </div>
+
         {/* Availability */}
         <div className="py-2">
           <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>Availability</label>
           <ToggleField label="Dine-In" checked={form.dineIn} onChange={(v) => update("dineIn", v)} />
           <ToggleField label="Delivery" checked={form.delivery} onChange={(v) => update("delivery", v)} />
           <ToggleField label="Takeaway" checked={form.takeaway} onChange={(v) => update("takeaway", v)} />
+          <ToggleField label="Live Web (Online Ordering)" checked={form.liveWeb} onChange={(v) => update("liveWeb", v)} />
         </div>
 
         {/* Status */}
@@ -166,6 +222,8 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
           <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>Status</label>
           <ToggleField label="Stock Out" checked={form.isOutOfStock} onChange={(v) => update("isOutOfStock", v)} />
           <ToggleField label="Disabled (hidden from POS)" checked={form.isDisabled} onChange={(v) => update("isDisabled", v)} />
+          <ToggleField label="Inventory Item" checked={form.isInventory} onChange={(v) => update("isInventory", v)} />
+          <ToggleField label="Packaging Item" checked={form.isPackagedFood} onChange={(v) => update("isPackagedFood", v)} />
         </div>
 
         {/* Complementary */}
@@ -195,15 +253,18 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
         {/* Discount */}
         <div className="py-2">
           <label className="block text-xs font-medium mb-2" style={{ color: COLORS.grayText }}>Discount</label>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField label="Discount" value={form.discount} onChange={(v) => update("discount", v)} type="number" min={0} />
-            <SelectField
-              label="Type"
-              value={form.discountType}
-              onChange={(v) => update("discountType", v)}
-              options={[{ value: "percent", label: "Percent" }, { value: "amount", label: "Amount" }]}
-            />
-          </div>
+          <ToggleField label="Allow Discount" checked={form.giveDiscount} onChange={(v) => update("giveDiscount", v)} />
+          {form.giveDiscount && (
+            <div className="grid grid-cols-2 gap-4">
+              <InputField label="Discount" value={form.discount} onChange={(v) => update("discount", v)} type="number" min={0} />
+              <SelectField
+                label="Type"
+                value={form.discountType}
+                onChange={(v) => update("discountType", v)}
+                options={[{ value: "percent", label: "Percent" }, { value: "amount", label: "Amount" }]}
+              />
+            </div>
+          )}
         </div>
 
         {/* Prep Time */}
