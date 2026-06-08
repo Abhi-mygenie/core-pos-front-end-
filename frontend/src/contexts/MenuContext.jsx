@@ -31,7 +31,7 @@ export const MenuProvider = ({ children }) => {
         next[idx] = { ...next[idx], ...product };
         return next;
       }
-      return [...prev, product];
+      return [product, ...prev];
     });
   }, []);
 
