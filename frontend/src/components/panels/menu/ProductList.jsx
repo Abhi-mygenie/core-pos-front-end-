@@ -1,13 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Search, Plus, SlidersHorizontal } from "lucide-react";
 import { COLORS } from "../../../constants";
-import { useMenu, useRestaurant } from "../../../contexts";
+import { useRestaurant } from "../../../contexts";
 import { useToast } from "../../../hooks/use-toast";
 import ProductCard from "./ProductCard";
 import ProductForm from "./ProductForm";
+import * as menuService from "../../../api/services/menuManagementService";
+import { toAPI } from "../../../api/transforms/menuManagementTransform";
 
-// Filter options
 const STATUS_FILTERS = [
   { id: "all", label: "All" },
   { id: "active", label: "Active" },
@@ -24,8 +25,7 @@ const FOOD_FILTERS = [
   { id: "jain", label: "Jain", color: "#8B5CF6" },
 ];
 
-const ProductList = ({ selectedCategoryId }) => {
-  const { products, categories } = useMenu();
+const ProductList = ({ foods, categories, selectedCategoryId, deleteReasons, menuType, onRefresh }) => {
   const { currencySymbol } = useRestaurant();
   const { toast } = useToast();
 
@@ -34,25 +34,20 @@ const ProductList = ({ selectedCategoryId }) => {
   const [foodFilter, setFoodFilter] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [quickEditId, setQuickEditId] = useState(null);
-  const [editingProduct, setEditingProduct] = useState(null); // null = list, product = full edit, 'new' = add
+  const [editingProduct, setEditingProduct] = useState(null);
   const [localProducts, setLocalProducts] = useState(null);
 
-  // Filter products
+  const products = localProducts || foods || [];
+
   const filteredProducts = useMemo(() => {
-    let items = localProducts || products || [];
-
-    // Category filter
+    let items = products;
     if (selectedCategoryId) {
-      items = items.filter((p) => p.categoryId === selectedCategoryId || p.categoryIds?.some((c) => String(c.id) === String(selectedCategoryId)));
+      items = items.filter((p) => p.categoryId === selectedCategoryId);
     }
-
-    // Search
     if (search) {
       const s = search.toLowerCase();
       items = items.filter((p) => p.productName.toLowerCase().includes(s));
     }
-
-    // Status filter
     if (statusFilter !== "all") {
       items = items.filter((p) => {
         if (statusFilter === "active") return p.isActive && !p.isOutOfStock && !p.isDisabled;
@@ -62,8 +57,6 @@ const ProductList = ({ selectedCategoryId }) => {
         return true;
       });
     }
-
-    // Food type filter
     if (foodFilter !== "all") {
       items = items.filter((p) => {
         if (foodFilter === "veg") return p.isVeg && !p.hasEgg;
@@ -73,25 +66,72 @@ const ProductList = ({ selectedCategoryId }) => {
         return true;
       });
     }
-
     return items;
-  }, [products, localProducts, selectedCategoryId, search, statusFilter, foodFilter]);
+  }, [products, selectedCategoryId, search, statusFilter, foodFilter]);
 
-  const handleDragEnd = (result) => {
+  // Drag-and-drop reorder — calls API #11
+  const handleDragEnd = useCallback(async (result) => {
     if (!result.destination) return;
     const items = Array.from(filteredProducts);
     const [moved] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, moved);
-    // Update local state (mocked)
-    const allItems = Array.from(localProducts || products || []);
+    // Update local state optimistically
+    const allItems = Array.from(products);
     const sourceIdx = allItems.findIndex((p) => p.productId === moved.productId);
     allItems.splice(sourceIdx, 1);
     const destItem = items[result.destination.index + 1];
     const destIdx = destItem ? allItems.findIndex((p) => p.productId === destItem.productId) : allItems.length;
     allItems.splice(destIdx, 0, moved);
     setLocalProducts(allItems);
-    toast({ title: "Reordered", description: "Product order updated." });
-  };
+    try {
+      const payload = toAPI.reorderPayload('food', items);
+      await menuService.quickReorder(payload.type, payload.items);
+      toast({ title: "Reordered", description: "Product order saved." });
+    } catch (err) {
+      console.error('[ProductList] Reorder failed:', err);
+      toast({ title: "Error", description: "Failed to save product order." });
+      setLocalProducts(null);
+    }
+  }, [filteredProducts, products, toast]);
+
+  // Delete — calls API #4
+  const handleDelete = useCallback(async (product, reason) => {
+    try {
+      await menuService.deleteFood(product.productId, reason);
+      toast({ title: "Deleted", description: `"${product.productName}" removed.` });
+      onRefresh();
+    } catch (err) {
+      console.error('[ProductList] Delete failed:', err);
+      toast({ title: "Error", description: "Failed to delete product." });
+    }
+  }, [toast, onRefresh]);
+
+  // Status toggle — calls API #6
+  const handleStatusToggle = useCallback(async (product) => {
+    const newStatus = product.isActive ? 0 : 1;
+    try {
+      await menuService.toggleFoodStatus(product.productId, newStatus);
+      toast({ title: newStatus ? "Activated" : "Deactivated", description: `"${product.productName}" is now ${newStatus ? 'active' : 'inactive'}.` });
+      onRefresh();
+    } catch (err) {
+      console.error('[ProductList] Status toggle failed:', err);
+      toast({ title: "Error", description: "Failed to update status." });
+    }
+  }, [toast, onRefresh]);
+
+  // Quick edit save — calls API #2
+  const handleQuickSave = useCallback(async (product, formData) => {
+    try {
+      const foodInfo = toAPI.foodInfo({ ...formData, foodFor: menuType });
+      await menuService.editFood(product.productId, foodInfo);
+      toast({ title: "Saved", description: "Quick edit saved." });
+      setQuickEditId(null);
+      onRefresh();
+    } catch (err) {
+      console.error('[ProductList] Quick save failed:', err);
+      toast({ title: "Error", description: "Failed to save changes." });
+    }
+  }, [toast, onRefresh, menuType]);
 
   const getCategoryName = (categoryId) => {
     const cat = categories?.find((c) => c.categoryId === categoryId);
@@ -105,10 +145,11 @@ const ProductList = ({ selectedCategoryId }) => {
         product={editingProduct === "new" ? null : editingProduct}
         categories={categories}
         currencySymbol={currencySymbol}
+        menuType={menuType}
         onBack={() => setEditingProduct(null)}
         onSave={() => {
-          toast({ title: "Saved", description: editingProduct === "new" ? "Product added." : "Product updated." });
           setEditingProduct(null);
+          onRefresh();
         }}
       />
     );
@@ -190,7 +231,7 @@ const ProductList = ({ selectedCategoryId }) => {
 
       {/* Product count */}
       <div className="text-xs mb-2" style={{ color: COLORS.grayText }}>
-        Showing {filteredProducts.length} of {(products || []).length} products
+        Showing {filteredProducts.length} of {products.length} products
       </div>
 
       {/* Product List with DnD */}
@@ -212,13 +253,15 @@ const ProductList = ({ selectedCategoryId }) => {
                           categoryName={getCategoryName(product.categoryId)}
                           currencySymbol={currencySymbol}
                           categories={categories}
+                          deleteReasons={deleteReasons}
                           isDragging={snapshot.isDragging}
                           dragHandleProps={provided.dragHandleProps}
                           isQuickEditing={quickEditId === product.productId}
                           onQuickEdit={() => setQuickEditId(quickEditId === product.productId ? null : product.productId)}
                           onFullEdit={() => setEditingProduct(product)}
-                          onDelete={() => toast({ title: "Deleted", description: `"${product.productName}" removed.` })}
-                          onQuickSave={() => { toast({ title: "Saved", description: "Quick edit saved." }); setQuickEditId(null); }}
+                          onDelete={(reason) => handleDelete(product, reason)}
+                          onStatusToggle={() => handleStatusToggle(product)}
+                          onQuickSave={(formData) => handleQuickSave(product, formData)}
                           onQuickCancel={() => setQuickEditId(null)}
                         />
                       </div>

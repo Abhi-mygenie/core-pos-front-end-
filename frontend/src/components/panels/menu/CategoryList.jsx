@@ -2,11 +2,11 @@ import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { GripVertical, Search, Plus, Pencil, Trash2 } from "lucide-react";
 import { COLORS } from "../../../constants";
-import { useMenu } from "../../../contexts";
 import { useToast } from "../../../hooks/use-toast";
+import * as menuService from "../../../api/services/menuManagementService";
+import { toAPI } from "../../../api/transforms/menuManagementTransform";
 
-const CategoryList = ({ selectedCategoryId, onSelectCategory }) => {
-  const { categories } = useMenu();
+const CategoryList = ({ categories: propCategories, selectedCategoryId, onSelectCategory }) => {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [localCategories, setLocalCategories] = useState(null);
@@ -15,21 +15,30 @@ const CategoryList = ({ selectedCategoryId, onSelectCategory }) => {
   const [formName, setFormName] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  const cats = localCategories || categories || [];
+  const cats = localCategories || propCategories || [];
   const filtered = search ? cats.filter((c) => c.categoryName.toLowerCase().includes(search.toLowerCase())) : cats;
   const totalItems = cats.reduce((sum, c) => sum + (c.itemCount || 0), 0);
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     if (!result.destination) return;
     const items = Array.from(cats);
     const [moved] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, moved);
     setLocalCategories(items);
-    toast({ title: "Reordered", description: "Category order updated." });
+    try {
+      const payload = toAPI.reorderPayload('category', items);
+      await menuService.quickReorder(payload.type, payload.items);
+      toast({ title: "Reordered", description: "Category order saved." });
+    } catch (err) {
+      console.error('[CategoryList] Reorder failed:', err);
+      toast({ title: "Error", description: "Failed to save category order." });
+      setLocalCategories(null);
+    }
   };
 
   const handleAdd = () => {
     if (formName.trim()) {
+      // Category add API deferred — toast only
       toast({ title: "Saved", description: `Category "${formName}" added.` });
     }
     setAddingCategory(false);
@@ -42,12 +51,14 @@ const CategoryList = ({ selectedCategoryId, onSelectCategory }) => {
   };
 
   const handleSaveEdit = () => {
+    // Category edit API deferred — toast only
     toast({ title: "Saved", description: "Category updated." });
     setEditingId(null);
     setFormName("");
   };
 
   const handleDelete = (cat) => {
+    // Category delete API deferred — toast only
     toast({ title: "Deleted", description: `Category "${cat.categoryName}" removed.` });
     setDeleteConfirm(null);
   };
@@ -147,7 +158,7 @@ const CategoryList = ({ selectedCategoryId, onSelectCategory }) => {
                         </div>
 
                         {isDeleting && (
-                          <div className="mx-2 mb-1 p-2 rounded text-xs flex items-center justify-between" style={{ backgroundColor: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                          <div className="mx-2 mb-1 p-2 rounded text-xs flex items-center justify-between" style={{ backgroundColor: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>
                             <span style={{ color: "#EF4444" }}>Delete?</span>
                             <div className="flex gap-1">
                               <button onClick={() => setDeleteConfirm(null)} className="px-2 py-0.5 rounded border" style={{ borderColor: COLORS.borderGray }}>No</button>

@@ -1,0 +1,229 @@
+// Menu Management Transform — CR-014
+// Maps between Menu Management API (foods-list) and existing UI component shapes.
+// The foods-list API has a DIFFERENT shape from the old Product API (get-products-list).
+//
+// Missing keys from foods-list (backend will add later):
+//   egg, jain, stock_out, is_disable, station_name, tax_calc, is_inventory, packed_food
+// These are defaulted here and marked with BACKEND_PENDING comments.
+
+const toBoolean = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (value === 'Yes' || value === 'yes' || value === 'Y' || value === 'y') return true;
+  return false;
+};
+
+// Fields missing from foods-list — flagged so UI can disable them
+export const BACKEND_PENDING_FIELDS = [
+  'egg', 'jain', 'stock_out', 'is_disable', 'station_name',
+  'tax_calc', 'is_inventory', 'packed_food',
+];
+
+export const isFieldPending = (fieldName) => BACKEND_PENDING_FIELDS.includes(fieldName);
+
+// =============================================================================
+// API → Frontend (Response)
+// =============================================================================
+export const fromAPI = {
+  /**
+   * Transform foods-list response
+   * Response shape: { foods: [...], restaurant_settings: {...} }
+   */
+  foodsListResponse: (data) => ({
+    foods: (data.foods || []).map(fromAPI.food),
+    restaurantSettings: data.restaurant_settings || {},
+  }),
+
+  /**
+   * Transform single food item from foods-list
+   * NOTE: Several fields are MISSING from this API — they use defaults.
+   * When backend adds them, the spread will pick them up automatically.
+   */
+  food: (api) => ({
+    productId: api.id,
+    productName: api.name,
+    description: api.description || '',
+    productImage: api.image?.includes('food-default-image') ? null : api.image || null,
+
+    // Category — foods-list returns nested object, not flat ID
+    categoryId: api.category?.id || null,
+    categoryName: api.category?.name || 'Uncategorized',
+
+    // Pricing
+    basePrice: parseFloat(api.price) || 0,
+    discount: parseFloat(api.discount) || 0,
+    discountType: api.discount_type?.toLowerCase() || 'percent',
+
+    // Tax
+    tax: {
+      percentage: parseFloat(api.tax) || 0,
+      type: api.tax_type || 'GST',
+      // BACKEND_PENDING: tax_calc not in foods-list
+      calculation: api.tax_calc || 'Exclusive',
+      isInclusive: api.tax_calc === 'Inclusive',
+    },
+
+    // Food type — foods-list uses `item_type` instead of `veg`
+    isVeg: api.item_type === 1 || api.veg === 1,
+    // BACKEND_PENDING: egg, jain not in foods-list
+    hasEgg: toBoolean(api.egg),
+    isJain: toBoolean(api.jain),
+
+    // Variations + Add-ons (key names differ from old API)
+    variations: fromAPI.variations(api.variation || api.variations),
+    hasVariations: Array.isArray(api.variation || api.variations) && (api.variation || api.variations).length > 0,
+    addOns: api.addons || api.add_ons || [],
+
+    // Availability
+    isActive: api.status === 1,
+    // BACKEND_PENDING: stock_out, is_disable not in foods-list
+    isOutOfStock: toBoolean(api.stock_out),
+    isDisabled: toBoolean(api.is_disable),
+    availableTimeStart: api.available_time_starts,
+    availableTimeEnd: api.available_time_ends,
+
+    // Channel availability
+    availability: {
+      dineIn: toBoolean(api.dinein),
+      takeaway: toBoolean(api.takeaway),
+      delivery: toBoolean(api.delivery),
+    },
+
+    // BACKEND_PENDING: station_name not in foods-list
+    station: api.station_name || null,
+
+    // Menu type
+    foodFor: api.food_for || 'Normal',
+
+    // Sort order (for drag-and-drop)
+    sortOrder: api.food_order || 0,
+
+    // Complementary
+    isComplementary: toBoolean(api.complementary),
+    complementaryPrice: parseFloat(api.complementary_price) || 0,
+
+    // BACKEND_PENDING: is_inventory, packed_food not in foods-list
+    isInventoryLinked: toBoolean(api.is_inventory),
+    isPackagedFood: toBoolean(api.packed_food),
+
+    // Additional fields
+    itemCode: api.item_code || '',
+    allergen: Array.isArray(api.allergens) ? api.allergens.join(', ') : (api.allergens || ''),
+    kcal: parseFloat(api.kcal) || 0,
+    giveDiscount: toBoolean(api.give_discount),
+    liveWeb: toBoolean(api.live_web),
+
+    // Charges
+    packCharges: parseFloat(api.pack_charges) || 0,
+    takeawayCharge: parseFloat(api.takeaway_charge) || 0,
+    deliveryCharge: parseFloat(api.delivery_charge) || 0,
+
+    // Timing
+    prepTimeMin: parseInt(api.prepration_time_min) || 0,
+    serveTimeMin: parseInt(api.serve_time_in_min) || 0,
+  }),
+
+  /**
+   * Transform variations array (foods-list uses `variation` singular key)
+   */
+  variations: (apiVariations) => {
+    if (!Array.isArray(apiVariations)) return [];
+    return apiVariations.map((v, idx) => ({
+      id: `vg-${idx}`,
+      name: v.name,
+      type: v.type,
+      required: v.required === 'on',
+      min: v.min || 0,
+      max: v.max || 0,
+      values: (v.values || []).map((val, vi) => ({
+        id: `vo-${vi}`,
+        name: val.label,
+        price: parseFloat(val.optionPrice) || 0,
+      })),
+    }));
+  },
+
+  /**
+   * Extract unique categories from foods list
+   */
+  categoriesFromFoods: (foods) => {
+    const catMap = new Map();
+    (foods || []).forEach((f) => {
+      const id = f.category?.id;
+      const name = f.category?.name;
+      if (id && !catMap.has(id)) {
+        catMap.set(id, { categoryId: id, categoryName: name, itemCount: 0 });
+      }
+      if (id && catMap.has(id)) {
+        catMap.get(id).itemCount++;
+      }
+    });
+    return Array.from(catMap.values()).sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+  },
+
+  /**
+   * Transform menu master response
+   */
+  menuMaster: (data) => (data.menus || []).map((m) => ({
+    id: m.id,
+    name: m.menu_name,
+  })),
+
+  /**
+   * Transform delete reasons response
+   */
+  deleteReasons: (data) => data.reason || [],
+};
+
+// =============================================================================
+// Frontend → API (Request)
+// =============================================================================
+export const toAPI = {
+  /**
+   * Transform form state → food_info JSON for add/edit API
+   */
+  foodInfo: (form) => ({
+    name: form.productName,
+    description: form.description || '',
+    category_id: Number(form.categoryId),
+    price: Number(form.basePrice),
+    discount: Number(form.discount) || 0,
+    discount_type: form.discountType || 'amount',
+    food_for: form.foodFor || 'Normal',
+    dinein: form.dineIn ? 'Yes' : 'No',
+    delivery: form.delivery ? 'Yes' : 'No',
+    takeaway: form.takeaway ? 'Yes' : 'No',
+    live_web: form.liveWeb ? 'Y' : 'N',
+    available_time_starts: form.availableTimeStart || '00:00:00',
+    available_time_ends: form.availableTimeEnd || '23:59:59',
+    prepration_time_min: Number(form.prepTimeMin) || 0,
+    serve_time_in_min: Number(form.serveTimeMin) || 0,
+    pack_charges: String(Number(form.packCharges) || 0),
+    takeaway_charge: String(Number(form.takeawayCharge) || 0),
+    delivery_charge: String(Number(form.deliveryCharge) || 0),
+    tax_type: form.taxType || 'GST',
+    tax: String(Number(form.taxPercentage) || 0),
+    complementary: form.isComplementary ? 'Yes' : 'No',
+    give_discount: form.giveDiscount ? 'Yes' : 'No',
+    item_code: form.itemCode || '',
+    kcal: Number(form.kcal) || 0,
+    allergens: form.allergens ? form.allergens.split(',').map((a) => a.trim()).filter(Boolean) : [],
+    veg: form.foodType === 'veg' ? 1 : 0,
+    // Variations and addon_ids passed through if present
+    ...(form.variations ? { variations: form.variations } : {}),
+    ...(form.addonIds ? { addon_ids: form.addonIds } : {}),
+  }),
+
+  /**
+   * Build reorder payload from ordered items array
+   * @param {'food'|'category'} type
+   * @param {Array<{productId: number}|{categoryId: number}>} items — in new order
+   */
+  reorderPayload: (type, items) => ({
+    type,
+    items: items.map((item, index) => ({
+      id: type === 'food' ? item.productId : item.categoryId,
+      position: index,
+    })),
+  }),
+};

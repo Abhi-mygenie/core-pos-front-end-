@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { GripVertical, Zap, Pencil, Trash2, Power } from "lucide-react";
 import { COLORS } from "../../../constants";
+import { isFieldPending } from "../../../api/transforms/menuManagementTransform";
 
-// Food type helpers
 const getFoodDot = (product) => {
   if (product.hasEgg) return { color: "#F59E0B", label: "Egg" };
   if (product.isJain) return { color: "#8B5CF6", label: "Jain" };
@@ -38,6 +38,15 @@ const ChannelChip = ({ label, active }) => (
   </span>
 );
 
+// Disabled field helper
+const DisabledCheckbox = ({ label, checked, testId }) => (
+  <label className="flex items-center gap-2 py-2 opacity-50 cursor-not-allowed" data-testid={testId} title="Waiting for backend to add this field">
+    <input type="checkbox" checked={checked} disabled className="w-4 h-4 rounded border" />
+    <span className="text-sm" style={{ color: COLORS.grayText }}>{label}</span>
+    <span className="text-xs italic" style={{ color: COLORS.grayText }}>(pending)</span>
+  </label>
+);
+
 // ─── Quick Edit Form (inline) ──────────────────────────────────────────────
 const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }) => {
   const [form, setForm] = useState({
@@ -50,9 +59,25 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
     taxPercentage: product.tax?.percentage || 0,
     isInventory: product.isInventoryLinked || false,
     isPackagedFood: product.isPackagedFood || false,
+    // Pass through all existing product fields for the API call
+    description: product.description || "",
+    discount: product.discount || 0,
+    discountType: product.discountType || "percent",
+    dineIn: product.availability?.dineIn ?? true,
+    delivery: product.availability?.delivery ?? true,
+    takeaway: product.availability?.takeaway ?? true,
+    liveWeb: product.liveWeb ?? true,
+    giveDiscount: product.giveDiscount ?? true,
+    prepTimeMin: product.prepTimeMin || 0,
+    serveTimeMin: product.serveTimeMin || 0,
+    allergens: product.allergen || "",
+    kcal: product.kcal || 0,
+    itemCode: product.itemCode || "",
   });
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
+  const inventoryPending = isFieldPending('is_inventory');
+  const packagingPending = isFieldPending('packed_food');
 
   return (
     <div className="p-4 rounded-xl border-2" style={{ borderColor: COLORS.primaryOrange, backgroundColor: "rgba(242,107,51,0.02)" }} data-testid="quick-edit-form">
@@ -161,26 +186,34 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
 
       {/* Row 5: Inventory + Packaging Item */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-inventory">
-          <input
-            type="checkbox"
-            checked={form.isInventory}
-            onChange={(e) => update("isInventory", e.target.checked)}
-            className="w-4 h-4 rounded border accent-current"
-            style={{ accentColor: COLORS.primaryOrange }}
-          />
-          <span className="text-sm" style={{ color: COLORS.darkText }}>Inventory Item</span>
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-packaging">
-          <input
-            type="checkbox"
-            checked={form.isPackagedFood}
-            onChange={(e) => update("isPackagedFood", e.target.checked)}
-            className="w-4 h-4 rounded border accent-current"
-            style={{ accentColor: COLORS.primaryOrange }}
-          />
-          <span className="text-sm" style={{ color: COLORS.darkText }}>Packaging Item</span>
-        </label>
+        {inventoryPending ? (
+          <DisabledCheckbox label="Inventory Item" checked={form.isInventory} testId="quick-edit-inventory" />
+        ) : (
+          <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-inventory">
+            <input
+              type="checkbox"
+              checked={form.isInventory}
+              onChange={(e) => update("isInventory", e.target.checked)}
+              className="w-4 h-4 rounded border"
+              style={{ accentColor: COLORS.primaryOrange }}
+            />
+            <span className="text-sm" style={{ color: COLORS.darkText }}>Inventory Item</span>
+          </label>
+        )}
+        {packagingPending ? (
+          <DisabledCheckbox label="Packaging Item" checked={form.isPackagedFood} testId="quick-edit-packaging" />
+        ) : (
+          <label className="flex items-center gap-2 cursor-pointer py-2" data-testid="quick-edit-packaging">
+            <input
+              type="checkbox"
+              checked={form.isPackagedFood}
+              onChange={(e) => update("isPackagedFood", e.target.checked)}
+              className="w-4 h-4 rounded border"
+              style={{ accentColor: COLORS.primaryOrange }}
+            />
+            <span className="text-sm" style={{ color: COLORS.darkText }}>Packaging Item</span>
+          </label>
+        )}
       </div>
 
       {/* Actions */}
@@ -188,7 +221,7 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
         <button onClick={onCancel} className="px-4 py-2 text-sm rounded-lg border" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}>
           Cancel
         </button>
-        <button onClick={onSave} className="px-4 py-2 text-sm font-medium rounded-lg text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="quick-edit-save">
+        <button onClick={() => onSave(form)} className="px-4 py-2 text-sm font-medium rounded-lg text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="quick-edit-save">
           Save
         </button>
       </div>
@@ -198,17 +231,17 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel }
 
 // ─── Main Product Card ─────────────────────────────────────────────────────
 const ProductCard = ({
-  product, categoryName, currencySymbol, categories,
+  product, categoryName, currencySymbol, categories, deleteReasons,
   isDragging, dragHandleProps,
-  isQuickEditing, onQuickEdit, onFullEdit, onDelete,
+  isQuickEditing, onQuickEdit, onFullEdit, onDelete, onStatusToggle,
   onQuickSave, onQuickCancel,
 }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
   const food = getFoodDot(product);
   const isDisabled = product.isDisabled;
   const isOutOfStock = product.isOutOfStock;
 
-  // Quick Edit state
   if (isQuickEditing) {
     return (
       <QuickEditForm
@@ -249,6 +282,11 @@ const ProductCard = ({
             <span className="text-sm font-semibold truncate" style={{ color: isDisabled ? "#94A3B8" : COLORS.darkText }}>
               {product.productName}
             </span>
+            {!product.isActive && (
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(148,163,184,0.15)", color: "#64748B" }}>
+                Inactive
+              </span>
+            )}
             {isOutOfStock && (
               <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#EF4444" }}>
                 Out of Stock
@@ -271,12 +309,12 @@ const ProductCard = ({
             <ChannelChip label="Delivery" active={product.availability?.delivery} />
             <ChannelChip label="Takeaway" active={product.availability?.takeaway} />
             {product.isInventoryLinked && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(59,130,246,0.08)", color: "#3B82F6", border: "1px solid rgba(59,130,246,0.2)" }} data-testid={`inventory-badge-${product.productId}`}>
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(59,130,246,0.08)", color: "#3B82F6", border: "1px solid rgba(59,130,246,0.2)" }}>
                 Inventory
               </span>
             )}
             {product.isPackagedFood && (
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(168,85,247,0.08)", color: "#A855F7", border: "1px solid rgba(168,85,247,0.2)" }} data-testid={`packaged-badge-${product.productId}`}>
+              <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(168,85,247,0.08)", color: "#A855F7", border: "1px solid rgba(168,85,247,0.2)" }}>
                 Packaged
               </span>
             )}
@@ -291,7 +329,7 @@ const ProductCard = ({
           </span>
           <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              onClick={(e) => { e.stopPropagation(); /* API #6 status toggle - will be wired */ }}
+              onClick={(e) => { e.stopPropagation(); onStatusToggle(); }}
               className="p-1.5 rounded hover:bg-green-50 transition-colors"
               title={product.isActive ? "Deactivate" : "Activate"}
               data-testid={`status-toggle-${product.productId}`}
@@ -315,7 +353,7 @@ const ProductCard = ({
               <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
             </button>
             <button
-              onClick={() => setDeleteConfirm(true)}
+              onClick={() => { setDeleteConfirm(true); setSelectedReason(""); }}
               className="p-1.5 rounded hover:bg-red-50 transition-colors"
               title="Delete"
               data-testid={`delete-${product.productId}`}
@@ -326,13 +364,35 @@ const ProductCard = ({
         </div>
       </div>
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation with Reason Dropdown */}
       {deleteConfirm && (
-        <div className="mx-3 mb-3 p-2.5 rounded-lg flex items-center justify-between" style={{ backgroundColor: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)" }}>
-          <span className="text-xs" style={{ color: "#EF4444" }}>Delete "{product.productName}"?</span>
-          <div className="flex gap-2">
-            <button onClick={() => setDeleteConfirm(false)} className="text-xs px-3 py-1 rounded border" style={{ borderColor: COLORS.borderGray }}>No</button>
-            <button onClick={() => { onDelete(); setDeleteConfirm(false); }} className="text-xs px-3 py-1 rounded text-white" style={{ backgroundColor: "#EF4444" }}>Yes, Delete</button>
+        <div className="mx-3 mb-3 p-2.5 rounded-lg" style={{ backgroundColor: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)" }}>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium" style={{ color: "#EF4444" }}>Delete "{product.productName}"?</span>
+          </div>
+          <select
+            value={selectedReason}
+            onChange={(e) => setSelectedReason(e.target.value)}
+            className="w-full px-2 py-1.5 text-xs rounded border outline-none bg-white mb-2"
+            style={{ borderColor: "rgba(239,68,68,0.3)" }}
+            data-testid={`delete-reason-${product.productId}`}
+          >
+            <option value="">Select reason...</option>
+            {(deleteReasons || []).map((r, i) => (
+              <option key={i} value={r}>{r}</option>
+            ))}
+          </select>
+          <div className="flex gap-2 justify-end">
+            <button onClick={() => setDeleteConfirm(false)} className="text-xs px-3 py-1 rounded border" style={{ borderColor: COLORS.borderGray }}>Cancel</button>
+            <button
+              onClick={() => { if (selectedReason) { onDelete(selectedReason); setDeleteConfirm(false); } }}
+              disabled={!selectedReason}
+              className="text-xs px-3 py-1 rounded text-white disabled:opacity-50"
+              style={{ backgroundColor: "#EF4444" }}
+              data-testid={`confirm-delete-${product.productId}`}
+            >
+              Delete
+            </button>
           </div>
         </div>
       )}

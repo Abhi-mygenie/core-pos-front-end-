@@ -1,10 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Upload, X as XIcon } from "lucide-react";
 import { COLORS } from "../../../constants";
+import { useToast } from "../../../hooks/use-toast";
+import * as menuService from "../../../api/services/menuManagementService";
+import { toAPI, isFieldPending } from "../../../api/transforms/menuManagementTransform";
 
-const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) => {
+const ProductForm = ({ product, categories, currencySymbol, menuType, onBack, onSave }) => {
   const isNew = !product;
   const [form, setForm] = useState({});
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (product) {
@@ -316,8 +321,31 @@ const ProductForm = ({ product, categories, currencySymbol, onBack, onSave }) =>
         <button onClick={onBack} className="px-5 py-2.5 text-sm font-medium rounded-lg border" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}>
           Cancel
         </button>
-        <button onClick={onSave} className="px-5 py-2.5 text-sm font-medium rounded-lg text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="product-form-save">
-          {isNew ? "Add Product" : "Save Changes"}
+        <button
+          onClick={async () => {
+            setSaving(true);
+            try {
+              const foodInfo = toAPI.foodInfo({ ...form, foodFor: menuType || 'Normal' });
+              if (isNew) {
+                await menuService.addFood(foodInfo, form.imageFile);
+              } else {
+                await menuService.editFood(product.productId, foodInfo, form.imageFile);
+              }
+              toast({ title: "Saved", description: isNew ? "Product added." : "Product updated." });
+              onSave();
+            } catch (err) {
+              console.error('[ProductForm] Save failed:', err);
+              toast({ title: "Error", description: err?.response?.data?.message || "Failed to save product." });
+            } finally {
+              setSaving(false);
+            }
+          }}
+          disabled={saving}
+          className="px-5 py-2.5 text-sm font-medium rounded-lg text-white disabled:opacity-60"
+          style={{ backgroundColor: COLORS.primaryGreen }}
+          data-testid="product-form-save"
+        >
+          {saving ? "Saving..." : isNew ? "Add Product" : "Save Changes"}
         </button>
       </div>
     </div>

@@ -1,12 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 import { COLORS } from "../../constants";
+import { useToast } from "../../hooks/use-toast";
 import CategoryList from "./menu/CategoryList";
 import ProductList from "./menu/ProductList";
+import * as menuService from "../../api/services/menuManagementService";
+import { fromAPI } from "../../api/transforms/menuManagementTransform";
 
 const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
+  const { toast } = useToast();
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [menuType, setMenuType] = useState("Normal");
+  const [menuTypes, setMenuTypes] = useState([{ id: 0, name: "Normal" }]);
+  const [foods, setFoods] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [deleteReasons, setDeleteReasons] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch foods list from Menu Management API
+  const fetchFoods = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await menuService.getFoodsList(menuType);
+      const rawFoods = res.data?.foods ? res.data : res.data?.data || res.data;
+      const { foods: transformed } = fromAPI.foodsListResponse(rawFoods);
+      const cats = fromAPI.categoriesFromFoods(rawFoods.foods || []);
+      setFoods(transformed);
+      setCategories(cats);
+    } catch (err) {
+      console.error('[MenuMgmt] Failed to fetch foods:', err);
+      toast({ title: "Error", description: "Failed to load menu items." });
+    } finally {
+      setLoading(false);
+    }
+  }, [menuType, toast]);
+
+  // Fetch menu types + delete reasons on mount
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchMeta = async () => {
+      try {
+        const [masterRes, reasonsRes] = await Promise.all([
+          menuService.getMenuMaster(),
+          menuService.getDeleteReasons(),
+        ]);
+        const masterData = masterRes.data?.menus ? masterRes.data : masterRes.data?.data || masterRes.data;
+        const reasonsData = reasonsRes.data?.reason ? reasonsRes.data : reasonsRes.data?.data || reasonsRes.data;
+        setMenuTypes(fromAPI.menuMaster(masterData));
+        setDeleteReasons(fromAPI.deleteReasons(reasonsData));
+      } catch (err) {
+        console.error('[MenuMgmt] Failed to fetch meta:', err);
+      }
+    };
+    fetchMeta();
+  }, [isOpen]);
+
+  // Re-fetch foods when panel opens or menu type changes
+  useEffect(() => {
+    if (isOpen) fetchFoods();
+  }, [isOpen, fetchFoods]);
 
   const handleClose = () => {
     setSelectedCategoryId(null);
@@ -39,10 +91,13 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
             style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
             data-testid="menu-type-selector"
           >
-            <option value="Normal">Normal</option>
-            <option value="Party">Party</option>
-            <option value="Premium">Premium</option>
+            {menuTypes.map((mt) => (
+              <option key={mt.id} value={mt.name}>{mt.name}</option>
+            ))}
           </select>
+          {loading && (
+            <span className="text-xs" style={{ color: COLORS.grayText }}>Loading...</span>
+          )}
         </div>
         <button
           data-testid="menu-close-btn"
@@ -61,6 +116,7 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
           style={{ borderRight: `1px solid ${COLORS.borderGray}` }}
         >
           <CategoryList
+            categories={categories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
           />
@@ -68,7 +124,14 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
 
         {/* Right: Products (70%) */}
         <div className="w-[70%] p-4 overflow-hidden flex flex-col">
-          <ProductList selectedCategoryId={selectedCategoryId} />
+          <ProductList
+            foods={foods}
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            deleteReasons={deleteReasons}
+            menuType={menuType}
+            onRefresh={fetchFoods}
+          />
         </div>
       </div>
     </div>
