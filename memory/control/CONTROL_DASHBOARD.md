@@ -47,7 +47,7 @@
 | **CR-016 Settlement History (Insights)** | **CLOSED — OWNER VERIFIED** | **7/7 gates complete. Settlement Report under Insights. Active-only days + waiters. KPI strip, drill-down, 365-day range, Excel/PDF export. Owner smoke PASSED 2026-06-09.** | **None** |
 | **BUG-120 CR-014 Menu Mgmt Post-Delivery (5 sub-bugs)** | **GATE 2 COMPLETE** | **A: InputField defined inside render — move to module scope (LOW). B: Image uploads to preprod storage — working, document only (ZERO). C: Variation CRUD UI + form section redesign (HIGH). D: 8 new API fields to wire — is_inventory, packed_food, stock_out, is_disable, tax_calc + 3 more (MEDIUM). E: Socket handler exists but needs verification + category ops handling (MEDIUM).** | **Gate 3 (Implementation Plan) next** |
 | **BUG-121 Category Count + Post-Save Refresh** | **CLOSED — OWNER VERIFIED** | **A: Category count derived from foods array (categories API has no count field). B: 500ms delay on post-save refresh. Both fixes verified.** | **None** |
-| **CR-017 WhatsApp Payment Link** | **Gate 2 COMPLETE** | **P1. All 9 Qs answered. UI mockup approved (OrderCard footer: [KOT][Cancel][WhatsApp]). Impact analysis done. 2 new files + 2 modified files planned. Zero regression risk.** | **Gate 3 (Implementation Plan) next** |
+| **CR-017 WhatsApp Payment Link** | **Gate 3 COMPLETE** | **P1. Implementation plan written. 2 new files + 2 modified. ~190 lines. Zero regression. Awaiting owner GO (Gate 4).** | **Gate 4 (Code Gate — owner GO) next** |
 
 ---
 
