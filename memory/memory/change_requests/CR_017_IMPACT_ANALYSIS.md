@@ -16,7 +16,7 @@
 | Q-017-2 | Channels | **All** (Dine-In, TakeAway, Delivery, Room, Walk-In) |
 | Q-017-3 | Order state | **Unpaid + On Hold / Pending Payment only** (fOrderStatus: 7, 1, 2, 5, 8, 9). Hide for 6 (paid), 3 (cancelled). |
 | Q-017-4 | Permission | **Reuse existing** (no new permission key) |
-| Q-017-5 | Feature flag | **Show for everybody** (no gating). Future: backend-driven Razorpay ID flag. |
+| Q-017-5 | Feature flag | **Show for everybody** (no gating for now). Future: backend-driven Razorpay ID flag. |
 | Q-017-6 | Amount | **Order actual values** (`order.amount`), no edit |
 | Q-017-7 | Missing phone | **Quick popup** — phone input + auto-populate name from order context |
 | Q-017-8 | Button label | **WhatsApp icon** (no text label) |
@@ -84,7 +84,7 @@
 
 ---
 
-## 5. UI Placement (OrderCard footer)
+## 5. UI Placement (OrderCard footer) — OWNER APPROVED
 
 Current footer layout:
 ```
@@ -97,6 +97,14 @@ Proposed layout — WhatsApp icon goes in the **left group** after Cancel:
 ```
 
 The WhatsApp icon follows the same 44×44px touch target pattern as KOT and Cancel.
+- Icon: WhatsApp brand logo (filled SVG)
+- Color: #25D366 (WhatsApp green)
+- Border: 1px solid #25D366
+- Hover state: light green background (#E8F8ED)
+
+**Visual Mockup:** `/app/frontend/public/cr017-mockup.html`
+- Shows 3 card states: Preparing (fOrderStatus=1), Ready (fOrderStatus=2), Served (fOrderStatus=5)
+- Owner approved placement on 2026-06-09
 
 ---
 
