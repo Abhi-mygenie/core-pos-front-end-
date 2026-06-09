@@ -1,0 +1,106 @@
+{
+  "summary": "CR-018 Schedule Order - Code Review & Frontend Verification Complete. All 15 implementation steps verified across 6 files. Frontend compiles and loads correctly (login page renders). No functional testing possible without real POS credentials.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "code_review_verification": {
+    "orderTransform.js": {
+      "status": "PASS",
+      "verified_items": [
+        "Lines 302-303: fromAPI.order parses scheduled (coerced to boolean) + scheduleAt fields",
+        "Line 865: placeOrder options destructuring includes scheduled=false, scheduleAt=null defaults",
+        "Lines 908-909: placeOrder payload uses scheduled ? 1 : 0 (not hardcoded 0) + schedule_at",
+        "Line 1094: placeOrderWithPayment options destructuring includes scheduled=false, scheduleAt=null defaults",
+        "Lines 1166-1167: placeOrderWithPayment payload uses scheduled ? 1 : 0 + schedule_at"
+      ]
+    },
+    "CartPanel.jsx": {
+      "status": "PASS",
+      "verified_items": [
+        "Lines 9-18: generateTimeSlots() utility exists, produces 96 time slots (15-min intervals 00:00-23:45)",
+        "Lines 747-751: New props isScheduled, setIsScheduled, scheduleAt, setScheduleAt with defaults",
+        "Line 1217: Schedule Order checkbox with data-testid='schedule-order-checkbox' exists",
+        "Line 1239: Date input with data-testid='schedule-date-input' exists when checkbox checked",
+        "Line 1256: Time select with data-testid='schedule-time-select' exists when checkbox checked",
+        "Line 1215: Schedule section hidden for delivery orders (orderType !== 'delivery' guard)",
+        "Line 1215: Schedule section hidden for room orders (!isRoom guard)",
+        "Line 1215: Schedule section hidden in QSR mode (!qsrMode guard)",
+        "Line 1443: Place Order button disabled when isScheduled true but scheduleAt empty"
+      ]
+    },
+    "OrderCard.jsx": {
+      "status": "PASS",
+      "verified_items": [
+        "Lines 453-457: Scheduled badge with data-testid='scheduled-badge-{orderId}' renders when order.scheduled is true"
+      ]
+    },
+    "ScanOrderPopOut.jsx": {
+      "status": "PASS",
+      "verified_items": [
+        "Lines 56-59: isUnconfirmedScanOrder predicate includes !order.scheduled guard"
+      ]
+    },
+    "DashboardPage.jsx": {
+      "status": "PASS",
+      "verified_items": [
+        "Line 1110: schedule filter uses item.scheduled === true (not item.status === 'scheduled')"
+      ]
+    },
+    "OrderEntry.jsx": {
+      "status": "PASS",
+      "verified_items": [
+        "Lines 150-151: isScheduled and scheduleAt state vars exist",
+        "Lines 180-186: Effect resets schedule when switching to delivery order type",
+        "Lines 188-194: Effect pre-populates schedule state on re-engage of existing scheduled order",
+        "Lines 1004-1005: scheduled/scheduleAt threaded into unpaid placeOrder call site",
+        "Lines 1241-1242: scheduled/scheduleAt threaded into QSR placeOrder call site",
+        "Lines 1889-1890: scheduled/scheduleAt threaded into prepaid placeOrder call site",
+        "Lines 2349-2352: Schedule props threaded to CartPanel (isScheduled, setIsScheduled, scheduleAt, setScheduleAt)"
+      ]
+    }
+  },
+  "frontend_compilation": {
+    "status": "PASS",
+    "details": "Webpack compiled successfully. Only pre-existing lint warnings (react-hooks/exhaustive-deps in reports-module files). No new warnings from CR-018 changes."
+  },
+  "login_page_load": {
+    "status": "PASS",
+    "details": "Login page loads correctly at root URL. MyGenie POS title, email/password inputs, LOG IN button all visible."
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - external API (preprod.mygenie.online)",
+    "frontend": "100% (code review + compilation + page load)"
+  },
+  "test_credentials": "Not available - requires real POS credentials for preprod.mygenie.online",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-018 Schedule Order implementation verified via code review. All 15 steps across 6 files confirmed. Frontend compiles and login page loads. Cannot test actual schedule order functionality without real POS credentials. The schedule UI (checkbox + date/time picker) is only visible in CartPanel for Dine-In/TakeAway/Walk-In orders with unplaced items, not for delivery/room/QSR modes.",
+  "features_verified": {
+    "generateTimeSlots_utility": "PASS - 96 slots (00:00:00 to 23:45:00 in 15-min intervals)",
+    "schedule_checkbox_testid": "PASS - data-testid='schedule-order-checkbox'",
+    "schedule_date_input_testid": "PASS - data-testid='schedule-date-input'",
+    "schedule_time_select_testid": "PASS - data-testid='schedule-time-select'",
+    "schedule_section_visibility_guards": "PASS - hidden for delivery/room/QSR",
+    "place_order_disable_guard": "PASS - disabled when isScheduled && !scheduleAt",
+    "scheduled_badge_testid": "PASS - data-testid='scheduled-badge-{orderId}'",
+    "scan_order_exclusion": "PASS - !order.scheduled guard in predicate",
+    "dashboard_filter_fix": "PASS - uses item.scheduled === true",
+    "orderTransform_fromAPI": "PASS - parses scheduled + scheduleAt",
+    "orderTransform_placeOrder_payload": "PASS - scheduled ? 1 : 0",
+    "orderTransform_placeOrderWithPayment_payload": "PASS - scheduled ? 1 : 0",
+    "orderEntry_state_vars": "PASS - isScheduled + scheduleAt useState",
+    "orderEntry_effects": "PASS - reset on delivery + pre-populate on re-engage",
+    "orderEntry_call_sites": "PASS - all 3 placeOrder calls include schedule options"
+  }
+}
