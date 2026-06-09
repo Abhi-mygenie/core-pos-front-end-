@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-09 — **BUG-120 ALL CLOSED (5/5). BUG-121 CLOSED — OWNER VERIFIED. CR-015 + CR-016 CLOSED.**
+**Last Updated:** 2026-06-09 — **BUG-120 ALL CLOSED (5/5). BUG-121 CLOSED — OWNER VERIFIED. CR-015 + CR-016 CLOSED. CR-017 REGISTERED (WhatsApp Payment Link, P1, Gate 1 complete).**
 **Deployment Reconciliation:** 2026-06-08 — branch `8-june`; preview URL: https://core-pos-preview-4.preview.emergentagent.com
 
 ---
@@ -47,6 +47,7 @@
 | **CR-016 Settlement History (Insights)** | **CLOSED — OWNER VERIFIED** | **7/7 gates complete. Settlement Report under Insights. Active-only days + waiters. KPI strip, drill-down, 365-day range, Excel/PDF export. Owner smoke PASSED 2026-06-09.** | **None** |
 | **BUG-120 CR-014 Menu Mgmt Post-Delivery (5 sub-bugs)** | **GATE 2 COMPLETE** | **A: InputField defined inside render — move to module scope (LOW). B: Image uploads to preprod storage — working, document only (ZERO). C: Variation CRUD UI + form section redesign (HIGH). D: 8 new API fields to wire — is_inventory, packed_food, stock_out, is_disable, tax_calc + 3 more (MEDIUM). E: Socket handler exists but needs verification + category ops handling (MEDIUM).** | **Gate 3 (Implementation Plan) next** |
 | **BUG-121 Category Count + Post-Save Refresh** | **CLOSED — OWNER VERIFIED** | **A: Category count derived from foods array (categories API has no count field). B: 500ms delay on post-save refresh. Both fixes verified.** | **None** |
+| **CR-017 WhatsApp Payment Link** | **INTAKE (Gate 0+1 complete)** | **P1. Single API call to backend generates Razorpay link + sends WhatsApp. API confirmed live. 9 open Qs for Gate 2 (placement, gating, UX).** | **Gate 2: Owner answers on Q-017-1 through Q-017-9** |
 
 ---
 

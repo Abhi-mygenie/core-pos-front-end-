@@ -12266,6 +12266,29 @@
       "opened": "2026-06-08",
       "artifacts": "0/7",
       "notes": "Date-range settlement history under Insights. Depends on CR-015. Parked."
+    },
+    {
+      "id": "CR-017",
+      "type": "CR",
+      "title": "WhatsApp Payment Link \u2014 Send Razorpay Payment Link to Customer via WhatsApp",
+      "status": "INTAKE",
+      "priority": "P1",
+      "sprint": "POS 4.0",
+      "opened": "2026-06-09",
+      "area": "Order Entry / Collect Bill / Dashboard",
+      "completeness": "1/7",
+      "registered_at": "2026-06-09",
+      "artifacts": {
+        "art0_registration": "PRESENT",
+        "art1_intake": "PRESENT",
+        "art2_impact_analysis": "PENDING",
+        "art3_implementation_plan": "PENDING",
+        "art4_code_gate": "PENDING",
+        "art5_impl_summary_qa": "PENDING",
+        "art6_owner_smoke": "PENDING"
+      },
+      "intake_doc": "/app/memory/memory/crs/intake/CR_017_INTAKE_2026_06_09.md",
+      "notes": "Single API call to preprod backend generates Razorpay link + sends WhatsApp to customer. Backend orchestrates Razorpay + WhatsApp delivery. API confirmed live on preprod."
     }
   ]
 }
