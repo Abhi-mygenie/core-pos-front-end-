@@ -1,7 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-08 (CR-014 IMPLEMENTED — 20 API endpoints wired, Gate 5 QA 100% pass, awaiting owner smoke)
+**Last Updated:** 2026-06-10 (BUG-122 CLOSED — OWNER VERIFIED)
 
 ---
 
@@ -105,7 +105,7 @@
 | **BUG-121** | **Category item count shows 0 + post-save refresh.** A: Categories API has no products_count field — derived from foods array. B: Race condition on post-save refresh — 500ms delay added. | **CLOSED — OWNER VERIFIED (2026-06-09).** | `MenuManagementPanel.jsx`, `ProductList.jsx` |
 | **CR-017** | **WhatsApp Payment Link — Send Razorpay Payment Link to Customer via WhatsApp.** Send Razorpay payment link to customer phone via WhatsApp/SMS. Modal on OrderCard (unpaid orders). Auto-populates customer name/phone. Backend: `/api/v1/razor-pay/payment-link` (creates or reuses Razorpay link, triggers WhatsApp via `razoar_payment_with_url` template). | **IMPLEMENTED (Gates 0–5 complete). Awaiting owner smoke (Gate 6).** | `WhatsAppPaymentModal.jsx` (NEW), `paymentLinkService.js` (NEW), `OrderCard.jsx`, `constants.js` |
 | **CR-018** | **Schedule Order — Place orders for future date/time.** Cashier can schedule an order for a future date/time via checkbox + 15-min interval picker in CartPanel (next to KOT/Bill). Payload keys `scheduled=1` + `schedule_at` already exist in `orderTransform.js` (hardcoded 0/null). Dine-In + TakeAway + Walk-In only. Scheduled orders get badge on OrderCard, own column in Status View. API tested: backend saves correctly but **scheduled orders not in running orders API (escalation filed)**. | **IMPLEMENTED (Gates 0–5 complete). Awaiting owner smoke (Gate 6). Backend escalation (running orders API) non-blocking for FE.** | `orderTransform.js`, `OrderEntry.jsx`, `CartPanel.jsx`, `OrderCard.jsx`, `ScanOrderPopOut.jsx`, `DashboardPage.jsx` |
-| **BUG-122** | **POS orders with fOrderStatus 7 incorrectly trigger ScanOrderPopOut popup.** Predicate uses `fOrderStatus === 7` as web-origin proxy, but backend can assign status 7 to POS orders. Fix: popup only when `isWebOrder === true`. POS fOrderStatus 7 orders show as normal OrderCard with tick (✓) button (no Reject). Tick advances status per `def_ord_status` config. | **IMPLEMENTED (Gates 0–5 complete). Awaiting owner smoke (Gate 6).** | `ScanOrderPopOut.jsx`, `OrderCard.jsx` |
+| **BUG-122** | **POS orders with fOrderStatus 7 incorrectly trigger ScanOrderPopOut popup.** Predicate uses `fOrderStatus === 7` as web-origin proxy, but backend can assign status 7 to POS orders. Fix: popup only when `isWebOrder === true`. POS fOrderStatus 7 orders show as normal OrderCard with tick (✓) button (no Reject). Tick advances status per `def_ord_status` config. | **CLOSED — OWNER VERIFIED (2026-06-10).** | `ScanOrderPopOut.jsx`, `OrderCard.jsx` |
 
 ---
 
