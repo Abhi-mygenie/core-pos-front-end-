@@ -27,6 +27,9 @@
 
 ## Active CRs / Backlog
 
+### Triage / Preprod-validation queue
+- `memory/triage/MENU_MANAGEMENT_FE_GAPS_TRIAGE_2026_06_10.md` — 10 frontend gaps spotted in Menu Management on first-read review. NOT registered as CRs yet. Awaits owner-driven preprod validation; findings that confirm 🟢 promote into a new CR-021. High-value tests bolded: #1 Quick Edit data-loss, #6 DnD reorder, #8 Discount-leak, #9 Tax-None.
+
 ### CR-018 — Schedule Order (pos_4_0)
 - Doc: `memory/change_requests/CR_018_SCHEDULE_ORDER_CR.md`
 - Status: OPEN — GATE 3 (Plan). Phase 1 G1–G4 done in code; G5–G10 pending implementation.
