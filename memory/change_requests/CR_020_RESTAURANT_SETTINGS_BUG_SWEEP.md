@@ -23,8 +23,62 @@
 | CR-020-B8 | NumberInput snaps to 0 on clear — can't empty field to retype | LOW | `RestaurantSettingsPage.jsx` |
 | CR-020-B9 | Manual `Content-Type: multipart/form-data` omits boundary | LOW | `restaurantSettingsService.js` |
 | CR-020-B10 | Global axios JSON header conflicts with FormData uploads | LOW | `axios.js` |
+| CR-020-B11 | Order type dropdown shows disabled channels (Delivery/TakeAway visible when OFF) | **HIGH** | `OrderEntry.jsx` |
+| CR-020-B12 | "Default GST %" label unclear — doesn't explain what this value controls | LOW | `RestaurantSettingsPage.jsx:436` |
+| CR-020-B13 | GST Mode hint always shows "Category" text even when "Flat GST" is selected | MEDIUM | `RestaurantSettingsPage.jsx:435` |
+| CR-020-B14 | GST Mode labels should be "Item Level" / "Restaurant Level" per owner | MEDIUM | `RestaurantSettingsPage.jsx:435` |
 
 ---
+
+### CR-020-B12 — "Default GST %" label unclear (LOW)
+
+**What happens:**
+The label "Default GST %" doesn't explain what this value does. Cashiers/owners don't know if this is the fallback rate when an item has no GST set, or a global override, or something else.
+
+**Where:** `RestaurantSettingsPage.jsx` line 436
+```js
+<NumberInput label="Default GST %" value={s1.gstTax} .../>
+```
+
+**Fix:** Rename label to something descriptive, e.g. "Default GST % (applied when item has no specific rate)" or add a `hint` prop explaining the purpose. Owner to confirm exact wording.
+
+---
+
+### CR-020-B13 — GST Mode hint text is static/misleading (MEDIUM)
+
+**What happens:**
+The hint below the GST Mode dropdown always says `"Category" = different GST per menu item` — even when the user selects "Flat GST". The hint should change based on the selected mode, or at minimum explain both options.
+
+**Where:** `RestaurantSettingsPage.jsx` line 435
+```js
+<SelectInput ... options={[{ value: 'category', label: 'Category-wise GST' }, { value: 'flat', label: 'Flat GST' }]} hint='"Category" = different GST per menu item' />
+```
+
+**Fix:** Make hint dynamic based on `s1.gstMode`:
+- `category` → "Each menu item/category can have its own GST rate"
+- `flat` → "One GST rate applies to all items across the restaurant"
+
+---
+
+### CR-020-B14 — GST Mode labels should be "Item Level" / "Restaurant Level" (MEDIUM)
+
+**What happens:**
+Owner wants the dropdown labels changed from "Category-wise GST" / "Flat GST" to "Item Level" / "Restaurant Level" for clarity.
+
+**Where:** `RestaurantSettingsPage.jsx` line 435
+```js
+options={[{ value: 'category', label: 'Category-wise GST' }, { value: 'flat', label: 'Flat GST' }]}
+```
+
+**Fix:**
+```js
+options={[{ value: 'category', label: 'Item Level' }, { value: 'flat', label: 'Restaurant Level' }]}
+```
+
+**Note:** The `value` sent to the API stays `'category'` / `'flat'` — only the display label changes. Zero backend impact.
+
+---
+
 
 ## 2. BUG DETAILS
 
