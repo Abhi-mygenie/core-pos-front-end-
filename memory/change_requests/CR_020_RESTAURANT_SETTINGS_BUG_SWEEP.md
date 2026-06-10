@@ -24,29 +24,29 @@
 | CR-020-B9 | Manual `Content-Type: multipart/form-data` omits boundary | LOW | `restaurantSettingsService.js` |
 | CR-020-B10 | Global axios JSON header conflicts with FormData uploads | LOW | `axios.js` |
 | CR-020-B11 | Order type dropdown shows disabled channels (Delivery/TakeAway visible when OFF) | **HIGH** | `OrderEntry.jsx` |
-| CR-020-B12 | "Default GST %" label unclear — doesn't explain what this value controls | LOW | `RestaurantSettingsPage.jsx:436` |
+| CR-020-B12 | "Default GST %" field should be hidden from UI entirely — not needed for restaurant owner | MEDIUM | `RestaurantSettingsPage.jsx:436` |
 | CR-020-B13 | GST Mode hint always shows "Category" text even when "Flat GST" is selected | MEDIUM | `RestaurantSettingsPage.jsx:435` |
 | CR-020-B14 | GST Mode labels should be "Item Level" / "Restaurant Level" per owner | MEDIUM | `RestaurantSettingsPage.jsx:435` |
 | CR-020-B15 | Short Code is a TextInput but backend expects Yes/No — should be a Toggle | MEDIUM | `RestaurantSettingsPage.jsx:423`, `restaurantSettingsTransform.js:44,153` |
 
 ---
 
-### CR-020-B12 — "Default GST %" label unclear (LOW)
+### CR-020-B12 — "Default GST %" field should be hidden from UI (MEDIUM)
 
 **What happens:**
-The label "Default GST %" doesn't explain what this value does. Cashiers/owners don't know if this is the fallback rate when an item has no GST set, or a global override, or something else.
+The "Default GST %" field is a backend-only config value (fallback rate for new menu items). It does NOT feed into the POS billing math — the frontend always uses per-item tax from product data. Showing it to the restaurant owner is confusing and unnecessary.
 
 **Where:** `RestaurantSettingsPage.jsx` line 436
 ```js
-<NumberInput label="Default GST %" value={s1.gstTax} .../>
+<NumberInput label="Default GST %" value={s1.gstTax} onChange={(v) => updateStep('step1', 'gstTax', v)} suffix="%" min={0} max={100} step={0.1} />
 ```
 
-**Fix:** Rename label to something descriptive, e.g. "Default GST % (applied when item has no specific rate)" or add a `hint` prop explaining the purpose. Owner to confirm exact wording.
+**Fix:** Remove the entire `<NumberInput label="Default GST %" .../>` line from the UI. Keep the `gstTax` field in form state and transforms so the existing value is preserved on save — just don't show it.
 
 **Impact Analysis:**
-- **Scope:** UI-only, 1 line in `RestaurantSettingsPage.jsx` (line 436)
-- **Cross-refs:** `gstTax` is mapped to API field `gst_tax` (advanced). Read by `profileTransform.js:168` for billing calculations, `reportTransform.js:93` for reports, `orderTransform.js:657+` for order tax computation. **None of these are affected** — only the display label changes.
-- **Risk:** ZERO — label/hint text change, no data or logic impact.
+- **Scope:** Remove 1 line from UI in `RestaurantSettingsPage.jsx` (line 436). Form state, transform read/write, and INITIAL_FORM stay untouched — value round-trips silently.
+- **Cross-refs:** `gstTax` maps to `gst_tax` in the API. Read by `profileTransform.js:168`, consumed in `ViewEditViews.jsx` as read-only display. The billing flow (`orderTransform.js`) uses per-item `item.tax.percentage`, NOT this value. Hiding the UI has zero billing impact.
+- **Risk:** LOW — the value still persists to backend on save (unchanged from whatever it was). Only the UI field is removed.
 - **Backend:** No change.
 
 ---
