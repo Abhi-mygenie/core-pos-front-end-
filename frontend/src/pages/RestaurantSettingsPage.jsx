@@ -268,7 +268,10 @@ const RestaurantSettingsPage = () => {
   const saveStep = async () => {
     setIsSaving(true);
     try {
-      await updateSettings(formState, logoFile, pdfFile);
+      // Only send file uploads when saving Step 1 (where they are selected)
+      const sendLogo = currentStep === 1 ? logoFile : null;
+      const sendPdf = currentStep === 1 ? pdfFile : null;
+      await updateSettings(formState, sendLogo, sendPdf);
       return true;
     } catch (err) {
       toast({ title: "Save failed", description: err.message, variant: "destructive" });
@@ -298,6 +301,7 @@ const RestaurantSettingsPage = () => {
 
   // Skip optional step
   const handleSkip = () => {
+    if (currentStep >= STEPS.length) return;
     setCompletedSteps((prev) => new Set([...prev, currentStep]));
     setCurrentStep((prev) => prev + 1);
   };
@@ -307,9 +311,15 @@ const RestaurantSettingsPage = () => {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
-  // Click step in rail
+  // Click step in rail — only allow if all prior required steps are done
   const goToStep = (step) => {
-    if (step <= currentStep || completedSteps.has(step) || completedSteps.has(step - 1) || step === 1) {
+    if (step === 1) { setCurrentStep(1); return; }
+    if (step <= currentStep) { setCurrentStep(step); return; }
+    // For forward jumps: check that every required step before `step` is completed
+    const allPriorRequiredDone = STEPS
+      .filter(s => s.id < step && s.required)
+      .every(s => completedSteps.has(s.id));
+    if (allPriorRequiredDone && (completedSteps.has(step - 1) || completedSteps.has(step))) {
       setCurrentStep(step);
     }
   };

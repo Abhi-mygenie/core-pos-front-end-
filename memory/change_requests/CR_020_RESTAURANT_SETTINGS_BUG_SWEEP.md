@@ -593,7 +593,7 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 |------|--------|--------|
 | 4a | Code Implementation | DONE |
 | 5a | QA / Automated Test | DONE — 100% passed (iteration_2) |
-| **6a** | **Owner Smoke Test + Signoff** | **READY FOR OWNER** |
+| **6a** | **Owner Smoke Test + Signoff** | **DONE — Signed off** |
 
 **Scope:** B1 (online_payment dropped), B9 (Content-Type boundary), B10 (mitigated by B9)
 **Files:** `restaurantSettingsTransform.js`, `restaurantSettingsService.js`
