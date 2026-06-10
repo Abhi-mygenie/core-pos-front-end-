@@ -869,16 +869,27 @@ const OrderCard = ({
             </button>
           </>
         ) : isPosYetToConfirm ? (
-          /* BUG-122: POS YTC — tick (✓) only, no Reject. Same confirm API. */
-          <button
-            data-testid={`pos-confirm-btn-${orderId}`}
-            className={`min-h-[44px] min-w-[44px] px-6 rounded-lg flex items-center justify-center gap-2 ${isActionInProgress ? 'opacity-50 cursor-not-allowed' : ''}`}
-            style={{ backgroundColor: COLORS.primaryGreen, color: 'white' }}
-            onClick={handleAcceptClick}
-            disabled={isActionInProgress}
-          >
-            {isAcceptingOrder ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-5 h-5" />}
-          </button>
+          /* BUG-122 + CR-018: POS YTC — Cancel (X) + Confirm (✓). Matches TableCard. */
+          <>
+            <button
+              data-testid={`pos-cancel-btn-${orderId}`}
+              className={`min-h-[44px] min-w-[44px] px-3 rounded-lg flex items-center justify-center ${isActionInProgress ? 'opacity-40 cursor-not-allowed' : ''}`}
+              style={{ backgroundColor: COLORS.errorBg, color: COLORS.errorText }}
+              onClick={() => onCancelOrder?.(order)}
+              disabled={isActionInProgress}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <button
+              data-testid={`pos-confirm-btn-${orderId}`}
+              className={`min-h-[44px] min-w-[44px] px-6 rounded-lg flex items-center justify-center gap-2 ${isActionInProgress ? 'opacity-50 cursor-not-allowed' : ''}`}
+              style={{ backgroundColor: COLORS.primaryGreen, color: 'white' }}
+              onClick={handleAcceptClick}
+              disabled={isActionInProgress}
+            >
+              {isAcceptingOrder ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-5 h-5" />}
+            </button>
+          </>
         ) : (
           /* Normal flow: [KOT] [Cancel] ... [Ready/Serve/Bill] for ALL order types */
           <div className="flex items-center w-full">

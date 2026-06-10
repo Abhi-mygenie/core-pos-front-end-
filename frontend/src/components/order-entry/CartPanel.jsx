@@ -1245,7 +1245,7 @@ const CartPanel = ({
                     const time = scheduleAt ? scheduleAt.split(' ')[1] : '';
                     if (setScheduleAt) {
                       if (date && time) setScheduleAt(`${date} ${time}`);
-                      else if (date) setScheduleAt(`${date} `);
+                      else if (date) setScheduleAt(date);
                     }
                   }}
                   disabled={hasPlacedItems}
@@ -1440,7 +1440,7 @@ const CartPanel = ({
         <button
           data-testid="place-order-btn"
           onClick={handlePlaceOrder}
-          disabled={newItemCount === 0 || isPlacingOrder || hasValidationErrors || (isScheduled && !scheduleAt?.trim())}
+          disabled={newItemCount === 0 || isPlacingOrder || hasValidationErrors || (isScheduled && (!scheduleAt?.trim() || !scheduleAt?.includes(':')))}
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: COLORS.primaryOrange }}
         >

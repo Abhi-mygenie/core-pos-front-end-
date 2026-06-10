@@ -315,8 +315,8 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
             <span className="text-xs font-semibold flex-shrink-0">{currencySymbol}{table.amount.toLocaleString()}</span>
           ) : null}
           
-          {/* Snooze Button - Only for yetToConfirm orders */}
-          {isYetToConfirm && onToggleSnooze && (
+          {/* Snooze Button - Only for web yetToConfirm orders (BUG-122 parity) */}
+          {isYetToConfirm && table.isWebOrder === true && onToggleSnooze && (
             <button
               data-testid={`snooze-btn-${table.id}`}
               onClick={(e) => {
