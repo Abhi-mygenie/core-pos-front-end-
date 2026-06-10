@@ -636,20 +636,55 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 
 ---
 
-### Phase 4 — Backend Confirmation Required (B2)
+### Phase 4 — Dashboard Channel Visibility (B2 closed, B11 new)
 | Step | Action | Status |
 |------|--------|--------|
-| 4d | Code Implementation | BLOCKED until Phase 3 signoff + backend team confirms expected types |
+| 4d | Code Implementation | PENDING |
 | 5d | QA / Automated Test | PENDING |
 | **6d** | **Owner Smoke Test + Signoff** | **BLOCKED until 5d** |
 
-**Scope:** B2 (channel type mismatch: Yes/No vs true/false)
-**Files:** `restaurantSettingsTransform.js`
-**Prerequisite:** Backend team confirms whether `take_away` and `delivery` expect string or boolean
+**Scope:** B2 (CLOSED — not a bug), B11 (order type dropdown shows disabled channels)
+**Files:** `OrderEntry.jsx`
 **Owner Smoke Test Checklist:**
-- [ ] Toggle Takeaway OFF → Save → Reload → Still OFF
-- [ ] Toggle Delivery ON → Save → Reload → Still ON
-- [ ] Check network tab: `take_away` and `delivery` values match confirmed type
+- [ ] Turn off Delivery + TakeAway in settings → go to Dashboard → open order type dropdown → only Walk-In should appear
+- [ ] Turn Delivery back ON → dropdown shows Delivery + Walk-In
+- [ ] Turn TakeAway back ON → dropdown shows all three
+
+---
+
+### B11 — Line-by-line implementation plan
+
+**File:** `src/components/order-entry/OrderEntry.jsx`
+
+**Change 1 — Destructure `features` (line 54)**
+
+Before:
+```js
+  const { restaurant, cancellation, settings, printerAgents } = useRestaurant();
+```
+
+After:
+```js
+  const { restaurant, features, cancellation, settings, printerAgents } = useRestaurant();
+```
+
+**Change 2 — Filter ORDER_TYPES by features (line 2124)**
+
+Before:
+```js
+                      {ORDER_TYPES.map(type => {
+```
+
+After:
+```js
+                      {ORDER_TYPES.filter(type => {
+                        if (type.id === 'delivery') return features.delivery;
+                        if (type.id === 'takeAway') return features.takeaway;
+                        return true;
+                      }).map(type => {
+```
+
+**Lines changed:** ~5 lines in 1 file. Zero risk — additive filter, no existing behavior altered for enabled channels.
 
 ---
 
@@ -663,4 +698,4 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 | 4–6 Phase 1 | Code → QA → Owner Smoke | PENDING |
 | 4–6 Phase 2 | Code → QA → Owner Smoke | BLOCKED on Phase 1 |
 | 4–6 Phase 3 | Code → QA → Owner Smoke | BLOCKED on Phase 2 |
-| 4–6 Phase 4 | Code → QA → Owner Smoke | BLOCKED on Phase 3 + backend confirmation |
+| 4–6 Phase 4 | Code → QA → Owner Smoke | PENDING (B2 closed, B11 plan ready) |
