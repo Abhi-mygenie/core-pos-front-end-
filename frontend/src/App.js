@@ -18,6 +18,7 @@ import RoomOrdersMockup from "./pages/reports-module/RoomOrdersMockup";
 import FoodCourtMockup from "./pages/reports-module/FoodCourtMockup";
 import SettlementReportMockup from "./pages/reports-module/SettlementReportMockup";
 import SettlementMockup from "./pages/SettlementMockup";
+import RestaurantSettingsPage from "./pages/RestaurantSettingsPage";
 import { Toaster } from "./components/ui/toaster";
 import { AppProviders } from "./contexts";
 import { useRestaurant } from "./contexts";
@@ -87,6 +88,8 @@ function App() {
               <Route path="/visibility/status-config" element={<ProtectedRoute><StatusConfigPage /></ProtectedRoute>} />
               {/* CR-015: Settlement Module (panel on dashboard, preview for mockup) */}
               <Route path="/settlement/preview" element={<SettlementMockup />} />
+              {/* CR-019: Restaurant Settings Self-Onboarding Wizard */}
+              <Route path="/restaurant-settings" element={<ProtectedRoute><RestaurantSettingsPage /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
           <Toaster />

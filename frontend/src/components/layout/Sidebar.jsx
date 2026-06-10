@@ -4,7 +4,7 @@ import {
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
   PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye,
-  LayoutGrid, List, Columns, Rows, LineChart, Banknote
+  LayoutGrid, List, Columns, Rows, LineChart, Banknote, Store as StoreIcon
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
@@ -22,6 +22,7 @@ const SIDEBAR_PERMISSIONS = {
   expenses: 'expence',
   inventory: 'inventory',
   settings: 'restaurant_settings',
+  'restaurant-setup': 'restaurant_setup',
 };
 
 // Items that show "Coming soon" toast instead of navigating
@@ -97,6 +98,12 @@ const sidebarMenuItems = [
     label: "Settlement",
     icon: Banknote,
     path: "/settlement",
+  },
+  {
+    id: "restaurant-setup",
+    label: "Restaurant Setup",
+    icon: StoreIcon,
+    path: "/restaurant-settings",
   },
   {
     id: "menu-management",
@@ -218,7 +225,7 @@ const Sidebar = ({
   };
 
   // Only show these sidebar sections (hide the rest)
-  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'insights', 'credit', 'settlement', 'menu-management', 'visibility-settings']);
+  const VISIBLE_SECTIONS = new Set(['dashboard', 'reports', 'insights', 'credit', 'settlement', 'restaurant-setup', 'menu-management', 'visibility-settings']);
 
   // Filter menu items by visibility + permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {

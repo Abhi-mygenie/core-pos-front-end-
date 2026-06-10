@@ -81,6 +81,10 @@ export const API_ENDPOINTS = {
 
   // Settings
   CANCELLATION_REASONS: '/api/v1/vendoremployee/cancellation-reasons',
+
+  // CR-019: Restaurant Settings (Self-Onboarding Wizard)
+  RESTAURANT_SETTINGS_LIST: '/api/v2/vendoremployee/restaurant-settings/settings-list',
+  RESTAURANT_SETTINGS_UPDATE: '/api/v2/vendoremployee/restaurant-settings/update-settings',
   
   // Orders (Phase 1 Part B)
   RUNNING_ORDERS: '/api/v1/vendoremployee/pos/employee-orders-list',
