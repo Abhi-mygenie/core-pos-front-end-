@@ -1,0 +1,67 @@
+{
+  "summary": "CR-020 B12-B15 QA complete. All 4 bug fixes verified at code level. Frontend compiles with only eslint warnings and login page loads correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_6.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - no backend changes",
+    "frontend": "100%"
+  },
+  "test_credentials": "No login credentials available - code review + structural verification only",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-020 B12-B15 bug fixes verified. Cannot test actual wizard flow without authentication to preprod.mygenie.online.",
+  "verified_fixes": {
+    "B12_Default_GST_Percent_Hidden": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/RestaurantSettingsPage.jsx",
+      "verification": "Tax Configuration section (lines 430-437) contains: GST Enabled toggle, GST Number input, GST Mode select, Tax % input. NO 'Default GST %' NumberInput present. gstTax field still exists in INITIAL_FORM (line 25) and transforms (line 50 read, line 209 write) for silent round-trip."
+    },
+    "B13_GST_Mode_Dynamic_Hint": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/RestaurantSettingsPage.jsx",
+      "line": 435,
+      "code_snippet": "hint={s1.gstMode === 'category' ? 'Each item/category can have its own GST rate' : 'One GST rate applies to all items restaurant-wide'}",
+      "verification": "GST Mode SelectInput hint is now dynamic based on s1.gstMode value"
+    },
+    "B14_GST_Mode_Labels_Changed": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/RestaurantSettingsPage.jsx",
+      "line": 435,
+      "code_snippet": "options={[{ value: 'category', label: 'Item Level' }, { value: 'flat', label: 'Restaurant Level' }]}",
+      "verification": "GST Mode labels changed from 'Category' to 'Item Level' and 'Flat' to 'Restaurant Level'. API values (category/flat) unchanged."
+    },
+    "B15_Short_Code_Toggle": {
+      "status": "VERIFIED",
+      "files": [
+        "/app/frontend/src/pages/RestaurantSettingsPage.jsx",
+        "/app/frontend/src/api/transforms/restaurantSettingsTransform.js"
+      ],
+      "verification_points": {
+        "INITIAL_FORM": "Line 25: shortCode: false (boolean, not string)",
+        "UI_Component": "Line 424: Toggle component with label='Short Code', hint='Enable short code on bills', testId='toggle-shortcode'",
+        "Transform_Read": "Line 44: shortCode: toBool(basic.short_code)",
+        "Transform_Write": "Line 153: short_code: toYesNo(s1.shortCode)"
+      }
+    },
+    "frontend_compilation": {
+      "status": "VERIFIED",
+      "notes": "Webpack compiled with only eslint warnings (React hooks dependencies). No errors."
+    },
+    "login_page_rendering": {
+      "status": "VERIFIED",
+      "notes": "Login page loads correctly with MyGenie logo, tagline, email/password inputs, LOG IN button, Remember me checkbox, Forgot Password link."
+    }
+  }
+}

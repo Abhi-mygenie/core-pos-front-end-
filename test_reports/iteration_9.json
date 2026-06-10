@@ -1,0 +1,90 @@
+{
+  "summary": "CR-024 re-test PASSED. All 6 code changes verified via grep + code review. Login test passed, dashboard loads successfully.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "code_issues": []
+  },
+  "verified_fixes": {
+    "CR-024_Bug_A_toYesNo": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/restaurantSettingsTransform.js",
+      "lines": "159-160",
+      "verification": "take_away: toYesNo(s2.takeAway), delivery: toYesNo(s2.delivery) — both use toYesNo()"
+    },
+    "CR-024_Bug_B_useRestaurant_import": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "line": "7",
+      "verification": "import { useStations, useMenu, useRestaurant } from '../contexts';"
+    },
+    "CR-024_Bug_B_features_destructure": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "line": "146",
+      "verification": "const { features } = useRestaurant();"
+    },
+    "CR-024_Bug_B_availableChannels_filter": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "lines": "149-155",
+      "verification": "availableChannels = ALL_CHANNELS.filter(ch => { ... features.dineIn/takeaway/delivery/room ... })"
+    },
+    "CR-024_Bug_B_render_locations": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "lines": "1197, 1500, 1554",
+      "verification": "All 3 render locations use availableChannels.map (not ALL_CHANNELS.map)"
+    },
+    "CR-024_DEFAULT_CHANNEL_CONFIG_enabled_false": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "line": "102",
+      "verification": "DEFAULT_CHANNEL_CONFIG = { enabled: false, channels: ALL_CHANNELS.map(c => c.id) }"
+    },
+    "CR-024_DashboardPage_default_enabled_false": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/DashboardPage.jsx",
+      "line": "257",
+      "verification": "return { enabled: false, channels: ['dineIn', 'takeAway', 'delivery', 'room'] };"
+    },
+    "CR-024_saveConfiguration_cleanup": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+      "lines": "497-502",
+      "verification": "availableIds = availableChannels.map(ch => ch.id); cleanedConfig.channels = channelConfig.channels.filter(id => availableIds.includes(id));"
+    },
+    "webpack_compilation": {
+      "status": "VERIFIED",
+      "notes": "Webpack compiled successfully with only eslint warnings (React hooks dependencies). No errors."
+    },
+    "login_test": {
+      "status": "VERIFIED",
+      "credentials": "owner@kunafamahal.com / Qplazm@10",
+      "notes": "Login API returns 200, dashboard loads successfully with Dine-In orders visible. Console shows: [DEBUG-B11] Resolved features: {dineIn: true, delivery: true, takeaway: true, room: false}"
+    }
+  },
+  "grep_verification": {
+    "toYesNo_usage": "grep -n 'take_away:\\|delivery:' restaurantSettingsTransform.js → L159: take_away: toYesNo(s2.takeAway), L160: delivery: toYesNo(s2.delivery)",
+    "availableChannels_map": "grep -n 'availableChannels.map' StatusConfigPage.jsx → L497, L1197, L1500, L1554",
+    "ALL_CHANNELS_usage": "grep -n 'ALL_CHANNELS' StatusConfigPage.jsx → L93 (const definition), L103 (DEFAULT_CHANNEL_CONFIG), L149 (filter source) — NO ALL_CHANNELS.map in render"
+  },
+  "test_report_links": ["/app/test_reports/iteration_9.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - no backend changes",
+    "frontend": "100% (CR-024 PASS)"
+  },
+  "test_credentials": "owner@kunafamahal.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-023, CR-024, CR-025 all verified. No outstanding issues."
+}

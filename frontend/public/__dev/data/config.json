@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "environment": "preprod",
+  "generated_at": "2026-05-29",
+  "generated_by": "scripts/gen_dev_dashboard_config.js",
+  "source_env_var_present": true,
+  "reason": "REACT_APP_SHOW_DEV_DASHBOARD=true detected"
+}
