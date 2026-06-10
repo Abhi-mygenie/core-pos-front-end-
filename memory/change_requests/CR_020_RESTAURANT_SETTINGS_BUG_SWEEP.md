@@ -27,6 +27,7 @@
 | CR-020-B12 | "Default GST %" label unclear — doesn't explain what this value controls | LOW | `RestaurantSettingsPage.jsx:436` |
 | CR-020-B13 | GST Mode hint always shows "Category" text even when "Flat GST" is selected | MEDIUM | `RestaurantSettingsPage.jsx:435` |
 | CR-020-B14 | GST Mode labels should be "Item Level" / "Restaurant Level" per owner | MEDIUM | `RestaurantSettingsPage.jsx:435` |
+| CR-020-B15 | Short Code is a TextInput but backend expects Yes/No — should be a Toggle | MEDIUM | `RestaurantSettingsPage.jsx:423`, `restaurantSettingsTransform.js:44,153` |
 
 ---
 
@@ -78,6 +79,28 @@ options={[{ value: 'category', label: 'Item Level' }, { value: 'flat', label: 'R
 **Note:** The `value` sent to the API stays `'category'` / `'flat'` — only the display label changes. Zero backend impact.
 
 ---
+
+### CR-020-B15 — Short Code is a TextInput but backend expects Yes/No toggle (MEDIUM)
+
+**What happens:**
+The "Short Code" field is rendered as a free-text input (placeholder "e.g. C103"), but the backend API returns and expects `short_code: "Yes"` or `"No"`. The API response confirms: `short_code: "No"`. This means the field is a boolean flag (enable/disable short codes), not a text value.
+
+Currently the frontend:
+- Reads `basic.short_code || ''` as a string → shows "No" as text in the input
+- Sends `s1.shortCode` as raw string back → sends whatever the user types
+
+**Where:**
+- UI: `RestaurantSettingsPage.jsx` line 423 — `<TextInput label="Short Code" ...>`
+- Transform read: `restaurantSettingsTransform.js` line 44 — `shortCode: basic.short_code || ''`
+- Transform write: `restaurantSettingsTransform.js` line 153 — `short_code: s1.shortCode`
+
+**Fix:**
+1. Change `TextInput` → `Toggle` in the UI (line 423)
+2. Change transform read to use `toBool()` (line 44): `shortCode: toBool(basic.short_code)`
+3. Change transform write to use `toYesNo()` (line 153): `short_code: toYesNo(s1.shortCode)`
+4. Change `INITIAL_FORM.step1.shortCode` from `''` to `false` (line 25)
+
+
 
 
 ## 2. BUG DETAILS
