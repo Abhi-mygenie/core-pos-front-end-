@@ -607,9 +607,9 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 ### Phase 2 — Wizard Logic Fixes (B3, B5, B6)
 | Step | Action | Status |
 |------|--------|--------|
-| 4b | Code Implementation | BLOCKED until Phase 1 signoff |
-| 5b | QA / Automated Test | PENDING |
-| **6b** | **Owner Smoke Test + Signoff** | **BLOCKED until 5b** |
+| 4b | Code Implementation | DONE |
+| 5b | QA / Automated Test | DONE — 100% passed (iteration_3) |
+| **6b** | **Owner Smoke Test + Signoff** | **READY FOR OWNER** |
 
 **Scope:** B3 (files re-uploaded every step), B5 (skip guard), B6 (bypass required steps)
 **Files:** `RestaurantSettingsPage.jsx`
