@@ -141,3 +141,53 @@ Deploy React frontend from GitHub repo `https://github.com/Abhi-mygenie/core-pos
 - `/app/memory/change_requests/CR_023_BULK_EDITOR_TYPING_LAG.md`
 - `/app/memory/change_requests/CR_024_CHANNEL_VISIBILITY_OVERRIDE.md`
 - `/app/memory/change_requests/CR_025_DISCOUNT_PAYLOAD_FIX.md`
+
+---
+
+### Session 3 (June 11, 2026) — Report Gaps + Prepaid Partial Payment + Credit Fixes
+
+#### Doc Consolidation
+- Pulled all doc files from 6 branches (main, 9-june, 10-june, 10-june-docs, doc-2, doc-3) — 1,084 files total
+- Verified local repo has latest code (10-june) + complete doc archive
+
+#### Gap 6: Display Rounding Fix ✅
+- 12 `formatCurrency`/`fmtCur` functions rounded decimals to integers (₹14.50 → ₹15)
+- Fixed all 12 to show decimals when present, hide `.00` for whole numbers
+- Files: OrderDetailSheet, OrderTable, SummaryBar, RoomRowCard, OrderLedgerMockup, FoodCourtMockup, RoomOrdersMockup, SettlementReportMockup, DashboardMockup, ItemSalesMockup, PrepServeTimeMockup, EdgeStatesMockup
+
+#### Gaps 1,2,3,5: orderLogsReportRow Missing Fields ✅
+- Gap 1: `customerPhone`, `customerEmail`, `customerContact` (from `cust_mobile`, `cust_email`)
+- Gap 2: `transactionRef` (from `transection_id`)
+- Gap 3: `deliveryAddress` (from `orderWrapper.customer_details`)
+- Gap 5: `roomTotal`, `roomAdvance`, `roomBalance`, `roomCheckout` (from `room_info`)
+- Wired into `toLedgerRow()` in `orderLedgerService.js`
+
+#### CR-021 Extension: Prepaid Partial Payment Parity ✅
+- `placeOrderWithPayment` had `payment_method` never set to `"partial"` — fixed
+- `partial_payments` always sent even for single payments — made conditional
+- Verified: Order 939700 (cafe103) sends correct payload
+
+#### Fix A: singleOrderNew Missing Financial Fields ✅
+- Added 12 fields to `singleOrderNew` transform (parity with orderLogsReportRow)
+- Credit Panel drill-down now shows correct bill summary
+
+#### Fix B: Credit Service Totals from API ✅
+- `tap-customer-record-list` returns `total_tap_credit_amount`, `total_tap_debit_amount` — now extracted
+- `CreditManagementPanel.jsx` uses backend totals instead of re-computing from transactions
+
+#### Bug Fix: customerDetails Crash ✅
+- `orderLogsReportRow` referenced undeclared `customerDetails` variable — added declaration
+
+#### Identified Backend Asks (cannot fix on frontend)
+- **Gap 4:** `order-logs-report` doesn't return cash/card/upi breakup for partial payment orders
+- **Credit Panel Totals:** `tap-waiter-list` doesn't return `total_credit`/`total_paid` at top level
+
+### Key Files Modified (Session 3)
+| File | What |
+|------|------|
+| `src/api/transforms/reportTransform.js` | Gaps 1-3,5,6, singleOrderNew fix, customerDetails crash |
+| `src/api/services/orderLedgerService.js` | Gaps 1-3,5 wire-up |
+| `src/api/transforms/orderTransform.js` | Prepaid partial payment parity |
+| `src/api/services/creditService.js` | Credit totals from API |
+| `src/components/panels/CreditManagementPanel.jsx` | Credit totals usage |
+| 12 report component files | Display rounding fix |

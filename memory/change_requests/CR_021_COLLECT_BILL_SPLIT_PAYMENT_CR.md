@@ -3,7 +3,7 @@
 **Registered:** 2026-06-10
 **Sprint:** pos_4_0
 **Priority:** P0 (money-impacting — cashier can collect mismatched amounts; payload data loss)
-**Status:** IMPLEMENTED — awaiting owner smoke test (B1 second fix: `payment_mode: "partial"` added 2026-06-10)
+**Status:** IMPLEMENTED — awaiting owner smoke test (B1 second fix: `payment_mode: "partial"` added 2026-06-10; **prepaid parity fix added 2026-06-11**)
 **Owner:** Abhi
 **Reporter:** Owner (chat, 2026-06-10)
 
@@ -141,7 +141,7 @@ For `showSplit === true`, only the per-row card-txn-id check runs. **No rule che
 | Flow | Endpoint | Affected? | Why |
 |------|----------|-----------|-----|
 | **Collect Bill on existing order** (postpaid) | `BILL_PAYMENT` | **B1 ✗, B2 ✗, B3 ✗, B4 ✗** | All four defects live here. |
-| **Place+Pay prepaid (new order)** | `PLACE_ORDER` | **B1 ✓ unaffected** (transform L1119 has correct gate), B2/B3/B4 **✗ affected** (same UI panel). | Same `CollectPaymentPanel` component → same UI bugs; only payload-thread issue (B1) is asymmetric. |
+| **Place+Pay prepaid (new order)** | `PLACE_ORDER` | **B1 ✗ FIXED (2026-06-11)** — `payment_method` now sends `"partial"` + `partial_payments` conditional. B2/B3/B4 **✓ fixed** (same UI panel). |
 | **Audit Report → Hold tab Collect Bill** | `BILL_PAYMENT` | **B1, B2, B3, B4 ✗** | Uses `CollectBillPanelDrawer` → same `CollectPaymentPanel` + same `collectBillExisting`. |
 | **Transfer to Room** | `ORDER_SHIFTED_ROOM` | Unaffected | `transferToRoom` transform doesn't handle splits (room transfer is single-transaction). |
 | **TAB / Credit** | `BILL_PAYMENT` | Unaffected by B1 (split not allowed with credit). B2/B3/B4 not applicable. | — |
@@ -297,7 +297,10 @@ After all 4 patches land, the Collect Bill split-payment rail must behave as fol
 4. **Discount / service charge / tip / coupon / loyalty / wallet changes** → `effectiveTotal` changes → **all split amounts clear to empty** (both directions: drop and rise). The "Remaining" label naturally recomputes; cashier re-enters.
 5. **Pay button** → disabled whenever `Σ splitPayments[].amount < effectiveTotal` (new B4 rule). Existing per-row Card Txn ID rule still applies but **only on rows with amount > 0** (new B3 amount-gate). Existing rules for non-split flows untouched.
 6. **BILL_PAYMENT payload** → `partial_payments[]` is attached whenever `splitPayments?.length > 0`, regardless of `paymentData.method` (new B1 fix). Existing top-level `payment_mode` / `payment_amount` fields are left alone — backend continues to see the same shape that `placeOrderWithPayment` already sends.
-7. **Place+Pay prepaid (PLACE_ORDER)** → unchanged. Already correct.
+7. **Place+Pay prepaid (PLACE_ORDER)** → **FIXED (2026-06-11)**. Two bugs found and patched:
+   - `payment_method` was never set to `"partial"` when `splitPayments` exist → now mirrors `collectBillExisting` logic: `splitPayments?.length > 0 ? 'partial' : method`
+   - `partial_payments` was always sent (even single payments, padded with 3 zero modes) → now conditional, only sent when `splitPayments?.length > 0`
+   - **Verified:** Order 939700 (cafe103, prepaid) — payload correctly sends `payment_method: "partial"` + `partial_payments` array
 8. **Transfer-to-Room, TAB/Credit, single-method flows** → unchanged.
 
 ### 6.2 Non-negotiables (regression guards)

@@ -4,7 +4,7 @@
 During CR investigation on the Order Detail Sheet (used by Audit Report + Order Ledger), two issues were found:
 
 1. **Sequence fix** — already implemented this session (CR not registered)
-2. **Display rounding** — discovered via live API data, needs further investigation
+2. **Display rounding** — ~~discovered via live API data, needs further investigation~~ **FIXED (2026-06-11)**
 
 ---
 
@@ -30,54 +30,48 @@ GST and VAT now hide when zero (previously always visible).
 
 ---
 
-## Issue 2: Display Rounding (OPEN — needs investigation)
+## Issue 2: Display Rounding — FIXED (2026-06-11)
 
-### Evidence: Order 012661 (cafe103, DB id: 939673)
+### Root cause
+`formatCurrency` / `fmtCur` functions across 12 report files used `maximumFractionDigits: 0` or `Math.round()`, rounding all currency values to integers.
 
-**API returns:**
-```
-order_sub_total_amount:    334
-total_gst_tax_amount:      14.50
-round_up:                  0.50
-order_amount:              349
-```
-
-**Math:** 334 + 14.50 + 0.50 = 349 ✅
-
-**Screenshot shows:**
-```
-Item Total    ₹334
-GST           ₹15      ← should be ₹14.50
-Round-off     ₹1       ← should be ₹0.50
-Grand Total   ₹349
+### Fix applied
+All 12 functions updated to show decimals when the value has them, hide `.00` for whole numbers:
+```js
+const hasDecimals = n % 1 !== 0;
+minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2
 ```
 
-**Visible math:** 334 + 15 + 1 = 350 ≠ 349 — **contradicts Grand Total**
+### Files fixed (12):
+1. `components/reports/OrderDetailSheet.jsx`
+2. `components/reports/OrderTable.jsx`
+3. `components/reports/SummaryBar.jsx`
+4. `components/reports/RoomRowCard.jsx`
+5. `pages/reports-module/OrderLedgerMockup.jsx` (fmtCur)
+6. `pages/reports-module/FoodCourtMockup.jsx`
+7. `pages/reports-module/RoomOrdersMockup.jsx`
+8. `pages/reports-module/SettlementReportMockup.jsx`
+9. `pages/reports-module/DashboardMockup.jsx`
+10. `pages/reports-module/ItemSalesMockup.jsx`
+11. `pages/reports-module/PrepServeTimeMockup.jsx`
+12. `pages/reports-module/EdgeStatesMockup.jsx`
 
-### Root cause hypothesis
-The `formatCurrency` function (or the way values are displayed) is rounding to nearest integer. Need to check:
+### Already correct (no change needed):
+- `OrderLedgerMockup.jsx` L839 (`fc` — audit drill-down)
+- `ItemSalesHybridMockup.jsx`
+- `ExportButtons.jsx`
+- `ItemDrillSheet.jsx`
 
-1. **`formatCurrency` function** in OrderDetailSheet — is it rounding?
-   ```bash
-   grep -n 'formatCurrency' /app/frontend/src/components/reports/OrderDetailSheet.jsx | head -5
-   ```
-   Then find its definition and check if it rounds.
+---
 
-2. **Should show decimals** — ₹14.50 should display as `₹14.50`, not `₹15`. The formatCurrency should use 2 decimal places for non-integer values.
+## Additional fixes in same session (2026-06-11)
 
-3. **Check if this affects Order Ledger too** — the Order Ledger uses the same `orderLogsReportRow` data but renders via table cells. Check if the Ledger table also rounds.
+### singleOrderNew transform — missing financial fields (FIXED)
+Added 12 fields to `singleOrderNew` return block in `reportTransform.js`: `itemTotal`, `gstAmount`, `vatAmount`, `serviceChargeAmount`, `tipAmount`, `roundOff`, `discountAmount`, `couponCode`, `couponAmount`, `deliveryChargeGst`, `orderNote`. Fixed `subtotal` to read from backend.
+**Impact:** OrderDetailSheet FETCH MODE (Credit Panel drill-down) now shows correct bill summary.
 
-### Files to investigate
-- `src/components/reports/OrderDetailSheet.jsx` — find `formatCurrency` definition or import
-- Check if it's `Math.round()`, `.toFixed(0)`, or `toLocaleString()` without decimal options
-- The Order Ledger (`src/pages/reports-module/OrderLedgerMockup.jsx`) uses `fc()` / `fmtCur()` — check those too
-
-### Fix direction
-`formatCurrency` should show:
-- `₹14.50` when value has decimals (not ₹15)
-- `₹334` when value is a whole number (no unnecessary `.00`)
-
-Or always show 2 decimals: `₹14.50`, `₹334.00` — owner decision needed.
+### orderLogsReportRow — missing fields (FIXED)
+Added to transform: `customerPhone`, `customerEmail`, `customerContact`, `transactionRef`, `deliveryAddress`, `roomTotal`, `roomAdvance`, `roomBalance`, `roomCheckout`. Wired into `toLedgerRow()` in `orderLedgerService.js`.
 
 ---
 
@@ -128,13 +122,12 @@ Order Ledger adds one extra layer:
 
 The OrderDetailSheet gets data via two paths:
 - **DATA MODE** (L496): `order.items` already present → uses the order-logs transform data directly
-- **FETCH MODE** (L503): calls `getSingleOrderNew()` → uses `singleOrderNew` transform which is MISSING most financial fields (only has `subtotal` re-computed from items + `amount`)
-
-For Audit Report drill-down, DATA MODE is used (order already has items from order-logs). For other consumers (Credit panel), FETCH MODE is used and financial data is incomplete.
+- **FETCH MODE** (L503): calls `getSingleOrderNew()` → uses `singleOrderNew` transform — **NOW FIXED** with all financial fields
 
 ---
 
 ## Related open items
 - **CR-025** (Discount payload) — implemented, awaiting smoke test
 - **Report sequence fix** — implemented (no CR registered), awaiting smoke test
-- **`singleOrderNew` transform gaps** — missing `discountAmount`, `gstAmount`, `serviceChargeAmount`, `tipAmount`, `roundOff`, `itemTotal` — separate issue from rounding, affects FETCH MODE consumers only
+- **Gap 4** (Partial payment breakup in reports) — **BACKEND ASK** — `order-logs-report` doesn't return cash/card/upi breakdown
+- **Credit Panel TOTAL CREDIT / TOTAL PAID** — **BACKEND ASK** — `tap-waiter-list` needs totals at top level
