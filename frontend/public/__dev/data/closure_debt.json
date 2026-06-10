@@ -1,0 +1,1437 @@
+{
+  "generated_at": "2026-06-01",
+  "audit_revision": "v2.11_2026_05_31_pos4_consolidation",
+  "source": "/app/memory/control/CLOSURE_DEBT_BURNDOWN.csv",
+  "total": 32,
+  "archived_count": 66,
+  "tracked_total": 98,
+  "items": [
+    {
+      "sprint": "POS 2.0",
+      "item_id": "POS2-003",
+      "title": "Print Agent Mapping",
+      "registry_status": "IMPLEMENTED + QA PASSED",
+      "files_touched": "orderTransform.js; OrderEntry.jsx",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "PRESENT",
+      "art0_session_start": "N/A",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md; memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md; memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md; memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md; memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Awaiting live tenant smoke",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/QA_REPORT_authenticated_subtotal_delivery.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_003_REOPEN_A_WIRE_LEVEL_QA_REPORT_2026_05_09.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/CR_REFS_SYNC_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "POS 2.0",
+      "item_id": "POS2-003-FU-02",
+      "title": "printer_agent null on Collect Bill",
+      "registry_status": "IMPLEMENTED",
+      "files_touched": "CollectPaymentPanel.jsx",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "4",
+      "severity": "HIGH",
+      "existing_docs_path": "change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.5",
+      "recommended_action": "Write Intake + Impact + Code Gate + Impl Summary + Smoke",
+      "notes": "Awaiting live tenant smoke",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "POS 2.0",
+      "item_id": "POS2-003-REOPEN-A",
+      "title": "Update/cancel printer_agent + v2 endpoint review",
+      "registry_status": "IMPLEMENTED + WIRE QA PASSED",
+      "files_touched": "orderTransform.js; orderService.js",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "3",
+      "severity": "MEDIUM",
+      "existing_docs_path": "change_requests/impact_analysis/POS2_003_REOPEN_*; qa_reports/POS2_003_REOPEN_A_WIRE_LEVEL_QA_REPORT_2026_05_09.md; implementation_summaries/POS2_003_REOPEN_A_*",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write Intake + Code Gate + Owner Smoke Sign-off",
+      "notes": "29/29 wire cases pass; live tenant smoke pending",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "4/7"
+    },
+    {
+      "sprint": "POS 2.0",
+      "item_id": "POS2-005-FU §A",
+      "title": "Collect-Bill hidden for status-8",
+      "registry_status": "IMPLEMENTED",
+      "files_touched": "OrderTable.jsx",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "4",
+      "severity": "CRITICAL",
+      "existing_docs_path": "change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.5",
+      "recommended_action": "Write Intake + Plan + Code Gate + Impl Summary + Smoke",
+      "notes": "Code-walk PASS only",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "POS 2.0",
+      "item_id": "POS2-007 Phase 1",
+      "title": "Confirm-order tone FE override",
+      "registry_status": "IMPLEMENTED + QA PASSED",
+      "files_touched": "DashboardPage.jsx; soundManager.js",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "5",
+      "severity": "CRITICAL",
+      "existing_docs_path": "qa_reports/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_QA_REPORT.md; implementation_summaries/POS2_007_PHASE1_*",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.5",
+      "recommended_action": "Write Intake + Impact + Plan + Code Gate + Smoke",
+      "notes": "",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "2/7"
+    },
+    {
+      "sprint": "POS 3.1",
+      "item_id": "BUG-109",
+      "title": "QSR takeaway/delivery customer validation parity",
+      "registry_status": "CLOSED — IMPLEMENTED",
+      "files_touched": "CartPanel.jsx",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/change_requests/POS_QSR_BUGS_BUG_109_BUG_110_DISCOVERY_REGISTRATION_2026_05_27.md; memory/bugs/code_gate_waivers/BUG_109_CG_WAIVER.md; control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write Impact + Impl Summary + QA Report + Owner Smoke Sign-off (reconstruct from HANDOVER_NEXT_AGENT_2026_05_27.md)",
+      "notes": "Owner-verified in handover prose; T-DISCOUNT-CLUB PASS",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/POS_QSR_BUGS_BUG_109_BUG_110_DISCOVERY_REGISTRATION_2026_05_27.md",
+          "type": "intake"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/code_gate_waivers/BUG_109_CG_WAIVER.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "POS 3.1",
+      "item_id": "BUG-110",
+      "title": "QSR prepaid lock parity",
+      "registry_status": "CLOSED — IMPLEMENTED",
+      "files_touched": "CartPanel.jsx",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/change_requests/POS_QSR_BUGS_BUG_109_BUG_110_DISCOVERY_REGISTRATION_2026_05_27.md; memory/bugs/code_gate_waivers/BUG_110_CG_WAIVER.md; control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write Impact + Impl Summary + QA Report + Owner Smoke Sign-off",
+      "notes": "Owner-verified in handover prose",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/POS_QSR_BUGS_BUG_109_BUG_110_DISCOVERY_REGISTRATION_2026_05_27.md",
+          "type": "intake"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/code_gate_waivers/BUG_110_CG_WAIVER.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "POS 3.1",
+      "item_id": "BUG-111",
+      "title": "QSR bill parity (Grand Total + breakdown)",
+      "registry_status": "CLOSED — IMPLEMENTED",
+      "files_touched": "CartPanel.jsx; OrderEntry.jsx",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "1",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/bugs/intake/BUG_111_INTAKE_2026_05_30.md; memory/bugs/AUDIT_REPORT_API_INVESTIGATION_2026_05_27.md; memory/bugs/code_gate_waivers/BUG_111_CG_WAIVER.md; control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.5",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Owner-verified via T-DISCOUNT-CLUB PASS (handover prose)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/bugs/intake/BUG_111_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/bugs/AUDIT_REPORT_API_INVESTIGATION_2026_05_27.md",
+          "type": "impact"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/code_gate_waivers/BUG_111_CG_WAIVER.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "6/7"
+    },
+    {
+      "sprint": "Standalone",
+      "item_id": "Audit Report Optimization CR",
+      "title": "Transform rewrite + dual-mode OrderDetailSheet + Paid→Settled",
+      "registry_status": "SHIPPED",
+      "files_touched": "reportTransform; reportService; OrderDetailSheet; FilterBar; FilterTags; AllOrdersReportPage",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "3",
+      "severity": "MEDIUM",
+      "existing_docs_path": "change_requests/AUDIT_REPORT_OPTIMISE_CR_CLEAN_PLAN_2026_05_28.md; change_requests/AUDIT_REPORT_CR_QA_HANDOVER_2026_05_29.md; bugs/AUDIT_REPORT_*.md",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.5",
+      "recommended_action": "Write Intake + Code Gate + Owner Smoke Sign-off",
+      "notes": "reportService.js reduced 1257→744 lines",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "4/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-002",
+      "title": "Settle print guard",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "(no code fix)",
+      "art1_intake": "N/A (no-code-fix)",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "N/A (no-code-fix)",
+      "art4_code_gate": "N/A (no-code-fix)",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "PRESENT",
+      "art0_session_start": "N/A",
+      "missing_count": "0",
+      "severity": "RESOLVED",
+      "existing_docs_path": "change_requests/production_hotfixes/PROD_BUG_002_AUTO_KOT_AUTO_BILL_TRIGGER_INVESTIGATION_2026_05_21.md; PROD_BUG_002_SETTLE_PRINT_GUARD_RUNTIME_QA_CHECKLIST_2026_05_21.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "0.5",
+      "recommended_action": "CLOSED 2026-05-31 — runtime QA passed (Group A live) + backend confirms no print",
+      "notes": "Owner-verified: Settle does not print (live); backend BQ-B2-01 = no print. See PROD_BUG_002_OWNER_SMOKE_SIGNOFF_2026_05_31.md",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "2026-05-31",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "7/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-003",
+      "title": "PayLater table clear",
+      "registry_status": "FE-VERIFIED, BE-FOLLOWUP",
+      "files_touched": "(FE only — backend must emit on update-order-paid)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "3",
+      "severity": "MEDIUM",
+      "existing_docs_path": "change_requests/production_hotfixes/PROD_BUG_003_*.md (5 docs)",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "TRUE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write Intake + Code Gate + Owner Smoke Sign-off; await BE follow-up",
+      "notes": "Backend follow-up open",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "4/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-HOTFIX-004",
+      "title": "Walk-in cart not cleared on stay-on-order",
+      "registry_status": "SHIPPED",
+      "files_touched": "DashboardPage.jsx (+2 lines)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PARTIAL",
+      "art3_implementation_plan": "PARTIAL",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "change_requests/production_hotfixes/PROD_HOTFIX_004_WALKIN_CART_NOT_CLEARED_2026_05_27.md (single combined doc)",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Split combined doc into Intake + Impact + Plan + Code Gate + QA + Smoke OR formally accept \"combined hotfix doc\" convention",
+      "notes": "Single-file doc fails artifact rule",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-HOTFIX-005",
+      "title": "Prepaid screen clear delay",
+      "registry_status": "SHIPPED",
+      "files_touched": "DashboardPage.jsx (+5 lines)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PARTIAL",
+      "art3_implementation_plan": "PARTIAL",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "N/A",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "change_requests/production_hotfixes/PROD_HOTFIX_005_PREPAID_SCREEN_CLEAR_DELAY_2026_05_27.md (single combined doc)",
+      "owner_verified_in_prose": "FALSE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Same as PROD-004",
+      "notes": "Single-file doc fails artifact rule",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-007",
+      "title": "Loyalty earn points displayed on Collect Bill",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "loyaltyTransform.js (+3); CollectPaymentPanel.jsx (+5)",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "PRESENT",
+      "art0_session_start": "MISSING",
+      "missing_count": "1",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/bugs/intake/PROD_007_INTAKE_2026_05_30.md; memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md; memory/bugs/code_gate_waivers/PROD_007_CG_WAIVER.md; control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md; memory/BIG_BATCH_CLOSURE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Owner verified in prose only; CR_REGISTRY shows both INTAKE and CLOSED states (registry self-contradiction)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/bugs/intake/PROD_007_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md",
+          "type": "impact"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/code_gate_waivers/PROD_007_CG_WAIVER.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/BIG_BATCH_CLOSURE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/CLOSURE_DEBT_REAUDIT_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "6/7"
+    },
+    {
+      "sprint": "Production Hotfix",
+      "item_id": "PROD-008",
+      "title": "Manual KOT/Bill print custName & custPhone NULL",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "orderService.js (+2 lines L155-156)",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "PRESENT",
+      "art0_session_start": "MISSING",
+      "missing_count": "1",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/bugs/intake/PROD_008_INTAKE_2026_05_30.md; memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md; memory/bugs/code_gate_waivers/PROD_008_CG_WAIVER.md; control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md; memory/BIG_BATCH_CLOSURE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+      "owner_verified_in_prose": "TRUE",
+      "tracked_in_open_gaps": "FALSE",
+      "estimated_doc_effort_hrs": "1.0",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Owner verified in prose only",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/bugs/intake/PROD_008_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md",
+          "type": "impact"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/code_gate_waivers/PROD_008_CG_WAIVER.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/BIG_BATCH_CLOSURE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/CLOSURE_DEBT_REAUDIT_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "6/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-001",
+      "title": "Delivery charge / GST / web delivery lock",
+      "registry_status": "NOT STARTED",
+      "files_touched": "",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "MISSING",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "4",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md; memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md; memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md; memory/change_requests/impact_analysis/POS2_002_ORDER_FROM_WEB_PIPELINE_CR_IMPACT_ANALYSIS_2026_05_07.md; memory/crs/code_gate_premature/POS2-001_CG_PREMATURE.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_002_ORDER_FROM_WEB_PIPELINE_CR_IMPACT_ANALYSIS_2026_05_07.md",
+          "type": "impact"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/POS2-001_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "POS 4.0 sprint — excluded from active debt",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-002",
+      "title": "Order origin / Scan&Order web pipeline",
+      "registry_status": "CLOSED — RESOLVED VIA CR",
+      "files_touched": "",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "PRESENT",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "1",
+      "severity": "LOW",
+      "existing_docs_path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md; memory/crs/intake/POS2-002_INTAKE_2026_05_30.md; memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md; memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md; memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Write remaining 1 artifact(s); near-closure",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-002_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_SCRUTINY_AND_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/POS_FINAL_1_0_BUG_045_PRE_IMPL_CODE_GATE.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+          "type": "qa_report"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "6/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-003-REOPEN-B",
+      "title": "v1→v2 place-order revert",
+      "registry_status": "CLOSED — VERIFIED",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "5",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "2/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-004",
+      "title": "f_order_status=8 investigation",
+      "registry_status": "CLOSED — IMPLEMENTED",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "4",
+      "severity": "HIGH",
+      "existing_docs_path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md; memory/change_requests/impact_analysis/POS2_004_F_STATUS_8_HOLD_PAID_DASHBOARD_INVESTIGATION_2026_05_08.md; memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_004_F_STATUS_8_HOLD_PAID_DASHBOARD_INVESTIGATION_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+          "type": "qa_report"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-005-FU §B",
+      "title": "PG filter cross-tab",
+      "registry_status": "CLOSED — AS DESIGNED",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "5",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "2/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-006",
+      "title": "confirmOrderTone investigation",
+      "registry_status": "DEFERRED → POS 4.0",
+      "files_touched": "",
+      "art1_intake": "PRESENT",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "1",
+      "severity": "LOW",
+      "existing_docs_path": "memory/crs/intake/POS2-006_INTAKE_2026_05_30.md; memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md; memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md; memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md; memory/change_requests/impact_analysis/POS2_006_CONFIRM_ORDER_TONE_INVESTIGATION_2026_05_09.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Write remaining 1 artifact(s); near-closure",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-006_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/impact_analysis/POS2_008_PHASE2_BACKEND_OWNED_TONE_DELIVERY_CR_PLANNING_2026_05_09.md",
+          "type": "plan"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/POS2-006_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_002_PHASE_3_HEADER_PLATFORM_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_10.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_006_PG_FILTER_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "6/7"
+    },
+    {
+      "sprint": "POS 2 0",
+      "item_id": "POS2-008 Phase 2",
+      "title": "Backend-owned tone delivery",
+      "registry_status": "PLANNING COMPLETE",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "MISSING",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "6",
+      "severity": "CRITICAL",
+      "existing_docs_path": "memory/crs/code_gate_premature/POS2-008_Phase_2_CG_PREMATURE.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/POS2-008_Phase_2_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "POS 4.0 sprint — excluded from active debt",
+      "completeness": "1/7"
+    },
+    {
+      "sprint": "POS 3 1",
+      "item_id": "BUG-111 P1+P2",
+      "title": "Grand Total + server-driven breakdown",
+      "registry_status": "SHIPPED + VERIFIED",
+      "files_touched": "CartPanel.jsx, OrderEntry.jsx",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "Y",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "CRM 2 0",
+      "item_id": "CR-006",
+      "title": "Item-level Notes",
+      "registry_status": "SUBSUMED into CR-002",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "PRESENT",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md; memory/change_requests/impact_analysis/CR_004_IMPACT_ANALYSIS.md; memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md; memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md; memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/CR_004_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/CR_008_D1_DEFAULT_LANDING_SCREEN_IMPLEMENTATION_SUMMARY.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/CR_008_D1_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+          "type": "smoke_signoff"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "CRM 2 0",
+      "item_id": "CR-007",
+      "title": "Order-level Notes",
+      "registry_status": "SUBSUMED into CR-002",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "PRESENT",
+      "art3_implementation_plan": "PRESENT",
+      "art4_code_gate": "PRESENT",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "MEDIUM",
+      "existing_docs_path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md; memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md; memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md; memory/change_requests/impact_analysis/POS2_004_F_STATUS_8_HOLD_PAID_DASHBOARD_INVESTIGATION_2026_05_08.md; memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Write remaining 2 artifact(s); near-closure",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+          "type": "plan"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_057_2026_05_17.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/CR_005_B2_SPLIT_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+          "type": "qa_report"
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "Audit Report Optimization",
+      "title": "Transform rewrite + dual-mode sheet",
+      "registry_status": "SHIPPED",
+      "files_touched": "reportTransform, reportService, OrderDetailSheet, FilterBar, FilterTags, AllOrdersReportPage",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "4",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "Order Activity Log",
+      "title": "Chronological activity feed per order",
+      "registry_status": "CLOSED — AS DESIRED",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "3",
+      "severity": "CRITICAL",
+      "existing_docs_path": "memory/crs/code_gate_premature/Order_Activity_Log_CG_PREMATURE.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/Order_Activity_Log_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "4/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "PROD-HOTFIX-006",
+      "title": "Takeaway print: custPhone empty",
+      "registry_status": "CLOSED — AS DESIRED",
+      "files_touched": "orderTransform.js or backend template",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "4",
+      "severity": "CRITICAL",
+      "existing_docs_path": "memory/crs/code_gate_premature/PROD-HOTFIX-006_CG_PREMATURE.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/PROD-HOTFIX-006_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "3/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "PROD-HOTFIX-007",
+      "title": "Loyalty earn points display",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "loyaltyTransform.js (+3), CollectPaymentPanel.jsx (+5)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "5",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "Y",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "2/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "PROD-HOTFIX-008",
+      "title": "Manual KOT/Bill print: custName & custPhone NULL",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "orderService.js (+2 lines)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "5",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "Y",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "2/7"
+    },
+    {
+      "sprint": "STANDALONE",
+      "item_id": "DEV-DASHBOARD-001",
+      "title": "Internal dev control dashboard (v1.0 + v1.1)",
+      "registry_status": "CLOSED — OWNER VERIFIED",
+      "files_touched": "/app/frontend/public/__dev/**, /app/scripts/gen_dev_dashboard_config.js (all NEW, isolated; zero touch to /src/)",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "MISSING",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "2",
+      "severity": "CRITICAL",
+      "existing_docs_path": "",
+      "owner_verified_in_prose": "Y",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: SHIPPED)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "5/7"
+    },
+    {
+      "sprint": "PHASE 3",
+      "item_id": "UX-LOADING-02",
+      "title": "Parallel API loading + visible station progress",
+      "registry_status": "CLOSED — AS DESIRED",
+      "files_touched": "",
+      "art1_intake": "MISSING",
+      "art2_impact_analysis": "MISSING",
+      "art3_implementation_plan": "MISSING",
+      "art4_code_gate": "WAIVED",
+      "art5_impl_summary_qa": "PRESENT",
+      "art6_owner_smoke_signoff": "MISSING",
+      "art0_session_start": "MISSING",
+      "missing_count": "3",
+      "severity": "CRITICAL",
+      "existing_docs_path": "memory/crs/code_gate_premature/UX-LOADING-02_CG_PREMATURE.md",
+      "owner_verified_in_prose": "N",
+      "tracked_in_open_gaps": "N",
+      "estimated_doc_effort_hrs": "2",
+      "recommended_action": "Awaiting scanner evidence pass",
+      "notes": "Added 2026-05-30 CR→CSV sync v2.7 (category: OTHER)",
+      "audit_revision": "v2.9_2026_05_30",
+      "archived": "",
+      "artifact_refs": [
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/UX-LOADING-02_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "active_debt": false,
+      "debt_reason": "QA present — code-gate waiver applies (pre-Phase-4)",
+      "completeness": "4/7"
+    }
+  ],
+  "debt_model": "QA-driven; code-gate waived pre-Phase-4; POS 4.0 excluded (POS4-QA-001)",
+  "active_count": 0,
+  "pos4_excluded_count": 2,
+  "qa_satisfied_count": 30
+}

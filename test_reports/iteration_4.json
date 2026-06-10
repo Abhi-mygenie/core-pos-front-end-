@@ -1,0 +1,116 @@
+{
+  "summary": "CR-016 Settlement Report (Insights Module) - Comprehensive frontend testing completed. All 20 features tested successfully. The Settlement Report page loads correctly with proper layout, KPI strip, day summary table, waiter drill-down, date presets, search, sorting, and export functionality.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - frontend only testing",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10 (restaurant #644, cafe103)",
+  "seed_data_creation": "None - uses existing production data from preprod.mygenie.online",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-016 Settlement Report fully tested. All features working correctly including: page layout, KPI strip (5 cards), day summary table with 7-day default, zero-activity day styling, pilferage highlighting (amber), day row expansion with waiter details, TOTAL row, date presets (8 presets), From-To date picker with Apply, max 365-day validation, search by date, column sorting, download menu (Excel/PDF enabled, Email/WhatsApp/SMS disabled), sidebar position (Settlement before Sales), back button navigation, refresh button.",
+  "features_tested": {
+    "page_layout": {
+      "status": "PASS",
+      "details": "Page loads at /reports-module/settlement with correct layout (sidebar + header + KPI + table)"
+    },
+    "kpi_strip": {
+      "status": "PASS",
+      "details": "5 KPI cards displayed: Total Opening Balance, Total Cash Collected, Total Settled, Total Expected, Total Pilferage"
+    },
+    "kpi_pilferage_highlighting": {
+      "status": "PASS",
+      "details": "Pilferage KPI card has amber highlighting when pilferage > 0"
+    },
+    "day_summary_table": {
+      "status": "PASS",
+      "details": "Shows all 7 days (including zero-activity) for default 7-day range"
+    },
+    "zero_activity_styling": {
+      "status": "PASS",
+      "details": "Zero-activity days shown with reduced opacity"
+    },
+    "pilferage_day_highlighting": {
+      "status": "PASS",
+      "details": "Days with pilferage > 0 have amber background"
+    },
+    "day_row_expansion": {
+      "status": "PASS",
+      "details": "Click day row expands waiter detail table with correct columns (13 waiters found for 09 Jun 2026)"
+    },
+    "total_row": {
+      "status": "PASS",
+      "details": "TOTAL row at bottom sums all day values correctly"
+    },
+    "date_presets": {
+      "status": "PASS",
+      "details": "All 8 presets work: Today (1 row), Yesterday (1 row), 7D (7 rows), 30D (30 rows), 90D, 365D (365 rows), MTD, YTD"
+    },
+    "date_picker_apply": {
+      "status": "PASS",
+      "details": "From-To date picker with Apply button changes data correctly"
+    },
+    "max_365_day_validation": {
+      "status": "PASS",
+      "details": "Max 365-day range validation works - shows 'Max 365 days' error and disables Apply button for invalid range"
+    },
+    "search_by_date": {
+      "status": "PASS",
+      "details": "Search by date filters table correctly"
+    },
+    "column_sorting": {
+      "status": "PASS",
+      "details": "Click header to sort asc/desc works"
+    },
+    "download_menu": {
+      "status": "PASS",
+      "details": "Download button opens dropdown with Excel/PDF enabled, Email/WhatsApp/SMS visually disabled"
+    },
+    "excel_export": {
+      "status": "PASS",
+      "details": "Excel export button clickable and triggers download"
+    },
+    "pdf_export": {
+      "status": "PASS",
+      "details": "PDF export button clickable and opens print window"
+    },
+    "sidebar_position": {
+      "status": "PASS",
+      "details": "Settlement entry appears before Sales under Insights in sidebar"
+    },
+    "back_button": {
+      "status": "PASS",
+      "details": "Back arrow navigates to dashboard"
+    },
+    "refresh_button": {
+      "status": "PASS",
+      "details": "Refresh button reloads data"
+    },
+    "regression_dashboard": {
+      "status": "PASS",
+      "details": "Dashboard and other Insights reports still work (no regression)"
+    }
+  },
+  "screenshots": [
+    ".screenshots/01_after_login.png",
+    ".screenshots/02_settlement_report_page.png",
+    ".screenshots/05_expanded_waiter_details.png",
+    ".screenshots/06_download_menu.png",
+    ".screenshots/08_max_range_validation.png",
+    ".screenshots/09_365d_preset.png",
+    ".screenshots/10_dashboard_regression.png"
+  ]
+}
