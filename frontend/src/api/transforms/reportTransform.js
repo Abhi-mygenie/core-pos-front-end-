@@ -823,6 +823,7 @@ const buildTimeline = (api, operations) => {
  */
 export const orderLogsReportRow = (orderWrapper, activeSrmIds = null) => {
   const api = orderWrapper.orders_table || {};
+  const customerDetails = orderWrapper.customer_details || {};
   const toNum = (val) => parseFloat(val) || 0;
 
   // === Location ===
