@@ -100,7 +100,7 @@ Full details: see `BASELINE_INDEX.md` and `BUSINESS_RULES_PENDING_FREEZE_ITEMS_2
 | BE-1 P1-P6: display fields on `/order-logs-report` | Backend | NOT DELIVERED | CR-001/CR-004 |
 | BE-2: Lodging payment breakdown | Backend | NOT DELIVERED | Room Orders Report |
 | **Waiter cash transfer API** | **Backend** | **FLAGGED — 404** | **CR-015. Need `POST /waiter/cash-transfer` with `{from_waiter_id, to_waiter_id, amount, date}`. UI placeholder built.** |
-| **CR-019: `first_login` flag reliability for auto-redirect** | **Backend** | **OPEN — BQ-019-1** | **CR-019. Login API returns `first_login: "false"` (string) for existing restaurants. Questions: (1) Does `first_login` return `"true"` for brand-new restaurants on their very first login? (2) Does it auto-reset to `"false"` after first login, or does it require an explicit backend call to mark setup complete? (3) Is there a better signal (e.g., `setup_complete` flag or empty `settings-list` response) to detect an unconfigured restaurant? FE needs a reliable trigger to auto-redirect new restaurants to the setup wizard. Without backend confirmation, FE will use manual navigation only (sidebar link).** |
+| **CR-019: `first_login` auto-redirect** | **Backend** | **DEFERRED — BQ-019-1** | **CR-019. Owner decision 2026-06-10: No auto-redirect for now. `first_login` flag not reliable for this purpose. FE will use manual sidebar navigation only. Auto-redirect to setup wizard is a future enhancement — backend to provide a reliable signal (e.g., `setup_complete` flag) when ready.** |
 
 ---
 
