@@ -51,7 +51,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const { categories, products, popularFood } = useMenu();
   const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged, waitForOrderReady, getOrderByTableId, getOrderById } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
-  const { restaurant, cancellation, settings, printerAgents } = useRestaurant();
+  const { restaurant, features, cancellation, settings, printerAgents } = useRestaurant();
   const { user, hasPermission, permissions } = useAuth();
   const { updateTableStatus, setTableEngaged, waitForTableEngaged, isTableEngaged } = useTables();
   const { toast } = useToast();
@@ -2121,7 +2121,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       className="absolute top-full left-0 mt-1 rounded-lg shadow-lg z-50 overflow-hidden min-w-[180px] max-h-[400px] overflow-y-auto"
                       style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
                     >
-                      {ORDER_TYPES.map(type => {
+                      {ORDER_TYPES.filter(type => {
+                        if (type.id === 'delivery') return features.delivery;
+                        if (type.id === 'takeAway') return features.takeaway;
+                        return true;
+                      }).map(type => {
                         const Icon = type.icon;
                         const isActive = orderType === type.id;
                         return (
