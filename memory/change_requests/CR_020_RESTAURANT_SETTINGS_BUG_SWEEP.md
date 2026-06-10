@@ -798,7 +798,8 @@ After:
 | 1 | Bug Registration | DONE |
 | 2 | Impact Analysis | DONE (Section 2) |
 | 3 | Implementation Plan (line-by-line) | DONE (Section 3) |
-| 4–6 Phase 1 | Code → QA → Owner Smoke | PENDING |
-| 4–6 Phase 2 | Code → QA → Owner Smoke | BLOCKED on Phase 1 |
-| 4–6 Phase 3 | Code → QA → Owner Smoke | BLOCKED on Phase 2 |
-| 4–6 Phase 4 | Code → QA → Owner Smoke | PENDING (B2 closed, B11 plan ready) |
+| 4–6 Phase 1 | Code → QA → Owner Smoke | DONE — all signed off |
+| 4–6 Phase 2 | Code → QA → Owner Smoke | DONE — all signed off |
+| 4–6 Phase 3 | Code → QA → Owner Smoke | DONE — all signed off |
+| 4–6 Phase 4 | Code → QA → Owner Smoke | Code DONE, QA DONE — awaiting owner smoke test |
+| B12–B15 | Code → QA → Owner Smoke | Code DONE, QA DONE — awaiting owner smoke test |
