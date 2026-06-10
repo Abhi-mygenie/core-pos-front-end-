@@ -1152,7 +1152,7 @@ export const toAPI = {
       cust_anniversary:           customer?.anniversary || '',
       cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
-      payment_method:             method,
+      payment_method:             splitPayments?.length > 0 ? 'partial' : method,
       // BUG-058 (Wave 7): PayLater in prepaid path must be treated as postpaid.
       // Backend expects payment_status 'sucess' (literal typo) + payment_type
       // 'postpaid' — matching the postpaid PayLater collect-bill contract.
@@ -1219,7 +1219,13 @@ export const toAPI = {
       discount_member_category_name: discounts.discountMemberCategoryName || '',
       usage_id:                   '',
       cart,
-      partial_payments:           partialPayments,
+      // CR-021 parity: only attach partial_payments when split (mirrors collectBillExisting L1434)
+      ...(splitPayments?.length > 0 ? { partial_payments: splitPayments.map(p => ({
+        payment_mode:   p.method,
+        payment_amount: parseFloat(p.amount) || 0,
+        grant_amount:   parseFloat(p.amount) || 0,
+        transaction_id: p.transactionId || '',
+      })) } : {}),
       // OQ-PA-13: empty when print_kot:'No'. OQ-PA-9: never omit the key.
       printer_agent:              printerAgentForPlace,
       // BUG-007 / BUG-016 (Apr-2026): always emit `delivery_address` key — full
