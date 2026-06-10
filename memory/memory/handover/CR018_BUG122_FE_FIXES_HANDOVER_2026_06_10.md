@@ -3,7 +3,7 @@
 **Date:** 2026-06-10
 **Sprint:** POS 4.0
 **Priority:** P1
-**Status:** 3 fixes pending implementation + testing
+**Status:** 3 fixes IMPLEMENTED (2026-06-10) — awaiting owner smoke test
 **Predecessor Session:** BUG-122 closed (owner verified), CR-018 Gates 0–5 complete, backend fields confirmed working
 
 ---

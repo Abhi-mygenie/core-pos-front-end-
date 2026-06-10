@@ -12303,7 +12303,7 @@
       "id": "CR-018",
       "type": "CR",
       "title": "Schedule Order — Place orders for future date/time",
-      "status": "IMPLEMENTED",
+      "status": "IMPLEMENTED + POST-DELIVERY FIX",
       "priority": "P1",
       "sprint": "POS 4.0",
       "opened": "2026-06-09",
@@ -12323,18 +12323,18 @@
       "impact_analysis_doc": "/app/memory/memory/change_requests/CR_018_IMPACT_ANALYSIS.md",
       "implementation_plan_doc": "/app/memory/memory/change_requests/CR_018_IMPLEMENTATION_PLAN.md",
       "code_gate_doc": "/app/memory/memory/change_requests/code_gates/CR_018_SCHEDULE_ORDER_CODE_GATE_2026_06_09.md",
-      "notes": "Schedule orders for future date/time. Payload keys scheduled=1 + schedule_at already exist in orderTransform.js (hardcoded 0/null). Dine-In + TakeAway + Walk-In. 15-min interval picker. Backend escalation: scheduled orders not in running orders API."
+      "notes": "Schedule orders for future date/time. Payload keys scheduled=1 + schedule_at already exist in orderTransform.js (hardcoded 0/null). Dine-In + TakeAway + Walk-In. 15-min interval picker. Backend escalation: scheduled orders not in running orders API. POST-DELIVERY FIX (2026-06-10): schedule_at trailing space removed (was sending midnight 00:00:00), Place Order disable guard strengthened to require time component."
     },
     {
       "id": "BUG-122",
       "type": "bug",
       "title": "POS orders with fOrderStatus 7 incorrectly trigger ScanOrderPopOut popup",
-      "status": "IMPLEMENTED",
+      "status": "IMPLEMENTED + POST-DELIVERY FIX",
       "priority": "P1",
       "sprint": "POS 4.0",
       "opened": "2026-06-10",
-      "area": "Dashboard / ScanOrderPopOut / OrderCard",
-      "completeness": "4/7",
+      "area": "Dashboard / ScanOrderPopOut / OrderCard / TableCard",
+      "completeness": "5/7",
       "registered_at": "2026-06-10",
       "artifacts": {
         "art0_registration": "PRESENT",
@@ -12342,12 +12342,13 @@
         "art2_impact_analysis": "PRESENT",
         "art3_implementation_plan": "PRESENT",
         "art4_code_gate": "PRESENT",
-        "art5_impl_summary_qa": "PENDING",
+        "art5_impl_summary_qa": "PRESENT",
         "art6_owner_smoke": "PENDING"
       },
       "intake_doc": "/app/memory/memory/bugs/BUG_122_POS_YTC_POPUP_INTAKE_AND_PLAN.md",
-      "files": "ScanOrderPopOut.jsx, OrderCard.jsx",
-      "notes": "isUnconfirmedScanOrder predicate uses fOrderStatus===7 as web proxy but backend assigns status 7 to POS orders too. Fix: add && order.isWebOrder. POS YTC orders get tick button instead of Accept/Reject."
+      "handover_doc": "/app/memory/memory/handover/CR018_BUG122_FE_FIXES_HANDOVER_2026_06_10.md",
+      "files": "ScanOrderPopOut.jsx, OrderCard.jsx, TableCard.jsx",
+      "notes": "isUnconfirmedScanOrder predicate uses fOrderStatus===7 as web proxy but backend assigns status 7 to POS orders too. Fix: add && order.isWebOrder. POS YTC orders get tick button instead of Accept/Reject. POST-DELIVERY FIXES (2026-06-10): (1) Cancel X button added to POS YTC on OrderCard (owner confirmed X+tick needed). (2) Snooze clock gated to web-only on TableCard (table.isWebOrder===true)."
     },
     {
       "id": "CR-019",
