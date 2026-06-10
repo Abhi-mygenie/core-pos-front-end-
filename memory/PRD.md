@@ -1,7 +1,7 @@
 # Core POS Frontend - PRD
 
 ## Original Problem Statement
-Deploy React frontend POS application from GitHub repo (https://github.com/Abhi-mygenie/core-pos-front-end-.git, branch: 10-june). Frontend-only app connecting to external backend at https://preprod.mygenie.online/. Then register and implement CR-019: Restaurant Settings Self-Onboarding Wizard.
+Deploy React frontend POS application from GitHub repo (https://github.com/Abhi-mygenie/core-pos-front-end-.git, branch: 10-june). Frontend-only app connecting to external backend at https://preprod.mygenie.online/. Register and implement CR-019 (Restaurant Settings Wizard). Implement BUG-122/CR-018 post-delivery fixes from handover.
 
 ## Architecture
 - **Frontend**: React 19 + CRA + Craco + TailwindCSS + Radix UI + shadcn components
@@ -12,27 +12,28 @@ Deploy React frontend POS application from GitHub repo (https://github.com/Abhi-
 
 ## What's Been Implemented
 
-### Session 1 — Deployment (June 10, 2026)
-- Cloned repo, configured env vars, installed deps, all services running
+### Session — June 10, 2026
 
-### Session 2 — CR-019 Full Lifecycle (June 10, 2026)
-- **Gate 0 (Registration):** CR-019 registered in registry.json, CR_REGISTRY.md, CONTROL_DASHBOARD.md
-- **Gate 1 (Intake):** Full intake doc with 50+ fields mapped, 6-step wizard spec, API endpoints
-- **Gate 2 (Impact Analysis):** 3 new files + 3 modified, zero regression risk
-- **Gate 3 (Implementation Plan):** 6-phase plan with owner gate at each phase
-- **Gate 4 (Code Gate):** Owner GO received — exact diffs approved
-- **Gate 5 (Implementation + QA):** All 6 phases implemented. Testing: 18/18 passed (100%)
-  - `restaurantSettingsService.js` — GET settings-list + POST update-settings
-  - `restaurantSettingsTransform.js` — toBool/toYesNo, fromAPI, toAPI
-  - `RestaurantSettingsPage.jsx` — 6-step wizard with stepper, validation, save
-  - App.js route, Sidebar.jsx entry, constants.js endpoints
-- **BQ-019-1:** first_login auto-redirect DEFERRED to Open Gaps Register
+**CR-019: Restaurant Settings Self-Onboarding Wizard**
+- Gates 0-5 complete (Registration → Intake → Impact Analysis → Implementation Plan → Code Gate → Implementation + QA)
+- 6-step wizard at `/restaurant-settings` with left-rail stepper
+- 3 new files + 3 modified, 18/18 tests passed
+- Gate 6 (Owner Smoke) pending
 
-## CR-019 Gate Status
-- Gate 0 ✅ | Gate 1 ✅ | Gate 2 ✅ | Gate 3 ✅ | Gate 4 ✅ | **Gate 5 ✅** | Gate 6 ⏳ (Owner Smoke)
+**BUG-122 Post-Delivery Fixes (3 FE fixes)**
+- Fix #1: Cancel X button on POS YTC OrderCard (OrderCard.jsx)
+- Fix #2: Snooze web-only gate on TableCard (TableCard.jsx)
+- Fix #3: schedule_at time fix + disable guard (CartPanel.jsx)
+- All implemented, awaiting owner smoke
+
+**BQ-019-1: first_login auto-redirect** — DEFERRED in Open Gaps Register
+
+## Pending Owner Actions
+- CR-019 Gate 6: Full smoke test of wizard
+- BUG-122/CR-018: Smoke test 3 post-delivery fixes
 
 ## Backlog
-- P0: CR-019 Gate 6 — Owner full smoke test
+- P0: Owner smoke tests (CR-019, BUG-122 fixes, CR-018 fix)
 - P1: BQ-019-1 — Auto-redirect for first-time restaurants (backend signal needed)
-- P2: localStorage draft persistence for partial wizard progress
+- P2: localStorage draft persistence for wizard partial progress
 - P2: Operating hours / tables / printers in wizard (separate APIs)
