@@ -639,9 +639,9 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 ### Phase 4 — Dashboard Channel Visibility (B2 closed, B11 new)
 | Step | Action | Status |
 |------|--------|--------|
-| 4d | Code Implementation | PENDING |
-| 5d | QA / Automated Test | PENDING |
-| **6d** | **Owner Smoke Test + Signoff** | **BLOCKED until 5d** |
+| 4d | Code Implementation | DONE |
+| 5d | QA / Automated Test | DONE — 100% passed (iteration_5) |
+| **6d** | **Owner Smoke Test + Signoff** | **READY FOR OWNER** |
 
 **Scope:** B2 (CLOSED — not a bug), B11 (order type dropdown shows disabled channels)
 **Files:** `OrderEntry.jsx`
