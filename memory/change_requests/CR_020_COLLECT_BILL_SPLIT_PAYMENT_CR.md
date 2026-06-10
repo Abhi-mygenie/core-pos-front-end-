@@ -305,6 +305,37 @@ Block — fix CANNOT ship without these answers:
 
 ---
 
+## 7A. LIVE EVIDENCE — Owner screenshots 2026-06-10
+
+Two screenshots captured on `preprod.mygenie.online` during owner walkthrough confirm the B3 → B4 exploit chain on a real ₹462 bill:
+
+**Screenshot 1 — B3 reproduction**
+- State: Cash ₹100 + UPI ₹200 + Card row amount = empty + Card Txn ID = empty (red border) → Remaining: ₹162.00
+- Pay button: **DISABLED** (faded green), labelled `Pay ₹462`
+- Confirms: Card Txn ID validator fires even though Card row amount is ₹0. Cashier is blocked despite Card not being used.
+
+**Screenshot 2 — B3 bypass → B4 trigger (worst-case exploit)**
+- State: identical to #1 except Card Txn ID = `2222` (any 4 digits) → Remaining: ₹162.00
+- Pay button: **ENABLED** (full green), labelled `Pay ₹462`
+- Confirms: validator falls silent once `txnId.length === 4`, regardless of card amount. No `Σ amounts >= total` rule fires. The Remaining ₹162.00 label is displayed **directly above** the Pay button that claims ₹462 will be collected — UI is self-contradictory.
+
+**Net effect when cashier presses Pay in Screenshot 2:**
+1. Frontend POSTs `BILL_PAYMENT` with `payment_amount: 462`.
+2. Per **B1**, `partial_payments[]` is dropped from the payload (transform L1436 `method === 'partial'` gate misses).
+3. Backend records full ₹462 against the single top-level `payment_mode` (whatever `paymentMethod` was last set to, e.g. `'cash'`).
+4. Cash drawer is short by ₹162; reconciliation looks clean on paper. **Silent money loss.**
+
+This single trace exercises B1 + B3 + B4 simultaneously. B2 (stale-validation-on-bill-change) is independent and not exercised by these screenshots.
+
+**QA reproduction recipe (post-fix verification):**
+1. Engage any dine-in order with grand total ≥ ₹300.
+2. Open Collect Bill → Split → By Payment.
+3. Enter Cash ₹100 + UPI ₹200, leave Card empty.
+4. Pre-fix: Pay button disabled; type `1234` in Card Txn ID; Pay button enables and reads full bill amount.
+5. Post-fix expectation: Card Txn ID must be neutral (not red) when Card amount = 0; Pay button must remain disabled with a "Split sum (₹300) is less than total (₹462)" hint; entering any Txn ID must NOT unlock the button while Remaining > 0.
+
+---
+
 ## 8. CROSS-REF
 - Predecessor inline-tracked bugs in same rail: **BUG-001, BUG-002, BUG-080, BUG-113, BUG-240, BUG-241, BUG-252, BUG-273**.
 - Sibling open CR (sprint pos_4_0): **CR-018 (Schedule Order)** — independent code path, can ship in parallel.
