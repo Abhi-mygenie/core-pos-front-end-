@@ -43,6 +43,12 @@ The label "Default GST %" doesn't explain what this value does. Cashiers/owners 
 
 **Fix:** Rename label to something descriptive, e.g. "Default GST % (applied when item has no specific rate)" or add a `hint` prop explaining the purpose. Owner to confirm exact wording.
 
+**Impact Analysis:**
+- **Scope:** UI-only, 1 line in `RestaurantSettingsPage.jsx` (line 436)
+- **Cross-refs:** `gstTax` is mapped to API field `gst_tax` (advanced). Read by `profileTransform.js:168` for billing calculations, `reportTransform.js:93` for reports, `orderTransform.js:657+` for order tax computation. **None of these are affected** — only the display label changes.
+- **Risk:** ZERO — label/hint text change, no data or logic impact.
+- **Backend:** No change.
+
 ---
 
 ### CR-020-B13 — GST Mode hint text is static/misleading (MEDIUM)
@@ -58,6 +64,12 @@ The hint below the GST Mode dropdown always says `"Category" = different GST per
 **Fix:** Make hint dynamic based on `s1.gstMode`:
 - `category` → "Each menu item/category can have its own GST rate"
 - `flat` → "One GST rate applies to all items across the restaurant"
+
+**Impact Analysis:**
+- **Scope:** UI-only, 1 line in `RestaurantSettingsPage.jsx` (line 435). Replace static `hint` string with a ternary on `s1.gstMode`.
+- **Cross-refs:** `gstMode` maps to API field `restaurent_gst` (advanced). Read only at `restaurantSettingsTransform.js:49` (read) and `:208` (write). No other file consumes this value.
+- **Risk:** ZERO — hint text change, no data impact.
+- **Backend:** No change.
 
 ---
 
@@ -77,6 +89,12 @@ options={[{ value: 'category', label: 'Item Level' }, { value: 'flat', label: 'R
 ```
 
 **Note:** The `value` sent to the API stays `'category'` / `'flat'` — only the display label changes. Zero backend impact.
+
+**Impact Analysis:**
+- **Scope:** UI-only, 1 line in `RestaurantSettingsPage.jsx` (line 435). Change `label` strings in the `options` array.
+- **Cross-refs:** The `value` field (`'category'`/`'flat'`) is what gets saved to API as `restaurent_gst`. Values are untouched — only the human-readable labels change.
+- **Risk:** ZERO — display-only change.
+- **Backend:** No change. API still receives `'category'` or `'flat'`.
 
 ---
 
@@ -99,6 +117,14 @@ Currently the frontend:
 2. Change transform read to use `toBool()` (line 44): `shortCode: toBool(basic.short_code)`
 3. Change transform write to use `toYesNo()` (line 153): `short_code: toYesNo(s1.shortCode)`
 4. Change `INITIAL_FORM.step1.shortCode` from `''` to `false` (line 25)
+
+**Impact Analysis:**
+- **Scope:** 4 locations across 2 files:
+  - `RestaurantSettingsPage.jsx` line 25 (initial state), line 423 (UI component)
+  - `restaurantSettingsTransform.js` line 44 (fromAPI), line 153 (toAPI)
+- **Cross-refs:** `shortCode` / `short_code` is used ONLY in the restaurant settings wizard and its transform. No other file reads or writes this field. Confirmed via grep — 4 hits total, all in these 2 files.
+- **Risk:** LOW — type changes from string to boolean in form state, but fully contained. The API value stays `"Yes"`/`"No"` string, matching what the backend already sends.
+- **Backend:** No change. `toYesNo()` produces the same `"Yes"`/`"No"` strings the backend expects.
 
 
 
