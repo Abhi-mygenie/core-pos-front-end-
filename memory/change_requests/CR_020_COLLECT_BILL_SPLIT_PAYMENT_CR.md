@@ -3,7 +3,7 @@
 **Registered:** 2026-06-10
 **Sprint:** pos_4_0
 **Priority:** P0 (money-impacting — cashier can collect mismatched amounts; payload data loss)
-**Status:** OPEN — GATE 2 (Intake + Discovery done; Impact + Plan drafted; awaiting owner go on fix options)
+**Status:** OPEN — GATE 5 (Owner Decision Queue, partial — 2 of 5 picks recorded; awaiting 3 final picks before Gate 6 Code)
 **Owner:** Abhi
 **Reporter:** Owner (chat, 2026-06-10)
 
@@ -279,13 +279,13 @@ No backend changes required (backend already accepts the `partial_payments` shap
 
 Block — fix CANNOT ship without these answers:
 
-| ID | Decision needed | Recommendation |
-|----|-----------------|----------------|
-| OD-020-1 | B1 fix Option A vs B vs C | **C** (drop transform gate; keep UI behaviour intact) |
-| OD-020-2 | B2 re-clamp behaviour: proportional scale-down vs zero-out vs reset-last-row | **proportional scale-down** |
-| OD-020-3 | B2 on `effectiveTotal` **rise**: no-op vs auto-distribute | **no-op** |
-| OD-020-4 | B4 strict `<` vs strict `!==` | **`<`** (parity with existing cash rule) |
-| OD-020-5 | B3 follow-up: auto-hide Card Txn ID input when amount=0 vs keep visible-neutral | **keep visible-neutral** |
+| ID | Decision needed | Recommendation | Owner pick | Source |
+|----|-----------------|----------------|------------|--------|
+| OD-020-1 | B1 fix Option A vs B vs C | **C** (drop transform gate; keep UI behaviour intact) | OPEN | — |
+| OD-020-2 | B2 behaviour on `effectiveTotal` **drop**: proportional scale-down vs **clear-all** vs reset-last-row | originally "proportional"; owner overrode | **CLEAR ALL** (owner chat 2026-06-10) | chat |
+| OD-020-3 | B2 on `effectiveTotal` **rise**: no-op vs auto-distribute vs clear-all | **no-op** | OPEN | — |
+| OD-020-4 | B4 strict `Σ < total` vs strict `Σ !== total` | **`<`** (parity with existing cash rule) | OPEN | — |
+| OD-020-5 | B3 reframed (owner clarification 2026-06-10): the visible defect is Pay-button-enables-on-junk-Txn-ID + under-collection. Fix BOTH halves — (a) gate Card Txn ID validator on `amount > 0`, AND (b) ship B4 sum-check together (they must land in the same patch). Card Txn ID input visual when amount=0: keep visible-neutral vs auto-hide. | **fix both halves; visible-neutral input** | **CONFIRMED (both halves) — visible-neutral OPEN** | chat |
 
 ---
 
