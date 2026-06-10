@@ -516,7 +516,20 @@ export const reportFromAPI = {
       id: order.id,
       orderId: order.restaurant_order_id || `#${order.id}`,
       amount: formatAmount(order.order_amount),
-      subtotal,
+      subtotal: formatAmount(order.order_sub_total_without_tax) || subtotal,
+
+      // Financial fields from order object (parity with orderLogsReportRow)
+      itemTotal:            formatAmount(order.order_sub_total_amount),
+      gstAmount:            formatAmount(order.total_gst_tax_amount),
+      vatAmount:            formatAmount(order.total_vat_tax_amount),
+      serviceChargeAmount:  formatAmount(order.total_service_tax_amount),
+      tipAmount:            formatAmount(order.tip_amount),
+      roundOff:             formatAmount(order.round_up),
+      discountAmount:       formatAmount(order.restaurant_discount_amount),
+      couponCode:           order.coupon_code || null,
+      couponAmount:         formatAmount(order.coupon_discount_amount),
+      deliveryChargeGst:    formatAmount(order.delivery_charge_gst),
+      orderNote:            order.order_note || null,
 
       // BUG-039 (May-2026): expose backend's delivery_charge as its own field
       // on the row object so OrderDetailSheet can render a separate "Delivery

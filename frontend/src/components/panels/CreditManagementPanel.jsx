@@ -191,8 +191,8 @@ const CreditManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
         });
       }
 
-      const totalCredit = credits.reduce((s, c) => s + c.amount, 0);
-      const totalPaid = debits.reduce((s, d) => s + d.amount, 0);
+      const totalCredit = detail.summary?.totalCreditAmount || credits.reduce((s, c) => s + c.amount, 0);
+      const totalPaid = detail.summary?.totalDebitAmount || debits.reduce((s, d) => s + d.amount, 0);
 
       writeCreditStatement(win, {
         customer,
@@ -244,9 +244,9 @@ const CreditManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
         id: d.id, amount: parseFloat(d.debit_order_amount) || 0, currentBalance: parseFloat(d.current_balance) || 0,
         paymentMethod: d.payment_status || '', createdAt: d.created_at || null,
       }));
-      const totalCredit = credits.reduce((s, c) => s + c.amount, 0);
-      const totalPaid = debits.reduce((s, d) => s + d.amount, 0);
-      const detail = { credits, debits, summary: { totalCredit, totalPaid, balance: totalCredit - totalPaid, tapStartDate: raw?.meta?.tapStartDate || null } };
+      const totalCredit = raw?.meta?.totalCreditAmount || credits.reduce((s, c) => s + c.amount, 0);
+      const totalPaid = raw?.meta?.totalDebitAmount || debits.reduce((s, d) => s + d.amount, 0);
+      const detail = { credits, debits, summary: { totalCredit, totalPaid, balance: totalCredit - totalPaid, tapStartDate: raw?.meta?.tapStartDate || null, totalCreditAmount: raw?.meta?.totalCreditAmount, totalDebitAmount: raw?.meta?.totalDebitAmount } };
       // Quick statement for SS1 row — no item details (instant)
       await handleGenerateStatement(customer, detail, {}, { isDetailed: false, preOpenedWindow: win });
     } catch (err) {
@@ -287,8 +287,8 @@ const CreditManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
               const raw = await getTabCustomerRecords(c.id);
               const credits = (raw?.credits || []);
               const debits = (raw?.debits || []);
-              const tc = credits.reduce((s, cr) => s + (parseFloat(cr.credit_order_amount) || 0), 0);
-              const tp = debits.reduce((s, d) => s + (parseFloat(d.debit_order_amount) || 0), 0);
+              const tc = raw?.meta?.totalCreditAmount || credits.reduce((s, cr) => s + (parseFloat(cr.credit_order_amount) || 0), 0);
+              const tp = raw?.meta?.totalDebitAmount || debits.reduce((s, d) => s + (parseFloat(d.debit_order_amount) || 0), 0);
               enriched.push({ name: c.name, mobile: c.mobile, totalCredit: tc, totalPaid: tp, outstanding: tc - tp });
             } catch {
               enriched.push({ name: c.name, mobile: c.mobile, totalCredit: 0, totalPaid: 0, outstanding: c.balance || 0 });

@@ -37,6 +37,9 @@ export const getTabCustomerRecords = async (customerId) => {
       lastCreditAmount: d.last_tap_credit_amount || null,
       lastDebitDate: d.last_tap_debit_date || null,
       lastDebitAmount: d.last_tap_debit_amount || null,
+      totalCreditAmount: parseFloat(d.total_tap_credit_amount) || 0,
+      totalDebitAmount: parseFloat(d.total_tap_debit_amount) || 0,
+      balanceAmount: parseFloat(d.tap_balance_amount) || 0,
     },
   };
 };
