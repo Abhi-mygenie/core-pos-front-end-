@@ -37,8 +37,10 @@ const CHANNEL_COLORS = {
 
 const PAYMENT_COLORS = ['#329937', '#F26B33', '#3B82F6', '#EF4444', '#F59E0B', '#8B5CF6'];
 
-const formatCurrency = (val) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+const formatCurrency = (val) => {
+  const hasDecimals = val % 1 !== 0;
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 }).format(val);
+};
 
 const DashboardMockup = () => {
   const navigate = useNavigate();

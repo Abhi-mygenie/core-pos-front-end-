@@ -36,8 +36,10 @@ const GHOST_ROWS = [
   { name: 'Gulab Jamun', category: 'Desserts', station: 'Dessert Counter', qty: 55, revenue: 4400, isVeg: true },
 ];
 
-const formatCurrency = (val) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+const formatCurrency = (val) => {
+  const hasDecimals = val % 1 !== 0;
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 }).format(val);
+};
 
 const EdgeStatesMockup = () => {
   const navigate = useNavigate();

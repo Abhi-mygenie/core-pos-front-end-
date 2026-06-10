@@ -62,7 +62,8 @@ const WAITER_COLUMNS = [
 const fmtCur = (v) => {
   if (v === null || v === undefined) return '—';
   const abs = Math.abs(v);
-  const formatted = abs.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const hasDecimals = abs % 1 !== 0;
+  const formatted = abs.toLocaleString('en-IN', { minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 });
   return `${v < 0 ? '-' : ''}₹${formatted}`;
 };
 

@@ -42,7 +42,8 @@ import { getSingleOrderRoom } from '../../api/services/reportService';
 
 const formatCurrency = (n) => {
   if (n === null || n === undefined || Number.isNaN(n)) return '—';
-  return `₹${Math.round(n).toLocaleString('en-IN')}`;
+  const hasDecimals = n % 1 !== 0;
+  return `₹${n.toLocaleString('en-IN', { minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 })}`;
 };
 
 const formatCheckInDateTime = (rawIso) => {

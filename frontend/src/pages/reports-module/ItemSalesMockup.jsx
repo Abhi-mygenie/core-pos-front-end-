@@ -394,7 +394,7 @@ const ItemSalesMockup = () => {
       : <ChevronDown className="w-3.5 h-3.5 text-zinc-800 inline-block ml-1" />;
   };
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+  const formatCurrency = (val) => { const hasDecimals = val % 1 !== 0; return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 }).format(val); };
 
   return (
     <div className="flex h-screen bg-white font-sans" data-testid="item-sales-report-page">

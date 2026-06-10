@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-const fmtCur = (v) => (!v && v !== 0) ? '' : `\u20B9${Math.round(v).toLocaleString('en-IN')}`;
+const fmtCur = (v) => { if (!v && v !== 0) return ''; const hasDecimals = v % 1 !== 0; return `\u20B9${v.toLocaleString('en-IN', { minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 })}`; };
 const fmtISO = (d) => { const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; };
 const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
 

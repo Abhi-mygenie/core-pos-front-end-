@@ -195,7 +195,7 @@ const PrepServeTimeMockup = () => {
     return { peakHour, fastestHour, slowestDay, fastestDay };
   }, [daily, hourly]);
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+  const formatCurrency = (val) => { const hasDecimals = val % 1 !== 0; return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 }).format(val); };
 
   // ── Export payload builder ──
   const buildExportPayload = () => {

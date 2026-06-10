@@ -37,7 +37,7 @@ import {
 } from 'recharts';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-const fmtCur = (v) => (!v && v !== 0) ? '' : `\u20B9${Math.round(v).toLocaleString('en-IN')}`;
+const fmtCur = (v) => { if (!v && v !== 0) return ''; const hasDecimals = v % 1 !== 0; return `\u20B9${v.toLocaleString('en-IN', { minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 })}`; };
 const fmtDate = (d) => {
   if (!d) return '\u2014';
   const dt = new Date(typeof d === 'string' ? d.replace(' ', 'T') : d);

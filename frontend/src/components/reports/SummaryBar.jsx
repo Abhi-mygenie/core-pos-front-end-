@@ -8,7 +8,9 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
  */
 const formatCurrency = (amount) => {
   if (amount === null || amount === undefined) return '—';
-  return `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+  const n = parseFloat(amount);
+  const hasDecimals = n % 1 !== 0;
+  return `₹${n.toLocaleString('en-IN', { minimumFractionDigits: hasDecimals ? 2 : 0, maximumFractionDigits: 2 })}`;
 };
 
 /**
