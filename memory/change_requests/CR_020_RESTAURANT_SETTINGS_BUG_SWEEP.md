@@ -623,9 +623,9 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 ### Phase 3 — UX Polish (B7, B8, B4)
 | Step | Action | Status |
 |------|--------|--------|
-| 4c | Code Implementation | BLOCKED until Phase 2 signoff |
-| 5c | QA / Automated Test | PENDING |
-| **6c** | **Owner Smoke Test + Signoff** | **BLOCKED until 5c** |
+| 4c | Code Implementation | DONE |
+| 5c | QA / Automated Test | DONE — 100% passed (iteration_4) |
+| **6c** | **Owner Smoke Test + Signoff** | **READY FOR OWNER** |
 
 **Scope:** B7 (error bleed across steps), B8 (number input snaps to 0), B4 (dead imports)
 **Files:** `RestaurantSettingsPage.jsx`
