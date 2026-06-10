@@ -34,11 +34,11 @@
 
 ### CR-020 — Collect Bill Split-Payment defects (pos_4_0) — P0
 - Doc: `memory/change_requests/CR_020_COLLECT_BILL_SPLIT_PAYMENT_CR.md`
-- Status: OPEN — GATE 5 (Owner Decisions, partial — 2 of 5 picks recorded).
-- 4 defects bundled (B1 payload-drop, B2 stale-on-bill-change, B3 Card-Txn-ID-exploit, B4 no sum-check). Combined effect = silent under-collection of cash (confirmed by owner screenshots).
-- Owner picks so far: **B2 → clear-all on bill drop**, **B3 → fix both halves (validator gate + B4 sum-check ship together)**.
-- Blocking next gate (Gate 6 Code): owner picks for OD-020-1 (B1 style), OD-020-3 (B2 on bill rise), OD-020-4 (B4 strictness), OD-020-5 (Card Txn ID visual).
-- Files to touch when unblocked: `components/order-entry/CollectPaymentPanel.jsx`, `api/transforms/orderTransform.js`. No backend changes.
+- Status: **READY FOR GATE 6 (Code)** — all 5 owner decisions locked 2026-06-10. No further owner input required to start coding.
+- 4 defects bundled (B1 payload-drop, B2 stale-on-bill-change, B3 Card-Txn-ID-exploit, B4 no sum-check). Combined effect = silent under-collection of cash (confirmed by owner screenshots, see §7A).
+- Locked picks: **B1 → drop transform gate (Option C)** · **B2 drop → clear-all** · **B2 rise → clear-all** · **B4 → block on Σ < total only** · **B3 → visible-neutral Txn ID input + amount-gate**.
+- Files to touch: `components/order-entry/CollectPaymentPanel.jsx`, `api/transforms/orderTransform.js`. No backend changes.
+- Execution order (lowest-risk first): B3 → B4 → B2 → B1.
 
 ## Implementation-agent handoff checklist (when picking up CR-020)
 1. Read `memory/change_requests/CR_020_COLLECT_BILL_SPLIT_PAYMENT_CR.md` end-to-end — §2 has root-cause file:line refs, §4 has the patch recipe, §7A has the live screenshot evidence and QA repro recipe.

@@ -3,7 +3,7 @@
 **Registered:** 2026-06-10
 **Sprint:** pos_4_0
 **Priority:** P0 (money-impacting — cashier can collect mismatched amounts; payload data loss)
-**Status:** OPEN — GATE 5 (Owner Decision Queue, partial — 2 of 5 picks recorded; awaiting 3 final picks before Gate 6 Code)
+**Status:** READY FOR GATE 6 (Code) — all 5 owner decisions locked 2026-06-10. Awaiting implementation agent pickup.
 **Owner:** Abhi
 **Reporter:** Owner (chat, 2026-06-10)
 
@@ -275,17 +275,37 @@ No backend changes required (backend already accepts the `partial_payments` shap
 
 ---
 
-## 6. OWNER DECISION QUEUE
+## 6. OWNER DECISION QUEUE — LOCKED 2026-06-10
 
-Block — fix CANNOT ship without these answers:
+All 5 decisions confirmed by owner via chat 2026-06-10. Implementation agent: **do NOT deviate** from any pick below without re-asking the owner.
 
-| ID | Decision needed | Recommendation | Owner pick | Source |
-|----|-----------------|----------------|------------|--------|
-| OD-020-1 | B1 fix Option A vs B vs C | **C** (drop transform gate; keep UI behaviour intact) | OPEN | — |
-| OD-020-2 | B2 behaviour on `effectiveTotal` **drop**: proportional scale-down vs **clear-all** vs reset-last-row | originally "proportional"; owner overrode | **CLEAR ALL** (owner chat 2026-06-10) | chat |
-| OD-020-3 | B2 on `effectiveTotal` **rise**: no-op vs auto-distribute vs clear-all | **no-op** | OPEN | — |
-| OD-020-4 | B4 strict `Σ < total` vs strict `Σ !== total` | **`<`** (parity with existing cash rule) | OPEN | — |
-| OD-020-5 | B3 reframed (owner clarification 2026-06-10): the visible defect is Pay-button-enables-on-junk-Txn-ID + under-collection. Fix BOTH halves — (a) gate Card Txn ID validator on `amount > 0`, AND (b) ship B4 sum-check together (they must land in the same patch). Card Txn ID input visual when amount=0: keep visible-neutral vs auto-hide. | **fix both halves; visible-neutral input** | **CONFIRMED (both halves) — visible-neutral OPEN** | chat |
+| ID | Decision needed | Owner pick | Source |
+|----|-----------------|------------|--------|
+| **OD-020-1** | B1 fix style | **DROP** the `method === 'partial' &&` gate in `orderTransform.js` `collectBillExisting` (Option C). Keeps the UI untouched; symmetric with `placeOrderWithPayment` which already uses only `splitPayments?.length`. | chat 2026-06-10 |
+| **OD-020-2** | B2 behaviour on `effectiveTotal` **drop** (bill goes down due to discount/etc.) | **CLEAR ALL** split amounts. Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
+| **OD-020-3** | B2 behaviour on `effectiveTotal` **rise** (bill goes up due to tip/SC/etc.) | **CLEAR ALL** split amounts (same as drop, for consistency). Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
+| **OD-020-4** | B4 Pay-button sum check strictness | **UNDER-ONLY** — block when `Σ amounts < effectiveTotal`. Allow `Σ ≥ effectiveTotal` (over-collection treated as cash change, parity with existing cash-row rule at L3058). | chat 2026-06-10 |
+| **OD-020-5** | B3 Card Txn ID input visual when amount = 0 | **VISIBLE-NEUTRAL** — keep the input rendered; remove the red border / pink background / "4 digits" hint when `parseFloat(sp.amount) === 0`. Layout does not shift. | chat 2026-06-10 |
+
+### 6.1 Locked behaviour summary (single source of truth for the implementer)
+
+After all 4 patches land, the Collect Bill split-payment rail must behave as follows:
+
+1. **Split toggle ON** → 1 row per enabled primary method (existing BUG-080 behaviour, unchanged). `paymentMethod` state is left alone (existing) — fix is in the transform, not the UI flag.
+2. **Card row, amount = 0** → Txn ID input renders **neutral** (default grey border, white background). No "4 digits" hint. Pay button is NOT blocked by an empty Txn ID on that row.
+3. **Card row, amount > 0** → Txn ID input renders red until 4 digits entered (existing BUG-241 behaviour, unchanged). Pay button blocked until 4 digits.
+4. **Discount / service charge / tip / coupon / loyalty / wallet changes** → `effectiveTotal` changes → **all split amounts clear to empty** (both directions: drop and rise). The "Remaining" label naturally recomputes; cashier re-enters.
+5. **Pay button** → disabled whenever `Σ splitPayments[].amount < effectiveTotal` (new B4 rule). Existing per-row Card Txn ID rule still applies but **only on rows with amount > 0** (new B3 amount-gate). Existing rules for non-split flows untouched.
+6. **BILL_PAYMENT payload** → `partial_payments[]` is attached whenever `splitPayments?.length > 0`, regardless of `paymentData.method` (new B1 fix). Existing top-level `payment_mode` / `payment_amount` fields are left alone — backend continues to see the same shape that `placeOrderWithPayment` already sends.
+7. **Place+Pay prepaid (PLACE_ORDER)** → unchanged. Already correct.
+8. **Transfer-to-Room, TAB/Credit, single-method flows** → unchanged.
+
+### 6.2 Non-negotiables (regression guards)
+
+- **BUG-113 (POS 4.0)** "no real-time keystroke clamping" stays intact. The new B2 clear-on-bill-change effect must fire on **`effectiveTotal` changing**, not on input keystrokes.
+- **BUG-241** Card Txn ID 4-digit format stays intact when card amount > 0.
+- **BUG-001 / BUG-002 / BUG-273** auto-print bill paths are untouched.
+- No backend changes. Confirm via network tab that the existing `BILL_PAYMENT` endpoint accepts `partial_payments[]` (it already does — `placeOrderWithPayment` uses the same shape today).
 
 ---
 
@@ -297,8 +317,8 @@ Block — fix CANNOT ship without these answers:
 | 2 | Discovery | DONE | this file, §2 |
 | 3 | Impact Analysis | DONE | this file, §3 |
 | 4 | Implementation Plan | DONE | this file, §4 |
-| 5 | Owner Decision Queue | OPEN | this file, §6 |
-| 6 | Code Gate | PENDING | — |
+| 5 | Owner Decision Queue | **DONE (locked 2026-06-10)** | this file, §6 |
+| 6 | Code Gate | **READY FOR PICKUP** | — |
 | 7 | Implementation Summary | PENDING | — |
 | 8 | QA Report | PENDING | — |
 | 9 | Owner Smoke / Signoff | PENDING | — |
