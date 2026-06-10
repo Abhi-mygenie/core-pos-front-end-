@@ -625,7 +625,7 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 |------|--------|--------|
 | 4c | Code Implementation | DONE |
 | 5c | QA / Automated Test | DONE — 100% passed (iteration_4) |
-| **6c** | **Owner Smoke Test + Signoff** | **READY FOR OWNER** |
+| **6c** | **Owner Smoke Test + Signoff** | **DONE — Signed off** |
 
 **Scope:** B7 (error bleed across steps), B8 (number input snaps to 0), B4 (dead imports)
 **Files:** `RestaurantSettingsPage.jsx`
