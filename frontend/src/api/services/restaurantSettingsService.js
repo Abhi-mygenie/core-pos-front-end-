@@ -28,8 +28,6 @@ export const updateSettings = async (formState, logoFile = null, pdfFile = null)
   if (logoFile) formData.append('logo', logoFile);
   if (pdfFile) formData.append('pdf', pdfFile);
 
-  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData);
   return response.data;
 };

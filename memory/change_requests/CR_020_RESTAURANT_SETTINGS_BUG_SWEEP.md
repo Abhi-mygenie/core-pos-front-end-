@@ -591,7 +591,7 @@ The global `'Content-Type': 'application/json'` default stays. Once B9 is applie
 ### Phase 1 — Critical Data Fixes (B1, B9, B10)
 | Step | Action | Status |
 |------|--------|--------|
-| 4a | Code Implementation | PENDING |
+| 4a | Code Implementation | DONE |
 | 5a | QA / Automated Test | PENDING |
 | **6a** | **Owner Smoke Test + Signoff** | **BLOCKED until 5a** |
 

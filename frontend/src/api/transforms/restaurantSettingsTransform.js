@@ -163,6 +163,7 @@ export const toAPI = {
         pay_upi: toYesNo(s2.payUpi),
         pay_cc: toYesNo(s2.payCc),
         pay_tab: toYesNo(s2.payTab),
+        online_payment: toYesNo(s2.onlinePayment),
         upi_id: s2.upiId,
         dynamic_upi_value: toYesNo(s2.dynamicUpiValue),
         order_payment_type: s2.orderPaymentType,
