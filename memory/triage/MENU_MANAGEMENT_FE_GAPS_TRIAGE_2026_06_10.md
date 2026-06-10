@@ -4,7 +4,7 @@
 **Status:** TRIAGE — pending preprod validation. None of these are registered CRs/bugs yet.
 **Owner:** Abhi
 **Source:** First-read code analysis by main agent (no preprod testing performed).
-**Promotion path:** Findings that pass preprod validation get registered into a new `CR_021_MENU_MANAGEMENT_*` CR (or rolled into an existing CR if directly related).
+**Promotion path:** Findings that pass preprod validation get registered into a new `CR_022_MENU_MANAGEMENT_*` CR (or rolled into an existing CR if directly related). (Note: CR-021 is allocated to the Collect Bill split-payment defects.)
 
 ---
 
@@ -278,10 +278,10 @@ Findings that get registered will be added to one of:
 
 | Finding category | Promotion target |
 |---|---|
-| Quick Edit data-loss (#1, #3) | New CR-021 (Menu Management — Quick Edit hardening) |
-| DnD reorder (#6) | New CR-021 § DnD-reorder section, OR separate if scope grows |
-| Discount/Tax flow (#7, #8, #9) | New CR-021 § Payload-hygiene section |
-| Edge cases (#2, #4) | CR-021 backlog (P3) or close |
+| Quick Edit data-loss (#1, #3) | New CR-022 (Menu Management — Quick Edit hardening) |
+| DnD reorder (#6) | New CR-022 § DnD-reorder section, OR separate if scope grows |
+| Discount/Tax flow (#7, #8, #9) | New CR-022 § Payload-hygiene section |
+| Edge cases (#2, #4) | CR-022 backlog (P3) or close |
 | Feature gaps (#5, #10) | Separate feature CR(s) or backlog |
 
 **No CR exists yet.** It is created the moment the first finding flips from 🟡 to 🟢 with owner go-ahead.

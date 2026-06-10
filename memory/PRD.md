@@ -23,7 +23,7 @@
 - `frontend/.env` configured with all 14 required env vars.
 - `backend` supervisor service stopped; frontend running on port 3000 — login page renders.
 - Baseline read of project (CRs, BUGs, sprint reconstruction) — see chat log; no canonical sprint board file exists in repo.
-- **CR-020 registered** (see `memory/change_requests/CR_020_COLLECT_BILL_SPLIT_PAYMENT_CR.md`) — 4 defects in the Collect Bill / split-payment rail. Currently at Gate 5 (Owner Decisions, partial).
+- **CR-021 registered** (see `memory/change_requests/CR_021_COLLECT_BILL_SPLIT_PAYMENT_CR.md`) — 4 defects in the Collect Bill / split-payment rail. Currently READY FOR GATE 6 (Code) — all owner decisions locked.
 
 ## Active CRs / Backlog
 
@@ -35,16 +35,16 @@
 - Status: OPEN — GATE 3 (Plan). Phase 1 G1–G4 done in code; G5–G10 pending implementation.
 - Priority: P1.
 
-### CR-020 — Collect Bill Split-Payment defects (pos_4_0) — P0
-- Doc: `memory/change_requests/CR_020_COLLECT_BILL_SPLIT_PAYMENT_CR.md`
+### CR-021 — Collect Bill Split-Payment defects (pos_4_0) — P0
+- Doc: `memory/change_requests/CR_021_COLLECT_BILL_SPLIT_PAYMENT_CR.md`
 - Status: **READY FOR GATE 6 (Code)** — all 5 owner decisions locked 2026-06-10. No further owner input required to start coding.
 - 4 defects bundled (B1 payload-drop, B2 stale-on-bill-change, B3 Card-Txn-ID-exploit, B4 no sum-check). Combined effect = silent under-collection of cash (confirmed by owner screenshots, see §7A).
 - Locked picks: **B1 → drop transform gate (Option C)** · **B2 drop → clear-all** · **B2 rise → clear-all** · **B4 → block on Σ < total only** · **B3 → visible-neutral Txn ID input + amount-gate**.
 - Files to touch: `components/order-entry/CollectPaymentPanel.jsx`, `api/transforms/orderTransform.js`. No backend changes.
 - Execution order (lowest-risk first): B3 → B4 → B2 → B1.
 
-## Implementation-agent handoff checklist (when picking up CR-020)
-1. Read `memory/change_requests/CR_020_COLLECT_BILL_SPLIT_PAYMENT_CR.md` end-to-end — §2 has root-cause file:line refs, §4 has the patch recipe, §7A has the live screenshot evidence and QA repro recipe.
+## Implementation-agent handoff checklist (when picking up CR-021)
+1. Read `memory/change_requests/CR_021_COLLECT_BILL_SPLIT_PAYMENT_CR.md` end-to-end — §2 has root-cause file:line refs, §4 has the patch recipe, §7A has the live screenshot evidence and QA repro recipe.
 2. Confirm all 5 picks in §6 are filled (any OPEN row means STOP — do not code yet).
 3. Implement in the order in §4.2 (B3 → B4 → B2 → B1).
 4. Use `memory/test_credentials.md` (cafe103 owner) for preprod smoke.

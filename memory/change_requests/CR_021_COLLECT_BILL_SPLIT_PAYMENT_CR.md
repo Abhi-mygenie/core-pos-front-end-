@@ -1,4 +1,4 @@
-# CR-020: Collect Bill — Split / Partial Payment Defects
+# CR-021: Collect Bill — Split / Partial Payment Defects
 ## Intake + Discovery + Impact Analysis + Implementation Plan
 **Registered:** 2026-06-10
 **Sprint:** pos_4_0
@@ -281,11 +281,11 @@ All 5 decisions confirmed by owner via chat 2026-06-10. Implementation agent: **
 
 | ID | Decision needed | Owner pick | Source |
 |----|-----------------|------------|--------|
-| **OD-020-1** | B1 fix style | **DROP** the `method === 'partial' &&` gate in `orderTransform.js` `collectBillExisting` (Option C). Keeps the UI untouched; symmetric with `placeOrderWithPayment` which already uses only `splitPayments?.length`. | chat 2026-06-10 |
-| **OD-020-2** | B2 behaviour on `effectiveTotal` **drop** (bill goes down due to discount/etc.) | **CLEAR ALL** split amounts. Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
-| **OD-020-3** | B2 behaviour on `effectiveTotal` **rise** (bill goes up due to tip/SC/etc.) | **CLEAR ALL** split amounts (same as drop, for consistency). Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
-| **OD-020-4** | B4 Pay-button sum check strictness | **UNDER-ONLY** — block when `Σ amounts < effectiveTotal`. Allow `Σ ≥ effectiveTotal` (over-collection treated as cash change, parity with existing cash-row rule at L3058). | chat 2026-06-10 |
-| **OD-020-5** | B3 Card Txn ID input visual when amount = 0 | **VISIBLE-NEUTRAL** — keep the input rendered; remove the red border / pink background / "4 digits" hint when `parseFloat(sp.amount) === 0`. Layout does not shift. | chat 2026-06-10 |
+| **OD-021-1** | B1 fix style | **DROP** the `method === 'partial' &&` gate in `orderTransform.js` `collectBillExisting` (Option C). Keeps the UI untouched; symmetric with `placeOrderWithPayment` which already uses only `splitPayments?.length`. | chat 2026-06-10 |
+| **OD-021-2** | B2 behaviour on `effectiveTotal` **drop** (bill goes down due to discount/etc.) | **CLEAR ALL** split amounts. Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
+| **OD-021-3** | B2 behaviour on `effectiveTotal` **rise** (bill goes up due to tip/SC/etc.) | **CLEAR ALL** split amounts (same as drop, for consistency). Cashier re-enters from scratch on the new total. | chat 2026-06-10 |
+| **OD-021-4** | B4 Pay-button sum check strictness | **UNDER-ONLY** — block when `Σ amounts < effectiveTotal`. Allow `Σ ≥ effectiveTotal` (over-collection treated as cash change, parity with existing cash-row rule at L3058). | chat 2026-06-10 |
+| **OD-021-5** | B3 Card Txn ID input visual when amount = 0 | **VISIBLE-NEUTRAL** — keep the input rendered; remove the red border / pink background / "4 digits" hint when `parseFloat(sp.amount) === 0`. Layout does not shift. | chat 2026-06-10 |
 
 ### 6.1 Locked behaviour summary (single source of truth for the implementer)
 
