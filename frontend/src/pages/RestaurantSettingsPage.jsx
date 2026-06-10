@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, ArrowRight, Check, Home, CreditCard, Percent,
   Settings, Package, User, Loader2, Upload, FileText, X,
-  Building2, ChevronRight, AlertCircle, SkipForward,
+  ChevronRight, AlertCircle,
 } from "lucide-react";
 import { COLORS } from "../constants";
 import { getSettings, updateSettings } from "../api/services/restaurantSettingsService";
@@ -74,7 +74,10 @@ const NumberInput = ({ label, value, onChange, placeholder, suffix, min, max, st
         className="h-[42px] w-full border rounded-lg px-3.5 text-sm outline-none transition-colors focus:shadow-[0_0_0_3px_rgba(242,107,51,0.08)]"
         style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
         value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        onChange={(e) => {
+          const v = e.target.value;
+          onChange(v === '' ? '' : (parseFloat(v) || 0));
+        }}
         placeholder={placeholder}
         min={min}
         max={max}
@@ -237,30 +240,35 @@ const RestaurantSettingsPage = () => {
   // Update a step's form data
   const updateStep = useCallback((stepKey, field, value) => {
     setFormState((prev) => ({ ...prev, [stepKey]: { ...prev[stepKey], [field]: value } }));
-    setErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
+    setErrors((prev) => { const n = { ...prev }; delete n[`${stepKey}.${field}`]; return n; });
   }, []);
 
   // Validate current step
   const validateStep = (step) => {
+    const stepKey = `step${step}`;
     const errs = {};
     if (step === 1) {
       const s = formState.step1;
-      if (!s.name.trim()) errs.name = 'Restaurant name is required';
-      if (!s.phone.trim()) errs.phone = 'Phone is required';
-      if (!s.address.trim()) errs.address = 'Address is required';
-      if (s.gstEnabled && !s.gstCode.trim()) errs.gstCode = 'GST number is required when GST is enabled';
-      if (s.vatEnabled && !s.vatCode.trim()) errs.vatCode = 'VAT code is required when VAT is enabled';
+      if (!s.name.trim()) errs[`${stepKey}.name`] = 'Restaurant name is required';
+      if (!s.phone.trim()) errs[`${stepKey}.phone`] = 'Phone is required';
+      if (!s.address.trim()) errs[`${stepKey}.address`] = 'Address is required';
+      if (s.gstEnabled && !s.gstCode.trim()) errs[`${stepKey}.gstCode`] = 'GST number is required when GST is enabled';
+      if (s.vatEnabled && !s.vatCode.trim()) errs[`${stepKey}.vatCode`] = 'VAT code is required when VAT is enabled';
     } else if (step === 2) {
       const s = formState.step2;
-      if (![s.dineIn, s.takeAway, s.delivery, s.room].some(Boolean)) errs.channels = 'Select at least one service channel';
-      if (![s.payCash, s.payUpi, s.payCc, s.payTab, s.onlinePayment].some(Boolean)) errs.payments = 'Select at least one payment method';
+      if (![s.dineIn, s.takeAway, s.delivery, s.room].some(Boolean)) errs[`${stepKey}.channels`] = 'Select at least one service channel';
+      if (![s.payCash, s.payUpi, s.payCc, s.payTab, s.onlinePayment].some(Boolean)) errs[`${stepKey}.payments`] = 'Select at least one payment method';
     } else if (step === 6) {
       const s = formState.step6;
-      if (!s.firstName.trim()) errs.firstName = 'First name is required';
-      if (!s.lastName.trim()) errs.lastName = 'Last name is required';
-      if (!s.phone.trim()) errs.phone = 'Phone is required';
+      if (!s.firstName.trim()) errs[`${stepKey}.firstName`] = 'First name is required';
+      if (!s.lastName.trim()) errs[`${stepKey}.lastName`] = 'Last name is required';
+      if (!s.phone.trim()) errs[`${stepKey}.phone`] = 'Phone is required';
     }
-    setErrors(errs);
+    // Merge into existing errors (only replace this step's errors)
+    setErrors((prev) => {
+      const cleaned = Object.fromEntries(Object.entries(prev).filter(([k]) => !k.startsWith(`${stepKey}.`)));
+      return { ...cleaned, ...errs };
+    });
     return Object.keys(errs).length === 0;
   };
 
