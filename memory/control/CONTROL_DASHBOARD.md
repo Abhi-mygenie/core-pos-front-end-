@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-09 — **BUG-120 ALL CLOSED (5/5). BUG-121 CLOSED — OWNER VERIFIED. CR-015 + CR-016 CLOSED.**
+**Last Updated:** 2026-06-10 — **CR-019 REGISTERED (Restaurant Settings Wizard). BUG-120 ALL CLOSED. BUG-121 CLOSED. CR-015 + CR-016 CLOSED.**
 **Deployment Reconciliation:** 2026-06-08 — branch `8-june`; preview URL: https://core-pos-preview-4.preview.emergentagent.com
 
 ---
@@ -48,6 +48,7 @@
 | **BUG-120 CR-014 Menu Mgmt Post-Delivery (5 sub-bugs)** | **GATE 2 COMPLETE** | **A: InputField defined inside render — move to module scope (LOW). B: Image uploads to preprod storage — working, document only (ZERO). C: Variation CRUD UI + form section redesign (HIGH). D: 8 new API fields to wire — is_inventory, packed_food, stock_out, is_disable, tax_calc + 3 more (MEDIUM). E: Socket handler exists but needs verification + category ops handling (MEDIUM).** | **Gate 3 (Implementation Plan) next** |
 | **BUG-121 Category Count + Post-Save Refresh** | **CLOSED — OWNER VERIFIED** | **A: Category count derived from foods array (categories API has no count field). B: 500ms delay on post-save refresh. Both fixes verified.** | **None** |
 | **CR-017 WhatsApp Payment Link** | **Gate 2 COMPLETE** | **P1. All 9 Qs answered. UI mockup approved (OrderCard footer: [KOT][Cancel][WhatsApp]). Impact analysis done. 2 new files + 2 modified files planned. Zero regression risk.** | **Gate 3 (Implementation Plan) next** |
+|| **CR-019 Restaurant Settings Wizard** | **REGISTERED (Gate 0 + Gate 1)** | **P1. 6-step self-onboarding wizard (new module). Steps: Restaurant Identity, Channels & Payments, Charges & Tips, Order & Kitchen, Inventory & Extras, Owner Info. APIs: GET settings-list + POST update-settings. Interactive mockup approved. 3 new files + 3 modified files planned.** | **Gate 2 (Impact Analysis) next** |
 
 ---
 

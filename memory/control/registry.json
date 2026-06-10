@@ -12348,6 +12348,31 @@
       "intake_doc": "/app/memory/memory/bugs/BUG_122_POS_YTC_POPUP_INTAKE_AND_PLAN.md",
       "files": "ScanOrderPopOut.jsx, OrderCard.jsx",
       "notes": "isUnconfirmedScanOrder predicate uses fOrderStatus===7 as web proxy but backend assigns status 7 to POS orders too. Fix: add && order.isWebOrder. POS YTC orders get tick button instead of Accept/Reject."
+    },
+    {
+      "id": "CR-019",
+      "type": "CR",
+      "title": "Restaurant Settings — Self-Onboarding Setup Wizard",
+      "status": "REGISTERED",
+      "priority": "P1",
+      "sprint": "POS 4.0",
+      "opened": "2026-06-10",
+      "area": "Settings / Onboarding",
+      "completeness": "1/7",
+      "registered_at": "2026-06-10",
+      "artifacts": {
+        "art0_registration": "PRESENT",
+        "art1_intake": "PRESENT",
+        "art2_impact_analysis": "PENDING",
+        "art3_implementation_plan": "PENDING",
+        "art4_code_gate": "PENDING",
+        "art5_impl_summary_qa": "PENDING",
+        "art6_owner_smoke": "PENDING"
+      },
+      "intake_doc": "/app/memory/memory/crs/intake/CR_019_INTAKE_2026_06_10.md",
+      "mockup": "/app/frontend/public/mockup-wizard.html",
+      "files": "RestaurantSettingsPage.jsx (NEW), restaurantSettingsService.js (NEW), restaurantSettingsTransform.js (NEW), App.js, Sidebar.jsx, constants.js",
+      "notes": "6-step wizard for restaurant self-onboarding. Steps: 1-Restaurant Identity & Tax (required), 2-Channels & Payments (required), 3-Charges & Tips (optional), 4-Order & Kitchen (optional), 5-Inventory & Extras (optional), 6-Owner Info (required). APIs: GET settings-list + POST update-settings. Interactive mockup at /mockup-wizard.html."
     }
   ]
 }
