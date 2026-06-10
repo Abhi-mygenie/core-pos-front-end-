@@ -22,7 +22,7 @@ const STEPS = [
 ];
 
 const INITIAL_FORM = {
-  step1: { name: '', phone: '', address: '', fssai: '', shortCode: '', logoUrl: null, pdfMenuUrl: null, gstEnabled: false, gstCode: '', gstMode: 'category', gstTax: 0, tax: 0, vatEnabled: false, vatCode: '' },
+  step1: { name: '', phone: '', address: '', fssai: '', shortCode: false, logoUrl: null, pdfMenuUrl: null, gstEnabled: false, gstCode: '', gstMode: 'category', gstTax: 0, tax: 0, vatEnabled: false, vatCode: '' },
   step2: { dineIn: true, takeAway: true, delivery: false, room: false, payCash: true, payUpi: true, payCc: true, payTab: false, onlinePayment: false, upiId: '', dynamicUpiValue: true, orderPaymentType: 'both', showCashOnDelivery: true, walkinOnlinePayment: false, dineinOnlinePayment: false, takeawayOnlinePayment: false, deliveryOnlinePayment: false },
   step3: { serviceCharge: false, autoServiceCharge: false, serviceChargePercentage: 0, serviceChargeTax: 0, tip: true, availableDiscount: true, totalRound: true },
   step4: { defOrdStatus: 2, listServeItem: 'Dynamic', printKot: true, billingAutoBillPrint: false, canclePostServe: true, voiceInKds: true, realTimeOrderStatus: true, showPopularCategory: true, foodLevelNotes: true, showFoodVarriance: false, orderConfirmForWeb: true, showAcNonMenu: false, foodDate: false, searchBy: [] },
@@ -420,8 +420,8 @@ const RestaurantSettingsPage = () => {
                     <TextArea label="Address" required value={s1.address} onChange={(v) => updateStep('step1', 'address', v)} placeholder="Full restaurant address" testId="input-address" />
                   </div>
                   <TextInput label="FSSAI License No." value={s1.fssai} onChange={(v) => updateStep('step1', 'fssai', v)} placeholder="14-digit FSSAI" hint="Printed on bills. Can add later." testId="input-fssai" />
-                  <TextInput label="Short Code" value={s1.shortCode} onChange={(v) => updateStep('step1', 'shortCode', v)} placeholder="e.g. C103" testId="input-shortcode" />
                 </div>
+                <Toggle label="Short Code" hint="Enable short code on bills" checked={s1.shortCode} onChange={(v) => updateStep('step1', 'shortCode', v)} testId="toggle-shortcode" />
                 <div className="flex gap-6 mt-5">
                   <FileUpload label="Restaurant Logo" icon={Upload} accept="image/*" file={logoFile} existingUrl={s1.logoUrl} onSelect={setLogoFile} onClear={() => { setLogoFile(null); updateStep('step1', 'logoUrl', null); }} />
                   <FileUpload label="PDF Menu" icon={FileText} accept=".pdf" file={pdfFile} existingUrl={s1.pdfMenuUrl} onSelect={setPdfFile} onClear={() => { setPdfFile(null); updateStep('step1', 'pdfMenuUrl', null); }} />
@@ -432,8 +432,7 @@ const RestaurantSettingsPage = () => {
                 {s1.gstEnabled && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <TextInput label="GST Number" required value={s1.gstCode} onChange={(v) => updateStep('step1', 'gstCode', v)} placeholder="15-digit GSTIN" testId="input-gst-code" />
-                    <SelectInput label="GST Mode" value={s1.gstMode} onChange={(v) => updateStep('step1', 'gstMode', v)} options={[{ value: 'category', label: 'Category-wise GST' }, { value: 'flat', label: 'Flat GST' }]} hint='"Category" = different GST per menu item' />
-                    <NumberInput label="Default GST %" value={s1.gstTax} onChange={(v) => updateStep('step1', 'gstTax', v)} suffix="%" min={0} max={100} step={0.1} />
+                    <SelectInput label="GST Mode" value={s1.gstMode} onChange={(v) => updateStep('step1', 'gstMode', v)} options={[{ value: 'category', label: 'Item Level' }, { value: 'flat', label: 'Restaurant Level' }]} hint={s1.gstMode === 'category' ? 'Each item/category can have its own GST rate' : 'One GST rate applies to all items restaurant-wide'} />
                     <NumberInput label="Tax %" value={s1.tax} onChange={(v) => updateStep('step1', 'tax', v)} suffix="%" min={0} max={100} />
                   </div>
                 )}

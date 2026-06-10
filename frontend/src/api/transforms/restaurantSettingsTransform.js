@@ -41,7 +41,7 @@ export const fromAPI = {
         phone: basic.phone || '',
         address: basic.address || '',
         fssai: basic.fssai || '',
-        shortCode: basic.short_code || '',
+        shortCode: toBool(basic.short_code),
         logoUrl: basic.logo || null,
         pdfMenuUrl: basic.pdf_menu || null,
         gstEnabled: (basic.gst?.status ?? 0) === 1,
@@ -150,7 +150,7 @@ export const toAPI = {
         inventory_manager_name: s5.inventoryManagerName,
         online_ordering_link: s5.onlineOrderingLink,
         phone_number_on_bill: s5.phoneNumberOnBill,
-        short_code: s1.shortCode,
+        short_code: toYesNo(s1.shortCode),
       },
       advanced: {
         // Step 2 — Channels (preserve original types: dine_in="Yes"/"No", take_away/delivery=bool)
