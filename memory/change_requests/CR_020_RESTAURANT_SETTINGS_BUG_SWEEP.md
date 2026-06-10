@@ -179,39 +179,488 @@ No immediate code change needed — this is a latent risk tied to Bug 9. Fixing 
 
 ---
 
-## 3. PRIORITY ORDER FOR FIXES
+## 3. IMPLEMENTATION PLAN — LINE-BY-LINE CODE DIFFS
 
-| Order | Bug | Reason |
-|-------|-----|--------|
-| 1 | B1 | Data loss on every save — highest user impact |
-| 2 | B9 + B10 | File upload header issues — may cause upload failures |
-| 3 | B2 | Type mismatch — needs backend confirmation |
-| 4 | B3 | Redundant uploads — bandwidth + potential side effects |
-| 5 | B6 | Step navigation bypass — wizard integrity |
-| 6 | B7 | Error bleed — UX confusion |
-| 7 | B8 | Number input UX — minor annoyance |
-| 8 | B5 | Skip guard — preventative |
-| 9 | B4 | Dead imports — hygiene |
+### Execution Order
+| Order | Bug(s) | File | Risk |
+|-------|--------|------|------|
+| 1 | B1 | `restaurantSettingsTransform.js` | LOW — additive, one line |
+| 2 | B2 | `restaurantSettingsTransform.js` | LOW — two lines, same file as B1 |
+| 3 | B9 | `restaurantSettingsService.js` | LOW — remove one config line |
+| 4 | B3 | `RestaurantSettingsPage.jsx` | LOW — conditional in saveStep |
+| 5 | B7 | `RestaurantSettingsPage.jsx` | MEDIUM — refactor error keys |
+| 6 | B6 | `RestaurantSettingsPage.jsx` | MEDIUM — rewrite goToStep logic |
+| 7 | B8 | `RestaurantSettingsPage.jsx` | LOW — one-line onChange fix |
+| 8 | B5 | `RestaurantSettingsPage.jsx` | LOW — one-line guard |
+| 9 | B4 | `RestaurantSettingsPage.jsx` | LOW — remove two words |
+| 10 | B10 | `axios.js` | NONE — no code change, mitigated by B9 fix |
+
+---
+
+### B1 — Add missing `online_payment` to toAPI
+
+**File:** `src/api/transforms/restaurantSettingsTransform.js`
+**Line:** 165 (after `pay_tab` line)
+
+**Before (lines 161–166):**
+```js
+        // Step 2 — Payments
+        pay_cash: toYesNo(s2.payCash),
+        pay_upi: toYesNo(s2.payUpi),
+        pay_cc: toYesNo(s2.payCc),
+        pay_tab: toYesNo(s2.payTab),
+        upi_id: s2.upiId,
+```
+
+**After:**
+```js
+        // Step 2 — Payments
+        pay_cash: toYesNo(s2.payCash),
+        pay_upi: toYesNo(s2.payUpi),
+        pay_cc: toYesNo(s2.payCc),
+        pay_tab: toYesNo(s2.payTab),
+        online_payment: toYesNo(s2.onlinePayment),
+        upi_id: s2.upiId,
+```
+
+**Change:** +1 line. Add `online_payment: toYesNo(s2.onlinePayment),` after `pay_tab`.
+
+---
+
+### B2 — Normalize channel types to toYesNo()
+
+**File:** `src/api/transforms/restaurantSettingsTransform.js`
+**Lines:** 158–159
+
+**Before:**
+```js
+        take_away: s2.takeAway,
+        delivery: s2.delivery,
+```
+
+**After:**
+```js
+        take_away: toYesNo(s2.takeAway),
+        delivery: toYesNo(s2.delivery),
+```
+
+**Change:** 2 lines modified. Wraps both in `toYesNo()` to match `dine_in` and `room`.
+
+**Risk note:** If backend genuinely expects booleans for these two fields, this change would break them. Needs backend confirmation. If backend does require booleans, then the fix is the opposite — change `dine_in` and `room` to raw booleans. Either way the current mix is wrong.
+
+---
+
+### B9 — Remove manual Content-Type header from FormData upload
+
+**File:** `src/api/services/restaurantSettingsService.js`
+**Lines:** 31–33
+
+**Before:**
+```js
+  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+```
+
+**After:**
+```js
+  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData);
+```
+
+**Change:** Remove the `{ headers: ... }` third argument entirely. Axios auto-detects `FormData` and sets `Content-Type: multipart/form-data; boundary=----...` with the correct boundary. This also mitigates B10 (global JSON header gets properly overridden by axios internals).
+
+---
+
+### B3 — Only send files on Step 1 save
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+**Lines:** 267–279 (saveStep function)
+
+**Before:**
+```js
+  // Save current step
+  const saveStep = async () => {
+    setIsSaving(true);
+    try {
+      await updateSettings(formState, logoFile, pdfFile);
+      return true;
+    } catch (err) {
+      toast({ title: "Save failed", description: err.message, variant: "destructive" });
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+```
+
+**After:**
+```js
+  // Save current step
+  const saveStep = async () => {
+    setIsSaving(true);
+    try {
+      // Only send file uploads when saving Step 1 (where they are selected)
+      const sendLogo = currentStep === 1 ? logoFile : null;
+      const sendPdf = currentStep === 1 ? pdfFile : null;
+      await updateSettings(formState, sendLogo, sendPdf);
+      return true;
+    } catch (err) {
+      toast({ title: "Save failed", description: err.message, variant: "destructive" });
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+```
+
+**Change:** 3 lines added (2 const + replace call args). Files are only attached to the request when the user is on Step 1.
+
+---
+
+### B7 — Scope error keys by step to prevent cross-step bleed
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+
+**Part A — updateStep error clear (line 238–241)**
+
+**Before:**
+```js
+  const updateStep = useCallback((stepKey, field, value) => {
+    setFormState((prev) => ({ ...prev, [stepKey]: { ...prev[stepKey], [field]: value } }));
+    setErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
+  }, []);
+```
+
+**After:**
+```js
+  const updateStep = useCallback((stepKey, field, value) => {
+    setFormState((prev) => ({ ...prev, [stepKey]: { ...prev[stepKey], [field]: value } }));
+    setErrors((prev) => { const n = { ...prev }; delete n[`${stepKey}.${field}`]; return n; });
+  }, []);
+```
+
+**Change:** Error key becomes `step1.phone` instead of `phone`.
+
+**Part B — validateStep error keys (lines 244–264)**
+
+**Before:**
+```js
+  const validateStep = (step) => {
+    const errs = {};
+    if (step === 1) {
+      const s = formState.step1;
+      if (!s.name.trim()) errs.name = 'Restaurant name is required';
+      if (!s.phone.trim()) errs.phone = 'Phone is required';
+      if (!s.address.trim()) errs.address = 'Address is required';
+      if (s.gstEnabled && !s.gstCode.trim()) errs.gstCode = 'GST number is required when GST is enabled';
+      if (s.vatEnabled && !s.vatCode.trim()) errs.vatCode = 'VAT code is required when VAT is enabled';
+    } else if (step === 2) {
+      const s = formState.step2;
+      if (![s.dineIn, s.takeAway, s.delivery, s.room].some(Boolean)) errs.channels = 'Select at least one service channel';
+      if (![s.payCash, s.payUpi, s.payCc, s.payTab, s.onlinePayment].some(Boolean)) errs.payments = 'Select at least one payment method';
+    } else if (step === 6) {
+      const s = formState.step6;
+      if (!s.firstName.trim()) errs.firstName = 'First name is required';
+      if (!s.lastName.trim()) errs.lastName = 'Last name is required';
+      if (!s.phone.trim()) errs.phone = 'Phone is required';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+```
+
+**After:**
+```js
+  const validateStep = (step) => {
+    const stepKey = `step${step}`;
+    const errs = {};
+    if (step === 1) {
+      const s = formState.step1;
+      if (!s.name.trim()) errs[`${stepKey}.name`] = 'Restaurant name is required';
+      if (!s.phone.trim()) errs[`${stepKey}.phone`] = 'Phone is required';
+      if (!s.address.trim()) errs[`${stepKey}.address`] = 'Address is required';
+      if (s.gstEnabled && !s.gstCode.trim()) errs[`${stepKey}.gstCode`] = 'GST number is required when GST is enabled';
+      if (s.vatEnabled && !s.vatCode.trim()) errs[`${stepKey}.vatCode`] = 'VAT code is required when VAT is enabled';
+    } else if (step === 2) {
+      const s = formState.step2;
+      if (![s.dineIn, s.takeAway, s.delivery, s.room].some(Boolean)) errs[`${stepKey}.channels`] = 'Select at least one service channel';
+      if (![s.payCash, s.payUpi, s.payCc, s.payTab, s.onlinePayment].some(Boolean)) errs[`${stepKey}.payments`] = 'Select at least one payment method';
+    } else if (step === 6) {
+      const s = formState.step6;
+      if (!s.firstName.trim()) errs[`${stepKey}.firstName`] = 'First name is required';
+      if (!s.lastName.trim()) errs[`${stepKey}.lastName`] = 'Last name is required';
+      if (!s.phone.trim()) errs[`${stepKey}.phone`] = 'Phone is required';
+    }
+    // Merge into existing errors (only replace this step's errors)
+    setErrors((prev) => {
+      const cleaned = Object.fromEntries(Object.entries(prev).filter(([k]) => !k.startsWith(`${stepKey}.`)));
+      return { ...cleaned, ...errs };
+    });
+    return Object.keys(errs).length === 0;
+  };
+```
+
+**Change:** Error keys namespaced as `step1.phone`, `step6.phone`. `setErrors` now merges instead of replacing — clears only the current step's errors while preserving other steps.
+
+**Part C — Error display (lines 430–433 and 595–599)**
+
+Both error display blocks use `Object.values(errors)` — these continue to work unchanged because we only changed the keys, not the values.
+
+---
+
+### B6 — Fix goToStep to enforce all prior required steps are complete
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+**Lines:** 310–315
+
+**Before:**
+```js
+  // Click step in rail
+  const goToStep = (step) => {
+    if (step <= currentStep || completedSteps.has(step) || completedSteps.has(step - 1) || step === 1) {
+      setCurrentStep(step);
+    }
+  };
+```
+
+**After:**
+```js
+  // Click step in rail — only allow if all prior required steps are done
+  const goToStep = (step) => {
+    if (step === 1) { setCurrentStep(1); return; }
+    if (step <= currentStep) { setCurrentStep(step); return; }
+    // For forward jumps: check that every required step before `step` is completed
+    const allPriorRequiredDone = STEPS
+      .filter(s => s.id < step && s.required)
+      .every(s => completedSteps.has(s.id));
+    if (allPriorRequiredDone && (completedSteps.has(step - 1) || completedSteps.has(step))) {
+      setCurrentStep(step);
+    }
+  };
+```
+
+**Change:** Forward navigation now requires all prior required steps to be completed — not just the immediately preceding one.
+
+---
+
+### B8 — Allow empty transitional state in NumberInput
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+**Line:** 77
+
+**Before:**
+```js
+        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+```
+
+**After:**
+```js
+        onChange={(e) => {
+          const v = e.target.value;
+          onChange(v === '' ? '' : (parseFloat(v) || 0));
+        }}
+```
+
+**Change:** When the field is empty, pass empty string instead of snapping to 0. Parent components already handle numeric coercion on save via `parseFloat(...) || 0` in the transform layer.
+
+---
+
+### B5 — Add upper-bound guard to handleSkip
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+**Lines:** 299–303
+
+**Before:**
+```js
+  // Skip optional step
+  const handleSkip = () => {
+    setCompletedSteps((prev) => new Set([...prev, currentStep]));
+    setCurrentStep((prev) => prev + 1);
+  };
+```
+
+**After:**
+```js
+  // Skip optional step
+  const handleSkip = () => {
+    if (currentStep >= STEPS.length) return;
+    setCompletedSteps((prev) => new Set([...prev, currentStep]));
+    setCurrentStep((prev) => prev + 1);
+  };
+```
+
+**Change:** +1 line. Guard prevents incrementing past the last step.
+
+---
+
+### B4 — Remove unused imports
+
+**File:** `src/pages/RestaurantSettingsPage.jsx`
+**Lines:** 3–7
+
+**Before:**
+```js
+import {
+  ArrowLeft, ArrowRight, Check, Home, CreditCard, Percent,
+  Settings, Package, User, Loader2, Upload, FileText, X,
+  Building2, ChevronRight, AlertCircle, SkipForward,
+} from "lucide-react";
+```
+
+**After:**
+```js
+import {
+  ArrowLeft, ArrowRight, Check, Home, CreditCard, Percent,
+  Settings, Package, User, Loader2, Upload, FileText, X,
+  ChevronRight, AlertCircle,
+} from "lucide-react";
+```
+
+**Change:** Removed `Building2` and `SkipForward`.
+
+---
+
+### B10 — No code change (mitigated by B9)
+
+**File:** `src/api/axios.js`
+**Line:** 15
+
+The global `'Content-Type': 'application/json'` default stays. Once B9 is applied (removing the manual header override in the service), axios auto-detects `FormData` and correctly sets `multipart/form-data` with boundary — overriding the global default. No action needed.
 
 ---
 
 ## 4. AFFECTED FILES SUMMARY
 
-| File | Bugs |
-|------|------|
-| `src/api/transforms/restaurantSettingsTransform.js` | B1, B2 |
-| `src/pages/RestaurantSettingsPage.jsx` | B3, B4, B5, B6, B7, B8 |
-| `src/api/services/restaurantSettingsService.js` | B9 |
-| `src/api/axios.js` | B10 |
+| File | Bugs | Lines Changed |
+|------|------|---------------|
+| `src/api/transforms/restaurantSettingsTransform.js` | B1, B2 | +1 line, ~2 lines modified |
+| `src/api/services/restaurantSettingsService.js` | B9 | -2 lines (remove header config) |
+| `src/pages/RestaurantSettingsPage.jsx` | B3, B4, B5, B6, B7, B8 | ~30 lines changed across 6 locations |
+| `src/api/axios.js` | B10 | 0 lines (no change) |
+
+**Total impact:** ~35 lines across 3 files. No new files. No dependency changes.
 
 ---
 
-## 5. ARTIFACT TRACKER
+## 5. RISK ASSESSMENT
+
+| Bug | Risk Level | Reason |
+|-----|-----------|--------|
+| B1 | LOW | Additive — one new field, no existing behavior changes |
+| B2 | MEDIUM | Depends on backend contract — if backend requires raw booleans for `take_away`/`delivery`, this breaks. Needs backend team confirmation before applying |
+| B9 | LOW | Removing a bad override — lets axios do what it already knows how to do |
+| B3 | LOW | Conditional null — only changes what step sends files, not the save logic |
+| B7 | MEDIUM | Changes error key format — if any other code reads `errors.phone` directly (not via `Object.values`), it would break. Grep confirms only `Object.values(errors)` is used in display, so safe |
+| B6 | MEDIUM | Changes navigation reachability — may confuse testers who relied on the old loose behavior |
+| B8 | LOW | Pass-through value change — transform layer handles coercion |
+| B5 | LOW | Early return guard — no behavioral change in current config |
+| B4 | LOW | Import removal — zero runtime impact |
+| B10 | NONE | No code change |
+
+---
+
+## 6. TESTING PLAN
+
+### Per-Bug Verification
+| Bug | Test |
+|-----|------|
+| B1 | Save settings → check API request payload contains `online_payment: "Yes"` or `"No"` |
+| B2 | Save settings → check `take_away` and `delivery` are `"Yes"`/`"No"` strings (not booleans) |
+| B9 | Save with logo → check request Content-Type header has `boundary=` parameter |
+| B3 | Upload logo on Step 1 → proceed to Step 3 → save → confirm request body has no `logo` file part |
+| B7 | Set invalid phone on Step 1 → go to Step 6 → type in Step 6 phone → go back to Step 1 → confirm Step 1 phone error still shows |
+| B6 | Complete Step 1 → complete Step 3 (skip Step 2) → try clicking Step 4 → should be blocked |
+| B8 | Click into GST % field → select all → delete → field should be empty (not 0) |
+| B5 | N/A — preventative, no current UI path triggers it |
+| B4 | Compile clean — no warnings about unused imports |
+| B10 | Covered by B9 test |
+
+### Regression
+- [ ] Full wizard flow: Step 1 → 2 → 3 → 4 → 5 → 6 → Save & Launch → navigates to dashboard
+- [ ] Skip flow: Step 1 → 2 → Skip 3 → Skip 4 → Skip 5 → 6 → Save & Launch
+- [ ] Back navigation: Step 4 → Back → Back → Step 2 content shows correctly
+- [ ] Existing settings load correctly on page mount
+- [ ] Validation blocks: empty name on Step 1 → "Save & Continue" shows error
+
+---
+
+## 7. PHASED EXECUTION PLAN
+
+**Rule: Each phase requires Owner Smoke Test + Signoff before the next phase begins. No exceptions.**
+
+### Phase 1 — Critical Data Fixes (B1, B9, B10)
+| Step | Action | Status |
+|------|--------|--------|
+| 4a | Code Implementation | PENDING |
+| 5a | QA / Automated Test | PENDING |
+| **6a** | **Owner Smoke Test + Signoff** | **BLOCKED until 5a** |
+
+**Scope:** B1 (online_payment dropped), B9 (Content-Type boundary), B10 (mitigated by B9)
+**Files:** `restaurantSettingsTransform.js`, `restaurantSettingsService.js`
+**Owner Smoke Test Checklist:**
+- [ ] Toggle Online Payment ON → Save → Reload → Still ON
+- [ ] Upload logo on Step 1 → Save → No server error
+- [ ] Check network tab: request Content-Type has `boundary=`
+
+---
+
+### Phase 2 — Wizard Logic Fixes (B3, B5, B6)
+| Step | Action | Status |
+|------|--------|--------|
+| 4b | Code Implementation | BLOCKED until Phase 1 signoff |
+| 5b | QA / Automated Test | PENDING |
+| **6b** | **Owner Smoke Test + Signoff** | **BLOCKED until 5b** |
+
+**Scope:** B3 (files re-uploaded every step), B5 (skip guard), B6 (bypass required steps)
+**Files:** `RestaurantSettingsPage.jsx`
+**Owner Smoke Test Checklist:**
+- [ ] Upload logo Step 1 → go to Step 4 → Save → network tab shows no file in request
+- [ ] Complete Step 1 → Skip Step 2 → Try clicking Step 4 in rail → Should be blocked
+- [ ] Normal flow Step 1 → 2 → Skip 3 → Skip 4 → Skip 5 → 6 → Save & Launch works
+
+---
+
+### Phase 3 — UX Polish (B7, B8, B4)
+| Step | Action | Status |
+|------|--------|--------|
+| 4c | Code Implementation | BLOCKED until Phase 2 signoff |
+| 5c | QA / Automated Test | PENDING |
+| **6c** | **Owner Smoke Test + Signoff** | **BLOCKED until 5c** |
+
+**Scope:** B7 (error bleed across steps), B8 (number input snaps to 0), B4 (dead imports)
+**Files:** `RestaurantSettingsPage.jsx`
+**Owner Smoke Test Checklist:**
+- [ ] Leave Step 1 phone empty → try Save → error shows → go to Step 6 → type phone → go back to Step 1 → Step 1 phone error still visible
+- [ ] Click GST % field → select all → delete → field shows empty (not 0)
+- [ ] Full wizard completes without console warnings about unused imports
+
+---
+
+### Phase 4 — Backend Confirmation Required (B2)
+| Step | Action | Status |
+|------|--------|--------|
+| 4d | Code Implementation | BLOCKED until Phase 3 signoff + backend team confirms expected types |
+| 5d | QA / Automated Test | PENDING |
+| **6d** | **Owner Smoke Test + Signoff** | **BLOCKED until 5d** |
+
+**Scope:** B2 (channel type mismatch: Yes/No vs true/false)
+**Files:** `restaurantSettingsTransform.js`
+**Prerequisite:** Backend team confirms whether `take_away` and `delivery` expect string or boolean
+**Owner Smoke Test Checklist:**
+- [ ] Toggle Takeaway OFF → Save → Reload → Still OFF
+- [ ] Toggle Delivery ON → Save → Reload → Still ON
+- [ ] Check network tab: `take_away` and `delivery` values match confirmed type
+
+---
+
+## 8. ARTIFACT TRACKER
 
 | # | Artifact | Status |
 |---|----------|--------|
-| 1 | Bug Registration | DONE (this file) |
-| 2 | Impact Analysis | DONE (see Section 2) |
-| 3 | Fix Implementation | PENDING |
-| 4 | QA / Testing | PENDING |
-| 5 | Owner Signoff | PENDING |
+| 1 | Bug Registration | DONE |
+| 2 | Impact Analysis | DONE (Section 2) |
+| 3 | Implementation Plan (line-by-line) | DONE (Section 3) |
+| 4–6 Phase 1 | Code → QA → Owner Smoke | PENDING |
+| 4–6 Phase 2 | Code → QA → Owner Smoke | BLOCKED on Phase 1 |
+| 4–6 Phase 3 | Code → QA → Owner Smoke | BLOCKED on Phase 2 |
+| 4–6 Phase 4 | Code → QA → Owner Smoke | BLOCKED on Phase 3 + backend confirmation |
