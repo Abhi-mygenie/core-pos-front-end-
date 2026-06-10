@@ -3,7 +3,7 @@
 **Registered:** 2026-06-10
 **Sprint:** pos_4_0
 **Priority:** P1 (opacity bug — not money-impacting, but every failed API call across the app is currently surfaced inconsistently or not at all; large support-burden reduction expected)
-**Status:** READY FOR GATE 6 (Code) — Q1/Q3/Q4/A–D locked 2026-06-10; Q2 & Q5 listed OPEN but non-blocking.
+**Status:** READY FOR GATE 6 (Code) — Q1/Q3/Q4/A–D locked 2026-06-10; Q2 & Q5 listed OPEN but non-blocking. **Risk-assessed; phased rollout adopted (see §4.7).**
 **Owner:** Abhi
 **Reporter:** Owner (chat, 2026-06-10)
 **Initiated from:** Menu Management error-handling investigation (chat 2026-06-10). Promoted to cross-module scope after owner direction "1 need to unify so need to know what all kind of toast are there across modules".
@@ -192,16 +192,121 @@ Every `console.error(...)` followed by no toast in the in-scope files gets a toa
 
 ### 4.5 Execution order (lowest-risk first)
 
-1. **Interceptor extension** (`api/axios.js`) — additive, backwards-compatible. Smoke-test on Settlement + Login (already use `readableMessage`).
-2. **Menu Management slice** (5 files) — highest density of inconsistency; clearest user value.
-3. **Cards + Modals + Order Entry slice** (10 files) — bulk conversion.
-4. **Panels + Pages + Sidebar slice** (12 files) — bulk conversion.
-5. **BulkEditor per-row trail** (Q3 hybrid) — UI addition. Last because higher implementation effort.
+See §4.7 for the formal phased rollout. Summary:
+
+- **Phase 1** — Interceptor only (1 file).
+- **Phase 2** — Mechanical catch conversion across 27 files, in 3 slices (Menu → Cards/Modals/Order Entry → Panels/Pages/Sidebar).
+- **Phase 3** — BulkEditor row trail + drawer (new UI).
+
+Each phase is an independent commit and independently revertable.
 
 ### 4.6 Files NOT to edit
 
 - Any `toast({...})` call that is a **success** or **info** toast (not in a catch block) — out of scope for this CR.
 - Any `toast({...})` call already using `err.readableMessage` correctly with `variant: "destructive"` — out of scope (touch only if title is wrong or variant missing).
+
+---
+
+### 4.7 Risk analysis & phased rollout (owner-driven, added 2026-06-10)
+
+Owner flagged the CR's blast radius (28 files + interceptor + 168 toast calls). Below is the honest risk picture and the mitigation plan that turns CR-025 into three independently-revertable phases.
+
+#### 4.7.1 Risk summary
+
+| Layer | Risk | Severity | Mitigatable? |
+|-------|------|----------|---------------|
+| Axios interceptor edit (`api/axios.js`) | App-wide error contract — affects every API call, not just the 28 in the conversion list | **HIGH** | YES — change is additive (prepends 2 branches to existing 4-branch OR chain); existing `readableMessage` consumers see identical behaviour |
+| BulkEditor row trail + drawer (Q3 hybrid) | Genuinely new UI state + new drawer component | MEDIUM | YES — defer to Phase 3 sub-scope; can ship later without blocking Phases 1–2 |
+| 28-file mechanical conversion | Typos, side-effect catches missed, action-specific titles flattened | MEDIUM | YES — slice-by-slice; diff-review enforces "only description string changes"; `yarn build` + `yarn test` after each slice |
+| `TOAST_LIMIT = 1` clobbers concurrent errors | CR produces MORE toasts (5 silent bootstrap catches now fire); only last one is visible | LOW–MEDIUM | YES (without unlocking Q2) — aggregate bootstrap failures into a single toast |
+| Existing tests assert specific text | `__tests__/api/axios.test.js` + transforms tests may have hard-coded message strings | LOW–MEDIUM | YES — run `yarn test` after the interceptor edit; update expected values (all changes should be "new behaviour is correct, update assertion", not "logic is wrong") |
+| CR-021 (Collect Bill split) in flight | Merge conflict on shared rails | LOW | NO direct file overlap (`OrderEntry.jsx` is referenced in CR-021 but edited only by CR-025); ship CR-021 first |
+
+The interceptor change is the only **app-wide** risk. Everything else is bounded to its own file or phase.
+
+#### 4.7.2 Specific failure modes for the mechanical conversion (Phase 2)
+
+| Failure mode | Where it can bite | How it's caught |
+|--------------|--------------------|------------------|
+| Catch block has side-effects beyond toast (retry, state cleanup, redirect) and implementer accidentally removes the surrounding logic | Any of the 27 files | **Diff-review every catch.** Only the `description` value changes; the rest of the catch body is byte-identical. |
+| Action-specific title gets flattened to generic `"Error"` | Cards / Modals / Order Entry (titles like `"Cancel Failed"`, `"Dispatch failed"`, `"Cannot print bill"`) | CR explicitly says **titles are preserved**; diff-review enforces |
+| Backend message is empty / less specific than the old hardcoded fallback for some endpoint | A few legacy endpoints | Interceptor's terminal fallback is still `"Something went wrong"`. Monitor for 48 hours after rollout; if any specific message is regressively worse, restore the action-specific text as a `\|\| fallback` in that one catch. |
+| Missing import / typo / `err` shadowing | Any file | `yarn build` + linter |
+| Adding a toast to a catch that's inside a polling/refresh effect → toast spam | `MenuManagementPanel.jsx` bootstrap, any auto-refresh path | Audit each newly-toasted catch for "is this called in a hot loop?" before adding the toast. |
+
+#### 4.7.3 Phased rollout (canonical execution order)
+
+##### Phase 1 — Interceptor only (1 file)
+
+**Scope:** `api/axios.js` interceptor extension (Decision A) + 4 new test cases in `__tests__/api/axios.test.js`.
+
+**Why first:** smallest possible change with the largest leverage. If correct, every consumer of `err.readableMessage` automatically benefits. If wrong, single-file revert restores prior behaviour.
+
+**Acceptance criteria:**
+- All existing `__tests__/api/axios.test.js` cases still pass unchanged.
+- 4 new test cases pass:
+  1. Laravel 422 object shape (`errors: { name: ["The name field is required."] }`) → `readableMessage === "The name field is required."`
+  2. Axios `ECONNABORTED` → friendly timeout message
+  3. `ERR_NETWORK` → friendly network message
+  4. Empty `errors` object falls through to `data.message`
+- Settlement + Login + Credit + Restaurant Settings smoke-tested on preprod (these already consume `readableMessage`).
+- 24-hour soak on preprod before Phase 2 begins.
+
+**Revert plan:** single-file `git revert` on `api/axios.js`.
+
+##### Phase 2 — Mechanical catch conversion (27 files, 3 slices)
+
+**Scope:** convert all in-scope catch blocks to the §4.1 target pattern. Title preserved; description replaced with `err.readableMessage`; variant set to `"destructive"`.
+
+**Slice ordering:**
+
+| Slice | Files | Catches | Why this order |
+|-------|-------|---------|----------------|
+| 2A — Menu Management | `panels/MenuManagementPanel.jsx`, `panels/menu/ProductList.jsx`, `panels/menu/ProductForm.jsx`, `panels/menu/CategoryList.jsx`, `panels/menu/BulkEditor.jsx` (catches only — UI work deferred to Phase 3) | ~14 | Highest density of inconsistency + originating module |
+| 2B — Cards + Modals + Order Entry | `cards/OrderCard.jsx`, `cards/TableCard.jsx`, `cards/WhatsAppPaymentModal.jsx`, `modals/AssignRiderModal.jsx`, `modals/RoomCheckInModal.jsx`, `modals/SplitBillModal.jsx`, `credit/CreditClearanceModal.jsx`, `order-entry/OrderEntry.jsx`, `order-entry/CustomerModal.jsx`, `order-entry/RePrintButton.jsx` | ~16 | Bulk mechanical conversion |
+| 2C — Panels + Pages + Sidebar | `panels/CreditManagementPanel.jsx`, `panels/SettlementPanel.jsx`, `panels/settings/TableManagementView.jsx`, `panels/settings/shared.jsx`, `pages/AllOrdersReportPage.jsx`, `pages/LoadingPage.jsx`, `pages/LoginPage.jsx`, `pages/RestaurantSettingsPage.jsx`, `pages/RoomOrdersReportPage.jsx`, `pages/SettlementPage.jsx`, `pages/StatusConfigPage.jsx`, `layout/Sidebar.jsx` | ~20 | Mostly already-canonical; smallest churn |
+
+**Per-slice gating:**
+- `yarn build` clean.
+- `yarn test` clean (update expected assertions where new behaviour is correct).
+- 5-minute preprod smoke on the slice's primary flows.
+- Owner signoff before next slice.
+
+**Revert plan:** per-slice revert. Each slice = one commit.
+
+##### Phase 3 — BulkEditor row trail + drawer (Q3 hybrid)
+
+**Scope:** the genuinely new UI work — `row._saveError` state, tooltip on red row indicator, `[View errors]` button + drawer when `failed > 3`.
+
+**Why last:** higher implementation effort; not blocking; can be deferred indefinitely without losing the value of Phases 1–2.
+
+**Acceptance criteria:**
+- 1–3 failures → tooltip on each red row shows backend message.
+- 4+ failures → toast shows `[View errors]` button → drawer lists each failed row + its message.
+- `_saveError` clears when row is re-edited.
+
+**Revert plan:** isolated to `panels/menu/BulkEditor.jsx`; revert that one file.
+
+#### 4.7.4 Residual risk after mitigation
+
+| Risk | Residual exposure |
+|------|---------------------|
+| Interceptor regression | Near zero after Phase 1 24h soak — additive change, all existing consumers unchanged |
+| Per-slice mechanical typo | Caught by build/test/smoke per slice; worst case = revert one slice |
+| Toast spam in a refresh loop | Caught by pre-edit audit per catch in Phase 2 |
+| Concurrent error invisibility (`TOAST_LIMIT = 1`) | Real but pre-existing; aggregated-bootstrap-toast mitigation contains the new exposure; OD-025-2 will decide the permanent fix |
+| Regressive backend messages on legacy endpoints | Surfaces only after rollout; 48-hour monitor + per-catch `\|\|` fallback restore on demand |
+| CR-021 merge conflict | Eliminated by shipping CR-021 first |
+
+#### 4.7.5 Alternative paths considered (and why rejected)
+
+| Alternative | Owner-visible cost | Why rejected |
+|-------------|--------------------|---------------|
+| **(b)** Split CR-025 into 3 separate CR docs (025A, 025B, 025C) | Three tracker entries; more administrative overhead | Same outcome as phased rollout inside one doc, with less context-locality |
+| **(c)** Pause CR-025 entirely | All 168 toasts remain inconsistent; Menu Management opacity bug persists | Doesn't address the originating need |
+| **(d)** Drop interceptor change; mechanical-conversion only against current 4-branch interceptor | Loses Laravel 422 object-shape fix + friendly network/timeout messages | Defeats half the value; field-level validation messages stay hidden |
+
+**Selected:** **(a)** — phased rollout in this single doc, formalised in §4.7.3.
 
 ---
 
