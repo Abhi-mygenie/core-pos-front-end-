@@ -15,6 +15,12 @@ Deploy repo https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch `11-
 - yarn install + pip install, services restarted, login page verified via screenshot
 - Summarized /app/INSIGHTS_REPORTS_AUDIT.md (dated 2026-06-10) for the user
 
+## Update 2026-06-11 — Palm House audit
+- Ran same-methodology Insights audit for The Palm House (rid 541, owner@palmhouse.com), Mar 1 – Jun 10 2026
+- Rebuilt /app/audit_data/ (fetch_data.py + analyze.py + results.json + raw payloads ~150MB)
+- Report: /app/INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md — confirms all cafe103 findings; room-revenue split (₹1.78L Mar) and after-midnight tail loss are LIVE here; settlement "total sale" exceeds all frontend figures (open backend question)
+- No application code modified
+
 ## Notes
 - /app/audit_data/ referenced in the audit doc is NOT present in this branch
 - No code edits made (per user instruction)
