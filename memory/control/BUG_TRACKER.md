@@ -1,7 +1,21 @@
 # Layer 4 — Bug Tracker
 
 **Status:** POPULATED — RECONCILED 2026-05-30, UPDATED 2026-06-11
-**Last Updated:** 2026-06-11 (Baseline consolidation: BUG-122 + post-delivery added; BUG-120(401)→**BUG-123**, BUG-121(socket)→**BUG-124** renumbered per owner ruling R3; BUG-112/113/114 moved to formal owner smoke batch per ruling R5)
+**Last Updated:** 2026-06-11 (Insights-audit batch BUG-125…BUG-129 registered, Gates 0-2 complete — see section below. Earlier same-day: BUG-122 + post-delivery added; BUG-120(401)→**BUG-123**, BUG-121(socket)→**BUG-124** renumbered per owner ruling R3; BUG-112/113/114 moved to formal owner smoke batch per ruling R5)
+
+---
+
+## Insights Cross-Report Audit Batch (registered 2026-06-11, Gates 0-2 complete)
+
+Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md` (palmhouse). Replication harness: `/app/audit_data/`.
+
+| Bug ID | Title | Priority | Status | Gate | Blocker |
+|---|---|---|---|---|---|
+| BUG-125 | Cancellations Order-Level scope never matches ('Cancel' vs 'cancelled') | P1 | REGISTERED 2/7 | Ready for Gate 3 | — |
+| BUG-126 | insightsService reads non-existent round_off (API: round_up) | P2 | REGISTERED 2/7 | Ready for Gate 3 | — |
+| BUG-127 | Dashboard Unsettled-TAB tile dead code (always ₹0) | P2 | REGISTERED 2/7 | Gate 3 blocked | Owner: tile semantics (Option A/B/C in impact doc) |
+| BUG-128 | Dashboard double-fetches identical order-logs payload | P2 | REGISTERED 2/7 | Ready for Gate 3 | — |
+| BUG-129 | Backend stamps TAB orders f_order_status=6 before collection | P1 | REGISTERED 2/7 — BACKEND-BLOCKED | — | Backend team contract answer |
 **Source:** Canonical sprint summaries + `/memory/bugs/` artifact docs + `BUG_TEMPLATE.md`
 **Reconciliation report:** `change_requests/AUDIT_CLOSURE_DRIFT_001_PHASE_A_RECONCILIATION_2026_05_30.md`
 

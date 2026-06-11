@@ -1,7 +1,21 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-11 (Baseline consolidation sync: CR-020…CR-027 registered; CR-021/022/023/024 CLOSED; ID collisions resolved — Toast CR→CR-027, 401-redirect bug→BUG-123, socket-payload bug→BUG-124; CR-026 retro-registered. CR-028 Item-Level Discount registered — intake complete, no code.)
+**Last Updated:** 2026-06-11 (Insights-audit batch CR-029…CR-033 registered, Gates 0-2 complete — see section below. Earlier same-day: baseline consolidation sync: CR-020…CR-027 registered; CR-021/022/023/024 CLOSED; ID collisions resolved — Toast CR→CR-027, 401-redirect bug→BUG-123, socket-payload bug→BUG-124; CR-026 retro-registered. CR-028 Item-Level Discount registered — intake complete, no code.)
+
+---
+
+## Insights Cross-Report Audit CRs (registered 2026-06-11, Gates 0-2 complete)
+
+Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md` (palmhouse). Sibling bugs: BUG-125…BUG-129 (see Bug Tracker).
+
+| CR ID | Title | Priority | Status | Gate | Blocker |
+|---|---|---|---|---|---|
+| CR-029 | Room scope consistency — shared predicate + per-screen badge/toggle | P1 | REGISTERED 2/7 | Gate 3 needs owner choice | Badge vs toggle; default scope; transferToRoom membership |
+| CR-030 | Punch vs collection attribution — standardized + labelled toggle | P1 | REGISTERED 2/7 | Gate 3 BLOCKED | Owner OD-1..OD-3 (revenue basis, toggle vs canonical, TAB timing) |
+| CR-031 | Canonical cancellation money formula (Dashboard vs Cancellations) | P2 | REGISTERED 2/7 | Gate 3 needs owner sign-off | Formula approval; depends BUG-125 |
+| CR-032 | Shared payment-method classifier (pending/partial/COD/zero-amt) | P2 | REGISTERED 2/7 | Ready for Gate 3 | Info ask: backend semantics of 'pending' |
+| CR-033 | Settlement 'total sale' basis definition + reconciliation | P1 | REGISTERED 2/7 — BACKEND-BLOCKED | — | Backend formula documentation |
 
 ---
 

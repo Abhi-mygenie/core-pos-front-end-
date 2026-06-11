@@ -21,6 +21,13 @@ Deploy repo https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch `11-
 - Report: /app/INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md — confirms all cafe103 findings; room-revenue split (₹1.78L Mar) and after-midnight tail loss are LIVE here; settlement "total sale" exceeds all frontend figures (open backend question)
 - No application code modified
 
+## Update 2026-06-11 (later) — Gate process entered for audit findings
+- Batch-registered 10 items in control layer (registry.json, 181 items now): BUG-125..129, CR-029..033
+- Gates 0+1+2 complete for all 10: intake docs (memory/memory/{bugs,crs}/intake/) + impact analyses (memory/memory/bugs/ + change_requests/)
+- Trackers synced: control/BUG_TRACKER.md + control/CR_REGISTRY.md (new audit-batch sections)
+- Gate 3 ready: BUG-125, BUG-126, BUG-128, CR-032 · Gate 3 blocked on owner: BUG-127, CR-029, CR-030, CR-031 · Backend-blocked: BUG-129, CR-033
+- Note: scripts/create_intake.py + gen_dashboard_data.js missing from 11-june branch — registration done manually
+
 ## Notes
 - /app/audit_data/ referenced in the audit doc is NOT present in this branch
 - No code edits made (per user instruction)
