@@ -269,19 +269,19 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 
 | # | Item | Decision needed | Options | Recommendation | Owner Answer |
 |---|---|---|---|---|---|
-| H1 | BUG-125 | Cancel-scope match approach | a. add string `'cancel'` match · b. align to `fStatus===3` (shared transform predicate) | b (one predicate everywhere) | PENDING |
-| H2 | BUG-127 | Unsettled-TAB tile semantics | A. redefine "Credit Outstanding" = all TAB value · B. remove tile · C. wait for backend BUG-129 | A | PENDING |
-| H3 | BUG-127 | If H2=A: tile scope | a. room-excluded (match Ledger Credit tab) · b. incl. rooms (Dashboard's current scope) | a | PENDING |
+| H1 | BUG-125 | Cancel-scope match approach | a. add string `'cancel'` match · b. align to `fStatus===3` (shared transform predicate) | b (one predicate everywhere) | ✅ **DECIDED 2026-06-11: b, Merge exclusion kept ("Yes certainly")** |
+| H2 | BUG-127 | Unsettled-TAB tile semantics | A. redefine "Credit Outstanding" = all TAB value · B. remove tile · C. wait for backend BUG-129 | A | ✅ **DECIDED 2026-06-11: source from Credit Management API (tap-waiter-list / paid-in-tab-order-list), NOT order-logs — "unsettled Tab comes from different API coz these orders are later settled, in credit management we use that"** |
+| H3 | BUG-127 | If H2=A: tile scope | a. room-excluded (match Ledger Credit tab) · b. incl. rooms (Dashboard's current scope) | a | SUPERSEDED by H2 ruling — credit API is source of truth |
 | H4 | BUG-128 | Confirm: dedupe only; wider cancel-window deferred to CR-031 | yes/no | yes | PENDING |
-| H5 | BUG-129 | Backend escalation route + FE wait-or-proceed | a. owner forwards brief to backend, FE proceeds on current data · b. FE blocks on answer | a | PENDING |
-| H6 | CR-029 | Default room scope | a. rooms EXCLUDED everywhere (Room Orders Report covers them) · b. INCLUDED everywhere · c. per-screen toggle | a | PENDING |
+| H5 | BUG-129 | Backend escalation route + FE wait-or-proceed | a. owner forwards brief to backend, FE proceeds on current data · b. FE blocks on answer | a | **OWNER RULING 2026-06-11 (verbatim): "Tab is to be considered as paid only for GST purposes since this is already billed so tax needs to be paid, its never revenue."** → TAB excluded from revenue on all screens; its GST stays in tax-collected; revenue recognised on settlement. Detailed per-report TAB map shared; confirmations pending (see brief) |
+| H6 | CR-029 | Default room scope | a. rooms EXCLUDED everywhere (Room Orders Report covers them) · b. INCLUDED everywhere · c. per-screen toggle | a | **OWNER DIRECTION 2026-06-11 (verbatim): "any food running in room or any thing which is transferred to room, food should be part of report. room report is specifically to see how much coming from room as room price and food price. so ideally all reports should include this food orders"** → option b (include room FOOD everywhere); Room Orders Report stays the room lens. Final confirmation pending after gap walkthrough |
 | H7 | CR-029 | UI affordance | a. static badge · b. interactive toggle | a (badge) for v1 | PENDING |
 | H8 | CR-029 | transferToRoom membership | a. room scope (excluded with rooms) · b. restaurant scope (today: in Sales, not in Ledger Paid — inconsistent) | a | PENDING |
 | H9 | CR-029 | `payment_method='ROOM'` with `order_in=null` treated as room order? | yes/no | yes | PENDING |
 | H10 | CR-029 | If rooms excluded: drop Dashboard "Room" channel slice? | yes/no | yes (link to Room Orders Report instead) | PENDING |
 | H11 | CR-030 | Canonical meaning of "revenue" | a. billed (punch date) · b. collected (collection date) | owner business call | PENDING |
 | H12 | CR-030 | Delivery mechanism | a. single canonical basis everywhere · b. labelled toggle per screen | b (toggle, labelled) | PENDING |
-| H13 | CR-030 | TAB revenue recognition | a. at punch · b. at settlement | b (matches backend engine) | PENDING |
+| H13 | CR-030 | TAB revenue recognition | a. at punch · b. at settlement | b (matches backend engine) | ✅ **DECIDED 2026-06-11: b — settlement day. Owner H5 rulings (verbatim): "sales report should not include tab order amount but it needs to include all settled tab amount, which is different API. Payments report we need to include tab settlement and exclude tab orders. Items & Menu — tab can be in sold for item ledger. Order Ledger — fine. Tax collected — correct (TAB GST stays)." H5-a yes (settlement-day revenue), H5-b yes (tile = credit outstanding via credit API)** |
 | H14 | CR-030 | Daily bucketing of 00:00-03:00 orders | a. prior business day · b. calendar date (today's behaviour) | a (42 such orders in May @palmhouse) | PENDING |
 | H15 | CR-030 | Approve Phase 1 = collection-mode correctness fixes (B1 filter mismatch + B2 to_date+1 tail fetch), no UI change | yes/no | yes | PENDING |
 | H16 | CR-030 | Toggle scope: which screens | a. all 9 report screens · b. core 5 (Sales, Payments, Dashboard, Items, Ledger) | b first | PENDING |
