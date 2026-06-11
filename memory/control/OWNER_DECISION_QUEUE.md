@@ -259,3 +259,47 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 |---|---|---|---|---|
 | G58 | FE-58 | **Drift investigation: retain per-line order details for drift lines** | During aggregation, when a sold/pending line has abs(actual_tax - expected_tax) > tolerance (₹0.02), save the order details (orderId, date, employee, payment, table, qty, subtotal, expectedTax, actualTax, drift) into a driftLines[] array on that food_id. Same pattern as drill.orderLines for S3. No extra API call. | ✅ **APPROVED 2026-06-03** — Owner verbatim: *"In audit tab i need order details which are responsible for drift, will detailed note this kind of investigation to run dynamically when user clicks on we need to have button to run this investigation"* |
 | G59 | FE-59 | **Audit tab Investigate button: expand drift lines on click** | Each AMBER row on the Audit tab shows an "Investigate" button. Clicking reveals the driftLines[] for that item in an inline expandable table showing Order#, Date, Employee, Payment, Table, Qty, Subtotal, Expected, Actual, Drift. Collapsed by default. | ✅ **APPROVED 2026-06-03** — Same owner directive as FE-58. |
+
+
+---
+
+## CATEGORY H: Insights Audit Batch (BUG-125..129, CR-029..033) — PENDING, BLOCKS GATE 3
+
+**Added:** 2026-06-11 · **Source:** INSIGHTS_REPORTS_AUDIT.md + INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md · Gates 0-2 complete for all items.
+
+| # | Item | Decision needed | Options | Recommendation | Owner Answer |
+|---|---|---|---|---|---|
+| H1 | BUG-125 | Cancel-scope match approach | a. add string `'cancel'` match · b. align to `fStatus===3` (shared transform predicate) | b (one predicate everywhere) | PENDING |
+| H2 | BUG-127 | Unsettled-TAB tile semantics | A. redefine "Credit Outstanding" = all TAB value · B. remove tile · C. wait for backend BUG-129 | A | PENDING |
+| H3 | BUG-127 | If H2=A: tile scope | a. room-excluded (match Ledger Credit tab) · b. incl. rooms (Dashboard's current scope) | a | PENDING |
+| H4 | BUG-128 | Confirm: dedupe only; wider cancel-window deferred to CR-031 | yes/no | yes | PENDING |
+| H5 | BUG-129 | Backend escalation route + FE wait-or-proceed | a. owner forwards brief to backend, FE proceeds on current data · b. FE blocks on answer | a | PENDING |
+| H6 | CR-029 | Default room scope | a. rooms EXCLUDED everywhere (Room Orders Report covers them) · b. INCLUDED everywhere · c. per-screen toggle | a | PENDING |
+| H7 | CR-029 | UI affordance | a. static badge · b. interactive toggle | a (badge) for v1 | PENDING |
+| H8 | CR-029 | transferToRoom membership | a. room scope (excluded with rooms) · b. restaurant scope (today: in Sales, not in Ledger Paid — inconsistent) | a | PENDING |
+| H9 | CR-029 | `payment_method='ROOM'` with `order_in=null` treated as room order? | yes/no | yes | PENDING |
+| H10 | CR-029 | If rooms excluded: drop Dashboard "Room" channel slice? | yes/no | yes (link to Room Orders Report instead) | PENDING |
+| H11 | CR-030 | Canonical meaning of "revenue" | a. billed (punch date) · b. collected (collection date) | owner business call | PENDING |
+| H12 | CR-030 | Delivery mechanism | a. single canonical basis everywhere · b. labelled toggle per screen | b (toggle, labelled) | PENDING |
+| H13 | CR-030 | TAB revenue recognition | a. at punch · b. at settlement | b (matches backend engine) | PENDING |
+| H14 | CR-030 | Daily bucketing of 00:00-03:00 orders | a. prior business day · b. calendar date (today's behaviour) | a (42 such orders in May @palmhouse) | PENDING |
+| H15 | CR-030 | Approve Phase 1 = collection-mode correctness fixes (B1 filter mismatch + B2 to_date+1 tail fetch), no UI change | yes/no | yes | PENDING |
+| H16 | CR-030 | Toggle scope: which screens | a. all 9 report screens · b. core 5 (Sales, Payments, Dashboard, Items, Ledger) | b first | PENDING |
+| H17 | CR-030 | Default mode post-rollout | a. punch (today's numbers unchanged) · b. collection | a | PENDING |
+| H18 | CR-031 | Canonical cancellation money basis | a. per-line subtotal+tax · b. order_amount | a | PENDING |
+| H19 | CR-031 | Partially-cancelled orders: which is "loss"? | a. cancelled-line value (e.g. Rs10,680) · b. order_amount delta (Rs120) | a + flag data bug to backend | PENDING |
+| H20 | CR-031 | Count basis | a. qty · b. lines | a | PENDING |
+| H21 | CR-031 | Attribution + window | a. cancel_at, widen fetch so pre-range orders' cancels count · b. created_at business day (today) | a | PENDING |
+| H22 | CR-031 | Comp / 100%-discounted cancelled lines included in loss? | yes/no | no (zero net loss) | PENDING |
+| H23 | CR-031 | cafe103 order 012612 Rs1,02,286 cancel ("Others") — genuine or test data? | genuine/test | owner to verify | PENDING |
+| H24 | CR-032 | transferToRoom payment bucket | a. own "Room Transfer" bucket (Dashboard style) · b. grouped under TAB (Payments style) | a | PENDING |
+| H25 | CR-032 | Zero-amount paid orders | a. exclude from AOV + order counts · b. keep counted · c. badge only | a | PENDING |
+| H26 | CR-032 | Until backend defines `pending`: keep out of all paid buckets? | yes/no | yes | PENDING |
+| H27 | CR-032 | `partial` handling | a. single "Partial" bucket (FE-only) · b. backend ask for leg-split to match settlement | a now, b queued | PENDING |
+| H28 | CR-032 | Bucket list sign-off: Cash, Card, UPI, TAB, Room Transfer, Partial, Zomato Gold, Other(+log) | approve/modify | approve | PENDING |
+| H29 | CR-033 | Backend ask route for total_sale formula | a. owner forwards brief · b. agent drafts email-ready brief for owner | b then a | PENDING |
+| H30 | CR-033 | Interim: add "definition pending" footnote on Settlement total-sale KPI now? | yes/no | yes (cheap honesty) | PENDING |
+| H31 | CR-033 | Does owner know if settlement sale includes room folio/advance amounts? | info | owner input | PENDING |
+| H32 | BATCH | Sprint placement: pull into active POS 4.0 now, or queue after owner smoke batch S-1..S-9? | now/after | after smoke batch unless P1 pain | PENDING |
+| H33 | BATCH | Approve palmhouse+cafe103 replication harness (/app/audit_data/) as the QA acceptance fixture for this batch | yes/no | yes | PENDING |
+| H34 | BATCH | Frozen screens S5-S9: blanket freeze-log amendment approval for this batch, or per-item? | blanket/per-item | per-item | PENDING |
