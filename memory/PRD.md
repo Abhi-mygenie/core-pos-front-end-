@@ -33,6 +33,7 @@ Deploy repo https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch `11-
 - Live-verified: complementary_price key; operations[].order_cancel.previous_order_amount (partial coverage caveats); room_revenue = food-at-checkout (to the rupee); discount zeroed on all 823 cancelled lines; no settlements ever recorded (₹4.4L credit outstanding genuine)
 - Gate 3 artifacts created: implementation plans for BUG-125/126/127/128, CR-029/030/031/032/034; CR-034 registered (intake+impact+plan); BACKEND_BRIEF_2026_06_11.md (7 asks); registry at 182 items, batch completeness 3/7
 - STATUS: awaiting owner Gate 4 GO per item. NO CODE WRITTEN (freeze rule R3 honoured)
+- Handover for implementation agent: /app/memory/handover/INSIGHTS_BATCH_HANDOVER_2026_06_11.md (env, creds, locked spec, waves, QA rule, API facts, code map, gotchas)
 
 ## Notes
 - /app/audit_data/ referenced in the audit doc is NOT present in this branch
