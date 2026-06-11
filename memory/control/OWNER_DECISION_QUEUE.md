@@ -289,7 +289,7 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 | H18 | CR-031 | Canonical cancellation money basis | a. per-line subtotal+tax · b. order_amount | a | PENDING |
 | H19 | CR-031 | Partially-cancelled orders: which is "loss"? | a. cancelled-line value (e.g. Rs10,680) · b. order_amount delta (Rs120) | a + flag data bug to backend | PENDING |
 | H20 | CR-031 | Count basis | a. qty · b. lines | a | PENDING |
-| H21 | CR-031 | Attribution + window | a. cancel_at, widen fetch so pre-range orders' cancels count · b. created_at business day (today) | a | PENDING |
+| H21 | CR-031 | Attribution + window | a. cancel_at, widen fetch so pre-range orders' cancels count · b. created_at business day (today) | a | ✅ **DECIDED 2026-06-11: Cancellations report → by cancel_at; Items & Menu cancelled bucket → by cancel_at; Order Ledger Cancelled tab → by punch date (verbatim: "by punch date first we show")** |
 | H22 | CR-031 | Comp / 100%-discounted cancelled lines included in loss? | yes/no | no (zero net loss) | PENDING |
 | H23 | CR-031 | cafe103 order 012612 Rs1,02,286 cancel ("Others") — genuine or test data? | genuine/test | owner to verify | PENDING |
 | H24 | CR-032 | transferToRoom payment bucket | a. own "Room Transfer" bucket (Dashboard style) · b. grouped under TAB (Payments style) | a | PENDING |
