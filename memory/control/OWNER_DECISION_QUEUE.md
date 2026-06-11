@@ -293,7 +293,7 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 | H22 | CR-031 | Comp / 100%-discounted cancelled lines included in loss? | yes/no | no (zero net loss) | PENDING |
 | H23 | CR-031 | cafe103 order 012612 Rs1,02,286 cancel ("Others") — genuine or test data? | genuine/test | owner to verify | ✅ **DECIDED 2026-06-11: TEST data ("test dont see any june data") — exclude from KPI baselines/QA fixtures** |
 | H24 | CR-032 | transferToRoom payment bucket | a. own "Room Transfer" bucket (Dashboard style) · b. grouped under TAB (Payments style) | a | PENDING |
-| H25 | CR-032 | Zero-amount paid orders | a. exclude from AOV + order counts · b. keep counted · c. badge only | a | PENDING |
+| H25 | CR-032 | Zero-amount paid orders | a. exclude from AOV + order counts · b. keep counted · c. badge only | a | ✅ **DECIDED 2026-06-11: b — keep counted ("this will anyways flag in discount since these must be counted order correct") — 100% discount visible in discount column, orders counted normally** |
 | H26 | CR-032 | Until backend defines `pending`: keep out of all paid buckets? | yes/no | yes | PENDING |
 | H27 | CR-032 | `partial` handling | a. single "Partial" bucket (FE-only) · b. backend ask for leg-split to match settlement | a now, b queued | PENDING |
 | H28 | CR-032 | Bucket list sign-off: Cash, Card, UPI, TAB, Room Transfer, Partial, Zomato Gold, Other(+log) | approve/modify | approve | PENDING |
@@ -302,7 +302,7 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 | H31 | CR-033 | Does owner know if settlement sale includes room folio/advance amounts? | info | owner input | PENDING |
 | H32 | BATCH | Sprint placement: pull into active POS 4.0 now, or queue after owner smoke batch S-1..S-9? | now/after | after smoke batch unless P1 pain | PENDING |
 | H33 | BATCH | Approve palmhouse+cafe103 replication harness (/app/audit_data/) as the QA acceptance fixture for this batch | yes/no | yes | PENDING |
-| H34 | BATCH | Frozen screens S5-S9: blanket freeze-log amendment approval for this batch, or per-item? | blanket/per-item | per-item | PENDING |
+| H34 | BATCH | Frozen screens S5-S9: blanket freeze-log amendment approval for this batch, or per-item? | blanket/per-item | per-item | ✅ **DECIDED 2026-06-11: per-screen amendment presented at each Gate 4** |
 
 ### H-Addendum — Session rulings 2026-06-11 (owner Q&A round 2)
 
@@ -321,3 +321,4 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 | ORD-CANCEL-KEY | Verified: NO order-level cancelled-amount key exists (`canceled` = None on all 5,858 orders; only metadata: cancel_at/canceled_by/reason). Item-level consolidation is the only source (owner's stated fallback). Optional backend ask: add order-level cancelled_amount | ✅ VERIFIED |
 | R2 | **DECIDED 2026-06-11: Credit-Outstanding tile = total outstanding as of LAST DAY of selected range** (owner: "no, total outstanding as of last day selected"). Implementation: derive as-of-date balance from dated credit records (tap-customer-record-list) or current balance when range end = today | ✅ DECIDED |
 | Q3-val | Ledger tab rules for room orders VALIDATED against code + live data: SRM/RM collected at checkout arrive as fs=6 + real mode (card/cash/upi) → Paid tab ✅ · RM not yet collected (fs=5/2, pm=pending/COD, 12 orders ₹26,213) → Running tab ✅ (deriveOrderStatus fs≠3/6/8/9 → running) · pm='transferToRoom' literal (pre-checkout state) → Running tab ✅ (explicit rule, CR-001 Phase 2) · pm='ROOM' fs=6 (folio settled) → Paid tab ✅ · SRM+TAB → Credit tab ✅. NO new rules needed — removing the upstream room-row stripping is sufficient; existing TAB_FILTERS classify all room stages correctly | ✅ VALIDATED |
+ATED |
