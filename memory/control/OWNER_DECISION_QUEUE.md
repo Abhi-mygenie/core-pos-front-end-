@@ -303,3 +303,13 @@ This pre-seed catalog reflects a manual scan of the two main files on 2026-06-02
 | H32 | BATCH | Sprint placement: pull into active POS 4.0 now, or queue after owner smoke batch S-1..S-9? | now/after | after smoke batch unless P1 pain | PENDING |
 | H33 | BATCH | Approve palmhouse+cafe103 replication harness (/app/audit_data/) as the QA acceptance fixture for this batch | yes/no | yes | PENDING |
 | H34 | BATCH | Frozen screens S5-S9: blanket freeze-log amendment approval for this batch, or per-item? | blanket/per-item | per-item | PENDING |
+
+### H-Addendum — Session rulings 2026-06-11 (owner Q&A round 2)
+
+| Ref | Ruling (owner verbatim where quoted) | Status |
+|---|---|---|
+| Q1 | "Its real data, tabs is not settled" — ₹4.4L+ outstanding credit at palmhouse is genuine; settled-TAB lines will read ₹0 until collections happen | ✅ CONFIRMED |
+| Q2 | `room_revenue` (Room Cash/Card/UPI) in Order Summary API = **room-channel FOOD collected at checkout, by collection date** — verified to-the-rupee (Mar 15: 23 room food orders punched Feb 23–Mar 13, collected Mar 15 = Cash 137/Card 20475/UPI 1712 exactly). NOT room rent (Room advance/Checkout = 0 at palmhouse). Palm House DOES have Room Cash/Card/UPI values | ✅ VERIFIED |
+| Q3 | No separate "Room" tab needed in Order Ledger — room rent never enters order-logs; room food rows simply join existing tabs | ✅ CONFIRMED |
+| Q4 | **"No connection of order id to tab, tab is cumulative"** — TAB settlements are against customer's cumulative balance, never linked to orders. Items stay in "Added to Credit" permanently; settlements appear only as money-in (Credit Cash/Card/UPI) on settlement day. Items & Menu gets Order Ledger-style buckets (Sold / Added to Credit / Cancelled / Pending) | ✅ DECIDED |
+| Q5 | Owner confirmed understanding: order punched Apr 28, collected May 5 → punch-dated Insights screens show it under Apr 28 (retroactively), NEVER in May; only Order Summary/Settlement show it on May 5. Follow-up R1 open: make Sales/Payments collection-dated to close this | CONFIRMED, R1 OPEN |
