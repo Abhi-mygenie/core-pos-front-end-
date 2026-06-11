@@ -1,0 +1,88 @@
+{
+  "summary": "CR-021 B1-B4 bug fixes verified at code level. All 4 fixes implemented correctly. Webpack compiles successfully. Login page renders correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - no backend changes",
+    "frontend": "100%"
+  },
+  "test_credentials": "No login credentials available - code review + structural verification only",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-021 B1-B4 bug fixes verified. Cannot test actual split payment flow without authentication to preprod.mygenie.online.",
+  "verified_fixes": {
+    "B1_collectBillExisting_partial_payments": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "line": 1437,
+      "code_snippet": "if (splitPayments?.length > 0) { payload.partial_payments = splitPayments.map(p => ({ ... })); }",
+      "verification": "Removed 'method === partial &&' gate. Now partial_payments array is attached whenever splitPayments.length > 0. Matches placeOrderWithPayment L1119 pattern."
+    },
+    "B2_useEffect_clear_split_amounts": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+      "lines": "668-684",
+      "code_snippet": "const prevEffectiveTotal = useRef(effectiveTotal); useEffect(() => { if (!showSplit) { prevEffectiveTotal.current = effectiveTotal; return; } if (prevEffectiveTotal.current !== effectiveTotal) { prevEffectiveTotal.current = effectiveTotal; setSplitPayments(prev => prev.map(sp => ({ ...sp, amount: '', transactionId: '' }))); } }, [effectiveTotal, showSplit]);",
+      "verification": "useEffect with prevEffectiveTotal ref clears all split amounts (amount + transactionId) when effectiveTotal changes. Dependency array [effectiveTotal, showSplit] is correct. BUG-113 contract respected (fires on bill change, not keystroke)."
+    },
+    "B3_card_txn_id_visual": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+      "lines": "2713-2725",
+      "verification_points": {
+        "border_color": "Line 2714-2716: borderColor uses parseFloat(sp.amount) > 0 guard. When card amount = 0, uses COLORS.borderGray (#E5E5E5 grey/neutral). When amount > 0, shows red (#ef4444) until 4 digits entered, then green.",
+        "background_color": "Line 2717-2719: backgroundColor also uses parseFloat(sp.amount) > 0 guard. When amount = 0, uses 'white'. When amount > 0, shows light red (#fef2f2) until 4 digits, then light green.",
+        "hint_text": "Line 2723-2725: '4 digits' hint only shows when parseFloat(sp.amount) > 0 AND transactionId.length > 0 AND transactionId.length < 4."
+      }
+    },
+    "B3_B4_pay_button_disabled_rule": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+      "lines": "3076-3085",
+      "verification_points": {
+        "B3_card_txn_id_guard": "Line 3082: splitPayments.some(sp => sp.method === 'card' && parseFloat(sp.amount) > 0 && (!sp.transactionId || sp.transactionId.length !== 4)) - Pay button NOT disabled due to empty Card Txn ID when card split amount = 0 or empty (parseFloat(sp.amount) > 0 guard).",
+        "B4_sum_check": "Line 3083: splitPayments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0) < effectiveTotal - Pay button disabled when sum of split amounts < effectiveTotal. Enabled when sum >= effectiveTotal."
+      }
+    },
+    "regression_BUG113_free_typing": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+      "lines": "2654-2688",
+      "verification": "Split amount inputs allow free typing without real-time clamping. Clamp only happens on blur (onBlur handler at line 2665-2688). BUG-113 contract preserved."
+    },
+    "regression_BUG241_card_txn_id": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+      "lines": "2696-2726",
+      "verification": "Card Txn ID input still present for card split rows. 4-digit validation still enforced when card amount > 0 (line 3082)."
+    },
+    "webpack_compilation": {
+      "status": "VERIFIED",
+      "notes": "Webpack compiled successfully with only eslint warnings (React hooks dependencies in report pages). No errors. Frontend loads correctly."
+    },
+    "login_page_rendering": {
+      "status": "VERIFIED",
+      "notes": "Login page loads correctly with MyGenie logo, tagline, email/password inputs, LOG IN button, Remember me checkbox, Forgot Password link."
+    }
+  },
+  "code_patterns_verified": {
+    "B1_pattern": "if (splitPayments?.length > 0) at orderTransform.js:1437",
+    "B2_pattern": "prevEffectiveTotal ref + useEffect with [effectiveTotal, showSplit] deps at CollectPaymentPanel.jsx:672-684",
+    "B3_visual_pattern": "parseFloat(sp.amount) > 0 guard for borderColor/backgroundColor at CollectPaymentPanel.jsx:2714-2719",
+    "B3_hint_pattern": "parseFloat(sp.amount) > 0 guard for '4 digits' hint at CollectPaymentPanel.jsx:2723",
+    "B3_button_pattern": "parseFloat(sp.amount) > 0 guard in Pay button disabled rule at CollectPaymentPanel.jsx:3082",
+    "B4_pattern": "splitPayments.reduce(...) < effectiveTotal at CollectPaymentPanel.jsx:3083"
+  }
+}

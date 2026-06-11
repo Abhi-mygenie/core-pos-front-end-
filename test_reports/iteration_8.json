@@ -1,0 +1,152 @@
+{
+  "summary": "QA for CR-023, CR-024, CR-025. CR-023 and CR-025 VERIFIED. CR-024 NOT IMPLEMENTED - all 4 changes missing. Login works, dashboard loads successfully.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "code_issues": [
+      {
+        "cr": "CR-024 Bug A",
+        "file": "/app/frontend/src/api/transforms/restaurantSettingsTransform.js",
+        "lines": "158-159",
+        "issue": "take_away and delivery NOT using toYesNo() - still raw values (s2.takeAway, s2.delivery)",
+        "expected": "take_away: toYesNo(s2.takeAway), delivery: toYesNo(s2.delivery)",
+        "actual": "take_away: s2.takeAway, delivery: s2.delivery",
+        "priority": "HIGH"
+      },
+      {
+        "cr": "CR-024 Bug B",
+        "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+        "lines": "1179, 1482, 1536",
+        "issue": "ALL_CHANNELS.map still used instead of availableChannels.map in 3 render locations",
+        "expected": "availableChannels.map",
+        "actual": "ALL_CHANNELS.map",
+        "priority": "HIGH"
+      },
+      {
+        "cr": "CR-024 Bug B",
+        "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+        "line": "102",
+        "issue": "DEFAULT_CHANNEL_CONFIG.enabled is true, should be false",
+        "expected": "enabled: false",
+        "actual": "enabled: true",
+        "priority": "MEDIUM"
+      },
+      {
+        "cr": "CR-024",
+        "file": "/app/frontend/src/pages/DashboardPage.jsx",
+        "line": "257",
+        "issue": "Default channelVisibility.enabled is true, should be false",
+        "expected": "enabled: false",
+        "actual": "enabled: true",
+        "priority": "MEDIUM"
+      },
+      {
+        "cr": "CR-024 Bug B",
+        "file": "/app/frontend/src/pages/StatusConfigPage.jsx",
+        "issue": "useRestaurant import and availableChannels filter NOT implemented",
+        "expected": "Import useRestaurant, create availableChannels filter by features",
+        "actual": "Missing entirely",
+        "priority": "HIGH"
+      }
+    ]
+  },
+  "verified_fixes": {
+    "CR-023_LocalTextInput": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/panels/menu/BulkEditor.jsx",
+      "lines": "676-684",
+      "verification": "LocalTextInput component exists with useState(value), useEffect sync, onBlur flush when local !== value"
+    },
+    "CR-023_React_memo": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/panels/menu/BulkEditor.jsx",
+      "line": "688",
+      "verification": "CellRenderer wrapped in React.memo(function CellRenderer(...))"
+    },
+    "CR-023_handleSave_blur": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/panels/menu/BulkEditor.jsx",
+      "lines": "336-339",
+      "verification": "handleSave starts with document.activeElement?.blur() + await new Promise(r => setTimeout(r, 0))"
+    },
+    "CR-023_text_cells_use_LocalTextInput": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/components/panels/menu/BulkEditor.jsx",
+      "lines": "692-694",
+      "verification": "Text/textarea cells use <LocalTextInput>, number/dropdown/toggle/yesno unchanged"
+    },
+    "CR-025_self_discount_zeroed": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "lines": "922, 1043, 1177, 1187, 1397, 1469",
+      "verification": "All self_discount values are 0, none reference discounts.manual"
+    },
+    "CR-025_order_discount_manual": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "lines": "1194, 1405, 1468",
+      "verification": "All order_discount send discounts.manual || 0 (not orderDiscountPercent)"
+    },
+    "CR-025_prepaid_parity": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "lines": "1192-1197",
+      "verification": "Prepaid (placeOrderWithPayment) has comm_discount, discount_value, discount_type"
+    },
+    "CR-025_payment_mode_partial": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "line": "1358",
+      "verification": "collectBillExisting payment_mode uses splitPayments?.length > 0 ? 'partial' : method"
+    },
+    "CR-021_B1_partial_payments": {
+      "status": "VERIFIED",
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "lines": "1432-1440",
+      "verification": "partial_payments attached when splitPayments.length > 0"
+    },
+    "webpack_compilation": {
+      "status": "VERIFIED",
+      "notes": "Webpack compiled successfully with only eslint warnings (React hooks dependencies). No errors."
+    },
+    "login_test": {
+      "status": "VERIFIED",
+      "credentials": "owner@kunafamahal.com / Qplazm@10",
+      "notes": "Login API returns 200, dashboard loads successfully with Dine-In orders visible"
+    }
+  },
+  "test_report_links": ["/app/test_reports/iteration_8.json"],
+  "action_items": [
+    "CR-024 Bug A: Change restaurantSettingsTransform.js L158-159 to use toYesNo() for take_away and delivery",
+    "CR-024 Bug B: Import useRestaurant in StatusConfigPage.jsx and create availableChannels filter",
+    "CR-024 Bug B: Change 3 render locations (L1179, L1482, L1536) from ALL_CHANNELS.map to availableChannels.map",
+    "CR-024: Change DEFAULT_CHANNEL_CONFIG.enabled to false in StatusConfigPage.jsx L102",
+    "CR-024: Change default channelVisibility.enabled to false in DashboardPage.jsx L257",
+    "CR-024: Implement saveConfiguration cleanup to filter stale channel IDs"
+  ],
+  "critical_code_review_comments": [
+    "CR-024 appears to NOT be implemented at all - all 4 changes from the QA handover doc are missing",
+    "Console logs show raw API values: delivery: true (boolean), take_away: true (boolean) - confirms Bug A is not fixed"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - no backend changes",
+    "frontend": "66% (CR-023 PASS, CR-025 PASS, CR-024 FAIL)"
+  },
+  "test_credentials": "owner@kunafamahal.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-023 and CR-025 verified. CR-024 NOT implemented - main agent needs to implement all changes from /app/memory/change_requests/CR_024_CHANNEL_VISIBILITY_OVERRIDE.md. Login works with provided credentials.",
+  "grep_verification_commands": {
+    "CR-024_Bug_A": "grep -n 'take_away:\\|delivery:' /app/frontend/src/api/transforms/restaurantSettingsTransform.js",
+    "CR-024_Bug_B_channels": "grep -n 'ALL_CHANNELS.map\\|availableChannels.map' /app/frontend/src/pages/StatusConfigPage.jsx",
+    "CR-024_useRestaurant": "grep -n 'useRestaurant\\|availableChannels' /app/frontend/src/pages/StatusConfigPage.jsx",
+    "CR-024_default_enabled": "grep -n 'DEFAULT_CHANNEL_CONFIG\\|enabled:' /app/frontend/src/pages/StatusConfigPage.jsx | head -20"
+  }
+}

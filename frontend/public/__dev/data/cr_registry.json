@@ -1,0 +1,1854 @@
+{
+  "generated_at": "2026-06-01",
+  "source": "control/registry.json (via scripts/gen_dashboard_data.js)",
+  "sprints": {
+    "pos_2_0": {
+      "status": "CLOSED",
+      "closed_date": "2026-05-09",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md",
+      "crs": [
+        {
+          "id": "POS2-002",
+          "title": "Order origin / Scan&Order web pipeline",
+          "status": "CLOSED \u2014 RESOLVED VIA CR",
+          "files": "",
+          "notes": "Owner-confirmed working & closed under a shipped CR (2026-05-31)",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_SCRUTINY_AND_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/POS_FINAL_1_0_BUG_045_PRE_IMPL_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-002_INTAKE_2026_05_30.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "6/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-003",
+          "title": "Print Agent Mapping",
+          "status": "IMPLEMENTED + QA PASSED",
+          "files": "orderTransform.js, OrderEntry.jsx",
+          "notes": "Awaiting live tenant smoke",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/QA_REPORT_authenticated_subtotal_delivery.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_REOPEN_A_WIRE_LEVEL_QA_REPORT_2026_05_09.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/CR_REFS_SYNC_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "5/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-003-FU-02",
+          "title": "printer_agent null on Collect Bill",
+          "status": "IMPLEMENTED",
+          "files": "CollectPaymentPanel.jsx",
+          "notes": "Awaiting live tenant smoke",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-fu-02",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-fu-02",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-003-REOPEN-A",
+          "title": "Update/cancel printer_agent",
+          "status": "IMPLEMENTED + WIRE QA PASSED",
+          "files": "orderTransform.js, orderService.js",
+          "notes": "29/29 wire cases pass",
+          "artifact_refs": [],
+          "completeness": "4/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-003-REOPEN-B",
+          "title": "v1\u2192v2 place-order revert",
+          "status": "CLOSED \u2014 VERIFIED",
+          "files": "",
+          "notes": "Code on v2 (constants.js PLACE_ORDER=/api/v2/.../place-order); v2 confirmed deployed + live commit verified. Owner-closed 2026-05-31",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-reopen-b",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-reopen-b",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-004",
+          "title": "f_order_status=8 investigation",
+          "status": "CLOSED \u2014 IMPLEMENTED",
+          "files": "",
+          "notes": "Rolled into POS2-005",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_004_F_STATUS_8_HOLD_PAID_DASHBOARD_INVESTIGATION_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-005",
+          "title": "f_status=8 Hold/Audit reroute",
+          "status": "SHIPPED + VERIFIED",
+          "files": "DashboardPage.jsx, OrderTable.jsx",
+          "notes": "Status columns exclude id:8",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_006_CONFIRM_ORDER_TONE_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/POS2_008_PHASE2_BACKEND_OWNED_TONE_DELIVERY_CR_PLANNING_2026_05_09.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_042_C_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_042_A_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_005_F_STATUS_8_HOLD_REROUTE_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_005_POS2_007_JUNGLE_TRAIL_QA_REPORT_2026_05_09.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_ADDENDUM_FU_01_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/CLOSURE_DEBT_REAUDIT_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_042_A_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_042_C_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-005-FU__B_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "control/sessions/SESSION_START_2026_05_30_SUBSUMED_BACKLOG_ATTESTATION.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SHIPPED",
+          "status_history": [
+            {
+              "from": "IMPLEMENTED + QA PASSED",
+              "to": "SHIPPED + VERIFIED",
+              "date": "2026-05-30",
+              "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (CR Registry sync v2.7)"
+            }
+          ]
+        },
+        {
+          "id": "POS2-005-FU \u00a7A",
+          "title": "Collect-Bill hidden for status-8",
+          "status": "IMPLEMENTED",
+          "files": "OrderTable.jsx",
+          "notes": "Code-walk PASS",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-a",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-a",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-005-FU \u00a7B",
+          "title": "PG filter cross-tab",
+          "status": "CLOSED \u2014 AS DESIGNED",
+          "files": "",
+          "notes": "Owner 2026-05-31: keep PG filter cross-tab (all tabs)",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-b",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-b",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "POS2-006",
+          "title": "confirmOrderTone investigation",
+          "status": "DEFERRED \u2192 POS 4.0",
+          "files": "",
+          "notes": "Owner 2026-05-31: shifted to POS 4.0 backlog",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/POS2_008_PHASE2_BACKEND_OWNED_TONE_DELIVERY_CR_PLANNING_2026_05_09.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_002_PHASE_3_HEADER_PLATFORM_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_10.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_006_PG_FILTER_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-006_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-006_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "6/7",
+          "category": "DEFERRED"
+        },
+        {
+          "id": "POS2-007 Phase 1",
+          "title": "Confirm-order tone FE override",
+          "status": "IMPLEMENTED + QA PASSED",
+          "files": "DashboardPage.jsx, soundManager.js",
+          "notes": "",
+          "artifact_refs": [],
+          "completeness": "2/7",
+          "category": "SHIPPED"
+        }
+      ]
+    },
+    "pos_3_0": {
+      "status": "CLOSED",
+      "closed_date": "2026-05-21",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md",
+      "crs": []
+    },
+    "pos_3_1": {
+      "status": "CLOSED",
+      "started_date": "2026-05-27",
+      "closed_date": "2026-05-31",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md",
+      "crs": []
+    },
+    "crm_2_0": {
+      "status": "CLOSED",
+      "started_date": "2026-05-26",
+      "closed_date": "2026-05-31",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md",
+      "crs": [
+        {
+          "id": "CR-001",
+          "title": "Customer Notes Suggestion",
+          "status": "SUBSUMED into CR-002",
+          "files": "",
+          "notes": "Legacy GETs never called",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/discovery/CRM2_0_CR_001_CUSTOMER_NOTES_SUGGESTION_DISCOVERY_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_001_CUSTOMER_NOTES_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/CR_013_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/station_api_visible_loading_investigation/STATION_API_VISIBLE_LOADING_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_5_CODE_DIFF_PREVIEW_BUG_071_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SUBSUMED"
+        },
+        {
+          "id": "CR-002",
+          "title": "Cross-Sell + Customer Intelligence",
+          "status": "SHIPPED + VERIFIED",
+          "files": "4 new + 4 modified",
+          "notes": "T-28/T-29 live regression PASS 2026-05-31 \u2192 CLOSED \u2014 OWNER VERIFIED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/production_hotfixes/PROD_HOTFIX_006_007_INTAKE_2026_05_29.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/contract/CRM2_0_CR_002_CROSS_SELL_CONTRACT_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_003_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_001_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_PHASE_1_IMPLEMENTATION_REPORT_2026_05_26.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_001_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/crm/crm_2_0/qa/CRM2_0_CR_002_CROSS_SELL_PHASE_2_QA_REPORT_2026_05_26.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-002_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/ACTIVE_CR_COMPLIANCE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SHIPPED",
+          "status_history": [
+            {
+              "from": "CODE-COMPLETE",
+              "to": "SHIPPED + VERIFIED",
+              "date": "2026-05-30",
+              "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (CR Registry sync v2.7)"
+            }
+          ]
+        },
+        {
+          "id": "CR-003",
+          "title": "Tab",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "files": "",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_COUPON_CRM_CONTRACT_GAP_AND_QUESTIONS_2026_05_25.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_COUPON_LOYALTY_WALLET_CRM_API_DISCOVERY_PLAN_2026_05_22.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/vat_mapping_gap_investigation/VAT_MAPPING_GAP_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_099_QSR_QUICK_BILLING_UX_DECISION_PLAN_2026_05_19.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_059_REVISED_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_059_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_004_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "control/SUBSUMED_BACKLOG_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "intake",
+              "subsumed_owner_attested": true
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-003_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-003_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SUBSUMED",
+          "status_history": [
+            {
+              "from": "NOT_STARTED",
+              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "date": "2026-05-30",
+              "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
+            }
+          ]
+        },
+        {
+          "id": "CR-004",
+          "title": "Up-sell",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "files": "",
+          "notes": "Blocked: feature_flags.upsell=false",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/bugs/BUG_048_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_003_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_001_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/bugs/BUG_048_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_048_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_004_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_003_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-004_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-004_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SUBSUMED",
+          "status_history": [
+            {
+              "from": "NOT_STARTED",
+              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "date": "2026-05-30",
+              "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
+            }
+          ]
+        },
+        {
+          "id": "CR-005",
+          "title": "Wallet",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "files": "",
+          "notes": "Deferred from BUG-108",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_097_104_CONTINUATION_PLANNING_2026_05_20.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_DELIVERY_AUDIT_DISPATCH_AND_NAVIGATION.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_005_B2_SPLIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_004_REVALIDATION_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-005_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-005_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-005_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SUBSUMED",
+          "status_history": [
+            {
+              "from": "NOT_STARTED",
+              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "date": "2026-05-30",
+              "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
+            }
+          ]
+        },
+        {
+          "id": "CR-006",
+          "title": "Item-level Notes",
+          "status": "SUBSUMED into CR-002",
+          "files": "",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_004_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_D1_DEFAULT_LANDING_SCREEN_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_008_D1_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "5/7",
+          "category": "SUBSUMED"
+        },
+        {
+          "id": "CR-007",
+          "title": "Order-level Notes",
+          "status": "SUBSUMED into CR-002",
+          "files": "",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_057_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_005_B2_SPLIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "5/7",
+          "category": "SUBSUMED"
+        },
+        {
+          "id": "CR-008",
+          "title": "Integrations",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "files": "",
+          "notes": "Scope TBD",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/post_action_navigation_investigation/POST_ACTION_NAVIGATION_ORDERENTRY_SCOPE_PLAN.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/CR_013_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_D1_DEFAULT_LANDING_SCREEN_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_DELIVERY_AUDIT_DISPATCH_AND_NAVIGATION.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/post_action_navigation_investigation/POST_ACTION_NAVIGATION_ORDERENTRY_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_008_SUB_1_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_029_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_046_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-008_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-008_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "7/7",
+          "category": "SUBSUMED",
+          "status_history": [
+            {
+              "from": "NOT_STARTED",
+              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "date": "2026-05-30",
+              "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
+            }
+          ]
+        },
+        {
+          "id": "CR-009",
+          "title": "BUG-108 Carryover",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "files": "",
+          "notes": "Items listed in CRM 2.0 README",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "control/OWNER_DECISION_QUEUE.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-009_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-009_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            },
+            {
+              "label": "Intake",
+              "path": "control/SUBSUMED_BACKLOG_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "intake",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "6/7",
+          "category": "SUBSUMED",
+          "status_history": [
+            {
+              "from": "NOT_FORMALIZED",
+              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "date": "2026-05-30",
+              "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
+            }
+          ]
+        }
+      ]
+    },
+    "standalone": {
+      "status": "MIXED",
+      "crs": [
+        {
+          "id": "Audit Report Optimization",
+          "title": "Transform rewrite + dual-mode sheet",
+          "status": "SHIPPED",
+          "files": "reportTransform, reportService, OrderDetailSheet, FilterBar, FilterTags, AllOrdersReportPage",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan",
+              "path": "memory/memory/change_requests/AUDIT_REPORT_OPTIMISE_CR_CLEAN_PLAN_2026_05_28.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#audit-report-optimization",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report / Handover",
+              "path": "memory/memory/change_requests/AUDIT_REPORT_CR_QA_HANDOVER_2026_05_29.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "Order Activity Log",
+          "title": "Chronological activity feed per order",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "files": "",
+          "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/Order_Activity_Log_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "CR Registration",
+              "path": "memory/memory/change_requests/ORDER_ACTIVITY_LOG_CR_REGISTERED_2026_05_28.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate (premature waiver)",
+              "path": "memory/crs/code_gate_premature/Order_Activity_Log_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#order-activity-log",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#order-activity-log",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "4/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "PROD-HOTFIX-006",
+          "title": "Takeaway print: custPhone empty",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "files": "orderTransform.js or backend template",
+          "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
+          "artifact_refs": [
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/PROD-HOTFIX-006_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-006",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-006",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "PROD-HOTFIX-007",
+          "title": "Loyalty earn points display",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "files": "loyaltyTransform.js (+3), CollectPaymentPanel.jsx (+5)",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-007",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-007",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "PROD-HOTFIX-008",
+          "title": "Manual KOT/Bill print: custName & custPhone NULL",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "files": "orderService.js (+2 lines)",
+          "notes": "",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-008",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-008",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7",
+          "category": "SHIPPED"
+        },
+        {
+          "id": "DEV-DASHBOARD-001",
+          "title": "Internal dev control dashboard (v1.0 + v1.1)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "files": "/app/frontend/public/__dev/**, /app/scripts/gen_dev_dashboard_config.js (all NEW, isolated; zero touch to /src/)",
+          "notes": "Full 6-artifact closure. Hidden route /__dev/ env-gated via REACT_APP_SHOW_DEV_DASHBOARD. Read-only triage view of closure debt / bugs / CRs.",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/DEV_DASHBOARD_V1_1_OWNER_SMOKE_SIGNOFF_2026_05_29.md"
+            },
+            {
+              "label": "Intake / Session Start",
+              "path": "memory/control/sessions/SESSION_START_2026_05_29_DEV_DASHBOARD.md",
+              "type": "intake"
+            },
+            {
+              "label": "Implementation Plan (v1.1)",
+              "path": "memory/memory/change_requests/DEV_DASHBOARD_V1_1_ROW_DETAIL_PLAN_2026_05_29.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Implementation Summary (v1.0)",
+              "path": "memory/memory/HANDOVER_DEV_DASHBOARD_2026_05_29.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary (v1.1)",
+              "path": "memory/memory/HANDOVER_DEV_DASHBOARD_V1_1_2026_05_29.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#dev-dashboard-001",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "5/7",
+          "category": "SHIPPED"
+        }
+      ]
+    },
+    "phase_3": {
+      "status": "PENDING",
+      "crs": [
+        {
+          "id": "UX-LOADING-02",
+          "title": "Parallel API loading + visible station progress",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "files": "",
+          "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan / Spec",
+              "path": "memory/memory/change_requests/phase_3/UX_LOADING_02_VISIBLE_STATION_PROGRESS.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Code Gate (premature waiver)",
+              "path": "memory/crs/code_gate_premature/UX-LOADING-02_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#ux-loading-02",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#ux-loading-02",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "4/7",
+          "category": "SHIPPED"
+        }
+      ]
+    },
+    "pos_4_0": {
+      "status": "ACTIVE",
+      "started_date": "2026-05-31",
+      "crs": [
+        {
+          "id": "POS2-001",
+          "title": "Delivery charge / GST / web delivery lock",
+          "status": "NOT STARTED",
+          "files": "",
+          "notes": "Possibly absorbed by shipped CRs",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_002_ORDER_FROM_WEB_PIPELINE_CR_IMPACT_ANALYSIS_2026_05_07.md",
+              "type": "impact"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-001_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "3/7",
+          "category": "NOT_STARTED"
+        },
+        {
+          "id": "POS2-008 Phase 2",
+          "title": "Backend-owned tone delivery",
+          "status": "PLANNING COMPLETE",
+          "files": "",
+          "notes": "Backend owns implementation",
+          "artifact_refs": [
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-008_Phase_2_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "1/7",
+          "category": "IN_PROGRESS"
+        },
+        {
+          "id": "CR-010",
+          "title": "Weight-based menu item support (item_unit / item_unit_price)",
+          "status": "OPEN \u2014 INTAKE",
+          "files": "",
+          "notes": "Registered 2026_06_01 via conversational intake",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_010_INTAKE_2026_06_01.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7",
+          "category": "IN_PROGRESS",
+          "priority": "P1"
+        },
+        {
+          "id": "CR-011",
+          "title": "Complete Reports Module (new, role-based, separate tab)",
+          "status": "OPEN \u2014 GATE 2.5 PHASE 1 (S0 locked, S1 FROZEN, S2 API-wired awaiting validation)",
+          "files": "",
+          "notes": "Option C adopted 2026-06-01: template screens merge with first real exemplar (S2 = Aggregated Template + Item Sales). S2 wired against /order-logs-report + /get-products-list + /get-categories. Awaiting owner validation against Pav&Pages (rid=383) date 2026-05-01 (164 orders confirmed at API level). BE-3 DROPPED: /get-categories endpoint discovered live, provides full category names.",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_011_INTAKE_2026_06_01.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_IMPACT_ANALYSIS_2026_06_01.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Field-to-Report Atlas (Discovery)",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_FIELD_TO_REPORT_ATLAS_2026_06_01.md",
+              "type": "discovery"
+            },
+            {
+              "label": "Backend Coordination Note",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_BACKEND_COORDINATION_NOTE_2026_06_01.md",
+              "type": "coordination"
+            },
+            {
+              "label": "Screen Freeze Protocol (BINDING)",
+              "path": "memory/control/CR_011_SCREEN_FREEZE_PROTOCOL.md",
+              "type": "governance"
+            },
+            {
+              "label": "Screen Freeze Log",
+              "path": "memory/control/CR_011_SCREEN_FREEZE_LOG.md",
+              "type": "tracking"
+            },
+            {
+              "label": "Design Guidelines (locked DNA)",
+              "path": "design_guidelines.json",
+              "type": "design"
+            },
+            {
+              "label": "S0 Landing Dashboard Mockup",
+              "path": "frontend/src/pages/reports-module/DashboardMockup.jsx",
+              "type": "mockup"
+            }
+          ],
+          "completeness": "2/7",
+          "category": "IN_PROGRESS",
+          "priority": "P1"
+        },
+        {
+          "id": "CR-012",
+          "title": "Menu Management \u2014 migrate to new API contract (scope-limited)",
+          "status": "OPEN \u2014 INTAKE",
+          "files": "",
+          "notes": "Registered 2026_06_01 via conversational intake",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_012_INTAKE_2026_06_01.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7",
+          "category": "IN_PROGRESS",
+          "priority": "P1"
+        },
+        {
+          "id": "CR-018",
+          "title": "Schedule Order \u2014 expanded scope (visibility, filters, badges, column order)",
+          "status": "OPEN \u2014 GATE 3 (Intake + Impact + Plan)",
+          "files": "CartPanel.jsx, OrderEntry.jsx, TableCard.jsx, DashboardPage.jsx, Header.jsx, TableSection.jsx",
+          "notes": "Registered 2026-06-10. Original partial impl in codebase (Jun-2026). This CR covers 10 gaps: schedule visibility rules (G1-G3), Collect Bill validation (G4), TableCard/OrderEntry badges (G5-G6), status column order (G7), channel view status filter re-enable (G8), Schedule filter pill (G9), TableSection filter fix (G10). G1-G4 already implemented.",
+          "artifact_refs": [
+            {
+              "label": "Intake + Impact + Plan",
+              "path": "memory/change_requests/CR_018_SCHEDULE_ORDER_CR.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "3/7",
+          "category": "IN_PROGRESS",
+          "priority": "P1"
+        }
+      ]
+    }
+  },
+  "cross_sprint_dependency_flags": [
+    {
+      "file": "OrderEntry.jsx",
+      "sprints": "POS 3.1 + CRM 2.0",
+      "risk": "HIGH"
+    },
+    {
+      "file": "CartPanel.jsx",
+      "sprints": "POS 3.1 + BUG-099 (POS 3.0)",
+      "risk": "MEDIUM"
+    },
+    {
+      "file": "CollectPaymentPanel.jsx",
+      "sprints": "BUG-108 (CRM) + potential financial rule fixes",
+      "risk": "MEDIUM"
+    }
+  ],
+  "schema_version": "2.0-gen",
+  "category_counts": {
+    "NOT_STARTED": 1,
+    "SHIPPED": 18,
+    "DEFERRED": 1,
+    "IN_PROGRESS": 4,
+    "SUBSUMED": 8
+  },
+  "active_count": 6,
+  "shipped_count": 18,
+  "subsumed_count": 8,
+  "closed_count": 27,
+  "tracked_total": 33
+}
