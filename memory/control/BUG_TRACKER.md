@@ -11,11 +11,11 @@ Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUS
 
 | Bug ID | Title | Priority | Status | Gate | Blocker |
 |---|---|---|---|---|---|
-| BUG-125 | Cancellations Order-Level scope never matches ('Cancel' vs 'cancelled') | P1 | REGISTERED 2/7 | Ready for Gate 3 | — |
-| BUG-126 | insightsService reads non-existent round_off (API: round_up) | P2 | REGISTERED 2/7 | Ready for Gate 3 | — |
-| BUG-127 | Dashboard Unsettled-TAB tile dead code (always ₹0) | P2 | REGISTERED 2/7 | Gate 3 blocked | Owner: tile semantics (Option A/B/C in impact doc) |
-| BUG-128 | Dashboard double-fetches identical order-logs payload | P2 | REGISTERED 2/7 | Ready for Gate 3 | — |
-| BUG-129 | Backend stamps TAB orders f_order_status=6 before collection | P1 | REGISTERED 2/7 — BACKEND-BLOCKED | — | Backend team contract answer |
+| BUG-125 | Cancellations Order-Level scope never matches ('Cancel' vs 'cancelled') | P1 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| BUG-126 | insightsService reads non-existent round_off (API: round_up) | P2 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| BUG-127 | Dashboard Unsettled-TAB tile → Credit Outstanding (credit API, option a) | P2 | PLANNED 3/7 | Awaiting Gate 4 GO | historical value needs backend as-of-date (brief #2) |
+| BUG-128 | Dashboard double-fetches identical order-logs payload | P2 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| BUG-129 | Backend stamps TAB orders f_order_status=6 before collection | P1→P3 (downgraded; FE gates by pm) | PLANNED (BACKEND-BLOCKED) | Brief sent via owner | Backend reply (brief #3) |
 **Source:** Canonical sprint summaries + `/memory/bugs/` artifact docs + `BUG_TEMPLATE.md`
 **Reconciliation report:** `change_requests/AUDIT_CLOSURE_DRIFT_001_PHASE_A_RECONCILIATION_2026_05_30.md`
 

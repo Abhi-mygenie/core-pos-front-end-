@@ -12385,18 +12385,18 @@
    "id": "BUG-125",
    "type": "bug",
    "title": "Cancellations report Order-Level scope never matches \u2014 code compares 'cancelled' but API sends 'Cancel'",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Cancellations",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12405,24 +12405,26 @@
    "impact_analysis_doc": "/app/memory/memory/bugs/BUG_125_IMPACT_ANALYSIS.md",
    "files": "CancellationsMockup.jsx",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "0/259 cancelled orders matched order scope in Mar-Jun 2026 across cafe103 AND palmhouse audits. Order-Level tab permanently empty; all order-cancels render under Item-Level. 1-line fix: match pm==='cancel' or fStatus===3 (reportTransform already does this)."
+   "notes": "0/259 cancelled orders matched order scope in Mar-Jun 2026 across cafe103 AND palmhouse audits. Order-Level tab permanently empty; all order-cancels render under Item-Level. 1-line fix: match pm==='cancel' or fStatus===3 (reportTransform already does this).",
+   "implementation_plan_doc": "/app/memory/memory/bugs/BUG_125_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "BUG-126",
    "type": "bug",
    "title": "insightsService reads non-existent ot.round_off \u2014 API field is round_up; Items & Menu under-reports Sold revenue",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Items & Menu",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12431,24 +12433,26 @@
    "impact_analysis_doc": "/app/memory/memory/bugs/BUG_126_IMPACT_ANALYSIS.md",
    "files": "insightsService.js",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "Round-off never distributed to items: palmhouse Mar Rs460/Apr Rs305/May Rs272/Jun Rs23; cafe103 ~Rs100+/month. 1-line fix: round_off -> round_up at insightsService.js line ~93."
+   "notes": "Round-off never distributed to items: palmhouse Mar Rs460/Apr Rs305/May Rs272/Jun Rs23; cafe103 ~Rs100+/month. 1-line fix: round_off -> round_up at insightsService.js line ~93.",
+   "implementation_plan_doc": "/app/memory/memory/bugs/BUG_126_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "BUG-127",
    "type": "bug",
    "title": "Dashboard 'Unsettled TAB' tile is dead code \u2014 condition nested inside isPaid branch, always Rs0",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Dashboard",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12457,24 +12461,26 @@
    "impact_analysis_doc": "/app/memory/memory/bugs/BUG_127_IMPACT_ANALYSIS.md",
    "files": "insightsService.js getDashboardAggregated",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "if (pm==='tab' && fStatus!=='6') is inside the fStatus==='6' branch \u2014 unreachable. Live-confirmed Rs0 despite 319 TAB orders (palmhouse) / 141 (cafe103). Note: backend stamps TAB fStatus=6 (BUG-129) so even corrected logic reads 0 \u2014 tile needs redefinition or removal."
+   "notes": "if (pm==='tab' && fStatus!=='6') is inside the fStatus==='6' branch \u2014 unreachable. Live-confirmed Rs0 despite 319 TAB orders (palmhouse) / 141 (cafe103). Note: backend stamps TAB fStatus=6 (BUG-129) so even corrected logic reads 0 \u2014 tile needs redefinition or removal.",
+   "implementation_plan_doc": "/app/memory/memory/bugs/BUG_127_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "BUG-128",
    "type": "bug",
    "title": "Dashboard double-fetches identical /order-logs-report payload (~40MB x2 per load at palmhouse)",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Dashboard",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12483,24 +12489,26 @@
    "impact_analysis_doc": "/app/memory/memory/bugs/BUG_128_IMPACT_ANALYSIS.md",
    "files": "insightsService.js getDashboardAggregated",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "ordersResp and cancelDataResp are byte-identical POSTs (same sort_by/from/to). Comment claims cancel_at-attribution purpose but wider window never implemented \u2014 cancels of orders created before range are missed."
+   "notes": "ordersResp and cancelDataResp are byte-identical POSTs (same sort_by/from/to). Comment claims cancel_at-attribution purpose but wider window never implemented \u2014 cancels of orders created before range are missed.",
+   "implementation_plan_doc": "/app/memory/memory/bugs/BUG_128_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "BUG-129",
    "type": "bug",
    "title": "Backend stamps TAB (credit) orders f_order_status=6 before money is collected",
-   "status": "REGISTERED",
+   "status": "PLANNED (BACKEND-BLOCKED)",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Backend \u2014 order lifecycle (backend ask)",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12509,24 +12517,26 @@
    "impact_analysis_doc": "/app/memory/memory/bugs/BUG_129_IMPACT_ANALYSIS.md",
    "files": "backend orders_table",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "All 319 palmhouse + 141 cafe103 TAB orders have fStatus=6 at punch. Root cause of CR-030/TAB policy ambiguity: frontend cannot distinguish settled vs outstanding credit from the list payload. Backend team item."
+   "notes": "All 319 palmhouse + 141 cafe103 TAB orders have fStatus=6 at punch. Root cause of CR-030/TAB policy ambiguity: frontend cannot distinguish settled vs outstanding credit from the list payload. Backend team item.",
+   "implementation_plan_doc": "/app/memory/control/BACKEND_BRIEF_2026_06_11.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "CR-029",
    "type": "CR",
    "title": "Room order scope consistency \u2014 one shared room predicate + per-screen incl./excl. rooms badge or toggle",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 all screens",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12535,24 +12545,26 @@
    "impact_analysis_doc": "/app/memory/memory/change_requests/CR_029_IMPACT_ANALYSIS.md",
    "files": "insightsService.js, orderLedgerService.js, SalesMockup, PaymentsMockup, DashboardMockup, ItemSales*",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "Palmhouse live impact: Dashboard/Items include rooms, Sales/Payments/Ledger exclude. Mar gap Rs1,78,172; Card mix differs by Rs1.4L. Also payment_method='ROOM' with order_in=null edge (4 orders Jun)."
+   "notes": "Palmhouse live impact: Dashboard/Items include rooms, Sales/Payments/Ledger exclude. Mar gap Rs1,78,172; Card mix differs by Rs1.4L. Also payment_method='ROOM' with order_in=null edge (4 orders Jun).",
+   "implementation_plan_doc": "/app/memory/memory/change_requests/CR_029_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "CR-030",
    "type": "CR",
    "title": "Revenue attribution toggle \u2014 punch date vs collection date, standardized + labelled on every Insights screen",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 all screens + Settlement",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12561,24 +12573,26 @@
    "impact_analysis_doc": "/app/memory/memory/change_requests/CR_030_IMPACT_ANALYSIS.md",
    "files": "all report screens, orderLedgerService sortBy",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "Jun 3 palmhouse: punch Rs7,838 vs collection Rs22,897/24,892. Order 014894 punched May 16, collected Jun 8. No single day reconciles between Insights and Settlement/backend. Owner decision needed: canonical basis or labelled toggle."
+   "notes": "Jun 3 palmhouse: punch Rs7,838 vs collection Rs22,897/24,892. Order 014894 punched May 16, collected Jun 8. No single day reconciles between Insights and Settlement/backend. Owner decision needed: canonical basis or labelled toggle.",
+   "implementation_plan_doc": "/app/memory/memory/change_requests/CR_030_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "CR-031",
    "type": "CR",
    "title": "Canonical cancellation money formula \u2014 Dashboard vs Cancellations report disagree every month",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Dashboard + Cancellations",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12587,24 +12601,26 @@
    "impact_analysis_doc": "/app/memory/memory/change_requests/CR_031_IMPACT_ANALYSIS.md",
    "files": "insightsService.js, CancellationsMockup.jsx",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "Palmhouse deltas: Mar 13,475 / Apr 6,658 / May 10,453. Causes: order_amount+raw price vs line subtotal+tax; cancel_at vs created_at gates; line-count vs qty-count. Depends on BUG-125 fix landing first."
+   "notes": "Palmhouse deltas: Mar 13,475 / Apr 6,658 / May 10,453. Causes: order_amount+raw price vs line subtotal+tax; cancel_at vs created_at gates; line-count vs qty-count. Depends on BUG-125 fix landing first.",
+   "implementation_plan_doc": "/app/memory/memory/change_requests/CR_031_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "CR-032",
    "type": "CR",
    "title": "Shared payment-method classifier module \u2014 handle pending/partial/cash_on_delivery/zero-amount-paid consistently",
-   "status": "REGISTERED",
+   "status": "PLANNED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights \u2014 Sales, Payments, Dashboard",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12613,24 +12629,26 @@
    "impact_analysis_doc": "/app/memory/memory/change_requests/CR_032_IMPACT_ANALYSIS.md",
    "files": "SalesMockup, PaymentsMockup, insightsService, AllOrdersReportPage",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "New live enums at palmhouse: 'pending' (13 orders, unknown to all classifiers), 'partial' (Sales 'Partial' vs Dashboard raw 'partial'; Mar Rs2,268 vs Rs9,858), 'cash_on_delivery' (6, classified Cash by substring luck), zero-amount paid orders (May: 17) skew AOV."
+   "notes": "New live enums at palmhouse: 'pending' (13 orders, unknown to all classifiers), 'partial' (Sales 'Partial' vs Dashboard raw 'partial'; Mar Rs2,268 vs Rs9,858), 'cash_on_delivery' (6, classified Cash by substring luck), zero-amount paid orders (May: 17) skew AOV.",
+   "implementation_plan_doc": "/app/memory/memory/change_requests/CR_032_IMPLEMENTATION_PLAN.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
   },
   {
    "id": "CR-033",
    "type": "CR",
    "title": "Settlement report 'total sale' basis \u2014 define + reconcile against Insights (backend ask)",
-   "status": "REGISTERED",
+   "status": "PLANNED (BACKEND-BLOCKED)",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Settlement / backend (backend ask)",
-   "completeness": "2/7",
+   "completeness": "3/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
     "art1_intake": "PRESENT",
     "art2_impact_analysis": "PRESENT",
-    "art3_implementation_plan": "PENDING",
+    "art3_implementation_plan": "PRESENT",
     "art4_code_gate": "PENDING",
     "art5_impl_summary_qa": "PENDING",
     "art6_owner_smoke": "PENDING"
@@ -12639,7 +12657,36 @@
    "impact_analysis_doc": "/app/memory/memory/change_requests/CR_033_IMPACT_ANALYSIS.md",
    "files": "backend get-settlement-report",
    "source": "INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md (2026-06-11) + INSIGHTS_REPORTS_AUDIT.md (cafe103, 2026-06-10)",
-   "notes": "Palmhouse Mar: settlement total_sale Rs15,03,418 vs Dashboard Rs13,46,993 (most inclusive frontend figure) vs Sales Rs11,68,821 \u2014 ~Rs1.4L unexplained even after adding cancels/pending. Settlement screen cannot be footed against anything until basis is documented."
+   "notes": "Palmhouse Mar: settlement total_sale Rs15,03,418 vs Dashboard Rs13,46,993 (most inclusive frontend figure) vs Sales Rs11,68,821 \u2014 ~Rs1.4L unexplained even after adding cancels/pending. Settlement screen cannot be footed against anything until basis is documented.",
+   "implementation_plan_doc": "/app/memory/control/BACKEND_BRIEF_2026_06_11.md",
+   "decisions": "All owner decisions locked 2026-06-11 \u2014 see OWNER_DECISION_QUEUE.md Category H + addendum"
+  },
+  {
+   "id": "CR-034",
+   "type": "CR",
+   "title": "Items & Menu \u2014 Order Ledger-style buckets (Sold / Added to Credit / Cancelled / Pending Billing)",
+   "status": "PLANNED",
+   "priority": "P1",
+   "sprint": "POS 4.0",
+   "opened": "2026-06-11",
+   "area": "Reports / Insights \u2014 Items & Menu",
+   "completeness": "3/7",
+   "registered_at": "2026-06-11",
+   "artifacts": {
+    "art0_registration": "PRESENT",
+    "art1_intake": "PRESENT",
+    "art2_impact_analysis": "PRESENT",
+    "art3_implementation_plan": "PRESENT",
+    "art4_code_gate": "PENDING",
+    "art5_impl_summary_qa": "PENDING",
+    "art6_owner_smoke": "PENDING"
+   },
+   "intake_doc": "/app/memory/memory/crs/intake/CR_034_INTAKE_2026_06_11.md",
+   "impact_analysis_doc": "/app/memory/memory/change_requests/CR_034_IMPACT_ANALYSIS.md",
+   "implementation_plan_doc": "/app/memory/memory/change_requests/CR_034_IMPLEMENTATION_PLAN.md",
+   "files": "insightsService.js, ItemSalesHybridMockup.jsx",
+   "source": "Owner Q4 ruling 2026-06-11 (Insights audit batch, OWNER_DECISION_QUEUE Category H addendum)",
+   "notes": "Buckets by parent-order ledger category; punch-dated (ITEMS-BASIS ruling); cancelled bucket by cancel_at; TAB cumulative \u2014 credit items never move (Q4)."
   }
  ]
 }

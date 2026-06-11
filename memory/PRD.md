@@ -28,6 +28,12 @@ Deploy repo https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch `11-
 - Gate 3 ready: BUG-125, BUG-126, BUG-128, CR-032 · Gate 3 blocked on owner: BUG-127, CR-029, CR-030, CR-031 · Backend-blocked: BUG-129, CR-033
 - Note: scripts/create_intake.py + gen_dashboard_data.js missing from 11-june branch — registration done manually
 
+## Update 2026-06-11 (later-2) — Question freeze complete + Gate 3 plans produced
+- ~35 owner decisions locked across 2 Q&A rounds (OWNER_DECISION_QUEUE.md Category H + addendum): revenue = collection date (R1); room food included everywhere; TAB out of revenue, settlements in by method, GST stays; Items punch-dated with Ledger-style buckets; cancellation = line value/qty/cancel_at with operations.previous_order_amount override; per-screen basis labels; harness = QA fixture; per-screen freeze-log at Gate 4
+- Live-verified: complementary_price key; operations[].order_cancel.previous_order_amount (partial coverage caveats); room_revenue = food-at-checkout (to the rupee); discount zeroed on all 823 cancelled lines; no settlements ever recorded (₹4.4L credit outstanding genuine)
+- Gate 3 artifacts created: implementation plans for BUG-125/126/127/128, CR-029/030/031/032/034; CR-034 registered (intake+impact+plan); BACKEND_BRIEF_2026_06_11.md (7 asks); registry at 182 items, batch completeness 3/7
+- STATUS: awaiting owner Gate 4 GO per item. NO CODE WRITTEN (freeze rule R3 honoured)
+
 ## Notes
 - /app/audit_data/ referenced in the audit doc is NOT present in this branch
 - No code edits made (per user instruction)

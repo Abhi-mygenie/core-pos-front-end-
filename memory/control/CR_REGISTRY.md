@@ -11,11 +11,12 @@ Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUS
 
 | CR ID | Title | Priority | Status | Gate | Blocker |
 |---|---|---|---|---|---|
-| CR-029 | Room scope consistency — shared predicate + per-screen badge/toggle | P1 | REGISTERED 2/7 | Gate 3 needs owner choice | Badge vs toggle; default scope; transferToRoom membership |
-| CR-030 | Punch vs collection attribution — standardized + labelled toggle | P1 | REGISTERED 2/7 | Gate 3 BLOCKED | Owner OD-1..OD-3 (revenue basis, toggle vs canonical, TAB timing) |
-| CR-031 | Canonical cancellation money formula (Dashboard vs Cancellations) | P2 | REGISTERED 2/7 | Gate 3 needs owner sign-off | Formula approval; depends BUG-125 |
-| CR-032 | Shared payment-method classifier (pending/partial/COD/zero-amt) | P2 | REGISTERED 2/7 | Ready for Gate 3 | Info ask: backend semantics of 'pending' |
-| CR-033 | Settlement 'total sale' basis definition + reconciliation | P1 | REGISTERED 2/7 — BACKEND-BLOCKED | — | Backend formula documentation |
+| CR-029 | Room food included in ALL reports (owner-ruled) + Room Bill bucket | P1 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| CR-030 | Revenue by collection date (R1) + TAB out/settlements in (H5) + labels | P1 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| CR-031 | One cancellation truth: line value, qty, cancel_at, ops-amount override | P2 | PLANNED 3/7 | Awaiting Gate 4 GO | BUG-125 lands first |
+| CR-032 | Shared payment classifier + 3 chart groups (order/Credit/Room Bill) | P2 | PLANNED 3/7 | Awaiting Gate 4 GO | — |
+| CR-033 | Settlement 'total sale' basis definition + reconciliation | P1 | PLANNED (BACKEND-BLOCKED) | Brief sent via owner | Backend reply (brief #1) |
+| CR-034 | Items & Menu Ledger-style buckets (Sold/Credit/Cancelled/Pending) | P1 | PLANNED 3/7 (registered 2026-06-11) | Awaiting Gate 4 GO | with CR-031 |
 
 ---
 
