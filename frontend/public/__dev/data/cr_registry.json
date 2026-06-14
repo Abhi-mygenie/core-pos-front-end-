@@ -476,7 +476,7 @@
             }
           ],
           "completeness": "6/7",
-          "category": "DEFERRED"
+          "category": "PARKED"
         },
         {
           "id": "POS2-007 Phase 1",
@@ -835,7 +835,7 @@
             }
           ],
           "completeness": "7/7",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "status_history": [
             {
               "from": "NOT_STARTED",
@@ -945,7 +945,7 @@
             }
           ],
           "completeness": "7/7",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "status_history": [
             {
               "from": "NOT_STARTED",
@@ -1049,7 +1049,7 @@
             }
           ],
           "completeness": "7/7",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "status_history": [
             {
               "from": "NOT_STARTED",
@@ -1306,7 +1306,7 @@
             }
           ],
           "completeness": "7/7",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "status_history": [
             {
               "from": "NOT_STARTED",
@@ -1396,7 +1396,7 @@
             }
           ],
           "completeness": "6/7",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "status_history": [
             {
               "from": "NOT_FORMALIZED",
@@ -1656,163 +1656,190 @@
           "id": "CR-014",
           "title": "Menu Management API Migration + Bulk Editor",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-015",
           "title": "Settlement Module",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-016",
           "title": "Settlement History (Insights)",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-017",
           "title": "WhatsApp Payment Link",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-018",
           "title": "Schedule Order",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-019",
           "title": "Restaurant Settings Wizard",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-020",
           "title": "Settings Bug Sweep (B1-B15)",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-021",
           "title": "Split/Partial Payment",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-022",
           "title": "Food Type Filters",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-023",
           "title": "Typing Lag Fix",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-024",
           "title": "Channel Visibility Override",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-025",
           "title": "Discount Payload Fix (P0 money)",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P0"
+          "priority": "P0",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-026",
           "title": "Report Data & Rounding Sweep",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-029",
           "title": "Room Food in All Reports",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-030",
           "title": "Revenue by Collection Date",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-031",
           "title": "Cancellation Truth",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-032",
           "title": "Payment Classifier + Charts",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-033",
           "title": "Settlement Total Sale Basis",
           "status": "CLOSED — owner directive",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-034",
           "title": "Items Ledger Buckets",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-035",
           "title": "Report Definitions Help",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P3"
+          "priority": "P3",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-037",
           "title": "Remove Popular Items",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-038",
           "title": "Boot Retry Policy",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-039",
           "title": "Credit Total Wire + Portfolio Optimization",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-040",
           "title": "Sidebar Rename Labels + Remove X/Y/Z",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P3"
+          "priority": "P3",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-042",
           "title": "Item Ledger Rename",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P3"
+          "priority": "P3",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-044",
           "title": "Insights Shared Cache",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "SHIPPED"
         },
         {
           "id": "CR-045",
           "title": "FE Field Stripping (temporary)",
           "status": "CLOSED — OWNER VERIFIED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "SHIPPED"
         }
       ],
       "frozen": true,
@@ -1828,55 +1855,64 @@
           "id": "CR-027",
           "title": "Unified Toast & Error Surfacing",
           "status": "NOT STARTED",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "NOT_STARTED"
         },
         {
           "id": "CR-028",
           "title": "Item-Level Discount (payload + give_discount)",
           "status": "INTAKE — OWNER DECISIONS LOCKED",
-          "priority": "P0"
+          "priority": "P0",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-036",
           "title": "Bulk Editor — Add Item Row (merge from menu-bug)",
           "status": "GATE 3 COMPLETE — MERGE PENDING",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-036-FU-01",
           "title": "Validation UX Polish",
           "status": "GATE 3 COMPLETE — MERGE PENDING",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-036-FU-02",
           "title": "Column Reorder + Sold By",
           "status": "GATE 3 COMPLETE — MERGE PENDING",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-036-FU-03",
           "title": "Tax Validation + Backdrop Loader",
           "status": "GATE 3 COMPLETE — MERGE PENDING",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-029-QSR",
           "title": "QSR Payload Parity + round_up",
           "status": "GATE 3 COMPLETE — MERGE PENDING",
-          "priority": "P1"
+          "priority": "P1",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-041",
           "title": "Navigation Consistency",
           "status": "INVESTIGATION COMPLETE — D-1: Routes everywhere",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "IN_PROGRESS"
         },
         {
           "id": "CR-043",
           "title": "Credit Per-Customer Totals",
           "status": "GATE 1 ONLY",
-          "priority": "P2"
+          "priority": "P2",
+          "category": "IN_PROGRESS"
         }
       ]
     }
@@ -1901,14 +1937,15 @@
   "schema_version": "2.0-gen",
   "category_counts": {
     "NOT_STARTED": 1,
-    "SHIPPED": 18,
-    "DEFERRED": 1,
-    "IN_PROGRESS": 4,
-    "SUBSUMED": 8
+    "IN_PROGRESS": 8,
+    "BLOCKED": 0,
+    "SHIPPED": 50,
+    "SUBSUMED": 3,
+    "PARKED": 1
   },
   "active_count": 9,
-  "shipped_count": 45,
-  "subsumed_count": 8,
+  "shipped_count": 50,
+  "subsumed_count": 3,
   "closed_count": 27,
-  "tracked_total": 33
+  "tracked_total": 63
 }

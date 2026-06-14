@@ -3,10 +3,11 @@
   "schema_version": "1.3",
   "source": "POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md + /memory/bugs/*.md + reconciliation 2026-05-30 + CR-002/BUG-097/AUDIT closures 2026-05-31",
   "summary": {
-    "total_tracked": 89,
-    "pos_4_0_closed": 19,
-    "pos_5_0_open": 9,
-    "backend_blocked": 8
+    "total_tracked": 141,
+    "closed_verified": 119,
+    "open_intake": 4,
+    "backend_blocked": 8,
+    "crm_blocked": 0
   },
   "active_recent_bugs": [
     {
