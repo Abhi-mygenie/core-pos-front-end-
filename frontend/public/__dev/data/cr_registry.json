@@ -1913,6 +1913,15 @@
           "status": "GATE 1 ONLY",
           "priority": "P2",
           "category": "IN_PROGRESS"
+        },
+        {
+          "id": "CR-046",
+          "title": "Dashboard v2.0 — Workflow Controller (login, batch, gates, smoke)",
+          "priority": "P1",
+          "status": "REGISTERED — INTAKE COMPLETE",
+          "category": "IN_PROGRESS",
+          "files": "public/__dev/",
+          "notes": "3-phase delivery: security → batch workflow → smoke+express"
         }
       ]
     }
@@ -1937,15 +1946,15 @@
   "schema_version": "2.0-gen",
   "category_counts": {
     "NOT_STARTED": 0,
-    "IN_PROGRESS": 2,
+    "IN_PROGRESS": 3,
     "BLOCKED": 0,
     "SHIPPED": 57,
     "SUBSUMED": 3,
     "PARKED": 1
   },
-  "active_count": 2,
+  "active_count": 3,
   "shipped_count": 57,
   "subsumed_count": 3,
   "closed_count": 27,
-  "tracked_total": 63
+  "tracked_total": 64
 }
