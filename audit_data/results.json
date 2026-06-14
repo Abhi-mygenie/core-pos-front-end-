@@ -1,0 +1,630 @@
+{
+ "mar": {
+  "sales": {
+   "rev": 1168821,
+   "cnt": 1871,
+   "tax": 53084,
+   "disc": 31750,
+   "pm": {
+    "Card": 428630,
+    "UPI": 275601,
+    "Cash": 394866,
+    "TAB": 67457,
+    "Partial": 2268
+   },
+   "tab_rev": 67457,
+   "tab_cnt": 128,
+   "ttr_rev": 0,
+   "zero_amt_paid": 6,
+   "daily": {
+    "2026-03-01": 45186,
+    "2026-03-02": 39408,
+    "2026-03-03": 66582,
+    "2026-03-04": 25201,
+    "2026-03-05": 39874,
+    "2026-03-06": 44030,
+    "2026-03-07": 39329,
+    "2026-03-08": 47868,
+    "2026-03-09": 36784,
+    "2026-03-10": 36450,
+    "2026-03-11": 31399,
+    "2026-03-12": 24896,
+    "2026-03-13": 35322,
+    "2026-03-14": 30584,
+    "2026-03-15": 51064,
+    "2026-03-16": 34662,
+    "2026-03-17": 65094,
+    "2026-03-18": 36742,
+    "2026-03-19": 34269,
+    "2026-03-20": 47720,
+    "2026-03-21": 43292,
+    "2026-03-22": 33734,
+    "2026-03-23": 29467,
+    "2026-03-24": 24619,
+    "2026-03-25": 35896,
+    "2026-03-26": 26183,
+    "2026-03-27": 37726,
+    "2026-03-28": 28898,
+    "2026-03-29": 27112,
+    "2026-03-30": 31279,
+    "2026-03-31": 38151
+   }
+  },
+  "ledger": {
+   "paid_rev": 1101364,
+   "paid_cnt": 1743,
+   "meta_total": 1186726,
+   "all_rows": 2081
+  },
+  "items": {
+   "sold_rev": 1346763,
+   "roundoff_missing": 460,
+   "item_tax": 60888,
+   "pending_rev": 0,
+   "mismatch_orders": 0,
+   "mismatch_delta": 0
+  },
+  "dashboard": {
+   "rev": 1346993,
+   "cnt": 2088,
+   "pm": {
+    "Card": 568852,
+    "UPI": 284646,
+    "Cash": 413064,
+    "TAB": 70573,
+    "partial": 9858
+   },
+   "unsettled_tab": 0,
+   "room_rev": 178172,
+   "cancel_orders": 82,
+   "cancel_order_rev": 17685,
+   "cancel_items": 162,
+   "cancel_item_rev": 35075,
+   "cancel_total_rev": 52760,
+   "top_items_basis": 1323545
+  },
+  "cancellations": {
+   "loss": 66235,
+   "qty": 310,
+   "order_scope_qty": 0,
+   "item_scope_qty": 310,
+   "cancelled_pm": {
+    "Cancel": 109
+   },
+   "big": []
+  },
+  "tab": {
+   "cnt": 133,
+   "rev": 70573,
+   "fs": {
+    "6": 133
+   }
+  },
+  "enums": {
+   "Cancel": 109,
+   "card": 735,
+   "upi": 386,
+   "cash": 828,
+   "TAB": 133,
+   "Merge": 101,
+   "partial": 6
+  },
+  "merged": {
+   "cnt": 101,
+   "amt": 0
+  },
+  "after_midnight_orders": 1,
+  "partial_paid_rev": 9858
+ },
+ "apr": {
+  "sales": {
+   "rev": 778271,
+   "cnt": 1206,
+   "tax": 36071,
+   "disc": 28933,
+   "pm": {
+    "Card": 232594,
+    "Cash": 220397,
+    "UPI": 275985,
+    "TAB": 45127,
+    "Partial": 4168
+   },
+   "tab_rev": 45127,
+   "tab_cnt": 88,
+   "ttr_rev": 0,
+   "zero_amt_paid": 7,
+   "daily": {
+    "2026-04-01": 36577,
+    "2026-04-02": 32459,
+    "2026-04-03": 22254,
+    "2026-04-04": 55390,
+    "2026-04-05": 28442,
+    "2026-04-06": 24270,
+    "2026-04-07": 24873,
+    "2026-04-08": 26606,
+    "2026-04-09": 25190,
+    "2026-04-10": 22590,
+    "2026-04-11": 19149,
+    "2026-04-12": 40679,
+    "2026-04-13": 28116,
+    "2026-04-14": 20445,
+    "2026-04-15": 20227,
+    "2026-04-16": 19598,
+    "2026-04-17": 21668,
+    "2026-04-18": 18541,
+    "2026-04-19": 19747,
+    "2026-04-20": 22425,
+    "2026-04-21": 18246,
+    "2026-04-22": 28693,
+    "2026-04-23": 23137,
+    "2026-04-24": 20686,
+    "2026-04-25": 26946,
+    "2026-04-26": 29450,
+    "2026-04-27": 19812,
+    "2026-04-28": 27649,
+    "2026-04-29": 23876,
+    "2026-04-30": 30530
+   }
+  },
+  "ledger": {
+   "paid_rev": 733144,
+   "paid_cnt": 1118,
+   "meta_total": 790061,
+   "all_rows": 1315
+  },
+  "items": {
+   "sold_rev": 918704,
+   "roundoff_missing": 305,
+   "item_tax": 42413,
+   "pending_rev": 8631,
+   "mismatch_orders": 2,
+   "mismatch_delta": 137
+  },
+  "dashboard": {
+   "rev": 921874,
+   "cnt": 1358,
+   "pm": {
+    "Card": 369442,
+    "Cash": 222834,
+    "UPI": 279221,
+    "TAB": 45127,
+    "ROOM": 1082,
+    "partial": 4168
+   },
+   "unsettled_tab": 0,
+   "room_rev": 143603,
+   "cancel_orders": 43,
+   "cancel_order_rev": 11790,
+   "cancel_items": 102,
+   "cancel_item_rev": 24536,
+   "cancel_total_rev": 36326,
+   "top_items_basis": 916670
+  },
+  "cancellations": {
+   "loss": 42984,
+   "qty": 185,
+   "order_scope_qty": 0,
+   "item_scope_qty": 185,
+   "cancelled_pm": {
+    "Cancel": 49
+   },
+   "big": []
+  },
+  "tab": {
+   "cnt": 88,
+   "rev": 45127,
+   "fs": {
+    "6": 88
+   }
+  },
+  "enums": {
+   "card": 416,
+   "cash": 437,
+   "upi": 411,
+   "TAB": 88,
+   "ROOM": 3,
+   "Merge": 60,
+   "pending": 1,
+   "Cancel": 49,
+   "partial": 3
+  },
+  "merged": {
+   "cnt": 60,
+   "amt": 0
+  },
+  "after_midnight_orders": 0,
+  "partial_paid_rev": 4168
+ },
+ "may": {
+  "sales": {
+   "rev": 1321940,
+   "cnt": 1660,
+   "tax": 52294,
+   "disc": 46042,
+   "pm": {
+    "UPI": 682035,
+    "TAB": 49460,
+    "Cash": 280251,
+    "Card": 293291,
+    "Partial": 16903
+   },
+   "tab_rev": 49460,
+   "tab_cnt": 85,
+   "ttr_rev": 0,
+   "zero_amt_paid": 17,
+   "daily": {
+    "2026-05-01": 44263,
+    "2026-05-02": 50058,
+    "2026-05-03": 43686,
+    "2026-05-04": 45085,
+    "2026-05-05": 23951,
+    "2026-05-06": 24662,
+    "2026-05-07": 21994,
+    "2026-05-08": 28919,
+    "2026-05-09": 97950,
+    "2026-05-10": 35900,
+    "2026-05-11": 23555,
+    "2026-05-12": 26384,
+    "2026-05-13": 32824,
+    "2026-05-14": 36811,
+    "2026-05-15": 27650,
+    "2026-05-16": 79715,
+    "2026-05-17": 43044,
+    "2026-05-18": 27660,
+    "2026-05-19": 24604,
+    "2026-05-20": 16301,
+    "2026-05-21": 26395,
+    "2026-05-22": 34078,
+    "2026-05-23": 88479,
+    "2026-05-24": 41289,
+    "2026-05-25": 37695,
+    "2026-05-26": 40948,
+    "2026-05-27": 36031,
+    "2026-05-28": 44000,
+    "2026-05-29": 71620,
+    "2026-05-30": 83395,
+    "2026-05-31": 62994
+   }
+  },
+  "ledger": {
+   "paid_rev": 1272480,
+   "paid_cnt": 1575,
+   "meta_total": 1341395,
+   "all_rows": 1834
+  },
+  "items": {
+   "sold_rev": 1423816,
+   "roundoff_missing": 272,
+   "item_tax": 56741,
+   "pending_rev": 19014,
+   "mismatch_orders": 2,
+   "mismatch_delta": -557
+  },
+  "dashboard": {
+   "rev": 1423021,
+   "cnt": 1775,
+   "pm": {
+    "UPI": 707257,
+    "TAB": 49460,
+    "Cash": 283871,
+    "Card": 347179,
+    "ROOM": 18351,
+    "partial": 16903
+   },
+   "unsettled_tab": 0,
+   "room_rev": 101081,
+   "cancel_orders": 71,
+   "cancel_order_rev": 15843,
+   "cancel_items": 228,
+   "cancel_item_rev": 56169,
+   "cancel_total_rev": 72012,
+   "top_items_basis": 1427641
+  },
+  "cancellations": {
+   "loss": 82465,
+   "qty": 392,
+   "order_scope_qty": 0,
+   "item_scope_qty": 392,
+   "cancelled_pm": {
+    "Cancel": 97
+   },
+   "big": []
+  },
+  "tab": {
+   "cnt": 86,
+   "rev": 49460,
+   "fs": {
+    "6": 86
+   }
+  },
+  "enums": {
+   "upi": 847,
+   "TAB": 86,
+   "Merge": 73,
+   "cash": 455,
+   "card": 355,
+   "Cancel": 97,
+   "pending": 5,
+   "cash_on_delivery": 6,
+   "ROOM": 28,
+   "partial": 4
+  },
+  "merged": {
+   "cnt": 73,
+   "amt": 0
+  },
+  "after_midnight_orders": 42,
+  "partial_paid_rev": 16903
+ },
+ "jun": {
+  "sales": {
+   "rev": 87589,
+   "cnt": 110,
+   "tax": 4025,
+   "disc": 3710,
+   "pm": {
+    "Cash": 16115,
+    "UPI": 43374,
+    "TAB": 5863,
+    "Card": 22237
+   },
+   "tab_rev": 5863,
+   "tab_cnt": 12,
+   "ttr_rev": 0,
+   "zero_amt_paid": 3,
+   "daily": {
+    "2026-06-01": 41785,
+    "2026-06-02": 37422,
+    "2026-06-03": 7838,
+    "2026-06-10": 544
+   }
+  },
+  "ledger": {
+   "paid_rev": 81726,
+   "paid_cnt": 98,
+   "meta_total": 92227,
+   "all_rows": 122
+  },
+  "items": {
+   "sold_rev": 91165,
+   "roundoff_missing": 23,
+   "item_tax": 4191,
+   "pending_rev": 3481,
+   "mismatch_orders": 2,
+   "mismatch_delta": -153
+  },
+  "dashboard": {
+   "rev": 91034,
+   "cnt": 120,
+   "pm": {
+    "Cash": 16115,
+    "UPI": 44047,
+    "TAB": 5863,
+    "Card": 22237,
+    "ROOM": 2772
+   },
+   "unsettled_tab": 0,
+   "room_rev": 3445,
+   "cancel_orders": 3,
+   "cancel_order_rev": 130,
+   "cancel_items": 20,
+   "cancel_item_rev": 3860,
+   "cancel_total_rev": 3990,
+   "top_items_basis": 95175
+  },
+  "cancellations": {
+   "loss": 4236,
+   "qty": 23,
+   "order_scope_qty": 0,
+   "item_scope_qty": 23,
+   "cancelled_pm": {
+    "Cancel": 4
+   },
+   "big": []
+  },
+  "tab": {
+   "cnt": 12,
+   "rev": 5863,
+   "fs": {
+    "6": 12
+   }
+  },
+  "enums": {
+   "cash": 28,
+   "Cancel": 4,
+   "pending": 7,
+   "upi": 60,
+   "TAB": 12,
+   "card": 19,
+   "ROOM": 4,
+   "Merge": 2
+  },
+  "merged": {
+   "cnt": 2,
+   "amt": 0
+  },
+  "after_midnight_orders": 2,
+  "partial_paid_rev": 0
+ },
+ "jun_daily_comparison": [
+  {
+   "date": "2026-06-01",
+   "sales_created": 41785,
+   "ledger_collect": 41564,
+   "backend_paid": 40178,
+   "backend_total_sales": 47065,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 1743,
+   "backend_cash": 9647,
+   "backend_card": 7496,
+   "backend_upi": 22678,
+   "settlement_sale": 41921
+  },
+  {
+   "date": "2026-06-02",
+   "sales_created": 37422,
+   "ledger_collect": 37433,
+   "backend_paid": 49180,
+   "backend_total_sales": 40060,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 2314,
+   "backend_cash": 5115,
+   "backend_card": 12216,
+   "backend_upi": 17788,
+   "settlement_sale": 51494
+  },
+  {
+   "date": "2026-06-03",
+   "sales_created": 7838,
+   "ledger_collect": 8426,
+   "backend_paid": 22897,
+   "backend_total_sales": 10296,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 1995,
+   "backend_cash": 725,
+   "backend_card": 2525,
+   "backend_upi": 3181,
+   "settlement_sale": 24892
+  },
+  {
+   "date": "2026-06-04",
+   "sales_created": 0,
+   "ledger_collect": 0,
+   "backend_paid": 0,
+   "backend_total_sales": 0,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 0,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 0
+  },
+  {
+   "date": "2026-06-05",
+   "sales_created": 0,
+   "ledger_collect": 0,
+   "backend_paid": 0,
+   "backend_total_sales": 0,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 0,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 0
+  },
+  {
+   "date": "2026-06-06",
+   "sales_created": 0,
+   "ledger_collect": 0,
+   "backend_paid": 0,
+   "backend_total_sales": 0,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 0,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 0
+  },
+  {
+   "date": "2026-06-07",
+   "sales_created": 0,
+   "ledger_collect": 0,
+   "backend_paid": 2705,
+   "backend_total_sales": 84,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 2441,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 2631
+  },
+  {
+   "date": "2026-06-08",
+   "sales_created": 0,
+   "ledger_collect": 2367,
+   "backend_paid": 0,
+   "backend_total_sales": 0,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 0,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 0
+  },
+  {
+   "date": "2026-06-09",
+   "sales_created": 0,
+   "ledger_collect": 84,
+   "backend_paid": 84,
+   "backend_total_sales": 0,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 84,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 84
+  },
+  {
+   "date": "2026-06-10",
+   "sales_created": 544,
+   "ledger_collect": 544,
+   "backend_paid": 672,
+   "backend_total_sales": 830,
+   "backend_tab_settled": 0,
+   "backend_unpaid": 0,
+   "backend_cash": 672,
+   "backend_card": 0,
+   "backend_upi": 0,
+   "settlement_sale": 544
+  }
+ ],
+ "spot_days": [
+  {
+   "date": "2026-03-15",
+   "sales_created": 51064,
+   "backend_paid": 64648,
+   "backend_tab_settled": 0,
+   "settlement_sale": 68420
+  },
+  {
+   "date": "2026-04-15",
+   "sales_created": 20227,
+   "backend_paid": 17340,
+   "backend_tab_settled": 0,
+   "settlement_sale": 18453
+  },
+  {
+   "date": "2026-05-15",
+   "sales_created": 27650,
+   "backend_paid": 27650,
+   "backend_tab_settled": 0,
+   "settlement_sale": 27650
+  }
+ ],
+ "settlement_totals": {
+  "mar": {
+   "total_today_collection": 439332.1,
+   "total_today_settlement": 0.0,
+   "total_pilferage": 0.0,
+   "total_sale": 1503417.6
+  },
+  "apr": {
+   "total_today_collection": 219463.0,
+   "total_today_settlement": 0.0,
+   "total_pilferage": 0.0,
+   "total_sale": 1020009.0
+  },
+  "may": {
+   "total_today_collection": 115587.0,
+   "total_today_settlement": 0.0,
+   "total_pilferage": 0.0,
+   "total_sale": 1458269.0
+  },
+  "jun": {
+   "total_today_collection": 3248.0,
+   "total_today_settlement": 50.0,
+   "total_pilferage": 4.0,
+   "total_sale": 121566.0
+  }
+ }
+}

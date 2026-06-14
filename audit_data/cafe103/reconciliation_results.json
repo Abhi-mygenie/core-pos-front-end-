@@ -1,0 +1,134 @@
+{
+  "restaurant": "cafe103 rid=644",
+  "generated": "2026-06-11 18:14:07.928419",
+  "A_sales_identity": {
+    "days_checked": 92,
+    "days_exact": 90,
+    "mismatch_days": [
+      {
+        "day": "2026-05-29",
+        "fe_orders": 80961.0,
+        "tab_settle": 0.0,
+        "fe_sales": 80961.0,
+        "be_paid_revenue": 80962.0,
+        "diff": -1.0
+      },
+      {
+        "day": "2026-05-30",
+        "fe_orders": 98698.0,
+        "tab_settle": 0.0,
+        "fe_sales": 98698.0,
+        "be_paid_revenue": 98699.0,
+        "diff": -1.0
+      }
+    ],
+    "total_fe": 6196939.32,
+    "total_be": 6196941.32,
+    "total_diff": -2.0,
+    "fs6_revenue_orders": 5137,
+    "tab_orders_excluded": 138
+  },
+  "B_cr034_identity": {
+    "Mar": {
+      "old_sold": 2093870.45,
+      "new_sold": 1745218.43,
+      "credit": 344687.44,
+      "new_sold_plus_credit_lines_only": 2089905.87,
+      "old_sold_lines_only": 2089905.87,
+      "identity_diff_lines_only": 0.0,
+      "order_charges_old_dist": 3964.58,
+      "order_charges_new_dist": 3964.58,
+      "charges_dist_diff": 0.0,
+      "tab_nonfs6_lines": 0,
+      "tab_nonfs6_value": 0.0,
+      "sold_lines": 6105,
+      "credit_lines": 74
+    },
+    "Apr": {
+      "old_sold": 1779010.03,
+      "new_sold": 1698098.43,
+      "credit": 75601.26,
+      "new_sold_plus_credit_lines_only": 1773699.69,
+      "old_sold_lines_only": 1773699.69,
+      "identity_diff_lines_only": 0.0,
+      "order_charges_old_dist": 5310.34,
+      "order_charges_new_dist": 5310.34,
+      "charges_dist_diff": 0.0,
+      "tab_nonfs6_lines": 0,
+      "tab_nonfs6_value": 0.0,
+      "sold_lines": 6809,
+      "credit_lines": 208
+    },
+    "May": {
+      "old_sold": 2534337.5,
+      "new_sold": 2299681.16,
+      "credit": 230932.11,
+      "new_sold_plus_credit_lines_only": 2530613.27,
+      "old_sold_lines_only": 2530613.27,
+      "identity_diff_lines_only": -0.0,
+      "order_charges_old_dist": 3724.23,
+      "order_charges_new_dist": 3724.23,
+      "charges_dist_diff": 0.0,
+      "tab_nonfs6_lines": 0,
+      "tab_nonfs6_value": 0.0,
+      "sold_lines": 8996,
+      "credit_lines": 162
+    }
+  },
+  "C_cr031_cancellations": {
+    "Mar": {
+      "item_scope": {
+        "lines": 42,
+        "qty": 50.0,
+        "value": 19317.0,
+        "comp_cancel_lines": 0
+      },
+      "order_scope": {
+        "orders": 1,
+        "ops_coverage": "0/1",
+        "ops_valued_total": 0.0,
+        "line_consol_same_orders": 0.0,
+        "line_consol_all_orders": 45.0,
+        "ops_vs_lines_drift_orders": [],
+        "drift_orders_count": 0
+      },
+      "order_012612_in_range": null
+    },
+    "Apr": {
+      "item_scope": {
+        "lines": 70,
+        "qty": 80.0,
+        "value": 16133.0,
+        "comp_cancel_lines": 0
+      },
+      "order_scope": {
+        "orders": 7,
+        "ops_coverage": "0/7",
+        "ops_valued_total": 0.0,
+        "line_consol_same_orders": 0.0,
+        "line_consol_all_orders": 7436.0,
+        "ops_vs_lines_drift_orders": [],
+        "drift_orders_count": 0
+      },
+      "order_012612_in_range": null
+    },
+    "May": {
+      "item_scope": {
+        "lines": 83,
+        "qty": 107.0,
+        "value": 25656.0,
+        "comp_cancel_lines": 0
+      },
+      "order_scope": {
+        "orders": 17,
+        "ops_coverage": "0/17",
+        "ops_valued_total": 0.0,
+        "line_consol_same_orders": 0.0,
+        "line_consol_all_orders": 9100.0,
+        "ops_vs_lines_drift_orders": [],
+        "drift_orders_count": 0
+      },
+      "order_012612_in_range": null
+    }
+  }
+}
