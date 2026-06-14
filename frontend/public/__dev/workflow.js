@@ -129,7 +129,6 @@ const WorkflowManager = {
 
   // ── Gate status helpers ──
   getItemGateStatus(item) {
-    // Derive gate progress from item fields
     const s = (item.status || '').toUpperCase();
     const gates = {
       intake:  'none',
@@ -140,18 +139,19 @@ const WorkflowManager = {
       smoke:   'none'
     };
 
-    // Intake
-    if (item.art1_intake === 'PRESENT' || /REGISTERED|INTAKE|PLAN|IMPLEMENT|CLOSED|VERIFIED|QA|GATE/.test(s)) gates.intake = 'done';
+    // Intake — anything registered or beyond
+    if (item.art1_intake === 'PRESENT' || /REGISTERED|INTAKE|PLAN|IMPLEMENT|CLOSED|VERIFIED|QA|GATE|BACKEND|PARTIAL|OWNER|INVESTIGATION/.test(s)) gates.intake = 'done';
 
-    // Plan
-    if (item.art2_impact === 'PRESENT' || item.art3_plan === 'PRESENT' || /PLAN|GATE.3|GATE.4|IMPLEMENT|CLOSED|VERIFIED|QA/.test(s)) gates.plan = 'done';
-    else if (/PLANNING|INVESTIGATION/.test(s)) gates.plan = 'active';
+    // Plan — has impact/plan or status implies planned
+    if (item.art2_impact === 'PRESENT' || item.art3_plan === 'PRESENT' || /GATE.3|GATE.4|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS|PLANNING.*COMPLETE/.test(s)) gates.plan = 'done';
+    else if (/PLANNING|INVESTIGATION/.test(s) && !/COMPLETE/.test(s)) gates.plan = 'active';
+    else if (/INTAKE|REGISTERED/.test(s)) gates.plan = 'waiting';
 
     // Gate 4
     const approval = this.getApproval(item.id);
-    if (approval?.verdict === 'GO' || /GATE.4.*GO|IMPLEMENT|CLOSED|VERIFIED|QA/.test(s)) gates.gate4 = 'done';
-    else if (/GATE.3.*COMPLETE/.test(s)) gates.gate4 = 'waiting';
+    if (approval?.verdict === 'GO' || /GATE.4.*GO|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS/.test(s)) gates.gate4 = 'done';
     else if (approval?.verdict === 'NO') gates.gate4 = 'rejected';
+    else if (/GATE.3.*COMPLETE|PLANNING.*COMPLETE/.test(s)) gates.gate4 = 'waiting';
 
     // Code
     if (item.art5_impl_summary_qa === 'PRESENT' || /IMPLEMENT|CLOSED|VERIFIED|QA.*PASS/.test(s)) gates.code = 'done';
@@ -167,18 +167,50 @@ const WorkflowManager = {
     else if (smoke?.verdict === 'FAIL') gates.smoke = 'rejected';
     else if (/QA.*PASS/.test(s)) gates.smoke = 'waiting';
 
+    // Blocked items — show intake done, rest blocked
+    if (/BACKEND.BLOCKED|CRM.BLOCKED/.test(s)) {
+      gates.intake = 'done';
+      gates.plan = gates.plan === 'done' ? 'done' : 'none';
+      if (gates.plan !== 'done') gates.plan = 'none';
+    }
+
     return gates;
   },
 
   // ── Stage eligibility ──
   getEligibleStage(item) {
     const s = (item.status || '').toUpperCase();
-    if (/CLOSED|VERIFIED|SHIPPED|SUBSUMED/.test(s)) return null;
-    if (/REGISTERED|INTAKE/.test(s) && !/IMPLEMENT/.test(s) && !/GATE/.test(s)) return 'planning';
-    if (/GATE.3.*COMPLETE/.test(s)) return 'gate4';
-    if (/GATE.4.*GO/.test(s)) return 'implementation';
-    if (/IMPLEMENT/.test(s) && !/CLOSED/.test(s)) return 'qa';
+    
+    // Closed / shipped / verified — not eligible for any stage
+    if (/CLOSED|VERIFIED|SHIPPED|SUBSUMED/.test(s) && !/NOT/.test(s)) return null;
+    
+    // Blocked items — not eligible
+    if (/BACKEND.BLOCKED|CRM.BLOCKED/.test(s)) return null;
+    
+    // Owner scope needed — not eligible
+    if (/OWNER.*SCOPE/.test(s)) return null;
+    
+    // Deferred / parked — not eligible
+    if (/DEFERRED|PARKED/.test(s) && !/RESIDUAL/.test(s)) return null;
+
+    // QA passed → smoke
     if (/QA.*PASS/.test(s)) return 'smoke';
-    return 'planning'; // default
+    
+    // Implemented (not closed) → qa
+    if (/IMPLEMENT/.test(s) && !/CLOSED/.test(s)) return 'qa';
+    
+    // Gate 4 GO → implementation
+    if (/GATE.4.*GO/.test(s)) return 'implementation';
+    
+    // Gate 3 complete / Planning complete → gate4
+    if (/GATE.3.*COMPLETE|PLANNING.*COMPLETE/.test(s)) return 'gate4';
+
+    // Registered / intake / partial → planning
+    if (/REGISTERED|INTAKE|PARTIAL|NOT.STARTED/.test(s)) return 'planning';
+    
+    // Investigation complete → planning (needs plan after investigation)
+    if (/INVESTIGATION.*COMPLETE/.test(s)) return 'planning';
+
+    return 'planning'; // default fallback
   }
 };

@@ -195,11 +195,11 @@ function StageFilter({ value, onChange }) {
     <select data-testid="stage-filter" value={value} onChange={e => onChange(e.target.value)}
       className="bg-slate-900 border border-amber-600/50 rounded px-3 py-1.5 text-sm text-amber-300 font-medium">
       <option value="ALL">All Stages</option>
-      <option value="planning">Ready for: Planning</option>
+      <option value="planning">Ready for: Impact Analysis + Plan (Gate 2+3)</option>
       <option value="gate4">Ready for: Gate 4 Approval</option>
-      <option value="implementation">Ready for: Implementation</option>
-      <option value="qa">Ready for: QA</option>
-      <option value="smoke">Ready for: Smoke Test</option>
+      <option value="implementation">Ready for: Implementation (Gate 5a)</option>
+      <option value="qa">Ready for: QA (Gate 5b)</option>
+      <option value="smoke">Ready for: Smoke Test (Gate 6)</option>
     </select>
   );
 }
@@ -1078,6 +1078,12 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
   const [section, setSection] = useState("ALL");
   const [hideClosed, setHideClosed] = useState(true);
 
+  // CR-046: Bug Tracker workflow features (same as CR Registry)
+  const [selectedBugs, setSelectedBugs] = useState(new Set());
+  const [stageFilter, setStageFilter] = useState("ALL");
+  const [wfVersion, setWfVersion] = useState(0);
+  const [ejections, setEjections] = useState([]);
+
   useEffect(() => { if (search) { setStatus("ALL"); setSection("ALL"); setHideClosed(false); } }, [search]);
 
   const isClosedStatus = (s) => /CLOSED|SHIPPED|VERIFIED|IMPLEMENTED|CARRY.?FORWARD|NO CODE NEEDED|DEFERRED|SUBSUMED/i.test(s || "");
@@ -1089,6 +1095,28 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
     if (search && !JSON.stringify(b).toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   }), [allBugs, status, section, search, hideClosed]);
+
+  const stageFiltered = useMemo(() => {
+    if (stageFilter === "ALL") return filtered;
+    return filtered.filter(b => WorkflowManager.getEligibleStage(b) === stageFilter);
+  }, [filtered, stageFilter, wfVersion]);
+
+  const toggleBug = (id) => setSelectedBugs(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
+  const toggleAllBugs = () => {
+    if (selectedBugs.size === stageFiltered.length) setSelectedBugs(new Set());
+    else setSelectedBugs(new Set(stageFiltered.map(b => b.id)));
+  };
+  const handleBugBatchCreate = (stage, notes) => {
+    const items = [...selectedBugs];
+    const sprint = stageFiltered.find(b => selectedBugs.has(b.id))?.sprint_key || stageFiltered.find(b => selectedBugs.has(b.id))?.sprint?.toLowerCase().replace(/\s/g,'_') || 'pos_5_0';
+    WorkflowManager.createBatch(stage, sprint, items, notes);
+    setSelectedBugs(new Set());
+    setWfVersion(v => v + 1);
+  };
 
   const sections = [...new Set(allBugs.map(b => b._section))];
   const statuses = [...new Set(allBugs.map(b => b.status))].sort();
@@ -1103,8 +1131,8 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
   const groups = useMemo(() => {
     if (groupBy === "none") return null;
     const keyFn = { status: b => b.status || "—", section: b => b._section, sprint: b => b.sprint || "—", priority: b => b.priority || "—" }[groupBy];
-    return groupRows(filtered, keyFn, null, (a, b) => a.key.localeCompare(b.key));
-  }, [filtered, groupBy]);
+    return groupRows(stageFiltered, keyFn, null, (a, b) => a.key.localeCompare(b.key));
+  }, [stageFiltered, groupBy]);
 
   const expandedCount = Object.values(expanded).filter(Boolean).length;
 
@@ -1135,12 +1163,16 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
           onExpandAll={() => setCollapsedGroups(Object.fromEntries((groups || []).map(g => [g.key, false])))}
           onCollapseAll={() => setCollapsedGroups(Object.fromEntries((groups || []).map(g => [g.key, true])))} />
         <CollapseAllBar visible={expandedCount > 0} expandedCount={expandedCount} onCollapse={() => setExpanded({})} />
-        <button data-testid="bug-export-csv" onClick={() => downloadCSV(`bug_tracker_${Date.now()}.csv`, ["_section", "id", "title", "priority", "status", "sprint", "blocker", "date", "notes"], filtered)}
-          className="bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium rounded px-3 py-1.5">Export CSV ({filtered.length})</button>
+        <button data-testid="bug-export-csv" onClick={() => downloadCSV(`bug_tracker_${Date.now()}.csv`, ["_section", "id", "title", "priority", "status", "sprint", "blocker", "date", "notes"], stageFiltered)}
+          className="bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium rounded px-3 py-1.5">Export CSV ({stageFiltered.length})</button>
+        <StageFilter value={stageFilter} onChange={setStageFilter} />
       </div>
 
+      {/* CR-046: Ejection banner */}
+      <EjectionBanner ejections={ejections} onDismiss={() => setEjections([])} />
+
       <ExpandableTable
-        rows={filtered} groups={groups} columnsCount={8}
+        rows={stageFiltered} groups={groups} columnsCount={10}
         rowKeyFn={r => `${r._section}-${r.id}`}
         expanded={expanded}
         toggleRow={k => setExpanded(prev => ({ ...prev, [k]: !prev[k] }))}
@@ -1149,30 +1181,44 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
         renderHead={() => (
           <thead className="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
             <tr>
+              <th className="px-1 py-2 w-6"><input type="checkbox" checked={selectedBugs.size > 0 && selectedBugs.size === stageFiltered.length} onChange={toggleAllBugs} className="accent-amber-500" /></th>
               <th className="px-2 py-2 w-6"></th>
-              <th className="px-3 py-2 text-left">Section</th>
               <th className="px-3 py-2 text-left">ID</th>
               <th className="px-3 py-2 text-left">Title</th>
               <th className="px-3 py-2 text-left">Priority</th>
               <th className="px-3 py-2 text-left">Status</th>
               <th className="px-3 py-2 text-left">Sprint</th>
+              <th className="px-3 py-2 text-left">Gates</th>
+              <th className="px-3 py-2 text-left">Actions</th>
               <th className="px-3 py-2 text-left">Blocker / Notes</th>
             </tr>
           </thead>
         )}
-        renderRow={(b, i, isOpen, onToggle) => (
+        renderRow={(b, i, isOpen, onToggle) => {
+          const eligible = WorkflowManager.getEligibleStage(b);
+          return (
           <tr key={`r-${b._section}-${b.id}-${i}`} className="row-hover cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40" tabIndex={0}
             onClick={onToggle} onKeyDown={e => e.key === "Enter" && onToggle()}>
+            <td className="px-1 py-2 text-center" onClick={e => e.stopPropagation()}>
+              <input type="checkbox" checked={selectedBugs.has(b.id)} onChange={() => toggleBug(b.id)} className="accent-amber-500" />
+            </td>
             <td className="px-2 py-2 text-center"><RowExpander open={isOpen} /></td>
-            <td className="px-3 py-2 text-slate-500 text-xs whitespace-nowrap">{b._section}</td>
             <td className="px-3 py-2 font-mono text-slate-200 whitespace-nowrap">{b.id}</td>
             <td className="px-3 py-2 text-slate-300">{b.title}</td>
             <td className="px-3 py-2 text-slate-400">{b.priority || "—"}</td>
-            <td className="px-3 py-2"><StatusPill status={b.status} />{b.subsumed_meta?.owner_attested && <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30" title={`SUBSUMED — owner attested ${b.subsumed_meta.attested_date}; subsuming CR unidentified, code grep waived. See ${b.subsumed_meta.attestation_doc}`}>subsumed</span>}</td>
+            <td className="px-3 py-2"><StatusPill status={b.status} /></td>
             <td className="px-3 py-2 text-slate-400 text-xs whitespace-nowrap">{b.sprint || "—"}</td>
+            <td className="px-3 py-2"><GateProgressBar item={b} /></td>
+            <td className="px-3 py-2">
+              {eligible === 'gate4' && <Gate4Buttons itemId={b.id} onApprove={() => setWfVersion(v => v+1)} />}
+              {eligible === 'smoke' && <SmokeButtons itemId={b.id} onResult={() => setWfVersion(v => v+1)} />}
+              {eligible && eligible !== 'gate4' && eligible !== 'smoke' && <span className="text-[10px] text-slate-500">→ {eligible}</span>}
+              {!eligible && <span className="text-[10px] text-slate-600">—</span>}
+            </td>
             <td className="px-3 py-2 text-slate-400 text-xs">{b.blocker || b.notes || "—"}</td>
           </tr>
-        )}
+          );
+        }}
         renderDetail={b => {
           const closureMatch = xref[normalizeId(b.id)]?.closure;
           return (
@@ -1209,6 +1255,30 @@ function BugTrackerTab({ data, xref, onJump, search, setSearch, expanded, setExp
             </>
           );
         }}
+      />
+
+      {/* CR-046: Smoke Test Cards for bugs */}
+      {stageFiltered.some(b => /QA.*PASS|IMPLEMENTED/i.test(b.status || '') && !/CLOSED|VERIFIED/i.test(b.status || '')) && (
+        <div className="space-y-2">
+          <div className="text-xs text-amber-300 uppercase tracking-wider font-semibold">Smoke Tests Ready</div>
+          {stageFiltered.filter(b => /QA.*PASS|IMPLEMENTED/i.test(b.status || '') && !/CLOSED|VERIFIED/i.test(b.status || '')).map(b => (
+            <SmokeTestCard key={b.id} item={b} onResult={() => setWfVersion(v => v+1)} />
+          ))}
+        </div>
+      )}
+
+      {/* CR-046: Batch History + Queue */}
+      <BatchHistoryPanel />
+      <QueuePanel />
+
+      {/* CR-046: Batch Action Bar */}
+      <BatchActionBar
+        selectedCount={selectedBugs.size}
+        selectedItems={[...selectedBugs]}
+        stage={stageFilter}
+        sprint="pos_5_0"
+        onBatchCreate={handleBugBatchCreate}
+        onClearSelection={() => setSelectedBugs(new Set())}
       />
     </div>
   );
@@ -1294,8 +1364,8 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
   const groups = useMemo(() => {
     if (groupBy === "none") return null;
     const keyFn = { status: c => c.status || "—", sprint: c => c.sprint_label, priority: c => c.priority || "—" }[groupBy];
-    return groupRows(filtered, keyFn, null, (a, b) => a.key.localeCompare(b.key));
-  }, [filtered, groupBy]);
+    return groupRows(stageFiltered, keyFn, null, (a, b) => a.key.localeCompare(b.key));
+  }, [stageFiltered, groupBy]);
 
   const expandedCount = Object.values(expanded).filter(Boolean).length;
 
