@@ -158,6 +158,255 @@ function RowExpander({ open }) {
   );
 }
 
+// ============================================================================
+// CR-046: WORKFLOW UI COMPONENTS (Phase 2)
+// ============================================================================
+
+// Gate Progress Bar — shows ✅⬜🟡🔴 per gate
+function GateProgressBar({ item }) {
+  const gates = WorkflowManager.getItemGateStatus(item);
+  const gateList = [
+    { key: 'intake', label: 'Intake' },
+    { key: 'plan',   label: 'Plan' },
+    { key: 'gate4',  label: 'Gate 4' },
+    { key: 'code',   label: 'Code' },
+    { key: 'qa',     label: 'QA' },
+    { key: 'smoke',  label: 'Smoke' },
+  ];
+  const statusIcon = { done: '✅', active: '🔵', waiting: '🟡', rejected: '🔴', none: '⬜' };
+  const statusColor = { done: 'text-emerald-400', active: 'text-blue-400', waiting: 'text-amber-400', rejected: 'text-red-400', none: 'text-slate-600' };
+  return (
+    <div className="flex items-center gap-0.5 text-[10px]">
+      {gateList.map((g, i) => (
+        <React.Fragment key={g.key}>
+          {i > 0 && <span className="text-slate-700 mx-0.5">→</span>}
+          <span className={statusColor[gates[g.key]]} title={`${g.label}: ${gates[g.key]}`}>
+            {statusIcon[gates[g.key]]}<span className="hidden lg:inline ml-0.5">{g.label}</span>
+          </span>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+// Stage Filter Dropdown
+function StageFilter({ value, onChange }) {
+  return (
+    <select data-testid="stage-filter" value={value} onChange={e => onChange(e.target.value)}
+      className="bg-slate-900 border border-amber-600/50 rounded px-3 py-1.5 text-sm text-amber-300 font-medium">
+      <option value="ALL">All Stages</option>
+      <option value="planning">Ready for: Planning</option>
+      <option value="gate4">Ready for: Gate 4 Approval</option>
+      <option value="implementation">Ready for: Implementation</option>
+      <option value="qa">Ready for: QA</option>
+      <option value="smoke">Ready for: Smoke Test</option>
+    </select>
+  );
+}
+
+// Batch Action Bar — appears when items selected
+function BatchActionBar({ selectedCount, selectedItems, stage, sprint, onBatchCreate, onClearSelection }) {
+  const [notes, setNotes] = useState('');
+  const [showNotes, setShowNotes] = useState(false);
+  if (selectedCount === 0) return null;
+  
+  const stageLabels = { planning: 'Planning', gate4: 'Gate 4 Approval', implementation: 'Implementation', qa: 'QA', smoke: 'Smoke Test' };
+  
+  return (
+    <div className="sticky bottom-0 z-20 bg-slate-800/95 backdrop-blur border-t border-amber-500/30 px-4 py-3 flex flex-wrap items-center gap-3" data-testid="batch-action-bar">
+      <span className="text-sm text-amber-300 font-semibold">{selectedCount} item{selectedCount > 1 ? 's' : ''} selected</span>
+      {stage && stage !== 'ALL' && (
+        <button data-testid="batch-send-btn"
+          onClick={() => { onBatchCreate(stage, notes); setNotes(''); setShowNotes(false); }}
+          className="bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium rounded px-4 py-1.5 transition">
+          Send to {stageLabels[stage] || stage}
+        </button>
+      )}
+      {!stage || stage === 'ALL' ? (
+        <span className="text-xs text-slate-400">Select a stage filter first to enable batch actions</span>
+      ) : null}
+      <button onClick={() => setShowNotes(!showNotes)} className="text-xs text-slate-400 hover:text-slate-200 underline">
+        {showNotes ? 'hide notes' : '+ add notes'}
+      </button>
+      {showNotes && (
+        <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Owner notes for this batch..."
+          className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm text-slate-200 flex-1 min-w-[200px]" />
+      )}
+      <button onClick={onClearSelection} className="text-xs text-slate-500 hover:text-red-400 ml-auto">Clear selection</button>
+    </div>
+  );
+}
+
+// Gate 4 Approval Buttons — per-item inline
+function Gate4Buttons({ itemId, onApprove }) {
+  const [feedback, setFeedback] = useState('');
+  const [showFeedback, setShowFeedback] = useState(false);
+  const existing = WorkflowManager.getApproval(itemId);
+  
+  if (existing) {
+    return (
+      <span className={classNames("text-xs font-semibold px-2 py-0.5 rounded",
+        existing.verdict === 'GO' ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300")}>
+        Gate 4: {existing.verdict} {existing.notes && `— ${existing.notes}`}
+      </span>
+    );
+  }
+  
+  return (
+    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+      <button data-testid={`gate4-go-${itemId}`}
+        onClick={() => { WorkflowManager.addApproval(itemId, 'GO', ''); onApprove(); }}
+        className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold rounded px-2 py-0.5 transition">
+        ✅ GO
+      </button>
+      <button onClick={() => setShowFeedback(!showFeedback)}
+        className="bg-red-700 hover:bg-red-600 text-white text-[11px] font-semibold rounded px-2 py-0.5 transition">
+        ❌ NO
+      </button>
+      {showFeedback && (
+        <div className="flex items-center gap-1">
+          <input value={feedback} onChange={e => setFeedback(e.target.value)} placeholder="Reason..."
+            className="bg-slate-900 border border-slate-600 rounded px-2 py-0.5 text-xs text-slate-200 w-40" />
+          <button onClick={() => { WorkflowManager.addApproval(itemId, 'NO', feedback); setShowFeedback(false); onApprove(); }}
+            className="text-red-400 text-xs underline">Submit</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Smoke Test Buttons — per-item inline
+function SmokeButtons({ itemId, onResult }) {
+  const [feedback, setFeedback] = useState('');
+  const [showFeedback, setShowFeedback] = useState(false);
+  const existing = WorkflowManager.getSmokeResult(itemId);
+  
+  if (existing) {
+    return (
+      <span className={classNames("text-xs font-semibold px-2 py-0.5 rounded",
+        existing.verdict === 'PASS' ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300")}>
+        Smoke: {existing.verdict} {existing.notes && `— ${existing.notes}`}
+      </span>
+    );
+  }
+  
+  return (
+    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+      <button data-testid={`smoke-pass-${itemId}`}
+        onClick={() => { WorkflowManager.addSmokeResult(itemId, 'PASS', ''); onResult(); }}
+        className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold rounded px-2 py-0.5 transition">
+        ✅ PASS
+      </button>
+      <button onClick={() => setShowFeedback(!showFeedback)}
+        className="bg-red-700 hover:bg-red-600 text-white text-[11px] font-semibold rounded px-2 py-0.5 transition">
+        ❌ FAIL
+      </button>
+      {showFeedback && (
+        <div className="flex items-center gap-1">
+          <input value={feedback} onChange={e => setFeedback(e.target.value)} placeholder="What failed..."
+            className="bg-slate-900 border border-slate-600 rounded px-2 py-0.5 text-xs text-slate-200 w-40" />
+          <button onClick={() => { WorkflowManager.addSmokeResult(itemId, 'FAIL', feedback); setShowFeedback(false); onResult(); }}
+            className="text-red-400 text-xs underline">Submit</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Queue Panel — shows active batches
+function QueuePanel() {
+  const [q, setQ] = useState(() => WorkflowManager.load());
+  const refresh = () => setQ(WorkflowManager.load());
+  const batches = q.batches || [];
+  const active = batches.filter(b => b.status === 'QUEUED' || b.status === 'IN_PROGRESS');
+  const completed = batches.filter(b => b.status === 'DONE' || b.status === 'FAILED');
+  
+  const handleExport = () => {
+    const json = WorkflowManager.exportAsJSON();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'workflow_queue_export.json'; a.click();
+    URL.revokeObjectURL(url);
+  };
+  
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-amber-300">Workflow Queue</h3>
+        <div className="flex gap-2">
+          <button onClick={handleExport} className="text-xs text-slate-400 hover:text-amber-300 border border-slate-700 rounded px-2 py-1">Export JSON</button>
+          <button onClick={refresh} className="text-xs text-slate-400 hover:text-slate-200 border border-slate-700 rounded px-2 py-1">Refresh</button>
+        </div>
+      </div>
+      
+      {active.length === 0 && completed.length === 0 && (
+        <div className="text-center text-slate-500 text-sm py-8">No batches yet. Select items and send to a stage.</div>
+      )}
+      
+      {active.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs text-slate-400 uppercase tracking-wider">Active ({active.length})</div>
+          {active.map(b => (
+            <div key={b.batch_id} className="border border-amber-500/30 bg-slate-900/50 rounded-lg p-3 text-xs space-y-1">
+              <div className="flex justify-between">
+                <span className="font-mono text-amber-300">{b.batch_id}</span>
+                <span className="text-slate-400">{b.stage.toUpperCase()}</span>
+              </div>
+              <div className="text-slate-300">Items: {b.items.join(', ')}</div>
+              {b.owner_notes && <div className="text-slate-500 italic">{b.owner_notes}</div>}
+              <div className="flex justify-between items-center">
+                <span className={b.status === 'QUEUED' ? 'text-amber-400' : 'text-blue-400'}>{b.status}</span>
+                <button onClick={() => { WorkflowManager.cancelBatch(b.batch_id); refresh(); }}
+                  className="text-red-400 hover:text-red-300 text-[10px]">Cancel</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {completed.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs text-slate-400 uppercase tracking-wider">Completed ({completed.length})</div>
+          {completed.map(b => (
+            <div key={b.batch_id} className="border border-slate-700/50 bg-slate-900/30 rounded-lg p-3 text-xs space-y-1 opacity-70">
+              <div className="flex justify-between">
+                <span className="font-mono text-slate-400">{b.batch_id}</span>
+                <span className={b.status === 'DONE' ? 'text-emerald-400' : 'text-red-400'}>{b.status}</span>
+              </div>
+              <div className="text-slate-500">Items: {b.items.join(', ')} | Stage: {b.stage}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      <div className="border-t border-slate-800 pt-3">
+        <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Recent Approvals</div>
+        {(q.approvals || []).slice(-5).reverse().map((a, i) => (
+          <div key={i} className="text-xs text-slate-500 py-0.5">
+            <span className="font-mono text-slate-300">{a.item_id}</span> — Gate 4:
+            <span className={a.verdict === 'GO' ? ' text-emerald-400' : ' text-red-400'}> {a.verdict}</span>
+            {a.notes && <span className="text-slate-600"> ({a.notes})</span>}
+          </div>
+        ))}
+        {(q.approvals || []).length === 0 && <div className="text-xs text-slate-600">No approvals yet</div>}
+      </div>
+      
+      <div className="border-t border-slate-800 pt-3">
+        <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Recent Smoke Results</div>
+        {(q.smoke_results || []).slice(-5).reverse().map((s, i) => (
+          <div key={i} className="text-xs text-slate-500 py-0.5">
+            <span className="font-mono text-slate-300">{s.item_id}</span> — Smoke:
+            <span className={s.verdict === 'PASS' ? ' text-emerald-400' : ' text-red-400'}> {s.verdict}</span>
+            {s.notes && <span className="text-slate-600"> ({s.notes})</span>}
+          </div>
+        ))}
+        {(q.smoke_results || []).length === 0 && <div className="text-xs text-slate-600">No smoke results yet</div>}
+      </div>
+    </div>
+  );
+}
+
+
 function DocPathItem({ path }) {
   const [copied, setCopied] = useState(false);
   const copy = () => {
@@ -829,6 +1078,33 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
   const trackedTotal = flatten.length;
   const [categoryFilter, setCategoryFilter] = useState("ALL");
 
+  // CR-046 Phase 2: Multi-select + stage filter + workflow
+  const [selectedCRs, setSelectedCRs] = useState(new Set());
+  const [stageFilter, setStageFilter] = useState("ALL");
+  const [wfVersion, setWfVersion] = useState(0); // trigger re-render on workflow changes
+
+  const stageFiltered = useMemo(() => {
+    if (stageFilter === "ALL") return filtered;
+    return filtered.filter(c => WorkflowManager.getEligibleStage(c) === stageFilter);
+  }, [filtered, stageFilter, wfVersion]);
+
+  const toggleCR = (id) => setSelectedCRs(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
+  const toggleAllCRs = () => {
+    if (selectedCRs.size === stageFiltered.length) setSelectedCRs(new Set());
+    else setSelectedCRs(new Set(stageFiltered.map(c => c.id)));
+  };
+  const handleCRBatchCreate = (stage, notes) => {
+    const items = [...selectedCRs];
+    const sprint = stageFiltered.find(c => selectedCRs.has(c.id))?.sprint_key || 'pos_5_0';
+    WorkflowManager.createBatch(stage, sprint, items, notes);
+    setSelectedCRs(new Set());
+    setWfVersion(v => v + 1);
+  };
+
   const groupOptions = [
     { value: "status", label: "Status" },
     { value: "sprint", label: "Sprint" },
@@ -912,10 +1188,11 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
         <CollapseAllBar visible={expandedCount > 0} expandedCount={expandedCount} onCollapse={() => setExpanded({})} />
         <button data-testid="cr-export-csv" onClick={() => downloadCSV(`cr_registry_${Date.now()}.csv`, ["sprint_label", "id", "title", "priority", "status", "files", "notes"], filtered)}
           className="bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium rounded px-3 py-1.5">Export CSV ({filtered.length})</button>
+        <StageFilter value={stageFilter} onChange={setStageFilter} />
       </div>
 
       <ExpandableTable
-        rows={filtered} groups={groups} columnsCount={8}
+        rows={stageFiltered} groups={groups} columnsCount={10}
         rowKeyFn={r => `${r.sprint_key}-${r.id}`}
         expanded={expanded}
         toggleRow={k => setExpanded(prev => ({ ...prev, [k]: !prev[k] }))}
@@ -924,30 +1201,43 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
         renderHead={() => (
           <thead className="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
             <tr>
+              <th className="px-1 py-2 w-6"><input type="checkbox" checked={selectedCRs.size > 0 && selectedCRs.size === stageFiltered.length} onChange={toggleAllCRs} className="accent-amber-500" /></th>
               <th className="px-2 py-2 w-6"></th>
               <th className="px-3 py-2 text-left">Sprint</th>
               <th className="px-3 py-2 text-left">ID</th>
               <th className="px-3 py-2 text-left">Title</th>
               <th className="px-3 py-2 text-left">Priority</th>
               <th className="px-3 py-2 text-left">Status</th>
-              <th className="px-3 py-2 text-left">Files</th>
+              <th className="px-3 py-2 text-left">Gates</th>
+              <th className="px-3 py-2 text-left">Actions</th>
               <th className="px-3 py-2 text-left">Notes</th>
             </tr>
           </thead>
         )}
-        renderRow={(c, i, isOpen, onToggle) => (
+        renderRow={(c, i, isOpen, onToggle) => {
+          const eligible = WorkflowManager.getEligibleStage(c);
+          return (
           <tr key={`r-${c.sprint_key}-${c.id}-${i}`} className="row-hover cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40" tabIndex={0}
             onClick={onToggle} onKeyDown={e => e.key === "Enter" && onToggle()}>
+            <td className="px-1 py-2 text-center" onClick={e => e.stopPropagation()}>
+              <input type="checkbox" checked={selectedCRs.has(c.id)} onChange={() => toggleCR(c.id)} className="accent-amber-500" />
+            </td>
             <td className="px-2 py-2 text-center"><RowExpander open={isOpen} /></td>
             <td className="px-3 py-2 text-slate-500 text-xs whitespace-nowrap">{c.sprint_label}</td>
             <td className="px-3 py-2 font-mono text-slate-200 whitespace-nowrap">{c.id}</td>
             <td className="px-3 py-2 text-slate-300">{c.title}</td>
             <td className="px-3 py-2 text-slate-400">{c.priority || "—"}</td>
-            <td className="px-3 py-2"><StatusPill status={c.status} />{c.subsumed_meta?.owner_attested && <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30" title={`SUBSUMED — owner attested ${c.subsumed_meta.attested_date}; subsuming CR ${c.subsumed_meta.subsuming_cr}. See ${c.subsumed_meta.attestation_doc}`}>subsumed</span>}</td>
-            <td className="px-3 py-2 text-slate-400 text-xs max-w-[260px] truncate" title={c.files}>{c.files || "—"}</td>
+            <td className="px-3 py-2"><StatusPill status={c.status} /></td>
+            <td className="px-3 py-2"><GateProgressBar item={c} /></td>
+            <td className="px-3 py-2">
+              {eligible === 'gate4' && <Gate4Buttons itemId={c.id} onApprove={() => setWfVersion(v => v+1)} />}
+              {eligible === 'smoke' && <SmokeButtons itemId={c.id} onResult={() => setWfVersion(v => v+1)} />}
+              {eligible && eligible !== 'gate4' && eligible !== 'smoke' && <span className="text-[10px] text-slate-500">→ {eligible}</span>}
+            </td>
             <td className="px-3 py-2 text-slate-400 text-xs">{c.notes || "—"}</td>
           </tr>
-        )}
+          );
+        }}
         renderDetail={c => {
           const hotspot = detectHotspot(c.files, depFlags);
           const closureMatch = xref[normalizeId(c.id)]?.closure;
@@ -1002,6 +1292,19 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
           </ul>
         </div>
       )}
+
+      {/* CR-046: Queue Panel */}
+      <QueuePanel />
+
+      {/* CR-046: Batch Action Bar (sticky bottom) */}
+      <BatchActionBar
+        selectedCount={selectedCRs.size}
+        selectedItems={[...selectedCRs]}
+        stage={stageFilter}
+        sprint="pos_5_0"
+        onBatchCreate={handleCRBatchCreate}
+        onClearSelection={() => setSelectedCRs(new Set())}
+      />
     </div>
   );
 }
