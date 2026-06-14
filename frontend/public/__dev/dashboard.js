@@ -1137,7 +1137,20 @@ function App() {
           <nav className="flex gap-1" data-testid="dev-dashboard-tabs">
             <TabButton id="closure" current={tab} onClick={setTab}
               count={closureDebt.active_count ?? (closureDebt.items || []).filter(r => r.active_debt).length}>Closure Debt</TabButton>
-            <TabButton id="bugs" current={tab} onClick={setTab} count={(bugTracker.active_recent_bugs?.length || 0) + (bugTracker.pos_2_0_closed_consolidated_2026_05_18?.length || 0) + (bugTracker.pos_final_1_0_closed_consolidated_2026_05_12?.length || 0) + (bugTracker.older_closed_or_partial?.length || 0) + (bugTracker.true_intake_or_blocked?.length || 0) + (bugTracker.production_hotfixes?.length || 0)}>Bug Tracker</TabButton>
+            <TabButton id="bugs" current={tab} onClick={setTab}
+              count={(() => {
+                const all = [
+                  ...(bugTracker.active_recent_bugs || []),
+                  ...(bugTracker.pos_2_0_closed_consolidated_2026_05_18 || []),
+                  ...(bugTracker.pos_final_1_0_closed_consolidated_2026_05_12 || []),
+                  ...(bugTracker.older_closed_or_partial || []),
+                  ...(bugTracker.true_intake_or_blocked || []),
+                  ...(bugTracker.production_hotfixes || []),
+                ];
+                const closed = /CLOSED|SHIPPED|VERIFIED|IMPLEMENTED|CARRY.?FORWARD|NO CODE NEEDED|DEFERRED|SUBSUMED/i;
+                const active = all.filter(b => !closed.test(b.status || "")).length;
+                return `${active} / ${all.length}`;
+              })()}>Bug Tracker</TabButton>
             <TabButton id="crs" current={tab} onClick={setTab}
               count={(() => {
                 const flatten = Object.values(crRegistry.sprints || {}).flatMap(sp => sp.crs || []);
