@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-13 — **POS 4.0 FROZEN. ALL SMOKE PASSED.** 43 items CLOSED — OWNER VERIFIED. DEBUG-B11 logs removed. **POS 5.0 sprint planning created** — 32 items deferred (5 P0/P1 FE, 13 backend-blocked, 5 menu-bug merge, 9 carried). Next: owner answers OD-1…5 + D-1/2/3, then POS 5.0 begins. Release agent pending for POS 4.0 production deploy.
+**Last Updated:** 2026-06-14 — **POS 4.0 BASELINE CORRECTED.** 50 items CLOSED — OWNER VERIFIED (43 original + 7 retroactive: CR-027 Phase 1, CR-028 item discount, CR-036 family ×4, CR-029-QSR). Retroactive QA: 66/66 unit + 15/15 browser PASS. POS 5.0: 2 CRs + 16 bugs. Release agent pending for corrected baseline.
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---
@@ -26,7 +26,7 @@
 
 | Sprint | Status | Progress | Top Blocker |
 |---|---|---|---|
-| **POS 4.0 (Consolidated Backlog)** | **FROZEN (2026-06-13)** | 43 items CLOSED — OWNER VERIFIED | **None — sprint frozen** |
+| **POS 4.0 (Consolidated Backlog)** | **FROZEN (2026-06-13, baseline corrected 2026-06-14)** | 50 items CLOSED — OWNER VERIFIED (43 + 7 retroactive) | **None — sprint frozen** |
 | POS 3.1 | CLOSED → consolidated into POS 4.0 | 3/3 QSR bugs shipped | — |
 | CRM 2.0 | CLOSED → backlog into POS 4.0 | CR-002 CLOSED (T-28/T-29 live PASS); 5 CRs → POS 4.0 | — |
 | Audit Report CR | SHIPPED | Complete | None |

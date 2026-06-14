@@ -1,7 +1,7 @@
 # Layer 0 — Baseline Index
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-13 (POS 4.0 FROZEN — all smoke passed, 43 items CLOSED — OWNER VERIFIED, baseline entry cut)
+**Last Updated:** 2026-06-14 (POS 4.0 BASELINE CORRECTED — 7 retroactive CRs added. 50 items CLOSED — OWNER VERIFIED. Original freeze 2026-06-13 had 43; code audit found 7 more implemented but unregistered.)
 
 ---
 
@@ -13,15 +13,17 @@
 | **POS 3.0** | FROZEN | 2026-05-31 | incl. BUG-097 dispatch flow verified (`profileTransform.js:127`, `TableCard.jsx:70`) |
 | **POS 3.1** | FROZEN | 2026-05-31 | BUG-111 P1+P2 verified (`CartPanel.jsx:365,499`) |
 | **CRM 2.0** | FROZEN | 2026-05-31 | CR-002 commit-payload verified (`orderTransform.js:602,882`); OG-06 legacy GETs removed |
-| **POS 4.0** | **FROZEN** | **2026-06-13** | **Branch `13-june-audt-` @ `f970328`. 43 items CLOSED — OWNER VERIFIED. Smoke S-1→S-19 + Insights batch ALL PASS. QA 10/10. Regression 4/4 CLEAN. Pre-Release Audit CLEAN (0 blockers). DEBUG-B11 logs removed.** |
+| **POS 4.0** | **FROZEN** | **2026-06-13 (baseline corrected 2026-06-14)** | **Branch `14-june` (supersedes `13-june-audt-`). 50 items CLOSED — OWNER VERIFIED (43 original + 7 retroactive). Smoke S-1→S-19 + Insights batch ALL PASS. QA 10/10 + retroactive 66/66 unit + 15/15 browser. Regression 4/4 CLEAN. Pre-Release Audit CLEAN (0 blockers).** |
 
-### POS 4.0 Frozen Items (43 CLOSED — OWNER VERIFIED)
+### POS 4.0 Frozen Items (50 CLOSED — OWNER VERIFIED)
 
 **CRs (20):** CR-014, CR-015, CR-016, CR-017, CR-018, CR-019, CR-020, CR-021, CR-022, CR-023, CR-024, CR-025, CR-026, CR-029, CR-030, CR-031, CR-032, CR-034, CR-035, CR-033 (owner directive)
 
-**CRs — Performance/UX (6):** CR-037, CR-038, CR-039, CR-040, CR-042, CR-044, CR-045
+**CRs — Performance/UX (7):** CR-037, CR-038, CR-039, CR-040, CR-042, CR-044, CR-045
 
-**Bugs (12):** BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-117, BUG-119, BUG-122, BUG-122-post, BUG-125, BUG-126, BUG-127, BUG-128, BUG-131, BUG-132, BUG-133
+**CRs — Retroactive (7, added 2026-06-14):** CR-027 (Phase 1 interceptor, 24 tests), CR-028 (item-level discount, 4 files), CR-036 (Bulk Editor add row, 31 tests), CR-036-FU-01 (validation UX), CR-036-FU-02 (column reorder), CR-036-FU-03 (tax validation + backdrop), CR-029-QSR (round_up + category discount, 11 tests)
+
+**Bugs (16):** BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-117, BUG-119, BUG-122, BUG-122-post, BUG-125, BUG-126, BUG-127, BUG-128, BUG-131, BUG-132, BUG-133
 
 **Standalone closed prior:** BUG-120 (5 sub-bugs), BUG-121
 
@@ -29,17 +31,13 @@
 
 | ID | Title | Reason |
 |----|-------|--------|
-| CR-027 | Unified Toast | NOT STARTED — next sprint |
-| CR-028 | Item-Level Discount | INTAKE only — blocked on OD-1…OD-5 |
-| CR-041 | Navigation Consistency | Investigation only — D-1/D-2/D-3 pending |
-| CR-043 | Credit Per-Customer | Gate 1 only |
+| CR-041 | Navigation Consistency | Investigation only — D-1/D-2/D-3 answered, implementation pending |
+| CR-043 | Credit Per-Customer | Gate 1 only — core wiring done (CR-039), reports scope not started |
 | BUG-118 | Coupon Codes | INTAKE — investigation needed |
 | BUG-123 | 401 Silent Redirect | INTAKE — next sprint |
 | BUG-124 | Socket Payload | BACKEND-BLOCKED |
 | BUG-129 | TAB status=6 | BACKEND-BLOCKED |
 | BUG-130 | Channel Visibility | Investigation deferred |
-| CR-036 family | Bulk Editor enhancements | Gate 3 — menu-bug branch |
-| CR-029-QSR | QSR Payload Parity | Gate 3 — menu-bug branch |
 
 ### POS 4.0 Evidence
 
@@ -49,6 +47,8 @@
 | Smoke Batch (S-1→S-9) | `control/POS4_0_OWNER_SMOKE_BATCH_2026_06_11.md` |
 | Smoke Supplement (S-10→S-19) | `control/POS4_0_OWNER_SMOKE_BATCH_2026_06_13_SUPPLEMENT.md` |
 | QA Report | `test_reports/QA_REPORT_2026_06_13_IMPLEMENTATION_SESSION.md` |
+| **QA Report (retroactive 7 CRs)** | **`test_reports/QA_REPORT_2026_06_14_RETROACTIVE_BATCH.md`** |
+| **QA Handover (retroactive)** | **`handover/QA_HANDOVER_2026_06_14_RETROACTIVE_BATCH.md`** |
 | Regression Report | `test_reports/REGRESSION_REPORT_2026_06_13.md` |
 | Pre-Release Audit | `test_reports/PRE_RELEASE_AUDIT_2026_06_13.md` |
 | Gap Audit | `control/POS4_0_GAP_AUDIT_2026_06_13.md` |

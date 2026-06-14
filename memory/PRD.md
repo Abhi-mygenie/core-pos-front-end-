@@ -18,40 +18,30 @@ Deploy and maintain the core-pos-front-end React POS application. Multi-sprint d
 | POS 3.0 | FROZEN | 2026-05-21 | 8 + 6 backend-blocked |
 | POS 3.1 | FROZEN | 2026-05-31 | 3 |
 | CRM 2.0 | FROZEN | 2026-05-31 | 1 (CR-002) |
-| **POS 4.0** | **FROZEN** | **2026-06-13** | **43** |
+| **POS 4.0** | **FROZEN (corrected)** | **2026-06-13 → 2026-06-14** | **50** (was 43) |
 
-## POS 4.0 — FROZEN (2026-06-13)
-- **43 items CLOSED — OWNER VERIFIED** (20 CRs + 6 perf/UX CRs + 17 bugs)
-- Owner Smoke: ALL PASS (S-1→S-19 + Insights batch)
-- QA: 10/10. Regression: 4/4 CLEAN. Pre-Release Audit: CLEAN (0 blockers)
-- Branch: `13-june-audt-` @ `f970328`
-- Closure Report: `/app/memory/control/POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md`
+## Current Session — 2026-06-14 (Closure + Baseline Correction)
 
-## What Was Done (2026-06-14 — CLOSURE Session)
-- Read and verified all 15+ sprint artifacts (control dashboard, registries, smoke batches, QA/regression/pre-release audit reports, gap audit, handovers, baseline index, file ownership, open gaps, POS 5.0 planning)
-- Updated registry.json pos_4_0 sprint_meta → FROZEN (was still ACTIVE)
-- Rewrote Sprint Closure Report to reflect final post-freeze state (was stale — showed "BLOCKED" when freeze already happened)
-- Verified all 43 items at CLOSED — OWNER VERIFIED status across CR_REGISTRY, BUG_TRACKER, SPRINT_STATUS
-- Confirmed BASELINE_INDEX.md already had POS 4.0 entry cut
-- Confirmed FILE_OWNERSHIP.md and OPEN_GAPS_REGISTER.md already refreshed
+### What Was Done
+1. **Deployment** — Cloned repo (branch `14-june`), configured env, app running
+2. **Closure (Role 11)** — Read AGENT_PROMPT_ALPHA.md, verified all sprint artifacts, finalized sprint closure report
+3. **Dashboard sync** — Moved deferred items POS 4.0 → POS 5.0, fixed KPI keys, fixed CR categories, made badge format consistent (`active / total`)
+4. **Code Audit** — Found 7 CRs implemented in code but missing from registries (previous agent shipped code but didn't update artifacts)
+5. **Retroactive Closure** — Updated artifacts → wrote QA handover → ran QA (66/66 unit + 15/15 browser) → closed 7 CRs into POS 4.0
+6. **Baseline Correction** — Updated BASELINE_INDEX.md (43→50), CONTROL_DASHBOARD.md, SPRINT_STATUS.md, Sprint Closure Report
 
-## POS 5.0 — PLANNING (Next Sprint)
-- 32 deferred items (5 P0/P1 FE, 13 backend-blocked, 5 menu-bug merge, 9 carried)
-- Owner decisions OD-1…OD-5 + D-1/D-2/D-3 answered → CR-028 + CR-041 unblocked
-- Planning doc: `/app/memory/control/POS5_0_SPRINT_PLANNING_2026_06_13.md`
-- Phase 1: Merge menu-bug branch (5 items, code ready)
-- Phase 2: Critical fixes (BUG-123, BUG-130, BUG-118)
-- Phase 3: Feature work (CR-028, CR-043)
-- Phase 4: Mechanical cleanup (CR-027, CR-041)
+### Updated Artifacts
+- `BASELINE_INDEX.md` — 50 items, 7 retroactive added, deferred list revised
+- `CONTROL_DASHBOARD.md` — Header updated with corrected counts
+- `SPRINT_STATUS.md` — POS 4.0 section revised (50 items, retroactive note)
+- `POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md` — Final version
+- `registry.json` — pos_4_0 FROZEN, 7 items moved back, statuses synced
+- `cr_registry.json` — POS 4.0: 34, POS 5.0: 2, categories corrected
+- `bug_tracker.json` — Summary keys fixed, sprints corrected
+- `dashboard.js` — Bug Tracker badge format: `active / total`
+- `QA_REPORT_2026_06_14_RETROACTIVE_BATCH.md` — 7 CR QA evidence
+- `QA_HANDOVER_2026_06_14_RETROACTIVE_BATCH.md` — Test cases
 
-## Next Tasks
+## Next Steps
 1. **RELEASE agent (Role 12)** — Tag branch, production deploy, post-deploy smoke
-2. **POS 5.0** — Begin Phase 1 (menu-bug branch merge)
-3. **Backend Brief** — Send to backend team to unblock 13 items
-
-## Environment
-- Preview URL: https://mygenie-pos-ui-3.preview.emergentagent.com
-- Production API: https://preprod.mygenie.online/
-- Socket: https://presocket.mygenie.online
-- Firebase: mygenie-restaurant.firebaseapp.com
-- CRM: https://react-python-crm-2.preview.emergentagent.com/api
+2. **POS 5.0** — 2 CRs (CR-041, CR-043) + 16 bugs. Sprint planning needs revision.

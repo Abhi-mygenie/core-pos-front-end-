@@ -62,27 +62,30 @@
 | Key Doc | `crm/crm_2_0/reconciliation/CRM2_0_SPRINT_CONSOLIDATION_2026_05_27.md` |
 
 ---
-## POS 4.0 — **FROZEN** (2026-06-13)
+## POS 4.0 — **FROZEN** (2026-06-13, baseline corrected 2026-06-14)
 
-**Sprint frozen 2026-06-13.** All smoke passed. 43 items CLOSED — OWNER VERIFIED. Branch `13-june-audt-` @ `f970328`.
+**Sprint frozen 2026-06-13.** All smoke passed. **50 items CLOSED — OWNER VERIFIED** (43 original + 7 retroactive). Branch `14-june`.
 
 | Metric | Value |
 |---|---|
-| Total items shipped | **43** (20 CRs + 6 perf/UX CRs + 17 bugs) |
-| QA | 10/10 PASS |
+| Total items shipped | **50** (27 CRs + 7 perf/UX CRs + 16 bugs) |
+| QA | 10/10 PASS + retroactive 66/66 unit + 15/15 browser |
 | Regression | CLEAN (4/4 cross-item tests) |
 | Pre-Release Audit | CLEAN (0 blockers) |
 | Owner Smoke | ALL PASS (S-1→S-19 + Insights batch) |
-| Freeze date | **2026-06-13** |
+| Retroactive (2026-06-14) | 7 CRs: CR-027, CR-028, CR-036 ×4, CR-029-QSR |
+| Freeze date | **2026-06-13 (corrected 2026-06-14)** |
 
-### Deferred → Next Sprint
+### Deferred → Next Sprint (revised 2026-06-14 — 7 items moved back to POS 4.0)
 
 | Bucket | Count | Items |
 |---|---|---|
-| B — Deferred / Not started | 5 | CR-027 (Toast), CR-043 (Credit reports), BUG-118 (Coupons), BUG-123 (401 redirect), BUG-130 (Channel visibility) |
-| C — Blocked (reactivation-gated) | 4 | BUG-124 (socket), BUG-129 (TAB status), CR-028 (item discount, OD-1…OD-5), CR-041 (nav decisions D-1/D-2/D-3) |
-| E — Gate 3 (menu-bug branch) | 5 | CR-036, CR-036-FU-01/02/03, CR-029-QSR |
+| B — Deferred / Not started | 2 | CR-043 (Credit reports), BUG-130 (Channel visibility) |
+| C — Blocked (reactivation-gated) | 4 | BUG-124 (socket), BUG-129 (TAB status), CR-041 (nav decisions D-1/D-2/D-3), BUG-118 (Coupons) |
+| D — Open intake | 1 | BUG-123 (401 redirect) |
 | Carried from POS 3.0 | 11 | Backend-blocked: BUG-090→094/101/096, BUG-097 Bucket-5 · CRM: BUG-106/107/108 · Owner-scope: BUG-104/105 |
+
+**Moved back to POS 4.0 (retroactive 2026-06-14):** CR-027, CR-028, CR-036, CR-036-FU-01/02/03, CR-029-QSR — all verified implemented + tested in code.
 
 ### CR-011 — Gate 2.5 Screen Freeze (active phase)
 
