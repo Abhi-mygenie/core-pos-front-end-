@@ -1,0 +1,67 @@
+{
+  "summary": "POS 4.0 Retroactive QA — Browser verification of 7 CRs. All tested features PASS. CR-027 error toast, CR-036 Bulk Editor, CR-036-FU-01/02 validation UX, and regression tests all verified working on preprod.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_2.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CR-027 VERIFIED: axios.js:54-96 has 6-branch error message extraction chain with Laravel 422 parsing, timeout handling (ECONNABORTED), and network error (ERR_NETWORK) friendly messages",
+    "CR-028 VERIFIED: productTransform.js:136 has giveDiscount: api.give_discount !== 'No' mapping",
+    "CR-028 VERIFIED: orderTransform.js:476-547 has distributeItemDiscounts() with largest-remainder rounding and coupon Phase 3B support",
+    "CR-028 VERIFIED: orderTransform.js:1202-1234 injects per-item discount_amount in placeOrderWithPayment",
+    "CR-028 VERIFIED: orderTransform.js:1508-1542 injects per-item discount_amount in collectBill path",
+    "CR-028 VERIFIED: CollectPaymentPanel.jsx:515-518 has discountableTotal excluding giveDiscount=false items",
+    "CR-028 VERIFIED: CollectPaymentPanel.jsx:885-896 has coupon rejection for give_discount='No' items",
+    "CR-029-QSR VERIFIED: CartPanel.jsx:421-423 has roundOff computation (finalTotal - rawFinalTotal)",
+    "CR-029-QSR VERIFIED: CartPanel.jsx:450 passes roundOff in paymentData to onQsrCollectBill",
+    "CR-029-QSR VERIFIED: orderTransform.js:1580 has round_up: Math.max(0, Math.round((parseFloat(roundOff) || 0) * 100) / 100)",
+    "CR-036 VERIFIED: BulkEditor.jsx has addNewRow() at line 367-392 with top-pinning, auto-focus, and search filter bypass",
+    "CR-036-FU-01 VERIFIED: BulkEditor.jsx:406-430 has validateRow() returning {field, message} objects for cell-level error tinting",
+    "CR-036-FU-01 VERIFIED: BulkEditor.jsx:469-479 has descriptive toast with row label and error count",
+    "CR-036-FU-02 VERIFIED: BulkEditor.jsx:27-28 has Tax Type column BEFORE Tax % in ALL_COLUMNS definition",
+    "CR-036-FU-02 VERIFIED: BulkEditor.jsx:33 has itemUnit (Sold By Unit) as Tier 1 column"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - frontend only deployment",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@welcomeresort.com / Qplazm@10 (RID 474)",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 7 CRs verified via browser testing and code review. CR-027 error toast shows readable message. CR-036 Bulk Editor Add Item works with top-pinning and auto-focus. CR-036-FU-01 validation shows specific error toast with row/field info and red border. CR-036-FU-02 column order correct (Tax Type before Tax %). Regression tests pass: Dashboard loads, Menu Management opens with 772 items, Insights works, Settlement shows KPIs.",
+  "test_results": {
+    "CR-027_wrong_password_error_toast": "PASS - Toast shows 'Login Failed - Unauthorized.' (readable message, not raw JSON)",
+    "CR-027_interceptor_code_review": "PASS - axios.js:54-96 has 6-branch error extraction chain",
+    "CR-036_bulk_editor_opens": "PASS - Bulk Editor panel opens with 773 items",
+    "CR-036_add_item_top_pinned": "PASS - New row appears at TOP of list with '+' indicator",
+    "CR-036_add_item_auto_focus": "PASS - Name input focused after add (verified via pendingFocusRowId mechanism)",
+    "CR-036-FU-01_validation_toast": "PASS - Toast shows 'Validation Error - Row 1 — Name is required. +2 more on this row.'",
+    "CR-036-FU-01_red_border": "PASS - Row has red left border (border-l-4 border-l-red-500)",
+    "CR-036-FU-02_tax_type_before_tax_pct": "PASS - Column order: Tax Type (index 6) before Tax % (index 7)",
+    "CR-036-FU-02_sold_by_unit_visible": "PASS - 'Sold By (Unit)' column visible in default Tier 1 view",
+    "CR-028_code_review": "PASS - giveDiscount mapping, distributeItemDiscounts, per-item discount_amount injection all verified",
+    "CR-029-QSR_code_review": "PASS - roundOff computation in CartPanel, round_up persistence in orderTransform verified",
+    "Regression_dashboard_loads": "PASS - Dashboard loads with Dine-In (4 active) and Room (4 active) orders",
+    "Regression_menu_management": "PASS - Menu Management opens, 772 products load",
+    "Regression_insights": "PASS - Insights panel loads",
+    "Regression_settlement": "PASS - Settlement panel shows KPIs (Opening Balance, Cash Collected, Total Funds, Settled, Remaining, Pilferage)"
+  },
+  "notes": [
+    "This is a frontend-only React POS app connecting to external APIs at preprod.mygenie.online",
+    "No backend code on this pod - all APIs are external",
+    "Did NOT test place-order or collect-bill flows as instructed (write operations on preprod)",
+    "CR-028 and CR-029-QSR verified via code review only (browser testing would require write operations)",
+    "All 66 unit tests already pass per handover doc (CR-027: 24/24, CR-036: 31/31, CR-029: 11/11)"
+  ]
+}
