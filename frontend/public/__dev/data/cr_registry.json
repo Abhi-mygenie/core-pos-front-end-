@@ -1844,49 +1844,49 @@
         {
           "id": "CR-027",
           "title": "Unified Toast & Error Surfacing",
-          "status": "PHASE 1 IMPLEMENTED — interceptor + BulkEditor error trail (24/24 tests pass). Phases 2+3 remain → POS 5.0",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P2",
           "category": "SHIPPED"
         },
         {
           "id": "CR-028",
           "title": "Item-Level Discount (payload + give_discount)",
-          "status": "IMPLEMENTED — per-item discount distribution, give_discount exclusion, coupon rejection, GST recompute (4 files)",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P0",
           "category": "SHIPPED"
         },
         {
           "id": "CR-036",
           "title": "Bulk Editor — Add Item Row (merge from menu-bug)",
-          "status": "IMPLEMENTED + TESTED (31/31) — top-pinned new row, auto-focus, scroll-to-top",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P1",
           "category": "SHIPPED"
         },
         {
           "id": "CR-036-FU-01",
           "title": "Validation UX Polish",
-          "status": "IMPLEMENTED + TESTED — validation red border, Trash2 delete, specific toast, scrollIntoView",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P1",
           "category": "SHIPPED"
         },
         {
           "id": "CR-036-FU-02",
           "title": "Column Reorder + Sold By",
-          "status": "IMPLEMENTED + TESTED — column reorder, itemUnit Tier 1 promotion, Sold By (Unit) label",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P1",
           "category": "SHIPPED"
         },
         {
           "id": "CR-036-FU-03",
           "title": "Tax Validation + Backdrop Loader",
-          "status": "IMPLEMENTED + TESTED — tax-required validation (gstStatus), packed exemption, backdrop overlay, pendingImport race guard",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P1",
           "category": "SHIPPED"
         },
         {
           "id": "CR-029-QSR",
           "title": "QSR Payload Parity + round_up",
-          "status": "IMPLEMENTED + TESTED (11/11) — round_up persistence on BILL_PAYMENT, discount_member_category propagation",
+          "status": "CLOSED — OWNER VERIFIED (retroactive 2026-06-14)",
           "priority": "P1",
           "category": "SHIPPED"
         }
