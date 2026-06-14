@@ -74,6 +74,25 @@ let webpackConfig = {
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
       }
+
+      // CR-046: Exclude __dev/ from production build
+      // CRA's CopyPlugin copies public/ → build/. We hook into the compiler
+      // to delete __dev/ after the copy completes.
+      if (process.env.NODE_ENV === 'production') {
+        const fs = require('fs');
+        const rimraf = (dir) => { if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true }); };
+        webpackConfig.plugins.push({
+          apply: (compiler) => {
+            compiler.hooks.afterEmit.tapAsync('RemoveDevDashboard', (compilation, callback) => {
+              const devDir = path.resolve(compiler.outputPath, '__dev');
+              rimraf(devDir);
+              console.log('[CR-046] __dev/ excluded from production build');
+              callback();
+            });
+          }
+        });
+      }
+
       return webpackConfig;
     },
   },
