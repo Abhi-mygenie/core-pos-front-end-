@@ -406,6 +406,185 @@ function QueuePanel() {
   );
 }
 
+// CR-046 Phase 3: Smoke Test Card — guided verification for owner
+function SmokeTestCard({ item, onResult }) {
+  const [open, setOpen] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const existing = WorkflowManager.getSmokeResult(item.id);
+  const s = (item.status || '').toUpperCase();
+  const isSmokeable = /QA.*PASS|IMPLEMENTED/.test(s) && !/CLOSED|VERIFIED/.test(s);
+  
+  if (!isSmokeable && !existing) return null;
+
+  const title = item.title || item.id;
+  const files = item.files || '(no files listed)';
+
+  return (
+    <div className={classNames("rounded-lg border overflow-hidden transition-all",
+      existing?.verdict === 'PASS' ? "border-emerald-500/40 bg-emerald-950/20" :
+      existing?.verdict === 'FAIL' ? "border-red-500/40 bg-red-950/20" :
+      "border-amber-500/40 bg-amber-950/10")}>
+      
+      <button onClick={() => setOpen(!open)} className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-slate-800/30 transition">
+        <div className="flex items-center gap-3">
+          <span className="text-lg">{existing?.verdict === 'PASS' ? '✅' : existing?.verdict === 'FAIL' ? '❌' : '🔍'}</span>
+          <div>
+            <div className="font-mono text-sm text-slate-200">{item.id}</div>
+            <div className="text-xs text-slate-400 truncate max-w-[400px]">{title}</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {existing && (
+            <span className={classNames("text-xs font-semibold px-2 py-0.5 rounded",
+              existing.verdict === 'PASS' ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300")}>
+              {existing.verdict} {existing.at && `(${new Date(existing.at).toLocaleDateString()})`}
+            </span>
+          )}
+          <svg width="12" height="12" viewBox="0 0 12 12" className={classNames("transition-transform text-slate-500", open && "rotate-90")}>
+            <path d="M4 2 L8 6 L4 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 pt-1 space-y-3 border-t border-slate-800/50 animate-expand">
+          <div>
+            <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">What was done</div>
+            <div className="text-xs text-slate-300">{item.status}</div>
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Files changed</div>
+            <div className="text-xs text-slate-400 font-mono">{files}</div>
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Verification steps</div>
+            <ol className="text-xs text-slate-300 space-y-1 list-decimal list-inside">
+              <li>Login to preprod as test account</li>
+              <li>Navigate to the affected area ({item.area || 'see files above'})</li>
+              <li>Verify the fix/feature works as described in status</li>
+              <li>Check no regressions in adjacent functionality</li>
+            </ol>
+          </div>
+          {item.notes && (
+            <div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Notes</div>
+              <div className="text-xs text-slate-400 italic">{item.notes}</div>
+            </div>
+          )}
+          
+          {existing?.notes && (
+            <div className="rounded bg-slate-800/50 px-3 py-2">
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Owner feedback</div>
+              <div className="text-xs text-slate-300">{existing.notes}</div>
+            </div>
+          )}
+
+          {!existing && (
+            <div className="flex items-center gap-2 pt-2 border-t border-slate-800/30">
+              <button onClick={() => { WorkflowManager.addSmokeResult(item.id, 'PASS', ''); onResult(); }}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded px-4 py-1.5 transition">
+                ✅ PASS
+              </button>
+              <div className="flex items-center gap-1 flex-1">
+                <input value={feedback} onChange={e => setFeedback(e.target.value)} placeholder="What failed or needs rework..."
+                  className="bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-xs text-slate-200 flex-1" />
+                <button onClick={() => { WorkflowManager.addSmokeResult(item.id, 'FAIL', feedback); setFeedback(''); onResult(); }}
+                  className="bg-red-700 hover:bg-red-600 text-white text-xs font-semibold rounded px-4 py-1.5 transition">
+                  ❌ FAIL
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// CR-046 Phase 3: Batch History Panel — kept until sprint closure
+function BatchHistoryPanel() {
+  const [q, setQ] = useState(() => WorkflowManager.load());
+  const refresh = () => setQ(WorkflowManager.load());
+  const batches = (q.batches || []).slice().reverse();
+  const approvals = (q.approvals || []).slice().reverse();
+  const smokes = (q.smoke_results || []).slice().reverse();
+  const totalActions = batches.length + approvals.length + smokes.length;
+
+  if (totalActions === 0) return null;
+
+  return (
+    <div className="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+          Workflow History ({totalActions} actions)
+        </h3>
+        <div className="flex gap-2">
+          <button onClick={() => { WorkflowManager.clearCompleted(); refresh(); }}
+            className="text-[10px] text-slate-500 hover:text-red-400 border border-slate-700 rounded px-2 py-0.5">
+            Clear completed
+          </button>
+          <button onClick={refresh}
+            className="text-[10px] text-slate-500 hover:text-slate-300 border border-slate-700 rounded px-2 py-0.5">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div className="max-h-[300px] overflow-y-auto space-y-1 pr-1">
+        {batches.map(b => (
+          <div key={b.batch_id} className="flex items-center gap-2 text-[11px] py-1 border-b border-slate-800/40">
+            <span className={classNames("w-2 h-2 rounded-full flex-shrink-0",
+              b.status === 'DONE' ? 'bg-emerald-500' : b.status === 'FAILED' ? 'bg-red-500' : b.status === 'QUEUED' ? 'bg-amber-500' : 'bg-blue-500')} />
+            <span className="font-mono text-slate-400 w-24 flex-shrink-0">{b.batch_id.split('-').slice(-1)[0]}</span>
+            <span className="text-slate-300">{b.stage}</span>
+            <span className="text-slate-500">{b.items.join(', ')}</span>
+            <span className="ml-auto text-slate-600 text-[10px]">{new Date(b.created_at).toLocaleString()}</span>
+          </div>
+        ))}
+        {approvals.map((a, i) => (
+          <div key={`a-${i}`} className="flex items-center gap-2 text-[11px] py-1 border-b border-slate-800/40">
+            <span className={classNames("w-2 h-2 rounded-full flex-shrink-0", a.verdict === 'GO' ? 'bg-emerald-500' : 'bg-red-500')} />
+            <span className="font-mono text-slate-400 w-24 flex-shrink-0">Gate 4</span>
+            <span className="text-slate-300">{a.item_id}</span>
+            <span className={a.verdict === 'GO' ? 'text-emerald-400' : 'text-red-400'}>{a.verdict}</span>
+            {a.notes && <span className="text-slate-600 truncate">{a.notes}</span>}
+            <span className="ml-auto text-slate-600 text-[10px]">{new Date(a.at).toLocaleString()}</span>
+          </div>
+        ))}
+        {smokes.map((s, i) => (
+          <div key={`s-${i}`} className="flex items-center gap-2 text-[11px] py-1 border-b border-slate-800/40">
+            <span className={classNames("w-2 h-2 rounded-full flex-shrink-0", s.verdict === 'PASS' ? 'bg-emerald-500' : 'bg-red-500')} />
+            <span className="font-mono text-slate-400 w-24 flex-shrink-0">Smoke</span>
+            <span className="text-slate-300">{s.item_id}</span>
+            <span className={s.verdict === 'PASS' ? 'text-emerald-400' : 'text-red-400'}>{s.verdict}</span>
+            {s.notes && <span className="text-slate-600 truncate">{s.notes}</span>}
+            <span className="ml-auto text-slate-600 text-[10px]">{new Date(s.at).toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// CR-046 Phase 3: Ejection Notification Banner
+function EjectionBanner({ ejections, onDismiss }) {
+  if (!ejections || ejections.length === 0) return null;
+  return (
+    <div className="rounded-lg border border-red-500/30 bg-red-950/20 px-4 py-3 flex items-start gap-3">
+      <span className="text-red-400 text-lg flex-shrink-0">⚠</span>
+      <div className="flex-1">
+        <div className="text-xs text-red-300 font-semibold uppercase tracking-wider mb-1">Items Ejected from Batch</div>
+        {ejections.map((e, i) => (
+          <div key={i} className="text-xs text-slate-300 py-0.5">
+            <span className="font-mono text-red-300">{e.item_id}</span> — {e.reason}
+          </div>
+        ))}
+      </div>
+      <button onClick={onDismiss} className="text-slate-500 hover:text-slate-300 text-xs">dismiss</button>
+    </div>
+  );
+}
+
 
 function DocPathItem({ path }) {
   const [copied, setCopied] = useState(false);
@@ -1082,6 +1261,7 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
   const [selectedCRs, setSelectedCRs] = useState(new Set());
   const [stageFilter, setStageFilter] = useState("ALL");
   const [wfVersion, setWfVersion] = useState(0); // trigger re-render on workflow changes
+  const [ejections, setEjections] = useState([]); // Phase 3: ejection notifications
 
   const stageFiltered = useMemo(() => {
     if (stageFilter === "ALL") return filtered;
@@ -1138,6 +1318,9 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
         </div>
         <div className="ml-auto text-xs text-slate-500 italic">Active = NOT_STARTED + IN_PROGRESS + BLOCKED. Click a card to filter.</div>
       </div>
+
+      {/* CR-046 Phase 3: Ejection notifications */}
+      <EjectionBanner ejections={ejections} onDismiss={() => setEjections([])} />
 
       {/* Category stat cards (clickable filters) */}
       <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
@@ -1292,6 +1475,19 @@ function CRRegistryTab({ data, xref, onJump, search, setSearch, expanded, setExp
           </ul>
         </div>
       )}
+
+      {/* CR-046 Phase 3: Smoke Test Cards — expandable guided verification */}
+      {stageFiltered.some(c => /QA.*PASS|IMPLEMENTED/i.test(c.status || '') && !/CLOSED|VERIFIED/i.test(c.status || '')) && (
+        <div className="space-y-2">
+          <div className="text-xs text-amber-300 uppercase tracking-wider font-semibold">Smoke Tests Ready</div>
+          {stageFiltered.filter(c => /QA.*PASS|IMPLEMENTED/i.test(c.status || '') && !/CLOSED|VERIFIED/i.test(c.status || '')).map(c => (
+            <SmokeTestCard key={c.id} item={c} onResult={() => setWfVersion(v => v+1)} />
+          ))}
+        </div>
+      )}
+
+      {/* CR-046 Phase 3: Batch History */}
+      <BatchHistoryPanel />
 
       {/* CR-046: Queue Panel */}
       <QueuePanel />

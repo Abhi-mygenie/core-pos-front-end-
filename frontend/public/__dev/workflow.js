@@ -103,6 +103,30 @@ const WorkflowManager = {
     this.save(data);
   },
 
+  // ── Ejections ──
+  addEjection(batchId, itemId, reason) {
+    const data = this.load();
+    if (!data.ejections) data.ejections = [];
+    data.ejections.push({
+      batch_id: batchId,
+      item_id: itemId,
+      reason: reason,
+      at: new Date().toISOString()
+    });
+    this.save(data);
+  },
+
+  getEjections() {
+    const data = this.load();
+    return data.ejections || [];
+  },
+
+  clearEjections() {
+    const data = this.load();
+    data.ejections = [];
+    this.save(data);
+  },
+
   // ── Gate status helpers ──
   getItemGateStatus(item) {
     // Derive gate progress from item fields

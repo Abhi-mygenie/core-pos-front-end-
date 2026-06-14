@@ -13349,7 +13349,7 @@
    "id": "CR-046",
    "title": "Control Dashboard v2.0 — Interactive Workflow Controller (login, batch queue, gate approvals, smoke cards)",
    "type": "cr",
-   "status": "PHASE 2 IMPLEMENTED — workflow UI (gates, select, batch, approvals, queue)",
+   "status": "IMPLEMENTED — all 3 phases complete (login, batch workflow, smoke cards)",
    "priority": "P1",
    "area": "Dev Tooling / Dashboard",
    "sprint_key": "pos_5_0",
