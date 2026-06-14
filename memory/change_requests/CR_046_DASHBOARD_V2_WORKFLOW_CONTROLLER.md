@@ -41,8 +41,7 @@ No POS app code touched. All changes confined to `public/__dev/`.
 | Stage eligibility | Dashboard only shows items eligible for selected stage |
 | No sprint mixing | All batch items must be same sprint |
 | Eject, don't wait | If item can't proceed mid-batch → eject, don't block others |
-| Express = chained batches | Auto-creates next-stage batch on completion. All gates still followed internally. |
-| Smoke always stops | Even Express Lane stops at smoke — owner must verify |
+| Owner drives all transitions | Owner clicks to approve every gate and push to next stage. Agent never auto-advances. |
 | Triage always first | Agent triages batch before working — reports ejections |
 
 ## 5. Stage Definitions
@@ -73,11 +72,11 @@ No POS app code touched. All changes confined to `public/__dev/`.
 - Gate 4 approval buttons
 - **Verify:** can create batch, see queue, approve gates
 
-### Phase 3 — Smoke + Express
-- Smoke test cards (summary + steps + PASS/FAIL)
-- Express Lane chain (auto-advance with stop triggers)
-- Batch checkpoint display
-- Ejection notifications
+### Phase 3 — Smoke + Polish
+- Smoke test cards (summary + steps + PASS/FAIL buttons)
+- Batch checkpoint display (agent progress per item)
+- Ejection notifications (item removed from batch)
+- Batch history panel (kept until sprint closure)
 - **Verify:** full flow from queue → smoke → close
 
 ## 7. File Structure (planned)
@@ -124,27 +123,17 @@ If no batch → proceed with normal interactive session
   ],
   "smoke_results": [
     { "item_id": "CR-XXX", "verdict": "PASS|FAIL", "notes": "", "at": "ISO" }
-  ],
-  "express_chains": [
-    {
-      "chain_id": "EXPRESS-YYYY-MM-DD-NNN",
-      "items": ["CR-XXX"],
-      "stages": ["planning","implementation","qa"],
-      "current_stage": "planning",
-      "auto_gate4": true,
-      "stop_triggers_fired": []
-    }
   ]
 }
 ```
 
-## 10. Open Questions
+## 10. Owner Decisions (LOCKED 2026-06-14)
 
-| # | Question | Status |
+| # | Question | Answer |
 |---|----------|--------|
-| OQ-1 | What password for dashboard login? | **OWNER TO DECIDE** |
-| OQ-2 | Should Express Lane auto-approve Gate 4 or always stop? | Brainstorm says: auto-approve unless stop trigger fires |
-| OQ-3 | Should batch history be persisted across sessions? | Suggest YES — append-only log |
+| OQ-1 | Dashboard login credentials | User: `abhishek jain`, Pass: `Qplazm@07111981` (SHA-256 hashed in access.json) |
+| OQ-2 | Gate approval model | **Owner approves every gate. No auto-advance. No Express Lane.** Owner selects → sends to stage → agent works → owner reviews → owner pushes to next stage. |
+| OQ-3 | Batch history retention | Keep until sprint closure, then archive |
 
 ## 11. Dependencies
 
