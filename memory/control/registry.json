@@ -39,8 +39,15 @@
    "status": "PENDING"
   },
   "pos_4_0": {
-   "status": "ACTIVE",
-   "started_date": "2026-05-31"
+   "status": "FROZEN",
+   "started_date": "2026-05-31",
+   "closed_date": "2026-06-13",
+   "frozen": true,
+   "frozen_date": "2026-06-13",
+   "branch": "13-june-audt-",
+   "commit": "f970328",
+   "items_shipped": 43,
+   "baseline_ref": "control/POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md"
   }
  },
  "baseline_code_verification": {

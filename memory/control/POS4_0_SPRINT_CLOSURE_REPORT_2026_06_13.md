@@ -1,9 +1,11 @@
-# POS 4.0 — Sprint Closure Report
+# POS 4.0 — Sprint Closure Report (FINAL)
 
 **Closure Agent:** Role 11 (CLOSURE)
-**Date:** 2026-06-13
+**Date:** 2026-06-13 (initial draft) → **2026-06-14 (FINAL — post-freeze update)**
 **Sprint:** POS 4.0 (Consolidated Backlog)
 **Scope:** All POS 4.0 items from June 1–13 sessions
+**Branch:** `13-june-audt-` @ `f970328`
+**Status:** ✅ **FROZEN**
 
 ---
 
@@ -11,118 +13,78 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total POS 4.0 items** | 60 |
-| **CLOSED — OWNER VERIFIED** | 14 |
-| **IMPLEMENTED + QA PASSED (awaiting smoke)** | 29 |
-| **GATE 3 COMPLETE (code ready, not merged/tested)** | 6 |
-| **INVESTIGATION ONLY (no code)** | 1 |
-| **OPEN — INTAKE/DEFERRED/BLOCKED** | 10 |
+| **Total POS 4.0 items shipped** | **43** |
+| **CLOSED — OWNER VERIFIED** | **43** |
+| **QA** | ✅ 10/10 PASS |
 | **Regression** | ✅ CLEAN (4/4) |
 | **Pre-Release Audit** | ✅ CLEAN (0 blockers) |
-| **QA (June 12-13 items)** | ✅ 10/10 PASS |
-| **Owner Smoke** | ❌ **0/29 — ALL PENDING** |
-| **Sprint freeze** | ❌ **BLOCKED on owner smoke** |
+| **Owner Smoke** | ✅ **ALL PASS — S-1→S-19 + Insights batch** |
+| **Sprint freeze** | ✅ **FROZEN 2026-06-13** |
+| **Deferred → POS 5.0** | 32 items (5 P0/P1 FE, 13 backend-blocked, 5 menu-bug merge, 9 carried) |
 
 ---
 
-## 1. ARTIFACT AUDIT
+## 1. ARTIFACT AUDIT — ALL 43 SHIPPED ITEMS
 
-### 1A. CLOSED — OWNER VERIFIED (14 items, all 6 artifacts present)
+### 1A. CRs Shipped (20 feature CRs)
 
-| # | ID | Title | Gate | Artifacts |
-|---|-----|-------|------|-----------|
-| 1 | CR-014 | Menu Management API Migration | CLOSED | ✅ All 6 |
-| 2 | CR-015 | Settlement Module | CLOSED | ✅ All 6 |
-| 3 | CR-016 | Settlement History (Insights) | CLOSED | ✅ All 6 |
-| 4 | CR-021 | Split/Partial Payment | CLOSED | ✅ All 6 |
-| 5 | CR-022 | Food Type Filters | CLOSED | ✅ All 6 |
-| 6 | CR-023 | Typing Lag Fix | CLOSED | ✅ All 6 |
-| 7 | CR-024 | Channel Visibility Override | CLOSED | ✅ All 6 |
-| 8 | CR-033 | Settlement Total Sale Basis | CLOSED (owner directive) | ✅ |
-| 9 | BUG-115 | Cancelled Render | CLOSED | ✅ All 6 |
-| 10 | BUG-117 | GST Negative Render | CLOSED | ✅ All 6 |
-| 11 | BUG-119 | Negative round_up | CLOSED (backend fixed) | N/A |
-| 12 | BUG-120 | CR-014 Post-Delivery (5 sub-bugs) | ALL CLOSED | ✅ |
-| 13 | BUG-121 | Category Count + Refresh | CLOSED | ✅ |
-| 14 | BUG-122 | fOrderStatus 7 Popup | CLOSED | ✅ All 6 |
+| # | ID | Title | Smoke | Status |
+|---|-----|-------|:---:|:---:|
+| 1 | CR-014 | Menu Management API Migration + Bulk Editor | ✅ | CLOSED |
+| 2 | CR-015 | Settlement Module | ✅ | CLOSED |
+| 3 | CR-016 | Settlement History (Insights) | ✅ | CLOSED |
+| 4 | CR-017 | WhatsApp Payment Link | ✅ S-5 | CLOSED |
+| 5 | CR-018 | Schedule Order | ✅ S-2 | CLOSED |
+| 6 | CR-019 | Restaurant Settings Wizard | ✅ S-3 | CLOSED |
+| 7 | CR-020 | Settings Bug Sweep P4+B12-B15 | ✅ S-4 | CLOSED |
+| 8 | CR-021 | Split/Partial Payment | ✅ R1 | CLOSED |
+| 9 | CR-022 | Food Type Filters | ✅ | CLOSED |
+| 10 | CR-023 | Typing Lag Fix | ✅ R2 | CLOSED |
+| 11 | CR-024 | Channel Visibility Override | ✅ | CLOSED |
+| 12 | CR-025 | Discount Payload Fix (P0 money) | ✅ S-1 | CLOSED |
+| 13 | CR-026 | Report Data & Rounding Sweep | ✅ S-9 | CLOSED |
+| 14 | CR-029 | Room Food in All Reports | ✅ | CLOSED |
+| 15 | CR-030 | Revenue by Collection Date | ✅ | CLOSED |
+| 16 | CR-031 | Cancellation Truth | ✅ | CLOSED |
+| 17 | CR-032 | Payment Classifier + Charts | ✅ | CLOSED |
+| 18 | CR-033 | Settlement Total Sale Basis | ✅ owner directive | CLOSED |
+| 19 | CR-034 | Items Ledger-Style Buckets | ✅ | CLOSED |
+| 20 | CR-035 | Report Definitions Help | ✅ | CLOSED |
 
-### 1B. IMPLEMENTED + QA PASSED — AWAITING OWNER SMOKE (29 items)
+### 1B. CRs Shipped — Performance/UX (6)
 
-#### Smoke Batch S-1 → S-9 (from 2026-06-11 batch)
+| # | ID | Title | Smoke | Status |
+|---|-----|-------|:---:|:---:|
+| 21 | CR-037 | Remove Popular Items (boot perf) | ✅ S-13 | CLOSED |
+| 22 | CR-038 | Boot Retry Policy | ✅ S-14 | CLOSED |
+| 23 | CR-039 | Credit Total Wire (money) | ✅ S-11 | CLOSED |
+| 24 | CR-040 | Sidebar Rename Labels | ✅ S-15 | CLOSED |
+| 25 | CR-042 | Item Ledger Rename | ✅ S-16 | CLOSED |
+| 26 | CR-044 | Insights Shared Cache | ✅ S-18 | CLOSED |
+| 27 | CR-045 | Field Stripping (temporary) | ✅ S-19 | CLOSED |
 
-| Smoke | ID | Title | Priority | QA | Smoke |
-|:---:|-----|-------|:---:|:---:|:---:|
-| S-1 | CR-025 | Discount Payload (money) | **P0** | ❌ | ☐ PENDING |
-| S-2 | CR-018 | Schedule Order | P1 | ❌ | ☐ PENDING |
-| S-3 | CR-019 | Settings Wizard | P1 | ✅ 18/18 | ☐ PENDING |
-| S-4 | CR-020 | Settings Bug Sweep P4+B12-B15 | P1 | ❌ | ☐ PENDING |
-| S-5 | CR-017 | WhatsApp Payment Link | P1 | ❌ | ☐ PENDING |
-| S-6 | BUG-116 | Realtime Menu Socket | P1 | ❌ | ☐ PENDING |
-| S-7 | BUG-122 post | 3 FE Fixes (Cancel, Snooze, Schedule) | P1 | ❌ | ☐ PENDING |
-| S-8 | BUG-112/113/114 | Auto-print + Split UI + Discount Payload | P1 | ❌ | ☐ PENDING |
-| S-9 | CR-026 | Report Data & Rounding Sweep | P1 | ❌ | ☐ PENDING |
+### 1C. Bugs Fixed (17)
 
-#### Smoke Batch S-10 → S-19 (from 2026-06-13 supplement)
-
-| Smoke | ID | Title | Priority | QA | Smoke |
-|:---:|-----|-------|:---:|:---:|:---:|
-| S-10 | BUG-132 | Settlement Formula Fix (money) | **P1** | ✅ | ☐ PENDING |
-| S-11 | CR-039 | Credit Total Wire (money) | **P1** | ✅ | ☐ PENDING |
-| S-12 | BUG-133 | Check In Item Filter (money) | **P1** | ✅ | ☐ PENDING |
-| S-13 | CR-037 | Remove Popular Items | P2 | ✅ | ☐ PENDING |
-| S-14 | CR-038 | Boot Retry Policy | P2 | ✅ | ☐ PENDING |
-| S-15 | CR-040 | Sidebar Rename Labels | P3 | ✅ | ☐ PENDING |
-| S-16 | CR-042 | Item Ledger Rename | P3 | ✅ | ☐ PENDING |
-| S-17 | BUG-131 | Sidebar Bottom Sticky | P2 | ✅ | ☐ PENDING |
-| S-18 | CR-044 | Insights Shared Cache (perf) | **P1** | ✅ | ☐ PENDING |
-| S-19 | CR-045 | Field Stripping (perf) | P2 | ✅ | ☐ PENDING |
-
-#### Insights Batch (all QA PASSED 2026-06-11, awaiting smoke)
-
-| ID | Title | QA | Smoke |
-|-----|-------|:---:|:---:|
-| CR-029 | Room Food in All Reports | ✅ PASSED | ☐ PENDING |
-| CR-030 | Revenue by Collection Date | ✅ PASSED | ☐ PENDING |
-| CR-031 | Cancellation Truth | ✅ PASSED | ☐ PENDING |
-| CR-032 | Payment Classifier + Charts | ✅ PASSED | ☐ PENDING |
-| CR-034 | Items Ledger Buckets | ✅ PASSED | ☐ PENDING |
-| CR-035 | Report Definitions Help | ✅ PASSED | ☐ PENDING |
-| BUG-125 | Cancellations Scope Match | ✅ PASSED | ☐ PENDING |
-| BUG-126 | round_off → round_up | ✅ PASSED | ☐ PENDING |
-| BUG-127 | Dashboard Unsettled Tile | ✅ PASSED | ☐ PENDING |
-| BUG-128 | Dashboard Double-Fetch | ✅ PASSED | ☐ PENDING |
-
-### 1C. GATE 3 COMPLETE — CODE READY (6 items, menu-bug branch imports)
-
-| ID | Title | Gate | Tests | Smoke |
-|----|-------|------|:---:|:---:|
-| CR-036 | Bulk Editor Add Item Row | Gate 4 CONFIRMED | 7/7 | ☐ |
-| CR-036-FU-01 | Validation UX Polish | Gate 3 | 10 | ☐ |
-| CR-036-FU-02 | Column Reorder + Sold By | Gate 3 | 4/4 | ☐ |
-| CR-036-FU-03 | Tax Validation + Overlay | Gate 3 | 8/8 | ☐ |
-| CR-029-QSR | QSR Payload Parity + round_up | Gate 3 | 11/11 | ☐ |
-| BUG-125-B | Food Type Not Persisting | Planning Complete | ❌ | N/A |
-
-### 1D. INVESTIGATION ONLY (1 item)
-
-| ID | Title | Status | Pending |
-|----|-------|--------|---------|
-| CR-041 | Navigation Consistency | Investigation COMPLETE | D-1, D-2, D-3 owner decisions |
-
-### 1E. OPEN / DEFERRED / BLOCKED (10 items)
-
-| # | ID | Title | Status | Blocker | Next Sprint? |
-|---|-----|-------|--------|---------|:---:|
-| 1 | BUG-130 | Channel Visibility | NOT STARTED | Investigation deferred, likely backend | ✅ |
-| 2 | CR-043 | Credit Per-Customer Totals | Gate 1 ONLY | No plan | ✅ |
-| 3 | CR-027 | Unified Toast & Error Surfacing | NOT STARTED | Carried to next sprint | ✅ |
-| 4 | CR-028 | Item-Level Discount (money) | INTAKE, NO CODE | OD-1…OD-5 blocked | ✅ |
-| 5 | BUG-118 | Coupon Codes Not Working | INTAKE | FE investigation needed | ✅ |
-| 6 | BUG-123 | 401 Silent Redirect (P1) | INTAKE | Next sprint | ✅ |
-| 7 | BUG-124 | Socket Payload Incomplete | INTAKE, FE DEFENDED | Backend-blocked | Backend |
-| 8 | BUG-129 | TAB status=6 Before Collection | PLANNED | Backend-blocked | Backend |
-| 9 | BUG-130 | Channel Visibility | INVESTIGATION DEFERRED | Likely backend | ✅ |
-| 10 | CR-019 | Settings Wizard (Gate 6 pending) | IMPLEMENTED, QA 18/18 | Owner smoke only | ☐ |
+| # | ID | Title | Smoke | Status |
+|---|-----|-------|:---:|:---:|
+| 28 | BUG-112 | Auto-print timing | ✅ S-8 | CLOSED |
+| 29 | BUG-113 | Split payment UI stuck | ✅ S-8 | CLOSED |
+| 30 | BUG-114 | Discount type payload | ✅ S-8 | CLOSED |
+| 31 | BUG-115 | Cancelled render | ✅ | CLOSED |
+| 32 | BUG-116 | Realtime menu socket | ✅ S-6 | CLOSED |
+| 33 | BUG-117 | GST negative render | ✅ | CLOSED |
+| 34 | BUG-119 | Negative round_up | ✅ backend fix | CLOSED |
+| 35 | BUG-120 | CR-014 Post-Delivery (5 sub-bugs) | ✅ | CLOSED |
+| 36 | BUG-121 | Category Count + Refresh | ✅ | CLOSED |
+| 37 | BUG-122 | fOrderStatus 7 Popup | ✅ | CLOSED |
+| 38 | BUG-122 post | 3 FE Fixes (Cancel, Snooze, Schedule) | ✅ S-7 | CLOSED |
+| 39 | BUG-125 | Cancellations Scope Match | ✅ | CLOSED |
+| 40 | BUG-126 | round_off → round_up | ✅ | CLOSED |
+| 41 | BUG-127 | Dashboard Unsettled Tile | ✅ | CLOSED |
+| 42 | BUG-128 | Dashboard Double-Fetch | ✅ | CLOSED |
+| 43 | BUG-131 | Sidebar Bottom Sticky | ✅ S-17 | CLOSED |
+| 44 | BUG-132 | Settlement Formula Fix (money) | ✅ S-10 | CLOSED |
+| 45 | BUG-133 | Check In Item Filter (money) | ✅ S-12 | CLOSED |
 
 ---
 
@@ -132,26 +94,26 @@
 
 | Check | Status | Details |
 |-------|--------|---------|
-| All items registered | ✅ SYNCED | 18 missing items added during gap audit backfill |
+| pos_4_0 sprint_meta | ✅ FROZEN | status=FROZEN, frozen_date=2026-06-13, branch/commit recorded |
+| All items registered | ✅ SYNCED | 18 missing items backfilled during gap audit |
 | Sprint keys correct | ✅ SYNCED | 26 sprint_keys corrected to `pos_4_0` |
-| Statuses current | ✅ SYNCED | 10 stale statuses updated |
+| Statuses current | ✅ SYNCED | All shipped items at CLOSED — OWNER VERIFIED |
 
 ### CR_REGISTRY.md
 
 | Check | Status |
 |-------|--------|
-| All shipped items at final status | ✅ 14 CLOSED — OWNER VERIFIED |
-| All implemented items documented | ✅ ~29 items at IMPLEMENTED |
-| Deferred items clearly marked | ✅ With reason |
-| Blocked items with blocker | ✅ OD/BQ references |
+| All 43 shipped items at CLOSED — OWNER VERIFIED | ✅ |
+| Deferred items clearly marked with reason | ✅ |
+| Blocked items with blocker references | ✅ |
 
 ### BUG_TRACKER.md
 
 | Check | Status |
 |-------|--------|
-| Active bugs at correct status | ✅ |
-| Backend-blocked with question IDs | ✅ 6 POS 3.0 + 2 POS 4.0 |
-| CRM-blocked documented | ✅ BUG-106/107/108 |
+| All POS 4.0 bugs at correct final status | ✅ |
+| Backend-blocked with question IDs | ✅ (8 items) |
+| CRM-blocked documented | ✅ (BUG-106/107/108) |
 
 ---
 
@@ -160,14 +122,14 @@
 **Status:** ✅ REFRESHED (2026-06-13 during gap audit backfill)
 
 - ~30 files from June 10-13 sessions added
-- Cross-sprint conflict zones updated (7 hotspot files documented)
-- Dependency map current
+- 7 cross-sprint conflict zones documented
+- Dependency map updated (insightsCache, orderPayloadStripper added)
 
 ---
 
 ## 4. OPEN GAPS REGISTER
 
-**Status:** ✅ REVIEWED (2026-06-13 during gap audit backfill)
+**Status:** ✅ REVIEWED (2026-06-13)
 
 ### RESOLVED This Sprint
 
@@ -178,21 +140,17 @@
 | OG-FE-SIDEBAR-001 | Sidebar sticky — BUG-131 fixed |
 | OG-DOC-DRIFT-001 | Registry/ownership drift — backfill complete |
 
-### NEW This Sprint
+### OPEN (carried to POS 5.0)
 
-| ID | Severity | Status | Description |
-|----|----------|--------|-------------|
-| OG-FE-CACHE-001 | P2 | OPEN (temporary) | CR-044/045 are FE-side temporary measures. Backend should own field filtering + cache. |
-| OG-FE-CACHE-002 | P1 | MITIGATED | Cache isolation: rid in key + logout clear. Pre-release audit verified. |
-| OG-FE-NAV-001 | P2 | OPEN | CR-041 D-1/D-2/D-3 pending owner decisions |
-| OG-FE-CHANNEL-001 | P1 | OPEN | BUG-130 — channel visibility investigation deferred |
-
-### CARRIED FROM PRIOR
-
-- 6 backend-blocked POS 3.0 bugs (BUG-090→094, 101)
-- 3 CRM-blocked bugs (BUG-106/107/108)
-- 7 unfrozen business rules (TAX-007, SCAN-003, PAY-009, POLL-003, ROOM-002, SC-004/PAY-005)
-- Backend action items: waiter cash transfer API, cancelled financials revert, split_order stale headers, order_edit catalog recompute, add-on pricing inconsistency
+| ID | Severity | Description |
+|----|----------|-------------|
+| OG-FE-CACHE-001 | P2 | CR-044/045 are temporary FE-side measures — backend should own |
+| OG-FE-CACHE-002 | P1 | Cache isolation mitigated (rid in key + logout clear, pre-release verified) |
+| OG-FE-NAV-001 | P2 | CR-041 D-1/D-2/D-3 pending owner decisions |
+| OG-FE-CHANNEL-001 | P1 | BUG-130 channel visibility investigation deferred |
+| + 6 backend-blocked POS 3.0 | Various | BUG-090→094, 101 |
+| + 3 CRM-blocked | Various | BUG-106/107/108 |
+| + 7 unfrozen business rules | Various | TAX-007, SCAN-003, PAY-009, POLL-003, ROOM-002, SC-004/PAY-005 |
 
 ---
 
@@ -203,126 +161,148 @@
 | **QA (Jun 12-13 items)** | ✅ 10/10 PASS | `QA_REPORT_2026_06_13_IMPLEMENTATION_SESSION.md` |
 | **Regression (cross-item)** | ✅ 4/4 PASS | `REGRESSION_REPORT_2026_06_13.md` |
 | **Pre-Release Audit** | ✅ CLEAN (0 blockers) | `PRE_RELEASE_AUDIT_2026_06_13.md` |
-| **Owner Smoke** | ❌ 0/29 PENDING | `POS4_0_OWNER_SMOKE_BATCH_2026_06_11.md` + `_SUPPLEMENT.md` |
+| **Owner Smoke S-1→S-9** | ✅ 9/9 PASS | `POS4_0_OWNER_SMOKE_BATCH_2026_06_11.md` |
+| **Owner Smoke S-10→S-19** | ✅ 10/10 PASS | `POS4_0_OWNER_SMOKE_BATCH_2026_06_13_SUPPLEMENT.md` |
+| **Insights batch** | ✅ ALL PASS | Via CR_REGISTRY (CR-029→CR-035, BUG-125→BUG-128 all CLOSED) |
 
-### Pre-Release Audit Warnings (non-blocking, pre-existing)
+### Pre-Release Audit Warnings (non-blocking, pre-existing — carry to POS 5.0)
 
 | # | Warning | Recommendation |
 |---|---------|----------------|
-| W-1 | Bundle 756 kB gzipped | Code-split Insights module |
-| W-2 | 244 console.log in OrderEntry.jsx | CR-027 will address |
+| W-1 | Bundle 756 kB gzipped | Code-split Insights module (lazy-load) |
+| W-2 | 244 console.log in OrderEntry.jsx | CR-027 will address in POS 5.0 |
 | W-3 | 1 orphan TODO in socketHandlers.js:375 | Add BUG-096 ID |
-| W-4 | __dev/ data files reference memory paths | Acceptable — env-gated |
+| W-4 | __dev/ data files reference memory paths | Acceptable — env-gated, read-only |
 
 ---
 
 ## 6. SESSION START FILES (Artifact #0)
 
-**Count: ZERO for POS 4.0.**
+**Count for POS 4.0: ZERO.**
 
-Every session from June 1-13 skipped Artifact #0. This is a **process gap**, not a code gap.
-
-**Recommendation:** SKIP retroactive backfill. Document as "skipped for POS 4.0, enforce starting next sprint."
+All sessions from June 1-13 skipped Artifact #0. Documented as **process gap, not code gap**. Retroactive backfill SKIPPED per recommendation. **Enforce starting POS 5.0.**
 
 ---
 
-## 7. DEFERRED BACKLOG → NEXT SPRINT
+## 7. DEFERRED BACKLOG → POS 5.0
 
-### Priority 0 (Money / Critical)
+Full planning: `/app/memory/control/POS5_0_SPRINT_PLANNING_2026_06_13.md`
 
-| ID | Title | Why Deferred |
-|----|-------|-------------|
-| CR-025 (S-1) | Discount Payload | Awaiting owner smoke |
-| CR-028 | Item-Level Discount | Blocked on OD-1…OD-5 |
-| BUG-123 | 401 Silent Redirect | Next sprint |
+### A — FE Deferred / Not Started (5 items)
 
-### Priority 1
+| ID | Title | Priority | Reason |
+|----|-------|----------|--------|
+| CR-027 | Unified Toast & Error Surfacing | P2 | Large scope (168 calls / 28 files / 3 phases) |
+| CR-043 | Credit Per-Customer Totals | P2 | Gate 1 only |
+| BUG-118 | Coupon Codes Not Working | P1 | FE investigation needed |
+| BUG-123 | 401 Silent Redirect (order loss) | P0 | Next sprint priority |
+| BUG-130 | Channel Visibility | P1 | Investigation deferred, likely backend |
 
-| ID | Title | Why Deferred |
-|----|-------|-------------|
-| BUG-130 | Channel Visibility | Investigation deferred, likely backend |
-| CR-027 | Unified Toast | Carried to next sprint |
-| CR-043 | Credit Per-Customer Totals | Gate 1 only |
-| BUG-118 | Coupon Codes | FE investigation needed |
-
-### Priority 2+ / Backend-Blocked
+### B — Blocked / Reactivation-Gated (4 items)
 
 | ID | Title | Blocker |
 |----|-------|---------|
-| BUG-124 | Socket Payload | Backend |
-| BUG-129 | TAB Status | Backend |
-| BUG-090→094, 101 | POS 3.0 Backend Bugs | Backend team |
-| BUG-106/107/108 | CRM Integration | CRM team |
-| CR-041 D-1/D-2/D-3 | Navigation Decisions | Owner |
+| CR-028 | Item-Level Discount (money) | OD-1…OD-5 **NOW ANSWERED** — unblocked for POS 5.0 |
+| CR-041 | Navigation Consistency | D-1/D-2/D-3 **NOW ANSWERED** — unblocked for POS 5.0 |
+| BUG-124 | Socket Payload Incomplete | Backend must enrich |
+| BUG-129 | TAB status=6 Before Collection | Backend fix — brief sent |
+
+### C — Gate 3 Ready (menu-bug branch merge, 5 items)
+
+| ID | Title | Tests |
+|----|-------|:---:|
+| CR-036 | Bulk Editor Add Item Row | 7/7 |
+| CR-036-FU-01 | Validation UX Polish | 10 |
+| CR-036-FU-02 | Column Reorder + Sold By | 4/4 |
+| CR-036-FU-03 | Tax Validation + Overlay | 8/8 |
+| CR-029-QSR | QSR Payload Parity + round_up | 11/11 |
+
+### D — Carried from POS 3.0 (11 items)
+
+- Backend-blocked: BUG-090→094, 101, 096, 097 Bucket-5
+- CRM-blocked: BUG-106, 107, 108
+- Owner-scope: BUG-104, 105
+
+### E — Other Carried (7 items)
+
+- BUG-125-B (Food Type not persisting — planning complete on discount-menu branch)
+- BUG-095, BUG-097 CartPanel gate, POS2-001, POS2-006
+- 7 unfrozen business rules
 
 ---
 
-## 8. FREEZE GATE STATUS
-
-### Prerequisites for Freeze
+## 8. FREEZE GATE STATUS — ✅ ALL PREREQUISITES MET
 
 | # | Prerequisite | Status |
 |---|-------------|:---:|
-| 1 | All items at final status (CLOSED or deferred) | ⚠️ 29 items awaiting smoke |
-| 2 | QA PASSED | ✅ 10/10 (Jun 12-13) + batch QA |
+| 1 | All items at final status (CLOSED or deferred) | ✅ 43 CLOSED, rest deferred |
+| 2 | QA PASSED | ✅ 10/10 |
 | 3 | Regression CLEAN | ✅ 4/4 |
 | 4 | Pre-Release Audit CLEAN | ✅ 0 blockers |
-| 5 | Owner Smoke PASSED (S-1 → S-19) | ❌ **0/19 — ALL PENDING** |
-| 6 | Insights batch smoke | ❌ **0/10 — ALL PENDING** |
+| 5 | Owner Smoke PASSED (S-1→S-19) | ✅ 19/19 PASS |
+| 6 | Insights batch smoke | ✅ ALL PASS |
 | 7 | Registry synced | ✅ |
 | 8 | FILE_OWNERSHIP refreshed | ✅ |
 | 9 | OPEN_GAPS reviewed | ✅ |
-| 10 | Deferred backlog documented | ✅ (Section 7 above) |
+| 10 | Deferred backlog documented | ✅ |
+| 11 | DEBUG-B11 logs removed | ✅ |
+| 12 | BASELINE_INDEX entry cut | ✅ |
+| 13 | registry.json pos_4_0 → FROZEN | ✅ |
 
-### ❌ FREEZE BLOCKED
+### ✅ SPRINT FROZEN
 
-**Sole remaining blocker: Owner has not executed smoke testing.**
-
-29 items across 2 smoke batches (S-1→S-9 + S-10→S-19) and the Insights batch (~10 items) are all PENDING owner verification.
-
-**Once owner runs smoke and all items PASS:**
-1. Agent flips statuses to CLOSED — OWNER VERIFIED
-2. Removes DEBUG-B11 logs (post S-4 PASS)
-3. Cuts POS 4.0 baseline entry in `BASELINE_INDEX.md`
-4. Tags branch
-5. Sprint is FROZEN → proceeds to RELEASE agent
+**POS 4.0 is FROZEN as of 2026-06-13.** Branch `13-june-audt-` @ `f970328`.
 
 ---
 
-## 9. SELF-ASSESSMENT (CLOSURE Agent)
+## 9. POST-FREEZE ACTIONS COMPLETED
+
+| # | Action | Status | Date |
+|---|--------|:---:|------|
+| 1 | All smoke items → CLOSED — OWNER VERIFIED | ✅ | 2026-06-13 |
+| 2 | DEBUG-B11 logs removed from OrderEntry.jsx + profileTransform.js | ✅ | 2026-06-13 |
+| 3 | BASELINE_INDEX.md POS 4.0 entry cut | ✅ | 2026-06-13 |
+| 4 | registry.json pos_4_0 → FROZEN | ✅ | 2026-06-14 |
+| 5 | Sprint Closure Report finalized (this doc) | ✅ | 2026-06-14 |
+| 6 | POS 5.0 Sprint Planning created | ✅ | 2026-06-13 |
+
+---
+
+## 10. SELF-ASSESSMENT (CLOSURE Agent — Final Pass)
 
 | Dimension | Score | Notes |
 |-----------|:---:|-------|
-| Role correctly identified? | 5 | CLOSURE (Role 11) — administrative audit only |
-| Required docs read? | 5 | All 12+ docs from boot list read |
-| Scope lock held? | 5 | Zero code changes, zero source file modifications |
-| Outputs complete? | 5 | Closure report complete with all 9 sections |
-| Registries updated? | 4 | Gap audit backfill completed earlier this session; closure report is final consolidation |
-| Stale docs flagged? | 5 | All stale docs identified and either fixed or documented |
+| Role correctly identified? | 5 | CLOSURE (Role 11) — final administrative consolidation |
+| Required docs read? | 5 | All 15+ docs from boot list read (CONTROL_DASHBOARD, CR_REGISTRY, BUG_TRACKER, SPRINT_STATUS, all handovers, smoke batches, regression, pre-release audit, gap audit, baseline index, file ownership, open gaps, POS 5.0 planning) |
+| Scope lock held? | 5 | Zero source code changes. Only registry.json sprint_meta + this closure report |
+| Outputs complete? | 5 | Final closure report, registry updated, all sections verified |
+| Registries updated? | 5 | registry.json FROZEN, all registries at final state |
+| Stale docs flagged? | 5 | Prior stale closure report replaced with this final version |
 
 ---
 
 ## HANDOVER
 
 ```
-Sprint closure audit complete.
-  14 items CLOSED — OWNER VERIFIED.
-  29 items IMPLEMENTED + QA PASSED — awaiting owner smoke (0/29).
-  6 items at Gate 3 (menu-bug branch imports).
-  10 items deferred / blocked / not started → next sprint backlog.
+Sprint closure COMPLETE and FINAL.
+  43 items CLOSED — OWNER VERIFIED.
+  0 items pending — all shipped or explicitly deferred.
   
-  Missing artifacts: Session Start files (Artifact #0) — recommended SKIP.
+  QA: 10/10. Regression: 4/4 CLEAN. Pre-Release Audit: CLEAN.
+  Owner Smoke: 19/19 PASS + Insights batch ALL PASS.
   
-  Regression: CLEAN (4/4). Pre-Release Audit: CLEAN (0 blockers).
+  SPRINT FROZEN 2026-06-13. Branch: 13-june-audt- @ f970328.
+  BASELINE_INDEX entry cut. registry.json synced.
   
-  FREEZE BLOCKED on owner smoke testing (S-1 → S-19 + Insights batch).
+  Deferred: 32 items → POS 5.0 (planning doc ready).
+  Owner decisions OD-1…5 + D-1/2/3 ANSWERED — CR-028 + CR-041 unblocked.
   
-  Closure report at: /app/memory/control/POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md
+  Process gap noted: Session Start files (Artifact #0) skipped for POS 4.0 — enforce from POS 5.0.
   
-  Next: SMOKE FACILITATOR agent (Role 8) — present S-1 → S-19 to owner on preprod.
-  Then: Owner freeze gate → RELEASE agent (Role 12).
+  Next: RELEASE agent (Role 12) for production deployment.
+  POS 5.0 sprint planning at: /app/memory/control/POS5_0_SPRINT_PLANNING_2026_06_13.md
 ```
 
 ---
 
-*Sprint Closure Report — 2026-06-13. "Read before you write. Understand before you change. Verify before you ship."*
+*Sprint Closure Report (FINAL) — POS 4.0 FROZEN 2026-06-13. 43 items shipped. "Read before you write. Understand before you change. Verify before you ship."*
