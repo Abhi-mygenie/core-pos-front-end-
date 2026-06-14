@@ -162,11 +162,12 @@ function RowExpander({ open }) {
 // CR-046: WORKFLOW UI COMPONENTS (Phase 2)
 // ============================================================================
 
-// Gate Progress Bar — shows ✅⬜🟡🔴 per gate
+// Gate Progress Bar — shows ✅⬜🟡🔴 per gate (7 gates)
 function GateProgressBar({ item }) {
   const gates = WorkflowManager.getItemGateStatus(item);
   const gateList = [
     { key: 'intake', label: 'Intake' },
+    { key: 'impact', label: 'Impact' },
     { key: 'plan',   label: 'Plan' },
     { key: 'gate4',  label: 'Gate 4' },
     { key: 'code',   label: 'Code' },
@@ -195,7 +196,8 @@ function StageFilter({ value, onChange }) {
     <select data-testid="stage-filter" value={value} onChange={e => onChange(e.target.value)}
       className="bg-slate-900 border border-amber-600/50 rounded px-3 py-1.5 text-sm text-amber-300 font-medium">
       <option value="ALL">All Stages</option>
-      <option value="planning">Ready for: Impact Analysis + Plan (Gate 2+3)</option>
+      <option value="impact_analysis">Ready for: Impact Analysis (Gate 2)</option>
+      <option value="implementation_plan">Ready for: Implementation Plan (Gate 3)</option>
       <option value="gate4">Ready for: Gate 4 Approval</option>
       <option value="implementation">Ready for: Implementation (Gate 5a)</option>
       <option value="qa">Ready for: QA (Gate 5b)</option>
@@ -210,7 +212,7 @@ function BatchActionBar({ selectedCount, selectedItems, stage, sprint, onBatchCr
   const [showNotes, setShowNotes] = useState(false);
   if (selectedCount === 0) return null;
   
-  const stageLabels = { planning: 'Planning', gate4: 'Gate 4 Approval', implementation: 'Implementation', qa: 'QA', smoke: 'Smoke Test' };
+  const stageLabels = { impact_analysis: 'Impact Analysis', implementation_plan: 'Implementation Plan', gate4: 'Gate 4 Approval', implementation: 'Implementation', qa: 'QA', smoke: 'Smoke Test' };
   
   return (
     <div className="sticky bottom-0 z-20 bg-slate-800/95 backdrop-blur border-t border-amber-500/30 px-4 py-3 flex flex-wrap items-center gap-3" data-testid="batch-action-bar">

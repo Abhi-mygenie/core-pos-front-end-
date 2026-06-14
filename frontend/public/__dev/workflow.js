@@ -127,11 +127,12 @@ const WorkflowManager = {
     this.save(data);
   },
 
-  // ── Gate status helpers ──
+  // ── Gate status helpers (7 gates: Intake → Impact → Plan → Gate4 → Code → QA → Smoke) ──
   getItemGateStatus(item) {
     const s = (item.status || '').toUpperCase();
     const gates = {
       intake:  'none',
+      impact:  'none',
       plan:    'none',
       gate4:   'none',
       code:    'none',
@@ -139,78 +140,69 @@ const WorkflowManager = {
       smoke:   'none'
     };
 
-    // Intake — anything registered or beyond
-    if (item.art1_intake === 'PRESENT' || /REGISTERED|INTAKE|PLAN|IMPLEMENT|CLOSED|VERIFIED|QA|GATE|BACKEND|PARTIAL|OWNER|INVESTIGATION/.test(s)) gates.intake = 'done';
+    // Gate 1: Intake
+    if (item.art1_intake === 'PRESENT' || /REGISTERED|INTAKE|PLAN|IMPLEMENT|CLOSED|VERIFIED|QA|GATE|BACKEND|PARTIAL|OWNER|INVESTIGATION|IMPACT/.test(s)) gates.intake = 'done';
 
-    // Plan — has impact/plan or status implies planned
-    if (item.art2_impact === 'PRESENT' || item.art3_plan === 'PRESENT' || /GATE.3|GATE.4|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS|PLANNING.*COMPLETE/.test(s)) gates.plan = 'done';
-    else if (/PLANNING|INVESTIGATION/.test(s) && !/COMPLETE/.test(s)) gates.plan = 'active';
-    else if (/INTAKE|REGISTERED/.test(s)) gates.plan = 'waiting';
+    // Gate 2: Impact Analysis
+    if (item.art2_impact === 'PRESENT' || /IMPACT.*COMPLETE|GATE.3|GATE.4|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS|PLANNING.*COMPLETE/.test(s)) gates.impact = 'done';
+    else if (/INVESTIGATION|IMPACT.*PROGRESS/.test(s)) gates.impact = 'active';
+    else if (/INTAKE|REGISTERED/.test(s)) gates.impact = 'waiting';
 
-    // Gate 4
+    // Gate 3: Implementation Plan
+    if (item.art3_plan === 'PRESENT' || /GATE.3.*COMPLETE|GATE.4|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS|PLANNING.*COMPLETE/.test(s)) gates.plan = 'done';
+    else if (gates.impact === 'done' && !/GATE.3|GATE.4|IMPLEMENT|CLOSED/.test(s)) gates.plan = 'waiting';
+
+    // Gate 4: Owner Approval
     const approval = this.getApproval(item.id);
     if (approval?.verdict === 'GO' || /GATE.4.*GO|IMPLEMENT|CLOSED|VERIFIED|QA.*PASS/.test(s)) gates.gate4 = 'done';
     else if (approval?.verdict === 'NO') gates.gate4 = 'rejected';
     else if (/GATE.3.*COMPLETE|PLANNING.*COMPLETE/.test(s)) gates.gate4 = 'waiting';
 
-    // Code
+    // Gate 5a: Code
     if (item.art5_impl_summary_qa === 'PRESENT' || /IMPLEMENT|CLOSED|VERIFIED|QA.*PASS/.test(s)) gates.code = 'done';
     else if (/GATE.4.*GO/.test(s)) gates.code = 'active';
 
-    // QA
+    // Gate 5b: QA
     if (/QA.*PASS|CLOSED.*VERIFIED|OWNER.*VERIFIED/.test(s)) gates.qa = 'done';
     else if (/IMPLEMENT/.test(s) && !/CLOSED/.test(s)) gates.qa = 'waiting';
 
-    // Smoke
+    // Gate 6: Smoke
     const smoke = this.getSmokeResult(item.id);
     if (smoke?.verdict === 'PASS' || item.art6_owner_smoke === 'PRESENT' || /CLOSED.*OWNER.*VERIFIED|OWNER.*VERIFIED/.test(s)) gates.smoke = 'done';
     else if (smoke?.verdict === 'FAIL') gates.smoke = 'rejected';
     else if (/QA.*PASS/.test(s)) gates.smoke = 'waiting';
 
-    // Blocked items — show intake done, rest blocked
+    // Blocked items
     if (/BACKEND.BLOCKED|CRM.BLOCKED/.test(s)) {
       gates.intake = 'done';
-      gates.plan = gates.plan === 'done' ? 'done' : 'none';
-      if (gates.plan !== 'done') gates.plan = 'none';
     }
 
     return gates;
   },
 
-  // ── Stage eligibility ──
+  // ── Stage eligibility (7 stages) ──
   getEligibleStage(item) {
     const s = (item.status || '').toUpperCase();
     
-    // Closed / shipped / verified — not eligible for any stage
+    // Not eligible
     if (/CLOSED|VERIFIED|SHIPPED|SUBSUMED/.test(s) && !/NOT/.test(s)) return null;
-    
-    // Blocked items — not eligible
     if (/BACKEND.BLOCKED|CRM.BLOCKED/.test(s)) return null;
-    
-    // Owner scope needed — not eligible
     if (/OWNER.*SCOPE/.test(s)) return null;
-    
-    // Deferred / parked — not eligible
     if (/DEFERRED|PARKED/.test(s) && !/RESIDUAL/.test(s)) return null;
 
     // QA passed → smoke
     if (/QA.*PASS/.test(s)) return 'smoke';
-    
-    // Implemented (not closed) → qa
+    // Implemented → qa
     if (/IMPLEMENT/.test(s) && !/CLOSED/.test(s)) return 'qa';
-    
     // Gate 4 GO → implementation
     if (/GATE.4.*GO/.test(s)) return 'implementation';
-    
-    // Gate 3 complete / Planning complete → gate4
+    // Gate 3 / Planning complete → gate4
     if (/GATE.3.*COMPLETE|PLANNING.*COMPLETE/.test(s)) return 'gate4';
+    // Impact complete → implementation_plan (Gate 3)
+    if (/IMPACT.*COMPLETE|GATE.2.*COMPLETE/.test(s)) return 'implementation_plan';
+    // Intake / registered / partial / investigation → impact_analysis (Gate 2)
+    if (/REGISTERED|INTAKE|PARTIAL|NOT.STARTED|INVESTIGATION.*COMPLETE/.test(s)) return 'impact_analysis';
 
-    // Registered / intake / partial → planning
-    if (/REGISTERED|INTAKE|PARTIAL|NOT.STARTED/.test(s)) return 'planning';
-    
-    // Investigation complete → planning (needs plan after investigation)
-    if (/INVESTIGATION.*COMPLETE/.test(s)) return 'planning';
-
-    return 'planning'; // default fallback
+    return 'impact_analysis';
   }
 };
