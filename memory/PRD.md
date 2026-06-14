@@ -1,19 +1,42 @@
-# PRD — MyGenie POS (Core POS Front End)
+# MyGenie POS Frontend - PRD & Deployment Record
 
 ## Original Problem Statement
-Restaurant POS frontend application (React 19, CRACO, Tailwind, Radix/shadcn). Connects to Laravel backend at `preprod.mygenie.online`.
+Deploy the core-pos-front-end React application from GitHub repo (branch: 14-june) onto the Emergent preview environment. Frontend-only deployment connecting to external APIs.
 
-## POS 4.0 — FROZEN (2026-06-13)
-- 43 items CLOSED — OWNER VERIFIED
-- Branch `13-june-audt-` @ `f970328`
-- Step 1 (cleanup) + Step 2 (freeze) complete
-- Step 3 (release) pending
+## Architecture
+- **Frontend**: React 19 with Craco, Tailwind CSS, Radix UI, shadcn/ui components
+- **External APIs**: preprod.mygenie.online (REST API), presocket.mygenie.online (WebSocket)
+- **Auth**: Firebase Authentication
+- **No backend** required on this deployment — all data served by external preprod APIs
 
-## POS 5.0 — PLANNING (2026-06-13)
-- 32 items deferred from POS 4.0
-- Sprint plan: `/app/memory/control/POS5_0_SPRINT_PLANNING_2026_06_13.md`
-- P0: BUG-123 (401 redirect), CR-028 (item discount)
-- P1: CR-036 family merge (5 items), BUG-130, BUG-118
-- P2: CR-027 (toast), CR-043 (credit), CR-041 (nav)
-- Backend handoff: 13 items
-- Owner decisions needed: OD-1…5 + D-1/2/3
+## What's Been Implemented (2026-06-14)
+- Cloned repo from GitHub (branch: 14-june) into /app/frontend
+- Configured all environment variables (API base URL, Socket URL, Firebase config, CRM URL)
+- Installed dependencies via yarn
+- Frontend compiled and running successfully on port 3000
+- All tests passed (100% frontend success rate)
+
+## Core Features (from repo)
+- POS login system (Firebase + external API auth)
+- Order management panels
+- Settlement system
+- Menu management
+- Reports module (Sales, Payments, Cancellations, Food Court, Item Sales, Order Ledger, etc.)
+- CRM integration
+- Real-time socket connections
+
+## Environment Variables Configured
+- REACT_APP_BACKEND_URL (Emergent preview URL)
+- REACT_APP_API_BASE_URL (preprod.mygenie.online)
+- REACT_APP_SOCKET_URL (presocket.mygenie.online)
+- Firebase config (API key, Auth domain, Project ID, Storage bucket, Messaging sender ID, App ID, Measurement ID, VAPID key)
+- REACT_APP_CRM_BASE_URL
+
+## Prioritized Backlog
+- P0: None — deployment complete and functional
+- P1: Monitor for any runtime issues with external API connectivity
+- P2: Update browserslist data (minor warning during compilation)
+
+## Next Tasks
+- User to verify login with actual credentials against preprod API
+- Test full POS workflow (orders, settlements, reports) post-login
