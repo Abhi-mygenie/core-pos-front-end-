@@ -12,7 +12,7 @@
         {
           "id": "POS2-002",
           "title": "Order origin / Scan&Order web pipeline",
-          "status": "CLOSED \u2014 RESOLVED VIA CR",
+          "status": "CLOSED — RESOLVED VIA CR",
           "files": "",
           "notes": "Owner-confirmed working & closed under a shipped CR (2026-05-31)",
           "artifact_refs": [
@@ -206,8 +206,8 @@
         },
         {
           "id": "POS2-003-REOPEN-B",
-          "title": "v1\u2192v2 place-order revert",
-          "status": "CLOSED \u2014 VERIFIED",
+          "title": "v1→v2 place-order revert",
+          "status": "CLOSED — VERIFIED",
           "files": "",
           "notes": "Code on v2 (constants.js PLACE_ORDER=/api/v2/.../place-order); v2 confirmed deployed + live commit verified. Owner-closed 2026-05-31",
           "artifact_refs": [
@@ -230,7 +230,7 @@
         {
           "id": "POS2-004",
           "title": "f_order_status=8 investigation",
-          "status": "CLOSED \u2014 IMPLEMENTED",
+          "status": "CLOSED — IMPLEMENTED",
           "files": "",
           "notes": "Rolled into POS2-005",
           "artifact_refs": [
@@ -368,7 +368,7 @@
           ]
         },
         {
-          "id": "POS2-005-FU \u00a7A",
+          "id": "POS2-005-FU §A",
           "title": "Collect-Bill hidden for status-8",
           "status": "IMPLEMENTED",
           "files": "OrderTable.jsx",
@@ -391,9 +391,9 @@
           "category": "SHIPPED"
         },
         {
-          "id": "POS2-005-FU \u00a7B",
+          "id": "POS2-005-FU §B",
           "title": "PG filter cross-tab",
-          "status": "CLOSED \u2014 AS DESIGNED",
+          "status": "CLOSED — AS DESIGNED",
           "files": "",
           "notes": "Owner 2026-05-31: keep PG filter cross-tab (all tabs)",
           "artifact_refs": [
@@ -416,7 +416,7 @@
         {
           "id": "POS2-006",
           "title": "confirmOrderTone investigation",
-          "status": "DEFERRED \u2192 POS 4.0",
+          "status": "DEFERRED → POS 4.0",
           "files": "",
           "notes": "Owner 2026-05-31: shifted to POS 4.0 backlog",
           "artifact_refs": [
@@ -616,7 +616,7 @@
           "title": "Cross-Sell + Customer Intelligence",
           "status": "SHIPPED + VERIFIED",
           "files": "4 new + 4 modified",
-          "notes": "T-28/T-29 live regression PASS 2026-05-31 \u2192 CLOSED \u2014 OWNER VERIFIED",
+          "notes": "T-28/T-29 live regression PASS 2026-05-31 → CLOSED — OWNER VERIFIED",
           "artifact_refs": [
             {
               "label": "Intake",
@@ -722,7 +722,7 @@
         {
           "id": "CR-003",
           "title": "Tab",
-          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "status": "CLOSED — SUBSUMED (owner-attested)",
           "files": "",
           "notes": "",
           "artifact_refs": [
@@ -839,7 +839,7 @@
           "status_history": [
             {
               "from": "NOT_STARTED",
-              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "to": "CLOSED — SUBSUMED (owner-attested)",
               "date": "2026-05-30",
               "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
             }
@@ -848,7 +848,7 @@
         {
           "id": "CR-004",
           "title": "Up-sell",
-          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "status": "CLOSED — SUBSUMED (owner-attested)",
           "files": "",
           "notes": "Blocked: feature_flags.upsell=false",
           "artifact_refs": [
@@ -949,7 +949,7 @@
           "status_history": [
             {
               "from": "NOT_STARTED",
-              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "to": "CLOSED — SUBSUMED (owner-attested)",
               "date": "2026-05-30",
               "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
             }
@@ -958,7 +958,7 @@
         {
           "id": "CR-005",
           "title": "Wallet",
-          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "status": "CLOSED — SUBSUMED (owner-attested)",
           "files": "",
           "notes": "Deferred from BUG-108",
           "artifact_refs": [
@@ -1053,7 +1053,7 @@
           "status_history": [
             {
               "from": "NOT_STARTED",
-              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "to": "CLOSED — SUBSUMED (owner-attested)",
               "date": "2026-05-30",
               "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
             }
@@ -1204,7 +1204,7 @@
         {
           "id": "CR-008",
           "title": "Integrations",
-          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "status": "CLOSED — SUBSUMED (owner-attested)",
           "files": "",
           "notes": "Scope TBD",
           "artifact_refs": [
@@ -1310,7 +1310,7 @@
           "status_history": [
             {
               "from": "NOT_STARTED",
-              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "to": "CLOSED — SUBSUMED (owner-attested)",
               "date": "2026-05-30",
               "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
             }
@@ -1319,7 +1319,7 @@
         {
           "id": "CR-009",
           "title": "BUG-108 Carryover",
-          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "status": "CLOSED — SUBSUMED (owner-attested)",
           "files": "",
           "notes": "Items listed in CRM 2.0 README",
           "artifact_refs": [
@@ -1400,7 +1400,7 @@
           "status_history": [
             {
               "from": "NOT_FORMALIZED",
-              "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+              "to": "CLOSED — SUBSUMED (owner-attested)",
               "date": "2026-05-30",
               "reason": "Owner attestation 2026-05-30: scope absorbed by other CRs that shipped; code-level identification of subsuming CR explicitly waived by owner."
             }
@@ -1441,7 +1441,7 @@
         {
           "id": "Order Activity Log",
           "title": "Chronological activity feed per order",
-          "status": "CLOSED \u2014 AS DESIRED",
+          "status": "CLOSED — AS DESIRED",
           "files": "",
           "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
           "artifact_refs": [
@@ -1481,7 +1481,7 @@
         {
           "id": "PROD-HOTFIX-006",
           "title": "Takeaway print: custPhone empty",
-          "status": "CLOSED \u2014 AS DESIRED",
+          "status": "CLOSED — AS DESIRED",
           "files": "orderTransform.js or backend template",
           "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
           "artifact_refs": [
@@ -1511,7 +1511,7 @@
         {
           "id": "PROD-HOTFIX-007",
           "title": "Loyalty earn points display",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "files": "loyaltyTransform.js (+3), CollectPaymentPanel.jsx (+5)",
           "notes": "",
           "artifact_refs": [
@@ -1539,7 +1539,7 @@
         {
           "id": "PROD-HOTFIX-008",
           "title": "Manual KOT/Bill print: custName & custPhone NULL",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "files": "orderService.js (+2 lines)",
           "notes": "",
           "artifact_refs": [
@@ -1567,7 +1567,7 @@
         {
           "id": "DEV-DASHBOARD-001",
           "title": "Internal dev control dashboard (v1.0 + v1.1)",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "files": "/app/frontend/public/__dev/**, /app/scripts/gen_dev_dashboard_config.js (all NEW, isolated; zero touch to /src/)",
           "notes": "Full 6-artifact closure. Hidden route /__dev/ env-gated via REACT_APP_SHOW_DEV_DASHBOARD. Read-only triage view of closure debt / bugs / CRs.",
           "artifact_refs": [
@@ -1614,7 +1614,7 @@
         {
           "id": "UX-LOADING-02",
           "title": "Parallel API loading + visible station progress",
-          "status": "CLOSED \u2014 AS DESIRED",
+          "status": "CLOSED — AS DESIRED",
           "files": "",
           "notes": "Owner 2026-05-31: current code state is as desired, no further changes needed",
           "artifact_refs": [
@@ -1655,163 +1655,163 @@
         {
           "id": "CR-014",
           "title": "Menu Management API Migration + Bulk Editor",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-015",
           "title": "Settlement Module",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-016",
           "title": "Settlement History (Insights)",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-017",
           "title": "WhatsApp Payment Link",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-018",
           "title": "Schedule Order",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-019",
           "title": "Restaurant Settings Wizard",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-020",
           "title": "Settings Bug Sweep (B1-B15)",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-021",
           "title": "Split/Partial Payment",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-022",
           "title": "Food Type Filters",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-023",
           "title": "Typing Lag Fix",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-024",
           "title": "Channel Visibility Override",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-025",
           "title": "Discount Payload Fix (P0 money)",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P0"
         },
         {
           "id": "CR-026",
           "title": "Report Data & Rounding Sweep",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-029",
           "title": "Room Food in All Reports",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-030",
           "title": "Revenue by Collection Date",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-031",
           "title": "Cancellation Truth",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P2"
         },
         {
           "id": "CR-032",
           "title": "Payment Classifier + Charts",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P2"
         },
         {
           "id": "CR-033",
           "title": "Settlement Total Sale Basis",
-          "status": "CLOSED \u2014 owner directive",
+          "status": "CLOSED — owner directive",
           "priority": "P1"
         },
         {
           "id": "CR-034",
           "title": "Items Ledger Buckets",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-035",
           "title": "Report Definitions Help",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P3"
         },
         {
           "id": "CR-037",
           "title": "Remove Popular Items",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P2"
         },
         {
           "id": "CR-038",
           "title": "Boot Retry Policy",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P2"
         },
         {
           "id": "CR-039",
           "title": "Credit Total Wire + Portfolio Optimization",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-040",
           "title": "Sidebar Rename Labels + Remove X/Y/Z",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P3"
         },
         {
           "id": "CR-042",
           "title": "Item Ledger Rename",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P3"
         },
         {
           "id": "CR-044",
           "title": "Insights Shared Cache",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P1"
         },
         {
           "id": "CR-045",
           "title": "FE Field Stripping (temporary)",
-          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "status": "CLOSED — OWNER VERIFIED",
           "priority": "P2"
         }
       ],
@@ -1833,43 +1833,43 @@
         {
           "id": "CR-028",
           "title": "Item-Level Discount (payload + give_discount)",
-          "status": "INTAKE \u2014 OWNER DECISIONS LOCKED",
+          "status": "INTAKE — OWNER DECISIONS LOCKED",
           "priority": "P0"
         },
         {
           "id": "CR-036",
-          "title": "Bulk Editor \u2014 Add Item Row (merge from menu-bug)",
-          "status": "GATE 3 COMPLETE \u2014 MERGE PENDING",
+          "title": "Bulk Editor — Add Item Row (merge from menu-bug)",
+          "status": "GATE 3 COMPLETE — MERGE PENDING",
           "priority": "P1"
         },
         {
           "id": "CR-036-FU-01",
           "title": "Validation UX Polish",
-          "status": "GATE 3 COMPLETE \u2014 MERGE PENDING",
+          "status": "GATE 3 COMPLETE — MERGE PENDING",
           "priority": "P1"
         },
         {
           "id": "CR-036-FU-02",
           "title": "Column Reorder + Sold By",
-          "status": "GATE 3 COMPLETE \u2014 MERGE PENDING",
+          "status": "GATE 3 COMPLETE — MERGE PENDING",
           "priority": "P1"
         },
         {
           "id": "CR-036-FU-03",
           "title": "Tax Validation + Backdrop Loader",
-          "status": "GATE 3 COMPLETE \u2014 MERGE PENDING",
+          "status": "GATE 3 COMPLETE — MERGE PENDING",
           "priority": "P1"
         },
         {
           "id": "CR-029-QSR",
           "title": "QSR Payload Parity + round_up",
-          "status": "GATE 3 COMPLETE \u2014 MERGE PENDING",
+          "status": "GATE 3 COMPLETE — MERGE PENDING",
           "priority": "P1"
         },
         {
           "id": "CR-041",
           "title": "Navigation Consistency",
-          "status": "INVESTIGATION COMPLETE \u2014 D-1: Routes everywhere",
+          "status": "INVESTIGATION COMPLETE — D-1: Routes everywhere",
           "priority": "P2"
         },
         {

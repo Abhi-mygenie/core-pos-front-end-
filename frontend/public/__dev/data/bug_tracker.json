@@ -4,8 +4,8 @@
   "source": "POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md + /memory/bugs/*.md + reconciliation 2026-05-30 + CR-002/BUG-097/AUDIT closures 2026-05-31",
   "summary": {
     "total_tracked": 89,
-    "pos_4_0_closed": 26,
-    "pos_5_0_open": 16,
+    "pos_4_0_closed": 19,
+    "pos_5_0_open": 9,
     "backend_blocked": 8
   },
   "active_recent_bugs": [
@@ -13,7 +13,7 @@
       "id": "BUG-087",
       "title": "PayLater PAID badge on dashboard",
       "priority": "P0",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -99,8 +99,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -111,7 +111,7 @@
       "id": "BUG-088",
       "title": "Room Transfer v2 endpoint + socket",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -229,8 +229,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -241,7 +241,7 @@
       "id": "BUG-089",
       "title": "Eliminate redundant API calls on update-food-status",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -330,8 +330,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -343,7 +343,7 @@
       "title": "CRM customer_id not stored on room orders",
       "priority": "P2",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "Q-090-B-1 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -430,7 +430,7 @@
       "title": "CRM search API duplicates",
       "priority": "P2",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "CRM team (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -501,7 +501,7 @@
       "title": "Phone format contract undefined for room check-in",
       "priority": "P2",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "Q-092-1 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -577,7 +577,7 @@
       "title": "Room check-in date missing in API response",
       "priority": "P3",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "Backend (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -653,7 +653,7 @@
       "title": "Delivery-assign-order socket missing payload",
       "priority": "P3",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "Q-094-1 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -734,7 +734,7 @@
       "title": "Socket handler + dead code cleanup",
       "priority": "P2",
       "status": "PLANNING COMPLETE",
-      "sprint": "POS 3.0",
+      "sprint": "POS 5.0",
       "blocker": "Reconciled to cr_registry authoritative status (was PLANNING COMPLETE) 2026-05-31",
       "artifact_refs": [
         {
@@ -806,7 +806,7 @@
       "title": "Realtime FE updates for menu + hold/unpaid",
       "priority": "P1",
       "status": "PARTIAL",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "BQ-CR-01/02/03 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -887,8 +887,8 @@
       "title": "Delivery dispatch + assign rider",
       "priority": "P1",
       "status": "RESIDUALS DEFERRED",
-      "sprint": "POS 3.0",
-      "blocker": "Residuals (CartPanel gate + Bucket-5 rider events) \u2192 POS 4.0",
+      "sprint": "POS 5.0",
+      "blocker": "Residuals (CartPanel gate + Bucket-5 rider events) → POS 4.0",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -963,7 +963,7 @@
       "id": "BUG-098",
       "title": "Use restaurant profile CRM key",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -1053,8 +1053,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -1065,7 +1065,7 @@
       "id": "BUG-099",
       "title": "QSR / Cafe Quick Billing UX",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -1158,8 +1158,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -1170,7 +1170,7 @@
       "id": "BUG-100",
       "title": "Remove duplicate local toast notifications",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -1253,8 +1253,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -1266,7 +1266,7 @@
       "title": "Print template GST display slot",
       "priority": "P3",
       "status": "BACKEND-BLOCKED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "Q-101-1 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -1341,7 +1341,7 @@
       "id": "BUG-102",
       "title": "Mark Served/Ready button 20-30s delay",
       "priority": "P0",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -1419,8 +1419,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -1431,7 +1431,7 @@
       "id": "BUG-103",
       "title": "Remove number input arrows",
       "priority": "P2",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.0",
       "blocker": "",
       "artifact_refs": [
@@ -1504,8 +1504,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -1517,7 +1517,7 @@
       "title": "Settlement Module",
       "priority": "P1",
       "status": "OWNER SCOPE NEEDED",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "OQ-CR-06/07/08 (origin: POS 3.0)",
       "artifact_refs": [
         {
@@ -1583,7 +1583,7 @@
       "title": "CRM Cross-Sell/Upsell insights",
       "priority": "P2",
       "status": "SUBSUMED",
-      "sprint": "POS 3.0 \u2192 CRM 2.0",
+      "sprint": "POS 3.0 → CRM 2.0",
       "blocker": "Absorbed into CR-002",
       "artifact_refs": [
         {
@@ -1648,7 +1648,7 @@
       "id": "BUG-109",
       "title": "QSR takeaway/delivery validation parity",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.1",
       "blocker": "",
       "artifact_refs": [
@@ -1689,7 +1689,7 @@
       "id": "BUG-110",
       "title": "QSR prepaid lock parity",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.1",
       "blocker": "",
       "artifact_refs": [
@@ -1730,7 +1730,7 @@
       "id": "BUG-111",
       "title": "QSR bill parity (Grand Total + breakdown)",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 3.1",
       "blocker": "",
       "artifact_refs": [
@@ -1814,15 +1814,15 @@
       "id": "BUG-112",
       "title": "Auto-print blocked by Place Order API response",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-113",
-      "title": "Partial payment UI stuck \u2014 auto-fill locks fields",
+      "title": "Partial payment UI stuck — auto-fill locks fields",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1830,7 +1830,7 @@
       "id": "BUG-114",
       "title": "discount_type/category_id sent as empty when category discount applied",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1838,15 +1838,15 @@
       "id": "BUG-115",
       "title": "Audit Report cancelled item/order not rendering correctly",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-116",
-      "title": "Out-of-kitchen item Add \u2014 FE had no food_update listener",
+      "title": "Out-of-kitchen item Add — FE had no food_update listener",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1854,23 +1854,24 @@
       "id": "BUG-117",
       "title": "Audit Report side-sheet GST renders negative on VAT orders",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-118",
-      "title": "Nth-item coupon + BOGO coupon \u2014 needs testing",
+      "title": "Nth-item coupon + BOGO coupon — needs testing",
       "priority": "P1",
       "status": "INTAKE",
       "sprint_key": "pos_5_0",
-      "section": "Active / Recent"
+      "section": "Active / Recent",
+      "sprint": "POS 5.0"
     },
     {
       "id": "BUG-119",
       "title": "Backend stores negative round_up",
       "priority": "P2",
-      "status": "CLOSED \u2014 BACKEND FIXED",
+      "status": "CLOSED — BACKEND FIXED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1878,31 +1879,33 @@
       "id": "BUG-122",
       "title": "POS fOrderStatus 7 incorrectly triggers ScanOrderPopOut popup",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-123",
-      "title": "Place Order on 401 silently redirects \u2014 cashier loses order",
+      "title": "Place Order on 401 silently redirects — cashier loses order",
       "priority": "P1",
       "status": "INTAKE",
       "sprint_key": "pos_5_0",
-      "section": "Active / Recent"
+      "section": "Active / Recent",
+      "sprint": "POS 5.0"
     },
     {
       "id": "BUG-124",
       "title": "Backend food_update socket payload missing critical fields",
       "priority": "P2",
-      "status": "BACKEND-BLOCKED \u2014 FE DEFENDED",
+      "status": "BACKEND-BLOCKED — FE DEFENDED",
       "sprint_key": "pos_5_0",
-      "section": "Active / Recent"
+      "section": "Active / Recent",
+      "sprint": "POS 5.0"
     },
     {
       "id": "BUG-125",
       "title": "Cancellations scope match (Cancel vs cancelled)",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1910,15 +1913,15 @@
       "id": "BUG-126",
       "title": "insightsService reads round_off (API: round_up)",
       "priority": "P2",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-127",
-      "title": "Dashboard Unsettled-TAB tile \u2192 Credit Outstanding",
+      "title": "Dashboard Unsettled-TAB tile → Credit Outstanding",
       "priority": "P2",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1926,7 +1929,7 @@
       "id": "BUG-128",
       "title": "Dashboard double-fetches identical order-logs payload",
       "priority": "P2",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1936,7 +1939,8 @@
       "priority": "P3",
       "status": "BACKEND-BLOCKED",
       "sprint_key": "pos_5_0",
-      "section": "Active / Recent"
+      "section": "Active / Recent",
+      "sprint": "POS 5.0"
     },
     {
       "id": "BUG-130",
@@ -1944,13 +1948,14 @@
       "priority": "P1",
       "status": "INVESTIGATION DEFERRED",
       "sprint_key": "pos_5_0",
-      "section": "Active / Recent"
+      "section": "Active / Recent",
+      "sprint": "POS 5.0"
     },
     {
       "id": "BUG-131",
-      "title": "Sidebar bottom section scrolls up \u2014 should be sticky",
+      "title": "Sidebar bottom section scrolls up — should be sticky",
       "priority": "P2",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
@@ -1958,15 +1963,15 @@
       "id": "BUG-132",
       "title": "Settlement Report formulas broken",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     },
     {
       "id": "BUG-133",
-      "title": "Check In item appearing in reports \u2014 phantom revenue",
+      "title": "Check In item appearing in reports — phantom revenue",
       "priority": "P1",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint_key": "pos_4_0",
       "section": "Active / Recent"
     }
@@ -1975,7 +1980,7 @@
     {
       "id": "BUG-050",
       "title": "Printed Bill Mismatch After Item Cancellation",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2104,8 +2109,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2114,7 +2119,7 @@
     {
       "id": "BUG-051",
       "title": "Round-off Logic Should Always Use Ceiling",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2217,8 +2222,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2227,7 +2232,7 @@
     {
       "id": "BUG-052",
       "title": "Place Order Should Apply Restaurant Round-off Configuration",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2325,8 +2330,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2335,7 +2340,7 @@
     {
       "id": "BUG-053",
       "title": "GST Split Label Should Not Hardcode SGST/CGST Percentage When Item-Level GST Differs",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2420,14 +2425,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2436,7 +2441,7 @@
     {
       "id": "BUG-054",
       "title": "VAT Is Not Recalculating After Item Discount",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2539,8 +2544,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2549,7 +2554,7 @@
     {
       "id": "BUG-055",
       "title": "order_discount_type Missing in Prepaid Order Payload",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2647,8 +2652,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2657,7 +2662,7 @@
     {
       "id": "BUG-056",
       "title": "Custom Discount Category Not Showing in Discount UI",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2755,8 +2760,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -2765,7 +2770,7 @@
     {
       "id": "BUG-057",
       "title": "Prepaid Order Missing Print Bill Button",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -2908,8 +2913,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3013,7 +3018,7 @@
     {
       "id": "BUG-059",
       "title": "Audit Report Needs Print Bill Option for Completed and Cancelled Orders",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3131,8 +3136,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3141,7 +3146,7 @@
     {
       "id": "BUG-060",
       "title": "Table Remains Occupied After Transferring Order to Room",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3250,8 +3255,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3260,7 +3265,7 @@
     {
       "id": "BUG-061",
       "title": "Room Check-in Time Not Showing in Audit Report",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3363,8 +3368,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3373,7 +3378,7 @@
     {
       "id": "BUG-062",
       "title": "Takeaway and Delivery Orders Should Not Be Transferable to Room",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3476,8 +3481,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3486,7 +3491,7 @@
     {
       "id": "BUG-063",
       "title": "Room Bill Print Is Missing Required Room-Related Keys",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3576,14 +3581,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3592,7 +3597,7 @@
     {
       "id": "BUG-064",
       "title": "Room Transfer Notification Sound/Message Says New Order Instead of Room Transfer",
-      "status": "DEFERRED \u2014 FUTURE SPRINT",
+      "status": "DEFERRED — FUTURE SPRINT",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3662,7 +3667,7 @@
     {
       "id": "BUG-065",
       "title": "Corporate Room Check-in Details Not Captured or Passed to Bill/BOS",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3787,8 +3792,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3797,7 +3802,7 @@
     {
       "id": "BUG-066",
       "title": "Table Item Transfer Should Not Allow Transfer to Room",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -3900,8 +3905,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -3910,7 +3915,7 @@
     {
       "id": "BUG-067",
       "title": "KDS Station View Toggle Should Depend on Restaurant Ready Configuration",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4013,8 +4018,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4023,7 +4028,7 @@
     {
       "id": "BUG-068",
       "title": "Pending Scan & Order Popup Does Not Appear After Socket Reconnect",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4126,8 +4131,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4136,7 +4141,7 @@
     {
       "id": "BUG-069",
       "title": "Firebase Sound Plays Before Socket Order/Update Appears",
-      "status": "DEFERRED \u2014 FUTURE SPRINT",
+      "status": "DEFERRED — FUTURE SPRINT",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4196,7 +4201,7 @@
     {
       "id": "BUG-070",
       "title": "Area-wise Segregation Missing in Table View and Channel View",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4284,8 +4289,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4294,7 +4299,7 @@
     {
       "id": "BUG-071",
       "title": "UI and Bills Should Show User-Facing Order ID, Not Database Order ID",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4387,8 +4392,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4397,7 +4402,7 @@
     {
       "id": "BUG-072",
       "title": "Order Card Should Show Room Notes, Table Notes, and Item Notes",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4490,8 +4495,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4500,7 +4505,7 @@
     {
       "id": "BUG-073",
       "title": "Customizable Item Shows Empty Variation/Add-on Line in Order UI",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4588,8 +4593,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4598,7 +4603,7 @@
     {
       "id": "BUG-074",
       "title": "Login Remember Me Button Is Not Working",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4688,8 +4693,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4698,7 +4703,7 @@
     {
       "id": "BUG-075",
       "title": "Remove Tip/Tip GST From Takeaway and Delivery Flows",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4786,8 +4791,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4796,7 +4801,7 @@
     {
       "id": "BUG-076",
       "title": "Replace Conditional Round to Always Math.ceil()",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4871,14 +4876,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4887,7 +4892,7 @@
     {
       "id": "BUG-077",
       "title": "Add .trim() to Mobile Before CRM Lookup",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -4957,14 +4962,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -4973,7 +4978,7 @@
     {
       "id": "BUG-078",
       "title": "Add Visible Error on CRM Timeout",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5083,7 +5088,7 @@
     {
       "id": "BUG-079",
       "title": "Change 2-Miss Removal to 1-Miss Removal",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5176,8 +5181,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5186,7 +5191,7 @@
     {
       "id": "BUG-080",
       "title": "Filter partial_payments to Configured Modes Only",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5274,8 +5279,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5284,7 +5289,7 @@
     {
       "id": "BUG-081",
       "title": "Confirm/Fix Snooze to 120,000ms (2 min)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5354,14 +5359,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5370,7 +5375,7 @@
     {
       "id": "BUG-082",
       "title": "Read Socket Index 4 as Primary Web Source",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5463,8 +5468,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5473,7 +5478,7 @@
     {
       "id": "BUG-083",
       "title": "Verify delivery_charge_gst_amount Separate Key",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5586,8 +5591,8 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5596,7 +5601,7 @@
     {
       "id": "BUG-084",
       "title": "CGST/SGST Split Over ALL GST Types",
-      "status": "DEFERRED \u2014 FUTURE SPRINT",
+      "status": "DEFERRED — FUTURE SPRINT",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5651,7 +5656,7 @@
     {
       "id": "BUG-086",
       "title": "Confirm Room Order Grand Total Key Name",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "POS 2.0",
       "blocker": "",
       "artifact_refs": [
@@ -5721,14 +5726,14 @@
       "completeness": "7/7",
       "status_history": [
         {
-          "from": "CLOSED \u2014 NO CODE NEEDED",
-          "to": "CLOSED \u2014 IMPLEMENTED",
+          "from": "CLOSED — NO CODE NEEDED",
+          "to": "CLOSED — IMPLEMENTED",
           "date": "2026-05-30",
           "reason": "Owner reclassification: code was actually shipped after design lock; agent verified live code matches design. Originally misclassified at closure time. Will receive verbal smoke + auto-promote to OWNER VERIFIED on next scanner run."
         },
         {
-          "from": "CLOSED \u2014 IMPLEMENTED",
-          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "from": "CLOSED — IMPLEMENTED",
+          "to": "CLOSED — OWNER VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (owner directive 2026-05-30)"
         }
@@ -5739,7 +5744,7 @@
     {
       "id": "BUG-037",
       "title": "Scan Order Confirm Fails When Default Configuration Is \"Delivered\"",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -5805,8 +5810,8 @@
     },
     {
       "id": "BUG-038",
-      "title": "Credit Payment \u2014 Customer Details Not Linking / Auto-Populating From CRM",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "Credit Payment — Customer Details Not Linking / Auto-Populating From CRM",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -5908,8 +5913,8 @@
     },
     {
       "id": "BUG-039",
-      "title": "Delivery Order \u2014 Audit Detail Calculation Shows Delivery Charge as Tax",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "Delivery Order — Audit Detail Calculation Shows Delivery Charge as Tax",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -5950,8 +5955,8 @@
     },
     {
       "id": "BUG-042",
-      "title": "Hold Order \u2014 Payment Collection Fails With UPI Payment Method",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "Hold Order — Payment Collection Fails With UPI Payment Method",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6110,8 +6115,8 @@
     },
     {
       "id": "BUG-043",
-      "title": "Room Orders Report \u2014 Wrongly Shows Discount Column / Value",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "Room Orders Report — Wrongly Shows Discount Column / Value",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6152,8 +6157,8 @@
     },
     {
       "id": "BUG-045",
-      "title": "New Web / Scan & Order Popup \u2014 View Order & Reject Actions Not Working; Item Price Shows \u20b90.00",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "New Web / Scan & Order Popup — View Order & Reject Actions Not Working; Item Price Shows ₹0.00",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6249,7 +6254,7 @@
     {
       "id": "BUG-046",
       "title": "Editable Delivery Charge Accepted But Not Reflected in Order Total / Collect Bill Amount",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6334,7 +6339,7 @@
     {
       "id": "BUG-047",
       "title": "Order Placed From \"Mayur's Kitchen\" But Buzzer Notification Appears For \"18 March\"",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6380,8 +6385,8 @@
     },
     {
       "id": "BUG-048",
-      "title": "Room Orders Report \u2014 Discount Column Wrongly Shows Previous Outstanding After Full Payment; Total Inflates (\u20b99,999 \u2192 \u20b916,665)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "title": "Room Orders Report — Discount Column Wrongly Shows Previous Outstanding After Full Payment; Total Inflates (₹9,999 → ₹16,665)",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6436,7 +6441,7 @@
     {
       "id": "BUG-049",
       "title": "PayLater Payment Leaves \"NA\" On Available Table Card",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
       "blocker": "",
       "artifact_refs": [
@@ -6504,9 +6509,9 @@
   "older_closed_or_partial": [
     {
       "id": "BUG-001",
-      "title": "Prepaid Auto Bill Print \u2014 Payload is Missing Tip and Discount",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Prepaid Auto Bill Print — Payload is Missing Tip and Discount",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6622,9 +6627,9 @@
     },
     {
       "id": "BUG-002",
-      "title": "Postpaid Collect Bill \u2014 Auto Bill Print Not Triggered (order-temp-store API Not Called)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Postpaid Collect Bill — Auto Bill Print Not Triggered (order-temp-store API Not Called)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6704,9 +6709,9 @@
     },
     {
       "id": "BUG-003",
-      "title": "Credit Payment on Walk-in Order \u2014 Name Field Auto-Fills With \u201cWalk-In\u201d",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Credit Payment on Walk-in Order — Name Field Auto-Fills With “Walk-In”",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6786,9 +6791,9 @@
     },
     {
       "id": "BUG-004",
-      "title": "Split Bill \u2014 Total Amount Shown Wrong in \u201cEqually\u201d and \u201cBy Person\u201d Sections",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Split Bill — Total Amount Shown Wrong in “Equally” and “By Person” Sections",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6824,8 +6829,8 @@
     {
       "id": "BUG-005",
       "title": "Print Bill Button Missing on Prepaid Orders in Collect Bill Screen",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6889,8 +6894,8 @@
     {
       "id": "BUG-006",
       "title": "Service Charge Calculated Before Discount (Should Be After Discount, Then Taxes)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -6980,8 +6985,8 @@
     {
       "id": "BUG-007",
       "title": "Place Order Payload for Delivery Orders Missing Full `delivery_address` Object (Currently Sends Only Address ID)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7016,9 +7021,9 @@
     },
     {
       "id": "BUG-008",
-      "title": "Online Order \u2014 Confirm Button Not Working",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Online Order — Confirm Button Not Working",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7048,9 +7053,9 @@
     },
     {
       "id": "BUG-009",
-      "title": "Rounding Off \u2014 Inverted Logic (\u20b91.06 Rounds to \u20b92 Instead of \u20b91)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Rounding Off — Inverted Logic (₹1.06 Rounds to ₹2 Instead of ₹1)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7148,9 +7153,9 @@
     },
     {
       "id": "BUG-010",
-      "title": "Discount and Tip Fields \u2014 No Programmatic Max Validation (Allows >100% Discount)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Discount and Tip Fields — No Programmatic Max Validation (Allows >100% Discount)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7185,9 +7190,9 @@
     },
     {
       "id": "BUG-011",
-      "title": "Scan & Order \u2014 Confirm in New POS Spins Indefinitely (API 404 Not Found)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Scan & Order — Confirm in New POS Spins Indefinitely (API 404 Not Found)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7237,9 +7242,9 @@
     },
     {
       "id": "BUG-012",
-      "title": "Delivery Order Edit \u2014 Address Not Showing in UI and Not Printing on Bill",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Delivery Order Edit — Address Not Showing in UI and Not Printing on Bill",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7275,8 +7280,8 @@
     {
       "id": "BUG-013",
       "title": "Service Charge Applied to Takeaway and Delivery (Should Be Dine-In and Room Only)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7365,8 +7370,8 @@
     {
       "id": "BUG-016",
       "title": "Delivery Payload Being Sent on Non-Delivery Order Types (dine-in, etc.)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7396,9 +7401,9 @@
     },
     {
       "id": "BUG-017",
-      "title": "Quantity Input \u2014 Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Quantity Input — Amount Not Updating When Qty Is Typed (Items with Variants / Add-ons)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7428,9 +7433,9 @@
     },
     {
       "id": "BUG-019",
-      "title": "Scan / Re-engaged Delivery Orders \u2014 Delivery Charge Not Mapped to Collect Bill",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Scan / Re-engaged Delivery Orders — Delivery Charge Not Mapped to Collect Bill",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7518,9 +7523,9 @@
     },
     {
       "id": "BUG-023",
-      "title": "Print Bill from Dashboard Card \u2014 Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Print Bill from Dashboard Card — Service Charge Present in Print Payload for Takeaway / Delivery (residual of BUG-013 in default-branch print path)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7583,9 +7588,9 @@
     },
     {
       "id": "BUG-024",
-      "title": "Mark Order Ready \u2014 Backend does not cascade `food_status` to items; order header flips but items stuck in Cooking",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Mark Order Ready — Backend does not cascade `food_status` to items; order header flips but items stuck in Cooking",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7615,9 +7620,9 @@
     },
     {
       "id": "BUG-025",
-      "title": "Cancelled Item \u2014 Not Shown in Order Card's Collapsible \"Served\" Dropdown (Order detail screen correctly shows it strikethrough)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Cancelled Item — Not Shown in Order Card's Collapsible \"Served\" Dropdown (Order detail screen correctly shows it strikethrough)",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7648,8 +7653,8 @@
     {
       "id": "BUG-028",
       "title": "Service Charge Auto-Added on Bill Even When Auto Service Charge Toggle Is Off",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7729,9 +7734,9 @@
     },
     {
       "id": "BUG-029",
-      "title": "Prepaid Order \u2014 After Settling Bill, POS Returns to Previous Order's Edit Screen Instead of New Order",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "title": "Prepaid Order — After Settling Bill, POS Returns to Previous Order's Edit Screen Instead of New Order",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7802,8 +7807,8 @@
     {
       "id": "BUG-030",
       "title": "Cancelled KOT Not Received After Item Cancellation",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7844,8 +7849,8 @@
     {
       "id": "BUG-031",
       "title": "Out-of-Menu Order Item Not Added to Menu Management",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7886,8 +7891,8 @@
     {
       "id": "BUG-032",
       "title": "Back-End Order ID Displayed Instead of Restaurant Order ID",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -7973,8 +7978,8 @@
     {
       "id": "BUG-033",
       "title": "Cancellation Notification Says \"Order Updated\" Instead of \"Order Cancelled\"",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8020,8 +8025,8 @@
     {
       "id": "BUG-034",
       "title": "Inconsistent Notification Tone When Placing / Serving Orders",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8117,8 +8122,8 @@
     {
       "id": "BUG-035",
       "title": "Dynamic Price Feature Missing in New POS (parity gap with old POS)",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
-      "sprint": "\u2014",
+      "status": "CLOSED — OWNER VERIFIED",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8184,8 +8189,8 @@
     {
       "id": "BUG-014",
       "title": "GST Not Applied on Tip Amount",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8230,7 +8235,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8238,9 +8243,9 @@
     },
     {
       "id": "BUG-015",
-      "title": "Loyalty, Coupon Code, and Wallet Shown on Collect Bill \u2014 Feature Flags Not Gating Visibility",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Loyalty, Coupon Code, and Wallet Shown on Collect Bill — Feature Flags Not Gating Visibility",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8290,7 +8295,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8298,9 +8303,9 @@
     },
     {
       "id": "BUG-020",
-      "title": "Final Bill Total \u2014 Unwanted Round-Off on Grand Total (\u20b949.50 \u2192 \u20b950); user wants no rounding anywhere",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Final Bill Total — Unwanted Round-Off on Grand Total (₹49.50 → ₹50); user wants no rounding anywhere",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8340,7 +8345,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8348,9 +8353,9 @@
     },
     {
       "id": "BUG-021",
-      "title": "Runtime-Marked Complimentary Item \u2014 Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints \u20b90 correctly)",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Runtime-Marked Complimentary Item — Prints at Actual Price on Postpaid Collect-Bill Auto-Print (prepaid prints ₹0 correctly)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8405,7 +8410,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8413,9 +8418,9 @@
     },
     {
       "id": "BUG-022",
-      "title": "Cancelled Item \u2014 Not Shown as Strikethrough in Collect Bill Page \"ITEMS\" List (Order page correctly strikes it through)",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Cancelled Item — Not Shown as Strikethrough in Collect Bill Page \"ITEMS\" List (Order page correctly strikes it through)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8455,7 +8460,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8463,9 +8468,9 @@
     },
     {
       "id": "BUG-026",
-      "title": "Station Panel \u2014 Items With Different Variants/Add-Ons Aggregated Under Same Name; Variant Info Not Visible to Chef",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Station Panel — Items With Different Variants/Add-Ons Aggregated Under Same Name; Variant Info Not Visible to Chef",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8505,7 +8510,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8513,9 +8518,9 @@
     },
     {
       "id": "BUG-027",
-      "title": "Room Check-In \u2014 Payment Method Not Captured for \"Advance\" Amount (deferred to Phase 2 but never tracked as a bug)",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Room Check-In — Payment Method Not Captured for \"Advance\" Amount (deferred to Phase 2 but never tracked as a bug)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8555,7 +8560,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8564,7 +8569,7 @@
     {
       "id": "PROD-006",
       "title": "Takeaway print: custPhone empty when no phone entered",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8604,7 +8609,7 @@
       "status_history": [
         {
           "from": "INTAKE",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8612,9 +8617,9 @@
     },
     {
       "id": "BUG-018",
-      "title": "Collect Bill UI \u2014 Ability to Mark an Item as Complimentary",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "\u2014",
+      "title": "Collect Bill UI — Ability to Mark an Item as Complimentary",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "—",
       "blocker": "",
       "artifact_refs": [
         {
@@ -8674,7 +8679,7 @@
       "status_history": [
         {
           "from": "PARTIAL DOCUMENTATION",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8684,7 +8689,7 @@
       "id": "BUG-104",
       "title": "Credit/Tab Management module",
       "priority": "P1",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
       "sprint": "POS 3.0",
       "blocker": "OQ-CR-04/05",
       "artifact_refs": [
@@ -8797,7 +8802,7 @@
       "status_history": [
         {
           "from": "OWNER SCOPE NEEDED",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8807,7 +8812,7 @@
       "id": "BUG-106",
       "title": "CRM Notes API integration",
       "priority": "P2",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
       "sprint": "POS 3.0",
       "blocker": "CQ-CR-01/02",
       "artifact_refs": [
@@ -8908,7 +8913,7 @@
       "status_history": [
         {
           "from": "CRM-BLOCKED",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -8918,8 +8923,8 @@
       "id": "BUG-108",
       "title": "CRM Coupon/Loyalty/Wallet",
       "priority": "P1",
-      "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
-      "sprint": "POS 3.0 \u2192 CRM 2.0",
+      "status": "CLOSED — SUBSUMED (owner-attested)",
+      "sprint": "POS 3.0 → CRM 2.0",
       "blocker": "P1 backend defect open",
       "artifact_refs": [
         {
@@ -9031,7 +9036,7 @@
       "status_history": [
         {
           "from": "PARTIAL",
-          "to": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "to": "CLOSED — SUBSUMED (owner-attested)",
           "date": "2026-05-30",
           "reason": "Owner attestation 2026-05-30: defect behaviour no longer reproduces in production; absorbed by subsequent (unidentified) CR work. Code-level identification waived by owner."
         }
@@ -9043,7 +9048,7 @@
       "id": "BUG-040",
       "title": "Audit Report Excel / CSV Export Format Must Follow Provided Format",
       "status": "INTAKE",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "(origin: pos_final_1.0)",
       "artifact_refs": [
         {
@@ -9082,9 +9087,9 @@
     },
     {
       "id": "BUG-041",
-      "title": "Audit Report PDF Download \u2014 Mixed / Misaligned Rows, Logic Review & Refinement Needed",
+      "title": "Audit Report PDF Download — Mixed / Misaligned Rows, Logic Review & Refinement Needed",
       "status": "INTAKE",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "(origin: pos_final_1.0)",
       "artifact_refs": [
         {
@@ -9124,9 +9129,9 @@
     {
       "id": "BUG-044",
       "title": "Free / Available Table Still Shows Old Order Items Until Page Refresh",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
-      "blocker": "Owner smoke PASS (smoke_pass_ready_to_close) \u2014 reconciled from PARKED/BLOCKED 2026-05-31",
+      "blocker": "Owner smoke PASS (smoke_pass_ready_to_close) — reconciled from PARKED/BLOCKED 2026-05-31",
       "artifact_refs": [
         {
           "type": "intake",
@@ -9229,8 +9234,8 @@
     {
       "id": "BUG-085",
       "title": "Print Bill Shows Full GST Breakdown",
-      "status": "\ud83d\udccb Pending backend",
-      "sprint": "POS 4.0",
+      "status": "📋 Pending backend",
+      "sprint": "POS 5.0",
       "blocker": "(origin: POS 2.0)",
       "artifact_refs": [
         {
@@ -9291,7 +9296,7 @@
     {
       "id": "PROD-001",
       "title": "Auto-settle toggle",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "blocker": "",
       "artifact_refs": [
         {
@@ -9322,7 +9327,7 @@
     {
       "id": "PROD-002",
       "title": "Settle print guard",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "blocker": "Runtime QA Group A passed (live) + backend confirms no print on paid-prepaid-order. Owner-closed 2026-05-31",
       "completeness": "7/7"
     },
@@ -9350,7 +9355,7 @@
     {
       "id": "PROD-007",
       "title": "Loyalty points earned not displayed on Collect Bill",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "blocker": "",
       "artifact_refs": [
         {
@@ -9408,7 +9413,7 @@
     {
       "id": "PROD-008",
       "title": "Manual KOT/Bill print: custName & custPhone NULL",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "blocker": "",
       "artifact_refs": [
         {
@@ -9515,7 +9520,7 @@
       "id": "BUG-040",
       "title": "Audit Report Excel / CSV Export Format Must Follow Provided Format",
       "status": "INTAKE",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "(origin: pos_final_1.0)",
       "artifact_refs": [
         {
@@ -9554,9 +9559,9 @@
     },
     {
       "id": "BUG-041",
-      "title": "Audit Report PDF Download \u2014 Mixed / Misaligned Rows, Logic Review & Refinement Needed",
+      "title": "Audit Report PDF Download — Mixed / Misaligned Rows, Logic Review & Refinement Needed",
       "status": "INTAKE",
-      "sprint": "POS 4.0",
+      "sprint": "POS 5.0",
       "blocker": "(origin: pos_final_1.0)",
       "artifact_refs": [
         {
@@ -9596,9 +9601,9 @@
     {
       "id": "BUG-044",
       "title": "Free / Available Table Still Shows Old Order Items Until Page Refresh",
-      "status": "CLOSED \u2014 OWNER VERIFIED",
+      "status": "CLOSED — OWNER VERIFIED",
       "sprint": "pos_final_1.0",
-      "blocker": "Owner smoke PASS (smoke_pass_ready_to_close) \u2014 reconciled from PARKED/BLOCKED 2026-05-31",
+      "blocker": "Owner smoke PASS (smoke_pass_ready_to_close) — reconciled from PARKED/BLOCKED 2026-05-31",
       "artifact_refs": [
         {
           "type": "intake",
@@ -9701,8 +9706,8 @@
     {
       "id": "BUG-085",
       "title": "Print Bill Shows Full GST Breakdown",
-      "status": "\ud83d\udccb Pending backend",
-      "sprint": "POS 4.0",
+      "status": "📋 Pending backend",
+      "sprint": "POS 5.0",
       "blocker": "(origin: POS 2.0)",
       "artifact_refs": [
         {

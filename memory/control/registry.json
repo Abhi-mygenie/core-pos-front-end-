@@ -48,6 +48,12 @@
    "commit": "f970328",
    "items_shipped": 43,
    "baseline_ref": "control/POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md"
+  },
+  "pos_5_0": {
+   "status": "PLANNING",
+   "started_date": "2026-06-13",
+   "frozen": false,
+   "baseline_ref": "control/POS5_0_SPRINT_PLANNING_2026_06_13.md"
   }
  },
  "baseline_code_verification": {
@@ -150,7 +156,7 @@
  "items": [
   {
    "type": "CR",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "id": "POS2-001",
    "title": "Delivery charge / GST / web delivery lock",
    "status": "NOT STARTED",
@@ -698,7 +704,7 @@
   },
   {
    "type": "CR",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "id": "POS2-008 Phase 2",
    "title": "Backend-owned tone delivery",
    "status": "PLANNING COMPLETE",
@@ -2335,7 +2341,8 @@
      "subsumed_owner_attested": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2409,7 +2416,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2488,7 +2496,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2567,7 +2576,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2651,7 +2661,8 @@
      "type": "smoke_signoff"
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2726,7 +2737,8 @@
      "type": "intake"
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2810,7 +2822,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -2890,7 +2903,8 @@
      "type": "smoke_signoff"
     }
    ],
-   "completeness": "5/7"
+   "completeness": "5/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -3280,7 +3294,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "7/7"
+   "completeness": "7/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -3530,7 +3545,8 @@
      "waived_premature": true
     }
    ],
-   "completeness": "6/7"
+   "completeness": "6/7",
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -11118,7 +11134,8 @@
     "attested_date": "2026-05-30",
     "subsuming_cr": "UNIDENTIFIED — code grep waived by owner",
     "attestation_doc": "/app/memory/control/SUBSUMED_BACKLOG_OWNER_ATTESTATION_2026_05_30.md"
-   }
+   },
+   "sprint_key": "pos_5_0"
   },
   {
    "type": "BUG",
@@ -11960,7 +11977,7 @@
   },
   {
    "type": "CR",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "id": "CR-010",
    "title": "Weight-based menu item support (item_unit / item_unit_price)",
    "status": "OPEN — INTAKE",
@@ -11980,7 +11997,7 @@
   },
   {
    "type": "CR",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "id": "CR-011",
    "title": "Complete Reports Module (new, role-based, separate tab)",
    "status": "OPEN — GATE 2.5 PHASE 1 (S0 locked, S1 FROZEN, S2 API-wired awaiting validation)",
@@ -12063,7 +12080,7 @@
   },
   {
    "type": "CR",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "id": "CR-012",
    "title": "Menu Management — migrate to new API contract (scope-limited)",
    "status": "OPEN — INTAKE",
@@ -12101,12 +12118,13 @@
    "type": "bug",
    "sprint": "pos_4_0",
    "priority": "P1",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "area": "Order Entry",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-07",
    "intake_doc": "/app/memory/memory/bugs/BUG_112_AUTO_PRINT_PARALLEL_INTAKE.md",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-113",
@@ -12114,12 +12132,13 @@
    "type": "bug",
    "sprint": "pos_4_0",
    "priority": "P1",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "area": "Order Entry → Collect Bill",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-07",
    "intake_doc": "/app/memory/memory/bugs/BUG_113_PARTIAL_PAYMENT_UI_STUCK_INTAKE.md",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-114",
@@ -12127,12 +12146,13 @@
    "type": "bug",
    "sprint": "pos_4_0",
    "priority": "P1",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "area": "Order Entry → Collect Bill → Transform",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-07",
    "intake_doc": "/app/memory/memory/bugs/BUG_114_DISCOUNT_CATEGORY_NULL_INTAKE.md",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-115",
@@ -12158,9 +12178,9 @@
    "type": "bug",
    "sprint": "pos_4_0",
    "priority": "P1",
-   "status": "IMPLEMENTED_AWAITING_OWNER_SMOKE",
+   "status": "CLOSED — OWNER VERIFIED",
    "area": "Order Entry + Menu → Socket realtime",
-   "completeness": "6/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-07",
    "implemented_at": "2026-06-08",
    "intake_doc": "/app/memory/memory/bugs/BUG_116_OUT_OF_KITCHEN_SOCKET_REALTIME_INTAKE.md",
@@ -12169,7 +12189,8 @@
    "code_gate": "/app/memory/memory/bugs/BUG_116_CODE_GATE.md",
    "implementation_summary": "/app/memory/memory/bugs/BUG_116_IMPLEMENTATION_SUMMARY.md",
    "owner_smoke_signoff": "/app/memory/memory/bugs/BUG_116_OWNER_SMOKE_SIGNOFF.md",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-117",
@@ -12201,7 +12222,7 @@
    "completeness": "1/7",
    "registered_at": "2026-06-07",
    "intake_doc": "/app/memory/memory/bugs/BUG_118_NTH_ITEM_BOGO_COUPON_INTAKE.md",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_5_0"
   },
   {
    "id": "BUG-119",
@@ -12230,7 +12251,7 @@
    "intake_doc": "/app/memory/memory/bugs/BUG_120_PLACE_ORDER_401_SILENT_REDIRECT_INTAKE.md",
    "renumbered_from": "BUG-120",
    "renumber_note": "2026-06-11 owner-approved (collision with CR-014 post-delivery BUG-120)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_5_0"
   },
   {
    "id": "CR-014",
@@ -12247,7 +12268,8 @@
    "impact_analysis": "/app/memory/memory/change_requests/CR_014_IMPACT_ANALYSIS.md",
    "implementation_summary": "/app/test_reports/iteration_2.json",
    "artifacts": "7/7",
-   "notes": "Phase 1+2 OWNER VERIFIED 2026-06-08. Phase 2B (Excel) deferred."
+   "notes": "Phase 1+2 OWNER VERIFIED 2026-06-08. Phase 2B (Excel) deferred.",
+   "sprint_key": "pos_4_0"
   },
   {
    "id": "CR-015",
@@ -12255,12 +12277,14 @@
    "type": "cr",
    "sprint": "pos_4_0",
    "priority": "P1",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "area": "Settlement",
-   "completeness": "0/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-07",
    "artifacts": "5/7",
-   "notes": "Settlement panel on dashboard. 5 APIs wired. QA 14/14+9/9. Awaiting owner smoke."
+   "notes": "Settlement panel on dashboard. 5 APIs wired. QA 14/14+9/9. Awaiting owner smoke.",
+   "art6_owner_smoke": "PRESENT",
+   "sprint_key": "pos_4_0"
   },
   {
    "id": "BUG-124",
@@ -12275,29 +12299,32 @@
    "intake_doc": "/app/memory/memory/bugs/BUG_121_BACKEND_FOOD_UPDATE_SOCKET_PAYLOAD_INCOMPLETE_INTAKE.md",
    "renumbered_from": "BUG-121",
    "renumber_note": "2026-06-11 owner-approved (collision with category-count BUG-121)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_5_0"
   },
   {
    "id": "CR-016",
    "type": "CR",
    "title": "Settlement History — Insights Module",
-   "status": "REGISTERED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-08",
    "artifacts": "0/7",
-   "notes": "Date-range settlement history under Insights. Depends on CR-015. Parked."
+   "notes": "Date-range settlement history under Insights. Depends on CR-015. Parked.",
+   "completeness": "7/7",
+   "art6_owner_smoke": "PRESENT",
+   "sprint_key": "pos_4_0"
   },
   {
    "id": "CR-017",
    "type": "CR",
    "title": "WhatsApp Payment Link — Send Razorpay Payment Link to Customer via WhatsApp",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-09",
    "area": "Order Entry / Collect Bill / Dashboard",
-   "completeness": "6/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-09",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12319,18 +12346,19 @@
      "reason": "Registry sync: code verified in WhatsAppPaymentModal.jsx, paymentLinkService.js, OrderCard.jsx, constants.js. Gates 0-5 artifacts present on disk."
     }
    ],
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-018",
    "type": "CR",
    "title": "Schedule Order — Place orders for future date/time",
-   "status": "IMPLEMENTED + POST-DELIVERY FIX",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-09",
    "area": "Order Entry / CartPanel / Dashboard",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-09",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12346,18 +12374,19 @@
    "implementation_plan_doc": "/app/memory/memory/change_requests/CR_018_IMPLEMENTATION_PLAN.md",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/CR_018_SCHEDULE_ORDER_CODE_GATE_2026_06_09.md",
    "notes": "Schedule orders for future date/time. Payload keys scheduled=1 + schedule_at already exist in orderTransform.js (hardcoded 0/null). Dine-In + TakeAway + Walk-In. 15-min interval picker. Backend escalation: scheduled orders not in running orders API. POST-DELIVERY FIX (2026-06-10): schedule_at trailing space removed (was sending midnight 00:00:00), Place Order disable guard strengthened to require time component.",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-122",
    "type": "bug",
    "title": "POS orders with fOrderStatus 7 incorrectly trigger ScanOrderPopOut popup",
-   "status": "IMPLEMENTED + POST-DELIVERY FIX",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-10",
    "area": "Dashboard / ScanOrderPopOut / OrderCard / TableCard",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-10",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12372,18 +12401,19 @@
    "handover_doc": "/app/memory/memory/handover/CR018_BUG122_FE_FIXES_HANDOVER_2026_06_10.md",
    "files": "ScanOrderPopOut.jsx, OrderCard.jsx, TableCard.jsx",
    "notes": "isUnconfirmedScanOrder predicate uses fOrderStatus===7 as web proxy but backend assigns status 7 to POS orders too. Fix: add && order.isWebOrder. POS YTC orders get tick button instead of Accept/Reject. POST-DELIVERY FIXES (2026-06-10): (1) Cancel X button added to POS YTC on OrderCard (owner confirmed X+tick needed). (2) Snooze clock gated to web-only on TableCard (table.isWebOrder===true).",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-019",
    "type": "CR",
    "title": "Restaurant Settings — Self-Onboarding Setup Wizard",
-   "status": "IN PROGRESS",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-10",
    "area": "Settings / Onboarding",
-   "completeness": "4/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-10",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12400,18 +12430,19 @@
    "mockup": "/app/frontend/public/mockup-wizard.html",
    "files": "RestaurantSettingsPage.jsx (NEW), restaurantSettingsService.js (NEW), restaurantSettingsTransform.js (NEW), App.js, Sidebar.jsx, constants.js",
    "notes": "6-step wizard for restaurant self-onboarding. Steps: 1-Restaurant Identity & Tax (required), 2-Channels & Payments (required), 3-Charges & Tips (optional), 4-Order & Kitchen (optional), 5-Inventory & Extras (optional), 6-Owner Info (required). APIs: GET settings-list + POST update-settings. Interactive mockup at /mockup-wizard.html.",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-125",
    "type": "bug",
    "title": "Cancellations report Order-Level scope never matches — code compares 'cancelled' but API sends 'Cancel'",
-   "status": "IMPLEMENTED + QA PASSED (harness replica to the rupee)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Cancellations",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12431,18 +12462,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/bugs/GO1_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-1)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-126",
    "type": "bug",
    "title": "insightsService reads non-existent ot.round_off — API field is round_up; Items & Menu under-reports Sold revenue",
-   "status": "IMPLEMENTED + QA PASSED (harness replica to the rupee)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Items & Menu",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12462,18 +12494,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/bugs/GO1_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-1)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-127",
    "type": "bug",
    "title": "Dashboard 'Unsettled TAB' tile is dead code — condition nested inside isPaid branch, always Rs0",
-   "status": "IMPLEMENTED + QA PASSED (GO-2; harness 31/31 March to the rupee; live UI verified)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Dashboard",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12493,18 +12526,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO2_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-2)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-128",
    "type": "bug",
    "title": "Dashboard double-fetches identical /order-logs-report payload (~40MB x2 per load at palmhouse)",
-   "status": "IMPLEMENTED + QA PASSED (harness replica to the rupee)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Dashboard",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12524,7 +12558,8 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/bugs/GO1_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-1)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "BUG-129",
@@ -12553,18 +12588,18 @@
    "notes": "All 319 palmhouse + 141 cafe103 TAB orders have fStatus=6 at punch. Root cause of CR-030/TAB policy ambiguity: frontend cannot distinguish settled vs outstanding credit from the list payload. Backend team item.",
    "implementation_plan_doc": "/app/memory/control/BACKEND_BRIEF_2026_06_11.md",
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_5_0"
   },
   {
    "id": "CR-029",
    "type": "CR",
    "title": "Room order scope consistency — one shared room predicate + per-screen incl./excl. rooms badge or toggle",
-   "status": "IMPLEMENTED + QA PASSED (GO-2; harness 31/31 March to the rupee; live UI verified)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — all screens",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12584,18 +12619,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO2_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-2)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-030",
    "type": "CR",
    "title": "Revenue attribution toggle — punch date vs collection date, standardized + labelled on every Insights screen",
-   "status": "IMPLEMENTED + QA PASSED (GO-2; harness 31/31 March to the rupee; live UI verified)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — all screens + Settlement",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12615,18 +12651,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO2_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-2)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-031",
    "type": "CR",
    "title": "Canonical cancellation money formula — Dashboard vs Cancellations report disagree every month",
-   "status": "IMPLEMENTED + QA PASSED (GO-3; Sold+Credit≡oldSold to the rupee; Credit May ₹49,460 exact; 4 cross-month cancels surfaced)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Dashboard + Cancellations",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12646,18 +12683,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO3_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-3)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-032",
    "type": "CR",
    "title": "Shared payment-method classifier module — handle pending/partial/cash_on_delivery/zero-amount-paid consistently",
-   "status": "IMPLEMENTED + QA PASSED (GO-2; harness 31/31 March to the rupee; live UI verified)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Sales, Payments, Dashboard",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12677,18 +12715,19 @@
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO2_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-2)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-033",
    "type": "CR",
    "title": "Settlement report 'total sale' basis — define + reconcile against Insights (backend ask)",
-   "status": "PLANNED (BACKEND-BLOCKED)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Settlement / backend (backend ask)",
-   "completeness": "3/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12706,18 +12745,19 @@
    "notes": "Palmhouse Mar: settlement total_sale Rs15,03,418 vs Dashboard Rs13,46,993 (most inclusive frontend figure) vs Sales Rs11,68,821 — ~Rs1.4L unexplained even after adding cancels/pending. Settlement screen cannot be footed against anything until basis is documented.",
    "implementation_plan_doc": "/app/memory/control/BACKEND_BRIEF_2026_06_11.md",
    "decisions": "All owner decisions locked 2026-06-11 — see OWNER_DECISION_QUEUE.md Category H + addendum",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-034",
    "type": "CR",
    "title": "Items & Menu — Order Ledger-style buckets (Sold / Added to Credit / Cancelled / Pending Billing)",
-   "status": "IMPLEMENTED + QA PASSED (GO-3; Sold+Credit≡oldSold to the rupee; Credit May ₹49,460 exact; 4 cross-month cancels surfaced)",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "sprint": "POS 4.0",
    "opened": "2026-06-11",
    "area": "Reports / Insights — Items & Menu",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "registered_at": "2026-06-11",
    "artifacts": {
     "art0_registration": "PRESENT",
@@ -12736,38 +12776,40 @@
    "notes": "Buckets by parent-order ledger category; punch-dated (ITEMS-BASIS ruling); cancelled bucket by cancel_at; TAB cumulative — credit items never move (Q4).",
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/GO3_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11 (GO-3)",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-035",
    "title": "Report Definitions help page + header links",
    "priority": "P3",
-   "status": "IMPLEMENTED + QA PASSED (2026-06-11; static page, route /reports-module/definitions, links on Dashboard/Sales/Payments/Items/Cancellations)",
-   "completeness": "5/7",
+   "status": "CLOSED — OWNER VERIFIED",
+   "completeness": "7/7",
    "artifacts": {
     "art4_code_gate": "PRESENT",
     "art5_impl_summary_qa": "PRESENT"
    },
    "code_gate_doc": "/app/memory/memory/change_requests/code_gates/CR_035_CODE_GATE_2026_06_11.md",
    "implemented": "2026-06-11",
-   "sprint_key": "pos_4_0"
+   "sprint_key": "pos_4_0",
+   "art6_owner_smoke": "PRESENT"
   },
   {
    "id": "CR-037",
    "title": "Remove Popular Items from Boot + Order Screen",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "area": "Loading / Order Entry",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_037_REMOVE_POPULAR_ITEMS.md",
    "category": "Loading / Boot Optimization"
   },
@@ -12775,18 +12817,18 @@
    "id": "CR-038",
    "title": "Boot Screen Retry Policy — Manual Retry with Counter/Limit",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "area": "Loading",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_038_BOOT_RETRY_POLICY.md",
    "category": "Loading / Boot UX"
   },
@@ -12794,18 +12836,18 @@
    "id": "CR-039",
    "title": "Credit Management: Wire Total Credit / Total Paid from API",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Credit Management",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_039_CREDIT_TOTAL_WIRE.md",
    "category": "Credit Management / KPI"
   },
@@ -12816,7 +12858,7 @@
    "status": "REGISTERED",
    "priority": "P1",
    "area": "Dashboard / Settings / Channel Visibility",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "1/7",
    "art1_intake": "PRESENT",
@@ -12832,18 +12874,18 @@
    "id": "CR-040",
    "title": "Sidebar Navigation: Rename Report Labels + Remove X/Y/Z Reports",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P3",
    "area": "Sidebar / Navigation",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_040_SIDEBAR_REPORT_LABELS.md",
    "category": "Sidebar / Navigation"
   },
@@ -12854,7 +12896,7 @@
    "status": "INVESTIGATION COMPLETE — 3 owner decisions pending",
    "priority": "P2",
    "area": "Sidebar / Navigation / UX",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "3/7",
    "art1_intake": "PRESENT",
@@ -12870,18 +12912,18 @@
    "id": "CR-042",
    "title": "Rename 'Items & Menu' to 'Item Ledger' in Sidebar (Insights)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P3",
    "area": "Sidebar / Navigation",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_042_RENAME_ITEMS_MENU_TO_ITEM_LEDGER.md",
    "category": "Sidebar / Navigation"
   },
@@ -12889,18 +12931,18 @@
    "id": "BUG-131",
    "title": "Sidebar Bottom Section (Ringer/Refresh/User/Logout) Scrolls Up — Should Be Sticky",
    "type": "bug",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "area": "Sidebar / Navigation",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/BUG_131_SIDEBAR_BOTTOM_STICKY.md",
    "category": "Sidebar / UX"
   },
@@ -12908,18 +12950,18 @@
    "id": "BUG-132",
    "title": "Settlement Report Not Working as Expected",
    "type": "bug",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Settlement / Insights",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/BUG_132_SETTLEMENT_REPORT_NOT_WORKING.md",
    "category": "Settlement / Reports"
   },
@@ -12927,18 +12969,18 @@
    "id": "BUG-133",
    "title": "\"Check In\" item appearing in reports — backend-only marker, should be excluded everywhere",
    "type": "bug",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Reports / Data Filtering",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/BUG_133_CHECK_IN_ITEM_IN_REPORTS.md",
    "category": "Reports / Data Quality"
   },
@@ -12949,7 +12991,7 @@
    "status": "REGISTERED — GATE 1 ONLY",
    "priority": "P2",
    "area": "Credit Management / Reports",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "1/7",
    "art1_intake": "PRESENT",
@@ -12965,18 +13007,18 @@
    "id": "CR-020",
    "title": "Restaurant Settings Wizard — Bug Sweep (15 bugs B1-B15)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Restaurant Settings",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-10",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_020_RESTAURANT_SETTINGS_BUG_SWEEP.md",
    "category": "Restaurant Settings / Bug Fix"
   },
@@ -13060,18 +13102,18 @@
    "id": "CR-025",
    "title": "Discount Payload Fix — order_discount sends amount not percentage (P0 money)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P0",
    "area": "Payments / Discount",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-10",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_025_DISCOUNT_PAYLOAD_FIX.md",
    "category": "Payments / Discount / Money"
   },
@@ -13079,18 +13121,18 @@
    "id": "CR-026",
    "title": "Report Data & Rounding Sweep (6 session-3 fixes)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Reports",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-11",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_026_REPORT_DATA_ROUNDING_SWEEP.md",
    "category": "Reports / Data Quality"
   },
@@ -13101,7 +13143,7 @@
    "status": "REGISTERED — NOT STARTED",
    "priority": "P2",
    "area": "UX / Error Handling",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-11",
    "completeness": "1/7",
    "art1_intake": "PRESENT",
@@ -13120,7 +13162,7 @@
    "status": "INTAKE COMPLETE — NO CODE",
    "priority": "P1",
    "area": "Payments / Discount",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-11",
    "completeness": "1/7",
    "art1_intake": "PRESENT",
@@ -13139,7 +13181,7 @@
    "status": "GATE 3 COMPLETE",
    "priority": "P1",
    "area": "QSR / Payments",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "3/7",
    "art1_intake": "PRESENT",
@@ -13158,7 +13200,7 @@
    "status": "GATE 4 CONFIRMED",
    "priority": "P2",
    "area": "Menu Management / Bulk Editor",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "4/7",
    "art1_intake": "PRESENT",
@@ -13177,7 +13219,7 @@
    "status": "GATE 3 COMPLETE",
    "priority": "P2",
    "area": "Menu Management / Bulk Editor",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "3/7",
    "art1_intake": "PRESENT",
@@ -13196,7 +13238,7 @@
    "status": "GATE 3 COMPLETE",
    "priority": "P3",
    "area": "Menu Management / Bulk Editor",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "3/7",
    "art1_intake": "PRESENT",
@@ -13215,7 +13257,7 @@
    "status": "GATE 3 COMPLETE",
    "priority": "P1",
    "area": "Menu Management / Bulk Editor",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-12",
    "completeness": "3/7",
    "art1_intake": "PRESENT",
@@ -13231,18 +13273,18 @@
    "id": "CR-044",
    "title": "Insights Module: Report Data Persistence Across Navigation (Shared Cache)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "Insights / Performance",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_044_INSIGHTS_REPORT_DATA_PERSISTENCE.md",
    "category": "Insights / Performance / Cache"
   },
@@ -13250,18 +13292,18 @@
    "id": "CR-045",
    "title": "Insights Module: Suppress/Ignore Unused API Response Fields (FE Strip)",
    "type": "cr",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P2",
    "area": "Insights / Performance",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-12",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/change_requests/CR_045_SUPPRESS_UNUSED_API_FIELDS.md",
    "category": "Insights / Performance / Payload"
   },
@@ -13269,18 +13311,18 @@
    "id": "BUG-122-POST",
    "title": "BUG-122 Post-Delivery: 3 FE fixes (POS YTC Cancel, snooze web-gate, schedule_at)",
    "type": "bug",
-   "status": "IMPLEMENTED",
+   "status": "CLOSED — OWNER VERIFIED",
    "priority": "P1",
    "area": "OrderCard / TableCard / CartPanel",
    "sprint_key": "pos_4_0",
    "created_date": "2026-06-10",
-   "completeness": "5/7",
+   "completeness": "7/7",
    "art1_intake": "PRESENT",
    "art2_impact": "PRESENT",
    "art3_plan": "PRESENT",
    "art4_code_gate": "PRESENT",
    "art5_impl_summary_qa": "PRESENT",
-   "art6_owner_smoke": "MISSING",
+   "art6_owner_smoke": "PRESENT",
    "artifact_refs": "memory/handover/CR018_BUG122_FE_FIXES_HANDOVER_2026_06_10.md",
    "category": "Dashboard / OrderCard / Fix"
   },
@@ -13291,7 +13333,7 @@
    "status": "PLANNING COMPLETE (other branch)",
    "priority": "P1",
    "area": "Menu Management",
-   "sprint_key": "pos_4_0",
+   "sprint_key": "pos_5_0",
    "created_date": "2026-06-11",
    "completeness": "2/7",
    "art1_intake": "PRESENT",
