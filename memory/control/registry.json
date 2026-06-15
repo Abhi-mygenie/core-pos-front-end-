@@ -13382,6 +13382,25 @@
    "art6_owner_smoke": "PRESENT (owner reviewed v0.6 in-session)",
    "artifact_refs": "memory/change_requests/CR_047_AGENT_PROMPT_ALPHA_V06_ROLE_HARDENING.md",
    "category": "Agent Control Layer"
+  },
+  {
+   "id": "CR-048",
+   "title": "Insights Module: Migrate from Client-Side Aggregation to Backend Aggregation Endpoints",
+   "type": "cr",
+   "status": "INTAKE COMPLETE",
+   "priority": "P1",
+   "area": "Insights / Reports Module",
+   "sprint_key": "pos_5_0",
+   "created_date": "2026-06-15",
+   "completeness": "1/7",
+   "art1_intake": "PRESENT",
+   "art2_impact": "MISSING",
+   "art3_plan": "MISSING",
+   "art4_code_gate": "MISSING",
+   "art5_impl_summary_qa": "MISSING",
+   "art6_owner_smoke": "MISSING",
+   "artifact_refs": "memory/change_requests/CR_048_INSIGHTS_BACKEND_AGGREGATION_MIGRATION.md",
+   "category": "Insights / Performance"
   }
  ]
 }
