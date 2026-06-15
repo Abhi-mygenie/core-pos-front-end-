@@ -1,7 +1,7 @@
 # Layer 6 — Sprint Status Board
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-13 (POS 4.0 **FROZEN** — 43 items CLOSED — OWNER VERIFIED; all smoke passed; deferred backlog documented)
+**Last Updated:** 2026-06-15 (CR-047 AGENT_PROMPT_ALPHA v0.6 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
 
 ---
 
@@ -144,6 +144,7 @@
 | Audit Report Optimization | SHIPPED | 2026-05-28 |
 | Order Activity Log | REGISTERED, NOT STARTED | 2026-05-28 |
 | **DEV-DASHBOARD-001** (v1.0 + v1.1) | **CLOSED — OWNER VERIFIED** | **2026-05-29** |
+| **CR-047** AGENT_PROMPT_ALPHA v0.6 Role Hardening | **CLOSED — OWNER VERIFIED** | **2026-06-15** |
 
 ---
 
