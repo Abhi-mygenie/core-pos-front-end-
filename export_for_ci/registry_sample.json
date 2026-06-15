@@ -1,0 +1,391 @@
+{
+  "generated_at": "2026-05-31",
+  "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
+  "sprints_meta": {
+    "pos_2_0": {
+      "status": "CLOSED",
+      "closed_date": "2026-05-09",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md"
+    },
+    "pos_3_0": {
+      "status": "CLOSED",
+      "closed_date": "2026-05-21",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md"
+    },
+    "pos_3_1": {
+      "status": "CLOSED",
+      "started_date": "2026-05-27",
+      "closed_date": "2026-05-31",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md"
+    },
+    "crm_2_0": {
+      "status": "CLOSED",
+      "started_date": "2026-05-26",
+      "closed_date": "2026-05-31",
+      "frozen": true,
+      "frozen_date": "2026-05-31",
+      "baseline_ref": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md"
+    },
+    "standalone": {
+      "status": "MIXED"
+    },
+    "phase_3": {
+      "status": "PENDING"
+    },
+    "pos_4_0": {
+      "status": "FROZEN",
+      "started_date": "2026-05-31",
+      "closed_date": "2026-06-13",
+      "frozen": true,
+      "frozen_date": "2026-06-13",
+      "branch": "13-june-audt-",
+      "commit": "f970328",
+      "items_shipped": 43,
+      "baseline_ref": "control/POS4_0_SPRINT_CLOSURE_REPORT_2026_06_13.md"
+    },
+    "pos_5_0": {
+      "status": "PLANNING",
+      "started_date": "2026-06-13",
+      "frozen": false,
+      "baseline_ref": "control/POS5_0_SPRINT_PLANNING_2026_06_13.md"
+    }
+  },
+  "baseline_code_verification": {
+    "date": "2026-05-31",
+    "directive": "Option A — code-verified promotion (actual frontend code is the final source of truth)",
+    "branch": "31may-for-baseline",
+    "commit": "8f92e8c",
+    "working_tree": "/app/frontend/src",
+    "report": "control/BASELINE_CODE_VERIFICATION_REPORT_2026_05_31.md",
+    "frozen_sprints": [
+      "pos_2_0",
+      "pos_3_0",
+      "pos_3_1",
+      "crm_2_0"
+    ],
+    "fe_code_verified": [
+      {
+        "id": "POS2-003",
+        "sprint": "POS 2.0",
+        "evidence": "printerAgentSelector.js:2; RestaurantContext.jsx:88; profileTransform.js:192,283"
+      },
+      {
+        "id": "POS2-003-REOPEN-A",
+        "sprint": "POS 2.0",
+        "evidence": "orderTransform.js:780 (printer_agent additive on cancel-item)"
+      },
+      {
+        "id": "POS2-003-REOPEN-B",
+        "sprint": "POS 2.0",
+        "evidence": "constants.js:59 (PLACE_ORDER reverted v1->v2 per owner directive 2026-05-09)"
+      },
+      {
+        "id": "POS2-003-FU-02",
+        "sprint": "POS 2.0",
+        "evidence": "CustomerModal.jsx:207 (FU-02 modal-local intel hook)"
+      },
+      {
+        "id": "POS2-005",
+        "sprint": "POS 2.0",
+        "evidence": "socketHandlers.js:189,562; constants.js:200; TableCard.jsx:309; OrderCard.jsx:432 (status-8 Hold classification)"
+      },
+      {
+        "id": "POS2-007 Phase 1",
+        "sprint": "POS 2.0",
+        "evidence": "NotificationContext.jsx:26,99,117; utils/soundManager.js (confirm-order tone)"
+      },
+      {
+        "id": "BUG-097",
+        "sprint": "POS 3.0",
+        "evidence": "profileTransform.js:127; TableCard.jsx:70,72,457; OrderCard.jsx:81 (deliveryAssign from profile, not order_in/source)"
+      },
+      {
+        "id": "BUG-111 P1+P2",
+        "sprint": "POS 3.1",
+        "evidence": "CartPanel.jsx:365,499 (server-authoritative QSR bill parity)"
+      },
+      {
+        "id": "CR-002",
+        "sprint": "CRM 2.0",
+        "evidence": "orderTransform.js:602,882,1007,1135 ({label}-shaped order_note/food_level_notes); legacy notes GET absent (OG-06)"
+      },
+      {
+        "id": "PROD-HOTFIX-007",
+        "sprint": "standalone",
+        "evidence": "loyaltyTransform.js (loyalty earn/redeem idempotency)"
+      },
+      {
+        "id": "PROD-HOTFIX-008",
+        "sprint": "standalone",
+        "evidence": "orderService.js:145-156 (KOT custName/custPhone)"
+      },
+      {
+        "id": "Audit Report Optimization",
+        "sprint": "standalone",
+        "evidence": "reportTransform.js:650 (/order-logs-report transform)"
+      }
+    ],
+    "result": "All 13 verification rows PASS; 12 distinct promotable FE-footprint items (OG-06 is a sub-check of CR-002) confirmed in code; 0 silent reversals; 0 mismatches.",
+    "not_fe_code_verifiable": "Backend/runtime/owner-attested closures (e.g. PROD-002, CR-002 live T-28/T-29) are frozen on owner-smoke evidence and labelled in the report; subsumed/backend-blocked/deferred items and the 24 unfrozen business rules are NOT promoted (remain in the POS 4.0 backlog / separate gate)."
+  },
+  "_SAMPLE_NOTE": "This is a 3-item sample. Full file has 214 items.",
+  "items": [
+    {
+      "type": "CR",
+      "sprint_key": "pos_5_0",
+      "id": "POS2-001",
+      "title": "Delivery charge / GST / web delivery lock",
+      "status": "NOT STARTED",
+      "files": "",
+      "notes": "Possibly absorbed by shipped CRs",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_002_ORDER_FROM_WEB_PIPELINE_CR_IMPACT_ANALYSIS_2026_05_07.md",
+          "type": "impact"
+        },
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/crs/code_gate_premature/POS2-001_CG_PREMATURE.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        },
+        {
+          "label": "Code Gate",
+          "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+          "type": "code_gate",
+          "waived": true,
+          "waived_premature": true
+        }
+      ],
+      "completeness": "3/7",
+      "category": "NOT_STARTED"
+    },
+    {
+      "type": "CR",
+      "sprint_key": "pos_2_0",
+      "id": "POS2-002",
+      "title": "Order origin / Scan&Order web pipeline",
+      "status": "CLOSED — RESOLVED VIA CR",
+      "files": "",
+      "notes": "Owner-confirmed working & closed under a shipped CR (2026-05-31)",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_SCRUTINY_AND_FIX_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Code Gate",
+          "path": "memory/bugs/POS_FINAL_1_0_BUG_045_PRE_IMPL_CODE_GATE.md",
+          "type": "code_gate"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_FIX_REPORT.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+          "type": "intake"
+        },
+        {
+          "label": "Intake",
+          "path": "memory/crs/intake/POS2-002_INTAKE_2026_05_30.md",
+          "type": "intake"
+        }
+      ],
+      "completeness": "6/7",
+      "category": "IN_PROGRESS"
+    },
+    {
+      "type": "CR",
+      "sprint_key": "pos_2_0",
+      "id": "POS2-003",
+      "title": "Print Agent Mapping",
+      "status": "IMPLEMENTED + QA PASSED",
+      "files": "orderTransform.js, OrderEntry.jsx",
+      "notes": "Awaiting live tenant smoke",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+          "type": "impact"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+          "type": "plan"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "Implementation Summary",
+          "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+          "type": "impl_summary"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/QA_REPORT_authenticated_subtotal_delivery.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "QA Report",
+          "path": "memory/change_requests/qa_reports/POS2_003_REOPEN_A_WIRE_LEVEL_QA_REPORT_2026_05_09.md",
+          "type": "qa_report"
+        },
+        {
+          "label": "Owner Smoke Sign-off",
+          "path": "memory/CR_REFS_SYNC_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+          "type": "smoke_signoff"
+        }
+      ],
+      "completeness": "5/7",
+      "category": "SHIPPED"
+    },
+    {
+      "id": "CR-046",
+      "title": "Control Dashboard v2.0 — Interactive Workflow Controller (login, batch queue, gate approvals, smoke cards)",
+      "type": "cr",
+      "status": "IMPLEMENTED — all phases + bug tracker workflow parity + stage filter fix",
+      "priority": "P1",
+      "area": "Dev Tooling / Dashboard",
+      "sprint_key": "pos_5_0",
+      "created_date": "2026-06-14",
+      "completeness": "5/7",
+      "art1_intake": "PRESENT",
+      "art2_impact": "PRESENT",
+      "art3_plan": "PRESENT",
+      "art4_code_gate": "PRESENT",
+      "art5_impl_summary_qa": "PARTIAL",
+      "art6_owner_smoke": "MISSING",
+      "artifact_refs": "memory/change_requests/CR_046_DASHBOARD_V2_WORKFLOW_CONTROLLER.md",
+      "category": "Dev Tooling / Dashboard"
+    },
+    {
+      "id": "CR-047",
+      "title": "AGENT_PROMPT_ALPHA v0.6 — Role Hardening (Intake, QA, Bug Fix, Investigation)",
+      "type": "cr",
+      "status": "CLOSED — OWNER VERIFIED",
+      "priority": "P1",
+      "area": "Agent Control Layer / Process",
+      "sprint_key": "pos_5_0",
+      "created_date": "2026-06-15",
+      "completeness": "7/7",
+      "art1_intake": "PRESENT",
+      "art2_impact": "PRESENT",
+      "art3_plan": "PRESENT",
+      "art4_code_gate": "N/A (doc-only)",
+      "art5_impl_summary_qa": "PRESENT (self-verified via grep)",
+      "art6_owner_smoke": "PRESENT (owner reviewed v0.6 in-session)",
+      "artifact_refs": "memory/change_requests/CR_047_AGENT_PROMPT_ALPHA_V06_ROLE_HARDENING.md",
+      "category": "Agent Control Layer"
+    }
+  ]
+}
