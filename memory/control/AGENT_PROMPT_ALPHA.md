@@ -43,26 +43,39 @@ You are NOT a greenfield builder. You are joining an active, production-facing c
 **This runs BEFORE role selection. Every session starts here.**
 
 ```
-1. READ LATEST HANDOVER
+1. READ LATEST HANDOVER (always — regardless of what owner wants)
    ls -t /app/memory/handover/SESSION_HANDOVER_*.md | head -1 → READ
    Present 1-line summary: "Last session (<date>): <first line of handover summary>"
-   This tells you WHERE the previous agent left off.
 
-2. READ WORKFLOW QUEUE
+2. ASK OWNER: "What would you like to do this session?"
+
+   Present options:
+   a) Process the workflow queue      → go to step 3 (read queue, present batches)
+   b) Register a new bug or CR        → go straight to INTAKE role
+   c) Investigate an issue             → go straight to INVESTIGATION role
+   d) Fix QA failures                  → go straight to BUG FIX role
+   e) Deploy / setup environment       → go straight to DEPLOYMENT role
+   f) Continue from last session       → read queue, present batches
+   g) Something else                   → owner states what they need, agent matches to role
+
+   IF owner picks (b), (c), (d), (e), or (g) → SKIP the queue. Go directly to that role.
+   IF owner picks (a) or (f) → proceed to step 3 (queue processing).
+
+3. READ WORKFLOW QUEUE (only if owner chose to process queue)
    /app/frontend/public/__dev/data/workflow_queue.json
    (also available via API: GET /api/workflow-queue)
 
-3. IF file has batches with status = "QUEUED":
+4. IF file has batches with status = "QUEUED":
 
-   3a. Stale batch check:
+   4a. Stale batch check:
        IF batch.created_at is older than 48 hours:
          Flag: "⚠ This batch was created <N> days ago. Still relevant?"
 
-   3b. Multi-batch ordering:
+   4b. Multi-batch ordering:
        Present batches sorted by: stage (earliest gate first), then priority (P0 items first).
        Owner approves ONE batch at a time.
 
-   3c. Present each batch:
+   4c. Present each batch:
        "I found <N> batch(es) in the workflow queue:
 
         BATCH-XXX <⚠ 3 days old — still relevant?>
@@ -75,12 +88,12 @@ You are NOT a greenfield builder. You are joining an active, production-facing c
         - NO — I'll skip this batch
         - MODIFY — tell me what to change"
 
-4. WAIT for owner response.
-   IF owner's response doesn't address the batch (e.g., "start session" without YES/NO):
-     Re-present ONCE: "I need direction on the queued batch before starting. YES / NO / MODIFY?"
-     IF still no batch response: treat as NO (skip batch), ask owner what they want to work on.
+5. WAIT for owner response on batch.
+   IF owner's response doesn't address the batch:
+     Re-present ONCE: "I need direction on the queued batch. YES / NO / MODIFY?"
+     IF still no response: treat as NO (skip batch), ask owner what they want.
 
-5. On YES → pick role matching the batch stage:
+6. On YES → pick role matching the batch stage:
 
    | Batch Stage          | Agent Role        | What Agent Does |
    |---------------------|-------------------|-----------------|
@@ -91,20 +104,19 @@ You are NOT a greenfield builder. You are joining an active, production-facing c
    | qa                   | QA                | Execute test cases |
    | smoke               | SMOKE FACILITATOR | Present items for owner testing |
 
-6. Process items in batch priority order (P0 first, then P1, P2).
+7. Process items in batch priority order (P0 first, then P1, P2).
    For each item: follow the role's full playbook.
 
-7. After ALL items done:
+8. After ALL items done:
    - Update workflow_queue.json: batch status → "DONE"
      POST /api/workflow-queue with updated payload
    - Update registry.json: each item's status advanced
    - Write session handover as normal
 
-8. IF no batches in queue → proceed to normal role selection
-   (owner picks role manually in chat)
+9. IF no batches in queue → ask owner what they want to work on.
 ```
 
-**Rule: agent NEVER auto-starts a batch. Always show what's queued, always get approval.**
+**Rule: agent NEVER auto-starts a batch. Owner drives the session. Queue is opt-in, not forced.**
 
 ---
 
@@ -1474,7 +1486,7 @@ If you encounter:
 | v0.3 | 2026-05-29 | Added Session Start Template (Artifact #0). 7-artifact closure rule. |
 | v0.4 | 2026-06-13 | Major rewrite: Role-based architecture. 12 roles. Distributed artifact ownership. Sprint-level closure flow. Pre-Release Audit covers perf/security/a11y/code quality/release hygiene. |
 | **v0.5** | **2026-06-14** | **Hardened playbooks based on POS 4.0 retrospective (7 lost CRs). PLANNING: +Code Reality Check, +Conflict Pre-Check, +Verification Matrix, +Post-Code Registry Checklist. IMPLEMENTATION: +Entry Verification, +Checkpointing, +Self-Verification, +5-item EXIT GATE (hard blocker). QA: +Precondition Check (rejects unsynced handovers), +Registry Spot-Check. PRE-RELEASE AUDIT: +§F Registry Integrity Audit (code-to-registry cross-check, RELEASE BLOCKER). CLOSURE: +Phase B Reconciliation (formal process for code-exists-but-unregistered). RELEASE: +Baseline Precondition Check. New rules R17 (Registry Sync Gate) + R18 (Code Markers Mandatory). Artifact #0 merged into handover header (4-line mandatory format). Dashboard Data Contract added. Smoke batch: single-doc append-only rule. Regression: +meta-regression item count check.** |
-| **v0.6** | **2026-06-15** | **CR-047: Role Hardening for 4 weakest roles. STEP -1: +handover reading, +stale batch 48h detection, +multi-batch ordering, +owner-didn't-respond fallback. NEW STEP -1.5: conditional environment check (execution roles only, doc roles skip). PLANNING: +stage dispatch (Gate 2 only / Gate 3 only / ask). INTAKE: +severity rubric (P0-P3 with triggers+SLA), +duplicate detection protocol (3-step DUPLICATE/RELATED/DISTINCT), +evidence storage (/app/memory/evidence/), +source/confidence tag, +blast radius estimate. QA: +4-tier finding severity (BLOCKER/MAJOR/MINOR/NOTE independent of P0-P3), +conditional env check, +evidence format standard, +regression scope calibration (3-tier), +coverage sufficiency check, +re-test protocol, +8-step sequence. BUG FIX (full rewrite): +reproduce-before-fixing (mandatory Step 0), +root cause analysis (5 classifications: PLAN_GAP/CODE_ERROR/DATA_EDGE/ENVIRONMENT/INTERACTION, MINOR exception), +fix report artifact, +5 escalation paths (→QA, →owner, →BACKEND_BRIEF, →INVESTIGATION, →OPEN_GAPS), +scope expansion micro-protocol. INVESTIGATION: +10-step time-box, +hypothesis-driven method, +6-section structured report template, +data persistence rule (/tmp/ banned), +exit criteria with Planning skip path (owner-approved), +Bug Fix escalation intake format.** |
+| **v0.6** | **2026-06-15** | **CR-047: Role Hardening for 4 weakest roles. STEP -1: rewritten as owner-driven session start — agent asks "What would you like to do?" FIRST, queue is opt-in (not forced). +handover reading, +stale batch 48h detection, +multi-batch ordering. NEW STEP -1.5: conditional environment check (execution roles only, doc roles skip). PLANNING: +stage dispatch (Gate 2 only / Gate 3 only / ask). INTAKE: +severity rubric (P0-P3 with triggers+SLA), +duplicate detection protocol (3-step DUPLICATE/RELATED/DISTINCT), +evidence storage (/app/memory/evidence/), +source/confidence tag, +blast radius estimate. QA: +4-tier finding severity (BLOCKER/MAJOR/MINOR/NOTE independent of P0-P3), +conditional env check, +evidence format standard, +regression scope calibration (3-tier), +coverage sufficiency check, +re-test protocol, +8-step sequence. BUG FIX (full rewrite): +reproduce-before-fixing (mandatory Step 0), +root cause analysis (5 classifications: PLAN_GAP/CODE_ERROR/DATA_EDGE/ENVIRONMENT/INTERACTION, MINOR exception), +fix report artifact, +5 escalation paths (→QA, →owner, →BACKEND_BRIEF, →INVESTIGATION, →OPEN_GAPS), +scope expansion micro-protocol. INVESTIGATION: +10-step time-box, +hypothesis-driven method, +6-section structured report template, +data persistence rule (/tmp/ banned), +exit criteria with Planning skip path (owner-approved), +Bug Fix escalation intake format.** |
 
 ---
 
