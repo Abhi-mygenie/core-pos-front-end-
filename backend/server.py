@@ -66,6 +66,25 @@ async def get_status_checks():
     
     return status_checks
 
+# CR-046: Workflow queue endpoint — dashboard writes queue to disk, agent reads it
+QUEUE_PATH = Path(__file__).parent.parent / "frontend" / "public" / "__dev" / "data" / "workflow_queue.json"
+
+@api_router.post("/workflow-queue")
+async def save_workflow_queue(payload: dict):
+    """Dashboard saves workflow queue to disk so agents can read it at session start."""
+    import json
+    QUEUE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    QUEUE_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
+    return {"status": "saved", "path": str(QUEUE_PATH)}
+
+@api_router.get("/workflow-queue")
+async def get_workflow_queue():
+    """Agent reads the current workflow queue."""
+    import json
+    if QUEUE_PATH.exists():
+        return json.loads(QUEUE_PATH.read_text())
+    return {"batches": [], "approvals": [], "smoke_results": []}
+
 # Include the router in the main app
 app.include_router(api_router)
 

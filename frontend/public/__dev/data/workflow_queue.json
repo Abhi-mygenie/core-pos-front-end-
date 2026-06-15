@@ -1,5 +1,22 @@
 {
-  "batches": [],
+  "batches": [
+    {
+      "batch_id": "BATCH-2026-06-15-001",
+      "stage": "impact_analysis",
+      "sprint": "pos_5_0",
+      "items": [
+        "BUG-096",
+        "BUG-118",
+        "BUG-123",
+        "BUG-040",
+        "BUG-041",
+        "BUG-085"
+      ],
+      "status": "QUEUED",
+      "created_at": "2026-06-15T04:59:36.488Z",
+      "owner_notes": "sending first batch "
+    }
+  ],
   "approvals": [],
   "smoke_results": []
 }

@@ -38,6 +38,59 @@ You are NOT a greenfield builder. You are joining an active, production-facing c
 
 ---
 
+## STEP -1: CHECK WORKFLOW QUEUE (ALL agents, BEFORE picking role)
+
+**This runs BEFORE role selection. Every session starts here.**
+
+```
+1. READ /app/frontend/public/__dev/data/workflow_queue.json
+   (also available via API: GET /api/workflow-queue)
+
+2. IF file has batches with status = "QUEUED":
+   Present to owner:
+   
+   "I found <N> batch(es) in the workflow queue:
+   
+    BATCH-XXX
+    Stage: Impact Analysis (Gate 2)
+    Items: BUG-118 (P1), BUG-123 (P1)  
+    Owner notes: '<notes>'
+    
+    Shall I proceed?
+    - YES — I'll pick the matching role and start
+    - NO — I'll skip this batch
+    - MODIFY — tell me what to change"
+
+3. WAIT for owner approval. Do NOT proceed without explicit YES.
+
+4. On YES → pick role matching the batch stage:
+   
+   | Batch Stage          | Agent Role        | What Agent Does |
+   |---------------------|-------------------|-----------------|
+   | impact_analysis      | PLANNING (Gate 2) | Write Impact Analysis docs only |
+   | implementation_plan  | PLANNING (Gate 3) | Write Implementation Plan docs only |
+   | gate4               | (skip — owner approves via dashboard) | — |
+   | implementation       | IMPLEMENTATION    | Code from approved plans |
+   | qa                   | QA                | Execute test cases |
+   | smoke               | SMOKE FACILITATOR | Present items for owner testing |
+
+5. Process items in batch priority order (P0 first, then P1, P2).
+   For each item: follow the role's full playbook.
+
+6. After ALL items done:
+   - Update workflow_queue.json: batch status → "DONE"
+     POST /api/workflow-queue with updated payload
+   - Update registry.json: each item's status advanced
+   - Write session handover as normal
+
+7. IF no batches in queue → proceed to normal role selection
+   (owner picks role manually in chat)
+```
+
+**Rule: agent NEVER auto-starts a batch. Always show what's queued, always get approval.**
+
+---
+
 ## ROLE 1: INTAKE AGENT
 
 ### Boot (2 min)
@@ -831,25 +884,31 @@ READ:
 ## TYPICAL SPRINT SEQUENCE
 
 ```
-ITEM LEVEL:
-  INTAKE (+ code reality check)
-    → PLANNING (+ verification matrix + registry checklist)
-      → Owner Gate 4
-        → IMPLEMENTATION (+ entry verify + self-test + EXIT GATE)
-          → QA (+ precondition check + registry spot-check)
-            → (BUG FIX → QA)*
-              → PASS
+SESSION START:
+  STEP -1: Read workflow_queue.json → show batches → get owner approval
+    → If batch found: pick matching role automatically
+    → If no batch: owner picks role in chat
+
+ITEM LEVEL (via dashboard batch queue):
+  Owner selects items → "Send to Impact Analysis"
+    → Agent: PLANNING (Gate 2 — Impact Analysis only)
+  Owner reviews → "Send to Implementation Plan"
+    → Agent: PLANNING (Gate 3 — Plan only)
+  Owner reviews plan → clicks Gate 4 GO on dashboard
+  Owner selects items → "Send to Implementation"
+    → Agent: IMPLEMENTATION (+ entry verify + self-test + EXIT GATE)
+  Owner selects items → "Send to QA"
+    → Agent: QA (+ precondition check + registry spot-check)
+    → (BUG FIX → QA)*
+  Owner does smoke on dashboard → PASS/FAIL per item
+    → CLOSED
 
 SPRINT LEVEL:
-  SMOKE FACILITATOR (single batch doc)
-    → (BUG FIX → QA)*
-      → REGRESSION (+ meta-regression item count)
-        → (BUG FIX → QA)*
-          → PRE-RELEASE AUDIT (+ §F Registry Integrity)
-            → (BUG FIX → re-audit)*
-              → CLOSURE (Phase A + Phase B if drift)
-                → Owner Freeze
-                  → RELEASE (+ baseline precondition)
+  REGRESSION (+ meta-regression item count)
+    → PRE-RELEASE AUDIT (+ §F Registry Integrity)
+      → CLOSURE (Phase A + Phase B if drift)
+        → Owner Freeze
+          → RELEASE (+ baseline precondition)
 ```
 
 ---

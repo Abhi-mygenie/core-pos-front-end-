@@ -16,6 +16,12 @@ const WorkflowManager = {
 
   save(data) {
     localStorage.setItem(WF_STORAGE_KEY, JSON.stringify(data));
+    // CR-046: Auto-sync to disk via backend API so agents can read it
+    fetch('/api/workflow-queue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(() => {}); // silent — disk sync is best-effort
   },
 
   // ── Batch Operations ──
