@@ -31,6 +31,14 @@ export const getExpenseItems = () =>
  * @param {string[]} itemNames  - flat array of stock item title strings
  * @returns {Promise<AxiosResponse>}
  */
+/**
+ * POST /expense/category — create empty category (no items required)
+ * BUG-159: replaces createCategoryWithItems(name, []) which silently failed
+ * Response: { category: { id: N, name: "..." } }
+ */
+export const createEmptyCategory = (categoryName) =>
+  api.post(EXPENSE_ENDPOINTS.CATEGORY, { category_name: categoryName }); // BUG-159 fix
+
 export const createCategoryWithItems = (categoryName, itemNames = []) =>
   api.post(EXPENSE_ENDPOINTS.STORE_EXPENSE, {
     category_name: categoryName,
@@ -51,6 +59,22 @@ export const updateCategory = (categoryId, categoryName, items = []) =>
   });
 
 /**
+ * PUT /expense/category/{id} — rename category by ID
+ * BUG-160: replaces updateCategory() which returned "Category not found"
+ * Response: { message: "Category updated successfully.", category: { id, name } }
+ */
+export const renameExpenseCategory = (id, name) =>
+  api.put(`${EXPENSE_ENDPOINTS.CATEGORY}/${id}`, { category_name: name }); // BUG-160 fix
+
+/**
+ * DELETE /expense/category/{id} — delete category atomically
+ * BUG-160: replaces per-item delete loop; backend moves items to misc automatically
+ * Response: { message: "Category deleted successfully.", moved_items_count: N }
+ */
+export const deleteExpenseCategory = (id) =>
+  api.delete(`${EXPENSE_ENDPOINTS.CATEGORY}/${id}`); // BUG-160 fix
+
+/**
  * DELETE a single expense stock item by ID
  * @param {number|string} itemId
  * @returns {Promise<AxiosResponse>}
@@ -63,7 +87,7 @@ export const deleteExpenseItem = (itemId) =>
  * @returns {Promise<AxiosResponse>}
  */
 export const exportStockMaster = () =>
-  api.post(EXPENSE_ENDPOINTS.BULK_EXPORT);
+  api.post(EXPENSE_ENDPOINTS.BULK_EXPORT, { type: 'all' }); // BUG-163 fix
 
 /**
  * POST import stock master from Excel file

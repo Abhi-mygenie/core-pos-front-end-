@@ -330,6 +330,7 @@ export const EXPENSE_ENDPOINTS = {
   EXPENSES_LIST: '/api/v2/vendoremployee/expense/expenses-list',
   STORE_EXPENSE: '/api/v2/vendoremployee/expense/store_expense',
   UPDATE_CATEGORY: '/api/v2/vendoremployee/expense/expenses',       // PUT /{category_id}
+  CATEGORY: '/api/v2/vendoremployee/expense/category',              // POST (create empty), PUT /{id} (rename), DELETE /{id}  // BUG-159 + BUG-160
   DELETE_ITEM: '/api/v2/vendoremployee/expense/expenses',           // DELETE /{item_id}
   BULK_EXPORT: '/api/v2/vendoremployee/expense/bulk-export-expense',
   BULK_IMPORT: '/api/v2/vendoremployee/expense/bulk-import-expense',

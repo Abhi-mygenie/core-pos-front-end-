@@ -66,8 +66,58 @@ async def get_status_checks():
     
     return status_checks
 
+# CR-046: Workflow queue endpoint — dashboard writes queue to disk, agent reads it
+QUEUE_PATH = Path(__file__).parent.parent / "frontend" / "public" / "__dev" / "data" / "workflow_queue.json"
+
+@api_router.post("/workflow-queue")
+async def save_workflow_queue(payload: dict):
+    """Dashboard saves workflow queue to disk so agents can read it at session start."""
+    import json
+    QUEUE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    QUEUE_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
+    return {"status": "saved", "path": str(QUEUE_PATH)}
+
+@api_router.get("/workflow-queue")
+async def get_workflow_queue():
+    """Agent reads the current workflow queue."""
+    import json
+    if QUEUE_PATH.exists():
+        return json.loads(QUEUE_PATH.read_text())
+    return {"batches": [], "approvals": [], "smoke_results": []}
+
 # Include the router in the main app
 app.include_router(api_router)
+
+# CR-053: Proxy /api/training/* to training backend on port 8002
+# This is infrastructure-only — no training logic in POS backend
+import httpx
+from fastapi import Request
+from fastapi.responses import StreamingResponse
+
+@app.api_route("/api/training/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def training_proxy(request: Request, path: str):
+    """Proxy training API requests to the standalone training backend."""
+    target_url = f"http://localhost:8002/api/training/{path}"
+    headers = dict(request.headers)
+    headers.pop("host", None)
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client_http:
+            resp = await client_http.request(
+                method=request.method,
+                url=target_url,
+                headers=headers,
+                content=await request.body(),
+                params=dict(request.query_params),
+            )
+            return StreamingResponse(
+                iter([resp.content]),
+                status_code=resp.status_code,
+                headers=dict(resp.headers),
+            )
+    except httpx.ConnectError:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": "Training service unavailable"}, status_code=503)
+
 
 app.add_middleware(
     CORSMiddleware,

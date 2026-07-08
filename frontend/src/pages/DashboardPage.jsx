@@ -17,7 +17,7 @@ import { useRefreshAllData } from "../hooks/useRefreshAllData";
 import { useOrderPollingReconciliation } from "../hooks/useOrderPollingReconciliation";
 import RoomCheckInModal from "../components/modals/RoomCheckInModal";
 import CancelOrderModal from "../components/order-entry/CancelOrderModal";
-import { useSocketEvents } from "../api/socket";
+// BUG-167: useSocketEvents moved to AppSocketManager — removed import
 import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
@@ -181,9 +181,7 @@ const DashboardPage = () => {
   } = useOrders();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged, setTableEngaged } = useTables();
-
-  // Socket events - subscribe to real-time updates
-  const { isConnected: socketConnected } = useSocketEvents();
+  // BUG-167: socket events now handled by AppSocketManager (app-level)
 
   // CR ORDER_POLLING_RECONCILIATION (May-2026): silent background safety
   // net. Polls running orders every 60 s while authenticated + tab visible,

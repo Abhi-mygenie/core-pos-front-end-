@@ -151,7 +151,14 @@ const ExpenseSetupPanel = () => {
     if (!newCatName.trim()) return;
     setAddingCat(true);
     try {
-      await expenseService.createCategoryWithItems(newCatName.trim(), []);
+      const res = await expenseService.createEmptyCategory(newCatName.trim()); // BUG-159 fix
+      // BUG-164: backend returns HTTP 201 even for duplicates, with errors[] in body.
+      // Axios never throws for 2xx — must inspect res.data.errors manually.
+      if (res?.data?.errors?.[0]) {
+        const msg = res.data.errors[0].message || "This category already exists.";
+        toast({ title: "Duplicate category", description: msg, variant: "destructive" });
+        return;
+      }
       toast({ title: "Category added", description: newCatName.trim() });
       setNewCatName("");
       setShowNewCatInput(false);
@@ -164,10 +171,9 @@ const ExpenseSetupPanel = () => {
   };
 
   // ── Rename category ───────────────────────────────────────────────
-  const renameCategory = async (catId, name) => {
-    const items = allItems.filter(i => String(i.categoryId) === String(catId));
+  const renameCategory = async (catId, name) => { // BUG-160 fix
     try {
-      await expenseService.updateCategory(catId, name, items);
+      await expenseService.renameExpenseCategory(catId, name);
       toast({ title: "Renamed", description: name });
       fetchAll();
     } catch (err) {
@@ -176,12 +182,10 @@ const ExpenseSetupPanel = () => {
   };
 
   // ── Delete category ───────────────────────────────────────────────
-  const deleteCategory = async () => {
+  const deleteCategory = async () => { // BUG-160 fix
     if (!deletingCatId) return;
-    // Delete all items in category first
-    const catItems = allItems.filter(i => String(i.categoryId) === String(deletingCatId));
     try {
-      await Promise.all(catItems.map(i => expenseService.deleteExpenseItem(i.id)));
+      await expenseService.deleteExpenseCategory(deletingCatId);
       toast({ title: "Category removed" });
       setDeletingCatId(null);
       if (selectedCategoryId === deletingCatId) setSelectedCategoryId(null);
@@ -198,6 +202,18 @@ const ExpenseSetupPanel = () => {
     setAddingItem(true);
     const cat = categories.find(c => String(c.id) === String(selectedCategoryId));
     if (!cat) { setAddingItem(false); return; }
+    // BUG-165 FE guard: backend has no uniqueness constraint on item names per category.
+    // Check allItems state before calling API to block obvious duplicates client-side.
+    // ⚠️ BACKEND FLAG: POST /store_expense should return 4xx for duplicate stock_title within same category.
+    const isDuplicate = allItems.some(
+      i => String(i.categoryId) === String(selectedCategoryId) &&
+           i.title.trim().toLowerCase() === newItemName.trim().toLowerCase()
+    );
+    if (isDuplicate) {
+      toast({ title: "Duplicate item", description: `"${newItemName.trim()}" already exists in ${cat.name}.`, variant: "destructive" });
+      setAddingItem(false);
+      return;
+    }
     try {
       // BUG-158: updateCategory (PUT /expenses/{id}) silently ignores stock_title.
       // Fix: POST store_expense adds a single item to an existing category (same pattern as DnD fix).

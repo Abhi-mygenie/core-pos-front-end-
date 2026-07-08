@@ -1859,11 +1859,11 @@ const CollectPaymentPanel = ({
                               <span className="ml-2" style={{ color: COLORS.grayText }}>x{item.qty}</span>
                             </div>
                             {/* BUG-073: guard against empty customization wrapper */}
-                            {item.customizations && (item.customizations.size || item.customizations.variants?.length > 0 || item.customizations.addons?.length > 0) && (
+                            {item.customizations && (item.customizations.size || item.customizations.variants?.length > 0 || (item.selectedAddons?.length > 0 || item.addOns?.length > 0 || item.customizations.addons?.length > 0)) && (
                               <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
                                 └─ {item.customizations.size}
                                 {item.customizations.variants?.length > 0 && (item.customizations.size ? ', ' : '') + item.customizations.variants.join(", ")}
-                                {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
+                                {(item.selectedAddons?.length > 0 || item.addOns?.length > 0) ? ` + ${(item.selectedAddons || item.addOns).filter(a => a.name).map(a => `${a.name} x${(a.quantity || a.qty || 1) * (item.qty || 1)}`).join(", ")}` : (item.customizations.addons?.length > 0 ? ` + ${item.customizations.addons.join(", ")}` : '')}
                               </div>
                             )}
                             {!item.customizations && (item.variation?.length > 0 || item.addOns?.length > 0) && (
@@ -1875,8 +1875,8 @@ const CollectPaymentPanel = ({
                                   return labels.length > 0 ? `${v.name}: ${labels.join(', ')}` : v.name;
                                 }).filter(Boolean).join(', ')}
                                 {item.addOns?.length > 0 && `${item.variation?.length > 0 ? ' + ' : ''}${item.addOns.map(a => {
-                                  const qty = a.quantity || a.qty || 1;
-                                  return qty > 1 ? `${a.name} x${qty}` : a.name;
+                                  const totalQty = (a.quantity || a.qty || 1) * (item.qty || 1); // BUG-168
+                                  return totalQty > 1 ? `${a.name} x${totalQty}` : a.name;
                                 }).filter(Boolean).join(', ')}`}
                               </div>
                             )}
@@ -2214,11 +2214,11 @@ const CollectPaymentPanel = ({
                       <span className="ml-2" style={{ color: COLORS.grayText }}>x{item.qty}</span>
                     </div>
                     {/* BUG-073: guard against empty customization wrapper */}
-                    {item.customizations && (item.customizations.size || item.customizations.variants?.length > 0 || item.customizations.addons?.length > 0) && (
+                    {item.customizations && (item.customizations.size || item.customizations.variants?.length > 0 || (item.selectedAddons?.length > 0 || item.addOns?.length > 0 || item.customizations.addons?.length > 0)) && (
                       <div className="text-xs mt-0.5 pl-2" style={{ color: COLORS.primaryGreen }}>
                         └─ {item.customizations.size}
                         {item.customizations.variants?.length > 0 && (item.customizations.size ? ', ' : '') + item.customizations.variants.join(", ")}
-                        {item.customizations.addons?.length > 0 && ` + ${item.customizations.addons.join(", ")}`}
+                        {(item.selectedAddons?.length > 0 || item.addOns?.length > 0) ? ` + ${(item.selectedAddons || item.addOns).filter(a => a.name).map(a => `${a.name} x${(a.quantity || a.qty || 1) * (item.qty || 1)}`).join(", ")}` : (item.customizations.addons?.length > 0 ? ` + ${item.customizations.addons.join(", ")}` : '')}
                       </div>
                     )}
                     {!item.customizations && (item.variation?.length > 0 || item.addOns?.length > 0) && (
@@ -2230,8 +2230,8 @@ const CollectPaymentPanel = ({
                           return labels.length > 0 ? `${v.name}: ${labels.join(', ')}` : v.name;
                         }).filter(Boolean).join(', ')}
                         {item.addOns?.length > 0 && `${item.variation?.length > 0 ? ' + ' : ''}${item.addOns.map(a => {
-                          const qty = a.quantity || a.qty || 1;
-                          return qty > 1 ? `${a.name} x${qty}` : a.name;
+                          const totalQty = (a.quantity || a.qty || 1) * (item.qty || 1); // BUG-168
+                          return totalQty > 1 ? `${a.name} x${totalQty}` : a.name;
                         }).filter(Boolean).join(', ')}`}
                       </div>
                     )}

@@ -1,33 +1,53 @@
-# core-pos-front-end — Deployment PRD
+# MyGenie POS — PRD
 
 ## Original Problem Statement
-Clone `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch `6-july`) into `/app`, install dependencies, and run the React POS frontend in development mode. Frontend-only (no backend spin-up required).
+Deployment and maintenance of MyGenie POS frontend (React 19, CRACO, Tailwind CSS, Radix UI, shadcn). 
+Source repo: `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: `6-july`)
 
-## User Choices (verbatim)
-- Repo access: public
-- Run mode: dev
-- Backend: frontend only
-- Existing /app contents & port: skipped → sensible defaults applied
+## What's Been Implemented
 
-## Architecture / Tasks Done (2026-01-07)
-- Cloned `Abhi-mygenie/core-pos-front-end-` branch `6-july` into `/tmp` and merged the `frontend/` subtree into `/app/frontend` (preserved `/app/.git`, `/app/.emergent`, `/app/backend` starter).
-- CRA + craco React 19 project (MyGenie POS).
-- `yarn install` completed (802 pkgs, react-scripts 5.0.1, craco 7).
-- `/app/frontend/.env` configured with required runtime env vars:
-  - `REACT_APP_BACKEND_URL` (preserved)
-  - `REACT_APP_API_BASE_URL` (mandatory — app throws if unset)
-  - `REACT_APP_CRM_BASE_URL`, `REACT_APP_SOCKET_URL`
-- Supervisor-managed `frontend` service running on port 3000 (`yarn start` → `craco start`), HTTP 200, login page renders.
+### Session 1-2 (2026-07-07 / 2026-07-08)
+- Cloned repo, installed dependencies, configured env, fresh pull
 
-## Core Requirements
-- React POS frontend must build cleanly and serve on port 3000.
-- Preview URL (`REACT_APP_BACKEND_URL`) must return the MyGenie POS login page.
+### Session 3 (2026-07-12) — BUG FIXES + INVESTIGATION
 
-## What's Implemented
-- [2026-01-07] Repo cloned, deps installed, dev server up, UI verified via screenshot (login page loads).
+**BUG-166 — addon_amount × qty (KEPT ✅)**
+- L704 (buildCartItem): `addonAmount * (item.qty || 1)` — sends total price
+- L1493 (collectBillExisting): `addonAmount * qty` — sends total price
 
-## Backlog / Next Actions
-- P1: Wire up backend API — the frontend expects a live REST + Socket.io backend at `REACT_APP_API_BASE_URL`. Login/POS flows will 4xx/5xx until a backend is provided.
-- P2: Firebase env vars are optional (push/analytics). Add real values only if push notifications are required.
-- P2: Address react-hooks/exhaustive-deps warnings (non-blocking).
-- P3: Production build pipeline (`yarn build` + static serve).
+**BUG-168 — add_on_qtys (REVERTED ❌ → back to per-unit)**
+- L698: REVERTED back to `addonQtys` (per-unit). Backend multiplies qty on its side.
+
+**BUG-168 Display fixes (KEPT ✅)**
+- CartPanel.jsx: getAddonText helper + socket fallback — shows `a.qty × item.qty`
+- CollectPaymentPanel.jsx: 4 paths — shows total addon qty
+- These work correctly now because backend returns per-unit qty, display × item.qty = correct total
+
+**BUG-VQTY — variation_amount × qty (KEPT ✅, no issues)**
+- L703, L1492: sends total variation price. No round-trip double-count issue.
+
+### Final state of orderTransform.js buildCartItem (L696-704):
+```
+add_on_qtys:      addonQtys                              ← per-unit (reverted)
+variation_amount: variationAmount * (item.qty || 1)      ← total price (kept)
+addon_amount:     addonAmount * (item.qty || 1)          ← total price (kept)
+```
+
+### Backend contract (confirmed via Order #940260):
+- `add_on_qtys`: expects per-unit → backend multiplies by qty
+- `addon_amount`: expects total price
+- `variation_amount`: expects total price
+
+## Investigation Docs
+- `/app/memory/change_requests/BUG_166_168_ADDON_REVERT_PLAN.md` — full revert plan (superseded by partial revert)
+- `/app/memory/change_requests/BUG_168_PHASE2_FRONTEND_ADAPTATION_PLAN.md` — new contract adaptation plan
+- `/app/memory/change_requests/BUG_166_ADDON_AMOUNT_QTY_INTAKE.md` — original intake
+
+## Prioritized Backlog
+- P1: CR-061 V2, OrderCard cluster, CR-051, CR-060
+- Blocked: CR-065 (needs backend PUT endpoint)
+
+## Test Credentials
+- owner@cafe103.com / Qplazm@10
+- owner@mantri.com / Qplazm@10
+- manager@hogwarts.com / Qplazm@10

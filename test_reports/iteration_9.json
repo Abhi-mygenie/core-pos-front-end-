@@ -1,0 +1,96 @@
+{
+  "summary": "BUG-168 fix verified: add_on_qtys field at L698 now correctly computes addonQtys.map(q => q * (item.qty || 1)) instead of just addonQtys. All 14 new tests pass. BUG-166 (addon_amount) and BUG-VQTY (variation_amount) regression checks passed. Frontend loads correctly. Webpack compiled with only pre-existing warnings.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js",
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddonQty.test.js",
+    "/app/frontend/src/__tests__/api/transforms/orderTransformFinancials.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Line 698 (buildCartItem): add_on_qtys correctly uses `addonQtys.map(q => q * (item.qty || 1))` - BUG-168 fix verified",
+    "Line 587 (buildCartItem): addonQtys built as per-unit quantities `addons.map(a => a.quantity || a.qty || 1)` - correct baseline",
+    "Line 703 (buildCartItem): variation_amount uses `variationAmount * (item.qty || 1)` - BUG-VQTY regression check passed",
+    "Line 704 (buildCartItem): addon_amount uses `addonAmount * (item.qty || 1)` - BUG-166 regression check passed",
+    "Owner scenario verified: item qty=3, addon qty=1 per unit → add_on_qtys=[3] (was incorrectly [1] before fix)",
+    "Multiple addons verified: addon1 qty=1, addon2 qty=2, item qty=3 → add_on_qtys=[3,6]",
+    "collectBillExisting path (L1485+) does NOT have add_on_qtys field - no fix needed there (confirmed)"
+  ],
+  "updated_files": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-168 add_on_qtys qty multiplication fix verified via 14 new unit tests in orderTransformAddOnQtys.test.js. All 45 tests across 3 test files pass. The fix pattern is identical to BUG-166 (addon_amount) and BUG-VQTY (variation_amount) which were also verified as regression-safe.",
+  "test_results": {
+    "unit_tests": {
+      "orderTransformAddOnQtys.test.js": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "tests": [
+          "owner scenario: item qty=3, addon qty=1 per unit → add_on_qtys=[3]",
+          "add_on_qtys equals original addonQtys when item qty=1",
+          "multiple addons are each multiplied by item qty",
+          "add_on_qtys is empty array when no addons",
+          "addon qty > 1 per item is multiplied by item qty",
+          "missing item qty defaults to 1 for add_on_qtys calculation",
+          "missing addon quantity defaults to 1",
+          "addon using qty field instead of quantity",
+          "handles large quantities correctly",
+          "addon_amount is still multiplied by item qty (BUG-166 regression)",
+          "variation_amount is still multiplied by item qty (BUG-VQTY regression)",
+          "add_on_qtys, addon_amount, and variation_amount all correct together",
+          "add_on_qtys is multiplied by item qty in update-order",
+          "add_on_qtys is multiplied by item qty in prepaid order"
+        ]
+      },
+      "orderTransformAddonQty.test.js": {
+        "total": 13,
+        "passed": 13,
+        "failed": 0,
+        "note": "Existing BUG-166 tests - regression check passed"
+      },
+      "orderTransformFinancials.test.js": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "note": "Existing regression tests - all passed"
+      }
+    },
+    "frontend_load": {
+      "status": "PASS",
+      "login_page_renders": true,
+      "webpack_compilation": "SUCCESS (1 pre-existing warning, no new warnings)"
+    }
+  },
+  "bug_168_verification": {
+    "fix_location": "Line 698 in /app/frontend/src/api/transforms/orderTransform.js",
+    "before_fix": "add_on_qtys: addonQtys",
+    "after_fix": "add_on_qtys: addonQtys.map(q => q * (item.qty || 1))",
+    "owner_scenario": {
+      "item": "Aloo Patties",
+      "item_qty": 3,
+      "addon": "Pack",
+      "addon_qty_per_unit": 1,
+      "expected_add_on_qtys": "[3]",
+      "before_fix_result": "[1]",
+      "after_fix_result": "[3]",
+      "verified": true
+    }
+  }
+}

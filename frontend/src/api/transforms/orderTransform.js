@@ -700,8 +700,8 @@ const buildCartItem = (item) => {
     add_ons:             [],
     station:             item.station ? item.station.toUpperCase() : null,  // null if no station (no KOT)
     food_amount:         isRuntimeComp ? 0 : foodAmount,
-    variation_amount:    isRuntimeComp ? 0 : variationAmount,
-    addon_amount:        isRuntimeComp ? 0 : addonAmount,
+    variation_amount:    isRuntimeComp ? 0 : variationAmount * (item.qty || 1), // BUG-VQTY fix
+    addon_amount:        isRuntimeComp ? 0 : addonAmount * (item.qty || 1), // BUG-166 fix
     gst_amount:          isRuntimeComp ? '0.00' : String((isGst ? taxAmount : 0).toFixed(2)),
     vat_amount:          isRuntimeComp ? '0.00' : String((!isGst ? taxAmount : 0).toFixed(2)),
     discount_amount:     '0.00',
@@ -1489,8 +1489,8 @@ export const toAPI = {
           unit_price:         unitPrice,
           is_complementary:   isRuntimeComp ? 'Yes' : 'No',
           food_amount:        isRuntimeComp ? 0 : (unitPrice * qty),
-          variation_amount:   isRuntimeComp ? 0 : variationAmount,
-          addon_amount:       isRuntimeComp ? 0 : addonAmount,
+          variation_amount:   isRuntimeComp ? 0 : variationAmount * qty, // BUG-VQTY fix
+          addon_amount:       isRuntimeComp ? 0 : addonAmount * qty, // BUG-166 fix
           gst_amount:         isRuntimeComp ? '0.00' : String((isGst ? taxAmount : 0).toFixed(2)),
           vat_amount:         isRuntimeComp ? '0.00' : String((!isGst ? taxAmount : 0).toFixed(2)),
           discount_amount:    '0.00',
@@ -1628,8 +1628,8 @@ export const toAPI = {
                                       : 0,
       loyalty_redemption_id:        null,  // POS Backend generates during CRM call
       use_wallet_balance:           BUG108_FLAGS.walletDebitLive ? (discounts.walletBalance || 0) : 0,
-      // Room & Misc
-      paid_room:                    '',
+      // Room & Misc  // BUG-ROOM-PAIDROOM fix
+      paid_room:                    table?.isRoom ? 'yes' : '',
       usage_id:                     '',
       // TAB-specific fields (BUG-252: customer info for credit tracking)
       name:                         tabContact?.name || '',
@@ -1805,7 +1805,7 @@ export const toAPI = {
       const qty = parseFloat(item.quantity) || 1;
       const unitPrice = parseFloat(item.unit_price) || parseFloat(item.food_details?.price) || 0;
       const price = unitPrice > 0 ? unitPrice : (parseFloat(item.price) || 0);
-      const lineTotal = price * qty;
+      const lineTotal = (price * qty) + (parseFloat(item.total_add_on_price) || 0); // BUG-168: include addon in print subtotal
       computedSubtotal += lineTotal;
 
       // Try pre-computed item-level tax first, then compute from food_details

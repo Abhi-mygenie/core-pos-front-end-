@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, LoadingPage, DashboardPage, OrderSummaryPage } from "./pages";
+import AppSocketManager from "./components/AppSocketManager"; // BUG-167 fix
 import AllOrdersReportPage from "./pages/AllOrdersReportPage";
 import RoomOrdersReportPage from "./pages/RoomOrdersReportPage";
 import StatusConfigPage from "./pages/StatusConfigPage";
@@ -75,6 +76,7 @@ function App() {
         <AppTitleSync />
         <div className="App">
           <BrowserRouter>
+            <AppSocketManager /> {/* BUG-167: app-level socket — persists across all routes */}
             <Routes>
               <Route path="/" element={<LoginPage />} />
               <Route path="/loading" element={<ProtectedRoute><LoadingPage /></ProtectedRoute>} />

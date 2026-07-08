@@ -1,0 +1,74 @@
+{
+  "summary": "Tested BUG-DND-CR059 (cross-category DnD) and BUG-P2 (no drag handles) on /expense-setup. All 8 test cases (T1-T5, R1-R2-R3) verified as PASS.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "LOW: Console warning 'Droppable: unsupported nested scroll container detected' from @hello-pangea/dnd appears on load (dev-only warning, not production)",
+    "LOW: React DOM warning 'In HTML, <tr> cannot be a child of <div>' from provided.placeholder in category Droppable. The placeholder (same type as draggable=<tr>) renders inside the height:0 <div> wrapper. Dev-only nesting warning, does not affect functionality."
+  ],
+  "critical_code_review_comments": [
+    "MINOR: category Droppable wraps provided.placeholder in <div style={{height:0,overflow:'hidden'}}> — this causes <tr> (placeholder) to be child of <div>, which is invalid HTML. Consider using <tbody> wrapper or different approach to hide placeholder while keeping DnD hit-area.",
+    "All DnD logic in handleDragEnd (DELETE + POST) is correct and matches the QA handover spec.",
+    "Keyboard DnD (Space+ArrowLeft) works perfectly for cross-category moves — primary UX path for automated testing.",
+    "Mouse-based drag automation is limited in Playwright for @hello-pangea/dnd — keyboard navigation is the reliable path for automated DnD testing."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only)",
+    "frontend": "100% (8/8 tests passed)"
+  },
+  "seed_data_creation": "Test moved '100 delivery' from Others→Milk (now in Milk permanently). Deleted item '200 Tip in upi' from Others. Kitchen was renamed to Kitchen_TEST and back to Kitchen.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All DnD tests verified. Keyboard DnD approach: 1) page.evaluate to focus drag handle '[data-rfd-drag-handle-draggable-id]', 2) page.keyboard.press('Space') to lift, 3) page.keyboard.press('ArrowLeft') to navigate to Milk droppable (droppable id=250), 4) page.keyboard.press('Space') to drop. Data state: Others=79, Milk=3 (100 delivery is now in Milk). Login pattern: login → wait for /loading to complete (~30s for Products to load) → navigate to /expense-setup.",
+  "bug_verification": {
+    "T1_cross_category_move": {
+      "status": "PASS",
+      "description": "Dragged '100 delivery' from Others to Milk via keyboard DnD. Toast showed 'Item moved / \"100 delivery\" → Milk'. Others: 81→80, Milk: 2→3.",
+      "evidence": "Toast: 'Item moved / 100 delivery → Milk', category counts updated"
+    },
+    "T2_item_count_updates": {
+      "status": "PASS",
+      "description": "After move: Others count decreased from 81 to 80, Milk count increased from 2 to 3.",
+      "evidence": "DOM counts verified after drop"
+    },
+    "T3_persists_after_refresh": {
+      "status": "PASS",
+      "description": "After full page reload, '100 delivery' found in Milk (3 items: 100 delivery, 396, Milk 260). Others=80. Backend persisted the DELETE+POST correctly.",
+      "evidence": "Milk items: ['100 delivery', '396', 'Milk 260'] after refresh"
+    },
+    "T4_no_drag_handles": {
+      "status": "PASS",
+      "description": "Zero GripVertical/grip icons in items table. BUG-P2 fix confirmed. Drag handle span has width:0, not visible.",
+      "evidence": "JS evaluation: grip SVG count = 0"
+    },
+    "T5_same_category_noop": {
+      "status": "PASS",
+      "description": "Pressing Space to lift then Space immediately to drop in same position: no toast, count unchanged (Others stayed at 80).",
+      "evidence": "Toast empty, count unchanged"
+    },
+    "R1_delete_item": {
+      "status": "PASS",
+      "description": "Clicked trash icon on '200 Tip in upi'. Confirmation dialog 'Remove Item?' appeared. Clicked 'Remove'. Count went from 80→79, toast 'Item removed' showed.",
+      "evidence": "Count 80→79, toast 'Item removed'"
+    },
+    "R2_category_rename": {
+      "status": "PASS",
+      "description": "Clicked pencil on Kitchen, renamed to 'Kitchen_TEST', saved. Toast 'Renamed / Kitchen_TEST' appeared. Renamed back to Kitchen.",
+      "evidence": "Toast: 'Renamed / Kitchen_TEST'"
+    },
+    "R3_expenses_page_loads": {
+      "status": "PASS",
+      "description": "/expenses page loads correctly with summary cards (Today's Total ₹500, Cash ₹500), Add Expense form, transactions table with 1 row. No errors.",
+      "evidence": "Page screenshot shows full expenses page, no JS errors"
+    }
+  }
+}
