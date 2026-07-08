@@ -14280,30 +14280,29 @@
     },
     {
       "id": "BUG-168",
-      "title": "add_on_qtys not multiplied by item qty in place-order payload",
+      "title": "Bill print omits addons on dashboard/reports reprint (fallback subtotal loop misses add_ons[])",
       "type": "BUG",
       "priority": "P0",
-      "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "risk": "CRITICAL",
+      "status": "IMPLEMENTED (v2) - AWAITING OWNER SMOKE",
       "sprint_key": "pos_5_0",
       "gate": "5",
       "created_at": "2026-07-12",
-      "implemented_at": "2026-07-12",
+      "implemented_at": "2026-07-08",
       "related": [
         "BUG-166",
         "BUG-VQTY"
       ],
-      "root_cause": "buildCartItem L698: add_on_qtys sent as per-unit addonQtys without multiplying by item.qty. Backend stores [1] instead of [3], KOT/Bill printer shows wrong addon qty.",
-      "fix_plan": "L698 REVERTED to per-unit addonQtys. L704+L1493 addon_amount KEPT as total. Display changes KEPT.",
-      "fix_verified": "57/57 tests PASS (14 payload + 19 CartPanel + 24 CollectPaymentPanel)",
+      "root_cause": "orderTransform.js:1808 fallback subtotal loop was `price * qty` only (no addons). A prior 2026-07-08 attempt used `item.total_add_on_price` which is not present on orderDetails[] shape. Regression amplified by April-2026 socket refactor (socketHandlers.js:151) that dropped GET-refetch \u2014 dashboard OrderContext now holds order.subtotalAmount=0 for orders where backend doesn't emit that field on socket, forcing the fallback branch to fire.",
+      "fix_plan": "Rewrite L1808 to compute addonPerUnit from item.add_ons[] \u00d7 qty \u00d7 item.qty, mirroring CollectPaymentPanel.getItemLinePrice L212-224 verbatim. Fallback branch now equals live-UI override branch on any input.",
+      "fix_verified": "Curl-verified against live order #002384 (940279) \u2014 pre-fix emitted order_item_total=69, post-fix emits 219 matching backend order_sub_total_amount. 7/7 regression tests PASS (no-addon, multi-addon, missing qty, complimentary, backward-compat with total_add_on_price).",
       "files_impacted": [
-        "api/transforms/orderTransform.js",
-        "components/order-entry/CartPanel.jsx",
-        "components/order-entry/CollectPaymentPanel.jsx"
+        "api/transforms/orderTransform.js (L1808-1826, buildBillPrintPayload fallback loop)"
       ],
       "source": "OWNER-REPORTED",
-      "confidence": "CONFIRMED",
-      "duplicate_check": "DISTINCT (RELATED to BUG-166, BUG-VQTY)"
+      "confidence": "CONFIRMED (live curl + regression suite)",
+      "duplicate_check": "DISTINCT (RELATED to BUG-166, BUG-VQTY)",
+      "history_note": "Registry drift cleaned 2026-07-08: prior entry described a REVERTED L698 add_on_qtys\u00d7qty fix that never surfaced; the surviving BUG-168 code was actually the L1808 print-subtotal patch. See /app/memory/evidence/BUG-168/INVESTIGATION_REPORT.md for full trace."
     }
   ]
 }

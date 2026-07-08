@@ -1805,7 +1805,24 @@ export const toAPI = {
       const qty = parseFloat(item.quantity) || 1;
       const unitPrice = parseFloat(item.unit_price) || parseFloat(item.food_details?.price) || 0;
       const price = unitPrice > 0 ? unitPrice : (parseFloat(item.price) || 0);
-      const lineTotal = (price * qty) + (parseFloat(item.total_add_on_price) || 0); // BUG-168: include addon in print subtotal
+      // BUG-168 v2 (2026-07-08): the pre-existing L1808 fix used
+      // `item.total_add_on_price`, which is NOT present on `orderDetails[]`
+      // from get-single-order-new (verified via curl against order #002384 —
+      // see /app/memory/evidence/BUG-168/order_940279.json). Backend socket
+      // payload also omits `order_sub_total_amount`, so post-April-2026 the
+      // dashboard OrderContext holds `subtotalAmount = 0` and this fallback
+      // branch (see L1921-1923) fires — emitting item_total WITHOUT addons.
+      //
+      // Fix: compute addon per-unit-price × per-unit-qty × item.qty. This
+      // mirrors CollectPaymentPanel.getItemLinePrice (L212-224) verbatim so
+      // the fallback branch ≡ live-UI override branch on the same order.
+      // Complimentary carve-out (L1734-1783) already zeroes prices earlier;
+      // no interaction with BUG-018.
+      const addonPerUnit = (item.add_ons || []).reduce(
+        (s, a) => s + ((parseFloat(a.price) || 0) * (parseFloat(a.quantity) || 1)),
+        0
+      );
+      const lineTotal = (price * qty) + (addonPerUnit * qty); // BUG-168: include addons per-unit × item.qty in print subtotal
       computedSubtotal += lineTotal;
 
       // Try pre-computed item-level tax first, then compute from food_details
