@@ -1,0 +1,71 @@
+{
+  "summary": "Code inspection + compile verification for BUG-163, BUG-VQTY, BUG-ROOM-PAIDROOM. All 3 bug fixes confirmed present in source. Frontend compiles cleanly. UI login to test /expense-setup export flow could not be completed (login redirects back — preprod.mygenie.online auth not reachable from preview env), so Export button smoke test is unverifiable from this environment.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "BUG-163 Expense Export smoke test",
+        "issue": "Could not reach /expense-setup after login — login redirects back to '/' (preprod.mygenie.online API unreachable from preview env). UI smoke test skipped. Code fix confirmed correct.",
+        "affected_selectors": []
+      }
+    ],
+    "design_issues": []
+  },
+  "code_inspection_results": {
+    "BUG-163": {
+      "file": "/app/frontend/src/api/services/expenseService.js",
+      "line": 66,
+      "expected": "api.post(EXPENSE_ENDPOINTS.BULK_EXPORT, { type: 'all' })",
+      "found": "api.post(EXPENSE_ENDPOINTS.BULK_EXPORT, { type: 'all' }); // BUG-163 fix",
+      "status": "PASS"
+    },
+    "BUG-163-import-regression": {
+      "file": "/app/frontend/src/api/services/expenseService.js",
+      "lines": "73-79",
+      "check": "importStockMaster uses FormData + multipart — unchanged, no { type: 'all' } added",
+      "status": "PASS"
+    },
+    "BUG-VQTY-L703": {
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "line": 703,
+      "expected": "variationAmount * (item.qty || 1)",
+      "found": "variation_amount: isRuntimeComp ? 0 : variationAmount * (item.qty || 1), // BUG-VQTY fix",
+      "status": "PASS"
+    },
+    "BUG-VQTY-L1492": {
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "line": 1492,
+      "expected": "variationAmount * qty",
+      "found": "variation_amount: isRuntimeComp ? 0 : variationAmount * qty, // BUG-VQTY fix",
+      "status": "PASS"
+    },
+    "BUG-ROOM-PAIDROOM-L1632": {
+      "file": "/app/frontend/src/api/transforms/orderTransform.js",
+      "line": 1632,
+      "expected": "paid_room: table?.isRoom ? 'yes' : ''",
+      "found": "paid_room: table?.isRoom ? 'yes' : ''",
+      "status": "PASS"
+    },
+    "BUG-ROOM-PAIDROOM-non-room-regression": {
+      "check": "For non-room (isRoom=false), expression evaluates to '' — correct",
+      "status": "PASS"
+    }
+  },
+  "compile_check": "Compiled successfully! confirmed from supervisor logs",
+  "test_report_links": [],
+  "action_items": [
+    "BUG-163 export button smoke test on /expense-setup page could not be executed due to preprod auth not reachable from preview env — manual QA recommended on staging/preprod directly"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100% (code inspection) / skipped (UI smoke)"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All 3 frontend JS fixes verified by code inspection. Login to preview env fails (redirects back to /) because preprod.mygenie.online API is unreachable from this environment. To do full UI test, run from a machine with access to preprod."
+}

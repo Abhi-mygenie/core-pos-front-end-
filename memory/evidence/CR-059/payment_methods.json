@@ -1,0 +1,8 @@
+{
+  "Payment_method": [
+    "UPI",
+    "Cash",
+    "Bank Transfer",
+    "Cash Draw"
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "summary": {
+    "total_revenue": 164046,
+    "total_orders": 167,
+    "total_tax": 7957.74,
+    "total_gst": 7957.74,
+    "total_vat": 0,
+    "total_discount": 8115.42,
+    "avg_order_value": 982.31,
+    "tab_settlement_total": 0,
+    "best_day": {
+      "date": "2026-06-02",
+      "revenue": 64279,
+      "orders": 53,
+      "tax": 3058.46,
+      "discount": 3976.9,
+      "tab_settlement": 0
+    },
+    "worst_day": {
+      "date": "2026-06-12",
+      "revenue": 3612,
+      "orders": 7,
+      "tax": 198.15,
+      "discount": 537,
+      "tab_settlement": 0
+    },
+    "peak_hour": {
+      "hour": 22,
+      "revenue": 24251,
+      "orders": 16
+    },
+    "active_days": 9
+  },
+  "daily": [
+    {
+      "date": "2026-06-01",
+      "revenue": 54176,
+      "orders": 60,
+      "tax": 2572.58,
+      "discount": 2234.52,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-02",
+      "revenue": 64279,
+      "orders": 53,
+      "tax": 3058.46,
+      "discount": 3976.9,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-03",
+      "revenue": 6316,
+      "orders": 7,
+      "tax": 299.5,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-04",
+      "revenue": 6668,
+      "orders": 8,
+      "tax": 317.45,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-05",
+      "revenue": 8212,
+      "orders": 9,
+      "tax": 390.9,
+      "discount": 282,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-06",
+      "revenue": 5791,
+      "orders": 6,
+      "tax": 275.75,
+      "discount": 85,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-07",
+      "revenue": 0,
+      "orders": 1,
+      "tax": 0,
+      "discount": 930,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-08",
+      "revenue": 0,
+      "orders": 0,
+      "tax": 0,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-09",
+      "revenue": 9708,
+      "orders": 8,
+      "tax": 463.45,
+      "discount": 10,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-10",
+      "revenue": 5284,
+      "orders": 8,
+      "tax": 239,
+      "discount": 60,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-11",
+      "revenue": 0,
+      "orders": 0,
+      "tax": 0,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-12",
+      "revenue": 3612,
+      "orders": 7,
+      "tax": 198.15,
+      "discount": 537,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-13",
+      "revenue": 0,
+      "orders": 0,
+      "tax": 0,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-14",
+      "revenue": 0,
+      "orders": 0,
+      "tax": 0,
+      "discount": 0,
+      "tab_settlement": 0
+    },
+    {
+      "date": "2026-06-15",
+      "revenue": 0,
+      "orders": 0,
+      "tax": 0,
+      "discount": 0,
+      "tab_settlement": 0
+    }
+  ],
+  "channels": [
+    {
+      "channel": "Dine-In",
+      "orders": 159,
+      "revenue": 154468
+    },
+    {
+      "channel": "Delivery",
+      "orders": 7,
+      "revenue": 9137
+    },
+    {
+      "channel": "Takeaway",
+      "orders": 1,
+      "revenue": 441
+    }
+  ],
+  "payments": [
+    {
+      "method": "UPI",
+      "orders": 66,
+      "revenue": 75325
+    },
+    {
+      "method": "Cash",
+      "orders": 83,
+      "revenue": 65089
+    },
+    {
+      "method": "Card",
+      "orders": 7,
+      "revenue": 11753
+    },
+    {
+      "method": "Partial",
+      "orders": 8,
+      "revenue": 8808
+    },
+    {
+      "method": "Zomato Gold",
+      "orders": 2,
+      "revenue": 1418
+    }
+  ],
+  "hourly": [
+    {
+      "hour": 1,
+      "revenue": 4074,
+      "orders": 8
+    },
+    {
+      "hour": 3,
+      "revenue": 3575,
+      "orders": 3
+    },
+    {
+      "hour": 8,
+      "revenue": 3752,
+      "orders": 6
+    },
+    {
+      "hour": 9,
+      "revenue": 10298,
+      "orders": 13
+    },
+    {
+      "hour": 10,
+      "revenue": 11364,
+      "orders": 10
+    },
+    {
+      "hour": 11,
+      "revenue": 10421,
+      "orders": 8
+    },
+    {
+      "hour": 12,
+      "revenue": 662,
+      "orders": 2
+    },
+    {
+      "hour": 13,
+      "revenue": 10704,
+      "orders": 11
+    },
+    {
+      "hour": 14,
+      "revenue": 14108,
+      "orders": 12
+    },
+    {
+      "hour": 15,
+      "revenue": 12429,
+      "orders": 12
+    },
+    {
+      "hour": 16,
+      "revenue": 7336,
+      "orders": 6
+    },
+    {
+      "hour": 17,
+      "revenue": 16776,
+      "orders": 21
+    },
+    {
+      "hour": 18,
+      "revenue": 7506,
+      "orders": 12
+    },
+    {
+      "hour": 19,
+      "revenue": 5741,
+      "orders": 9
+    },
+    {
+      "hour": 20,
+      "revenue": 5151,
+      "orders": 6
+    },
+    {
+      "hour": 21,
+      "revenue": 14449,
+      "orders": 11
+    },
+    {
+      "hour": 22,
+      "revenue": 24251,
+      "orders": 16
+    },
+    {
+      "hour": 23,
+      "revenue": 1449,
+      "orders": 1
+    }
+  ]
+}

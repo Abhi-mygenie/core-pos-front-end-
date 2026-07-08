@@ -1,0 +1,10 @@
+{
+  "batches": [
+    {
+      "id": "test_batch_1",
+      "name": "Test Batch"
+    }
+  ],
+  "approvals": [],
+  "smoke_results": []
+}

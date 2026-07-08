@@ -1,0 +1,89 @@
+{
+  "theme": "Light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "rationale": "For a fast-paced restaurant POS where staff log multiple expenses daily, clarity and speed are paramount. The Swiss archetype provides a highly functional, low-decoration environment that reduces cognitive load. High contrast ensures readability on POS tablets, while pure functional colors (Red for expense, Green for income) guide actions.",
+  "colors": {
+    "background": "#FFFFFF",
+    "surface": "#F9FAFB",
+    "surface_hover": "#F3F4F6",
+    "border": "#E5E7EB",
+    "text_primary": "#09090B",
+    "text_secondary": "#52525B",
+    "primary": "#000000",
+    "primary_hover": "#27272A",
+    "accent_blue": "#2563EB",
+    "accent_red": "#DC2626",
+    "accent_green": "#059669"
+  },
+  "typography": {
+    "heading_font": "Outfit, sans-serif",
+    "body_font": "Inter, sans-serif",
+    "h1": "text-4xl sm:text-5xl tracking-tight font-bold",
+    "h2": "text-2xl sm:text-3xl tracking-tight font-semibold",
+    "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+    "h4": "text-lg font-medium",
+    "body": "text-base sm:text-sm",
+    "label": "text-xs uppercase tracking-[0.2em] font-semibold text-text_secondary"
+  },
+  "spacing_and_layout": {
+    "container_padding": "p-6 md:p-8",
+    "kpi_grid": "grid grid-cols-2 md:grid-cols-5 gap-4",
+    "form_grid": "grid grid-cols-1 md:grid-cols-12 gap-4",
+    "master_detail_layout": "grid grid-cols-1 md:grid-cols-12 gap-6 h-full",
+    "left_panel_span": "md:col-span-3 lg:col-span-2",
+    "right_panel_span": "md:col-span-9 lg:col-span-10",
+    "border_radius": "rounded-md",
+    "shadows": "shadow-sm"
+  },
+  "components": {
+    "kpi_card": "Flat background, 1px subtle border, no shadow by default. Hover adds slight lift (-translate-y-1) and shadow-sm.",
+    "buttons": "Square or slight radius (max 8px). High contrast. Primary: Black background, White text. Secondary: White background, 1px border, Black text.",
+    "inputs": "Shadcn input style. Focus state: ring-2 ring-primary offset-2.",
+    "table": "Dense padding (py-2 px-3). Subtle alternating row colors (bg-white / bg-gray-50) for readability. Sticky header.",
+    "sidebar": "Collapsible left sidebar. Active state highlighted with primary background and white text or subtle gray background with black text and left border indicator.",
+    "bulk_editor": "Spreadsheet-style grid. Minimal padding, visible cell borders, zero gap between cells. Click-to-edit behavior."
+  },
+  "motion": {
+    "hover_state": "transition-colors duration-200 ease-in-out",
+    "modal_enter": "animate-in fade-in zoom-in-95 duration-200",
+    "table_row": "transition-colors hover:bg-gray-100"
+  },
+  "pages": {
+    "expenses": {
+      "route": "/expenses",
+      "layout": "Vertical stack: KPI Strip -> Date Picker & Quick Add Form -> Data Table.",
+      "features": [
+        "KPI Strip: 5 summary cards (Today's Total, Cash, UPI, Bank Transfer, Cash Draw).",
+        "Quick Add Form: Inline layout. Category dropdown -> Item Search dropdown -> Amount -> Payment Method.",
+        "Expandable 'More Fields': Use an accordion or toggle for Qty + Unit.",
+        "Data Table: Time, Item, Category, Amount, Payment Method, Actions. Click row for inline edit."
+      ]
+    },
+    "expense_setup": {
+      "route": "/expense-setup",
+      "layout": "Two-column Master-Detail. Categories on left, Items on right.",
+      "features": [
+        "Left Panel: List of categories with count badges. Add/Edit/Delete.",
+        "Right Panel: Toolbar (Search, Bulk Edit toggle, Excel Import/Export) -> Data Table.",
+        "Standard Mode Table: Name, Unit Price (click to edit), Unit, Actions.",
+        "Bulk Editor Mode: Spreadsheet grid. Editable dropdowns for Category/Unit, input for Price."
+      ]
+    }
+  },
+  "icons_library": "lucide-react",
+  "image_urls": {
+    "placeholder_logo": {
+      "url": "https://images.unsplash.com/photo-1586864030223-a918b07d357d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwyfHxyZXN0YXVyYW50JTIwcG9zJTIwbG9nb3xlbnwwfHx8fDE3ODMzNTczOTN8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Restaurant POS context image",
+      "category": "background_context"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Implement the UI using React 19, Tailwind CSS, and shadcn/ui components.",
+    "Do NOT use 'Inter' for headings. Use 'Outfit' via Google Fonts.",
+    "Apply data-testid attributes to all interactive elements for testing (e.g., data-testid='expense-submit-button').",
+    "Ensure responsive layout: mobile-first stacking, then multi-column for md/lg (tablets).",
+    "Build the Bulk Editor as a dense, grid-based table similar to a spreadsheet for fast data entry.",
+    "Include hover states for all clickable elements with proper contrast."
+  ]
+}
