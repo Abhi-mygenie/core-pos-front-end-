@@ -1,53 +1,43 @@
-# MyGenie POS — PRD
+# PRD — core-pos-front-end (MyGenie POS)
 
 ## Original Problem Statement
-Deployment and maintenance of MyGenie POS frontend (React 19, CRACO, Tailwind CSS, Radix UI, shadcn). 
-Source repo: `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: `6-july`)
+Clone and deploy a React-based POS frontend application from `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch `6-july`) into `/app`, install dependencies, and run.
 
-## What's Been Implemented
+## Architecture
+- **Frontend:** React 19 + CRACO + Tailwind CSS + Radix UI + Socket.io
+- **Backend:** FastAPI (minimal, serves /api/ endpoints)
+- **External APIs:** preprod.mygenie.online (main), presocket.mygenie.online (websocket), crm.mygenie.online (CRM)
+- **Database:** MongoDB (backend only, minimal usage)
 
-### Session 1-2 (2026-07-07 / 2026-07-08)
-- Cloned repo, installed dependencies, configured env, fresh pull
+## User Personas
+- Restaurant staff (cashiers, waiters, managers) using the POS terminal
+- Restaurant owners viewing reports and settings
 
-### Session 3 (2026-07-12) — BUG FIXES + INVESTIGATION
+## Core Requirements
+- Clone repo from GitHub (branch 6-july)
+- Replace existing /app structure
+- Install dependencies (yarn for frontend, pip for backend)
+- Run on port 3000 (frontend) and 8001 (backend)
+- Configure environment variables for external API connectivity
 
-**BUG-166 — addon_amount × qty (KEPT ✅)**
-- L704 (buildCartItem): `addonAmount * (item.qty || 1)` — sends total price
-- L1493 (collectBillExisting): `addonAmount * qty` — sends total price
-
-**BUG-168 — add_on_qtys (REVERTED ❌ → back to per-unit)**
-- L698: REVERTED back to `addonQtys` (per-unit). Backend multiplies qty on its side.
-
-**BUG-168 Display fixes (KEPT ✅)**
-- CartPanel.jsx: getAddonText helper + socket fallback — shows `a.qty × item.qty`
-- CollectPaymentPanel.jsx: 4 paths — shows total addon qty
-- These work correctly now because backend returns per-unit qty, display × item.qty = correct total
-
-**BUG-VQTY — variation_amount × qty (KEPT ✅, no issues)**
-- L703, L1492: sends total variation price. No round-trip double-count issue.
-
-### Final state of orderTransform.js buildCartItem (L696-704):
-```
-add_on_qtys:      addonQtys                              ← per-unit (reverted)
-variation_amount: variationAmount * (item.qty || 1)      ← total price (kept)
-addon_amount:     addonAmount * (item.qty || 1)          ← total price (kept)
-```
-
-### Backend contract (confirmed via Order #940260):
-- `add_on_qtys`: expects per-unit → backend multiplies by qty
-- `addon_amount`: expects total price
-- `variation_amount`: expects total price
-
-## Investigation Docs
-- `/app/memory/change_requests/BUG_166_168_ADDON_REVERT_PLAN.md` — full revert plan (superseded by partial revert)
-- `/app/memory/change_requests/BUG_168_PHASE2_FRONTEND_ADAPTATION_PLAN.md` — new contract adaptation plan
-- `/app/memory/change_requests/BUG_166_ADDON_AMOUNT_QTY_INTAKE.md` — original intake
+## What's Been Implemented (July 8, 2026)
+- Cloned repository from GitHub branch `6-july`
+- Preserved `.git` and `.emergent` platform folders
+- Configured frontend `.env` with required API URLs (REACT_APP_API_BASE_URL, REACT_APP_SOCKET_URL, REACT_APP_CRM_BASE_URL)
+- Configured backend `.env` with MongoDB connection
+- Installed all frontend dependencies via yarn
+- Installed all backend dependencies via pip
+- Both services running via supervisor
+- Frontend compiles with 1 warning (no errors)
+- Login page fully functional and rendering correctly
+- Testing: 100% pass rate (10/10 backend, all frontend checks pass)
 
 ## Prioritized Backlog
-- P1: CR-061 V2, OrderCard cluster, CR-051, CR-060
-- Blocked: CR-065 (needs backend PUT endpoint)
+- P0: None (setup complete)
+- P1: User to provide actual API credentials/env vars if needed
+- P2: Firebase configuration (REACT_APP_FIREBASE_* vars) if push notifications needed
+- P3: Google Maps key (REACT_APP_GOOGLE_MAPS_KEY) for delivery address features
 
-## Test Credentials
-- owner@cafe103.com / Qplazm@10
-- owner@mantri.com / Qplazm@10
-- manager@hogwarts.com / Qplazm@10
+## Next Tasks
+- User to configure their actual API credentials in `/app/frontend/.env`
+- Test login flow with real credentials against preprod.mygenie.online
