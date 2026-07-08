@@ -327,6 +327,7 @@
 | `api/transforms/orderTransform.js` | L704: `addonAmount * (item.qty \|\| 1)` — BUG-166 fix | BUG FIX agent |
 | `api/transforms/orderTransform.js` | L1493: `addonAmount * qty` — BUG-166 fix | BUG FIX agent |
 | `api/transforms/orderTransform.js` | L698: `addonQtys.map(q => q * (item.qty \|\| 1))` — BUG-168 fix | BUG FIX agent |
+| `api/transforms/orderTransform.js` | L1808-1826: `addonPerUnit` reduce over `item.add_ons[]` + `(price*qty) + (addonPerUnit*qty)` — BUG-168 v2 fix (2026-07-08). Fallback subtotal loop in `buildBillPrintPayload` now includes addons. Replaces prior 2026-07-08 patch that used non-existent `item.total_add_on_price` field. Mirrors `CollectPaymentPanel.getItemLinePrice` L212-224. Curl-verified against live order #002384. | BUG FIX agent |
 | `components/order-entry/CartPanel.jsx` | L8-23: getAddonText/hasAddons helpers, L99+L124+L240: addon display × item.qty — BUG-168 display fix | BUG FIX agent |
 | `components/order-entry/CollectPaymentPanel.jsx` | L1862+L1877+L2217+L2232: addon display × item.qty — BUG-168 display fix | BUG FIX agent |
 

@@ -1,10 +1,13 @@
 {
-  "batches": [
+  "batches": [],
+  "approvals": [
     {
-      "id": "test_batch_1",
-      "name": "Test Batch"
+      "item_id": "BUG-125-B",
+      "gate": "gate_4",
+      "verdict": "GO",
+      "notes": "",
+      "at": "2026-06-15T20:14:10.577Z"
     }
   ],
-  "approvals": [],
   "smoke_results": []
 }
