@@ -1,53 +1,59 @@
-# MyGenie POS — PRD
+# MyGenie POS — Working PRD (session-updated)
 
-## Original Problem Statement
-Deployment and maintenance of MyGenie POS frontend (React 19, CRACO, Tailwind CSS, Radix UI, shadcn). 
-Source repo: `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: `6-july`)
+## Origin
+Clone of `Abhi-mygenie/core-pos-front-end-` branch `6-july` — full MyGenie POS frontend (React 19 + CRACO + Tailwind + Radix). Backend API lives at `https://preprod.mygenie.online` (Laravel).
 
-## What's Been Implemented
+## Session log
 
-### Session 1-2 (2026-07-07 / 2026-07-08)
-- Cloned repo, installed dependencies, configured env, fresh pull
+### 2026-07-08 — Deployment + fresh pull + BUG-168 investigation & partial fix
 
-### Session 3 (2026-07-12) — BUG FIXES + INVESTIGATION
+**Deployment:**
+- Fresh clone of `6-july` into `/app` (preserved `/app/.git`, `/app/.emergent`).
+- `yarn install` (802 pkgs, React 19, craco 7, Tailwind, Radix, Zustand).
+- Configured `/app/frontend/.env` with:
+  - `REACT_APP_BACKEND_URL` (Emergent preview)
+  - `REACT_APP_API_BASE_URL=https://preprod.mygenie.online/`
+  - `REACT_APP_SOCKET_URL=https://presocket.mygenie.online`
+  - `REACT_APP_CRM_BASE_URL=https://crm.mygenie.online/api`
+  - Full Firebase config for `mygenie-restaurant`.
+- Supervisor frontend service RUNNING on port 3000, HTTP 200, MyGenie POS login page verified.
 
-**BUG-166 — addon_amount × qty (KEPT ✅)**
-- L704 (buildCartItem): `addonAmount * (item.qty || 1)` — sends total price
-- L1493 (collectBillExisting): `addonAmount * qty` — sends total price
+**BUG-168 v2 applied (single-file edit):**
+- `frontend/src/api/transforms/orderTransform.js` L1808-1826 — replaced prior no-op patch with add_ons[] traversal mirroring `CollectPaymentPanel.getItemLinePrice:212-224`.
+- Verified working for addon case on 2 live orders (#002384 → 219 ✅, #002386 → 292 ✅).
 
-**BUG-168 — add_on_qtys (REVERTED ❌ → back to per-unit)**
-- L698: REVERTED back to `addonQtys` (per-unit). Backend multiplies qty on its side.
+**Owner clarification (session close):**
+- Investigation direction inverted per owner: **Collect Bill auto-print (B3/B4/B5) is WRONG; dashboard/card/order-entry Bill-Print button (B1/B2/B6/B7) is CORRECT** — opposite of the model this session used.
+- Investigation reopened for next session (see handover doc).
 
-**BUG-168 Display fixes (KEPT ✅)**
-- CartPanel.jsx: getAddonText helper + socket fallback — shows `a.qty × item.qty`
-- CollectPaymentPanel.jsx: 4 paths — shows total addon qty
-- These work correctly now because backend returns per-unit qty, display × item.qty = correct total
+**Intake candidates filed (not yet approved):**
+- BUG-169 — Double-SC in `finalOrderSubtotal` fallback (order #002386).
+- BUG-170 — Variation upcharge missing from fallback subtotal loop (order #000334).
+- BUG-171 — Receipt Total ≠ Item Total + taxes (order #000334, ₹9.80 gap).
 
-**BUG-VQTY — variation_amount × qty (KEPT ✅, no issues)**
-- L703, L1492: sends total variation price. No round-trip double-count issue.
+## Environment (stable)
+- Frontend: `http://localhost:3000` (supervisor) or Emergent preview URL for browser test.
+- Backend API: `https://preprod.mygenie.online`.
+- Socket: `https://presocket.mygenie.online`.
+- Node 20+, yarn 1.x.
+- Hot reload enabled — restart only on `.env` or dependency changes.
 
-### Final state of orderTransform.js buildCartItem (L696-704):
-```
-add_on_qtys:      addonQtys                              ← per-unit (reverted)
-variation_amount: variationAmount * (item.qty || 1)      ← total price (kept)
-addon_amount:     addonAmount * (item.qty || 1)          ← total price (kept)
-```
+## Active hotspot files (per Alpha R5)
+`OrderEntry.jsx`, `CollectPaymentPanel.jsx`, `orderTransform.js`, `DashboardPage.jsx`, `LoadingPage.jsx`, `socketHandlers.js`.
 
-### Backend contract (confirmed via Order #940260):
-- `add_on_qtys`: expects per-unit → backend multiplies by qty
-- `addon_amount`: expects total price
-- `variation_amount`: expects total price
+## What's implemented (this session)
+- Environment stood up, fresh pull from remote.
+- BUG-168 v2 fix at `orderTransform.js:1808-1826` (addon case for backend-sourced print paths).
 
-## Investigation Docs
-- `/app/memory/change_requests/BUG_166_168_ADDON_REVERT_PLAN.md` — full revert plan (superseded by partial revert)
-- `/app/memory/change_requests/BUG_168_PHASE2_FRONTEND_ADAPTATION_PLAN.md` — new contract adaptation plan
-- `/app/memory/change_requests/BUG_166_ADDON_AMOUNT_QTY_INTAKE.md` — original intake
+## Backlog (prioritised)
+- **P0** — Resolve BUG-168 path-divergence per owner clarification (Collect Bill auto-print vs Bill-Print button). Handover: `/app/memory/handover/SESSION_HANDOVER_2026_07_08_BUG168_PRINT_INVESTIGATION.md`.
+- **P1** — BUG-169 subtotal double-SC (pending owner approval + path clarification).
+- **P1** — BUG-170 variation upcharge in fallback (pending owner approval + path clarification).
+- **P2** — BUG-171 receipt Total tax-cascade rounding gap.
 
-## Prioritized Backlog
-- P1: CR-061 V2, OrderCard cluster, CR-051, CR-060
-- Blocked: CR-065 (needs backend PUT endpoint)
-
-## Test Credentials
-- owner@cafe103.com / Qplazm@10
-- owner@mantri.com / Qplazm@10
-- manager@hogwarts.com / Qplazm@10
+## Next action item (P0)
+Owner to place ONE test order with both addons AND a variation-upcharge item, then:
+1. Print via Collect Bill auto-print → capture `/order-temp-store` request body from browser DevTools.
+2. WITHOUT collecting again, print via Order-Card / Order-Entry "Bill Print" button → capture same.
+3. Share both JSON payloads.
+4. Next agent diffs and traces the divergent code path.

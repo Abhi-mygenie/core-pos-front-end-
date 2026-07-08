@@ -1,5 +1,21 @@
 # INVESTIGATION — All Bill-Print Paths (BUG-168 scope expansion)
 
+> ⚠️ **STATUS: DIRECTION DISPUTED BY OWNER (2026-07-08 late session)**
+>
+> The model in this report assumes:
+> - Fallback branch (B1/B2/B6/B7) = WRONG
+> - Live-UI override branch (B3/B4/B5) = CORRECT
+>
+> **Owner reports the OPPOSITE in production:** Collect Bill auto-print (B3/B4/B5) is WRONG; dashboard/card/order-entry Bill-Print button (B1/B2/B6/B7) is CORRECT.
+>
+> The BUG-168 v2 fix at `orderTransform.js:1808-1826` still holds (verified for the addon case on backend-sourced paths for orders #002384 and #002386). But the primary bug lives elsewhere.
+>
+> **Next-session ask:** capture Collect-Bill-auto-print and Bill-Print-button payloads for the SAME order, diff every field, trace the divergent code path (likely `paymentData` override construction, not the fallback loop).
+>
+> **Full handover:** `/app/memory/handover/SESSION_HANDOVER_2026_07_08_BUG168_PRINT_INVESTIGATION.md`
+
+---
+
 **Session:** 2026-07-08 (INVESTIGATION role — read-only)
 **Trigger:** owner-shared print payload for order #002384 shows `order_item_total: 69` while backend truth = 219.
 **Evidence dir:** `/app/memory/evidence/BUG-168/`
