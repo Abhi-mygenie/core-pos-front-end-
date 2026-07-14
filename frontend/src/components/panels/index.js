@@ -13,6 +13,6 @@ export { default as ProductList } from './menu/ProductList';
 
 // Settings sub-components
 export { default as ListFormViews } from './settings/ListFormViews';
-export { default as TableManagementView } from './settings/TableManagementView';
+export { TableManagementView } from './settings/TableManagementView'; // CR-060
 export { default as ViewEditViews } from './settings/ViewEditViews';
 export * from './settings/shared';

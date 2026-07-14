@@ -1,30 +1,28 @@
-# MyGenie POS Frontend — Deployment PRD
+# PRD — MyGenie POS Frontend
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is, with no code edits. Frontend-only deployment — no backend or database setup needed. Env variables to be added later by the user.
+Deploy existing React frontend repo and run as-is. Then implement CR-060 Table/Room Management CRUD wiring. Then fix BUG-185/186 Settlement Expected column.
 
 ## Architecture
-- **Frontend**: React 19.0.0 with CRACO (Create React App Configuration Override)
-- **Backend**: FastAPI (default boilerplate, not part of the deployed repo's logic)
-- **Process Manager**: Supervisor (frontend on port 3000, backend on port 8001)
-- **External URL**: https://pos-app-preview-5.preview.emergentagent.com
+- Frontend: React 19 (CRA + CRACO) on port 3000
+- Backend: External Laravel at preprod.mygenie.online
+- Process Manager: Supervisor
+- Database: MongoDB (local, for platform use only — app data on preprod)
 
-## What's Been Implemented (2026-07-14)
-1. Cloned repo contents into `/app`, preserving platform files (`.emergent`, `.git`, `.env`, `memory/`)
-2. Installed dependencies via `yarn install` (no lockfile in repo — fresh resolve)
-3. Added placeholder env variables to `/app/frontend/.env` to prevent hard crash (`REACT_APP_API_BASE_URL` is required at module load)
-4. Frontend running via supervisor with hot reload enabled
-5. All tests passed (6/6): server accessible, login page renders, no compilation errors
+## What's Been Implemented
 
-## Env Variables (Placeholders — User to Update)
-- `REACT_APP_API_BASE_URL` — Main API endpoint (currently placeholder)
-- `REACT_APP_SOCKET_URL` — WebSocket URL (currently placeholder)
-- `REACT_APP_CRM_BASE_URL` — CRM API base (currently placeholder)
-- `REACT_APP_GOOGLE_MAPS_KEY` — Google Maps key (empty)
-- `REACT_APP_FIREBASE_*` — Firebase config (all empty)
-- `REACT_APP_SHOW_AUDIT_TAB` — Audit tab visibility (false)
+### 2026-07-14
+- Repo deployed from GitHub (core-pos-front-end-, branch main)
+- CR-060: Table/Room Management — 8 CRUD APIs wired, TableManagementView rewritten, TableBulkEditor created, sidebar comingSoon removed. QA 15/15 PASS.
+- BUG-185: Settlement Expected column — replaced 9 instances of wrong FE formula with backend `balanceToSettle`. Awaiting QA.
+- BUG-186: Partial Settlement — resolved as side-effect of BUG-185 fix. No additional code.
 
-## Backlog / Next Steps
-- **P0**: User provides real `.env` values for API, Firebase, Socket, CRM, Google Maps
-- **P1**: Verify login flow works end-to-end with real API
-- **P2**: Test all POS features (order entry, reports, settings) after env is configured
+## Prioritized Backlog
+- P0: BUG-185/186 QA verification on cafe103
+- P0: CR-060 Gate 6 Owner Smoke
+- P1: Settlement Report formula fix (3 lines — planned, owner-approved, deferred to next session)
+- P1: CR-061 Expense Report (Gate 3 complete, awaiting Gate 4 GO)
+- P1: CR-051 Customer Field Mandatoriness (Gate 3 complete)
+- P1: CR-060 Phase 2 (QR codes, waiter permissions)
+- P1: BUG-123 Place Order 401 redirect (Gate 2 complete, needs owner decisions)
+- P2: Transfer Cash Modal (backend-blocked — /waiter/cash-transfer 404)

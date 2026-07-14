@@ -2,7 +2,7 @@
 
 import api from '../axios';
 import { API_ENDPOINTS } from '../constants';
-import { fromAPI } from '../transforms/tableTransform';
+import { fromAPI, configFromAPI, configToAPI } from '../transforms/tableTransform'; // CR-060
 
 /**
  * Fetch all tables and rooms (unified)
@@ -106,4 +106,54 @@ export const searchTables = (tables, searchTerm) => {
     table.tableNumber.toLowerCase().includes(term) ||
     table.displayName.toLowerCase().includes(term)
   );
+};
+
+// =============================================================================
+// CR-060: Table Management CRUD (Settings)
+// =============================================================================
+
+export const getTableConfig = async () => {
+  const res = await api.get(API_ENDPOINTS.TABLE_CONFIG);
+  return configFromAPI.tableConfigList(res.data);
+};
+
+export const storeTable = async (data) => {
+  const payload = configToAPI.storeTable(data);
+  const res = await api.post(API_ENDPOINTS.TABLE_CONFIG_STORE, payload);
+  return res.data;
+};
+
+export const deleteTable = async (id) => {
+  const res = await api.delete(`${API_ENDPOINTS.TABLE_CONFIG}/${id}`);
+  return res.data;
+};
+
+export const getAreaOptions = async () => {
+  const res = await api.get(API_ENDPOINTS.TABLE_CONFIG_AREA_OPTIONS);
+  return configFromAPI.areaOptions(res.data);
+};
+
+export const getWaiterList = async () => {
+  const res = await api.get(API_ENDPOINTS.TABLE_CONFIG_WAITER_LIST);
+  return configFromAPI.waiterList(res.data);
+};
+
+export const exportSampleTemplate = async () => {
+  const res = await api.get(API_ENDPOINTS.TABLE_CONFIG_EXPORT_SAMPLE);
+  return configFromAPI.exportResponse(res.data);
+};
+
+export const exportTableList = async () => {
+  const res = await api.get(API_ENDPOINTS.TABLE_CONFIG_EXPORT_LIST);
+  return res.data;
+};
+
+export const importTables = async (file) => {
+  const formData = new FormData();
+  formData.append('button', 'import');
+  formData.append('table_file', file);
+  const res = await api.post(API_ENDPOINTS.TABLE_CONFIG_IMPORT, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
 };

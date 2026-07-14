@@ -163,3 +163,61 @@ export const toAPI = {
     target_order_id: currentTable.orderId, // current table (survives the merge)
   }),
 };
+
+// =============================================================================
+// CR-060: Table Config Transforms (Settings CRUD)
+// =============================================================================
+export const configFromAPI = {
+  tableConfigList: (res) => {
+    const data = res?.data || res;
+    return {
+      tables: (data.tables || []).map(configFromAPI.tableConfigItem),
+      walkinQrUrls: data.walkin_qr_urls || {},
+      walkinMenuQrUrls: data.walkin_menu_qr_urls || {},
+      restaurantId: data.restaurant_id,
+      restaurantName: data.restaurant_name,
+    };
+  },
+
+  tableConfigItem: (api) => ({
+    id: api.id,
+    tableNo: api.table_no,
+    title: api.title || null,
+    rtype: api.rtype,
+    waiterId: api.waiter_id,
+    waiterName: [api.f_name, api.l_name].filter(Boolean).join(' ') || 'Unassigned',
+    status: api.status,
+    qrCodeUrls: api.qr_code_urls || {},
+    createdAt: api.created_at,
+    updatedAt: api.updated_at,
+  }),
+
+  areaOptions: (res) => {
+    const data = res?.data || res;
+    return (data.areas || data || []).filter(a => a != null);
+  },
+
+  waiterList: (res) => {
+    const data = res?.data || res;
+    return (data.waiters || data || []).map(w => ({
+      id: w.id,
+      name: (w.name || [w.f_name, w.l_name].filter(Boolean).join(' '))?.trim() || 'Unknown',
+    }));
+  },
+
+  exportResponse: (res) => ({
+    success: res.success,
+    message: res.message,
+    downloadUrl: res.download_url || null,
+  }),
+};
+
+export const configToAPI = {
+  storeTable: (data) => ({
+    title: data.title || null,
+    table_no: data.tableNo,
+    vendorName: data.waiterId || null,
+    rtype: data.rtype || 'TB',
+    ...(data.id ? { id: data.id } : {}),
+  }),
+};

@@ -103,7 +103,7 @@ const sidebarMenuItems = [
     icon: Settings,
     children: [
       { id: "restaurant-setup", label: "Restaurant Setup", path: "/restaurant-settings" },
-      { id: "table-management", label: "Table Management", comingSoon: true },
+      { id: "table-management", label: "Table Management", path: "/settings" }, // CR-060
       { id: "printers", label: "Printers", comingSoon: true },
       { id: "operating-hours", label: "Operating Hours", comingSoon: true },
       { id: "cancellation-reasons", label: "Cancellation Reasons", comingSoon: true },

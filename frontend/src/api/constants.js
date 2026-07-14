@@ -20,6 +20,15 @@ export const API_ENDPOINTS = {
   MERGE_ORDER: '/api/v2/vendoremployee/order/transfer-order',
   TRANSFER_FOOD: '/api/v2/vendoremployee/order/transfer-food-item',
 
+  // CR-060: Table Management CRUD Endpoints
+  TABLE_CONFIG: '/api/v2/vendoremployee/restaurant-settings/table-config',
+  TABLE_CONFIG_STORE: '/api/v2/vendoremployee/restaurant-settings/table-config/store',
+  TABLE_CONFIG_AREA_OPTIONS: '/api/v2/vendoremployee/restaurant-settings/table-config/area-options',
+  TABLE_CONFIG_WAITER_LIST: '/api/v2/vendoremployee/restaurant-settings/table-config/waiter-list',
+  TABLE_CONFIG_EXPORT_SAMPLE: '/api/v2/vendoremployee/restaurant-settings/table-config/export-sample',
+  TABLE_CONFIG_EXPORT_LIST: '/api/v2/vendoremployee/restaurant-settings/table-config/export-list',
+  TABLE_CONFIG_IMPORT: '/api/v2/vendoremployee/restaurant-settings/table-config/import',
+
   // Cancel Operations (Phase 1C)
   CANCEL_ITEM: '/api/v2/vendoremployee/order/cancel-food-item',
   ORDER_STATUS_UPDATE: '/api/v2/vendoremployee/order/order-status-update',

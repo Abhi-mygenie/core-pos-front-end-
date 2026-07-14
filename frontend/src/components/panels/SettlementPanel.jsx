@@ -101,7 +101,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
     setSaving(true);
     try {
       const w = settleModal;
-      const expected = w.totalFunds - w.settled;
+      const expected = w.balanceToSettle; // BUG-185: use backend balance_to_settle
       const actual = actualBalances[w.waiterId];
       const pilf = actual !== undefined ? Math.max(expected - actual, 0) : 0;
       await settlementService.settleWaiter(formatDateISO(date), w.waiterId, settleAmount, settleType, -pilf);
@@ -142,7 +142,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
 
   const openSettleModal = (w) => {
     const actual = actualBalances[w.waiterId];
-    const expected = w.totalFunds - w.settled;
+    const expected = w.balanceToSettle; // BUG-185: use backend balance_to_settle
     // BUG-186: use absolute balanceToSettle when expected ≤ 0 (over-settlement / negative balance)
     const absBalance = Math.abs(w.balanceToSettle || 0);
     const effectiveExpected = expected > 0 ? expected : absBalance;
@@ -250,7 +250,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
                 {activeWaiters.map((w) => {
                   const status = getStatus(w);
                   const bal = w.balanceToSettle;
-                  const expected = w.totalFunds - w.settled;
+                  const expected = w.balanceToSettle; // BUG-185: use backend balance_to_settle
                   const actual = actualBalances[w.waiterId];
                   const pilf = actual !== undefined ? (expected - actual) : w.pilferage;
                   const isExpanded = expandedRow === w.waiterId;
@@ -355,7 +355,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
                     <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: COLORS.primaryGreen }}>{fmt(totals.cashCollected)}</td>
                     <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: COLORS.darkText }}>{fmt(totals.totalFunds)}</td>
                     <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: "#3B82F6" }}>{fmt(totals.settled)}</td>
-                    <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: COLORS.darkText }}>{fmt((totals.totalFunds || 0) - (totals.settled || 0))}</td>
+                    <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: COLORS.darkText }}>{fmt(totals.remaining || 0)}</td>
                     <td className="px-3 py-2"></td>
                     <td className="px-3 py-2 text-right text-sm font-mono font-bold" style={{ color: totals.pilferage > 0 ? "#EF4444" : COLORS.grayText }}>{fmt(totals.pilferage)}</td>
                     <td className="px-3 py-2"></td>
@@ -393,7 +393,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
               <div>
                 <label className="text-xs font-medium uppercase tracking-wide" style={{ color: COLORS.grayText }}>Type</label>
                 <div className="flex gap-2 mt-1">
-                  <button onClick={() => { setSettleType("full"); const actual = actualBalances[settleModal.waiterId]; const exp = settleModal.totalFunds - settleModal.settled; const absB = Math.abs(settleModal.balanceToSettle || 0); const effExp = exp > 0 ? exp : absB; const val = actual !== undefined ? Math.abs(Math.round(actual)) : Math.round(effExp); setSettleAmount(Math.max(val, 0)); }}
+                  <button onClick={() => { setSettleType("full"); const actual = actualBalances[settleModal.waiterId]; const exp = settleModal.balanceToSettle; const absB = Math.abs(settleModal.balanceToSettle || 0); const effExp = exp > 0 ? exp : absB; const val = actual !== undefined ? Math.abs(Math.round(actual)) : Math.round(effExp); setSettleAmount(Math.max(val, 0)); }}
                     className={`flex-1 py-2 text-sm font-medium rounded-lg ${settleType === "full" ? "text-white" : "border"}`}
                     style={settleType === "full" ? { background: COLORS.primaryOrange } : { borderColor: COLORS.borderGray, color: COLORS.grayText }} data-testid="settle-type-full">Full</button>
                   <button onClick={() => setSettleType("partial")}
@@ -402,8 +402,8 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
                 </div>
               </div>
               <div className="rounded-lg p-3" style={{ background: COLORS.sectionBg }}>
-                <div className="flex justify-between text-xs"><span style={{ color: COLORS.grayText }}>Expected</span><span className="font-mono font-medium" style={{ color: COLORS.darkText }}>{fmt(settleModal.totalFunds - settleModal.settled)}</span></div>
-                <div className="flex justify-between text-xs mt-1"><span style={{ color: COLORS.grayText }}>Pilferage</span><span className="font-mono" style={{ color: actualBalances[settleModal.waiterId] !== undefined && (settleModal.totalFunds - settleModal.settled) > actualBalances[settleModal.waiterId] ? "#EF4444" : COLORS.grayText }}>{actualBalances[settleModal.waiterId] !== undefined ? fmt(Math.max((settleModal.totalFunds - settleModal.settled) - actualBalances[settleModal.waiterId], 0)) : "₹0"}</span></div>
+                <div className="flex justify-between text-xs"><span style={{ color: COLORS.grayText }}>Expected</span><span className="font-mono font-medium" style={{ color: COLORS.darkText }}>{fmt(settleModal.balanceToSettle)}</span></div>
+                <div className="flex justify-between text-xs mt-1"><span style={{ color: COLORS.grayText }}>Pilferage</span><span className="font-mono" style={{ color: actualBalances[settleModal.waiterId] !== undefined && (settleModal.balanceToSettle) > actualBalances[settleModal.waiterId] ? "#EF4444" : COLORS.grayText }}>{actualBalances[settleModal.waiterId] !== undefined ? fmt(Math.max((settleModal.balanceToSettle) - actualBalances[settleModal.waiterId], 0)) : "₹0"}</span></div>
               </div>
             </div>
             <div className="px-6 py-4 border-t flex justify-end gap-2" style={{ borderColor: COLORS.borderGray }}>
