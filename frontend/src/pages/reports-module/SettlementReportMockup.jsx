@@ -221,7 +221,7 @@ const SettlementReportMockup = () => {
     return fmtCur(v);
   };
 
-  const waiterExpected = (w) => w.totalFunds - w.settled; // BUG-185: removed circular - Math.abs(w.pilferage)
+  const waiterExpected = (w) => w.balanceToSettle; // BUG-185: use backend balance_to_settle directly
 
   // ── Sort icon ─────────────────────────────────────────────────────────────
   const SortIcon = ({ col }) => {

@@ -43,7 +43,7 @@ export const fromAPI = {
           cashCollected:   toNum(dt.total_today_collection),
           totalFunds,
           settled,
-          expected:        totalFunds - settled, // BUG-185: removed circular - Math.abs(pilferage)
+          expected:        toNum(dt.total_balance_to_settle), // BUG-185: use backend balance_to_settle directly
           pilferage:       pilferage,
           totalSale:       toNum(dt.total_sale),
           deliveryCharges: toNum(dt.total_today_delivery_charge),
@@ -77,7 +77,7 @@ export const fromAPI = {
         cashCollected:  toNum(topTotals.total_today_collection),
         totalFunds:     aggFunds,
         settled:        aggSettled,
-        expected:       aggFunds - aggSettled, // BUG-185: removed circular - Math.abs(aggPilf)
+        expected:       toNum(topTotals.total_balance_to_settle), // BUG-185: use backend balance_to_settle directly
         pilferage:      aggPilf,
         totalSale:      toNum(topTotals.total_sale),
       },
