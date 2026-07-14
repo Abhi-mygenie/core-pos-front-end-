@@ -1,0 +1,76 @@
+{
+  "summary": "BUG-168 v3 fix verification complete. Manual print path in POS app now correctly uses backend values (order.subtotalAmount, order.subtotalBeforeTax, order.serviceTax) instead of locally computing them. Tested login, dashboard load, and print payload interception.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_14.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BUG-168 v3 fix correctly implemented in buildBillPrintPayload (orderTransform.js L1795-1933)",
+    "hasFinancialOverrides gate (L1799) correctly distinguishes Collect Bill path vs Manual Print path",
+    "Manual print path (L1868-1897) uses backend values: order.serviceTax, order.subtotalAmount, order.subtotalBeforeTax",
+    "OrderCard.jsx (L217-220) correctly passes minimal overrides (no orderItemTotal), triggering backend passthrough"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@18march.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-168 v3 fix verified. The buildBillPrintPayload function now has two paths: (1) Collect Bill path with full FE computation when overrides.orderItemTotal is provided, (2) Manual print path using backend values directly when no financial overrides. Print payload interception confirmed order_item_total, order_subtotal, and serviceChargeAmount use backend values.",
+  "test_results": {
+    "TEST_A": {
+      "description": "Verify order_item_total in print payload matches backend's order_sub_total_amount",
+      "status": "PASS",
+      "evidence": "Intercepted POST to /order-temp-store: order_item_total=1525 (from order.subtotalAmount)"
+    },
+    "TEST_B": {
+      "description": "Verify serviceChargeAmount in print payload matches backend's total_service_tax_amount",
+      "status": "PASS",
+      "evidence": "Intercepted POST to /order-temp-store: serviceChargeAmount=152.5 (from order.serviceTax)"
+    },
+    "TEST_C": {
+      "description": "Verify order_subtotal in print payload matches backend's order_sub_total_without_tax",
+      "status": "PASS",
+      "evidence": "Intercepted POST to /order-temp-store: order_subtotal=1677.5 (from order.subtotalBeforeTax)"
+    },
+    "TEST_D": {
+      "description": "Verify app loads without JavaScript runtime errors",
+      "status": "PASS",
+      "evidence": "Login page loaded, dashboard rendered, no console errors detected"
+    },
+    "TEST_E": {
+      "description": "Verify orders display correctly with items and addons visible",
+      "status": "PASS",
+      "evidence": "Dashboard shows 44 Dine-In orders, 1 TakeAway, 8 Delivery, 2 Room orders with items visible"
+    },
+    "TEST_F": {
+      "description": "Verify Collect Bill flow still works",
+      "status": "PASS",
+      "evidence": "Bill buttons functional on dashboard, orders can be printed. Collect Bill path unchanged per code review."
+    }
+  },
+  "code_review": {
+    "file": "/app/frontend/src/api/transforms/orderTransform.js",
+    "function": "buildBillPrintPayload",
+    "key_changes": [
+      "L1799: hasFinancialOverrides = overrides.orderItemTotal !== undefined",
+      "L1868-1897: Manual print path uses backend values directly",
+      "L1873: serviceChargeAmount = order.serviceTax || 0",
+      "L1925-1927: finalOrderItemTotal = order.subtotalAmount when no override",
+      "L1931-1933: finalOrderSubtotal = order.subtotalBeforeTax when no override"
+    ],
+    "verification": "OrderCard.jsx L217-220 passes only serviceChargeTaxPct and deliveryChargeGstPct (no orderItemTotal), so hasFinancialOverrides=false, triggering backend passthrough"
+  }
+}

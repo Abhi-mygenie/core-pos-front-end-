@@ -1,0 +1,71 @@
+{
+  "summary": "Code inspection for BUG-164 and BUG-165 fixes in ExpenseSetupPanel.jsx. All conditional logic verified correct, regressions clean.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verification_results": [
+    {
+      "check": "BUG-164: res captured (not void await)",
+      "line": 154,
+      "status": "PASS",
+      "detail": "const res = await expenseService.createEmptyCategory(newCatName.trim())"
+    },
+    {
+      "check": "BUG-164: errors[] inspection after await",
+      "line": 157,
+      "status": "PASS",
+      "detail": "if (res?.data?.errors?.[0]) — correct optional chaining"
+    },
+    {
+      "check": "BUG-164: destructive toast + early return (no fetchAll, no success toast)",
+      "lines": "158-160",
+      "status": "PASS",
+      "detail": "toast destructive fires, then return — fetchAll() and success toast are after this block"
+    },
+    {
+      "check": "BUG-164: success path still works",
+      "line": 162,
+      "status": "PASS",
+      "detail": "toast({ title: 'Category added' }) only reached if no errors[]"
+    },
+    {
+      "check": "BUG-165 backend flag comment",
+      "line": 207,
+      "status": "PASS",
+      "detail": "⚠️ BACKEND FLAG: POST /store_expense should return 4xx for duplicate stock_title within same category."
+    },
+    {
+      "check": "BUG-165 FE guard: allItems.some() with categoryId AND title (case-insensitive)",
+      "lines": "208-211",
+      "status": "PASS",
+      "detail": "String(i.categoryId) === String(selectedCategoryId) && i.title.trim().toLowerCase() === newItemName.trim().toLowerCase()"
+    },
+    {
+      "check": "BUG-165 FE guard: destructive toast + setAddingItem(false) + early return",
+      "lines": "212-215",
+      "status": "PASS",
+      "detail": "toast destructive, setAddingItem(false), return — API NOT called"
+    },
+    {
+      "check": "Regression: addItem() non-duplicate path intact",
+      "lines": "217-228",
+      "status": "PASS",
+      "detail": "createCategoryWithItems called, 'Item added' toast shown, fetchAll() called"
+    }
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "BACKEND (pending): POST /store_expense should return 4xx for duplicate stock_title within same category (BUG-165 backend fix still pending per registry.json)"
+  ],
+  "critical_code_review_comments": [
+    "BUG-165 backend fix is still pending — FE guard is a client-side workaround only; server-side uniqueness enforcement needed"
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-164 and BUG-165 FE guard verified correct in ExpenseSetupPanel.jsx L150-229. BUG-165 backend fix (4xx for duplicate stock_title) still pending."
+}

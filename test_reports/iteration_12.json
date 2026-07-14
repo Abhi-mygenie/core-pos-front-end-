@@ -1,0 +1,116 @@
+{
+  "summary": "BUG-168 B1 revert verified: L698 now sends add_on_qtys as per-unit (addonQtys directly, no multiplication). addon_amount (L704) and variation_amount (L703) are STILL multiplied by item qty (BUG-166 and BUG-VQTY fixes KEPT). All 14 unit tests pass. Frontend loads correctly. Webpack compiles with no new errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "pre_existing_lint_warnings": [
+      "orderTransform.js L1323: Duplicate key 'self_discount' (pre-existing, not related to BUG-168)",
+      "orderTransform.js: 4 unused eslint-disable directives (pre-existing warnings)"
+    ]
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js",
+    "/app/frontend/src/__tests__/components/CartPanelAddonDisplay.test.js",
+    "/app/frontend/src/__tests__/components/CollectPaymentPanelAddonDisplay.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "L698: add_on_qtys: addonQtys - VERIFIED per-unit (no multiplication)",
+    "L703: variation_amount: variationAmount * (item.qty || 1) - VERIFIED total price (BUG-VQTY KEPT)",
+    "L704: addon_amount: addonAmount * (item.qty || 1) - VERIFIED total price (BUG-166 KEPT)"
+  ],
+  "updated_files": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "test_credentials": "N/A",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-168 B1 revert complete. Backend contract: add_on_qtys expects per-unit qty (backend multiplies by item qty on its side), addon_amount expects total price. Test file updated to reflect correct behavior.",
+  "test_results": {
+    "unit_tests": {
+      "orderTransformAddOnQtys.test.js": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "note": "UPDATED - Tests now verify per-unit add_on_qtys behavior"
+      },
+      "CartPanelAddonDisplay.test.js": {
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "note": "Regression check passed"
+      },
+      "CollectPaymentPanelAddonDisplay.test.js": {
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "note": "Regression check passed"
+      }
+    },
+    "lint_check": {
+      "orderTransform.js": {
+        "status": "PASS with pre-existing warnings",
+        "issues": "1 error (duplicate key L1323 - pre-existing), 4 warnings (unused eslint-disable)"
+      }
+    },
+    "frontend_load": {
+      "status": "PASS",
+      "url": "https://agent-deploy-63.preview.emergentagent.com",
+      "http_status": 200,
+      "login_page_renders": true
+    }
+  },
+  "bug_168_b1_revert_verification": {
+    "code_changes_verified": [
+      {
+        "file": "orderTransform.js",
+        "line": "L698",
+        "field": "add_on_qtys",
+        "value": "addonQtys",
+        "behavior": "per-unit (NOT multiplied by item qty)",
+        "verified": true
+      },
+      {
+        "file": "orderTransform.js",
+        "line": "L703",
+        "field": "variation_amount",
+        "value": "variationAmount * (item.qty || 1)",
+        "behavior": "total price (multiplied by item qty)",
+        "verified": true
+      },
+      {
+        "file": "orderTransform.js",
+        "line": "L704",
+        "field": "addon_amount",
+        "value": "addonAmount * (item.qty || 1)",
+        "behavior": "total price (multiplied by item qty)",
+        "verified": true
+      }
+    ],
+    "test_scenarios": [
+      {
+        "scenario": "item qty=5, addon per-unit qty=1",
+        "expected_add_on_qtys": "[1]",
+        "expected_addon_amount": "50 (10 × 1 × 5)",
+        "verified": true
+      },
+      {
+        "scenario": "item qty=1, addon per-unit qty=1",
+        "expected_add_on_qtys": "[1]",
+        "expected_addon_amount": "10",
+        "verified": true
+      }
+    ],
+    "backend_contract": "add_on_qtys expects per-unit quantity (backend multiplies by item qty on its side). addon_amount expects total price. Confirmed via Order #940260 where sending [5] caused backend to store quantity:5 and display showed x25 (5×5 double-count)."
+  }
+}
