@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:51:24.057784+00:00",
+  "generated_at": "2026-07-15T09:24:59.434398+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -14803,16 +14803,15 @@
       "registered": "2026-07-11",
       "intake_doc": "change_requests/CR_068_CANCELLATION_ROLE_GATING.md",
       "depends_on": [
-        "CR-071"
-      ],
-      "depends_on_note": "Updated 2026-02-15 \u2014 was CR-069 pre-split; now points to CR-071 (gating phase) which is the actual dependency."
+        "CR-069"
+      ]
     },
     {
       "id": "CR-069",
-      "title": "Employee Management (Migration Phase 1 \u2014 Employee CRUD only)",
+      "title": "Employee Management + Roles & Permissions (Migration Phase 1)",
       "type": "CR",
       "priority": "P1",
-      "risk": "MEDIUM",
+      "risk": "CRITICAL",
       "status": "GATE 2 COMPLETE \u2014 awaiting mockup approval",
       "gate": "2",
       "sprint_key": "pos_5_0",
@@ -14821,11 +14820,12 @@
       "subsumes": [
         "OG-CR041-EMPLOYEE-MGMT"
       ],
+      "blocks": [
+        "CR-068"
+      ],
       "related": [
         "CR-041",
-        "CR-060",
-        "CR-071",
-        "CR-070"
+        "CR-060"
       ],
       "phase": 1,
       "future_phases": {
@@ -14835,71 +14835,12 @@
         "Backend endpoint list from owner (OQ-1)"
       ],
       "impact_analysis_doc": "impact/CR-069_IMPACT_ANALYSIS.md",
-      "gate3_blocker": "Design guidelines v2 (aligned to codebase primitives + old POS UX) awaiting owner approval; sub-task OQ-15 (hidden fields) + OQ-6 (password policy \u2014 appears already answered by old POS Confirm Password field) pending.",
-      "risk_notes": "Downgraded from CRITICAL after split \u2014 Phase 1 is pure CRUD, no auth/permissions plumbing changes, no R6 sacred logic, no R5 hotspots.",
-      "design_guidelines_doc": "evidence/CR-069/mockups/CR-069_DESIGN_GUIDELINES_v2.json",
+      "gate3_blocker": "Design guidelines produced 2026-02-15; awaiting owner approval before Gate 3",
+      "risk_notes": "Impact Analysis found permission model already exists in AuthContext/authService/LoadingPage. Owner may downgrade CRITICAL\u2192HIGH per OQ-9.",
+      "design_guidelines_doc": "evidence/CR-069/mockups/CR-069_DESIGN_GUIDELINES.json",
       "backend_endpoints_verified": true,
       "backend_evidence": "evidence/CR-069/api_responses/ + evidence/CR-069/AUTHORITATIVE_CATALOG.json",
-      "permission_catalog_size": "52 permissions (frontend:27, backend:13, report:12) + 6 role_types + 10 predefined templates",
-      "scope_note": "Split 2026-02-15 into 3 phases: CR-069 (Employee CRUD) / CR-070 (Role Mgmt) / CR-071 (Role Gating). Impact Analysis and design guidelines being revised.",
-      "blast_radius": "SMALL (~7 files: ~5 new + Sidebar comingSoon flag removal + App.js route)",
-      "old_pos_reference_saved": "evidence/CR-069/old_pos_reference/ (5 screenshots)"
-    },
-    {
-      "id": "CR-070",
-      "title": "Role Management (Migration Phase 2 \u2014 Role CRUD + Permission Matrix)",
-      "type": "CR",
-      "priority": "P1",
-      "risk": "MEDIUM",
-      "status": "INTAKE \u2014 awaiting Phase 1 (CR-069) mockup approval",
-      "gate": "0",
-      "sprint_key": "pos_5_0",
-      "registered": "2026-02-15",
-      "depends_on": [
-        "CR-069"
-      ],
-      "related": [
-        "CR-069",
-        "CR-071"
-      ],
-      "blocks": [
-        "CR-071"
-      ],
-      "phase": 2,
-      "scope_note": "Role CRUD + Permission Matrix (3 backend-defined categories: frontend/backend/report). Role Type = single-select dropdown driven by role-master-list templates; picking a template loads default_modules[] into matrix baseline. System-protected roles HIDDEN from table, shown as chip banner. Preserve R9 typos verbatim. Consumer wiring NOT in scope (that is CR-071).",
-      "sub_task_flagged_by_owner": "Role Definitions doc \u2014 canonical spec of what each Role Type SHOULD have as default permissions. To be produced during CR-070 design/planning phase as an OQ for owner.",
-      "blast_radius": "SMALL\u2013MEDIUM (~6 files: ~5 new + Sidebar entry / role-tab in same page as CR-069)",
-      "design_brainstorm_owner_note": "How to make it easy for user to understand \"Role Type pre-fills defaults, you can add/remove on top\" \u2014 needs education UI (tooltip/help text/example). Owner requested design-phase brainstorm."
-    },
-    {
-      "id": "CR-071",
-      "title": "App-Wide Role Gating / Permission Consumer Wiring (Migration Phase 3 \u2014 DEFERRED)",
-      "type": "CR",
-      "priority": "P1",
-      "risk": "CRITICAL",
-      "status": "INTAKE \u2014 DEFERRED (post CR-057 + CR-058 close, and CR-069/070 ship)",
-      "gate": "0",
-      "sprint_key": "pos_5_0_wave_2",
-      "registered": "2026-02-15",
-      "depends_on": [
-        "CR-069",
-        "CR-070",
-        "CR-057",
-        "CR-058"
-      ],
-      "related": [
-        "CR-069",
-        "CR-070",
-        "CR-068"
-      ],
-      "blocks": [
-        "CR-068"
-      ],
-      "phase": 3,
-      "scope_note": "Consume existing AuthContext.hasPermission() across ~30 consumer files: Sidebar sub-items, OrderCard/CartPanel/OrderEntry/CollectPaymentPanel/TableCard (R5 hotspots), all Reports pages, Menu Mgmt (bulk edit/delete/price), Credit/Settlement/Expense CRUD, Settings tiles. NO new backend endpoints. NO new UI components. Pure app-wide gating rollout.",
-      "blast_radius": "LARGE (~30 files, ~80\u2013120 gate insertions)",
-      "gate_infrastructure": "Reuses existing AuthContext.hasPermission()/usePermission() hook that already exists. Adds a thin PermissionGate.jsx JSX wrapper as convenience.",
-      "sequencing_reason": "Deferred behind CR-057 (Menu No-Tax, CRITICAL) and CR-058 (Order Complimentary, HIGH) to avoid R5 hotspot merge conflicts per R16."
+      "permission_catalog_size": "52 permissions (frontend:27, backend:13, report:12) + 6 role_types + 10 predefined templates"
     }
   ]
 }
