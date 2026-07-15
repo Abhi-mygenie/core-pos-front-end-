@@ -1,28 +1,49 @@
-# PRD — MyGenie POS Frontend
+# MyGenie POS Frontend — PRD
 
 ## Original Problem Statement
-Deploy existing React frontend repo and run as-is. Then implement CR-060 Table/Room Management CRUD wiring. Then fix BUG-185/186 Settlement Expected column.
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`) into `/app` and run as-is. Frontend-only — no backend setup. Env variables provided by owner.
 
 ## Architecture
-- Frontend: React 19 (CRA + CRACO) on port 3000
-- Backend: External Laravel at preprod.mygenie.online
-- Process Manager: Supervisor
-- Database: MongoDB (local, for platform use only — app data on preprod)
+- **Frontend**: React 19.0.0 with CRACO, Tailwind CSS, Radix UI, shadcn
+- **Backend**: Laravel on preprod.mygenie.online (external)
+- **Socket**: presocket.mygenie.online
+- **Firebase**: Auth/notifications
+- **CRM**: crm.mygenie.online/api
+- **Process Manager**: Supervisor (frontend port 3000, backend port 8001)
 
 ## What's Been Implemented
 
-### 2026-07-14
-- Repo deployed from GitHub (core-pos-front-end-, branch main)
-- CR-060: Table/Room Management — 8 CRUD APIs wired, TableManagementView rewritten, TableBulkEditor created, sidebar comingSoon removed. QA 15/15 PASS.
-- BUG-185: Settlement Expected column — replaced 9 instances of wrong FE formula with backend `balanceToSettle`. Awaiting QA.
-- BUG-186: Partial Settlement — resolved as side-effect of BUG-185 fix. No additional code.
+### Session 1 (2026-07-14) — Previous Agent
+- CR-060: Table/Room Management (QA 15/15 PASS)
+- BUG-185: Settlement Expected column fix (uses `balanceToSettle`)
+- BUG-186: Partial settlement fix (side-effect of BUG-185)
+- Settlement Report formula partial fix (removed circular pilferage)
+
+### Session 2 (2026-07-15) — This Agent
+- Branch switch: `main` → `15-july` (fresh clone)
+- **Settlement Report formula COMPLETE fix** — 3 lines now read `balance_to_settle` from API instead of FE formula
+- **Status View Sort Investigation** — root cause found, fix specified
 
 ## Prioritized Backlog
-- P0: BUG-185/186 QA verification on cafe103
-- P0: CR-060 Gate 6 Owner Smoke
-- P1: Settlement Report formula fix (3 lines — planned, owner-approved, deferred to next session)
-- P1: CR-061 Expense Report (Gate 3 complete, awaiting Gate 4 GO)
-- P1: CR-051 Customer Field Mandatoriness (Gate 3 complete)
-- P1: CR-060 Phase 2 (QR codes, waiter permissions)
-- P1: BUG-123 Place Order 401 redirect (Gate 2 complete, needs owner decisions)
-- P2: Transfer Cash Modal (backend-blocked — /waiter/cash-transfer 404)
+
+### P0 — Critical
+- **Status View Sort Fix**: Cards in wrong order within status columns. Fix: 1 file (`statusHelpers.js`), ~6 lines. Investigation complete, owner approval needed.
+
+### P1 — High
+- QA verification: BUG-185/186 + report formula on cafe103
+- Backend: `ready_at` not always populated (breaks timeline + sort)
+
+### P2 — Medium
+- Transfer Cash Modal: Backend-blocked (404)
+- BUG-182: Expense report wrong employee name (backend)
+- Backend: `serve_at` inconsistent population
+
+### P3 — Low
+- 6 backend-blocked bugs from POS 3.0 (BUG-090→094, BUG-101)
+- BUG-124: Socket payload missing fields (FE-defended)
+- BUG-129: TAB orders premature status stamp (FE workaround)
+
+## Next Tasks
+1. Owner approves Status View sort fix → implement (1 file, 6 lines)
+2. QA: Settlement panel + report on cafe103
+3. QA: Status View sort after fix (vishal@pav.com)
