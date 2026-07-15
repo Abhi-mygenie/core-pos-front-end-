@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:10:07.044115+00:00",
+  "generated_at": "2026-07-15T09:24:59.434398+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -14835,8 +14835,12 @@
         "Backend endpoint list from owner (OQ-1)"
       ],
       "impact_analysis_doc": "impact/CR-069_IMPACT_ANALYSIS.md",
-      "gate3_blocker": "Mockups for 4 primary screens pending owner approval (OQ-14)",
-      "risk_notes": "Impact Analysis found permission model already exists in AuthContext/authService/LoadingPage. Owner may downgrade CRITICAL\u2192HIGH per OQ-9."
+      "gate3_blocker": "Design guidelines produced 2026-02-15; awaiting owner approval before Gate 3",
+      "risk_notes": "Impact Analysis found permission model already exists in AuthContext/authService/LoadingPage. Owner may downgrade CRITICAL\u2192HIGH per OQ-9.",
+      "design_guidelines_doc": "evidence/CR-069/mockups/CR-069_DESIGN_GUIDELINES.json",
+      "backend_endpoints_verified": true,
+      "backend_evidence": "evidence/CR-069/api_responses/ + evidence/CR-069/AUTHORITATIVE_CATALOG.json",
+      "permission_catalog_size": "52 permissions (frontend:27, backend:13, report:12) + 6 role_types + 10 predefined templates"
     }
   ]
 }
