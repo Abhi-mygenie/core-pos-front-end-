@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:10:07.044115+00:00",
+  "generated_at": "2026-07-15T09:01:31.030278+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -14812,8 +14812,8 @@
       "type": "CR",
       "priority": "P1",
       "risk": "CRITICAL",
-      "status": "GATE 2 COMPLETE \u2014 awaiting mockup approval",
-      "gate": "2",
+      "status": "INTAKE",
+      "gate": "0-1",
       "sprint_key": "pos_5_0",
       "registered": "2026-02-15",
       "intake_doc": "change_requests/CR-069_EMPLOYEE_MANAGEMENT_INTAKE.md",
@@ -14833,10 +14833,7 @@
       },
       "blockers": [
         "Backend endpoint list from owner (OQ-1)"
-      ],
-      "impact_analysis_doc": "impact/CR-069_IMPACT_ANALYSIS.md",
-      "gate3_blocker": "Mockups for 4 primary screens pending owner approval (OQ-14)",
-      "risk_notes": "Impact Analysis found permission model already exists in AuthContext/authService/LoadingPage. Owner may downgrade CRITICAL\u2192HIGH per OQ-9."
+      ]
     }
   ]
 }
