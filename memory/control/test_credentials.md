@@ -7,6 +7,7 @@
 |---|---|---|---|---|
 | 18March | `owner@18march.com` | `Qplazm@10` | Owner | Verified working — used to fetch orders #002384, #002386 |
 | Hogwarts (rest id 618) | `Manager@hogwarts.com` | `Qplazm@10` | Manager | Verified working — used to fetch order #000334. **Requires `?role_name=Manager` query param on `/pos/employee-orders-list`** (undocumented gotcha). |
+| cafe103 | `owner@cafe103.com` | `Qplazm@10` | Owner | Verified 2026-02-15 for CR-069 (Employee Management intake). Login returns `role_name: "Owner"` + 50 permissions. Used for `/employees-list`, `/role-list`, `/all-role-list`, `/role-master-list` probes. Evidence at `/app/memory/evidence/CR-069/api_responses/`. |
 
 ## Login endpoint
 `POST /api/v1/auth/vendoremployee/login`

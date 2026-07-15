@@ -203,146 +203,198 @@ Grouped by risk band:
 
 ---
 
-## §5 — Backend Contract Requirements (BLOCKED on OQ-1)
+## §5 — Backend Contract (VALIDATED via live curl-probe 2026-02-15)
 
-Endpoints we predict are needed. Marked ⏳ = pending owner share; will curl-probe per R11 when available and update this doc.
+Endpoints probed with fresh token from `owner@cafe103.com` login. All 4 GET endpoints returned **HTTP 200**. Full JSON responses saved under `/app/memory/evidence/CR-069/api_responses/`. Consolidated authoritative catalog at `/app/memory/evidence/CR-069/AUTHORITATIVE_CATALOG.json`.
 
-### A. Existing endpoints we depend on (verify shape)
+### A. Endpoints (owner-provided, all live-verified)
 
-| Endpoint | Purpose | Verification |
+| Method | Endpoint | Purpose | Response shape (top-level) | Sample size |
+|---|---|---|---|---|
+| POST | `/api/v1/auth/vendoremployee/login` | Auth + hydrate `role_name` + `role[]` (permissions) | `{ token, role_name, role[], firebase_token, crm_token, first_login, zone_wise_topic }` | 50 perms for Owner |
+| GET | `/api/v2/vendoremployee/employee/employees-list` | List employees | `{ employees: [...] }` | 19 employees @ cafe103 |
+| GET | `/api/v1/vendoremployee/employee/role-list` | List configured roles | `{ message, roles: [...] }` | 9 roles @ cafe103 |
+| GET | `/api/v2/vendoremployee/employee/all-role-list` | **Canonical permission catalog** + role types | `{ role_types: [6], role_modules: { frontend:[27], backend:[13], report:[12] } }` | 6 role_types + 52 modules |
+| GET | `/api/v1/vendoremployee/employee/role-master-list` | Predefined role templates | `{ message, count, roles: [...] }` | 10 templates |
+| POST | `/api/v2/vendoremployee/employee/employees-add` | Create employee | body: `{ f_name, l_name, role_id, email, phone, bill_user_view, password }` | — |
+| POST/PUT | `/api/v2/vendoremployee/employee/employees-update/{id}` | Update employee | body: same as add minus `password` | — |
+| POST/PUT | `/api/v2/vendoremployee/employee/employee-status/{id}` | Toggle active/inactive | body: `{ status: 0\|1 }` | — |
+| POST | `/api/v1/vendoremployee/employee/role-add` | Create role | body: `{ name, modules[], role_type[], role_master_id, printmodules }` | — |
+| POST/PUT | `/api/v1/vendoremployee/employee/role-update/{id}` | Update role | body: same + `status` | — |
+
+**Not yet shared by owner (may be needed):** DELETE role, single employee GET, single role GET (may be inferable from list responses if backend supports pagination or filtering).
+
+### B. Entity Shapes (from live responses)
+
+**Employee** (from `employees-list`):
+```
+id, f_name, l_name, phone, email, status (0/1), image (URL),
+role: { id, name },
+bill_user_view: "Yes" | "No",
+mac_ip_kds, mac_ip_bill, mac_ip_bar   ← Station IP configuration per employee
+                                        (NOT in owner's add-employee payload — surface in edit form? See OQ-15 below)
+```
+
+**Role** (from `role-list`):
+```
+id, name, status (0/1),
+parent_role, role_master_id (nullable), role_master_name (nullable),
+modules: [string], total_modules,
+is_system_role (bool), is_editable (bool), protection_level ("System Protected" | ...),
+created_at, updated_at
+```
+
+⚠️ **Critical UX gate:** `is_editable: false` means the UI must show the role as **read-only with a lock affordance**. Example: `"BAR"` role has `is_system_role: true, is_editable: false, protection_level: "System Protected"`.
+
+**Role Master Template** (from `role-master-list`):
+```
+id, name (e.g., "Accountant"), map_role (role_type mapping),
+default_modules: [string], is_protected (bool),
+created_at, updated_at
+```
+
+Purpose: When creating a new role, user picks a template → form pre-fills with `default_modules[]`.
+
+**Role Type** (from `all-role-list.role_types`):
+```
+6 values: STATION, Waiter, Manager, Billing, Server Waiter (Buffet), Delivery
+```
+These are the values for `role_type[]` on role add/update payloads.
+
+**Permission Catalog** (from `all-role-list.role_modules`) — §6 below.
+
+### C. Rule R9 — Backend Spelling Verbatim (CONFIRMED from live catalog)
+
+The live catalog contains these authoritative typos. FE MUST use verbatim (do NOT correct in transforms, filters, or UI code):
+
+| `role_pass_value` (permission key) | Display `name` | English intent |
 |---|---|---|
-| `POST /login` | Must return `permissions[]` in response | ⏳ Curl-probe once endpoint shared |
-| `GET /profile` (via `profileService.getProfile`) | Must return `user.roleName`, `user.roleId`, `permissions[]` | ⏳ Curl-probe |
+| `expence` | Expence | expense |
+| `report_summery` | report summery | report summary |
+| `sattle_report` | sattle report | settle_report |
+| `complementary_food` | Complementary Food | complimentary (order-level comp) |
+| `revenue_report_average` | revenue report_average | revenue_report_average |
 
-### B. NEW endpoints owner needs to expose (predicted)
+### D. Backend Brief — not needed at this time
 
-| Method | Endpoint pattern | Purpose |
-|---|---|---|
-| GET | `/employees` (list) | Employee list with `role`, `status` |
-| GET | `/employees/{id}` | Employee detail |
-| POST | `/employees` | Create employee |
-| PUT/PATCH | `/employees/{id}` | Update employee (name, phone, role, status) |
-| DELETE | `/employees/{id}` | Deactivate (soft-delete recommended) |
-| POST | `/employees/{id}/password` | Reset password (if OQ-6 = admin-set) |
-| GET | `/roles` | Role list |
-| GET | `/roles/{id}` | Role detail incl. permission grants |
-| POST | `/roles` | Create role |
-| PUT/PATCH | `/roles/{id}` | Update role name + permissions |
-| DELETE | `/roles/{id}` | Delete role (only if no employees assigned) |
-| GET | `/permissions` | Canonical permission catalog (source of truth for §6) |
-
-### C. Backend Brief needed (R11 / v0.7 §Backend Handoff Template)
-
-If any of the above return unexpected shape (e.g., different `roleName` casing between endpoints — see BUG-182 precedent), a `BACKEND_BRIEF_CR-069_2026_02_15.md` must be filed under `/app/memory/backend_briefs/`. This is a common trap — BUG-182 documents `employee_name` inconsistency across expense endpoints on this exact backend.
+All response shapes are consistent within themselves. No BUG-182-style drift detected across employees-list vs. role-list. If a drift shows up during Gate 3 curl re-probes, we'll file `BACKEND_BRIEF_CR-069_<date>.md`.
 
 ---
 
-## §6 — Permission Catalog — Draft
+## §6 — Permission Catalog (AUTHORITATIVE — from live `all-role-list` response)
 
-Canonical keys the FE will use. Grouped by module. Owner + backend confirm names during OQ-2.
+**Source of truth:** `GET /api/v2/vendoremployee/employee/all-role-list` → `role_modules` dict, grouped into 3 categories by backend.
 
-**Naming convention (proposed):** `{module}.{action}` — e.g., `orders.cancel`, `menu.edit`, `reports.export`. Lowercase, dot-separated.
+**52 total permissions**, grouped as the backend delivers them. The FE `permissionCatalog.js` should mirror this structure verbatim.
 
-```
-# Existing (already used in SIDEBAR_PERMISSIONS)
-pos                     # Dashboard, Day Closure, Credit, Expenses
-menu                    # Menu Management page
-report                  # Reports + Insights top-level access
-restaurant_settings     # Settings top-level access
-credit                  # Currently unused (sidebar reuses 'pos')
+### Category: `frontend` (27 permissions — POS/Order actions)
 
-# Orders (gated at button level)
-orders.view
-orders.create
-orders.edit
-orders.cancel                    # ← CR-068's target permission
-orders.item_cancel               # ← CR-068 sub-question
-orders.refund
-orders.discount_apply
-orders.complimentary_mark        # ← CR-058's target permission
-orders.split
-orders.settle
-orders.print_bill
-orders.print_kot
-orders.reopen
-orders.transfer_table
+| `role_pass_value` (permission key) | Display label |
+|---|---|
+| `food` | food |
+| `pos` | Pos |
+| `order` | Order |
+| `bill` | Bills |
+| `order_cancel` | Order Cancel |
+| `serve` | Serve |
+| `aggregator` | Aggregator |
+| `show_online_order` | Show Online Order |
+| `assign_online_order` | Assign Online Order |
+| `order_unpaid` | Order Unpaid |
+| `update_payment` | Update Payment |
+| `order_edit` | Order Edit |
+| `delivery_man` | Delivery Man |
+| `clear_payment` | Clear Payment |
+| `ready` | Ready |
+| `customer_management` | customer management |
+| `virtual_wallet` | virtual wallet |
+| `discount` | Discount |
+| `transfer_table` | Transfer Table |
+| `merge_table` | Merge Table |
+| `food_transfer` | Food Transfer |
+| `whatsapp_icon` | WhatsApp Icon |
+| `print_icon` | Print Icon |
+| `table_view` | Table View |
+| `token_display` | Token Display |
+| `confirm_order` | Confirm Order |
+| `complementary_food` | Complementary Food ⚠️ (R9 typo — "complimentary") |
 
-# Menu
-menu.view
-menu.create_item
-menu.edit_item
-menu.delete_item
-menu.bulk_edit
-menu.category_manage
-menu.price_edit                  # separate — commonly restricted
-menu.no_tax_toggle               # ← CR-057's target permission
+### Category: `backend` (13 permissions — module-level access)
 
-# Reports & Insights
-report.view
-report.audit_tab                 # already env-flagged; layer permission on top
-report.export
-report.filter_all_users          # see own reports vs. all users
+| `role_pass_value` | Display label |
+|---|---|
+| `employee` | Employee |
+| `restaurant_setup` | Restaurant Setup |
+| `inventory` | Inventory |
+| `coupon` | Coupon |
+| `printer` | Print Bill |
+| `menu` | Menu |
+| `expence` | Expence ⚠️ (R9 typo — "expense") |
+| `loyalty` | Loyalty |
+| `restaurant_settings` | restaurant settings |
+| `printer_management` | Printer Management |
+| `table_management` | Table Management |
+| `delivery_management` | Delivery Management |
+| `physicalqty_master` | PhysicalQty Master |
 
-# Settings
-settings.view
-settings.restaurant_edit
-settings.printers
-settings.table_management        # ← CR-060 wired area
-settings.employee_management     # ← THIS CR
-settings.role_management         # ← THIS CR
-settings.operating_hours
-settings.cancellation_reasons
-settings.status_config
-settings.channel_visibility
+### Category: `report` (12 permissions — report access)
 
-# Credit / Settlement / Expense / Day Closure
-credit.view
-credit.create
-credit.edit
-credit.void
-settlement.view
-settlement.perform               # actually settle a day
-day_closure.perform
-expense.view
-expense.create
-expense.edit
-expense.void
+| `role_pass_value` | Display label |
+|---|---|
+| `report` | report |
+| `report_summery` | report summery ⚠️ (R9 typo — "summary") |
+| `waiter_revenue_report` | waiter revenue_report |
+| `sattle_report` | sattle report ⚠️ (R9 typo — "settle") |
+| `revenue_report` | revenue report |
+| `room_report` | room report |
+| `sales_report` | sales report |
+| `revenue_report_average` | revenue report_average |
+| `consumption_report` | consumption report |
+| `cancellation_report` | cancellation report |
+| `pl_report` | PL Report |
+| `wastage_report` | Wastage Report |
 
-# Room
-room.check_in
-room.check_out
-room.transfer
+### Role Types (6 — used in `role_type[]` field on role add/update)
 
-# Admin
-admin.employees.manage           # convenience alias
-admin.roles.manage
-admin.impersonate                # future
-```
+`STATION`, `Waiter`, `Manager`, `Billing`, `Server Waiter` (value=`Buffet`), `Delivery`
 
-**Count:** ~55 permission keys. Owner may prune/merge/rename during OQ-2. Backend authoritative list wins (OQ-1 disclosure).
+### Live-configured roles at cafe103 (`role-list` — 9 roles)
+
+`BAR` *(system, non-editable)*, `captain`, `KDS`, `Manager`, `Manger(C)`, `Owner`, `owner(c)`, `Report`, `Waiter`
+
+### Predefined role templates (`role-master-list` — 10 templates)
+
+`Accountant`, `Billing User`, `Captain`, `Cashier`, `Delivery Boy`, `Manager`, `Owner`, `Station (Chef)`, `Waiter(S)`, `Waiter(T)`
+
+**Design implication:** The Permission Matrix UI in the Role Management screen must render the 52 permissions **grouped by these 3 backend categories** (frontend / backend / report) — not by our earlier speculative grouping. This drops OQ-13 (naming convention) — backend is authoritative.
 
 ---
 
 ## §7 — Owner Decision Queue
 
-Combines Intake OQs with new ones surfaced during analysis:
+**Update 2026-02-15 post-probe:** OQ-1 partially resolved (endpoints shared + probed live). OQ-2 fully resolved (backend catalog is authoritative — see §6). OQ-13 dropped (backend keys used verbatim per R9).
 
-| # | Question | Priority | Blocks |
-|---|---|---|---|
-| OQ-1 (intake) | **Full backend endpoint list** for employees + roles + permissions on `preprod.mygenie.online` | 🔴 P0 | Curl-probe / R11 / all planning |
-| OQ-2 (intake) | Default seeded roles + canonical permission catalog from backend | 🔴 P0 | §6 finalization / mockups |
-| OQ-7 (intake) | Confirm CR-069 ships before CR-068 (Cancellation Role-Gating) | 🟡 P1 | Sprint sequencing |
-| OQ-8 (intake) | One PR vs. two-slice (Employee CRUD → Roles/Perms → Consumer wiring) | 🟡 P1 | Implementation batching |
-| OQ-3 (intake) | Permission granularity — resource-level (`orders.cancel`) confirmed as proposal? | 🟢 P2 | §6 taxonomy |
-| OQ-4 (intake) | Multi-restaurant scope — per-tenant or global? | 🟡 P1 | Data model |
-| OQ-5 (intake) | Migration of existing user accounts to role model | 🟡 P1 | Backend + release plan |
-| OQ-6 (intake) | Password policy on Employee Create — admin-set / invite-email / phone-OTP | 🟡 P1 | Form design |
-| **OQ-9** ⭐ (new — §1 correction) | **Risk downgrade** — Permission model already exists; may we downgrade risk from CRITICAL → HIGH? (v0.7 §Risk Classification requires owner rationale for downgrade) | 🟡 P1 | Process rigor level for the sprint |
-| **OQ-10** ⭐ (new — §3.C) | Confirm gate primitive: **`<PermissionGate>` for JSX blocks + `usePermission()` for logic**? Or JSX-only? Or Hook-only? | 🟡 P1 | Consumer wiring style |
-| **OQ-11** ⭐ (new — §4.C) | Wave strategy — Wave 1 = Employee CRUD + Role Mgmt + Sidebar polish; Wave 2 = R5 hotspot consumer wiring (delayed until CR-057/058 close). Owner confirms? | 🟡 P1 | Sprint sequencing |
-| **OQ-12** ⭐ (new — §5.C) | If backend returns inconsistent shapes (BUG-182 precedent), do we open a `BACKEND_BRIEF` and delay the affected wave, or ship an FE workaround? | 🟢 P2 | Contingency planning |
-| **OQ-13** ⭐ (new — §6) | Permission-key naming convention — `orders.cancel` (dot) vs. `cancel_order` (underscore) vs. backend-defined verbatim? | 🟡 P1 | Catalog finalization |
-| **OQ-14** ⭐ (new — mockups) | **Mockup workflow** — should I invoke `design_agent_full_stack` to produce mockups for the 4 primary screens (see §8), or will owner supply mocks from the Old POS? | 🔴 P0 | Gate-3 blocked until mocks approved |
+| # | Question | Status | Priority | Blocks |
+|---|---|---|---|---|
+| ~~OQ-1~~ (intake) | Full backend endpoint list for employees + roles + permissions | ✅ **RESOLVED** — 9 endpoints provided + 4 GETs live-probed | — | — |
+| ~~OQ-2~~ (intake) | Default seeded roles + canonical permission catalog | ✅ **RESOLVED** — 52 permissions in 3 categories + 10 role templates confirmed live (§6) | — | — |
+| ~~OQ-13~~ (analysis) | Permission-key naming convention | ✅ **RESOLVED** — use backend keys verbatim per R9 | — | — |
+| OQ-7 (intake) | Confirm CR-069 ships before CR-068 (Cancellation Role-Gating) | ⏳ Open | 🟡 P1 | Sprint sequencing |
+| OQ-8 (intake) | One PR vs. two-slice (Employee CRUD → Roles/Perms → Consumer wiring) | ⏳ Open | 🟡 P1 | Implementation batching |
+| OQ-3 (intake) | Permission granularity — `<PermissionGate>` for JSX + `usePermission()` for logic (proposal) | ⏳ Open | 🟢 P2 | Consumer wiring style |
+| OQ-4 (intake) | Multi-restaurant scope — per-tenant or global? | ⏳ Open | 🟡 P1 | Data model (probably per-tenant given login flow — needs owner confirm) |
+| OQ-5 (intake) | Migration of existing user accounts to role model | ⏳ Open — likely N/A since roles already exist per `role-list` | 🟡 P1 | Release plan |
+| OQ-6 (intake) | Password policy on Employee Create — admin-set / invite-email / phone-OTP | ⏳ Open — current `add-employee` payload accepts `password` directly (admin-set) | 🟡 P1 | Form design |
+| OQ-9 (analysis) | Risk downgrade CRITICAL → HIGH | ⏳ Open | 🟡 P1 | Process rigor |
+| OQ-10 (analysis) | Gate primitive — `<PermissionGate>` + `usePermission()` combo | ⏳ Open | 🟡 P1 | Consumer wiring |
+| OQ-11 (analysis) | Wave strategy — Wave 1 (Employee + Role Mgmt + Sidebar) then Wave 2 (R5 consumer wiring after CR-057/058 close) | ⏳ Open | 🟡 P1 | Sprint sequencing |
+| OQ-12 (analysis) | Backend drift contingency (BUG-182-style) — brief + delay, or FE workaround? | ⏳ Open | 🟢 P2 | Contingency |
+| OQ-14 (analysis) | Mockup workflow — `design_agent_full_stack` vs. owner-supplied | ⏳ Open — proceeding with **design_agent proposal** unless owner overrides | 🔴 P0 | Gate 3 |
+| **OQ-15** ⭐ NEW | **`mac_ip_kds` / `mac_ip_bill` / `mac_ip_bar` fields** are on every employee record but NOT in the add-employee payload owner shared. Are these Phase 1 (surface in edit form for station routing config) or Phase 2 (hide)? | ⏳ Open | 🟡 P1 | Employee Form design |
+| **OQ-16** ⭐ NEW | **System-protected roles** (e.g., `BAR` with `is_editable: false, protection_level: "System Protected"`) — should the UI show them at all, show read-only, or hide entirely? Recommend show read-only with a lock badge. | ⏳ Open | 🟡 P1 | Role List UX |
+| **OQ-17** ⭐ NEW | **`role_master_id` on role create** — should it be required (user must pick a template) or optional (allow fully-custom roles with `null`)? Live data shows both patterns. | ⏳ Open | 🟡 P1 | Role Form UX |
+
+**Currently blocking Gate 3:** OQ-14 (mockup workflow — but proceeding by default), OQ-11 (wave strategy — impacts plan slicing), OQ-15/16/17 (Form UX details for the mockups themselves).
 
 ---
 
