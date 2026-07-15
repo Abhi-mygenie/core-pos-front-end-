@@ -299,7 +299,7 @@ Both formulas frozen as intentional design choices. Future agents MUST NOT align
 |---|---|---|---|
 | OG-CR041-SETTINGS-DEEPLINK | Settings children (Table Mgmt, Printers, Operating Hours, Cancellation Reasons, Employee Mgmt) show "Coming Soon" toast. Need `/settings?tile=X` deep-linking or individual page wrappers per tile. | P3 | NO — "All Settings" link opens full 12-tile panel |
 | OG-CR041-ITEM-REPORT | "Item Report" under Daily Report — owner to specify content, screen, and endpoint. Placeholder with Coming Soon. | P2 | NO |
-| OG-CR041-EMPLOYEE-MGMT | "Employee Management" under Settings — owner to provide endpoint. Placeholder with Coming Soon. | P2 | NO |
+| OG-CR041-EMPLOYEE-MGMT | ~~"Employee Management" under Settings — owner to provide endpoint. Placeholder with Coming Soon.~~ **SUBSUMED by CR-069 on 2026-02-15** (Employee Management + Roles & Permissions migration Phase 1). See `change_requests/CR-069_EMPLOYEE_MANAGEMENT_INTAKE.md`. | P2 | SUBSUMED |
 | OG-CR041-OPERATING-HOURS-WRITE | Operating Hours edit form in Settings Panel has no save API wired (`onSave={handleBack}` is a no-op). Write endpoint needs identification from backend. Read works via profile API. | P2 | NO |
 | OG-CR041-DAILY-ROOM-REPORT | Daily Room Report (`/reports/rooms`) removed from sidebar in restructure. Route still works via direct URL. Owner to confirm if it needs placement elsewhere. | P3 | NO |
 | OG-CR041-SCREEN-MOCKUPS | New page wrappers (MenuManagementPage, CreditManagementPage, DayClosurePage, SettingsPage) wrap existing panels. May need design review for layout, back-navigation UX, and mobile responsiveness. | P3 | NO |

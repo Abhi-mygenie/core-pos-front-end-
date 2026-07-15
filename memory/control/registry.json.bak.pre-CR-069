@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:01:31.030278+00:00",
+  "generated_at": "2026-07-07T08:55:50.376769+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -14801,39 +14801,7 @@
       "gate": "0-1",
       "sprint_key": "pos_5_0",
       "registered": "2026-07-11",
-      "intake_doc": "change_requests/CR_068_CANCELLATION_ROLE_GATING.md",
-      "depends_on": [
-        "CR-069"
-      ]
-    },
-    {
-      "id": "CR-069",
-      "title": "Employee Management + Roles & Permissions (Migration Phase 1)",
-      "type": "CR",
-      "priority": "P1",
-      "risk": "CRITICAL",
-      "status": "INTAKE",
-      "gate": "0-1",
-      "sprint_key": "pos_5_0",
-      "registered": "2026-02-15",
-      "intake_doc": "change_requests/CR-069_EMPLOYEE_MANAGEMENT_INTAKE.md",
-      "subsumes": [
-        "OG-CR041-EMPLOYEE-MGMT"
-      ],
-      "blocks": [
-        "CR-068"
-      ],
-      "related": [
-        "CR-041",
-        "CR-060"
-      ],
-      "phase": 1,
-      "future_phases": {
-        "phase_2": "Attendance/Check-in, Shifts/Roster, Payroll, Leaves - not yet registered"
-      },
-      "blockers": [
-        "Backend endpoint list from owner (OQ-1)"
-      ]
+      "intake_doc": "change_requests/CR_068_CANCELLATION_ROLE_GATING.md"
     }
   ]
 }
