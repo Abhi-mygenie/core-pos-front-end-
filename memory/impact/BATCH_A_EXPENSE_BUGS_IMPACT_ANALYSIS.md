@@ -264,23 +264,50 @@ Owner noted Expense Setup and Bulk Editor UIs diverge from Menu Management patte
 
 **Files (estimated):** `ExpenseBulkEditor.jsx`, `ExpenseSetupPanel.jsx`, `expenseService.js`, conditionally `ExpenseReportPage.jsx` + `utils/reportExporter.js`.
 
-### 9.3 New Blockers (B-5..B-8)
+### 9.3 New Blockers (B-5..B-8) — Status
 
-| ID | Blocker | Blocks |
+| ID | Blocker | Status |
 |---|---|---|
-| **B-5** | CR-074 scope — Narrow vs Broad | CR-074-A implementation |
-| **B-6** | BUG-202 backend model — is `PUT /expense/expenses/{id}` supported? (curl + possibly BACKEND_BRIEF) | BUG-202 implementation |
-| **B-7** | BUG-202 rename/re-categorize semantics — Snapshot / Retroactive / Hybrid? | BUG-202 implementation approach |
-| **B-8** | CR-074-B — replaces CR-067 bulk editor or complements it? | CR-074-B design brief |
+| **B-5** | CR-074 scope — Narrow vs Broad | ✅ **RESOLVED — NARROW** (owner 2026-07-16). Remove import/export only from Expense Setup (item-master bulk editor). Insights/Report Excel-PDF download preserved. |
+| **B-6** | BUG-202 backend model — is `PUT /expense/expenses/{id}` supported? | ✅ **RESOLVED — NO** (curl 2026-07-16). Route exists but routes to category-update handler. Item update needs new endpoint. `BACKEND_BRIEF_BUG202_2026-07-16.md` drafted. |
+| **B-7** | BUG-202 rename/re-categorize semantics | ✅ **RESOLVED — Mixed reality** (owner 2026-07-16 accepted planning rec). Name = retroactive (backend joins on read); Category = snapshot (per-transaction category_id at creation). UI copy will make this explicit. |
+| **B-8** | CR-074-B — replaces CR-067 bulk editor or complements it? | ✅ **RESOLVED — replaces** (owner: "bulk edit UI we already discussed and noted"). Design refresh supersedes CR-067 UI patterns. |
 
-### 9.4 Revised Batch A execution order (post-decisions)
+Additional blockers resolved by curl-verify session (2026-07-16):
 
-1. Curl session resolves B-1, B-2, B-6 in one pass.
-2. Owner rulings on B-5, B-7, B-8.
-3. design_agent invoked with resolved constraints → mockup for owner approval.
-4. Gate 3 Implementation Plan covers all 5 items:
-   - BUG-199 (independent, ship first)
-   - BUG-200 (independent, ship second)
-   - BUG-201 Phase 1 interim (wording only, awaiting backend)
-   - CR-074-A (Narrow remove — independent, low risk)
-   - BUG-202 + CR-074-B (paired, gated by design approval + backend for PUT endpoint)
+| ID | Blocker | Status |
+|---|---|---|
+| **B-1** | BUG-199 payload key | ✅ **RESOLVED — `category_id`** (snake_case, numeric, at line level). Backend defaults to misc (cat 273) when missing. Deterministic. |
+| **B-2** | BUG-200 param name for report filter | ✅ **RESOLVED — filter already works**. `category_id` is correct; current FE code (`expenseService.js:120–125`) is already sending correct param. **BUG-200 is a downstream symptom of BUG-199** — no code change needed for BUG-200. Reclassify as **DUPLICATE-OF-BUG-199** (auto-resolves once BUG-199 ships). |
+
+Evidence: `/app/memory/evidence/BATCH_A/CURL_VERIFY_FINDINGS.md`
+
+### 9.4 Revised Batch A execution order (post-decisions, 2026-07-16 final)
+
+**Ship-now group (no backend dependency, ~1h coding + QA):**
+1. **BUG-199** — Add `category_id` at 2 sites (`ExpenseEntryPanel.jsx:489`, `expenseService.js:138`). Extend to `editExpenseEntry` (L154–163) per Q-1.
+2. **BUG-200** — CLOSE as auto-resolved. Add regression test in Verification Matrix.
+3. **CR-074-A (Narrow)** — Remove import/export UI in `ExpenseBulkEditor.jsx` + service wrappers (`exportStockMaster`, `importStockMaster`, `importExpenses` in `expenseService.js`). **Preserve** `exportExpenseReport` (report page uses it).
+4. **BUG-201 Phase 1 interim** — Wording-only update on existing delete-item modal (`ExpenseSetupPanel.jsx:897–914`). No functional change; sets user expectations while awaiting backend.
+
+**Backend-gated group (waiting on BACKEND_BRIEF_BUG201 + BUG202):**
+5. **BUG-202** — Edit Item feature. UI + service wrapper + `PUT /expense/stock-items/{id}` consumption. Blocked on BACKEND_BRIEF_BUG202 delivery.
+6. **BUG-201 Phase 1 full** — Consume 409 responses from BACKEND_BRIEF_BUG201. Update dialog to show `transaction_count`/`item_count`.
+
+**Design-gated group:**
+7. **CR-074-B** — Full Expense Setup redesign matching Menu Management (inline row edit, dropdown, unified bulk pattern). **Call design_agent_full_stack** for mockup → owner approval → then Gate 3.
+
+### 9.5 Final Decisions Log (2026-07-16)
+
+| Item | Decision |
+|---|---|
+| Q-1 (extend BUG-199 to editExpenseEntry) | ✅ Extend |
+| Q-2 (backfill script for miscategorized entries) | ✅ Out of scope; note as backlog only |
+| B-1 (payload key) | ✅ `category_id` (curl-verified) |
+| B-2 (report filter) | ✅ auto-resolved by BUG-199 |
+| B-3 (pre-delete impact for BUG-201) | ✅ BACKEND_BRIEF_BUG201 written |
+| B-4 (BUG-201 fallback) | ✅ Escalate to backend; FE interim wording only |
+| B-5 (CR-074 scope) | ✅ Narrow — setup module only |
+| B-6 (BUG-202 endpoint) | ✅ BACKEND_BRIEF_BUG202 written |
+| B-7 (BUG-202 semantics) | ✅ Mixed reality — name retroactive, category snapshot |
+| B-8 (CR-074-B vs CR-067) | ✅ Replaces CR-067 bulk-editor UI patterns |
