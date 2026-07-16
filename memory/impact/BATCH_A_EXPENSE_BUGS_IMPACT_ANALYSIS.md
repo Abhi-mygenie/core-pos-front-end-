@@ -216,3 +216,71 @@ Impact Analysis complete for 3 items (BUG-199, BUG-200, BUG-201 Phase 1).
 - ⚠ Q-1, Q-2 non-blocking; will use planning defaults unless owner overrides.
 
 **Awaiting:** curl session approval to resolve B-1 + B-2 → then Gate 3 Implementation Plan.
+
+---
+
+## 9. Scope Expansion — Batch A Extended (2026-07-16, owner-driven)
+
+Owner added the following to Batch A during Gate 2 review:
+
+### 9.1 BUG-202 (new intake) — Add Edit Item (rename + change category) to Expense Setup
+
+**Problem:** Item list in `ExpenseSetupPanel.jsx` supports only Add and Delete. There is no way to rename an item or change its category without the destructive DnD workaround.
+
+**Critical data-model question surfaced by owner:** Will edits reflect in historical transactions and reports?
+- `expenseTransform.js:111–120` shows transactions carry `expense` (name string) + `category` (name string) + `categoryId` (numeric FK), but NO `expense_id`/`item_id` FK. This suggests a **snapshot model** — edits do NOT propagate to history — but must be curl-verified.
+
+**Behavior options (owner ruling required — B-7):**
+- **B-1 Snapshot (recommended):** rename/re-categorize applies to new transactions only; history preserved. Accounting-safe.
+- **B-2 Retroactive:** rewrite past transactions. Fast, intuitive, but destroys audit trail — NOT recommended.
+- **B-3 Hybrid:** versioned name in master + current-name display + historical fallback. Needs significant backend work.
+
+**Backend dependency (B-6):** `PUT /expense/expenses/{id}` likely doesn't exist (DnD uses DELETE+POST workaround). If confirmed absent → BACKEND_BRIEF needed.
+
+**Design dependency:** UI pattern should follow Menu Management (see CR-074-B). Design_agent needed before implementation.
+
+**Risk:** HIGH (backend + data-model + design coupling).
+
+**Files (estimated):** `ExpenseSetupPanel.jsx`, `expenseService.js`, `api/constants.js`.
+
+### 9.2 CR-074 (new intake) — Remove Import/Export + Design Consistency Refresh
+
+**CR-074-A — Remove Excel/CSV import & export**
+Surfaces in code:
+- `ExpenseBulkEditor.jsx` (L34, L230, L234, L249, L289)
+- `expenseService.js` (`exportStockMaster` L89, `importStockMaster` L97, `exportExpenseReport` L181, `importExpenses` L189)
+- `ExpenseReportPage.jsx` (L43–44, L236, L285) — download menu (Excel + PDF)
+
+**Ambiguity (B-5):** Owner intent unclear between:
+- Narrow — remove only item-master import/export in setup/bulk editor (recommended default).
+- Broad — also remove report Excel/PDF download.
+
+**CR-074-B — Design consistency refresh**
+Owner noted Expense Setup and Bulk Editor UIs diverge from Menu Management pattern. Requested design_agent mockup after impact analysis.
+
+**Coupling with CR-067 (Expense Bulk Editor Redesign — CLOSED 2026-07-11):** Owner ruling needed (B-8) — is CR-074-B a full replacement of CR-067's bulk editor, or a re-skin? Impact on that CR's blast radius must be assessed before Gate 3.
+
+**Risk:** MEDIUM (UI-only; CR-074-A safe, CR-074-B is redesign — should have its own gate).
+
+**Files (estimated):** `ExpenseBulkEditor.jsx`, `ExpenseSetupPanel.jsx`, `expenseService.js`, conditionally `ExpenseReportPage.jsx` + `utils/reportExporter.js`.
+
+### 9.3 New Blockers (B-5..B-8)
+
+| ID | Blocker | Blocks |
+|---|---|---|
+| **B-5** | CR-074 scope — Narrow vs Broad | CR-074-A implementation |
+| **B-6** | BUG-202 backend model — is `PUT /expense/expenses/{id}` supported? (curl + possibly BACKEND_BRIEF) | BUG-202 implementation |
+| **B-7** | BUG-202 rename/re-categorize semantics — Snapshot / Retroactive / Hybrid? | BUG-202 implementation approach |
+| **B-8** | CR-074-B — replaces CR-067 bulk editor or complements it? | CR-074-B design brief |
+
+### 9.4 Revised Batch A execution order (post-decisions)
+
+1. Curl session resolves B-1, B-2, B-6 in one pass.
+2. Owner rulings on B-5, B-7, B-8.
+3. design_agent invoked with resolved constraints → mockup for owner approval.
+4. Gate 3 Implementation Plan covers all 5 items:
+   - BUG-199 (independent, ship first)
+   - BUG-200 (independent, ship second)
+   - BUG-201 Phase 1 interim (wording only, awaiting backend)
+   - CR-074-A (Narrow remove — independent, low risk)
+   - BUG-202 + CR-074-B (paired, gated by design approval + backend for PUT endpoint)
