@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:51:24.057784+00:00",
+  "generated_at": "2026-07-16T15:57:13.077076+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15027,6 +15027,52 @@
       "gate": "1",
       "source_cr": "CR-059",
       "intake_doc": "change_requests/BUG_201_EXPENSE_DELETION_SAFETY.md",
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-202",
+      "title": "Expense Setup \u2014 no Edit Item (rename + change category) capability; DnD workaround unsafe",
+      "type": "BUG",
+      "status": "GATE 2 COMPLETE \u2014 BACKEND-BLOCKED (BACKEND_BRIEF_BUG202)",
+      "severity": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "2",
+      "files": [
+        "frontend/src/components/expense/ExpenseSetupPanel.jsx",
+        "frontend/src/api/services/expenseService.js",
+        "frontend/src/api/constants.js"
+      ],
+      "notes": "Curl 2026-07-16 confirmed no dedicated PUT item-update endpoint. BACKEND_BRIEF_BUG202 written; awaiting backend delivery of PUT /expense/stock-items/{id}. Semantics: name = retroactive (join on read), category = snapshot (per-txn).",
+      "artifact_refs": [
+        "backend_briefs/BACKEND_BRIEF_BUG202_2026-07-16.md",
+        "evidence/BATCH_A/CURL_VERIFY_FINDINGS.md",
+        "impact/BATCH_A_EXPENSE_BUGS_IMPACT_ANALYSIS.md"
+      ],
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "CR-074",
+      "title": "Expense Setup \u2014 remove Import/Export + design consistency refresh (match Menu Management)",
+      "type": "CR",
+      "status": "GATE 3 READY \u2014 split -A (impl-ready) + -B (design-gated)",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_0",
+      "gate": "3",
+      "files": [
+        "frontend/src/components/expense/ExpenseBulkEditor.jsx",
+        "frontend/src/api/services/expenseService.js",
+        "frontend/src/api/constants.js",
+        "frontend/src/api/transforms/expenseTransform.js",
+        "frontend/src/components/expense/ExpenseSetupPanel.jsx"
+      ],
+      "notes": "-A NARROW scope confirmed 2026-07-16: remove item-master import/export from Bulk Editor + dead-code sweep (Insights Excel/PDF preserved). -B replaces CR-067 bulk-editor UI patterns \u2014 awaiting design_agent mockup.",
+      "artifact_refs": [
+        "impact/BATCH_A_EXPENSE_BUGS_IMPACT_ANALYSIS.md",
+        "plans/BATCH_A_SHIPNOW_IMPLEMENTATION_PLAN.md"
+      ],
+      "supersedes_ui": "CR-067",
       "registered": "2026-07-16"
     }
   ]

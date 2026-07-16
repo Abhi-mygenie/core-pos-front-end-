@@ -494,6 +494,7 @@ const ExpenseEntryPanel = () => {
         unit: l.unit || "",
         physical_quantity: parseFloat(l.physical_quantity || 0), // BUG-176
         notes: l.notes || "",  // BUG-177
+        category_id: l.categoryId ? parseInt(l.categoryId, 10) : null, // BUG-199: pass user-selected category (curl-verified 2026-07-16)
       }));
       const total = lines.reduce((acc, l) => acc + parseFloat(l.amount || 0), 0);
       await expenseService.addExpenseEntry(dateStr, total, details);
@@ -520,6 +521,7 @@ const ExpenseEntryPanel = () => {
       unit: tx.unit || "",
       physical_quantity: String(tx.physical_quantity || ""), // BUG-176
       notes: tx.notes || "",  // BUG-177
+      category_id: tx.categoryId ?? null,  // BUG-199 Q-1: preserve category snapshot from transaction so edit payload round-trips
     });
   };
 

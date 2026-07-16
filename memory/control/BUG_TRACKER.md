@@ -1,6 +1,6 @@
 # Layer 4 — Bug Tracker
 
-**Last Updated:** 2026-07-16 — BUG-196 (sidebar missing, IMPLEMENTED). BUG-197 (CR-072 post-delivery 10 gaps, IMPLEMENTED). BUG-198 (CR-069 employee post-delivery 4 issues, INTAKE). BUG-199 (expense entry category→misc, INTAKE). BUG-200 (expense report category filter, INTAKE).
+**Last Updated:** 2026-07-16 — Batch A execution start. BUG-199 (expense entry category, GATE 3 → IMPL). BUG-200 (auto-resolved by BUG-199, CLOSED — DUPLICATE). BUG-201 Phase 1 interim (wording only, GATE 3 → IMPL; full flow BACKEND-BLOCKED). BUG-202 (edit item — new, BACKEND-BLOCKED).
 
 ---
 
@@ -11,9 +11,10 @@
 | BUG-196 | Sidebar missing on 6 inventory/employee pages | P1 | LOW | **IMPLEMENTED** | 0-5 ✅ | 6 page wrappers + Sidebar component. Session handover. |
 | BUG-197 | CR-072 Inventory Post-Delivery (10 gaps: recipe store/update/edit, purchase Amount, vendor save, wastage CRUD, add ingredient) | P1 | HIGH | **IMPLEMENTED** | 0-5 ✅ | 7 files, ~265 lines. Includes 4 NEW gaps found during audit (fromAPI foodId, form validation, sub/addon PUT, addon dropdown). |
 | BUG-198 | CR-069 Employee Post-Delivery (4 issues: update POST→PUT, add missing confirm_password+status, reset password 3 stacked bugs, eye icon missing) | P1 | HIGH | **INTAKE** | 0-1 ✅ | All 4 CRUD operations broken. 23/23 QA tested UI only, not API persistence. ~30 lines, 4 files. |
-| BUG-199 | Expense Entry: new item always goes to "misc" category — categoryId never serialized to API payload | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | 2 lines, 2 files. Fast Lane eligible. |
-| BUG-200 | Expense Report: category filter returns 0 results — likely wrong query param name | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | Needs curl verify with fresh token. ~2 lines. |
-| BUG-201 | Expense Deletion Safety: item delete silently cascades to expense transactions without warning. Category delete needs "items moved to uncategorized" info. Role gating deferred to CR-071. | P1 | HIGH | **INTAKE** | 0-1 ✅ | Phase 1: cascade warning dialog (~40 lines). Phase 2: role gate (deferred). |
+| BUG-199 | Expense Entry: new item always goes to "misc" category — category_id never serialized to API payload | P1 | MEDIUM | **GATE 3 — IMPL IN PROGRESS** | 0-3 ✅ | Curl-verified 2026-07-16: key = `category_id` at line level. Extended to editExpenseEntry per Q-1. |
+| BUG-200 | Expense Report: category filter returns 0 results | P1 | MEDIUM | **CLOSED — DUPLICATE-OF-BUG-199** | 0-6 ✅ | Curl 2026-07-16 proved filter mechanics correct (`category_id=<int>` works). Empty result was downstream of BUG-199 stuffing everything into misc. Auto-resolves once BUG-199 ships. Zero code change. |
+| BUG-201 | Expense Deletion Safety — item + category cascade | P1 | HIGH | **PHASE 1 INTERIM — IMPL IN PROGRESS** (wording); Phase 1 FULL: **BACKEND-BLOCKED** | 0-3 ✅ | BACKEND_BRIEF_BUG201 sent to backend team (owner ruling: new rules R-201-A item→txns first, R-201-B category→items first, backend returns 409). FE interim: modal wording update only. |
+| BUG-202 | Expense Setup — no Edit Item (rename + change category) capability | P1 | HIGH | **GATE 2 COMPLETE — BACKEND-BLOCKED** | 0-2 ✅ | Curl 2026-07-16 confirmed no PUT item-update endpoint. BACKEND_BRIEF_BUG202 sent. Semantics: name = retroactive, category = snapshot. |
 
 ---
 

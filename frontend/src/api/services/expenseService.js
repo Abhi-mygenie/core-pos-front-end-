@@ -82,25 +82,7 @@ export const deleteExpenseCategory = (id) =>
 export const deleteExpenseItem = (itemId) =>
   api.delete(`${EXPENSE_ENDPOINTS.DELETE_ITEM}/${itemId}`);
 
-/**
- * POST export stock master to Excel
- * @returns {Promise<AxiosResponse>}
- */
-export const exportStockMaster = () =>
-  api.post(EXPENSE_ENDPOINTS.BULK_EXPORT, { type: 'all' }); // BUG-163 fix
-
-/**
- * POST import stock master from Excel file
- * @param {File} file
- * @returns {Promise<AxiosResponse>}
- */
-export const importStockMaster = (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  return api.post(EXPENSE_ENDPOINTS.BULK_IMPORT, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-};
+// CR-074-A (2026-07-16): removed exportStockMaster + importStockMaster (item-master Excel/CSV import/export UI removed from Bulk Editor)
 
 // =============================================================================
 // TRANSACTIONS — EXPENSE REPORT / ENTRY
@@ -142,6 +124,8 @@ export const addExpenseEntry = (date, totalAmount, lines = []) =>
       quantity: l.quantity || 0,
       unit: l.unit || '',
       physical_quantity: l.physical_quantity || 0, // BUG-176: user-enterable, not deprecated
+      notes: l.notes || '',                        // BUG-199: propagate caller-provided notes (was dropped here)
+      category_id: l.category_id ?? null,          // BUG-199: preserve line's category (curl-verified 2026-07-16; missing → backend defaults to misc/273)
     })),
   });
 
@@ -160,6 +144,8 @@ export const editExpenseEntry = (id, data) =>
     quantity: data.quantity || 0,
     unit: data.unit || '',
     physical_quantity: data.physical_quantity || 0, // BUG-176: user-enterable, not deprecated
+    notes: data.notes || '',                        // BUG-199: propagate caller-provided notes (was dropped here)
+    category_id: data.category_id ?? null,          // BUG-199 Q-1: preserve category on edit so subsequent lookups don't reset to misc
   });
 
 /**
@@ -172,27 +158,7 @@ export const editExpenseEntry = (id, data) =>
 export const deleteExpenseEntry = (id) =>
   api.delete(`${EXPENSE_ENDPOINTS.DELETE_EXPENSE}/${id}`);
 
-/**
- * POST export expense report to Excel
- * @param {string} from  - "DD/MM/YYYY"
- * @param {string} to    - "DD/MM/YYYY"
- * @returns {Promise<AxiosResponse>}
- */
-export const exportExpenseReport = (from, to) =>
-  api.post(EXPENSE_ENDPOINTS.EXPORT_REPORT, { from, to });
-
-/**
- * POST import expense entries from file
- * @param {File} file
- * @returns {Promise<AxiosResponse>}
- */
-export const importExpenses = (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  return api.post(EXPENSE_ENDPOINTS.IMPORT_EXPENSE, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-};
+// CR-074-A (2026-07-16): removed exportExpenseReport + importExpenses (dead code — no UI ever wired to these)
 
 // =============================================================================
 // UNIT PRICES

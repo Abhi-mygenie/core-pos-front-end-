@@ -191,11 +191,8 @@ export const fromAPI = {
 
   /**
    * POST /bulk-export-expense → {message, downloadUrl}
+   * CR-074-A (2026-07-16): removed — no longer used after import/export UI removal.
    */
-  exportResponse: (res) => ({
-    message: res?.data?.message ?? 'Export ready',
-    downloadUrl: res?.data?.url ?? res?.data?.download_url ?? null,
-  }),
 };
 
 // =============================================================================

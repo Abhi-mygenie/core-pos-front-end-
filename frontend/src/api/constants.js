@@ -413,17 +413,13 @@ export const EXPENSE_ENDPOINTS = {
   UPDATE_CATEGORY: '/api/v2/vendoremployee/expense/expenses',       // PUT /{category_id}
   CATEGORY: '/api/v2/vendoremployee/expense/category',              // POST (create empty), PUT /{id} (rename), DELETE /{id}  // BUG-159 + BUG-160
   DELETE_ITEM: '/api/v2/vendoremployee/expense/expenses',           // DELETE /{item_id}
-  BULK_EXPORT: '/api/v2/vendoremployee/expense/bulk-export-expense',
-  BULK_IMPORT: '/api/v2/vendoremployee/expense/bulk-import-expense',
-  STOCK_SAMPLE: '/bulk_upload_sample/expense/expense_stock_sample.xlsx',
+  // CR-074-A: removed BULK_EXPORT/BULK_IMPORT/STOCK_SAMPLE (item-master import/export UI removed 2026-07-16)
   // Transactions
   EXPENSES_REPORT: '/api/v2/vendoremployee/expense/expenses-report',
   STORE_EXPENSE_DETAILS: '/api/v2/vendoremployee/expense/store-expense-details',
   EDIT_EXPENSE: '/api/v2/vendoremployee/expense/edit-expense',      // PUT /{id}
   DELETE_EXPENSE: '/api/v2/vendoremployee/expense/delete-expense',  // DELETE /{id} — BUG-152
-  EXPORT_REPORT: '/api/v2/vendoremployee/expense/expenses-export-report',
-  DOWNLOAD_SAMPLE: '/api/v2/vendoremployee/expense/download-semple',
-  IMPORT_EXPENSE: '/api/v2/vendoremployee/expense/import-expense',
+  // CR-074-A: removed EXPORT_REPORT/DOWNLOAD_SAMPLE/IMPORT_EXPENSE (dead code — never called from UI)
   // Unit Prices
   STOCK_UNIT_PRICES: '/api/v2/vendoremployee/expense/stock-unit-prices',
   WITHOUT_UNIT_PRICES: '/api/v2/vendoremployee/expense/expenses-without-unit-prices',

@@ -1,13 +1,13 @@
 // CR-067: Expense Bulk Editor — Full Parity Redesign (menu management pattern)
+// CR-074-A (2026-07-16): Removed item-master Excel export + Import buttons (owner ruling — Import/Export no longer needed in Expense Setup)
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import {
   X, Search, Save, Plus, RotateCcw, Check, AlertCircle,
-  Download, Upload, Loader2, Trash2, Table2
+  Loader2, Trash2, Table2
 } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useToast } from "../../hooks/use-toast";
 import * as expenseService from "../../api/services/expenseService";
-import { fromAPI } from "../../api/transforms/expenseTransform";
 
 // ─── Row builder ────────────────────────────────────────────────────────────
 const buildRow = (item, isNew = false) => ({
@@ -30,9 +30,7 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
   const [rows, setRows] = useState(() => items.map(r => buildRow(r)));
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [importing, setImporting] = useState(false);
-  const fileInputRef = useRef(null);
+  // CR-074-A: removed exporting/importing state + fileInputRef (Excel/Import UI removed)
   const scrollContainerRef = useRef(null);
   const [pendingFocusRowId, setPendingFocusRowId] = useState(null);
   const dirtyCountRef = useRef(0);
@@ -227,32 +225,7 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
     if (saved > 0 && onRefresh) setTimeout(() => onRefresh(), 500);
   };
 
-  // ─── Excel / Import ──────────────────────────────────────────────────────
-  const handleExport = async () => {
-    setExporting(true);
-    try {
-      const res = await expenseService.exportStockMaster();
-      const data = fromAPI.exportResponse(res);
-      if (data.downloadUrl) window.open(data.downloadUrl, "_blank");
-      else toast({ title: "Export", description: data.message });
-    } catch (err) {
-      toast({ title: "Export failed", description: err.readableMessage, variant: "destructive" });
-    } finally { setExporting(false); }
-  };
-
-  const handleImport = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = "";
-    setImporting(true);
-    try {
-      await expenseService.importStockMaster(file);
-      toast({ title: "Import complete", description: file.name });
-      if (onRefresh) setTimeout(() => onRefresh(), 500);
-    } catch (err) {
-      toast({ title: "Import failed", description: err.readableMessage, variant: "destructive" });
-    } finally { setImporting(false); }
-  };
+  // CR-074-A (2026-07-16): removed handleExport + handleImport (Excel export + Import UI removed)
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
@@ -286,26 +259,7 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
             />
           </div>
 
-          {/* Excel export */}
-          <button onClick={handleExport} disabled={exporting}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors hover:bg-orange-50 disabled:opacity-50"
-            style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
-            data-testid="bulk-excel-btn">
-            <Download className="w-3.5 h-3.5" />
-            {exporting ? "Exporting…" : "Excel"}
-          </button>
-
-          {/* Import */}
-          <button onClick={() => fileInputRef.current?.click()} disabled={importing}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors hover:bg-green-50 disabled:opacity-50"
-            style={{ borderColor: COLORS.primaryGreen, color: COLORS.primaryGreen }}
-            data-testid="bulk-import-btn">
-            <Upload className="w-3.5 h-3.5" />
-            {importing ? "Importing…" : "Import"}
-          </button>
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv"
-                 className="hidden" onChange={handleImport}
-                 data-testid="bulk-import-file" />
+          {/* CR-074-A (2026-07-16): removed Excel export + Import buttons + hidden file input */}
 
           {/* Add Item */}
           <button onClick={addNewRow}

@@ -894,12 +894,15 @@ const ExpenseSetupPanel = () => {
       )}
 
       {/* ── Delete Item Confirm ──────────────────────────────────── */}
+      {/* BUG-201 Phase 1 interim (2026-07-16): cascade-aware wording. Full 409-driven UX (with transaction count from backend) lands once BACKEND_BRIEF_BUG201 is delivered. */}
       {deletingItemId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-80 border" style={{ borderColor: COLORS.borderGray }}
+          <div className="bg-white rounded-xl shadow-xl p-6 w-96 border" style={{ borderColor: COLORS.borderGray }}
             data-testid="delete-item-confirm">
-            <h3 className="text-base font-semibold mb-2" style={{ color: COLORS.darkText }}>Remove Item?</h3>
-            <p className="text-sm mb-5" style={{ color: COLORS.grayText }}>This action cannot be undone.</p>
+            <h3 className="text-base font-semibold mb-2" style={{ color: COLORS.darkText }}>Delete Item?</h3>
+            <p className="text-sm mb-5" style={{ color: COLORS.grayText }}>
+              This item may have linked expense transactions. Deleting will permanently remove the item and all related expense records. This cannot be undone.
+            </p>
             <div className="flex gap-2 justify-end">
               <button onClick={() => setDeletingItemId(null)}
                 className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50"
@@ -907,7 +910,7 @@ const ExpenseSetupPanel = () => {
               <button onClick={deleteItem}
                 className="px-4 py-2 text-sm font-medium rounded-lg text-white"
                 style={{ background: COLORS.errorText }}
-                data-testid="delete-item-confirm-btn">Remove</button>
+                data-testid="delete-item-confirm-btn">Delete</button>
             </div>
           </div>
         </div>
