@@ -14947,6 +14947,74 @@
       "scope_note": "Phase 1 SHIPPED: 5 screens (Stock Dashboard, Purchase Entry, Physical Count, Inventory Setup 3-tab, Recipes 3-tab). 37 API endpoints wired. Phase 2 (intelligence features) blocked on 6 backend endpoints \u2014 backend brief filed.",
       "implemented_date": "2026-07-15",
       "test_report": "test_reports/iteration_24.json"
+    },
+    {
+      "id": "BUG-196",
+      "title": "Sidebar missing on 6 inventory/employee pages",
+      "type": "BUG",
+      "status": "IMPLEMENTED",
+      "severity": "P1",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "gate": "5",
+      "source_cr": "CR-072/CR-069",
+      "intake_doc": "change_requests/BUG_196_SIDEBAR_MISSING_INVENTORY_EMPLOYEE_SETTINGS.md",
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-197",
+      "title": "CR-072 Inventory Post-Delivery \u2014 10 gaps (recipe CRUD, purchase Amount, vendor save, wastage CRUD, add ingredient, form validation)",
+      "type": "BUG",
+      "status": "IMPLEMENTED",
+      "severity": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "5",
+      "source_cr": "CR-072",
+      "intake_doc": "change_requests/BUG_197_CR072_INVENTORY_POST_DELIVERY.md",
+      "impact_analysis_doc": "impact/BUG-197_IMPACT_ANALYSIS.md",
+      "implementation_plan_doc": "plans/BUG-197_IMPLEMENTATION_PLAN.md",
+      "evidence": "evidence/CR-072/CR072_POST_DELIVERY_INVESTIGATION_2026_07_16.md",
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-198",
+      "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "source_cr": "CR-069",
+      "intake_doc": "change_requests/BUG_198_CR069_EMPLOYEE_POST_DELIVERY.md",
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-199",
+      "title": "Expense Entry \u2014 new item always goes to misc category (categoryId not serialized to API payload)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "source_cr": "CR-059",
+      "intake_doc": "change_requests/BUG_199_EXPENSE_ENTRY_CATEGORY_MISC.md",
+      "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-200",
+      "title": "Expense Report \u2014 category filter returns 0 results (wrong query param name, needs curl verify)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "source_cr": "CR-061",
+      "intake_doc": "change_requests/BUG_200_EXPENSE_REPORT_CATEGORY_FILTER.md",
+      "registered": "2026-07-16"
     }
   ]
 }

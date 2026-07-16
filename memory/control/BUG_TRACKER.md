@@ -1,6 +1,18 @@
 # Layer 4 — Bug Tracker
 
-**Last Updated:** 2026-07-11 — BUG-177 through BUG-182 registered (6 expense module bugs from investigation session). BUG-166 revert plan CANCELLED by owner ("keep the fix"). addon_amount × qty logic confirmed correct and permanent. CR-067 IMPLEMENTED. BUG-175 + BUG-176 IMPLEMENTED.
+**Last Updated:** 2026-07-16 — BUG-196 (sidebar missing, IMPLEMENTED). BUG-197 (CR-072 post-delivery 10 gaps, IMPLEMENTED). BUG-198 (CR-069 employee post-delivery 4 issues, INTAKE). BUG-199 (expense entry category→misc, INTAKE). BUG-200 (expense report category filter, INTAKE).
+
+---
+
+## POS 5.0 — Session 2026-07-16 Registrations
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-196 | Sidebar missing on 6 inventory/employee pages | P1 | LOW | **IMPLEMENTED** | 0-5 ✅ | 6 page wrappers + Sidebar component. Session handover. |
+| BUG-197 | CR-072 Inventory Post-Delivery (10 gaps: recipe store/update/edit, purchase Amount, vendor save, wastage CRUD, add ingredient) | P1 | HIGH | **IMPLEMENTED** | 0-5 ✅ | 7 files, ~265 lines. Includes 4 NEW gaps found during audit (fromAPI foodId, form validation, sub/addon PUT, addon dropdown). |
+| BUG-198 | CR-069 Employee Post-Delivery (4 issues: update POST→PUT, add missing confirm_password+status, reset password 3 stacked bugs, eye icon missing) | P1 | HIGH | **INTAKE** | 0-1 ✅ | All 4 CRUD operations broken. 23/23 QA tested UI only, not API persistence. ~30 lines, 4 files. |
+| BUG-199 | Expense Entry: new item always goes to "misc" category — categoryId never serialized to API payload | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | 2 lines, 2 files. Fast Lane eligible. |
+| BUG-200 | Expense Report: category filter returns 0 results — likely wrong query param name | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | Needs curl verify with fresh token. ~2 lines. |
 
 ---
 
