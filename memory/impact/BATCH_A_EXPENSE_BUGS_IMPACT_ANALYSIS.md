@@ -143,31 +143,31 @@ Owner ruling needed. Default recommendation if OQ-1 is unresolved: **Option C fo
 
 ---
 
-## 5. Owner Decisions Required Before Implementation Plan (BLOCKERS)
+## 5. Owner Decisions — Status
 
-### 🛑 B-1 — Backend contract for BUG-199 (curl required)
+### 🛑 B-1 — Backend contract for BUG-199 (curl required) — **OPEN**
 **Question:** Does `POST /store-expense-details` accept `category_id` at the detail-line level, and is the exact key `category_id` (snake_case) vs `categoryId` vs `category` vs `expense_category_id`?
 **How to resolve:** Fresh login → curl `POST /store-expense-details` with a test payload including `category_id` at line level → GET the created expense → verify category persisted.
 **Blocks:** BUG-199 implementation.
 **Owner action needed:** Confirm you want me to run the curl session (need Bearer via `owner@18march.com` per `test_credentials.md`).
 
-### 🛑 B-2 — Backend contract for BUG-200 (curl required)
+### 🛑 B-2 — Backend contract for BUG-200 (curl required) — **OPEN**
 **Question:** Which query param does `GET /expenses-report` accept for category filtering — `category_id` (numeric ID), `category` (name), or `category_name`?
 **How to resolve:** Fresh login → three parallel curls with each candidate → whichever returns rows is correct.
 **Blocks:** BUG-200 implementation.
 
-### 🛑 B-3 — Backend pre-delete impact endpoint (BUG-201)
-**Question:** Does backend expose an endpoint that returns `{transaction_count, total_amount}` for a given item BEFORE deletion? Candidate paths to probe: `GET /expense/expenses/{id}`, `GET /expense/expenses/{id}/impact`, `GET /expense/expenses/{id}/references`.
-**How to resolve:** Curl each candidate; if none exist, escalate to BACKEND_BRIEF or accept Option C.
-**Blocks:** BUG-201 implementation approach (Option A vs B vs C).
+### ✅ B-3 — Backend pre-delete impact endpoint (BUG-201) — **RESOLVED (owner-approved backend work)**
+**Owner ruling (2026-07-16):** Backend will add new endpoints + change delete semantics. **New business rules:**
+- **R-201-A:** Item delete blocked unless ALL its expense transactions have been deleted first.
+- **R-201-B:** Category delete blocked unless it contains ZERO items (must move items out first).
+- Backend to remove all cascade behavior from `DELETE /expense/expenses/{id}` and `DELETE /expense/category/{id}`; return **409 Conflict** with counts when blocked.
+- Optional pre-check endpoints (`GET /expense/expenses/{id}/impact`, `GET /expense/category/{id}/impact`) requested but not blocking.
+**Artifact:** `/app/memory/backend_briefs/BACKEND_BRIEF_BUG201_2026-07-16.md`
+**Blocks:** BUG-201 Phase 1 backend-side. Frontend can proceed with interim generic warning while backend delivers.
 
-### 🛑 B-4 — Fallback strategy for BUG-201 if B-3 is negative
-**Question:** If no pre-delete impact endpoint exists, are you OK with:
-- **Option B** (client-side count from `/expenses-report` with a wide "all-time" date range — extra API call, could be slow, needs a sensible upper bound)?
-- **Option C** (ship generic cascade warning without counts, no backend brief for now)?
-- **Escalate** (write BACKEND_BRIEF, park Phase 1 until backend delivers)?
-**Blocks:** BUG-201 implementation.
-**Recommendation:** Option C for Phase 1 (fastest safety net); log Option A as follow-up.
+### ✅ B-4 — Fallback strategy for BUG-201 — **RESOLVED**
+**Owner ruling (2026-07-16):** **Escalate to backend** (Option: BACKEND_BRIEF). Do NOT ship Option B (client-side count) or Option C (generic warning) as the permanent solution.
+**FE interim plan while awaiting backend:** Ship a **generic warning** copy update on the existing modal (no counts, just clearer language) — Phase 1 minimum viable safety net. Then upgrade to the 409-driven flow once backend delivers.
 
 ### ⚠ Q-1 — Non-blocker, extension question for BUG-199
 Should `editExpenseEntry` also be fixed (category persists on edit), keeping BUG-199 as a single unit? Or file separately as **BUG-199-B**?
@@ -208,5 +208,11 @@ Are historical expense entries (created after CR-059 shipped) that landed in "mi
 ## 8. Handover
 
 Impact Analysis complete for 3 items (BUG-199, BUG-200, BUG-201 Phase 1).
-**STOP** — 4 owner decisions required (B-1..B-4) + 2 non-blocker questions (Q-1, Q-2).
-Awaiting owner review → then Gate 3 Implementation Plan.
+**Status (updated 2026-07-16):**
+- ✅ B-3 resolved: BACKEND_BRIEF drafted at `/app/memory/backend_briefs/BACKEND_BRIEF_BUG201_2026-07-16.md` — new business rules R-201-A (item→txns first) + R-201-B (category→items first). Owner will route to backend team.
+- ✅ B-4 resolved: escalate to backend; FE ships interim generic-warning wording change until backend delivers.
+- 🛑 B-1 still OPEN — needs curl-verify on `POST /store-expense-details` payload key.
+- 🛑 B-2 still OPEN — needs curl-verify on `/expenses-report` category param name.
+- ⚠ Q-1, Q-2 non-blocking; will use planning defaults unless owner overrides.
+
+**Awaiting:** curl session approval to resolve B-1 + B-2 → then Gate 3 Implementation Plan.
