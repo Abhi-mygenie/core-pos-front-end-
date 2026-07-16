@@ -1,35 +1,23 @@
-# MyGenie POS Frontend - Deployment PRD
+# Core POS Frontend - Deployment PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `16-july-`) directly into `/app` and run it as-is with no code edits.
+Deploy existing React frontend repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
+(branch `16-july-`) into `/app` and run it as-is, with no code edits.
+
+## What's Been Implemented (2026-07-16)
+- Backed up platform files (`/app/.emergent/emergent.yml`, `/app/backend/.env`, `/app/frontend/.env`)
+- Cleared `/app` (preserving `.emergent` + `.git`) and cloned repo branch `16-july-` directly into `/app`
+- Restored platform env files after clone
+- Installed frontend dependencies via `yarn install` (detected from `packageManager` field in package.json)
+- Registered with supervisor (existing readonly config runs `yarn start` in `/app/frontend`)
+- Verified `craco start` compiles and app responds on port 3000
+- User provided real `.env` values (Firebase, API base URLs, CRM keys, Google Maps key) - restarted, verified login page renders without runtime errors
 
 ## Architecture
-- **Stack**: React 19 + CRA + craco + TailwindCSS + Radix UI
-- **Process Manager**: Supervisor (`yarn start` → `craco start` on port 3000)
-- **Backend**: Default FastAPI backend (not part of this repo, kept from platform scaffold)
+- Frontend-only React app (CRA + CRACO), React 19, Tailwind, Radix UI, Firebase, socket.io-client, axios
+- Backend/DB not part of this task (external APIs consumed at `preprod.mygenie.online`)
+- Supervisor auto-restart + hot reload enabled
 
-## What's Been Implemented (July 16, 2026)
-- Cloned repo from GitHub (branch `16-july-`) into `/app`
-- Preserved platform files (`.emergent/`, `.git/`, `.env` files, supervisor config)
-- Installed all dependencies via `yarn install`
-- Added placeholder env vars to `/app/frontend/.env` so app renders without crashing
-- Frontend compiles and runs successfully (webpack compiled with ESLint warnings only)
-- Login page (MyGenie POS) renders correctly at root URL
-
-## Environment Variables (Placeholders - User to Replace)
-- `REACT_APP_API_BASE_URL` - Backend API URL (currently placeholder)
-- `REACT_APP_SOCKET_URL` - WebSocket URL (currently placeholder)
-- `REACT_APP_FIREBASE_*` - Firebase config (currently placeholder)
-- `REACT_APP_CRM_BASE_URL` - CRM URL (currently placeholder)
-- `REACT_APP_GOOGLE_MAPS_KEY` - Google Maps API key (currently placeholder)
-
-## Testing Status
-- All 5 test criteria passed (HTTP 200, login page renders, webpack compiles, supervisor services running, hot reload functional)
-
-## Next Action Items (P0)
-- User to provide real `.env` values for API, Firebase, Socket, and other integrations
-- Verify login flow with real backend credentials
-
-## Backlog
-- P1: Address ESLint warnings (react-hooks/exhaustive-deps) in multiple report components
-- P2: Upgrade deprecated webpack-dev-server middleware options
+## Backlog / Notes
+- P2: `REACT_APP_BACKEND_URL` appears twice in `/app/frontend/.env` (dotenv takes last value). Not modified per "no code edits" rule.
+- P2: Non-fatal ESLint `react-hooks/exhaustive-deps` warnings in reports-module pages.
