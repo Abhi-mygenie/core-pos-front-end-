@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Setup - Bulk Edit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primaryOrange: '#F97316', primaryGreen: '#22C55E', darkText: '#1F2937', grayText: '#6B7280', borderGray: '#E5E7EB', sectionBg: '#F9FAFB', errorText: '#EF4444', lightBg: '#FFFFFF'
+                    },
+                    fontFamily: { poppins: ['Poppins', 'sans-serif'], body: ['system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'system-ui', sans-serif; background-color: #e5e7eb; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex bg-black/40">
+    <div class="flex-1"></div>
+    
+    <div class="w-11/12 max-w-[1440px] h-full bg-sectionBg shadow-2xl flex flex-col" data-testid="expense-setup-panel">
+        
+        <!-- Bulk Edit Header -->
+        <header class="border-b border-borderGray px-8 py-4 bg-white flex items-center justify-between z-10 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button class="p-2 border border-borderGray rounded-md text-grayText hover:bg-sectionBg transition-colors shadow-sm">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <h1 class="text-xl font-semibold text-darkText tracking-tight">Bulk Edit Items</h1>
+                    <p class="text-xs text-grayText mt-0.5">Edit multiple items and prices simultaneously.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="relative w-64 mr-2">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-grayText"></i>
+                    <input data-testid="items-search" type="text" placeholder="Filter items..." class="w-full pl-9 pr-3 py-2 text-sm border border-borderGray rounded-md focus:outline-none focus:border-primaryOrange bg-sectionBg">
+                </div>
+                <button class="px-4 py-2 border border-borderGray text-darkText rounded-md hover:bg-sectionBg transition-colors flex items-center gap-2 font-medium text-sm shadow-sm bg-white">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Add Row
+                </button>
+                <button class="px-5 py-2 bg-primaryOrange text-white rounded-md hover:bg-orange-600 transition-colors flex items-center gap-2 font-medium text-sm shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area: Full Width Table -->
+        <div class="flex-1 overflow-hidden flex flex-col bg-sectionBg p-6">
+            <div class="flex-1 bg-white border border-borderGray rounded-lg shadow-sm flex flex-col overflow-hidden">
+                <div class="flex-1 overflow-y-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-white z-10 shadow-sm border-b border-borderGray">
+                            <tr class="bg-sectionBg text-xs uppercase tracking-wider text-grayText">
+                                <th class="w-10"></th>
+                                <th class="p-4 font-semibold w-[35%]">Item Name</th>
+                                <th class="p-4 font-semibold w-[30%]">Category</th>
+                                <th class="p-4 font-semibold w-[25%]">Unit Price ($)</th>
+                                <th class="p-4 font-semibold w-[10%] text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Clean Row -->
+                            <tr class="border-b border-borderGray group hover:bg-sectionBg/50">
+                                <td></td>
+                                <td class="p-2">
+                                    <input type="text" value="Tomatoes" class="w-full px-3 py-2 text-sm border border-transparent hover:border-borderGray rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-transparent focus:bg-white transition-colors">
+                                </td>
+                                <td class="p-2">
+                                    <select class="w-full px-3 py-2 text-sm border border-transparent hover:border-borderGray rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-transparent focus:bg-white transition-colors text-darkText">
+                                        <option selected>Vegetables</option>
+                                        <option>Dairy & Eggs</option>
+                                    </select>
+                                </td>
+                                <td class="p-2">
+                                    <input type="number" value="2.50" class="w-full px-3 py-2 text-sm border border-transparent hover:border-borderGray rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-transparent focus:bg-white transition-colors">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <button class="p-1.5 text-grayText hover:text-errorText hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Dirty Row (Edited) -->
+                            <tr class="border-b border-green-200 bg-green-50/20 relative shadow-[inset_4px_0_0_0_#22C55E]">
+                                <td>
+                                    <div title="Unsaved changes" class="w-2 h-2 rounded-full bg-primaryGreen mx-auto"></div>
+                                </td>
+                                <td class="p-2">
+                                    <input type="text" value="Red Onions" class="w-full px-3 py-2 text-sm border border-green-300 rounded focus:border-primaryGreen focus:outline-none focus:ring-1 focus:ring-primaryGreen bg-white shadow-inner font-medium text-darkText">
+                                </td>
+                                <td class="p-2">
+                                    <select class="w-full px-3 py-2 text-sm border border-transparent hover:border-borderGray rounded focus:border-primaryGreen focus:outline-none focus:ring-1 focus:ring-primaryGreen bg-transparent focus:bg-white transition-colors text-darkText">
+                                        <option selected>Vegetables</option>
+                                        <option>Dairy & Eggs</option>
+                                    </select>
+                                </td>
+                                <td class="p-2">
+                                    <input type="number" value="1.45" class="w-full px-3 py-2 text-sm border border-green-300 rounded focus:border-primaryGreen focus:outline-none focus:ring-1 focus:ring-primaryGreen bg-white shadow-inner font-medium text-darkText">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <button class="p-1.5 text-grayText hover:text-errorText hover:bg-red-50 rounded transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+
+                            <!-- Dirty Row (New Row) -->
+                            <tr class="border-b border-orange-200 bg-orange-50/30 relative shadow-[inset_4px_0_0_0_#F97316]">
+                                <td>
+                                    <div title="New item" class="w-2 h-2 rounded-full bg-primaryOrange mx-auto"></div>
+                                </td>
+                                <td class="p-2">
+                                    <input type="text" placeholder="Item name" value="Avocado" class="w-full px-3 py-2 text-sm border border-orange-300 rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-white shadow-inner font-medium text-darkText">
+                                </td>
+                                <td class="p-2">
+                                    <select class="w-full px-3 py-2 text-sm border border-orange-300 rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-white text-darkText shadow-inner">
+                                        <option disabled selected>Select category</option>
+                                        <option selected>Vegetables</option>
+                                        <option>Dairy & Eggs</option>
+                                    </select>
+                                </td>
+                                <td class="p-2">
+                                    <input type="number" placeholder="0.00" value="3.00" class="w-full px-3 py-2 text-sm border border-orange-300 rounded focus:border-primaryOrange focus:outline-none focus:ring-1 focus:ring-primaryOrange bg-white shadow-inner font-medium text-darkText">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <button class="p-1.5 text-grayText hover:text-errorText hover:bg-red-50 rounded transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
