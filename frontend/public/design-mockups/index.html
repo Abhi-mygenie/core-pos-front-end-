@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CR-074-B Design Mockups — MyGenie POS Expense Setup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Poppins', system-ui, sans-serif; background: #F9FAFB; }
+  </style>
+</head>
+<body class="p-10">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-2" style="color:#1F2937">CR-074-B — Design Mockups</h1>
+    <p class="text-sm mb-8" style="color:#6B7280">Expense Setup panel redesign matching Menu Management pattern. Includes CR-064 (unit price quick-add), BUG-162 (flicker fix), BUG-202 forward-compat (inline edit).</p>
+
+    <div class="grid gap-3">
+      <a href="01_stock_master_default.html" class="block p-5 bg-white rounded-xl border hover:shadow-md transition-shadow" style="border-color:#E5E7EB">
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#F97316;color:white">01</span>
+          <h2 class="font-semibold" style="color:#1F2937">Stock Master — Default View</h2>
+        </div>
+        <p class="text-sm ml-9" style="color:#6B7280">30/70 split, Category CRUD, quick-add row with Name + Unit Price, per-row inline edit/delete on hover</p>
+      </a>
+      <a href="02_item_row_edit_mode.html" class="block p-5 bg-white rounded-xl border hover:shadow-md transition-shadow" style="border-color:#E5E7EB">
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#F97316;color:white">02</span>
+          <h2 class="font-semibold" style="color:#1F2937">Item Row — Edit Mode (BUG-202)</h2>
+        </div>
+        <p class="text-sm ml-9" style="color:#6B7280">Row transforms into rename input + category dropdown + Save/Cancel actions</p>
+      </a>
+      <a href="03_bulk_edit_mode.html" class="block p-5 bg-white rounded-xl border hover:shadow-md transition-shadow" style="border-color:#E5E7EB">
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#F97316;color:white">03</span>
+          <h2 class="font-semibold" style="color:#1F2937">Bulk Edit Mode</h2>
+        </div>
+        <p class="text-sm ml-9" style="color:#6B7280">Full-panel datagrid matching Menu Management BulkEditor. Dirty-row indicators. No import/export.</p>
+      </a>
+      <a href="04_unit_prices_tab.html" class="block p-5 bg-white rounded-xl border hover:shadow-md transition-shadow" style="border-color:#E5E7EB">
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#F97316;color:white">04</span>
+          <h2 class="font-semibold" style="color:#1F2937">Unit Prices Tab</h2>
+        </div>
+        <p class="text-sm ml-9" style="color:#6B7280">Not Priced Yet + Priced sections restyled with new aesthetic</p>
+      </a>
+      <a href="05_delete_item_modal.html" class="block p-5 bg-white rounded-xl border hover:shadow-md transition-shadow" style="border-color:#E5E7EB">
+        <div class="flex items-center gap-3 mb-1">
+          <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#F97316;color:white">05</span>
+          <h2 class="font-semibold" style="color:#1F2937">Delete Item Modal (BUG-201)</h2>
+        </div>
+        <p class="text-sm ml-9" style="color:#6B7280">Cascade-warning confirmation with preserved BUG-201 interim wording</p>
+      </a>
+    </div>
+
+    <p class="text-xs mt-8" style="color:#6B7280">Source: <code>/app/memory/design/CR-074-B_mockups/</code></p>
+  </div>
+</body>
+</html>
