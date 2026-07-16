@@ -15015,6 +15015,19 @@
       "source_cr": "CR-061",
       "intake_doc": "change_requests/BUG_200_EXPENSE_REPORT_CATEGORY_FILTER.md",
       "registered": "2026-07-16"
+    },
+    {
+      "id": "BUG-201",
+      "title": "Expense Deletion Safety \u2014 cascade warning for item delete + role gating (deferred)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "source_cr": "CR-059",
+      "intake_doc": "change_requests/BUG_201_EXPENSE_DELETION_SAFETY.md",
+      "registered": "2026-07-16"
     }
   ]
 }

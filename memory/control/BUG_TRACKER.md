@@ -13,6 +13,7 @@
 | BUG-198 | CR-069 Employee Post-Delivery (4 issues: update POST→PUT, add missing confirm_password+status, reset password 3 stacked bugs, eye icon missing) | P1 | HIGH | **INTAKE** | 0-1 ✅ | All 4 CRUD operations broken. 23/23 QA tested UI only, not API persistence. ~30 lines, 4 files. |
 | BUG-199 | Expense Entry: new item always goes to "misc" category — categoryId never serialized to API payload | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | 2 lines, 2 files. Fast Lane eligible. |
 | BUG-200 | Expense Report: category filter returns 0 results — likely wrong query param name | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | Needs curl verify with fresh token. ~2 lines. |
+| BUG-201 | Expense Deletion Safety: item delete silently cascades to expense transactions without warning. Category delete needs "items moved to uncategorized" info. Role gating deferred to CR-071. | P1 | HIGH | **INTAKE** | 0-1 ✅ | Phase 1: cascade warning dialog (~40 lines). Phase 2: role gate (deferred). |
 
 ---
 
