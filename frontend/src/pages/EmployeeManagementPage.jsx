@@ -1,7 +1,9 @@
 // CR-069: Employee Management Page — shell with Employees | Roles tabs
+// BUG-196: Added Sidebar navigation
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Users, Shield } from 'lucide-react';
+import Sidebar from '@/components/layout/Sidebar';
 import EmployeeListView from '@/components/panels/employee/EmployeeListView';
 import RoleListView from '@/components/panels/employee/RoleListView';
 import RoleFormView from '@/components/panels/employee/RoleFormView';
@@ -9,6 +11,7 @@ import RoleFormView from '@/components/panels/employee/RoleFormView';
 export default function EmployeeManagementPage() {
   const [activeTab, setActiveTab] = useState('employees');
   const [editingRole, setEditingRole] = useState(undefined); // undefined=list, null=add, object=edit
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // BUG-196
 
   const handleEditRole = (role) => {
     setEditingRole(role); // null = add new, object = edit existing
@@ -19,8 +22,10 @@ export default function EmployeeManagementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50" data-testid="employee-management-page">
-      <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
+    <div className="flex h-screen" data-testid="employee-management-page">
+      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
+      <main className="flex-1 overflow-auto bg-slate-50">
+        <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
         {/* Page Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
@@ -66,7 +71,8 @@ export default function EmployeeManagementPage() {
           /* Role Form View — replaces tabs when editing/creating */
           <RoleFormView role={editingRole} onBack={handleBackToList} />
         )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

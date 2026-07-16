@@ -1,62 +1,88 @@
 {
-  "theme": {
-    "mode": "light",
-    "primary_color": "#22c55e",
-    "accent_color": "#f97316",
-    "background": "#f8fafc",
-    "surface": "#ffffff",
-    "text": "#0f172a"
-  },
+  "theme": "light",
+  "archetype": "ARCHETYPE 4: SWISS & HIGH-CONTRAST",
   "typography": {
     "headings": "Manrope",
     "body": "IBM Plex Sans",
-    "strategy": "Soft Utility (Friendly but professional). Tight tracking on role names, legible mono or clean sans for data like dates and counts. Avoid Inter for headings."
+    "weights": ["400", "500", "600", "700", "800"],
+    "cdn_links": [
+      "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">",
+      "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>",
+      "<link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap\" rel=\"stylesheet\">"
+    ],
+    "rules": "Headings must use Manrope with tracking-tight. Tabular data must use IBM Plex Sans for maximum legibility."
   },
-  "layouts": {
-    "page": "Dashboard with dark sidebar. Main content area padding should be generous (p-8 or p-12).",
-    "table": "Dense, cardless list. Use standard table or CSS Grid with border-collapse. Row borders should be subtle (border-border/40). No heavy shadows on the table container, just a 1px border. Use the 'Grid Borders (The Technical Look)' surface strategy."
-  },
-  "components": {
-    "Table": "Shadcn Table with custom styling. Remove outer card, keep it flat. Sticky header for better scrolling context.",
-    "RoleRow": {
-      "Column1_RoleInfo": "Role Name (font-medium text-lg). Below it, display the 'role_master_name' as a subtle template badge. If `is_system_role` is true, add a 'System Protected' mini-badge with a lock icon.",
-      "Column2_Users": "A clean pill or text showing 'X Employees'. Use a small Users icon next to the number. Make it look clickable (as it conceptually filters the employees tab).",
-      "Column3_Permissions": "Visual Permission Distribution. Show 'X/52 Modules' text prominently. Below it, include a 'PermissionCoverageBar' component: a mini segmented progress bar or a flex row of colored dots representing the 8 business categories (Orders, Discounts, etc.). Use green for high coverage, orange for partial, gray for none. Tooltip on hover showing exact category breakdown.",
-      "Column4_LastModified": "text-sm text-muted-foreground showing the date, e.g., 'Oct 24, 2023'.",
-      "Column5_Status": "Shadcn Switch component. Green when active (status=1), gray when inactive (status=0). Disable switch if `is_system_role`.",
-      "Column6_Actions": "Ghost button for Edit. If `is_editable` is false, use a View (eye) icon instead of Edit and apply a disabled or read-only styling."
-    },
-    "PageHeader": "Title 'Roles' (text-3xl font-semibold tracking-tight). Right side: Search Input (Shadcn) + Filter Dropdown (Role Type) + 'Create Role' primary button in brand green."
+  "colors": {
+    "background": "#FFFFFF",
+    "surface": "#F9FAFB",
+    "surface_active": "#F3F4F6",
+    "primary": "#F97316",
+    "primary_hover": "#EA580C",
+    "text_main": "#111827",
+    "text_muted": "#4B5563",
+    "border": "#E5E7EB",
+    "rule": "Color is Function Only. 95% of the UI must be monochrome. Orange is reserved STRICTLY for the 'Save Changes' button, the active tab underline, and the left border of the expanded ingredient row. No background gradients."
   },
   "visual_enhancers": {
-    "badges": "Use subtle colored backgrounds for badges (e.g., bg-orange-100 text-orange-800 for 'Template: Manager'). System Protected badge in slate/gray with a lock icon.",
-    "permission_bar": "A 100% width, h-2 flex container. Split into segments based on access categories to visually demonstrate what the role can do without reading a list.",
-    "icons": "Use lucide-react for rich iconography (lock, users, shield, pencil, eye)."
+    "borders": "1px solid #E5E7EB on all grid cells. Table must look like a clean, dense spreadsheet.",
+    "radius": "rounded-sm (2px) for inputs and buttons. Sharp edges.",
+    "shadows": "None on the grid. shadow-sm on the header/toolbar if sticky. shadow-md on dropdowns only."
+  },
+  "grids_and_layouts": {
+    "philosophy": "Dense, functional, scanable. Optimize for data correlation.",
+    "container": "min-h-screen bg-gray-50 text-gray-900 font-sans",
+    "header": "flex justify-between items-center py-4 px-6 bg-white border-b border-gray-200",
+    "tabs": "flex gap-8 px-6 bg-white border-b border-gray-200 text-sm font-medium",
+    "toolbar": "flex justify-between items-center py-3 px-6 bg-white border-b border-gray-200 gap-4",
+    "data_grid_container": "bg-white mx-6 my-4 border border-gray-200 rounded-sm overflow-hidden overflow-x-auto",
+    "table": "w-full text-left border-collapse whitespace-nowrap",
+    "th": "bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider py-2 px-3 border-b border-gray-200 sticky top-0",
+    "td": "py-1.5 px-3 border-b border-gray-200 text-sm",
+    "expanded_row": "bg-gray-50 border-l-4 border-l-orange-500 relative",
+    "inputs": "h-8 px-2 border border-gray-300 rounded-sm text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 w-full"
   },
   "motion": {
-    "hover": "Table rows should have a subtle bg-muted/50 hover state. Do not use scale transitions on rows.",
-    "interactions": "Switch toggling should be smooth. Button hover states must explicitly declare text color (e.g., hover:bg-slate-100 hover:text-slate-900)."
+    "hover": "Subtle bg-gray-50 on table rows. Buttons slightly darken on hover.",
+    "expansion": "Immediate toggle using Vanilla JS (toggling a 'hidden' class on the sub-table row), no complex animation needed for this prototype, prioritize functional speed."
   },
   "accessibility": {
-    "contrast": "Ensure green text/badges meet minimum 4.5:1 ratio.",
-    "data-testid": "Add data-testid attributes to all interactive elements (e.g., 'role-edit-button', 'role-status-switch', 'create-role-button')."
+    "focus": "All interactive elements MUST have focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1.",
+    "data_testid": "Add data-testid attributes to all buttons, inputs, row toggles, and tabs."
   },
-  "instructions_to_main_agent": [
-    "Build the Roles List screen according to the redesign requirements in the problem statement.",
-    "Implement the table using Shadcn UI table components, customized for a 'cardless, rectangular, dense' look. Avoid wrapping the table in a thick, rounded card.",
-    "Create a custom 'PermissionCoverageBar' component to visualize the module count vs total modules across the 8 categories. This is the visual centerpiece of the row.",
-    "Differentiate 'System Protected' roles clearly with a lock icon and disabled edit actions (replace Edit pencil with View eye).",
-    "Use Manrope for headings and IBM Plex Sans for body. Do not use generic fonts like Inter for headings.",
-    "Incorporate the brand's green (#22c55e) and orange accents purposefully, avoiding gradient overload.",
-    "Ensure all mock data matches the structure described in the problem statement (e.g., 8 business-function groups, system_role flags)."
-  ],
-  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
-    "Avoid generic, on-distribution outputs (the 'AI slop' aesthetic).",
-    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
-    "Create depth through layered design elements with z-index hierarchy.",
-    "Do not apply universal transition (transition: all). Always specify properties.",
-    "Do not center align the app container (.App { text-align: center; }).",
-    "NEVER use AI assistant Emoji characters for icons.",
-    "All interactive elements MUST include a data-testid attribute in kebab-case."
+  "component_instructions": {
+    "file_path": "/app/frontend/public/__dev/recipe_bulk_editor_mockup.html",
+    "frameworks": "HTML5, Tailwind CSS (via CDN), Google Fonts, Phosphor Icons (via unpkg CDN), Vanilla JavaScript.",
+    "tailwind_setup": "<script src=\"https://cdn.tailwindcss.com\"></script><script>tailwind.config = { theme: { extend: { colors: { orange: { 500: '#F97316', 600: '#EA580C' } }, fontFamily: { sans: ['IBM Plex Sans', 'sans-serif'], display: ['Manrope', 'sans-serif'] } } } }</script>",
+    "icon_library": "<script src=\"https://unpkg.com/@phosphor-icons/web\"></script> use classes like 'ph ph-caret-right', 'ph ph-caret-down', 'ph ph-magnifying-glass'.",
+    "data_requirements": [
+      {"name": "50-50 Aam -E -Bahar", "ingredients": ["Butter 13gm", "Sugar Syrup 13gm", "Base Cream 25gm", "Mango Filling 25gm", "Roasted Chopped Pistachios 2gm"], "count": 5},
+      {"name": "50-50 Astha E Malai", "ingredients": ["Butter 13gm", "Sugar Syrup 13gm", "Roasted Chopped Pistachios 2.5gm", "Base Cream 20gm"], "count": 4},
+      {"name": "50-50 Bluebeery", "ingredients": ["Butter 13gm", "Sugar Syrup 13gm", "Base Cream 30gm", "Blueberry Compote 15gm", "Vanilla Extract 2gm"], "count": 5},
+      {"name": "50-50 Caramel", "ingredients": ["Butter 13gm", "Sugar Syrup 13gm", "Peanut 3gm", "Caramel Sauce 15gm"], "count": 4},
+      {"name": "50-50 Choco Lava", "ingredients": ["Triple Chocolate Ganache 20gm", "Pouring Sauce 25gm", "Butter 13gm"], "count": 3},
+      {"name": "50-50 Gul", "ingredients": ["Butter 13gm", "Roasted Chopped Pistachios 5gm", "Rose Petals 0.5gm", "Gulkand 10gm"], "count": 4}
+    ],
+    "structure": [
+      "1. App wrapper: bg-gray-50 min-h-screen",
+      "2. Header: 'Recipes Management' (font-display text-2xl font-bold tracking-tight). Right side: Toggle group for 'Card View' / 'Bulk Editor' (Bulk Editor active with dark bg).",
+      "3. Tabs: 'Standard Recipes (92)' (Active, orange border-b-2), 'Sub-Recipes (0)', 'Addon Recipes (0)'.",
+      "4. Toolbar: Search input (left), Right side: Columns dropdown, Excel export icon, Import icon, '+ Add Recipe' button (ghost/outline), 'Save Changes' button (solid orange bg).",
+      "5. Data Grid: Table wrapped in a white card. Columns: Chevron (w-8), '#', 'Menu Item / Recipe' (input field w-64), 'Qty' (input w-16), 'Unit' (select), 'Prep Time (m)', 'Cook/Serve (m)', 'Serves', 'Ingredients' (badge), 'Cost (₹)', 'Margin %'.",
+      "6. Sub-table logic: When chevron is clicked, the main row chevron changes from ph-caret-right to ph-caret-down. The row immediately following it (which spans all columns via colspan) removes its 'hidden' class to reveal a sub-table of ingredients. Sub-table has columns: Ingredient (select w-48), Quantity (input w-24), Unit (text), Action (Trash icon). Sub-table is wrapped in a div with orange left border.",
+      "7. Make 2 rows expanded by default so the user can see the ingredient state immediately upon loading."
+    ],
+    "js_interactions_script": "Write a vanilla JS script at the bottom of the body. Select all chevrons by a class. On click, find the closest tr, toggle the chevron icon, and toggle the 'hidden' class on the nextElementSibling tr (which is the subtable row). Implement a simple search filter that hides trs not matching the input value."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "CREATE THE FILE EXACTLY AT `/app/frontend/public/__dev/recipe_bulk_editor_mockup.html`.",
+    "Do NOT create a React component. Do NOT put this in src/components.",
+    "This must be a self-contained, valid HTML5 file that runs independently in the browser.",
+    "Do NOT center align the text globally. Ensure table content is properly aligned (numbers right-aligned, text left-aligned).",
+    "Use standard HTML <input>, <select>, <button> elements styled with Tailwind utility classes.",
+    "Ensure the recipe name IS the menu item name - they are combined into one column 'Menu Item / Recipe' as explicitly requested.",
+    "The Expanded Row MUST feature an orange left border (4px) and a subtle bg-gray-50 background.",
+    "Include 'data-testid' on interactive elements. Example: data-testid='recipe-search-input', data-testid='expand-row-btn-1'.",
+    "For icons, use Phosphor Icons via script tag. NO AI emojis.",
+    "Avoid unnecessary wrappers. Build exactly the structure needed for a high-performance dense UI data grid."
   ]
 }
