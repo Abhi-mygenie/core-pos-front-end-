@@ -7,6 +7,7 @@ const fromAPI = {
     const items = response?.recipes || [];
     return items.map(r => ({
       id: r.recipe_id,
+      foodId: r.food_id || null,            // BUG-197 #7: needed for edit mode
       name: r.name || r.food_name || '',
       foodName: r.food_name || '',
       categoryName: r.category_name || '',
@@ -98,19 +99,35 @@ const fromAPI = {
 };
 
 const toAPI = {
-  // C2: store-recipe
+  // C2: store-recipe — BUG-197 #4: name = food_id (integer), serves_people (with 's')
   storeRecipe(data) {
     return {
-      food_id: data.foodId,
-      name: data.name,
+      name: data.foodId,                    // Backend expects food_id integer in 'name' field
       qty: data.qty,
       unit: data.unit,
       preparation_time: data.preparationTime || '',
       serve_time: data.serveTime || '',
-      serve_people: data.servePeople || 1,
+      serves_people: data.servePeople || 1, // 'serves' with s
       ingredients: (data.ingredients || []).map(ing => ({
         ingredient_id: ing.ingredientId,
         quantity: ing.quantity,
+        unit: ing.unit,
+      })),
+    };
+  },
+
+  // C3: update-recipe — BUG-197 #5: PUT, different ingredient field names
+  updateRecipe(data) {
+    return {
+      name: data.foodId,
+      qty: data.qty,
+      unit: data.unit,
+      preparation_time: data.preparationTime || '',
+      serve_time: data.serveTime || '',
+      serves_people: data.servePeople || 1,
+      ingredients: (data.ingredients || []).map(ing => ({
+        id: ing.ingredientId,               // 'id' not 'ingredient_id' (update contract)
+        qty: ing.quantity,                   // 'qty' not 'quantity' (update contract)
         unit: ing.unit,
       })),
     };
@@ -131,6 +148,21 @@ const toAPI = {
     };
   },
 
+  // C7: update-sub-recipe — BUG-197 #9: PUT, different ingredient fields
+  updateSubRecipe(data) {
+    return {
+      name: data.name,
+      qty: data.qty,
+      unit: data.unit,
+      preparation_time: data.preparationTime || '',
+      ingredients: (data.ingredients || []).map(ing => ({
+        id: ing.ingredientId,
+        qty: ing.quantity,
+        unit: ing.unit,
+      })),
+    };
+  },
+
   // D2: store-addon-recipe
   storeAddonRecipe(data) {
     return {
@@ -141,6 +173,21 @@ const toAPI = {
       ingredients: (data.ingredients || []).map(ing => ({
         ingredient_id: ing.ingredientId,
         quantity: ing.quantity,
+        unit: ing.unit,
+      })),
+    };
+  },
+
+  // D3: update-addon-recipe — BUG-197 #9: PUT, different ingredient fields
+  updateAddonRecipe(data) {
+    return {
+      addon_id: data.addonId,
+      name: data.name,
+      qty: data.qty,
+      unit: data.unit,
+      ingredients: (data.ingredients || []).map(ing => ({
+        id: ing.ingredientId,
+        qty: ing.quantity,
         unit: ing.unit,
       })),
     };

@@ -15,8 +15,8 @@ export async function storeRecipe(data) {
 }
 
 export async function updateRecipe(id, data) {
-  const payload = toAPI.storeRecipe(data);
-  return api.post(`${RECIPE_ENDPOINTS.UPDATE_RECIPE}/${id}`, payload);
+  const payload = toAPI.updateRecipe(data); // BUG-197 #5: separate transform
+  return api.put(`${RECIPE_ENDPOINTS.UPDATE_RECIPE}/${id}`, payload); // BUG-197 #5: PUT not POST
 }
 
 export async function deleteRecipe(id) {
@@ -45,8 +45,8 @@ export async function storeSubRecipe(data) {
 }
 
 export async function updateSubRecipe(id, data) {
-  const payload = toAPI.storeSubRecipe(data);
-  return api.post(`${RECIPE_ENDPOINTS.UPDATE_SUB_RECIPE}/${id}`, payload);
+  const payload = toAPI.updateSubRecipe(data); // BUG-197 #9: separate update transform
+  return api.put(`${RECIPE_ENDPOINTS.UPDATE_SUB_RECIPE}/${id}`, payload); // BUG-197 #9: PUT
 }
 
 export async function deleteSubRecipe(id) {
@@ -65,8 +65,8 @@ export async function storeAddonRecipe(data) {
 }
 
 export async function updateAddonRecipe(id, data) {
-  const payload = toAPI.storeAddonRecipe(data);
-  return api.post(`${RECIPE_ENDPOINTS.UPDATE_ADDON_RECIPE}/${id}`, payload);
+  const payload = toAPI.updateAddonRecipe(data); // BUG-197 #9: separate update transform
+  return api.put(`${RECIPE_ENDPOINTS.UPDATE_ADDON_RECIPE}/${id}`, payload); // BUG-197 #9: PUT
 }
 
 export async function deleteAddonRecipe(id) {

@@ -164,8 +164,15 @@ export const INVENTORY_ENDPOINTS = {
   IMPORT_STOCK: '/api/v2/vendoremployee/inventory/upload-stock-excel',
   // Vendors
   VENDOR_TYPE: '/api/v2/vendoremployee/inventory/vendor-type',
+  ADD_VENDOR: '/api/v2/vendoremployee/inventory/add-vendor', // BUG-197 #2
   // Wastage
   WASTAGE_REASONS: '/api/v2/vendoremployee/inventory/wastage-reasons',
+  // BUG-197 #3: Wastage CRUD (different base path)
+  WASTAGE_LIST: '/api/v2/vendoremployee/wastage-reasons/list',
+  ADD_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/add',
+  UPDATE_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/update',
+  WASTAGE_REASON_STATUS: '/api/v2/vendoremployee/wastage-reasons/status',
+  DELETE_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/delete',
 };
 
 // CR-072: Recipe Management

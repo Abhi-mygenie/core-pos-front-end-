@@ -84,12 +84,13 @@ const fromAPI = {
     }));
   },
 
-  // B10: wastage-reasons → { status, reasons: [...] }
+  // B10: wastage-reasons — BUG-197 #3: supports both legacy + new list endpoint shapes
   wastageReasons(response) {
-    const items = response?.reasons || [];
+    const items = response?.reasons || response?.data?.reasons || response?.data || [];
     return items.map(r => ({
       id: r.id,
       reason: r.reason || '',
+      status: r.status !== undefined ? Number(r.status) : 1,
     }));
   },
 
@@ -126,7 +127,7 @@ const toAPI = {
         Unit: item.unit,               // R9: capital U
         quantity: item.quantity,
         rate: item.rate,
-        amount: item.amount,
+        Amount: item.amount,           // BUG-197 #6: capital A per backend contract
         converion_factor: item.conversionFactor || 1, // R9 typo
       })),
     };
@@ -157,6 +158,24 @@ const toAPI = {
       type: 'inventory',
     };
   },
+
+  // BUG-197 #2: add-vendor
+  addVendor(data) {
+    return {
+      vendor_name: data.name,
+      contact_person: data.contactPerson || '',
+      phone: data.phone || '',
+      email: data.email || '',
+      address: data.address || '',
+      vendor_type_id: data.typeId || null,
+      gst_number: data.gst || '',
+    };
+  },
+
+  // BUG-197 #3: wastage CRUD
+  addWastageReason(data) { return { reason: data.reason }; },
+  updateWastageReason(data) { return { reason: data.reason }; },
+  toggleWastageStatus(status) { return { status }; },
 };
 
 export { fromAPI, toAPI };

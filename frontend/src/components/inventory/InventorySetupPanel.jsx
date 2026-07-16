@@ -17,6 +17,9 @@ function IngredientsTab() {
   const [search, setSearch] = useState('');
   const [newCatName, setNewCatName] = useState('');
   const [loading, setLoading] = useState(true);
+  // BUG-197 #1: Add Ingredient state
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newIng, setNewIng] = useState({ name: '', categoryId: '', unit: '' });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -83,6 +86,23 @@ function IngredientsTab() {
     }
   };
 
+  // BUG-197 #1: Add Ingredient handler
+  const addIngredient = async () => {
+    if (!newIng.name.trim() || !newIng.categoryId || !newIng.unit) {
+      toast.error('Name, category, and unit are required');
+      return;
+    }
+    try {
+      await inventoryService.addIngredient(newIng);
+      toast.success(`"${newIng.name}" added`);
+      setNewIng({ name: '', categoryId: '', unit: '' });
+      setShowAddForm(false);
+      await fetchData();
+    } catch (err) {
+      toast.error(err?.readableMessage || 'Failed to add ingredient');
+    }
+  };
+
   return (
     <div className="flex gap-5" data-testid="ingredients-tab">
       {/* Category Sidebar */}
@@ -126,6 +146,10 @@ function IngredientsTab() {
               <Input placeholder={selectedCat ? `Search in ${categories.find(c => c.id === selectedCat)?.name || ''}...` : 'Search all ingredients...'}
                 value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-sm" data-testid="ingredient-search" />
             </div>
+            {/* BUG-197 #1: Add Ingredient button */}
+            <Button onClick={() => setShowAddForm(true)} className="ml-auto bg-green-600 hover:bg-green-700 text-white gap-1.5" data-testid="add-ingredient-btn">
+              <Plus className="w-4 h-4" /> Add Ingredient
+            </Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left" data-testid="ingredient-table">
@@ -140,6 +164,36 @@ function IngredientsTab() {
                 </tr>
               </thead>
               <tbody>
+                {/* BUG-197 #1: Add Ingredient inline form */}
+                {showAddForm && (
+                  <tr className="border-b border-slate-100 bg-green-50/30" data-testid="ingredient-add-row">
+                    <td className="py-2 px-4">
+                      <Input value={newIng.name} onChange={e => setNewIng(p => ({ ...p, name: e.target.value }))}
+                        placeholder="Ingredient name..." className="h-8 text-sm" autoFocus data-testid="new-ingredient-name" />
+                    </td>
+                    <td className="py-2 px-4 text-center" colSpan={2}>
+                      <select className="h-8 text-xs border border-slate-200 rounded-md px-2 w-full outline-none"
+                        value={newIng.categoryId} onChange={e => setNewIng(p => ({ ...p, categoryId: Number(e.target.value) }))} data-testid="new-ingredient-category">
+                        <option value="">Category...</option>
+                        {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      <select className="h-8 text-xs border border-slate-200 rounded-md px-2 w-full outline-none"
+                        value={newIng.unit} onChange={e => setNewIng(p => ({ ...p, unit: e.target.value }))} data-testid="new-ingredient-unit">
+                        <option value="">Unit...</option>
+                        {units.map((u, i) => <option key={i} value={typeof u === 'string' ? u : u.name}>{typeof u === 'string' ? u : u.name}</option>)}
+                      </select>
+                    </td>
+                    <td className="py-2 px-4" />
+                    <td className="py-2 px-4 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <Button size="sm" variant="outline" onClick={addIngredient} className="h-7 px-2 text-xs" data-testid="save-new-ingredient">Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setShowAddForm(false); setNewIng({ name: '', categoryId: '', unit: '' }); }} className="h-7 px-2 text-xs">Cancel</Button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 {loading ? (
                   <tr><td colSpan={6} className="py-12 text-center text-sm text-slate-400">Loading ingredients...</td></tr>
                 ) : filtered.length === 0 ? (
@@ -206,10 +260,16 @@ function VendorsTab() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // BUG-197 #2: Wire to actual API
   const handleSave = async (data) => {
-    toast.success(`Vendor "${data.name}" saved`);
-    setEditVendor(undefined);
-    await fetchData();
+    try {
+      await inventoryService.addVendor(data);
+      toast.success(`Vendor "${data.name}" saved`);
+      setEditVendor(undefined);
+      await fetchData();
+    } catch (err) {
+      toast.error(err?.readableMessage || 'Failed to save vendor');
+    }
   };
 
   return (
@@ -258,44 +318,142 @@ function VendorsTab() {
   );
 }
 
-// ── Wastage Reasons Tab ──────────────────────────────────────────
+// ── Wastage Reasons Tab — BUG-197 #3: Full CRUD ─────────────────
 function WastageTab() {
   const [reasons, setReasons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newReason, setNewReason] = useState('');
+  const [showAddRow, setShowAddRow] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState('');
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await inventoryService.getWastageReasons();
-        setReasons(data);
-      } catch { toast.error('Failed to load wastage reasons'); }
-      finally { setLoading(false); }
-    })();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await inventoryService.getWastageReasons();
+      setReasons(data);
+    } catch { toast.error('Failed to load wastage reasons'); }
+    finally { setLoading(false); }
   }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const addReason = async () => {
+    if (!newReason.trim()) return;
+    try {
+      await inventoryService.addWastageReason({ reason: newReason.trim() });
+      toast.success(`Reason "${newReason}" added`);
+      setNewReason('');
+      setShowAddRow(false);
+      await fetchData();
+    } catch (err) { toast.error(err?.readableMessage || 'Failed to add reason'); }
+  };
+
+  const saveEdit = async (id) => {
+    if (!editingText.trim()) return;
+    try {
+      await inventoryService.updateWastageReason(id, { reason: editingText.trim() });
+      toast.success('Reason updated');
+      setEditingId(null);
+      await fetchData();
+    } catch (err) { toast.error(err?.readableMessage || 'Failed to update'); }
+  };
+
+  const toggleStatus = async (r) => {
+    try {
+      await inventoryService.toggleWastageStatus(r.id, r.status ? 0 : 1);
+      toast.success(`"${r.reason}" ${r.status ? 'disabled' : 'enabled'}`);
+      await fetchData();
+    } catch (err) { toast.error(err?.readableMessage || 'Failed to toggle status'); }
+  };
+
+  const deleteReason = async (r) => {
+    if (!window.confirm(`Delete "${r.reason}"?`)) return;
+    try {
+      await inventoryService.deleteWastageReason(r.id);
+      toast.success(`"${r.reason}" deleted`);
+      await fetchData();
+    } catch (err) { toast.error(err?.readableMessage || 'Failed to delete'); }
+  };
 
   return (
     <div data-testid="wastage-tab">
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left" data-testid="wastage-table">
-            <thead>
-              <tr className="bg-slate-50/80">
-                <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">Reason</th>
-                <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-center" style={{ width: 80 }}>ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={2} className="py-12 text-center text-sm text-slate-400">Loading...</td></tr>
-              ) : reasons.map(r => (
-                <tr key={r.id} className="border-b border-slate-50 hover:bg-slate-50/50" data-testid={`wastage-row-${r.id}`}>
-                  <td className="py-3 px-4 text-sm font-medium text-slate-900">{r.reason}</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">#{r.id}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="p-4 flex items-center justify-between border-b border-slate-100">
+          <span className="text-sm font-medium text-slate-700">Wastage Reasons ({reasons.length})</span>
+          <Button onClick={() => setShowAddRow(true)} className="bg-green-600 hover:bg-green-700 text-white gap-1.5" size="sm" data-testid="add-wastage-btn">
+            <Plus className="w-3.5 h-3.5" /> Add Reason
+          </Button>
         </div>
+        <table className="w-full text-left" data-testid="wastage-table">
+          <thead>
+            <tr className="bg-slate-50/80">
+              <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">Reason</th>
+              <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-center" style={{ width: 100 }}>Status</th>
+              <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200 text-center" style={{ width: 140 }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {showAddRow && (
+              <tr className="border-b border-slate-100 bg-green-50/30" data-testid="wastage-add-row">
+                <td className="py-2 px-4">
+                  <Input value={newReason} onChange={e => setNewReason(e.target.value)} placeholder="New reason..."
+                    className="h-8 text-sm" autoFocus onKeyDown={e => e.key === 'Enter' && addReason()} data-testid="wastage-new-input" />
+                </td>
+                <td />
+                <td className="py-2 px-4 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Button size="sm" variant="outline" onClick={addReason} className="h-7 px-2 text-xs" data-testid="wastage-save-new">Save</Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setShowAddRow(false); setNewReason(''); }} className="h-7 px-2 text-xs">Cancel</Button>
+                  </div>
+                </td>
+              </tr>
+            )}
+            {loading ? (
+              <tr><td colSpan={3} className="py-12 text-center text-sm text-slate-400">Loading...</td></tr>
+            ) : reasons.length === 0 ? (
+              <tr><td colSpan={3} className="py-12 text-center text-sm text-slate-400">No wastage reasons configured</td></tr>
+            ) : reasons.map(r => (
+              <tr key={r.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors" data-testid={`wastage-row-${r.id}`}>
+                <td className="py-3 px-4">
+                  {editingId === r.id ? (
+                    <Input value={editingText} onChange={e => setEditingText(e.target.value)} className="h-8 text-sm"
+                      autoFocus onKeyDown={e => e.key === 'Enter' && saveEdit(r.id)} data-testid={`wastage-edit-input-${r.id}`} />
+                  ) : (
+                    <span className={`text-sm font-medium ${r.status ? 'text-slate-900' : 'text-slate-400 line-through'}`}>{r.reason}</span>
+                  )}
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <button onClick={() => toggleStatus(r)} data-testid={`wastage-toggle-${r.id}`}
+                    className={`text-xs font-medium px-2.5 py-1 rounded-full cursor-pointer transition-colors ${r.status ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}>
+                    {r.status ? 'Active' : 'Inactive'}
+                  </button>
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    {editingId === r.id ? (
+                      <>
+                        <Button size="sm" variant="outline" onClick={() => saveEdit(r.id)} className="h-7 px-2 text-xs" data-testid={`wastage-save-edit-${r.id}`}>Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setEditingId(null)} className="h-7 px-2 text-xs">Cancel</Button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => { setEditingId(r.id); setEditingText(r.reason); }}
+                          className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" data-testid={`wastage-edit-${r.id}`}>
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => deleteReason(r)}
+                          className="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors" data-testid={`wastage-delete-${r.id}`}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

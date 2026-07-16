@@ -81,10 +81,31 @@ export async function getVendorTypes() {
   return fromAPI.vendorTypes(res.data);
 }
 
+export async function addVendor(data) {
+  const payload = toAPI.addVendor(data);
+  return api.post(INVENTORY_ENDPOINTS.ADD_VENDOR, payload); // BUG-197 #2
+}
+
 // ── Wastage ──────────────────────────────────────────────────────
 export async function getWastageReasons() {
-  const res = await api.get(INVENTORY_ENDPOINTS.WASTAGE_REASONS);
+  const res = await api.get(INVENTORY_ENDPOINTS.WASTAGE_LIST); // BUG-197 #3: new list endpoint
   return fromAPI.wastageReasons(res.data);
+}
+
+export async function addWastageReason(data) {
+  return api.post(INVENTORY_ENDPOINTS.ADD_WASTAGE_REASON, toAPI.addWastageReason(data)); // BUG-197 #3
+}
+
+export async function updateWastageReason(id, data) {
+  return api.post(`${INVENTORY_ENDPOINTS.UPDATE_WASTAGE_REASON}/${id}`, toAPI.updateWastageReason(data)); // BUG-197 #3
+}
+
+export async function toggleWastageStatus(id, status) {
+  return api.post(`${INVENTORY_ENDPOINTS.WASTAGE_REASON_STATUS}/${id}`, toAPI.toggleWastageStatus(status)); // BUG-197 #3
+}
+
+export async function deleteWastageReason(id) {
+  return api.delete(`${INVENTORY_ENDPOINTS.DELETE_WASTAGE_REASON}/${id}`); // BUG-197 #3
 }
 
 // ── Shared with Expense (import, don't duplicate) ────────────────

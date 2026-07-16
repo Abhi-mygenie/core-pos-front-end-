@@ -47,10 +47,22 @@ export default function RecipeFormPanel({ recipe, recipeType, onBack }) {
         setIngredients(ingList);
         setFoods(foodList);
         setUnits(Array.isArray(unitList) ? unitList : []);
+        // BUG-197 #7: reverse-lookup foodId/addonId from name for edit mode
+        // (GET recipe response may not include food_id, only food_name)
+        if (isEdit && foodList.length) {
+          if (recipeType !== 'sub' && !foodId && recipe?.foodName) {
+            const match = foodList.find(f => f.name.toLowerCase() === recipe.foodName.toLowerCase());
+            if (match) setFoodId(String(match.id));
+          }
+          if (recipeType === 'addon' && !addonId && recipe?.addonName) {
+            const match = foodList.find(f => f.name.toLowerCase() === recipe.addonName.toLowerCase());
+            if (match) setAddonId(String(match.id));
+          }
+        }
       } catch { toast.error('Failed to load form data'); }
       finally { setLoading(false); }
     })();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addIngRow = () => setIngRows(prev => [...prev, emptyIngRow()]);
   const removeIngRow = (key) => { if (ingRows.length > 1) setIngRows(prev => prev.filter(r => r._key !== key)); };
@@ -68,6 +80,9 @@ export default function RecipeFormPanel({ recipe, recipeType, onBack }) {
 
   const handleSave = async () => {
     if (!name.trim()) { toast.error('Recipe name is required'); return; }
+    // BUG-197 #8: validate food/addon selection
+    if (recipeType === 'standard' && !foodId) { toast.error('Select a menu item for this recipe'); return; }
+    if (recipeType === 'addon' && !addonId) { toast.error('Select an addon item for this recipe'); return; }
     const validIngs = ingRows.filter(r => r.ingredientId && Number(r.quantity) > 0);
     if (validIngs.length === 0) { toast.error('Add at least one ingredient'); return; }
 
@@ -116,15 +131,24 @@ export default function RecipeFormPanel({ recipe, recipeType, onBack }) {
             <Label className="text-xs text-slate-500">Recipe Name <span className="text-red-500">*</span></Label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Kunafa Classic" className={`mt-1 ${inputCls}`} data-testid="recipe-name" />
           </div>
-          {recipeType !== 'sub' && (
+          {/* BUG-197 #10: addon dropdown sets addonId, standard sets foodId, sub hides dropdown */}
+          {recipeType === 'addon' ? (
             <div>
-              <Label className="text-xs text-slate-500">{recipeType === 'addon' ? 'Addon Item' : 'Menu Item'}</Label>
+              <Label className="text-xs text-slate-500">Addon Item <span className="text-red-500">*</span></Label>
+              <select className={`mt-1 ${selectCls}`} value={addonId} onChange={e => setAddonId(e.target.value)} data-testid="recipe-addon">
+                <option value="">Select addon...</option>
+                {foods.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            </div>
+          ) : recipeType !== 'sub' ? (
+            <div>
+              <Label className="text-xs text-slate-500">Menu Item <span className="text-red-500">*</span></Label>
               <select className={`mt-1 ${selectCls}`} value={foodId} onChange={e => setFoodId(e.target.value)} data-testid="recipe-food">
                 <option value="">Select item...</option>
                 {foods.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
             </div>
-          )}
+          ) : null}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-slate-500">Qty</Label>
