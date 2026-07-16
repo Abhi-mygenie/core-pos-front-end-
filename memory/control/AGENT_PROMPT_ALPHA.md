@@ -1573,6 +1573,22 @@ When root cause is backend/API, write a BACKEND_BRIEF using the v0.7 template wi
 Every role must end with the v0.7 compact final format so the owner and next agent can see status, outputs, blockers, and next step quickly.
 **Applies to:** ALL roles.
 
+### R25: Laravel uses PUT for all update endpoints — never POST for updates
+This backend is Laravel and follows strict REST verb conventions:
+- `POST` → **create** only (new records)
+- `PUT` / `PATCH` → **update** existing records
+- `DELETE` → delete
+
+Using `api.post()` on an update endpoint returns **405 Method Not Allowed** (often silently in the UI — the request "returns" but nothing persists). This has caused repeated post-delivery bugs (CR-072 recipes fixed in BUG-197; CR-069 employees still broken as BUG-198).
+
+**Enforcement:**
+- PLANNING: every service function that mutates an existing record must specify `PUT` (or `PATCH` if backend confirms) in the plan. Update-endpoint verb is a mandatory line in the Verification Matrix.
+- IMPLEMENTATION / BUG FIX: `api.post(...)` is allowed only for creation. Grep-guard: any `api.post` in a function named `update*`, `edit*`, `save*` (with an `id` arg), or `resetPassword*` is a defect.
+- Curl-probe rule (R11) must confirm method + response shape before wiring any update call.
+- If a `POST` update genuinely exists on the backend, document it as an exception in `KNOWN BACKEND QUIRKS` with the endpoint name — do not assume.
+
+**Applies to:** PLANNING, IMPLEMENTATION, BUG FIX, INVESTIGATION, QA (API testing).
+
 ---
 
 ## ENVIRONMENT
@@ -1652,6 +1668,7 @@ When a report needs account context, write alias + RID only. Never write passwor
 | `payment_status` is `null` from list endpoint even after settlement | Use `fOrderStatus` for rooms |
 | `'sucess'` misspelling for PayLater status | Do not fix — backend expects this |
 | Laravel returns `Supported methods: ...` on 405 | Method-probe first |
+| **Laravel uses `PUT` for ALL updates (see R25)** | **`api.post()` on update endpoints → silent 405. Always `api.put()` for update.** |
 | `scan-new-order` socket has 2 payload formats (4-element old, 6-element new) | Must be backward compatible |
 | Profile API can 500 → empty permissions → icons disappear | Permission-gated UI becomes invisible |
 | `delivery_assign` feature flag in restaurant profile | Never branch on `order_in` or `source` |
@@ -1705,6 +1722,7 @@ Rate yourself 1-5. **Items 1-2 are MANDATORY** (must appear in SESSION_HANDOVER 
 - Do not print raw passwords, tokens, API keys, or customer-sensitive payloads
 - Do not use Fast Lane unless all eligibility rules pass and owner explicitly approves
 - Do not downgrade risk without owner rationale
+- **Do not use `api.post()` for update operations — Laravel backend requires `PUT` (R25)**
 - QA agent: NEVER fix code. Report it, don't fix it.
 - PLANNING agent: NEVER write code. Plan it, don't build it.
 - INVESTIGATION agent: NEVER write code. Diagnose it, don't fix it.
@@ -1737,6 +1755,7 @@ If you encounter:
 | **v0.5** | **2026-06-14** | **Hardened playbooks based on POS 4.0 retrospective (7 lost CRs). PLANNING: +Code Reality Check, +Conflict Pre-Check, +Verification Matrix, +Post-Code Registry Checklist. IMPLEMENTATION: +Entry Verification, +Checkpointing, +Self-Verification, +5-item EXIT GATE (hard blocker). QA: +Precondition Check (rejects unsynced handovers), +Registry Spot-Check. PRE-RELEASE AUDIT: +§F Registry Integrity Audit (code-to-registry cross-check, RELEASE BLOCKER). CLOSURE: +Phase B Reconciliation (formal process for code-exists-but-unregistered). RELEASE: +Baseline Precondition Check. New rules R17 (Registry Sync Gate) + R18 (Code Markers Mandatory). Artifact #0 merged into handover header (4-line mandatory format). Dashboard Data Contract added. Smoke batch: single-doc append-only rule. Regression: +meta-regression item count check.** |
 | **v0.6** | **2026-06-15** | **CR-047: Role Hardening for 4 weakest roles. STEP -1: rewritten as owner-driven session start — agent asks "What would you like to do?" FIRST, queue is opt-in (not forced). +handover reading, +stale batch 48h detection, +multi-batch ordering. NEW STEP -1.5: conditional environment check (execution roles only, doc roles skip). PLANNING: +stage dispatch (Gate 2 only / Gate 3 only / ask). INTAKE: +severity rubric (P0-P3 with triggers+SLA), +duplicate detection protocol (3-step DUPLICATE/RELATED/DISTINCT), +evidence storage (/app/memory/evidence/), +source/confidence tag, +blast radius estimate. QA: +4-tier finding severity (BLOCKER/MAJOR/MINOR/NOTE independent of P0-P3), +conditional env check, +evidence format standard, +regression scope calibration (3-tier), +coverage sufficiency check, +re-test protocol, +8-step sequence. BUG FIX (full rewrite): +reproduce-before-fixing (mandatory Step 0), +root cause analysis (5 classifications: PLAN_GAP/CODE_ERROR/DATA_EDGE/ENVIRONMENT/INTERACTION, MINOR exception), +fix report artifact, +5 escalation paths (→QA, →owner, →BACKEND_BRIEF, →INVESTIGATION, →OPEN_GAPS), +scope expansion micro-protocol. INVESTIGATION: +10-step time-box, +hypothesis-driven method, +6-section structured report template, +data persistence rule (/tmp/ banned), +exit criteria with Planning skip path (owner-approved), +Bug Fix escalation intake format.** |
 | **v0.7** | **2026-06-17** | **Non-breaking operating layer. Header version aligned to v0.7. Added session scope control, secret hygiene, role decision tree, mandatory risk classification, owner-approved Fast Lane for safe tiny changes, owner approval matrix, standard final response formats, backend handoff template, artifact naming standard, secure credential aliases replacing raw passwords, and shared rules R19-R24. Existing v0.6 gate flow, roles, registry sync, code markers, QA, audit, closure, and release controls remain intact.** |
+| **v0.8** | **2026-07-16** | **+R25: Laravel PUT-for-updates rule (systemic pattern uncovered by BUG-197/BUG-198). `api.post()` on update endpoints returns silent 405. New shared rule enforced across PLANNING/IMPLEMENTATION/BUG FIX/INVESTIGATION/QA; grep-guard on `update*`, `edit*`, `save*(id,...)`, `resetPassword*` functions; verb line added to Verification Matrix; cross-reference row added to KNOWN BACKEND QUIRKS; WHAT NOT TO DO bullet added.** |
 
 ---
 
