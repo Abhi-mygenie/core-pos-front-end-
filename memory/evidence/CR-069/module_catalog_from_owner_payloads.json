@@ -1,0 +1,106 @@
+{
+  "extracted_from": "Owner-provided curl payloads in chat 2026-02-15",
+  "source_endpoint": "PUT /api/v1/vendoremployee/employee/role-update/{id} + POST /role-add",
+  "note": "This is the working module/permission catalog inferred from owner's role-update example. To be validated against GET /all-role-list once fresh token is available.",
+  "modules_seen_in_role_update_example": [
+    "Manager",
+    "food",
+    "pos",
+    "order",
+    "bill",
+    "order_cancel",
+    "serve",
+    "aggregator",
+    "show_online_order",
+    "assign_online_order",
+    "order_unpaid",
+    "update_payment",
+    "order_edit",
+    "clear_payment",
+    "ready",
+    "customer_management",
+    "virtual_wallet",
+    "discount",
+    "transfer_table",
+    "merge_table",
+    "food_transfer",
+    "whatsapp_icon",
+    "print_icon",
+    "table_view",
+    "confirm_order",
+    "complementary_food",
+    "employee",
+    "restaurant_setup",
+    "inventory",
+    "coupon",
+    "printer",
+    "menu",
+    "expence",
+    "loyalty",
+    "restaurant_settings",
+    "printer_management",
+    "table_management",
+    "delivery_management",
+    "physicalqty_master",
+    "report",
+    "report_summery",
+    "waiter_revenue_report",
+    "sattle_report",
+    "revenue_report",
+    "room_report",
+    "sales_report",
+    "revenue_report_average",
+    "consumption_report",
+    "cancellation_report",
+    "pl_report",
+    "wastage_report"
+  ],
+  "count": 50,
+  "backend_typos_R9_verbatim_do_not_fix": [
+    "expence (typo of 'expense')",
+    "report_summery (typo of 'report_summary')",
+    "sattle_report (typo of 'settle_report')",
+    "complementary_food (typo of 'complimentary_food')"
+  ],
+  "grouping_suggestion_for_permission_matrix_UI": {
+    "General": ["Manager", "food"],
+    "POS / Order Actions": [
+      "pos", "order", "bill", "confirm_order", "order_cancel", "serve",
+      "order_edit", "clear_payment", "update_payment", "order_unpaid", "ready",
+      "discount", "complementary_food", "customer_management", "virtual_wallet",
+      "transfer_table", "merge_table", "food_transfer", "table_view",
+      "whatsapp_icon", "print_icon"
+    ],
+    "Online / Aggregator": [
+      "aggregator", "show_online_order", "assign_online_order"
+    ],
+    "Modules (top-level menu)": [
+      "employee", "restaurant_setup", "inventory", "menu", "coupon", "loyalty",
+      "expence", "printer", "restaurant_settings", "printer_management",
+      "table_management", "delivery_management", "physicalqty_master"
+    ],
+    "Reports": [
+      "report", "report_summery", "waiter_revenue_report", "sattle_report",
+      "revenue_report", "revenue_report_average", "room_report", "sales_report",
+      "consumption_report", "cancellation_report", "pl_report", "wastage_report"
+    ]
+  },
+  "special_fields_on_role_payload": {
+    "role_type[]": "String array; owner's example uses ['Manager']. Purpose unclear — likely a coarse job-family label. Confirm with owner or via GET all-role-list.",
+    "role_master_id": "Integer; owner's example uses 15 and 16. Likely FK to role-master-list (predefined role templates). Confirm shape via GET role-master-list.",
+    "printmodules": "Nullable; may be a similar checklist for print-permissions. Not shown populated in owner's example.",
+    "status": "Integer 0/1 present on role-update but not role-add — likely inherited default 1 on create.",
+    "name": "String — the role's display name (e.g., 'hola', 'CA')."
+  },
+  "employee_entity_fields": {
+    "id": "Integer (path param in update/status endpoints — e.g., 4572, 4841)",
+    "f_name": "String, required",
+    "l_name": "String, optional (empty string acceptable)",
+    "role_id": "Integer, required — FK to role-list",
+    "email": "String, required (email format)",
+    "phone": "String, required (numeric, no country code visible — 10 digits in India)",
+    "bill_user_view": "String 'Yes' | 'No' — NOT boolean; per Rule R9 keep as string verbatim",
+    "password": "String (only on create; not on update)",
+    "status": "Integer 0/1 (via employee-status endpoint only, not on create/update body)"
+  }
+}

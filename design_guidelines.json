@@ -1,0 +1,62 @@
+{
+  "theme": {
+    "mode": "light",
+    "primary_color": "#22c55e",
+    "accent_color": "#f97316",
+    "background": "#f8fafc",
+    "surface": "#ffffff",
+    "text": "#0f172a"
+  },
+  "typography": {
+    "headings": "Manrope",
+    "body": "IBM Plex Sans",
+    "strategy": "Soft Utility (Friendly but professional). Tight tracking on role names, legible mono or clean sans for data like dates and counts. Avoid Inter for headings."
+  },
+  "layouts": {
+    "page": "Dashboard with dark sidebar. Main content area padding should be generous (p-8 or p-12).",
+    "table": "Dense, cardless list. Use standard table or CSS Grid with border-collapse. Row borders should be subtle (border-border/40). No heavy shadows on the table container, just a 1px border. Use the 'Grid Borders (The Technical Look)' surface strategy."
+  },
+  "components": {
+    "Table": "Shadcn Table with custom styling. Remove outer card, keep it flat. Sticky header for better scrolling context.",
+    "RoleRow": {
+      "Column1_RoleInfo": "Role Name (font-medium text-lg). Below it, display the 'role_master_name' as a subtle template badge. If `is_system_role` is true, add a 'System Protected' mini-badge with a lock icon.",
+      "Column2_Users": "A clean pill or text showing 'X Employees'. Use a small Users icon next to the number. Make it look clickable (as it conceptually filters the employees tab).",
+      "Column3_Permissions": "Visual Permission Distribution. Show 'X/52 Modules' text prominently. Below it, include a 'PermissionCoverageBar' component: a mini segmented progress bar or a flex row of colored dots representing the 8 business categories (Orders, Discounts, etc.). Use green for high coverage, orange for partial, gray for none. Tooltip on hover showing exact category breakdown.",
+      "Column4_LastModified": "text-sm text-muted-foreground showing the date, e.g., 'Oct 24, 2023'.",
+      "Column5_Status": "Shadcn Switch component. Green when active (status=1), gray when inactive (status=0). Disable switch if `is_system_role`.",
+      "Column6_Actions": "Ghost button for Edit. If `is_editable` is false, use a View (eye) icon instead of Edit and apply a disabled or read-only styling."
+    },
+    "PageHeader": "Title 'Roles' (text-3xl font-semibold tracking-tight). Right side: Search Input (Shadcn) + Filter Dropdown (Role Type) + 'Create Role' primary button in brand green."
+  },
+  "visual_enhancers": {
+    "badges": "Use subtle colored backgrounds for badges (e.g., bg-orange-100 text-orange-800 for 'Template: Manager'). System Protected badge in slate/gray with a lock icon.",
+    "permission_bar": "A 100% width, h-2 flex container. Split into segments based on access categories to visually demonstrate what the role can do without reading a list.",
+    "icons": "Use lucide-react for rich iconography (lock, users, shield, pencil, eye)."
+  },
+  "motion": {
+    "hover": "Table rows should have a subtle bg-muted/50 hover state. Do not use scale transitions on rows.",
+    "interactions": "Switch toggling should be smooth. Button hover states must explicitly declare text color (e.g., hover:bg-slate-100 hover:text-slate-900)."
+  },
+  "accessibility": {
+    "contrast": "Ensure green text/badges meet minimum 4.5:1 ratio.",
+    "data-testid": "Add data-testid attributes to all interactive elements (e.g., 'role-edit-button', 'role-status-switch', 'create-role-button')."
+  },
+  "instructions_to_main_agent": [
+    "Build the Roles List screen according to the redesign requirements in the problem statement.",
+    "Implement the table using Shadcn UI table components, customized for a 'cardless, rectangular, dense' look. Avoid wrapping the table in a thick, rounded card.",
+    "Create a custom 'PermissionCoverageBar' component to visualize the module count vs total modules across the 8 categories. This is the visual centerpiece of the row.",
+    "Differentiate 'System Protected' roles clearly with a lock icon and disabled edit actions (replace Edit pencil with View eye).",
+    "Use Manrope for headings and IBM Plex Sans for body. Do not use generic fonts like Inter for headings.",
+    "Incorporate the brand's green (#22c55e) and orange accents purposefully, avoiding gradient overload.",
+    "Ensure all mock data matches the structure described in the problem statement (e.g., 8 business-function groups, system_role flags)."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Avoid generic, on-distribution outputs (the 'AI slop' aesthetic).",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Do not apply universal transition (transition: all). Always specify properties.",
+    "Do not center align the app container (.App { text-align: center; }).",
+    "NEVER use AI assistant Emoji characters for icons.",
+    "All interactive elements MUST include a data-testid attribute in kebab-case."
+  ]
+}

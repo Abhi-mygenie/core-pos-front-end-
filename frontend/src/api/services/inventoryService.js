@@ -1,0 +1,99 @@
+// CR-072: Inventory Service — 22 API functions for inventory CRUD
+import api from '../axios';
+import { INVENTORY_ENDPOINTS, EXPENSE_ENDPOINTS } from '../constants';
+import { fromAPI, toAPI } from '../transforms/inventoryTransform';
+
+// ── Ingredients Master ──────────────────────────────────────────
+export async function getIngredients() {
+  const res = await api.get(INVENTORY_ENDPOINTS.GET_INVENTORY_MASTER);
+  return fromAPI.ingredients(res.data);
+}
+
+export async function addIngredient(data) {
+  const payload = toAPI.addIngredient(data);
+  return api.post(INVENTORY_ENDPOINTS.ADD_INVENTORY, payload);
+}
+
+export async function deleteIngredient(id) {
+  return api.delete(`${INVENTORY_ENDPOINTS.DELETE_INGREDIENT}/${id}`);
+}
+
+export async function exportIngredients() {
+  return api.get(INVENTORY_ENDPOINTS.EXPORT_INVENTORY, { responseType: 'blob' });
+}
+
+export async function importIngredients(formData) {
+  return api.post(INVENTORY_ENDPOINTS.IMPORT_INVENTORY, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+}
+
+// ── Categories ──────────────────────────────────────────────────
+export async function getCategories() {
+  const res = await api.get(INVENTORY_ENDPOINTS.STOCK_CATEGORIES);
+  return fromAPI.categories(res.data);
+}
+
+export async function storeCategory(data) {
+  const payload = toAPI.storeCategory(data);
+  return api.post(INVENTORY_ENDPOINTS.STORE_CATEGORY, payload);
+}
+
+// ── Stock ────────────────────────────────────────────────────────
+export async function getStockInventory() {
+  const res = await api.get(INVENTORY_ENDPOINTS.STOCK_INVENTORY);
+  return fromAPI.stockItems(res.data);
+}
+
+export async function getUnitInventory(id) {
+  const res = await api.get(`${INVENTORY_ENDPOINTS.UNIT_INVENTORY}/${id}`);
+  return fromAPI.unitInventory(res.data);
+}
+
+export async function updateStock(id, data) {
+  const payload = toAPI.updateStock(data);
+  return api.post(`${INVENTORY_ENDPOINTS.UPDATE_STOCK}/${id}`, payload);
+}
+
+export async function addStock(id, data) {
+  const payload = toAPI.addStock(data);
+  return api.post(`${INVENTORY_ENDPOINTS.ADD_STOCK}/${id}`, payload);
+}
+
+export async function addPurchase(data) {
+  const payload = toAPI.addPurchase(data);
+  return api.post(INVENTORY_ENDPOINTS.ADD_PURCHASE, payload);
+}
+
+export async function exportStock() {
+  return api.get(INVENTORY_ENDPOINTS.EXPORT_STOCK, { responseType: 'blob' });
+}
+
+export async function importStock(formData) {
+  return api.post(INVENTORY_ENDPOINTS.IMPORT_STOCK, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+}
+
+// ── Vendors ──────────────────────────────────────────────────────
+export async function getVendorTypes() {
+  const res = await api.get(INVENTORY_ENDPOINTS.VENDOR_TYPE);
+  return fromAPI.vendorTypes(res.data);
+}
+
+// ── Wastage ──────────────────────────────────────────────────────
+export async function getWastageReasons() {
+  const res = await api.get(INVENTORY_ENDPOINTS.WASTAGE_REASONS);
+  return fromAPI.wastageReasons(res.data);
+}
+
+// ── Shared with Expense (import, don't duplicate) ────────────────
+export async function getUnits() {
+  const res = await api.get(EXPENSE_ENDPOINTS.GET_UNIT);
+  return res.data?.units || res.data?.data || res.data || [];
+}
+
+export async function getPaymentMethods() {
+  const res = await api.get(EXPENSE_ENDPOINTS.PAYMENT_METHOD);
+  return res.data?.Payment_method || res.data?.payment_method || res.data?.data || res.data || []; // R9: capital P in response key
+}

@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "message": "Area options retrieved successfully",
+  "data": {
+    "areas": [
+      null,
+      "Garden Area"
+    ]
+  }
+}

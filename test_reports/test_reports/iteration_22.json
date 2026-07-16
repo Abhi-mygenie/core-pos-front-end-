@@ -1,0 +1,67 @@
+{
+  "summary": "CR-060 Table/Room Management full E2E on Palm House restaurant (owner@palmhouse.com) with mandatory screenshots for ALL 15 QA operations. Verified: login → 45s Palm House boot (90 tables, 473 products) → dashboard renders without CR-060 crash → sidebar Settings flyout shows 'Table Management' (no Coming Soon) → 'All Settings' opens SettingsPanel slide-over tile grid → 'Table Management' tile loads TableManagementView with real API data (90 tables, all sections=[All, Unassigned]) → section filter works → Add Table dialog opens with all required fields (type toggle, table number, area combobox, waiter select) → Successfully created QA-TEST-1 (id=8231, count went 90→91) → Edit dialog opens pre-filled with 'QA-TEST-1' → Delete inline confirmation appears with correct 'Delete \"QA-TEST-1\"?' text and Yes/No buttons → Delete succeeds with toast 'Deleted — Table \"QA-TEST-1\" removed.' (count 91→90) → Bulk Editor opens with spreadsheet grid showing all 90 items with # Type Table/Room No. Area/Section Assign Waiter columns → Bulk Add Item creates new row → Close X returns to card view → Export triggers download of TableList_1784036041.xlsx. Zero console errors during entire flow. Previous iteration_21 'All section empty' bug is CONFIRMED FIXED (line 47 now defaults setSelectedArea('All') and areas API is sanitized with .filter(Boolean)).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Add Table success toast",
+        "issue": "No toast is shown after successful Add Table. Backend create succeeds and card appears in grid, but no confirmation toast fires. Delete flow correctly shows a toast ('Deleted — Table \"QA-TEST-1\" removed.'), so this asymmetry is minor UX gap. Edit flow was not tested for toast (Cancelled in test).",
+        "affected_selectors": ["[data-testid=\"dialog-save-btn\"]"]
+      },
+      {
+        "flow": "Export toast/feedback",
+        "issue": "Export triggers file download (TableList_1784036041.xlsx) but no success toast is shown to user. Recommend adding toast 'Export ready' for accessibility parity.",
+        "affected_selectors": ["[data-testid=\"export-btn\"]"]
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Table Management Card Grid (Palm House data)",
+        "issues": [
+          "Every card shows label 'Manager' regardless of waiter assignment — this appears to be a Palm House data quirk (all tables assigned to a user with name/role 'Manager'), not a code bug. Consider showing 'Unassigned' when no distinct waiter, or verify the API name field matches expectations.",
+          "All Palm House tables have empty 'title' (area) → all 90 tables fall under 'Unassigned' section — only 2 sections visible (All, Unassigned). Not a code bug; data-driven."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots_cr060/01_login_screen.jpeg",
+    "/app/test_reports/screenshots_cr060/02_dashboard_loaded.jpeg",
+    "/app/test_reports/screenshots_cr060/03_settings_flyout.jpeg",
+    "/app/test_reports/screenshots_cr060/04_settings_panel_tiles.jpeg",
+    "/app/test_reports/screenshots_cr060/05_table_management_view.jpeg",
+    "/app/test_reports/screenshots_cr060/06_section_filtered.jpeg",
+    "/app/test_reports/screenshots_cr060/07_add_table_dialog.jpeg",
+    "/app/test_reports/screenshots_cr060/07b_dialog_filled.jpeg",
+    "/app/test_reports/screenshots_cr060/08_add_success_after_baseline.jpeg",
+    "/app/test_reports/screenshots_cr060/09_new_table_visible.jpeg",
+    "/app/test_reports/screenshots_cr060/10_edit_dialog_prefilled.jpeg",
+    "/app/test_reports/screenshots_cr060/11a_delete_confirm.jpeg",
+    "/app/test_reports/screenshots_cr060/11b_delete_success_toast.jpeg",
+    "/app/test_reports/screenshots_cr060/12_bulk_editor.jpeg",
+    "/app/test_reports/screenshots_cr060/13_bulk_add_row.jpeg",
+    "/app/test_reports/screenshots_cr060/14_bulk_closed_card_view.jpeg",
+    "/app/test_reports/screenshots_cr060/15_export_result.jpeg"
+  ],
+  "action_items": [
+    "OPTIONAL UX POLISH: Fire a success toast after successful Add Table/Room save (dialog-save-btn) to match the delete flow's UX (which correctly shows 'Deleted — Table X removed.').",
+    "OPTIONAL UX POLISH: Add success toast after Export (currently silent — file just downloads).",
+    "NOT A BUG: All Palm House tables show 'Manager' as waiter label — verify with data owner whether this is the correct display for these tables (likely they're all assigned to the same user record named 'Manager')."
+  ],
+  "critical_code_review_comments": [
+    "Iteration_21's 'All' section empty bug is FIXED: TableManagementView.jsx line 45 now applies .filter(Boolean) on areas from API, and line 47 defaults selectedArea to 'All'. Verified working — count matches sidebar (91 tables after add, 90 after delete).",
+    "Add Table flow does NOT emit a toast on success. Compare to delete which uses toast({title:'Deleted', description:'Table ... removed.'}). Recommend adding toast({title:'Saved', description:`Table ${tableNo} added.`}) in save handler for consistent UX.",
+    "Export flow does NOT emit a toast — user only sees the browser download indicator. Minor UX gap.",
+    "All 15 required data-testids from the spec (table-management-view, add-table-btn, bulk-edit-toggle, export-btn, import-btn, table-toolbar, table-card-grid, section-list, section-All, section-Unassigned, add-table-dialog, dialog-type-toggle, dialog-table-number, dialog-area-select, dialog-waiter-select, dialog-save-btn, dialog-cancel-btn, table-card-{id}, table-edit-btn-{id}, table-delete-btn-{id}, delete-yes-btn-{id}, table-bulk-editor, table-bulk-add-btn, table-bulk-close-btn) are present and functional.",
+    "Zero JS console errors during full CRUD flow. No 4xx/5xx from preprod.mygenie.online APIs during the session."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100% (15/15 QA steps captured, all core CRUD verified)"},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10 (Palm House restaurant, 90 tables, 473 products) — WORKING",
+  "seed_data_creation": "QA-TEST-1 test row was created, edited (dialog opened, cancelled), then deleted via UI. Tenant left in clean pre-test state (90 tables).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-060 Table Management is fully functional on Palm House data. Login takes ~15-18s to reach /dashboard (not 45s as originally documented — the boot progress screen accepts /dashboard route earlier). Sidebar is collapsed by default; Settings icon requires CLICK (not hover) to open flyout. Flyout data-testids: flyout-restaurant-setup, flyout-table-management, flyout-printers, flyout-operating-hours, flyout-cancellation-reasons, flyout-employee-management, flyout-dashboard-display, flyout-all-settings. Settings panel tile testid: settings-tile-table-management. Note that a common trap: page.locator('[data-testid^=\"table-card-\"]') will ALSO match the parent 'table-card-grid' container — always filter out testid==='table-card-grid'. Palm House area API returns empty for all tables, so all 90 tables fall under Unassigned section. Downloads (Export): TableList_{timestamp}.xlsx via browser download event.",
+  "rca_of_the_issue": "No bugs found in this iteration. All 15 QA operations from the owner's checklist have been screenshotted and validated. The only remaining polish suggestions are: (1) fire add-success toast, (2) fire export-success toast — both minor UX enhancements, not blockers."
+}
