@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T15:57:13.077076+00:00",
+  "generated_at": "2026-07-16T16:57:35.943078+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -14094,7 +14094,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "BUNDLED \u2014 SCOPE-MERGED-INTO-CR-074-B (2026-07-16)",
       "sprint_key": "pos_5_0",
       "gate": "0-1",
       "created_at": "2026-07-09",
@@ -14116,7 +14116,9 @@
       "confidence": "CONFIRMED",
       "fast_lane_eligible": false,
       "evidence_dir": "/app/memory/evidence/BUG-158/",
-      "intake_doc": "/app/memory/change_requests/BUG_162_EXPENSE_SETUP_FLICKER.md"
+      "intake_doc": "/app/memory/change_requests/BUG_162_EXPENSE_SETUP_FLICKER.md",
+      "notes": "Owner ruling 2026-07-16: Setup panel flicker (fetchAll full re-fetch) will be fixed as part of CR-074-B redesign via optimistic local updates.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "BUG-163",
@@ -14124,7 +14126,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+      "status": "RESOLVED \u2014 feature removed post-fix by CR-074-A (2026-07-16)",
       "sprint_key": "pos_5_0",
       "gate": "5b",
       "created_at": "2026-07-07",
@@ -14135,7 +14137,9 @@
         "api/services/expenseService.js"
       ],
       "implemented_at": "2026-07-11",
-      "fast_lane": true
+      "fast_lane": true,
+      "notes": "Excel export fix shipped in prior session but the entire export button was removed in CR-074-A (2026-07-16). Retained in registry as historical resolved record.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "BUG-VQTY",
@@ -14222,7 +14226,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "BUNDLED \u2014 SCOPE-MERGED-INTO-CR-074-B (2026-07-16)",
       "sprint_key": "pos_5_0",
       "gate": "1",
       "created_at": "2026-07-11",
@@ -14230,7 +14234,9 @@
       "files_impacted": [
         "components/expense/ExpenseSetupPanel.jsx",
         "api/services/expenseService.js"
-      ]
+      ],
+      "notes": "Owner ruling 2026-07-16: unit-price field on quick-add form folded into CR-074-B redesign scope so both ship together.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "CR-065",
@@ -14238,7 +14244,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "RETIRED \u2014 SUPERSEDED-BY-BUG-202 (2026-07-16)",
       "sprint_key": "pos_5_0",
       "gate": "1",
       "created_at": "2026-07-11",
@@ -14246,7 +14252,9 @@
       "files_impacted": [
         "components/expense/ExpenseSetupPanel.jsx"
       ],
-      "backend_dependency": "Backend must add PUT /expense/expenses/{id} \u2192 { stock_title: \"new name\" } endpoint. Current PUT /expenses/{id} redirects to homepage (302)."
+      "backend_dependency": "Backend must add PUT /expense/expenses/{id} \u2192 { stock_title: \"new name\" } endpoint. Current PUT /expenses/{id} redirects to homepage (302).",
+      "notes": "Inline rename subset of BUG-202 (rename + change category with backend brief + snapshot/retroactive semantics locked). BUG-202 takes over.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "CR-066",
@@ -14401,7 +14409,7 @@
       "id": "BUG-172",
       "type": "BUG",
       "title": "ExpenseBulkEditor: \"+ Add Row\" in footer instead of \"+ Add Item\" in header \u2014 design inconsistency vs Menu Management",
-      "status": "INTAKE",
+      "status": "RETIRED \u2014 SUPERSEDED-BY-CR-074-B (2026-07-16)",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -14412,13 +14420,15 @@
       "blast_radius": "SMALL",
       "files": [
         "components/expense/ExpenseBulkEditor.jsx"
-      ]
+      ],
+      "notes": "ExpenseBulkEditor \"+ Add Row\" vs \"+ Add Item\" design inconsistency. CR-074-B redesign supersedes; unified header pattern will be part of the Menu-Management-style refresh.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "BUG-173",
       "type": "BUG",
       "title": "ExpenseBulkEditor: Unit column displayed and collected but never sent to API \u2014 silently discarded (backend stock items have no unit field)",
-      "status": "INTAKE",
+      "status": "RETIRED \u2014 SUPERSEDED-BY-CR-074-B (2026-07-16)",
       "priority": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
@@ -14429,13 +14439,15 @@
       "blast_radius": "SMALL",
       "files": [
         "components/expense/ExpenseBulkEditor.jsx"
-      ]
+      ],
+      "notes": "Unit column collected but never sent. Column set + payload wiring will be decided by CR-074-B design.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "BUG-174",
       "type": "BUG",
       "title": "ExpenseBulkEditor: Download Template button missing + STOCK_SAMPLE URL returns 404 on backend",
-      "status": "INTAKE",
+      "status": "RETIRED \u2014 OBSOLETE-BY-CR-074-A (2026-07-16)",
       "priority": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
@@ -14448,7 +14460,9 @@
         "components/expense/ExpenseBulkEditor.jsx",
         "api/services/expenseService.js",
         "api/constants.js"
-      ]
+      ],
+      "notes": "Download Template feeds an Import feature that no longer exists after CR-074-A removed all bulk import/export. Template + STOCK_SAMPLE endpoint have no consumer.",
+      "retired_at": "2026-07-16"
     },
     {
       "id": "CR-067",
@@ -15055,7 +15069,7 @@
       "id": "CR-074",
       "title": "Expense Setup \u2014 remove Import/Export + design consistency refresh (match Menu Management)",
       "type": "CR",
-      "status": "GATE 3 READY \u2014 split -A (impl-ready) + -B (design-gated)",
+      "status": "GATE 2 (-A IMPL DONE, awaits Phase 4 closeout; -B DESIGN-GATED with expanded scope)",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
@@ -15067,13 +15081,17 @@
         "frontend/src/api/transforms/expenseTransform.js",
         "frontend/src/components/expense/ExpenseSetupPanel.jsx"
       ],
-      "notes": "-A NARROW scope confirmed 2026-07-16: remove item-master import/export from Bulk Editor + dead-code sweep (Insights Excel/PDF preserved). -B replaces CR-067 bulk-editor UI patterns \u2014 awaiting design_agent mockup.",
+      "notes": "-A: IMPLEMENTED 2026-07-16 (import/export removed + dead-code sweep). -B expanded scope (owner ruling 2026-07-16) NOW INCLUDES: (a) design refresh matching Menu Management; (b) CR-064 unit-price field on quick-add form; (c) BUG-162 setup panel flicker fix (optimistic updates, no full re-fetch); (d) BUG-202 forward-compat inline Edit Item UI pattern. Awaiting design_agent_full_stack mockup + owner approval.",
       "artifact_refs": [
         "impact/BATCH_A_EXPENSE_BUGS_IMPACT_ANALYSIS.md",
         "plans/BATCH_A_SHIPNOW_IMPLEMENTATION_PLAN.md"
       ],
       "supersedes_ui": "CR-067",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "scope_absorbs": [
+        "CR-064",
+        "BUG-162"
+      ]
     }
   ]
 }

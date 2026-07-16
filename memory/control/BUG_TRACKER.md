@@ -18,6 +18,20 @@
 
 ---
 
+## POS 5.0 — Session 2026-07-16 Consolidation (retirements / bundling)
+
+Owner ruling 2026-07-16: retire the following 5 items and bundle 2 items into CR-074-B (see `/app/memory/EXPENSE_MODULE_CONSOLIDATED_BACKLOG_2026_07_16.md`).
+
+| Bug ID | Title | Status | Reason |
+|---|---|---|---|
+| BUG-163 | CR-059 Setup — Export fails: missing type field in POST body | **RESOLVED — feature removed post-fix by CR-074-A** | Fix shipped previously but export button was fully removed in CR-074-A. Kept as historical record. |
+| BUG-172 | ExpenseBulkEditor: "+ Add Row" vs "+ Add Item" design inconsistency | **RETIRED — SUPERSEDED-BY-CR-074-B** | Redesign resolves button placement/label. |
+| BUG-173 | ExpenseBulkEditor: Unit column collected but never sent | **RETIRED — SUPERSEDED-BY-CR-074-B** | Redesign decides column set + payload wiring. |
+| BUG-174 | ExpenseBulkEditor: Download Template button missing + STOCK_SAMPLE 404 | **RETIRED — OBSOLETE-BY-CR-074-A** | Template feeds an Import feature that no longer exists. |
+| BUG-162 | CR-059 Setup — Expense Setup panel flickers on every mutation | **BUNDLED — SCOPE-MERGED-INTO-CR-074-B** | Optimistic-update fix ships alongside redesign to avoid a shiny UI that still flickers. |
+
+---
+
 ## POS 5.0 Active Bugs (registered 2026-06-18)
 
 | Bug ID | Title | Priority | Risk | Status | Gate | Blocker |

@@ -2,7 +2,9 @@
 
 **Prepared by:** Planning role
 **Purpose:** Consolidate all 31 expense-module registry items into a clean, deduplicated backlog. Apply owner ruling "no bulk import/export in Expense Module" and identify supersedances.
-**No code edits.** This document only reorganizes the registry view; actual `registry.json` updates happen at closeout.
+**No code edits.** This document only reorganizes the registry view.
+
+**STATUS 2026-07-16 (post owner rulings):** ✅ Retirements + bundlings APPLIED to `registry.json`, `BUG_TRACKER.md`, `CR_REGISTRY.md`. Execution not started.
 
 ---
 
@@ -143,22 +145,27 @@ Assuming you approve the retirements above:
 
 ---
 
-## 7. Owner Rulings Needed
+## 7. Owner Rulings — DECIDED 2026-07-16
 
-Please confirm each retirement — or push back if I misread intent.
-
-| ID | Proposed | Confirm? |
+| ID | Decision | Applied |
 |---|---|---|
-| **BUG-174** | Retire as OBSOLETE (import/export removed) | ✅ / ❌ |
-| **BUG-163** | Reclassify as RESOLVED — feature removed post-fix | ✅ / ❌ |
-| **BUG-172** | Retire as SUPERSEDED-BY-CR-074-B | ✅ / ❌ |
-| **BUG-173** | Retire as SUPERSEDED-BY-CR-074-B | ✅ / ❌ |
-| **CR-065** | Retire as SUPERSEDED-BY-BUG-202 | ✅ / ❌ |
+| **BUG-174** | ✅ Retire as OBSOLETE-BY-CR-074-A | ✅ registry updated |
+| **BUG-163** | ✅ Reclassify as RESOLVED — feature removed post-fix | ✅ registry updated |
+| **BUG-172** | ✅ Retire as SUPERSEDED-BY-CR-074-B | ✅ registry updated |
+| **BUG-173** | ✅ Retire as SUPERSEDED-BY-CR-074-B | ✅ registry updated |
+| **CR-065** | ✅ Retire as SUPERSEDED-BY-BUG-202 | ✅ registry updated |
 
-### Non-blocking questions:
-- **Q1** — Are you OK to bundle **CR-064** (unit price in quick-add) into the CR-074-B redesign scope, since the row-add UI is being redesigned anyway? *Recommendation: yes.*
-- **Q2** — Should I roll **BUG-162** (setup panel flicker) into the CR-074-B redesign since the panel is being touched? Or file separately? *Recommendation: bundle — a redesign that still flickers on every save would be embarrassing.*
-- **Q3** — What do you want to do about the 16 "awaiting owner smoke" items? Options: **(a)** batch-sign as OK based on QA-PASS status (recommended); **(b)** ask me to schedule a smoke session; **(c)** leave as-is until a monthly cleanup.
+### Bundling decisions:
+- **Q1 — CR-064** → ✅ **BUNDLED** into CR-074-B (unit-price on quick-add ships with redesign)
+- **Q2 — BUG-162** → ✅ **BUNDLED** into CR-074-B (flicker fix ships with redesign)
+- **Q3 — 16 "awaiting owner smoke" items** → *pending — no ruling yet* (default = leave until asked)
+
+### CR-074-B expanded scope (as of 2026-07-16)
+1. Design refresh matching Menu Management inline-edit-with-dropdown pattern
+2. Absorb **CR-064** — unit-price field on quick-add form
+3. Absorb **BUG-162** — optimistic-update pattern to eliminate panel flicker
+4. Forward-compat UI slot for **BUG-202** inline Edit Item (row-level rename + category-change)
+5. Supersedes CR-067 UI patterns
 
 ---
 
