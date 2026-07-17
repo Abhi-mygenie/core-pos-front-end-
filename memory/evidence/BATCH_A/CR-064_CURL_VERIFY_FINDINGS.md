@@ -87,12 +87,10 @@ DELETE /expense/expenses/4595 → HTTP 200 "Expense deleted."
 
 ---
 
-## Owner questions raised
+## Owner Rulings (2026-07-17)
 
-1. **Q1** — For CR-064, ship with Option A (two-call sequence, ships immediately) or wait for backend Option B (single atomic call)? *[my rec: A]*
-2. **Q2** — In bulk-select "Move to Category" flow, when selected items include priced items — what UX? Options:
-   - **(a)** Block the move entirely (like CR-067 OQ-2 today)
-   - **(b)** Show warning modal listing priced items, require confirm-acknowledgment, proceed with delete+recreate (loses prices)
-   - **(c)** Wait for BUG-202 delivery and skip bulk-move until then
-   *[my rec: **(c)** — bulk-move is disabled/hidden until BUG-202 lands; keep the inline "Move to Category" per-row as ready-when-backend-ready.]*
-3. **Q3** — Add unit_price inline support to `BACKEND_BRIEF_BUG202` as §3.4 optional item? Or file separately? *[my rec: add to BUG-202 brief §3.4 as optional.]*
+| ID | Question | Ruling |
+|---|---|---|
+| **Q-CR064-1** | CR-064 quick-add: two-call sequence (A) vs backend inline (B) | ✅ **A** — two-call sequence, ship now |
+| **Q-CR064-2** | Bulk "Move to Category" with priced items: (a) block / (b) warn+proceed / (c) defer | ✅ **(c) DEFER** — hide `[Move to Category ▼]` bulk action from selection banner until BUG-202 delivers. Selection banner ships with only `[Delete Selected]` + `[Clear]`. |
+| **Q-CR064-3** | Add optional inline unit_price to BACKEND_BRIEF_BUG202 §3.4 | ✅ **YES** — added to brief as OPTIONAL nice-to-have |

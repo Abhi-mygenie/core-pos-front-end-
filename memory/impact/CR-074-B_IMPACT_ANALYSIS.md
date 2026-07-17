@@ -93,13 +93,13 @@ Also supersedes UI patterns from **CR-067** (existing bulk-editor).
 | **B-6** | ⚠ **NEW** | Historical Bulk Editor restriction: `ExpenseBulkEditor.jsx:174-190` blocks rename (OQ-1) and category-move-on-priced-items (OQ-2). Both resolve when BUG-202 delivers `PUT /expense/stock-items/{id}`. FE must keep these restrictions active until backend ships. |
 | **B-7** | 🛑 **OPEN** | Bulk-select "Move to Category" UX for priced items — see Open Questions Q-CR064-2 below. |
 
-**Open Questions raised 2026-07-17:**
+**Open Questions raised 2026-07-17 — RESOLVED 2026-07-17:**
 
-| ID | Question | Recommendation | Blocks? |
+| ID | Question | Owner Ruling | Design Impact |
 |---|---|---|---|
-| **Q-CR064-1** | CR-064 quick-add price: ship with two-call sequence (A) or wait for backend inline support (B)? | **A (ship now)** | Blocks Gate 3 execution ordering |
-| **Q-CR064-2** | Bulk "Move to Category" behavior when selection includes priced items: (a) block, (b) warn+proceed with price loss, (c) defer until BUG-202 | **(c) defer** — show "Move to Category" only when NO selected item has a price OR when BUG-202 lands | Blocks Gate 3 for bulk-move feature |
-| **Q-CR064-3** | Add optional inline `unit_price` field to `BACKEND_BRIEF_BUG202` §3.4 as nice-to-have? | **Yes** — small backend win, cleaner FE code | Non-blocking |
+| **Q-CR064-1** | CR-064 quick-add price: two-call sequence (A) vs backend inline (B) | ✅ **A** — two-call sequence | Mockup 01 quick-add row already reflects this (single Add button; frontend chains 2 calls internally) |
+| **Q-CR064-2** | Bulk "Move to Category" with priced items | ✅ **(c) DEFER** | **Mockups 03 & 06 need update:** remove `[Move to Category ▼]` from selection banner. Banner ships with only `[Delete Selected]` + `[Clear]` until BUG-202 delivers. |
+| **Q-CR064-3** | Add optional inline unit_price to BACKEND_BRIEF_BUG202 §3.4 | ✅ **Yes — filed** | None on FE |
 
 ---
 
@@ -129,5 +129,7 @@ Design agent output → owner approval → Gate 3 Implementation Plan → Gate 4
 Impact Analysis complete for CR-074-B expanded scope.
 Design agent invoked; HTML mockups delivered (round 2 with owner corrections).
 Curl-verified 2026-07-17: CR-064 must use two-call sequence; historical Bulk Editor unit-price restriction root-caused.
-**Impact Analysis: CLOSED with 1 owner question outstanding (Q-CR064-2 blocking Gate 3 for bulk-move feature; other 2 are non-blocking).**
-Gate 3 Implementation Plan blocked on: (a) owner ruling on Q-CR064-2; (b) BUG-202 backend delivery (for full functionality — but FE-side design + UI-behind-flag can proceed on the ship-now portion).
+Owner rulings 2026-07-17: Q-CR064-1=A, Q-CR064-2=(c) defer, Q-CR064-3=Yes.
+**Impact Analysis: CLOSED — 0 unresolved questions.**
+**Follow-up action:** design mockups 03 & 06 need a small revision to REMOVE `[Move to Category ▼]` from the bulk selection banner (Q-CR064-2 defer ruling). Mockup 01 unaffected.
+Gate 3 Implementation Plan ready to draft once mockups 03/06 are updated.

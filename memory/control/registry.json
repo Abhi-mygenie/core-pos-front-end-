@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T16:57:35.943078+00:00",
+  "generated_at": "2026-07-17T03:43:51.056770+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15081,7 +15081,7 @@
         "frontend/src/api/transforms/expenseTransform.js",
         "frontend/src/components/expense/ExpenseSetupPanel.jsx"
       ],
-      "notes": "-A: IMPLEMENTED 2026-07-16 (import/export removed + dead-code sweep). -B expanded scope (owner ruling 2026-07-16) NOW INCLUDES: (a) design refresh matching Menu Management; (b) CR-064 unit-price field on quick-add form; (c) BUG-162 setup panel flicker fix (optimistic updates, no full re-fetch); (d) BUG-202 forward-compat inline Edit Item UI pattern. Awaiting design_agent_full_stack mockup + owner approval.",
+      "notes": "-A: IMPLEMENTED 2026-07-16 (import/export removed + dead-code sweep). -B expanded scope (owner ruling 2026-07-16) NOW INCLUDES: (a) design refresh matching Menu Management; (b) CR-064 unit-price field on quick-add form; (c) BUG-162 setup panel flicker fix (optimistic updates, no full re-fetch); (d) BUG-202 forward-compat inline Edit Item UI pattern. Awaiting design_agent_full_stack mockup + owner approval. | 2026-07-17 rulings: Q-CR064-1=A, Q-CR064-2=(c) defer, Q-CR064-3=Yes filed.",
       "artifact_refs": [
         "impact/BATCH_A_EXPENSE_BUGS_IMPACT_ANALYSIS.md",
         "plans/BATCH_A_SHIPNOW_IMPLEMENTATION_PLAN.md"
@@ -15091,7 +15091,12 @@
       "scope_absorbs": [
         "CR-064",
         "BUG-162"
-      ]
+      ],
+      "open_questions_resolved": {
+        "Q-CR064-1": "A (two-call sequence, ship now)",
+        "Q-CR064-2": "(c) DEFER bulk Move-to-Category until BUG-202 delivers",
+        "Q-CR064-3": "Yes \u2014 filed in BACKEND_BRIEF_BUG202 \u00a73.4"
+      }
     }
   ]
 }

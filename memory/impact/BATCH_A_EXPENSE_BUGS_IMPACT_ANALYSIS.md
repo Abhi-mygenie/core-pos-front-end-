@@ -311,10 +311,13 @@ Curl-verified on preprod (see `/app/memory/evidence/BATCH_A/CR-064_CURL_VERIFY_F
 
 **Historical bulk-editor restriction rediscovered:** `ExpenseBulkEditor.jsx:174-190` blocks (a) rename (OQ-1) and (b) category-move on priced items (OQ-2). Both derive from the "no update endpoint" limitation. **Both will be resolved when BUG-202 backend delivers `PUT /expense/stock-items/{id}`.**
 
-### Open Questions
-- **Q-CR064-1** — CR-064 implementation: Option A (two-call sequence, ships today) vs Option B (request backend inline `unit_price` support). *[recommendation: A now, B as follow-up]*
-- **Q-CR064-2** — Bulk-select "Move to Category" behavior for priced items: block / warn+confirm / defer until BUG-202. *[recommendation: defer until BUG-202]*
-- **Q-CR064-3** — Add inline `unit_price` support to `BACKEND_BRIEF_BUG202` as §3.4 optional? *[recommendation: yes]*
+**Open Questions raised 2026-07-17 — RESOLVED 2026-07-17:**
+
+| ID | Question | Owner Ruling |
+|---|---|---|
+| **Q-CR064-1** | CR-064 quick-add price: two-call sequence (A) vs backend inline (B) | ✅ **A — two-call sequence, ship now** |
+| **Q-CR064-2** | Bulk "Move to Category" with priced items: (a) block / (b) warn+proceed / (c) defer | ✅ **(c) DEFER** — hide `[Move to Category ▼]` bulk action until BUG-202 delivers. Selection banner ships with only `[Delete Selected]` + `[Clear]`. |
+| **Q-CR064-3** | Add optional inline unit_price to BACKEND_BRIEF_BUG202 §3.4 | ✅ **Yes — filed** |
 
 ### 9.5 Final Decisions Log (2026-07-16)
 
