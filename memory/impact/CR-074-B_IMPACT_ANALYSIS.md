@@ -98,7 +98,7 @@ Also supersedes UI patterns from **CR-067** (existing bulk-editor).
 | ID | Question | Owner Ruling | Design Impact |
 |---|---|---|---|
 | **Q-CR064-1** | CR-064 quick-add price: two-call sequence (A) vs backend inline (B) | ✅ **A** — two-call sequence | Mockup 01 quick-add row already reflects this (single Add button; frontend chains 2 calls internally) |
-| **Q-CR064-2** | Bulk "Move to Category" with priced items | ✅ **SUPERSEDED 2026-07-17** by BUG-202 delivery — priced items now move safely via PUT (unit_price FK survives). Bulk `[Move to Category ▼]` **RESTORED** to selection banners in Phases 4 and 5. `bulk-move-deferred-note` REMOVED from spec. **Mockups 03 and 06 need a small design tweak** to add the button back and remove the deferred note. | Mockups 03 & 06 need one final revision. |
+| **Q-CR064-2** | Bulk "Move to Category" with priced items | ✅ **SUPERSEDED 2026-07-17** by BUG-202 delivery — priced items now move safely via PUT (unit_price FK survives). Bulk `[Move to Category ▼]` **RESTORED** to selection banners in Phases 4 and 5. `bulk-move-deferred-note` REMOVED from spec. **Mockups 03 & 06 restored 2026-07-17** — button back, note gone. Design + plan fully aligned. | Mockups 03 & 06 aligned. |
 | **Q-CR064-3** | Add optional inline unit_price to BACKEND_BRIEF_BUG202 §3.4 | ✅ **Yes — filed** | None on FE |
 
 ---

@@ -19,7 +19,7 @@
 |---|---|
 | Impact Analysis (Gate 2) closed | ✅ |
 | Owner rulings locked (Q-CR064-1/2/3, plus prior B-1..B-8) | ✅ |
-| Design mockups final (6 files) with owner corrections applied | ✅ (needs 1 small tweak — restore `[Move to Category ▼]` per §2A below) |
+| Design mockups final (6 files) with owner corrections applied | ✅ **Mockups 03 & 06 restored 2026-07-17** — `[Move to Category ▼]` reinstated in selection banner (outline orange, `bulk-move-category-btn` testid, chevron-down icon), deferred-note removed. All mockups now aligned with post-BUG-202-delivery plan. |
 | Backend contracts curl-verified for CR-064 | ✅ (two-call sequence works; cascade confirmed) |
 | **Backend BUG-202 endpoint delivered + curl-verified 2026-07-17** | ✅ **NEW** — `PUT /expenses/{item_id}` with `{stock_title, category_id}` works; unit_price survives; see `/app/memory/evidence/BATCH_A/BUG-202_BACKEND_VALIDATION_2026-07-17.md` |
 | Registry aligned | ✅ |
@@ -47,7 +47,7 @@ Two curl payloads validated against preprod. Findings that change this plan:
 4. Rewrite `handleDragEnd` to a single PUT call in Phase 2 (replaces the DELETE+POST workaround).
 5. Add FE pre-flight duplicate-name check in Phases 3 and 5.
 6. Add error-body parsing for the malformed 404-as-201 case in Phases 3 and 5.
-7. Design mockups 03/06 need `[Move to Category ▼]` restored (small design tweak) — deferred-note removed.
+7. Design mockups 03/06 restored 2026-07-17 — `[Move to Category ▼]` added back to selection banner (outline orange with chevron-down, testid `bulk-move-category-btn`); "coming soon" deferred-note removed. All 6 mockups now aligned with the post-BUG-202-delivery implementation plan.
 
 ---
 

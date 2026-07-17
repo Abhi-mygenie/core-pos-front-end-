@@ -68,4 +68,4 @@ PUT /expenses/99999999 {...}
 4. `handleDragEnd` in Phase 2 REWRITTEN — single PUT replaces DELETE+POST workaround.
 5. FE pre-flight duplicate-name check ADDED to Phases 3 and 5.
 6. Malformed 404-as-201 handler ADDED to Phases 3 and 5.
-7. Mockups 03 and 06 need one small revision: add `[Move to Category ▼]` back, delete deferred-note. (Not yet done — needs design-agent invocation OR manual patch.)
+7. **Mockups 03 & 06 restored 2026-07-17** — `[Move to Category ▼]` button back (outline orange with chevron-down, testid `bulk-move-category-btn`), deferred-note removed. Design + plan now fully aligned.
