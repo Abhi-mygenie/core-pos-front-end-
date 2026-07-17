@@ -707,6 +707,9 @@ const ExpenseEntryPanel = () => {
                     <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Time</th>
                     <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Item</th>
                     <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Category</th>
+                    {/* BUG-205: Qty + Unit columns */}
+                    <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Qty</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Unit</th>
                     <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Amount</th>
                     <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Payment</th>
                     <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: COLORS.grayText }}>Added By</th>
@@ -730,9 +733,29 @@ const ExpenseEntryPanel = () => {
                             {editRow.expense}
                           </td>
                           <td className="px-4 py-2" style={{ color: COLORS.grayText }}>{tx.category}</td>
+                          {/* BUG-205: Qty + Unit (read-only in edit) */}
+                          <td className="px-4 py-2 text-right text-xs" style={{ color: COLORS.grayText }}>{tx.quantity || "—"}</td>
+                          <td className="px-4 py-2 text-xs" style={{ color: COLORS.grayText }}>{tx.unit || "—"}</td>
+                          {/* BUG-203 Sub-D: conditional amount — qty input for priced items, plain amount for others */}
                           <td className="px-4 py-2">
-                            <input type="number" value={editRow.d_amount} onChange={e => setEditRow(r => ({ ...r, d_amount: e.target.value }))}
-                              className={inputCls + " w-24 text-right"} style={inputStyle} />
+                            {editRow.unitPrice > 0 ? (
+                              <div className="flex items-center gap-1">
+                                <input type="number" value={editRow.quantity}
+                                  onChange={e => {
+                                    const q = e.target.value;
+                                    const total = Math.round((editRow.unitPrice * (parseFloat(q) || 0)) * 100) / 100;
+                                    setEditRow(r => ({ ...r, quantity: q, d_amount: total > 0 ? String(total) : "" }));
+                                  }}
+                                  placeholder="Qty" className={inputCls + " w-16 text-right"} style={inputStyle}
+                                  data-testid={`expense-edit-qty-${tx.id}`} />
+                                <span className="text-xs whitespace-nowrap" style={{ color: COLORS.grayText }}>
+                                  = ₹{editRow.d_amount || "0"}
+                                </span>
+                              </div>
+                            ) : (
+                              <input type="number" value={editRow.d_amount} onChange={e => setEditRow(r => ({ ...r, d_amount: e.target.value }))}
+                                className={inputCls + " w-24 text-right"} style={inputStyle} />
+                            )}
                           </td>
                           <td className="px-4 py-2">
                             <select value={editRow.payment_method} onChange={e => setEditRow(r => ({ ...r, payment_method: e.target.value }))}
@@ -772,6 +795,9 @@ const ExpenseEntryPanel = () => {
                               {tx.category || "—"}
                             </span>
                           </td>
+                          {/* BUG-205: Qty + Unit columns */}
+                          <td className="px-4 py-2.5 text-right text-xs" style={{ color: COLORS.grayText }} data-testid={`expense-qty-${tx.id}`}>{tx.quantity || "—"}</td>
+                          <td className="px-4 py-2.5 text-xs" style={{ color: COLORS.grayText }} data-testid={`expense-unit-${tx.id}`}>{tx.unit || "—"}</td>
                           <td className="px-4 py-2.5 text-right font-semibold" style={{ color: COLORS.darkText }}>{fmt(tx.amount)}</td>
                           <td className="px-4 py-2.5 text-xs" style={{ color: COLORS.grayText }}>{tx.paymentMethod}</td>
                           {/* BUG-181: Added By column */}
@@ -799,7 +825,7 @@ const ExpenseEntryPanel = () => {
                 </tbody>
                 <tfoot>
                   <tr style={{ background: COLORS.sectionBg }}>
-                    <td colSpan={3} className="px-4 py-3 text-sm font-semibold" style={{ color: COLORS.darkText }}>Total</td>
+                    <td colSpan={5} className="px-4 py-3 text-sm font-semibold" style={{ color: COLORS.darkText }}>Total</td>
                     <td className="px-4 py-3 text-right text-sm font-bold" style={{ color: COLORS.primaryOrange }} data-testid="expense-total-amount">
                       {fmt(totalAmount || kpis.total)}
                     </td>

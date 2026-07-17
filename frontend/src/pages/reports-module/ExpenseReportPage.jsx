@@ -395,7 +395,7 @@ const ExpenseReportPage = () => {
                     })}
                   </div>
 
-                  {/* Transaction Table — 7 columns */}
+                  {/* Transaction Table — 9 columns */}  {/* BUG-205 */}
                   <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden" data-testid="expense-report-table-card">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
                       <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide">Transactions</h2>
@@ -411,6 +411,8 @@ const ExpenseReportPage = () => {
                           <th className="px-5 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Date</th>
                           <th className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Expense Item</th>
                           <th className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Category</th>
+                          <th className="px-4 py-3 text-right text-[10px] font-semibold text-zinc-500 uppercase">Qty</th>
+                          <th className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Unit</th>
                           <th className="px-4 py-3 text-right text-[10px] font-semibold text-zinc-500 uppercase">Amount</th>
                           <th className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Payment</th>
                           <th className="px-4 py-3 text-left text-[10px] font-semibold text-zinc-500 uppercase">Added By</th>
@@ -419,7 +421,7 @@ const ExpenseReportPage = () => {
                       </thead>
                       <tbody>
                         {filteredTransactions.length === 0 && (
-                          <tr><td colSpan={7} className="px-5 py-10 text-center text-sm text-zinc-400">{debouncedSearch.trim() ? `No results match "${debouncedSearch}".` : 'No transactions found for this period.'}</td></tr>
+                          <tr><td colSpan={9} className="px-5 py-10 text-center text-sm text-zinc-400">{debouncedSearch.trim() ? `No results match "${debouncedSearch}".` : 'No transactions found for this period.'}</td></tr>
                         )}
                         {filteredTransactions.map((t) => {
                           const badgeColor = PAYMENT_COLORS[t.paymentMethod] || '#71717A';
@@ -429,6 +431,8 @@ const ExpenseReportPage = () => {
                               <td className="px-5 py-3 text-sm text-zinc-700">{t.date}</td>
                               <td className="px-4 py-3 text-sm font-medium text-zinc-800">{t.expense}</td>
                               <td className="px-4 py-3 text-sm text-zinc-600">{t.category}</td>
+                              <td className="px-4 py-3 text-sm text-right text-zinc-600 tabular-nums" data-testid={`expense-report-row-qty-${t.id}`}>{t.quantity || '\u2014'}</td>
+                              <td className="px-4 py-3 text-sm text-zinc-600" data-testid={`expense-report-row-unit-${t.id}`}>{t.unit || '\u2014'}</td>
                               <td className="px-4 py-3 text-sm text-right font-semibold text-zinc-900 tabular-nums">{fmtINR(t.amount)}</td>
                               <td className="px-4 py-3"><span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ backgroundColor: badgeBg, color: badgeColor }}>{t.paymentMethod}</span></td>
                               <td className="px-4 py-3 text-sm text-zinc-600" data-testid={`expense-report-row-employee-${t.id}`}>{t.employeeName || '\u2014'}</td>
@@ -440,7 +444,7 @@ const ExpenseReportPage = () => {
                       {filteredTransactions.length > 0 && (
                         <tfoot className="bg-zinc-50 border-t-2 border-zinc-200">
                           <tr>
-                            <td className="px-5 py-3 text-sm font-bold text-zinc-900" colSpan={3}>{debouncedSearch.trim() ? 'FILTERED TOTAL' : 'PAGE TOTAL'}</td>
+                            <td className="px-5 py-3 text-sm font-bold text-zinc-900" colSpan={5}>{debouncedSearch.trim() ? 'FILTERED TOTAL' : 'PAGE TOTAL'}</td>
                             <td className="px-4 py-3 text-sm text-right font-bold text-zinc-900 tabular-nums">{fmtINR(filteredTransactions.reduce((s, t) => s + t.amount, 0))}</td>
                             <td colSpan={3} />
                           </tr>

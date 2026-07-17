@@ -418,3 +418,12 @@
 | `components/expense/ExpenseSetupPanel.jsx` | BUG-203: editItemPrice state, startEditItem/cancelEditItem price init, eager pricedItems load, saveEditItem 2-call price logic, price validation, inline edit price input UI | IMPL agent |
 | `components/expense/ExpenseBulkEditor.jsx` | BUG-203: _originalPrice tracking in buildRow, PRICE column header, per-row price input, 2-call save for price changes | IMPL agent |
 | `components/expense/ExpenseEntryPanel.jsx` | BUG-204: handleItemSelect clears qty/amount, handlePricedQtyChange live auto-calc, Case A rendering (qty input + breakdown text), amount placeholder, startEdit cross-reference unitPrice | IMPL agent |
+
+## BUG-205 (2026-07-17) — Qty/Unit columns in expense tables
+| `components/expense/ExpenseEntryPanel.jsx` | BUG-205: added Qty + Unit `<th>` headers + `<td>` cells (view + edit), updated tfoot colSpan |
+| `pages/reports-module/ExpenseReportPage.jsx` | BUG-205: added Qty + Unit to columns config, `<th>` headers, `<td>` cells, updated colSpans |
+
+## BUG-203 Sub-B/C/D (2026-07-17) — Unit price in Bulk Editor + edit row auto-calc
+| `components/expense/ExpenseBulkEditor.jsx` | BUG-203 Sub-B: removed _isNew guard on price input, chain addUnitPrice after createCategoryWithItems. Sub-C: accept pricedItems prop, use for edit-vs-add decision in save handler |
+| `components/expense/ExpenseSetupPanel.jsx` | BUG-203 Sub-C: pass pricedItems prop to ExpenseBulkEditor |
+| `components/expense/ExpenseEntryPanel.jsx` | BUG-203 Sub-D: edit row shows qty input + auto-calc for priced items |

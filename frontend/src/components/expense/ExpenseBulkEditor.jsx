@@ -29,7 +29,7 @@ const buildRow = (item, isNew = false) => ({
 });
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
+const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onClose }) => {
   const { toast } = useToast();
   const [rows, setRows] = useState(() => items.map(r => buildRow(r)));
   const [search, setSearch] = useState("");
@@ -368,6 +368,23 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
             return;
           }
           await expenseService.createCategoryWithItems(cat.name, [row.title.trim()]);
+          // BUG-203 Sub-B: chain addUnitPrice if user entered a price for the new item
+          if (row.unitPriceAmount != null && row.unitPriceAmount > 0) {
+            try {
+              // Re-fetch expenses-list to find the newly created item's ID
+              const listRes = await expenseService.getExpenseItems();
+              const allStockItems = (listRes?.data?.expenses || []);
+              const newItem = allStockItems.find(
+                si => si.stock_title?.trim().toLowerCase() === row.title.trim().toLowerCase()
+                  && String(si.category_id) === String(row.categoryId)
+              );
+              if (newItem?.id) {
+                await expenseService.addUnitPrice(newItem.id, 1, row.unitPriceAmount);
+              }
+            } catch (priceErr) {
+              // Item created but price failed — partial success
+            }
+          }
           saved++;
           setRows(prev => prev.map(r => r._id === row._id
             ? { ...r, _saveStatus: "saved" } : r));
@@ -441,16 +458,21 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
                 categoryName: targetCat.name,
               }
             : r));
-          // BUG-203: 2-call for price if changed
+          // BUG-203 Sub-C: 2-call for price if changed — use pricedItems for edit-vs-add decision
           const priceChanged = row.unitPriceAmount !== row._originalPrice;
           if (priceChanged && row.unitPriceAmount != null && row.unitPriceAmount > 0) {
             try {
               const itemId = parseInt(row._id, 10);
-              // Try add first; if already exists backend may reject — fall back to edit
-              await expenseService.addUnitPrice(itemId, 1, row.unitPriceAmount);
+              const priceRow = pricedItems.find(p => String(p.stockId) === String(itemId));
+              if (priceRow) {
+                // BUG-203 Sub-C: existing price → edit
+                await expenseService.editUnitPrice(priceRow.id, row.unitPriceAmount);
+              } else {
+                // BUG-203 Sub-C: no existing price → add
+                await expenseService.addUnitPrice(itemId, 1, row.unitPriceAmount);
+              }
             } catch {
-              // Likely duplicate — no simple fallback without priceRowId; price may not save
-              // Swallow for now — owner can use Unit Prices tab as fallback
+              // Price save failed — name/cat saved. Owner can use Unit Prices tab as fallback.
             }
             setRows(prev => prev.map(r => r._id === row._id
               ? { ...r, _originalPrice: row.unitPriceAmount } : r));
@@ -736,31 +758,27 @@ const ExpenseBulkEditor = ({ items, categories, onRefresh, onClose }) => {
                 />
               </div>
 
-              {/* BUG-203: Price column — editable for existing rows */}
+              {/* BUG-203: Price column — editable for ALL rows (Sub-B: new rows included) */}
               <div className="flex-[1] px-2">
-                {!row._isNew ? (
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-medium"
-                      style={{ color: COLORS.grayText }}>₹</span>
-                    <input
-                      type="number" min="0" step="0.01"
-                      value={row.unitPriceAmount ?? ""}
-                      onChange={e => {
-                        const val = e.target.value;
-                        updateRow(row._id, "unitPriceAmount", val === "" ? null : parseFloat(val));
-                      }}
-                      placeholder="—"
-                      className="w-full pl-5 pr-1 py-1.5 text-sm rounded border outline-none focus:ring-1 focus:ring-orange-200 bg-white"
-                      style={{
-                        borderColor: row.unitPriceAmount !== row._originalPrice ? COLORS.amber : COLORS.borderGray,
-                        color: COLORS.darkText,
-                      }}
-                      data-testid={`bulk-price-input-${row._id}`}
-                    />
-                  </div>
-                ) : (
-                  <span className="text-xs" style={{ color: COLORS.grayText }}>—</span>
-                )}
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-medium"
+                    style={{ color: COLORS.grayText }}>₹</span>
+                  <input
+                    type="number" min="0" step="0.01"
+                    value={row.unitPriceAmount ?? ""}
+                    onChange={e => {
+                      const val = e.target.value;
+                      updateRow(row._id, "unitPriceAmount", val === "" ? null : parseFloat(val));
+                    }}
+                    placeholder="—"
+                    className="w-full pl-5 pr-1 py-1.5 text-sm rounded border outline-none focus:ring-1 focus:ring-orange-200 bg-white"
+                    style={{
+                      borderColor: row.unitPriceAmount !== row._originalPrice ? COLORS.amber : COLORS.borderGray,
+                      color: COLORS.darkText,
+                    }}
+                    data-testid={`bulk-price-input-${row._id}`}
+                  />
+                </div>
               </div>
 
               {/* Category */}

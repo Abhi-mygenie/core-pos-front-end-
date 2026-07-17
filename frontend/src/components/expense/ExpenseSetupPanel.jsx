@@ -902,6 +902,7 @@ const ExpenseSetupPanel = () => {
         <ExpenseBulkEditor
           items={allItems}
           categories={categories}
+          pricedItems={pricedItems}
           onRefresh={fetchAll}
           onClose={() => setBulkMode(false)}
         />
