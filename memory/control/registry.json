@@ -14841,7 +14841,8 @@
       "depends_on": [
         "CR-071"
       ],
-      "depends_on_note": "Updated 2026-02-15 \u2014 was CR-069 pre-split; now points to CR-071 (gating phase) which is the actual dependency."
+      "depends_on_note": "Updated 2026-02-15 \u2014 was CR-069 pre-split; now points to CR-071 (gating phase) which is the actual dependency.",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "CR-069",
@@ -14880,7 +14881,8 @@
       "old_pos_reference_saved": "evidence/CR-069/old_pos_reference/ (5 screenshots)",
       "implementation_plan_doc": "plans/CR_069_IMPLEMENTATION_PLAN.md",
       "test_report": "test_reports/iteration_23.json",
-      "implemented_date": "2026-07-15"
+      "implemented_date": "2026-07-15",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "CR-070",
@@ -14936,7 +14938,8 @@
       "scope_note": "Consume existing AuthContext.hasPermission() across ~30 consumer files: Sidebar sub-items, OrderCard/CartPanel/OrderEntry/CollectPaymentPanel/TableCard (R5 hotspots), all Reports pages, Menu Mgmt (bulk edit/delete/price), Credit/Settlement/Expense CRUD, Settings tiles. NO new backend endpoints. NO new UI components. Pure app-wide gating rollout.",
       "blast_radius": "LARGE (~30 files, ~80\u2013120 gate insertions)",
       "gate_infrastructure": "Reuses existing AuthContext.hasPermission()/usePermission() hook that already exists. Adds a thin PermissionGate.jsx JSX wrapper as convenience.",
-      "sequencing_reason": "Deferred behind CR-057 (Menu No-Tax, CRITICAL) and CR-058 (Order Complimentary, HIGH) to avoid R5 hotspot merge conflicts per R16."
+      "sequencing_reason": "Deferred behind CR-057 (Menu No-Tax, CRITICAL) and CR-058 (Order Complimentary, HIGH) to avoid R5 hotspot merge conflicts per R16.",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "CR-072",
@@ -14974,7 +14977,8 @@
       "gate": "5",
       "source_cr": "CR-072/CR-069",
       "intake_doc": "change_requests/BUG_196_SIDEBAR_MISSING_INVENTORY_EMPLOYEE_SETTINGS.md",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "BUG-197",
@@ -15010,7 +15014,8 @@
         "OQ-2: password_confirmation NOT required on create or update. Backend uses upsert.",
         "OQ-3: Password field is normal editable column in row. Save All sends it with update."
       ],
-      "implementation_plan": "plans/BUG_198_IMPLEMENTATION_PLAN.md"
+      "implementation_plan": "plans/BUG_198_IMPLEMENTATION_PLAN.md",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "BUG-199",
@@ -15049,7 +15054,8 @@
       "gate": "1",
       "source_cr": "CR-059",
       "intake_doc": "change_requests/BUG_201_EXPENSE_DELETION_SAFETY.md",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
     },
     {
       "id": "BUG-202",
