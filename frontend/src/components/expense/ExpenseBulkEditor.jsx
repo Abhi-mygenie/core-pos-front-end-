@@ -72,7 +72,8 @@ const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onC
   const isDirty = useCallback((row) => {
     if (row._isNew) return row.title.trim().length > 0;
     return row.title !== (row._original.title || "") ||
-           String(row.categoryId) !== String(row._original.categoryId || "");
+           String(row.categoryId) !== String(row._original.categoryId || "") ||
+           row.unitPriceAmount !== row._originalPrice;  // BUG-203 Sub-C: detect price-only changes
   }, []);
 
   const dirtyCount = useMemo(() => {
@@ -396,7 +397,28 @@ const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onC
           const titleChanged = row.title !== (row._original.title || "");
           const catChanged = String(row.categoryId) !== String(row._original.categoryId || "");
           if (!titleChanged && !catChanged) {
-            // Nothing to save
+            // BUG-203 Sub-C: even if name/cat unchanged, price may have changed — handle price-only save
+            const priceChanged = row.unitPriceAmount !== row._originalPrice;
+            if (priceChanged && row.unitPriceAmount != null && row.unitPriceAmount > 0) {
+              try {
+                const itemId = parseInt(row._id, 10);
+                const priceRow = pricedItems.find(p => String(p.stockId) === String(itemId));
+                if (priceRow) {
+                  await expenseService.editUnitPrice(priceRow.id, row.unitPriceAmount);
+                } else {
+                  await expenseService.addUnitPrice(itemId, 1, row.unitPriceAmount);
+                }
+                setRows(prev => prev.map(r => r._id === row._id
+                  ? { ...r, _originalPrice: row.unitPriceAmount } : r));
+              } catch (priceErr) {
+                failed++;
+                setRows(prev => prev.map(r => r._id === row._id
+                  ? { ...r, _saveStatus: "error", _saveError: "Price update failed: " + (priceErr?.response?.data?.message || priceErr?.message || "Unknown error") }
+                  : r));
+                return;
+              }
+            }
+            saved++;
             setRows(prev => prev.map(r => r._id === row._id ? { ...r, _saveStatus: "saved" } : r));
             return;
           }
