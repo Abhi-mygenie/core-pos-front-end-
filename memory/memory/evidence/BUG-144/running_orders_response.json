@@ -1,0 +1,83 @@
+{
+  "endpoint": "GET /api/v1/vendoremployee/pos/employee-orders-list?role_name=Owner",
+  "order_count": 4,
+  "daily_token_present": true,
+  "first_5_tokens": [
+    {
+      "id": 1070789,
+      "restaurant_order_id": "015044",
+      "daily_token": "0001"
+    },
+    {
+      "id": 1070790,
+      "restaurant_order_id": "015045",
+      "daily_token": "0002"
+    },
+    {
+      "id": 1070791,
+      "restaurant_order_id": "015046",
+      "daily_token": "0003"
+    },
+    {
+      "id": 1070792,
+      "restaurant_order_id": "015047",
+      "daily_token": "0004"
+    }
+  ],
+  "all_order_keys": [
+    "associated_order_list",
+    "audio_file",
+    "b_order_status",
+    "checked",
+    "created_at",
+    "daily_token",
+    "delivery_address",
+    "delivery_charge",
+    "delivery_man",
+    "delivery_man_id",
+    "delivery_man_status",
+    "employee_id",
+    "f_order_status",
+    "id",
+    "k_order_status",
+    "orderDetails",
+    "order_amount",
+    "order_dispatch_status",
+    "order_edit_count",
+    "order_from",
+    "order_in",
+    "order_note",
+    "order_status",
+    "order_sub_total_amount",
+    "order_sub_total_without_tax",
+    "order_type",
+    "parent_order_id",
+    "payment_id",
+    "payment_method",
+    "payment_status",
+    "payment_type",
+    "print_bill_status",
+    "print_kot",
+    "restaurantTable",
+    "restaurant_discount_amount",
+    "restaurant_id",
+    "restaurant_order_id",
+    "room_info",
+    "schedule_at",
+    "scheduled",
+    "send_payment_link",
+    "serve_order_details",
+    "table_id",
+    "tablepart",
+    "tip_amount",
+    "tip_tax_amount",
+    "total_service_tax_amount",
+    "updated_at",
+    "user",
+    "user_id",
+    "user_name",
+    "vendorEmployee",
+    "waiter_call",
+    "waiter_id"
+  ]
+}

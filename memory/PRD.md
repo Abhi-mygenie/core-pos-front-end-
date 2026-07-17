@@ -1,27 +1,49 @@
-# MyGenie POS Frontend Deployment PRD
+# MyGenie POS Frontend — PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `17-july`) directly into `/app` and run it as-is with no code edits.
+Deploy React frontend repo (branch `17-july`), run as-is. Then execute expense module improvements: CR-074-B closeout, BUG-203 (unit price editing), BUG-204 (qty × unitPrice auto-calc).
 
 ## Architecture
-- **Frontend**: React (CRA + CRACO) running on port 3000 via supervisor
-- **Backend**: Not applicable (frontend-only deployment)
-- **Database**: Not applicable
+- **Tech Stack**: React 19, CRACO, Tailwind CSS, Radix UI, Firebase, Axios, Socket.io
+- **Process Manager**: Supervisor (`yarn start` → `craco start` on port 3000)
+- **Backend**: Laravel at preprod.mygenie.online (external)
+- **Socket**: presocket.mygenie.online
 
-## What's Been Implemented (Jul 17, 2026)
-- Cloned repo branch `17-july` into staging directory
-- Replaced `/app/frontend/` with repo's `frontend/` contents
-- Preserved platform files: `.emergent/`, `backend/`, `memory/`, `.env`, supervisor configs
-- Installed dependencies via `yarn install`
-- Frontend running via supervisor with `craco start`
-- Compiled successfully with 1 non-fatal warning (React hooks exhaustive-deps)
-- App loads MyGenie POS login page correctly
+## What's Been Implemented (2026-07-17)
 
-## Environment Variables
-- `.env` contains Firebase config, API URLs, Google Maps key, CRM keys
-- User will add/update env values as needed
+| Item | Status | Test |
+|---|---|---|
+| Deployment (branch 17-july) | ✅ Running | HTTP 200 |
+| CR-074-B Phase 6 Closeout | ✅ EXIT GATE 5/5 | iteration_29 |
+| BUG-204 — Qty × unitPrice auto-calc | ✅ IMPLEMENTED | iteration_30 |
+| BUG-203 Sub-A — Stock Master inline edit price | ✅ IMPLEMENTED | iteration_30 |
+| BUG-203 Sub-A — Label fixes (Unit Price column) | ✅ IMPLEMENTED | Compile clean |
 
-## Backlog
-- P0: User to supply correct `.env` values for API calls to work
-- P1: Backend setup if needed for API proxying
-- P2: Production build (`yarn build`) for optimized deployment
+## Planned (Gate 3 ready, awaiting Gate 4 GO)
+
+| Item | Plan | Files |
+|---|---|---|
+| BUG-203 Sub-B — Bulk Editor new row price | `plans/BUG-203_SUBBCD_IMPLEMENTATION_PLAN.md` | BulkEditor |
+| BUG-203 Sub-C — Bulk Editor edit price fix | Same plan | BulkEditor + SetupPanel |
+| BUG-203 Sub-D — Edit expense qty/amount for priced items | Same plan | EntryPanel |
+
+## Unregistered Findings
+
+| Finding | Description | Action needed |
+|---|---|---|
+| Qty/Unit display gap | Backend returns quantity+unit per transaction but neither transaction table nor report shows them | Register as bug → implement (~20 lines, 2 files) |
+| physical_quantity dead feature | Collected in form, stored in DB, displayed nowhere. Transform says "deprecated" | Owner decision: keep/remove/display? |
+
+## Prioritized Backlog
+- **P0**: Gate 4 GO → BUG-203 Sub-B/C/D implementation
+- **P0**: Register qty/unit display gap bug
+- **P1**: Owner Smoke for shipped items (CR-074-B, BUG-204, BUG-203 Sub-A)
+- **P1**: BUG-199 (category_id not sent in expense payload)
+- **P2**: Owner decision on physical_quantity
+- **P2**: Backend briefs: §3.4 (PUT unit_price), bulk endpoints, cascade rules
+
+## Next Session Tasks
+1. BUG-203 Sub-B/C/D implementation (plan ready)
+2. Register + implement qty/unit display columns
+3. BUG-199 intake → implement
+4. Owner Smoke batch

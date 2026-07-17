@@ -1,0 +1,174 @@
+{
+  "data": [
+    {
+      "id": 7593,
+      "category_id": {
+        "id": "",
+        "name": ""
+      },
+      "stock_title": "Coffee Powder",
+      "type": "inventory",
+      "unit": "pkt",
+      "small_unit": "pkt",
+      "cal_quantity": "3.00",
+      "quantity": "3.00",
+      "display_unit": "pkt",
+      "display_qty": "3.00",
+      "min_qty_alert": "20.00",
+      "min_unit_alert": "pkt"
+    },
+    {
+      "id": 7594,
+      "category_id": {
+        "id": 799,
+        "name": "Dabeli"
+      },
+      "stock_title": "Water",
+      "type": "inventory",
+      "unit": "ltr",
+      "small_unit": "ml",
+      "cal_quantity": "1000.00",
+      "quantity": 1,
+      "display_unit": "ltr",
+      "display_qty": "1.00",
+      "min_qty_alert": "5.00",
+      "min_unit_alert": "ltr"
+    },
+    {
+      "id": 7596,
+      "category_id": {
+        "id": 799,
+        "name": "Dabeli"
+      },
+      "stock_title": "Milk",
+      "type": "inventory",
+      "unit": "ltr",
+      "small_unit": "ml",
+      "cal_quantity": "-64000.00",
+      "quantity": -64,
+      "display_unit": "ltr",
+      "display_qty": "-64.00",
+      "min_qty_alert": "10.00",
+      "min_unit_alert": "ltr"
+    },
+    {
+      "id": 8119,
+      "category_id": {
+        "id": 843,
+        "name": "Addicted To Dates"
+      },
+      "stock_title": "test_bulk_upload22",
+      "type": "inventory",
+      "unit": "kg",
+      "small_unit": "gm",
+      "cal_quantity": "0.00",
+      "quantity": 0,
+      "display_unit": "kg",
+      "display_qty": "0.00",
+      "min_qty_alert": "2.00",
+      "min_unit_alert": "gm"
+    },
+    {
+      "id": 8120,
+      "category_id": {
+        "id": 843,
+        "name": "Addicted To Dates"
+      },
+      "stock_title": "Green Chili Powder",
+      "type": "inventory",
+      "unit": "kg",
+      "small_unit": "gm",
+      "cal_quantity": "54000.00",
+      "quantity": 54,
+      "display_unit": "kg",
+      "display_qty": "54.00",
+      "min_qty_alert": "2.00",
+      "min_unit_alert": "gm"
+    },
+    {
+      "id": 8734,
+      "category_id": {
+        "id": "",
+        "name": ""
+      },
+      "stock_title": "Chili Powder",
+      "type": "inventory",
+      "unit": "pkt",
+      "small_unit": "pkt",
+      "cal_quantity": "0.00",
+      "quantity": "0.00",
+      "display_unit": "pkt",
+      "display_qty": "0.00",
+      "min_qty_alert": "5.00",
+      "min_unit_alert": "pkt"
+    },
+    {
+      "id": 8735,
+      "category_id": {
+        "id": "",
+        "name": ""
+      },
+      "stock_title": "White Powder",
+      "type": "inventory",
+      "unit": "pkt",
+      "small_unit": "pkt",
+      "cal_quantity": "20.00",
+      "quantity": "20.00",
+      "display_unit": "pkt",
+      "display_qty": "20.00",
+      "min_qty_alert": "5.00",
+      "min_unit_alert": "pkt"
+    },
+    {
+      "id": 13799,
+      "category_id": {
+        "id": "",
+        "name": ""
+      },
+      "stock_title": "Jaggery",
+      "type": "inventory",
+      "unit": "kg",
+      "small_unit": "gm",
+      "cal_quantity": "-33000.00",
+      "quantity": -33,
+      "display_unit": "kg",
+      "display_qty": "-33.00",
+      "min_qty_alert": "10.00",
+      "min_unit_alert": "kg"
+    },
+    {
+      "id": 13800,
+      "category_id": {
+        "id": "",
+        "name": ""
+      },
+      "stock_title": "Sugar",
+      "type": "inventory",
+      "unit": "pkt",
+      "small_unit": "pkt",
+      "cal_quantity": "-2.00",
+      "quantity": "-2.00",
+      "display_unit": "pkt",
+      "display_qty": "-2.00",
+      "min_qty_alert": "20.00",
+      "min_unit_alert": "pkt"
+    },
+    {
+      "id": 13801,
+      "category_id": {
+        "id": 800,
+        "name": "Bottle"
+      },
+      "stock_title": "Coffee paste",
+      "type": "SubRecipe",
+      "unit": "plates",
+      "small_unit": "plates",
+      "cal_quantity": "-27.00",
+      "quantity": "-27.00",
+      "display_unit": "plates",
+      "display_qty": "-27.00",
+      "min_qty_alert": "2.00",
+      "min_unit_alert": "plates"
+    }
+  ]
+}

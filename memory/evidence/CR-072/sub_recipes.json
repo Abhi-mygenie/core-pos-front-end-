@@ -1,0 +1,36 @@
+{
+  "sub_recipes": [
+    {
+      "recipe_id": 168,
+      "name": "Coffee paste",
+      "food_name": "Coffee paste",
+      "category_name": "",
+      "preparation_time": "0",
+      "serve_time": "0",
+      "unit": "plates",
+      "serve_people": 1,
+      "qty": "1.00",
+      "type": "sub_recipe",
+      "inventory_id": 13801,
+      "current_stock": "-27.00",
+      "stock_unit": "plates",
+      "min_qty_alert": "2.00",
+      "min_unit_alert": "plates",
+      "cal_quantity": "-27.00",
+      "ingredients": [
+        {
+          "ingredient_id": 7594,
+          "ingredient_name": "Water",
+          "ingredient_unit": "ltr",
+          "ingredient_qty": "1"
+        },
+        {
+          "ingredient_id": 7593,
+          "ingredient_name": "Coffee Powder",
+          "ingredient_unit": "pkt",
+          "ingredient_qty": "1"
+        }
+      ]
+    }
+  ]
+}

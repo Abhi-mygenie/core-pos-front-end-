@@ -1,0 +1,118 @@
+[
+  {
+    "request": {
+      "method": "PUT",
+      "url": "/api/v2/vendoremployee/expense/expenses/250",
+      "body": {
+        "category_name": "Milk",
+        "stock_title": [
+          {
+            "title": "396"
+          },
+          {
+            "title": "Milk 260"
+          },
+          {
+            "title": "TEST_ITEM_OBJ_FORMAT"
+          }
+        ]
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "message": "Update successful."
+      }
+    },
+    "observation": "TEST_ITEM_OBJ_FORMAT did NOT appear in expenses-list after this call \u2014 silent ignore confirmed"
+  },
+  {
+    "request": {
+      "method": "PUT",
+      "url": "/api/v2/vendoremployee/expense/expenses/250",
+      "body": {
+        "category_name": "Milk",
+        "stock_title": [
+          "396",
+          "Milk 260",
+          "TEST_ITEM_FLAT"
+        ]
+      }
+    },
+    "response": {
+      "status": "HTML_REDIRECT",
+      "body": "Redirecting to preprod.mygenie.online"
+    },
+    "observation": "Flat string array is rejected (HTML redirect = Laravel validation error)"
+  },
+  {
+    "request": {
+      "method": "PUT",
+      "url": "/api/v2/vendoremployee/expense/expenses/250",
+      "body": {
+        "category_name": "Milk_TEST",
+        "stock_title": [
+          {
+            "title": "396"
+          },
+          {
+            "title": "Milk 260"
+          }
+        ]
+      }
+    },
+    "response": {
+      "status": 422,
+      "body": {
+        "errors": [
+          {
+            "code": "not_found",
+            "message": "Category not found."
+          }
+        ]
+      }
+    },
+    "observation": "Backend validates category_name must match existing name for that ID \u2014 it uses name for lookup, not just ID"
+  },
+  {
+    "request": {
+      "method": "DELETE",
+      "url": "/api/v2/vendoremployee/expense/expenses/4268"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "message": "Expense deleted."
+      }
+    },
+    "observation": "Item 4268 (TEST_DELETE_ITEM) was removed from Milk category \u2014 DELETE on /expenses/{id} works for stock items"
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/v2/vendoremployee/expense/store_expense",
+      "body": {
+        "category_name": "Milk",
+        "stock_title": [
+          "TEST_DELETE_ITEM"
+        ]
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "category": {
+          "id": 250,
+          "name": "Milk"
+        },
+        "stock_items": [
+          {
+            "id": 4268,
+            "stock_title": "TEST_DELETE_ITEM"
+          }
+        ]
+      }
+    },
+    "observation": "POST correctly creates items in named category and returns new item IDs"
+  }
+]
