@@ -15188,7 +15188,7 @@
       "id": "BUG-205",
       "title": "Expense: Qty/Unit columns missing from transaction table + report",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE (2026-07-17) \u2014 Impact Analysis done. ~20 lines, 2 files. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-17) \u2014 Implementation Plan ready. 6 edits, 2 files, ~20 lines. Awaiting Gate 4 GO.",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -15207,7 +15207,9 @@
         "pages/reports-module/ExpenseReportPage.jsx"
       ],
       "duplicate_check": "DISTINCT",
-      "blast_radius": "SMALL"
+      "blast_radius": "SMALL",
+      "plan_doc": "plans/BUG_205_IMPLEMENTATION_PLAN.md",
+      "impact_doc": "impact/EXPENSE_INTAKE_BATCH_IMPACT_ANALYSIS_2026_07_17.md"
     }
   ]
 }
