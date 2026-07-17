@@ -1,6 +1,6 @@
 # Layer 4 — Bug Tracker
 
-**Last Updated:** 2026-07-16 — Batch A execution start. BUG-199 (expense entry category, GATE 3 → IMPL). BUG-200 (auto-resolved by BUG-199, CLOSED — DUPLICATE). BUG-201 Phase 1 interim (wording only, GATE 3 → IMPL; full flow BACKEND-BLOCKED). BUG-202 (edit item — new, BACKEND-BLOCKED).
+**Last Updated:** 2026-07-17 — BUG-202 → IMPLEMENTED (backend PUT confirmed working, FE already coded). BUG-182 → CLOSED (investigation: names consistent, misdiagnosis). BUG-205 registered (qty/unit columns missing).
 
 ---
 
@@ -14,7 +14,7 @@
 | BUG-199 | Expense Entry: new item always goes to "misc" category — category_id never serialized to API payload | P1 | MEDIUM | **GATE 3 — IMPL IN PROGRESS** | 0-3 ✅ | Curl-verified 2026-07-16: key = `category_id` at line level. Extended to editExpenseEntry per Q-1. |
 | BUG-200 | Expense Report: category filter returns 0 results | P1 | MEDIUM | **CLOSED — DUPLICATE-OF-BUG-199** | 0-6 ✅ | Curl 2026-07-16 proved filter mechanics correct (`category_id=<int>` works). Empty result was downstream of BUG-199 stuffing everything into misc. Auto-resolves once BUG-199 ships. Zero code change. |
 | BUG-201 | Expense Deletion Safety — item + category cascade | P1 | HIGH | **PHASE 1 INTERIM — IMPL IN PROGRESS** (wording); Phase 1 FULL: **BACKEND-BLOCKED** | 0-3 ✅ | BACKEND_BRIEF_BUG201 sent to backend team (owner ruling: new rules R-201-A item→txns first, R-201-B category→items first, backend returns 409). FE interim: modal wording update only. |
-| BUG-202 | Expense Setup — no Edit Item (rename + change category) capability | P1 | HIGH | **GATE 2 COMPLETE — BACKEND-BLOCKED** | 0-2 ✅ | Curl 2026-07-16 confirmed no PUT item-update endpoint. BACKEND_BRIEF_BUG202 sent. Semantics: name = retroactive, category = snapshot. |
+| BUG-202 | Expense Setup — no Edit Item (rename + change category) capability | P1 | HIGH | **IMPLEMENTED (2026-07-17).** Backend PUT `/expenses/{id}` confirmed working (rename + category move). FE inline edit already coded (`BUG-202-fwd-compat`). Awaiting owner smoke. | 0-5a ✅ | `ExpenseSetupPanel.jsx`, `expenseService.js` |
 
 ---
 
@@ -84,7 +84,7 @@ Owner ruling 2026-07-16: retire the following 5 items and bundle 2 items into CR
 | BUG-179 | Expense Report: Excel export produces file with no transaction data. `exportReportAsExcel` called with raw API array instead of expected `{ title, sheets: [{ columns, rows }] }`. Only Summary metadata sheet generated. | P1 | MEDIUM | **INTAKE (2026-07-11). Related: BUG-180 (fix together). ~25 lines, 1 file.** | 0-1 | `ExpenseReportPage.jsx` |
 | BUG-180 | Expense Report: PDF export throws error. `exportReportAsPDF` called with 1 string arg instead of `(Window, params)`. Missing `openReportWindow()` call. Error: "Report window was closed before generation completed." | P1 | MEDIUM | **INTAKE (2026-07-11). Related: BUG-179 (fix together). ~25 lines, 1 file.** | 0-1 | `ExpenseReportPage.jsx` |
 | BUG-181 | Expense Entry: "Added By" column missing from daily transaction table. API returns `employee_name`, transform maps to `employeeName`, but table has no column for it. | P2 | LOW | **INTAKE (2026-07-11). Fast Lane eligible. ~8 lines, 1 file.** | 0-1 | `ExpenseEntryPanel.jsx` |
-| BUG-182 | Expense Report: wrong employee name in "Added By" column. Backend returns inconsistent `employee_name` across endpoints: profile=Pranav Dogra, create=Owner, report=rowan. Same employee_id resolves to different names. **BACKEND-BLOCKED.** | P1 | MEDIUM | **INTAKE — BACKEND-BLOCKED (2026-07-11). Zero FE fix needed. Backend brief: `BACKEND_BRIEF_EXPENSE_MODULE_2026_07_11_B.md`.** | 0-1 | BACKEND |
+| BUG-182 | Expense Report: wrong employee name in "Added By" column. | P1 | MEDIUM | **CLOSED — INVESTIGATION (2026-07-17).** Backend returns correct names. Curl confirmed employee_id=3081 → f_name="Counter" consistently across employees-list + expenses-report. Original report was misdiagnosis (different employees, not inconsistent names for same employee). | CLOSED | N/A |
 
 
 ---
