@@ -14998,7 +14998,7 @@
       "id": "BUG-198",
       "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
       "type": "BUG",
-      "status": "IMPLEMENTED (2026-07-17) \u2014 12 edits shipped. POST\u2192PUT (employee+role), inline password+eye toggle, ResetPasswordDialog deleted, status:1 on create, email omit-if-empty, X-localization header, role_type wired.",
+      "status": "QA PASS (2026-07-17) \u2014 10/10 tests pass. Employee PUT works, inline password+eye toggle, role type wired, X-localization header, ResetPasswordDialog deleted.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
