@@ -14984,7 +14984,7 @@
       "id": "BUG-197",
       "title": "CR-072 Inventory Post-Delivery \u2014 10 gaps (recipe CRUD, purchase Amount, vendor save, wastage CRUD, add ingredient, form validation)",
       "type": "BUG",
-      "status": "IMPLEMENTED",
+      "status": "GATE 2 ADDENDUM \u2014 QA-discovered contract mismatches in recipe transforms + missing X-localization header. 7/10 original fixes verified. 6 transform field renames needed.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
@@ -14994,13 +14994,14 @@
       "impact_analysis_doc": "impact/BUG-197_IMPACT_ANALYSIS.md",
       "implementation_plan_doc": "plans/BUG-197_IMPLEMENTATION_PLAN.md",
       "evidence": "evidence/CR-072/CR072_POST_DELIVERY_INVESTIGATION_2026_07_16.md",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "impact_analysis_addendum": "impact/BUG-197_IMPACT_ANALYSIS_ADDENDUM_QA.md"
     },
     {
       "id": "BUG-198",
       "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
       "type": "BUG",
-      "status": "GATE 3 COMPLETE \u2014 Implementation Plan done 2026-07-17. Awaiting Gate 4 GO.",
+      "status": "GATE 2 ADDENDUM \u2014 QA confirmed PUT works, discovered email validation + role POST\u2192PUT + role validation. 10 edits total (6 original + 4 new).",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
@@ -15015,7 +15016,8 @@
         "OQ-3: Password field is normal editable column in row. Save All sends it with update."
       ],
       "implementation_plan": "plans/BUG_198_IMPLEMENTATION_PLAN.md",
-      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md"
+      "roadmap": "plans/EMPLOYEE_ROLE_ROADMAP.md",
+      "impact_analysis_addendum": "impact/BUG-198_IMPACT_ANALYSIS_ADDENDUM_QA.md"
     },
     {
       "id": "BUG-199",
