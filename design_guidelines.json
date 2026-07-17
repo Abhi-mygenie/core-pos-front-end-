@@ -84,8 +84,8 @@
       "bulk-select-row-2",
       "bulk-select-row-3",
       "bulk-delete-selected-btn",
-      "bulk-move-category-btn",
       "bulk-clear-selection-btn",
+      "bulk-move-deferred-note",
       "row-status-1",
       "row-undo-2",
       "row-delete-new1",
@@ -98,7 +98,8 @@
   "instructions_to_main_agent": [
     "DnD affordance mirrors Menu Management CategoryList: `GripVertical` icon at opacity-30 default, opacity-100 on hover, gray color.",
     "Bulk Editor MUST match `/app/frontend/src/components/panels/menu/BulkEditor.jsx` structure (toolbar / column chips / grid with #-column and save-state icons / footer bar) — EXCEPT skip the Columns picker (Expense has only 3 fields) and Export/Import buttons (removed by CR-074-A).",
-    "Bulk-select + delete + move-category is a NEW pattern beyond Menu Management, per owner request 2026-07-16."
+    "Bulk-select + delete + move-category is a NEW pattern beyond Menu Management, per owner request 2026-07-16.",
+    "Bulk 'Move to Category' button is REMOVED from selection banner per owner ruling 2026-07-17 (Q-CR064-2). Feature deferred until BUG-202 backend endpoint delivers. Do NOT implement this button in React. Show `bulk-move-deferred-note` instead."
   ],
   "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": "Do not center align standard block elements via body CSS. Ensure nested z-index properly layers modals > toolbars > table headers > table bodies. Do not rely entirely on transparent dropdowns without backdrop blur. Retain testids rigorously as assigned. Maintain sharp aesthetic details matching tailwind standard conventions."
 }
