@@ -28,13 +28,10 @@
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex bg-black/40">
-    <!-- Background overlay -->
     <div class="flex-1"></div>
     
-    <!-- Right Panel -->
     <div class="w-11/12 max-w-[1440px] h-full bg-sectionBg shadow-2xl flex flex-col transform transition-transform" data-testid="expense-setup-panel">
         
-        <!-- Header -->
         <header class="border-b border-borderGray px-8 py-5 bg-white flex items-center justify-between z-10">
             <div>
                 <h1 class="text-2xl font-semibold text-darkText tracking-tight">Expense Setup</h1>
@@ -54,16 +51,13 @@
             </div>
         </header>
         
-        <!-- Tabs -->
         <div class="px-8 border-b border-borderGray bg-white flex gap-6" data-testid="setup-tab-strip">
             <button data-testid="tab-stock-master" class="py-3 border-b-2 border-primaryOrange text-primaryOrange font-medium text-sm">Stock Master</button>
             <button data-testid="tab-unit-prices" class="py-3 border-b-2 border-transparent text-grayText hover:text-darkText font-medium text-sm transition-colors">Unit Prices</button>
         </div>
 
-        <!-- Content Area: 30/70 Split -->
         <div class="flex-1 overflow-hidden flex bg-sectionBg p-6 gap-6">
             
-            <!-- Left: Categories (30%) -->
             <div class="w-[30%] bg-white border border-borderGray rounded-lg flex flex-col shadow-sm overflow-hidden">
                 <div class="p-4 border-b border-borderGray flex justify-between items-center bg-white">
                     <h2 class="font-semibold text-darkText">Categories</h2>
@@ -72,38 +66,44 @@
                     </button>
                 </div>
                 
-                <!-- Quick Add Category inline input -->
                 <div class="p-3 border-b border-borderGray bg-orange-50/50 flex gap-2">
                     <input data-testid="new-category-input" type="text" placeholder="New category name..." class="flex-1 px-3 py-1.5 text-sm border border-borderGray rounded-md focus:outline-none focus:border-primaryOrange bg-white shadow-inner">
                     <button data-testid="new-category-save" class="px-3 py-1.5 bg-primaryOrange hover:bg-orange-600 text-white rounded-md transition-colors shadow-sm text-sm font-medium">Add</button>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-2 space-y-1">
-                    <div data-testid="category-all" class="category-row flex items-center justify-between p-2.5 rounded-md hover:bg-sectionBg cursor-pointer group transition-colors">
-                        <span class="text-sm font-medium text-darkText">All Categories</span>
+                    <div data-testid="category-all" class="category-row flex items-center justify-between p-2.5 rounded-md bg-gray-50/80 text-grayText cursor-default">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="list" class="w-4 h-4 text-grayText"></i>
+                            <span class="text-sm font-medium">All Items</span>
+                        </div>
                         <span class="text-xs text-grayText bg-borderGray px-2 py-0.5 rounded-full font-medium">32</span>
                     </div>
                     
-                    <div data-testid="category-row-1" class="category-row flex items-center justify-between p-2.5 rounded-md bg-orange-50 border border-orange-100 text-primaryOrange cursor-pointer group">
+                    <div data-testid="category-row-1" class="category-row flex items-center justify-between p-2.5 rounded-md hover:bg-sectionBg cursor-pointer group transition-colors">
                         <div class="flex items-center gap-2.5">
-                            <i data-lucide="folder" class="w-4 h-4 fill-orange-100"></i>
-                            <span class="text-sm font-semibold">Vegetables</span>
+                            <i data-lucide="folder" class="w-4 h-4 text-grayText"></i>
+                            <span class="text-sm font-medium text-darkText">Vegetables</span>
                         </div>
                         <div class="flex items-center gap-1 category-hover-actions">
-                            <button data-testid="category-edit-1" class="p-1 hover:bg-white rounded text-primaryOrange shadow-sm"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                            <button data-testid="category-delete-1" class="p-1 hover:bg-white rounded text-errorText shadow-sm"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            <button data-testid="category-edit-1" class="p-1 hover:bg-white rounded text-grayText shadow-sm border border-borderGray"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button data-testid="category-delete-1" class="p-1 hover:bg-white rounded text-errorText shadow-sm border border-borderGray"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                         </div>
                     </div>
                     
-                    <div data-testid="category-row-2" class="category-row flex items-center justify-between p-2.5 rounded-md hover:bg-sectionBg cursor-pointer group transition-colors">
-                        <div class="flex items-center gap-2.5 text-darkText">
-                            <i data-lucide="folder" class="w-4 h-4 text-grayText"></i>
-                            <span class="text-sm font-medium">Dairy & Eggs</span>
+                    <!-- Drop Hover State Category -->
+                    <div data-testid="category-row-2" class="category-row flex flex-col justify-center p-2.5 rounded-md bg-orange-50/50 border-2 border-orange-500 border-solid cursor-pointer group transition-colors" style="background: rgba(249, 115, 22, 0.10);">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2.5 text-primaryOrange">
+                                <i data-lucide="folder-open" class="w-4 h-4 fill-orange-100 text-primaryOrange"></i>
+                                <span class="text-sm font-semibold">Dairy & Eggs</span>
+                            </div>
+                            <div class="flex items-center gap-1 category-hover-actions">
+                                <button data-testid="category-edit-2" class="p-1 hover:bg-white rounded text-primaryOrange shadow-sm border border-orange-200"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                <button data-testid="category-delete-2" class="p-1 hover:bg-white rounded text-errorText shadow-sm border border-orange-200"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-1 category-hover-actions">
-                            <button data-testid="category-edit-2" class="p-1 hover:bg-white rounded text-grayText shadow-sm border border-borderGray"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                            <button data-testid="category-delete-2" class="p-1 hover:bg-white rounded text-errorText shadow-sm border border-borderGray"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                        </div>
+                        <span class="text-[10px] font-bold text-primaryOrange mt-1 ml-6">Drop here</span>
                     </div>
 
                     <div data-testid="category-row-3" class="category-row flex items-center justify-between p-2.5 rounded-md hover:bg-sectionBg cursor-pointer group transition-colors">
@@ -119,10 +119,9 @@
                 </div>
             </div>
             
-            <!-- Right: Items (70%) -->
             <div class="flex-1 bg-white border border-borderGray rounded-lg shadow-sm flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-borderGray flex justify-between items-center bg-white">
-                    <h2 class="font-semibold text-darkText">Items in <span class="text-primaryOrange">Vegetables</span></h2>
+                    <h2 class="font-semibold text-darkText">Items in <span class="text-darkText">All Items</span></h2>
                     <div class="relative w-72">
                         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-grayText"></i>
                         <input data-testid="items-search" type="text" placeholder="Search items..." class="w-full pl-9 pr-3 py-2 text-sm border border-borderGray rounded-md focus:outline-none focus:border-primaryOrange focus:ring-1 focus:ring-primaryOrange bg-sectionBg">
@@ -133,15 +132,18 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-white z-10 shadow-sm">
                             <tr class="bg-sectionBg border-b border-borderGray text-xs uppercase tracking-wider text-grayText">
-                                <th class="p-4 font-semibold w-[40%]">Item Name</th>
-                                <th class="p-4 font-semibold w-[25%]">Category</th>
-                                <th class="p-4 font-semibold w-[20%]">Unit Price</th>
+                                <th class="p-4 font-semibold w-10 text-center"><input type="checkbox" data-testid="bulk-select-all" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange"></th>
+                                <th class="p-4 font-semibold w-8 text-center"></th>
+                                <th class="p-4 font-semibold w-[35%]">Item Name</th>
+                                <th class="p-4 font-semibold w-[20%]">Category</th>
+                                <th class="p-4 font-semibold w-[15%]">Unit Price</th>
                                 <th class="p-4 font-semibold w-[15%] text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Quick Add Row -->
                             <tr class="border-b border-borderGray bg-orange-50/30">
+                                <td></td>
+                                <td></td>
                                 <td class="p-3">
                                     <input data-testid="new-item-input" type="text" placeholder="Add new item..." class="w-full px-3 py-1.5 text-sm border border-borderGray rounded-md focus:outline-none focus:border-primaryOrange bg-white shadow-inner">
                                 </td>
@@ -165,8 +167,15 @@
                                 </td>
                             </tr>
                             
-                            <!-- Standard Rows -->
                             <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                                <td class="p-4 text-center">
+                                    <input type="checkbox" data-testid="bulk-select-row-1" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-1">
+                                        <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
+                                    </div>
+                                </td>
                                 <td class="p-4 text-sm font-medium text-darkText">Tomatoes</td>
                                 <td class="p-4 text-sm text-grayText">Vegetables</td>
                                 <td class="p-4 text-sm text-darkText font-medium">$ 2.50</td>
@@ -179,6 +188,14 @@
                             </tr>
                             
                             <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                                <td class="p-4 text-center">
+                                    <input type="checkbox" data-testid="bulk-select-row-2" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-2">
+                                        <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
+                                    </div>
+                                </td>
                                 <td class="p-4 text-sm font-medium text-darkText">Onions</td>
                                 <td class="p-4 text-sm text-grayText">Vegetables</td>
                                 <td class="p-4 text-sm text-darkText font-medium">$ 1.20</td>
@@ -191,6 +208,14 @@
                             </tr>
 
                             <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                                <td class="p-4 text-center">
+                                    <input type="checkbox" data-testid="bulk-select-row-3" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                </td>
+                                <td class="p-2 text-center">
+                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-3">
+                                        <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
+                                    </div>
+                                </td>
                                 <td class="p-4 text-sm font-medium text-darkText">Bell Peppers</td>
                                 <td class="p-4 text-sm text-grayText">Vegetables</td>
                                 <td class="p-4 text-sm text-grayText italic">Not set</td>

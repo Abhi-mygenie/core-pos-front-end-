@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Setup - Stock Master</title>
+    <title>Expense Setup - Bulk Select Active</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -128,11 +128,28 @@
                     </div>
                 </div>
                 
+                
+                <!-- Selection Banner -->
+                <div class="bg-red-50/50 border-l-4 border-red-500 p-3 flex justify-between items-center" style="background: rgba(239, 68, 68, 0.10);">
+                    <span class="font-bold text-red-600 text-sm">3 items selected</span>
+                    <div class="flex items-center gap-3">
+                        <button data-testid="bulk-delete-selected-btn" class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 hover:bg-red-600 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Delete Selected
+                        </button>
+                        <button data-testid="bulk-move-category-btn" class="border border-primaryOrange text-primaryOrange px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 hover:bg-orange-50 transition-colors bg-white">
+                            Move to Category <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <button data-testid="bulk-clear-selection-btn" class="text-grayText text-sm font-medium hover:text-darkText transition-colors px-2">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex-1 overflow-y-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-white z-10 shadow-sm">
                             <tr class="bg-sectionBg border-b border-borderGray text-xs uppercase tracking-wider text-grayText">
-                                <th class="p-4 font-semibold w-10 text-center"><input type="checkbox" data-testid="bulk-select-all" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange"></th>
+                                <th class="p-4 font-semibold w-10 text-center"><input type="checkbox" data-testid="bulk-select-all" class="w-4 h-4 rounded border-gray-300" checked  text-primaryOrange focus:ring-primaryOrange"></th>
                                 <th class="p-4 font-semibold w-8 text-center"></th>
                                 <th class="p-4 font-semibold w-[35%]">Item Name</th>
                                 <th class="p-4 font-semibold w-[20%]">Category</th>
@@ -167,12 +184,12 @@
                                 </td>
                             </tr>
                             
-                            <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                            <tr class="border-b border-borderGray bg-blue-50/30 transition-colors item-row group border-l-2 border-l-blue-500" style="background: rgba(59, 130, 246, 0.05); border-left: 2px solid #3b82f6;">
                                 <td class="p-4 text-center">
-                                    <input type="checkbox" data-testid="bulk-select-row-1" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                    <input type="checkbox" data-testid="bulk-select-row-1" class="w-4 h-4 rounded border-gray-300" checked  text-primaryOrange focus:ring-primaryOrange">
                                 </td>
                                 <td class="p-2 text-center">
-                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-1">
+                                    <div class="p-1 cursor-grab opacity-15 transition-opacity" data-testid="item-drag-handle-1">
                                         <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
                                     </div>
                                 </td>
@@ -187,12 +204,12 @@
                                 </td>
                             </tr>
                             
-                            <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                            <tr class="border-b border-borderGray bg-blue-50/30 transition-colors item-row group border-l-2 border-l-blue-500" style="background: rgba(59, 130, 246, 0.05); border-left: 2px solid #3b82f6;">
                                 <td class="p-4 text-center">
-                                    <input type="checkbox" data-testid="bulk-select-row-2" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                    <input type="checkbox" data-testid="bulk-select-row-2" class="w-4 h-4 rounded border-gray-300" checked  text-primaryOrange focus:ring-primaryOrange">
                                 </td>
                                 <td class="p-2 text-center">
-                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-2">
+                                    <div class="p-1 cursor-grab opacity-15 transition-opacity" data-testid="item-drag-handle-2">
                                         <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
                                     </div>
                                 </td>
@@ -207,12 +224,12 @@
                                 </td>
                             </tr>
 
-                            <tr class="border-b border-borderGray hover:bg-sectionBg/80 transition-colors item-row group">
+                            <tr class="border-b border-borderGray bg-blue-50/30 transition-colors item-row group border-l-2 border-l-blue-500" style="background: rgba(59, 130, 246, 0.05); border-left: 2px solid #3b82f6;">
                                 <td class="p-4 text-center">
-                                    <input type="checkbox" data-testid="bulk-select-row-3" class="w-4 h-4 rounded border-gray-300 text-primaryOrange focus:ring-primaryOrange">
+                                    <input type="checkbox" data-testid="bulk-select-row-3" class="w-4 h-4 rounded border-gray-300" checked  text-primaryOrange focus:ring-primaryOrange">
                                 </td>
                                 <td class="p-2 text-center">
-                                    <div class="p-1 cursor-grab opacity-30 group-hover:opacity-100 transition-opacity" data-testid="item-drag-handle-3">
+                                    <div class="p-1 cursor-grab opacity-15 transition-opacity" data-testid="item-drag-handle-3">
                                         <i data-lucide="grip-vertical" class="w-4 h-4 text-grayText mx-auto"></i>
                                     </div>
                                 </td>

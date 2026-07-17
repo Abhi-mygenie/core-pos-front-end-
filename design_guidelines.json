@@ -1,85 +1,104 @@
 {
-  "design_context": "Expense Setup panel redesign (CR-074-B) handling category/item management with inline editing, unit prices, and bulk editing functionalities. The panel slides in from the right over the main dashboard.",
-  "html_mockup_files": [
-    {
-      "path": "/app/memory/design/CR-074-B_mockups/01_stock_master_default.html",
-      "description": "Default view featuring a 30/70 split layout. The left column handles Category CRUD with inline 'add' inputs and hover action icons. The right column displays items with an inline quick-add row and hover action icons. Incorporates all specified test IDs."
-    },
-    {
-      "path": "/app/memory/design/CR-074-B_mockups/02_item_row_edit_mode.html",
-      "description": "Displays the right-hand items table with one specific row toggled into inline edit mode. Uses text inputs, select dropdowns, and save/cancel actions replacing the pencil/trash icons."
-    },
-    {
-      "path": "/app/memory/design/CR-074-B_mockups/03_bulk_edit_mode.html",
-      "description": "Bulk editor mode matching the Menu Management pattern. Replaces the 30/70 split with a full-width datagrid. Features dirty row indicators (green dots/borders) and omits any import/export toolbars."
-    },
-    {
-      "path": "/app/memory/design/CR-074-B_mockups/04_unit_prices_tab.html",
-      "description": "Unit Prices tab state showcasing two distinct sections: 'Not Priced Yet' (highlighting missing prices to encourage completion) and 'Priced Items'."
-    },
-    {
-      "path": "/app/memory/design/CR-074-B_mockups/05_delete_item_modal.html",
-      "description": "Delete confirmation modal overlaid on the Stock Master view. Preserves specific cascade warning verbiage to address BUG-201 and uses a prominent error-colored styling to enforce destructive action awareness."
-    }
-  ],
   "typography": {
-    "headings": "Poppins, sans-serif (font-semibold to font-bold)",
-    "body": "system-ui, sans-serif (text-sm for standard content)",
-    "hierarchy": {
-      "h1": "text-2xl font-semibold tracking-tight",
-      "h2": "text-lg font-semibold",
-      "table_headers": "text-xs uppercase tracking-wider font-semibold text-grayText"
-    }
+    "headings": "Poppins, sans-serif",
+    "body": "system-ui, sans-serif",
+    "rules": "Use Poppins for all headings (h1-h6) and UI component titles. Use system-ui for all other text, forms, tabular data, and inputs."
   },
   "colors": {
-    "primary": "#F97316 (primaryOrange)",
-    "secondary": "#22C55E (primaryGreen)",
-    "text": {
-      "dark": "#1F2937 (darkText)",
-      "gray": "#6B7280 (grayText)",
-      "error": "#EF4444 (errorText)"
-    },
-    "surfaces": {
-      "panelBg": "#FFFFFF (lightBg)",
-      "sectionBg": "#F9FAFB (sectionBg)",
-      "border": "#E5E7EB (borderGray)",
-      "hover_active": "orange-50 to orange-100 / blue-50 for edit state"
-    }
+    "primaryOrange": "#F97316",
+    "primaryGreen": "#22C55E",
+    "darkText": "#1F2937",
+    "grayText": "#6B7280",
+    "borderGray": "#E5E7EB",
+    "sectionBg": "#F9FAFB",
+    "errorText": "#EF4444",
+    "lightBg": "#FFFFFF",
+    "rules": "Avoid generic default vercel blue for interactive elements. Ensure high contrast for textual elements and borders. For error states use EF4444 and for success states use 22C55E. Avoid pure white backgrounds (#FFF) if it strains eyes, but use carefully over panels. Dark theme is preferred for complex data apps where appropriate, but this app hybrid is primarily bright UI with a slight dark overlay backdrop."
   },
   "visual_enhancers": {
-    "shadows": "shadow-sm on cards and buttons, shadow-inner on inputs, shadow-2xl on the main sliding panel",
-    "borders": "1px solid #E5E7EB (borderGray) for structural separation, rounded-lg/rounded-md for modern feel",
-    "transitions": "transition-colors duration-200 ease-in-out on all interactive elements (buttons, rows)",
-    "indicators": "Left border highlights (e.g. shadow-[inset_4px_0_0_0_#22C55E]) to indicate dirty rows in Bulk Edit mode."
+    "borders": "1px solid #E5E7EB, with some highlights in orange (#F97316)",
+    "shadows": "Use subtle shadow-sm for inner panels, shadow-inner for inputs to add depth.",
+    "hover_states": "Interactive row hover with background tint #F9FAFB/80 (gray-50/50). Checkboxes must have visible focus rings. Outline transition on inputs. Action icons hidden by default, visible on group-hover."
   },
-  "grids_and_layouts": {
-    "main_panel": "w-11/12 max-w-[1440px] flex flex-col sliding from right over a black/40 backdrop",
-    "stock_master": "Flex layout with 30% width left sidebar (Categories) and 70% width main content area (Items) separated by a gap of 24px (gap-6)",
-    "bulk_edit": "Full-width table taking over the main content area with sticky headers"
+  "components": {
+    "expense_setup_panel": "Primary wrapper using 11/12 max-width, bounded with shadow-2xl. Sidebar split 30/70.",
+    "bulk_editor": "Full-width table with sortable columns, item count pills. Footer save bar gradient to indicate dirty state.",
+    "table_rows": "Grouped with sticky sticky headers. Distinct background states: clean (white), dirty (amber bg), new (green bg), error (red bg).",
+    "drag_and_drop": "Uses grip-vertical icon, dim (opacity-30) by default, full opacity on hover. Selection disables drag and drop handles (opacity-15)."
   },
-  "component_guidelines": {
-    "buttons": "Pill or rounded-md shapes. Primary buttons use primaryOrange with white text. Secondary/Actions use borderGray border with darkText and white bg. Icon buttons use hover states showing primary/error colors over light tinted backgrounds.",
-    "inputs_selects": "rounded-md, border-borderGray, focus:border-primaryOrange focus:ring-1 focus:ring-primaryOrange. Consistent padding (px-3 py-1.5 or py-2).",
-    "tables": "border-collapse w-full text-left. bg-white headers with sticky positioning. Row hover states using bg-sectionBg/80."
+  "layouts": {
+    "main_grid": "Split layout for standard view (30% category sidebar, 70% items list), Full width layout for bulk edit.",
+    "sub_grid": "Dense table columns with absolute positioning/sticky heads. Custom table layouts mapped exactly to data schemas."
+  },
+  "motion": {
+    "interactions": "Transition-colors, transition-opacity 0.2s duration. Row additions fade-in gently."
   },
   "accessibility": {
-    "contrast": "Maintained high contrast text choices (darkText #1F2937 vs white/gray bg). Error states explicitly use red colors + icons.",
-    "interactive": "Hover and focus states are strictly defined. Focus rings implemented on inputs.",
-    "testing": "Mandatory data-testid attributes applied to all interactive and data-bearing elements (e.g. item-edit-btn-{id}, category-row-{id})."
+    "contrast": "Ensure 4.5:1 text-to-background ratio on primary elements.",
+    "focus": "All form elements must maintain clear focus outlines.",
+    "aria": "Use aria-labels where icons stand alone without text."
+  },
+  "html_mockup_files": [
+    "01_stock_master_default.html",
+    "02_item_row_edit_mode.html",
+    "03_bulk_edit_mode.html",
+    "04_unit_prices_tab.html",
+    "05_delete_item_modal.html",
+    "06_bulk_select_active.html",
+    "index.html"
+  ],
+  "data_testids": {
+    "required": [
+      "expense-setup-panel",
+      "setup-refresh-btn",
+      "setup-bulk-btn",
+      "setup-tab-strip",
+      "tab-stock-master",
+      "tab-unit-prices",
+      "add-category-btn",
+      "new-category-input",
+      "new-category-save",
+      "category-all",
+      "category-row-1",
+      "category-edit-1",
+      "category-delete-1",
+      "category-row-2",
+      "category-edit-2",
+      "category-delete-2",
+      "category-row-3",
+      "category-edit-3",
+      "category-delete-3",
+      "items-search",
+      "new-item-input",
+      "new-item-price-input",
+      "new-item-save",
+      "item-drag-handle-1",
+      "item-edit-btn-1",
+      "item-delete-btn-1",
+      "item-edit-btn-2",
+      "item-delete-btn-2",
+      "item-edit-btn-3",
+      "item-delete-btn-3",
+      "bulk-select-all",
+      "bulk-select-row-1",
+      "bulk-select-row-2",
+      "bulk-select-row-3",
+      "bulk-delete-selected-btn",
+      "bulk-move-category-btn",
+      "bulk-clear-selection-btn",
+      "row-status-1",
+      "row-undo-2",
+      "row-delete-new1",
+      "row-delete-1",
+      "footer-save-btn",
+      "footer-reset-all-btn",
+      "bulk-editor-close-btn"
+    ]
   },
   "instructions_to_main_agent": [
-    "Do NOT use HTML native date/selects when building the React version. Map these HTML mockups to Shadcn UI components where applicable, applying custom Tailwind styling as detailed.",
-    "Ensure all data-testid attributes from the mockups are preserved exactly as written in the React components.",
-    "Preserve the 30/70 width split exactly for the default stock master view.",
-    "Preserve the cascade warning text 'This will also remove it from any associated recipes and historical expense records. This action cannot be undone.' verbatim in the delete modal.",
-    "Implement the 'dirty row' indicator visual pattern (green dot + inset left shadow) for the BulkEditor component exactly as mocked."
+    "DnD affordance mirrors Menu Management CategoryList: `GripVertical` icon at opacity-30 default, opacity-100 on hover, gray color.",
+    "Bulk Editor MUST match `/app/frontend/src/components/panels/menu/BulkEditor.jsx` structure (toolbar / column chips / grid with #-column and save-state icons / footer bar) — EXCEPT skip the Columns picker (Expense has only 3 fields) and Export/Import buttons (removed by CR-074-A).",
+    "Bulk-select + delete + move-category is a NEW pattern beyond Menu Management, per owner request 2026-07-16."
   ],
-  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
-    "Prioritize using pre-existing components from src/components/ui when applicable.",
-    "Use glass-morphism effects with backdrop filters (12-24px blur) where necessary, but keep functional cards solid.",
-    "Do not apply global transitions that break transforms. Apply transitions selectively (e.g. transition-colors).",
-    "Every interactive element needs a hover state.",
-    "Never center align the entire app container or layout content unecessarily; favor standard left-to-right reading flow.",
-    "Use sonner for toast notifications."
-  ]
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": "Do not center align standard block elements via body CSS. Ensure nested z-index properly layers modals > toolbars > table headers > table bodies. Do not rely entirely on transparent dropdowns without backdrop blur. Retain testids rigorously as assigned. Maintain sharp aesthetic details matching tailwind standard conventions."
 }
