@@ -1317,26 +1317,22 @@ const ExpenseSetupPanel = () => {
                                       </div>
                                     )}
                                   </td>
-                                  {/* BUG-203: inline edit — unit price input */}
+                                  {/* BUG-203: inline edit — unit price input (always show, even for unpriced items) */}
                                   <td className="px-2 py-2" style={{ width: 110 }}>
-                                    {(item.unitPrice || editItemPrice) ? (
-                                      <div className="relative">
-                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-medium"
-                                          style={{ color: COLORS.grayText }}>₹</span>
-                                        <input
-                                          type="number" min="0" step="0.01"
-                                          value={editItemPrice}
-                                          onChange={e => setEditItemPrice(e.target.value)}
-                                          onKeyDown={e => { if (e.key === "Enter") saveEditItem(); if (e.key === "Escape") cancelEditItem(); }}
-                                          placeholder="Price"
-                                          className="w-full pl-5 pr-2 py-1 text-sm rounded border outline-none focus:ring-1 focus:ring-orange-200"
-                                          style={{ borderColor: COLORS.borderGray }}
-                                          data-testid={`item-edit-price-input-${item.id}`}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <span className="text-xs" style={{ color: COLORS.grayText }}>No price</span>
-                                    )}
+                                    <div className="relative">
+                                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-medium"
+                                        style={{ color: COLORS.grayText }}>₹</span>
+                                      <input
+                                        type="number" min="0" step="0.01"
+                                        value={editItemPrice}
+                                        onChange={e => setEditItemPrice(e.target.value)}
+                                        onKeyDown={e => { if (e.key === "Enter") saveEditItem(); if (e.key === "Escape") cancelEditItem(); }}
+                                        placeholder="—"
+                                        className="w-full pl-5 pr-2 py-1 text-sm rounded border outline-none focus:ring-1 focus:ring-orange-200"
+                                        style={{ borderColor: COLORS.borderGray }}
+                                        data-testid={`item-edit-price-input-${item.id}`}
+                                      />
+                                    </div>
                                   </td>
                                   {/* BUG-202-fwd-compat: inline edit — category dropdown */}
                                   <td className="px-4 py-2">
