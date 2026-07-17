@@ -297,6 +297,25 @@ Evidence: `/app/memory/evidence/BATCH_A/CURL_VERIFY_FINDINGS.md`
 **Design-gated group:**
 7. **CR-074-B** — Full Expense Setup redesign matching Menu Management (inline row edit, dropdown, unified bulk pattern). **Call design_agent_full_stack** for mockup → owner approval → then Gate 3.
 
+---
+
+## 10. CR-064 Backend Contract Verification (2026-07-17)
+
+Curl-verified on preprod (see `/app/memory/evidence/BATCH_A/CR-064_CURL_VERIFY_FINDINGS.md`):
+
+| Finding | Verdict |
+|---|---|
+| `POST /store_expense` accepts inline `unit_price` in body | ❌ **IGNORED** by backend. Item created without price. |
+| Two-call sequence (create item → `POST /stock-unit-price`) | ✅ WORKS. Ship-safe. |
+| Unit price CASCADE-deletes with item | ✅ Confirmed. No orphan risk. |
+
+**Historical bulk-editor restriction rediscovered:** `ExpenseBulkEditor.jsx:174-190` blocks (a) rename (OQ-1) and (b) category-move on priced items (OQ-2). Both derive from the "no update endpoint" limitation. **Both will be resolved when BUG-202 backend delivers `PUT /expense/stock-items/{id}`.**
+
+### Open Questions
+- **Q-CR064-1** — CR-064 implementation: Option A (two-call sequence, ships today) vs Option B (request backend inline `unit_price` support). *[recommendation: A now, B as follow-up]*
+- **Q-CR064-2** — Bulk-select "Move to Category" behavior for priced items: block / warn+confirm / defer until BUG-202. *[recommendation: defer until BUG-202]*
+- **Q-CR064-3** — Add inline `unit_price` support to `BACKEND_BRIEF_BUG202` as §3.4 optional? *[recommendation: yes]*
+
 ### 9.5 Final Decisions Log (2026-07-16)
 
 | Item | Decision |

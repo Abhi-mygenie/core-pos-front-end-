@@ -125,9 +125,26 @@ The FE plans to consume this endpoint under the following semantics — please c
 
 ---
 
-## 4. Reproduction of the current gap
+## 3.4 (Optional nice-to-have) — Accept `unit_price` inline on item creation
 
-### Try to rename an item via the existing route
+Added 2026-07-17 after CR-064 curl verification. **Priority: OPTIONAL** — frontend has a working two-call fallback.
+
+**Current gap:** `POST /api/v2/vendoremployee/expense/store_expense` accepts a `unit_price` field in the request body but **silently ignores it**. Curl-verified 2026-07-17:
+```
+POST body: { "category_name":"grocery","stock_title":["Basmati Rice"],"unit_price":45.50 }
+Response:  { "stock_items":[{ "id":4600, "stock_title":"Basmati Rice", "unit_price":false, "unit_price_amount":null }] }
+```
+
+**Requested:** If `unit_price` (numeric) is present, atomically create the item **AND** the associated `stock-unit-price` row (quantity=1 default). Response should echo the new price:
+```
+{ "stock_items":[{ "id":4600, "stock_title":"Basmati Rice", "unit_price":true, "unit_price_amount":45.50 }] }
+```
+
+**Why:** frontend's CR-064 quick-add row (name + unit price + Add) currently needs 2 sequential API calls. A single atomic call is safer (no orphan risk on mid-sequence failure) and simpler.
+
+---
+
+## 4. Reproduction of the current gap
 ```bash
 curl -X PUT   "https://preprod.mygenie.online/api/v2/vendoremployee/expense/expenses/4589"      -H "Authorization: Bearer $TOKEN"      -H "Content-Type: application/json"      -d '{"title":"RENAMED","category_id":42}'
 # HTTP/1.1 302 Found  (silent redirect to preprod root)

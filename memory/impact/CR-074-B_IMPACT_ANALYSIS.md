@@ -88,10 +88,18 @@ Also supersedes UI patterns from **CR-067** (existing bulk-editor).
 | B-1 | ✅ RESOLVED | Confirmed with owner: CR-074-B replaces CR-067 UI patterns. |
 | B-2 | ✅ RESOLVED | CR-064 + BUG-162 + BUG-202 fwd-compat bundled into scope. |
 | B-3 | ⏳ EXTERNAL | BUG-202 backend delivery (BACKEND_BRIEF_BUG202) — needed for full inline-edit functionality. FE can build UI now and gate behind flag. |
-| B-4 | ⏳ EXTERNAL | Curl-verify: does `POST /store_expense` accept inline `unit_price` in create body? (needed for CR-064 clean implementation.) Not blocking design mockup. |
-| B-5 | 🔵 NOW | `design_agent_full_stack` mockup — will be invoked immediately after this Impact Analysis. |
+| B-4 | ✅ RESOLVED | Curl-verify 2026-07-17: `POST /store_expense` **does NOT** accept inline `unit_price` — silently ignored. **Two-call sequence WORKS** and is ship-safe. Evidence: `/app/memory/evidence/BATCH_A/CR-064_CURL_VERIFY_FINDINGS.md`. |
+| B-5 | ✅ RESOLVED | design_agent_full_stack invoked 2026-07-16; HTML mockups delivered at `/app/frontend/public/design-mockups/` (round 2 with owner corrections). |
+| **B-6** | ⚠ **NEW** | Historical Bulk Editor restriction: `ExpenseBulkEditor.jsx:174-190` blocks rename (OQ-1) and category-move-on-priced-items (OQ-2). Both resolve when BUG-202 delivers `PUT /expense/stock-items/{id}`. FE must keep these restrictions active until backend ships. |
+| **B-7** | 🛑 **OPEN** | Bulk-select "Move to Category" UX for priced items — see Open Questions Q-CR064-2 below. |
 
-**No owner decisions outstanding.** Green light to invoke design agent.
+**Open Questions raised 2026-07-17:**
+
+| ID | Question | Recommendation | Blocks? |
+|---|---|---|---|
+| **Q-CR064-1** | CR-064 quick-add price: ship with two-call sequence (A) or wait for backend inline support (B)? | **A (ship now)** | Blocks Gate 3 execution ordering |
+| **Q-CR064-2** | Bulk "Move to Category" behavior when selection includes priced items: (a) block, (b) warn+proceed with price loss, (c) defer until BUG-202 | **(c) defer** — show "Move to Category" only when NO selected item has a price OR when BUG-202 lands | Blocks Gate 3 for bulk-move feature |
+| **Q-CR064-3** | Add optional inline `unit_price` field to `BACKEND_BRIEF_BUG202` §3.4 as nice-to-have? | **Yes** — small backend win, cleaner FE code | Non-blocking |
 
 ---
 
@@ -119,6 +127,7 @@ Design agent output → owner approval → Gate 3 Implementation Plan → Gate 4
 ## 8. Handover
 
 Impact Analysis complete for CR-074-B expanded scope.
-No unresolved owner questions.
-Invoking `design_agent_full_stack` next (this turn).
-Gate 3 Implementation Plan blocked on: (a) design mockup + owner approval; (b) optional curl-verify on `POST /store_expense` unit_price acceptance.
+Design agent invoked; HTML mockups delivered (round 2 with owner corrections).
+Curl-verified 2026-07-17: CR-064 must use two-call sequence; historical Bulk Editor unit-price restriction root-caused.
+**Impact Analysis: CLOSED with 1 owner question outstanding (Q-CR064-2 blocking Gate 3 for bulk-move feature; other 2 are non-blocking).**
+Gate 3 Implementation Plan blocked on: (a) owner ruling on Q-CR064-2; (b) BUG-202 backend delivery (for full functionality — but FE-side design + UI-behind-flag can proceed on the ship-now portion).
