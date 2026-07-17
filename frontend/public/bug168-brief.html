@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUG-168 — Financial Field Gap Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap');
+  
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card-border: #2a2d3a;
+    --text: #e4e4e7;
+    --text-muted: #71717a;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --orange: #f97316;
+    --orange-bg: rgba(249,115,22,0.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.1);
+    --purple: #a855f7;
+    --purple-bg: rgba(168,85,247,0.1);
+    --cyan: #06b6d4;
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #3b82f6, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 48px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2 .num {
+    background: var(--blue);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: var(--cyan);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge.green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+  .badge.red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .badge.orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(249,115,22,0.2); }
+  .badge.blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+  .badge.purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+
+  /* Flow Diagrams */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+  }
+
+  .flow-step {
+    position: relative;
+    padding: 20px 24px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 0;
+  }
+
+  .flow-step + .flow-arrow {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  .flow-step .step-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .flow-step .step-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .flow-step .endpoint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .field-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .field-item .icon { font-size: 0.9rem; flex-shrink: 0; }
+  .field-item.sent { border-left: 3px solid var(--green); }
+  .field-item.missing { border-left: 3px solid var(--red); opacity: 0.8; }
+  .field-item.returned { border-left: 3px solid var(--blue); }
+  .field-item.new { border-left: 3px solid var(--orange); }
+
+  /* Comparison Table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 16px 0;
+  }
+
+  .compare-table th {
+    background: rgba(59,130,246,0.1);
+    color: var(--blue);
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid var(--card-border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .compare-table th:first-child {
+    text-align: left;
+    min-width: 220px;
+  }
+
+  .compare-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--card-border);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  .compare-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .compare-table tr:hover { background: rgba(255,255,255,0.02); }
+  .compare-table .section-row td { 
+    background: rgba(255,255,255,0.03); 
+    font-weight: 700; 
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+  }
+
+  .cell-yes { color: var(--green); }
+  .cell-no { color: var(--red); font-weight: 600; }
+  .cell-new { color: var(--orange); font-weight: 600; }
+  .cell-na { color: var(--text-muted); }
+
+  /* Example Box */
+  .example-box {
+    background: var(--yellow-bg);
+    border: 1px solid rgba(234,179,8,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+
+  .example-box .title {
+    font-weight: 700;
+    color: var(--yellow);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .example-grid {
+    display: grid;
+    grid-template-columns: 1fr 20px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .example-col {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+
+  .example-col .label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+  }
+
+  .example-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    padding-top: 24px;
+  }
+
+  /* Edge Cases */
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .case-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .case-card .case-title {
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .case-card .case-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .case-card code {
+    background: rgba(59,130,246,0.1);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+  }
+
+  /* Order Type Table */
+  .type-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin: 16px 0;
+  }
+
+  .type-table th {
+    background: rgba(168,85,247,0.1);
+    color: var(--purple);
+    padding: 8px 10px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--card-border);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+  }
+
+  .type-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 0.78rem;
+  }
+
+  .type-table td:first-child { text-align: left; font-weight: 500; }
+
+  /* Ask Section */
+  .ask-card {
+    border: 2px solid var(--orange);
+    border-radius: 12px;
+    padding: 24px;
+    background: var(--orange-bg);
+  }
+
+  .ask-card h3 { color: var(--orange); margin-top: 0; }
+
+  .ask-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 12px 0;
+  }
+
+  .ask-table th {
+    background: rgba(249,115,22,0.15);
+    color: var(--orange);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+  }
+
+  .ask-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(249,115,22,0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  /* After Fix */
+  .after-fix {
+    background: var(--green-bg);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+
+  .after-fix h3 { color: var(--green); margin-top: 0; }
+
+  .after-fix code {
+    display: block;
+    background: rgba(0,0,0,0.3);
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-top: 10px;
+    white-space: pre;
+  }
+
+  .status-bar {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot.green { background: var(--green); }
+  .dot.red { background: var(--red); }
+  .dot.orange { background: var(--orange); }
+  .dot.blue { background: var(--blue); }
+
+  @media (max-width: 768px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .case-grid { grid-template-columns: 1fr; }
+    .example-grid { grid-template-columns: 1fr; }
+    .example-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>BUG-168 Financial Field Gap Analysis</h1>
+<p class="subtitle">
+  What FE sends to backend vs what backend returns &mdash; across all order flows.<br>
+  <span style="margin-top:6px;display:inline-block">
+    <span class="badge blue">BACKEND_BRIEF_BUG168</span>
+    <span class="badge orange">P1 &mdash; BLOCKS PRINT FIX</span>
+    <span style="color:var(--text-muted); margin-left:8px">2026-07-08</span>
+  </span>
+</p>
+
+<div class="status-bar">
+  <div class="status-item"><div class="dot green"></div> Sent by FE &amp; returned by backend</div>
+  <div class="status-item"><div class="dot red"></div> Sent by FE but NOT returned</div>
+  <div class="status-item"><div class="dot orange"></div> Recently added (this sprint)</div>
+  <div class="status-item"><div class="dot blue"></div> Returned by backend</div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">1</span> Place Order Flow</h2>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="step-label">Step 1 &mdash; FE Sends</div>
+    <div class="step-title">Place Order</div>
+    <div class="endpoint">POST /api/v2/vendoremployee/order/place-order</div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px">FE computes all financials from cart items. Applies to: Dine-In, Walk-In, Takeaway, Delivery, Room.</p>
+    <div class="field-grid">
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_sub_total_amount &nbsp;<span style="color:var(--text-muted)">₹292</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_sub_total_without_tax &nbsp;<span style="color:var(--text-muted)">₹321.2</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_amount &nbsp;<span style="color:var(--text-muted)">₹333</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> service_tax &nbsp;<span style="color:var(--text-muted)">₹29.2</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> gst_tax &nbsp;<span style="color:var(--text-muted)">₹0</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> vat_tax &nbsp;<span style="color:var(--text-muted)">₹11.68</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> tax_amount &nbsp;<span style="color:var(--text-muted)">₹11.68</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> service_gst_tax_amount &nbsp;<span style="color:var(--text-muted)">₹</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> tip_tax_amount &nbsp;<span style="color:var(--text-muted)">₹0</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> delivery_charge_gst_amount &nbsp;<span style="color:var(--text-muted)">conditional</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> round_up &nbsp;<span style="color:var(--text-muted)">₹</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> tip_amount &nbsp;<span style="color:var(--text-muted)">₹0</span></div>
+    </div>
+  </div>
+  <div class="flow-arrow">&#9660; Backend stores ALL fields</div>
+  <div class="flow-step">
+    <div class="step-label">Step 2 &mdash; Backend Returns via Socket</div>
+    <div class="step-title">Socket: <code>new-order</code> event</div>
+    <div class="field-grid">
+      <div class="field-item returned"><span class="icon">&#9989;</span> order_sub_total_amount</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order_sub_total_without_tax</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order_amount</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> total_service_tax_amount</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> tip_amount</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> tip_tax_amount</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> delivery_charge</div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> delivery_charge_gst</div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> gst_tax &mdash; <strong>NOT RETURNED</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> vat_tax &mdash; <strong>NOT RETURNED</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> tax_amount &mdash; <strong>NOT RETURNED</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> service_gst_tax_amount &mdash; <strong>NOT RETURNED</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> delivery_charge_gst_amount &mdash; <strong>NOT RETURNED</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> round_up &mdash; <strong>NOT RETURNED</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">2</span> Edit Order Flow (Add Items)</h2>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="step-label">Step 1 &mdash; FE Sends (recalculated for ALL items)</div>
+    <div class="step-title">Edit Order</div>
+    <div class="endpoint">PUT /api/v1/vendoremployee/order/update-place-order</div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px">FE recalculates financials for placed + new items combined. Same complete field set as Place Order.</p>
+    <div class="field-grid">
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_sub_total_amount &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_sub_total_without_tax &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> order_amount &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> gst_tax &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> vat_tax &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> tax_amount &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> service_tax &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> service_gst_tax_amount &nbsp;<span style="color:var(--text-muted)">(recalc)</span></div>
+    </div>
+  </div>
+  <div class="flow-arrow">&#9660; Backend re-stores updated values</div>
+  <div class="flow-step">
+    <div class="step-label">Step 2 &mdash; Backend Returns</div>
+    <div class="step-title">Socket: <code>update-order</code> event</div>
+    <p style="font-size:0.82rem;color:var(--red);font-weight:600;margin-top:8px">Same gap &mdash; gst_tax, vat_tax, tax_amount, service_gst_tax_amount, delivery_charge_gst_amount, round_up all NOT returned.</p>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-top:4px">After edit, the updated tax values sent by FE are lost. OrderContext reverts to 0 for these fields.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">3</span> Collect Bill Flow</h2>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="step-label">Step 1 &mdash; FE Sends (final bill with discount/coupon/tip)</div>
+    <div class="step-title">Collect Bill</div>
+    <div class="endpoint">POST /api/v2/vendoremployee/order/order-bill-payment</div>
+    <div class="field-grid">
+      <div class="field-item sent"><span class="icon">&#9989;</span> gst_tax + total_gst_tax_amount</div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> vat_tax</div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> service_gst_tax_amount</div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> tip_tax_amount</div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> delivery_charge_gst_amount</div>
+      <div class="field-item sent"><span class="icon">&#9989;</span> All subtotals + amounts</div>
+    </div>
+  </div>
+  <div class="flow-arrow">&#9660; Order becomes PAID &mdash; removed from dashboard</div>
+  <div class="flow-step" style="border-color: var(--green); background: var(--green-bg);">
+    <div class="step-label" style="color:var(--green)">No gap for this flow</div>
+    <div class="step-title" style="color:var(--green)">Collect Bill print uses live UI overrides &mdash; works correctly</div>
+    <p style="font-size:0.82rem;color:var(--text-muted)">Auto-print at Collect Bill time passes all values as overrides. Never reads from OrderContext. Not affected by the gap.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">4</span> Manual Print Flow (THE BUG)</h2>
+
+<div class="flow">
+  <div class="flow-step">
+    <div class="step-label">Step 1 &mdash; FE reads order from context</div>
+    <div class="step-title">OrderCard / TableCard / RePrintButton</div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px">User clicks Print Bill on dashboard. FE reads order data from OrderContext (populated by socket or list API).</p>
+    <div class="field-grid">
+      <div class="field-item returned"><span class="icon">&#9989;</span> order.subtotalAmount &nbsp;<span style="color:var(--green)">292</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order.subtotalBeforeTax &nbsp;<span style="color:var(--green)">321.2</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order.serviceTax &nbsp;<span style="color:var(--green)">29.2</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order.amount &nbsp;<span style="color:var(--green)">333</span></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> order.gstTax &mdash; <strong>undefined (not in API)</strong></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> order.vatTax &mdash; <strong>undefined (not in API)</strong></div>
+    </div>
+  </div>
+  <div class="flow-arrow">&#9660; buildBillPrintPayload()</div>
+  <div class="flow-step" style="border-color: var(--red);">
+    <div class="step-label" style="color:var(--red)">Step 2 &mdash; Print payload built</div>
+    <div class="step-title">POST /api/v1/vendoremployee/order-temp-store</div>
+    <div class="field-grid">
+      <div class="field-item returned"><span class="icon">&#9989;</span> order_item_total &nbsp;<span style="color:var(--green)">292 (backend)</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> order_subtotal &nbsp;<span style="color:var(--green)">321.2 (backend)</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> serviceChargeAmount &nbsp;<span style="color:var(--green)">29.2 (backend)</span></div>
+      <div class="field-item returned"><span class="icon">&#9989;</span> payment_amount &nbsp;<span style="color:var(--green)">333 (backend)</span></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> gst_tax &nbsp;<span style="color:var(--red)"><strong>0 &mdash; WRONG</strong> (should be 0)</span></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> vat_tax &nbsp;<span style="color:var(--red)"><strong>3.68 &mdash; WRONG</strong> (should be 11.68)</span></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> cgst_amount &nbsp;<span style="color:var(--red)">derived from wrong gst</span></div>
+      <div class="field-item missing"><span class="icon">&#10060;</span> sgst_amount &nbsp;<span style="color:var(--red)">derived from wrong gst</span></div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--red-bg);border-radius:8px;font-size:0.82rem">
+      <strong style="color:var(--red)">Root cause:</strong> Backend doesn't return gst_tax/vat_tax. FE computes tax on base price (92) instead of full item total with addons (292). Gets 92 &times; 4% = 3.68 instead of 292 &times; 4% = 11.68.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">5</span> Complete Field Comparison</h2>
+
+<div class="card">
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>FE &rarr; BE<br>(Place / Edit)</th>
+      <th>FE &rarr; BE<br>(Collect Bill)</th>
+      <th>Socket<br>new-order / update-*</th>
+      <th>List API<br>employee-orders-list</th>
+      <th>Single Order<br>get-single-order-new</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="section-row"><td colspan="6">Subtotals &amp; Amounts</td></tr>
+    <tr><td>order_sub_total_amount</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-new">&#9989; NEW</td><td class="cell-yes">&#9989;</td></tr>
+    <tr><td>order_sub_total_without_tax</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-new">&#9989; NEW</td><td class="cell-yes">&#9989;</td></tr>
+    <tr><td>order_amount</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td></tr>
+    
+    <tr class="section-row"><td colspan="6">Tax Breakdown (THE GAP)</td></tr>
+    <tr><td><strong>gst_tax</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+    <tr><td><strong>vat_tax</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+    <tr><td><strong>tax_amount</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+    
+    <tr class="section-row"><td colspan="6">Service Charge &amp; Tip</td></tr>
+    <tr><td>total_service_tax_amount</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td></tr>
+    <tr><td><strong>service_gst_tax_amount</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+    <tr><td>tip_amount</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td></tr>
+    <tr><td>tip_tax_amount</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td></tr>
+    
+    <tr class="section-row"><td colspan="6">Delivery</td></tr>
+    <tr><td>delivery_charge</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td></tr>
+    <tr><td>delivery_charge_gst (socket)</td><td class="cell-na">&mdash;</td><td class="cell-na">&mdash;</td><td class="cell-yes">&#9989;</td><td class="cell-no">&#10060;</td><td class="cell-no">&#10060;</td></tr>
+    <tr><td><strong>delivery_charge_gst_amount</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+    
+    <tr class="section-row"><td colspan="6">Other</td></tr>
+    <tr><td>restaurant_discount_amount</td><td class="cell-na">&mdash;</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060;</td><td class="cell-new">&#9989; NEW</td><td class="cell-no">&#10060;</td></tr>
+    <tr><td><strong>round_up</strong></td><td class="cell-yes">&#9989; SEND</td><td class="cell-yes">&#9989; SEND</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td><td class="cell-no">&#10060; MISSING</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">6</span> Order Type &times; Component Matrix</h2>
+
+<div class="card">
+<table class="type-table">
+  <thead>
+    <tr>
+      <th style="text-align:left">Component</th>
+      <th>Dine-In + Room</th>
+      <th>Walk-In</th>
+      <th>Takeaway</th>
+      <th>Delivery</th>
+      <th>Gap?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Item Total</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-yes">&#9989;</td><td class="cell-no">&#10060; gst/vat on items</td></tr>
+    <tr><td>Service Charge</td><td class="cell-yes">&#9989; Applied</td><td class="cell-yes">&#9989; Applied</td><td class="cell-na">&#8212; N/A</td><td class="cell-na">&#8212; N/A</td><td class="cell-no">&#10060; sc_gst_tax_amount</td></tr>
+    <tr><td>Tip</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>&#9989; tip_tax returned</td></tr>
+    <tr><td>Delivery Charge</td><td class="cell-na">&#8212; N/A</td><td class="cell-na">&#8212; N/A</td><td class="cell-na">&#8212; N/A</td><td class="cell-yes">&#9989; Applied</td><td class="cell-no">&#10060; del_gst_amount</td></tr>
+    <tr><td>Discount</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>&#9989; discount returned</td></tr>
+    <tr><td>Round-off</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td class="cell-no">&#10060; round_up</td></tr>
+  </tbody>
+</table>
+<p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px">The tax gap (gst_tax, vat_tax) affects ALL order types. SC GST gap affects Dine-In + Walk-In. Delivery GST gap affects Delivery only.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">7</span> Edge Cases</h2>
+
+<div class="case-grid">
+  <div class="case-card">
+    <div class="case-title">&#127860; Addons</div>
+    <div class="case-desc">Order #002388: sahi paneer &times;4 + cheese addon.<br>FE sent <code>vat_tax=11.68</code>. Backend doesn't return it. FE recomputes on base 92 &rarr; <code>3.68</code> (wrong).</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#127860; Variations</div>
+    <div class="case-desc">Item with +&#8377;20 "large" upcharge. Same gap &mdash; FE computes tax on base without variation upcharge.</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#128176; Mixed GST + VAT</div>
+    <div class="case-desc">Item A: GST 18%, Item B: VAT 5%. FE sent both separately. Backend must return both so FE doesn't need to split.</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#9999;&#65039; After Edit</div>
+    <div class="case-desc">Place &rarr; <code>vat_tax=10</code>. Edit (add items) &rarr; <code>vat_tax=15</code>. Socket update returns: <code>vat_tax=&#10060;</code>. Updated value lost.</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#128666; Delivery</div>
+    <div class="case-desc"><code>delivery_charge_gst_amount</code> sent by FE but not returned. Print needs it for correct total.</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#127977; Room Orders</div>
+    <div class="case-desc">Room with associated table orders. Tax gap same as dine-in. Associated amounts correct, but tax is wrong.</div>
+  </div>
+  <div class="case-card">
+    <div class="case-title">&#128179; Discount</div>
+    <div class="case-desc">Manual print happens BEFORE collect bill (no discount yet). Pre-discount tax from place-order should be returned as-is.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">8</span> Specific Example &mdash; Order #002388</h2>
+
+<div class="example-box">
+  <div class="title">&#128269; sahi paneer &times;4 + extra cheese slice addon (VAT 4%)</div>
+  <div class="example-grid">
+    <div class="example-col">
+      <div class="label">FE sent on Place Order</div>
+      order_sub_total_amount: <strong>292</strong><br>
+      order_sub_total_without_tax: <strong>321.2</strong><br>
+      order_amount: <strong>333</strong><br>
+      service_tax: <strong>29.2</strong><br>
+      gst_tax: <strong>0</strong><br>
+      vat_tax: <strong style="color:var(--green)">11.68</strong><br>
+      tax_amount: <strong>11.68</strong>
+    </div>
+    <div class="example-arrow">&rarr;</div>
+    <div class="example-col">
+      <div class="label">Backend Returns (Socket / API)</div>
+      order_sub_total_amount: <strong style="color:var(--green)">292 &#9989;</strong><br>
+      order_sub_total_without_tax: <strong style="color:var(--green)">321.2 &#9989;</strong><br>
+      order_amount: <strong style="color:var(--green)">333 &#9989;</strong><br>
+      total_service_tax_amount: <strong style="color:var(--green)">29.2 &#9989;</strong><br>
+      gst_tax: <strong style="color:var(--red)">&#10060; NOT RETURNED</strong><br>
+      vat_tax: <strong style="color:var(--red)">&#10060; NOT RETURNED</strong><br>
+      tax_amount: <strong style="color:var(--red)">&#10060; NOT RETURNED</strong>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.78rem">
+    Print payload result:<br>
+    &nbsp;&nbsp;vat_tax: <strong style="color:var(--red)">3.68</strong> (FE computes 92 &times; 4% = 3.68)<br>
+    &nbsp;&nbsp;should be: <strong style="color:var(--green)">11.68</strong> (292 &times; 4% = 11.68)<br><br>
+    <strong>Backend HAS 11.68 &rarr; just return it &rarr; FE passes through &rarr; done.</strong>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">9</span> Backend Ask</h2>
+
+<div class="ask-card">
+  <h3>Priority 1 &mdash; Blocks Print Fix</h3>
+  <table class="ask-table">
+    <thead><tr><th>Field</th><th>Add To</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td><strong>gst_tax</strong></td><td>Socket + List API + Single Order</td><td>Already stored from place-order / update-order / bill-payment</td></tr>
+      <tr><td><strong>vat_tax</strong></td><td>Socket + List API + Single Order</td><td>Already stored from place-order / update-order / bill-payment</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px">Priority 2 &mdash; Enables 100% Backend Passthrough</h3>
+  <table class="ask-table">
+    <thead><tr><th>Field</th><th>Add To</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>tax_amount</td><td>Socket + List API + Single Order</td><td>Stored (= gst_tax + vat_tax)</td></tr>
+      <tr><td>service_gst_tax_amount</td><td>Socket + List API + Single Order</td><td>Stored from all write flows</td></tr>
+      <tr><td>delivery_charge_gst_amount</td><td>List API + Single Order</td><td>Stored (socket has delivery_charge_gst)</td></tr>
+      <tr><td>round_up</td><td>Socket + List API + Single Order</td><td>Stored from place / update / bill-payment</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px;font-size:0.85rem"><strong>Precedent:</strong> <code>order_sub_total_amount</code> and <code>order_sub_total_without_tax</code> were in this exact same situation. Backend added them to <code>employee-orders-list</code> this sprint &mdash; working perfectly. This is the identical pattern for tax fields.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">10</span> FE Change After Backend Fix</h2>
+
+<div class="after-fix">
+  <h3>Result: 100% Backend Passthrough (Zero Computation)</h3>
+  <code>// Print payload for manual print path:
+
+order_item_total    &rarr; order.subtotalAmount       (292)    &larr; backend
+order_subtotal      &rarr; order.subtotalBeforeTax    (321.2)  &larr; backend
+serviceChargeAmount &rarr; order.serviceTax           (29.2)   &larr; backend
+payment_amount      &rarr; order.amount               (333)    &larr; backend
+gst_tax             &rarr; order.gstTax               (0)      &larr; backend  NEW
+vat_tax             &rarr; order.vatTax               (11.68)  &larr; backend  NEW
+cgst_amount         &rarr; order.gstTax / 2           (0)      &larr; derived
+sgst_amount         &rarr; order.gstTax / 2           (0)      &larr; derived
+Tip                 &rarr; order.tipAmount             (0)      &larr; backend
+delivery_charge     &rarr; order.deliveryCharge        (0)      &larr; backend
+discount_amount     &rarr; order.discount              (0)      &larr; backend
+
+// ZERO local computation. ZERO item-level loops.
+// Entire FE tax computation block can be deleted.</code>
+</div>
+
+</div>
+</body>
+</html>

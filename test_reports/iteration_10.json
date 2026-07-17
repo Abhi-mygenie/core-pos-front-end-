@@ -1,0 +1,99 @@
+{
+  "summary": "BUG-168 display fix verified: Fixed critical scoping bug where getAddonText() and hasAddons() helper functions were incorrectly nested inside generateTimeSlots(). Moved helpers to module level. All 33 tests pass (19 new display tests + 14 existing API payload tests). Frontend loads correctly and cart panel displays addons.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/components/CartPanelAddonDisplay.test.js",
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FIXED: getAddonText() and hasAddons() were incorrectly nested inside generateTimeSlots() function (lines 9-26 were inside the function body starting at line 9). This caused 'not defined' errors at lines 95, 99, 236, 240.",
+    "FIX APPLIED: Moved both helper functions to module level (lines 8-23) before generateTimeSlots() definition",
+    "Line 15: getAddonText correctly computes total addon qty as (a.quantity || a.qty || 1) * itemQty",
+    "Line 22: hasAddons checks all three addon data sources (selectedAddons, addOns, customizations.addons)",
+    "Lines 95-99: PlacedItemRow uses helpers for placed items display",
+    "Lines 236-240: NewItemRow uses helpers for unplaced items display",
+    "ItemCustomizationModal (Line 251) correctly shows per-unit qty in selector UI - NOT changed per requirements"
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/order-entry/CartPanel.jsx",
+    "/app/frontend/src/__tests__/components/CartPanelAddonDisplay.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@mantri.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-168 display fix complete. The original code had a critical scoping bug where the helper functions were accidentally placed inside generateTimeSlots() function body. This was fixed by moving them to module level. The API payload fix (add_on_qtys multiplication at orderTransform.js:698) from iteration 9 remains intact.",
+  "test_results": {
+    "unit_tests": {
+      "CartPanelAddonDisplay.test.js": {
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "tests": [
+          "owner scenario: item qty=3, addon qty=1 per unit → displays 'milk x3'",
+          "item qty=1, addon qty=1 → displays 'milk x1' (no change for single items)",
+          "multiple addons: item qty=3, milk x1 and honey x2 per unit → displays 'milk x3, honey x6'",
+          "uses addOns array when selectedAddons is not present",
+          "falls back to customizations.addons when no structured data",
+          "returns empty string when no addons",
+          "filters out addons without name",
+          "defaults addon quantity to 1 when not specified",
+          "defaults item qty to 1 when not specified",
+          "handles large quantities correctly",
+          "hasAddons: returns true when selectedAddons has items",
+          "hasAddons: returns true when addOns has items",
+          "hasAddons: returns true when customizations.addons has items",
+          "hasAddons: returns false when no addon data",
+          "hasAddons: returns false when addon arrays are empty",
+          "hasAddons: returns false when addon properties are undefined",
+          "Integration: new item added to cart with addons (unplaced)",
+          "Integration: placed item from socket with addOns array",
+          "Integration: item with only static customizations (legacy data)"
+        ]
+      },
+      "orderTransformAddOnQtys.test.js": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "note": "BUG-168 API payload tests - regression check passed"
+      }
+    },
+    "lint_check": {
+      "status": "PASS",
+      "file": "/app/frontend/src/components/order-entry/CartPanel.jsx",
+      "issues": 0
+    },
+    "frontend_load": {
+      "status": "PASS",
+      "login_page_renders": true,
+      "dashboard_loads": true,
+      "order_entry_loads": true,
+      "cart_panel_displays_addons": true
+    }
+  },
+  "bug_168_display_fix": {
+    "issue": "Helper functions getAddonText() and hasAddons() were nested inside generateTimeSlots() function, causing 'not defined' errors",
+    "fix_location": "Lines 8-23 in /app/frontend/src/components/order-entry/CartPanel.jsx",
+    "before_fix": "Functions were inside generateTimeSlots() body (lines 11-26 inside function starting at line 9)",
+    "after_fix": "Functions moved to module level before generateTimeSlots() definition",
+    "display_locations_fixed": [
+      "Line 95-99: PlacedItemRow (placed items view)",
+      "Line 236-240: NewItemRow (active items view)"
+    ],
+    "popup_unchanged": "ItemCustomizationModal.jsx Line 251 still shows per-unit qty (correct for selector UI)",
+    "verified": true
+  }
+}

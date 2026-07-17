@@ -1,0 +1,124 @@
+{
+  "summary": "BUG-168 iteration 3 display fix verified: All 5 addon display locations now correctly compute total addon qty as (per-unit addon qty × item qty). 57 unit tests pass (19 CartPanel + 24 CollectPaymentPanel + 14 API payload). Frontend loads correctly at https://agent-deploy-63.preview.emergentagent.com. Webpack compiles with no new errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "pre_existing_lint_warnings": [
+      "CollectPaymentPanel.jsx has 5 unused eslint-disable directives (warnings)",
+      "CollectPaymentPanel.jsx has 2 unescaped apostrophe characters (pre-existing)"
+    ]
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/components/CartPanelAddonDisplay.test.js",
+    "/app/frontend/src/__tests__/components/CollectPaymentPanelAddonDisplay.test.js",
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddOnQtys.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CartPanel.jsx L8-23: getAddonText() and hasAddons() helper functions correctly at module level",
+    "CartPanel.jsx L95-99: PlacedItemRow uses helpers for placed items with customizations - VERIFIED",
+    "CartPanel.jsx L121-126: Socket fallback path now computes (a.quantity || a.qty || 1) * (item.qty || 1) - VERIFIED",
+    "CartPanel.jsx L236-240: NewItemRow uses helpers for unplaced items - VERIFIED",
+    "CollectPaymentPanel.jsx L1862-1868: View 1 customizations path computes (a.quantity || a.qty || 1) * (item.qty || 1) - VERIFIED",
+    "CollectPaymentPanel.jsx L1877-1880: View 1 fallback path computes totalQty = (a.quantity || a.qty || 1) * (item.qty || 1) - VERIFIED",
+    "CollectPaymentPanel.jsx L2217-2221: View 2 customizations path computes (a.quantity || a.qty || 1) * (item.qty || 1) - VERIFIED",
+    "CollectPaymentPanel.jsx L2232-2235: View 2 fallback path computes totalQty = (a.quantity || a.qty || 1) * (item.qty || 1) - VERIFIED"
+  ],
+  "updated_files": [
+    "/app/frontend/src/__tests__/components/CollectPaymentPanelAddonDisplay.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@mantri.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-168 display fix complete across all 5 locations. The fix pattern is: (per-unit addon qty × item qty). CartPanel uses getAddonText() helper for customizations path and inline computation for socket fallback. CollectPaymentPanel uses inline computation in both views for both customizations and fallback paths. All 57 unit tests pass.",
+  "test_results": {
+    "unit_tests": {
+      "CartPanelAddonDisplay.test.js": {
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "note": "Tests getAddonText() and hasAddons() helpers"
+      },
+      "CollectPaymentPanelAddonDisplay.test.js": {
+        "total": 24,
+        "passed": 24,
+        "failed": 0,
+        "note": "NEW - Tests inline addon display computation for both views"
+      },
+      "orderTransformAddOnQtys.test.js": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "note": "BUG-168 API payload tests - regression check passed"
+      }
+    },
+    "lint_check": {
+      "CartPanel.jsx": {
+        "status": "PASS",
+        "issues": 0
+      },
+      "CollectPaymentPanel.jsx": {
+        "status": "PASS with warnings",
+        "issues": "7 pre-existing (5 unused eslint-disable, 2 unescaped entities)"
+      }
+    },
+    "frontend_load": {
+      "status": "PASS",
+      "url": "https://agent-deploy-63.preview.emergentagent.com",
+      "http_status": 200,
+      "login_page_renders": true,
+      "dashboard_loads": true
+    }
+  },
+  "bug_168_iteration_3_verification": {
+    "locations_fixed": [
+      {
+        "file": "CartPanel.jsx",
+        "line": "L121-126",
+        "path": "Socket fallback (PlacedItemRow)",
+        "fix": "addonQty = (a.quantity || a.qty || 1) * (item.qty || 1)",
+        "verified": true
+      },
+      {
+        "file": "CollectPaymentPanel.jsx",
+        "line": "L1862-1868",
+        "path": "View 1 customizations",
+        "fix": "(a.quantity || a.qty || 1) * (item.qty || 1)",
+        "verified": true
+      },
+      {
+        "file": "CollectPaymentPanel.jsx",
+        "line": "L1877-1880",
+        "path": "View 1 fallback (addOns array)",
+        "fix": "totalQty = (a.quantity || a.qty || 1) * (item.qty || 1)",
+        "verified": true
+      },
+      {
+        "file": "CollectPaymentPanel.jsx",
+        "line": "L2217-2221",
+        "path": "View 2 customizations",
+        "fix": "(a.quantity || a.qty || 1) * (item.qty || 1)",
+        "verified": true
+      },
+      {
+        "file": "CollectPaymentPanel.jsx",
+        "line": "L2232-2235",
+        "path": "View 2 fallback (addOns array)",
+        "fix": "totalQty = (a.quantity || a.qty || 1) * (item.qty || 1)",
+        "verified": true
+      }
+    ],
+    "example_scenario": "item qty=4, addon 'Extra Shot' qty=1 per unit → displays 'Extra Shot x4'",
+    "single_item_behavior": "item qty=1, addon qty=1 → fallback path shows just addon name (no x1), customizations path shows 'addon x1'"
+  }
+}

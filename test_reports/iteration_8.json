@@ -1,0 +1,72 @@
+{
+  "summary": "BUG-166 fix verified: addon_amount is now correctly multiplied by item qty at both fix sites (L704 buildCartItem, L1493 collectBillExisting). BUG-VQTY regression check passed. Frontend compiles with no new errors. Login page renders correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddonQty.test.js",
+    "/app/frontend/src/__tests__/api/transforms/orderTransformFinancials.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Line 704 (buildCartItem): addon_amount correctly uses `addonAmount * (item.qty || 1)` - BUG-166 fix verified",
+    "Line 1493 (collectBillExisting): addon_amount correctly uses `addonAmount * qty` - BUG-166 fix verified",
+    "Line 703 (buildCartItem): variation_amount uses `variationAmount * (item.qty || 1)` - BUG-VQTY regression check passed",
+    "Line 1492 (collectBillExisting): variation_amount uses `variationAmount * qty` - BUG-VQTY regression check passed",
+    "Runtime complementary items (isRuntimeComp=true) correctly return addon_amount=0 at both sites",
+    "Webpack compiled successfully with only pre-existing warnings (no new warnings from fix)"
+  ],
+  "updated_files": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransformAddonQty.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-166 addon_amount qty multiplication fix verified via 13 unit tests. All tests pass. The fix pattern is identical to BUG-VQTY (variation_amount) which was also verified as regression-safe. Test file: orderTransformAddonQty.test.js",
+  "test_results": {
+    "unit_tests": {
+      "orderTransformAddonQty.test.js": {
+        "total": 13,
+        "passed": 13,
+        "failed": 0,
+        "tests": [
+          "addon_amount equals addonAmount when qty=1",
+          "addon_amount is multiplied by item qty when qty > 1",
+          "addon_amount handles multiple addons with qty > 1",
+          "addon_amount is 0 when no addons",
+          "addon_amount is 0 for runtime complementary items",
+          "variation_amount equals variationAmount when qty=1 (BUG-VQTY regression)",
+          "variation_amount is multiplied by item qty when qty > 1 (BUG-VQTY regression)",
+          "both addon_amount and variation_amount are multiplied by qty",
+          "collectBillExisting food_detail includes addon_amount multiplied by qty",
+          "collectBillExisting food_detail has addon_amount=0 for runtime complementary",
+          "handles decimal addon prices correctly",
+          "handles addon with qty > 1 per item correctly",
+          "handles missing qty (defaults to 1)"
+        ]
+      },
+      "orderTransformFinancials.test.js": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "note": "Existing tests - regression check passed"
+      }
+    },
+    "frontend_load": {
+      "status": "PASS",
+      "login_page_renders": true,
+      "webpack_compilation": "SUCCESS (warnings only, no errors)"
+    }
+  }
+}

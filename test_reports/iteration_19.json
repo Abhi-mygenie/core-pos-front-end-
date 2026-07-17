@@ -1,0 +1,70 @@
+{
+  "summary": "BUG-179 (Excel export empty) and BUG-180 (PDF export error) - BOTH VERIFIED FIXED. Tested Expense Report page export functionality with 30D date range (154 transactions, ₹64,104 total). Excel downloads .xls file with Summary + Transactions sheets. PDF opens new window with formatted HTML report showing KPIs + transaction table.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_19.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BUG-179 FIX VERIFIED: exportReportAsExcel() now receives correct payload shape with { title, restaurant, dateRange, kpis, sheets }",
+    "BUG-180 FIX VERIFIED: openReportWindow() called synchronously in click handler, then passed to exportReportAsPDF(win, payload)",
+    "buildExportPayload() function correctly constructs export data with 7 columns: Date, Item, Category, Amount, Payment, Added By, Notes",
+    "Excel file (21KB) contains 2 worksheets: Summary + Transactions with proper SpreadsheetML 2003 XML format",
+    "PDF opens in new window with proper title 'Expense Report — CAFE 103', KPI strip, and transaction table"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "Used existing 30D expense data (154 transactions, ₹64,104 total spend)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-179/180 export fixes verified. Session expires quickly (~30s idle). Login takes ~20s. Use 30D preset for data. data-testid attributes: expense-report-download-trigger, expense-report-download-excel, expense-report-download-pdf, expense-report-preset-30d.",
+  "test_results": {
+    "BUG_179_EXCEL_EXPORT": {
+      "description": "Click Download → 'Download as Excel' → .xls file downloads with transaction data",
+      "status": "PASS",
+      "evidence": "File 'Expense_Report_2026-06-12_2026-07-11.xls' (21KB) downloaded. Contains Summary sheet + Transactions sheet with 42 rows. Valid SpreadsheetML 2003 XML format."
+    },
+    "BUG_180_PDF_EXPORT": {
+      "description": "Click Download → 'Download as PDF' → new browser window opens with formatted HTML report",
+      "status": "PASS",
+      "evidence": "New window opened with title 'Expense Report — CAFE 103'. Contains: EXPENSE REPORT header, CAFE 103 #644, date range, KPIs (Total Spend ₹64,104.00, Transactions 154, Active Days 14, Avg Daily ₹4,578.86, Top Category misc), Transactions table with 25 rows and 7 columns."
+    },
+    "EXPENSE_REPORT_PAGE_LOAD": {
+      "description": "Expense Report page loads without errors - KPI strip, charts, transaction table render correctly",
+      "status": "PASS",
+      "evidence": "Page loaded with data-testid='expense-report-page'. KPI strip visible with 6 KPIs. Daily Expense Trend chart and Category Breakdown pie chart rendered. Transaction table shows 'Showing 25 of 154 · Page 1 of 7'."
+    },
+    "DOWNLOAD_DROPDOWN_OPTIONS": {
+      "description": "Download button dropdown shows all 5 options (Excel, PDF enabled; Email, WhatsApp, SMS disabled)",
+      "status": "PASS",
+      "evidence": "All 5 options found: expense-report-download-excel (enabled), expense-report-download-pdf (enabled), expense-report-share-email (disabled), expense-report-share-whatsapp (disabled), expense-report-share-sms (disabled)."
+    }
+  },
+  "excel_file_details": {
+    "filename": "Expense_Report_2026-06-12_2026-07-11.xls",
+    "size_bytes": 21236,
+    "format": "SpreadsheetML 2003 XML",
+    "worksheets": ["Summary", "Transactions"],
+    "total_rows": 42
+  },
+  "pdf_report_details": {
+    "title": "Expense Report — CAFE 103",
+    "restaurant": "CAFE 103 #644",
+    "date_range": "12/06/2026 to 11/07/2026",
+    "kpis": ["Total Spend: ₹64,104.00", "Transactions: 154", "Active Days: 14", "Avg Daily: ₹4,578.86", "Top Category: misc"],
+    "table_columns": ["Date", "Item", "Category", "Amount", "Payment", "Added By", "Notes"],
+    "visible_rows": 25
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "summary": "Tested all 4 bug fixes (BUG-150 through BUG-153) on /expenses and /expense-setup pages. All bugs verified as FIXED and working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ExpenseEntryPanel - EntryLine",
+        "issue": "Category select placeholder text still shows 'Category *' with asterisk — minor UX confusion since category is now optional (no longer required per BUG-153 fix). No functional issue.",
+        "selector": "[data-testid=\"expense-category-select-0\"]",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: Change 'Category *' placeholder in EntryLine select to 'Category (optional)' to avoid confusion since category is no longer required"
+  ],
+  "critical_code_review_comments": [
+    "BUG-150 DnD placeholder fix is correct — height:0+overflow:hidden preserves @hello-pangea/dnd hit-area calculation. Verified working.",
+    "BUG-151 fix (exp_name: data.expense ?? data.exp_name) correctly handles both old and new key names.",
+    "BUG-152 DELETE endpoint fix using EXPENSE_ENDPOINTS.DELETE_EXPENSE confirmed working — no more 405 errors.",
+    "BUG-153 category auto-fill in handleItemSelect works correctly; catError=false removes validation block."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only)",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "Added 2 test expense entries during testing (amounts ₹500, ₹750 on 07/06/2026). One was deleted during BUG-152 test. One (₹500 - 10000 item) remains.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 4 bugs in CR-059 Phase 1 are verified fixed. Navigation pattern: login → wait 20s for dashboard → poll for target URL (loading page can take 10-15s per navigation). Credentials: owner@cafe103.com / Qplazm@10. Test data created: expense entry for 07/06/2026.",
+  "bug_verification": {
+    "BUG-150": {
+      "status": "FIXED",
+      "description": "DnD on /expense-setup works correctly. Dragged '100 delivery' from Others to Milk category. Milk category highlighted with solid orange border and 'Drop here' label on hover. Item moved with 'Item moved' toast. Items table refreshed correctly.",
+      "evidence": "Toast: 'Item moved - 100 delivery → Milk'"
+    },
+    "BUG-151": {
+      "status": "FIXED",
+      "description": "Edit transaction shows ItemCombobox (not plain text). Selected different item from dropdown, clicked Save. Row updated with 'Updated - Expense updated' toast. No 500 error.",
+      "evidence": "Toast: 'Updated - Expense updated'"
+    },
+    "BUG-152": {
+      "status": "FIXED",
+      "description": "Delete transaction shows confirmation dialog. After confirming, row removed from table with 'Deleted - Expense removed' toast. No 405 error.",
+      "evidence": "Toast: 'Deleted - Expense removed', row count reduced from 2 to 1"
+    },
+    "BUG-153": {
+      "status": "FIXED",
+      "description": "Item combobox shows all 326 items with orange category badges (e.g., 'Others', 'To Owner') without requiring category selection first. Selecting item auto-fills categoryId. Expense saves successfully without manual category selection.",
+      "evidence": "326 items shown in dropdown with category badges, category auto-filled to id '249' after item selection, expense saved successfully"
+    }
+  }
+}

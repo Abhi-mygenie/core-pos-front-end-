@@ -1,0 +1,105 @@
+{
+  "typography": {
+    "headings": "Poppins, sans-serif",
+    "body": "system-ui, sans-serif",
+    "rules": "Use Poppins for all headings (h1-h6) and UI component titles. Use system-ui for all other text, forms, tabular data, and inputs."
+  },
+  "colors": {
+    "primaryOrange": "#F97316",
+    "primaryGreen": "#22C55E",
+    "darkText": "#1F2937",
+    "grayText": "#6B7280",
+    "borderGray": "#E5E7EB",
+    "sectionBg": "#F9FAFB",
+    "errorText": "#EF4444",
+    "lightBg": "#FFFFFF",
+    "rules": "Avoid generic default vercel blue for interactive elements. Ensure high contrast for textual elements and borders. For error states use EF4444 and for success states use 22C55E. Avoid pure white backgrounds (#FFF) if it strains eyes, but use carefully over panels. Dark theme is preferred for complex data apps where appropriate, but this app hybrid is primarily bright UI with a slight dark overlay backdrop."
+  },
+  "visual_enhancers": {
+    "borders": "1px solid #E5E7EB, with some highlights in orange (#F97316)",
+    "shadows": "Use subtle shadow-sm for inner panels, shadow-inner for inputs to add depth.",
+    "hover_states": "Interactive row hover with background tint #F9FAFB/80 (gray-50/50). Checkboxes must have visible focus rings. Outline transition on inputs. Action icons hidden by default, visible on group-hover."
+  },
+  "components": {
+    "expense_setup_panel": "Primary wrapper using 11/12 max-width, bounded with shadow-2xl. Sidebar split 30/70.",
+    "bulk_editor": "Full-width table with sortable columns, item count pills. Footer save bar gradient to indicate dirty state.",
+    "table_rows": "Grouped with sticky sticky headers. Distinct background states: clean (white), dirty (amber bg), new (green bg), error (red bg).",
+    "drag_and_drop": "Uses grip-vertical icon, dim (opacity-30) by default, full opacity on hover. Selection disables drag and drop handles (opacity-15)."
+  },
+  "layouts": {
+    "main_grid": "Split layout for standard view (30% category sidebar, 70% items list), Full width layout for bulk edit.",
+    "sub_grid": "Dense table columns with absolute positioning/sticky heads. Custom table layouts mapped exactly to data schemas."
+  },
+  "motion": {
+    "interactions": "Transition-colors, transition-opacity 0.2s duration. Row additions fade-in gently."
+  },
+  "accessibility": {
+    "contrast": "Ensure 4.5:1 text-to-background ratio on primary elements.",
+    "focus": "All form elements must maintain clear focus outlines.",
+    "aria": "Use aria-labels where icons stand alone without text."
+  },
+  "html_mockup_files": [
+    "01_stock_master_default.html",
+    "02_item_row_edit_mode.html",
+    "03_bulk_edit_mode.html",
+    "04_unit_prices_tab.html",
+    "05_delete_item_modal.html",
+    "06_bulk_select_active.html",
+    "index.html"
+  ],
+  "data_testids": {
+    "required": [
+      "expense-setup-panel",
+      "setup-refresh-btn",
+      "setup-bulk-btn",
+      "setup-tab-strip",
+      "tab-stock-master",
+      "tab-unit-prices",
+      "add-category-btn",
+      "new-category-input",
+      "new-category-save",
+      "category-all",
+      "category-row-1",
+      "category-edit-1",
+      "category-delete-1",
+      "category-row-2",
+      "category-edit-2",
+      "category-delete-2",
+      "category-row-3",
+      "category-edit-3",
+      "category-delete-3",
+      "items-search",
+      "new-item-input",
+      "new-item-price-input",
+      "new-item-save",
+      "item-drag-handle-1",
+      "item-edit-btn-1",
+      "item-delete-btn-1",
+      "item-edit-btn-2",
+      "item-delete-btn-2",
+      "item-edit-btn-3",
+      "item-delete-btn-3",
+      "bulk-select-all",
+      "bulk-select-row-1",
+      "bulk-select-row-2",
+      "bulk-select-row-3",
+      "bulk-delete-selected-btn",
+      "bulk-clear-selection-btn",
+      "bulk-move-category-btn",
+      "row-status-1",
+      "row-undo-2",
+      "row-delete-new1",
+      "row-delete-1",
+      "footer-save-btn",
+      "footer-reset-all-btn",
+      "bulk-editor-close-btn"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "DnD affordance mirrors Menu Management CategoryList: `GripVertical` icon at opacity-30 default, opacity-100 on hover, gray color.",
+    "Bulk Editor MUST match `/app/frontend/src/components/panels/menu/BulkEditor.jsx` structure (toolbar / column chips / grid with #-column and save-state icons / footer bar) — EXCEPT skip the Columns picker (Expense has only 3 fields) and Export/Import buttons (removed by CR-074-A).",
+    "Bulk-select + delete + move-category is a NEW pattern beyond Menu Management, per owner request 2026-07-16.",
+    "Bulk 'Move to Category' RESTORED 2026-07-17 after BUG-202 backend delivery. Wire button to open a category dropdown; on selection → confirm modal → parallel `updateExpenseItem(id, {category_id})` calls (see CR-074-B_IMPLEMENTATION_PLAN.md Phase 4)."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": "Do not center align standard block elements via body CSS. Ensure nested z-index properly layers modals > toolbars > table headers > table bodies. Do not rely entirely on transparent dropdowns without backdrop blur. Retain testids rigorously as assigned. Maintain sharp aesthetic details matching tailwind standard conventions."
+}

@@ -1,0 +1,9 @@
+{
+  "probe": "DELETE /api/v2/vendoremployee/expense/edit-expense/99999",
+  "http_status": 405,
+  "backend_exception": "MethodNotAllowedHttpException",
+  "message": "The DELETE method is not supported for this route. Supported methods: PUT.",
+  "correct_endpoint_found": "DELETE /api/v2/vendoremployee/expense/delete-expense/{id}",
+  "correct_endpoint_http_status": 200,
+  "not_found_response": {"errors":[{"code":"not_found","message":"Expense not found."}]}
+}

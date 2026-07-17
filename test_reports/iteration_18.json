@@ -1,0 +1,72 @@
+{
+  "summary": "BUG-177, BUG-178, BUG-181 expense entry panel bug fixes - ALL TESTS PASSED. Verified: (1) Notes field in add form + table column, (2) Item name read-only in edit mode, (3) Added By column in table.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_18.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All 3 bug fixes properly implemented with correct data-testid attributes",
+    "BUG-177: Notes field added to EMPTY_LINE, EntryLine component, table headers, and edit mode",
+    "BUG-178: Edit mode now shows item name as static text instead of ItemCombobox dropdown",
+    "BUG-181: Added By column added between Payment and Notes columns, showing employee name",
+    "Transform layer (expenseTransform.js) correctly handles notes field in toAPI.addExpenseEntry and toAPI.editExpenseEntry"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100%"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "Used existing transactions from date 2026-07-09 (5 transactions: Bread 103, Guest Refund, Lassi, Match Box, tip in tip)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-177/178/181 all verified working. External API (preprod.mygenie.online) session expires quickly - login fresh each test. Login takes ~22 seconds due to API boot sequence. Date 2026-07-09 has 5 test transactions with employee 'Emily/Meychele'.",
+  "test_results": {
+    "BUG_177_NOTES_ADD_FORM": {
+      "description": "Add Expense form has 'Notes (optional)' input field (full width, below item/amount/payment row)",
+      "status": "PASS",
+      "evidence": "Notes input found with data-testid='expense-notes-input-0' and placeholder='Notes (optional)'"
+    },
+    "BUG_177_NOTES_TABLE_COLUMN": {
+      "description": "Daily transaction table has 'NOTES' column header showing notes value or '—' for each row",
+      "status": "PASS",
+      "evidence": "Notes column header found in table. Notes cell found with data-testid='expense-notes-{id}' showing '—' for empty notes"
+    },
+    "BUG_177_NOTES_EDIT_MODE": {
+      "description": "Edit mode has Notes input field pre-populated with existing notes",
+      "status": "PASS",
+      "evidence": "Notes input found in edit mode with data-testid='expense-edit-notes-{id}'"
+    },
+    "BUG_178_ITEM_READONLY_EDIT": {
+      "description": "Click edit on transaction row → ITEM column shows item name as static text (NOT dropdown/combobox)",
+      "status": "PASS",
+      "evidence": "ItemCombobox (data-testid='expense-edit-item-{id}') NOT found in edit mode. Item name 'Bread 103' displayed as static text."
+    },
+    "BUG_181_ADDED_BY_COLUMN": {
+      "description": "Daily transaction table has 'ADDED BY' column header between Payment and Notes, showing employee name or '—'",
+      "status": "PASS",
+      "evidence": "Added By column header found. Cell with data-testid='expense-added-by-{id}' shows 'Emily/Meychele'"
+    },
+    "BUG_181_ADDED_BY_EDIT_MODE": {
+      "description": "In edit mode row, Added By cell shows employee name as read-only text",
+      "status": "PASS",
+      "evidence": "Added By cell visible in edit mode showing employee name (read-only, not editable)"
+    }
+  },
+  "table_columns_verified": ["Time", "Item", "Category", "Amount", "Payment", "Added By", "Notes", "Actions"],
+  "notes": {
+    "external_api": "App connects to preprod.mygenie.online Laravel backend",
+    "login_time": "Login takes ~22 seconds due to API boot sequence",
+    "test_date": "2026-07-09 with 5 transactions",
+    "all_bugs_fixed": true
+  }
+}

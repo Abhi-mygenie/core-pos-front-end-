@@ -1,0 +1,17 @@
+{
+  "units": [
+    "kg",
+    "ltr",
+    "bundle",
+    "pkt",
+    "piece",
+    "bottle",
+    "tank",
+    "tin",
+    "plates",
+    "pieces",
+    "Db",
+    "gm",
+    "ml"
+  ]
+}
