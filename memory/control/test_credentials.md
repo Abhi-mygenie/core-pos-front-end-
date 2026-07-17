@@ -7,6 +7,7 @@
 |---|---|---|---|---|
 | 18March | `owner@18march.com` | `Qplazm@10` | Owner | Verified working — used to fetch orders #002384, #002386 |
 | Hogwarts (rest id 618) | `Manager@hogwarts.com` | `Qplazm@10` | Manager | Verified working — used to fetch order #000334. **Requires `?role_name=Manager` query param on `/pos/employee-orders-list`** (undocumented gotcha). |
+| Kunafamahal | `owner@kunafamahal.com` | `Qplazm@10` | Owner | Verified 2026-07-17 — used for recipe curl validation. 92 recipes, 8 employees. |
 
 ## Login endpoint
 `POST /api/v1/auth/vendoremployee/login`
