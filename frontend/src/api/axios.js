@@ -13,6 +13,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'X-localization': 'en', // BUG-198 + BUG-197: required by Laravel backend for JSON responses
   },
   timeout: 60000, // 60 seconds
 });

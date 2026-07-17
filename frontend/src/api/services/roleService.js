@@ -16,7 +16,7 @@ export async function addRole(roleData) {
 
 export async function updateRole(id, roleData) {
   const payload = toAPI.updateRole(roleData);
-  const response = await api.post(`${API_ENDPOINTS.ROLE_UPDATE}/${id}`, payload);
+  const response = await api.put(`${API_ENDPOINTS.ROLE_UPDATE}/${id}`, payload); // BUG-198: POST → PUT
   return response.data;
 }
 

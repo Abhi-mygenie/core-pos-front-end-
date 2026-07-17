@@ -1,4 +1,5 @@
 // CR-069: Employee Transform — API ↔ FE shape mapping
+// BUG-198: status:1 on create, optional password on update, email omit-if-empty
 
 // API → FE
 const fromAPI = {
@@ -26,26 +27,30 @@ const fromAPI = {
 // FE → API
 const toAPI = {
   createEmployee(fe) {
-    return {
+    const payload = {
       f_name: fe.firstName,
       l_name: fe.lastName,
       phone: fe.phone,
-      email: fe.email || '',
       role_id: fe.roleId,
       password: fe.password,
       bill_user_view: fe.billUserView ? 'Yes' : 'No',
+      status: 1, // BUG-198: backend requires status on create
     };
+    if (fe.email) payload.email = fe.email; // BUG-198: omit empty email (backend rejects '')
+    return payload;
   },
 
   updateEmployee(fe) {
-    return {
+    const payload = {
       f_name: fe.firstName,
       l_name: fe.lastName,
       phone: fe.phone,
-      email: fe.email || '',
       role_id: fe.roleId,
       bill_user_view: fe.billUserView ? 'Yes' : 'No',
     };
+    if (fe.email) payload.email = fe.email; // BUG-198: omit empty email
+    if (fe.password) payload.password = fe.password; // BUG-198: only send password when user typed one
+    return payload;
   },
 };
 

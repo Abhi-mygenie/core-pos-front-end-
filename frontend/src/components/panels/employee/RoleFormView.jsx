@@ -15,7 +15,7 @@ export default function RoleFormView({ role, onBack }) {
 
   const [name, setName] = useState(role?.name || '');
   const [checkedPerms, setCheckedPerms] = useState(new Set(role?.modules || []));
-  const [roleTypes, setRoleTypes] = useState([]);
+  const [roleTypes, setRoleTypes] = useState(role?.roleTypes || []); // BUG-198: wire to state
   const [templates, setTemplates] = useState([]);
   const [expandedSections, setExpandedSections] = useState(new Set(['orders', 'discounts']));
   const [saving, setSaving] = useState(false);
@@ -143,6 +143,7 @@ export default function RoleFormView({ role, onBack }) {
           <div>
             <Label className="text-xs text-slate-500">Role Type</Label>
             <select className="mt-1 h-9 w-full text-sm border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white"
+              value={roleTypes[0] || ''} onChange={e => setRoleTypes(e.target.value ? [e.target.value] : [])}
               disabled={isReadOnly} data-testid="role-type-select">
               <option value="">Select type...</option>
               {catalogRoleTypes.map(rt => (

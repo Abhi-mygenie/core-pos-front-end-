@@ -1,13 +1,13 @@
 // CR-069: Employee List — Inline Editable Grid
+// BUG-198: POST→PUT, inline password + eye toggle, removed ResetPasswordDialog
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Plus, Check, Trash2, KeyRound, UserCheck, UserX } from 'lucide-react';
+import { Search, Plus, Check, Trash2, Eye, EyeOff, UserCheck, UserX } from 'lucide-react'; // BUG-198: Eye/EyeOff replace KeyRound
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import * as employeeService from '@/api/services/employeeService';
 import * as roleService from '@/api/services/roleService';
-import ResetPasswordDialog from './ResetPasswordDialog';
 
 export default function EmployeeListView() {
   const [employees, setEmployees] = useState([]);
@@ -18,7 +18,7 @@ export default function EmployeeListView() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [resetTarget, setResetTarget] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // BUG-198: replaces resetTarget
   const newRowRef = useRef(null);
   let nextTempId = useRef(-1);
 
@@ -132,18 +132,6 @@ export default function EmployeeListView() {
     }
   };
 
-  // Reset password
-  const handleResetPassword = async (password) => {
-    if (!resetTarget) return;
-    try {
-      await employeeService.resetEmployeePassword(resetTarget.id, password);
-      toast.success(`Password reset for ${resetTarget.firstName}`);
-      setResetTarget(null);
-    } catch (err) {
-      toast.error('Failed to reset password');
-    }
-  };
-
   // Filter
   const filtered = employees.filter(e => {
     if (!search) return true;
@@ -235,8 +223,18 @@ export default function EmployeeListView() {
                       placeholder="Email" className={inputCls} />
                   </td>
                   <td className="py-2 px-3">
-                    <Input type="password" value={row.password} onChange={e => updateNewRow(row._tempId, 'password', e.target.value)}
-                      placeholder="Password *" className={inputCls} data-testid={`emp-new-password-${row._tempId}`} />
+                    <div className="flex items-center gap-1">
+                      <Input type={showPassword ? 'text' : 'password'} value={row.password}
+                        onChange={e => updateNewRow(row._tempId, 'password', e.target.value)}
+                        placeholder="Password *" className={inputCls + ' flex-1'} data-testid={`emp-new-password-${row._tempId}`} />
+                      <button onClick={() => setShowPassword(p => !p)}
+                        className="p-1.5 rounded-md hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors flex-shrink-0"
+                        title={showPassword ? 'Hide password' : 'Show password'}
+                        type="button"
+                        data-testid={`emp-new-toggle-pwd-${row._tempId}`}>
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
                   </td>
                   <td className="py-2 px-3">
                     <select className={selectCls} value={row.roleId || ''}
@@ -289,12 +287,18 @@ export default function EmployeeListView() {
                   </td>
                   <td className="py-2 px-3">
                     <div className="flex items-center gap-1">
-                      <Input type="password" value="--------" disabled
-                        className="h-9 text-sm border-slate-200 rounded-md bg-slate-50 text-slate-400 flex-1" />
-                      <button onClick={() => setResetTarget(emp)}
+                      <Input type={showPassword ? 'text' : 'password'}
+                        value={getVal(emp, 'password') || ''}
+                        onChange={e => updateExisting(emp.id, 'password', e.target.value)}
+                        placeholder="New password"
+                        className={inputCls + ' flex-1'}
+                        data-testid={`emp-password-${emp.id}`} />
+                      <button onClick={() => setShowPassword(p => !p)}
                         className="p-1.5 rounded-md hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors flex-shrink-0"
-                        title="Reset Password" data-testid={`emp-reset-pwd-${emp.id}`}>
-                        <KeyRound className="w-3.5 h-3.5" />
+                        title={showPassword ? 'Hide password' : 'Show password'}
+                        type="button"
+                        data-testid={`emp-toggle-pwd-${emp.id}`}>
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
                     </div>
                   </td>
@@ -341,13 +345,6 @@ export default function EmployeeListView() {
         </p>
       )}
 
-      {/* Reset Password Dialog */}
-      <ResetPasswordDialog
-        open={!!resetTarget}
-        onOpenChange={(open) => { if (!open) setResetTarget(null); }}
-        employeeName={resetTarget ? `${resetTarget.firstName} ${resetTarget.lastName}`.trim() : ''}
-        onConfirm={handleResetPassword}
-      />
     </div>
   );
 }

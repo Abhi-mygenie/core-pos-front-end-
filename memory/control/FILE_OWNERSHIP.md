@@ -427,3 +427,12 @@
 | `components/expense/ExpenseBulkEditor.jsx` | BUG-203 Sub-B: removed _isNew guard on price input, chain addUnitPrice after createCategoryWithItems. Sub-C: accept pricedItems prop, use for edit-vs-add decision in save handler |
 | `components/expense/ExpenseSetupPanel.jsx` | BUG-203 Sub-C: pass pricedItems prop to ExpenseBulkEditor |
 | `components/expense/ExpenseEntryPanel.jsx` | BUG-203 Sub-D: edit row shows qty input + auto-calc for priced items |
+
+## BUG-198 (2026-07-17) — Employee CRUD fixes + role type wiring
+| `api/services/employeeService.js` | BUG-198: POST→PUT for updateEmployee, removed resetEmployeePassword |
+| `api/transforms/employeeTransform.js` | BUG-198: status:1 on create, optional password on update, email omit-if-empty |
+| `components/panels/employee/EmployeeListView.jsx` | BUG-198: removed ResetPasswordDialog, inline password + Eye/EyeOff toggle |
+| `api/services/roleService.js` | BUG-198: POST→PUT for updateRole |
+| `api/axios.js` | BUG-198 + BUG-197: X-localization: en header |
+| `components/panels/employee/RoleFormView.jsx` | BUG-198: role_type dropdown wired (onChange + value) |
+| `components/panels/employee/ResetPasswordDialog.jsx` | BUG-198: DELETED — no longer needed |
