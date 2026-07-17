@@ -87,7 +87,7 @@ Also supersedes UI patterns from **CR-067** (existing bulk-editor).
 |---|---|---|
 | B-1 | ✅ RESOLVED | Confirmed with owner: CR-074-B replaces CR-067 UI patterns. |
 | B-2 | ✅ RESOLVED | CR-064 + BUG-162 + BUG-202 fwd-compat bundled into scope. |
-| B-3 | ⏳ EXTERNAL | BUG-202 backend delivery (BACKEND_BRIEF_BUG202) — needed for full inline-edit functionality. FE can build UI now and gate behind flag. |
+| B-3 | ✅ **RESOLVED 2026-07-17** | BUG-202 backend delivered — `PUT /expenses/{item_id}` with `{stock_title, category_id}` returns 200 + echo. Unit_price row FK survives PUT (no cascade). Curl-verified: `/app/memory/evidence/BATCH_A/BUG-202_BACKEND_VALIDATION_2026-07-17.md`. **Deviations from spec:** (a) payload key is `stock_title` not `title`; (b) 404 case returns HTTP 201 with `{errors:[{code:not_found}]}` body — FE parses body not status; (c) duplicate-name 409 NOT enforced (backend returns 200 on dupes) — FE adds pre-flight duplicate check. **Effects:** feature flag removed, OQ-1/OQ-2 guards removed, DnD handleDragEnd switches to single PUT, `[Move to Category ▼]` restored to bulk banners.
 | B-4 | ✅ RESOLVED | Curl-verify 2026-07-17: `POST /store_expense` **does NOT** accept inline `unit_price` — silently ignored. **Two-call sequence WORKS** and is ship-safe. Evidence: `/app/memory/evidence/BATCH_A/CR-064_CURL_VERIFY_FINDINGS.md`. |
 | B-5 | ✅ RESOLVED | design_agent_full_stack invoked 2026-07-16; HTML mockups delivered at `/app/frontend/public/design-mockups/` (round 2 with owner corrections). |
 | **B-6** | ⚠ **NEW** | Historical Bulk Editor restriction: `ExpenseBulkEditor.jsx:174-190` blocks rename (OQ-1) and category-move-on-priced-items (OQ-2). Both resolve when BUG-202 delivers `PUT /expense/stock-items/{id}`. FE must keep these restrictions active until backend ships. |
@@ -98,7 +98,7 @@ Also supersedes UI patterns from **CR-067** (existing bulk-editor).
 | ID | Question | Owner Ruling | Design Impact |
 |---|---|---|---|
 | **Q-CR064-1** | CR-064 quick-add price: two-call sequence (A) vs backend inline (B) | ✅ **A** — two-call sequence | Mockup 01 quick-add row already reflects this (single Add button; frontend chains 2 calls internally) |
-| **Q-CR064-2** | Bulk "Move to Category" with priced items | ✅ **(c) DEFER** | **Mockups 03 & 06 need update:** remove `[Move to Category ▼]` from selection banner. Banner ships with only `[Delete Selected]` + `[Clear]` until BUG-202 delivers. |
+| **Q-CR064-2** | Bulk "Move to Category" with priced items | ✅ **SUPERSEDED 2026-07-17** by BUG-202 delivery — priced items now move safely via PUT (unit_price FK survives). Bulk `[Move to Category ▼]` **RESTORED** to selection banners in Phases 4 and 5. `bulk-move-deferred-note` REMOVED from spec. **Mockups 03 and 06 need a small design tweak** to add the button back and remove the deferred note. | Mockups 03 & 06 need one final revision. |
 | **Q-CR064-3** | Add optional inline unit_price to BACKEND_BRIEF_BUG202 §3.4 | ✅ **Yes — filed** | None on FE |
 
 ---

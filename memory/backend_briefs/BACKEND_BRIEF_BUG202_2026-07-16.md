@@ -1,5 +1,16 @@
 # BACKEND_BRIEF_BUG202_2026-07-16 — Expense Item Update Endpoint (Rename + Change Category)
 
+**🎉 BACKEND DELIVERED 2026-07-17 — curl-verified. See `/app/memory/evidence/BATCH_A/BUG-202_BACKEND_VALIDATION_2026-07-17.md`.**
+
+**Delivered deviations from spec (documented for FE consumption):**
+- Route path: `PUT /expense/expenses/{id}` (not `/expense/stock-items/{id}`)
+- Payload key: `stock_title` (not `title`)
+- Duplicate-name check: NOT enforced — FE pre-flight required
+- 404 case: returns HTTP 201 with `{errors:[{code:not_found}]}` body — FE parses body
+- §3.4 optional inline `unit_price`: NOT delivered
+
+---
+
 **Date:** 2026-07-16
 **Owner:** Product Owner (feature approved 2026-07-16)
 **Related bug:** BUG-202 (NEW — Edit Item feature in Expense Setup)
