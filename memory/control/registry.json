@@ -14996,7 +14996,7 @@
       "id": "BUG-198",
       "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE \u2014 Impact Analysis done 2026-07-17",
+      "status": "GATE 3 COMPLETE \u2014 Implementation Plan done 2026-07-17. Awaiting Gate 4 GO.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
@@ -15009,7 +15009,8 @@
         "OQ-1: No dedicated reset-password endpoint. Use update employee PUT. Inline in row, no popup.",
         "OQ-2: password_confirmation NOT required on create or update. Backend uses upsert.",
         "OQ-3: Password field is normal editable column in row. Save All sends it with update."
-      ]
+      ],
+      "implementation_plan": "plans/BUG_198_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-199",
