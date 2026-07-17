@@ -101,6 +101,10 @@ Source: Owner smoke observations during CR-074-B Phase 6 closeout.
 BUG-203 intake: registered 2026-07-17 · source OWNER-REPORTED · confidence CONFIRMED · duplicate check DISTINCT · blast radius SMALL · fast lane NO · intake doc `change_requests/BUG_203_INLINE_EDIT_MISSING_UNIT_PRICE.md` · BACKEND-BLOCKED (§3.4 not delivered).
 
 BUG-204 intake: registered 2026-07-17 · source OWNER-REPORTED · confidence CONFIRMED · duplicate check RELATED to BUG-175 (reversal) · blast radius SMALL · fast lane NO · intake doc `change_requests/BUG_204_EXPENSE_ENTRY_QTY_TIMES_UNITPRICE.md` · next role PLANNING (Gate 2).
+
+| BUG-205 | Expense: Qty/Unit columns missing from transaction table + report. API returns `quantity` and `unit`, transform maps them, but neither ExpenseEntryPanel nor ExpenseReportPage renders them. ~20 lines, 2 files. | P2 | LOW | **INTAKE (2026-07-17).** | 0-1 | `ExpenseEntryPanel.jsx`, `ExpenseReportPage.jsx` |
+
+BUG-205 intake: registered 2026-07-17 · source AGENT-DISCOVERED (Finding B) · confidence CONFIRMED (code trace + API verified) · duplicate check DISTINCT (BUG-173 RETIRED/different surface, BUG-181 RELATED/different column) · blast radius SMALL · fast lane NO (2 files) · intake doc `change_requests/BUG_205_EXPENSE_QTY_UNIT_COLUMNS_MISSING.md` · next role PLANNING (Gate 2).
 BUG-162 intake: registered 2026-07-09 · source OWNER-REPORTED · confidence CONFIRMED (owner observed live during BUG-158 verification; agent reproduced via Playwright) · duplicate check DISTINCT · blast radius SMALL · fast lane NO · intake doc `/app/memory/change_requests/BUG_162_EXPENSE_SETUP_FLICKER.md` · next role PLANNING (Gate 2 Impact Analysis).
 
 ---
