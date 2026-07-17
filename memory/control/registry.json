@@ -14998,7 +14998,7 @@
       "id": "BUG-198",
       "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
       "type": "BUG",
-      "status": "INTAKE",
+      "status": "GATE 3 COMPLETE (2026-07-17) \u2014 10 edits + 2 new (role_type wiring). OQ-5 RESOLVED: no FE validation on modules for now. Role type\u2194template conflict flagged as backend brief.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
