@@ -213,6 +213,8 @@ const ExpenseReportPage = () => {
           { key: 'date',          label: 'Date',      format: 'text',  width: 100 },
           { key: 'expense',       label: 'Item',      format: 'text',  width: 180 },
           { key: 'category',      label: 'Category',  format: 'text',  width: 120 },
+          { key: 'quantity',      label: 'Qty',       format: 'text',  width: 70,  align: 'right' },  // BUG-205
+          { key: 'unit',          label: 'Unit',      format: 'text',  width: 80 },                   // BUG-205
           { key: 'amount',        label: 'Amount',    format: 'inr',   width: 110, align: 'right' },
           { key: 'paymentMethod', label: 'Payment',   format: 'text',  width: 120 },
           { key: 'employeeName',  label: 'Added By',  format: 'text',  width: 140 },

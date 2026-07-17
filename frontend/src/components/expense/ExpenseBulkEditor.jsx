@@ -472,7 +472,8 @@ const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onC
                 await expenseService.addUnitPrice(itemId, 1, row.unitPriceAmount);
               }
             } catch {
-              // Price save failed — name/cat saved. Owner can use Unit Prices tab as fallback.
+              // BUG-203 Sub-C: Price save failed — name/cat saved. Show warning.
+              toast({ title: "Price not saved", description: "Item saved but unit price update failed. Use Unit Prices tab.", variant: "destructive" });
             }
             setRows(prev => prev.map(r => r._id === row._id
               ? { ...r, _originalPrice: row.unitPriceAmount } : r));
