@@ -14996,14 +14996,20 @@
       "id": "BUG-198",
       "title": "CR-069 Employee Post-Delivery \u2014 4 issues (update POST\u2192PUT, add missing fields, reset password 3-bug stack, eye icon missing)",
       "type": "BUG",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 Impact Analysis done 2026-07-17",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
       "gate": "1",
       "source_cr": "CR-069",
       "intake_doc": "change_requests/BUG_198_CR069_EMPLOYEE_POST_DELIVERY.md",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "impact_analysis": "impact/BUG-198_IMPACT_ANALYSIS.md",
+      "owner_decisions": [
+        "OQ-1: No dedicated reset-password endpoint. Use update employee PUT. Inline in row, no popup.",
+        "OQ-2: password_confirmation NOT required on create or update. Backend uses upsert.",
+        "OQ-3: Password field is normal editable column in row. Save All sends it with update."
+      ]
     },
     {
       "id": "BUG-199",
