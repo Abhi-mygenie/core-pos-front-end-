@@ -247,17 +247,85 @@ To avoid a super-CR that stalls on backend, propose splitting into 4 shippable s
 
 ---
 
-## §Planning final response format (§Standard Final Response Formats)
+---
+
+## 🔒 GATE 2 CLOSURE — OWNER DECISIONS (2026-07-18)
+
+All 15 blockers resolved. Bundle reshaped per owner directives below.
+
+### Locked Owner Rulings
+
+| # | Question | Owner ruling |
+|---|---|---|
+| B1 | Payment Method mandatory on Purchase? | ✅ **YES · mandatory** |
+| B2 | Rate can be 0? | ✅ **NO · Rate > 0** (no free samples via UI) |
+| B3 | Receive endpoints MD | ✅ received → scope moved to CR-077 |
+| B4 | Batch/Expiry in payload | ✅ **SEND** to backend |
+| B5 | Wastage log write | ✅ `add-stock` is unified — no extra call |
+| B6 | Wastage in reports | ✅ implicit YES |
+| B7 | Rename Physical Count → **"Stock Audit"** | ✅ **YES rename** |
+| B8 | `is_low_stock` semantics | ✅ ship current flag + consumption-based Intelligence widgets |
+| B9 | S3 upload architecture | ✅ **Presigned URL (9-a)** — parked to standalone S3 CR (out of this bundle) |
+| B10 | S3 endpoint contract | ✅ **CR-076 removed from this bundle** — becomes standalone CR (env-driven), separate from Inventory |
+| B11 | S3 size + types | ✅ 10 MB · PDF/JPG/PNG/WEBP (moved with S3 CR) |
+| B12 | Room check-in | ✅ moved with S3 CR |
+| B13 | Pre-delete count endpoint | ✅ **Approach A** — backend brief filed (`BACKEND_BRIEF_EXPENSE_ITEM_IMPACT_2026_07_18.html`) |
+| B14 | Cascade totals recompute | ✅ **Assume auto-recalc · all business logic at backend**; QA verifies |
+| B15 | Promote P5 → CR-077 | ✅ **YES · new CR-077** (Hierarchy Stock Transfer — Receive/Reject/Return/Dispute) |
+| NEW-Q1 | Wastage EVENTS read endpoint | ✅ backend brief filed (`BACKEND_BRIEF_WASTAGE_REPORT_2026_07_18.html`) — Wastage widgets defer to Phase 2 |
+| NEW-Q2 | P&L relevance | ✅ OUT OF SCOPE (Insights section, later) |
+| NEW-Q3 | vendor-item-list shape | ✅ shape (b) full purchase history — Cost/Vendor/Recipe widgets unblocked |
+
+### Backend Briefs Filed
+
+| Brief | Blocks | Path | Preview |
+|---|---|---|---|
+| Wastage Report | Intelligence Widgets A + B (deferred) | `/app/memory/backend_briefs/BACKEND_BRIEF_WASTAGE_REPORT_2026_07_18.html` | `/backend-briefs/wastage-report-2026-07-18.html` |
+| Expense Item Impact | BUG-201-Ph1 cascade-warning dialog | `/app/memory/backend_briefs/BACKEND_BRIEF_EXPENSE_ITEM_IMPACT_2026_07_18.html` | `/backend-briefs/expense-item-impact-2026-07-18.html` |
+
+### Final Scope Split — 4 shippable slices
+
+| Slice | Contents | Risk | Est. lines | Status |
+|---|---|---|---|---|
+| **CR-075-A** (this bundle) | Stock export fix, filter chips + counts, error display, vendor typeahead, red-* validation (Rate > 0, Payment Method mandatory), batch/expiry payload, error surfacer, filter clear/count | HIGH | ~285 | ✅ **READY for Gate 3 Plan** |
+| **CR-075-B** (this bundle) | Rename Physical Count → Stock Audit (sidebar + route + title + confirm dialog) | MEDIUM | ~55 | ✅ **READY for Gate 3 Plan** |
+| **CR-077** — Hierarchy Stock Transfer (NEW CR — must be registered separately) | Pending Queue page + Details drawer + Receive modal (full/partial/dispute) + Reject + Return module | HIGH | 600-900 (8-12 files) | 📋 needs new INTAKE + full Gate 2 cycle of its own |
+| **CR-076** — S3 File Upload (separated from bundle) | Presigned-URL upload service + FilePicker + Purchase invoice attach + Room check-in docs (Phase B) | MEDIUM | ~200 (mostly new) | ⏸ **standalone CR-076 — parked, env + backend contract needed** |
+| **BUG-201-Ph1** (this bundle) | Cascade-warning dialog + category informational warning · uses new `GET /expense/item/{id}/impact` | HIGH | ~90 | ⏸ **backend-blocked** on brief above |
+| **BUG-201-Ph2** | Role gating on all 3 delete types | — | — | ⏸ DEFERRED to CR-071 (per owner ruling in intake) |
+| **Intelligence Widgets** — 6 live + 2 deferred | Reorder Forecast · Consumption Trends · Cost Trend · Vendor Performance · Recipe Cost · Low-stock Alerts · Vendor Directory | (part of CR-075) | separate HTML mock first | 📋 mock-first, then Gate 3 |
+
+### Gate 2 exit criteria — ALL MET
+
+- ✅ Code Reality per item documented
+- ✅ Conflict Pre-Check completed (no blocking conflicts; ExpenseSetupPanel flagged for §Step-0 entry verify)
+- ✅ Risk labels assigned (all HIGH except CR-076 MEDIUM — CR-076 now out of bundle)
+- ✅ Data flow traces done
+- ✅ Affected file list + scope lock (files WILL change / WILL NOT touch)
+- ✅ Verification Matrix seeded (13 checks)
+- ✅ Post-Code Registry Checklist stated
+- ✅ All 17 Open Questions resolved · 2 backend briefs filed as external dependencies
+- ✅ Bundle re-split into shippable slices
+
+---
+
+## §Planning final response format
 
 ```
-Planning complete (Gate 2 Impact Analysis): CR-075, CR-076, BUG-201
-Stage: Impact Analysis (Gate 2 only — Plan Gate 3 pending owner Q&A)
-Code reality: CR-075 PARTIAL (buggy code exists); CR-076 NONE; BUG-201 NONE
-Risk: CR-075 HIGH, CR-076 MEDIUM, BUG-201 HIGH
-Files WILL change: 14 files, ~633 lines
-Files WILL NOT touch: order flow, tax, settlement, orderTransform, menu bulk editor
-Owner decisions needed: 14 (B1–B14) — see §Open Questions
-Recommended split: CR-075-A ship-ready · CR-075-B/C park · CR-076-A/B need backend contract · BUG-201-Ph1 ship-ready
+Planning complete (Gate 2 · Impact Analysis): CR-075-A, CR-075-B, BUG-201-Ph1
+Split-outs: CR-077 (new intake needed) · CR-076 (parked standalone)
+Stage: Impact Analysis (Gate 2 CLOSED) — Gate 3 Plan pending owner GO
+Code reality: CR-075-A PARTIAL · CR-075-B NONE · BUG-201-Ph1 NONE
+Risk: CR-075-A HIGH · CR-075-B MEDIUM · BUG-201-Ph1 HIGH
+Files WILL change (this bundle): 9 files, ~430 lines
+Files WILL NOT touch: order flow, tax, settlement, orderTransform, menu bulk editor, S3, hierarchy-transfer
+Owner decisions: 17/17 RESOLVED
+Backend dependencies: 2 briefs filed (wastage report · expense item impact)
 Docs: /app/memory/impact/CR-075_CR-076_BUG-201_IMPACT_ANALYSIS.md
-Next: Owner resolves B1–B14 → Planning Gate 3 (Implementation Plans) → Gate 4 GO
+       /app/memory/backend_briefs/BACKEND_BRIEF_WASTAGE_REPORT_2026_07_18.html
+       /app/memory/backend_briefs/BACKEND_BRIEF_EXPENSE_ITEM_IMPACT_2026_07_18.html
+Next: (1) Intelligence HTML mock v3 (before or in parallel with Gate 3)
+      (2) Register CR-077 via INTAKE role (separate session)
+      (3) Gate 3 Plan for CR-075-A + CR-075-B (BUG-201-Ph1 waits for backend brief ack)
+      (4) Owner Gate 4 GO
 ```
