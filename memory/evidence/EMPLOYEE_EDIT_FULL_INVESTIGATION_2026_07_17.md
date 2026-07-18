@@ -113,5 +113,144 @@ Both dropdowns should use the **same** data source. Either:
 
 ---
 
+## Exact Fixes (file, line, current → new)
+
+### FIX 1: Surface backend validation errors
+**File:** `components/panels/employee/EmployeeListView.jsx` **Line 117-118**
+
+**Current:**
+```js
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to save');
+```
+
+**New:**
+```js
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data?.errors) {
+        // Show each field's validation errors
+        Object.entries(data.errors).forEach(([field, messages]) => {
+          const fieldLabel = field.charAt(0).toUpperCase() + field.slice(1);
+          toast.error(`${fieldLabel}: ${messages.join(', ')}`);
+        });
+      } else {
+        toast.error(data?.message || 'Failed to save');
+      }
+```
+
+---
+
+### FIX 2: Password hint on new + existing employee inputs
+**File:** `components/panels/employee/EmployeeListView.jsx`
+
+**Line 229 (new employee password):**
+```
+Current:  placeholder="Password *"
+New:      placeholder="Min 8: Aa + symbol (e.g. Test@123)"
+```
+
+**Line 293 (existing employee password):**
+```
+Current:  placeholder="New password"
+New:      placeholder="Min 8: Aa + symbol (e.g. Test@123)"
+```
+
+---
+
+### FIX 3a: Make both dropdowns use same data source
+**File:** `components/panels/employee/EmployeeListView.jsx` **Line 314**
+
+**Current (existing employee dropdown renders ALL roles):**
+```js
+{roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+```
+
+**New (use same filtered roleOptions as new employee):**
+```js
+{roleOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+```
+
+**OR if owner decides all roles should be available:**
+
+**Line 247 (new employee dropdown) change to:**
+```js
+{roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+```
+**AND Line 242 change `roleOptions.find` to `roles.find`**
+
+**Owner decision required before implementing.**
+
+---
+
+### FIX 3b: Existing dropdown onChange uses wrong find source
+**File:** `components/panels/employee/EmployeeListView.jsx` **Line 309**
+
+**Current:**
+```js
+const r = roleOptions.find(ro => ro.id === Number(e.target.value));
+```
+
+**New (match the data source used for rendering):**
+```js
+const r = roles.find(ro => ro.id === Number(e.target.value));
+```
+
+**Note:** If FIX 3a changes L314 to `roleOptions`, then L309 stays as `roleOptions` — they just need to match.
+
+---
+
+### FIX 4: Always send email field (even empty)
+**File:** `api/transforms/employeeTransform.js` **Line 51**
+
+**Current:**
+```js
+if (fe.email) payload.email = fe.email; // BUG-198: omit empty email
+```
+
+**New:**
+```js
+payload.email = fe.email || ''; // Always send email — backend requires it on PUT
+```
+
+**Risk:** If backend rejects empty string `""`, this will fail for employees without email. In that case, backend needs to make email optional on update.
+
+---
+
+## Verification Matrix
+
+| Fix # | File | Verification | Method |
+|-------|------|-------------|--------|
+| 1 | EmployeeListView.jsx L117 | Type wrong password → see specific error messages | Browser |
+| 2 | EmployeeListView.jsx L229, L293 | Password placeholder shows rules | Visual |
+| 3a | EmployeeListView.jsx L314 | New + existing dropdowns show same role list | Visual |
+| 3b | EmployeeListView.jsx L309 | Select system role on existing → roleId saved correctly | Browser + Network |
+| 4 | employeeTransform.js L51 | Edit employee without email → no "email required" error | curl |
+
+---
+
+## Files WILL Change (2)
+
+| File | Fixes | Lines Changed |
+|------|-------|:---:|
+| `components/panels/employee/EmployeeListView.jsx` | Fix 1, 2, 3a, 3b | ~15 |
+| `api/transforms/employeeTransform.js` | Fix 4 | 1 |
+
+## Files WILL NOT Touch
+- employeeService.js (no changes needed)
+- roleService.js, roleTransform.js (no changes)
+- Any other module
+
+---
+
+## Owner Decisions Required
+
+| # | Question | Options |
+|---|----------|---------|
+| OQ-1 | Should new employees be assignable to system roles (Manager, Owner, Waiter)? | **A:** Yes — both dropdowns show ALL roles / **B:** No — both dropdowns show only custom/editable roles |
+| OQ-2 | Backend email required on update — should we always send empty string, or ask backend to make it optional? | **A:** FE sends `""` / **B:** Backend brief to make email optional |
+
+---
+
 ## Report
-`/app/memory/evidence/EMPLOYEE_PASSWORD_INVESTIGATION_2026_07_17.md` (updated)
+`/app/memory/evidence/EMPLOYEE_EDIT_FULL_INVESTIGATION_2026_07_17.md`
