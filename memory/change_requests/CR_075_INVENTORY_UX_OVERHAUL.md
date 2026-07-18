@@ -18,7 +18,7 @@ Comprehensive UX overhaul of the Inventory module's Stock Dashboard and Purchase
 
 ---
 
-## Scope — 10 Items (2 screens + cross-cutting)
+## Scope — 11 Items (3 screens + cross-cutting)
 
 ### STOCK DASHBOARD SCREEN (5 items)
 
@@ -96,6 +96,36 @@ Hotspot files: NONE (inventory files are not R5 hotspots)
 
 ---
 
+### PHYSICAL STOCK COUNT SCREEN (1 item)
+
+| # | Item | Severity | Description |
+|---|------|----------|-------------|
+| PC1 | **Wastage not recorded from physical count** | MAJOR | When physical count reveals a negative drift (e.g., System=4.65kg, Physical=0, Drift=-4.65kg, Reason=Expired), the system calls `addStock()` which adjusts stock quantity. But there is **no explicit wastage record created**. The wastage reason dropdown appears but it's unclear if the backend actually creates a wastage log entry or just silently overwrites the stock number. The -4.65kg of "Expired" stock should appear in wastage reports — need backend confirmation: does `add-stock` with `wastage_reason_id` create a wastage_log entry? If not, FE needs to call a separate wastage recording endpoint after the stock adjustment. |
+
+**Current flow:**
+```
+Physical Count → enter physical qty → drift calculated → select reason → Save
+  → addStock(itemId, { quantity: physicalQty, wastage_reason_id, reason })
+  → Backend: adjusts stock to physicalQty. Wastage log? UNKNOWN.
+```
+
+**Expected flow:**
+```
+Physical Count → enter physical qty → drift calculated → select reason → Save
+  → IF drift < 0: record wastage (qty=|drift|, reason=selected) + adjust stock
+  → IF drift > 0: record addition (found extra stock) + adjust stock
+  → Wastage appears in wastage reports
+```
+
+**FE gaps in Physical Count screen:**
+1. No confirmation dialog before saving (irreversible stock adjustment)
+2. No summary of what will change (e.g., "3 items will be adjusted, 2 wastage entries")
+3. No error display (same generic toast pattern)
+4. Reason dropdown only shows when drift ≠ 0 — but no * indicator that it's mandatory for wastage
+5. No "Export" for the physical count sheet (useful for paper audit)
+
+---
+
 ## Dependencies
 
 | Dependency | Status | Blocks |
@@ -108,7 +138,8 @@ Hotspot files: NONE (inventory files are not R5 hotspots)
 
 ---
 
-## Next
+| OQ-7 | Does `add-stock` with `wastage_reason_id` create a wastage log entry? Or only adjusts stock qty? | PENDING — backend |
+| OQ-8 | Should wastage from physical count appear in wastage reports? | PENDING — owner |
 
 Planning Gate 2 (Impact Analysis) can start for items S1-S5 + P1-P4 immediately.
 Item P5 (Receive) blocked until owner shares endpoint MD file.
