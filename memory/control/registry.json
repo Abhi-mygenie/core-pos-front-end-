@@ -15211,6 +15211,25 @@
       "blast_radius": "SMALL",
       "plan_doc": "plans/BUG_205_IMPLEMENTATION_PLAN.md",
       "impact_doc": "impact/EXPENSE_INTAKE_BATCH_IMPACT_ANALYSIS_2026_07_17.md"
+    },
+    {
+      "id": "CR-075",
+      "title": "Inventory Module UX Overhaul \u2014 Stock export fix, status chips, vendor typeahead, error display, field validation, Purchase/Receive conditional",
+      "type": "CR",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "intake_doc": "change_requests/CR_075_INVENTORY_UX_OVERHAUL.md",
+      "evidence": "evidence/INVENTORY_STOCK_PURCHASE_AUDIT_2026_07_18.md",
+      "registered": "2026-07-18",
+      "related": [
+        "CR-072",
+        "BUG-197"
+      ],
+      "scope_note": "10 items: S1-S5 (stock) + P1-P5 (purchase/receive). S1=BLOCKER export. P5=NEW purchase/receive conditional on restaurant_type_flag.",
+      "depends_on_note": "P5 (Receive) blocked until owner shares endpoint MD. P3 (invoice) blocked until backend endpoint confirmed."
     }
   ]
 }

@@ -240,3 +240,5 @@ Total items in registry.json: 301
 CR range: CR-001 to CR-071 (70 registered, 1 gap: CR-063)
 BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 ```
+
+| CR-075 | Inventory Module UX Overhaul (Stock + Purchase/Receive) | P1 | HIGH | **INTAKE** | 0-1 | 10 items: export BLOCKER, vendor typeahead, error display, status chips, validation, Purchase→Receive conditional on restaurant_type_flag. ~6 files, ~225 lines. |
