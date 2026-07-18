@@ -70,7 +70,21 @@ Recipes-related coupling from this IA is **read-only** — the new `RecipeCostMa
 
 **No blocking dependency in either direction.** CR-073 and CR-078+CR-079 can ship in any order.
 
+**Design consolidation (2026-07-18):** The standalone Recipe Bulk Editor mock (previously at `/__dev/recipe_bulk_editor_mockup.html`) has been **merged into the canonical v5 mock** at `cr072-inventory-mockup-v5-full.html` (screen `#screen-recipes`). The `/__dev/` copy is now SUPERSEDED. Owner directive: "we shd maintian one refrrence as final mock ups to avoid confusion."
+
 **Registry gap patched during this IA:** CR-073 was missing from `registry.json` despite having intake + plan docs. Backfilled during this session.
+
+### Deferred / Backlog · Role-Based Access (owner 2026-07-18)
+
+Owner raised role-aware landing during B10 discussion — but explicitly deferred: "role gating will be done later just wanted to let u know we have still keep navigation same and basis roles tabs can some that better way may be."
+
+**Filed for future CR (likely CR-081 or later):**
+- Role-aware `/inventory` landing (Owner → Dashboard · Chef → Recipes · Purchase Officer → Smart Purchase · Storekeeper → Receive/Current Stock etc.)
+- Role-driven sidebar filtering (Chef sees only Recipes + read-only Current Stock; not all 9 pills)
+- Read-only banners on screens where the role can't mutate
+- Cross-module concern — recommended to lift to app-wide "Role-Based Access" CR rather than baking into CR-079
+
+CR-078 + CR-079 ship **role-agnostic** — all users see all pills with all permissions the current app grants.
 
 ### Open Gaps intersected
 - **OG-FE-NAV-001** (CR-041 nav consistency) — 3 unresolved owner decisions (D-1/D-2/D-3). This bundle **only affects Inventory nav section**, does not touch the D-1/D-2/D-3 items. Safe to proceed independently.
@@ -306,7 +320,7 @@ The 8 OQs from CR-078 intake + 6 OQs from CR-079 intake are still open. Owner ru
 | # | Question | Recommended default |
 |---|---|---|
 | **B9** | Absorb CR-075-B into CR-079? | ✅ **Absorb** — done in this IA already |
-| **B10** | Default `/inventory` hard or soft redirect to Intelligence Dashboard? | **Hard** (`<Navigate replace>`) — cleanest URL, no user confusion |
+| **B10** | Default `/inventory` hard or soft redirect to Intelligence Dashboard? | **Hard `<Navigate replace>`** to `/inventory-dashboard`. **Role-based landing DEFERRED** to a future CR (owner 2026-07-18 · "role gating will be done later"). CR-079 ships with a single canonical landing; role-aware routing (Owner→Dashboard · Chef→Recipes etc.) filed as future work — see backlog note below. |
 | **B11** | Legacy `/inventory-purchase` etc. — redirect or 404? | **302 redirect** to new paths — safe for bookmarks/emails |
 | **B12** | Widgets owned by CR-078 (planner file tree) or CR-079 (dashboard file tree)? | **Dashboard file tree** (`components/inventory/widgets/*`) — reusable outside planner |
 | **B13** | Receive pill visible for `master` too? | **YES** — master outlets see all their outgoing dispatch confirmations there. Both flags show the pill; internal tabs differ. |
