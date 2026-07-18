@@ -1,0 +1,126 @@
+{
+  "theme": "light",
+  "app_type": "dashboard_mockup",
+  "design_system": {
+    "colors": {
+      "brand-green": "#329937",
+      "brand-orange": "#F26B33",
+      "brand-amber": "#F4A11A",
+      "pos-dark": "#1A1A1A",
+      "pos-gray": "#666666",
+      "pos-border": "#E5E5E5",
+      "pos-bg": "#F7F7F7",
+      "pos-error": "#EF4444"
+    },
+    "typography": {
+      "headings": "Poppins, sans-serif",
+      "body": "Inter, sans-serif"
+    },
+    "tokens": "Match existing tokens defined in /app/frontend/public/cr072-inventory-mockup.html."
+  },
+  "layout_and_structure": {
+    "nav_pills": [
+      "Dashboard",
+      "Purchase Entry",
+      "Physical Count",
+      "Ingredients",
+      "Recipes",
+      "Vendors",
+      "Wastage Reasons",
+      "Intelligence (NEW - Active State)"
+    ],
+    "screen_container": "<div id=\"screen-intelligence\" class=\"screen-view active\">...</div>"
+  },
+  "components_to_build": {
+    "Header": {
+      "title": "Stock Intelligence (with restaurant name Kunafa Mahal)",
+      "controls": "Date range chips (7d / 14d / 30d with 30d active), Category filter dropdown, Export/print visual button",
+      "test_ids": ["chip-7d", "chip-14d", "chip-30d", "intel-category-filter", "export-intel"]
+    },
+    "Top_KPIs": {
+      "description": "4 headline cards at the top",
+      "metrics": [
+        {"label": "Reorder Alerts", "value": "12", "icon": "alert-triangle", "color": "text-brand-amber"},
+        {"label": "Wastage Value", "value": "₹4,250", "icon": "trash-2", "color": "text-pos-error"},
+        {"label": "Cost Change", "value": "↑ 3.2%", "icon": "trending-up", "color": "text-pos-error"},
+        {"label": "Recipes at Risk", "value": "5", "icon": "chef-hat", "color": "text-brand-orange"}
+      ]
+    },
+    "Low_Stock_Alerts": {
+      "description": "Prominent banner/card showing count and list of low/projected low items. Colored in amber/red.",
+      "items": ["Biscoff Biscuit", "Pistachio Paste"],
+      "test_ids": ["widget-low-stock"]
+    },
+    "Reorder_Forecast": {
+      "description": "Table of top ingredients about to run out.",
+      "columns": ["Ingredient", "Current Stock", "Days Left (color coded)", "Suggested Reorder", "Preferred Vendor"],
+      "data": [
+        {"name": "Biscoff Biscuit", "stock": "1.86 kg", "days": "3d", "reorder": "5 kg", "vendor": "Kunafabake"},
+        {"name": "Pistachio Paste", "stock": "0.0 kg", "days": "0d", "reorder": "2 kg", "vendor": "Tasty Craft"}
+      ],
+      "test_ids": ["widget-reorder-forecast"]
+    },
+    "Consumption_Trends": {
+      "description": "Line/area chart representation (using CSS or inline SVG) showing qty per day.",
+      "test_ids": ["widget-consumption-trends"]
+    },
+    "Cost_Trend_Per_Ingredient": {
+      "description": "Table with sparklines and delta percentages vs previous period.",
+      "columns": ["Ingredient", "Current Rate", "Trend (Sparkline)", "Change %"],
+      "data": [
+        {"name": "Butter", "rate": "₹650/kg", "change": "↑ 15%", "color": "text-pos-error"},
+        {"name": "Sugar Syrup", "rate": "₹45/ltr", "change": "↓ 2%", "color": "text-brand-green"}
+      ],
+      "test_ids": ["widget-cost-trends"]
+    },
+    "Vendor_Performance": {
+      "description": "Grid of vendor cards showing spend, avg rate, and top items.",
+      "vendors": ["Kunafabake", "Varun Dairy", "Rahul Grocery"],
+      "test_ids": ["widget-vendor-performance"]
+    },
+    "Recipe_Cost_Impact": {
+      "description": "List of recipes with computed cost delta.",
+      "data": [
+        {"recipe": "Kunafa Classic", "impact": "Cost ↑ ₹8 vs last month"},
+        {"recipe": "50-50 Blueberry", "impact": "Cost ↑ ₹4 vs last month"}
+      ],
+      "test_ids": ["widget-recipe-impact"]
+    },
+    "Vendor_Directory": {
+      "description": "Compact table of vendors from purchase history.",
+      "columns": ["Vendor", "Total Lines Supplied", "Total Spent", "Last Purchase"],
+      "test_ids": ["widget-vendor-directory"]
+    },
+    "Locked_Widgets_Phase_2": {
+      "description": "Wastage Insights & Top Wasted Items. Must be visibly locked/grayed out.",
+      "style": "Use existing .phase2 and .phase2-badge classes from the template.",
+      "message": "Awaiting Backend Brief — Wastage Report Endpoint",
+      "link": "/backend-briefs/wastage-report-2026-07-18.html",
+      "background": "Placeholder skeleton bar-chart shape behind the gray.",
+      "test_ids": ["widget-wastage-insights-locked", "widget-top-wasted-locked"]
+    },
+    "Footer": {
+      "description": "Explanatory note at the bottom.",
+      "text": "Powered by /daily-consumption-report + /vendor-item-list + /stock-inventory · Wastage widgets require BACKEND_BRIEF_WASTAGE_REPORT (2026-07-18)"
+    }
+  },
+  "instructions_to_main_agent": [
+    "READ the file /app/frontend/public/cr072-inventory-mockup.html in its entirety to understand the exact structure, styles, classes, and HTML boilerplate.",
+    "CREATE a new file at /app/frontend/public/cr072-inventory-mockup-v3-intelligence.html.",
+    "COPY the entire contents of the original HTML file.",
+    "ADD a new navigation pill in the header for 'Intelligence' and set it to active. Remove 'active' class from 'Dashboard'.",
+    "UPDATE the JavaScript logic `showScreen` so that 'intelligence' works alongside the existing 7 tabs.",
+    "ADD a new div `<div id=\"screen-intelligence\" class=\"screen-view active\">` inside `<main>`.",
+    "BUILD the Intelligence dashboard inside this new div based on the components_to_build structure above.",
+    "ENSURE you strictly use Tailwind CDN classes and Lucide icons as already present in the HTML document.",
+    "DO NOT use React, JSX, or any build step. This must be a raw static HTML file.",
+    "IMPLEMENT the locked states exactly as described, with a clickable anchor tag `<a href=\"/backend-briefs/wastage-report-2026-07-18.html\">`.",
+    "MATCH the exact aesthetic (colors, fonts, borders, shadows) of the other screens. It should look like a natural addition to the product."
+  ],
+  "universal_guidelines_for_main_agent": [
+    "No React or framework features. Use pure HTML/Tailwind.",
+    "Add data-testid to every interactive element.",
+    "Do not invent new colors, strictly use the custom colors defined in the tailwind.config script in the head.",
+    "Maintain the exact layout structure, spacing, and typography of the existing mock."
+  ]
+}
