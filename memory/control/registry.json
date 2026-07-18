@@ -15292,6 +15292,18 @@
         "CR-077",
         "CR-078"
       ]
+    },
+    {
+      "id": "CR-073",
+      "type": "CR",
+      "title": "Recipe Bulk Editor \u2014 Inline Spreadsheet for Recipe Management (92+ recipes)",
+      "status": "PLANNED",
+      "priority": "P1",
+      "sprint_key": "pos_5_0",
+      "gate": "3",
+      "intake_doc": "change_requests/CR-073_RECIPE_BULK_EDITOR_INTAKE.md",
+      "plan_doc": "plans/CR-073_IMPLEMENTATION_PLAN.md",
+      "mockup": "public/__dev/recipe_bulk_editor_mockup.html"
     }
   ]
 }

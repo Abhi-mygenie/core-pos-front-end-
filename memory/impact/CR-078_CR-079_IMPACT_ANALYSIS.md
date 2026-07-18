@@ -56,6 +56,22 @@ Inventory files added by CR-072 are still not listed in FILE_OWNERSHIP.md (alrea
 - `components/inventory/*.jsx` · renames + new file (CR-078+CR-079)
 - All new files created
 
+### Cross-CR Coordination — CR-073 Recipe Bulk Editor
+
+**CR-073** (Recipe Bulk Editor · P1 · already at Gate 3 Plan) lives under `/recipes` route in the Setup group of the sidebar. This IA (**CR-078+CR-079**) does **NOT** touch:
+- `RecipeManagementPage.jsx`
+- `RecipeManagementPanel.jsx`
+- `RecipeFormPanel.jsx`
+- `recipeService.js` / `recipeTransform.js`
+- `/recipes` route
+- Sidebar `inventory-recipes` child
+
+Recipes-related coupling from this IA is **read-only** — the new `RecipeCostMarginWidget.jsx` (built here) consumes recipe + ingredient-rate data via existing endpoints. When CR-073 lands and mutates recipes in bulk, the widget refreshes on next load with the new values.
+
+**No blocking dependency in either direction.** CR-073 and CR-078+CR-079 can ship in any order.
+
+**Registry gap patched during this IA:** CR-073 was missing from `registry.json` despite having intake + plan docs. Backfilled during this session.
+
 ### Open Gaps intersected
 - **OG-FE-NAV-001** (CR-041 nav consistency) — 3 unresolved owner decisions (D-1/D-2/D-3). This bundle **only affects Inventory nav section**, does not touch the D-1/D-2/D-3 items. Safe to proceed independently.
 
