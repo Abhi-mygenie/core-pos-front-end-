@@ -13626,7 +13626,7 @@
       "title": "Table Management \u2014 cannot add new table",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "CLOSED \u2014 CANNOT REPRODUCE (2026-07-17). Curl verified: backend CRUD works, FE fully wired.",
       "sprint_key": "pos_5_0",
       "area": "Settings \u2192 Table Management",
       "created_at": "2026-07-04",
@@ -13638,7 +13638,7 @@
         "src/contexts/TableContext.jsx"
       ],
       "related": [],
-      "notes": "Add-table action fails/no-op. Failure mode unknown. Curl-probe required. Confidence: REPORTED."
+      "notes": "Investigation 2026-07-17: 4 curl steps on cafe103 preprod. Full CRUD works. May have been temporary or restaurant-specific. Report: evidence/BUG148_BUG200_INVESTIGATION_REPORT_2026_07_17.md"
     },
     {
       "id": "BUG-149",
@@ -14377,11 +14377,11 @@
       "title": "Double-SC in finalOrderSubtotal fallback (uses subtotalBeforeTax which already contains SC)",
       "risk": "MEDIUM",
       "priority": "P1",
-      "status": "INTAKE - NOT YET APPROVED",
+      "status": "CLOSED \u2014 SUPERSEDED by BUG-168 v3 (2026-07-17). Double-SC eliminated in code.",
       "reported_by": "BUG FIX session 2026-07-08",
       "reported_at": "2026-07-08",
       "file": "orderTransform.js:1932",
-      "notes": "Owner clarification (see BUG-168) may reframe this. Hold work until path divergence investigation done.",
+      "notes": "Code Reality Check 2026-07-17: L1946-1951 uses backend subtotalBeforeTax directly. Comment confirms previous double-SC fixed. No code change needed.",
       "evidence": "/app/memory/evidence/BUG-168/order_940281.json (order #002386)"
     },
     {
@@ -15011,11 +15011,11 @@
       "id": "BUG-199",
       "title": "Expense Entry \u2014 new item always goes to misc category (categoryId not serialized to API payload)",
       "type": "BUG",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED \u2014 Code Reality Check 2026-07-17: category_id serialized at 4 locations (ExpenseEntryPanel L512+L539, expenseService L144+L164). BUG-199 markers present.",
       "severity": "P1",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
-      "gate": "1",
+      "gate": "5",
       "source_cr": "CR-059",
       "intake_doc": "change_requests/BUG_199_EXPENSE_ENTRY_CATEGORY_MISC.md",
       "registered": "2026-07-16"
@@ -15024,14 +15024,15 @@
       "id": "BUG-200",
       "title": "Expense Report \u2014 category filter returns 0 results (wrong query param name, needs curl verify)",
       "type": "BUG",
-      "status": "INTAKE",
+      "status": "CLOSED \u2014 CANNOT REPRODUCE (2026-07-17). Curl verified: category_id filter works, FE sends correctly.",
       "severity": "P1",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
       "gate": "1",
       "source_cr": "CR-061",
       "intake_doc": "change_requests/BUG_200_EXPENSE_REPORT_CATEGORY_FILTER.md",
-      "registered": "2026-07-16"
+      "registered": "2026-07-16",
+      "notes": "Investigation 2026-07-17: 6 curl steps on cafe103 preprod. category_id=255 returns \"To Owner\" only. Date format DD/MM/YYYY confirmed. Report: evidence/BUG148_BUG200_INVESTIGATION_REPORT_2026_07_17.md"
     },
     {
       "id": "BUG-201",

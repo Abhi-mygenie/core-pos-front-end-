@@ -115,7 +115,15 @@ export default function EmployeeListView() {
       toast.success(`Saved ${newRows.length + dirtyIds.size} change(s)`);
       await fetchData();
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to save');
+      const data = err?.response?.data;
+      if (data?.errors) {
+        Object.entries(data.errors).forEach(([field, messages]) => {
+          const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' ');
+          toast.error(`${label}: ${messages.join(', ')}`);
+        });
+      } else {
+        toast.error(data?.message || 'Failed to save');
+      }
     } finally {
       setSaving(false);
     }
@@ -194,7 +202,7 @@ export default function EmployeeListView() {
           <table className="w-full text-left" style={{ minWidth: 1050 }} data-testid="employee-grid">
             <thead>
               <tr className="bg-slate-50/80">
-                {['First Name', 'Last Name', 'Phone', 'Email', 'Password', 'Role', 'Status', ''].map((h, i) => (
+                {['First Name', 'Last Name', 'Phone', 'Email (User ID)', 'Password', 'Role', 'Status', ''].map((h, i) => (
                   <th key={i} className="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200"
                     style={{ width: i === 7 ? 80 : i === 6 ? 80 : i === 5 ? 130 : undefined }}>
                     {h}
@@ -226,7 +234,7 @@ export default function EmployeeListView() {
                     <div className="flex items-center gap-1">
                       <Input type={showPassword ? 'text' : 'password'} value={row.password}
                         onChange={e => updateNewRow(row._tempId, 'password', e.target.value)}
-                        placeholder="Password *" className={inputCls + ' flex-1'} data-testid={`emp-new-password-${row._tempId}`} />
+                        placeholder="Min 8: Aa + symbol (e.g. Test@123)" className={inputCls + ' flex-1'} data-testid={`emp-new-password-${row._tempId}`} />
                       <button onClick={() => setShowPassword(p => !p)}
                         className="p-1.5 rounded-md hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors flex-shrink-0"
                         title={showPassword ? 'Hide password' : 'Show password'}
@@ -239,12 +247,12 @@ export default function EmployeeListView() {
                   <td className="py-2 px-3">
                     <select className={selectCls} value={row.roleId || ''}
                       onChange={e => {
-                        const r = roleOptions.find(ro => ro.id === Number(e.target.value));
+                        const r = roles.find(ro => ro.id === Number(e.target.value));
                         updateNewRow(row._tempId, 'roleId', r?.id || null);
                         updateNewRow(row._tempId, 'roleName', r?.name || '');
                       }}>
                       <option value="">Select...</option>
-                      {roleOptions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                      {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                     </select>
                   </td>
                   <td className="py-2 px-3 text-center">
@@ -290,7 +298,7 @@ export default function EmployeeListView() {
                       <Input type={showPassword ? 'text' : 'password'}
                         value={getVal(emp, 'password') || ''}
                         onChange={e => updateExisting(emp.id, 'password', e.target.value)}
-                        placeholder="New password"
+                        placeholder="Min 8: Aa + symbol (e.g. Test@123)"
                         className={inputCls + ' flex-1'}
                         data-testid={`emp-password-${emp.id}`} />
                       <button onClick={() => setShowPassword(p => !p)}
@@ -306,7 +314,7 @@ export default function EmployeeListView() {
                     <select className={selectCls}
                       value={getVal(emp, 'roleId') || ''}
                       onChange={e => {
-                        const r = roleOptions.find(ro => ro.id === Number(e.target.value));
+                        const r = roles.find(ro => ro.id === Number(e.target.value));
                         updateExisting(emp.id, 'roleId', r?.id || null);
                         updateExisting(emp.id, 'roleName', r?.name || '');
                       }}>

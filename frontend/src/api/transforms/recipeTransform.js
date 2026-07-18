@@ -103,8 +103,8 @@ const toAPI = {
   storeRecipe(data) {
     return {
       name: data.foodId,                    // Backend expects food_id integer in 'name' field
-      qty: data.qty,
-      unit: data.unit,
+      recipe_qty: data.qty,                 // BUG-197-A2: qty → recipe_qty
+      recipe_unit: data.unit,               // BUG-197-A2: unit → recipe_unit
       preparation_time: data.preparationTime || '',
       serve_time: data.serveTime || '',
       serves_people: data.servePeople || 1, // 'serves' with s
@@ -120,8 +120,8 @@ const toAPI = {
   updateRecipe(data) {
     return {
       name: data.foodId,
-      qty: data.qty,
-      unit: data.unit,
+      recipe_qty: data.qty,                 // BUG-197-A3: qty → recipe_qty
+      recipe_unit: data.unit,               // BUG-197-A3: unit → recipe_unit
       preparation_time: data.preparationTime || '',
       serve_time: data.serveTime || '',
       serves_people: data.servePeople || 1,
@@ -133,13 +133,17 @@ const toAPI = {
     };
   },
 
-  // C6: store-sub-recipe
+  // C6: store-sub-recipe — BUG-197-A4: field renames per backend contract
   storeSubRecipe(data) {
     return {
-      name: data.name,
+      sub_recipe_name: data.name,           // BUG-197-A4: name → sub_recipe_name
       qty: data.qty,
-      unit: data.unit,
-      preparation_time: data.preparationTime || '',
+      subunit: data.unit,                   // BUG-197-A4: unit → subunit
+      prepration_time: data.preparationTime || '', // BUG-197-A4: R9 backend typo
+      serve_time: data.serveTime || 0,      // BUG-197-A4: missing field
+      serve_people: data.servePeople || 1,  // BUG-197-A4: missing field
+      thershold_qty: data.thresholdQty || 0,  // BUG-197-A4: R9 backend typo "thershold"
+      thershold_unit: data.thresholdUnit || '', // BUG-197-A4: R9 backend typo
       ingredients: (data.ingredients || []).map(ing => ({
         ingredient_id: ing.ingredientId,
         quantity: ing.quantity,
@@ -148,13 +152,17 @@ const toAPI = {
     };
   },
 
-  // C7: update-sub-recipe — BUG-197 #9: PUT, different ingredient fields
+  // C7: update-sub-recipe — BUG-197-A5: field renames per backend contract
   updateSubRecipe(data) {
     return {
-      name: data.name,
+      sub_recipe_name: data.name,           // BUG-197-A5: name → sub_recipe_name
       qty: data.qty,
-      unit: data.unit,
-      preparation_time: data.preparationTime || '',
+      subunit: data.unit,                   // BUG-197-A5: unit → subunit
+      prepration_time: data.preparationTime || '', // BUG-197-A5: R9 backend typo
+      serve_time: data.serveTime || 0,      // BUG-197-A5: missing field
+      serve_people: data.servePeople || 1,  // BUG-197-A5: missing field
+      thershold_qty: data.thresholdQty || 0,  // BUG-197-A5: R9 backend typo
+      thershold_unit: data.thresholdUnit || '', // BUG-197-A5: R9 backend typo
       ingredients: (data.ingredients || []).map(ing => ({
         id: ing.ingredientId,
         qty: ing.quantity,
@@ -163,13 +171,16 @@ const toAPI = {
     };
   },
 
-  // D2: store-addon-recipe
+  // D2: store-addon-recipe — BUG-197-A6: field renames per backend contract
   storeAddonRecipe(data) {
     return {
       addon_id: data.addonId,
       name: data.name,
-      qty: data.qty,
-      unit: data.unit,
+      recipe_qty: data.qty,                 // BUG-197-A6: qty → recipe_qty
+      recipe_unit: data.unit,               // BUG-197-A6: unit → recipe_unit
+      preparation_time: data.preparationTime || 0, // BUG-197-A6: missing field
+      serves_people: data.servePeople || 1, // BUG-197-A6: missing field
+      serve_time: data.serveTime || 0,      // BUG-197-A6: missing field
       ingredients: (data.ingredients || []).map(ing => ({
         ingredient_id: ing.ingredientId,
         quantity: ing.quantity,
@@ -178,13 +189,16 @@ const toAPI = {
     };
   },
 
-  // D3: update-addon-recipe — BUG-197 #9: PUT, different ingredient fields
+  // D3: update-addon-recipe — BUG-197-A7: field renames per backend contract
   updateAddonRecipe(data) {
     return {
       addon_id: data.addonId,
       name: data.name,
-      qty: data.qty,
-      unit: data.unit,
+      recipe_qty: data.qty,                 // BUG-197-A7: qty → recipe_qty
+      recipe_unit: data.unit,               // BUG-197-A7: unit → recipe_unit
+      preparation_time: data.preparationTime || 0, // BUG-197-A7: missing field
+      serves_people: data.servePeople || 1, // BUG-197-A7: missing field
+      serve_time: data.serveTime || 0,      // BUG-197-A7: missing field
       ingredients: (data.ingredients || []).map(ing => ({
         id: ing.ingredientId,
         qty: ing.quantity,
