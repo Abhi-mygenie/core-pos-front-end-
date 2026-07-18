@@ -295,17 +295,85 @@ All 15 blockers resolved. Bundle reshaped per owner directives below.
 | **BUG-201-Ph2** | Role gating on all 3 delete types | — | — | ⏸ DEFERRED to CR-071 (per owner ruling in intake) |
 | **Intelligence Widgets** — 6 live + 2 deferred | Reorder Forecast · Consumption Trends · Cost Trend · Vendor Performance · Recipe Cost · Low-stock Alerts · Vendor Directory | (part of CR-075) | separate HTML mock first | 📋 mock-first, then Gate 3 |
 
-### Gate 2 exit criteria — ALL MET
+---
 
-- ✅ Code Reality per item documented
-- ✅ Conflict Pre-Check completed (no blocking conflicts; ExpenseSetupPanel flagged for §Step-0 entry verify)
-- ✅ Risk labels assigned (all HIGH except CR-076 MEDIUM — CR-076 now out of bundle)
-- ✅ Data flow traces done
-- ✅ Affected file list + scope lock (files WILL change / WILL NOT touch)
-- ✅ Verification Matrix seeded (13 checks)
-- ✅ Post-Code Registry Checklist stated
-- ✅ All 17 Open Questions resolved · 2 backend briefs filed as external dependencies
-- ✅ Bundle re-split into shippable slices
+# 🧾 ADDENDUM · FB Round 2 (Mock v5 · 2026-07-18)
+
+Owner reviewed v3 → v4 → v5. Five additional feedback items · all resolved · mock v5 locked as the approved design artifact for CR-075/077/078/079.
+
+## Feedback Log (FB-6 through FB-9 + implicit FB-10)
+
+| # | Feedback | Resolution | Where it lives in v5 |
+|---|---|---|---|
+| **FB-6** | v4 "suggest" values inconsistent with Gap column (2.5 vs 2.1, 3.1 vs 3.04) | **Rule locked: Suggest = \|Gap\| exactly** (Owner Q1-a). No buffer, no rounding. | Smart Purchase rows: 2.1 / 3.04 / 1.6 / 3.3 |
+| **FB-7** | Recipe cost / margin intelligence missing — recipe cards on Recipes Management show `Cost: ₹— · Margin: —%` (locked) | **New "Recipe Cost & Margin" widget** replacing v4 Recipe Cost Impact. Cost/serve · Sale ₹ · Margin % · Δ vs prev. Colour bands: green >50% · amber 30-50% · red <30% (Owner Q7-2 confirmed). Data sources: recipes from `/recipe/get-recipe` × latest rates from `/vendor-item-list` × sale price from `/product/active-foods-list`. Formula shown in footer. Threshold breach flagged (28.3% Kunafa Cheese). | Dashboard 4th row right, anchor `#recipe-margin` |
+| **FB-8** | Widgets should link to detailed reports later | **Noted for future CR** — backlogged as candidate CR-08X (Inventory Reports · widget drill-downs). "View details →" affordance added to all 5 primary widgets so operators know detail views are coming. Non-functional in mock. | Present on Reorder Forecast · Consumption Trends · Cost Trend · Recipe Margin · Vendor Performance headers |
+| **FB-9** | Master/franchise Receive screen missing from mock (was split into CR-077 during Gate 2) | **Full Receive screen added to v5 mock** (Owner Q9-b). New "Receive" nav pill with count badge. 4 tabs matching backend queue categories · pending-queue table · row-click drawer with per-line Accept / Partial / Dispute / Reject. Real transfer data (TRF-813-2026-0003) with real batch/expiry from `meta_json.segments`. Endpoint paths surfaced in footer. **This mock now covers CR-077 preview too.** | New `#screen-receive` |
+| **FB-10** (self-caught) | Gate-2 B1 Payment Method dropped when Purchase flipped item-first | **Restored on per-vendor PO cards** in "Will submit as N vendor POs" section — each vendor gets its own Payment Method dropdown with red `*`. | Smart Purchase grouped-vendor preview |
+
+## Live Signals Captured (Owner-provided creds this round)
+
+Login validated: `owner@palmindia.com` — Palm India (id 816) — `restaurant_type_flag = "franchise"` · `parent_restaurant_id = 813`.
+
+| Endpoint | Method | Purpose | Evidence file |
+|---|---|---|---|
+| `/api/v1/vendoremployee/profile` | GET | Confirms `restaurants[0].{restaurant_type_flag, parent_restaurant_id}` at existing shape — no backend brief needed for CR-075/CR-077 IA restructure | `/app/memory/evidence/CR-077/profile_master.json` |
+| `/api/v2/vendoremployee/inventory-transfer/pending-queues` | **POST** | 6-category queue payload: `approval_pending`, `lateral_approval_pending`, `dispatch_pending`, `receive_pending` (2 rows for Palm India), `receive_dispute_pending`, `my_requests` | `/app/memory/evidence/CR-077/pending_queues.json` |
+| `/api/v2/vendoremployee/inventory-transfer/details/{id}` | **GET** | Line-level shape: `{transfer, lines[]}`. Each line has `meta_json.segments[]` carrying batch, expiry_date, purchase_price · plus `stock_source`, `price_status`, `received_at`, `progress.received_qty/rejected_qty` | `/app/memory/evidence/CR-077/transfer_details.json` |
+| `/api/v2/vendoremployee/recipe/get-recipe` | GET | 92 recipes with full `ingredients[]` blob — enables recipe cost math client-side | `/app/memory/evidence/CR-075/recipes_list.json` |
+| `/api/v2/vendoremployee/product/active-foods-list` | GET | Foods with sale prices for margin calc | `/app/memory/evidence/CR-075/active_foods_list.json` |
+
+## Key Discovery — `restaurant_type_flag` has ≥ 3 values
+
+Confirmed: **`normal`** (Kunafa Mahal · standalone) · **`franchise`** (Palm India · child) · presumed **`master`** (Central Kitchen · parent #813). Impacts CR-077 P5 conditional logic — the flag is a tri-state, not a boolean. Franchise children see the Receive screen; master parents see Dispatch flows (out of this mock's scope).
+
+## Mock Iteration Trail
+
+| Version | Purpose | File |
+|---|---|---|
+| v2 | Original CR-072 mock (7 screens, no intelligence) | `/app/frontend/public/cr072-inventory-mockup.html` |
+| v3 | Added Intelligence tab (9 widgets, 2 locked Phase-2 wastage) | `/app/frontend/public/cr072-inventory-mockup-v3-intelligence.html` |
+| v4 | FB-1..5 addendum · IA reshuffle · Smart Purchase introduced | `/app/frontend/public/cr072-inventory-mockup-v4-smartpurchase.html` |
+| **v5 · LOCKED** | FB-6..9 · Palm India context · Receive screen · Recipe Cost & Margin widget · Payment Method restored | `/app/frontend/public/cr072-inventory-mockup-v5-full.html` |
+
+Public preview URL for v5: `https://react-pos-frontend-4.preview.emergentagent.com/cr072-inventory-mockup-v5-full.html`
+
+## Final Split — 5 shippable CRs
+
+| Slice | Contents | Registry action | Gate 3 ready? |
+|---|---|---|---|
+| **CR-075-A** | Stock/Purchase surface polish (export fix · chips · error display · red-* validation · batch/expiry payload) — original ~285 lines, unchanged | ✅ Ready — no new intake needed | ✅ YES |
+| **CR-075-B** | Physical Count → Stock Audit rename | ✅ Ready | ✅ YES |
+| **CR-077** (NEW · from B15) | Hierarchy Stock Transfer — Receive/Dispatch/Dispute/Return module (screen designed in v5 mock) | 📋 Needs new INTAKE + own Gate 2 cycle | ⏸ |
+| **CR-078** (NEW · from FB-1..3) | Smart Purchase — item-first planner with horizon picker, gap calc, vendor suggestion, per-vendor payment method | 📋 Needs new INTAKE + own Gate 2 cycle | ⏸ |
+| **CR-079** (NEW · from FB-5) | Inventory IA restructure — Intelligence-as-Dashboard, Current Stock rename, Sidebar refresh | 📋 Needs new INTAKE | ⏸ |
+| BUG-201-Ph1 | Cascade-warning dialog (unchanged) | ✅ | ⏸ backend-blocked on brief |
+| CR-076 | S3 File Upload (parked, standalone) | ✅ | ⏸ |
+| **CR-08X** (candidate · from FB-8) | Inventory Reports — widget drill-downs | 📋 Backlog only — not yet a CR | — |
+
+## Backend Briefs — Complete Set Filed
+
+| Brief | Status | Blocks |
+|---|---|---|
+| `BACKEND_BRIEF_WASTAGE_REPORT_2026_07_18.html` | ✅ Filed | 2 Dashboard wastage widgets |
+| `BACKEND_BRIEF_EXPENSE_ITEM_IMPACT_2026_07_18.html` | ✅ Filed | BUG-201-Ph1 cascade dialog |
+| `BACKEND_BRIEF_MULTI_VENDOR_PURCHASE_2026_07_18.html` | ✅ Filed (this session) | CR-078 optimisation — single-call multi-vendor purchase (Owner Q7-b future) |
+
+## Gate 2 Exit — CLOSED (per §R4)
+
+- ✅ Code Reality Check complete
+- ✅ Conflict Pre-Check complete
+- ✅ Risk labels current
+- ✅ Data flow traces documented
+- ✅ Affected files list + scope lock
+- ✅ Verification Matrix seeded
+- ✅ All 17 original blockers + 5 FB-round decisions RESOLVED
+- ✅ 3 backend briefs filed as external dependencies
+- ✅ 5-way CR split registered (CR-075-A/B + CR-077 + CR-078 + CR-079)
+- ✅ Design artifact locked (mock v5)
+- ✅ Live endpoint evidence captured for all critical paths
+
+**Gate 3 (Implementation Plans) is the next planning step — deferred to a fresh session per §Session Closure.**
 
 ---
 
