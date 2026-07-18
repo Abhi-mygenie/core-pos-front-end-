@@ -131,7 +131,7 @@ Stock Audit → enter physical qty → drift calculated → select reason → Sa
 
 | # | Item | Severity | Description |
 |---|------|----------|-------------|
-| P6 | **Batch + Expiry fields NOT sent to backend** | MAJOR | Purchase line items have Batch (default "B-001") and Expiry (date picker) UI fields. User can enter values. BUT: `addPurchase` transform does NOT include batch or expiry in the payload — they are **silently discarded**. Also: backend stock-inventory API has NO batch/expiry fields (checked — 27 keys, none batch-related). This means batch/expiry tracking is not supported by backend at all, yet the UI presents it as a feature. |
+| P6 | **Batch + Expiry fields NOT sent to backend** | MAJOR | Purchase line items have Batch and Expiry UI fields. User can enter values. BUT `addPurchase` transform does NOT include them in payload — **silently discarded**. **Curl-verified 2026-07-18:** backend DOES accept and store `batch` + `expiry_date` (DD-MM-YYYY). Just needs 2 lines in transform. Backend field names: `batch` (not `batch_no`), `expiry_date` (not `expiry`). |
 
 **Current state:**
 - FE line item model: `{ ingredientId, unit, quantity, rate, batch: '', expiry: '' }` — fields exist ✅
