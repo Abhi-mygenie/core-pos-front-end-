@@ -15247,6 +15247,36 @@
         "CR-072"
       ],
       "scope_note": "S3 integration for: (A) Purchase/Receive invoice PDF/image upload, (B) Room check-in document upload. Shared S3 service + per-module upload UI."
+    },
+    {
+      "id": "CR-077",
+      "type": "CR",
+      "title": "Hierarchy Stock Transfer \u2014 Receive \u00b7 Dispatch \u00b7 Dispute \u00b7 Return (split from CR-075 P5 per B15)",
+      "status": "INTAKE",
+      "priority": "P1",
+      "sprint_key": "pos_5_0_wave_2",
+      "gate": "1",
+      "intake_doc": "change_requests/CR-077_HIERARCHY_STOCK_TRANSFER_INTAKE.md"
+    },
+    {
+      "id": "CR-078",
+      "type": "CR",
+      "title": "Smart Purchase \u2014 Item-First Planner with Velocity & Vendor Intelligence (split from CR-075 per Q10-a)",
+      "status": "INTAKE",
+      "priority": "P1",
+      "sprint_key": "pos_5_0_wave_2",
+      "gate": "1",
+      "intake_doc": "change_requests/CR-078_SMART_PURCHASE_INTAKE.md"
+    },
+    {
+      "id": "CR-079",
+      "type": "CR",
+      "title": "Inventory Information Architecture Restructure \u2014 Intelligence-as-Dashboard (split from CR-075 per FB-5)",
+      "status": "INTAKE",
+      "priority": "P2",
+      "sprint_key": "pos_5_0_wave_2",
+      "gate": "1",
+      "intake_doc": "change_requests/CR-079_INVENTORY_IA_RESTRUCTURE_INTAKE.md"
     }
   ]
 }
