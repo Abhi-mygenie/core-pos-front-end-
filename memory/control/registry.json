@@ -15228,8 +15228,25 @@
         "CR-072",
         "BUG-197"
       ],
-      "scope_note": "13 items: S1-S5 (stock) + P1-P6 (purchase/receive + batch/expiry) + PC1-PC2 (stock audit rename + wastage recording). S1=BLOCKER export. P5=purchase/receive conditional. P6=batch/expiry silently discarded. PC2=rename to Stock Audit.",
+      "scope_note": "13 items: S1-S5 (stock) + P1-P6 (purchase/receive + batch/expiry) + PC1-PC2 (stock audit). OQ-1 RESOLVED (low stock = consumption-based gap). OQ-2 RESOLVED (S3 \u2192 CR-076). EP-3/EP-5 owner confirms existing. Curls pending: receive endpoints, EP-2, EP-6, EP-3, wastage log check.",
       "depends_on_note": "P5 (Receive) blocked until owner shares endpoint MD. P3 (invoice) blocked until backend endpoint confirmed."
+    },
+    {
+      "id": "CR-076",
+      "title": "Amazon S3 File Upload \u2014 Invoice attachments (Purchase/Receive) + Room Check-in document uploads",
+      "type": "CR",
+      "status": "INTAKE",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "intake_doc": "change_requests/CR_076_S3_FILE_UPLOAD.md",
+      "registered": "2026-07-18",
+      "related": [
+        "CR-075",
+        "CR-072"
+      ],
+      "scope_note": "S3 integration for: (A) Purchase/Receive invoice PDF/image upload, (B) Room check-in document upload. Shared S3 service + per-module upload UI."
     }
   ]
 }

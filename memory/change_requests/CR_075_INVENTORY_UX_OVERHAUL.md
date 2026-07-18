@@ -87,8 +87,8 @@ Hotspot files: NONE (inventory files are not R5 hotspots)
 
 | # | Question | Status |
 |---|----------|--------|
-| OQ-1 | Does backend set `is_low_stock` from `min_qty_alert` threshold? | PENDING — backend team |
-| OQ-2 | Backend endpoint for invoice file upload? Storage location? | PENDING — owner |
+| OQ-1 | Does backend set `is_low_stock` from `min_qty_alert` threshold? | **RESOLVED** — Owner: threshold for new outlets. Running outlets: low stock = based on previous consumption with selectable gap (7d/14d/1mo). Needs EP-1 data. |
+| OQ-2 | Backend endpoint for invoice file upload? Storage location? | **RESOLVED** — Owner: Amazon S3. Registered as CR-076. |
 | OQ-3 | Should Payment Method be mandatory on purchase? | PENDING — owner |
 | OQ-4 | Can Rate be ₹0 (free samples/donations)? | PENDING — owner |
 | OQ-5 | Receive endpoints — owner to share MD file | PENDING — owner |
@@ -161,7 +161,7 @@ Stock Audit → enter physical qty → drift calculated → select reason → Sa
 
 ---
 
-| OQ-7 | Does `add-stock` with `wastage_reason_id` create a wastage log entry? Or only adjusts stock qty? | PENDING — backend |
+| OQ-7 | Does `add-stock` with `wastage_reason_id` create a wastage log? | PENDING — owner needs to check curl |
 | OQ-8 | Should wastage from physical count appear in wastage reports? | PENDING — owner |
 
 Planning Gate 2 (Impact Analysis) can start for items S1-S5 + P1-P4 immediately.
