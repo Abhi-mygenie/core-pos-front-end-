@@ -1,0 +1,215 @@
+{
+  "revenue": {
+    "total": 164046,
+    "paid_order_count": 167,
+    "avg_order_value": 982.31,
+    "tab_settlement_total": 0,
+    "by_hour": [
+      {
+        "hour": 1,
+        "amount": 4074
+      },
+      {
+        "hour": 3,
+        "amount": 3575
+      },
+      {
+        "hour": 8,
+        "amount": 3752
+      },
+      {
+        "hour": 9,
+        "amount": 10298
+      },
+      {
+        "hour": 10,
+        "amount": 11364
+      },
+      {
+        "hour": 11,
+        "amount": 10421
+      },
+      {
+        "hour": 12,
+        "amount": 662
+      },
+      {
+        "hour": 13,
+        "amount": 10704
+      },
+      {
+        "hour": 14,
+        "amount": 14108
+      },
+      {
+        "hour": 15,
+        "amount": 12429
+      },
+      {
+        "hour": 16,
+        "amount": 7336
+      },
+      {
+        "hour": 17,
+        "amount": 16776
+      },
+      {
+        "hour": 18,
+        "amount": 7506
+      },
+      {
+        "hour": 19,
+        "amount": 5741
+      },
+      {
+        "hour": 20,
+        "amount": 5151
+      },
+      {
+        "hour": 21,
+        "amount": 14449
+      },
+      {
+        "hour": 22,
+        "amount": 24251
+      },
+      {
+        "hour": 23,
+        "amount": 1449
+      }
+    ]
+  },
+  "channel_mix": [
+    {
+      "channel": "Dine-In",
+      "orders": 159,
+      "revenue": 154468
+    },
+    {
+      "channel": "Delivery",
+      "orders": 7,
+      "revenue": 9137
+    },
+    {
+      "channel": "Takeaway",
+      "orders": 1,
+      "revenue": 441
+    }
+  ],
+  "payment_mix": [
+    {
+      "method": "UPI",
+      "orders": 66,
+      "revenue": 75325
+    },
+    {
+      "method": "Cash",
+      "orders": 83,
+      "revenue": 65089
+    },
+    {
+      "method": "Card",
+      "orders": 7,
+      "revenue": 11753
+    },
+    {
+      "method": "Partial",
+      "orders": 8,
+      "revenue": 8808
+    },
+    {
+      "method": "Zomato Gold",
+      "orders": 2,
+      "revenue": 1418
+    }
+  ],
+  "top_items": [
+    {
+      "food_id": 116608,
+      "name": "Cappuccino",
+      "qty": 55,
+      "revenue": 10393.95
+    },
+    {
+      "food_id": 116723,
+      "name": "Tandoori Roti",
+      "qty": 163,
+      "revenue": 6727.65
+    },
+    {
+      "food_id": 116842,
+      "name": "Farmhouse Pizza",
+      "qty": 12,
+      "revenue": 6221.25
+    },
+    {
+      "food_id": 116713,
+      "name": "Butter Chicken",
+      "qty": 6,
+      "revenue": 4647.3
+    },
+    {
+      "food_id": 116851,
+      "name": "Allfredo Pasta",
+      "qty": 14,
+      "revenue": 4305
+    }
+  ],
+  "cancellations": {
+    "order_scope_count": 97,
+    "order_scope_loss": 125752,
+    "item_scope_count": 2,
+    "item_scope_loss": 288,
+    "total_count": 99,
+    "total_loss": 126040,
+    "top_reason": "No reason provided",
+    "top_reason_count": 68
+  },
+  "discounts": {
+    "manual_discount": 8115.42,
+    "coupon_discount": 0,
+    "coupon_order_count": 0,
+    "loyalty_discount": 0,
+    "comp_item_total": 0,
+    "comp_item_count": 0,
+    "total_leakage": 8115.42
+  },
+  "kitchen": {
+    "avg_prep_minutes": 22.62,
+    "avg_serve_minutes": 8.71,
+    "sla_breach_count": 212,
+    "has_prep_data": true
+  },
+  "customers": {
+    "total_orders": 170,
+    "registered_count": 23,
+    "guest_count": 147,
+    "unique_customers": 17,
+    "repeat_customers": 4,
+    "repeat_pct": 24
+  },
+  "audits": {
+    "make_unpaid_count": 2,
+    "payment_method_change_count": 0,
+    "total": 2,
+    "orders": [
+      {
+        "order_id": "012662",
+        "type": "make_unpaid",
+        "amount": 1653,
+        "by": "Manager",
+        "prev_method": "cash",
+        "curr_method": "cash"
+      },
+      {
+        "order_id": "012648",
+        "type": "make_unpaid",
+        "amount": 0,
+        "by": "Owner",
+        "prev_method": "upi",
+        "curr_method": "upi"
+      }
+    ]
+  },
+  "credit_outstanding": 0
+}

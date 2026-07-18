@@ -1,0 +1,17 @@
+{
+  "total_amount": 60,
+  "report": [
+    {
+      "id": 13458,
+      "Date & Time": "01/06/2026",
+      "EXPENSE": "N/A",
+      "Category": "misc",
+      "category_id": 347,
+      "Amount": "60",
+      "Payment Method": "Cash",
+      "quantity": "0.00",
+      "unit": "",
+      "physical_quantity": "0"
+    }
+  ]
+}
