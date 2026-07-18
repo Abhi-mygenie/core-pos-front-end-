@@ -237,7 +237,7 @@ Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUS
 
 ```
 Total items in registry.json: 301
-CR range: CR-001 to CR-079 (74 registered, 1 gap: CR-063)
+CR range: CR-001 to CR-080 (75 registered, 1 gap: CR-063)
 BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 ```
 
@@ -246,3 +246,4 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | CR-077 | Hierarchy Stock Transfer — Receive · Dispatch · Dispute · Return (split from CR-075 P5 per B15) | P1 | HIGH | **INTAKE** | 1 | 9 endpoints live-verified via `owner@palmindia.com`. Full Receive screen designed in mock v5. Est. 8-12 files / 600-900 lines. Master creds still needed for Dispatch. Docs: `change_requests/CR-077_HIERARCHY_STOCK_TRANSFER_INTAKE.md` |
 | CR-078 | Smart Purchase — Item-First Planner with Velocity & Vendor Intelligence (split from CR-075 per Q10-a) | P1 | HIGH | **INTAKE** | 1 | Full workflow redesign of Purchase Entry. Horizon picker · gap = \|need − on-hand\| · vendor ranking = lowest last rate · override warning · ad-hoc rows · N sequential POSTs (optimisation brief filed). Est. 6-8 files / 400-500 lines. Docs: `change_requests/CR-078_SMART_PURCHASE_INTAKE.md` |
 | CR-079 | Inventory Information Architecture Restructure — Intelligence-as-Dashboard | P2 | MEDIUM | **INTAKE** | 1 | Nav restructure: Intelligence becomes default Dashboard · old Dashboard → "Current Stock" · Purchase Entry → "Smart Purchase" · Physical Count → "Stock Audit". Recommend bundling CR-075-B into CR-079. Est. 6-8 files / 55-80 lines. Docs: `change_requests/CR-079_INVENTORY_IA_RESTRUCTURE_INTAKE.md` |
+| CR-080 | Transfer-First Smart Purchase — Franchise cross-flow optimisation | P3 | MEDIUM | **INTAKE · DEFERRED (Phase 2)** | 1 | Depends on CR-077 + CR-078 shipping first. Adds "Available from parent (Central Kitchen)" as a zero-cost alternative alongside vendor options in the Smart Purchase planner. ~50-80 lines additive to CR-078 files. Docs: `change_requests/CR-080_TRANSFER_FIRST_SMART_PURCHASE_INTAKE.md` |

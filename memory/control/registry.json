@@ -15277,6 +15277,21 @@
       "sprint_key": "pos_5_0_wave_2",
       "gate": "1",
       "intake_doc": "change_requests/CR-079_INVENTORY_IA_RESTRUCTURE_INTAKE.md"
+    },
+    {
+      "id": "CR-080",
+      "type": "CR",
+      "title": "Transfer-First Smart Purchase \u2014 Franchise cross-flow optimisation (Phase 2 \u00b7 depends on CR-077 + CR-078)",
+      "status": "INTAKE",
+      "priority": "P3",
+      "sprint_key": "pos_5_0_wave_3",
+      "gate": "1",
+      "intake_doc": "change_requests/CR-080_TRANSFER_FIRST_SMART_PURCHASE_INTAKE.md",
+      "deferred": true,
+      "depends_on": [
+        "CR-077",
+        "CR-078"
+      ]
     }
   ]
 }

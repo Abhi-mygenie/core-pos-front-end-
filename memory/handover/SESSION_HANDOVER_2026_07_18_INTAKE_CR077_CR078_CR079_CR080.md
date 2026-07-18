@@ -1,9 +1,9 @@
-# Session Handover · 2026-07-18 (part 2) · CR-077 / CR-078 / CR-079 Intake Registration
+# Session Handover · 2026-07-18 (part 2) · CR-077 / CR-078 / CR-079 / CR-080 Intake Registration
 
 **Role this session:** INTAKE (per AGENT_PROMPT_ALPHA v0.7 §Role Decision Tree row 1)
-**Purpose:** Formally register the 3 new CRs that emerged from the CR-075 planning cycle (prior session `SESSION_HANDOVER_2026_07_18_INVENTORY_PLANNING.md`)
-**Outcome:** ✅ All 3 CRs registered · registry.json + CR_REGISTRY.md updated · intake docs written
-**Sprint tag:** `pos_5_0_wave_2`
+**Purpose:** Formally register the 3 new CRs that emerged from the CR-075 planning cycle (prior session `SESSION_HANDOVER_2026_07_18_INVENTORY_PLANNING.md`) + 1 Phase-2 follow-up idea (CR-080)
+**Outcome:** ✅ All 4 CRs registered · registry.json + CR_REGISTRY.md updated · intake docs written
+**Sprint tag:** `pos_5_0_wave_2` (CR-077/078/079) · `pos_5_0_wave_3` (CR-080 · deferred)
 
 ---
 
@@ -14,21 +14,24 @@
 | 1 | Wrote intake doc for **CR-077** Hierarchy Stock Transfer | `/app/memory/change_requests/CR-077_HIERARCHY_STOCK_TRANSFER_INTAKE.md` |
 | 2 | Wrote intake doc for **CR-078** Smart Purchase | `/app/memory/change_requests/CR-078_SMART_PURCHASE_INTAKE.md` |
 | 3 | Wrote intake doc for **CR-079** Inventory IA Restructure | `/app/memory/change_requests/CR-079_INVENTORY_IA_RESTRUCTURE_INTAKE.md` |
-| 4 | Appended 3 entries to `registry.json` (318 total items now) | `/app/memory/control/registry.json` |
-| 5 | Added 4 rows to `CR_REGISTRY.md` (CR-076 · CR-077 · CR-078 · CR-079) + updated CR-075 status to "SPLIT" | `/app/memory/control/CR_REGISTRY.md` |
-| 6 | Updated CR range summary in CR_REGISTRY.md footer (CR-001..CR-079 · 74 registered · 1 gap CR-063) | same file |
+| 4 | Wrote intake doc for **CR-080** Transfer-First Smart Purchase (Phase 2 · deferred) | `/app/memory/change_requests/CR-080_TRANSFER_FIRST_SMART_PURCHASE_INTAKE.md` |
+| 5 | Appended 4 entries to `registry.json` (319 total items now) | `/app/memory/control/registry.json` |
+| 6 | Added 5 rows to `CR_REGISTRY.md` (CR-076 · CR-077 · CR-078 · CR-079 · CR-080) + updated CR-075 status to "SPLIT" | `/app/memory/control/CR_REGISTRY.md` |
+| 7 | Updated CR range summary in CR_REGISTRY.md footer (CR-001..CR-080 · 75 registered · 1 gap CR-063) | same file |
 
 ---
 
 ## Registered CRs Snapshot
 
-| CR | Title | P | Risk | Gate | Split from |
-|---|---|---|---|---|---|
-| **CR-077** | Hierarchy Stock Transfer — Receive · Dispatch · Dispute · Return | P1 | HIGH | 1 | CR-075 P5 (owner B15) |
-| **CR-078** | Smart Purchase — Item-First Planner with Velocity & Vendor Intelligence | P1 | HIGH | 1 | CR-075 FB-1/2/3/6 (owner Q10-a) |
-| **CR-079** | Inventory Information Architecture Restructure — Intelligence-as-Dashboard | P2 | MEDIUM | 1 | CR-075 FB-5 (owner Q10-a) |
+| CR | Title | P | Risk | Gate | Depends on | Split from |
+|---|---|---|---|---|---|---|
+| **CR-077** | Hierarchy Stock Transfer — Receive · Dispatch · Dispute · Return | P1 | HIGH | 1 | — | CR-075 P5 (owner B15) |
+| **CR-078** | Smart Purchase — Item-First Planner with Velocity & Vendor Intelligence | P1 | HIGH | 1 | — | CR-075 FB-1/2/3/6 (owner Q10-a) |
+| **CR-079** | Inventory Information Architecture Restructure — Intelligence-as-Dashboard | P2 | MEDIUM | 1 | — | CR-075 FB-5 (owner Q10-a) |
+| **CR-080** | Transfer-First Smart Purchase — Franchise cross-flow (Phase 2 · DEFERRED) | P3 | MEDIUM | 1 | **CR-077 + CR-078 must ship first** | idea captured 2026-07-18 |
 
-All three inherit their design references from **mock v5** — `/app/frontend/public/cr072-inventory-mockup-v5-full.html` — which owner locked at end of prior session.
+CR-077/078/079 inherit their design references from **mock v5** — `/app/frontend/public/cr072-inventory-mockup-v5-full.html`.
+CR-080 has no design yet — deliberately deferred until prerequisites land.
 
 ---
 
