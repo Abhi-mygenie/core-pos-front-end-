@@ -36,7 +36,7 @@ const toAPI = {
       bill_user_view: fe.billUserView ? 'Yes' : 'No',
       status: 1, // BUG-198: backend requires status on create
     };
-    if (fe.email) payload.email = fe.email; // BUG-198: omit empty email (backend rejects '')
+    payload.email = fe.email || ''; // Always send email — backend requires it
     return payload;
   },
 
@@ -48,7 +48,7 @@ const toAPI = {
       role_id: fe.roleId,
       bill_user_view: fe.billUserView ? 'Yes' : 'No',
     };
-    if (fe.email) payload.email = fe.email; // BUG-198: omit empty email
+    payload.email = fe.email || ''; // Always send email — backend requires it on PUT
     if (fe.password) payload.password = fe.password; // BUG-198: only send password when user typed one
     return payload;
   },

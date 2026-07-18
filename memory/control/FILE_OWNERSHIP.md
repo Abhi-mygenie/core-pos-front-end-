@@ -439,3 +439,7 @@
 
 ## BUG-197 Addendum A2-A7 (2026-07-17) — Recipe transform field renames
 | `api/transforms/recipeTransform.js` | BUG-197-A2/A3: recipe_qty/recipe_unit for standard recipe store/update. BUG-197-A4/A5: sub_recipe_name, subunit, prepration_time, thershold_qty/unit for sub-recipe. BUG-197-A6/A7: recipe_qty/recipe_unit + preparation_time/serves_people/serve_time for addon recipe. |
+
+## Employee Edit UX Fixes (2026-07-17)
+| `components/panels/employee/EmployeeListView.jsx` | Fix 1: backend error parsing (L117-126), Fix 2: password hint placeholders (L237,L301), Fix 3a/3b: role dropdown uses all roles (L250,L255,L317,L322), Fix 5: Email (User ID) header (L205) |
+| `api/transforms/employeeTransform.js` | Fix 4: always send email field on create+update (L39,L51) |
