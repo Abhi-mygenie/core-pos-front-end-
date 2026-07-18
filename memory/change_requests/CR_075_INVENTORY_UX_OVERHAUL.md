@@ -18,7 +18,7 @@ Comprehensive UX overhaul of the Inventory module's Stock Dashboard and Purchase
 
 ---
 
-## Scope — 11 Items (3 screens + cross-cutting)
+## Scope — 13 Items (3 screens + cross-cutting)
 
 ### STOCK DASHBOARD SCREEN (5 items)
 
@@ -96,11 +96,12 @@ Hotspot files: NONE (inventory files are not R5 hotspots)
 
 ---
 
-### PHYSICAL STOCK COUNT SCREEN (1 item)
+### PHYSICAL STOCK COUNT SCREEN — renamed to "Stock Audit" (2 items)
 
 | # | Item | Severity | Description |
 |---|------|----------|-------------|
 | PC1 | **Wastage not recorded from physical count** | MAJOR | When physical count reveals a negative drift (e.g., System=4.65kg, Physical=0, Drift=-4.65kg, Reason=Expired), the system calls `addStock()` which adjusts stock quantity. But there is **no explicit wastage record created**. The wastage reason dropdown appears but it's unclear if the backend actually creates a wastage log entry or just silently overwrites the stock number. The -4.65kg of "Expired" stock should appear in wastage reports — need backend confirmation: does `add-stock` with `wastage_reason_id` create a wastage_log entry? If not, FE needs to call a separate wastage recording endpoint after the stock adjustment. |
+| PC2 | **Rename screen: "Physical Stock Count" → "Stock Audit"** | LOW | Owner prefers "Audit" terminology. Update: page title, sidebar label, breadcrumb, any references in code. |
 
 **Current flow:**
 ```
@@ -111,7 +112,7 @@ Physical Count → enter physical qty → drift calculated → select reason →
 
 **Expected flow:**
 ```
-Physical Count → enter physical qty → drift calculated → select reason → Save
+Stock Audit → enter physical qty → drift calculated → select reason → Save
   → IF drift < 0: record wastage (qty=|drift|, reason=selected) + adjust stock
   → IF drift > 0: record addition (found extra stock) + adjust stock
   → Wastage appears in wastage reports
@@ -123,6 +124,28 @@ Physical Count → enter physical qty → drift calculated → select reason →
 3. No error display (same generic toast pattern)
 4. Reason dropdown only shows when drift ≠ 0 — but no * indicator that it's mandatory for wastage
 5. No "Export" for the physical count sheet (useful for paper audit)
+
+---
+
+### PURCHASE ENTRY — Batch & Expiry Gap (1 item)
+
+| # | Item | Severity | Description |
+|---|------|----------|-------------|
+| P6 | **Batch + Expiry fields NOT sent to backend** | MAJOR | Purchase line items have Batch (default "B-001") and Expiry (date picker) UI fields. User can enter values. BUT: `addPurchase` transform does NOT include batch or expiry in the payload — they are **silently discarded**. Also: backend stock-inventory API has NO batch/expiry fields (checked — 27 keys, none batch-related). This means batch/expiry tracking is not supported by backend at all, yet the UI presents it as a feature. |
+
+**Current state:**
+- FE line item model: `{ ingredientId, unit, quantity, rate, batch: '', expiry: '' }` — fields exist ✅
+- FE UI: Batch input + Expiry date picker rendered ✅
+- FE transform `addPurchase()`: sends `{ Ingredient, Unit, quantity, rate, Amount, converion_factor }` — **NO batch, NO expiry** ❌
+- Backend stock-inventory response: 27 keys — **NO batch/expiry fields** ❌
+- Backend add-purchase: unknown if it accepts batch/expiry
+
+**Options:**
+- **A:** Remove Batch + Expiry columns from UI (honest — backend doesn't support it)
+- **B:** Add batch/expiry to payload + backend brief to support batch tracking (future feature)
+- **C:** Send fields in payload (they'll be ignored by backend but preserved for future)
+
+**Owner decision needed:** Is batch/expiry tracking a planned feature, or should the UI columns be removed?
 
 ---
 

@@ -15228,7 +15228,7 @@
         "CR-072",
         "BUG-197"
       ],
-      "scope_note": "11 items: S1-S5 (stock) + P1-P5 (purchase/receive) + PC1 (physical count wastage recording). S1=BLOCKER export. P5=NEW purchase/receive conditional. PC1=wastage not recorded from physical count drift.",
+      "scope_note": "13 items: S1-S5 (stock) + P1-P6 (purchase/receive + batch/expiry) + PC1-PC2 (stock audit rename + wastage recording). S1=BLOCKER export. P5=purchase/receive conditional. P6=batch/expiry silently discarded. PC2=rename to Stock Audit.",
       "depends_on_note": "P5 (Receive) blocked until owner shares endpoint MD. P3 (invoice) blocked until backend endpoint confirmed."
     }
   ]
