@@ -118,8 +118,8 @@
 <h2 id="rootcause"><span class="num">2</span>Root Cause — How the Outage Happens</h2>
 
 <div class="callout red">
-  <span class="t">Verdict</span>
-  <b>Primary culprit: backend/infra.</b> The socket server broadcasts every event <b>globally to all restaurants</b> (no rooms), and the API origin collapses under the resulting load (proven: Cloudflare 521 = origin down). <b>The frontend is a contributing amplifier</b>, not the source: its handlers turn each broadcast into simultaneous API calls, retries have no jitter, and a reconnect race can double connections.
+  <span class="t">Verdict — PROVEN LIVE 2026-07-19</span>
+  <b>Primary culprit: backend/infra — now confirmed with a live authenticated test.</b> A logged-in client of restaurant <b>644</b> received unsolicited socket events for restaurants <b>689 and 523</b> within 4 minutes (<code>own=0, foreign=6</code>). The socket server broadcasts every event <b>globally to all restaurants</b> on the default namespace (no rooms). The API origin also collapses under load (Cloudflare 521 = origin down, observed twice). <b>The frontend is a contributing amplifier</b>, not the source: its handlers turn each broadcast into simultaneous API calls, retries have no jitter, and a reconnect race can double connections.
 </div>
 
 <h3>The amplification chain (traced in code)</h3>
@@ -139,7 +139,7 @@
 <h3>Findings table</h3>
 <table>
   <tr><th>#</th><th>Finding</th><th>Owner</th><th>Proof</th></tr>
-  <tr><td>F1</td><td><b>No room / join protocol exists.</b> Client never emits <code>join</code>, sends no identity at handshake. Server cannot scope emits → global broadcast is the only possibility.</td><td><span class="badge b-amber">BACKEND</span></td><td><code>socketService.js:43-71</code>, grep of <code>/src</code>: zero join emits</td></tr>
+  <tr><td>F1</td><td><b>Global broadcast — PROVEN LIVE.</b> Authenticated client of restaurant <b>644</b> received unsolicited events for restaurants <b>689 & 523</b> in a 4-min window (<code>own=0, foreign=6</code>). No room/join protocol; server emits on default namespace to every client. Client-side name-filter is the ONLY isolation.</td><td><span class="badge b-amber">BACKEND</span></td><td>Live onAny probe 2026-07-19 04:25 UTC; <code>socketService.js:43-71</code></td></tr>
   <tr><td>F2</td><td><b>API calls inside socket handlers.</b> <code>update-order-status</code>, <code>update-food-status</code>, <code>scan-new-order</code> each force a GET-back from every device, retry after fixed 1s.</td><td><span class="badge b-amber">BACKEND</span> contract + <span class="badge b-blue">FE</span> behavior</td><td><code>socketHandlers.js:94-112, 380-434, 459+</code></td></tr>
   <tr><td>F3</td><td><b>Synchronized fleet load.</b> Every client polls <code>getRunningOrders</code> every 60s + on tab-visible + on every reconnect &gt;1.5s → reconnect storms.</td><td><span class="badge b-blue">FRONTEND</span></td><td><code>useOrderPollingReconciliation.js:29,292-355</code>, <code>useSocketEvents.js:67-111</code></td></tr>
   <tr><td>F4</td><td><b>Duplicate-connection race.</b> <code>connect()</code> creates a new socket without killing an old mid-reconnect one → two live connections, doubled handlers &amp; API herd.</td><td><span class="badge b-blue">FRONTEND</span></td><td><code>socketService.js:45</code> guard; triggers at <code>SocketContext.jsx:72-113</code></td></tr>
@@ -157,7 +157,8 @@
   <tr><td><code>presocket.mygenie.online:80</code></td><td>Apache/2.4.52, 404 on <code>/socket.io/</code></td><td>Apache co-located on the socket host (shared box)</td></tr>
   <tr><td><code>presocket.mygenie.online:6001</code></td><td><code>server: uvicorn</code>, 404</td><td>A Python service also runs there</td></tr>
   <tr><td>DNS</td><td>Single A record → 52.66.232.149 (AWS ap-south-1)</td><td>Single host. No load balancer. SPOF.</td></tr>
-  <tr><td>Code audit</td><td>0 <code>join</code> emits, 0 handshake auth</td><td>Global broadcast proven by protocol</td></tr>
+  <tr><td>Code audit + <b>live onAny probe</b></td><td>0 <code>join</code> emits; <b>foreign=6 events (RID 689, 523) received by RID 644 client in 4 min</b></td><td><b>Global broadcast PROVEN</b> — not just inferred</td></tr>
+  <tr><td>Socket handshake (backend up)</td><td>nginx/1.18.0, Socket.IO v4, EIO4 OK, websocket upgrade, no-auth accepted</td><td>Server healthy when up; accepts unauthenticated sockets (security gap)</td></tr>
 </table>
 <p class="muted">Raw outputs: <code>/app/memory/evidence/INV-SOCKET-001/handshake_probe.txt</code>, <code>handshake_probe2.txt</code></p>
 

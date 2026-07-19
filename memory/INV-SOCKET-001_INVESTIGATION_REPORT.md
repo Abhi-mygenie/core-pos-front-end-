@@ -9,10 +9,10 @@
 
 ## 1. Summary
 
-**Root cause (composite, HIGH confidence on mechanism):**
-The socket layer has **no room/tenant scoping protocol** — the client never joins a room and sends no identity at handshake, so the server can only broadcast every event **globally to all connected sockets across all 150 restaurants**. On top of that, 3 of the socket handlers **call the order API from inside the handler**, so every broadcast event multiplies into N simultaneous API requests (one per connected client of that restaurant). Combined with per-client 60s polling, reconnect-storm rehydration fetches, and a frontend `connect()` leak that can create duplicate physical connections, peak traffic produces a **self-amplifying request storm** that saturates the Laravel origin → 500s/timeouts → retries → more load → 1–4 minute death spiral until the herd subsides.
+**Root cause (composite, PROVEN):**
+The socket layer has **no room/tenant scoping protocol** — the client never joins a room and sends no identity at handshake, and the server broadcasts on the default namespace to ALL clients. **This is now proven live (2026-07-19 04:25 UTC):** an authenticated client of restaurant 644 received unsolicited events for restaurants 689 and 523 within 4 minutes. Every order/status event of every restaurant travels to every connected socket in the fleet. On top of that, 3 socket handlers **call the order API from inside the handler**, so every broadcast multiplies into N simultaneous API requests. Combined with per-client 60s polling, reconnect-storm rehydration, and a frontend `connect()` leak, peak traffic produces a **self-amplifying O(N²) fan-out storm** that saturates the Laravel origin → 500s/timeouts → retries → more load → the 1–4 minute death spiral.
 
-**Live evidence captured today:** `preprod.mygenie.online` returned **HTTP 521 (Cloudflare: origin down)** — the API origin does go hard-down, exactly matching the reported outage signature. The socket host refused port 443 entirely from this pod.
+**Live evidence captured:** `preprod.mygenie.online` returned **HTTP 521 (Cloudflare: origin down)** at two separate times (03:19, 04:12 UTC) — origin does go hard-down, matching the outage signature. Global broadcast confirmed by authenticated onAny probe (own=0, **foreign=6**).
 
 - Classification: **INFRA/BACKEND primary** (global broadcast + origin capacity) with **contributing FE_BUGs** (connect leak, in-handler API herd, retry without jitter)
 - Confidence: HIGH (mechanism traced in code) / server-side resource metrics still needed (Backend Brief issued)
@@ -24,7 +24,7 @@ The socket layer has **no room/tenant scoping protocol** — the client never jo
 
 | # | Hypothesis | Test Method | Result | Evidence |
 |---|-----------|-------------|--------|----------|
-| H1 | Events broadcast globally, not per-restaurant room | Code trace: grep all `emit(`/`join` in FE | **CONFIRMED (by design)** — client NEVER emits `join`, sends no auth/identity at handshake; server has zero information to scope emits per restaurant | §3.2 |
+| H1 | Events broadcast globally, not per-restaurant room | **LIVE authenticated onAny probe, 4 min, 2026-07-19 04:25 UTC** | **CONFIRMED — PROVEN (not just inferred).** Logged in as restaurant **644**; client subscribed only to `*_644`; `onAny` received **6 FOREIGN events** for restaurants **689 and 523** (`login_disabled_689`, `login_disabled_523`) — unsolicited, over websocket. Server emits every tenant's events to every client on the default namespace. | §3.2, evidence/LIVE_REPROBE |
 | H2 | Socket handlers trigger API calls (thundering herd) | Code trace `socketHandlers.js` | **CONFIRMED** — `update-food-status`, `update-order-status`, `scan-new-order` each call `GET single-order` with 1s retry, per client | §3.4 |
 | H3 | Reconnects create duplicate listeners/connections | Code trace `socketService.connect()` + `SocketContext` | **CONFIRMED (race)** — `connect()` leaks the previous socket while its manager keeps auto-reconnecting → duplicate live connections possible | §3.6 |
 | H4 | 500/timeout errors originate at API origin, not proxy | Live curl probe | **CONFIRMED for today's sample** — Cloudflare 521 = origin down/refusing | §4 |
