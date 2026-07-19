@@ -212,6 +212,7 @@ Bundle net effect: **5 files added to scope** (constants, service adds, AuthCont
 | G15 | Ad-hoc new-ingredient | v1 restricted to existing ingredients only |
 | V1 | Live `/add-purchase` acceptance test | Deferred to §7 verification (single small test purchase during implementation) |
 | V2 | Unit-family mismatch | Confirmed 0 in real data; keep defensive fallback branch, no UI warning |
+| **PATH-X** | **Backend stock-inventory contract quirk** (discovered post-refactor E2E test 2026-07-19) | **`computePlan` reads `item.calQuantity` + `item.smallUnit` instead of `item.quantity` + `item.unit`. Rationale: `(quantity, unit)` pair is inconsistent per-ingredient; `cal_quantity` is always in `small_unit`. Backend brief filed at `/app/memory/backend_briefs/BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY_2026-07-19.md` — workaround reverts when backend normalizes contract.** |
 
 No further owner rulings needed inside this amendment.
 

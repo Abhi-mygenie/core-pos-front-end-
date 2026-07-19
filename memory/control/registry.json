@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T04:54:58.893080+00:00",
+  "generated_at": "2026-07-19T05:14:59.839368+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15279,6 +15279,12 @@
           "to": "PLANNED (gate=3 \u00b7 amended \u00b7 final v2)",
           "date": "2026-07-19",
           "reason": "15-gap review closed via preprod curl validation (10 endpoints, 3 existing transforms, 2 new transforms confirmed NOT needed). Amendment doc: /app/memory/plans/CR-078_PLAN_AMENDMENT_2026-07-19.md. Locked G11=wired-via-AuthContext \u00b7 G15=existing-ingredients-only \u00b7 V1=live-test-during-Phase-C. Awaiting Gate 4 GO."
+        },
+        {
+          "from": "PLANNED (gate=3 \u00b7 amended \u00b7 final v2)",
+          "to": "IN-PROGRESS \u00b7 Phase A refactor applied \u00b7 Path X patched",
+          "date": "2026-07-19",
+          "reason": "Phase A refactor complete (constants, services, planner, ranking). E2E test on real preprod data revealed backend stock-inventory contract inconsistency: (quantity, unit) pair mixes display-unit and small-unit magnitudes per ingredient. Owner ruled Path X: use cal_quantity + small_unit for math. Backend brief filed: /app/memory/backend_briefs/BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY_2026-07-19.md. 12/12 smoke tests pass. 48 sane plan rows on real Kunafa Mahal data. Webpack clean. Awaiting owner checkpoint before Phase C."
         }
       ],
       "artifact_refs": [
@@ -15286,6 +15292,11 @@
           "label": "Plan Amendment (final v2)",
           "path": "memory/plans/CR-078_PLAN_AMENDMENT_2026-07-19.md",
           "type": "amendment"
+        },
+        {
+          "label": "Backend Brief (stock unit contract)",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY_2026-07-19.md",
+          "type": "backend_brief"
         }
       ]
     },

@@ -64,11 +64,13 @@ export function getHorizonDates(horizonDays, referenceDate = new Date()) {
 }
 
 /**
- * Compute daily consumption velocity in the ingredient's canonical unit.
+ * Compute daily consumption velocity in the ingredient's BASE unit (small_unit).
+ * Uses stockItem.smallUnit as the target family base (gm/ml/piece).
+ *
  * @param {Object} dcrRow      Row from response.stock_summary (RAW)
  * @param {Object} stockItem   Row from getStockInventory() (TRANSFORMED)
  * @param {number} horizonDays How many days the DCR window spans
- * @returns {number}           Velocity in stockItem.unit per day (0 if no data)
+ * @returns {number}           Velocity in stockItem.smallUnit per day (0 if no data)
  */
 export function computeVelocity(dcrRow, stockItem, horizonDays) {
   if (!dcrRow || horizonDays <= 0) return 0;
@@ -76,17 +78,16 @@ export function computeVelocity(dcrRow, stockItem, horizonDays) {
   if (consumedVal <= 0) return 0;
 
   const consumedBase = convertToBase(consumedVal, consumedUnit);
-  const targetUnit   = (stockItem?.unit || consumedUnit).toLowerCase();
+  // CR-078 · Path X · backend contract quirk (see BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY.md):
+  //   cal_quantity is always in small_unit → use smallUnit as target base
+  const targetUnit   = (stockItem?.smallUnit || stockItem?.unit || consumedUnit).toLowerCase();
   const targetInBase = convertToBase(1, targetUnit);
 
   // Family mismatch (0 real cases in preprod, defensive fallback):
-  //   assume the DCR value already matches the stock unit, no conversion.
+  //   assume the DCR value already matches the target unit, no conversion.
   if (consumedBase.base !== targetInBase.base) {
     return consumedVal / horizonDays;
   }
-  // consumedBase.value = grams (or ml/piece). targetInBase.value = grams per 1 stock-unit.
-  // e.g. stock unit 'gm' -> targetInBase.value = 1 (1 gm = 1 g). Consumed 5703 g / 1 = 5703 gm/window.
-  //      stock unit 'kg' -> targetInBase.value = 1000. Consumed 5703 g / 1000 = 5.703 kg/window.
   return (consumedBase.value / targetInBase.value) / horizonDays;
 }
 
@@ -113,8 +114,11 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
     .map(item => {
       const ingredientId = item.id;
       const name         = item.name || '';
-      const unit         = item.unit || '';
-      const onHand       = Number(item.quantity) || 0;          // already transformed to Number
+      // CR-078 · Path X · use small_unit + cal_quantity for math (see BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY.md).
+      // The (quantity, unit) pair is inconsistent per-ingredient in the current backend contract;
+      // cal_quantity is always expressed in small_unit → single source of truth for planner math.
+      const unit         = item.smallUnit || item.unit || '';
+      const onHand       = Number(item.calQuantity) || 0;
       const dcrRow       = dcrByIngredient.get(String(ingredientId));
       const velocity     = computeVelocity(dcrRow, item, horizonDays);
       const projected    = velocity * horizonDays;
@@ -123,7 +127,8 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
       return {
         ingredient_id:    ingredientId,
         name,
-        unit,
+        unit,                                                      // base unit (gm/ml/piece) for math + labels
+        display_unit:     item.displayUnit || unit,                // display-friendly (kg/ltr) for UI conversion
         on_hand:          Number(onHand.toFixed(3)),
         velocity_per_day: Number(velocity.toFixed(3)),
         projected_need:   Number(projected.toFixed(3)),
