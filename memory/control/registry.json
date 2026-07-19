@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T03:34:56.208119+00:00",
+  "generated_at": "2026-07-19T03:58:18.913587+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15320,6 +15320,45 @@
       "intake_doc": "change_requests/CR-073_RECIPE_BULK_EDITOR_INTAKE.md",
       "plan_doc": "plans/CR-073_IMPLEMENTATION_PLAN.md",
       "mockup": "public/__dev/recipe_bulk_editor_mockup.html"
+    },
+    {
+      "type": "CR",
+      "sprint_key": "pos_5_0_wave_2",
+      "id": "CR-075-A",
+      "title": "Stock Dashboard Polish (S1 export fix, S2 filter UX, S3 status chips, S5 error display)",
+      "status": "PLANNED",
+      "gate": 3,
+      "priority": "P1",
+      "risk": "LOW",
+      "files": "CurrentStockPanel.jsx (renamed), inventoryService.js",
+      "notes": "Split from CR-075 on 2026-07-18. P1/P2/P4 auto-covered by CR-078. P6 folded into CR-078 Edit #3. P3 remains in CR-076. S4 backend-blocked.",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis (Round 1)",
+          "path": "memory/impact/CR-075_CR-076_BUG-201_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-075-A_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
+        },
+        {
+          "label": "Intake (parent)",
+          "path": "memory/change_requests/CR_075_INVENTORY_UX_OVERHAUL.md",
+          "type": "intake"
+        }
+      ],
+      "completeness": "3/7",
+      "category": "IN_PROGRESS",
+      "status_history": [
+        {
+          "from": "INTAKE (via parent CR-075)",
+          "to": "PLANNED (gate=3)",
+          "date": "2026-07-18",
+          "reason": "Gate 3 Plan authored after code-walk revealed items S1/S2/S3/S5 still unshipped. Scope narrowed to Stock Dashboard only (P1/P2/P4 auto-covered by CR-078, P6 folded into CR-078 transform edit)."
+        }
+      ]
     }
   ]
 }

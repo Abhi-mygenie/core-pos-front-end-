@@ -143,10 +143,45 @@ rankVendors(vendorItemList, ingredientId)
 **Verify:** unit test `vendorRanking.test.js` — 3 vendors, 5 fixtures for each branch
 
 #### Edit #3 — **EDIT** `api/transforms/inventoryTransform.js`
-**Location:** `toAPI.addStock()` builder (find via grep)
-**Change:** Add `origin: line.origin || 'legacy'` passthrough on each line
-**Δ:** ~5 lines
-**Verify:** curl an /add-stock POST with `origin: 'planner'` — response 200 · payload preserved server-side (Q7-b future brief mentions field-preservation)
+**Location:** `toAPI.addPurchase()` line 116-134 · `purchase_items` mapper
+**Changes (2 concerns · same edit):**
+
+1. **`origin` passthrough** (CR-078 planner marker · used by future backend brief Q7-b):
+   ```js
+   origin: item.origin || 'legacy',   // 'planner' | 'ad_hoc' | 'legacy'
+   ```
+
+2. **P6 fix — Batch + Expiry passthrough** (folded from CR-075-A per code-walk 2026-07-18):
+   - Prior state: fields captured in UI + line-item model, but **silently dropped** at transform → backend never receives them
+   - Backend field names (curl-verified 2026-07-18): `batch` (raw string) · `expiry_date` (DD-MM-YYYY string)
+   - Reuse existing `formatDateForAPI(item.expiry)` helper (already in `PurchaseEntryPanel.jsx:82-85` — extract to shared util or inline the 2-line conversion inside the mapper)
+   - **Add to `purchase_items` mapper:**
+     ```js
+     batch: item.batch || '',
+     expiry_date: item.expiry ? formatDateForAPI(item.expiry) : '',
+     ```
+
+**After (final purchase_items object):**
+```js
+purchase_items: (data.items || []).map(item => ({
+  Ingredient: item.ingredientId,
+  Unit: item.unit,
+  quantity: item.quantity,
+  rate: item.rate,
+  Amount: item.amount,
+  converion_factor: item.conversionFactor || 1,   // R9 typo preserved
+  batch: item.batch || '',                          // P6 · CR-075-A folded
+  expiry_date: item.expiry ? formatDateForAPI(item.expiry) : '',  // P6 · CR-075-A folded
+  origin: item.origin || 'legacy',                  // CR-078
+})),
+```
+
+**Δ:** ~7 lines (3 new fields + 4 lines inline formatter or import)
+
+**Verify:**
+- Curl an `/add-purchase` POST with `batch: 'B-2026-07'` + `expiry_date: '31-12-2026'` + `origin: 'planner'` → response 200 · fields present in stored record (per P6 curl proof in CR-075 intake §P6)
+- Unit test: transform input `{ items: [{ batch: 'B1', expiry: '2026-12-31', origin: 'planner' }] }` → output has `batch: 'B1'`, `expiry_date: '31-12-2026'`, `origin: 'planner'`
+- Regression: transform input WITHOUT batch/expiry → output has empty strings (backwards compat)
 
 ### 4.2 · Renames (Phase B)
 
