@@ -1,4 +1,5 @@
-// CR-072: Physical Stock Count Panel — system vs physical qty with drift indicators
+// CR-079: Stock Audit Panel (renamed from PhysicalCountPanel · absorbs CR-075-B rename)
+// CR-072: Original — system vs physical qty with drift indicators
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import * as inventoryService from '@/api/services/inventoryService';
 
-export default function PhysicalCountPanel() {
+export default function StockAuditPanel() {
   const [stockItems, setStockItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [wastageReasons, setWastageReasons] = useState([]);
@@ -89,7 +90,7 @@ export default function PhysicalCountPanel() {
   const selectCls = "h-9 text-sm border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white";
 
   return (
-    <div data-testid="physical-count-panel">
+    <div data-testid="stock-audit-panel">
       <p className="text-sm text-slate-500 mb-5">Compare system quantities with actual physical stock. Enter what you see on the shelf.</p>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -98,9 +99,9 @@ export default function PhysicalCountPanel() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input placeholder="Search ingredient..." value={search} onChange={e => setSearch(e.target.value)}
-              className="pl-9 h-9 text-sm" data-testid="physical-search" />
+              className="pl-9 h-9 text-sm" data-testid="audit-search" />
           </div>
-          <select className={selectCls} value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} data-testid="physical-category-filter">
+          <select className={selectCls} value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} data-testid="audit-category-filter">
             <option value="">All Categories</option>
             {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
@@ -108,7 +109,7 @@ export default function PhysicalCountPanel() {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left" style={{ minWidth: 750 }} data-testid="physical-table">
+          <table className="w-full text-left" style={{ minWidth: 750 }} data-testid="audit-table">
             <thead>
               <tr className="bg-slate-50/80">
                 <th className="py-2.5 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200" style={{ width: '35%' }}>Ingredient</th>
@@ -126,7 +127,7 @@ export default function PhysicalCountPanel() {
               ) : filtered.map(item => {
                 const drift = getDrift(item);
                 return (
-                  <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors" data-testid={`physical-row-${item.id}`}>
+                  <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors" data-testid={`audit-row-${item.id}`}>
                     <td className="py-3 px-4">
                       <div className="text-sm font-medium text-slate-900">{item.name}</div>
                       <div className="text-xs text-slate-400">{item.categoryName}</div>
@@ -141,7 +142,7 @@ export default function PhysicalCountPanel() {
                         onChange={e => updateEntry(item.id, 'qty', e.target.value)}
                         placeholder={String(item.quantity)}
                         className="h-8 text-sm text-center w-24 mx-auto"
-                        data-testid={`physical-input-${item.id}`} />
+                        data-testid={`audit-input-${item.id}`} />
                     </td>
                     <td className="py-3 px-4 text-center">
                       {drift === null ? (
@@ -159,7 +160,7 @@ export default function PhysicalCountPanel() {
                         <select className={`${selectCls} w-full text-xs`}
                           value={physicalEntries[item.id]?.reasonId || ''}
                           onChange={e => updateEntry(item.id, 'reasonId', e.target.value)}
-                          data-testid={`physical-reason-${item.id}`}>
+                          data-testid={`audit-reason-${item.id}`}>
                           <option value="">Select reason...</option>
                           {wastageReasons.map(r => <option key={r.id} value={r.id}>{r.reason}</option>)}
                           <option value="physical_count">Physical stock count</option>
@@ -180,7 +181,7 @@ export default function PhysicalCountPanel() {
       {hasEntries && (
         <div className="flex justify-end mt-4">
           <Button onClick={handleSaveAll} disabled={saving}
-            className="bg-green-600 hover:bg-green-700 text-white gap-1.5" data-testid="physical-save-btn">
+            className="bg-green-600 hover:bg-green-700 text-white gap-1.5" data-testid="audit-save-btn">
             <Check className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save Adjustments'}
           </Button>

@@ -66,7 +66,17 @@ export async function addPurchase(data) {
 }
 
 export async function exportStock() {
-  return api.get(INVENTORY_ENDPOINTS.EXPORT_STOCK, { responseType: 'blob' });
+  // CR-075-A · S1 — support JSON { download_url } (new) OR blob (legacy) response shapes
+  try {
+    const res = await api.get(INVENTORY_ENDPOINTS.EXPORT_STOCK);
+    return res;
+  } catch (err) {
+    // Fallback to blob if server rejects the JSON default
+    if (err?.response?.status === 406 || err?.response?.status === 415) {
+      return api.get(INVENTORY_ENDPOINTS.EXPORT_STOCK, { responseType: 'blob' });
+    }
+    throw err;
+  }
 }
 
 export async function importStock(formData) {

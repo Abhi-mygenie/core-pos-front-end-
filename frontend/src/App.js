@@ -54,8 +54,8 @@ import SettingsPage from "./pages/SettingsPage";                     // CR-041
 import ExpenseEntryPage from "./pages/ExpenseEntryPage";             // CR-059
 import ExpenseSetupPage from "./pages/ExpenseSetupPage";             // CR-059
 import EmployeeManagementPage from "./pages/EmployeeManagementPage"; // CR-069
-import InventoryDashboardPage from "./pages/InventoryDashboardPage"; // CR-072
-import PhysicalCountPage from "./pages/PhysicalCountPage";           // CR-072
+import InventoryCurrentStockPage from "./pages/InventoryCurrentStockPage"; // CR-079 (renamed from InventoryDashboardPage)
+import StockAuditPage from "./pages/StockAuditPage";                       // CR-079 (renamed from PhysicalCountPage · absorbs CR-075-B)
 import InventorySetupPage from "./pages/InventorySetupPage";         // CR-072
 import PurchaseEntryPage from "./pages/PurchaseEntryPage";           // CR-072
 import RecipeManagementPage from "./pages/RecipeManagementPage";     // CR-072
@@ -165,8 +165,8 @@ function App() {
               {/* CR-069: Employee Management */}
               <Route path="/employees" element={<ProtectedRoute><EmployeeManagementPage /></ProtectedRoute>} />
               {/* CR-072: Inventory Management */}
-              <Route path="/inventory" element={<ProtectedRoute><InventoryDashboardPage /></ProtectedRoute>} />
-              <Route path="/inventory-physical" element={<ProtectedRoute><PhysicalCountPage /></ProtectedRoute>} />
+              <Route path="/inventory" element={<ProtectedRoute><InventoryCurrentStockPage /></ProtectedRoute>} />
+              <Route path="/inventory-physical" element={<ProtectedRoute><StockAuditPage /></ProtectedRoute>} />
               <Route path="/inventory-setup" element={<ProtectedRoute><InventorySetupPage /></ProtectedRoute>} />
               <Route path="/inventory-purchase" element={<ProtectedRoute><PurchaseEntryPage /></ProtectedRoute>} />
               <Route path="/recipes" element={<ProtectedRoute><RecipeManagementPage /></ProtectedRoute>} />
