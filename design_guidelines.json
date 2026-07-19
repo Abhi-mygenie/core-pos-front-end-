@@ -1,0 +1,78 @@
+{
+  "theme": "light",
+  "typography": {
+    "headings": "Poppins",
+    "body": "Inter",
+    "scale": {
+      "h1": "text-2xl font-bold",
+      "h2": "text-xl font-semibold",
+      "h3": "text-sm font-semibold",
+      "body": "text-sm",
+      "small": "text-xs",
+      "tiny": "text-[11px]"
+    }
+  },
+  "colors": {
+    "primary": "#F26B33 (brand-orange)",
+    "secondary": "#329937 (brand-green)",
+    "accent": "#F4A11A (brand-amber)",
+    "background": "#F7F7F7 (pos-bg)",
+    "surface": "#FFFFFF",
+    "border": "#E5E5E5 (pos-border)",
+    "text": {
+      "primary": "#1A1A1A (pos-dark)",
+      "secondary": "#666666 (pos-gray)",
+      "error": "#EF4444 (pos-error)"
+    }
+  },
+  "visual_enhancers": {
+    "borders": "1px solid #E5E5E5",
+    "shadows": "shadow-sm",
+    "radius": "rounded-xl for cards, rounded-lg for buttons/inputs"
+  },
+  "components": {
+    "pill_nav": "rounded-full bg-white text-pos-gray border border-pos-border px-3 py-1.5",
+    "tabs": "border-b-2 text-sm font-semibold px-4 py-2.5",
+    "table": "w-full text-sm divide-y divide-pos-border",
+    "badges": "px-2 py-0.5 rounded-full text-xs font-semibold",
+    "data_grid_inputs": "border border-transparent hover:border-pos-border focus:border-brand-orange bg-transparent focus:bg-white rounded-sm"
+  },
+  "layouts": {
+    "container": "max-w-7xl mx-auto p-6",
+    "sidebar": "w-[70px] border-r border-pos-border",
+    "grid": "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  },
+  "motion": {
+    "fade_in": "animation: fadeIn 0.2s ease-out",
+    "transitions": "transition-colors 0.15s, transition-transform 0.3s"
+  },
+  "accessibility": {
+    "data_testid": "Required on all interactive elements using kebab-case",
+    "contrast": "WCAG AA compliant text colors"
+  },
+  "media": {
+    "icons": "lucide-react"
+  },
+  "instructions_to_main_agent": [
+    "Maintain the exact visual language of v5-full mock including brand tokens and component styles",
+    "Do not add role-switching toggles, it is deferred to a future CR",
+    "Ensure all buttons, inputs, tabs, and interactive rows have data-testid attributes",
+    "Use Lucide icons matching the v5-full mock",
+    "Do not use generic font families like Arial or Roboto; stick to Poppins and Inter",
+    "When rendering the Recipe Bulk Editor, implement the expandable rows matching the vanilla JS logic"
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic outputs. Make creative, distinctive frontends.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts. Create depth through layered design elements.",
+    "Use glass-morphism effects carefully.",
+    "You MUST NOT apply universal transition (transition: all).",
+    "You MUST NOT center align the app container (.App { text-align: center; }).",
+    "Always use modern button styles.",
+    "NEVER use emoji characters for icons.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Prioritize using pre-existing components from src/components/ui.",
+    "Use sonner for toasts."
+  ]
+}

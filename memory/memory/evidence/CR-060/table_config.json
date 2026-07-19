@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "message": "Table configuration retrieved successfully",
+  "data": {
+    "tables": [],
+    "walkin_qr_urls": {
+      "walkin_dinein": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Normal",
+      "delivery": "https://devorder.mygenie.online/689?type=walkin&orderType=delivery&foodFor=Normal",
+      "takeaway": "https://devorder.mygenie.online/689?type=walkin&orderType=takeaway&foodFor=Normal"
+    },
+    "walkin_menu_qr_urls": {
+      "Normal": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Normal",
+      "Party": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Party",
+      "Premium": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Premium"
+    },
+    "restaurant_id": 689,
+    "restaurant_name": "Kunafa Mahal"
+  }
+}

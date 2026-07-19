@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Restaurant",
+    "description": "Vendors that operate food businesses.",
+    "status": 1,
+    "created_at": "2025-03-01 05:21:07",
+    "updated_at": "2025-03-01 05:21:07"
+  },
+  {
+    "id": 2,
+    "name": "Grocery Store",
+    "description": "Vendors that sell grocery items.",
+    "status": 1,
+    "created_at": "2025-03-01 05:21:07",
+    "updated_at": "2025-03-01 05:21:07"
+  },
+  {
+    "id": 3,
+    "name": "Wholesale Supplier",
+    "description": "Vendors supplying products in bulk.",
+    "status": 1,
+    "created_at": "2025-03-01 05:21:07",
+    "updated_at": "2025-03-01 05:21:07"
+  },
+  {
+    "id": 4,
+    "name": "Retail Store",
+    "description": "Vendors selling directly to customers.",
+    "status": 1,
+    "created_at": "2025-03-01 05:21:07",
+    "updated_at": "2025-03-01 05:21:07"
+  },
+  {
+    "id": 5,
+    "name": "Online Vendor",
+    "description": "Vendors selling through online platforms.",
+    "status": 1,
+    "created_at": "2025-03-01 05:21:07",
+    "updated_at": "2025-03-01 05:21:07"
+  }
+]

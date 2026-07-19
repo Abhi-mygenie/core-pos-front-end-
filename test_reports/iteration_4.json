@@ -1,0 +1,64 @@
+{
+  "summary": "CR-073 Recipe Bulk Editor — full frontend QA on live preprod (kunafamahal tenant, 92 standard recipes). 12 of 14 review items PASS (V1-V8, V10-V13). CRITICAL: V9 Batch Save fails with 422 'The name field is required'; RT-1 Round-Trip persistence therefore FAILS. Root cause: RecipeBulkEditor does not reverse-lookup foodId from foodName like RecipeFormPanel does (BUG-197 #7 workaround), so `name: null` is sent for every existing standard recipe update. Card-view save on the same endpoint returns 200 — the endpoint itself is healthy.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "PUT /api/v2/vendoremployee/recipe/update-recipe/{id}", "issue": "Backend returns 422 'The name field is required' when Bulk Editor sends name: null. Not a backend bug — backend correctly rejects invalid payload. Card view PUT to the same endpoint with name: <food_id> returns 200. Included here for context, not as a backend defect.", "priority": "HIGH"}
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "RecipeBulkEditor.jsx", "issue": "Missing foodId reverse-lookup from foodName. When editing existing standard recipes, `normaliseRecipe()` sets `foodId: r.foodId ?? null`, but the GET recipe list endpoint does NOT return food_id (per BUG-197 #7 note in RecipeFormPanel.jsx L50). Result: every existing standard recipe update PUT ships `{name: null, ...}`, backend returns 422 'The name field is required'. The RecipeFormPanel does not have this bug because it explicitly matches food_name against foodsMaster (L50-53) to populate foodId before saving.", "selector": "[data-testid='bulk-save']", "priority": "CRITICAL"},
+      {"component": "RecipeBulkEditor.jsx (addon tab)", "issue": "Same pattern likely fails for addon recipes: `addonId: r.addonId ?? null`. Backend addon list DOES return addon_id (confirmed by fromAPI.addonRecipes → addonId: r.addon_id || null), so may or may not repro. Not exercised in this test run because kunafamahal has 0 addon recipes.", "selector": "recipe-view-bulk (addon tab)", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "V9 Batch Save → RT-1 Round-Trip persistence", "issue": "Bulk save of existing standard recipe with prep=55 → PUT returns 422; results banner correctly shows '✗ 50-50 Choco Lava · The name field is required'. Recipe prep does NOT persist. After reload, prep reverts to original value. Card-view save of the same recipe with prep=88/prep=10 succeeds (200) — proving the endpoint works and the bug is Bulk-Editor-payload-only.", "affected_selectors": ["[data-testid='bulk-save']", "[data-testid='bulk-submit-results']"]}
+    ],
+    "design_issues": [
+      {"screen": "Recipe Bulk Editor", "issues": ["Partial-success error banner (A3 UX) works correctly — clear red '✗ recipe-name · error-message' line surfaced. Good UX for surfacing this bug to users. No design regressions observed."]}
+    ]
+  },
+  "test_results": {
+    "V1 Card/Bulk toggle visible": "PASS — [data-testid='recipe-view-card'] and [data-testid='recipe-view-bulk'] both rendered in header at /recipes.",
+    "V2 Bulk grid renders with all columns": "PASS — Editor rendered with 92 recipe rows and all 10 columns: #, NAME, QTY, UNIT, PREP, COOK, SERVES, INGREDIENTS, COST, MARGIN.",
+    "V3 Search filters recipes": "PASS — typed 'Kunafa' → counter '36 of 92 standard recipes' updated in real time; row count reduced from 92 → 36.",
+    "V4 Inline editing activates Save with dirty count": "PASS — edited prep on 50-50 Choco Lava (row bulk-row-4874) from 10 → 77; [data-testid='bulk-save'] text became 'Save Changes (1)' and button enabled.",
+    "V5 Expandable ingredient row with orange border": "PASS — clicked '3 items' ingredient badge; sub-table expanded with `.border-l-4.border-orange-500` orange left border.",
+    "V6 Ingredient dropdown + quantity input functional": "PASS — expanded row exposed 3 [data-testid^='bulk-ing-select-'] selects and 3 quantity inputs.",
+    "V7 Add Ingredient inserts new row": "PASS — [data-testid^='bulk-add-ing-'] added a 4th ingredient (select+qty inputs went 3→4).",
+    "V8 Delete Ingredient removes row": "PASS — trash icon on new ingredient row reduced count 4→3.",
+    "V9 Batch Save persists": "FAIL — PUT /api/v2/vendoremployee/recipe/update-recipe/4874 returns 422. Payload sent: `{\"name\":null,\"recipe_qty\":1,\"recipe_unit\":\"plates\",\"preparation_time\":\"55\",...}`. Banner ✗ '50-50 Choco Lava · The name field is required' shown. No toast success. RCA: foodId not reverse-looked-up in RecipeBulkEditor (BUG-197 #7 fix missing).",
+    "V10 Add Recipe inserts empty row at top expanded": "PASS — clicked [data-testid='bulk-add-recipe']; new row [data-testid='bulk-row-new'] inserted at top (row count 92→93), expanded with 1 empty ingredient, showed 'Select menu food' dropdown.",
+    "V11 Excel button enabled on Standard tab": "PASS — [data-testid='bulk-excel'] is_disabled=False.",
+    "V12 Import button enabled on Standard tab": "PASS — [data-testid='bulk-import'] is_disabled=False.",
+    "V13 Card View toggle back works": "PASS — clicked [data-testid='recipe-view-card'] → 92 [data-testid^='recipe-card-'] cards re-rendered.",
+    "RT-1 Round-Trip persistence (prep=99)": "FAIL — Save PUT returned 401 in one session and 422 in a fresh session (same root cause: name:null payload). After reload, prep reverts to original. Persistence NOT achieved via Bulk Editor. Same recipe, same endpoint, saved successfully via Card view (200) — confirming this is a Bulk Editor payload bug.",
+    "Bonus: Card-view Update Recipe on same recipe/endpoint": "PASS — PUT payload correctly ships `{\"name\":168408,...}` (food_id in name field). Backend returns 200. Prep persisted to 88, then reverted to 10 via a second card-view save for cleanup."
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_4.json"
+  ],
+  "action_items": [
+    "FIX RecipeBulkEditor.jsx: Port the BUG-197 #7 workaround from RecipeFormPanel.jsx L50-53 — reverse-lookup foodId (and addonId) from foodName/addonName against foodsMaster before building the save payload. Suggested locations: either enrich rows on hydrate `useEffect([recipes, recipeType, foodsMaster])` or resolve in `handleSave()` per row before dispatch.store/update. Add unit assertion: after hydrate, every existing standard/addon row has non-null foodId/addonId when a matching menu item exists.",
+    "Add validation in handleSave to fail-fast client-side when name/foodId is null so we surface a clearer error than server-side 422 (avoid confusing user).",
+    "Regression: verify addon-tab Bulk saves work (kunafamahal has 0 addon recipes so wasn't exercised here). Sub-recipe saves should also be smoke-tested since normaliseRecipe zeroes out foodId/addonId for sub as well (unused for sub, but worth confirming payload symmetry).",
+    "Consider: axios interceptor kicks user to /login on 401 during Bulk saves — a stale token during a long-lived Bulk-edit session would silently discard all pending edits. Not part of CR-073 but worth a UX warning."
+  ],
+  "critical_code_review_comments": [
+    "RecipeBulkEditor.jsx L34-58 normaliseRecipe(): `foodId: r.foodId ?? null` accepts whatever the list endpoint returns. Since fromAPI.recipes() in recipeTransform.js already sets `foodId: r.food_id || null` and the get-recipe endpoint reportedly omits food_id (BUG-197 #7), foodId is null for all existing standard recipes. Downstream, toAPI.updateRecipe() maps `name: data.foodId` → sends name:null → 422. Same recipe list is used by RecipeFormPanel which reverse-looks-up foodId via foodsMaster; RecipeBulkEditor already loads foodsMaster (L82-88) but never uses it to enrich rows.",
+    "RecipeBulkEditor.jsx L190-200 handleSave payload: No client-side guard that foodId is non-null for existing standard recipes. The validation only checks `row.isNew && !row.foodId`. Consider extending: `if (recipeType==='standard' && !row.foodId) failed.push({error:'Menu food link missing'})`.",
+    "RecipeBulkEditor.jsx L60 total file size: 567 lines. Approaching the 700-line limit. Consider extracting RecipeRow subcomponent to its own file (already 165 lines just for that inner component).",
+    "RecipeBulkEditor.jsx L241 handleImportClick: no visible progress indicator during Excel import; user may double-click. Consider disable-while-uploading.",
+    "RecipeBulkEditor.jsx L156-169 deleteRow uses window.confirm — inconsistent with the rest of the app using shadcn AlertDialog. Minor UX inconsistency.",
+    "RecipeManagementPanel.jsx L200-205: When switching tab while in Bulk view, the same viewMode is preserved and RecipeBulkEditor keys off `activeTab` — good. But the dirty state in RecipeBulkEditor is cleared on `recipes/recipeType` change (L74-78) — meaning switching tabs silently discards unsaved edits. Consider a confirm-before-switch guard.",
+    "recipeTransform.js toAPI.updateRecipe L104-118: Maps `name: data.foodId`. This is fragile — the field name 'name' is misleading; if backend ever renames to food_id, both card and bulk break. Consider aliasing `name: (data.foodId ?? data.name)` as defense in depth."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only per request)", "frontend": "12/14 = 85.7% (V1-V8, V10-V13 PASS; V9 & RT-1 FAIL due to same root cause)"},
+  "test_credentials": "owner@kunafamahal.com / Qplazm@10 (as provided in review request; /app/memory/test_credentials.md does not exist)",
+  "seed_data_creation": "None. All mutations were reverted: (1) Bulk save attempts failed with 422 so no data changed; (2) Card-view saves changed 50-50 Choco Lava prep 10→88 for RCA confirmation, then reverted back to 10. Final state on preprod: unchanged from pre-test baseline. Recipe id 4874, food_id 168408.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-073 core UI (12 tests) passes cleanly. The single defect is a payload bug: RecipeBulkEditor.jsx does not reverse-lookup foodId from foodName like RecipeFormPanel.jsx L50-53 does. As soon as main-agent adds the enrichment (either in normaliseRecipe using foodsMaster or in handleSave), V9 and RT-1 should pass. Test recipe used: '50-50 Choco Lava' (recipe_id 4874, food_id 168408) — good candidate for regression retest since it exists on preprod. Do not run repeated bulk saves without reverting — the A3 partial-success banner works but there's no undo. Card-view path on the same endpoint is confirmed healthy (verified 200 with payload {name:168408,...}).",
+  "rca of the issue": "STEP 1 (repro): Login → /recipes → click Bulk → edit prep on any existing standard recipe (e.g. 50-50 Choco Lava) → click 'Save Changes (1)'. STEP 2 (network): Playwright request interception captured PUT /api/v2/vendoremployee/recipe/update-recipe/4874 with body `{\"name\":null,\"recipe_qty\":1,\"recipe_unit\":\"plates\",\"preparation_time\":\"55\",\"serve_time\":\"2\",\"serves_people\":1,\"ingredients\":[...]}` → response 422 `The name field is required`. STEP 3 (compare): Same recipe saved via Card view (RecipeFormPanel → 'Update Recipe' button) sends `{\"name\":168408,\"recipe_qty\":1,...}` → 200 OK and persists. STEP 4 (RCA): Diff in code paths — RecipeFormPanel.jsx L50-53 has BUG-197 #7 workaround that matches recipe.foodName against foodsMaster to fill missing foodId before save. RecipeBulkEditor.jsx has no such workaround. Since fromAPI.recipes() sets `foodId: r.food_id || null` and the list endpoint omits food_id, `row.foodId` stays null. Then `toAPI.updateRecipe` maps `name: data.foodId` → null → 422. MITIGATION: In RecipeBulkEditor.jsx normaliseRecipe (or in a new post-hydrate useEffect using foodsMaster), do: `const food = foodsMaster.find(f => (f.name||f.food_name||'').trim().toLowerCase() === (r.foodName||r.name||'').trim().toLowerCase()); foodId: r.foodId || food?.id || null` — then re-run V9 & RT-1."
+}

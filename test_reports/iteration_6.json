@@ -1,0 +1,37 @@
+{
+  "summary": "BUG-206 v2 fix VERIFIED WORKING. Merging foodId enrichment INTO normaliseRecipe(r, foods) + adding foodsMaster to hydration useEffect deps fully resolves the reverse-lookup issue. V9 Batch Save: PUT /recipe/update-recipe/4874 with payload {\"name\":168408,\"preparation_time\":\"55\",...} → 200 OK. RT-1 Round-Trip: After page reload, prep persisted as 55. Reverted prep back to 10 (200 OK) to leave preprod clean. REGRESSION Add Recipe food picker: 98 options rendered correctly for new rows. All 3 test scenarios PASS.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "RecipeBulkEditor after save", "issues": ["No success toast or submit-results banner appears after successful save. Reason: handleSave() calls onRefresh?.() which triggers parent re-fetch → new recipes prop → hydration useEffect fires setSubmitResults(null), clearing the banner. Toasts also seem to be dismissed/missing. Minor UX regression — user gets no visual confirmation that save succeeded (they see the updated value in the row though). Not blocking; server save succeeds correctly."]}
+    ]
+  },
+  "test_results": {
+    "V9 Batch Save (BUG-206 v2 retest)": "PASS — PUT https://preprod.mygenie.online/api/v2/vendoremployee/recipe/update-recipe/4874 body={\"name\":168408,\"recipe_qty\":1,\"recipe_unit\":\"plates\",\"preparation_time\":\"55\",\"serve_time\":\"2\",\"serves_people\":1,\"ingredients\":[...3...]}, response 200 OK: {\"message\":\"Recipe updated successfully.\",\"recipe_id\":4874,\"preparation_time\":\"55\",...}. name field correctly contains the food_id 168408 (integer, not null).",
+    "RT-1 Round-Trip Persistence (BUG-206 v2 retest)": "PASS — After reload → /recipes → Bulk view → search '50-50 Choco Lava', the prep input shows '55' (persisted). Then reverted prep=10 → save → PUT 200 OK with body preparation_time:'10' and name:168408 → server response confirms preparation_time:'10'. Preprod cleaned back to baseline.",
+    "REGRESSION Add Recipe food picker": "PASS — [data-testid='bulk-add-recipe'] inserts new row with <select data-testid^='bulk-food-picker-'> containing 98 options (1 placeholder + 97 foods). Sample options: '— Select menu food —', '50-50 Aam -E -Bahar', '50-50 Astha E Malai', '50-50 Bluebeery'."
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_6.json",
+    "/app/test_reports/iteration_5.json"
+  ],
+  "action_items": [
+    "OPTIONAL UX POLISH (non-blocking): After successful bulk save, the success toast / submit-results banner is not visible because onRefresh?.() causes parent to re-pass recipes prop → hydration useEffect resets submitResults=null. Consider either (a) preserving the banner state across recipe prop updates, or (b) not calling onRefresh when all saves succeeded (data is already fresh from server response), or (c) using a slightly longer toast duration. User currently gets no visual confirmation despite the save succeeding on the server."
+  ],
+  "critical_code_review_comments": [
+    "RecipeBulkEditor.jsx L34-49 (BUG-206 v2 fix): The merged normaliseRecipe(r, foods) approach is CORRECT and works reliably. Enrichment happens at row construction time, so no effect ordering issues. Verified via network trace: PUT payload has name:168408 (integer food_id) instead of null.",
+    "RecipeBulkEditor.jsx L82-86 hydration useEffect deps [recipes, recipeType, foodsMaster]: CORRECT. When foodsMaster loads async (after recipes), useEffect re-runs and re-hydrates rows with enriched foodId. Verified live: rows[4874].foodId = '168408' after ~7-9s wait (foodsMaster load latency).",
+    "MINOR: L82-86 hydration useEffect always calls setSubmitResults(null). This is why the success banner disappears after onRefresh triggers a re-hydration. Consider preserving submitResults if only foodsMaster ref changed (guard against clearing on foods-only refresh).",
+    "MINOR: onRefresh?.() (L227, 232) is called after successful saves, which refetches ALL recipes from parent. Since the server response already contains the updated recipe, an optimistic-update approach would avoid the full re-fetch and keep the success banner visible. Not blocking."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "3/3 = 100% (V9 PASS, RT-1 PASS, Regression PASS)"},
+  "test_credentials": "owner@kunafamahal.com / Qplazm@10 (from review request; /app/memory/test_credentials.md does not exist)",
+  "seed_data_creation": "None. Recipe 4874 ('50-50 Choco Lava') prep temporarily set to 55, then reverted to 10 via same UI. Preprod is clean at baseline (prep=10) as confirmed by final PUT 200 response body.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-206 v2 fix in RecipeBulkEditor.jsx (merged foodId reverse-lookup INTO normaliseRecipe with foodsMaster as arg + hydration useEffect deps [recipes, recipeType, foodsMaster]) is CONFIRMED WORKING for all 3 scenarios: V9 batch save (PUT 200 with name=food_id integer), RT-1 persistence (survives reload), and regression (Add Recipe food picker still shows 98 options). Only a minor UX gap: the success toast/banner is not visible post-save because onRefresh triggers a re-hydration that resets submitResults. Non-blocking. Login flow note: The app renders login form inline at any URL when unauthed (no /login route). Detect via `button:has-text('LOG IN')` visibility. First page load can take 5-8s to render inputs.",
+  "rca of the issue": "BUG-206 root cause was React effect ordering. Previous v1 fix used a separate useEffect for reverse-lookup with deps=[foodsMaster], which failed when hydration useEffect (deps=[recipes, recipeType]) re-ran and reset rows to foodId=null but foodsMaster ref hadn't changed → the reverse-lookup didn't re-fire. V2 fix merges the enrichment INTO normaliseRecipe(r, foods) at row construction time and adds foodsMaster to hydration deps → atomic and correct. Verified live: PUT body now sends name:168408 (food_id integer) instead of name:null → server accepts with 200 OK."
+}

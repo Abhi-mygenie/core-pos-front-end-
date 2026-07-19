@@ -1,0 +1,72 @@
+{
+  "summary": "BUG-207 fix VERIFICATION FAILED — CRITICAL. The BUG-207 change in RecipeBulkEditor.jsx introduced a ReferenceError that crashes the entire Bulk view into ErrorBoundary. Root cause: main agent added setPurchaseRates(rateMap) call (L109) and purchaseRates.get(ingId) read (L137) plus dep [purchaseRates] (L151), but FORGOT to declare `const [purchaseRates, setPurchaseRates] = useState(new Map())`. When user clicks [data-testid='recipe-view-bulk'], React throws `ReferenceError: purchaseRates is not defined` at RecipeBulkEditor and ErrorBoundary shows 'Something went wrong'. NONE of V-COST-1, V-COST-2, V-MARGIN-1, V-MARGIN-2, V-ZERO could be verified because the grid never renders. V-SAVE-REGRESSION also blocked (Save button unreachable). Additional secondary bug spotted at L511: unconditional `₹{cost.toFixed(0)}` will TypeError-crash the row when cost is null — precisely the '—' branch this fix is supposed to introduce.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "RecipeBulkEditor",
+        "issue": "ReferenceError: purchaseRates is not defined — component crashes into ErrorBoundary immediately on Bulk view toggle. State hook declaration is missing.",
+        "selector": "[data-testid='recipe-view-bulk'] → [data-testid='recipe-bulk-editor']",
+        "priority": "CRITICAL"
+      },
+      {
+        "component": "RecipeBulkEditor RecipeRow (L511)",
+        "issue": "`₹{cost.toFixed(0)}` will throw TypeError when cost === null (the uncovered-ingredients branch). Needs null-guard like `{cost != null ? '₹' + cost.toFixed(0) : <span className='text-slate-400'>—</span>}`.",
+        "selector": "td cost cell inside bulk-row-*",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "V-COST/V-MARGIN/V-ZERO/V-SAVE-REGRESSION",
+        "issue": "All blocked. Bulk editor unmounts via ErrorBoundary before any recipe row is painted. No cost/margin/save UI is reachable.",
+        "affected_selectors": ["[data-testid='recipe-bulk-editor']", "[data-testid='bulk-save']", "td cost / td margin cells"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "V-COST-1 real ₹ values": "BLOCKED — ErrorBoundary before grid renders",
+    "V-COST-2 '—' for uncovered": "BLOCKED — ErrorBoundary before grid renders",
+    "V-MARGIN-1 margin % with color bands": "BLOCKED — ErrorBoundary before grid renders",
+    "V-MARGIN-2 '—' margin when cost is '—'": "BLOCKED — ErrorBoundary before grid renders",
+    "V-ZERO no ₹0 anywhere": "BLOCKED — ErrorBoundary before grid renders",
+    "V-SAVE-REGRESSION BUG-206 save still works": "BLOCKED — Save button unreachable",
+    "V-COMPILE 0 new warnings": "FAIL — Runtime ReferenceError raised: `purchaseRates is not defined` at RecipeBulkEditor. Console shows ErrorBoundary caught it. (Note: this is a runtime crash, not a webpack-compile warning — code compiled but ReferenceError fires on first render.)"
+  },
+  "reproduction_steps": [
+    "1. Open https://pos-frontend-dev-3.preview.emergentagent.com/",
+    "2. Login as owner@kunafamahal.com / Qplazm@10",
+    "3. Navigate to /recipes",
+    "4. Click [data-testid='recipe-view-bulk']",
+    "5. Observe: 'Something went wrong' ErrorBoundary screen with details 'ReferenceError: purchaseRates is not defined'",
+    "6. Console: [ErrorBoundary] Caught error: ReferenceError: purchaseRates is not defined at RecipeBulkEditor"
+  ],
+  "rca of the issue": "BUG-207 fix in /app/frontend/src/components/inventory/RecipeBulkEditor.jsx is incomplete. The diff added: (a) getVendorItemList() call to build a lastRate Map (L91-108), (b) setPurchaseRates(rateMap) at L109, (c) purchaseRates.get(ingId) inside costMarginFor at L137, (d) purchaseRates in useCallback deps at L151, and (e) '—' render at L516 for null margin. However, the corresponding `const [purchaseRates, setPurchaseRates] = useState(new Map());` hook declaration was NOT added alongside the other useState declarations (L68-74). Grep confirms: only 3 occurrences of `purchaseRates` in the file — all reads/writes, no declaration. Result: JS reference lookup fails at first render → uncaught ReferenceError → ErrorBoundary shows 'Something went wrong'. Additional latent bug at L511: `₹{cost.toFixed(0)}` needs a null-guard to match the null-cost design (cost is explicitly returned as `null` from costMarginFor when any ingredient lacks a purchase rate; only the margin cell at L513-517 has the null-guard).",
+  "fix_required": {
+    "file": "/app/frontend/src/components/inventory/RecipeBulkEditor.jsx",
+    "changes": [
+      "Add after L74 (near other useState hooks): `const [purchaseRates, setPurchaseRates] = useState(new Map());`",
+      "Change L511 from `<td className=\"p-2 text-right text-sm text-slate-600 font-medium\">₹{cost.toFixed(0)}</td>` to `<td className=\"p-2 text-right text-sm text-slate-600 font-medium\">{cost != null ? `₹${cost.toFixed(0)}` : <span className='text-xs text-slate-400'>—</span>}</td>`"
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "CRITICAL: Add missing `const [purchaseRates, setPurchaseRates] = useState(new Map());` state hook near other useState calls in RecipeBulkEditor.jsx (top of component, around L75). Import useState is already there.",
+    "HIGH: Guard L511 cost render against null — currently `₹{cost.toFixed(0)}` unconditionally; must render '—' when cost === null to match the design ruling.",
+    "After both fixes, re-run the V-COST/V-MARGIN/V-ZERO/V-SAVE test set. The purchaseRates load is async (~5-8s for vendor-item-list payload of 1,146 records), so test should wait ≥8s after toggling to Bulk view before asserting cost values."
+  ],
+  "critical_code_review_comments": [
+    "RecipeBulkEditor.jsx: purchaseRates state hook declaration is missing but the variable is referenced in 3 places (L109 write, L137 read, L151 dep). This is a straightforward oversight — the fix diff for BUG-207 must have missed the useState line.",
+    "RecipeBulkEditor.jsx L511: The cost cell does NOT null-guard `cost.toFixed(0)`, but costMarginFor explicitly returns `cost: null` for uncovered recipes. This will crash the row even after fixing the ReferenceError above. The margin cell at L513-517 is correctly guarded — mirror that pattern.",
+    "MINOR: The purchaseRates Map is loaded async in a separate useEffect (L88-114) independent from the recipes/foodsMaster hydration useEffect. Since costMarginFor recomputes via useCallback deps [priceByName, purchaseRates], the Cost/Margin cells will update automatically once purchaseRates resolves — this is correct, but expect a brief window where all rows show '—' before the vendor-item-list payload arrives. Consider a loading indicator or defer render until purchaseRates is populated.",
+    "MINOR: Consider extracting the vendor-item-list fetch + rateMap build into a custom hook (useLastPurchaseRates) — it's ~20 lines of tightly-coupled logic that would be reusable elsewhere (e.g., Sub/Addon views if they also need cost)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "0/7 verifiable — all 7 test cases blocked by ReferenceError crash"},
+  "test_credentials": "owner@kunafamahal.com / Qplazm@10 (from review request; /app/memory/test_credentials.md still does not exist)",
+  "seed_data_creation": "None. App state not touched — bulk editor never mounted successfully.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Two trivial code fixes needed in /app/frontend/src/components/inventory/RecipeBulkEditor.jsx before BUG-207 verification can proceed: (1) Add missing useState hook for purchaseRates near L75, (2) Null-guard L511 cost render. Both are ~2-line changes. After main agent applies these, re-run the 7 test cases; the review request context is otherwise correct (wait ≥8s after clicking Bulk, expect ~56% of recipes to show ₹ values and ~44% to show '—'). Login: owner@kunafamahal.com / Qplazm@10 — inline login form on '/' (no /login route). Bulk toggle: [data-testid='recipe-view-bulk']. Grid container: [data-testid='recipe-bulk-editor']. Row testid: [data-testid='bulk-row-{id}']."
+}
