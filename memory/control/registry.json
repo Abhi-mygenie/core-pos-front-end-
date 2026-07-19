@@ -15271,6 +15271,27 @@
         "test_report": "test_reports/iteration_4.json",
         "handover": "memory/handover/SESSION_HANDOVER_2026_07_19_INV-SOCKET-001.md"
       }
+    },
+    {
+      "id": "CR-077",
+      "title": "Socket room-join contract (join_restaurant) \u2014 restore realtime after backend room-scoped emits",
+      "type": "CR",
+      "status": "PLANNED \u2014 GATE 3 (awaiting Gate 4 GO + backend B1 deploy)",
+      "severity": "P0",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_0",
+      "gate": "3",
+      "intake_doc": "memory/impact/CR-077_IMPACT_ANALYSIS.md",
+      "registered": "2026-07-19",
+      "related": [
+        "INV-SOCKET-001",
+        "BUG-167"
+      ],
+      "scope_note": "FE: socketEvents.js, socketService.js, useSocketEvents.js (~20 lines). BE (external): join_restaurant handler + scope remaining io.emit paths.",
+      "artifacts": {
+        "impact_analysis": "memory/impact/CR-077_IMPACT_ANALYSIS.md",
+        "implementation_plan": "memory/plans/CR-077_IMPLEMENTATION_PLAN.md"
+      }
     }
   ]
 }
