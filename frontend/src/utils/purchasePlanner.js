@@ -1,59 +1,135 @@
-// CR-078 · Smart Purchase — velocity/gap math utility
-// Locked owner rulings applied:
-//   B1 · velocity window = horizon (7d/14d/30d)
-//   B2 · hide rows where gap ≥ 0 (only return rows that need action)
+// CR-078 · Smart Purchase — velocity/gap planner (transform-aware, unit-safe)
+// Locked owner rulings:
+//   B1 · velocity window = horizon (7d/14d/30d matches horizon input)
+//   B2 · hide rows where gap ≥ 0
+//   G4 · unit normalization via convertToBase (0 real family mismatches confirmed in preprod)
+//   G8 · consumes TRANSFORMED stock rows (camelCase, quantity=Number, isSubRecipe boolean)
+//   G9 · filter isSubRecipe === true rows out of the planner
+//   G12 · getHorizonDates helper builds DCR body dates
+//
+// Input contract:
+//   stockInventory = TRANSFORMED rows from getStockInventory() -> fromAPI.stockItems()
+//     shape: { id, name, unit, quantity(Number), isSubRecipe(bool), ... }
+//   dcrStockSummary = RAW rows from getDailyConsumptionReport()
+//     shape: { ingredient_id, ingredient_name, total_consumed: "5.703 kg", closing_stock, opening_stock }
+
+// ── Unit conversion tables ─────────────────────────────────────
+const WEIGHT_UNITS = { g: 1, gm: 1, gms: 1, kg: 1000 };                        // base = g
+const VOLUME_UNITS = { ml: 1, l: 1000, ltr: 1000, liter: 1000, litre: 1000 };  // base = ml
+const COUNT_UNITS  = { piece: 1, pieces: 1, pc: 1, pcs: 1, unit: 1 };          // base = piece
 
 /**
- * Compute the daily consumption velocity for a single ingredient
- * from a daily-consumption report window.
- *
- * @param {Array} dcrRows  Rows from getDailyConsumptionReport({days: horizonDays})
- *                         Expected shape: [{ ingredient_id, quantity, date }, ...]
- * @param {string|number} ingredientId
- * @param {number} horizonDays  Number of days the DCR window spans (B1: same as horizon).
- * @returns {number}  Average consumption per day (units/day). 0 if no data.
+ * Parse a "<value> <unit>" string like "5.703 kg" -> { value: 5.703, unit: 'kg' }
+ * Tolerant of: whitespace, negative values, missing unit (numeric-only), garbage.
  */
-export function computeVelocity(dcrRows, ingredientId, horizonDays) {
-  if (!Array.isArray(dcrRows) || horizonDays <= 0) return 0;
-  const rows = dcrRows.filter(r => String(r.ingredient_id) === String(ingredientId));
-  if (rows.length === 0) return 0;
-  const totalConsumed = rows.reduce((sum, r) => sum + (Number(r.quantity) || 0), 0);
-  return totalConsumed / horizonDays;
+export function parseQuantity(str) {
+  if (str === null || str === undefined) return { value: 0, unit: '' };
+  if (typeof str === 'number')            return { value: str, unit: '' };
+  const s = String(str).trim();
+  if (!s) return { value: 0, unit: '' };
+  const m = s.match(/^(-?\d+(?:\.\d+)?)\s*([a-zA-Z]*)$/);
+  if (!m) return { value: 0, unit: '' };
+  return { value: parseFloat(m[1]), unit: (m[2] || '').toLowerCase() };
 }
 
 /**
- * Compute the purchase plan for the whole outlet:
- *   projected_need = velocity_per_day × horizonDays
- *   gap = on_hand - projected_need
- *   suggest_qty = max(0, ceil(-gap)) → i.e. how much to buy to zero the gap
+ * Convert (value, unit) to the family's base unit.
+ * Weight -> g · Volume -> ml · Count -> piece · Unknown -> passthrough.
+ */
+export function convertToBase(value, unit) {
+  const u = String(unit || '').toLowerCase().trim();
+  if (u in WEIGHT_UNITS) return { value: value * WEIGHT_UNITS[u], base: 'g' };
+  if (u in VOLUME_UNITS) return { value: value * VOLUME_UNITS[u], base: 'ml' };
+  if (u in COUNT_UNITS)  return { value: value,                    base: 'piece' };
+  return { value, base: u || 'unknown' };
+}
+
+/**
+ * Given a horizon in days, return the from_date/to_date for the DCR POST body.
+ *   to_date   = reference date (default: today, local)
+ *   from_date = reference - (horizonDays - 1)
+ * Both as "YYYY-MM-DD".
+ */
+export function getHorizonDates(horizonDays, referenceDate = new Date()) {
+  const to = new Date(referenceDate);
+  const from = new Date(referenceDate);
+  from.setDate(from.getDate() - Math.max(0, horizonDays - 1));
+  const iso = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dd}`;
+  };
+  return { from_date: iso(from), to_date: iso(to) };
+}
+
+/**
+ * Compute daily consumption velocity in the ingredient's canonical unit.
+ * @param {Object} dcrRow      Row from response.stock_summary (RAW)
+ * @param {Object} stockItem   Row from getStockInventory() (TRANSFORMED)
+ * @param {number} horizonDays How many days the DCR window spans
+ * @returns {number}           Velocity in stockItem.unit per day (0 if no data)
+ */
+export function computeVelocity(dcrRow, stockItem, horizonDays) {
+  if (!dcrRow || horizonDays <= 0) return 0;
+  const { value: consumedVal, unit: consumedUnit } = parseQuantity(dcrRow.total_consumed);
+  if (consumedVal <= 0) return 0;
+
+  const consumedBase = convertToBase(consumedVal, consumedUnit);
+  const targetUnit   = (stockItem?.unit || consumedUnit).toLowerCase();
+  const targetInBase = convertToBase(1, targetUnit);
+
+  // Family mismatch (0 real cases in preprod, defensive fallback):
+  //   assume the DCR value already matches the stock unit, no conversion.
+  if (consumedBase.base !== targetInBase.base) {
+    return consumedVal / horizonDays;
+  }
+  // consumedBase.value = grams (or ml/piece). targetInBase.value = grams per 1 stock-unit.
+  // e.g. stock unit 'gm' -> targetInBase.value = 1 (1 gm = 1 g). Consumed 5703 g / 1 = 5703 gm/window.
+  //      stock unit 'kg' -> targetInBase.value = 1000. Consumed 5703 g / 1000 = 5.703 kg/window.
+  return (consumedBase.value / targetInBase.value) / horizonDays;
+}
+
+/**
+ * Build the auto-shopping list for Smart Purchase.
  *
- * Only rows with gap < 0 are returned (B2: hide 0-gap rows).
+ * Filters:
+ *   - G9 · isSubRecipe === true rows dropped (sub-recipes aren't purchasable)
+ *   - B2 · gap ≥ 0 rows dropped (already-covered items)
  *
  * @param {Object} opts
- * @param {Array} opts.stockInventory  [{ ingredient_id, name, unit, quantity }, ...]
- * @param {Array} opts.dcr             daily-consumption rows (window == horizonDays)
- * @param {number} opts.horizonDays    3 | 7 | 10 | 14 | custom
- * @returns {Array<{ingredient_id, name, unit, on_hand, velocity_per_day, projected_need, gap, suggest_qty}>}
+ * @param {Array}  opts.stockInventory   TRANSFORMED stock rows (camelCase)
+ * @param {Array}  opts.dcrStockSummary  RAW DCR rows (from response.stock_summary)
+ * @param {number} opts.horizonDays      3 | 7 | 10 | 14 | custom
+ * @returns {Array} rows where gap < 0
  */
-export function computePlan({ stockInventory, dcr, horizonDays }) {
+export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
   if (!Array.isArray(stockInventory) || horizonDays <= 0) return [];
-  const rows = stockInventory.map(item => {
-    const velocity = computeVelocity(dcr, item.ingredient_id ?? item.id, horizonDays);
-    const onHand = Number(item.quantity ?? item.on_hand ?? 0);
-    const projectedNeed = velocity * horizonDays;
-    const gap = onHand - projectedNeed;
-    const suggestQty = gap < 0 ? Math.ceil(-gap) : 0;
-    return {
-      ingredient_id: item.ingredient_id ?? item.id,
-      name: item.name ?? item.ingredient_name ?? '',
-      unit: item.unit ?? '',
-      on_hand: onHand,
-      velocity_per_day: Number(velocity.toFixed(3)),
-      projected_need: Number(projectedNeed.toFixed(3)),
-      gap: Number(gap.toFixed(3)),
-      suggest_qty: suggestQty,
-    };
-  });
-  // B2 · hide rows where gap ≥ 0
-  return rows.filter(r => r.gap < 0);
+  const dcrByIngredient = new Map();
+  (dcrStockSummary || []).forEach(r => dcrByIngredient.set(String(r.ingredient_id), r));
+
+  const rows = stockInventory
+    .filter(item => item?.isSubRecipe !== true)                 // G9
+    .map(item => {
+      const ingredientId = item.id;
+      const name         = item.name || '';
+      const unit         = item.unit || '';
+      const onHand       = Number(item.quantity) || 0;          // already transformed to Number
+      const dcrRow       = dcrByIngredient.get(String(ingredientId));
+      const velocity     = computeVelocity(dcrRow, item, horizonDays);
+      const projected    = velocity * horizonDays;
+      const gap          = onHand - projected;
+      const suggest      = gap < 0 ? Math.ceil(-gap) : 0;
+      return {
+        ingredient_id:    ingredientId,
+        name,
+        unit,
+        on_hand:          Number(onHand.toFixed(3)),
+        velocity_per_day: Number(velocity.toFixed(3)),
+        projected_need:   Number(projected.toFixed(3)),
+        gap:              Number(gap.toFixed(3)),
+        suggest_qty:      suggest,
+      };
+    });
+  return rows.filter(r => r.gap < 0);                            // B2
 }

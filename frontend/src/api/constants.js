@@ -173,6 +173,13 @@ export const INVENTORY_ENDPOINTS = {
   UPDATE_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/update',
   WASTAGE_REASON_STATUS: '/api/v2/vendoremployee/wastage-reasons/status',
   DELETE_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/delete',
+  // CR-078: Smart Purchase — vendor purchase history
+  VENDOR_ITEM_LIST: '/api/v2/vendoremployee/inventory/vendor-item-list',
+};
+
+// CR-078: Smart Purchase — reporting endpoints (different URL prefix from inventory)
+export const REPORT_ENDPOINTS = {
+  DAILY_CONSUMPTION_REPORT: '/api/v2/vendoremployee/report/daily-consumption-report',
 };
 
 // CR-072: Recipe Management

@@ -1,6 +1,7 @@
 // CR-072: Inventory Service — 22 API functions for inventory CRUD
+// CR-078: +2 services (getDailyConsumptionReport, getVendorItemList)
 import api from '../axios';
-import { INVENTORY_ENDPOINTS, EXPENSE_ENDPOINTS } from '../constants';
+import { INVENTORY_ENDPOINTS, EXPENSE_ENDPOINTS, REPORT_ENDPOINTS } from '../constants';
 import { fromAPI, toAPI } from '../transforms/inventoryTransform';
 
 // ── Ingredients Master ──────────────────────────────────────────
@@ -127,4 +128,16 @@ export async function getUnits() {
 export async function getPaymentMethods() {
   const res = await api.get(EXPENSE_ENDPOINTS.PAYMENT_METHOD);
   return res.data?.Payment_method || res.data?.payment_method || res.data?.data || res.data || []; // R9: capital P in response key
+}
+
+// CR-078: Smart Purchase — daily consumption report (POST body { from_date, to_date } as YYYY-MM-DD)
+export async function getDailyConsumptionReport({ from_date, to_date }) {
+  const res = await api.post(REPORT_ENDPOINTS.DAILY_CONSUMPTION_REPORT, { from_date, to_date });
+  return res.data;  // { stock_summary, stock_details, date_range, restaurant_id, applied_restaurant_ids, hierarchy_scope }
+}
+
+// CR-078: Smart Purchase — vendor purchase history (unwraps .data.data wrapper)
+export async function getVendorItemList() {
+  const res = await api.get(INVENTORY_ENDPOINTS.VENDOR_ITEM_LIST);
+  return res.data?.data || [];
 }

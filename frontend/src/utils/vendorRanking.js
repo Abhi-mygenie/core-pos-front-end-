@@ -30,7 +30,8 @@ export function rankVendors(vendorItemList, ingredientId) {
       const vid = r.vendor_id ?? r.vendorId;
       if (!vid) return;
       const price = Number(r.unit_price ?? r.rate ?? 0);
-      const date = r.last_purchase_date ?? r.purchase_date ?? r.date ?? '';
+      // CR-078 · G7 · vendor-item-list uses "Purchase_Date" (capital P + D) as the raw API field
+      const date = r.Purchase_Date ?? r.last_purchase_date ?? r.purchase_date ?? r.date ?? '';
       const existing = perVendor.get(vid);
       // Keep only the row with most-recent date per vendor
       if (!existing || String(date) > String(existing.last_purchase_date || '')) {
