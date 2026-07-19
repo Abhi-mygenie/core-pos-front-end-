@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T05:14:59.839368+00:00",
+  "generated_at": "2026-07-19T06:03:25.966245+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15262,10 +15262,10 @@
       "id": "CR-078",
       "type": "CR",
       "title": "Smart Purchase \u2014 Item-First Planner with Velocity & Vendor Intelligence (split from CR-075 per Q10-a)",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED (Phase A-E \u00b7 Phase F deferred \u00b7 Phase G done)",
       "priority": "P1",
       "sprint_key": "pos_5_0_wave_2",
-      "gate": 3,
+      "gate": 4,
       "intake_doc": "change_requests/CR-078_SMART_PURCHASE_INTAKE.md",
       "status_history": [
         {
@@ -15285,6 +15285,12 @@
           "to": "IN-PROGRESS \u00b7 Phase A refactor applied \u00b7 Path X patched",
           "date": "2026-07-19",
           "reason": "Phase A refactor complete (constants, services, planner, ranking). E2E test on real preprod data revealed backend stock-inventory contract inconsistency: (quantity, unit) pair mixes display-unit and small-unit magnitudes per ingredient. Owner ruled Path X: use cal_quantity + small_unit for math. Backend brief filed: /app/memory/backend_briefs/BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY_2026-07-19.md. 12/12 smoke tests pass. 48 sane plan rows on real Kunafa Mahal data. Webpack clean. Awaiting owner checkpoint before Phase C."
+        },
+        {
+          "from": "PLANNED",
+          "to": "IMPLEMENTED (Phase A-E complete \u00b7 Phase F deferred \u00b7 awaiting QA)",
+          "date": "2026-07-19",
+          "reason": "Phases A/B/B.5/C/D/E shipped. Phase F (delete old PurchaseEntry files) deferred per owner ruling for rollback safety. Bundle awaiting owner acceptance + optional QA testing. Backend brief filed for stock-inventory unit contract inconsistency. V1 live /add-purchase test still pending owner OK."
         }
       ],
       "artifact_refs": [
@@ -15304,10 +15310,10 @@
       "id": "CR-079",
       "type": "CR",
       "title": "Inventory Information Architecture Restructure \u2014 Intelligence-as-Dashboard (split from CR-075 per FB-5)",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED (Phase A-E \u00b7 Phase F deferred \u00b7 Phase G done)",
       "priority": "P2",
       "sprint_key": "pos_5_0_wave_2",
-      "gate": 3,
+      "gate": 4,
       "intake_doc": "change_requests/CR-079_INVENTORY_IA_RESTRUCTURE_INTAKE.md",
       "status_history": [
         {
@@ -15315,6 +15321,12 @@
           "to": "PLANNED (gate=3)",
           "date": "2026-07-18",
           "reason": "Gate 3 Implementation Plan complete. Owner ruled B1-B14 defaults 2026-07-18. Plan doc: /app/memory/plans/CR-078_CR-079_IMPLEMENTATION_PLAN.md"
+        },
+        {
+          "from": "PLANNED",
+          "to": "IMPLEMENTED (Phase A-E complete \u00b7 Phase F deferred \u00b7 awaiting QA)",
+          "date": "2026-07-19",
+          "reason": "Phases A/B/B.5/C/D/E shipped. Phase F (delete old PurchaseEntry files) deferred per owner ruling for rollback safety. Bundle awaiting owner acceptance + optional QA testing. Backend brief filed for stock-inventory unit contract inconsistency. V1 live /add-purchase test still pending owner OK."
         }
       ]
     },
@@ -15350,8 +15362,8 @@
       "sprint_key": "pos_5_0_wave_2",
       "id": "CR-075-A",
       "title": "Stock Dashboard Polish (S1 export fix, S2 filter UX, S3 status chips, S5 error display)",
-      "status": "PLANNED",
-      "gate": 3,
+      "status": "IMPLEMENTED (Phase A-E \u00b7 Phase F deferred \u00b7 Phase G done)",
+      "gate": 4,
       "priority": "P1",
       "risk": "LOW",
       "files": "CurrentStockPanel.jsx (renamed), inventoryService.js",
@@ -15381,6 +15393,12 @@
           "to": "PLANNED (gate=3)",
           "date": "2026-07-18",
           "reason": "Gate 3 Plan authored after code-walk revealed items S1/S2/S3/S5 still unshipped. Scope narrowed to Stock Dashboard only (P1/P2/P4 auto-covered by CR-078, P6 folded into CR-078 transform edit)."
+        },
+        {
+          "from": "PLANNED",
+          "to": "IMPLEMENTED (Phase A-E complete \u00b7 Phase F deferred \u00b7 awaiting QA)",
+          "date": "2026-07-19",
+          "reason": "Phases A/B/B.5/C/D/E shipped. Phase F (delete old PurchaseEntry files) deferred per owner ruling for rollback safety. Bundle awaiting owner acceptance + optional QA testing. Backend brief filed for stock-inventory unit contract inconsistency. V1 live /add-purchase test still pending owner OK."
         }
       ]
     }
