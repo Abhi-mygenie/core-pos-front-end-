@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T04:43:14.375439+00:00",
+  "generated_at": "2026-07-19T04:54:58.893080+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15276,15 +15276,15 @@
         },
         {
           "from": "PLANNED (gate=3)",
-          "to": "PLANNED (gate=3 \u00b7 amended)",
+          "to": "PLANNED (gate=3 \u00b7 amended \u00b7 final v2)",
           "date": "2026-07-19",
-          "reason": "Implementation-agent \u00a7Step 0 flagged 7 endpoint/shape gaps at Phase C entry. Planning-agent review found 15 total. Amendment #1 written: /app/memory/plans/CR-078_PLAN_AMENDMENT_01_2026-07-19.md. Phase A utilities require refactor; Phase B/B.5 unaffected. Awaiting owner code-walk approval before applying refactor."
+          "reason": "15-gap review closed via preprod curl validation (10 endpoints, 3 existing transforms, 2 new transforms confirmed NOT needed). Amendment doc: /app/memory/plans/CR-078_PLAN_AMENDMENT_2026-07-19.md. Locked G11=wired-via-AuthContext \u00b7 G15=existing-ingredients-only \u00b7 V1=live-test-during-Phase-C. Awaiting Gate 4 GO."
         }
       ],
       "artifact_refs": [
         {
-          "label": "Plan Amendment #1",
-          "path": "memory/plans/CR-078_PLAN_AMENDMENT_01_2026-07-19.md",
+          "label": "Plan Amendment (final v2)",
+          "path": "memory/plans/CR-078_PLAN_AMENDMENT_2026-07-19.md",
           "type": "amendment"
         }
       ]
