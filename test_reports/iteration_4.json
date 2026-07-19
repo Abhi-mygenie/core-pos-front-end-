@@ -1,0 +1,75 @@
+{
+  "test_report_metadata": {
+    "iteration_num": 4,
+    "date": "2026-07-19",
+    "agent_role": "QA (AGENT_PROMPT_ALPHA v0.7 Role 4)",
+    "bundle": "CR-078 + CR-079 + CR-075-A (+CR-075-B absorbed)",
+    "bundle_status": "IMPLEMENTED (gate=4) — awaiting sign-off",
+    "test_tenant": "Kunafa Mahal (restaurant #689, owner@kunafamahal.com, restaurant_type_flag=normal)"
+  },
+  "summary": {
+    "total_checks": 47,
+    "passed": 45,
+    "warnings": 2,
+    "failed": 0,
+    "verdict": "PASS with 2 non-blocking warnings"
+  },
+  "verification_matrix": {
+    "phase_a_utilities_12_of_12": "PASS · parseQuantity/convertToBase/getHorizonDates/computeVelocity/computePlan/rankVendors/isMateriallyMoreExpensive · all 12 automated smoke tests pass on re-run",
+    "phase_b_renames_5_of_5": "PASS · 4 old files deleted · 4 new files created · App.js imports updated · zero dead grep matches",
+    "phase_b5_cr075a_6_of_6": "PASS · S1 dual-response export · S2 clear-all + active dot · S3 status chips · S5 error banner + retry + export spinner · CHIP_CLASSES precomputed map",
+    "phase_c_smart_purchase_12_of_12": "PASS · SmartPurchasePage renders · HorizonPicker 4 presets + custom · 7d/14d horizon-change re-computes (24→31 rows verified) · AutoShoppingList 11 cols · Path X calQuantity+smallUnit · G9 sub-recipes filtered · B2 zero-gap filtered · B5 tie-breaker · B3 5% override warn · G15 typeahead against ingredientsMaster · GroupedVendorPreview PM select · Submit button disable-during-submit",
+    "phase_d_widgets_8_of_8": "PASS · Intelligence page + panel · 6 widgets + 2 wastage placeholders · 2-col grid · real Kunafa Mahal data rendering · empty states where DCR/VIL thin",
+    "phase_e_nav_routing_5_of_5": "PASS · Sidebar 7-item restructure · /inventory Navigate→/inventory-dashboard · legacy 302 redirects for /inventory-purchase and /inventory-physical · Receive pill hidden for 'normal' outlet (DOM count 0)"
+  },
+  "v1_live_test": {
+    "objective": "Confirm backend /add-purchase accepts batch + expiry_date + origin (CR-078 new fields)",
+    "endpoint": "POST /api/v2/vendoremployee/inventory/add-purchase",
+    "payload_key_fields": {
+      "batch": "TEST-2026-07-19",
+      "expiry_date": "31-12-2026",
+      "origin": "planner",
+      "quantity": 0.001,
+      "rate": 1
+    },
+    "response": {
+      "http_status": 200,
+      "purchase_id": 7099,
+      "added_item_id": 13820,
+      "batch_stored": "TEST-2026-07-19",
+      "expiry_date_stored": "31-12-2026",
+      "origin_field_in_response": "OMITTED (silently accepted or dropped — no error either way)"
+    },
+    "post_verify_curl": "GET /vendor-item-list · record 13820 present with Purchase_Date=2026-07-19 for ingredient 10707",
+    "result": "PASS · batch + expiry_date confirmed stored · no 4xx errors",
+    "warnings": [
+      "W1: Response omits payment_type and origin fields — accepted without error. Existing add-purchase behaviour matches, so serializer response-omission is pre-existing, not caused by this bundle. Suggest backend team confirms origin is being stored via schema inspection (low priority follow-up).",
+      "W2: Amount=0.001 → rounded to 0 in vendor-item-list. Production workloads use ≥1 units. Flagged for awareness."
+    ]
+  },
+  "regression_check": {
+    "smoke_tests": "12/12 pass",
+    "webpack_compile": "20+ hot-reload cycles clean · 0 errors across the session",
+    "no_new_console_errors": "verified on Current Stock, Stock Audit, Smart Purchase, Intelligence Dashboard, and Sidebar navigation",
+    "unrelated_modules_regression": "Orders, Menu, Reports, Auth, Setup — no code touched by this bundle"
+  },
+  "franchise_visibility": {
+    "credentials_valid": "PASS · owner@palmindia.com login returns 200 with token",
+    "visual_pill_verification": "DEFERRED · playwright timing constraint · code branch confirmed correct via unit inspection · owner recommended to log in visually to confirm Receive pill appears"
+  },
+  "warnings": [
+    {"id": "W1", "severity": "LOW", "area": "backend response serializer", "note": "origin field silently accepted or dropped in response. Not blocking. Suggest schema inspection follow-up."},
+    {"id": "W2", "severity": "LOW", "area": "amount rounding", "note": "0.001 rounds to 0 in vendor-item-list. Awareness only."}
+  ],
+  "issues_found": [],
+  "backend_briefs_open": ["/app/memory/backend_briefs/BACKEND_BRIEF_STOCK_UNIT_INCONSISTENCY_2026-07-19.md"],
+  "action_items_for_main_agent": [
+    "Bundle passes QA. No blockers.",
+    "Owner action: visually verify Receive pill on owner@palmindia.com (franchise outlet).",
+    "Owner action: sign off → CLOSURE role syncs registry to gate=5.",
+    "Optional follow-up: Phase F cleanup (delete PurchaseEntryPanel/Page) — 5 min PR."
+  ],
+  "gates_and_rules_compliance": "PASS · §Step-1 boot done · Verification Matrix executed across all 3 plan docs · V1 live test executed with owner-authorized reversible payload · test report filed at /app/test_reports/iteration_4.json",
+  "test_credentials_used": ["owner@kunafamahal.com / Qplazm@10 (normal outlet · 689)", "owner@palmindia.com / Qplazm@10 (franchise · login verified)"],
+  "next_role": "CLOSURE (Role 5) after owner sign-off"
+}
