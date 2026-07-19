@@ -1,12 +1,14 @@
 // CR-072: Recipe Management Panel — 3 tabs (Standard / Sub / Addon) + recipe cards
+// CR-073: Card/Bulk view toggle · integrates RecipeBulkEditor (spreadsheet mode)
 import { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, Clock, Users, ChefHat } from 'lucide-react';
+import { Search, Plus, Clock, Users, ChefHat, LayoutGrid, Table2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import * as recipeService from '@/api/services/recipeService';
 import RecipeFormPanel from './RecipeFormPanel';
+import RecipeBulkEditor from './RecipeBulkEditor';   // CR-073
 
 function RecipeCard({ recipe, onEdit }) {
   const maxShow = 3;
@@ -115,6 +117,7 @@ export default function RecipeManagementPanel() {
   const [loading, setLoading] = useState(true);
   const [editingRecipe, setEditingRecipe] = useState(undefined); // undefined=list, null=add, object=edit
   const [editingType, setEditingType] = useState('standard');
+  const [viewMode, setViewMode] = useState('card');   // CR-073 · 'card' | 'bulk'
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -180,6 +183,28 @@ export default function RecipeManagementPanel() {
           </Button>
         </div>
 
+        {/* CR-073 · Card/Bulk view toggle */}
+        <div className="flex items-center justify-end mb-3 gap-1">
+          <button type="button" onClick={() => setViewMode('card')}
+            className={`px-2.5 h-8 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors ${viewMode === 'card' ? 'bg-orange-100 text-orange-700 ring-1 ring-orange-300' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+            data-testid="recipe-view-card">
+            <LayoutGrid className="w-3.5 h-3.5" /> Card
+          </button>
+          <button type="button" onClick={() => setViewMode('bulk')}
+            className={`px-2.5 h-8 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors ${viewMode === 'bulk' ? 'bg-orange-100 text-orange-700 ring-1 ring-orange-300' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}
+            data-testid="recipe-view-bulk">
+            <Table2 className="w-3.5 h-3.5" /> Bulk
+          </button>
+        </div>
+
+        {viewMode === 'bulk' ? (
+          <RecipeBulkEditor
+            recipes={{ standard: standardRecipes, sub: subRecipes, addon: addonRecipes }[activeTab]}
+            recipeType={activeTab}
+            onRefresh={fetchData}
+          />
+        ) : (
+        <>
         <TabsContent value="standard" className="mt-0">
           <RecipeTab type="standard" recipes={standardRecipes} loading={loading}
             onEdit={(r) => handleEdit(r, 'standard')} onCreate={() => handleCreate('standard')} />
@@ -192,6 +217,8 @@ export default function RecipeManagementPanel() {
           <RecipeTab type="addon" recipes={addonRecipes} loading={loading}
             onEdit={(r) => handleEdit(r, 'addon')} onCreate={() => handleCreate('addon')} />
         </TabsContent>
+        </>
+        )}
       </Tabs>
     </div>
   );
