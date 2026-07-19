@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T06:03:25.966245+00:00",
+  "generated_at": "2026-07-19T06:31:13.563854+00:00",
   "note": "SINGLE SOURCE OF TRUTH for the /__dev/ dashboard. Edit here; run scripts/gen_dashboard_data.js to rebuild the tab JSONs. BUG-* = Bug Tracker, others = CR Registry.",
   "sprints_meta": {
     "pos_2_0": {
@@ -15355,7 +15355,22 @@
       "gate": "3",
       "intake_doc": "change_requests/CR-073_RECIPE_BULK_EDITOR_INTAKE.md",
       "plan_doc": "plans/CR-073_IMPLEMENTATION_PLAN.md",
-      "mockup": "public/__dev/recipe_bulk_editor_mockup.html"
+      "mockup": "public/__dev/recipe_bulk_editor_mockup.html",
+      "status_history": [
+        {
+          "from": "PLANNED (gate=3)",
+          "to": "PLANNED (gate=3 \u00b7 amended \u00b7 rulings A1-A6 locked \u00b7 Gate 4 GO received)",
+          "date": "2026-07-19",
+          "reason": "Plan-staleness check surfaced 5 ambiguities \u00b7 all resolved via Phase D + CR-078 pattern reuse \u00b7 amendment doc: /app/memory/plans/CR-073_PLAN_AMENDMENT_2026-07-19.md"
+        }
+      ],
+      "artifact_refs": [
+        {
+          "label": "Plan Amendment (rulings A1-A6)",
+          "path": "memory/plans/CR-073_PLAN_AMENDMENT_2026-07-19.md",
+          "type": "amendment"
+        }
+      ]
     },
     {
       "type": "CR",
