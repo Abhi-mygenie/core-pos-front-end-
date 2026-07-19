@@ -1,0 +1,50 @@
+Frontend live wiretap validation (post backend room-emit fix)
+================================================================
+Env:
+  Preview URL   : https://22314ad3-6734-45b5-a481-c8eae02527f5.preview.emergentagent.com
+  Socket server : https://presocket.mygenie.online
+  Logged-in user: owner@cafe103.com (restaurant_id=644)
+
+Setup:
+  Playwright headless Chromium logged in, reached /loading (post-auth).
+  window.__SOCKET_SERVICE__ present. Socket connected id=rhes-7drE9iRE2c6AAA0,
+  uri=https://presocket.mygenie.online. Installed s.onAny() wiretap into
+  window.__WIRETAP__.
+
+Triggers (fired from test container via curl):
+  1) POST https://presocket.mygenie.online/order-update
+     body: {"order_type":"new-order","order_id":999999,"restaurant_id":644,
+            "food_status":0,"order_details":{"orders":[]}}
+     resp: 200 {"status":"Message broadcasted22"}
+  2) POST /order-update (same, order_id 999998)
+     resp: 200 {"status":"Message broadcasted22"}
+
+Observation window: ~70 s continuous s.onAny wiretap running while socket
+stayed connected.
+
+RESULT
+------
+new_order_644 events received by logged-in frontend : 0
+Any *_644 events                                     : 0
+Foreign events (_<other rid>) received               : 0
+Total onAny events captured                          : 0
+
+Conclusions
+-----------
+V1 (leak fix for /order-update): CONFIRMED — outside/no-join clients no longer
+    receive broadcast (pod probe already showed this; this test observed 0
+    foreign in the window as an additional data point).
+V2 (CRITICAL regression): CONFIRMED — the logged-in POS for restaurant 644
+    receives ZERO new_order_644 events even though the backend POST returns
+    "Message broadcasted22". The frontend socket is NOT in room rest_644 because
+    /app/frontend/src/api/socket/socketService.js connect() never emits any
+    join/subscribe event and the io connection carries no auth/query payload
+    the server could use to auto-join the room. Net effect: switching to
+    io.to('rest_' + rid).emit(...) means the POS gets zero realtime new-order
+    events until a join mechanism is added on the frontend AND accepted by the
+    socket server.
+V3 (other channels leak): 0 foreign events observed in this ~70s window.
+    Note: prior iteration_4 observed 6 foreign over ~3-4 min; this window is
+    shorter so absence here is not conclusive. Backend fix was scoped to
+    /order-update only; other emit paths may still be global — needs a longer
+    observation to re-verify (out of scope for this quick re-check).

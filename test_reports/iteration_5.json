@@ -1,0 +1,27 @@
+{
+  "summary": "Validated backend room-emit fix for /order-update against the live logged-in POS frontend (restaurant_id=644, owner@cafe103.com). Wiretap via window.__SOCKET_SERVICE__.socket.onAny() captured ZERO events across ~70s while two POST /order-update triggers to socket server returned 200 {\"status\":\"Message broadcasted22\"}. Leak is fixed AND — critically — the logged-in frontend no longer receives its own new_order_644 events. This is a functional regression: room-scoped emit with no frontend join mechanism = POS gets no realtime new orders.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Realtime new-order via Socket.IO", "issue": "Backend now emits with io.to('rest_'+restaurant_id).emit(...) but the frontend socket never joins any room. socketService.connect() has no auth/query payload and never emits a join/subscribe event. Result: logged-in POS for restaurant 644 receives 0 new_order_644 events after POST /order-update?restaurant_id=644 (verified twice; socket connected id=rhes-7drE9iRE2c6AAA0, uri=https://presocket.mygenie.online, wiretap installed and returned 0 events over ~70s window while both POSTs returned Message broadcasted22).", "affected_selectors": ["/app/frontend/src/api/socket/socketService.js:connect (lines 43-71)", "socketEvents.js getOrderChannel -> new_order_<rid>"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/memory/evidence/INV-SOCKET-001/frontend_wiretap_2026-01.txt", "/app/memory/evidence/INV-SOCKET-001/room_fix_probe_result.txt"],
+  "action_items": [
+    "CRITICAL: Coordinate with socket-server team on a join mechanism. Two options: (a) server auto-joins socket to rest_<restaurant_id> using a token/query on handshake (frontend then must send auth or query.restaurant_id on io()), OR (b) server accepts a documented client-emitted event like 'join_restaurant' with restaurant_id and calls socket.join('rest_'+rid). Then update frontend socketService.connect to either pass query={restaurant_id} / auth={token} to io() OR emit the join event on 'connect'. Without one of these, restaurant users get zero realtime new-order pushes.",
+    "Re-run a longer (~5 min) foreign-event observation with the wiretap to confirm whether non-/order-update emit paths (e.g. login_disabled_<rid>, other channels) are still globally broadcast. Backend fix was scoped only to /order-update."
+  ],
+  "critical_code_review_comments": [
+    "/app/frontend/src/api/socket/socketService.js connect() opens io(SOCKET_URL) with no auth/query and never emits a join/subscribe on the 'connect' event. Given the backend fix, this guarantees the client is never a member of room rest_<rid> and cannot receive new_order_<rid>. This is the root cause of the regression."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (external, not tested here)", "frontend": "V1 pass, V2 FAIL (critical), V3 inconclusive-in-window"},
+  "test_credentials": "owner@cafe103.com / Qplazm@10 (restaurant_id=644) — from /app/memory/control/test_credentials.md, login worked, reached /loading route",
+  "seed_data_creation": "none",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Wiretap technique confirmed working: after login, window.__SOCKET_SERVICE__.socket is exposed in this dev build; s.onAny(...) works. Trigger is: curl -s -X POST https://presocket.mygenie.online/order-update -H 'Content-Type: application/json' -d '{\"order_type\":\"new-order\",\"order_id\":<n>,\"restaurant_id\":644,\"food_status\":0,\"order_details\":{\"orders\":[]}}' — expected 200 {\"status\":\"Message broadcasted22\"}. Two triggers => 0 events received on the logged-in tab. Socket handshake carries no auth/query, so before any code change the server has no way to auto-join room rest_644. Loading route stayed on 'Products Loading...' at 83% but socket was already connected and wiretap active — loading progress does not affect socket wiretap validity.",
+  "rca of the issue": "Backend team changed /order-update from global io.emit to io.to('rest_'+restaurant_id).emit(...). This fixes the tenant leak (verified). However the frontend Socket.IO client (/app/frontend/src/api/socket/socketService.js connect(), lines 43-71) opens the connection with no auth/query payload and never emits any join/subscribe event after 'connect'. Therefore the client socket is not a member of any 'rest_<rid>' room. Consequence: room-scoped emit reaches zero POS clients — the logged-in cafe103 (restaurant 644) frontend receives 0 new_order_644 events despite the backend POST returning \"Message broadcasted22\". Mitigation options: (1) server-side auto-join using handshake auth/query and frontend adds auth:{token} or query:{restaurant_id} to io(), OR (2) define a client-emitted join event ('join_restaurant', payload {restaurant_id}) and have the server socket.join('rest_'+rid) on it; frontend then emits it inside the 'connect' handler. Prior probe (room_fix_probe.js) tried 9 common join event names — none placed the socket into the room — so this must be an agreed contract between backend and frontend."
+}

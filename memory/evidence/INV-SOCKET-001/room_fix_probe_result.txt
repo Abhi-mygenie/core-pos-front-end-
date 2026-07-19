@@ -1,0 +1,10 @@
+[both connected] A=rQtBwGzwydKyCWAfAAAy B=GdKildiThTx9AVMJAAAx
+[POST pre-join] HTTP 200 → {"status":"Message broadcasted22"}
+[B] emitted 9 join candidates
+[POST post-join] HTTP 200 → {"status":"Message broadcasted22"}
+
+===== RESULT =====
+A (no join) received on new_order_777001 : 0 | foreign events: 0
+B (join attempts) received: 0 
+>>> LEAK FIXED for /order-update: no-join socket got nothing.
+>>> NO JOIN PATH: no tested join event puts a client in the room → frontend can NEVER receive new orders.
