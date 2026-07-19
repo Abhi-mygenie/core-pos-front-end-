@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INV-SOCKET-001 — Peak-Traffic Outage Workbook</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a23; --panel2:#1d212e; --border:#2a2f3f;
+    --text:#e8eaf2; --muted:#9aa1b5; --accent:#e8b34b; --red:#ef6a6a; --green:#5ec98f; --blue:#6aa5ef; --purple:#b08aef;
+    --mono:'SF Mono',Consolas,'Courier New',monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.65 Georgia,'Times New Roman',serif;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+  header{background:var(--panel);border-bottom:1px solid var(--border);padding:40px 0 28px;margin-bottom:36px}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:.3px}
+  h1 .id{color:var(--accent);font-family:var(--mono);font-size:20px}
+  .meta{color:var(--muted);font-size:13px;font-family:var(--mono)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:3px;font-family:var(--mono);font-size:11px;font-weight:bold;margin-right:6px;vertical-align:middle}
+  .b-red{background:#3a1d1d;color:var(--red);border:1px solid #5a2d2d}
+  .b-green{background:#173428;color:var(--green);border:1px solid #245c41}
+  .b-blue{background:#1b2a42;color:var(--blue);border:1px solid #2b4468}
+  .b-amber{background:#3a301a;color:var(--accent);border:1px solid #5c4c26}
+  .b-purple{background:#2a2040;color:var(--purple);border:1px solid #443364}
+  h2{font-size:20px;margin:48px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+  h2 .num{color:var(--accent);font-family:var(--mono);margin-right:10px}
+  h3{font-size:16px;margin:26px 0 10px;color:var(--accent)}
+  p{margin:10px 0}
+  .muted{color:var(--muted)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:#f3c98a}
+  pre{font-family:var(--mono);font-size:12.5px;background:#0b0d12;border:1px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;line-height:1.55;color:#d7dce8}
+  pre code{background:none;border:none;padding:0;color:inherit}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  th{background:var(--panel2);text-align:left;padding:9px 12px;border:1px solid var(--border);font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  td{padding:9px 12px;border:1px solid var(--border);vertical-align:top}
+  tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+  .callout{border-left:4px solid var(--accent);background:var(--panel);padding:14px 18px;margin:18px 0;border-radius:0 6px 6px 0}
+  .callout.red{border-color:var(--red)}
+  .callout.green{border-color:var(--green)}
+  .callout.blue{border-color:var(--blue)}
+  .callout .t{font-weight:bold;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px}
+  .callout.red .t{color:var(--red)} .callout.green .t{color:var(--green)} .callout.blue .t{color:var(--blue)} .callout .t{color:var(--accent)}
+  /* workbook checklist */
+  .task{display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:13px 16px;margin:8px 0}
+  .task input[type=checkbox]{width:17px;height:17px;margin-top:3px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+  .task .body{flex:1}
+  .task .title{font-weight:bold}
+  .task .who{font-family:var(--mono);font-size:10.5px;padding:1px 8px;border-radius:3px;margin-left:8px;vertical-align:middle}
+  .task .desc{font-size:13.5px;color:var(--muted);margin-top:3px}
+  .task .verify{font-size:12.5px;margin-top:6px;padding:7px 10px;background:rgba(94,201,143,.06);border-left:3px solid var(--green);border-radius:0 4px 4px 0}
+  .task .verify b{color:var(--green);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px}
+  .task.done{opacity:.55}
+  .task.done .title{text-decoration:line-through}
+  .flow{font-family:var(--mono);font-size:12.5px;background:#0b0d12;border:1px solid var(--border);border-radius:6px;padding:18px;margin:14px 0;line-height:1.9;overflow-x:auto;white-space:pre}
+  .progress{position:sticky;top:0;z-index:9;background:var(--panel);border-bottom:1px solid var(--border);padding:10px 0;font-family:var(--mono);font-size:12px}
+  .progress .bar{height:6px;background:var(--panel2);border-radius:3px;margin-top:6px;overflow:hidden}
+  .progress .fill{height:100%;background:var(--green);width:0%;transition:width .3s}
+  .toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:18px 24px;font-size:14px}
+  .toc a{color:var(--blue);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .toc ol{margin:6px 0;padding-left:22px}
+  footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+  @media print{
+    body{background:#fff;color:#111}
+    :root{--panel:#f5f5f5;--panel2:#ececec;--border:#ccc;--text:#111;--muted:#555}
+    pre,.flow{background:#f7f7f7;color:#111}
+    .progress{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1><span class="id">INV-SOCKET-001</span> — Peak-Traffic Outage Workbook</h1>
+    <div class="meta">MyGenie POS · Investigation date 2026-07-19 · Status: INVESTIGATED ·
+      <span class="badge b-red">P0 / CRITICAL</span>
+      <span class="badge b-amber">BACKEND PRIMARY</span>
+      <span class="badge b-blue">FRONTEND CONTRIBUTING</span>
+    </div>
+  </div>
+</header>
+
+<div class="progress"><div class="wrap">
+  <span id="pTxt">Workbook progress: 0 / 0 tasks</span>
+  <div class="bar"><div class="fill" id="pFill"></div></div>
+</div></div>
+
+<div class="wrap">
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#rootcause">Root Cause — How the Outage Happens</a></li>
+    <li><a href="#evidence">Evidence Captured</a></li>
+    <li><a href="#backend">Backend Workbook — What Backend Has To Do</a></li>
+    <li><a href="#frontend">Frontend Workbook — What Frontend Has To Do</a></li>
+    <li><a href="#howwecheck">How We Check — Verification Playbook</a></li>
+    <li><a href="#acceptance">Acceptance Criteria — When Is This Closed</a></li>
+    <li><a href="#refs">Reference Files</a></li>
+  </ol>
+</div>
+
+<!-- ================================================================ -->
+<h2 id="problem"><span class="num">1</span>The Problem</h2>
+<p>During peak hours (lunch / dinner), the entire application becomes unresponsive for <b>1–4 minutes</b>. All ~150 live restaurants (5–10 concurrent devices each) see:</p>
+<table>
+  <tr><th>Symptom</th><th>Where the user sees it</th></tr>
+  <tr><td>HTTP 500 errors</td><td>Order placement, reports, any API action</td></tr>
+  <tr><td>API timeouts</td><td>Order placement hangs, spinners never resolve</td></tr>
+  <tr><td>Delayed / missing socket updates</td><td>Kitchen displays wrong, table statuses stale</td></tr>
+  <tr><td>Temporary app hangs</td><td>Cashiers panic-refresh → which adds even more load</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2 id="rootcause"><span class="num">2</span>Root Cause — How the Outage Happens</h2>
+
+<div class="callout red">
+  <span class="t">Verdict</span>
+  <b>Primary culprit: backend/infra.</b> The socket server broadcasts every event <b>globally to all restaurants</b> (no rooms), and the API origin collapses under the resulting load (proven: Cloudflare 521 = origin down). <b>The frontend is a contributing amplifier</b>, not the source: its handlers turn each broadcast into simultaneous API calls, retries have no jitter, and a reconnect race can double connections.
+</div>
+
+<h3>The amplification chain (traced in code)</h3>
+<div class="flow">1 waiter places an order
+   └─ Laravel emits 3–5 socket events (new-order, food-status, order-status, engage, table)
+        └─ ❌ NO ROOMS → each event is written to ALL ~600–1,500 connected sockets
+             (all 150 restaurants receive all events; clients filter by event name)
+              └─ ❌ 3 event types carry NO payload → every device of that restaurant
+                   (5–10 clients) simultaneously calls  GET /single-order
+                    └─ API slows under herd → fetch fails → fixed 1s retry (no jitter)
+                         └─ MORE simultaneous load → 500s / timeouts
+                              └─ sockets drop → EVERY client refetches ALL running
+                                 orders on reconnect (rehydration herd)
+                                   └─ origin saturates → Cloudflare 521 (origin DOWN)
+                                        └─ 1–4 min death spiral until the herd subsides</div>
+
+<h3>Findings table</h3>
+<table>
+  <tr><th>#</th><th>Finding</th><th>Owner</th><th>Proof</th></tr>
+  <tr><td>F1</td><td><b>No room / join protocol exists.</b> Client never emits <code>join</code>, sends no identity at handshake. Server cannot scope emits → global broadcast is the only possibility.</td><td><span class="badge b-amber">BACKEND</span></td><td><code>socketService.js:43-71</code>, grep of <code>/src</code>: zero join emits</td></tr>
+  <tr><td>F2</td><td><b>API calls inside socket handlers.</b> <code>update-order-status</code>, <code>update-food-status</code>, <code>scan-new-order</code> each force a GET-back from every device, retry after fixed 1s.</td><td><span class="badge b-amber">BACKEND</span> contract + <span class="badge b-blue">FE</span> behavior</td><td><code>socketHandlers.js:94-112, 380-434, 459+</code></td></tr>
+  <tr><td>F3</td><td><b>Synchronized fleet load.</b> Every client polls <code>getRunningOrders</code> every 60s + on tab-visible + on every reconnect &gt;1.5s → reconnect storms.</td><td><span class="badge b-blue">FRONTEND</span></td><td><code>useOrderPollingReconciliation.js:29,292-355</code>, <code>useSocketEvents.js:67-111</code></td></tr>
+  <tr><td>F4</td><td><b>Duplicate-connection race.</b> <code>connect()</code> creates a new socket without killing an old mid-reconnect one → two live connections, doubled handlers &amp; API herd.</td><td><span class="badge b-blue">FRONTEND</span></td><td><code>socketService.js:45</code> guard; triggers at <code>SocketContext.jsx:72-113</code></td></tr>
+  <tr><td>F5</td><td><b>API origin goes hard-down.</b> Live probe returned HTTP 521 — Cloudflare reached, origin refused. The 500s originate at the Laravel box, not the proxy.</td><td><span class="badge b-amber">BACKEND</span></td><td>Probe 2026-07-19, <code>evidence/INV-SOCKET-001/</code></td></tr>
+  <tr><td>F6</td><td><b>Single node, SPOF, no LB.</b> One A record (52.66.232.149). Socket port 443 refused although FE config uses <code>https://</code>. Apache + uvicorn co-located on the socket host.</td><td><span class="badge b-amber">INFRA</span></td><td>DNS + port probes</td></tr>
+  <tr><td>F7</td><td><b>Duplicate events.</b> <code>scan-new-order</code> ships v1+v2 payloads simultaneously; 2 FE subscribers per channel when Station View is on.</td><td>Both</td><td>ARCHITECTURE_BIBLE §459; <code>useStationSocketRefresh.js:217-241</code></td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2 id="evidence"><span class="num">3</span>Evidence Captured (2026-07-19)</h2>
+<table>
+  <tr><th>Probe</th><th>Result</th><th>Meaning</th></tr>
+  <tr><td><code>GET https://preprod.mygenie.online/api/v1/</code></td><td><b>HTTP 521</b> in 0.39s</td><td>Cloudflare: <b>origin web server is down</b>. Authoritative — independent of our network.</td></tr>
+  <tr><td><code>presocket.mygenie.online:443</code></td><td>Connection refused</td><td>Socket server unreachable on its configured HTTPS URL</td></tr>
+  <tr><td><code>presocket.mygenie.online:80</code></td><td>Apache/2.4.52, 404 on <code>/socket.io/</code></td><td>Apache co-located on the socket host (shared box)</td></tr>
+  <tr><td><code>presocket.mygenie.online:6001</code></td><td><code>server: uvicorn</code>, 404</td><td>A Python service also runs there</td></tr>
+  <tr><td>DNS</td><td>Single A record → 52.66.232.149 (AWS ap-south-1)</td><td>Single host. No load balancer. SPOF.</td></tr>
+  <tr><td>Code audit</td><td>0 <code>join</code> emits, 0 handshake auth</td><td>Global broadcast proven by protocol</td></tr>
+</table>
+<p class="muted">Raw outputs: <code>/app/memory/evidence/INV-SOCKET-001/handshake_probe.txt</code>, <code>handshake_probe2.txt</code></p>
+
+<!-- ================================================================ -->
+<h2 id="backend"><span class="num">4</span>Backend Workbook — What Backend Has To Do</h2>
+<p class="muted">Tick items as they are completed. Progress is saved in this browser (localStorage). Each task carries its own verification step.</p>
+
+<h3>Phase A — Capture evidence during one peak window (before changing anything)</h3>
+
+<div class="task"><input type="checkbox" data-k="be1"><div class="body">
+  <span class="title">BE-A1 · Log active socket count</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">Log <code>io.engine.clientsCount</code> every 10 seconds through a full lunch peak.</div>
+  <div class="verify"><b>How we check:</b> time-series exists; expect ~600–1,500 at peak. Spikes right before an incident = reconnect storm signature.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be2"><div class="body">
+  <span class="title">BE-A2 · Count emits + fan-out per order</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">Count <code>io.emit</code> calls/sec and multiply by clientsCount = actual socket writes/sec. Also count events emitted for ONE order placement (expected 3–5; check <code>scan-new-order</code> double v1+v2 payload).</div>
+  <div class="verify"><b>How we check:</b> writes/sec at peak documented. &gt;3,000 writes/sec on a single node confirms write amplification.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be3"><div class="body">
+  <span class="title">BE-A3 · Confirm global emit in server code</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">Grep the socket server source: <code>io.emit(</code> vs <code>io.to(</code> / <code>socket.join(</code>. Expected: only global <code>io.emit</code>, zero join handlers.</div>
+  <div class="verify"><b>How we check:</b> paste the grep output into the incident doc. This closes finding F1 definitively.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be4"><div class="body">
+  <span class="title">BE-A4 · Measure Node event-loop lag</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">Add <code>perf_hooks.monitorEventLoopDelay()</code>; log p50/p99 every 10s during peak.</div>
+  <div class="verify"><b>How we check:</b> p99 &gt; 100ms during incident windows = event loop blocked by broadcasting.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be5"><div class="body">
+  <span class="title">BE-A5 · Host resource audit during an incident</span><span class="badge b-amber who">INFRA</span>
+  <div class="desc">On 52.66.232.149: CPU, RSS memory of node process, <code>dmesg</code>/syslog for OOM kills around incident timestamps. List ALL processes — is the socket node sharing the box with Apache/PHP/uvicorn? Who owns port 443 and why is it closed while FE config says <code>https://presocket...</code>?</div>
+  <div class="verify"><b>How we check:</b> process list + resource graph attached; port-443 question answered in writing.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be6"><div class="body">
+  <span class="title">BE-A6 · Laravel worker + DB saturation check</span><span class="badge b-amber who">API / DB</span>
+  <div class="desc">During peak: Apache/PHP-FPM active vs max workers (<code>server-status</code> / fpm status page); MySQL <code>max_connections</code> vs used; slow-query log; lock waits. Correlate with Cloudflare origin-error (521/52x) analytics timestamps.</div>
+  <div class="verify"><b>How we check:</b> a single timeline chart: emit burst → API latency → worker/DB saturation → 521 window. This is the smoking gun for the 1–4 min hang.</div>
+</div></div>
+
+<h3>Phase B — Fixes (in priority order)</h3>
+
+<div class="task"><input type="checkbox" data-k="be7"><div class="body">
+  <span class="title">BE-B1 · Implement room protocol</span> <span class="badge b-red who">P0</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">On connection: require <code>join</code> with restaurantId + token validation → <code>socket.join('rest_'+rid)</code>. Change every <code>io.emit(channel, ...)</code> → <code>io.to('rest_'+rid).emit(channel, ...)</code>. Keep old global emit temporarily behind a flag for backward compatibility during rollout.</div>
+  <div class="verify"><b>How we check:</b> run the wire probe (§6.1) from restaurant A — zero foreign-restaurant events received. Expected wire-traffic drop ≈ 99.3% (1/150).</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be8"><div class="body">
+  <span class="title">BE-B2 · Payload-complete status events</span> <span class="badge b-red who">P0</span><span class="badge b-amber who">API + SOCKET</span>
+  <div class="desc">Include the full order object in <code>update-order-status</code> / <code>update-food-status</code> emits so clients stop calling GET-back. The FE already supports payload events (<code>EVENTS_WITH_PAYLOAD</code>) — no FE change needed to benefit.</div>
+  <div class="verify"><b>How we check:</b> place 1 order, change its status; API access log shows ZERO <code>GET /single-order</code> bursts from that restaurant's devices.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be9"><div class="body">
+  <span class="title">BE-B3 · Serve production frontend as static build</span> <span class="badge b-red who">P0-VERIFY</span><span class="badge b-amber who">INFRA</span>
+  <div class="desc">Verify what serves the production bundle. If it is <code>craco start</code> (dev server — ARCH bible FDEP-04), it caps at ~100 connections and is an outage-class bug on its own. Replace with <code>yarn build</code> + nginx/CDN.</div>
+  <div class="verify"><b>How we check:</b> response headers of the prod app URL show nginx/CDN, not webpack-dev-server; no <code>/sockjs-node</code> or HMR endpoints exposed.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be10"><div class="body">
+  <span class="title">BE-B4 · Kill duplicate scan-new-order payloads</span> <span class="badge b-purple who">P1</span><span class="badge b-amber who">SOCKET SERVER</span>
+  <div class="desc">Stop emitting v1+v2 formats simultaneously; version the protocol and deprecate v1.</div>
+  <div class="verify"><b>How we check:</b> wire probe shows exactly 1 event per scan order.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="be11"><div class="body">
+  <span class="title">BE-B5 · Redis adapter — only when adding a 2nd socket node</span> <span class="badge b-purple who">P2</span><span class="badge b-amber who">INFRA</span>
+  <div class="desc">Not needed on a single node. Mandatory the moment horizontal scaling starts, together with sticky sessions on the LB (polling fallback transport breaks without them). Rooms (BE-B1) are the prerequisite.</div>
+  <div class="verify"><b>How we check:</b> N/A until multi-node; then: events emitted on node 1 reach clients on node 2.</div>
+</div></div>
+
+<!-- ================================================================ -->
+<h2 id="frontend"><span class="num">5</span>Frontend Workbook — What Frontend Has To Do</h2>
+<p class="muted">All items go through the normal gate flow (Intake → Planning → Gate 4 GO → Implementation → QA). Socket files are hotspots — no Fast Lane. Verification after implementation is done by the testing agent, not by inspection.</p>
+
+<div class="task"><input type="checkbox" data-k="fe1"><div class="body">
+  <span class="title">FE-1 · Fix connect() duplicate-socket leak</span> <span class="badge b-red who">HIGH</span><span class="badge b-blue who">socketService.js</span>
+  <div class="desc">In <code>connect()</code> (<code>socketService.js:43-71</code>): before creating a new <code>io()</code> socket, fully tear down any existing one (<code>disconnect()</code> + remove listeners + clear <code>eventHandlers</code> map entries). Guard must handle the "exists but reconnecting" state, not just "connected".</div>
+  <div class="verify"><b>How we check:</b> QA: kill network 5s → restore → toggle tab visibility repeatedly; <code>getDebugInfo()</code> + server clientsCount show exactly 1 connection per device; no double event logs.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="fe2"><div class="body">
+  <span class="title">FE-2 · Jitter + backoff on all herd paths</span> <span class="badge b-red who">HIGH</span><span class="badge b-blue who">socketHandlers.js · useSocketEvents.js · useOrderPollingReconciliation.js</span>
+  <div class="desc">(a) <code>fetchOrderWithRetry</code>: replace fixed 1s retry with exponential backoff + random jitter. (b) Reconnect rehydration: add 0–5s random delay so 1,000 clients don't refetch in the same second. (c) 60s poll: add per-client random phase offset.</div>
+  <div class="verify"><b>How we check:</b> simulate a 3s disconnect for multiple clients; API access log shows rehydration requests spread over ≥5s window, not a single spike.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="fe3"><div class="body">
+  <span class="title">FE-3 · De-duplicate in-flight single-order fetches</span> <span class="badge b-purple who">MEDIUM</span><span class="badge b-blue who">socketHandlers.js</span>
+  <div class="desc">Multiple events for the same orderId within a short window currently trigger multiple concurrent GETs. Keep a per-orderId in-flight promise map; reuse it.</div>
+  <div class="verify"><b>How we check:</b> emit 3 status events for the same order within 1s (test harness); Network tab shows exactly 1 GET.</div>
+</div></div>
+
+<div class="task"><input type="checkbox" data-k="fe4"><div class="body">
+  <span class="title">FE-4 · Send restaurantId + token in handshake auth</span> <span class="badge b-purple who">MEDIUM</span><span class="badge b-blue who">socketService.js · socketEvents.js</span>
+  <div class="desc">Add <code>auth: { restaurantId, token }</code> to connection options and emit <code>join</code> after connect. Harmless with today's server; enables BE-B1 room rollout to be backward-compatible. Also closes the "any client can receive all events" security gap once server validates.</div>
+  <div class="verify"><b>How we check:</b> handshake request (DevTools → WS frames) contains auth payload; after BE-B1, server rejects join with a bad token.</div>
+</div></div>
+
+<div class="callout blue">
+  <span class="t">Testing rule</span>
+  Every FE item above is verified by the <b>testing agent</b> after implementation (mandated) — plus the wire probe and the peak-window numbers from §6. Self-inspection alone does not close an item.
+</div>
+
+<!-- ================================================================ -->
+<h2 id="howwecheck"><span class="num">6</span>How We Check — Verification Playbook</h2>
+
+<h3>6.1 The 5-minute wire probe (decisive: global vs room broadcast)</h3>
+<p>Run in DevTools console of any <b>logged-in</b> POS tab during business hours. Full script: <code>/app/memory/evidence/INV-SOCKET-001/wire_probe.js</code></p>
+<pre><code>// counts every event arriving on the wire, split own vs foreign restaurant
+const sock = window.__SOCKET_SERVICE__.getSocket();
+const myRid = String(JSON.parse(localStorage.getItem('restaurant')||'{}').id);
+const stats = {own:0, foreign:0, bytes:0};
+sock.onAny((ev, ...a) => {
+  stats.bytes += JSON.stringify(a).length;
+  (ev.endsWith('_'+myRid) ? stats.own++ : stats.foreign++);
+});
+// ...wait 5 minutes, then:
+console.log(stats);
+// foreign &gt; 0  ⇒  GLOBAL BROADCAST CONFIRMED (with real events/sec + KB/sec numbers)</code></pre>
+
+<h3>6.2 Herd measurement (before/after BE-B2 + FE-2)</h3>
+<pre><code># On the Laravel access log, during one status change of one order:
+grep "GET .*single-order.*orderId=12345" access.log | wc -l
+# BEFORE fix: 5–10 hits within ~1s (one per device) — AFTER: 0 (payload) or 1 (dedup)</code></pre>
+
+<h3>6.3 Peak-window dashboard (what to graph on one timeline)</h3>
+<table>
+  <tr><th>Metric</th><th>Source</th><th>Healthy</th><th>Incident signature</th></tr>
+  <tr><td>Socket clientsCount</td><td>BE-A1</td><td>Stable curve</td><td>Cliff-drop then spike = reconnect storm</td></tr>
+  <tr><td>Socket writes/sec</td><td>BE-A2</td><td>&lt; 1k/s (after rooms: ~1/150th)</td><td>3k–15k/s bursts</td></tr>
+  <tr><td>Node event-loop p99</td><td>BE-A4</td><td>&lt; 20ms</td><td>&gt; 100ms sustained</td></tr>
+  <tr><td>API p95 latency + 5xx rate</td><td>Laravel / Cloudflare</td><td>&lt; 500ms, ~0 5xx</td><td>Timeouts + 521 window</td></tr>
+  <tr><td>PHP workers / DB connections</td><td>BE-A6</td><td>&lt; 70% of max</td><td>Pinned at max during the hang</td></tr>
+</table>
+
+<h3>6.4 FE regression QA (after FE-1…FE-4, run by testing agent)</h3>
+<ol>
+  <li>Login → single connection registered (server count +1 exactly).</li>
+  <li>5s network kill → restore: 1 connection survives, rehydration fires once with jittered delay, orders merge correctly.</li>
+  <li>Tab hide/show ×5 during reconnect: still exactly 1 connection (FE-1).</li>
+  <li>3 rapid status events, same order: exactly 1 GET (FE-3).</li>
+  <li>Logout: clientsCount −1; no events processed after logout.</li>
+</ol>
+
+<!-- ================================================================ -->
+<h2 id="acceptance"><span class="num">7</span>Acceptance Criteria — When Is This Closed</h2>
+<table>
+  <tr><th>#</th><th>Criterion</th><th>Measured by</th></tr>
+  <tr><td>1</td><td>Wire probe from any restaurant shows <b>0 foreign-restaurant events</b></td><td>§6.1</td></tr>
+  <tr><td>2</td><td>One order status change produces <b>0 GET-back bursts</b> in API logs</td><td>§6.2</td></tr>
+  <tr><td>3</td><td>Full lunch + dinner peak with <b>0 Cloudflare 521/52x</b> origin errors</td><td>Cloudflare analytics, 7 consecutive days</td></tr>
+  <tr><td>4</td><td>Node event-loop p99 &lt; 20ms through peak</td><td>BE-A4 metric</td></tr>
+  <tr><td>5</td><td>Simulated 5s network blip on 10 devices → all recover with exactly 1 connection each, requests spread ≥5s</td><td>§6.4 + server clientsCount</td></tr>
+  <tr><td>6</td><td>FE items FE-1…FE-4 pass testing-agent verification</td><td>QA report</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2 id="refs"><span class="num">8</span>Reference Files</h2>
+<table>
+  <tr><th>Artifact</th><th>Path</th></tr>
+  <tr><td>Full investigation report (MD)</td><td><code>/app/memory/INV-SOCKET-001_INVESTIGATION_REPORT.md</code></td></tr>
+  <tr><td>Backend brief (MD)</td><td><code>/app/memory/backend_briefs/BACKEND_BRIEF_INV-SOCKET-001_2026-07-19.md</code></td></tr>
+  <tr><td>This workbook (HTML)</td><td><code>/app/memory/INV-SOCKET-001_WORKBOOK.html</code></td></tr>
+  <tr><td>Wire probe script</td><td><code>/app/memory/evidence/INV-SOCKET-001/wire_probe.js</code></td></tr>
+  <tr><td>Probe raw outputs</td><td><code>/app/memory/evidence/INV-SOCKET-001/handshake_probe*.txt</code></td></tr>
+  <tr><td>Registry entry</td><td><code>registry.json → INV-SOCKET-001</code> (P0 / CRITICAL / INVESTIGATED)</td></tr>
+</table>
+
+<footer>INV-SOCKET-001 · Generated 2026-07-19 · MyGenie POS control docs · Checkbox state persists in this browser only (localStorage key: inv-socket-001-wb)</footer>
+</div>
+
+<script>
+(function(){
+  const KEY='inv-socket-001-wb';
+  const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+  const boxes=[...document.querySelectorAll('.task input[type=checkbox]')];
+  function refresh(){
+    const done=boxes.filter(b=>b.checked).length;
+    document.getElementById('pTxt').textContent=`Workbook progress: ${done} / ${boxes.length} tasks`;
+    document.getElementById('pFill').style.width=(boxes.length?100*done/boxes.length:0)+'%';
+  }
+  boxes.forEach(b=>{
+    if(saved[b.dataset.k]) b.checked=true;
+    b.closest('.task').classList.toggle('done',b.checked);
+    b.addEventListener('change',()=>{
+      saved[b.dataset.k]=b.checked;
+      localStorage.setItem(KEY,JSON.stringify(saved));
+      b.closest('.task').classList.toggle('done',b.checked);
+      refresh();
+    });
+  });
+  refresh();
+})();
+</script>
+</body>
+</html>
