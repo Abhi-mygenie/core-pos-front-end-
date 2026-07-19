@@ -113,15 +113,17 @@ const sidebarMenuItems = [
       { id: "all-settings", label: "All Settings", path: "/settings" },
     ],
   },
-  // CR-072 — Inventory Management
+  // CR-072/CR-078/CR-079 — Inventory Management
   {
     id: "inventory",
     label: "Inventory",
     icon: Package,
     children: [
-      { id: "inventory-dashboard", label: "Stock Dashboard", path: "/inventory" },
-      { id: "inventory-purchase", label: "Purchase Entry", path: "/inventory-purchase" },
-      { id: "inventory-physical", label: "Physical Count", path: "/inventory-physical" },
+      { id: "inventory-dashboard", label: "Dashboard", path: "/inventory-dashboard" },                                  // CR-079 · Intelligence view (default)
+      { id: "inventory-current-stock", label: "Current Stock", path: "/inventory-current-stock" },                      // CR-079 · was "Stock Dashboard"
+      { id: "inventory-smart-purchase", label: "Smart Purchase", path: "/inventory-smart-purchase" },                   // CR-078 · was "Purchase Entry"
+      { id: "inventory-receive", label: "Receive", path: "/inventory-receive", featureGate: "restaurantTypeFlagged" },  // CR-077 · conditional B13 (franchise + master)
+      { id: "inventory-audit", label: "Stock Audit", path: "/inventory-audit" },                                        // CR-079 · absorbs CR-075-B · was "Physical Count"
       { id: "inventory-setup", label: "Ingredients & Setup", path: "/inventory-setup" },
       { id: "inventory-recipes", label: "Recipes", path: "/recipes" },
     ],
@@ -216,7 +218,7 @@ const Sidebar = ({
   const { navRef, saveScroll } = useSidebarScroll(); // BUG-136
   const { toast } = useToast();
   const { user, logout: authLogout, hasPermission } = useAuth();
-  const { restaurant, clearRestaurant } = useRestaurant();
+  const { restaurant, clearRestaurant, restaurantTypeFlag } = useRestaurant();
   const { clearMenu } = useMenu();
   const { clearTables } = useTables();
   const { clearSettings } = useSettings();
@@ -572,7 +574,10 @@ const Sidebar = ({
                       );
                     }
                     // F-10: Feature-gate — hide items when restaurant lacks the feature
-                    if (child.featureGate && !restaurant?.features?.[child.featureGate]) return null;
+                    // CR-078 B13: 'restaurantTypeFlagged' case → show pill for franchise + master, hide for normal/undefined
+                    if (child.featureGate === 'restaurantTypeFlagged') {
+                      if (!(restaurantTypeFlag === 'franchise' || restaurantTypeFlag === 'master')) return null;
+                    } else if (child.featureGate && !restaurant?.features?.[child.featureGate]) return null;
                     const isChildActive = activeItem === child.id;
                     return (
                       <button
@@ -629,7 +634,10 @@ const Sidebar = ({
                   </div>
                 );
               }
-              if (child.featureGate && !restaurant?.features?.[child.featureGate]) return null;
+              // CR-078 B13: 'restaurantTypeFlagged' case → show pill for franchise + master
+              if (child.featureGate === 'restaurantTypeFlagged') {
+                if (!(restaurantTypeFlag === 'franchise' || restaurantTypeFlag === 'master')) return null;
+              } else if (child.featureGate && !restaurant?.features?.[child.featureGate]) return null;
               const isChildActive = activeItem === child.id;
               return (
                 <button

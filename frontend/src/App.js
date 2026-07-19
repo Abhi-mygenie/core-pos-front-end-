@@ -167,12 +167,16 @@ function App() {
               {/* CR-069: Employee Management */}
               <Route path="/employees" element={<ProtectedRoute><EmployeeManagementPage /></ProtectedRoute>} />
               {/* CR-072: Inventory Management */}
-              <Route path="/inventory" element={<ProtectedRoute><InventoryCurrentStockPage /></ProtectedRoute>} />
-              <Route path="/inventory-physical" element={<ProtectedRoute><StockAuditPage /></ProtectedRoute>} />
+              {/* CR-079 · Phase E — Inventory IA restructure */}
+              <Route path="/inventory" element={<ProtectedRoute><Navigate to="/inventory-dashboard" replace /></ProtectedRoute>} />
+              <Route path="/inventory-dashboard" element={<ProtectedRoute><InventoryIntelligencePage /></ProtectedRoute>} />
+              <Route path="/inventory-current-stock" element={<ProtectedRoute><InventoryCurrentStockPage /></ProtectedRoute>} />
+              <Route path="/inventory-smart-purchase" element={<ProtectedRoute><SmartPurchasePage /></ProtectedRoute>} />
+              <Route path="/inventory-audit" element={<ProtectedRoute><StockAuditPage /></ProtectedRoute>} />
               <Route path="/inventory-setup" element={<ProtectedRoute><InventorySetupPage /></ProtectedRoute>} />
-              <Route path="/inventory-purchase" element={<ProtectedRoute><PurchaseEntryPage /></ProtectedRoute>} />
-              <Route path="/inventory-smart-purchase" element={<ProtectedRoute><SmartPurchasePage /></ProtectedRoute>} /> {/* CR-078 Phase C — Phase E adds legacy redirect */}
-              <Route path="/inventory-dashboard" element={<ProtectedRoute><InventoryIntelligencePage /></ProtectedRoute>} /> {/* CR-079 Phase D — Phase E makes /inventory redirect here */}
+              {/* CR-079 · Legacy 302 redirects — B11 (safe for bookmarks/emails/print QR codes) */}
+              <Route path="/inventory-purchase" element={<Navigate to="/inventory-smart-purchase" replace />} />
+              <Route path="/inventory-physical" element={<Navigate to="/inventory-audit" replace />} />
               <Route path="/recipes" element={<ProtectedRoute><RecipeManagementPage /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
