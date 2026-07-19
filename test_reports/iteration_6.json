@@ -1,0 +1,50 @@
+{
+  "summary": "Independent validation of external Socket.IO server B1 join_restaurant handler (CR-077 PART 1 Edit B1) via node script from pod. All 4 mandated tests + arg envelope shape check PASS. TEST 5 (frontend not yet emitting join) is documented as CONFIRMED-EXPECTED — F1-F3 planned, not yet implemented. No app code was modified (user mandate honored).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/memory/evidence/INV-SOCKET-001/b1_full_validation.js",
+    "/app/memory/evidence/INV-SOCKET-001/b1_full_validation_result.txt"
+  ],
+  "action_items": [
+    "B1 handler is production-ready — proceed with Gate 4 GO for frontend F1-F3 edits (emit join_restaurant on connect / on restaurant switch).",
+    "Frontend F1-F3 tasks: (a) emit join_restaurant({restaurant_id: rid}) on socket connect once rid known, (b) re-emit on tenant switch, (c) optionally listen for joined_restaurant ack for observability."
+  ],
+  "critical_code_review_comments": [
+    "B1 handler behavior observed matches CR-077 contract exactly: parseInt guard rejects '' / 'abc' / missing key; explicit leave loop of prior rest_* rooms before join; ack {room:'rest_<rid>'} emitted only on success; no crash / server remains responsive after invalid emits.",
+    "Broadcast envelope confirmed as io.to('rest_'+rid).emit('new_order_'+rid, order_type, order_id, restaurant_id, food_status, order_details) — matches MSG_INDEX lines 163-170 (5 positional args).",
+    "Response body still contains literal 'Message broadcasted22' (typo preserved from prior deploy) — cosmetic only, not part of contract; can be ignored."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "n/a (skipped per request)"},
+  "test_credentials": "Not used (TEST 5 optional live-frontend confirmation was skipped as it is documented CONFIRMED-EXPECTED)",
+  "seed_data_creation": "None. Only ephemeral POSTs to /order-update with fake rids 777001/777002 (harmless).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "B1 handler on https://presocket.mygenie.online is validated (join, isolation, stale-room cleanup, invalid-payload guard, arg envelope). Reusable probe: /app/memory/evidence/INV-SOCKET-001/b1_full_validation.js. Once frontend F1-F3 lands, re-test with real rid 644 login to confirm live wiretap receives new_order_644 events after POST /order-update.",
+  "detailed_results": {
+    "TEST_1_join_and_delivery": {
+      "ack_received": true, "ack_room": "rest_777001",
+      "events_received": 1, "expected": 1,
+      "arg_envelope_ok": true,
+      "arg_shape": "[new-order, 424242, 777001, 0, {orders:[],probe:'T1-after-join'}] — 5 positional args match MSG_INDEX contract"
+    },
+    "TEST_2_isolation_control_socket": {
+      "order_events_on_A": 0, "expected": 0, "pass": true
+    },
+    "TEST_3_stale_room_cleanup_tenant_switch": {
+      "ack2_received": true, "ack2_room": "rest_777002",
+      "old_room_777001_leaks_after_switch": 0, "expected": 0,
+      "new_room_777002_delivery": 1, "expected_new": 1
+    },
+    "TEST_4_invalid_payload_guard": {
+      "empty_object_emit_ack": "none (correct)",
+      "restaurant_id_abc_emit_ack": "none (correct)",
+      "delivery_leak_after_invalid_emits": 0,
+      "server_responsive_after_invalid": true,
+      "recovery_valid_join_ack_received": true,
+      "recovery_delivery": 1
+    },
+    "TEST_5_frontend_live_emit": "SKIPPED — CONFIRMED-EXPECTED per plan (F1-F3 not yet implemented, awaiting Gate 4 GO). Previous iteration_5 already documented that live POS window.__SOCKET_SERVICE__.socket never emits join_restaurant."
+  }
+}

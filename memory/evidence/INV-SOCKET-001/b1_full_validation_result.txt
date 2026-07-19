@@ -1,0 +1,35 @@
+[connected] A=thrK1cFXukKkZECHAAAe B=GQIUJ3Ud9vS1kvEwAAAf C=D6RcnI-5Car1laQJAAAd
+[B] ACK #1: {"room":"rest_777001"}
+[POST T1-after-join rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+
+[TEST 1] ack=true delivery(1?)=1 argshape=true
+[TEST 2] A order events (expect 0): 0
+[B] ACK #2: {"room":"rest_777002"}
+[POST T3-old-room rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+[POST T3-new-room rid=777002] HTTP 200 → {"status":"Message broadcasted22"}
+
+[TEST 3] ack2=true old-room-leaks(expect 0)=0 new-room-delivery(expect 1)=1
+
+[TEST 4] emit join_restaurant with {} (invalid)
+[TEST 4] emit join_restaurant with {restaurant_id:"abc"} (invalid)
+[POST T4-after-invalid-joins rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+[TEST 4] now valid join_restaurant {restaurant_id:777001}
+[C] ACK joined_restaurant: {"room":"rest_777001"}
+[POST T4-valid-after-recovery rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+
+===== B1 INDEPENDENT VALIDATION SUMMARY =====
+{
+  "T1_ack_correct_room": true,
+  "T1_exactly_one_event": true,
+  "T1_arg_envelope_matches": true,
+  "T2_control_socket_isolated": true,
+  "T3_switch_ack": true,
+  "T3_old_room_leaks_zero": true,
+  "T3_new_room_delivered_one": true,
+  "T4_invalid_no_ack": true,
+  "T4_invalid_no_join_leak": true,
+  "T4_server_still_responsive_ack": true,
+  "T4_server_still_delivers": true
+}
+
+>>> OVERALL: PASS — B1 handler meets CR-077 contract.

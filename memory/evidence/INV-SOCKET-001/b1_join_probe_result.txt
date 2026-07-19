@@ -1,0 +1,14 @@
+[connected] A=01JJ6Wv45nE5KA1jAAAO B=LgA-tan6oLORbT8oAAAP
+[B] ACK joined_restaurant: {"room":"rest_777001"}
+[POST after-join rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+[B] ACK joined_restaurant: {"room":"rest_777002"}
+[POST old-room-after-switch rid=777001] HTTP 200 → {"status":"Message broadcasted22"}
+[POST new-room-after-switch rid=777002] HTTP 200 → {"status":"Message broadcasted22"}
+
+===== B1 VALIDATION RESULT =====
+ACK received: {"room":"rest_777002"}
+B events on new_order_777001 after join: 1 | first payload: ["new-order",424242,777001,0,{"orders":[],"probe":"after-join"}]
+B events on OLD room after switching to 777002: 0 (expect 0 — stale-room cleanup)
+B events on NEW room 777002: 1 (expect 1)
+A (never joined) events: 0 (expect 0 — isolation)
+>>> B1 HANDLER: PASS — join, delivery, room-switch cleanup, isolation all correct.
