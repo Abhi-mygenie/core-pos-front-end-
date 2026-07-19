@@ -91,6 +91,13 @@ export const RestaurantProvider = ({ children }) => {
     return restaurant?.printerAgents || [];
   }, [restaurant]);
 
+  // CR-078 · Smart Purchase / CR-077 Receive pill — expose restaurant type
+  //   Values: "normal" | "franchise" | "master" | null (until profile loads)
+  //   Consumers: Sidebar (conditional Receive pill), Smart Purchase (transfer hint deferred to CR-080)
+  const restaurantTypeFlag = useMemo(() => {
+    return restaurant?.restaurantTypeFlag || null;
+  }, [restaurant]);
+
   // Context value
   const value = useMemo(() => ({
     // State
@@ -107,7 +114,8 @@ export const RestaurantProvider = ({ children }) => {
     discountTypes,
     printers,
     printerAgents,
-    
+    restaurantTypeFlag,   // CR-078
+
     // Actions
     setRestaurant,
     clearRestaurant,
@@ -123,6 +131,7 @@ export const RestaurantProvider = ({ children }) => {
     discountTypes,
     printers,
     printerAgents,
+    restaurantTypeFlag,   // CR-078
     setRestaurant,
     clearRestaurant,
   ]);

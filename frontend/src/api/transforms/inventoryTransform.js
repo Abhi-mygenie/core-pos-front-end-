@@ -1,5 +1,7 @@
 // CR-072: Inventory Transform — fromAPI/toAPI normalizers
 // Verified against live preprod data (18march: 429 ingredients, 427 stock items, 31 categories)
+// CR-075-A P6 + CR-078: import formatDateForAPI for batch/expiry passthrough in addPurchase
+import { formatDateForAPI } from './settlementTransform';
 
 const fromAPI = {
   // A1: get-inventory-master → { data: [...] }
@@ -114,6 +116,8 @@ const toAPI = {
   },
 
   // B5: add-purchase — multi-line
+  // CR-075-A P6 (folded): batch + expiry_date passthrough (backend accepts, previously silently dropped)
+  // CR-078: origin field (planner|ad_hoc|legacy) — future backend brief Q7-b
   addPurchase(data) {
     return {
       vendor_name: data.vendorName || '',
@@ -129,6 +133,9 @@ const toAPI = {
         rate: item.rate,
         Amount: item.amount,           // BUG-197 #6: capital A per backend contract
         converion_factor: item.conversionFactor || 1, // R9 typo
+        batch: item.batch || '',                                                          // CR-075-A P6
+        expiry_date: item.expiry ? formatDateForAPI(item.expiry) : '',                    // CR-075-A P6 (DD-MM-YYYY)
+        origin: item.origin || 'legacy',                                                  // CR-078
       })),
     };
   },

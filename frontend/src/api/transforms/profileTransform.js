@@ -114,6 +114,13 @@ export const fromAPI = {
       coverPhoto: getImageUrl(api.cover_photo),
       currency: api.currency || 'INR',
       currencySymbol: api.currency === 'INR' ? '₹' : api.currency,
+
+      // CR-078 · Smart Purchase / CR-077 Receive pill dependency:
+      //   Surface restaurant_type_flag ("normal" | "franchise" | "master") to consumers.
+      //   Used by Sidebar to conditionally render the Receive pill (CR-078 B13:
+      //   visible for franchise + master, hidden for normal or undefined).
+      restaurantTypeFlag: api.restaurant_type_flag || null,
+      parentRestaurantId: api.parent_restaurant_id || null,
       
       // Features
       features: {

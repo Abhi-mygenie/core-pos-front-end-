@@ -56,6 +56,7 @@ import ExpenseSetupPage from "./pages/ExpenseSetupPage";             // CR-059
 import EmployeeManagementPage from "./pages/EmployeeManagementPage"; // CR-069
 import InventoryCurrentStockPage from "./pages/InventoryCurrentStockPage"; // CR-079 (renamed from InventoryDashboardPage)
 import StockAuditPage from "./pages/StockAuditPage";                       // CR-079 (renamed from PhysicalCountPage · absorbs CR-075-B)
+import SmartPurchasePage from "./pages/SmartPurchasePage";                 // CR-078 (Phase C — replaces PurchaseEntryPage in Phase F)
 import InventorySetupPage from "./pages/InventorySetupPage";         // CR-072
 import PurchaseEntryPage from "./pages/PurchaseEntryPage";           // CR-072
 import RecipeManagementPage from "./pages/RecipeManagementPage";     // CR-072
@@ -169,6 +170,7 @@ function App() {
               <Route path="/inventory-physical" element={<ProtectedRoute><StockAuditPage /></ProtectedRoute>} />
               <Route path="/inventory-setup" element={<ProtectedRoute><InventorySetupPage /></ProtectedRoute>} />
               <Route path="/inventory-purchase" element={<ProtectedRoute><PurchaseEntryPage /></ProtectedRoute>} />
+              <Route path="/inventory-smart-purchase" element={<ProtectedRoute><SmartPurchasePage /></ProtectedRoute>} /> {/* CR-078 Phase C — Phase E adds legacy redirect */}
               <Route path="/recipes" element={<ProtectedRoute><RecipeManagementPage /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
