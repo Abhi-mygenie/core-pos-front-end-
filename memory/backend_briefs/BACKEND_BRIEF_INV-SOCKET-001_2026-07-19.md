@@ -7,7 +7,8 @@
 - Priority/Risk: P0 / CRITICAL
 
 ## What the frontend PROVES about the server contract
-1. The client NEVER joins a room and sends NO identity at handshake. Channels are plain event names (`new_order_${rid}`, `update_table_${rid}`, `order-engage_${rid}`, `food_update_${rid}`, `aggregator_order_${rid}`). Therefore the socket server can only be doing global `io.emit(...)` — every event reaches every connected socket of all 150 restaurants.
+1. The client NEVER joins a room and sends NO identity at handshake. **LIVE-PROVEN 2026-07-19 04:25 UTC:** an authenticated client for restaurant 644 received 6 unsolicited FOREIGN events for restaurants 689 & 523 on channel `login_disabled_<rid>` (`own=0, foreign=6`). Server emits on the DEFAULT namespace to every connected socket in the fleet.
+   - NOTE: the proof events were `login_disabled_<rid>` (a system/admin event), NOT order events — the frontend has ZERO references to that channel yet still received it. Please tell us what emits `login_disabled_<rid>`, how often, and whether ORDER emits (`new_order_<rid>` etc.) use the same global `io.emit()` path.
 2. Three events force clients to call the API back: `update-food-status`, `update-order-status`, `scan-new-order` → each emit triggers `GET single-order` from EVERY device of that restaurant (5–10×), with a 1s retry on failure.
 3. Every client also calls `GET running-orders` every 60s, plus on every reconnect >1.5s (reconnect storm = herd of heavy queries).
 4. Live probe 2026-07-19: `https://preprod.mygenie.online/api/v1/` → **HTTP 521 (Cloudflare: origin down)**. `presocket.mygenie.online:443` refused; port 80 = Apache 404; port 6001 = uvicorn. Single A record (52.66.232.149) — single node, SPOF, no LB.

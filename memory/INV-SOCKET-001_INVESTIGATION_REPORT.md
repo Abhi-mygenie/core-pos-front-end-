@@ -125,5 +125,42 @@ Caveat: pod egress could be filtered for some ports, but the 521 is served *by C
 ### Decisive experiment (5 min, run in any logged-in POS browser console)
 `/app/memory/evidence/INV-SOCKET-001/wire_probe.js` — counts ALL events arriving on the wire via `onAny`, split into own-restaurant vs foreign-restaurant. If foreign events appear → global broadcast proven with numbers (events/sec, bytes/sec).
 
-## 7. Retroactive Candidates
+## 7. LEARNINGS (updated 2026-07-19, post-live-test)
+
+1. **Global broadcast is PROVEN, not inferred.** Authenticated client of restaurant 644 received foreign events for 689 & 523 (`own=0, foreign=6`) in 4 min. Server emits on the DEFAULT namespace to every socket.
+2. **The proof came from a NON-order event.** The 6 foreign events were on channel `login_disabled_<rid>` — a system/admin event (likely subscription/login-access toggle), NOT order traffic. `own=0` on order channels only meant restaurant 644 had no orders during the quiet test window; it does NOT weaken the finding.
+3. **The frontend does not even subscribe to `login_disabled`** (grep `/app/frontend/src`: 0 references). Receiving an unsubscribed foreign channel is the cleanest possible proof of raw `io.emit()` fan-out — the client cannot be blamed for an accidental subscription.
+4. **Client-side isolation is name-filtering only.** `useSocketEvents` subscribes to `*_<myRid>`; any stray `onAny`/wildcard listener leaks cross-tenant data → this is a PRIVACY issue in addition to the performance issue.
+5. **Earlier "socket 443 refused / Apache" readings were OUTAGE ARTIFACTS.** When healthy the socket host is **nginx 1.18.0 + Socket.IO v4**, websocket upgrade works, EIO4 only (client `socket.io-client ^4.8.3` matches). User confirmed stack is nginx.
+6. **The origin flaps.** `preprod.mygenie.online` returned HTTP 521 (Cloudflare: origin down) at BOTH 03:19 and 04:12 UTC, then recovered by 04:19. Intermittent origin death is a distinct, confirmed symptom from the broadcast issue.
+7. **Handshake accepts unauthenticated sockets** (no token required) → anyone can open a socket and, given global broadcast, receive the whole fleet's events.
+
+## 8. FILES REQUIRED TO CLOSE THE LOOP (request from backend team)
+
+Priority order. Goal: turn "proven by observation" into "proven by source line" + pinpoint the origin-flap cause. **Mask all secrets (`DB_PASSWORD=***`, tokens, API keys) before sharing.**
+
+### Tier 1 — Socket server (highest value, smallest)
+- [ ] **Node Socket.IO server source** (`server.js`/`index.js` + any handler files). Confirms: `io.emit()` (global) vs `io.to(room)`; what emits `login_disabled_<rid>` and how often; whether order emits use the same global path; any DB query / blocking work inside handlers; disconnect cleanup.
+- [ ] **Process/topology:** `pm2 ls` / systemd unit for the socket service, and `ps aux` + `sudo ss -tlnp | grep -E ':80|:443|:6001'` on 52.66.232.149 (who owns each port; is socket node co-located with nginx/php-fpm/uvicorn).
+
+### Tier 2 — nginx + PHP-FPM (pinpoints the 500s / 521)
+- [ ] **nginx.conf + the API vhost site config** — `worker_connections`, `proxy_read_timeout`, `proxy_connect_timeout`, `upstream`/`fastcgi_pass`, and the socket vhost WebSocket block (`proxy_http_version 1.1`, `Upgrade`/`Connection` headers).
+- [ ] **`/var/log/nginx/error.log`** for one incident window (±10 min around a known hang). `connect() ... failed (11: Resource temporarily unavailable)` = FPM pool exhausted (#1 suspect); `upstream timed out` = slow PHP/DB.
+- [ ] **`/var/log/nginx/access.log`** same window (with `$request_time` + `$upstream_response_time`; I'll supply a log_format if missing). Lets me count the GET-back herd per order and req/sec at collapse.
+- [ ] **PHP-FPM pool config** (`www.conf` → `pm`, `pm.max_children`) + **`php-fpm.log`** — look for `server reached pm.max_children` (smoking gun for the 1–4 min hang).
+
+### Tier 3 — Laravel + DB + edge
+- [ ] **`storage/logs/laravel.log`** for the incident window.
+- [ ] **The Laravel code path that emits the socket event after order placement** (event/broadcast class or the HTTP call to the socket server) — confirms events-per-order and whether the emit is synchronous inside the request cycle.
+- [ ] **MySQL slow query log** for the window + `SHOW VARIABLES LIKE 'max_connections';` and `.env` DB pool keys (values only, mask password).
+- [ ] **`dmesg` / syslog** around incident timestamps (OOM-killer evidence).
+- [ ] **Cloudflare origin-error analytics** screenshot for the 521/52x spike times (to align all timelines).
+
+## 9. NEXT STEPS
+1. Backend team runs the **Phase A evidence capture** (workbook BE-A1…A6) during one peak window and sends the Tier 1–3 files above.
+2. Main agent (next session): ingest those files, build a single incident timeline, pinpoint first-resource-to-die, confirm `io.emit` vs `io.to` at source-line level.
+3. Register FE hardening items **FE-1…FE-4** (Intake → Planning) — socket files are hotspots (R5), no Fast Lane; testing-agent verification mandatory.
+4. Backend fixes **BE-B1 (rooms)** + **BE-B2 (payload-complete events)** are the highest-leverage; re-run the wire probe after BE-B1 to confirm `foreign=0`.
+
+## 10. Retroactive Candidates
 None found.

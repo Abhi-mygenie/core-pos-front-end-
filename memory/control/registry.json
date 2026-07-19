@@ -15263,7 +15263,14 @@
         "BUG-094",
         "BUG-116"
       ],
-      "scope_note": "Owner-reported: entire app unresponsive 1-4 min at peak (500s, timeouts, missing socket updates). Investigation report + backend brief produced. FE fixes proposed: socket connect() leak, no room join protocol."
+      "scope_note": "GLOBAL BROADCAST PROVEN LIVE (client 644 received foreign 689/523 login_disabled events, own=0 foreign=6). Origin flaps 521. Awaiting backend files (socket JS, nginx/php-fpm logs) to pinpoint first-resource-to-die. FE-1..FE-4 hardening pending INTAKE.",
+      "artifacts": {
+        "report": "memory/INV-SOCKET-001_INVESTIGATION_REPORT.md",
+        "workbook_html": "memory/INV-SOCKET-001_WORKBOOK.html",
+        "backend_brief": "memory/backend_briefs/BACKEND_BRIEF_INV-SOCKET-001_2026-07-19.md",
+        "test_report": "test_reports/iteration_4.json",
+        "handover": "memory/handover/SESSION_HANDOVER_2026_07_19_INV-SOCKET-001.md"
+      }
     }
   ]
 }

@@ -99,6 +99,8 @@
     <li><a href="#frontend">Frontend Workbook — What Frontend Has To Do</a></li>
     <li><a href="#howwecheck">How We Check — Verification Playbook</a></li>
     <li><a href="#acceptance">Acceptance Criteria — When Is This Closed</a></li>
+    <li><a href="#learnings">Key Learnings (updated after live test)</a></li>
+    <li><a href="#files">Files To Provide — To Close The Loop</a></li>
     <li><a href="#refs">Reference Files</a></li>
   </ol>
 </div>
@@ -323,7 +325,85 @@ grep "GET .*single-order.*orderId=12345" access.log | wc -l
 </table>
 
 <!-- ================================================================ -->
-<h2 id="refs"><span class="num">8</span>Reference Files</h2>
+<h2 id="learnings"><span class="num">9</span>Key Learnings (updated after live test)</h2>
+<div class="callout green">
+  <span class="t">The clincher: a non-order event proved it</span>
+  The 6 foreign events were on channel <code>login_disabled_&lt;rid&gt;</code> — a <b>system/admin event, not order traffic</b>. That is <i>why</i> restaurants 689 & 523 fired them despite having no orders running. The order channels showed <code>own=0</code> simply because test restaurant 644 was quiet. The frontend has <b>zero references to <code>login_disabled</code></b> — it never subscribes to it, yet still received it. Receiving an <b>unsubscribed foreign channel</b> is the cleanest possible proof of raw <code>io.emit()</code> fan-out to the default namespace.
+</div>
+<table>
+  <tr><th>#</th><th>Learning</th></tr>
+  <tr><td>1</td><td><b>Global broadcast PROVEN</b> (not inferred): client 644 got foreign events for 689 & 523 in 4 min.</td></tr>
+  <tr><td>2</td><td>Proof came from <code>login_disabled_&lt;rid&gt;</code> (admin/system event) — orders were NOT needed to prove it.</td></tr>
+  <tr><td>3</td><td>Client isolation is <b>name-filtering only</b> → any stray wildcard listener = cross-tenant data leak (privacy + perf).</td></tr>
+  <tr><td>4</td><td>Earlier "443 refused / Apache" was an <b>outage artifact</b>. Healthy socket host = <b>nginx 1.18.0 + Socket.IO v4</b>, websocket upgrade OK.</td></tr>
+  <tr><td>5</td><td>Origin <b>flaps</b>: Cloudflare 521 at 03:19 AND 04:12 UTC, recovered by 04:19 — intermittent origin death is a distinct confirmed symptom.</td></tr>
+  <tr><td>6</td><td>Handshake <b>accepts unauthenticated sockets</b> (no token) → anyone can open a socket and, given global broadcast, receive the whole fleet's events.</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2 id="files"><span class="num">10</span>Files To Provide — To Close The Loop</h2>
+<p>Send these to turn <b>"proven by observation"</b> into <b>"proven by source line"</b> and pinpoint the origin-flap cause. <b class="muted">Mask all secrets before sharing — <code>DB_PASSWORD=***</code>, tokens, API keys. Paths, timestamps, and config structure are what we need, never credentials.</b></p>
+
+<h3>Tier 1 — Socket server (highest value, smallest)</h3>
+<div class="task"><input type="checkbox" data-k="f1"><div class="body">
+  <span class="title">Node Socket.IO server source</span><span class="badge b-amber who">SOCKET</span>
+  <div class="desc"><code>server.js</code>/<code>index.js</code> + handler files.</div>
+  <div class="verify"><b>Answers:</b> <code>io.emit()</code> (global) vs <code>io.to(room)</code>; what emits <code>login_disabled_&lt;rid&gt;</code> & how often; do order emits use the same global path; any DB query / blocking work in handlers; disconnect cleanup.</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f2"><div class="body">
+  <span class="title">Process & port topology</span><span class="badge b-amber who">INFRA</span>
+  <div class="desc"><code>pm2 ls</code> / systemd unit, plus on 52.66.232.149: <code>ps aux</code> and <code>sudo ss -tlnp | grep -E ':80|:443|:6001'</code>.</div>
+  <div class="verify"><b>Answers:</b> who owns each port; is the socket node co-located with nginx/php-fpm/uvicorn.</div>
+</div></div>
+
+<h3>Tier 2 — nginx + PHP-FPM (pinpoints the 500s / 521)</h3>
+<div class="task"><input type="checkbox" data-k="f3"><div class="body">
+  <span class="title">nginx.conf + API vhost + socket vhost</span><span class="badge b-amber who">NGINX</span>
+  <div class="desc"><code>worker_connections</code>, <code>proxy_read_timeout</code>, <code>proxy_connect_timeout</code>, <code>upstream</code>/<code>fastcgi_pass</code>, and the WebSocket block (<code>proxy_http_version 1.1</code>, <code>Upgrade</code>/<code>Connection</code> headers).</div>
+  <div class="verify"><b>Answers:</b> whether 500s are nginx→FPM timeouts vs PHP fatals; whether socket proxy forces long-polling.</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f4"><div class="body">
+  <span class="title">nginx error.log (one incident window, ±10 min)</span><span class="badge b-amber who">NGINX</span>
+  <div class="verify"><b>Reads like:</b> <code>connect() ... failed (11: Resource temporarily unavailable)</code> = FPM pool exhausted (#1 suspect); <code>upstream timed out</code> = slow PHP/DB.</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f5"><div class="body">
+  <span class="title">nginx access.log (same window)</span><span class="badge b-amber who">NGINX</span>
+  <div class="desc">With <code>$request_time</code> + <code>$upstream_response_time</code> (we'll supply a log_format if missing).</div>
+  <div class="verify"><b>Answers:</b> the GET-back herd count per order and req/sec at collapse.</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f6"><div class="body">
+  <span class="title">PHP-FPM pool config + php-fpm.log</span><span class="badge b-amber who">PHP-FPM</span>
+  <div class="desc"><code>www.conf</code> → <code>pm</code>, <code>pm.max_children</code>.</div>
+  <div class="verify"><b>Smoking gun:</b> <code>server reached pm.max_children</code> in the log = direct cause of the 1–4 min hang.</div>
+</div></div>
+
+<h3>Tier 3 — Laravel + DB + edge</h3>
+<div class="task"><input type="checkbox" data-k="f7"><div class="body">
+  <span class="title">storage/logs/laravel.log (incident window)</span><span class="badge b-amber who">LARAVEL</span>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f8"><div class="body">
+  <span class="title">Laravel socket-emit code path (post order placement)</span><span class="badge b-amber who">LARAVEL</span>
+  <div class="verify"><b>Answers:</b> events-per-order; whether the emit is synchronous inside the HTTP request cycle (hidden latency).</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f9"><div class="body">
+  <span class="title">MySQL slow query log + max_connections + DB pool (.env keys, masked)</span><span class="badge b-amber who">DB</span>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f10"><div class="body">
+  <span class="title">dmesg / syslog around incident timestamps</span><span class="badge b-amber who">INFRA</span>
+  <div class="verify"><b>Answers:</b> OOM-killer events.</div>
+</div></div>
+<div class="task"><input type="checkbox" data-k="f11"><div class="body">
+  <span class="title">Cloudflare origin-error analytics screenshot (521/52x spike times)</span><span class="badge b-amber who">EDGE</span>
+  <div class="verify"><b>Answers:</b> aligns all timelines onto one clock.</div>
+</div></div>
+
+<h3>What you get back</h3>
+<div class="callout blue"><span class="t">Deliverable after files arrive</span>
+A single incident timeline, e.g.: <i>"At 13:42:07 event X → Y requests in Z s; PHP-FPM hit max_children=N at 13:42:19; everything queued; recovered 13:45 when the herd drained — fix is A + B."</i> That closes the RCA at source-line precision.
+</div>
+
+<!-- ================================================================ -->
+<h2 id="refs"><span class="num">11</span>Reference Files</h2>
 <table>
   <tr><th>Artifact</th><th>Path</th></tr>
   <tr><td>Full investigation report (MD)</td><td><code>/app/memory/INV-SOCKET-001_INVESTIGATION_REPORT.md</code></td></tr>
