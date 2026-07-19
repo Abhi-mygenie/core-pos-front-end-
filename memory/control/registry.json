@@ -15247,6 +15247,23 @@
         "CR-072"
       ],
       "scope_note": "S3 integration for: (A) Purchase/Receive invoice PDF/image upload, (B) Room check-in document upload. Shared S3 service + per-module upload UI."
+    },
+    {
+      "id": "INV-SOCKET-001",
+      "title": "Peak-traffic outage investigation \u2014 socket broadcast architecture, event-loop blocking, API 500/timeouts (1\u20134 min hangs)",
+      "type": "INVESTIGATION",
+      "status": "INVESTIGATED",
+      "severity": "P0",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "intake_doc": "memory/INV-SOCKET-001_INVESTIGATION_REPORT.md",
+      "registered": "2026-07-19",
+      "related": [
+        "BUG-094",
+        "BUG-116"
+      ],
+      "scope_note": "Owner-reported: entire app unresponsive 1-4 min at peak (500s, timeouts, missing socket updates). Investigation report + backend brief produced. FE fixes proposed: socket connect() leak, no room join protocol."
     }
   ]
 }

@@ -1,0 +1,14 @@
+--- EIO=3 ---
+curl: (7) Failed to connect to presocket.mygenie.online port 443 after 270 ms: Couldn't connect to server
+curl exit: 7
+
+--- EIO=4 ---
+curl: (7) Failed to connect to presocket.mygenie.online port 443 after 232 ms: Couldn't connect to server
+curl exit: 7
+
+port 443 closed/filtered
+port 80 OPEN
+port 3000 closed/filtered
+port 6001 OPEN
+port 2053 closed/filtered
+port 8443 closed/filtered

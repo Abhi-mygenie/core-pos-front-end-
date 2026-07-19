@@ -1,0 +1,50 @@
+=== http://presocket.mygenie.online/socket.io/?EIO=4&transport=polling ===
+HTTP/1.1 404 Not Found
+Date: Sun, 19 Jul 2026 03:19:23 GMT
+Server: Apache/2.4.52 (Ubuntu)
+Content-Length: 286
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<hr>
+<address>Apache/2.4.52 (Ubuntu) Server at presocket.mygenie.online Port 80</address>
+</body></html>
+
+=== http://presocket.mygenie.online:6001/socket.io/?EIO=4&transport=polling ===
+HTTP/1.1 404 Not Found
+date: Sun, 19 Jul 2026 03:19:23 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+
+{"detail":"Not Found"}
+=== http://presocket.mygenie.online/socket.io/?EIO=3&transport=polling ===
+HTTP/1.1 404 Not Found
+Date: Sun, 19 Jul 2026 03:19:24 GMT
+Server: Apache/2.4.52 (Ubuntu)
+Content-Length: 286
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<hr>
+<address>Apache/2.4.52 (Ubuntu) Server at presocket.mygenie.online Port 80</address>
+</body></html>
+
+=== http://presocket.mygenie.online:6001/socket.io/?EIO=3&transport=polling ===
+HTTP/1.1 404 Not Found
+date: Sun, 19 Jul 2026 03:19:24 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+
+{"detail":"Not Found"}
