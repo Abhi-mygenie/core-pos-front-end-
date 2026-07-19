@@ -15349,10 +15349,10 @@
       "id": "CR-073",
       "type": "CR",
       "title": "Recipe Bulk Editor \u2014 Inline Spreadsheet for Recipe Management (92+ recipes)",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "priority": "P1",
       "sprint_key": "pos_5_0",
-      "gate": "3",
+      "gate": "4",
       "intake_doc": "change_requests/CR-073_RECIPE_BULK_EDITOR_INTAKE.md",
       "plan_doc": "plans/CR-073_IMPLEMENTATION_PLAN.md",
       "mockup": "public/__dev/recipe_bulk_editor_mockup.html",
@@ -15362,6 +15362,12 @@
           "to": "PLANNED (gate=3 \u00b7 amended \u00b7 rulings A1-A6 locked \u00b7 Gate 4 GO received)",
           "date": "2026-07-19",
           "reason": "Plan-staleness check surfaced 5 ambiguities \u00b7 all resolved via Phase D + CR-078 pattern reuse \u00b7 amendment doc: /app/memory/plans/CR-073_PLAN_AMENDMENT_2026-07-19.md"
+        },
+        {
+          "from": "PLANNED (gate=3 \u00b7 amended \u00b7 rulings A1-A6 locked \u00b7 Gate 4 GO received)",
+          "to": "IMPLEMENTED (gate=4)",
+          "date": "2026-07-19",
+          "reason": "Phase 1 (Card/Bulk toggle) + Phase 2 (RecipeBulkEditor.jsx \u00b7 507 lines) shipped \u00b7 webpack compiled clean \u00b7 smoke-tested on 18march (64 std \u00b7 11 sub \u00b7 7 addon) \u00b7 Excel/Import correctly disabled on sub/addon tabs \u00b7 margin bands render"
         }
       ],
       "artifact_refs": [
@@ -15369,6 +15375,11 @@
           "label": "Plan Amendment (rulings A1-A6)",
           "path": "memory/plans/CR-073_PLAN_AMENDMENT_2026-07-19.md",
           "type": "amendment"
+        },
+        {
+          "label": "Session Handover (Implementation)",
+          "path": "memory/handover/SESSION_HANDOVER_2026_07_19_CR073_IMPLEMENTED.md",
+          "type": "handover"
         }
       ]
     },

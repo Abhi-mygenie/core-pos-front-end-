@@ -443,3 +443,7 @@
 ## Employee Edit UX Fixes (2026-07-17)
 | `components/panels/employee/EmployeeListView.jsx` | Fix 1: backend error parsing (L117-126), Fix 2: password hint placeholders (L237,L301), Fix 3a/3b: role dropdown uses all roles (L250,L255,L317,L322), Fix 5: Email (User ID) header (L205) |
 | `api/transforms/employeeTransform.js` | Fix 4: always send email field on create+update (L39,L51) |
+
+## CR-073 (2026-07-19) — Recipe Bulk Editor · spreadsheet-style multi-recipe editor
+| `components/inventory/RecipeBulkEditor.jsx` | CR-073: NEW · ~510 lines · 11-col data grid + expandable ingredient sub-table + N-sequential batch save (partial-success · CR-078 pattern) + tab-aware dispatch (standard/sub/addon) + A1 cost/margin bands via menuManagementService.getFoodsList() + A6 Excel/Import restricted to standard tab |
+| `components/inventory/RecipeManagementPanel.jsx` | CR-073: added Card/Bulk view toggle (LayoutGrid + Table2 icons) · viewMode state · conditional render (bulk → RecipeBulkEditor · card → existing tabbed grid) |
