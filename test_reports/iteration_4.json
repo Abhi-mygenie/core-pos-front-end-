@@ -1,0 +1,50 @@
+{
+  "summary": "INV-SOCKET-001 live decisive test COMPLETE. Logged in as owner@cafe103.com (Owner, restaurantId=644). Socket.IO connected to https://presocket.mygenie.online over websocket transport. Client subscribed to own channels: new_order_644, update_table_644, order-engage_644, food_update_644. Ran onAny wire probe for 4 minutes. RESULT: own=0, foreign=6, bytes=1206. Foreign events observed on 'login_disabled_689' and 'login_disabled_523' — RIDs 689 and 523 which are NOT 644. VERDICT: GLOBAL BROADCAST CONFIRMED. Socket.IO server delivers events for OTHER restaurants to an authenticated client, proving the server is NOT room/namespace isolated.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "wss://presocket.mygenie.online (Socket.IO)", "issue": "GLOBAL BROADCAST confirmed: authenticated client for restaurantId=644 received 6 events for foreign restaurants 689 and 523 on channel 'login_disabled_<RID>' within 4 minutes. onAny captured them despite client subscribing only to *_644. Server does NOT use rooms/namespaces — every connected client receives ALL restaurants' emissions on the default namespace.", "priority": "CRITICAL"}
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Socket per-tenant isolation", "issue": "Because server broadcasts globally, frontend RELIES on channel-name-suffix filtering (subscribing only to *_<myRid>) as its sole isolation. Any onAny/wildcard listener leaks foreign-restaurant data. Confirmed live: login_disabled_689 and login_disabled_523 events reached this client's wire.", "affected_selectors": ["socketService.getSocket().onAny"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "SERVER FIX REQUIRED (external Laravel/Socket.IO team): Move per-restaurant emissions to Socket.IO rooms (io.to('restaurant_'+rid).emit) or per-restaurant namespaces. Currently emitting to default namespace globally.",
+    "Client hardening (interim): Add defensive suffix check in socketService.on() wrapper to drop payloads whose channel suffix != current restaurantId.",
+    "Bandwidth/peak impact: Each POS receives O(N) traffic proportional to total restaurants online — strong candidate root cause for peak-traffic outages. Quantify against observed peak bytes/sec."
+  ],
+  "critical_code_review_comments": [
+    "socketService.js exposes window.__SOCKET_SERVICE__ only in NODE_ENV=development — preview build is dev, which enabled the probe. Production build would hide it.",
+    "useSocketEvents.js subscribes correctly to *_<restaurantId> — isolation is NAME-based, not ROOM-based. Fragile: any accidental wildcard listener will leak cross-tenant data."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (external)", "frontend": "100% (login + connect + subscribe verified)"},
+  "test_credentials": "owner@cafe103.com / Qplazm@10 (Owner, restaurantId=644) — WORKING",
+  "seed_data_creation": "None. Passive observation only. NO code changes made per investigation-only mandate.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Decisive evidence gathered. Screenshot of loaded dashboard/loading page saved at .screenshots/03_after_login.png. window.__SOCKET_SERVICE__ was available (dev build). Transport=websocket. socketId=-5GeT4Au_PpQc1T5AAAN. registeredEvents=[new_order_644, update_table_644, order-engage_644, food_update_644] — no duplicates, no foreign in registration (leak is via server broadcast, not client sub). No own-restaurant events during window (quiet on subscribed channels) but foreign login_disabled_* events came through unsolicited.",
+  "rca_of_the_issue": {
+    "hypothesis": "Server-side global broadcast (no rooms/namespaces).",
+    "evidence": "4-min authenticated observation for RID=644: own=0, foreign=6, bytes=1206. Foreign events on channels login_disabled_689 and login_disabled_523. Client never emitted a join for those channels; server pushed them unsolicited.",
+    "verdict": "GLOBAL BROADCAST — foreign>0. Server emits every restaurant's events to every connected client on default namespace. Client-side name-filter is the ONLY thing preventing cross-tenant UI leakage.",
+    "peak_traffic_implication": "Each POS receives O(N) traffic where N=total restaurants online — O(N^2) system-wide fanout. Amplifies outage risk on both browsers and socket server.",
+    "mitigation": "Server: emit with rooms (io.to('rid_'+rid).emit) or per-restaurant namespaces. Client interim: reject-on-suffix defensive check in socketService.on wrapper."
+  },
+  "raw_probe_output": "WIRE_PROBE own=0 foreign=6 bytes=1206 foreignChannels=[\"login_disabled_689\",\"login_disabled_523\"] foreignRids=[\"689\",\"523\"] allChannels=[\"login_disabled_689\",\"login_disabled_523\"]",
+  "debug_info": {
+    "socketId": "-5GeT4Au_PpQc1T5AAAN",
+    "transport": "websocket",
+    "connected": true,
+    "registeredEvents": ["new_order_644", "update_table_644", "order-engage_644", "food_update_644"],
+    "lastConnectedAt": "2026-07-19 04:25:36 UTC",
+    "restaurantId": 644,
+    "role": "Owner"
+  }
+}

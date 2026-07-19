@@ -1,0 +1,7 @@
+[probe] connected sid=cMZmjSty-xda9khvAAAG transport=websocket — listening 150s, NO join emitted
+
+========== WIRE PROBE RESULT ==========
+duration: 2.5 min | total events: 0 | bytes: 0
+distinct restaurant IDs seen: 0 → []
+channels: {}
+>>> No events received in window (quiet hour or rooms exist). Re-run during peak.
