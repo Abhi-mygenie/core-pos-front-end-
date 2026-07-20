@@ -15282,7 +15282,7 @@
       "id": "CR-080",
       "type": "CR",
       "title": "Transfer-First Smart Purchase — Franchise cross-flow optimisation (Phase 2 · depends on CR-077 + CR-078)",
-      "status": "INTAKE",
+      "status": "CLOSED — WONT-DO (2026-07-20). Owner ruling: franchise model is push-based (parent dispatches, franchise receives). Franchise does not request from parent — buys from vendors via Smart Purchase (CR-078). Transfer-First optimization not needed.",
       "priority": "P3",
       "sprint_key": "pos_5_0_wave_3",
       "gate": "1",
@@ -15291,7 +15291,9 @@
       "depends_on": [
         "CR-077",
         "CR-078"
-      ]
+      ],
+      "closed_at": "2026-07-20",
+      "closed_reason": "Business model mismatch — franchise receive is push (CR-077 Phase 1), not pull. No parent-stock lookup needed."
     },
     {
       "id": "CR-073",
