@@ -15401,6 +15401,24 @@
       ],
       "investigation_report": "memory/test_reports/INVESTIGATION_EXPENSE_MODULE_2026_07_20.md",
       "qa_report": "test_reports/iteration_11.json"
+    },
+    {
+      "id": "CR-083",
+      "title": "Expense Split/Partial Payment — split single expense across multiple payment methods (Cash+UPI, Paid+Unpaid)",
+      "type": "CR",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE (2026-07-20) — Backend supports multi-line split. FE needs UI. 4 OQs pending.",
+      "sprint_key": "pos_5_0",
+      "created_at": "2026-07-20",
+      "intake_doc": "memory/change_requests/CR-083_EXPENSE_SPLIT_PAYMENT.md",
+      "files": [
+        "components/expense/ExpenseEntryPanel.jsx"
+      ],
+      "related": [
+        "CR-021"
+      ],
+      "duplicate_check": "DISTINCT (CR-021 is Order split payment, not Expense)"
     }
   ]
 }
