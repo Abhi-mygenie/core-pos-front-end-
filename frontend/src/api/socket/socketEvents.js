@@ -93,6 +93,13 @@ export const SOCKET_EVENTS = {
 };
 
 // =============================================================================
+// CR-082: Room-join contract with socket server (INV-SOCKET-001)
+// Server: socket.on('join_restaurant', {restaurant_id}) -> socket.join('rest_'+rid)
+// =============================================================================
+export const JOIN_EVENT = 'join_restaurant';
+export const JOINED_ACK_EVENT = 'joined_restaurant';
+
+// =============================================================================
 // AGGREGATOR EVENTS (2) - Phase 3B
 // =============================================================================
 export const AGGREGATOR_EVENTS = {

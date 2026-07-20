@@ -268,4 +268,4 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | ID | Description | Priority | Risk | Status | Notes |
 |---|---|---|---|---|---|
-| **CR-082** | Socket Room-Join — FE must emit `join('rest_<rid>')` after socket connect. Backend moved to room-scoped emit (`io.to('rest_'+rid).emit(...)`) but FE never joins rooms → POS clients receive 0 events. P0 CRITICAL — order updates broken for all restaurants. | **P0** | CRITICAL | **INTAKE — Awaiting Gate 4 GO** | ⚠️ **NOT CR-077.** Originally labelled CR-077 on `socket-issue` branch. Renumbered to CR-082 to avoid collision. CR-077 = Inventory Transfer Receive (different feature). Handover: `handover/SESSION_HANDOVER_2026_07_19_SOCKET_ROOM_JOIN_PLANNING.md` |
+| **CR-082** | Socket Room-Join — FE emits `join_restaurant({restaurant_id})` after connect so room-scoped backend events reach POS client. 3 files, ~22 lines. | **P0** | CRITICAL | **IMPLEMENTED (2026-07-19)** | Files: `socketEvents.js`, `socketService.js`, `useSocketEvents.js`. Handover: `handover/SESSION_HANDOVER_2026_07_19_SOCKET_ROOM_JOIN_PLANNING.md` |

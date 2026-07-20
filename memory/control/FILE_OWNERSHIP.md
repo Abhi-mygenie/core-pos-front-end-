@@ -463,3 +463,6 @@
 | `api/transforms/inventoryTransferTransform.js` | CR-077 | 2026-07-19 | NEW — fromAPI normalizers |
 | `App.js` | CR-077 | 2026-07-19 | MODIFIED — +1 route, +1 import |
 | `api/constants.js` | CR-077 | 2026-07-19 | MODIFIED — +INVENTORY_TRANSFER_ENDPOINTS |
+| `api/socket/socketEvents.js` | CR-082 | 2026-07-19 | MODIFIED — +JOIN_EVENT, +JOINED_ACK_EVENT constants |
+| `api/socket/socketService.js` | CR-082 | 2026-07-19 | MODIFIED — +joinRestaurant() method, +restaurantId state, +re-join on connect, +clear on disconnect |
+| `api/socket/useSocketEvents.js` | CR-082 | 2026-07-19 | MODIFIED — +socketService.joinRestaurant(restaurantId) call in subscription effect |

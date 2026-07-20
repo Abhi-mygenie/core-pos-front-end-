@@ -1,42 +1,41 @@
-# Core POS Frontend - PRD
+# Core POS Frontend — PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is with no code edits.
+Deploy existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) into `/app` and run as-is. Then implement CR-082 Socket Room-Join.
 
 ## Architecture
-- **Frontend**: React (CRA + CRACO) running on port 3000 via supervisor
-- **Backend**: FastAPI (from repo) running on port 8001 via supervisor
-- **Package Manager**: Yarn (yarn.lock detected)
-- **Styling**: TailwindCSS + Radix UI + shadcn/ui components
-- **State**: React Query, SWR, React Context
-- **Integrations**: Firebase, Socket.io, Google Maps, Axios API layer
+- **Frontend**: React 19 (CRA + CRACO) on port 3000 via supervisor
+- **Backend**: External Laravel at `preprod.mygenie.online` (no local backend needed)
+- **Socket**: Socket.IO at `presocket.mygenie.online`
+- **Firebase**: Auth + Push Notifications
+- **CRM**: Customer intelligence at `crm.mygenie.online`
+- **Package Manager**: Yarn (yarn.lock)
 
-## What's Been Implemented (July 19, 2026)
-- ✅ Cloned repo from GitHub `main` branch into `/app`
-- ✅ Preserved platform files (.emergent/, .git/, memory/, .env files)
-- ✅ Installed frontend dependencies via `yarn install --frozen-lockfile`
-- ✅ Installed backend dependencies via `pip install -r requirements.txt`
-- ✅ Added placeholder env vars (`REACT_APP_API_BASE_URL`, `REACT_APP_SOCKET_URL`, `REACT_APP_CRM_BASE_URL`) to prevent hard crashes
-- ✅ Frontend compiles and serves successfully on port 3000
-- ✅ Backend runs successfully on port 8001
-- ✅ Login page renders correctly with MyGenie branding
+## What's Been Implemented
 
-## Env Variables (Placeholders - User to Replace)
-- `REACT_APP_API_BASE_URL` - Main API base URL
-- `REACT_APP_SOCKET_URL` - WebSocket server URL
-- `REACT_APP_CRM_BASE_URL` - CRM API base URL
-- `REACT_APP_FIREBASE_API_KEY` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_AUTH_DOMAIN` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_PROJECT_ID` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_STORAGE_BUCKET` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_MESSAGING_SENDER_ID` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_APP_ID` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_MEASUREMENT_ID` - Firebase config (not yet added)
-- `REACT_APP_FIREBASE_VAPID_KEY` - Firebase config (not yet added)
-- `REACT_APP_GOOGLE_MAPS_KEY` - Google Maps API key (not yet added)
-- `REACT_APP_SHOW_AUDIT_TAB` - Set to `true`/`false`
+### Session 1 — 2026-07-19: Deployment
+- ✅ Cloned repo into `/app`, preserved platform files
+- ✅ Installed dependencies, frontend compiles and runs
+- ✅ Added placeholder env vars → user replaced with real values
 
-## Next Action Items
-- P0: User to provide real `.env` values for API, Socket, CRM, Firebase, and Google Maps
-- P1: Verify login flow works end-to-end once real API URL is set
-- P2: Verify WebSocket connections once real socket URL is set
+### Session 2 — 2026-07-19: CR-082 Socket Room-Join (IMPLEMENTED)
+- ✅ PLANNING: Validated impact analysis + wrote implementation plan (Gate 2+3)
+- ✅ IMPLEMENTATION: 3 files, 7 edits, ~22 lines
+  - `socketEvents.js`: +JOIN_EVENT, +JOINED_ACK_EVENT constants
+  - `socketService.js`: +joinRestaurant() method, +restaurantId state, +re-join on connect, +clear on disconnect
+  - `useSocketEvents.js`: +socketService.joinRestaurant(restaurantId) in subscription effect
+- ✅ EXIT GATE: 5/5 PASS
+- ✅ QA Handover written: `/app/memory/handover/QA_HANDOVER_CR082_2026_07_19.md`
+
+## Open Items (Priority Order)
+
+| # | Item | Priority | Status |
+|---|---|---|---|
+| 1 | CR-082 QA | P0 | QA handover ready — 8 test cases + 4 regression |
+| 2 | CR-081 Phase A — Inventory Tab Bar | P1 | INTAKE |
+| 3 | CR-081 Phase B — Dashboard | P1 | INTAKE |
+| 4 | CR-077 Phase 2 — Partial Receive | P2 | Deferred |
+| 5 | 77 items awaiting owner smoke (Gate 6) | — | Pending |
+
+## Backend-Blocked (No FE action)
+- CR-062, BUG-201, BUG-124, CR-076, CR-080

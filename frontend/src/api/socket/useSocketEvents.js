@@ -205,6 +205,9 @@ export const useSocketEvents = () => {
       console.log('[useSocketEvents] No restaurantId yet, skipping subscriptions');
       return;
     }
+
+    // CR-082: join server-side room so room-scoped emits reach this client
+    socketService.joinRestaurant(restaurantId);
     
     // Subscribe to order channel
     const orderChannel = getOrderChannel(restaurantId);

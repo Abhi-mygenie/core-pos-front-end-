@@ -2,7 +2,7 @@
 // Handles connection lifecycle, reconnection, and event management
 
 import io from 'socket.io-client';
-import { SOCKET_CONFIG, CONNECTION_EVENTS } from './socketEvents';
+import { SOCKET_CONFIG, CONNECTION_EVENTS, JOIN_EVENT } from './socketEvents'; // CR-082: +JOIN_EVENT
 
 // =============================================================================
 // CONNECTION STATUS ENUM
@@ -27,6 +27,8 @@ class SocketService {
     this.lastError = null;
     this.eventHandlers = new Map(); // Store handlers for cleanup
     this.statusListeners = new Set(); // Listeners for status changes
+    // CR-082: room to (re)join on every connect
+    this.restaurantId = null;
     // Enable debug mode by default in development
     this.debugMode = process.env.NODE_ENV === 'development' || localStorage.getItem('SOCKET_DEBUG') === 'true';
   }
@@ -71,6 +73,19 @@ class SocketService {
   }
 
   /**
+   * CR-082: Register restaurant room. Server joins this socket to rest_<rid>.
+   * Safe to call before connection — rid is stored and emitted on 'connect'.
+   */
+  joinRestaurant(restaurantId) {
+    if (!restaurantId) return;
+    this.restaurantId = restaurantId;
+    if (this.socket && this.socket.connected) {
+      this.socket.emit(JOIN_EVENT, { restaurant_id: restaurantId });
+      this._log('INFO', `join_restaurant emitted for ${restaurantId}`);
+    }
+  }
+
+  /**
    * Disconnect socket
    */
   disconnect() {
@@ -80,6 +95,8 @@ class SocketService {
       this.socket = null;
       this._setStatus(CONNECTION_STATUS.DISCONNECTED);
       this.reconnectAttempts = 0;
+      // CR-082: clear room on logout — prevents next tenant joining previous tenant's room
+      this.restaurantId = null;
     }
   }
 
@@ -230,6 +247,12 @@ class SocketService {
       this.lastConnectedAt = new Date();
       this.reconnectAttempts = 0;
       this.lastError = null;
+      // CR-082: re-join room on EVERY (re)connect — Socket.IO room membership
+      // is per-connection and lost on each reconnect
+      if (this.restaurantId) {
+        this.socket.emit(JOIN_EVENT, { restaurant_id: this.restaurantId });
+        this._log('INFO', `join_restaurant re-emitted for ${this.restaurantId} (connect)`);
+      }
     });
 
     // Disconnected
