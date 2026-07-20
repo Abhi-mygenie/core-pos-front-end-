@@ -1,0 +1,30 @@
+{
+  "summary": "QA FINAL GATE for CR-077/INV-SOCKET-001 B2 fix. All 5 QA checks PASS. Outsider leak = 0, cross-tenant leak = 0, scoped delivery intact (new_order_644 + login_disabled_644), FE E2E wiretap on core-pos-preview-10 saw exactly 1 event (new_order_644) and 0 foreign events over 236s soak (pre-fix baseline: 6 foreign in 4 min).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": [
+    "/app/memory/evidence/INV-SOCKET-001/B2_QA_FINAL_2026-07-20.md",
+    "/app/memory/evidence/INV-SOCKET-001/QA4_QA5_wiretap_result.json",
+    "/app/memory/evidence/INV-SOCKET-001/b2_qa_probe.js",
+    "/app/memory/evidence/INV-SOCKET-001/b2_qa_probe_result.txt"
+  ],
+  "qa_matrix": {
+    "QA-1_outsider_leak": { "verdict": "PASS", "expected": 0, "observed": 0 },
+    "QA-2_scoped_delivery": { "verdict": "PASS", "expected": ["new_order_644","login_disabled_644"], "observed": ["new_order_644","login_disabled_644"] },
+    "QA-3_cross_tenant_isolation_rest_777001": { "verdict": "PASS", "expected": 0, "observed": 0 },
+    "QA-4_fe_e2e_wiretap_single_trigger": { "verdict": "PASS", "expected": "exactly 1 new_order_644, 0 foreign", "observed": "['new_order_644'], 0 foreign", "socket_sid": "_skqD3Fr4MfQwo-SAACQ" },
+    "QA-5_passive_soak_4min": { "verdict": "PASS", "elapsed_s": 236, "foreign_events": 0, "pre_fix_baseline_foreign_per_4min": 6 }
+  },
+  "action_items": [],
+  "critical_code_review_comments": ["No code changes reviewed per QA-only mandate. Payload envelope for new_order_644 observed as ['new-order', 777123, 644, 0, {...}] — matches MSG_INDEX L163-170 in /app/frontend/src/api/socket/socketEvents.js; B2 did not alter payloads."],
+  "updated_files": [
+    "/app/memory/evidence/INV-SOCKET-001/B2_QA_FINAL_2026-07-20.md",
+    "/app/memory/evidence/INV-SOCKET-001/QA4_QA5_wiretap_result.json"
+  ],
+  "success_rate": { "backend": "100%", "frontend": "100%" },
+  "test_credentials": "owner@cafe103.com / Qplazm@10 (rid 644) — used per /app/memory/control/test_credentials.md; login API returned 200.",
+  "seed_data_creation": "None. Only mutation: POST /order-update to presocket with test rid 644 (fake order_id 777123) and legitimate login. No POS UI order was placed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "B2 is the final piece of the CR-077 socket saga. All emit paths (order-update, login_disabled, update_table, food_update, order-engage, aggregator_order) are now room-scoped via io.to('rest_'+rid). Verified live end-to-end on FE branch core-pos-preview-10 AND at the socket-server level directly. If a future regression is suspected, re-run node /app/memory/evidence/INV-SOCKET-001/b2_qa_probe.js — outsider must stay at 0."
+}

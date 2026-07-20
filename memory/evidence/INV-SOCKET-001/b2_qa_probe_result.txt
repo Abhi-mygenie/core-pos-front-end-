@@ -1,0 +1,7 @@
+[POST /order-update] 200 {"status":"Message broadcasted22"}
+[login api] 200
+
+===== B2 QA PROBE =====
+A outsider (expect 0): 0 []
+B rest_644 (expect new_order_644 + login_disabled_644): 2 [ 'new_order_644', 'login_disabled_644' ]
+C rest_777001 (expect 0): 0 []
