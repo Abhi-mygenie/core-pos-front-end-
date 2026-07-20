@@ -21,9 +21,8 @@ export default function InventoryIntelligencePage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>
-                  Inventory Intelligence
+                  Stock Intelligence
                 </h1>
-                <p className="text-xs text-slate-500 mt-0.5">Reorder forecasts, consumption trends, cost analysis, vendor performance.</p>
               </div>
             </div>
           </div>
