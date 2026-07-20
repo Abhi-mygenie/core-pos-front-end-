@@ -1,0 +1,97 @@
+{
+  "summary": "CR-083 Expense Split Payment Feature - All 8 test cases PASSED. Tested split button visibility, split flow end-to-end, validation for mismatched amounts, Unpaid payment method, cancel split, remove split row, Cash Draw insufficient balance warning, and regression for normal expense entry.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "T1_split_button_visibility": {
+      "status": "PASS",
+      "details": {
+        "T1a_no_split_when_empty": "PASS - Split button NOT visible when amount is empty",
+        "T1b_no_split_after_item": "PASS - Split button NOT visible after item selection (no amount)",
+        "T1c_split_visible_with_amount": "PASS - Split button IS visible when amount > 0",
+        "T1d_split_hidden_when_cleared": "PASS - Split button disappears when amount cleared"
+      }
+    },
+    "T2_split_flow_end_to_end": {
+      "status": "PASS",
+      "details": {
+        "T2a_split_rows_appear": "PASS - Split rows appear when Split button clicked",
+        "T2b_validation_match": "PASS - Validation bar shows '✓ Split amounts match total' (₹600 + ₹400 = ₹1000 / ₹1000)",
+        "T2c_save_success": "PASS - Both split lines (SplitTest UPI ₹600, SplitTest Cash ₹400) appear in transactions table"
+      }
+    },
+    "T3_validation_mismatch": {
+      "status": "PASS",
+      "details": {
+        "T3a_validation_mismatch": "PASS - Validation bar shows '✗ Amounts don't match — ₹100.00 remaining' (₹600 + ₹300 = ₹900 / ₹1000)",
+        "T3b_error_toast": "PASS - Error toast 'Split payment error' shown when trying to save mismatched amounts"
+      }
+    },
+    "T4_split_with_unpaid": {
+      "status": "PASS",
+      "details": {
+        "T4a_unpaid_warning": "PASS - 'Will be tracked as outstanding' text shown below Unpaid dropdown",
+        "T4b_save_success": "PASS - Both lines (T4Unpaid UPI ₹600, T4Unpaid Unpaid ₹400) saved and appear in table"
+      }
+    },
+    "T5_cancel_split": {
+      "status": "PASS",
+      "details": {
+        "T5a_split_rows_appear": "PASS - Split rows appear when Split button clicked",
+        "T5b_cancel_works": "PASS - Cancel split reverts to single payment mode with payment method dropdown restored"
+      }
+    },
+    "T6_remove_split_row": {
+      "status": "PASS",
+      "details": {
+        "T6a_two_rows": "PASS - Two split rows present",
+        "T6b_remove_unsplits": "PASS - Removing Row 2 unsplits and reverts to single payment mode"
+      }
+    },
+    "T7_cash_draw_insufficient": {
+      "status": "PASS",
+      "details": {
+        "T7a_insufficient_warning": "PASS - 'insufficient' warning shown in red when Cash Draw amount exceeds available balance",
+        "T7b_available_balance_hint": "PASS - 'Available: ₹0' hint shown below Cash Draw dropdown"
+      }
+    },
+    "T8_regression_normal_entry": {
+      "status": "PASS",
+      "details": {
+        "T8a_split_btn_available": "PASS - Split button available but not used",
+        "T8b_no_split_rows": "PASS - No split rows (single payment mode)",
+        "T8c_save_success": "PASS - Normal expense (T8Normal ₹250 UPI) saved successfully"
+      }
+    }
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CR-083 implementation is complete and well-structured",
+    "Split button visibility logic (line 286-294) correctly checks for amount > 0",
+    "Split validation (line 631-645) properly validates sum matches total and all rows have method/amount",
+    "flatMap expansion (line 651-668) correctly expands split lines into multiple API detail entries",
+    "Cash Draw balance hint (line 391-396) shows available balance and insufficient warning",
+    "Unpaid tracking warning (line 398-402) correctly displays 'Will be tracked as outstanding'",
+    "Cancel split (line 574-581) properly restores first split row's method",
+    "Remove split row (line 604-614) correctly unsplits when only 1 row remains",
+    "All data-testid attributes are properly implemented for testing"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100% (8/8 test cases passed)"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10 (Restaurant ID: 644)",
+  "seed_data_creation": "Test expenses created during testing: SplitTest (UPI ₹600 + Cash ₹400), T4Unpaid (UPI ₹600 + Unpaid ₹400), T7Setup (UPI ₹100), T8Normal (UPI ₹250). These can be deleted via trash icon in transactions table.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-083 Expense Split Payment feature is fully verified. All 8 test cases passed. The split functionality works correctly including: split button visibility based on amount, split row expansion, validation for matching amounts, Unpaid payment method with tracking warning, Cash Draw insufficient balance warning, cancel split, remove split row, and normal (non-split) expense entry regression. Test data was created in Cafe103 (restaurant 644) on 20/07/2026."
+}
