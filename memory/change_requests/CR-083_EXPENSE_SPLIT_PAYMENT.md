@@ -85,13 +85,38 @@ grep -rn "paymentMethod\|payment_method" ExpenseEntryPanel.jsx → 12 hits
 
 ## Open Questions for Impact Analysis
 
-| # | Question | Context |
+| # | Question | Owner Ruling (2026-07-20) |
 |---|---|---|
-| OQ-1 | **UX: Split button per line or per entry?** | Option A: "Split" button on each line item → duplicates the line with remainder. Option B: Global "Add Payment Method" that splits the total. |
-| OQ-2 | **Unpaid + Paid mix: any settlement workflow?** | Currently Unpaid just stays as a label. Should there be a "Mark as Paid" action later? Or is that Phase 2? |
-| OQ-3 | **Validation: must split amounts sum to line total?** | If item is ₹1000 and user splits ₹600 Cash + ₹300 UPI = ₹900, is ₹100 gap allowed? Or must it sum exactly? |
-| OQ-4 | **Cash Draw balance gate:** | Backend rejects Cash Draw if insufficient balance. Should FE show available balance hint? |
+| OQ-1 | **UX: Split button per line or per entry?** | **Per line item** — "Split" button on each line |
+| OQ-2 | **Unpaid settlement workflow?** | **Tracking only for now** — no settlement workflow (Phase 2) |
+| OQ-3 | **Must split amounts sum to line total?** | **YES — must sum exactly** |
+| OQ-4 | **Cash Draw balance hint?** | **YES — show available balance when Cash Draw selected** |
 
 ---
 
-## Next: Planning Gate 2 (Impact Analysis + Mockup)
+## Design Mockup — FROZEN (2026-07-20)
+
+**Mockup file:** `/app/frontend/public/cr083-expense-split-payment-mockup.html`
+**Status:** OWNER REVIEWED + FROZEN
+
+### 6 Screens:
+| # | Screen | Key Element |
+|---|---|---|
+| 01 | Current state (before) | Single payment per line |
+| 02 | Split button appears | Dashed orange "Split" button next to payment dropdown |
+| 03 | Split expanded (Cash + UPI) | 2 payment rows + green validation bar "✓ Split amounts match total" |
+| 04 | Half Paid + Half Unpaid | UPI ₹600 + Unpaid ₹400, red warning "⚠ Will be tracked as outstanding" |
+| 05 | Validation error | Red bar "✗ Amounts don't match — ₹100 remaining", Save disabled |
+| 06 | Cash Draw balance hint | "Available: ₹2,450" green hint, insufficient = red warning |
+
+### Flow:
+1. User adds line → single payment (current behavior unchanged)
+2. Clicks "Split" → line expands, original method becomes Row 1
+3. Row 2 auto-fills: remainder amount, empty method dropdown
+4. User picks method + adjusts amounts → must sum exactly to total
+5. Save → FE sends 2 detail lines to backend (same item, different methods)
+6. "Unpaid" lines tracked in reports — no settlement workflow (Phase 2)
+
+---
+
+## Next: Planning Gate 2 → Gate 3 (Implementation Plan)
