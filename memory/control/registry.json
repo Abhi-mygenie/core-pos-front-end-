@@ -15423,6 +15423,22 @@
       "implementation_plan": "memory/plans/CR-083_IMPLEMENTATION_PLAN.md",
       "implemented_at": "2026-07-20",
       "qa_report": "test_reports/iteration_12.json"
+    },
+    {
+      "id": "BUG-209",
+      "title": "Weight item qty display — Bill Summary missing unit labels (x100 instead of 100gm) + Receipt shows decimal Kg instead of gm",
+      "type": "BUG",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE (2026-07-20) — 3 gaps: Gap 1 FE bill summary (~5 lines), Gap 2 owner config, Gap 3 backend receipt (brief filed)",
+      "sprint_key": "pos_5_0",
+      "created_at": "2026-07-20",
+      "intake_doc": "memory/change_requests/BUG-209_WEIGHT_DISPLAY_BILL_SUMMARY.md",
+      "backend_brief": "memory/backend_briefs/BACKEND_BRIEF_WEIGHT_RECEIPT_DISPLAY_2026_07_20.md",
+      "files": [
+        "components/order-entry/CollectPaymentPanel.jsx"
+      ],
+      "duplicate_check": "DISTINCT"
     }
   ]
 }
