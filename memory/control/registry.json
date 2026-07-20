@@ -15408,7 +15408,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 3 COMPLETE (2026-07-20) — Design frozen + Implementation plan ready. 7 edits, ~80 lines, 1 file. Awaiting Gate 4 GO.",
+      "status": "IMPLEMENTED (2026-07-20) — Split button, split rows UI, validation bar, Cash Draw hint, flatMap save. 1 file, ~80 lines.",
       "sprint_key": "pos_5_0",
       "created_at": "2026-07-20",
       "intake_doc": "memory/change_requests/CR-083_EXPENSE_SPLIT_PAYMENT.md",
@@ -15420,7 +15420,8 @@
       ],
       "duplicate_check": "DISTINCT (CR-021 is Order split payment, not Expense)",
       "mockup": "frontend/public/cr083-expense-split-payment-mockup.html",
-      "implementation_plan": "memory/plans/CR-083_IMPLEMENTATION_PLAN.md"
+      "implementation_plan": "memory/plans/CR-083_IMPLEMENTATION_PLAN.md",
+      "implemented_at": "2026-07-20"
     }
   ]
 }

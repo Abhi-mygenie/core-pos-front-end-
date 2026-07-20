@@ -35,6 +35,7 @@ const EMPTY_LINE = {
   unitPrice: null,     // BUG-154: null = manual amount; non-null = qty×price auto-calc
   isCustomItem: false, // BUG-155: true when free-text item (not from master) → show category select
   notes: "",           // BUG-177: notes field — backend accepts and stores
+  splitPayments: null, // CR-083: null=single payment, [{method,amount}]=split mode
 };
 
 // ─── KPI Card ────────────────────────────────────────────────────────────────
@@ -165,7 +166,7 @@ const ItemCombobox = ({ items, value, onChange, placeholder, disabled, categoryN
 };
 
 // ─── Single Entry Line ────────────────────────────────────────────────────────
-const EntryLine = ({ line, idx, categories, filteredItems, paymentMethods, units, onChange, onRemove, showRemove, showError }) => {
+const EntryLine = ({ line, idx, categories, filteredItems, paymentMethods, units, onChange, onRemove, showRemove, showError, onSplitToggle, onSplitChange, onRemoveSplit, cashDrawBalance }) => {
   const handleField = (field, val) => onChange(idx, field, val);
 
   const handleItemSelect = (title, item) => {
@@ -263,21 +264,34 @@ const EntryLine = ({ line, idx, categories, filteredItems, paymentMethods, units
         </div>
       </div>
 
-      {/* Payment Method */}
-      <div className="min-w-[130px] flex-1">
-        <select
-          value={line.paymentMethod}
-          onChange={e => handleField("paymentMethod", e.target.value)}
-          className={inputCls}
-          style={{ borderColor: COLORS.borderGray, color: line.paymentMethod ? COLORS.darkText : COLORS.grayText }}
-          data-testid={`expense-payment-select-${idx}`}
+      {/* Payment Method — hidden when split is active (shown per-row instead) */}
+      {!line.splitPayments && (
+        <div className="min-w-[130px] flex-1">
+          <select
+            value={line.paymentMethod}
+            onChange={e => handleField("paymentMethod", e.target.value)}
+            className={inputCls}
+            style={{ borderColor: COLORS.borderGray, color: line.paymentMethod ? COLORS.darkText : COLORS.grayText }}
+            data-testid={`expense-payment-select-${idx}`}
+          >
+            <option value="">Payment</option>
+            {paymentMethods.map(pm => (
+              <option key={pm} value={pm}>{pm}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* CR-083: Split Payment button */}
+      {!line.splitPayments && line.amount && parseFloat(line.amount) > 0 && (
+        <button type="button" onClick={() => onSplitToggle(idx)}
+          className="flex-shrink-0 px-2.5 py-1.5 text-xs font-semibold rounded-lg border-[1.5px] border-dashed hover:bg-orange-50 transition-colors whitespace-nowrap"
+          style={{ borderColor: COLORS.primaryOrange, color: COLORS.primaryOrange }}
+          data-testid={`expense-split-btn-${idx}`}
         >
-          <option value="">Payment</option>
-          {paymentMethods.map(pm => (
-            <option key={pm} value={pm}>{pm}</option>
-          ))}
-        </select>
-      </div>
+          Split
+        </button>
+      )}
 
       {/* BUG-204: Case A — priced item: qty input + breakdown hint (unit dropdown removed — unit comes from stock master) */}
       {line.unitPrice != null && line.unitPrice > 0 && (
@@ -351,6 +365,76 @@ const EntryLine = ({ line, idx, categories, filteredItems, paymentMethods, units
         </button>
       )}
 
+      {/* CR-083: Split Payment Rows — shown when splitPayments is active */}
+      {line.splitPayments && (() => {
+        const lineTotal = parseFloat(line.amount) || 0;
+        const splitSum = line.splitPayments.reduce((acc, sp) => acc + (parseFloat(sp.amount) || 0), 0);
+        const isMatch = Math.abs(splitSum - lineTotal) < 0.01;
+        const remainder = lineTotal - splitSum;
+        return (
+          <div className="w-full mt-2 pt-2 border-t border-dashed" style={{ borderColor: '#E0D5C8' }}>
+            {line.splitPayments.map((sp, si) => (
+              <div key={si} className="flex items-center gap-2 py-1.5"
+                style={si > 0 ? { borderTop: '1px solid #F0EBE4', paddingTop: 8 } : {}}
+                data-testid={`expense-split-row-${idx}-${si}`}>
+                <span className="text-xs font-bold w-5 text-center" style={{ color: COLORS.primaryOrange }}>{si + 1}</span>
+                <div className="flex-1">
+                  <select value={sp.method}
+                    onChange={e => onSplitChange(idx, si, 'method', e.target.value)}
+                    className={inputCls}
+                    style={{ borderColor: COLORS.primaryOrange, color: sp.method ? COLORS.darkText : COLORS.grayText, fontSize: 12 }}
+                    data-testid={`expense-split-method-${idx}-${si}`}>
+                    <option value="">Payment method</option>
+                    {paymentMethods.map(pm => <option key={pm} value={pm}>{pm}</option>)}
+                  </select>
+                  {sp.method === 'Cash Draw' && cashDrawBalance != null && (
+                    <div className="text-[10px] mt-0.5" style={{ color: parseFloat(sp.amount || 0) > cashDrawBalance ? COLORS.errorText : '#888' }}>
+                      Available: <span style={{ fontWeight: 700, color: parseFloat(sp.amount || 0) > cashDrawBalance ? COLORS.errorText : '#2F855A' }}>
+                        ₹{cashDrawBalance.toLocaleString()}
+                      </span>
+                      {parseFloat(sp.amount || 0) > cashDrawBalance && <span style={{ color: COLORS.errorText }}> — insufficient</span>}
+                    </div>
+                  )}
+                  {sp.method === 'Unpaid' && (
+                    <div className="text-[10px] mt-0.5" style={{ color: COLORS.errorText }}>
+                      Will be tracked as outstanding
+                    </div>
+                  )}
+                </div>
+                <div style={{ width: 110 }}>
+                  <input type="number" min="0" step="0.01" value={sp.amount}
+                    onChange={e => onSplitChange(idx, si, 'amount', e.target.value)}
+                    placeholder="Amount"
+                    className={inputCls}
+                    style={{ borderColor: COLORS.primaryOrange, fontSize: 12 }}
+                    data-testid={`expense-split-amount-${idx}-${si}`} />
+                </div>
+                {line.splitPayments.length > 1 && (
+                  <button type="button" onClick={() => onRemoveSplit(idx, si)}
+                    className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold hover:bg-red-100"
+                    style={{ background: '#FEE', color: COLORS.errorText }}
+                    data-testid={`expense-split-remove-${idx}-${si}`}>×</button>
+                )}
+              </div>
+            ))}
+            {/* Validation bar */}
+            <div className="flex items-center justify-between mt-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold"
+              style={{ background: isMatch ? '#F0FFF4' : '#FFF5F5', color: isMatch ? '#2F855A' : COLORS.errorText }}
+              data-testid={`expense-split-validation-${idx}`}>
+              <span>{isMatch ? '✓ Split amounts match total' : `✗ Amounts don't match — ₹${Math.abs(remainder).toFixed(2)} ${remainder > 0 ? 'remaining' : 'over'}`}</span>
+              <span>₹{line.splitPayments.map(sp => parseFloat(sp.amount) || 0).join(' + ₹')} = ₹{splitSum.toFixed(0)} / ₹{lineTotal.toFixed(0)}</span>
+            </div>
+            {/* Unsplit button */}
+            <button type="button" onClick={() => onSplitToggle(idx)}
+              className="mt-1.5 text-[10px] font-medium hover:underline"
+              style={{ color: COLORS.grayText }}
+              data-testid={`expense-unsplit-btn-${idx}`}>
+              Cancel split
+            </button>
+          </div>
+        );
+      })()}
+
       {/* BUG-177: Notes input — full width row below */}
       <div className="w-full">
         <input
@@ -393,6 +477,9 @@ const ExpenseEntryPanel = () => {
 
   // Delete confirm
   const [deletingId, setDeletingId] = useState(null);
+
+  // CR-083: Cash Draw available balance
+  const [cashDrawBalance, setCashDrawBalance] = useState(null);
 
   // ── Filtered items per category ───────────────────────────────────
   const filteredItems = useCallback((categoryId) => {
@@ -483,11 +570,54 @@ const ExpenseEntryPanel = () => {
 
   const resetForm = () => { setLines([{ ...EMPTY_LINE }]); setShowErrors(false); };
 
+  // CR-083: Split payment helpers
+  const handleSplitToggle = (idx) => {
+    setLines(prev => prev.map((l, i) => {
+      if (i !== idx) return l;
+      if (l.splitPayments) {
+        // Unsplit → restore single payment from first split row
+        const first = l.splitPayments[0];
+        return { ...l, splitPayments: null, paymentMethod: first?.method || l.paymentMethod };
+      }
+      // Split → Row 1 = current method+amount, Row 2 = empty remainder
+      const currentAmount = parseFloat(l.amount) || 0;
+      return {
+        ...l,
+        splitPayments: [
+          { method: l.paymentMethod, amount: String(currentAmount) },
+          { method: '', amount: '' },
+        ],
+      };
+    }));
+  };
+
+  const handleSplitChange = (lineIdx, splitIdx, field, val) => {
+    setLines(prev => prev.map((l, i) => {
+      if (i !== lineIdx || !l.splitPayments) return l;
+      const updated = l.splitPayments.map((sp, si) =>
+        si === splitIdx ? { ...sp, [field]: val } : sp
+      );
+      return { ...l, splitPayments: updated };
+    }));
+  };
+
+  const removeSplitRow = (lineIdx, splitIdx) => {
+    setLines(prev => prev.map((l, i) => {
+      if (i !== lineIdx || !l.splitPayments) return l;
+      const remaining = l.splitPayments.filter((_, si) => si !== splitIdx);
+      if (remaining.length <= 1) {
+        // Only 1 row left → unsplit
+        return { ...l, splitPayments: null, paymentMethod: remaining[0]?.method || l.paymentMethod, amount: remaining[0]?.amount || l.amount };
+      }
+      return { ...l, splitPayments: remaining };
+    }));
+  };
+
   // ── Save expense ──────────────────────────────────────────────────
   const handleSave = async () => {
     // Validate: category + item + amount + payment all required
     // BUG-153: category optional — only item name, amount, payment method required
-    const hasErrors = lines.some(l => !l.itemName || !l.amount || !l.paymentMethod);
+    const hasErrors = lines.some(l => !l.itemName || !l.amount || (!l.splitPayments && !l.paymentMethod));
     if (hasErrors) {
       setShowErrors(true);
       toast({
@@ -497,22 +627,51 @@ const ExpenseEntryPanel = () => {
       });
       return;
     }
+    // CR-083: Validate split payment sums
+    const splitErrors = lines.some(l => {
+      if (!l.splitPayments) return false;
+      const total = parseFloat(l.amount) || 0;
+      const splitSum = l.splitPayments.reduce((acc, sp) => acc + (parseFloat(sp.amount) || 0), 0);
+      return Math.abs(splitSum - total) > 0.01 || l.splitPayments.some(sp => !sp.method || !sp.amount);
+    });
+    if (splitErrors) {
+      setShowErrors(true);
+      toast({
+        title: "Split payment error",
+        description: "Split amounts must equal the line total and each must have a payment method.",
+        variant: "destructive",
+      });
+      return;
+    }
     setShowErrors(false);
     setSaving(true);
     try {
       const dateStr = formatDateDDMMYYYY(selectedDate);
-      const details = lines.map(l => ({
-        expense: l.itemName,
-        amount: parseFloat(l.amount),
-        payment_method: l.paymentMethod,
-        quantity: parseFloat(l.quantity || 0),
-        unit: l.unit || "",
-        physical_quantity: parseFloat(l.physical_quantity || 0), // BUG-176
-        notes: l.notes || "",  // BUG-177
-        category_id: l.categoryId ? parseInt(l.categoryId, 10) : null, // BUG-199: pass user-selected category (curl-verified 2026-07-16)
-      }));
-      const total = lines.reduce((acc, l) => acc + parseFloat(l.amount || 0), 0);
-      await expenseService.addExpenseEntry(dateStr, total, details);
+      // CR-083: flatMap — expand split lines into multiple API detail entries
+      const details = lines.flatMap(l => {
+        const base = {
+          expense: l.itemName,
+          quantity: parseFloat(l.quantity || 0),
+          unit: l.unit || "",
+          physical_quantity: parseFloat(l.physical_quantity || 0), // BUG-176
+          notes: l.notes || "",  // BUG-177
+          category_id: l.categoryId ? parseInt(l.categoryId, 10) : null, // BUG-199
+        };
+        if (l.splitPayments) {
+          return l.splitPayments.map(sp => ({
+            ...base,
+            amount: parseFloat(sp.amount),
+            payment_method: sp.method,
+          }));
+        }
+        return [{ ...base, amount: parseFloat(l.amount), payment_method: l.paymentMethod }];
+      });
+      const total = details.reduce((acc, d) => acc + (d.amount || 0), 0);
+      const res = await expenseService.addExpenseEntry(dateStr, total, details);
+      // CR-083: Extract cash draw balance from response
+      if (res?.data?.total_cash_available != null) {
+        setCashDrawBalance(parseFloat(res.data.total_cash_available));
+      }
       toast({ title: "Saved", description: `${lines.length} expense${lines.length > 1 ? "s" : ""} added` });
       resetForm();
       fetchReport(selectedDate);
@@ -640,6 +799,10 @@ const ExpenseEntryPanel = () => {
               onRemove={removeLine}
               showRemove={lines.length > 1}
               showError={showErrors}
+              onSplitToggle={handleSplitToggle}
+              onSplitChange={handleSplitChange}
+              onRemoveSplit={removeSplitRow}
+              cashDrawBalance={cashDrawBalance}
             />
           ))}
         </div>
