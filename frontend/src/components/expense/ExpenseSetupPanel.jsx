@@ -157,11 +157,18 @@ const ExpenseSetupPanel = () => {
       // Cross-reference by name to populate categoryId.
       const catByName = {};
       cats.forEach(c => { catByName[c.name.toLowerCase().trim()] = c.id; });
+      // BUG-208: cross-join pricedItems onto items so unitPriceAmount survives fetchAll refresh
+      // (expenses-list API returns unit_price_amount=null for all items)
+      const prices = fromAPI.unitPrices(pricesRes);
+      const priceMap = new Map(prices.map(p => [String(p.stockId), p.price]));
       const rawItems = fromAPI.expenseItems(itemRes).map(item => ({
         ...item,
         categoryId: item.categoryId
           ?? catByName[item.categoryName?.toLowerCase().trim()]
           ?? null,
+        // BUG-208: enrich with unit price from priceMap
+        unitPriceAmount: priceMap.get(String(item.id)) ?? item.unitPriceAmount ?? null,
+        unitPrice: priceMap.has(String(item.id)) || !!item.unitPrice,
       }));
       setAllItems(rawItems);
 
@@ -563,7 +570,7 @@ const ExpenseSetupPanel = () => {
     // BUG-203: validate price — required if item already has a unit price
     const originalItem = allItems.find(i => i.id === editingItemId);
     if (originalItem?.unitPrice && (!editItemPrice || parseFloat(editItemPrice) <= 0)) {
-      setEditError("Unit price is required. To remove price, use the Unit Prices tab.");
+      setEditError("Unit price is required. To remove price, go to the Unit Prices tab and click the delete (trash) icon next to the item."); // BUG-208: clearer message
       return;
     }
     const prevItems = allItems;
@@ -1583,6 +1590,12 @@ const ExpenseSetupPanel = () => {
                                   className="w-20 px-2 py-1 text-sm text-center rounded border outline-none focus:ring-1 focus:ring-orange-200"
                                   style={{ borderColor: COLORS.borderGray }}
                                   data-testid={`up-edit-price-input-${item.id}`} />
+                                {/* BUG-208: hint when field is empty — direct user to trash button */}
+                                {(!editPriceAmount || parseFloat(editPriceAmount) <= 0) && (
+                                  <div className="text-[10px] mt-0.5" style={{ color: COLORS.grayText }}>
+                                    Use 🗑 to remove
+                                  </div>
+                                )}
                               </td>
                             ) : (
                               <td className="px-4 py-2.5 text-center font-medium" style={{ color: COLORS.darkText }}>

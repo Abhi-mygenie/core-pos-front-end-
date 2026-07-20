@@ -417,6 +417,23 @@ const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onC
                   : r));
                 return;
               }
+            // BUG-208: handle price CLEARING — delete unit price when user clears the field
+            } else if (priceChanged && (row.unitPriceAmount == null || row.unitPriceAmount <= 0) && row._originalPrice != null) {
+              try {
+                const itemId = parseInt(row._id, 10);
+                const priceRow = pricedItems.find(p => String(p.stockId) === String(itemId));
+                if (priceRow) {
+                  await expenseService.deleteUnitPrice(priceRow.id);
+                }
+                setRows(prev => prev.map(r => r._id === row._id
+                  ? { ...r, _originalPrice: null } : r));
+              } catch (priceErr) {
+                failed++;
+                setRows(prev => prev.map(r => r._id === row._id
+                  ? { ...r, _saveStatus: "error", _saveError: "Price removal failed: " + (priceErr?.response?.data?.message || priceErr?.message || "Unknown error") }
+                  : r));
+                return;
+              }
             }
             saved++;
             setRows(prev => prev.map(r => r._id === row._id ? { ...r, _saveStatus: "saved" } : r));
@@ -499,6 +516,19 @@ const ExpenseBulkEditor = ({ items, categories, pricedItems = [], onRefresh, onC
             }
             setRows(prev => prev.map(r => r._id === row._id
               ? { ...r, _originalPrice: row.unitPriceAmount } : r));
+          // BUG-208: handle price clearing in title/cat changed path
+          } else if (priceChanged && (row.unitPriceAmount == null || row.unitPriceAmount <= 0) && row._originalPrice != null) {
+            try {
+              const itemId = parseInt(row._id, 10);
+              const priceRow = pricedItems.find(p => String(p.stockId) === String(itemId));
+              if (priceRow) {
+                await expenseService.deleteUnitPrice(priceRow.id);
+              }
+            } catch {
+              toast({ title: "Price not removed", description: "Item saved but price removal failed. Use Unit Prices tab.", variant: "destructive" });
+            }
+            setRows(prev => prev.map(r => r._id === row._id
+              ? { ...r, _originalPrice: null } : r));
           }
         }
       } catch (err) {

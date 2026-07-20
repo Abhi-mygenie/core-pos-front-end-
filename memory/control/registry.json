@@ -15384,6 +15384,22 @@
       "note": "WARNING: This was originally labelled CR-077 on the socket-issue branch. Renumbered to CR-082 to avoid collision with CR-077 (Inventory Hierarchy Stock Transfer). The handover doc still references CR-077 internally — next agent must treat it as CR-082.",
       "implemented_at": "2026-07-19",
       "qa_report": "memory/test_reports/CR-082_QA_REPORT_2026_07_20.md"
+    },
+    {
+      "id": "BUG-208",
+      "title": "Expense Bulk Edit price reverts after save + Unit Price removal UX gaps",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "IMPLEMENTED (2026-07-20) — 3 fixes: fetchAll cross-join, price clearing in BulkEditor, improved error messages",
+      "sprint_key": "pos_5_0",
+      "created_at": "2026-07-20",
+      "implemented_at": "2026-07-20",
+      "files": [
+        "components/expense/ExpenseSetupPanel.jsx",
+        "components/expense/ExpenseBulkEditor.jsx"
+      ],
+      "investigation_report": "memory/test_reports/INVESTIGATION_EXPENSE_MODULE_2026_07_20.md"
     }
   ]
 }

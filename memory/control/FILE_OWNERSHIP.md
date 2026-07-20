@@ -466,3 +466,5 @@
 | `api/socket/socketEvents.js` | CR-082 | 2026-07-19 | MODIFIED — +JOIN_EVENT, +JOINED_ACK_EVENT constants |
 | `api/socket/socketService.js` | CR-082 | 2026-07-19 | MODIFIED — +joinRestaurant() method, +restaurantId state, +re-join on connect, +clear on disconnect |
 | `api/socket/useSocketEvents.js` | CR-082 | 2026-07-19 | MODIFIED — +socketService.joinRestaurant(restaurantId) call in subscription effect |
+| `components/expense/ExpenseSetupPanel.jsx` | BUG-208 | 2026-07-20 | MODIFIED — fetchAll cross-join pricedItems→allItems, improved error message (line 573), Unit Prices edit hint |
+| `components/expense/ExpenseBulkEditor.jsx` | BUG-208 | 2026-07-20 | MODIFIED — price clearing via deleteUnitPrice when user clears price field (2 paths) |
