@@ -268,4 +268,4 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | ID | Description | Priority | Risk | Status | Notes |
 |---|---|---|---|---|---|
-| **CR-082** | Socket Room-Join — FE emits `join_restaurant({restaurant_id})` after connect so room-scoped backend events reach POS client. 3 files, ~22 lines. | **P0** | CRITICAL | **IMPLEMENTED (2026-07-19)** | Files: `socketEvents.js`, `socketService.js`, `useSocketEvents.js`. Handover: `handover/SESSION_HANDOVER_2026_07_19_SOCKET_ROOM_JOIN_PLANNING.md` |
+| **CR-082** | Socket Room-Join — FE emits `join_restaurant({restaurant_id})` after connect so room-scoped backend events reach POS client. 3 files, ~22 lines. | **P0** | CRITICAL | **QA PASS (2026-07-20)** — 7/7 tests, 0 blockers | QA Report: `test_reports/CR-082_QA_REPORT_2026_07_20.md`. Files: `socketEvents.js`, `socketService.js`, `useSocketEvents.js` |

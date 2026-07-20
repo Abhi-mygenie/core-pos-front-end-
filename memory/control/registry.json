@@ -15371,7 +15371,7 @@
       "type": "CR",
       "priority": "P0",
       "risk": "CRITICAL",
-      "status": "IMPLEMENTED — Phase 1 (join_restaurant emit). 3 files, 7 edits, ~22 lines. QA handover pending.",
+      "status": "QA PASS (2026-07-20) — 7/7 tests pass, 0 blockers. Coverage 3/3. Ready for Gate 6 (Owner Smoke).",
       "sprint_key": "pos_5_0",
       "related": "NOT related to CR-077 (Inventory Transfer Receive). Different domain entirely.",
       "intake_doc": "handover/SESSION_HANDOVER_2026_07_19_SOCKET_ROOM_JOIN_PLANNING.md",
@@ -15382,7 +15382,8 @@
       ],
       "date": "2026-07-19",
       "note": "WARNING: This was originally labelled CR-077 on the socket-issue branch. Renumbered to CR-082 to avoid collision with CR-077 (Inventory Hierarchy Stock Transfer). The handover doc still references CR-077 internally — next agent must treat it as CR-082.",
-      "implemented_at": "2026-07-19"
+      "implemented_at": "2026-07-19",
+      "qa_report": "memory/test_reports/CR-082_QA_REPORT_2026_07_20.md"
     }
   ]
 }
