@@ -15358,14 +15358,15 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE (2026-07-19) — 4 phases, ~745 lines, 12+ files. Absorbs CR-075 remaining polish.",
+      "status": "GATE 2 COMPLETE (2026-07-20) — Impact Analysis done. 4 phases, NO API blockers. 1 OQ pending (OQ-4: setup tab routing). Awaiting owner answer → Gate 3.",
       "sprint_key": "pos_5_0",
       "related": "CR-075, CR-078, CR-079",
       "intake_doc": "change_requests/CR-081_INVENTORY_V5_DESIGN_ALIGNMENT.md",
       "files": [
         "ALL inventory panels + widgets + page wrappers + new InventoryTabBar.jsx"
       ],
-      "date": "2026-07-19"
+      "date": "2026-07-19",
+      "impact_analysis": "memory/impact/CR-081_IMPACT_ANALYSIS.md"
     },
     {
       "id": "CR-082",
