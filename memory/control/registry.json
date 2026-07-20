@@ -15391,7 +15391,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED (2026-07-20) — BUG-208 + BUG-208b: fetchAll cross-join, price clearing in all 3 locations (Bulk Editor, Stock Master, Unit Prices tab), removed inconsistency",
+      "status": "QA PASS (2026-07-20) — 4/4 bug fixes verified, 1 regression partial (Set Price QTY field — expected behavior). Data restored after testing.",
       "sprint_key": "pos_5_0",
       "created_at": "2026-07-20",
       "implemented_at": "2026-07-20",
@@ -15399,7 +15399,8 @@
         "components/expense/ExpenseSetupPanel.jsx",
         "components/expense/ExpenseBulkEditor.jsx"
       ],
-      "investigation_report": "memory/test_reports/INVESTIGATION_EXPENSE_MODULE_2026_07_20.md"
+      "investigation_report": "memory/test_reports/INVESTIGATION_EXPENSE_MODULE_2026_07_20.md",
+      "qa_report": "test_reports/iteration_11.json"
     }
   ]
 }
