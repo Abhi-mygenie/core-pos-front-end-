@@ -15293,6 +15293,27 @@
         "implementation_plan": "memory/plans/CR-077_IMPLEMENTATION_PLAN.md",
         "qa_report": "memory/test_reports/QA_REPORT_CR-077_B2_2026-07-20.md"
       }
+    },
+    {
+      "id": "PROD-BUG-004",
+      "title": "paid-prepaid-order request storm \u2014 Auto-Settle 10s retry loop, no backoff/terminal state; amplified by room-scoping vs old FE builds",
+      "type": "BUG",
+      "status": "INVESTIGATED \u2014 root cause traced (FE loop), fix plan in analysis doc",
+      "severity": "P0",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_5_0",
+      "gate": "1",
+      "intake_doc": "memory/handover/PAYMENT_STORM_ANALYSIS_PROD-BUG-004_2026-07-20.md",
+      "registered": "2026-07-20",
+      "related": [
+        "PROD-BUG-001",
+        "CR-077",
+        "INV-SOCKET-001"
+      ],
+      "scope_note": "FE: DashboardPage.jsx auto-settle effect (backoff+terminal states+burst cap). BE: 202 on lock-skip (done), idempotent already-paid response, rate limit.",
+      "artifacts": {
+        "investigation": "memory/handover/PAYMENT_STORM_ANALYSIS_PROD-BUG-004_2026-07-20.md"
+      }
     }
   ]
 }
