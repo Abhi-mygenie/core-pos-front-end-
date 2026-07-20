@@ -15252,7 +15252,7 @@
       "id": "INV-SOCKET-001",
       "title": "Peak-traffic outage investigation \u2014 socket broadcast architecture, event-loop blocking, API 500/timeouts (1\u20134 min hangs)",
       "type": "INVESTIGATION",
-      "status": "INVESTIGATED",
+      "status": "RESOLVED-VERIFIED \u2014 root cause fixed (rooms+join, B1+B2+FE), QA 5/5 PASS 2026-07-20",
       "severity": "P0",
       "risk": "CRITICAL",
       "sprint_key": "pos_5_0",
@@ -15276,7 +15276,7 @@
       "id": "CR-077",
       "title": "Socket room-join contract (join_restaurant) \u2014 restore realtime after backend room-scoped emits",
       "type": "CR",
-      "status": "PLANNED \u2014 GATE 3 (awaiting Gate 4 GO + backend B1 deploy)",
+      "status": "QA PASS \u2014 implemented on external branch (core-pos-preview-10); B2 backend verified; awaiting merge + owner smoke",
       "severity": "P0",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
@@ -15290,7 +15290,8 @@
       "scope_note": "FE: socketEvents.js, socketService.js, useSocketEvents.js (~20 lines). BE (external): join_restaurant handler + scope remaining io.emit paths.",
       "artifacts": {
         "impact_analysis": "memory/impact/CR-077_IMPACT_ANALYSIS.md",
-        "implementation_plan": "memory/plans/CR-077_IMPLEMENTATION_PLAN.md"
+        "implementation_plan": "memory/plans/CR-077_IMPLEMENTATION_PLAN.md",
+        "qa_report": "memory/test_reports/QA_REPORT_CR-077_B2_2026-07-20.md"
       }
     }
   ]
