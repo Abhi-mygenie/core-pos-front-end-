@@ -1,8 +1,10 @@
 // CR-078 · Smart Purchase Page (thin wrapper)
+// CR-081: +InventoryTabBar
 import { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import SmartPurchasePanel from '@/components/inventory/SmartPurchasePanel';
+import InventoryTabBar from '@/components/inventory/InventoryTabBar'; // CR-081
 
 export default function SmartPurchasePage() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -10,6 +12,7 @@ export default function SmartPurchasePage() {
     <div className="flex h-screen" data-testid="smart-purchase-page">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       <main className="flex-1 overflow-auto bg-slate-50">
+        <InventoryTabBar active="smart-purchase" />
         <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">

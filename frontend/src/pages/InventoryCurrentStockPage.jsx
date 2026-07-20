@@ -1,10 +1,12 @@
 // CR-079: Inventory Current Stock Page (renamed from InventoryDashboardPage)
 // CR-072: Original — page shell with Sidebar
 // BUG-196: Sidebar navigation
+// CR-081: +InventoryTabBar
 import { useState } from 'react';
 import { Package } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import CurrentStockPanel from '@/components/inventory/CurrentStockPanel';
+import InventoryTabBar from '@/components/inventory/InventoryTabBar'; // CR-081
 
 export default function InventoryCurrentStockPage() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -12,6 +14,7 @@ export default function InventoryCurrentStockPage() {
     <div className="flex h-screen" data-testid="inventory-current-stock-page">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       <main className="flex-1 overflow-auto bg-slate-50">
+        <InventoryTabBar active="current-stock" />
         <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">

@@ -469,3 +469,11 @@
 | `components/expense/ExpenseSetupPanel.jsx` | BUG-208 | 2026-07-20 | MODIFIED — fetchAll cross-join pricedItems→allItems, improved error message (line 573), Unit Prices edit hint |
 | `components/expense/ExpenseBulkEditor.jsx` | BUG-208 | 2026-07-20 | MODIFIED — price clearing via deleteUnitPrice when user clears price field (2 paths) |
 | `components/expense/ExpenseEntryPanel.jsx` | CR-083 | 2026-07-20 | MODIFIED — Split payment: EMPTY_LINE+splitPayments, EntryLine+split props, split rows UI, validation bar, Cash Draw hint, handleSplitToggle/Change/Remove, flatMap save expansion |
+| `components/inventory/InventoryTabBar.jsx` | CR-081 | 2026-07-20 | NEW — horizontal pill tab bar (OPERATIONS + SETUP groups), 9 pills, active state, franchise-only Receive, sticky |
+| `pages/InventoryIntelligencePage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="dashboard" |
+| `pages/InventoryCurrentStockPage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="current-stock" |
+| `pages/SmartPurchasePage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="smart-purchase" |
+| `pages/InventoryReceivePage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="receive" |
+| `pages/StockAuditPage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="audit" |
+| `pages/InventorySetupPage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active={tabFromQuery} + useSearchParams |
+| `pages/RecipeManagementPage.jsx` | CR-081 | 2026-07-20 | MODIFIED — +InventoryTabBar active="recipes" |

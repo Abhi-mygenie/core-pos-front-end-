@@ -1,9 +1,11 @@
 // CR-072: Recipe Management Page
 // BUG-196: Added Sidebar navigation
+// CR-081: +InventoryTabBar
 import { useState } from 'react';
 import { ChefHat } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import RecipeManagementPanel from '@/components/inventory/RecipeManagementPanel';
+import InventoryTabBar from '@/components/inventory/InventoryTabBar'; // CR-081
 
 export default function RecipeManagementPage() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -11,6 +13,7 @@ export default function RecipeManagementPage() {
     <div className="flex h-screen" data-testid="recipe-management-page">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       <main className="flex-1 overflow-auto bg-slate-50">
+        <InventoryTabBar active="recipes" />
         <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
