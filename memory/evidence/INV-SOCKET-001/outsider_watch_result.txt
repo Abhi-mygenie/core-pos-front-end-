@@ -1,0 +1,3 @@
+outsider connected (no join), watching 120s
+OUTSIDER GOT login_disabled_644
+OUTSIDER TOTAL: 1 -> FAIL (leak!)
