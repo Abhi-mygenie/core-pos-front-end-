@@ -567,11 +567,24 @@ const ExpenseSetupPanel = () => {
       setEditError(`Item with this name already exists in ${targetCat?.name ?? "target category"}.`);
       return;
     }
-    // BUG-203: validate price — required if item already has a unit price
+    // BUG-208b: allow clearing price in Stock Master — delete unit price if user empties the field
     const originalItem = allItems.find(i => i.id === editingItemId);
     if (originalItem?.unitPrice && (!editItemPrice || parseFloat(editItemPrice) <= 0)) {
-      setEditError("Unit price is required. To remove price, go to the Unit Prices tab and click the delete (trash) icon next to the item."); // BUG-208: clearer message
-      return;
+      // User cleared price — delete the unit price row
+      try {
+        const priceRow = pricedItems.find(p => String(p.stockId) === String(editingItemId));
+        if (priceRow) {
+          await expenseService.deleteUnitPrice(priceRow.id);
+          setAllItems(prev => prev.map(i => i.id === editingItemId
+            ? { ...i, unitPrice: false, unitPriceAmount: null }
+            : i));
+          setPricedItems(prev => prev.filter(p => p.id !== priceRow.id));
+          toast({ title: "Price removed", description: `Unit price cleared for ${originalItem.title}` });
+        }
+      } catch (priceErr) {
+        setEditError("Failed to remove price: " + (priceErr.readableMessage || "Unknown error"));
+        return;
+      }
     }
     const prevItems = allItems;
     const targetCat = categories.find((c) => String(c.id) === String(targetCatId));
@@ -858,9 +871,16 @@ const ExpenseSetupPanel = () => {
   };
 
   // CR-066: Edit existing price (qty read-only — API only accepts price)
+  // BUG-208b: clearing price field now triggers delete confirmation (same as trash button)
   const handleEditPrice = async (priceId) => {
     const price = parseFloat(editPriceAmount);
-    if (!price || price <= 0) return;
+    if (!price || price <= 0) {
+      // BUG-208b: empty/zero → user wants to remove price. Open delete confirm modal.
+      setEditingPriceId(null);
+      setEditPriceAmount('');
+      setDeletingPriceId(priceId);
+      return;
+    }
     try {
       await expenseService.editUnitPrice(priceId, price);
       setPricedItems((prev) =>
@@ -1590,12 +1610,6 @@ const ExpenseSetupPanel = () => {
                                   className="w-20 px-2 py-1 text-sm text-center rounded border outline-none focus:ring-1 focus:ring-orange-200"
                                   style={{ borderColor: COLORS.borderGray }}
                                   data-testid={`up-edit-price-input-${item.id}`} />
-                                {/* BUG-208: hint when field is empty — direct user to trash button */}
-                                {(!editPriceAmount || parseFloat(editPriceAmount) <= 0) && (
-                                  <div className="text-[10px] mt-0.5" style={{ color: COLORS.grayText }}>
-                                    Use 🗑 to remove
-                                  </div>
-                                )}
                               </td>
                             ) : (
                               <td className="px-4 py-2.5 text-center font-medium" style={{ color: COLORS.darkText }}>
@@ -1610,7 +1624,6 @@ const ExpenseSetupPanel = () => {
                                 {editingPriceId === item.id ? (
                                   <>
                                     <button onClick={() => handleEditPrice(item.id)}
-                                      disabled={!editPriceAmount || parseFloat(editPriceAmount) <= 0}
                                       className="p-1 rounded hover:bg-green-50 disabled:opacity-40"
                                       data-testid={`up-edit-confirm-${item.id}`}>
                                       <Check className="w-3.5 h-3.5" style={{ color: COLORS.primaryGreen }} />
