@@ -15827,7 +15827,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Runtime trace needed at Gate 2.",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 CONFIRMED: UX confusion in StockAuditPanel drift indicator. No auto-save on blur. Scope SMALL (1 file). Awaiting Gate 2.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15865,7 +15865,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Cross-screen data trace needed at Gate 2.",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 CONFIRMED: ghee dosa (ID 18523) is ingredient in Ajwain Paratha recipe. Display fix subsumed by BUG-216. Awaiting Gate 2.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -16036,7 +16036,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Backend endpoint URL needed from owner (Open Question).",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 CONFIRMED: POST /api/v1/vendoremployee/profit-loss-report, DD/MM/YYYY, schema captured. All Open Questions resolved. Awaiting Gate 2.",
       "sprint_key": "pos_5_0",
       "module": "reports",
       "files_to_change": [

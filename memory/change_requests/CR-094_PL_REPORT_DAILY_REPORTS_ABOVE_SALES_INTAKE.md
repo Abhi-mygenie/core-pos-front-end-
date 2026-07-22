@@ -7,9 +7,9 @@
 **Risk:** MEDIUM
 **Module:** Reports — Daily Reports (new P&L screen, first position above Sales report)
 **Duplicate Check:** NONE — new screen.
-**Code Reality:** NONE — no P&L Report screen exists. Owner confirmed a backend P&L endpoint was shared. Location: under Daily Reports, positioned ABOVE the existing Sales report.
+**Code Reality:** NONE — no P&L Report screen exists. Backend endpoint CONFIRMED (curl-verified 2026-07-22). Location: under Daily Reports, positioned ABOVE the existing Sales report.
 **Source:** OWNER-REQUESTED (session 2026-07-22)
-**Confidence:** REPORTED (backend endpoint shared by owner but not curl-verified this session)
+**Confidence:** CONFIRMED (endpoint + schema curl-verified 2026-07-22)
 
 ---
 
@@ -18,48 +18,84 @@
 Owner wants a **Profit & Loss (P&L) Report** screen:
 - **Location**: Under the "Daily Reports" navigation section
 - **Position**: First report — ABOVE the existing Sales report
-- **Backend**: Owner reported that the P&L endpoint was already shared (URL/contract available in prior session context)
+- **Backend**: `POST /api/v1/vendoremployee/profit-loss-report` (v1 endpoint — confirmed)
+- **Date format**: `DD/MM/YYYY` (not ISO — frontend must convert before sending)
+- **Date filter**: Custom date range picker (from → to)
 
-### Expected Content
-- Revenue (total sales for date range)
-- Cost of Goods Sold (COGS) — recipe cost × items sold
-- Gross Profit = Revenue − COGS
-- Expenses (from expense module)
-- Net Profit = Gross Profit − Expenses
-- Date range filter (daily, weekly, monthly, custom)
-- Possibly: per-category or per-item breakdown
+### Confirmed API Response Schema
+```json
+{
+  "report": [
+    {
+      "date": "16/07/2026",
+      "sales": "0.00",
+      "paid_revenue": "0.00",
+      "expenses": "0.00",
+      "purchase": "0.00",
+      "total_expenses": "0.00",
+      "profit_loss": "0.00"
+    }
+  ],
+  "summary": {
+    "total_sales": "0.00",
+    "total_paid_revenue": "0.00",
+    "total_expenses": "0.00",
+    "total_purchase": "0.00",
+    "total_expenses_combined": "0.00",
+    "total_profit_loss": "0.00"
+  }
+}
+```
+
+### Display Columns (from schema)
+| Column | Field | Note |
+|---|---|---|
+| Date | `date` | per row |
+| Sales | `sales` | gross revenue |
+| Paid Revenue | `paid_revenue` | actual collected |
+| Expenses | `expenses` | direct expenses |
+| Purchase | `purchase` | stock purchase cost |
+| Total Expenses | `total_expenses` | combined expenses |
+| Profit / Loss | `profit_loss` | net P&L |
+
+Summary row uses `summary.*` totals across the date range.
 
 ---
 
 ## Evidence
 
-- Owner-reported: "profit and loss endpoint was also shared. This I need under Daily reports Above sales first report — New CR"
+- Owner curl provided: `POST https://preprod.mygenie.online/api/v1/vendoremployee/profit-loss-report`
+- Curl-verified 2026-07-22 with fresh auth token — HTTP 200, schema confirmed above
+- Date format required by API: `DD/MM/YYYY` (returns 400 "Invalid date format" if ISO YYYY-MM-DD used)
 - No P&L screen exists in current frontend navigation
-- Backend endpoint: was referenced in previous session (not verified this session — needs retrieval from prior handover or re-request from owner)
+- Note: endpoint uses `/api/v1/` path (older API version) — not v2
 
 ---
 
 ## Blast Radius
 
-- 3-4 files: New `PLReportPanel.jsx` (or `ProfitLossPanel.jsx`), daily reports navigation component, `reportService.js` or new service file, possibly `constants.js`
+- 3-4 files: New `PLReportPanel.jsx`, daily reports navigation component, `reportService.js` (or new service), `constants.js`
 - ~100-150 lines (new screen)
 - Scope: LARGE (new screen + navigation position change)
 
 ---
 
-## Open Questions (Gate 2 — must resolve before Gate 3)
-1. What is the exact backend P&L endpoint URL and response schema? (Owner provided it in a previous session — needs retrieval)
-2. Should this be date-picker based (select any date range) or fixed periods (today/week/month)?
-3. Does "above Sales" mean it is the first tab/card in the Daily Reports section?
+## Open Questions — ALL RESOLVED
+
+| # | Question | Answer |
+|---|---|---|
+| 1 | Backend P&L endpoint URL + schema? | `POST /api/v1/vendoremployee/profit-loss-report` — schema confirmed above |
+| 2 | Date filter type? | Custom date range picker (from/to), format DD/MM/YYYY |
+| 3 | "Above Sales" = first tab/card in Daily Reports? | YES — first position above Sales report |
 
 ---
 
 ## Fix Plan (seeding — formal plan at Gate 3)
 
-1. Retrieve / curl-verify P&L endpoint (owner to provide or retrieve from prior handover)
-2. Create `PLReportPanel.jsx` with date range filter + P&L table (Revenue, COGS, Expenses, Net Profit)
-3. Add to Daily Reports navigation — insert ABOVE Sales report (first position)
-4. Wire to service function + constants
+1. Add `P_AND_L_REPORT` to `constants.js` → `POST /api/v1/vendoremployee/profit-loss-report`
+2. Add `getProfitLossReport(from, to)` to `reportService.js` (convert dates to DD/MM/YYYY before send)
+3. Create `PLReportPanel.jsx` — date range pickers + table with 7 columns + summary footer row
+4. Insert into Daily Reports navigation — first position above Sales
 
 ---
 
