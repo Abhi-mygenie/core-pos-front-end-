@@ -53,6 +53,14 @@ constants.js:154 IMPORT_INVENTORY = '/api/v2/vendoremployee/inventory/import-inv
 
 Field name confirmed: `file`.
 
+### Flow D — Ingredient import TEMPLATE (owner-provided 2026-07-23, verified)
+Static file (not an API endpoint): `GET {BASE_URL}/bulk_upload_sample/Ingredients/Ingredients_Bulk_Import_Sample.xlsx`
+→ HTTP 200, `content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, 9183 bytes, VALID xlsx (PK magic).
+Template columns: `Category Name | Stock Title | Unit | Min Qty Alert | Min Unit Alert` (sample row: Bar / test_bulk_upload10 / kg / gm).
+⚠ Template has NO Small Unit / Conversion Factor columns — import likely cannot set those fields (note for owner expectations + QA).
+Evidence: `/app/memory/evidence/BUG-221/Ingredients_Bulk_Import_Sample.xlsx`
+Fix implication: bulk editor should get a "Download Template" action linking this static URL (constant to add in `constants.js` OR hardcode-free via new INVENTORY_ENDPOINTS entry — Gate 3 decision).
+
 ---
 
 ## 2. Exact Lines
@@ -82,8 +90,11 @@ Dual-response pattern is written correctly BUT is unreachable because of the blo
 - `api/services/inventoryService.js` — `exportIngredients()` drop blob responseType (~1-2 lines)
 - `components/inventory/IngredientBulkEditor.jsx` — add Import button + handler (~25-30 lines); optionally add server-export option (owner decision Q2)
 
+**WILL change (conditional):**
+- `api/constants.js` — ONLY to add the static template URL constant (`INGREDIENT_IMPORT_SAMPLE`) if owner approves the Template button (+1 line)
+
 **WILL NOT touch:**
-- `api/constants.js` (endpoints already exist)
+- `api/constants.js` beyond the single template constant above
 - `components/inventory/InventorySetupPanel.jsx` (handler already correct once service fixed — verify only; avoids overlap with BUG-218)
 - Transforms, stock import/export (`exportStock`/`importStock` already use correct dual pattern — see inventoryService.js:75-88)
 
