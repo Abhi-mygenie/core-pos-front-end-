@@ -16064,6 +16064,22 @@
         "Date-picker based or fixed periods (today/week/month)?",
         "Does 'above Sales' mean first tab/card in Daily Reports?"
       ]
+    },
+    {
+      "id": "CR-095",
+      "title": "Waiter-to-Waiter Transfer \u2014 Unlock Backend-Blocked Settlement Feature",
+      "type": "CR",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "gate": 1,
+      "sprint_key": "pos_5_0",
+      "module": "Settlement / Day Closure",
+      "related": "CR-015",
+      "code_reality": "PARTIAL",
+      "duplicate_check": "RELATED to CR-015",
+      "intake_doc": "change_requests/CR-095_WAITER_TRANSFER_UNLOCK_INTAKE.md",
+      "created": "2026-07-22"
     }
   ]
 }

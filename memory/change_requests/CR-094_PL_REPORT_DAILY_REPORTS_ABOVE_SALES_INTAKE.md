@@ -101,3 +101,18 @@ Summary row uses `summary.*` totals across the date range.
 
 ## Next
 Planning Gate 2 (owner must answer Open Questions above) → Gate 3 → Implementation
+
+---
+
+## Update 2026-07-22 — Open Question RESOLVED
+
+**Backend endpoint CONFIRMED live.** Curl-verified with `owner@cafe103.com` credentials:
+
+```bash
+POST https://preprod.mygenie.online/api/v1/vendoremployee/profit-loss-report
+Body: {"date_from":"01/07/2026","date_to":"22/07/2026"}
+```
+
+Response HTTP 200 — full `report[]` + `summary{}` as documented above.
+
+**All open questions are now RESOLVED.** CR-094 is ready for Planning Gate 2.
