@@ -15661,7 +15661,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. No owner decisions. Gate 2 APPROVED by owner. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-214_IMPLEMENTATION_PLAN.md. 1 file ~8 lines (addon fallback removal \u00d73 spots). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15680,7 +15680,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. No owner decisions. Gate 2 APPROVED by owner. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-215_IMPLEMENTATION_PLAN.md. 1 file ~28 lines (inline error states \u2014 PATTERN SETTER for Wave 1, implement FIRST). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15699,7 +15699,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Data-confirmed: all 346 preprod recipe rows already store small units; form autofill (base unit) is the outlier AND is saved to backend (not display-only). Sibling defect found in RecipeBulkEditor.jsx:185. Risk upgraded MEDIUM\u2192HIGH (saved-data semantics). 2 files, 3 lines. OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-216_IMPLEMENTATION_PLAN.md. 2 files 3 lines (small-unit autofill; CRITICAL e2e deduction test mandated). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15737,7 +15737,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis APPROVED by owner. Curl-verified: HTTP 400 + used_in_recipes[]. Q1: BLOCK. Q2: backend enforces. FE-only fix: parse 400 catch + Dialog. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-218_IMPLEMENTATION_PLAN.md. 1 file ~30 lines (400-parse + blocked-delete Dialog). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15795,7 +15795,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export returns JSON download_url but service forces blob \u2192 corrupt xlsx; bulk editor has NO import UI (importIngredients() defined but unused). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-221_IMPLEMENTATION_PLAN.md. 3 files ~35 lines (dual-pattern export, Template btn, NEW import UI w/ 2xx status:false trap handling). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15815,7 +15815,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export JSON-vs-blob mismatch corrupts xlsx (file won't open CONFIRMED); import sends field \"file\" but backend requires \"products_file\" (422) \u2192 import can never succeed; template endpoint exists unwired. Risk upgraded MEDIUM\u2192HIGH (API contract). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-222_IMPLEMENTATION_PLAN.md. 2 files ~28 lines (dual-pattern export, products_file field fix \u2014 import btn already exists (entry-check correction), Template btn; Q1 sub-recipe-rows check gate). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15835,7 +15835,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis APPROVED by owner. UX-only: StockAuditPanel.jsx drift column shows red immediately (no API call fires). Fix: amber preview badge + unsaved banner. 1 file. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-223_IMPLEMENTATION_PLAN.md. 1 file ~18 lines (amber preview badge + unsaved banner). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15855,7 +15855,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Mechanism corrected vs intake: all stock rows ARE processed but velocity-0 items always fail B2 gap<0 filter; min alerts never consulted. No new fetch needed (stockItems transform already has minQtyAlert/minUnitAlert). Risk upgraded MEDIUM\u2192HIGH (amends locked B2 + feeds add-purchase). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-224_IMPLEMENTATION_PLAN.md. 3 files ~26 lines (B2 Rule 2 low-stock pass in computePlan, unit tests mandated). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15892,7 +15892,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis APPROVED by owner. Q1 resolved: default=1. inventoryTransform.js ADD path missing converion_factor; EDIT || 1 fallback issue. 1 file. Awaiting Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-226_IMPLEMENTATION_PLAN.md. 1 file ~2 lines (converion_factor ADD path + Q1 ||1 kept \u2014 implement FIRST in Wave 2). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15911,7 +15911,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Confirmed: vendor master never fetched into ranking universe; ALSO 54% of vendor-item-list rows have vendor_id null (data evidence saved). Risk upgraded MEDIUM\u2192HIGH (feeds add-purchase write). 3 files. OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-227_IMPLEMENTATION_PLAN.md. 3 files ~60 lines (System Vendor bucketing, master append, searchable combobox, submit guard vendor_id!=system CRITICAL). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
