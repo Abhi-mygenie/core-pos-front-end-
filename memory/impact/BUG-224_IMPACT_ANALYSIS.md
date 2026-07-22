@@ -77,8 +77,8 @@ Optional badge for `origin === 'stock_alert'` rows ("Low stock" vs velocity colu
 
 - **Q1 → DECIDED:** Threshold = **`minQtyAlert` only** (base unit). Planner compares in small-unit domain: `onHand(calQuantity) < minQtyAlert × conversionFactor`. `minUnitAlert` NOT used.
 - **Q2 → APPROVED:** Suggested qty = top-up to threshold: `ceil(threshold − onHand)`.
-- **Q3 (B2 amendment) → PENDING:** owner asked for fuller explanation before confirming. See session notes; blocking for Gate 3.
-- **Q4 (badge) → not explicitly answered; default to "Low stock" badge, confirm at Gate 3 plan review.
+- **Q3 (B2 amendment) → OWNER APPROVED (2026-07-23):** B2 amended — velocity rows keep original B2 (hide gap ≥ 0); NEW Rule 2: ingredients below `minQtyAlert` appear as "Low stock" rows with top-up qty, regardless of consumption. Additive only.
+- **Q4 (badge) → default to "Low stock" badge, confirm at Gate 3 plan review.
 
 ---
 

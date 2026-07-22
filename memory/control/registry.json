@@ -15698,17 +15698,19 @@
    "title": "Recipe Ingredient Row Shows Base Unit, Should Show Small Unit",
    "type": "BUG",
    "severity": "P2",
-   "risk": "MEDIUM",
-   "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+   "risk": "HIGH",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Data-confirmed: all 346 preprod recipe rows already store small units; form autofill (base unit) is the outlier AND is saved to backend (not display-only). Sibling defect found in RecipeBulkEditor.jsx:185. Risk upgraded MEDIUM\u2192HIGH (saved-data semantics). 2 files, 3 lines. Awaiting owner approval \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
-    "components/inventory/RecipeFormPanel.jsx"
+    "components/inventory/RecipeFormPanel.jsx",
+    "components/inventory/RecipeBulkEditor.jsx"
    ],
    "created": "2026-07-22",
-   "updated": "2026-07-22",
+   "updated": "2026-07-23",
    "artifact_refs": {
-    "intake": "/app/memory/change_requests/BUG-216_RECIPE_INGREDIENT_ROW_SHOWS_BASE_UNIT_INTAKE.md"
+    "intake": "/app/memory/change_requests/BUG-216_RECIPE_INGREDIENT_ROW_SHOWS_BASE_UNIT_INTAKE.md",
+    "impact_analysis": "/app/memory/impact/BUG-216_IMPACT_ANALYSIS.md"
    }
   },
   {
@@ -15853,7 +15855,7 @@
    "type": "BUG",
    "severity": "P2",
    "risk": "HIGH",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Mechanism corrected vs intake: all stock rows ARE processed but velocity-0 items always fail B2 gap<0 filter; min alerts never consulted. No new fetch needed (stockItems transform already has minQtyAlert/minUnitAlert). Risk upgraded MEDIUM\u2192HIGH (amends locked B2 + feeds add-purchase). Awaiting owner approval \u2192 Gate 3.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Mechanism corrected vs intake: all stock rows ARE processed but velocity-0 items always fail B2 gap<0 filter; min alerts never consulted. No new fetch needed (stockItems transform already has minQtyAlert/minUnitAlert). Risk upgraded MEDIUM\u2192HIGH (amends locked B2 + feeds add-purchase). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15872,18 +15874,16 @@
    "title": "Same Name Appears as Ingredient + Recipe; Unit Mismatch Across Screens",
    "type": "BUG",
    "severity": "P2",
-   "risk": "MEDIUM",
-   "status": "INTAKE COMPLETE (2026-07-22) \u2014 CONFIRMED: ghee dosa (ID 18523) is ingredient in Ajwain Paratha recipe. Display fix subsumed by BUG-216. Awaiting Gate 2.",
+   "risk": "LOW",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 SUBSUMED by BUG-216 (documented). Live symptom self-resolved: ghee dosa no longer in any recipe (re-curl 2026-07-23). Residuals: conversion\u2192BUG-226, negative stock\u2192owner data fix. No code under this ID. Awaiting owner approval.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
-   "files_to_change": [
-    "components/inventory/RecipeManagementPanel.jsx",
-    "components/inventory/InventorySetupPanel.jsx"
-   ],
+   "files_to_change": [],
    "created": "2026-07-22",
-   "updated": "2026-07-22",
+   "updated": "2026-07-23",
    "artifact_refs": {
-    "intake": "/app/memory/change_requests/BUG-225_SAME_NAME_INGREDIENT_RECIPE_UNIT_MISMATCH_INTAKE.md"
+    "intake": "/app/memory/change_requests/BUG-225_SAME_NAME_INGREDIENT_RECIPE_UNIT_MISMATCH_INTAKE.md",
+    "impact_analysis": "/app/memory/impact/BUG-225_IMPACT_ANALYSIS.md"
    }
   },
   {
@@ -15911,7 +15911,7 @@
    "type": "BUG",
    "severity": "P1",
    "risk": "HIGH",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Confirmed: vendor master never fetched into ranking universe; ALSO 54% of vendor-item-list rows have vendor_id null (data evidence saved). Risk upgraded MEDIUM\u2192HIGH (feeds add-purchase write). 3 files. Awaiting owner approval \u2192 Gate 3.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Confirmed: vendor master never fetched into ranking universe; ALSO 54% of vendor-item-list rows have vendor_id null (data evidence saved). Risk upgraded MEDIUM\u2192HIGH (feeds add-purchase write). 3 files. OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
