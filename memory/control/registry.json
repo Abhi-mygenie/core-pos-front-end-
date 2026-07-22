@@ -15931,7 +15931,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE \u2014 awaiting Gate 3",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15942,7 +15942,8 @@
       "updated": "2026-07-22",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/CR-088_RECIPE_BY_INGREDIENT_REVERSE_VIEW_INTAKE.md"
-      }
+      },
+      "gate": 2
     },
     {
       "id": "CR-089",
@@ -15950,7 +15951,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE \u2014 awaiting Gate 3",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15961,7 +15962,8 @@
       "updated": "2026-07-22",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/CR-089_PDF_EXPORT_RECIPES_INTAKE.md"
-      }
+      },
+      "gate": 2
     },
     {
       "id": "CR-090",
@@ -16008,7 +16010,7 @@
       "type": "CR",
       "severity": "P3",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE \u2014 awaiting Gate 3",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -16018,7 +16020,8 @@
       "updated": "2026-07-22",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/CR-092_RECIPE_TABS_SORT_CONTROLS_INTAKE.md"
-      }
+      },
+      "gate": 2
     },
     {
       "id": "CR-093",
