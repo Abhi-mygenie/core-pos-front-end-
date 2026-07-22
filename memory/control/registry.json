@@ -15661,7 +15661,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2 (Impact Analysis).",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. No owner decisions. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15670,7 +15670,8 @@
       "created": "2026-07-22",
       "updated": "2026-07-22",
       "artifact_refs": {
-        "intake": "/app/memory/change_requests/BUG-214_ADDON_RECIPE_DROPDOWN_SHOWS_MENU_ITEMS_INTAKE.md"
+        "intake": "/app/memory/change_requests/BUG-214_ADDON_RECIPE_DROPDOWN_SHOWS_MENU_ITEMS_INTAKE.md",
+        "impact_analysis": "/app/memory/BUG-214_IMPACT_ANALYSIS.md"
       }
     },
     {
@@ -15679,7 +15680,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. No owner decisions. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15688,7 +15689,8 @@
       "created": "2026-07-22",
       "updated": "2026-07-22",
       "artifact_refs": {
-        "intake": "/app/memory/change_requests/BUG-215_RECIPE_FORMS_VALIDATION_ERRORS_NOT_SHOWN_INTAKE.md"
+        "intake": "/app/memory/change_requests/BUG-215_RECIPE_FORMS_VALIDATION_ERRORS_NOT_SHOWN_INTAKE.md",
+        "impact_analysis": "/app/memory/BUG-215_IMPACT_ANALYSIS.md"
       }
     },
     {
@@ -15827,7 +15829,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. No owner decisions. Ready for Gate 3.",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis approved. No owner decisions. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15885,7 +15887,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis done. 1 owner decision pending (Q1: default value). Awaiting Gate 4 GO.",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis approved. Q1 resolved: default=1. Awaiting Gate 3 (Implementation Plan).",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
