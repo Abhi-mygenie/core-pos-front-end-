@@ -66,4 +66,4 @@ WILL NOT touch: `recipeTransform.js`, `recipeService.js`, `axios.js`, any backen
 - Standard + addon recipe with Unit blank → same guard fires.
 
 ---
-*Gate 2 complete. STOP — no Implementation Plan, no code. Awaiting owner approval.*
+*Gate 2 complete. **OWNER APPROVED 2026-07-23** — re-scope confirmed (require Unit, Serves stays optional); backend brief card #bug-217 filed. → Gate 3.*

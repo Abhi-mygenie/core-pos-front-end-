@@ -150,9 +150,9 @@
   <div class="subtitle">All modules: Expense · Order Management · Print · File Upload · Realtime / Socket · Inventory. Last updated 2026-07-23.</div>
   <div class="meta">
     <span class="mp red">4 P0/P1 — Active blockers</span>
-    <span class="mp orange">7 P2 — High value</span>
+    <span class="mp orange">8 P2 — High value</span>
     <span class="mp blue">4 P3 — Legacy / Low priority</span>
-    <span class="mp green">15 total blockers across 6 modules</span>
+    <span class="mp green">16 total blockers across 6 modules</span>
   </div>
 </div>
 
@@ -189,6 +189,7 @@
   <div class="sb-sect">Inventory Module</div>
   <a class="tl p2" href="#bug-221"><span class="dot db"></span>BUG-221 — Import Accepts Junk File</a>
   <a class="tl p2" href="#bug-227"><span class="dot db"></span>BUG-227 — Vendor-less Purchases / System Vendor</a>
+  <a class="tl p2" href="#bug-217"><span class="dot db"></span>BUG-217 — store-sub-recipe No Validation / 500 Leak</a>
 
   <div class="sb-sect">Summary</div>
   <a class="tl" href="#summary"><span class="dot dg"></span>All Endpoints — Quick Ref</a>
@@ -670,6 +671,24 @@
   </div>
 </div>
 
+<div class="card" id="bug-217">
+  <div class="ch">
+    <div><div class="cid">BUG-217 · Backend Ask</div><div class="ct">store-sub-recipe Has No Validation Layer — Raw 500 SQL Errors + Junk Ingredients Accepted</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bfix">Validation / Security</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE plan (Gate 2, 2026-07-23): FE will add a required-Unit guard so users can no longer trigger the 500. This brief asks backend to add a proper validation layer — FE guards cannot protect direct API consumers, and the current 500 leaks a full stack trace (debugbar enabled on preprod).</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current (verified 2026-07-23, restaurant 689)</div><p><code>POST /recipe/store-sub-recipe</code> with blank <code>subunit</code> → HTTP <strong>500</strong> <code>SQLSTATE[23000] Column 'unit' cannot be null</code> + full Laravel stack trace in response. <code>serve_people: 0</code> → silently coerced to 1 (200). Non-existent ingredient id <code>999999</code> → silently accepted, sub-recipe created with junk row (200).</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Request validation: <code>subunit</code> required → 422 with field message; ingredient ids validated against inventory master → 422 on unknown ids; no stack traces in API responses (disable debugbar on preprod).</p></div>
+    </div>
+    <div class="sl">Endpoints involved</div>
+    <div class="fr"><span class="fl">Write path</span><span class="fv"><code>POST /api/v2/vendoremployee/recipe/store-sub-recipe</code> (RecipeController.php:669 sub_recipes_store) — likely same gaps on <code>update-sub-recipe</code></span></div>
+    <div class="fr"><span class="fl">Evidence</span><span class="fv"><code>/app/memory/evidence/BUG-217/probe1_serves0_invalid_ing.json</code>, <code>probe2_blank_subunit.json</code> (test sub-recipe deleted after probe)</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> None required — FE guard ships independently. Backend 422s would then surface field-level messages via existing readableMessage chain.</div>
+  </div>
+</div>
+
 <!-- ═══ SUMMARY TABLE ════════════════════════════════════════ -->
 <div class="mh" id="summary"><span>📋</span><span>All Endpoints — Quick Reference</span></div>
 
@@ -685,6 +704,7 @@
         <tr><td>BUG-164</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>POST /expense/category</code></td><td>Return 409 instead of 201 for duplicates</td><td style="color:var(--green)">Yes (HTTP fix only)</td></tr>
         <tr><td>BUG-203</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>PUT /expense/expenses/{id}</code></td><td>Accept + persist unit_price field</td><td style="color:var(--orange)">Partial (2-call workaround)</td></tr>
         <tr><td>CR-062</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>POST /expense/expense-aggregation</code> (NEW)</td><td>New endpoint: 3 breakdown aggregations</td><td style="color:var(--red)">No — new endpoint needed</td></tr>
+        <tr><td>BUG-217</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Inventory</td><td><code>POST /recipe/store-sub-recipe</code></td><td>Add validation layer (422s); stop 500 stack-trace leak</td><td style="color:var(--green)">Yes (FE guard ships independently)</td></tr>
         <tr><td>PROD-003</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Orders</td><td><code>socket: update-order-paid</code></td><td>Emit socket when PayLater order paid</td><td style="color:var(--red)">No — missing emit</td></tr>
         <tr><td>CR-076</td><td><span class="badge bp0" style="font-size:9px">P0</span></td><td>Upload</td><td><code>POST /upload/presigned-url</code> (NEW)</td><td>New S3 presigned URL infrastructure</td><td style="color:var(--red)">No — zero infrastructure</td></tr>
         <tr><td>BUG-124</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Socket</td><td><code>socket: food_update_{rid}</code></td><td>Add 5 missing fields to emit payload</td><td style="color:var(--orange)">Partial (FE backfill)</td></tr>

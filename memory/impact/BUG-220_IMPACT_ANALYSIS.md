@@ -54,4 +54,4 @@ GAP: no pre-call check → duplicate attempt still costs a round-trip; message w
 - Direct-API duplicate (bypass FE) → 409 message still surfaces (regression of existing behavior).
 
 ---
-*Gate 2 complete. STOP — no Implementation Plan, no code. Awaiting owner approval.*
+*Gate 2 complete. **OWNER APPROVED 2026-07-23** — pre-call check + risk downgrade MEDIUM→LOW approved (rationale: backend enforcement curl-verified robust). → Gate 3.*
