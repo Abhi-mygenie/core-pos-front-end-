@@ -16046,7 +16046,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE",
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "module": "reports",
       "files_to_change": [
@@ -16064,7 +16064,7 @@
         "Date-picker based or fixed periods (today/week/month)?",
         "Does 'above Sales' mean first tab/card in Daily Reports?"
       ],
-      "gate": 2
+      "gate": 3
     },
     {
       "id": "CR-095",
@@ -16072,8 +16072,8 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE",
-      "gate": 2,
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
+      "gate": 3,
       "sprint_key": "pos_5_0",
       "module": "Settlement / Day Closure",
       "related": "CR-015",
