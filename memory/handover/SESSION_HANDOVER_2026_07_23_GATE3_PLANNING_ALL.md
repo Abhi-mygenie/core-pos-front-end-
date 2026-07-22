@@ -5,7 +5,45 @@
 ---
 
 ## 1-Line Summary
-**Last session (2026-07-23, Session E):** Gate 3 Implementation Plans COMPLETE for ALL 13 code items (Batches 1–8; BUG-225 subsumed). Entry-verified against live code. Registry/tracker synced (13 × "GATE 3 COMPLETE — awaiting Gate 4 GO"). Execution order: 4 waves + 1 standalone. Awaiting owner Gate 4 GO.
+**Last session (2026-07-23, Session E):** Gate 3 Implementation Plans COMPLETE for ALL 13 code items (Batches 1–8; BUG-225 subsumed). Entry-verified against live code. Registry/tracker synced (13 × "GATE 3 COMPLETE — awaiting Gate 4 GO"). Execution order: 4 waves + 1 standalone. **⚠ Gate 4 GO NOT YET GIVEN — next agent must obtain it before writing any code.**
+
+---
+
+## NEXT AGENT: YOUR ROLE THIS SESSION
+
+**Role:** IMPLEMENTATION (per AGENT_PROMPT_ALPHA.md Role 3)
+
+**MANDATORY BOOT:**
+```
+1. READ this handover fully
+2. READ /app/memory/control/AGENT_PROMPT_ALPHA.md → IMPLEMENTATION role section
+3. ⚠ GATE 4 CHECK: Owner has NOT yet given Gate 4 GO (owner reviewed Gate 3 output
+   then closed the session). Per OWNER APPROVAL MATRIX you MUST ask the owner:
+   "Gate 4 GO? — (a) wave-by-wave [recommended by planning agent] or (b) all 13 in
+   one session with single QA at end". DO NOT code before GO.
+4. ENV CHECK (STEP -1.5): frontend compiles + preprod login curl works
+5. READ the plan(s) for your approved wave at /app/memory/plans/
+6. STEP 0 Entry Verification per plan: confirm each 'current' line still matches
+   before editing (planning verified 2026-07-23 — re-verify if repo was re-pulled)
+```
+
+**HARD DEPENDENCY RULES (never violate):**
+1. BUG-215 → BUG-217 (same handleSave block; if same session, fold 217's Unit guard into 215's error block — both plans document the merge)
+2. BUG-226 → BUG-219 (adjacent lines, toAPI.addIngredient)
+3. BUG-216 → BUG-222 (RecipeBulkEditor:185 shifts lines)
+4. BUG-224 → BUG-227 (planner rows before vendor layer)
+Everything else parallel-safe. Compile-check after each wave.
+
+**CRITICAL SELF-TESTS (blocking — from plans):**
+- BUG-219: edit-save an ingredient WITHOUT touching alert fields → curl → `min_unit_alert` NOT corrupted to '0'
+- BUG-216: saved recipe stores small unit; deduction spot-check
+- BUG-227: submit payload NEVER contains `vendor_id: 'system'`
+- BUG-222: STOP-GATE — exported excel must contain sub-recipe rows, else flag owner
+- BUG-224: unit tests on computePlan (Rule 1 output bit-identical, Rule 2 additive)
+- Wave 4: NO real add-purchase submit during QA (owner smoke only)
+- Preprod test data: ZZ_TEST names + delete after (delete-sub-recipe uses recipe_id; categories via /delete/{id})
+
+**EXIT GATE (all 5 per item, before QA handover):** registry.json IMPLEMENTED + tracker row + FILE_OWNERSHIP + `// BUG-XXX` code markers + webpack 0 new warnings.
 
 ## Plans (all at /app/memory/plans/)
 | Wave | Order | Items (plan files) |
