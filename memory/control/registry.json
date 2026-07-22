@@ -15735,7 +15735,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Q1 (force-delete vs block) + Q2 (backend 422 guard?) pending owner decisions. Awaiting owner approval \u2192 Gate 3.",
+      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: backend returns HTTP 400 + used_in_recipes[] on delete of in-use ingredient. Q1 RESOLVED: BLOCK (no force-delete). Q2 RESOLVED: backend enforces. FE-only fix: parse 400 catch + Dialog. No owner decisions pending. Awaiting Gate 2 approval \u2192 Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15746,7 +15746,8 @@
       "updated": "2026-07-22",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/BUG-218_DELETE_INGREDIENT_NO_BLOCKING_ERROR_INTAKE.md",
-        "impact_analysis": "/app/memory/impact/BUG-218_IMPACT_ANALYSIS.md"
+        "impact_analysis": "/app/memory/impact/BUG-218_IMPACT_ANALYSIS.md",
+        "evidence": "/app/memory/evidence/BUG-218/delete_in_use_response.json"
       }
     },
     {

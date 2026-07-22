@@ -1,6 +1,6 @@
 # BUG-218 — Impact Analysis
 **Gate:** 2
-**Produced:** 2026-07-23
+**Produced:** 2026-07-23 (revised after curl verification)
 **Agent Role:** PLANNING
 
 ---
@@ -12,9 +12,48 @@
 | ID | BUG-218 |
 | Title | Delete Ingredient — No Blocking Error When Used in Recipe |
 | Priority | P1 |
-| Risk | **MEDIUM** |
-| Code Reality | **CONFIRMED** — `InventorySetupPanel.jsx:86-93` calls `deleteIngredient(id)` immediately after `window.confirm()`. Zero recipe-usage pre-check. No impact endpoint in `constants.js`. Pattern exists: BUG-201 (expense deletion safety) solved the same problem in the expense module. |
-| Conflict Pre-Check | `InventorySetupPanel.jsx` was last modified by BUG-212 (2026-07-21). BUG-219 and BUG-220 also target this same file. CR-090 (Inventory Categories Edit/Delete) targets the category sidebar section of this same file. **Execution order: BUG-218 BEFORE BUG-219, BUG-220, CR-090.** All four touch different functions within `InventorySetupPanel.jsx` — parallel-safe within a single implementation session if each touches a distinct function scope. |
+| Risk | **MEDIUM → LOW after fix** |
+| Code Reality | **CONFIRMED** — `InventorySetupPanel.jsx:86-93` calls `deleteIngredient(id)` with only `window.confirm()` guard. Backend returns HTTP 400 with structured recipe list (curl-verified 2026-07-23) but FE only shows generic `toast.error('Failed to delete')`. **No new backend endpoint needed.** |
+| Conflict Pre-Check | `InventorySetupPanel.jsx` also targeted by BUG-219 (labels/inputs), BUG-220 (category dup check), CR-090 (category edit/delete). **Execution order: BUG-218 FIRST** — touches only `deleteIngredient()` function. Other bugs touch `addCategory()`, form inputs, category sidebar — different scopes. Parallel-safe within a single implementation session. |
+
+---
+
+## Q1 & Q2 — Both Resolved via Curl Verification (2026-07-23)
+
+### Q2 — Does backend block delete or silently delete?
+
+**CONFIRMED: Backend blocks with HTTP 400 + full recipe list.**
+
+```bash
+DELETE /api/v2/vendoremployee/inventory/ingredient/10741
+Authorization: Bearer <token>
+→ HTTP 400
+```
+
+```json
+{
+  "success": false,
+  "message": "Cannot delete. This ingredient is used in recipes.",
+  "data": {
+    "ingredient_name": "Base Cream",
+    "used_in_recipes": [
+      "Blueberry Shab-E-jamun",
+      "Aam-E-Bahaar Kunafa",
+      "50-50 Bluebeery",
+      "Heart Shape kunafa",
+      "50-50 Aam -E -Bahar"
+    ],
+    "recipe_count": 5,
+    "reason": "ingredient_used_in_main_recipes"
+  }
+}
+```
+
+Evidence saved: `/app/memory/evidence/BUG-218/delete_in_use_response.json`
+
+### Q1 — Block or allow force-delete?
+
+**Owner decision (2026-07-23): BLOCK.** Backend already hard-blocks (HTTP 400, no force-delete option in API). Owner confirmed: same pattern as expenses. Fix scope: FE must parse the 400 error and surface the recipe list properly — no "Delete Anyway" button.
 
 ---
 
@@ -22,27 +61,34 @@
 
 ```
 User clicks Trash icon on ingredient row
-  → InventorySetupPanel.jsx:86 — deleteIngredient(id, name) called
-      → window.confirm(`Delete "${name}"?`)   ← sole guard, no recipe check
+  → deleteIngredient(id, name) called  [InventorySetupPanel.jsx:86]
+      → window.confirm(`Delete "${name}"?`)          ← basic confirm only
           IF confirmed:
           → inventoryService.deleteIngredient(id)
-              → api.delete(`${INVENTORY_ENDPOINTS.DELETE_INGREDIENT}/${id}`)
-              → DELETE /api/v2/vendoremployee/inventory/ingredient/{id}
-              → If API allows: ingredient deleted from backend
-              → All recipe rows referencing this ingredient_id now reference
-                a deleted record → recipe ingredient list shows stale/broken data
+              → api.delete(`/api/v2/vendoremployee/inventory/ingredient/${id}`)
 
-NO pre-delete check at any layer:
-  - No GET /ingredient/{id}/impact endpoint in constants.js
-  - No frontend cross-reference to recipeService
-  - No backend 422 guard confirmed (unknown — see Owner Decision Queue)
+          PATH A — ingredient NOT in any recipe:
+          → HTTP 200 {"success":true}
+          → toast.success(`"${name}" deleted`)  ← WORKS CORRECTLY
+
+          PATH B — ingredient IS in a recipe:
+          → HTTP 400 {
+              success: false,
+              message: "Cannot delete. This ingredient is used in recipes.",
+              data: { used_in_recipes: [...], recipe_count: N, ... }
+            }
+          → catch(err) → toast.error('Failed to delete')  ← BUG ROOT
+            ↑ err.response.data.data.used_in_recipes never read
+            ↑ owner sees "Failed to delete" with no explanation
 ```
 
 ---
 
-## Exact Lines Involved
+## Exact Change Required
 
-### Current code — `InventorySetupPanel.jsx:86-93`
+### File: `components/inventory/InventorySetupPanel.jsx`
+
+**Current `deleteIngredient()` (lines ~86-93):**
 ```js
 const deleteIngredient = async (id, name) => {
   if (!window.confirm(`Delete "${name}"?`)) return;
@@ -56,38 +102,53 @@ const deleteIngredient = async (id, name) => {
 };
 ```
 
-### Current code — `inventoryService.js:18-19`
+**Required change:**
+1. Add state: `const [deleteBlocker, setDeleteBlocker] = useState(null);`
+   - `deleteBlocker` = `null` (closed) or `{ name, recipes: [], count: N }` (open)
+2. In catch block: check `err?.response?.data?.data?.used_in_recipes` before generic toast
+3. Add a `<Dialog>` that renders when `deleteBlocker !== null`:
+   - Title: `Cannot Delete "${deleteBlocker?.name}"`
+   - Body: "This ingredient is used in **N recipe(s)**:" + bulleted list of recipe names
+   - Footer: "Remove this ingredient from those recipes first." + single **Close** button
+
+**New catch block:**
 ```js
-export async function deleteIngredient(id) {
-  return api.delete(`${INVENTORY_ENDPOINTS.DELETE_INGREDIENT}/${id}`);
+} catch (err) {
+  const apiData = err?.response?.data?.data;
+  if (apiData?.used_in_recipes?.length) {
+    setDeleteBlocker({
+      name,
+      recipes: apiData.used_in_recipes,
+      count: apiData.recipe_count,
+    });
+  } else {
+    toast.error(err?.readableMessage || 'Failed to delete');
+  }
 }
 ```
 
-**No impact-check function exists.** No `GET_INGREDIENT_IMPACT` constant exists in `constants.js:147-183`.
-
----
-
-## Fix Design
-
-### Option A — Frontend cross-reference (Recommended — no backend change needed)
-On trash-icon click, before showing any confirm:
-1. Fetch recipes that reference this ingredient by calling `recipeService.getRecipes()`, `recipeService.getSubRecipes()`, `recipeService.getAddonRecipes()` (all already wired).
-2. Filter: find all recipes where `recipe.ingredients.some(i => i.id === targetId)`.
-3. **If recipes found** → show a Dialog (Radix/shadcn) listing:
-   - "This ingredient is used in N recipe(s): [Recipe A, Recipe B…]"
-   - Buttons: **Cancel** (safe default) + **Delete Anyway** (destructive, only if owner approves)
-4. **If no recipes found** → proceed with existing confirm + delete flow.
-
-### Option B — Backend impact endpoint (Requires owner confirmation)
-Call `GET /api/v2/vendoremployee/inventory/ingredient/{id}/impact` before delete.
-Returns count + names of recipes using this ingredient.
-**Blocked on:** Owner confirming this endpoint exists on preprod.
-
-### Recommended: Option A
-- Zero backend dependency.
-- Recipe data is small (pre-fetched in same module section).
-- Matches BUG-201 pattern (expense deletion safety) already approved and shipped.
-- `recipeService.js` is already imported in the same src directory.
+**New Dialog JSX (added to IngredientsTab return):**
+```jsx
+<Dialog open={!!deleteBlocker} onOpenChange={() => setDeleteBlocker(null)}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Cannot Delete "{deleteBlocker?.name}"</DialogTitle>
+    </DialogHeader>
+    <p className="text-sm text-gray-600">
+      This ingredient is used in <strong>{deleteBlocker?.count}</strong> recipe(s):
+    </p>
+    <ul className="mt-2 space-y-1 text-sm list-disc list-inside text-gray-700">
+      {deleteBlocker?.recipes.map((r, i) => <li key={i}>{r}</li>)}
+    </ul>
+    <p className="mt-3 text-xs text-gray-500">
+      Remove this ingredient from those recipes before deleting.
+    </p>
+    <DialogFooter>
+      <Button onClick={() => setDeleteBlocker(null)}>Close</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
 
 ---
 
@@ -95,56 +156,45 @@ Returns count + names of recipes using this ingredient.
 
 | File | Change |
 |---|---|
-| `components/inventory/InventorySetupPanel.jsx` | Replace `deleteIngredient()` with impact-check version; add `confirmDelete` / `recipeUsageList` state; add `<Dialog>` JSX for blocking modal |
+| `components/inventory/InventorySetupPanel.jsx` | +`deleteBlocker` state + catch-block parse + Dialog JSX (~30 lines) |
 
 ## Files WILL NOT Touch
 
 | File | Reason |
 |---|---|
-| `api/services/inventoryService.js` | `deleteIngredient(id)` API call unchanged |
+| `api/services/inventoryService.js` | `deleteIngredient(id)` function unchanged |
 | `api/transforms/inventoryTransform.js` | No transform change |
-| `api/constants.js` | No new endpoint needed (Option A uses existing recipe endpoints) |
-| `api/services/recipeService.js` | Called read-only via import; no modification |
-| `RecipeManagementPanel.jsx` | Reads recipe data; not involved in delete flow |
+| `api/constants.js` | No new endpoint needed |
+| `api/services/recipeService.js` | Not needed — backend returns recipe list in delete error |
+| Backend | Already implemented — no backend brief needed |
 
 ---
 
-## Risk Classification: **MEDIUM**
+## Risk Classification: **LOW** (after fix)
 
 | Factor | Assessment |
 |---|---|
-| Blast radius | 1 file (`InventorySetupPanel.jsx`) |
-| API contract change | NONE (read-only recipe fetch added; delete endpoint unchanged) |
+| Blast radius | 1 file, ~30 lines |
+| API contract change | NONE — same delete call, new catch handler only |
 | Financial risk | NONE |
 | Hotspot (R5) | NO |
-| Regression risk | LOW — delete flow only gains a pre-check step; existing delete path preserved |
-| Data risk | MEDIUM → HIGH if NOT fixed (deleting in-use ingredient corrupts recipe data) |
+| Data integrity risk | RESOLVED — backend blocks delete; FE just shows proper UI |
+| Regression risk | NONE — success path unchanged |
 
 ---
 
 ## Owner Decision Queue
 
-**Q1 (BUG-218):** If an ingredient IS used in recipes, should the owner be allowed to force-delete anyway, or should delete be fully blocked?
-
-- **Option A (Recommended):** Show warning + allow "Delete Anyway" with destructive styling — matches BUG-201 expense pattern. Owner retains control.
-- **Option B:** Fully block delete — owner must remove ingredient from all recipes first. Safer, but requires extra steps.
-- If Option B chosen: add a helper message: "To delete, remove this ingredient from: [Recipe A, Recipe B…]."
-
-**Q2 (BUG-218):** Does the backend (`DELETE /api/v2/vendoremployee/inventory/ingredient/{id}`) currently block deletion when the ingredient is in a recipe (returns 409/422), or does it silently allow it?
-
-- Confirmation would determine whether a frontend guard is the *only* line of defence or a redundant layer.
-- **Agent recommendation:** Add frontend guard regardless — user experience must never rely solely on backend error messages.
+**No open decisions.** Both Q1 and Q2 resolved via curl verification:
+- Q1: **BLOCK** (no force-delete — owner confirmed + backend enforces)
+- Q2: **Backend returns HTTP 400 + `data.used_in_recipes[]`** (confirmed on preprod 2026-07-23)
 
 ---
 
-## Downstream Consumers (affected by ingredient deletion if no guard)
+## Backend Blockers Brief
 
-| Consumer | Impact if ingredient deleted |
-|---|---|
-| `RecipeFormPanel.jsx` — recipe ingredient rows | `ingredient_name` field becomes stale/orphaned |
-| `RecipeBulkEditor.jsx` — bulk editor ingredient column | Orphaned ingredient rows in bulk editor |
-| `purchasePlanner.js` — DCR cross-join | Ingredient removed from smart purchase plan silently |
-| `IngredientBulkEditor.jsx` — bulk editor list | Ingredient disappears from bulk editor (correct) |
+**Not required.** Backend already implements the impact check correctly.
+Impact analysis for BUG-218 confirmed as **FE-only fix.**
 
 ---
 
@@ -153,8 +203,7 @@ Returns count + names of recipes using this ingredient.
 | Item | Value |
 |---|---|
 | Files | 1 (`InventorySetupPanel.jsx`) |
-| Lines | ~35-45 added/changed (state vars + impact fetch + Dialog JSX) |
-| New import | `import * as recipeService from '@/api/services/recipeService'` |
-| New component | `<Dialog>` (already installed via shadcn — `/app/frontend/src/components/ui/dialog.jsx`) |
-| Test | Click delete on in-use ingredient → modal lists recipes. Click delete on unused ingredient → window.confirm → deletes. |
-| Risk | MEDIUM |
+| Lines | ~30 added |
+| New import | `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogFooter` from `@/components/ui/dialog` |
+| Test | Delete "Base Cream" (in 5 recipes) → Dialog shows "Cannot Delete... used in 5 recipe(s): [list]". Delete an unused ingredient → normal confirm + success. |
+| Risk | LOW |
