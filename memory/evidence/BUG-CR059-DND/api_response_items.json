@@ -1,0 +1,6 @@
+{
+  "endpoint": "GET /api/v2/vendoremployee/expense/expenses-list",
+  "sample_item": {"id":1125,"stock_title":"100 delivery","category_name":"Others","created_at":"28/10/2025","unit_price":false,"unit_price_amount":null},
+  "finding": "NO category_id field in response — only category_name. Transform stores null in item.categoryId for all items.",
+  "impact": "handleDragEnd: oldCatId=null, oldCat never found, new category PUT only sends dragged item (clears all others in category)."
+}

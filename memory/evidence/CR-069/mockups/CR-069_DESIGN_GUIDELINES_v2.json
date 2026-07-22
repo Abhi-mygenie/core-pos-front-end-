@@ -1,0 +1,239 @@
+{
+  "document_meta": {
+    "supersedes": "CR-069_DESIGN_GUIDELINES.json (initial version 2026-02-15 by design_agent)",
+    "revised_by": "PLANNING agent — after owner-supplied old-POS screenshots + codebase pattern audit",
+    "date": "2026-02-15",
+    "scope": "CR-069 (Phase 1 — Employee Management) AND CR-070 (Phase 2 — Role Management). CR-071 (Phase 3 — Role Gating) has no dedicated screens; it wires gates into existing screens.",
+    "principle": "Reuse the established MyGenie POS design system verbatim. This is a MIGRATION — retain muscle memory. Old POS aesthetic IS the design language; we're rebuilding it as clean React 19 + shadcn + existing shared primitives, not reinventing."
+  },
+
+  "brand_and_tokens_authoritative_source": {
+    "colors_file": "/app/frontend/src/constants/colors.js",
+    "COLORS": {
+      "primaryOrange": "#F26B33  — back-arrows, top-nav title accent, active-status highlights, focus rings",
+      "primaryGreen":  "#329937  — primary CTAs (Save, Edit, Add, +), active tab underline/bar, positive states, toggle-ON",
+      "darkText":      "#1A1A1A  — headings, table cell primary text",
+      "grayText":      "#666666  — secondary text, form labels (small caps in shared.jsx)",
+      "borderGray":    "#E5E5E5  — form field borders, row separators, cards",
+      "sectionBg":     "#F7F7F7  — page background (bg-[#F7F7F7])",
+      "white":         "#FFFFFF  — surfaces (cards, table rows, modals)"
+    },
+    "old_pos_confirms": "Screenshots at /app/memory/evidence/CR-069/old_pos_reference/ show EXACTLY these tokens — orange back-arrow on the ← icon, green title 'Employee Mgmt' / 'Roles Mgmt' / 'Edit Employee' / 'Edit Role', green rounded '+' add-button, green full-width 'Edit' primary button, grey pill-shaped inputs on white bg."
+  },
+
+  "typography": {
+    "font_source": "existing app (do NOT re-import a new font like Plus Jakarta Sans — the app already uses its own stack; introducing new fonts violates the migration principle). Verify what fonts are currently loaded via /app/frontend/src/index.css or App.css before touching.",
+    "note_for_impl_agent": "If the app currently ships without a custom font (system stack), keep it. If a custom font is loaded, keep it. This CR does not introduce typography changes."
+  },
+
+  "primitive_reuse_MANDATORY": {
+    "source_file": "/app/frontend/src/components/panels/settings/shared.jsx",
+    "must_reuse": [
+      {"name": "FormContainer", "usage": "Every Add/Edit form wraps in this. Props: title, onBack, onSave, footerRight. Provides consistent orange back-arrow header + sticky green Save button.", "matches_old_pos": true},
+      {"name": "ListItem", "usage": "Row in the Employees table + Roles table. Props: onEdit, onDelete, testId, children. Handles hover state and right-aligned actions.", "matches_old_pos": true},
+      {"name": "TextInput", "usage": "Name, Phone, Email, Password fields on Employee form + Role Name on Role form. Rounded pill; floating label; consistent focus ring.", "matches_old_pos": true},
+      {"name": "SelectInput", "usage": "Role dropdown (Employee form), Role Type dropdown (Role form).", "matches_old_pos": true},
+      {"name": "ToggleSwitch", "usage": "Employee Active/Inactive column toggle; Role Status toggle.", "matches_old_pos": true},
+      {"name": "BoolBadge", "usage": "Bill User View 'Yes/No' chip (backend value verbatim per R9)."}
+    ],
+    "no_new_primitives_unless": "Only add a new primitive if the old POS shows a control that shared.jsx lacks. Currently identified gap: none for Phase 1/2. For Phase 2 Permission Matrix we may need a CategoryAccordion, but see below."
+  },
+
+  "layout_and_route_pattern": {
+    "route_pattern": "Follow CR-041 / CR-059 / CR-060 established pattern — a Page in /app/frontend/src/pages/ + a Panel/View in /app/frontend/src/components/. Route registered in App.js.",
+    "recommended_route": "/employees (or /employee-management) — top-level, NOT nested under /settings. Old POS shows Employee Mgmt as a first-class module. Confirm placement with owner.",
+    "page_shell": "Same shell as MenuManagementPage.jsx / ExpenseEntryPage.jsx: <Sidebar/> + main content with bg-[#F7F7F7] and margin-left synced to sidebar-expanded state.",
+    "pattern_B_list_form_swap": "Use `viewMode` state ('list' | 'form') to swap between List view and Add/Edit form IN-PLACE (not modal). This matches: (a) old POS UX exactly — Edit Employee is a full-page view, not a Sheet; (b) settings/ListFormViews.jsx precedent."
+  },
+
+  "top_header_bar_pattern": {
+    "matches_old_pos_exactly": true,
+    "structure": [
+      "Left: orange back-arrow icon (←, ArrowLeft from lucide-react, color: COLORS.primaryOrange) + Title text (color: COLORS.primaryGreen, text-xl font-semibold)",
+      "Right: [Download icon button (grey/muted, color: COLORS.grayText, hover: darkText) for CSV export] + [Green round + button (bg-[#329937] rounded-full w-9 h-9, white Plus icon inside)] — 12px gap between them"
+    ],
+    "sub_header": "Under top bar: SEGMENTED TAB switcher (Employees | Roles). Active tab: bg-[#329937 opacity=15%] with text-primaryGreen font-semibold + green underline bar. Inactive: gray text on transparent bg. Full width, single row. Rounded top corners. See old POS screenshot 01 + 03.",
+    "search_bar": "Full-width rounded pill input (border-borderGray bg-white), placeholder 'Search'. Search icon on right (lucide Search, grayText).",
+    "system_role_banner": {
+      "when": "Only on Roles tab",
+      "component": "grey pill/chip centered under search bar",
+      "content": "'System Role : {list-of-role-type-names}' — where role-type-names come from all-role-list.role_types (STATION, Waiter, Manager, Billing, Server Waiter, Delivery) OR from role-list.roles filtered by is_system_role=true. Owner said to clarify during design brainstorm; both semantics exist in the data.",
+      "styling": "bg-[#F0F0F0] text-grayText text-xs px-3 py-1.5 rounded-full"
+    }
+  },
+
+  "screens": {
+    "SCREEN_1_employee_list": {
+      "cr": "CR-069",
+      "route": "/employees (default tab)",
+      "columns_matches_old_pos_verbatim": [
+        {"header": "Details", "content": "Two lines: Line 1 = f_name (+ l_name if present) in text-sm text-darkText font-medium. Line 2 = employee id (e.g., '4784') in text-xs text-primaryOrange (matches old-POS blue but we align to brand orange) — clickable to copy. Line 3 = phone number in text-xs text-grayText. Right side of column: chevron > icon (lucide ChevronRight, primaryOrange) OPTIONAL — collapse for now; add later if detail-panel is needed. Right side: phone icon (lucide Phone, primaryOrange) — tel: link click-to-call."},
+        {"header": "Role", "content": "Plain text of employee.role.name — NO badge, matches old POS which shows role as plain text (e.g., 'captain', 'Owner', 'KDS')."},
+        {"header": "Action", "content": "Right-aligned: pencil edit icon (lucide Pencil, size-4, primaryOrange) + ToggleSwitch (Active/Inactive, mapped to employee-status endpoint status:0/1)."}
+      ],
+      "column_widths": "Details ~50% / Role ~25% / Action ~25% — old POS uses this proportion.",
+      "row_hover": "bg-[#F7F7F7]; cursor default; only the icons in Action column are clickable.",
+      "empty_state": "'No employees found. Click + to add your first employee.' Centered, text-sm grayText. Bring the green + button visually to attention with a subtle pulse or arrow annotation.",
+      "loading_state": "shadcn Skeleton rows (3-5) using same column widths.",
+      "not_in_this_screen": "bill_user_view, mac_ip_kds/bill/bar, email, image — old POS list view doesn't show these. Match verbatim.",
+      "data_testids": {
+        "page": "employee-management-page",
+        "tab_employees": "tab-employees",
+        "tab_roles": "tab-roles",
+        "search": "employee-list-search-input",
+        "add_btn": "employee-list-add-button",
+        "download_btn": "employee-list-download-button",
+        "row": "employee-row-{id}",
+        "edit": "employee-edit-{id}",
+        "status_toggle": "employee-status-toggle-{id}",
+        "phone_call": "employee-phone-call-{id}"
+      }
+    },
+
+    "SCREEN_2_employee_form": {
+      "cr": "CR-069",
+      "route": "same route, viewMode='form' — in-place swap (NOT modal, NOT Sheet)",
+      "wrapping": "Use FormContainer from shared.jsx with title='Edit Employee' or 'Add Employee'.",
+      "section_1_title": "General Information (with expand/collapse chevron — accordion, expanded by default). Matches old POS.",
+      "fields_ordered_matches_old_pos": [
+        {"label": "Select Role", "component": "SelectInput", "options_source": "role-list API (only editable + active roles)", "required": true, "test_id": "employee-form-role-select"},
+        {"label": "First Name", "component": "TextInput", "required": true, "test_id": "employee-form-first-name-input"},
+        {"label": "Last Name", "component": "TextInput", "required": false, "test_id": "employee-form-last-name-input"},
+        {"label": "Phone", "component": "TextInput", "props": "type=tel, maxLength=10, pattern=[0-9]{10}", "required": true, "test_id": "employee-form-phone-input"},
+        {"label": "E-mail", "component": "TextInput", "props": "type=email", "required": true, "test_id": "employee-form-email-input"},
+        {"label": "Password", "component": "TextInput", "props": "type=password with eye-toggle (Eye/EyeOff lucide)", "required_on": "add-only; on edit, empty means keep-existing", "test_id": "employee-form-password-input"},
+        {"label": "Confirm Password", "component": "TextInput", "props": "type=password with eye-toggle; client-side match validation", "required_on": "add-only or when password field non-empty on edit", "test_id": "employee-form-confirm-password-input"}
+      ],
+      "hidden_fields_OQ15_owner_pending": {
+        "bill_user_view": "API round-trips this Yes/No. Old POS form does NOT show it. Send 'No' as default. Confirm with owner before shipping — OQ-15 open.",
+        "mac_ip_kds / mac_ip_bill / mac_ip_bar": "API round-trips these. Old POS form does NOT show them. Send empty string or null. Confirm with owner — OQ-15 open."
+      },
+      "footer": {
+        "left_button": "Reset — light grey, disabled when form is pristine (matches old POS). test_id='employee-form-reset-button'",
+        "right_button": "Edit (on edit-mode) or Save (on add-mode) — full-width green (bg-primaryGreen), text-white. test_id='employee-form-save-button'. This matches old POS exactly."
+      },
+      "validation": "Inline red text under each field. Phone must be 10 digits. Email must match /.+@.+\\..+/. Password min 6 chars (or match backend policy — verify with owner OQ-6). Confirm password must match password.",
+      "on_save_success": "toast('Employee added' / 'Employee updated') + return to list viewMode with fresh fetch."
+    },
+
+    "SCREEN_3_role_list_CR070": {
+      "cr": "CR-070",
+      "route": "/employees (Roles tab)",
+      "columns_matches_old_pos_verbatim": [
+        {"header": "Details", "content": "Line 1 = role.name (text-sm darkText font-medium). Line 2 = updated_at date formatted DD/MM/YYYY (text-xs primaryOrange). Right side: chevron > icon (primaryOrange) — optional expand."},
+        {"header": "Modules", "content": "Comma-separated preview of first 3–4 modules with '…' ellipsis when longer. E.g., 'Manager, food, pos, order, bill, a…'. text-sm grayText multi-line."},
+        {"header": "Action", "content": "pencil edit + ToggleSwitch (role.status)."}
+      ],
+      "system_roles_HIDDEN_from_table": "Filter roles where is_system_role=true (or is_editable=false — verify both). Show them ONLY in the grey pill banner under search bar.",
+      "data_testids": {
+        "row": "role-row-{id}",
+        "edit": "role-edit-{id}",
+        "status_toggle": "role-status-toggle-{id}",
+        "add_btn": "role-list-add-button",
+        "download_btn": "role-list-download-button"
+      }
+    },
+
+    "SCREEN_4_role_form_CR070": {
+      "cr": "CR-070",
+      "route": "/employees (Roles tab), viewMode='form'",
+      "wrapping": "FormContainer title='Edit Role' or 'Add Role'.",
+      "section_1_role_details": {
+        "title": "Role Details (accordion, expanded)",
+        "fields": [
+          {"label": "Role Name", "component": "TextInput", "required": true, "test_id": "role-form-name-input"},
+          {"label": "Role Type", "component": "SelectInput", "note": "SINGLE-select. Options source = role-master-list ('All Role' as first item = null template, then Accountant, Billing User, Captain, Cashier, Delivery Boy, Manager, Owner, Station (Chef), Waiter(S), Waiter(T)). Selecting a template AUTO-LOADS the template's default_modules[] into the Permission Matrix (see brainstorm note below).", "required": true, "test_id": "role-form-type-select"}
+        ]
+      },
+      "OWNER_BRAINSTORM_REQUIRED": {
+        "context": "Owner: 'so we might some info in terms of making it easy for user how it works during design phase we will brianstorm this'",
+        "issue": "The Role Type dropdown does double-duty — categorization + defaults-loader. Users may not realize that changing Role Type mid-form OVERWRITES their permission selections.",
+        "proposed_UX_options_for_owner_to_pick": [
+          "A) On Role Type change, show a confirm dialog: 'Load default permissions for {Type}? This will overwrite your current selections.'",
+          "B) Show an info banner under the Role Type field: 'Selecting a Role Type pre-fills the permission checklist. You can add or remove permissions afterward.'",
+          "C) Show a small (i) tooltip icon next to 'Role Type' label with the explanation.",
+          "D) Combination: banner (B) + confirm dialog on subsequent changes (A). Recommended default."
+        ]
+      },
+      "section_2_permission_matrix_ACCORDIONS_not_tabs": {
+        "matches_old_pos": true,
+        "structure": [
+          {"accordion_title": "Frontend Module Permission", "count": 27, "expanded_default": true, "layout": "2-column grid of checkboxes with label; row height compact (~40px); tiny (i) tooltip icon next to each label showing description if available", "search_within": "optional filter chip 'Search permissions…' at top of first accordion"},
+          {"accordion_title": "Backend Module Permission", "count": 13, "expanded_default": false},
+          {"accordion_title": "Report Module Permission", "count": 12, "expanded_default": false}
+        ],
+        "selection_helpers": [
+          "'Select all in this section' checkbox at the accordion header level (indeterminate state when partial).",
+          "Live counter in each accordion header: '(15 of 27 selected)'.",
+          "Overall counter above section 2: 'Selected: X of 52 permissions'."
+        ],
+        "R9_typo_preservation": "Render labels EXACTLY as backend returns in all-role-list.role_modules[*].name — including 'Expence', 'sattle report', 'report summery', 'Complementary Food', 'complementary_food', 'revenue report_average'. NEVER autocorrect. Add code comment: // CR-070 R9 — backend labels are canonical",
+        "checkbox_source_of_truth": "Backend key is role_pass_value (e.g., 'expence', 'sattle_report'). Send verbatim in modules[] array of role-add/role-update payload."
+      },
+      "system_protected_read_only": "If editing a role where is_editable=false, the entire form enters read-only mode: all inputs disabled, top of form shows a lock badge 'System Protected — {protection_level}', Reset+Edit buttons hidden, replaced by 'Close' button. This is defensive UX only; system roles shouldn't reach this screen since they're filtered from the list.",
+      "footer": {
+        "left_button": "Reset (matches old POS)",
+        "right_button": "Edit or Save — full-width green"
+      },
+      "data_testids": {
+        "name": "role-form-name-input",
+        "type_select": "role-form-type-select",
+        "accordion_frontend": "role-form-accordion-frontend",
+        "accordion_backend": "role-form-accordion-backend",
+        "accordion_report": "role-form-accordion-report",
+        "select_all_category": "role-form-select-all-{category}",
+        "permission_checkbox": "role-form-permission-{category}-{role_pass_value}-checkbox",
+        "save_btn": "role-form-save-button"
+      }
+    }
+  },
+
+  "cr069_phase1_ONLY_deliverable_checklist": [
+    "SCREEN_1_employee_list (Employees tab)",
+    "SCREEN_2_employee_form (Add/Edit Employee)",
+    "Top header (back arrow + title + download + green +)",
+    "Tab switcher (Employees | Roles) — Roles tab shows placeholder 'Coming soon in Phase 2 (CR-070)' toast when clicked, until CR-070 ships",
+    "Sidebar: unflag employee-management from comingSoon, wire to /employees route",
+    "App.js: register /employees route"
+  ],
+
+  "cr070_phase2_deliverable_checklist": [
+    "SCREEN_3_role_list (Roles tab)",
+    "SCREEN_4_role_form + Permission Matrix (3 accordions)",
+    "System-role banner chip",
+    "Role Type auto-loader UX (per owner brainstorm decision)",
+    "Sub-task noted: Role Definitions doc — canonical default-permissions spec per Role Type. Produced during CR-070 design phase as owner deliverable."
+  ],
+
+  "accessibility_notes": {
+    "focus_ring": "focus-visible:ring-2 focus-visible:ring-[#F26B33] focus-visible:ring-offset-2 on all inputs and buttons (orange, per brand).",
+    "aria": "aria-label on all icon-only buttons (Pencil = 'Edit {name}', Phone = 'Call {phone}', Download = 'Export CSV', Plus = 'Add {entity}').",
+    "keyboard": "Tab order strictly top-to-bottom-then-left-to-right in forms. Enter submits form. Escape from form returns to list (with dirty-state confirm).",
+    "screen_reader": "Table has proper <thead>/<tbody> structure. Toggle status announces 'Active/Inactive' via aria-checked."
+  },
+
+  "motion_and_interactions": {
+    "principle": "Business tool — subtle motion only.",
+    "transitions": "Use transition-colors duration-150 on hover states. Never transition: all.",
+    "tab_switch": "150ms opacity fade of underlying content; no slide/wipe.",
+    "form_swap": "Instant — no animation between list ↔ form (matches old POS)."
+  },
+
+  "instructions_to_implementation_agent": [
+    "1. Import COLORS from '../../constants' — do NOT hardcode hex.",
+    "2. Reuse FormContainer, TextInput, SelectInput, ToggleSwitch, ListItem from '../panels/settings/shared.jsx' — do NOT invent new primitives unless the pattern in the old POS is missing (see 'no_new_primitives_unless' note).",
+    "3. Follow the Page + Panel pattern from ExpenseEntryPage.jsx / MenuManagementPage.jsx. Panel holds all logic, Page is a thin shell with <Sidebar/> + main.",
+    "4. Use Pattern B (viewMode state 'list' | 'form') for the list↔form swap — NOT a Dialog / Sheet.",
+    "5. For CR-070 permission matrix: use accordion (native <details> or a small custom component matching shared.jsx aesthetic). DO NOT use shadcn Tabs.",
+    "6. Preserve R9 typos verbatim in all labels and permission keys.",
+    "7. Every interactive element gets a data-testid per the registry above.",
+    "8. Toast via useToast from '../../hooks/use-toast' — same as ExpenseEntryPanel.",
+    "9. Icons from lucide-react ONLY. No emoji, no Font Awesome.",
+    "10. CR-069 (Phase 1) — DO NOT touch any file listed in R5 hotspots or R6 sacred logic. Zero role gating in Phase 1."
+  ],
+
+  "revision_log": [
+    {"date": "2026-02-15", "source": "design_agent_full_stack initial output", "outcome": "Superseded — proposed Plus Jakarta Sans font, orange primary + green CTA (partially inverted), Tabs for permission matrix (should be accordions), lock-icon read-only for system roles (should be HIDDEN), missed Confirm Password field, missed click-to-call phone icon, missed download-CSV button. Design agent had no visibility into codebase primitives at /components/panels/settings/shared.jsx."},
+    {"date": "2026-02-15", "source": "PLANNING agent after owner-provided 5 old-POS screenshots + codebase audit", "outcome": "This document. Aligns to established shared.jsx primitives + COLORS constants + old POS UX verbatim. Split into CR-069 Phase 1 screens and CR-070 Phase 2 screens explicitly."}
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "success": true,
+  "message": "Table configuration retrieved successfully",
+  "data": {
+    "tables": [
+      {
+        "id": 7702,
+        "restaurant_id": 689,
+        "waiter_id": 3580,
+        "title": "Main Hall",
+        "table_no": "T-PROBE-1",
+        "qr_code": null,
+        "status": 1,
+        "created_at": "2026-07-06 23:15:48",
+        "updated_at": "2026-07-06 23:15:48",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/689?tableId=7702&tableName=T-PROBE-1&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/689?tableId=7702&tableName=T-PROBE-1&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/689?tableId=7702&tableName=T-PROBE-1&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 7703,
+        "restaurant_id": 689,
+        "waiter_id": 3580,
+        "title": null,
+        "table_no": "R-PROBE-1",
+        "qr_code": null,
+        "status": 1,
+        "created_at": "2026-07-06 23:15:48",
+        "updated_at": "2026-07-06 23:15:48",
+        "rtype": "RM",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/689?tableId=7703&tableName=R-PROBE-1&type=room&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/689?tableId=7703&tableName=R-PROBE-1&type=room&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/689?tableId=7703&tableName=R-PROBE-1&type=room&orderType=dinein&foodFor=Premium"
+        }
+      }
+    ],
+    "walkin_qr_urls": {
+      "walkin_dinein": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Normal",
+      "delivery": "https://devorder.mygenie.online/689?type=walkin&orderType=delivery&foodFor=Normal",
+      "takeaway": "https://devorder.mygenie.online/689?type=walkin&orderType=takeaway&foodFor=Normal"
+    },
+    "walkin_menu_qr_urls": {
+      "Normal": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Normal",
+      "Party": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Party",
+      "Premium": "https://devorder.mygenie.online/689?type=walkin&orderType=dinein&foodFor=Premium"
+    },
+    "restaurant_id": 689,
+    "restaurant_name": "Kunafa Mahal"
+  }
+}

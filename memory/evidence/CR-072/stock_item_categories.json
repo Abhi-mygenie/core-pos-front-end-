@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": 798,
+      "category_name": "Powder",
+      "restaurant_id": 618,
+      "type": "inventory",
+      "p_catid": 0,
+      "created_at": "2025-10-17T07:26:16.000000Z",
+      "updated_at": "2025-10-17T07:26:16.000000Z"
+    },
+    {
+      "id": 799,
+      "category_name": "Liquids",
+      "restaurant_id": 618,
+      "type": "inventory",
+      "p_catid": 0,
+      "created_at": "2025-10-17T07:27:01.000000Z",
+      "updated_at": "2025-10-17T07:27:01.000000Z"
+    },
+    {
+      "id": 800,
+      "category_name": "Sub Recipe",
+      "restaurant_id": 618,
+      "type": "inventory",
+      "p_catid": 0,
+      "created_at": "2025-10-17T01:58:43.000000Z",
+      "updated_at": "2025-10-17T01:58:43.000000Z"
+    },
+    {
+      "id": 843,
+      "category_name": "Bar",
+      "restaurant_id": 618,
+      "type": "inventory",
+      "p_catid": 0,
+      "created_at": "2025-11-01T17:27:57.000000Z",
+      "updated_at": "2025-11-01T17:27:57.000000Z"
+    },
+    {
+      "id": 1520,
+      "category_name": "beer",
+      "restaurant_id": 618,
+      "type": "inventory",
+      "p_catid": 0,
+      "created_at": "2026-07-15T10:06:53.000000Z",
+      "updated_at": "2026-07-15T10:06:53.000000Z"
+    }
+  ]
+}

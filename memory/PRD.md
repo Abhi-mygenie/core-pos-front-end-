@@ -1,50 +1,63 @@
-# POS Frontend Deployment
+# MyGenie POS Frontend — Project PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is with no code edits.
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) into `/app`, connected to live pre-prod backend (`preprod.mygenie.online`). Ongoing active development with strict gate-based change-control protocol.
 
 ## Architecture
-- **Frontend**: React + Craco (Create React App wrapper), runs on port 3000
-- **Supervisor**: `frontend` program → `yarn start` → `craco start` from `/app/frontend`
-- **Backend**: FastAPI (kept running as supervisor config is readonly)
-- **MongoDB**: Local instance (kept running)
+- **Frontend:** React (CRA + CRACO), Tailwind CSS, Axios, Socket.io-client, Firebase, jsPDF, xlsx, recharts
+- **Backend:** Laravel at `preprod.mygenie.online` (pre-prod)
+- **Auth:** Firebase
+- **Gate System:** AGENT_PROMPT_ALPHA.md (`/app/memory/control/`) — strict 7-gate flow per bug/CR
+- **Control Docs:** `/app/memory/control/registry.json`, `BUG_TRACKER.md`, `FILE_OWNERSHIP.md`
 
-## What Was Done (2026-07-22)
-- Cloned repo's `frontend/` subfolder into `/app/frontend/` (supervisor expects this path)
-- Backed up platform `.env` (`REACT_APP_BACKEND_URL`, `WDS_SOCKET_PORT=443`, `ENABLE_HEALTH_CHECK=false`) and restored after copy
-- Installed all dependencies with `yarn install --ignore-engines` (Node 20.20.2 vs required >=22 for jest-dom)
-- Restarted frontend supervisor → webpack compiled successfully (1 warning, no errors)
-- App serves HTTP 200 on port 3000
+## What's Been Implemented (Chronological)
 
-## Required .env Variables (user to fill in)
-```
-REACT_APP_API_BASE_URL=           # Laravel backend API base URL (REQUIRED — app crashes without this)
-REACT_APP_CRM_BASE_URL=           # CRM service base URL
-REACT_APP_SOCKET_URL=             # WebSocket server URL
-REACT_APP_GOOGLE_MAPS_KEY=        # Google Maps API key
-REACT_APP_FIREBASE_API_KEY=
-REACT_APP_FIREBASE_AUTH_DOMAIN=
-REACT_APP_FIREBASE_PROJECT_ID=
-REACT_APP_FIREBASE_STORAGE_BUCKET=
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=
-REACT_APP_FIREBASE_APP_ID=
-REACT_APP_FIREBASE_MEASUREMENT_ID=
-REACT_APP_FIREBASE_VAPID_KEY=
-REACT_APP_SHOW_AUDIT_TAB=         # true/false
-```
+### 2026-07-21 (Session 1 - Fork origin)
+- Repo deployed and running on port 3000
+- BUG-213: IngredientBulkEditor page title fix (DONE)
+- QA Batch: 27/27 tests PASS (Inventory module — BUG-211, BUG-212, CR-086, CR-085 Ph1, BUG-213)
+- Gate 2 Impact Analysis: Complete for all open Expense, Inventory, Employee items
 
-## Platform-preserved env (already in /app/frontend/.env)
-```
-WDS_SOCKET_PORT=443               # Required for hot reload via platform proxy
-ENABLE_HEALTH_CHECK=false
-```
+### 2026-07-22 (Session 2 - This fork)
+- OQ answers processed for CR-062 and new payment fields
+- CR-087 registered (payment_made_to + payment_ref_id new fields)
+- CR-062 backend contract document written
+- BUG-201 Phase 1: IMPLEMENTED — impact-aware delete modal on expense items
 
-## How to Add Env Values
-1. Edit `/app/frontend/.env` and add the required variables above
-2. Run: `sudo supervisorctl restart frontend`
-3. App will reload and function normally
+## Current Sprint Status (POS 5.0)
 
-## Notes
-- Repo has `craco.config.js` with `@emergentbase/visual-edits` section already commented out
-- `REACT_APP_BACKEND_URL` in `.env` is a platform variable — leave it as-is
-- The `@testing-library/jest-dom@6.10.0` requires Node >=22 (we have 20.20.2) — bypassed with `--ignore-engines`; tests not affected for dev server
+### Ready to Implement
+- CR-087 (New Payment Fields) — Gate 2 complete, Gate 3 plan ready
+- BUG-201 Phase 1 — ✅ IMPLEMENTED (2026-07-22)
+
+### Planning Phase (OQs Open)
+- CR-086 F5 (Ingredient Import) — 4 OQs open
+- CR-078 (Smart Purchase Redesign) — 6 OQs open
+- CR-077 Ph2 (Hierarchy Stock Transfer) — 6 OQs open + master creds needed
+- CR-062 (Report Aggregation) — Contract written, backend-blocked
+
+### Hard Blocked
+- CR-076 (S3 Upload) — backend must deliver upload endpoint first
+- BUG-124 (Socket payload) — backend-only fix
+- CR-071 / CR-068 (Role Gating) — blocked on CR-057 + CR-058 (INTAKE, not started)
+
+## P0/P1/P2 Backlog
+
+### P0 (Critical Path)
+- [ ] CR-087 — New expense payment fields (Gate 3 implementation)
+- [ ] Owner smoke on BUG-201 Phase 1
+
+### P1 (Next Sprint)
+- [ ] CR-086 F5 — Ingredient Import wiring (4 OQs to clear)
+- [ ] CR-078 — Smart Purchase Redesign (6 OQs to clear)
+- [ ] CR-077 Ph2 — Hierarchy Stock Transfer (needs master-outlet creds)
+- [ ] CR-057 + CR-058 — INTAKE needed (prerequisite for CR-071)
+
+### P2 (Future)
+- [ ] CR-076 — S3 File Upload (backend-blocked)
+- [ ] CR-071 — App-Wide Role Gating (blocked on CR-057 + CR-058)
+- [ ] CR-068 — Cancellation Role Gating (blocked on CR-071)
+- [ ] CR-062 FE implementation (backend must deliver aggregation endpoint)
+
+## Test Credentials
+See `/app/memory/test_credentials.md`
