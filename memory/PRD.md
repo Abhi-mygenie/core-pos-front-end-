@@ -1,20 +1,29 @@
-# PRD — MyGenie POS Frontend Deployment
+# Core POS Frontend Deployment
 
 ## Original Problem Statement
-Deploy the existing React frontend repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch `main`) directly into `/app` and run it as-is, with no code edits. Env variables to be supplied later by user. Run dev version.
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is with no code edits.
 
-## What Was Done (2026-06)
-- Backed up platform files (.emergent, frontend/.env, backend/.env, memory/test_credentials.md)
-- Cleared /app and moved repo contents + .git directly into /app (repo already follows the frontend/ + backend/ layout)
-- Restored platform files (.env placeholders, .emergent)
-- Installed frontend deps with `yarn install --ignore-engines` (repo has no lockfile; @testing-library/jest-dom@6.10.0 requires Node >=22, env has 20.20.2 — engines check bypassed at install time only, no code changes)
-- Frontend runs via supervisor (`yarn start` → craco/CRA dev server, 0.0.0.0:3000), backend also running
-- Added root-level `.oxlintrc.json` (mirror of repo's frontend/.oxlintrc.json) so platform lint ignores the minified vendor file `public/training/training-sdk.js`
-- Verified: webpack compiled (lint warnings only), HTTP 200 on port 3000, app renders title "MyGenie POS"
+## Architecture
+- **Frontend**: React (CRA + CRACO) running on port 3000 via supervisor
+- **Repo Structure**: `frontend/` + `backend/` + `memory/` subdirectories
+- **Package Manager**: Yarn (no lockfile in repo, generated on install with `--ignore-engines`)
+- **Build Tool**: CRACO wrapping react-scripts
 
-## Known/Expected Issue
-- Runtime error on load: `[Config] REACT_APP_API_BASE_URL is not set` from src/api/axios.js — EXPECTED per user; API env values pending from user. Add to `/app/frontend/.env` and restart frontend.
+## What's Been Implemented (2026-07-22)
+1. Cloned repo into `/app`, preserving platform files (`.emergent/`, `.env` files)
+2. Installed all dependencies via `yarn install --ignore-engines`
+3. Created placeholder `.env` with all required `REACT_APP_*` variables
+4. Frontend running via supervisor on port 3000, compiles successfully
+5. App renders login page (MyGenie POS)
 
-## Next Tasks
-- User to provide env values (REACT_APP_API_BASE_URL, etc.) → add to /app/frontend/.env → `sudo supervisorctl restart frontend`
-- Verify app flows once API config is in place
+## Environment Variables Needed (User to provide)
+- `REACT_APP_API_BASE_URL` - MyGenie API backend URL
+- `REACT_APP_CRM_BASE_URL` - CRM backend URL
+- `REACT_APP_SOCKET_URL` - WebSocket server URL
+- `REACT_APP_GOOGLE_MAPS_KEY` - Google Maps API key
+- `REACT_APP_FIREBASE_*` - Firebase config (7 variables + VAPID key)
+
+## Backlog
+- P0: User provides real `.env` values for API connectivity
+- P1: Backend deployment if needed
+- P2: Firebase push notification setup
