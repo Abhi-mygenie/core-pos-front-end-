@@ -1,6 +1,6 @@
 # Layer 4 — Bug Tracker
 
-**Last Updated:** 2026-07-22 — BUG-214 through BUG-227 registered (14 bugs, Inventory Module). CR-088 through CR-094 registered (7 CRs). Gate 1 COMPLETE for all 21 items. Awaiting Gate 2 (Impact Analysis). BUG-201 Phase 1 IMPLEMENTED (impact-aware delete modal). CR-087 registered (new payment fields).
+**Last Updated:** 2026-07-23 — Gate 2 Impact Analysis COMPLETE + OWNER APPROVED for BUG-226, BUG-223, BUG-214, BUG-215, BUG-218 (Batches 1–3). Remaining 9 bugs (BUG-216, BUG-217, BUG-219, BUG-220, BUG-221, BUG-222, BUG-224, BUG-225, BUG-227) at Gate 1 — awaiting Gate 2 (Batches 4–9).
 
 ---
 
@@ -10,20 +10,20 @@
 
 | Bug ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| BUG-214 | Addon Recipe Dropdown Shows Menu Items Instead of Addon Items | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | `RecipeFormPanel.jsx:150` fallback `addons.length > 0 ? addons : foods`. Silent catch in `getActiveAddons()` empties addon list. 1 file. |
-| BUG-215 | Recipe Forms — Validation Errors Not Shown on Save Failure | P1 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `RecipeFormPanel.jsx:91-116` toast-only feedback, no inline red borders. 1 file. |
-| BUG-216 | Recipe Ingredient Row Shows Base Unit, Should Show Small Unit | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `RecipeFormPanel.jsx:84` auto-fills `ing.unit` (base). `ing.smallUnit` exists but unused in row. 1 file. |
-| BUG-217 | Sub-Recipe Serves Field Not Required But Blocks Save | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Frontend no `servePeople` guard. Backend may 422 on blank. Curl verify needed at Gate 2. 1 file. |
-| BUG-218 | Delete Ingredient — No Blocking Error When Used in Recipe | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | `InventorySetupPanel.jsx:86-93` direct delete, no recipe-usage pre-check. BUG-201 pattern applicable. 2-3 files. |
-| BUG-219 | Ingredient Form — Min Unit Text Input, Labels Unclear | P2 | LOW | **INTAKE COMPLETE** | 0-1 ✅ | `minUnitAlert` should be select not text input. "Factor..." label ambiguous. 1 file. |
-| BUG-220 | Ingredient Category — No Duplicate Alert | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `addCategory()` no dup check. Edit/Delete deferred to CR-090. 1 file. |
-| BUG-221 | Bulk Ingredient Upload & Excel Download Not Working | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | `IngredientBulkEditor.jsx` import/export handlers need investigation. 2-3 files. |
-| BUG-222 | Bulk Recipe Excel — No Template/Export Split; File Won't Open | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `RecipeBulkEditor.jsx:95` Excel standard-only. File format/blob handling needs verify. 2 files. |
-| BUG-223 | Wastage & Recipe Deduction Auto-Trigger Without Explicit Save | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | Runtime trace required. May be backend-side. Multiple files. |
-| BUG-224 | Smart Purchase — Ingredients Without Recipes Never Appear | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `computePlan()` only processes DCR items. Ingredient master pass-through needed. 2 files. |
-| BUG-225 | Same Name as Ingredient + Recipe; Unit Mismatch Across Screens | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | "Ghee Dosa" in ingredients as bundle but shows in recipes. Cross-screen data trace needed. 2+ files. |
-| BUG-226 | Conversion Factor Not Saved on Add or Edit Ingredient | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | `inventoryTransform.js:addIngredient()` missing `converion_factor`. Edit has `\|\| 1` issue. 1 file (hotspot). |
-| BUG-227 | Smart Purchase — Vendor Column Shows No History Though Vendors Exist | P1 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | `vendorRanking.js` uses purchase history, not vendor master. 2-3 files. |
+| BUG-214 | Addon Recipe Dropdown Shows Menu Items Instead of Addon Items | P1 | HIGH | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-214_IMPACT_ANALYSIS.md`. FE-only fix: `RecipeFormPanel.jsx` — fix `getActiveAddons()` silent catch + remove `foods` fallback. |
+| BUG-215 | Recipe Forms — Validation Errors Not Shown on Save Failure | P1 | MEDIUM | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-215_IMPACT_ANALYSIS.md`. FE-only: `RecipeFormPanel.jsx` — add inline error state on save catch. |
+| BUG-216 | Recipe Ingredient Row Shows Base Unit, Should Show Small Unit | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `RecipeFormPanel.jsx:84` auto-fills `ing.unit` (base). `ing.smallUnit` exists but unused. |
+| BUG-217 | Sub-Recipe Serves Field Not Required But Blocks Save | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. Curl verify backend 422 behavior needed. `RecipeFormPanel.jsx` 1 file. |
+| BUG-218 | Delete Ingredient — No Blocking Error When Used in Recipe | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/impact/BUG-218_IMPACT_ANALYSIS.md`. Curl-verified: backend HTTP 400 + `used_in_recipes[]`. FE-only: parse catch + Dialog. `InventorySetupPanel.jsx` 1 file. |
+| BUG-219 | Ingredient Form — Min Unit Text Input, Labels Unclear | P2 | LOW | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `minUnitAlert` input→select, label clarity. `InventorySetupPanel.jsx` 1 file. |
+| BUG-220 | Ingredient Category — No Duplicate Alert | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `addCategory()` no dup check. Edit/Delete deferred to CR-090. 1 file. |
+| BUG-221 | Bulk Ingredient Upload & Excel Download Not Working | P1 | HIGH | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `IngredientBulkEditor.jsx` import/export handlers need curl verification. 2-3 files. |
+| BUG-222 | Bulk Recipe Excel — No Template/Export Split; File Won't Open | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `RecipeBulkEditor.jsx:95` Excel standard-only. Blob handling needs verify. 2 files. |
+| BUG-223 | Wastage & Recipe Deduction Auto-Trigger Without Explicit Save | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-223_IMPACT_ANALYSIS.md`. UX-only: `StockAuditPanel.jsx` — amber "preview" badge + unsaved banner. 1 file. |
+| BUG-224 | Smart Purchase — Ingredients Without Recipes Never Appear | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `computePlan()` only processes DCR items. 2 files. |
+| BUG-225 | Same Name as Ingredient + Recipe; Unit Mismatch Across Screens | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. Root cause confirmed: display fix subsumed by BUG-216. |
+| BUG-226 | Conversion Factor Not Saved on Add or Edit Ingredient | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-226_IMPACT_ANALYSIS.md`. `inventoryTransform.js` — add `converion_factor` to ADD payload + fix `\|\| 1` on EDIT. 1 file. Q1 resolved: default=1. |
+| BUG-227 | Smart Purchase — Vendor Column Shows No History Though Vendors Exist | P1 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `vendorRanking.js` uses purchase history not master. 2-3 files. |
 
 ### CR Registrations (CR-088 → CR-094) — see CR_REGISTRY.md for full rows
 

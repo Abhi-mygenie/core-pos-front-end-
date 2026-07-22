@@ -15735,7 +15735,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: backend returns HTTP 400 + used_in_recipes[] on delete of in-use ingredient. Q1 RESOLVED: BLOCK (no force-delete). Q2 RESOLVED: backend enforces. FE-only fix: parse 400 catch + Dialog. No owner decisions pending. Awaiting Gate 2 approval \u2192 Gate 3.",
+      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis APPROVED by owner. Curl-verified: HTTP 400 + used_in_recipes[]. Q1: BLOCK. Q2: backend enforces. FE-only fix: parse 400 catch + Dialog. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15831,7 +15831,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis approved. No owner decisions. Awaiting Gate 3.",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis APPROVED by owner. UX-only: StockAuditPanel.jsx drift column shows red immediately (no API call fires). Fix: amber preview badge + unsaved banner. 1 file. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15889,7 +15889,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis approved. Q1 resolved: default=1. Awaiting Gate 3 (Implementation Plan).",
+      "status": "GATE 2 COMPLETE (2026-07-22) \u2014 Impact Analysis APPROVED by owner. Q1 resolved: default=1. inventoryTransform.js ADD path missing converion_factor; EDIT || 1 fallback issue. 1 file. Awaiting Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
