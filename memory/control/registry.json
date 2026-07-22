@@ -15719,7 +15719,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: intake mechanism DISPROVEN \u2014 serves never blocks save (FE ||1 fallback + backend coerces 0\u21921). Real blocker: blank Unit (subunit) \u2192 backend 500 SQL null violation, no validation layer. Fix re-scope: require Unit, 1 file ~4 lines. CONFLICT: after/with BUG-215. OWNER APPROVED (2026-07-23) \u2192 Gate 3. Re-scope approved: require Unit, Serves stays optional. Backend brief card #bug-217 filed.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-217_IMPLEMENTATION_PLAN.md. 1 file, 2 edits ~3 lines (Unit guard + * label). DEPENDENCY: implement AFTER BUG-215 (variant A/B documented). Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15758,7 +15758,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Data-proven: min_unit_alert is a UNIT STRING in all 106 live rows; FE Number() coercion \u2192 0 \u2192 edit-save writes \"0\" (data corruption on customer inventory config). Risk upgraded LOW\u2192HIGH. Fix: unit select + transform retype, 2 files ~20 lines. Conflict: after/with BUG-226 (inventoryTransform.js). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-219_IMPLEMENTATION_PLAN.md. 2 files, 11 edits ~25 lines (transform retype \u00d75 incl. dead updateStock path + unit selects + labels + display row). Risk HIGH. DEPENDENCY: after/with BUG-226. CRITICAL e2e no-corruption test mandated. Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15776,7 +15776,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: backend dup check robust (409, case-insensitive, trimmed) and FE toast ALREADY surfaces the 409 message \u2014 intake claim outdated. Remaining fix: pre-call dup guard, 1 file ~5 lines. Risk downgrade MEDIUM\u2192LOW proposed (needs owner approval). Bonus: category delete endpoint exists (CR-090 intel). OWNER APPROVED (2026-07-23) \u2192 Gate 3. Risk downgrade MEDIUM\u2192LOW owner-approved (rationale: backend enforcement curl-verified robust).",
+      "status": "GATE 3 COMPLETE (2026-07-23) \u2014 Implementation Plan at /app/memory/plans/BUG-220_IMPLEMENTATION_PLAN.md. 1 file, 1 edit ~6 lines (case-insensitive pre-call dup guard). Risk LOW. No blocking deps. Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-090",
