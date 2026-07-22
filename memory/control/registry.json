@@ -15699,7 +15699,7 @@
    "type": "BUG",
    "severity": "P2",
    "risk": "HIGH",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Data-confirmed: all 346 preprod recipe rows already store small units; form autofill (base unit) is the outlier AND is saved to backend (not display-only). Sibling defect found in RecipeBulkEditor.jsx:185. Risk upgraded MEDIUM\u2192HIGH (saved-data semantics). 2 files, 3 lines. Awaiting owner approval \u2192 Gate 3.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Data-confirmed: all 346 preprod recipe rows already store small units; form autofill (base unit) is the outlier AND is saved to backend (not display-only). Sibling defect found in RecipeBulkEditor.jsx:185. Risk upgraded MEDIUM\u2192HIGH (saved-data semantics). 2 files, 3 lines. OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15875,7 +15875,7 @@
    "type": "BUG",
    "severity": "P2",
    "risk": "LOW",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 SUBSUMED by BUG-216 (documented). Live symptom self-resolved: ghee dosa no longer in any recipe (re-curl 2026-07-23). Residuals: conversion\u2192BUG-226, negative stock\u2192owner data fix. No code under this ID. Awaiting owner approval.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 SUBSUMED by BUG-216 (documented). Live symptom self-resolved: ghee dosa no longer in any recipe (re-curl 2026-07-23). Residuals: conversion\u2192BUG-226, negative stock\u2192owner data fix. No code under this ID. OWNER APPROVED (2026-07-23).",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [],

@@ -1,6 +1,6 @@
 # Layer 4 — Bug Tracker
 
-**Last Updated:** 2026-07-23 — Gate 2 Impact Analysis COMPLETE + OWNER APPROVED for BUG-226, BUG-223, BUG-214, BUG-215, BUG-218 (Batches 1–3). Remaining 9 bugs (BUG-216, BUG-217, BUG-219, BUG-220, BUG-221, BUG-222, BUG-224, BUG-225, BUG-227) at Gate 1 — awaiting Gate 2 (Batches 4–9).
+**Last Updated:** 2026-07-23 — Gate 2 Impact Analysis COMPLETE + OWNER APPROVED for Batches 1–6: BUG-226, BUG-223, BUG-214, BUG-215, BUG-218, BUG-221, BUG-222, BUG-224, BUG-227, BUG-216, BUG-225 (225 subsumed by 216). Remaining 3 bugs (BUG-217, BUG-219, BUG-220) at Gate 1 — Batches 7–8 pending.
 
 ---
 
@@ -12,7 +12,7 @@
 |---|---|---|---|---|---|---|
 | BUG-214 | Addon Recipe Dropdown Shows Menu Items Instead of Addon Items | P1 | HIGH | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-214_IMPACT_ANALYSIS.md`. FE-only fix: `RecipeFormPanel.jsx` — fix `getActiveAddons()` silent catch + remove `foods` fallback. |
 | BUG-215 | Recipe Forms — Validation Errors Not Shown on Save Failure | P1 | MEDIUM | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-215_IMPACT_ANALYSIS.md`. FE-only: `RecipeFormPanel.jsx` — add inline error state on save catch. |
-| BUG-216 | Recipe Ingredient Row Shows Base Unit, Should Show Small Unit | P2 | HIGH ⬆ | **GATE 2 COMPLETE ✅** | 0-2 ✅ | Data-confirmed: all 346 preprod recipe rows already store small units; form autofill is the outlier AND unit is SAVED to backend (not display-only). Sibling defect in `RecipeBulkEditor.jsx:185`. 2 files, 3 lines. Awaiting owner → Gate 3. |
+| BUG-216 | Recipe Ingredient Row Shows Base Unit, Should Show Small Unit | P2 | HIGH ⬆ | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Data-confirmed: all 346 preprod recipe rows already store small units; form autofill is the outlier AND unit is SAVED to backend (not display-only). Sibling defect in `RecipeBulkEditor.jsx:185`. 2 files, 3 lines. Awaiting owner → Gate 3. |
 | BUG-217 | Sub-Recipe Serves Field Not Required But Blocks Save | P2 | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. Curl verify backend 422 behavior needed. `RecipeFormPanel.jsx` 1 file. |
 | BUG-218 | Delete Ingredient — No Blocking Error When Used in Recipe | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/impact/BUG-218_IMPACT_ANALYSIS.md`. Curl-verified: backend HTTP 400 + `used_in_recipes[]`. FE-only: parse catch + Dialog. `InventorySetupPanel.jsx` 1 file. |
 | BUG-219 | Ingredient Form — Min Unit Text Input, Labels Unclear | P2 | LOW | **INTAKE COMPLETE** | 0-1 ✅ | Gate 2 pending. `minUnitAlert` input→select, label clarity. `InventorySetupPanel.jsx` 1 file. |
@@ -21,7 +21,7 @@
 | BUG-222 | Bulk Recipe Excel — No Template/Export Split; File Won't Open | P2 | HIGH ⬆ | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Curl-verified 2026-07-23: export JSON-vs-blob mismatch → corrupt xlsx (won't-open CONFIRMED). Import sends `file`, backend requires `products_file` → always 422. Template endpoint live, unwired. Risk upgraded MEDIUM→HIGH (API contract). 2 files. Awaiting owner → Gate 3. |
 | BUG-223 | Wastage & Recipe Deduction Auto-Trigger Without Explicit Save | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-223_IMPACT_ANALYSIS.md`. UX-only: `StockAuditPanel.jsx` — amber "preview" badge + unsaved banner. 1 file. |
 | BUG-224 | Smart Purchase — Ingredients Without Recipes Never Appear | P2 | HIGH ⬆ | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Mechanism verified: all stock rows processed, but velocity-0 items always fail B2 gap<0 filter; min alerts never consulted. No new fetch needed. Amends locked B2 (owner Q3). 2-3 files. Awaiting owner → Gate 3. |
-| BUG-225 | Same Name as Ingredient + Recipe; Unit Mismatch Across Screens | P2 | LOW ⬇ | **GATE 2 COMPLETE ✅ — SUBSUMED by BUG-216** | 0-2 ✅ | No code under this ID. Live symptom self-resolved (ghee dosa no longer in any recipe, re-curl 2026-07-23). Residuals: conversion→BUG-226, negative stock→owner data fix. Closes with BUG-216 QA. |
+| BUG-225 | Same Name as Ingredient + Recipe; Unit Mismatch Across Screens | P2 | LOW ⬇ (owner-approved) | **GATE 2 COMPLETE ✅ APPROVED — SUBSUMED by BUG-216** | 0-2 ✅ | No code under this ID. Live symptom self-resolved (ghee dosa no longer in any recipe, re-curl 2026-07-23). Residuals: conversion→BUG-226, negative stock→owner data fix. Closes with BUG-216 QA. |
 | BUG-226 | Conversion Factor Not Saved on Add or Edit Ingredient | P1 | LOW (post-fix) | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Impact doc: `/app/memory/BUG-226_IMPACT_ANALYSIS.md`. `inventoryTransform.js` — add `converion_factor` to ADD payload + fix `\|\| 1` on EDIT. 1 file. Q1 resolved: default=1. |
 | BUG-227 | Smart Purchase — Vendor Column Shows No History Though Vendors Exist | P1 | HIGH ⬆ | **GATE 2 COMPLETE ✅ APPROVED** | 0-2 ✅ | Curl-verified: vendor master (12 vendors) never enters ranking; PLUS 54% of history rows have vendor_id null (evidence saved). 3 files (`SmartPurchasePanel`, `vendorRanking`, `VendorSuggestionCell`). Awaiting owner → Gate 3. |
 
