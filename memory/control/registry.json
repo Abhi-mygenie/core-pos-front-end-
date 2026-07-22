@@ -16046,7 +16046,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 CONFIRMED: POST /api/v1/vendoremployee/profit-loss-report, DD/MM/YYYY, schema captured. All Open Questions resolved. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE",
       "sprint_key": "pos_5_0",
       "module": "reports",
       "files_to_change": [
@@ -16063,7 +16063,8 @@
         "What is the exact backend P&L endpoint URL and response schema?",
         "Date-picker based or fixed periods (today/week/month)?",
         "Does 'above Sales' mean first tab/card in Daily Reports?"
-      ]
+      ],
+      "gate": 2
     },
     {
       "id": "CR-095",
@@ -16071,8 +16072,8 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
-      "gate": 1,
+      "status": "GATE 2 COMPLETE",
+      "gate": 2,
       "sprint_key": "pos_5_0",
       "module": "Settlement / Day Closure",
       "related": "CR-015",
