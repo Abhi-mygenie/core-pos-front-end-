@@ -107,10 +107,10 @@ Regression checklist required at QA: main-tab export, bulk-editor save flow (unc
 
 ---
 
-## 5. Owner Decision Queue
+## 5. Owner Decision Queue — RESOLVED (owner, 2026-07-23)
 
-- **Q1:** Backend accepts a junk (non-Excel) file with `status:true` and gives NO row-level result. After import, frontend can only refresh the list — it cannot show "N rows imported / N failed". Accept this UX, or should I file a BACKEND_BRIEF asking for row-level import results + strict file validation? (Recommend: file backend brief; frontend proceeds with refresh-only UX now.)
-- **Q2:** Bulk editor's "Excel" button today exports only visible/filtered rows client-side. Keep it, replace it with the server master export (`download_url`), or offer both (e.g., "Excel (view)" + "Excel (master)")?
+- **Q1 → APPROVED:** Backend brief filed in `/app/memory/briefs/BACKEND_BLOCKERS_BRIEF_2026_07_22.html` (card `#bug-221`). Frontend ships refresh-only UX now.
+- **Q2 → DECIDED:** Replace client-side Excel button with SERVER master export (`download_url`) + add "Template" button linking static `bulk_upload_sample/Ingredients/Ingredients_Bulk_Import_Sample.xlsx`.
 
 ---
 

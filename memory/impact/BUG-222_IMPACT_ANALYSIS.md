@@ -101,10 +101,10 @@ const fd = new FormData(); fd.append('file', file);
 
 ---
 
-## 5. Owner Decision Queue
+## 5. Owner Decision Queue — RESOLVED (owner, 2026-07-23)
 
-- **Q1:** Enable Excel (template/export/import) for **Sub-recipes**? Backend endpoints exist (`export-sample-sub-recipe`, `export-sub-recipes`, `import-sub-recipes`). Addon recipes have NO backend excel endpoints → stay disabled either way. (Recommend: fix standard first in this bug; register sub-recipe enablement as a separate CR if wanted.)
-- **Q2:** Import of a real filled template has not been executed against preprod (would mutate live recipe data). Approve QA to run one live import on preprod with a 1-row test recipe, or should import be verified only with validation-error paths?
+- **Q1 → DECIDED:** "It will come in same excel" — sub-recipes are expected in the SAME exported excel file; no separate sub-recipe enablement. `excelEnabled` gating stays unchanged. Gate 3 must verify the standard export file actually contains sub-recipe rows; if it does not, flag back to owner.
+- **Q2 → APPROVED:** QA may run ONE live 1-row recipe import on preprod to verify the import fix.
 
 ---
 

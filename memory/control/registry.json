@@ -15793,7 +15793,7 @@
    "type": "BUG",
    "severity": "P1",
    "risk": "HIGH",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export returns JSON download_url but service forces blob \u2192 corrupt xlsx; bulk editor has NO import UI (importIngredients() defined but unused). Awaiting owner approval \u2192 Gate 3.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export returns JSON download_url but service forces blob \u2192 corrupt xlsx; bulk editor has NO import UI (importIngredients() defined but unused). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15813,7 +15813,7 @@
    "type": "BUG",
    "severity": "P2",
    "risk": "HIGH",
-   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export JSON-vs-blob mismatch corrupts xlsx (file won't open CONFIRMED); import sends field \"file\" but backend requires \"products_file\" (422) \u2192 import can never succeed; template endpoint exists unwired. Risk upgraded MEDIUM\u2192HIGH (API contract). Awaiting owner approval \u2192 Gate 3.",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Curl-verified: export JSON-vs-blob mismatch corrupts xlsx (file won't open CONFIRMED); import sends field \"file\" but backend requires \"products_file\" (422) \u2192 import can never succeed; template endpoint exists unwired. Risk upgraded MEDIUM\u2192HIGH (API contract). OWNER APPROVED (2026-07-23) \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15852,8 +15852,8 @@
    "title": "Smart Purchase \u2014 Ingredients Without Recipes Never Appear",
    "type": "BUG",
    "severity": "P2",
-   "risk": "MEDIUM",
-   "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+   "risk": "HIGH",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Mechanism corrected vs intake: all stock rows ARE processed but velocity-0 items always fail B2 gap<0 filter; min alerts never consulted. No new fetch needed (stockItems transform already has minQtyAlert/minUnitAlert). Risk upgraded MEDIUM\u2192HIGH (amends locked B2 + feeds add-purchase). Awaiting owner approval \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15861,9 +15861,10 @@
     "utils/purchasePlanner.js"
    ],
    "created": "2026-07-22",
-   "updated": "2026-07-22",
+   "updated": "2026-07-23",
    "artifact_refs": {
-    "intake": "/app/memory/change_requests/BUG-224_SMART_PURCHASE_INGREDIENTS_WITHOUT_RECIPES_INTAKE.md"
+    "intake": "/app/memory/change_requests/BUG-224_SMART_PURCHASE_INGREDIENTS_WITHOUT_RECIPES_INTAKE.md",
+    "impact_analysis": "/app/memory/impact/BUG-224_IMPACT_ANALYSIS.md"
    }
   },
   {
@@ -15909,8 +15910,8 @@
    "title": "Smart Purchase \u2014 Vendor Column Shows No History Though Vendors Exist",
    "type": "BUG",
    "severity": "P1",
-   "risk": "MEDIUM",
-   "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. vendorRanking uses history not master.",
+   "risk": "HIGH",
+   "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Confirmed: vendor master never fetched into ranking universe; ALSO 54% of vendor-item-list rows have vendor_id null (data evidence saved). Risk upgraded MEDIUM\u2192HIGH (feeds add-purchase write). 3 files. Awaiting owner approval \u2192 Gate 3.",
    "sprint_key": "pos_5_0",
    "module": "inventory",
    "files_to_change": [
@@ -15918,9 +15919,10 @@
     "utils/vendorRanking.js"
    ],
    "created": "2026-07-22",
-   "updated": "2026-07-22",
+   "updated": "2026-07-23",
    "artifact_refs": {
-    "intake": "/app/memory/change_requests/BUG-227_SMART_PURCHASE_VENDOR_NO_HISTORY_INTAKE.md"
+    "intake": "/app/memory/change_requests/BUG-227_SMART_PURCHASE_VENDOR_NO_HISTORY_INTAKE.md",
+    "impact_analysis": "/app/memory/impact/BUG-227_IMPACT_ANALYSIS.md"
    }
   },
   {

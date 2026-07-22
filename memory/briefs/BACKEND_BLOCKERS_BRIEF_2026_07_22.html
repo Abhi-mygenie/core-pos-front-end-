@@ -147,12 +147,12 @@
 <div class="page-header">
   <div class="eyebrow">MyGenie POS · Backend Engineering Brief</div>
   <h1>Backend Delivery Blockers — Complete Register</h1>
-  <div class="subtitle">All modules: Expense · Order Management · Print · File Upload · Realtime / Socket. Last updated 2026-07-22.</div>
+  <div class="subtitle">All modules: Expense · Order Management · Print · File Upload · Realtime / Socket · Inventory. Last updated 2026-07-23.</div>
   <div class="meta">
     <span class="mp red">4 P0/P1 — Active blockers</span>
-    <span class="mp orange">5 P2 — High value</span>
+    <span class="mp orange">6 P2 — High value</span>
     <span class="mp blue">4 P3 — Legacy / Low priority</span>
-    <span class="mp green">13 total blockers across 5 modules</span>
+    <span class="mp green">14 total blockers across 6 modules</span>
   </div>
 </div>
 
@@ -185,6 +185,9 @@
   <a class="tl p3" href="#bug-129"><span class="dot dg"></span>BUG-129 — TAB Order Status</a>
   <a class="tl p3" href="#bug-090"><span class="dot dg"></span>BUG-090 — CRM customer_id</a>
   <a class="tl p3" href="#bug-092"><span class="dot dg"></span>BUG-092 — Phone Format</a>
+
+  <div class="sb-sect">Inventory Module</div>
+  <a class="tl p2" href="#bug-221"><span class="dot db"></span>BUG-221 — Import Accepts Junk File</a>
 
   <div class="sb-sect">Summary</div>
   <a class="tl" href="#summary"><span class="dot dg"></span>All Endpoints — Quick Ref</a>
@@ -607,6 +610,42 @@
       <div class="db2 exp"><div class="dl">Order Screen</div><p>Sends raw 10-digit: <code>9876543210</code></p></div>
     </div>
     <div class="imp"><strong>Backend must confirm:</strong> Which format is canonical? FE standardises once backend responds.</div>
+  </div>
+</div>
+
+<!-- ═══ INVENTORY MODULE ═════════════════════════════════════ -->
+<div class="mh"><span>📦</span><span>Inventory Module</span></div>
+
+<!-- BUG-221 -->
+<div class="card" id="bug-221">
+  <div class="ch">
+    <div><div class="cid">BUG-221 · Backend Ask</div><div class="ct">Bulk Ingredient Import — Accepts Non-Excel Junk as "Success", No Row-Level Results</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bfix">Validation</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE plan (Gate 2 approved 2026-07-23): bulk editor gets Import button wired to this endpoint with refresh-only UX. FE will check <code>status:false</code> on 2xx responses. This brief asks for strict validation + row-level results so FE can show per-row feedback later.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current (verified 2026-07-23)</div><p>POST with a plain .txt file under field <code>file</code> → HTTP 200 <code>{"status":true,"message":"Inventory imported successfully!"}</code>. No rows imported, no error. Empty POST → HTTP <strong>201</strong> with <code>{"status":false,"errors":"Please upload an Excel file."}</code> (error on a 2xx status).</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Non-Excel file → HTTP 422 with clear error. Valid file → 200 with row-level results: <code>{"imported": N, "failed": M, "row_errors":[{"row":3,"error":"Unit invalid"}]}</code>. Validation errors should never ride on 201.</p></div>
+    </div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>POST /api/v2/vendoremployee/inventory/import-inventory</code></span></div>
+    <div class="fr"><span class="fl">Field</span><span class="fv">multipart <code>file</code> (.xlsx per template <code>bulk_upload_sample/Ingredients/Ingredients_Bulk_Import_Sample.xlsx</code>)</span></div>
+    <div class="fr"><span class="fl">Template gap</span><span class="fv">Sample columns: Category Name · Stock Title · Unit · Min Qty Alert · Min Unit Alert — <strong>no Small Unit / Conversion Factor columns</strong>. Confirm whether import can set these fields.</span></div>
+    <div class="sl">Evidence curl</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Junk .txt → currently returns 200 success (wrong)</span><span class="cbm mp2">POST</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> POST \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/inventory/import-inventory</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> <span class="f">-H</span> <span class="s">"X-localization: en"</span> \
+  <span class="f">-F</span> <span class="s">"file=@junk.txt"</span>
+
+<span class="cm"># Current (wrong): HTTP 200</span>
+{ <span class="k">"status"</span>: <span class="n">true</span>, <span class="k">"message"</span>: <span class="s">"Inventory imported successfully!"</span> }
+
+<span class="cm"># Expected: HTTP 422 for non-Excel; row-level results for valid files</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Small — import handler upgraded to render <code>row_errors</code> list (~10 lines). Until then FE ships refresh-only UX.</div>
   </div>
 </div>
 
