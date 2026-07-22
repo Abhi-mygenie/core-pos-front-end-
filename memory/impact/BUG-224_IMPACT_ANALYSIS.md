@@ -73,14 +73,12 @@ Optional badge for `origin === 'stock_alert'` rows ("Low stock" vs velocity colu
 
 ---
 
-## 5. Owner Decision Queue
+## 5. Owner Decision Queue — PARTIALLY RESOLVED (owner, 2026-07-23)
 
-- **Q1 (threshold semantics):** Planner math runs in small units (`calQuantity`). Which threshold defines "low stock"?
-  a. `minUnitAlert` (small-unit), fallback `minQtyAlert × conversionFactor` when minUnitAlert empty (recommended)
-  b. `minQtyAlert` only (base unit × conversionFactor)
-- **Q2 (suggested qty):** For stock-alert rows, suggest `threshold − onHand` (top up to threshold), or a different rule (e.g., threshold × 2)?
-- **Q3 (B2 ruling amendment):** B2 is a LOCKED owner ruling ("hide rows where gap ≥ 0"). This fix intentionally adds rows that have no consumption gap. Confirm B2 is amended to: "hide velocity rows where gap ≥ 0; stock-alert rows appear when below threshold."
-- **Q4 (badge):** Show a "Low stock" badge distinguishing stock-alert rows from consumption-planned rows? (Recommend: yes.)
+- **Q1 → DECIDED:** Threshold = **`minQtyAlert` only** (base unit). Planner compares in small-unit domain: `onHand(calQuantity) < minQtyAlert × conversionFactor`. `minUnitAlert` NOT used.
+- **Q2 → APPROVED:** Suggested qty = top-up to threshold: `ceil(threshold − onHand)`.
+- **Q3 (B2 amendment) → PENDING:** owner asked for fuller explanation before confirming. See session notes; blocking for Gate 3.
+- **Q4 (badge) → not explicitly answered; default to "Low stock" badge, confirm at Gate 3 plan review.
 
 ---
 

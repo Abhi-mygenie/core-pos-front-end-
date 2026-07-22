@@ -150,9 +150,9 @@
   <div class="subtitle">All modules: Expense · Order Management · Print · File Upload · Realtime / Socket · Inventory. Last updated 2026-07-23.</div>
   <div class="meta">
     <span class="mp red">4 P0/P1 — Active blockers</span>
-    <span class="mp orange">6 P2 — High value</span>
+    <span class="mp orange">7 P2 — High value</span>
     <span class="mp blue">4 P3 — Legacy / Low priority</span>
-    <span class="mp green">14 total blockers across 6 modules</span>
+    <span class="mp green">15 total blockers across 6 modules</span>
   </div>
 </div>
 
@@ -188,6 +188,7 @@
 
   <div class="sb-sect">Inventory Module</div>
   <a class="tl p2" href="#bug-221"><span class="dot db"></span>BUG-221 — Import Accepts Junk File</a>
+  <a class="tl p2" href="#bug-227"><span class="dot db"></span>BUG-227 — Vendor-less Purchases / System Vendor</a>
 
   <div class="sb-sect">Summary</div>
   <a class="tl" href="#summary"><span class="dot dg"></span>All Endpoints — Quick Ref</a>
@@ -646,6 +647,26 @@
 <span class="cm"># Expected: HTTP 422 for non-Excel; row-level results for valid files</span></pre>
     </div>
     <div class="imp"><strong>FE work after delivery:</strong> Small — import handler upgraded to render <code>row_errors</code> list (~10 lines). Until then FE ships refresh-only UX.</div>
+  </div>
+</div>
+
+<!-- BUG-227 -->
+<div class="card" id="bug-227">
+  <div class="ch">
+    <div><div class="cid">BUG-227 · Backend Ask</div><div class="ct">Purchase Rows Saved Without Vendor — Need Default "System Vendor" Attribution</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bfix">Data Quality</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE interim shipped plan (Gate 2, 2026-07-23): vendor-item-list rows with <code>vendor_id: null</code> are bucketed under a synthetic "System Vendor" for display/ranking in Smart Purchase, so their price history is not lost. This brief asks backend to make vendor attribution structural.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current (verified 2026-07-23, restaurant 689)</div><p><code>GET /inventory/vendor-item-list</code>: 1146 purchase rows — <strong>614 (54%) have <code>vendor_id: null</code>, <code>Vendor_Name: ""</code></strong>. Many attributed rows also carry <code>unit_price: 0</code> / <code>Amount: 0</code>. Vendor ranking and spend analytics are structurally degraded.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Purchases created without an explicit vendor are attributed to a default <strong>System Vendor</strong> (per-restaurant, auto-created). vendor-item-list never returns <code>vendor_id: null</code>. Historical rows backfilled to System Vendor.</p></div>
+    </div>
+    <div class="sl">Endpoints involved</div>
+    <div class="fr"><span class="fl">Write path</span><span class="fv"><code>POST /api/v2/vendoremployee/inventory/add-purchase</code> — should default vendor_id → System Vendor when absent</span></div>
+    <div class="fr"><span class="fl">Read path</span><span class="fv"><code>GET /api/v2/vendoremployee/inventory/vendor-item-list</code> — should return the attributed vendor</span></div>
+    <div class="fr"><span class="fl">Evidence</span><span class="fv"><code>/app/memory/evidence/BUG-227/vendor_item_list_response.json</code> (1146 rows), <code>vendor_master_response.json</code> (12 vendors)</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Remove the synthetic System Vendor bucketing (~10 lines) — master list will contain the real System Vendor. Also investigate why <code>unit_price/Amount = 0</code> on attributed rows.</div>
   </div>
 </div>
 

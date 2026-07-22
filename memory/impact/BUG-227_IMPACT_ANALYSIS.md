@@ -56,11 +56,14 @@ const vendorNamesById = useMemo(() => {
 
 ### vendorRanking.js:20 signature (current)
 `rankVendors(vendorItemList, ingredientId)`
-→ Needs: optional third param `vendorMaster = []`; after ranking, append master vendors not already in candidates as `alternatives` with `{ unit_price: null, last_purchase_date: null, fromMaster: true }`. When history candidates = 0: return `{ winner: null, alternatives: <master vendors>, reason: 'No purchase history — select vendor' }`. Winner stays null (no auto-preselect — pending owner Q1). B3/B5 ranking math for history candidates UNCHANGED.
+→ Needs: optional third param `vendorMaster = []`. Owner-decided behavior (2026-07-23):
+1. Null-vendor history rows (54% of feed) are NO LONGER dropped — bucket under synthetic `{ vendor_id: 'system', vendor_name: 'System Vendor' }` candidate so their price/date history participates in display.
+2. Master vendors not in candidates appended as unranked `{ unit_price: null, fromMaster: true }`.
+3. History candidates keep B3/B5 ranking math UNCHANGED. "System Vendor" is display/ranking-only — submit must NOT send `vendor_id: 'system'` to add-purchase (maps back to null/absent, as today).
 
 ### VendorSuggestionCell.jsx:28-36 (current)
 `candidates = ranking?.winner ? [winner, ...alternatives] : []` → empty → "No history" literal.
-→ Needs: build candidates from winner + alternatives even when winner is null; render master-only options as `name · no history` (no ₹ price); keep placeholder option when nothing selected. Guard `isMateriallyMoreExpensive` + `getReason` for null-price candidates.
+→ Needs (owner-decided): replace plain `<select>` with a **searchable combobox** listing ALL vendors always — ranked/history vendors first (marked "Recommended" with ₹price), then remaining master vendors (no price). User can search + pick any vendor. Guard `isMateriallyMoreExpensive`/`getReason` for null-price candidates.
 
 ### Rate path (financial adjacency — verify at QA)
 `SmartPurchasePanel.jsx:52-53` sets `rate: ranking.winner?.unit_price ?? ''`. Master-only vendors carry `unit_price: null` → rate stays `''` → existing validation `rate > 0` (line 109) forces manual rate entry before submit. NO change to validation.
@@ -89,10 +92,12 @@ const vendorNamesById = useMemo(() => {
 
 ---
 
-## 5. Owner Decision Queue
+## 5. Owner Decision Queue — RESOLVED (owner, 2026-07-23)
 
-- **Q1:** For an ingredient with NO history: show all 12 master vendors as options with NO auto-preselection (owner picks; rate typed manually)? Or auto-preselect the first master vendor? (Recommend: no auto-preselect.)
-- **Q2:** 54% of purchase-history rows have `vendor_id: null` (purchases saved without vendor), and many attributed rows have `unit_price: 0`. This weakens ranking permanently. File a BACKEND/data-quality brief (add to `BACKEND_BLOCKERS_BRIEF` register) asking why add-purchase rows lose vendor attribution? (Recommend: yes — likely relates to how FE/other clients post purchases.)
+- **Q1 → DECIDED:** Vendor cell becomes a **searchable dropdown (autocomplete/combobox)** listing ALL vendors always. If history exists → ranked/recommended vendors shown first (marked "Recommended"); user can always search and select ANY master vendor. No plain `<select>`. (Gate 3: combobox component — check existing shadcn `command`/`popover` usage in codebase.)
+- **Q2 → DECIDED (two parts):**
+  1. **Backend brief FILED** (BACKEND_BLOCKERS_BRIEF card `#bug-227`): purchases should never be vendor-less — backend should attach a default **System Vendor** when no vendor is supplied.
+  2. **Frontend interim:** do NOT drop null-vendor history rows — bucket them under a synthetic **"System Vendor"** pseudo-candidate (vendor_id `'system'`), so their price/date history is visible in ranking until backend delivers. Gate 3 must define: System Vendor is display/ranking-only, NEVER submitted as vendor_id to add-purchase (submit maps back to null/absent vendor exactly as today).
 
 ---
 
