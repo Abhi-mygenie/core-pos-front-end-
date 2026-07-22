@@ -15735,7 +15735,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "status": "GATE 2 COMPLETE (2026-07-23) \u2014 Impact Analysis done. Q1 (force-delete vs block) + Q2 (backend 422 guard?) pending owner decisions. Awaiting owner approval \u2192 Gate 3.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -15745,7 +15745,8 @@
       "created": "2026-07-22",
       "updated": "2026-07-22",
       "artifact_refs": {
-        "intake": "/app/memory/change_requests/BUG-218_DELETE_INGREDIENT_NO_BLOCKING_ERROR_INTAKE.md"
+        "intake": "/app/memory/change_requests/BUG-218_DELETE_INGREDIENT_NO_BLOCKING_ERROR_INTAKE.md",
+        "impact_analysis": "/app/memory/impact/BUG-218_IMPACT_ANALYSIS.md"
       }
     },
     {
