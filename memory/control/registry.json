@@ -15631,7 +15631,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 5 IMPLEMENTED + QA PASS (2026-07-22) — iteration_3.json: 9/9 tests PASS. Form Row 2: Notes+Paid To+Ref ID side-by-side. Table: 12 cols. Report: 11 cols. Edit mode: 2 new inputs. Search extended. Transform layer maps paymentMadeTo+paymentRefId.",
+      "status": "GATE 5 IMPLEMENTED + QA PASS (2026-07-22) \u2014 iteration_3.json: 9/9 tests PASS. Form Row 2: Notes+Paid To+Ref ID side-by-side. Table: 12 cols. Report: 11 cols. Edit mode: 2 new inputs. Search extended. Transform layer maps paymentMadeTo+paymentRefId.",
       "sprint_key": "pos_5_0",
       "module": "expense",
       "files_to_change": [
@@ -15654,6 +15654,406 @@
         "edit_flow": true,
         "backend_fields_confirmed": true
       }
+    },
+    {
+      "id": "BUG-214",
+      "title": "Addon Recipe Dropdown Shows Menu Items Instead of Addon Items",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2 (Impact Analysis).",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeFormPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-214_ADDON_RECIPE_DROPDOWN_SHOWS_MENU_ITEMS_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-215",
+      "title": "Recipe Forms \u2014 Validation Errors Not Shown on Save Failure",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeFormPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-215_RECIPE_FORMS_VALIDATION_ERRORS_NOT_SHOWN_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-216",
+      "title": "Recipe Ingredient Row Shows Base Unit, Should Show Small Unit",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeFormPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-216_RECIPE_INGREDIENT_ROW_SHOWS_BASE_UNIT_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-217",
+      "title": "Sub-Recipe Serves Field Not Required But Blocks Save",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Backend curl needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeFormPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-217_SUB_RECIPE_SERVES_BLOCKS_SAVE_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-218",
+      "title": "Delete Ingredient \u2014 No Blocking Error When Used in Recipe",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/InventorySetupPanel.jsx",
+        "api/services/inventoryService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-218_DELETE_INGREDIENT_NO_BLOCKING_ERROR_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-219",
+      "title": "Ingredient Form \u2014 Min Unit Text Input, Factor/Min Q/Min U Labels Unclear",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/InventorySetupPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-219_INGREDIENT_FORM_MIN_UNIT_LABELS_UNCLEAR_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-220",
+      "title": "Ingredient Category \u2014 No Duplicate Alert, No Edit/Delete",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Edit/Delete deferred to CR-090.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "related": "CR-090",
+      "files_to_change": [
+        "components/inventory/InventorySetupPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-220_INGREDIENT_CATEGORY_NO_DUPLICATE_ALERT_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-221",
+      "title": "Bulk Ingredient Upload & Excel Download Not Working",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Bulk editor code review needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/IngredientBulkEditor.jsx",
+        "api/services/inventoryService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-221_BULK_INGREDIENT_UPLOAD_EXCEL_NOT_WORKING_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-222",
+      "title": "Bulk Recipe Excel \u2014 No Template/Export Split; File Won't Open",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Curl verify needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeBulkEditor.jsx",
+        "api/services/recipeService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-222_BULK_RECIPE_EXCEL_NO_TEMPLATE_FILE_WONT_OPEN_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-223",
+      "title": "Wastage & Recipe Deduction Auto-Trigger Without Explicit Save",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Runtime trace needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeFormPanel.jsx",
+        "components/inventory/InventorySetupPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-223_WASTAGE_RECIPE_DEDUCTION_AUTO_TRIGGER_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-224",
+      "title": "Smart Purchase \u2014 Ingredients Without Recipes Never Appear",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/SmartPurchasePanel.jsx",
+        "utils/purchasePlanner.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-224_SMART_PURCHASE_INGREDIENTS_WITHOUT_RECIPES_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-225",
+      "title": "Same Name Appears as Ingredient + Recipe; Unit Mismatch Across Screens",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Cross-screen data trace needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeManagementPanel.jsx",
+        "components/inventory/InventorySetupPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-225_SAME_NAME_INGREDIENT_RECIPE_UNIT_MISMATCH_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-226",
+      "title": "Conversion Factor Not Saved on Add or Edit Ingredient",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Code confirmed: addIngredient() missing converion_factor.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "api/transforms/inventoryTransform.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-226_CONVERSION_FACTOR_NOT_SAVED_ADD_EDIT_INTAKE.md"
+      }
+    },
+    {
+      "id": "BUG-227",
+      "title": "Smart Purchase \u2014 Vendor Column Shows No History Though Vendors Exist",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. vendorRanking uses history not master.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/SmartPurchasePanel.jsx",
+        "utils/vendorRanking.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-227_SMART_PURCHASE_VENDOR_NO_HISTORY_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-088",
+      "title": "Recipe By Ingredient Reverse View Tab",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeManagementPanel.jsx",
+        "api/services/recipeService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-088_RECIPE_BY_INGREDIENT_REVERSE_VIEW_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-089",
+      "title": "PDF Export for Standard Sub and Addon Recipes",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeManagementPanel.jsx",
+        "api/services/recipeService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-089_PDF_EXPORT_RECIPES_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-090",
+      "title": "Inventory Categories \u2014 Edit and Delete",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. RELATED BUG-220 (dup check).",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "related": "BUG-220",
+      "files_to_change": [
+        "components/inventory/InventorySetupPanel.jsx",
+        "api/services/inventoryService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-090_INVENTORY_CATEGORIES_EDIT_DELETE_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-091",
+      "title": "Purchase \u2014 Transaction ID for Bank Transfer",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. PurchaseEntryPanel full read needed at Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/PurchaseEntryPanel.jsx",
+        "api/transforms/inventoryTransform.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-091_PURCHASE_TRANSACTION_ID_BANK_TRANSFER_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-092",
+      "title": "Recipe Tabs \u2014 Sort Controls",
+      "type": "CR",
+      "severity": "P3",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Awaiting Gate 2.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/RecipeManagementPanel.jsx"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-092_RECIPE_TABS_SORT_CONTROLS_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-093",
+      "title": "Consumption Report \u2014 New Screen (Date Range Category Ingredient Margin Cost)",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Backend endpoint verification needed.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "files_to_change": [
+        "components/inventory/ConsumptionReportPanel.jsx (new)",
+        "components/inventory/InventoryTabBar.jsx",
+        "api/services/inventoryService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-093_CONSUMPTION_REPORT_NEW_SCREEN_INTAKE.md"
+      }
+    },
+    {
+      "id": "CR-094",
+      "title": "P&L Report \u2014 New Screen Under Daily Reports Above Sales",
+      "type": "CR",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE (2026-07-22) \u2014 Gate 1 done. Backend endpoint URL needed from owner (Open Question).",
+      "sprint_key": "pos_5_0",
+      "module": "reports",
+      "files_to_change": [
+        "components/reports/PLReportPanel.jsx (new)",
+        "daily reports navigation component",
+        "api/services/reportService.js"
+      ],
+      "created": "2026-07-22",
+      "updated": "2026-07-22",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-094_PL_REPORT_DAILY_REPORTS_ABOVE_SALES_INTAKE.md"
+      },
+      "open_questions": [
+        "What is the exact backend P&L endpoint URL and response schema?",
+        "Date-picker based or fixed periods (today/week/month)?",
+        "Does 'above Sales' mean first tab/card in Daily Reports?"
+      ]
     }
   ]
 }

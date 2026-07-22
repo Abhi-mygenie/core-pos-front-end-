@@ -275,3 +275,17 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **CR-085** | Inventory Module Completion (Phase 2 Consolidation). 6 categories: (A) CR-081 design gaps — missing table borders, columns, sparklines, skeleton loading. (B) Backend 500 blockers on recipe create (3 endpoints, RecipeController.php). (C) 5 frontend fixes applied (min_unit_alert string, prep_time default, sub-recipe key, addon dropdown source). (D) Unstarted features: S3 file upload (CR-076), Dispatch/Dispute/Return (CR-077 P2), Recipe column toggle (CR-073-FU-01). (E) Code quality: extract InventorySetupPanel tabs. (F) Registry housekeeping for BUG-210 + CR-084 QA status. | **P1** | HIGH | **INTAKE** | 0-1 | ~35 files, 3607 LOC. Absorbs CR-081/CR-075/CR-076/CR-077-P2/CR-073-FU-01. Backend brief filed. |
 
 | **CR-086** | Current Stock & Ingredients UX Overhaul — 5 features: (1) Card-based filter UX replacing status chip pills, (2) Export field fix (current export has purchase fields, not stock fields — need Category, Status, Days Left, Vendor, Min Alert), (3) PDF export option, (4) Ingredient Bulk Editor (spreadsheet-style, matching RecipeBulkEditor/Menu BulkEditor pattern, ~400-500 lines), (5) Import wiring (service function exists, button disabled). | **P2** | HIGH | **INTAKE** | 0-1 | 5+ files, ~400-600 lines. New IngredientBulkEditor.jsx component. RELATED to CR-075 (S1), CR-081, CR-085. |
+
+---
+
+### 2026-07-22 Inventory Module Batch (CR-088 → CR-094)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-088** | Recipe "By Ingredient" Reverse View Tab — 4th tab in RecipeManagementPanel; select ingredient → see all recipes using it. Backend endpoint needed. | **P2** | LOW | **INTAKE COMPLETE** | 0-1 ✅ | 2-3 files: `RecipeManagementPanel.jsx`, `recipeService.js`. ~40-60 lines. |
+| **CR-089** | PDF Export for Standard, Sub, Addon Recipes — printable recipe sheet for kitchen staff. Backend endpoint check needed; client-side fallback via jspdf. | **P2** | LOW | **INTAKE COMPLETE** | 0-1 ✅ | 2-3 files: `RecipeManagementPanel.jsx`, `recipeService.js`. ~30 lines. |
+| **CR-090** | Inventory Categories — Edit & Delete — pencil + trash on category sidebar rows. Backend PUT/DELETE endpoints needed. RELATED to BUG-220 (dup check). | **P2** | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | 2-3 files: `InventorySetupPanel.jsx`, `inventoryService.js`. ~40-50 lines. |
+| **CR-091** | Purchase — Transaction ID for Bank Transfer — `payment_ref_id` field shown when paymentMethod = bank transfer. Mirror of CR-087 for purchase module. | **P2** | LOW | **INTAKE COMPLETE** | 0-1 ✅ | 2-3 files: `PurchaseEntryPanel.jsx`, `inventoryTransform.js`. ~25 lines. |
+| **CR-092** | Recipe Tabs — Sort Controls — sort by name/date/cost, applies per active tab. Client-side sort only. | **P3** | LOW | **INTAKE COMPLETE** | 0-1 ✅ | 1-2 files: `RecipeManagementPanel.jsx`. ~20-25 lines. |
+| **CR-093** | Consumption Report — New Screen (Date Range, Category, Ingredient, Margin, Cost) — new Inventory tab, uses DCR API. | **P2** | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | 3-4 files: new `ConsumptionReportPanel.jsx`, `InventoryTabBar.jsx`, `inventoryService.js`. ~100-150 lines. |
+| **CR-094** | P&L Report — New Screen Under Daily Reports, First Position Above Sales — Revenue/COGS/Expenses/Net Profit. Backend endpoint URL pending from owner (Open Question). | **P1** | MEDIUM | **INTAKE COMPLETE** | 0-1 ✅ | 3-4 files: new `PLReportPanel.jsx`, daily reports nav, `reportService.js`. Open Question: backend endpoint URL. |
