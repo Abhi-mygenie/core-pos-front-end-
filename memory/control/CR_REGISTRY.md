@@ -346,3 +346,5 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 |---|---|---|---|---|---|---|
 | **CR-089** | PDF Export for Recipes (jsPDF 3-section document) | **P2** | LOW | **IMPLEMENTED (2026-07-24). jsPDF+autoTable, 3 sections (Standard/Sub/Addon), "Download PDF" button. // CR-089** | 0-5a ✅ | `RecipeManagementPanel.jsx` |
 | **CR-101** | Daily Report — Punched By + Collected By Filter Dropdowns | **P2** | LOW | **IMPLEMENTED (2026-07-24). 2 client-side-derived dropdowns from unique punchedBy/actionedBy. Hidden when no data. // CR-101** | 0-5a ✅ | `AllOrdersReportPage.jsx`, `FilterBar.jsx` |
+
+| **CR-104** | Item-level complementary reason — mandatory note when marking food as comp. Backend needs `complementary_reason` field per order_details line item. RELATED to CR-058 (order-level comp — separate scope). | **P2** | MEDIUM | **INTAKE — BACKEND-BLOCKED** | 0-1 | 3 files: `OrderEntry.jsx` (R5), `CollectPaymentPanel.jsx` (R5), `orderTransform.js`. Backend brief appended to `BACKEND_BLOCKERS_BRIEF_2026_07_22.html`. |

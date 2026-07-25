@@ -981,6 +981,44 @@ GET /stock-inventory → stock_title="Tandoori Chicken Indian":
 
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- APPENDED 2026-07-25: CR-104 — Per-Item Complementary Reason Field -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<hr style="margin:40px 0;border:2px solid #f97316;">
+<h2 style="color:#f97316;">BACKEND ASK: Per-Item Complementary Reason (CR-104, 2026-07-25)</h2>
+
+<h3>Summary</h3>
+<p>When cashier marks a food item as complementary (per-item checkbox, not order-level),
+FE needs to capture and send a <strong>mandatory reason</strong>. Backend currently has no field for this.</p>
+
+<h3>What FE Will Send</h3>
+<pre><code>// On order settle / update — per order_details line item:
+{
+  "is_complementary": "Yes",
+  "complementary_reason": "Guest complaint — cold food"   // NEW FIELD
+}
+</code></pre>
+
+<h3>Backend Needs To</h3>
+<ol>
+  <li><strong>Accept:</strong> <code>complementary_reason</code> (string) per <code>order_details</code> line item on settle/update endpoints</li>
+  <li><strong>Validate:</strong> Required when <code>is_complementary: "Yes"</code>, optional otherwise</li>
+  <li><strong>Store:</strong> Persist alongside <code>is_complementary</code> flag in order_details table</li>
+  <li><strong>Return:</strong> Include in GET order detail responses (for Discount Report, Comp Detail report, audit)</li>
+</ol>
+
+<h3>Endpoints Affected</h3>
+<ul>
+  <li>PUT <code>/api/v2/vendoremployee/order-status-update</code> (settle flow)</li>
+  <li>Any endpoint that accepts <code>is_complementary</code> per line item</li>
+  <li>GET order detail responses (return the reason for display)</li>
+</ul>
+
+<h3>FE Status</h3>
+<p><strong>BACKEND-BLOCKED.</strong> FE will add reason input UI + payload wiring once backend confirms the field name and contract.
+Related: CR-058 (order-level comp) — separate scope but same domain.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- APPENDED 2026-07-25: add-purchase Payload Contract Mismatch (FE Fix + Backend Ask) -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <hr style="margin:40px 0;border:2px solid #f97316;">

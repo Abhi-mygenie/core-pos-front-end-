@@ -16577,6 +16577,29 @@
         "plan": "/app/memory/plans/BUG-247_IMPACT_AND_PLAN.md"
       },
       "gate": "5a"
+    },
+    {
+      "id": "CR-104",
+      "title": "Item-level complementary reason (mandatory note per food item)",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE \u2014 BACKEND-BLOCKED (no API field for complementary_reason)",
+      "sprint_key": "pos_5_0",
+      "module": "order-entry",
+      "related": "CR-058",
+      "files_to_change": [
+        "OrderEntry.jsx",
+        "CollectPaymentPanel.jsx",
+        "orderTransform.js"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-104_COMPLEMENTARY_REASON_INTAKE.md",
+        "backend_brief": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25)"
+      },
+      "gate": "0-1"
     }
   ]
 }
