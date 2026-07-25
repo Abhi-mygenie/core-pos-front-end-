@@ -1,53 +1,63 @@
-# BUG-248 — Bulk Editor: 9 Columns Missing from Dirty Detection (Save Never Triggers)
+# BUG-248 — Bulk Editor: 9 Columns Missing from Dirty Detection + Backend Drops 4 Fields
 
 **ID:** BUG-248
 **Type:** BUG
 **Created:** 2026-07-25
-**Severity:** P1 (user edits silently lost — no save button appears)
-**Risk:** LOW
-**Module:** Menu Management — Bulk Editor (`BulkEditor.jsx`)
-**Duplicate Check:** DISTINCT. No prior bug on isDirty coverage.
-**Code Reality:** Bug confirmed at `BulkEditor.jsx:258-290` — `isDirty()` checks object has 29 entries but 9 columns are missing.
-**Source:** OWNER-REPORTED (session 2026-07-25, screenshot: Packaged Item toggled to "Yes" but "No Changes" shown)
-**Confidence:** CONFIRMED (code trace: `packedFood` and 8 other keys absent from `checks` object)
+**Updated:** 2026-07-25 (investigation: backend silently drops 4 fields)
+**Severity:** P1 (user edits silently lost — no save button + backend drops fields)
+**Risk:** LOW (FE fix) + BACKEND-BLOCKED (4 fields)
+**Module:** Menu Management — Bulk Editor + Card View (`BulkEditor.jsx`, `ProductForm.jsx`)
+**Duplicate Check:** DISTINCT.
+**Source:** OWNER-REPORTED (session 2026-07-25)
+**Confidence:** CONFIRMED (curl-verified: backend returns success but doesn't persist)
 
 ---
 
-## Description
+## Two-Part Bug
 
-In Menu Management Bulk Editor, toggling certain columns (Packaged Item, Inventory, Out of Stock, Hidden from POS, Tax Calc, Sold By Unit, Avail. Start/End, Portion Size) does NOT trigger the "Save X Changes" button. The edits appear in the UI but `isDirty()` returns `false` for these fields — so the save button stays as "No Changes" and edits are silently lost.
+### Part A — FE: `isDirty` missing 9 fields (FE FIX READY)
 
-### Evidence
+`BulkEditor.jsx:258-290` — `isDirty()` checks object missing 9 column keys. Editing these columns never triggers "Save X Changes".
 
-Screenshot: "Allfredo Pasta" → Packaged Item toggled to "Yes" → toolbar shows "No Changes".
+| # | Column Key | Label |
+|---|-----------|-------|
+| 1 | `packedFood` | Packaged Item |
+| 2 | `isInventory` | Inventory |
+| 3 | `stockOut` | Out of Stock |
+| 4 | `isDisabled` | Hidden from POS |
+| 5 | `taxCalc` | Tax Calc |
+| 6 | `itemUnit` | Sold By (Unit) |
+| 7 | `availableTimeStart` | Avail. Start |
+| 8 | `availableTimeEnd` | Avail. End |
+| 9 | `portionSize` | Portion Size |
 
-### Root Cause
+**Fix:** Add 9 entries to `checks` object. ~9 lines. File: `BulkEditor.jsx`.
 
-`BulkEditor.jsx:258-290` — the `isDirty` function's `checks` object maps field keys to comparison functions. **9 column keys have no entry:**
+### Part B — BACKEND: Edit API silently drops 4 fields (BACKEND-BLOCKED)
 
-| # | Column Key | Label | In `checks`? | In `toAPI`? |
-|---|-----------|-------|:---:|:---:|
-| 1 | `packedFood` | Packaged Item | ❌ MISSING | ✅ L161 |
-| 2 | `isInventory` | Inventory | ❌ MISSING | Needs verify |
-| 3 | `stockOut` | Out of Stock | ❌ MISSING | Needs verify |
-| 4 | `isDisabled` | Hidden from POS | ❌ MISSING | Needs verify |
-| 5 | `taxCalc` | Tax Calc | ❌ MISSING | Needs verify |
-| 6 | `itemUnit` | Sold By (Unit) | ❌ MISSING | Needs verify |
-| 7 | `availableTimeStart` | Avail. Start | ❌ MISSING | Needs verify |
-| 8 | `availableTimeEnd` | Avail. End | ❌ MISSING | Needs verify |
-| 9 | `portionSize` | Portion Size | ❌ MISSING | Needs verify |
+`POST /api/v2/vendoremployee/product/foods/{id}` returns "food updated successfully" but does NOT persist:
+
+| Field | FE Sends | Persisted? |
+|-------|----------|:---:|
+| `packed_food` | `"Yes"` | ❌ NO |
+| `is_inventory` | `"No"` | ❌ NO |
+| `stock_out` | `"Y"` | ❌ NO |
+| `tax_calc` | `"Exclusive"` | ❌ NO |
+
+**Curl-verified against preprod** (food 116799, restaurant cafe103). Backend brief filed at `BACKEND_BLOCKERS_BRIEF_2026_07_22.html`.
+
+**Affects BOTH** Bulk Editor and Card View (ProductForm) — same endpoint.
 
 ---
 
 ## Blast Radius
 
-- 1 file: `BulkEditor.jsx` (~9 lines added to `checks` object)
-- Scope: SMALL
-- Hotspot: NO (not R5)
-- Financial: NO
+- FE Part A: 1 file (`BulkEditor.jsx`), ~9 lines
+- Backend Part B: backend fix needed for `/foods/{id}` endpoint
 
 ---
 
 ## Next
 
-Planning Gate 2 → Gate 3 → Implementation
+- Part A (FE): Proceed through gates → fix isDirty
+- Part B (Backend): BLOCKED — awaiting backend fix for 4 silently-dropped fields

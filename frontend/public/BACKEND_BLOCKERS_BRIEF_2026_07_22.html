@@ -981,6 +981,60 @@ GET /stock-inventory → stock_title="Tandoori Chicken Indian":
 
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- APPENDED 2026-07-25: BUG-248 — Food Edit API Silently Drops 4 Fields -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<hr style="margin:40px 0;border:2px solid #dc2626;">
+<h2 style="color:#dc2626;">BACKEND BUG: Food Edit API Silently Drops 4 Fields (BUG-248, 2026-07-25)</h2>
+
+<h3>Summary</h3>
+<p><code>POST /api/v2/vendoremployee/product/foods/{id}</code> returns <code>"food updated successfully"</code>
+but <strong>silently ignores</strong> 4 fields in the <code>food_info</code> JSON body.
+FE sends them correctly. Backend says success but does not persist.</p>
+
+<h3>Affected Fields</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;border-color:#2a3349;color:#e2e8f0;font-size:13px;">
+  <tr style="background:#1c2333;"><th>Field</th><th>FE Sends</th><th>Backend Response</th><th>Re-fetch Value</th><th>Persisted?</th></tr>
+  <tr><td><code>packed_food</code></td><td><code>"Yes"</code></td><td><code>"food updated successfully"</code></td><td><code>"No"</code></td><td style="color:#ef4444;font-weight:bold;">NO</td></tr>
+  <tr><td><code>is_inventory</code></td><td><code>"No"</code></td><td><code>"food updated successfully"</code></td><td><code>"Yes"</code></td><td style="color:#ef4444;font-weight:bold;">NO</td></tr>
+  <tr><td><code>stock_out</code></td><td><code>"Y"</code></td><td><code>"food updated successfully"</code></td><td><code>"N"</code></td><td style="color:#ef4444;font-weight:bold;">NO</td></tr>
+  <tr><td><code>tax_calc</code></td><td><code>"Exclusive"</code></td><td><code>"food updated successfully"</code></td><td><code>"Inclusive"</code></td><td style="color:#ef4444;font-weight:bold;">NO</td></tr>
+</table>
+
+<h3>Reproduction</h3>
+<pre><code># 1. Get current state
+GET /api/v2/vendoremployee/product/foods-list?food_for=Normal
+→ food 116799: packed_food="No", is_inventory="Yes", stock_out="N", tax_calc="Inclusive"
+
+# 2. Edit with all 4 fields changed
+POST /api/v2/vendoremployee/product/foods/116799
+Content-Type: multipart/form-data
+food_info: {"...","packed_food":"Yes","is_inventory":"No","stock_out":"Y","tax_calc":"Exclusive","..."}
+→ Response: {"message":"food updated successfully"}
+
+# 3. Re-fetch — NO CHANGE
+GET /api/v2/vendoremployee/product/foods-list?food_for=Normal
+→ food 116799: packed_food="No", is_inventory="Yes", stock_out="N", tax_calc="Inclusive"
+</code></pre>
+
+<h3>Impact</h3>
+<ul>
+  <li><strong>Packaged Item:</strong> Cannot mark food as packaged (affects tax exemption logic)</li>
+  <li><strong>Inventory:</strong> Cannot toggle inventory tracking per food item</li>
+  <li><strong>Out of Stock:</strong> Cannot mark food as out of stock via edit (only via separate toggle?)</li>
+  <li><strong>Tax Calc:</strong> Cannot change Inclusive↔Exclusive tax calculation mode</li>
+</ul>
+<p>Affects both <strong>Bulk Editor</strong> and <strong>Card View (ProductForm)</strong> — same endpoint.</p>
+
+<h3>Priority</h3>
+<p><strong>P1.</strong> These fields are user-visible in the Bulk Editor UI. User changes them, sees "saved successfully", but changes are silently lost. Data integrity issue.</p>
+
+<h3>FE Status</h3>
+<p>FE sends all 4 fields correctly in <code>food_info</code> JSON (verified via curl).
+Separate FE fix (BUG-248) for <code>isDirty</code> detection will proceed independently —
+that fixes the Save button. But even after FE fix, changes won't persist until backend fix is applied.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- APPENDED 2026-07-25: CR-104 — Per-Item Complementary Reason Field -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <hr style="margin:40px 0;border:2px solid #f97316;">

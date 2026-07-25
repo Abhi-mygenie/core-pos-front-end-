@@ -16607,7 +16607,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE",
+      "status": "INTAKE COMPLETE \u2014 Part A (FE isDirty) ready for gates, Part B (backend 4 fields) BACKEND-BLOCKED",
       "sprint_key": "pos_5_0",
       "module": "menu-management",
       "related": "",
@@ -16617,7 +16617,8 @@
       "created": "2026-07-25",
       "updated": "2026-07-25",
       "artifact_refs": {
-        "intake": "/app/memory/change_requests/BUG-248_BULKEDITOR_DIRTY_MISSING_INTAKE.md"
+        "intake": "/app/memory/change_requests/BUG-248_BULKEDITOR_DIRTY_MISSING_INTAKE.md",
+        "backend_brief": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25 \u2014 4 silently dropped fields)"
       },
       "gate": "0-1"
     }
