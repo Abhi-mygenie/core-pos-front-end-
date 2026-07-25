@@ -1,5 +1,12 @@
 // CR-106: Normalize nested aggregator API response → flat FE order model
 // Incorporates GAP-1 (order note), GAP-2 (coupon/discount), GAP-3 (rider_info casing), GAP-5 (schedule_at)
+import { F_ORDER_STATUS, ORDER_TO_TABLE_STATUS } from '../constants';
+
+// CR-106: Map f_order_status → tableStatus (same logic as orderTransform.mapTableStatus)
+const mapAggregatorTableStatus = (fOrderStatus) => {
+  const statusKey = F_ORDER_STATUS[fOrderStatus] || 'unknown';
+  return ORDER_TO_TABLE_STATUS[statusKey] || 'occupied';
+};
 
 export const fromAPI = {
   /**
@@ -24,6 +31,7 @@ export const fromAPI = {
 
       // Status
       fOrderStatus: od.f_order_status,
+      tableStatus: mapAggregatorTableStatus(od.f_order_status), // CR-106: needed by TableCard to render as "occupied"
 
       // Source / Origin
       source: od.order_plateform || 'aggregator', // NOTE: backend misspells "plateform"
@@ -59,6 +67,7 @@ export const fromAPI = {
 
       // Customer
       customerName: cust.name || od.user_name || '',
+      customer: od.restaurant_order_id ? `#${od.restaurant_order_id.split('/').pop()}` : (cust.name || od.user_name || 'DEL'), // CR-106: display label for TableCard (e.g. "#002327")
       phone: cust.phone || '',
       deliveryAddress: cust.address || null,
 
@@ -107,6 +116,8 @@ export const fromAPI = {
       tableId: 0,
       tableName: '',
       waiterName: '',
+      waiter: cust.name || od.user_name || 'Aggregator', // CR-106: waiter field used by TableCard for display
+      time: od.created_at || '', // CR-106: time field used by adaptOrder
     };
   },
 

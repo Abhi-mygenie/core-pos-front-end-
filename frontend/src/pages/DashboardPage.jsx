@@ -792,6 +792,12 @@ const DashboardPage = () => {
       servedAt: order.servedAt,
       paymentType: order.paymentType || '',
       paymentMethod: order.paymentMethod || '',
+      // CR-106: Aggregator-specific fields for TableCard S/Z badge + read-only
+      isAggregator: order.isAggregator || false,
+      source: order.source || 'own',
+      isWebOrder: order.isWebOrder || false,
+      customer: order.customer || '',
+      customerName: order.customerName || '',
     });
 
     // Helper to enrich dine-in tables with order data (supports split: 1 table → N entries)

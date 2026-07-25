@@ -37,7 +37,7 @@ const AggregatorRejectModal = ({ open, onClose, onConfirm }) => {
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-0 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 bg-red-50">
-          <h3 className="text-base font-semibold text-red-700">Reject Order</h3>
+          <h3 className="text-base font-semibold text-red-700">Reject Aggregator Order</h3>
           <button onClick={handleClose} className="p-1 rounded-lg hover:bg-red-100 transition-colors" data-testid="reject-modal-close">
             <X className="w-4 h-4 text-red-500" />
           </button>
@@ -88,7 +88,7 @@ const AggregatorRejectModal = ({ open, onClose, onConfirm }) => {
             className="flex-1 h-10 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             data-testid="reject-confirm-btn"
           >
-            {isSubmitting ? 'Rejecting...' : 'Reject Order'}
+            {isSubmitting ? 'Rejecting...' : 'Confirm Reject'}
           </button>
         </div>
       </div>

@@ -301,8 +301,20 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
           style={headerPillStyle}
         >
           <div className="flex items-center gap-2 min-w-0">
+            {/* CR-106: S/Z source badge for aggregator orders (Swiggy orange / Zomato red) */}
+            {isAggregator && (table.order?.source || table.source) && (table.order?.source || table.source) !== 'own' && (
+              <span
+                data-testid={`source-badge-${table.id}`}
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                style={{
+                  backgroundColor: (table.order?.source || table.source) === 'zomato' ? '#E23744' : '#FC8019',
+                }}
+              >
+                {(table.order?.source || table.source) === 'zomato' ? 'Z' : 'S'}
+              </span>
+            )}
             {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
-            {table.orderType === 'delivery' && <Bike className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
+            {table.orderType === 'delivery' && !isAggregator && <Bike className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             {(table.orderType === 'dineIn' || table.orderType === 'walkIn') && <Utensils className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             {table.orderType === 'room' && <DoorOpen className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             <span className="text-sm font-bold truncate" title={table.label || table.id}>{table.label || table.id}</span>

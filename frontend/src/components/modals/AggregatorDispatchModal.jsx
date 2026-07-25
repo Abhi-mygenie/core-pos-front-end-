@@ -90,7 +90,7 @@ const AggregatorDispatchModal = ({ open, onClose, onConfirm }) => {
             className="flex-1 h-10 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             data-testid="dispatch-confirm-btn"
           >
-            {isSubmitting ? 'Dispatching...' : 'Dispatch'}
+            {isSubmitting ? 'Dispatching...' : 'Confirm Dispatch'}
           </button>
         </div>
       </div>
