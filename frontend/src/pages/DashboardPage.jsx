@@ -30,7 +30,8 @@ import ScanOrderPopOut from "../components/dashboard/ScanOrderPopOut";
 import AggregatorOrderPopOut from "../components/dashboard/AggregatorOrderPopOut"; // CR-106
 import AggregatorRejectModal from "../components/modals/AggregatorRejectModal";   // CR-106
 import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
-import { updateAggregatorOrderStatus } from "../api/services/aggregatorService";    // CR-106
+import { updateAggregatorOrderStatus, getAggregatorOrderList } from "../api/services/aggregatorService";    // CR-106
+import { fromAPI as aggregatorFromAPI } from "../api/transforms/aggregatorTransform"; // CR-106
 
 // ROOM_CARD_TOTAL (Task 4, Apr-2026): card amount for ROOM orders must reflect
 // the full checkout value the cashier will see — i.e., room food/room-service
@@ -179,7 +180,7 @@ const DashboardPage = () => {
   const { getOrderCancellationReasons } = useSettings();
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
-    orders,
+    orders, addOrder,
     orderItemsByTableId, getOrderByTableId, getOrdersByTableId, removeOrder, waitForOrderRemoval,
     isOrderEngaged, getOrderById,
   } = useOrders();
@@ -194,6 +195,23 @@ const DashboardPage = () => {
   // nothing — the only visible side effect is the existing ScanOrderPopOut
   // picking up newly-discovered Web/Scan YTC orders.
   useOrderPollingReconciliation();
+
+  // CR-106: Fetch existing aggregator orders on dashboard boot
+  // These come from a separate API (UrbanPiper) and aren't included in regular getRunningOrders
+  const aggregatorBootDone = useRef(false);
+  useEffect(() => {
+    if (aggregatorBootDone.current || !restaurantLoaded) return;
+    aggregatorBootDone.current = true;
+    getAggregatorOrderList()
+      .then(data => {
+        const aggOrders = aggregatorFromAPI.aggregatorOrderList(data);
+        aggOrders.forEach(o => addOrder(o));
+        if (aggOrders.length > 0) {
+          console.log(`[Dashboard] CR-106: Loaded ${aggOrders.length} aggregator orders on boot`);
+        }
+      })
+      .catch(err => console.warn('[Dashboard] CR-106: Aggregator boot fetch failed (non-blocking):', err?.message));
+  }, [restaurantLoaded, addOrder]);
 
   // Redirect to loading if data not loaded (auth check handled by ProtectedRoute — T-07)
   useEffect(() => {
