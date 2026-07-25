@@ -608,3 +608,8 @@
 | File | Change | Agent |
 |------|--------|-------|
 | `components/panels/menu/BulkEditor.jsx` | +9 isDirty checks (packedFood, isInventory, stockOut, isDisabled, taxCalc, itemUnit, availableTimeStart, availableTimeEnd, portionSize) at L289-298. +`portion_size` in buildPayload at L168. | BUG-248 IMPL agent |
+
+### CR-048-REBUILD — Dashboard Sync Script (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `frontend/scripts/gen_dashboard_sync.py` | NEW — Python sync script reads registry.json, outputs cr_registry.json + bug_tracker.json for Control Dashboard. 130 CRs, 263 BUGs synced. | CR-048-REBUILD IMPL agent |

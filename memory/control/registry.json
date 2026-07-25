@@ -13062,7 +13062,7 @@
       "title": "Auto-Sync Registry \u2192 Dashboard JSON (eliminate manual sync gap)",
       "type": "cr",
       "priority": "P1",
-      "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+      "status": "QA PASS \u2014 AWAITING OWNER SMOKE | CR-048-REBUILD: sync script recreated + dashboard JSONs regenerated (2026-07-25)",
       "sprint_key": "pos_5_0",
       "area": "Dev Tooling / Control Dashboard",
       "created": "2026-06-15",
@@ -13078,7 +13078,8 @@
         "qa_handover": "memory/handover/QA_HANDOVER_2026_06_15_CR049_SESSION.md"
       },
       "completeness": "5/7",
-      "gate": "5b"
+      "gate": "5b",
+      "updated": "2026-07-25"
     },
     {
       "id": "CR-049",
