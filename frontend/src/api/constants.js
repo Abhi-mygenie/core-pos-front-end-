@@ -275,6 +275,7 @@ export const STATION_TYPES = {
 
 // f_order_status (API) → frontend status key
 export const F_ORDER_STATUS = {
+  0: 'aggregatorNew',  // CR-106: incoming aggregator order (Swiggy/Zomato)
   1: 'preparing',
   2: 'ready',
   3: 'cancelled',
@@ -457,3 +458,24 @@ export const EXPENSE_ENDPOINTS = {
 
 // CR-094: Profit & Loss Report
 export const PL_REPORT_ENDPOINT = '/api/v1/vendoremployee/profit-loss-report';
+
+// CR-106: AGGREGATOR MODULE ENDPOINTS (UrbanPiper — Swiggy/Zomato)
+export const AGGREGATOR_ENDPOINTS = {
+  ORDER_LIST: '/api/v1/vendoremployee/urbanpiper/get-order-list',
+  ORDER_STATUS_UPDATE: '/api/v1/urbanpiper/orders-status-update',
+};
+
+// CR-106: Cancel reason codes (identical for Swiggy & Zomato via UrbanPiper)
+export const AGGREGATOR_CANCEL_REASONS = [
+  { code: 'ITEM_OUT_OF_STOCK', label: 'Item Out of Stock' },
+  { code: 'STORE_CLOSED', label: 'Store Closed' },
+  { code: 'STORE_BUSY', label: 'Store Busy' },
+  { code: 'RIDER_NOT_AVAILABLE', label: 'Rider Not Available' },
+  { code: 'OUT_OF_DELIVERY_RADIUS', label: 'Out of Delivery Radius' },
+  { code: 'CONNECTIVITY_ISSUE', label: 'Connectivity Issue' },
+  { code: 'TOTAL_MISSMATCH', label: 'Total Mismatch' },
+  { code: 'INVALID_ITEM', label: 'Invalid Item' },
+  { code: 'OPTION_OUT_OF_STOCK', label: 'Option Out of Stock' },
+  { code: 'INVALID_OPTION', label: 'Invalid Option' },
+  { code: 'UNSPECIFIED', label: 'Other / Unspecified' },
+];

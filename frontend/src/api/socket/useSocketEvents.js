@@ -15,10 +15,12 @@ import socketService, { CONNECTION_STATUS } from './socketService';
 import { getRunningOrders } from '../services/orderService';
 import { 
   SOCKET_EVENTS,
+  AGGREGATOR_EVENTS, // CR-106
   getOrderChannel,
   getTableChannel,
   getOrderEngageChannel,
   getFoodUpdateChannel,
+  getAggregatorChannel, // CR-106
 } from './socketEvents';
 import {
   handleNewOrder,
@@ -31,7 +33,10 @@ import {
   handleOrderEngage,
   handleSplitOrder,
   handleFoodUpdate,
+  handleAggregatorNewOrder,    // CR-106
+  handleAggregatorOrderUpdate, // CR-106
 } from './socketHandlers';
+import { fromAPI as aggregatorFromAPI } from '../transforms/aggregatorTransform'; // CR-106
 
 /**
  * Hook that subscribes to all socket events and routes them to handlers
@@ -187,6 +192,23 @@ export const useSocketEvents = () => {
     handleFoodUpdate(args, actionsRef.current);
   }, []);
 
+  // CR-106: Aggregator order channel handler (Swiggy/Zomato via UrbanPiper)
+  const handleAggregatorChannelEvent = useCallback((...args) => {
+    const eventName = args[0];
+    console.log(`[useSocketEvents] Aggregator channel event: ${eventName}`, args);
+    
+    switch (eventName) {
+      case AGGREGATOR_EVENTS.AGGRIGATOR_ORDER:
+        handleAggregatorNewOrder(args, actionsRef.current, { fromAPI: aggregatorFromAPI });
+        break;
+      case AGGREGATOR_EVENTS.AGGRIGATOR_ORDER_UPDATE:
+        handleAggregatorOrderUpdate(args, actionsRef.current, { fromAPI: aggregatorFromAPI });
+        break;
+      default:
+        console.log(`[useSocketEvents] Unknown aggregator event: ${eventName}`);
+    }
+  }, []);
+
   // ===========================================================================
   // SUBSCRIBE TO ORDER CHANNEL ONLY
   // BUG-203: Table channel removed — table status derived from order data
@@ -217,13 +239,16 @@ export const useSocketEvents = () => {
     const orderEngageChannel = getOrderEngageChannel(restaurantId);
     // BUG-116: Subscribe to food-update channel (menu/product realtime upsert)
     const foodUpdateChannel = getFoodUpdateChannel(restaurantId);
+    // CR-106: Subscribe to aggregator order channel (Swiggy/Zomato)
+    const aggregatorChannel = getAggregatorChannel(restaurantId);
     
-    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}: ${orderChannel}, ${tableChannel}, ${orderEngageChannel}, ${foodUpdateChannel}`);
+    console.log(`[useSocketEvents] Subscribing to channels for restaurant ${restaurantId}: ${orderChannel}, ${tableChannel}, ${orderEngageChannel}, ${foodUpdateChannel}, ${aggregatorChannel}`);
     
     const unsubscribeOrder = subscribe(orderChannel, handleOrderChannelEvent);
     const unsubscribeTable = subscribe(tableChannel, handleTableChannelEvent);
     const unsubscribeOrderEngage = subscribe(orderEngageChannel, handleOrderEngageChannelEvent);
     const unsubscribeFoodUpdate = subscribe(foodUpdateChannel, handleFoodUpdateChannelEvent);
+    const unsubscribeAggregator = subscribe(aggregatorChannel, handleAggregatorChannelEvent); // CR-106
     
     if (unsubscribeOrder) {
       console.log(`[useSocketEvents] Subscribed to order channel successfully`);
@@ -248,6 +273,13 @@ export const useSocketEvents = () => {
     } else {
       console.warn('[useSocketEvents] food-update channel subscription failed');
     }
+
+    // CR-106
+    if (unsubscribeAggregator) {
+      console.log('[useSocketEvents] Subscribed to aggregator channel successfully');
+    } else {
+      console.warn('[useSocketEvents] Aggregator channel subscription failed');
+    }
     
     // Cleanup on unmount or when restaurantId changes
     return () => {
@@ -256,6 +288,7 @@ export const useSocketEvents = () => {
       unsubscribeTable && unsubscribeTable();
       unsubscribeOrderEngage && unsubscribeOrderEngage();
       unsubscribeFoodUpdate && unsubscribeFoodUpdate();
+      unsubscribeAggregator && unsubscribeAggregator(); // CR-106
     };
   }, [
     isConnected,
@@ -265,6 +298,7 @@ export const useSocketEvents = () => {
     handleTableChannelEvent,
     handleOrderEngageChannelEvent,
     handleFoodUpdateChannelEvent,
+    handleAggregatorChannelEvent, // CR-106
   ]);
 
   // Return connection status and restaurantId for UI feedback

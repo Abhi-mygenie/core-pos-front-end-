@@ -904,3 +904,62 @@ export const handleFoodUpdate = (args, actions) => {
     log('WARN', `food-update: unhandled type='${type}' food_id=${food_id}`);
   }
 };
+
+
+// =============================================================================
+// CR-106: AGGREGATOR ORDER HANDLERS (Swiggy/Zomato via UrbanPiper)
+// =============================================================================
+
+/**
+ * Handle new aggregator order from socket
+ * Socket: aggregator_order_${rid} → 'aggrigator-order' → [event, orderId, rid, ?, payload?]
+ * Owner confirmed: full payload comes via socket, no separate API fetch needed
+ */
+export const handleAggregatorNewOrder = (message, actions, aggregatorTransform) => {
+  log('INFO', 'Aggregator new order event', message);
+  const orderId = message[1];
+  const payload = message[4] || message[3]; // payload position may vary
+
+  if (payload && typeof payload === 'object' && payload.order_details_order) {
+    // Full payload in socket — transform directly
+    const order = aggregatorTransform.fromAPI.aggregatorOrder(payload);
+    actions.addOrder(order);
+    log('INFO', `Aggregator order added from socket payload: ${order.orderId}`);
+  } else {
+    // Fallback: fetch via API (shouldn't happen per owner, but defensive)
+    log('WARN', `Aggregator socket missing payload for orderId=${orderId}, fetching via API`);
+    import('../services/aggregatorService').then(({ getAggregatorOrderList }) => {
+      getAggregatorOrderList().then(data => {
+        const orders = aggregatorTransform.fromAPI.aggregatorOrderList(data);
+        const found = orders.find(o => o.orderId === Number(orderId));
+        if (found) actions.addOrder(found);
+      }).catch(err => log('ERROR', 'Aggregator API fallback failed', err));
+    });
+  }
+};
+
+/**
+ * Handle aggregator order status update from socket
+ * Socket: aggregator_order_${rid} → 'aggrigator-order-update' → [event, orderId, rid, status]
+ */
+export const handleAggregatorOrderUpdate = (message, actions, aggregatorTransform) => {
+  log('INFO', 'Aggregator order update event', message);
+  const orderId = Number(message[1]);
+  const payload = message[4] || message[3];
+
+  if (payload && typeof payload === 'object' && payload.order_details_order) {
+    const order = aggregatorTransform.fromAPI.aggregatorOrder(payload);
+    actions.updateOrder(order.orderId, order);
+    log('INFO', `Aggregator order updated from socket: ${order.orderId}, status=${order.fOrderStatus}`);
+  } else {
+    // Fallback: re-fetch order list and find this order
+    log('WARN', `Aggregator update missing payload for orderId=${orderId}, fetching via API`);
+    import('../services/aggregatorService').then(({ getAggregatorOrderList }) => {
+      getAggregatorOrderList().then(data => {
+        const orders = aggregatorTransform.fromAPI.aggregatorOrderList(data);
+        const found = orders.find(o => o.orderId === orderId);
+        if (found) actions.updateOrder(found.orderId, found);
+      }).catch(err => log('ERROR', 'Aggregator update API fallback failed', err));
+    });
+  }
+};
