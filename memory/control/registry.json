@@ -16683,7 +16683,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE \u2014 Impact Analysis frozen. Ready for Gate 3 (Implementation Plan).",
+      "status": "GATE 3 COMPLETE \u2014 Implementation Plan ready. Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "dashboard",
       "related": "CR-082, BUG-122",
@@ -16706,9 +16706,10 @@
         "intake": "/app/memory/change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md",
         "evidence": "/app/memory/evidence/CR-106/",
         "handover": "/app/memory/handover/SESSION_HANDOVER_2026_07_25_CR106_INTAKE_IA.md",
-        "impact_analysis": "/app/memory/impact/CR-106_IMPACT_ANALYSIS.md"
+        "impact_analysis": "/app/memory/impact/CR-106_IMPACT_ANALYSIS.md",
+        "implementation_plan": "/app/memory/plans/CR-106_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "2",
+      "gate": "3",
       "notes": "ID collision resolved: original CR-105 intake doc on swiggy branch renumbered to CR-106. Distinct from CR-105 (Smart Purchase Show All). LARGE blast radius (~15 files). Touches R5 hotspots (OrderCard, DashboardPage). 4 open questions (OQ-1 to OQ-4)."
     }
   ]
