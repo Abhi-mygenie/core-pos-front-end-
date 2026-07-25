@@ -66,6 +66,7 @@ User edits cell in BulkEditor grid
 | File | Lines | Change |
 |------|-------|--------|
 | `components/panels/menu/BulkEditor.jsx` | ~258-288 (isDirty `checks` object) | Add 9 entries |
+| `components/panels/menu/BulkEditor.jsx` | ~157 (buildPayload) | Add `portion_size` field (OQ-1 resolved) |
 
 ### Files will NOT touch:
 - `MenuManagementPanel.jsx` — parent; no change needed
@@ -76,11 +77,11 @@ User edits cell in BulkEditor grid
 
 ---
 
-## 5. Owner Decisions Needed
+## 5. Owner Decisions — RESOLVED
 
-| # | Question | Options | Impact |
-|---|----------|---------|--------|
-| OQ-1 | `portionSize`: `buildPayload` does not include `portion_size`. After isDirty fix, editing portion size will trigger Save but the field won't be sent to API. Add `portion_size: row.portionSize \|\| ""` to `buildPayload`? | A) Add it (1 line). B) Leave as-is (harmless — save fires but field ignored by API). | If A: +1 line in buildPayload (~L157). If B: no extra change. |
+| # | Question | Decision | Date |
+|---|----------|----------|------|
+| OQ-1 | `portionSize`: `buildPayload` does not include `portion_size`. Add it? | **YES — Option A: add `portion_size: row.portionSize \|\| ""` to `buildPayload`.** +1 line at ~L157. | 2026-07-25 |
 
 ---
 
@@ -106,7 +107,7 @@ Each missing check follows the same pattern as existing entries. The `_original`
 
 | Factor | Assessment |
 |--------|-----------|
-| Change scope | 1 file, ~9-10 lines (isDirty checks), +1 optional (buildPayload portionSize) |
+| Change scope | 1 file, ~10 lines (9 isDirty checks + 1 buildPayload portionSize) |
 | Financial logic | NO — none of these 9 fields are financial |
 | API contract | NO change — buildPayload already sends these fields |
 | State management | NO change — same `rows` state, same `isDirty` function, just more entries |

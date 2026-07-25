@@ -16607,7 +16607,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "IMPACT ANALYSIS COMPLETE \u2014 Part A (FE isDirty) ready for Gate 3, Part B (backend 4 fields) BACKEND-BLOCKED",
+      "status": "GATE 3 COMPLETE \u2014 Plan ready. Awaiting Gate 4 GO. Part B BACKEND-BLOCKED.",
       "sprint_key": "pos_5_0",
       "module": "menu-management",
       "related": "",
@@ -16619,9 +16619,10 @@
       "artifact_refs": {
         "intake": "/app/memory/change_requests/BUG-248_BULKEDITOR_DIRTY_MISSING_INTAKE.md",
         "backend_brief": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25 \u2014 4 silently dropped fields)",
-        "impact_analysis": "/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md"
+        "impact_analysis": "/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md",
+        "implementation_plan": "/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "2"
+      "gate": "3"
     }
   ]
 }
