@@ -16517,7 +16517,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE",
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "module": "dashboard",
       "related": "",
@@ -16528,9 +16528,10 @@
       "updated": "2026-07-25",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/BUG-245_TABLE_CARD_MOVES_ON_ORDER_INTAKE.md",
-        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
+        "plan": "/app/memory/plans/BUG-245_IMPACT_AND_PLAN.md"
       },
-      "gate": "0-1"
+      "gate": "3"
     },
     {
       "id": "BUG-246",
@@ -16538,7 +16539,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE COMPLETE",
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "module": "order-entry",
       "related": "",
@@ -16549,9 +16550,10 @@
       "updated": "2026-07-25",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/BUG-246_CUSTOMIZED_ITEMS_NOT_MERGING_INTAKE.md",
-        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
+        "plan": "/app/memory/plans/BUG-246_IMPACT_AND_PLAN.md"
       },
-      "gate": "0-1"
+      "gate": "3"
     },
     {
       "id": "BUG-247",
@@ -16559,7 +16561,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE",
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "BUG-236",
@@ -16571,9 +16573,10 @@
       "updated": "2026-07-25",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/BUG-247_ADHOC_SEARCH_BLOCKS_UI_INTAKE.md",
-        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
+        "plan": "/app/memory/plans/BUG-247_IMPACT_AND_PLAN.md"
       },
-      "gate": "0-1"
+      "gate": "3"
     }
   ]
 }
