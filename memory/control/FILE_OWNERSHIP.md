@@ -596,3 +596,10 @@
 | File | Change | Agent |
 |------|--------|-------|
 | `api/transforms/inventoryTransform.js` | BUG-244: `toAPI.addPurchase()` — payment_method→payment_type, +tot_amount/item_total/tot_fair/tot_tax, removed converion_factor from line items | BUG-244 IMPL agent |
+
+### BUG-245 + BUG-246 + BUG-247 — Implementation Batch (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `components/dashboard/ChannelColumn.jsx` | BUG-245: Removed occupied-first bucketing in channel mode. Single `.sort(compare)` replaces 8-line split. Tables stay in label-numeric position regardless of order status. | BUG-245 IMPL |
+| `components/order-entry/OrderEntry.jsx` | BUG-246: +`customizationKey()` builder + merge logic in `addCustomizedItemToCart()`. Identical customized items (same id+size+variants+addons+notes) merge qty instead of appending duplicate lines. | BUG-246 IMPL |
+| `components/inventory/smart/VendorSuggestionCell.jsx` | BUG-247: Wrapped in `React.memo()` to prevent re-render on parent typeahead state change. Import `memo` added. | BUG-247 IMPL |

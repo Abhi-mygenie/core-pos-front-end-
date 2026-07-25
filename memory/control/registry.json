@@ -16517,7 +16517,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
       "module": "dashboard",
       "related": "",
@@ -16531,7 +16531,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-245_IMPACT_AND_PLAN.md"
       },
-      "gate": "3"
+      "gate": "5a"
     },
     {
       "id": "BUG-246",
@@ -16539,7 +16539,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
       "module": "order-entry",
       "related": "",
@@ -16553,7 +16553,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-246_IMPACT_AND_PLAN.md"
       },
-      "gate": "3"
+      "gate": "5a"
     },
     {
       "id": "BUG-247",
@@ -16561,7 +16561,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "BUG-236",
@@ -16576,7 +16576,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-247_IMPACT_AND_PLAN.md"
       },
-      "gate": "3"
+      "gate": "5a"
     }
   ]
 }

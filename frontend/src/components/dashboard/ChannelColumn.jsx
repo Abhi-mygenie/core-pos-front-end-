@@ -151,20 +151,14 @@ const ChannelColumn = ({
     };
     const compare = viewType === 'table' ? tableCompare : orderCompare;
 
-    // Step 3: within each bucket, sort occupied then available
+    // Step 3: within each bucket, sort by groupingMode
     for (const bucket of buckets.values()) {
       if (groupingMode === 'status') {
         bucket.items = sortByActiveFirst(bucket.items, TABLE_STATUS_PRIORITY);
       } else {
-        const occupied = [];
-        const available = [];
-        bucket.items.forEach(it => {
-          if (isAvailable(it)) available.push(it);
-          else occupied.push(it);
-        });
-        occupied.sort(compare);
-        available.sort(compare);
-        bucket.items = [...occupied, ...available];
+        // BUG-245: channel mode — sort ALL items by stable comparator (label-numeric / FIFO).
+        // No occupied-first bucketing — tables stay in their label position regardless of order status.
+        bucket.items.sort(compare);
       }
     }
 

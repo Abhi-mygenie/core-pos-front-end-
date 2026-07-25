@@ -673,20 +673,40 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setWeightEntryItem(null);
   };
 
+  // BUG-246: Build identity key for customization merge
+  const customizationKey = (ci) => JSON.stringify([
+    ci.id || ci.foodId,
+    ci.customizations?.size || '',
+    [...(ci.customizations?.variants || [])].sort(),
+    [...(ci.customizations?.addons || [])].sort(),
+    ci.customizations?.notes || '',
+  ]);
+
   const addCustomizedItemToCart = (item) => {
     // Case 3: Prepaid orders cannot be edited
     if (isPrepaid && placedOrderId) {
       toast({ title: "Cannot Edit", description: "Prepaid orders cannot be modified", variant: "destructive" });
       return;
     }
-    setCartItems([...cartItems, {
-      ...item,
-      qty: item.quantity || 1,
-      status: "preparing",
-      placed: false,
-      addedAt: new Date().toISOString()
-    }]);
+    // BUG-246: Merge identical customized items instead of always appending
+    const key = customizationKey(item);
+    const existingIndex = cartItems.findIndex(ci => !ci.placed && ci.customizations && customizationKey(ci) === key);
+    if (existingIndex >= 0) {
+      const updated = [...cartItems];
+      updated[existingIndex] = { ...updated[existingIndex], qty: updated[existingIndex].qty + (item.quantity || 1) };
+      setCartItems(updated);
+    } else {
+      setCartItems([...cartItems, {
+        ...item,
+        qty: item.quantity || 1,
+        status: "preparing",
+        placed: false,
+        addedAt: new Date().toISOString()
+      }]);
+    }
     setCustomizationItem(null);
+    setFlashItemId(item.id || item.foodId);
+    setTimeout(() => setFlashItemId(null), 400);
   };
 
   // updateQuantity — differentiates placed vs unplaced items
