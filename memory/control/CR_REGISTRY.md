@@ -349,3 +349,10 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | **CR-104** | Item-level complementary reason — mandatory note when marking food as comp. Backend needs `complementary_reason` field per order_details line item. RELATED to CR-058 (order-level comp — separate scope). | **P2** | MEDIUM | **INTAKE — BACKEND-BLOCKED** | 0-1 | 3 files: `OrderEntry.jsx` (R5), `CollectPaymentPanel.jsx` (R5), `orderTransform.js`. Backend brief appended to `BACKEND_BLOCKERS_BRIEF_2026_07_22.html`. |
 | **CR-105** | Smart Purchase: Show All toggle + Add Item button. Sub-A: inStockRows in planner. Sub-B: AdHocTypeahead uncommented. | **P2** | LOW | **IMPLEMENTED** | 5a | 3 files: purchasePlanner.js, SmartPurchasePanel.jsx, AutoShoppingList.jsx. |
+
+
+### 2026-07-25 Aggregator Integration (CR-106)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-106** | Aggregator Integration Module (UrbanPiper / Swiggy / Zomato) — Live order handling: socket subscription, mandatory popup, accept with prep-time, ready/dispatch/reject lifecycle, source badge. **ID NOTE: renumbered from CR-105 on swiggy branch (collision with existing CR-105 Smart Purchase Show All).** | **P1** | HIGH | **INTAKE COMPLETE (2026-07-25).** 4 OQs open. LARGE blast radius (~15 files, R5 hotspots). | 0-1 ✅ | `aggregatorService.js` (NEW), `aggregatorTransform.js` (NEW), `AggregatorOrderPopOut.jsx` (NEW), `AggregatorRejectModal.jsx` (NEW), `AggregatorDispatchModal.jsx` (NEW), `OrderCard.jsx`, `DashboardPage.jsx`, `OrderContext.jsx`, `socket/index.js`, `socketHandlers.js`, `constants.js`. Intake: `change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md`. Evidence: `evidence/CR-106/`. |

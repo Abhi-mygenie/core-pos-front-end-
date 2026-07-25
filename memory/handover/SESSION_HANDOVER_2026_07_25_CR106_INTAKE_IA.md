@@ -1,12 +1,12 @@
-# SESSION HANDOVER — 2026-07-25 (CR-105 Intake + Impact Analysis + Design Freeze)
+# SESSION HANDOVER — 2026-07-25 (CR-106 Intake + Impact Analysis + Design Freeze)
 **Role:** INTAKE (Gate 0-1) → PLANNING (Gate 2) → DESIGN FREEZE
 **Sprint:** POS 5.0
-**CR:** CR-105 — Aggregator Integration Module (UrbanPiper / Swiggy / Zomato)
+**CR:** CR-106 — Aggregator Integration Module (UrbanPiper / Swiggy / Zomato)
 
 ---
 
 ## 1-Line Summary
-**CR-105 GATES 0-2 COMPLETE + DESIGN FROZEN.** Full API probe, 14 owner decisions locked, 4 corrections from real-data validation, 0 open questions. 11 files scoped (5 new + 6 modified). Design validated with 5 live orders. Ready for Gate 3.
+**CR-106 GATES 0-2 COMPLETE + DESIGN FROZEN.** Full API probe, 14 owner decisions locked, 4 corrections from real-data validation, 0 open questions. 11 files scoped (5 new + 6 modified). Design validated with 5 live orders. Ready for Gate 3.
 
 ---
 
@@ -17,8 +17,8 @@
 ### MANDATORY BOOT SEQUENCE
 ```
 1. READ this handover FIRST
-2. READ /app/memory/impact/CR-105_IMPACT_ANALYSIS.md (Gate 2 — FINAL)
-3. READ /app/memory/change_requests/CR-105_AGGREGATOR_MODULE_INTAKE.md
+2. READ /app/memory/impact/CR-106_IMPACT_ANALYSIS.md (Gate 2 — FINAL)
+3. READ /app/memory/change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md
 4. READ /app/memory/control/AGENT_PROMPT_ALPHA.md (system prompt — planning role)
 5. VALIDATE: curl the aggregator API with fresh token (see §Credentials)
 6. VALIDATE: check transform field mapping against orders at DIFFERENT lifecycle statuses
@@ -86,12 +86,12 @@ curl -s -X POST 'https://preprod.mygenie.online/api/v1/urbanpiper/orders-status-
 
 | Artifact | Path | Description |
 |---|---|---|
-| Impact Analysis (FINAL) | `memory/impact/CR-105_IMPACT_ANALYSIS.md` | Full Gate 2 doc with all corrections |
-| Intake doc | `memory/change_requests/CR-105_AGGREGATOR_MODULE_INTAKE.md` | Original intake with API contracts |
+| Impact Analysis (FINAL) | `memory/impact/CR-106_IMPACT_ANALYSIS.md` | Full Gate 2 doc with all corrections |
+| Intake doc | `memory/change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md` | Original intake with API contracts |
 | Design flow HTML | `frontend/public/cr105-design-flow.html` | Interactive mockups — all 6 lifecycle steps + rider timeline + 2 view comparison |
 | Real data validation HTML | `frontend/public/cr105-validation.html` | All 5 real orders rendered in mockup format + field mapping table |
-| API probe evidence | `memory/evidence/CR-105/aggregator_orders_probe.json` | Raw API response (5 orders) |
-| Registry | `memory/control/registry.json` (CR-105) | Status: GATE 2 COMPLETE — DESIGN FROZEN |
+| API probe evidence | `memory/evidence/CR-106/aggregator_orders_probe.json` | Raw API response (5 orders) |
+| Registry | `memory/control/registry.json` (CR-106) | Status: GATE 2 COMPLETE — DESIGN FROZEN |
 
 ---
 

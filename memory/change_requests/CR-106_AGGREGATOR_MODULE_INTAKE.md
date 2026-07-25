@@ -1,6 +1,6 @@
-# CR-105 — Aggregator Integration Module (UrbanPiper / Swiggy / Zomato)
+# CR-106 — Aggregator Integration Module (UrbanPiper / Swiggy / Zomato)
 
-**Document:** `change_requests/CR-105_AGGREGATOR_MODULE_INTAKE.md`
+**Document:** `change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md`
 **Created:** 2026-07-25
 **Role:** INTAKE (Gate 0→1)
 **Status:** REGISTERED
@@ -237,8 +237,8 @@ Separate from `new_order_${restaurantId}`. Already scaffolded in `socketEvents.j
 
 ## Evidence
 
-- API probe response saved: `/app/memory/evidence/CR-105/aggregator_orders_probe.json`
-- Login response: `/app/memory/evidence/CR-105/login_response.json`
+- API probe response saved: `/app/memory/evidence/CR-106/aggregator_orders_probe.json`
+- Login response: `/app/memory/evidence/CR-106/login_response.json`
 - Flutter socket code: provided by owner (inline in chat)
 - cURL commands: provided by owner (inline in chat)
 - Test credentials: `owner@18march.com` / `Qplazm@10` (restaurant_id: 478)
