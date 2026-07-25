@@ -16649,6 +16649,27 @@
         "mockup": "__dev/cr105-mockup.html"
       },
       "gate": "2"
+    },
+    {
+      "id": "BUG-249",
+      "title": "Current Stock: Negative quantity items show \"In Stock\" badge \u2014 field mismatch (quantity vs displayQty)",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "LOW",
+      "status": "INVESTIGATION COMPLETE \u2014 root cause confirmed, fix scoped. Ready for Planning.",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "related": "CR-078, BUG-211",
+      "files_to_change": [
+        "components/inventory/CurrentStockPanel.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
+        "investigation": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md"
+      },
+      "gate": "1-2"
     }
   ]
 }

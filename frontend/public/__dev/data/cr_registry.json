@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T10:54:38.164352+00:00",
+  "generated_at": "2026-07-25T11:04:02.800159+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -1087,7 +1087,7 @@
         {
           "id": "CR-105",
           "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
-          "status": "INTAKE COMPLETE \u2014 all OQs resolved. Ready for Gate 2 (Planning).",
+          "status": "IMPACT ANALYSIS COMPLETE \u2014 ready for Gate 3 (Implementation Plan)",
           "priority": "P2",
           "category": "IN_PROGRESS",
           "artifact_refs": [
@@ -1100,9 +1100,19 @@
               "label": "Investigation",
               "path": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md",
               "type": "investigation"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-105_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Mockup",
+              "path": "__dev/cr105-mockup.html",
+              "type": "mockup"
             }
           ],
-          "completeness": "1/7"
+          "completeness": "2/7"
         }
       ]
     },
