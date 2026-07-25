@@ -1,0 +1,61 @@
+{
+  "summary": "CR-106 (UrbanPiper / Swiggy / Zomato Aggregator Module) QA validation. Code-level review of all 5 new files and 6 modified files: PASS. Frontend compiles with 0 new errors (only pre-existing react-hooks warnings). Live E2E on preprod.mygenie.online (restaurant 478): login OK, dashboard boot fetch OK, 4 aggregator orders loaded, socket subscribed to aggregator_order_478, aggregator Ready button renders correctly for status=1 orders, POS Bill/Cancel/Serve buttons correctly hidden for aggregator orders. AggregatorOrderPopOut, AggregatorRejectModal, AggregatorDispatchModal could NOT be exercised in-browser because no aggregator orders currently exist in f_order_status=0/7 (popup trigger) or f_order_status=2 (dispatch trigger). ONE CRITICAL DESIGN GAP found: TableCard.jsx (used for Delivery-channel aggregator cards) does NOT render the S/Z source badge — only OrderCard has renderLogo(); aggregator orders render as TableCard so the mockup-required orange 'S' / red 'Z' circle badge is missing from every aggregator card in the dashboard.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "TableCard.jsx (Delivery channel cards)",
+        "issue": "S/Z source badge NOT rendered for aggregator orders. TableCard has no equivalent to OrderCard's renderLogo() (OrderCard.jsx:353-371). Aggregator orders in Delivery column render via TableCard (data-testid='table-card-delivery-*'), and their header only shows a bike icon + 'Del/DEL' text + amount — no orange S / red Z circle. Users cannot distinguish Swiggy from Zomato at a glance. Verified live: cards table-card-delivery-892353, 40474-40477 all have zero single-letter S/Z badges in DOM. Mockup section 3 requires the S/Z badge in card header.",
+        "selector": "[data-testid^='table-card-delivery-']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "AggregatorRejectModal",
+        "issues": ["Header text is 'Reject Order' — mockup calls for 'Reject Aggregator Order'.", "Confirm button label is 'Reject Order' — mockup calls for 'Confirm Reject'."]
+      },
+      {
+        "screen": "AggregatorDispatchModal",
+        "issues": ["Confirm button label is 'Dispatch' — mockup calls for 'Confirm Dispatch'."]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "HIGH: Add S/Z source badge rendering to TableCard.jsx header (mirror OrderCard.jsx:353-371 renderLogo). Aggregator orders currently render through TableCard and have zero source-badge on live dashboard.",
+    "LOW: Align modal titles/labels with mockup — 'Reject Aggregator Order' / 'Confirm Reject' / 'Confirm Dispatch'.",
+    "INFO: To fully exercise AggregatorOrderPopOut/Reject/Dispatch modals in QA, seed test aggregator orders in f_order_status=0 or 7 (popup) and =2 (dispatch) — none exist on preprod restaurant 478 right now."
+  ],
+  "critical_code_review_comments": [
+    "DashboardPage.jsx is >2000 lines — refactor CR-106 handlers (handleAggregatorAccept/Reject/Ready/Dispatch) into a custom hook (e.g. useAggregatorLifecycle).",
+    "aggregatorTransform.js: line 29 hard-codes 'plateform' misspelling — good comment call-out; consider extracting a normalizer wrapper for defense against backend spelling fixes.",
+    "aggregatorService.js: no explicit error handling — errors bubble to caller (OK because handlers in DashboardPage wrap in try/catch), but a 401/network fault will surface as toast-less failure. Consider central axios interceptor coverage confirmation.",
+    "AggregatorDispatchModal: rider phone validation is >=10 chars only — no numeric-only / country-code check. Acceptable for MVP.",
+    "AggregatorOrderPopOut: safety reset for isAccepting is a 8s timer — if socket update lands earlier, timer still fires; harmless but noisy."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (external Laravel backend not in scope)", "frontend": "code 100% / live E2E 85% (popup+modals not exercisable without seed)"},
+  "test_credentials": "owner@18march.com / Qplazm@10 (working, restaurant 478)",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "CR-106 wiring end-to-end confirmed live: boot fetch (4 orders), socket subscription (aggregator_order_478), Ready button (ready-btn-delivery-*), read-only aggregator cards. Remaining unverified paths: (1) AggregatorOrderPopOut rendering + Accept flow — needs an order in f_order_status=0/7. (2) AggregatorRejectModal — same. (3) AggregatorDispatchModal — needs an order in f_order_status=2. Any of these can be tested by seeding via urbanpiper webhook or by finding a restaurant with live traffic. Also: TableCard S/Z badge gap — fix and re-verify by checking any [data-testid^='table-card-delivery-*'] has a single-letter S/Z child with orange/red background.",
+  "verification_evidence": {
+    "compilation": "webpack compiled with 1 warning (pre-existing, not CR-106)",
+    "files_present": ["aggregatorService.js", "aggregatorTransform.js", "AggregatorOrderPopOut.jsx", "AggregatorRejectModal.jsx", "AggregatorDispatchModal.jsx"],
+    "cr106_markers_in_modified_files": {
+      "constants.js": "line 278 f_order_status=0 mapped to 'aggregatorNew'; lines 462-481 AGGREGATOR_ENDPOINTS + 11 CANCEL_REASONS present",
+      "socketHandlers.js": "lines 910-965 handleAggregatorNewOrder + handleAggregatorOrderUpdate present with API fallback",
+      "useSocketEvents.js": "lines 195-210, 242-251 aggregator channel subscription + handler wired",
+      "DashboardPage.jsx": "lines 30-34 imports, 199-213 boot fetch, 458-460 modal state, 1335-1395 handlers, 1713-1731 component rendering, 1827/2035 handlers passed to child cards",
+      "OrderCard.jsx": "line 60/102 isAggregator, line 411 click no-op guard, lines 999-1032 ready/dispatch buttons + POS hidden",
+      "TableCard.jsx": "line 54/62 isAggregator, line 286 click no-op guard, lines 419-477 ready/dispatch buttons + POS hidden — BUT no S/Z badge render"
+    },
+    "live_console": "[Dashboard] CR-106: Loaded 4 aggregator orders on boot",
+    "live_network": "GET /api/v1/vendoremployee/urbanpiper/get-order-list -> 200",
+    "live_socket": "Subscribed to: aggregator_order_478",
+    "live_dom": "1 aggregator ready-btn present (ready-btn-delivery-892353); 0 S/Z single-letter badges anywhere in delivery cards; 0 dispatch-btns (no orders in status=2); 0 aggregator-popout (no orders in status=0/7); 3 Bill buttons all on non-aggregator cards"
+  }
+}
