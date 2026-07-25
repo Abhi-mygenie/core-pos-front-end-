@@ -16631,7 +16631,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE COMPLETE \u2014 all OQs resolved. Ready for Gate 2 (Planning).",
+      "status": "IMPACT ANALYSIS COMPLETE \u2014 ready for Gate 3 (Implementation Plan)",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-224",
@@ -16644,9 +16644,11 @@
       "updated": "2026-07-25",
       "artifact_refs": {
         "intake": "/app/memory/change_requests/CR-105_SMART_PURCHASE_SHOW_ALL_MANUAL_ADD_INTAKE.md",
-        "investigation": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md"
+        "investigation": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md",
+        "impact_analysis": "/app/memory/impact/CR-105_IMPACT_ANALYSIS.md",
+        "mockup": "__dev/cr105-mockup.html"
       },
-      "gate": "0-1"
+      "gate": "2"
     }
   ]
 }
