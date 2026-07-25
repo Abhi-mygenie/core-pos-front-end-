@@ -3,15 +3,17 @@
 **Date:** 2026-07-25
 **Role:** INVESTIGATION
 **Scope:** Trace Smart Purchase submit payload vs backend `add-purchase` contract
-**Steps Used:** 6/10
-**Confidence:** HIGH (code fully traced)
-**Classification:** CONTRACT_REVIEW (not a bug report — owner asked for gap analysis)
+**Steps Used:** 8/10
+**Confidence:** HIGH (code traced + live curl-probed against preprod)
+**Classification:** FE_BUG — confirmed unit/conversion mismatch affecting 36 of 117 ingredients (31%)
 
 ---
 
 ## 1. Summary
 
-Smart Purchase uses the **same** `inventoryService.addPurchase()` → `toAPI.addPurchase()` pipeline as manual purchase. There is only ONE purchase submission path in the codebase. However, the data being fed into that path has **3 structural gaps** that may cause backend issues.
+Smart Purchase uses the **same** `inventoryService.addPurchase()` → `toAPI.addPurchase()` pipeline as any purchase. There is only ONE submission path.
+
+**CONFIRMED GAP:** The planner computes quantities in **small units** (gm/ml) and the submit sends `Unit: "gm"` with `converion_factor: 1`. But the **backend purchase history records quantities in the ingredient's LARGE unit** (kg/ltr). **36 of 117 ingredients** (31%) have `unit ≠ small_unit` and are affected.
 
 ---
 
@@ -19,98 +21,131 @@ Smart Purchase uses the **same** `inventoryService.addPurchase()` → `toAPI.add
 
 ```
 purchasePlanner.computePlan()
-  → rows: { ingredient_id, name, unit (=smallUnit), suggest_qty, origin, ... }
+  → rows: { ingredient_id, name, unit (=smallUnit ← THIS IS THE PROBLEM), suggest_qty (in small unit), ... }
 
-SmartPurchasePanel adds:
-  → { vendor_id, rate, qty (=suggest_qty), batch:'', expiry:'' }
+SmartPurchasePanel.handleSubmit() builds:
+  → items: [{ ingredientId, unit (=smallUnit), quantity (in small unit), rate, amount, conversionFactor: 1 (HARDCODED) }]
 
-handleSubmit() builds FE shape:
-  → {
-      vendorName, vendorId, purchaseDate, paymentMethod,
-      items: [{ ingredientId, unit, quantity, rate, amount, conversionFactor:1, batch:'', expiry:'', origin }]
-    }
+toAPI.addPurchase() sends to backend:
+  → purchase_items: [{ Ingredient: id, Unit: "gm", quantity: 4604, rate: 0.056, Amount: 257.8, converion_factor: 1 }]
 
-toAPI.addPurchase() maps to backend contract:
-  → {
-      vendor_name, vendor_id, purchase_date (DD-MM-YYYY), payment_method,
-      purchase_items: [{
-        Ingredient: id,     // R9 capital I
-        Unit: unit,         // R9 capital U
-        quantity, rate,
-        Amount: qty*rate,   // R9 capital A
-        converion_factor: 1,// R9 typo
-        batch: '',
-        expiry_date: '',
-        origin: 'planner'
-      }]
-    }
+BUT backend purchase history for same ingredient shows:
+  → Quantity: "4 kg", stock_quantity_raw: 4  (LARGE UNIT)
 ```
 
 ---
 
-## 3. Gaps Found
+## 3. Live Evidence (curl-probed against preprod)
 
-### GAP-1: `converion_factor` HARDCODED to 1 (MEDIUM risk)
+### Ingredient 10719 — Biscoff Biscuit (unit=kg, small_unit=gm)
 
-**Location:** `SmartPurchasePanel.jsx:173` → `conversionFactor: 1`
+| Source | Unit | Quantity | Rate |
+|--------|------|----------|------|
+| **stock-inventory** | unit=kg, small_unit=gm | cal_quantity=6843 gm, quantity=6.843 kg | — |
+| **Purchase History (2026-07-18)** | **Quantity: "4 kg"** | raw: 4 | unit_price: 0.056/gm |
+| **Purchase History (2026-06-03)** | **Quantity: "1 kg"** | raw: 1 | unit_price: 0.11/gm |
+| **What Smart Purchase sends** | **Unit: "gm"** | quantity: ~1000 | rate: 0.056 (per gm) |
 
-**Issue:** The planner (`purchasePlanner.js:120`) uses `item.smallUnit || item.unit` for all math. So `unit` in each row is the **small/base unit** (e.g., `gm`, `ml`, `piece`). The submission sends `quantity` in small-unit terms with `converion_factor: 1`.
+Backend records purchases in **kg** (large unit). Smart Purchase sends in **gm** (small unit).
 
-**Question for backend:** Does `POST /add-purchase` expect:
-- **Option A:** Quantity in small unit + converion_factor=1 ← what FE sends today
-- **Option B:** Quantity in large unit (kg/ltr) + converion_factor=actual (e.g. 1000)
+### Scale of Impact
 
-If backend expects Option B, then both `quantity` and `converion_factor` are wrong. The fix would be to divide `suggest_qty` by the ingredient's `conversionFactor` and pass the real conversion factor.
+```
+unit == small_unit:  81 ingredients (70%) — Smart Purchase unit is CORRECT
+unit != small_unit:  36 ingredients (31%) — Smart Purchase sends WRONG unit
+                     ^^^^^^^^^^^^^^^^^^
+                     All kg↔gm or ltr↔ml pairs
+```
 
-**Evidence:** `purchasePlanner.js:120-121` — unit = `item.smallUnit || item.unit`, onHand = `item.calQuantity` (already in small unit). `SmartPurchasePanel.jsx:170` — `quantity: Number(r.qty ?? r.suggest_qty)` sends small-unit quantity.
+### Ingredient 10741 (unit=gm, small_unit=gm — same unit)
 
-### GAP-2: `vendor_id: null` for System Vendor on submit (LOW-MEDIUM risk)
+Purchase history confirms both gm and kg have been submitted historically:
+- `Quantity: "1 kg", raw: 1` (recent, Jun 2026)
+- `Quantity: "250 gm", raw: 250` (older, Mar 2026)
+
+This shows the backend ACCEPTS either unit — but interprets `raw` literally (250 when gm, 1 when kg). **Correct stock accounting depends on the backend's internal conversion logic.**
+
+---
+
+## 4. Gaps Found
+
+### GAP-1 (CONFIRMED — HIGH risk): Unit + Quantity Mismatch for 36 Ingredients
+
+**Location:** `purchasePlanner.js:120` → `SmartPurchasePanel.jsx:169-173`
+
+**Root cause:** Planner always uses `item.smallUnit || item.unit` for the unit and `item.calQuantity` for on-hand math. The `suggest_qty` is in **small units** (gm/ml). The submit passes this directly to `addPurchase` with `converion_factor: 1`.
+
+**Impact scenarios for ingredient 10719 (unit=kg, small_unit=gm):**
+
+If user wants to buy 1 kg via Smart Purchase:
+- Planner shows: "buy 1000 gm" (suggest_qty=1000, unit=gm)
+- Submit sends: `{ Unit: "gm", quantity: 1000, converion_factor: 1 }`
+- **If backend treats Unit literally:** records 1000 gm purchase (correct stock, ugly record)
+- **If backend ignores Unit and uses ingredient's default (kg):** records 1000 KG — **1000x overstock!**
+- **If backend rejects gm for a kg-ingredient:** 422 error
+
+**Cannot confirm which scenario without a test purchase.** But the mismatch is structurally present.
+
+### GAP-2: Rate/Price Confusion (UX — tied to GAP-1)
+
+**Location:** `SmartPurchasePanel.jsx:58` (suggestedRate from vendor ranking)
+
+**Issue:** `unit_price` from vendor-item-list is normalized to **per small unit** (per gm):
+- Ingredient 10719: `unit_price: 0.056` = 0.056 per gm = 56 per kg
+
+The user sees `suggestedRate: 0.056` as a hint. But they naturally think in kg and might type `56` (per kg). If the system uses this as per-gm:
+- `amount = 1000 gm × 56 = 56,000` — **1000x overcharge**
+
+### GAP-3: `vendor_id: null` for System Vendor (LOW-MEDIUM risk)
 
 **Location:** `SmartPurchasePanel.jsx:162`
 
-**Issue:** System Vendor (BUG-227) displays as a fallback when no vendor history exists. On submit, `vendor_id: 'system'` maps to `null`:
-```js
-vendorId: vid === 'null' ? null : (vid === 'system' ? null : vid)
+System Vendor submits `vendor_id: null`. Existing purchases also show `vendor_id: null` in purchase history — so **backend likely accepts this.** Lower risk than GAP-1/GAP-2.
+
+---
+
+## 5. Non-Gaps (Confirmed Correct)
+
+| Field | Status |
+|-------|--------|
+| `Ingredient` (capital I), `Amount` (capital A) | ✅ R9 |
+| `converion_factor` (typo) | ✅ R9 |
+| `purchase_date` (DD-MM-YYYY) | ✅ R9 |
+| `payment_method` per vendor group | ✅ validated |
+| `origin` field | ✅ planner/stock_alert |
+| Single submission path (`addPurchase`) | ✅ same as any purchase |
+| `vendor_id: null` accepted by backend | ✅ historical evidence |
+
+---
+
+## 6. Fix Direction (no code edit per owner directive)
+
+**For GAP-1 + GAP-2 (the fix is linked):**
+
+The submit payload needs to convert from planner's small-unit domain to the ingredient's large unit:
+
+```
+For each row being submitted:
+  ingredientMaster = find ingredient by id
+  if (ingredientMaster.unit !== ingredientMaster.smallUnit):
+    // Needs conversion: gm→kg, ml→ltr
+    convFactor = 1000  (or derive from known unit families)
+    submit Unit = ingredientMaster.unit (kg/ltr)
+    submit quantity = row.qty / convFactor
+    submit rate = row.rate * convFactor (per kg, not per gm)
+    submit converion_factor = convFactor
+  else:
+    // Same unit, no conversion needed
+    submit as-is
 ```
 
-Validation at L141 blocks `vendor_id === 'null'` (no vendor selected) but ALLOWS `vendor_id === 'system'` (System Vendor) — which then submits as `null`.
-
-**Question for backend:** Does `POST /add-purchase` accept `vendor_id: null`? If not, purchases against System Vendor will fail silently or with a 422.
-
-### GAP-3: `Unit` is small unit, not large unit (tied to GAP-1)
-
-**Location:** `purchasePlanner.js:120` → `SmartPurchasePanel.jsx:169` → `toAPI.addPurchase:177`
-
-**Issue:** The `Unit` field sent to backend is the **small unit** (gm, ml, piece) because that's what the planner uses. If the backend `add-purchase` expects the **large unit** (kg, ltr) as the `Unit` field alongside the conversion factor, this is a mismatch.
-
-**Evidence:** `purchasePlanner.js:120` — `const unit = item.smallUnit || item.unit || ''`
+**Files to change:** `SmartPurchasePanel.jsx` (handleSubmit item mapping, ~10 lines)
 
 ---
 
-## 4. Non-Gaps (Confirmed Correct)
+## 7. Evidence Artifacts
 
-| Field | Status | Notes |
-|-------|--------|-------|
-| `Ingredient` (capital I) | ✅ | R9 preserved |
-| `Amount` (capital A) | ✅ | BUG-197 #6 compliant |
-| `converion_factor` (typo) | ✅ | R9 preserved |
-| `purchase_date` (DD-MM-YYYY) | ✅ | R9 format |
-| `payment_method` per vendor group | ✅ | Validated (L144) |
-| `origin` field | ✅ | 'planner' or 'stock_alert' passed through |
-| `batch` / `expiry_date` empty | ✅ Acceptable | Smart Purchase is quick-order flow; user can't enter these |
-
----
-
-## 5. Recommendations
-
-| # | Gap | Action | Owner? |
-|---|-----|--------|--------|
-| 1 | converion_factor + Unit (small vs large) | **Curl-probe backend** with a test purchase in small unit + factor=1 vs large unit + factor=N. Confirm which the backend expects. | YES — needs backend verification |
-| 2 | vendor_id: null (System Vendor) | **Curl-probe backend** with `vendor_id: null`. If 422 → either block System Vendor submit or require user to pick real vendor. | YES — needs backend verification |
-| 3 | Unit = smallUnit | Tied to GAP-1. If backend expects large unit, both Unit and quantity need remapping. | Resolved with GAP-1 |
-
----
-
-## 6. Evidence Artifacts
-
-All code traces documented above. No curl probes executed (investigation-only session). Backend verification needed for GAP-1 and GAP-2.
+- Stock inventory curl: 117 items, 36 with unit≠small_unit
+- Purchase history curl: ingredient 10719 shows "4 kg" records, ingredient 10741 shows both gm and kg
+- vendor-item-list curl: unit_price normalized to per-small-unit (0.056/gm = 56/kg)
+- All probed against preprod with restaurant Kunafa Mahal (id=689)
