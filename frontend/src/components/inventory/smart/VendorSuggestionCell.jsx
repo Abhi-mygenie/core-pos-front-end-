@@ -1,7 +1,7 @@
 // CR-078 · Smart Purchase — Vendor Suggestion Cell
 // BUG-227: Searchable combobox replaces plain select. Master vendors + System Vendor shown.
 // CR-081 Screen 3: +vendor reasoning text (Cheapest, Stable, Only vendor, Override warning)
-import { useState, useMemo, memo } from 'react'; // BUG-247: +memo
+import { useState, useMemo } from 'react';
 import { AlertTriangle, ChevronsUpDown, Check } from 'lucide-react';
 import { isMateriallyMoreExpensive } from '@/utils/vendorRanking';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
@@ -28,8 +28,8 @@ const getReason = (ranking, selected, winner) => {
   return 'Suggested';
 };
 
-// BUG-247: React.memo prevents re-render when parent re-renders from typeahead state change.
-function VendorSuggestionCellInner({ ranking, selectedVendorId, onChange, ingredientId }) {
+// BUG-247: reverted memo — using extracted typeahead component instead
+export default function VendorSuggestionCell({ ranking, selectedVendorId, onChange, ingredientId }) {
   const [open, setOpen] = useState(false);
   const winner = ranking?.winner;
   const allCandidates = useMemo(() => {
@@ -119,5 +119,3 @@ function VendorSuggestionCellInner({ ranking, selectedVendorId, onChange, ingred
     </div>
   );
 }
-
-export default memo(VendorSuggestionCellInner); // BUG-247

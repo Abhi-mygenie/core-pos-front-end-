@@ -1,10 +1,56 @@
 // CR-078 · Smart Purchase — Auto Shopping List
 // CR-081 Screen 3: Design polish — stock badges, ON-HAND colors, column renames, suggest hint, row bg tints, override warning
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { X, Plus, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import VendorSuggestionCell from './VendorSuggestionCell';
+
+// BUG-247: Extracted typeahead into isolated component. Its state (query text)
+// no longer triggers re-render of the parent table + 50 VendorSuggestionCells.
+function AdHocTypeahead({ ingredientsMaster, vendorItemList, rows, onAddAdHoc, onClose }) {
+  const [query, setQuery] = useState('');
+
+  const filtered = query.length >= 1
+    ? (ingredientsMaster || []).filter(i =>
+        i.name.toLowerCase().includes(query.toLowerCase()) &&
+        !rows.some(r => String(r.ingredient_id) === String(i.id))
+      ).slice(0, 8)
+    : [];
+
+  const handlePick = (ingredient) => {
+    const recentRow = (vendorItemList || []).find(v => String(v.ingredient_id) === String(ingredient.id));
+    onAddAdHoc({
+      ingredient_id: ingredient.id, name: ingredient.name,
+      unit: ingredient.smallUnit || ingredient.unit || '',
+      display_unit: ingredient.displayUnit || ingredient.unit || '',
+      on_hand: 0, velocity_per_day: 0, projected_need: 0, gap: 0, suggest_qty: 0,
+      qty: '', rate: recentRow?.unit_price || '', origin: 'ad_hoc',
+    });
+    onClose();
+  };
+
+  return (
+    <div className="border-t border-slate-100 p-3 bg-slate-50/50">
+      <div className="relative max-w-md">
+        <Input autoFocus value={query}
+          onChange={e => setQuery(e.target.value)}
+          onBlur={() => setTimeout(onClose, 200)}
+          placeholder="Type ingredient name…" className="h-8 text-sm" data-testid="adhoc-typeahead-input" />
+        {filtered.length > 0 && (
+          <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg max-h-52 overflow-y-auto" data-testid="adhoc-typeahead-dropdown">
+            {filtered.map(ing => (
+              <button key={ing.id} type="button" onMouseDown={() => handlePick(ing)}
+                className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-50" data-testid={`adhoc-option-${ing.id}`}>
+                {ing.name} <span className="text-xs text-slate-400">· {ing.displayUnit || ing.unit}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // CR-081: Stock status badge
 const StockBadge = ({ onHand, daysLeft }) => {
@@ -34,27 +80,8 @@ const rowBg = (row) => {
 
 export default function AutoShoppingList({ rows, rankingByIngredient, ingredientsMaster, vendorItemList, onRowChange, onRowRemove, onAddAdHoc, horizonDays, selectedRows, onToggleRow, onToggleAll, onBulkRemove }) {
   const [showTypeahead, setShowTypeahead] = useState(false);
-  const [typeaheadQuery, setTypeaheadQuery] = useState('');
 
-  const filteredMaster = typeaheadQuery.length >= 1
-    ? (ingredientsMaster || []).filter(i =>
-        i.name.toLowerCase().includes(typeaheadQuery.toLowerCase()) &&
-        !rows.some(r => String(r.ingredient_id) === String(i.id))
-      ).slice(0, 8)
-    : [];
-
-  const handleAdHocPick = (ingredient) => {
-    const recentRow = (vendorItemList || []).find(v => String(v.ingredient_id) === String(ingredient.id));
-    onAddAdHoc({
-      ingredient_id: ingredient.id, name: ingredient.name,
-      unit: ingredient.smallUnit || ingredient.unit || '',
-      display_unit: ingredient.displayUnit || ingredient.unit || '',
-      on_hand: 0, velocity_per_day: 0, projected_need: 0, gap: 0, suggest_qty: 0,
-      qty: '', rate: recentRow?.unit_price || '', origin: 'ad_hoc',
-    });
-    setTypeaheadQuery('');
-    setShowTypeahead(false);
-  };
+  // BUG-247: handleAdHocPick moved into AdHocTypeahead component
 
   // CR-081: Format quantity with unit conversion
   const fmtQty = (q, unit) => {
@@ -181,26 +208,15 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
         </table>
       </div>
 
-      {/* Ad-hoc typeahead — kept in footer as well */}
+      {/* BUG-247: Extracted typeahead — its state is isolated, no table re-render on keystrokes */}
       {showTypeahead && (
-        <div className="border-t border-slate-100 p-3 bg-slate-50/50">
-          <div className="relative max-w-md">
-            <Input autoFocus value={typeaheadQuery}
-              onChange={e => setTypeaheadQuery(e.target.value)}
-              onBlur={() => setTimeout(() => setShowTypeahead(false), 200)}
-              placeholder="Type ingredient name…" className="h-8 text-sm" data-testid="adhoc-typeahead-input" />
-            {filteredMaster.length > 0 && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg max-h-52 overflow-y-auto" data-testid="adhoc-typeahead-dropdown">
-                {filteredMaster.map(ing => (
-                  <button key={ing.id} type="button" onMouseDown={() => handleAdHocPick(ing)}
-                    className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-50" data-testid={`adhoc-option-${ing.id}`}>
-                    {ing.name} <span className="text-xs text-slate-400">· {ing.displayUnit || ing.unit}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        <AdHocTypeahead
+          ingredientsMaster={ingredientsMaster}
+          vendorItemList={vendorItemList}
+          rows={rows}
+          onAddAdHoc={onAddAdHoc}
+          onClose={() => setShowTypeahead(false)}
+        />
       )}
     </div>
   );
