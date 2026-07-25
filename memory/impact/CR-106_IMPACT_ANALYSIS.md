@@ -5,7 +5,7 @@
 **Last Updated:** 2026-07-25 (post real-data validation)
 **Role:** PLANNING (Gate 2)
 **Intake ref:** `change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md`
-**Status:** FROZEN — Design validated with real API data
+**Status:** FROZEN — Design validated with real API data. **Updated 2026-07-25b: 5 gaps incorporated from second API probe (4 orders: 3×status-1, 1×status-5).**
 
 ---
 
@@ -18,8 +18,8 @@
 | **Risk (v0.7)** | **HIGH** (touches sockets, order flow, dashboard rendering, new API integration, R5 hotspot files) |
 | **Fast Lane eligible** | NO (multi-file, multi-layer, hotspot files) |
 | **Rules invoked** | R5, R10, R11, R14, R17, R18, R21 |
-| **Curl-probe status (R11)** | **COMPLETE** — `get-order-list` probed, 5 orders returned, full response structure mapped + validated |
-| **Real-data validation** | **COMPLETE** — all 5 real orders rendered in mockups, 25/26 fields validated, 1 corrected |
+| **Curl-probe status (R11)** | **COMPLETE** — `get-order-list` probed, 5+4 orders returned across 2 sessions, full response structure mapped + validated |
+| **Real-data validation** | **COMPLETE (2 rounds)** — Round 1: 5 orders, 25/26 fields, 4 corrections. Round 2 (2026-07-25b): 4 orders (3×status-1 + 1×status-5), 5 new gaps found + incorporated. |
 | **Design docs** | `cr105-design-flow.html` (flow + mockups), `cr105-validation.html` (real data) |
 
 ---
@@ -162,7 +162,7 @@ Socket handler → updateOrder in OrderContext → UI auto-updates
 | `order_details_order.delivery_charge` | `deliveryCharge` | `0` | ✅ |
 | `order_details_order.payment_method` | `paymentMethod` | `"aggregator"` | ✅ |
 | `order_details_order.payment_status` | `paymentType` | `"unpaid"` | ✅ |
-| `order_details_order.order_note` | `orderNote` | `"This is order level instructions"` | ✅ |
+| `order_details_order.order_note` **OR** `order_details_food[0].food_details.order_note` | `orderNote` | **⚠️ GAP-1 CORRECTED:** `order_details_order.order_note` = NULL on all probed orders. Actual note lives at `food_details.order_note` = `"order level note"`. Transform must check both (fallback chain). | ⚠️ |
 | `order_details_order.created_at` | `createdAt` | `"2026-07-13 14:13:29"` | ✅ |
 | `order_details_order.restaurant_order_id` | `orderNumber` | `"478/002327"` | ✅ |
 | `order_details_order.restaurant_id` | `restaurantId` | `478` | ✅ |
@@ -182,7 +182,12 @@ Socket handler → updateOrder in OrderContext → UI auto-updates
 | `customer_details.name` | `customerName` | `"SWIGGY"` (masked) | ✅ |
 | `customer_details.phone` | `phone` | `"+919999999992"` (masked) | ✅ |
 | `customer_details.address` | `deliveryAddress` | `{ line_1: "Bangalore", city: "Bangalore" }` | ✅ |
-| `rider_info` | `riderInfo` | `{ id: null, name: null, Phone: null }` | ✅ |
+| `rider_info` | `riderInfo` | `{ id: null, name: null, Phone: null }` — **⚠️ GAP-3:** Keys use inconsistent casing: `Phone` (capital P), `Cahnel` (misspelled "Channel"). Also includes `order_return_otp`, `bag_return_otp`. Some orders return `{}`, others return full null-valued object. Transform must handle both shapes. | ⚠️ |
+| `order_details_order.coupon_code` | `couponCode` | **GAP-2 (NEW):** `"10% off"` — present on all probed orders. Needed to explain total breakdown to staff. | ⚠️ NEW |
+| `order_details_order.coupon_discount_amount` | `couponDiscount` | **GAP-2 (NEW):** `19` — formula: `order_amount = item_total - coupon_discount + tax` (190 − 19 + 8.55 = 179.55) | ⚠️ NEW |
+| `order_details_order.discount_on_product_by` | `discountBy` | **GAP-2 (NEW):** `"vendor"` — who funded the discount | ⚠️ NEW |
+| `order_details_food[*].discount_on_food` | `items[*].discount` | **GAP-2 (NEW):** `19` — per-item discount amount | ⚠️ NEW |
+| `order_details_order.schedule_at` | `scheduledAt` | **GAP-5 (NEW):** `"2026-07-16 12:37:10"` — aggregator orders can be scheduled. Show "Scheduled for X" in popup if future. | ⚠️ NEW |
 | — | `isAggregator` | **NEW derived field** = `true` | — |
 | — | `orderFrom` | Set to `'aggregator'` | — |
 | — | `isWebOrder` | Set to `false` (prevents ScanOrderPopOut from triggering) | — |
@@ -195,7 +200,7 @@ Socket handler → updateOrder in OrderContext → UI auto-updates
   - **Size:** SAME as `ScanOrderPopOut` — desktop ≥50% viewport centered, tablet full-screen
   - **Predicate:** `isAggregator === true && (fOrderStatus === 0 || fOrderStatus === 7)` (vs web popup: `isWebOrder && fOrderStatus === 7`)
   - **Header:** Shows aggregator source badge (Swiggy orange `#FC8019` / Zomato red `#E23744`) with "S" or "Z" letter badge
-  - **Body:** Order number, OTP, type, total, tax, customer (masked), delivery address, order note (conditional), item list with category + notes (conditional)
+  - **Body:** Order number, OTP, type, total, tax, **coupon discount line (GAP-2: show coupon_code + coupon_discount_amount so staff understands total breakdown)**, customer (masked), delivery address, order note **(GAP-1: read from `food_details.order_note` first, fallback to `order_details_order.order_note`)**, scheduled time **(GAP-5: show if `schedule_at` is future)**, item list with category + notes (conditional)
   - **Prep time picker:** Pill presets (5/10/15/20/25/30) + manual input field — user MUST select before accepting
   - **Actions:** **Reject + Accept ONLY** (no View button — all data visible in popup)
   - **Blocking:** App unusable until all orders in queue are actioned
@@ -259,7 +264,7 @@ Socket handler → updateOrder in OrderContext → UI auto-updates
 - **Change 1:** Aggregator lifecycle action buttons (Ready → calls "Food Ready" API, Dispatch → opens modal)
 - **Change 2:** Hide POS-specific buttons for aggregator orders (Cancel, Settle Bill) — payment handled externally
 - **Change 3:** Card body click = no-op for aggregator orders (read-only)
-- **Change 4:** Rider timeline section (No Rider → Assigned → On the Way → Arrived with waiting timer)
+- **Change 4:** Rider timeline section (No Rider → Assigned → On the Way → Arrived with waiting timer). **GAP-4: Default to "No Rider" even on dispatched orders — rider data may only arrive via socket push, not in order list API. Tested: status-5 order has all rider fields NULL.**
 - **S/Z badge already works** at line 349-364 — no change needed
 - **Risk:** MEDIUM — R5 hotspot but changes are conditional (gated by `isAggregator`)
 
@@ -315,6 +320,16 @@ Corrections discovered during real-data validation with 5 live orders from 18mar
 | C-3 | **Item category** | Not mapped | **`food_details.category.name`** = "Dosa", "Non-veg Roll" — bonus field, show in popup | LOW |
 | C-4 | **Item image** | Not mapped | **`food_details.image_url`** = S3 URL — available but not required for MVP | LOW |
 
+### Round 2 Gaps (discovered 2026-07-25, second API probe with 4 orders: 3×status-1, 1×status-5)
+
+| # | Gap | Detail | Severity | Action |
+|---|---|---|---|---|
+| GAP-1 | **Order note location** | `order_details_order.order_note` = NULL on all 4 orders. Actual note at `order_details_food[0].food_details.order_note` = `"order level note"`. | **MEDIUM** | Transform reads from `food_details.order_note` first, falls back to `order_details_order.order_note` |
+| GAP-2 | **Discount/coupon data not mapped** | All orders have `coupon_code: "10% off"`, `coupon_discount_amount: 19`. Formula: `order_amount = item_total − coupon_discount + tax` (190 − 19 + 8.55 = 179.55). Food-level: `discount_on_food: 19`. Staff will see confusing totals without discount context. | **MEDIUM** | Map `couponCode`, `couponDiscount`, `discountBy` in transform. Display discount line in popup total breakdown. |
+| GAP-3 | **`rider_info` key casing inconsistent** | API returns `Phone` (capital P), `Cahnel` (misspelled "Channel"). Some orders return `{}`, others `{id: null, name: null, Phone: null, Cahnel: null, order_return_otp: null, bag_return_otp: null}`. | **LOW** | Transform must handle both empty and full shapes. Use `rider_info.Phone` (not `.phone`). |
+| GAP-4 | **Dispatched order has NO rider data** | Order #478/002362 at status 5 — `rider_name`, `rider_phone_number`, `rider_info.*` ALL null. Rider data likely only arrives via socket push, not in order list API. | **LOW** | Rider timeline defaults to "No Rider" state. Timeline only populates when socket delivers rider updates. Graceful handling required. |
+| GAP-5 | **`schedule_at` field present** | `schedule_at: "2026-07-16 12:37:10"` — aggregator orders can be scheduled for future prep. Not mapped. | **LOW** | Map `scheduledAt` in transform. Show "Scheduled for X" in popup if in the future. Defer for MVP if needed. |
+
 ---
 
 ## §8 — Risk Register
@@ -326,6 +341,10 @@ Corrections discovered during real-data validation with 5 live orders from 18mar
 | R3 | Aggregator order transform mismatches regular order shape → breaks OrderCard | MEDIUM | HIGH | Test with all 5 probed orders; ensure all OrderCard-consumed fields present |
 | R4 | Socket event payload shape differs from API `get-order-list` shape | LOW | MEDIUM | Confirm via live socket testing; owner says full payload |
 | R5 | `food_details.title` used incorrectly as `.name` | RESOLVED | — | Corrected in C-1 above |
+| R6 | **Order note read from wrong location** (GAP-1) | HIGH | MEDIUM | Transform uses fallback chain: `food_details.order_note` → `order_details_order.order_note` |
+| R7 | **Confusing totals without discount context** (GAP-2) | HIGH | MEDIUM | Map coupon fields; show discount line in popup breakdown |
+| R8 | **`rider_info` key casing crash** (GAP-3) | MEDIUM | LOW | Defensive access: `rider_info?.Phone` with fallback to `rider_info?.phone` |
+| R9 | **Rider timeline shows empty on dispatched orders** (GAP-4) | MEDIUM | LOW | Default "No Rider" state; timeline populates only from socket push |
 
 ---
 
@@ -334,7 +353,7 @@ Corrections discovered during real-data validation with 5 live orders from 18mar
 ```
 Phase 1: Foundation (no UI)
   1. constants.js — f_order_status=0 + endpoints
-  2. aggregatorTransform.js — normalize nested → flat (use food_details.title!)
+  2. aggregatorTransform.js — normalize nested → flat (use food_details.title! + GAP-1 order_note fallback + GAP-2 coupon fields + GAP-3 rider_info casing + GAP-5 schedule_at)
   3. aggregatorService.js — API calls
   4. socketHandlers.js — aggregator handlers
   5. useSocketEvents.js — aggregator channel subscription
@@ -414,12 +433,13 @@ Phase 4: Polish
 
 ```
 IMPACT ANALYSIS COMPLETE + DESIGN FROZEN for CR-106.
+Updated 2026-07-25b: 5 gaps incorporated (GAP-1 order note location, GAP-2 discount/coupon, GAP-3 rider_info casing, GAP-4 rider data null on dispatched, GAP-5 schedule_at).
 Code reality: PARTIAL (scaffolding exists, live handler/service/popup missing).
 Conflict pre-check: LOW (no active conflicts on target files).
-Risk: HIGH (R5 hotspots DashboardPage + OrderCard, socket wiring, new API).
+Risk: HIGH (R5 hotspots DashboardPage + OrderCard, socket wiring, new API). 9 risks registered (R1-R9).
 Files WILL change: 11 (5 new + 6 modified).
 Files WILL NOT touch: ScanOrderPopOut, CollectPaymentPanel, orderTransform.js, settlement, auth.
-Owner decisions: ALL 14 locked. All OQs resolved. 4 corrections applied from real-data validation.
+Owner decisions: ALL 14 locked. All OQs resolved. 4 corrections + 5 gaps applied from real-data validation.
 Verification matrix: 17 checks.
 Design docs: cr105-design-flow.html + cr105-validation.html
 Next: Gate 3 (Implementation Plan) — exact edits per file with line numbers.
