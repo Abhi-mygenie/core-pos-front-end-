@@ -59,6 +59,11 @@ export async function storeCategory(data) {
   return api.post(INVENTORY_ENDPOINTS.STORE_CATEGORY, payload);
 }
 
+// CR-090: Delete inventory category
+export async function deleteCategory(id) {
+  return api.delete(`${INVENTORY_ENDPOINTS.DELETE_STOCK_CATEGORY}/${id}`);
+}
+
 // ── Stock ────────────────────────────────────────────────────────
 export async function getStockInventory() {
   const res = await api.get(INVENTORY_ENDPOINTS.STOCK_INVENTORY);

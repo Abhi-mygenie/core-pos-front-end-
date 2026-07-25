@@ -91,6 +91,24 @@ function IngredientsTab() {
     }
   };
 
+  // CR-090: Delete category handler (DELETE only — edit deferred)
+  const deleteCategory = async (cat) => {
+    if (!window.confirm(`Delete category "${cat.name}"?`)) return;
+    try {
+      const res = await inventoryService.deleteCategory(cat.id);
+      if (res?.data?.success === false) {
+        toast.error(res.data.message || 'Cannot delete category');
+        return;
+      }
+      toast.success(`Category "${cat.name}" deleted`);
+      if (selectedCat === cat.id) setSelectedCat(null);
+      await fetchData();
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.readableMessage || 'Failed to delete category';
+      toast.error(msg);
+    }
+  };
+
   const deleteIngredient = async (id, name) => {
     if (!window.confirm(`Delete "${name}"?`)) return;
     try {
@@ -207,12 +225,19 @@ function IngredientsTab() {
               <span className="text-xs text-slate-400">{ingredients.length}</span>
             </button>
             {categories.map(cat => (
-              <button key={cat.id} onClick={() => setSelectedCat(cat.id)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm flex justify-between items-center transition-colors ${selectedCat === cat.id ? 'bg-orange-50 text-orange-700 font-medium border-l-2 border-orange-500' : 'text-slate-600 hover:bg-slate-50'}`}
-                data-testid={`cat-${cat.id}`}>
-                <span className="truncate">{cat.name}</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${selectedCat === cat.id ? 'bg-orange-200 text-orange-800' : 'bg-slate-100 text-slate-500'}`}>{catCounts[cat.id] || 0}</span>
-              </button>
+              <div key={cat.id} className="group flex items-center gap-0.5" data-testid={`cat-${cat.id}`}>
+                <button onClick={() => setSelectedCat(cat.id)}
+                  className={`flex-1 text-left px-3 py-2 rounded-lg text-sm flex justify-between items-center transition-colors ${selectedCat === cat.id ? 'bg-orange-50 text-orange-700 font-medium border-l-2 border-orange-500' : 'text-slate-600 hover:bg-slate-50'}`}>
+                  <span className="truncate">{cat.name}</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${selectedCat === cat.id ? 'bg-orange-200 text-orange-800' : 'bg-slate-100 text-slate-500'}`}>{catCounts[cat.id] || 0}</span>
+                </button>
+                <button onClick={() => deleteCategory(cat)}
+                  className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all flex-shrink-0"
+                  data-testid={`cat-delete-${cat.id}`}
+                  title={`Delete ${cat.name}`}>
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
             ))}
           </div>
           <div className="flex gap-1">

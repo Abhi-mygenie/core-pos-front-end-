@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T12:18:17.258549+00:00",
+  "generated_at": "2026-07-25T12:30:57.027875+00:00",
   "schema_version": "2.0",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "summary": {
@@ -10761,5 +10761,5 @@
   "intake_only_bugs": [],
   "pos_2_0_closed_consolidated_2026_05_18": [],
   "pos_final_1_0_closed_consolidated_2026_05_12": [],
-  "normalized_at": "2026-07-25T12:18:17.258549+00:00"
+  "normalized_at": "2026-07-25T12:30:57.027875+00:00"
 }

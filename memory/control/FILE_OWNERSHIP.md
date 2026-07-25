@@ -625,3 +625,10 @@
 | `utils/purchasePlanner.js` | +showAll param (L107), +inStockRows (L143-146), merged return (L173). // CR-105 | CR-105 IMPL agent |
 | `components/inventory/SmartPurchasePanel.jsx` | +showAll state (L20), pass to computePlan (L50) + AutoShoppingList (L241-242), deps (L77). // CR-105 | CR-105 IMPL agent |
 | `components/inventory/smart/AutoShoppingList.jsx` | +showAll/onToggleShowAll props (L82), +in_stock rowBg (L74), +toggle UI (L107-114), uncommented Add Item button (L116-120), +in_stock badge (L170). // CR-105 | CR-105 IMPL agent |
+
+### CR-090 — Inventory Category Delete (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `api/constants.js` | +DELETE_STOCK_CATEGORY endpoint (L159). // CR-090 | CR-090 IMPL agent |
+| `api/services/inventoryService.js` | +deleteCategory(id) function (L63-65). // CR-090 | CR-090 IMPL agent |
+| `components/inventory/InventorySetupPanel.jsx` | +deleteCategory handler (L95-111), sidebar category rows → div wrapper + Trash2 icon on hover (L226-240). // CR-090 | CR-090 IMPL agent |

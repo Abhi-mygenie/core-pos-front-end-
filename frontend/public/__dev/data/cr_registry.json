@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T12:18:17.258549+00:00",
+  "generated_at": "2026-07-25T12:30:57.027875+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -743,7 +743,7 @@
         {
           "id": "CR-090",
           "title": "Inventory Categories \u2014 Edit and Delete",
-          "status": "GATE 3 COMPLETE \u2014 DELETE ONLY (edit deferred, backend PUT missing)",
+          "status": "IMPLEMENTED \u2014 DELETE category with trash icon, confirm dialog, 3 error paths. Edit deferred.",
           "priority": "P2",
           "category": "SUBSUMED",
           "artifact_refs": [

@@ -156,6 +156,7 @@ export const INVENTORY_ENDPOINTS = {
   // Categories
   STOCK_CATEGORIES: '/api/v2/vendoremployee/inventory/stock-item-categories',
   STORE_CATEGORY: '/api/v2/vendoremployee/inventory/stock-item-categories/store',
+  DELETE_STOCK_CATEGORY: '/api/v2/vendoremployee/inventory/stock-item-categories/delete', // CR-090
   // Stock
   STOCK_INVENTORY: '/api/v2/vendoremployee/inventory/stock-inventory',
   UNIT_INVENTORY: '/api/v2/vendoremployee/inventory/unit-inventory',
