@@ -1,34 +1,33 @@
-# Core POS Frontend Deployment
+# MyGenie Core POS Frontend - Deployment PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (branch: main) directly into `/app` and run it as-is with no code edits.
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is with no code edits.
 
 ## Architecture
-- **Frontend**: React (CRA + CRACO) on port 3000
+- **Frontend**: React (CRA + Craco) running on port 3000 via supervisor
+- **Backend**: FastAPI on port 8001 (template, not used by this repo)
 - **Process Manager**: Supervisor
-- **Backend**: Stopped (not needed, frontend-only)
-- **Package Manager**: Yarn
+- **Source Repo**: https://github.com/Abhi-mygenie/core-pos-front-end-.git
 
 ## What's Been Implemented (2026-07-25)
-- Backed up platform files (.env, .emergent/cron)
-- Cloned repo contents into /app
-- Restored platform .env and .emergent configs
-- Installed dependencies via `yarn install --ignore-engines`
-- Frontend dev server running via supervisor (`craco start`)
-- Compilation successful with no fatal errors
-- Created placeholder .env with all required REACT_APP_ variables
+- Cloned repo into `/app` preserving platform structure
+- Backed up and restored platform files (.emergent, .env files)
+- Installed dependencies with `yarn install --ignore-engines`
+- Added placeholder env variables for `REACT_APP_API_BASE_URL` and other required vars
+- Frontend compiles and renders successfully (login page visible)
 
-## Required Environment Variables (user to provide)
-- REACT_APP_API_BASE_URL
-- REACT_APP_CRM_API_KEYS
-- REACT_APP_CRM_BASE_URL
-- REACT_APP_FIREBASE_* (7 Firebase config vars)
-- REACT_APP_GOOGLE_MAPS_KEY
-- REACT_APP_SHOW_AUDIT_TAB
-- REACT_APP_SOCKET_URL
+## Placeholder Env Variables (need real values)
+- `REACT_APP_API_BASE_URL` - MyGenie API backend URL
+- `REACT_APP_SOCKET_URL` - Socket.IO server URL
+- `REACT_APP_CRM_BASE_URL` - CRM base URL
+- `REACT_APP_GOOGLE_MAPS_KEY` - Google Maps API key
+- `REACT_APP_FIREBASE_*` - Firebase configuration (7 keys)
 
-## Status
-- ✅ Dev server compiles and serves on port 3000
-- ⚠️ Runtime error expected: missing REACT_APP_API_BASE_URL (user will add later)
-- ✅ Hot reload active
-- ✅ No code edits made to repo
+## Next Actions (P0)
+- User supplies real `.env` values for API and Firebase
+- Verify login and full app functionality with real backend
+
+## Backlog
+- P1: Connect to real MyGenie backend API
+- P2: Configure Firebase for push notifications
+- P2: Set up production build (`yarn build`)
