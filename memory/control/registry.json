@@ -16493,7 +16493,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE \u2014 2 OQs block Gate 3",
+      "status": "GATE 3 COMPLETE \u2014 awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-243",
@@ -16506,9 +16506,10 @@
         "intake": "/app/memory/change_requests/BUG-244_ADDPURCHASE_PAYLOAD_MISMATCH_INTAKE.md",
         "investigation": "/app/memory/reports/INVESTIGATION_SMART_PURCHASE_SUBMIT_2026_07_25.md",
         "backend_brief": "/app/memory/backend_briefs/BACKEND_BRIEF_ADDPURCHASE_PAYLOAD_2026_07_25.md",
-        "impact_analysis": "/app/memory/impact/BUG-244_IMPACT_ANALYSIS.md"
+        "impact_analysis": "/app/memory/impact/BUG-244_IMPACT_ANALYSIS.md",
+        "implementation_plan": "/app/memory/plans/BUG-244_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "2"
+      "gate": "3"
     }
   ]
 }
