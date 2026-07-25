@@ -16510,6 +16510,70 @@
         "implementation_plan": "/app/memory/plans/BUG-244_IMPLEMENTATION_PLAN.md"
       },
       "gate": "5a"
+    },
+    {
+      "id": "BUG-245",
+      "title": "Table card moves to top when order placed (occupied-first bucketing)",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE",
+      "sprint_key": "pos_5_0",
+      "module": "dashboard",
+      "related": "",
+      "files_to_change": [
+        "components/dashboard/ChannelColumn.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-245_TABLE_CARD_MOVES_ON_ORDER_INTAKE.md",
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+      },
+      "gate": "0-1"
+    },
+    {
+      "id": "BUG-246",
+      "title": "Customized items not merging in cart (duplicate line items + print)",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE COMPLETE",
+      "sprint_key": "pos_5_0",
+      "module": "order-entry",
+      "related": "",
+      "files_to_change": [
+        "components/order-entry/OrderEntry.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-246_CUSTOMIZED_ITEMS_NOT_MERGING_INTAKE.md",
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+      },
+      "gate": "0-1"
+    },
+    {
+      "id": "BUG-247",
+      "title": "Smart Purchase ad-hoc typeahead blocks UI (perf \u2014 no React.memo)",
+      "type": "BUG",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "related": "BUG-236",
+      "files_to_change": [
+        "components/inventory/smart/AutoShoppingList.jsx",
+        "components/inventory/smart/VendorSuggestionCell.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-247_ADHOC_SEARCH_BLOCKS_UI_INTAKE.md",
+        "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md"
+      },
+      "gate": "0-1"
     }
   ]
 }
