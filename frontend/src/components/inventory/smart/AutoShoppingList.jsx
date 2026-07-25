@@ -103,10 +103,11 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
           )}
         </div>
         {/* CR-081: Ad-hoc link in header */}
-        <button type="button" onClick={() => setShowTypeahead(true)}
+        {/* BUG-247: Ad-hoc disabled — typeahead causes runtime error, needs deeper fix */}
+        {/* <button type="button" onClick={() => setShowTypeahead(true)}
           className="text-xs font-semibold text-orange-600 hover:underline" data-testid="add-adhoc-header">
           + Add Ad-hoc Item
-        </button>
+        </button> */}
       </div>
 
       {/* CR-103 Sub-C: Bulk remove toolbar */}
