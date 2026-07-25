@@ -56,13 +56,13 @@ Add an "Add Item" button/typeahead at the bottom of the Auto Shopping List:
 
 ---
 
-## Open Questions
+## Open Questions — RESOLVED
 
-| # | Question | Options |
-|---|----------|---------|
-| OQ-1 | Sub-A: Show All toggle — should in-stock items be editable (user can order even if sufficient stock) or read-only (display only)? | A) Editable. B) Read-only display. |
-| OQ-2 | Sub-B: Manual Add — should it allow items NOT in ingredients master (free-text entry for new ingredients)? | A) Master-list only. B) Allow free-text (creates new ingredient). |
-| OQ-3 | Priority: Sub-A and Sub-B together, or which one first? | A) Both. B) Sub-A only. C) Sub-B only. |
+| # | Question | Decision | Date |
+|---|----------|----------|------|
+| OQ-1 | Sub-A: Show All toggle — in-stock items editable or read-only? | **A) Editable — all operations (qty, rate, vendor, remove) same as deficit items.** | 2026-07-25 |
+| OQ-2 | Sub-B: Manual Add — master-list only or free-text? | **A) Master-list only.** Free-text/adhoc did not work. | 2026-07-25 |
+| OQ-3 | Priority: Sub-A and Sub-B together or separate? | **A) Both together.** (Implied — owner answered both without deferral.) | 2026-07-25 |
 
 ---
 
