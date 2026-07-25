@@ -100,15 +100,12 @@ export default function EmployeeListView() {
   const updateExisting = (id, field, value) => {
     setEditBuffer(prev => {
       const buf = { ...(prev[id] || {}), [field]: value };
+      // BUG-230 fix: always regenerate email on firstName change
+      // unless user explicitly typed in the email field during this edit session.
+      // Previous logic compared against expectedAutoEmail and permanently blocked
+      // sync on any mismatch (typos, backend defaults). Now matches ADD flow behavior.
       if (field === 'firstName' && !buf._emailManual) {
-        const emp = employees.find(e => e.id === id);
-        const currentEmail = buf.email ?? emp?.email ?? '';
-        const expectedAutoEmail = generateEmail(emp?.firstName || '');
-        if (!currentEmail || currentEmail === expectedAutoEmail) {
-          buf.email = generateEmail(value);
-        } else {
-          buf._emailManual = true;
-        }
+        buf.email = generateEmail(value);
       }
       if (field === 'email') {
         buf._emailManual = true;
