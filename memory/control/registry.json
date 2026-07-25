@@ -16631,7 +16631,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "IMPACT ANALYSIS COMPLETE \u2014 ready for Gate 3 (Implementation Plan)",
+      "status": "GATE 3 COMPLETE \u2014 Implementation Plan ready. Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-224",
@@ -16646,9 +16646,10 @@
         "intake": "/app/memory/change_requests/CR-105_SMART_PURCHASE_SHOW_ALL_MANUAL_ADD_INTAKE.md",
         "investigation": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md",
         "impact_analysis": "/app/memory/impact/CR-105_IMPACT_ANALYSIS.md",
-        "mockup": "__dev/cr105-mockup.html"
+        "mockup": "__dev/cr105-mockup.html",
+        "implementation_plan": "/app/memory/plans/CR-105_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "2"
+      "gate": "3"
     },
     {
       "id": "BUG-249",
@@ -16656,7 +16657,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "INVESTIGATION COMPLETE \u2014 root cause confirmed, fix scoped. Ready for Planning.",
+      "status": "GATE 3 COMPLETE \u2014 Impact Analysis + Implementation Plan ready. Awaiting Gate 4 GO.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-211",
@@ -16667,9 +16668,11 @@
       "updated": "2026-07-25",
       "artifact_refs": {
         "intake": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
-        "investigation": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md"
+        "investigation": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
+        "impact_analysis": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
+        "implementation_plan": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md"
       },
-      "gate": "1-2"
+      "gate": "3"
     }
   ]
 }

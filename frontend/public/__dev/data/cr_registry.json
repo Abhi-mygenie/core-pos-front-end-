@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T11:04:02.800159+00:00",
+  "generated_at": "2026-07-25T11:07:15.446696+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -1087,7 +1087,7 @@
         {
           "id": "CR-105",
           "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
-          "status": "IMPACT ANALYSIS COMPLETE \u2014 ready for Gate 3 (Implementation Plan)",
+          "status": "GATE 3 COMPLETE \u2014 Implementation Plan ready. Awaiting Gate 4 GO.",
           "priority": "P2",
           "category": "IN_PROGRESS",
           "artifact_refs": [
@@ -1110,9 +1110,14 @@
               "label": "Mockup",
               "path": "__dev/cr105-mockup.html",
               "type": "mockup"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "/app/memory/plans/CR-105_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
             }
           ],
-          "completeness": "2/7"
+          "completeness": "3/7"
         }
       ]
     },
