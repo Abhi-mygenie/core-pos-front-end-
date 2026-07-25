@@ -15821,7 +15821,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED \u2014 DELETE category with trash icon, confirm dialog, 3 error paths. Edit deferred.",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. 71 categories with trash icon confirmed. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "BUG-220",
@@ -15836,7 +15836,7 @@
         "impact_analysis": "/app/memory/impact/CR-090_IMPACT_ANALYSIS.md",
         "implementation_plan": "/app/memory/plans/CR-090_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "CR-091",

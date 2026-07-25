@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T12:30:57.027875+00:00",
+  "generated_at": "2026-07-25T12:36:47.718955+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -743,9 +743,9 @@
         {
           "id": "CR-090",
           "title": "Inventory Categories \u2014 Edit and Delete",
-          "status": "IMPLEMENTED \u2014 DELETE category with trash icon, confirm dialog, 3 error paths. Edit deferred.",
+          "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. 71 categories with trash icon confirmed. Ready for Gate 6.",
           "priority": "P2",
-          "category": "SUBSUMED",
+          "category": "SHIPPED",
           "artifact_refs": [
             {
               "label": "Intake",
@@ -3047,14 +3047,14 @@
   "cross_sprint_dependency_flags": [],
   "category_counts": {
     "NOT_STARTED": 1,
-    "SHIPPED": 107,
+    "SHIPPED": 108,
     "IN_PROGRESS": 7,
-    "SUBSUMED": 13,
+    "SUBSUMED": 12,
     "BLOCKED": 3
   },
   "active_count": 11,
-  "shipped_count": 107,
-  "subsumed_count": 13,
-  "closed_count": 107,
+  "shipped_count": 108,
+  "subsumed_count": 12,
+  "closed_count": 108,
   "tracked_total": 131
 }
