@@ -15820,7 +15820,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE \u2014 BACKEND-BLOCKED (endpoints missing)",
+      "status": "GATE 2 COMPLETE \u2014 DELETE UNBLOCKED, EDIT PENDING OQ-1",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "BUG-220",
@@ -15829,11 +15829,12 @@
         "api/services/inventoryService.js"
       ],
       "created": "2026-07-22",
-      "updated": "2026-07-22",
+      "updated": "2026-07-25",
       "artifact_refs": {
-        "intake": "/app/memory/change_requests/CR-090_INVENTORY_CATEGORIES_EDIT_DELETE_INTAKE.md"
+        "intake": "/app/memory/change_requests/CR-090_INVENTORY_CATEGORIES_EDIT_DELETE_INTAKE.md",
+        "impact_analysis": "/app/memory/impact/CR-090_IMPACT_ANALYSIS.md"
       },
-      "gate": "0-1"
+      "gate": "2"
     },
     {
       "id": "CR-091",
