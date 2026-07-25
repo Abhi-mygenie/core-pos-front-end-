@@ -17,6 +17,7 @@ export default function SmartPurchasePanel() {
   const [horizonDays, setHorizonDays] = useState(DEFAULT_HORIZON);
   const [rows, setRows] = useState([]);
   const [selectedRows, setSelectedRows] = useState(new Set()); // CR-103: bulk selection
+  const [showAll, setShowAll] = useState(false); // CR-105 Sub-A
   const [pmByVendor, setPmByVendor] = useState({});
   const [ingredientsMaster, setIngredientsMaster] = useState([]);
   const [vendorItemList, setVendorItemList] = useState([]);
@@ -46,6 +47,7 @@ export default function SmartPurchasePanel() {
         stockInventory: stock,
         dcrStockSummary: dcr?.stock_summary || [],
         horizonDays,
+        showAll, // CR-105 Sub-A
       });
       // Attach winning vendor + initial qty
       const masterList = vendorMasterRaw || []; // BUG-227
@@ -72,7 +74,7 @@ export default function SmartPurchasePanel() {
     } finally {
       setLoading(false);
     }
-  }, [horizonDays]);
+  }, [horizonDays, showAll]); // CR-105
 
   useEffect(() => { fetchPlan(); }, [fetchPlan]);
 
@@ -236,6 +238,8 @@ export default function SmartPurchasePanel() {
             onToggleAll={onToggleAll}
             onBulkRemove={onBulkRemove}
             horizonDays={horizonDays}
+            showAll={showAll}
+            onToggleShowAll={() => setShowAll(p => !p)}
           />
 
           <GroupedVendorPreview

@@ -20,6 +20,9 @@ const CHIP_CLASSES = {
   red:   { active: 'bg-red-100 text-red-700 ring-1 ring-red-300',        count: 'bg-red-200' },
 };
 
+// BUG-249: Use displayQty (what user sees) for status, with calQuantity + quantity fallback
+const effectiveQty = (item) => Number(item.displayQty || item.calQuantity || item.quantity) || 0;
+
 function StatusBadge({ isLowStock, quantity }) {
   if (Number(quantity) <= 0) return <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-600" data-testid="status-out">Out of Stock</span>;
   if (isLowStock) return <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-600" data-testid="status-low">Low Stock</span>;
@@ -62,8 +65,8 @@ export default function CurrentStockPanel() {
   // KPI calculations
   const kpis = useMemo(() => {
     const total = stockItems.length;
-    const lowStock = stockItems.filter(i => i.isLowStock && Number(i.quantity) > 0).length;
-    const outOfStock = stockItems.filter(i => Number(i.quantity) <= 0).length;
+    const lowStock = stockItems.filter(i => i.isLowStock && effectiveQty(i) > 0).length;
+    const outOfStock = stockItems.filter(i => effectiveQty(i) <= 0).length;
     const inStock = total - lowStock - outOfStock;
     const catCount = categories.length;
     return { total, lowStock, outOfStock, inStock, catCount };
@@ -91,13 +94,13 @@ export default function CurrentStockPanel() {
         if (!item.name.toLowerCase().includes(q) && !item.categoryName.toLowerCase().includes(q) && !item.vendorName.toLowerCase().includes(q)) return false;
       }
       if (categoryFilter && String(item.categoryId) !== categoryFilter) return false;
-      if (statusFilter === 'low' && !(item.isLowStock && Number(item.quantity) > 0)) return false;
-      if (statusFilter === 'out' && Number(item.quantity) > 0) return false;
-      if (statusFilter === 'ok' && (item.isLowStock || Number(item.quantity) <= 0)) return false;
+      if (statusFilter === 'low' && !(item.isLowStock && effectiveQty(item) > 0)) return false;
+      if (statusFilter === 'out' && effectiveQty(item) > 0) return false;
+      if (statusFilter === 'ok' && (item.isLowStock || effectiveQty(item) <= 0)) return false;
       return true;
     }).sort((a, b) => {
       // BUG-211: Out of Stock (0) → Low Stock (1) → In Stock (2)
-      const rank = (i) => Number(i.quantity) <= 0 ? 0 : i.isLowStock ? 1 : 2;
+      const rank = (i) => effectiveQty(i) <= 0 ? 0 : i.isLowStock ? 1 : 2;
       return rank(a) - rank(b);
     });
   }, [stockItems, search, categoryFilter, statusFilter]);
@@ -114,7 +117,7 @@ export default function CurrentStockPanel() {
         'Category': item.categoryName,
         'Base Unit': item.unit,
         'Current Stock': item.displayQty || item.quantity,
-        'Status': Number(item.quantity) <= 0 ? 'Out of Stock' : item.isLowStock ? 'Low Stock' : 'In Stock',
+        'Status': effectiveQty(item) <= 0 ? 'Out of Stock' : item.isLowStock ? 'Low Stock' : 'In Stock',
         'Days Left': !Number.isFinite(dl) ? '' : `~${Math.round(dl)}`,
         'Vendor': item.vendorName || '',
         'Min Alert': item.minQtyAlert > 0 ? `${item.minQtyAlert} ${item.unit}` : '',
@@ -145,7 +148,7 @@ export default function CurrentStockPanel() {
         return [
           item.name, item.categoryName,
           item.displayQty || item.quantity, item.displayUnit || item.unit,
-          Number(item.quantity) <= 0 ? 'Out of Stock' : item.isLowStock ? 'Low Stock' : 'In Stock',
+          effectiveQty(item) <= 0 ? 'Out of Stock' : item.isLowStock ? 'Low Stock' : 'In Stock',
           !Number.isFinite(dl) ? '—' : `~${Math.round(dl)}d`,
           item.vendorName || '—',
           item.minQtyAlert > 0 ? `${item.minQtyAlert} ${item.unit}` : '—',
@@ -304,7 +307,7 @@ export default function CurrentStockPanel() {
                 <tr><td colSpan={6} className="py-12 text-center text-sm text-slate-400">{hasActiveFilter ? 'No items match filters' : 'No stock items'}</td></tr>
               ) : filtered.map(item => {
                 const daysLeft = daysLeftMap.get(String(item.id));
-                const isOut = Number(item.quantity) <= 0;
+                const isOut = effectiveQty(item) <= 0;
                 const isLow = item.isLowStock && !isOut;
                 return (
                 <tr key={item.id} className={`border-b border-slate-200 hover:bg-slate-50/50 transition-colors ${isLow ? 'bg-amber-50/20' : ''} ${isOut ? 'bg-red-50/20' : ''}`}
@@ -322,7 +325,7 @@ export default function CurrentStockPanel() {
                     <span className="text-sm font-semibold text-slate-900">{item.displayQty || item.quantity}</span>
                     <span className="text-xs text-slate-400 ml-1">{item.displayUnit || item.unit}</span>
                   </td>
-                  <td className="py-3 px-4 border border-slate-200"><StatusBadge isLowStock={item.isLowStock} quantity={item.quantity} /></td>
+                  <td className="py-3 px-4 border border-slate-200"><StatusBadge isLowStock={item.isLowStock} quantity={effectiveQty(item)} /></td>
                   {/* CR-085 A2: Days Left badges — larger with clock icon for critical */}
                   <td className="py-3 px-4 border border-slate-200 text-center">
                     {daysLeft === undefined || !Number.isFinite(daysLeft) ? (

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T11:07:15.446696+00:00",
+  "generated_at": "2026-07-25T11:12:46.260724+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -1087,9 +1087,9 @@
         {
           "id": "CR-105",
           "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
-          "status": "GATE 3 COMPLETE \u2014 Implementation Plan ready. Awaiting Gate 4 GO.",
+          "status": "IMPLEMENTED \u2014 Sub-A: Show All toggle + inStockRows. Sub-B: Add Item button uncommented.",
           "priority": "P2",
-          "category": "IN_PROGRESS",
+          "category": "SHIPPED",
           "artifact_refs": [
             {
               "label": "Intake",
@@ -3047,14 +3047,14 @@
   "cross_sprint_dependency_flags": [],
   "category_counts": {
     "NOT_STARTED": 1,
-    "SHIPPED": 106,
-    "IN_PROGRESS": 8,
+    "SHIPPED": 107,
+    "IN_PROGRESS": 7,
     "SUBSUMED": 13,
     "BLOCKED": 3
   },
-  "active_count": 12,
-  "shipped_count": 106,
+  "active_count": 11,
+  "shipped_count": 107,
   "subsumed_count": 13,
-  "closed_count": 106,
+  "closed_count": 107,
   "tracked_total": 131
 }

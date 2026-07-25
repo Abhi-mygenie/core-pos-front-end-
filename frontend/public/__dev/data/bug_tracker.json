@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-25T11:07:15.446696+00:00",
+  "generated_at": "2026-07-25T11:12:46.260724+00:00",
   "schema_version": "2.0",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "summary": {
     "total_tracked": 264,
-    "closed_verified": 231,
+    "closed_verified": 232,
     "open_intake": 20,
     "backend_blocked": 4,
     "crm_blocked": 0
@@ -167,37 +167,6 @@
         }
       ],
       "completeness": "0/7"
-    },
-    {
-      "id": "BUG-249",
-      "title": "Current Stock: Negative quantity items show \"In Stock\" badge \u2014 field mismatch (quantity vs displayQty)",
-      "priority": "P1",
-      "status": "GATE 3 COMPLETE \u2014 Impact Analysis + Implementation Plan ready. Awaiting Gate 4 GO.",
-      "sprint": "pos_5_0",
-      "blocker": "",
-      "artifact_refs": [
-        {
-          "label": "Intake",
-          "path": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
-          "type": "intake"
-        },
-        {
-          "label": "Investigation",
-          "path": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
-          "type": "investigation"
-        },
-        {
-          "label": "Impact Analysis",
-          "path": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
-          "type": "impact_analysis"
-        },
-        {
-          "label": "Implementation Plan",
-          "path": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
-          "type": "implementation_plan"
-        }
-      ],
-      "completeness": "3/7"
     }
   ],
   "older_closed_or_partial": [
@@ -10058,6 +10027,37 @@
         }
       ],
       "completeness": "3/7"
+    },
+    {
+      "id": "BUG-249",
+      "title": "Current Stock: Negative quantity items show \"In Stock\" badge \u2014 field mismatch (quantity vs displayQty)",
+      "priority": "P1",
+      "status": "IMPLEMENTED \u2014 effectiveQty helper replaces 10 stale item.quantity status checks",
+      "sprint": "pos_5_0",
+      "blocker": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation",
+          "path": "/app/memory/evidence/BUG-249/INVESTIGATION_REPORT_NEGATIVE_STOCK_INSTOCK_2026-07-25.md",
+          "type": "investigation"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
+          "type": "impact_analysis"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
+          "type": "implementation_plan"
+        }
+      ],
+      "completeness": "3/7"
     }
   ],
   "true_intake_or_blocked": [
@@ -10761,5 +10761,5 @@
   "intake_only_bugs": [],
   "pos_2_0_closed_consolidated_2026_05_18": [],
   "pos_final_1_0_closed_consolidated_2026_05_12": [],
-  "normalized_at": "2026-07-25T11:07:15.446696+00:00"
+  "normalized_at": "2026-07-25T11:12:46.260724+00:00"
 }

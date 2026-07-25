@@ -71,6 +71,7 @@ const onHandColor = (onHand, daysLeft) => {
 // CR-081: Row background tint
 const rowBg = (row) => {
   if (row.origin === 'ad_hoc') return 'bg-blue-50/40';
+  if (row.origin === 'in_stock') return 'bg-green-50/30'; // CR-105 Sub-A
   if (row.on_hand <= 0) return 'bg-red-50/30';
   const daysLeft = row.velocity_per_day > 0 ? row.on_hand / row.velocity_per_day : Infinity;
   if (daysLeft <= 3) return 'bg-red-50/20';
@@ -78,7 +79,7 @@ const rowBg = (row) => {
   return '';
 };
 
-export default function AutoShoppingList({ rows, rankingByIngredient, ingredientsMaster, vendorItemList, onRowChange, onRowRemove, onAddAdHoc, horizonDays, selectedRows, onToggleRow, onToggleAll, onBulkRemove }) {
+export default function AutoShoppingList({ rows, rankingByIngredient, ingredientsMaster, vendorItemList, onRowChange, onRowRemove, onAddAdHoc, horizonDays, selectedRows, onToggleRow, onToggleAll, onBulkRemove, showAll, onToggleShowAll }) {
   const [showTypeahead, setShowTypeahead] = useState(false);
 
   // BUG-247: handleAdHocPick moved into AdHocTypeahead component
@@ -102,12 +103,21 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
             </span>
           )}
         </div>
-        {/* CR-081: Ad-hoc link in header */}
-        {/* BUG-247: Ad-hoc disabled — typeahead causes runtime error, needs deeper fix */}
-        {/* <button type="button" onClick={() => setShowTypeahead(true)}
-          className="text-xs font-semibold text-orange-600 hover:underline" data-testid="add-adhoc-header">
-          + Add Ad-hoc Item
-        </button> */}
+        <div className="flex items-center gap-3">
+          {/* CR-105 Sub-A: Show All toggle */}
+          <label className="flex items-center gap-2 cursor-pointer" data-testid="show-all-toggle">
+            <span className="text-xs font-medium text-slate-500">Show all</span>
+            <button type="button" onClick={onToggleShowAll}
+              className={`relative w-8 h-[18px] rounded-full transition-colors ${showAll ? 'bg-green-500' : 'bg-slate-300'}`}>
+              <span className={`absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full bg-white shadow transition-transform ${showAll ? 'translate-x-[14px]' : ''}`} />
+            </button>
+          </label>
+          {/* CR-105 Sub-B: Add Item from master list */}
+          <button type="button" onClick={() => setShowTypeahead(true)}
+            className="text-xs font-semibold text-orange-600 hover:underline border border-dashed border-orange-300 px-2 py-1 rounded" data-testid="add-item-btn">
+            + Add Item
+          </button>
+        </div>
       </div>
 
       {/* CR-103 Sub-C: Bulk remove toolbar */}
@@ -157,6 +167,7 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
                     {r.origin === 'ad_hoc' && <div className="text-[9px] font-bold text-blue-500 uppercase">Ad-hoc</div>}
                     {/* BUG-224: Low stock badge for stock_alert origin rows */}
                     {r.origin === 'stock_alert' && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700" data-testid={`low-stock-badge-${r.ingredient_id}`}>Low stock</span>}
+                    {r.origin === 'in_stock' && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700" data-testid={`in-stock-badge-${r.ingredient_id}`}>In stock</span>}
                   </td>
                   {/* CR-081: ON-HAND with color coding */}
                   <td className="py-2 px-3 text-sm font-medium" style={{ color: onHandColor(r.on_hand, daysLeft) }}>

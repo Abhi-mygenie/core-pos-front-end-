@@ -104,7 +104,7 @@ export function computeVelocity(dcrRow, stockItem, horizonDays) {
  * @param {number} opts.horizonDays      3 | 7 | 10 | 14 | custom
  * @returns {Array} rows where gap < 0
  */
-export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
+export function computePlan({ stockInventory, dcrStockSummary, horizonDays, showAll = false }) {
   if (!Array.isArray(stockInventory) || horizonDays <= 0) return [];
   const dcrByIngredient = new Map();
   (dcrStockSummary || []).forEach(r => dcrByIngredient.set(String(r.ingredient_id), r));
@@ -140,6 +140,11 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
   const velocityRows = rows.filter(r => r.gap < 0)
     .map(r => ({ ...r, origin: 'planner' }));                    // B2 Rule 1 (unchanged)
 
+  // CR-105 Sub-A: When showAll=true, include in-stock items (gap >= 0)
+  const inStockRows = showAll
+    ? rows.filter(r => r.gap >= 0).map(r => ({ ...r, suggest_qty: 0, origin: 'in_stock' }))
+    : [];
+
   // BUG-224: B2 Rule 2 (owner-amended 2026-07-23) — low-stock rows regardless of consumption
   const inPlan = new Set(velocityRows.map(r => String(r.ingredient_id)));
   const alertRows = stockInventory
@@ -165,5 +170,5 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays }) {
     })
     .filter(Boolean);
 
-  return [...velocityRows, ...alertRows];                        // BUG-224
+  return [...velocityRows, ...alertRows, ...inStockRows];        // BUG-224 + CR-105
 }

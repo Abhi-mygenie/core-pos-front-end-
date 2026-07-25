@@ -613,3 +613,15 @@
 | File | Change | Agent |
 |------|--------|-------|
 | `frontend/scripts/gen_dashboard_sync.py` | NEW — Python sync script reads registry.json, outputs cr_registry.json + bug_tracker.json for Control Dashboard. 130 CRs, 263 BUGs synced. | CR-048-REBUILD IMPL agent |
+
+### BUG-249 — effectiveQty status fix (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `components/inventory/CurrentStockPanel.jsx` | +effectiveQty helper (L24). Replaced 10 sites: StatusBadge, KPI counts, filters, sort, Excel/PDF export, row tint. // BUG-249 | BUG-249 IMPL agent |
+
+### CR-105 — Show All + Add Item (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `utils/purchasePlanner.js` | +showAll param (L107), +inStockRows (L143-146), merged return (L173). // CR-105 | CR-105 IMPL agent |
+| `components/inventory/SmartPurchasePanel.jsx` | +showAll state (L20), pass to computePlan (L50) + AutoShoppingList (L241-242), deps (L77). // CR-105 | CR-105 IMPL agent |
+| `components/inventory/smart/AutoShoppingList.jsx` | +showAll/onToggleShowAll props (L82), +in_stock rowBg (L74), +toggle UI (L107-114), uncommented Add Item button (L116-120), +in_stock badge (L170). // CR-105 | CR-105 IMPL agent |
