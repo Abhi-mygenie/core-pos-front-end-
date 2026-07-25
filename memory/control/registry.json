@@ -16600,6 +16600,26 @@
         "backend_brief": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25)"
       },
       "gate": "0-1"
+    },
+    {
+      "id": "BUG-248",
+      "title": "Bulk Editor: 9 columns missing from isDirty \u2014 edits silently lost (Save never triggers)",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE",
+      "sprint_key": "pos_5_0",
+      "module": "menu-management",
+      "related": "",
+      "files_to_change": [
+        "components/panels/menu/BulkEditor.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-248_BULKEDITOR_DIRTY_MISSING_INTAKE.md"
+      },
+      "gate": "0-1"
     }
   ]
 }
