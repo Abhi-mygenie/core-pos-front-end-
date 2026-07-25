@@ -387,3 +387,5 @@ Per `IMPLEMENTATION_AGENT_RULES.md` — 6-Artifact Rule (added 2026-05-12):
 BUG-240 updated: **IMPLEMENTED (2026-07-24). display_on_hand from displayQty. purchasePlanner.js + AutoShoppingList.jsx. // BUG-240**
 BUG-241 updated: **IMPLEMENTED (2026-07-24). rate='' + suggestedRate hint. SmartPurchasePanel.jsx + AutoShoppingList.jsx. // BUG-241**
 BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + validate blocks null. SmartPurchasePanel.jsx. // BUG-242**
+
+| **BUG-243** | add-purchase payload: `payment_method` wrong key (should be `payment_type`), missing `tot_amount`/`item_total` (default to 1), `converion_factor: 1` always sent (should omit). Affects ALL purchases via `addPurchase`. | **P0** | MEDIUM | **GATE 2 COMPLETE** | 2 | 1 file: `inventoryTransform.js`. ~6 lines. Investigation: `/app/memory/reports/INVESTIGATION_SMART_PURCHASE_SUBMIT_2026_07_25.md`. Backend brief: appended to `BACKEND_BLOCKERS_BRIEF_2026_07_22.html`. |

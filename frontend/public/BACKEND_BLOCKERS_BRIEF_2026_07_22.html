@@ -978,3 +978,55 @@ GET /stock-inventory → stock_title="Tandoori Chicken Indian":
 
 <h3>FE Workaround</h3>
 <p>None possible — FE correctly re-fetches after submit. The stale data comes from the backend.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- APPENDED 2026-07-25: add-purchase Payload Contract Mismatch (FE Fix + Backend Ask) -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<hr style="margin:40px 0;border:2px solid #f97316;">
+<h2 style="color:#f97316;">AMENDMENT: add-purchase Payload — FE Key Mismatches (2026-07-25)</h2>
+
+<h3>Context</h3>
+<p>Investigation of Smart Purchase submit structure against the <strong>backend contract doc</strong>
+(<code>add_purchase_payload_frontend.md</code>, provided 2026-07-25) revealed the FE
+<code>toAPI.addPurchase()</code> in <code>inventoryTransform.js:167-186</code> uses wrong/missing keys.
+Affects <strong>every purchase</strong> via <code>addPurchase</code> — not just Smart Purchase.</p>
+
+<h3>FE Gaps (to be fixed on FE side)</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;border-color:#2a3349;color:#e2e8f0;font-size:13px;">
+  <tr style="background:#1c2333;"><th>Priority</th><th>Gap</th><th>FE Sends</th><th>Backend Expects</th><th>Effect</th></tr>
+  <tr><td style="color:#ef4444;font-weight:bold;">P0</td><td><code>payment_method</code> wrong key</td><td><code>payment_method: "Cash"</code></td><td><code>payment_type: "Cash"</code></td><td>Ignored &rarr; <code>payment_type: null</code> on every purchase</td></tr>
+  <tr><td style="color:#ef4444;font-weight:bold;">P0</td><td>Missing header totals</td><td><em>not sent</em></td><td><code>tot_amount</code>, <code>item_total</code> = sum of line <code>Amount</code></td><td>Defaults to <code>1</code> &rarr; all purchase headers show total=1</td></tr>
+  <tr><td style="color:#60a5fa;">P2</td><td><code>converion_factor: 1</code> always sent</td><td><code>converion_factor: 1</code></td><td>Omit unless real conversion</td><td>Stores <code>1</code> for all items</td></tr>
+  <tr><td style="color:#60a5fa;">P2</td><td>Missing tax/fair fields</td><td><em>not sent</em></td><td><code>tot_fair: 0</code>, <code>tot_tax: 0</code></td><td>Defaults to <code>1</code> instead of <code>0</code></td></tr>
+</table>
+
+<h3>Backend Ask (keys FE sends that backend currently ignores)</h3>
+<p>The following keys are sent by FE but silently dropped by the backend.
+<strong>No FE change needed</strong> &mdash; these will continue to be sent for future backend consumption.
+If/when backend wants to store them, no FE update will be required.</p>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;border-color:#2a3349;color:#e2e8f0;font-size:13px;">
+  <tr style="background:#1c2333;"><th>FE Key</th><th>Purpose</th><th>Backend Status</th></tr>
+  <tr><td><code>vendor_name</code></td><td>Supplier display name (convenience)</td><td>Ignored &mdash; only <code>vendor_id</code> used</td></tr>
+  <tr><td><code>invoice_number</code></td><td>GRN invoice reference</td><td>Ignored (string not stored on this endpoint)</td></tr>
+  <tr><td><code>notes</code></td><td>Purchase notes / source tag</td><td>Ignored (no column write)</td></tr>
+  <tr><td><code>rate</code> (per line)</td><td>Unit rate</td><td>Ignored &mdash; line cost = <code>Amount</code> only</td></tr>
+  <tr><td><code>origin</code></td><td>Source: <code>planner</code> / <code>stock_alert</code> / <code>ad_hoc</code></td><td>Ignored</td></tr>
+</table>
+<p><strong>Recommendation:</strong> Consider accepting <code>notes</code>, <code>invoice_number</code>, and <code>origin</code> in a future backend release.
+<code>origin</code> enables purchase analytics (Smart Purchase vs manual). <code>invoice_number</code> enables GRN audit trail.</p>
+
+<h3>FE Fix Plan</h3>
+<p>File: <code>api/transforms/inventoryTransform.js</code>, function <code>toAPI.addPurchase()</code> (lines 167-186).</p>
+<ol>
+  <li><code>payment_method</code> &rarr; <code>payment_type</code> (rename key)</li>
+  <li>Add <code>tot_amount</code> = sum of all <code>items[].amount</code></li>
+  <li>Add <code>item_total</code> = same sum</li>
+  <li>Add <code>tot_fair: 0</code>, <code>tot_tax: 0</code></li>
+  <li><code>converion_factor</code>: only send when ingredient has real conversion; omit otherwise</li>
+  <li>Keep <code>vendor_name</code>, <code>notes</code>, <code>invoice_number</code>, <code>rate</code>, <code>origin</code> (future backend use)</li>
+</ol>
+
+<h3>Risk</h3>
+<p><strong>MEDIUM.</strong> Fix is additive (adding missing header fields). Line-item <code>Amount</code> is already correct.
+No change to financial calculations. <code>inventoryTransform.js</code> is not an R5 hotspot.</p>

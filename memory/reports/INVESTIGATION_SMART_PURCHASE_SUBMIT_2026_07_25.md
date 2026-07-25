@@ -143,7 +143,7 @@ Changes needed:
 2. Add `tot_amount`, `item_total` (computed from sum of items.Amount)
 3. Add `tot_fair: 0`, `tot_tax: 0`
 4. Remove `converion_factor: 1` default → only send when ingredient has conversion
-5. Remove ignored fields: `vendor_name`, `invoice_number`, `notes`, `rate`, `origin`
+5. KEEP ignored fields (`vendor_name`, `invoice_number`, `notes`, `rate`, `origin`) — backend may consume in future
 
 **Also in `SmartPurchasePanel.jsx`:** The `paymentMethod` field passed to addPurchase is already populated from GroupedVendorPreview. No change needed there — just the transform key name.
 
