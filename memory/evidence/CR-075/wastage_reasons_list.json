@@ -1,0 +1,1 @@
+{"success":true,"message":"Wastage reasons retrieved successfully","data":{"reasons":[{"id":15,"reason":"Others","status":1},{"id":14,"reason":"Expired","status":1},{"id":13,"reason":"Pilferage","status":1},{"id":12,"reason":"Spillage","status":1}],"is_master":true,"can_edit":false}}

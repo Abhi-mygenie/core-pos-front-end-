@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyGenie POS — Backend Blockers Brief</title>
+  <style>
+    :root {
+      --bg:#0f1117;--surface:#161b27;--surface2:#1c2333;
+      --border:#2a3349;--border-soft:#1e2840;
+      --text:#e2e8f0;--text-muted:#7c8db0;--text-dim:#4a5878;
+      --orange:#f97316;--orange-dim:#7c3e0e;--orange-bg:#1a1008;
+      --green:#22c55e;--green-bg:#0a1f11;--green-dim:#14532d;
+      --red:#ef4444;--red-bg:#1a0808;--red-dim:#7f1d1d;
+      --blue:#60a5fa;--blue-bg:#080f1a;--blue-dim:#1e3a5f;
+      --yellow:#fbbf24;--yellow-bg:#1a1200;--yellow-dim:#78350f;
+      --purple:#a78bfa;--purple-bg:#0d0818;
+      --mono:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+      --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.7;}
+
+    /* Header */
+    .page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:36px 60px 28px;position:sticky;top:0;z-index:100;}
+    .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);font-weight:600;margin-bottom:6px;}
+    .page-header h1{font-size:22px;font-weight:700;letter-spacing:-.02em;}
+    .subtitle{color:var(--text-muted);font-size:13px;margin-top:3px;}
+    .meta{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
+    .mp{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;border:1px solid;}
+    .mp.red{background:var(--red-bg);border-color:var(--red-dim);color:var(--red);}
+    .mp.orange{background:var(--orange-bg);border-color:var(--orange-dim);color:var(--orange);}
+    .mp.blue{background:var(--blue-bg);border-color:var(--blue-dim);color:var(--blue);}
+    .mp.green{background:var(--green-bg);border-color:var(--green-dim);color:var(--green);}
+
+    /* Layout */
+    .layout{display:grid;grid-template-columns:250px 1fr;min-height:100vh;}
+
+    /* Sidebar */
+    .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:28px 0;position:sticky;top:117px;height:calc(100vh - 117px);overflow-y:auto;}
+    .sb-sect{padding:0 18px 6px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-top:18px;}
+    .sb-sect:first-child{margin-top:0;}
+    .tl{display:flex;align-items:center;gap:9px;padding:6px 18px;color:var(--text-muted);text-decoration:none;font-size:12px;transition:background .15s,color .15s;border-left:2px solid transparent;}
+    .tl:hover{background:var(--surface2);color:var(--text);border-left-color:var(--border);}
+    .tl.p0{border-left-color:var(--red);color:var(--red);}
+    .tl.p1{border-left-color:var(--orange);color:var(--orange);}
+    .tl.p2{border-left-color:var(--blue);}
+    .tl.p3{border-left-color:var(--text-dim);color:var(--text-dim);}
+    .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .dr{background:var(--red);}
+    .do{background:var(--orange);}
+    .db{background:var(--blue);}
+    .dg{background:var(--text-dim);}
+
+    /* Content */
+    .content{padding:44px 56px;max-width:960px;}
+
+    /* Module heading */
+    .mh{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin:44px 0 18px;padding-bottom:9px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;gap:9px;}
+    .mh:first-child{margin-top:0;}
+
+    /* Card */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden;}
+    .ch{padding:16px 22px 13px;border-bottom:1px solid var(--border-soft);display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:3px;letter-spacing:.06em;}
+    .ct{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-.01em;}
+    .cb-wrap{display:flex;gap:7px;flex-shrink:0;padding-top:1px;}
+    .badge{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
+    .bp0{background:var(--red-bg);border-color:var(--red-dim);color:var(--red);}
+    .bp1{background:var(--orange-bg);border-color:var(--orange-dim);color:var(--orange);}
+    .bp2{background:var(--blue-bg);border-color:var(--blue-dim);color:var(--blue);}
+    .bp3{background:var(--surface2);border-color:var(--border);color:var(--text-dim);}
+    .bnew{background:var(--purple-bg);border-color:#4c3580;color:var(--purple);}
+    .bfix{background:var(--yellow-bg);border-color:var(--yellow-dim);color:var(--yellow);}
+    .bsoc{background:var(--green-bg);border-color:var(--green-dim);color:var(--green);}
+    .bwa{background:#140a1a;border-color:#5c2d7a;color:#c084fc;}
+    .cbody{padding:18px 22px;}
+
+    /* Diff grid */
+    .dg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+    .db2{border-radius:7px;padding:13px 15px;border:1px solid;}
+    .db2.cur{background:var(--red-bg);border-color:var(--red-dim);}
+    .db2.exp{background:var(--green-bg);border-color:var(--green-dim);}
+    .dl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+    .db2.cur .dl{color:var(--red);}
+    .db2.exp .dl{color:var(--green);}
+    .db2 p{font-size:12px;color:var(--text-muted);line-height:1.6;}
+
+    /* Field row */
+    .fr{display:flex;gap:10px;margin-bottom:8px;font-size:12px;align-items:flex-start;}
+    .fl{color:var(--text-dim);font-weight:600;width:120px;flex-shrink:0;padding-top:1px;}
+    .fv{color:var(--text-muted);}
+    .fv code,.cbody code,.db2 code{font-family:var(--mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--blue);}
+
+    /* Section label inside card */
+    .sl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin:18px 0 9px;}
+    .sl:first-child{margin-top:0;}
+
+    /* Code block */
+    .cw{background:#0a0d14;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:9px 0;}
+    .cbar{background:var(--surface2);border-bottom:1px solid var(--border);padding:5px 13px;display:flex;align-items:center;justify-content:space-between;}
+    .cbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim);}
+    .cbm{font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:4px;}
+    .md{background:#3d0f0f;color:#fca5a5;}
+    .mp2{background:#0a1f0a;color:#86efac;}
+    .mg{background:#0a1020;color:#93c5fd;}
+    .ms{background:#1a0f2e;color:var(--purple);}
+    pre{font-family:var(--mono);font-size:12px;line-height:1.75;padding:15px;overflow-x:auto;color:#a8b4c8;}
+    pre .cm{color:#3d5473;}
+    pre .k{color:#7dd3fc;}
+    pre .s{color:#86efac;}
+    pre .n{color:#fcd34d;}
+    pre .c{color:var(--orange);}
+    pre .f{color:#c4b5fd;}
+    pre .u{color:#a5b4fc;}
+    pre .ok{color:var(--green);}
+    pre .er{color:var(--red);}
+
+    /* Impact note */
+    .imp{background:var(--surface2);border:1px solid var(--border-soft);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:9px 13px;font-size:12px;color:var(--text-muted);margin:13px 0 0;line-height:1.6;}
+    .imp strong{color:var(--orange);}
+
+    /* FE status */
+    .fe{background:var(--green-bg);border:1px solid var(--green-dim);border-radius:6px;padding:7px 13px;font-size:11px;color:#4ade80;margin-bottom:13px;display:flex;align-items:center;gap:7px;}
+    .fe::before{content:'✓';font-weight:700;}
+    .wa{background:#140a1a;border:1px solid #5c2d7a;border-radius:6px;padding:7px 13px;font-size:11px;color:#c084fc;margin-bottom:13px;display:flex;align-items:center;gap:7px;}
+    .wa::before{content:'⚠';font-weight:700;}
+
+    /* Summary table */
+    .st{width:100%;border-collapse:collapse;font-size:12px;}
+    .st th{text-align:left;padding:7px 11px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);background:var(--surface2);border-bottom:1px solid var(--border);}
+    .st td{padding:9px 11px;border-bottom:1px solid var(--border-soft);color:var(--text-muted);vertical-align:top;}
+    .st tr:last-child td{border-bottom:none;}
+    .st td:first-child{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+    .st td code{font-family:var(--mono);font-size:10px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;}
+
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr;}
+      .sidebar{display:none;}
+      .content,.page-header{padding:22px 18px;}
+      .dg2{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">MyGenie POS · Backend Engineering Brief</div>
+  <h1>Backend Delivery Blockers — Complete Register</h1>
+  <div class="subtitle">All modules: Expense · Order Management · Print · File Upload · Realtime / Socket · Recipe / Inventory. Last updated 2026-07-23 · 18 issues.</div>
+  <div class="meta">
+    <span class="mp red">4 P0/P1 — Active blockers</span>
+    <span class="mp orange">3 P2 — High value</span>
+    <span class="mp blue">4 P3 — Legacy / Low priority</span>
+    <span class="mp green">5 DELIVERED this session · 16 remaining across 7 modules</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sb-sect">Expense Module</div>
+  <a class="tl p1" href="#bug-201"><span class="dot do"></span>BUG-201 Ph2 — Item Delete 409</a>
+  <a class="tl p1" href="#bug-165"><span class="dot do"></span>BUG-165 — Duplicate Item Name</a>
+  <a class="tl p2" href="#bug-164"><span class="dot db"></span>BUG-164 — Category Dup HTTP Fix</a>
+  <a class="tl p2" href="#bug-203"><span class="dot db"></span>BUG-203 — unit_price in PUT</a>
+  <a class="tl p2" href="#cr-062"><span class="dot db"></span>CR-062 — Report Aggregation API</a>
+
+  <div class="sb-sect">Order Management</div>
+  <a class="tl p2" href="#prod-003"><span class="dot db"></span>PROD-003 — PayLater Table Clear</a>
+
+  <div class="sb-sect">File Upload</div>
+  <a class="tl p0" href="#cr-076"><span class="dot dr"></span>CR-076 — S3 Upload Infrastructure</a>
+
+  <div class="sb-sect">Realtime / Socket</div>
+  <a class="tl p2" href="#bug-124"><span class="dot db"></span>BUG-124 — food_update Payload</a>
+  <a class="tl p3" href="#bug-094"><span class="dot dg"></span>BUG-094 — Delivery Socket Payload</a>
+
+  <div class="sb-sect">Print Templates</div>
+  <a class="tl p3" href="#bug-101"><span class="dot dg"></span>BUG-101 — GST Display Slot</a>
+  <a class="tl p3" href="#prod-006"><span class="dot dg"></span>PROD-006 — Takeaway Phone</a>
+
+  <div class="sb-sect">Legacy POS 3.0</div>
+  <a class="tl p3" href="#bug-129"><span class="dot dg"></span>BUG-129 — TAB Order Status</a>
+  <a class="tl p3" href="#bug-090"><span class="dot dg"></span>BUG-090 — CRM customer_id</a>
+  <a class="tl p3" href="#bug-092"><span class="dot dg"></span>BUG-092 — Phone Format</a>
+
+  <div class="sb-sect">Recipe / Inventory</div>
+  <a class="tl p0" href="#bug-233"><span class="dot dr"></span>BUG-233 — Addon Recipe Ingredients</a>
+  <a class="tl p1" href="#cr-093-oq1"><span class="dot do"></span>CR-093 OQ-1 — DCR Cost Fields</a>
+  <a class="tl p2" href="#cr-093-oq2"><span class="dot db"></span>CR-093 OQ-2 — Ingredient Filter</a>
+
+  <div class="sb-sect">Smart Purchase</div>
+  <a class="tl p2" href="#cr091-ref"><span class="dot db"></span>CR-091 — Purchase Ref ID (→CR-100)</a>
+  <a class="tl p1" href="#cr100-partial"><span class="dot do"></span>CR-100 — Partial Payment + Ref ID</a>
+
+  <div class="sb-sect">Inventory Setup</div>
+  <a class="tl p2" href="#cr090-category"><span class="dot db"></span>CR-090 — Category Edit/Delete</a>
+
+  <div class="sb-sect">Restaurant Settings</div>
+  <a class="tl p2" href="#cr056-scanpopup"><span class="dot db"></span>CR-056 — Scan Popup Toggle</a>
+
+  <div class="sb-sect">Summary</div>
+  <a class="tl" href="#summary"><span class="dot dg"></span>All Endpoints — Quick Ref</a>
+</nav>
+
+<!-- Content -->
+<main class="content">
+
+<!-- ═══ EXPENSE MODULE ═══════════════════════════════════════ -->
+<div class="mh"><span>💳</span><span>Expense Module</span></div>
+
+<!-- BUG-201 Ph2 -->
+<div class="card" id="bug-201">
+  <div class="ch">
+    <div><div class="cid">BUG-201 · Phase 2</div><div class="ct">Item Delete — Backend Must Return 409 When Transactions Exist</div></div>
+    <div class="cb-wrap"><span class="badge bp1">P1</span><span class="badge bfix">Enforcement</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE Phase 1 shipped: impact modal calls GET /expense/item/{id}/impact before showing confirm dialog. User sees real transaction count + amount. This is a UX warning only — Phase 2 is the hard backend safety net.</div>
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7">If a user bypasses the FE modal (direct API call, Postman, other client), the backend currently silently deletes the item AND all linked expense transactions — permanently destroying financial data.</p>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>DELETE always returns 200. Linked transactions silently deleted. No safety check.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Item has linked transactions → return 409 with count + amount. No transactions → 200 (no change).</p></div>
+    </div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>DELETE /api/v2/vendoremployee/expense/expenses/{item_id}</code></span></div>
+    <div class="fr"><span class="fl">Request body</span><span class="fv"><code>{ "delete_reason": "string" }</code> (optional — FE sends "Deleted by owner")</span></div>
+    <div class="sl">Expected curl</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Item WITH transactions → must return 409</span><span class="cbm md">DELETE</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> DELETE \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/expense/expenses/123</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> \
+  <span class="f">-H</span> <span class="s">"X-localization: en"</span> \
+  <span class="f">-d</span> <span class="s">'{"delete_reason":"Deleted by owner"}'</span>
+
+<span class="cm"># Expected 409:</span>
+{ <span class="k">"message"</span>: <span class="s">"Cannot delete. This item has 5 linked transactions."</span>,
+  <span class="k">"transaction_count"</span>: <span class="n">5</span>, <span class="k">"total_amount"</span>: <span class="n">1200.00</span> }
+
+<span class="cm"># Expected 200 when 0 transactions (no change to current):</span>
+{ <span class="k">"message"</span>: <span class="s">"Item deleted successfully."</span> }</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Read <code>err.response.data.transaction_count</code> in catch block → show specific toast. ~2 lines, 30 min.</div>
+  </div>
+</div>
+
+<!-- BUG-165 -->
+<div class="card" id="bug-165">
+  <div class="ch">
+    <div><div class="cid">BUG-165</div><div class="ct">Add Expense Item — Backend Allows Duplicate Stock Titles Per Category</div></div>
+    <div class="cb-wrap"><span class="badge bp1">P1</span><span class="badge bfix">Uniqueness</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE guard shipped: checks allItems in-memory before calling API. Fails when two sessions are open simultaneously or items added from another device.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>POST always returns 201, even for duplicate stock_title in same category. Silent duplicate created.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Duplicate stock_title in same restaurant + category → 422 with structured errors array.</p></div>
+    </div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>POST /api/v2/vendoremployee/expense/store_expense</code></span></div>
+    <div class="fr"><span class="fl">Uniqueness</span><span class="fv">Per: restaurant_id + category_id + stock_title (case-insensitive)</span></div>
+    <div class="sl">Expected curl</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Duplicate in same category → must return 422</span><span class="cbm mp2">POST</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> POST \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/expense/store_expense</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> \
+  <span class="f">-H</span> <span class="s">"Content-Type: application/json"</span> \
+  <span class="f">-d</span> <span class="s">'{"stock_title":"Milk","category_id":45}'</span>
+
+<span class="cm"># Expected 422 when "Milk" already exists in category 45:</span>
+{ <span class="k">"message"</span>: <span class="s">"Item already exists in this category."</span>,
+  <span class="k">"errors"</span>: [{ <span class="k">"code"</span>: <span class="s">"duplicate"</span>, <span class="k">"field"</span>: <span class="s">"stock_title"</span> }] }</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero — <code>addItem()</code> already reads <code>res.data.errors[0]</code>. The in-memory guard stays as a fast path.</div>
+  </div>
+</div>
+
+<!-- BUG-164 -->
+<div class="card" id="bug-164">
+  <div class="ch">
+    <div><div class="cid">BUG-164</div><div class="ct">Add Category — Returns HTTP 201 for Duplicates Instead of 409</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bfix">HTTP Semantics</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE workaround shipped: addCategory() inspects res.data.errors[0] on every 2xx response. User experience is correct. This is a pure HTTP semantics fix.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current (wrong)</div><p>POST /expense/category returns HTTP 201 for duplicates, with <code>errors:[{code:"duplicate"}]</code> in body. Non-standard.</p></div>
+      <div class="db2 exp"><div class="dl">Expected (correct)</div><p>Duplicate category name → HTTP 409 Conflict. Unique name → 201 (no change).</p></div>
+    </div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>POST /api/v2/vendoremployee/expense/category</code></span></div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Duplicate → must return 409 (currently returns 201)</span><span class="cbm mp2">POST</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> POST \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/expense/category</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> \
+  <span class="f">-d</span> <span class="s">'{"category_name":"Groceries"}'</span>
+
+<span class="cm"># Current (wrong): HTTP 201 with error body</span>
+<span class="cm"># Expected (correct): HTTP 409</span>
+{ <span class="k">"message"</span>: <span class="s">"Category already exists."</span>,
+  <span class="k">"errors"</span>: [{ <span class="k">"code"</span>: <span class="s">"duplicate"</span> }] }</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. <code>addCategory()</code> already reads <code>errors[0]</code>. No FE code change needed.</div>
+  </div>
+</div>
+
+<!-- BUG-203 -->
+<div class="card" id="bug-203">
+  <div class="ch">
+    <div><div class="cid">BUG-203</div><div class="ct">Expense Setup Inline Edit — PUT /expenses/{id} Does Not Accept unit_price (§3.4 Not Delivered)</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bwa">Workaround Active</span></div>
+  </div>
+  <div class="cbody">
+    <div class="wa">FE workaround shipped: inline price edit uses a 2-call approach (delete old item + create new with updated price). Works but is destructive — changes the item ID. The native single-call fix requires backend to accept unit_price in PUT.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p><code>PUT /expenses/{id}</code> accepts <code>stock_title</code> and <code>category_id</code> but silently ignores <code>unit_price</code>. Price cannot be updated natively.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p><code>PUT /expenses/{id}</code> also accepts and persists <code>unit_price</code>. FE can then update price in a single atomic call.</p></div>
+    </div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>PUT /api/v2/vendoremployee/expense/expenses/{item_id}</code></span></div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Update item with new unit_price — currently silently ignored</span><span class="cbm md">PUT</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> PUT \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/expense/expenses/456</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> \
+  <span class="f">-H</span> <span class="s">"Content-Type: application/json"</span> \
+  <span class="f">-d</span> <span class="s">'{"stock_title":"Milk","category_id":45,"unit_price":26.00}'</span>
+
+<span class="cm"># Expected 200 after fix:</span>
+{ <span class="k">"id"</span>: <span class="n">456</span>, <span class="k">"stock_title"</span>: <span class="s">"Milk"</span>, <span class="k">"unit_price"</span>: <span class="n">26.00</span>, <span class="k">"category_id"</span>: <span class="n">45</span> }
+
+<span class="cm"># Test: GET the item after PUT — unit_price must be 26.00</span>
+<span class="c">curl</span> <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/expense/item/456</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Remove the 2-call delete+create workaround. Replace with a single <code>PUT /expenses/{id}</code> call that includes <code>unit_price</code>. FE transform already serializes the field — it was just being ignored by backend. ~15 min.</div>
+  </div>
+</div>
+
+<!-- CR-062 -->
+<div class="card" id="cr-062">
+  <div class="ch">
+    <div><div class="cid">CR-062</div><div class="ct">Expense Report — New Server-Side Aggregation Endpoint Required</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bnew">New Endpoint</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">FE currently fetches ALL transactions and aggregates client-side. For large volumes this is slow. Backend needs one endpoint returning all 3 breakdowns in a single call.</p>
+    <div class="sl">New Endpoint Required</div>
+    <div class="fr"><span class="fl">Method + URL</span><span class="fv"><code>POST /api/v2/vendoremployee/expense/expense-aggregation</code></span></div>
+    <div class="fr"><span class="fl">Date format</span><span class="fv">DD/MM/YYYY (same as existing expense endpoints)</span></div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Request body</span><span class="cbm mp2">POST</span></div>
+      <pre>{ <span class="k">"from"</span>: <span class="s">"01/07/2026"</span>,           <span class="cm">// required</span>
+  <span class="k">"to"</span>: <span class="s">"31/07/2026"</span>,             <span class="cm">// required</span>
+  <span class="k">"category_ids"</span>: [<span class="n">1</span>, <span class="n">2</span>],         <span class="cm">// optional — [] = all</span>
+  <span class="k">"payment_methods"</span>: [<span class="s">"Cash Draw"</span>] <span class="cm">// optional — [] = all</span>
+}</pre>
+    </div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Expected response — ALL 3 breakdowns in one call</span><span class="cbm mg">200</span></div>
+      <pre>{ <span class="k">"grand_total"</span>: <span class="n">48250.00</span>,
+  <span class="k">"daily_totals"</span>: [
+    { <span class="k">"date"</span>: <span class="s">"2026-07-01"</span>, <span class="k">"total"</span>: <span class="n">1250.00</span>, <span class="k">"transaction_count"</span>: <span class="n">8</span> }
+  ],
+  <span class="k">"category_totals"</span>: [
+    { <span class="k">"category_id"</span>: <span class="n">12</span>, <span class="k">"category_name"</span>: <span class="s">"Groceries"</span>, <span class="k">"total"</span>: <span class="n">18500.00</span>, <span class="k">"transaction_count"</span>: <span class="n">34</span> }
+  ],
+  <span class="k">"payment_totals"</span>: [
+    { <span class="k">"payment_method"</span>: <span class="s">"Cash Draw"</span>, <span class="k">"total"</span>: <span class="n">32000.00</span>, <span class="k">"transaction_count"</span>: <span class="n">56</span> }
+  ]
+}</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Add constant + service method → update ExpenseReportPanel to call aggregation API → deprecate 3 client-side transform functions. ~2 hours.</div>
+  </div>
+</div>
+
+<!-- ═══ ORDER MANAGEMENT ═══════════════════════════════════════ -->
+<div class="mh"><span>🧾</span><span>Order Management</span></div>
+
+<!-- PROD-003 -->
+<div class="card" id="prod-003">
+  <div class="ch">
+    <div><div class="cid">PROD-003</div><div class="ct">PayLater Table Clear — Backend Must Emit Socket When Order Paid</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bsoc">Socket</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE is complete. Table clearing logic listens for the socket event. Event is simply not being emitted by backend.</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>When a PayLater order is collected/paid, the table card on the POS dashboard does NOT clear automatically. Staff must manually refresh. Backend does not emit a socket on payment confirmation.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>When a PayLater order is marked as paid, backend emits <code>update-order-paid</code> socket to the restaurant channel. FE clears the table card immediately.</p></div>
+    </div>
+    <div class="sl">Required Socket Event</div>
+    <div class="fr"><span class="fl">Event name</span><span class="fv"><code>update-order-paid</code></span></div>
+    <div class="fr"><span class="fl">Channel</span><span class="fv">Restaurant-specific channel (same pattern as other order events)</span></div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Expected socket payload when PayLater order is collected</span><span class="cbm ms">SOCKET EMIT</span></div>
+      <pre><span class="cm">// Emit on channel: order_update_{restaurant_id}</span>
+<span class="cm">// Trigger: when staff marks a PayLater order as paid/collected</span>
+{
+  <span class="k">"event"</span>:    <span class="s">"update-order-paid"</span>,
+  <span class="k">"order_id"</span>: <span class="n">88321</span>,
+  <span class="k">"table_id"</span>: <span class="n">14</span>,
+  <span class="k">"status"</span>:   <span class="n">6</span>         <span class="cm">// f_order_status = 6 (paid/collected)</span>
+}</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. The socket handler for <code>update-order-paid</code> exists and clears the table card. This is purely a missing backend emit.</div>
+  </div>
+</div>
+
+<!-- ═══ FILE UPLOAD ═══════════════════════════════════════════ -->
+<div class="mh"><span>📎</span><span>File Upload Infrastructure</span></div>
+
+<!-- CR-076 -->
+<div class="card" id="cr-076">
+  <div class="ch">
+    <div><div class="cid">CR-076</div><div class="ct">Amazon S3 File Upload — No Backend Infrastructure Exists</div></div>
+    <div class="cb-wrap"><span class="badge bp0">P0</span><span class="badge bnew">New Infrastructure</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">Zero backend infrastructure exists. No S3 client, no presigned-URL endpoint, no proxy. FE cannot start until backend delivers the upload endpoint and answers the questions below.</p>
+    <div class="sl">Backend Must Answer First</div>
+    <table class="st" style="margin-bottom:14px">
+      <thead><tr><th>#</th><th>Question</th><th>Options</th></tr></thead>
+      <tbody>
+        <tr><td>OQ-1</td><td>Upload approach</td><td><strong style="color:var(--green)">A: Presigned URL</strong> (FE uploads directly to S3) or B: Proxy (FE → backend → S3). Presigned recommended.</td></tr>
+        <tr><td>OQ-2</td><td>Which screens</td><td>Purchase Entry only? Room Check-in? Other screens?</td></tr>
+        <tr><td>OQ-3</td><td>Allowed file types</td><td>PDF only? PDF + JPG/PNG?</td></tr>
+        <tr><td>OQ-4</td><td>Max file size</td><td>Backend must set — FE validation limit follows this.</td></tr>
+      </tbody>
+    </table>
+    <div class="sl">Expected Endpoints (Presigned URL approach)</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Step 1 — Get presigned URL from backend</span><span class="cbm mp2">POST</span></div>
+      <pre><span class="c">curl</span> <span class="f">-X</span> POST \
+  <span class="u">https://preprod.mygenie.online/api/v2/vendoremployee/upload/presigned-url</span> \
+  <span class="f">-H</span> <span class="s">"Authorization: Bearer {token}"</span> \
+  <span class="f">-d</span> <span class="s">'{"file_name":"invoice.pdf","file_type":"application/pdf","context":"purchase_entry"}'</span>
+
+<span class="cm"># Expected response:</span>
+{ <span class="k">"upload_url"</span>: <span class="s">"https://s3.amazonaws.com/mygenie/..."</span>, <span class="cm">// PUT to this</span>
+  <span class="k">"file_key"</span>: <span class="s">"purchases/2026/07/invoice_abc123.pdf"</span>,   <span class="cm">// store this</span>
+  <span class="k">"expires_in"</span>: <span class="n">300</span> }                                   <span class="cm">// seconds</span></pre>
+    </div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Step 2 — FE PUTs file directly to S3</span><span class="cbm md">PUT → S3</span></div>
+      <pre><span class="cm"># FE uploads directly to the presigned URL (no backend involved)</span>
+<span class="c">curl</span> <span class="f">-X</span> PUT <span class="u">"https://s3.amazonaws.com/..."</span> \
+  <span class="f">-H</span> <span class="s">"Content-Type: application/pdf"</span> \
+  <span class="f">--data-binary</span> @invoice.pdf
+<span class="cm"># HTTP 200 from S3 → FE stores file_key alongside purchase entry</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> ~4 new files (FileUploadService, UploadButton, progress modal, S3 hook) + wire into Purchase Entry. ~1 day. Cannot start at all until presigned URL endpoint is live.</div>
+  </div>
+</div>
+
+<!-- ═══ REALTIME / SOCKET ════════════════════════════════════ -->
+<div class="mh"><span>⚡</span><span>Realtime / Socket</span></div>
+
+<!-- BUG-124 -->
+<div class="card" id="bug-124">
+  <div class="ch">
+    <div><div class="cid">BUG-124</div><div class="ct">food_update Socket Payload Missing 5 Fields — Stale Stock-Out Status</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span><span class="badge bsoc">Socket</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE defensive workaround: SOCKET_FOOD_DEFAULTS backfill in socketHandlers.js fills missing fields with defaults. App doesn't crash. BUT: backfill overwrites live values with stale defaults — stock-out toggle changes are unreliable in realtime.</div>
+    <div class="sl">Missing Fields in Current food_update Payload</div>
+    <table class="st" style="margin-bottom:14px">
+      <thead><tr><th>Field</th><th>Type</th><th>Used For</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>status</td><td>int</td><td>Item active/inactive</td><td style="color:var(--red)">Missing — FE backfills 1</td></tr>
+        <tr><td>is_disable</td><td>bool</td><td>Item disabled</td><td style="color:var(--red)">Missing — FE backfills false</td></tr>
+        <tr><td>stock_out</td><td>bool</td><td>Out-of-stock badge</td><td style="color:var(--red)">Missing — FE backfills false ← HIGH IMPACT</td></tr>
+        <tr><td>food_status</td><td>int</td><td>Kitchen status</td><td style="color:var(--red)">Missing — FE backfills 1</td></tr>
+        <tr><td>live_web</td><td>bool</td><td>Online visibility</td><td style="color:var(--red)">Missing — FE backfills false</td></tr>
+      </tbody>
+    </table>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Socket: food_update_{restaurant_id} — expected payload after fix</span><span class="cbm ms">SOCKET EMIT</span></div>
+      <pre>{ <span class="k">"id"</span>: <span class="n">1234</span>, <span class="k">"food_name"</span>: <span class="s">"Chicken Burger"</span>, <span class="k">"price"</span>: <span class="n">120</span>,
+  <span class="k">"status"</span>: <span class="n">1</span>,          <span class="cm">// ← ADD</span>
+  <span class="k">"is_disable"</span>: <span class="ok">false</span>,  <span class="cm">// ← ADD</span>
+  <span class="k">"stock_out"</span>: <span class="ok">false</span>,   <span class="cm">// ← ADD — most critical</span>
+  <span class="k">"food_status"</span>: <span class="n">1</span>,     <span class="cm">// ← ADD</span>
+  <span class="k">"live_web"</span>: <span class="ok">true</span> }    <span class="cm">// ← ADD</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Delete the 5-field SOCKET_FOOD_DEFAULTS backfill from socketHandlers.js. 1 block deleted. Verify stock-out toggle reflects instantly across all active POS sessions.</div>
+  </div>
+</div>
+
+<!-- BUG-094 -->
+<div class="card" id="bug-094">
+  <div class="ch">
+    <div><div class="cid">BUG-094</div><div class="ct">Delivery Assign-Order — Socket Payload Missing After Rider Assignment</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span><span class="badge bsoc">Socket</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">When a rider is assigned to a delivery order, the backend does not emit (or emits an incomplete) socket payload. The FE delivery dispatch panel cannot update in realtime to show rider assignment status without a full page refresh.</p>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>Rider assignment either emits no socket, or emits a payload missing <code>rider_id</code>, <code>rider_name</code>, and <code>delivery_status</code>. FE delivery panel requires manual refresh.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Backend emits <code>assign-delivery-order</code> socket with full rider details + updated order status immediately after assignment.</p></div>
+    </div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Expected socket payload after rider assignment</span><span class="cbm ms">SOCKET EMIT</span></div>
+      <pre><span class="cm">// Channel: delivery_update_{restaurant_id}</span>
+{ <span class="k">"event"</span>: <span class="s">"assign-delivery-order"</span>,
+  <span class="k">"order_id"</span>: <span class="n">77123</span>,
+  <span class="k">"rider_id"</span>: <span class="n">42</span>,
+  <span class="k">"rider_name"</span>: <span class="s">"Rahul Kumar"</span>,
+  <span class="k">"delivery_status"</span>: <span class="s">"assigned"</span>,  <span class="cm">// assigned / picked / delivered</span>
+  <span class="k">"assigned_at"</span>: <span class="s">"2026-07-22T10:30:00Z"</span> }</pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Wire socket listener in delivery dispatch panel to update rider assignment badge in real time. ~30 min.</div>
+  </div>
+</div>
+
+<!-- ═══ PRINT TEMPLATES ═════════════════════════════════════ -->
+<div class="mh"><span>🖨️</span><span>Print Templates</span></div>
+
+<!-- BUG-101 -->
+<div class="card" id="bug-101">
+  <div class="ch">
+    <div><div class="cid">BUG-101</div><div class="ct">Print Template — GST Display Slot Not Rendered on Bill</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">The backend print template (thermal/PDF bill) does not have a dedicated GST breakdown slot. FE sends the correct GST values in the print payload but they are not displayed on the printed bill because the template has no slot for them. This is a backend print template layout issue, not an FE data issue.</p>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>Bill print shows item totals + grand total. GST breakdown (CGST / SGST / VAT lines) is absent even when FE sends correct GST fields in print payload.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>Bill shows itemised GST breakdown section: CGST%, SGST%, total tax amount, above grand total. Template must read <code>gst_amount</code>, <code>cgst</code>, <code>sgst</code> fields from print payload.</p></div>
+    </div>
+    <div class="sl">FE Already Sends These Fields in Print Payload</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Fields FE sends — template must render them</span><span class="cbm mp2">PAYLOAD</span></div>
+      <pre>{ <span class="cm">// These fields are already in the print payload from FE:</span>
+  <span class="k">"gst_amount"</span>:      <span class="n">44.00</span>,   <span class="cm">// total GST</span>
+  <span class="k">"cgst"</span>:            <span class="n">22.00</span>,   <span class="cm">// Central GST</span>
+  <span class="k">"sgst"</span>:            <span class="n">22.00</span>,   <span class="cm">// State GST</span>
+  <span class="k">"vat"</span>:             <span class="n">0</span>,       <span class="cm">// VAT (if applicable)</span>
+  <span class="k">"tax_percentage"</span>:  <span class="n">5</span>        <span class="cm">// overall tax %</span>
+}
+<span class="cm"># Backend template must add a GST breakdown section that reads these fields.</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. FE already sends all GST fields. This is 100% a backend print template layout change.</div>
+  </div>
+</div>
+
+<!-- PROD-006 -->
+<div class="card" id="prod-006">
+  <div class="ch">
+    <div><div class="cid">PROD-006</div><div class="ct">Takeaway Print — Customer Phone Empty When Not Entered</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">Takeaway bill prints show an empty phone field even when a customer phone was entered on the order. Investigation points to the backend print template reading the wrong field name, or the print agent not receiving the phone value from the order record.</p>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Current</div><p>Takeaway bill: Customer phone line prints blank or missing, even when phone was entered at order time.</p></div>
+      <div class="db2 exp"><div class="dl">Expected</div><p>If phone was provided on order → print template shows it. If not provided → field omitted (no blank line).</p></div>
+    </div>
+    <div class="sl">FE Sends These Fields in Print Payload — Template May Be Reading Wrong Key</div>
+    <div class="cw">
+      <div class="cbar"><span class="cbl">Phone fields sent by FE in print payload</span><span class="cbm mp2">PAYLOAD</span></div>
+      <pre>{ <span class="k">"cust_phone"</span>:  <span class="s">"9876543210"</span>,   <span class="cm">// 10-digit raw</span>
+  <span class="k">"custPhone"</span>:   <span class="s">"9876543210"</span>,   <span class="cm">// camelCase variant</span>
+  <span class="k">"phone"</span>:       <span class="s">"9876543210"</span>    <span class="cm">// plain variant</span>
+}
+<span class="cm"># Backend template must check which key it reads vs. which key FE actually sends.</span>
+<span class="cm"># Confirm canonical field name with backend team.</span></pre>
+    </div>
+    <div class="imp"><strong>FE work after delivery:</strong> Possibly zero (template fix only). If backend confirms a canonical field name change, FE aligns its print payload key. ~5 min.</div>
+  </div>
+</div>
+
+<!-- ═══ LEGACY POS 3.0 ════════════════════════════════════════ -->
+<div class="mh"><span>📦</span><span>Legacy POS 3.0 — Lower Priority</span></div>
+
+<!-- BUG-129 -->
+<div class="card" id="bug-129">
+  <div class="ch">
+    <div><div class="cid">BUG-129</div><div class="ct">TAB Orders Stamped f_order_status=6 Before Collection</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE gates by checking payment method (pm) as a workaround. User experience is functional but incorrect HTTP semantics.</div>
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">Backend stamps TAB orders as status=6 (collected) at placement, before staff has actually collected payment. Causes incorrect order state across all POS sessions.</p>
+    <div class="sl">Expected</div>
+    <div class="fr"><span class="fl">status=6</span><span class="fv">Must only be set when staff explicitly calls "Mark Collected" endpoint — never on TAB order creation.</span></div>
+    <div class="imp"><strong>Backend brief:</strong> Brief #3 was sent via owner. Awaiting backend acknowledgement and target date.</div>
+  </div>
+</div>
+
+<!-- BUG-090 -->
+<div class="card" id="bug-090">
+  <div class="ch">
+    <div><div class="cid">BUG-090</div><div class="ct">CRM — customer_id Not Stored on Room Orders</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">When a room order is placed with a linked CRM customer, FE sends <code>customer_id</code> in the payload but the backend does not persist it. CRM customer history is broken for all room orders.</p>
+    <div class="sl">Expected</div>
+    <div class="fr"><span class="fl">Endpoint</span><span class="fv"><code>POST /order</code> (room type)</span></div>
+    <div class="fr"><span class="fl">Fix</span><span class="fv">Persist <code>customer_id</code> from request payload. Return it in the order object on subsequent GET calls.</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. FE already sends <code>customer_id</code> correctly.</div>
+  </div>
+</div>
+
+<!-- BUG-092 -->
+<div class="card" id="bug-092">
+  <div class="ch">
+    <div><div class="cid">BUG-092</div><div class="ct">Phone Format Contract Undefined — Room Check-In vs Order Screen</div></div>
+    <div class="cb-wrap"><span class="badge bp3">P3</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">Two screens send phone in two different formats. Backend contract is undefined. FE cannot standardise until backend confirms canonical format.</p>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">Room Check-In Screen</div><p>Sends E.164 format: <code>+919876543210</code></p></div>
+      <div class="db2 exp"><div class="dl">Order Screen</div><p>Sends raw 10-digit: <code>9876543210</code></p></div>
+    </div>
+    <div class="imp"><strong>Backend must confirm:</strong> Which format is canonical? FE standardises once backend responds.</div>
+  </div>
+</div>
+
+<!-- BUG-221 (added 2026-07-22, QA iteration_6) -->
+<div class="card" id="bug-221">
+  <div class="ch">
+    <div><div class="cid">BUG-221</div><div class="ct">Ingredient Template Export — CORS Blocked on export-sample-inventory</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span></div>
+  </div>
+  <div class="cbody">
+    <div class="fe">FE code is correct — uses same <code>download_url</code> server pattern as all other export endpoints. Blocked by missing CORS header on this single endpoint.</div>
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">Browser-based QA (iteration_6) confirmed: <code>GET /api/v2/vendoremployee/inventory/export-sample-inventory</code> returns response without <code>Access-Control-Allow-Origin</code> header. XHR from <code>https://pos-frontend-dev-4.preview.emergentagent.com</code> is blocked. All other export/import endpoints (<code>export-inventory-master</code>, <code>export-recipe</code>, <code>export-sample-recipe</code>, <code>import-recipe</code>, <code>import-inventory</code>) return proper CORS headers and work correctly.</p>
+    <div class="sl">Evidence</div>
+    <div class="fr"><span class="fl">Endpoint</span><span class="fv"><code>GET /api/v2/vendoremployee/inventory/export-sample-inventory</code></span></div>
+    <div class="fr"><span class="fl">Error</span><span class="fv">CORS: <code>Access-Control-Allow-Origin</code> header missing in preflight/response</span></div>
+    <div class="fr"><span class="fl">Working peers</span><span class="fv"><code>export-inventory-master</code> ✅, <code>export-recipe</code> ✅, <code>export-sample-recipe</code> ✅, <code>import-inventory</code> ✅, <code>import-recipe</code> ✅</span></div>
+    <div class="sl">Expected</div>
+    <div class="fr"><span class="fl">Fix</span><span class="fv">Add CORS headers to <code>export-sample-inventory</code> route (same middleware as other export routes)</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. FE already wired correctly. Template download will work immediately once CORS is fixed.</div>
+  </div>
+</div>
+
+<!-- ═══ RECIPE / INVENTORY ════════════════════════════════════ -->
+<div class="mh" id="recipe-inventory"><span>🧪</span><span>Recipe / Inventory — Added 2026-07-23</span></div>
+
+<!-- BUG-233 -->
+<div class="card" id="bug-233">
+  <div class="ch">
+    <div><div class="cid">BUG-233</div><div class="ct">addon-recipe-list returns <code>ingredients: []</code> for all addon recipes — Data Loss Risk</div></div>
+    <div class="cb-wrap"><span class="badge bp0">P0</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">The <code>addon-recipe-list</code> endpoint returns <code>"ingredients": []</code> (empty array) for every addon recipe, regardless of restaurant, even though ingredients were saved during recipe creation. Standard and sub-recipe endpoints both populate ingredients correctly. Confirmed cross-restaurant: palmhouse (2 recipes) and kunafamahal (1 recipe) both affected.</p>
+    <div class="imp"><strong>Data Loss Risk:</strong> RecipeFormPanel initialises from <code>recipe.ingredients</code>. Since this is always <code>[]</code>, the edit form opens with one blank row. If owner clicks "Update Recipe", FE sends <code>ingredients:[]</code> → permanently deletes all stored ingredients for that recipe. <strong>Do not edit addon recipes until this is fixed.</strong></div>
+    <div class="sl">Impact — Two Broken Features</div>
+    <div class="fr"><span class="fl">By Ingredient tab</span><span class="fv">Addon recipes never appear in the CR-088 reverse-lookup tab because all ingredient arrays are empty. Standard + sub recipes work correctly.</span></div>
+    <div class="fr"><span class="fl">Edit addon recipe</span><span class="fv">Form opens with empty ingredients row. Saving overwrites the backend-stored ingredients with an empty array — permanent data loss.</span></div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method / URL</span><span class="fv"><code>GET /api/v2/vendoremployee/product/addon-recipe-list</code></span></div>
+    <div class="fr"><span class="fl">Working peers</span><span class="fv"><code>GET /recipe/get-recipe</code> ✅ populated &nbsp;|&nbsp; <code>GET /recipe/sub-recipes</code> ✅ populated</span></div>
+    <div class="sl">Actual vs Expected</div>
+    <div class="dg2">
+      <div class="db2 cur"><div class="dl">ACTUAL (broken)</div><p><code>"ingredients": []</code> — always empty on every restaurant and every addon recipe</p></div>
+      <div class="db2 exp"><div class="dl">EXPECTED (fix)</div><p><code>"ingredients": [{"ingredient_id":12345,"ingredient_name":"Vanilla protein powder","ingredient_qty":33,"ingredient_unit":"gm"}]</code> — same shape as get-recipe</p></div>
+    </div>
+    <div class="sl">Suggested Fix</div>
+    <div class="fr"><span class="fl">Change</span><span class="fv">Add <code>->with('ingredients')</code> (or equivalent eager-load) to the <code>addon-recipe-list</code> controller query. Use same ingredient shape as <code>get-recipe</code>: <code>ingredient_id</code>, <code>ingredient_name</code>, <code>ingredient_qty</code>, <code>ingredient_unit</code>, <code>cost</code></span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Zero. FE transform already handles this shape (<code>recipeTransform.js</code>). Both the By Ingredient tab and edit form will fix automatically.</div>
+  </div>
+</div>
+
+<!-- CR-093-OQ1 -->
+<div class="card" id="cr-093-oq1">
+  <div class="ch">
+    <div><div class="cid">CR-093 / OQ-1</div><div class="ct">daily-consumption-report missing cost &amp; margin fields — Phase 2 Blocker</div></div>
+    <div class="cb-wrap"><span class="badge bp1">P1</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">The <code>daily-consumption-report</code> endpoint returns stock movement data (opening, consumed qty, closing) but does not include cost or margin fields. CR-093 Consumption Report Phase 1 ships without cost columns (placeholders). Phase 2 requires <code>cost_per_unit</code>, <code>total_cost</code>, <code>recipe_cost</code>, <code>margin</code> per ingredient in the <code>stock_summary</code> array.</p>
+    <div class="fe">Phase 1 ships now without cost columns. Placeholders shown with tooltip. No blocking for Phase 1 delivery.</div>
+    <div class="sl">Endpoint</div>
+    <div class="fr"><span class="fl">Method / URL</span><span class="fv"><code>POST /api/v2/vendoremployee/report/daily-consumption-report</code></span></div>
+    <div class="fr"><span class="fl">Payload</span><span class="fv"><code>{"start_date":"2026-07-01","end_date":"2026-07-23","category_id":1478}</code></span></div>
+    <div class="sl">Fields needed in stock_summary (Phase 2)</div>
+    <div class="fr"><span class="fl">cost_per_unit</span><span class="fv">Purchase rate per unit (₹) — e.g. 150.00</span></div>
+    <div class="fr"><span class="fl">total_cost</span><span class="fv">cost_per_unit × consumed qty (₹)</span></div>
+    <div class="fr"><span class="fl">recipe_cost</span><span class="fv">Cost attributed to recipe production (₹)</span></div>
+    <div class="fr"><span class="fl">margin</span><span class="fv">Margin % or ₹ value — please confirm format</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Minimal. Remove placeholder <code>—</code> cells, render numeric values. Cost columns already laid out in the table, hidden by placeholder class.</div>
+  </div>
+</div>
+
+<!-- CR-093-OQ2 -->
+<div class="card" id="cr-093-oq2">
+  <div class="ch">
+    <div><div class="cid">CR-093 / OQ-2</div><div class="ct">daily-consumption-report ignores <code>ingredient_id</code> filter param</div></div>
+    <div class="cb-wrap"><span class="badge bp2">P2</span></div>
+  </div>
+  <div class="cbody">
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px">The POST endpoint accepts <code>category_id</code> filter (works correctly) but silently ignores <code>ingredient_id</code> — always returns all rows for the restaurant regardless of the value sent. FE implements a client-side JS filter as a workaround, which is acceptable for datasets up to ~500 rows.</p>
+    <div class="fe">FE client-side workaround active. No blocking for Phase 1 delivery.</div>
+    <div class="sl">Reproduction</div>
+    <div class="dg2">
+      <div class="db2 exp"><div class="dl">category_id filter — WORKS ✅</div><p><code>POST {"category_id": 1478}</code> → returns only BAR ingredients</p></div>
+      <div class="db2 cur"><div class="dl">ingredient_id filter — BROKEN ❌</div><p><code>POST {"ingredient_id": 16932}</code> → returns ALL 34 ingredients (Bacardi White not isolated)</p></div>
+    </div>
+    <div class="sl">Fix Request</div>
+    <div class="fr"><span class="fl">Change</span><span class="fv">Add <code>ingredient_id</code> to the WHERE clause in the <code>daily-consumption-report</code> controller, using the same pattern as the working <code>category_id</code> filter.</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> Remove client-side filter fallback, send <code>ingredient_id</code> to API directly. Performance improvement for large datasets.</div>
+  </div>
+</div>
+
+<!-- ═══ CR-100: SMART PURCHASE — PARTIAL PAYMENT ════════════ -->
+<div class="mh" id="cr-100"><span>🛒</span><span>Smart Purchase Module</span></div>
+
+<div class="card" id="cr091-ref">
+  <div class="ch">
+    <div class="ct"><span class="badge bp2" style="font-size:9px">P2</span> CR-091 — Purchase Transaction ID for Bank Transfer</div>
+    <span style="font-size:10px;color:var(--text-dim)">Added 2026-07-24 · Covered by CR-100</span>
+  </div>
+  <div class="cbody">
+    <p style="color:var(--text-muted);font-size:13px;">The <code>payment_ref_id</code> field needed by CR-091 is included in the CR-100 partial payment contract below. Once CR-100 backend changes are delivered, CR-091 is automatically unblocked.</p>
+  </div>
+</div>
+<div class="mh" id="cr-100"><span>🛒</span><span>Smart Purchase Module</span></div>
+
+<div class="card" id="cr100-partial">
+  <div class="ch">
+    <div class="ct"><span class="badge bp1" style="font-size:9px">P1</span> CR-100 — Partial Payment, Reference ID, Notes &amp; Unpaid Status</div>
+    <span style="font-size:10px;color:var(--text-dim)">Added 2026-07-24</span>
+  </div>
+  <div class="cbody">
+    <div class="sl">Current Situation</div>
+    <p><code>POST /api/v2/vendoremployee/inventory/add-purchase</code> currently accepts a <strong>single <code>payment_method</code> string</strong> per vendor PO. There is no way to:</p>
+    <ul style="margin:8px 0 12px 20px;color:var(--text-muted);font-size:13px;line-height:1.8">
+      <li>Split payment across methods (e.g., ₹50K Cash + ₹20K UPI)</li>
+      <li>Record a payment reference/transaction ID</li>
+      <li>Mark a PO as unpaid (credit) or partially paid</li>
+      <li>Add user-editable notes per PO (field exists but is hardcoded by FE)</li>
+    </ul>
+    <p style="color:var(--text-muted);font-size:13px;">The <strong>Expense module already supports all of these</strong> via CR-083 (split payments) + CR-087 (ref ID + notes). Purchase needs the same capability.</p>
+
+    <div class="sl">Endpoint</div>
+    <div class="dg2">
+      <div class="db2 cur">
+        <div class="dl">Current Payload Shape</div>
+<pre style="font-size:11px;line-height:1.6;color:var(--text-muted);white-space:pre-wrap">{
+  "vendor_name": "Saurav",
+  "vendor_id": 123,
+  "purchase_date": "24-07-2026",
+  "payment_method": "Cash",          // single string — no split
+  "invoice_number": "",
+  "notes": "...",                     // exists but hardcoded by FE
+  "purchase_items": [...]
+}</pre>
+      </div>
+      <div class="db2 exp">
+        <div class="dl">Proposed Extended Payload</div>
+<pre style="font-size:11px;line-height:1.6;color:var(--text-muted);white-space:pre-wrap">{
+  "vendor_name": "Saurav",
+  "vendor_id": 123,
+  "purchase_date": "24-07-2026",
+  "payment_method": "Cash",          // kept for backward compat
+  <span style="color:var(--green)">"payment_status": "partial",       // NEW: "paid"|"unpaid"|"partial"</span>
+  <span style="color:var(--green)">"paid_amount": 50000,              // NEW: actual amount paid (≤ total)</span>
+  "invoice_number": "INV-2026-0789",
+  "notes": "Bulk cheese order",      // now user-editable in FE
+  <span style="color:var(--green)">"payment_ref_id": "CHQ-44821",     // NEW: reference for single payment</span>
+  <span style="color:var(--green)">"partial_payments": [               // NEW: when split
+    {"method":"Cash",  "amount":30000, "payment_ref_id":""},
+    {"method":"UPI",   "amount":20000, "payment_ref_id":"UPI-TXN-ABC"}
+  ],</span>
+  "purchase_items": [...]            // unchanged
+}</pre>
+      </div>
+    </div>
+
+    <div class="sl">New Fields Required</div>
+    <table class="st" style="font-size:12px">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>payment_status</code></td><td>enum string</td><td>YES (default "paid")</td><td>"paid" / "unpaid" / "partial"</td></tr>
+        <tr><td><code>paid_amount</code></td><td>number</td><td>When status ≠ "paid"</td><td>Amount actually paid. 0 for fully unpaid.</td></tr>
+        <tr><td><code>partial_payments</code></td><td>array</td><td>When split</td><td>[{method, amount, payment_ref_id}]</td></tr>
+        <tr><td><code>payment_ref_id</code></td><td>string</td><td>NO</td><td>Cheque/UPI/bank reference (single-payment mode)</td></tr>
+        <tr><td><code>notes</code></td><td>string</td><td>NO</td><td>Already accepted — no backend change. FE will make it user-editable.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sl">Backward Compatibility</div>
+    <ul style="margin:8px 0 12px 20px;color:var(--text-muted);font-size:12px;line-height:1.8">
+      <li>If <code>partial_payments</code> absent → single payment (existing behavior, zero breakage)</li>
+      <li>If <code>payment_status</code> absent → default "paid" (existing behavior)</li>
+      <li>If <code>payment_ref_id</code> absent → empty string (existing behavior)</li>
+    </ul>
+
+    <div class="sl">Open Questions for Backend</div>
+    <ol style="margin:8px 0 12px 20px;color:var(--text-muted);font-size:12px;line-height:1.8">
+      <li>Does purchase table already have <code>payment_status</code> column? If not, DB migration needed.</li>
+      <li>Store <code>partial_payments</code> as JSON column or separate <code>purchase_payments</code> table?</li>
+      <li>Should unpaid POs appear differently in purchase history / reports?</li>
+      <li>Is there an existing <code>update-purchase</code> endpoint to mark unpaid → paid later?</li>
+    </ol>
+
+    <div class="sl">Fix Request</div>
+    <div class="fr"><span class="fl">Change 1</span><span class="fv">Accept <code>payment_status</code> (enum: paid/unpaid/partial), <code>paid_amount</code> (number), <code>payment_ref_id</code> (string) as top-level fields on <code>POST /add-purchase</code>. Persist in purchase table.</span></div>
+    <div class="fr"><span class="fl">Change 2</span><span class="fv">Accept <code>partial_payments</code> array field: <code>[{method: string, amount: number, payment_ref_id: string}]</code>. Store as JSON or in related table. Sum of partial amounts must equal <code>paid_amount</code>.</span></div>
+    <div class="fr"><span class="fl">Change 3</span><span class="fv">Return <code>payment_status</code> + <code>partial_payments</code> in GET purchase-history / vendor-item-list responses so FE can display status.</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> ~175 lines across 3 files. Split payment UI in GroupedVendorPreview (mirrors Expense CR-083 pattern), reference ID input, notes input, payment status toggle (Paid/Partial/Unpaid). Intake doc: <code>CR_100_SMART_PURCHASE_PARTIAL_PAYMENT_INTAKE.md</code>.</div>
+  </div>
+</div>
+
+<!-- ═══ CR-090: INVENTORY CATEGORY EDIT/DELETE ════════════ -->
+<div class="mh" id="cr-090"><span>📦</span><span>Inventory Setup Module</span></div>
+
+<div class="card" id="cr090-category">
+  <div class="ch">
+    <div class="ct"><span class="badge bp2" style="font-size:9px">P2</span> CR-090 — Inventory Category Edit &amp; Delete Endpoints</div>
+    <span style="font-size:10px;color:var(--text-dim)">Added 2026-07-24</span>
+  </div>
+  <div class="cbody">
+    <div class="sl">Current Situation</div>
+    <p style="color:var(--text-muted);font-size:13px;">Inventory categories (<code>/stock-item-categories</code>) currently support only <strong>GET (list) + POST /store (create)</strong>. There are no PUT or DELETE endpoints. Curl probe on preprod returned <strong>405 Method Not Allowed</strong> for PUT.</p>
+    <p style="color:var(--text-muted);font-size:13px;">FE needs to offer rename + delete on the category sidebar in <code>InventorySetupPanel.jsx</code>. The Expense module already has this pattern: <code>PUT /expense/category/{id}</code> (rename) + <code>DELETE /expense/category/{id}</code> (BUG-160).</p>
+
+    <div class="sl">Endpoints Needed</div>
+    <table class="st" style="font-size:12px">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Body</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>PUT</td><td><code>/api/v2/vendoremployee/inventory/stock-item-categories/{id}</code></td><td><code>{"category_name": "New Name"}</code></td><td>Rename category. Return updated object.</td></tr>
+        <tr><td>DELETE</td><td><code>/api/v2/vendoremployee/inventory/stock-item-categories/{id}</code></td><td>—</td><td>Delete category. Return 409 if ingredients are assigned (with count). Return 200 if empty.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sl">Pattern Reference</div>
+    <p style="color:var(--text-muted);font-size:12px;">Same pattern as Expense categories: <code>PUT /expense/category/{id}</code> (rename, BUG-160) + <code>DELETE /expense/category/{id}</code> (BUG-160). Controller logic should mirror <code>ExpenseCategoryController</code>.</p>
+
+    <div class="sl">Fix Request</div>
+    <div class="fr"><span class="fl">Change 1</span><span class="fv">Add <code>PUT /stock-item-categories/{id}</code> — accept <code>category_name</code>, update, return updated row.</span></div>
+    <div class="fr"><span class="fl">Change 2</span><span class="fv">Add <code>DELETE /stock-item-categories/{id}</code> — check ingredient count. If &gt; 0, return 409 with <code>{"error": "Category has N ingredients"}</code>. If 0, delete + return 200.</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> ~40-50 lines in <code>InventorySetupPanel.jsx</code> + <code>inventoryService.js</code>. Pencil/trash icons on category rows, inline edit, delete-with-guard modal.</div>
+  </div>
+</div>
+
+<!-- ═══ CR-056: SCAN POPUP CONFIG ════════════════════════ -->
+<div class="mh" id="cr-056"><span>⚙️</span><span>Restaurant Settings Module</span></div>
+
+<div class="card" id="cr056-scanpopup">
+  <div class="ch">
+    <div class="ct"><span class="badge bp2" style="font-size:9px">P2</span> CR-056 — Scan Order Popup Toggle (Restaurant Setting)</div>
+    <span style="font-size:10px;color:var(--text-dim)">Added 2026-07-24</span>
+  </div>
+  <div class="cbody">
+    <div class="sl">Current Situation</div>
+    <p style="color:var(--text-muted);font-size:13px;">When scan-channel orders arrive, <code>ScanOrderPopOut.jsx</code> always shows a popup on the Dashboard. There is no toggle to suppress it. Owner wants a restaurant-level setting.</p>
+
+    <div class="sl">Backend Field Needed</div>
+    <table class="st" style="font-size:12px">
+      <thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Location</th></tr></thead>
+      <tbody>
+        <tr><td><code>show_scan_popup</code></td><td>boolean</td><td><code>true</code> (ON)</td><td>Restaurant settings table (same as <code>gst_status</code>, <code>short_code</code>, etc.)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sl">Requirements</div>
+    <ul style="margin:8px 0 12px 20px;color:var(--text-muted);font-size:12px;line-height:1.8">
+      <li><code>GET /settings-list</code> must return <code>show_scan_popup</code> (boolean)</li>
+      <li><code>POST /update-settings</code> must accept <code>show_scan_popup</code> (boolean)</li>
+      <li>Default: <code>true</code> for all existing restaurants (preserves current behavior)</li>
+      <li>Scope: restaurant-level (not per-user)</li>
+    </ul>
+
+    <div class="sl">Fix Request</div>
+    <div class="fr"><span class="fl">Change</span><span class="fv">Add <code>show_scan_popup</code> boolean field to restaurant settings. Return in <code>GET /settings-list</code>, accept in <code>POST /update-settings</code>. Default <code>true</code>.</span></div>
+    <div class="imp"><strong>FE work after delivery:</strong> ~25 lines across 3 files. Toggle in <code>RestaurantSettingsPage.jsx</code> (Step 4), map in <code>restaurantSettingsTransform.js</code>, gate in <code>DashboardPage.jsx</code> (ScanOrderPopOut render). Label: "Show Scan Pop up".</div>
+  </div>
+</div>
+
+<!-- ═══ SUMMARY TABLE ════════════════════════════════════════ -->
+<div class="mh" id="summary"><span>📋</span><span>All Endpoints — Quick Reference</span></div>
+
+<div class="card">
+  <div class="cbody" style="padding:0">
+    <table class="st">
+      <thead>
+        <tr><th>ID</th><th>Priority</th><th>Module</th><th>Endpoint / Channel</th><th>Change Needed</th><th>FE Unblocked?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>BUG-201 Ph2</td><td><span class="badge bp1" style="font-size:9px">P1</span></td><td>Expense</td><td><code>DELETE /expense/expenses/{id}</code></td><td>409 when item has transactions</td><td style="color:var(--orange)">Partial (Ph1 done)</td></tr>
+        <tr><td>BUG-165</td><td><span class="badge bp1" style="font-size:9px">P1</span></td><td>Expense</td><td><code>POST /expense/store_expense</code></td><td><s>422 for duplicate stock_title per category</s> — DELIVERED 2026-07-24</td><td style="color:var(--green)">Yes — backend returns 422</td></tr>
+        <tr><td>BUG-164</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>POST /expense/category</code></td><td><s>Return 409 instead of 201 for duplicates</s> — DELIVERED 2026-07-24</td><td style="color:var(--green)">Yes — backend returns 409</td></tr>
+        <tr><td>BUG-203</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>PUT /expense/expenses/{id}</code></td><td><s>Accept + persist unit_price field</s> — DELIVERED 2026-07-24</td><td style="color:var(--green)">Yes — PUT accepts unit_price</td></tr>
+        <tr><td>CR-062</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Expense</td><td><code>POST /expense/expense-aggregation</code></td><td><s>New endpoint: 3 breakdown aggregations</s> — DELIVERED 2026-07-24</td><td style="color:var(--green)">Yes — endpoint live</td></tr>
+        <tr><td>PROD-003</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Orders</td><td><code>socket: update-order-paid</code></td><td>Emit socket when PayLater order paid</td><td style="color:var(--red)">No — missing emit</td></tr>
+        <tr><td>CR-076</td><td><span class="badge bp0" style="font-size:9px">P0</span></td><td>Upload</td><td><code>POST /upload/presigned-url</code> (NEW)</td><td>New S3 presigned URL infrastructure</td><td style="color:var(--red)">No — zero infrastructure</td></tr>
+        <tr><td>BUG-124</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Socket</td><td><code>socket: food_update_{rid}</code></td><td>Add 5 missing fields to emit payload</td><td style="color:var(--orange)">Partial (FE backfill)</td></tr>
+        <tr><td>BUG-094</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>Socket</td><td><code>socket: assign-delivery-order</code></td><td>Emit rider details after assignment</td><td style="color:var(--red)">No</td></tr>
+        <tr><td>BUG-101</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>Print</td><td>Backend print template</td><td>Add GST breakdown slot to bill template</td><td style="color:var(--red)">No (template issue)</td></tr>
+        <tr><td>PROD-006</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>Print</td><td>Backend print template</td><td>Confirm canonical phone field name</td><td style="color:var(--orange)">Partial</td></tr>
+        <tr><td>BUG-129</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>Orders</td><td>TAB order status logic</td><td>Don't stamp status=6 until collection</td><td style="color:var(--orange)">Partial (FE gates by pm)</td></tr>
+        <tr><td>BUG-090</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>CRM</td><td><code>POST /order</code> (room)</td><td>Persist customer_id from payload</td><td style="color:var(--red)">No</td></tr>
+        <tr><td>BUG-092</td><td><span class="badge bp3" style="font-size:9px">P3</span></td><td>Room</td><td>All order endpoints</td><td>Define canonical phone format</td><td style="color:var(--red)">No (contract undefined)</td></tr>
+        <tr><td>BUG-221</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Inventory</td><td><code>GET /inventory/export-sample-inventory</code></td><td>Add CORS headers (same as other export routes)</td><td style="color:var(--orange)">Partial (FE done, CORS blocks)</td></tr>
+        <tr><td>BUG-233</td><td><span class="badge bp0" style="font-size:9px">P0</span></td><td>Recipe</td><td><code>GET /product/addon-recipe-list</code></td><td>Eager-load ingredients relation (same shape as get-recipe)</td><td style="color:var(--red)">No — data loss risk on edit</td></tr>
+        <tr><td>CR-093 OQ-1</td><td><span class="badge bp1" style="font-size:9px">P1</span></td><td>Inventory</td><td><code>POST /report/daily-consumption-report</code></td><td>Add cost_per_unit, total_cost, recipe_cost, margin to stock_summary</td><td style="color:var(--orange)">Partial (Phase 1 ships without cost)</td></tr>
+        <tr><td>CR-093 OQ-2</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Inventory</td><td><code>POST /report/daily-consumption-report</code></td><td>Fix ingredient_id filter param (currently ignored)</td><td style="color:var(--orange)">Partial (client-side workaround active)</td></tr>
+        <tr><td>CR-100</td><td><span class="badge bp1" style="font-size:9px">P1</span></td><td>Purchase</td><td><code>POST /inventory/add-purchase</code></td><td>Accept payment_status, paid_amount, partial_payments[], payment_ref_id. Return in GET history.</td><td style="color:var(--red)">No — contract change needed</td></tr>
+        <tr><td>CR-090</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Inventory</td><td><code>PUT + DELETE /stock-item-categories/{id}</code></td><td>New endpoints: rename category (PUT) + delete empty category (DELETE). Currently only POST /store exists.</td><td style="color:var(--red)">No — endpoints don't exist (405)</td></tr>
+        <tr><td>CR-056</td><td><span class="badge bp2" style="font-size:9px">P2</span></td><td>Settings</td><td><code>GET/POST /restaurant-settings</code></td><td><s>Add show_scan_popup boolean field</s> — DELIVERED (confirmed in settings response)</td><td style="color:var(--green)">Yes — field exists</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="height:60px"></div>
+</main>
+</div>
+</body>
+</html>

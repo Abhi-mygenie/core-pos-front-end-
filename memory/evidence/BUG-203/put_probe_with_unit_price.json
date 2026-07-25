@@ -1,0 +1,12 @@
+{
+  "probe_date": "2026-07-17",
+  "tenant": "cafe103",
+  "endpoint": "PUT /api/v2/vendoremployee/expense/expenses/4599",
+  "request_body": {"stock_title": "test-probe-revert", "category_id": 255, "unit_price": 99.50},
+  "response": {
+    "message": "Update successful.",
+    "updated_expense": {"id": 4599, "stock_title": "test-probe-revert", "category_id": 255, "category_name": "To Owner"}
+  },
+  "finding": "unit_price field silently IGNORED by backend. Response does not echo unit_price. Subsequent GET confirms unit_price_amount unchanged at 20 (was 20 before, still 20 after PUT with 99.50).",
+  "conclusion": "PUT /expenses/{id} does NOT support unit_price modification. §3.4 confirmed NOT delivered."
+}
