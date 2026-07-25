@@ -1,151 +1,169 @@
 # Investigation Report — Smart Purchase Submit Structure
 
-**Date:** 2026-07-25
+**Date:** 2026-07-25 (Updated with backend contract doc)
 **Role:** INVESTIGATION
 **Scope:** Trace Smart Purchase submit payload vs backend `add-purchase` contract
-**Steps Used:** 8/10
-**Confidence:** HIGH (code traced + live curl-probed against preprod)
-**Classification:** FE_BUG — confirmed unit/conversion mismatch affecting 36 of 117 ingredients (31%)
+**Steps Used:** 10/10
+**Confidence:** HIGH (code traced + live curl-probed + backend contract doc verified)
+**Classification:** FE_BUG — multiple payload key mismatches affecting ALL purchases via addPurchase
 
 ---
 
 ## 1. Summary
 
-Smart Purchase uses the **same** `inventoryService.addPurchase()` → `toAPI.addPurchase()` pipeline as any purchase. There is only ONE submission path.
+The backend contract doc (`add_purchase_payload_frontend.md`) reveals **4 critical gaps** in the FE `toAPI.addPurchase()` transform — wrong key names, missing header totals, and unnecessary fields. These affect **every purchase submission** (not just Smart Purchase).
 
-**CONFIRMED GAP:** The planner computes quantities in **small units** (gm/ml) and the submit sends `Unit: "gm"` with `converion_factor: 1`. But the **backend purchase history records quantities in the ingredient's LARGE unit** (kg/ltr). **36 of 117 ingredients** (31%) have `unit ≠ small_unit` and are affected.
-
----
-
-## 2. Data Flow Trace
-
-```
-purchasePlanner.computePlan()
-  → rows: { ingredient_id, name, unit (=smallUnit ← THIS IS THE PROBLEM), suggest_qty (in small unit), ... }
-
-SmartPurchasePanel.handleSubmit() builds:
-  → items: [{ ingredientId, unit (=smallUnit), quantity (in small unit), rate, amount, conversionFactor: 1 (HARDCODED) }]
-
-toAPI.addPurchase() sends to backend:
-  → purchase_items: [{ Ingredient: id, Unit: "gm", quantity: 4604, rate: 0.056, Amount: 257.8, converion_factor: 1 }]
-
-BUT backend purchase history for same ingredient shows:
-  → Quantity: "4 kg", stock_quantity_raw: 4  (LARGE UNIT)
-```
+**Priority ranking:**
+- **P0: `payment_method` → should be `payment_type`** — every purchase has null payment type
+- **P0: Missing `tot_amount` / `item_total`** — every purchase header shows total=1
+- **P2: `converion_factor: 1` always sent** — should omit when no conversion
+- **P3: Sending ignored fields** — vendor_name, notes, invoice_number, rate, origin
 
 ---
 
-## 3. Live Evidence (curl-probed against preprod)
+## 2. Gap-by-Gap Analysis
 
-### Ingredient 10719 — Biscoff Biscuit (unit=kg, small_unit=gm)
+### GAP-A (P0): Wrong key — `payment_method` → `payment_type`
 
-| Source | Unit | Quantity | Rate |
-|--------|------|----------|------|
-| **stock-inventory** | unit=kg, small_unit=gm | cal_quantity=6843 gm, quantity=6.843 kg | — |
-| **Purchase History (2026-07-18)** | **Quantity: "4 kg"** | raw: 4 | unit_price: 0.056/gm |
-| **Purchase History (2026-06-03)** | **Quantity: "1 kg"** | raw: 1 | unit_price: 0.11/gm |
-| **What Smart Purchase sends** | **Unit: "gm"** | quantity: ~1000 | rate: 0.056 (per gm) |
+**Location:** `inventoryTransform.js:172`
 
-Backend records purchases in **kg** (large unit). Smart Purchase sends in **gm** (small unit).
+| | Current FE | Backend expects |
+|--|-----------|-----------------|
+| Key | `payment_method` | `payment_type` |
+| Value | `"Cash"` | `"Cash"` / `"Cash Draw"` |
+| Result | **IGNORED** → `payment_type: null` | Stored correctly |
 
-### Scale of Impact
+**Impact:** Every purchase via `addPurchase` has `payment_type: null` in the backend. Affects purchase history, reports, settlement.
 
+### GAP-B (P0): Missing header totals — `tot_amount`, `item_total`
+
+**Location:** `inventoryTransform.js:167-186` (never computed/sent)
+
+| Field | Current FE | Backend expects | Default if missing |
+|-------|-----------|-----------------|-------------------|
+| `tot_amount` | **not sent** | Sum of all `Amount` | **defaults to `1`** |
+| `item_total` | **not sent** | Sum of all `Amount` | **defaults to `1`** |
+| `tot_fair` | **not sent** | `0` or actual | **defaults to `1`** |
+| `tot_tax` | **not sent** | `0` or actual | **defaults to `1`** |
+
+**Impact:** Every purchase header shows `tot_amount: 1, item_total: 1, tot_fair: 1, tot_tax: 1` — regardless of actual amounts. Corrupts purchase header reports.
+
+### GAP-C (P2): `converion_factor: 1` always sent
+
+**Location:** `inventoryTransform.js:181`
+
+```js
+converion_factor: item.conversionFactor || 1, // R9 typo
 ```
-unit == small_unit:  81 ingredients (70%) — Smart Purchase unit is CORRECT
-unit != small_unit:  36 ingredients (31%) — Smart Purchase sends WRONG unit
-                     ^^^^^^^^^^^^^^^^^^
-                     All kg↔gm or ltr↔ml pairs
-```
 
-### Ingredient 10741 (unit=gm, small_unit=gm — same unit)
+**Backend contract says:** "Omit unless SKU has real conversion. Do not always send 1."
+**Impact:** Low — backend stores `1` for all items. Not breaking, but incorrect data. Backend contract explicitly says to OMIT this field when unused.
 
-Purchase history confirms both gm and kg have been submitted historically:
-- `Quantity: "1 kg", raw: 1` (recent, Jun 2026)
-- `Quantity: "250 gm", raw: 250` (older, Mar 2026)
+### GAP-D (P3): Sending keys the backend ignores
 
-This shows the backend ACCEPTS either unit — but interprets `raw` literally (250 when gm, 1 when kg). **Correct stock accounting depends on the backend's internal conversion logic.**
+| FE sends | Backend action |
+|----------|---------------|
+| `vendor_name` | **Ignored** — only `vendor_id` matters |
+| `invoice_number` | **Ignored** on this endpoint (string not stored) |
+| `notes` | **Ignored** (no column write) |
+| `rate` (per line) | **Ignored** — line cost = `Amount` only |
+| `origin` | **Ignored** (e.g. "planner") |
+
+**Impact:** None functionally. Wasteful payload. Low priority cleanup.
 
 ---
 
-## 4. Gaps Found
+## 3. Unit Issue Re-Assessment (Downgraded)
 
-### GAP-1 (CONFIRMED — HIGH risk): Unit + Quantity Mismatch for 36 Ingredients
+My earlier GAP-1 (unit mismatch for 36 ingredients) is **downgraded from HIGH to LOW** based on the backend contract:
 
-**Location:** `purchasePlanner.js:120` → `SmartPurchasePanel.jsx:169-173`
+The "good curl" example in the contract sends `Unit: "gm", quantity: 17975` and the backend accepts it:
+```json
+{ "sunit": "gm", "stock_quantity": 17975, "calculate_quantity": 17975 }
+```
 
-**Root cause:** Planner always uses `item.smallUnit || item.unit` for the unit and `item.calQuantity` for on-hand math. The `suggest_qty` is in **small units** (gm/ml). The submit passes this directly to `addPurchase` with `converion_factor: 1`.
+**The backend accepts ANY unit** and records it as-is. Stock accounting uses `calculate_quantity` in whatever unit was sent. So sending `gm` instead of `kg` is **not a stock corruption risk** — it's a display/consistency issue.
 
-**Impact scenarios for ingredient 10719 (unit=kg, small_unit=gm):**
-
-If user wants to buy 1 kg via Smart Purchase:
-- Planner shows: "buy 1000 gm" (suggest_qty=1000, unit=gm)
-- Submit sends: `{ Unit: "gm", quantity: 1000, converion_factor: 1 }`
-- **If backend treats Unit literally:** records 1000 gm purchase (correct stock, ugly record)
-- **If backend ignores Unit and uses ingredient's default (kg):** records 1000 KG — **1000x overstock!**
-- **If backend rejects gm for a kg-ingredient:** 422 error
-
-**Cannot confirm which scenario without a test purchase.** But the mismatch is structurally present.
-
-### GAP-2: Rate/Price Confusion (UX — tied to GAP-1)
-
-**Location:** `SmartPurchasePanel.jsx:58` (suggestedRate from vendor ranking)
-
-**Issue:** `unit_price` from vendor-item-list is normalized to **per small unit** (per gm):
-- Ingredient 10719: `unit_price: 0.056` = 0.056 per gm = 56 per kg
-
-The user sees `suggestedRate: 0.056` as a hint. But they naturally think in kg and might type `56` (per kg). If the system uses this as per-gm:
-- `amount = 1000 gm × 56 = 56,000` — **1000x overcharge**
-
-### GAP-3: `vendor_id: null` for System Vendor (LOW-MEDIUM risk)
-
-**Location:** `SmartPurchasePanel.jsx:162`
-
-System Vendor submits `vendor_id: null`. Existing purchases also show `vendor_id: null` in purchase history — so **backend likely accepts this.** Lower risk than GAP-1/GAP-2.
+However, `unit_price` in vendor-item-list is normalized to per-small-unit, so the `suggestedRate` hint is correct for the unit being sent.
 
 ---
 
-## 5. Non-Gaps (Confirmed Correct)
+## 4. Current FE Payload vs Correct Payload
 
-| Field | Status |
-|-------|--------|
-| `Ingredient` (capital I), `Amount` (capital A) | ✅ R9 |
-| `converion_factor` (typo) | ✅ R9 |
-| `purchase_date` (DD-MM-YYYY) | ✅ R9 |
-| `payment_method` per vendor group | ✅ validated |
-| `origin` field | ✅ planner/stock_alert |
-| Single submission path (`addPurchase`) | ✅ same as any purchase |
-| `vendor_id: null` accepted by backend | ✅ historical evidence |
+### What FE sends today (`toAPI.addPurchase`):
+```json
+{
+  "vendor_name": "Saurav",           ← IGNORED
+  "vendor_id": "278",               ← ✅
+  "purchase_date": "25-07-2026",    ← ✅
+  "payment_method": "Cash",         ← ❌ WRONG KEY (should be payment_type)
+  "invoice_number": "",              ← IGNORED
+  "notes": "Smart Purchase...",     ← IGNORED
+  "purchase_items": [{
+    "Ingredient": 15983,            ← ✅
+    "Unit": "gm",                   ← ✅ (backend accepts any unit)
+    "quantity": 17975,              ← ✅
+    "rate": 100,                    ← IGNORED
+    "Amount": 1797500,              ← ✅
+    "converion_factor": 1,          ← ❌ should OMIT when no conversion
+    "batch": "",                    ← ✅
+    "expiry_date": "",              ← ✅
+    "origin": "planner"             ← IGNORED
+  }]
+}
+```
+
+### What FE SHOULD send:
+```json
+{
+  "vendor_id": "278",
+  "purchase_date": "25-07-2026",
+  "payment_type": "Cash",            ← FIXED key name
+  "tot_amount": 1797500,             ← NEW: sum of all Amount
+  "item_total": 1797500,             ← NEW: sum of all Amount
+  "tot_fair": 0,                     ← NEW: default 0
+  "tot_tax": 0,                      ← NEW: default 0
+  "purchase_items": [{
+    "Ingredient": 15983,
+    "Unit": "gm",
+    "quantity": 17975,
+    "Amount": 1797500
+  }]
+}
+```
 
 ---
 
-## 6. Fix Direction (no code edit per owner directive)
+## 5. Fix Location
 
-**For GAP-1 + GAP-2 (the fix is linked):**
+**Single file:** `api/transforms/inventoryTransform.js` → `toAPI.addPurchase()` (lines 167-186)
 
-The submit payload needs to convert from planner's small-unit domain to the ingredient's large unit:
+Changes needed:
+1. `payment_method` → `payment_type` (rename key)
+2. Add `tot_amount`, `item_total` (computed from sum of items.Amount)
+3. Add `tot_fair: 0`, `tot_tax: 0`
+4. Remove `converion_factor: 1` default → only send when ingredient has conversion
+5. Remove ignored fields: `vendor_name`, `invoice_number`, `notes`, `rate`, `origin`
 
-```
-For each row being submitted:
-  ingredientMaster = find ingredient by id
-  if (ingredientMaster.unit !== ingredientMaster.smallUnit):
-    // Needs conversion: gm→kg, ml→ltr
-    convFactor = 1000  (or derive from known unit families)
-    submit Unit = ingredientMaster.unit (kg/ltr)
-    submit quantity = row.qty / convFactor
-    submit rate = row.rate * convFactor (per kg, not per gm)
-    submit converion_factor = convFactor
-  else:
-    // Same unit, no conversion needed
-    submit as-is
-```
+**Also in `SmartPurchasePanel.jsx`:** The `paymentMethod` field passed to addPurchase is already populated from GroupedVendorPreview. No change needed there — just the transform key name.
 
-**Files to change:** `SmartPurchasePanel.jsx` (handleSubmit item mapping, ~10 lines)
+---
+
+## 6. Verification Matrix (for future QA)
+
+| # | Test | Expected |
+|---|------|----------|
+| V1 | Submit purchase → check response `payment_type` | Not null, matches what user selected |
+| V2 | Submit purchase → check response `tot_amount` | Equals sum of line items Amount |
+| V3 | Submit purchase → check response `item_total` | Equals sum of line items Amount |
+| V4 | Submit purchase with no conversion ingredient → check payload | `converion_factor` absent |
+| V5 | Submit purchase with conversion ingredient → check payload | `converion_factor` present with real value |
 
 ---
 
 ## 7. Evidence Artifacts
 
-- Stock inventory curl: 117 items, 36 with unit≠small_unit
-- Purchase history curl: ingredient 10719 shows "4 kg" records, ingredient 10741 shows both gm and kg
-- vendor-item-list curl: unit_price normalized to per-small-unit (0.056/gm = 56/kg)
-- All probed against preprod with restaurant Kunafa Mahal (id=689)
+- Backend contract: `add_purchase_payload_frontend.md` (owner-provided 2026-07-25)
+- Live curl probes: stock-inventory, vendor-item-list, ingredient master (preprod, restaurant 689)
+- Code trace: `inventoryTransform.js:167-186`, `SmartPurchasePanel.jsx:150-189`
+- Full report: `/app/memory/reports/INVESTIGATION_SMART_PURCHASE_SUBMIT_2026_07_25.md`
