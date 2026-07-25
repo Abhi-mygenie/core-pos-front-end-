@@ -118,7 +118,7 @@ export default function SmartPurchasePanel() {
   // ── Row handlers ─────────────────────────────────────────────────
   const onRowChange = (ix, patch) => setRows(prev => prev.map((r, i) => i === ix ? { ...r, ...patch } : r));
   const onRowRemove = (ix) => { setRows(prev => prev.filter((_, i) => i !== ix)); setSelectedRows(new Set()); }; // CR-103: clear selection on single remove
-  const onAddAdHoc = (newRow) => setRows(prev => [...prev, newRow]);
+  const onAddAdHoc = (newRow) => setRows(prev => [newRow, ...prev]); // CR-105: add to top
   // CR-103: Selection handlers for bulk remove
   const onToggleRow = (ix) => setSelectedRows(prev => {
     const next = new Set(prev);
