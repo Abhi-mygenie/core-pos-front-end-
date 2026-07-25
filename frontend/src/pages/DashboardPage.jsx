@@ -27,6 +27,10 @@ import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
 import { isWebOrigin, getRunningOrders } from "../utils/orderOrigin";
 import ScanOrderPopOut from "../components/dashboard/ScanOrderPopOut";
+import AggregatorOrderPopOut from "../components/dashboard/AggregatorOrderPopOut"; // CR-106
+import AggregatorRejectModal from "../components/modals/AggregatorRejectModal";   // CR-106
+import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
+import { updateAggregatorOrderStatus } from "../api/services/aggregatorService";    // CR-106
 
 // ROOM_CARD_TOTAL (Task 4, Apr-2026): card amount for ROOM orders must reflect
 // the full checkout value the cashier will see — i.e., room food/room-service
@@ -433,6 +437,9 @@ const DashboardPage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [checkInRoom, setCheckInRoom] = useState(null); // Room object for CheckIn modal
   const [cancelOrderEntry, setCancelOrderEntry] = useState(null); // Table entry for CancelOrderModal
+  // CR-106: Aggregator modal state
+  const [aggregatorRejectOrder, setAggregatorRejectOrder] = useState(null);
+  const [aggregatorDispatchOrder, setAggregatorDispatchOrder] = useState(null);
 
   // Req 2: Order Taking flag — when false, all card body clicks no-op via
   // early return in handleTableClick. Action buttons inside cards (Mark
@@ -1307,6 +1314,68 @@ const DashboardPage = () => {
     setCancelOrderEntry(null);
   }, [cancelOrderEntry, getOrderDataForEntry, permissions, waitForOrderRemoval]);
 
+  // CR-106: Aggregator order handlers
+  const handleAggregatorAccept = useCallback(async (order, prepTimeMins) => {
+    try {
+      await updateAggregatorOrderStatus({
+        order_id: order.orderId,
+        urban_order_id: order.urbanOrderId,
+        new_status: 'Acknowledged',
+        message: 'Success',
+        extra: { prep_time_mins: prepTimeMins },
+      });
+    } catch (err) {
+      console.error('[Dashboard] Aggregator accept failed:', err);
+    }
+  }, []);
+
+  const handleAggregatorReject = useCallback(async (reasonCode, message) => {
+    if (!aggregatorRejectOrder) return;
+    try {
+      await updateAggregatorOrderStatus({
+        order_id: aggregatorRejectOrder.orderId,
+        urban_order_id: aggregatorRejectOrder.urbanOrderId,
+        new_status: 'Cancelled',
+        message: message || 'Order rejected',
+        reason_code: reasonCode,
+      });
+    } catch (err) {
+      console.error('[Dashboard] Aggregator reject failed:', err);
+    } finally {
+      setAggregatorRejectOrder(null);
+    }
+  }, [aggregatorRejectOrder]);
+
+  const handleAggregatorReady = useCallback(async (order) => {
+    try {
+      await updateAggregatorOrderStatus({
+        order_id: order.orderId,
+        urban_order_id: order.urbanOrderId,
+        new_status: 'Food Ready',
+        message: 'Success',
+      });
+    } catch (err) {
+      console.error('[Dashboard] Aggregator ready failed:', err);
+    }
+  }, []);
+
+  const handleAggregatorDispatch = useCallback(async (riderName, riderPhone) => {
+    if (!aggregatorDispatchOrder) return;
+    try {
+      await updateAggregatorOrderStatus({
+        order_id: aggregatorDispatchOrder.orderId,
+        urban_order_id: aggregatorDispatchOrder.urbanOrderId,
+        new_status: 'Dispatched',
+        message: 'Order dispatched',
+        extra: { rider_name: riderName, rider_phone_number: riderPhone },
+      });
+    } catch (err) {
+      console.error('[Dashboard] Aggregator dispatch failed:', err);
+    } finally {
+      setAggregatorDispatchOrder(null);
+    }
+  }, [aggregatorDispatchOrder]);
+
   const handleSearchSelect = (selection) => {
     const { type, data } = selection;
     if (type === 'table') {
@@ -1623,6 +1692,24 @@ const DashboardPage = () => {
           suppressed={Boolean(orderEntryType) || Boolean(cancelOrderEntry)}
         />
       )}
+      {/* CR-106: Aggregator order popup (Swiggy/Zomato) */}
+      <AggregatorOrderPopOut
+        orders={orders}
+        onAccept={handleAggregatorAccept}
+        onReject={(order) => setAggregatorRejectOrder(order)}
+        currencySymbol={currencySymbol}
+        suppressed={Boolean(orderEntryType) || Boolean(cancelOrderEntry)}
+      />
+      <AggregatorRejectModal
+        open={!!aggregatorRejectOrder}
+        onClose={() => setAggregatorRejectOrder(null)}
+        onConfirm={handleAggregatorReject}
+      />
+      <AggregatorDispatchModal
+        open={!!aggregatorDispatchOrder}
+        onClose={() => setAggregatorDispatchOrder(null)}
+        onConfirm={handleAggregatorDispatch}
+      />
       <Sidebar
         isExpanded={sidebarExpanded}
         setIsExpanded={setSidebarExpanded}
@@ -1719,6 +1806,8 @@ const DashboardPage = () => {
                 onConfirmOrder={handleConfirmOrder}
                 onUpdateStatus={handleUpdateTableStatus}
                 onFoodTransfer={handleFoodTransfer}
+                onAggregatorReady={handleAggregatorReady}              
+                onAggregatorDispatch={(order) => setAggregatorDispatchOrder(order)} 
                 hasPermission={hasPermission}
                 snoozedOrders={snoozedOrders}
                 currencySymbol={currencySymbol}
@@ -1925,6 +2014,8 @@ const DashboardPage = () => {
                         onCancelOrder={handleCancelOrderFromCard}
                         onItemStatusChange={handleItemStatusChange}
                         onPostSettleSuccess={handlePrepaidSettleSuccess}
+                        onAggregatorReady={handleAggregatorReady}
+                        onAggregatorDispatch={(order) => setAggregatorDispatchOrder(order)}
                       />
                     ))
                   }

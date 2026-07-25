@@ -57,6 +57,9 @@ const OrderCard = ({
   onMergeOrder,
   onTableShift,
   onFoodTransfer,
+  // CR-106: Aggregator action handlers
+  onAggregatorReady,
+  onAggregatorDispatch,
   // BUG-029 (Apr-2026): callback invoked after successful prepaid settle so the
   // parent dashboard can clear any stale order-entry selection for this order.
   onPostSettleSuccess,
@@ -96,6 +99,7 @@ const OrderCard = ({
 
   const source = order.source || "own";
   const isOwn = source === "own";
+  const isAggregator = order.isAggregator === true; // CR-106
   const isDineIn = orderType === "dineIn";
   const isDelivery = orderType === "delivery";
   const isTakeAway = orderType === "takeAway";
@@ -404,7 +408,7 @@ const OrderCard = ({
       data-testid={`order-card-${orderId}`}
       className={`relative rounded-lg shadow-sm overflow-hidden mb-2 ${isSnoozed ? "opacity-60" : ""} ${isEngaged ? "pointer-events-none" : "cursor-pointer"}`}
       style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}`, breakInside: 'avoid' }}
-      onClick={isEngaged ? undefined : () => onEdit?.()}
+      onClick={isEngaged || isAggregator ? undefined : () => onEdit?.()} // CR-106: no-op for aggregator
     >
       {/* Engaged spinner overlay */}
       {isEngaged && (
@@ -992,7 +996,29 @@ const OrderCard = ({
             <div className="flex-1" />
 
             {/* Right: Action button */}
-            {fOrderStatus === 1 && (
+            {/* CR-106: Aggregator-specific actions (Ready/Dispatch via UrbanPiper API) */}
+            {isAggregator && fOrderStatus === 1 && (
+              <button
+                data-testid={`agg-ready-btn-${orderId}`}
+                className={`min-h-[44px] px-6 text-sm font-bold rounded-lg flex items-center justify-center gap-2`}
+                style={{ backgroundColor: `${SOURCE_COLORS[source] || '#FC8019'}15`, color: SOURCE_COLORS[source] || '#FC8019', border: `1px solid ${SOURCE_COLORS[source] || '#FC8019'}` }}
+                onClick={(e) => { e.stopPropagation(); onAggregatorReady?.(order); }}
+              >
+                Mark Ready
+              </button>
+            )}
+            {isAggregator && fOrderStatus === 2 && (
+              <button
+                data-testid={`agg-dispatch-btn-${orderId}`}
+                className={`min-h-[44px] px-6 text-sm font-bold rounded-lg flex items-center justify-center gap-2`}
+                style={{ backgroundColor: `${SOURCE_COLORS[source] || '#FC8019'}15`, color: SOURCE_COLORS[source] || '#FC8019', border: `1px solid ${SOURCE_COLORS[source] || '#FC8019'}` }}
+                onClick={(e) => { e.stopPropagation(); onAggregatorDispatch?.(order); }}
+              >
+                Dispatch
+              </button>
+            )}
+            {/* POS actions — hidden for aggregator orders (CR-106: payment handled externally) */}
+            {!isAggregator && fOrderStatus === 1 && (
               <button
                 data-testid={`ready-btn-${orderId}`}
                 className={`min-h-[44px] px-6 text-sm font-bold rounded-lg flex items-center justify-center gap-2 ${isActionInProgress ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -1003,7 +1029,7 @@ const OrderCard = ({
                 {isMarkingReady ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ready'}
               </button>
             )}
-            {fOrderStatus === 2 && (
+            {!isAggregator && fOrderStatus === 2 && (
               isDelivery ? (
                 // BUG-097: Delivery-specific branching at fOrderStatus 2
                 !hasRiderAssigned ? (
@@ -1068,7 +1094,7 @@ const OrderCard = ({
                 </button>
               )
             )}
-            {fOrderStatus === 5 && canBill && (
+            {!isAggregator && fOrderStatus === 5 && canBill && (
               // BUG-097 (2026-05-21): delivery + rider picked up (riderStatus='dispatched')
               //   ⇒ passive "Rider is on the way" label; no Bill/Settle until handover.
               //   Handover-complete exit signal is backend-blocked (Bucket 5).

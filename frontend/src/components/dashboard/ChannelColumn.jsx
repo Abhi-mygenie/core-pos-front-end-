@@ -47,6 +47,9 @@ const ChannelColumn = ({
   onConfirmOrder,
   onUpdateStatus,
   onFoodTransfer,    // Handler for food transfer
+  // CR-106: Aggregator handlers
+  onAggregatorReady,
+  onAggregatorDispatch,
   // Permissions
   hasPermission,
   // Other
@@ -303,6 +306,8 @@ const ChannelColumn = ({
                           onToggleSnooze={onToggleSnooze}
                           currencySymbol={currencySymbol}
                           isEngaged={isOrderEngaged?.(item.orderId) || isTableEngaged?.(item.tableId)}
+                          onAggregatorReady={onAggregatorReady}
+                          onAggregatorDispatch={onAggregatorDispatch}
                         />
                       );
                     }
@@ -332,6 +337,8 @@ const ChannelColumn = ({
                         onCancelOrder={onCancelOrder}
                         onItemStatusChange={onItemStatusChange}
                         onFoodTransfer={onFoodTransfer ? (order, foodItem) => onFoodTransfer(order, foodItem, item) : undefined}
+                        onAggregatorReady={onAggregatorReady}
+                        onAggregatorDispatch={onAggregatorDispatch}
                       />
                     );
                   })}

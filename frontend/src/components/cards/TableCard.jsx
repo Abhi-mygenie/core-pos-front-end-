@@ -51,11 +51,15 @@ const computeStageTime = (table) => {
 
 // Table Card Component - Simplified (no expansion, uses modal)
 const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, onMarkReady, onMarkServed, isSnoozed, onToggleSnooze, currencySymbol = '₹', isEngaged = false, orderItems = null,
+  // CR-106: Aggregator action handlers
+  onAggregatorReady,
+  onAggregatorDispatch,
   // BUG-029 (Apr-2026): callback invoked after successful prepaid settle so the
   // parent dashboard can clear any stale order-entry selection for this order.
   onPostSettleSuccess,
 }) => {
   const statusConfig = getTableStatusConfig(table.status);
+  const isAggregator = table.order?.isAggregator === true || table.isAggregator === true; // CR-106
   const isActive = isTableActive(table.status);
   const hasOrders = ["occupied", "billReady"].includes(table.status);
   const isYetToConfirm = table.status === "yetToConfirm";
@@ -279,7 +283,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   return (
     <div
       data-testid={`table-card-${table.id}`}
-      onClick={isEngaged ? undefined : handleCardClick}
+      onClick={isEngaged || isAggregator ? undefined : handleCardClick} // CR-106: no-op for aggregator
       className={`relative rounded-2xl transition-all duration-200 ${isEngaged ? 'pointer-events-none' : 'cursor-pointer hover:shadow-md'} ${isSnoozed ? 'opacity-60' : ''}`}
       style={cardStyle}
     >
@@ -412,7 +416,37 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                  fOrderStatus 2 (ready)     → KOT button + Serve button
                  fOrderStatus 5 (served)    → KOT button + Bill button */
               <div className="flex gap-2">
-                {table.fOrderStatus === 1 && (
+                {/* CR-106: Aggregator-specific action buttons */}
+                {isAggregator && table.fOrderStatus === 1 && (
+                  <TextButton
+                    onClick={(e) => { e?.stopPropagation?.(); onAggregatorReady?.(table.order || table); }}
+                    backgroundColor="#FFF3E8"
+                    textColor={COLORS.primaryOrange}
+                    borderColor={COLORS.primaryOrange}
+                    testId={`agg-ready-btn-${table.id}`}
+                    ariaLabel={`Mark aggregator order ready`}
+                    fullWidth={false}
+                    className="flex-1 text-xs py-2 flex items-center justify-center gap-1"
+                  >
+                    Ready
+                  </TextButton>
+                )}
+                {isAggregator && table.fOrderStatus === 2 && (
+                  <TextButton
+                    onClick={(e) => { e?.stopPropagation?.(); onAggregatorDispatch?.(table.order || table); }}
+                    backgroundColor="#FFF3E8"
+                    textColor={COLORS.primaryOrange}
+                    borderColor={COLORS.primaryOrange}
+                    testId={`agg-dispatch-btn-${table.id}`}
+                    ariaLabel={`Dispatch aggregator order`}
+                    fullWidth={false}
+                    className="flex-1 text-xs py-2 flex items-center justify-center gap-1"
+                  >
+                    Dispatch
+                  </TextButton>
+                )}
+                {/* POS actions — hidden for aggregator (CR-106) */}
+                {!isAggregator && table.fOrderStatus === 1 && (
                   <>
                     <IconButton
                       icon={Printer}
@@ -440,7 +474,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                     </TextButton>
                   </>
                 )}
-                {table.fOrderStatus === 2 && (
+                {!isAggregator && table.fOrderStatus === 2 && (
                   <>
                     {/* BUG-097: Hide KOT for delivery orders at dispatch/assign/reassign state */}
                     {!isDelivery && (
@@ -527,7 +561,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                     )}
                   </>
                 )}
-                {table.fOrderStatus === 5 && (
+                {!isAggregator && table.fOrderStatus === 5 && (
                   <>
                     {/* BUG-097: Hide KOT for delivery orders at delivered state */}
                     {!isDelivery && (

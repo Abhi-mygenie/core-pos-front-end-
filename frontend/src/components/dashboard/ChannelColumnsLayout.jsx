@@ -69,6 +69,9 @@ const ChannelColumnsLayout = ({
   onConfirmOrder,
   onUpdateStatus,
   onFoodTransfer,
+  // CR-106: Aggregator handlers
+  onAggregatorReady,
+  onAggregatorDispatch,
   // Permissions
   hasPermission,
   // Other
@@ -192,6 +195,8 @@ const ChannelColumnsLayout = ({
           onConfirmOrder={onConfirmOrder}
           onUpdateStatus={onUpdateStatus}
           onFoodTransfer={onFoodTransfer}
+          onAggregatorReady={onAggregatorReady}
+          onAggregatorDispatch={onAggregatorDispatch}
           hasPermission={hasPermission}
           snoozedOrders={snoozedOrders}
           currencySymbol={currencySymbol}
