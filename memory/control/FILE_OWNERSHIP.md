@@ -591,3 +591,8 @@
 | `utils/purchasePlanner.js` | +display_on_hand field in velocity + stock_alert rows | BUG-240 |
 | `components/inventory/smart/AutoShoppingList.jsx` | Render display_on_hand + display_unit; rate placeholder + suggestedRate hint | BUG-240, BUG-241 |
 | `components/inventory/SmartPurchasePanel.jsx` | rate='' + suggestedRate; vendor_id defaults 'system'; validate blocks null vendor | BUG-241, BUG-242 |
+
+### BUG-244 — add-purchase Payload Fix (2026-07-25)
+| File | Change | Agent |
+|------|--------|-------|
+| `api/transforms/inventoryTransform.js` | BUG-244: `toAPI.addPurchase()` — payment_method→payment_type, +tot_amount/item_total/tot_fair/tot_tax, removed converion_factor from line items | BUG-244 IMPL agent |

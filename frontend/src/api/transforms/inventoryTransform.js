@@ -164,21 +164,27 @@ const toAPI = {
   // B5: add-purchase — multi-line
   // CR-075-A P6 (folded): batch + expiry_date passthrough (backend accepts, previously silently dropped)
   // CR-078: origin field (planner|ad_hoc|legacy) — future backend brief Q7-b
+  // BUG-244: payment_method→payment_type, +tot_amount/item_total/tot_fair/tot_tax, removed converion_factor
   addPurchase(data) {
+    const items = data.items || [];
+    const totalAmount = items.reduce((sum, i) => sum + (Number(i.amount) || 0), 0); // BUG-244
     return {
       vendor_name: data.vendorName || '',
       vendor_id: data.vendorId || null,
       purchase_date: data.purchaseDate, // "DD-MM-YYYY" format per R9
-      payment_method: data.paymentMethod || '',
+      payment_type: data.paymentMethod || '',     // BUG-244: was payment_method (backend ignored wrong key)
       invoice_number: data.invoiceNumber || '',
       notes: data.notes || '',
-      purchase_items: (data.items || []).map(item => ({
+      tot_amount: totalAmount,                     // BUG-244: required — was missing, defaulted to 1
+      item_total: totalAmount,                     // BUG-244: required — was missing, defaulted to 1
+      tot_fair: 0,                                 // BUG-244: was missing, defaulted to 1
+      tot_tax: 0,                                  // BUG-244: was missing, defaulted to 1
+      purchase_items: items.map(item => ({
         Ingredient: item.ingredientId, // R9: capital I
         Unit: item.unit,               // R9: capital U
         quantity: item.quantity,
         rate: item.rate,
         Amount: item.amount,           // BUG-197 #6: capital A per backend contract
-        converion_factor: item.conversionFactor || 1, // R9 typo
         batch: item.batch || '',                                                          // CR-075-A P6
         expiry_date: item.expiry ? formatDateForAPI(item.expiry) : '',                    // CR-075-A P6 (DD-MM-YYYY)
         origin: item.origin || 'legacy',                                                  // CR-078
