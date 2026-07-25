@@ -14,7 +14,8 @@ function AdHocTypeahead({ ingredientsMaster, vendorItemList, rows, onAddAdHoc, o
   const filtered = query.length >= 1
     ? (ingredientsMaster || []).filter(i =>
         i.name.toLowerCase().includes(query.toLowerCase()) &&
-        !rows.some(r => String(r.ingredient_id) === String(i.id))
+        // CR-105: Only exclude items already added as ad_hoc (not in_stock/planner/alert rows)
+        !rows.some(r => r.origin === 'ad_hoc' && String(r.ingredient_id) === String(i.id))
       ).slice(0, 8)
     : [];
 
@@ -31,12 +32,16 @@ function AdHocTypeahead({ ingredientsMaster, vendorItemList, rows, onAddAdHoc, o
   };
 
   return (
-    <div className="border-t border-slate-100 p-3 bg-slate-50/50">
+    <div className="border-b border-slate-200 p-3 bg-blue-50/30">
       <div className="relative max-w-md">
         <Input autoFocus value={query}
           onChange={e => setQuery(e.target.value)}
-          onBlur={() => setTimeout(onClose, 200)}
-          placeholder="Type ingredient name…" className="h-8 text-sm" data-testid="adhoc-typeahead-input" />
+          placeholder="Search ingredient to add..." className="h-8 text-sm" data-testid="adhoc-typeahead-input" />
+        {query.length >= 1 && filtered.length === 0 && (
+          <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg px-3 py-2 text-sm text-slate-400">
+            No matching ingredients
+          </div>
+        )}
         {filtered.length > 0 && (
           <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg max-h-52 overflow-y-auto" data-testid="adhoc-typeahead-dropdown">
             {filtered.map(ing => (
@@ -47,6 +52,10 @@ function AdHocTypeahead({ ingredientsMaster, vendorItemList, rows, onAddAdHoc, o
             ))}
           </div>
         )}
+        <button type="button" onClick={onClose}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs" data-testid="adhoc-close">
+          ✕
+        </button>
       </div>
     </div>
   );
@@ -129,6 +138,17 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
             Remove Selected
           </Button>
         </div>
+      )}
+
+      {/* CR-105: Add Item typeahead — positioned above table for visibility */}
+      {showTypeahead && (
+        <AdHocTypeahead
+          ingredientsMaster={ingredientsMaster}
+          vendorItemList={vendorItemList}
+          rows={rows}
+          onAddAdHoc={onAddAdHoc}
+          onClose={() => setShowTypeahead(false)}
+        />
       )}
 
       <div className="overflow-x-auto">
@@ -220,16 +240,6 @@ export default function AutoShoppingList({ rows, rankingByIngredient, ingredient
         </table>
       </div>
 
-      {/* BUG-247: Extracted typeahead — its state is isolated, no table re-render on keystrokes */}
-      {showTypeahead && (
-        <AdHocTypeahead
-          ingredientsMaster={ingredientsMaster}
-          vendorItemList={vendorItemList}
-          rows={rows}
-          onAddAdHoc={onAddAdHoc}
-          onClose={() => setShowTypeahead(false)}
-        />
-      )}
     </div>
   );
 }
