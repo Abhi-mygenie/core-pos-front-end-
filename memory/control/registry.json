@@ -16413,8 +16413,8 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 display_on_hand from displayQty in planner + AutoShoppingList renders display units",
-      "gate": "0-3",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+      "gate": "5b",
       "sprint_key": "pos_5_0",
       "source": "INVESTIGATION",
       "created": "2026-07-24",
@@ -16426,7 +16426,8 @@
         "intake": "change_requests/BUG_240_SP_DISPLAY_UNITS.md",
         "investigation": "impact/INVESTIGATION_SMART_PURCHASE_STOCK_DISCREPANCY_2026_07_24.md"
       },
-      "notes": "Q1 APPROVED. calQuantity(gm) \u2192 displayQty(kg). ~5 lines, 1-2 files."
+      "notes": "Q1 APPROVED. calQuantity(gm) \u2192 displayQty(kg). ~5 lines, 1-2 files.",
+      "updated": "2026-07-25"
     },
     {
       "id": "BUG-241",
@@ -16434,8 +16435,8 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 rate empty by default, suggestedRate as hint. User must enter to opt in.",
-      "gate": "0-3",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+      "gate": "5b",
       "sprint_key": "pos_5_0",
       "source": "INVESTIGATION",
       "created": "2026-07-24",
@@ -16447,7 +16448,8 @@
         "intake": "change_requests/BUG_241_SP_RATE_AUTOFILL.md",
         "investigation": "impact/INVESTIGATION_SMART_PURCHASE_STOCK_DISCREPANCY_2026_07_24.md"
       },
-      "notes": "Q3 APPROVED. Don't auto-fill rate, show as suggested hint. ~8 lines, 2 files. CR-103 gap."
+      "notes": "Q3 APPROVED. Don't auto-fill rate, show as suggested hint. ~8 lines, 2 files. CR-103 gap.",
+      "updated": "2026-07-25"
     },
     {
       "id": "BUG-242",
@@ -16455,8 +16457,8 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 default System Vendor + validate blocks null vendor on active rows",
-      "gate": "0-3",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+      "gate": "5b",
       "sprint_key": "pos_5_0",
       "source": "INVESTIGATION",
       "created": "2026-07-24",
@@ -16467,7 +16469,8 @@
         "intake": "change_requests/BUG_242_SP_DEFAULT_VENDOR.md",
         "investigation": "impact/INVESTIGATION_SMART_PURCHASE_STOCK_DISCREPANCY_2026_07_24.md"
       },
-      "notes": "Q4 APPROVED. Default System Vendor + block null vendor submit. ~10 lines, 1 file."
+      "notes": "Q4 APPROVED. Default System Vendor + block null vendor submit. ~10 lines, 1 file.",
+      "updated": "2026-07-25"
     },
     {
       "id": "BUG-243",
@@ -16494,7 +16497,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-243",
@@ -16510,7 +16513,7 @@
         "impact_analysis": "/app/memory/impact/BUG-244_IMPACT_ANALYSIS.md",
         "implementation_plan": "/app/memory/plans/BUG-244_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "BUG-245",
@@ -16518,7 +16521,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "dashboard",
       "related": "",
@@ -16532,7 +16535,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-245_IMPACT_AND_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "BUG-246",
@@ -16540,7 +16543,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "order-entry",
       "related": "",
@@ -16554,7 +16557,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-246_IMPACT_AND_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "BUG-247",
@@ -16562,7 +16565,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "BUG-236",
@@ -16577,7 +16580,7 @@
         "investigation": "/app/memory/reports/INVESTIGATION_3_ITEMS_2026_07_25.md",
         "plan": "/app/memory/plans/BUG-247_IMPACT_AND_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "CR-104",
@@ -16608,7 +16611,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 isDirty 9 checks + portionSize payload. Part B BACKEND-BLOCKED.",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "menu-management",
       "related": "",
@@ -16623,7 +16626,7 @@
         "impact_analysis": "/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md",
         "implementation_plan": "/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "CR-105",
@@ -16631,7 +16634,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 Sub-A: Show All toggle + inStockRows. Sub-B: Add Item button uncommented.",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-224",
@@ -16649,7 +16652,7 @@
         "mockup": "__dev/cr105-mockup.html",
         "implementation_plan": "/app/memory/plans/CR-105_IMPLEMENTATION_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     },
     {
       "id": "BUG-249",
@@ -16657,7 +16660,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 effectiveQty helper replaces 10 stale item.quantity status checks",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "related": "CR-078, BUG-211",
@@ -16672,7 +16675,7 @@
         "impact_analysis": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md",
         "implementation_plan": "/app/memory/plans/BUG-249_IMPACT_AND_PLAN.md"
       },
-      "gate": "5a"
+      "gate": "5b"
     }
   ]
 }

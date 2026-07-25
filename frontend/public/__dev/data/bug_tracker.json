@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-25T11:12:46.260724+00:00",
+  "generated_at": "2026-07-25T12:18:17.258549+00:00",
   "schema_version": "2.0",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "summary": {
     "total_tracked": 264,
     "closed_verified": 232,
-    "open_intake": 20,
-    "backend_blocked": 4,
+    "open_intake": 19,
+    "backend_blocked": 3,
     "crm_blocked": 0
   },
   "active_recent_bugs": [
@@ -9824,7 +9824,7 @@
       "id": "BUG-240",
       "title": "Smart Purchase: On-Hand Shows Small Unit (gm) Instead of Display Unit (kg)",
       "priority": "",
-      "status": "IMPLEMENTED \u2014 display_on_hand from displayQty in planner + AutoShoppingList renders display units",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9845,7 +9845,7 @@
       "id": "BUG-241",
       "title": "Smart Purchase: Rate Auto-Fills From Vendor History Making Unselected Items Active",
       "priority": "",
-      "status": "IMPLEMENTED \u2014 rate empty by default, suggestedRate as hint. User must enter to opt in.",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9866,7 +9866,7 @@
       "id": "BUG-242",
       "title": "Smart Purchase: No Default Vendor + Allows Submit With Null Vendor",
       "priority": "",
-      "status": "IMPLEMENTED \u2014 default System Vendor + validate blocks null vendor on active rows",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9887,7 +9887,7 @@
       "id": "BUG-244",
       "title": "add-purchase payload: wrong payment key + missing header totals",
       "priority": "P0",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9923,7 +9923,7 @@
       "id": "BUG-245",
       "title": "Table card moves to top when order placed (occupied-first bucketing)",
       "priority": "P1",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9949,7 +9949,7 @@
       "id": "BUG-246",
       "title": "Customized items not merging in cart (duplicate line items + print)",
       "priority": "P1",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -9975,7 +9975,7 @@
       "id": "BUG-247",
       "title": "Smart Purchase ad-hoc typeahead blocks UI (perf \u2014 no React.memo)",
       "priority": "P2",
-      "status": "IMPLEMENTED",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -10001,9 +10001,9 @@
       "id": "BUG-248",
       "title": "Bulk Editor: 9 columns missing from isDirty \u2014 edits silently lost (Save never triggers)",
       "priority": "P1",
-      "status": "IMPLEMENTED \u2014 isDirty 9 checks + portionSize payload. Part B BACKEND-BLOCKED.",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
-      "blocker": "Backend",
+      "blocker": "",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -10032,7 +10032,7 @@
       "id": "BUG-249",
       "title": "Current Stock: Negative quantity items show \"In Stock\" badge \u2014 field mismatch (quantity vs displayQty)",
       "priority": "P1",
-      "status": "IMPLEMENTED \u2014 effectiveQty helper replaces 10 stale item.quantity status checks",
+      "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
       "sprint": "pos_5_0",
       "blocker": "",
       "artifact_refs": [
@@ -10761,5 +10761,5 @@
   "intake_only_bugs": [],
   "pos_2_0_closed_consolidated_2026_05_18": [],
   "pos_final_1_0_closed_consolidated_2026_05_12": [],
-  "normalized_at": "2026-07-25T11:12:46.260724+00:00"
+  "normalized_at": "2026-07-25T12:18:17.258549+00:00"
 }

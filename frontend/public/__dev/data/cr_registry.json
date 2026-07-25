@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T11:12:46.260724+00:00",
+  "generated_at": "2026-07-25T12:18:17.258549+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -1087,7 +1087,7 @@
         {
           "id": "CR-105",
           "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
-          "status": "IMPLEMENTED \u2014 Sub-A: Show All toggle + inStockRows. Sub-B: Add Item button uncommented.",
+          "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
           "priority": "P2",
           "category": "SHIPPED",
           "artifact_refs": [
