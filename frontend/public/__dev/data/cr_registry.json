@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T10:32:37.471215+00:00",
+  "generated_at": "2026-07-25T10:48:37.544693+00:00",
   "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
   "schema_version": "2.0",
   "sprints": {
@@ -206,7 +206,7 @@
         {
           "id": "CR-048",
           "title": "Auto-Sync Registry \u2192 Dashboard JSON (eliminate manual sync gap)",
-          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE | CR-048-REBUILD: sync script recreated + dashboard JSONs regenerated (2026-07-25)",
           "priority": "",
           "category": "SHIPPED",
           "artifact_refs": [
@@ -1080,6 +1080,26 @@
               "label": "Backend Brief",
               "path": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25)",
               "type": "backend_brief"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-105",
+          "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
+          "status": "INTAKE COMPLETE \u2014 3 open questions (OQ-1..3) pending owner",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-105_SMART_PURCHASE_SHOW_ALL_MANUAL_ADD_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md",
+              "type": "investigation"
             }
           ],
           "completeness": "1/7"
@@ -3013,13 +3033,13 @@
   "category_counts": {
     "NOT_STARTED": 1,
     "SHIPPED": 106,
-    "IN_PROGRESS": 7,
+    "IN_PROGRESS": 8,
     "SUBSUMED": 13,
     "BLOCKED": 3
   },
-  "active_count": 11,
+  "active_count": 12,
   "shipped_count": 106,
   "subsumed_count": 13,
   "closed_count": 106,
-  "tracked_total": 130
+  "tracked_total": 131
 }

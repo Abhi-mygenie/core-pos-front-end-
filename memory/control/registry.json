@@ -16624,6 +16624,29 @@
         "implementation_plan": "/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md"
       },
       "gate": "5a"
+    },
+    {
+      "id": "CR-105",
+      "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "INTAKE COMPLETE \u2014 3 open questions (OQ-1..3) pending owner",
+      "sprint_key": "pos_5_0",
+      "module": "inventory",
+      "related": "CR-078, BUG-224",
+      "files_to_change": [
+        "utils/purchasePlanner.js",
+        "components/inventory/SmartPurchasePanel.jsx",
+        "components/inventory/smart/AutoShoppingList.jsx"
+      ],
+      "created": "2026-07-25",
+      "updated": "2026-07-25",
+      "artifact_refs": {
+        "intake": "/app/memory/change_requests/CR-105_SMART_PURCHASE_SHOW_ALL_MANUAL_ADD_INTAKE.md",
+        "investigation": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md"
+      },
+      "gate": "0-1"
     }
   ]
 }
