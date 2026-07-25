@@ -307,10 +307,10 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                 data-testid={`source-badge-${table.id}`}
                 className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
                 style={{
-                  backgroundColor: (table.order?.source || table.source) === 'zomato' ? '#E23744' : '#FC8019',
+                  backgroundColor: (table.order?.source || table.source)?.toLowerCase() === 'zomato' ? '#E23744' : '#FC8019',
                 }}
               >
-                {(table.order?.source || table.source) === 'zomato' ? 'Z' : 'S'}
+                {(table.order?.source || table.source)?.toLowerCase() === 'zomato' ? 'Z' : 'S'}
               </span>
             )}
             {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
