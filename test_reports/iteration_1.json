@@ -1,0 +1,56 @@
+{
+  "summary": "Code-inspection QA of 10 items across BATCH 1/2/3. 9 of 10 PASS via code review. 1 item FAILS: BUG-247 — VendorSuggestionCell.jsx is NOT wrapped in React.memo (an inline comment explicitly states 'BUG-247: reverted memo — using extracted typeahead component instead'). Browser-level verification for BUG-249 (Out of Stock badge) and CR-105 (Show all toggle) could not be executed because preprod Laravel backend rejects the provided credentials (owner@kunfamahal.com / Qplazm@10) with HTTP 401 at https://preprod.mygenie.online/api/v1/auth/vendoremployee/login. However, the underlying source code for those flows has been verified and satisfies the acceptance criteria.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "components/inventory/smart/VendorSuggestionCell.jsx",
+        "issue": "BUG-247 FAIL: component is exported as plain function (line 32: `export default function VendorSuggestionCell`) and NOT wrapped in React.memo. A comment at line 31 says 'BUG-247: reverted memo — using extracted typeahead component instead'. Review spec requires the component to be wrapped in React.memo().",
+        "selector": "N/A (code-level)",
+        "priority": "P2"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "POS Login (browser E2E)",
+        "issue": "Preprod Laravel backend returns HTTP 401 on POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/login for the supplied credentials owner@kunfamahal.com / Qplazm@10. Blocks browser-level verification of BUG-249 (Current Stock 'Out of Stock' badge for negative displayQty) and CR-105 UI (Show-all toggle behavior + AdHoc typeahead). Not a frontend bug — either credentials are stale/rotated or the preprod tenant is locked. Please provide fresh credentials or re-enable the account.",
+        "affected_selectors": ["input[type=email]", "input[type=password]", "button:has-text('LOG IN')"]
+      }
+    ],
+    "design_issues": []
+  },
+  "code_inspection_results": {
+    "BUG-244 (P0) inventoryTransform.js addPurchase": "PASS — payment_type present (line 175), tot_amount/item_total/tot_fair/tot_tax all present (lines 178-181), converion_factor NOT present in purchase_items line-object (lines 182-191).",
+    "BUG-245 (P1) ChannelColumn.jsx sort": "PASS — occupied/available bucketing removed; single .sort(compare) at line 161 with explicit BUG-245 comment.",
+    "BUG-246 (P1) OrderEntry.jsx merge": "PASS — customizationKey() defined at line 677 keyed on id/size/variants/addons/notes; addCustomizedItemToCart (line 685) uses key to find existing entry and increments qty (line 696) instead of appending.",
+    "BUG-247 (P2) VendorSuggestionCell.jsx memo": "FAIL — NOT wrapped in React.memo (see frontend_issues).",
+    "BUG-248 (P1) BulkEditor.jsx isDirty + payload": "PASS — All 9 required keys (packedFood, isInventory, stockOut, isDisabled, taxCalc, itemUnit, availableTimeStart, availableTimeEnd, portionSize) present in `checks` (lines 290-298). checks contains 35 keys matching ALL_COLUMNS (35 entries). buildPayload includes portion_size (line 168).",
+    "BUG-249 (P1) CurrentStockPanel.jsx effectiveQty": "PASS (code) — effectiveQty helper at line 24 (displayQty || calQuantity || quantity). Zero occurrences of Number(item.quantity) or Number(i.quantity) for status. StatusBadge is called with quantity={effectiveQty(item)} (line 328). Browser verification blocked by 401.",
+    "CR-105 (P2) Show all + Add Item": "PASS — purchasePlanner.computePlan accepts showAll param (line 107); inStockRows built with origin='in_stock' when gap>=0 (lines 143-146); AutoShoppingList renders data-testid='show-all-toggle' (line 117), data-testid='add-item-btn' (line 126), and AdHocTypeahead component (line 145). Browser verification blocked by 401.",
+    "BUG-240 planner display_on_hand": "PASS — display_on_hand emitted on planner rows (lines 133, 163). AutoShoppingList renders it with display_unit (line 194).",
+    "BUG-241 initial rate + hint": "PASS — SmartPurchasePanel sets rate='' (line 59) and suggestedRate hint (line 60). AutoShoppingList shows 'last: ₹{suggestedRate}' hint when rate is empty (lines 217-218).",
+    "BUG-242 vendor_id='system' default + validation": "PASS — default vendor_id set to 'system' (line 58). validate() blocks submit when !vendor_id || vendor_id==='null' (line 143). System vendor still safely mapped to null when actually submitting purchase (line 164)."
+  },
+  "test_report_links": [],
+  "action_items": [
+    "BUG-247: Wrap VendorSuggestionCell default export in React.memo. Suggested fix — change `export default function VendorSuggestionCell(...)` to a named function and add `export default React.memo(VendorSuggestionCell)` (or use `const VendorSuggestionCell = React.memo(function ... {})`). Remove/update the misleading line-31 comment that says 'reverted memo'.",
+    "Provide working POS credentials for preprod (current owner@kunfamahal.com / Qplazm@10 returns 401) so E2E verification of BUG-249 (Out-of-Stock badge on negative displayQty items) and CR-105 (Show-all toggle + Add Item typeahead) can be completed."
+  ],
+  "critical_code_review_comments": [
+    "OrderEntry.jsx is 2808 lines — well over the 700-line guideline; splitting into hooks/sub-components would greatly improve maintainability.",
+    "Multiple .bak files present (OrderEntry.jsx.bak.cr008r3, .bak.cr013, .bak.cr013p15-fix2, .bak.d1cap; CartPanel.jsx.bak.cr008r3; CollectPaymentPanel.jsx.bak.* etc.) in the source tree — recommend cleaning them up; they inflate the bundle context and pollute code search.",
+    "BulkEditor.jsx `isDirty` returns `checks[field]?.()` — the description in the spec says 'ALL 33 column keys' but ALL_COLUMNS actually has 35 entries; all 35 are covered so behaviour is correct, but the spec/comment should be updated to match the true count (35).",
+    "SmartPurchasePanel: `vid === 'system' ? null : vid` at line 164 correctly strips the sentinel — good, but consider centralising 'system' handling to avoid drift."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (no backend tests — remote Laravel)", "frontend": "90% code-inspection pass (9/10); browser E2E blocked by 401 auth"},
+  "test_credentials": "owner@kunfamahal.com / Qplazm@10 — REJECTED by preprod backend (401)",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "9 of 10 items were verified via source-code inspection. Only remaining item to fix is BUG-247 (wrap VendorSuggestionCell in React.memo). Browser E2E for BUG-249 and CR-105 could not be run — the given owner@kunfamahal.com credential produces a 401 from https://preprod.mygenie.online/api/v1/auth/vendoremployee/login. Once E1 provides working credentials, log in via the POS page (NOT __dev), navigate to /inventory-current-stock (verify negative displayQty rows show red 'Out of Stock' badge with data-testid='status-out') and /inventory-smart-purchase (toggle data-testid='show-all-toggle' should render in-stock green rows; data-testid='add-item-btn' should open AdHoc typeahead). Ingredient rows in AutoShoppingList should display display_on_hand + display_unit and show 'last: ₹X' hint when suggestedRate exists and rate is empty.",
+  "rca_of_the_issue": "BUG-247: VendorSuggestionCell was previously wrapped in React.memo but a code refactor (comment: 'reverted memo — using extracted typeahead component instead') removed the memoization. The extracted typeahead lives elsewhere (AdHocTypeahead inside AutoShoppingList) but the VendorSuggestionCell still renders once per planner row and can re-render unnecessarily on parent state changes. Fix: restore React.memo wrapper on the default export. Since props are shallowly-comparable primitives + ranking object, default shallow-equality is sufficient; no custom equality function needed."
+}
