@@ -29,7 +29,7 @@ const getReason = (ranking, selected, winner) => {
 };
 
 // BUG-247: React.memo prevents re-render when parent re-renders from typeahead state change.
-const VendorSuggestionCell = memo(function VendorSuggestionCell({ ranking, selectedVendorId, onChange, ingredientId }) {
+function VendorSuggestionCellInner({ ranking, selectedVendorId, onChange, ingredientId }) {
   const [open, setOpen] = useState(false);
   const winner = ranking?.winner;
   const allCandidates = useMemo(() => {
@@ -118,6 +118,6 @@ const VendorSuggestionCell = memo(function VendorSuggestionCell({ ranking, selec
       </div>
     </div>
   );
-});
+}
 
-export default VendorSuggestionCell;
+export default memo(VendorSuggestionCellInner); // BUG-247
