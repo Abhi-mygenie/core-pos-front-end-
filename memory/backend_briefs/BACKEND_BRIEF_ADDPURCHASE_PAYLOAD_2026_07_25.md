@@ -33,4 +33,4 @@ Recommendation: Consider accepting `notes`, `invoice_number`, `origin` in future
 - Investigation report: `/app/memory/reports/INVESTIGATION_SMART_PURCHASE_SUBMIT_2026_07_25.md`
 
 ## Frontend Fix Status
-Registered as BUG-243. Awaiting Gate 4 GO.
+Registered as BUG-244. Awaiting Gate 4 GO.

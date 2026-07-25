@@ -16488,25 +16488,26 @@
       "notes": "BACKEND-BLOCKED. Purchase recorded but quantity/cal_quantity/display_qty never updated. Brief filed. No FE workaround."
     },
     {
-      "id": "BUG-243",
+      "id": "BUG-244",
       "title": "add-purchase payload: wrong payment key + missing header totals",
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (investigation done) \u2014 awaiting Gate 3 plan + Gate 4 GO",
+      "status": "INTAKE COMPLETE",
       "sprint_key": "pos_5_0",
       "module": "inventory",
-      "related": "CR-078",
+      "related": "CR-078, BUG-243",
       "files_to_change": [
         "api/transforms/inventoryTransform.js"
       ],
       "created": "2026-07-25",
       "updated": "2026-07-25",
       "artifact_refs": {
+        "intake": "/app/memory/change_requests/BUG-244_ADDPURCHASE_PAYLOAD_MISMATCH_INTAKE.md",
         "investigation": "/app/memory/reports/INVESTIGATION_SMART_PURCHASE_SUBMIT_2026_07_25.md",
         "backend_brief": "/app/memory/backend_briefs/BACKEND_BRIEF_ADDPURCHASE_PAYLOAD_2026_07_25.md"
       },
-      "gate": "2"
+      "gate": "0-1"
     }
   ]
 }
