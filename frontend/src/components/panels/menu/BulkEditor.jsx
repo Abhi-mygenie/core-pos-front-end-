@@ -165,6 +165,7 @@ const buildPayload = (row) => ({
   // CR-010: Weight-based billing — unit price always equals base price
   item_unit: row.itemUnit || '',
   item_unit_price: ['Kg','gm','L','ml'].includes(row.itemUnit) ? String(Number(row.basePrice) || 0) : '',
+  portion_size: row.portionSize || '', // BUG-248: was missing from payload
 });
 
 // ─── Main Component ────────────────────────────────────────────────
@@ -285,6 +286,16 @@ const BulkEditor = ({ foods = [], categories = [], menuType = "Normal", isLoadin
       sortOrder:   () => (o.sortOrder || 0) !== Number(row.sortOrder),
       allergen:    () => (o.allergen || "") !== (row.allergen || ""),
       kcal:        () => (o.kcal || 0) !== Number(row.kcal),
+      // BUG-248: 9 missing isDirty checks — edits to these columns were silently lost
+      packedFood:  () => (o.packedFood ? "Yes" : "No") !== row.packedFood,
+      isInventory: () => (o.isInventory ? "Yes" : "No") !== row.isInventory,
+      stockOut:    () => (o.isOutOfStock ? "Yes" : "No") !== row.stockOut,
+      isDisabled:  () => (o.isDisabled ? "Yes" : "No") !== row.isDisabled,
+      taxCalc:     () => (o.taxCalc || "Exclusive") !== row.taxCalc,
+      itemUnit:    () => (o.itemUnit || "") !== (row.itemUnit || ""),
+      availableTimeStart: () => (o.availableTimeStart || "00:00:00") !== row.availableTimeStart,
+      availableTimeEnd:   () => (o.availableTimeEnd || "23:59:59") !== row.availableTimeEnd,
+      portionSize: () => (o.portionSize || "") !== (row.portionSize || ""),
     };
     return checks[field] ? checks[field]() : false;
   }, []);
