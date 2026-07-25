@@ -117,7 +117,7 @@ The inventory implementation should mirror this exact pattern for consistency.
 
 | # | Question | Options | Default | Blocking? |
 |---|----------|---------|---------|-----------|
-| OQ-1 | Does `PUT /api/v2/vendoremployee/inventory/stock-item-categories/{id}` exist for rename? | A) Yes — include edit+delete. B) No — ship DELETE only, defer edit. | A | YES — determines scope |
+| OQ-1 | Does `PUT /api/v2/vendoremployee/inventory/stock-item-categories/{id}` exist for rename? | A) Yes — include edit+delete. **B) No — ship DELETE only, defer edit.** | **B — OWNER CHOSE (2026-07-25)** | RESOLVED |
 | OQ-2 | Should franchise-locked categories (PUSHED_CATALOG_LOCKED) hide the pencil/trash icons entirely, or show them and display the error on click? | A) Hide icons. B) Show icons, error on click. | B (matches delete behavior already tested) | NO — cosmetic |
 
 ---
