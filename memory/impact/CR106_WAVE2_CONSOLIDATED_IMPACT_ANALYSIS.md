@@ -17,6 +17,9 @@
 | OD-W2-3 | CR-110: Badge design for MyGenie own delivery orders | **Use MyGenie mascot icon** (the green genie character from `GENIE_LOGO_URL`). Mini circular image badge, same size as S/Z letter badges. |
 | OD-W2-4 | Batch 1 path | **Full Gate 3 (Implementation Plan) required.** No fast lane. |
 | OD-W2-5 | CR-109 timing | **Wait.** Not parallel with Batch 1. |
+| OD-W2-6 | Aggregator lifecycle: Dispatched (5) | **STAY on dashboard** with label "Dispatched" (not "Served"). |
+| OD-W2-7 | Aggregator lifecycle: Completed (6) | **REMOVE from dashboard.** |
+| OD-W2-8 | Aggregator lifecycle: Cancelled (3) | **REMOVE from dashboard.** |
 
 ---
 
@@ -102,7 +105,14 @@ pollOnce() → getRunningOrders() → reconcile(serverOrders)
 
 | # | File | Line | Current | New |
 |---|------|------|---------|-----|
-| 3 | `socketHandlers.js` | L945-965 (`handleAggregatorOrderUpdate`) | Always calls `updateOrder()` | Add terminal-status check: if `fOrderStatus === 3 (cancelled) \|\| fOrderStatus === 6 (completed)` → call `removeOrder()` instead of `updateOrder()` |
+| 3 | `socketHandlers.js` | L945-965 (`handleAggregatorOrderUpdate`) | Always calls `updateOrder()` | Add terminal-status check: if `fOrderStatus === 3 (cancelled) \|\| fOrderStatus === 6 (completed)` → call `removeOrder()` instead of `updateOrder()`. **Dispatched (5) stays visible** with "Dispatched" label. |
+
+**Owner decisions on lifecycle (locked 2026-07-26):**
+- **Dispatched (f_order_status=5):** STAY on dashboard, show status "Dispatched" (not "Served")
+- **Completed (f_order_status=6):** REMOVE from dashboard
+- **Cancelled (f_order_status=3):** REMOVE from dashboard
+
+**Additional fix:** The status label for f_order_status=5 currently shows "Served" (from `F_ORDER_STATUS[5] = 'served'`). For aggregator orders, the label should display as **"Dispatched"** instead. This needs a UI-level override in TableCard/OrderCard when `isAggregator && fOrderStatus === 5`.
 
 **Verification:** Login → wait 90s → aggregator orders still in Delivery channel (not removed). Also: when backend fires status=6 via socket → order card disappears from dashboard.
 

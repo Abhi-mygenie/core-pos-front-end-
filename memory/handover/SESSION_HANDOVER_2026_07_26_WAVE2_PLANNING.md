@@ -31,6 +31,9 @@
 | OD-W2-3 | CR-110 badge | **MyGenie mascot icon** from `GENIE_LOGO_URL`. |
 | OD-W2-4 | Batch 1 path | **Full Gate 3** required. |
 | OD-W2-5 | CR-109 timing | **Wait.** Not parallel. |
+| OD-W2-6 | Dispatched (f_order_status=5) | **STAY** on dashboard with "Dispatched" label (not "Served"). |
+| OD-W2-7 | Completed (f_order_status=6) | **REMOVE** from dashboard. |
+| OD-W2-8 | Cancelled (f_order_status=3) | **REMOVE** from dashboard. |
 
 ---
 
