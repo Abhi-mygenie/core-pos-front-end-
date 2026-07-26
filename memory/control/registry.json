@@ -16711,6 +16711,149 @@
       },
       "gate": "3",
       "notes": "ID collision resolved: original CR-105 intake doc on swiggy branch renumbered to CR-106. Distinct from CR-105 (Smart Purchase Show All). LARGE blast radius (~15 files). Touches R5 hotspots (OrderCard, DashboardPage). 4 open questions (OQ-1 to OQ-4)."
+    },
+    {
+      "id": "BUG-250",
+      "title": "Polling Reconciliation Removes Aggregator Orders (~60s)",
+      "type": "BUG",
+      "priority": "P0",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-250_POLLING_REMOVES_AGGREGATOR_ORDERS.md"
+    },
+    {
+      "id": "BUG-251",
+      "title": "OrderCard Shows Cancel + WhatsApp for Aggregator Orders",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-251_ORDERCARD_CANCEL_WHATSAPP_AGGREGATOR.md"
+    },
+    {
+      "id": "BUG-252",
+      "title": "TableCard Missing Items/Customer/Rider for Aggregator per Design",
+      "type": "BUG",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-252_TABLECARD_MISSING_DETAILS_AGGREGATOR.md"
+    },
+    {
+      "id": "BUG-253",
+      "title": "Platform Dropdown Missing Aggregator Filter",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-253_PLATFORM_DROPDOWN_MISSING_AGGREGATOR.md"
+    },
+    {
+      "id": "BUG-254",
+      "title": "Aggregator API Handlers Fail Silently (No Toast)",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-254_AGGREGATOR_HANDLERS_SILENT_FAILURE.md"
+    },
+    {
+      "id": "BUG-255",
+      "title": "Item-Level Ready/Serve Dots Shown for Aggregator Orders",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-255_ITEM_LEVEL_STATUS_AGGREGATOR.md"
+    },
+    {
+      "id": "CR-107",
+      "title": "Aggregator Auto-Accept (with Dynamic Prep Time)",
+      "type": "CR",
+      "priority": "P2",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106",
+        "CR-109"
+      ],
+      "intake_doc": "change_requests/CR-107_AGGREGATOR_AUTO_ACCEPT.md"
+    },
+    {
+      "id": "CR-108",
+      "title": "Wire Auto-KOT on Aggregator Accept",
+      "type": "CR",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106",
+        "CR-107"
+      ],
+      "intake_doc": "change_requests/CR-108_AGGREGATOR_AUTO_KOT_WIRING.md"
+    },
+    {
+      "id": "CR-109",
+      "title": "Dynamic Prep Time Calculation for Aggregator",
+      "type": "CR",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106",
+        "CR-107"
+      ],
+      "intake_doc": "change_requests/CR-109_DYNAMIC_PREP_TIME_AGGREGATOR.md"
+    },
+    {
+      "id": "CR-110",
+      "title": "MyGenie Brand Badge for Own Delivery Orders",
+      "type": "CR",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/CR-110_MYGENIE_DELIVERY_BADGE.md"
     }
   ]
 }

@@ -356,3 +356,12 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
 | **CR-106** | Aggregator Integration Module (UrbanPiper / Swiggy / Zomato) — Live order handling: socket subscription, mandatory popup, accept with prep-time, ready/dispatch/reject lifecycle, source badge. **ID NOTE: renumbered from CR-105 on swiggy branch (collision with existing CR-105 Smart Purchase Show All).** | **P1** | HIGH | **GATE 3 COMPLETE (2026-07-25).** 14 ODs locked, 0 OQs open, 5 gaps incorporated. 11 files (5 new + 6 modified), ~835 lines. Awaiting Gate 4 GO. | 0-3 ✅ | `aggregatorService.js` (NEW), `aggregatorTransform.js` (NEW), `AggregatorOrderPopOut.jsx` (NEW), `AggregatorRejectModal.jsx` (NEW), `AggregatorDispatchModal.jsx` (NEW), `OrderCard.jsx`, `DashboardPage.jsx`, `OrderContext.jsx`, `socket/index.js`, `socketHandlers.js`, `constants.js`. Intake: `change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md`. Evidence: `evidence/CR-106/`. |
+
+### 2026-07-26 Aggregator Features + MyGenie Badge (CR-107 → CR-110)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-107** | Aggregator Auto-Accept (with Dynamic Prep Time) — When `auto_prep_time_ack` enabled, auto-accept new aggregator orders with computed prep time. Backend settings exist, FE feature NOT built. | **P2** | HIGH | **INTAKE** | 0-1 ✅ | 3+ files, ~100 lines. Needs Gate 2-3 planning. Related: CR-106, CR-109. |
+| **CR-108** | Wire Auto-KOT on Aggregator Accept — `aggregator_auto_kot: Yes` in settings, Settings UI exists, but accept handler doesn't trigger KOT. Also: `aggregator_auto_bill` + `aggregator_auto_bill_stage`. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | 1-2 files, ~15 lines. Needs Gate 2-3 (touches printing). Related: CR-106. |
+| **CR-109** | Dynamic Prep Time Calculation — Backend has `default_prep_time`, `prep_time_count_method: quantity`, `prep_time_bonus_config`. FE shows static pills only. Pre-compute and pre-select optimal pill. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1-2 files, ~20 lines. Related: CR-107. |
+| **CR-110** | MyGenie Brand Badge for Own Delivery Orders — Add "M" (green) badge on own delivery orders, matching S/Z pattern for Swiggy/Zomato. Staff can distinguish at a glance. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 2 files (`TableCard.jsx`, `OrderCard.jsx`), ~15 lines each. OQs: badge design (M letter vs bell icon), color. |

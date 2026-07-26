@@ -396,3 +396,14 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 
 | **BUG-248** | Bulk Editor: 9 columns missing from `isDirty()` + `portionSize` missing from `buildPayload`. Part B (backend drops 4 fields) BACKEND-BLOCKED. | **P1** | LOW | **IMPLEMENTED — isDirty 9 checks + portionSize payload. Part B BACKEND-BLOCKED.** | 5a | `BulkEditor.jsx`: 9 isDirty checks + 1 buildPayload line. Impact: `/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md`. Plan: `/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md` |
 | **BUG-249** | Current Stock: Negative qty shows "In Stock" — effectiveQty helper fixes 10 sites. | **P1** | LOW | **IMPLEMENTED** | 5a | `CurrentStockPanel.jsx` — effectiveQty(item) replaces Number(item.quantity). |
+
+### 2026-07-26 Aggregator Module Investigation Bugs (BUG-250 → BUG-255)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-250** | Polling Reconciliation Removes Aggregator Orders (~60s) — `useOrderPollingReconciliation` treats aggregator orders as orphans after 1 poll cycle. CRITICAL: orders vanish from dashboard. | **P0** | HIGH | **INTAKE** | 0-1 ✅ | 1-2 files: `useOrderPollingReconciliation.js`, `useSocketEvents.js`. Fix: add `isAggregator` exemption in removal + reconnect merge. Investigation: `evidence/CR-106/INVESTIGATION_REPORT_DESIGN_MISMATCH_2026_07_26.md` |
+| **BUG-251** | OrderCard Cancel + WhatsApp Buttons Shown for Aggregator — Normal flow (L946-996) has no `isAggregator` guard. Design says no Cancel (uses reject popup). | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx`, 2 lines. |
+| **BUG-252** | TableCard Missing Items/Customer/Rider for Aggregator per Design Mockup — Design Section 3 shows items, customer+phone, rider status. TableCard only shows compact header. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | 1 file: `TableCard.jsx`, ~40 lines. Needs Gate 2-3 planning. |
+| **BUG-253** | Platform Dropdown Missing "Aggregator" Filter — Only has All/POS/Web. Aggregator orders wrongly bucket under POS. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 2 files: `PlatformDropdown.jsx`, `DashboardPage.jsx`, ~10 lines. |
+| **BUG-254** | Aggregator Handlers Fail Silently (No Toast) — All 4 handlers (accept/reject/ready/dispatch) catch errors with `console.error` only. No user feedback. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `DashboardPage.jsx`, ~40 lines across 4 handlers. |
+| **BUG-255** | Item-Level Ready/Serve Dots Shown for Aggregator — Owner confirmed: "no item level ready and serve in aggregator order". No `isAggregator` guard on item toggles. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx`, ~3 lines. |
