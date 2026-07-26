@@ -8,6 +8,30 @@
 
 ---
 
+## Owner Decisions (Locked 2026-07-26)
+
+| # | Decision | Owner Answer |
+|---|----------|-------------|
+| OD-W2-1 | BUG-250: Approach A (skip aggregator in polling removal) vs B (re-fetch aggregator on every poll) | **A — Simple skip.** Socket handles real-time updates; polling re-fetch not needed. |
+| OD-W2-2 | BUG-254: Success toast on aggregator actions? | **No success toast.** Error toast only. Sound notification for success is a separate CR. |
+| OD-W2-3 | CR-110: Badge design for MyGenie own delivery orders | **Use MyGenie mascot icon** (the green genie character from `GENIE_LOGO_URL`). Mini circular image badge, same size as S/Z letter badges. |
+| OD-W2-4 | Batch 1 path | **Full Gate 3 (Implementation Plan) required.** No fast lane. |
+| OD-W2-5 | CR-109 timing | **Wait.** Not parallel with Batch 1. |
+
+---
+
+## Late Finding: Aggregator Completion Flow Gap
+
+**Discovered during OD session:** `handleAggregatorOrderUpdate` (socketHandlers.js:945-965) calls `updateOrder()` for ALL status changes, but does NOT call `removeOrder()` for terminal statuses (f_order_status=3 cancelled, f_order_status=6 completed).
+
+Regular handlers (L339, L426, L511) check `isTerminal` and call `removeOrder()`. The aggregator handler does not.
+
+**Impact:** After rider completes delivery (status→6), order lingers on dashboard as an "Available"-looking card (status 'paid' → tableStatus 'available'). Same for cancelled aggregator orders (status→3).
+
+**Resolution:** Added to **BUG-250 scope** (same file: socketHandlers.js). The fix adds terminal-status removal to `handleAggregatorOrderUpdate`.
+
+---
+
 ## Batch Strategy — Dependency Analysis
 
 ### File Conflict Matrix
@@ -74,7 +98,13 @@ pollOnce() → getRunningOrders() → reconcile(serverOrders)
 | 1 | `useOrderPollingReconciliation.js` | After L201 (after PayLater check, before L203 `const prevMisses`) | No aggregator check | `if (l.isAggregator === true) { continue; } // BUG-250: aggregator orders from separate API` |
 | 2 | `useSocketEvents.js` | L97-101 (reconnect merge) | `mergeRunningOrders(freshOrders)` replaces ALL | Preserve aggregator orders during merge: extract agg orders from current state, append to freshOrders before merging |
 
-**Verification:** Login → wait 90s → aggregator orders still in Delivery channel (not removed).
+**Late addition (completion flow gap):**
+
+| # | File | Line | Current | New |
+|---|------|------|---------|-----|
+| 3 | `socketHandlers.js` | L945-965 (`handleAggregatorOrderUpdate`) | Always calls `updateOrder()` | Add terminal-status check: if `fOrderStatus === 3 (cancelled) \|\| fOrderStatus === 6 (completed)` → call `removeOrder()` instead of `updateOrder()` |
+
+**Verification:** Login → wait 90s → aggregator orders still in Delivery channel (not removed). Also: when backend fires status=6 via socket → order card disappears from dashboard.
 
 ---
 
@@ -179,18 +209,14 @@ pollOnce() → getRunningOrders() → reconcile(serverOrders)
 **Conflict Pre-Check:** LOW
 **Risk:** LOW — same pattern as S/Z badge
 
-**Design:** Add brand badge for own/POS delivery orders:
-- "M" green circle badge (matching MyGenie brand) OR
-- Small MyGenie bell icon
+**Owner Decision (LOCKED):** Use the **MyGenie mascot icon** (green genie character) from existing `GENIE_LOGO_URL` constant (`constants/colors.js:22`). Render as a mini circular `<img>` badge at the same size (w-5 h-5) as the S/Z letter badges.
 
-**OQs need owner decision before implementation:**
-- OQ-1: Badge design — "M" letter or bell icon?
-- OQ-2: Color — brand green (#4CAF50)?
-- OQ-3: Web/Scan orders — distinct "W" badge?
+**Existing asset:** `GENIE_LOGO_URL` = `https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg` — already imported in Sidebar, LoginPage, LoadingPage.
 
 **Change scope:**
-- `TableCard.jsx`: Add "M" badge for non-aggregator delivery orders (after S/Z badge block)
-- `OrderCard.jsx`: Same pattern at `renderLogo()` (L349-371) — add "M" case
+- `TableCard.jsx`: For non-aggregator delivery orders (`orderType === 'delivery' && !isAggregator`), render mini MyGenie logo badge
+- `OrderCard.jsx`: Same pattern at `renderLogo()` (L349-371) — add MyGenie case for own delivery orders
+- Import `GENIE_LOGO_URL` from constants in both files
 
 ---
 
@@ -241,20 +267,21 @@ Pre-select matching pill OR show computed value in manual input
 ## Handover
 
 ```
-Impact Analysis complete for 10 items across 4 batches.
+IMPACT ANALYSIS COMPLETE + DECISIONS LOCKED for CR-106 Wave 2 (10 items).
 
-BATCH 1 (5 bugs, DIRECT BUG FIX — owner approve):
-  BUG-250 (P0): useOrderPollingReconciliation.js L201 + useSocketEvents.js L97
-  BUG-251 (P1): OrderCard.jsx L966, L979
-  BUG-253 (P1): PlatformDropdown.jsx L28 + DashboardPage.jsx L854
-  BUG-254 (P1): DashboardPage.jsx L1336-1402 (4 handlers)
-  BUG-255 (P1): OrderCard.jsx L401, L623
-  Total: ~7 files, ~50 lines. All parallel-safe. No inter-dependencies.
+Owner decisions locked (2026-07-26):
+  OD-W2-1: BUG-250 Approach A (simple skip). Socket handles real-time.
+  OD-W2-2: BUG-254 Error toast only. No success toast.
+  OD-W2-3: CR-110 MyGenie mascot icon badge (from GENIE_LOGO_URL).
+  OD-W2-4: Full Gate 3 required for Batch 1 (no fast lane).
+  OD-W2-5: CR-109 waits, not parallel.
 
-BATCH 2 (BUG-252 + CR-110): TableCard body enhancement + MyGenie badge. Awaits BUG-250 fix + OQ answers for CR-110.
-BATCH 3 (CR-109): Dynamic prep time. Independent. ~25 lines.
-BATCH 4 (CR-107 + CR-108): Auto-accept + auto-KOT. Deferred — HIGH risk, needs separate Gate 3.
+Late finding: handleAggregatorOrderUpdate missing removeOrder() for terminal statuses (3=cancelled, 6=completed). Added to BUG-250 scope (edit 3).
 
-Owner decisions needed: CR-110 OQ-1/2/3 (badge design, color, Web/Scan badge).
-Next: Gate 3 (Implementation Plan) for Batch 1, OR owner approves direct bug fix path.
+BATCH 1 (5 bugs): BUG-250 scope now 3 edits (polling skip + reconnect preserve + terminal removal). 
+BATCH 2 (BUG-252 + CR-110): CR-110 OQs resolved — MyGenie mascot badge. Unblocked.
+BATCH 3 (CR-109): Wait.
+BATCH 4 (CR-107 + CR-108): Deferred.
+
+Next: Gate 3 (Implementation Plan) for Batch 1.
 ```

@@ -25,13 +25,13 @@ Currently:
 - "Z" = Zomato (red #E23744)
 - "M" = MyGenie (green #2E8B57 or MyGenie brand green)
 
-## Open Questions
+## Open Questions — RESOLVED
 
-| # | Question | Status |
-|---|----------|--------|
-| OQ-1 | Badge design: "M" letter circle or MyGenie bell logo mini-icon? | OPEN |
-| OQ-2 | Badge color: MyGenie brand green (#2E8B57 / #4CAF50) or another color? | OPEN |
-| OQ-3 | Should Web/Scan orders also get a distinct badge (e.g., "W" blue)? | OPEN |
+| # | Question | Decision | Date |
+|---|----------|----------|------|
+| OQ-1 | Badge design: "M" letter circle or MyGenie bell logo mini-icon? | **MyGenie mascot icon** (green genie from `GENIE_LOGO_URL`). Mini circular `<img>` badge. | 2026-07-26 |
+| OQ-2 | Badge color: MyGenie brand green (#2E8B57 / #4CAF50) or another color? | **N/A** — using actual logo image, not colored letter. | 2026-07-26 |
+| OQ-3 | Should Web/Scan orders also get a distinct badge (e.g., "W" blue)? | **Deferred.** Only MyGenie own delivery for now. | 2026-07-26 |
 
 ## Blast Radius
 
