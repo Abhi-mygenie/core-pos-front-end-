@@ -16718,13 +16718,14 @@
       "type": "BUG",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DIRECT BUG FIX ELIGIBLE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-250_POLLING_REMOVES_AGGREGATOR_ORDERS.md"
+      "intake_doc": "change_requests/BUG-250_POLLING_REMOVES_AGGREGATOR_ORDERS.md",
+      "batch": "BATCH_1"
     },
     {
       "id": "BUG-251",
@@ -16732,13 +16733,14 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DIRECT BUG FIX ELIGIBLE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-251_ORDERCARD_CANCEL_WHATSAPP_AGGREGATOR.md"
+      "intake_doc": "change_requests/BUG-251_ORDERCARD_CANCEL_WHATSAPP_AGGREGATOR.md",
+      "batch": "BATCH_1"
     },
     {
       "id": "BUG-252",
@@ -16746,13 +16748,14 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-252_TABLECARD_MISSING_DETAILS_AGGREGATOR.md"
+      "intake_doc": "change_requests/BUG-252_TABLECARD_MISSING_DETAILS_AGGREGATOR.md",
+      "batch": "BATCH_2"
     },
     {
       "id": "BUG-253",
@@ -16760,13 +16763,14 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DIRECT BUG FIX ELIGIBLE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-253_PLATFORM_DROPDOWN_MISSING_AGGREGATOR.md"
+      "intake_doc": "change_requests/BUG-253_PLATFORM_DROPDOWN_MISSING_AGGREGATOR.md",
+      "batch": "BATCH_1"
     },
     {
       "id": "BUG-254",
@@ -16774,13 +16778,14 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DIRECT BUG FIX ELIGIBLE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-254_AGGREGATOR_HANDLERS_SILENT_FAILURE.md"
+      "intake_doc": "change_requests/BUG-254_AGGREGATOR_HANDLERS_SILENT_FAILURE.md",
+      "batch": "BATCH_1"
     },
     {
       "id": "BUG-255",
@@ -16788,13 +16793,14 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DIRECT BUG FIX ELIGIBLE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/BUG-255_ITEM_LEVEL_STATUS_AGGREGATOR.md"
+      "intake_doc": "change_requests/BUG-255_ITEM_LEVEL_STATUS_AGGREGATOR.md",
+      "batch": "BATCH_1"
     },
     {
       "id": "CR-107",
@@ -16802,14 +16808,15 @@
       "type": "CR",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DEFERRED TO SEPARATE GATE 3",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106",
         "CR-109"
       ],
-      "intake_doc": "change_requests/CR-107_AGGREGATOR_AUTO_ACCEPT.md"
+      "intake_doc": "change_requests/CR-107_AGGREGATOR_AUTO_ACCEPT.md",
+      "batch": "BATCH_4"
     },
     {
       "id": "CR-108",
@@ -16817,14 +16824,15 @@
       "type": "CR",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 DEFERRED TO SEPARATE GATE 3",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106",
         "CR-107"
       ],
-      "intake_doc": "change_requests/CR-108_AGGREGATOR_AUTO_KOT_WIRING.md"
+      "intake_doc": "change_requests/CR-108_AGGREGATOR_AUTO_KOT_WIRING.md",
+      "batch": "BATCH_4"
     },
     {
       "id": "CR-109",
@@ -16832,14 +16840,15 @@
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106",
         "CR-107"
       ],
-      "intake_doc": "change_requests/CR-109_DYNAMIC_PREP_TIME_AGGREGATOR.md"
+      "intake_doc": "change_requests/CR-109_DYNAMIC_PREP_TIME_AGGREGATOR.md",
+      "batch": "BATCH_3"
     },
     {
       "id": "CR-110",
@@ -16847,13 +16856,14 @@
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-2",
       "related": [
         "CR-106"
       ],
-      "intake_doc": "change_requests/CR-110_MYGENIE_DELIVERY_BADGE.md"
+      "intake_doc": "change_requests/CR-110_MYGENIE_DELIVERY_BADGE.md",
+      "batch": "BATCH_2"
     }
   ]
 }
