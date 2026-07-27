@@ -916,6 +916,117 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- BUG-266 · Wastage Report / Top Wasted Items — BACKEND-BLOCKED     -->
+<!-- Appended: 2026-07-27                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div style="margin-top:48px;border-top:3px solid #ef4444;padding-top:32px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <span style="background:#ef4444;color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:0.5px;">P1 · BLOCKER</span>
+    <span style="background:#8b5cf6;color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:0.5px;">BACKEND</span>
+    <span style="font-size:12px;color:#64748b;">Filed: 2026-07-27 · BUG-266</span>
+  </div>
+  <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin-bottom:8px;">BUG-266 — Wastage Report &amp; Top Wasted Items Endpoints</h2>
+  <p style="color:#475569;font-size:14px;line-height:1.6;margin-bottom:20px;">
+    The Inventory Intelligence Dashboard has two placeholder widgets (<strong>Wastage Insights</strong> and <strong>Top Wasted Items</strong>)
+    that cannot render because no wastage aggregation/report API endpoints exist. Wastage log <em>write</em> endpoints exist via CR-072,
+    but there is no companion <em>read/aggregate</em> endpoint. Frontend has placeholder UI ready to wire.
+    <br><br>
+    <strong>Full technical spec:</strong> <a href="/backend-briefs/wastage-report-2026-07-18.html" style="color:#3b82f6;text-decoration:underline;">Wastage Report Backend Brief (2026-07-18)</a>
+  </p>
+
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:16px;">Endpoints Required</h3>
+    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;border-color:#e2e8f0;font-size:13px;width:100%;">
+      <tr style="background:#1e293b;color:#e2e8f0;">
+        <th style="text-align:left;">Endpoint</th>
+        <th style="text-align:left;">Method</th>
+        <th style="text-align:left;">Purpose</th>
+        <th style="text-align:left;">Status</th>
+      </tr>
+      <tr>
+        <td><code>/api/v1/inventory/wastage-report</code></td>
+        <td>GET</td>
+        <td>Aggregated wastage data for date range, grouped by ingredient + reason + daily totals</td>
+        <td style="color:#ef4444;font-weight:600;">NOT BUILT</td>
+      </tr>
+      <tr>
+        <td><code>/api/v1/inventory/top-wasted-items</code></td>
+        <td>GET</td>
+        <td>Ranked list of most-wasted items by value/quantity (last N days)</td>
+        <td style="color:#ef4444;font-weight:600;">NOT BUILT</td>
+      </tr>
+    </table>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:16px;">Endpoint 1: <code>GET /api/v1/inventory/wastage-report</code></h3>
+    <p style="font-size:13px;color:#475569;margin-bottom:12px;"><strong>Query params:</strong> <code>from_date</code> (DD-MM-YYYY), <code>to_date</code> (DD-MM-YYYY)</p>
+    <p style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:8px;">Expected Response Shape:</p>
+    <pre style="background:#0f172a;color:#e2e8f0;padding:16px 20px;border-radius:8px;font-size:12.5px;overflow-x:auto;line-height:1.55;">{
+  "<span style="color:#86efac;">status</span>": "success",
+  "<span style="color:#86efac;">data</span>": {
+    "<span style="color:#86efac;">total_wastage_value</span>": 12500.00,
+    "<span style="color:#86efac;">total_wastage_quantity</span>": 45,
+    "<span style="color:#86efac;">wastage_by_ingredient</span>": [
+      {
+        "ingredient_id": 123,
+        "ingredient_name": "Tomato",
+        "category_name": "Vegetables",
+        "total_quantity_wasted": 5.5,
+        "unit": "kg",
+        "total_value": 550.00,
+        "wastage_count": 3,
+        "reasons": [
+          { "reason": "Expired", "quantity": 3.0, "value": 300.00 },
+          { "reason": "Spoiled", "quantity": 2.5, "value": 250.00 }
+        ]
+      }
+    ],
+    "<span style="color:#86efac;">wastage_by_reason</span>": [
+      { "reason": "Expired", "total_quantity": 20, "total_value": 5000.00, "count": 15 }
+    ],
+    "<span style="color:#86efac;">daily_totals</span>": [
+      { "date": "20-07-2026", "total_value": 1500.00, "count": 5 }
+    ]
+  }
+}</pre>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:16px;">Endpoint 2: <code>GET /api/v1/inventory/top-wasted-items</code></h3>
+    <p style="font-size:13px;color:#475569;margin-bottom:12px;"><strong>Query params:</strong> <code>days</code> (default 30), <code>limit</code> (default 10), <code>sort_by</code> (value|quantity)</p>
+    <p style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:8px;">Expected Response Shape:</p>
+    <pre style="background:#0f172a;color:#e2e8f0;padding:16px 20px;border-radius:8px;font-size:12.5px;overflow-x:auto;line-height:1.55;">{
+  "<span style="color:#86efac;">status</span>": "success",
+  "<span style="color:#86efac;">data</span>": [
+    {
+      "ingredient_id": 123,
+      "ingredient_name": "Tomato",
+      "category_name": "Vegetables",
+      "total_value_wasted": 2500.00,
+      "total_quantity_wasted": 25.0,
+      "unit": "kg",
+      "wastage_count": 12,
+      "top_reason": "Expired",
+      "trend": "increasing"
+    }
+  ]
+}</pre>
+  </div>
+
+  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px 20px;">
+    <p style="font-size:13px;color:#92400e;margin:0;">
+      <strong>Data source:</strong> Wastage log entries are already being created via <code>add-stock</code> (when <code>wastage_reason_id</code> is passed).
+      These endpoints need to <strong>aggregate existing log data</strong>, not create new data flows.
+      <br><br>
+      <strong>FE readiness:</strong> Widget structure exists in <code>InventoryIntelligencePanel.jsx</code>. Once endpoints deliver, FE wiring estimated at ~100 lines per widget + transform + service function.
+      <br><br>
+      <strong>Related:</strong> BUG-262 (removal of "Coming Soon" placeholder text from production). Full spec: <a href="/backend-briefs/wastage-report-2026-07-18.html" style="color:#3b82f6;text-decoration:underline;">Detailed Brief (July 18)</a>
+    </p>
+  </div>
+</div>
+
 <div style="height:60px"></div>
 </main>
 </div>
