@@ -414,3 +414,17 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 |---|---|---|---|---|---|---|
 | **BUG-256** | Revert BUG-252: TableCard aggregator body makes cards 2× height. Owner: keep same height as regular cards. Delete ~30 lines. | **P1** | LOW | **INTAKE — OWNER APPROVED REVERT** | 0-1 ✅ | 1 file: `TableCard.jsx`. Remove BUG-252 body block (~L412-443). |
 | **BUG-257** | OrderCard `item.qty` undefined for aggregator — empty parens `()`. Root: aggregatorTransform uses `quantity`, OrderCard reads `qty`. | **P1** | LOW | **INTAKE — OWNER APPROVED FIX** | 0-1 ✅ | 1 file: `aggregatorTransform.js`. Add `qty:` alias. 1 line. |
+
+### 2026-07-27 Reports + Inventory Investigation Batch (BUG-258 → BUG-266)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-258** | P&L Report Calendar Broken / Different UI — No Presets, No Max Date, No Calendar Component | **P1** | MEDIUM | **INTAKE** | 0-1 ✅ | 1 file (`PLReportPage.jsx`), ~60 lines. Rewrite date bar to match ExpenseReport pattern. Intake: `change_requests/BUG-258_PL_REPORT_CALENDAR_BROKEN_INTAKE.md` |
+| **BUG-259** | P&L Report Charts Hidden When ≤1 Data Point — `chartData.length > 1` too strict | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1 file, 1 line. Fast lane eligible. Intake: `change_requests/BUG-259_PL_REPORT_CHARTS_HIDDEN_INTAKE.md` |
+| **BUG-260** | Future Dates Allowed in 5 Report Calendars (PLReport, Consumption, EdgeStates, ItemSalesHybrid, Dashboard) | **P1** | LOW | **INTAKE** | 0-1 ✅ | 5 files, ~2 lines each. Fast lane eligible. Intake: `change_requests/BUG-260_FUTURE_DATES_ALLOWED_5_REPORTS_INTAKE.md` |
+| **BUG-261** | Missing Preset Pills in P&L + Consumption Reports — should be [Today, 7D, 30D, MTD] | **P1** | MEDIUM | **INTAKE** | 0-1 ✅ | 2 files, ~50 lines each. Owner confirmed standard pattern. Intake: `change_requests/BUG-261_MISSING_PRESET_PILLS_PL_CONSUMPTION_INTAKE.md` |
+| **BUG-262** | "Coming Soon" Placeholders Visible in Production (6 Locations: Intelligence, Setup, Sidebar, Login) | **P0** | MEDIUM | **INTAKE** | 0-1 ✅ | 4 files with user-visible text. Multi-file audit+removal. Intake: `change_requests/BUG-262_COMING_SOON_IN_PRODUCTION_INTAKE.md` |
+| **BUG-263** | Smart Purchase — No Sticky Toolbar (long scroll with 100+ items) | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1 file, CSS only. Fast lane eligible. Intake: `change_requests/BUG-263_SMART_PURCHASE_NO_STICKY_TOOLBAR_INTAKE.md` |
+| **BUG-264** | System Vendor — No Explanation/Tooltip (confusing UX) | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1-2 files, ~10 lines. Fast lane eligible. Intake: `change_requests/BUG-264_SYSTEM_VENDOR_NO_EXPLANATION_INTAKE.md` |
+| **BUG-265** | Conversion Factor — No Help Text (users don't understand concept) | **P3** | LOW | **INTAKE** | 0-1 ✅ | 1 file, ~10 lines. Fast lane eligible. Intake: `change_requests/BUG-265_CONVERSION_FACTOR_NO_HELP_TEXT_INTAKE.md` |
+| **BUG-266** | Wastage Report / Top Wasted Items — BACKEND-BLOCKED (no endpoint exists) | **P1** | N/A | **INTAKE — BACKEND-BLOCKED** | 0-1 ✅ | Frontend placeholder ready. Backend brief needed. Intake: `change_requests/BUG-266_WASTAGE_REPORT_BACKEND_BLOCKED_INTAKE.md` |

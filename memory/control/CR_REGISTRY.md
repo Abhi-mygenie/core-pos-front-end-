@@ -373,3 +373,10 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **CR-111** | OrderCard item format: ● Qty× Name pattern (design mockup alignment) | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Owner decision pending: aggregator-only or all order types? |
 | **CR-112** | OrderCard item price display (₹ per item line) | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Same decision needed as CR-111. |
 | **CR-113** | OrderCard customer+phone section for aggregator | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Add dedicated customer row in OrderCard body. |
+
+### 2026-07-27 Smart Purchase UX Enhancements (CR-114, CR-115)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-114** | Smart Purchase — Default All Items Unselected (Opt-In). All planner items shown by default, overwhelming with 100+ items. Add opt-in checkbox, unchecked by default. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | 2 files (`SmartPurchasePanel.jsx`, `AutoShoppingList.jsx`), ~30-40 lines. Related: CR-103, CR-105. Intake: `change_requests/CR-114_SMART_PURCHASE_DEFAULT_UNSELECTED_INTAKE.md` |
+| **CR-115** | Smart Purchase — Search Filter + Sort by Category. No search/filter/category sort in 100+ item list. Add filter bar: search input + category dropdown. | **P1** | MEDIUM | **INTAKE** | 0-1 ✅ | 1-2 files, ~60 lines. Related: CR-114. Intake: `change_requests/CR-115_SMART_PURCHASE_SEARCH_SORT_CATEGORY_INTAKE.md` |
