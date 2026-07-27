@@ -183,6 +183,7 @@ export default function ConsumptionReportPage() {
               <Input
                 type="date" value={fromDate}
                 onChange={e => setFromDate(e.target.value)}
+                max={today()} // BUG-260: block future dates
                 className="h-8 text-xs"
                 data-testid="cr093-from-date"
               />
@@ -192,6 +193,7 @@ export default function ConsumptionReportPage() {
               <Input
                 type="date" value={toDate}
                 onChange={e => setToDate(e.target.value)}
+                max={today()} // BUG-260: block future dates
                 className="h-8 text-xs"
                 data-testid="cr093-to-date"
               />

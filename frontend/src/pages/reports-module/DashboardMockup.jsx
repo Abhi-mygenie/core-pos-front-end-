@@ -222,6 +222,7 @@ const DashboardMockup = () => {
                   onChange={(e) => { setFromDate(e.target.value); setActivePreset(''); }}
                   disabled={isLoading}
                   min={minFromDate}
+                  max={maxToDate} // BUG-260: block future dates on From input
                   className="bg-transparent border-0 outline-none text-sm font-medium text-zinc-800 cursor-pointer focus:ring-0 p-0"
                   data-testid="reports-date-from"
                 />

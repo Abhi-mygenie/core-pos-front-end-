@@ -98,7 +98,7 @@ export default function SmartPurchasePanel() {
     });
     // Overlay from history (more recent names win)
     vendorItemList.forEach(v => { if (v.vendor_id) m[String(v.vendor_id)] = v.Vendor_Name || v.vendor_name || `Vendor #${v.vendor_id}`; });
-    m['system'] = 'System Vendor'; // BUG-227
+    m['system'] = 'System Vendor (no purchase history)'; // BUG-227 + BUG-264: clarify meaning
     return m;
   }, [vendorItemList, vendorMaster]); // BUG-227: +vendorMaster dep
 
@@ -195,7 +195,8 @@ export default function SmartPurchasePanel() {
   return (
     <div data-testid="smart-purchase-panel">
       {/* CR-081: Toolbar with horizon picker + Review & Submit */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 mb-4 flex items-center justify-between flex-wrap gap-3">
+      {/* BUG-263: sticky toolbar so controls stay visible while scrolling 100+ items */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 mb-4 flex items-center justify-between flex-wrap gap-3 sticky top-0 z-10 shadow-sm">
         <HorizonPicker value={horizonDays} onChange={setHorizonDays} />
         <div className="flex items-center gap-3">
           <div className="text-xs text-slate-500">

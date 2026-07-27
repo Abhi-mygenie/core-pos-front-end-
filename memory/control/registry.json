@@ -16963,7 +16963,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED (FAST LANE — 2026-07-27)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -16972,7 +16972,7 @@
         "BUG-258"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "FULL",
       "fast_lane_eligible": true,
       "intake_doc": "change_requests/BUG-259_PL_REPORT_CHARTS_HIDDEN_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
@@ -16985,7 +16985,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED (FAST LANE — 2026-07-27)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -16993,7 +16993,7 @@
         "BUG-258"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "FULL",
       "fast_lane_eligible": true,
       "intake_doc": "change_requests/BUG-260_FUTURE_DATES_ALLOWED_5_REPORTS_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
@@ -17091,7 +17091,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED (FAST LANE — 2026-07-27)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17101,7 +17101,7 @@
         "CR-078"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "FULL",
       "fast_lane_eligible": true,
       "intake_doc": "change_requests/BUG-263_SMART_PURCHASE_NO_STICKY_TOOLBAR_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
@@ -17114,7 +17114,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED (FAST LANE — 2026-07-27)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17124,7 +17124,7 @@
         "CR-078"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "FULL",
       "fast_lane_eligible": true,
       "intake_doc": "change_requests/BUG-264_SYSTEM_VENDOR_NO_EXPLANATION_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
@@ -17137,7 +17137,7 @@
       "type": "BUG",
       "severity": "P3",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED (FAST LANE — 2026-07-27)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17145,7 +17145,7 @@
         "BUG-226"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "FULL",
       "fast_lane_eligible": true,
       "intake_doc": "change_requests/BUG-265_CONVERSION_FACTOR_NO_HELP_TEXT_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
@@ -17176,6 +17176,6 @@
   ],
   "meta": {
     "last_updated": "2026-07-27",
-    "last_action": "INTAKE: 11 items registered (BUG-258 to BUG-266, CR-114, CR-115)"
+    "last_action": "BUG FIX (FAST LANE): BUG-259, 260, 263, 264, 265 → IMPLEMENTED"
   }
 }

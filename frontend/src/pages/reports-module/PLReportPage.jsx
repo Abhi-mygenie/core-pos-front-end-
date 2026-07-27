@@ -149,9 +149,9 @@ export default function PLReportPage() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
                 <Calendar className="w-4 h-4 text-slate-400" />
-                <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="h-7 text-xs border-0 p-0 w-28" data-testid="pl-date-from" />
+                <Input type="date" value={fromDate} max={today} onChange={e => setFromDate(e.target.value)} className="h-7 text-xs border-0 p-0 w-28" data-testid="pl-date-from" />
                 <span className="text-xs text-slate-400">to</span>
-                <Input type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="h-7 text-xs border-0 p-0 w-28" data-testid="pl-date-to" />
+                <Input type="date" value={toDate} max={today} onChange={e => setToDate(e.target.value)} className="h-7 text-xs border-0 p-0 w-28" data-testid="pl-date-to" />
               </div>
               <Button onClick={fetchData} size="sm" className="bg-orange-500 hover:bg-orange-600 text-white text-xs gap-1" data-testid="pl-apply-btn">
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null} Apply
@@ -179,7 +179,7 @@ export default function PLReportPage() {
               </div>
 
               {/* Charts Row */}
-              {chartData.length > 1 && (
+              {chartData.length >= 1 && ( // BUG-259: show charts even with 1 data point
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                   {/* Bar Chart */}
                   <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4" data-testid="pl-bar-chart">

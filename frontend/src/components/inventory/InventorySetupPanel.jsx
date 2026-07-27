@@ -309,7 +309,8 @@ function IngredientsTab() {
                     </td>
                     <td className="py-2 px-4 text-center">
                       <Input type="number" value={newIng.conversionFactor} onChange={e => setNewIng(p => ({ ...p, conversionFactor: e.target.value }))}
-                        placeholder={`1 ${newIng.unit || 'unit'} = ? ${newIng.smallUnit || 'small'}`} className="h-8 text-xs" data-testid="new-ingredient-conversion" />
+                        placeholder={`1 ${newIng.unit || 'unit'} = ? ${newIng.smallUnit || 'small'}`} className="h-8 text-xs" data-testid="new-ingredient-conversion"
+                        title="How many small units in 1 large unit? e.g. 1 KG = 1000 GM → enter 1000" /> {/* BUG-265 */}
                     </td>
                     <td className="py-2 px-4 text-center">
                       <select className="h-8 text-xs border border-slate-200 rounded-md px-2 w-full outline-none"
@@ -365,7 +366,8 @@ function IngredientsTab() {
                     </td>
                     <td className="py-2 px-4 text-center">
                       <Input type="number" value={editIng.conversionFactor} onChange={e => setEditIng(p => ({ ...p, conversionFactor: e.target.value }))}
-                        placeholder={`1 ${editIng.unit || 'unit'} = ? ${editIng.smallUnit || 'small'}`} className="h-8 text-xs" data-testid="edit-ingredient-conversion" />
+                        placeholder={`1 ${editIng.unit || 'unit'} = ? ${editIng.smallUnit || 'small'}`} className="h-8 text-xs" data-testid="edit-ingredient-conversion"
+                        title="How many small units in 1 large unit? e.g. 1 KG = 1000 GM → enter 1000" /> {/* BUG-265 */}
                     </td>
                     <td className="py-2 px-4 text-center">
                       <select className="h-8 text-xs border border-slate-200 rounded-md px-2 w-full outline-none"
