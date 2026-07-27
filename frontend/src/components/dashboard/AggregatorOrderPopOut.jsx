@@ -4,9 +4,11 @@
 // Actions: Reject + Accept ONLY (OD-6). Prep time required before accept (OD-4).
 // Size: Same as ScanOrderPopOut (OD-7). Blocking until all orders actioned.
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X, Check, Loader2, Clock, MapPin, FileText, Tag } from 'lucide-react';
 import { SOURCE_COLORS } from '../../constants';
+import { useRestaurant } from '../../contexts'; // CR-109: access settings for auto-accept + prep time
+import { computeAggregatorPrepTime } from '../../utils/aggregatorPrepTime'; // CR-109
 
 // CR-106: Aggregator orders needing immediate action
 const isUnconfirmedAggregatorOrder = (order) =>
@@ -50,6 +52,11 @@ const AggregatorOrderPopOut = ({
   const [selectedPrepTime, setSelectedPrepTime] = useState(null);
   const [customPrepTime, setCustomPrepTime] = useState('');
   const [isAccepting, setIsAccepting] = useState(false);
+  const autoAcceptFiredRef = useRef(new Set()); // CR-109: track auto-accepted order IDs
+
+  // CR-109: Access restaurant settings for prep time computation + auto-accept
+  const { settings } = useRestaurant();
+  const autoAcceptEnabled = settings?.auto_prep_time_ack === 'Yes' || settings?.auto_prep_time_ack === true;
 
   // Clamp index when queue changes
   useEffect(() => {
@@ -62,11 +69,27 @@ const AggregatorOrderPopOut = ({
     }
   }, [queue.length, currentIndex]);
 
-  // Reset prep time when order changes
+  // CR-109: Compute prep time from settings brackets + pre-select pill
+  const order = queue[currentIndex] || null;
+  const computedPrepTime = useMemo(() => {
+    if (!order) return null;
+    return computeAggregatorPrepTime(order.items || [], settings || {});
+  }, [order, settings]);
+
+  // Reset prep time when order changes — pre-select computed value
   useEffect(() => {
-    setSelectedPrepTime(null);
-    setCustomPrepTime('');
-  }, [currentIndex, queue.length]);
+    if (computedPrepTime && PREP_TIME_OPTIONS.includes(computedPrepTime)) {
+      setSelectedPrepTime(computedPrepTime);
+      setCustomPrepTime('');
+    } else if (computedPrepTime) {
+      // Computed time not in pill options (e.g., 35 min) → set as custom
+      setSelectedPrepTime(null);
+      setCustomPrepTime(String(computedPrepTime));
+    } else {
+      setSelectedPrepTime(null);
+      setCustomPrepTime('');
+    }
+  }, [currentIndex, queue.length, computedPrepTime]);
 
   const effectivePrepTime = selectedPrepTime || (customPrepTime ? Number(customPrepTime) : null);
 
@@ -90,13 +113,25 @@ const AggregatorOrderPopOut = ({
     if (typeof onReject === 'function') onReject(order);
   }, [queue, currentIndex, onReject]);
 
+  // CR-109: Auto-accept when auto_prep_time_ack is enabled
+  // Fires once per order after prep time is computed and pre-selected
+  useEffect(() => {
+    if (!autoAcceptEnabled || !order || !effectivePrepTime || isAccepting) return;
+    if (autoAcceptFiredRef.current.has(order.orderId)) return; // already auto-accepted this order
+    autoAcceptFiredRef.current.add(order.orderId);
+    // Brief delay so staff sees the popup + selected time before it auto-accepts
+    const timer = setTimeout(() => {
+      console.log(`[AggregatorPopOut] CR-109: Auto-accepting order ${order.orderId} with ${effectivePrepTime} min`);
+      handleAccept();
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [autoAcceptEnabled, order, effectivePrepTime, isAccepting, handleAccept]);
+
   const goPrev = useCallback(() => setCurrentIndex((i) => Math.max(0, i - 1)), []);
   const goNext = useCallback(() => setCurrentIndex((i) => Math.min(queue.length - 1, i + 1)), [queue.length]);
 
   // Don't render if queue empty or suppressed
   if (queue.length === 0 || suppressed) return null;
-
-  const order = queue[currentIndex];
   if (!order) return null;
 
   const source = order.source || 'aggregator';

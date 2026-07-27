@@ -1,0 +1,67 @@
+{
+  "summary": "CR-109 code review + unit tests uncover TWO critical wiring bugs. Dynamic prep-time computation and auto-accept behaviour are effectively DEAD CODE — they will never trigger for the real API payload. Login/dashboard/regressions all fine; webpack compiles clean. Popup itself cannot be live-tested (no fOrderStatus=0/7 orders in preprod).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "CR-109 dynamic prep time",
+        "issue": "computeAggregatorPrepTime() looks for bracket fields `min_items` / `max_items` / `bonus_minutes` but the actual restaurant settings payload (per task spec + preprod for rid=478) uses `min` / `max` / `bonus`. Result: bracket lookup never matches → function always returns basePrepTime (15) regardless of item count.",
+        "affected_selectors": ["utils/aggregatorPrepTime.js L24-28"]
+      },
+      {
+        "flow": "CR-109 settings surface for auto-accept + prep-time bracket",
+        "issue": "profileTransform.js `fromAPI.settings()` (L325-376) does NOT expose `default_prep_time`, `prep_time_bonus_config`, or `auto_prep_time_ack` on the `settings` object returned by useRestaurant(). It only emits camelCase `defaultPrepTime` (no bracket config, no auto-accept flag). But AggregatorOrderPopOut.jsx reads them via snake_case: L59 `settings?.auto_prep_time_ack`, and computeAggregatorPrepTime reads `settings.default_prep_time` + `settings.prep_time_bonus_config`. All three come back as undefined. Consequences: (a) `autoAcceptEnabled` is ALWAYS false — even if a tenant had `auto_prep_time_ack=Yes`, the 1.5s auto-accept effect would never fire; (b) `computedPrepTime` is always 15 (base fallback); (c) pre-select pill always defaults to 15-min pill instead of the bracket-derived value. Verified live via React fiber walk of RestaurantContext.Provider value on rid=478: settings keys = [isCoupon, isLoyalty, isCustomerWallet, aggregatorAutoKot, autoKot, autoBill, defaultPrepTime, confirmOrderTone, aggregatorOrderTone, useToken, showScanPopup]. No prep_time_bonus_config, no auto_prep_time_ack.",
+        "affected_selectors": [
+          "frontend/src/api/transforms/profileTransform.js L325-376 (settings transform)",
+          "frontend/src/components/dashboard/AggregatorOrderPopOut.jsx L59, L74-77",
+          "frontend/src/utils/aggregatorPrepTime.js L11, L17, L24-28"
+        ]
+      }
+    ],
+    "design_issues": []
+  },
+  "verified_features": [
+    "LOGIN: owner@18march.com / Qplazm@10 → /dashboard OK, 4 Swiggy orders (40474-40477) loaded on boot.",
+    "CODE STRUCTURE: utils/aggregatorPrepTime.js exists, exports computeAggregatorPrepTime.",
+    "CODE STRUCTURE: AggregatorOrderPopOut.jsx L10-11 imports useRestaurant + computeAggregatorPrepTime, L55 autoAcceptFiredRef defined, L74-77 computedPrepTime memo, L80-92 pre-select useEffect, L118-128 auto-accept effect with 1500ms timeout.",
+    "COMPILATION: webpack compiled successfully (latest log line). Prior parse error resolved.",
+    "REGRESSIONS: TableCard compact height / S badge / Delivery column layout / Platform filter / Add button / dashboard columns all rendering as before (per screenshot).",
+    "AGGREGATOR POPUP GATED: No fOrderStatus=0/7 orders present in preprod (existing 40474-40477 are already accepted with status !=0/7), so the popup itself did not render — matches expected behaviour."
+  ],
+  "unit_test_results": {
+    "file": "/app/backend/tests/test_cr109_aggregator_prep_time.js",
+    "results": [
+      "PASS 1 item → 15",
+      "PASS 3 items → 15",
+      "FAIL 5 items → expected 20, got 15",
+      "FAIL 8 items → expected 25, got 15",
+      "FAIL 12 items → expected 30, got 15",
+      "FAIL 20 items → expected 35, got 15",
+      "FAIL camelCase settings variant (hypothetical fix) → expected 20, got 15"
+    ],
+    "conclusion": "Only the base-prep-time fallback works. All bracket-based computations fail because of field-name mismatch (min_items vs min etc)."
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_cr109_aggregator_prep_time.js"
+  ],
+  "action_items": [
+    "FIX #1 (utils/aggregatorPrepTime.js L24-28): Read bracket fields as `b.min` / `b.max` / `b.bonus` (or accept both variants) to match the actual API/config shape per CR-109 spec.",
+    "FIX #2 (api/transforms/profileTransform.js settings transform L325-376): Expose the three new keys on the settings object so useRestaurant() consumers can read them. Options: (a) add snake_case pass-through: `default_prep_time`, `prep_time_bonus_config`, `auto_prep_time_ack`; OR (b) map to camelCase and update AggregatorOrderPopOut + aggregatorPrepTime util to read camelCase keys (defaultPrepTime already exists as camelCase — reuse). Recommend option (b) for consistency with rest of transform.",
+    "After fixes: re-verify with a simulated order (fOrderStatus=0/7, items qty=5) that pill 20-min gets pre-selected, and toggle auto_prep_time_ack=Yes on a test tenant to confirm 1500ms auto-accept fires exactly once (autoAcceptFiredRef Set dedupe works)."
+  ],
+  "critical_code_review_comments": [
+    "aggregatorPrepTime.js util contract mismatch with API payload — silently degrades to base prep time; no defensive log/warning to catch this in prod.",
+    "profileTransform.settings() is the single source of truth for the settings context — any new CR that adds settings-driven behaviour MUST add the field here, otherwise consumers read undefined. Consider adding a smoke assertion / snapshot test.",
+    "AggregatorOrderPopOut auto-accept effect deps include `handleAccept` (a useCallback that itself depends on many values). If `effectivePrepTime` changes between renders (e.g. staff edits pill after popup shows but before 1.5s elapses), the effect will re-schedule. Deduplication via autoAcceptFiredRef.current.has(order.orderId) protects against double-accept — OK, but the timer from the previous render is cancelled by cleanup — so behaviour is fine. No change needed once main bugs fixed.",
+    "Line 92 useEffect deps: `[currentIndex, queue.length, computedPrepTime]` — should also include `queue` identity or use `order?.orderId` to be robust against orders swapping without index change (edge case)."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "40% (CR-109 primary goals fail; regressions pass)" },
+  "test_credentials": "owner@18march.com / Qplazm@10 (working)",
+  "seed_data_creation": "None. No fOrderStatus=0/7 orders available to force popup rendering.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "After E1 fixes both bugs, re-run /app/backend/tests/test_cr109_aggregator_prep_time.js (node --input-type=module -e \"$(cat ...)\" — see file). Then inspect settings via fiber walk (see script in iteration_11 log) to confirm the three new keys are present. To live-test the popup, either inject a mock aggregator order via socket emit (`aggregator_order_478` channel) with fOrderStatus=0 and items qty=5, or wait for a real incoming order. Auto-accept toggle: only reproducible if a tenant has auto_prep_time_ack=Yes — rid=478 is currently No.",
+  "rca of the issue": "CR-109 introduces a util + effect that read three settings keys (default_prep_time, prep_time_bonus_config, auto_prep_time_ack) directly off the `settings` object returned by useRestaurant(). But the profileTransform layer between the API and the context has always exposed only a curated camelCase surface — none of these three keys are in that surface. Additionally the util was written against a hypothetical bracket schema (min_items/max_items/bonus_minutes) rather than the actual schema (min/max/bonus) confirmed in the CR spec. Two independent oversights that together render CR-109 inert in production. Repro: (1) node run of unit tests shows bracket lookup fails; (2) React fiber walk on live dashboard shows settings object lacks all 3 keys."
+}
