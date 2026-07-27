@@ -16900,7 +16900,7 @@
       "type": "CR",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE \u2014 DEFERRED",
+      "status": "INTAKE \u2014 DECISIONS LOCKED (aggregator only)",
       "sprint_key": "pos_5_0",
       "gate": "0-1",
       "related": [
@@ -16914,7 +16914,7 @@
       "type": "CR",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE \u2014 DEFERRED",
+      "status": "INTAKE \u2014 DECISIONS LOCKED (aggregator only, Option B context, permission key deferred)",
       "sprint_key": "pos_5_0",
       "gate": "0-1",
       "related": [
@@ -16929,7 +16929,7 @@
       "type": "CR",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE \u2014 DEFERRED",
+      "status": "INTAKE \u2014 DECISIONS LOCKED (aggregator data, not CRM)",
       "sprint_key": "pos_5_0",
       "gate": "0-1",
       "related": [
