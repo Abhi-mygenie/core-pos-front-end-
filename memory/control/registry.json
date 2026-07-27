@@ -16943,7 +16943,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE (Impact Analysis)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -16951,7 +16951,7 @@
         "CR-094"
       ],
       "blast_radius": "SMALL",
-      "code_reality": "NONE",
+      "code_reality": "PARTIAL",
       "intake_doc": "change_requests/BUG-258_PL_REPORT_CALENDAR_BROKEN_INTAKE.md",
       "investigation_doc": "evidence/INVESTIGATION_BATCH_2026_07_27/INVESTIGATION_REPORT.md",
       "created": "2026-07-27",
@@ -17006,7 +17006,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE (Impact Analysis)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17028,7 +17028,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE (Impact Analysis) — 3 Owner Decisions pending (OD-4/5/6)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17048,7 +17048,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE (Impact Analysis) — 3 Owner Decisions pending (OD-7/8/9)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17070,7 +17070,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE (Impact Analysis)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17158,7 +17158,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "N/A",
-      "status": "INTAKE — BACKEND-BLOCKED",
+      "status": "GATE 2 COMPLETE (Impact Analysis + Backend Brief filed) — BACKEND-BLOCKED",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17176,6 +17176,6 @@
   ],
   "meta": {
     "last_updated": "2026-07-27",
-    "last_action": "BUG FIX (FAST LANE): BUG-259, 260, 263, 264, 265 → IMPLEMENTED"
+    "last_action": "PLANNING (Gate 2): Impact Analysis for BUG-258, 261, 262, CR-114, 115, BUG-266"
   }
 }
