@@ -16943,7 +16943,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (Impact Analysis)",
+      "status": "GATE 3 COMPLETE (Implementation Plan) — Awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17006,7 +17006,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (Impact Analysis)",
+      "status": "GATE 3 COMPLETE (Implementation Plan) — Awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17028,7 +17028,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (Impact Analysis) — 3 Owner Decisions pending (OD-4/5/6)",
+      "status": "GATE 3 COMPLETE (Implementation Plan) — Awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17048,7 +17048,7 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (Impact Analysis) — 3 Owner Decisions pending (OD-7/8/9)",
+      "status": "GATE 3 COMPLETE (Implementation Plan) — Awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17070,7 +17070,7 @@
       "type": "CR",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE (Impact Analysis)",
+      "status": "GATE 3 COMPLETE (Implementation Plan) — Awaiting Gate 4 GO",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -17176,6 +17176,6 @@
   ],
   "meta": {
     "last_updated": "2026-07-27",
-    "last_action": "PLANNING (Gate 2): Impact Analysis for BUG-258, 261, 262, CR-114, 115, BUG-266"
+    "last_action": "PLANNING (Gate 3): Implementation Plans for BUG-258, 261, 262, CR-114, 115"
   }
 }
