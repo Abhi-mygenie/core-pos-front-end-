@@ -16808,7 +16808,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "MERGED INTO CR-109 (auto-accept scope moved to Batch 3)",
+      "status": "MERGED INTO CR-109 \u2014 IMPLEMENTED",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [
@@ -16840,9 +16840,9 @@
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "GATE 2 COMPLETE \u2014 SCOPE: prep time computation + auto-accept ONLY (no print)",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-2",
+      "gate": "0-5a",
       "related": [
         "CR-106",
         "CR-107"
