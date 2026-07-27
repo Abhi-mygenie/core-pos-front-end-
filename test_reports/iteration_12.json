@@ -1,0 +1,52 @@
+{
+  "summary": "CR-109 RETEST PASSED. Both bugs from iteration_11 are fixed. profileTransform.settings now exposes prepTimeBonusConfig (5 brackets), autoPrepTimeAck (false for rid=478), prepTimeCountMethod ('quantity'), and defaultPrepTime (15). aggregatorPrepTime util now handles both min_items/max_items/bonus_minutes (API shape) and min/max/bonus (camelCase) variants with Number() coercion for string values. All 10 unit tests pass. Dashboard loads clean with 4 aggregator orders, all regressions intact, webpack compiled successfully.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verified_features": [
+    "UNIT TESTS (10/10 PASS): 1 item→15, 3→15, 5→20, 8→25, 12→30, 20→35 with string-value API shape {min_items,max_items,bonus_minutes}; plus camelCase variant, snake_case fallback, multi-item aggregation (2+3=5→20), empty brackets→base.",
+    "SETTINGS EXPOSED (live fiber walk on rid=478): settings.keys now includes prepTimeBonusConfig (array with 5 brackets), autoPrepTimeAck (false), prepTimeCountMethod ('quantity'), defaultPrepTime (15). Full keys: [isCoupon, isLoyalty, isCustomerWallet, aggregatorAutoKot, autoKot, autoBill, defaultPrepTime, prepTimeBonusConfig, prepTimeCountMethod, autoPrepTimeAck, confirmOrderTone, aggregatorOrderTone, useToken, showScanPopup].",
+    "COMPILATION: 'webpack compiled successfully' (latest supervisor log line).",
+    "REGRESSIONS: Login OK, /dashboard renders with Dine-In/TakeAway/Delivery/Room columns, 4 Swiggy aggregator orders (40474-40477) loaded on boot, aggregator cards visible in Delivery column with S badge, platform filter present, Add button present.",
+    "AggregatorOrderPopOut.jsx L59 correctly reads settings?.autoPrepTimeAck (camelCase); L74-77 computedPrepTime memo intact."
+  ],
+  "unit_test_results": {
+    "file": "/app/backend/tests/test_cr109_aggregator_prep_time.js",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "cases": [
+      "PASS 1 item → 15",
+      "PASS 3 items → 15",
+      "PASS 5 items → 20",
+      "PASS 8 items → 25",
+      "PASS 12 items → 30",
+      "PASS 20 items → 35",
+      "PASS CAMEL 5 items → 20 (min/max/bonus keys)",
+      "PASS SNAKE 5 items → 20 (snake_case settings root)",
+      "PASS MULTI qty 2+3 → 20 (aggregation)",
+      "PASS Empty brackets → 15 (fallback)"
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_cr109_aggregator_prep_time.js"],
+  "action_items": [
+    "Optional: The popup itself could not be live-tested (rid=478 has no fOrderStatus=0/7 orders; existing 40474-40477 already accepted). To fully validate auto-accept 1500ms + pre-select pill, seed an aggregator order with fOrderStatus=0 and items qty=5 via socket emit on channel `aggregator_order_478`, or toggle a test tenant's auto_prep_time_ack=Yes."
+  ],
+  "critical_code_review_comments": [
+    "aggregatorPrepTime util now correctly supports both API shapes with Number() coercion — no more silent degradation.",
+    "profileTransform.settings() now includes CR-109 keys with nested apiSettings.settings.* → root fallback. Good defensive pattern consistent with confirmOrderTone.",
+    "AggregatorOrderPopOut L73 declares `const order = queue[currentIndex] || null;` at outer scope; L97 and L111 redeclare `const order` inside useCallbacks — valid block scope but slightly confusing; consider renaming inner refs for clarity (nit).",
+    "L92 useEffect deps `[currentIndex, queue.length, computedPrepTime]` — still consider adding `order?.orderId` for robustness against queue swaps at same index (edge case, unchanged from iteration_11)."
+  ],
+  "updated_files": ["/app/backend/tests/test_cr109_aggregator_prep_time.js"],
+  "success_rate": { "backend": "N/A", "frontend": "100% (CR-109 unit + settings surface + regressions)" },
+  "test_credentials": "owner@18march.com / Qplazm@10 (working)",
+  "seed_data_creation": "None. Popup live-render still gated on absence of fOrderStatus=0/7 orders on rid=478.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CR-109 wiring is now correct end-to-end. If future changes touch profileTransform.settings() or aggregatorPrepTime util, re-run /app/backend/tests/test_cr109_aggregator_prep_time.js and re-do the fiber walk (see script in iteration_12 log). To live-exercise the popup + auto-accept, either seed a socket event on aggregator_order_478 with an order carrying fOrderStatus=0 and items qty>=4, or use a tenant with auto_prep_time_ack='Yes'.",
+  "rca of the issue": "Iteration_11 identified two independent bugs that made CR-109 dead code: (a) util looked for min_items/max_items/bonus_minutes but was invoked against a hypothetical schema shape; (b) profileTransform.settings did not expose the three new keys, so useRestaurant().settings.autoPrepTimeAck/prepTimeBonusConfig/defaultPrepTime were undefined. Iteration_12 verifies both are now fixed: transform adds the keys (with nested→root fallback), util handles both key variants with Number() coercion. Live fiber inspection confirms keys are present on rid=478 with expected values."
+}

@@ -353,6 +353,16 @@ export const fromAPI = {
       // root-level snake_case path.
       autoBill:          toBoolean(apiSettings.billing_auto_bill_print),
       defaultPrepTime: parseInt(apiSettings.default_prep_time) || 15,
+      // CR-109: Prep time bracket config for dynamic aggregator prep time computation
+      prepTimeBonusConfig: (() => {
+        const raw = apiSettings.settings?.prep_time_bonus_config ?? apiSettings.prep_time_bonus_config;
+        if (Array.isArray(raw)) return raw;
+        if (typeof raw === 'string') { try { return JSON.parse(raw); } catch { return []; } }
+        return [];
+      })(),
+      prepTimeCountMethod: apiSettings.settings?.prep_time_count_method ?? apiSettings.prep_time_count_method ?? 'quantity',
+      // CR-109: Auto-accept toggle for aggregator orders
+      autoPrepTimeAck: toBoolean(apiSettings.settings?.auto_prep_time_ack ?? apiSettings.auto_prep_time_ack),
 
       // POS2-007 Phase 1 — confirm-order tone selector (FE override consumer).
       // Value lives nested under `restaurants[0].settings.confirm_order_tone`

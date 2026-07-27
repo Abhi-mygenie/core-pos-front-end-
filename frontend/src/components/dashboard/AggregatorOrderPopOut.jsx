@@ -56,7 +56,7 @@ const AggregatorOrderPopOut = ({
 
   // CR-109: Access restaurant settings for prep time computation + auto-accept
   const { settings } = useRestaurant();
-  const autoAcceptEnabled = settings?.auto_prep_time_ack === 'Yes' || settings?.auto_prep_time_ack === true;
+  const autoAcceptEnabled = settings?.autoPrepTimeAck === true; // CR-109: camelCase from profileTransform
 
   // Clamp index when queue changes
   useEffect(() => {
