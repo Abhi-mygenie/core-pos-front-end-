@@ -16748,7 +16748,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "REVERTED (BUG-256)",
       "sprint_key": "pos_5_0",
       "gate": "0-5a",
       "related": [
@@ -16871,9 +16871,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "BUG-252",
         "CR-106"
@@ -16886,9 +16886,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
