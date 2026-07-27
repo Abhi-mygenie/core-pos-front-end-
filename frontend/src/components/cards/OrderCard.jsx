@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { User, X, ChevronDown, ChevronUp, MapPin, Clock, Printer, ShoppingBag, Bike, Utensils, DoorOpen, Circle, CheckCircle2, Check, FileText, GitMerge, ArrowLeftRight, CornerRightUp, Loader2 } from "lucide-react";
 import { COLORS, SOURCE_COLORS } from "../../constants";
+import { GENIE_LOGO_URL } from "../../constants/colors"; // CR-110: MyGenie badge
 import OrderTimeline from "./OrderTimeline";
 import { printOrder, completePrepaidOrder } from "../../api/services/orderService";
 import { dispatchOrder } from "../../api/services/deliveryService";
@@ -350,10 +351,9 @@ const OrderCard = ({
     return ''; // Don't show anything if no real customer name
   };
 
-  // Source logo - Only show for aggregators (swiggy, zomato, etc.)
-  // Skip MG logo for all own orders in Order View
+  // Source logo — S/Z for aggregators, MyGenie icon for own delivery (CR-110)
   const renderLogo = () => {
-    // For aggregators (swiggy, zomato, etc.) - always show logo
+    // For aggregators (swiggy, zomato, etc.) - always show letter badge
     if (!isOwn) {
       const color = SOURCE_COLORS[source] || SOURCE_COLORS.own;
       const letter = source === "swiggy" ? "S" : source === "zomato" ? "Z" : "O";
@@ -366,7 +366,18 @@ const OrderCard = ({
         </div>
       );
     }
-    // For all own orders - no logo
+    // CR-110: MyGenie mascot badge for own delivery orders
+    if (isDelivery) {
+      return (
+        <img
+          src={GENIE_LOGO_URL}
+          alt="MyGenie"
+          data-testid={`mygenie-badge-${orderId}`}
+          className="w-6 h-6 flex-shrink-0 object-contain"
+        />
+      );
+    }
+    // For other own orders - no logo
     return null;
   };
 

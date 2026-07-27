@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Printer, Clock, X, Check, PlusSquare, ShoppingBag, Bike, Utensils, DoorOpen, Loader2 } from "lucide-react";
 import PropTypes from 'prop-types';
 import { COLORS, CONFIG } from "../../constants";
+import { GENIE_LOGO_URL } from "../../constants/colors"; // CR-110: MyGenie badge
 import { mockOrderItems } from "../../data";
 import { getTableStatusConfig, isTableActive } from "../../utils";
 import { IconButton, TextButton } from "./buttons";
@@ -313,6 +314,15 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                 {(table.order?.source || table.source)?.toLowerCase() === 'zomato' ? 'Z' : 'S'}
               </span>
             )}
+            {/* CR-110: MyGenie mascot badge for own delivery orders */}
+            {!isAggregator && table.orderType === 'delivery' && (
+              <img
+                src={GENIE_LOGO_URL}
+                alt="MyGenie"
+                data-testid={`mygenie-badge-${table.id}`}
+                className="w-5 h-5 flex-shrink-0 object-contain"
+              />
+            )}
             {table.orderType === 'takeAway' && <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             {table.orderType === 'delivery' && !isAggregator && <Bike className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
             {(table.orderType === 'dineIn' || table.orderType === 'walkIn') && <Utensils className="w-3.5 h-3.5 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />}
@@ -398,6 +408,39 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
             <div className="text-xs mt-1 mb-2 whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: COLORS.grayText }}>
               <span>{table.status === "reserved" ? table.reservedTime : computeStageTime(table)}</span>
             </div>
+
+            {/* BUG-252: Aggregator card body — items, customer+phone, rider status */}
+            {isAggregator && table.order && (
+              <div className="flex-1 flex flex-col gap-1 mb-2 min-h-0">
+                {/* Condensed items (first 2 + overflow) */}
+                {table.order.items?.length > 0 && (
+                  <div className="text-[11px] leading-tight" style={{ color: COLORS.darkText }}>
+                    {table.order.items.slice(0, 2).map((item, i) => (
+                      <div key={i} className="flex items-start gap-1 truncate">
+                        <span style={{ color: COLORS.primaryOrange }}>●</span>
+                        <span className="truncate">{item.quantity}× {item.name}</span>
+                      </div>
+                    ))}
+                    {table.order.items.length > 2 && (
+                      <div className="text-[10px] italic" style={{ color: COLORS.grayText }}>
+                        +{table.order.items.length - 2} more
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* Customer + phone */}
+                {(table.order.customerName || table.order.phone) && (
+                  <div className="text-[11px] font-medium truncate" style={{ color: COLORS.darkText }}>
+                    {table.order.customerName}{table.order.phone ? ` · ${table.order.phone}` : ''}
+                  </div>
+                )}
+                {/* Rider status */}
+                <div className="text-[10px] flex items-center gap-1" style={{ color: COLORS.grayText }}>
+                  <span>👤</span>
+                  <span>{table.order.riderName || 'Awaiting Runner'}</span>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             {isYetToConfirm ? (

@@ -1,0 +1,29 @@
+{
+  "summary": "Batch 2 (BUG-252 TableCard aggregator body + CR-110 MyGenie mascot badge) frontend testing. All 9 checks PASS. Webpack compiles cleanly, login works, aggregator cards show items/customer/rider, MyGenie badge present only on own delivery cards, absent on aggregator/dine-in/takeaway.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "verification_details": {
+    "1_login": "PASS — owner@18march.com / Qplazm@10 → /dashboard (loading page took retry once due to kitchen-stations transient fail, unrelated to this batch).",
+    "2_BUG252_items": "PASS — All 4 aggregator cards (table-card-delivery-40474/75/76/77) in Delivery column render '● 1× Double Chicken Keema Roll' condensed item line below waiter/status.",
+    "3_BUG252_customer": "PASS — All 4 aggregator cards render 'Vansh · +919999999992' (customerName · phone).",
+    "4_BUG252_rider": "PASS — All 4 aggregator cards show '👤 Awaiting Runner' rider status line.",
+    "5_CR110_mygenie_own_delivery": "PASS — 4 mygenie-badge-delivery-* testids present on own delivery cards: mygenie-badge-delivery-892353 ('Del ₹105'), 972255 ('mayur ₹2'), 998007, 867887. src=https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg (matches GENIE_LOGO_URL).",
+    "6_CR110_no_badge_aggregator": "PASS — Aggregator cards 40474/75/76/77 have source-badge-delivery-* (S badge) but NO mygenie-badge child. Verified via querySelector inside each table-card-delivery-4047* element.",
+    "7_CR110_no_badge_non_delivery": "PASS — All 4 mygenie badges present on the page carry the 'delivery-' id prefix; no mygenie badge appears on Dine-In (table-card-3237..) or TakeAway (table-card-wc-*) cards. TableCard.jsx L318 guards with `table.orderType === 'delivery' && !isAggregator`.",
+    "8_regression_batch1": "PASS — Aggregator OrderCard testids (from prior iter) still limited to order-card / order-id-chip / print-kot / agg-ready — no whatsapp-payment / cancel-order buttons on aggregator. 4 aggregator cards persist across polling. Source-badge-* testids present as expected.",
+    "9_compilation": "PASS — No webpack errors, dashboard rendered cleanly, no console errors observed during test."
+  },
+  "test_report_links": ["/app/test_reports/iteration_8.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "TableCard.jsx now 797 LOC (over 700 guideline). Consider splitting aggregator body block (L412-443) and action-buttons block (L445-680) into small subcomponents for maintainability.",
+    "Rider status uses raw emoji '👤' string (L439); consider using lucide User icon for consistency with other icons in the card (Bike, etc.) and to avoid emoji cross-platform rendering differences.",
+    "MyGenie <img> should include width/height attributes and loading='lazy' to prevent CLS when many delivery cards render (only alt/data-testid present at L320-323)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% (9/9 checks PASS)"},
+  "seed_data_creation": "None — used existing preprod aggregator orders 40474-40477 (Swiggy, restaurant 478) and own delivery orders 892353/972255/998007/867887.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Batch 2 complete. Aggregator cards use `table-card-delivery-{id}` testid, have `source-badge-delivery-{id}` for S/Z, no mygenie. Own delivery cards use same `table-card-delivery-{id}` testid but have `mygenie-badge-delivery-{id}` <img> child. Kitchen-stations load intermittently fails during login-loading but retry works; not a blocker."
+}
