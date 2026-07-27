@@ -16808,7 +16808,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE \u2014 DEFERRED TO SEPARATE GATE 3",
+      "status": "MERGED INTO CR-109 (auto-accept scope moved to Batch 3)",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [
@@ -16824,7 +16824,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE \u2014 DEFERRED TO SEPARATE GATE 3",
+      "status": "GATE 2 COMPLETE \u2014 auto-KOT wiring included in CR-109 Batch 3",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [
@@ -16836,11 +16836,11 @@
     },
     {
       "id": "CR-109",
-      "title": "Dynamic Prep Time Calculation for Aggregator",
+      "title": "Dynamic Prep Time + Auto-Accept for Aggregator (merged CR-107 scope)",
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "GATE 2 COMPLETE",
+      "status": "GATE 2 COMPLETE \u2014 SCOPE EXPANDED (includes auto-accept from CR-107)",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [
