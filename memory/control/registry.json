@@ -16820,11 +16820,11 @@
     },
     {
       "id": "CR-108",
-      "title": "Wire Auto-KOT on Aggregator Accept",
+      "title": "Auto-KOT + Auto-Bill on Aggregator Accept \u2014 PARKED pending payload confirmation",
       "type": "CR",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE \u2014 auto-KOT wiring included in CR-109 Batch 3",
+      "status": "INTAKE \u2014 PARKED (owner reconfirming KOT/bill payload)",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [
@@ -16836,11 +16836,11 @@
     },
     {
       "id": "CR-109",
-      "title": "Dynamic Prep Time + Auto-Accept for Aggregator (merged CR-107 scope)",
+      "title": "Dynamic Prep Time + Auto-Accept for Aggregator (no KOT/bill \u2014 separate CR)",
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "GATE 2 COMPLETE \u2014 SCOPE EXPANDED (includes auto-accept from CR-107)",
+      "status": "GATE 2 COMPLETE \u2014 SCOPE: prep time computation + auto-accept ONLY (no print)",
       "sprint_key": "pos_5_0",
       "gate": "0-2",
       "related": [

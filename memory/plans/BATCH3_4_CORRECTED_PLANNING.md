@@ -109,3 +109,19 @@ IF failure:
 | 7–10 | 3 | +10 min | **25 min** → pill "25" |
 | 11–15 | 4 | +15 min | **30 min** → pill "30" |
 | 16+ | 5 | +20 min | **35 min** → manual input (no 35 pill) |
+
+---
+
+## UPDATE 2026-07-27: KOT/Bill PARKED
+
+**Owner directive:** Park the print (KOT + bill) part. Keep as separate CR (CR-108). Owner will reconfirm payload later.
+
+**CR-109 revised scope (FINAL):**
+1. Prep time computation util
+2. Pre-select pill in popup
+3. Auto-accept when `auto_prep_time_ack = Yes`
+4. ~~Auto-KOT~~ → PARKED in CR-108
+
+**CR-108 status:** PARKED — owner reconfirming KOT/bill payload before implementation.
+
+**Batch 3 = CR-109 only (~35 lines, 2 files). No printing.**
