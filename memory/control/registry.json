@@ -16718,9 +16718,9 @@
       "type": "BUG",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
@@ -16733,9 +16733,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
@@ -16763,9 +16763,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
@@ -16778,9 +16778,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
@@ -16793,9 +16793,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-3",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
