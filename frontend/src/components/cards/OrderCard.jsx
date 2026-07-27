@@ -975,8 +975,8 @@ const OrderCard = ({
               </button>
               )}
 
-              {/* CR-017: WhatsApp Payment Link button */}
-              {showWhatsAppPayment && (
+              {/* CR-017: WhatsApp Payment Link button — BUG-251: hidden for aggregator */}
+              {!isAggregator && showWhatsAppPayment && (
               <button
                 data-testid={`whatsapp-payment-btn-${orderId}`}
                 className={`min-h-[44px] min-w-[44px] rounded-lg border flex items-center justify-center ${isActionInProgress ? 'opacity-50' : ''}`}

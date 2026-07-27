@@ -1,0 +1,25 @@
+{
+  "summary": "Re-test of BUG-251 WhatsApp fix and BUG-254 sonner toast fix. Both fixes VERIFIED PASS. Quick BUG-250 polling persistence re-verified PASS. Frontend compiles cleanly.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "verification_details": {
+    "login": "PASS — owner@18march.com / Qplazm@10 → /dashboard",
+    "compilation": "PASS — no webpack errors, dashboard renders cleanly",
+    "BUG-251_whatsapp_hidden_on_aggregator": "PASS — In Order View, aggregator OrderCards 40474/40475/40476/40477 have NO `whatsapp-payment-btn-{orderId}` testid. Testids present per card are limited to order-card-{id}, order-id-chip-{id}, print-kot-btn-{id}, agg-ready-btn-{id}. Cancel(X) also correctly hidden.",
+    "BUG-251_whatsapp_regression_regular": "PASS — Regular delivery OrderCard 892353 still exposes `whatsapp-payment-btn-892353` (verified True).",
+    "BUG-254_sonner_toast": "PASS — Clicking `agg-ready-btn-delivery-40474` triggers POST /api/v1/urbanpiper/orders-status-update returning 500 (stale ID). Sonner toast renders top-right with text 'Failed to mark ready — please retry'. Confirmed via `[data-sonner-toast]` querySelectorAll length=1 and visual screenshot (red toast with X close button). App.js L67-68 imports `Toaster as SonnerToaster from ./components/ui/sonner`, L192-193 mounts `<SonnerToaster position='top-right' richColors closeButton />` alongside shadcn Toaster.",
+    "BUG-250_polling_persistence": "PASS — All 4 aggregator cards (40474/75/76/77) still present after 75s wait (>1 poll cycle at 60s interval)."
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "DashboardPage.jsx still exceeds 700 LOC guideline (2145 lines) — consider splitting adaptOrder helpers into a separate module (carried over from iter 6, not blocking).",
+    "Two toast systems coexist (shadcn Toaster + sonner). Both are mounted now which works, but consider consolidating to a single toast system project-wide to avoid future confusion."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% (3/3 retest items PASS)"},
+  "seed_data_creation": "None — used existing preprod aggregator orders 40474-40477 (Swiggy, restaurant 478).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-250, BUG-251, BUG-253, BUG-254, BUG-255 all verified PASS across iter 6+7. CR-106 Wave 2 batch complete. Test credentials: owner@18march.com / Qplazm@10, restaurant 478. Aggregator ready endpoint returns 500 for stale UrbanPiper IDs which is expected in preprod — used to trigger toast.error path."
+}

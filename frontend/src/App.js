@@ -65,6 +65,7 @@ import PurchaseEntryPage from "./pages/PurchaseEntryPage";           // CR-072
 import RecipeManagementPage from "./pages/RecipeManagementPage";     // CR-072
 import InventoryReceivePage from "./pages/InventoryReceivePage";     // CR-077
 import { Toaster } from "./components/ui/toaster";
+import { Toaster as SonnerToaster } from "./components/ui/sonner"; // BUG-254: sonner toast host for aggregator error toasts
 import { AppProviders } from "./contexts";
 import { useRestaurant } from "./contexts";
 import { ProtectedRoute, ErrorBoundary } from "./components/guards";
@@ -189,6 +190,7 @@ function App() {
             </Routes>
           </BrowserRouter>
           <Toaster />
+          <SonnerToaster position="top-right" richColors closeButton />
         </div>
       </AppProviders>
     </ErrorBoundary>
