@@ -13,7 +13,8 @@ Design mockup shows `₹120.00` per item line. OrderCard doesn't render item pri
 **Owner decisions (LOCKED):**
 - Scope: Aggregator only
 - Approach: **Option B** — read `currencySymbol` from `useRestaurant()` context (already imported in OrderCard L95)
-- Permission key: Owner will provide a visibility permission key during implementation. Code should include a permission guard placeholder.
+- Permission key: **EMPLOYEE-LEVEL permission** (role-based, from `role[]` in login response), NOT restaurant-level setting. Owner will provide exact key during role-gating CR. Current 53 permissions have no `show_price` key yet — backend to create.
+- Current implementation: placeholder guard `isAggregator && item.unitPrice > 0`. Must be updated to `hasPermission('<key>') && isAggregator && item.unitPrice > 0` when key is available.
 - Gap registered: `GAP-CR112-PRICE-PERMISSION` in OPEN_GAPS_REGISTER
 
 ## Blast Radius

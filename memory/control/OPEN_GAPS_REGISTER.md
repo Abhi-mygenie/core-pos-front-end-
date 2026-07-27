@@ -324,3 +324,9 @@ Both formulas frozen as intentional design choices. Future agents MUST NOT align
 **Status:** OPEN — owner will provide key during implementation
 **Description:** OrderCard item price display for aggregator needs a permission/setting key to control visibility. Owner confirmed a key exists but will provide it during role-gating CR implementation. Until then, CR-112 implementation should include a permission guard placeholder.
 **Related:** CR-112, CR-106
+
+### GAP UPDATE: CR-112 — Price Permission is EMPLOYEE-LEVEL (2026-07-27)
+**ID:** GAP-CR112-PRICE-PERMISSION (updated)
+**Correction:** Price visibility is **employee-level permission** (role-based, from `role[]` array in login response), NOT restaurant-level setting. Owner will provide the exact permission key during role-gating CR.
+**Current permissions checked:** 53 keys for Owner role. No explicit `show_price` or `hide_price` exists yet — key to be created by backend.
+**Impact on CR-112:** The `isAggregator && item.unitPrice > 0` guard currently implemented is a placeholder. Must be replaced with `hasPermission('price_key') && isAggregator && item.unitPrice > 0` when the key is provided.
