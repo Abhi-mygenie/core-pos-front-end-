@@ -409,38 +409,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
               <span>{table.status === "reserved" ? table.reservedTime : computeStageTime(table)}</span>
             </div>
 
-            {/* BUG-252: Aggregator card body — items, customer+phone, rider status */}
-            {isAggregator && table.order && (
-              <div className="flex-1 flex flex-col gap-1 mb-2 min-h-0">
-                {/* Condensed items (first 2 + overflow) */}
-                {table.order.items?.length > 0 && (
-                  <div className="text-[11px] leading-tight" style={{ color: COLORS.darkText }}>
-                    {table.order.items.slice(0, 2).map((item, i) => (
-                      <div key={i} className="flex items-start gap-1 truncate">
-                        <span style={{ color: COLORS.primaryOrange }}>●</span>
-                        <span className="truncate">{item.quantity}× {item.name}</span>
-                      </div>
-                    ))}
-                    {table.order.items.length > 2 && (
-                      <div className="text-[10px] italic" style={{ color: COLORS.grayText }}>
-                        +{table.order.items.length - 2} more
-                      </div>
-                    )}
-                  </div>
-                )}
-                {/* Customer + phone */}
-                {(table.order.customerName || table.order.phone) && (
-                  <div className="text-[11px] font-medium truncate" style={{ color: COLORS.darkText }}>
-                    {table.order.customerName}{table.order.phone ? ` · ${table.order.phone}` : ''}
-                  </div>
-                )}
-                {/* Rider status */}
-                <div className="text-[10px] flex items-center gap-1" style={{ color: COLORS.grayText }}>
-                  <span>👤</span>
-                  <span>{table.order.riderName || 'Awaiting Runner'}</span>
-                </div>
-              </div>
-            )}
+            {/* BUG-256: Reverted BUG-252 aggregator body — owner directive: keep same height as regular cards */}
 
             {/* Action Buttons */}
             {isYetToConfirm ? (

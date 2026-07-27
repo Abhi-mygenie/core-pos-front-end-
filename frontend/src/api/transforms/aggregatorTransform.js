@@ -96,6 +96,7 @@ export const fromAPI = {
           name: fd.title || fd.name || '', // C-1: use .title first
           categoryName: fd.category?.name || '',
           quantity: Number(f.quantity) || 1,
+          qty: Number(f.quantity) || 1, // BUG-257: OrderCard reads item.qty (not item.quantity)
           unitPrice: Number(f.unit_price || f.price) || 0,
           price: Number(f.price) || 0,
           tax: Number(f.gst || f.tax_amount) || 0,

@@ -1,0 +1,28 @@
+{
+  "summary": "Batch 2b (BUG-256 TableCard aggregator body reverted + BUG-257 OrderCard qty fix) frontend testing. All 7 checks PASS. Aggregator cards now compact 156px (same as own delivery), only qty appears correctly in OrderCard parens.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "verification_details": {
+    "1_login": "PASS — owner@18march.com / Qplazm@10 → /dashboard, 55 table cards render on first try (no kitchen-stations retry needed).",
+    "2_BUG256_card_height": "PASS — All 8 delivery cards render at exactly 156px height. Aggregator cards (table-card-delivery-40474/75/76/77) match own delivery cards (892353/972255/998007/867887) at 156px. No items line, no customer·phone line, no rider status line inside TableCard body (as per BUG-256 reversion).",
+    "3_BUG256_compact_body_content": "PASS — Aggregator card body contains exactly: S badge | #002359 | ₹179.55 | Vansh · Preparing | 11d | Ready button. Nothing else.",
+    "4_BUG256_still_works": "PASS — S badge (source-badge-delivery-*) visible on all 4 aggregator cards. Ready button (agg-ready-btn-*) present on 40474/75/76 (status 1); 40477 shows 'Dispatched' label and no Ready button (status 5 as expected).",
+    "5_BUG257_qty_fix": "PASS — In Order View, all 4 aggregator OrderCards show 'Double Chicken Keema Roll (1)' — quantity '1' visible in parens (not empty '()'). Verified for order-card-40474/75/76/77. aggregatorTransform.js L99 `qty: Number(f.quantity) || 1` alias working correctly.",
+    "6_CR110_regression": "PASS — MyGenie badge (mygenie-badge-delivery-*) present on all 4 own delivery cards (892353 'Del ₹105', 972255 'mayur ₹2', 998007 'parth ₹32', 867887 'saurav'). Aggregator cards have S badge instead (no MyGenie).",
+    "7_batch1_regression": "PASS — Aggregator OrderCards contain only Mark Ready button; no Cancel/WhatsApp buttons visible. 4 aggregator orders (40474-40477) persist across polling. Aggregator filter icons appear in dropdown source badges (S).",
+    "8_compilation": "PASS — Webpack compiled cleanly, no console errors during login/navigation/view-switch."
+  },
+  "test_report_links": ["/app/test_reports/iteration_9.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "TableCard.jsx still 766 LOC — action-buttons block (L437-680) is the main bulk; consider extracting into per-status sub-components.",
+    "aggregatorTransform.js L98-99: two identical `Number(f.quantity) || 1` expressions could share a const. Minor DRY.",
+    "Consider deleting the now-orphaned `computeStageTime` guarded fallback for aggregator (rider block removal keeps time logic unchanged; no action needed but note the aggregator body block was reverted cleanly with a single-line comment at L412)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% (7/7 checks PASS)"},
+  "seed_data_creation": "None — used preprod aggregator orders 40474-40477 (Swiggy, ₹179.55) and own delivery orders 892353/972255/998007/867887.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Batch 2b (BUG-256 revert + BUG-257 qty alias) verified. Aggregator cards are compact 156px again, matching own delivery cards. In Order View, aggregator OrderCards correctly show 'Item Name (qty)'. Use view-toggle [data-testid='view-toggle'] to switch to Order View; [data-testid='group-toggle'] toggles group-by. 40477 is status 5 (Dispatched) and has no Ready button on either card. Kitchen-stations did not fail on this run."
+}
