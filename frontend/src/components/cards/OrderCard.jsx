@@ -92,7 +92,7 @@ const OrderCard = ({
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const { toast } = useToast();
   const { getProductById } = useMenu();
-  const { restaurant, printerAgents } = useRestaurant();
+  const { restaurant, printerAgents, currencySymbol } = useRestaurant(); // CR-112: added currencySymbol
   const { user } = useAuth();
   const { updateOrder } = useOrders();
 
@@ -689,8 +689,18 @@ const OrderCard = ({
                   {/* Item name + qty + details inline - SMALLER, SECONDARY */}
                   <div className="flex-1 min-w-0">
                     <span className="text-[11px]" style={{ color: COLORS.grayText }}>
-                      {item.itemCode ? `[${item.itemCode}] ` : ''}{item.name} ({item.qty})
+                      {/* CR-111: Aggregator items use ● Qty× Name format; POS keeps existing format */}
+                      {isAggregator
+                        ? <>{item.qty}× {item.name}</>
+                        : <>{item.itemCode ? `[${item.itemCode}] ` : ''}{item.name} ({item.qty})</>
+                      }
                     </span>
+                    {/* CR-112: Item price for aggregator orders (permission guard placeholder) */}
+                    {isAggregator && item.unitPrice > 0 && (
+                      <span className="text-[11px] ml-1 font-medium" style={{ color: COLORS.darkText }}>
+                        {currencySymbol}{Number(item.unitPrice).toFixed(2)}
+                      </span>
+                    )}
                     {/* CR-099: Elapsed prep/serve time per item */}
                     {item.createdAt && item.status === 'preparing' && (
                       <span className="ml-1 text-[9px] font-medium" style={{ color: COLORS.primaryOrange }}>
@@ -842,6 +852,25 @@ const OrderCard = ({
       )}
 
       {/* ── RIDER SECTION (Delivery + Aggregator only) ── */}
+      {/* CR-113: Aggregator customer + phone section (data from UrbanPiper, not CRM) */}
+      {isAggregator && (order.customerName || order.phone) && (
+        <div
+          className="px-3 py-1.5 border-b flex items-center gap-2"
+          style={{ borderColor: COLORS.borderGray }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span className="text-xs font-medium" style={{ color: COLORS.darkText }}>
+            {order.customerName || 'Customer'}
+          </span>
+          {order.phone && (
+            <span className="text-[11px]" style={{ color: COLORS.grayText }}>
+              {order.phone}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Rider Section */}
       {isDelivery && (hasRiderAssigned || !isOwn) && (
         <div
           className="px-3 py-2 border-b flex items-center gap-2"

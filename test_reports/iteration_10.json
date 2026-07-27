@@ -1,0 +1,34 @@
+{
+  "summary": "Frontend-only verification of CR-111, CR-112, CR-113 in OrderCard for aggregator orders. All three CRs pass. Regressions (POS orders, table view) intact. Webpack compiled successfully with no errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verified_features": [
+    "LOGIN: owner@18march.com / Qplazm@10 → /dashboard after ~10s loading (Kitchen stations retry not needed this run).",
+    "CR-111 ITEM FORMAT (Aggregator): Orders 40474-40477 show '1× Double Chicken Keema Roll' — qty× name format, NO parens, NO itemCode brackets. Verified via card innerText scrape.",
+    "CR-111 REGRESSION (POS): Order #002286 shows 'priti (1)', #002304 shows 'zone (1)', 'balluu (1)', #002306 shows 'South West Chipotle (1)' — legacy 'Name (qty)' format retained.",
+    "CR-112 ITEM PRICE (Aggregator): '₹190.00' rendered immediately after item name (currencySymbol from useRestaurant defaults to ₹). Note: task hint said ₹120 but actual unitPrice in data is 190; formatting/logic correct.",
+    "CR-112 REGRESSION (POS): No item price rendered in POS delivery cards.",
+    "CR-113 CUSTOMER+PHONE (Aggregator): 'Vansh' + '+919999999992' section renders between items and rider ('Awaiting Runner') section for all 4 Swiggy orders. Section absent from POS orders.",
+    "REGRESSION - Aggregator cards have NO cancel-order-btn testid and NO WhatsApp button; only 'Mark Ready' action visible (matches isAggregator gate).",
+    "REGRESSION - TableCard aggregator (S badge) cards remain compact and match regular card height in Table view; visible in Delivery column.",
+    "COMPILATION: webpack compiled successfully — no errors in /var/log/supervisor/frontend.out.log."
+  ],
+  "test_report_links": ["/app/.screenshots/dashboard.png", "/app/.screenshots/order_view.png"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "OrderCard.jsx is 1225 lines — approaching split threshold (>700). Consider extracting aggregator-specific sub-components (item row, customer section, action row) to reduce complexity.",
+    "CR-112 price condition uses item.unitPrice > 0 which correctly hides ₹0.00; good defensive check.",
+    "CR-113 uses order.customerName || order.phone as gate — correct fallback; renders 'Customer' label if only phone present."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only run)", "frontend": "100%"},
+  "test_credentials": "owner@18march.com / Qplazm@10 (working)",
+  "seed_data_creation": "None. Used existing Swiggy aggregator orders 40474-40477.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 3 CRs (111/112/113) verified via DOM innerText scrape of order-card-* elements in Order View. Aggregator orders are Swiggy IDs 40474-40477 with #478/00235x display IDs, ₹179.55, 'Double Chicken Keema Roll' item. Order View entered via [data-testid=view-toggle]. POS orders #002286/2304/2306 serve as regression baseline in Delivery column."
+}
