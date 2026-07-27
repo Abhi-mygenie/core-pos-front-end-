@@ -1,29 +1,25 @@
-# MyGenie POS Frontend - Deployment PRD
+# Core POS Frontend Deployment
 
 ## Original Problem Statement
-Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `swiggy`) directly into `/app` and run it as-is, with no code edits.
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `27july`) directly into `/app` and run it as-is with no code edits.
 
 ## Architecture
-- **Frontend**: React (CRA + CRACO) on port 3000
-- **Backend**: FastAPI on port 8001 (from repo)
-- **Process Manager**: Supervisor
+- **Frontend**: React (CRA + Craco) running on port 3000 via supervisor
+- **Backend**: Disabled (frontend-only deployment)
+- **Database**: N/A
 
-## What's Been Implemented (2026-07-25)
-- Cloned repo (branch `swiggy`) into platform structure
-- Preserved platform files (`.emergent/`, supervisor configs, `.env` files)
-- Installed frontend dependencies via `yarn install --ignore-engines`
-- Added placeholder `.env` vars for `REACT_APP_API_BASE_URL`, `REACT_APP_SOCKET_URL`, Firebase config, etc.
-- Frontend compiles and serves successfully on port 3000
-- Backend running on port 8001
+## What's Been Implemented (July 27, 2026)
+- Cloned repo into `/app` preserving platform files (`.emergent/`, supervisor configs)
+- Installed dependencies via `yarn install --ignore-engines`
+- Created placeholder `.env` with all required REACT_APP_* variables
+- Frontend running via supervisor, backend disabled
+- Dev server compiles successfully with only lint warnings
 
-## Environment Variables (frontend/.env)
-- `REACT_APP_API_BASE_URL` - **PLACEHOLDER** - needs real API URL
-- `REACT_APP_SOCKET_URL` - **PLACEHOLDER** - needs real socket URL  
-- `REACT_APP_FIREBASE_*` - **PLACEHOLDER** - needs real Firebase config
-- `REACT_APP_GOOGLE_MAPS_KEY` - **PLACEHOLDER**
-- `REACT_APP_CRM_BASE_URL` - **PLACEHOLDER**
+## Current Status
+- App renders MyGenie POS login page at https://react-pos-frontend-5.preview.emergentagent.com
+- API calls will fail until real env values are provided (expected)
 
 ## Backlog
-- P0: User to provide real `.env` values for API/Socket/Firebase
-- P1: Verify login flow works end-to-end with real backend
-- P2: Verify all app routes and features function correctly
+- P0: User to provide real `.env` values (API_BASE_URL, Firebase config, Socket URL, etc.)
+- P1: Backend setup if needed
+- P2: Production build configuration
