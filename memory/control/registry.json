@@ -16871,9 +16871,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE \u2014 OWNER APPROVED REVERT",
+      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-3",
       "related": [
         "BUG-252",
         "CR-106"
@@ -16886,9 +16886,9 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "INTAKE \u2014 OWNER APPROVED FIX",
+      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
       "sprint_key": "pos_5_0",
-      "gate": "0-1",
+      "gate": "0-3",
       "related": [
         "CR-106"
       ],
