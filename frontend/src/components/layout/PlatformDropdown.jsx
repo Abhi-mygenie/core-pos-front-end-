@@ -25,9 +25,10 @@ import { ChevronDown } from 'lucide-react';
 // Owner-locked option set (Phase 3 v1). Future BE values (kiosk / aggregator /
 // whatsapp / qr_campaign) extend this list — no other code change needed.
 export const PLATFORM_OPTIONS = [
-  { value: null,  label: 'Platform: All' },
-  { value: 'pos', label: 'POS' },
-  { value: 'web', label: 'Web / Scan' },
+  { value: null,         label: 'Platform: All' },
+  { value: 'pos',        label: 'POS' },
+  { value: 'web',        label: 'Web / Scan' },
+  { value: 'aggregator', label: 'Aggregator' },  // BUG-253: Swiggy / Zomato filter
 ];
 
 const PlatformDropdown = ({ value = null, onChange }) => {

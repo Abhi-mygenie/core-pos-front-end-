@@ -949,8 +949,15 @@ export const handleAggregatorOrderUpdate = (message, actions, aggregatorTransfor
 
   if (payload && typeof payload === 'object' && payload.order_details_order) {
     const order = aggregatorTransform.fromAPI.aggregatorOrder(payload);
-    actions.updateOrder(order.orderId, order);
-    log('INFO', `Aggregator order updated from socket: ${order.orderId}, status=${order.fOrderStatus}`);
+    // BUG-250: Remove on terminal statuses (OD-W2-7: completed=6, OD-W2-8: cancelled=3)
+    const isTerminal = order.fOrderStatus === 6 || order.fOrderStatus === 3;
+    if (isTerminal) {
+      actions.removeOrder(order.orderId);
+      log('INFO', `Aggregator order removed (terminal): ${order.orderId}, status=${order.fOrderStatus}`);
+    } else {
+      actions.updateOrder(order.orderId, order);
+      log('INFO', `Aggregator order updated from socket: ${order.orderId}, status=${order.fOrderStatus}`);
+    }
   } else {
     // Fallback: re-fetch order list and find this order
     log('WARN', `Aggregator update missing payload for orderId=${orderId}, fetching via API`);

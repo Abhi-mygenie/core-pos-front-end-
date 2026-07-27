@@ -620,7 +620,7 @@ const OrderCard = ({
       <div className={`px-3 border-b ${isDineIn ? 'py-1.5' : 'py-1'}`} style={{ borderColor: COLORS.borderGray }}>
         {activeItems.length > 0 ? (
           activeItems.map((item) => {
-            const actionConfig = getItemActionConfig(item);
+            const actionConfig = isAggregator ? null : getItemActionConfig(item); // BUG-255
             const statusLabel = item.status === 'preparing' ? 'Preparing' : item.status === 'ready' ? 'Ready' : '';
             
             // Build variants/addons display string
@@ -962,8 +962,8 @@ const OrderCard = ({
               </button>
               )}
 
-              {/* Cancel Order Button - permission gated (order_cancel) */}
-              {isOrderCancelAllowed && (
+              {/* Cancel Order Button - permission gated (order_cancel) — BUG-251: hidden for aggregator */}
+              {!isAggregator && isOrderCancelAllowed && (
               <button
                 data-testid={`cancel-order-btn-${orderId}`}
                 onClick={() => onCancelOrder?.(order)}

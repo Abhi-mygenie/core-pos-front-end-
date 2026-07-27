@@ -388,7 +388,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                     {/* Add status label inline - normal weight to match bottom style */}
                     {table.fOrderStatus === 1 && <span style={{ color: COLORS.primaryOrange }}> • Preparing</span>}
                     {table.fOrderStatus === 2 && <span style={{ color: COLORS.primaryGreen }}> • Ready</span>}
-                    {table.fOrderStatus === 5 && <span style={{ color: COLORS.primaryGreen }}> • Served</span>}
+                    {table.fOrderStatus === 5 && <span style={{ color: COLORS.primaryGreen }}> • {isAggregator ? 'Dispatched' : 'Served'}</span>}
                     {table.fOrderStatus === 7 && <span style={{ color: COLORS.amber }}> • Confirming</span>}
                   </>
                 )}

@@ -1,0 +1,55 @@
+{
+  "summary": "Batch 1 CR-106 Wave 2 verification (BUG-250/251/253/254/255). 6 of 8 acceptance criteria PASS. TWO CRITICAL FAILURES: BUG-251 WhatsApp button is still visible on aggregator OrderCards (only Cancel was gated with !isAggregator, WhatsApp gate missing), and BUG-254 error toast does NOT render because `sonner` is imported but its `<Toaster>` component is NOT mounted in App.js (only shadcn `Toaster` is mounted).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "OrderCard.jsx (L979)",
+        "issue": "BUG-251 partial fix: Cancel(X) button correctly hidden for aggregator (L966 `!isAggregator && isOrderCancelAllowed`), but WhatsApp payment button (L979) is only gated by `showWhatsAppPayment` — missing the `!isAggregator` gate. Verified: aggregator OrderCards 40474, 40475, 40476, 40477 all have `data-testid=\"whatsapp-payment-btn-{orderId}\"` present in DOM.",
+        "selector": "[data-testid^=\"whatsapp-payment-btn-\"]",
+        "priority": "HIGH"
+      },
+      {
+        "component": "App.js (L67, L191) + DashboardPage.jsx (L35)",
+        "issue": "BUG-254 error toast fix is BROKEN. DashboardPage imports `{ toast } from 'sonner'` and calls `toast.error('Failed to mark ready — please retry')` at L1394 (also L1362, L1378, L1410). But App.js only mounts shadcn `<Toaster />` from `./components/ui/toaster` — the `sonner` `<Toaster>` is never mounted, so sonner toasts have no host and DO NOT render. Verified via DOM: no `[data-sonner-toaster]` element exists, no toast appears after Ready click even though POST /api/v1/urbanpiper/orders-status-update returns 500 and console logs `[Dashboard] Aggregator ready failed: AxiosError`.",
+        "selector": "[data-sonner-toaster]",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verification_details": {
+    "login": "PASS — owner@18march.com / Qplazm@10 → /dashboard",
+    "BUG-250_polling_persistence": "PASS — Aggregator cards 40474/75/76/77 (S badge, ₹179.55) STILL present in Delivery channel after 80s wait. POLL_INTERVAL_MS=60s so at least one full cycle completed.",
+    "BUG-250_dispatched_label": "PASS — Card 40477 (f_order_status=5) shows 'Dispatch...' (truncated 'Dispatched') as status label in TableCard, NOT 'Served'. Preparing cards (40474/75/76) show 'Preparing'.",
+    "BUG-251_cancel_hidden": "PASS — No cancel-order-btn-{40474..40477} testids on any aggregator OrderCard in Order View.",
+    "BUG-251_whatsapp_hidden": "FAIL — whatsapp-payment-btn-{40474..40477} testids present on all 4 aggregator OrderCards. Regression: regular delivery OrderCard 892353 (#002286 Del ₹105) still has cancel + whatsapp as expected.",
+    "BUG-253_platform_filter": "PASS — Dropdown testid `dashboard-platform-filter-wrapper` opens 4 options with testids `dashboard-platform-filter-option-{all,pos,web,aggregator}` (labels: Platform: All / POS / Web / Scan / Aggregator). Selecting 'Aggregator' → only 4 S-badge cards visible (Delivery channel count = 4). Selecting 'POS' → 0 aggregator badges visible, only Del/mayur/parth/saurav regular cards.",
+    "BUG-254_error_toast": "FAIL — 500 response confirmed on POST /api/v1/urbanpiper/orders-status-update after Ready click. Console shows `[Dashboard] Aggregator ready failed: AxiosError`. But NO toast renders (`hasSonnerToaster=false`, `sonnerCount=0`, no visible red toast). Root cause: sonner `<Toaster>` component not mounted in App.js — only shadcn Toaster is mounted, but code calls sonner's toast.error.",
+    "BUG-255_item_dots": "PASS (code-verified) — OrderCard.jsx L623 `const actionConfig = isAggregator ? null : getItemActionConfig(item);` and L401 `handleItemAction` early-returns for aggregator. Aggregator OrderCards render items without status toggle dots. Note: item dots would already be hidden for delivery/takeaway via `isItemActionable`, so this fix is defensive but code-correct.",
+    "compilation": "PASS — Frontend compiled cleanly, dashboard rendered without errors (no webpack errors in console).",
+    "regular_orders_regression": "PASS — Regular delivery OrderCard 892353 (#002286 Del ₹105 priti) retains cancel-order-btn-892353, whatsapp-payment-btn-892353, assign-rider-btn-892353. Regular saurav (#002280) shows 'Rider is on the way'. TableCard 'Del ₹105' has Assign button. No regressions detected."
+  },
+  "test_report_links": ["/app/test_reports/iteration_6.json"],
+  "action_items": [
+    "FIX BUG-251 WhatsApp: In /app/frontend/src/components/cards/OrderCard.jsx L979, change `{showWhatsAppPayment && (` to `{!isAggregator && showWhatsAppPayment && (` so the WhatsApp button is also hidden for aggregator orders (matching the intent stated in the review request `!isAggregator on ... WhatsApp L979`).",
+    "FIX BUG-254 Toast: The toast library is mismatched. Either (a) mount sonner's Toaster in /app/frontend/src/App.js by importing `{ Toaster as SonnerToaster } from 'sonner'` (or the wrapper at src/components/ui/sonner.jsx which exports `Toaster`) and rendering `<SonnerToaster />` next to the existing `<Toaster />`, OR (b) change the imports in DashboardPage.jsx L35 from `sonner` to the project's shadcn `use-toast` hook and rewrite `toast.error(...)` calls accordingly. Currently sonner toasts have no host and are silently dropped."
+  ],
+  "critical_code_review_comments": [
+    "DashboardPage.jsx is 2145 lines — still exceeds the 700 LOC guideline; consider splitting adaptOrder helpers into a separate module.",
+    "OrderCard.jsx L979 WhatsApp gate is inconsistent with L966 Cancel gate — both should share the same `!isAggregator` guard for symmetry with BUG-251 spec.",
+    "Toast library confusion: App uses shadcn Toaster in App.js but DashboardPage.jsx imports sonner. Pick ONE toast system project-wide and remove the other to prevent silent failures like BUG-254.",
+    "useOrderPollingReconciliation isAggregator skip and mergeRunningOrders preservation (BUG-250) are working correctly — no code review concerns there."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "75% (6/8 bugs verified fixed; BUG-251 partial, BUG-254 broken)"},
+  "seed_data_creation": "None — used existing preprod aggregator orders 40474-40477 (Swiggy, restaurant 478).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "After main agent applies the two fixes: (1) add `!isAggregator &&` to OrderCard.jsx L979 WhatsApp gate; (2) mount sonner's Toaster in App.js. Then re-verify: switch to Order View + Aggregator filter, confirm whatsapp-payment-btn-{40474..40477} testids are absent. For BUG-254, click agg-ready-btn-delivery-40474 (or any Preparing aggregator ready button) and wait ~3s — a red sonner toast with text 'Failed to mark ready — please retry' should appear (server returns 500 for stale UrbanPiper IDs). Use `[data-sonner-toast]` or `[data-sonner-toaster]` selectors to detect it.",
+  "rca of the issue": {
+    "BUG-251_whatsapp": "The review request stated `!isAggregator on Cancel L966, WhatsApp L979` but only L966 was patched. L979 kept its original `showWhatsAppPayment` gate. Missing single-token edit.",
+    "BUG-254_toast": "Two different toast systems coexist in the codebase: shadcn `./components/ui/toaster` (mounted in App.js L191) and sonner (wrapper at ./components/ui/sonner.jsx). BUG-254 fix imported sonner's `toast` in DashboardPage.jsx L35 but neither the sonner wrapper's `<Toaster>` nor sonner's native `<Toaster>` is rendered anywhere. Result: toast.error() enqueues to a non-existent host and is silently dropped."
+  }
+}

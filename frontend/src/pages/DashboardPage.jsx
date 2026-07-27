@@ -32,6 +32,7 @@ import AggregatorRejectModal from "../components/modals/AggregatorRejectModal"; 
 import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
 import { updateAggregatorOrderStatus, getAggregatorOrderList } from "../api/services/aggregatorService";    // CR-106
 import { fromAPI as aggregatorFromAPI } from "../api/transforms/aggregatorTransform"; // CR-106
+import { toast } from 'sonner'; // BUG-254: error toast for aggregator actions
 
 // ROOM_CARD_TOTAL (Task 4, Apr-2026): card amount for ROOM orders must reflect
 // the full checkout value the cashier will see — i.e., room food/room-service
@@ -855,7 +856,11 @@ const DashboardPage = () => {
       if (platform === null) return true;
       const hasOrder = !!(item?.orderId || item?.order?.orderId);
       if (!hasOrder) return false;
-      return platform === 'web' ? isWebOrigin(item) : !isWebOrigin(item);
+      // BUG-253: Aggregator filter (Swiggy/Zomato via UrbanPiper)
+      const itemIsAggregator = item.isAggregator === true || item.order?.isAggregator === true;
+      if (platform === 'aggregator') return itemIsAggregator;
+      if (platform === 'pos') return !isWebOrigin(item) && !itemIsAggregator;
+      return platform === 'web' ? isWebOrigin(item) : true;
     };
 
     // CR-018 G9: Schedule filter — cross-cutting boolean filter.
@@ -1004,7 +1009,11 @@ const DashboardPage = () => {
       if (platform === null) return true;
       const hasOrder = !!(item?.orderId || item?.order?.orderId);
       if (!hasOrder) return false;
-      return platform === 'web' ? isWebOrigin(item) : !isWebOrigin(item);
+      // BUG-253: Aggregator filter (mirrors channelData predicate)
+      const itemIsAggregator = item.isAggregator === true || item.order?.isAggregator === true;
+      if (platform === 'aggregator') return itemIsAggregator;
+      if (platform === 'pos') return !isWebOrigin(item) && !itemIsAggregator;
+      return platform === 'web' ? isWebOrigin(item) : true;
     };
     STATUS_COLUMNS.forEach(col => {
       // Map fOrderStatus to status ID for enabledStatuses check
@@ -1350,6 +1359,7 @@ const DashboardPage = () => {
       });
     } catch (err) {
       console.error('[Dashboard] Aggregator accept failed:', err);
+      toast.error('Failed to accept order — please retry'); // BUG-254
     }
   }, []);
 
@@ -1365,6 +1375,7 @@ const DashboardPage = () => {
       });
     } catch (err) {
       console.error('[Dashboard] Aggregator reject failed:', err);
+      toast.error('Failed to reject order — please retry'); // BUG-254
     } finally {
       setAggregatorRejectOrder(null);
     }
@@ -1380,6 +1391,7 @@ const DashboardPage = () => {
       });
     } catch (err) {
       console.error('[Dashboard] Aggregator ready failed:', err);
+      toast.error('Failed to mark ready — please retry'); // BUG-254
     }
   }, []);
 
@@ -1395,6 +1407,7 @@ const DashboardPage = () => {
       });
     } catch (err) {
       console.error('[Dashboard] Aggregator dispatch failed:', err);
+      toast.error('Failed to dispatch order — please retry'); // BUG-254
     } finally {
       setAggregatorDispatchOrder(null);
     }

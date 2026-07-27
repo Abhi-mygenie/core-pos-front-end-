@@ -201,6 +201,12 @@ export const useOrderPollingReconciliation = () => {
         if (!isSettledPayLater) continue;
       }
 
+      // BUG-250: Aggregator orders come from UrbanPiper API (not getRunningOrders).
+      // Do not treat as orphan — status updates arrive via aggregator socket channel.
+      if (l.isAggregator === true) {
+        continue;
+      }
+
       const prevMisses = missCountRef.current.get(orderId) || 0;
       const nextMisses = prevMisses + 1;
       if (nextMisses >= REMOVAL_MISS_THRESHOLD) {
