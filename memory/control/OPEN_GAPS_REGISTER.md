@@ -318,3 +318,9 @@ Both formulas frozen as intentional design choices. Future agents MUST NOT align
 | OG-CR053-NO-TRAINING-CONFIG-SEED | `training_restaurant_config` collection is empty (0 docs). Catalog endpoint falls back to "all active courses" when no config row exists. Acceptable for pilot — needs a per-restaurant enable script once Owner Admin Panel ships (Phase 2). | P3 | NO |
 | OG-CR053-BACK-ARROW-SELECTOR | M4 step 7 and M5 step 6 use a structural CSS selector `[data-testid='product-form'] > div:first-child > button` to spotlight the form's back arrow, because the ArrowLeft `<button>` in `ProductForm.jsx:289` has no `data-testid`. Brittle if POS markup ever reorders. Long-term fix: add `data-testid="product-form-back"` to that button (1-line POS change, but currently forbidden under CR-053's "no POS code change" mandate). Same risk applies to QuickEdit / DeleteConfirm Cancel buttons. Filed 2026-06-18 during CR-053-UX-01 implementation. | P3 | NO — structural selector works; revisit if POS form markup ever changes |
 | OG-CR053-MULTILINGUAL | English-only for v1 of training tour (CR-053-UX-01). Hindi / Tamil / regional language support deferred to a future CR. Will need: (1) mission text moved to i18n files, (2) language picker in launcher, (3) tone review per language. Owner decision: when does multi-lingual become a priority? | P3 | NO — v1 is English-only by design |
+
+### GAP: CR-112 — Price Visibility Permission Key (2026-07-27)
+**ID:** GAP-CR112-PRICE-PERMISSION
+**Status:** OPEN — owner will provide key during implementation
+**Description:** OrderCard item price display for aggregator needs a permission/setting key to control visibility. Owner confirmed a key exists but will provide it during role-gating CR implementation. Until then, CR-112 implementation should include a permission guard placeholder.
+**Related:** CR-112, CR-106
