@@ -16748,9 +16748,9 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-2",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
@@ -16856,9 +16856,9 @@
       "type": "CR",
       "priority": "P2",
       "risk": "LOW",
-      "status": "GATE 2 COMPLETE",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_0",
-      "gate": "0-2",
+      "gate": "0-5a",
       "related": [
         "CR-106"
       ],
