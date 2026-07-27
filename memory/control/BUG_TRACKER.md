@@ -407,3 +407,10 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | **BUG-253** | Platform Dropdown Missing "Aggregator" Filter — Only has All/POS/Web. Aggregator orders wrongly bucket under POS. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 2 files: `PlatformDropdown.jsx`, `DashboardPage.jsx`, ~10 lines. |
 | **BUG-254** | Aggregator Handlers Fail Silently (No Toast) — All 4 handlers (accept/reject/ready/dispatch) catch errors with `console.error` only. No user feedback. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `DashboardPage.jsx`, ~40 lines across 4 handlers. |
 | **BUG-255** | Item-Level Ready/Serve Dots Shown for Aggregator — Owner confirmed: "no item level ready and serve in aggregator order". No `isAggregator` guard on item toggles. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx`, ~3 lines. |
+
+### 2026-07-27 Aggregator TableCard Revert + OrderCard Qty Fix (BUG-256, BUG-257)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-256** | Revert BUG-252: TableCard aggregator body makes cards 2× height. Owner: keep same height as regular cards. Delete ~30 lines. | **P1** | LOW | **INTAKE — OWNER APPROVED REVERT** | 0-1 ✅ | 1 file: `TableCard.jsx`. Remove BUG-252 body block (~L412-443). |
+| **BUG-257** | OrderCard `item.qty` undefined for aggregator — empty parens `()`. Root: aggregatorTransform uses `quantity`, OrderCard reads `qty`. | **P1** | LOW | **INTAKE — OWNER APPROVED FIX** | 0-1 ✅ | 1 file: `aggregatorTransform.js`. Add `qty:` alias. 1 line. |

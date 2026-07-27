@@ -365,3 +365,11 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **CR-108** | Wire Auto-KOT on Aggregator Accept — `aggregator_auto_kot: Yes` in settings, Settings UI exists, but accept handler doesn't trigger KOT. Also: `aggregator_auto_bill` + `aggregator_auto_bill_stage`. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | 1-2 files, ~15 lines. Needs Gate 2-3 (touches printing). Related: CR-106. |
 | **CR-109** | Dynamic Prep Time Calculation — Backend has `default_prep_time`, `prep_time_count_method: quantity`, `prep_time_bonus_config`. FE shows static pills only. Pre-compute and pre-select optimal pill. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1-2 files, ~20 lines. Related: CR-107. |
 | **CR-110** | MyGenie Brand Badge for Own Delivery Orders — Add "M" (green) badge on own delivery orders, matching S/Z pattern for Swiggy/Zomato. Staff can distinguish at a glance. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 2 files (`TableCard.jsx`, `OrderCard.jsx`), ~15 lines each. OQs: badge design (M letter vs bell icon), color. |
+
+### 2026-07-27 OrderCard Aggregator Enhancements — DEFERRED (CR-111, CR-112, CR-113)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-111** | OrderCard item format: ● Qty× Name pattern (design mockup alignment) | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Owner decision pending: aggregator-only or all order types? |
+| **CR-112** | OrderCard item price display (₹ per item line) | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Same decision needed as CR-111. |
+| **CR-113** | OrderCard customer+phone section for aggregator | **P3** | LOW | **INTAKE — DEFERRED** | 0-1 | Add dedicated customer row in OrderCard body. |

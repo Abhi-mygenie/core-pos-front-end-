@@ -16864,6 +16864,78 @@
       ],
       "intake_doc": "change_requests/CR-110_MYGENIE_DELIVERY_BADGE.md",
       "batch": "BATCH_2"
+    },
+    {
+      "id": "BUG-256",
+      "title": "Revert BUG-252: TableCard Aggregator Body Makes Cards 2\u00d7 Height",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 OWNER APPROVED REVERT",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "BUG-252",
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-256_REVERT_TABLECARD_AGGREGATOR_BODY.md"
+    },
+    {
+      "id": "BUG-257",
+      "title": "OrderCard item.qty Undefined for Aggregator \u2014 Empty Parens Display",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 OWNER APPROVED FIX",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/BUG-257_ORDERCARD_QTY_FIELD_MISMATCH.md"
+    },
+    {
+      "id": "CR-111",
+      "title": "OrderCard Aggregator Item Format: \u25cf Qty\u00d7 Name Pattern",
+      "type": "CR",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 DEFERRED",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/CR-111_ORDERCARD_ITEM_FORMAT.md"
+    },
+    {
+      "id": "CR-112",
+      "title": "OrderCard Item Price Display (\u20b9 per item line)",
+      "type": "CR",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 DEFERRED",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106",
+        "CR-111"
+      ],
+      "intake_doc": "change_requests/CR-112_ORDERCARD_ITEM_PRICE.md"
+    },
+    {
+      "id": "CR-113",
+      "title": "OrderCard Customer+Phone Section for Aggregator",
+      "type": "CR",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 DEFERRED",
+      "sprint_key": "pos_5_0",
+      "gate": "0-1",
+      "related": [
+        "CR-106"
+      ],
+      "intake_doc": "change_requests/CR-113_ORDERCARD_CUSTOMER_PHONE.md"
     }
   ]
 }
