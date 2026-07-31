@@ -17788,8 +17788,8 @@
       "id": "BUG-286",
       "title": "Aggregator KOT/Bill Buttons Hidden on OrderCard (canPrintBill Permission Gate)",
       "type": "BUG",
-      "status": "INTAKE",
-      "gate": "1",
+      "status": "GATE 3 COMPLETE — Impact Analysis + Implementation Plan ready",
+      "gate": "3",
       "priority": "P1",
       "risk": "LOW",
       "area": "Dashboard → OrderCard → Footer Actions",
@@ -17803,14 +17803,16 @@
       "blast_radius": "SMALL",
       "files": "OrderCard.jsx",
       "open_questions": [],
-      "related": []
+      "related": [],
+      "impact_doc": "plans/BUG-286_287_IMPACT_AND_PLAN.md",
+      "plan_doc": "plans/BUG-286_287_IMPACT_AND_PLAN.md"
     },
     {
       "id": "BUG-287",
       "title": "Aggregator: 'This is order level instructions' Default Placeholder Not Stripped",
       "type": "BUG",
-      "status": "INTAKE",
-      "gate": "1",
+      "status": "GATE 3 COMPLETE — Impact Analysis + Implementation Plan ready",
+      "gate": "3",
       "priority": "P2",
       "risk": "LOW",
       "area": "Transforms → aggregatorTransform.js",
@@ -17826,7 +17828,9 @@
       "open_questions": [],
       "related": [
         "BUG-283"
-      ]
+      ],
+      "impact_doc": "plans/BUG-286_287_IMPACT_AND_PLAN.md",
+      "plan_doc": "plans/BUG-286_287_IMPACT_AND_PLAN.md"
     }
   ],
   "meta": {
