@@ -482,3 +482,10 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | BUG-283 | "Order Instructions :::" Prefix Not Stripped | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `aggregatorTransform.js` L23: regex strip of Zomato prefix. 1 line. |
 | BUG-284 | Address Duplicate City "Bangalore, Bangalore" | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `AggregatorOrderPopOut.jsx` L27-34: dedup filter + sub_locality + landmark. |
 | BUG-285 | "Ready to Dispatch" Button → Text Label | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `OrderCard.jsx` L1071-1079 + `TableCard.jsx` L490-517: button→span. |
+
+### 2026-07-31 Intake — BUG-286, BUG-287
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-286 | Aggregator KOT/Bill Hidden on OrderCard — `canPrintBill` gate | P1 | LOW | **INTAKE** | 0-1 ✅ | `OrderCard.jsx` L1013+L1082: `canPrintBill` blocks aggregator print buttons. TableCard has no gate → shows correctly. Owner directive: always show for aggregator. 1 file, 2 lines. |
+| BUG-287 | "This is order level instructions" Placeholder Not Stripped | P2 | LOW | **INTAKE** | 0-1 ✅ | UrbanPiper default placeholder text not filtered. Shows on OrderCard+PopOut. Related: BUG-283 (prefix strip). Fix: 1 line in `aggregatorTransform.js`. UI auto-hides when null. |

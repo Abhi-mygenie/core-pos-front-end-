@@ -17783,6 +17783,50 @@
       "related": [
         "CR-051"
       ]
+    },
+    {
+      "id": "BUG-286",
+      "title": "Aggregator KOT/Bill Buttons Hidden on OrderCard (canPrintBill Permission Gate)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "1",
+      "priority": "P1",
+      "risk": "LOW",
+      "area": "Dashboard → OrderCard → Footer Actions",
+      "sprint_key": "pos_5_0",
+      "intake_date": "2026-07-31",
+      "intake_doc": "change_requests/BUG-286_AGGREGATOR_KOT_BILL_HIDDEN_ORDERCARD_INTAKE.md",
+      "evidence": "Owner screenshot + code trace",
+      "source": "OWNER-REPORTED",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL",
+      "files": "OrderCard.jsx",
+      "open_questions": [],
+      "related": []
+    },
+    {
+      "id": "BUG-287",
+      "title": "Aggregator: 'This is order level instructions' Default Placeholder Not Stripped",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "1",
+      "priority": "P2",
+      "risk": "LOW",
+      "area": "Transforms → aggregatorTransform.js",
+      "sprint_key": "pos_5_0",
+      "intake_date": "2026-07-31",
+      "intake_doc": "change_requests/BUG-287_AGGREGATOR_NOTE_PLACEHOLDER_NOT_STRIPPED_INTAKE.md",
+      "evidence": "API data probe + owner screenshot",
+      "source": "OWNER-REPORTED",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "RELATED to BUG-283",
+      "blast_radius": "SMALL",
+      "files": "aggregatorTransform.js",
+      "open_questions": [],
+      "related": [
+        "BUG-283"
+      ]
     }
   ],
   "meta": {
