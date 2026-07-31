@@ -390,3 +390,10 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **CR-118** | Aggregator KOT & Bill Manual Print — Manual KOT/Bill print for aggregator orders via `/urbanpiper/manually-print-aggregator`. PopOut KOT/Bill checkboxes (auto-setting defaults), card print buttons (fOS 1+2), `aggrigator_id` display fix, "Ready to Dispatch" label. | **P1** | MEDIUM | **IMPLEMENTED** | 5a ✅ | 7 files: `aggregatorTransform.js`, `profileTransform.js`, `constants.js`, `aggregatorService.js`, `AggregatorOrderPopOut.jsx`, `OrderCard.jsx`, `TableCard.jsx`. ~135 lines. | |
 | **CR-119** | Aggregator Food Mapping — New panel to map POS menu items to aggregator platform items (Swiggy/Zomato ref_ids). | **P1** | MEDIUM | **INTAKE — BACKEND-BLOCKED + SPEC MISSING** | 0-1 ✅ | 6 files estimated. Backend endpoints 404 (not yet built or path unknown). **Owner must supply MD spec + backend API docs before Planning.** Related: CR-106. OQ-1: spec file missing. OQ-2: API contract unknown. Intake: `change_requests/CR-119_AGGREGATOR_FOOD_MAPPING_INTAKE.md`. |
 
+
+### 2026-07-31 Aggregator Investigation — CR-120
+
+| CR ID | Description | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-120** | Aggregator: Split KOT/Bill Buttons by Order Status — preparing (fOS=1) shows KOT only, ready (fOS=2) shows Bill only. Currently both show at both statuses. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx` — 2 line condition changes (lines 1013 + 1082). Related: CR-106, BUG-285. Intake: `change_requests/CR-120_AGGREGATOR_KOT_BILL_SPLIT_INTAKE.md`. |
+| **CR-121** | Dashboard Quick-Start — Single-click order creation for Walk-in / Takeaway / Delivery from dashboard. Pre-selects order type, navigates to OrderEntry. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | ~2-3 files (DashboardPage.jsx R5 hotspot). OQ-1: button placement. OQ-2: walk-in flow. OQ-3: customer prompt per CR-051. Intake: `change_requests/CR-121_DASHBOARD_QUICK_ORDER_INTAKE.md`. |

@@ -17642,6 +17642,137 @@
         "src/api/transforms/orderTransform.js",
         "src/components/order-entry/OrderEntry.jsx"
       ]
+    },
+    {
+      "id": "BUG-282",
+      "title": "Aggregator Popup: Addons + Variations Not Displayed",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P1",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "LOW",
+      "files": [
+        "components/dashboard/AggregatorOrderPopOut.jsx"
+      ],
+      "intake_doc": "change_requests/BUG-282_AGGREGATOR_POPUP_ADDONS_MISSING_INTAKE.md",
+      "evidence": "evidence/AGGREGATOR_INVESTIGATION_REPORT_20260731.md",
+      "open_questions": [],
+      "related": [
+        "CR-106"
+      ]
+    },
+    {
+      "id": "BUG-283",
+      "title": "Aggregator: 'Order Instructions :::' Prefix Not Stripped from Zomato Notes",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "LOW",
+      "files": [
+        "api/transforms/aggregatorTransform.js"
+      ],
+      "intake_doc": "change_requests/BUG-283_AGGREGATOR_ORDER_NOTE_PREFIX_INTAKE.md",
+      "evidence": "evidence/AGGREGATOR_INVESTIGATION_REPORT_20260731.md",
+      "open_questions": [],
+      "related": [
+        "CR-106"
+      ]
+    },
+    {
+      "id": "BUG-284",
+      "title": "Aggregator: Address Shows Duplicate City ('Bangalore, Bangalore')",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "LOW",
+      "files": [
+        "components/dashboard/AggregatorOrderPopOut.jsx"
+      ],
+      "intake_doc": "change_requests/BUG-284_AGGREGATOR_ADDRESS_DEDUP_INTAKE.md",
+      "evidence": "evidence/AGGREGATOR_INVESTIGATION_REPORT_20260731.md",
+      "open_questions": [],
+      "related": [
+        "CR-106"
+      ]
+    },
+    {
+      "id": "BUG-285",
+      "title": "Aggregator OrderCard: 'Ready to Dispatch' Should Be Text Label, Not Button",
+      "type": "BUG",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "LOW",
+      "files": [
+        "components/cards/OrderCard.jsx"
+      ],
+      "intake_doc": "change_requests/BUG-285_AGGREGATOR_READY_DISPATCH_LABEL_INTAKE.md",
+      "evidence": "evidence/AGGREGATOR_INVESTIGATION_REPORT_20260731.md",
+      "open_questions": [],
+      "related": [
+        "CR-106"
+      ]
+    },
+    {
+      "id": "CR-120",
+      "title": "Aggregator: Split KOT/Bill Buttons by Order Status (Preparing\u2192KOT, Ready\u2192Bill)",
+      "type": "CR",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "LOW",
+      "files": [
+        "components/cards/OrderCard.jsx"
+      ],
+      "intake_doc": "change_requests/CR-120_AGGREGATOR_KOT_BILL_SPLIT_INTAKE.md",
+      "evidence": "evidence/AGGREGATOR_INVESTIGATION_REPORT_20260731.md",
+      "open_questions": [],
+      "related": [
+        "CR-106",
+        "BUG-285"
+      ]
+    },
+    {
+      "id": "CR-121",
+      "title": "Dashboard Quick-Start: Single-Click Order for Delivery / Takeaway / Walk-in",
+      "type": "CR",
+      "status": "INTAKE",
+      "gate": "0-1",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_0",
+      "created": "2026-07-31",
+      "blast_radius": "MEDIUM",
+      "files": [
+        "pages/DashboardPage.jsx",
+        "contexts/OrderContext.jsx"
+      ],
+      "intake_doc": "change_requests/CR-121_DASHBOARD_QUICK_ORDER_INTAKE.md",
+      "open_questions": [
+        "OQ-1: button placement (widget/bar/cards)",
+        "OQ-2: walk-in flow",
+        "OQ-3: delivery/takeaway customer prompt"
+      ],
+      "related": [
+        "CR-051"
+      ]
     }
   ],
   "meta": {

@@ -464,3 +464,12 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | **BUG-280** | Customer Details (name/phone/membership_id) Not Sent in Collect Bill Settle API | **P1** | HIGH | **QA PASS — AWAITING OWNER SMOKE** | 0-6 ✅ | LIVE: `[CollectBill] payload` shows `cust_name/cust_mobile/cust_membership_id`. No email (OD-BUG280-1). 2026-07-31. |
 | **BUG-281** | custGST/custGSTName Not Forwarded to Auto-Bill Print — 6 sites | **P1** | HIGH | **QA PASS — AWAITING OWNER SMOKE** | 0-6 ✅ | LIVE: `order-temp-store` has `custGST/custGSTName`. `[CollectBill] payload` has both. All 6 sites verified. 2026-07-31. |
 
+
+### 2026-07-31 Aggregator Investigation Batch (BUG-282 → BUG-285)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-282** | Aggregator Popup: Addons + Variations Not Displayed | **P1** | LOW | **INTAKE** | 0-1 ✅ | `AggregatorOrderPopOut.jsx` has zero addon/variation render code. Transform maps data correctly. Live: orders #002407, #002401 have add_ons. Fix: ~30 lines, copy pattern from ScanOrderPopOut. |
+| **BUG-283** | Aggregator: "Order Instructions :::" Prefix Not Stripped | **P2** | LOW | **INTAKE** | 0-1 ✅ | Zomato sends `"Order Instructions ::: <text>"`, Swiggy sends clean text. Fix: 1-line strip in `aggregatorTransform.js`. |
+| **BUG-284** | Aggregator: Address Duplicate City ("Bangalore, Bangalore") | **P2** | LOW | **INTAKE** | 0-1 ✅ | Swiggy sets line_1=city=sub_locality="Bangalore". Fix: deduplicate + add sub_locality/landmark in `formatAddress()`. |
+| **BUG-285** | Aggregator OrderCard: "Ready to Dispatch" Should Be Text, Not Button | **P2** | LOW | **INTAKE** | 0-1 ✅ | fOS=2: renders as clickable `<button>`. Owner says no dispatch action → convert to text label. Fix: ~5 lines in `OrderCard.jsx`. |
