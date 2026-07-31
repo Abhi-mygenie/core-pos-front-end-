@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Printer, Clock, X, Check, PlusSquare, ShoppingBag, Bike, Utensils, DoorOpen, Loader2 } from "lucide-react";
 import PropTypes from 'prop-types';
 import { COLORS, CONFIG } from "../../constants";
-import { GENIE_LOGO_URL } from "../../constants/colors"; // CR-110: MyGenie badge
+import { GENIE_LOGO_URL, SOURCE_COLORS } from "../../constants/colors"; // CR-110: MyGenie badge, BUG-285: source color for label
 import { mockOrderItems } from "../../data";
 import { getTableStatusConfig, isTableActive } from "../../utils";
 import { IconButton, TextButton } from "./buttons";
@@ -487,32 +487,30 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
                     </TextButton>
                   </>
                 )}
+                {/* BUG-285 + CR-120: fOS=2 — Bill button replaces KOT; "Ready to Dispatch" becomes status label */}
                 {isAggregator && table.fOrderStatus === 2 && (
                   <>
-                    {/* CR-118: KOT reprint for aggregator at Ready */}
+                    {/* CR-120: Bill print at Ready (replaces KOT reprint) */}
                     <IconButton
                       icon={Printer}
-                      onClick={(e) => handleAggregatorPrint(e, 'aggr_kot')}
-                      backgroundColor={COLORS.borderGray}
-                      testId={`agg-kot-btn-${table.id}`}
-                      title="Print KOT"
-                      ariaLabel={`Print aggregator KOT`}
+                      onClick={(e) => handleAggregatorPrint(e, 'aggr_bill')}
+                      backgroundColor="#E8F5E9"
+                      textColor={COLORS.primaryGreen}
+                      testId={`agg-bill-btn-${table.id}`}
+                      title="Print Bill"
+                      ariaLabel={`Print aggregator Bill`}
                       disabled={isActionInProgress}
-                      isLoading={isPrintingKot}
+                      isLoading={isPrintingBill}
                       LoadingIcon={Loader2}
                     />
-                    <TextButton
-                      onClick={(e) => { e?.stopPropagation?.(); onAggregatorDispatch?.(table.order || table); }}
-                      backgroundColor="#FFF3E8"
-                      textColor={COLORS.primaryOrange}
-                      borderColor={COLORS.primaryOrange}
-                      testId={`agg-dispatch-btn-${table.id}`}
-                      ariaLabel={`Ready to dispatch aggregator order`}
-                      fullWidth={false}
-                      className="flex-1 text-xs py-2 flex items-center justify-center gap-1"
+                    {/* BUG-285: Status label, not button */}
+                    <span
+                      className="flex-1 text-xs py-2 flex items-center justify-center gap-1 font-bold rounded-lg"
+                      style={{ backgroundColor: `${SOURCE_COLORS[table.order?.source] || COLORS.primaryOrange}10`, color: SOURCE_COLORS[table.order?.source] || COLORS.primaryOrange }}
+                      data-testid={`agg-dispatch-label-${table.id}`}
                     >
                       Ready to Dispatch
-                    </TextButton>
+                    </span>
                   </>
                 )}
                 {/* POS actions — hidden for aggregator (CR-106) */}

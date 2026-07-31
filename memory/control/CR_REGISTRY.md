@@ -397,3 +397,13 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 |---|---|---|---|---|---|---|
 | **CR-120** | Aggregator: Split KOT/Bill Buttons by Order Status — preparing (fOS=1) shows KOT only, ready (fOS=2) shows Bill only. Currently both show at both statuses. | **P2** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx` — 2 line condition changes (lines 1013 + 1082). Related: CR-106, BUG-285. Intake: `change_requests/CR-120_AGGREGATOR_KOT_BILL_SPLIT_INTAKE.md`. |
 | **CR-121** | Dashboard Quick-Start — Single-click order creation for Walk-in / Takeaway / Delivery from dashboard. Pre-selects order type, navigates to OrderEntry. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | ~2-3 files (DashboardPage.jsx R5 hotspot). OQ-1: button placement. OQ-2: walk-in flow. OQ-3: customer prompt per CR-051. Intake: `change_requests/CR-121_DASHBOARD_QUICK_ORDER_INTAKE.md`. |
+
+### CR-120 — Aggregator KOT/Bill Split by Order Status (2026-07-31)
+| Field | Value |
+|---|---|
+| Status | **IMPLEMENTED** |
+| Gate | 0-5a ✅ |
+| Priority | P2 |
+| Risk | LOW |
+| Files | `OrderCard.jsx` (L1013, L1082), `TableCard.jsx` (L490-517) |
+| Notes | KOT only at fOS=1 (preparing), Bill only at fOS=2 (ready). Non-aggregator orders unaffected. |

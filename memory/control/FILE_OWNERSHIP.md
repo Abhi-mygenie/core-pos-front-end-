@@ -651,3 +651,11 @@
 | `components/inventory/IngredientBulkEditor.jsx` | BUG-274: dirtyCount includes pending deletes (L89), handleSave checks toDelete (L148-149), toDelete moved before early return (L148). BUG-276: AlertDialog replaces window.confirm (L60, L140-146, L472-488), fragment wrapper (L284). | BUG-274+276 IMPL agent |
 | `components/expense/ExpenseBulkEditor.jsx` | BUG-276: Category move keeps item in place with "→ Category" badge (L286-300, L803-808). Auto-refresh skipped after move (L322). | BUG-276 IMPL agent |
 | `components/inventory/IngredientBulkEditor.jsx` | BUG-277: prevItemIds useRef + stable ID guard in useEffect (L62, L66-72). BUG-278: saveInProgress useRef + re-entry guard in handleSave (L63, L155, L212). BUG-279: sticky thead (L346). | BUG-277+278+279 IMPL agent |
+
+### Batch A — BUG-282/283/284/285 + CR-120 (2026-07-31)
+| File | Change | Agent |
+|------|--------|-------|
+| `api/transforms/aggregatorTransform.js` | BUG-283: Strip "Order Instructions :::" prefix from Zomato order notes (L23) | Batch A IMPL agent |
+| `components/dashboard/AggregatorOrderPopOut.jsx` | BUG-284: formatAddress dedup + sub_locality + landmark (L27-34). BUG-282: addon/variation render block (L299-321). | Batch A IMPL agent |
+| `components/cards/OrderCard.jsx` | CR-120: KOT condition narrowed fOS=1 only (L1013). BUG-285: button→span label (L1071-1079). CR-120: Bill condition narrowed fOS=2 only (L1082). | Batch A IMPL agent |
+| `components/cards/TableCard.jsx` | BUG-285+CR-120: fOS=2 block rewrite — KOT→Bill, button→label (L490-517). SOURCE_COLORS import added (L5). | Batch A IMPL agent |

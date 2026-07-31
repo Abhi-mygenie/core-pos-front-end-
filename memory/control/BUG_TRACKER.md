@@ -473,3 +473,12 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | **BUG-283** | Aggregator: "Order Instructions :::" Prefix Not Stripped | **P2** | LOW | **INTAKE** | 0-1 ✅ | Zomato sends `"Order Instructions ::: <text>"`, Swiggy sends clean text. Fix: 1-line strip in `aggregatorTransform.js`. |
 | **BUG-284** | Aggregator: Address Duplicate City ("Bangalore, Bangalore") | **P2** | LOW | **INTAKE** | 0-1 ✅ | Swiggy sets line_1=city=sub_locality="Bangalore". Fix: deduplicate + add sub_locality/landmark in `formatAddress()`. |
 | **BUG-285** | Aggregator OrderCard: "Ready to Dispatch" Should Be Text, Not Button | **P2** | LOW | **INTAKE** | 0-1 ✅ | fOS=2: renders as clickable `<button>`. Owner says no dispatch action → convert to text label. Fix: ~5 lines in `OrderCard.jsx`. |
+
+### 2026-07-31 Batch A Implementation (BUG-282, BUG-283, BUG-284, BUG-285)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-282 | Aggregator Popup: Addons + Variations Not Displayed | P1 | LOW | **IMPLEMENTED** | 0-5a ✅ | `AggregatorOrderPopOut.jsx`: +addon/variation render block (~25 lines). |
+| BUG-283 | "Order Instructions :::" Prefix Not Stripped | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `aggregatorTransform.js` L23: regex strip of Zomato prefix. 1 line. |
+| BUG-284 | Address Duplicate City "Bangalore, Bangalore" | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `AggregatorOrderPopOut.jsx` L27-34: dedup filter + sub_locality + landmark. |
+| BUG-285 | "Ready to Dispatch" Button → Text Label | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `OrderCard.jsx` L1071-1079 + `TableCard.jsx` L490-517: button→span. |

@@ -1009,8 +1009,8 @@ const OrderCard = ({
             {/* Left: Print KOT + Cancel */}
             <div className="flex items-center gap-3">
               {/* CR-118: KOT button — aggregator uses dedicated print endpoint */}
-              {/* BUG-097: Hide KOT for delivery at fOS 2+5 — BUT CR-118: always show for aggregator at fOS 1+2 */}
-              {canPrintBill && (isAggregator ? (fOrderStatus === 1 || fOrderStatus === 2) : !(isDelivery && (fOrderStatus === 2 || fOrderStatus === 5))) && (
+              {/* CR-120: Aggregator KOT only at fOS=1 (preparing); Bill moves to fOS=2 */}
+              {canPrintBill && (isAggregator ? (fOrderStatus === 1) : !(isDelivery && (fOrderStatus === 2 || fOrderStatus === 5))) && (
               <button
                 data-testid={`print-kot-btn-${orderId}`}
                 className={`min-h-[44px] min-w-[44px] rounded-lg border flex items-center justify-center ${isActionInProgress ? 'opacity-50' : ''}`}
@@ -1068,18 +1068,18 @@ const OrderCard = ({
                 Mark Ready
               </button>
             )}
+            {/* BUG-285: "Ready to Dispatch" as status label, not interactive button */}
             {isAggregator && fOrderStatus === 2 && (
-              <button
-                data-testid={`agg-dispatch-btn-${orderId}`}
-                className={`min-h-[44px] px-6 text-sm font-bold rounded-lg flex items-center justify-center gap-2`}
-                style={{ backgroundColor: `${SOURCE_COLORS[source] || '#FC8019'}15`, color: SOURCE_COLORS[source] || '#FC8019', border: `1px solid ${SOURCE_COLORS[source] || '#FC8019'}` }}
-                onClick={(e) => { e.stopPropagation(); onAggregatorDispatch?.(order); }}
+              <span
+                data-testid={`agg-dispatch-label-${orderId}`}
+                className="min-h-[44px] px-6 text-sm font-bold rounded-lg flex items-center justify-center gap-2"
+                style={{ backgroundColor: `${SOURCE_COLORS[source] || '#FC8019'}10`, color: SOURCE_COLORS[source] || '#FC8019' }}
               >
                 Ready to Dispatch
-              </button>
+              </span>
             )}
-            {/* CR-118: Aggregator Bill print button (fOS 1+2) */}
-            {isAggregator && (fOrderStatus === 1 || fOrderStatus === 2) && canPrintBill && (
+            {/* CR-120: Aggregator Bill only at fOS=2 (ready) */}
+            {isAggregator && fOrderStatus === 2 && canPrintBill && (
               <button
                 data-testid={`agg-bill-btn-${orderId}`}
                 className={`min-h-[44px] px-4 text-sm font-bold rounded-lg flex items-center justify-center gap-1 ${isActionInProgress ? 'opacity-50' : ''}`}

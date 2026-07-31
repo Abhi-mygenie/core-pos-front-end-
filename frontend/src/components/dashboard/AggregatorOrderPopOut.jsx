@@ -24,9 +24,12 @@ const formatCurrency = (amount, symbol = '₹') => {
   return `${symbol}${num.toFixed(2)}`;
 };
 
+// BUG-284: Include sub_locality + landmark; deduplicate repeated segments (Swiggy sends "Bangalore" in line_1, sub_locality, and city)
 const formatAddress = (addr) => {
   if (!addr) return null;
-  const parts = [addr.line_1, addr.line_2, addr.city, addr.pin].filter(Boolean);
+  const parts = [addr.line_1, addr.line_2, addr.sub_locality, addr.landmark, addr.city, addr.pin]
+    .filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i);
   return parts.length > 0 ? parts.join(', ') : null;
 };
 
@@ -293,6 +296,29 @@ const AggregatorOrderPopOut = ({
                       {item.categoryName && <span>{item.categoryName}</span>}
                       {item.notes && <span className="text-amber-500 italic">Note: {item.notes}</span>}
                     </div>
+                    {/* BUG-282: Render add-ons */}
+                    {item.addOns?.length > 0 && (
+                      <div className="mt-0.5 space-y-0.5">
+                        {item.addOns.map((addon, ai) => (
+                          <div key={ai} className="flex items-center gap-1 text-xs text-slate-400 pl-3">
+                            <span className="text-slate-300">+</span>
+                            <span>{addon.name || addon.addon_name}</span>
+                            {addon.price > 0 && <span className="text-slate-300">({formatCurrency(addon.price, currencySymbol)})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* BUG-282: Render variations */}
+                    {item.variation?.length > 0 && (
+                      <div className="mt-0.5 space-y-0.5">
+                        {item.variation.map((v, vi) => (
+                          <div key={vi} className="text-xs text-slate-400 pl-3 italic">
+                            {v.name || 'Variant'}: {v.value || v.label}
+                            {v.price > 0 && <span className="text-slate-300 ml-1">({formatCurrency(v.price, currencySymbol)})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="text-right flex-shrink-0 ml-3">
                     <div className="text-sm text-slate-600">{item.quantity} x {formatCurrency(item.unitPrice, currencySymbol)}</div>

@@ -20,7 +20,9 @@ export const fromAPI = {
     const rider = raw.rider_info || {};
 
     // GAP-1: order note — food_details.order_note takes precedence over order_details_order.order_note
-    const orderNote = foods[0]?.food_details?.order_note || od.order_note || null;
+    // BUG-283: Strip Zomato "Order Instructions :::" prefix from order notes
+    const rawNote = foods[0]?.food_details?.order_note || od.order_note || '';
+    const orderNote = rawNote.replace(/^Order Instructions\s*:::\s*/i, '').trim() || null;
 
     return {
       // Identity
