@@ -17647,8 +17647,8 @@
       "id": "BUG-282",
       "title": "Aggregator Popup: Addons + Variations Not Displayed",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE — Impact Analysis done",
-      "gate": "2",
+      "status": "GATE 3 COMPLETE — Implementation Plan ready",
+      "gate": "3",
       "priority": "P1",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -17663,14 +17663,15 @@
       "related": [
         "CR-106"
       ],
-      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BATCH_A_BUG-282_283_284_285_CR-120_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-283",
       "title": "Aggregator: 'Order Instructions :::' Prefix Not Stripped from Zomato Notes",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE — Impact Analysis done",
-      "gate": "2",
+      "status": "GATE 3 COMPLETE — Implementation Plan ready",
+      "gate": "3",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -17685,14 +17686,15 @@
       "related": [
         "CR-106"
       ],
-      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BATCH_A_BUG-282_283_284_285_CR-120_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-284",
       "title": "Aggregator: Address Shows Duplicate City ('Bangalore, Bangalore')",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE — Impact Analysis done",
-      "gate": "2",
+      "status": "GATE 3 COMPLETE — Implementation Plan ready",
+      "gate": "3",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -17707,14 +17709,15 @@
       "related": [
         "CR-106"
       ],
-      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BATCH_A_BUG-282_283_284_285_CR-120_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-285",
       "title": "Aggregator OrderCard: 'Ready to Dispatch' Should Be Text Label, Not Button",
       "type": "BUG",
-      "status": "GATE 2 COMPLETE — Impact Analysis done",
-      "gate": "2",
+      "status": "GATE 3 COMPLETE — Implementation Plan ready",
+      "gate": "3",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -17729,14 +17732,15 @@
       "related": [
         "CR-106"
       ],
-      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BATCH_A_BUG-282_283_284_285_CR-120_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "CR-120",
       "title": "Aggregator: Split KOT/Bill Buttons by Order Status (Preparing→KOT, Ready→Bill)",
       "type": "CR",
-      "status": "GATE 2 COMPLETE — Impact Analysis done",
-      "gate": "2",
+      "status": "GATE 3 COMPLETE — Implementation Plan ready",
+      "gate": "3",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -17752,7 +17756,8 @@
         "CR-106",
         "BUG-285"
       ],
-      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BATCH_A_BUG-282_283_284_285_CR-120_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BATCH_A_BUG-282_283_284_285_CR-120_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "CR-121",
