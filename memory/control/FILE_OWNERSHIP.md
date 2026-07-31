@@ -659,3 +659,9 @@
 | `components/dashboard/AggregatorOrderPopOut.jsx` | BUG-284: formatAddress dedup + sub_locality + landmark (L27-34). BUG-282: addon/variation render block (L299-321). | Batch A IMPL agent |
 | `components/cards/OrderCard.jsx` | CR-120: KOT condition narrowed fOS=1 only (L1013). BUG-285: button→span label (L1071-1079). CR-120: Bill condition narrowed fOS=2 only (L1082). | Batch A IMPL agent |
 | `components/cards/TableCard.jsx` | BUG-285+CR-120: fOS=2 block rewrite — KOT→Bill, button→label (L490-517). SOURCE_COLORS import added (L5). | Batch A IMPL agent |
+
+### BUG-286 + BUG-287 (2026-07-31)
+| File | Change | Agent |
+|------|--------|-------|
+| `components/cards/OrderCard.jsx` | BUG-286: KOT L1013 `(isAggregator || canPrintBill)` bypasses permission gate. Bill L1082 removed `canPrintBill` for aggregator. | BUG-286 IMPL agent |
+| `api/transforms/aggregatorTransform.js` | BUG-287: Added placeholder filter — "This is order level instructions" → null (L25). | BUG-287 IMPL agent |

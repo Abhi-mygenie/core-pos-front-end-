@@ -1,0 +1,28 @@
+{
+  "summary": "Verified BUG-286 (KOT/Bill visibility on OrderCard for aggregator regardless of print_icon permission), BUG-287 ('This is order level instructions' placeholder note filtered out), and BUG-285+CR-120 (TableCard fOS=2 shows green Bill icon + 'Ready to Dispatch' as non-clickable span). All 7 scenarios from the request passed on live preprod data for owner@18march.com (restaurant 478). No backend testing (frontend-only app talking to external preprod API).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "OrderCard.jsx is now 1260 lines — still well over the recommended 700 line threshold. Split into <OrderCardHeader>, <OrderCardItems>, <OrderCardFooter>, <OrderCardModals> for maintainability.",
+    "aggregatorTransform.js line 27: placeholder filter uses exact-match regex `^this is order level instructions$` (case-insensitive). This is correct but brittle — if UrbanPiper varies punctuation (e.g. trailing period, 'these are order level instructions'), it will slip through. Consider a small allow-list or comparing after non-alphanumeric strip.",
+    "OrderCard.jsx line 1014 condition is complex: `(isAggregator || canPrintBill) && (isAggregator ? (fOrderStatus === 1) : !(isDelivery && (fOrderStatus === 2 || fOrderStatus === 5)))`. Extract to a boolean `shouldShowKotButton` for readability.",
+    "OrderCard.jsx: `agg-bill-btn-*` and `agg-dispatch-label-*` use `orderId` in testid, while POS bill uses `bill-btn-*` — inconsistent naming across POS/aggregator paths. Consider unifying to `bill-btn-*` with a source suffix or attribute."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (7/7 scenarios verified)"},
+  "test_credentials": "owner@18march.com / Qplazm@10 (rid=478, has 6 aggregator fOS=1 + 1 aggregator fOS=2 order, plus 1 Zomato order with real note 'this is mallu\\'s order' for regression)",
+  "seed_data_creation": "None — used live preprod aggregator orders.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Dashboard has Grid (default) and List (data-testid='view-toggle') views. TableCard testid pattern is `agg-*-<table.id>` (e.g. 'agg-bill-btn-delivery-40486'); OrderCard testid pattern is `print-kot-btn-<orderId>` / `agg-bill-btn-<orderId>` / `agg-dispatch-label-<orderId>` / `agg-ready-btn-<orderId>`. Loading screen (data-testid='loading-screen') can take 60-90s after login on preprod — poll for its absence rather than fixed sleeps. Order #40486 (SWIGGY fOS=2) is the only Ready-to-Dispatch aggregator order; #40487–40492 are fOS=1 preparing. Zomato #LSEJ8FQP carries real note 'this is mallu\\'s order' — good BUG-287 regression check. Preprod-side placeholder 'This is order level instructions' still comes back on 5-6 aggregator orders and is correctly stripped in aggregatorTransform.js line 27.",
+  "rca_of_the_issue": {
+    "BUG-286": "Previously, OrderCard footer gated the KOT (line 1013 area) and Bill (line 1082 area) buttons behind `canPrintBill` (derived from role permission `print_icon`). Aggregator orders don't print via a physical POS printer — they hit UrbanPiper's print endpoint — so gating on `print_icon` was incorrect. Fix: the KOT condition now uses `(isAggregator || canPrintBill) && ...` and the Bill condition drops `canPrintBill` for the aggregator path. Verified on live data: 6 aggregator fOS=1 orders show `print-kot-btn-*`; 1 aggregator fOS=2 order shows `agg-bill-btn-*` — matching TableCard behavior which never had the gate.",
+    "BUG-287": "UrbanPiper test/preprod env injects the literal string 'This is order level instructions' into `order_note` for orders without customer notes. Fix in aggregatorTransform.js line 25-27: after stripping the 'Order Instructions :::' prefix (BUG-283), the code compares the trimmed value case-insensitively to the placeholder and returns `null` if it matches, causing the note section to be hidden entirely. Real notes like 'this is mallu\\'s order' pass through unchanged and still render with the FileText icon."
+  }
+}

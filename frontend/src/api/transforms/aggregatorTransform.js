@@ -21,8 +21,10 @@ export const fromAPI = {
 
     // GAP-1: order note — food_details.order_note takes precedence over order_details_order.order_note
     // BUG-283: Strip Zomato "Order Instructions :::" prefix from order notes
+    // BUG-287: Filter UrbanPiper default placeholder "This is order level instructions"
     const rawNote = foods[0]?.food_details?.order_note || od.order_note || '';
-    const orderNote = rawNote.replace(/^Order Instructions\s*:::\s*/i, '').trim() || null;
+    const stripped = rawNote.replace(/^Order Instructions\s*:::\s*/i, '').trim();
+    const orderNote = (stripped && !/^this is order level instructions$/i.test(stripped)) ? stripped : null;
 
     return {
       // Identity
