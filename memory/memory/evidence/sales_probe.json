@@ -1,0 +1,423 @@
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "total_revenue": 1409418,
+      "total_orders": 1690,
+      "total_tax": 57426.38,
+      "total_gst": 57426.38,
+      "total_vat": 0,
+      "total_discount": 46591.6,
+      "avg_order_value": 833.98,
+      "tab_settlement_total": 420,
+      "best_day": {
+        "date": "2026-05-23",
+        "revenue": 98627,
+        "orders": 135,
+        "tax": 2194.62,
+        "discount": 1578,
+        "tab_settlement": 0
+      },
+      "worst_day": {
+        "date": "2026-05-20",
+        "revenue": 19783,
+        "orders": 27,
+        "tax": 778.5,
+        "discount": 720,
+        "tab_settlement": 0
+      },
+      "peak_hour": {
+        "hour": 11,
+        "revenue": 153364,
+        "orders": 156
+      },
+      "active_days": 31
+    },
+    "daily": [
+      {
+        "date": "2026-05-01",
+        "revenue": 44483,
+        "orders": 45,
+        "tax": 2084.45,
+        "discount": 1481,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-02",
+        "revenue": 49627,
+        "orders": 48,
+        "tax": 2346.2,
+        "discount": 1851,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-03",
+        "revenue": 42874,
+        "orders": 44,
+        "tax": 2008,
+        "discount": 1770,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-04",
+        "revenue": 51949,
+        "orders": 55,
+        "tax": 2447.65,
+        "discount": 1442,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-05",
+        "revenue": 23069,
+        "orders": 37,
+        "tax": 1098.3,
+        "discount": 1444,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-06",
+        "revenue": 22720,
+        "orders": 33,
+        "tax": 1065,
+        "discount": 1450,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-07",
+        "revenue": 27790,
+        "orders": 43,
+        "tax": 1304.6,
+        "discount": 1528,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-08",
+        "revenue": 28603,
+        "orders": 45,
+        "tax": 1342.55,
+        "discount": 999,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-09",
+        "revenue": 90665,
+        "orders": 133,
+        "tax": 1571.35,
+        "discount": 1423,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-10",
+        "revenue": 36711,
+        "orders": 44,
+        "tax": 1719.78,
+        "discount": 4974.5,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-11",
+        "revenue": 41858,
+        "orders": 46,
+        "tax": 1902.3,
+        "discount": 1314,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-12",
+        "revenue": 44187,
+        "orders": 50,
+        "tax": 2027.35,
+        "discount": 988,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-13",
+        "revenue": 33023,
+        "orders": 44,
+        "tax": 1522.3,
+        "discount": 1454,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-14",
+        "revenue": 42378,
+        "orders": 57,
+        "tax": 1884.27,
+        "discount": 1404.5,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-15",
+        "revenue": 27650,
+        "orders": 35,
+        "tax": 1267.5,
+        "discount": 1115,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-16",
+        "revenue": 72373,
+        "orders": 143,
+        "tax": 1737.64,
+        "discount": 1596.7,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-17",
+        "revenue": 48901,
+        "orders": 46,
+        "tax": 2134.6,
+        "discount": 922,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-18",
+        "revenue": 26326,
+        "orders": 35,
+        "tax": 1241.45,
+        "discount": 1081,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-19",
+        "revenue": 50025,
+        "orders": 41,
+        "tax": 1307.95,
+        "discount": 1226,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-20",
+        "revenue": 19783,
+        "orders": 27,
+        "tax": 778.5,
+        "discount": 720,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-21",
+        "revenue": 27046,
+        "orders": 35,
+        "tax": 1266.09,
+        "discount": 1543.2,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-22",
+        "revenue": 34107,
+        "orders": 39,
+        "tax": 1607.2,
+        "discount": 1016,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-23",
+        "revenue": 98627,
+        "orders": 135,
+        "tax": 2194.62,
+        "discount": 1578,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-24",
+        "revenue": 42843,
+        "orders": 37,
+        "tax": 1831.8,
+        "discount": 524,
+        "tab_settlement": 420
+      },
+      {
+        "date": "2026-05-25",
+        "revenue": 43786,
+        "orders": 43,
+        "tax": 2040.4,
+        "discount": 3282,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-26",
+        "revenue": 38836,
+        "orders": 38,
+        "tax": 1677.63,
+        "discount": 2212.4,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-27",
+        "revenue": 36073,
+        "orders": 37,
+        "tax": 1645.97,
+        "discount": 600.8,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-28",
+        "revenue": 45898,
+        "orders": 43,
+        "tax": 2008.9,
+        "discount": 798,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-29",
+        "revenue": 68344,
+        "orders": 59,
+        "tax": 3050.5,
+        "discount": 1676,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-30",
+        "revenue": 88122,
+        "orders": 110,
+        "tax": 2734.2,
+        "discount": 266,
+        "tab_settlement": 0
+      },
+      {
+        "date": "2026-05-31",
+        "revenue": 60741,
+        "orders": 63,
+        "tax": 2709.33,
+        "discount": 2911.5,
+        "tab_settlement": 0
+      }
+    ],
+    "channels": [
+      {
+        "channel": "Dine-In",
+        "orders": 1575,
+        "revenue": 1272865
+      },
+      {
+        "channel": "Room",
+        "orders": 115,
+        "revenue": 136133
+      }
+    ],
+    "payments": [
+      {
+        "method": "UPI",
+        "orders": 846,
+        "revenue": 700214
+      },
+      {
+        "method": "Card",
+        "orders": 359,
+        "revenue": 366722
+      },
+      {
+        "method": "Cash",
+        "orders": 453,
+        "revenue": 306808
+      },
+      {
+        "method": "Room Bill",
+        "orders": 28,
+        "revenue": 18351
+      },
+      {
+        "method": "Partial",
+        "orders": 4,
+        "revenue": 16903
+      },
+      {
+        "method": "Credit",
+        "orders": 1,
+        "revenue": 420
+      }
+    ],
+    "hourly": [
+      {
+        "hour": 0,
+        "revenue": 46517,
+        "orders": 47
+      },
+      {
+        "hour": 1,
+        "revenue": 1003,
+        "orders": 3
+      },
+      {
+        "hour": 8,
+        "revenue": 17532,
+        "orders": 21
+      },
+      {
+        "hour": 9,
+        "revenue": 35049,
+        "orders": 53
+      },
+      {
+        "hour": 10,
+        "revenue": 69171,
+        "orders": 80
+      },
+      {
+        "hour": 11,
+        "revenue": 153364,
+        "orders": 156
+      },
+      {
+        "hour": 12,
+        "revenue": 137416,
+        "orders": 146
+      },
+      {
+        "hour": 13,
+        "revenue": 145582,
+        "orders": 155
+      },
+      {
+        "hour": 14,
+        "revenue": 135246,
+        "orders": 155
+      },
+      {
+        "hour": 15,
+        "revenue": 115582,
+        "orders": 114
+      },
+      {
+        "hour": 16,
+        "revenue": 105231,
+        "orders": 114
+      },
+      {
+        "hour": 17,
+        "revenue": 76324,
+        "orders": 80
+      },
+      {
+        "hour": 18,
+        "revenue": 45242,
+        "orders": 62
+      },
+      {
+        "hour": 19,
+        "revenue": 65302,
+        "orders": 71
+      },
+      {
+        "hour": 20,
+        "revenue": 60326,
+        "orders": 80
+      },
+      {
+        "hour": 21,
+        "revenue": 83260,
+        "orders": 124
+      },
+      {
+        "hour": 22,
+        "revenue": 66790,
+        "orders": 124
+      },
+      {
+        "hour": 23,
+        "revenue": 50061,
+        "orders": 105
+      }
+    ]
+  }
+}

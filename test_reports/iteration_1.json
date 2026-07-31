@@ -1,0 +1,43 @@
+{
+  "summary": "Verified aggregator addon fix (CR-118) and Order Report Beta (CR-117). All 5 features work as expected. During testing, discovered and fixed a critical TDZ (Temporal Dead Zone) crash in AggregatorOrderPopOut.jsx where `settings` was read in useState initializers before `const { settings } = useRestaurant()` was declared — this was crashing the entire dashboard with an ErrorBoundary. After the fix, dashboard loads cleanly and all target features work: (1) aggregator addon '+ Paneer' shows on Schezwan Dosa (Zomato #QW5X9ZIQ), (2) regular POS addons '+ extra cheese slice' and variant 'Large' still render, (3) Order Report Beta at /reports-module/order-report-beta loads with date pickers, KPI strip (Total 9 / Paid 2 / Unpaid 6 / Cancelled 1), filters and 9-row table, (4) Sidebar 'Daily Report' flyout shows 'Orders (Beta)' link.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AggregatorOrderPopOut.jsx",
+        "issue": "TDZ error: `settings` read in useState initializers (lines 59, 61) before its declaration on line 66. Dashboard crashes with 'ReferenceError: Cannot access settings before initialization'. Fixed by moving `const { settings } = useRestaurant()` above the useState calls that reference `settings`.",
+        "selector": "N/A (component render)",
+        "priority": "CRITICAL"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Review the AggregatorOrderPopOut.jsx fix (moved useRestaurant destructure above useState) — this was a code-order bug that fully broke the dashboard for accounts with aggregator settings. Please add a lint rule / ESLint no-use-before-define to prevent regressions."
+  ],
+  "critical_code_review_comments": [
+    "AggregatorOrderPopOut.jsx: TDZ ordering — const declarations were referenced by earlier useState initializers. Now fixed by reordering. Recommend ESLint no-use-before-define.",
+    "OrderCard.jsx addon/variant parser (lines 663-681) is robust: handles multiple shapes ({name,value}, {name,labels[]}, string). Good defensive coding.",
+    "aggregatorTransform.js: addon normalization (title→name) + is_variant separation looks correct and clean.",
+    "OrderReportBetaPage.jsx (459 lines) — approaching size threshold; consider splitting into <ReportFilters>, <KpiStrip>, <ReportTable>, <ReportFooter> subcomponents for maintainability.",
+    "OrderCard.jsx at 1259 lines — well over the 700 line threshold. Should be split into logical subcomponents (header, items, actions, modals) for maintainability."
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/dashboard/AggregatorOrderPopOut.jsx"
+  ],
+  "success_rate": {
+    "backend": "N/A (backend skipped per request)",
+    "frontend": "100% (5/5 features verified) after applied fix"
+  },
+  "test_credentials": "owner@18march.com / Qplazm@10 (restaurant 478, working; has aggregator orders with Paneer addon on Schezwan Dosa)",
+  "seed_data_creation": "None. Used existing preprod aggregator orders on restaurant 478.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Dashboard uses two view modes: Grid (default, shows compact TableCards) and List (data-testid='view-toggle'). To see OrderCard with item-level addon/variant rendering, switch to List View, then click 'Preparing' or 'Ready' tab. Aggregator Zomato order #QW5X9ZIQ with 'Schezwan Dosa + Paneer' addon is a good regression check. Order Report Beta is reachable via Sidebar → Reports icon (data-testid='sidebar-reports') → 'Orders (Beta)' flyout item. Direct URL navigation to /reports-module/order-report-beta from a fresh login gets bounced to /loading — need to log in fully first, then navigate via sidebar or click.",
+  "rca_of_the_issue": "AggregatorOrderPopOut.jsx: `const [printKot, setPrintKot] = useState(settings?.aggregatorAutoKot ?? false)` on line 59 executed at first render, but `settings` (a `const` from `useRestaurant()`) was declared on line 66 — creating a TDZ. React function components execute the body top-to-bottom on each render, so this always threw. The fix moves `const { settings } = useRestaurant()` above the affected useState declarations. This was likely introduced by CR-118 when adding the checkbox defaults."
+}

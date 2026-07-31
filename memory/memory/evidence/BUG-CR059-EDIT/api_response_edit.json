@@ -1,0 +1,14 @@
+{
+  "probe_correct": {
+    "request": "PUT /api/v2/vendoremployee/expense/edit-expense/13562",
+    "body_key": "exp_name",
+    "http_status": 200,
+    "response": {"message":"Expense updated successfully.","updated_expense":{"id":13562,"exp_name":"100 delivery","e_dates":"06/07/2026","d_amount":"50","payment_method":"Cash","quantity":0,"unit":null}}
+  },
+  "probe_wrong": {
+    "request": "PUT /api/v2/vendoremployee/expense/edit-expense/13562",
+    "body_key": "expense",
+    "http_status": "redirect/422",
+    "response": "HTML redirect — validation failure"
+  }
+}

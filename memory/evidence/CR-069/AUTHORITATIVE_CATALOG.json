@@ -1,0 +1,412 @@
+{
+  "source": "Live curl-probe from preprod.mygenie.online with fresh token 2026-02-15",
+  "total_modules": 52,
+  "role_types": [
+    "STATION",
+    "Waiter",
+    "Manager",
+    "Billing",
+    "Server Waiter",
+    "Delivery"
+  ],
+  "role_types_full": [
+    {
+      "id": 1,
+      "name": "STATION",
+      "role_type_value": "STATION",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 2,
+      "name": "Waiter",
+      "role_type_value": "Waiter",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 3,
+      "name": "Manager",
+      "role_type_value": "Manager",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 4,
+      "name": "Billing",
+      "role_type_value": "Billing",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 5,
+      "name": "Server Waiter",
+      "role_type_value": "Buffet",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 6,
+      "name": "Delivery",
+      "role_type_value": "Delivery",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    }
+  ],
+  "permission_catalog_by_category": {
+    "frontend": [
+      {
+        "key": "food",
+        "label": "food",
+        "description": "Access to food module"
+      },
+      {
+        "key": "pos",
+        "label": "Pos",
+        "description": "Access to POS system"
+      },
+      {
+        "key": "order",
+        "label": "Order",
+        "description": "Access to orders"
+      },
+      {
+        "key": "bill",
+        "label": "Bills",
+        "description": "Access to bills"
+      },
+      {
+        "key": "order_cancel",
+        "label": "Order Cancel",
+        "description": "Permission to cancel orders"
+      },
+      {
+        "key": "serve",
+        "label": "Serve",
+        "description": "Permission to serve orders"
+      },
+      {
+        "key": "aggregator",
+        "label": "Aggregator",
+        "description": "Access to aggregators"
+      },
+      {
+        "key": "show_online_order",
+        "label": "Show Online Order",
+        "description": "Permission to show online orders"
+      },
+      {
+        "key": "assign_online_order",
+        "label": "Assign Online Order",
+        "description": "Permission to assign online orders"
+      },
+      {
+        "key": "order_unpaid",
+        "label": "Order Unpaid",
+        "description": "View unpaid orders"
+      },
+      {
+        "key": "update_payment",
+        "label": "Update Payment",
+        "description": "Permission to update payment"
+      },
+      {
+        "key": "order_edit",
+        "label": "Order Edit",
+        "description": "Permission to edit orders"
+      },
+      {
+        "key": "delivery_man",
+        "label": "Delivery Man",
+        "description": "Access to delivery personnel"
+      },
+      {
+        "key": "clear_payment",
+        "label": "Clear Payment",
+        "description": "Permission to clear payments"
+      },
+      {
+        "key": "Ready",
+        "label": "Ready",
+        "description": "order_ready"
+      },
+      {
+        "key": "customer_management",
+        "label": "customer management",
+        "description": "customer management"
+      },
+      {
+        "key": "virtual_wallet",
+        "label": "virtual wallet",
+        "description": "virtual wallet"
+      },
+      {
+        "key": "discount",
+        "label": "Discount",
+        "description": "For show discount value in collect bill screen"
+      },
+      {
+        "key": "transfer_table",
+        "label": "Transfer Table",
+        "description": "Transfer Table"
+      },
+      {
+        "key": "merge_table",
+        "label": "Merge Table",
+        "description": "Merge Table"
+      },
+      {
+        "key": "food_transfer",
+        "label": "Food Transfer",
+        "description": "Food Transfer"
+      },
+      {
+        "key": "whatsapp_icon",
+        "label": "WhatsApp Icon",
+        "description": "WhatsApp Icon"
+      },
+      {
+        "key": "print_icon",
+        "label": "Print Icon",
+        "description": "Print Bill icon Configuration"
+      },
+      {
+        "key": "table_view",
+        "label": "Table View",
+        "description": "Table View Configuration"
+      },
+      {
+        "key": "token_display",
+        "label": "Token Display",
+        "description": "Token Display"
+      },
+      {
+        "key": "confirm_order",
+        "label": "Confirm Order",
+        "description": "For show confirm order button"
+      },
+      {
+        "key": "complementary_food",
+        "label": "Complementary Food",
+        "description": "For show option of complementary food apply"
+      }
+    ],
+    "backend": [
+      {
+        "key": "employee",
+        "label": "Employee",
+        "description": "Access to employee module"
+      },
+      {
+        "key": "restaurant_setup",
+        "label": "Restaurant Setup",
+        "description": "Access to my restaurant"
+      },
+      {
+        "key": "inventory",
+        "label": "Inventory",
+        "description": "Access to inventory module"
+      },
+      {
+        "key": "coupon",
+        "label": "Coupon",
+        "description": "Access to coupon module"
+      },
+      {
+        "key": "printer",
+        "label": "Print Bill",
+        "description": "Permission to print bills"
+      },
+      {
+        "key": "menu",
+        "label": "Menu",
+        "description": "Access to menu"
+      },
+      {
+        "key": "expence",
+        "label": "Expence",
+        "description": "Permission to expence"
+      },
+      {
+        "key": "Loyalty",
+        "label": "Loyalty",
+        "description": "Loyalty"
+      },
+      {
+        "key": "restaurant_settings",
+        "label": "restaurant settings",
+        "description": "changes restaurant configuration"
+      },
+      {
+        "key": "printer_management",
+        "label": "Printer Management",
+        "description": "Printer Management"
+      },
+      {
+        "key": "table_management",
+        "label": "Table Management",
+        "description": "Table Management"
+      },
+      {
+        "key": "delivery_management",
+        "label": "Delivery Management",
+        "description": "Delivery Management"
+      },
+      {
+        "key": "physicalqty_master",
+        "label": "PhysicalQty Master",
+        "description": "PhysicalQty Master"
+      }
+    ],
+    "report": [
+      {
+        "key": "report",
+        "label": "report",
+        "description": "report"
+      },
+      {
+        "key": "report_summery",
+        "label": "report summery",
+        "description": "report_summery"
+      },
+      {
+        "key": "waiter_revenue_report",
+        "label": "waiter revenue_report",
+        "description": "waiter_revenue_report"
+      },
+      {
+        "key": "sattle_report",
+        "label": "sattle report",
+        "description": "sattle_report"
+      },
+      {
+        "key": "revenue_report",
+        "label": "revenue report",
+        "description": "revenue_report"
+      },
+      {
+        "key": "room_report",
+        "label": "room report",
+        "description": "Room Report"
+      },
+      {
+        "key": "sales_report",
+        "label": "sales report",
+        "description": "sales_report"
+      },
+      {
+        "key": "revenue_report_average",
+        "label": "revenue report_average",
+        "description": "revenue_report"
+      },
+      {
+        "key": "consumption_report",
+        "label": "consumption report",
+        "description": "consumption_report"
+      },
+      {
+        "key": "cancellation_report",
+        "label": "cancellation report",
+        "description": "cancellation_report"
+      },
+      {
+        "key": "pl_report",
+        "label": "PL Report",
+        "description": "Profit Loss Report"
+      },
+      {
+        "key": "wastage_report",
+        "label": "Wastage Report",
+        "description": "Wastage Report"
+      }
+    ]
+  },
+  "employee_shape": {
+    "sample_count": 19,
+    "fields": [
+      "id",
+      "f_name",
+      "l_name",
+      "phone",
+      "email",
+      "status",
+      "mac_ip_kds",
+      "mac_ip_bill",
+      "mac_ip_bar",
+      "bill_user_view",
+      "image",
+      "role"
+    ],
+    "notes": {
+      "mac_ip_kds/bill/bar": "Station IP config per employee (not in owner-provided add-payload — surface in edit form? Phase 1 or hide?)",
+      "bill_user_view": "Yes/No string per Rule R9",
+      "role": "Nested object {id, name}",
+      "image": "Profile picture URL (default fallback exists)"
+    }
+  },
+  "role_list_shape": {
+    "sample_count": 9,
+    "fields": [
+      "id",
+      "name",
+      "parent_role",
+      "role_master_id",
+      "role_master_name",
+      "modules",
+      "total_modules",
+      "status",
+      "is_system_role",
+      "is_editable",
+      "protection_level",
+      "created_at",
+      "updated_at"
+    ],
+    "notes": {
+      "is_system_role + is_editable + protection_level": "CRITICAL for UI — system roles must be read-only (e.g., BAR: is_editable=false, protection_level=\"System Protected\")",
+      "role_master_id": "FK to role-master-list (null for fully custom roles)",
+      "total_modules": "Convenience count field"
+    }
+  },
+  "role_master_shape": {
+    "sample_count": 10,
+    "fields": [
+      "id",
+      "name",
+      "map_role",
+      "default_modules",
+      "is_protected",
+      "created_at",
+      "updated_at"
+    ],
+    "purpose": "Predefined role templates for quick role creation (name + default_modules[])"
+  },
+  "r9_typos_verbatim": [
+    "expence (backend key; label \"Expence\") — do NOT correct",
+    "report_summery (key + label) — do NOT correct",
+    "sattle_report (key) / \"sattle report\" (label) — do NOT correct",
+    "Complementary Food (label — should be \"Complimentary\") / complementary_food (key) — do NOT correct"
+  ],
+  "live_role_names_at_cafe103": [
+    "BAR",
+    "captain",
+    "KDS",
+    "Manager",
+    "Manger(C)",
+    "Owner",
+    "owner(c)",
+    "Report",
+    "Waiter"
+  ],
+  "predefined_role_templates": [
+    "Accountant",
+    "Billing User",
+    "Captain",
+    "Cashier",
+    "Delivery Boy",
+    "Manager",
+    "Owner",
+    "Station (Chef)",
+    "Waiter(S)",
+    "Waiter(T)"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "recipes": [
+    {
+      "recipe_id": 6186,
+      "addon_id": 11511,
+      "name": "Brown Sugar",
+      "addon_name": "Brown Sugar",
+      "food_name": "Brown Sugar",
+      "addon_price": "10.00",
+      "preparation_time": "1",
+      "serve_time": "1",
+      "unit": "kg",
+      "serve_people": 1,
+      "qty": "1",
+      "type": "addon_recipe",
+      "ingredients": [
+        {
+          "ingredient_id": 13799,
+          "ingredient_name": "Jaggery",
+          "ingredient_unit": "kg",
+          "ingredient_qty": 1
+        },
+        {
+          "ingredient_id": 13800,
+          "ingredient_name": "Sugar",
+          "ingredient_unit": "pkt",
+          "ingredient_qty": 2
+        }
+      ]
+    }
+  ]
+}

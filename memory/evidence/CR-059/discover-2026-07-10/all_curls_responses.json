@@ -1,0 +1,156 @@
+{
+  "curl_1_category_list": {
+    "endpoint": "GET /category-list",
+    "total": 8,
+    "categories": [
+      {
+        "id": 249,
+        "name": "Others"
+      },
+      {
+        "id": 250,
+        "name": "Milk"
+      },
+      {
+        "id": 255,
+        "name": "To Owner"
+      },
+      {
+        "id": 267,
+        "name": "Delivery"
+      },
+      {
+        "id": 268,
+        "name": "Kitchen"
+      },
+      {
+        "id": 269,
+        "name": "Vendor Payment"
+      },
+      {
+        "id": 270,
+        "name": "Staff Payment"
+      },
+      {
+        "id": 280,
+        "name": "misc"
+      }
+    ]
+  },
+  "curl_2_create_category": {
+    "endpoint": "POST /category",
+    "payload": {
+      "category_name": "Dairy_DISCOVER_TEST"
+    },
+    "response": {
+      "category": {
+        "id": 533,
+        "name": "Dairy_DISCOVER_TEST"
+      }
+    }
+  },
+  "curl_3_rename_category": {
+    "endpoint": "PUT /category/533",
+    "payload": {
+      "category_name": "Dairy_DISCOVER_RENAMED"
+    },
+    "response": {
+      "message": "Category updated successfully.",
+      "category": {
+        "id": 533,
+        "name": "Dairy_DISCOVER_RENAMED"
+      }
+    }
+  },
+  "curl_4_delete_category": {
+    "endpoint": "DELETE /category/533",
+    "response": {
+      "message": "Category deleted successfully.",
+      "moved_items_count": 0
+    }
+  },
+  "curl_5_stock_search_category_id_250": {
+    "endpoint": "GET /expenses-list?category_id=250",
+    "items_returned": 4,
+    "unique_categories": [
+      "Milk"
+    ],
+    "note": "category_id filter WORKS"
+  },
+  "curl_5b_stock_search_milk": {
+    "endpoint": "GET /expenses-list?search=milk",
+    "items_returned": 12,
+    "note": "search filter WORKS"
+  },
+  "curl_6_store_expense": {
+    "endpoint": "POST /store-expense-details",
+    "payload_notes": "exp_master_id=1131, notes=Emergency purchase from vendor X",
+    "response": {
+      "id": 8677,
+      "details": [
+        {
+          "expense": {
+            "id": 1131,
+            "name": "Milk"
+          },
+          "employee_id": 3063,
+          "employee_name": "Owner",
+          "notes": "Emergency purchase from vendor X"
+        }
+      ]
+    }
+  },
+  "curl_7_edit_expense": {
+    "endpoint": "PUT /edit-expense/13586",
+    "payload_notes": "notes=Price increase - was 80 per kg",
+    "response": {
+      "message": "Expense updated successfully.",
+      "updated_expense": {
+        "id": 13586,
+        "notes": "Price increase - was 80 per kg last month"
+      }
+    }
+  },
+  "curl_8_report_paginated_category_filter": {
+    "endpoint": "GET /expenses-report?from=07/07/2026&to=07/07/2026&page=1&category_id=268",
+    "top_keys": [
+      "total_amount",
+      "total_count",
+      "total_pages",
+      "page",
+      "per_page",
+      "report"
+    ],
+    "row_keys": [
+      "id",
+      "Date & Time",
+      "EXPENSE",
+      "Category",
+      "category_id",
+      "employee_id",
+      "employee_name",
+      "Amount",
+      "Payment Method",
+      "quantity",
+      "unit",
+      "physical_quantity",
+      "notes"
+    ],
+    "total_count": 1,
+    "total_pages": 1,
+    "per_page": 25,
+    "category_ids_in_result": [
+      268
+    ]
+  },
+  "curl_9_export_report": {
+    "endpoint": "POST /expenses-export-report",
+    "note": "All rows include exp_master_id, employee_name, notes, category_name"
+  },
+  "curl_10_delete_expense": {
+    "endpoint": "DELETE /delete-expense/13586",
+    "response": {
+      "message": "Expense deleted"
+    }
+  }
+}
