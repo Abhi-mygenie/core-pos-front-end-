@@ -7,28 +7,27 @@
 
 ---
 
-## Design Review Status (2026-08-09)
+## Design Review Status (2026-08-11 — DESIGN FREEZE)
 
 | Screen | Comparison Page | Owner Review |
 |---|---|---|
-| 1 — Basic Settings | `/screen1-compare` | ✅ REVIEWED — F1-01..F1-06 locked |
+| 1 — Basic Settings | `/screen1-compare` | ✅ LOCKED — F1-01..F1-09 |
 | 2 — Printer Setup | *(deferred — CR-133)* | ⏸ ON HOLD |
-| 3 — Channels, Payments & Info | `/screen3-compare` | ⏳ Awaiting feedback |
-| 4 — Tax & Charges | `/screen4-compare` | ⏳ Awaiting feedback |
-| 5 — Order & Kitchen | `/screen5-compare` | ⏳ Awaiting feedback |
-| 6 — Online Ordering | `/screen6-compare` | ⏳ Awaiting feedback |
-| 7 — Aggregator | `/screen7-compare` | ⏳ Awaiting feedback |
-| 8 — Inventory | `/screen8-compare` | ⏳ Awaiting feedback |
-| 9 — Room & Hospitality | `/screen9-compare` | ⏳ Awaiting feedback |
+| 3 — Channels, Payments & Info | `/screen3-compare` | ✅ APPROVED — no changes |
+| 4 — Tax & Charges | `/screen4-compare` | ✅ APPROVED — no changes |
+| 5 — Order & Kitchen | `/screen5-compare` | ✅ APPROVED — no changes |
+| 6 — Online Ordering | `/screen6-compare` | ✅ APPROVED — no changes |
+| 7 — Inventory | `/screen7-compare` | ✅ APPROVED — no changes |
+| 8 — Room & Hospitality | `/screen8-compare` | ✅ APPROVED — no changes |
 | **All screens (print)** | `/cr132-print` | Printable PDF — A4 landscape |
 
-**Next:** Owner to review Screens 3-9, provide cumulative feedback → update this IA → Gate 3 Implementation Plan.
+**DESIGN FREEZE — 2026-08-11. Gate 3 (Implementation Plan) can now proceed.**
 
 ---
 
 ## Owner Design Review Feedback Log (Screen-by-Screen)
 
-### Screen 1 — Basic Settings (reviewed 2026-08-09)
+### Screen 1 — Basic Settings (reviewed 2026-08-09, closed 2026-08-11)
 | # | Feedback | Action |
 |---|---|---|
 | F1-01 | `phone_number_on_bill` must appear on Screen 1 under Restaurant Identity, below main Phone Number | **CONFIRMED** — move `phone_number_on_bill` from Screen 2 (Contact & Delivery) → Screen 1 (Restaurant Identity section) |
@@ -37,12 +36,12 @@
 | F1-04 | PDF Menu label must read "PDF Menu (Digital Menu Link)" | **CONFIRMED** — label updated |
 | F1-05 | PDF Menu upload must show "Copy Link" + "View Menu" buttons when file exists, surfacing the `basic.pdf_menu` URL | **GAP CONFIRMED** — current `FileUpload` component (RestaurantSettingsPage.jsx line 141-158) shows only "Current file ×" — URL (`basic.pdf_menu`) is never surfaced to owner. Needs new CR or scope addition. See PDF Menu Gap section below |
 | F1-06 | All other Screen 1 groupings confirmed as proposed | No change |
+| F1-07 | `is_banner` — not used, hide from UI | **CONFIRMED** — pass-through only in transform, no UI rendered |
+| F1-08 | `is_category_box` — not used, hide from UI | **CONFIRMED** — pass-through only in transform, no UI rendered |
+| F1-09 | `show_popular_category` — rename UI label to "Show Popular Items" | **CONFIRMED** — UI label updated |
 
-### Screen 2 — Channels, Payments & Info
-*(not yet reviewed)*
-
-### Screens 3–8
-*(not yet reviewed)*
+### Screens 3–8 — All Approved 2026-08-11 (no changes)
+Owner reviewed all comparison pages (`/screen3-compare` → `/screen8-compare`) and confirmed: **no changes needed on any screen.**
 
 ---
 
@@ -184,9 +183,10 @@ Operational Flags:
   prepaid_auto_sattle (NEW), auto_dispatch (NEW), ordersAutoPaid (NEW)
 
 Display & UI:
-  show_popular_category, show_food_varriance, show_ac_non_menu
+  show_popular_category [UI LABEL → "Show Popular Items"] (F1-09), show_food_varriance, show_ac_non_menu
   food_date, food_level_notes
-  is_banner (NEW), is_category_box (NEW)
+  is_banner (NEW) — HIDDEN, pass-through only (F1-07)
+  is_category_box (NEW) — HIDDEN, pass-through only (F1-08)
 
 CRM & Loyalty:
   is_loyality (NEW), is_customer_wallet (NEW), is_coupon (NEW)
@@ -297,8 +297,8 @@ These fields are now in the live API but were NOT in the previous impact analysi
 | Field | API key | Type | Value seen | UI Component |
 |---|---|---|---|---|
 | Restaurant Type | `restaurant_for` | Select | `'Normal'` | SelectInput: Normal / Hotel / ... |
-| Show App Banner | `is_banner` | Toggle | `'Yes'` | Toggle Yes/No |
-| Category Box UI | `is_category_box` | Toggle | `'Yes'` | Toggle Yes/No |
+| Show App Banner | `is_banner` | Toggle | `'Yes'` | **HIDDEN — pass-through only** (F1-07: not used) |
+| Category Box UI | `is_category_box` | Toggle | `'Yes'` | **HIDDEN — pass-through only** (F1-08: not used) |
 | Show GST to User | `show_user_gst` | Toggle | `'No'` | Toggle Yes/No |
 | Delivery Charge GST% | `deliver_charge_gst` | Number | `'5.00'` | NumberInput (%) |
 | Service Charge Tax Label | `service_chrg_taxt` | Text | `'Service Charge'` | TextInput |
@@ -410,8 +410,8 @@ All fields that need changes to `restaurantSettingsTransform.js` and `Restaurant
 | `auto_prep_time_ack` | `autoPrepTimeAck` | step4 | bool | `toBool(basic.auto_prep_time_ack)` |
 | `auto_accept_inventory` | `autoAcceptInventory` | step5 | bool | `toBool(basic.auto_accept_inventory)` |
 | `restaurant_for` | `restaurantFor` | step1 | str | `basic.restaurant_for \|\| 'Normal'` |
-| `is_banner` | `isBanner` | step1 | bool | `toBool(basic.is_banner)` |
-| `is_category_box` | `isCategoryBox` | step1 | bool | `toBool(basic.is_category_box)` |
+| `is_banner` | `isBanner` | step1 | bool | `toBool(basic.is_banner)` — **no UI, pass-through in toAPI** (F1-07) |
+| `is_category_box` | `isCategoryBox` | step1 | bool | `toBool(basic.is_category_box)` — **no UI, pass-through in toAPI** (F1-08) |
 | `show_user_gst` | `showUserGst` | step1 | bool | `toBool(basic.show_user_gst)` |
 | `prep_time_bonus_config` | `prepTimeBonusConfig` | step4 | any | `basic.prep_time_bonus_config \|\| null` (pass-through) |
 | `auto_paid` | `autoPaid` | step2 | bool | `toBool(basic.auto_paid)` (pass-through, no UI) |

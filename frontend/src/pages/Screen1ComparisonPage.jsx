@@ -217,13 +217,13 @@ const NewScreen = () => (
     {/* Section 3: Display & UI */}
     <Card title="Display & UI" desc="Control what staff and customers see">
       <Grid2>
-        <TRow label="Show Popular Category" />
+        <TRow label="Show Popular Items" hint="Was: Show Popular Category — renamed" />
         <TRow label="Show Food Variance" />
         <TRow label="Show AC/Non-AC Menu" />
         <TRow label="Food Date Tracking" />
         <TRow label="Food Level Notes" />
-        <TRow label="Show App Banner" hint="Banner in customer app" isNew />
-        <TRow label="Category Box UI" hint="Category tiles on order screen" isNew />
+        {/* F1-07: is_banner — hidden, not used (pass-through only) */}
+        {/* F1-08: is_category_box — hidden, not used (pass-through only) */}
       </Grid2>
     </Card>
 
