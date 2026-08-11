@@ -12,16 +12,17 @@
 | Screen | Comparison Page | Owner Review |
 |---|---|---|
 | 1 — Basic Settings | `/screen1-compare` | ✅ LOCKED — F1-01..F1-09 |
-| 2 — Printer Setup | *(deferred — CR-133)* | ⏸ ON HOLD |
+| 2 — Printer Settings | `/screen2-compare` | ✅ LOCKED — 2026-08-11 (8 fields from settings-list API) |
 | 3 — Channels, Payments & Info | `/screen3-compare` | ✅ APPROVED — no changes |
 | 4 — Tax & Charges | `/screen4-compare` | ✅ APPROVED — no changes |
-| 5 — Order & Kitchen | `/screen5-compare` | ✅ APPROVED — no changes |
+| 5 — Order & Kitchen | `/screen5-compare` | ✅ APPROVED — printer fields MOVED to Step 2 |
 | 6 — Online Ordering | `/screen6-compare` | ✅ APPROVED — no changes |
-| 7 — Inventory | `/screen7-compare` | ✅ APPROVED — no changes |
-| 8 — Room & Hospitality | `/screen8-compare` | ✅ APPROVED — no changes |
-| **All screens (print)** | `/cr132-print` | Printable PDF — A4 landscape |
+| 7 — Aggregator | ~~`/screen7-compare`~~ | ❌ REMOVED from CR-132 — moved to CR-135 (Q1=A, 2026-08-11) |
+| 8 → **7** — Inventory | `/screen8-compare` | ✅ APPROVED — renumbered Step 7 |
+| 9 → **8** — Room & Hospitality | `/screen9-compare` | ✅ APPROVED — renumbered Step 8 |
+| **All screens (print)** | `/cr132-print` | Printable PDF |
 
-**DESIGN FREEZE — 2026-08-11. Gate 3 (Implementation Plan) can now proceed.**
+**DESIGN FREEZE — 2026-08-11. All screens locked. Gate 3 (Implementation Plan) unblocked.**
 
 ---
 
@@ -53,8 +54,8 @@ Following cross-CR analysis, all printer-related fields are consolidated under C
 
 | Field | Was in wizard | Now owned by |
 |---|---|---|
-| `advanced.billing_auto_bill_print` | Screen 5 Print section | CR-133 `auto_printing.auto_print_bill` |
-| `advanced.print_kot` | Screen 5 Print section | CR-133 `auto_printing.auto_print_kot` |
+| `advanced.billing_auto_bill_print` | **Step 2 (Printer Settings)** — MOVE from Screen 5. Both wizard + CR-133 write this; wizard via `update-settings`, CR-133 via `printer-agent-config` |
+| `advanced.print_kot` | **Step 2 (Printer Settings)** — MOVE from Screen 5. Same dual-write as above |
 | `basic.no_of_bill` | Screen 5 Print section | CR-133 `print_copies.bill_copy_count` |
 | `basic.no_of_kot` | Screen 5 Print section | CR-133 `print_copies.kot_copy_count` |
 | `basic.aggregator_auto_kot` | Screen 7 Aggregator | CR-133 `auto_printing.aggregator_auto_kot` |
@@ -146,20 +147,20 @@ Backend change only. FE receives S3 URL instead of preprod URL — already handl
 
 ---
 
-## Screen Architecture — Owner Approved (2026-08-09)
+## Screen Architecture — FINAL FROZEN 2026-08-11
 
-New wizard restructured from 6 steps → 8 steps (+ 1 conditional). Brainstormed and confirmed by owner over design review session.
+8-step wizard (Aggregator removed — moved to CR-135):
 
-| # | Screen | Required | Key fields |
-|---|---|---|---|
-| 1 | Basic Settings | Always | Identity, `phone_number_on_bill` *(F1-01)*, Operational Flags, Display & UI, CRM & Loyalty |
-| 2 | Channels, Payments & Info | Always | Channels, Payments, Online Payment/Channel, Contacts, Settlement, Feedback, Owner Info |
-| 3 | Tax & Charges | Always | GST (inc/exc), VAT, Service Charge (all), Other Charges |
-| 4 | Order & Kitchen | Always | Order Workflow, Kitchen Display, Scheduling |
-| 5 | Online Ordering | Always | Online Order, Scan, Confirm Order Tone |
-| 6 | Aggregator | Always | Auto KOT/Bill/Stage, Tones, Prep Time |
-| 7 | Inventory | Always | Tracking, Auto Accept, Alerts |
-| 8 | Room & Hospitality | Room=ON only (Screen 3) | Room settings, Guest Details, Booking Details, Billing by Employee |
+| Step | Screen | Required | Key fields | Decision |
+|---|---|---|---|---|
+| 1 | Basic Settings | Always | Identity, Operational Flags, Display & UI, CRM & Loyalty | Locked F1-01..F1-09 |
+| **2** | **Printer Settings** | Always | `print_kot`, `billing_auto_bill_print`, `no_of_bill`, `no_of_kot`, `printing_in_kds`, `print_bill_customer_copy`, `use_token`, `kot_language` | **NEW step — 2026-08-11. All printer settings-list fields here.** |
+| 3 | Channels, Payments & Info | Always | Channels, Payments, Online Payment/Channel, Contacts, Settlement, Feedback, Owner Info | `basic.phone` optional (Q3=B) |
+| 4 | Tax & Charges | Always | GST (inc/exc), VAT, Service Charge (all), Other Charges | — |
+| 5 | Order & Kitchen | Always | Order Workflow, Kitchen Display, Scheduling. **NOT printer fields** | `print_kot`/`billing_auto_bill_print` MOVED to Step 2 |
+| 6 | Online Ordering | Always | Online Order, Scan, Confirm Order Tone | — |
+| 7 | Inventory | Always | Tracking, Auto Accept, Alerts | Was Screen 8 — renumbered |
+| 8 | Room & Hospitality | Room=ON (Step 3) | Room settings, Guest, Booking, Billing Employee | Was Screen 9 — renumbered |
 
 ### Screen 1 — Confirmed Field List (post F1-01 → F1-05)
 ```
@@ -390,20 +391,20 @@ All fields that need changes to `restaurantSettingsTransform.js` and `Restaurant
 | `takeaway_charges` | `takeawayCharges` | step3 | int | `parseInt(basic.takeaway_charges) \|\| 0` |
 | `service_chrg_taxt` | `serviceChrgTaxt` | step3 | str | `basic.service_chrg_taxt \|\| 'Service Charge'` |
 | `deliver_charge_gst` | `deliverChargeGst` | step3 | float | `parseFloat(basic.deliver_charge_gst) \|\| 0` |
-| `print_bill_customer_copy` | `printBillCustomerCopy` | step4 | bool | `toBool(basic.print_bill_customer_copy)` |
-| `kot_language` | `kotLanguage` | step4 | str | `basic.kot_language \|\| 'English'` |
-| `locationSelection` | `locationSelection` | step4 | str | `basic.locationSelection \|\| 'scanner'` |
-| `order_auto_serve` | `orderAutoServe` | step4 | bool | `toBool(basic.order_auto_serve)` |
+| `print_bill_customer_copy` | `printBillCustomerCopy` | **step2 (printer)** | bool | `toBool(basic.print_bill_customer_copy)` |
+| `kot_language` | `kotLanguage` | **step2 (printer)** | str | `basic.kot_language \|\| 'English'` |
+| `locationSelection` | `locationSelection` | step5 | str | `basic.locationSelection \|\| 'scanner'` |
+| `order_auto_serve` | `orderAutoServe` | step5 | bool | `toBool(basic.order_auto_serve)` |
 | `aggregator_order_tone` | `aggregatorOrderTone` | step4 | str | `basic.aggregator_order_tone \|\| 'buzzer'` |
-| `use_token` | `useToken` | step4 | bool | `toBool(basic.use_token)` |
+| `use_token` | `useToken` | **step2 (printer)** | bool | `toBool(basic.use_token)` |
 | `aggregator_auto_kot` | `aggregatorAutoKot` | step4 | bool | `toBool(basic.aggregator_auto_kot)` |
 | `aggregator_auto_bill` | `aggregatorAutoBill` | step4 | bool | `toBool(basic.aggregator_auto_bill)` |
 | `aggregator_auto_bill_stage` | `aggregatorAutoBillStage` | step4 | str | `basic.aggregator_auto_bill_stage \|\| 'Ready'` |
 | `confirm_order_tone` | `confirmOrderTone` | step4 | str | `basic.confirm_order_tone \|\| 'default'` |
 | `confirm_order_show_tab` | `confirmOrderShowTab` | step4 | bool | `toBool(basic.confirm_order_show_tab)` |
-| `no_of_kot` | `noOfKot` | step4 | str | `basic.no_of_kot \|\| '1'` |
-| `no_of_bill` | `noOfBill` | step4 | str | `basic.no_of_bill \|\| '1'` |
-| `printing_in_kds` | `printingInKds` | step4 | bool | `toBool(basic.printing_in_kds)` |
+| `no_of_kot` | `noOfKot` | **step2 (printer)** | str | `basic.no_of_kot \|\| '1'` |
+| `no_of_bill` | `noOfBill` | **step2 (printer)** | str | `basic.no_of_bill \|\| '1'` |
+| `printing_in_kds` | `printingInKds` | **step2 (printer)** | bool | `toBool(basic.printing_in_kds)` |
 | `schedule_order` | `scheduleOrder` | step4 | bool | `toBool(basic.schedule_order)` |
 | `default_prep_time` | `defaultPrepTime` | step4 | int | `parseInt(basic.default_prep_time) \|\| 15` |
 | `prep_time_count_method` | `prepTimeCountMethod` | step4 | str | `basic.prep_time_count_method \|\| 'quantity'` |

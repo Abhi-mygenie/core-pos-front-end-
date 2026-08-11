@@ -43,7 +43,7 @@ const FakeInput = ({label,placeholder,isNew,hint,suffix}) => (
 const Grid2 = ({children}) => <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 20px'}}>{children}</div>;
 const InfoBox = ({color,bg,text}) => <div style={{background:bg,border:`1px solid ${color}30`,borderRadius:8,padding:'8px 14px',marginBottom:16,fontSize:11,color,fontWeight:600}}>{text}</div>;
 
-const NEW_STEPS = ['Basic Settings','⏸ Printer Setup','Channels & Info','Tax & Charges','Order & Kitchen','Online Ordering','Aggregator','Inventory','Room & Hospitality'];
+const NEW_STEPS = ['Basic Settings','Printer Settings','Channels & Info','Tax & Charges','Order & Kitchen','Online Ordering','Inventory','Room & Hospitality'];
 const OLD_STEPS = ['Restaurant Identity','Channels & Payments','Charges & Tips','Order & Kitchen','Inventory & Extras','Owner Info'];
 
 const Sidebar = ({steps,active,label,small}) => (
@@ -92,8 +92,6 @@ const NewScreen = ({highlight}) => (
   <div style={{flex:1,overflowY:'auto',padding:'16px 20px 80px'}}>
     <Card title="Order Workflow" desc="How orders flow from placement to kitchen">
       <Grid2>
-        <TRow label="Print KOT" hint="Print KOT on order placement" highlight={highlight}/>
-        <TRow label="Auto Print Bill" hint="Print bill after payment" highlight={highlight}/>
         <TRow label="Cancel After Serve" highlight={highlight}/>
         <TRow label="Order Auto Serve" isNew hint="Auto-serve items when kitchen marks ready" highlight={highlight}/>
         <TRow label="Schedule Orders" isNew hint="Enable future scheduled orders" highlight={highlight}/>
@@ -101,26 +99,27 @@ const NewScreen = ({highlight}) => (
       <TRow label="Serve Item Display" type="select" options={['Dynamic','Static']} highlight={highlight}/>
     </Card>
 
-    <Card title="Kitchen Display (KDS)" desc="Voice and real-time settings">
+    <Card title="Kitchen Display (KDS)" desc="Voice and real-time status settings">
       <Grid2>
         <TRow label="Voice in KDS" hint="Voice announcements on KDS" highlight={highlight}/>
         <TRow label="Real-Time Order Status" hint="Live updates on dashboard" highlight={highlight}/>
-        <TRow label="KOT Language" isNew hint="Language on printed KOTs" highlight={highlight}/>
-        <TRow label="Token Number on KOT/Bill" isNew hint="Print token number on all prints" highlight={highlight}/>
       </Grid2>
     </Card>
 
-    <Card title="Scanner & Location" desc="QR scan and order-source settings" accent>
-      <TRow label="Show Scan Pop Up" hint="Scan popup on dashboard" highlight={highlight}/>
-      <TRow label="Scanner Location" isNew type="select" options={['Scanner (QR)','Manual','Both']} highlight={highlight}/>
+    <Card title="Confirmations & Pop-ups" desc="Online order confirmation and scan settings" accent>
+      <TRow label="Confirm Web Orders" hint="Require manual confirmation for online/web orders" highlight={highlight}/>
+      <TRow label="Show Scan Pop Up" hint="Show scan popup on dashboard for QR orders" highlight={highlight}/>
+      <TRow label="Show Confirm Order Tab" isNew hint="Dedicated tab in order screen for confirmation" highlight={highlight}/>
+      <TRow label="Confirm Order Tone" isNew type="select" options={['Default','Buzzer','Chime','Silent']} hint="Sound played when a new online order arrives" highlight={highlight}/>
+      <TRow label="Location Selection" isNew type="select" options={['Scanner (QR)','Manual']} hint="How table/location is identified on order" highlight={highlight}/>
     </Card>
 
-    <Card title="Scheduling & Prep Time" desc="Scheduled orders and kitchen prep time" allNew>
-      <FakeInput label="Default Prep Time (min)" isNew placeholder="15" hint="Default time for kitchen preparation" suffix="min"/>
-      <Grid2>
-        <TRow label="Prep Time Count Method" isNew type="select" options={['By Quantity','By Time']} highlight={highlight}/>
-        <TRow label="Auto Acknowledge Prep Time" isNew hint="Auto-confirm prep time on accept" highlight={highlight}/>
-      </Grid2>
+    <Card title="Search By" desc="Fields staff can use to search for orders">
+      <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+        {['Order ID','Table No','Phone No','User ID'].map(o=>(
+          <div key={o} style={{padding:'5px 14px',borderRadius:20,background:'rgba(50,153,55,0.08)',border:'2px solid rgba(50,153,55,0.3)',fontSize:11,fontWeight:600,color:'#329937'}}>{o}</div>
+        ))}
+      </div>
     </Card>
   </div>
 );
@@ -163,7 +162,7 @@ export default function Screen5ComparisonPage() {
           <div style={{background:C.orange,color:'#fff',padding:'8px 20px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
             <span style={{fontSize:10,fontWeight:700,background:'rgba(255,255,255,0.25)',padding:'2px 8px',borderRadius:99}}>PROPOSED</span>
             <span style={{fontSize:13,fontWeight:600}}>Screen 5: Order & Kitchen</span>
-            <span style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,0.75)'}}>4 cards · 9 steps total</span>
+            <span style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,0.75)'}}>4 sections · 8 steps total</span>
           </div>
           <div style={{display:'flex',flex:1,overflow:'hidden',background:C.bg}}>
             <Sidebar steps={NEW_STEPS} active={4} label="NEW WIZARD"/>

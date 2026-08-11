@@ -54,6 +54,7 @@ import SettlementMockup from "./pages/SettlementMockup";
 import RestaurantSettingsPage from "./pages/RestaurantSettingsPage";
 import SettingsPreviewPage from "./pages/SettingsPreviewPage"; // CR-132 design preview
 import Screen1ComparisonPage from "./pages/Screen1ComparisonPage"; // CR-132 Screen 1 comparison
+import Screen2ComparisonPage from "./pages/Screen2ComparisonPage"; // CR-132 Screen 2 — Printer Settings
 import Screen3ComparisonPage from "./pages/Screen3ComparisonPage"; // CR-132 Screen 3 comparison
 import Screen4ComparisonPage from "./pages/Screen4ComparisonPage"; // CR-132 Screen 4 comparison
 import Screen5ComparisonPage from "./pages/Screen5ComparisonPage"; // CR-132 Screen 5 comparison
@@ -186,6 +187,7 @@ function App() {
               <Route path="/restaurant-settings" element={<ProtectedRoute><RestaurantSettingsPage /></ProtectedRoute>} />
               <Route path="/settings-preview" element={<SettingsPreviewPage />} />
               <Route path="/screen1-compare" element={<Screen1ComparisonPage />} />
+              <Route path="/screen2-compare" element={<Screen2ComparisonPage />} />
               <Route path="/screen3-compare" element={<Screen3ComparisonPage />} />
               <Route path="/screen4-compare" element={<Screen4ComparisonPage />} />
               <Route path="/screen5-compare" element={<Screen5ComparisonPage />} />

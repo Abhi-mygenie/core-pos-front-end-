@@ -94,7 +94,7 @@ const PayChip = ({ label, selected }) => (
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 const OLD_STEPS = ['Restaurant Identity', 'Channels & Payments', 'Charges & Tips', 'Order & Kitchen', 'Inventory & Extras', 'Owner Info'];
-const NEW_STEPS = ['Basic Settings', '⏸ Printer Setup', 'Channels & Info', 'Tax & Charges', 'Order & Kitchen', 'Online Ordering', 'Aggregator', 'Inventory', 'Room & Hospitality'];
+const NEW_STEPS = ['Basic Settings', 'Printer Settings', 'Channels & Info', 'Tax & Charges', 'Order & Kitchen', 'Online Ordering', 'Inventory', 'Room & Hospitality'];
 
 const Sidebar = ({ steps, active, label }) => (
   <div style={{ width: 176, background: C.white, borderRight: `1px solid ${C.border}`, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>

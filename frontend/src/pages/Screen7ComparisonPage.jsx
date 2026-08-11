@@ -40,7 +40,7 @@ const FakeInput = ({label,placeholder,isNew,hint,suffix}) => (
 const Grid2 = ({children}) => <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 20px'}}>{children}</div>;
 const InfoBox = ({color,bg,text}) => <div style={{background:bg,border:`1px solid ${color}30`,borderRadius:8,padding:'8px 14px',marginBottom:16,fontSize:11,color,fontWeight:600}}>{text}</div>;
 
-const NEW_STEPS = ['Basic Settings','⏸ Printer Setup','Channels & Info','Tax & Charges','Order & Kitchen','Online Ordering','Aggregator','Inventory','Room & Hospitality'];
+const NEW_STEPS = ['Basic Settings','Printer Settings','Channels & Info','Tax & Charges','Order & Kitchen','Online Ordering','Inventory','Room & Hospitality'];
 const OLD_STEPS = ['Restaurant Identity','Channels & Payments','Charges & Tips','Order & Kitchen','Inventory & Extras','Owner Info'];
 
 const Sidebar = ({steps,active,label}) => (
