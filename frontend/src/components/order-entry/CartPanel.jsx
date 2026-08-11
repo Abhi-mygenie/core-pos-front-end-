@@ -381,12 +381,15 @@ const QsrBillingSection = ({
   );
 
   // Tax
+  // BUG-304: split discountable vs non-discountable GST/VAT (mirrors CPP E1)
   const taxTotals = useMemo(() => {
     let sgst = 0, cgst = 0, vat = 0;
+    let dSgst = 0, dCgst = 0, dVat = 0; // BUG-304: discountable-only buckets
     billableItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
       const linePrice = getItemLinePrice(item);
+      const isDiscountable = item.giveDiscount !== false; // BUG-304
       let taxAmt;
       if (tax.isInclusive) {
         taxAmt = linePrice - (linePrice / (1 + tax.percentage / 100));
@@ -394,13 +397,17 @@ const QsrBillingSection = ({
         taxAmt = linePrice * (tax.percentage / 100);
       }
       if ((tax.type || 'GST').toUpperCase() === 'GST') {
-        sgst += taxAmt / 2;
-        cgst += taxAmt / 2;
+        sgst += taxAmt / 2; cgst += taxAmt / 2;
+        if (isDiscountable) { dSgst += taxAmt / 2; dCgst += taxAmt / 2; } // BUG-304
       } else if ((tax.type || '').toUpperCase() === 'VAT') {
         vat += taxAmt;
+        if (isDiscountable) { dVat += taxAmt; } // BUG-304
       }
     });
-    return { sgst: Math.round(sgst * 100) / 100, cgst: Math.round(cgst * 100) / 100, vat: Math.round(vat * 100) / 100 };
+    return {
+      sgst: Math.round(sgst * 100) / 100, cgst: Math.round(cgst * 100) / 100, vat: Math.round(vat * 100) / 100,
+      dSgst: Math.round(dSgst * 100) / 100, dCgst: Math.round(dCgst * 100) / 100, dVat: Math.round(dVat * 100) / 100, // BUG-304
+    };
   }, [billableItems]);
 
   // Discount
@@ -422,15 +429,19 @@ const QsrBillingSection = ({
   const serviceCharge = scApplicable ? Math.round(subtotalAfterDiscount * scPct / 100 * 100) / 100 : 0;
 
   // GST on components
-  const discountRatio = itemTotal > 0 ? totalDiscount / itemTotal : 0;
-  const itemGstPostDiscount = (taxTotals.sgst + taxTotals.cgst) * (1 - discountRatio);
+  // BUG-304: use discountableTotal as denominator; only discount-eligible items' GST/VAT reduced
+  const discountableRatio = discountableTotal > 0 ? totalDiscount / discountableTotal : 0;
+  const itemGstPostDiscount =
+    (taxTotals.dSgst + taxTotals.dCgst) * (1 - discountableRatio)
+    + (taxTotals.sgst - taxTotals.dSgst) + (taxTotals.cgst - taxTotals.dCgst); // BUG-304
   const scGst = serviceCharge * scTaxRate;
   const tipGst = tip * scTaxRate;
   const deliveryGst = deliveryCharge * delTaxRate;
   const totalGst = itemGstPostDiscount + scGst + tipGst + deliveryGst;
   const sgst = Math.round((totalGst / 2) * 100) / 100;
   const cgst = Math.round((totalGst / 2) * 100) / 100;
-  const vatAmount = taxTotals.vat * (1 - discountRatio);
+  const vatAmount = taxTotals.dVat * (1 - discountableRatio)
+                  + (taxTotals.vat - taxTotals.dVat); // BUG-304
 
   const subtotal = Math.round((subtotalAfterDiscount + serviceCharge + tip + deliveryCharge) * 100) / 100;
   const rawFinalTotal = Math.round((subtotal + sgst + cgst + vatAmount) * 100) / 100;

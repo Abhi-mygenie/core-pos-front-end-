@@ -402,7 +402,7 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | Bug ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
 | **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **INTAKE** | 1 ✅ | 1 file `PLReportPage.jsx:83`. Fast Lane eligible. DISTINCT from BUG-258/259/260/261. Intake: `change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md`. |
-| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **GATE 3 COMPLETE — AWAITING GATE 4 GO** | 1-3 ✅ | 4 edits (E1-E4): CPP taxTotals split + discountableRatio + GST fix + VAT fix; CartPanel same. OD-1/2/3 YES, OD-4 BUG-304-B. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
+| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **IMPLEMENTED — AWAITING QA** | 1-5a ✅ | E1: CPP taxTotals split (dSgst/dCgst/dVat). E2: CPP discountableRatio + itemGstPostDiscount + vat. E3: CartPanel taxTotals split. E4: CartPanel discountableRatio + itemGstPostDiscount + vatAmount. 9 BUG-304 markers in each file. Compile PASS 0 new warnings. EXIT GATE 5/5. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
 
 ---
 

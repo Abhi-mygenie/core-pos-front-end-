@@ -23,6 +23,7 @@
 | `pages/DashboardPage.jsx` | 1975 | Orchestration boundary, cartsByTable, stay-on-order | PROD-HOTFIX-004 agent (2026-05-27) |
 | `components/order-entry/OrderEntry.jsx` | 2493 | Transactional workflow, customer modal, CRM intel | CR-037 agent (2026-06-13) — Popular tab removed |
 | `components/order-entry/CollectPaymentPanel.jsx` | 3050 | Final settlement, payment status, financial logic | CR-021 agent (2026-06-10) |
+| `components/order-entry/CollectPaymentPanel.jsx` | BUG-304: E1 taxTotals split (dSgst/dCgst/dVat buckets) + E2 discountableRatio + itemGstPostDiscount + vat fix | BUG-304 IMPL 2026-08-11 |
 | `components/modals/RoomCheckInModal.jsx` | 1362 | Room workflow, advance payment | POS 3.0 era |
 | `pages/StatusConfigPage.jsx` | 1561 | Visibility settings, QSR toggles, auto-settle | CR-024 agent (2026-06-10) |
 | `api/transforms/orderTransform.js` | 1916 | Financial payload builders, rider fields, discount payload | CR-025 agent (2026-06-10) |
@@ -109,6 +110,7 @@
 | `api/services/paymentLinkService.js` | NEW — Razorpay payment link API | CR-017 agent |
 | `components/order/OrderCard.jsx` | +WhatsApp button, +POS YTC Cancel (BUG-122 post) | CR-017/BUG-122 agent |
 | `components/order-entry/CartPanel.jsx` | +Schedule checkbox, schedule_at fix (BUG-122 post) | CR-018/BUG-122 agent |
+| `components/order-entry/CartPanel.jsx` | BUG-304: E3 taxTotals split (dSgst/dCgst/dVat) + E4 discountableRatio + itemGstPostDiscount + vatAmount fix | BUG-304 IMPL 2026-08-11 |
 | `components/order/TableCard.jsx` | +Snooze web-gate (BUG-122 post) | BUG-122 agent |
 | `pages/ScanOrderPopOut.jsx` | +isWebOrder gate | BUG-122 agent |
 | `pages/RestaurantSettingsPage.jsx` | NEW — 6-step wizard | CR-019 agent |

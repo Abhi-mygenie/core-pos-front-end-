@@ -243,13 +243,16 @@ const CollectPaymentPanel = ({
   // BUG-018 Part 2 (Apr-2026): iterate `billableItems` so complimentary lines are
   // carved out of the tax base. (CR-013 May-2026: SC/Tip/Delivery GST no longer
   // use the item-blended `avgGstRate`; they pull from per-component profile pcts.
-  // Item GST proration via `discountRatio` still uses billableItems-derived totals.)
+  // BUG-304: taxTotals splits discountable vs non-discountable GST/VAT so
+  // itemGstPostDiscount only reduces the discountable portion.
   const taxTotals = useMemo(() => {
     let sgst = 0, cgst = 0, vat = 0;
+    let dSgst = 0, dCgst = 0, dVat = 0; // BUG-304: discountable-only buckets
     billableItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
       const linePrice = getItemLinePrice(item);
+      const isDiscountable = item.giveDiscount !== false; // BUG-304
       let taxAmt;
       if (tax.isInclusive) {
         taxAmt = linePrice - (linePrice / (1 + tax.percentage / 100));
@@ -258,18 +261,22 @@ const CollectPaymentPanel = ({
       }
       // Split into SGST + CGST for GST type (India dine-in)
       if ((tax.type || 'GST').toUpperCase() === 'GST') {
-        sgst += taxAmt / 2;
-        cgst += taxAmt / 2;
+        sgst += taxAmt / 2; cgst += taxAmt / 2;
+        if (isDiscountable) { dSgst += taxAmt / 2; dCgst += taxAmt / 2; } // BUG-304
       } else if ((tax.type || '').toUpperCase() === 'VAT') {
         // VAT items: full taxAmt accumulates into single VAT bucket
         // (no SGST/CGST half-split). See VAT_FIX_IMPLEMENTATION_HANDOVER.md.
         vat += taxAmt;
+        if (isDiscountable) { dVat += taxAmt; } // BUG-304
       }
     });
     return {
       sgst: Math.round(sgst * 100) / 100,
       cgst: Math.round(cgst * 100) / 100,
       vat:  Math.round(vat  * 100) / 100,
+      dSgst: Math.round(dSgst * 100) / 100, // BUG-304: discountable portion only
+      dCgst: Math.round(dCgst * 100) / 100,
+      dVat:  Math.round(dVat  * 100) / 100,
     };
   }, [billableItems]);
 
@@ -602,11 +609,15 @@ const CollectPaymentPanel = ({
   //      "correct, coz it's bug" — instant cut-over to per-config rates.
   //   Pre-CR-013: SC/Tip/Delivery used `avgGstRate` (item-blended) which
   //   over-taxed high-item-GST carts and ignored configured rates entirely.
-  const discountRatio = itemTotal > 0 ? totalDiscount / itemTotal : 0;
-  const scTaxRate     = (restaurant?.serviceChargeTaxPct  || 0) / 100;
-  const delTaxRate    = (restaurant?.deliveryChargeGstPct || 0) / 100;
+  // BUG-304: use discountableTotal as denominator; only discount-eligible items' GST reduced
+  const discountableRatio = discountableTotal > 0 ? totalDiscount / discountableTotal : 0;
+  const scTaxRate         = (restaurant?.serviceChargeTaxPct  || 0) / 100;
+  const delTaxRate        = (restaurant?.deliveryChargeGstPct || 0) / 100;
 
-  const itemGstPostDiscount = (taxTotals.sgst + taxTotals.cgst) * (1 - discountRatio);
+  // BUG-304: discountable GST reduced by ratio; non-discountable GST unchanged
+  const itemGstPostDiscount =
+    (taxTotals.dSgst + taxTotals.dCgst) * (1 - discountableRatio)
+    + (taxTotals.sgst - taxTotals.dSgst) + (taxTotals.cgst - taxTotals.dCgst);
   const scGst               = serviceCharge  * scTaxRate;
   const tipGst              = tip            * scTaxRate;
   const deliveryGst         = deliveryCharge * delTaxRate;
@@ -647,7 +658,9 @@ const CollectPaymentPanel = ({
 
   // BUG-054: VAT proration mirrors GST (frozen TAX-003).
   // SC / Tip / Delivery tax math intentionally untouched per owner decision.
-  const vat = taxTotals.vat * (1 - discountRatio);
+  // BUG-304: same split for VAT — non-discountable items' VAT unchanged (OD-2 confirmed)
+  const vat = taxTotals.dVat * (1 - discountableRatio)
+            + (taxTotals.vat - taxTotals.dVat);
 
   const rawFinalTotal = Math.round((subtotal + sgst + cgst + vat) * 100) / 100;
 

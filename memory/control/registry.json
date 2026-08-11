@@ -18767,7 +18767,7 @@
       "id": "BUG-304",
       "type": "BUG",
       "title": "Item-Level Discount \u2014 discountRatio uses itemTotal (not discountableTotal), GST/VAT wrong for non-discountable items",
-      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO + IMPLEMENTATION",
+      "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_1",
@@ -18782,7 +18782,8 @@
       "artifact_refs": {
         "intake": "change_requests/BUG-304_ITEM_DISCOUNT_GST_DISCOUNTRATIO_WRONG_DENOMINATOR_INTAKE.md",
         "impact_analysis": "impact/BUG-304_IMPACT_ANALYSIS.md",
-        "implementation_plan": "plans/BUG-304_IMPLEMENTATION_PLAN.md"
+        "implementation_plan": "plans/BUG-304_IMPLEMENTATION_PLAN.md",
+        "qa_report": "test_reports/iteration_11.json"
       },
       "notes": "Gate 3 complete 2026-08-11. 4 edits (E1-E4): E1+E2 in CollectPaymentPanel, E3+E4 in CartPanel. Fix: split taxTotals into dSgst/dCgst/dVat buckets, apply discountableRatio only to discountable portion. Owner OD-1/2/3/4 all locked. orderTransform parked as BUG-304-B."
     }
