@@ -1,0 +1,36 @@
+{
+  "summary": "BUG-305 QA Role 4 — Browser regression + cross-flow tests. All V11/V12/V13/R1/R2 flows PASS. Registry spot-check PASS. T1-T9 code checks confirmed PASS from iteration_12 (not repeated per instructions).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "V11_app_loads_order_entry": "PASS — Login with owner@cafe103.com successful, dashboard loaded with tables, OrderEntry opened for Table C2 (and Table 103/Walk-in confirmed). No JS errors detected.",
+    "V12_all_discountable_with_discount": "PASS — Cart: Chilli mushroom Gravy (₹350) + Extra Bhatura (₹50) = ₹400. Applied 10% discount. CGST=₹9, SGST=₹9. Grand Total=₹378. No NaN. Math identity confirmed: all-discountable path = original formula.",
+    "V13_no_discount": "PASS — Same 2 items, no discount. CGST=₹10, SGST=₹10, Grand Total=₹420 (subtotal ₹400 + GST ₹20). No NaN.",
+    "R1_place_order_collect_bill": "PASS — Added items to C2, Collect Bill panel opened successfully. Item list correct, subtotal ₹400, CGST ₹10, SGST ₹10, Grand Total ₹420. No crash, no NaN.",
+    "R2_collect_bill_zero_discount": "PASS — Collect Bill with NO discount: CGST=₹10, SGST=₹10 (non-zero). Grand Total = ₹400 + ₹20 = ₹420. discountableRatio=0 path is safe.",
+    "registry_spot_check": "PASS — BUG-305 status = 'IMPLEMENTED — QA PASS (Gate 5b)', sprint_key = pos_5_1. BUG-304 status = 'IMPLEMENTED — QA PASS (Gate 5b)'."
+  },
+  "math_verification": {
+    "no_discount": "Items=₹400, GST(5%)=₹20, CGST=₹10, SGST=₹10, Total=₹420 ✓",
+    "10pct_discount": "Items=₹400, Discount=-₹40, Post-discount=₹360, GST(5% on 360)=₹18, CGST=₹9, SGST=₹9, Total=₹378 ✓",
+    "discountable_ratio_note": "All items are discountable in cafe103 → discountableSubtotal=subtotal → discountableRatio=discountAmount/subtotal (same as old discountRatio). Math identity confirmed — no visible change for all-discountable cart."
+  },
+  "code_checks_reference": "T1-T9 all PASS per iteration_12 (confirmed, not repeated)",
+  "test_report_links": ["/app/test_reports/iteration_13.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "Created fresh orders on Table C2 for testing (not persisted — browser session only)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-305 fully verified. All code checks (T1-T9) and browser regression (V11-V13, R1, R2) PASS. Registry shows BUG-305 and BUG-304 both 'IMPLEMENTED — QA PASS (Gate 5b)'. Non-discountable item path cannot be tested in browser (cafe103 has no give_discount=false items) — fix verified by code inspection in iteration_12. The Collect Bill button on OLD existing orders (Table 103, Walk-in) is disabled by the app — only enabled when new items are in cart. This is expected UX behavior.",
+  "rca_of_issue": "BUG-305: orderTransform.js was using full subtotal as denominator for discountRatio instead of discountableSubtotal, causing inflated GST reduction for non-discountable items. Fix: E1 adds _giveDiscount flag to cart items; E2 splits calcOrderTotals to track discountableSubtotal/Gst/Vat separately and compute discountableRatio; E3 mirrors the same split in buildBillPrintPayload. For cafe103 (all items discountable), new formula = old formula (math identity), confirming no regression."
+}

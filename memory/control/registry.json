@@ -18814,7 +18814,8 @@
         "impact_analysis": "impact/BUG-305_IMPACT_ANALYSIS.md",
         "implementation_plan": "plans/BUG-305_IMPLEMENTATION_PLAN.md",
         "qa_handover": "handover/QA_HANDOVER_BUG305_2026_08_11.md",
-        "qa_report": "test_reports/iteration_12.json"
+        "qa_report": "test_reports/iteration_12.json",
+        "qa_report_formal": "test_reports/QA_REPORT_BUG305_2026_08_11.md"
       },
       "notes": "Gate 2 complete 2026-08-11. Fix is ENTIRELY in orderTransform.js (1 file, 3 functions). Intake overestimated blast radius (5 files \u2192 1 file). buildCartItem adds _giveDiscount marker; calcOrderTotals splits discountableGst; buildBillPrintPayload uses food_details.give_discount. Only Caller 3 (collectBillExisting) is affected in calcOrderTotals. All ODs resolved by analysis. No caller changes needed."
     }
