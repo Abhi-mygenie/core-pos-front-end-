@@ -32,7 +32,17 @@ export default function AggregatorSetupView() {
         setConfigState(aggregatorConfigTransform.fromAPI.config(res));
         setDirty(false);
       })
-      .catch(err => setError(err?.message || 'Failed to load configuration'))
+      .catch(err => {
+        // BUG-306: treat 404 OR ERR_NETWORK (endpoint unreachable/not enabled for this restaurant)
+        // as empty/new config — per CR-135 findOrEmptyConfig spec
+        const isNoConfig = err?.response?.status === 404 || !err?.response;
+        if (isNoConfig) {
+          setConfigState(aggregatorConfigTransform.fromAPI.config({}));
+          setDirty(false);
+        } else {
+          setError(err?.readableMessage || err?.message || 'Failed to load configuration');
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 

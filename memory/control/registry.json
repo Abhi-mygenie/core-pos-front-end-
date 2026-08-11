@@ -18818,6 +18818,47 @@
         "qa_report_formal": "test_reports/QA_REPORT_BUG305_2026_08_11.md"
       },
       "notes": "Gate 2 complete 2026-08-11. Fix is ENTIRELY in orderTransform.js (1 file, 3 functions). Intake overestimated blast radius (5 files \u2192 1 file). buildCartItem adds _giveDiscount marker; calcOrderTotals splits discountableGst; buildBillPrintPayload uses food_details.give_discount. Only Caller 3 (collectBillExisting) is affected in calcOrderTotals. All ODs resolved by analysis. No caller changes needed."
+    },
+    {
+      "id": "BUG-306",
+      "type": "BUG",
+      "title": "Aggregator Setup shows Network Error instead of empty form when GET returns 404 (unregistered restaurant)",
+      "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_5_1",
+      "area": "Settings \u2192 Aggregator Setup",
+      "files_affected": [
+        "src/components/settings/aggregatorSetup/AggregatorSetupView.jsx"
+      ],
+      "related_to": "CR-135",
+      "fast_lane_eligible": true,
+      "artifact_refs": {
+        "investigation": "investigation/CR135_TONE_TIMING_INVESTIGATION_2026_08_11.md",
+        "qa_report": "test_reports/iteration_15.json"
+      },
+      "notes": "loadConfig() catch treats 404 as error. Should treat 404 as empty config (per CR-135 design: findOrEmptyConfig). 1-line fix in catch handler."
+    },
+    {
+      "id": "BUG-307",
+      "type": "BUG",
+      "title": "Aggregator Setup: tone_timing field not mapped in UI \u2014 cannot be read or set from ConfigTab",
+      "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+      "priority": "P1",
+      "risk": "LOW",
+      "sprint_key": "pos_5_1",
+      "area": "Settings \u2192 Aggregator Setup \u2192 Config Tab",
+      "files_affected": [
+        "src/api/transforms/aggregatorConfigTransform.js",
+        "src/components/settings/aggregatorSetup/ConfigTab.jsx"
+      ],
+      "related_to": "CR-135",
+      "fast_lane_eligible": false,
+      "artifact_refs": {
+        "investigation": "investigation/CR135_TONE_TIMING_INVESTIGATION_2026_08_11.md",
+        "qa_report": "test_reports/iteration_15.json"
+      },
+      "notes": "tone_timing (integer seconds) present in API but not mapped in fromAPI or shown in UI. Pass-through via _raw preserves existing values but cannot set new value. Fix: add toneTiming to fromAPI + add to toAPI explicitly + add NumInput in ConfigTab."
     }
   ],
   "meta": {

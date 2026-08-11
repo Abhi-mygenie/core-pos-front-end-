@@ -319,6 +319,25 @@ export default function ConfigTab({
         )}
       </Card>
 
+      {/* ── Notification Tone Duration — BUG-307: tone_timing ─────────────────── */}
+      <Card title="Notification Settings" desc="Audio alert duration for incoming aggregator orders">
+        <Field label="Tone Duration (seconds)">
+          <div style={{ fontSize: 10, color: COLORS.grayText, marginBottom: 6 }}>
+            How long the order notification tone plays (e.g. 45 = 45 seconds). Leave empty to use platform default.
+          </div>
+          <input
+            data-testid="tone-timing-input"
+            type="number"
+            min={0}
+            max={300}
+            value={configState.toneTiming ?? ''}
+            placeholder="e.g. 45"
+            onChange={e => updateField('toneTiming', e.target.value === '' ? null : parseInt(e.target.value) || null)}
+            style={{ width: '100%', fontSize: 11, padding: '7px 10px', border: `1px solid ${COLORS.borderGray}`, borderRadius: 8, background: '#fff', color: COLORS.darkText, boxSizing: 'border-box' }}
+          />
+        </Field>
+      </Card>
+
       {/* ── Platform Status (OD-20: toggle=display only, button=action) ─────── */}
       <Card title="Platform Status" desc="Control whether this brand is accepting orders on each platform" accent>
         <div style={{ background: '#FFFBEB', border: '1px solid #D9770630', borderRadius: 8, padding: '8px 12px', fontSize: 10, color: '#D97706', fontWeight: 600, marginBottom: 12 }}>

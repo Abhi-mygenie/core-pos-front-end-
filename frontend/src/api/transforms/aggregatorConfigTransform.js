@@ -39,6 +39,7 @@ export const aggregatorConfigTransform = {
         swiggiUrl:    d.swiggi_url  || '',   // ⚠️ typo preserved
         zomatoStatus: d.zomato_status  === 'Yes',  // null → false for new brand ✅
         swiggyStatus: d.swiggy_status  === 'Yes',  // ⚠️ correct spelling; null → false ✅
+        toneTiming:   d.tone_timing != null ? parseInt(d.tone_timing) : null, // BUG-307: explicit mapping
         // Excluded from UI (OD-16/17/18): auto_aknowledge, auto_kot_id, notification_number
       };
     },
@@ -82,6 +83,7 @@ export const aggregatorConfigTransform = {
       swiggi_url:    state.swiggiUrl,    // ⚠️ typo preserved
       zomato_status: state.zomatoStatus ? 'Yes' : 'No',
       swiggy_status: state.swiggyStatus ? 'Yes' : 'No',  // ⚠️ correct spelling
+      tone_timing:   state.toneTiming ?? null, // BUG-307: explicit override so UI value takes precedence over _raw
       ...(state.clientId ? { client_id: state.clientId } : {}),
     }),
   },

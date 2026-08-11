@@ -1,0 +1,42 @@
+{
+  "summary": "Tested BUG-306 and BUG-307 fixes on /aggregator/setup. BUG-306 fix is INCOMPLETE — the code handles 404 but the actual error from preprod is ERR_NETWORK (no HTTP response at all). Both thegoankitchen.com and cafe103.com show the red 'config-error' banner with 'Cannot reach server. Check your internet connection.' BUG-307 cannot be fully tested because config-tab never renders (blocked by BUG-306 error). Operational Settings tab works correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AggregatorSetupView.jsx",
+        "issue": "BUG-306 fix INCOMPLETE: loadConfig() catch only handles err?.response?.status === 404 but the actual preprod error is ERR_NETWORK (err.response is undefined). 'config-error' banner still shows 'Cannot reach server. Check your internet connection.' for both test accounts.",
+        "selector": "[data-testid='config-error']",
+        "priority": "CRITICAL"
+      },
+      {
+        "component": "ConfigTab.jsx",
+        "issue": "BUG-307: tone-timing-input NOT visible because config-tab never renders (blocked by BUG-306 unresolved error). Code is correctly implemented at lines 322-338 but never reaches the user.",
+        "selector": "[data-testid='tone-timing-input']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "BUG-306 FIX NEEDED: In AggregatorSetupView.jsx catch block, also treat !err.response (ERR_NETWORK / no HTTP response) as empty config, not just err?.response?.status === 404. Proposed fix: if (err?.response?.status === 404 || !err?.response) { setConfigState(aggregatorConfigTransform.fromAPI.config({})); setDirty(false); } else { setError(...) }",
+    "BUG-307 will be testable once BUG-306 is fixed. Code looks correct in ConfigTab.jsx lines 322-338."
+  ],
+  "critical_code_review_comments": [
+    "AggregatorSetupView.jsx line 37: condition `err?.response?.status === 404` does not handle ERR_NETWORK errors (where err.response is undefined). The preprod API endpoint /api/v2/vendoremployee/aggregator-config appears to be unreachable (ERR_NETWORK), not returning 404. The catch clause needs to also treat no-response errors as empty config."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only)",
+    "frontend": "33% — Operational Settings tab works; Configuration tab blocked by BUG-306"
+  },
+  "rca_of_issue": "BUG-306 RCA: The preprod backend endpoint /api/v2/vendoremployee/aggregator-config is unreachable (ERR_NETWORK — axios error.code='ERR_NETWORK', no response object). The fix in AggregatorSetupView.jsx line 37 checks err?.response?.status === 404, which is false when there is no response at all. The axios interceptor in axios.js sets err.readableMessage = 'Cannot reach server. Check your internet connection.' for ERR_NETWORK errors. The else branch then calls setError() which shows the red banner. Fix: expand the 404 check to also cover !err.response (network-level failure).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-306 fix in AggregatorSetupView.jsx is incomplete. The actual error from preprod is ERR_NETWORK (no HTTP response), not 404. Fix the catch condition to also handle !err.response as empty config. Once fixed, verify: (1) config-error NOT visible, (2) config-tab IS visible, (3) new-config-banner shown (isNewConfig=true for empty config), (4) tone-timing-input visible with type=number, min=0, max=300. Operational Settings tab already works — Auto KOT, Auto Bill, Order Tone, Prep Time all render correctly."
+}

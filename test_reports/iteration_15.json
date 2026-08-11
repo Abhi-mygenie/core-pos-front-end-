@@ -1,0 +1,24 @@
+{
+  "summary": "Retested BUG-306 and BUG-307 fixes for owner@thegoankitchen.com on /aggregator/setup. Both bugs are resolved.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-306 fix (isNoConfig = err?.response?.status===404 || !err?.response) works. ERR_NETWORK / CORS failure now treated as empty config. BUG-307 tone-timing-input visible as type=number min=0 max=300 in Notification Settings card. Operational Settings tab fully working (auto-kot-toggle, auto-bill-toggle, order-tone-select, prep-time-input all found).",
+  "test_results": {
+    "BUG-306 config-error banner NOT visible": "PASS",
+    "BUG-306 new-config-banner visible": "PASS",
+    "BUG-306 Configuration sections render (Brand, Credentials, Location, Platform Links, Notification Settings)": "PASS",
+    "BUG-307 tone-timing-input visible, type=number, min=0, max=300": "PASS",
+    "REGRESSION Operational Settings tab - auto-kot-toggle": "PASS",
+    "REGRESSION Operational Settings tab - auto-bill-toggle": "PASS",
+    "REGRESSION Operational Settings tab - order-tone-select": "PASS",
+    "REGRESSION Operational Settings tab - prep-time-input": "PASS"
+  }
+}
