@@ -402,7 +402,7 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | Bug ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
 | **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **INTAKE** | 1 ✅ | 1 file `PLReportPage.jsx:83`. Fast Lane eligible. DISTINCT from BUG-258/259/260/261. Intake: `change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md`. |
-| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **INTAKE** | 1 ✅ | 2 hotspot files: `CollectPaymentPanel.jsx:605` + `CartPanel.jsx:425`. Related to CR-028 (gap). Full Gate 2-3 required. Intake: `change_requests/BUG-304_ITEM_DISCOUNT_GST_DISCOUNTRATIO_WRONG_DENOMINATOR_INTAKE.md`. |
+| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **GATE 2 COMPLETE — awaiting owner OD-2/OD-3/OD-4 + Gate 4 GO** | 1-2 ✅ | 4 sites total. Scope BUG-304: `CollectPaymentPanel.jsx` (~247 taxTotals split + ~605 discountRatio) + `CartPanel.jsx` (~400 + ~425). Fix: split taxTotals into discountable/non-discountable GST buckets — denominator change alone is insufficient. BUG-304-B (orderTransform:823+1896) filed separately. OD-2: apply to VAT also. OD-3: CartPanel same fix. OD-4: fix orderTransform scope or park. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
 
 ---
 
