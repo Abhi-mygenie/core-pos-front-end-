@@ -1,0 +1,57 @@
+{
+  "summary": "CR-132 Restaurant Settings Wizard Round 3 QA — E2E save bug fix verified PASS. Tested all 9 cases: E2E_SAVE, T6, T8, T2, T10, R1, R2, R3, T14.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Step 3 Channels & Info",
+        "issue": "R1 FAIL: Deselecting ALL service channels and clicking Save & Continue advances to Step 4 with no validation error. At least one channel should be required.",
+        "selector": "[data-testid='channel-dineIn'], [data-testid='channel-takeAway'], etc.",
+        "priority": "HIGH"
+      },
+      {
+        "component": "Step 4 Tax & Charges",
+        "issue": "R2 FAIL: Enabling GST toggle without entering GST code allows advancing to Step 5 — no validation error shown. GST code input field does not appear after toggling GST ON (data-testid='input-gst-code' or input[name*='gst'] not found).",
+        "selector": "[data-testid='toggle-gst']",
+        "priority": "HIGH"
+      },
+      {
+        "component": "Step 8 Room & Hospitality",
+        "issue": "T14 minor: data-testid='toggle-room-otp' not found but 'Room OTP Required' field IS visible in UI. Testid may be misnamed (perhaps 'toggle-room-otp-required').",
+        "selector": "[data-testid='toggle-room-otp']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "E2E_SAVE": "PASS — HTTP 200, no error toast, wizard advanced Step 1 → Step 2",
+    "T6_printer_settings": "PASS — All 8 fields present: toggle-print-kot, toggle-billing-auto-bill-print, toggle-printing-in-kds, toggle-print-bill-customer-copy, select-no-of-bill, select-no-of-kot, toggle-use-token, select-kot-language",
+    "T8_channel_tiles": "PASS — All 5 channel tiles present: channel-dineIn, channel-takeAway, channel-delivery, channel-room, channel-onlineOrder",
+    "T2_room_step8": "PASS — Room Service OFF → step-nav-8 absent; Room Service ON → step-nav-8 appears in left rail",
+    "T10_gst_toggle": "PASS — data-testid='toggle-gst' found in Step 4",
+    "R1_channels_validation": "FAIL — No validation error when all channels deselected; app advances to Step 4",
+    "R2_gst_validation": "FAIL — No validation error when GST enabled without code; app advances to Step 5",
+    "R3_navigation": "PASS — Back button from Step 4 returns to Step 3; full 8-step navigation confirmed (Steps 1→2→3→4→5→6→7→8 with Room ON)",
+    "T14_step8_room_fields": "PASS — Step 8 shows Room Billing Included (toggle-room-billing-included), Pay Via Room (toggle-pay-via-room), Room OTP Required (visible but toggle-room-otp testid missing)"
+  },
+  "test_report_links": ["/app/test_reports/iteration_9.json"],
+  "action_items": [
+    "FIX R1: Add validation in Step 3 (Channels & Info) to prevent advancing when zero channels selected — show error 'At least one service channel required'",
+    "FIX R2: Add validation in Step 4 (Tax & Charges) — when GST toggle is ON and GST code is empty, block Save & Continue and show 'GST code required'. Also verify GST code input field renders when GST is toggled ON.",
+    "FIX T14 minor: Add data-testid='toggle-room-otp' to the Room OTP Required toggle in Step 8 (RestaurantSettingsPage.jsx)"
+  ],
+  "critical_code_review_comments": [
+    "Step 3: channels validation is missing — no guard in handleSaveAndContinue to check if at least one channel is selected before proceeding",
+    "Step 4: GST code validation is missing — when gstEnabled=true, no check for non-empty gstCode before proceeding"
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "67% (6/9 pass: E2E_SAVE, T6, T8, T2, T10, R3, T14 = 7/9 = 78% if T14 counted as pass)"},
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "E2E SAVE bug (schedule_order MySQL 1366) is confirmed FIXED — HTTP 200. Navigation bug (pushState needed to avoid /loading redirect) is the workaround for testing. The 2 remaining failures are: R1 (no channels validation) and R2 (no GST code validation). T14 toggle-room-otp testid is missing but field is visible. All other tests PASS including full 8-step wizard navigation with Room Service conditional step."
+}

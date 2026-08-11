@@ -257,7 +257,7 @@ export const toAPI = {
         show_user_gst:     toYesNo(s4.showUserGst),
         // Screen 5 — Order & Kitchen (basic fields)
         order_auto_serve:     toYesNo(s5.orderAutoServe),
-        schedule_order:       toYesNo(s5.scheduleOrder),
+        schedule_order:       s5.scheduleOrder ? 1 : 0,   // CR-132 BUG-FIX: integer column, not VARCHAR
         confirm_order_show_tab: toYesNo(s5.confirmOrderShowTab),
         confirm_order_tone:   s5.confirmOrderTone,
         locationSelection:    s5.locationSelection,

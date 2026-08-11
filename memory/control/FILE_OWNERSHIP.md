@@ -818,3 +818,4 @@
 | `components/panels/settings/printerConfig/BillContentTab.jsx` | CR-133-GAP: +employee dropdown with useEffect fetch + pre-select (G3b) | CR-133-GAP IMPL 2026-08-11 |
 | `pages/RestaurantSettingsPage.jsx` | CR-132: Full 8-step wizard rewrite (was 6 steps). New screens: Printer Settings, Tax & Charges expanded, Room & Hospitality conditional. | CR-132 IMPL 2026-08-11 |
 | `api/transforms/restaurantSettingsTransform.js` | CR-132: Full 8-step rewrite. Regression fix (room: basic not advanced). 49 new fields. 8 step keys. CR-135 pass-throughs. | CR-132 IMPL 2026-08-11 |
+| `api/transforms/restaurantSettingsTransform.js` | CR-132 BUG-FIX: line 260 `schedule_order` changed from `toYesNo()` (string) to `? 1 : 0` (integer) — MySQL INT column type mismatch fix. | CR-132 BUG FIX 2026-08-11 |
