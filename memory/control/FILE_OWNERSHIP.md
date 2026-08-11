@@ -27,6 +27,7 @@
 | `components/modals/RoomCheckInModal.jsx` | 1362 | Room workflow, advance payment | POS 3.0 era |
 | `pages/StatusConfigPage.jsx` | 1561 | Visibility settings, QSR toggles, auto-settle | CR-024 agent (2026-06-10) |
 | `api/transforms/orderTransform.js` | 1916 | Financial payload builders, rider fields, discount payload | CR-025 agent (2026-06-10) |
+| `api/transforms/orderTransform.js` | BUG-305: E1 `buildCartItem` +`_giveDiscount` marker (line 748). E2 `calcOrderTotals` +discountable buckets +`discountableRatio` (lines 787-855). E3 `buildBillPrintPayload` +split forEach +`discountableRatio` (lines 1859-1929). | BUG-305 IMPL 2026-08-11 |
 | `api/services/reportService.js` | 744 | Report presentation (reduced from 1257) | Audit Report agent (2026-05-28) |
 | `api/socket/socketHandlers.js` | 839 | Realtime event handling, scan-new-order, food_update | BUG-116 agent (2026-06-08) |
 | `api/socket/useSocketEvents.js` | 248 | Socket subscriptions | BUG-116 agent (2026-06-08) |

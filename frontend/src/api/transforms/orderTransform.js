@@ -745,6 +745,7 @@ const buildCartItem = (item) => {
     is_complementary:    isRuntimeComp ? 'Yes' : 'No',
     food_level_notes:    Array.isArray(item.itemNotes) ? item.itemNotes.map(n => n.label).join(', ') : (item.notes || ''),
     _fullUnitPrice:      fullUnitPrice,
+    _giveDiscount:       item.giveDiscount !== false, // BUG-305: private marker for calcOrderTotals GST split
   };
 };
 
@@ -783,6 +784,7 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
   let subtotal = 0;
   let gstTax = 0;
   let vatTax = 0;
+  let discountableSubtotal = 0, discountableGst = 0, discountableVat = 0; // BUG-305
 
   cart.forEach(item => {
     // BUG-018 Part 2 (Apr-2026): exclude runtime-marked complimentary lines from
@@ -792,9 +794,16 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
     if (item.is_complementary === 'Yes') return;
     // CR-010: item.quantity may be decimal for weight-based items — do not parseInt/floor
     const lineTotal = (item._fullUnitPrice || item.price || 0) * (item.quantity || 1);
+    const itemGst = parseFloat(item.gst_amount) || 0; // BUG-305
+    const itemVat = parseFloat(item.vat_amount) || 0; // BUG-305
     subtotal += lineTotal;
-    gstTax += parseFloat(item.gst_amount) || 0;
-    vatTax += parseFloat(item.vat_amount) || 0;
+    gstTax   += itemGst;
+    vatTax   += itemVat;
+    if (item._giveDiscount !== false) { // BUG-305: marker from buildCartItem
+      discountableSubtotal += lineTotal;
+      discountableGst      += itemGst;
+      discountableVat      += itemVat;
+    }
   });
 
   subtotal = Math.round(subtotal * 100) / 100;
@@ -820,7 +829,8 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
   //   Tip rides SC rate (frozen rule §1 row 9): if SC rate = 0 → tip GST = 0.
   //   Pre-CR-013 (`avgGstRate`-based) was buggy on mixed-GST carts and ignored
   //   configured rates entirely.
-  const discountRatio = subtotal > 0 ? discountAmount / subtotal : 0;
+  // BUG-305: use discountableSubtotal as denominator; non-discountable items' GST/VAT unchanged
+  const discountableRatio = discountableSubtotal > 0 ? discountAmount / discountableSubtotal : 0;
   const scTaxRate     = (serviceChargeTaxPct  || 0) / 100;
   const delTaxRate    = (deliveryChargeGstPct || 0) / 100;
 
@@ -834,11 +844,15 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
   const scGstAmt    = serviceCharge  * scTaxRate;
   const tipGstAmt   = tipAmount      * scTaxRate;
   const delGstAmt   = deliveryCharge * delTaxRate;
-  const itemGstPostDiscount = gstTax * (1 - discountRatio);
+  // BUG-305: only discountable items' GST reduced; non-discountable portion unchanged
+  const itemGstPostDiscount =
+    discountableGst * (1 - discountableRatio) + (gstTax - discountableGst);
 
   // BUG-054: VAT proration mirrors GST (frozen TAX-003). Previously only GST
   // was prorated by discount; VAT was left at the pre-discount amount.
-  const vatTaxPostDiscount = vatTax * (1 - discountRatio);
+  // BUG-305: same split for VAT (mirrors GST fix above)
+  const vatTaxPostDiscount =
+    discountableVat * (1 - discountableRatio) + (vatTax - discountableVat);
 
   gstTax = itemGstPostDiscount + scGstAmt + tipGstAmt + delGstAmt;
 
@@ -1842,6 +1856,7 @@ export const toAPI = {
 
     if (hasFinancialOverrides) {
       // ── COLLECT BILL PATH (existing FE computation, unchanged) ────────
+      let discountableSubtotal = 0, discountableGst = 0, discountableVat = 0; // BUG-305
       billFoodList.forEach(item => {
         if (isDetailComplimentary(item)) return;
         const qty = parseFloat(item.quantity) || 1;
@@ -1866,8 +1881,15 @@ export const toAPI = {
         }
 
         const taxType = (item.food_details?.tax_type || 'GST').toUpperCase();
-        if (taxType === 'VAT') vat_tax += taxAmt;
-        else gst_tax += taxAmt;
+        // BUG-305: food_details.give_discount available from CR-028 fromAPI.order (line 159)
+        const isDiscountable = (item.food_details?.give_discount || 'Yes') !== 'No'; // BUG-305
+        if (taxType === 'VAT') {
+          vat_tax += taxAmt;
+          if (isDiscountable) { discountableSubtotal += lineTotal; discountableVat += taxAmt; } // BUG-305
+        } else {
+          gst_tax += taxAmt;
+          if (isDiscountable) { discountableSubtotal += lineTotal; discountableGst += taxAmt; } // BUG-305
+        }
       });
       computedSubtotal = Math.round(computedSubtotal * 100) / 100;
 
@@ -1893,13 +1915,18 @@ export const toAPI = {
 
       if (overrides.serviceChargeAmount === undefined
           && computedSubtotal > 0) {
-        const discountRatio = overrideDiscount / computedSubtotal;
+        // BUG-305: use discountableSubtotal; non-discountable items' GST/VAT unchanged
+        const discountableRatio = discountableSubtotal > 0
+          ? overrideDiscount / discountableSubtotal : 0;
         const scTaxRate     = (overrides.serviceChargeTaxPct  || 0) / 100;
         const delTaxRate    = (overrides.deliveryChargeGstPct || 0) / 100;
-        gst_tax = gst_tax * (1 - discountRatio)
+        gst_tax = discountableGst * (1 - discountableRatio)   // BUG-305: discountable GST ↓
+                + (gst_tax - discountableGst)                  // BUG-305: non-discountable unchanged
                 + serviceChargeAmount * scTaxRate
                 + overrideTip          * scTaxRate
                 + overrideDelivery     * delTaxRate;
+        vat_tax = discountableVat * (1 - discountableRatio)   // BUG-305: discountable VAT ↓
+                + (vat_tax - discountableVat);                 // BUG-305: non-discountable unchanged
       }
 
       gst_tax = Math.round(gst_tax * 100) / 100;
