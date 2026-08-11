@@ -402,7 +402,7 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | Bug ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
 | **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **INTAKE** | 1 ✅ | 1 file `PLReportPage.jsx:83`. Fast Lane eligible. DISTINCT from BUG-258/259/260/261. Intake: `change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md`. |
-| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **GATE 2 COMPLETE — ODs LOCKED — AWAITING GATE 3** | 1-2 ✅ | Scope: `CollectPaymentPanel.jsx` + `CartPanel.jsx`. Fix: split taxTotals into discountable/non-discountable GST+VAT buckets. OD-2 YES (VAT). OD-3 YES (CartPanel). OD-4 LATER → BUG-304-B. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
+| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **GATE 3 COMPLETE — AWAITING GATE 4 GO** | 1-3 ✅ | 4 edits (E1-E4): CPP taxTotals split + discountableRatio + GST fix + VAT fix; CartPanel same. OD-1/2/3 YES, OD-4 BUG-304-B. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
 
 ---
 
