@@ -1,0 +1,61 @@
+{
+  "summary": "CR-132 Iteration 8: E2E re-validation after claimed backend fix. All UI elements T1-T5 PASS via live Playwright test. E2E SAVE still returns HTTP 500 — specific error identified: schedule_order column expects integer but frontend sends string 'No'. Navigation to steps 2+ blocked. T6/T8/T10/T2/R3 untestable.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+        "issue": "Returns HTTP 500 with SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'No' for column 'schedule_order' at row 1. The transform sends schedule_order: toYesNo(s5.scheduleOrder) = 'No' but the DB column is integer type.",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Wizard Save & Continue (step 1 → step 2)",
+        "issue": "Blocked by 500 on update-settings API. Cannot advance past step 1. T6/T8/T10/T2/R3 untestable.",
+        "affected_selectors": ["[data-testid='btn-next']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "step_verification_results": {
+    "T1": "PASS — All 8 step navs visible (step-nav-1 through step-nav-8)",
+    "T2": "UNTESTABLE — Cannot navigate to step 3 (save 500 blocks progression)",
+    "T3": "PASS — select-restaurant-for and select-def-ord-status both FOUND",
+    "T4": "PASS — toggle-show-popular-items FOUND",
+    "T5": "PASS — input-phone ABSENT from step 1 (correct)",
+    "T6": "UNTESTABLE — Cannot navigate to step 2",
+    "T8": "UNTESTABLE — Cannot navigate to step 3",
+    "T10": "UNTESTABLE — Cannot navigate to step 4",
+    "R3": "UNTESTABLE — Cannot navigate past step 1",
+    "E2E_SAVE": "FAIL — HTTP 500: schedule_order column integer mismatch"
+  },
+  "test_report_links": [],
+  "action_items": [
+    "CRITICAL: Fix schedule_order field mapping in restaurantSettingsTransform.js line 260 — change toYesNo(s5.scheduleOrder) to integer (0 or 1) instead of 'Yes'/'No' string, OR fix the backend to accept 'Yes'/'No' for this specific field",
+    "Verify if the curl-confirmed 200 test payload had schedule_order as integer vs the UI sending string",
+    "Once save is fixed, re-run T6 (step 2 printer fields), T8 (step 3 channels), T10 (step 4 GST), T2 (room toggle), R3 (back/next nav)"
+  ],
+  "critical_code_review_comments": [
+    "restaurantSettingsTransform.js line 260: schedule_order: toYesNo(s5.scheduleOrder) sends string 'No' but database column is integer type. All other toYesNo fields likely work because they're VARCHAR columns. This single field mismatch blocks the entire wizard.",
+    "The full payload curl test that returned 200 may have used schedule_order: 0 (integer) — frontend UI sends 'No' (string), causing the 500."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "0% (E2E save fails with 500 — schedule_order type mismatch)",
+    "frontend": "50% — T1/T3/T4/T5 PASS; E2E save blocked; T6/T8/T10/T2/R3 untestable"
+  },
+  "test_credentials": "owner@cafe103.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "T1/T3/T4/T5 confirmed PASS via live Playwright. The only blocker is schedule_order being sent as string 'No' instead of integer. Fix: restaurantSettingsTransform.js line 260. Once fixed, test E2E save advances to step 2, then test T6/T8/T10/T2/R3. Login is slow — wait for dashboard before navigating to /restaurant-settings.",
+  "rca_of_issue": {
+    "root_cause": "restaurantSettingsTransform.js line 260: schedule_order is mapped with toYesNo() which returns string 'Yes'/'No'. The MySQL DB column schedule_order is integer type and rejects the string 'No' value.",
+    "reproduction": "Login → /restaurant-settings → Click Save & Continue on Step 1 → POST update-settings → 500 with SQLSTATE[HY000] 1366 error",
+    "fix": "Change line 260 from: schedule_order: toYesNo(s5.scheduleOrder) to: schedule_order: s5.scheduleOrder ? 1 : 0. OR if the backend handles it, ensure schedule_order is sent as integer."
+  }
+}
