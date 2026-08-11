@@ -18742,6 +18742,47 @@
       "gate4_go_date": "2026-08-10",
       "implemented_date": "2026-08-10",
       "qa_date": "2026-08-10"
+    },
+    {
+      "id": "BUG-303",
+      "type": "BUG",
+      "title": "P&L Report \u2014 Paid Revenue KPI always shows \u20b90 (field mismatch: paid_revenue vs total_paid_revenue)",
+      "status": "INTAKE",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_1",
+      "area": "Reports \u2192 P&L Report",
+      "files_affected": [
+        "src/pages/reports-module/PLReportPage.jsx"
+      ],
+      "duplicate_check": "DISTINCT",
+      "related_to": "CR-094",
+      "fast_lane_eligible": true,
+      "artifact_refs": {
+        "intake": "change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md"
+      },
+      "notes": "PLReportPage.jsx:83 reads s.paid_revenue but API returns s.total_paid_revenue. 1 line fix. Fast Lane eligible \u2014 owner approval needed."
+    },
+    {
+      "id": "BUG-304",
+      "type": "BUG",
+      "title": "Item-Level Discount \u2014 discountRatio uses itemTotal (not discountableTotal), GST/VAT wrong for non-discountable items",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_5_1",
+      "area": "Order Entry \u2192 Collect Bill / Cart (QSR)",
+      "files_affected": [
+        "src/components/order-entry/CollectPaymentPanel.jsx",
+        "src/components/order-entry/CartPanel.jsx"
+      ],
+      "duplicate_check": "RELATED to CR-028 (gap in implementation)",
+      "related_to": "CR-028",
+      "fast_lane_eligible": false,
+      "artifact_refs": {
+        "intake": "change_requests/BUG-304_ITEM_DISCOUNT_GST_DISCOUNTRATIO_WRONG_DENOMINATOR_INTAKE.md"
+      },
+      "notes": "CollectPaymentPanel.jsx:605 + CartPanel.jsx:425 \u2014 discountRatio = totalDiscount/itemTotal should be totalDiscount/discountableTotal. Non-discountable items GST incorrectly reduced. HIGH risk, 2 hotspot files, full Gate 2-3 required."
     }
   ],
   "meta": {
