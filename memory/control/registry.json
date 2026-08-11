@@ -18558,7 +18558,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 2 COMPLETE",
+      "status": "IMPLEMENTED \u2014 AWAITING QA",
       "gate": 3,
       "sprint_key": "pos_5_1",
       "files": [

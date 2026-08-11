@@ -816,3 +816,5 @@
 | `components/panels/settings/printerConfig/PrintStyleTab.jsx` | CR-133-GAP: RowEditor platform-aware, Windows/Android toggle, global settings split, allow-empty inputs (G4,G5+G6) | CR-133-GAP IMPL 2026-08-11 |
 | `api/services/printerAgentConfigService.js` | CR-133-GAP: +getEmployeeList() using EMPLOYEES_LIST (G3b) | CR-133-GAP IMPL 2026-08-11 |
 | `components/panels/settings/printerConfig/BillContentTab.jsx` | CR-133-GAP: +employee dropdown with useEffect fetch + pre-select (G3b) | CR-133-GAP IMPL 2026-08-11 |
+| `pages/RestaurantSettingsPage.jsx` | CR-132: Full 8-step wizard rewrite (was 6 steps). New screens: Printer Settings, Tax & Charges expanded, Room & Hospitality conditional. | CR-132 IMPL 2026-08-11 |
+| `api/transforms/restaurantSettingsTransform.js` | CR-132: Full 8-step rewrite. Regression fix (room: basic not advanced). 49 new fields. 8 step keys. CR-135 pass-throughs. | CR-132 IMPL 2026-08-11 |
