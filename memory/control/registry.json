@@ -18786,6 +18786,33 @@
         "qa_report": "test_reports/iteration_11.json"
       },
       "notes": "Gate 3 complete 2026-08-11. 4 edits (E1-E4): E1+E2 in CollectPaymentPanel, E3+E4 in CartPanel. Fix: split taxTotals into dSgst/dCgst/dVat buckets, apply discountableRatio only to discountable portion. Owner OD-1/2/3/4 all locked. orderTransform parked as BUG-304-B."
+    },
+    {
+      "id": "BUG-305",
+      "type": "BUG",
+      "title": "orderTransform.js \u2014 discountRatio uses full subtotal (not discountableSubtotal) in calcOrderTotals + buildBillPrintPayload: wrong GST in backend payload and bill print",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_5_1",
+      "area": "Order Entry \u2192 Backend Payload (place/settle) + Bill Print",
+      "files_affected": [
+        "src/api/transforms/orderTransform.js",
+        "src/components/order-entry/CollectPaymentPanel.jsx",
+        "src/components/order-entry/CartPanel.jsx",
+        "src/components/order-entry/OrderEntry.jsx",
+        "src/api/services/orderService.js"
+      ],
+      "duplicate_check": "RELATED to BUG-304 (parent, IMPLEMENTED) + CR-028 (CLOSED). DISTINCT.",
+      "related_to": [
+        "BUG-304",
+        "CR-028"
+      ],
+      "fast_lane_eligible": false,
+      "artifact_refs": {
+        "intake": "change_requests/BUG-305_ORDERTRANSFORM_DISCOUNT_RATIO_BACKEND_PAYLOAD_PRINT_INTAKE.md"
+      },
+      "notes": "Continuation of BUG-304 (OD-4 parked). orderTransform.js:823 calcOrderTotals + :1896 buildBillPrintPayload both use discountRatio = discount/fullSubtotal. Fix requires adding discountableSubtotal to extras parameter + updating all callers. CRITICAL risk (hotspot R5 + financial R6). 5 files, unit tests exist and need updating."
     }
   ],
   "meta": {

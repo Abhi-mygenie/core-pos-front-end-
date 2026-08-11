@@ -397,12 +397,13 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 | **BUG-248** | Bulk Editor: 9 columns missing from `isDirty()` + `portionSize` missing from `buildPayload`. Part B (backend drops 4 fields) BACKEND-BLOCKED. | **P1** | LOW | **IMPLEMENTED — isDirty 9 checks + portionSize payload. Part B BACKEND-BLOCKED.** | 5a | `BulkEditor.jsx`: 9 isDirty checks + 1 buildPayload line. Impact: `/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md`. Plan: `/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md` |
 | **BUG-249** | Current Stock: Negative qty shows "In Stock" — effectiveQty helper fixes 10 sites. | **P1** | LOW | **IMPLEMENTED** | 5a | `CurrentStockPanel.jsx` — effectiveQty(item) replaces Number(item.quantity). |
 
-### 2026-08-11 P&L Report + Item Discount GST (BUG-303, BUG-304)
+### 2026-08-11 P&L Report + Item Discount GST (BUG-303, BUG-304, BUG-305)
 
 | Bug ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **INTAKE** | 1 ✅ | 1 file `PLReportPage.jsx:83`. Fast Lane eligible. DISTINCT from BUG-258/259/260/261. Intake: `change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md`. |
-| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **IMPLEMENTED — AWAITING QA** | 1-5a ✅ | E1: CPP taxTotals split (dSgst/dCgst/dVat). E2: CPP discountableRatio + itemGstPostDiscount + vat. E3: CartPanel taxTotals split. E4: CartPanel discountableRatio + itemGstPostDiscount + vatAmount. 9 BUG-304 markers in each file. Compile PASS 0 new warnings. EXIT GATE 5/5. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. IA: `impact/BUG-304_IMPACT_ANALYSIS.md`. |
+| **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **IMPLEMENTED — QA PASS** | 1-5b ✅ | 1 file `PLReportPage.jsx`. 4 issues fixed: DollarSign→IndianRupee, paid_revenue field, date sort. Intake: `change_requests/BUG-303_PL_REPORT_PAID_REVENUE_FIELD_MISMATCH_INTAKE.md`. |
+| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **IMPLEMENTED — QA PASS (Gate 5b)** | 1-5b ✅ | `CollectPaymentPanel.jsx` + `CartPanel.jsx`. taxTotals split into dSgst/dCgst/dVat. CGST/SGST drop ₹4→₹3.60 on 10% discount verified. OD-4 parked → BUG-305. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. |
+| **BUG-305** | `orderTransform.js` — `discountRatio` uses full subtotal in `calcOrderTotals` (line 823) + `buildBillPrintPayload` (line 1896): wrong GST in backend payload and bill print | **P1** | **CRITICAL** | **INTAKE** | 1 ✅ | 5 files. `orderTransform.js` hotspot R5 + financial R6. Fix: add `discountableSubtotal` to `calcOrderTotals` extras + callers. Unit tests exist and need updating. OQ-1/2/3/4 open for Gate 2. Intake: `change_requests/BUG-305_ORDERTRANSFORM_DISCOUNT_RATIO_BACKEND_PAYLOAD_PRINT_INTAKE.md`. |
 
 ---
 
