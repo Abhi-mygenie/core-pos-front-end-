@@ -1,7 +1,7 @@
 // CR-094: Profit & Loss Report — new screen under Daily Reports, above Sales
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Receipt, Download, Loader2, Check } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, TrendingUp, TrendingDown, IndianRupee, Receipt, Download, Loader2, Check } from 'lucide-react'; // BUG-303: DollarSign→IndianRupee
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -80,7 +80,7 @@ export default function PLReportPage() {
     const s = data.summary;
     return {
       totalSales: parseFloat(s.total_sales) || 0,
-      paidRevenue: parseFloat(s.paid_revenue) || 0,
+      paidRevenue: parseFloat(s.total_paid_revenue ?? s.paid_revenue) || 0, // BUG-303: API summary uses total_paid_revenue
       totalExpenses: parseFloat(s.total_expenses) || 0,
       totalPurchase: parseFloat(s.total_purchase) || 0,
       profitLoss: parseFloat(s.total_profit_loss ?? s.profit_loss) || 0,
@@ -110,8 +110,11 @@ export default function PLReportPage() {
       purchase: parseFloat(r.total_purchase || r.purchase) || 0,
       profitLoss: parseFloat(r.profit_loss) || 0,
     }));
+    // BUG-303: convert DD/MM/YYYY to YYYY-MM-DD for correct date sort
+    const toSortable = (s) => { const [d,m,y] = (s||'').split('/'); return y&&m&&d ? `${y}-${m}-${d}` : s||''; };
     rows.sort((a, b) => {
-      const av = a[sortCol], bv = b[sortCol];
+      let av = a[sortCol], bv = b[sortCol];
+      if (sortCol === 'date') { av = toSortable(av); bv = toSortable(bv); }
       if (typeof av === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
       return sortDir === 'asc' ? av - bv : bv - av;
     });
@@ -210,7 +213,7 @@ export default function PLReportPage() {
             <>
               {/* KPI Strip */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-testid="pl-kpi-strip">
-                <KpiCard label="Total Sales" value={summary.totalSales} icon={DollarSign} color="#3B82F6" />
+                <KpiCard label="Total Sales" value={summary.totalSales} icon={IndianRupee} color="#3B82F6" /> {/* BUG-303: DollarSign→IndianRupee */}
                 <KpiCard label="Paid Revenue" value={summary.paidRevenue} icon={TrendingUp} color="#10B981" />
                 <KpiCard label="Total Expenses" value={summary.totalExpenses} icon={Receipt} color="#EF4444" />
                 <KpiCard label="Net P&L" value={summary.profitLoss} icon={summary.profitLoss >= 0 ? TrendingUp : TrendingDown} color={summary.profitLoss >= 0 ? '#16A34A' : '#DC2626'} />
