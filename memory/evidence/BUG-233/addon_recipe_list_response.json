@@ -1,0 +1,44 @@
+{
+  "recipes": [
+    {
+      "recipe_id": 9796,
+      "addon_id": 11021,
+      "name": "Cureveda Vegan Pea Protein Choclate",
+      "addon_name": "Cureveda Vegan Pea Protein Choclate",
+      "food_name": "Cureveda Vegan Pea Protein Choclate",
+      "addon_price": "120.00",
+      "preparation_time": "0",
+      "serve_time": "0",
+      "unit": "gm",
+      "serve_people": 1,
+      "qty": "33",
+      "type": "addon_recipe",
+      "ingredients": [],
+      "is_pushed_managed": false
+    },
+    {
+      "recipe_id": 9797,
+      "addon_id": 10848,
+      "name": "Cureveda Vegan Pea Protein Vanilla",
+      "addon_name": "Cureveda Vegan Pea Protein Vanilla",
+      "food_name": "Cureveda Vegan Pea Protein Vanilla",
+      "addon_price": "120.00",
+      "preparation_time": "10",
+      "serve_time": "1",
+      "unit": "",
+      "serve_people": 1,
+      "qty": "1",
+      "type": "addon_recipe",
+      "ingredients": [],
+      "is_pushed_managed": false
+    }
+  ],
+  "catalog_edit_policy": {
+    "allow_child_catalog_create": true,
+    "allow_child_catalog_update": true,
+    "allow_child_catalog_delete": true,
+    "allow_child_inventory_create": true,
+    "allow_child_inventory_update": true,
+    "allow_child_inventory_delete": true
+  }
+}

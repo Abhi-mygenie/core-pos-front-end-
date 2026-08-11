@@ -1,0 +1,180 @@
+{
+  "order_stats": {
+    "paidOrders": 0,
+    "unpaidOrders": 2,
+    "cancelOrders": 0
+  },
+  "daily_reports": [
+    {
+      "date": "2026-07-25",
+      "report": [
+        {
+          "source": "orders",
+          "order_id": 1070983,
+          "restaurant_order_id": "002356",
+          "original_restaurant_order_id": "002356",
+          "order_plateform": null,
+          "order_type": "pos",
+          "waiter_id": 1476,
+          "employee_id": 1476,
+          "waiter": "Manager",
+          "collected_by": "Manager",
+          "order_date": "10:04",
+          "order_new_date": "2026-07-25 10:04:06",
+          "customer_info": null,
+          "date_of_birth": null,
+          "date_of_anniversary": null,
+          "membership_id": null,
+          "user_name": null,
+          "user_phone": null,
+          "gst_amount": "5.00",
+          "gst_amount_only": "5.00",
+          "vat_amount": "0.00",
+          "delivery_charge": "0.00",
+          "packing_charge": "0.00",
+          "order_discount": "0.00",
+          "service_tax": "10.00",
+          "tip_amount": "0.00",
+          "roundoff": "0.00",
+          "payment_for": "postpaid",
+          "quantity": 1,
+          "food_name": "priti (1)",
+          "discount_for": null,
+          "total_order_value": "100.00",
+          "order_amount_raw": "115.00",
+          "payment_method_raw": "pending",
+          "coupon_code": null,
+          "coupon_discount": "0.00",
+          "wallet_used": "0.00",
+          "loyalty_used": "0.00",
+          "total_discount": "0.00",
+          "transaction_id": "",
+          "collect_bill": null,
+          "order_sub_total_without_tax": "110.00",
+          "payment_type": "Unpaid",
+          "amount": "0.00",
+          "payment": {
+            "cash": "0.00",
+            "card": "0.00",
+            "upi": "0.00",
+            "tab": "0.00"
+          }
+        },
+        {
+          "source": "orders",
+          "order_id": 1070984,
+          "restaurant_order_id": "002357",
+          "original_restaurant_order_id": "002357",
+          "order_plateform": null,
+          "order_type": "pos",
+          "waiter_id": 1476,
+          "employee_id": 1476,
+          "waiter": "Manager",
+          "collected_by": "Manager",
+          "order_date": "10:04",
+          "order_new_date": "2026-07-25 10:04:46",
+          "customer_info": null,
+          "date_of_birth": null,
+          "date_of_anniversary": null,
+          "membership_id": null,
+          "user_name": null,
+          "user_phone": null,
+          "gst_amount": "6.00",
+          "gst_amount_only": "6.00",
+          "vat_amount": "0.00",
+          "delivery_charge": "0.00",
+          "packing_charge": "0.00",
+          "order_discount": "0.00",
+          "service_tax": "12.00",
+          "tip_amount": "0.00",
+          "roundoff": "0.00",
+          "payment_for": "postpaid",
+          "quantity": 1,
+          "food_name": "choco cake (1)",
+          "discount_for": null,
+          "total_order_value": "120.00",
+          "order_amount_raw": "138.00",
+          "payment_method_raw": "pending",
+          "coupon_code": null,
+          "coupon_discount": "0.00",
+          "wallet_used": "0.00",
+          "loyalty_used": "0.00",
+          "total_discount": "0.00",
+          "transaction_id": "",
+          "collect_bill": null,
+          "order_sub_total_without_tax": "132.00",
+          "payment_type": "Unpaid",
+          "amount": "0.00",
+          "payment": {
+            "cash": "0.00",
+            "card": "0.00",
+            "upi": "0.00",
+            "tab": "0.00"
+          }
+        }
+      ],
+      "paid_revenue": "0.00",
+      "order_revenue": {
+        "Cash": "0.00",
+        "Card": "0.00",
+        "UPI": "0.00",
+        "CashOnDelivery": "0.00"
+      },
+      "tab_revenue": {
+        "tab_cash": "0.00",
+        "tab_card": "0.00",
+        "tab_upi": "0.00"
+      },
+      "room_revenue": {
+        "Room Cash": "0.00",
+        "Room Card": "0.00",
+        "Room UPI": "0.00"
+      },
+      "unpaid_revenue": {
+        "orderTAB": "0.00",
+        "orderRoom": "0.00"
+      },
+      "total_sales": "220.00",
+      "total_discount": "0.00",
+      "gst_amount": "11.00",
+      "delivery_charge": "0.00",
+      "packing_charge": "0.00",
+      "service_tax": "22.00",
+      "tip_amount": "0.00",
+      "roundoff": "0.00"
+    }
+  ],
+  "grand_total": {
+    "paid_revenue": "0.00",
+    "order_revenue": {
+      "Cash": "0.00",
+      "Card": "0.00",
+      "UPI": "0.00",
+      "CashOnDelivery": "0.00"
+    },
+    "tab_revenue": {
+      "tab_cash": "0.00",
+      "tab_card": "0.00",
+      "tab_upi": "0.00"
+    },
+    "room_revenue": {
+      "Room Cash": "0.00",
+      "Room Card": "0.00",
+      "Room UPI": "0.00"
+    },
+    "unpaid_revenue": {
+      "orderTAB": "0.00",
+      "orderRoom": "0.00"
+    },
+    "total_sales": "220.00",
+    "total_discount": "0.00",
+    "gst_amount": "11.00",
+    "delivery_charge": "0.00",
+    "packing_charge": "0.00",
+    "service_tax": "22.00",
+    "tip_amount": "0.00",
+    "roundoff": "0.00"
+  },
+  "from": "2026-07-25 00:00:00",
+  "to": "2026-07-25 23:59:59"
+}

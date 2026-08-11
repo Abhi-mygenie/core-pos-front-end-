@@ -24,3 +24,19 @@ export const saveConfig = async (state) => {
   const response = await api.post(API_ENDPOINTS.PRINTER_AGENT_CONFIG, toAPI(state));
   return response.data;
 };
+
+// CR-133-GAP: Employee list for printer agent employee dropdown (G3b)
+/**
+ * Fetch employee list for dropdown
+ * Response: { employees: [{ id, f_name, l_name, status, role:{name} }] }
+ * @returns {Promise<Array>} - [{ value: String(id), label: 'f_name (role)' }]
+ */
+export const getEmployeeList = async () => {
+  const res = await api.get(API_ENDPOINTS.EMPLOYEES_LIST);
+  return (res.data.employees || [])
+    .filter((e) => e.status === 1)
+    .map((e) => ({
+      value: String(e.id),
+      label: `${e.f_name}${e.l_name ? ' ' + e.l_name : ''} (${e.role?.name || ''})`,
+    }));
+};

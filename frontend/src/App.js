@@ -54,6 +54,17 @@ import SettlementMockup from "./pages/SettlementMockup";
 import RestaurantSettingsPage from "./pages/RestaurantSettingsPage";
 import SettingsPreviewPage from "./pages/SettingsPreviewPage"; // CR-132 design preview
 import Screen1ComparisonPage from "./pages/Screen1ComparisonPage"; // CR-132 Screen 1 comparison
+import Screen3ComparisonPage from "./pages/Screen3ComparisonPage"; // CR-132 Screen 3 comparison
+import Screen4ComparisonPage from "./pages/Screen4ComparisonPage"; // CR-132 Screen 4 comparison
+import Screen5ComparisonPage from "./pages/Screen5ComparisonPage"; // CR-132 Screen 5 comparison
+import Screen6ComparisonPage from "./pages/Screen6ComparisonPage"; // CR-132 Screen 6 comparison
+import Screen7ComparisonPage from "./pages/Screen7ComparisonPage"; // CR-132 Screen 7 comparison
+import Screen8ComparisonPage from "./pages/Screen8ComparisonPage"; // CR-132 Screen 8 comparison
+import Screen9ComparisonPage from "./pages/Screen9ComparisonPage"; // CR-132 Screen 9 comparison
+import CR132PrintPage from "./pages/CR132PrintPage"; // CR-132 All screens printable PDF
+import AggregatorPreviewPage from "./pages/AggregatorPreviewPage"; // CR-135 Aggregator Setup design preview
+import AggregatorSetupPage from "./pages/AggregatorSetupPage"; // CR-135 Aggregator Setup
+import PrinterConfigPreviewPage from "./pages/PrinterConfigPreviewPage"; // CR-133 Gap Batch preview
 import MenuManagementPage from "./pages/MenuManagementPage";         // CR-041
 import CreditManagementPage from "./pages/CreditManagementPage";     // CR-041
 import DayClosurePage from "./pages/DayClosurePage";                 // CR-041
@@ -175,6 +186,17 @@ function App() {
               <Route path="/restaurant-settings" element={<ProtectedRoute><RestaurantSettingsPage /></ProtectedRoute>} />
               <Route path="/settings-preview" element={<SettingsPreviewPage />} />
               <Route path="/screen1-compare" element={<Screen1ComparisonPage />} />
+              <Route path="/screen3-compare" element={<Screen3ComparisonPage />} />
+              <Route path="/screen4-compare" element={<Screen4ComparisonPage />} />
+              <Route path="/screen5-compare" element={<Screen5ComparisonPage />} />
+              <Route path="/screen6-compare" element={<Screen6ComparisonPage />} />
+              <Route path="/screen7-compare" element={<Screen7ComparisonPage />} />
+              <Route path="/screen8-compare" element={<Screen8ComparisonPage />} />
+              <Route path="/screen9-compare" element={<Screen9ComparisonPage />} />
+              <Route path="/cr132-print" element={<CR132PrintPage />} />
+              <Route path="/aggregator-preview" element={<AggregatorPreviewPage />} />
+              <Route path="/aggregator/setup" element={<ProtectedRoute><AggregatorSetupPage /></ProtectedRoute>} />
+              <Route path="/printer-config-preview" element={<PrinterConfigPreviewPage />} />
               {/* CR-041: Panel → Route migrations */}
               <Route path="/menu" element={<ProtectedRoute><MenuManagementPage /></ProtectedRoute>} />
               <Route path="/credit" element={<ProtectedRoute><CreditManagementPage /></ProtectedRoute>} />

@@ -1,4 +1,5 @@
-// CR-133: Auto Print tab — copies, in-house toggles (incl. Auto Settle), aggregator toggles + stage
+// CR-133: Auto Print tab — copies, in-house toggles (incl. Auto Settle)
+// CR-133 amendment: Aggregator Orders section removed — moved to CR-135 AggregatorSetup OperationalTab
 import { COLORS } from "../../../../constants";
 import { NumberInput, SelectInput, SectionTitle } from "../shared";
 
@@ -34,16 +35,5 @@ export const AutoPrintTab = ({ config, update }) => (
     <Toggle label="Auto Settle" hint="Settle the order automatically after bill print" checked={config.autoSettle} onChange={(v) => update({ autoSettle: v })} testId="auto-settle-toggle" />
     <Toggle label="Scan Order Auto-print" hint="Auto-print orders placed via QR scan" checked={config.scanOrderAutoPrint} onChange={(v) => update({ scanOrderAutoPrint: v })} testId="scan-order-auto-print-toggle" />
 
-    <SectionTitle title="Aggregator Orders (Zomato / Swiggy)" />
-    <Toggle label="Auto-print KOT" hint="Print KOT automatically for aggregator orders" checked={config.aggregatorAutoKot} onChange={(v) => update({ aggregatorAutoKot: v })} testId="aggregator-auto-kot-toggle" />
-    <Toggle label="Auto-print Bill" hint="Print the bill automatically for aggregator orders" checked={config.aggregatorAutoBill} onChange={(v) => update({ aggregatorAutoBill: v })} testId="aggregator-auto-bill-toggle" />
-    {config.aggregatorAutoBill && (
-      <SelectInput
-        label="Print Bill When Order Is"
-        value={config.aggregatorAutoBillStage}
-        onChange={(v) => update({ aggregatorAutoBillStage: v })}
-        options={config.options.aggregatorStages.map((s) => ({ value: s, label: s }))}
-      />
-    )}
   </div>
 );

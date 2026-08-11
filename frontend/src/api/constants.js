@@ -487,6 +487,14 @@ export const AGGREGATOR_ENDPOINTS = {
   MANUALLY_PRINT: '/api/v1/urbanpiper/manually-print-aggregator', // CR-118: manual KOT/bill print
 };
 
+// CR-135: Aggregator Config + Setup endpoints
+export const AGGREGATOR_CONFIG_ENDPOINTS = {
+  CONFIG:       '/api/v2/vendoremployee/aggregator-config',
+  CLIENTS:      '/api/v2/vendoremployee/aggregator-config/restaurant-clients',
+  PUSH_STORE:   '/api/v2/vendoremployee/aggregator-config/push-store',
+  STORE_TOGGLE: '/api/v2/vendoremployee/aggregator-config/store-toggle',
+};
+
 // CR-106: Cancel reason codes (identical for Swiggy & Zomato via UrbanPiper)
 export const AGGREGATOR_CANCEL_REASONS = [
   { code: 'ITEM_OUT_OF_STOCK', label: 'Item Out of Stock' },

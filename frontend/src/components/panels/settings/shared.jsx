@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, XCircle, Pencil, Trash2, X } from "lucide-react";
 import { COLORS } from "../../../constants";
 import { useToast } from "../../../hooks/use-toast";
+// CR-133-GAP: G1 fix — NumberInput allow-empty onChange + blur clamp
 
 // ─── Form Inputs ────────────────────────────────────────────────────────────
 export const TextInput = ({ label, value, onChange, placeholder, required }) => (
@@ -30,7 +31,17 @@ export const NumberInput = ({ label, value, onChange, min, max, step, suffix }) 
       <input
         type="number"
         value={value ?? ""}
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        onChange={(e) => {
+          const raw = e.target.value;
+          if (raw === '') return;                                    // allow clearing to retype
+          const n = parseFloat(raw);
+          if (Number.isFinite(n)) onChange(n);
+        }}
+        onBlur={(e) => {
+          const n = parseFloat(e.target.value);
+          if (!Number.isFinite(n) || (min != null && n < min)) { onChange(min ?? 0); return; }
+          if (max != null && n > max) onChange(max);
+        }}
         min={min}
         max={max}
         step={step || 1}

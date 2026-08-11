@@ -1,0 +1,38 @@
+{
+  "summary": "CR-135 Aggregator Setup QA — tested all specified test cases on /aggregator-preview (public design mockup). 17/18 tests passed. One failure: T8 - submit-add-brand button has no onClick handler, so no validation/toast fires on empty form submission.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AggregatorPreviewPage — ConfigTab — Add New Brand form",
+        "issue": "T8 FAIL: 'Create Brand →' button (data-testid=submit-add-brand) has no onClick handler. Clicking it without filling Brand Name or Phone does NOT show any toast or validation. Code review: line 263 in AggregatorPreviewPage.jsx — button has no onClick prop.",
+        "selector": "[data-testid='submit-add-brand']",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": [
+    "T8 FIX: Add onClick handler to submit-add-brand button in AggregatorPreviewPage.jsx that validates Brand Name and Phone are non-empty and shows a toast (or inline error) when they are empty. Example: onClick={() => { if (!addForm.name || !addForm.phone) { /* show toast */ return; } /* proceed */ }}"
+  ],
+  "critical_code_review_comments": [
+    "AggregatorPreviewPage.jsx line 263: submit-add-brand button has no onClick — no validation or submit logic. The addForm state is tracked but never read on submit.",
+    "AggregatorPreviewPage.jsx Input component (line 97-104): uses defaultValue (uncontrolled) instead of value+onChange, so addForm state is never updated when user types — even if onClick was added, addForm.name/phone would always be '' (empty string). This is a fundamental issue: the inline Add Brand form fields are uncontrolled, so validation against addForm state would always fail even with real data typed."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only)",
+    "frontend": "94% (17/18 tests passed)"
+  },
+  "test_credentials": "None needed — /aggregator-preview is a public route",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All tests on /aggregator-preview passed except T8. The Add Brand form uses uncontrolled inputs (defaultValue) so addForm state never gets user input — validation based on addForm state would not work. The submit button needs: (1) onChange handlers on inputs, (2) onClick with validation logic, (3) toast/error display. The real ConfigTab.jsx component may have proper validation — only tested the AggregatorPreviewPage mockup per instructions.",
+  "rca_of_issue": "T8 Root Cause: In AggregatorPreviewPage.jsx ConfigTab component, the Input primitive (line 97) uses `defaultValue` (uncontrolled React input) instead of `value + onChange`. The addForm state (line 189) is initialized but Input components never call setAddForm when user types. Additionally, the submit-add-brand button has no onClick handler at all (line 263). Fix: (1) Change Input to use value+onChange or add separate onChange to these inputs, (2) Add onClick to submit-add-brand that reads form state and shows validation error if name/phone empty."
+}

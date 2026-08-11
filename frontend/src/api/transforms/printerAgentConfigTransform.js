@@ -96,7 +96,9 @@ export const newPrinter = (defaults = {}) => ({
 // Style config normalize / apply
 // =============================================================================
 
-/** Extract ONLY the editable core triple per row (windows{}/android{}/content/visible/alignment untouched in raw) */
+/** Hybrid API shape: rows have BOTH flat keys AND windows{}/android{} sub-objects.
+ *  Prefer windows sub-object (backend now reads this). Fall back to flat for old configs.
+ *  CR-133-GAP: G5+G6 fix — android platform added. */
 const normalizeStyle = (styleSection = {}) => {
   const out = {};
   Object.entries(styleSection).forEach(([sectionKey, rows]) => {
@@ -104,17 +106,27 @@ const normalizeStyle = (styleSection = {}) => {
     out[sectionKey] = {};
     Object.entries(rows).forEach(([rowKey, row]) => {
       if (!row || typeof row !== 'object') return;
+      const w = row.windows || row;    // prefer windows sub-object; flat is backward compat
+      const a = row.android || {};
       out[sectionKey][rowKey] = {
-        fontSize58: toNum(row.font_size_58mm),
-        fontSize80: toNum(row.font_size_80mm),
-        bold: toBool(row.bold),
+        windows: {
+          fontSize58: toNum(w.font_size_58mm),
+          fontSize80: toNum(w.font_size_80mm),
+          bold:       toBool(w.bold),
+        },
+        android: {
+          fontSize58: toNum(a.font_size_58mm, 1),
+          fontSize80: toNum(a.font_size_80mm, 1),
+          bold:       toBool(a.bold),
+        },
       };
     });
   });
   return out;
 };
 
-/** Overwrite ONLY the core triple leaves on the raw (cloned) style section */
+/** CR-133-GAP: Write to windows{} (backend reads this) AND flat fields (backward compat for older agents).
+ *  Android values written to android{} sub-object. */
 const applyStyle = (rawSection = {}, styleState = {}) => {
   Object.entries(styleState).forEach(([sectionKey, rows]) => {
     const rawRows = rawSection[sectionKey];
@@ -122,9 +134,20 @@ const applyStyle = (rawSection = {}, styleState = {}) => {
     Object.entries(rows).forEach(([rowKey, row]) => {
       const rawRow = rawRows[rowKey];
       if (!rawRow) return;
-      rawRow.font_size_58mm = toNum(row.fontSize58);
-      rawRow.font_size_80mm = toNum(row.fontSize80);
-      rawRow.bold = toYesNo(row.bold);
+      // Windows (primary — backend reads these for Windows printing)
+      if (!rawRow.windows) rawRow.windows = {};
+      rawRow.windows.font_size_58mm = toNum(row.windows?.fontSize58);
+      rawRow.windows.font_size_80mm = toNum(row.windows?.fontSize80);
+      rawRow.windows.bold           = toYesNo(row.windows?.bold);
+      // Flat (backward compat — keep in sync with windows values)
+      rawRow.font_size_58mm = rawRow.windows.font_size_58mm;
+      rawRow.font_size_80mm = rawRow.windows.font_size_80mm;
+      rawRow.bold           = rawRow.windows.bold;
+      // Android
+      if (!rawRow.android) rawRow.android = {};
+      rawRow.android.font_size_58mm = toNum(row.android?.fontSize58, 1);
+      rawRow.android.font_size_80mm = toNum(row.android?.fontSize80, 1);
+      rawRow.android.bold           = toYesNo(row.android?.bold);
     });
   });
 };
@@ -162,6 +185,8 @@ export const fromAPI = (data) => {
   return {
     _raw: deepClone(data), // entire GET payload retained — basis of the POST body
 
+    employeeId: String(data.employee_id ?? ''),  // CR-133-GAP: G3b — bound to dropdown
+
     printers: (sc.printers || []).map(normalizePrinter),
     paperSize: sc.paper_settings?.paper_size ?? '80 mm',
     printerType: sc.printer_type?.selected ?? 'USB Printer',
@@ -190,20 +215,26 @@ export const fromAPI = (data) => {
 
     fontFamily: gs.font_family ?? '',
     dividerLineStyle: gs.divider_line_style ?? 'Solid',
+    // CR-133-GAP: G5+G6 — prefer windows sub-object for global sizes; flat fallback for old configs
     pageMargins: {
-      top: gs.page_margins_mm?.top ?? 0,
-      bottom: gs.page_margins_mm?.bottom ?? 0,
-      left: gs.page_margins_mm?.left ?? 0,
-      right: gs.page_margins_mm?.right ?? 0,
+      top:    gs.windows?.page_margins_mm?.top    ?? gs.page_margins_mm?.top    ?? 0,
+      bottom: gs.windows?.page_margins_mm?.bottom ?? gs.page_margins_mm?.bottom ?? 0,
+      left:   gs.windows?.page_margins_mm?.left   ?? gs.page_margins_mm?.left   ?? 0,
+      right:  gs.windows?.page_margins_mm?.right  ?? gs.page_margins_mm?.right  ?? 0,
     },
     logoSize: {
-      width: gs.logo_size_mm?.width ?? 30,
-      height: gs.logo_size_mm?.height ?? 30,
+      width:  gs.windows?.logo_size_mm?.width  ?? gs.logo_size_mm?.width  ?? 30,
+      height: gs.windows?.logo_size_mm?.height ?? gs.logo_size_mm?.height ?? 30,
     },
     qrSize: {
-      upi: gs.qr_size_mm?.upi ?? 25,
-      feedback: gs.qr_size_mm?.feedback ?? 25,
+      upi:      gs.windows?.qr_size_mm?.upi      ?? gs.qr_size_mm?.upi      ?? 25,
+      feedback: gs.windows?.qr_size_mm?.feedback ?? gs.qr_size_mm?.feedback ?? 25,
     },
+    // Android global sizes (scalar int, scale 1–8)
+    androidLogoSize:       gs.android?.logo_size_mm          ?? 30,
+    androidUpiQrSize:      gs.android?.upi_qr_size_mm        ?? 25,
+    androidFeedbackQrSize: gs.android?.feedback_qr_size_mm   ?? 25,
+    androidScaleRange:     gs.android?.size_scale_range       ?? [1, 8],
 
     billStyle: normalizeStyle(style.bill_print_style),
     kotStyle: normalizeStyle(style.kot_print_style),
@@ -273,27 +304,26 @@ export const toAPI = (state) => {
   const gs = style.global_settings;
   gs.font_family = state.fontFamily;
   gs.divider_line_style = state.dividerLineStyle;
-  gs.page_margins_mm = {
-    top: toNum(state.pageMargins.top),
-    bottom: toNum(state.pageMargins.bottom),
-    left: toNum(state.pageMargins.left),
-    right: toNum(state.pageMargins.right),
-  };
-  gs.logo_size_mm = {
-    width: toNum(state.logoSize.width),
-    height: toNum(state.logoSize.height),
-  };
-  gs.qr_size_mm = {
-    upi: toNum(state.qrSize.upi),
-    feedback: toNum(state.qrSize.feedback),
-  };
+  // CR-133-GAP: G5+G6 — write windows (primary, backend reads) + flat (backward compat)
+  if (!gs.windows) gs.windows = {};
+  gs.windows.page_margins_mm = { top: toNum(state.pageMargins.top), bottom: toNum(state.pageMargins.bottom), left: toNum(state.pageMargins.left), right: toNum(state.pageMargins.right) };
+  gs.windows.logo_size_mm    = { width: toNum(state.logoSize.width), height: toNum(state.logoSize.height) };
+  gs.windows.qr_size_mm      = { upi: toNum(state.qrSize.upi), feedback: toNum(state.qrSize.feedback) };
+  gs.page_margins_mm         = gs.windows.page_margins_mm;   // backward compat flat
+  gs.logo_size_mm            = gs.windows.logo_size_mm;
+  gs.qr_size_mm              = gs.windows.qr_size_mm;
+  // Android global (size_scale_range read-only — preserved via _raw)
+  if (!gs.android) gs.android = {};
+  gs.android.logo_size_mm        = toNum(state.androidLogoSize);
+  gs.android.upi_qr_size_mm      = toNum(state.androidUpiQrSize);
+  gs.android.feedback_qr_size_mm = toNum(state.androidFeedbackQrSize);
 
   applyStyle(style.bill_print_style, state.billStyle);
   applyStyle(style.kot_print_style, state.kotStyle);
 
   // top-level restaurant_id NOT sent (matches known-good POST)
   return {
-    employee_id: body.employee_id,
+    employee_id: state.employeeId || body.employee_id,  // CR-133-GAP: G3b — use dropdown state; fall back to raw
     settings_config: sc,
     style_config: style,
   };

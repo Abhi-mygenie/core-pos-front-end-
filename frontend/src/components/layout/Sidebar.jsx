@@ -4,7 +4,7 @@ import {
   ChevronDown, User, Home as HomeIcon, ClipboardList, BarChart3, 
   UtensilsCrossed, Users, Wallet, Package, Settings, LogOut, 
   PanelLeftClose, PanelLeft, RefreshCw, Bell, BellOff, Eye,
-  LayoutGrid, List, Columns, Rows, LineChart, Banknote, Store as StoreIcon, Receipt
+  LayoutGrid, List, Columns, Rows, LineChart, Banknote, Store as StoreIcon, Receipt, Link2
 } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../../constants";
 import { useAuth, useRestaurant, useMenu, useTables, useSettings } from "../../contexts";
@@ -200,6 +200,16 @@ const sidebarMenuItems = [
       { id: "insights-expense-report", label: "Expense Report", path: "/reports-module/expense-report" },
     ],
   },
+  // CR-135: Aggregator Setup
+  {
+    id: 'aggregator',
+    label: 'Aggregator',
+    icon: Link2,
+    children: [
+      { id: 'aggregator-setup', label: 'Aggregator Setup', path: '/aggregator/setup' },
+      { id: 'food-mapping',     label: 'Food Mapping',     comingSoon: true },
+    ],
+  },
 ];
 
 // Sidebar Component
@@ -293,7 +303,7 @@ const Sidebar = ({
   };
 
   // Only show these sidebar sections (hide the rest)
-  const VISIBLE_SECTIONS = new Set(['dashboard', 'day-closure', 'expenses', 'menu-management', 'credit', 'reports', 'settings', 'inventory', 'insights']); // CR-041, CR-059, CR-072
+  const VISIBLE_SECTIONS = new Set(['dashboard', 'day-closure', 'expenses', 'menu-management', 'credit', 'reports', 'settings', 'inventory', 'insights', 'aggregator']); // CR-041, CR-059, CR-072, CR-135
 
   // Filter menu items by visibility + permission
   const visibleMenuItems = sidebarMenuItems.filter((item) => {

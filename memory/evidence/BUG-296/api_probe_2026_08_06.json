@@ -1,0 +1,50 @@
+{
+  "date": "2026-08-06",
+  "restaurant": "Shimla QoH Food Court",
+  "rid": 598,
+  "period": "June 2026",
+  "food_court_path": {
+    "sort_by": "created_at",
+    "date_range": "exact Jun 1-30",
+    "total_orders": 6170,
+    "fos_breakdown": {
+      "3_cancelled": 18,
+      "6_paid": 6152
+    },
+    "item_lines": 12560,
+    "item_revenue": 1840043.0,
+    "order_amount_sum": 1980822.53
+  },
+  "item_sales_path": {
+    "sort_by": "collect_bill",
+    "date_range": "exact Jun 1-30",
+    "total_orders": 6152,
+    "fos_breakdown": {
+      "6_paid": 6152
+    },
+    "item_lines": 12538,
+    "item_revenue": 1840043.0,
+    "order_amount_sum": 1979039.0
+  },
+  "stations": [
+    "CREAMBELLPARLOUR",
+    "GUPTAJEE",
+    "MSB",
+    "ZORKO"
+  ],
+  "item_lines_per_station": {
+    "CREAMBELLPARLOUR": 3663,
+    "GUPTAJEE": 3246,
+    "MSB": 1425,
+    "ZORKO": 4226
+  },
+  "station_item_revenue": {
+    "CREAMBELLPARLOUR": 242575,
+    "GUPTAJEE": 719873,
+    "MSB": 302643,
+    "ZORKO": 574952
+  },
+  "cross_station_orders": 1739,
+  "single_station_orders": 4428,
+  "key_finding": "Revenue totals are identical (1840043). Mismatch is in ORDER COUNT when owner sums Food Court tabs vs Item Sales unique orders."
+}

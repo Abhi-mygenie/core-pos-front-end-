@@ -1,0 +1,14 @@
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": [
+      "The email field is required."
+    ],
+    "password": [
+      "The password must be at least 8 characters.",
+      "The password must contain at least one uppercase and one lowercase letter.",
+      "The password must contain at least one letter.",
+      "The password must contain at least one symbol."
+    ]
+  }
+}
