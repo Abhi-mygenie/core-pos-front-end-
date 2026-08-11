@@ -12,10 +12,10 @@
 | Screen | Comparison Page | Owner Review |
 |---|---|---|
 | 1 — Basic Settings | `/screen1-compare` | ✅ LOCKED — F1-01..F1-09 |
-| 2 — Printer Settings | `/screen2-compare` | ✅ LOCKED — 2026-08-11 (8 fields from settings-list API) |
+| 2 — Printer Settings | `/screen2-compare` | ✅ LOCKED — 2026-08-11 (owner approved) |
 | 3 — Channels, Payments & Info | `/screen3-compare` | ✅ APPROVED — no changes |
 | 4 — Tax & Charges | `/screen4-compare` | ✅ APPROVED — no changes |
-| 5 — Order & Kitchen | `/screen5-compare` | ✅ APPROVED — printer fields MOVED to Step 2 |
+| 5 — Order & Kitchen | `/screen5-compare` | ✅ LOCKED — 2026-08-11 (printer fields moved to Step 2, owner approved) |
 | 6 — Online Ordering | `/screen6-compare` | ✅ APPROVED — no changes |
 | 7 — Aggregator | ~~`/screen7-compare`~~ | ❌ REMOVED from CR-132 — moved to CR-135 (Q1=A, 2026-08-11) |
 | 8 → **7** — Inventory | `/screen8-compare` | ✅ APPROVED — renumbered Step 7 |
@@ -393,31 +393,66 @@ All fields that need changes to `restaurantSettingsTransform.js` and `Restaurant
 | `deliver_charge_gst` | `deliverChargeGst` | step3 | float | `parseFloat(basic.deliver_charge_gst) \|\| 0` |
 | `print_bill_customer_copy` | `printBillCustomerCopy` | **step2 (printer)** | bool | `toBool(basic.print_bill_customer_copy)` |
 | `kot_language` | `kotLanguage` | **step2 (printer)** | str | `basic.kot_language \|\| 'English'` |
-| `locationSelection` | `locationSelection` | step5 | str | `basic.locationSelection \|\| 'scanner'` |
-| `order_auto_serve` | `orderAutoServe` | step5 | bool | `toBool(basic.order_auto_serve)` |
-| `aggregator_order_tone` | `aggregatorOrderTone` | step4 | str | `basic.aggregator_order_tone \|\| 'buzzer'` |
+| `locationSelection` | `locationSelection` | **step4 (Order&Kitchen)** | str | `basic.locationSelection \|\| 'scanner'` |
+| `order_auto_serve` | `orderAutoServe` | **step4 (Order&Kitchen)** | bool | `toBool(basic.order_auto_serve)` |
+| `aggregator_order_tone` | `aggregatorOrderTone` | **pass-through** | str | `basic.aggregator_order_tone \|\| 'buzzer'` — CR-135 write path |
 | `use_token` | `useToken` | **step2 (printer)** | bool | `toBool(basic.use_token)` |
-| `aggregator_auto_kot` | `aggregatorAutoKot` | step4 | bool | `toBool(basic.aggregator_auto_kot)` |
-| `aggregator_auto_bill` | `aggregatorAutoBill` | step4 | bool | `toBool(basic.aggregator_auto_bill)` |
-| `aggregator_auto_bill_stage` | `aggregatorAutoBillStage` | step4 | str | `basic.aggregator_auto_bill_stage \|\| 'Ready'` |
-| `confirm_order_tone` | `confirmOrderTone` | step4 | str | `basic.confirm_order_tone \|\| 'default'` |
-| `confirm_order_show_tab` | `confirmOrderShowTab` | step4 | bool | `toBool(basic.confirm_order_show_tab)` |
+| `aggregator_auto_kot` | `aggregatorAutoKot` | **pass-through** | bool | `toBool(basic.aggregator_auto_kot)` — CR-135 write path |
+| `aggregator_auto_bill` | `aggregatorAutoBill` | **pass-through** | bool | `toBool(basic.aggregator_auto_bill)` — CR-135 write path |
+| `aggregator_auto_bill_stage` | `aggregatorAutoBillStage` | **pass-through** | str | `basic.aggregator_auto_bill_stage \|\| 'Ready'` — CR-135 write path |
+| `confirm_order_tone` | `confirmOrderTone` | **step4 (Order&Kitchen)** | str | `basic.confirm_order_tone \|\| 'default'` |
+| `confirm_order_show_tab` | `confirmOrderShowTab` | **step4 (Order&Kitchen)** | bool | `toBool(basic.confirm_order_show_tab)` |
 | `no_of_kot` | `noOfKot` | **step2 (printer)** | str | `basic.no_of_kot \|\| '1'` |
 | `no_of_bill` | `noOfBill` | **step2 (printer)** | str | `basic.no_of_bill \|\| '1'` |
 | `printing_in_kds` | `printingInKds` | **step2 (printer)** | bool | `toBool(basic.printing_in_kds)` |
-| `schedule_order` | `scheduleOrder` | step4 | bool | `toBool(basic.schedule_order)` |
-| `default_prep_time` | `defaultPrepTime` | step4 | int | `parseInt(basic.default_prep_time) \|\| 15` |
-| `prep_time_count_method` | `prepTimeCountMethod` | step4 | str | `basic.prep_time_count_method \|\| 'quantity'` |
-| `auto_prep_time_ack` | `autoPrepTimeAck` | step4 | bool | `toBool(basic.auto_prep_time_ack)` |
-| `auto_accept_inventory` | `autoAcceptInventory` | step5 | bool | `toBool(basic.auto_accept_inventory)` |
+| `schedule_order` | `scheduleOrder` | **step4 (Order&Kitchen)** | bool | `toBool(basic.schedule_order)` |
+| `default_prep_time` | `defaultPrepTime` | **pass-through** | int | `parseInt(basic.default_prep_time) \|\| 15` — CR-135 write path |
+| `prep_time_count_method` | `prepTimeCountMethod` | **pass-through** | str | `basic.prep_time_count_method \|\| 'quantity'` — CR-135 write path |
+| `auto_prep_time_ack` | `autoPrepTimeAck` | **pass-through** | bool | `toBool(basic.auto_prep_time_ack)` — CR-135 write path |
+| `auto_accept_inventory` | `autoAcceptInventory` | **step6 (Inventory)** | bool | `toBool(basic.auto_accept_inventory)` |
 | `restaurant_for` | `restaurantFor` | step1 | str | `basic.restaurant_for \|\| 'Normal'` |
 | `is_banner` | `isBanner` | step1 | bool | `toBool(basic.is_banner)` — **no UI, pass-through in toAPI** (F1-07) |
 | `is_category_box` | `isCategoryBox` | step1 | bool | `toBool(basic.is_category_box)` — **no UI, pass-through in toAPI** (F1-08) |
-| `show_user_gst` | `showUserGst` | step1 | bool | `toBool(basic.show_user_gst)` |
-| `prep_time_bonus_config` | `prepTimeBonusConfig` | step4 | any | `basic.prep_time_bonus_config \|\| null` (pass-through) |
-| `auto_paid` | `autoPaid` | step2 | bool | `toBool(basic.auto_paid)` (pass-through, no UI) |
+| `show_user_gst` | `showUserGst` | **step3 (Tax&Charges)** | bool | `toBool(basic.show_user_gst)` |
+| `prep_time_bonus_config` | `prepTimeBonusConfig` | **pass-through** | any | `basic.prep_time_bonus_config \|\| null` — pass null as-is |
+| `auto_paid` | `autoPaid` | **pass-through** | bool | `toBool(basic.auto_paid)` — pass-through, no UI |
 
 **Total new fromAPI additions: 49 fields** (+ 1 REGRESSION FIX for `room`)
+
+### fromAPI changes — advanced{} — PRINTER FIELDS MOVING TO step2 (printer)
+
+These two already exist in the current transform under `step4`. They must MOVE to `step2 (printer)` in the new wizard:
+
+| Field | FE Key | New Step | Type | Transform |
+|---|---|---|---|---|
+| `print_kot` | `printKot` | **step2 (printer)** ← was step4 | bool | `toBool(advanced.print_kot)` |
+| `billing_auto_bill_print` | `billingAutoBillPrint` | **step2 (printer)** ← was step4 | bool | `toBool(advanced.billing_auto_bill_print)` |
+
+### fromAPI — CR-135 pass-through fields (no UI in wizard, echo back in toAPI)
+
+| Field | FE Key | Type | Transform | Note |
+|---|---|---|---|---|
+| `aggregator_order_tone` | `aggregatorOrderTone` | str | `basic.aggregator_order_tone \|\| 'buzzer'` | CR-135 owns write path |
+| `aggregator_auto_kot` | `aggregatorAutoKot` | bool | `toBool(basic.aggregator_auto_kot)` | CR-135 owns write path |
+| `aggregator_auto_bill` | `aggregatorAutoBill` | bool | `toBool(basic.aggregator_auto_bill)` | CR-135 owns write path |
+| `aggregator_auto_bill_stage` | `aggregatorAutoBillStage` | str | `basic.aggregator_auto_bill_stage \|\| 'Ready'` | CR-135 owns write path |
+| `default_prep_time` | `defaultPrepTime` | int | `parseInt(basic.default_prep_time) \|\| 15` | CR-135 owns write path |
+| `prep_time_count_method` | `prepTimeCountMethod` | str | `basic.prep_time_count_method \|\| 'quantity'` | CR-135 owns write path |
+| `auto_prep_time_ack` | `autoPrepTimeAck` | bool | `toBool(basic.auto_prep_time_ack)` | CR-135 owns write path |
+| `prep_time_bonus_config` | `prepTimeBonusConfig` | any | `basic.prep_time_bonus_config \|\| null` | pass-through null |
+| `auto_paid` | `autoPaid` | bool | `toBool(basic.auto_paid)` | pass-through, no UI |
+
+### fromAPI — Screen 5 (Order & Kitchen) new fields — step4 in new wizard
+
+| Field | FE Key | Type | Transform |
+|---|---|---|---|
+| `confirm_order_tone` | `confirmOrderTone` | str | `basic.confirm_order_tone \|\| 'default'` |
+| `confirm_order_show_tab` | `confirmOrderShowTab` | bool | `toBool(basic.confirm_order_show_tab)` |
+| `schedule_order` | `scheduleOrder` | bool | `toBool(basic.schedule_order)` |
+| `order_auto_serve` | `orderAutoServe` | bool | `toBool(basic.order_auto_serve)` |
+| `locationSelection` | `locationSelection` | str | `basic.locationSelection \|\| 'scanner'` |
+
+> **Step numbering note:** `step2`, `step3`, `step4`, `step5` in this table refer to the new wizard's 8-step numbering (step1=Basic, step2=Printer, step3=Channels, step4=Order&Kitchen...). Gate 3 Implementation Plan will define final JS step keys.
 
 ### toAPI changes — basic{} additions
 
