@@ -18791,7 +18791,7 @@
       "id": "BUG-305",
       "type": "BUG",
       "title": "orderTransform.js \u2014 discountRatio uses full subtotal (not discountableSubtotal) in calcOrderTotals + buildBillPrintPayload: wrong GST in backend payload and bill print",
-      "status": "GATE 2 COMPLETE \u2014 ALL ODs RESOLVED \u2014 AWAITING GATE 3",
+      "status": "GATE 3 COMPLETE \u2014 AWAITING GATE 4 GO",
       "priority": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_5_1",
@@ -18811,7 +18811,8 @@
       "fast_lane_eligible": false,
       "artifact_refs": {
         "intake": "change_requests/BUG-305_ORDERTRANSFORM_DISCOUNT_RATIO_BACKEND_PAYLOAD_PRINT_INTAKE.md",
-        "impact_analysis": "impact/BUG-305_IMPACT_ANALYSIS.md"
+        "impact_analysis": "impact/BUG-305_IMPACT_ANALYSIS.md",
+        "implementation_plan": "plans/BUG-305_IMPLEMENTATION_PLAN.md"
       },
       "notes": "Gate 2 complete 2026-08-11. Fix is ENTIRELY in orderTransform.js (1 file, 3 functions). Intake overestimated blast radius (5 files \u2192 1 file). buildCartItem adds _giveDiscount marker; calcOrderTotals splits discountableGst; buildBillPrintPayload uses food_details.give_discount. Only Caller 3 (collectBillExisting) is affected in calcOrderTotals. All ODs resolved by analysis. No caller changes needed."
     }
