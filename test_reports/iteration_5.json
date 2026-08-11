@@ -1,0 +1,16 @@
+{
+  "summary": "T14 re-test: Aggregator banner in AutoPrintTab. Banner is now present and rendering correctly in the real AutoPrintTab component.",
+  "test_results": {
+    "T14_aggregator_banner": "PASS - data-testid='aggregator-setup-banner' found. Text: 'Aggregator auto-print settings (auto-KOT, auto-bill, stage) are managed in Aggregator Setup.' Background: rgb(239, 246, 255) (blue/info). Link 'Go to Aggregator Setup' present with data-testid='aggregator-setup-banner-link'. No aggregator auto-KOT section present."
+  },
+  "navigation_note": "Used pushState('/settings') + dispatchEvent(popstate) after dashboard load to reach SettingsPanel. Clicked settings-tile-printers → printer-config-tab-autoprint.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100% (T14 PASS)" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "T14 fully passes. Banner present in real AutoPrintTab with correct blue styling and testids. All CR-133 GAP tests T1-T14, R1, R4 are PASS. Navigation: use pushState('/settings') + popstate event after dashboard load, then click settings-tile-printers tile."
+}

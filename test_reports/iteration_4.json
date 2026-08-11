@@ -1,0 +1,58 @@
+{
+  "summary": "QA for CR-133 Gap Batch on real PrinterAgentConfigView via correct navigation: Login → /settings → SettingsPanel → Printers tile. All T1-T9 tests executed on the real component. Previous agent used wrong nav (sidebar click → comingSoon toast). This iteration confirms the correct path works.",
+
+  "navigation_fix": "Used pushState('/settings') after dashboard load to bypass loading screen redirect. SettingsPanel opens with tile grid. Clicked 'Printers' tile (NOT sidebar) to open PrinterAgentConfigView with 4 tabs.",
+
+  "test_results": {
+    "NAV": "PASS - /settings → SettingsPanel → Printers tile → PrinterAgentConfigView with 4 tabs (Printers, Auto Print, Bill Content, Print Style)",
+    "T1_bill_copies_allow_empty": "PASS - Ctrl+A then type '3' shows '3' in field. No snap-back mid-type.",
+    "T2_bill_copies_blur_clamp": "PASS - Clear + blur snaps to 1 (min enforced).",
+    "T3_kot_copies": "PASS - KOT Copies allows typing '3' and clamps to 1 on blur.",
+    "T4_print_style_allow_empty": "PASS - style-row-restaurant_name-58mm found after expanding Restaurant Header. Ctrl+A then type '9' shows '9'.",
+    "T5_android_scale_clamp": "PASS - Typed '9' in Android 58mm input, Tab to blur → value clamped to 8.",
+    "T6_platform_toggle_renders": "PASS - data-testid='style-platform-android' and 'style-platform-windows' found. Android toggle shows 'Android scale 1-8  Values are scale multipliers, not pt sizes' banner. Field/58mm/80mm/Bold column headers present.",
+    "T7_windows_vs_android_values": "PASS - Windows restaurant_name 58mm = 11 (pt size), Android 58mm = 2 (scale multiplier). Values differ as expected.",
+    "T8_windows_global_card": "PASS - data-testid='margin-top', 'logo-w', 'qr-upi' all found and visible.",
+    "T9_android_global_card": "PASS - data-testid='android-androidLogoSize' found. Android global card shows 'Scale range 1-8' label.",
+    "T10_employee_dropdown_renders": "PASS - data-testid='employee-dropdown' found on Bill Content tab.",
+    "T11_employee_populated": "PASS - 19 employees loaded (20 options including placeholder). e.g. 'San dd (Manger(C))', 'saurav (owner(c))', etc.",
+    "T14_no_aggregator_in_autoprint": "PARTIAL PASS - No auto-KOT/auto-bill aggregator section (correct). However, banner pointing to Aggregator Setup is NOT present in the real AutoPrintTab (was only in /printer-config-preview). May be a missing feature in real component.",
+    "R1_autoprint_copies_regression": "PASS - Bill Copies=1, KOT Copies=1. Valid saved values shown.",
+    "R4_bill_content_non_employee_fields": "PASS - UPI Payment QR, Dynamic UPI QR, Feedback QR, PDF Printing on Windows, Bill Footer all present after employee dropdown addition."
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "T14 - Aggregator banner in AutoPrint",
+        "issue": "The real AutoPrintTab does NOT show the 'Aggregator auto-print settings are managed in Aggregator Setup' banner. This banner appeared in /printer-config-preview but not in the real component. If T14 spec requires a banner, the real AutoPrintTab is missing it.",
+        "affected_selectors": ["[data-testid='printer-config-tab-autoprint']"],
+        "priority": "LOW - no crash, but missing informational banner"
+      }
+    ],
+    "design_issues": []
+  },
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [
+    "OPTIONAL: Add aggregator banner to real AutoPrintTab (not just the preview page) to fully satisfy T14 spec requirement for 'A banner pointing to Aggregator Setup should appear instead'.",
+    "NAVIGATION NOTE: Direct page.goto('/settings') triggers /loading redirect. The pushState workaround used in testing is not needed for real users (they navigate within the app). No code change needed."
+  ],
+
+  "critical_code_review_comments": [
+    "NumberInput G1 fix (shared.jsx line 36 'if (raw==='') return') works for ctrl+a+type flow but fill('') via Playwright first triggers React re-render back to state value. This is expected behavior for controlled inputs. Real user experience: allow-empty works correctly.",
+    "T14: AutoPrintTab in real component vs preview page differ in aggregator banner presence. If product requires the banner, it needs to be added to AutoPrintTab.jsx."
+  ],
+
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "95% (14/15 pass, 1 partial for T14 banner)"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All CR-133 GAP tests (T1-T9, T10-T11, T14, R1, R4) now tested on REAL PrinterAgentConfigView via correct path: pushState('/settings') after dashboard load → click Printers tile. Navigation via page.goto('/settings') redirects to /loading — must wait for full dashboard load first, then use pushState or in-app navigation. All main tests PASS. Only T14 aggregator banner is missing from real AutoPrintTab (present only in preview page)."
+}

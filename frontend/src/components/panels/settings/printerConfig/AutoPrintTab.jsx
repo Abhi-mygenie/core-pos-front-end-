@@ -1,5 +1,7 @@
 // CR-133: Auto Print tab — copies, in-house toggles (incl. Auto Settle)
 // CR-133 amendment: Aggregator Orders section removed — moved to CR-135 AggregatorSetup OperationalTab
+// CR-133-GAP: T14 fix — aggregator banner added to real component (was only in preview)
+import { useNavigate } from "react-router-dom";
 import { COLORS } from "../../../../constants";
 import { NumberInput, SelectInput, SectionTitle } from "../shared";
 
@@ -21,8 +23,25 @@ const Toggle = ({ label, hint, checked, onChange, testId }) => (
   </div>
 );
 
-export const AutoPrintTab = ({ config, update }) => (
+export const AutoPrintTab = ({ config, update }) => {
+  const navigate = useNavigate();
+  return (
   <div data-testid="autoprint-tab">
+    {/* CR-133-GAP: T14 — aggregator banner */}
+    <div
+      className="flex items-center justify-between px-3 py-2 rounded-md mb-3 text-xs"
+      style={{ backgroundColor: "#EFF6FF", border: "1px solid #BFDBFE", color: "#1D4ED8" }}
+      data-testid="aggregator-setup-banner"
+    >
+      <span>Aggregator auto-print settings (auto-KOT, auto-bill, stage) are managed in Aggregator Setup.</span>
+      <button
+        onClick={() => navigate("/aggregator/setup")}
+        className="ml-2 underline whitespace-nowrap font-medium"
+        data-testid="aggregator-setup-banner-link"
+      >
+        Go to Aggregator Setup
+      </button>
+    </div>
     <SectionTitle title="Print Copies" />
     <div className="grid grid-cols-2 gap-3">
       <NumberInput label="Bill Copies" value={config.billCopyCount} onChange={(v) => update({ billCopyCount: Math.max(1, Math.round(v)) })} min={1} max={5} step={1} />
@@ -36,4 +55,5 @@ export const AutoPrintTab = ({ config, update }) => (
     <Toggle label="Scan Order Auto-print" hint="Auto-print orders placed via QR scan" checked={config.scanOrderAutoPrint} onChange={(v) => update({ scanOrderAutoPrint: v })} testId="scan-order-auto-print-toggle" />
 
   </div>
-);
+  );
+};

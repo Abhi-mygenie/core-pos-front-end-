@@ -1,0 +1,80 @@
+{
+  "summary": "QA execution for CR-133 Gap Batch on MyGenie POS frontend. Testing performed on /printer-config-preview page (the only accessible printer config UI). Critical finding: Settings → Printers in the main nav shows 'Coming Soon' toast (comingSoon: true in Sidebar.jsx), so the real PrinterAgentConfigView with actual CR-133 fixes is NOT accessible to end users via navigation.",
+
+  "critical_finding": "Settings → Printers is marked comingSoon: true in /app/frontend/src/components/layout/Sidebar.jsx line 112. The actual PrinterAgentConfigView (with real G1/G3b/G4/G5/G6 fixes) is only accessible as a standalone design preview at /printer-config-preview, not through the main navigation flow.",
+
+  "test_results": {
+    "T1_bill_copies_allow_empty": "SKIP - Preview page uses NumberInputFixed (defaultValue, uncontrolled) without data-testid='input-bill-copies'. The real NumberInput in shared.jsx HAS the G1 fix and correct testid, but it's not accessible since Settings→Printers is Coming Soon.",
+    "T2_bill_copies_blur_clamp": "SKIP - Same reason as T1",
+    "T3_kot_copies": "SKIP - Same reason as T1/T2",
+    "T4_print_style_allow_empty": "PASS - Cleared style-row-restaurant_name-58mm input, typed '9', shows '9' (no snap-back). Allow-empty works in preview page.",
+    "T5_android_scale_clamp": "SKIP - data-testid='style-platform-android' not present in preview page platform toggle buttons",
+    "T6_platform_toggle_renders": "PARTIAL PASS - Windows/Android toggle buttons visible and clickable in preview page. Android panel shows 'Scale range: 1-8'. Column headers (Field/58mm/80mm/Bold) present. BUT data-testid attributes (style-platform-android, style-platform-windows) are NOT in the preview page buttons.",
+    "T7_windows_vs_android_values": "PASS - Windows restaurant_name 58mm = 11 (pt size). SAMPLE_WIN_VALUES vs SAMPLE_AND_VALUES differ (Windows: 11, Android: 2). Different values confirmed.",
+    "T8_windows_global_card": "VISUAL PASS - Windows card renders with Margin Top/Bottom/Left/Right inputs and Logo W×H. But data-testid='margin-top', 'logo-w', 'qr-upi' are NOT in the preview page (they exist in real PrintStyleTab.jsx but not in PrinterConfigPreviewPage.jsx).",
+    "T9_android_global_card": "VISUAL PASS - Android card renders with Logo Size, UPI QR, Feedback QR and 'Scale range: 1-8' label. But data-testid='android-androidLogoSize' NOT in preview page.",
+    "T10_employee_dropdown_renders": "PASS - data-testid='employee-dropdown' found and visible",
+    "T11_employee_populated": "PASS - 7 employee options loaded from API: PA (Owner), check (Owner), abhi (Manager), p (All Modules), parth (captains(c)), Saurav (m), System Employee",
+    "T14_no_aggregator_section": "PASS - No auto-KOT / auto-bill section for aggregator. Blue banner reads: 'Aggregator auto-print settings (auto-KOT, auto-bill, stage) are managed in Aggregator Setup → Operational Settings'",
+    "R1_autoprint_copies_regression": "PASS - Bill Copies and KOT Copies both display value=1, min=1, max=5. Values not undefined/0.",
+    "R4_bill_content_non_employee_fields": "PASS - UPI Payment QR toggle, Dynamic UPI QR toggle, Feedback QR toggle, PDF Printing on Windows toggle all present and visible. Bill Footer input present."
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Sidebar.jsx",
+        "issue": "Settings → Printers is marked comingSoon:true (line 112), showing 'Printers will be available in a future update' toast. The real PrinterAgentConfigView (with CR-133 fixes) is NOT accessible from main navigation.",
+        "selector": "data-testid=sidebar-settings → text=Printers",
+        "priority": "CRITICAL"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "T1/T2/T3 - NumberInput allow-empty + blur clamp",
+        "issue": "Preview page uses NumberInputFixed component (uncontrolled defaultValue, no onChange/onBlur logic). The G1 fix exists in shared.jsx NumberInput but is NOT used in /printer-config-preview. Tests T1/T2/T3 require data-testid='input-bill-copies' / 'input-kot-copies' which are absent in preview page.",
+        "affected_selectors": ["[data-testid='input-bill-copies']", "[data-testid='input-kot-copies']"]
+      },
+      {
+        "flow": "T5/T6 - Android platform toggle",
+        "issue": "Platform toggle buttons in preview page lack data-testid attributes. Real PrintStyleTab.jsx has data-testid='style-platform-android' and 'style-platform-windows' but preview page doesn't.",
+        "affected_selectors": ["[data-testid='style-platform-android']", "[data-testid='style-platform-windows']"]
+      },
+      {
+        "flow": "T8/T9 - Windows/Android global card inputs",
+        "issue": "Preview page global card inputs lack data-testid. Real PrintStyleTab.jsx has margin-top, logo-w, qr-upi, android-androidLogoSize testids but preview page doesn't.",
+        "affected_selectors": ["[data-testid='margin-top']", "[data-testid='logo-w']", "[data-testid='qr-upi']", "[data-testid='android-androidLogoSize']"]
+      }
+    ],
+    "design_issues": []
+  },
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "action_items": [
+    "CRITICAL: Remove comingSoon:true from Printers in Sidebar.jsx (line 112) to make the real PrinterAgentConfigView accessible via Settings → Printers. Without this, CR-133 fixes exist in code but are not accessible to users.",
+    "IMPORTANT: The /printer-config-preview page is a standalone design mockup using different components (NumberInputFixed, uncontrolled inputs) — the data-testids for T1/T2/T3/T5/T6/T8/T9 are in the REAL components (shared.jsx, PrintStyleTab.jsx) which are only rendered via PrinterAgentConfigView. Main agent needs to either: (a) expose PrinterAgentConfigView, or (b) add testids to preview page to enable testing.",
+    "Once Printers is accessible via nav, re-run full test suite against the real PrinterAgentConfigView to verify G1 (NumberInput blur clamp), G4 (StyleInput), G5/G6 (platform split) fixes work end-to-end."
+  ],
+
+  "what_was_tested_successfully": [
+    "T10/T11: employee-dropdown renders with 7 real employees from API (G3b fix verified)",
+    "T14: No aggregator section in AutoPrint, banner points to Aggregator Setup (correct)",
+    "R1: Bill Copies + KOT Copies show valid values (not undefined/0)",
+    "R4: All existing Bill Content fields (toggles, footer, QR) present and not broken",
+    "T4: StyleInput allow-empty works (typed 9, showed 9, no snap-back) - G4 verified in preview",
+    "T7: Windows restaurant_name=11pt, Android=2 scale - different values confirmed (G5/G6)",
+    "T6/T8/T9: Visual confirmation of Windows/Android split layout rendering correctly with 'Scale range: 1-8' label"
+  ],
+
+  "test_report_links": ["/app/test_reports/iteration_3.json"],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "65% (8 pass/visual pass, 5 skip due to inaccessible real component, 0 fail)"},
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The printer config is at /printer-config-preview (standalone preview mockup). Real component PrinterAgentConfigView is NOT in main nav (comingSoon:true). To test T1-T3/T5-T6/T8-T9 properly, the main agent must first remove comingSoon:true from Sidebar.jsx line 112. The preview page employee dropdown works with real API data (7 employees). The code review confirms G1/G4 fixes are correctly implemented in shared.jsx and PrintStyleTab.jsx.",
+  "rca_of_issue": "Root cause: Sidebar.jsx line 112 has '{ id: \"printers\", label: \"Printers\", comingSoon: true }'. This prevents the real PrinterAgentConfigView from being accessible. The fix code (CR-133) exists in the codebase but is gated behind this flag. The /printer-config-preview page is a separate design preview that uses simplified/uncontrolled components without the same data-testids. Resolution: change comingSoon: true to false (or remove the flag) for the printers entry in Sidebar.jsx."
+}
