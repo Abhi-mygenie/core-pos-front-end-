@@ -18767,7 +18767,7 @@
       "id": "BUG-304",
       "type": "BUG",
       "title": "Item-Level Discount \u2014 discountRatio uses itemTotal (not discountableTotal), GST/VAT wrong for non-discountable items",
-      "status": "GATE 2 COMPLETE \u2014 AWAITING OWNER OD-2/OD-3/OD-4 + GATE 4 GO",
+      "status": "GATE 2 COMPLETE \u2014 OWNER DECISIONS LOCKED \u2014 AWAITING GATE 3",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_1",
@@ -18783,7 +18783,7 @@
         "intake": "change_requests/BUG-304_ITEM_DISCOUNT_GST_DISCOUNTRATIO_WRONG_DENOMINATOR_INTAKE.md",
         "impact_analysis": "impact/BUG-304_IMPACT_ANALYSIS.md"
       },
-      "notes": "Gate 2 complete 2026-08-11. 4 sites found: CPP:605, CartPanel:425, orderTransform:823, orderTransform:1896. BUG-304 scope = CPP+CartPanel (UI). BUG-304-B filed for orderTransform backend path. Fix: split taxTotals into discountable/non-discountable buckets. Owner ODs needed: OD-2 (VAT), OD-3 (CartPanel same fix), OD-4 (orderTransform scope)."
+      "notes": "Gate 2 complete + ODs locked 2026-08-11. OD-2 YES (VAT fixed too). OD-3 YES (CartPanel same fix). OD-4 LATER (orderTransform \u2192 BUG-304-B). Scope: CPP + CartPanel only. Fix: split taxTotals into discountable/non-discountable buckets, apply discountRatio only to discountable portion."
     }
   ],
   "meta": {

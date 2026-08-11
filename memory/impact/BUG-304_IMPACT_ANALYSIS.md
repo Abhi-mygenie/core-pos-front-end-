@@ -225,14 +225,14 @@ These affect what GST is **sent to the backend** and **printed on the bill**. Se
 
 ---
 
-## 12. Owner Decisions
+## 12. Owner Decisions — LOCKED 2026-08-11
 
-| OD | Question | Options |
+| OD | Question | Owner Answer |
 |---|---|---|
-| **OD-1 ✅** | Fix approach confirmed | Option B (split taxTotals buckets) — mathematically correct |
-| **OD-2** | Apply same fix to VAT in both CPP and CartPanel? | YES (confirmed by investigation — same bug on line 650/433) |
-| **OD-3** | CartPanel (QSR) — apply same fix or different rule? | Recommended: same fix (QSR cashier should also see correct GST) |
-| **OD-4** | Fix `orderTransform.js` too (BUG-304-B), or park as separate sprint? | **Owner to decide — BUG-304-B scope** |
+| **OD-1 ✅** | Fix approach: split taxTotals buckets (Option B) | **CONFIRMED** |
+| **OD-2 ✅** | Apply same fix to VAT in both CPP and CartPanel? | **YES — owner confirmed** |
+| **OD-3 ✅** | CartPanel (QSR) — apply same fix? | **YES — owner confirmed** |
+| **OD-4 ✅** | Fix `orderTransform.js` (BUG-304-B) now or later? | **LATER — park as BUG-304-B, separate sprint** |
 
 ---
 
@@ -248,5 +248,10 @@ These affect what GST is **sent to the backend** and **printed on the bill**. Se
 
 ---
 
-**Gate 2 COMPLETE.**
-Awaiting owner confirmation on OD-2, OD-3, OD-4 → then Gate 3 Implementation Plan.
+**Gate 2 COMPLETE — All owner decisions LOCKED (2026-08-11).**
+Ready for Gate 3 Implementation Plan.
+
+**Scope confirmed:**
+- `CollectPaymentPanel.jsx` — taxTotals split + discountRatio fix (GST + VAT) ✅
+- `CartPanel.jsx` — same fix ✅
+- `orderTransform.js` — **OUT OF SCOPE** → BUG-304-B, separate sprint
