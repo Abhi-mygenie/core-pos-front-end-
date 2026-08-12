@@ -36,7 +36,7 @@ export const parseTopFoodSalesRow = (r, index) => {
     foodItem:        r.food_item        || '',
     stationName:     r.station_name     || '',
     categoryName:    r.category_name    || '',
-    isComplementary: r.complementary_status === 'Yes',
+    isComplementary: (r.complementary_status || '') === 'Yes', // field absent on some restaurant backends → defaults to false
     totalQuantity,
     basePrice,
     variationPrice,
@@ -81,7 +81,10 @@ export const getTopFoodSalesForRange = async (fromDate, toDate, restaurantId = 0
   );
 
   // rawData is the bare food_sales_report array (returned by fetchOrReuse)
-  const rows = (rawData || []).map(parseTopFoodSalesRow);
+  // Filter out 'check in' items — room check-in charges, not food (BUG-133 pattern)
+  const rows = (rawData || [])
+    .filter(r => (r.food_item || '').toLowerCase().trim() !== 'check in')
+    .map(parseTopFoodSalesRow);
   const grandTotal = rows.reduce((s, r) => s + r.netSales, 0);
 
   return {

@@ -75,7 +75,9 @@ const COLUMNS = [
 ];
 
 const DEFAULT_VISIBLE = new Set([
-  'rank', 'foodItem', 'categoryName', 'stationName', 'totalQuantity', 'netSales',
+  'rank', 'foodItem', 'categoryName', 'stationName', 'totalQuantity',
+  'variationPrice', 'addonPrice',   // visible by default — endpoint computes these in total_sales
+  'netSales',
 ]);
 const COL_STORAGE_KEY = 'cr136.columnVisibility.v1';
 
