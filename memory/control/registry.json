@@ -18863,7 +18863,7 @@
     {
       "id": "CR-136",
       "type": "CR",
-      "title": "Item Sales Ledger \u2014 Backend-Aggregated Item Performance Report",
+      "title": "Item Sales Ledger + Variation & Addon Sales Report",
       "status": "IMPLEMENTED",
       "sprint_key": "pos_5_1",
       "risk": "MEDIUM",
@@ -18873,7 +18873,9 @@
         "src/api/services/topFoodSalesService.js",
         "src/pages/reports-module/ItemSalesLedgerMockup.jsx",
         "src/App.js",
-        "src/components/layout/Sidebar.jsx"
+        "src/components/layout/Sidebar.jsx",
+        "src/api/services/variationAddonService.js",
+        "src/pages/reports-module/VariationAddonMockup.jsx"
       ],
       "artifact_refs": {
         "intake": "change_requests/CR-136_ITEM_SALES_LEDGER_INTAKE.md",

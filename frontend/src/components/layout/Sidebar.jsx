@@ -150,6 +150,7 @@ const sidebarMenuItems = [
       { id: "insights-items-group", label: "Sales Ledger", isGroup: true },
       { id: "insights-items", label: "Items Ledger", path: "/reports-module/items" },
       { id: "insights-item-sales", label: "Item Sales", path: "/reports-module/item-sales" }, // CR-136
+      { id: "insights-var-addon", label: "Variation & Addon", path: "/reports-module/variation-addon-sales" }, // CR-136
       { id: "insights-order-ledger", label: "Orders Ledger", path: "/reports-module/order-ledger" },
       // Payments group
       { id: "insights-payments-group", label: "Payments", isGroup: true },

@@ -1,0 +1,40 @@
+{
+  "summary": "CR-136 Variation & Addon Sales report at /reports-module/variation-addon-sales fully tested. All 8 requirements verified and passing. Page loads correctly, data renders with real Shimla food court data (65 variations, 9 addons for July 2026).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Sidebar",
+        "issues": ["Sidebar 'Variation & Addon' entry (data-testid='insights-var-addon') exists in code but is only visible when sidebar is expanded. When collapsed (icon-only mode), entry is not accessible via text search. This is expected behavior for all sidebar items — not a bug."]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "variationAddonService.js: fetchOrReuse returns raw.data (the array from cache), but the code passes the full result object {data, orderCount} to fetchOrReuse. The cache layer stores only the `data` field. Verified this works correctly because the code does `const raw = await fetchOrReuse(...)` and then `reportListFromAPI.orderLogsReport(raw, null)` — raw here is the cached `data` field (the orders array). This is consistent with the fix applied in iteration_19 for topFoodSalesService."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "test_credentials": "owner@shimlaqohfoodcourt.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-136 Variation & Addon Sales at /reports-module/variation-addon-sales fully working. July 2026 returns 65 variations (top: Chicken Biryani|Full ₹1,440) and 9 addons (top: Waffle Cone ₹1,320). All features working: KPI strip (4 cards), Variations tab default, Addons tab, search filter, TOTALS sticky row, Download dropdown (Excel+PDF). API takes ~15s to load. Use pushState trick to navigate past loading screen in playwright tests.",
+  "test_results": {
+    "sidebar_entry_present": "PASS — insights-var-addon in Sidebar.jsx line 153",
+    "page_loads_no_crash": "PASS — /reports-module/variation-addon-sales loads correctly",
+    "kpi_strip_4_cards": "PASS — 65 Variations, ₹4,735 Variation Revenue (orange), 9 Addons, ₹2,881 Addon Revenue (orange)",
+    "variations_tab_default": "PASS — Variations tab active by default with columns #, Food Item, Group, Variant, Times Ordered, Revenue",
+    "addons_tab_columns": "PASS — Addons tab shows #, Addon Name, Dishes, Applied To, Times Ordered, Revenue",
+    "data_loads_real": "PASS — 65 variations, 9 addons for July 2026. Chicken Biryani|Full variation ✓, Waffle Cone addon ✓",
+    "search_filter": "PASS — Search 'Biryani' returns 4 rows (from 65)",
+    "totals_row_sticky": "PASS — TOTALS row shows 283 qty, ₹4,735.00 revenue",
+    "download_dropdown": "PASS — Dropdown shows Excel (.xlsx) and PDF options"
+  }
+}
