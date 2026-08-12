@@ -731,8 +731,8 @@ export const getProfitLossReport = async (fromDate, toDate) => {
     return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
   };
   const { data } = await api.post('/api/v1/vendoremployee/profit-loss-report', {
-    date_from: formatDDMMYYYY(fromDate),
-    date_to: formatDDMMYYYY(toDate),
+    from: formatDDMMYYYY(fromDate),   // BUG-PL-A fix: API expects 'from'/'to', not 'date_from'/'date_to'
+    to: formatDDMMYYYY(toDate),
   });
   return data;
 };

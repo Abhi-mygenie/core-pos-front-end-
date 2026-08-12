@@ -74,28 +74,31 @@ export default function PLReportPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // CR-094: Parse summary KPIs
+// CR-094: Parse summary KPIs
+  // BUG-PL-B fix: API returns comma-formatted strings e.g. "537,876.02" — strip commas before parseFloat
+  const numStr = (v) => parseFloat(String(v ?? 0).replace(/,/g, '')) || 0;
+
   const summary = useMemo(() => {
     if (!data?.summary) return null;
     const s = data.summary;
     return {
-      totalSales: parseFloat(s.total_sales) || 0,
-      paidRevenue: parseFloat(s.total_paid_revenue ?? s.paid_revenue) || 0, // BUG-303: API summary uses total_paid_revenue
-      totalExpenses: parseFloat(s.total_expenses) || 0,
-      totalPurchase: parseFloat(s.total_purchase) || 0,
-      profitLoss: parseFloat(s.total_profit_loss ?? s.profit_loss) || 0,
+      totalSales:    numStr(s.total_sales),
+      paidRevenue:   numStr(s.total_paid_revenue ?? s.paid_revenue),
+      totalExpenses: numStr(s.total_expenses),
+      totalPurchase: numStr(s.total_purchase),
+      profitLoss:    numStr(s.total_profit_loss ?? s.profit_loss),
     };
   }, [data]);
 
-  // CR-094: Chart data from report rows
+  // CR-094: Chart data from report rows — BUG-PL-B fix: strip commas
   const chartData = useMemo(() => {
     if (!data?.report?.length) return [];
     return data.report.map(r => ({
-      date: r.date || '',
-      revenue: parseFloat(r.sales || r.paid_revenue) || 0,
-      expenses: parseFloat(r.total_expenses) || 0,
-      purchase: parseFloat(r.total_purchase || r.purchase) || 0,
-      profit: parseFloat(r.profit_loss) || 0,
+      date:     r.date || '',
+      revenue:  numStr(r.sales || r.paid_revenue),
+      expenses: numStr(r.total_expenses),
+      purchase: numStr(r.total_purchase || r.purchase),
+      profit:   numStr(r.profit_loss),
     }));
   }, [data]);
 
@@ -103,12 +106,12 @@ export default function PLReportPage() {
   const tableRows = useMemo(() => {
     if (!data?.report?.length) return [];
     const rows = data.report.map(r => ({
-      date: r.date || '',
-      sales: parseFloat(r.sales) || 0,
-      paidRevenue: parseFloat(r.paid_revenue) || 0,
-      expenses: parseFloat(r.total_expenses) || 0,
-      purchase: parseFloat(r.total_purchase || r.purchase) || 0,
-      profitLoss: parseFloat(r.profit_loss) || 0,
+      date:        r.date || '',
+      sales:       numStr(r.sales),
+      paidRevenue: numStr(r.paid_revenue),
+      expenses:    numStr(r.total_expenses),
+      purchase:    numStr(r.total_purchase || r.purchase),
+      profitLoss:  numStr(r.profit_loss),
     }));
     // BUG-303: convert DD/MM/YYYY to YYYY-MM-DD for correct date sort
     const toSortable = (s) => { const [d,m,y] = (s||'').split('/'); return y&&m&&d ? `${y}-${m}-${d}` : s||''; };
