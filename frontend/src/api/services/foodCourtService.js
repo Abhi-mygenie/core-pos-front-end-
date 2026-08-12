@@ -101,11 +101,15 @@ const parallelMap = async (items, fn, limit, onProgress) => {
 // ── Single-chunk fetcher ────────────────────────────────────────────────────
 
 const fetchChunk = async (chunk, schedules, restaurantId = 0) => {
+  // BUG-296 Fix A: extend to_date by 1 calendar day so the backend returns orders collected
+  // between midnight and the business-day end (03:00 AM) of the last day in the chunk.
+  // The business-day filter below correctly trims the result to the exact business-day window.
+  const toDateExtended = fmtISO(new Date(new Date(chunk.to + 'T00:00:00').getTime() + 86400000));
   const raw = await fetchOrReuse(
-    buildCacheKey(restaurantId, 'order-logs', 'collect_bill', chunk.from, chunk.to), // BUG-296: align cache key with sort_by
+    buildCacheKey(restaurantId, 'order-logs', 'collect_bill', chunk.from, chunk.to), // cache key uses original (unchanged) to avoid cache bloat
     async () => {
       const resp = await api.post(API_ENDPOINTS.ORDER_LOGS_REPORT, {
-        sort_by: 'collect_bill', from_date: chunk.from, to_date: chunk.to, // BUG-296: use collect_bill to exclude cancelled orders (fos=3)
+        sort_by: 'collect_bill', from_date: chunk.from, to_date: toDateExtended, // BUG-296 Fix A
       });
       const data = resp.data?.order || []; // CR-045: backend strips server-side
       return { data, orderCount: data.length };
@@ -113,13 +117,14 @@ const fetchChunk = async (chunk, schedules, restaurantId = 0) => {
   );
   const transformed = reportListFromAPI.orderLogsReport(raw, null);
 
-  // Business-day filter for this chunk
+  // Business-day filter — single source of truth for both single-day and multi-day chunks.
+  // BUG-296 Fix A: removed inRange() from multi-day path; it capped at toDate 23:59:59 and
+  // excluded cross-midnight orders that belong to the last business day of the chunk.
   const { start: dayStart } = getBusinessDayRange(chunk.from, schedules);
   const { end: dayEnd } = getBusinessDayRange(chunk.to, schedules);
   return transformed.filter((o) => {
     const ca = (o.createdAt || '').replace('T', ' ').substring(0, 19);
-    if (chunk.from === chunk.to) return isWithinBusinessDay(ca, dayStart, dayEnd);
-    return ca >= dayStart && ca <= dayEnd && inRange(o.createdAt, chunk.from, chunk.to);
+    return isWithinBusinessDay(ca, dayStart, dayEnd);
   });
 };
 
@@ -131,11 +136,13 @@ const toStationRow = (o, stationItems, stationName) => {
   const gstAmount = stationItems.filter((it) => it.foodStatus !== 3).reduce((s, it) => s + (it.gstAmount || 0), 0);
   const vatAmount = stationItems.filter((it) => it.foodStatus !== 3).reduce((s, it) => s + (it.vatAmount || 0), 0);
 
-  // Proportional discount distribution by item price share
-  const orderItemTotal = (o.items || []).reduce((s, it) => s + (it.price || 0), 0);
-  const orderDiscount = o.discountAmount || o.discount || 0;
-  const share = orderItemTotal > 0 ? itemTotal / orderItemTotal : 0;
-  const discount = Math.round(orderDiscount * share * 100) / 100;
+  // BUG-296 Fix B: use item-level discountOnFood directly (matches backend top-food-sales-report).
+  // Previous code computed proportional discount from order-level restaurant_discount_amount with
+  // an incorrect denominator (price only, not price+variation+addon), causing over-allocation.
+  const discount = Math.round(
+    stationItems.filter((it) => it.foodStatus !== 3)
+      .reduce((s, it) => s + (it.discountOnFood || 0), 0) * 100
+  ) / 100;
   const subTotal = Math.round((itemTotal - discount) * 100) / 100;
   const total = Math.round((subTotal + gstAmount + vatAmount) * 100) / 100;
 

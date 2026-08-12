@@ -787,6 +787,7 @@ const parseOrderItem = (item) => {
     gstAmount: (parseFloat(item.gst_tax_amount) || 0) - (parseFloat(item.vat_tax_amount) || 0),
     vatAmount: parseFloat(item.vat_tax_amount) || 0,
     discountAmount: parseFloat(item.discount_amount) || 0,
+    discountOnFood: parseFloat(item.discount_on_food) || 0, // BUG-296: item-level discount (discount_amount is always 0; discount_on_food has the real value)
     serviceCharge: parseFloat(item.service_charge) || 0,
   };
 };
