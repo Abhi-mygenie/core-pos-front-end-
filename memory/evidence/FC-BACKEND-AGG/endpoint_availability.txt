@@ -1,0 +1,16 @@
+# FC-BACKEND-AGG — Endpoint Availability Probe — 2026-08-12
+
+## Test: preprod.mygenie.online/api/v1/vendoremployee/top-food%20sales-report
+Result: HTTP 401 (Unauthorized — auth-required, endpoint EXISTS)
+
+## Test: manage.mygenie.online/api/v1/vendoremployee/top-food%20sales-report
+Result: HTTP 401 (Unauthorized — auth-required, endpoint EXISTS)
+
+## Control test: preprod.mygenie.online/api/v1/vendoremployee/THISDOESNOTEXIST
+Result: HTTP 404 (Not Found — confirms 401 above is NOT a catch-all, endpoint is genuinely registered)
+
+## Conclusion:
+- Endpoint is live on BOTH hosts
+- Standard Bearer token auth required (same localStorage auth_token as all other endpoints)
+- No base URL change needed — preprod.mygenie.online supports this endpoint
+- Tokens in owner's curl + BUG-296 evidence are expired → fresh login required to probe
