@@ -18859,6 +18859,28 @@
         "qa_report": "test_reports/iteration_15.json"
       },
       "notes": "tone_timing (integer seconds) present in API but not mapped in fromAPI or shown in UI. Pass-through via _raw preserves existing values but cannot set new value. Fix: add toneTiming to fromAPI + add to toAPI explicitly + add NumInput in ConfigTab."
+    },
+    {
+      "id": "CR-136",
+      "type": "CR",
+      "title": "Item Sales Ledger \u2014 Backend-Aggregated Item Performance Report",
+      "status": "IMPLEMENTED",
+      "sprint_key": "pos_5_1",
+      "risk": "MEDIUM",
+      "priority": "P2",
+      "files": [
+        "src/api/constants.js",
+        "src/api/services/topFoodSalesService.js",
+        "src/pages/reports-module/ItemSalesLedgerMockup.jsx",
+        "src/App.js",
+        "src/components/layout/Sidebar.jsx"
+      ],
+      "artifact_refs": {
+        "intake": "change_requests/CR-136_ITEM_SALES_LEDGER_INTAKE.md",
+        "impact": "impact/CR-136_IMPACT_ANALYSIS.md",
+        "plan": "plans/CR-136_IMPLEMENTATION_PLAN.md",
+        "mockup": "/cr136-item-sales-ledger-mockup.html"
+      }
     }
   ],
   "meta": {

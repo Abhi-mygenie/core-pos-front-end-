@@ -822,3 +822,8 @@
 | `pages/RestaurantSettingsPage.jsx` | CR-132: Full 8-step wizard rewrite (was 6 steps). New screens: Printer Settings, Tax & Charges expanded, Room & Hospitality conditional. | CR-132 IMPL 2026-08-11 |
 | `api/transforms/restaurantSettingsTransform.js` | CR-132: Full 8-step rewrite. Regression fix (room: basic not advanced). 49 new fields. 8 step keys. CR-135 pass-throughs. | CR-132 IMPL 2026-08-11 |
 | `api/transforms/restaurantSettingsTransform.js` | CR-132 BUG-FIX: line 260 `schedule_order` changed from `toYesNo()` (string) to `? 1 : 0` (integer) — MySQL INT column type mismatch fix. | CR-132 BUG FIX 2026-08-11 |
+| `api/constants.js` | CR-136: +TOP_FOOD_SALES_REPORT endpoint constant (L118) | CR-136 IMPL agent 2026-08-12 |
+| `api/services/topFoodSalesService.js` | CR-136: NEW FILE — parseTopFoodSalesRow + getTopFoodSalesForRange. parseFloat all 14 fields. payload {from,to} not {from_date,to_date}. No businessDay. | CR-136 IMPL agent 2026-08-12 |
+| `pages/reports-module/ItemSalesLedgerMockup.jsx` | CR-136: NEW FILE — 4-tab item sales report. Column chooser. Accordion for Category+Station. Export uses visibleColList. | CR-136 IMPL agent 2026-08-12 |
+| `App.js` | CR-136: +import ItemSalesLedgerMockup (L51) + routes item-sales + item-sales/preview (L139-140) | CR-136 IMPL agent 2026-08-12 |
+| `components/layout/Sidebar.jsx` | CR-136: +insights-item-sales nav entry under Sales Ledger group (L152) | CR-136 IMPL agent 2026-08-12 |

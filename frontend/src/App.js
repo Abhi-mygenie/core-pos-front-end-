@@ -48,6 +48,7 @@ import KotVarianceMockup from "./pages/reports-module/KotVarianceMockup"; // CR-
 import ExpenseReportPage from "./pages/reports-module/ExpenseReportPage"; // CR-061
 import PLReportPage from "./pages/reports-module/PLReportPage"; // CR-094
 import ConsumptionReportPage from "./pages/reports-module/ConsumptionReportPage"; // CR-093
+import ItemSalesLedgerMockup from "./pages/reports-module/ItemSalesLedgerMockup"; // CR-136
 import OrderReportBetaPage from "./pages/reports-module/OrderReportBetaPage"; // CR-117
 import { InsightsCacheProvider } from "./contexts/InsightsCacheContext";
 import SettlementMockup from "./pages/SettlementMockup";
@@ -136,6 +137,8 @@ function App() {
               <Route path="room-orders/preview" element={<RoomOrdersMockup />} />
               <Route path="food-court" element={<ProtectedRoute><FoodCourtMockup /></ProtectedRoute>} />
               <Route path="food-court/preview" element={<FoodCourtMockup />} />
+              <Route path="item-sales" element={<ProtectedRoute><ItemSalesLedgerMockup /></ProtectedRoute>} /> {/* CR-136 */}
+              <Route path="item-sales/preview" element={<ItemSalesLedgerMockup />} /> {/* CR-136 */}
               <Route path="settlement" element={<ProtectedRoute><SettlementReportMockup /></ProtectedRoute>} />
               {/* CR-011 Phase 3 Batch A: S11–S14 Sales deep-dives */}
               <Route path="daily-sales" element={<ProtectedRoute><DailySalesMockup /></ProtectedRoute>} />

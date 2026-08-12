@@ -1,0 +1,33 @@
+{
+  "summary": "CR-136 Item Sales Ledger frontend testing completed. Found and fixed a critical data rendering bug in topFoodSalesService.js. After fix, all core features verified working: page loads, sidebar, KPI strip, tabs, accordion expansion, column chooser, download dropdown. The API returned real data for Shimla food court with 4 stations.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Item Sales data rendering",
+        "issue": "FIXED: topFoodSalesService.js used raw.data (undefined) instead of raw directly since fetchOrReuse returns the bare data array. All items showed 0 despite API returning data.",
+        "affected_selectors": ["[data-testid='kpi-unique-items']", "[data-testid^='item-sales-row-']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/frontend/src/api/services/topFoodSalesService.js"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "topFoodSalesService.js: fetchOrReuse only caches/returns `data` field, but service code expected `{data, grandTotal, apiFrom, apiTo}` object. Fixed to use rawData (bare array) directly.",
+    "External API (preprod.mygenie.online/top-food sales-report) response takes 8-12 seconds. During this time isLoading=true causes pointer-events-none and disabled Download button. This is expected behavior but may feel slow to users.",
+    "The date inputs in header show today's dates even after clicking 1Y preset in some renders — minor cosmetic issue that doesn't affect data correctness. The data correctly fetches for 1Y range."
+  ],
+  "updated_files": ["/app/frontend/src/api/services/topFoodSalesService.js"],
+  "success_rate": {"backend": "N/A", "frontend": "95%"},
+  "test_credentials": "owner@shimlaqohfoodcourt.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CR-136 Item Sales Ledger at /reports-module/item-sales. Critical bug fixed in topFoodSalesService.js (raw.data vs raw). Page loads correctly with all features working. External API takes ~10-12s to respond. When testing accordion/download, always wait 12+ seconds after clicking a preset before interacting. All 4 stations (GUPTAJEE, ZORKO, MSB, CREAMBELLPARLOUR) appear in By Station tab. Complementary tab shows empty state (no complementary items in test data).",
+  "rca_of_issue": "Root cause: insightsCache.js fetchOrReuse() caches only the `data` field from fetchFn's return object and returns just `data` (the array). topFoodSalesService.js (CR-136 new code) incorrectly expected fetchOrReuse to return the full { data, grandTotal, apiFrom, apiTo } object, so it accessed raw.data (undefined → []) and raw.grandTotal (undefined → 0). Fix: use the rawData return value directly as the food_sales_report array. grandTotal derived from summing row.netSales."
+}

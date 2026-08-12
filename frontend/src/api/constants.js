@@ -115,6 +115,7 @@ export const API_ENDPOINTS = {
   SINGLE_ORDER_NEW: '/api/v2/vendoremployee/get-single-order-new',
   DAILY_SALES_REPORT: '/api/v2/vendoremployee/daily-sales-revenue-report',
   ORDER_LOGS_REPORT: '/api/v2/vendoremployee/report/order-logs-report',
+  TOP_FOOD_SALES_REPORT: '/api/v1/vendoremployee/top-food%20sales-report', // CR-136
   // CR-117: Order Report Beta — backend-aggregated combined endpoint
   ORDER_REPORT_BETA_COMBINED: '/api/v1/vendoremployee/daily-order-report-details-combined',
   ORDER_REPORT_BETA_EXCEL: '/api/v1/vendoremployee/daily-order-report-excel-export-combined',
