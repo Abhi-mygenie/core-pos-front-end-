@@ -4,7 +4,7 @@
 **Type:** CR (New Feature)
 **Priority:** P2 — MEDIUM
 **Risk:** MEDIUM (new screen, new service, no financial order logic, no hotspot files)
-**Status:** INTAKE — Gate 0→1
+**Status:** GATE 2 COMPLETE — FROZEN (2026-08-12) — Awaiting Gate 4 GO → Implementation
 **Sprint:** pos_5_1
 **Registered:** 2026-08-12
 **Source:** OWNER-REQUESTED
@@ -151,15 +151,19 @@ Blast radius: **SMALL** (3 new files + 3 one-line edits)
 
 ---
 
-## Open Questions
+## Owner Decisions — RESOLVED (2026-08-12)
 
-| # | Question | Owner Decision Needed |
+| OD | Decision | Resolution |
 |---|---|---|
-| OQ-1 | Route: `/reports-module/item-sales` or keep under `/reports-module/items` (currently ItemSalesHybrid)? | YES — route naming |
-| OQ-2 | Sidebar label: "Item Sales", "Item Performance", "Top Sellers", or something else? | YES |
-| OQ-3 | Should this eventually REPLACE `ItemSalesHybridMockup.jsx` (CR-011 S5) or live alongside it? | YES — architecture decision |
-| OQ-4 | Column chooser scope: 12 columns (keep minimal) or match Order Ledger's 51-column approach? | NO — 12 columns recommended, can change later |
-| OQ-5 | Presets: include `1Y` and `FY` (Order Ledger only goes Today/7D/30D/MTD/FY-disabled)? Backend supports unlimited range | YES — confirm if 1Y/FY wanted |
+| OD-1 Sidebar label | **"Item Sales"** | Owner approved via mockup |
+| OD-2 Route | **`/reports-module/item-sales`** (new, separate from /items) | Owner: "separate report" |
+| OD-3 ItemSalesHybrid | **Keep both** — run alongside CR-011 S5, do NOT replace | Owner: "separate report" |
+| OD-4 Presets 1Y/FY | **Yes — include both** (backend has no date range limit) | Owner confirmed |
+| Export columns | **Follows column chooser** — both PDF and Excel export only visible cols | Owner confirmed |
+| Rank column | **Keep, sorted highest Net Sales first** | Owner confirmed: "this highest first" |
+| Variation/Addon detail | **Deferred** — separate CR to be filed later | Owner confirmed |
+
+**All owner decisions resolved. Zero open questions.**
 
 ---
 

@@ -188,25 +188,37 @@ Tab: COMPLEMENTARY
   → Show "No complementary items" empty state if none
 ```
 
-### Export payload structure
+### Export payload structure (column-chooser-aware — OWNER CONFIRMED)
 
 ```javascript
-exportReportAsExcel({
-  title: 'Item Sales',
-  dateRange: { from: appliedFrom, to: appliedTo },
-  kpis: [
-    { label: 'Unique Items', value: rows.length, format: 'text' },
-    { label: 'Units Sold', value: totalQty, format: 'text' },
-    { label: 'Gross Revenue', value: grossTotal, format: 'inr' },
-    { label: 'Discount', value: discountTotal, format: 'inr' },
-    { label: 'Net Sales', value: netTotal, format: 'inr', tone: 'primary' },
-  ],
-  sheets: [
-    { name: 'All Items', columns: EXPORT_COLS, rows, totals },
-    { name: 'By Category', columns: EXPORT_COLS, rows: groupedRows, totals },
-    { name: 'By Station', columns: EXPORT_COLS, rows: stationRows, totals },
-  ],
-});
+// Export uses visibleColList (same as table render) — NOT full COLUMNS array
+// Both PDF and Excel respect column chooser selection
+const buildExportPayload = () => {
+  const exportCols = visibleColList.map((c) => ({
+    key: c.key, label: c.label,
+    format: c.align === 'right' ? 'inr' : 'text',
+    align: c.align, width: 100,
+  }));
+  const computeTotals = (rows) => {
+    const t = { label: `TOTAL (${rows.length})` };
+    visibleColList.forEach((c) => {
+      if (c.align === 'right') t[c.key] = rows.reduce((s, r) => s + (Number(r[c.key]) || 0), 0);
+    });
+    return t;
+  };
+  return {
+    title: 'Item Sales',
+    dateRange: { from: appliedFrom, to: appliedTo },
+    kpis: [ /* 5 KPI cards */ ],
+    sheets: [
+      { name: 'All Items',   columns: exportCols, rows: sortedRows,    totals: computeTotals(sortedRows) },
+      { name: 'By Category', columns: exportCols, rows: categoryRows,  totals: computeTotals(categoryRows) },
+      { name: 'By Station',  columns: exportCols, rows: stationRows,   totals: computeTotals(stationRows) },
+    ],
+  };
+};
+// Rank column: always included in export regardless of chooser (OD resolved: keep rank)
+// Variation/Addon columns: DEFERRED — no implementation in this CR
 ```
 
 ---
@@ -236,10 +248,27 @@ exportReportAsExcel({
 
 ---
 
-**Code Reality: NONE**
-**Conflict pre-check: PARALLEL-SAFE on all 3 edited files**
-**Risk: MEDIUM**
-**Files WILL change: 5 (2 new, 3 edit)**
-**Files WILL NOT touch: all order/financial/audit screens**
-**Owner decisions: 4 (OD-2/OD-3 are gate-blockers)**
-**Awaiting: owner review → Gate 3 Implementation Plan**
+---
+
+## FROZEN — Gate 2 Complete (2026-08-12)
+
+### All Owner Decisions Resolved
+
+| OD | Decision | Source |
+|---|---|---|
+| OD-1 Sidebar label | **"Item Sales"** | Mockup approved |
+| OD-2 Route | **`/reports-module/item-sales`** | Owner: separate report |
+| OD-3 ItemSalesHybrid | **Keep both** — no replacement | Owner: separate report |
+| OD-4 Presets | **Today / 7D / 30D / MTD / 1Y / FY** (all enabled) | Owner confirmed |
+| Export columns | **visibleColList only** — column chooser controls both PDF + Excel | Owner confirmed |
+| Rank column | **Keep, sorted highest Net Sales first** (`index + 1`, FE-computed) | Owner: "this highest first" |
+| Variation/Addon breakdown | **DEFERRED** — separate CR, filed later | Owner confirmed |
+
+### Design Status: FROZEN ✅
+Mockup URL: https://core-pos-preview-13.preview.emergentagent.com/cr136-item-sales-ledger-mockup.html
+Design file: `/app/frontend/public/cr136-item-sales-ledger-mockup.html`
+
+### Impact Analysis Status: FROZEN ✅
+Path: `/app/memory/impact/CR-136_IMPACT_ANALYSIS.md`
+
+**Zero open questions. Ready for Gate 4 GO → Implementation.**
