@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-08-08 — **CR-133 IMPLEMENTED + QA PASS** (Printer Agent Config 4-tab screen, live-478 QA via testing agent, EXIT GATE 5/5; awaiting owner Gate-5 smoke). NEW backend finding: printers[] deep-merge ignores deletes — follow-up CR needed. OD-10 pending owner (preview/test-print). Preview URL: https://react-app-preview-9.preview.emergentagent.com. Prior: 2026-06-14 — POS 4.0 BASELINE CORRECTED. 50 items CLOSED — OWNER VERIFIED (43 original + 7 retroactive: CR-027 Phase 1, CR-028 item discount, CR-036 family ×4, CR-029-QSR). Retroactive QA: 66/66 unit + 15/15 browser PASS. POS 5.0: 2 CRs + 16 bugs. Release agent pending for corrected baseline.
+**Last Updated:** 2026-08-12 — **CR-137 PLANNING CLOSED** (optional `discount_for` field; Gate 2 Impact Analysis + Gate 3 Implementation Plan + 77-test Regression List all complete; awaiting Gate 4 GO). Prior: 2026-08-08 — **CR-133 IMPLEMENTED + QA PASS**
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---

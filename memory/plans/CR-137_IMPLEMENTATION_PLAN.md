@@ -419,13 +419,31 @@ Only the "None" branch clears the discount completely. The preset→manual and m
 ## 1. Verification Matrix results
 (Implementation agent fills in V1–V14 PASS/FAIL)
 
-## 2. Registry Sync Confirmation
+## 2. Regression Test List
+**MANDATORY for QA agent — 77 tests across 10 sections:**
+  Path: `/app/memory/plans/CR-137_REGRESSION_TEST_LIST.md`
+
+  Priority breakdown:
+  - 35 × P0  — must all pass before merge
+  - 31 × P1  — must all pass before owner smoke
+  - 11 × P2  — run before release
+
+  Highest-priority sections (run first):
+  - Section I (8 P0): Full critical-path smoke — Login → Order → Pay → Ledger → Logout
+  - Section B (3 P0): BUG-304 interaction — discountableRatio + dSgst/dCgst/dVat unchanged
+  - Section C (3 P0): BUG-305 interaction — gst_tax in backend payload + print unchanged
+  - Section A (6 P0): CR-137 feature tests — reason input appear/hide/clear/payload
+
+  ⚠ BUG-304 + BUG-305 shipped 2026-08-11 (yesterday) in the same files.
+  Tests B1, B3, C1, C2 are the highest-interaction-risk checks.
+
+## 3. Registry Sync Confirmation
   Registry synced: YES/NO
   Items: CR-137
   Sprint: pos_5_1
   EXIT GATE: N/5 PASSED
 
-## 3. Credentials
+## 4. Credentials
   Account: owner@shimlaqohfoodcourt.com / Qplazm@10
   URL: https://pos-printer-1.preview.emergentagent.com
   Flow to test: Dine-in order → add items → Collect Bill → apply discount → enter reason → submit

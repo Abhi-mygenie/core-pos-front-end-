@@ -296,6 +296,7 @@
 
 | Item | Status | Notes |
 |---|---|---|
+| **CR-137** Optional `discount_for` Field | **PLANNING CLOSED — Gate 4 GO pending** | P2 · HIGH risk · 4 files (2 hotspot) · 9 edits · 77 regression tests. Impact Analysis + Plan + Regression list done 2026-08-12. Awaiting owner Gate 4 GO. QA uses `plans/CR-137_REGRESSION_TEST_LIST.md`. |
 | **CR-133** Printer Agent Config | **IMPLEMENTED — QA PASS** | 4-tab screen; 20/20 unit tests; EXIT GATE 5/5. **Awaiting owner Gate-5 smoke** (owner@18march.com, restaurant 478). |
 | CR-133 backend: printer DELETE | **OPEN — backend** | Preprod deep-merges printers[] by id. Frontend reconciliation toast shipped. Needs backend fix + DB cleanup of `printer_new_1786121623349` on 478. |
 | CR-133 Amendment (D1-D7, U1-U4) | **PENDING — owner + backend** | 7 duplicate fields + 4 migration fields need confirmation. Doc: `handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md` |
