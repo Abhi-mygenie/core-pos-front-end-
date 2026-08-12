@@ -82,7 +82,7 @@ const toLedgerRow = (o) => {
     walletUsed: 0, loyaltyUsed: 0,
     discount: o.discountAmount || 0,
     discountCategory: o.couponCode ? 'Coupon' : '',
-    discountFor: o.discountAmount > 0 ? 'Customer' : '',
+    discountFor: o.discount_for || (o.discountAmount > 0 ? 'Customer' : ''),  // CR-137: prefer API field; fallback 'Customer'
     roundOff: o.roundOff || 0,
     totalAmount,
     cashAmount: o.cashAmount || (pm === 'cash' ? amt : 0),       // BUG-272: prefer transform's partial leg, fallback to single-method

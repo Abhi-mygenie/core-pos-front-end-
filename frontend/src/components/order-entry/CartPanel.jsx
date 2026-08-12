@@ -510,6 +510,7 @@ const QsrBillingSection = ({
         loyaltyPointsRedeemed: 0,
         loyaltyRedemptionId: null,
         walletBalance: 0,
+        discountFor: null,           // CR-137 pass-through: QSR quick-bill has no reason UI
       },
       customer: null,
       itemTotal,

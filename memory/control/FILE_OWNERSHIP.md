@@ -827,3 +827,12 @@
 | `pages/reports-module/ItemSalesLedgerMockup.jsx` | CR-136: NEW FILE — 4-tab item sales report. Column chooser. Accordion for Category+Station. Export uses visibleColList. | CR-136 IMPL agent 2026-08-12 |
 | `App.js` | CR-136: +import ItemSalesLedgerMockup (L51) + routes item-sales + item-sales/preview (L139-140) | CR-136 IMPL agent 2026-08-12 |
 | `components/layout/Sidebar.jsx` | CR-136: +insights-item-sales nav entry under Sales Ledger group (L152) | CR-136 IMPL agent 2026-08-12 |
+
+
+### CR-137 — Optional discount_for Field (2026-08-12)
+| File | Change | Agent |
+|---|---|---|
+| `api/transforms/orderTransform.js` | CR-137: E1 `discount_for: null` in placeOrder (L1066). E2 `discount_for: null` in updateOrder (L1190). E3 `discount_for: discounts.discountFor \|\| null` in placeOrderWithPayment (L1369). E4 `discount_for: discounts.discountFor \|\| null` in collectBillExisting (L1645). | CR-137 IMPL agent 2026-08-12 |
+| `components/order-entry/CollectPaymentPanel.jsx` | CR-137: E5a `discountFor` useState (L306). E5b `discountFor` in discounts object (L1115). E5c `setDiscountFor('')` in None-clear handler (L1310). E5d1 reason input in main drawer (L1373). E5d2 reason input in inline Room Service path (L2006). | CR-137 IMPL agent 2026-08-12 |
+| `components/order-entry/CartPanel.jsx` | CR-137: E6 `discountFor: null` pass-through in QSR handleCollectBill (L513). | CR-137 IMPL agent 2026-08-12 |
+| `api/services/orderLedgerService.js` | CR-137: E7 `o.discount_for \|\|` fallback replacing hardcoded 'Customer' (L85). | CR-137 IMPL agent 2026-08-12 |

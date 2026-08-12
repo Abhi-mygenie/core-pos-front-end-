@@ -1063,6 +1063,7 @@ export const toAPI = {
       // Discount
       discount_type:              null,
       self_discount:              0,
+      discount_for:               null,                   // CR-137: always null on placement — no discount applied pre-payment
       // BUG-108 V1B (2026-05-25, E-11): coupon_code parity field — Flow 1 never
       // carries a coupon (unpaid placement), but the field is emitted so POS BE
       // schema is uniform across all 4 commit flows.
@@ -1186,6 +1187,7 @@ export const toAPI = {
       // Discount
       discount_type:              null,
       self_discount:              0,
+      discount_for:               null,                   // CR-137: always null on update path — owner OQ-1 confirmed
       // BUG-108 V1B (2026-05-25, E-12): coupon_code parity field — Flow 2 never
       // carries a coupon (item-add only), but the field is emitted so POS BE
       // schema is uniform across all 4 commit flows.
@@ -1364,6 +1366,7 @@ export const toAPI = {
       // BUG-108 V1B (2026-05-25, E-13/E-14): Flow 3 coupon fields.
       // V1 closure (2026-05-25): couponLive ternaries removed — fields unconditional.
       self_discount:              (discounts.manual || 0) + (discounts.preset || 0),
+      discount_for:               discounts.discountFor || null,  // CR-137
       coupon_code:                discounts.couponCode || '',
       coupon_discount:            discounts.couponDiscount || 0,
       coupon_title:               discounts.couponTitle || '',
@@ -1639,6 +1642,7 @@ export const toAPI = {
       ...(paymentData.deliveryGstAmount > 0 ? { delivery_charge_gst_amount: Math.round(paymentData.deliveryGstAmount * 100) / 100 } : {}),
       // BUG-138: self_discount = manual + preset only (old POS parity). Coupon/loyalty/wallet have own fields.
       self_discount:                (discounts.manual || 0) + (discounts.preset || 0),
+      discount_for:                 discounts.discountFor || null,  // CR-137
       coupon_code:                  discounts.couponCode || '',
       coupon_discount:              discounts.couponDiscount || 0,
       coupon_title:                 discounts.couponTitle || '',

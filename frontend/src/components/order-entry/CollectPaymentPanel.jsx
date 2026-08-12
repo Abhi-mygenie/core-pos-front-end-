@@ -303,6 +303,7 @@ const CollectPaymentPanel = ({
   const [showCouponDropdown, setShowCouponDropdown] = useState(false);
   const [discountType, setDiscountType] = useState(null); // 'percent' or 'flat'
   const [discountValue, setDiscountValue] = useState("");
+  const [discountFor, setDiscountFor] = useState('');     // CR-137: optional discount reason (max 50 chars)
 
   // BUG-276: Service charge toggle — default ON, staff can uncheck per order
   // BUG-028 (Apr-2026): Default service-charge toggle to OFF; cashier must
@@ -1111,6 +1112,7 @@ const CollectPaymentPanel = ({
         loyaltyPointsRedeemed: finalLoyaltyPoints,
         loyaltyRedemptionId:   null,
         walletBalance:        walletDiscount,
+        discountFor:          discountFor,             // CR-137
       },
       customer,
       itemTotal,
@@ -1305,6 +1307,7 @@ const CollectPaymentPanel = ({
                     // "None" — clear everything
                     setDiscountType(null);
                     setDiscountValue("");
+                    setDiscountFor('');                // CR-137
                     setSelectedDiscountType(null);
                   } else if (val === 'percent' || val === 'flat') {
                     // Manual mode — clear preset
@@ -1364,6 +1367,20 @@ const CollectPaymentPanel = ({
               )}
             </div>
           </div>
+          {/* CR-137: Optional discount reason — appears only when a discount is active */}
+          {(manualDiscount > 0 || presetDiscount > 0) && (
+            <div className="mt-2">
+              <input
+                type="text"
+                placeholder="Reason (optional) — e.g. Staff, Event, Loyalty"
+                value={discountFor}
+                onChange={(e) => setDiscountFor(e.target.value.slice(0, 50))}
+                className="w-full px-2 py-1.5 rounded-lg border text-sm outline-none"
+                style={{ borderColor: COLORS.borderGray }}
+                data-testid="discount-for-input"
+              />
+            </div>
+          )}
           {/* BUG-108 P1 Q10: Discount disabled when a coupon is applied. */}
           {selectedCoupon && (
             <div className="text-xs mt-1 ml-6 italic" style={{ color: COLORS.grayText }} data-testid="discount-helper-text">
@@ -1983,6 +2000,21 @@ const CollectPaymentPanel = ({
                           )}
                         </div>
                       </div>
+                      {/* CR-137: Optional discount reason — inline path */}
+                      {manualDiscount > 0 && (
+                        <div className="mt-1.5">
+                          <input
+                            type="text"
+                            placeholder="Reason (optional)"
+                            value={discountFor}
+                            onChange={(e) => setDiscountFor(e.target.value.slice(0, 50))}
+                            className="w-full px-2 py-1 rounded-lg border text-xs outline-none"
+                            style={{ borderColor: COLORS.borderGray }}
+                            data-testid="discount-for-input-inline"
+                          />
+                        </div>
+                      )}
+                      {/* BUG-108 P1 Q10: Inline-mirror — disabled when a coupon is applied. */}
                       {selectedCoupon && (
                         <div className="text-xs mt-1 ml-5 italic" style={{ color: COLORS.grayText }}>
                           {BUG108_COPY.discountBlockedByCoupon}

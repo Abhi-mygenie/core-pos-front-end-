@@ -18888,7 +18888,7 @@
       "id": "CR-137",
       "type": "CR",
       "title": "Optional discount_for field in order payload",
-      "status": "INTAKE",
+      "status": "IMPLEMENTED",
       "sprint_key": "pos_5_1",
       "risk": "HIGH",
       "priority": "P2",
@@ -18898,9 +18898,12 @@
         "src/components/order-entry/CartPanel.jsx",
         "src/api/services/orderLedgerService.js"
       ],
-      "artifact_refs": {
-        "intake": "change_requests/CR-137_DISCOUNT_FOR_OPTIONAL_FIELD_INTAKE.md"
-      }
+      "artifact_refs": [
+        "change_requests/CR-137_DISCOUNT_FOR_OPTIONAL_FIELD_INTAKE.md",
+        "impact/CR-137_IMPACT_ANALYSIS.md",
+        "plans/CR-137_IMPLEMENTATION_PLAN.md",
+        "plans/CR-137_REGRESSION_TEST_LIST.md"
+      ]
     }
   ],
   "meta": {
