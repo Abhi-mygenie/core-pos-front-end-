@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-08-12 — **CR-137 IMPLEMENTED** (optional `discount_for` field; 9 edits, EXIT GATE 5/5, awaiting QA Gate 5b). Prior: **CR-137 PLANNING CLOSED**
+**Last Updated:** 2026-08-12 — **CR-137 QA PASS Gate 5b** (35/35 P0 PASS, 0 blockers, ready for owner smoke Gate 6). Prior: CR-137 IMPLEMENTED
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---

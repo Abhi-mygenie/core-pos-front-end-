@@ -18888,7 +18888,7 @@
       "id": "CR-137",
       "type": "CR",
       "title": "Optional discount_for field in order payload",
-      "status": "IMPLEMENTED",
+      "status": "QA_PASS",
       "sprint_key": "pos_5_1",
       "risk": "HIGH",
       "priority": "P2",
