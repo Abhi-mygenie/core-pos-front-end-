@@ -18883,6 +18883,24 @@
         "plan": "plans/CR-136_IMPLEMENTATION_PLAN.md",
         "mockup": "/cr136-item-sales-ledger-mockup.html"
       }
+    },
+    {
+      "id": "CR-137",
+      "type": "CR",
+      "title": "Optional discount_for field in order payload",
+      "status": "INTAKE",
+      "sprint_key": "pos_5_1",
+      "risk": "HIGH",
+      "priority": "P2",
+      "files": [
+        "src/api/transforms/orderTransform.js",
+        "src/components/order-entry/CollectPaymentPanel.jsx",
+        "src/components/order-entry/CartPanel.jsx",
+        "src/api/services/orderLedgerService.js"
+      ],
+      "artifact_refs": {
+        "intake": "change_requests/CR-137_DISCOUNT_FOR_OPTIONAL_FIELD_INTAKE.md"
+      }
     }
   ],
   "meta": {
