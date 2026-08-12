@@ -1,192 +1,84 @@
 {
-  "project_context": {
-    "app_type": "saas_app",
+  "app_context": {
+    "app_name": "MyGenie POS",
+    "screen_name": "Item Sales Ledger (CR-136)",
+    "description": "Food-item level performance data report screen. Visually identical to existing Order Ledger and Food Court reports.",
+    "target_audience": "Restaurant owners and operations managers",
     "theme": "light",
-    "primary_objective": "Redesign a 6-step POS settings wizard into an 8-step wizard using the exact existing visual language. Focus on Screen 2, 4, and 5 data grouping and consistency."
+    "device_target": "desktop"
   },
   "typography": {
-    "fonts": {
-      "heading": "Work Sans",
-      "body": "IBM Plex Sans",
-      "mono": "JetBrains Mono"
-    },
-    "hierarchy": {
-      "h1": "text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900",
-      "h2": "text-lg sm:text-xl font-medium tracking-tight text-slate-800",
-      "h3": "text-base font-medium text-slate-800",
-      "body": "text-sm text-slate-600 leading-relaxed",
-      "label": "text-xs font-medium uppercase tracking-[0.05em] text-slate-500",
-      "helper": "text-xs text-slate-400"
-    }
+    "headings": "Use existing sans-serif font (standard Tailwind font-sans). text-zinc-950, tracking-tight. S7 Header Title: text-2xl font-bold.",
+    "body": "text-zinc-700 for standard data, text-sm for dense table rows.",
+    "accent_text": "text-[#F26B33] (Orange) for primary metrics like Net Sales and active tabs.",
+    "subtext": "text-zinc-500 for secondary information (e.g., item counts in accordions)."
   },
   "colors": {
-    "background": {
-      "app": "#F7F7F7",
-      "card": "#FFFFFF",
-      "left_rail": "#FFFFFF",
-      "action_bar": "#FFFFFF"
-    },
-    "brand": {
-      "primary": "#F26B33",
-      "primary_hover": "#D85B28",
-      "primary_light": "#FFF0EA",
-      "secondary": "#329937",
-      "secondary_hover": "#28802C"
-    },
-    "text": {
-      "primary": "#0A0A0A",
-      "secondary": "#4B5563",
-      "muted": "#9CA3AF"
-    },
-    "border": {
-      "default": "#E5E7EB",
-      "focus": "#F26B33",
-      "highlight": "#F9C3A8"
-    }
+    "primary_accent": "#F26B33",
+    "primary_accent_hover": "#d95f2d",
+    "primary_accent_bg": "#fff0eb",
+    "positive_action": "#329937",
+    "positive_action_hover": "#287b2c",
+    "background_main": "zinc-50",
+    "background_surface": "white",
+    "border_color": "zinc-200",
+    "text_main": "zinc-950",
+    "text_muted": "zinc-500"
   },
   "layouts": {
-    "wizard_container": "flex h-screen w-full bg-[#F7F7F7] overflow-hidden",
-    "left_rail": "w-[280px] flex-shrink-0 bg-white border-r border-gray-200 h-full flex flex-col py-6 z-10",
-    "main_area": "flex-1 flex flex-col h-full relative",
-    "scrollable_content": "flex-1 overflow-y-auto px-8 py-8 pb-32",
-    "action_bar": "absolute bottom-0 left-0 right-0 h-20 bg-white border-t border-gray-200 px-8 flex items-center justify-between shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-20",
-    "card_grid": "grid grid-cols-1 md:grid-cols-2 gap-6"
+    "page_structure": "h-screen flex flex-col bg-zinc-50 overflow-hidden",
+    "header_zone": "Flex container with strict horizontal alignment. S7 pattern.",
+    "kpi_strip": "grid grid-cols-5 gap-4 p-4 shrink-0",
+    "tab_bar": "flex border-b border-zinc-200 px-4 shrink-0",
+    "content_area": "flex-1 overflow-auto bg-white m-4 mt-0 border border-zinc-200 rounded-md shadow-sm"
   },
   "components": {
-    "SectionCard": {
-      "container": "bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6",
-      "header": "pb-4 mb-4 border-b border-gray-100",
-      "title": "text-lg font-semibold text-gray-900",
-      "description": "text-sm text-gray-500 mt-1",
-      "content": "flex flex-col space-y-5"
+    "S7_Header": {
+      "instructions": "Top navigation bar containing the 'Item Sales' title, back button, date range pickers, green Apply button, preset date pills (Today, 7D, 30D, MTD, 1Y, FY), column chooser, and orange outlined Download button. Must have white background and bottom border-zinc-200.",
+      "action_buttons": "Apply: bg-[#329937] text-white. Download: border-[#F26B33] text-[#F26B33] bg-transparent hover:bg-orange-50. Presets: bg-zinc-100 text-zinc-700 hover:bg-zinc-200 rounded-full px-3 py-1 text-xs."
     },
-    "LeftRailItem": {
-      "base": "flex items-center px-6 py-3 text-sm font-medium cursor-pointer transition-colors w-full",
-      "active": "bg-[#FFF0EA] text-[#F26B33] border-r-4 border-[#F26B33]",
-      "inactive": "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-r-4 border-transparent"
+    "KPI_Strip": {
+      "instructions": "5 cards. Unique Items, Total Units Sold, Gross Revenue (₹), Total Discount (₹), Net Sales (₹). Cards have white bg, rounded-md, border-zinc-200, p-4. The 'Net Sales' card should have bg-orange-50/50 and border-orange-200 to stand out."
     },
-    "Toggle": {
-      "base": "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#329937] focus-visible:ring-offset-2",
-      "active": "bg-[#329937]",
-      "inactive": "bg-gray-200",
-      "thumb": "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+    "Tabs": {
+      "instructions": "4 Tabs: 'All Items', 'By Category', 'By Station', 'Complementary'. Use text-zinc-500 for inactive, text-[#F26B33] border-b-2 border-[#F26B33] for active."
     },
-    "InfoBanner": {
-      "container": "flex items-start bg-orange-50 border border-orange-200 rounded-md p-4 mb-6",
-      "icon": "text-orange-500 w-5 h-5 mr-3 mt-0.5",
-      "text": "text-sm text-orange-800"
+    "Data_Table": {
+      "instructions": "Flat or Accordion table depending on tab. Sticky header (z-20) and sticky TOTALS row (z-10) directly beneath it. Columns: Rank, Food Item, Category, Station, Qty Sold, Base Price, Variation, Addon, Discount, GST, Net Sales, % of Total.",
+      "special_columns": {
+        "Rank": "Display in a small badge (bg-zinc-100 text-zinc-600 rounded-full px-2 py-0.5 text-xs font-medium).",
+        "Net_Sales": "Highlight text in orange (text-[#F26B33] font-semibold) mimicking Order ID behavior in other reports.",
+        "Percent_of_Total": "Show a horizontal progress bar (bg-zinc-100 with bg-[#F26B33] fill) alongside the percentage text."
+      },
+      "accordions": "For 'By Category' and 'By Station' tabs. Accordion header row shows: [Chevron Icon] [Category Name] - [N items] - [₹XX,XXX net]. Clicking expands to show item rows. Collapsed by default."
     },
-    "Buttons": {
-      "primary": "bg-[#F26B33] hover:bg-[#D85B28] text-white font-medium py-2 px-6 rounded-md transition-colors shadow-sm",
-      "secondary": "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-6 rounded-md transition-colors",
-      "ghost": "text-gray-500 hover:text-gray-900 font-medium py-2 px-4 transition-colors"
+    "Popovers_and_Inputs": {
+      "instructions": "Search bar: standard input with magnifying glass icon. Column Chooser: popover with checkboxes. Download: Dropdown menu with Excel (.xlsx) and PDF options."
     }
   },
-  "screen_specifications": {
-    "screen_2_printer_settings": {
-      "title": "Printer Settings",
-      "description": "Configure your receipt, KOT printing rules, and layout options.",
-      "info_banner": "Hardware Configuration Note: To manage printer IP addresses, ports, and hardware models, please navigate to the main Settings → Printers section.",
-      "sections": [
-        {
-          "title": "Print Behaviour",
-          "description": "Control when and where tickets are printed automatically.",
-          "fields": [
-            {"type": "toggle", "label": "Print KOT", "key": "advanced.print_kot"},
-            {"type": "toggle", "label": "Auto Print Bill", "key": "advanced.billing_auto_bill_print"},
-            {"type": "toggle", "label": "Print in KDS", "key": "basic.printing_in_kds"},
-            {"type": "toggle", "label": "Print Customer Copy", "key": "basic.print_bill_customer_copy"}
-          ]
-        },
-        {
-          "title": "Copies & Layout",
-          "description": "Set the number of copies and printed formats.",
-          "fields": [
-            {"type": "select", "label": "Bill Copies", "options": ["1", "2", "3"], "key": "basic.no_of_bill"},
-            {"type": "select", "label": "KOT Copies", "options": ["1", "2", "3"], "key": "basic.no_of_kot"},
-            {"type": "toggle", "label": "Use Token on Bill/KOT", "key": "basic.use_token"},
-            {"type": "select", "label": "KOT Language", "options": ["English", "Hindi"], "key": "basic.kot_language"}
-          ]
-        }
-      ]
-    },
-    "screen_4_tax_and_charges": {
-      "title": "Tax & Charges",
-      "description": "Manage taxation, service charges, delivery fees, and tips.",
-      "sections": [
-        {
-          "title": "Taxation",
-          "fields": [
-            {"type": "input", "label": "GST / VAT (%)", "key": "gst_vat"},
-            {"type": "toggle", "label": "Show GST to User", "key": "show_user_gst"}
-          ]
-        },
-        {
-          "title": "Service & Convenience Charges",
-          "fields": [
-            {"type": "input", "label": "Service Charge (%)", "key": "service_charge"},
-            {"type": "toggle", "label": "Tax on Service Charge", "key": "service_chrg_taxt"},
-            {"type": "input", "label": "Takeaway Charges", "key": "takeaway_charges"}
-          ]
-        },
-        {
-          "title": "Delivery & Additional",
-          "fields": [
-            {"type": "toggle", "label": "GST on Delivery Charge", "key": "deliver_charge_gst"},
-            {"type": "input", "label": "Tips / Discounts", "key": "tips_and_discounts"}
-          ]
-        }
-      ]
-    },
-    "screen_5_order_and_kitchen": {
-      "title": "Order & Kitchen Workflow",
-      "description": "Manage order flows, kitchen display settings, and notification alerts.",
-      "sections": [
-        {
-          "title": "Order Workflow",
-          "description": "Rules for automated order processing and serving.",
-          "fields": [
-            {"type": "toggle", "label": "Cancel After Serve", "key": "cancel_after_serve"},
-            {"type": "toggle", "label": "Order Auto Serve", "key": "order_auto_serve"},
-            {"type": "toggle", "label": "Schedule Orders", "key": "schedule_order"},
-            {"type": "select", "label": "Serve Item Display", "key": "serve_item_display"},
-            {"type": "multi-select", "label": "Search By", "key": "search_by"}
-          ]
-        },
-        {
-          "title": "Kitchen Display System (KDS)",
-          "fields": [
-            {"type": "toggle", "label": "Voice in KDS", "key": "voice_in_kds"},
-            {"type": "toggle", "label": "Real-Time Order Status", "key": "real_time_order_status"}
-          ]
-        },
-        {
-          "title": "Confirmations & Pop-ups",
-          "fields": [
-            {"type": "toggle", "label": "Confirm Web Orders", "key": "confirm_web_orders"},
-            {"type": "toggle", "label": "Show Scan Pop Up", "key": "show_scan_pop_up"},
-            {"type": "toggle", "label": "Show Confirm Order Tab", "key": "confirm_order_show_tab"},
-            {"type": "select", "label": "Confirm Order Tone", "options": ["Default", "Buzzer", "Chime", "Silent"], "key": "confirm_order_tone"},
-            {"type": "select", "label": "Location Selection", "options": ["Scanner", "Manual"], "key": "locationSelection"}
-          ]
-        }
-      ]
-    }
+  "visual_enhancers": {
+    "shadows": "Use shadow-sm for structural containers (table area, KPI cards). No excessive blur.",
+    "borders": "Crisp 1px borders (border-zinc-200).",
+    "empty_state": "If Complementary tab is empty, show a centered empty state illustration/icon with text 'No complementary items found for this period'."
   },
-  "instructions_to_main_agent": {
-    "file_structure": "Ensure logic is primarily placed in `.js` or `.jsx` files, not `.tsx`. Use React hooks for form state management.",
-    "wizard_state": "Manage the 8 steps using a unified form state object or context to allow skipping and saving progress.",
-    "left_rail": "Implement the left rail ensuring active states map exactly to the current step (1 through 8). Use `w-[280px]` fixed width.",
-    "action_bar": "Always render the bottom action bar fixed. Include Back (ghost), Skip (ghost/secondary), and Save & Continue (primary orange).",
-    "form_groups": "Group related fields visually inside `SectionCard` components. Do not display fields without a containing card.",
-    "test_ids": "Apply `data-testid` to ALL interactive elements. Example: `data-testid=\"toggle-print-kot\"`, `data-testid=\"select-bill-copies\"`."
+  "motion": {
+    "interactions": "Add hover states to all buttons, table rows (hover:bg-zinc-50), and tabs. Add transition-transform to accordion chevrons (rotate-180 when open).",
+    "transitions": "Use transition-colors duration-200 for buttons."
   },
-  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
-    "NEVER use generic placeholder text. Use the actual terminology provided (e.g., 'KOT', 'KDS', 'Auto Print').",
-    "Maintain high contrast. Do not use fully transparent backgrounds on dropdowns, select menus, or modals.",
-    "Use proper 1px solid borders (`border-gray-200`) for all cards. No heavy shadows, use subtle `shadow-sm`.",
-    "Keep typography scalable and left-aligned for forms. No center-aligned form labels or inputs.",
-    "Always provide hover states for buttons and toggle elements.",
-    "Ensure `data-testid` is added systematically for automated tests: format should be kebab-case and role-based."
+  "accessibility": {
+    "focus": "focus:ring-2 focus:ring-[#F26B33] focus:outline-none for interactive elements.",
+    "aria": "Use aria-expanded on accordion trigger rows.",
+    "data_testid": "MANDATORY. Add data-testid to every interactive element (e.g., 'back-button', 'date-apply-button', 'tab-all-items', 'download-menu-trigger', 'table-row-item')."
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "CREATE .js FILES ONLY. DO NOT CREATE .tsx FILES.",
+    "You tend to converge toward generic outputs. Break the mold while strictly adhering to the specific #F26B33 and #329937 brand colors requested.",
+    "Never use completely transparent backgrounds on headers or sticky elements.",
+    "DO NOT apply universal transitions (e.g., `transition: all`). Target specific properties like `transition-colors` or `transition-transform`.",
+    "Use lucide-react for all icons (ChevronDown, Search, Download, Columns, ArrowLeft, etc.). Never use emojis as icons.",
+    "Ensure the sticky TOTALS row stays pinned exactly below the table column headers (calculate top offset accurately).",
+    "Use 2-3x more generous padding in empty states or standalone layouts, but stick to dense, high-utility spacing (p-2 to p-4) inside the data tables to maximize visibility on the POS desktop screen.",
+    "Build Shadcn-style components locally in HTML/Tailwind if Shadcn isn't pre-installed for complex features, but maintain robust state management for the accordions, column toggling, and date selection.",
+    "All test IDs must be kebab-case and role-based."
   ]
 }
