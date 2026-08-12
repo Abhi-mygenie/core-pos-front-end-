@@ -296,6 +296,7 @@
 
 | Item | Status | Notes |
 |---|---|---|
+| **CR-138** Dual Excel — CR-136 Amendment | **INTAKE — Gate 1** | P2 · LOW risk · 4 files (0 hotspot) · ~33 lines. Backend endpoint confirmed live. Owner: keep both FE + server Excel. ⚠ Backend static filename must be fixed before prod. Intake: `change_requests/CR-138_DUAL_EXCEL_DOWNLOAD_CR136_AMENDMENT_INTAKE.md` |
 | **CR-137** Optional `discount_for` Field | **QA PASS — Gate 5b ✅ Awaiting owner smoke (Gate 6)** | 35/35 P0 PASS · 4/4 files covered · 0 blockers. QA report: `test_reports/QA_REPORT_CR137_2026_08_12.md` |
 | **CR-133** Printer Agent Config | **IMPLEMENTED — QA PASS** | 4-tab screen; 20/20 unit tests; EXIT GATE 5/5. **Awaiting owner Gate-5 smoke** (owner@18march.com, restaurant 478). |
 | CR-133 backend: printer DELETE | **OPEN — backend** | Preprod deep-merges printers[] by id. Frontend reconciliation toast shipped. Needs backend fix + DB cleanup of `printer_new_1786121623349` on 478. |

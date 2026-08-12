@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-08-12 — **CR-137 QA PASS Gate 5b** (35/35 P0 PASS, 0 blockers, ready for owner smoke Gate 6). Prior: CR-137 IMPLEMENTED
+**Last Updated:** 2026-08-12 — **CR-138 INTAKE** (Dual Excel: add backend Excel endpoint to CR-136 screens; owner keeps both FE+server Excel; LOW risk; 4 non-hotspot files). Prior: CR-137 QA PASS Gate 5b
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---

@@ -18904,6 +18904,31 @@
         "plans/CR-137_IMPLEMENTATION_PLAN.md",
         "plans/CR-137_REGRESSION_TEST_LIST.md"
       ]
+    },
+    {
+      "id": "CR-138",
+      "type": "CR",
+      "title": "Dual Excel Download \u2014 Add Backend Excel Endpoint to CR-136 Screens",
+      "status": "INTAKE",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_5_1",
+      "artifact_refs": [
+        "change_requests/CR-138_DUAL_EXCEL_DOWNLOAD_CR136_AMENDMENT_INTAKE.md",
+        "investigation/INV-CR136-EXCEL_2026_08_12.md",
+        "evidence/CR-136-INV/endpoint_evidence.json"
+      ],
+      "related": [
+        "CR-136",
+        "CR-117"
+      ],
+      "files_will_change": [
+        "src/api/constants.js",
+        "src/api/services/topFoodSalesService.js",
+        "src/pages/reports-module/ItemSalesLedgerMockup.jsx",
+        "src/pages/reports-module/VariationAddonMockup.jsx"
+      ],
+      "hotspot_files": false
     }
   ],
   "meta": {

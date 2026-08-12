@@ -536,6 +536,14 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | Field | Value |
 |---|---|
+### 2026-08-12 Dual Excel Download — CR-136 Amendment (CR-138)
+
+| **ID** | CR-138 |
+|---|---|
+| **CR-138** | **Dual Excel Download — Add Backend Excel Endpoint to CR-136 Item Sales + Variation/Addon Screens.** Investigation (INV-CR136-EXCEL_2026_08_12) confirmed backend endpoint `POST /api/v1/vendoremployee/top-food-variation-sales-report-download` is LIVE — returns `{ download_url }` → `.xlsx` with 3 sheets (Food Sales + Variation Sales + Addon Sales) in one file. Owner decision: **keep BOTH** FE Excel + backend Excel — add "Server Excel" as second download option on both screens. FE Excel unchanged (column chooser, By-Category/Station tabs still there). Backend adds: Addon ID, Food ID, Variation Group, VAT, Service Charge. ⚠ Backend static filename (`top_food_variation_sales_report.xlsx`) — concurrency risk flagged, must fix before production. **RELATED: CR-136, CR-117.** | **P2** | **LOW** | **INTAKE — Gate 0→1 (2026-08-12)** | pos_5_1 | `change_requests/CR-138_DUAL_EXCEL_DOWNLOAD_CR136_AMENDMENT_INTAKE.md` · `investigation/INV-CR136-EXCEL_2026_08_12.md` |
+
+---
+
 | **ID** | CR-137 |
 | **Sprint** | pos_5_1 |
 
