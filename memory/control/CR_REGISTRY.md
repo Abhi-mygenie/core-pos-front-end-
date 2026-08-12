@@ -536,6 +536,11 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | Field | Value |
 |---|---|
+| **ID** | CR-136 |
+| **Sprint** | pos_5_1 |
+
+| **CR-136** | **Item Sales Ledger — Backend-Aggregated Item Performance Report.** New report screen `/reports-module/item-sales`. Powered by `POST /api/v1/vendoremployee/top-food%20sales-report` (single BE-aggregated call, no date limit). Grain: food_item × station (vs Order Ledger's per-order grain). 4 tabs: All Items / By Category / By Station / Complementary. 12 configurable columns. KPI strip: Unique Items, Units Sold, Gross, Discount, Net Sales. Export: FE-side Excel (multi-sheet) + PDF via existing `reportExporter.js` utilities. DISTINCT from CR-011 S5 (ItemSalesHybrid uses FE aggregation from order-logs-report; this uses BE aggregation). RELATED: CR-013 (Food Court shares same endpoint). **Intake:** `change_requests/CR-136_ITEM_SALES_LEDGER_INTAKE.md`. 3 new files + 3 one-line edits. SMALL blast radius. No hotspot files. | **P2** | **MEDIUM** | **INTAKE — Gate 1** | | |
+
 | **ID** | CR-135 |
 | **Sprint** | pos_5_1 |
 
