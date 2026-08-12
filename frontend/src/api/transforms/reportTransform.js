@@ -742,6 +742,8 @@ const parseOrderItem = (item) => {
     quantity: item.quantity || 0,
     unitPrice: parseFloat(item.unit_price) || 0,
     price: parseFloat(item.price) || 0,
+    addonTotal:     parseFloat(item.total_add_on_price)     || 0, // BUG-296-R2: OD-1 addon revenue
+    variationTotal: parseFloat(item.total_variation_price)  || 0, // BUG-296-R2: OD-1 variation revenue
     isVeg: food.veg === 1,
     isEgg: food.egg === 1,
     image: food.image || null,

@@ -193,10 +193,10 @@ const FoodCourtMockup = () => {
       stations.forEach((s) => { stationVals[s] = { itemTotal: 0, discount: 0, subTotal: 0, tax: 0, total: 0 }; });
 
       // Step 1: Compute per-station item totals + tax
-      const orderItemTotal = (o.items || []).reduce((s, it) => s + (it.price || 0), 0);
+      const orderItemTotal = (o.items || []).reduce((s, it) => s + (it.price || 0) + (it.addonTotal || 0) + (it.variationTotal || 0), 0); // BUG-296-R2
       (o.items || []).forEach((it) => {
         const st = it.station && stationList.includes(it.station) ? it.station : 'UNASSIGNED';
-        stationVals[st].itemTotal += it.price || 0;
+        stationVals[st].itemTotal += (it.price || 0) + (it.addonTotal || 0) + (it.variationTotal || 0); // BUG-296-R2: OD-1
         if (it.foodStatus !== 3) {
           stationVals[st].tax += (it.gstAmount || 0) + (it.vatAmount || 0);
         }
@@ -212,7 +212,7 @@ const FoodCourtMockup = () => {
       });
 
       // Expected totals (from item-level sums, same formulas — so drift = 0 by construction)
-      const allItemsPrice = (o.items || []).reduce((s, it) => s + (it.price || 0), 0);
+      const allItemsPrice = (o.items || []).reduce((s, it) => s + (it.price || 0) + (it.addonTotal || 0) + (it.variationTotal || 0), 0); // BUG-296-R2: OD-1
       const allItemsTax = (o.items || []).reduce((s, it) => it.foodStatus !== 3 ? s + (it.gstAmount || 0) + (it.vatAmount || 0) : s, 0);
       const expectedDiscount = orderDiscount;
       const expectedSubTotal = Math.round((allItemsPrice - expectedDiscount) * 100) / 100;

@@ -126,7 +126,8 @@ const fetchChunk = async (chunk, schedules, restaurantId = 0) => {
 // ── Station row builder ─────────────────────────────────────────────────────
 
 const toStationRow = (o, stationItems, stationName) => {
-  const itemTotal = stationItems.filter((it) => it.foodStatus !== 3).reduce((s, it) => s + (it.price || 0), 0); // BUG-296: exclude cancelled items (foodStatus=3) — aligns with gstAmount/vatAmount on L130-131
+  const itemTotal = stationItems.filter((it) => it.foodStatus !== 3) // BUG-296-R2: OD-1 include addon+variation; OD-2 total already adds gst via gstAmount+vatAmount
+    .reduce((s, it) => s + (it.price || 0) + (it.addonTotal || 0) + (it.variationTotal || 0), 0);
   const gstAmount = stationItems.filter((it) => it.foodStatus !== 3).reduce((s, it) => s + (it.gstAmount || 0), 0);
   const vatAmount = stationItems.filter((it) => it.foodStatus !== 3).reduce((s, it) => s + (it.vatAmount || 0), 0);
 

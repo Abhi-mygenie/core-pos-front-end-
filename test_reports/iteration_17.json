@@ -1,0 +1,33 @@
+{
+  "summary": "BUG-296-R2 fix verification: Food Court addon+variation prices now included in itemTotal. Tested CREAMBELLPARLOUR for June 2026 — Item Total is ₹2,57,012.45 (was ₹2,36,427.45), an increase of ~₹20,585 representing addons+variations. Audit tab loads cleanly with 6038 orders, DRIFT=₹0 across all stations. All stations combined Item Total = ₹18,71,131.61 (vs old ₹18,06,549.45).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Food Court report takes ~40 seconds to load June 2026 data (batch API call for 30-day range) — this is expected behavior per CR-013 batching design, not a bug"
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "test_credentials": "owner@shimlaqohfoodcourt.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-296-R2 fix is verified and working. CREAMBELLPARLOUR June 2026 Item Total = ₹2,57,012.45 (expected ~₹257,012). Audit tab shows all 4 stations (CREAMBELLPARLOUR, GUPTAJEE, MSB, ZORKO) + UNASSIGNED with DRIFT=₹0. Total Item Total across all stations = ₹18,71,131.61. Navigation: app uses pushState to reach /reports-module/food-court then need to wait 8s for initial fetch + set June dates + click Apply + wait ~40s for data to load.",
+  "verified_values": {
+    "CREAMBELLPARLOUR_itemTotal_June2026": "₹2,57,012.45",
+    "CREAMBELLPARLOUR_tax_June2026": "₹12,785.99",
+    "CREAMBELLPARLOUR_total_June2026": "₹2,68,340.69",
+    "all_stations_audit_itemTotal_June2026": "₹18,71,131.61",
+    "audit_drift": "₹0 (all 6038 orders clean)",
+    "old_CREAMBELLPARLOUR_value": "₹2,36,427.45",
+    "increase": "~₹20,585 (addons + variations now included)"
+  }
+}
