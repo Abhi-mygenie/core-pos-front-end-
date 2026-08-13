@@ -18996,7 +18996,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "SUBSUMED into CR-139",
       "gate": "1",
       "sprint_key": "pos_5_0",
       "area": "Inventory > API Transform",
@@ -19011,7 +19011,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "SUBSUMED into CR-139",
       "gate": "1",
       "sprint_key": "pos_5_0",
       "area": "Inventory > Stock Update + Purchase Entry",
@@ -19022,17 +19022,22 @@
     },
     {
       "id": "CR-139",
-      "title": "Sub-Recipe Stock: Dedicated tab in OPERATIONS group (separate from purchase flow)",
+      "title": "Sub-Recipe Stock: Dedicated tab (absorbs BUG-312 + BUG-313) \u2014 owner decisions locked",
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
-      "gate": "1",
+      "status": "INTAKE COMPLETE \u2014 READY FOR GATE 2",
+      "gate": "1 COMPLETE",
       "sprint_key": "pos_5_0",
       "area": "Inventory > Navigation + Sub-Recipe Stock",
       "registered": "2026-08-13",
       "artifact_refs": [
         "change_requests/CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md"
+      ],
+      "owner_decisions_locked": true,
+      "absorbs": [
+        "BUG-312",
+        "BUG-313"
       ]
     }
   ],
