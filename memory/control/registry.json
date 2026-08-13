@@ -19026,13 +19026,15 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE COMPLETE \u2014 READY FOR GATE 2",
-      "gate": "1 COMPLETE",
+      "status": "GATE 2 COMPLETE \u2014 AWAITING OWNER MOCKUP APPROVAL",
+      "gate": "2 COMPLETE",
       "sprint_key": "pos_5_0",
       "area": "Inventory > Navigation + Sub-Recipe Stock",
       "registered": "2026-08-13",
       "artifact_refs": [
-        "change_requests/CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md"
+        "change_requests/CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md",
+        "CR-139_IMPACT_ANALYSIS.md",
+        "frontend/public/cr139-subrecipe-stock-mockup.html"
       ],
       "owner_decisions_locked": true,
       "absorbs": [
