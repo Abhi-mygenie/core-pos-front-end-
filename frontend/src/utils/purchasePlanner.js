@@ -110,7 +110,7 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays, show
   (dcrStockSummary || []).forEach(r => dcrByIngredient.set(String(r.ingredient_id), r));
 
   const rows = stockInventory
-    .filter(item => item?.isSubRecipe !== true)                 // G9
+    .filter(item => item?.isSubRecipe !== true && !item?.subrecipeId)  // G9 CR-139: dual guard — catches missing is_sub_recipe flag
     .map(item => {
       const ingredientId = item.id;
       const name         = item.name || '';
@@ -143,7 +143,7 @@ export function computePlan({ stockInventory, dcrStockSummary, horizonDays, show
   // BUG-224: B2 Rule 2 (owner-amended 2026-07-23) — low-stock rows regardless of consumption
   const inPlan = new Set(velocityRows.map(r => String(r.ingredient_id)));
   const alertRows = stockInventory
-    .filter(item => item?.isSubRecipe !== true)                  // G9 also applies
+    .filter(item => item?.isSubRecipe !== true && !item?.subrecipeId)  // G9 CR-139: dual guard
     .filter(item => !inPlan.has(String(item.id)))
     .map(item => {
       const threshold = (Number(item.minQtyAlert) || 0) * (Number(item.conversionFactor) || 1); // Q1: minQtyAlert only, small-unit domain

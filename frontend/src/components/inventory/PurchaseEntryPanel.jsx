@@ -192,7 +192,7 @@ export default function PurchaseEntryPanel() {
                       onChange={e => updateRow(item._key, 'ingredientId', e.target.value)}
                       data-testid={`purchase-ingredient-${idx}`}>
                       <option value="">Select ingredient...</option>
-                      {ingredients.map(ing => <option key={ing.id} value={ing.id}>{ing.name}</option>)}
+                      {ingredients.filter(i => !i.isSubRecipe).map(ing => <option key={ing.id} value={ing.id}>{ing.name}</option>)}{/* CR-139: sub-recipes not purchasable */}
                     </select>
                   </td>
                   <td className="py-2 px-4 text-center">

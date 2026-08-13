@@ -14,6 +14,7 @@ function AdHocTypeahead({ ingredientsMaster, vendorItemList, rows, onAddAdHoc, o
   const filtered = query.length >= 1
     ? (ingredientsMaster || []).filter(i =>
         i.name.toLowerCase().includes(query.toLowerCase()) &&
+        !i.isSubRecipe &&                                         // CR-139 Phase B2: sub-recipes are not purchasable
         // CR-105: Only exclude items already added as ad_hoc (not in_stock/planner/alert rows)
         !rows.some(r => r.origin === 'ad_hoc' && String(r.ingredient_id) === String(i.id))
       ).slice(0, 8)

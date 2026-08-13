@@ -8,8 +8,9 @@ const TABS = [
   // OPERATIONS
   { id: 'dashboard',       label: 'Dashboard',      path: '/inventory-dashboard',                group: 'OPERATIONS', icon: Brain },
   { id: 'current-stock',   label: 'Current Stock',  path: '/inventory-current-stock',            group: 'OPERATIONS' },
-  { id: 'smart-purchase',  label: 'Stock Update', path: '/inventory-smart-purchase',             group: 'OPERATIONS', icon: Sparkles }, // CR-122
-  { id: 'receive',         label: 'Receive',        path: '/inventory-receive',                  group: 'OPERATIONS', icon: Truck, franchiseOnly: true },
+  { id: 'smart-purchase',    label: 'Stock Update',     path: '/inventory-smart-purchase',   group: 'OPERATIONS', icon: Sparkles }, // CR-122
+  { id: 'sub-recipe-stock',  label: 'Sub-Recipe Stock', path: '/inventory-sub-recipe-stock', group: 'OPERATIONS' },               // CR-139
+  { id: 'receive',           label: 'Receive',          path: '/inventory-receive',          group: 'OPERATIONS', icon: Truck, franchiseOnly: true },
   { id: 'audit',           label: 'Stock Audit',    path: '/inventory-audit',                    group: 'OPERATIONS' },
   // SETUP
   { id: 'ingredients',     label: 'Ingredients',    path: '/inventory-setup?tab=ingredients',    group: 'SETUP' },

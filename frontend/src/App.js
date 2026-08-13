@@ -78,6 +78,7 @@ import EmployeeManagementPage from "./pages/EmployeeManagementPage"; // CR-069
 import InventoryCurrentStockPage from "./pages/InventoryCurrentStockPage"; // CR-079 (renamed from InventoryDashboardPage)
 import StockAuditPage from "./pages/StockAuditPage";                       // CR-079 (renamed from PhysicalCountPage · absorbs CR-075-B)
 import SmartPurchasePage from "./pages/SmartPurchasePage";                 // CR-078 (Phase C — replaces PurchaseEntryPage in Phase F)
+import SubRecipeStockPage from "./pages/SubRecipeStockPage";               // CR-139
 import InventoryIntelligencePage from "./pages/InventoryIntelligencePage"; // CR-079 (Phase D — replaces /inventory in Phase E)
 import InventorySetupPage from "./pages/InventorySetupPage";         // CR-072
 import PurchaseEntryPage from "./pages/PurchaseEntryPage";           // CR-072
@@ -221,6 +222,7 @@ function App() {
               <Route path="/inventory-dashboard" element={<ProtectedRoute><InventoryIntelligencePage /></ProtectedRoute>} />
               <Route path="/inventory-current-stock" element={<ProtectedRoute><InventoryCurrentStockPage /></ProtectedRoute>} />
               <Route path="/inventory-smart-purchase" element={<ProtectedRoute><SmartPurchasePage /></ProtectedRoute>} />
+              <Route path="/inventory-sub-recipe-stock" element={<ProtectedRoute><SubRecipeStockPage /></ProtectedRoute>} />{/* CR-139 */}
               <Route path="/inventory-audit" element={<ProtectedRoute><StockAuditPage /></ProtectedRoute>} />
               <Route path="/inventory-receive" element={<ProtectedRoute><InventoryReceivePage /></ProtectedRoute>} />
               <Route path="/inventory-setup" element={<ProtectedRoute><InventorySetupPage /></ProtectedRoute>} />

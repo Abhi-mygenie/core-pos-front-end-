@@ -752,3 +752,10 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **BUG-311** | Ingredient Add/Bulk Edit: No duplicate detection (missing typeahead + pre-save check + bulk editor guard) | **P1** | MEDIUM | **INTAKE** | 1 | 2 files: `InventorySetupPanel.jsx` (addIngredient — no isDuplicate), `IngredientBulkEditor.jsx` (handleSave — no dupe check). Layer 3 (typeahead) needs full Gate 2-3. Layers 1+2 fast-lane eligible. |
 | **BUG-312** | `fromAPI.ingredients()` missing `isSubRecipe`/`subrecipeId` — root cause for all sub-recipe misrouting | **P1** | **HIGH** | **SUBSUMED into CR-139** | — | Absorbed as CR-139 Phase A. Will be implemented as part of CR-139 bundle. Owner decision: 2026-08-13. |
 | **BUG-313** | Sub-recipe appears in Stock Update auto-plan + `addPurchase()` called for all rows (no sub-recipe routing) | **P1** | **HIGH** | **SUBSUMED into CR-139** | — | Absorbed as CR-139 Phase B. Will be implemented as part of CR-139 bundle. Owner decision: 2026-08-13. |
+
+
+### CR-139 Implementation (2026-08-13)
+| ID | Status | Notes |
+|---|---|---|
+| **BUG-312** | **IMPLEMENTED** via CR-139 Phase A | `inventoryTransform.js`: +`isSubRecipe`+`subrecipeId` to `fromAPI.ingredients()` |
+| **BUG-313** | **IMPLEMENTED** via CR-139 Phases B1-B4 | `purchasePlanner.js` dual G9, `AutoShoppingList.jsx` filter, `PurchaseEntryPanel.jsx` dropdown filter, `SmartPurchasePanel.jsx` comment marker |

@@ -1,0 +1,49 @@
+{
+  "summary": "CR-139 Sub-Recipe Stock — full code-level verification of all 9 changed files + login page render check. No live API tests possible (external preprod backend, no test credentials in test_credentials.md). All Phase A/B/C changes verified correct in code.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "code_verification_results": {
+    "app_compile_load": "PASS — Login page renders with title 'MyGenie POS', no console errors",
+    "InventoryTabBar_sub_recipe_tab": "PASS — TABS array line 12: { id: 'sub-recipe-stock', label: 'Sub-Recipe Stock', path: '/inventory-sub-recipe-stock', group: 'OPERATIONS' } — positioned after smart-purchase (Stock Update) and before receive",
+    "App_js_route": "PASS — SubRecipeStockPage imported at line 81, ProtectedRoute at line 225: /inventory-sub-recipe-stock",
+    "SubRecipeStockPage_structure": "PASS — Thin wrapper with Sidebar, InventoryTabBar active='sub-recipe-stock', h1 'Sub-Recipe Stock', SubRecipeStockPanel",
+    "SubRecipeStockPanel_table_columns": "PASS — 8 columns: Sub-Recipe, Current Qty, New Qty, Unit, Drift, Wastage Reason *, Batch (opt), Expiry (opt)",
+    "SubRecipeStockPanel_purple_badge": "PASS — Line 198-200: bg-purple-50 text-purple-600 'Sub-Recipe' badge on every row",
+    "SubRecipeStockPanel_positive_drift_badge": "PASS — data-testid=drift-positive-{id}, green bg-green-50 text-green-600 with TrendingUp icon, '+{diff} {unit}'",
+    "SubRecipeStockPanel_negative_drift_badge": "PASS — data-testid=drift-negative-{id}, amber bg-amber-50 text-amber-600 with TrendingDown icon, preview label",
+    "SubRecipeStockPanel_wastage_required": "PASS — Validation loop lines 71-78 blocks save and shows toast.error when drift.diff < 0 && !entry.reasonId",
+    "SubRecipeStockPanel_wastage_red_border": "PASS — select element: !entry.reasonId → 'border-red-300 bg-red-50', with error hint 'Required for negative drift'",
+    "SubRecipeStockPanel_save_btn_disabled": "PASS — disabled={saving || !hasEntries} where hasEntries = any entry with non-empty qty",
+    "SubRecipeStockPanel_save_btn_count": "PASS — Shows 'Save N Adjustment(s)' when entryCount > 0",
+    "SubRecipeStockPanel_batch_expiry_optional": "PASS — Conditional spread in addSubRecipeStock call: only included if truthy. No required validation.",
+    "SubRecipeStockPanel_reset_all": "PASS — data-testid=sub-recipe-stock-reset, onClick={() => setEntries({})}",
+    "SubRecipeStockPanel_data_testids": "PASS — All required testids present: sub-recipe-stock-panel, sub-recipe-stock-table, sub-recipe-stock-save-btn, sub-recipe-stock-search, sub-recipe-unsaved-banner, sub-recipe-stock-reset, sub-recipe-stock-save-footer",
+    "inventoryTransform_Phase_A": "PASS — lines 30-31: isSubRecipe: !!item.is_sub_recipe, subrecipeId: item.subrecipe_id || null",
+    "purchasePlanner_G9_dual_guard": "PASS — lines 113 AND 146: .filter(item => item?.isSubRecipe !== true && !item?.subrecipeId)",
+    "AutoShoppingList_Phase_B2": "PASS — line 17: !i.isSubRecipe filter in AdHocTypeahead's filtered array",
+    "PurchaseEntryPanel_Phase_B3": "PASS — line 195: ingredients.filter(i => !i.isSubRecipe) on ingredient dropdown"
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor defensive coding gap: In SubRecipeStockPanel handleSaveAll validation loop (lines 71-78), getDrift(sub) is called without null-checking `sub` first. If an entry ID doesn't match any subRecipe, `sub.id` would throw. In the actual save loop (line 84), there's a `if (!sub) continue` guard — same guard should be added to the validation loop. Low risk in practice since entries can only be created from rendered rows.",
+    "SubRecipeStockPanel line 261: Hardcoded <option value='physical_count'>Physical stock count</option> appended after wastageReasons from API. This creates an option with a string value 'physical_count' while all API reasons use numeric IDs. The reasonLabel lookup (line 88) will return '' for this value since wastageReasons.find won't match. Consider using a numeric sentinel or handling this string value explicitly in the API payload."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100% (code-level)"
+  },
+  "test_credentials": "Not available — test_credentials.md is empty. Cannot login to test live UI flows. External backend: preprod.mygenie.online",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-139 all 9 files code-verified as correct. Two minor code quality issues noted (validation loop null-check, hardcoded physical_count option). Live UI panel testing requires valid preprod.mygenie.online credentials — once credentials are in test_credentials.md, test: (1) navigate to /inventory-sub-recipe-stock, (2) verify Sub-Recipe rows load, (3) enter qty higher/lower than current to verify drift badges, (4) attempt save without wastage reason to verify toast block."
+}

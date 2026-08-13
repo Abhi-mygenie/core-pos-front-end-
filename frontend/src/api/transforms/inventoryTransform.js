@@ -27,6 +27,8 @@ const fromAPI = {
       minUnitAlert: item.min_unit_alert || '', // BUG-219: unit string ('gm'), not a number
       type: item.type || 'inventory',
       isPushedManaged: !!item.is_pushed_managed,
+      isSubRecipe: !!item.is_sub_recipe,         // CR-139 Phase A (BUG-312)
+      subrecipeId: item.subrecipe_id || null,    // CR-139 Phase A (BUG-312)
     }));
   },
 

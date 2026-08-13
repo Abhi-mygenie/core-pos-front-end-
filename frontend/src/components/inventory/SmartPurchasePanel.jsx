@@ -180,6 +180,8 @@ export default function SmartPurchasePanel() {
   };
 
   // ── Submit (N sequential /add-purchase calls · partial-success UX) ───
+  // CR-139 Phase B4: Sub-recipes excluded at G9 (purchasePlanner) + B2 (AdHocTypeahead).
+  // addPurchase() is ingredient-only by design. No further guard needed here.
   const handleSubmit = async () => {
     const err = validate();
     if (err) { toast.error(err); return; }
