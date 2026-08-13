@@ -58,18 +58,25 @@ export default function StockAuditPanel() {
     if (entries.length === 0) { toast.error('No physical counts entered'); return; }
     setSaving(true);
     try {
+      let skipped = 0;
       for (const [itemId, entry] of entries) {
         const item = stockItems.find(s => String(s.id) === String(itemId));
         const reasonLabel = entry.reasonId ? wastageReasons.find(r => r.id === Number(entry.reasonId))?.reason : '';
-        // BUG-sub-recipe-stock: sub-recipe items need a different endpoint
+        // BUG-sub-recipe-stock + G4: explicit three-way routing
         if (item?.isSubRecipe && item?.subrecipeId) {
+          // Sub-recipe with ID — correct endpoint
           await inventoryService.addSubRecipeStock(item.subrecipeId, {
             quantity: Number(entry.qty),
             unit: item.unit || '',
             physicalQty: Number(entry.qty),
             reason: reasonLabel || '',
           });
+        } else if (item?.isSubRecipe && !item?.subrecipeId) {
+          // Sub-recipe but subrecipeId missing — cannot call correct endpoint; skip + surface error
+          skipped++;
+          toast.error(`"${item.name}" is a sub-recipe but has no sub-recipe ID — skipped`);
         } else {
+          // Regular ingredient — correct endpoint
           await inventoryService.addStock(itemId, {
             quantity: Number(entry.qty),
             wastageReasonId: entry.reasonId || null,
@@ -77,7 +84,8 @@ export default function StockAuditPanel() {
           });
         }
       }
-      toast.success(`${entries.length} adjustment(s) saved`);
+      const saved = entries.length - skipped;
+      if (saved > 0) toast.success(`${saved} adjustment(s) saved${skipped > 0 ? ` · ${skipped} skipped` : ''}`);
       setPhysicalEntries({});
       await fetchData();
     } catch (err) {

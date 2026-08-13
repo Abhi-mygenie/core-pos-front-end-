@@ -1,0 +1,21 @@
+{
+  "summary": "Code-level verification of BUG-308 fix in StockAuditPanel.jsx handleSaveAll (lines 56-96). All requirements confirmed correct.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": ["/app/frontend/src/components/inventory/StockAuditPanel.jsx"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-308 fix fully verified. handleSaveAll three-way routing is correct. No further action needed on this file.",
+  "verification_details": {
+    "line_61_skipped_counter": "PASS — `let skipped = 0` declared inside try block at line 61",
+    "branch1_subrecipe_with_id": "PASS — line 66-73: item.isSubRecipe && item.subrecipeId → calls addSubRecipeStock(item.subrecipeId, ...)",
+    "branch2_subrecipe_no_id": "PASS — line 74-77: item.isSubRecipe && !item.subrecipeId → skipped++ and toast.error with item name and 'sub-recipe ID'",
+    "branch3_regular_ingredient": "PASS — line 78-85: else → calls addStock(itemId, ...)",
+    "final_toast_count": "PASS — line 88: uses entries.length - skipped, shows '· N skipped' suffix when skipped > 0",
+    "suppress_toast_if_all_skipped": "PASS — line 88: `if (saved > 0)` guards toast.success, so if saved=0 no success toast fires"
+  }
+}
