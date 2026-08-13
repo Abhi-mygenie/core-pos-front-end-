@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-08-13 — **INTAKE SESSION CLOSED** (7 items registered: BUG-308 IMPLEMENTED, BUG-309/310/311 INTAKE, BUG-312+BUG-313 SUBSUMED into CR-139, CR-139 INTAKE COMPLETE with all owner decisions locked — ready for Gate 2 Planning). Prior: 2026-08-12 — **CR-138 INTAKE**
+**Last Updated:** 2026-08-13 — **SESSION CLOSED.** Multi-role session: DEPLOYMENT + 4× INVESTIGATION + INTAKE (7 items: BUG-308→313 + CR-139) + PLANNING Gates 2+3 (CR-139) + IMPLEMENTATION (CR-139, 9 files) + BUG FIX (BUG-308 G4). Next session: PLANNING for BUG-309 (Min Unit data loss P1) + BUG-310 (Conversion styling P2) + BUG-311 (Duplicate detection P1). Handover: `handover/SESSION_HANDOVER_2026_08_13.md`. Prior: 2026-08-13 — INTAKE SESSION CLOSED
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---
