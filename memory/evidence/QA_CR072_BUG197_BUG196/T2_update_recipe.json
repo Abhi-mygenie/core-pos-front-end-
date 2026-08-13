@@ -1,0 +1,18 @@
+{
+  "message": "Recipe updated successfully.",
+  "recipe_id": 8461,
+  "name": "Boiled Eggs",
+  "preparation_time": "20",
+  "serve_time": "10",
+  "unit": "plate",
+  "serves_people": 2,
+  "is_manufactured": false,
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "Tiparos Fish Sauce",
+      "unit": "gm",
+      "qty": 200
+    }
+  ]
+}

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend Brief — FE Aggregation Endpoints · MyGenie POS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #329937;
+      --orange:  #F26B33;
+      --blue:    #3B82F6;
+      --purple:  #8B5CF6;
+      --red:     #EF4444;
+      --amber:   #F59E0B;
+      --teal:    #14B8A6;
+      --zinc50:  #FAFAFA;
+      --zinc100: #F4F4F5;
+      --zinc200: #E4E4E7;
+      --zinc400: #A1A1AA;
+      --zinc500: #71717A;
+      --zinc700: #3F3F46;
+      --zinc900: #18181B;
+      --code-bg: #1E1E2E;
+      --code-fg: #CDD6F4;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: #F7F7F8;
+      color: var(--zinc700);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Top header ── */
+    .doc-header {
+      background: white;
+      border: 1px solid var(--zinc200);
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 32px;
+    }
+    .doc-header .logo-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .logo-badge {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--green), #22c55e);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: white;
+    }
+    .doc-title { font-size: 22px; font-weight: 700; color: var(--zinc900); }
+    .doc-subtitle { font-size: 13px; color: var(--zinc500); margin-top: 2px; }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;
+    }
+    .meta-pill {
+      display: inline-flex; align-items: center; gap-6px;
+      padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    }
+    .meta-pill.date   { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .meta-pill.from   { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .meta-pill.class  { background: #FFF7ED; color: #9A3412; border: 1px solid #FDBA74; }
+    .meta-pill.prio   { background: #FFF1F2; color: #9F1239; border: 1px solid #FDA4AF; }
+
+    /* ── Context box ── */
+    .context-box {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .context-box h3 { font-size: 13px; font-weight: 600; color: #1D4ED8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
+    .context-box p  { font-size: 13px; color: #1e40af; line-height: 1.7; }
+    .context-box ul { margin-top: 10px; padding-left: 18px; }
+    .context-box li { font-size: 13px; color: #1e40af; margin-bottom: 4px; }
+    .context-box code { background: #DBEAFE; padding: 1px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 12px; }
+
+    /* ── Priority table ── */
+    .priority-section { margin-bottom: 40px; }
+    .priority-section h2 { font-size: 16px; font-weight: 700; color: var(--zinc900); margin-bottom: 16px; }
+    .priority-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--zinc200); }
+    .priority-table th { background: var(--zinc50); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--zinc500); border-bottom: 1px solid var(--zinc200); }
+    .priority-table td { padding: 13px 16px; border-bottom: 1px solid var(--zinc100); font-size: 13px; vertical-align: top; }
+    .priority-table tr:last-child td { border-bottom: none; }
+    .priority-table tr:hover td { background: var(--zinc50); }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge.p1     { background: #FFF1F2; color: #9F1239; border: 1px solid #FECDD3; }
+    .badge.p2     { background: #FFF7ED; color: #9A3412; border: 1px solid #FED7AA; }
+    .badge.p3     { background: var(--zinc100); color: var(--zinc500); border: 1px solid var(--zinc200); }
+    .badge.low    { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .badge.medium { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .badge.high   { background: #FFF1F2; color: #9F1239; border: 1px solid #FECDD3; }
+
+    code.mono { font-family: 'Fira Code', 'Consolas', monospace; background: var(--zinc100); padding: 1px 6px; border-radius: 4px; font-size: 12px; color: var(--orange); }
+
+    /* ── Endpoint cards ── */
+    .endpoint-card {
+      background: white;
+      border: 1px solid var(--zinc200);
+      border-radius: 16px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 24px 28px; border-bottom: 1px solid var(--zinc100);
+    }
+    .ep-num {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 15px; flex-shrink: 0;
+      color: white;
+    }
+    .ep-num.n1 { background: var(--green); }
+    .ep-num.n2 { background: var(--blue); }
+    .ep-num.n3 { background: var(--purple); }
+    .ep-num.n4 { background: var(--orange); }
+    .ep-num.n5 { background: var(--red); }
+
+    .ep-title { font-size: 16px; font-weight: 700; color: var(--zinc900); }
+    .ep-sub { font-size: 13px; color: var(--zinc500); margin-top: 3px; }
+    .ep-path {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--code-bg); color: #89DCEB;
+      padding: 6px 14px; border-radius: 8px;
+      font-family: 'Fira Code', monospace; font-size: 12px;
+      margin-top: 10px;
+    }
+    .ep-path .method { color: #A6E3A1; font-weight: 700; margin-right: 6px; }
+
+    .endpoint-body { padding: 24px 28px; }
+
+    /* ── Sections inside card ── */
+    .section { margin-bottom: 24px; }
+    .section:last-child { margin-bottom: 0; }
+    .section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--zinc400); margin-bottom: 10px;
+    }
+
+    /* ── Code blocks ── */
+    pre {
+      background: var(--code-bg);
+      border-radius: 10px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--code-fg);
+    }
+    .comment { color: #6C7086; }
+    .key     { color: #89DCEB; }
+    .str     { color: #A6E3A1; }
+    .num     { color: #FAB387; }
+    .kw      { color: #CBA6F7; }
+    .op      { color: #F38BA8; }
+
+    /* ── Info/note boxes ── */
+    .note-box {
+      background: var(--zinc50);
+      border: 1px solid var(--zinc200);
+      border-left: 3px solid var(--zinc400);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-top: 12px;
+    }
+    .note-box.green { border-left-color: var(--green); background: #F0FDF4; }
+    .note-box.blue  { border-left-color: var(--blue);  background: #EFF6FF; }
+    .note-box.amber { border-left-color: var(--amber); background: #FFFBEB; }
+    .note-box.red   { border-left-color: var(--red);   background: #FFF1F2; }
+    .note-box ul { padding-left: 16px; }
+    .note-box li { font-size: 13px; margin-bottom: 4px; line-height: 1.5; }
+    .note-box p  { font-size: 13px; line-height: 1.6; }
+
+    /* ── Classification rule block ── */
+    .rule-block {
+      background: #0D1117;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 2;
+      color: #E6EDF3;
+    }
+    .rule-block .r-comment { color: #8B949E; }
+    .rule-block .r-kw      { color: #FF7B72; }
+    .rule-block .r-str     { color: #A5D6FF; }
+    .rule-block .r-result  { color: #7EE787; font-weight: 600; }
+    .rule-block .r-label   { color: #D2A8FF; }
+
+    /* ── FE consumers ── */
+    .fe-files { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .fe-file {
+      display: flex; align-items: center; gap-10px;
+      background: var(--zinc50); border: 1px solid var(--zinc200);
+      border-radius: 8px; padding: 8px 14px;
+      font-size: 12px;
+    }
+    .fe-file .fname { font-family: 'Fira Code', monospace; color: var(--orange); font-weight: 500; }
+    .fe-file .farrow { color: var(--zinc400); margin: 0 8px; }
+    .fe-file .faction { color: var(--zinc600); }
+
+    /* ── Defer banner ── */
+    .defer-banner {
+      background: repeating-linear-gradient(45deg, #FFF7ED, #FFF7ED 10px, #FFFBEB 10px, #FFFBEB 20px);
+      border: 1px solid #FDE68A;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .defer-banner .d-icon { font-size: 18px; }
+    .defer-banner p { font-size: 13px; color: #92400E; line-height: 1.6; }
+    .defer-banner strong { font-weight: 700; }
+
+    /* ── Testing section ── */
+    .testing-card {
+      background: white;
+      border: 1px solid var(--zinc200);
+      border-radius: 16px;
+      padding: 28px;
+      margin-top: 8px;
+    }
+    .testing-card h2 { font-size: 16px; font-weight: 700; color: var(--zinc900); margin-bottom: 20px; }
+    .test-row { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .test-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--zinc900); color: white;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .test-text { font-size: 13px; color: var(--zinc700); line-height: 1.6; }
+    .cred-box {
+      background: var(--zinc50);
+      border: 1px solid var(--zinc200);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 16px;
+    }
+    .cred-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; font-size: 13px; }
+    .cred-label { color: var(--zinc500); min-width: 80px; font-weight: 500; }
+    .cred-val { font-family: 'Fira Code', monospace; color: var(--zinc900); font-size: 12px; background: white; border: 1px solid var(--zinc200); padding: 2px 8px; border-radius: 5px; }
+
+    /* ── Sticky nav ── */
+    .sticky-nav {
+      position: sticky; top: 16px; float: right;
+      width: 220px; margin-left: 32px; margin-right: -252px;
+      background: white; border: 1px solid var(--zinc200); border-radius: 12px;
+      padding: 16px; font-size: 12px;
+    }
+    .sticky-nav h4 { font-size: 11px; font-weight: 700; color: var(--zinc400); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+    .sticky-nav a { display: block; color: var(--zinc700); text-decoration: none; padding: 4px 0; border-left: 2px solid transparent; padding-left: 10px; margin-left: -10px; }
+    .sticky-nav a:hover { color: var(--green); border-left-color: var(--green); }
+
+    @media (max-width: 1300px) { .sticky-nav { display: none; } }
+
+    /* ── Discount formula box ── */
+    .formula-box {
+      background: var(--code-bg); border-radius: 10px; padding: 14px 20px;
+      font-family: 'Fira Code', monospace; font-size: 12.5px; color: var(--code-fg);
+      line-height: 1.8;
+    }
+    .formula-box .f-var { color: #89DCEB; }
+    .formula-box .f-eq  { color: #CBA6F7; }
+    .formula-box .f-op  { color: #F38BA8; }
+
+    /* scrollbar */
+    pre::-webkit-scrollbar { height: 6px; }
+    pre::-webkit-scrollbar-track { background: transparent; }
+    pre::-webkit-scrollbar-thumb { background: #45475A; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Top Header ── -->
+  <div class="doc-header">
+    <div class="logo-row">
+      <div class="logo-badge">M</div>
+      <div>
+        <div class="doc-title">Backend Brief — FE Aggregation Endpoints</div>
+        <div class="doc-subtitle">MyGenie POS · Insights Module · 1-Year Range Expansion</div>
+      </div>
+    </div>
+    <div class="meta-row">
+      <span class="meta-pill date">2026-07-10</span>
+      <span class="meta-pill from">From: Frontend Investigation Agent</span>
+      <span class="meta-pill class">CONTRACT_MISMATCH / NEW_ENDPOINT_REQUEST</span>
+      <span class="meta-pill prio">P1 — Blocks 1-year range for 5 screens</span>
+    </div>
+  </div>
+
+  <!-- ── Context ── -->
+  <div class="context-box">
+    <h3>Context</h3>
+    <p>Five Insights reports currently fetch raw <code>order-logs-report</code> data and aggregate entirely in the browser. This works for small date ranges but becomes unsafe for 1-year ranges on high-volume restaurants (potential 100 MB+ payloads, browser freezes).</p>
+    <ul>
+      <li>Each report needs a dedicated backend aggregation endpoint.</li>
+      <li>All new endpoints must follow the same contract as existing <code>insights-*</code> endpoints.</li>
+      <li><strong>Method:</strong> <code>POST</code> &nbsp;|&nbsp; <strong>Auth:</strong> Bearer JWT &nbsp;|&nbsp; <strong>Body:</strong> <code>{ "from_date": "YYYY-MM-DD", "to_date": "YYYY-MM-DD" }</code></li>
+      <li><strong>Envelope:</strong> <code>{ "success": true, "data": { ... } }</code></li>
+    </ul>
+  </div>
+
+  <!-- ── Priority Table ── -->
+  <div class="priority-section">
+    <h2>Implementation Priority</h2>
+    <table class="priority-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Endpoint</th>
+          <th>Effort</th>
+          <th>Unblocks</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><code class="mono">insights-tab-settlements</code></td>
+          <td><span class="badge low">Low</span> — range wrapper over existing daily-sales logic</td>
+          <td>Order Ledger for 1-year</td>
+          <td><span class="badge p1">P1 — Do first</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><code class="mono">insights-food-court</code></td>
+          <td><span class="badge medium">Medium</span> — station-scoped order aggregation</td>
+          <td>Food Court for 1-year</td>
+          <td><span class="badge p1">P1</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><code class="mono">insights-room-orders</code></td>
+          <td><span class="badge medium">Medium</span> — RM/SRM join + room_info extraction</td>
+          <td>Room Orders for 1-year</td>
+          <td><span class="badge p1">P1</span></td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td><code class="mono">insights-prep-serve</code></td>
+          <td><span class="badge medium">Medium-High</span> — timestamp classification logic</td>
+          <td>Prep/Serve Time for 1-year</td>
+          <td><span class="badge p2">P2</span></td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td><code class="mono">insights-item-audit</code></td>
+          <td><span class="badge high">High</span> — tax drift engine + per-line join</td>
+          <td>Item Ledger Audit tab</td>
+          <td><span class="badge p3">P3 — Defer</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ENDPOINT 2 — insights-food-court  (P1)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep2">
+    <div class="endpoint-header">
+      <div class="ep-num n2">2</div>
+      <div style="flex:1">
+        <div class="ep-title">insights-food-court</div>
+        <div class="ep-sub">Food Court / Station Sales · <span class="badge p1">P1</span></div>
+        <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/report/insights-food-court</div>
+      </div>
+    </div>
+    <div class="endpoint-body">
+
+      <div class="section">
+        <div class="section-title">Request Body</div>
+        <pre>{
+  <span class="key">"from_date"</span>: <span class="str">"YYYY-MM-DD"</span>,
+  <span class="key">"to_date"</span>:   <span class="str">"YYYY-MM-DD"</span>,
+  <span class="key">"station"</span>:   <span class="str">"Main Kitchen"</span>   <span class="comment">// optional — omit to get station list only</span>
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">What the FE currently computes</div>
+        <div class="note-box blue">
+          <ul>
+            <li>All orders that have at least one item belonging to the selected station</li>
+            <li>Per-order: proportional discount split by item price share, subtotal, GST, VAT, total</li>
+            <li>Station list derived from all item <code class="mono">station_name</code> values in the response</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Response — Station List Only (no station param)</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"stations"</span>: [<span class="str">"Bar"</span>, <span class="str">"Grill"</span>, <span class="str">"Main Kitchen"</span>],
+    <span class="key">"meta"</span>: { <span class="key">"total_orders"</span>: <span class="num">245</span>, <span class="key">"total_revenue"</span>: <span class="num">186500</span> }
+  }
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Response — Station Specified</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"stations"</span>: [<span class="str">"Bar"</span>, <span class="str">"Grill"</span>, <span class="str">"Main Kitchen"</span>],
+    <span class="key">"orders"</span>: [
+      {
+        <span class="key">"order_number"</span>:   <span class="str">"000123"</span>,
+        <span class="key">"order_date"</span>:     <span class="str">"09/07/2026"</span>,    <span class="comment">// DD/MM/YYYY</span>
+        <span class="key">"order_time"</span>:     <span class="str">"13:45"</span>,
+        <span class="key">"order_type"</span>:     <span class="str">"Dine-In"</span>,
+        <span class="key">"station_name"</span>:   <span class="str">"Main Kitchen"</span>,
+        <span class="key">"payment_method"</span>: <span class="str">"Cash"</span>,
+        <span class="key">"payment_status"</span>: <span class="str">"paid"</span>,
+        <span class="key">"f_order_status"</span>: <span class="num">6</span>,
+        <span class="key">"order_in"</span>:       <span class="str">"POS"</span>,
+        <span class="key">"status"</span>:         <span class="str">"paid"</span>,
+        <span class="key">"item_count"</span>:     <span class="num">3</span>,
+        <span class="key">"total_qty"</span>:      <span class="num">5</span>,
+        <span class="key">"order_details"</span>:  <span class="str">"Biryani (2) ₹340, Dal Makhani (1) ₹180, Naan (2) ₹80"</span>,
+        <span class="key">"item_total"</span>:     <span class="num">600</span>,
+        <span class="key">"discount"</span>:       <span class="num">30</span>,
+        <span class="key">"sub_total"</span>:      <span class="num">570</span>,
+        <span class="key">"gst_amount"</span>:     <span class="num">28.5</span>,
+        <span class="key">"vat_amount"</span>:     <span class="num">0</span>,
+        <span class="key">"total"</span>:          <span class="num">598.5</span>
+      }
+    ],
+    <span class="key">"meta"</span>: {
+      <span class="key">"total_orders"</span>:   <span class="num">45</span>,
+      <span class="key">"total_revenue"</span>:  <span class="num">28500</span>,
+      <span class="key">"total_gst"</span>:      <span class="num">1425</span>,
+      <span class="key">"total_discount"</span>: <span class="num">890</span>
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Discount Split Rule (must replicate FE logic)</div>
+        <div class="formula-box">
+          <span class="f-var">order_discount_share_for_station</span>
+          <span class="f-eq"> = </span>
+          (<span class="f-var">station_item_total</span> <span class="f-op">/</span> <span class="f-var">total_order_item_total</span>) <span class="f-op">×</span> <span class="f-var">order_total_discount</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Important Notes</div>
+        <div class="note-box green">
+          <ul>
+            <li>Include ALL order statuses (paid, running, cancelled) — FE filters at display layer</li>
+            <li>Sort by <code class="mono">order_number</code> descending (latest first)</li>
+            <li><code class="mono">order_date</code> format: <code class="mono">DD/MM/YYYY</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">FE Files That Will Consume This</div>
+        <div class="fe-files">
+          <div class="fe-file"><span class="fname">foodCourtService.js</span><span class="farrow">→</span><span class="faction">Replace <code class="mono">getFoodCourtForRange()</code> (currently chunked ORDER_LOGS_REPORT)</span></div>
+          <div class="fe-file"><span class="fname">FoodCourtMockup.jsx</span><span class="farrow">→</span><span class="faction">No shape changes needed</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ENDPOINT 3 — insights-room-orders  (P1)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep3">
+    <div class="endpoint-header">
+      <div class="ep-num n3">3</div>
+      <div style="flex:1">
+        <div class="ep-title">insights-room-orders</div>
+        <div class="ep-sub">Room Orders Report · <span class="badge p1">P1</span></div>
+        <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/report/insights-room-orders</div>
+      </div>
+    </div>
+    <div class="endpoint-body">
+
+      <div class="section">
+        <div class="section-title">What the FE currently computes</div>
+        <div class="note-box blue">
+          <ul>
+            <li>Filters <code class="mono">order-logs-report</code> to <code class="mono">order_in = 'RM'</code> (room parent orders only)</li>
+            <li>Pre-scans raw wrappers to extract <code class="mono">room_info</code> (room_price, advance, balance, dates, guest name)</li>
+            <li>Groups SRM (sub-room food orders) by <code class="mono">parent_order_id</code> as <code class="mono">associated_orders</code></li>
+            <li>Drops cancelled/merged room parents, counts them as anomalies</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Required Response Shape</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"rows"</span>: [
+      {
+        <span class="key">"parent_order_id"</span>:      <span class="num">731922</span>,
+        <span class="key">"restaurant_order_id"</span>:  <span class="str">"000123"</span>,
+        <span class="key">"table_id"</span>:             <span class="num">45</span>,
+        <span class="key">"guest_name"</span>:           <span class="str">"Mr. Sharma"</span>,
+        <span class="key">"check_in_datetime"</span>:    <span class="str">"2026-07-01 14:00:00"</span>,
+        <span class="key">"f_order_status"</span>:       <span class="num">6</span>,
+        <span class="key">"status"</span>:               <span class="str">"paid"</span>,
+        <span class="key">"order_in"</span>:             <span class="str">"RM"</span>,
+        <span class="key">"amount"</span>:               <span class="num">12500</span>,
+        <span class="key">"room_info"</span>: {
+          <span class="key">"room_no"</span>:          <span class="str">"101"</span>,
+          <span class="key">"room_price"</span>:       <span class="num">8000</span>,
+          <span class="key">"advance_payment"</span>:  <span class="num">4000</span>,
+          <span class="key">"balance_payment"</span>:  <span class="num">4000</span>,
+          <span class="key">"receive_balance"</span>:  <span class="num">0</span>,
+          <span class="key">"discount_amount"</span>:  <span class="num">0</span>,
+          <span class="key">"checkin_date"</span>:     <span class="str">"2026-07-01"</span>,
+          <span class="key">"checkout_date"</span>:    <span class="str">"2026-07-03"</span>
+        },
+        <span class="key">"associated_orders"</span>: [
+          {
+            <span class="key">"order_id"</span>:      <span class="num">731923</span>,
+            <span class="key">"order_number"</span>:  <span class="str">"000124"</span>,
+            <span class="key">"amount"</span>:        <span class="num">450.0</span>,
+            <span class="key">"transferred_at"</span>: <span class="str">"2026-07-01 20:30:00"</span>
+          }
+        ]
+      }
+    ],
+    <span class="key">"anomaly_count"</span>: <span class="num">2</span>,
+    <span class="key">"meta"</span>: {
+      <span class="key">"total_rooms"</span>:    <span class="num">12</span>,
+      <span class="key">"total_revenue"</span>:  <span class="num">156000</span>,
+      <span class="key">"rooms_with_srm"</span>: <span class="num">4</span>
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Guest Name Resolution Rule</div>
+        <div class="rule-block">
+          <span class="r-label">Priority chain</span> (first non-empty wins):<br>
+          <span class="r-kw">1.</span> <span class="r-str">room_info.name3</span><br>
+          <span class="r-kw">2.</span> <span class="r-str">orders_table.user_name</span><br>
+          <span class="r-kw">3.</span> booking_type is <span class="r-str">'walkin'</span> or <span class="r-str">'walk-in'</span> → <span class="r-result">"Walk-in"</span><br>
+          <span class="r-kw">4.</span> booking_type string as-is
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Important Notes</div>
+        <div class="note-box green">
+          <ul>
+            <li>Return only <code class="mono">order_in = 'RM'</code> rows. Exclude <code class="mono">order_in = 'SRM'</code> — they appear as <code class="mono">associated_orders</code>.</li>
+            <li>Drop cancelled/merged RM rows from <code class="mono">rows[]</code> but include their count in <code class="mono">anomaly_count</code>.</li>
+            <li>Sort <code class="mono">rows[]</code> by <code class="mono">parent_order_id</code> descending (latest first).</li>
+            <li><code class="mono">associated_orders</code> includes ALL SRM orders for that parent regardless of status.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">FE Files That Will Consume This</div>
+        <div class="fe-files">
+          <div class="fe-file"><span class="fname">roomOrdersService.js</span><span class="farrow">→</span><span class="faction">Replace <code class="mono">getRoomOrdersForRange()</code> body</span></div>
+          <div class="fe-file"><span class="fname">RoomOrdersMockup.jsx</span><span class="farrow">→</span><span class="faction">No shape changes needed</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ENDPOINT 1 — insights-prep-serve  (P2)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep1">
+    <div class="endpoint-header">
+      <div class="ep-num n1">1</div>
+      <div style="flex:1">
+        <div class="ep-title">insights-prep-serve</div>
+        <div class="ep-sub">Prep &amp; Serve Time Report · <span class="badge p2">P2</span></div>
+        <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/report/insights-prep-serve</div>
+      </div>
+    </div>
+    <div class="endpoint-body">
+
+      <div class="section">
+        <div class="section-title">Item Classification Logic (must be replicated server-side)</div>
+        <div class="rule-block">
+          <span class="r-comment">// Inputs per order line:</span><br>
+          <span class="r-label">ready_gap</span> = (ready_at − created_at) in minutes<br>
+          <span class="r-label">serve_gap</span> = (serve_at − created_at) in minutes<br>
+          <span class="r-label">THRESHOLD</span> = 0.5 min (30 seconds)<br>
+          <br>
+          <span class="r-kw">IF</span>   no timestamps at all                                    → <span class="r-result">mode = "direct"</span><br>
+          <span class="r-kw">IF</span>   ready_gap &lt; THRESHOLD <span class="r-kw">AND</span> serve_gap &lt; THRESHOLD → <span class="r-result">mode = "direct"</span><br>
+          <span class="r-kw">ELIF</span> ready_gap &lt; THRESHOLD <span class="r-kw">AND</span> serve_gap ≥ THRESHOLD → <span class="r-result">mode = "bar"</span><br>
+          <span class="r-kw">ELIF</span> ready_gap ≥ THRESHOLD                                   → <span class="r-result">mode = "kitchen"</span><br>
+          <br>
+          <span class="r-comment">// Outlier cap: skip any prep or serve value &gt; 120 min from averages.</span><br>
+          <span class="r-comment">// Only skip that VALUE — do NOT skip the item entirely.</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Required Response Shape</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"kpi"</span>: {
+      <span class="key">"avg_prep_minutes"</span>:  <span class="num">8.5</span>,
+      <span class="key">"avg_serve_minutes"</span>: <span class="num">3.2</span>,
+      <span class="key">"avg_total_minutes"</span>: <span class="num">11.7</span>,
+      <span class="key">"total_orders"</span>:      <span class="num">120</span>,
+      <span class="key">"kitchen_items"</span>:     <span class="num">450</span>,
+      <span class="key">"served_items"</span>:      <span class="num">380</span>,
+      <span class="key">"bar_items"</span>:         <span class="num">120</span>,
+      <span class="key">"direct_items"</span>:      <span class="num">210</span>
+    },
+    <span class="key">"mode_count"</span>: { <span class="key">"kitchen"</span>: <span class="num">450</span>, <span class="key">"bar"</span>: <span class="num">120</span>, <span class="key">"direct"</span>: <span class="num">210</span> },
+    <span class="key">"daily"</span>: [
+      { <span class="key">"date"</span>: <span class="str">"01/07/2026"</span>, <span class="key">"avg_prep"</span>: <span class="num">8.2</span>, <span class="key">"avg_serve"</span>: <span class="num">3.1</span>, <span class="key">"avg_total"</span>: <span class="num">11.3</span>, <span class="key">"orders"</span>: <span class="num">12</span> }
+    ],
+    <span class="key">"hourly"</span>: [
+      { <span class="key">"hour"</span>: <span class="str">"12"</span>, <span class="key">"avg_prep"</span>: <span class="num">9.1</span>, <span class="key">"avg_serve"</span>: <span class="num">3.5</span>, <span class="key">"orders"</span>: <span class="num">45</span> }
+    ],
+    <span class="key">"distribution"</span>: [
+      { <span class="key">"label"</span>: <span class="str">"0-5 min"</span>,   <span class="key">"count"</span>: <span class="num">50</span>,  <span class="key">"pct"</span>: <span class="num">11.1</span> },
+      { <span class="key">"label"</span>: <span class="str">"5-10 min"</span>,  <span class="key">"count"</span>: <span class="num">120</span>, <span class="key">"pct"</span>: <span class="num">26.7</span> },
+      { <span class="key">"label"</span>: <span class="str">"10-15 min"</span>, <span class="key">"count"</span>: <span class="num">90</span>,  <span class="key">"pct"</span>: <span class="num">20.0</span> },
+      { <span class="key">"label"</span>: <span class="str">"15-20 min"</span>, <span class="key">"count"</span>: <span class="num">80</span>,  <span class="key">"pct"</span>: <span class="num">17.8</span> },
+      { <span class="key">"label"</span>: <span class="str">"20-30 min"</span>, <span class="key">"count"</span>: <span class="num">70</span>,  <span class="key">"pct"</span>: <span class="num">15.6</span> },
+      { <span class="key">"label"</span>: <span class="str">"30+ min"</span>,   <span class="key">"count"</span>: <span class="num">40</span>,  <span class="key">"pct"</span>:  <span class="num">8.9</span> }
+    ],
+    <span class="key">"by_channel"</span>: [
+      { <span class="key">"channel"</span>: <span class="str">"Dine-In"</span>, <span class="key">"avg_prep"</span>: <span class="num">8.5</span>, <span class="key">"avg_serve"</span>: <span class="num">3.2</span>, <span class="key">"avg_total"</span>: <span class="num">11.7</span>, <span class="key">"orders"</span>: <span class="num">80</span> }
+    ],
+    <span class="key">"by_station"</span>: [
+      {
+        <span class="key">"station"</span>: <span class="str">"Main Kitchen"</span>,
+        <span class="key">"avg_prep"</span>: <span class="num">9.0</span>, <span class="key">"avg_serve"</span>: <span class="num">3.5</span>,
+        <span class="key">"orders"</span>: <span class="num">60</span>, <span class="key">"items"</span>: <span class="num">180</span>,
+        <span class="key">"modes"</span>: { <span class="key">"kitchen"</span>: <span class="num">160</span>, <span class="key">"bar"</span>: <span class="num">10</span>, <span class="key">"direct"</span>: <span class="num">10</span> }
+      }
+    ],
+    <span class="key">"slow_items"</span>: [
+      { <span class="key">"name"</span>: <span class="str">"Biryani"</span>, <span class="key">"station"</span>: <span class="str">"Main Kitchen"</span>, <span class="key">"mode"</span>: <span class="str">"kitchen"</span>, <span class="key">"avg_prep"</span>: <span class="num">25.0</span>, <span class="key">"avg_serve"</span>: <span class="num">5.0</span>, <span class="key">"orders"</span>: <span class="num">45</span> }
+    ],
+    <span class="key">"fast_items"</span>: [
+      { <span class="key">"name"</span>: <span class="str">"Lassi"</span>, <span class="key">"station"</span>: <span class="str">"Bar"</span>, <span class="key">"mode"</span>: <span class="str">"bar"</span>, <span class="key">"avg_prep"</span>: <span class="num">0</span>, <span class="key">"avg_serve"</span>: <span class="num">2.1</span>, <span class="key">"orders"</span>: <span class="num">30</span> }
+    ]
+  }
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Important Notes</div>
+        <div class="note-box green">
+          <ul>
+            <li><code class="mono">slow_items</code> and <code class="mono">fast_items</code>: top 10 each, sorted by <code class="mono">avg_prep + avg_serve</code> (desc / asc). Only include items with ≥ 2 data points.</li>
+            <li><code class="mono">by_channel</code>: map <code class="mono">dinein→"Dine-In"</code>, <code class="mono">delivery→"Delivery"</code>, <code class="mono">takeaway / take_away→"Takeaway"</code>. Exclude "direct" mode items from channel aggregation.</li>
+            <li><code class="mono">daily[].date</code> format: <code class="mono">DD/MM/YYYY</code></li>
+            <li><code class="mono">hourly[].hour</code>: zero-padded 2-digit string — <code class="mono">"09"</code>, <code class="mono">"12"</code>, <code class="mono">"23"</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">FE Files That Will Consume This</div>
+        <div class="fe-files">
+          <div class="fe-file"><span class="fname">prepServeService.js</span><span class="farrow">→</span><span class="faction">Replace <code class="mono">getPrepServeAnalytics()</code> chunked fetch with single call</span></div>
+          <div class="fe-file"><span class="fname">PrepServeTimeMockup.jsx</span><span class="farrow">→</span><span class="faction">No shape changes needed</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ENDPOINT 4 — insights-tab-settlements  (P1 — Order Ledger)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep4">
+    <div class="endpoint-header">
+      <div class="ep-num n4">4</div>
+      <div style="flex:1">
+        <div class="ep-title">insights-tab-settlements</div>
+        <div class="ep-sub">Order Ledger — Tab (Credit) settlement data · <span class="badge p1">P1 — Simplest, do first</span></div>
+        <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/report/insights-tab-settlements</div>
+      </div>
+    </div>
+    <div class="endpoint-body">
+
+      <div class="section">
+        <div class="section-title">Why this exists</div>
+        <div class="note-box amber">
+          <p>The Order Ledger currently calls <code class="mono">daily-sales-revenue-report</code> <strong>once per day</strong> for N days to get tab settlement breakdown. For a 60-day range = 60 API calls. This is the <strong>only bottleneck</strong> preventing Order Ledger from supporting 1-year ranges. The <code class="mono">order-logs-report</code> part already handles 1-year in a single call.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">What the FE currently extracts per day</div>
+        <pre><span class="comment">// From: daily-sales-revenue-report (called once per calendar day)</span>
+<span class="kw">const</span> tp = data.paid_revenue_method?.tab_payment || {};
+cash = tp[<span class="str">'Credit Cash'</span>]
+card = tp[<span class="str">'Credit Card'</span>]
+upi  = tp[<span class="str">'Credit UPI'</span>]</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Required Response Shape</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"tab_settlements"</span>: [
+      {
+        <span class="key">"date"</span>:         <span class="str">"2026-07-01"</span>,       <span class="comment">// YYYY-MM-DD</span>
+        <span class="key">"date_display"</span>: <span class="str">"01/07/2026"</span>,       <span class="comment">// DD/MM/YYYY for display</span>
+        <span class="key">"cash"</span>:         <span class="num">1200.0</span>,
+        <span class="key">"card"</span>:         <span class="num">800.0</span>,
+        <span class="key">"upi"</span>:          <span class="num">500.0</span>,
+        <span class="key">"total"</span>:        <span class="num">2500.0</span>
+      }
+      <span class="comment">// ... one row per calendar day in range</span>
+    ],
+    <span class="key">"summary"</span>: {
+      <span class="key">"total_cash"</span>: <span class="num">45000</span>,
+      <span class="key">"total_card"</span>: <span class="num">28000</span>,
+      <span class="key">"total_upi"</span>:  <span class="num">19000</span>,
+      <span class="key">"total"</span>:      <span class="num">92000</span>
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Important Notes</div>
+        <div class="note-box green">
+          <ul>
+            <li>Return <strong>one row per calendar day</strong> in the requested range, even if <code class="mono">total = 0</code> — FE needs a full date spine for chart rendering.</li>
+            <li><code class="mono">date_display</code> format: <code class="mono">DD/MM/YYYY</code></li>
+            <li>This is the simplest of the 5 endpoints — just a range wrapper over the existing <code class="mono">daily-sales-revenue-report</code> logic.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">FE Files That Will Consume This</div>
+        <div class="fe-files">
+          <div class="fe-file"><span class="fname">orderLedgerService.js</span><span class="farrow">→</span><span class="faction">Replace <code class="mono">getTabSettlementsForRange()</code> N-per-day calls with 1 call to this endpoint</span></div>
+          <div class="fe-file"><span class="fname">OrderLedgerMockup.jsx</span><span class="farrow">→</span><span class="faction">No shape changes needed</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ENDPOINT 5 — insights-item-audit  (P3 — Item Ledger Audit tab)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep5">
+    <div class="endpoint-header">
+      <div class="ep-num n5">5</div>
+      <div style="flex:1">
+        <div class="ep-title">insights-item-audit</div>
+        <div class="ep-sub">Item Ledger — Audit Tab · <span class="badge p3">P3 — Deferred</span></div>
+        <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/report/insights-item-audit</div>
+      </div>
+    </div>
+    <div class="endpoint-body">
+
+      <div class="section">
+        <div class="defer-banner">
+          <div class="d-icon">⚠️</div>
+          <p><strong>Deferred — FE volume guard is in place.</strong> A guard in <code class="mono">ItemSalesHybridMockup.jsx</code> shows an amber warning if the date range would return &gt;5,000 orders, preventing browser freeze. The main Item Ledger view is already backed by <code class="mono">insights-items</code> (backend) and supports 1-year ranges. Build this endpoint when the P1/P2 items are shipped.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Why this is complex</div>
+        <div class="note-box red">
+          <ul>
+            <li>Per-line expected tax calculation (requires <code class="mono">product.tax_rate</code>, <code class="mono">product.tax_calc</code>)</li>
+            <li>Drift detection: actual tax vs computed expected tax per item</li>
+            <li>Up to 20 most-recent order lines per item (date, qty, price, discount, status, waiter)</li>
+            <li>Variation and addon aggregation per item</li>
+            <li>Cancellation reason aggregation per item (scope: item vs order-level cancel)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Required Response Shape (for when you build it)</div>
+        <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"items"</span>: [
+      {
+        <span class="key">"food_id"</span>:             <span class="num">176906</span>,
+        <span class="key">"name"</span>:               <span class="str">"Biryani"</span>,
+        <span class="key">"category_name"</span>:      <span class="str">"Main Course"</span>,
+        <span class="key">"station"</span>:            <span class="str">"Main Kitchen"</span>,
+        <span class="key">"tax_rate"</span>:           <span class="num">5.0</span>,
+        <span class="key">"tax_type"</span>:           <span class="str">"GST"</span>,
+        <span class="key">"tax_calc"</span>:           <span class="str">"Exclusive"</span>,
+        <span class="key">"qty_sold"</span>:           <span class="num">120</span>,
+        <span class="key">"total_revenue_sold"</span>: <span class="num">48000</span>,
+        <span class="key">"expected_tax_sold"</span>:  <span class="num">2285.71</span>,
+        <span class="key">"actual_tax_sold"</span>:    <span class="num">2400.00</span>,
+        <span class="key">"tax_drift"</span>:          <span class="num">114.29</span>,
+        <span class="key">"drift_class"</span>:        <span class="str">"OVER_TAXED"</span>,  <span class="comment">// OVER_TAXED | TAX_NOT_COMPUTED | GST_NOT_CONFIGURED</span>
+        <span class="key">"recent_order_lines"</span>: [
+          {
+            <span class="key">"order_id"</span>: <span class="str">"#002384"</span>, <span class="key">"date"</span>: <span class="str">"2026-07-09 13:45:00"</span>,
+            <span class="key">"qty"</span>: <span class="num">2</span>, <span class="key">"price"</span>: <span class="num">800</span>, <span class="key">"discount"</span>: <span class="num">0</span>,
+            <span class="key">"status"</span>: <span class="str">"served"</span>, <span class="key">"waiter"</span>: <span class="str">"Ravi"</span>
+          }
+          <span class="comment">// max 20 most-recent lines</span>
+        ],
+        <span class="key">"variations"</span>: [
+          { <span class="key">"label"</span>: <span class="str">"Full"</span>, <span class="key">"qty"</span>: <span class="num">80</span>, <span class="key">"revenue"</span>: <span class="num">32000</span> }
+        ],
+        <span class="key">"addons"</span>: [
+          { <span class="key">"name"</span>: <span class="str">"Extra Raita"</span>, <span class="key">"count"</span>: <span class="num">15</span>, <span class="key">"revenue"</span>: <span class="num">450</span>, <span class="key">"rate"</span>: <span class="num">12</span> }
+        ],
+        <span class="key">"cancel_reasons"</span>: [
+          { <span class="key">"reason"</span>: <span class="str">"Wrong order"</span>, <span class="key">"scope"</span>: <span class="str">"item"</span>, <span class="key">"count"</span>: <span class="num">3</span> }
+        ]
+      }
+    ],
+    <span class="key">"meta"</span>: {
+      <span class="key">"total_items"</span>:       <span class="num">85</span>,
+      <span class="key">"total_drift_items"</span>: <span class="num">12</span>,
+      <span class="key">"date_range_days"</span>:   <span class="num">365</span>
+    }
+  }
+}</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Testing section ── -->
+  <div class="testing-card">
+    <h2>Testing Instructions</h2>
+
+    <div class="cred-box">
+      <div class="cred-row"><span class="cred-label">Email</span><span class="cred-val">owner@18march.com</span></div>
+      <div class="cred-row"><span class="cred-label">Password</span><span class="cred-val">Qplazm@10</span></div>
+      <div class="cred-row"><span class="cred-label">Role</span><span class="cred-val">Owner</span></div>
+      <div class="cred-row"><span class="cred-label">Auth</span><span class="cred-val">POST /api/v1/auth/vendoremployee/login</span></div>
+      <div class="cred-row"><span class="cred-label">Base URL</span><span class="cred-val">https://preprod.mygenie.online</span></div>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <div class="test-row">
+        <div class="test-num">1</div>
+        <div class="test-text"><strong>1-day range:</strong> verify counts match same-day <code class="mono">order-logs-report</code></div>
+      </div>
+      <div class="test-row">
+        <div class="test-num">2</div>
+        <div class="test-text"><strong>62-day range:</strong> verify totals match current FE computation (before migration)</div>
+      </div>
+      <div class="test-row">
+        <div class="test-num">3</div>
+        <div class="test-text"><strong>1-year range:</strong> verify HTTP 200, response time &lt; 10s</div>
+      </div>
+      <div class="test-row">
+        <div class="test-num">4</div>
+        <div class="test-text"><strong>Empty range (no orders):</strong> verify empty arrays returned, no 500 errors</div>
+      </div>
+    </div>
+
+    <div class="note-box" style="margin-top:16px;">
+      <p><strong>Evidence path:</strong> <code class="mono">/app/memory/evidence/INV-001-INSIGHTS-1YR-RANGE/</code><br>
+      <strong>Backend brief source:</strong> <code class="mono">BACKEND_BRIEF_FE_AGGREGATION_2026_07_10.md</code></p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

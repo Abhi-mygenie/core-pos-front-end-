@@ -1,0 +1,4 @@
+{
+  "error": "Invalid date format. Use DD/MM/YYYY",
+  "debug": "The separation symbol could not be found\nUnexpected data found.\nTrailing data"
+}

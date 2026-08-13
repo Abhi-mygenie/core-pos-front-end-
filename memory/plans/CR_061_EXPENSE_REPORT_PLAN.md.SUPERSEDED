@@ -1,0 +1,334 @@
+# CR-061 — Impact Analysis (Gate 2) + Implementation Plan (Gate 3)
+
+**ID:** CR-061
+**Gates:** 2 + 3
+**Date:** 2026-07-06
+**Code Reality:** NONE — zero expense report code exists
+**Conflict Pre-Check:** CLEAN — all target insertion points stable
+**Risk:** LOW (read-only report, follows proven pattern, no mutations)
+**Priority:** P1
+
+---
+
+## SCOPE LOCK
+
+**Files WILL change (3 existing — additive only):**
+1. `components/layout/Sidebar.jsx` — add Expenses group under Insights
+2. `App.js` — add route + import for expense report page
+3. `pages/OrderSummaryPage.jsx` — add expense summary card (Surface B)
+
+**Files WILL create (2 new):**
+1. `pages/reports-module/ExpenseReportPage.jsx` — full Insights expense report (Surface A)
+2. `api/services/expenseReportService.js` — report-specific fetch + client-side aggregation
+
+**Files WILL NOT touch:**
+- All order/payment/settlement/menu/socket files
+- Existing Insights report pages (DailySalesMockup, SettlementReportMockup, etc.)
+- expenseService.js (Phase 1 — CRUD service, separate from reporting)
+- expenseTransform.js (Phase 1 — CRUD transforms)
+- InsightsCacheContext.jsx (shared infra — used, not modified)
+- ReportLoadingShield, useReportFetch (shared infra — used, not modified)
+- TableContext, OrderContext, MenuContext — untouched
+
+---
+
+## DATA FLOW
+
+```
+                   ┌───────────────────────────┐
+                   │ preprod.mygenie.online     │
+                   │ /expense/expenses-report   │
+                   │ /expense/category-list     │
+                   │ /expense/payment-method    │
+                   │ /expense/expenses-export   │
+                   └────────────┬──────────────┘
+                                │
+                   ┌────────────▼──────────────┐
+                   │ expenseReportService.js    │  ← NEW
+                   │ • fetchExpenseReport()     │
+                   │ • aggregateExpenses()      │
+                   │ • fetchExpenseCategories() │
+                   │ • fetchPaymentMethods()    │
+                   │ • exportExpenseReport()    │
+                   └────────────┬──────────────┘
+                                │
+              ┌─────────────────┼─────────────────┐
+              │                                   │
+     ┌────────▼─────────┐              ┌──────────▼──────────┐
+     │ExpenseReportPage  │              │OrderSummaryPage     │
+     │ (Surface A)       │              │ (Surface B)         │
+     │ /reports-module/  │              │ /reports/summary    │
+     │  expense-report   │              │ + expense card      │
+     │ • KPIs            │              │ • Today total       │
+     │ • Charts          │              │ • Payment breakdown │
+     │ • Table           │              │ • "View Report" →   │
+     │ • Export          │              │                     │
+     └──────────────────┘              └─────────────────────┘
+```
+
+---
+
+## EXECUTION SEQUENCE
+
+### Step 1: `api/services/expenseReportService.js` — NEW (~120 lines)
+
+**File:** `/app/frontend/src/api/services/expenseReportService.js` (NEW)
+**Pattern:** Follows `insightsService.js` fetch functions
+
+```javascript
+// CR-061: Expense Report Service — client-side aggregation
+import api from '../axios';
+import { EXPENSE_ENDPOINTS } from '../constants';  // from CR-059 Phase 1
+
+/** Fetch raw expense transactions for date range */
+export const fetchExpenseReport = async (fromDate, toDate, paymentMethod = 'All') => {
+  // Convert YYYY-MM-DD → DD/MM/YYYY for API
+  const from = formatDDMMYYYY(fromDate);
+  const to = formatDDMMYYYY(toDate);
+  const res = await api.get(
+    `${EXPENSE_ENDPOINTS.EXPENSES_REPORT}?from=${from}&to=${to}&payment_method=${paymentMethod}`
+  );
+  return res.data;
+};
+
+/** Client-side aggregation from raw transactions */
+export const aggregateExpenses = (rawReport) => {
+  const transactions = rawReport.report || [];
+  const totalAmount = parseFloat(rawReport.total_amount) || 0;
+
+  // By category
+  const byCategory = {};
+  // By payment method
+  const byPayment = {};
+  // By date (daily trend)
+  const byDate = {};
+
+  transactions.forEach(t => {
+    const amt = parseFloat(t.Amount) || 0;
+    const cat = t.Category || 'Unknown';
+    const pay = t['Payment Method'] || 'Unknown';
+    const date = t['Date & Time'] || '';
+
+    byCategory[cat] = (byCategory[cat] || 0) + amt;
+    byPayment[pay] = (byPayment[pay] || 0) + amt;
+    byDate[date] = (byDate[date] || { total: 0, count: 0 });
+    byDate[date].total += amt;
+    byDate[date].count += 1;
+  });
+
+  const activeDays = Object.keys(byDate).length;
+  const avgDaily = activeDays > 0 ? totalAmount / activeDays : 0;
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
+  const highestDay = Object.entries(byDate).sort((a, b) => b[1].total - a[1].total)[0];
+
+  return {
+    totalAmount,
+    transactionCount: transactions.length,
+    activeDays,
+    avgDaily,
+    topCategory: topCategory ? { name: topCategory[0], total: topCategory[1] } : null,
+    highestDay: highestDay ? { date: highestDay[0], total: highestDay[1].total, count: highestDay[1].count } : null,
+    byCategory: Object.entries(byCategory).map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total),
+    byPayment: Object.entries(byPayment).map(([method, total]) => ({ method, total })).sort((a, b) => b.total - a.total),
+    daily: Object.entries(byDate).map(([date, d]) => ({ date, total: d.total, count: d.count })).sort((a, b) => /* date sort */),
+    transactions, // raw for table
+  };
+};
+
+/** Fetch categories for filter dropdown */
+export const fetchExpenseCategories = async () => { ... };
+
+/** Fetch payment methods for filter dropdown */
+export const fetchPaymentMethods = async () => { ... };
+
+/** Export report as Excel */
+export const exportExpenseReport = async (fromDate, toDate) => { ... };
+
+// Date helpers
+const formatDDMMYYYY = (isoDate) => { ... };
+```
+
+**Verify:** Import + call with sample dates → returns aggregated data.
+
+---
+
+### Step 2: `pages/reports-module/ExpenseReportPage.jsx` — NEW (~500 lines)
+
+**File:** `/app/frontend/src/pages/reports-module/ExpenseReportPage.jsx` (NEW)
+**Pattern:** EXACT clone of `DailySalesMockup.jsx` layout structure
+
+```
+Structure:
+  ── Imports ──
+  Sidebar, ReportLoadingShield, useReportFetch, InsightsCacheContext
+  recharts (BarChart, PieChart, ResponsiveContainer)
+  lucide-react icons
+  expenseReportService (fetchExpenseReport, aggregateExpenses, etc.)
+  exportReportAsExcel, exportReportAsPDF
+
+  ── State ──
+  isSidebarExpanded (default false)
+  fromDate / toDate (from InsightsCacheContext)
+  appliedFrom / appliedTo (triggers fetch)
+  activePreset ('Today' | '7D' | '30D' | 'MTD')
+  categoryFilter (null = all)
+  paymentFilter (null = all)
+  searchQuery ("")
+  showDownloadMenu (false)
+
+  ── Data ──
+  useReportFetch → fetches raw data → aggregateExpenses → KPIs + charts + table
+
+  ── Layout ──
+  <Sidebar />
+  <main>
+    <ReportLoadingShield>
+      ── Header: ← Back + "Expense Report" title + presets
+      ── Date Range: From [___] To [___] [Apply]
+      ── Filters: Category dropdown + Payment dropdown + Search
+      ── KPI Strip (grid-cols-6):
+        • Total Spend (₹)
+        • Avg Daily (₹)
+        • Transactions (#)
+        • Active Days (#)
+        • Top Category (name + ₹)
+        • Highest Day (date + ₹)
+      ── Charts Row (grid-cols-2):
+        LEFT: Daily Expense Trend (BarChart — x=date, y=amount)
+        RIGHT: Category Breakdown (PieChart — slices=categories)
+      ── Payment Method Bar (single row):
+        Horizontal stacked bar or cards showing Cash/UPI/Bank/Cash Draw
+      ── Transaction Table:
+        Columns: Date, Item, Category, Amount, Payment Method
+        Sortable (click header), searchable, filtered
+        Pagination or virtual scroll
+      ── Download Menu: Excel / PDF / Email(disabled) / WhatsApp(disabled)
+    </ReportLoadingShield>
+  </main>
+
+  ── data-testid attributes ──
+  expense-report-page
+  expense-report-back-btn
+  expense-report-presets, expense-report-preset-{name}
+  expense-report-from-date, expense-report-to-date, expense-report-apply-btn
+  expense-report-category-filter, expense-report-payment-filter, expense-report-search
+  expense-report-kpi-total, expense-report-kpi-avg, expense-report-kpi-count
+  expense-report-kpi-days, expense-report-kpi-top-category, expense-report-kpi-highest-day
+  expense-report-daily-chart, expense-report-category-chart, expense-report-payment-chart
+  expense-report-table, expense-report-table-row-{id}
+  expense-report-download-btn, expense-report-download-excel, expense-report-download-pdf
+```
+
+---
+
+### Step 3: `components/layout/Sidebar.jsx` — Add Expenses Group
+
+**File:** `/app/frontend/src/components/layout/Sidebar.jsx`
+**Action:** Insert AFTER line 164 (after Food Court entry, before closing `]` of insights children)
+
+```javascript
+      // Expenses group — CR-061
+      { id: "insights-expenses-group", label: "Expenses", isGroup: true },
+      { id: "insights-expense-report", label: "Expense Report", path: "/reports-module/expense-report" },
+```
+
+**Verify:** Insights sidebar shows "Expenses" group with "Expense Report" child.
+
+---
+
+### Step 4: `App.js` — Add Route + Import
+
+**Edit 4a:** Add import after line 28 (after existing report imports):
+```javascript
+import ExpenseReportPage from "./pages/reports-module/ExpenseReportPage"; // CR-061
+```
+
+**Edit 4b:** Add route inside `<InsightsCacheProvider>` block, after line 134 (before `<Route path="preview">`):
+```jsx
+              {/* CR-061: Expense Report */}
+              <Route path="expense-report" element={<ProtectedRoute><ExpenseReportPage /></ProtectedRoute>} />
+```
+
+**Verify:** Navigate to `/reports-module/expense-report` → page renders inside InsightsCacheProvider.
+
+---
+
+### Step 5: `pages/OrderSummaryPage.jsx` — Add Expense Summary Card (Surface B)
+
+**File:** `/app/frontend/src/pages/OrderSummaryPage.jsx`
+**Action:** Add expense summary card section (~40 lines) within the existing page layout
+**Lines:** Insert after the main summary sections
+
+```
+New section:
+  ── Expense Summary Card ──
+  useEffect: fetch today's expenses via fetchExpenseReport(today, today)
+  
+  <div className="bg-white rounded-xl p-5 border mt-4">
+    <h3>Today's Expenses</h3>
+    <div className="text-2xl font-bold">₹{totalExpense}</div>
+    <div className="text-sm text-gray-500">
+      Cash: ₹X · UPI: ₹X · Cash Draw: ₹X
+    </div>
+    <Link to="/reports-module/expense-report">View Full Report →</Link>
+  </div>
+```
+
+**data-testid:** `expense-summary-card`, `expense-summary-total`, `expense-summary-link`
+
+**Verify:** `/reports/summary` shows expense card with today's total + "View Full Report" link.
+
+---
+
+## VERIFICATION MATRIX
+
+| # | File | Change | How to Verify | Auto? |
+|---|------|--------|---------------|:---:|
+| 1 | expenseReportService.js | Fetch + aggregation functions | Import test + curl | YES |
+| 2 | ExpenseReportPage.jsx | Full report page | Browser: navigate, KPIs, charts, table | NO |
+| 2a | — KPIs | 6 cards computed correctly | Browser: verify totals match raw data | NO |
+| 2b | — Charts | Bar + Pie render | Browser: visual check | NO |
+| 2c | — Table | Sortable, searchable | Browser: click headers, type search | NO |
+| 2d | — Filters | Category + payment + date | Browser: select filters, table updates | NO |
+| 2e | — Export | Excel/PDF download | Browser: click download | NO |
+| 3 | Sidebar.jsx | Expenses group | Browser: Insights sidebar shows new group | NO |
+| 4a | App.js | Import | Webpack compiles | YES |
+| 4b | App.js | Route | Navigate to URL | NO |
+| 5 | OrderSummaryPage.jsx | Expense card | Browser: /reports/summary shows expense total | NO |
+
+---
+
+## POST-CODE REGISTRY CHECKLIST
+
+```
+- [ ] registry.json: CR-061 → status: IMPLEMENTED
+- [ ] CR_REGISTRY.md: row updated
+- [ ] FILE_OWNERSHIP.md: add ExpenseReportPage (new), expenseReportService (new), OrderSummaryPage (modified) with CR-061
+- [ ] Code markers: // CR-061 in every new/modified file
+- [ ] Compile check: 0 new webpack warnings
+```
+
+---
+
+## RISK REGISTER
+
+| # | Risk | Severity | Mitigation |
+|---|------|----------|------------|
+| R1 | Client-side aggregation performance | LOW | 765 txns for 6 months = trivial. Flag for backend (CR-062) if > 5,000 |
+| R2 | Sidebar.jsx change | LOW | Additive — 2 new entries in insights children array |
+| R3 | App.js route | LOW | Inside existing InsightsCacheProvider block — same pattern as all reports |
+| R4 | OrderSummaryPage modification | LOW | Additive — new card section, no existing code touched |
+| R5 | Date format DD/MM/YYYY vs YYYY-MM-DD | LOW | expenseReportService handles conversion (same as Phase 1 transforms) |
+
+---
+
+```
+Gate 2 + Gate 3 complete: CR-061
+Code reality: NONE
+Risk: LOW
+Files WILL change: 3 existing (Sidebar, App.js, OrderSummaryPage — all additive)
+Files WILL create: 2 new (ExpenseReportPage ~500 lines, expenseReportService ~120 lines)
+Total: ~660 new/modified lines
+Verification matrix: 11 checks (2 automated, 9 browser)
+Next: Gate 4 GO → Implementation
+```

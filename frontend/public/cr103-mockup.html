@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-103 — Smart Purchase Mockup (Before vs After)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; padding: 32px; color: #1e293b; }
+  h1 { font-size: 22px; margin-bottom: 8px; }
+  .subtitle { color: #64748b; font-size: 14px; margin-bottom: 32px; }
+  .section { margin-bottom: 48px; }
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-before { background: #fee2e2; color: #dc2626; }
+  .badge-after { background: #dcfce7; color: #16a34a; }
+  .desc { color: #64748b; font-size: 13px; margin-bottom: 16px; }
+
+  /* Table styles */
+  .card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #f8fafc; }
+  th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:hover { background: #fafafa; }
+  .name { font-weight: 500; color: #0f172a; }
+  .neg { color: #dc2626; font-weight: 500; }
+  .status-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #fee2e2; color: #dc2626; }
+  .suggest { font-size: 10px; color: #f97316; font-weight: 500; margin-top: 2px; }
+  input[type="number"], input[type="text"] { border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 8px; font-size: 13px; width: 80px; height: 32px; }
+  select { border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 8px; font-size: 13px; height: 32px; min-width: 120px; color: #94a3b8; }
+
+  /* BEFORE: tiny × */
+  .x-before { color: #94a3b8; cursor: pointer; font-size: 14px; border: none; background: none; }
+  .x-before:hover { color: #ef4444; }
+
+  /* AFTER: prominent × */
+  .x-after { color: #64748b; cursor: pointer; border: none; background: none; padding: 6px; border-radius: 50%; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .x-after:hover { color: #dc2626; background: #fef2f2; }
+  .x-after svg { width: 20px; height: 20px; }
+
+  /* Checkbox */
+  .cb { width: 16px; height: 16px; accent-color: #ef4444; cursor: pointer; border-radius: 4px; }
+
+  /* Bulk remove bar */
+  .bulk-bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fef2f2; border-bottom: 1px solid #fecaca; }
+  .bulk-bar .count { font-size: 13px; font-weight: 600; color: #b91c1c; }
+  .bulk-bar button { background: #dc2626; color: white; border: none; padding: 4px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; height: 28px; }
+  .bulk-bar button:hover { background: #b91c1c; }
+
+  /* Submit button */
+  .submit-btn { background: #16a34a; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .submit-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+  /* Error toast */
+  .toast-error { background: #dc2626; color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; margin-top: 12px; display: inline-block; }
+
+  .flex-between { display: flex; justify-content: space-between; align-items: center; padding: 16px; }
+  .header-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b; }
+  .header-count { font-size: 12px; font-weight: 700; color: #16a34a; margin-left: 12px; }
+  .gap-col { color: #dc2626; font-weight: 500; }
+  .arrow { margin: 24px 0; text-align: center; font-size: 24px; color: #16a34a; }
+</style>
+</head>
+<body>
+
+<h1>CR-103 — Smart Purchase Bulk Remove UX</h1>
+<p class="subtitle">Before vs After comparison. No code — mockup only.</p>
+
+<!-- ═══════════════════ BEFORE ═══════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="badge badge-before">Before</span> Current State — Problems</div>
+  <p class="desc">Tiny × button · No select-all · Must fill ALL 50 rows to submit</p>
+  <div class="card">
+    <div class="flex-between">
+      <div><span class="header-label">Auto Shopping List · 3-Day Horizon</span><span class="header-count">50 items suggested</span></div>
+      <button class="submit-btn" disabled>🛒 Review & Submit</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Ingredient</th><th>On-Hand</th><th>Status</th><th>Projected Need · 7D</th><th>Gap</th><th>Qty to Buy *</th><th>Rate</th><th>Vendor * (suggested)</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">Amul Cheese slice</td>
+          <td class="neg">-5.00 piece</td>
+          <td><span class="status-badge">Out of stock</span></td>
+          <td>0 piece</td>
+          <td class="gap-col">-5</td>
+          <td><input type="number" value="5"><div class="suggest">suggest: 5</div></td>
+          <td><input type="number" value="200"></td>
+          <td><select><option>Saurav</option></select></td>
+          <td><button class="x-before" title="Hard to see!">×</button></td>
+        </tr>
+        <tr>
+          <td class="name">anar juice</td>
+          <td class="neg">-2700.00 ml</td>
+          <td><span class="status-badge">Out of stock</span></td>
+          <td>0 ml</td>
+          <td class="gap-col">-2700</td>
+          <td><input type="number" value="2700"><div class="suggest">suggest: 2700</div></td>
+          <td><input type="number" placeholder="₹" style="color:#ccc"></td>
+          <td><select><option>Select vendor...</option></select></td>
+          <td><button class="x-before">×</button></td>
+        </tr>
+        <tr>
+          <td class="name">Blueberry Filling</td>
+          <td class="neg">-1935.00 gm</td>
+          <td><span class="status-badge">Out of stock</span></td>
+          <td>0 gm</td>
+          <td class="gap-col">-1935</td>
+          <td><input type="number" value="1935"><div class="suggest">suggest: 1935</div></td>
+          <td><input type="number" placeholder="₹" style="color:#ccc"></td>
+          <td><select><option>Select vendor...</option></select></td>
+          <td><button class="x-before">×</button></td>
+        </tr>
+        <tr style="opacity:0.4"><td colspan="9" style="text-align:center; font-size:12px; color:#94a3b8; padding:8px">... 47 more rows all requiring Rate + Vendor ...</td></tr>
+      </tbody>
+    </table>
+    <div style="padding:16px">
+      <div class="toast-error">❌ Rate must be > 0 for "anar juice"</div>
+      <div style="color:#94a3b8; font-size:11px; margin-top:8px;">↑ Blocks submit even though you only want to buy Amul Cheese</div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow">▼ After CR-103 ▼</div>
+
+<!-- ═══════════════════ AFTER ═══════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="badge badge-after">After</span> With CR-103 — 3 Improvements</div>
+  <p class="desc">Checkboxes + Select All · Prominent × · Unfilled rows auto-skipped on submit</p>
+  <div class="card">
+
+    <!-- BULK REMOVE BAR (visible when rows selected) -->
+    <div class="bulk-bar">
+      <span class="count">47 selected</span>
+      <button>Remove Selected</button>
+      <span style="font-size:11px; color:#94a3b8; margin-left:auto">Tip: Select All → uncheck the items you want → Remove Selected</span>
+    </div>
+
+    <div class="flex-between">
+      <div><span class="header-label">Auto Shopping List · 3-Day Horizon</span><span class="header-count">50 items suggested</span></div>
+      <button class="submit-btn">🛒 Review & Submit</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px"><input type="checkbox" class="cb" checked></th>
+          <th>Ingredient</th><th>On-Hand</th><th>Status</th><th>Projected Need · 7D</th><th>Gap</th><th>Qty to Buy *</th><th>Rate</th><th>Vendor * (suggested)</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fefce8">
+          <td><input type="checkbox" class="cb"></td>
+          <td class="name">Amul Cheese slice</td>
+          <td class="neg">-5.00 piece</td>
+          <td><span class="status-badge">Out of stock</span></td>
+          <td>0 piece</td>
+          <td class="gap-col">-5</td>
+          <td><input type="number" value="5"><div class="suggest">suggest: 5</div></td>
+          <td><input type="number" value="200"></td>
+          <td><select><option>Saurav</option></select></td>
+          <td>
+            <button class="x-after" title="Remove item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="cb" checked></td>
+          <td class="name" style="opacity:0.5">anar juice</td>
+          <td class="neg" style="opacity:0.5">-2700.00 ml</td>
+          <td style="opacity:0.5"><span class="status-badge">Out of stock</span></td>
+          <td style="opacity:0.5">0 ml</td>
+          <td class="gap-col" style="opacity:0.5">-2700</td>
+          <td style="opacity:0.5"><input type="number" value="2700" disabled></td>
+          <td style="opacity:0.5"><input type="number" placeholder="₹" disabled></td>
+          <td style="opacity:0.5"><select disabled><option>Select vendor...</option></select></td>
+          <td>
+            <button class="x-after" title="Remove item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="cb" checked></td>
+          <td class="name" style="opacity:0.5">Blueberry Filling</td>
+          <td class="neg" style="opacity:0.5">-1935.00 gm</td>
+          <td style="opacity:0.5"><span class="status-badge">Out of stock</span></td>
+          <td style="opacity:0.5">0 gm</td>
+          <td class="gap-col" style="opacity:0.5">-1935</td>
+          <td style="opacity:0.5"><input type="number" value="1935" disabled></td>
+          <td style="opacity:0.5"><input type="number" placeholder="₹" disabled></td>
+          <td style="opacity:0.5"><select disabled><option>Select vendor...</option></select></td>
+          <td>
+            <button class="x-after" title="Remove item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </td>
+        </tr>
+        <tr style="opacity:0.3">
+          <td><input type="checkbox" class="cb" checked></td>
+          <td colspan="9" style="text-align:center; font-size:12px; color:#94a3b8; padding:8px">... 47 more checked (will be removed on "Remove Selected") ...</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="padding: 16px; background: #f0fdf4; border-top: 1px solid #bbf7d0;">
+      <div style="font-size:13px; color:#16a34a; font-weight:600;">✅ Submit processes only rows with Rate > 0 (Amul Cheese = ₹200). Unfilled rows are auto-skipped.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div style="margin-top:32px; padding:20px; background:white; border-radius:12px; border:1px solid #e2e8f0;">
+  <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Summary of Changes</div>
+  <table style="font-size:13px;">
+    <tr><td style="padding:6px 16px 6px 0; font-weight:600; color:#dc2626;">Sub-A</td><td style="padding:6px 0;">Validate + submit only processes rows with Rate > 0. Unfilled = skipped, not blocked.</td></tr>
+    <tr><td style="padding:6px 16px 6px 0; font-weight:600; color:#dc2626;">Sub-B</td><td style="padding:6px 0;">× button: 16px→20px, slate-400→slate-500, added round hover target with red-50 background.</td></tr>
+    <tr><td style="padding:6px 16px 6px 0; font-weight:600; color:#dc2626;">Sub-C</td><td style="padding:6px 0;">New checkbox column (first column) + Select All in header + "Remove Selected (N)" red bar when ≥1 checked.</td></tr>
+  </table>
+  <div style="font-size:12px; color:#94a3b8; margin-top:12px;">
+    <strong>Typical flow:</strong> Select All (checks all 50) → uncheck the 5 you want → "Remove Selected (45)" → fill rate + vendor for remaining 5 → Submit ✅
+  </div>
+</div>
+
+</body>
+</html>

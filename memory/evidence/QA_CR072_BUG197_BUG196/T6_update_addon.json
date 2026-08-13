@@ -1,0 +1,17 @@
+{
+  "message": "Add-on recipe updated successfully.",
+  "recipe_id": 7953,
+  "name": "cheese",
+  "preparation_time": 10,
+  "serve_time": 5,
+  "unit": "plate",
+  "serves_people": 1,
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "Tiparos Fish Sauce",
+      "unit": "gm",
+      "qty": 100
+    }
+  ]
+}

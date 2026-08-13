@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "message": "Waiter list retrieved successfully",
+  "data": {
+    "waiters": [
+      {
+        "id": 3580,
+        "name": "Manager "
+      },
+      {
+        "id": 3581,
+        "name": "Captain "
+      },
+      {
+        "id": 3596,
+        "name": "Meet Singh"
+      },
+      {
+        "id": 3597,
+        "name": "Manmeet Singh"
+      },
+      {
+        "id": 3598,
+        "name": "laptop "
+      },
+      {
+        "id": 3680,
+        "name": "Simarjot Singh "
+      },
+      {
+        "id": 3755,
+        "name": "Salman "
+      },
+      {
+        "id": 3756,
+        "name": "saurav "
+      },
+      {
+        "id": 4106,
+        "name": "Kaynat "
+      }
+    ]
+  }
+}

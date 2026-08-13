@@ -1,0 +1,22 @@
+{
+  "investigation": "INV-003",
+  "date": "2026-08-05",
+  "customer": "LOUISE MADAM",
+  "phone": "8956566082",
+  "crm_customer_id": "a88e326d-2c9e-4a72-8df6-d2ea4305ec73",
+  "crm_documents_probe": {
+    "endpoint": "GET /pos/customers/a88e326d-2c9e-4a72-8df6-d2ea4305ec73/documents",
+    "response": {
+      "success": true,
+      "message": "Documents retrieved",
+      "data": {
+        "documents": {}
+      }
+    },
+    "result": "EMPTY \u2014 CRM has no docs for this customer"
+  },
+  "crm_search_probe": {
+    "endpoint": "GET /pos/customers?search=8956566082",
+    "result": "customer FOUND in CRM with id a88e326d-2c9e-4a72-8df6-d2ea4305ec73"
+  }
+}

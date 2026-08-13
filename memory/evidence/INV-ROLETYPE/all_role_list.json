@@ -1,0 +1,531 @@
+{
+  "role_types": [
+    {
+      "id": 1,
+      "name": "STATION",
+      "role_type_value": "STATION",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 2,
+      "name": "Waiter",
+      "role_type_value": "Waiter",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 3,
+      "name": "Manager",
+      "role_type_value": "Manager",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 4,
+      "name": "Billing",
+      "role_type_value": "Billing",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 5,
+      "name": "Server Waiter",
+      "role_type_value": "Buffet",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    },
+    {
+      "id": 6,
+      "name": "Delivery",
+      "role_type_value": "Delivery",
+      "description": null,
+      "created_at": "2025-06-18 07:07:47"
+    }
+  ],
+  "role_modules": {
+    "frontend": [
+      {
+        "id": 1,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "food",
+        "role_pass_value": "food",
+        "description": "Access to food module",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 8,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Pos",
+        "role_pass_value": "pos",
+        "description": "Access to POS system",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 10,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Order",
+        "role_pass_value": "order",
+        "description": "Access to orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 12,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Bills",
+        "role_pass_value": "bill",
+        "description": "Access to bills",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 13,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Order Cancel",
+        "role_pass_value": "order_cancel",
+        "description": "Permission to cancel orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 14,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Serve",
+        "role_pass_value": "serve",
+        "description": "Permission to serve orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 17,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Aggregator",
+        "role_pass_value": "aggregator",
+        "description": "Access to aggregators",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 20,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Show Online Order",
+        "role_pass_value": "show_online_order",
+        "description": "Permission to show online orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 21,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Assign Online Order",
+        "role_pass_value": "assign_online_order",
+        "description": "Permission to assign online orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 22,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Order Unpaid",
+        "role_pass_value": "order_unpaid",
+        "description": "View unpaid orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 23,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Update Payment",
+        "role_pass_value": "update_payment",
+        "description": "Permission to update payment",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 24,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Order Edit",
+        "role_pass_value": "order_edit",
+        "description": "Permission to edit orders",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 25,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Delivery Man",
+        "role_pass_value": "delivery_man",
+        "description": "Access to delivery personnel",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 26,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Clear Payment",
+        "role_pass_value": "clear_payment",
+        "description": "Permission to clear payments",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 43,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Ready",
+        "role_pass_value": "Ready",
+        "description": "order_ready",
+        "created_at": "2025-06-24 01:46:42"
+      },
+      {
+        "id": 50,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "customer management",
+        "role_pass_value": "customer_management",
+        "description": "customer management",
+        "created_at": "2025-12-13 15:37:59"
+      },
+      {
+        "id": 51,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "virtual wallet",
+        "role_pass_value": "virtual_wallet",
+        "description": "virtual wallet",
+        "created_at": "2025-12-13 15:38:28"
+      },
+      {
+        "id": 53,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Discount",
+        "role_pass_value": "discount",
+        "description": "For show discount value in collect bill screen",
+        "created_at": "2025-12-24 11:11:03"
+      },
+      {
+        "id": 54,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Transfer Table",
+        "role_pass_value": "transfer_table",
+        "description": "Transfer Table",
+        "created_at": "2025-12-24 15:38:39"
+      },
+      {
+        "id": 55,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Merge Table",
+        "role_pass_value": "merge_table",
+        "description": "Merge Table",
+        "created_at": "2025-12-24 15:39:06"
+      },
+      {
+        "id": 56,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Food Transfer",
+        "role_pass_value": "food_transfer",
+        "description": "Food Transfer",
+        "created_at": "2025-12-24 15:39:41"
+      },
+      {
+        "id": 57,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "WhatsApp Icon",
+        "role_pass_value": "whatsapp_icon",
+        "description": "WhatsApp Icon",
+        "created_at": "2025-12-24 15:40:21"
+      },
+      {
+        "id": 96,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Print Icon",
+        "role_pass_value": "print_icon",
+        "description": "Print Bill icon Configuration",
+        "created_at": "2025-12-29 19:34:25"
+      },
+      {
+        "id": 97,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Table View",
+        "role_pass_value": "table_view",
+        "description": "Table View Configuration",
+        "created_at": "2025-12-29 19:35:18"
+      },
+      {
+        "id": 100,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Token Display",
+        "role_pass_value": "token_display",
+        "description": "Token Display",
+        "created_at": "2026-01-28 19:56:40"
+      },
+      {
+        "id": 101,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Confirm Order",
+        "role_pass_value": "confirm_order",
+        "description": "For show confirm order button",
+        "created_at": "2026-02-25 14:19:29"
+      },
+      {
+        "id": 102,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Complementary Food",
+        "role_pass_value": "complementary_food",
+        "description": "For show option of complementary food apply",
+        "created_at": "2026-02-25 14:23:58"
+      },
+      {
+        "id": 103,
+        "role_id": null,
+        "role_for": "frontend",
+        "name": "Swiggy zomato price",
+        "role_pass_value": "swiggy_zomato_price",
+        "description": "To hide swiggy zomato price on Frontend.",
+        "created_at": "2026-07-16 14:33:03"
+      }
+    ],
+    "backend": [
+      {
+        "id": 2,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Employee",
+        "role_pass_value": "employee",
+        "description": "Access to employee module",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 3,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Restaurant Setup",
+        "role_pass_value": "restaurant_setup",
+        "description": "Access to my restaurant",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 4,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Inventory",
+        "role_pass_value": "inventory",
+        "description": "Access to inventory module",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 9,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Coupon",
+        "role_pass_value": "coupon",
+        "description": "Access to coupon module",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 11,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Print Bill",
+        "role_pass_value": "printer",
+        "description": "Permission to print bills",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 18,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Menu",
+        "role_pass_value": "menu",
+        "description": "Access to menu",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 27,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Expence",
+        "role_pass_value": "expence",
+        "description": "Permission to expence",
+        "created_at": "2025-06-18 07:14:38"
+      },
+      {
+        "id": 44,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Loyalty",
+        "role_pass_value": "Loyalty",
+        "description": "Loyalty",
+        "created_at": "2025-08-08 13:24:37"
+      },
+      {
+        "id": 45,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "restaurant settings",
+        "role_pass_value": "restaurant_settings",
+        "description": "changes restaurant configuration",
+        "created_at": "2025-10-17 12:49:16"
+      },
+      {
+        "id": 48,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Printer Management",
+        "role_pass_value": "printer_management",
+        "description": "Printer Management",
+        "created_at": "2025-11-23 00:26:36"
+      },
+      {
+        "id": 49,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Table Management",
+        "role_pass_value": "table_management",
+        "description": "Table Management",
+        "created_at": "2025-11-23 00:26:56"
+      },
+      {
+        "id": 52,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "Delivery Management",
+        "role_pass_value": "delivery_management",
+        "description": "Delivery Management",
+        "created_at": "2025-12-16 11:34:37"
+      },
+      {
+        "id": 99,
+        "role_id": null,
+        "role_for": "backend",
+        "name": "PhysicalQty Master",
+        "role_pass_value": "physicalqty_master",
+        "description": "PhysicalQty Master",
+        "created_at": "2026-01-05 19:43:45"
+      }
+    ],
+    "report": [
+      {
+        "id": 33,
+        "role_id": null,
+        "role_for": "report",
+        "name": "report",
+        "role_pass_value": "report",
+        "description": "report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 34,
+        "role_id": null,
+        "role_for": "report",
+        "name": "report summery",
+        "role_pass_value": "report_summery",
+        "description": "report_summery",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 35,
+        "role_id": null,
+        "role_for": "report",
+        "name": "waiter revenue_report",
+        "role_pass_value": "waiter_revenue_report",
+        "description": "waiter_revenue_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 36,
+        "role_id": null,
+        "role_for": "report",
+        "name": "sattle report",
+        "role_pass_value": "sattle_report",
+        "description": "sattle_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 37,
+        "role_id": null,
+        "role_for": "report",
+        "name": "revenue report",
+        "role_pass_value": "revenue_report",
+        "description": "revenue_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 38,
+        "role_id": null,
+        "role_for": "report",
+        "name": "room report",
+        "role_pass_value": "room_report",
+        "description": "Room Report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 39,
+        "role_id": null,
+        "role_for": "report",
+        "name": "sales report",
+        "role_pass_value": "sales_report",
+        "description": "sales_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 40,
+        "role_id": null,
+        "role_for": "report",
+        "name": "revenue report_average",
+        "role_pass_value": "revenue_report_average",
+        "description": "revenue_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 41,
+        "role_id": null,
+        "role_for": "report",
+        "name": "consumption report",
+        "role_pass_value": "consumption_report",
+        "description": "consumption_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 42,
+        "role_id": null,
+        "role_for": "report",
+        "name": "cancellation report",
+        "role_pass_value": "cancellation_report",
+        "description": "cancellation_report",
+        "created_at": "2025-06-23 10:45:35"
+      },
+      {
+        "id": 46,
+        "role_id": null,
+        "role_for": "report",
+        "name": "PL Report",
+        "role_pass_value": "pl_report",
+        "description": "Profit Loss Report",
+        "created_at": "2025-11-15 18:59:21"
+      },
+      {
+        "id": 47,
+        "role_id": null,
+        "role_for": "report",
+        "name": "Wastage Report",
+        "role_pass_value": "wastage_report",
+        "description": "Wastage Report",
+        "created_at": "2025-11-15 18:59:39"
+      }
+    ]
+  }
+}

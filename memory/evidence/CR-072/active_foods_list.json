@@ -1,0 +1,144 @@
+{
+  "status": true,
+  "message": "Food items retrieved successfully",
+  "data": {
+    "foods": [
+      {
+        "id": 107839,
+        "name": "Organic Espresso",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107840,
+        "name": "Herbal Tea",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107841,
+        "name": "Watermelon Juice",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107842,
+        "name": "Cloud Nine (V)",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107843,
+        "name": "Cacao Crush (V)",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107844,
+        "name": "Samosa Chaat",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 107845,
+        "name": "Egg",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 121462,
+        "name": "Rabdi",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 128349,
+        "name": "Coco",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 134738,
+        "name": "Green Chili",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 203702,
+        "name": "out of menu",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 204664,
+        "name": "check in",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 205895,
+        "name": "Egg",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 209015,
+        "name": "dd",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      },
+      {
+        "id": 209016,
+        "name": "ee",
+        "status": 1,
+        "food_status": 0,
+        "food_for": "Normal",
+        "restaurant_id": 618,
+        "source_table": "food"
+      }
+    ],
+    "total_count": 15
+  }
+}

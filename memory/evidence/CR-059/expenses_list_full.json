@@ -1,0 +1,2468 @@
+{
+  "expenses": [
+    {
+      "id": 3905,
+      "stock_title": "ac reparing",
+      "category_name": "misc",
+      "created_at": "01/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3305,
+      "stock_title": "ALAMBAGH CON",
+      "category_name": "misc",
+      "created_at": "17/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2337,
+      "stock_title": "almond",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3858,
+      "stock_title": "AMAR FAX",
+      "category_name": "misc",
+      "created_at": "26/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3076,
+      "stock_title": "amar fax banner",
+      "category_name": "misc",
+      "created_at": "02/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2654,
+      "stock_title": "AMAR FAX GARD",
+      "category_name": "misc",
+      "created_at": "29/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3269,
+      "stock_title": "amar fax menu",
+      "category_name": "misc",
+      "created_at": "15/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3140,
+      "stock_title": "amar fax print",
+      "category_name": "misc",
+      "created_at": "07/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2938,
+      "stock_title": "amerfax menu",
+      "category_name": "misc",
+      "created_at": "17/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3040,
+      "stock_title": "amina bad convance",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3941,
+      "stock_title": "aminabad & gem &  rakabganj convance",
+      "category_name": "misc",
+      "created_at": "04/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3970,
+      "stock_title": "aminabad & gem convance",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2492,
+      "stock_title": "aminabad convance",
+      "category_name": "misc",
+      "created_at": "14/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3666,
+      "stock_title": "aminabad sticker kunafa",
+      "category_name": "misc",
+      "created_at": "12/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3700,
+      "stock_title": "aminabad sticker kunafa con",
+      "category_name": "misc",
+      "created_at": "15/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2254,
+      "stock_title": "amit advance",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3522,
+      "stock_title": "amit con rajajipuram",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3277,
+      "stock_title": "amit rajajipuram con",
+      "category_name": "misc",
+      "created_at": "15/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2196,
+      "stock_title": "amul butter",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3588,
+      "stock_title": "amul butter OLD AMOUNT",
+      "category_name": "misc",
+      "created_at": "05/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3604,
+      "stock_title": "amul cream",
+      "category_name": "misc",
+      "created_at": "07/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2283,
+      "stock_title": "amul milk",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2458,
+      "stock_title": "amul taza milk",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2901,
+      "stock_title": "amul taza milk       butter",
+      "category_name": "misc",
+      "created_at": "15/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2426,
+      "stock_title": "ANSHU",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2696,
+      "stock_title": "anshu advance",
+      "category_name": "misc",
+      "created_at": "01/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3236,
+      "stock_title": "anubhav advance",
+      "category_name": "misc",
+      "created_at": "11/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3606,
+      "stock_title": "apron",
+      "category_name": "misc",
+      "created_at": "07/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2695,
+      "stock_title": "ar plastic",
+      "category_name": "misc",
+      "created_at": "01/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3413,
+      "stock_title": "ayan aminabad & yarana  convance",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3077,
+      "stock_title": "ayan aminabad convance",
+      "category_name": "misc",
+      "created_at": "02/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3579,
+      "stock_title": "AYAN CON",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3518,
+      "stock_title": "ayan con all 28,29,30,31",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3399,
+      "stock_title": "ayan con fatima",
+      "category_name": "misc",
+      "created_at": "25/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3585,
+      "stock_title": "AYAN CON RAJAJIPURAM",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3075,
+      "stock_title": "ayan convance",
+      "category_name": "misc",
+      "created_at": "02/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3603,
+      "stock_title": "ayan petrol",
+      "category_name": "misc",
+      "created_at": "07/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3102,
+      "stock_title": "BADAM",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3436,
+      "stock_title": "baking tray",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3605,
+      "stock_title": "basant",
+      "category_name": "misc",
+      "created_at": "07/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4228,
+      "stock_title": "bike reparring shekhar bhaiya",
+      "category_name": "misc",
+      "created_at": "29/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3003,
+      "stock_title": "biscoff biskit",
+      "category_name": "misc",
+      "created_at": "22/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2874,
+      "stock_title": "biscoff biskit   custerd powder",
+      "category_name": "misc",
+      "created_at": "13/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2405,
+      "stock_title": "biscoff biskit   kaisr",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2627,
+      "stock_title": "blinkit",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3582,
+      "stock_title": "BOX 5 PEC",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3371,
+      "stock_title": "box con",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3699,
+      "stock_title": "box exp",
+      "category_name": "misc",
+      "created_at": "15/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3631,
+      "stock_title": "brush",
+      "category_name": "misc",
+      "created_at": "09/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3587,
+      "stock_title": "BUTTER",
+      "category_name": "misc",
+      "created_at": "05/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2257,
+      "stock_title": "butter milk porter",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3417,
+      "stock_title": "butter papper",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2265,
+      "stock_title": "canbarry",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3993,
+      "stock_title": "car parking shekhar bhaiya",
+      "category_name": "misc",
+      "created_at": "08/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3590,
+      "stock_title": "CAREMAL",
+      "category_name": "misc",
+      "created_at": "05/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2620,
+      "stock_title": "cashews",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4127,
+      "stock_title": "cement",
+      "category_name": "misc",
+      "created_at": "18/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2607,
+      "stock_title": "chai patti",
+      "category_name": "misc",
+      "created_at": "24/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2464,
+      "stock_title": "chai somosa",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3761,
+      "stock_title": "charbagh con",
+      "category_name": "misc",
+      "created_at": "20/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2401,
+      "stock_title": "chocolate",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2512,
+      "stock_title": "chocolate BOX",
+      "category_name": "misc",
+      "created_at": "15/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3439,
+      "stock_title": "chocos",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3467,
+      "stock_title": "chocose cranberry",
+      "category_name": "misc",
+      "created_at": "30/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3589,
+      "stock_title": "CHURI DHAR",
+      "category_name": "misc",
+      "created_at": "05/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3438,
+      "stock_title": "cleaner exp",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2760,
+      "stock_title": "clear water bottel",
+      "category_name": "misc",
+      "created_at": "05/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3187,
+      "stock_title": "coconut oil",
+      "category_name": "misc",
+      "created_at": "10/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2340,
+      "stock_title": "coffee beans",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3574,
+      "stock_title": "coffee beans PORTER",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2638,
+      "stock_title": "coffee milk",
+      "category_name": "misc",
+      "created_at": "27/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2334,
+      "stock_title": "colin",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3339,
+      "stock_title": "con box",
+      "category_name": "misc",
+      "created_at": "20/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3343,
+      "stock_title": "con box lead",
+      "category_name": "misc",
+      "created_at": "20/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2407,
+      "stock_title": "cranberry juice",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3629,
+      "stock_title": "cream",
+      "category_name": "misc",
+      "created_at": "09/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3528,
+      "stock_title": "custurd",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2902,
+      "stock_title": "dary pen",
+      "category_name": "misc",
+      "created_at": "15/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2264,
+      "stock_title": "dates (khajoor)",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3415,
+      "stock_title": "delhi courier",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2335,
+      "stock_title": "dhoti",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2888,
+      "stock_title": "disposal plates",
+      "category_name": "misc",
+      "created_at": "14/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2697,
+      "stock_title": "disposal plates  spoon",
+      "category_name": "misc",
+      "created_at": "01/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2281,
+      "stock_title": "driver",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2864,
+      "stock_title": "dustbin bag",
+      "category_name": "misc",
+      "created_at": "11/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2278,
+      "stock_title": "elaichi",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3103,
+      "stock_title": "ELICHI",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3980,
+      "stock_title": "envolep",
+      "category_name": "misc",
+      "created_at": "07/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3367,
+      "stock_title": "fillo",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3630,
+      "stock_title": "finail all exp",
+      "category_name": "misc",
+      "created_at": "09/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2333,
+      "stock_title": "final",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2250,
+      "stock_title": "food exp",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3591,
+      "stock_title": "FRESH CREAM",
+      "category_name": "misc",
+      "created_at": "05/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2451,
+      "stock_title": "fridger",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2965,
+      "stock_title": "fridger reparing",
+      "category_name": "misc",
+      "created_at": "18/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3576,
+      "stock_title": "FRUIT",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3828,
+      "stock_title": "fruit box",
+      "category_name": "misc",
+      "created_at": "23/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2489,
+      "stock_title": "garbag panni",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2282,
+      "stock_title": "gem",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4191,
+      "stock_title": "gem &  rakabganj convance",
+      "category_name": "misc",
+      "created_at": "25/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3101,
+      "stock_title": "gem CON",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2618,
+      "stock_title": "GOLDEN FOIL",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3973,
+      "stock_title": "golu bhaiya icecream",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2610,
+      "stock_title": "green cream",
+      "category_name": "misc",
+      "created_at": "25/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3979,
+      "stock_title": "gst",
+      "category_name": "misc",
+      "created_at": "07/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2263,
+      "stock_title": "gulab jamun",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2619,
+      "stock_title": "HAND GLOVES",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3441,
+      "stock_title": "hazratganj con",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3742,
+      "stock_title": "hit",
+      "category_name": "misc",
+      "created_at": "19/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3041,
+      "stock_title": "holi convanc",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4183,
+      "stock_title": "house kipeeng exp",
+      "category_name": "misc",
+      "created_at": "24/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3860,
+      "stock_title": "I 10 PARKING",
+      "category_name": "misc",
+      "created_at": "26/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2262,
+      "stock_title": "ice cream",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4064,
+      "stock_title": "IMRAN CARPANTER",
+      "category_name": "misc",
+      "created_at": "13/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2280,
+      "stock_title": "insentive",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2258,
+      "stock_title": "kanhaiya advance",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2666,
+      "stock_title": "kaser",
+      "category_name": "misc",
+      "created_at": "31/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2789,
+      "stock_title": "kawa leaves",
+      "category_name": "misc",
+      "created_at": "06/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2639,
+      "stock_title": "kaynat insentiv",
+      "category_name": "misc",
+      "created_at": "27/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3369,
+      "stock_title": "kaynat insentive",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3329,
+      "stock_title": "KHARE",
+      "category_name": "misc",
+      "created_at": "19/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3575,
+      "stock_title": "KHARI",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2465,
+      "stock_title": "kitchen insentine",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3520,
+      "stock_title": "kitchen insentive",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3942,
+      "stock_title": "kot roll",
+      "category_name": "misc",
+      "created_at": "04/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2261,
+      "stock_title": "kulfi",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2493,
+      "stock_title": "kulfi convance",
+      "category_name": "misc",
+      "created_at": "14/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3529,
+      "stock_title": "kunafa exp",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2513,
+      "stock_title": "KUNAGA",
+      "category_name": "misc",
+      "created_at": "15/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4126,
+      "stock_title": "labour exp",
+      "category_name": "misc",
+      "created_at": "18/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3244,
+      "stock_title": "lemon",
+      "category_name": "misc",
+      "created_at": "12/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3521,
+      "stock_title": "mango felling",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2452,
+      "stock_title": "markar",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3729,
+      "stock_title": "markiting zepto",
+      "category_name": "misc",
+      "created_at": "18/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3994,
+      "stock_title": "medicine & bandage",
+      "category_name": "misc",
+      "created_at": "08/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3039,
+      "stock_title": "meet bhaiya momo",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3974,
+      "stock_title": "meet bhaiya swiggy testing",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4230,
+      "stock_title": "meet bhaiya swiggy testing toing",
+      "category_name": "misc",
+      "created_at": "30/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2144,
+      "stock_title": "meet check",
+      "category_name": "misc",
+      "created_at": "28/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2725,
+      "stock_title": "menu",
+      "category_name": "misc",
+      "created_at": "03/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3857,
+      "stock_title": "MENU COLOUR WAY",
+      "category_name": "misc",
+      "created_at": "26/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4009,
+      "stock_title": "menu new",
+      "category_name": "misc",
+      "created_at": "09/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2195,
+      "stock_title": "milk",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2294,
+      "stock_title": "milk butter",
+      "category_name": "misc",
+      "created_at": "07/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2609,
+      "stock_title": "milk made",
+      "category_name": "misc",
+      "created_at": "25/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2547,
+      "stock_title": "milk mde",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3514,
+      "stock_title": "milk soking",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2259,
+      "stock_title": "milk staff",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2940,
+      "stock_title": "milk staff 15/02/2026",
+      "category_name": "misc",
+      "created_at": "17/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3043,
+      "stock_title": "milk staff 23/02/2026",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2611,
+      "stock_title": "milk staff 24/01/2026",
+      "category_name": "misc",
+      "created_at": "25/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3042,
+      "stock_title": "milk staff 24/02/2026",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2621,
+      "stock_title": "milk staff 25/01/2026",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3069,
+      "stock_title": "milk staff 27/02/2026",
+      "category_name": "misc",
+      "created_at": "01/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3122,
+      "stock_title": "milk staff 5/3/2026",
+      "category_name": "misc",
+      "created_at": "06/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2622,
+      "stock_title": "milk staff20/01/2026",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2623,
+      "stock_title": "milk staff21/01/2026",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2624,
+      "stock_title": "milk staff22/01/2026",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2625,
+      "stock_title": "milk staff23/01/2026",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4256,
+      "stock_title": "milk testing",
+      "category_name": "misc",
+      "created_at": "01/06/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3104,
+      "stock_title": "MILKMADE",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3440,
+      "stock_title": "mode & mixes con",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3412,
+      "stock_title": "moter exp",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3100,
+      "stock_title": "N/A",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3573,
+      "stock_title": "NAGAR NIGAM",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4150,
+      "stock_title": "NAGAR NIGAM 2 month",
+      "category_name": "misc",
+      "created_at": "21/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2714,
+      "stock_title": "napkin",
+      "category_name": "misc",
+      "created_at": "02/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2197,
+      "stock_title": "nutakla past",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3014,
+      "stock_title": "odonil",
+      "category_name": "misc",
+      "created_at": "23/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2199,
+      "stock_title": "pachment paper",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3969,
+      "stock_title": "paint exp",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3368,
+      "stock_title": "pan drive",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2081,
+      "stock_title": "PANI",
+      "category_name": "misc",
+      "created_at": "22/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4033,
+      "stock_title": "panter",
+      "category_name": "misc",
+      "created_at": "10/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2406,
+      "stock_title": "pappu advance",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3913,
+      "stock_title": "parcel",
+      "category_name": "misc",
+      "created_at": "02/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3640,
+      "stock_title": "PARIVARTAN CON",
+      "category_name": "misc",
+      "created_at": "10/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3443,
+      "stock_title": "parking golu bhaiya",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3577,
+      "stock_title": "PASTRY",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2198,
+      "stock_title": "pastry bags",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2724,
+      "stock_title": "pendrive",
+      "category_name": "misc",
+      "created_at": "03/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2457,
+      "stock_title": "petrol",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3714,
+      "stock_title": "petrol genrator",
+      "category_name": "misc",
+      "created_at": "16/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3906,
+      "stock_title": "petrol white activa",
+      "category_name": "misc",
+      "created_at": "01/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2402,
+      "stock_title": "pipe",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3698,
+      "stock_title": "pipe somendra",
+      "category_name": "misc",
+      "created_at": "15/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2466,
+      "stock_title": "pipeing bag",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3610,
+      "stock_title": "piping bag",
+      "category_name": "misc",
+      "created_at": "08/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2336,
+      "stock_title": "pista",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3516,
+      "stock_title": "pista badam",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2875,
+      "stock_title": "plain almond",
+      "category_name": "misc",
+      "created_at": "13/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4174,
+      "stock_title": "plumber item",
+      "category_name": "misc",
+      "created_at": "23/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2865,
+      "stock_title": "pochha",
+      "category_name": "misc",
+      "created_at": "11/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2251,
+      "stock_title": "porter",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3972,
+      "stock_title": "porter apachi key shekhar bhaiya",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2279,
+      "stock_title": "porter butter",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4227,
+      "stock_title": "porter butter bheaja h rajajipuram",
+      "category_name": "misc",
+      "created_at": "29/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2726,
+      "stock_title": "porter cary bag",
+      "category_name": "misc",
+      "created_at": "03/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3515,
+      "stock_title": "porter customer",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2253,
+      "stock_title": "porter fridge",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2514,
+      "stock_title": "porter KUNAFA",
+      "category_name": "misc",
+      "created_at": "15/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2834,
+      "stock_title": "porter MENU",
+      "category_name": "misc",
+      "created_at": "10/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4114,
+      "stock_title": "PORTER PEN DRIVE",
+      "category_name": "misc",
+      "created_at": "17/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4216,
+      "stock_title": "porter shekhar bhaiya",
+      "category_name": "misc",
+      "created_at": "27/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2939,
+      "stock_title": "poter",
+      "category_name": "misc",
+      "created_at": "17/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2936,
+      "stock_title": "poter janeshwar",
+      "category_name": "misc",
+      "created_at": "17/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3063,
+      "stock_title": "pratima advance",
+      "category_name": "misc",
+      "created_at": "28/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3345,
+      "stock_title": "pratima food exp",
+      "category_name": "misc",
+      "created_at": "20/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3037,
+      "stock_title": "print out",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2277,
+      "stock_title": "printing papper",
+      "category_name": "misc",
+      "created_at": "05/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3517,
+      "stock_title": "pudung rice",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2293,
+      "stock_title": "QR stande",
+      "category_name": "misc",
+      "created_at": "07/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2813,
+      "stock_title": "QTroll",
+      "category_name": "misc",
+      "created_at": "08/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2455,
+      "stock_title": "rabdi",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3330,
+      "stock_title": "RAPIDO",
+      "category_name": "misc",
+      "created_at": "19/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2255,
+      "stock_title": "rasmalai",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2404,
+      "stock_title": "rasmalai    gulabjamun",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3270,
+      "stock_title": "rasmalai & waffle",
+      "category_name": "misc",
+      "created_at": "15/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3398,
+      "stock_title": "rasmalai milk",
+      "category_name": "misc",
+      "created_at": "25/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2292,
+      "stock_title": "rasmali",
+      "category_name": "misc",
+      "created_at": "07/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3005,
+      "stock_title": "refund meet bhaiya",
+      "category_name": "misc",
+      "created_at": "22/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2833,
+      "stock_title": "REMOT AC",
+      "category_name": "misc",
+      "created_at": "10/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2111,
+      "stock_title": "rent",
+      "category_name": "misc",
+      "created_at": "25/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2761,
+      "stock_title": "ribbion",
+      "category_name": "misc",
+      "created_at": "05/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3578,
+      "stock_title": "RICE PUDDING",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2966,
+      "stock_title": "room freshener",
+      "category_name": "misc",
+      "created_at": "18/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3344,
+      "stock_title": "room freshner",
+      "category_name": "misc",
+      "created_at": "20/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2338,
+      "stock_title": "rose petal",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3397,
+      "stock_title": "sagar plastic",
+      "category_name": "misc",
+      "created_at": "25/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2597,
+      "stock_title": "salman advance",
+      "category_name": "misc",
+      "created_at": "21/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3971,
+      "stock_title": "salman aminabad con",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3366,
+      "stock_title": "salman con alambagh",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2260,
+      "stock_title": "salman convance",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2626,
+      "stock_title": "salman insentiv",
+      "category_name": "misc",
+      "created_at": "26/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3370,
+      "stock_title": "salman insentive",
+      "category_name": "misc",
+      "created_at": "23/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3004,
+      "stock_title": "samosa meet bhaiya",
+      "category_name": "misc",
+      "created_at": "22/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3968,
+      "stock_title": "saudagar",
+      "category_name": "misc",
+      "created_at": "06/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3036,
+      "stock_title": "sement",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3581,
+      "stock_title": "SHEKHAR BHAI APRON",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4175,
+      "stock_title": "shekhar bhaiya all staff nashta",
+      "category_name": "misc",
+      "created_at": "23/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3641,
+      "stock_title": "SHEKHAR BHAIYA CON",
+      "category_name": "misc",
+      "created_at": "10/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3580,
+      "stock_title": "SHEKHAR BHAIYA CON RAHUL ARORA",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3583,
+      "stock_title": "SHEKHAR BHAIYA PORTER",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3437,
+      "stock_title": "shivansh con",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2876,
+      "stock_title": "shope",
+      "category_name": "misc",
+      "created_at": "13/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3168,
+      "stock_title": "SIKHANDRABAGH & aminabad con",
+      "category_name": "misc",
+      "created_at": "09/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3105,
+      "stock_title": "SIKHANDRABAGH CON",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2339,
+      "stock_title": "silver foil",
+      "category_name": "misc",
+      "created_at": "08/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2194,
+      "stock_title": "somasa",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2713,
+      "stock_title": "spekar",
+      "category_name": "misc",
+      "created_at": "02/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4134,
+      "stock_title": "SPRITE SHEKHAR BHAIYA",
+      "category_name": "misc",
+      "created_at": "19/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3327,
+      "stock_title": "STAFF  MILK",
+      "category_name": "misc",
+      "created_at": "19/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2937,
+      "stock_title": "staff food",
+      "category_name": "misc",
+      "created_at": "17/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2548,
+      "stock_title": "staff food 13/01/2026",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2549,
+      "stock_title": "staff food 14/01/2026",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2550,
+      "stock_title": "staff food 15/01/2026",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2561,
+      "stock_title": "staff food 17/01/2026",
+      "category_name": "misc",
+      "created_at": "18/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3283,
+      "stock_title": "staff insentive",
+      "category_name": "misc",
+      "created_at": "16/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2193,
+      "stock_title": "staff milk",
+      "category_name": "misc",
+      "created_at": "02/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2545,
+      "stock_title": "staff milk 15/01/2026",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2546,
+      "stock_title": "staff milk 16/01/2026",
+      "category_name": "misc",
+      "created_at": "17/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3519,
+      "stock_title": "staff milk 3 days",
+      "category_name": "misc",
+      "created_at": "01/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3713,
+      "stock_title": "staff milk,sugar",
+      "category_name": "misc",
+      "created_at": "16/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2511,
+      "stock_title": "STAFF SUGAR",
+      "category_name": "misc",
+      "created_at": "15/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3701,
+      "stock_title": "staff tea",
+      "category_name": "misc",
+      "created_at": "15/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3859,
+      "stock_title": "STAFF TEA PATTI",
+      "category_name": "misc",
+      "created_at": "26/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4063,
+      "stock_title": "STAFF WATER CANE",
+      "category_name": "misc",
+      "created_at": "13/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2967,
+      "stock_title": "standy",
+      "category_name": "misc",
+      "created_at": "18/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3106,
+      "stock_title": "STARTING EXP",
+      "category_name": "misc",
+      "created_at": "04/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2853,
+      "stock_title": "stawberry filling",
+      "category_name": "misc",
+      "created_at": "11/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2658,
+      "stock_title": "stepler pin",
+      "category_name": "misc",
+      "created_at": "30/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2453,
+      "stock_title": "sugar",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3243,
+      "stock_title": "sugar home",
+      "category_name": "misc",
+      "created_at": "12/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2490,
+      "stock_title": "sugar shachet",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2403,
+      "stock_title": "sugar syrup dibbi",
+      "category_name": "misc",
+      "created_at": "10/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2712,
+      "stock_title": "sunny advance",
+      "category_name": "misc",
+      "created_at": "02/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3038,
+      "stock_title": "sunny convance",
+      "category_name": "misc",
+      "created_at": "25/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2092,
+      "stock_title": "Sunny Salary",
+      "category_name": "Salary",
+      "created_at": "23/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2491,
+      "stock_title": "surf",
+      "category_name": "misc",
+      "created_at": "14/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2788,
+      "stock_title": "taddy",
+      "category_name": "misc",
+      "created_at": "06/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4182,
+      "stock_title": "tala",
+      "category_name": "misc",
+      "created_at": "24/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2456,
+      "stock_title": "tape",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3414,
+      "stock_title": "tape black",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2749,
+      "stock_title": "tasty craft",
+      "category_name": "misc",
+      "created_at": "04/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2080,
+      "stock_title": "TEA",
+      "category_name": "misc",
+      "created_at": "22/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3015,
+      "stock_title": "tea chaipatti",
+      "category_name": "misc",
+      "created_at": "23/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2082,
+      "stock_title": "TEA GOLU",
+      "category_name": "misc",
+      "created_at": "22/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2454,
+      "stock_title": "tea staff",
+      "category_name": "misc",
+      "created_at": "11/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3328,
+      "stock_title": "TOWEL",
+      "category_name": "misc",
+      "created_at": "19/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3416,
+      "stock_title": "transport nagar labour",
+      "category_name": "misc",
+      "created_at": "26/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2467,
+      "stock_title": "tray",
+      "category_name": "misc",
+      "created_at": "13/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4090,
+      "stock_title": "TUB BICKIT",
+      "category_name": "misc",
+      "created_at": "14/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2256,
+      "stock_title": "tv  exp",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3795,
+      "stock_title": "universal",
+      "category_name": "misc",
+      "created_at": "22/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3584,
+      "stock_title": "V CHETAN ARORA TO RAJAJIPURAM CON",
+      "category_name": "misc",
+      "created_at": "04/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3342,
+      "stock_title": "vinayak",
+      "category_name": "misc",
+      "created_at": "20/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4199,
+      "stock_title": "waiting machine",
+      "category_name": "misc",
+      "created_at": "26/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2252,
+      "stock_title": "washroom exp",
+      "category_name": "misc",
+      "created_at": "04/01/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3632,
+      "stock_title": "wating mashine exp",
+      "category_name": "misc",
+      "created_at": "09/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3442,
+      "stock_title": "white tape",
+      "category_name": "misc",
+      "created_at": "28/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2112,
+      "stock_title": "wifi",
+      "category_name": "misc",
+      "created_at": "25/12/2025",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3158,
+      "stock_title": "wifi recharge",
+      "category_name": "misc",
+      "created_at": "08/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 2866,
+      "stock_title": "wiper",
+      "category_name": "misc",
+      "created_at": "11/02/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4052,
+      "stock_title": "yash advance",
+      "category_name": "misc",
+      "created_at": "12/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 4151,
+      "stock_title": "yash con",
+      "category_name": "misc",
+      "created_at": "21/05/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3159,
+      "stock_title": "zakariya",
+      "category_name": "misc",
+      "created_at": "08/03/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3728,
+      "stock_title": "zakariya ads",
+      "category_name": "misc",
+      "created_at": "18/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    },
+    {
+      "id": 3743,
+      "stock_title": "zepto",
+      "category_name": "misc",
+      "created_at": "19/04/2026",
+      "unit_price": false,
+      "unit_price_amount": null
+    }
+  ]
+}

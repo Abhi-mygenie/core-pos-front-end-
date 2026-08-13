@@ -1,0 +1,14 @@
+{
+  "source": "BUG-168-reinvestigation/single_order_940279.json — real backend /api/v1/vendoremployee/single-order-detail response",
+  "finding": "Backend orderDetails items have gst_tax_amount=null, vat_tax_amount=null, tax_amount=null. food_details.tax is populated (e.g. 4 for a 4% VAT item).",
+  "sample_item": {
+    "id": 2429186,
+    "gst_tax_amount": null,
+    "vat_tax_amount": null,
+    "tax_amount": null,
+    "food_details_tax": 4,
+    "food_details_tax_type": "VAT",
+    "food_details_tax_calc": "Exclusive"
+  },
+  "implication": "BUG-271 manual print path reads item.gst_tax_amount which is null -> parseFloat(null||0) = 0 -> gst_tax stays 0. Collect Bill path has fallback to food_details.tax which gives correct value."
+}
