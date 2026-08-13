@@ -559,3 +559,12 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 
 | **CR-135** | Aggregator Setup — New Settings Screen (UrbanPiper Config + Operational Flags) | **P1** | **HIGH** | **QA PASS — AWAITING OWNER SMOKE Gate 6 (2026-08-10)** | 5 | New top-level Settings navigation: "Aggregator Setup". Absorbs CR-132 Screen 7 (7 operational flags: aggregator_order_tone, auto_kot, auto_bill, auto_bill_stage, prep_time, prep_time_method, auto_prep_ack). 13 new endpoints: `/aggregator-config` (GET+POST, brands, push-store, store-toggle) + `/aggregator-sync` (category-timings, stock-toggle, sync-catalog, clear-catalog, clear-modifiers). Multi-brand (`client_id` optional). Stock-toggle has 3 timed modes (indefinite/relative/custom epoch). Two-phase async catalog sync. Resolves CR-133 amendment D5-D7. RELATED: CR-108 (absorb), CR-119 (future tab). Evidence: `samplecurl.md` (artifact csahzzuj). Intake: `change_requests/CR-135_AGGREGATOR_SETUP_SETTINGS_SCREEN_INTAKE.md`. 10 files (8 NEW + 2 EDIT). Gate 2 = full curl-probe + design + impact analysis. |
 
+
+
+---
+
+### 2026-08-13 Sub-Recipe Stock Architecture (CR-139)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-139** | Sub-Recipe Stock: Dedicated tab in OPERATIONS group (separate from purchase flow) | **P1** | HIGH | **INTAKE** | 0-1 ✅ | New tab `Sub-Recipe Stock` + `SubRecipeStockPage.jsx` + `SubRecipeStockPanel.jsx`. Calls `add-sub-recipe-stock` endpoint. Depends on BUG-312 (isSubRecipe in ingredients transform). 4-5 files, ~250-350 lines. 5 owner decisions at Gate 2. Related: BUG-308 (implemented), BUG-313 (stock update routing). |

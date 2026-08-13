@@ -18929,6 +18929,111 @@
         "src/pages/reports-module/VariationAddonMockup.jsx"
       ],
       "hotspot_files": false
+    },
+    {
+      "id": "BUG-308",
+      "title": "Sub-Recipe Stock: addStock() called instead of addSubRecipeStock() in StockAuditPanel",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "IMPLEMENTED",
+      "gate": "5a",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Stock Audit",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-308_SUBRECIPE_ADDSTOCK_WRONG_ENDPOINT_INTAKE.md"
+      ]
+    },
+    {
+      "id": "BUG-309",
+      "title": "Ingredient Bulk Edit: Min Unit input type=number drops unit string \u2014 data loss on save",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Ingredients > Bulk Edit",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-309_BULKEDIT_MINUNIT_NUMBER_INPUT_TYPE_INTAKE.md"
+      ]
+    },
+    {
+      "id": "BUG-310",
+      "title": "Ingredient Bulk Edit: Conversion field transparent styling looks like non-editable static text",
+      "type": "BUG",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Ingredients > Bulk Edit",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-310_BULKEDIT_CONVERSION_INVISIBLE_STYLING_INTAKE.md"
+      ]
+    },
+    {
+      "id": "BUG-311",
+      "title": "Ingredient Add/Bulk Edit: No duplicate detection (missing typeahead + pre-save guard)",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Ingredients > Add Form + Bulk Edit",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-311_INGREDIENT_ADD_NO_DUPLICATE_DETECTION_INTAKE.md"
+      ]
+    },
+    {
+      "id": "BUG-312",
+      "title": "fromAPI.ingredients() missing isSubRecipe/subrecipeId fields \u2014 root cause for sub-recipe misrouting",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > API Transform",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-312_FROM_API_INGREDIENTS_MISSING_ISSUBRECIPE_INTAKE.md"
+      ]
+    },
+    {
+      "id": "BUG-313",
+      "title": "Sub-recipe appears in Stock Update auto-plan + addPurchase() called for all rows (no sub-recipe routing)",
+      "type": "BUG",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Stock Update + Purchase Entry",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/BUG-313_SUBRECIPE_APPEARS_IN_STOCK_UPDATE_PURCHASE_INTAKE.md"
+      ]
+    },
+    {
+      "id": "CR-139",
+      "title": "Sub-Recipe Stock: Dedicated tab in OPERATIONS group (separate from purchase flow)",
+      "type": "CR",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "gate": "1",
+      "sprint_key": "pos_5_0",
+      "area": "Inventory > Navigation + Sub-Recipe Stock",
+      "registered": "2026-08-13",
+      "artifact_refs": [
+        "change_requests/CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md"
+      ]
     }
   ],
   "meta": {
