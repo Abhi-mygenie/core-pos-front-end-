@@ -1,0 +1,30 @@
+{
+  "summary": "Code-level verification of sub-recipe stock routing fix in StockAuditPanel. All 4 changed files verified correct. App compiles and loads successfully.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "code_verification_results": {
+    "StockAuditPanel_handleSaveAll": "PASS — lines 65-71 correctly branch: item.isSubRecipe && item.subrecipeId → addSubRecipeStock(item.subrecipeId, ...), else → addStock(itemId, ...)",
+    "INVENTORY_ENDPOINTS_ADD_SUB_RECIPE_STOCK": "PASS — constants.js line 198: '/api/v2/vendoremployee/inventory/add-sub-recipe-stock'",
+    "toAPI_addSubRecipeStock": "PASS — inventoryTransform.js lines 225-234 produces { sub_recipe_id, quantity, unit, physical_qty, waste_reason } with optional batch/expiry_date",
+    "inventoryService_addSubRecipeStock": "PASS — lines 89-92: api.post(INVENTORY_ENDPOINTS.ADD_SUB_RECIPE_STOCK, payload) — NOT to add-stock/{id}",
+    "app_compile_and_load": "PASS — login page renders without console errors"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100%"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Sub-recipe stock fix fully verified at code level. Live API test (addSubRecipeStock endpoint) requires a valid restaurant token — not testable in preview env without credentials. All wiring is correct."
+}

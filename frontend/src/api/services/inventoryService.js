@@ -85,6 +85,12 @@ export async function addStock(id, data) {
   return api.post(`${INVENTORY_ENDPOINTS.ADD_STOCK}/${id}`, payload);
 }
 
+// BUG-sub-recipe-stock: sub-recipe stock uses its own endpoint with sub_recipe_id in body
+export async function addSubRecipeStock(subRecipeId, data) {
+  const payload = toAPI.addSubRecipeStock({ ...data, subRecipeId });
+  return api.post(INVENTORY_ENDPOINTS.ADD_SUB_RECIPE_STOCK, payload);
+}
+
 export async function addPurchase(data) {
   const payload = toAPI.addPurchase(data);
   return api.post(INVENTORY_ENDPOINTS.ADD_PURCHASE, payload);

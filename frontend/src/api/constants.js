@@ -194,6 +194,8 @@ export const INVENTORY_ENDPOINTS = {
   DELETE_WASTAGE_REASON: '/api/v2/vendoremployee/wastage-reasons/delete',
   // CR-078: Smart Purchase — vendor purchase history
   VENDOR_ITEM_LIST: '/api/v2/vendoremployee/inventory/vendor-item-list',
+  // BUG-sub-recipe-stock: sub-recipe items use a separate add-stock endpoint
+  ADD_SUB_RECIPE_STOCK: '/api/v2/vendoremployee/inventory/add-sub-recipe-stock',
 };
 
 // CR-077: Inventory Transfer (Phase 1 — Receive + Reject)

@@ -59,11 +59,23 @@ export default function StockAuditPanel() {
     setSaving(true);
     try {
       for (const [itemId, entry] of entries) {
-        await inventoryService.addStock(itemId, {
-          quantity: Number(entry.qty),
-          wastageReasonId: entry.reasonId || null,
-          reason: entry.reasonId ? wastageReasons.find(r => r.id === Number(entry.reasonId))?.reason : '',
-        });
+        const item = stockItems.find(s => String(s.id) === String(itemId));
+        const reasonLabel = entry.reasonId ? wastageReasons.find(r => r.id === Number(entry.reasonId))?.reason : '';
+        // BUG-sub-recipe-stock: sub-recipe items need a different endpoint
+        if (item?.isSubRecipe && item?.subrecipeId) {
+          await inventoryService.addSubRecipeStock(item.subrecipeId, {
+            quantity: Number(entry.qty),
+            unit: item.unit || '',
+            physicalQty: Number(entry.qty),
+            reason: reasonLabel || '',
+          });
+        } else {
+          await inventoryService.addStock(itemId, {
+            quantity: Number(entry.qty),
+            wastageReasonId: entry.reasonId || null,
+            reason: reasonLabel,
+          });
+        }
       }
       toast.success(`${entries.length} adjustment(s) saved`);
       setPhysicalEntries({});

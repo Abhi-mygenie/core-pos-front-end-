@@ -221,6 +221,19 @@ const toAPI = {
     };
   },
 
+  // BUG-sub-recipe-stock: POST add-sub-recipe-stock — sub-recipe physical count
+  addSubRecipeStock(data) {
+    return {
+      sub_recipe_id: data.subRecipeId,
+      quantity: data.quantity,
+      unit: data.unit || '',
+      physical_qty: data.physicalQty ?? 0,
+      waste_reason: data.reason || '',
+      ...(data.batch ? { batch: data.batch } : {}),
+      ...(data.expiry ? { expiry_date: data.expiry } : {}),
+    };
+  },
+
   // A4: store-category
   storeCategory(data) {
     return {
