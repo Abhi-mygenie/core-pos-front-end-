@@ -1,0 +1,71 @@
+{
+  "date": "2026-08-06",
+  "session": "Session 2 — Deep Investigation",
+  "restaurant": "Shimla QoH Food Court",
+  "rid": 598,
+  "credentials_used": "owner@shimlaqohfoodcourt.com / Qplazm@10",
+  "period": "June 2026",
+  "token_file": "pos_token_fresh.txt",
+
+  "restaurant_profile": {
+    "tab_credit_orders": 0,
+    "payment_methods": {
+      "upi": 3539,
+      "cash": 2376,
+      "card": 220,
+      "partial": 16,
+      "pending": 1
+    },
+    "service_charge_lines": 0,
+    "service_charge_total": 0.0,
+    "complementary_lines": 0,
+    "unassigned_station_items": 0
+  },
+
+  "current_food_court": {
+    "sort": "created_at",
+    "total_orders": 6170,
+    "cancelled_orders": 18,
+    "station_revenue": {
+      "CREAMBELLPARLOUR": 243361.63,
+      "GUPTAJEE": 721103.00,
+      "MSB": 302792.00,
+      "ZORKO": 575269.00,
+      "TOTAL": 1842525.63
+    }
+  },
+
+  "fixed_food_court": {
+    "sort": "collect_bill",
+    "excludes_cancelled_items": true,
+    "total_orders": 6152,
+    "cancelled_orders": 0,
+    "station_revenue": {
+      "CREAMBELLPARLOUR": 242458.34,
+      "GUPTAJEE": 718535.00,
+      "MSB": 301993.00,
+      "ZORKO": 574715.00,
+      "TOTAL": 1837701.34
+    }
+  },
+
+  "item_sales_logic_station_revenue": {
+    "CREAMBELLPARLOUR": 242458.34,
+    "GUPTAJEE": 718535.00,
+    "MSB": 301993.00,
+    "ZORKO": 574715.00,
+    "TOTAL": 1837701.34
+  },
+
+  "gap_after_fixes": {
+    "CREAMBELLPARLOUR": 0.00,
+    "GUPTAJEE": 0.00,
+    "MSB": 0.00,
+    "ZORKO": 0.00,
+    "TOTAL": 0.00
+  },
+
+  "total_removed_by_fixes": 4824.29,
+
+  "key_finding": "After Fix1 (collect_bill sort) + Fix2 (exclude foodStatus=3 from itemTotal), Food Court station revenues match Item Sales station-filtered revenues exactly. Gap = Rs0.00 per station and total."
+}

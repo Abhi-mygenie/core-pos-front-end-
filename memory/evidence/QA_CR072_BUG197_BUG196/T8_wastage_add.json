@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "message": "Wastage reason added successfully",
+  "data": {
+    "id": 29,
+    "reason": "QA Test Reason",
+    "status": 1
+  }
+}

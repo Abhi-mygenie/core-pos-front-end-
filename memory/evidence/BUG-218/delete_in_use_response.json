@@ -1,0 +1,1 @@
+{"success":false,"message":"Cannot delete. This ingredient is used in recipes.","data":{"ingredient_name":"Base Cream","used_in_recipes":["Blueberry Shab-E-jamun","Aam-E-Bahaar Kunafa","50-50 Bluebeery","Heart Shape kunafa","50-50 Aam -E -Bahar"],"recipe_count":5,"reason":"ingredient_used_in_main_recipes"}}

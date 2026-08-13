@@ -1,41 +1,53 @@
-# MyGenie Core POS Frontend — Deployment Record
+# POS Frontend Deployment PRD
 
 ## Original Problem Statement
-Deploy the existing React frontend repo directly into `/app` and run it as-is, with no code edits.
-- Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git (branch: main)
-- Destination: /app/frontend (platform supervisor serves from /app/frontend)
+Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core-pos-front-end-.git`, branch `main`) directly into `/app` and run it as-is, with no code edits.
 
 ## Architecture
-- Frontend-only React app (CRA + CRACO)
-- Supervisor: `yarn start` → `craco start` on 0.0.0.0:3000
-- No backend changes
 
-## Deployment Steps Done (2026-08-13)
-1. Stopped frontend supervisor
-2. Cleared /app/frontend contents (preserved node_modules temporarily)
-3. Cloned repo to /tmp/pos-repo, copied /tmp/pos-repo/frontend/ → /app/frontend/
-4. Wrote all env variables to /app/frontend/.env
-5. Ran `npm install --legacy-peer-deps` (repo has package-lock.json)
-6. Started frontend supervisor — compiled successfully
+- **Stack**: React (CRA via craco), deployed to `/app/frontend/`
+- **Process Manager**: supervisor → `yarn start` from `/app/frontend/`
+- **Port**: 3000 (0.0.0.0)
+- **API**: `REACT_APP_API_BASE_URL=https://preprod.mygenie.online/`
+- **Backend**: No backend changes; platform backend unchanged at `/app/backend/`
 
-## Environment Variables Set (/app/frontend/.env)
+## Deployment Steps Completed
+
+### Phase 1 – Prepare
+- Preserved platform files: `/app/.emergent/`, `/app/backend/`, `/app/memory/` (pre-existing)
+
+### Phase 2 – Clone
+- Cloned `main` branch to `/tmp/core-pos-staging`
+- Repo structure confirmed: `frontend/` subdir contains the React app
+- Rsynced `frontend/` → `/app/frontend/` (excluding `.env` and `node_modules`)
+- Rsynced `memory/` → `/app/memory/` (merged — 83 files)
+
+### Phase 3 – Install Dependencies
+- Package manager detected: `package-lock.json` → **npm**
+- Ran `npm install --legacy-peer-deps` in `/app/frontend/`
+- Installed 1,626 packages
+
+### Phase 4 – Run
+- Supervisor restarted: `sudo supervisorctl restart frontend`
+- Compiled successfully (`craco start` via `yarn start`)
+
+### Phase 5 – Verify
+- HTTP 200 on port 3000 ✓
+- Login screen renders correctly ✓
+- Hot reload active ✓
+
+## Environment Variables (`/app/frontend/.env`)
+- REACT_APP_BACKEND_URL (platform URL preserved)
 - WDS_SOCKET_PORT=443
 - REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
-- REACT_APP_SOCKET_URL=https://presocket.mygenie.online
-- REACT_APP_FIREBASE_* (full Firebase config)
-- REACT_APP_CRM_BASE_URL=https://crm.mygenie.online/api
-- REACT_APP_CRM_API_KEYS (partial — "509" key was truncated in problem statement, placeholder set)
-- REACT_APP_GOOGLE_MAPS_KEY
-- CORS_ORIGINS=*
-- REACT_APP_SHOW_AUDIT_TAB=true
-- REACT_APP_BACKEND_URL (platform URL)
+- REACT_APP_SOCKET_URL, Firebase vars, CRM vars, Google Maps key, etc.
 
-## Status
-- App compiles successfully (webpack compiled successfully)
-- Login page visible and serving on port 3000
-- Only non-fatal deprecation warnings in stderr
+## What's Been Implemented
+- Date: 2026-08-13
+- Full repo cloned and deployed as-is (no code edits)
+- All env vars written to `/app/frontend/.env`
+- Memory dir fully populated (83 files from repo)
 
-## Backlog / Known Issues
-- P1: REACT_APP_CRM_API_KEYS for outlet "509" is a placeholder — user must supply the real value
-- P1: API calls will fail until backend (preprod.mygenie.online) credentials are confirmed working
-- P2: Firebase Messaging / push notifications — VAPID key is set, runtime depends on service worker
+## Backlog / P0
+- Supply correct REACT_APP_CRM_API_KEYS["509"] value (was truncated in problem statement)
+- Validate login against `https://preprod.mygenie.online/` backend

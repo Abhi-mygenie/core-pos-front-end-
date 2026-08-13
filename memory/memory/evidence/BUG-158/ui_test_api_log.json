@@ -1,0 +1,44 @@
+[
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/category-list",
+    "body": "{\"categories\":[{\"id\":249,\"category_name\":\"Others\"},{\"id\":250,\"category_name\":\"Milk\"},{\"id\":255,\"category_name\":\"To Owner\"},{\"id\":267,\"category_name\":\"Delivery\"},{\"id\":268,\"category_name\":\"Kitchen\"},{\"id\":269,\"category_name\":\"Vendor Payment\"},{\"id\":270,\"category_name\":\"Staff Payment\"},{\"id\":280,\"category_name\":\"misc\"}]}"
+  },
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/category-list",
+    "body": "{\"categories\":[{\"id\":249,\"category_name\":\"Others\"},{\"id\":250,\"category_name\":\"Milk\"},{\"id\":255,\"category_name\":\"To Owner\"},{\"id\":267,\"category_name\":\"Delivery\"},{\"id\":268,\"category_name\":\"Kitchen\"},{\"id\":269,\"category_name\":\"Vendor Payment\"},{\"id\":270,\"category_name\":\"Staff Payment\"},{\"id\":280,\"category_name\":\"misc\"}]}"
+  },
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/expenses-list",
+    "body": "{\"expenses\":[{\"id\":4271,\"stock_title\":\"100 delivery\",\"category_name\":\"Milk\",\"created_at\":\"07\\/07\\/2026\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":1118,\"stock_title\":\"10000\",\"category_name\":\"To Owner\",\"created_at\":\"27\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":999,\"stock_title\":\"11000\",\"category_name\":\"To Owner\",\"created_at\":\"17\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":980,\"stock_title\":\"12000\",\"category_name\":\"To Owner\",\"created_at\":\"14\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":985,\"stock_title\":\"12000\",\"category_name\":\"To Ow"
+  },
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/expenses-list",
+    "body": "{\"expenses\":[{\"id\":4271,\"stock_title\":\"100 delivery\",\"category_name\":\"Milk\",\"created_at\":\"07\\/07\\/2026\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":1118,\"stock_title\":\"10000\",\"category_name\":\"To Owner\",\"created_at\":\"27\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":999,\"stock_title\":\"11000\",\"category_name\":\"To Owner\",\"created_at\":\"17\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":980,\"stock_title\":\"12000\",\"category_name\":\"To Owner\",\"created_at\":\"14\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":985,\"stock_title\":\"12000\",\"category_name\":\"To Ow"
+  },
+  {
+    "status": 200,
+    "method": "POST",
+    "url": "/api/v2/vendoremployee/expense/store_expense",
+    "body": "{\"category\":{\"id\":249,\"name\":\"Others\"},\"stock_items\":[{\"id\":4276,\"stock_title\":\"UI_TEST_1783410868\"}]}"
+  },
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/category-list",
+    "body": "{\"categories\":[{\"id\":249,\"category_name\":\"Others\"},{\"id\":250,\"category_name\":\"Milk\"},{\"id\":255,\"category_name\":\"To Owner\"},{\"id\":267,\"category_name\":\"Delivery\"},{\"id\":268,\"category_name\":\"Kitchen\"},{\"id\":269,\"category_name\":\"Vendor Payment\"},{\"id\":270,\"category_name\":\"Staff Payment\"},{\"id\":280,\"category_name\":\"misc\"}]}"
+  },
+  {
+    "status": 200,
+    "method": "GET",
+    "url": "/api/v2/vendoremployee/expense/expenses-list",
+    "body": "{\"expenses\":[{\"id\":4271,\"stock_title\":\"100 delivery\",\"category_name\":\"Milk\",\"created_at\":\"07\\/07\\/2026\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":1118,\"stock_title\":\"10000\",\"category_name\":\"To Owner\",\"created_at\":\"27\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":999,\"stock_title\":\"11000\",\"category_name\":\"To Owner\",\"created_at\":\"17\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":980,\"stock_title\":\"12000\",\"category_name\":\"To Owner\",\"created_at\":\"14\\/10\\/2025\",\"unit_price\":false,\"unit_price_amount\":null},{\"id\":985,\"stock_title\":\"12000\",\"category_name\":\"To Ow"
+  }
+]

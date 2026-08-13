@@ -1,0 +1,39 @@
+{
+  "food_sales_report": [
+    {
+      "food_item": "Afghani Mushroom Tikka",
+      "station_name": "GUPTAJEE",
+      "category_name": "Veg Snacks (GSW)",
+      "complementary_status": "No",
+      "total_quantity": "1",
+      "item_price": "285.00",
+      "variation_price": "0.00",
+      "addon_price": "0.00",
+      "gst": "14.25",
+      "vat": "0.00",
+      "service_charge": "0.00",
+      "discount": "0.00",
+      "complementary_price": "0.00",
+      "total_sales": "299.25"
+    },
+    {
+      "food_item": "Achari Paneer",
+      "station_name": "GUPTAJEE",
+      "category_name": "Ala-Carte",
+      "complementary_status": "No",
+      "total_quantity": "1",
+      "item_price": "280.00",
+      "variation_price": "0.00",
+      "addon_price": "0.00",
+      "gst": "14.00",
+      "vat": "0.00",
+      "service_charge": "0.00",
+      "discount": "0.00",
+      "complementary_price": "0.00",
+      "total_sales": "294.00"
+    }
+  ],
+  "total_sales": "593.25",
+  "from": "2026-08-03 06:00:00",
+  "to": "2026-08-04 03:00:00"
+}
