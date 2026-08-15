@@ -1,0 +1,10 @@
+KEYS: ['id', 'name', 'category', 'price', 'item_type', 'status', 'image', 'description', 'discount_type', 'discount', 'available_time_starts', 'available_time_ends', 'prepration_time_min', 'serve_time_in_min', 'live_web', 'pack_charges', 'takeaway_charge', 'delivery_charge', 'tax', 'tax_type', 'tax_calc', 'item_unit', 'item_unit_price', 'give_discount', 'variation', 'addons', 'food_for', 'allergens', 'kcal', 'portion_size', 'total_quantity', 'swiggy_image', 'swiggy', 'zomato', 'food_id', 'recipe_id', 'sort_order', 'category_ids', 'attributes', 'choice_options', 'swiggy_price', 'veg', 'egg', 'jain', 'turn_on_at', 'restaurant_id', 'order_count', 'avg_rating', 'rating_count', 'rating', 'recommended', 'slug', 'food_status', 'food_stock', 'Action', 'food_order', 'dinein', 'takeaway', 'delivery', 'swiggy_packing_chrg', 'mapped_food_id', 'zomato_image', 'client_id', 'created_at', 'updated_at', 'is_packaged_good', 'source_table']
+  swiggy: YES
+  zomato: YES
+  client_id: 0
+  client: MISSING
+  turn_on_at: None
+  food_for: Aggregator
+  dinein: Yes
+  takeaway: Yes
+  delivery: Yes

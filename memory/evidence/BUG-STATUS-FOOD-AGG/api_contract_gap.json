@@ -1,0 +1,24 @@
+{
+  "confirmed_date": "2026-08-06",
+  "api_endpoint": "POST /api/v2/vendoremployee/product/status-food/{foodId}",
+  "fe_sends": {
+    "status": 1
+  },
+  "fe_result": {
+    "errors": [
+      {
+        "code": "not_found",
+        "message": "Food not found"
+      }
+    ]
+  },
+  "correct_payload": {
+    "food_for": "Aggregator"
+  },
+  "correct_result": {
+    "message": "food status updated successfully",
+    "action": "enable"
+  },
+  "root_cause": "FE sends {status: 0|1} but aggregator endpoint requires {food_for: Aggregator}",
+  "gap_file": "menuManagementService.js:53"
+}

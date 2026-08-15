@@ -1,0 +1,64 @@
+{
+  "endpoint": "POST https://preprod.mygenie.online/api/v1/vendoremployee/top-food-variation-sales-report-download",
+  "request_body": {
+    "from": "YYYY-MM-DD",
+    "to": "YYYY-MM-DD"
+  },
+  "response_shape": {
+    "status": true,
+    "message": "Template generated successfully.",
+    "download_url": "https://preprod.mygenie.online/storage/top_food_variation_sales_report.xlsx"
+  },
+  "file_format": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "file_size_bytes": 9208,
+  "sheets": {
+    "Food Sales": {
+      "cols": 13,
+      "headers": [
+        "Sn",
+        "Food Item",
+        "Station",
+        "Category",
+        "Qty",
+        "Item Price",
+        "Variation Price",
+        "Addon Price",
+        "GST",
+        "VAT",
+        "Service Charge",
+        "Discount",
+        "Total Sales"
+      ]
+    },
+    "Variation Sales": {
+      "cols": 8,
+      "headers": [
+        "Sn",
+        "Food Item",
+        "Category",
+        "Group",
+        "Label",
+        "Option Price",
+        "Qty",
+        "Total Amount"
+      ]
+    },
+    "Addon Sales": {
+      "cols": 9,
+      "headers": [
+        "Sn",
+        "Addon ID",
+        "Addon Name",
+        "Addon Price",
+        "Food ID",
+        "Food Item",
+        "Category",
+        "Qty",
+        "Total Amount"
+      ]
+    }
+  },
+  "filename_note": "Static filename top_food_variation_sales_report.xlsx \u2014 same URL for all users/restaurants. Concurrency risk noted.",
+  "http_status": 200,
+  "response_time_ms": 994
+}

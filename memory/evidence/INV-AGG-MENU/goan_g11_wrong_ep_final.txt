@@ -1,0 +1,1 @@
+NOT FOUND — add-food with food_for=Aggregator does NOT create a proper aggregator food. Total foods now: 4

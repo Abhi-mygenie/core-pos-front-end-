@@ -1,0 +1,1 @@
+id=13307: turn_on_at=None food_stock=0

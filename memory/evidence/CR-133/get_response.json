@@ -1,0 +1,353 @@
+{
+  "success": true,
+  "message": "Printer agent configuration retrieved successfully",
+  "value_source": "stored",
+  "is_default": false,
+  "data": {
+    "restaurant_id": 478,
+    "employee_id": "3631",
+    "settings_config": {
+      "server_configuration": {
+        "socket_base_url": "http://socket.mygenie.online",
+        "api_base_url": "https://manage.mygenie.online"
+      },
+      "restaurant_configuration": {
+        "restaurant_id": "478",
+        "employee_id": "3631"
+      },
+      "restaurant_information": {
+        "restaurant_name": "18march",
+        "phone_number": "9999999999",
+        "email_address": null,
+        "gst_number": null,
+        "fssai_number": null,
+        "restaurant_logo": null,
+        "restaurant_address_bill_details": null
+      },
+      "bill_footer": {
+        "footer_text": "Powered by MyGenie"
+      },
+      "paper_settings": {
+        "paper_size": "58 mm",
+        "available_options": [
+          "58 mm",
+          "80 mm"
+        ]
+      },
+      "printer_type": {
+        "selected": "USB Printer",
+        "available_options": [
+          "USB Printer",
+          "Bluetooth (BLE) Printer",
+          "LAN Printer"
+        ]
+      },
+      "printers": [
+        {
+          "id": "printer_478_kds_001",
+          "label": "Kitchen Printer",
+          "type": "USB Printer",
+          "usb_printer_name": "POS58 Printer",
+          "vendor_id": null,
+          "product_id": null,
+          "lan_ip_address": null,
+          "lan_port": "9100",
+          "bluetooth_mac_address": null,
+          "android_device_ip_address": null,
+          "paper_size": "58 mm",
+          "handled_stations": [
+            "KDS"
+          ],
+          "handles_bill": false
+        },
+        {
+          "id": "printer_478_bill_001",
+          "label": "Billing Printer",
+          "type": "USB Printer",
+          "usb_printer_name": "POS58 Printer",
+          "vendor_id": null,
+          "product_id": null,
+          "lan_ip_address": null,
+          "lan_port": "9100",
+          "bluetooth_mac_address": null,
+          "android_device_ip_address": null,
+          "paper_size": "58 mm",
+          "handled_stations": [],
+          "handles_bill": true
+        }
+      ],
+      "printer_configuration": {
+        "usb_printer_name": "POS58 Printer",
+        "lan_printer_ip_address": "",
+        "lan_printer_port": "9100",
+        "android_device_ip_address": ""
+      },
+      "print_copies": {
+        "bill_copy_count": 1,
+        "kot_copy_count": 1
+      },
+      "auto_printing": {
+        "auto_print_bill": "Yes",
+        "auto_print_kot": "Yes",
+        "scan_order_auto_print": "No",
+        "aggregator_auto_kot": "No",
+        "aggregator_auto_bill": "No",
+        "aggregator_auto_bill_stage": "Acknowledged",
+        "aggregator_auto_bill_stage_options": [
+          "Acknowledged",
+          "Food Ready"
+        ]
+      },
+      "bill_display_options": {
+        "show_item_date_on_80mm": "No"
+      },
+      "qr_codes": {
+        "upi_qr_enabled": "No",
+        "upi_id": null,
+        "feedback_qr_enabled": "No",
+        "feedback_qr_url": null
+      },
+      "windows_options": {
+        "use_pdf_printing_on_windows": "Yes",
+        "use_pdf_for_bills_only": "No"
+      }
+    },
+    "style_config": {
+      "global_settings": {
+        "font_family": "Poppins",
+        "available_fonts": [
+          "Montserrat",
+          "Roboto",
+          "Poppins",
+          "Ubuntu",
+          "Open Sans",
+          "Lato",
+          "Oswald",
+          "Helvetica",
+          "Times New Roman",
+          "Courier New",
+          "Arial",
+          "Calibri",
+          "Verdana",
+          "Tahoma",
+          "Georgia",
+          "Trebuchet MS",
+          "Nunito",
+          "Inter",
+          "Source Sans Pro",
+          "Noto Sans"
+        ],
+        "divider_line_style": "Solid",
+        "divider_line_options": [
+          "Solid",
+          "Dashed"
+        ],
+        "page_margins_mm": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "logo_size_mm": {
+          "width": 30,
+          "height": 30
+        },
+        "qr_size_mm": {
+          "upi": 25,
+          "feedback": 25
+        }
+      },
+      "bill_print_style": {
+        "restaurant_header": {
+          "restaurant_name": {
+            "font_size_58mm": 11,
+            "font_size_80mm": 17,
+            "bold": "Yes"
+          },
+          "restaurant_address": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "restaurant_phone": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "restaurant_email": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "gst_number": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "fssai_number": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        },
+        "bill_information": {
+          "row_1": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_2": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_3": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_4": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        },
+        "item_table": {
+          "table_header": {
+            "font_size_58mm": 7,
+            "font_size_80mm": 8,
+            "bold": "Yes"
+          },
+          "table_content": {
+            "font_size_58mm": 7,
+            "font_size_80mm": 8,
+            "bold": "No"
+          },
+          "table_qty": {
+            "font_size_58mm": 7,
+            "font_size_80mm": 8,
+            "bold": "No"
+          },
+          "table_meta": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "notes": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "Yes"
+          }
+        },
+        "amount_section": {
+          "amount_breakdown": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "total": {
+            "font_size_58mm": 7,
+            "font_size_80mm": 8,
+            "bold": "Yes"
+          },
+          "grand_total": {
+            "font_size_58mm": 7,
+            "font_size_80mm": 8,
+            "bold": "Yes"
+          },
+          "paid_by": {
+            "font_size_58mm": 5.5,
+            "font_size_80mm": 6.5,
+            "bold": "No"
+          }
+        },
+        "delivery_section": {
+          "delivery_header": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "delivery_content": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "Yes"
+          }
+        },
+        "room_section": {
+          "room_header": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "Yes"
+          },
+          "room_content": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        },
+        "footer": {
+          "footer_text": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        }
+      },
+      "kot_print_style": {
+        "kot_header": {
+          "kot_title": {
+            "font_size_58mm": 11,
+            "font_size_80mm": 14,
+            "bold": "Yes"
+          },
+          "cancel_kot_title": {
+            "font_size_58mm": 9,
+            "font_size_80mm": 14,
+            "bold": "Yes"
+          }
+        },
+        "kot_information": {
+          "row_1": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_2": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_3": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          },
+          "row_4": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        },
+        "item_table": {
+          "table_header": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "Yes"
+          },
+          "table_content": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "No"
+          }
+        },
+        "notes": {
+          "notes": {
+            "font_size_58mm": 6,
+            "font_size_80mm": 7,
+            "bold": "Yes"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "api_available_fonts_for_thegoankitchen": null,
+  "api_note": "thegoankitchen.com returns available_fonts: null \u2014 FALLBACK_FONTS activates correctly for this restaurant",
+  "screenshot_fonts_observed": [
+    "Montserrat",
+    "Roboto",
+    "Poppins",
+    "Ubuntu",
+    "Open Sans",
+    "Lato",
+    "Oswald",
+    "Helvetica",
+    "Times New Roman",
+    "Courier New",
+    "Arial",
+    "Calibri",
+    "Verdana",
+    "Tahoma",
+    "Georgia",
+    "Trebuchet MS",
+    "Nunito",
+    "Inter"
+  ],
+  "fallback_fonts": [
+    "Montserrat",
+    "Roboto",
+    "Poppins",
+    "Ubuntu",
+    "Open Sans",
+    "Lato",
+    "Oswald",
+    "Helvetica (Sans Serif)",
+    "Times New Roman",
+    "Courier",
+    "Gujarati"
+  ],
+  "condition_in_code": "gs.available_fonts?.length ? [...gs.available_fonts] : [...FALLBACK_FONTS]",
+  "root_cause": "When API returns available_fonts with ANY items, the API list is used directly instead of FALLBACK_FONTS. The screenshot shows 18+ fonts \u2014 this restaurant has available_fonts populated by backend with more fonts than the 11 approved ones.",
+  "fix_required": "ALWAYS use FALLBACK_FONTS (rename to APPROVED_FONTS). Ignore the API list entirely. The approved 11 fonts are a product decision, not data-driven."
+}

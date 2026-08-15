@@ -1,0 +1,15 @@
+success: True
+auto_print keys: []
+bill_copies: None
+kot_copies: None
+aggregator_auto_kot: None
+aggregator_auto_bill: None
+aggregator_auto_bill_stage: None
+aggregator_auto_bill_stage_options: None
+bill_footer: {'footer_text': 'Powered by MyGenie'}
+available_fonts: None
+android keys: []
+android_logo: None
+android_upi: None
+android_fdbk: None
+android_scale: None

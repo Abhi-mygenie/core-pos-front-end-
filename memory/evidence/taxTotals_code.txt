@@ -1,0 +1,45 @@
+  const taxTotals = useMemo(() => {
+    let sgst = 0, cgst = 0, vat = 0;
+    billableItems.forEach(item => {
+      const tax = item.tax;
+      if (!tax || tax.percentage === 0) return;
+      const linePrice = getItemLinePrice(item);
+      let taxAmt;
+      if (tax.isInclusive) {
+        taxAmt = linePrice - (linePrice / (1 + tax.percentage / 100));
+      } else {
+        taxAmt = linePrice * (tax.percentage / 100);
+      }
+      // Split into SGST + CGST for GST type (India dine-in)
+      if ((tax.type || 'GST').toUpperCase() === 'GST') {
+        sgst += taxAmt / 2;
+        cgst += taxAmt / 2;
+      } else if ((tax.type || '').toUpperCase() === 'VAT') {
+        // VAT items: full taxAmt accumulates into single VAT bucket
+        // (no SGST/CGST half-split). See VAT_FIX_IMPLEMENTATION_HANDOVER.md.
+        vat += taxAmt;
+      }
+    });
+    return {
+      sgst: Math.round(sgst * 100) / 100,
+  //      Missing / null / blank / non-numeric / negative profile values were
+  //      already forced to 0 upstream by parseTaxPct. Owner directive 2026-05-05:
+  //      "correct, coz it's bug" — instant cut-over to per-config rates.
+  //   Pre-CR-013: SC/Tip/Delivery used `avgGstRate` (item-blended) which
+  //   over-taxed high-item-GST carts and ignored configured rates entirely.
+  const discountRatio = itemTotal > 0 ? totalDiscount / itemTotal : 0;
+  const scTaxRate     = (restaurant?.serviceChargeTaxPct  || 0) / 100;
+  const delTaxRate    = (restaurant?.deliveryChargeGstPct || 0) / 100;
+
+  const itemGstPostDiscount = (taxTotals.sgst + taxTotals.cgst) * (1 - discountRatio);
+  const scGst               = serviceCharge  * scTaxRate;
+  const tipGst              = tip            * scTaxRate;
+  const deliveryGst         = deliveryCharge * delTaxRate;
+
+  const totalGst = itemGstPostDiscount + scGst + tipGst + deliveryGst;
+  const sgst = Math.round((totalGst / 2) * 100) / 100;
+  const cgst = Math.round((totalGst / 2) * 100) / 100;
+
+  // CR-013 Phase 1.5 D-GST-4 parity guardrail (May-2026, owner-approved):
+  // Compare component-sum vs composite BEFORE final round-off (per owner
+  // directive 2026-05-05: round-off applies ONLY to Grand Total, never to

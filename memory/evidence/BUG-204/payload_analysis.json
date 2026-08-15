@@ -1,0 +1,12 @@
+{
+  "probe_date": "2026-07-17",
+  "tenant": "cafe103",
+  "analysis": "FE handleSave (L489-498) sends: {expense, amount, payment_method, quantity, unit, physical_quantity, notes, category_id}. Backend accepts quantity field. Currently for priced items (Case A): amount = unitPrice (fixed), quantity = 0 (not entered). Fix: amount = unitPrice * qty (user-entered), quantity = user value.",
+  "backend_accepts_quantity": true,
+  "no_backend_change_needed": true,
+  "priced_items_on_cafe103": [
+    {"id": 4599, "stock_title": "pav", "category": "Kitchen", "unit_price_amount": 20},
+    {"id": 4600, "stock_title": "pav", "category": "Milk", "unit_price_amount": 26},
+    {"id": 4601, "stock_title": "pav", "category": "To Owner", "unit_price_amount": 30}
+  ]
+}

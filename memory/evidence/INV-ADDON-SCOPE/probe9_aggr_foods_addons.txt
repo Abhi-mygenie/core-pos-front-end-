@@ -1,0 +1,4 @@
+Aggregator foods count: 4
+  '69 special': 0 addons
+  '_GOAN_TEST_CLIENT_': 0 addons
+  '_GOAN_TEST_MAIN_': 0 addons

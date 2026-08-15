@@ -1,0 +1,14 @@
+Addons count: 2
+Keys: ['id', 'name', 'price', 'status', 'weight', 'veg', 'has_inventory', 'recipe_id', 'has_recipe', 'is_pushed_managed']
+Sample: {
+  "id": 13193,
+  "name": "Dark",
+  "price": 10,
+  "status": 1,
+  "weight": 0,
+  "veg": null,
+  "has_inventory": "No",
+  "recipe_id": null,
+  "has_recipe": false,
+  "is_pushed_managed": false
+}

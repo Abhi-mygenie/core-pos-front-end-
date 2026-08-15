@@ -1,0 +1,5 @@
+Menu types (4):
+  id=218 name=Normal
+  id=217 name=Party
+  id=216 name=Premium
+  id=4198 name=Aggregator

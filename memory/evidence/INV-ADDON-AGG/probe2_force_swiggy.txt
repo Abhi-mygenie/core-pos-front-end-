@@ -1,0 +1,1 @@
+{"status":true,"message":"Swiggy force stock-in triggered for 3 items","data":{"client_id":null,"store_id":"STORE_POS_ID_69","total_items":3,"total_batches":1,"batches":[{"batch":1,"count":3,"success"

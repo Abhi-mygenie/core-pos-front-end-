@@ -1,0 +1,65 @@
+TOP-LEVEL RESPONSE KEYS: ['success', 'message', 'data']
+DATA KEYS: ['basic', 'advanced', 'vendor']
+
+BASIC KEY COUNT: 66
+ADVANCED KEY COUNT: 48
+
+=== FIELD LOCATION PROBE ===
+  room: BASIC = 'No'
+  def_ord_status: ADVANCED = 1
+  no_of_bill: BASIC = '1'
+  no_of_kot: BASIC = '1'
+  print_kot: ADVANCED = 'Yes'
+  billing_auto_bill_print: ADVANCED = 'No'
+  aggregator_auto_kot: BASIC = 'Yes'
+  aggregator_auto_bill: BASIC = 'No'
+  aggregator_auto_bill_stage: BASIC = 'Ready'
+  print_bill_customer_copy: BASIC = 'No'
+  printing_in_kds: BASIC = 'Yes'
+  use_token: BASIC = 'No'
+  kot_language: BASIC = 'English'
+  schedule_order: BASIC = False
+  confirm_order_show_tab: BASIC = 'No'
+  confirm_order_tone: BASIC = 'default'
+  is_banner: BASIC = 'Yes'
+  is_category_box: BASIC = 'Yes'
+  show_popular_category: ADVANCED = 'Yes'
+  prepaid_auto_sattle: BASIC = 'No'
+  order_auto_serve: BASIC = 'No'
+  ordersAutoPaid: BASIC = 0
+  auto_dispatch: BASIC = 'No'
+  is_loyality: BASIC = 'No'
+  is_customer_wallet: BASIC = 'No'
+  is_coupon: BASIC = 'Yes'
+  restaurant_for: BASIC = 'Normal'
+  online_order: BASIC = 'Yes'
+  multiple_menu: BASIC = 'No'
+  food_different_price: BASIC = 'No'
+  default_prep_time: BASIC = 15
+  prep_time_count_method: BASIC = 'quantity'
+  auto_prep_time_ack: BASIC = 'No'
+  auto_accept_inventory: BASIC = 'No'
+  service_chrg_taxt: BASIC = 'Service Charge'
+  deliver_charge_gst: BASIC = '5.00'
+  takeaway_charges: BASIC = 0
+  show_user_gst: BASIC = 'No'
+  room_billing_included: BASIC = 'Yes'
+  room_otp_require: BASIC = 'Yes'
+  room_price: BASIC = 'No'
+  pay_via_room: BASIC = 'Yes'
+  guest_details: BASIC = 'Yes'
+  booking_details: BASIC = 'No'
+  billing_employee: BASIC = 'Yes'
+  role_base_discount: BASIC = 'No'
+  dinein_otp_require: BASIC = 'Yes'
+  dinein_number: BASIC = 'No'
+  locationSelection: BASIC = 'scanner'
+  aggregator_order_tone: BASIC = 'buzzer'
+  phone: BASIC = '9816697781'
+  phone_number_on_bill: BASIC = ''
+  short_code: BASIC = 'No'
+  fssai: BASIC = '10921013000164'
+  name: BASIC = 'CAFE 103'
+  address: BASIC = 'A UNIT OF BLOOMING MYSTIC 103 HOSPITALITY PVT LTD Near Tunnel 103 Shimla Contact no. - 01772990853'
+  logo: BASIC = None
+  pdf_menu: BASIC = None

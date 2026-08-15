@@ -1,0 +1,187 @@
+{
+  "brand": {
+    "name": "MyGenie POS",
+    "theme": "light",
+    "primary_accent": "orange-600",
+    "cta_accent": "green-600"
+  },
+  "typography": {
+    "font_family": "Plus Jakarta Sans, sans-serif",
+    "fallback": "ui-sans-serif, system-ui, sans-serif",
+    "scale": {
+      "h1": "text-3xl font-bold tracking-tight text-slate-900",
+      "h2": "text-2xl font-semibold tracking-tight text-slate-800",
+      "h3": "text-lg font-medium text-slate-800",
+      "body": "text-sm text-slate-600 leading-relaxed",
+      "small": "text-xs text-slate-500",
+      "label": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 uppercase tracking-widest text-slate-500"
+    },
+    "instructions": "Avoid generic fonts like Inter. Import Plus Jakarta Sans via Google Fonts. Headings should be tight, labels slightly tracked out."
+  },
+  "colors": {
+    "background": "bg-slate-50",
+    "surface": "bg-white",
+    "border": "border-slate-200",
+    "primary": {
+      "DEFAULT": "bg-orange-500 hover:bg-orange-600 text-white",
+      "subtle": "bg-orange-50 text-orange-700 border-orange-200"
+    },
+    "success_cta": {
+      "DEFAULT": "bg-green-600 hover:bg-green-700 text-white"
+    },
+    "danger": {
+      "DEFAULT": "bg-red-500 hover:bg-red-600 text-white"
+    },
+    "text": {
+      "main": "text-slate-900",
+      "muted": "text-slate-500",
+      "disabled": "text-slate-400"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "card": "shadow-sm",
+      "dropdown": "shadow-lg",
+      "modal": "shadow-xl"
+    },
+    "borders": "rounded-lg border border-slate-200",
+    "opacity": "disabled:opacity-50"
+  },
+  "grids_and_layouts": {
+    "container": "max-w-7xl mx-auto p-6 space-y-6",
+    "table_density": "py-2 px-3 text-sm",
+    "form_grid": "grid grid-cols-1 md:grid-cols-2 gap-4",
+    "sidebar": "w-64 border-r border-slate-200 bg-white"
+  },
+  "screens": {
+    "sidebar": {
+      "location": "Under 'Settings' tree",
+      "items": [
+        {
+          "label": "Employee Management",
+          "icon": "Users",
+          "test_id": "sidebar-nav-employee-management"
+        },
+        {
+          "label": "Role Management",
+          "icon": "ShieldCheck",
+          "test_id": "sidebar-nav-role-management"
+        }
+      ]
+    },
+    "employee_list": {
+      "type": "Table View",
+      "layout": "Card container with sticky header",
+      "components_used": ["Table", "Button", "Input", "Avatar", "Badge", "Switch", "DropdownMenu"],
+      "features": {
+        "header": "Search input (Name/Email/Phone), Filter Chips (Role, Status), '+ Add Employee' Green CTA.",
+        "columns": [
+          "Avatar (fallback to initials)",
+          "Name (f_name + l_name)",
+          "Phone",
+          "Email",
+          "Role (Badge using subtle primary styling)",
+          "Bill Visibility (Yes/No Chip)",
+          "Status (Switch/Toggle)",
+          "Actions (Edit, Deactivate via Dropdown or inline icons)"
+        ],
+        "states": {
+          "empty": "Illustration + 'No employees found' + 'Add Employee' button",
+          "loading": "Shadcn Skeleton rows"
+        }
+      },
+      "test_ids": {
+        "add_btn": "employee-list-add-button",
+        "search": "employee-list-search-input",
+        "row_action_edit": "employee-list-row-edit-button-{id}"
+      }
+    },
+    "employee_form": {
+      "type": "Side Sheet (Add/Edit)",
+      "layout": "Shadcn Sheet component sliding from right, 400px width.",
+      "components_used": ["Sheet", "Input", "Label", "Select", "Switch", "Button", "Accordion"],
+      "sections": [
+        {
+          "name": "Basic Info",
+          "fields": ["First Name (req)", "Last Name", "Phone (10-digit India, req)", "Email (req)", "Password (hidden on edit, req on add)"]
+        },
+        {
+          "name": "Role & Access",
+          "fields": ["Role (Searchable Select/Combobox)", "Bill User View (Switch -> strings 'Yes'/'No')"]
+        },
+        {
+          "name": "Advanced / Station IP Mapping",
+          "type": "Collapsible (Accordion)",
+          "fields": ["mac_ip_kds", "mac_ip_bill", "mac_ip_bar (IP formatted placeholders)"]
+        }
+      ],
+      "actions": "Footer with Cancel and Save buttons (sticky to bottom).",
+      "test_ids": {
+        "first_name": "employee-form-first-name-input",
+        "save_btn": "employee-form-save-button"
+      }
+    },
+    "role_list": {
+      "type": "Table View with Tabs",
+      "layout": "Card container",
+      "components_used": ["Tabs", "Table", "Badge", "Progress", "Tooltip", "Button"],
+      "features": {
+        "header": "Tabs: 'My Roles' | 'Templates'. '+ Add Role' Green CTA.",
+        "columns": [
+          "Name",
+          "Role Type (Badge)",
+          "Modules Coverage (e.g., '12 of 52' with tiny progress bar)",
+          "Template Origin (if applicable)",
+          "Actions (Edit, Duplicate, Delete)"
+        ],
+        "protection_rule": "CRITICAL: If role.is_editable === false, show Lock icon next to name with 'System Protected' Tooltip. Disable Edit and Delete actions."
+      },
+      "test_ids": {
+        "add_btn": "role-list-add-button",
+        "tab_my_roles": "role-list-tab-my-roles",
+        "row_action_delete": "role-list-row-delete-button-{id}"
+      }
+    },
+    "role_form_permission_matrix": {
+      "type": "Full Page Layout",
+      "layout": "Header block + Tabs for Permission Categories",
+      "components_used": ["Input", "Select", "Switch", "Tabs", "Card", "Checkbox", "Tooltip", "Badge"],
+      "header_block": {
+        "fields": ["Role Name", "Role Type (Multiselect)", "Template Picker (auto-checks modules)", "Status Switch"]
+      },
+      "matrix_body": {
+        "tabs": ["Frontend (27)", "Backend (13)", "Report (12)"],
+        "layout": "Grid of Checkboxes inside each tab. Each checkbox has label and tiny '?' tooltip.",
+        "features": [
+          "'Select All' master switch per tab",
+          "Live counter 'Selected: X of 52'",
+          "Search/filter within permissions"
+        ],
+        "typo_preservation_rule": "MUST display verbatim backend labels: 'Expence', 'sattle report', 'report summery', 'complementary_food'. DO NOT autocorrect.",
+        "protection_rule": "If editing a system-protected role, whole page enters Read-Only mode (disabled inputs, badge 'System Protected')."
+      },
+      "test_ids": {
+        "name_input": "role-form-name-input",
+        "tab_frontend": "role-form-tab-frontend",
+        "permission_checkbox": "role-form-permission-{category}-{key}-checkbox"
+      }
+    }
+  },
+  "component_guidelines": {
+    "dialogs_sheets": "Use explicit standard headers (SheetHeader, SheetTitle). Ensure content inside ScrollArea if it exceeds viewport height.",
+    "tables": "Ensure consistent column widths. Actions column should be right-aligned and fixed width.",
+    "badges": "Use subtle variations (bg-opacity-10 text-primary) instead of solid colors for non-status badges."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Subtle background shifts (e.g., bg-slate-50 to hover:bg-slate-100) on table rows.",
+    "focus_states": "Use focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 for accessibility.",
+    "transitions": "Use fast, standard transitions (transition-colors duration-200) - keep it feeling like a snappy internal tool."
+  },
+  "accessibility": {
+    "aria": "Add aria-label to all icon buttons (e.g., Edit, Delete, Lock).",
+    "keyboard": "Ensure Dialogs and Sheets trap focus and can be closed via 'Escape'.",
+    "contrast": "Ensure green CTA and orange primary text maintain at least 4.5:1 contrast against white backgrounds."
+  },
+  "instructions_to_main_agent": "1. Render the screens as functional mockups using existing Shadcn components in the /app/frontend. 2. Implement the typography scale using the requested font. 3. STRICTLY honor the Rule R9 regarding permission names (e.g., 'Expence'). 4. Implement the 'System Protected' lock/disabled states for Roles exactly as spec'd. 5. Include data-testids on all interactive nodes. 6. Build mock data referencing the evidence folder. DO NOT implement real backend mutations yet, this is Gate 2 Mockups phase.",
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": "1. Do not use centered layouts or generic AI slop styles. Use depth, glassmorphism slightly if applicable, and z-index hierarchy. 2. Maintain high information density suitable for a POS back-office. 3. Use 1px borders and neutral backgrounds to separate sections, avoiding solid thick dividers. 4. Use sonner for toasts. 5. Prioritize reusing /components/ui primitives. 6. Ensure no transparent backgrounds behind overlapping text or headers. 7. Do NOT use transition: all."
+}

@@ -1,0 +1,1 @@
+id=13306 food_stock=0 turn_on_at=2026-08-14 23:10:55
