@@ -19038,6 +19038,14 @@
         {
           "path": "components/inventory/IngredientNameCombobox.jsx",
           "type": "implementation_shared_component"
+        },
+        {
+          "path": "memory/impact/BUG-311-LAYER5_BULK_SAVE_DISABLE_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis_layer5"
+        },
+        {
+          "path": "memory/plans/BUG-311-LAYER5_BULK_SAVE_DISABLE_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan_layer5"
         }
       ],
       "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15."
