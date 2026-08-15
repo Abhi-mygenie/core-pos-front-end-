@@ -439,7 +439,7 @@ BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + va
 |---|---|---|---|---|---|---|
 | BUG-309 | Bulk Edit: Min Unit type=number drops unit string | P1 | HIGH | **IMPLEMENTED** | 5a ✅ | `IngredientBulkEditor.jsx:442` input→span. // BUG-309 |
 | BUG-310 | Bulk Edit: Conversion field invisible styling | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `IngredientBulkEditor.jsx:296` numCls Option A. // BUG-310 |
-| BUG-311 | No duplicate detection (All 3 layers: typeahead L1 + add-guard L2 + bulk-editor L3) | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | L1: `IngredientNameCombobox` typeahead in `InventorySetupPanel.jsx:23` (fixed dropdown, position:fixed). L2: `isDuplicate` guard `InventorySetupPanel.jsx:146`. L3: dup skip `IngredientBulkEditor.jsx:192`. // BUG-311 Layer 1 2026-08-14 |
+| BUG-311 | No duplicate detection (All layers: typeahead L1 + add-guard L2 + bulk-editor L3 + **edit-form L1B + bulk-typeahead L4**) | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | L1: `IngredientNameCombobox` typeahead in `InventorySetupPanel.jsx:23` (fixed dropdown, position:fixed). L2: `isDuplicate` guard `InventorySetupPanel.jsx:146`. L3: dup skip `IngredientBulkEditor.jsx:192`. **L1B: Edit form typeahead + Save disable `InventorySetupPanel.jsx:412` + `isEditDuplicate` L96. L4: BulkEditor name cell `IngredientBulkEditor.jsx:406`. Shared component extracted to `IngredientNameCombobox.jsx`. 2026-08-15** |
 | BUG-314 | Inventory Setup Promise.allSettled | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `InventorySetupPanel.jsx:42`. Backend 404→200 also fixed. // BUG-314 |
 | BUG-320 | Sub-Recipe Stock physical_qty extra key | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `SubRecipeStockPanel.jsx:94` + `inventoryTransform.js:227`. // BUG-320 |
 

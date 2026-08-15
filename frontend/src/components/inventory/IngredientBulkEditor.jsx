@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 import * as inventoryService from '@/api/services/inventoryService';
+import IngredientNameCombobox from './IngredientNameCombobox'; // BUG-311 Layer 4: typeahead for bulk edit name cell
 // Build row from API ingredient — track original for dirty detection
 function buildRow(ing) {
   return {
@@ -399,10 +400,16 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
                           checked={selected.has(row._key)} onChange={() => toggleSelect(row._key)} />
                       </td>
                       <td className={cellCls}>
-                        <input ref={isNew && !row.name ? newNameRef : undefined}
-                          className={isNew ? newInputCls : inputCls(row.name !== row._originalName)}
-                          value={row.name} onChange={e => updateRow(row._key, 'name', e.target.value)}
-                          placeholder={isNew ? 'New ingredient name...' : ''} data-testid={`bulk-name-${row._key}`} />
+                        {/* BUG-311 Layer 4: typeahead combobox — position:fixed escapes overflow-x/y-auto container */}
+                        {/* excludeId: null for new rows (no self-match); row._id for existing (avoid self on rename) */}
+                        {/* autoFocus on inner <Input> replaces newNameRef.focus() for new-row auto-focus */}
+                        <IngredientNameCombobox
+                          value={row.name}
+                          onChange={v => updateRow(row._key, 'name', v)}
+                          existingIngredients={allItems}
+                          excludeId={row._isNew ? null : row._id}
+                          testId={`bulk-name-${row._key}`}
+                        />
                       </td>
                       <td className={cellCls}>
                         <select className={isNew ? newSelectCls : selectCls(row.categoryId !== row._originalCategoryId)}

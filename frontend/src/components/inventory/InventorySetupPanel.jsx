@@ -1,6 +1,6 @@
 // CR-072: Inventory Setup Panel — 3 tabs: Ingredients / Vendors / Wastage Reasons
 // CR-086 F4: +IngredientBulkEditor toggle
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'; // BUG-311 Layer 1: +useRef for fixed dropdown
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Plus, Pencil, Trash2, Download, Upload, Package, Loader2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import * as inventoryService from '@/api/services/inventoryService';
 import VendorFormDialog from './VendorFormDialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'; // BUG-218
 import IngredientBulkEditor from './IngredientBulkEditor'; // CR-086 F4
+import IngredientNameCombobox from './IngredientNameCombobox'; // BUG-311 Layer 1B/L4: shared typeahead combobox
 
 // ── Ingredients Tab ──────────────────────────────────────────────
 // BUG-269-B: Auto-select small unit when base unit changes
@@ -17,77 +18,6 @@ const UNIT_SMALL_MAP = { kg: 'gm', ltr: 'ml', litre: 'ml' };
 const AUTO_CONV_UNITS = new Set(['kg', 'ltr', 'litre']); // BUG-275: backend handles conversion (1000)
 const NO_CONV_UNITS = new Set(['gm', 'ml']); // BUG-275: already small, no conversion
 
-// BUG-311 Layer 1: typeahead warning combobox for ingredient name
-// Shows existing matches as amber warnings; exact match blocks Save
-// Uses position:fixed + getBoundingClientRect to escape overflow-hidden/overflow-x-auto ancestors
-function IngredientNameCombobox({ value, onChange, existingIngredients, testId }) {
-  const inputRef = useRef(null);
-  const [open, setOpen] = useState(false);
-  const [dropPos, setDropPos] = useState({ top: 0, left: 0, width: 0 });
-
-  const trimmed = (value || '').trim().toLowerCase();
-
-  const filtered = useMemo(() =>
-    trimmed.length > 0
-      ? existingIngredients.filter(i => i.name.toLowerCase().includes(trimmed))
-      : [],
-    [existingIngredients, trimmed]
-  );
-
-  const exactMatch = trimmed.length > 0 &&
-    existingIngredients.some(i => i.name.trim().toLowerCase() === trimmed);
-
-  const openDrop = () => {
-    if (!inputRef.current || trimmed.length === 0) return;
-    const rect = inputRef.current.getBoundingClientRect();
-    setDropPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
-    setOpen(true);
-  };
-
-  return (
-    <div className="relative">
-      <Input
-        ref={inputRef}
-        value={value}
-        onChange={e => { onChange(e.target.value); if (e.target.value.trim()) openDrop(); else setOpen(false); }}
-        onFocus={openDrop}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        placeholder="Ingredient name..."
-        className={`h-8 text-sm ${exactMatch ? 'border-amber-400 bg-amber-50' : ''}`}
-        autoFocus
-        data-testid={testId}
-      />
-      {open && filtered.length > 0 && (
-        <div
-          className="bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden"
-          style={{ position: 'fixed', top: dropPos.top, left: dropPos.left, width: dropPos.width, zIndex: 9999, maxHeight: 192, overflowY: 'auto' }}>
-          <div className="px-2 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-slate-50">
-            Existing ingredients
-          </div>
-          {filtered.map(ing => {
-            const isExact = ing.name.trim().toLowerCase() === trimmed;
-            return (
-              <div key={ing.id}
-                className={`px-3 py-2 text-sm flex items-center justify-between cursor-default
-                  ${isExact ? 'bg-amber-50 text-amber-800' : 'text-slate-700 hover:bg-slate-50'}`}
-                data-testid={`ingredient-suggestion-${ing.id}`}>
-                <span className="font-medium">{ing.name}</span>
-                <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                  {ing.categoryName && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-50 text-orange-600">{ing.categoryName}</span>
-                  )}
-                  {isExact && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">Already exists</span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function IngredientsTab() {
   const [ingredients, setIngredients] = useState([]);
@@ -160,6 +90,16 @@ function IngredientsTab() {
     newIng.name.trim().length > 0 &&
     ingredients.some(i => i.name.trim().toLowerCase() === newIng.name.trim().toLowerCase()),
     [newIng.name, ingredients]
+  );
+
+  // BUG-311 Layer 1B: exact duplicate check for Edit form — self-exclusion via editingId
+  const isEditDuplicate = useMemo(() =>
+    editIng.name.trim().length > 0 && editingId !== null &&
+    ingredients.some(i =>
+      i.name.trim().toLowerCase() === editIng.name.trim().toLowerCase() &&
+      i.id !== editingId
+    ),
+    [editIng.name, ingredients, editingId]
   );
 
   const addCategory = async () => {
@@ -468,8 +408,14 @@ function IngredientsTab() {
                   // BUG-212 A: Inline edit row (blue-bordered, same pattern as VendorFormRow)
                   <tr key={ing.id} className="border-b-2 border-blue-300 bg-blue-50/40" data-testid={`ingredient-edit-row-${ing.id}`}>
                     <td className="py-2 px-4">
-                      <Input value={editIng.name} onChange={e => setEditIng(p => ({ ...p, name: e.target.value }))}
-                        className="h-8 text-sm" autoFocus data-testid="edit-ingredient-name" />
+                      {/* BUG-311 Layer 1B: typeahead combobox for edit form — excludes self via editingId */}
+                      <IngredientNameCombobox
+                        value={editIng.name}
+                        onChange={v => setEditIng(p => ({ ...p, name: v }))}
+                        existingIngredients={ingredients}
+                        excludeId={editingId}
+                        testId="edit-ingredient-name"
+                      />
                     </td>
                     <td className="py-2 px-4 text-center">
                       <select className="h-8 text-xs border border-slate-200 rounded-md px-2 w-full outline-none"
@@ -520,7 +466,10 @@ function IngredientsTab() {
                           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                         <div className="flex items-center justify-center gap-1">
-                          <Button size="sm" variant="outline" onClick={saveEdit} className="h-7 px-2 text-xs text-blue-700 border-blue-300" data-testid="save-edit-ingredient">Save</Button>
+                          <Button size="sm" variant="outline" onClick={saveEdit}
+                            disabled={isEditDuplicate}
+                            className={`h-7 px-2 text-xs text-blue-700 border-blue-300 ${isEditDuplicate ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            data-testid="save-edit-ingredient">Save</Button>{/* BUG-311 Layer 1B: disabled on exact duplicate */}
                           <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7 px-2 text-xs">Cancel</Button>
                         </div>
                       </div>

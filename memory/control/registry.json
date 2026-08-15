@@ -19000,7 +19000,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "IMPLEMENTED \u2014 QA pending (Gate 5a)",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Ingredients > Add Form + Bulk Edit",
@@ -19034,9 +19034,13 @@
         {
           "path": "memory/plans/BUG-311-LAYER1B-L4_AMENDMENT_IMPLEMENTATION_PLAN.md",
           "type": "implementation_plan_layer1b_l4"
+        },
+        {
+          "path": "components/inventory/IngredientNameCombobox.jsx",
+          "type": "implementation_shared_component"
         }
       ],
-      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO."
+      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15."
     },
     {
       "id": "BUG-312",
