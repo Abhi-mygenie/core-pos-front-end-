@@ -101,3 +101,51 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "QA Gate 5b — BUG-323 + BUG-324 Verification in BulkEditor.jsx"
+
+frontend:
+  - task: "BUG-323: Fix false-dirty state in Aggregator BulkEditor (categoryId=0 handling)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "VERIFIED in Normal mode. Line 324 fix confirmed: categoryId dirty check now uses Number(o.categoryId ?? 0) !== Number(row.categoryId ?? 0) preventing false-dirty on categoryId=0. Initial load shows 'No Changes' (0 dirty rows). Editing Tax Type GST→VAT correctly marks row dirty. LIMITATION: Cannot test Aggregator mode specifically as restaurant account only has 'Normal' menu type configured (no Aggregator in menu-master API response)."
+  
+  - task: "BUG-324: Fix stale isRowDirty closure (missing menuType in deps)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "CANNOT VERIFY. Line 372 fix confirmed in code: isRowDirty useCallback now includes menuType in dependency array. However, testing requires Aggregator menu type to verify Swiggy/Zomato column edits mark rows dirty. Restaurant account (owner@thegoankitchen.com) only has 'Normal' menu type available. Aggregator menu type not configured in backend menu-master. Code review shows fix is correct, but functional verification blocked by environment limitation."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+  test_date: "2026-08-15"
+  test_environment: "https://react-pos-frontend-11.preview.emergentagent.com"
+
+test_plan:
+  current_focus:
+    - "BUG-323: categoryId dirty detection"
+    - "BUG-324: Swiggy/Zomato dirty detection"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+  notes: "Aggregator menu type not available in test environment. BUG-324 requires restaurant with Aggregator configuration."
+
+agent_communication:
+  - agent: "testing"
+    message: "Testing completed for BUG-323 and BUG-324. BUG-323 verified working in Normal mode. BUG-324 code fix confirmed but cannot functionally test without Aggregator menu type. Restaurant account only has Normal menu type configured. To fully test BUG-324, need restaurant account with Aggregator menu type in menu-master API or backend configuration to enable Aggregator for this restaurant."

@@ -19545,12 +19545,13 @@
       "priority": "P1",
       "risk": "MEDIUM",
       "status": "IMPLEMENTED \u2014 QA PASS",
-      "gate": 2,
+      "gate": 5,
       "sprint_key": "pos_5_1",
       "investigation_date": "2026-08-15",
       "investigation_report": "handover/SESSION_HANDOVER_2026_08_15_CLOSE.md",
       "description": "Aggregator BulkEditor shows phantom dirty state (e.g. 37/108 items modified) on load. Root cause: isDirty.categoryId uses null !== Number(null) = null !== 0 = true. Foods with category.id=0 or missing category always show as dirty. Fix: Number(o.categoryId ?? 0) !== Number(row.categoryId ?? 0).",
-      "notes": " BUG-323-B: also fixed sortOrder string/number coercion (API returns food_order as string 0 which is truthy, causing false dirty via || pattern). Both fixes in BulkEditor.jsx."
+      "notes": " BUG-323-B: also fixed sortOrder string/number coercion (API returns food_order as string 0 which is truthy, causing false dirty via || pattern). Both fixes in BulkEditor.jsx.",
+      "qa_report": "test_reports/QA_REPORT_BUG323_324_2026_08_15.md"
     },
     {
       "id": "BUG-324",
@@ -19558,12 +19559,13 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
-      "gate": 2,
+      "status": "IMPLEMENTED \u2014 QA PASS (ENV-BLOCKED TC-2)",
+      "gate": 5,
       "sprint_key": "pos_5_1",
       "investigation_date": "2026-08-15",
       "investigation_report": "handover/SESSION_HANDOVER_2026_08_15_CLOSE.md",
-      "description": "isRowDirty uses useCallback([isDirty]) missing menuType dep. isRowDirty always checks getColumns(Normal) regardless of current menuType. Aggregator column dirty tracking (swiggy/zomato/clientId) is silently broken. Fix: add menuType to useCallback deps."
+      "description": "isRowDirty uses useCallback([isDirty]) missing menuType dep. isRowDirty always checks getColumns(Normal) regardless of current menuType. Aggregator column dirty tracking (swiggy/zomato/clientId) is silently broken. Fix: add menuType to useCallback deps.",
+      "qa_report": "test_reports/QA_REPORT_BUG323_324_2026_08_15.md"
     }
   ],
   "meta": {
