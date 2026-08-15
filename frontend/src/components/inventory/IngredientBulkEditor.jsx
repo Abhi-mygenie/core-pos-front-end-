@@ -98,6 +98,21 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
   const dirtyCount = useMemo(() => rows.filter(r => (!r._deleted && isDirty(r)) || (r._deleted && r._id)).length, [rows]); // BUG-274: include pending deletes
   const catMap = useMemo(() => new Map(categories.map(c => [c.id, c.name])), [categories]);
 
+  // BUG-311 Layer 5: proactive duplicate check — disables Save before user clicks
+  // Covers: new row vs DB (Case A), edited row vs DB excl. self (Case B), cross-row same name (Cases C+D)
+  const hasDuplicateInDirty = useMemo(() => {
+    const dirtyRows = rows.filter(r => !r._deleted && isDirty(r));
+    if (dirtyRows.length === 0) return false;
+    for (const r of dirtyRows) {
+      const name = (r.name || '').trim().toLowerCase();
+      if (!name) continue;
+      if (r._isNew && allItems.some(i => i.name.trim().toLowerCase() === name)) return true;
+      if (!r._isNew && allItems.some(i => i.name.trim().toLowerCase() === name && i.id !== r._id)) return true;
+      if (dirtyRows.some(o => o._key !== r._key && (o.name || '').trim().toLowerCase() === name)) return true;
+    }
+    return false;
+  }, [rows, allItems]);
+
   // ── Row mutations ──────────────────────────────────────────
   const updateRow = useCallback((key, field, value) => {
     setRows(prev => prev.map(r => r._key === key ? { ...r, [field]: value } : r));
@@ -202,6 +217,14 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
           }
           await inventoryService.addIngredient(r);
         } else {
+          // BUG-311 L5b: defence-in-depth guard for edited rows (primary guard is hasDuplicateInDirty)
+          const editDupName = (r.name || '').trim().toLowerCase();
+          const editDup = allItems.some(i => i.name.trim().toLowerCase() === editDupName && i.id !== r._id);
+          if (editDup) {
+            setRows(prev => prev.map(x => x._key === r._key
+              ? { ...x, _saving: false, _saveError: `"${r.name}" already exists` } : x));
+            fail++; continue;
+          }
           await inventoryService.updateIngredient(r._id, r);
         }
         setRows(prev => prev.map(x => x._key === r._key ? { ...x, _saving: false, _saveOk: true } : x));
@@ -320,7 +343,7 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
           <Plus className="w-3.5 h-3.5" /> Add Item
         </Button>
         <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white gap-1.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleSave} disabled={saving || dirtyCount === 0} data-testid="bulk-save">
+            onClick={handleSave} disabled={saving || dirtyCount === 0 || hasDuplicateInDirty} data-testid="bulk-save">{/* BUG-311 L5: block on duplicate names */}
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
             {dirtyCount > 0 ? `Save ${dirtyCount} Change${dirtyCount > 1 ? 's' : ''}` : 'Save Changes'}
           </Button>
@@ -493,7 +516,7 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
           <button className={`text-xs px-3 py-1.5 rounded transition-colors ${dirtyCount > 0 ? 'text-slate-500 hover:text-slate-700 hover:bg-slate-100' : 'text-slate-300 cursor-not-allowed'}`}
               onClick={handleReset} disabled={dirtyCount === 0} data-testid="bulk-reset">Reset All</button>
           <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleSave} disabled={saving || dirtyCount === 0} data-testid="bulk-save-footer">
+              onClick={handleSave} disabled={saving || dirtyCount === 0 || hasDuplicateInDirty} data-testid="bulk-save-footer">{/* BUG-311 L5: block on duplicate names */}
               {dirtyCount > 0 ? `Save ${dirtyCount} Change${dirtyCount > 1 ? 's' : ''}` : 'Save Changes'}
             </Button>
         </div>

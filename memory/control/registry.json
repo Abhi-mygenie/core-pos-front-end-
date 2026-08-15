@@ -19048,7 +19048,7 @@
           "type": "implementation_plan_layer5"
         }
       ],
-      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15."
+      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15. | Layer 5 (bulk save disable on dup) + L5b (handleSave edited guard): IMPLEMENTED 2026-08-15."
     },
     {
       "id": "BUG-312",
