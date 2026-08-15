@@ -19566,6 +19566,26 @@
       "investigation_report": "handover/SESSION_HANDOVER_2026_08_15_CLOSE.md",
       "description": "isRowDirty uses useCallback([isDirty]) missing menuType dep. isRowDirty always checks getColumns(Normal) regardless of current menuType. Aggregator column dirty tracking (swiggy/zomato/clientId) is silently broken. Fix: add menuType to useCallback deps.",
       "qa_report": "test_reports/QA_REPORT_BUG323_324_2026_08_15.md"
+    },
+    {
+      "id": "GAP-BULK-DEFAULTS",
+      "title": "BulkEditor: addons/variations columns hidden by default (should be tier 1/2)",
+      "type": "GAP",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "IMPLEMENTED \u2014 QA pending",
+      "gate": "5a",
+      "sprint_key": "pos_5_1",
+      "area": "Menu Management > BulkEditor > Column Picker",
+      "registered": "2026-08-15",
+      "description": "addons (CR-145) and variations columns were tier 2/3 \u2014 hidden behind Columns picker by default. Owner confirmed: both should be visible by default. Fix: addons tier 2\u21921, variations tier 3\u21922 in BASE_COLUMNS.",
+      "artifact_refs": [
+        {
+          "path": "components/panels/menu/BulkEditor.jsx",
+          "type": "implementation",
+          "lines": "55-57"
+        }
+      ]
     }
   ],
   "meta": {

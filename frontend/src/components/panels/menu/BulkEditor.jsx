@@ -52,8 +52,9 @@ const BASE_COLUMNS = [
   { key: "isDisabled",       label: "Hidden from POS",  type: "yesno",    width: 120, tier: 2 },
   { key: "taxCalc",          label: "Tax Calc",         type: "dropdown", width: 100, tier: 2 },
   // CR-145: nested array columns — rendered as chips + sub-row
-  { key: "addons",           label: "Add-ons",          type: "addon_expand", width: 110, tier: 2 },
-  { key: "variations",       label: "Variations",       type: "var_expand",   width: 110, tier: 3 },
+  // GAP-BULK-DEFAULTS: promoted to tier 1 so both columns are visible by default in the Editing bar
+  { key: "addons",           label: "Add-ons",          type: "addon_expand", width: 110, tier: 1 },
+  { key: "variations",       label: "Variations",       type: "var_expand",   width: 110, tier: 2 },
   // Tier 3
   { key: "prepTimeMin",      label: "Prep Time",        type: "number",   width: 85,  tier: 3 },
   { key: "serveTimeMin",     label: "Serve Time",       type: "number",   width: 90,  tier: 3 },
