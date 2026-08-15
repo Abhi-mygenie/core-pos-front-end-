@@ -19026,8 +19026,17 @@
         {
           "path": "components/inventory/InventorySetupPanel.jsx",
           "type": "implementation_layer1"
+        },
+        {
+          "path": "memory/impact/BUG-311-LAYER1B-L4_AMENDMENT_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis_layer1b_l4"
+        },
+        {
+          "path": "memory/plans/BUG-311-LAYER1B-L4_AMENDMENT_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan_layer1b_l4"
         }
-      ]
+      ],
+      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO."
     },
     {
       "id": "BUG-312",
