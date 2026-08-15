@@ -19594,7 +19594,7 @@
       "type": "GAP",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED \u2014 QA pending",
+      "status": "IMPLEMENTED \u2014 QA pending (Gate 5a)",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Menu Management > BulkEditor > Column Picker",
@@ -19605,8 +19605,13 @@
           "path": "components/panels/menu/BulkEditor.jsx",
           "type": "implementation",
           "lines": "55-57"
+        },
+        {
+          "path": "memory/investigation/GAP-BULK-DEFAULTS_ADDON_VAR_DISPLAY_INVESTIGATION.md",
+          "type": "investigation"
         }
-      ]
+      ],
+      "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block."
     }
   ],
   "meta": {

@@ -1182,48 +1182,50 @@ const CellRenderer = React.memo(function CellRenderer({ col, row, updateCell, ca
         {(clientOptions || []).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>;
     }
-    // CR-145: food thumbnail
-    if (col.type === 'image') {
-      return row.productImage ? (
-        <img src={row.productImage} alt="" loading="lazy"
-          style={{ width:36, height:36, borderRadius:6, objectFit:'cover',
-                   border:'1px solid #e2e8f0', display:'block' }} />
-      ) : (
-        <div style={{ width:36, height:36, borderRadius:6, background:'#f1f5f9',
-                      border:'1px solid #e2e8f0' }} />
-      );
-    }
-    // CR-145: addon chip
-    if (col.type === 'addon_expand') {
-      const count = (row.addonIds || []).length;
-      return (
-        <span data-testid={`addon-chip-${row._id}`}
-          onClick={() => toggleExpand(row._id, 'addon')}
-          style={{ display:'inline-flex', alignItems:'center', cursor:'pointer', gap:4,
-                   background: dirty ? '#fef9c3' : count > 0 ? '#eff6ff' : '#f8fafc',
-                   color: dirty ? '#a16207' : count > 0 ? '#3b82f6' : '#94a3b8',
-                   border:`1px solid ${dirty ? '#fde047' : count > 0 ? '#bfdbfe' : '#e2e8f0'}`,
-                   borderRadius:12, padding:'3px 10px', fontSize:11.5, whiteSpace:'nowrap' }}>
-          {count > 0 ? `${count} add-on${count!==1?'s':''} ▾` : 'None'}
-        </span>
-      );
-    }
-    // CR-145: variation chip
-    if (col.type === 'var_expand') {
-      const count = (row.variations || []).length;
-      return (
-        <span data-testid={`var-chip-${row._id}`}
-          onClick={() => count > 0 && toggleExpand(row._id, 'variation')}
-          style={{ display:'inline-flex', alignItems:'center', gap:4,
-                   cursor: count > 0 ? 'pointer' : 'default',
-                   background: count > 0 ? '#fdf4ff' : '#f8fafc',
-                   color: count > 0 ? '#9333ea' : '#94a3b8',
-                   border:`1px solid ${count > 0 ? '#e9d5ff' : '#e2e8f0'}`,
-                   borderRadius:12, padding:'3px 10px', fontSize:11.5, whiteSpace:'nowrap' }}>
-          {count > 0 ? `${count} group${count!==1?'s':''} ▾` : 'None'}
-        </span>
-      );
-    }
+  }
+  // CR-145 / GAP-BULK-DEFAULTS fix: image, addon_expand, var_expand moved to top-level
+  // These were incorrectly nested inside if (col.type === "dropdown") — making them unreachable.
+  // Fix: close the dropdown block after clientId, place these at CellRenderer top-level.
+  if (col.type === 'image') {
+    return row.productImage ? (
+      <img src={row.productImage} alt="" loading="lazy"
+        style={{ width:36, height:36, borderRadius:6, objectFit:'cover',
+                 border:'1px solid #e2e8f0', display:'block' }} />
+    ) : (
+      <div style={{ width:36, height:36, borderRadius:6, background:'#f1f5f9',
+                    border:'1px solid #e2e8f0' }} />
+    );
+  }
+  // CR-145: addon chip
+  if (col.type === 'addon_expand') {
+    const count = (row.addonIds || []).length;
+    return (
+      <span data-testid={`addon-chip-${row._id}`}
+        onClick={() => toggleExpand(row._id, 'addon')}
+        style={{ display:'inline-flex', alignItems:'center', cursor:'pointer', gap:4,
+                 background: dirty ? '#fef9c3' : count > 0 ? '#eff6ff' : '#f8fafc',
+                 color: dirty ? '#a16207' : count > 0 ? '#3b82f6' : '#94a3b8',
+                 border:`1px solid ${dirty ? '#fde047' : count > 0 ? '#bfdbfe' : '#e2e8f0'}`,
+                 borderRadius:12, padding:'3px 10px', fontSize:11.5, whiteSpace:'nowrap' }}>
+        {count > 0 ? `${count} add-on${count!==1?'s':''}` + ' ▾' : 'None'}
+      </span>
+    );
+  }
+  // CR-145: variation chip
+  if (col.type === 'var_expand') {
+    const count = (row.variations || []).length;
+    return (
+      <span data-testid={`var-chip-${row._id}`}
+        onClick={() => count > 0 && toggleExpand(row._id, 'variation')}
+        style={{ display:'inline-flex', alignItems:'center', gap:4,
+                 cursor: count > 0 ? 'pointer' : 'default',
+                 background: count > 0 ? '#fdf4ff' : '#f8fafc',
+                 color: count > 0 ? '#9333ea' : '#94a3b8',
+                 border:`1px solid ${count > 0 ? '#e9d5ff' : '#e2e8f0'}`,
+                 borderRadius:12, padding:'3px 10px', fontSize:11.5, whiteSpace:'nowrap' }}>
+        {count > 0 ? `${count} group${count!==1?'s':''}` + ' ▾' : 'None'}
+      </span>
+    );
   }
   return <span className="text-xs" style={{ color: COLORS.grayText }}>—</span>;
 });

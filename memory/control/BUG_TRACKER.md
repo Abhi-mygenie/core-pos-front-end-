@@ -831,3 +831,8 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 |---|---|---|
 | **BUG-312** | **IMPLEMENTED** via CR-139 Phase A | `inventoryTransform.js`: +`isSubRecipe`+`subrecipeId` to `fromAPI.ingredients()` |
 | **BUG-313** | **IMPLEMENTED** via CR-139 Phases B1-B4 | `purchasePlanner.js` dual G9, `AutoShoppingList.jsx` filter, `PurchaseEntryPanel.jsx` dropdown filter, `SmartPurchasePanel.jsx` comment marker |
+
+### GAP-BULK-DEFAULTS CellRenderer Fix (2026-08-15)
+| ID | Status | Notes |
+|---|---|---|
+| **GAP-BULK-DEFAULTS** | **IMPLEMENTED** | `BulkEditor.jsx`: `addon_expand`/`var_expand`/`image` CellRenderer handlers moved to top-level from inside `dropdown` block (were structurally unreachable). Cells now render chips/thumbnails instead of `—`. |

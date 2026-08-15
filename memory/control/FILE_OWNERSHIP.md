@@ -882,3 +882,4 @@
 | File | Change | CR/BUG |
 |------|--------|--------|
 | `components/panels/menu/BulkEditor.jsx` | L324: `categoryId` isDirty — `Number(o.categoryId ?? 0)` null-safe coercion. L372: `isRowDirty` useCallback — added `menuType` to deps array. | BUG-323, BUG-324 |
+| `components/panels/menu/BulkEditor.jsx` | GAP-BULK-DEFAULTS fix: CellRenderer `image`/`addon_expand`/`var_expand` handlers moved to top-level (L1189-L1229). Were nested inside `dropdown` if-block (L1131), making them structurally unreachable. Cells now render chips/thumbnails correctly. | GAP-BULK-DEFAULTS 2026-08-15 |

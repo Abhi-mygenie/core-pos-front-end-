@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "QA Gate 5b — BUG-323 + BUG-324 Verification in BulkEditor.jsx"
+user_problem_statement: "GAP-BULK-DEFAULTS: Add-ons & Variations Chips in BulkEditor — Verification"
 
 frontend:
   - task: "BUG-323: Fix false-dirty state in Aggregator BulkEditor (categoryId=0 handling)"
@@ -128,24 +128,38 @@ frontend:
       - working: "NA"
         agent: "testing"
         comment: "CANNOT VERIFY. Line 372 fix confirmed in code: isRowDirty useCallback now includes menuType in dependency array. However, testing requires Aggregator menu type to verify Swiggy/Zomato column edits mark rows dirty. Restaurant account (owner@thegoankitchen.com) only has 'Normal' menu type available. Aggregator menu type not configured in backend menu-master. Code review shows fix is correct, but functional verification blocked by environment limitation."
+  
+  - task: "GAP-BULK-DEFAULTS: Fix ADD-ONS, VARIATIONS, and Image columns rendering"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL BLOCKER: Cannot verify fix due to Menu Management page navigation failure. CODE REVIEW CONFIRMS FIX IS CORRECT (lines 1186-1229): image, addon_expand, and var_expand renderers moved to top-level outside dropdown block. However, CANNOT ACCESS BULK EDITOR UI to verify chips render correctly. After login, application remains on Orders page ('No active orders'). Multiple navigation attempts failed: (1) clicking sidebar items, (2) direct URL navigation to /#/menu, (3) clicking 'Menu Management' text. MenuManagementPage component exists and is routed in App.js line 210, but content does not render. This is a CRITICAL ROUTING/RENDERING ISSUE blocking all Bulk Editor testing. All 5 test cases (TC-1 through TC-5) cannot be executed."
 
 metadata:
   created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
+  version: "1.1"
+  test_sequence: 2
   run_ui: true
   test_date: "2026-08-15"
   test_environment: "https://react-pos-frontend-11.preview.emergentagent.com"
 
 test_plan:
   current_focus:
-    - "BUG-323: categoryId dirty detection"
-    - "BUG-324: Swiggy/Zomato dirty detection"
-  stuck_tasks: []
+    - "GAP-BULK-DEFAULTS: Verify chips render in Bulk Editor"
+  stuck_tasks:
+    - "GAP-BULK-DEFAULTS: Fix ADD-ONS, VARIATIONS, and Image columns rendering"
   test_all: false
   test_priority: "high_first"
-  notes: "Aggregator menu type not available in test environment. BUG-324 requires restaurant with Aggregator configuration."
+  notes: "CRITICAL: Menu Management page is completely inaccessible. Navigation to /menu route fails to render page content. This blocks all Bulk Editor testing."
 
 agent_communication:
   - agent: "testing"
     message: "Testing completed for BUG-323 and BUG-324. BUG-323 verified working in Normal mode. BUG-324 code fix confirmed but cannot functionally test without Aggregator menu type. Restaurant account only has Normal menu type configured. To fully test BUG-324, need restaurant account with Aggregator menu type in menu-master API or backend configuration to enable Aggregator for this restaurant."
+  - agent: "testing"
+    message: "CRITICAL ISSUE: GAP-BULK-DEFAULTS bug fix cannot be verified. Menu Management page is completely inaccessible in the deployed application. After login with owner@thegoankitchen.com, the app shows Orders page and all navigation attempts to Menu Management fail. Tried: (1) clicking sidebar buttons, (2) direct URL /#/menu, (3) clicking 'Menu Management' text. The MenuManagementPage component exists (src/pages/MenuManagementPage.jsx) and is correctly routed (App.js line 210: path='/menu'), but the page content does not render. The code fix in BulkEditor.jsx is CORRECT (lines 1186-1229 show image/addon_expand/var_expand moved to top-level), but UI verification is BLOCKED by this critical routing issue. MAIN AGENT MUST FIX NAVIGATION BEFORE TESTING CAN PROCEED."
