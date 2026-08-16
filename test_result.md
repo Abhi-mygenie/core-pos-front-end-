@@ -131,35 +131,39 @@ frontend:
   
   - task: "GAP-BULK-DEFAULTS: Fix ADD-ONS, VARIATIONS, and Image columns rendering"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "CRITICAL BLOCKER: Cannot verify fix due to Menu Management page navigation failure. CODE REVIEW CONFIRMS FIX IS CORRECT (lines 1186-1229): image, addon_expand, and var_expand renderers moved to top-level outside dropdown block. However, CANNOT ACCESS BULK EDITOR UI to verify chips render correctly. After login, application remains on Orders page ('No active orders'). Multiple navigation attempts failed: (1) clicking sidebar items, (2) direct URL navigation to /#/menu, (3) clicking 'Menu Management' text. MenuManagementPage component exists and is routed in App.js line 210, but content does not render. This is a CRITICAL ROUTING/RENDERING ISSUE blocking all Bulk Editor testing. All 5 test cases (TC-1 through TC-5) cannot be executed."
+      - working: true
+        agent: "testing"
+        comment: "✅ BOTH BUG FIXES VERIFIED SUCCESSFULLY. BUG-A (Variations visible by default): PASS - Both 'Add-ons' AND 'Variations' chips are visible in the editing bar at the top of Bulk Editor WITHOUT opening Columns picker. Previously only Add-ons was visible. Fix confirmed: variations column moved from tier 2 to tier 1 (line 57). BUG-B (Variation pills show text): PASS - Clicked '1 group ▾' chip in VARIATIONS column, expand panel opened showing variation group 'CHOOSE SUBJECT ONE' with pills displaying text labels: 'finger ₹10', 'toe ₹20', 'nails ₹30'. Pills are NOT blank. Fix confirmed: VariationExpandPanel.jsx line 41 uses val.name and val.price (not wrong field names). Additional verification: ADD-ONS column shows chips like 'None' or '2 add-ons ▾' (not dashes), VARIATIONS column shows chips like 'None' or '1 group ▾' (not dashes). Navigation issue from previous test is now resolved - Menu Management page accessible and Bulk Editor opens correctly."
 
 metadata:
   created_by: "testing_agent"
-  version: "1.1"
-  test_sequence: 2
+  version: "1.2"
+  test_sequence: 3
   run_ui: true
-  test_date: "2026-08-15"
+  test_date: "2026-08-16"
   test_environment: "https://react-pos-frontend-11.preview.emergentagent.com"
 
 test_plan:
   current_focus:
-    - "GAP-BULK-DEFAULTS: Verify chips render in Bulk Editor"
-  stuck_tasks:
-    - "GAP-BULK-DEFAULTS: Fix ADD-ONS, VARIATIONS, and Image columns rendering"
+    - "All bug fixes verified and working"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
-  notes: "CRITICAL: Menu Management page is completely inaccessible. Navigation to /menu route fails to render page content. This blocks all Bulk Editor testing."
+  notes: "All three bug fixes (BUG-323, BUG-324, GAP-BULK-DEFAULTS) have been tested. BUG-323 verified working. BUG-324 code fix confirmed but cannot functionally test without Aggregator menu type. GAP-BULK-DEFAULTS (BUG-A and BUG-B) both verified working successfully."
 
 agent_communication:
   - agent: "testing"
     message: "Testing completed for BUG-323 and BUG-324. BUG-323 verified working in Normal mode. BUG-324 code fix confirmed but cannot functionally test without Aggregator menu type. Restaurant account only has Normal menu type configured. To fully test BUG-324, need restaurant account with Aggregator menu type in menu-master API or backend configuration to enable Aggregator for this restaurant."
   - agent: "testing"
     message: "CRITICAL ISSUE: GAP-BULK-DEFAULTS bug fix cannot be verified. Menu Management page is completely inaccessible in the deployed application. After login with owner@thegoankitchen.com, the app shows Orders page and all navigation attempts to Menu Management fail. Tried: (1) clicking sidebar buttons, (2) direct URL /#/menu, (3) clicking 'Menu Management' text. The MenuManagementPage component exists (src/pages/MenuManagementPage.jsx) and is correctly routed (App.js line 210: path='/menu'), but the page content does not render. The code fix in BulkEditor.jsx is CORRECT (lines 1186-1229 show image/addon_expand/var_expand moved to top-level), but UI verification is BLOCKED by this critical routing issue. MAIN AGENT MUST FIX NAVIGATION BEFORE TESTING CAN PROCEED."
+  - agent: "testing"
+    message: "✅ VERIFICATION COMPLETE - ALL BUG FIXES WORKING. Previous navigation issue resolved. Successfully accessed Menu Management → Bulk Editor. BUG-A VERIFIED: Both 'Add-ons' AND 'Variations' chips visible in editing bar by default (tier 1 promotion working). BUG-B VERIFIED: Variation expand panel shows pills with text labels 'finger ₹10', 'toe ₹20', 'nails ₹30' (not blank - val.name/val.price fix working). Both ADD-ONS and VARIATIONS columns show chips (not dashes). All requested verifications PASS. No action items for main agent - bug fixes are complete and functional."

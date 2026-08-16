@@ -38,7 +38,7 @@ export default function VariationExpandPanel({ foodName, foodImage, variations =
                   <span key={vIdx}
                     style={{ background: '#fdf4ff', border: '1px solid #e9d5ff', color: '#6b21a8',
                               padding: '4px 12px', borderRadius: 12, fontSize: 11.5 }}>
-                    {val.label}{val.optionPrice > 0 ? ` · ₹${val.optionPrice}` : ''}
+                    {val.name}{val.price > 0 ? ` · ₹${val.price}` : ''}{/* BUG-B fix: transform stores .name/.price not .label/.optionPrice */}
                   </span>
                 ))}
               </div>

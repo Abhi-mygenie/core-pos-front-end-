@@ -19611,7 +19611,7 @@
           "type": "investigation"
         }
       ],
-      "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block."
+      "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block. | BUG-A: variations tier 2\u21921. BUG-B: VariationExpandPanel val.name/val.price fix. Both 2026-08-16."
     }
   ],
   "meta": {
