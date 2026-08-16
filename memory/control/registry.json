@@ -19612,6 +19612,33 @@
         }
       ],
       "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block. | BUG-A: variations tier 2\u21921. BUG-B: VariationExpandPanel val.name/val.price fix. Both 2026-08-16. | G1/G3/G4 stock toggle optimistic update + IST fix + status-dependent display. 2026-08-16."
+    },
+    {
+      "id": "CR-146",
+      "title": "Aggregator Menu: Client/Branch Selector Dropdown",
+      "type": "CR",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "GATE 3",
+      "gate": 3,
+      "sprint_key": "pos_5_1",
+      "area": "Menu Management > Header > Aggregator mode",
+      "registered": "2026-08-16",
+      "description": "Add a branch/client selector dropdown beside the Aggregator menu type dropdown. Allows owner to view only Main Branch foods (clientId=0) or a specific sub-brand's foods. Filtering is frontend-only (API returns all, client_id filter param not supported). Main Branch must be manually prepended (not in restaurant-clients API response).",
+      "artifact_refs": [
+        {
+          "path": "memory/investigation/CR140_CR141_CLIENT_DROPDOWN_STOCK_INV_2026_08_16.md",
+          "type": "investigation"
+        },
+        {
+          "path": "memory/impact/CR-146_CLIENT_DROPDOWN_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
+        },
+        {
+          "path": "memory/plans/CR-146_CLIENT_DROPDOWN_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan"
+        }
+      ]
     }
   ],
   "meta": {
