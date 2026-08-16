@@ -327,9 +327,9 @@ const ProductCard = ({
               <>
                 <ChannelChip label="Swiggy" active={product.swiggy} />
                 <ChannelChip label="Zomato" active={product.zomato} />
-                {product.foodStock === 0 && (
+                {!product.isActive && ( // G4: status-dependent (was food_stock===0); instant after toggle
                   <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(245,158,11,.08)', color: '#d97706', border: '1px solid rgba(245,158,11,.2)' }}>
-                    Offline{product.turnOnAt ? ` · Back at ${new Date(product.turnOnAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''}
+                    Offline{product.turnOnAt ? ` · Back at ${(d => d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }))(new Date(product.turnOnAt.includes('T') ? product.turnOnAt : product.turnOnAt.replace(' ','T') + '+05:30'))}` : ''}
                   </span>
                 )}
               </>

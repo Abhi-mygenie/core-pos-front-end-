@@ -42,6 +42,19 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
     }
   }, [menuType, toast]);
 
+  // G1: Optimistic stock toggle handler — updates isActive + turnOnAt immediately from
+  // aggregatorStockToggle response items[0], then fetchFoods for full sync
+  const handleStockToggleDone = useCallback((updatedItem) => {
+    if (updatedItem?.id) {
+      setFoods(prev => prev.map(f =>
+        f.productId === updatedItem.id
+          ? { ...f, isActive: updatedItem.status === 1, turnOnAt: updatedItem.turn_on_at || null }
+          : f
+      ));
+    }
+    fetchFoods();
+  }, [fetchFoods]);
+
   // Fetch categories from dedicated API
   const fetchCategories = useCallback(async () => {
     try {
@@ -265,6 +278,7 @@ const MenuManagementPanel = ({ isOpen, onClose, sidebarWidth }) => {
               clients={clients}
               onRefresh={fetchFoods}
               onRefreshAddons={fetchAddons}
+              onStockToggleDone={handleStockToggleDone}
             />
           </div>
         </div>

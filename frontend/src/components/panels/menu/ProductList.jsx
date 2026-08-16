@@ -23,7 +23,7 @@ const FOOD_FILTERS = [
   { id: "jain", label: "Jain", color: "#8B5CF6" },
 ];
 
-const ProductList = ({ foods, categories, addons, selectedCategoryId, deleteReasons, menuType, clients, onRefresh, onRefreshAddons }) => { // CR-140
+const ProductList = ({ foods, categories, addons, selectedCategoryId, deleteReasons, menuType, clients, onRefresh, onRefreshAddons, onStockToggleDone }) => { // CR-140, G1
   const { currencySymbol } = useRestaurant();
   const { toast } = useToast();
 
@@ -264,7 +264,7 @@ const ProductList = ({ foods, categories, addons, selectedCategoryId, deleteReas
                           onQuickCancel={() => setQuickEditId(null)}
                           menuType={menuType}
                           clients={clients}
-                          onStockToggleDone={onRefresh}
+                          onStockToggleDone={onStockToggleDone || onRefresh} // G1: propagate item from toggle
                         />
                       </div>
                     )}

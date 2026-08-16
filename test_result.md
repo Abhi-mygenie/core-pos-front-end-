@@ -102,63 +102,75 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "GAP-BULK-DEFAULTS: Add-ons & Variations Chips in BulkEditor — Verification"
+user_problem_statement: "Aggregator Stock Toggle Fixes (G1, G3, G4) — Verification"
 
 frontend:
-  - task: "BUG-323: Fix false-dirty state in Aggregator BulkEditor (categoryId=0 handling)"
+  - task: "G4: 'Offline · Back at' badge is status-dependent (instant after toggle)"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "testing"
-        comment: "VERIFIED in Normal mode. Line 324 fix confirmed: categoryId dirty check now uses Number(o.categoryId ?? 0) !== Number(row.categoryId ?? 0) preventing false-dirty on categoryId=0. Initial load shows 'No Changes' (0 dirty rows). Editing Tax Type GST→VAT correctly marks row dirty. LIMITATION: Cannot test Aggregator mode specifically as restaurant account only has 'Normal' menu type configured (no Aggregator in menu-master API response)."
-  
-  - task: "BUG-324: Fix stale isRowDirty closure (missing menuType in deps)"
-    implemented: true
-    working: "NA"
-    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "testing"
-        comment: "CANNOT VERIFY. Line 372 fix confirmed in code: isRowDirty useCallback now includes menuType in dependency array. However, testing requires Aggregator menu type to verify Swiggy/Zomato column edits mark rows dirty. Restaurant account (owner@thegoankitchen.com) only has 'Normal' menu type available. Aggregator menu type not configured in backend menu-master. Code review shows fix is correct, but functional verification blocked by environment limitation."
-  
-  - task: "GAP-BULK-DEFAULTS: Fix ADD-ONS, VARIATIONS, and Image columns rendering"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/components/panels/menu/BulkEditor.jsx"
-    stuck_count: 0
+    working: false
+    file: "/app/frontend/src/components/panels/menu/AggregatorStockToggle.jsx, /app/frontend/src/components/panels/menu/ProductCard.jsx"
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
-        comment: "CRITICAL BLOCKER: Cannot verify fix due to Menu Management page navigation failure. CODE REVIEW CONFIRMS FIX IS CORRECT (lines 1186-1229): image, addon_expand, and var_expand renderers moved to top-level outside dropdown block. However, CANNOT ACCESS BULK EDITOR UI to verify chips render correctly. After login, application remains on Orders page ('No active orders'). Multiple navigation attempts failed: (1) clicking sidebar items, (2) direct URL navigation to /#/menu, (3) clicking 'Menu Management' text. MenuManagementPage component exists and is routed in App.js line 210, but content does not render. This is a CRITICAL ROUTING/RENDERING ISSUE blocking all Bulk Editor testing. All 5 test cases (TC-1 through TC-5) cannot be executed."
+        comment: "❌ CRITICAL BLOCKER: CORS ERROR prevents API call. CODE REVIEW CONFIRMS FIX IS CORRECT: AggregatorStockToggle.jsx line 37 uses product.isActive (not food_stock) for button state. ProductCard.jsx lines 330-334 show 'Offline · Back at' badge based on !product.isActive. However, CANNOT FUNCTIONALLY VERIFY because aggregator-sync/stock-toggle API call is BLOCKED BY CORS: 'Access to XMLHttpRequest at https://preprod.mygenie.online/api/v2/vendoremployee/aggregator-sync/stock-toggle from origin https://react-pos-frontend-11.preview.emergentagent.com has been blocked by CORS policy: No Access-Control-Allow-Origin header'. This is an EXTERNAL API (preprod.mygenie.online) with CORS restrictions. Without API access, optimistic update cannot be tested. Frontend code is correct, but testing blocked by backend/API configuration."
+  
+  - task: "G1: After enable, card immediately shows active (no async wait)"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/panels/menu/AggregatorStockToggle.jsx, /app/frontend/src/components/panels/MenuManagementPanel.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BLOCKER: CORS ERROR prevents API call. CODE REVIEW CONFIRMS FIX IS CORRECT: AggregatorStockToggle.jsx lines 59-64 (disable) and 73-81 (enable) capture response items[0] and call onToggleDone(item) for optimistic update. MenuManagementPanel.jsx lines 47-56 handleStockToggleDone updates foods state immediately with new isActive and turnOnAt. However, CANNOT FUNCTIONALLY VERIFY because aggregator-sync/stock-toggle API is BLOCKED BY CORS (same error as G4). Without successful API response, onToggleDone is never called, so optimistic update cannot be tested. Frontend code is correct, but testing blocked by backend/API configuration."
+  
+  - task: "G3: 'Back at' time shows correct IST time"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/panels/menu/AggregatorStockToggle.jsx, /app/frontend/src/components/panels/menu/ProductCard.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BLOCKER: CORS ERROR prevents API call. CODE REVIEW CONFIRMS FIX IS CORRECT: AggregatorStockToggle.jsx lines 18-26 formatTurnOnAt function treats 'YYYY-MM-DD HH:MM:SS' as IST (+05:30) and formats using toLocaleTimeString('en-IN'). ProductCard.jsx line 332 displays formatted time in badge. However, CANNOT FUNCTIONALLY VERIFY because aggregator-sync/stock-toggle API is BLOCKED BY CORS (same error as G4 and G1). Without API returning turn_on_at timestamp, time formatting cannot be tested. Frontend code is correct, but testing blocked by backend/API configuration."
+  
+  - task: "TC-4: Regression test - Normal mode unaffected"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/panels/menu/ProductCard.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
       - working: true
         agent: "testing"
-        comment: "✅ BOTH BUG FIXES VERIFIED SUCCESSFULLY. BUG-A (Variations visible by default): PASS - Both 'Add-ons' AND 'Variations' chips are visible in the editing bar at the top of Bulk Editor WITHOUT opening Columns picker. Previously only Add-ons was visible. Fix confirmed: variations column moved from tier 2 to tier 1 (line 57). BUG-B (Variation pills show text): PASS - Clicked '1 group ▾' chip in VARIATIONS column, expand panel opened showing variation group 'CHOOSE SUBJECT ONE' with pills displaying text labels: 'finger ₹10', 'toe ₹20', 'nails ₹30'. Pills are NOT blank. Fix confirmed: VariationExpandPanel.jsx line 41 uses val.name and val.price (not wrong field names). Additional verification: ADD-ONS column shows chips like 'None' or '2 add-ons ▾' (not dashes), VARIATIONS column shows chips like 'None' or '1 group ▾' (not dashes). Navigation issue from previous test is now resolved - Menu Management page accessible and Bulk Editor opens correctly."
+        comment: "✅ PASS: Regression test successful. Switched to Normal menu type and verified: (1) Food cards show Dine-In/Delivery/Takeaway chips (not Aggregator-specific badges), (2) No 'Offline · Back at' badges appear on Normal mode foods, (3) No stock toggle buttons ('● Live ▾' or '○ Offline ▾') appear in Normal mode. ProductCard.jsx line 326 correctly shows AggregatorStockToggle only when menuType === 'Aggregator'. Normal mode functionality is unaffected by Aggregator fixes."
 
 metadata:
   created_by: "testing_agent"
-  version: "1.2"
-  test_sequence: 3
+  version: "1.3"
+  test_sequence: 4
   run_ui: true
   test_date: "2026-08-16"
   test_environment: "https://react-pos-frontend-11.preview.emergentagent.com"
 
 test_plan:
   current_focus:
-    - "All bug fixes verified and working"
-  stuck_tasks: []
+    - "CRITICAL BLOCKER: CORS error on aggregator-sync/stock-toggle API"
+  stuck_tasks:
+    - "G4: 'Offline · Back at' badge (blocked by CORS)"
+    - "G1: Optimistic update after enable/disable (blocked by CORS)"
+    - "G3: IST time formatting (blocked by CORS)"
   test_all: false
   test_priority: "high_first"
-  notes: "All three bug fixes (BUG-323, BUG-324, GAP-BULK-DEFAULTS) have been tested. BUG-323 verified working. BUG-324 code fix confirmed but cannot functionally test without Aggregator menu type. GAP-BULK-DEFAULTS (BUG-A and BUG-B) both verified working successfully."
+  notes: "All three Aggregator stock toggle fixes (G1, G3, G4) have correct frontend code implementation, but CANNOT be functionally tested due to CORS policy blocking the external API endpoint (https://preprod.mygenie.online/api/v2/vendoremployee/aggregator-sync/stock-toggle). This is a backend/API configuration issue, not a frontend bug. TC-4 regression test passed successfully."
 
 agent_communication:
   - agent: "testing"
@@ -167,3 +179,5 @@ agent_communication:
     message: "CRITICAL ISSUE: GAP-BULK-DEFAULTS bug fix cannot be verified. Menu Management page is completely inaccessible in the deployed application. After login with owner@thegoankitchen.com, the app shows Orders page and all navigation attempts to Menu Management fail. Tried: (1) clicking sidebar buttons, (2) direct URL /#/menu, (3) clicking 'Menu Management' text. The MenuManagementPage component exists (src/pages/MenuManagementPage.jsx) and is correctly routed (App.js line 210: path='/menu'), but the page content does not render. The code fix in BulkEditor.jsx is CORRECT (lines 1186-1229 show image/addon_expand/var_expand moved to top-level), but UI verification is BLOCKED by this critical routing issue. MAIN AGENT MUST FIX NAVIGATION BEFORE TESTING CAN PROCEED."
   - agent: "testing"
     message: "✅ VERIFICATION COMPLETE - ALL BUG FIXES WORKING. Previous navigation issue resolved. Successfully accessed Menu Management → Bulk Editor. BUG-A VERIFIED: Both 'Add-ons' AND 'Variations' chips visible in editing bar by default (tier 1 promotion working). BUG-B VERIFIED: Variation expand panel shows pills with text labels 'finger ₹10', 'toe ₹20', 'nails ₹30' (not blank - val.name/val.price fix working). Both ADD-ONS and VARIATIONS columns show chips (not dashes). All requested verifications PASS. No action items for main agent - bug fixes are complete and functional."
+  - agent: "testing"
+    message: "❌ CRITICAL BLOCKER: Aggregator Stock Toggle fixes (G1, G3, G4) CANNOT BE TESTED due to CORS policy blocking API calls. Error: 'Access to XMLHttpRequest at https://preprod.mygenie.online/api/v2/vendoremployee/aggregator-sync/stock-toggle from origin https://react-pos-frontend-11.preview.emergentagent.com has been blocked by CORS policy: No Access-Control-Allow-Origin header'. CODE REVIEW CONFIRMS ALL FIXES ARE CORRECTLY IMPLEMENTED: (G4) AggregatorStockToggle.jsx line 37 uses product.isActive for status-dependent badge, (G1) lines 59-81 capture API response and call onToggleDone for optimistic update, (G3) lines 18-26 format time as IST. However, without successful API calls, optimistic updates cannot be verified. This is an EXTERNAL API (preprod.mygenie.online) with CORS restrictions - NOT a frontend bug. TC-4 regression test PASSED. MAIN AGENT: This requires backend/API CORS configuration fix OR mock/proxy setup to test."

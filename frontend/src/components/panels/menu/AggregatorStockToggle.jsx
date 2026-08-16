@@ -18,7 +18,9 @@ const PRESETS = [
 const formatTurnOnAt = (iso) => {
   if (!iso) return '';
   try {
-    const d = new Date(iso);
+    // G3: treat 'YYYY-MM-DD HH:MM:SS' (foods-list, no TZ) as IST (+05:30)
+    const str = iso.includes('T') ? iso : iso.replace(' ', 'T') + '+05:30';
+    const d = new Date(str);
     return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
   } catch { return iso; }
 };
@@ -32,7 +34,7 @@ const AggregatorStockToggle = ({ product, onToggleDone }) => {
   const [showCustom, setShowCustom] = useState(false);
   const ref = useRef(null);
 
-  const isLive = (product.foodStock ?? 1) === 1;
+  const isLive = product.isActive !== false; // G4: status-dependent (api.status===1), not food_stock (async)
 
   useEffect(() => {
     const handler = (e) => {
@@ -54,11 +56,12 @@ const AggregatorStockToggle = ({ product, onToggleDone }) => {
           ? { turn_on_at: new Date(customDt).getTime() }
           : mode ? { turn_on_preset: mode } : {}),
       };
-      await menuService.aggregatorStockToggle(payload);
+      const res = await menuService.aggregatorStockToggle(payload); // G1: capture response
+      const item = res?.data?.items?.[0]; // G1: extract {id, status, turn_on_at} only
       const modeLabel = showCustom ? 'custom time' : (PRESETS.find(p => p.value === mode)?.label || 'indefinitely');
       toast({ title: 'Disabled', description: `"${product.productName}" disabled ${mode || showCustom ? `for ${modeLabel}` : 'indefinitely'}` });
       setOpen(false);
-      if (onToggleDone) onToggleDone();
+      if (onToggleDone) onToggleDone(item); // G1: pass item for optimistic update
     } catch (err) {
       toast({ title: 'Error', description: err.readableMessage || 'Toggle failed', variant: 'destructive' });
     } finally { setLoading(false); }
@@ -67,14 +70,15 @@ const AggregatorStockToggle = ({ product, onToggleDone }) => {
   const handleEnable = async () => {
     setLoading(true);
     try {
-      await menuService.aggregatorStockToggle({
+      const res = await menuService.aggregatorStockToggle({ // G1: capture response
         action: 'enable',
         item_ids: [product.productId],
         ...(product.clientId ? { client_id: product.clientId } : {}),
       });
+      const item = res?.data?.items?.[0]; // G1: extract {id, status, turn_on_at} only
       toast({ title: 'Enabled', description: `"${product.productName}" is live on Swiggy/Zomato` });
       setOpen(false);
-      if (onToggleDone) onToggleDone();
+      if (onToggleDone) onToggleDone(item); // G1: pass item for optimistic update
     } catch (err) {
       toast({ title: 'Error', description: err.readableMessage || 'Toggle failed', variant: 'destructive' });
     } finally { setLoading(false); }
