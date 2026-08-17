@@ -1,0 +1,21 @@
+{
+    "status": true,
+    "message": "Stock toggle queued successfully",
+    "action": "enable",
+    "turn_on_at": null,
+    "turn_on_at_iso": null,
+    "indefinite": false,
+    "reference_id": "f3a5026ce54745c299b8f1332e3b45ae",
+    "urbanpiper_status": "success",
+    "urbanpiper_message": "Task queued successfully",
+    "items": [
+        {
+            "id": 3162,
+            "name": "Plain Dosa",
+            "status": 1,
+            "status_text": "Available",
+            "turn_on_at": null
+        }
+    ],
+    "option_ref_ids": []
+}

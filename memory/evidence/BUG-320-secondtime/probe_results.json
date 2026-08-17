@@ -1,0 +1,66 @@
+{
+  "investigation_date": "2026-08-13",
+  "endpoint": "POST /api/v2/vendoremployee/inventory/add-sub-recipe-stock",
+  "sub_recipe": "churmura toe",
+  "recipe_id": 235,
+  "unit": "gm",
+  "probes": [
+    {
+      "probe": "P1-BASELINE",
+      "stock_before": 900.00,
+      "payload": null,
+      "stock_after": 900.00,
+      "note": "confirmed baseline from screenshot"
+    },
+    {
+      "probe": "P2-PRODUCE-ONLY",
+      "stock_before": 900.00,
+      "payload": {"sub_recipe_id":235,"quantity":10,"unit":"gm"},
+      "stock_after": 910.00,
+      "result": "ADD mode confirmed: 900+10=910",
+      "physical_qty_sent": false
+    },
+    {
+      "probe": "P4-NEGATIVE-DRIFT-1st-CALL",
+      "stock_before": 910.00,
+      "payload": {"sub_recipe_id":235,"quantity":5,"unit":"gm"},
+      "stock_after": 915.00,
+      "result": "Backend ADDS qty even when qty < current. 910+5=915. Drift is UI-only, has no backend effect.",
+      "physical_qty_sent": false
+    },
+    {
+      "probe": "P5-NEGATIVE-DRIFT-2nd-CALL",
+      "stock_before": 915.00,
+      "payload": {"sub_recipe_id":235,"quantity":5,"unit":"gm"},
+      "stock_after": 920.00,
+      "result": "Second call: same behaviour. 915+5=920. Stock keeps going UP on every call.",
+      "physical_qty_sent": false
+    },
+    {
+      "probe": "P6-WITH-PHYSICAL_QTY-1st-CALL",
+      "stock_before": 920.00,
+      "payload": {"sub_recipe_id":235,"quantity":5,"unit":"gm","physical_qty":5,"waste_reason":"Physical count adjustment"},
+      "stock_after": 10.00,
+      "result": "Backend ran recount: wastage = 920-5 = 915 gm (loss row written). Then produced 5. Final = 5+5 = 10.",
+      "physical_qty_sent": true,
+      "wastage_written": 915.0
+    },
+    {
+      "probe": "P7-WITH-PHYSICAL_QTY-2nd-CALL",
+      "stock_before": 10.00,
+      "payload": {"sub_recipe_id":235,"quantity":5,"unit":"gm","physical_qty":5,"waste_reason":"Physical count adjustment"},
+      "stock_after": 10.00,
+      "result": "SPURIOUS wastage: current=10, physical=5 → wastage=5 written. Then produced 5 → 5+5=10. Stock unchanged but FALSE wastage row of 5 gm written.",
+      "physical_qty_sent": true,
+      "wastage_written": 5.0,
+      "stock_net_change": 0,
+      "audit_trail_corrupted": true
+    }
+  ],
+  "key_findings": {
+    "backend_mode": "ADD (quantity is always added to current stock)",
+    "physical_qty_triggers_recount": true,
+    "second_call_with_physical_qty": "stock lands at same value (physical_qty + quantity) but a NEW spurious wastage row is written each time",
+    "current_fe_no_physical_qty": "stock keeps increasing on every call regardless of negative UI drift"
+  }
+}

@@ -1,0 +1,1 @@
+PUT addon-update response: {"message": "Addon updated successfully", "data": {"id": 13193, "name": "Dark", "price": 10, "status": 1, "weight": 0, "veg": null, "has_inventory": "No", "recipe_id": null, "has_recipe": false}}

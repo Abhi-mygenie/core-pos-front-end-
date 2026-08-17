@@ -1,0 +1,1616 @@
+{
+  "success": true,
+  "message": "Table configuration retrieved successfully",
+  "data": {
+    "tables": [
+      {
+        "id": 5552,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "117",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:21:50",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5552&tableName=117&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5552&tableName=117&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5552&tableName=117&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5562,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "210",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:22:57",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5562&tableName=210&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5562&tableName=210&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5562&tableName=210&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5561,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "209",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:23:10",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5561&tableName=209&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5561&tableName=209&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5561&tableName=209&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5560,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "208",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:23:20",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5560&tableName=208&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5560&tableName=208&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5560&tableName=208&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5559,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "207",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:23:29",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5559&tableName=207&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5559&tableName=207&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5559&tableName=207&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5558,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "206",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:23:40",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5558&tableName=206&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5558&tableName=206&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5558&tableName=206&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5557,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "205",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:23:51",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5557&tableName=205&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5557&tableName=205&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5557&tableName=205&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5556,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "204",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:25:14",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5556&tableName=204&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5556&tableName=204&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5556&tableName=204&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5555,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "203",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:25:24",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5555&tableName=203&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5555&tableName=203&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5555&tableName=203&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5554,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "202",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:25:33",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5554&tableName=202&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5554&tableName=202&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5554&tableName=202&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5553,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "201",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:25:43",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5553&tableName=201&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5553&tableName=201&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5553&tableName=201&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5563,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "301",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:25:54",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5563&tableName=301&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5563&tableName=301&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5563&tableName=301&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5551,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "116",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:26:15",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5551&tableName=116&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5551&tableName=116&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5551&tableName=116&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5550,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "115",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:26:06",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5550&tableName=115&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5550&tableName=115&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5550&tableName=115&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5549,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "114",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:26:31",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5549&tableName=114&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5549&tableName=114&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5549&tableName=114&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5548,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "113",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:26:48",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5548&tableName=113&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5548&tableName=113&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5548&tableName=113&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5547,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "112",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:26:59",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5547&tableName=112&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5547&tableName=112&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5547&tableName=112&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5546,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "111",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:27:10",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5546&tableName=111&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5546&tableName=111&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5546&tableName=111&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5545,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "110",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:27:24",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5545&tableName=110&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5545&tableName=110&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5545&tableName=110&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5544,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "109",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:27:36",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5544&tableName=109&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5544&tableName=109&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5544&tableName=109&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5543,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "108",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:28:52",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5543&tableName=108&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5543&tableName=108&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5543&tableName=108&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5573,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "401",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:31:13",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5573&tableName=401&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5573&tableName=401&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5573&tableName=401&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5583,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "C3",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:29:56",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5583&tableName=C3&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5583&tableName=C3&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5583&tableName=C3&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5582,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "C2",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:27:53",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5582&tableName=C2&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5582&tableName=C2&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5582&tableName=C2&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5581,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "C1",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:27:45",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5581&tableName=C1&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5581&tableName=C1&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5581&tableName=C1&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5580,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "408",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:31:31",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5580&tableName=408&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5580&tableName=408&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5580&tableName=408&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5579,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "407",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:31:54",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5579&tableName=407&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5579&tableName=407&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5579&tableName=407&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5578,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "406",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:32:09",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5578&tableName=406&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5578&tableName=406&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5578&tableName=406&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5577,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "405",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:32:27",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5577&tableName=405&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5577&tableName=405&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5577&tableName=405&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5576,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "404",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:32:43",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5576&tableName=404&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5576&tableName=404&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5576&tableName=404&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5575,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "403",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:33:01",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5575&tableName=403&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5575&tableName=403&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5575&tableName=403&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5574,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "402",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:33:22",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5574&tableName=402&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5574&tableName=402&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5574&tableName=402&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5542,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "107",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:33:41",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5542&tableName=107&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5542&tableName=107&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5542&tableName=107&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5572,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "310",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:34:05",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5572&tableName=310&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5572&tableName=310&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5572&tableName=310&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5571,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "309",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:35:02",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5571&tableName=309&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5571&tableName=309&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5571&tableName=309&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5570,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "308",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:35:48",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5570&tableName=308&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5570&tableName=308&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5570&tableName=308&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5569,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "307",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:36:26",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5569&tableName=307&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5569&tableName=307&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5569&tableName=307&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5568,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "306",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:37:03",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5568&tableName=306&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5568&tableName=306&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5568&tableName=306&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5567,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "305",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:37:39",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5567&tableName=305&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5567&tableName=305&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5567&tableName=305&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5566,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "304",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:38:15",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5566&tableName=304&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5566&tableName=304&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5566&tableName=304&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5565,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "303",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:38:44",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5565&tableName=303&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5565&tableName=303&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5565&tableName=303&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5564,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "302",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:39:20",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5564&tableName=302&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5564&tableName=302&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5564&tableName=302&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5510,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "14",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5510&tableName=14&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5510&tableName=14&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5510&tableName=14&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5520,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "32",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5520&tableName=32&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5520&tableName=32&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5520&tableName=32&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5519,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "31",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5519&tableName=31&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5519&tableName=31&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5519&tableName=31&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5518,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "30",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5518&tableName=30&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5518&tableName=30&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5518&tableName=30&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5517,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "25",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5517&tableName=25&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5517&tableName=25&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5517&tableName=25&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5516,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "24",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5516&tableName=24&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5516&tableName=24&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5516&tableName=24&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5515,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "23",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5515&tableName=23&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5515&tableName=23&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5515&tableName=23&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5514,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "22",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5514&tableName=22&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5514&tableName=22&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5514&tableName=22&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5513,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "21",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5513&tableName=21&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5513&tableName=21&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5513&tableName=21&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5512,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "20",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5512&tableName=20&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5512&tableName=20&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5512&tableName=20&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5511,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "15",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5511&tableName=15&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5511&tableName=15&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5511&tableName=15&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5521,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "33",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5521&tableName=33&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5521&tableName=33&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5521&tableName=33&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5509,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "13",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5509&tableName=13&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5509&tableName=13&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5509&tableName=13&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5508,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "12",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5508&tableName=12&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5508&tableName=12&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5508&tableName=12&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5507,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "11",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5507&tableName=11&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5507&tableName=11&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5507&tableName=11&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5506,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "10",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5506&tableName=10&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5506&tableName=10&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5506&tableName=10&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5505,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "6",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5505&tableName=6&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5505&tableName=6&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5505&tableName=6&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5504,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "5",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5504&tableName=5&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5504&tableName=5&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5504&tableName=5&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5503,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "4",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5503&tableName=4&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5503&tableName=4&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5503&tableName=4&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5502,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "3",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5502&tableName=3&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5502&tableName=3&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5502&tableName=3&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5501,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "2",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5501&tableName=2&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5501&tableName=2&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5501&tableName=2&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5531,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "54",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5531&tableName=54&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5531&tableName=54&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5531&tableName=54&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5541,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "106",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:40:29",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5541&tableName=106&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5541&tableName=106&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5541&tableName=106&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5540,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "105",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:41:05",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5540&tableName=105&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5540&tableName=105&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5540&tableName=105&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5539,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "104",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:41:37",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5539&tableName=104&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5539&tableName=104&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5539&tableName=104&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5538,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "103",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:42:25",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5538&tableName=103&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5538&tableName=103&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5538&tableName=103&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5537,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "102",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:43:21",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5537&tableName=102&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5537&tableName=102&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5537&tableName=102&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5536,
+        "restaurant_id": 644,
+        "waiter_id": 3061,
+        "title": "Room",
+        "table_no": "101",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": "2025-10-11 17:44:18",
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5536&tableName=101&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5536&tableName=101&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5536&tableName=101&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5535,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "58",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5535&tableName=58&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5535&tableName=58&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5535&tableName=58&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5534,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "57",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5534&tableName=57&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5534&tableName=57&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5534&tableName=57&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5533,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "56",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5533&tableName=56&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5533&tableName=56&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5533&tableName=56&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5532,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "55",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5532&tableName=55&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5532&tableName=55&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5532&tableName=55&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5500,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "V",
+        "table_no": "1",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5500&tableName=1&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5500&tableName=1&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5500&tableName=1&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5530,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "53",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5530&tableName=53&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5530&tableName=53&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5530&tableName=53&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5529,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "52",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5529&tableName=52&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5529&tableName=52&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5529&tableName=52&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5528,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "51",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5528&tableName=51&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5528&tableName=51&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5528&tableName=51&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5527,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "50",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5527&tableName=50&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5527&tableName=50&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5527&tableName=50&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5526,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "43",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5526&tableName=43&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5526&tableName=43&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5526&tableName=43&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5525,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "42",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5525&tableName=42&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5525&tableName=42&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5525&tableName=42&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5524,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "41",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5524&tableName=41&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5524&tableName=41&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5524&tableName=41&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5523,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "40",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5523&tableName=40&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5523&tableName=40&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5523&tableName=40&type=table&orderType=dinein&foodFor=Premium"
+        }
+      },
+      {
+        "id": 5522,
+        "restaurant_id": 644,
+        "waiter_id": 2874,
+        "title": "T",
+        "table_no": "34",
+        "qr_code": null,
+        "status": 1,
+        "created_at": null,
+        "updated_at": null,
+        "rtype": "TB",
+        "f_name": "Manager",
+        "l_name": null,
+        "qr_code_urls": {
+          "Normal": "https://devorder.mygenie.online/644?tableId=5522&tableName=34&type=table&orderType=dinein&foodFor=Normal",
+          "Party": "https://devorder.mygenie.online/644?tableId=5522&tableName=34&type=table&orderType=dinein&foodFor=Party",
+          "Premium": "https://devorder.mygenie.online/644?tableId=5522&tableName=34&type=table&orderType=dinein&foodFor=Premium"
+        }
+      }
+    ],
+    "walkin_qr_urls": {
+      "walkin_dinein": "https://devorder.mygenie.online/644?type=walkin&orderType=dinein&foodFor=Normal",
+      "delivery": "https://devorder.mygenie.online/644?type=walkin&orderType=delivery&foodFor=Normal",
+      "takeaway": "https://devorder.mygenie.online/644?type=walkin&orderType=takeaway&foodFor=Normal"
+    },
+    "walkin_menu_qr_urls": {
+      "Normal": "https://devorder.mygenie.online/644?type=walkin&orderType=dinein&foodFor=Normal",
+      "Party": "https://devorder.mygenie.online/644?type=walkin&orderType=dinein&foodFor=Party",
+      "Premium": "https://devorder.mygenie.online/644?type=walkin&orderType=dinein&foodFor=Premium"
+    },
+    "restaurant_id": 644,
+    "restaurant_name": "CAFE 103"
+  }
+}

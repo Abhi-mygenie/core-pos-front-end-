@@ -1,0 +1,13 @@
+{
+  "Payment_method": [
+    "UPI",
+    "Cash",
+    "Card",
+    "Unpaid",
+    "Store",
+    "UPI Drawer",
+    "Cash Draw",
+    "Bank Transfer",
+    "Others"
+  ]
+}

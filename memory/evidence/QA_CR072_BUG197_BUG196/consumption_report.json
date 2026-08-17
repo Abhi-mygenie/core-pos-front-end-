@@ -1,0 +1,293 @@
+{
+  "stock_summary": [
+    {
+      "ingredient_id": 3091,
+      "ingredient_name": "Breadcrumbs",
+      "category_id": 382,
+      "category_name": "Canned & Packaged Goods",
+      "total_consumed": "30 gm",
+      "closing_stock": "-110 gm",
+      "opening_stock": "-80 gm"
+    },
+    {
+      "ingredient_id": 3087,
+      "ingredient_name": "Eggs",
+      "category_id": 365,
+      "category_name": "Dairy & Alternatives",
+      "total_consumed": "30 pieces",
+      "closing_stock": "-61 pieces",
+      "opening_stock": "-31 pieces"
+    },
+    {
+      "ingredient_id": 3086,
+      "ingredient_name": "Flour",
+      "category_id": 364,
+      "category_name": "Grains, Pulses & Cereals",
+      "total_consumed": "30 gm",
+      "closing_stock": "9.94 kg",
+      "opening_stock": "9.97 kg"
+    },
+    {
+      "ingredient_id": 10105,
+      "ingredient_name": "Oil",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "total_consumed": "30 ml",
+      "closing_stock": "-2.03 ltr",
+      "opening_stock": "-2 ltr"
+    },
+    {
+      "ingredient_id": 10101,
+      "ingredient_name": "Paneer",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "total_consumed": "4 kg",
+      "closing_stock": "-20 kg",
+      "opening_stock": "-16 kg"
+    },
+    {
+      "ingredient_id": 10104,
+      "ingredient_name": "Salt",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "total_consumed": "30 gm",
+      "closing_stock": "-51 gm",
+      "opening_stock": "-21 gm"
+    },
+    {
+      "ingredient_id": 16371,
+      "ingredient_name": "extra cheese slice",
+      "category_id": 1450,
+      "category_name": "Packed Items",
+      "total_consumed": "4 piece",
+      "closing_stock": "-4 piece",
+      "opening_stock": "0 piece"
+    },
+    {
+      "ingredient_id": 3107,
+      "ingredient_name": "Chicken Breast",
+      "category_id": 363,
+      "category_name": "Proteins (Veg & Non-Veg)",
+      "total_consumed": "30 gm",
+      "closing_stock": "-360 gm",
+      "opening_stock": "-330 gm"
+    },
+    {
+      "ingredient_id": 3089,
+      "ingredient_name": "Black Pepper",
+      "category_id": 366,
+      "category_name": "Spices & Condiments",
+      "total_consumed": "30 gm",
+      "closing_stock": "-61.5 gm",
+      "opening_stock": "-31.5 gm"
+    },
+    {
+      "ingredient_id": 7276,
+      "ingredient_name": "Paneer graviye",
+      "category_id": 261,
+      "category_name": "Sub Recipe",
+      "total_consumed": "4 kg",
+      "closing_stock": "-17.5 kg",
+      "opening_stock": "-13.5 kg"
+    }
+  ],
+  "stock_details": [
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 3091,
+      "ingredient_name": "Breadcrumbs",
+      "category_id": 382,
+      "category_name": "Canned & Packaged Goods",
+      "quantity_deducted": "30 gm"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 3087,
+      "ingredient_name": "Eggs",
+      "category_id": 365,
+      "category_name": "Dairy & Alternatives",
+      "quantity_deducted": "30 pieces"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 3086,
+      "ingredient_name": "Flour",
+      "category_id": 364,
+      "category_name": "Grains, Pulses & Cereals",
+      "quantity_deducted": "30 gm"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 10105,
+      "ingredient_name": "Oil",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "quantity_deducted": "30 ml"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 10104,
+      "ingredient_name": "Salt",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "quantity_deducted": "30 gm"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 3107,
+      "ingredient_name": "Chicken Breast",
+      "category_id": 363,
+      "category_name": "Proteins (Veg & Non-Veg)",
+      "quantity_deducted": "30 gm"
+    },
+    {
+      "consumption_date": "2026-07-05",
+      "order_id": 1058190,
+      "food_id": "62126",
+      "food_item": "Chicken Strips 12pc",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 3089,
+      "ingredient_name": "Black Pepper",
+      "category_id": 366,
+      "category_name": "Spices & Condiments",
+      "quantity_deducted": "30 gm"
+    },
+    {
+      "consumption_date": "2026-07-08",
+      "order_id": 1065474,
+      "food_id": "81642",
+      "food_item": "Butter Masala Dosa",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 16371,
+      "ingredient_name": "extra cheese slice",
+      "category_id": 1450,
+      "category_name": "Packed Items",
+      "quantity_deducted": "1 piece"
+    },
+    {
+      "consumption_date": "2026-07-08",
+      "order_id": 1065576,
+      "food_id": "81642",
+      "food_item": "Butter Masala Dosa",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 16371,
+      "ingredient_name": "extra cheese slice",
+      "category_id": 1450,
+      "category_name": "Packed Items",
+      "quantity_deducted": "1 piece"
+    },
+    {
+      "consumption_date": "2026-07-08",
+      "order_id": 1065587,
+      "food_id": "81642",
+      "food_item": "Butter Masala Dosa",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 16371,
+      "ingredient_name": "extra cheese slice",
+      "category_id": 1450,
+      "category_name": "Packed Items",
+      "quantity_deducted": "1 piece"
+    },
+    {
+      "consumption_date": "2026-07-09",
+      "order_id": 1069085,
+      "food_id": "115965",
+      "food_item": "sahi paneer",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 10101,
+      "ingredient_name": "Paneer",
+      "category_id": 1029,
+      "category_name": "Grocery",
+      "quantity_deducted": "4 kg"
+    },
+    {
+      "consumption_date": "2026-07-09",
+      "order_id": 1069085,
+      "food_id": "115965",
+      "food_item": "sahi paneer",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 16371,
+      "ingredient_name": "extra cheese slice",
+      "category_id": 1450,
+      "category_name": "Packed Items",
+      "quantity_deducted": "1 piece"
+    },
+    {
+      "consumption_date": "2026-07-09",
+      "order_id": 1069085,
+      "food_id": "115965",
+      "food_item": "sahi paneer",
+      "order_type": "POS",
+      "brand_name": "Default / POS",
+      "brand_client_id": null,
+      "ingredient_id": 7276,
+      "ingredient_name": "Paneer graviye",
+      "category_id": 261,
+      "category_name": "Sub Recipe",
+      "quantity_deducted": "4 kg"
+    }
+  ],
+  "date_range": [
+    "2026-07-01",
+    "2026-07-17"
+  ],
+  "restaurant_id": 478,
+  "applied_restaurant_ids": [
+    478
+  ],
+  "hierarchy_scope": [
+    {
+      "id": 478,
+      "name": "18march",
+      "restaurant_type_flag": "normal"
+    }
+  ]
+}

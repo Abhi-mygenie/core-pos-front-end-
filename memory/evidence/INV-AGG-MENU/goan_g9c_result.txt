@@ -1,0 +1,3 @@
+id: ERR
+food_for: MISSING
+error: [{'code': 'category_id', 'message': 'The category id field is required.'}, {'code': 'price', 'message': 'The price field is required.'}]

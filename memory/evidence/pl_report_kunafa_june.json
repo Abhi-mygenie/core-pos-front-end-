@@ -1,0 +1,282 @@
+{
+  "report": [
+    {
+      "date": "01/06/2026",
+      "sales": "20,896.05",
+      "paid_revenue": "20,910.00",
+      "expenses": "60.00",
+      "purchase": "1,340.00",
+      "total_expenses": "1,400.00",
+      "profit_loss": "19,510.00"
+    },
+    {
+      "date": "02/06/2026",
+      "sales": "20,559.22",
+      "paid_revenue": "20,573.00",
+      "expenses": "60.00",
+      "purchase": "160.00",
+      "total_expenses": "220.00",
+      "profit_loss": "20,353.00"
+    },
+    {
+      "date": "03/06/2026",
+      "sales": "25,396.35",
+      "paid_revenue": "25,412.00",
+      "expenses": "3,730.00",
+      "purchase": "6,856.00",
+      "total_expenses": "10,586.00",
+      "profit_loss": "14,826.00"
+    },
+    {
+      "date": "04/06/2026",
+      "sales": "17,338.65",
+      "paid_revenue": "16,199.00",
+      "expenses": "1,296.00",
+      "purchase": "160.00",
+      "total_expenses": "1,456.00",
+      "profit_loss": "14,743.00"
+    },
+    {
+      "date": "05/06/2026",
+      "sales": "14,611.80",
+      "paid_revenue": "14,625.00",
+      "expenses": "2,272.00",
+      "purchase": "0.00",
+      "total_expenses": "2,272.00",
+      "profit_loss": "12,353.00"
+    },
+    {
+      "date": "06/06/2026",
+      "sales": "24,642.99",
+      "paid_revenue": "24,659.00",
+      "expenses": "550.00",
+      "purchase": "5,608.00",
+      "total_expenses": "6,158.00",
+      "profit_loss": "18,501.00"
+    },
+    {
+      "date": "07/06/2026",
+      "sales": "25,047.75",
+      "paid_revenue": "25,069.00",
+      "expenses": "1,220.00",
+      "purchase": "535.00",
+      "total_expenses": "1,755.00",
+      "profit_loss": "23,314.00"
+    },
+    {
+      "date": "08/06/2026",
+      "sales": "14,609.70",
+      "paid_revenue": "14,620.00",
+      "expenses": "2,383.00",
+      "purchase": "40,420.00",
+      "total_expenses": "42,803.00",
+      "profit_loss": "-28,183.00"
+    },
+    {
+      "date": "09/06/2026",
+      "sales": "14,906.85",
+      "paid_revenue": "14,916.00",
+      "expenses": "60.00",
+      "purchase": "9,880.00",
+      "total_expenses": "9,940.00",
+      "profit_loss": "4,976.00"
+    },
+    {
+      "date": "10/06/2026",
+      "sales": "15,274.35",
+      "paid_revenue": "14,093.00",
+      "expenses": "2,260.00",
+      "purchase": "1,625.00",
+      "total_expenses": "3,885.00",
+      "profit_loss": "10,208.00"
+    },
+    {
+      "date": "11/06/2026",
+      "sales": "13,610.10",
+      "paid_revenue": "15,337.00",
+      "expenses": "3,560.00",
+      "purchase": "1,733.00",
+      "total_expenses": "5,293.00",
+      "profit_loss": "10,044.00"
+    },
+    {
+      "date": "12/06/2026",
+      "sales": "20,856.15",
+      "paid_revenue": "20,873.00",
+      "expenses": "190.00",
+      "purchase": "360.00",
+      "total_expenses": "550.00",
+      "profit_loss": "20,323.00"
+    },
+    {
+      "date": "13/06/2026",
+      "sales": "23,000.46",
+      "paid_revenue": "22,645.00",
+      "expenses": "935.00",
+      "purchase": "4,123.00",
+      "total_expenses": "5,058.00",
+      "profit_loss": "17,587.00"
+    },
+    {
+      "date": "14/06/2026",
+      "sales": "24,897.60",
+      "paid_revenue": "24,153.00",
+      "expenses": "1,360.00",
+      "purchase": "0.00",
+      "total_expenses": "1,360.00",
+      "profit_loss": "22,793.00"
+    },
+    {
+      "date": "15/06/2026",
+      "sales": "10,252.20",
+      "paid_revenue": "10,932.00",
+      "expenses": "980.00",
+      "purchase": "332.00",
+      "total_expenses": "1,312.00",
+      "profit_loss": "9,620.00"
+    },
+    {
+      "date": "16/06/2026",
+      "sales": "20,665.16",
+      "paid_revenue": "20,785.00",
+      "expenses": "3,643.00",
+      "purchase": "21,785.00",
+      "total_expenses": "25,428.00",
+      "profit_loss": "-4,643.00"
+    },
+    {
+      "date": "17/06/2026",
+      "sales": "13,038.90",
+      "paid_revenue": "12,975.00",
+      "expenses": "1,125.00",
+      "purchase": "2,108.00",
+      "total_expenses": "3,233.00",
+      "profit_loss": "9,742.00"
+    },
+    {
+      "date": "18/06/2026",
+      "sales": "9,957.15",
+      "paid_revenue": "10,334.00",
+      "expenses": "130.00",
+      "purchase": "9,280.00",
+      "total_expenses": "9,410.00",
+      "profit_loss": "924.00"
+    },
+    {
+      "date": "19/06/2026",
+      "sales": "13,450.50",
+      "paid_revenue": "13,461.00",
+      "expenses": "2,610.00",
+      "purchase": "160.00",
+      "total_expenses": "2,770.00",
+      "profit_loss": "10,691.00"
+    },
+    {
+      "date": "20/06/2026",
+      "sales": "20,554.80",
+      "paid_revenue": "20,569.00",
+      "expenses": "260.00",
+      "purchase": "3,780.00",
+      "total_expenses": "4,040.00",
+      "profit_loss": "16,529.00"
+    },
+    {
+      "date": "21/06/2026",
+      "sales": "14,712.60",
+      "paid_revenue": "14,726.00",
+      "expenses": "2,868.00",
+      "purchase": "882.00",
+      "total_expenses": "3,750.00",
+      "profit_loss": "10,976.00"
+    },
+    {
+      "date": "22/06/2026",
+      "sales": "18,711.00",
+      "paid_revenue": "18,179.00",
+      "expenses": "60.00",
+      "purchase": "160.00",
+      "total_expenses": "220.00",
+      "profit_loss": "17,959.00"
+    },
+    {
+      "date": "23/06/2026",
+      "sales": "18,607.83",
+      "paid_revenue": "18,226.00",
+      "expenses": "120.00",
+      "purchase": "5,000.00",
+      "total_expenses": "5,120.00",
+      "profit_loss": "13,106.00"
+    },
+    {
+      "date": "24/06/2026",
+      "sales": "15,526.35",
+      "paid_revenue": "16,477.00",
+      "expenses": "858.00",
+      "purchase": "2,584.00",
+      "total_expenses": "3,442.00",
+      "profit_loss": "13,035.00"
+    },
+    {
+      "date": "25/06/2026",
+      "sales": "8,349.60",
+      "paid_revenue": "7,626.00",
+      "expenses": "470.00",
+      "purchase": "3,655.00",
+      "total_expenses": "4,125.00",
+      "profit_loss": "3,501.00"
+    },
+    {
+      "date": "26/06/2026",
+      "sales": "23,580.90",
+      "paid_revenue": "23,418.00",
+      "expenses": "510.00",
+      "purchase": "4,116.00",
+      "total_expenses": "4,626.00",
+      "profit_loss": "18,792.00"
+    },
+    {
+      "date": "27/06/2026",
+      "sales": "20,282.85",
+      "paid_revenue": "20,474.00",
+      "expenses": "6,534.00",
+      "purchase": "2,489.00",
+      "total_expenses": "9,023.00",
+      "profit_loss": "11,451.00"
+    },
+    {
+      "date": "28/06/2026",
+      "sales": "20,539.05",
+      "paid_revenue": "20,551.00",
+      "expenses": "1,860.00",
+      "purchase": "0.00",
+      "total_expenses": "1,860.00",
+      "profit_loss": "18,691.00"
+    },
+    {
+      "date": "29/06/2026",
+      "sales": "14,855.40",
+      "paid_revenue": "14,868.00",
+      "expenses": "1,685.00",
+      "purchase": "3,438.00",
+      "total_expenses": "5,123.00",
+      "profit_loss": "9,745.00"
+    },
+    {
+      "date": "30/06/2026",
+      "sales": "19,143.71",
+      "paid_revenue": "18,876.00",
+      "expenses": "932.00",
+      "purchase": "3,247.00",
+      "total_expenses": "4,179.00",
+      "profit_loss": "14,697.00"
+    }
+  ],
+  "summary": {
+    "total_sales": "537,876.02",
+    "total_paid_revenue": "536,561.00",
+    "total_expenses": "44,581.00",
+    "total_purchase": "135,816.00",
+    "total_expenses_combined": "180,397.00",
+    "total_profit_loss": "356,164.00"
+  }
+}

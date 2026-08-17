@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url='https://preprod.mygenie.online'" />
+
+        <title>Redirecting to https://preprod.mygenie.online</title>
+    </head>
+    <body>
+        Redirecting to <a href="https://preprod.mygenie.online">https://preprod.mygenie.online</a>.
+    </body>
+</html>
+HTTP:302

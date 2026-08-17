@@ -1,0 +1,3 @@
+food_for=Normal returns: 2 addons
+  id=13193 name='Dark'
+  id=13194 name='extra flesh'

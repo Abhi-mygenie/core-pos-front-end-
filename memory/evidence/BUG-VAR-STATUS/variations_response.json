@@ -1,0 +1,34 @@
+{
+  "status": true,
+  "client_id": null,
+  "items": [
+    {
+      "id": 13303,
+      "name": "echhi spcl",
+      "category_id": 8543,
+      "category_name": "Special",
+      "status": 1,
+      "variations": [
+        {
+          "name": "choice of",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "salsa",
+              "optionPrice": "0",
+              "available": false
+            },
+            {
+              "label": "gogo",
+              "optionPrice": "10",
+              "available": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

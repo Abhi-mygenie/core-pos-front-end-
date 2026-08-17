@@ -1,0 +1,7 @@
+Top-level keys: ['addons']
+Total addons returned: 2
+Keys per addon: ['id', 'name', 'price', 'status', 'weight', 'veg', 'has_inventory', 'recipe_id', 'has_recipe', 'is_pushed_managed']
+  id=13193 name='Dark' food_for=NOT PRESENT status=1
+  id=13194 name='extra flesh' food_for=NOT PRESENT status=1
+--- food_for field present in addon? --- False
+--- Any food_for param in endpoint? (check docs) ---

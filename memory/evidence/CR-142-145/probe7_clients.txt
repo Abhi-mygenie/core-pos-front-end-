@@ -1,0 +1,3 @@
+CLIENT keys: ['status', 'clients_found', 'clients']
+count: 1
+sample: {'id': 109, 'name': 'mallu goan', 'phone': '9990888123', 'email': 'mallu@goan.com', 'address': 'mallu ke ghar piche', 'status': 1}

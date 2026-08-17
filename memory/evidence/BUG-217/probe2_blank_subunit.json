@@ -1,0 +1,7 @@
+{
+ "http_status": 500,
+ "message": "SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'unit' cannot be null (SQL: insert into `sub_recipes` (`name`, `serve_people`, `serve_time`, `prepration_time`, `qty`, `thershold_qty`, `thershold_unit`, `unit`, `restaurant_id`, `min_qty_alert`, `min_unit_alert`, `created_at`, `updated_at`) values (ZZ_TEST_BUG217_B, 1, 0, 0, 1, 0, ?, ?, 689, 0, ?, 2026-07-22 15:46:49, 2026-07-22 15:46:49))",
+ "exception": "Illuminate\\Database\\QueryException",
+ "controller": "RecipeController.php:669 sub_recipes_store",
+ "note": "ConvertEmptyStringsToNull middleware turns subunit \"\" into null; no validation layer; raw SQL 23000"
+}

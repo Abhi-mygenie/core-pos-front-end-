@@ -1,0 +1,4 @@
+Total addons after probes: 5
+  PROBE: id=13197 name='_PROBE_AGG_FOOD_FOR_' food_for=NOT PRESENT
+  PROBE: id=13195 name='_PROBE_NORMAL_ADDON_' food_for=NOT PRESENT
+  PROBE: id=13196 name='_PROBE_NORMAL_FOOD_FOR_' food_for=NOT PRESENT

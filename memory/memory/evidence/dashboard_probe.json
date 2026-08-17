@@ -1,0 +1,346 @@
+{
+  "success": true,
+  "data": {
+    "revenue": {
+      "total": 1409418,
+      "paid_order_count": 1690,
+      "avg_order_value": 833.98,
+      "tab_settlement_total": 420,
+      "by_hour": [
+        {
+          "hour": 0,
+          "amount": 46517
+        },
+        {
+          "hour": 1,
+          "amount": 1003
+        },
+        {
+          "hour": 8,
+          "amount": 17532
+        },
+        {
+          "hour": 9,
+          "amount": 35049
+        },
+        {
+          "hour": 10,
+          "amount": 69171
+        },
+        {
+          "hour": 11,
+          "amount": 153364
+        },
+        {
+          "hour": 12,
+          "amount": 137416
+        },
+        {
+          "hour": 13,
+          "amount": 145582
+        },
+        {
+          "hour": 14,
+          "amount": 135246
+        },
+        {
+          "hour": 15,
+          "amount": 115582
+        },
+        {
+          "hour": 16,
+          "amount": 105231
+        },
+        {
+          "hour": 17,
+          "amount": 76324
+        },
+        {
+          "hour": 18,
+          "amount": 45242
+        },
+        {
+          "hour": 19,
+          "amount": 65302
+        },
+        {
+          "hour": 20,
+          "amount": 60326
+        },
+        {
+          "hour": 21,
+          "amount": 83260
+        },
+        {
+          "hour": 22,
+          "amount": 66790
+        },
+        {
+          "hour": 23,
+          "amount": 50061
+        }
+      ]
+    },
+    "channel_mix": [
+      {
+        "channel": "Dine-In",
+        "orders": 1575,
+        "revenue": 1272865
+      },
+      {
+        "channel": "Room",
+        "orders": 115,
+        "revenue": 136133
+      }
+    ],
+    "payment_mix": [
+      {
+        "method": "UPI",
+        "orders": 846,
+        "revenue": 700214
+      },
+      {
+        "method": "Card",
+        "orders": 359,
+        "revenue": 366722
+      },
+      {
+        "method": "Cash",
+        "orders": 453,
+        "revenue": 306808
+      },
+      {
+        "method": "Room Bill",
+        "orders": 28,
+        "revenue": 18351
+      },
+      {
+        "method": "Partial",
+        "orders": 4,
+        "revenue": 16903
+      },
+      {
+        "method": "Credit",
+        "orders": 1,
+        "revenue": 420
+      }
+    ],
+    "top_items": [
+      {
+        "food_id": 107739,
+        "name": "Zanzibar Burger (V)",
+        "qty": 224,
+        "revenue": 89019
+      },
+      {
+        "food_id": 107653,
+        "name": "Cappuccino",
+        "qty": 241,
+        "revenue": 39505.2
+      },
+      {
+        "food_id": 107720,
+        "name": "Eggs Benny",
+        "qty": 98,
+        "revenue": 34209
+      },
+      {
+        "food_id": 107718,
+        "name": "My Favourite Eggs",
+        "qty": 136,
+        "revenue": 34067.25
+      },
+      {
+        "food_id": 107723,
+        "name": "Pilgrim",
+        "qty": 87,
+        "revenue": 30901.5
+      }
+    ],
+    "cancellations": {
+      "order_scope_count": 157,
+      "order_scope_loss": 25199,
+      "item_scope_count": 246,
+      "item_scope_loss": 59092.5,
+      "total_count": 403,
+      "total_loss": 84291.5,
+      "top_reason": "No reason provided",
+      "top_reason_count": 167
+    },
+    "discounts": {
+      "manual_discount": 51891.6,
+      "coupon_discount": 0,
+      "coupon_order_count": 0,
+      "loyalty_discount": 0,
+      "comp_item_total": 2320,
+      "comp_item_count": 11,
+      "total_leakage": 54211.6
+    },
+    "kitchen": {
+      "avg_prep_minutes": 0,
+      "avg_serve_minutes": 0,
+      "sla_breach_count": 0,
+      "has_prep_data": false
+    },
+    "customers": {
+      "total_orders": 1775,
+      "registered_count": 1335,
+      "guest_count": 440,
+      "unique_customers": 347,
+      "repeat_customers": 99,
+      "repeat_pct": 29
+    },
+    "audits": {
+      "make_unpaid_count": 14,
+      "payment_method_change_count": 4,
+      "total": 18,
+      "orders": [
+        {
+          "order_id": "015864",
+          "type": "payment_method_change",
+          "amount": 0,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "015678",
+          "type": "make_unpaid",
+          "amount": 765,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "upi"
+        },
+        {
+          "order_id": "014894",
+          "type": "make_unpaid",
+          "amount": 0,
+          "by": "Counter",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "015297",
+          "type": "payment_method_change",
+          "amount": 0,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "card"
+        },
+        {
+          "order_id": "015244",
+          "type": "make_unpaid",
+          "amount": 105,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "upi"
+        },
+        {
+          "order_id": "015204",
+          "type": "make_unpaid",
+          "amount": 1101,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "upi"
+        },
+        {
+          "order_id": "015204",
+          "type": "make_unpaid",
+          "amount": 1563,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "upi"
+        },
+        {
+          "order_id": "015185",
+          "type": "make_unpaid",
+          "amount": 1092,
+          "by": "Counter",
+          "prev_method": "card",
+          "curr_method": "card"
+        },
+        {
+          "order_id": "015182",
+          "type": "make_unpaid",
+          "amount": 893,
+          "by": "Counter",
+          "prev_method": "ROOM",
+          "curr_method": "ROOM"
+        },
+        {
+          "order_id": "015143",
+          "type": "make_unpaid",
+          "amount": 1491,
+          "by": "Counter",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "015076",
+          "type": "make_unpaid",
+          "amount": 446,
+          "by": "Counter",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "014999",
+          "type": "make_unpaid",
+          "amount": 390,
+          "by": "Counter02",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "014820",
+          "type": "payment_method_change",
+          "amount": 0,
+          "by": "Counter",
+          "prev_method": "upi",
+          "curr_method": "card"
+        },
+        {
+          "order_id": "013992",
+          "type": "make_unpaid",
+          "amount": 525,
+          "by": "Counter",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "014752",
+          "type": "make_unpaid",
+          "amount": 137,
+          "by": "Counter",
+          "prev_method": "cash",
+          "curr_method": "cash"
+        },
+        {
+          "order_id": "014696",
+          "type": "make_unpaid",
+          "amount": 546,
+          "by": "Counter",
+          "prev_method": "ROOM",
+          "curr_method": "ROOM"
+        },
+        {
+          "order_id": "014564",
+          "type": "make_unpaid",
+          "amount": 1397,
+          "by": "Counter",
+          "prev_method": "ROOM",
+          "curr_method": "ROOM"
+        },
+        {
+          "order_id": "014538",
+          "type": "payment_method_change",
+          "amount": 0,
+          "by": "Counter",
+          "prev_method": "card",
+          "curr_method": "upi"
+        }
+      ]
+    },
+    "credit_outstanding": 0
+  }
+}

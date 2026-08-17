@@ -1,0 +1,1 @@
+PUT addon-update: {"message": "Addon updated successfully", "data": {"id": 13198, "name": "CR142_TEST_UPDATED", "price": 2, "status": 1, "weight": 5, "veg": 1, "has_inventory": "No", "recipe_id": null, "has_recipe": fa
