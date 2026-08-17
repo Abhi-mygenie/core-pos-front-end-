@@ -16,6 +16,8 @@
 
 | ID | Type | Title | Priority | Risk | Code Reality | Fast Lane |
 |----|------|-------|----------|------|--------------|-----------|
+| BUG-331 | BUG | Menu Item Added Without Item Name (No Validation Guard) | P1 | HIGH | FULL | ELIGIBLE (owner must approve) |
+| CR-155 | CR | Move Addon Stock + Variation Stock to Menu Management | P1 | MEDIUM | FULL | NO |
 | CR-147 | CR | Online Delivery Charge with Distance Calculation | P1 | HIGH | PARTIAL | NO |
 | BUG-328 | BUG | Discount Type Configuration Not Accessible | P1 | HIGH | FULL | NO |
 | CR-148 | CR | Popular Food Category | P2 | MEDIUM | PARTIAL | NO |

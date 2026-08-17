@@ -19910,6 +19910,45 @@
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
       "backend_brief_needed": true
+    },
+    {
+      "id": "BUG-331",
+      "type": "BUG",
+      "title": "Menu Item Can Be Added Without Item Name (No Validation Guard)",
+      "area": "Menu Management \u2192 Add/Edit Product",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-331_MENU_ITEM_ADDED_WITHOUT_NAME_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true
+    },
+    {
+      "id": "CR-155",
+      "type": "CR",
+      "title": "Move Addon Stock and Variation Stock from Aggregator Setup to Menu Management",
+      "area": "Menu Management / Aggregator Setup",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-155_MOVE_ADDON_VARIATION_STOCK_TO_MENU_MGMT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "RELATED to CR-143",
+      "fast_lane_eligible": false,
+      "screenshot_evidence": true
     }
   ],
   "meta": {
@@ -19920,6 +19959,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 522
+    "total": 524
   }
 }
