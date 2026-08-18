@@ -117,5 +117,6 @@ All fields on one screen, no Next/Back buttons:
 
 ---
 
-## Next: Gate 2 (Impact Analysis) — after OQ-1/2/3 answered or deferred to planning
-**Suggest adding to BATCH-09** (alongside CR-160, CR-161 — printer/station batch).
+## Next: Gate 2 (Impact Analysis) — BATCH-09
+OQ-1/2/3 deferred to Planning (owner directive 2026-08-18). Agent to raise at Gate 2.
+**Batch:** BATCH-09 (alongside CR-160, CR-161 — printer/station batch).
