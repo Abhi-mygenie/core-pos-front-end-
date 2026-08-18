@@ -76,11 +76,17 @@ Typical use case: a manager reviewing the day's orders in reports notices an unp
 - Staff confirms phone → sends → toast "Payment link sent" → modal closes → staff stays on reports
 - Button hidden for cancelled and paid orders (matching Dashboard eligibility rule)
 
-## Owner Decisions Needed
+## Owner Decisions — DEFERRED TO GATE 2 (Planning)
 
-1. Which report pages should have this button: (a) AllOrdersReportPage only, (b) OrderReportBetaPage only, or (c) both?
-2. Should the button auto-send if customer phone is already on the order, or always open the modal to confirm?
-3. Should the button appear for ALL unpaid order statuses, or only specific ones (e.g., only when order has a Razorpay order ID)?
+Owner confirmed all decisions will be answered during Planning Gate 2 (Impact Analysis).
+
+| # | Open Question | Deferred To |
+|---|---------------|-------------|
+| OQ-1 | Which report pages: AllOrdersReportPage only, OrderReportBetaPage only, or both? | Gate 2 |
+| OQ-2 | Auto-send if customer phone exists, or always open modal to confirm? | Gate 2 |
+| OQ-3 | Show button for ALL unpaid statuses, or only orders with a Razorpay order ID? | Gate 2 |
+
+**Intake Status: COMPLETE**
 
 ## Duplicate Check
 

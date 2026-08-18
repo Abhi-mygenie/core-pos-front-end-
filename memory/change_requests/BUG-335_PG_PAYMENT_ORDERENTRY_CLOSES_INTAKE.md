@@ -75,10 +75,16 @@ Additionally, `WhatsAppPaymentModal` is not available inside OrderEntry/CollectP
 5. A "Payment link sent — awaiting customer payment" indicator shows
 6. OrderEntry only closes when backend confirms payment via socket/webhook
 
-## Owner Decisions Needed
+## Owner Decisions — DEFERRED TO GATE 2 (Planning)
 
-1. In CollectPaymentPanel: should "Collect" button become "Send Payment Link" for PG methods, or show both options?
-2. After link is sent — should staff stay on the order screen or return to Dashboard?
+Owner confirmed all decisions will be answered during Planning Gate 2 (Impact Analysis).
+
+| # | Open Question | Deferred To |
+|---|---------------|-------------|
+| OQ-1 | Should "Collect" button become "Send Payment Link" for PG methods, or show both options? | Gate 2 |
+| OQ-2 | After link is sent — should staff stay on the order screen or return to Dashboard? | Gate 2 |
+
+**Intake Status: COMPLETE**
 
 ## Duplicate Check
 

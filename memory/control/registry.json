@@ -19722,7 +19722,10 @@
         "/app/memory/change_requests/CR-147_DELIVERY_CHARGE_DISTANCE_CALC_INTAKE.md"
       ],
       "sprint": "POS 5.x",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "BUG-328",
@@ -19740,7 +19743,10 @@
         "/app/memory/change_requests/BUG-328_DISCOUNT_TYPE_CONFIG_MISSING_INTAKE.md"
       ],
       "sprint": "POS 5.x",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-148",
@@ -19758,7 +19764,10 @@
         "/app/memory/change_requests/CR-148_POPULAR_FOOD_CATEGORY_INTAKE.md"
       ],
       "sprint": "POS 5.x",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-149",
@@ -19777,7 +19786,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to BUG-315-319",
-      "fast_lane_eligible": true
+      "fast_lane_eligible": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "BUG-329",
@@ -19796,7 +19808,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "fast_lane_eligible": true
+      "fast_lane_eligible": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "BUG-330",
@@ -19814,7 +19829,10 @@
         "/app/memory/change_requests/BUG-330_PAYMENT_METHODS_NOT_VISIBLE_INTAKE.md"
       ],
       "sprint": "POS 5.x",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-150",
@@ -19833,7 +19851,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-151",
@@ -19852,7 +19873,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to BUG-SRSTOCK",
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-152",
@@ -19871,7 +19895,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to BUG-315-319",
-      "dependency": "Printers feature sprint"
+      "dependency": "Printers feature sprint",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-153",
@@ -19890,7 +19917,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-154",
@@ -19909,7 +19939,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "BUG-331",
@@ -19928,7 +19961,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "fast_lane_eligible": true
+      "fast_lane_eligible": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-155",
@@ -19948,7 +19984,10 @@
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to CR-143",
       "fast_lane_eligible": false,
-      "screenshot_evidence": true
+      "screenshot_evidence": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-156",
@@ -19968,7 +20007,10 @@
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
       "blocked": "BACKEND \u2014 endpoint does not return table_no yet",
-      "fast_lane_eligible": false
+      "fast_lane_eligible": false,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-157",
@@ -19988,7 +20030,10 @@
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
       "blocked": "BACKEND \u2014 API contract pending from owner/backend team",
-      "fast_lane_eligible": false
+      "fast_lane_eligible": false,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-158",
@@ -20007,7 +20052,10 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to CR-036-FU-03 F3",
-      "fast_lane_eligible": false
+      "fast_lane_eligible": false,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-159",
@@ -20034,7 +20082,9 @@
         "delete_reason": "Single reason across all selected items",
         "backend_endpoint": "Backend will provide bulk delete endpoint"
       },
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-17",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE"
     },
     {
       "id": "BUG-332",
@@ -20056,7 +20106,10 @@
       "fast_lane_eligible": true,
       "root_cause": "config.options has no stations list; useStations().availableStations exists in context but not wired to PrinterWizard Step 3",
       "fix_file": "components/panels/settings/printerConfig/PrintersTab.jsx",
-      "fix_lines": "~15-20 lines"
+      "fix_lines": "~15-20 lines",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-160",
@@ -20082,7 +20135,10 @@
         "New tab in Printer Agent Config or standalone page?",
         "Per-employee rows with checkboxes or matrix view?",
         "Fixed-station toggle per printer (global) or per printer per employee?"
-      ]
+      ],
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-161",
@@ -20186,7 +20242,10 @@
       "fast_lane_eligible": true,
       "source_investigation": "INV-OE-001",
       "fix_file": "DashboardPage.jsx + utils/orderEntryPrefs.js",
-      "fix_lines": "~5-10 lines"
+      "fix_lines": "~5-10 lines",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "BUG-334",
@@ -20208,7 +20267,10 @@
       "fast_lane_eligible": true,
       "source_investigation": "INV-OE-001",
       "fix_file": "OrderEntry.jsx",
-      "fix_lines": "~3-5 lines"
+      "fix_lines": "~3-5 lines",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-162",
@@ -20230,7 +20292,10 @@
       "fast_lane_eligible": false,
       "blocked": "BACKEND \u2014 receive_balance write endpoint unconfirmed",
       "source_investigation": "INV-ROOM-001",
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-163",
@@ -20256,7 +20321,10 @@
       "open_blockers": [
         "B-1: /transfer-food-item accepts room order as from_order_id?",
         "B-2: Dynamic table creation or pick existing?"
-      ]
+      ],
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "INV-PG-001",
@@ -20304,7 +20372,10 @@
       "owner_decisions_pending": [
         "OQ-1: Replace Collect btn with Send Link for PG, or show both?",
         "OQ-2: Stay on order or return to Dashboard after link sent?"
-      ]
+      ],
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     },
     {
       "id": "CR-164",
@@ -20334,7 +20405,10 @@
         "OQ-3: Which report pages?",
         "OQ-4: Auto-send or always show modal?",
         "OQ-5: All unpaid or only PG orders?"
-      ]
+      ],
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     }
   ],
   "meta": {
