@@ -76,11 +76,13 @@ Owner needs a **bulk delete** capability in Menu Management — the ability to s
 
 - **Delete reason:** May or may not be required for bulk delete (single delete has `deleteReason` — owner to confirm)
 
-## Owner Decisions Needed
+## Owner Decisions — RESOLVED (2026-08-17)
 
-1. Should bulk delete be available in **Card View** (ProductList) as well, or Bulk Editor (table) only?
-2. Is a **delete reason** required for each item, or can bulk delete skip the reason field?
-3. Does the backend have a bulk delete endpoint, or does it need to be added? (sequential single-deletes as fallback?)
+| # | Decision | Owner Answer |
+|---|----------|--------------|
+| 1 | Bulk delete in Card View or Bulk Editor only? | **Bulk Editor (table view) only** — card view not needed |
+| 2 | Delete reason required per item or single reason for all? | **Single reason across all selected items** — one reason input covers the whole batch |
+| 3 | Backend bulk delete endpoint or sequential single deletes? | **Backend will provide a bulk delete endpoint** — do not implement sequential fallback |
 
 ## Duplicate Check
 
@@ -88,5 +90,17 @@ DISTINCT — no prior CR/BUG for bulk delete in menu management.
 
 ---
 
-**Backend Brief Needed:** Confirm if a bulk delete endpoint exists (`DELETE /foods/bulk` or similar) or if sequential single deletes are the expected approach.
+- **Bulk Editor (table view) only** — no card view changes needed
+- **One shared delete reason** for the entire batch (single text input in confirmation modal)
+- **Backend will provide bulk delete endpoint** — no sequential fallback; await endpoint contract before implementation
+
+- **Confirmation modal flow:**
+  1. "Delete N items?" count display
+  2. Single reason input field (required, same as single-item delete)
+  3. Confirm / Cancel buttons
+
+---
+
+**Backend Brief Needed:** Owner to share bulk delete endpoint URL + method + payload shape when backend is ready.
+**Owner Decisions:** ALL RESOLVED
 **Next:** Planning Gate 2

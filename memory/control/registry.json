@@ -20017,7 +20017,7 @@
       "priority": "P1",
       "risk": "HIGH",
       "status": "INTAKE",
-      "completeness": "1/7",
+      "completeness": "1/7 \u2014 owner decisions resolved, ready for Gate 2",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
       "created": "2026-08-17",
@@ -20027,7 +20027,14 @@
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
       "fast_lane_eligible": false,
-      "backend_brief_needed": true
+      "backend_brief_needed": true,
+      "owner_decisions_resolved": true,
+      "owner_decisions": {
+        "scope": "Bulk Editor only (not card view)",
+        "delete_reason": "Single reason across all selected items",
+        "backend_endpoint": "Backend will provide bulk delete endpoint"
+      },
+      "last_updated": "2026-08-17"
     }
   ],
   "meta": {
