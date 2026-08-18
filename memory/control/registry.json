@@ -20165,6 +20165,98 @@
         "BUG-334 (cart clears on table switch)"
       ],
       "fast_lane_eligible": true
+    },
+    {
+      "id": "BUG-333",
+      "type": "BUG",
+      "title": "New Order Always Opens as Walk-In (handleAddOrder Hardcoded)",
+      "area": "Dashboard \u2192 New Order \u2192 Order Entry",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-333_NEW_ORDER_DEFAULT_WALKIN_HARDCODED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "source_investigation": "INV-OE-001",
+      "fix_file": "DashboardPage.jsx + utils/orderEntryPrefs.js",
+      "fix_lines": "~5-10 lines"
+    },
+    {
+      "id": "BUG-334",
+      "type": "BUG",
+      "title": "Pre-Place Table Switch Clears Food Cart",
+      "area": "Order Entry \u2192 Pre-Place Table Switch",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-334_PRE_PLACE_TABLE_SWITCH_CLEARS_CART_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "source_investigation": "INV-OE-001",
+      "fix_file": "OrderEntry.jsx",
+      "fix_lines": "~3-5 lines"
+    },
+    {
+      "id": "CR-162",
+      "type": "CR",
+      "title": "Mid-Stay Partial Payment for Room Orders",
+      "area": "Room Module \u2192 Active Room Card / Order Entry",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-162_ROOM_MID_STAY_PARTIAL_PAYMENT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "blocked": "BACKEND \u2014 receive_balance write endpoint unconfirmed",
+      "source_investigation": "INV-ROOM-001",
+      "backend_brief_needed": true
+    },
+    {
+      "id": "CR-163",
+      "type": "CR",
+      "title": "Move Food Items from Room Order to Table (Room-to-Table Transfer)",
+      "area": "Room Module \u2192 Room Order Entry \u2192 Item Transfer",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-163_ROOM_TO_TABLE_FOOD_TRANSFER_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT \u2014 RELATED to BUG-066",
+      "fast_lane_eligible": false,
+      "blocked": "BACKEND \u2014 /transfer-food-item room-as-source unconfirmed",
+      "source_investigation": "INV-ROOM-001",
+      "backend_brief_needed": true,
+      "open_blockers": [
+        "B-1: /transfer-food-item accepts room order as from_order_id?",
+        "B-2: Dynamic table creation or pick existing?"
+      ]
     }
   ],
   "meta": {
@@ -20175,6 +20267,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 533
+    "total": 537
   }
 }
