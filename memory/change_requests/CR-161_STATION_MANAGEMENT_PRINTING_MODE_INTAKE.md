@@ -1,8 +1,9 @@
 # CR-161 — Station Management Screen (CRUD + Restaurant-Level Printing Mode)
 
-**Type:** Change Request (New Screen — API Contract Provided)
+**Type:** Change Request (New Screen — API Contract Provided + Backend Confirmed)
 **ID:** CR-161
 **Date:** 2026-08-17
+**Last Updated:** 2026-08-17 (backend confirmed station_gst + auto_serve fields via INV-BACKEND-001)
 **Status:** INTAKE COMPLETE — awaiting Gate 2 (Planning)
 
 ---
@@ -21,6 +22,17 @@ A setting to choose **how printing is dispatched** across the restaurant:
 - **Station** — print based on the kitchen station handling the item
 
 Both features use confirmed backend APIs. Neither has any frontend code.
+
+---
+
+## Backend Confirmation (2026-08-17 — INV-BACKEND-001)
+
+Backend has **confirmed** the following fields are live on ADD + UPDATE endpoints:
+- `station_gst`: string — GST number for the station (show only when `restaurant_for === 'food_court'`)
+- `auto_serve`: `"Yes"` / `"No"` — auto-serve toggle
+- `default` field mapping confirmed: `null` = None, `1` = Ready, `2` = Serve, `5` = Delivered
+
+**`station_gst` visibility rule:** Show this field in the station form ONLY when `restaurantFor === 'food_court'` (see BUG-339 — food_court option must be added to Restaurant Type select first).
 
 ---
 

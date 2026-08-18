@@ -1,8 +1,9 @@
 # CR-157 — Food Court Report (New Report Module)
 
-**Type:** Change Request (New Report — Backend Blocked)
+**Type:** Change Request (New Report — Backend Endpoint CONFIRMED)
 **ID:** CR-157
 **Date:** 2026-08-17
+**Last Updated:** 2026-08-17 (backend endpoint confirmed via INV-BACKEND-001)
 **Status:** INTAKE COMPLETE — awaiting Gate 2 (Planning)
 
 ---
@@ -11,7 +12,10 @@
 
 Owner needs a **Food Court Report** — a new dedicated report for food court operations. Backend team will provide the API contract / endpoint details separately. Frontend has a mockup/placeholder (`FoodCourtMockup.jsx`) already in place.
 
-**Backend status:** API details not yet finalized — owner will provide endpoint contract from the aggregation/backend team when ready.
+**Backend status:** ✅ ENDPOINT CONFIRMED via INV-BACKEND-001
+- Endpoint: `GET /api/v1/vendoremployee/food-court-order-report`
+- Current `foodCourtService.js` uses `ORDER_LOGS_REPORT` as a workaround — must be replaced with this dedicated endpoint
+- **Owner still needs to provide:** Response shape (fields + structure) before transform can be written
 
 ## Classification
 

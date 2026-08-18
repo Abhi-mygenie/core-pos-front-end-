@@ -20029,11 +20029,12 @@
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
-      "blocked": "BACKEND \u2014 API contract pending from owner/backend team",
+      "blocked": "Response shape needed from owner for transform",
       "fast_lane_eligible": false,
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-17",
+      "backend_status": "ENDPOINT CONFIRMED: GET /api/v1/vendoremployee/food-court-order-report"
     },
     {
       "id": "CR-158",
@@ -20170,7 +20171,13 @@
         "B-2: area-options response shape unknown \u2014 probe endpoint at Gate 2"
       ],
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-17",
+      "backend_confirmed_fields": [
+        "station_gst",
+        "auto_serve",
+        "default field mapping"
+      ],
+      "note": "station_gst shown only when restaurant_for === food_court (see BUG-339)"
     },
     {
       "id": "INV-ROOM-001",
@@ -20549,6 +20556,57 @@
         "CR-157 update: wire food-court-order-report endpoint",
         "CR-161 update: station_gst field gated by food_court type"
       ]
+    },
+    {
+      "id": "BUG-339",
+      "type": "BUG",
+      "title": "Restaurant Type Select Missing 'Food Court' Option",
+      "area": "Restaurant Settings \u2192 Step 1 \u2192 Restaurant Type select",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-339_RESTAURANT_TYPE_MISSING_FOOD_COURT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "source_investigation": "INV-BACKEND-001",
+      "fix_file": "RestaurantSettingsPage.jsx",
+      "fix_lines": "1",
+      "owner_decisions_status": "NONE NEEDED"
+    },
+    {
+      "id": "CR-165",
+      "type": "CR",
+      "title": "Razorpay Cancel and Refund Integration",
+      "area": "Order Entry \u2192 Cancellation Flow \u2192 Razorpay Refund",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-165_RAZORPAY_CANCEL_REFUND_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-BACKEND-001",
+      "backend_status": "API READY \u2014 POST manage.mygenie.online/api/v1/razor-pay/cancel-and-refund-order",
+      "owner_decisions_status": "DEFERRED TO GATE 2",
+      "open_decisions": [
+        "OQ-1: auto or manual trigger",
+        "OQ-2: axios instance",
+        "OQ-3: reason fields",
+        "OQ-4: detect PG order"
+      ]
     }
   ],
   "meta": {
@@ -20559,6 +20617,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 545
+    "total": 547
   }
 }
