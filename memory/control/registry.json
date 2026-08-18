@@ -20639,6 +20639,208 @@
       ],
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17"
+    },
+    {
+      "id": "BUG-328",
+      "type": "BUG",
+      "title": "Phone on Bill: Wrong Number Prints on Receipt",
+      "area": "Print / Bill / Restaurant Settings",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-328_PHONE_ON_BILL_WRONG_NUMBER_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-AUG18-2026",
+      "classification": "BACKEND_BUG",
+      "open_decisions": [
+        "OQ-1: source of restaurant_information.phone_number in printer config API"
+      ]
+    },
+    {
+      "id": "BUG-329",
+      "type": "BUG",
+      "title": "Discount Report: Discount Reason/Type Missing from Report",
+      "area": "Reports \u2192 Discount Report (S26)",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-329_DISCOUNT_REPORT_REASON_MISSING_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "RELATED to CR-137",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-AUG18-2026",
+      "classification": "FEATURE_GAP",
+      "related": "CR-137",
+      "open_decisions": [
+        "OQ-1: group by discount_for text or preset type?",
+        "OQ-2: backend endpoint shape for by_reason"
+      ]
+    },
+    {
+      "id": "BUG-330",
+      "type": "BUG",
+      "title": "Cancel After Serve Setting Not Gated in Frontend (allowPostServeCancel unused)",
+      "area": "Order Entry \u2192 Cart \u2192 Cancel Item",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-330_CANCEL_AFTER_SERVE_NOT_GATED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "source_investigation": "INV-AUG18-2026",
+      "classification": "FE_BUG",
+      "planning_skip_eligible": true
+    },
+    {
+      "id": "BUG-331",
+      "type": "BUG",
+      "title": "Schedule Order Setting Not Gated in Frontend (schedule_order not in profileTransform)",
+      "area": "Order Entry \u2192 Cart \u2192 Schedule Toggle",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-331_SCHEDULE_ORDER_NOT_GATED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "RELATED to CR-018",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-AUG18-2026",
+      "classification": "FE_BUG",
+      "related": "CR-018",
+      "open_decisions": [
+        "OQ-1: hide or disable schedule section when off?",
+        "OQ-2: where in restaurant object"
+      ]
+    },
+    {
+      "id": "BUG-332",
+      "type": "BUG",
+      "title": "Search By Setting Not Consumed in Frontend (searchOptions unmapped to UI)",
+      "area": "Settings \u2192 Order & Kitchen \u2192 Search By; Dashboard/Order search",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-332_SEARCH_BY_SETTING_NOT_CONSUMED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-AUG18-2026",
+      "classification": "FE_BUG",
+      "open_decisions": [
+        "OQ-1: which component renders search-by selector?",
+        "OQ-2: empty array = show all or show none?"
+      ]
+    },
+    {
+      "id": "CR-146",
+      "type": "CR",
+      "title": "Multiple Menu: Frontend Menu-Switcher UI Not Implemented",
+      "area": "Settings \u2192 Channels \u2192 Multiple Menus; Menu Management",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-146_MULTIPLE_MENU_FE_UI_NOT_IMPLEMENTED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-AUG18-2026",
+      "owner_decisions_status": "BLOCKED \u2014 OQ-1/2/3 unanswered",
+      "open_decisions": [
+        "OQ-1: expected FE behaviour when multiple_menu=Yes?",
+        "OQ-2: does backend return multiple menus?",
+        "OQ-3: per-table, per-order or restaurant-wide?"
+      ]
+    },
+    {
+      "id": "BUG-333",
+      "type": "BUG",
+      "title": "Printer Style Tab: Row Labels Show Generic Row 1/2/3/4 Instead of Field Names",
+      "area": "Settings \u2192 Printer Settings \u2192 Print Style Tab",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-333_PRINTER_STYLE_TAB_ROW_LABELS_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "source_investigation": "OWNER-REPORTED",
+      "classification": "FE_BUG",
+      "owner_decisions_status": "BLOCKED \u2014 owner must provide label mapping",
+      "open_decisions": [
+        "OQ-1: mapping for Bill Information rows (row_1\u2192?, row_2\u2192?, row_3\u2192?, row_4\u2192?)",
+        "OQ-2: mapping for Item Table rows",
+        "OQ-3: other sections needing mapping?"
+      ]
+    },
+    {
+      "id": "CR-167",
+      "type": "CR",
+      "title": "Printer Agent: Add/Edit Printer Wizard \u2192 Single-Step Inline Form",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Printers Tab \u2192 Add/Edit Printer",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "related": "CR-133",
+      "batch_suggestion": "BATCH-09",
+      "open_decisions": [
+        "OQ-1: inline panel or modal/drawer?",
+        "OQ-2: single-column or 2-column layout on wide screen?",
+        "OQ-3: connection type as select dropdown or radio cards?"
+      ]
     }
   ],
   "meta": {
