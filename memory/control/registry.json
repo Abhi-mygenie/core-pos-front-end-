@@ -20281,6 +20281,60 @@
       "backend_questions": [
         "OQ-1..OQ-4 documented in report"
       ]
+    },
+    {
+      "id": "BUG-335",
+      "type": "BUG",
+      "title": "PG Payment Method Triggers Immediate OrderEntry Close (Payment Not Collected Yet)",
+      "area": "Order Entry \u2192 CollectPaymentPanel \u2192 PG Dynamic Payment Method",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-335_PG_PAYMENT_ORDERENTRY_CLOSES_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-PG-001",
+      "owner_decisions_pending": [
+        "OQ-1: Replace Collect btn with Send Link for PG, or show both?",
+        "OQ-2: Stay on order or return to Dashboard after link sent?"
+      ]
+    },
+    {
+      "id": "CR-164",
+      "type": "CR",
+      "title": "Send Payment Link from Daily Reports (Per-Row Action)",
+      "area": "Reports \u2192 AllOrdersReportPage / OrderReportBetaPage \u2192 Per-Row Actions",
+      "priority": "P1",
+      "risk": "LOW-MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-164_SEND_PAYMENT_LINK_FROM_REPORTS_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-PG-001",
+      "infrastructure_reuse": [
+        "WhatsAppPaymentModal",
+        "paymentLinkService",
+        "PAYMENT_LINK endpoint"
+      ],
+      "owner_decisions_pending": [
+        "OQ-3: Which report pages?",
+        "OQ-4: Auto-send or always show modal?",
+        "OQ-5: All unpaid or only PG orders?"
+      ]
     }
   ],
   "meta": {
@@ -20291,6 +20345,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 538
+    "total": 540
   }
 }
