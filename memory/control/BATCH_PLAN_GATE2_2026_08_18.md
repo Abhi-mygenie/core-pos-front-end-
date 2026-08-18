@@ -95,9 +95,15 @@ Rationale: Menu management operational features. Separate from BATCH-07 (differe
 ### BATCH-09 — Printer / Station Management
 | ID | Title | P | Risk |
 |---|---|---|---|
-| CR-160 | Printer Mapping Screen — Employee to Printer Assignment | P1 | HIGH |
-| CR-161 | Station Management Screen — CRUD + Printing Mode | P1 | HIGH |
-Rationale: Both new settings screens, printer/station area, likely new files. Can be planned together.
+| CR-160 | Printer Mapping Screen — Employee to Printer Assignment (KOT / Bill) | P1 | HIGH |
+| CR-161 | Station Management Screen — CRUD + Restaurant-Level Printing Mode | P1 | HIGH |
+| CR-167 | Printer Add/Edit Wizard → Single-Step Inline Form (UX) | P2 | LOW |
+Rationale: All printer/station area, all live inside Printer Agent Config settings. CR-160 + CR-161 are new screens (multi-file). CR-167 is 1-file UX rewrite. Safe to plan together, must implement sequentially (all touch PrinterAgentConfigView.jsx tabs).
+OQs deferred to Gate 2: CR-160 (OQ-1/2/3), CR-161 (OQ-1/2/3/4 + B-1/B-2), CR-167 (OQ-1/2/3).
+Intake docs:
+  CR-160 → /app/memory/change_requests/CR-160_PRINTER_MAPPING_EMPLOYEE_SCREEN_INTAKE.md
+  CR-161 → /app/memory/change_requests/CR-161_STATION_MANAGEMENT_PRINTING_MODE_INTAKE.md
+  CR-167 → /app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md
 
 ---
 
