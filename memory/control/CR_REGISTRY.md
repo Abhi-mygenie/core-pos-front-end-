@@ -613,3 +613,16 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 |---|---|
 | **CR-167** | **Printer Agent: Add/Edit Printer Wizard → Single-Step Inline Form.** Current `PrinterWizard` in `PrintersTab.jsx` (lines 28–192) forces 3 steps: Step 1 = connection type picker, Step 2 = details + paper size, Step 3 = stations + bills toggle. Owner: "2-3 steps, should be 1 step — UX experience is not good." Fix: collapse into single scrollable form with conditional sections based on connection type. 1 file (`PrintersTab.jsx`), LOW risk, no API/logic/financial change. Validation unchanged. RELATED: CR-133 (built current screen). Suggest: add to BATCH-09. OQ-1: inline panel or modal? OQ-2: layout? OQ-3: type selector style? | **P2** | **LOW** | **INTAKE** | pos_5_x | `change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md` |
 
+
+---
+
+### 2026-08-18 Self Check-In Feature (CR-168, CR-169)
+
+| **ID** | CR-168 |
+|---|---|
+| **CR-168** | **Guest Self Check-In: Public Form → POS Review & Approval (Phase 1).** Complete new feature — no backend endpoints, no frontend page exists. Guest opens QR code → public `/self-checkin` route → fills name/phone/ID photo/dates → POST to new public endpoint → POS staff sees notification badge → slide-in drawer → Approve (room price entry) or Reject. Backend needs 4 endpoints + socket event. FE: 3 new files + 4 modified. Risk MEDIUM. All OQ-1–4 deferred to Gate 2. Investigation: `INV-SELF-CHECKIN-2026-08-18_INVESTIGATION_REPORT.md`. BACKEND NOT READY. | **P1** | **MEDIUM** | **INTAKE** | pos_5_x | `change_requests/CR-168_GUEST_SELF_CHECKIN_PHASE1_INTAKE.md` |
+
+| **ID** | CR-169 |
+|---|---|
+| **CR-169** | **Check-In WhatsApp Confirmation via Template (Phase 2).** After staff approves self check-in (CR-168), backend sends WhatsApp template to guest. CRM has no WA endpoint (all 404 probed). Backend already sends WA via `razoar_payment_with_url` (CR-017) — same pattern. FE: 1 function + 1 constant (minimal). DEPENDS ON CR-168. Backend: new `POST /api/v1/vendoremployee/room/send-checkin-confirmation`. OQ-5/OQ-6 deferred to Gate 2. | **P2** | **LOW** | **INTAKE — BLOCKED on CR-168 + backend** | pos_5_x | `change_requests/CR-169_CHECKIN_WHATSAPP_CONFIRMATION_PHASE2_INTAKE.md` |
+

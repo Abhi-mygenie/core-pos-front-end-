@@ -20841,6 +20841,66 @@
         "OQ-2: single-column or 2-column layout on wide screen?",
         "OQ-3: connection type as select dropdown or radio cards?"
       ]
+    },
+    {
+      "id": "CR-168",
+      "type": "CR",
+      "title": "Guest Self Check-In: Public Form \u2192 POS Review & Approval (Phase 1)",
+      "area": "Room Module \u2192 Self Check-In \u2192 Dashboard Review",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-168_GUEST_SELF_CHECKIN_PHASE1_INTAKE.md",
+        "/app/memory/INV-SELF-CHECKIN-2026-08-18_INVESTIGATION_REPORT.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-SELF-CHECKIN-2026-08-18",
+      "backend_status": "NOT READY \u2014 4 new endpoints + 1 socket event needed",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 OQ-1 through OQ-4",
+      "open_decisions": [
+        "OQ-1: guest page inside POS app or separate page?",
+        "OQ-2: approval flow \u2014 full modal or simple price input?",
+        "OQ-3: confirm guest vs staff field split",
+        "OQ-4: notify guest on rejection?"
+      ]
+    },
+    {
+      "id": "CR-169",
+      "type": "CR",
+      "title": "Check-In WhatsApp Confirmation via Template (Phase 2)",
+      "area": "Room Module \u2192 Self Check-In \u2192 WhatsApp Post-Approval",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-169_CHECKIN_WHATSAPP_CONFIRMATION_PHASE2_INTAKE.md",
+        "/app/memory/INV-SELF-CHECKIN-2026-08-18_INVESTIGATION_REPORT.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "related": "CR-168, CR-017",
+      "source_investigation": "INV-SELF-CHECKIN-2026-08-18",
+      "backend_status": "NOT READY \u2014 new WA template endpoint needed",
+      "dependencies": [
+        "CR-168"
+      ],
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 OQ-5/OQ-6",
+      "open_decisions": [
+        "OQ-5: auto-send on approval or staff clicks send?",
+        "OQ-6: confirm WhatsApp template name/content with backend team"
+      ]
     }
   ],
   "meta": {
