@@ -1,0 +1,1 @@
+{"id":9848,"e_date":"2026-07-16","total_amount":6,"details":[{"expense":{"id":4590,"name":"CURL_BUG199_repro_with_catid"},"category_id":42,"category_name":"grocery","employee_id":1478,"employee_name":"Owner","amount":6,"payment_method":"Cash","quantity":0,"unit":"","physical_quantity":0,"notes":""}],"cash_opening_balance":0,"total_cash_collections":0,"total_cash_available":0}

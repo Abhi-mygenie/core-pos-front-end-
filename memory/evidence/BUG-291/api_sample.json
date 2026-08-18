@@ -1,0 +1,21 @@
+{
+  "id": 45334,
+  "restaurant_id": 749,
+  "source": "owner-provided",
+  "date": "2026-07-31",
+  "notes": "Swiggy order with active rider — demonstrates rider_info populated at top level while order_details_order.rider_name is null",
+  "rider_info": {
+    "id": 186197119,
+    "name": "VEERJINDER SINGH",
+    "Phone": "9988190570",
+    "Cahnel": "swiggy",
+    "order_return_otp": null,
+    "bag_return_otp": null
+  },
+  "order_details_order": {
+    "rider_name": null,
+    "rider_phone_number": null,
+    "delivery_man_id": null
+  },
+  "investigation_notes": "rider data lives exclusively in rider_info with non-standard casing (Phone, Cahnel). aggregatorTransform emits riderName (wrong key) instead of rider (what OrderCard reads). riderStatus never computed. deliveryManId not mapped."
+}

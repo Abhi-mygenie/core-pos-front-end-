@@ -1,0 +1,40 @@
+{
+  "probe_date": "2026-08-17",
+  "account": "owner@thegoankitchen.com (restaurant 69)",
+  "foods_list_before_corruption": {
+    "id_13303_echhi_spcl": {
+      "image": "https://preprod.mygenie.online/storage/restaurant_panel/aggregater_img/2026-08-17-6a8213d76d3dc.png",
+      "swiggy_image": "https://preprod.mygenie.online/storage/restaurant_panel/aggregater_img/2026-08-17-6a8213d76e713.png",
+      "zomato_image": null
+    },
+    "other_6_foods": {
+      "image": "https://preprod.mygenie.online/public/assets/admin/img/100x100/food-default-image.png",
+      "swiggy_image": null,
+      "zomato_image": null
+    }
+  },
+  "json_add_response": {
+    "food_id": 13311,
+    "image": "1.png",
+    "swiggy_image": "1.png",
+    "zomato_image": null,
+    "note": "JSON add succeeded, both images default to 1.png when no file provided"
+  },
+  "multipart_update_13303": {
+    "result": "food updated successfully",
+    "swiggy_image_saved": true,
+    "note": "Flat multipart fields, no food_info wrapper \u2014 works correctly"
+  },
+  "backend_bug": {
+    "trigger": "multipart add with variations=[] and addon_ids=[] as -F string values",
+    "error": "cleanBindings(): Argument #1 must be type array, string given",
+    "location": "FoodController.php:1583 whereIn()",
+    "orphaned_food_ids": [
+      13312,
+      13313,
+      13314,
+      13315
+    ],
+    "current_state": "foods-list?food_for=Aggregator returns TypeError HTML (BROKEN)"
+  }
+}

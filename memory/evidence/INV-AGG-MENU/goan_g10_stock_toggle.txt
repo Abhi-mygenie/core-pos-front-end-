@@ -1,0 +1,5 @@
+status: True
+message: Stock toggle queued successfully
+action: enable
+urbanpiper_status: success
+error: none

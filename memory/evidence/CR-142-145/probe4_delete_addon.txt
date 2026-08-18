@@ -1,0 +1,1 @@
+DELETE addon: {"message": "Addon deleted successfully!"}

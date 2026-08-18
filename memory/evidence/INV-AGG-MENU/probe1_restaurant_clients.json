@@ -1,0 +1,14 @@
+{
+    "status": true,
+    "clients_found": true,
+    "clients": [
+        {
+            "id": 107,
+            "name": "sub brand",
+            "phone": "9990001234",
+            "email": "subbrand@test.com",
+            "address": null,
+            "status": 1
+        }
+    ]
+}

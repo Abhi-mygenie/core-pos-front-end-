@@ -1,0 +1,2 @@
+{"status":true,"message":"'Dark' marked as out of stock. Sync catalog to apply on aggregators.","data":{"addon_id":13193,"addon_name":"Dark","status":0,"restaurant_wide":true,"client_id":109}}
+HTTP:200

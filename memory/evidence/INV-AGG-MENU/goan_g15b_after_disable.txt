@@ -1,0 +1,2 @@
+id=13307 name=_GOAN_TEST_CLIENT_: turn_on_at=None food_stock=0
+id=13306 name=_GOAN_TEST_MAIN_: turn_on_at=None food_stock=0
