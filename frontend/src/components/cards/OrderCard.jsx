@@ -479,7 +479,7 @@ const OrderCard = ({
 
           {/* Table/Customer Name */}
           {getDisplayName() && (
-            <span className={`${(isRoom || isDineIn) ? 'font-extrabold text-lg' : 'text-xs font-medium'} truncate`} style={{ color: COLORS.darkText }}>
+            <span className={`${(isRoom || isDineIn) ? 'text-base font-semibold' : 'text-xs font-medium'} truncate`} style={{ color: COLORS.darkText }}>
               {getDisplayName()}
             </span>
           )}
@@ -515,7 +515,7 @@ const OrderCard = ({
         </div>
 
         {/* Center: Amount - Bold + Large */}
-        <span className="font-extrabold text-lg flex-shrink-0 ml-2" style={{ color: COLORS.grayText }}>
+        <span className="font-bold text-lg flex-shrink-0 ml-2" style={{ color: COLORS.darkText }}>
           ₹{(order.amount || 0).toLocaleString()}
         </span>
 
@@ -745,7 +745,7 @@ const OrderCard = ({
                   )}
                   {/* Item name + qty + details inline - SMALLER, SECONDARY */}
                   <div className="flex-1 min-w-0">
-                    <span className="text-[11px]" style={{ color: COLORS.grayText }}>
+                    <span className="text-[15px] font-semibold leading-tight" style={{ color: COLORS.darkText }}>
                       {/* CR-111: Aggregator items use ● Qty× Name format; POS keeps existing format */}
                       {isAggregator
                         ? <>{item.qty}× {item.name}</>
@@ -769,17 +769,17 @@ const OrderCard = ({
                         Prep: {formatElapsed(new Date(item.readyAt).getTime() - new Date(item.createdAt).getTime())} · Wait: {formatElapsed(now - new Date(item.readyAt).getTime())}
                       </span>
                     )}
-                    {/* Variants/Addons inline - Gray italic (subtle) */}
+                    {/* Variants/Addons inline - Gray, readable */}
                     {detailsStr && (
-                      <div className="text-[9px] leading-tight italic" style={{ color: COLORS.grayText }}>
+                      <div className="text-xs font-medium leading-tight mt-0.5" style={{ color: COLORS.grayText }}>
                         {detailsStr}
                       </div>
                     )}
                     {/* Item note inline */}
                     {itemNote && (
-                      <div className="flex items-center gap-1 text-[9px] leading-tight">
-                        <FileText className="w-2 h-2" style={{ color: COLORS.grayText }} />
-                        <span className="italic" style={{ color: COLORS.grayText }}>
+                      <div className="flex items-center gap-1 text-xs font-medium leading-tight mt-0.5">
+                        <FileText className="w-3 h-3 flex-shrink-0" style={{ color: COLORS.primaryOrange }} />
+                        <span style={{ color: COLORS.primaryOrange }}>
                           {itemNote}
                         </span>
                       </div>
