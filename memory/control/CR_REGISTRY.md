@@ -604,3 +604,12 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 |---|---|
 | **CR-146** | **Multiple Menu: Frontend Menu-Switcher UI Not Implemented.** Restaurant Settings toggle `multiple_menu` saves to `basic.multiple_menu` ✓ but has ZERO frontend consumers. Not in `profileTransform.features`. MenuContext does not reference it. No menu-switching UI exists. Owner decision needed: (OQ-1) what FE behaviour is expected when `multiple_menu=Yes`? (OQ-2) does backend return multiple menu versions already? (OQ-3) is switching per-table/order or restaurant-wide? Source: Investigation INV-AUG18-2026. Code reality: PARTIAL (setting saves, FE feature not built). | **P2** | **MEDIUM** | **INTAKE — BLOCKED on OQ-1/2/3** | pos_5_x | `change_requests/CR-146_MULTIPLE_MENU_FE_UI_NOT_IMPLEMENTED_INTAKE.md` |
 
+
+---
+
+### 2026-08-18 CR-167 — Printer Add/Edit Wizard → Single-Step Form
+
+| **ID** | CR-167 |
+|---|---|
+| **CR-167** | **Printer Agent: Add/Edit Printer Wizard → Single-Step Inline Form.** Current `PrinterWizard` in `PrintersTab.jsx` (lines 28–192) forces 3 steps: Step 1 = connection type picker, Step 2 = details + paper size, Step 3 = stations + bills toggle. Owner: "2-3 steps, should be 1 step — UX experience is not good." Fix: collapse into single scrollable form with conditional sections based on connection type. 1 file (`PrintersTab.jsx`), LOW risk, no API/logic/financial change. Validation unchanged. RELATED: CR-133 (built current screen). Suggest: add to BATCH-09. OQ-1: inline panel or modal? OQ-2: layout? OQ-3: type selector style? | **P2** | **LOW** | **INTAKE** | pos_5_x | `change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md` |
+

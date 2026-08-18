@@ -20815,6 +20815,32 @@
         "OQ-2: mapping for Item Table rows",
         "OQ-3: other sections needing mapping?"
       ]
+    },
+    {
+      "id": "CR-167",
+      "type": "CR",
+      "title": "Printer Agent: Add/Edit Printer Wizard \u2192 Single-Step Inline Form",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Printers Tab \u2192 Add/Edit Printer",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "related": "CR-133",
+      "batch_suggestion": "BATCH-09",
+      "open_decisions": [
+        "OQ-1: inline panel or modal/drawer?",
+        "OQ-2: single-column or 2-column layout on wide screen?",
+        "OQ-3: connection type as select dropdown or radio cards?"
+      ]
     }
   ],
   "meta": {
