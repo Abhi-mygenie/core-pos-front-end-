@@ -20409,6 +20409,42 @@
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17"
+    },
+    {
+      "id": "INV-GST-001",
+      "type": "INVESTIGATION",
+      "title": "GST Disable Not Working + Full Settings Gate Audit",
+      "area": "CollectPaymentPanel / RestaurantSettingsPage / ProfileTransform",
+      "priority": "P0",
+      "risk": "HIGH",
+      "status": "INVESTIGATION COMPLETE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/INV-GST-001_GST_DISABLE_SETTINGS_GATE_AUDIT.md"
+      ],
+      "findings": {
+        "gst_bug_layer1": "Profile not re-fetched after settings save \u2192 gstStatus stale in context",
+        "gst_bug_layer2": "CollectPaymentPanel computes tax from item.tax.percentage, never checks restaurant.tax.gstStatus",
+        "room_gst_bug": "roomGstApplicable not checked in CollectPaymentPanel for room orders",
+        "cross_cutting": "ALL settings stale after save \u2014 profile only loaded at boot"
+      },
+      "properly_gated": [
+        "features.dineIn/delivery/takeaway/room",
+        "features.serviceCharge",
+        "features.tip",
+        "paymentMethods",
+        "autoServiceCharge"
+      ],
+      "not_gated": [
+        "tax.gstStatus (CollectPaymentPanel)",
+        "settings.roomGstApplicable",
+        "showUserGst (partial)"
+      ],
+      "recommended_bugs": [
+        "BUG-336 (GST not gated)",
+        "BUG-337 (profile staleness)",
+        "BUG-338 (room GST not gated)"
+      ]
     }
   ],
   "meta": {
@@ -20419,6 +20455,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 540
+    "total": 541
   }
 }
