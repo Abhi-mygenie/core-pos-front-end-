@@ -20257,6 +20257,30 @@
         "B-1: /transfer-food-item accepts room order as from_order_id?",
         "B-2: Dynamic table creation or pick existing?"
       ]
+    },
+    {
+      "id": "INV-PG-001",
+      "type": "INVESTIGATION",
+      "title": "PG Link: OrderEntry Closes After Send + No Payment Link in Daily Reports",
+      "area": "CollectPaymentPanel / OrderEntry / AllOrdersReportPage",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INVESTIGATION COMPLETE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/INV-PG-001_PG_LINK_MODAL_CLOSE_REPORTS_PAYMENT_LINK.md"
+      ],
+      "findings": {
+        "issue_1_root_cause": "No PG-specific intercept in CollectPaymentPanel \u2014 PG dynamic type goes through standard handlePayment() \u2192 navigateAfterOrderAction() \u2192 OrderEntry closes before customer pays",
+        "issue_2_root_cause": "WhatsAppPaymentModal only in OrderCard (Dashboard), never wired to AllOrdersReportPage / OrderTable \u2014 feature completely absent from reports"
+      },
+      "recommended_items": [
+        "BUG-335: PG payment method triggers immediate close of OrderEntry",
+        "CR-164: Send Payment Link from Daily Reports"
+      ],
+      "backend_questions": [
+        "OQ-1..OQ-4 documented in report"
+      ]
     }
   ],
   "meta": {
@@ -20267,6 +20291,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 537
+    "total": 538
   }
 }
