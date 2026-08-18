@@ -20083,6 +20083,37 @@
         "Per-employee rows with checkboxes or matrix view?",
         "Fixed-station toggle per printer (global) or per printer per employee?"
       ]
+    },
+    {
+      "id": "CR-161",
+      "type": "CR",
+      "title": "Station Management Screen \u2014 CRUD + Restaurant-Level Printing Mode (Fixed/Waiter/Station)",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Stations + Printing Mode (new tabs)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "LARGE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-161_STATION_MANAGEMENT_PRINTING_MODE_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT \u2014 RELATED to CR-160",
+      "fast_lane_eligible": false,
+      "backend_status": "API READY \u2014 5 endpoints confirmed (GET/POST/PUT printer-config, GET area-options, GET/PUT printing-option)",
+      "api_contract_provided": true,
+      "parts": [
+        "Part A: Station CRUD",
+        "Part B: Printing Mode (Fixed/Waiter/Station)"
+      ],
+      "owner_decisions_pending": [
+        "Stations + Printing Mode in same tab or separate tabs?",
+        "area-options: fixed list or custom input?",
+        "DELETE station endpoint available?",
+        "station_gst: formatted GST or free text?"
+      ]
     }
   ],
   "meta": {
@@ -20093,6 +20124,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 530
+    "total": 531
   }
 }
