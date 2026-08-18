@@ -20057,6 +20057,32 @@
       "root_cause": "config.options has no stations list; useStations().availableStations exists in context but not wired to PrinterWizard Step 3",
       "fix_file": "components/panels/settings/printerConfig/PrintersTab.jsx",
       "fix_lines": "~15-20 lines"
+    },
+    {
+      "id": "CR-160",
+      "type": "CR",
+      "title": "Printer Mapping Screen \u2014 Employee to Printer Assignment (KOT / Bill)",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Printer Mapping (new tab/screen)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "MEDIUM-LARGE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-160_PRINTER_MAPPING_EMPLOYEE_SCREEN_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "backend_status": "API READY \u2014 GET + POST /api/v2/vendoremployee/restaurant-settings/printer-mapping",
+      "api_contract_provided": true,
+      "owner_decisions_pending": [
+        "New tab in Printer Agent Config or standalone page?",
+        "Per-employee rows with checkboxes or matrix view?",
+        "Fixed-station toggle per printer (global) or per printer per employee?"
+      ]
     }
   ],
   "meta": {
@@ -20067,6 +20093,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 529
+    "total": 530
   }
 }
