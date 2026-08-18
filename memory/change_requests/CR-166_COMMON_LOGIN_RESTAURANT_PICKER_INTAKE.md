@@ -110,17 +110,19 @@ Response: { token: "..." }   ← restaurant-specific token (used for all subsequ
 
 **Key constraint:** After `loginAsRestaurant`, all subsequent API calls must use the restaurant-specific token, not the common token.
 
-## Owner Decisions — DEFERRED TO GATE 2
+## Owner Decisions — DEFERRED TO GATE 2 (Planning)
 
-| # | Question | Deferred To |
-|---|----------|-------------|
-| OQ-1 | How does the frontend know the login response is "common" vs "single-restaurant"? (Does `common-login` return a different response shape, or a flag like `is_multi_restaurant: true`?) | Gate 2 |
-| OQ-2 | Should the common token be stored separately (e.g. `common_auth_token`) from the restaurant token (`auth_token`)? | Gate 2 |
-| OQ-3 | After logging into a restaurant, can the user switch back to the restaurant picker without re-entering credentials? (Session persistence for common token) | Gate 2 |
-| OQ-4 | What is the response shape of `GET /assigned-restaurants`? (Fields per restaurant: id, name, logo, address?) | Gate 2 |
-| OQ-5 | What does `POST /login-as-restaurant` return beyond a token? (Full auth response like regular login, or token only?) | Gate 2 |
+Owner confirmed all decisions will be answered during Planning Gate 2 (Impact Analysis).
 
-**Intake Status: COMPLETE — all decisions deferred to Gate 2**
+| # | Open Question | Deferred To |
+|---|---------------|-------------|
+| OQ-1 | How does frontend know login response is "common" vs single-restaurant? | Gate 2 |
+| OQ-2 | Common token stored separately from restaurant token? | Gate 2 |
+| OQ-3 | Can user return to picker without re-entering credentials? | Gate 2 |
+| OQ-4 | `assigned-restaurants` response shape (id, name, logo, etc.)? | Gate 2 |
+| OQ-5 | `login-as-restaurant` response — token only or full auth response? | Gate 2 |
+
+**Intake Status: COMPLETE**
 
 ## Important Implementation Note
 

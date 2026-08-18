@@ -20629,14 +20629,16 @@
       "backend_status": "API READY \u2014 3 endpoints confirmed (common-login, assigned-restaurants, login-as-restaurant)",
       "api_contract_provided": true,
       "auth_rule": "integration_playbook_expert_v2 MANDATORY before Gate 4 implementation",
-      "owner_decisions_status": "DEFERRED TO GATE 2",
+      "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "open_decisions": [
         "OQ-1: How to detect common vs single-restaurant login response?",
         "OQ-2: Token storage \u2014 separate keys for common vs restaurant token?",
         "OQ-3: Can user switch back to picker without re-entering credentials?",
         "OQ-4: Response shape of assigned-restaurants?",
         "OQ-5: Response shape of login-as-restaurant?"
-      ]
+      ],
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     }
   ],
   "meta": {
