@@ -120,6 +120,23 @@ User selects radio option:
   → NO "Save Changes" needed — saves immediately on change
 ```
 
+### INVESTIGATION FINDING — printing-option vs printer-agent-config (2026-08-18)
+
+Curl-probe confirmed:
+- `printing_option` is **NOT in `GET /printer-agent-config`** response
+- `printing_option` **IS in `GET /profile`** response (restaurant settings)
+- `PUT /printing-option` saves to restaurant settings (separate store from printer-agent-config)
+
+**What this means:**
+- The printer agent DEVICE does not read `printing_option` — it receives explicit printer IDs in each order's `printer_agent[]` payload
+- `printing_option` is a **POS-side routing decision** — the FE reads it from profile context to decide which printers to include in `printer_agent[]` when placing orders
+- It is valid and used, just not a printer agent config setting — it belongs in restaurant settings
+
+**Impact on implementation:**
+- The `PUT /printing-option` save works independently (confirmed live: endpoint returns success)
+- Display an info note in the UI: "This is a POS routing preference — not read by the printer agent device"
+- Implementation agent must confirm exact `restaurant_id` source for the PUT payload (from `useRestaurant()` context)
+
 ---
 
 ## §3 — Transform Logic

@@ -268,7 +268,8 @@ svg.icon-xs{width:10px;height:10px}
         <div class="grid-2">
           <div class="field-group">
             <label class="field-label">Printer Name <span class="req">*</span></label>
-            <input class="field-input" value="Kitchen USB Printer" data-testid="printer-name-input"/>
+            <input class="field-input" value="Kitchen USB Printer" placeholder="Auto-fills from USB Printer Name" style="color:var(--gray);font-style:italic" data-testid="printer-name-input"/>
+            <div style="font-size:10px;color:var(--gray);margin-top:3px">Auto-filled from USB Printer Name — edit to customise</div>
           </div>
           <div class="field-group">
             <label class="field-label">Paper Size</label>
@@ -285,10 +286,27 @@ svg.icon-xs{width:10px;height:10px}
           <div class="field-group" style="margin-bottom:8px">
             <label class="field-label">USB Printer Name <span class="req">*</span></label>
             <input class="field-input" placeholder="As shown in system devices" data-testid="usb-printer-name-input"/>
+            <div style="font-size:10px;color:var(--gray);margin-top:3px">Printer Name above will auto-fill as you type</div>
           </div>
           <button style="font-size:11px;color:var(--orange);background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-testid="printer-advanced-toggle">
-            + Show advanced (Vendor / Product ID)
+            + Show advanced (Vendor / Product ID — Android USB setup)
           </button>
+          <!-- Advanced expanded state -->
+          <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
+            <div style="font-size:10px;color:var(--blue);background:#EFF6FF;border:1px solid #BFDBFE;border-radius:5px;padding:5px 8px;margin-bottom:8px">
+              For Android USB printing only. Leave as <strong>0</strong> for most setups unless your device requires specific IDs.
+            </div>
+            <div class="grid-2">
+              <div class="field-group" style="margin-bottom:0">
+                <label class="field-label">Vendor ID <span style="font-weight:400;color:var(--light)">(default: 0)</span></label>
+                <input class="field-input" placeholder="0" data-testid="usb-vendor-id-input"/>
+              </div>
+              <div class="field-group" style="margin-bottom:0">
+                <label class="field-label">Product ID <span style="font-weight:400;color:var(--light)">(default: 0)</span></label>
+                <input class="field-input" placeholder="0" data-testid="usb-product-id-input"/>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="section-title" style="margin-top:4px">KOT Routing</div>
@@ -339,7 +357,17 @@ svg.icon-xs{width:10px;height:10px}
       <!-- ── PRINTING MODE SECTION (CR-161 Part B) ── -->
       <div style="margin-bottom:14px">
         <div class="section-title">Printing Mode</div>
-        <div style="font-size:11px;color:var(--gray);margin-bottom:8px">Controls how print jobs are dispatched across your printers.</div>
+        <!-- Investigation finding 2026-08-18: printing_option is in profile API (not printer-agent-config).
+             Saves via PUT /printing-option → stored in restaurant settings.
+             Used by the POS FE to decide which printer_agent[] to include per order.
+             The printer agent DEVICE does not read this — it's a POS-side routing decision. -->
+        <div class="banner-info" style="margin-bottom:8px">
+          <svg class="icon-sm" style="stroke:var(--blue);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <strong>POS routing decision</strong> — not read by the printer agent device. Controls which printer the POS selects when placing each order. Saved to restaurant settings via its own endpoint.
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--gray);margin-bottom:8px">Controls how the POS routes print jobs when placing orders.</div>
         <div class="mode-cards" data-testid="printing-mode-selector">
           <div class="mode-card active" data-testid="printing-mode-fixed">
             <div class="mode-card-title">Fixed</div>
