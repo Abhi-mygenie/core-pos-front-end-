@@ -20607,6 +20607,36 @@
         "OQ-3: reason fields",
         "OQ-4: detect PG order"
       ]
+    },
+    {
+      "id": "CR-166",
+      "type": "CR",
+      "title": "Customer Service / Franchise Multi-Restaurant Login (Common Login + Restaurant Picker)",
+      "area": "Auth \u2192 Login \u2192 Common Login + Restaurant Picker Page",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "NONE",
+      "blast_radius": "LARGE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-166_COMMON_LOGIN_RESTAURANT_PICKER_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "backend_status": "API READY \u2014 3 endpoints confirmed (common-login, assigned-restaurants, login-as-restaurant)",
+      "api_contract_provided": true,
+      "auth_rule": "integration_playbook_expert_v2 MANDATORY before Gate 4 implementation",
+      "owner_decisions_status": "DEFERRED TO GATE 2",
+      "open_decisions": [
+        "OQ-1: How to detect common vs single-restaurant login response?",
+        "OQ-2: Token storage \u2014 separate keys for common vs restaurant token?",
+        "OQ-3: Can user switch back to picker without re-entering credentials?",
+        "OQ-4: Response shape of assigned-restaurants?",
+        "OQ-5: Response shape of login-as-restaurant?"
+      ]
     }
   ],
   "meta": {
@@ -20617,6 +20647,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 547
+    "total": 548
   }
 }
