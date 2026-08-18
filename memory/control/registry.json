@@ -20008,6 +20008,26 @@
       "sprint": "POS 5.x",
       "duplicate_check": "RELATED to CR-036-FU-03 F3",
       "fast_lane_eligible": false
+    },
+    {
+      "id": "CR-159",
+      "type": "CR",
+      "title": "Bulk Delete in Menu Management",
+      "area": "Menu Management \u2192 Bulk Editor / Product List",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-159_BULK_DELETE_MENU_MANAGEMENT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "backend_brief_needed": true
     }
   ],
   "meta": {
@@ -20018,6 +20038,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 527
+    "total": 528
   }
 }
