@@ -20445,6 +20445,84 @@
         "BUG-337 (profile staleness)",
         "BUG-338 (room GST not gated)"
       ]
+    },
+    {
+      "id": "BUG-336",
+      "type": "BUG",
+      "title": "GST Applied on Bills Even When Disabled in Restaurant Settings",
+      "area": "Order Entry \u2192 CollectPaymentPanel \u2192 taxTotals useMemo",
+      "priority": "P0",
+      "risk": "CRITICAL",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-336_GST_STILL_APPLIED_WHEN_DISABLED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-GST-001",
+      "fix_file": "CollectPaymentPanel.jsx",
+      "fix_description": "Add restaurant.tax.gstStatus gate to taxTotals useMemo",
+      "owner_decisions_status": "NONE NEEDED \u2014 fix is clear",
+      "dependency": "BUG-337 must also be fixed for gstStatus to be current"
+    },
+    {
+      "id": "BUG-337",
+      "type": "BUG",
+      "title": "Profile Not Refreshed After Restaurant Settings Save (All Settings Stale Until Re-Login)",
+      "area": "Restaurant Settings \u2192 RestaurantSettingsPage \u2192 Profile Context",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-337_PROFILE_STALE_AFTER_SETTINGS_SAVE_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-GST-001",
+      "fix_file": "RestaurantSettingsPage.jsx",
+      "fix_description": "Re-fetch profile and call setRestaurant() after successful updateSettings()",
+      "owner_decisions_status": "NONE NEEDED \u2014 fix is clear",
+      "downstream_bugs_mitigated": [
+        "BUG-336",
+        "BUG-338"
+      ]
+    },
+    {
+      "id": "BUG-338",
+      "type": "BUG",
+      "title": "Room GST Applied Even When roomGstApplicable = false",
+      "area": "Room Module \u2192 CollectPaymentPanel \u2192 taxTotals (room orders)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-338_ROOM_GST_APPLIED_WHEN_DISABLED_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT \u2014 RELATED to BUG-336",
+      "fast_lane_eligible": false,
+      "source_investigation": "INV-GST-001",
+      "fix_file": "CollectPaymentPanel.jsx",
+      "fix_description": "Add isRoom + roomGstApplicable gate to taxTotals useMemo",
+      "owner_decisions_status": "NONE NEEDED \u2014 fix is clear",
+      "recommend_batch_with": [
+        "BUG-336",
+        "BUG-337"
+      ]
     }
   ],
   "meta": {
@@ -20455,6 +20533,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 541
+    "total": 544
   }
 }
