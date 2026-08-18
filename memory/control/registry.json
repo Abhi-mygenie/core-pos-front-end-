@@ -20841,16 +20841,77 @@
         "OQ-2: single-column or 2-column layout on wide screen?",
         "OQ-3: connection type as select dropdown or radio cards?"
       ]
+    },
+    {
+      "id": "CR-168",
+      "type": "CR",
+      "title": "Printer Agent: Test Print Job + Live Printer Status (wire up Coming Soon stubs)",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Printers Tab",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-168_PRINTER_TEST_PRINT_AND_STATUS_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT (absorbs CR-152 scope)",
+      "fast_lane_eligible": false,
+      "related": "CR-133, CR-152",
+      "batch_suggestion": "BATCH-09",
+      "owner_decisions_status": "OPEN \u2014 OQ-1/2/3/4 unanswered (API endpoint unknown)",
+      "open_decisions": [
+        "OQ-1: test-print API endpoint + payload (owner to confirm)",
+        "OQ-2: printer status endpoint or derived from test-print?",
+        "OQ-3: test KOT, test bill, or generic test page?",
+        "OQ-4: status auto-refresh on load or on click?"
+      ],
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-18"
+    },
+    {
+      "id": "CR-169",
+      "type": "CR",
+      "title": "Live Bill/KOT Print Preview in Printer Config (end-user, wired to real config data)",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Print Style Tab",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-18",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-169_LIVE_BILL_KOT_PRINT_PREVIEW_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT (PrinterConfigPreviewPage.jsx is dev mock, not end-user feature)",
+      "fast_lane_eligible": false,
+      "related": "CR-133, CR-167",
+      "batch_suggestion": "BATCH-09",
+      "owner_decisions_status": "OPEN \u2014 OQ-1/2/3/4 unanswered",
+      "open_decisions": [
+        "OQ-1: preview access location (Print Style tab button / new 6th tab / dedicated button)",
+        "OQ-2: show Bill layout, KOT layout, or both with toggle?",
+        "OQ-3: use real restaurant info from profile or sample placeholder data?",
+        "OQ-4: what to do with PrinterConfigPreviewPage.jsx (rewrite/keep/remove)?"
+      ],
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-18"
     }
   ],
   "meta": {
-    "last_updated": "2026-08-17",
+    "last_updated": "2026-08-18",
     "last_action": "PLANNING CLOSED (Gate 4 GO): CR-133 Printer Agent Config \u2014 OD-6..9 resolved, implementation authorized",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 548
+    "total": 548,
+    "total_items": 558
   }
 }
