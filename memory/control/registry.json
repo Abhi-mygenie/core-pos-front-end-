@@ -20143,6 +20143,28 @@
         "OQ-3: auto-create temp table or pick existing?",
         "OQ-4: room balance auto-reduce on item move?"
       ]
+    },
+    {
+      "id": "INV-OE-001",
+      "type": "INVESTIGATION",
+      "title": "Order Entry: Default Walk-In + Pre-Place Table Switch Cart Reset",
+      "area": "Order Entry \u2014 DashboardPage / OrderEntry",
+      "priority": "P1",
+      "risk": "LOW-MEDIUM",
+      "status": "INVESTIGATION COMPLETE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/INV-OE-001_DEFAULT_WALKIN_TABLE_SWITCH_CART_RESET.md"
+      ],
+      "findings": {
+        "issue_1": "handleAddOrder() hardcoded to walkIn in DashboardPage.jsx \u2014 no preference, no context awareness",
+        "issue_2": "Cart save/restore effect in OrderEntry.jsx clears cart on table switch when new table has no savedCart, even for new unplaced orders"
+      },
+      "recommended_bugs": [
+        "BUG-333 (default walk-in)",
+        "BUG-334 (cart clears on table switch)"
+      ],
+      "fast_lane_eligible": true
     }
   ],
   "meta": {
@@ -20153,6 +20175,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 532
+    "total": 533
   }
 }
