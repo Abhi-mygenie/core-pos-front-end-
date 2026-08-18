@@ -20119,13 +20119,14 @@
       "area": "Settings \u2192 Printer Agent Config \u2192 Printer Mapping (new tab/screen)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
-      "completeness": "1/7",
+      "status": "GATE 2 COMPLETE",
+      "completeness": "2/7",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM-LARGE",
       "created": "2026-08-17",
       "artifact_refs": [
-        "/app/memory/change_requests/CR-160_PRINTER_MAPPING_EMPLOYEE_SCREEN_INTAKE.md"
+        "/app/memory/change_requests/CR-160_PRINTER_MAPPING_EMPLOYEE_SCREEN_INTAKE.md",
+        "/app/memory/impact/CR-160_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
@@ -20139,7 +20140,7 @@
       ],
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-18"
     },
     {
       "id": "CR-161",
@@ -20148,13 +20149,14 @@
       "area": "Settings \u2192 Printer Agent Config \u2192 Stations + Printing Mode (new tabs)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
-      "completeness": "1/7 \u2014 intake complete, all decisions deferred to Gate 2",
+      "status": "GATE 2 COMPLETE",
+      "completeness": "2/7",
       "code_reality": "NONE",
       "blast_radius": "LARGE",
       "created": "2026-08-17",
       "artifact_refs": [
-        "/app/memory/change_requests/CR-161_STATION_MANAGEMENT_PRINTING_MODE_INTAKE.md"
+        "/app/memory/change_requests/CR-161_STATION_MANAGEMENT_PRINTING_MODE_INTAKE.md",
+        "/app/memory/impact/CR-161_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT \u2014 RELATED to CR-160",
@@ -20171,7 +20173,7 @@
         "B-2: area-options response shape unknown \u2014 probe endpoint at Gate 2"
       ],
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-08-18",
       "backend_confirmed_fields": [
         "station_gst",
         "auto_serve",
@@ -20823,13 +20825,14 @@
       "area": "Settings \u2192 Printer Agent Config \u2192 Printers Tab \u2192 Add/Edit Printer",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
-      "completeness": "1/7",
+      "status": "GATE 2 COMPLETE",
+      "completeness": "2/7",
       "code_reality": "FULL",
       "blast_radius": "SMALL",
       "created": "2026-08-18",
       "artifact_refs": [
-        "/app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md"
+        "/app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md",
+        "/app/memory/impact/CR-167_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
@@ -20840,7 +20843,8 @@
         "OQ-1: inline panel or modal/drawer?",
         "OQ-2: single-column or 2-column layout on wide screen?",
         "OQ-3: connection type as select dropdown or radio cards?"
-      ]
+      ],
+      "last_updated": "2026-08-18"
     },
     {
       "id": "CR-168",
@@ -20879,13 +20883,14 @@
       "area": "Settings \u2192 Printer Agent Config \u2192 Print Style Tab",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE",
-      "completeness": "1/7",
+      "status": "GATE 2 COMPLETE",
+      "completeness": "2/7",
       "code_reality": "PARTIAL",
       "blast_radius": "SMALL",
       "created": "2026-08-18",
       "artifact_refs": [
-        "/app/memory/change_requests/CR-169_LIVE_BILL_KOT_PRINT_PREVIEW_INTAKE.md"
+        "/app/memory/change_requests/CR-169_LIVE_BILL_KOT_PRINT_PREVIEW_INTAKE.md",
+        "/app/memory/impact/CR-169_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT (PrinterConfigPreviewPage.jsx is dev mock, not end-user feature)",
