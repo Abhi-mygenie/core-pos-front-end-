@@ -453,21 +453,28 @@ svg.icon-xs{width:10px;height:10px}
 
 
 <!-- ══════════════════════════════════════════════════════════════════
-     SCREEN 2 — Tab 5 "Printer Mapping" (CR-160)
+     SCREEN 2 — Tab 5 "Printer Mapping" (CR-160) — REDESIGNED
+     Two options presented for owner approval
 ═══════════════════════════════════════════════════════════════════ -->
 <div class="section-wrap">
   <div class="section-label">
     <span class="cr-badge">CR-160</span>
-    Screen 2 — Tab 5: Printer Mapping (Employee → Printer Assignment)
+    Screen 2 — Tab 5: Printer Mapping — REDESIGNED (2 options for approval)
   </div>
   <div class="screen-title">Tab 5: Printer Mapping</div>
-  <div class="screen-desc">Per-printer rows. Employee names shown (not IDs). Multi-select dropdown for editing assignments. Separate Save Mapping button — independent from main Save Changes.</div>
+  <div class="screen-desc">Owner feedback: "which employee can print which station — bar, kitchen, bill — simple idea." Two cleaner designs below. Pick A or B.</div>
 
-  <div class="panel-shell" style="max-width:560px">
+  <!-- ── OPTION A: Employee rows with station checkboxes ── -->
+  <div style="margin-bottom:8px">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#1A1A1A;color:#fff;padding:5px 14px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px">
+      OPTION A — Employee rows (recommended)
+    </div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px">Each row = one employee. Tick which stations they print to. "Prints All" = fixed user who prints everything.</div>
+  </div>
+
+  <div class="panel-shell" style="max-width:620px;margin-bottom:32px">
     <div class="panel-header">
-      <div class="back">
-        <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
-      </div>
+      <div class="back"><svg class="icon"><polyline points="15 18 9 12 15 6"/></svg></div>
       <span class="panel-title">Printer Settings</span>
     </div>
     <div class="tab-bar">
@@ -482,143 +489,229 @@ svg.icon-xs{width:10px;height:10px}
     </div>
     <div class="tab-content">
 
-      <!-- Default users -->
-      <div class="default-users-section" data-testid="default-users-section">
-        <div class="section-title" style="border-color:var(--orange25);color:var(--orange)">Default Users (Fixed Station)</div>
-        <div class="default-users-hint">These employees are automatically assigned to ALL printers. Toggle to mark / unmark as default.</div>
-        <div class="user-toggle-row">
-          <div class="user-toggle on" data-testid="default-user-toggle-1478">
-            <div class="toggle-dot on"></div>
-            Owner
-          </div>
-          <div class="user-toggle on" data-testid="default-user-toggle-2304">
-            <div class="toggle-dot on"></div>
-            Saurav
-          </div>
-          <div class="user-toggle" data-testid="default-user-toggle-1476">
-            <div class="toggle-dot"></div>
-            Manager
-          </div>
-          <div class="user-toggle" data-testid="default-user-toggle-1475">
-            <div class="toggle-dot"></div>
-            BAR
-          </div>
-          <div class="user-toggle" data-testid="default-user-toggle-1477">
-            <div class="toggle-dot"></div>
-            Captain
-          </div>
-        </div>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:14px;padding:8px 12px;background:#F9FAFB;border-radius:8px;border:1px solid var(--border)">
+        Set which stations each employee's orders route to. "Prints All" employees always print to every station.
       </div>
 
-      <div class="section-title">Printer Assignments</div>
-      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Assign employees to each printer. Each employee will only print to their assigned printers.</div>
-
-      <!-- Mapping row: BAR -->
-      <div class="mapping-row" data-testid="mapping-row-485">
-        <div class="mapping-printer-name">
-          <svg class="icon-sm" style="color:var(--gray)"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
-          BAR
-          <span class="bill-chip" style="font-size:9px">Bills</span>
-        </div>
-        <div class="mapping-printer-meta">bluetooth · 60:6E:41:45:6F:EF</div>
-        <div class="mapping-assignments">
-          <span class="emp-chip default-chip" data-testid="emp-chip-1478-485">
-            Owner
-            <span class="remove">✕</span>
-          </span>
-          <span class="emp-chip default-chip" data-testid="emp-chip-2304-485">
-            Saurav
-            <span class="remove">✕</span>
-          </span>
-          <span class="emp-chip" data-testid="emp-chip-1475-485">
-            BAR
-            <span class="remove">✕</span>
-          </span>
-          <button class="add-emp-btn" data-testid="add-employees-485">+ Add Employees</button>
-        </div>
+      <!-- Column headers -->
+      <div style="display:grid;grid-template-columns:140px 1fr 80px;gap:0;margin-bottom:4px;padding:0 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em">Employee</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em">Prints To (stations)</div>
+        <div style="font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.06em;text-align:center">Prints All</div>
       </div>
 
-      <!-- Mapping row: Bill -->
-      <div class="mapping-row" data-testid="mapping-row-486">
-        <div class="mapping-printer-name">
-          <svg class="icon-sm" style="color:var(--gray)"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
-          Bill
+      <!-- Employee rows -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+
+        <!-- Owner — Prints All ON -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="mapping-row-1478">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">O</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Owner</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px">
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">BAR</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">KDS</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">Bill</span>
+            <span style="font-size:10px;color:var(--light);font-style:italic">all stations</span>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot on" style="transform:scale(.85)" data-testid="prints-all-1478"></div>
+          </div>
         </div>
-        <div class="mapping-printer-meta">usb · BILLING</div>
-        <div class="mapping-assignments">
-          <span class="emp-chip default-chip" data-testid="emp-chip-1478-486">
-            Owner
-            <span class="remove">✕</span>
-          </span>
-          <span class="emp-chip default-chip" data-testid="emp-chip-2304-486">
-            Saurav
-            <span class="remove">✕</span>
-          </span>
-          <button class="add-emp-btn" data-testid="add-employees-486">+ Add Employees</button>
+
+        <!-- Saurav — Prints All ON -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="mapping-row-2304">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#6B7280;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">S</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Saurav</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px">
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">BAR</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">KDS</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">Bill</span>
+            <span style="font-size:10px;color:var(--light);font-style:italic">all stations</span>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot on" style="transform:scale(.85)" data-testid="prints-all-2304"></div>
+          </div>
         </div>
+
+        <!-- BAR employee — only BAR station -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border)" data-testid="mapping-row-1475">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">B</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">BAR</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <!-- Station checkboxes inline -->
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" checked style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1475"></div>
+          </div>
+        </div>
+
+        <!-- KDS employee — only KDS -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border)" data-testid="mapping-row-1474">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">K</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">KDS</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" checked style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1474"></div>
+          </div>
+        </div>
+
+        <!-- Manager — nothing assigned -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px" data-testid="mapping-row-1476">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">M</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Manager</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1476"></div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Mapping row: KDS -->
-      <div class="mapping-row" data-testid="mapping-row-484">
-        <div class="mapping-printer-name">
-          <svg class="icon-sm" style="color:var(--gray)"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
-          KDS
-        </div>
-        <div class="mapping-printer-meta">bluetooth · 60:6E:41:45:6F:EF</div>
-        <div class="mapping-assignments">
-          <span class="emp-chip default-chip" data-testid="emp-chip-1478-484">
-            Owner
-            <span class="remove">✕</span>
-          </span>
-          <span class="emp-chip default-chip" data-testid="emp-chip-2304-484">
-            Saurav
-            <span class="remove">✕</span>
-          </span>
-          <span class="emp-chip" data-testid="emp-chip-1474-484">
-            KDS
-            <span class="remove">✕</span>
-          </span>
-          <button class="add-emp-btn" data-testid="add-employees-484">+ Add Employees</button>
-        </div>
-      </div>
-
-      <!-- Multi-select dropdown (expanded state) -->
-      <div style="background:var(--white);border:1px solid var(--border);border-radius:9px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:12px;margin-top:4px" data-testid="employee-multiselect-dropdown">
-        <div style="font-size:11px;font-weight:600;color:var(--gray);margin-bottom:8px">Assign employees to BAR</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input class="field-input" placeholder="Search employees..." style="font-size:11px" data-testid="employee-search-input"/>
-        </div>
-        <div style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:7px">
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #F3F4F6;cursor:pointer;background:var(--orange10)">
-            <input type="checkbox" checked style="accent-color:var(--orange)" data-testid="emp-check-1478"/> <span style="font-size:12px;color:var(--dark)">Owner</span> <span style="font-size:10px;color:var(--orange);margin-left:auto">Default</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #F3F4F6;cursor:pointer;background:var(--orange10)">
-            <input type="checkbox" checked style="accent-color:var(--orange)" data-testid="emp-check-2304"/> <span style="font-size:12px;color:var(--dark)">Saurav</span> <span style="font-size:10px;color:var(--orange);margin-left:auto">Default</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #F3F4F6;cursor:pointer">
-            <input type="checkbox" checked style="accent-color:var(--orange)" data-testid="emp-check-1475"/> <span style="font-size:12px;color:var(--dark)">BAR</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #F3F4F6;cursor:pointer">
-            <input type="checkbox" style="accent-color:var(--orange)" data-testid="emp-check-1476"/> <span style="font-size:12px;color:var(--dark)">Manager</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer">
-            <input type="checkbox" style="accent-color:var(--orange)" data-testid="emp-check-1477"/> <span style="font-size:12px;color:var(--dark)">Captain</span>
-          </div>
-        </div>
-        <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px">
-          <button class="btn btn-ghost btn-sm">Cancel</button>
-          <button class="btn btn-orange btn-sm" data-testid="employee-multiselect-apply-btn">Apply</button>
-        </div>
+      <div style="font-size:10px;color:var(--gray);margin-top:8px;display:flex;align-items:center;gap:5px">
+        <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>
+        Prints All = employee prints to every station automatically (fixed user)
       </div>
 
     </div>
     <div class="save-bar">
       <div class="save-bar-inner">
-        <span style="font-size:11px;color:var(--gray)">Mapping changes are saved separately</span>
-        <button class="btn btn-green" data-testid="save-mapping-btn">Save Mapping</button>
+        <span style="font-size:11px;color:var(--orange);display:flex;align-items:center"><span class="unsaved-dot"></span> Unsaved changes</span>
+        <button class="btn btn-green" data-testid="save-mapping-btn-a">Save Mapping</button>
       </div>
     </div>
   </div>
+
+  <!-- ── OPTION B: Matrix grid ── -->
+  <div style="margin-bottom:8px">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#4B5563;color:#fff;padding:5px 14px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px">
+      OPTION B — Matrix grid (compact view)
+    </div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px">Employees as rows, stations as columns. Tick each intersection. Good when you have many employees.</div>
+  </div>
+
+  <div class="panel-shell" style="max-width:520px;margin-bottom:16px">
+    <div class="panel-header">
+      <div class="back"><svg class="icon"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill">Print Style</button>
+        <button class="tab-pill active">Mapping</button>
+        <button class="tab-pill">Stations</button>
+      </div>
+    </div>
+    <div class="tab-content">
+
+      <div style="font-size:12px;color:var(--gray);margin-bottom:14px">Tick the stations each employee should print to.</div>
+
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <!-- Matrix header -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);background:#F9FAFB;border-bottom:2px solid var(--border)">
+          <div style="padding:8px 12px;font-size:10px;font-weight:700;color:var(--gray)">EMPLOYEE</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">BAR</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">KDS</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">Bill</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--orange);text-align:center">All</div>
+        </div>
+        <!-- Owner -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="matrix-row-owner">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Owner</div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot on" style="transform:scale(.75);margin:0 auto" data-testid="m-owner-all"></div></div>
+        </div>
+        <!-- Saurav -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="matrix-row-saurav">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Saurav</div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot on" style="transform:scale(.75);margin:0 auto" data-testid="m-saurav-all"></div></div>
+        </div>
+        <!-- BAR employee -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border)" data-testid="matrix-row-bar">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">BAR</div>
+          <div style="text-align:center"><input type="checkbox" checked style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-bar-all"></div></div>
+        </div>
+        <!-- KDS employee -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border)" data-testid="matrix-row-kds">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">KDS</div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-kds-all"></div></div>
+        </div>
+        <!-- Manager -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center" data-testid="matrix-row-manager">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Manager</div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-mgr-all"></div></div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;color:var(--gray);margin-top:8px;display:flex;align-items:center;gap:5px">
+        <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>
+        All = toggles all stations on/off for that employee. Greys out individual boxes.
+      </div>
+
+    </div>
+    <div class="save-bar">
+      <div class="save-bar-inner">
+        <span style="font-size:11px;color:var(--orange);display:flex;align-items:center"><span class="unsaved-dot"></span> Unsaved changes</span>
+        <button class="btn btn-green" data-testid="save-mapping-btn-b">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
