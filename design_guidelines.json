@@ -1,0 +1,84 @@
+{
+  "theme": "light",
+  "typography": {
+    "headings": {
+      "font_family": "Inter, system-ui, sans-serif",
+      "weights": "600, 700",
+      "tracking": "tracking-tight",
+      "description": "Adhering to brand constraints, using Inter but with tight tracking and distinct weights to avoid a generic feel."
+    },
+    "body": {
+      "font_family": "Inter, system-ui, sans-serif",
+      "size": "text-sm",
+      "line_height": "leading-relaxed"
+    },
+    "receipt_preview": {
+      "font_family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      "size": "text-xs",
+      "description": "Essential for the thermal receipt preview. Needs to feel exactly like a physical dot-matrix/thermal printout."
+    }
+  },
+  "colors": {
+    "primary_orange": "#F26B33",
+    "primary_green": "#329937",
+    "dark_text": "#1A1A1A",
+    "gray_text": "#6B7280",
+    "border": "#E5E7EB",
+    "light_bg": "#F7F7F7",
+    "white": "#FFFFFF",
+    "background_surround": "#E5E7EB",
+    "receipt_paper": "#FFFFFF"
+  },
+  "visual_enhancers": {
+    "shadows": "shadow-sm on resting cards. The receipt preview needs a distinct shadow: shadow-[0_4px_20px_rgba(0,0,0,0.15)] to pop off the grey backdrop.",
+    "borders": "1px solid #E5E7EB (border color constraint) for structural dividers and cards.",
+    "radii": "rounded-lg (8px) for cards, rounded-md (6px) for inner elements and inputs.",
+    "surfaces": "Flat, solid colors. No muddy glassmorphism. Data-dense settings require crisp, opaque surfaces. The active tab uses white background with subtle shadow on a #F3F4F6 container."
+  },
+  "grids_and_spacing": {
+    "spacing_scale": "Compact yet structured. Use p-4 to p-6 inside cards. The tab bar uses px-6 py-2.",
+    "tab_1_layout": "Top section: 3-column grid for Printing Mode radio cards (Fixed / Waiter / Station). Below: list of printers. Inline form pushes content down (no modal overlay).",
+    "inline_form_grid": "Grid with 2 columns (md:grid-cols-2) for form inputs, but spanning full width for connection type cards (3-col grid: USB, LAN, BLE).",
+    "tab_5_mapping_layout": "Rows per printer. Each row uses flexbox: Left side printer name/details, Right side employee name-chips wrapping and 'Edit Assignments' trigger.",
+    "tab_6_stations_layout": "Data table or structured list format. Inline add/edit form row appearing directly in the list."
+  },
+  "layouts": {
+    "container": "A 6-tab navigation container (PrinterAgentConfigView) residing inside a settings slide-over. Must feel cohesive and incredibly dense yet readable.",
+    "split_panel": "Tab 4 (Print Style) -> Left: flex-1 for scrolling settings. Right: flex-none w-[340px] for the grey background preview panel.",
+    "receipt_container": "Centered in the right panel. Width animates between 220px (58mm) and 280px/300px (80mm). White background, jagged bottom edge via CSS or straight edge with shadow."
+  },
+  "component_guidelines": {
+    "tabs": "Pill-style navigation. Container: bg-[#F3F4F6] p-1 rounded-lg. Active tab: bg-white shadow-sm text-dark-text. Inactive: text-gray-text hover:text-dark-text.",
+    "radio_cards": "Large clickable areas for Connection Types and Printing Modes. Use border-2 border-transparent, and when active: border-primary_orange bg-primary_orange/10.",
+    "multi_select": "Popover + Command pattern (Shadcn UI). Search input inside the popover to filter 30+ employees, with checkbox list below. Renders selected employees as chips inside the printer row.",
+    "buttons": "Save/Confirm = bg-[#329937] text-white hover:bg-[#2A8030]. Primary/Active actions = bg-[#F26B33]. Secondary/Cancel = border border-[#E5E7EB] bg-white text-[#6B7280].",
+    "inputs": "TextInput, SelectInput, ToggleSwitch. Must use exact constraint colors."
+  },
+  "motion": {
+    "transitions": "Hover states on cards: translateY(-1px) with subtle shadow increase.",
+    "receipt_toggle": "Smooth width transition (transition-all duration-300 ease-out) when toggling between 58mm and 80mm preview widths.",
+    "inline_expansion": "Smooth height expansion for the inline forms to avoid jarring jumps."
+  },
+  "accessibility": {
+    "contrast": "Strict adherence. Text on primary buttons must be #FFFFFF. Muted text must be #6B7280 against #FFFFFF to pass APCA.",
+    "test_ids": "CRITICAL: Add data-testid attributes to ALL interactive elements. Example: data-testid='printer-add-button', data-testid='tab-stations', data-testid='connection-type-usb'."
+  },
+  "instructions_to_main_agent": [
+    "Update PrinterAgentConfigView to handle 6 tabs (Printers, Auto Print, Bill Content, Print Style, Printer Mapping, Stations).",
+    "CR-167: Implement 'Add/Edit Printer' entirely inline. When 'Add' is clicked, inject the form into the view. Use the large radio-button CARDS for USB/LAN/Bluetooth. Conditionally render fields based on connection type.",
+    "CR-160: Create the 'Printer Mapping' tab. Build the 'Edit Assignments' component using shadcn Popover + Command to handle 30+ employees without cluttering the UI.",
+    "CR-161: Add 'Stations' tab with an inline CRUD table. Add the 'Printing Mode' (Fixed/Waiter/Station) radio cards section to the top of the 'Printers' tab.",
+    "CR-169: Refactor 'Print Style' tab to a split-panel layout. Left side holds the existing settings, right side is exactly 340px wide, colored #E5E7EB, holding the white thermal receipt preview.",
+    "Do NOT use HTML `<select>` or standard `<input type='date'>`. Rely on Shadcn components, customized with the brand constraints.",
+    "Ensure all components use the EXACT hex codes specified (#F26B33, #329937, #1A1A1A, #6B7280, #E5E7EB, #F7F7F7, #FFFFFF)."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight within constraints.",
+    "Do not apply universal transition. Eg: `transition: all`. Always add transitions for specific properties.",
+    "You MUST NOT center align the app container. Do not add `.App { text-align: center; }`.",
+    "Always use modern pill-shaped or sharp button styles with interaction animations.",
+    "NEVER use AI assistant Emoji characters (🤖, 💡, etc) for icons. Use proper SVG libraries like Lucide or Phosphor.",
+    "All interactive and key informational elements MUST include a `data-testid` attribute to facilitate robust automated testing.",
+    "Use solid background for headers, never full transparent if content scrolls under."
+  ]
+}
