@@ -19949,6 +19949,65 @@
       "duplicate_check": "RELATED to CR-143",
       "fast_lane_eligible": false,
       "screenshot_evidence": true
+    },
+    {
+      "id": "CR-156",
+      "type": "CR",
+      "title": "Table Number in Cancellation Reports (Insights)",
+      "area": "Reports \u2192 Insights \u2192 Cancellation Report",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-156_TABLE_NUMBER_CANCELLATION_REPORT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "blocked": "BACKEND \u2014 endpoint does not return table_no yet",
+      "fast_lane_eligible": false
+    },
+    {
+      "id": "CR-157",
+      "type": "CR",
+      "title": "Food Court Report (New Report \u2014 Backend Contract Pending)",
+      "area": "Reports \u2192 Food Court",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-157_FOOD_COURT_REPORT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "blocked": "BACKEND \u2014 API contract pending from owner/backend team",
+      "fast_lane_eligible": false
+    },
+    {
+      "id": "CR-158",
+      "type": "CR",
+      "title": "GST/VAT Validate Button in Menu Management (Pre-Submit Highlight)",
+      "area": "Menu Management \u2192 Bulk Editor",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE",
+      "completeness": "1/7",
+      "code_reality": "PARTIAL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/change_requests/CR-158_GST_VAT_VALIDATE_BUTTON_MENU_MGMT_INTAKE.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "RELATED to CR-036-FU-03 F3",
+      "fast_lane_eligible": false
     }
   ],
   "meta": {
@@ -19959,6 +20018,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 524
+    "total": 527
   }
 }
