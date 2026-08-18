@@ -188,14 +188,23 @@ Body:
 
 ---
 
-## Owner Decisions Needed
+## Owner Decisions — DEFERRED TO GATE 2 (Impact Analysis)
 
-1. Should Stations and Printing Mode be in the **same new tab** inside Printer Agent Config, or **separate tabs**?
-2. For Area Name — does `/area-options` return a fixed list or can users type custom names?
-3. Is **delete station** needed? (No DELETE endpoint provided — confirm if backend supports it)
-4. Should `station_gst` be a formatted GST number field or free text?
+Owner confirmed all decisions will be answered during Planning Gate 2 (Impact Analysis). Recorded here as open questions for the Planning agent:
 
----
+| # | Open Question | Deferred To |
+|---|---------------|-------------|
+| OQ-1 | Should Stations and Printing Mode be in the **same new tab** or **separate tabs** inside Printer Agent Config? | Gate 2 |
+| OQ-2 | Does `/area-options` return a fixed list, or can users also type custom area names? | Gate 2 |
+| OQ-3 | Is **delete station** required? No DELETE endpoint provided — backend confirmation needed | Gate 2 |
+| OQ-4 | Should `station_gst` be a formatted/validated GST number field or free text? | Gate 2 |
+
+## Open Blockers
+
+| # | Blocker | Resolution Path |
+|---|---------|-----------------|
+| B-1 | OQ-3: No DELETE endpoint in the provided contract — Planning agent must confirm with owner/backend before including delete in implementation plan | Owner to confirm at Gate 2 |
+| B-2 | OQ-2: area-options response shape unknown — Planning agent must call the endpoint during investigation to determine if it returns a fixed enum or dynamic list | Gate 2 investigation step |
 
 ## Duplicate Check
 
@@ -206,4 +215,7 @@ RELATED to CR-160 (Printer Mapping) — both live in the Printer Agent Config se
 
 **Backend:** API READY (all 5 endpoints confirmed)
 **Frontend:** NONE — complete new screen
-**Next:** Planning Gate 2 (owner decisions above needed first)
+**Owner Decisions:** ALL DEFERRED TO GATE 2 — owner confirmed answers will be given during Impact Analysis
+**Blockers:** B-1 (DELETE endpoint unconfirmed), B-2 (area-options response shape unknown) — both resolved at Gate 2
+**Intake Status:** COMPLETE
+**Next:** Planning Gate 2 — Planning agent must resolve OQ-1 through OQ-4 + B-1 + B-2 before writing Implementation Plan

@@ -20092,7 +20092,7 @@
       "priority": "P1",
       "risk": "HIGH",
       "status": "INTAKE",
-      "completeness": "1/7",
+      "completeness": "1/7 \u2014 intake complete, all decisions deferred to Gate 2",
       "code_reality": "NONE",
       "blast_radius": "LARGE",
       "created": "2026-08-17",
@@ -20108,12 +20108,13 @@
         "Part A: Station CRUD",
         "Part B: Printing Mode (Fixed/Waiter/Station)"
       ],
-      "owner_decisions_pending": [
-        "Stations + Printing Mode in same tab or separate tabs?",
-        "area-options: fixed list or custom input?",
-        "DELETE station endpoint available?",
-        "station_gst: formatted GST or free text?"
-      ]
+      "owner_decisions_pending": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Impact Analysis",
+      "open_blockers": [
+        "B-1: DELETE station endpoint not provided \u2014 confirm with backend at Gate 2",
+        "B-2: area-options response shape unknown \u2014 probe endpoint at Gate 2"
+      ],
+      "intake_status": "COMPLETE",
+      "last_updated": "2026-08-17"
     }
   ],
   "meta": {
