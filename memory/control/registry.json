@@ -20115,6 +20115,34 @@
       ],
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17"
+    },
+    {
+      "id": "INV-ROOM-001",
+      "type": "INVESTIGATION",
+      "title": "Room Module: Partial Payment Mid-Stay + Food-to-Table Transfer",
+      "area": "Room Module \u2014 Checkout / Transfer",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INVESTIGATION COMPLETE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/INV-ROOM-001_PARTIAL_PAYMENT_FOOD_TRANSFER_INVESTIGATION.md"
+      ],
+      "findings": {
+        "case_1a": "WORKS \u2014 roomBalance already in effectiveTotal at checkout. No action needed.",
+        "case_1b": "GAP \u2014 receive_balance backend field exists; no frontend mid-stay payment flow",
+        "case_2": "GAP \u2014 TRANSFER_FOOD endpoint exists but room-as-source blocked in TransferFoodModal (BUG-066 legacy)"
+      },
+      "recommended_crs": [
+        "CR-162 (mid-stay partial payment)",
+        "CR-163 (room food to table transfer)"
+      ],
+      "backend_open_questions": [
+        "OQ-1: endpoint for receive_balance mid-stay update",
+        "OQ-2: TRANSFER_FOOD accepts room as source?",
+        "OQ-3: auto-create temp table or pick existing?",
+        "OQ-4: room balance auto-reduce on item move?"
+      ]
     }
   ],
   "meta": {
@@ -20125,6 +20153,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 531
+    "total": 532
   }
 }
