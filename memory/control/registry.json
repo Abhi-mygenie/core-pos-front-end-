@@ -20523,6 +20523,32 @@
         "BUG-336",
         "BUG-337"
       ]
+    },
+    {
+      "id": "INV-BACKEND-001",
+      "type": "INVESTIGATION",
+      "title": "Aggregator Socket + Razorpay Refund + Station Config + Food Court Endpoint",
+      "area": "Aggregator / Payment / Printer Config / Food Court / Restaurant Settings",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INVESTIGATION COMPLETE",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/INV-BACKEND-001_AGGREGATOR_SOCKET_RAZORPAY_STATION_FOODCOURT.md"
+      ],
+      "findings": {
+        "item1_aggregator_socket": "IMPLEMENTED \u2014 socket handlers exist; gaps: payload slot + shape need live testing",
+        "item2_razorpay_refund": "NONE \u2014 no endpoint, service, or UI for cancel-and-refund",
+        "item3_station_gst_auto_serve": "Fields confirmed by backend \u2014 include in CR-161 implementation plan",
+        "item4_restaurant_for_food_court": "PARTIAL \u2014 food_court option missing from select in RestaurantSettingsPage",
+        "item5_food_court_endpoint": "PARTIAL \u2014 mockup+service exist; service uses workaround endpoint, not new dedicated one"
+      },
+      "recommended_items": [
+        "BUG-339: restaurant_for missing food_court option",
+        "CR-165: Razorpay Cancel and Refund integration",
+        "CR-157 update: wire food-court-order-report endpoint",
+        "CR-161 update: station_gst field gated by food_court type"
+      ]
     }
   ],
   "meta": {
@@ -20533,6 +20559,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 544
+    "total": 545
   }
 }
