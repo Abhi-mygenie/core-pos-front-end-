@@ -595,3 +595,12 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
 | **CR-139** | Sub-Recipe Stock: Dedicated tab in OPERATIONS group (absorbs BUG-312 + BUG-313) — **INTAKE COMPLETE, owner decisions locked 2026-08-13** | **P1** | HIGH | **INTAKE COMPLETE — READY FOR GATE 2** | 0-1 ✅ | **Owner decisions locked:** (1) After Stock Update, name "Sub-Recipe Stock" (2) Show actual sub-recipe qty, no ingredients (3) Wastage reason REQUIRED on negative (4) Batch/expiry OPTIONAL (5) Same UX as Stock Audit. **3-phase scope:** Phase A = BUG-312 (inventoryTransform.js +2 lines), Phase B = BUG-313 (block sub-recipes from purchase flow, 4 files), Phase C = new tab + panel + page (2 new files + App.js + InventoryTabBar). Total: 9 files, ~240 lines. No hotspot files. Full Gate 2-3 required. Intake doc: `CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md` |
+
+---
+
+### 2026-08-18 CR-146 — Multiple Menu FE UI Not Implemented
+
+| **ID** | CR-146 |
+|---|---|
+| **CR-146** | **Multiple Menu: Frontend Menu-Switcher UI Not Implemented.** Restaurant Settings toggle `multiple_menu` saves to `basic.multiple_menu` ✓ but has ZERO frontend consumers. Not in `profileTransform.features`. MenuContext does not reference it. No menu-switching UI exists. Owner decision needed: (OQ-1) what FE behaviour is expected when `multiple_menu=Yes`? (OQ-2) does backend return multiple menu versions already? (OQ-3) is switching per-table/order or restaurant-wide? Source: Investigation INV-AUG18-2026. Code reality: PARTIAL (setting saves, FE feature not built). | **P2** | **MEDIUM** | **INTAKE — BLOCKED on OQ-1/2/3** | pos_5_x | `change_requests/CR-146_MULTIPLE_MENU_FE_UI_NOT_IMPLEMENTED_INTAKE.md` |
+

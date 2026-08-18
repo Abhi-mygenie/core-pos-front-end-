@@ -869,3 +869,19 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | ID | Status | Notes |
 |---|---|---|
 | **BUG-327** | **IMPLEMENTED** | `menuManagementTransform.js`: +`swiggyImage`. `menuManagementService.js`: +`addFoodAggregatorMultipart()` +`editFoodAggregator()` (flat multipart, skip variations/addon_ids). `ProductForm.jsx`: +`swiggyImageFile`/`swiggyImagePreview` state, +Swiggy image upload UI (aggregator only), save path → new services. `ProductList.jsx`: `handleQuickSave` aggregator → `editFoodAggregator`. `BulkEditor.jsx`: `processOne` aggregator new/edit → new services. NOTE: QA blocked until backend fixes orphaned `aggregator_food` records 13312–13315 to restore preprod. |
+
+---
+
+### 2026-08-18 Multi-Issue Intake Batch (from Investigation INV-AUG18-2026)
+
+**Last Updated:** 2026-08-18 — 6 bugs + 1 CR registered from investigation session. Source: INV-AUG18-2026_INVESTIGATION_REPORT.md
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-328** | Phone on Bill: Wrong Number Prints on Receipt | P1 | HIGH | **INTAKE** | 1 ✅ | Two separate phone fields: `basic.phone_number_on_bill` (settings API) ≠ `restaurant_information.phone_number` (printer config API). Printer agent reads wrong field. BACKEND_BUG. Backend brief needed. 0 FE files. `BUG-328_PHONE_ON_BILL_WRONG_NUMBER_INTAKE.md` |
+| **BUG-329** | Discount Report: Discount Reason/Type Missing | P2 | MEDIUM | **INTAKE** | 1 ✅ | `insights-discounts` API has no `by_reason[]`. Report has no reason column. `discountFor=null` in QSR flow. FEATURE_GAP. RELATED: CR-137. Backend brief + FE column needed. `BUG-329_DISCOUNT_REPORT_REASON_MISSING_INTAKE.md` |
+| **BUG-330** | Cancel After Serve Setting Not Gated in FE | P1 | HIGH | **INTAKE** | 1 ✅ | `allowPostServeCancel` mapped in profileTransform ✓ but `OrderEntry.jsx:307` gates cancel on `hasPermission('food')` only — never reads `cancellation.allowPostServeCancel`. 1 file ~3 lines. Planning skip eligible (owner GO needed). `BUG-330_CANCEL_AFTER_SERVE_NOT_GATED_INTAKE.md` |
+| **BUG-331** | Schedule Order Setting Not Gated in FE | P1 | MEDIUM | **INTAKE** | 1 ✅ | `schedule_order` NOT in profileTransform → not in context. CartPanel schedule toggle always renders. 2 files ~5 lines. Gate 2-3 required. RELATED: CR-018. `BUG-331_SCHEDULE_ORDER_NOT_GATED_INTAKE.md` |
+| **BUG-332** | Search By Setting Not Consumed in FE | P2 | MEDIUM | **INTAKE** | 1 ✅ | `searchOptions` correctly mapped in profileTransform but ZERO UI consumers. Search options always show all. Search UI component TBD. Gate 2-3. `BUG-332_SEARCH_BY_SETTING_NOT_CONSUMED_INTAKE.md` |
+| **BUG-333** | Printer Style Tab: Row Labels Generic (Row 1/2/3/4) | P2 | LOW | **INTAKE — BLOCKED (owner mapping needed)** | 1 ✅ | `humanize(rowKey)` renders `row_1`→"Row 1" instead of "Restaurant Name" etc. 1 file `PrintStyleTab.jsx`, add `LABEL_MAP`. Fast Lane eligible once owner provides mapping (OQ-1/2/3). `BUG-333_PRINTER_STYLE_TAB_ROW_LABELS_INTAKE.md` |
+
