@@ -292,13 +292,31 @@ svg.icon-xs{width:10px;height:10px}
         </div>
 
         <div class="section-title" style="margin-top:4px">KOT Routing</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input class="field-input" placeholder="Station name — press Enter" style="flex:1" data-testid="printer-station-input"/>
-          <button class="btn btn-orange btn-sm" data-testid="printer-station-add-btn">Add</button>
-        </div>
-        <div class="chips-row" style="margin-bottom:8px">
-          <span class="station-chip">KDS <span style="margin-left:4px;cursor:pointer;color:var(--gray)">✕</span></span>
-          <span class="station-chip">Bar <span style="margin-left:4px;cursor:pointer;color:var(--gray)">✕</span></span>
+        <div style="font-size:10px;color:var(--gray);margin-bottom:6px">Select from your configured stations. Ensures consistent routing.</div>
+        <!-- Multi-select dropdown — owner decision 2026-08-18: dropdown not free text -->
+        <div style="position:relative;margin-bottom:8px">
+          <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-height:36px;padding:5px 10px;border:1px solid var(--border);border-radius:7px;background:var(--white);cursor:pointer" data-testid="printer-stations-multiselect">
+            <span class="station-chip">KDS <span style="margin-left:4px;cursor:pointer;opacity:.6">✕</span></span>
+            <span class="station-chip">BAR <span style="margin-left:4px;cursor:pointer;opacity:.6">✕</span></span>
+            <span style="font-size:11px;color:var(--gray);margin-left:4px">+ Add stations</span>
+            <svg class="icon-xs" style="margin-left:auto;color:var(--gray)"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <!-- Dropdown open state -->
+          <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:10;padding:6px">
+            <div style="font-size:10px;font-weight:600;color:var(--gray);padding:3px 6px 6px;text-transform:uppercase;letter-spacing:.05em">Your configured stations</div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer;background:var(--orange10)" data-testid="station-option-kds">
+              <input type="checkbox" checked style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">KDS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer;background:var(--orange10)" data-testid="station-option-bar">
+              <input type="checkbox" checked style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">BAR</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer" data-testid="station-option-bill">
+              <input type="checkbox" style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">Bill</span>
+            </div>
+          </div>
         </div>
 
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);margin-top:4px">

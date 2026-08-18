@@ -13,8 +13,15 @@
 |---|---|
 | Code Reality | FULL — `PrinterWizard` (lines 28–192, `PrintersTab.jsx`) fully built and working. UX-only rewrite. |
 | Conflict Pre-Check | **CONFLICT** — CR-161 also modifies `PrintersTab.jsx` (adds Printing Mode section). **Execute CR-167 FIRST, then CR-161.** |
-| Risk | LOW — 1 file, no API change, no financial/order logic, no hotspot files |
-| Owner Decisions | All resolved: inline panel (Q5=a), keep radio cards (Q6=a) |
+| Risk | LOW — 1 file, minimal API change (add area-options load), no financial/order logic, no hotspot files |
+| Owner Decisions | All resolved: inline panel (Q5=a), keep radio cards (Q6=a), **KOT Routing = dropdown from stations list — NOT free text (owner decision 2026-08-18)** |
+
+### Owner Decision — KOT Routing Field (2026-08-18)
+**Decision: Option A — Multi-select dropdown from configured stations list.**
+Replaces the free-text `stationInput` + Add button pattern from the current wizard.
+Dropdown sources from `GET /printer-config/area-options` (same endpoint used by CR-161 StationsTab).
+Ensures printer KOT routing always references a valid, configured station name.
+No typo risk. Stays in sync with Stations tab.
 
 ---
 
@@ -29,10 +36,18 @@ Owner clicks "Add Printer" / Edit pencil icon
 PrinterForm state:
   form (printer object) — same shape as today
   showAdvanced (bool) — USB advanced toggle
-  stationInput (string) — station add input
+  ~~stationInput (string)~~ REMOVED — replaced by multi-select dropdown
+  
+  areaOptions[] — loaded from config.options.areaOptions (pre-fetched at PrinterAgentConfigView load)
   
   Connection type selected → shows conditional fields (same as step 2 today)
   Stations section visible always (same as step 3 today)
+  
+KOT Routing — CHANGED from free text to dropdown:
+  Multi-select dropdown: options = areaOptions[] from area-options API
+  Selected stations rendered as chips (same visual as before)
+  User selects from configured list (Bill, KDS, BAR / food court brand names)
+  No free-text entry — must select from list
   
   save() → validatePrinter(form) → if errors: toast → else: onDone(form)
   
@@ -50,14 +65,17 @@ PrinterForm state:
 
 | File | Change | Lines |
 |---|---|---|
-| `PrintersTab.jsx` | REWRITE lines 28–192: replace `PrinterWizard` (3-step) with `PrinterForm` (1-step). Remove `step` state, `next()`, `finish()`, Back/Next navigation. Keep all fields, validation logic, `addStation`, `showAdvanced`, `stationInput`. | ~165 lines → ~130 lines |
+| `PrintersTab.jsx` | REWRITE lines 28–192: replace `PrinterWizard` (3-step) with `PrinterForm` (1-step). Remove `step` state, `next()`, `finish()`, Back/Next nav. Remove `stationInput` free-text. Add multi-select dropdown for KOT routing from `options.areaOptions`. | ~165 lines → ~125 lines |
+| `printerAgentConfigService.js` | ADD `getAreaOptions()` function (reuses `STATION_CONFIG_AREA_OPTIONS` constant from CR-161) | +8 lines |
+| `printerAgentConfigTransform.js` | ADD `areaOptions` to `fromAPI()` options block — loaded alongside config | +3 lines |
+| `api/constants.js` | `STATION_CONFIG_AREA_OPTIONS` already added by CR-161. No duplicate needed. CR-161 must land before or together with CR-167. | 0 lines |
 
 **Files NOT touched:**
-- `PrinterAgentConfigView.jsx` — no tab change
-- `printerAgentConfigService.js` — no API change
-- `printerAgentConfigTransform.js` — no transform change
-- `api/constants.js` — no endpoint change
-- Any other file
+- `PrinterAgentConfigView.jsx` — no tab change (areaOptions flows through existing config/options prop)
+- Any order/report/hotspot file
+
+### Dependency Note
+CR-167 now depends on `STATION_CONFIG_AREA_OPTIONS` constant (added by CR-161). If implementing CR-167 before CR-161, add the constant to `api/constants.js` in CR-167's implementation instead.
 
 ---
 
@@ -89,8 +107,8 @@ MAC Address *           [AA:BB:CC:DD:EE:FF]
 Paper Size              [80 mm ▼     ]
 
 Kitchen Stations (KOT routing)
-[___________] [Add]
-[KDS ✕] [Bar ✕]                       (chips, same as today)
+[Select stations ▼]                    ← multi-select dropdown (owner decision 2026-08-18)
+[KDS ✕] [Bar ✕]                       (chips — same visual, different input method)
 ⚠ No stations + no bills warning       (same as today)
 
 Prints Bills (customer receipts)      [toggle]
@@ -104,22 +122,39 @@ Prints Bills (customer receipts)      [toggle]
 
 **Remove from PrinterWizard → not present in PrinterForm:**
 ```js
-const [step, setStep] = useState(1);  // REMOVE
-const next = () => { ... };           // REMOVE
-const finish = () => { ... };         // RENAME to save()
-// "Step {step} of 3" label          // REMOVE
-// Back / Next buttons               // REMOVE (single Save button instead)
+const [step, setStep] = useState(1);               // REMOVE
+const [stationInput, setStationInput] = useState(""); // REMOVE — free text replaced by dropdown
+const addStation = () => { ... };                  // REMOVE — dropdown handles selection
+const next = () => { ... };                        // REMOVE
+const finish = () => { ... };                      // RENAME to save()
+// "Step {step} of 3" label                       // REMOVE
+// Back / Next buttons                            // REMOVE
+```
+
+**KOT Routing — changed from free text to multi-select dropdown:**
+```jsx
+// BEFORE (free text + Add button):
+<input value={stationInput} placeholder="Station name — press Enter" />
+<button onClick={addStation}>Add</button>
+
+// AFTER (owner decision 2026-08-18 — dropdown from area-options):
+<MultiSelectDropdown
+  options={options.areaOptions}          // from config.options.areaOptions
+  selected={form.handledStations}
+  onChange={(v) => set("handledStations", v)}
+  placeholder="Select stations..."
+  data-testid="printer-stations-multiselect"
+/>
+// Chips still rendered below for remove-individual UX
 ```
 
 **Keep unchanged:**
 ```js
 const [form, setForm] = useState(printer);
 const [showAdvanced, setShowAdvanced] = useState(false);
-const [stationInput, setStationInput] = useState("");
 const set = (key, val) => setForm((p) => ({ ...p, [key]: val }));
-const addStation = () => { ... };          // unchanged
-validatePrinter(form)                       // unchanged — called once in save()
-onDone(form)                               // unchanged
+validatePrinter(form)   // unchanged — called once in save()
+onDone(form)            // unchanged
 ```
 
 **Consolidated save (replaces next+finish):**
