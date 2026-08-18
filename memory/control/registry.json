@@ -20035,6 +20035,28 @@
         "backend_endpoint": "Backend will provide bulk delete endpoint"
       },
       "last_updated": "2026-08-17"
+    },
+    {
+      "id": "BUG-332",
+      "type": "BUG",
+      "title": "Printer Agent \u2014 Station Input Is Free-Text; Should Show Dropdown of Restaurant Stations",
+      "area": "Settings \u2192 Printer Agent Config \u2192 Add Printer \u2192 Step 3",
+      "priority": "P1",
+      "risk": "LOW-MEDIUM",
+      "status": "INVESTIGATION COMPLETE",
+      "completeness": "2/7",
+      "code_reality": "FULL",
+      "blast_radius": "SMALL",
+      "created": "2026-08-17",
+      "artifact_refs": [
+        "/app/memory/investigation/BUG-332_PRINTER_STATION_DROPDOWN_INVESTIGATION_REPORT.md"
+      ],
+      "sprint": "POS 5.x",
+      "duplicate_check": "DISTINCT",
+      "fast_lane_eligible": true,
+      "root_cause": "config.options has no stations list; useStations().availableStations exists in context but not wired to PrinterWizard Step 3",
+      "fix_file": "components/panels/settings/printerConfig/PrintersTab.jsx",
+      "fix_lines": "~15-20 lines"
     }
   ],
   "meta": {
@@ -20045,6 +20067,6 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 528
+    "total": 529
   }
 }
