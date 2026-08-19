@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Card — Design Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            orange: { DEFAULT: '#F26B33', light: '#FEF0E9' },
+            green:  { DEFAULT: '#329937', light: '#E8F5E9' },
+            dark:   '#1A1A1A',
+            mid:    '#666666',
+            border: '#E5E5E5',
+            bg:     '#F4F4F6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #F4F4F6; }
+
+    /* annotation badge */
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 600; padding: 2px 7px;
+      border-radius: 99px; white-space: nowrap;
+    }
+    .badge-fix  { background: #E8F5E9; color: #329937; border: 1px solid #329937; }
+    .badge-warn { background: #FEF0E9; color: #F26B33; border: 1px solid #F26B33; }
+    .badge-info { background: #EEF2FF; color: #4F46E5; border: 1px solid #818CF8; }
+
+    /* card */
+    .card {
+      background: #fff;
+      border: 1px solid #E5E5E5;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    /* timeline dot row */
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-green  { background: #329937; }
+    .dot-orange { background: #F26B33; }
+    .dot-gray   { background: #D1D5DB; border: 1px solid #9CA3AF; }
+
+    /* action buttons */
+    .btn-icon {
+      min-width: 40px; min-height: 40px; border: 1px solid #E5E5E5;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; background: #fff; transition: background 0.15s;
+    }
+    .btn-icon:hover { background: #f9fafb; }
+    .btn-primary {
+      min-height: 40px; padding: 0 18px;
+      border-radius: 10px; font-weight: 700; font-size: 14px;
+      cursor: pointer; border: none; color: #fff;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-outline-orange {
+      min-height: 40px; padding: 0 16px;
+      border-radius: 10px; font-weight: 700; font-size: 13px;
+      cursor: pointer; background: #fff;
+      border: 1.5px solid #F26B33; color: #F26B33;
+      transition: background 0.15s;
+    }
+    .btn-outline-orange:hover { background: #FEF0E9; }
+
+    /* column header pill */
+    .col-label {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 99px; margin-bottom: 12px;
+    }
+    .col-label-current  { background: #FEE2E2; color: #DC2626; }
+    .col-label-proposed { background: #DCFCE7; color: #16A34A; }
+
+    /* annotation callout line */
+    .annot {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 3px;
+    }
+    .annot-line { width: 14px; height: 1px; background: #329937; flex-shrink: 0; }
+  </style>
+</head>
+<body class="min-h-screen p-6 md:p-10">
+
+  <!-- ── PAGE HEADER ───────────────────────────────────────────────────── -->
+  <div class="max-w-5xl mx-auto mb-10">
+    <div class="flex items-center gap-3 mb-1">
+      <div class="w-2 h-8 rounded-full" style="background:#F26B33;"></div>
+      <h1 class="text-2xl font-bold" style="color:#1A1A1A;">Order Card — Typography Redesign</h1>
+    </div>
+    <p class="text-sm ml-5" style="color:#666666;">
+      Side-by-side preview · No production code changed · For owner review &amp; approval only
+    </p>
+  </div>
+
+  <!-- ── TWO-COLUMN GRID ───────────────────────────────────────────────── -->
+  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- ══════════════ LEFT — CURRENT ══════════════ -->
+    <div data-testid="current-column">
+      <div class="col-label col-label-current">&#9888; Current Design</div>
+
+      <!-- Card 1: Dine-In (current) -->
+      <div class="card" data-testid="current-card-dinein">
+        <!-- header row -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F26B33"><path d="M11 2v7H4V2H2v20h2v-9h16v9h2V2z"/></svg>
+          <!-- name — extrabold 18px GRAY -->
+          <span style="font-size:18px;font-weight:800;color:#666666;flex:1;" class="truncate">#002318</span>
+          <span style="font-size:18px;font-weight:800;color:#666666;">₹242</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#E8F5E9;color:#329937;">PAID</span>
+        </div>
+        <!-- timeline -->
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;padding:0 2px;">
+          <span class="dot dot-green"></span>
+          <span style="font-size:10px;color:#666;">41d</span>
+          <span class="dot dot-green"></span>
+          <span class="dot dot-gray"></span>
+          <span class="dot dot-gray"></span>
+        </div>
+        <!-- items -->
+        <div style="padding:0 2px;margin-bottom:10px;">
+          <!-- item name — 11px gray -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:4px 0;">
+            <div>
+              <span style="font-size:11px;color:#666666;">Butter Masala Dosa (1)</span>
+              <div style="font-size:9px;font-style:italic;color:#666666;">+ extra cheese slice</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <span style="font-size:12px;font-weight:600;color:#329937;">Ready</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:4px 0;">
+            <div>
+              <span style="font-size:11px;color:#666666;">Masala Chai (2)</span>
+              <div style="font-size:9px;font-style:italic;color:#666666;">+ extra sugar</div>
+              <div style="display:flex;align-items:center;gap:3px;margin-top:2px;">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+                <span style="font-size:9px;italic;color:#666666;font-style:italic;">no milk</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <span style="font-size:12px;font-weight:600;color:#666;">Preparing</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- actions -->
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+          <button class="btn-primary" style="flex:1;background:#329937;">Serve</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Delivery/Aggregator (current) -->
+      <div class="card" data-testid="current-card-delivery">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png" style="height:14px;object-fit:contain;" />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#3B82F6"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span style="font-size:18px;font-weight:800;color:#666666;flex:1;">PRITI</span>
+          <span style="font-size:11px;color:#666;margin-right:2px;">#002445</span>
+          <span style="font-size:18px;font-weight:800;color:#666666;">₹60</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+          <span class="dot dot-green"></span>
+          <span style="font-size:10px;color:#666;">12d</span>
+          <span class="dot dot-green"></span>
+          <span class="dot dot-gray"></span>
+          <span class="dot dot-gray"></span>
+        </div>
+        <div style="padding:0 2px;margin-bottom:10px;">
+          <div style="padding:3px 0;"><span style="font-size:11px;color:#666666;">zone (1)</span></div>
+          <div style="padding:3px 0;"><span style="font-size:11px;color:#666666;">kakzu (1)</span></div>
+          <div style="padding:3px 0;"><span style="font-size:11px;color:#666666;">balluu (1)</span></div>
+          <div style="padding:3px 0;"><span style="font-size:11px;color:#666666;">kaliya (1)</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+          <button class="btn-outline-orange" style="flex:1;">Assign Rider</button>
+        </div>
+      </div>
+    </div><!-- end current column -->
+
+    <!-- ══════════════ RIGHT — PROPOSED ══════════════ -->
+    <div data-testid="proposed-column">
+      <div class="col-label col-label-proposed">&#10003; Proposed Design</div>
+
+      <!-- Card 1: Dine-In (proposed) -->
+      <div class="card" style="border-color:#329937;box-shadow:0 0 0 1px #32993720;" data-testid="proposed-card-dinein">
+        <!-- header row -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F26B33"><path d="M11 2v7H4V2H2v20h2v-9h16v9h2V2z"/></svg>
+          <!-- name — semibold 16px DARK -->
+          <span style="font-size:16px;font-weight:600;color:#1A1A1A;flex:1;" class="truncate">#002318</span>
+          <!-- amount — bold 18px DARK -->
+          <span style="font-size:18px;font-weight:700;color:#1A1A1A;">₹242</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#E8F5E9;color:#329937;">PAID</span>
+        </div>
+        <!-- annotation: amount -->
+        <div class="annot" style="margin-top:-4px;margin-bottom:6px;padding-left:2px;">
+          <div class="annot-line"></div>
+          <span class="badge badge-fix">Weight 800→700</span>
+          <span class="badge badge-fix">Gray→Dark</span>
+        </div>
+
+        <!-- timeline -->
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;padding:0 2px;">
+          <span class="dot dot-green"></span>
+          <span style="font-size:10px;color:#666;">41d</span>
+          <span class="dot dot-green"></span>
+          <span class="dot dot-gray"></span>
+          <span class="dot dot-gray"></span>
+        </div>
+
+        <!-- items -->
+        <div style="padding:0 2px;margin-bottom:10px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:4px 0;">
+            <div>
+              <!-- item name — 15px semibold dark -->
+              <span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">Butter Masala Dosa (1)</span>
+              <!-- variant — 12px medium gray, NO italic -->
+              <div style="font-size:12px;font-weight:500;color:#666666;margin-top:2px;">+ extra cheese slice</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <span style="font-size:12px;font-weight:600;color:#329937;">Ready</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+          </div>
+          <!-- annotation: item name -->
+          <div class="annot" style="margin-top:-2px;margin-bottom:4px;">
+            <div class="annot-line"></div>
+            <span class="badge badge-fix">11px→15px</span>
+            <span class="badge badge-fix">Gray→Dark</span>
+            <span class="badge badge-info">Italic removed</span>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:4px 0;">
+            <div>
+              <span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">Masala Chai (2)</span>
+              <div style="font-size:12px;font-weight:500;color:#666666;margin-top:2px;">+ extra sugar</div>
+              <!-- note — 12px medium orange -->
+              <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F26B33" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+                <span style="font-size:12px;font-weight:500;color:#F26B33;">no milk</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <span style="font-size:12px;font-weight:600;color:#666;">Preparing</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+            </div>
+          </div>
+          <!-- annotation: note -->
+          <div class="annot" style="margin-top:-2px;margin-bottom:2px;">
+            <div class="annot-line"></div>
+            <span class="badge badge-warn">Note: 9px→12px + Orange</span>
+          </div>
+        </div>
+
+        <!-- actions -->
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+          <button class="btn-primary" style="flex:1;background:#329937;">Serve</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Delivery/Aggregator (proposed) -->
+      <div class="card" style="border-color:#329937;box-shadow:0 0 0 1px #32993720;" data-testid="proposed-card-delivery">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png" style="height:14px;object-fit:contain;" />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#3B82F6"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span style="font-size:16px;font-weight:600;color:#1A1A1A;flex:1;">PRITI</span>
+          <span style="font-size:11px;color:#666;margin-right:2px;">#002445</span>
+          <span style="font-size:18px;font-weight:700;color:#1A1A1A;">₹60</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+          <span class="dot dot-green"></span>
+          <span style="font-size:10px;color:#666;">12d</span>
+          <span class="dot dot-green"></span>
+          <span class="dot dot-gray"></span>
+          <span class="dot dot-gray"></span>
+        </div>
+        <div style="padding:0 2px;margin-bottom:6px;">
+          <div style="padding:4px 0;"><span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">zone (1)</span></div>
+          <div style="padding:4px 0;"><span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">kakzu (1)</span></div>
+          <div style="padding:4px 0;"><span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">balluu (1)</span></div>
+          <div style="padding:4px 0;"><span style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.3;">kaliya (1)</span></div>
+        </div>
+        <!-- annotation -->
+        <div class="annot" style="margin-bottom:8px;">
+          <div class="annot-line"></div>
+          <span class="badge badge-fix">11px→15px semibold dark</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+          <button class="btn-outline-orange" style="flex:1;">Assign Rider</button>
+        </div>
+      </div>
+    </div><!-- end proposed column -->
+  </div>
+
+  <!-- ── CHANGES SUMMARY ───────────────────────────────────────────────── -->
+  <div class="max-w-5xl mx-auto mt-10" data-testid="changes-summary">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-2 h-6 rounded-full" style="background:#329937;"></div>
+      <h2 class="text-lg font-bold" style="color:#1A1A1A;">Changes Summary</h2>
+    </div>
+    <div class="bg-white rounded-2xl border overflow-hidden" style="border-color:#E5E5E5;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#F9FAFB;">
+            <th style="text-align:left;padding:12px 16px;font-weight:600;color:#1A1A1A;border-bottom:1px solid #E5E5E5;">#</th>
+            <th style="text-align:left;padding:12px 16px;font-weight:600;color:#1A1A1A;border-bottom:1px solid #E5E5E5;">Element</th>
+            <th style="text-align:left;padding:12px 16px;font-weight:600;color:#DC2626;border-bottom:1px solid #E5E5E5;">Current</th>
+            <th style="text-align:left;padding:12px 16px;font-weight:600;color:#16A34A;border-bottom:1px solid #E5E5E5;">Proposed</th>
+            <th style="text-align:left;padding:12px 16px;font-weight:600;color:#1A1A1A;border-bottom:1px solid #E5E5E5;">Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #F3F4F6;">
+            <td style="padding:12px 16px;color:#666;font-weight:600;">1</td>
+            <td style="padding:12px 16px;font-weight:600;color:#1A1A1A;">₹ Amount</td>
+            <td style="padding:12px 16px;color:#DC2626;">weight-800 · color #666666</td>
+            <td style="padding:12px 16px;color:#16A34A;">weight-700 · color #1A1A1A</td>
+            <td style="padding:12px 16px;color:#666;">800 not loaded → synthesized. Gray = poor contrast for key data.</td>
+          </tr>
+          <tr style="border-bottom:1px solid #F3F4F6;background:#FAFAFA;">
+            <td style="padding:12px 16px;color:#666;font-weight:600;">2</td>
+            <td style="padding:12px 16px;font-weight:600;color:#1A1A1A;">Item Names</td>
+            <td style="padding:12px 16px;color:#DC2626;">11px · weight-400 · #666666</td>
+            <td style="padding:12px 16px;color:#16A34A;">15px · weight-600 · #1A1A1A</td>
+            <td style="padding:12px 16px;color:#666;">11px gray is unreadable at 50-80cm. Core order info must be prominent.</td>
+          </tr>
+          <tr style="border-bottom:1px solid #F3F4F6;">
+            <td style="padding:12px 16px;color:#666;font-weight:600;">3</td>
+            <td style="padding:12px 16px;font-weight:600;color:#1A1A1A;">Variants / Addons</td>
+            <td style="padding:12px 16px;color:#DC2626;">9px · italic · #666666</td>
+            <td style="padding:12px 16px;color:#16A34A;">12px · weight-500 · no italic · #666666</td>
+            <td style="padding:12px 16px;color:#666;">9px is near-invisible. Italic harder to parse quickly. Still secondary to item name.</td>
+          </tr>
+          <tr style="border-bottom:1px solid #F3F4F6;background:#FAFAFA;">
+            <td style="padding:12px 16px;color:#666;font-weight:600;">4</td>
+            <td style="padding:12px 16px;font-weight:600;color:#1A1A1A;">Kitchen Notes</td>
+            <td style="padding:12px 16px;color:#DC2626;">9px · gray #666666</td>
+            <td style="padding:12px 16px;color:#16A34A;">12px · weight-500 · orange #F26B33</td>
+            <td style="padding:12px 16px;color:#666;">Notes are operationally critical (no onion, extra spicy). Must stand out instantly.</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;color:#666;font-weight:600;">5</td>
+            <td style="padding:12px 16px;font-weight:600;color:#1A1A1A;">Font Loading</td>
+            <td style="padding:12px 16px;color:#DC2626;">CSS @import (blocking)</td>
+            <td style="padding:12px 16px;color:#16A34A;">&lt;link&gt; in index.html (non-blocking)</td>
+            <td style="padding:12px 16px;color:#666;">@import blocks stylesheet on slow/Jio networks → Poppins never loads → Windows fallback.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs mt-4 text-center" style="color:#999;">
+      Preview only · All changes are CSS/className only · Zero API or logic change · Requires Gate 4 GO before implementation
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,72 +1,76 @@
 {
+  "project_context": "Create a standalone side-by-side HTML visual comparison page showing the CURRENT vs PROPOSED order card design. This is purely a static HTML preview page to allow the owner to review typography and layout changes. It does not modify any production React code.",
+  "theme": "light",
   "typography": {
-    "font_family": "Poppins, sans-serif",
-    "weights_allowed": [400, 500, 600, 700],
-    "weights_forbidden": [800],
-    "scales": {
-      "item_name": "text-[15px] sm:text-base",
-      "item_variant": "text-xs",
-      "item_note": "text-xs",
-      "amount": "text-lg md:text-xl",
-      "customer_table_name": "text-base font-semibold",
-      "status_label": "text-xs font-bold uppercase tracking-wider"
-    }
+    "primary_font": "Poppins",
+    "font_cdn": "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap",
+    "notes": "Use Google Fonts CDN in the HTML head. Explicitly apply specific font sizes, weights, and colors as required by the spec to differentiate current and proposed designs."
   },
   "colors": {
-    "primary": {
-      "orange": "#F26B33",
-      "green": "#329937"
-    },
-    "text": {
-      "primary": "#1A1A1A",
-      "secondary": "#666666",
-      "warning": "#F26B33"
-    },
-    "border": "#E5E5E5"
+    "primaryOrange": "#F26B33",
+    "primaryGreen": "#329937",
+    "darkText": "#1A1A1A",
+    "grayText": "#666666",
+    "borderGray": "#E5E5E5",
+    "background": "#F9FAFB"
   },
-  "visual_enhancers": {
-    "item_names": "Use high contrast text (darkText #1A1A1A) and semibold/medium weight to make items legible from 50-80cm away.",
-    "amount": "Highlight the amount with darkText (#1A1A1A) and bold (700) weight instead of extrabold (800) and gray. High contrast is key here.",
-    "variants_addons": "Remove italic formatting for better readability. Use font-medium and grayText (#666666) but bumped up to text-xs.",
-    "item_notes": "Use primaryOrange (#F26B33) or a darker shade and medium weight to make kitchen notes easily noticeable.",
-    "hierarchy": "Ensure clear distinction between Item Name (primary, larger, darker) and its details (secondary, slightly smaller, gray)."
-  },
-  "component_name": "OrderCard.jsx",
-  "component_path": "/app/frontend/src/components/cards/OrderCard.jsx",
-  "grids": {
-    "card_width": "Card width fits in a column grid, typically 200-300px wide. No structure changes required."
+  "design_specs": {
+    "current_design": {
+      "column_header_color": "text-red-600",
+      "amount": { "font-weight": 800, "color": "#666666", "font-size": "18px" },
+      "item_name": { "font-size": "11px", "color": "#666666", "font-weight": 400 },
+      "variant_addon": { "font-size": "9px", "font-style": "italic", "color": "#666666" },
+      "item_note": { "font-size": "9px", "color": "#666666" },
+      "customer_table_name": { "font-weight": 800, "font-size": "18px" }
+    },
+    "proposed_design": {
+      "column_header_color": "text-green-600",
+      "amount": { "font-weight": 700, "color": "#1A1A1A", "font-size": "18px" },
+      "item_name": { "font-size": "15px", "font-weight": 600, "color": "#1A1A1A" },
+      "variant_addon": { "font-size": "12px", "font-weight": 500, "font-style": "normal", "color": "#666666" },
+      "item_note": { "font-size": "12px", "font-weight": 500, "color": "#F26B33" },
+      "customer_table_name": { "font-weight": 600, "font-size": "16px" }
+    },
+    "card_style": {
+      "background": "#FFFFFF",
+      "border-radius": "16px",
+      "border": "1px solid #E5E5E5",
+      "padding": "10px"
+    }
   },
   "layouts": {
-    "item_row": "Maintain the flex row layout. Ensure proper line heights for the enlarged text (e.g., leading-tight for variants)."
-  },
-  "motion": {
-    "micro_interactions": "Keep existing hover and state transitions for action buttons."
-  },
-  "accessibility": {
-    "contrast": "Ensure text contrast ratio meets minimum WCAG AA standard (4.5:1 for normal text). The shift from #666666 to #1A1A1A for item names and amount fixes contrast failures against the white/light background.",
-    "legibility": "Target audience reads from a distance of 50-80cm. Increasing base font size from 9px/11px to 12px/15px solves the primary complaint.",
-    "test_ids": "All interactive elements already have data-testid attributes; maintain this standard for any new wrappers if created."
-  },
-  "media": {
-    "images": "N/A"
-  },
-  "3d_libraries": {
-    "usage": "None"
+    "page_structure": "A single responsive page. Header section explaining the page context, a 2-column grid (Left: Current, Right: Proposed), and a bottom Changes Summary section.",
+    "column_layout": "CSS Grid (grid-cols-2) with gap-8 for the side-by-side comparison.",
+    "card_layout": "Flexbox column. Header row (flex row space-between), Item List (flex column), Status row (flex row timeline), Action buttons (CSS grid 2-columns or flex row wrap)."
   },
   "instructions_to_main_agent": [
-    "In /app/frontend/src/components/cards/OrderCard.jsx, apply the following targeted typography fixes:",
-    "1. Replace the amount styling: Change `<span className=\"font-extrabold text-lg ...\" style={{ color: COLORS.grayText }}>` to `<span className=\"font-bold text-lg md:text-xl flex-shrink-0 ml-2\" style={{ color: COLORS.darkText }}>`.",
-    "2. Fix item names: Change `<span className=\"text-[11px]\" style={{ color: COLORS.grayText }}>` to `<span className=\"text-[15px] font-semibold leading-tight\" style={{ color: COLORS.darkText }}>`.",
-    "3. Fix variants/addons: Change `<div className=\"text-[9px] leading-tight italic\" style={{ color: COLORS.grayText }}>` to `<div className=\"text-xs font-medium leading-tight mt-0.5\" style={{ color: COLORS.grayText }}>`.",
-    "4. Fix item notes: Change `<div className=\"flex items-center gap-1 text-[9px] leading-tight\">` to use `text-xs font-medium` and switch text color to `COLORS.primaryOrange` for visibility.",
-    "5. Do NOT use font weight 800 (extrabold) anywhere in the file. Replace with font-bold (700) where needed.",
-    "6. Do NOT change the layout structure, action button logic, or permissions. Focus purely on className and style properties related to font-size, font-weight, color, and spacing for text legibility."
+    "1. CREATE A SINGLE FILE ONLY: /app/frontend/public/__dev/order-card-font-comparison.html",
+    "2. DO NOT modify any existing React components, TSX files, or package configurations.",
+    "3. Use Tailwind CSS via CDN (`<script src=\"https://cdn.tailwindcss.com\"></script>`) in the head to build the UI quickly and accurately in one file.",
+    "4. Add a script tag to configure Tailwind theme to include the custom colors (`primaryOrange`, `primaryGreen`, `darkText`, etc.) and set Poppins as the sans font.",
+    "5. Use standard HTML elements (`div`, `span`, `button`) instead of framework components.",
+    "6. Data Requirement: Use exactly the requested dummy data: 'Butter Masala Dosa (1) + extra cheese slice', 'zone (1) kakzu (1) balluu (1) kaliya (1)', amounts like ₹242, ₹60.",
+    "7. Include AT LEAST 2 card types in each column: Dine-In card and Delivery/Aggregator card.",
+    "8. Annotations: Add small visually distinct badges (e.g., absolute positioned tooltips or small adjacent tags) in the PROPOSED column calling out the specific changes (e.g., '11px \u2192 15px', 'Italic removed').",
+    "9. Summary Section: Include a 'CHANGES SUMMARY' table or list at the bottom detailing all 5 specified typographical changes clearly."
   ],
+  "accessibility": {
+    "contrast": "Ensure the comparison text remains readable. Although Current specs use low-contrast grays, ensure the Proposed specs maintain high visibility (like #1A1A1A on white bg).",
+    "data_testid": "Add data-testid attributes to key sections, e.g., `data-testid=\"current-card\"`, `data-testid=\"proposed-card\"`, `data-testid=\"changes-summary\"`."
+  },
   "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
-    "You tend to converge toward generic, 'on distribution' outputs. Make creative, distinctive frontends.",
-    "Never apply universal transition (e.g., transition: all). Add transitions for specific interactive elements.",
-    "Always ensure interactive elements have data-testid attributes.",
-    "Ensure contrast requirements (APCA/WCAG AA) are met, especially when shifting background colors.",
-    "Respect the available font weights. Do not invent classes or weights that are not loaded."
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) where appropriate, BUT DO NOT use complete transparent backgrounds for overlays or interactive items.",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like \ud83e\udd16\ud83e\udde0\ud83d\udcad\ud83d\udca1\udd2e\ud83c\udfaf etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "All interactive and key informational elements MUST include a data-testid attribute to facilitate robust automated testing."
   ]
 }

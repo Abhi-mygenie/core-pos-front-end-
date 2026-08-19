@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/pod-backups/react-pos-app-4/build/static/css/main.27355a70.css",
+    "main.js": "/pod-backups/react-pos-app-4/build/static/js/main.057c9f16.js",
+    "static/js/239.ad40150f.chunk.js": "/pod-backups/react-pos-app-4/build/static/js/239.ad40150f.chunk.js",
+    "static/js/977.0d22bb99.chunk.js": "/pod-backups/react-pos-app-4/build/static/js/977.0d22bb99.chunk.js",
+    "static/js/455.35578489.chunk.js": "/pod-backups/react-pos-app-4/build/static/js/455.35578489.chunk.js",
+    "index.html": "/pod-backups/react-pos-app-4/build/index.html",
+    "main.27355a70.css.map": "/pod-backups/react-pos-app-4/build/static/css/main.27355a70.css.map",
+    "main.057c9f16.js.map": "/pod-backups/react-pos-app-4/build/static/js/main.057c9f16.js.map",
+    "239.ad40150f.chunk.js.map": "/pod-backups/react-pos-app-4/build/static/js/239.ad40150f.chunk.js.map",
+    "977.0d22bb99.chunk.js.map": "/pod-backups/react-pos-app-4/build/static/js/977.0d22bb99.chunk.js.map",
+    "455.35578489.chunk.js.map": "/pod-backups/react-pos-app-4/build/static/js/455.35578489.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.27355a70.css",
+    "static/js/main.057c9f16.js"
+  ]
+}
