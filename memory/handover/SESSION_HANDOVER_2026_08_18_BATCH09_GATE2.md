@@ -22,24 +22,22 @@ Architecture: `"No"` → Local Printer Setup screen | `"Yes"` → Printer Agent 
 
 **Removed:** `printer_type`, `counter_no`, `always`, `mac_printer_ip`, `mapped_default_employee_ids`
 
-**Final 14 fields — confirmed clean:**
+**Final field list with confirmed UI labels (owner-approved 2026-08-18):**
 
-| Field | Form Label | Notes |
-|---|---|---|
-| `area_name` | Printer For | dropdown from area-options |
-| `printer_name` | Printer Type | usb / bluetooth / wifi |
-| `printer_ip` | IP / MAC Address | IP for LAN, MAC for Bluetooth |
-| `printer_paper_roll` | Paper Roll Size | 58 / 80 mm |
-| `vendor_id` | Vendor ID | default: 0 (Android USB) |
-| `product_id` | Product ID | default: 0 (Android USB) |
-| `default` | Default Stage | null/1/2/5 → None/Ready/Serve/Delivered |
-| `auto_serve` | Auto Serve | Yes/No toggle — **confirmed needed** |
-| `wifi_printer_ip` | WiFi Printer IP | **IS used** (not null always) |
-| `wifi_printer_name` | Printer Name | device display name |
-| `station_gst` | Station GST | food court only |
-| `id` | — | hidden, used in PUT/DELETE |
-| `restaurant_id` | — | hidden |
-| `created_at` / `updated_at` | — | display only |
+| Field | Table column | Form label | Notes |
+|---|---|---|---|
+| `area_name` | Area Name | Printer For | dropdown from area-options |
+| `printer_name` | Printer Type | Printer Type | usb / bluetooth / wifi |
+| `wifi_printer_name` | Printer Name | Printer Name | device display name |
+| `printer_ip` | IP / MAC | IP / MAC Address | ✅ both in table AND form |
+| `wifi_printer_ip` | WiFi IP | WiFi Printer IP | ✅ both in table AND form |
+| `printer_paper_roll` | Paper | Paper Roll Size | 58 / 80 mm |
+| `default` | Default | Default | ✅ label = "Default" (matches mobile app) |
+| `auto_serve` | Auto Serve | Auto Serve | Yes/No toggle |
+| `vendor_id` | — | Vendor ID | default: 0 |
+| `product_id` | — | Product ID | default: 0 |
+| `station_gst` | — | Station GST | food court only |
+| `id` | — | hidden | PUT/DELETE key |
 
 ### C. `roles[]` array — removed from `/printer-config` response, confirmed gone.
 ### D. Q1 (roles purpose for station-printer-map) — still unanswered, carry to next session.

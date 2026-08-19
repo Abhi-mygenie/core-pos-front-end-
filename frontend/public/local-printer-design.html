@@ -401,8 +401,10 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
                 <th>Area Name</th>
                 <th>Printer Type</th>
                 <th>Printer Name</th>
-                <th>Paper Roll</th>
-                <th>Default Stage</th>
+                <th>IP / MAC</th>
+                <th>WiFi IP</th>
+                <th>Paper</th>
+                <th>Default</th>
                 <th>Auto Serve</th>
                 <th style="width:72px">Actions</th>
               </tr>
@@ -411,7 +413,9 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
               <tr data-testid="printer-row-484">
                 <td style="font-weight:600">KDS</td>
                 <td><span class="printer-type-badge">bluetooth</span></td>
-                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">60:6E:41:45:6F:EF</td>
+                <td style="color:var(--light);font-size:11px">—</td>
                 <td style="color:var(--gray)">58mm</td>
                 <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
                 <td><span style="font-size:10px;color:var(--gray)">No</span></td>
@@ -423,7 +427,9 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
               <tr data-testid="printer-row-485">
                 <td style="font-weight:600">BAR</td>
                 <td><span class="printer-type-badge">usb</span></td>
-                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">AB:0A:20:24:42:D3</td>
+                <td style="color:var(--light);font-size:11px">—</td>
                 <td style="color:var(--gray)">58mm</td>
                 <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
                 <td><span style="font-size:10px;color:var(--green);font-weight:600">Yes</span></td>
@@ -435,7 +441,9 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
               <tr data-testid="printer-row-486">
                 <td style="font-weight:600">Bill</td>
                 <td><span class="printer-type-badge">bluetooth</span></td>
-                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+                <td style="color:var(--gray);font-size:11px">60:6E:41:45:6F:EF</td>
+                <td style="color:var(--light);font-size:11px">—</td>
                 <td style="color:var(--gray)">58mm</td>
                 <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
                 <td><span style="font-size:10px;color:var(--gray)">No</span></td>
@@ -503,7 +511,7 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
               <input class="field-input" placeholder="0" data-testid="product-id-input"/>
             </div>
             <div class="field-group">
-              <label class="field-label">Default Stage</label>
+              <label class="field-label">Default</label>
               <select class="field-select" data-testid="default-stage-select">
                 <option value="">None</option>
                 <option value="1">Ready</option>
@@ -548,12 +556,12 @@ svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">area_name</span> → <span style="color:var(--orange);font-weight:600">Printer For</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_name</span> → <span style="color:var(--orange);font-weight:600">Printer Type</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">wifi_printer_name</span> → <span style="color:var(--orange);font-weight:600">Printer Name</span></div>
-      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_ip</span> → <span style="color:var(--orange);font-weight:600">IP / MAC Address</span></div>
-      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">wifi_printer_ip</span> → <span style="color:var(--orange);font-weight:600">WiFi Printer IP</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_ip</span> → <span style="color:var(--orange);font-weight:600">IP / MAC Address (table + form)</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">wifi_printer_ip</span> → <span style="color:var(--orange);font-weight:600">WiFi IP (table + form)</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_paper_roll</span> → <span style="color:var(--orange);font-weight:600">Paper Roll Size</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">vendor_id</span> → <span style="color:var(--orange);font-weight:600">Vendor ID</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">product_id</span> → <span style="color:var(--orange);font-weight:600">Product ID</span></div>
-      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">default (null/1/2/5)</span> → <span style="color:var(--orange);font-weight:600">Default Stage</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">default (null/1/2/5)</span> → <span style="color:var(--orange);font-weight:600">Default (same label as mobile app)</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">auto_serve (Yes/No)</span> → <span style="color:var(--orange);font-weight:600">Auto Serve toggle</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#FEF9C3;border-radius:5px;border:1px solid #FDE68A"><span style="color:#92400E">station_gst</span> → <span style="color:#92400E;font-weight:600">Station GST (food court only)</span></div>
       <div style="font-size:10px;padding:6px 10px;background:#F0FFF4;border-radius:5px;border:1px solid #86efac"><span style="color:var(--green)">printing_option (/printing-option)</span> → <span style="color:var(--green);font-weight:600">Printer Mode</span></div>
