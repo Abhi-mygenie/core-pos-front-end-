@@ -7,7 +7,46 @@
 
 ---
 
-## 0. LATE-SESSION CRITICAL FINDING — Read This First
+## 0. END-OF-SESSION UPDATES — Read This First
+
+### A. `printer_agent` key confirmed in profile API
+```
+Path:  restaurants[0].settings.printer_agent
+18march (local):    "No"
+Food court (agent): "Yes"
+Update: POST /update-settings → { "basic": { "printer_agent": "Yes" } }
+```
+Architecture: `"No"` → Local Printer Setup screen | `"Yes"` → Printer Agent Config (6-tab)
+
+### B. `/printer-config` field contract FINALISED (backend removed 5 fields — confirmed on preprod)
+
+**Removed:** `printer_type`, `counter_no`, `always`, `mac_printer_ip`, `mapped_default_employee_ids`
+
+**Final 14 fields — confirmed clean:**
+
+| Field | Form Label | Notes |
+|---|---|---|
+| `area_name` | Printer For | dropdown from area-options |
+| `printer_name` | Printer Type | usb / bluetooth / wifi |
+| `printer_ip` | IP / MAC Address | IP for LAN, MAC for Bluetooth |
+| `printer_paper_roll` | Paper Roll Size | 58 / 80 mm |
+| `vendor_id` | Vendor ID | default: 0 (Android USB) |
+| `product_id` | Product ID | default: 0 (Android USB) |
+| `default` | Default Stage | null/1/2/5 → None/Ready/Serve/Delivered |
+| `auto_serve` | Auto Serve | Yes/No toggle — **confirmed needed** |
+| `wifi_printer_ip` | WiFi Printer IP | **IS used** (not null always) |
+| `wifi_printer_name` | Printer Name | device display name |
+| `station_gst` | Station GST | food court only |
+| `id` | — | hidden, used in PUT/DELETE |
+| `restaurant_id` | — | hidden |
+| `created_at` / `updated_at` | — | display only |
+
+### C. `roles[]` array — removed from `/printer-config` response, confirmed gone.
+### D. Q1 (roles purpose for station-printer-map) — still unanswered, carry to next session.
+
+---
+
+## 0b. LATE-SESSION CRITICAL FINDING — Printer Agent Key
 
 **Backend shipped `printer_agent` key in profile API on 2026-08-18.**
 
