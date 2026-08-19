@@ -7,7 +7,31 @@
 
 ---
 
-## 1. One-Line Summary
+## 0. LATE-SESSION CRITICAL FINDING — Read This First
+
+**Backend shipped `printer_agent` key in profile API on 2026-08-18.**
+
+```
+Path:  restaurants[0].settings.printer_agent
+18march (local):    "No"
+Food court (agent): "Yes"
+
+Update: POST /update-settings  →  { "basic": { "printer_agent": "Yes" } }
+```
+
+**This resolves Blocker 4 and reframes the entire BATCH-09 scope.**
+
+The next session must design TWO separate end-to-end flows before writing any code:
+- **Flow A — Local Printer** (`printer_agent: "No"`) → what screens/settings does this restaurant see?
+- **Flow B — Printer Agent** (`printer_agent: "Yes"`) → the 6-tab screen we've been designing
+
+Owner directive: *"Design local setup end-to-end, then printer agent setup — so no further confusion."*
+
+**The existing BATCH-09 Gate 2 docs cover Flow B only. Flow A is completely undesigned.**
+
+---
+
+
 
 Full day of Gate 2 (Impact Analysis) for BATCH-09. All 4 Impact Analysis docs written. HTML design mockup built and iterated with owner feedback. Session paused because several endpoint conflicts and architectural questions were discovered during owner design review — team discussion needed before Gate 3.
 
@@ -128,17 +152,34 @@ The printer agent DEVICE does not read this value. It is a POS-side routing deci
 
 ---
 
-### BLOCKER 4 — Architecture: Printer Agent vs Local Printer
+### BLOCKER 4 — Architecture: Printer Agent vs Local Printer ✅ RESOLVED (2026-08-18 end of session)
 
-Owner clarified there are TWO printing setups:
-- **Printer Agent** (device app installed) → uses Printer Agent Config screen (our 6-tab view)
-- **Local/Direct printer** (no agent app) → uses Restaurant Settings Step 2 print toggles
+**Backend shipped a new key: `printer_agent` in the profile API.**
 
-There is **no key/flag in the API** to detect which mode a restaurant is using.
+**Confirmed live by curl probe:**
 
-**Question for team:**
-1. Should the Printer Mapping tab (CR-160) be shown to ALL restaurants or only those using printer agent?
-2. Restaurant Settings Step 2 currently has: Print KOT, Auto Bill Print, Print in KDS, Customer Copy, KOT Copies, KOT Language. Is `printing_option` (Fixed/Waiter/Station) also needed there for local printer users?
+| Restaurant | Path | Value |
+|---|---|---|
+| 18march (local) | `restaurants[0].settings.printer_agent` | `"No"` |
+| Shimla Food Court (agent) | `restaurants[0].settings.printer_agent` | `"Yes"` |
+
+**Update endpoint:** `POST /update-settings` with `{ "basic": { "printer_agent": "Yes" } }`
+
+**Architecture now confirmed:**
+```
+Profile API → restaurants[0].settings.printer_agent
+  "Yes" → Show Printer Agent Config (6-tab screen — all BATCH-09 screens)
+  "No"  → Show Local Printer Setup (separate flow — TBD, not yet designed)
+```
+
+**What is NOT done yet (needs next session):**
+1. `profileTransform.js` does NOT map `printer_agent` yet — needs `printerAgentEnabled: settings.printer_agent === 'Yes'`
+2. `restaurantSettingsTransform.js` does NOT include `printer_agent` — needs mapping
+3. The Settings panel "Printers" tile does NOT gate on this key — needs conditional render
+4. **Local printer setup flow is completely undesigned** — what does the screen look like for `printer_agent: "No"` restaurants?
+5. Restaurant Settings needs a toggle to switch between `"Yes"` / `"No"`
+
+**Owner's direction:** Design BOTH flows end-to-end separately — local printer setup first, then printer agent setup. No more confusion between the two.
 
 ---
 
