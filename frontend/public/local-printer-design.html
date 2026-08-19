@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Printer Setup — Side-by-Side Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+
+:root{
+  --orange:#F26B33;--orange-h:#DE5C29;--orange10:rgba(242,107,51,.1);--orange25:rgba(242,107,51,.25);
+  --green:#329937;--green10:rgba(50,153,55,.08);
+  --dark:#1A1A1A;--gray:#6B7280;--light:#9CA3AF;
+  --border:#E5E7EB;--bg:#F7F7F7;--white:#FFFFFF;
+  --red:#EF4444;
+}
+
+/* ── Page header ── */
+.page-header{background:#111827;padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.page-header h1{font-size:14px;font-weight:700;color:#fff}
+.page-header p{font-size:11px;color:#9CA3AF;margin-top:2px}
+.badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px}
+
+/* ── Side-by-side grid ── */
+.compare-wrap{padding:24px 32px;max-width:1400px;margin:0 auto}
+.compare-grid{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start}
+.col-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:99px;display:inline-block;margin-bottom:12px}
+.col-label-mobile{background:#1F2937;color:#fff}
+.col-label-web{background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)}
+
+/* ── Mobile phone frame ── */
+.phone-frame{border:10px solid #1F2937;border-radius:36px;overflow:hidden;background:#F3F4F6;box-shadow:0 20px 60px rgba(0,0,0,.3);width:360px}
+.phone-notch{background:#1F2937;height:28px;display:flex;align-items:center;justify-content:center}
+.phone-notch-pill{width:80px;height:10px;border-radius:10px;background:#374151}
+.phone-screen{background:#fff;overflow:hidden}
+
+/* Mobile screen 1 */
+.mob-header{background:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F3F4F6}
+.mob-title{font-size:15px;font-weight:700;color:#1A1A1A}
+.mob-actions{display:flex;gap:10px}
+.mob-icon-btn{width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;background:#fff}
+.mob-back{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#F26B33}
+
+/* Mobile accordion */
+.mob-accordion{margin:10px 12px;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden}
+.mob-acc-header{padding:12px 14px;display:flex;align-items:center;gap:10px;background:#fff}
+.mob-acc-icon{width:36px;height:36px;border-radius:10px;background:#FEF0E7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mob-acc-title{font-size:13px;font-weight:700;color:#1A1A1A}
+.mob-acc-sub{font-size:11px;color:#9CA3AF}
+.mob-acc-arrow{margin-left:auto;color:#9CA3AF;font-size:16px}
+
+/* Mobile table */
+.mob-table-wrap{margin:4px 12px 10px}
+.mob-table-header{display:grid;grid-template-columns:1fr 1fr 80px;padding:8px 0;border-bottom:1px solid #E5E7EB}
+.mob-th{font-size:11px;font-weight:700;color:#1A1A1A}
+.mob-tr{display:grid;grid-template-columns:1fr 1fr 80px;padding:12px 0;border-bottom:1px solid #F3F4F6;align-items:center}
+.mob-td{font-size:12px;color:#1A1A1A}
+.mob-td-type{font-size:12px;color:#329937;font-weight:600}
+.mob-btn-edit{width:30px;height:30px;border-radius:8px;background:#EBF5FF;border:none;display:inline-flex;align-items:center;justify-content:center;margin-right:6px}
+.mob-btn-del{width:30px;height:30px;border-radius:8px;background:#FEF0E7;border:none;display:inline-flex;align-items:center;justify-content:center}
+
+/* Mobile edit form */
+.mob-form-section{margin:10px 12px}
+.mob-field{margin-bottom:10px}
+.mob-field-label{font-size:11px;color:#9CA3AF;margin-bottom:4px}
+.mob-field-input{width:100%;padding:10px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:13px;color:#1A1A1A;background:#fff;display:flex;align-items:center;justify-content:space-between}
+.mob-update-btn{width:calc(100% - 24px);margin:10px 12px;padding:14px;background:#F26B33;color:#fff;border-radius:10px;font-size:14px;font-weight:700;text-align:center;border:none}
+
+/* Mobile mode dropdown */
+.mob-mode-field{margin:0 12px 10px}
+.mob-mode-label{font-size:11px;color:#9CA3AF;margin-bottom:6px}
+.mob-mode-dropdown{padding:11px 14px;border:1px solid #E5E7EB;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#1A1A1A}
+.mob-mode-options{background:#fff;border:1px solid #E5E7EB;border-radius:8px;margin:4px 0}
+.mob-mode-opt{padding:12px 14px;font-size:13px;color:#9CA3AF;border-bottom:1px solid #F3F4F6}
+.mob-mode-opt:last-child{border-bottom:none}
+
+.mob-divider{height:6px;background:#F3F4F6;margin:4px 0}
+
+/* ── Web POS panel ── */
+.web-panel{background:var(--white);border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.web-panel-header{background:var(--white);border-bottom:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;gap:10px}
+.web-back{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);flex-shrink:0}
+.web-panel-title{font-size:14px;font-weight:600;color:var(--dark)}
+.web-panel-actions{margin-left:auto;display:flex;gap:6px}
+
+/* Printing mode section */
+.printing-mode-card{margin:16px 20px 0;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.pmc-header{padding:10px 14px;display:flex;align-items:center;gap:10px;background:#FAFAFA;border-bottom:1px solid var(--border);cursor:pointer}
+.pmc-icon{width:30px;height:30px;border-radius:7px;background:var(--orange10);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pmc-title{font-size:12px;font-weight:600;color:var(--dark)}
+.pmc-sub{font-size:10px;color:var(--gray)}
+.pmc-body{padding:12px 14px;background:var(--white)}
+.mode-pills{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.mode-pill{padding:8px 10px;border:2px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;background:var(--white)}
+.mode-pill.active{border-color:var(--orange);background:var(--orange10)}
+.mode-pill-title{font-size:11px;font-weight:600;color:var(--dark);margin-bottom:1px}
+.mode-pill.active .mode-pill-title{color:var(--orange)}
+.mode-pill-desc{font-size:9px;color:var(--gray);line-height:1.3}
+.mode-saved{font-size:10px;color:var(--green);display:flex;align-items:center;gap:3px;margin-top:8px}
+
+/* Printer list table */
+.printer-list-wrap{margin:12px 20px 0}
+.list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.list-title{font-size:12px;font-weight:600;color:var(--dark)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;font-size:11px;font-weight:500;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:var(--orange-h)}
+.btn-green{background:var(--green);color:#fff}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+
+/* Table */
+.printer-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.printer-table th{background:#FAFAFA;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.printer-table td{font-size:12px;color:var(--dark);padding:10px 12px;border-bottom:1px solid #F9FAFB;vertical-align:middle}
+.printer-table tr:last-child td{border-bottom:none}
+.printer-table tr:hover td{background:#FAFAFA}
+.printer-type-badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;background:var(--orange10);color:var(--orange)}
+.icon-btn{width:26px;height:26px;border-radius:5px;border:1px solid var(--border);background:var(--white);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);margin-right:3px;transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--dark)}
+.icon-btn.danger:hover{background:#FEF2F2;color:var(--red);border-color:rgba(239,68,68,.2)}
+
+/* Inline edit form */
+.inline-form{margin:0 20px 0;border:1px solid var(--orange25);border-radius:9px;background:#FFFBF5;padding:14px;margin-top:10px}
+.form-section-title{font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.field-group{margin-bottom:0}
+.field-label{font-size:10px;font-weight:600;color:var(--gray);margin-bottom:3px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.field-label .req{color:var(--orange)}
+.field-label .hint{font-size:9px;color:var(--light);font-weight:400;text-transform:none;letter-spacing:0}
+.field-input{width:100%;padding:6px 9px;font-size:11px;border:1px solid var(--border);border-radius:6px;outline:none;color:var(--dark);background:var(--white);font-family:inherit;transition:border-color .15s}
+.field-input:focus{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange10)}
+.field-select{width:100%;padding:6px 9px;font-size:11px;border:1px solid var(--border);border-radius:6px;outline:none;color:var(--dark);background:var(--white);cursor:pointer;font-family:inherit}
+.field-select:focus{border-color:var(--orange)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-top:1px solid var(--border);margin-top:4px}
+.toggle-label{font-size:11px;font-weight:500;color:var(--dark)}
+.toggle-sub{font-size:10px;color:var(--gray)}
+.toggle-dot{width:32px;height:18px;border-radius:9px;background:#D1D5DB;position:relative;flex-shrink:0;cursor:pointer;transition:background .2s}
+.toggle-dot.on{background:var(--orange)}
+.toggle-dot::after{content:'';width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle-dot.on::after{left:16px}
+.gst-badge{font-size:9px;background:#FEF9C3;color:#854D0E;padding:1px 5px;border-radius:3px;border:1px solid #FDE68A;font-weight:600}
+
+.form-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+
+/* Separator */
+.sep{height:1px;background:var(--border);margin:12px 0}
+
+/* Bottom save bar */
+.save-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.unsaved{font-size:10px;color:var(--orange);display:flex;align-items:center;gap:4px}
+.unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
+
+/* SVG icons helper */
+svg.icon{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+svg.icon-sm{width:12px;height:12px}
+svg.icon-xs{width:10px;height:10px}
+svg.icon-mob{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Local Printer Setup — Side-by-Side Design Comparison</h1>
+    <p>printer_agent = "No" · Left: Current Mobile App · Right: New Web POS · Uses /printer-config + /printing-option APIs</p>
+  </div>
+  <span class="badge">Design Approval</span>
+</div>
+
+<div class="compare-wrap">
+  <div class="compare-grid">
+
+    <!-- ══ LEFT: MOBILE APP REFERENCE ══ -->
+    <div>
+      <span class="col-label col-label-mobile">Mobile App (current reference)</span>
+
+      <div class="phone-frame">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-screen">
+
+          <!-- Screen 1: Printer Management List -->
+          <div class="mob-header">
+            <div class="mob-back">
+              <svg class="icon-mob"><polyline points="15 18 9 12 15 6"/></svg>
+            </div>
+            <span class="mob-title">Printer Management</span>
+            <div class="mob-actions">
+              <div class="mob-icon-btn">
+                <svg class="icon-mob" style="color:#F26B33"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.28-4.6"/></svg>
+              </div>
+              <div class="mob-icon-btn">
+                <svg class="icon-mob" style="color:#F26B33"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion collapsed -->
+          <div class="mob-accordion">
+            <div class="mob-acc-header">
+              <div class="mob-acc-icon">
+                <svg class="icon-mob" style="color:#F26B33"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              </div>
+              <div>
+                <div class="mob-acc-title">Basic Configuration</div>
+                <div class="mob-acc-sub">Configure printer mode</div>
+              </div>
+              <div class="mob-acc-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- Printer table -->
+          <div class="mob-table-wrap">
+            <div class="mob-table-header">
+              <span class="mob-th">Area Name</span>
+              <span class="mob-th">Printer Type</span>
+              <span class="mob-th">Actions</span>
+            </div>
+            <div class="mob-tr">
+              <span class="mob-td">KDS</span>
+              <span class="mob-td-type">USB</span>
+              <span>
+                <button class="mob-btn-edit"><svg class="icon-mob" style="color:#3B82F6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="mob-btn-del"><svg class="icon-mob" style="color:#F26B33"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+              </span>
+            </div>
+            <div class="mob-tr">
+              <span class="mob-td">BAR</span>
+              <span class="mob-td-type">USB</span>
+              <span>
+                <button class="mob-btn-edit"><svg class="icon-mob" style="color:#3B82F6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="mob-btn-del"><svg class="icon-mob" style="color:#F26B33"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+              </span>
+            </div>
+            <div class="mob-tr">
+              <span class="mob-td">Bill</span>
+              <span class="mob-td-type">USB</span>
+              <span>
+                <button class="mob-btn-edit"><svg class="icon-mob" style="color:#3B82F6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="mob-btn-del"><svg class="icon-mob" style="color:#F26B33"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="mob-divider"></div>
+
+          <!-- Screen 3: Basic Config expanded — Printing Mode -->
+          <div class="mob-accordion" style="margin-bottom:0;border-radius:0;border-left:none;border-right:none;border-top:none">
+            <div class="mob-acc-header">
+              <div class="mob-acc-icon">
+                <svg class="icon-mob" style="color:#F26B33"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              </div>
+              <div>
+                <div class="mob-acc-title">Basic Configuration</div>
+                <div class="mob-acc-sub">Configure printer mode</div>
+              </div>
+              <div class="mob-acc-arrow" style="transform:rotate(90deg)">›</div>
+            </div>
+            <div style="padding:10px 14px 4px;background:#fff">
+              <div class="mob-mode-label">Printer Mode</div>
+              <div class="mob-mode-dropdown">
+                <span>Waiter</span>
+                <svg class="icon-mob" style="color:#9CA3AF"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="mob-mode-options" style="margin:4px 0 10px">
+                <div class="mob-mode-opt">Fixed</div>
+                <div class="mob-mode-opt" style="color:#1A1A1A;font-weight:600">Waiter</div>
+                <div class="mob-mode-opt">Station</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mob-divider"></div>
+
+          <!-- Screen 2: Edit Printer form -->
+          <div class="mob-header" style="border-top:2px solid #F26B33">
+            <div class="mob-back"><svg class="icon-mob"><polyline points="15 18 9 12 15 6"/></svg></div>
+            <span class="mob-title">Edit Printer</span>
+          </div>
+          <div class="mob-accordion" style="margin-top:10px">
+            <div class="mob-acc-header">
+              <div class="mob-acc-icon" style="background:#EBF5FF">
+                <svg class="icon-mob" style="color:#3B82F6"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+              </div>
+              <div>
+                <div class="mob-acc-title">Advanced Configuration</div>
+                <div class="mob-acc-sub">Detailed printer settings</div>
+              </div>
+              <div class="mob-acc-arrow" style="transform:rotate(90deg)">›</div>
+            </div>
+          </div>
+          <div class="mob-form-section">
+            <div class="mob-field">
+              <div class="mob-field-label">Printer For</div>
+              <div class="mob-field-input">KDS <svg class="icon-mob" style="color:#9CA3AF"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Printer Type</div>
+              <div class="mob-field-input">usb <svg class="icon-mob" style="color:#9CA3AF"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Printer Name</div>
+              <div class="mob-field-input" style="justify-content:space-between">
+                Everycom-58-Series
+                <div style="width:32px;height:32px;background:#F26B33;border-radius:8px;display:flex;align-items:center;justify-content:center">
+                  <svg class="icon-mob" style="color:#fff"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+                </div>
+              </div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Product ID</div>
+              <div class="mob-field-input" style="color:#9CA3AF"></div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Vendor ID</div>
+              <div class="mob-field-input" style="color:#9CA3AF"></div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Paper Roll Size</div>
+              <div class="mob-field-input">58 mm <svg class="icon-mob" style="color:#9CA3AF"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="mob-field">
+              <div class="mob-field-label">Default</div>
+              <div class="mob-field-input" style="color:#9CA3AF">Select <svg class="icon-mob" style="color:#9CA3AF"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+          </div>
+          <button class="mob-update-btn">Update Printer</button>
+          <div style="height:12px"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RIGHT: WEB POS NEW DESIGN ══ -->
+    <div>
+      <span class="col-label col-label-web">Web POS (new design)</span>
+
+      <div class="web-panel">
+        <div class="web-panel-header">
+          <div class="web-back">
+            <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="web-panel-title">Local Printer Setup</span>
+          <div class="web-panel-actions">
+            <button class="btn btn-ghost" style="padding:5px 8px" data-testid="printer-setup-refresh-btn">
+              <svg class="icon"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.28-4.6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Printing Mode card -->
+        <div class="printing-mode-card" data-testid="printing-mode-section">
+          <div class="pmc-header">
+            <div class="pmc-icon">
+              <svg class="icon" style="color:var(--orange)"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            </div>
+            <div>
+              <div class="pmc-title">Basic Configuration</div>
+              <div class="pmc-sub">Configure printing mode for your restaurant</div>
+            </div>
+            <svg class="icon" style="color:var(--gray);margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="pmc-body">
+            <div style="font-size:11px;color:var(--gray);margin-bottom:8px">How should the POS route print jobs?</div>
+            <div class="mode-pills" data-testid="printer-mode-selector">
+              <div class="mode-pill active" data-testid="printer-mode-fixed">
+                <div class="mode-pill-title">Fixed</div>
+                <div class="mode-pill-desc">One dedicated printer for all jobs</div>
+              </div>
+              <div class="mode-pill" data-testid="printer-mode-waiter">
+                <div class="mode-pill-title">Waiter</div>
+                <div class="mode-pill-desc">Route by serving waiter</div>
+              </div>
+              <div class="mode-pill" data-testid="printer-mode-station">
+                <div class="mode-pill-title">Station</div>
+                <div class="mode-pill-desc">Route by kitchen station</div>
+              </div>
+            </div>
+            <div class="mode-saved">
+              <svg class="icon-xs" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>
+              Printing mode saved
+            </div>
+          </div>
+        </div>
+
+        <!-- Printer list -->
+        <div class="printer-list-wrap" style="margin-bottom:0">
+          <div class="list-header">
+            <span class="list-title">Printers (3)</span>
+            <button class="btn btn-orange" data-testid="add-printer-btn">
+              <svg class="icon-sm" style="stroke:#fff"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Printer
+            </button>
+          </div>
+          <table class="printer-table" data-testid="printer-list-table">
+            <thead>
+              <tr>
+                <th>Area Name</th>
+                <th>Printer Type</th>
+                <th>Printer Name</th>
+                <th>Paper Roll</th>
+                <th>Default Stage</th>
+                <th>Auto Serve</th>
+                <th style="width:72px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-testid="printer-row-484">
+                <td style="font-weight:600">KDS</td>
+                <td><span class="printer-type-badge">bluetooth</span></td>
+                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray)">58mm</td>
+                <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
+                <td><span style="font-size:10px;color:var(--gray)">No</span></td>
+                <td>
+                  <button class="icon-btn" data-testid="edit-printer-484"><svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                  <button class="icon-btn danger" data-testid="delete-printer-484"><svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </td>
+              </tr>
+              <tr data-testid="printer-row-485">
+                <td style="font-weight:600">BAR</td>
+                <td><span class="printer-type-badge">usb</span></td>
+                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray)">58mm</td>
+                <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
+                <td><span style="font-size:10px;color:var(--green);font-weight:600">Yes</span></td>
+                <td>
+                  <button class="icon-btn" data-testid="edit-printer-485"><svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                  <button class="icon-btn danger" data-testid="delete-printer-485"><svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </td>
+              </tr>
+              <tr data-testid="printer-row-486">
+                <td style="font-weight:600">Bill</td>
+                <td><span class="printer-type-badge">bluetooth</span></td>
+                <td style="color:var(--gray)">Everycom-58-Series</td>
+                <td style="color:var(--gray)">58mm</td>
+                <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)">None</span></td>
+                <td><span style="font-size:10px;color:var(--gray)">No</span></td>
+                <td>
+                  <button class="icon-btn" data-testid="edit-printer-486"><svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                  <button class="icon-btn danger" data-testid="delete-printer-486"><svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Inline edit form (expanded — Edit KDS) -->
+        <div class="inline-form" data-testid="printer-edit-form">
+          <div class="form-section-title">
+            <svg class="icon-xs" style="stroke:var(--orange)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit Printer — KDS
+            <button style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--gray)" data-testid="close-printer-form-btn">
+              <svg class="icon-xs"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-group">
+              <label class="field-label">Printer For <span class="req">*</span></label>
+              <select class="field-select" data-testid="printer-for-select">
+                <option>KDS</option>
+                <option>BAR</option>
+                <option>Bill</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Printer Type <span class="req">*</span></label>
+              <select class="field-select" data-testid="printer-type-select">
+                <option>bluetooth</option>
+                <option>usb</option>
+                <option>wifi</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Printer Name</label>
+              <input class="field-input" value="Everycom-58-Series" data-testid="printer-name-input"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">IP / MAC Address</label>
+              <input class="field-input" value="60:6E:41:45:6F:EF" data-testid="printer-ip-input"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">WiFi Printer IP</label>
+              <input class="field-input" placeholder="e.g. 192.168.1.50" data-testid="wifi-printer-ip-input"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Paper Roll Size</label>
+              <select class="field-select" data-testid="paper-roll-select">
+                <option>58 mm</option>
+                <option>80 mm</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Vendor ID <span class="hint">(default: 0)</span></label>
+              <input class="field-input" placeholder="0" data-testid="vendor-id-input"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Product ID <span class="hint">(default: 0)</span></label>
+              <input class="field-input" placeholder="0" data-testid="product-id-input"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Default Stage</label>
+              <select class="field-select" data-testid="default-stage-select">
+                <option value="">None</option>
+                <option value="1">Ready</option>
+                <option value="2">Serve</option>
+                <option value="5">Delivered</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Station GST <span class="gst-badge">Food Court Only</span></label>
+              <input class="field-input" placeholder="e.g. 07AAACE0531H1ZV" data-testid="station-gst-input"/>
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Auto Serve</div>
+              <div class="toggle-sub">Automatically mark items as served at this station</div>
+            </div>
+            <div class="toggle-dot" data-testid="auto-serve-toggle"></div>
+          </div>
+
+          <div class="form-footer">
+            <button class="btn btn-ghost" data-testid="cancel-edit-btn">Cancel</button>
+            <button class="btn btn-green" data-testid="update-printer-btn">
+              <svg class="icon-sm" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg>
+              Update Printer
+            </button>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Field mapping reference -->
+  <div style="margin-top:24px;padding:16px 20px;background:var(--white);border:1px solid var(--border);border-radius:10px;max-width:900px">
+    <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">API Field Mapping — /printer-config</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">area_name</span> → <span style="color:var(--orange);font-weight:600">Printer For</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_name</span> → <span style="color:var(--orange);font-weight:600">Printer Type</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">wifi_printer_name</span> → <span style="color:var(--orange);font-weight:600">Printer Name</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_ip</span> → <span style="color:var(--orange);font-weight:600">IP / MAC Address</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">wifi_printer_ip</span> → <span style="color:var(--orange);font-weight:600">WiFi Printer IP</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">printer_paper_roll</span> → <span style="color:var(--orange);font-weight:600">Paper Roll Size</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">vendor_id</span> → <span style="color:var(--orange);font-weight:600">Vendor ID</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">product_id</span> → <span style="color:var(--orange);font-weight:600">Product ID</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">default (null/1/2/5)</span> → <span style="color:var(--orange);font-weight:600">Default Stage</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F9FAFB;border-radius:5px;border:1px solid var(--border)"><span style="color:var(--gray)">auto_serve (Yes/No)</span> → <span style="color:var(--orange);font-weight:600">Auto Serve toggle</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#FEF9C3;border-radius:5px;border:1px solid #FDE68A"><span style="color:#92400E">station_gst</span> → <span style="color:#92400E;font-weight:600">Station GST (food court only)</span></div>
+      <div style="font-size:10px;padding:6px 10px;background:#F0FFF4;border-radius:5px;border:1px solid #86efac"><span style="color:var(--green)">printing_option (/printing-option)</span> → <span style="color:var(--green);font-weight:600">Printer Mode</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
