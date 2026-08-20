@@ -40,7 +40,21 @@ Architecture: `"No"` → Local Printer Setup screen | `"Yes"` → Printer Agent 
 | `id` | — | hidden | PUT/DELETE key |
 
 ### C. `roles[]` array — removed from `/printer-config` response, confirmed gone.
-### D. Q1 (roles purpose for station-printer-map) — still unanswered, carry to next session.
+### D. `station-printer-map` → PRINTER AGENT ONLY (owner confirmed 2026-08-18)
+NOT used in Local Printer Setup. Local Printer Setup has NO mapping tab.
+
+**Local Printer Setup — FINAL 3-tab structure:**
+| Tab | Endpoint |
+|---|---|
+| Printers | `/printer-config` + `/printing-option` |
+| Bill Content | `/bill-printer-config` (global toggles) + `/update-settings` |
+| Bill Style | `/bill-printer-config` (3 sub-tabs: 58mm/80mm/Windows) |
+
+**Bill Style array format confirmed:**
+- Android: `[height, width, bold]` — NOT `[size1, size2, visible]`
+- Windows: `[height, bold]`
+
+**Design mockup:** `/app/frontend/public/local-printer-final.html`
 
 ---
 

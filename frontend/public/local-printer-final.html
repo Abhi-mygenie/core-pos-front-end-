@@ -159,7 +159,6 @@ svg.ic-xs{width:10px;height:10px}
   <div class="tab-bar">
     <div class="tab-pills">
       <button class="tab-pill active" onclick="switchTab('printers')" data-testid="tab-printers">Printers</button>
-      <button class="tab-pill" onclick="switchTab('mapping')" data-testid="tab-mapping">Mapping</button>
       <button class="tab-pill" onclick="switchTab('billcontent')" data-testid="tab-bill-content">Bill Content</button>
       <button class="tab-pill" onclick="switchTab('billstyle')" data-testid="tab-bill-style">Bill Style</button>
     </div>
@@ -407,9 +406,9 @@ svg.ic-xs{width:10px;height:10px}
         <thead>
           <tr>
             <th style="width:200px">Section</th>
-            <th style="width:70px;text-align:center">Size 1</th>
-            <th style="width:70px;text-align:center">Size 2</th>
-            <th style="width:60px;text-align:center">Visible</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:70px;text-align:center">Width</th>
+            <th style="width:60px;text-align:center">Bold</th>
           </tr>
         </thead>
         <tbody id="bs-58-body"></tbody>
@@ -423,9 +422,9 @@ svg.ic-xs{width:10px;height:10px}
         <thead>
           <tr>
             <th style="width:200px">Section</th>
-            <th style="width:70px;text-align:center">Size 1</th>
-            <th style="width:70px;text-align:center">Size 2</th>
-            <th style="width:60px;text-align:center">Visible</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:70px;text-align:center">Width</th>
+            <th style="width:60px;text-align:center">Bold</th>
           </tr>
         </thead>
         <tbody id="bs-80-body"></tbody>
@@ -439,8 +438,8 @@ svg.ic-xs{width:10px;height:10px}
         <thead>
           <tr>
             <th style="width:200px">Section</th>
-            <th style="width:70px;text-align:center">Font Size</th>
-            <th style="width:60px;text-align:center">Visible</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:60px;text-align:center">Bold</th>
           </tr>
         </thead>
         <tbody id="bs-win-body"></tbody>
@@ -462,7 +461,6 @@ svg.ic-xs{width:10px;height:10px}
 </div>
 
 <script>
-// Tab switching
 function switchTab(id){
   document.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
@@ -525,14 +523,14 @@ function buildAndroidRows(tbodyId, data){
   const tbody=document.getElementById(tbodyId);
   SECTIONS.forEach(s=>{
     const d=data[s.key]||["1","1","false"];
-    const on=d[2]==="true";
+    const bold=d[2]==="true";
     const tr=document.createElement('tr');
     tr.setAttribute('data-testid',`bs-row-${s.key}`);
     tr.innerHTML=`
-      <td><span class="bs-section-name" style="${on?'':'color:var(--light)'}">${s.label}</span></td>
-      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-size1-${s.key}"/></td>
-      <td style="text-align:center"><input class="bs-input" value="${d[1]}" data-testid="bs-size2-${s.key}"/></td>
-      <td style="text-align:center"><div class="toggle-dot toggle-g ${on?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-vis-${s.key}"></div></td>
+      <td><span class="bs-section-name">${s.label}</span></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-height-${s.key}"/></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[1]}" data-testid="bs-width-${s.key}"/></td>
+      <td style="text-align:center"><div class="toggle-dot toggle-g ${bold?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-bold-${s.key}"></div></td>
     `;
     tbody.appendChild(tr);
   });
@@ -542,13 +540,13 @@ function buildWindowsRows(tbodyId, data){
   const tbody=document.getElementById(tbodyId);
   SECTIONS.forEach(s=>{
     const d=data[s.key]||["7","false"];
-    const on=d[1]==="true";
+    const bold=d[1]==="true";
     const tr=document.createElement('tr');
     tr.setAttribute('data-testid',`bs-row-win-${s.key}`);
     tr.innerHTML=`
-      <td><span class="bs-section-name" style="${on?'':'color:var(--light)'}">${s.label}</span></td>
-      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-winsize-${s.key}"/></td>
-      <td style="text-align:center"><div class="toggle-dot toggle-g ${on?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-winvis-${s.key}"></div></td>
+      <td><span class="bs-section-name">${s.label}</span></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-height-win-${s.key}"/></td>
+      <td style="text-align:center"><div class="toggle-dot toggle-g ${bold?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-bold-win-${s.key}"></div></td>
     `;
     tbody.appendChild(tr);
   });
