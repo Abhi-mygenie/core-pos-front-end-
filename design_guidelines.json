@@ -1,88 +1,99 @@
 {
   "theme": "light",
   "typography": {
-    "font_family": "Inter, sans-serif",
-    "headings": {
+    "primary_font": "Inter",
+    "hierarchy": {
       "h1": "text-2xl font-semibold tracking-tight text-[#1A1A1A]",
-      "h2": "text-lg font-semibold tracking-tight text-[#1A1A1A]",
+      "h2": "text-lg font-medium tracking-tight text-[#1A1A1A]",
       "h3": "text-base font-medium text-[#1A1A1A]",
-      "label": "text-xs font-medium text-[#6B7280] uppercase tracking-wider"
+      "body": "text-sm text-[#1A1A1A] leading-relaxed",
+      "body_sm": "text-xs text-[#6B7280]",
+      "label": "text-xs font-medium tracking-wide text-[#6B7280] uppercase"
     },
-    "body": "text-sm text-[#1A1A1A]"
+    "rules": "Use tight tracking for headings. Standardize on Inter as explicitly requested. Use tabular-nums for numeric inputs in the Bill Style tab."
   },
   "colors": {
     "primary": {
-      "orange": "#F26B33",
-      "orange_hover": "#DE5C29",
-      "green": "#329937"
+      "DEFAULT": "#F26B33",
+      "hover": "#D95A2B",
+      "light": "#FEECE5"
     },
-    "text": {
+    "success": {
+      "DEFAULT": "#329937",
+      "hover": "#287A2C",
+      "light": "#EAF5EA"
+    },
+    "neutral": {
       "dark": "#1A1A1A",
-      "gray": "#6B7280"
+      "gray": "#6B7280",
+      "border": "#E5E7EB",
+      "surface": "#F7F7F7",
+      "surface_hover": "#F3F4F6",
+      "white": "#FFFFFF"
     },
-    "surface": {
-      "light_bg": "#F7F7F7",
-      "white": "#FFFFFF",
-      "tab_container": "#F3F4F6"
-    },
-    "border": {
-      "default": "#E5E7EB",
-      "focus": "#F26B33"
-    }
+    "rules": "Use F26B33 for primary actions (Save buttons, active radio borders) and 329937 for active toggles or success states."
+  },
+  "visual_enhancers": {
+    "pill_tabs": "bg-[#F3F4F6] p-1 rounded-lg flex space-x-1. Active tab: bg-white text-[#1A1A1A] shadow-sm. Inactive tab: text-[#6B7280] hover:text-[#1A1A1A].",
+    "cards": "bg-white border border-[#E5E7EB] rounded-lg shadow-sm overflow-hidden",
+    "inline_forms": "bg-[#F7F7F7] border border-[#E5E7EB] rounded-md p-4 mt-2",
+    "toggles": "Custom styled Shadcn switches using #329937 for 'checked' state",
+    "surfaces": "Use crisp 1px borders and slight shadows. No heavy neumorphism, lean towards Swiss/High-Contrast data interfaces."
+  },
+  "component_name": [
+    "Tabs",
+    "Table",
+    "Switch",
+    "Input",
+    "Select",
+    "RadioGroup",
+    "Button",
+    "Card"
+  ],
+  "grids": {
+    "tab_3_grid": "grid grid-cols-1 md:grid-cols-2 gap-6",
+    "tab_4_dense_grid": "grid grid-cols-12 gap-2 items-center py-2 border-b border-[#E5E7EB] last:border-0",
+    "inline_form_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
   },
   "layouts": {
-    "page_container": "bg-[#F7F7F7] min-h-screen p-6 md:p-8",
-    "main_grid": "grid grid-cols-1 lg:grid-cols-[minmax(320px,400px)_1fr] gap-8 max-w-[1400px] mx-auto",
-    "mobile_column": "flex flex-col gap-4 w-full",
-    "web_column": "flex flex-col gap-4 w-full bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-0 overflow-hidden",
-    "form_grid": "grid grid-cols-1 md:grid-cols-2 gap-4"
+    "container": "w-full max-w-4xl mx-auto bg-white min-h-[80vh] flex flex-col",
+    "header": "px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between sticky top-0 bg-white z-10",
+    "content_area": "flex-1 p-6 overflow-y-auto bg-[#F7F7F7]/50",
+    "density": "High density for Tab 4 (Bill Style). Use py-2 for rows instead of py-4. Reduce gaps to fit 28 configurable sections seamlessly."
   },
-  "components": {
-    "tabs": {
-      "container": "flex p-1 bg-[#F3F4F6] rounded-lg w-full max-w-md",
-      "trigger": "flex-1 py-1.5 px-3 text-sm font-medium rounded-md text-[#6B7280] transition-all duration-200",
-      "trigger_active": "bg-[#FFFFFF] text-[#1A1A1A] shadow-sm"
-    },
-    "card": "bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg p-4",
-    "button": {
-      "primary": "bg-[#F26B33] hover:bg-[#DE5C29] text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors",
-      "secondary": "bg-white hover:bg-gray-50 text-[#1A1A1A] border border-[#E5E7EB] px-4 py-2 rounded-lg font-medium text-sm transition-colors",
-      "icon": "p-1.5 text-[#6B7280] hover:text-[#F26B33] hover:bg-orange-50 rounded-md transition-colors"
-    },
-    "input": "w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F26B33]/20 focus:border-[#F26B33] text-[#1A1A1A] placeholder-[#6B7280]",
-    "table": {
-      "wrapper": "w-full overflow-hidden rounded-lg border border-[#E5E7EB]",
-      "header": "bg-[#F7F7F7] text-left text-xs font-medium text-[#6B7280] uppercase tracking-wider py-3 px-4",
-      "row": "border-t border-[#E5E7EB] hover:bg-gray-50 transition-colors",
-      "cell": "py-3 px-4 text-sm text-[#1A1A1A]"
-    },
-    "toggle": "peer-focus:ring-[#329937]/30 peer-checked:bg-[#329937]"
+  "motion": {
+    "tabs": "Instant switch with subtle opacity fade (duration-150 ease-in-out)",
+    "hover": "Subtle background shifts (hover:bg-[#F3F4F6]) for table rows and buttons",
+    "inline_form": "Animate height/opacity when expanding the Add/Edit Station inline form"
   },
-  "icons": {
-    "library": "lucide-react",
-    "usage": "Use strictly Lucide icons (e.g., Settings, Plus, Printer, Edit2, Trash2, ArrowLeft, RefreshCw, ChevronDown). No emojis."
-  },
-  "design_instructions_to_main_agent": [
-    "IMPLEMENTATION CONTEXT: You are building a UI to demonstrate the transformation from a Mobile App to a Web POS. The left side should feature a mock 'Phone' container illustrating the 3 reference mobile screens. The right side is the newly designed Web Settings Panel.",
-    "STRICT COLOR PALETTE: You MUST only use the exact hex codes provided in the colors object. Primary actions must use the primary orange (#F26B33). Success states/toggles use green (#329937).",
-    "FONT: Strictly use Inter font.",
-    "LEFT COLUMN (MOBILE REF): Build a mock mobile frame using 'border-[12px] border-gray-900 rounded-[2.5rem] overflow-y-auto h-[800px] w-full max-w-[360px] mx-auto bg-gray-50'. Inside, create 3 visually distinct sections simulating 'Screen 1', 'Screen 2', and 'Screen 3' as described in the problem statement.",
-    "RIGHT COLUMN (WEB POS): Build the new settings panel. It should look like a slide-over or compact settings panel.",
-    "WEB LAYOUT - TOP SECTION: A Header 'Local Printer Setup' followed by a 'Basic Configuration' card (using the specified 1px border card style) with the 'Printing Mode' selector. Use a segmented pill tab (from the tab component styles) or a clean inline dropdown for Fixed / Waiter / Station.",
-    "WEB LAYOUT - MIDDLE SECTION: A dense data table representing the Printer List. Columns: Area Name, Printer Type, Actions (Edit/Trash).",
-    "WEB LAYOUT - INLINE FORM: Instead of opening a new page or modal, when 'Edit' or 'Add' is clicked, expand an inline form card directly below the table (or replacing the row/table). The form MUST use a dense 2-column grid (`grid-cols-2`) to fit the 10 fields compactly.",
-    "FORM FIELDS: Ensure all 10 fields from the problem statement are present: Printer For, Printer Type, Printer Name, IP/MAC, WiFi Printer IP, Paper Roll Size, Vendor ID, Product ID, Default Stage, Auto Serve, Station GST. Map them to appropriate input types (Select, Text, Switch).",
-    "TESTING: Every single interactive element, form field, and tab MUST have a `data-testid` attribute (e.g. data-testid='printer-mode-select', data-testid='edit-printer-btn')."
-  ],
   "accessibility": {
-    "contrast": "Text contrast complies with WCAG AA. Backgrounds and text pairs are optimized.",
-    "focus": "All interactive elements must use focus-visible states, particularly focusing with the orange tint `focus:ring-[#F26B33]/20`."
+    "contrast": "Ensure all #6B7280 text is sufficiently dark against #F7F7F7 and #FFFFFF backgrounds.",
+    "focus": "focus:ring-2 focus:ring-[#F26B33]/50 focus:outline-none focus:border-[#F26B33]",
+    "data_testid": "ALL interactive elements MUST include explicit data-testid attributes (e.g., 'tab-printers', 'btn-save-station', 'toggle-auto-serve')."
   },
-  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
-    "Do not apply `transition: all` globally. Apply targeted transitions.",
-    "Never center-align the app container (`.App { text-align: center; }`). Keep natural left-alignment.",
-    "Do not use transparent backgrounds for dropdowns or modals; always use solid white or F7F7F7.",
-    "Ensure the layout is completely responsive. On smaller screens, the side-by-side layout should stack (Mobile Mockup top, Web Design bottom).",
-    "Add functional state management in React so the 'Edit Printer' form toggles visibility when the Edit button or Add (+) is clicked."
+  "media": {},
+  "3d_libraries": {},
+  "image_urls": {},
+  "instructions_to_main_agent": [
+    "Build the UI in React using Javascript (.js/.jsx) with Tailwind CSS.",
+    "Do not build a full-page layout; build a settings panel structure (e.g., a polished div that could fit in a slide-over).",
+    "For Tab 1: Build the top 'Printing Mode' as 3 radio cards using the Primary Orange (#F26B33) for active border/ring.",
+    "For Tab 1: Build a dense data table for stations. Implement the inline Add/Edit form using `inline_form_grid` inside a `bg-[#F7F7F7]` bounded box.",
+    "For Tab 2: Map stations to employees. Add a 'Default Users' section at the top.",
+    "For Tab 3: Use a 2-column layout for the global bill config toggles and inputs.",
+    "For Tab 4: Implement nested pill tabs for '2-inch (58mm)', '3-inch (80mm)', and 'Windows'. Create a dense, spreadsheet-like list for the 28 configurable sections with visible toggles and font-size inputs (array values).",
+    "Ensure humanized labels for Tab 4 sections (e.g., 'Restaurant Logo' instead of 'restaurant_logo').",
+    "Use lucide-react for all icons. Explicitly no emojis.",
+    "Adhere strictly to the provided color hex codes. No generic tailwind blues.",
+    "All inputs/buttons/toggles must have specific data-testid attributes based on their functional names."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never use generic centered layouts. Left-align dense data for readability.",
+    "Implement crisp micro-interactions: use structural grays (#F7F7F7 to #F3F4F6 on hover) rather than shadows for list items.",
+    "Use Shadcn UI components for complex interactions (Select, Switch, Tabs) but style them to match the exact brand tokens.",
+    "Do not apply global transitions (transition-all). Target specific properties.",
+    "Use exact spacing scale (Tailwind standard) but apply tighter gaps (gap-2, p-2) in 'spreadsheet' areas like Tab 4.",
+    "Ensure 'Save' buttons are prominent, using the primary #F26B33 color with proper hover states.",
+    "Toasts: use sonner for any save action feedback."
   ]
 }
