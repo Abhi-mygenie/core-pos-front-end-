@@ -21,7 +21,7 @@
 
 ## 1. Curl Validation — Blocker B-1 RESOLVED
 
-**Endpoint confirmed deployed on preprod (2026-08-24):**
+**Endpoint confirmed deployed on preprod. Full validation map probed 2026-08-24:**
 
 ```
 POST https://preprod.mygenie.online/api/v2/vendoremployee/order/split-room-order
@@ -30,34 +30,63 @@ Content-Type: application/json
 X-localization: en
 
 {
-  "order_id": 1232008,      ← room order to split FROM
-  "room_id": 6182,          ← room context (backend auth check)
-  "items": [
-    { "id": 3112276 },      ← placed item IDs to move out
-    { "id": 3112277 },
-    { "id": 3112278 }
-  ],
-  "remark": "Customer pays selected room items separately"
+  "order_id": 1232008,                       ← REQUIRED
+  "order_detail_ids": [3112276, 3112277],    ← REQUIRED (or use "items: [{id}]")
+  "customer_name": "Room 101",               ← optional, accepted, see §OQ-6 decision below
+  "room_id": 6182,                           ← optional (backend derives from order_id)
+  "remark": "Customer pays selected room items separately"  ← optional
 }
-
-→ HTTP 401 (auth token mismatch, NOT 404 — endpoint exists and is deployed)
 ```
 
-**Key API contract findings:**
+**Validated field map:**
 
-| Field | Value | Impact on FE design |
+| Field | Required? | Notes |
 |---|---|---|
-| Dedicated endpoint | `/api/v2/vendoremployee/order/split-room-order` | Not `TRANSFER_FOOD` — new constant needed |
-| Auth | Bearer required | Use existing `api` axios instance |
-| `order_id` | Room order ID | Available as `effectiveTable?.orderId` in OrderEntry |
-| `room_id` | Room ID | Available as `orderData?.roomInfo?.roomId` or `table?.roomId` |
-| `items` | Array of `{id: N}` | Staff selects MULTIPLE placed items — new multi-select UI needed |
-| `remark` | Optional string | Show remark input in modal |
-| **No destination field** | Backend auto-creates output order | FE does NOT pick a destination table — intake OQ-1 resolved |
+| `order_id` | YES | Room order to split from |
+| `order_detail_ids: [id, id]` | YES (or `items`) | **Preferred** — flat array, simpler |
+| `items: [{id: N}]` | YES (or `order_detail_ids`) | Alternative object format |
+| `customer_name` | NO | Accepted without error — see OQ-6 decision |
+| `room_id` | NO | Optional — backend derives from `order_id` |
+| `remark` | NO | Optional note |
 
-**OQ-1 from intake resolved:** Backend auto-creates the destination order. Staff selects items only.
-**OQ-2 from intake resolved:** Socket `update-order` events will fire after split → room order total reduces in real time automatically.
-**OQ-3 (min items on room):** Backend responsibility — FE has no constraint to add.
+**Key error responses confirmed:**
+- Missing `order_id` + items → HTTP 403 validation errors (required fields listed)
+- Order already paid/completed → HTTP 200 `{"status":false,"message":"This order is already completed and paid. Room split is not allowed."}`
+- `customer_name` never appears in any validation error (not rejected)
+
+**OQ-1 resolved:** No destination field → backend auto-creates output order.
+**OQ-2 resolved:** Socket `update-order` fires after split → room total reduces automatically.
+**OQ-3 resolved:** Min items on room = backend responsibility.
+
+---
+
+## 1b. OQ-6 — `customer_name` Decision LOCKED (2026-08-24)
+
+**Decision: FE always sends `customer_name: "Room {roomNo}"`. Display degrades gracefully.**
+
+```
+FE sends:  customer_name: `Room ${orderData.roomInfo.roomNo}`   (e.g. "Room 101")
+
+Backend uses it    → split order appears as "Room 101" on Dashboard  ✅
+Backend ignores it → split order appears as "Walk-In" on Dashboard   ✅ (graceful fallback)
+```
+
+**Why this is safe:**
+- `customer_name` was never rejected by validation in any probe — backend accepts the field
+- DashboardPage line 602: `label: order.customer || 'Walk-In'` — if `user_name` not set, "Walk-In" is the natural fallback
+- `orderData.roomInfo.roomNo` is already mapped at `orderTransform.js:402` — no new transform needed
+- Zero risk: sending an extra field that backend ignores costs nothing
+
+**FE payload (final):**
+```js
+{
+  order_id: orderId,
+  order_detail_ids: selectedItemIds,   // flat array — simpler than items:[{id}]
+  customer_name: `Room ${roomNo}`,     // e.g. "Room 101"
+  remark: remark || '',
+  // room_id omitted — optional, backend derives it
+}
+```
 
 ---
 
@@ -220,29 +249,17 @@ Items excluded from selection:
 
 ## 11. Open Questions
 
-**OQ-6 (NEW — design decision, owner + backend):**
+**All resolved — Gate 4 GO can proceed.**
 
-**Room number as the walk-in label on Dashboard**
+| OQ | Question | Status |
+|---|---|---|
+| B-1 | Does backend support room-as-source? | ✅ Dedicated `split-room-order` confirmed deployed |
+| OQ-1 | Pick existing table or auto-create? | ✅ Backend auto-creates — no destination in payload |
+| OQ-2 | Real-time balance update? | ✅ Socket `update-order` handles automatically |
+| OQ-3 | Minimum items on room? | ✅ Backend responsibility |
+| OQ-6 | Room number as walk-in label? | ✅ **LOCKED** — FE always sends `customer_name: "Room {roomNo}"`. If backend uses it → "Room 101" on dashboard. If not → graceful "Walk-In" fallback. No blocking dependency. |
 
-After `split-room-order` fires, the backend creates a new order. That order will appear in the Dashboard's Walk-In section with label `order.customer || 'Walk-In'` (DashboardPage line 602). The `customer` field comes from `api.user_name` in the transform (orderTransform.js line 176).
-
-The room number is already available on the FE: `orderData?.roomInfo?.roomNo` (e.g. `"101"`) — mapped at orderTransform.js line 402.
-
-**Proposed behaviour:** Split order appears on Dashboard as **"Room 101"** instead of generic "Walk-In".
-
-Three options to achieve this:
-
-| Option | Approach | API calls | Backend change needed |
-|---|---|---|---|
-| **A (Recommended)** | Add `customer_name: "Room {roomNo}"` param to `split-room-order` payload; backend sets as `user_name` on created order | 1 | YES — add `customer_name` param |
-| **B** | Use `remark: "Room {roomNo}"` — if backend stores remark as `user_name` on created order | 1 | YES — backend must use remark as label |
-| **C** | FE creates walk-in via `PLACE_ORDER` with `cust_name: "Room {roomNo}"` + selected items; then cancel those items from room order via `CANCEL_ITEM` | 1 + N | NO — all existing endpoints |
-
-**Recommendation: Option A.** Single call, explicit intent, room number cleanly flows from `orderData.roomInfo.roomNo` → `customer_name` in payload → `user_name` on backend → `"Room 101"` label on Dashboard.
-
-> **Owner confirm:** Should split order show as "Room {number}" on Dashboard? If yes, ask backend to add `customer_name` to `split-room-order`.
-
-All other intake blockers and OQs (B-1, OQ-1, OQ-2, OQ-3) remain resolved.
+**Gate 4 GO required from owner before implementation.**
 
 ---
 

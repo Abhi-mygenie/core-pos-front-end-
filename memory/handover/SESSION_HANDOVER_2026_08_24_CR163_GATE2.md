@@ -21,7 +21,7 @@
 
 ---
 
-## API Contract (CONFIRMED)
+## API Contract (CONFIRMED — updated 2026-08-24)
 
 ```
 POST {REACT_APP_API_BASE_URL}/api/v2/vendoremployee/order/split-room-order
@@ -29,14 +29,16 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "order_id": <room_order_id>,
-  "room_id": <room_id>,
-  "items": [{ "id": <placed_item_id> }, ...],
-  "remark": "<optional string>"
+  "order_id": <room_order_id>,              ← REQUIRED
+  "order_detail_ids": [id, id, ...],        ← REQUIRED (flat array — simpler format)
+  "customer_name": "Room {roomNo}",         ← send always; backend uses if supported, else Walk-In fallback
+  "remark": "<optional string>"             ← optional
+  // room_id omitted — optional, not required by backend
 }
 ```
 
-Room ID source in FE: `orderData?.roomInfo?.roomId` (verify exact key in orderTransform.js ~line 389)
+**Room number source:** `orderData?.roomInfo?.roomNo` (orderTransform.js line 402)
+**Dashboard label chain:** `user_name` → `order.customer` → `label: order.customer || 'Walk-In'`
 
 ---
 
@@ -52,11 +54,15 @@ Room ID source in FE: `orderData?.roomInfo?.roomId` (verify exact key in orderTr
 
 Files NOT touched: `TransferFoodModal.jsx`, `DashboardPage.jsx`, `socketHandlers.js`
 
-## OQ-6 — Room number as walk-in label (NEW)
+## OQ-6 — LOCKED (2026-08-24)
 
-FE already has `orderData.roomInfo.roomNo`. After split, the new order lands in Dashboard's Walk-In section as `order.customer || 'Walk-In'` (DashboardPage line 602). Owner confirm Option A: backend adds `customer_name` param to `split-room-order`; FE sends `customer_name: "Room {roomNo}"` → split appears as **"Room 101"** on dashboard.
+**Decision:** FE always sends `customer_name: "Room {roomNo}"`.
+- Backend uses it → split appears as **"Room 101"** on dashboard ✅
+- Backend ignores it → graceful **"Walk-In"** fallback ✅
+- Zero blocking dependency on backend confirming the field.
 
-**Blocking Gate 3 if owner wants room label** — backend must add the param first.
+`order_detail_ids: [id, id]` preferred over `items: [{id}]` — simpler flat array format confirmed valid.
+`room_id` dropped from payload — not required by backend validation.
 
 - Test (needs active room orders): any hotel/resort restaurant account
 - Preview: `https://core-pos-deploy-12.preview.emergentagent.com`
