@@ -800,6 +800,7 @@ const CartPanel = ({
   setIsScheduled,
   scheduleAt = null,
   setScheduleAt,
+  onSplitItems = null, // CR-163: room order split trigger — null for non-room orders
 }) => {
   const { enableDynamicTables } = useSettings();
   const { features } = useRestaurant(); // BUG-331
@@ -1196,10 +1197,25 @@ const CartPanel = ({
       )}
 
       {/* Column Headers */}
+      {/* CR-163: Move Items trigger — visible only for room orders with placed items */}
       <div className="px-4 py-2 flex items-center text-xs font-medium" style={{ backgroundColor: COLORS.sectionBg, color: COLORS.grayText }}>
         <span className="flex-1">Items</span>
         <span className="w-16 text-center" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>Qty</span>
         <span className="w-20 text-right" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>Price</span>
+        {isRoom && hasPlacedItems && onSplitItems && (
+          <button
+            onClick={onSplitItems}
+            className="ml-3 flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold transition-colors hover:bg-white"
+            style={{ borderColor: COLORS.borderGray, color: COLORS.darkText, backgroundColor: '#f9fafb' }}
+            data-testid="move-items-trigger"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={COLORS.primaryGreen} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M21 16v3a2 2 0 0 0-2 2h-3M8 21H5a2 2 0 0 0-2-2v-3"/>
+              <path d="m7 11 5-5 5 5M7 13l5 5 5-5"/>
+            </svg>
+            Move Items
+          </button>
+        )}
       </div>
 
       {/* Cart Items */}

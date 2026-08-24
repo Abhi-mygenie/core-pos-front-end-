@@ -4,6 +4,7 @@ import { COLORS } from "../../constants";
 import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
+import { splitRoomOrder } from "../../api/services/roomService"; // CR-163
 import { lookupAddresses, addAddress, lookupCustomer } from "../../api/services/customerService";
 import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
@@ -27,6 +28,7 @@ import AddressPickerModal from "./AddressPickerModal";
 import AddressFormModal from "./AddressFormModal";
 import OrderPlacedModal from "./OrderPlacedModal";
 import TransferFoodModal from "./TransferFoodModal";
+import SplitRoomItemsModal from "./SplitRoomItemsModal"; // CR-163
 import MergeTableModal from "./MergeTableModal";
 import ShiftTableModal from "./ShiftTableModal";
 import CancelFoodModal from "./CancelFoodModal";
@@ -141,6 +143,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [orderNotes, setOrderNotes] = useState([]);
   const [showOrderPlaced, setShowOrderPlaced] = useState(false);
   const [transferItem, setTransferItem] = useState(initialTransferItem);
+  const [showSplitModal, setShowSplitModal] = useState(false); // CR-163
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
   const [cancelItem, setCancelItem] = useState(null);
@@ -1180,6 +1183,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     if (engagePromise) await engagePromise;
     console.log('[TransferFood] Socket engaged — redirecting to dashboard');
     navigateAfterOrderAction();
+  };
+
+  // CR-163: Split selected items from room order to a new walk-in table
+  const handleSplitRoomItems = async (selectedIds, remark) => {
+    const orderId = effectiveTable?.orderId || placedOrderId;
+    const roomNo = orderData?.roomInfo?.roomNo;
+    if (!orderId || selectedIds.length === 0) return;
+    await splitRoomOrder({
+      orderId,
+      orderDetailIds: selectedIds,
+      customerName: roomNo ? `Room ${roomNo}` : undefined,
+      remark,
+    });
+    toast({ title: 'Items Moved', description: 'Selected items split to a new table.' });
   };
 
   const handleMerge = async ({ selectedOrders }) => {
@@ -2578,6 +2595,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 setIsScheduled={setIsScheduled}
                 scheduleAt={scheduleAt}
                 setScheduleAt={setScheduleAt}
+                onSplitItems={table?.isRoom ? () => setShowSplitModal(true) : null}
               />
             </>
           )}
@@ -2700,6 +2718,14 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       )}
       {transferItem && table && (
         <TransferFoodModal item={transferItem} currentTable={table} orders={orders} onClose={() => setTransferItem(null)} onTransfer={handleTransfer} />
+      )}
+      {showSplitModal && table?.isRoom && (
+        <SplitRoomItemsModal
+          cartItems={cartItems}
+          roomNo={orderData?.roomInfo?.roomNo}
+          onClose={() => setShowSplitModal(false)}
+          onSplit={handleSplitRoomItems}
+        />
       )}
       {showMergeModal && table && (
         <MergeTableModal currentTable={table} orders={orders} onClose={() => setShowMergeModal(false)} onMerge={handleMerge} />

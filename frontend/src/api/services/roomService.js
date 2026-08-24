@@ -144,3 +144,18 @@ export const getRoomList = async () => {
   const res = await api.get(API_ENDPOINTS.GET_ROOM_LIST);
   return res.data;
 };
+
+// CR-163: Split selected items from room order into a new walk-in order.
+// Backend creates the destination order automatically.
+// customer_name is sent so the created order shows as "Room {N}" on Dashboard;
+// backend uses it if supported, falls back to Walk-In label if not.
+export const splitRoomOrder = async ({ orderId, orderDetailIds, customerName, remark = '' }) => {
+  const payload = {
+    order_id: orderId,
+    order_detail_ids: orderDetailIds,
+    ...(customerName ? { customer_name: customerName } : {}),
+    remark,
+  };
+  const res = await api.post(API_ENDPOINTS.SPLIT_ROOM_ORDER, payload);
+  return res.data;
+};
