@@ -506,7 +506,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     if (!placedOrderId) return;
     
     const orderFromContext = orders.find(o => o.orderId === placedOrderId);
-    if (!orderFromContext || !orderFromContext.items?.length) return;
+    if (!orderFromContext) return; // CR-163 FIX: allow sync even when items become empty (full split)
 
     console.log('[OrderEntry] Syncing from OrderContext', {
       orderId: placedOrderId,
