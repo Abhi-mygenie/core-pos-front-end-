@@ -32,32 +32,45 @@ Implementation agent MUST verify these before writing any code:
 
 ```
 1. constants.js line 86 reads:
-   PAYMENT_LINK: '/api/v1/razor-pay/payment-link',
-   → Confirm verbatim before inserting below it.
+   PAYMENT_LINK:      '/api/v1/razor-pay/payment-link',
+   AND line 88 reads:
+   SPLIT_ROOM_ORDER:  '/api/v2/vendoremployee/order/split-room-order',
+   → RAZORPAY_CANCEL_REFUND inserts BETWEEN these two (after line 86, before line 88).
+   ← UPDATED 2026-08-24: CR-163 added SPLIT_ROOM_ORDER at line 88
 
 2. orderTransform.js line 237 reads:
    paymentMethod: api.payment_method || api.payment_mode || '',
-   → Confirm verbatim before inserting after it.
+   → Insert BOTH razorpayOrderId AND razorpayPaymentStatus after this line (see Edit 3 below).
+   ← UPDATED 2026-08-24: razorpay_payment_status also confirmed in running orders schema
 
-3. OrderEntry.jsx line 1264 reads:
+3. OrderEntry.jsx line 1281 reads:   ← SHIFTED from 1264 — CR-163 added +17 lines
    const handleCancelOrder = async (reason) => {
    → Confirm verbatim before replacing.
 
-4. OrderEntry.jsx line 2720-2727 reads:
+4. OrderEntry.jsx CancelOrderModal block now at line 2746:   ← SHIFTED from 2720
    {showCancelOrderModal && (
      <CancelOrderModal
        table={table}
-       ...
+       itemCount={cartItems.filter(i => i.placed && i.status !== 'cancelled').length}
+       reasons={getOrderCancellationReasons()}
+       onClose={() => setShowCancelOrderModal(false)}
        onCancel={handleCancelOrder}
      />
    )}
    → Confirm verbatim before replacing.
 
-5. DashboardPage.jsx line 1332 reads:
+5. DashboardPage.jsx line 1332 reads:   ← UNCHANGED (CR-163 did not touch DashboardPage)
    const handleCancelOrderConfirm = useCallback(async (reason) => {
    → Confirm verbatim before replacing.
 
-6. DashboardPage.jsx line 2040-2050 reads the CancelOrderModal block.
+6. DashboardPage.jsx CancelOrderModal block at line 2041:   ← UNCHANGED
+   {cancelOrderEntry && (
+     <CancelOrderModal
+       table={cancelOrderEntry}
+       ...
+       onCancel={handleCancelOrderConfirm}
+     />
+   )}
    → Confirm verbatim before replacing.
 
 7. razorpayRefundService.js: confirm file does NOT exist.
@@ -84,18 +97,20 @@ Implementation agent MUST verify these before writing any code:
 
 ## Edit 1 — `src/api/constants.js`
 
-**Position:** After line 86 (`PAYMENT_LINK`)
+**Position:** After line 86 (`PAYMENT_LINK`), BEFORE line 88 (`SPLIT_ROOM_ORDER`)
 **Change:** Add new endpoint constant
-
-```js
-  // CR-165: Razorpay cancel-and-refund (v2, Bearer auth, no restaurant_id)
-  RAZORPAY_CANCEL_REFUND: '/api/v2/vendoremployee/order/cancel-and-refund-order',
-```
+← **UPDATED 2026-08-24:** CR-163 added `SPLIT_ROOM_ORDER` at line 88. Insert between them.
 
 **Exact search (insert after):**
 ```
   // CR-017: WhatsApp Payment Link — generates Razorpay link + sends WhatsApp/SMS
   PAYMENT_LINK:      '/api/v1/razor-pay/payment-link',
+```
+
+**Insert:**
+```js
+  // CR-165: Razorpay cancel-and-refund (v2, Bearer auth, no restaurant_id)
+  RAZORPAY_CANCEL_REFUND: '/api/v2/vendoremployee/order/cancel-and-refund-order',
 ```
 
 ---
@@ -133,7 +148,11 @@ export const cancelAndRefund = async (orderId, cancellationReason, cancellationN
 ## Edit 3 — `src/api/transforms/orderTransform.js`
 
 **Position:** After line 237 (`paymentMethod` line)
-**Change:** Map `razorpay_order_id` from API response (backend adding this field)
+**Change:** Map BOTH `razorpay_order_id` AND `razorpay_payment_status` — both confirmed in running orders schema (validated 2026-08-24)
+
+**Decision on `razorpay_payment_status` (locked 2026-08-24):**
+Backend added this field alongside `razorpay_order_id`. Map it now — useful for future detection logic
+(e.g. only trigger Trigger A if `razorpayPaymentStatus === 'paid'`). Currently all `null` for non-PG orders.
 
 **Exact search:**
 ```
@@ -143,8 +162,9 @@ export const cancelAndRefund = async (orderId, cancellationReason, cancellationN
 **Replace with:**
 ```
       paymentMethod: api.payment_method || api.payment_mode || '',
-      // CR-165: Razorpay PG detection — backend adds razorpay_order_id to running orders
-      razorpayOrderId: api.razorpay_order_id || null,
+      // CR-165: Razorpay PG detection — confirmed in running orders schema 2026-08-24
+      razorpayOrderId:       api.razorpay_order_id       || null,
+      razorpayPaymentStatus: api.razorpay_payment_status || null,
 ```
 
 ---
@@ -317,7 +337,7 @@ import api from '../../api/axios';
 import { cancelAndRefund } from '../../api/services/razorpayRefundService'; // CR-165
 ```
 
-### 5b — Replace `handleCancelOrder` (line 1264–1290)
+### 5b — Replace `handleCancelOrder` (line **1281** — SHIFTED from 1264 due to CR-163)
 
 **Exact search:**
 ```
@@ -398,7 +418,7 @@ import { cancelAndRefund } from '../../api/services/razorpayRefundService'; // C
   };
 ```
 
-### 5c — Update CancelOrderModal call site (line 2720–2727)
+### 5c — Update CancelOrderModal call site (line **2746** — SHIFTED from 2720)
 
 **Exact search:**
 ```
