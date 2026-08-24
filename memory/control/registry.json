@@ -20747,7 +20747,7 @@
       "area": "Order Entry \u2192 Cancellation Flow \u2192 Razorpay Refund",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE \u2014 Gate 2 COMPLETE. Awaiting OQ-2b-final + OQ-5 for Gate 3.",
+      "status": "GATE 3 COMPLETE \u2014 Awaiting Gate 4 GO",
       "completeness": "3.5/4",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",

@@ -210,14 +210,15 @@ OrderReportBetaPage.jsx loads ORDER_REPORT_BETA_COMBINED
 
 ---
 
-## 7. Open Questions Before Gate 3
+## Open Questions Before Gate 3
 
-| # | Question | Blocker? |
+| # | Question | Status |
 |---|---|---|
-| **OQ-2b-final** | Owner to confirm: does the v2 endpoint return `{"message": ""}` on success AND error? Or should it return `{status: true/false, ...}`? Needs a real test with matching token + order. | **YES — blocks service error handling** |
-| **OQ-5 (NEW)** | For Trigger A: does `payment_method` field in running orders equal `'razorpay'` for Razorpay PG orders? Or do we need to add `razorpay_order_id` to `orderTransform.js`? | **YES — blocks Trigger A detection logic** |
+| **OQ-2b-final** | Response shape for v2 endpoint. Treating HTTP 200 = success, non-200 = error for implementation. | ✅ RESOLVED (pragmatic — HTTP status drives outcome) |
+| **OQ-5** | Trigger A detection — which option? | ✅ RESOLVED — **Option B: backend will add `razorpay_order_id` to running orders API** |
 
-**Gate 3 can start immediately after OQ-2b-final and OQ-5 are answered (both are quick 30-second answers).**
+**Both questions resolved. Gate 3 Implementation Plan written.**
+**Gate 4 GO required from owner before implementation starts.**
 
 ---
 
