@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-094 — P&L Report Mock v2 (with Charts)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A1A; }
+
+  :root {
+    --primary-orange: #F26B33;
+    --primary-green: #329937;
+    --dark-text: #1A1A1A;
+    --gray-text: #666666;
+    --border-gray: #E5E5E5;
+    --error-red: #EF4444;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --zinc-50: #FAFAFA;
+    --zinc-100: #F4F4F5;
+    --zinc-200: #E4E4E7;
+    --zinc-400: #A1A1AA;
+    --zinc-500: #71717A;
+    --zinc-600: #52525B;
+    --zinc-700: #3F3F46;
+    --zinc-800: #27272A;
+    --zinc-950: #09090B;
+  }
+
+  /* ── Layout ── */
+  .app-shell { display: flex; height: 100vh; overflow: hidden; }
+
+  .sidebar {
+    width: 70px; min-width: 70px;
+    background: #fff; border-right: 1px solid var(--border-gray);
+    display: flex; flex-direction: column; padding: 12px 0;
+    align-items: center; gap: 4px;
+  }
+  .sidebar-logo { width: 36px; height: 36px; margin-bottom: 16px; }
+  .sidebar-item {
+    width: 48px; height: 48px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; color: var(--zinc-500);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: #F5F5F5; }
+  .sidebar-item.active { background: #FFF3ED; color: var(--primary-orange); }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--zinc-50); }
+
+  /* ── Header (matches DailySalesMockup / ExpenseReportPage) ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; background: #fff;
+    border-bottom: 1px solid var(--zinc-200); flex-shrink: 0;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .back-btn {
+    padding: 8px; border-radius: 8px; cursor: pointer; background: transparent;
+    border: none; color: var(--zinc-600); display: flex;
+  }
+  .back-btn:hover { background: var(--zinc-100); }
+  .header-title { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; color: var(--zinc-950); }
+  .header-subtitle { font-size: 11px; color: var(--zinc-500); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  /* Date range (matches insights pattern: bordered pill with From—To) */
+  .date-range-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border: 1px solid var(--zinc-200);
+    border-radius: 8px; background: #fff;
+  }
+  .date-range-pill svg { width: 16px; height: 16px; color: var(--zinc-500); }
+  .date-label { font-size: 10px; color: var(--zinc-400); text-transform: uppercase; letter-spacing: 0.5px; }
+  .date-input {
+    background: transparent; border: none; outline: none;
+    font-size: 13px; font-weight: 500; color: var(--zinc-800);
+    cursor: pointer; padding: 0; width: 110px;
+  }
+  .date-sep { color: var(--zinc-300); font-size: 14px; }
+
+  .apply-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    border: none; cursor: pointer; transition: all 0.15s;
+    background: var(--primary-green); color: #fff;
+  }
+  .apply-btn:hover { background: #287a2d; }
+
+  .preset-group {
+    display: flex; align-items: center; gap: 2px;
+    padding: 4px; background: var(--zinc-100); border-radius: 8px;
+  }
+  .preset-btn {
+    padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
+    border: none; cursor: pointer; background: transparent; color: var(--zinc-600);
+    transition: all 0.15s;
+  }
+  .preset-btn:hover { background: rgba(255,255,255,0.5); }
+  .preset-btn.active { background: #fff; color: var(--zinc-950); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  .download-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    border: 1px solid var(--primary-orange); color: var(--primary-orange);
+    background: #fff; cursor: pointer; transition: all 0.15s;
+  }
+  .download-btn:hover { background: #FFF7ED; }
+  .download-btn svg { width: 16px; height: 16px; }
+
+  /* ── Scrollable Content ── */
+  .content { flex: 1; overflow: auto; padding: 32px; }
+  .content-inner { display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── KPI Strip (6-col grid, matches DailySalesMockup) ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .kpi-card {
+    background: #fff; border: 1px solid var(--zinc-200);
+    border-radius: 12px; padding: 16px;
+  }
+  .kpi-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .kpi-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .kpi-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--zinc-500);
+  }
+  .kpi-value { font-size: 22px; font-weight: 700; color: var(--zinc-950); }
+  .kpi-value.profit { color: var(--primary-green); }
+  .kpi-value.loss { color: var(--error-red); }
+  .kpi-value.expense { color: var(--error-red); }
+  .kpi-sub { font-size: 10px; color: var(--zinc-400); margin-top: 3px; }
+
+  /* ── Charts Row (2/3 bar + 1/3 donut — matches ExpenseReportPage) ── */
+  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  .chart-card {
+    background: #fff; border: 1px solid var(--zinc-200);
+    border-radius: 12px; padding: 24px;
+  }
+  .chart-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--zinc-700); margin-bottom: 16px;
+  }
+
+  /* Bar Chart (SVG) */
+  .bar-chart { width: 100%; height: 220px; }
+  .bar-chart .grid-line { stroke: #f0f0f0; stroke-dasharray: 3 3; }
+  .bar-chart .axis-label { font-size: 10px; fill: #a1a1aa; font-family: Inter, sans-serif; }
+  .bar-chart .bar-revenue { fill: #3B82F6; opacity: 0.8; rx: 3; ry: 3; }
+  .bar-chart .bar-expense { fill: #EF4444; opacity: 0.65; rx: 3; ry: 3; }
+  .bar-chart .bar-profit { fill: #329937; opacity: 0.7; rx: 3; ry: 3; }
+  .chart-legend {
+    display: flex; align-items: center; gap: 16px; margin-top: 12px;
+    padding-top: 12px; border-top: 1px solid #f4f4f5;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--zinc-600); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* Donut Chart (SVG) */
+  .donut-chart { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .donut-center {
+    font-size: 16px; font-weight: 700; color: var(--zinc-950);
+    text-anchor: middle; dominant-baseline: middle; font-family: Inter, sans-serif;
+  }
+  .donut-center-sub {
+    font-size: 10px; fill: var(--zinc-500);
+    text-anchor: middle; dominant-baseline: middle; font-family: Inter, sans-serif;
+  }
+  .donut-legend {
+    display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 16px;
+  }
+  .donut-legend-item {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--zinc-700);
+  }
+  .donut-legend-left { display: flex; align-items: center; gap: 8px; }
+  .donut-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+  .donut-legend-pct { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--zinc-800); }
+
+  /* ── Table ── */
+  .table-card {
+    background: #fff; border: 1px solid var(--zinc-200);
+    border-radius: 12px; overflow: hidden;
+  }
+  .table-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; border-bottom: 1px solid var(--zinc-100);
+  }
+  .table-title { font-size: 13px; font-weight: 600; color: var(--zinc-700); text-transform: uppercase; letter-spacing: 0.3px; }
+  .table-count { font-size: 12px; color: var(--zinc-400); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    padding: 10px 20px; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    color: var(--zinc-500); background: #FAFAFA;
+    border-bottom: 1px solid var(--zinc-200);
+    white-space: nowrap; cursor: pointer; user-select: none;
+  }
+  th:hover { color: var(--zinc-800); }
+  th.r { text-align: right; }
+  th.l { text-align: left; }
+  .sort-icon { opacity: 0.3; margin-left: 3px; }
+  th:hover .sort-icon { opacity: 0.7; }
+
+  td {
+    padding: 12px 20px; font-size: 13px; color: var(--zinc-800);
+    border-bottom: 1px solid #f4f4f5; font-variant-numeric: tabular-nums;
+  }
+  td.r { text-align: right; }
+  td.date { font-weight: 500; }
+  td.exp { color: var(--error-red); }
+  td.profit { color: var(--primary-green); font-weight: 600; }
+  td.loss { color: var(--error-red); font-weight: 600; }
+
+  tr:hover td { background: #FAFBFC; }
+  tr:last-child td { border-bottom: none; }
+
+  tr.total td {
+    font-weight: 700; background: #F9FAFB;
+    border-top: 2px solid var(--zinc-200); padding: 14px 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <img class="sidebar-logo" src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" alt="MyGenie" />
+    <div class="sidebar-item" title="Dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    <div class="sidebar-item" title="Day Closure">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <div class="sidebar-item active" title="Daily Report">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </div>
+    <div class="sidebar-item" title="Insights">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <div class="sidebar-item" title="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <button class="back-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <div>
+          <div class="header-title">Profit & Loss Report</div>
+          <div class="header-subtitle">cafe103 · Daily Report</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="date-range-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <label style="display:flex;align-items:center;gap:6px">
+            <span class="date-label">From</span>
+            <input type="date" class="date-input" value="2026-07-16" />
+          </label>
+          <span class="date-sep">—</span>
+          <label style="display:flex;align-items:center;gap:6px">
+            <span class="date-label">To</span>
+            <input type="date" class="date-input" value="2026-07-22" />
+          </label>
+        </div>
+        <button class="apply-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Apply
+        </button>
+        <div class="preset-group">
+          <button class="preset-btn">Today</button>
+          <button class="preset-btn active">7D</button>
+          <button class="preset-btn">30D</button>
+          <button class="preset-btn">MTD</button>
+        </div>
+        <button class="download-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="content-inner">
+
+        <!-- KPI Strip -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header"><div class="kpi-dot" style="background:#329937"></div><span class="kpi-label">Total Sales</span></div>
+            <div class="kpi-value">₹1,84,250</div>
+            <div class="kpi-sub">16 Jul – 22 Jul · 7 days</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><div class="kpi-dot" style="background:#3B82F6"></div><span class="kpi-label">Paid Revenue</span></div>
+            <div class="kpi-value">₹1,72,800</div>
+            <div class="kpi-sub">93.8% collection rate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><div class="kpi-dot" style="background:#F26B33"></div><span class="kpi-label">Total Expenses</span></div>
+            <div class="kpi-value expense">₹92,450</div>
+            <div class="kpi-sub">Expenses + Purchase combined</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><div class="kpi-dot" style="background:#329937"></div><span class="kpi-label">Net Profit / Loss</span></div>
+            <div class="kpi-value profit">₹91,800</div>
+            <div class="kpi-sub">49.8% margin</div>
+          </div>
+        </div>
+
+        <!-- Charts Row (2/3 bar + 1/3 donut — matches ExpenseReportPage) -->
+        <div class="charts-row">
+
+          <!-- Daily Revenue vs Expenses Bar Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Daily Revenue vs Expenses</div>
+            <svg class="bar-chart" viewBox="0 0 700 220">
+              <!-- Grid lines -->
+              <line class="grid-line" x1="45" y1="20" x2="690" y2="20"/>
+              <line class="grid-line" x1="45" y1="60" x2="690" y2="60"/>
+              <line class="grid-line" x1="45" y1="100" x2="690" y2="100"/>
+              <line class="grid-line" x1="45" y1="140" x2="690" y2="140"/>
+              <line class="grid-line" x1="45" y1="180" x2="690" y2="180"/>
+              <!-- X axis -->
+              <line x1="45" y1="195" x2="690" y2="195" stroke="#e4e4e7" stroke-width="1"/>
+
+              <!-- Y axis labels -->
+              <text class="axis-label" x="40" y="24" text-anchor="end">35k</text>
+              <text class="axis-label" x="40" y="64" text-anchor="end">28k</text>
+              <text class="axis-label" x="40" y="104" text-anchor="end">21k</text>
+              <text class="axis-label" x="40" y="144" text-anchor="end">14k</text>
+              <text class="axis-label" x="40" y="184" text-anchor="end">7k</text>
+
+              <!-- Day 1: 16 Jul — Sales 21800, Expenses 12000, Profit 9800 -->
+              <rect class="bar-revenue" x="62" y="83" width="28" height="112"/>
+              <rect class="bar-expense" x="92" y="134" width="28" height="61"/>
+              <text class="axis-label" x="91" y="210" text-anchor="middle">16 Jul</text>
+
+              <!-- Day 2: 17 Jul — Sales 22600, Expenses 12200, Profit 10400 -->
+              <rect class="bar-revenue" x="152" y="79" width="28" height="116"/>
+              <rect class="bar-expense" x="182" y="133" width="28" height="62"/>
+              <text class="axis-label" x="181" y="210" text-anchor="middle">17 Jul</text>
+
+              <!-- Day 3: 18 Jul — Sales 29100, Expenses 12250, Profit 16850 -->
+              <rect class="bar-revenue" x="242" y="46" width="28" height="149"/>
+              <rect class="bar-expense" x="272" y="132" width="28" height="63"/>
+              <text class="axis-label" x="271" y="210" text-anchor="middle">18 Jul</text>
+
+              <!-- Day 4: 19 Jul — Sales 26300, Expenses 14300, Profit 12000 -->
+              <rect class="bar-revenue" x="332" y="60" width="28" height="135"/>
+              <rect class="bar-expense" x="362" y="122" width="28" height="73"/>
+              <text class="axis-label" x="361" y="210" text-anchor="middle">19 Jul</text>
+
+              <!-- Day 5: 20 Jul — Sales 24800, Expenses 12700, Profit 12100 -->
+              <rect class="bar-revenue" x="422" y="68" width="28" height="127"/>
+              <rect class="bar-expense" x="452" y="130" width="28" height="65"/>
+              <text class="axis-label" x="451" y="210" text-anchor="middle">20 Jul</text>
+
+              <!-- Day 6: 21 Jul — Sales 31200, Expenses 15300, Profit 15900 -->
+              <rect class="bar-revenue" x="512" y="36" width="28" height="159"/>
+              <rect class="bar-expense" x="542" y="117" width="28" height="78"/>
+              <text class="axis-label" x="541" y="210" text-anchor="middle">21 Jul</text>
+
+              <!-- Day 7: 22 Jul — Sales 28450, Expenses 13700, Profit 14750 -->
+              <rect class="bar-revenue" x="602" y="50" width="28" height="145"/>
+              <rect class="bar-expense" x="632" y="125" width="28" height="70"/>
+              <text class="axis-label" x="631" y="210" text-anchor="middle">22 Jul</text>
+            </svg>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#3B82F6;opacity:0.8"></div>Sales Revenue</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#EF4444;opacity:0.65"></div>Total Expenses</div>
+            </div>
+          </div>
+
+          <!-- Expense Breakdown Donut Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Expense Breakdown</div>
+            <div class="donut-chart">
+              <svg width="180" height="180" viewBox="0 0 180 180">
+                <!-- Donut: Expenses 52.1% (orange), Purchase 47.9% (purple) -->
+                <!-- Full circle = 2π×65 ≈ 408.4 -->
+                <!-- Expenses: 52.1% → 212.8 -->
+                <!-- Purchase: 47.9% → 195.6 -->
+                <circle cx="90" cy="90" r="65" fill="none" stroke="#F26B33" stroke-width="24"
+                  stroke-dasharray="212.8 195.6"
+                  stroke-dashoffset="102"
+                  transform="rotate(-90 90 90)" />
+                <circle cx="90" cy="90" r="65" fill="none" stroke="#8B5CF6" stroke-width="24"
+                  stroke-dasharray="195.6 212.8"
+                  stroke-dashoffset="-110.8"
+                  transform="rotate(-90 90 90)" />
+                <!-- Center text -->
+                <text class="donut-center" x="90" y="86">₹92,450</text>
+                <text class="donut-center-sub" x="90" y="104">Total</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="donut-legend-item">
+                  <div class="donut-legend-left">
+                    <div class="donut-legend-dot" style="background:#F26B33"></div>
+                    <span>Expenses</span>
+                  </div>
+                  <span class="donut-legend-pct">₹48,200 (52%)</span>
+                </div>
+                <div class="donut-legend-item">
+                  <div class="donut-legend-left">
+                    <div class="donut-legend-dot" style="background:#8B5CF6"></div>
+                    <span>Purchase</span>
+                  </div>
+                  <span class="donut-legend-pct">₹44,250 (48%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-card">
+          <div class="table-header-row">
+            <span class="table-title">Daily Breakdown</span>
+            <span class="table-count">7 days</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th class="l">Date <span class="sort-icon">↕</span></th>
+                <th class="r">Sales <span class="sort-icon">↕</span></th>
+                <th class="r">Paid Revenue <span class="sort-icon">↕</span></th>
+                <th class="r">Expenses <span class="sort-icon">↕</span></th>
+                <th class="r">Purchase <span class="sort-icon">↕</span></th>
+                <th class="r">Total Expenses <span class="sort-icon">↕</span></th>
+                <th class="r">Profit / Loss <span class="sort-icon">↕</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="date">22/07/2026</td>
+                <td class="r">₹28,450</td>
+                <td class="r">₹26,800</td>
+                <td class="r exp">₹7,200</td>
+                <td class="r exp">₹6,500</td>
+                <td class="r exp">₹13,700</td>
+                <td class="r profit">₹14,750</td>
+              </tr>
+              <tr>
+                <td class="date">21/07/2026</td>
+                <td class="r">₹31,200</td>
+                <td class="r">₹29,400</td>
+                <td class="r exp">₹8,100</td>
+                <td class="r exp">₹7,200</td>
+                <td class="r exp">₹15,300</td>
+                <td class="r profit">₹15,900</td>
+              </tr>
+              <tr>
+                <td class="date">20/07/2026</td>
+                <td class="r">₹24,800</td>
+                <td class="r">₹23,100</td>
+                <td class="r exp">₹6,800</td>
+                <td class="r exp">₹5,900</td>
+                <td class="r exp">₹12,700</td>
+                <td class="r profit">₹12,100</td>
+              </tr>
+              <tr>
+                <td class="date">19/07/2026</td>
+                <td class="r">₹26,300</td>
+                <td class="r">₹25,600</td>
+                <td class="r exp">₹7,500</td>
+                <td class="r exp">₹6,800</td>
+                <td class="r exp">₹14,300</td>
+                <td class="r profit">₹12,000</td>
+              </tr>
+              <tr>
+                <td class="date">18/07/2026</td>
+                <td class="r">₹29,100</td>
+                <td class="r">₹27,500</td>
+                <td class="r exp">₹6,400</td>
+                <td class="r exp">₹5,850</td>
+                <td class="r exp">₹12,250</td>
+                <td class="r profit">₹16,850</td>
+              </tr>
+              <tr>
+                <td class="date">17/07/2026</td>
+                <td class="r">₹22,600</td>
+                <td class="r">₹20,900</td>
+                <td class="r exp">₹6,200</td>
+                <td class="r exp">₹6,000</td>
+                <td class="r exp">₹12,200</td>
+                <td class="r profit">₹10,400</td>
+              </tr>
+              <tr>
+                <td class="date">16/07/2026</td>
+                <td class="r">₹21,800</td>
+                <td class="r">₹19,500</td>
+                <td class="r exp">₹6,000</td>
+                <td class="r exp">₹6,000</td>
+                <td class="r exp">₹12,000</td>
+                <td class="r profit">₹9,800</td>
+              </tr>
+              <tr class="total">
+                <td><strong>TOTAL (7 days)</strong></td>
+                <td class="r">₹1,84,250</td>
+                <td class="r">₹1,72,800</td>
+                <td class="r" style="color:#EF4444">₹48,200</td>
+                <td class="r" style="color:#EF4444">₹44,250</td>
+                <td class="r" style="color:#EF4444">₹92,450</td>
+                <td class="r profit">₹91,800</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

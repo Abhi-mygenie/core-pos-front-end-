@@ -1,0 +1,8 @@
+{
+    "errors": [
+        {
+            "code": "auth-003",
+            "message": "Unauthorized access."
+        }
+    ]
+}

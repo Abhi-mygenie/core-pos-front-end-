@@ -1,0 +1,11 @@
+{
+    "restaurant_token": "A2uWjsSlhxHhXtYD3KPEv557jdHL8eXn4zfBWSY1SxcZoOskBmpGwQJ9jUm3C9AxA2tVjrv7G3KNHeSsRl0Sac3dgEry5fTtfWU673EkF24lfULfJajiKySF",
+    "crm_token": "dp_live_QmGOqW0UIZuLNwsLSsD7nedV5fggzAWNWLxANulKo2k",
+    "restaurant_id": 69,
+    "restaurant_name": "The Goan Kitchen",
+    "owner_email": "owner@thegoankitchen.com",
+    "owner_name": "Owner",
+    "support_employee_id": 14,
+    "support_employee_name": "saurav ",
+    "message": "Successfully logged in as restaurant owner"
+}

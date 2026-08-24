@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BATCH-08 Design Mockup — CR-159 + CR-155</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #F1F5F9; color: #111827; font-size: 13px; }
+
+  /* ── Layout ── */
+  .page { padding: 24px; max-width: 1600px; margin: 0 auto; }
+  .page-title { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .page-sub   { font-size: 12px; color: #6B7280; margin-bottom: 28px; }
+
+  .section { margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+                   color: #6B7280; margin-bottom: 14px; }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .compare-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  .panel { background: #fff; border-radius: 12px; border: 1px solid #E5E7EB;
+           overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .panel-head { padding: 10px 16px; font-size: 11px; font-weight: 700; letter-spacing: .07em;
+                text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .panel-head.current { background: #F9FAFB; color: #6B7280; border-bottom: 1px solid #E5E7EB; }
+  .panel-head.proposed { background: #EFF6FF; color: #1D4ED8; border-bottom: 1px solid #BFDBFE; }
+  .panel-head.conflict { background: #FEF2F2; color: #B91C1C; border-bottom: 1px solid #FECACA; }
+  .panel-body { padding: 16px; }
+
+  /* ── Badge / Tags ── */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+           border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .badge-orange { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
+  .badge-blue   { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .badge-red    { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+  .badge-green  { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+  .badge-amber  { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+  .badge-gray   { background: #F3F4F6; color: #374151; border: 1px solid #D1D5DB; }
+
+  /* ── Simulated POS Panel Header ── */
+  .pos-header { display: flex; align-items: center; justify-content: space-between;
+                padding: 10px 16px; border-bottom: 1px solid #E5E7EB; background: #fff;
+                gap: 8px; flex-wrap: wrap; }
+  .pos-header-left { display: flex; align-items: center; gap: 10px; }
+  .pos-header-right { display: flex; align-items: center; gap: 6px; }
+  .pos-title { font-size: 14px; font-weight: 700; color: #111827; }
+
+  .btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
+         border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer;
+         border: 1px solid transparent; transition: background .15s; }
+  .btn-ghost { background: #fff; border-color: #D1D5DB; color: #374151; }
+  .btn-ghost:hover { background: #F9FAFB; }
+  .btn-orange { background: #F26B33; color: #fff; }
+  .btn-green  { background: #329937; color: #fff; }
+  .btn-red    { background: #EF4444; color: #fff; border-color: #EF4444; }
+  .btn-red-outline { background: #fff; color: #EF4444; border-color: #FCA5A5; }
+  .btn-active-green { background: #F0FDF4; border-color: #329937; color: #329937; }
+  .btn-active-orange { background: #FFF7ED; border-color: #F26B33; color: #F26B33; }
+  .btn-aggregator { background: #FFF7ED; border-color: #F26B33; color: #C2410C;
+                    font-weight: 600; position: relative; }
+  .btn-aggregator::before { content: ''; position: absolute; top: -3px; right: -3px;
+                             width: 8px; height: 8px; border-radius: 50%; background: #EF4444; }
+  .btn-close { background: none; border: none; color: #9CA3AF; font-size: 16px; cursor: pointer;
+               padding: 4px; border-radius: 5px; }
+  .btn-close:hover { background: #F3F4F6; }
+
+  .menu-type-select { padding: 4px 10px; border-radius: 7px; border: 1px solid #D1D5DB;
+                      font-size: 12px; color: #374151; background: #fff; }
+  .menu-type-tabs { display: flex; background: #F3F4F6; border-radius: 8px; padding: 2px; gap: 2px; }
+  .mt-tab { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer;
+             color: #6B7280; transition: all .15s; }
+  .mt-tab.active { background: #fff; color: #111827; font-weight: 600;
+                   box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .mt-tab.active-agg { background: #F26B33; color: #fff;
+                        box-shadow: 0 1px 3px rgba(242,107,51,.4); }
+
+  /* ── Aggregator mode tint ── */
+  .agg-mode-header { background: linear-gradient(135deg, #fff 60%, #FFF7ED); }
+  .agg-mode-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+                    background: #FFF7ED; border: 1px solid #F26B33; color: #C2410C;
+                    border-radius: 99px; font-size: 10px; font-weight: 700;
+                    letter-spacing: .05em; }
+
+  /* ── Table ── */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tbl th { background: #F8FAFC; padding: 7px 10px; font-weight: 600; color: #475569;
+             font-size: 11px; border-bottom: 2px solid #E5E7EB; text-align: left;
+             white-space: nowrap; }
+  .tbl td { padding: 7px 10px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr.selected-row td { background: #FEF2F2; }
+  .tbl .cb-col { width: 36px; text-align: center; }
+  .tbl .img-col { width: 36px; }
+  .tbl .status-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px;
+                      border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .status-active { background: #F0FDF4; color: #15803D; }
+  .status-inactive { background: #F3F4F6; color: #6B7280; }
+  .food-img { width: 26px; height: 26px; border-radius: 5px; background: #E5E7EB;
+              display: flex; align-items: center; justify-content: center; font-size: 10px; color: #9CA3AF; }
+  .veg-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; align-items: center; justify-content: space-between;
+             padding: 8px 12px; background: #F8FAFC; border-bottom: 1px solid #E5E7EB;
+             flex-wrap: wrap; gap: 6px; }
+  .toolbar-left { display: flex; align-items: center; gap: 6px; }
+  .toolbar-right { display: flex; align-items: center; gap: 6px; }
+  .search-box { display: flex; align-items: center; gap: 6px; padding: 5px 10px;
+                border: 1px solid #D1D5DB; border-radius: 7px; background: #fff;
+                font-size: 12px; color: #9CA3AF; min-width: 160px; }
+
+  /* ── Selection Banner ── */
+  .selection-banner { display: flex; align-items: center; justify-content: space-between;
+                       padding: 10px 16px; background: #fff; border-top: 1px solid #E5E7EB;
+                       box-shadow: 0 -4px 6px -1px rgba(0,0,0,.08); }
+  .sel-count { font-size: 12px; font-weight: 600; color: #374151; }
+  .sel-count span { color: #EF4444; }
+  .sel-actions { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Confirm Dialog ── */
+  .dialog-overlay { background: rgba(0,0,0,.35); border-radius: 10px; padding: 16px;
+                    display: flex; align-items: center; justify-content: center; }
+  .dialog-box { background: #fff; border-radius: 12px; padding: 20px; width: 320px;
+                box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .dialog-title { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+  .dialog-body { font-size: 12px; color: #4B5563; margin-bottom: 14px; line-height: 1.6; }
+  .dialog-body .mode-highlight { display: inline; background: #FEF2F2; color: #B91C1C;
+                                  padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+  .dialog-body .mode-highlight-blue { display: inline; background: #EFF6FF; color: #1D4ED8;
+                                       padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+  .dialog-label { font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+  .dialog-select { width: 100%; padding: 6px 10px; border: 1px solid #D1D5DB; border-radius: 7px;
+                   font-size: 12px; margin-bottom: 14px; }
+  .dialog-actions { display: flex; gap: 8px; }
+  .dialog-actions .btn { flex: 1; justify-content: center; }
+  .warning-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 7px;
+                 padding: 8px 10px; font-size: 11px; color: #B91C1C; margin-bottom: 12px;
+                 display: flex; align-items: flex-start; gap: 6px; }
+  .warning-box .warn-icon { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
+
+  /* ── Aggregator Stock Panel ── */
+  .tabs-row { display: flex; gap: 0; border-bottom: 1px solid #E5E7EB; }
+  .tab-btn { padding: 7px 14px; font-size: 12px; font-weight: 500; color: #6B7280;
+             border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; }
+  .tab-btn.active { color: #F26B33; border-bottom-color: #F26B33; font-weight: 600; }
+
+  .stock-tbl th { font-size: 10px; }
+  .oos-chip   { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA;
+                padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .avail-chip { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0;
+                padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .action-row { display: flex; gap: 4px; }
+  .mini-btn { padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 600;
+              border: 1px solid; cursor: pointer; }
+  .mini-btn-red   { border-color: #FECACA; background: #FEF2F2; color: #B91C1C; }
+  .mini-btn-green { border-color: #BBF7D0; background: #F0FDF4; color: #15803D; }
+  .mini-btn-gray  { border-color: #D1D5DB; background: #F9FAFB; color: #374151; }
+
+  /* ── Conflict row ── */
+  .conflict-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .conflict-table th { background: #FFF7ED; padding: 7px 10px; font-weight: 700; color: #C2410C;
+                        font-size: 11px; border-bottom: 2px solid #F26B33; text-align: left; }
+  .conflict-table td { padding: 8px 10px; border-bottom: 1px solid #FEF3C7; vertical-align: top; }
+  .conflict-table tr:last-child td { border-bottom: none; }
+  .conflict-table tr:hover td { background: #FFFBEB; }
+  .c-num { width: 28px; font-weight: 700; color: #F26B33; }
+  .c-sev { width: 70px; }
+  .c-loc { width: 160px; font-family: monospace; font-size: 11px; color: #374151; }
+
+  /* ── Divider ── */
+  .vs-divider { display: flex; align-items: center; justify-content: center;
+                font-size: 11px; font-weight: 700; color: #9CA3AF; gap: 8px; margin: 6px 0; }
+  .vs-divider::before, .vs-divider::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+
+  /* ── Icons (CSS only) ── */
+  .ico { display: inline-flex; align-items: center; justify-content: center; }
+  .ico-x::before { content: '×'; font-size: 16px; }
+  .ico-trash::before { content: '🗑'; font-size: 11px; }
+  .ico-check::before { content: '✓'; }
+  .ico-warn::before { content: '⚠'; }
+  .ico-lock::before { content: '🔒'; }
+  .ico-new::before { content: '✦'; color: #F26B33; }
+  .ico-remove::before { content: '✕'; color: #EF4444; }
+  .ico-conf::before { content: '⚡'; }
+
+  /* ── Hidden element ── */
+  .hidden-el { opacity: .3; position: relative; }
+  .hidden-el::after { content: 'HIDDEN'; position: absolute; top: 50%; left: 50%;
+                       transform: translate(-50%, -50%); font-size: 9px; font-weight: 800;
+                       letter-spacing: .1em; background: #E5E7EB; padding: 2px 6px; border-radius: 3px; color: #6B7280; }
+
+  /* ── Annotation pin ── */
+  .ann { display: inline-flex; align-items: center; justify-content: center;
+         width: 16px; height: 16px; border-radius: 50%; background: #F26B33; color: #fff;
+         font-size: 9px; font-weight: 800; flex-shrink: 0; }
+  .ann-red  { background: #EF4444; }
+  .ann-blue { background: #3B82F6; }
+  .ann-green { background: #22C55E; }
+
+  .note-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .note-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 11px;
+                   color: #4B5563; line-height: 1.5; }
+
+  .cr-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .cr-desc  { font-size: 12px; color: #6B7280; margin-bottom: 16px; }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .compare-grid, .compare-grid.three { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════ PAGE HEADER ══════════════════════ -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <div>
+      <div class="page-title">BATCH-08 — Menu Management Operations</div>
+      <div class="page-sub">Side-by-side design mockup · CR-159 Bulk Delete · CR-155 Addon/Variation Stock Move · Conflict analysis</div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <span class="badge badge-orange">P1 HIGH · CR-159</span>
+      <span class="badge badge-blue">P1 MEDIUM · CR-155</span>
+    </div>
+  </div>
+
+  <!-- Correction banner -->
+  <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:24px;display:flex;flex-direction:column;gap:6px;">
+    <div style="font-size:12px;font-weight:700;color:#B91C1C;display:flex;align-items:center;gap:6px;">
+      <span>⚠</span> Design Corrections Applied (owner feedback 2026-08-21)
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:#374151;">
+      <span style="background:#fff;border:1px solid #FECACA;border-radius:6px;padding:3px 10px;">1 · Menu type dropdown stays as-is — API-driven <code style="background:#FEF2F2;padding:0 4px;border-radius:3px;">&lt;select&gt;</code> (Normal, Party, Premium, Aggregator). No pills.</span>
+      <span style="background:#fff;border:1px solid #FECACA;border-radius:6px;padding:3px 10px;">2 · CR-159 Bulk Delete is for non-Aggregator menus only — "Delete Selected" hidden when Aggregator is active.</span>
+      <span style="background:#fff;border:1px solid #FECACA;border-radius:6px;padding:3px 10px;">3 · AddonStockTab / VariationStockTab are NOT in Menu Management currently — only in Settings → Aggregator Setup.</span>
+      <span style="background:#fff;border:1px solid #FECACA;border-radius:6px;padding:3px 10px;">4 · No live restaurant tested — source code read only (preprod screenshot confirmed dropdown options).</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 0 — HEADER ══════════════════════ -->
+  <div class="section">
+    <div class="section-label">Panel Header — Current state (dropdown unchanged) + what CR-155 adds</div>
+    <div class="compare-grid">
+
+      <!-- CURRENT HEADER — Normal selected -->
+      <div class="panel">
+        <div class="panel-head current"><span class="ann">C</span> Current — Normal selected (unchanged dropdown)</div>
+        <div class="panel-body" style="padding:0;">
+          <div class="pos-header">
+            <div class="pos-header-left">
+              <span class="pos-title">Menu Management</span>
+              <select class="menu-type-select">
+                <option selected>Normal</option>
+                <option>Party</option>
+                <option>Premium</option>
+                <option>Aggregator</option>
+              </select>
+            </div>
+            <div class="pos-header-right">
+              <button class="btn btn-ghost">Add-ons</button>
+              <button class="btn btn-ghost">Bulk Edit</button>
+              <button class="btn-close"><span class="ico ico-x"></span></button>
+            </div>
+          </div>
+          <div style="padding:8px 16px;background:#F0FDF4;font-size:11px;color:#15803D;border-top:1px solid #BBF7D0;display:flex;gap:6px;">
+            <span class="ico ico-check"></span>
+            Dropdown stays exactly as-is — API-driven, restaurant-specific options. No design change needed here.
+          </div>
+        </div>
+      </div>
+
+      <!-- CURRENT HEADER — Aggregator selected -->
+      <div class="panel">
+        <div class="panel-head current"><span class="ann">C</span> Current — Aggregator selected (dropdown unchanged)</div>
+        <div class="panel-body" style="padding:0;">
+          <div class="pos-header">
+            <div class="pos-header-left">
+              <span class="pos-title">Menu Management</span>
+              <select class="menu-type-select" style="border-color:#F26B33;color:#C2410C;background:#FFF7ED;">
+                <option>Normal</option>
+                <option>Party</option>
+                <option>Premium</option>
+                <option selected>Aggregator</option>
+              </select>
+            </div>
+            <div class="pos-header-right">
+              <button class="btn btn-ghost">Add-ons</button>
+              <button class="btn btn-ghost">Bulk Edit</button>
+              <button class="btn-close"><span class="ico ico-x"></span></button>
+            </div>
+          </div>
+          <div style="padding:8px 16px;background:#FEF3C7;font-size:11px;color:#92400E;border-top:1px solid #FDE68A;display:flex;gap:6px;">
+            <span class="ico ico-warn"></span>
+            Aggregator stock tabs are <strong>not accessible</strong> from here today — staff must go to Settings → Aggregator Setup.
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSED — CR-155 adds Stock button, Aggregator only -->
+      <div class="panel" style="grid-column:1/-1;">
+        <div class="panel-head proposed">
+          <span class="ann ann-blue">N</span> CR-155 Proposed — Aggregator selected → "Aggregator Stock" button appears
+          <span style="margin-left:auto;" class="badge badge-orange">Only when Aggregator is active</span>
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <div class="pos-header" style="background:linear-gradient(135deg,#fff 70%,#FFF7ED);">
+            <div class="pos-header-left">
+              <span class="pos-title">Menu Management</span>
+              <select class="menu-type-select" style="border-color:#F26B33;color:#C2410C;background:#FFF7ED;">
+                <option>Normal</option>
+                <option>Party</option>
+                <option>Premium</option>
+                <option selected>Aggregator</option>
+              </select>
+              <!-- same dropdown, no pills -->
+            </div>
+            <div class="pos-header-right">
+              <button class="btn btn-ghost">Add-ons</button>
+              <button class="btn btn-ghost">Bulk Edit</button>
+              <button class="btn btn-aggregator">
+                ✦ Aggregator Stock
+                <span style="background:#EF4444;color:#fff;border-radius:99px;padding:0 5px;font-size:10px;font-weight:700;margin-left:2px;">NEW</span>
+              </button>
+              <button class="btn-close"><span class="ico ico-x"></span></button>
+            </div>
+          </div>
+          <div style="padding:8px 16px;background:#FFF7ED;font-size:11px;color:#C2410C;border-top:1px solid #FED7AA;display:flex;gap:6px;align-items:flex-start;">
+            <span class="ico ico-conf"></span>
+            <span>Dropdown unchanged. One new button injected: <code style="background:#FEE2E2;padding:1px 5px;border-radius:3px;">menuType === 'Aggregator' &amp;&amp; &lt;Button&gt;Aggregator Stock&lt;/Button&gt;</code> — not rendered for Normal/Party/Premium.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 1 — CR-159 ══════════════════════ -->
+  <div class="section">
+    <div class="cr-title"><span class="badge badge-orange">CR-159</span> Bulk Delete in Menu Management</div>
+    <div class="cr-desc">Adding multi-select + bulk delete to Bulk Editor (table view only). API: DELETE /api/v2/vendoremployee/product/delete-bulk</div>
+
+    <div class="compare-grid">
+
+      <!-- CURRENT Bulk Editor -->
+      <div class="panel">
+        <div class="panel-head current"><span class="ann">C</span> Current — Bulk Editor (No Selection)</div>
+        <div class="panel-body" style="padding:0;">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#9CA3AF" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Search products…
+              </div>
+              <button class="btn btn-ghost" style="font-size:11px;">Tier 1 ▾</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Columns ▾</button>
+            </div>
+            <div class="toolbar-right">
+              <button class="btn btn-ghost" style="font-size:11px;">Save 0 Changes</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Export</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Import</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="img-col">Img</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="food-img">🍕</div></td>
+                  <td style="font-weight:600;">Paneer Tikka</td>
+                  <td style="color:#6B7280;">Starters</td>
+                  <td>₹250</td>
+                  <td><span class="status-chip status-active">● Active</span></td>
+                  <td><span class="veg-dot" style="background:#16A34A;border:2px solid #15803D;"></span></td>
+                </tr>
+                <tr>
+                  <td><div class="food-img">🍗</div></td>
+                  <td style="font-weight:600;">Chicken Curry</td>
+                  <td style="color:#6B7280;">Mains</td>
+                  <td>₹320</td>
+                  <td><span class="status-chip status-active">● Active</span></td>
+                  <td><span class="veg-dot" style="background:#EF4444;border:2px solid #DC2626;"></span></td>
+                </tr>
+                <tr>
+                  <td><div class="food-img">🍰</div></td>
+                  <td style="font-weight:600;">Gulab Jamun</td>
+                  <td style="color:#6B7280;">Desserts</td>
+                  <td>₹80</td>
+                  <td><span class="status-chip status-inactive">● Inactive</span></td>
+                  <td><span class="veg-dot" style="background:#16A34A;border:2px solid #15803D;"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:10px 12px;background:#FEF3C7;font-size:11px;color:#92400E;border-top:1px solid #FDE68A;display:flex;gap:6px;">
+            <span class="ico ico-warn"></span>
+            No checkboxes. No selection state. Delete is per-card only — slow for bulk cleanup.
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSED Bulk Editor -->
+      <div class="panel">
+        <div class="panel-head proposed"><span class="ann ann-blue">N</span> Proposed — With Checkbox + Selection</div>
+        <div class="panel-body" style="padding:0;">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#9CA3AF" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Search products…
+              </div>
+              <button class="btn btn-ghost" style="font-size:11px;">Tier 1 ▾</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Columns ▾</button>
+            </div>
+            <div class="toolbar-right">
+              <button class="btn btn-ghost" style="font-size:11px;">Save 0 Changes</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Export</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Import</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="cb-col" style="background:#FEF2F2;">
+                    <input type="checkbox" checked style="cursor:pointer;accent-color:#EF4444;" title="Select all" />
+                  </th>
+                  <th class="img-col">Img</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="selected-row">
+                  <td class="cb-col"><input type="checkbox" checked style="cursor:pointer;accent-color:#EF4444;" /></td>
+                  <td><div class="food-img">🍕</div></td>
+                  <td style="font-weight:600;">Paneer Tikka</td>
+                  <td style="color:#6B7280;">Starters</td>
+                  <td>₹250</td>
+                  <td><span class="status-chip status-active">● Active</span></td>
+                  <td><span class="veg-dot" style="background:#16A34A;border:2px solid #15803D;"></span></td>
+                </tr>
+                <tr>
+                  <td class="cb-col"><input type="checkbox" style="cursor:pointer;accent-color:#EF4444;" /></td>
+                  <td><div class="food-img">🍗</div></td>
+                  <td style="font-weight:600;">Chicken Curry</td>
+                  <td style="color:#6B7280;">Mains</td>
+                  <td>₹320</td>
+                  <td><span class="status-chip status-active">● Active</span></td>
+                  <td><span class="veg-dot" style="background:#EF4444;border:2px solid #DC2626;"></span></td>
+                </tr>
+                <tr class="selected-row">
+                  <td class="cb-col"><input type="checkbox" checked style="cursor:pointer;accent-color:#EF4444;" /></td>
+                  <td><div class="food-img">🍰</div></td>
+                  <td style="font-weight:600;">Gulab Jamun</td>
+                  <td style="color:#6B7280;">Desserts</td>
+                  <td>₹80</td>
+                  <td><span class="status-chip status-inactive">● Inactive</span></td>
+                  <td><span class="veg-dot" style="background:#16A34A;border:2px solid #15803D;"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Selection Banner -->
+          <div class="selection-banner">
+            <span class="sel-count"><span>2</span> items selected</span>
+            <div class="sel-actions">
+              <button class="btn btn-ghost" style="font-size:11px;">Clear</button>
+              <button class="btn btn-red" style="font-size:11px;">
+                <span class="ico ico-trash"></span>
+                Delete Selected (2)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aggregator guard: bulk delete hidden for Aggregator -->
+    <div style="margin-top:16px;">
+      <div class="section-label">CR-159 — Aggregator Guard: "Delete Selected" hidden when Aggregator is active</div>
+      <div class="compare-grid">
+
+        <div class="panel">
+          <div class="panel-head proposed"><span class="ann ann-green">✓</span> Bulk Editor — Normal / Party / Premium menu</div>
+          <div class="panel-body" style="padding:0;">
+            <div class="toolbar">
+              <div class="toolbar-left">
+                <select class="menu-type-select">
+                  <option selected>Normal</option>
+                  <option>Party</option>
+                  <option>Premium</option>
+                  <option>Aggregator</option>
+                </select>
+                <div class="search-box">🔍 Search…</div>
+              </div>
+              <div class="toolbar-right">
+                <button class="btn btn-ghost" style="font-size:11px;">Save 0 Changes</button>
+                <button class="btn btn-ghost" style="font-size:11px;">Export</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th class="cb-col" style="background:#FEF2F2;"><input type="checkbox" checked style="accent-color:#EF4444;" /></th>
+                    <th class="img-col">Img</th>
+                    <th>Name</th><th>Category</th><th>Price</th><th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="selected-row">
+                    <td class="cb-col"><input type="checkbox" checked style="accent-color:#EF4444;" /></td>
+                    <td><div class="food-img">🍕</div></td>
+                    <td style="font-weight:600;">Paneer Tikka</td><td style="color:#6B7280;">Starters</td><td>₹250</td>
+                    <td><span class="status-chip status-active">● Active</span></td>
+                  </tr>
+                  <tr>
+                    <td class="cb-col"><input type="checkbox" style="accent-color:#EF4444;" /></td>
+                    <td><div class="food-img">🍗</div></td>
+                    <td style="font-weight:600;">Chicken Curry</td><td style="color:#6B7280;">Mains</td><td>₹320</td>
+                    <td><span class="status-chip status-active">● Active</span></td>
+                  </tr>
+                  <tr class="selected-row">
+                    <td class="cb-col"><input type="checkbox" checked style="accent-color:#EF4444;" /></td>
+                    <td><div class="food-img">🍰</div></td>
+                    <td style="font-weight:600;">Gulab Jamun</td><td style="color:#6B7280;">Desserts</td><td>₹80</td>
+                    <td><span class="status-chip status-inactive">● Inactive</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="selection-banner">
+              <span class="sel-count"><span>2</span> items selected</span>
+              <div class="sel-actions">
+                <button class="btn btn-ghost" style="font-size:11px;">Clear</button>
+                <button class="btn btn-red" style="font-size:11px;"><span class="ico ico-trash"></span> Delete Selected (2)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head conflict"><span class="ann ann-red">!</span> Bulk Editor — Aggregator menu: checkboxes + Delete hidden</div>
+          <div class="panel-body" style="padding:0;">
+            <div class="toolbar">
+              <div class="toolbar-left">
+                <select class="menu-type-select" style="border-color:#F26B33;color:#C2410C;background:#FFF7ED;">
+                  <option>Normal</option><option>Party</option><option>Premium</option>
+                  <option selected>Aggregator</option>
+                </select>
+                <div class="search-box">🔍 Search…</div>
+              </div>
+              <div class="toolbar-right">
+                <button class="btn btn-ghost" style="font-size:11px;">Save 0 Changes</button>
+                <button class="btn btn-ghost" style="font-size:11px;">Export</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <!-- No checkbox column for Aggregator -->
+                    <th class="img-col">Img</th>
+                    <th>Name</th><th>Category</th><th>Price</th><th>Status</th>
+                    <th style="background:#FFF7ED;color:#C2410C;font-size:10px;">Swiggy</th>
+                    <th style="background:#FFF7ED;color:#C2410C;font-size:10px;">Zomato</th>
+                    <th style="background:#FFF7ED;color:#C2410C;font-size:10px;">Brand</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div class="food-img">🍕</div></td>
+                    <td style="font-weight:600;">Paneer Tikka</td><td style="color:#6B7280;">Starters</td><td>₹250</td>
+                    <td><span class="status-chip status-active">● Active</span></td>
+                    <td style="color:#6B7280;font-size:11px;">Yes</td><td style="color:#6B7280;font-size:11px;">No</td><td style="color:#6B7280;font-size:11px;">Main</td>
+                  </tr>
+                  <tr>
+                    <td><div class="food-img">🍗</div></td>
+                    <td style="font-weight:600;">Chicken Curry</td><td style="color:#6B7280;">Mains</td><td>₹320</td>
+                    <td><span class="status-chip status-active">● Active</span></td>
+                    <td style="color:#6B7280;font-size:11px;">Yes</td><td style="color:#6B7280;font-size:11px;">Yes</td><td style="color:#6B7280;font-size:11px;">Swiggy</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:10px 16px;background:#FEF2F2;border-top:1px solid #FECACA;font-size:11px;color:#B91C1C;display:flex;gap:6px;align-items:flex-start;">
+              <span class="ico ico-warn"></span>
+              <span>No checkbox column. No selection banner. No "Delete Selected" button.<br/>
+              <code style="background:#FEE2E2;padding:1px 5px;border-radius:3px;font-size:10px;">menuType !== 'Aggregator' &amp;&amp; &lt;CheckboxColumn /&gt;</code><br/>
+              <code style="background:#FEE2E2;padding:1px 5px;border-radius:3px;font-size:10px;">menuType !== 'Aggregator' &amp;&amp; &lt;SelectionBanner /&gt;</code><br/>
+              Aggregator has its own separate APIs — delete-bulk endpoint does not support it.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Confirm Dialog — only for Normal/Party/Premium -->
+    <div style="margin-top:16px;">
+      <div class="section-label">Confirm Dialog — single reason, no Aggregator variant needed</div>
+      <div style="max-width:500px;">
+        <div class="panel">
+          <div class="panel-head proposed"><span class="ann ann-green">✓</span> Confirm Dialog (Normal / Party / Premium only)</div>
+          <div class="panel-body">
+            <div class="dialog-box" style="width:100%;box-shadow:none;border:1px solid #E5E7EB;">
+              <div class="dialog-title">Delete 2 Items</div>
+              <div class="dialog-body">
+                You are about to permanently delete <strong>2 items</strong>. This action cannot be undone.
+              </div>
+              <div class="dialog-label">Reason for deletion</div>
+              <select class="dialog-select">
+                <option>Menu cleanup</option>
+                <option>Item discontinued</option>
+                <option>Seasonal removal</option>
+              </select>
+              <div class="dialog-actions">
+                <button class="btn btn-ghost">Cancel</button>
+                <button class="btn btn-red">Confirm Delete</button>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:#6B7280;display:flex;gap:5px;">
+              <span class="ico ico-check" style="color:#15803D;"></span>
+              Reason uses existing <code style="background:#F3F4F6;padding:1px 5px;border-radius:3px;font-size:10px;">deleteReasons</code> dropdown (already fetched). No new API call needed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 2 — CR-155 ══════════════════════ -->
+  <div class="section">
+    <div class="cr-title"><span class="badge badge-blue">CR-155</span> Move Addon/Variation Stock → Menu Management</div>
+    <div class="cr-desc">Relocate Addon Stock + Variation Stock from Settings → Aggregator Setup into Menu Management panel (Aggregator mode only).</div>
+
+    <div class="compare-grid">
+
+      <!-- CURRENT — Aggregator Setup -->
+      <div class="panel">
+        <div class="panel-head current"><span class="ann">C</span> Current — Settings → Aggregator Setup</div>
+        <div class="panel-body" style="padding:0;">
+          <div class="pos-header" style="background:#F8FAFC;">
+            <span style="font-size:13px;font-weight:700;color:#374151;">Aggregator Setup</span>
+            <span class="badge badge-gray" style="font-size:10px;">Settings section</span>
+          </div>
+          <div class="tabs-row" style="padding:0 12px;background:#fff;">
+            <div class="tab-btn">General</div>
+            <div class="tab-btn">Timings</div>
+            <div class="tab-btn">Charges</div>
+            <div class="tab-btn">Brands</div>
+            <div class="tab-btn active">Addon Stock</div>
+            <div class="tab-btn">Variation Stock</div>
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:11px;color:#6B7280;">Brand:</span>
+              <select style="padding:4px 8px;border:1px solid #D1D5DB;border-radius:6px;font-size:11px;">
+                <option>Main Brand</option>
+                <option>Swiggy Sub-brand</option>
+              </select>
+            </div>
+            <table class="tbl stock-tbl">
+              <thead>
+                <tr>
+                  <th>Add-on</th><th>Price</th><th>Catalog (all brands)</th><th>UrbanPiper (this brand)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Extra Cheese</td>
+                  <td>₹30</td>
+                  <td><div class="action-row"><span class="avail-chip">● Available</span><button class="mini-btn mini-btn-red">OOS</button></div></td>
+                  <td><div class="action-row"><button class="mini-btn mini-btn-green">Enable</button><button class="mini-btn mini-btn-red">Disable</button></div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Raita</td>
+                  <td>₹25</td>
+                  <td><div class="action-row"><span class="oos-chip">○ Out of Stock</span><button class="mini-btn mini-btn-green">Enable</button></div></td>
+                  <td><div class="action-row"><button class="mini-btn mini-btn-green">Enable</button><button class="mini-btn mini-btn-red">Disable</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:10px 12px;background:#FEF3C7;font-size:11px;color:#92400E;border-top:1px solid #FDE68A;display:flex;gap:6px;">
+            <span class="ico ico-warn"></span>
+            Staff must leave Menu Management → go to Settings → find Aggregator Setup → find tab 5. Poor discoverability.
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSED — Inside Menu Management -->
+      <div class="panel">
+        <div class="panel-head proposed"><span class="ann ann-blue">N</span> Proposed — Inside Menu Management (Aggregator mode)</div>
+        <div class="panel-body" style="padding:0;">
+          <!-- Header with Aggregator mode active -->
+          <div class="pos-header agg-mode-header">
+            <div class="pos-header-left">
+              <span class="pos-title">Menu Management</span>
+              <div class="menu-type-tabs">
+                <div class="mt-tab">Normal</div>
+                <div class="mt-tab active-agg">Aggregator</div>
+              </div>
+            </div>
+            <div class="pos-header-right">
+              <button class="btn btn-ghost" style="font-size:11px;">Add-ons</button>
+              <button class="btn btn-ghost" style="font-size:11px;">Bulk Edit</button>
+              <button class="btn btn-aggregator" style="font-size:11px;">
+                ✦ Aggregator Stock
+              </button>
+              <button class="btn-close"><span class="ico ico-x"></span></button>
+            </div>
+          </div>
+          <!-- Aggregator Stock panel (open state) -->
+          <div style="border-top:2px solid #F26B33;background:#FFF7ED;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;font-weight:700;color:#C2410C;">Aggregator Stock</span>
+            <button style="background:none;border:none;font-size:14px;color:#9CA3AF;cursor:pointer;">×</button>
+          </div>
+          <div class="tabs-row" style="padding:0 12px;background:#fff;">
+            <div class="tab-btn active">Addon Stock</div>
+            <div class="tab-btn">Variation Stock</div>
+          </div>
+          <div style="padding:12px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:11px;color:#6B7280;">Brand:</span>
+              <select style="padding:4px 8px;border:1px solid #D1D5DB;border-radius:6px;font-size:11px;">
+                <option>Main Brand</option>
+                <option>Swiggy Sub-brand</option>
+              </select>
+              <span class="badge badge-orange" style="margin-left:auto;">Aggregator API</span>
+            </div>
+            <table class="tbl stock-tbl">
+              <thead>
+                <tr>
+                  <th>Add-on</th><th>Price</th><th>Catalog (all brands)</th><th>UrbanPiper (this brand)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Extra Cheese</td>
+                  <td>₹30</td>
+                  <td><div class="action-row"><span class="avail-chip">● Available</span><button class="mini-btn mini-btn-red">OOS</button></div></td>
+                  <td><div class="action-row"><button class="mini-btn mini-btn-green">Enable</button><button class="mini-btn mini-btn-red">Disable</button></div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Raita</td>
+                  <td>₹25</td>
+                  <td><div class="action-row"><span class="oos-chip">○ Out of Stock</span><button class="mini-btn mini-btn-green">Enable</button></div></td>
+                  <td><div class="action-row"><button class="mini-btn mini-btn-green">Enable</button><button class="mini-btn mini-btn-red">Disable</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:10px 12px;background:#F0FDF4;font-size:11px;color:#15803D;border-top:1px solid #BBF7D0;display:flex;gap:6px;">
+            <span class="ico ico-check"></span>
+            Same components. Zero API changes. Only accessible when Aggregator mode is active.
+          </div>
+        </div>
+      </div>
+
+      <!-- CR-155: Normal mode — Stock hidden -->
+      <div class="panel" style="grid-column:1/-1;">
+        <div class="panel-head conflict"><span class="ann ann-red">!</span> CR-155 Conflict — Stock tabs must be INVISIBLE when Normal menu is selected</div>
+        <div class="panel-body" style="padding:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:260px;">
+            <div class="pos-header" style="border:1px solid #E5E7EB;border-radius:8px;margin-bottom:8px;">
+              <div class="pos-header-left">
+                <span class="pos-title" style="font-size:12px;">Menu Management</span>
+                <div class="menu-type-tabs">
+                  <div class="mt-tab active">Normal</div>
+                  <div class="mt-tab">Aggregator</div>
+                </div>
+              </div>
+              <div class="pos-header-right">
+                <button class="btn btn-ghost" style="font-size:11px;">Add-ons</button>
+                <button class="btn btn-ghost" style="font-size:11px;">Bulk Edit</button>
+                <div class="hidden-el" style="display:inline-block;">
+                  <button class="btn btn-aggregator" style="font-size:10px;pointer-events:none;">Aggregator Stock</button>
+                </div>
+                <button class="btn-close"><span class="ico ico-x"></span></button>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#6B7280;">Aggregator Stock button: <strong style="color:#EF4444;">not in DOM</strong> when Normal is active. Not just hidden — not rendered at all (<code>menuType === 'Aggregator' && ...</code>).</div>
+          </div>
+          <div style="flex:1;min-width:260px;">
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px;">
+              <div style="font-weight:700;font-size:12px;color:#B91C1C;margin-bottom:8px;">Why this matters:</div>
+              <ul class="note-list">
+                <li><span class="ann ann-red" style="width:14px;height:14px;font-size:8px;">1</span> AddonStockTab calls <code style="background:#FEE2E2;font-size:10px;padding:1px 4px;border-radius:3px;">getBulkAddons(clientId)</code> — aggregator API, fails for Normal restaurants</li>
+                <li><span class="ann ann-red" style="width:14px;height:14px;font-size:8px;">2</span> VariationStockTab calls <code style="background:#FEE2E2;font-size:10px;padding:1px 4px;border-radius:3px;">getVariations(clientId)</code> — aggregator-only endpoint</li>
+                <li><span class="ann ann-red" style="width:14px;height:14px;font-size:8px;">3</span> clientId (subBrands) is only fetched when <code style="background:#FEE2E2;font-size:10px;padding:1px 4px;border-radius:3px;">menuType === 'Aggregator'</code> — prop would be empty/null for Normal</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 3 — CONFLICT TABLE ══════════════════════ -->
+  <div class="section">
+    <div class="section-label">Corrected Conflict Map — what changes, what doesn't, what's Aggregator-only</div>
+    <div class="panel">
+      <div class="panel-body" style="padding:0;">
+        <table class="conflict-table">
+          <thead>
+            <tr>
+              <th class="c-num">#</th>
+              <th class="c-loc">Feature</th>
+              <th>Normal / Party / Premium</th>
+              <th>Aggregator</th>
+              <th style="width:80px;">Risk</th>
+              <th>Resolution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="c-num"><span class="ann">1</span></td>
+              <td class="c-loc">CR-159<br/>Checkbox column</td>
+              <td><span class="badge badge-green">SHOW</span> — checkbox on every row, Select All in header</td>
+              <td><span class="badge badge-red">HIDE</span> — no checkbox column, no selection state</td>
+              <td><span class="badge badge-orange">HIGH</span></td>
+              <td><code style="font-size:10px;background:#F0FDF4;padding:1px 5px;border-radius:3px;">menuType !== 'Aggregator' &amp;&amp; checkbox</code></td>
+            </tr>
+            <tr>
+              <td class="c-num"><span class="ann">2</span></td>
+              <td class="c-loc">CR-159<br/>Selection banner</td>
+              <td><span class="badge badge-green">SHOW</span> — "N items selected · Delete Selected"</td>
+              <td><span class="badge badge-red">HIDE</span> — banner never renders</td>
+              <td><span class="badge badge-orange">HIGH</span></td>
+              <td>Same guard as checkbox — if checkbox is hidden, banner can't appear</td>
+            </tr>
+            <tr>
+              <td class="c-num"><span class="ann">3</span></td>
+              <td class="c-loc">CR-159<br/>Confirm dialog</td>
+              <td><span class="badge badge-green">EXISTS</span> — item count + reason dropdown + Confirm</td>
+              <td><span class="badge badge-red">N/A</span> — Aggregator never reaches dialog</td>
+              <td><span class="badge badge-gray">LOW</span></td>
+              <td>No special handling needed — dialog only reachable from normal modes</td>
+            </tr>
+            <tr>
+              <td class="c-num"><span class="ann">4</span></td>
+              <td class="c-loc">CR-155<br/>Aggregator Stock btn</td>
+              <td><span class="badge badge-red">HIDE</span> — not in DOM, not rendered</td>
+              <td><span class="badge badge-green">SHOW</span> — new button, opens Addon/Variation Stock tabs</td>
+              <td><span class="badge badge-orange">HIGH</span></td>
+              <td><code style="font-size:10px;background:#FEF2F2;padding:1px 5px;border-radius:3px;">menuType === 'Aggregator' &amp;&amp; &lt;Button&gt;</code></td>
+            </tr>
+            <tr>
+              <td class="c-num"><span class="ann">5</span></td>
+              <td class="c-loc">CR-155<br/>AddonStockTab APIs</td>
+              <td><span class="badge badge-red">N/A</span> — button hidden, component never mounts</td>
+              <td><span class="badge badge-green">SAFE</span> — <code style="font-size:10px;">getBulkAddons</code>, <code style="font-size:10px;">toggleAddonStock</code> — aggregator APIs</td>
+              <td><span class="badge badge-gray">LOW</span></td>
+              <td>Zero risk — component only mounts behind the Aggregator gate</td>
+            </tr>
+            <tr>
+              <td class="c-num"><span class="ann">6</span></td>
+              <td class="c-loc">Menu type dropdown</td>
+              <td colspan="2" style="color:#15803D;font-weight:600;">✓ NO CHANGE — existing <code style="font-size:10px;background:#F0FDF4;padding:1px 5px;border-radius:3px;">&lt;select&gt;</code> dropdown stays exactly as-is. Options are API-driven and restaurant-specific.</td>
+              <td><span class="badge badge-gray">NONE</span></td>
+              <td>Both CRs inject into the header around the dropdown, not replacing it</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ FOOTER ══════════════════════ -->
+  <div style="text-align:center;padding:16px;font-size:11px;color:#9CA3AF;">
+    BATCH-08 Design Mockup · CR-159 + CR-155 · No code edits · Gate 2 Planning
+  </div>
+
+</div>
+</body>
+</html>

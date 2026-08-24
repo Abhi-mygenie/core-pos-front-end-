@@ -1,0 +1,110 @@
+{
+  "orders": [
+    {
+      "order_id": "039368",
+      "display_order_id": "#039368#CHICAGO DELIGHT'S",
+      "order_date": "21/08/2026",
+      "order_time": "12:12",
+      "station": "CHICAGO DELIGHT'S",
+      "station_gst": "GST666666",
+      "payment_method": "Upi",
+      "payment_status": "paid",
+      "f_order_status": 6,
+      "order_type": "DineIn",
+      "items": [
+        {
+          "name": "Garlic To Hot",
+          "quantity": 1,
+          "price": 230,
+          "gst": 11.5,
+          "vat": 0
+        }
+      ],
+      "item_count": 1,
+      "total_qty": 1,
+      "item_total": 230,
+      "discount": 0,
+      "sub_total": 230,
+      "gst": 11.5,
+      "vat": 0,
+      "total": 241.5
+    },
+    {
+      "order_id": "039362",
+      "display_order_id": "#039362#CHICAGO DELIGHT'S",
+      "order_date": "18/08/2026",
+      "order_time": "21:14",
+      "station": "CHICAGO DELIGHT'S",
+      "station_gst": "GST666666",
+      "payment_method": "Cash",
+      "payment_status": "paid",
+      "f_order_status": 6,
+      "order_type": "Pos",
+      "items": [
+        {
+          "name": "Margherita",
+          "quantity": 1,
+          "price": 170,
+          "gst": 8.5,
+          "vat": 0
+        }
+      ],
+      "item_count": 1,
+      "total_qty": 1,
+      "item_total": 170,
+      "discount": 0,
+      "sub_total": 170,
+      "gst": 8.5,
+      "vat": 0,
+      "total": 178.5
+    },
+    {
+      "order_id": "039351",
+      "display_order_id": "#039351#CHICAGO DELIGHT'S",
+      "order_date": "18/08/2026",
+      "order_time": "18:49",
+      "station": "CHICAGO DELIGHT'S",
+      "station_gst": "GST666666",
+      "payment_method": "Upi",
+      "payment_status": "paid",
+      "f_order_status": 6,
+      "order_type": "TakeAway",
+      "items": [
+        {
+          "name": "Kadhai Paneer Pizza",
+          "quantity": 1,
+          "price": 540,
+          "gst": 27,
+          "vat": 0
+        }
+      ],
+      "item_count": 1,
+      "total_qty": 1,
+      "item_total": 540,
+      "discount": 0,
+      "sub_total": 540,
+      "gst": 27,
+      "vat": 0,
+      "total": 567
+    }
+  ],
+  "stations": [
+    "CHICAGO DELIGHT'S",
+    "CHICAGO SHIMLA",
+    "CREAMBELLPARLOUR",
+    "GUPTAJEE",
+    "MSB",
+    "ZORKO"
+  ],
+  "station_gst_map": {
+    "CHICAGO DELIGHT'S": "GST666666",
+    "CHICAGO SHIMLA": null,
+    "CREAMBELLPARLOUR": "GST222222",
+    "GUPTAJEE": "GST555555",
+    "MSB": "GST111111",
+    "ZORKO": "GST444444"
+  },
+  "total_orders": 60,
+  "from": "2026-08-01 06:00:00",
+  "to": "2026-08-23 03:00:00"
+}

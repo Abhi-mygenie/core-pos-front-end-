@@ -1,0 +1,65 @@
+=== Aggregator foods ===
+
+ID: 13303 | Name: 69 special
+  status: 1
+  item_type: 1
+  price: 69 int
+  category: {'id': 8543, 'name': 'Special'}
+  tax: '0.00' | tax_type: 'GST'
+  swiggy: 'YES' | zomato: 'YES'
+  client_id: 0
+  addons: []
+  available_time_starts: '00:00:00'
+  available_time_ends: '23:59:59'
+  packed_food: None
+  is_inventory: None
+  item_unit: '0'
+  sort_order: 0
+
+ID: 13307 | Name: _GOAN_TEST_CLIENT_
+  status: 1
+  item_type: 1
+  price: 50 int
+  category: {'id': 1137, 'name': 'Dosa'}
+  tax: '0.00' | tax_type: 'GST'
+  swiggy: 'YES' | zomato: 'YES'
+  client_id: 109
+  addons: []
+  available_time_starts: '00:00:00'
+  available_time_ends: '23:59:59'
+  packed_food: None
+  is_inventory: None
+  item_unit: ''
+  sort_order: 0
+
+ID: 13306 | Name: _GOAN_TEST_MAIN_
+  status: 1
+  item_type: 1
+  price: 50 int
+  category: {'id': 1137, 'name': 'Dosa'}
+  tax: '0.00' | tax_type: 'GST'
+  swiggy: 'YES' | zomato: 'YES'
+  client_id: 0
+  addons: []
+  available_time_starts: '00:00:00'
+  available_time_ends: '23:59:59'
+  packed_food: None
+  is_inventory: None
+  item_unit: ''
+  sort_order: 0
+
+ID: 13304 | Name: poison
+  status: 1
+  item_type: 1
+  price: 100 int
+  category: {'id': 8543, 'name': 'Special'}
+  tax: '0.00' | tax_type: 'GST'
+  swiggy: 'YES' | zomato: 'YES'
+  client_id: 0
+  addons: [{'id': 13193, 'name': 'Dark'}]
+  available_time_starts: '00:00:00'
+  available_time_ends: '23:59:59'
+  packed_food: None
+  is_inventory: None
+  item_unit: ''
+  sort_order: 0

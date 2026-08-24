@@ -1,0 +1,6 @@
+Total aggregator foods: 7
+  id=3166 name=Butter Dosa client=- swiggy=YES zomato=YES
+  id=3167 name=Cheese Dosa client=- swiggy=YES zomato=YES
+  id=3165 name=Egg Dosa client=- swiggy=YES zomato=YES
+  id=3163 name=Masala Dosa client=- swiggy=YES zomato=YES
+  id=3162 name=Plain Dosa client=- swiggy=YES zomato=YES

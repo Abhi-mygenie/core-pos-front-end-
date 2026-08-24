@@ -1,0 +1,9 @@
+Keys per addon: ['id', 'name', 'price', 'status', 'status_text']
+Sample: {
+  "id": 13193,
+  "name": "Dark",
+  "price": 10,
+  "status": 1,
+  "status_text": "Available"
+}
+Top-level keys: ['status', 'client_id', 'addons']

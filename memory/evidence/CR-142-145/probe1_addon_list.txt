@@ -1,0 +1,3 @@
+ADDON-LIST: OK, count= 2
+FIELDS: ['id', 'name', 'price', 'status', 'weight', 'veg', 'has_inventory', 'recipe_id', 'has_recipe', 'is_pushed_managed']
+SAMPLE: {'id': 13193, 'name': 'Dark', 'price': 10, 'status': 1, 'weight': 0, 'veg': None, 'has_inventory': 'No', 'recipe_id': None, 'has_recipe': False, 'is_pushed_managed': False}

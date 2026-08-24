@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guest vs Registered (Beta) — MyGenie POS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { font-family: 'Inter', system-ui, sans-serif; }
+  .cabinet { font-weight: 800; letter-spacing: -0.03em; }
+  .t-bronze { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+  .t-silver { background:#f4f4f5; color:#52525b; border:1px solid #d4d4d8; }
+  .t-gold   { background:#fefce8; color:#854d0e; border:1px solid #fde047; }
+  .t-plat   { background:#f5f3ff; color:#5b21b6; border:1px solid #c4b5fd; }
+  .src-crm  { background:#ecfdf5; color:#065f46; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid #6ee7b7; letter-spacing:.05em; }
+  .src-both { background:#fff7ed; color:#9a3412; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid #fdba74; letter-spacing:.05em; }
+  .src-pos  { background:#eff6ff; color:#1e40af; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid #93c5fd; letter-spacing:.05em; }
+  tr.hr:hover td { background:#f9fafb; }
+  .lc-pill { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+</style>
+</head>
+<body class="bg-zinc-50 min-h-screen">
+
+<!-- Sidebar -->
+<div class="fixed left-0 top-0 bottom-0 w-14 bg-white border-r border-zinc-200 flex flex-col items-center py-4 gap-3 z-20">
+  <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#F26B33">
+    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+  </div>
+  <div class="mt-4 flex flex-col gap-3">
+    <div class="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    </div>
+    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#F26B33">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+  </div>
+</div>
+
+<div class="ml-14 flex flex-col min-h-screen">
+
+  <!-- ── Header ── -->
+  <header class="bg-white border-b border-zinc-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+    <div class="flex items-center gap-4">
+      <button class="w-9 h-9 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-500 hover:bg-zinc-50">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="cabinet text-xl text-zinc-950">Guest vs Registered</span>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-violet-100 text-violet-700 border border-violet-200">Beta</span>
+          <span class="src-both">POS + CRM</span>
+        </div>
+        <p class="text-[11px] text-zinc-400 mt-0.5">Lifecycle stages · engagement depth · churn bands — <code class="bg-zinc-100 px-1 rounded text-zinc-500">summary.lifecycle</code> + <code class="bg-zinc-100 px-1 rounded text-zinc-500">churn-risk</code></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-xs text-zinc-500">
+        <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        CRM uses fixed windows — date filter not applicable
+      </div>
+      <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold border border-[#F26B33] text-[#F26B33] hover:bg-orange-50 shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 p-8 space-y-5">
+
+    <!-- ── HERO: Lifecycle Funnel — from summary.lifecycle ── -->
+    <div class="bg-white rounded-xl border border-zinc-200 p-7">
+      <div class="flex items-center justify-between mb-7">
+        <div>
+          <h2 class="text-base font-bold text-zinc-900">Customer Journey — Where Are Your Registered Customers?</h2>
+          <p class="text-xs text-zinc-400 mt-1">All 5 lifecycle stages from <code class="bg-zinc-50 px-1 rounded">GET /pos/reports/summary → data.lifecycle</code> · Thresholds configured in CRM tenant settings</p>
+        </div>
+        <span class="src-crm">summary.lifecycle</span>
+      </div>
+
+      <!-- Funnel blocks -->
+      <div class="space-y-2">
+
+        <!-- New -->
+        <div class="relative flex items-stretch">
+          <div class="w-28 shrink-0 flex flex-col justify-center pr-4">
+            <div class="text-xs font-bold text-blue-700 uppercase tracking-wide">New</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">≤1 visit, last 30d</div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div class="h-14 rounded-xl flex items-center justify-between px-5 transition-all" style="width:100%;background:#dbeafe">
+              <span class="text-2xl font-extrabold text-blue-800 cabinet">612</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-blue-600">4.1% of base</span>
+                <div class="text-[10px] bg-white/70 text-blue-700 font-semibold px-2.5 py-1 rounded-full">First-timers &amp; recent sign-ups</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-28 pl-4 text-xs text-zinc-300 flex items-center gap-1 py-0.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Customers who return → become Active
+        </div>
+
+        <!-- Active -->
+        <div class="relative flex items-stretch">
+          <div class="w-28 shrink-0 flex flex-col justify-center pr-4">
+            <div class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Active</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">2+ visits, last 30d</div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div class="h-14 rounded-xl flex items-center justify-between px-5" style="width:100%;background:#dcfce7">
+              <span class="text-2xl font-extrabold text-emerald-800 cabinet">2,602</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-emerald-600">17.5% of base</span>
+                <div class="text-[10px] bg-white/70 text-emerald-700 font-semibold px-2.5 py-1 rounded-full">Your engaged, loyal regulars</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-28 pl-4 text-xs text-zinc-300 flex items-center gap-1 py-0.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Haven't visited recently → slip to At Risk
+        </div>
+
+        <!-- At Risk -->
+        <div class="relative flex items-stretch">
+          <div class="w-28 shrink-0 flex flex-col justify-center pr-4">
+            <div class="text-xs font-bold text-amber-700 uppercase tracking-wide">At Risk</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">band=high window</div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div class="h-14 rounded-xl flex items-center justify-between px-5" style="width:100%;background:#fef9c3">
+              <span class="text-2xl font-extrabold text-amber-800 cabinet">2,081</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-amber-600">14.0% of base</span>
+                <div class="text-[10px] bg-white/70 text-amber-700 font-semibold px-2.5 py-1 rounded-full">Win-back window open — act now</div>
+                <button class="text-[10px] font-bold text-white px-3 py-1 rounded-lg" style="background:#F26B33">View List →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-28 pl-4 text-xs text-zinc-300 flex items-center gap-1 py-0.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Going cold — last chance before permanent churn
+        </div>
+
+        <!-- Dormant -->
+        <div class="relative flex items-stretch">
+          <div class="w-28 shrink-0 flex flex-col justify-center pr-4">
+            <div class="text-xs font-bold text-red-600 uppercase tracking-wide">Dormant</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">band=medium window</div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div class="h-14 rounded-xl flex items-center justify-between px-5" style="width:100%;background:#fee2e2">
+              <span class="text-2xl font-extrabold text-red-800 cabinet">3,412</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-red-500">23.0% of base</span>
+                <div class="text-[10px] bg-white/70 text-red-600 font-semibold px-2.5 py-1 rounded-full">Going cold — needs urgent outreach</div>
+                <button class="text-[10px] font-bold text-white px-3 py-1 rounded-lg bg-red-500">View List →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-28 pl-4 text-xs text-zinc-300 flex items-center gap-1 py-0.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Exceeded churn threshold — very hard to recover
+        </div>
+
+        <!-- Churned -->
+        <div class="relative flex items-stretch">
+          <div class="w-28 shrink-0 flex flex-col justify-center pr-4">
+            <div class="text-xs font-bold text-zinc-500 uppercase tracking-wide">Churned</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">&gt; dormant threshold</div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div class="h-14 rounded-xl flex items-center justify-between px-5" style="width:100%;background:#f4f4f5">
+              <span class="text-2xl font-extrabold text-zinc-600 cabinet">6,140</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-zinc-400">41.4% of base</span>
+                <div class="text-[10px] bg-white/50 text-zinc-500 font-semibold px-2.5 py-1 rounded-full">Unlikely to return without active campaign</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 pt-4 border-t border-zinc-100 flex items-center gap-8 text-xs text-zinc-400">
+        <span>Total registered: <strong class="text-zinc-700">14,847</strong></span>
+        <span>Active + New (healthy): <strong class="text-emerald-600">3,214 (21.6%)</strong></span>
+        <span>Win-back opportunity: <strong class="text-amber-600">5,493 customers</strong></span>
+        <span class="ml-auto text-[10px] text-zinc-300 italic">Note: stage labels are stable; day thresholds vary per tenant</span>
+      </div>
+    </div>
+
+    <!-- ── Three insight cards ── -->
+    <div class="grid grid-cols-3 gap-4">
+
+      <!-- AOV comparison: all-time vs 30d -->
+      <div class="bg-white rounded-xl border border-zinc-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Order Value Trend</h2>
+          <span class="src-crm">summary.revenue</span>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="text-[10px] text-zinc-400 uppercase tracking-wide mb-1">All-Time Avg Order Value</div>
+            <div class="text-3xl font-extrabold text-zinc-900 cabinet">₹524</div>
+            <div class="text-xs text-zinc-400 mt-1">across all <strong class="text-zinc-600">9,309</strong> tracked orders</div>
+          </div>
+          <div class="w-full h-px bg-zinc-100"></div>
+          <div>
+            <div class="text-[10px] text-zinc-400 uppercase tracking-wide mb-1">Last 30 Days AOV</div>
+            <div class="text-3xl font-extrabold text-zinc-900 cabinet">₹488</div>
+            <div class="flex items-center gap-1.5 mt-1">
+              <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 7l-10 10M7 7h10v10"/></svg>
+              <span class="text-xs text-red-500 font-medium">-6.9% vs all-time</span>
+            </div>
+          </div>
+          <div class="pt-2 text-xs text-zinc-400">
+            <code class="bg-zinc-50 px-1 rounded">avg_order_value</code> vs <code class="bg-zinc-50 px-1 rounded">avg_order_value_30d</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loyalty redemption stat -->
+      <div class="bg-white rounded-xl border border-zinc-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Loyalty Engagement</h2>
+          <span class="src-crm">summary.loyalty</span>
+        </div>
+        <div class="flex flex-col items-center justify-center h-32">
+          <!-- Large dial -->
+          <div class="relative w-24 h-24">
+            <svg viewBox="0 0 36 36" class="w-24 h-24 -rotate-90">
+              <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#f4f4f5" stroke-width="4"/>
+              <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#329937" stroke-width="4"
+                stroke-dasharray="12.4 87.6" stroke-dashoffset="0"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-xl font-extrabold text-zinc-900 cabinet">12.4%</span>
+            </div>
+          </div>
+          <div class="text-xs text-zinc-500 mt-2 text-center">of orders use loyalty redemption</div>
+        </div>
+        <div class="pt-3 border-t border-zinc-100 text-xs text-zinc-400">
+          <code class="bg-zinc-50 px-1 rounded">loyalty.orders_with_redemption_pct</code>
+        </div>
+      </div>
+
+      <!-- Points outstanding -->
+      <div class="bg-white rounded-xl border border-zinc-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Points Outstanding</h2>
+          <span class="src-crm">summary.loyalty</span>
+        </div>
+        <div class="text-4xl font-extrabold text-zinc-900 cabinet">8,47,200</div>
+        <div class="text-xs text-zinc-400 mt-1">points held across all members</div>
+        <div class="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <div class="text-xs text-amber-700 font-semibold mb-0.5">Liability</div>
+          <div class="text-lg font-bold text-amber-800 cabinet">₹84,720</div>
+          <div class="text-[10px] text-amber-500 mt-0.5">at ₹0.10/pt ratio — what members can redeem</div>
+        </div>
+        <div class="mt-3 text-xs text-zinc-400">
+          <code class="bg-zinc-50 px-1 rounded">loyalty.points_outstanding</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Win-Back: Both Bands Side-by-Side ── -->
+    <div class="grid grid-cols-2 gap-4">
+
+      <!-- At Risk — band=high -->
+      <div class="bg-white rounded-xl border border-amber-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-amber-100 flex items-center justify-between bg-amber-50">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+              <h2 class="text-sm font-bold text-amber-800">At Risk</h2>
+              <span class="text-xs font-bold bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">2,081 total</span>
+            </div>
+            <p class="text-[10px] text-amber-600 mt-0.5"><code>band=high</code> · Highest win-back success rate</p>
+          </div>
+          <span class="src-crm">churn-risk</span>
+        </div>
+        <table class="w-full">
+          <thead class="bg-zinc-50">
+            <tr>
+              <th class="px-4 py-2.5 text-left text-[10px] font-semibold text-zinc-400 uppercase">Customer</th>
+              <th class="px-3 py-2.5 text-left text-[10px] font-semibold text-zinc-400 uppercase">Tier</th>
+              <th class="px-3 py-2.5 text-right text-[10px] font-semibold text-zinc-400 uppercase">Days</th>
+              <th class="px-3 py-2.5 text-right text-[10px] font-semibold text-zinc-400 uppercase">Spent</th>
+              <th class="px-3 py-2.5 text-center text-[10px] font-semibold text-zinc-400 uppercase">Act</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Vikram Nair</div><div class="text-xs text-zinc-400">97001 23456</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-plat px-1.5 py-0.5 rounded-full">Plat</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-amber-600">59d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹82,400</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Meena Iyer</div><div class="text-xs text-zinc-400">96543 21098</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-gold px-1.5 py-0.5 rounded-full">Gold</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-amber-600">52d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹54,200</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Suresh Gupta</div><div class="text-xs text-zinc-400">95432 10987</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-silver px-1.5 py-0.5 rounded-full">Silv</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-amber-500">47d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹31,600</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Anjali Singh</div><div class="text-xs text-zinc-400">94321 09876</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-bronze px-1.5 py-0.5 rounded-full">Brnz</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-amber-400">43d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹12,400</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Dev Malhotra</div><div class="text-xs text-zinc-400">93210 98765</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-silver px-1.5 py-0.5 rounded-full">Silv</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-amber-400">38d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹22,800</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-3 bg-zinc-50 border-t border-zinc-100 text-xs text-zinc-400 flex items-center justify-between">
+          <span>5 of 2,081 · sorted oldest-visit-first</span>
+          <span class="text-[#F26B33] cursor-pointer font-medium">Load more</span>
+        </div>
+      </div>
+
+      <!-- Dormant — band=medium -->
+      <div class="bg-white rounded-xl border border-red-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-red-100 flex items-center justify-between bg-red-50">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>
+              <h2 class="text-sm font-bold text-red-800">Dormant</h2>
+              <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">3,412 total</span>
+            </div>
+            <p class="text-[10px] text-red-400 mt-0.5"><code>band=medium</code> · Last chance before permanent churn</p>
+          </div>
+          <span class="src-crm">churn-risk</span>
+        </div>
+        <table class="w-full">
+          <thead class="bg-zinc-50">
+            <tr>
+              <th class="px-4 py-2.5 text-left text-[10px] font-semibold text-zinc-400 uppercase">Customer</th>
+              <th class="px-3 py-2.5 text-left text-[10px] font-semibold text-zinc-400 uppercase">Tier</th>
+              <th class="px-3 py-2.5 text-right text-[10px] font-semibold text-zinc-400 uppercase">Days</th>
+              <th class="px-3 py-2.5 text-right text-[10px] font-semibold text-zinc-400 uppercase">Spent</th>
+              <th class="px-3 py-2.5 text-center text-[10px] font-semibold text-zinc-400 uppercase">Act</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Kavita Sharma</div><div class="text-xs text-zinc-400">92109 87654</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-gold px-1.5 py-0.5 rounded-full">Gold</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-red-500">88d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹48,600</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Mohan Das</div><div class="text-xs text-zinc-400">91098 76543</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-silver px-1.5 py-0.5 rounded-full">Silv</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-red-500">84d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹29,200</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Rekha Pillai</div><div class="text-xs text-zinc-400">90987 65432</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-plat px-1.5 py-0.5 rounded-full">Plat</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-red-500">79d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹71,400</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr border-b border-zinc-50"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Arjun Verma</div><div class="text-xs text-zinc-400">89876 54321</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-bronze px-1.5 py-0.5 rounded-full">Brnz</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-red-400">74d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹8,200</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+            <tr class="hr"><td class="px-4 py-2.5"><div class="text-sm font-medium text-zinc-800">Sita Rao</div><div class="text-xs text-zinc-400">88765 43210</div></td><td class="px-3 py-2.5"><span class="text-[10px] font-semibold t-silver px-1.5 py-0.5 rounded-full">Silv</span></td><td class="px-3 py-2.5 text-xs text-right font-bold text-red-400">68d</td><td class="px-3 py-2.5 text-xs text-right font-semibold">₹18,900</td><td class="px-3 py-2.5 text-center"><button class="text-[10px] font-bold text-white px-2 py-1 rounded-md" style="background:#25D366">WA</button></td></tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-3 bg-zinc-50 border-t border-zinc-100 text-xs text-zinc-400 flex items-center justify-between">
+          <span>5 of 3,412 · sorted oldest-visit-first</span>
+          <span class="text-[#F26B33] cursor-pointer font-medium">Load more</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Phase 2 note ── -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+      <svg class="w-4 h-4 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <div class="text-xs text-blue-700 space-y-1">
+        <div class="font-semibold">Phase 2 — Guest vs Registered deeper funnel</div>
+        <div>The 4-layer acquisition funnel (All Orders → Phone Captured → CRM Profile → Loyalty Active) requires POS to expose "orders with phone number captured" per day. CRM Phase 2 includes <code class="bg-blue-100 px-1 rounded">/revenue-intelligence</code> and <code class="bg-blue-100 px-1 rounded">/customer-intelligence/{id}</code> which may unlock avg order value by type and per-day acquisition trends. Current screen is built entirely from Phase 1 contract.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

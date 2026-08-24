@@ -1,0 +1,30 @@
+Top-level keys: ['status', 'client_id', 'items']
+Item keys: ['id', 'name', 'category_id', 'category_name', 'status', 'variations']
+Variation keys: ['name', 'type', 'min', 'max', 'required', 'values']
+Value keys: ['label', 'optionPrice']
+Sample item: {
+  "id": 13303,
+  "name": "69 special",
+  "category_id": 8543,
+  "category_name": "Special",
+  "status": 1,
+  "variations": [
+    {
+      "name": "choice of",
+      "type": "single",
+      "min": 0,
+      "max": 0,
+      "required": "on",
+      "values": [
+        {
+          "label": "salsa",
+          "optionPrice": "0"
+        },
+        {
+          "label": "gogo",
+          "optionPrice": "10"
+        }
+      ]
+    }
+  ]
+}
