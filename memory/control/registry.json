@@ -20423,7 +20423,7 @@
       "area": "Room Module \u2192 Room Order Entry \u2192 Item Transfer",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 Awaiting Gate 4 GO",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
@@ -20443,7 +20443,8 @@
       ],
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-17",
+      "sprint_key": "pos_6_0"
     },
     {
       "id": "INV-PG-001",
