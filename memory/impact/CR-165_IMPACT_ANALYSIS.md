@@ -124,12 +124,18 @@ User taps "Cancel" on table card / OrderEntry
                   failure → toast "Order cancelled, refund failed"
 ```
 
-**Gap identified:** `razorpay_order_id` is NOT mapped in `orderTransform.js`. It is NOT in the running order object. The `paymentMethod` field maps to `api.payment_method` — whether this equals `'razorpay'` for Razorpay PG orders needs verification.
+**Gap confirmed (evidence-backed):**
+Running orders API (`GET /api/v1/vendoremployee/pos/employee-orders-list`) does NOT return `razorpay_order_id` — confirmed from BUG-144 `all_order_keys`. The field is only available in report APIs (ORDER_REPORT_BETA_COMBINED → reportTransform.js:903). `SINGLE_ORDER_NEW` also lacks it.
 
-**Owner must answer (OQ-5 — NEW):**
-> When a Razorpay PG order appears in running orders, what does `payment_method` return from the API? Is it `'razorpay'` or something else? Or should we add `razorpay_order_id` to the running orders transform from the live order data?
+**Detection options for Trigger A (owner must choose — OQ-5):**
 
-Until OQ-5 is answered, the Trigger A detection logic cannot be finalized.
+| Option | Approach | Pro | Con |
+|---|---|---|---|
+| A | `payment_method === 'razorpay'` check | No extra API call | Exact `payment_method` value for Razorpay not in any test data — must verify |
+| B | Backend adds `razorpay_order_id` to running orders response | Clean, mirrors Trigger B | Requires backend change |
+| C | Always call cancel-and-refund endpoint; backend no-ops for non-PG orders | Zero FE detection logic | Need backend confirmation it handles non-Razorpay gracefully |
+
+**OQ-5:** Which option? If A: what exact `payment_method` value does backend send for Razorpay PG orders?
 
 ### Trigger B — Manual Refund from Order Report
 
@@ -139,14 +145,31 @@ OrderReportBetaPage.jsx loads ORDER_REPORT_BETA_COMBINED
       IF razorpay_order_id != null → show [Refund] button in row
   → User clicks [Refund]
       → CancelOrderModal opens in mode="refund"
-          onCancel(selectedReason, cancellationNote) called
+          onCancel(selectedReason, cancellationNote) called   ← BOTH params
   → razorpayRefundService.cancelAndRefund(orderId, reason, note)
       api.post(RAZORPAY_CANCEL_REFUND, {...})
           success → toast + remove/mark row
           failure → toast error
 ```
 
-`razorpay_order_id` IS available in `OrderReportBetaPage.jsx` (confirmed at line 154 — already used for PG filter). **Trigger B has no data gap.** 
+`razorpay_order_id` IS available in `OrderReportBetaPage.jsx` (confirmed at line 154 — already used for PG filter). **Trigger B has no data gap.**
+
+### Key Correction: Same Modal at Both Triggers
+
+`CancelOrderModal.jsx` is used at **both** Trigger A and Trigger B with `mode="refund"`. Both call sites must:
+1. Open the modal with `mode="refund"` (shows textarea for `cancellation_note`)
+2. Wire `onCancel` to receive `(reason, note)` — both values passed dynamically
+3. Pass both to `razorpayRefundService.cancelAndRefund(orderId, reason.reasonText, note)`
+
+**Implication for `CancelOrderModal.jsx`:**
+- Current: `onCancel(selectedReason)` — passes reason object
+- Required: `onCancel(selectedReason, cancellationNote)` — passes BOTH in refund mode
+- The note textarea is shown ONLY when `mode="refund"`; in default `mode="cancel"` nothing changes (backward-compatible)
+
+**Call sites that must update their `onCancel` handler:**
+- `OrderEntry.jsx:2726` — currently `onCancel={handleCancelOrder}` → update to `onCancel={(reason, note) => handleCancelOrder(reason, note)}`
+- `DashboardPage.jsx:2049` — currently `onCancel={handleCancelOrderConfirm}` → same update
+- `OrderReportBetaPage.jsx` — new call site, wire from the start with `(reason, note)`
 
 ---
 
@@ -158,10 +181,10 @@ OrderReportBetaPage.jsx loads ORDER_REPORT_BETA_COMBINED
 |---|---|---|---|
 | 1 | `src/api/constants.js` | Add `RAZORPAY_CANCEL_REFUND: '/api/v2/vendoremployee/order/cancel-and-refund-order'` to `API_ENDPOINTS` | LOW |
 | 2 | `src/api/services/razorpayRefundService.js` | **NEW FILE** — `cancelAndRefund(orderId, reason, note)` using existing `api` instance | LOW |
-| 3 | `src/components/order-entry/CancelOrderModal.jsx` | Add `mode` prop (`'cancel'` default / `'refund'`), `cancellation_note` textarea in refund mode, title/button text changes, updated `onCancel(reason, note)` signature | MEDIUM |
-| 4 | `src/components/order-entry/OrderEntry.jsx` | In `handleCancelOrder`: after cancel API call, check payment type → call refund if Razorpay | **HIGH — R5** |
-| 5 | `src/pages/DashboardPage.jsx` | In `handleCancelOrderConfirm`: same Razorpay guard + refund call. Update `CancelOrderModal` call site to handle `onCancel(reason, note)` | **HIGH — R5** |
-| 6 | `src/pages/reports-module/OrderReportBetaPage.jsx` | Add `[Refund]` button column for rows where `razorpay_order_id != null`. Open CancelOrderModal in refund mode. | MEDIUM |
+| 3 | `src/components/order-entry/CancelOrderModal.jsx` | Add `mode` prop (`'cancel'` default / `'refund'`), `cancellation_note` textarea in refund mode, update callback to `onCancel(reason, note)` — backward-compatible (note is undefined in cancel mode) | MEDIUM |
+| 4 | `src/components/order-entry/OrderEntry.jsx` | In `handleCancelOrder`: (a) open modal in `mode="refund"` when Razorpay detected, (b) receive `(reason, note)`, (c) after cancel API → call refund if Razorpay | **HIGH — R5** |
+| 5 | `src/pages/DashboardPage.jsx` | In `handleCancelOrderConfirm`: same pattern. Modal call site updated to `onCancel={(reason, note) => handleCancelOrderConfirm(reason, note)}` | **HIGH — R5** |
+| 6 | `src/pages/reports-module/OrderReportBetaPage.jsx` | Add `[Refund]` button for `razorpay_order_id != null` rows. Open CancelOrderModal `mode="refund"`, wire `onCancel={(reason, note) => handleRefund(orderId, reason, note)}` | MEDIUM |
 
 ### Files will NOT touch:
 

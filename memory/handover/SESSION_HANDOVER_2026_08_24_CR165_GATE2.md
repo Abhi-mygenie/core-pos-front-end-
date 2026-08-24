@@ -51,8 +51,11 @@ Key change from old contract: `restaurant_id` REMOVED. Auth token now required. 
 **OQ-2b-final:**
 > "The v2 endpoint returned `{"message": ""}` for ALL test inputs including empty body. Can you test it with a real in-flight Razorpay order on preprod and tell me what comes back on success? Is `{"message": "ANYTHING"}` a failure or is the empty string a success indicator?"
 
-**OQ-5 (new — blocks Trigger A):**
-> "For Trigger A: when a Razorpay PG order is in the running orders list on Dashboard/OrderEntry, what does `payment_method` return? Is it `'razorpay'`? Or do we need to add `razorpay_order_id` to the running orders API transform?"
+**OQ-5 (Trigger A detection — 3 options, owner picks):**
+> "Running orders API confirmed does NOT return `razorpay_order_id` (evidence-verified). For Trigger A detection, which approach?
+> **Option A:** Check `payment_method === 'razorpay'` — what exact value does backend send for Razorpay PG orders?
+> **Option B:** Backend team adds `razorpay_order_id` to running orders API response
+> **Option C:** Always call cancel-and-refund endpoint and let backend handle gracefully (no FE detection)"
 
 Once both answered → **write Gate 3 Implementation Plan** using `/app/memory/impact/CR-165_IMPACT_ANALYSIS.md`.
 
