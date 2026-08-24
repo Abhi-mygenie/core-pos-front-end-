@@ -20423,7 +20423,7 @@
       "area": "Room Module \u2192 Room Order Entry \u2192 Item Transfer",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "IMPLEMENTED \u2014 FE complete. BACKEND BLOCKED: GAP1 (items not removed from source order) + GAP2 (new order created as room not walk-in). Backend brief filed 2026-08-24.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",

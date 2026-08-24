@@ -1,45 +1,106 @@
-# Core POS Frontend — Deployment Log
+# MyGenie POS — Project Memory
 
-## Deployment Date
-2026-08-24
+**Last updated:** 2026-08-24
 
-## Source
-- Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
-- Branch: main
-- Deployed to: /app/frontend/ (platform constraint — supervisor points to this dir)
-
-## What Was Done
-1. Cloned repo to /tmp/pos-staging
-2. Identified repo structure: React CRA/craco app lives in frontend/ subdir of repo
-3. Synced repo's frontend/ → /app/frontend/ (replaced all code, kept node_modules/.env)
-4. Synced repo's memory/ → /app/memory/ (full memory dir pull as requested)
-5. Wrote all provided env vars to /app/frontend/.env
-6. Ran `npm install --legacy-peer-deps` (repo uses package-lock.json)
-7. Restarted frontend via supervisor
+---
 
 ## Architecture
-- Frontend only: React + CRA + craco, port 3000
-- Backend: FastAPI (unchanged, not in use by this frontend)
-- No code edits made — deployed as-is
 
-## Env Variables Set
-- REACT_APP_BACKEND_URL (platform URL preserved)
-- WDS_SOCKET_PORT=443
-- REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
-- REACT_APP_SOCKET_URL=https://presocket.mygenie.online
-- REACT_APP_FIREBASE_* (all firebase vars)
-- REACT_APP_CRM_BASE_URL / REACT_APP_CRM_API_KEYS
-- REACT_APP_GOOGLE_MAPS_KEY
-- CORS_ORIGINS=*
-- REACT_APP_SHOW_AUDIT_TAB=true
+- **Frontend:** React 19, CRACO, Tailwind CSS, shadcn/Radix UI
+- **Backend API:** Laravel at `preprod.mygenie.online` (external)
+- **Socket:** Socket.io at `presocket.mygenie.online`
+- **Firebase:** Auth + notifications (mygenie-restaurant project)
+- **CRM:** `crm.mygenie.online/api` (X-API-Key auth, per-restaurant key)
+- **Deployment:** This pod runs the FE only. Backend is external preprod.
 
-## Status
-- App compiles: YES (webpack compiled with 1 warning — react-hooks/exhaustive-deps, expected)
-- App responds on port 3000: YES (HTTP 200)
-- Login page loads: YES (mygenie branding visible)
-- API calls to preprod.mygenie.online: depends on backend availability (expected)
+---
 
-## Backlog / Next Steps
-- Supply real env values when backend URLs change
-- REACT_APP_CRM_API_KEYS entry for restaurant 509 was truncated in problem statement — placeholder used
-- Hot reload: works via supervisor autorestart
+## What's been implemented (this session — 2026-08-24)
+
+### CR-163 — Move Items from Room Order to Table (Split Room Order)
+**Status:** FE IMPLEMENTED. **BACKEND BLOCKED** on 2 gaps.
+
+**Files changed:**
+- `src/api/constants.js` — `+SPLIT_ROOM_ORDER` endpoint constant
+- `src/api/services/roomService.js` — `+splitRoomOrder()` function
+- `src/components/order-entry/SplitRoomItemsModal.jsx` — NEW (199 lines)
+- `src/components/order-entry/CartPanel.jsx` — `+onSplitItems` prop + "Move Items" trigger button
+- `src/components/order-entry/OrderEntry.jsx` — `+showSplitModal state`, `+handleSplitRoomItems`, `+prop`, `+modal render`
+- `src/components/order-entry/OrderEntry.jsx line 509` — guard fix for empty-items socket sync
+
+**API contract confirmed:**
+```
+POST /api/v2/vendoremployee/order/split-room-order
+{ order_id, order_detail_ids: [id,id], customer_name: "Room {N}", remark }
+```
+
+**Backend gaps blocking full E2E:**
+1. Items not removed from source order (copy not move)
+2. New order created as room sub-card (not walk-in table)
+→ Backend brief: `/app/memory/backend_briefs/BACKEND_BRIEF_CR163_SPLIT_ROOM_ORDER_2026_08_24.md`
+
+**Pending FE (1 line — after backend fixes GAP 2):**
+Add `order_in: 'WalkIn'` to `splitRoomOrder` payload in `roomService.js`
+
+---
+
+### CR-165 — Razorpay Cancel and Refund
+**Status:** Gate 3 complete. Awaiting Gate 4 GO + backend adds `razorpay_order_id` to running orders + socket payloads.
+
+**Docs:**
+- Impact Analysis: `/app/memory/impact/CR-165_IMPACT_ANALYSIS.md`
+- Implementation Plan: `/app/memory/plans/CR-165_IMPLEMENTATION_PLAN.md`
+
+**Key API:**
+```
+POST /api/v2/vendoremployee/order/cancel-and-refund-order
+Authorization: Bearer <token>
+{ order_id, cancellation_reason, cancellation_note }
+```
+
+---
+
+### CR-162 — Mid-Stay Partial Payment for Room Orders
+**Status:** INTAKE complete. Blocked on backend endpoint confirmation for `receive_balance` write.
+
+---
+
+### Deployment (2026-08-24)
+- Cloned `core-pos-front-end-` repo → `/app/frontend/`
+- All env vars written to `/app/frontend/.env`
+- App compiles, HTTP 200 on port 3000
+- Login page live: `https://core-pos-deploy-12.preview.emergentagent.com`
+
+---
+
+## Prioritised Backlog
+
+### P0 — Blocking (backend must fix first)
+- **CR-163 GAP1:** Backend must remove split items from source room order (COPY → MOVE)
+- **CR-163 GAP2:** Backend must create split order as `table_id:0` + `order_in:'WalkIn'`
+
+### P1 — Ready to implement after backend
+- **CR-165 Gate 4 GO:** Razorpay cancel+refund — 7 files, plan complete
+- **CR-163 FE final:** Add `order_in:'WalkIn'` to payload (1 line) after backend confirms
+
+### P2 — Gate 3 needed
+- **CR-162:** Mid-stay partial payment — backend endpoint confirm needed
+
+---
+
+## Test credentials
+- `owner@18march.com / Qplazm@10` — Razorpay orders, preprod restaurant 478
+- Active room orders needed: hotel/resort account (18march has no rooms currently)
+
+---
+
+## Key file locations
+| Artifact | Path |
+|---|---|
+| CR-163 Impact Analysis | `/app/memory/impact/CR-163_IMPACT_ANALYSIS.md` |
+| CR-163 Implementation Plan | `/app/memory/plans/CR-163_IMPLEMENTATION_PLAN.md` |
+| CR-163 Backend Brief | `/app/memory/backend_briefs/BACKEND_BRIEF_CR163_SPLIT_ROOM_ORDER_2026_08_24.md` |
+| CR-165 Impact Analysis | `/app/memory/impact/CR-165_IMPACT_ANALYSIS.md` |
+| CR-165 Implementation Plan | `/app/memory/plans/CR-165_IMPLEMENTATION_PLAN.md` |
+| Session close handover | `/app/memory/handover/SESSION_HANDOVER_2026_08_24_CR163_SESSION_CLOSE.md` |
+| Design mockup (CR-163) | `https://core-pos-deploy-12.preview.emergentagent.com/cr163-mockup.html` |
