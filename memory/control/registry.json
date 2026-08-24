@@ -20747,7 +20747,7 @@
       "area": "Order Entry \u2192 Cancellation Flow \u2192 Razorpay Refund",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE \u2014 3.5/4 OQs RESOLVED. OQ-2b (axios instance) deferred. Gate 2 ready after OQ-2b answered.",
+      "status": "INTAKE \u2014 Gate 2 COMPLETE. Awaiting OQ-2b-final + OQ-5 for Gate 3.",
       "completeness": "3.5/4",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
@@ -20767,7 +20767,8 @@
         "OQ-3: reason fields",
         "OQ-4: detect PG order"
       ],
-      "notes": " | 2026-08-23: OQ-1=BOTH auto+manual \u00b7 OQ-2=preprod URL confirmed (live probe) \u00b7 OQ-2b=DEFERRED (axios instance choice) \u00b7 OQ-3=reuse CancelOrderModal with mode=refund prop \u00b7 OQ-4=razorpay_order_id field in ORDER_REPORT_BETA_COMBINED. Backend SQL log bug filed. Blast radius updated: 5-6 files, 80-120 lines. Risk HIGH."
+      "notes": " | 2026-08-23: OQ-1=BOTH auto+manual \u00b7 OQ-2=preprod URL confirmed (live probe) \u00b7 OQ-2b=DEFERRED (axios instance choice) \u00b7 OQ-3=reuse CancelOrderModal with mode=refund prop \u00b7 OQ-4=razorpay_order_id field in ORDER_REPORT_BETA_COMBINED. Backend SQL log bug filed. Blast radius updated: 5-6 files, 80-120 lines. Risk HIGH.",
+      "sprint_key": "pos_6_0"
     },
     {
       "id": "CR-166",
