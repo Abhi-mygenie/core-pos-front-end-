@@ -220,16 +220,29 @@ Items excluded from selection:
 
 ## 11. Open Questions
 
-**None — all intake blockers and OQs resolved:**
+**OQ-6 (NEW — design decision, owner + backend):**
 
-| OQ | Question | Status |
-|---|---|---|
-| B-1 | Does backend support room-as-source? | ✅ Dedicated `split-room-order` endpoint confirmed deployed |
-| OQ-1 | Pick existing table or auto-create? | ✅ Backend auto-creates — no destination in payload |
-| OQ-2 | Real-time balance update? | ✅ Socket `update-order` handles automatically |
-| OQ-3 | Minimum items on room? | ✅ Backend responsibility — no FE constraint |
+**Room number as the walk-in label on Dashboard**
 
-**Gate 4 GO required from owner before implementation.**
+After `split-room-order` fires, the backend creates a new order. That order will appear in the Dashboard's Walk-In section with label `order.customer || 'Walk-In'` (DashboardPage line 602). The `customer` field comes from `api.user_name` in the transform (orderTransform.js line 176).
+
+The room number is already available on the FE: `orderData?.roomInfo?.roomNo` (e.g. `"101"`) — mapped at orderTransform.js line 402.
+
+**Proposed behaviour:** Split order appears on Dashboard as **"Room 101"** instead of generic "Walk-In".
+
+Three options to achieve this:
+
+| Option | Approach | API calls | Backend change needed |
+|---|---|---|---|
+| **A (Recommended)** | Add `customer_name: "Room {roomNo}"` param to `split-room-order` payload; backend sets as `user_name` on created order | 1 | YES — add `customer_name` param |
+| **B** | Use `remark: "Room {roomNo}"` — if backend stores remark as `user_name` on created order | 1 | YES — backend must use remark as label |
+| **C** | FE creates walk-in via `PLACE_ORDER` with `cust_name: "Room {roomNo}"` + selected items; then cancel those items from room order via `CANCEL_ITEM` | 1 + N | NO — all existing endpoints |
+
+**Recommendation: Option A.** Single call, explicit intent, room number cleanly flows from `orderData.roomInfo.roomNo` → `customer_name` in payload → `user_name` on backend → `"Room 101"` label on Dashboard.
+
+> **Owner confirm:** Should split order show as "Room {number}" on Dashboard? If yes, ask backend to add `customer_name` to `split-room-order`.
+
+All other intake blockers and OQs (B-1, OQ-1, OQ-2, OQ-3) remain resolved.
 
 ---
 

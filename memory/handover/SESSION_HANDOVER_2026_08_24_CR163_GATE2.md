@@ -52,9 +52,11 @@ Room ID source in FE: `orderData?.roomInfo?.roomId` (verify exact key in orderTr
 
 Files NOT touched: `TransferFoodModal.jsx`, `DashboardPage.jsx`, `socketHandlers.js`
 
----
+## OQ-6 — Room number as walk-in label (NEW)
 
-## Credentials
+FE already has `orderData.roomInfo.roomNo`. After split, the new order lands in Dashboard's Walk-In section as `order.customer || 'Walk-In'` (DashboardPage line 602). Owner confirm Option A: backend adds `customer_name` param to `split-room-order`; FE sends `customer_name: "Room {roomNo}"` → split appears as **"Room 101"** on dashboard.
+
+**Blocking Gate 3 if owner wants room label** — backend must add the param first.
 
 - Test (needs active room orders): any hotel/resort restaurant account
 - Preview: `https://core-pos-deploy-12.preview.emergentagent.com`
