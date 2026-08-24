@@ -8,7 +8,25 @@
 
 ---
 
-## Pre-Implementation Entry Verification
+## Socket Consideration (CRITICAL — added 2026-08-24)
+
+**Finding:** `socketHandlers.js` line 270 runs `orderFromAPI.order(payload.orders[0])` — the **same** `orderTransform.js` function — on every `new-order`, `update-order`, `update-order-target`, `update-order-paid`, `update-order-source` event. `OrderContext.updateOrder()` does a **full replace** (`prev.map(o => o.orderId === orderId ? updatedOrder : o)`) — not a merge.
+
+**Consequence:** If backend adds `razorpay_order_id` to the REST API but NOT to socket event payloads, every socket update will call `orderFromAPI.order()` → `razorpay_order_id` absent → `razorpayOrderId: null` → full replace wipes the field. Trigger A becomes unreliable.
+
+**Backend MUST add `razorpay_order_id` to both:**
+1. `GET /api/v1/vendoremployee/pos/employee-orders-list` REST response
+2. Socket event payloads for `new-order`, `update-order*` (all variants)
+
+**FE is fully covered by a single Edit 3** (one line in `orderTransform.js`) — because socket handlers already use the same transform. No change to `socketHandlers.js` needed.
+
+**Race condition note (DashboardPage):** `handleCancelOrderConfirm` reads `getOrderDataForEntry(cancelOrderEntry)` from live `orders` state. If a socket `update-order` event fires between page load and cancel tap, and that socket payload lacks `razorpay_order_id`, `order.razorpayOrderId` would be null. This is fully resolved once backend includes the field in socket payloads.
+
+**OrderEntry is safe regardless:** `orderData` is a prop snapshot passed at mount — socket updates don't mutate it mid-session.
+
+---
+
+
 
 Implementation agent MUST verify these before writing any code:
 

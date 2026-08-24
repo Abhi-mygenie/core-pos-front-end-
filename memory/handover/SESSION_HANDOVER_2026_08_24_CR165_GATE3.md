@@ -39,13 +39,13 @@ Once owner approves → IMPLEMENTATION role:
 |---|---|---|
 | `src/api/constants.js` | +`RAZORPAY_CANCEL_REFUND` constant | LOW |
 | `src/api/services/razorpayRefundService.js` | NEW — `cancelAndRefund()` | LOW |
-| `src/api/transforms/orderTransform.js` | +`razorpayOrderId: api.razorpay_order_id \|\| null` after line 237 | LOW |
+| `src/api/transforms/orderTransform.js` | +`razorpayOrderId: api.razorpay_order_id \|\| null` after line 237 — covers REST **and** socket (both use same transform) | LOW |
 | `src/components/order-entry/CancelOrderModal.jsx` | Full rewrite — `mode` prop + `cancellationNote` textarea | MEDIUM |
 | `src/components/order-entry/OrderEntry.jsx` | +import, replace `handleCancelOrder`, update modal call site | HIGH (R5) |
 | `src/pages/DashboardPage.jsx` | +import, replace `handleCancelOrderConfirm`, update modal call site | HIGH (R5) |
 | `src/pages/reports-module/OrderReportBetaPage.jsx` | +state, +handler, +Refund button, +CancelOrderModal | MEDIUM |
 
-**Key dependency:** `orderTransform.js` edit (Edit 3) only becomes meaningful after backend ships the `razorpay_order_id` field in running orders API. All other edits are safe to ship immediately — they degrade gracefully (null check means no refund call if field absent).
+**Key dependency:** `orderTransform.js` edit (Edit 3) covers BOTH REST and socket — socket handlers use the same `orderFromAPI.order()` transform. Backend must include `razorpay_order_id` in **both** REST response AND socket event payloads (all `update-order*` variants), because `updateOrder()` does a full replace and would wipe the field on every socket event if payload omits it.
 
 ---
 
