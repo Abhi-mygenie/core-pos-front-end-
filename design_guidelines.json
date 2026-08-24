@@ -1,0 +1,141 @@
+{
+  "project_context": {
+    "app_type": "saas_app",
+    "industry": "POS (Restaurant / Hotel)",
+    "theme": "light",
+    "primary_goal": "High-speed, error-free operations for staff under pressure. Clear touch targets, explicit feedback, high readability."
+  },
+  "typography": {
+    "headings": {
+      "family": "Manrope, sans-serif",
+      "weight": "font-bold",
+      "tracking": "tracking-tight",
+      "usage": "Modal headers, section titles",
+      "sizes": {
+        "h2": "text-2xl",
+        "h3": "text-xl",
+        "h4": "text-lg"
+      }
+    },
+    "body": {
+      "family": "Inter, sans-serif",
+      "weight": "font-medium",
+      "tracking": "tracking-normal",
+      "usage": "Item lists, prices, buttons, labels",
+      "sizes": {
+        "base": "text-base",
+        "small": "text-sm",
+        "tiny": "text-xs uppercase tracking-[0.2em]"
+      }
+    }
+  },
+  "colors": {
+    "archetype": "Soft Utility + Tactical Focus",
+    "palette": {
+      "primaryGreen": "Use existing (e.g., #10B981) - Use for confirm/success actions and selected states",
+      "primaryOrange": "Use existing (e.g., #F97316) - Use for warnings or secondary highlights",
+      "darkText": "Use existing - For primary item names and headers",
+      "grayText": "Use existing - For secondary info, quantities, unselected hints",
+      "borderGray": "Use existing - For list dividers",
+      "sectionBg": "Use existing - For unselected item row backgrounds or modal canvas",
+      "errorText": "Use existing - For validation messages",
+      "amber": "Use existing - Alternative to primaryOrange"
+    },
+    "surface_strategies": {
+      "modal_backdrop": "bg-black/40 backdrop-blur-md - High-end glass to maintain context without visual noise.",
+      "modal_card": "bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12)] - Solid background to prevent text refraction.",
+      "selected_row": "bg-primaryGreen/5 border border-primaryGreen/20 - Clear visual confirmation without overwhelming saturation.",
+      "disabled_row": "opacity-50 grayscale - Immediately readable as non-interactive."
+    }
+  },
+  "visual_enhancers": {
+    "icons": {
+      "library": "lucide-react",
+      "usage": "ArrowRightLeft (trigger button), CheckSquare (selected), Square (unselected), Info (disabled hint)",
+      "styling": "stroke-2 for legibility. DO NOT use emojis."
+    },
+    "spacing": {
+      "touch_targets": "Minimum 48px height for all rows and buttons.",
+      "generous_padding": "Use p-6 or p-8 inside the modal. The grid must feel breathable."
+    }
+  },
+  "component_details": {
+    "cart_panel_trigger": {
+      "name": "MoveToTableButton",
+      "placement": "Contextual banner/button directly adjacent to the 'Placed Items' header. DO NOT place at the bottom billing section.",
+      "styling": "h-9 px-3 rounded-full border border-borderGray bg-white text-darkText hover:bg-gray-50 flex items-center gap-2 text-sm font-medium transition-colors shadow-sm",
+      "icon": "<ArrowRightLeft className='w-4 h-4' />",
+      "behavior": "Visible ONLY if isRoom=true AND placedItems.length > 0."
+    },
+    "split_room_items_modal": {
+      "name": "SplitRoomItemsModal",
+      "layout": "fixed inset-0 z-[100] flex items-center justify-center p-4",
+      "card_styling": "bg-white rounded-2xl w-full max-w-2xl flex flex-col overflow-hidden max-h-[90vh]",
+      "header": {
+        "styling": "p-6 border-b border-borderGray flex items-start justify-between bg-white z-10",
+        "title": "text-2xl font-bold tracking-tight text-darkText",
+        "subtitle": "text-sm text-grayText mt-1 flex items-center gap-2 (e.g., 'Moving from Room 101')"
+      },
+      "body": {
+        "styling": "flex-1 overflow-y-auto p-4 space-y-2 bg-sectionBg/30",
+        "item_row": "flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer min-h-[4rem]",
+        "item_row_unselected": "bg-white border-borderGray hover:border-gray-400",
+        "item_row_selected": "bg-primaryGreen/5 border-primaryGreen shadow-sm ring-1 ring-primaryGreen/20",
+        "item_row_disabled": "bg-gray-50 border-transparent opacity-60 cursor-not-allowed select-none",
+        "checkbox_custom": "Do not use standard tiny checkboxes. The entire row is the touch target. Use Lucide CheckCircle2 (filled/green) vs Circle (outline/gray) on the left side of the row."
+      },
+      "remark_field": {
+        "styling": "mx-4 mb-4 p-4 bg-gray-50 rounded-xl border border-borderGray",
+        "input": "w-full bg-transparent border-none text-sm focus:ring-0 placeholder:text-gray-400 resize-none h-10",
+        "label": "text-xs font-bold text-grayText uppercase tracking-wider mb-2 block"
+      },
+      "footer": {
+        "styling": "p-6 border-t border-borderGray bg-white flex items-center justify-between sticky bottom-0",
+        "running_total": "flex flex-col",
+        "running_total_label": "text-xs text-grayText font-medium",
+        "running_total_value": "text-lg font-bold text-darkText",
+        "actions": "flex gap-3",
+        "cancel_button": "px-6 py-3 rounded-xl border border-borderGray text-darkText font-medium hover:bg-gray-50 transition-colors",
+        "confirm_button": "px-6 py-3 rounded-xl bg-primaryGreen text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2",
+        "confirm_text_dynamic": "Shows 'Move {N} Items'"
+      }
+    }
+  },
+  "layouts": {
+    "bento_grid_protocol": "Not applicable for this specific modal, but use 'High Density Grid' principles for the POS order list. Ensure full width utilization, optical alignment for prices vs item names.",
+    "alignment": "Prices strictly right-aligned (tabular-nums). Item names and checkboxes left-aligned. Quantities prominently displayed next to item names (e.g., '2x Burger')."
+  },
+  "motion": {
+    "modal_entrance": "opacity-0 scale-95 -> opacity-100 scale-100 (duration-200 ease-out)",
+    "row_selection": "Scale down slightly on active click (active:scale-[0.99]), fast color transition (duration-150)",
+    "accessibility": "Respect prefers-reduced-motion for all transitions."
+  },
+  "accessibility": {
+    "focus_states": "All interactive elements (buttons, inputs) MUST have focus-visible:ring-2 focus-visible:ring-primaryGreen/50 outline-none.",
+    "aria_labels": "Buttons must have descriptive aria-labels. Selected rows should have aria-selected='true'.",
+    "touch_targets": "Ensure minimum 48px touch targets for staff operating on tablets.",
+    "data_testids": "MANDATORY. Add 'data-testid' to trigger button ('move-items-trigger'), modal ('split-items-modal'), item rows ('split-item-row-{id}'), check-in item ('split-item-checkin'), confirm button ('split-confirm-btn')."
+  },
+  "instructions_to_main_agent": {
+    "tech_stack": "React.js (.jsx files, NO .tsx), Tailwind CSS, Lucide React icons.",
+    "state_management": "Use a standard React `useState` array or Set for selected item IDs. The row's `onClick` toggles the ID in the state.",
+    "filtering": "Identify the 'check-in marker' based on existing data flags (e.g., `isCheckIn`, `price === 0 && name.includes('Room')`, or specific item categories) and render it in the `item_row_disabled` style. Prevent its ID from being added to the selected state.",
+    "dynamic_footer": "Calculate the running total by mapping selected IDs to their item prices and summing them up. Format as currency.",
+    "cart_panel_integration": "Locate the Placed Items section header in `CartPanel.jsx`. Insert the trigger button flex-aligned with the header text. Wrap in a condition checking for `isRoom` and `placedItems.length > 0`.",
+    "file_structure": "Create `SplitRoomItemsModal.jsx` (likely in `/app/frontend/src/components/` or equivalent modal directory). Update `CartPanel.jsx`.",
+    "z_index": "Existing modals use z-[100]. Ensure the backdrop and modal card align with this."
+  },
+  "universal_guidelines_for_main_agent": [
+    "You tend to converge toward generic outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "DO NOT use dark colors as gradients.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (backdrop-blur-md).",
+    "You MUST NOT apply universal transition (transition: all). Always target specific properties like transition-colors, transition-transform.",
+    "You MUST NOT center align the app container. Do not add text-align: center to the root CSS.",
+    "Always use modern button styles like pill-shaped, or sharp buttons with interaction animations & color relevant to the app style.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 for icons.",
+    "Every interaction needs micro-animations - hover states, active states, focus rings.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap. Specifically in this POS, space out the item rows.",
+    "All interactive and key informational elements MUST include a data-testid attribute to facilitate robust automated testing."
+  ]
+}
