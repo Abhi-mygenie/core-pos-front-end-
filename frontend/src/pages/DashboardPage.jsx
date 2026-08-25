@@ -32,6 +32,7 @@ import AggregatorRejectModal from "../components/modals/AggregatorRejectModal"; 
 import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
 import { updateAggregatorOrderStatus, getAggregatorOrderList } from "../api/services/aggregatorService";    // CR-106
 import { fromAPI as aggregatorFromAPI } from "../api/transforms/aggregatorTransform"; // CR-106
+import { cancelAndRefund } from '../api/services/razorpayRefundService'; // CR-165
 import { toast } from 'sonner'; // BUG-254: error toast for aggregator actions
 
 // ROOM_CARD_TOTAL (Task 4, Apr-2026): card amount for ROOM orders must reflect
@@ -1329,7 +1330,8 @@ const DashboardPage = () => {
   }, []);
 
   // --- Cancel order confirmed from modal ---
-  const handleCancelOrderConfirm = useCallback(async (reason) => {
+  // CR-165: accept (reason, note) — note used only for Razorpay refund; backward-compatible
+  const handleCancelOrderConfirm = useCallback(async (reason, note = '') => {
     if (!cancelOrderEntry) return;
 
     const order = getOrderDataForEntry(cancelOrderEntry);
@@ -1344,6 +1346,21 @@ const DashboardPage = () => {
       await waitForOrderRemoval(order.orderId, 5000);
     } catch (err) {
       console.error('[CancelOrder] Failed:', err);
+    }
+
+    // CR-165: Trigger A — auto-refund for Razorpay PG orders
+    if (order.razorpayOrderId) {
+      try {
+        await cancelAndRefund(order.orderId, reason?.reasonText || String(reason), note);
+        toast({ title: "Refund Initiated", description: "Razorpay refund has been initiated." });
+      } catch (err) {
+        console.error('[CR-165] Refund failed after cancel:', err);
+        toast({
+          title: "Refund Failed",
+          description: "Order cancelled but refund could not be initiated. Contact support.",
+          variant: "destructive",
+        });
+      }
     }
 
     setCancelOrderEntry(null);
@@ -2047,6 +2064,10 @@ const DashboardPage = () => {
             reasons={getOrderCancellationReasons()}
             onClose={() => setCancelOrderEntry(null)}
             onCancel={handleCancelOrderConfirm}
+            mode={(() => {
+              const order = getOrderDataForEntry(cancelOrderEntry);
+              return order?.razorpayOrderId ? 'refund' : 'cancel'; // CR-165
+            })()}
           />
         )}
       </div>

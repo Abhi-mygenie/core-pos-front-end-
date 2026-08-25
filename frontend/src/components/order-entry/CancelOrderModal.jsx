@@ -1,22 +1,28 @@
+// CR-165: mode prop — 'cancel' (default) | 'refund'
+// In refund mode: title/warning/button change; note textarea shown.
+// onCancel always receives (reason, note) — note is '' in cancel mode (backward-compatible).
 import { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import { COLORS } from "../../constants";
 
-const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel }) => {
+const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, mode = 'cancel' }) => {
   const [selectedReason, setSelectedReason] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [cancellationNote, setCancellationNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  const isRefund = mode === 'refund';
 
   const handleCancel = async () => {
     if (!selectedReason || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
-      await onCancel(selectedReason);
+      await onCancel(selectedReason, cancellationNote);
       onClose();
     } catch (err) {
-      const msg = err?.response?.data?.errors?.[0]?.message || err?.message || "Cancellation failed. Please try again.";
+      const msg = err?.response?.data?.errors?.[0]?.message || err?.message || "Operation failed. Please try again.";
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -33,7 +39,7 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel })
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold" style={{ color: COLORS.darkText }}>
-                Cancel Order
+                {isRefund ? 'Cancel & Refund' : 'Cancel Order'}
               </h2>
               <p className="text-sm mt-1" style={{ color: COLORS.grayText }}>
                 {table?.label || table?.id} · {itemCount} item{itemCount !== 1 ? 's' : ''} will be cancelled
@@ -49,7 +55,9 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel })
         <div className="p-5 space-y-4">
           {/* Warning */}
           <div className="px-4 py-3 rounded-xl text-sm" style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
-            This will cancel ALL items in this order. This action cannot be undone.
+            {isRefund
+              ? 'This will cancel the order and initiate a Razorpay refund. This action cannot be undone.'
+              : 'This will cancel ALL items in this order. This action cannot be undone.'}
           </div>
 
           {/* Reason Dropdown */}
@@ -91,6 +99,24 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel })
               )}
             </div>
           </div>
+
+          {/* CR-165: Note textarea — shown only in refund mode */}
+          {isRefund && (
+            <div>
+              <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
+                Refund Note
+              </label>
+              <textarea
+                value={cancellationNote}
+                onChange={(e) => setCancellationNote(e.target.value)}
+                placeholder="Add a note for the refund (optional)"
+                rows={2}
+                className="w-full px-4 py-3 rounded-xl border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-100"
+                style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
+                data-testid="cancel-order-refund-note"
+              />
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -107,7 +133,9 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel })
             className="w-full py-3.5 font-semibold text-white text-base rounded-xl transition-colors disabled:opacity-50"
             style={{ backgroundColor: '#EF4444' }}
           >
-            {submitting ? "Cancelling..." : "Cancel Order"}
+            {submitting
+              ? (isRefund ? 'Processing Refund...' : 'Cancelling...')
+              : (isRefund ? 'Confirm & Refund via Razorpay' : 'Cancel Order')}
           </button>
         </div>
       </div>

@@ -3,8 +3,11 @@
 // Design mockup: /cr117-mockup.html
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cancelAndRefund } from '../../api/services/razorpayRefundService'; // CR-165
+import CancelOrderModal from '../../components/order-entry/CancelOrderModal'; // CR-165
+import { useToast } from '../../hooks/use-toast'; // CR-165
 import { ArrowLeft, Download, ChevronDown, ChevronRight, Loader2, FileSpreadsheet, AlertTriangle } from 'lucide-react';
-import { useRestaurant } from '../../contexts';
+import { useRestaurant, useSettings } from '../../contexts'; // CR-165: +useSettings for cancellation reasons
 import Sidebar from '../../components/layout/Sidebar';
 import { getOrderReportBetaCombined, exportOrderReportBetaExcel } from '../../api/services/reportService';
 
@@ -209,6 +212,9 @@ const FilterSelect = ({ label, value, options, onChange, disabled, testId }) => 
 export default function OrderReportBetaPage() {
   const navigate = useNavigate();
   const { currencySymbol } = useRestaurant();
+  const { getOrderCancellationReasons } = useSettings(); // CR-165
+  const { toast } = useToast(); // CR-165
+  const [refundOrder, setRefundOrder] = useState(null); // CR-165: order selected for refund
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
   // CR-117: Date state
@@ -227,6 +233,19 @@ export default function OrderReportBetaPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [expandedDays, setExpandedDays] = useState(new Set());
   const [filters, setFilters] = useState({ payType: '', channel: '', platform: '', payment: '', punchedBy: '', collectedBy: '', status: '', pg: '' });
+
+  // CR-165: Trigger B — refund from Order Report
+  const handleRefundConfirm = useCallback(async (reason, note) => {
+    if (!refundOrder) return;
+    try {
+      await cancelAndRefund(refundOrder.order_id, reason?.reasonText || String(reason), note);
+      toast({ title: 'Refund Initiated', description: 'Razorpay refund has been initiated.' });
+    } catch (err) {
+      toast({ title: 'Refund Failed', description: err?.readableMessage || 'Refund could not be initiated. Contact support.', variant: 'destructive' });
+    } finally {
+      setRefundOrder(null);
+    }
+  }, [refundOrder]);
 
   // CR-117: Fetch data
   const fetchData = useCallback(async (from, to) => {
@@ -466,6 +485,19 @@ export default function OrderReportBetaPage() {
                               <td className="px-3 py-2 text-right text-zinc-500">{fmtINR(row.service_tax)}</td>
                               <td className="px-3 py-2"><Pill label={pay.label} cls={pay.cls} /></td>
                               <td className="px-3 py-2"><Pill label={status.label} cls={status.cls} /></td>
+                              {/* CR-165: Refund button — only for Razorpay PG orders */}
+                              <td className="px-3 py-2">
+                                {row.razorpay_order_id && (
+                                  <button
+                                    onClick={() => setRefundOrder(row)}
+                                    className="px-2 py-1 text-xs font-semibold rounded-lg border transition-colors hover:bg-red-50"
+                                    style={{ color: '#ef4444', borderColor: '#fecaca', backgroundColor: '#fef2f2' }}
+                                    data-testid={`refund-order-btn-${row.order_id}`}
+                                  >
+                                    Refund
+                                  </button>
+                                )}
+                              </td>
                             </tr>
                           );
                         })}
@@ -520,6 +552,17 @@ export default function OrderReportBetaPage() {
           )}
         </div>
       </div>
+      {/* CR-165: Refund modal — Trigger B */}
+      {refundOrder && (
+        <CancelOrderModal
+          table={{ label: `Order #${refundOrder.restaurant_order_id || refundOrder.order_id}` }}
+          itemCount={1}
+          reasons={getOrderCancellationReasons()}
+          onClose={() => setRefundOrder(null)}
+          onCancel={handleRefundConfirm}
+          mode="refund"
+        />
+      )}
     </div>
   );
 }

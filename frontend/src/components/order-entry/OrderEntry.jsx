@@ -4,6 +4,7 @@ import { COLORS } from "../../constants";
 import { useMenu, useOrders, useSettings, useRestaurant, useAuth, useTables } from "../../contexts";
 import { useToast } from "../../hooks/use-toast";
 import api from "../../api/axios";
+import { cancelAndRefund } from '../../api/services/razorpayRefundService'; // CR-165
 import { splitRoomOrder } from "../../api/services/roomService"; // CR-163
 import { lookupAddresses, addAddress, lookupCustomer } from "../../api/services/customerService";
 import { API_ENDPOINTS } from "../../api/constants";
@@ -1278,7 +1279,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     navigateAfterOrderAction();
   };
 
-  const handleCancelOrder = async (reason) => {
+  // CR-165: accept (reason, note) — note used only for Razorpay refund; backward-compatible (note='')
+  const handleCancelOrder = async (reason, note = '') => {
     const orderId = effectiveTable?.orderId || placedOrderId;
     if (!orderId) return;
 
@@ -1303,6 +1305,22 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       title: "Order Cancelled",
       description: `Order cancelled for ${table?.label || table?.id}`,
     });
+
+    // CR-165: Trigger A — auto-refund for Razorpay PG orders
+    if (orderData?.razorpayOrderId) {
+      try {
+        await cancelAndRefund(orderId, reason?.reasonText || String(reason), note);
+        toast({ title: "Refund Initiated", description: "Razorpay refund has been initiated." });
+      } catch (err) {
+        console.error('[CR-165] Refund failed after cancel:', err);
+        toast({
+          title: "Refund Failed",
+          description: "Order cancelled but refund could not be initiated. Contact support.",
+          variant: "destructive",
+        });
+      }
+    }
+
     navigateAfterOrderAction();
   };
 
@@ -2750,6 +2768,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           reasons={getOrderCancellationReasons()}
           onClose={() => setShowCancelOrderModal(false)}
           onCancel={handleCancelOrder}
+          mode={orderData?.razorpayOrderId ? 'refund' : 'cancel'}
         />
       )}
       {showCustomItemModal && (

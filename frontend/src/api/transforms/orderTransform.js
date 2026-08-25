@@ -235,6 +235,9 @@ export const fromAPI = {
       paymentStatus: api.payment_status || 'unpaid',
       paymentType: api.payment_type || '',
       paymentMethod: api.payment_method || api.payment_mode || '',
+      // CR-165: Razorpay PG detection — confirmed in running orders schema 2026-08-24
+      razorpayOrderId:       api.razorpay_order_id       || null,
+      razorpayPaymentStatus: api.razorpay_payment_status || null,
 
       // POS2-002 Phase 1 (May-2026): origin axis for downstream phases —
       //   • Phase 2 web-delivery-lock predicate (CollectPaymentPanel.jsx)

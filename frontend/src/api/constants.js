@@ -84,6 +84,8 @@ export const API_ENDPOINTS = {
   BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
   // CR-017: WhatsApp Payment Link — generates Razorpay link + sends WhatsApp/SMS
   PAYMENT_LINK:      '/api/v1/razor-pay/payment-link',
+  // CR-165: Razorpay cancel-and-refund (v2, Bearer auth, no restaurant_id)
+  RAZORPAY_CANCEL_REFUND: '/api/v2/vendoremployee/order/cancel-and-refund-order',
   // CR-163: Split room order items to a new walk-in order
   SPLIT_ROOM_ORDER:  '/api/v2/vendoremployee/order/split-room-order',
   EDIT_ORDER_ITEM:       'TBD',   // CHG-040: Edit placed item qty/notes
