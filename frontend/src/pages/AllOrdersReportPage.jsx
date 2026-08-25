@@ -84,7 +84,8 @@ const TAB_FILTERS = {
     // Include paid orders (f_order_status = 6)
     return o.fOrderStatus === 6;
   },
-  cancelled: (o) => o.paymentMethod === 'Cancel' || o.paymentMethod?.toLowerCase() === 'cancelled',
+  // CR-165 FIX: also catch fOrderStatus===3 — Razorpay-cancelled orders keep paymentMethod='razorpay'
+  cancelled: (o) => o.paymentMethod === 'Cancel' || o.paymentMethod?.toLowerCase() === 'cancelled' || o.fOrderStatus === 3,
   credit: (o) => o.paymentMethod === 'TAB',
   // CR-001 CS-1 + POS2-005: Hold matches paylater payment method OR
   // fOrderStatus === 9 OR fOrderStatus === 8 (POS2-005 reroute — status-8

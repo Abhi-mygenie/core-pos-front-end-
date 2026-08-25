@@ -1352,14 +1352,10 @@ const DashboardPage = () => {
     if (order.razorpayOrderId) {
       try {
         await cancelAndRefund(order.orderId, reason?.reasonText || String(reason), note);
-        toast({ title: "Refund Initiated", description: "Razorpay refund has been initiated." });
+        toast.success("Refund initiated via Razorpay."); // CR-165 FIX: sonner expects string, not {title,desc}
       } catch (err) {
         console.error('[CR-165] Refund failed after cancel:', err);
-        toast({
-          title: "Refund Failed",
-          description: "Order cancelled but refund could not be initiated. Contact support.",
-          variant: "destructive",
-        });
+        toast.error("Order cancelled but refund could not be initiated. Contact support."); // CR-165 FIX
       }
     }
 

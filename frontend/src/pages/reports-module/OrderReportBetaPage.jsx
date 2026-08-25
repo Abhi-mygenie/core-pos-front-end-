@@ -485,9 +485,9 @@ export default function OrderReportBetaPage() {
                               <td className="px-3 py-2 text-right text-zinc-500">{fmtINR(row.service_tax)}</td>
                               <td className="px-3 py-2"><Pill label={pay.label} cls={pay.cls} /></td>
                               <td className="px-3 py-2"><Pill label={status.label} cls={status.cls} /></td>
-                              {/* CR-165: Refund button — only for Razorpay PG orders */}
+                              {/* CR-165: Refund button — only for active (non-cancelled) Razorpay PG orders */}
                               <td className="px-3 py-2">
-                                {row.razorpay_order_id && (
+                                {row.razorpay_order_id && row.f_order_status !== 3 && (
                                   <button
                                     onClick={() => setRefundOrder(row)}
                                     className="px-2 py-1 text-xs font-semibold rounded-lg border transition-colors hover:bg-red-50"
