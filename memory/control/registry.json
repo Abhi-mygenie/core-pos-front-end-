@@ -21167,6 +21167,21 @@
       "classification": "CODE_ERROR",
       "created": "2026-08-22",
       "notes": "getPurchaseReport sends ?from=&to= but endpoint requires ?from_date=&to_date=. Live curl confirmed. 2-line fix in inventoryService.js. getDailyConsumptionReport in same file uses correct from_date/to_date pattern."
+    },
+    {
+      "id": "BUG-348",
+      "title": "Razorpay PG Paid Orders Show Wrong Actions (Unpaid/Change Method instead of Refund Only)",
+      "type": "BUG",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_6_0",
+      "artifact_refs": [
+        "/app/memory/change_requests/BUG-348_PG_PAID_ORDER_WRONG_ACTIONS_INTAKE.md"
+      ],
+      "related": [
+        "CR-165"
+      ]
     }
   ],
   "meta": {
