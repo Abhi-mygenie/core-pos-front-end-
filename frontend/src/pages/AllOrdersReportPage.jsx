@@ -15,7 +15,9 @@ import { calculateSummary } from "../api/transforms/reportTransform";
 import { fromAPI as orderFromAPI } from "../api/transforms/orderTransform";
 import api from "../api/axios";
 import { API_ENDPOINTS } from "../api/constants";
-import { useRestaurant } from "../contexts";
+import { useRestaurant, useSettings } from "../contexts"; // BUG-348: +useSettings for cancellation reasons
+import { cancelAndRefund } from '../api/services/razorpayRefundService'; // BUG-348
+import CancelOrderModal from '../components/order-entry/CancelOrderModal'; // BUG-348
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/use-toast";
 import { getBusinessDayRange, isWithinBusinessDay, isMutationAllowedForSelectedDate } from "../utils/businessDay";
@@ -862,6 +864,21 @@ const AllOrdersReportPage = () => {
     }
   }, [printerAgents, toast]);
 
+  // BUG-348: Razorpay refund from Paid tab
+  const { getOrderCancellationReasons } = useSettings();
+  const [refundOrder, setRefundOrder] = useState(null);
+  const handleRefundConfirm = useCallback(async (reason, note) => {
+    if (!refundOrder) return;
+    try {
+      await cancelAndRefund(refundOrder.id, reason?.reasonText || String(reason), note);
+      toast({ title: 'Refund Initiated', description: 'Razorpay refund has been initiated.' });
+    } catch (err) {
+      toast({ title: 'Refund Failed', description: err?.readableMessage || 'Contact support.', variant: 'destructive' });
+    } finally {
+      setRefundOrder(null);
+    }
+  }, [refundOrder, toast]);
+
   const actionsConfig = (activeTab === 'paid' || activeTab === 'hold')
     ? {
         isWithinMutationWindow,
@@ -876,6 +893,7 @@ const AllOrdersReportPage = () => {
         // a "Print" row action. NO permission gate (owner directive).
         // Hold-tab eligibility branch ignores it.
         onPrintBill: handlePrintBillFromAudit,
+        onRefund: setRefundOrder, // BUG-348: Razorpay refund
         // BUG-042-A (Feb-2026): Hold-tab Collect Bill must surface only
         // primary methods (Cash / Card / UPI). When none of those is
         // configured for the restaurant, the row-level Collect Bill button
@@ -1076,6 +1094,18 @@ const AllOrdersReportPage = () => {
         order={selectedOrder}
         tabId={activeTab}
       />
+
+      {/* BUG-348 / CR-165: Razorpay refund modal */}
+      {refundOrder && (
+        <CancelOrderModal
+          table={{ label: `Order #${refundOrder.orderNumber || refundOrder.id}` }}
+          itemCount={1}
+          reasons={getOrderCancellationReasons()}
+          onClose={() => setRefundOrder(null)}
+          onCancel={handleRefundConfirm}
+          mode="refund"
+        />
+      )}
 
       {/* CR-003 Phase 3.5 — Mark as Unpaid confirmation */}
       <MarkUnpaidConfirmDialog

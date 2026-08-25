@@ -344,7 +344,8 @@ const renderActionsCell = (order, tabId, actionsConfig) => {
     const pendingChangeMethod = !!actionsConfig.pendingChangeMethodIds?.has?.(order.id);
     return (
       <div className="flex items-center justify-end gap-1.5">
-        {canChangeMethod && (
+        {/* BUG-348: suppress Change Method for Razorpay PG orders */}
+        {canChangeMethod && !order.razorpayOrderId && (
           <PaymentMethodPicker
             order={order}
             currentMethod={currentMethod}
@@ -354,7 +355,8 @@ const renderActionsCell = (order, tabId, actionsConfig) => {
             onConfirm={(newMethod) => onChangeMethod?.(order, newMethod)}
           />
         )}
-        {canMarkUnpaid && (
+        {/* BUG-348: suppress Mark Unpaid for Razorpay PG orders */}
+        {canMarkUnpaid && !order.razorpayOrderId && (
           <button
             type="button"
             onClick={(e) => {
@@ -396,6 +398,19 @@ const renderActionsCell = (order, tabId, actionsConfig) => {
           <Printer className="w-3.5 h-3.5" />
           <span>Print</span>
         </button>
+        {/* BUG-348 / CR-165: Refund button — Razorpay PG paid orders only */}
+        {actionsConfig.onRefund && order.razorpayOrderId && (
+          <button
+            type="button"
+            onClick={(e) => { stop(e); actionsConfig.onRefund(order); }}
+            title="Initiate Razorpay refund"
+            data-testid={`row-action-refund-${order.id}`}
+            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-sm border transition-colors border-red-300 text-red-700 hover:bg-red-50 cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Refund</span>
+          </button>
+        )}
       </div>
     );
   }
