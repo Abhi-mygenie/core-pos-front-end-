@@ -1,0 +1,27 @@
+{
+  "evidence": {
+    "G1_dashboard_toast": {
+      "file": "src/pages/DashboardPage.jsx",
+      "line_36": "import { toast } from 'sonner'; // BUG-254",
+      "bad_call_1355": "toast({ title: 'Refund Initiated', description: '...' })",
+      "bad_call_1358": "toast({ title: 'Refund Failed', description: '...', variant: 'destructive' })",
+      "correct_existing_calls": ["toast.error('Failed to accept order')", "toast.error('Failed to reject order')"],
+      "other_files_use_useToast": {
+        "OrderEntry.jsx": "import { useToast } from '../../hooks/use-toast'",
+        "AllOrdersReportPage.jsx": "import { useToast } from '../hooks/use-toast'"
+      }
+    },
+    "G2_cancelled_filter": {
+      "file": "src/pages/AllOrdersReportPage.jsx",
+      "line_87": "cancelled: (o) => o.paymentMethod === 'Cancel' || o.paymentMethod?.toLowerCase() === 'cancelled'",
+      "issue": "Only checks paymentMethod string. Razorpay-cancelled orders have paymentMethod='razorpay' + fOrderStatus=3. No fOrderStatus===3 check.",
+      "paid_filter_uses_fOrderStatus": "return o.fOrderStatus === 6 — confirms field is available"
+    },
+    "G3_refund_button_no_guard": {
+      "file": "src/pages/reports-module/OrderReportBetaPage.jsx",
+      "line_490": "{row.razorpay_order_id && (<button>Refund</button>)}",
+      "issue": "No status guard. Cancelled Razorpay orders still have razorpay_order_id non-null. Button shows on cancelled rows.",
+      "cancelled_filter": "cancelled: (r) => pm === 'cancel' || pm === 'cancelled' — same string-only issue"
+    }
+  }
+}
