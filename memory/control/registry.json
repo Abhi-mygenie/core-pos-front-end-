@@ -20398,7 +20398,7 @@
       "area": "Room Module \u2192 Active Room Card / Order Entry",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE \u2014 Blocked on backend: move room_payment_summary inside room_info. Gate 3 ready once backend confirms nested structure.",
+      "status": "GATE 2 COMPLETE \u2014 All blockers resolved. Backend schema confirmed. Ready for Gate 4 GO \u2192 Gate 3.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",

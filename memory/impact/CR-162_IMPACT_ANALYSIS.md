@@ -15,7 +15,7 @@
 | Conflict Pre-Check | LOW — no active CR touches roomService.js or roomInfo fields |
 | Risk | HIGH — direct payment recording, affects checkout totals |
 | Blast Radius | MEDIUM (4–5 files, ~60–90 lines) |
-| Gate 2 Status | **COMPLETE — BLOCKED on backend restructure (see §OQ-1)** |
+| Gate 2 Status | **COMPLETE — all blockers resolved. Ready for Gate 4 GO → Gate 3** |
 
 ---
 
@@ -102,35 +102,43 @@ order = {
 
 ---
 
-## 3. OQ-1 — Structure Decision: WAITING ON BACKEND
+## 3. OQ-1 — Structure Decision: RESOLVED ✅ (2026-08-25)
 
-**Decision made 2026-08-25:** FE team requested backend to move `room_payment_summary` inside `room_info` instead of top level.
+**Backend confirmed:** `room_payment_summary` is now nested **inside `room_info`**.
+**`enabled` flag removed** — presence of `room_payment_summary` key is the gate.
+**Non-room orders:** `room_info` is `null` → no `room_payment_summary` at all. ✅
 
-**Reason:**
-- Non-room orders carry empty `room_payment_summary` block (wasted data on all orders)
-- `room_info: null` for non-room orders is already the null-check gate — no `enabled` flag needed
-- FE transform cleaner: one block, one null check
-- Logical grouping: all room-booking data in one place
-
-**Requested structure (pending backend change):**
+**Confirmed schema in running orders (`GET /api/v1/vendoremployee/pos/employee-orders-list`):**
 ```json
-order = {
-  "room_info": {
-    "advance_payment": "1000.00",
-    "balance_payment": "4000.00",
-    "room_price": "5000.00",
-    "room_payment_summary": {          ← NESTED inside room_info
-      "remaining_room_balance": 2993,
-      "ledger_paid_amount": 2007,
-      "legacy_advance_payment": 1000,
-      "payments": [...]
-    }
+room_info: {
+  "room_price": "5000.00",
+  "advance_payment": "1000.00",
+  "balance_payment": "4000.00",          ← static check-in snapshot
+  "room_payment_summary": {              ← NESTED ✅ — only present for room orders
+    "room_order_id": 1232082,
+    "room_price": 5000,
+    "legacy_advance_payment": 1000,
+    "ledger_paid_amount": 2007,
+    "total_paid_amount": 2007,
+    "remaining_room_balance": 2993,      ← LIVE SOURCE OF TRUTH
+    "payments": [
+      { "id": 10, "payment_amount": 1000, "payment_mode": "cash", "payment_type": "advance", "paid_at": "..." },
+      { "id": 11, "payment_amount": 500,  "payment_mode": "cash", "payment_type": "advance", "paid_at": "..." }
+    ]
   }
-  // non-room orders: room_info = null → no room_payment_summary at all
 }
 ```
 
-**Gate 3 is blocked on this structural change.** Once backend confirms nested format, implementation plan can be written.
+**Validation checks (all passed 2026-08-25):**
+
+| Check | Result |
+|---|---|
+| `room_payment_summary` nested in `room_info` | ✅ |
+| `room_payment_summary` removed from top level | ✅ (0 orders with top-level key) |
+| `enabled` flag removed | ✅ |
+| Non-room orders: `room_info` is null (no summary block) | ✅ (12/12 non-room orders have `room_info: null`) |
+| `remaining_room_balance` reflects live payments | ✅ 2993 (5000 - 1000 advance - 1007 mid-stay) |
+| `payments[]` history complete | ✅ 11 payments recorded |
 
 ---
 
@@ -176,9 +184,9 @@ Dashboard room card (r2 — ₹3,000 outstanding)
 
 | OQ | Question | Status |
 |---|---|---|
-| OQ-1 | Move `room_payment_summary` inside `room_info`? | ⏳ **WAITING ON BACKEND** — requested 2026-08-25 |
-| OQ-2 | Does `room-payment` fire `update-order` socket? | ❓ Not tested. If yes → room card auto-updates multi-device. If no → FE uses response data for optimistic update |
+| OQ-1 | Move `room_payment_summary` inside `room_info`? | ✅ **DONE** — confirmed nested 2026-08-25 |
+| OQ-2 | Does `room-payment` fire `update-order` socket? | ❓ Not tested — FE will use response data for optimistic update |
 | OQ-3 | Print receipt after recording payment? | ❓ Ask owner |
-| OQ-4 | Where else to add [Record Payment] trigger: room card only, or also inside OrderEntry room view? | ❓ Ask owner |
+| OQ-4 | Where to add [Record Payment] button: room card only, or also inside OrderEntry? | ❓ Ask owner |
 
-**Gate 3 blocked on OQ-1 resolution.**
+**Gate 3 ready. All API blockers resolved.**
