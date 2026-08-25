@@ -20398,12 +20398,13 @@
       "area": "Room Module \u2192 Active Room Card / Order Entry",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE \u2014 All blockers resolved. Backend schema confirmed. Ready for Gate 4 GO \u2192 Gate 3.",
+      "status": "GATE 2 CLOSED \u2014 All decisions locked. Awaiting Gate 4 GO \u2192 Gate 3.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
       "created": "2026-08-17",
       "artifact_refs": [
+        "/app/memory/change_requests/CR-162_ROOM_MID_STAY_PARTIAL_PAYMENT_INTAKE.md",
         "/app/memory/impact/CR-162_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
