@@ -20398,13 +20398,13 @@
       "area": "Room Module \u2192 Active Room Card / Order Entry",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE",
+      "status": "GATE 2 COMPLETE \u2014 Blocked on backend: move room_payment_summary inside room_info. Gate 3 ready once backend confirms nested structure.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
       "created": "2026-08-17",
       "artifact_refs": [
-        "/app/memory/change_requests/CR-162_ROOM_MID_STAY_PARTIAL_PAYMENT_INTAKE.md"
+        "/app/memory/impact/CR-162_IMPACT_ANALYSIS.md"
       ],
       "sprint": "POS 5.x",
       "duplicate_check": "DISTINCT",
@@ -20414,7 +20414,8 @@
       "backend_brief_needed": true,
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
-      "last_updated": "2026-08-17"
+      "last_updated": "2026-08-17",
+      "sprint_key": "pos_6_0"
     },
     {
       "id": "CR-163",

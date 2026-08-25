@@ -61,7 +61,16 @@ Authorization: Bearer <token>
 ---
 
 ### CR-162 — Mid-Stay Partial Payment for Room Orders
-**Status:** INTAKE complete. Blocked on backend endpoint confirmation for `receive_balance` write.
+**Status:** GATE 2 COMPLETE — Waiting on backend to nest `room_payment_summary` inside `room_info`. Gate 3 ready immediately after.
+
+**Validated APIs:**
+- `POST /api/v2/vendoremployee/pos/room-payment` — works ✅ (cash/upi/card/online/razorpay/neft)
+- `room_payment_summary` now in running orders ✅ — but at top level, not inside `room_info`
+- `balance_payment` in `room_info` is static (check-in snapshot). Live balance = `remaining_room_balance`
+
+**Decision:** Asked backend to move `room_payment_summary` inside `room_info`. Waiting confirmation.
+
+**Impact Analysis:** `/app/memory/impact/CR-162_IMPACT_ANALYSIS.md`
 
 ---
 
