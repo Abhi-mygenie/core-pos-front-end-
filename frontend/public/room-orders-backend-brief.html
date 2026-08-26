@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Backend Brief — Room Orders Aggregation Endpoint</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6;padding:0 0 60px}
+
+  /* ── Header ── */
+  .hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#1e40af 100%);color:#fff;padding:48px 64px;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;right:-80px;top:-80px;width:320px;height:320px;background:rgba(255,255,255,0.04);border-radius:50%}
+  .hero-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(96,165,250,.2);color:#93c5fd;border:1px solid rgba(96,165,250,.3);padding:4px 12px;border-radius:20px;margin-bottom:16px}
+  .hero h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+  .hero p{font-size:15px;color:#94a3b8;max-width:680px}
+  .hero-meta{display:flex;gap:32px;margin-top:24px;flex-wrap:wrap}
+  .hero-meta span{font-size:12px;color:#64748b}
+  .hero-meta strong{color:#e2e8f0;font-weight:600}
+
+  /* ── Layout ── */
+  .container{max-width:1100px;margin:0 auto;padding:0 32px}
+  .section{margin-top:40px}
+  .section-title{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:#e2e8f0}
+  h2{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:12px}
+  h3{font-size:14px;font-weight:700;color:#334155;margin:20px 0 8px}
+
+  /* ── Alert ── */
+  .alert{background:#fef3c7;border:1px solid #fcd34d;border-left:4px solid #f59e0b;border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:#92400e}
+  .alert strong{color:#78350f}
+
+  /* ── Cards ── */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px}
+  .card-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px}
+  .card-value{font-size:22px;font-weight:800;color:#0f172a}
+  .card-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+  .card.green{border-color:#86efac;background:#f0fdf4}.card.green .card-value{color:#16a34a}
+  .card.red{border-color:#fca5a5;background:#fef2f2}.card.red .card-value{color:#dc2626}
+  .card.blue{border-color:#93c5fd;background:#eff6ff}.card.blue .card-value{color:#2563eb}
+  .card.amber{border-color:#fcd34d;background:#fffbeb}.card.amber .card-value{color:#d97706}
+
+  /* ── Tables ── */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+  th{background:#f8fafc;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;padding:10px 14px;text-align:left;border-bottom:1px solid #e2e8f0}
+  td{padding:10px 14px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f8fafc}
+  td code{font-family:'JetBrains Mono',monospace;font-size:11px;background:#f1f5f9;padding:2px 6px;border-radius:4px;color:#0f172a}
+  td .req{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+  .req.yes{background:#dcfce7;color:#16a34a}
+  .req.no{background:#f1f5f9;color:#64748b}
+
+  /* ── Code blocks ── */
+  .code-block{background:#0f172a;color:#e2e8f0;border-radius:12px;overflow:hidden;margin:12px 0}
+  .code-header{background:#1e293b;padding:8px 16px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#64748b;display:flex;align-items:center;justify-content:space-between}
+  .code-header .lang{color:#38bdf8}
+  pre{padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;margin:0}
+  .k{color:#f472b6}  /* keyword */
+  .s{color:#86efac}  /* string */
+  .n{color:#7dd3fc}  /* number/value */
+  .c{color:#475569}  /* comment */
+
+  /* ── Comparison ── */
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .compare-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+  .compare-box.bad{border-color:#fca5a5;background:#fff5f5}
+  .compare-box.good{border-color:#86efac;background:#f0fdf4}
+  .compare-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+  .compare-box.bad .compare-title{color:#dc2626}
+  .compare-box.good .compare-title{color:#16a34a}
+  .compare-item{font-size:13px;color:#475569;padding:4px 0;display:flex;align-items:flex-start;gap:8px}
+  .compare-item::before{content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:6px}
+  .compare-box.bad .compare-item::before{background:#dc2626}
+  .compare-box.good .compare-item::before{background:#16a34a}
+
+  /* ── Formula pills ── */
+  .formula{display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0f172a;margin:4px 0}
+  .formula .arrow{color:#94a3b8}
+
+  /* ── Badge ── */
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase}
+  .badge.p1{background:#fee2e2;color:#dc2626}
+  .badge.fe{background:#dbeafe;color:#2563eb}
+  .badge.be{background:#dcfce7;color:#16a34a}
+  .badge.new{background:#ede9fe;color:#7c3aed}
+
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .hero{padding:32px 20px}
+    .container{padding:0 16px}
+    .compare-grid{grid-template-columns:1fr}
+    .card-grid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-tag">Backend Engineering Brief</div>
+  <h1>Room Orders Aggregation Endpoint</h1>
+  <p>Dedicated server-side aggregated endpoint for the Room Orders Report. Replaces front-end filtering of the generic <code style="background:rgba(255,255,255,.1);padding:2px 7px;border-radius:4px;font-family:monospace">order-logs-report</code>.</p>
+  <div class="hero-meta">
+    <span><strong>Date</strong> 2026-08-26</span>
+    <span><strong>Priority</strong> P1</span>
+    <span><strong>Feature</strong> Room Report — Aggregation Migration</span>
+    <span><strong>Requested by</strong> Frontend Team</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ── WHY ── -->
+<div class="section">
+  <div class="section-title">Problem Statement</div>
+  <div class="alert">
+    <strong>Current approach is inefficient:</strong> The Room Orders Report fetches the generic <code>order-logs-report</code> (returns ALL orders for a date range) and performs all filtering, grouping, and financial computation in the browser (JavaScript). This creates large payloads, slow load times, and no server-side pagination.
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-box bad">
+      <div class="compare-title">Current (Front-end Filtering)</div>
+      <div class="compare-item">Downloads ALL orders for date range (~500KB–2MB)</div>
+      <div class="compare-item">FE filters <code>order_in = 'RM'</code> from full list</div>
+      <div class="compare-item">FE groups SRM associated orders by <code>parent_order_id</code></div>
+      <div class="compare-item">FE computes food totals, folio, outstanding per row</div>
+      <div class="compare-item">FE computes KPI aggregates (sum, count)</div>
+      <div class="compare-item">No server-side pagination</div>
+      <div class="compare-item">Slow on large date ranges / busy restaurants</div>
+    </div>
+    <div class="compare-box good">
+      <div class="compare-title">New (Backend Aggregation)</div>
+      <div class="compare-item">Returns rooms only (~20–50KB)</div>
+      <div class="compare-item">SQL WHERE <code>order_in = 'RM'</code></div>
+      <div class="compare-item">SQL JOIN on <code>parent_order_id</code></div>
+      <div class="compare-item">Pre-computed financials — FE just renders</div>
+      <div class="compare-item">Pre-computed summary block in response</div>
+      <div class="compare-item">LIMIT / OFFSET pagination</div>
+      <div class="compare-item">Fast even for 90-day ranges</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ENDPOINT ── -->
+<div class="section">
+  <div class="section-title">Endpoint</div>
+  <div class="code-block">
+    <div class="code-header"><span>HTTP</span><span class="lang">POST</span></div>
+    <pre>/api/v2/vendoremployee/report/room-orders-report
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json</pre>
+  </div>
+</div>
+
+<!-- ── REQUEST ── -->
+<div class="section">
+  <div class="section-title">Request Payload</div>
+  <div class="code-block">
+    <div class="code-header"><span>Request Body</span><span class="lang">JSON</span></div>
+    <pre>{
+  <span class="s">"from_date"</span>:   <span class="s">"2026-08-01"</span>,     <span class="c">// YYYY-MM-DD — required</span>
+  <span class="s">"to_date"</span>:     <span class="s">"2026-08-26"</span>,     <span class="c">// YYYY-MM-DD — required</span>
+  <span class="s">"status"</span>:      <span class="s">"all"</span>,            <span class="c">// all | paid | unpaid | in_house</span>
+  <span class="s">"sort_by"</span>:     <span class="s">"checkin_date"</span>,   <span class="c">// checkin_date | checkout_date | total | outstanding</span>
+  <span class="s">"sort_order"</span>:  <span class="s">"desc"</span>,           <span class="c">// asc | desc</span>
+  <span class="s">"page"</span>:        <span class="n">1</span>,                <span class="c">// default 1</span>
+  <span class="s">"limit"</span>:       <span class="n">50</span>               <span class="c">// 10–200, default 50</span>
+}</pre>
+  </div>
+
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Values / Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>from_date</code></td><td>string</td><td><span class="req yes">YES</span></td><td>Start date YYYY-MM-DD</td></tr>
+      <tr><td><code>to_date</code></td><td>string</td><td><span class="req yes">YES</span></td><td>End date YYYY-MM-DD. Same as from_date = today only</td></tr>
+      <tr><td><code>status</code></td><td>string</td><td><span class="req no">NO</span></td><td><code>all</code> / <code>paid</code> / <code>unpaid</code> / <code>in_house</code>. Default: <code>all</code><br/><code>in_house</code> = checked in, not yet checked out (f_order_status ≠ 6 AND now BETWEEN checkin AND checkout)</td></tr>
+      <tr><td><code>sort_by</code></td><td>string</td><td><span class="req no">NO</span></td><td><code>checkin_date</code> / <code>checkout_date</code> / <code>total</code> / <code>outstanding</code>. Default: <code>checkin_date</code></td></tr>
+      <tr><td><code>sort_order</code></td><td>string</td><td><span class="req no">NO</span></td><td><code>asc</code> / <code>desc</code>. Default: <code>desc</code></td></tr>
+      <tr><td><code>page</code></td><td>int</td><td><span class="req no">NO</span></td><td>≥1. Default: 1</td></tr>
+      <tr><td><code>limit</code></td><td>int</td><td><span class="req no">NO</span></td><td>10–200. Default: 50</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── RESPONSE ── -->
+<div class="section">
+  <div class="section-title">Response Structure</div>
+
+  <div class="code-block">
+    <div class="code-header"><span>Response Body</span><span class="lang">JSON</span></div>
+    <pre>{
+  <span class="s">"success"</span>: <span class="k">true</span>,
+  <span class="s">"restaurant_id"</span>: <span class="n">478</span>,
+  <span class="s">"date_range"</span>: { <span class="s">"from"</span>: <span class="s">"2026-08-01"</span>, <span class="s">"to"</span>: <span class="s">"2026-08-26"</span> },
+
+  <span class="c">// ── Pre-computed aggregate totals ──────────────────────────────────</span>
+  <span class="s">"summary"</span>: {
+    <span class="s">"total_rooms"</span>:            <span class="n">12</span>,
+    <span class="s">"total_room_revenue"</span>:     <span class="n">85000</span>,    <span class="c">// Σ room_price</span>
+    <span class="s">"total_food_revenue"</span>:     <span class="n">24600</span>,    <span class="c">// Σ food_total (order_amount + SRM)</span>
+    <span class="s">"total_folio"</span>:            <span class="n">109600</span>,   <span class="c">// Σ (room_price + food_total)</span>
+    <span class="s">"total_collected"</span>:        <span class="n">67000</span>,    <span class="c">// Σ ledger_paid_amount</span>
+    <span class="s">"total_outstanding"</span>:      <span class="n">42600</span>,    <span class="c">// Σ outstanding per row</span>
+    <span class="s">"total_advance"</span>:          <span class="n">30000</span>,    <span class="c">// Σ advance_payment (check-in only)</span>
+    <span class="s">"total_mid_stay_payments"</span>: <span class="n">12000</span>,    <span class="c">// Σ ledger_paid - Σ advance</span>
+    <span class="s">"paid_count"</span>:             <span class="n">7</span>,        <span class="c">// f_order_status = 6</span>
+    <span class="s">"unpaid_count"</span>:           <span class="n">5</span>         <span class="c">// f_order_status ≠ 6</span>
+  },
+
+  <span class="c">// ── Pagination ──────────────────────────────────────────────────────</span>
+  <span class="s">"pagination"</span>: {
+    <span class="s">"page"</span>: <span class="n">1</span>, <span class="s">"limit"</span>: <span class="n">50</span>, <span class="s">"total_records"</span>: <span class="n">12</span>, <span class="s">"total_pages"</span>: <span class="n">1</span>
+  },
+
+  <span class="c">// ── Per-room rows ────────────────────────────────────────────────────</span>
+  <span class="s">"rooms"</span>: [
+    {
+      <span class="s">"order_id"</span>:             <span class="n">1232082</span>,
+      <span class="s">"restaurant_order_id"</span>:  <span class="s">"002403"</span>,
+      <span class="s">"room_id"</span>:              <span class="n">6182</span>,
+      <span class="s">"room_no"</span>:              <span class="s">"101"</span>,         <span class="c">// human-readable room label</span>
+      <span class="s">"guest_name"</span>:           <span class="s">"Arjun Rawal"</span>,
+      <span class="s">"guest_phone"</span>:          <span class="s">"9035133228"</span>,
+      <span class="s">"booking_type"</span>:         <span class="s">"WalkIn"</span>,
+      <span class="s">"checkin_date"</span>:         <span class="s">"2026-08-24 16:00:00"</span>,
+      <span class="s">"checkout_date"</span>:        <span class="s">"2026-08-25 11:00:00"</span>,
+      <span class="s">"nights"</span>:               <span class="n">1</span>,
+      <span class="s">"f_order_status"</span>:       <span class="n">1</span>,
+      <span class="s">"is_settled"</span>:           <span class="k">false</span>,
+
+      <span class="s">"financials"</span>: {
+        <span class="s">"room_price"</span>:           <span class="n">5000</span>,
+        <span class="s">"advance_payment"</span>:      <span class="n">1000</span>,
+        <span class="s">"food_total"</span>:           <span class="n">2007</span>,   <span class="c">// order_amount + Σ SRM.order_amount</span>
+        <span class="s">"total_folio"</span>:          <span class="n">7007</span>,   <span class="c">// room_price + food_total</span>
+        <span class="s">"total_collected"</span>:      <span class="n">3007</span>,   <span class="c">// ledger_paid_amount</span>
+        <span class="s">"outstanding"</span>:          <span class="n">3993</span>,   <span class="c">// total_folio - total_collected</span>
+        <span class="s">"room_payment_summary"</span>: {
+          <span class="s">"ledger_paid_amount"</span>:    <span class="n">3007</span>,
+          <span class="s">"remaining_room_balance"</span>: <span class="n">3993</span>,
+          <span class="s">"payments"</span>: [
+            { <span class="s">"id"</span>: <span class="n">10</span>, <span class="s">"payment_amount"</span>: <span class="n">1000</span>, <span class="s">"payment_mode"</span>: <span class="s">"cash"</span>, <span class="s">"payment_type"</span>: <span class="s">"advance"</span>, <span class="s">"paid_at"</span>: <span class="s">"2026-08-24 16:00:34"</span> },
+            { <span class="s">"id"</span>: <span class="n">11</span>, <span class="s">"payment_amount"</span>: <span class="n">500</span>,  <span class="s">"payment_mode"</span>: <span class="s">"upi"</span>,  <span class="s">"payment_type"</span>: <span class="s">"advance"</span>, <span class="s">"paid_at"</span>: <span class="s">"2026-08-25 09:20:54"</span> }
+          ]
+        }
+      },
+
+      <span class="s">"food_orders"</span>: [          <span class="c">// associated SRM orders</span>
+        {
+          <span class="s">"order_id"</span>:              <span class="n">1232083</span>,
+          <span class="s">"restaurant_order_id"</span>:   <span class="s">"002404"</span>,
+          <span class="s">"order_amount"</span>:          <span class="n">1200</span>,
+          <span class="s">"order_in"</span>:              <span class="s">"SRM"</span>,
+          <span class="s">"created_at"</span>:            <span class="s">"2026-08-24 18:30:00"</span>
+        }
+      ]
+    }
+  ]
+}</pre>
+  </div>
+</div>
+
+<!-- ── FINANCIALS ── -->
+<div class="section">
+  <div class="section-title">Financial Formulas</div>
+  <table>
+    <thead><tr><th>Field</th><th>Formula</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>food_total</code></td><td><code>orders.order_amount + Σ SRM.order_amount</code></td><td>All food ordered during stay including transferred sub-orders</td></tr>
+      <tr><td><code>total_folio</code></td><td><code>room_price + food_total</code></td><td>Grand total guest owes for entire stay</td></tr>
+      <tr><td><code>total_collected</code></td><td><code>room_payment_summary.ledger_paid_amount</code></td><td>Use the existing ledger — already correct</td></tr>
+      <tr><td><code>outstanding</code></td><td><code>MAX(0, total_folio − total_collected)</code></td><td>Can never be negative</td></tr>
+      <tr><td><code>nights</code></td><td><code>CEIL(TIMESTAMPDIFF(SECOND, checkin, checkout) / 86400)</code></td><td>Minimum 1 night</td></tr>
+      <tr><td><code>is_settled</code></td><td><code>f_order_status = 6</code></td><td>True = fully paid and checked out</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── FILTERING ── -->
+<div class="section">
+  <div class="section-title">Server-Side Filtering Logic</div>
+  <div class="code-block">
+    <div class="code-header"><span>SQL (pseudo-code)</span><span class="lang">SQL</span></div>
+    <pre><span class="c">-- Base filter (always applied)</span>
+<span class="k">WHERE</span> orders.order_in = <span class="s">'RM'</span>
+  <span class="k">AND</span> orders.restaurant_id = :restaurant_id
+  <span class="k">AND</span> orders.order_status <span class="k">NOT IN</span> (<span class="s">'cancelled'</span>, <span class="s">'merged'</span>)
+  <span class="k">AND</span> orders.created_at <span class="k">BETWEEN</span> :from_date <span class="s">' 00:00:00'</span> <span class="k">AND</span> :to_date <span class="s">' 23:59:59'</span>
+
+<span class="c">-- Status filter</span>
+<span class="k">IF</span> status = <span class="s">'paid'</span>:     <span class="k">AND</span> orders.f_order_status = <span class="n">6</span>
+<span class="k">IF</span> status = <span class="s">'unpaid'</span>:   <span class="k">AND</span> orders.f_order_status != <span class="n">6</span>
+<span class="k">IF</span> status = <span class="s">'in_house'</span>: <span class="k">AND</span> orders.f_order_status != <span class="n">6</span>
+                          <span class="k">AND</span> NOW() <span class="k">BETWEEN</span> room_info.checkin_date <span class="k">AND</span> room_info.checkout_date</pre>
+  </div>
+</div>
+
+<!-- ── SUMMARY FIELDS ── -->
+<div class="section">
+  <div class="section-title">Summary Block Aggregations</div>
+  <div class="card-grid">
+    <div class="card blue"><div class="card-label">total_rooms</div><div class="card-value" style="font-size:16px">COUNT(RM orders)</div><div class="card-sub">After all filters applied</div></div>
+    <div class="card green"><div class="card-label">total_room_revenue</div><div class="card-value" style="font-size:16px">Σ room_price</div><div class="card-sub">Room rent only</div></div>
+    <div class="card blue"><div class="card-label">total_food_revenue</div><div class="card-value" style="font-size:16px">Σ food_total</div><div class="card-sub">incl. SRM orders</div></div>
+    <div class="card"><div class="card-label">total_folio</div><div class="card-value" style="font-size:16px">Σ (rent + food)</div><div class="card-sub">Grand total all rooms</div></div>
+    <div class="card green"><div class="card-label">total_collected</div><div class="card-value" style="font-size:16px">Σ ledger_paid</div><div class="card-sub">All payments received</div></div>
+    <div class="card red"><div class="card-label">total_outstanding</div><div class="card-value" style="font-size:16px">Σ outstanding</div><div class="card-sub">Still to collect</div></div>
+    <div class="card amber"><div class="card-label">total_advance</div><div class="card-value" style="font-size:16px">Σ advance</div><div class="card-sub">Check-in payments only</div></div>
+    <div class="card amber"><div class="card-label">total_mid_stay</div><div class="card-value" style="font-size:16px">Σ ledger - Σ advance</div><div class="card-sub">CR-162 mid-stay payments</div></div>
+  </div>
+</div>
+
+<!-- ── GUEST NAME ── -->
+<div class="section">
+  <div class="section-title">Guest Name Resolution Priority</div>
+  <div class="code-block">
+    <div class="code-header"><span>Priority Order</span><span class="lang">Logic</span></div>
+    <pre><span class="n">1.</span> room_info.name3          <span class="c">// registered guest name from check-in form</span>
+<span class="n">2.</span> orders.user_name          <span class="c">// CRM-linked customer name</span>
+<span class="n">3.</span> room_info.booking_type    <span class="c">// fallback label e.g. "WalkIn" → "Walk-in"</span>
+<span class="n">4.</span> "Guest"                   <span class="c">// absolute fallback</span></pre>
+  </div>
+</div>
+
+<!-- ── NOTES ── -->
+<div class="section">
+  <div class="section-title">Implementation Notes</div>
+  <table>
+    <thead><tr><th>Note</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><strong>room_payment_summary</strong></td><td>Reuse the exact same structure already shipping in the running orders API. No need to redesign — just include it per room row.</td></tr>
+      <tr><td><strong>SRM orders</strong></td><td>Associated sub-orders have <code>order_in = 'SRM'</code> and <code>parent_order_id = RM.order_id</code>. JOIN and SUM their <code>order_amount</code> into <code>food_total</code>.</td></tr>
+      <tr><td><strong>room_no</strong></td><td>Should be the human-readable label (e.g. "101") from the rooms table, not the internal <code>room_id</code>.</td></tr>
+      <tr><td><strong>Cancelled/merged</strong></td><td>Exclude <code>order_status IN ('cancelled', 'merged')</code> — these are current "anomalies" the FE drops silently.</td></tr>
+      <tr><td><strong>nights</strong></td><td><code>CEIL(TIMESTAMPDIFF(SECOND, checkin_date, checkout_date) / 86400)</code> — minimum 1.</td></tr>
+      <tr><td><strong>Summary is always over full result set</strong></td><td>Summary totals should reflect ALL rooms matching the filter (not just the current page).</td></tr>
+      <tr><td><strong>Auth</strong></td><td>Bearer token. <code>restaurant_id</code> derived from token — not sent in payload.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── WHAT CHANGES IN FE ── -->
+<div class="section">
+  <div class="section-title">Frontend Changes (after backend ships)</div>
+  <table>
+    <thead><tr><th>File</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td><code>api/constants.js</code></td><td>Add <code>ROOM_ORDERS_REPORT: '/api/v2/vendoremployee/report/room-orders-report'</code></td></tr>
+      <tr><td><code>api/services/roomOrdersService.js</code></td><td>Replace <code>order-logs-report</code> call with new endpoint. Remove all FE-side filtering/grouping/computation (~120 lines removed).</td></tr>
+      <tr><td><code>pages/reports-module/RoomOrdersMockup.jsx</code></td><td>Remove KPI computation (use <code>response.summary</code> directly). Remove FE filtering (use <code>status</code> param). Wire pagination.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="height:1px;background:#e2e8f0;margin-top:48px"></div>
+<div style="text-align:center;padding:24px;font-size:12px;color:#94a3b8">
+  Backend Brief · Room Orders Aggregation · MyGenie POS · 2026-08-26
+</div>
+
+</div>
+</body>
+</html>
