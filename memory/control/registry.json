@@ -21589,6 +21589,21 @@
       "sprint_key": "pos_5_2",
       "gate": 3,
       "note": "5-phase execution plan (plans/CR-353_EXECUTION_PLAN_PHASED.md) approved by owner 2026-09-01, no merges/splits requested. BUG-BE-01 (local-reservations 500\u2192200) and BUG-BE-03 (direct-reservation 500\u2192201) fixed by backend and AGENT-VERIFIED live on preprod 2026-09-01. BUG-BE-02 (OTA check-in) + BUG-BE-04 (Direct check-in, new) backend-claimed-fixed, NOT yet agent-verified \u2014 re-probe at Phase 2 QA. Next: register CR-353-P1..P5 as child items, write CR-353-P1_IMPLEMENTATION_PLAN.md."
+    },
+    {
+      "id": "CR-353-P1",
+      "type": "CR",
+      "title": "PMS Phase 1 \u2014 Foundation + Channel Manager Core + In-House Guests",
+      "status": "GATE 2 \u2014 Impact Analysis COMPLETE (2026-09-01)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_pms_1",
+      "parent_id": "CR-353",
+      "gate": 2,
+      "artifact_refs": {
+        "impact_analysis": "memory/impact/CR-353-P1_IMPACT_ANALYSIS.md"
+      },
+      "notes": "Child of CR-353. Phase 1 of 5-phase phased execution plan (APPROVED 2026-09-01). Awaiting OD-P1-01 (sidebar featureGate) + owner Gate 3 GO before implementation plan."
     }
   ],
   "meta": {
