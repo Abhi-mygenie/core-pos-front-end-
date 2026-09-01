@@ -21594,14 +21594,15 @@
       "id": "CR-353-P1",
       "type": "CR",
       "title": "PMS Phase 1 \u2014 Foundation + Channel Manager Core + In-House Guests",
-      "status": "GATE 2 \u2014 COMPLETE, ALL DECISIONS CONFIRMED (2026-09-01)",
+      "status": "GATE 3 \u2014 IMPLEMENTATION PLAN COMPLETE (2026-09-01). Awaiting Gate 4 GO.",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_1",
       "parent_id": "CR-353",
-      "gate": 2,
+      "gate": 3,
       "artifact_refs": {
-        "impact_analysis": "memory/impact/CR-353-P1_IMPACT_ANALYSIS.md"
+        "impact_analysis": "memory/impact/CR-353-P1_IMPACT_ANALYSIS.md",
+        "implementation_plan": "memory/plans/CR-353-P1_IMPLEMENTATION_PLAN.md"
       },
       "notes": "Child of CR-353. Phase 1 of 5-phase phased execution plan (APPROVED 2026-09-01). OD-P1-01 CONFIRMED: features.room gate for sidebar section (hotels only; separate dedicated key to be added by owner later \u2014 1-line swap when ready). Gate 2 fully closed. Gate 3 (Implementation Plan) UNBLOCKED \u2014 awaiting owner GO."
     }
