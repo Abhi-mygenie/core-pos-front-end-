@@ -22,26 +22,18 @@
 
 ## Current State
 
-- `CR-353-P1`: **Gate 2 COMPLETE**. Impact Analysis at `memory/impact/CR-353-P1_IMPACT_ANALYSIS.md`.
-- **OD-P1-01 is OPEN:** Owner must confirm PMS sidebar section visibility gate before Gate 3 plan is written. Options: (A) gate on `features.room` [recommended], (B) always visible. This is the only blocker to Gate 3.
+- `CR-353-P1`: **Gate 2 FULLY COMPLETE. All decisions confirmed.**
+- **OD-P1-01 CONFIRMED 2026-09-01:** Option A — gate on `features.room`. Owner: *"Yes this will be only for hotels for now — a separate key will be provided later."* Implementation: `if (item.id === 'pms' && !restaurant?.features?.room) return false` in `visibleMenuItems` filter. When the dedicated key arrives, it is a 1-line swap — no other P1 code changes.
+- **Gate 3 (Implementation Plan) is fully unblocked. Zero open decisions.**
 
 ---
 
 ## Next agent instructions (exact sequence)
 
-### Step 1 — Present OD-P1-01 to owner (brief)
-"One new owner decision before Gate 3 plan:
+### Step 1 — SKIP (OD-P1-01 already confirmed — do not re-ask)
 
-**OD-P1-01 — PMS Sidebar Visibility:**
-The "Rooms & Reservations" section in the sidebar — should it appear only for hotels (`features.room = true`), or for all restaurants?
-
-**Option A (recommended):** Hidden for non-hotel restaurants. Consistent with existing F-10 featureGate pattern. No profileTransform change needed.
-**Option B:** Always visible for all restaurants.
-
-Please confirm A or B."
-
-### Step 2 — After owner confirms OD-P1-01
-Proceed to **Gate 3: Implementation Plan** for CR-353-P1 ONLY.
+### Step 2 — Gate 3: Implementation Plan for CR-353-P1
+Proceed immediately to **Gate 3: Implementation Plan** for CR-353-P1 ONLY.
 - Follow PLANNING role → Stage Dispatch → `implementation_plan` path.
 - Read: existing `impact/CR-353-P1_IMPACT_ANALYSIS.md` + `plans/CR-353_EXECUTION_PLAN_PHASED.md` § PHASE 1.
 - Verify Impact Analysis still accurate (check Sidebar.jsx line 312 + App.js route count still match analysis).
@@ -59,4 +51,4 @@ Proceed to **Gate 3: Implementation Plan** for CR-353-P1 ONLY.
 
 ---
 
-*Session 2026-09-01 | Planning agent | CR-353-P1 Gate 2 COMPLETE | OD-P1-01 pending | Next: Gate 3 Implementation Plan after owner confirms OD-P1-01*
+*Session 2026-09-01 | Planning agent | CR-353-P1 Gate 2 FULLY COMPLETE | OD-P1-01 CONFIRMED (features.room, hotel-only, separate key later) | Next: Gate 3 Implementation Plan — UNBLOCKED*

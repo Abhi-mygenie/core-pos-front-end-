@@ -8,6 +8,7 @@
 **Code Reality:** NONE — no PMS/AIOSELL code exists anywhere in `src/`. Fully greenfield.
 **Risk:** HIGH (sole phase touching `Sidebar.jsx` + `App.js` hotspots; AIOSELL API integration first-ever wiring)
 **Conflict Pre-Check:** CLEAN — no currently-open items touch `App.js` or `Sidebar.jsx`. See §3.
+**OD-P1-01 STATUS:** ✅ CONFIRMED 2026-09-01 — Option A. Gate on `features.room`. Owner note: "this is only for hotels for now — a separate dedicated key will be provided later to replace `features.room`."
 
 ---
 
@@ -131,7 +132,7 @@ rateplan_code: "deluxe-ep"  →  aiosellTransform.decodeMealPlan("deluxe-ep")
 | 3 | `api/services/pmsService.js` | NEW | ~80 | `getInHouseGuests()` wraps `roomService.getRoomList()` + `roomListTransform.transformRoomListToRows()`. Skeleton exports for P2 (`getReservations` → throws "Phase 3" until wired). |
 | 4 | `api/transforms/aiosellTransform.js` | NEW | ~200 | `fromAPI.status()`, `fromAPI.rooms()`, `fromAPI.inventory()`. Pure function `decodeMealPlan(rateplanCode)` — OD-08 meal plan badge. Defensive: `res?.data ?? {}` guards on every field. |
 | 5 | `App.js` | MODIFY | +18 | **Import section (top):** +9 lazy imports (or direct imports per existing pattern). **Routes block:** +9 `<Route>` elements in a new `{/* CR-353-P1: PMS Module */}` comment block. All wrapped in `<ProtectedRoute>`. App.js touched ONCE — frozen after P1. |
-| 6 | `Sidebar.jsx` | MODIFY | +20 | **4 targeted edits:** E1: `SIDEBAR_PERMISSIONS` — add `'pms': 'pos'`. E2: `VISIBLE_SECTIONS` — add `'pms'` to Set. E3: `sidebarMenuItems[]` — add `{id:'pms', label:'Rooms & Reservations', icon:Building2, children:[9 entries]}` (see §4a). E4: `visibleMenuItems` filter — add `features.room` section-level gate (see OD-P1-01 below). Sidebar touched ONCE — frozen after P1. |
+| 6 | `Sidebar.jsx` | MODIFY | +20 | **4 targeted edits:** E1: `SIDEBAR_PERMISSIONS` — add `'pms': 'pos'`. E2: `VISIBLE_SECTIONS` — add `'pms'` to Set. E3: `sidebarMenuItems[]` — add `{id:'pms', label:'Rooms & Reservations', icon:Building2, children:[9 entries]}` (see §4a). E4: `visibleMenuItems` filter — add `if (item.id === 'pms' && !restaurant?.features?.room) return false` (OD-P1-01 ✅ confirmed — `features.room` gate; future dedicated key is a 1-line swap). Sidebar touched ONCE — frozen after P1. |
 | 7 | `pages/pms/ChannelManagerPage.jsx` | NEW | ~400 | S8: Tabs A (Setup/Connect), B (Room Mapping), C (OTA/Sync — inventory bars, Sync Now, Fetch Reservations). Tabs D (Rates) + E (No-Show) render Phase 5 placeholder. Uses aiosellService + aiosellTransform. |
 | 8 | `pages/pms/InHouseGuestsPage.jsx` | NEW | ~200 | S6: calls pmsService.getInHouseGuests(), renders sortable table of occupied rooms (room no, guest name, phone, check-in date, order ID). Uses BUG-361 localStorage sidebar pattern. |
 | 9 | `pages/pms/PmsPlaceholderPage.jsx` | NEW | ~30 | Shared placeholder for 7 Phase 2–5 unbuilt routes. Props: `{ title, phase }`. Renders "Coming in Phase N" card. |
@@ -180,21 +181,21 @@ rateplan_code: "deluxe-ep"  →  aiosellTransform.decodeMealPlan("deluxe-ep")
 
 ## 6. Owner Decisions — Phase 1
 
-All OD-01 through OD-08 from parent Gate 2 are confirmed and carry over. One new decision needed:
+All OD-01 through OD-08 from parent Gate 2 are confirmed and carry over.
 
-### OD-P1-01 — PMS Sidebar Section Visibility Gate (NEW — not addressed in parent IA)
+### OD-P1-01 — PMS Sidebar Section Visibility Gate ✅ CONFIRMED 2026-09-01
 
-**Context:** `Sidebar.jsx` uses `VISIBLE_SECTIONS` to show/hide top-level sections, plus `SIDEBAR_PERMISSIONS` to permission-gate them. Child entries can use `featureGate` to check `restaurant?.features?.[key]`. The `features.room` flag (`api.room`) already exists in `profileTransform.js` and is used for the Room Transfers child entry (featureGate: "room").
+**Decision: Option A — Gate on `features.room`.**
 
-The PMS section (Rooms & Reservations) is hotel-only functionality. Two options:
+Owner confirmation (verbatim): *"Yes this will be only for hotels for now — this key will be used later, we will provide a separate key."*
 
-**Option A — Gate on `features.room`:** Add `features.room` check to `visibleMenuItems` filter for `item.id === 'pms'`. The section only appears if the restaurant has rooms enabled. Consistent with existing F-10 featureGate pattern. No profileTransform change needed.
+**Meaning:**
+- The "Rooms & Reservations" sidebar section is only visible to restaurants with `features.room = true` (hotels).
+- Implementation: add `if (item.id === 'pms' && !restaurant?.features?.room) return false` to the `visibleMenuItems` filter in `Sidebar.jsx`.
+- No `profileTransform.js` change needed — `features.room` is already mapped from `api.room`.
+- **Future:** A dedicated feature flag (e.g. `features.aiosell` or `features.pms`) will replace `features.room` for this gate when the owner provides it. When that key is added to the backend profile API, a one-line change in `profileTransform.js` + `Sidebar.jsx` filter is all that's needed. No other P1 code is affected.
 
-**Option B — Always visible, no gate:** PMS section appears for all restaurants. Non-hotel restaurants see it but cannot use it (AIOSELL setup would fail gracefully). Lower implementation risk.
-
-**Recommendation: Option A** — consistent, safe, no noise for non-hotel restaurants.
-
-**Owner: Please confirm Option A or B before Gate 3 plan is written.**
+**Zero open owner decisions remain. Gate 3 (Implementation Plan) is unblocked.**
 
 ---
 

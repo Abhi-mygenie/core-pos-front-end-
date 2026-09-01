@@ -71,7 +71,7 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | `api/services/pmsService.js` | NEW — skeleton + In-House aggregation (wraps existing `roomService.getRoomList`) |
 | `api/transforms/aiosellTransform.js` | NEW — rooms/mappings/status transforms + **rateplanCode meal-plan decoder** (OD-08: ep/cp/map/ap → labels; unit-testable pure function) |
 | `App.js` | ADD all 9 `/pms/*` routes at once (unbuilt pages render a shared "Coming in Phase N" placeholder) — App.js touched ONCE |
-| `Sidebar.jsx` | ADD "Rooms & Reservations" section with all entries at once (BUG-361 localStorage pattern; grep pattern before writing) — Sidebar touched ONCE |
+| `Sidebar.jsx` | ADD "Rooms & Reservations" section with all entries at once (BUG-361 localStorage pattern; grep pattern before writing; **section gated on `features.room` — OD-P1-01 CONFIRMED 2026-09-01: hotel-only for now; owner will provide a separate dedicated key later — 1-line swap in profileTransform + Sidebar filter when ready**) — Sidebar touched ONCE |
 | S8 Channel Manager (`ChannelManagerPage.jsx`) | Tabs A (Connect AIOSELL setup — OD-03), B (Room Mapping — OD-04), OTA/Sync tab (status card, Sync Now, inventory bars via fetch-inventory, push-inventory). Tabs C/D render "Phase 5" placeholder |
 | S6 In-House (`InHouseGuestsPage.jsx`) | GET_ROOM_LIST + existing `roomListTransform` reuse |
 
