@@ -11,6 +11,19 @@ Deployed at: https://core-frontend-dev.preview.emergentagent.com
 - Control docs in `/app/memory/control/` (synced from origin/main)
 - Deployed at: https://ac7e8e21-2fea-4559-a64e-e9d302552f9d.preview.emergentagent.com
 
+## Session 2026-09-01 (part 2) — All 4 Backend Blockers Confirmed Fixed
+
+Owner uploaded `reply_3.md` — backend claimed BUG-BE-02 and BUG-BE-04 also fixed, with full end-to-end curl evidence. Agent independently re-verified both by querying `local-reservations` directly (read-only, no new mutation):
+
+| Bug | Booking ID | Result |
+|---|---|---|
+| BUG-BE-02 (OTA check-in) | `BDC8899464` | `operational_status=in_house`, `line_status=checked_in`, RM 8527 (suite), `order_id=1232181` ✅ |
+| BUG-BE-04 (Direct check-in) | `MG-69-69BCC4D3-...` | `operational_status=in_house`, `line_status=checked_in`, RM 8528 (executive), `order_id=1232179` ✅ |
+
+**All 4 backend blockers (BUG-BE-01/02/03/04) now CLOSED and agent-verified.** No remaining hard backend blockers for Phase 1-3. Updated `plans/CR-353_EXECUTION_PLAN_PHASED.md`, `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`, `test_credentials.md`. Handover (`SESSION_HANDOVER_2026_09_01_CR353_PLAN_APPROVED.md`) Step B (re-probe BUG-BE-02/04) is now satisfied — next agent proceeds straight to Step A (present plan) + Step C (Gate 2 for CR-353-P1).
+
+---
+
 ## Session 2026-09-01 — CR-353 Phased Execution Plan Approved + Backend Fixes Verified
 
 | Milestone | Detail |

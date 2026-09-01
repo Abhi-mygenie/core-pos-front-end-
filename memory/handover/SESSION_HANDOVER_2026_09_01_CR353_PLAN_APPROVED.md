@@ -46,16 +46,15 @@ Translated into a strict sequence for the next agent:
 - Read `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` for the underlying gaps/OD context feeding the plan.
 - **Present the plan back to the owner** in chat — phase-by-phase summary (theme, scope, risk, backend dependency, exit criteria for each of the 5 phases) — so the owner can review it fresh before work starts. This is a presentation/walkthrough step, not a rewrite. Do not silently skip this even though the plan was technically already approved once — owner wants it walked through again.
 
-### Step B — Re-probe BUG-BE-02 and BUG-BE-04 (backend confirmation check)
-Backend's `reply_2.md` claims both are fixed but this agent could not verify them this session. **Do this check before Step C.** Two ways, pick whichever is available:
-1. Ask the owner/backend team directly for written confirmation (200 response + body) on both endpoints, OR
-2. Agent re-probes directly using real data now available (see `test_credentials.md` for full context):
-   - **Direct check-in (BUG-BE-04, was 403):** Use `booking_id=MG-69-8859D21E-D077-45A7-97CB-00070C6DCF9C` (created this session, room_code=executive, checkin=2026-09-07, checkout=2026-09-09) with `room_id=[8528]` (or any of 8524-8528, all mapped to `executive`). Exact curl is in `reply_2.md` §3 "Direct check-in" and in `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` §RE-PROBE.
-   - **OTA check-in (BUG-BE-02, was 422):** The existing sample OTA reservation (`booking_id=BDC7497606`, channel=booking.com) is on an **unmapped** room type (`suite`) — do NOT use it for a real room_id check-in test (it will fail for mapping reasons, not the bug being tested, giving a false negative). Either: (a) trigger a fresh OTA webhook test booking against `executive`, or (b) ask backend for a mapped-room OTA booking_id to test with. Curl template is in `reply_2.md` §4.
-   - **IMPORTANT:** `user-group-check-in` is a real state-mutating call (occupies a room). Confirm with owner/backend this is acceptable on the sandbox restaurant (69) before running it, same as this session's `direct-reservation` probe was.
-3. Record the result (PASS/FAIL + evidence) in `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` §RE-PROBE, same pattern as BUG-BE-01/03 this session.
+### Step B — Re-probe BUG-BE-02 and BUG-BE-04 (backend confirmation check) — ✅ **ALREADY DONE, SKIP THIS STEP**
 
-### Step C — ONLY after Step B is resolved (confirmed PASS or explicit owner override): start Gate 2 — Impact Analysis for CR-353-P1 ONLY
+**Update 2026-09-01 (later same day):** Owner uploaded `reply_3.md` with backend's end-to-end evidence for both flows. Agent independently re-verified (read-only query, no new mutation) via `GET local-reservations?view=all&booking_id=...`:
+- BUG-BE-02 (OTA check-in): `booking_id=BDC8899464` → `operational_status=in_house`, `line_status=checked_in`, RM 8527 (suite), `order_id=1232181` ✅
+- BUG-BE-04 (Direct check-in): `booking_id=MG-69-69BCC4D3-...` → `operational_status=in_house`, `line_status=checked_in`, RM 8528 (executive), `order_id=1232179` ✅
+
+**All 4 backend blockers (BUG-BE-01/02/03/04) are now CLOSED and agent-verified end-to-end.** Next agent should SKIP Step B entirely and go straight from Step A (present plan) to Step C (Gate 2 for CR-353-P1).
+
+### Step C — Start Gate 2 — Impact Analysis for CR-353-P1 ONLY (ready to start immediately — Step B is now satisfied)
 - **This is Gate 2 (Impact Analysis), NOT Gate 3 (Implementation Plan).** Owner was explicit: do not jump to the implementation plan.
 - Scope: Phase 1 only (`api/constants.js` additions, `aiosellService.js` NEW, `pmsService.js` NEW skeleton, `aiosellTransform.js` NEW, `App.js` routes ADD, `Sidebar.jsx` section ADD, `ChannelManagerPage.jsx` NEW, `InHouseGuestsPage.jsx` NEW) — per the "PHASE 1" section of the execution plan.
 - Follow `AGENT_PROMPT_ALPHA.md` ROLE 2: PLANNING → Stage Dispatch → `stage = "impact_analysis"` path: Step 0 (Code Reality Check) + Step 1 (Conflict Pre-Check) + Step 2 (Gate 2: Impact Analysis). **STOP after Impact Analysis output. Do NOT write Implementation Plan.**

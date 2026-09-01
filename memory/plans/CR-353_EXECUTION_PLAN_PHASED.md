@@ -38,19 +38,19 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | `ROOM_CHECK_IN` with `booking_type=WalkIn` | ✅ Working | — | Phase 2 |
 | **BUG-BE-03** — `direct-reservation` 500 (ENUM missing `Direct`) | ✅ **FIXED — agent-verified 201 (2026-09-01)** | S3 Save-as-Booking | Phase 2 — **UNBLOCKED, no longer late-gated** |
 | **BUG-BE-01** — `local-reservations` 500 (migration/relation) | ✅ **FIXED — agent-verified 200 (2026-09-01)** | S1, S2, S9, S10 | Phase 3 — **HARD GATE CLEARED, can start now** |
-| **BUG-BE-02** — OTA check-in 422 (`booking_type=Online`+`booking_id`) | ⚠ Backend claims fixed — **NOT agent-verified** (needs live OTA `booking_id`) | S4 OTA check-in | Phase 2/3 — re-probe at entry once a webhook booking exists |
-| **BUG-BE-04 (NEW)** — Direct check-in 403 (`booking_type=Direct`+`booking_id`) | ⚠ Backend claims fixed — **NOT agent-verified** | S3/S4 Direct check-in | Phase 2 — re-probe using booking_id from direct-reservation |
+| **BUG-BE-02** — OTA check-in 422 (`booking_type=Online`+`booking_id`) | ✅ **FIXED — agent-verified 200 (2026-09-01)**, booking `BDC8899464` reached `in_house`/`checked_in` | S4 OTA check-in | Phase 2 — **UNBLOCKED** |
+| **BUG-BE-04 (NEW)** — Direct check-in 403 (`booking_type=Direct`+`booking_id`) | ✅ **FIXED — agent-verified 200 (2026-09-01)**, booking `MG-69-69BCC4D3-...` reached `in_house`/`checked_in` | S3/S4 Direct check-in | Phase 2 — **UNBLOCKED** |
 | **MISSING-01** — `GET /aiosell/dashboard-kpis` (404) | ⏳ Still not built | S1 KPI strip | Phase 3 (non-blocking skeleton per NS-02) |
 | **MISSING-02** — `PATCH /aiosell/room-status/{table_id}` | ⏳ To build | S7 HK/OOO toggle | Phase 4 |
 | **NS-01 endpoints** — push-rates, fetch-rates, push-inventory-restrictions, push-rate-restrictions | ⚠ NEVER PROBED | S8-C | Phase 5 (probe first) |
 | `POST /aiosell/mark-no-show` | ⚠ Backend documented rule: 200 only for `booking.com`/`gommt` pending; else 422 by design | S8-D | Phase 5 (probe first) |
 
-**Net effect on phasing:** Phase 3's hard entry gate (§ "PHASE 3 — Entry gate") is now CLEARED. Phase 2's Direct-booking "Save as Booking" no longer ships disabled-with-tooltip — it is fully wired from day 1. Only the two check-in variants (OTA, Direct) stay flagged pending re-probe — plan still codes them, QA re-probes before marking those specific rows closed.
+**Net effect on phasing (updated 2026-09-01, all 4 confirmed):** ALL FOUR backend blockers (BUG-BE-01/02/03/04) are closed and agent-verified end-to-end, including full check-in flows for both Direct and OTA channels reaching `operational_status=in_house` / `line_status=checked_in` with a real `order_id`. Phase 2 and Phase 3 have **zero remaining hard backend blockers**. Phase 2 ships S3 (Save as Booking + Direct check-in) and S4 (Direct + OTA check-in) fully wired, no disabled/deferred rows. Phase 3's entry gate is cleared. Remaining backend items (dashboard-kpis, room-status PATCH, NS-01, mark-no-show) only affect Phase 3 (non-blocking skeleton), Phase 4, and Phase 5 respectively — none block Phase 1-3 core flows.
 
-**Ask of backend team, in priority order (updated):**
+**Ask of backend team, in priority order (updated 2026-09-01):**
 1. ~~Run migration + add `order` HasOne (BUG-BE-01)~~ — ✅ DONE, verified.
 2. ~~ALTER TABLE booking_type ENUM (BUG-BE-03)~~ — ✅ DONE, verified.
-3. **Now:** Confirm BUG-BE-02 (OTA check-in) and BUG-BE-04 (Direct check-in) — FE will re-probe once Phase 2 generates a real `booking_id` and re-post results.
+3. ~~Confirm BUG-BE-02 (OTA check-in) and BUG-BE-04 (Direct check-in)~~ — ✅ DONE, both agent-verified end-to-end 2026-09-01.
 4. **Before Phase 3 QA:** Build `dashboard-kpis`.
 5. **Before Phase 4 QA:** Build `PATCH room-status` + `room_status` column.
 6. **Before Phase 5:** Confirm NS-01 rate/restriction endpoints + mark-no-show rule on preprod (FE will curl-probe per R11).
@@ -93,9 +93,9 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | Meal plan badge | Wire Phase 1 decoder into S4 (Variant A, owner-approved) |
 | `pmsService.js` | Extend: booking payload builders (reuse `roomService.checkIn()` untouched) |
 
-**Backend dependency:** NONE hard-blocking. WalkIn + Save-as-Booking (Direct create) fully unblocked (BUG-BE-03 verified). Direct/OTA *check-in* variants (BUG-BE-04, BUG-BE-02) backend-claimed-fixed but need agent re-probe with a live `booking_id` at QA time.
-**Verification:** V3 (curl WalkIn 200), V4 full (curl Direct + OTA check-in using booking_id from direct-reservation / webhook), room appears in GET_ROOM_LIST + RoomOrdersReportPage, checkout via existing CollectPaymentPanel still works (downstream check §8 of IA).
-**Exit criteria:** WalkIn + Save-as-Booking e2e PASS incl. checkout. Direct/OTA check-in re-probed live during this phase's QA (no longer deferred to Phase 3 — BUG-BE-01 dependency removed for check-in itself; only needs a booking_id, obtainable now).
+**Backend dependency:** NONE. All check-in variants (WalkIn, Direct, OTA) and Save-as-Booking are fully unblocked and agent-verified end-to-end on preprod (2026-09-01).
+**Verification:** V3 (curl WalkIn 200), V4 full (curl Direct + OTA check-in — both agent-verified reaching `operational_status=in_house`/`line_status=checked_in` with real `order_id`), room appears in GET_ROOM_LIST + RoomOrdersReportPage, checkout via existing CollectPaymentPanel still works (downstream check §8 of IA).
+**Exit criteria:** WalkIn + Save-as-Booking + Direct check-in + OTA check-in e2e PASS incl. checkout. No deferred rows — all 4 backend blockers closed before Phase 2 coding starts.
 
 ---
 
@@ -244,11 +244,11 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | # | Who | Action |
 |---|---|---|
 | 1 | Owner | ✅ DONE (2026-09-01) — Approved 5-phase breakdown, no merges/splits requested |
-| 2 | Backend | ✅ DONE — BUG-BE-01 + BUG-BE-03 fixed and agent-verified live on preprod (2026-09-01) |
-| 3 | Backend | 🔲 OPEN — Confirm/fix BUG-BE-02 (OTA check-in, was 422) + BUG-BE-04 (Direct check-in, was 403). Backend claims both fixed in reply_2.md; FE will re-probe with a real `booking_id` at Phase 2 QA and report results back |
-| 4 | Planning agent | 🔲 NEXT — Write `CR-353-P1_IMPLEMENTATION_PLAN.md` (detailed Gate 3 for Phase 1 only) |
-| 5 | Registry | 🔲 NEXT — Register CR-353-P1…P5 as child items of CR-353 in registry.json |
+| 2 | Backend | ✅ DONE — ALL 4 backend blockers (BUG-BE-01/02/03/04) fixed and agent-verified live on preprod (2026-09-01), including full Direct + OTA check-in flows reaching `in_house`/`checked_in` |
+| 3 | Owner | 🔲 NEXT — Review the phased plan (re-presented in detail by next agent) |
+| 4 | Planning agent | 🔲 NEXT — Gate 2 (Impact Analysis) for CR-353-P1 (Phase 1) ONLY — NOT Gate 3 Implementation Plan yet, per owner instruction |
+| 5 | Registry | 🔲 NEXT — Register CR-353-P1 in registry.json once Gate 2 starts |
 
 ---
 
-*Planning agent | CR-353 phasing strategy | Owner APPROVED 2026-09-01 | BUG-BE-01/03 agent-verified FIXED | Next: Gate 3 Implementation Plan for Phase 1*
+*Planning agent | CR-353 phasing strategy | Owner APPROVED 2026-09-01 | ALL 4 backend blockers (BUG-BE-01/02/03/04) agent-verified FIXED end-to-end | Next: present plan -> Gate 2 for CR-353-P1*

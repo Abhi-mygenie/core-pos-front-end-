@@ -51,29 +51,33 @@ Backend reported fixes live on preprod (`reply_2.md`). Re-probed directly with o
 | VERIFY-01 (retest) | `GET /aiosell/local-reservations?view=arrivals` | **HTTP 200** — `data.reservations[]` with `operational_status`, per-room `line_status`, `guest{}`, `rooms[]` | ✅ **CLOSED — AGENT VERIFIED 2026-09-01** |
 | B-06 (retest) | `POST /aiosell/direct-reservation` | **HTTP 201** — `channel="Direct"`, `booking_id=MG-69-...`, `operational_status="pending"` | ✅ **CLOSED — AGENT VERIFIED 2026-09-01** |
 
-**Still open (backend-confirmed, agent NOT yet re-probed — needs a live OTA `booking_id` / assigned `room_id` to test):**
+**Still open (backend-confirmed via reply_3.md, agent-verified 2026-09-01):**
 
-| # | Endpoint | Status | Blocks |
-|---|---|---|---|
-| BUG-BE-02 | `POST user-group-check-in` (`booking_type=Online` + `booking_id`) | Backend claims fixed (was 422) — **UNVERIFIED**, needs OTA booking_id | S4 OTA check-in |
-| BUG-BE-04 (NEW) | `POST user-group-check-in` (`booking_type=Direct` + `booking_id`) | Backend claims fixed (was 403) — **UNVERIFIED** | S3/S4 Direct check-in |
-| — | `POST /aiosell/mark-no-show` | Only 200 for `booking.com`/`gommt` pending — **UNVERIFIED** | S8-D No-Show |
+| # | Endpoint | Status |
+|---|---|---|
+| BUG-BE-02 | `POST user-group-check-in` (`booking_type=Online` + `booking_id`) | ✅ **CONFIRMED FIXED — agent re-verified** (booking `BDC8899464`: `operational_status=in_house`, `line_status=checked_in`, `order_id=1232181`) |
+| BUG-BE-04 | `POST user-group-check-in` (`booking_type=Direct` + `booking_id`) | ✅ **CONFIRMED FIXED — agent re-verified** (booking `MG-69-69BCC4D3-...`: `operational_status=in_house`, `line_status=checked_in`, `order_id=1232179`) |
+| — | `POST /aiosell/mark-no-show` | Only 200 for `booking.com`/`gommt` pending — still UNVERIFIED (optional, not a Gate 3 blocker) |
+
+**FE note from backend (important for aiosellTransform.js later):** `view=in_house` only returns a reservation once today falls between `checkin`/`checkout` — for testing/future dates use `view=all&booking_id=`. Also, check-in `room_id` must map to the SAME Aiosell `room_code` as the reservation line (a `suite` booking needs a RM mapped to `suite`, not `executive`).
 
 ## §BUGS — Backend Blockers (must fix before FE implementation)
 
-**BUG-BE-01 + BUG-BE-02 (same root cause)** — ✅ **BUG-BE-01 RESOLVED 2026-09-01 (agent-verified 200)**. BUG-BE-02 (OTA check-in) still needs re-probe with a real `booking_id`.
+**BUG-BE-01 + BUG-BE-02 (same root cause)** — ✅ **BOTH FULLY RESOLVED AND AGENT-VERIFIED 2026-09-01.** BUG-BE-01 (local-reservations 200) and BUG-BE-02 (OTA check-in, `booking_id=BDC8899464` → `in_house`/`checked_in`) both confirmed live.
 - Root cause: Migration `2026_08_31_160000_aiosell_reservation_room_assignments.php` NOT run on preprod. `AiosellReservationRoom` model missing `order` HasOne relationship.
 - Fix: Run migration on preprod + confirm model relationship added.
-- Blocks: S1 Front Desk, S2 Tape Chart, S4 Check-In (OTA), S9 Arrivals, S10 Departures
+- Blocks: S1 Front Desk, S2 Tape Chart, S4 Check-In (OTA), S9 Arrivals, S10 Departures — **ALL UNBLOCKED**
 
-**BUG-BE-03** — ✅ **RESOLVED 2026-09-01 (agent-verified 201 on `direct-reservation`)**. Note: Direct *check-in* (BUG-BE-04, was 403) still needs re-probe.
+**BUG-BE-03 + BUG-BE-04** — ✅ **BOTH FULLY RESOLVED AND AGENT-VERIFIED 2026-09-01.** BUG-BE-03 (direct-reservation 201) and BUG-BE-04 (Direct check-in, `booking_id=MG-69-69BCC4D3-...` → `in_house`/`checked_in`, was 403) both confirmed live.
 - Root cause: `user_id_documents.booking_type` ENUM only has WalkIn, Online. Value "Direct" missing.
 - Fix: `ALTER TABLE user_id_documents MODIFY booking_type ENUM('WalkIn','Online','Direct')`
-- Blocks: S3 New Booking "Save as Booking" (UNBLOCKED) + Direct check-in (§6.4, still BUG-BE-04)
+- Blocks: S3 New Booking "Save as Booking" + Direct check-in (§6.4) — **ALL UNBLOCKED**
 
 **MISSING — /aiosell/dashboard-kpis**
 - Endpoint does not exist. Backend to build: occupancy_pct, arrivals_today, departures_today, in_house_count.
-- Blocks: S1 KPI strip
+- Blocks: S1 KPI strip (non-blocking skeleton state per NS-02, does not block Gate 3)
+
+**Gate 3 status: ALL 4 backend blockers (BUG-BE-01/02/03/04) CLOSED. No remaining hard backend blockers for Phase 1-3 scope.**
 
 ---
 
