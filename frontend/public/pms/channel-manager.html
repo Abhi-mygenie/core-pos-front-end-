@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Channel Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A}.nav-active{background:rgba(50,153,55,.1);border-left:3px solid #329937 !important;color:#329937}.nav-item{border-left:3px solid transparent;transition:background .15s}.nav-item:hover{background:#F7F7F7}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#E5E5E5;border-radius:4px}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(50,153,55,.4)}70%{box-shadow:0 0 0 8px rgba(50,153,55,0)}100%{box-shadow:0 0 0 0 rgba(50,153,55,0)}}
+.pulse-ring{animation:pulse-ring 2s ease-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}.pulse-dot{animation:pulse-dot 2s ease-in-out infinite}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+<!-- SIDEBAR -->
+<aside style="width:280px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0">
+  <div style="padding:16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between"><img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:40px"><button style="padding:8px;border-radius:8px;color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="panel-left-close" style="width:20px;height:20px"></i></button></div>
+  <div style="padding:12px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;gap:8px">
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(242,107,51,.08);color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="layout-grid" style="width:20px;height:20px;flex-shrink:0"></i><span>Table View</span></button>
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(50,153,55,.08);color:#329937;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="columns" style="width:20px;height:20px;flex-shrink:0"></i><span>By Channel</span></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:8px 0">
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="home" style="width:20px;height:20px;flex-shrink:0"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="banknote" style="width:20px;height:20px;flex-shrink:0"></i><span>Day Closure</span></a>
+    <div>
+      <a href="front-desk.html" class="nav-active nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bed-double" style="width:20px;height:20px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:16px;height:16px;color:#666"></i></a>
+      <div style="margin-left:16px;border-left:1px solid #E5E5E5">
+        <a href="front-desk.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Front Desk</a>
+        <a href="reservations.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Reservations</a>
+        <a href="in-house.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">In-House Guests</a>
+        <a href="room-status.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Room Status</a>
+        <a href="channel-manager.html" style="display:flex;padding:10px 16px;color:#329937;background:rgba(50,153,55,.06);font-size:13px;text-decoration:none;font-weight:500">Channel Manager</a>
+      </div>
+    </div>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bar-chart-3" style="width:20px;height:20px;flex-shrink:0"></i><span>Daily Report</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="settings" style="width:20px;height:20px;flex-shrink:0"></i><span>Settings</span></a>
+  </nav>
+  <div style="padding:16px;border-top:1px solid #E5E5E5">
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="refresh-cw" style="width:20px;height:20px;flex-shrink:0"></i><span>Refresh</span></button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#1A1A1A;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;background:transparent;margin-top:4px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:16px;height:16px;color:white"></i></div>
+      <div style="text-align:left"><div style="font-size:13px;font-weight:500">Owner (Admin)</div><div style="font-size:11px;color:#666">#541</div></div>
+    </button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#EF4444;border:none;cursor:pointer;margin-top:4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="log-out" style="width:20px;height:20px;flex-shrink:0"></i><span>Logout</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <h1 style="font-size:18px;font-weight:700">Channel Manager</h1>
+    <button style="display:flex;align-items:center;gap:8px;height:38px;padding:0 16px;background:#1A1A1A;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif"><i data-lucide="refresh-cw" style="width:15px;height:15px"></i> Sync All Now</button>
+  </div>
+
+  <div style="padding:20px 28px;display:flex;flex-direction:column;gap:16px">
+
+    <!-- AIOSELL master connection -->
+    <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+      <div style="display:flex;align-items:center;gap:16px">
+        <!-- Pulse indicator -->
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(50,153,55,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0" class="pulse-ring">
+          <div style="width:18px;height:18px;border-radius:50%;background:#329937"></div>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:20px;font-weight:700">AIOSELL</span>
+            <span style="font-size:12px;font-weight:600;color:#329937;background:rgba(50,153,55,.1);border:1px solid rgba(50,153,55,.2);padding:3px 10px;border-radius:20px">Connected · Live</span>
+          </div>
+          <div style="font-size:13px;color:#666;margin-top:4px">Core Engine Controller API · Managing all OTA channels</div>
+          <div style="font-size:12px;color:#999;margin-top:2px">Last full sync: 27 Aug 2026 at 09:12 AM (2 minutes ago)</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:28px;font-weight:700">14</div>
+          <div style="font-size:12px;color:#666">Active channels</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two columns -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:16px">
+
+      <!-- OTA Channels -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px">
+        <div style="padding:14px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+          <h2 style="font-size:14px;font-weight:600">OTA Channels</h2>
+          <button style="font-size:13px;color:#329937;background:transparent;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-weight:500">+ Add Channel</button>
+        </div>
+        <!-- Booking.com -->
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5">
+          <div style="width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=20" style="width:20px;height:20px"></div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Booking.com</div><div style="font-size:12px;color:#666;margin-top:2px">Last sync: 2 min ago · 3 bookings today</div></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#329937" class="pulse-dot"></div><span style="font-size:12px;color:#329937;font-weight:500">Active</span></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:600">₹22,600</div><div style="font-size:11px;color:#666">Today's revenue</div></div>
+        </div>
+        <!-- Expedia -->
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5">
+          <div style="width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=20" style="width:20px;height:20px"></div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Expedia</div><div style="font-size:12px;color:#666;margin-top:2px">Last sync: 5 min ago · 1 booking today</div></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#329937" class="pulse-dot"></div><span style="font-size:12px;color:#329937;font-weight:500">Active</span></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:600">₹9,800</div><div style="font-size:11px;color:#666">Today's revenue</div></div>
+        </div>
+        <!-- Airbnb -->
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5">
+          <div style="width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=20" style="width:20px;height:20px"></div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Airbnb</div><div style="font-size:12px;color:#666;margin-top:2px">Last sync: 12 min ago · 1 booking today</div></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#329937" class="pulse-dot"></div><span style="font-size:12px;color:#329937;font-weight:500">Active</span></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:600">₹8,750</div><div style="font-size:11px;color:#666">Today's revenue</div></div>
+        </div>
+        <!-- MakeMyTrip — not connected -->
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5;background:#FAFAFA">
+          <div style="width:40px;height:40px;border-radius:8px;background:#F5F5F5;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="plus-circle" style="width:20px;height:20px;color:#ccc"></i></div>
+          <div style="flex:1"><div style="font-size:13px;color:#999">MakeMyTrip</div><div style="font-size:12px;color:#bbb;margin-top:2px">Not connected</div></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#ccc"></div><span style="font-size:12px;color:#999">Inactive</span></div>
+          <button style="height:32px;padding:0 14px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;flex-shrink:0">Connect</button>
+        </div>
+        <!-- Goibibo -->
+        <div style="padding:14px 20px;display:flex;align-items:center;gap:14px;background:#FAFAFA">
+          <div style="width:40px;height:40px;border-radius:8px;background:#F5F5F5;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="plus-circle" style="width:20px;height:20px;color:#ccc"></i></div>
+          <div style="flex:1"><div style="font-size:13px;color:#999">Goibibo</div><div style="font-size:12px;color:#bbb;margin-top:2px">Not connected</div></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#ccc"></div><span style="font-size:12px;color:#999">Inactive</span></div>
+          <button style="height:32px;padding:0 14px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;flex-shrink:0">Connect</button>
+        </div>
+      </div>
+
+      <!-- Right column: Inventory + Sync Queue -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <!-- Inventory -->
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px">
+          <h2 style="font-size:14px;font-weight:600;margin-bottom:14px">Inventory — Tonight</h2>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#666">Standard Double</span><span style="font-weight:600">8 / 12 free</span></div>
+              <div style="height:5px;background:#F0F0F0;border-radius:4px"><div style="width:33%;height:100%;background:#F26B33;border-radius:4px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#666">Deluxe</span><span style="font-weight:600">4 / 6 free</span></div>
+              <div style="height:5px;background:#F0F0F0;border-radius:4px"><div style="width:33%;height:100%;background:#F26B33;border-radius:4px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="color:#666">Suite</span><span style="font-weight:600">1 / 2 free</span></div>
+              <div style="height:5px;background:#F0F0F0;border-radius:4px"><div style="width:50%;height:100%;background:#F26B33;border-radius:4px"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid #F0F0F0;display:flex;justify-content:space-between;font-size:12px;align-items:center">
+            <span style="color:#666">All channels updated</span>
+            <div style="display:flex;align-items:center;gap:5px;color:#329937;font-weight:500"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Synced</div>
+          </div>
+        </div>
+
+        <!-- Sync Queue -->
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px">
+          <h2 style="font-size:14px;font-weight:600;margin-bottom:12px">Pending Sync Queue</h2>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);border-radius:8px">
+              <div style="width:7px;height:7px;border-radius:50%;background:#F4A11A;flex-shrink:0" class="pulse-dot"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#8B6200">BK-88213 · Rahul Sharma</div><div style="font-size:11px;color:#B07000">Booking.com · Confirming...</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);border-radius:8px">
+              <div style="width:7px;height:7px;border-radius:50%;background:#F4A11A;flex-shrink:0"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#8B6200">WI-0045 · Walk-in booking</div><div style="font-size:11px;color:#B07000">Direct · Pushing availability...</div></div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#999;text-align:center">2 items pending · Auto-retries in 30s</div>
+        </div>
+
+        <!-- Today snapshot -->
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px">
+          <h2 style="font-size:14px;font-weight:600;margin-bottom:12px">Today — 27 Aug 2026</h2>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#666">Total bookings</span><span style="font-weight:600">5</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#666">From OTAs</span><span>3</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#666">Direct / Walk-in</span><span>2</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid #F0F0F0;padding-top:8px;font-weight:600"><span>Total Revenue</span><span style="color:#329937">₹41,150</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync Log -->
+    <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px">
+      <div style="padding:14px 20px;border-bottom:1px solid #E5E5E5;display:flex;justify-content:space-between;align-items:center">
+        <h2 style="font-size:14px;font-weight:600">Sync Log</h2>
+        <span style="font-size:12px;color:#999">Last 5 events</span>
+      </div>
+      <div style="font-family:monospace;font-size:12px">
+        <div style="padding:10px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5"><span style="color:#999;width:90px;flex-shrink:0">09:12:44 AM</span><span style="color:#329937;font-weight:700;width:60px;flex-shrink:0">SUCCESS</span><span style="color:#1A1A1A">AIOSELL full sync — 20 rooms pushed, 0 errors</span></div>
+        <div style="padding:10px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5"><span style="color:#999;width:90px;flex-shrink:0">09:10:02 AM</span><span style="color:#329937;font-weight:700;width:60px;flex-shrink:0">SUCCESS</span><span style="color:#1A1A1A">BK-88213 received from Booking.com · Room type: Standard</span></div>
+        <div style="padding:10px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5"><span style="color:#999;width:90px;flex-shrink:0">09:07:31 AM</span><span style="color:#329937;font-weight:700;width:60px;flex-shrink:0">SUCCESS</span><span style="color:#1A1A1A">Inventory update pushed — Deluxe: 4 available</span></div>
+        <div style="padding:10px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F5F5F5"><span style="color:#999;width:90px;flex-shrink:0">08:55:18 AM</span><span style="color:#F4A11A;font-weight:700;width:60px;flex-shrink:0">RETRY</span><span style="color:#1A1A1A">Airbnb rate push — timeout, retrying (2/3)</span></div>
+        <div style="padding:10px 20px;display:flex;align-items:center;gap:14px"><span style="color:#999;width:90px;flex-shrink:0">08:55:44 AM</span><span style="color:#329937;font-weight:700;width:60px;flex-shrink:0">SUCCESS</span><span style="color:#1A1A1A">Airbnb rate push — success on retry</span></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+<style>
+aside:not([class]){width:64px!important;min-width:64px!important;overflow:hidden!important}
+aside:not([class])>div:first-child img{height:26px!important;width:26px!important;object-fit:contain!important}
+aside:not([class])>div:first-child>button:last-child{display:none!important}
+aside:not([class])>div:nth-child(2){flex-direction:column!important;align-items:center!important;padding:8px 0!important;gap:4px!important}
+aside:not([class])>div:nth-child(2) button{width:40px!important;height:40px!important;justify-content:center!important;padding:0!important}
+aside:not([class])>div:nth-child(2) button span{display:none!important}
+aside:not([class]) nav a,aside:not([class]) nav>button{justify-content:center!important;padding:10px 0!important}
+aside:not([class]) nav a span,aside:not([class]) nav>button span,aside:not([class]) nav i[data-lucide="chevron-down"]{display:none!important}
+aside:not([class]) nav>div>div[style*="margin-left"]{display:none!important}
+aside:not([class])>div:last-child{flex-direction:column!important;align-items:center!important;padding:6px 0!important;gap:2px!important}
+aside:not([class])>div:last-child button{width:40px!important;height:40px!important;justify-content:center!important;flex:none!important;padding:0!important}
+aside:not([class])>div:last-child button span,aside:not([class])>div:last-child button div[style*="text-align:left"]{display:none!important}
+</style>
+</body>
+</html>

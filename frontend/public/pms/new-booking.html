@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — New Booking</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A}.nav-active{background:rgba(50,153,55,.1);border-left:3px solid #329937 !important;color:#329937}.nav-item{border-left:3px solid transparent;transition:background .15s}.nav-item:hover{background:#F7F7F7}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#E5E5E5;border-radius:4px}input,select,textarea{font-family:'Poppins',sans-serif}.fl{width:100%;height:40px;border:1px solid #E5E5E5;border-radius:8px;padding:0 12px;font-size:13px;background:#fff;outline:none;color:#1A1A1A}.fl:focus{border-color:#329937}.fld{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border:1px solid #E5E5E5;border-radius:8px;background:#F7F7F7;font-size:13px}.lbl{font-size:11px;font-weight:500;color:#666;margin-bottom:4px;display:block}</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+<!-- SIDEBAR -->
+<aside style="width:280px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0">
+  <div style="padding:16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between"><img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:40px"><button style="padding:8px;border-radius:8px;color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="panel-left-close" style="width:20px;height:20px"></i></button></div>
+  <div style="padding:12px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;gap:8px">
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(242,107,51,.08);color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="layout-grid" style="width:20px;height:20px;flex-shrink:0"></i><span>Table View</span></button>
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(50,153,55,.08);color:#329937;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="columns" style="width:20px;height:20px;flex-shrink:0"></i><span>By Channel</span></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:8px 0">
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="home" style="width:20px;height:20px;flex-shrink:0"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="banknote" style="width:20px;height:20px;flex-shrink:0"></i><span>Day Closure</span></a>
+    <div>
+      <a href="front-desk.html" class="nav-active nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bed-double" style="width:20px;height:20px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:16px;height:16px;color:#666"></i></a>
+      <div style="margin-left:16px;border-left:1px solid #E5E5E5">
+        <a href="front-desk.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Front Desk</a>
+        <a href="reservations.html" style="display:flex;padding:10px 16px;color:#329937;background:rgba(50,153,55,.06);font-size:13px;text-decoration:none;font-weight:500">Reservations</a>
+        <a href="in-house.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">In-House Guests</a>
+        <a href="room-status.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Room Status</a>
+        <a href="channel-manager.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Channel Manager</a>
+      </div>
+    </div>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bar-chart-3" style="width:20px;height:20px;flex-shrink:0"></i><span>Daily Report</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="settings" style="width:20px;height:20px;flex-shrink:0"></i><span>Settings</span></a>
+  </nav>
+  <div style="padding:16px;border-top:1px solid #E5E5E5">
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="refresh-cw" style="width:20px;height:20px;flex-shrink:0"></i><span>Refresh</span></button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#1A1A1A;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;background:transparent;margin-top:4px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:16px;height:16px;color:white"></i></div>
+      <div style="text-align:left"><div style="font-size:13px;font-weight:500">Owner (Admin)</div><div style="font-size:11px;color:#666">#541</div></div>
+    </button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#EF4444;border:none;cursor:pointer;margin-top:4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="log-out" style="width:20px;height:20px;flex-shrink:0"></i><span>Logout</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+  <!-- Header -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="front-desk.html" style="color:#666;background:transparent;border:none;cursor:pointer;display:flex;text-decoration:none"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></a>
+      <h1 style="font-size:18px;font-weight:700">New Booking</h1>
+      <span style="font-size:12px;background:rgba(50,153,55,.1);color:#329937;border:1px solid rgba(50,153,55,.2);padding:3px 10px;border-radius:20px;font-weight:500">Walk-in / Direct</span>
+    </div>
+    <!-- Step indicators -->
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#1A1A1A;border-radius:8px;color:#fff"><span style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">1</span><span>Stay Details</span></div>
+      <i data-lucide="chevron-right" style="width:14px;height:14px;color:#ccc"></i>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;color:#999"><span style="width:18px;height:18px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#999">2</span><span>Guest Details</span></div>
+      <i data-lucide="chevron-right" style="width:14px;height:14px;color:#ccc"></i>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;color:#999"><span style="width:18px;height:18px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#999">3</span><span>Confirm</span></div>
+    </div>
+  </div>
+
+  <div style="padding:24px 28px;display:grid;grid-template-columns:1fr 360px;gap:20px">
+
+    <!-- LEFT: Form -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Stay Details -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <h2 style="font-size:14px;font-weight:600;margin-bottom:16px">Stay Details</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label class="lbl">Check-in Date</label>
+            <div class="fld" style="cursor:pointer"><i data-lucide="calendar" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-weight:500">Thu, 27 Aug 2026</span></div>
+          </div>
+          <div>
+            <label class="lbl">Check-out Date</label>
+            <div class="fld" style="cursor:pointer"><i data-lucide="calendar" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-weight:500">Sat, 29 Aug 2026</span></div>
+          </div>
+          <div>
+            <label class="lbl">Nights</label>
+            <div class="fld"><span style="font-weight:500">2 nights</span></div>
+          </div>
+          <div>
+            <label class="lbl">Guests</label>
+            <div class="fld" style="cursor:pointer"><i data-lucide="users" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-weight:500">2 Adults, 0 Children</span><i data-lucide="chevron-down" style="width:14px;height:14px;color:#999;margin-left:auto"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guest Details -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <h2 style="font-size:14px;font-weight:600;margin-bottom:16px">Guest Details</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="grid-column:1/-1"><label class="lbl">Full Name</label><input class="fl" value="Neha Gupta" placeholder="Guest full name"></div>
+          <div><label class="lbl">Phone</label><input class="fl" value="+91 65432 10987"></div>
+          <div><label class="lbl">Email (optional)</label><input class="fl" placeholder="guest@email.com"></div>
+          <div>
+            <label class="lbl">Adults</label>
+            <div class="fld" style="cursor:pointer;background:#fff"><i data-lucide="users" style="width:14px;height:14px;color:#999;flex-shrink:0"></i><span>2</span><i data-lucide="chevron-down" style="width:13px;height:13px;color:#999;margin-left:auto"></i></div>
+          </div>
+          <div>
+            <label class="lbl">Children</label>
+            <div class="fld" style="cursor:pointer;background:#fff"><i data-lucide="user" style="width:14px;height:14px;color:#999;flex-shrink:0"></i><span>0</span><i data-lucide="chevron-down" style="width:13px;height:13px;color:#999;margin-left:auto"></i></div>
+          </div>
+          <div style="grid-column:1/-1"><label class="lbl">Special Requests (optional)</label><textarea class="fl" style="height:54px;padding:10px 12px;resize:none" placeholder="e.g. Late check-in, extra pillows, ground floor..."></textarea></div>
+          <!-- Booking For: Individual / Corporate -->
+          <div style="grid-column:1/-1">
+            <label class="lbl">Booking For</label>
+            <div style="display:flex;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:3px;gap:3px">
+              <button id="btn-individual" onclick="setBookingFor('individual')" style="flex:1;height:32px;border-radius:6px;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;background:#fff;color:#1A1A1A;box-shadow:0 1px 3px rgba(0,0,0,.07)">Individual</button>
+              <button id="btn-corporate" onclick="setBookingFor('corporate')" style="flex:1;height:32px;border-radius:6px;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;background:transparent;color:#666">Corporate / B2B</button>
+            </div>
+          </div>
+          <!-- Corporate fields — hidden by default, shown when Corporate selected -->
+          <div id="corporate-fields" style="grid-column:1/-1;display:none">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><label class="lbl">Company Name <span style="color:#EF4444">*</span></label><input class="fl" placeholder="e.g. Tata Consultancy Services" id="company-name"></div>
+              <div><label class="lbl">GST Number <span style="color:#EF4444">*</span></label><input class="fl" placeholder="27AAPCS1122R1ZQ" style="font-size:12px" id="gst-number"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 10px;background:#FFF8EC;border:1px solid rgba(244,161,26,.25);border-radius:6px">
+              <i data-lucide="info" style="width:13px;height:13px;color:#F4A11A;flex-shrink:0"></i>
+              <span style="font-size:11px;color:#966800">GST invoice will be generated at check-out. Verify GST number before confirming.</span>
+            </div>
+          </div>
+          <!-- ID capture note -->
+          <div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:9px 12px;background:#F0FDF4;border:1px solid rgba(50,153,55,.2);border-radius:8px">
+            <i data-lucide="info" style="width:13px;height:13px;color:#329937;flex-shrink:0"></i>
+            <span style="font-size:12px;color:#217A28">ID document will be captured at check-in (if required by settings)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advance Payment -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <h2 style="font-size:14px;font-weight:600;margin-bottom:14px">Advance Payment <span style="font-weight:400;color:#999;font-size:13px">(optional)</span></h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label class="lbl">Amount (₹)</label><input class="fl" value="1,000" placeholder="0"></div>
+          <div><label class="lbl">Payment Mode</label><div class="fld" style="cursor:pointer;background:#fff"><span>Cash</span><i data-lucide="chevron-down" style="width:14px;height:14px;color:#999;margin-left:auto"></i></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Room selector + summary + CTAs -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Room selector -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px">
+        <div style="padding:14px 16px;border-bottom:1px solid #E5E5E5">
+          <h2 style="font-size:14px;font-weight:600">Select Room</h2>
+          <p style="font-size:12px;color:#666;margin-top:2px">27–29 Aug · 2 nights · Available rooms</p>
+        </div>
+        <div style="padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#999;padding:4px 6px">Standard Double — ₹3,600 / night</div>
+          <!-- Selected room -->
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid #329937;background:rgba(50,153,55,.05);border-radius:8px;cursor:pointer">
+            <div style="width:36px;height:36px;background:rgba(50,153,55,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="bed-double" style="width:18px;height:18px;color:#329937"></i></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">Room 103</div><div style="font-size:11px;color:#666">Floor 1 · Garden view · Non-smoking</div></div>
+            <div style="width:20px;height:20px;border-radius:50%;background:#329937;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #E5E5E5;border-radius:8px;cursor:pointer">
+            <div style="width:36px;height:36px;background:#F7F7F7;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="bed-double" style="width:18px;height:18px;color:#ccc"></i></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500">Room 107</div><div style="font-size:11px;color:#666">Floor 2 · Pool view</div></div>
+          </div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#999;padding:4px 6px;margin-top:4px">Deluxe — ₹5,400 / night</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #E5E5E5;border-radius:8px;cursor:pointer">
+            <div style="width:36px;height:36px;background:#F7F7F7;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="bed-double" style="width:18px;height:18px;color:#ccc"></i></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500">Room 203</div><div style="font-size:11px;color:#666">Floor 2 · Pool view · Balcony</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px">
+        <h2 style="font-size:14px;font-weight:600;margin-bottom:12px">Booking Summary</h2>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Room 103 · Standard</span><span>₹3,600 / night</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">× 2 nights</span><span>₹7,200</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">GST (12%)</span><span>₹864</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:600;border-top:1px solid #F0F0F0;padding-top:8px"><span>Total</span><span style="font-size:15px">₹8,064</span></div>
+          <div style="display:flex;justify-content:space-between;color:#329937"><span>Advance Paid</span><span>− ₹1,000</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:700;color:#EF4444;font-size:14px"><span>Balance Due</span><span>₹7,064</span></div>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="check-in.html" style="display:flex;align-items:center;justify-content:center;gap:8px;height:48px;background:#F26B33;color:#fff;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 4px 14px rgba(242,107,51,.3)">
+          <i data-lucide="log-in" style="width:18px;height:18px"></i> Book &amp; Check In Now
+        </a>
+        <button style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#fff;border:1px solid #E5E5E5;border-radius:10px;font-size:13px;font-weight:500;color:#1A1A1A;cursor:pointer;font-family:Poppins,sans-serif">
+          <i data-lucide="bookmark" style="width:16px;height:16px"></i> Save as Booking (Check-in later)
+        </button>
+        <a href="front-desk.html" style="display:flex;align-items:center;justify-content:center;font-size:13px;color:#999;text-decoration:none;padding:8px">Cancel</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+function setBookingFor(type) {
+  const isCorp = type === 'corporate';
+  document.getElementById('btn-individual').style.background = isCorp ? 'transparent' : '#fff';
+  document.getElementById('btn-individual').style.color = isCorp ? '#666' : '#1A1A1A';
+  document.getElementById('btn-individual').style.boxShadow = isCorp ? 'none' : '0 1px 3px rgba(0,0,0,.07)';
+  document.getElementById('btn-corporate').style.background = isCorp ? '#fff' : 'transparent';
+  document.getElementById('btn-corporate').style.color = isCorp ? '#1A1A1A' : '#666';
+  document.getElementById('btn-corporate').style.boxShadow = isCorp ? '0 1px 3px rgba(0,0,0,.07)' : 'none';
+  document.getElementById('corporate-fields').style.display = isCorp ? 'block' : 'none';
+  lucide.createIcons();
+}
+</script>
+<style>
+aside:not([class]){width:64px!important;min-width:64px!important;overflow:hidden!important}
+aside:not([class])>div:first-child img{height:26px!important;width:26px!important;object-fit:contain!important}
+aside:not([class])>div:first-child>button:last-child{display:none!important}
+aside:not([class])>div:nth-child(2){flex-direction:column!important;align-items:center!important;padding:8px 0!important;gap:4px!important}
+aside:not([class])>div:nth-child(2) button{width:40px!important;height:40px!important;justify-content:center!important;padding:0!important}
+aside:not([class])>div:nth-child(2) button span{display:none!important}
+aside:not([class]) nav a,aside:not([class]) nav>button{justify-content:center!important;padding:10px 0!important}
+aside:not([class]) nav a span,aside:not([class]) nav>button span,aside:not([class]) nav i[data-lucide="chevron-down"]{display:none!important}
+aside:not([class]) nav>div>div[style*="margin-left"]{display:none!important}
+aside:not([class])>div:last-child{flex-direction:column!important;align-items:center!important;padding:6px 0!important;gap:2px!important}
+aside:not([class])>div:last-child button{width:40px!important;height:40px!important;justify-content:center!important;flex:none!important;padding:0!important}
+aside:not([class])>div:last-child button span,aside:not([class])>div:last-child button div[style*="text-align:left"]{display:none!important}
+</style>
+</body>
+</html>
