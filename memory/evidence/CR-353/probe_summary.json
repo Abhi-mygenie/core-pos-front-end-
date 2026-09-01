@@ -1,0 +1,83 @@
+{
+  "probe_date": "2026-08-31",
+  "restaurant_id": 69,
+  "results": {
+    "VERIFY-04_aiosell_status": {
+      "http": 200,
+      "is_running": true,
+      "hotel_code": "sandbox-pms",
+      "result": "PASS"
+    },
+    "VERIFY-05_room_mapping": {
+      "http": 200,
+      "mapping_complete": true,
+      "can_push_inventory": true,
+      "local_rooms": 5,
+      "mappings": 5,
+      "result": "PASS"
+    },
+    "VERIFY-01_local_reservations": {
+      "http": 500,
+      "error": "RelationNotFoundException: [order] on AiosellReservationRoom",
+      "result": "BACKEND_BUG \u2014 migration not run"
+    },
+    "VERIFY-02_ota_checkin": {
+      "http": 422,
+      "error": "RelationNotFoundException: [order] on AiosellReservationRoom",
+      "result": "BACKEND_BUG \u2014 same root cause as VERIFY-01"
+    },
+    "VERIFY-03_inventory": {
+      "http": 200,
+      "executive_available": 5,
+      "result": "PASS \u2014 fetch-inventory works"
+    },
+    "B06_direct_reservation": {
+      "http": 500,
+      "error": "Data truncated for column booking_type \u2014 Direct not in ENUM",
+      "result": "BACKEND_BUG"
+    },
+    "walkin_checkin": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "push_inventory": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "fetch_rates": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "push_rates": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "push_inventory_restrictions": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "push_rate_restrictions": {
+      "http": 200,
+      "result": "PASS"
+    },
+    "mark_no_show": {
+      "http": 422,
+      "message": "Failed to mark noshow",
+      "result": "BACKEND_BUG \u2014 seeded booking not stored correctly due to migration issue"
+    },
+    "dashboard_kpis": {
+      "http": 404,
+      "result": "ENDPOINT_MISSING"
+    },
+    "direct_reservation_cancel": {
+      "http": 422,
+      "message": "Reservation not found",
+      "result": "EXPECTED \u2014 test booking not created"
+    },
+    "fetch_reservations_cm": {
+      "http": 200,
+      "records": 0,
+      "result": "PASS \u2014 endpoint works, sandbox CM empty"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "status": true,
+  "message": "Inventory fetched from Aiosell successfully",
+  "data": {
+    "aiosell": {
+      "success": true,
+      "http_status": 200,
+      "body": {
+        "hotelCode": "sandbox-pms",
+        "updates": [
+          {
+            "startDate": "2026-09-08",
+            "endDate": "2026-09-08",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          },
+          {
+            "startDate": "2026-09-07",
+            "endDate": "2026-09-07",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          },
+          {
+            "startDate": "2026-09-09",
+            "endDate": "2026-09-09",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          },
+          {
+            "startDate": "2026-09-11",
+            "endDate": "2026-09-11",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          },
+          {
+            "startDate": "2026-09-10",
+            "endDate": "2026-09-10",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          },
+          {
+            "startDate": "2026-09-12",
+            "endDate": "2026-09-12",
+            "rooms": [
+              {
+                "available": 5,
+                "roomCode": "executive"
+              },
+              {
+                "available": 1,
+                "roomCode": "suite"
+              }
+            ]
+          }
+        ]
+      },
+      "error": null
+    }
+  }
+}
