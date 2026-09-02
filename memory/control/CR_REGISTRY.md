@@ -680,11 +680,11 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **CR-351** | Local Printer Setup — Bill Content + Bill Style Tabs | P1 | HIGH | **INTAKE COMPLETE** | 1 ✅ | BATCH-09. Local printer path (`printer_agent = "No"`). Endpoint: `GET+POST /bill-printer-config`. API confirmed live. OD-1: save toggles to all 3 configs simultaneously. OD-2: batch POST format `{configs:{58mm,80mm,windows}}` confirmed. OD-3: show_address + footer_text global. OQ-1 (GET source for 2 fields) deferred. Code reality: PARTIAL (agent version exists in CR-133, local path NONE). Execute after CR-161 in BATCH-09. 5 new files + 2 modified. Intake: `change_requests/CR-351_LOCAL_PRINTER_BILL_CONTENT_STYLE_INTAKE.md` |
 
 
-## 2026-08-28 — CR-353 PMS Module + Channel Manager (Gate 2 Impact Analysis Complete)
+## 2026-08-28 — CR-358 PMS Module + Channel Manager (Gate 2 Impact Analysis Complete)
 
 | Field | Value |
 |---|---|
-| **CR ID** | **CR-353** *(renumbered from design-session label CR-351 — true CR-351 = Printer Setup IMPLEMENTED)* |
+| **CR ID** | **CR-358** *(renumbered from design-session label CR-351 — true CR-351 = Printer Setup IMPLEMENTED)* |
 | **Title** | PMS Module — Property Management + Channel Manager Integration (AIOSELL + Room Redesign + Tape Chart + Self Check-In) |
 | **Priority** | P1 |
 | **Risk** | HIGH (new module, AIOSELL API integration, touches DashboardPage/RoomCheckInModal/Sidebar hotspots) |
@@ -693,7 +693,7 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **Gate** | 2 ✅ |
 | **Intake doc** | `change_requests/CR-351_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md` |
 | **Design Spec** | `plans/CR-351_DESIGN_SPEC_2026_08_27.md` (10 screens, 5 flows, all design decisions) |
-| **Impact doc** | `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
+| **Impact doc** | `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
 | **API handover** | `handover_1.md` (shared 2026-08-28 — AIOSELL MyGenie backend API spec) |
 | **Code reality** | NONE — greenfield PMS module |
 | **Gaps found** | 17 gaps (1 P0 CR-ID collision, 6 P1 blockers, 6 P2, 4 P3) |

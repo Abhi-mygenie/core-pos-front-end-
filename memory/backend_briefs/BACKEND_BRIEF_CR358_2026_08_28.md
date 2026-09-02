@@ -1,8 +1,8 @@
-# BACKEND_BRIEF_CR353_2026_08_28
+# BACKEND_BRIEF_CR358_2026_08_28
 ## PMS Module — AIOSELL Integration: All Backend Gaps & Questions
 
 **Date:** 2026-08-28
-**CR:** CR-353 — PMS Module + Channel Manager Integration
+**CR:** CR-358 — PMS Module + Channel Manager Integration
 **Raised by:** Planning agent (Gate 2 Impact Analysis)
 **Priority summary:** 4 missing endpoints (P1 blockers) · 2 clarifications needed · 2 design decisions
 
@@ -393,7 +393,7 @@ These are owner decisions that have backend implications. Backend team must conf
 ## Evidence Artifacts
 
 All curl probes and API responses to be saved at:
-`/app/memory/evidence/CR-353/`
+`/app/memory/evidence/CR-358/`
 
 Pending verification:
 - `gap02_local_reservations_probe.json` — verify endpoint exists or get 404
@@ -402,4 +402,4 @@ Pending verification:
 
 ---
 
-*Backend brief: 2026-08-28 | CR-353 | Impact Analysis Gate 2 | 10 action items*
+*Backend brief: 2026-08-28 | CR-358 | Impact Analysis Gate 2 | 10 action items*

@@ -1,11 +1,11 @@
 # CR-351 — PMS Module: Property Management + Channel Manager Integration
 ## Room Redesign · Tape Chart · Self Check-in · AIOSELL Sync
 
-**ID:** CR-353 *(renumbered from CR-351 — CR-351 is taken by "Local Printer Setup" IMPLEMENTED)*
+**ID:** CR-358 *(renumbered from CR-351 — CR-351 is taken by "Local Printer Setup" IMPLEMENTED)*
 **Date:** 2026-08-27
 **Status:** INTAKE COMPLETE — DESIGN LOCKED & AUDITED — GATE 2 IMPACT ANALYSIS COMPLETE
-**Impact Analysis:** `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`
-**Design Spec:** `plans/CR-351_DESIGN_SPEC_2026_08_27.md` (rename to CR-353 pending owner confirmation)
+**Impact Analysis:** `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`
+**Design Spec:** `plans/CR-351_DESIGN_SPEC_2026_08_27.md` (rename to CR-358 pending owner confirmation)
 **Priority:** P1
 **Risk:** HIGH (new module, AIOSELL API, self check-in, room state machine)
 **Area:** Room Module (expanded to full PMS section)

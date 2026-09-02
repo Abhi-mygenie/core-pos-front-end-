@@ -1,10 +1,10 @@
-# CR-353-P1 — Gate 2: Impact Analysis
+# CR-358-P1 — Gate 2: Impact Analysis
 ## PMS Phase 1 — Foundation + Channel Manager Core + In-House
 
-**Doc:** `impact/CR-353-P1_IMPACT_ANALYSIS.md`
+**Doc:** `impact/CR-358-P1_IMPACT_ANALYSIS.md`
 **Date:** 2026-09-01
 **Agent Role:** PLANNING (Gate 2 — Impact Analysis only. Gate 3 / Implementation Plan NOT written.)
-**Parent:** CR-353 (PMS Module + Channel Manager — Gate 2 CLOSED 2026-08-28, phased plan APPROVED 2026-09-01)
+**Parent:** CR-358 (PMS Module + Channel Manager — Gate 2 CLOSED 2026-08-28, phased plan APPROVED 2026-09-01)
 **Code Reality:** NONE — no PMS/AIOSELL code exists anywhere in `src/`. Fully greenfield.
 **Risk:** HIGH (sole phase touching `Sidebar.jsx` + `App.js` hotspots; AIOSELL API integration first-ever wiring)
 **Conflict Pre-Check:** CLEAN — no currently-open items touch `App.js` or `Sidebar.jsx`. See §3.
@@ -35,7 +35,7 @@ The single existing PMS-adjacent comment (`/* CR-004: Room Orders Report (PMS-st
 | All 3 new service/transform files | — | — | **NONE** — new files, no conflict possible |
 | All 2 new page files | — | — | **NONE** — new files |
 
-**Registry check:** CR-353 status = `GATE 3 — PHASED PLAN OWNER-APPROVED`. CR-353-P1 not yet registered (expected — this IA is the Gate 2 output that triggers registration). No other open CR touches the same files.
+**Registry check:** CR-358 status = `GATE 3 — PHASED PLAN OWNER-APPROVED`. CR-358-P1 not yet registered (expected — this IA is the Gate 2 output that triggers registration). No other open CR touches the same files.
 
 ---
 
@@ -131,7 +131,7 @@ rateplan_code: "deluxe-ep"  →  aiosellTransform.decodeMealPlan("deluxe-ep")
 | 2 | `api/services/aiosellService.js` | NEW | ~250 | 9 exported async functions using `api` from `../axios`. Status, property, start/stop, rooms, room-mapping, push/fetch-inventory, fetch-reservations. Each: try/catch, returns `res.data`. |
 | 3 | `api/services/pmsService.js` | NEW | ~80 | `getInHouseGuests()` wraps `roomService.getRoomList()` + `roomListTransform.transformRoomListToRows()`. Skeleton exports for P2 (`getReservations` → throws "Phase 3" until wired). |
 | 4 | `api/transforms/aiosellTransform.js` | NEW | ~200 | `fromAPI.status()`, `fromAPI.rooms()`, `fromAPI.inventory()`. Pure function `decodeMealPlan(rateplanCode)` — OD-08 meal plan badge. Defensive: `res?.data ?? {}` guards on every field. |
-| 5 | `App.js` | MODIFY | +18 | **Import section (top):** +9 lazy imports (or direct imports per existing pattern). **Routes block:** +9 `<Route>` elements in a new `{/* CR-353-P1: PMS Module */}` comment block. All wrapped in `<ProtectedRoute>`. App.js touched ONCE — frozen after P1. |
+| 5 | `App.js` | MODIFY | +18 | **Import section (top):** +9 lazy imports (or direct imports per existing pattern). **Routes block:** +9 `<Route>` elements in a new `{/* CR-358-P1: PMS Module */}` comment block. All wrapped in `<ProtectedRoute>`. App.js touched ONCE — frozen after P1. |
 | 6 | `Sidebar.jsx` | MODIFY | +20 | **4 targeted edits:** E1: `SIDEBAR_PERMISSIONS` — add `'pms': 'pos'`. E2: `VISIBLE_SECTIONS` — add `'pms'` to Set. E3: `sidebarMenuItems[]` — add `{id:'pms', label:'Rooms & Reservations', icon:Building2, children:[9 entries]}` (see §4a). E4: `visibleMenuItems` filter — add `if (item.id === 'pms' && !restaurant?.features?.room) return false` (OD-P1-01 ✅ confirmed — `features.room` gate; future dedicated key is a 1-line swap). Sidebar touched ONCE — frozen after P1. |
 | 7 | `pages/pms/ChannelManagerPage.jsx` | NEW | ~400 | S8: Tabs A (Setup/Connect), B (Room Mapping), C (OTA/Sync — inventory bars, Sync Now, Fetch Reservations). Tabs D (Rates) + E (No-Show) render Phase 5 placeholder. Uses aiosellService + aiosellTransform. |
 | 8 | `pages/pms/InHouseGuestsPage.jsx` | NEW | ~200 | S6: calls pmsService.getInHouseGuests(), renders sortable table of occupied rooms (room no, guest name, phone, check-in date, order ID). Uses BUG-361 localStorage sidebar pattern. |
@@ -223,10 +223,10 @@ Owner confirmation (verbatim): *"Yes this will be only for hotels for now — th
 ## 8. Post-Code Registry Checklist (for Implementation agent)
 
 ```
-- [ ] registry.json: CR-353-P1 → status: IMPLEMENTED, sprint_key: pos_X_0, gate: 5a
-- [ ] CR_REGISTRY.md: Add CR-353-P1 row (child of CR-353), status IMPLEMENTED
-- [ ] FILE_OWNERSHIP.md: Add all 9 files listed in §4 with CR-353-P1 + date
-- [ ] Code markers: // CR-353-P1 comment in every modified/created file
+- [ ] registry.json: CR-358-P1 → status: IMPLEMENTED, sprint_key: pos_X_0, gate: 5a
+- [ ] CR_REGISTRY.md: Add CR-358-P1 row (child of CR-358), status IMPLEMENTED
+- [ ] FILE_OWNERSHIP.md: Add all 9 files listed in §4 with CR-358-P1 + date
+- [ ] Code markers: // CR-358-P1 comment in every modified/created file
 - [ ] Verify: VISIBLE_SECTIONS still has all 10 original sections + 'pms'
 - [ ] Verify: App.js still has all 101 original routes + 9 new ones (grep Route count)
 ```
@@ -241,4 +241,4 @@ Owner confirmation (verbatim): *"Yes this will be only for hotels for now — th
 
 ---
 
-*Planning agent | CR-353-P1 Gate 2 | 2026-09-01 | Code reality: NONE | Conflict: CLEAN | Risk: HIGH | OD-P1-01 owner answer needed before Gate 3*
+*Planning agent | CR-358-P1 Gate 2 | 2026-09-01 | Code reality: NONE | Conflict: CLEAN | Risk: HIGH | OD-P1-01 owner answer needed before Gate 3*

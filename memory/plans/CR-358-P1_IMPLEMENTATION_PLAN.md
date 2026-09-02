@@ -1,10 +1,10 @@
-# CR-353-P1 — Gate 3: Implementation Plan
+# CR-358-P1 — Gate 3: Implementation Plan
 ## PMS Phase 1 — Foundation + Channel Manager Core + In-House Guests
 
-**Doc:** `plans/CR-353-P1_IMPLEMENTATION_PLAN.md`
+**Doc:** `plans/CR-358-P1_IMPLEMENTATION_PLAN.md`
 **Date:** 2026-09-01
 **Agent Role:** PLANNING (Gate 3 — Implementation Plan only. No code written.)
-**Gate 2 IA:** `memory/impact/CR-353-P1_IMPACT_ANALYSIS.md` — VERIFIED still accurate (see §0)
+**Gate 2 IA:** `memory/impact/CR-358-P1_IMPACT_ANALYSIS.md` — VERIFIED still accurate (see §0)
 **Risk:** HIGH
 **Scope:** 3 modified files + 6 new files. Total ~1,600 new lines.
 
@@ -58,7 +58,7 @@ Compile check after Steps 1–7 (new files only), then after Steps 8–9 (hotspo
 **Create** `/app/frontend/src/pages/pms/PmsPlaceholderPage.jsx`
 
 ```jsx
-// CR-353-P1: Shared placeholder for PMS Phase 2-5 unbuilt routes
+// CR-358-P1: Shared placeholder for PMS Phase 2-5 unbuilt routes
 import { useState } from 'react';
 import { Clock } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
@@ -103,7 +103,7 @@ export default PmsPlaceholderPage;
 **Append** after the last line (line 557, closing `};` of `AGGREGATOR_SYNC_ENDPOINTS`):
 
 ```js
-// CR-353-P1: AIOSELL Channel Manager + PMS endpoints
+// CR-358-P1: AIOSELL Channel Manager + PMS endpoints
 // All probed and verified on preprod (restaurant 69) on 2026-08-31.
 // P3/P4 stubs (LOCAL_RESERVATIONS, DASHBOARD_KPIS) are declared here but
 // only wired in Phase 3 — no FE code calls them in P1.
@@ -142,7 +142,7 @@ export const AIOSELL_ENDPOINTS = {
 **Create** `/app/frontend/src/api/transforms/aiosellTransform.js`
 
 ```js
-// CR-353-P1: AIOSELL API response transforms + meal plan decoder
+// CR-358-P1: AIOSELL API response transforms + meal plan decoder
 // Defensive: every fromAPI function guards against null/undefined response.
 // Response shapes verified from preprod probes (2026-08-31 evidence files).
 
@@ -271,7 +271,7 @@ export default aiosellTransform;
 **Create** `/app/frontend/src/api/services/aiosellService.js`
 
 ```js
-// CR-353-P1: AIOSELL Channel Manager service
+// CR-358-P1: AIOSELL Channel Manager service
 // All endpoints verified on preprod (restaurant 69) 2026-08-31.
 // R25: GET for reads, POST for writes (Laravel convention).
 // R11: every function curl-probed before wiring.
@@ -385,7 +385,7 @@ export const fetchReservations = async ({ startDate, endDate, importToLocal = fa
 **Create** `/app/frontend/src/api/services/pmsService.js`
 
 ```js
-// CR-353-P1: PMS aggregation service
+// CR-358-P1: PMS aggregation service
 // Wraps existing roomService + roomListTransform for the new PMS module.
 // roomService.getRoomList() and roomListTransform are NOT modified — only called.
 import { getRoomList } from './roomService';
@@ -401,18 +401,18 @@ export const getInHouseGuests = async () => {
   return roomListTransform.transformRoomListToRows(raw);
 };
 
-// ─── Phase 2 stubs (wired in CR-353-P2) ─────────────────────────────────────
+// ─── Phase 2 stubs (wired in CR-358-P2) ─────────────────────────────────────
 // Declared here so Phase 1 App.js routes compile without errors.
 // Phase 2 implementation will replace these throws with real API calls.
 
 /** P2: Get reservations for Check-In/New Booking flows */
 export const getPmsReservations = async () => {
-  throw new Error('[CR-353-P2] getPmsReservations not yet implemented — Phase 2 scope');
+  throw new Error('[CR-358-P2] getPmsReservations not yet implemented — Phase 2 scope');
 };
 
 /** P2: Create a direct/walk-in booking */
 export const createDirectReservation = async () => {
-  throw new Error('[CR-353-P2] createDirectReservation not yet implemented — Phase 2 scope');
+  throw new Error('[CR-358-P2] createDirectReservation not yet implemented — Phase 2 scope');
 };
 ```
 
@@ -429,7 +429,7 @@ Complete implementation of S8 — Channel Manager with 4 tabs:
 - Tab 3: Rates & Restrictions (Phase 5 placeholder)
 
 ```jsx
-// CR-353-P1: S8 — Channel Manager Page
+// CR-358-P1: S8 — Channel Manager Page
 // Tabs: OTA/Sync | AIOSELL Setup | Room Mapping | Rates & Restrictions (P5)
 // Design reference: /pms/channel-manager-v2.html
 import { useState, useEffect, useCallback } from 'react';
@@ -884,7 +884,7 @@ export default function ChannelManagerPage() {
 **Create** `/app/frontend/src/pages/pms/InHouseGuestsPage.jsx`
 
 ```jsx
-// CR-353-P1: S6 — In-House Guests Page
+// CR-358-P1: S6 — In-House Guests Page
 // Design reference: /pms/in-house.html
 // Calls pmsService.getInHouseGuests() → wraps existing GET_ROOM_LIST
 import { useState, useEffect, useCallback } from 'react';
@@ -1071,7 +1071,7 @@ import {
 **Replace with**:
 ```js
   insights: 'report',
-  pms: 'pos',               // CR-353-P1: Rooms & Reservations (hotels only — features.room gate)
+  pms: 'pos',               // CR-358-P1: Rooms & Reservations (hotels only — features.room gate)
 };
 ```
 
@@ -1084,7 +1084,7 @@ import {
 
 **Replace with**:
 ```js
-  const VISIBLE_SECTIONS = new Set(['dashboard', 'day-closure', 'expenses', 'menu-management', 'credit', 'reports', 'settings', 'inventory', 'insights', 'aggregator', 'pms']); // CR-041, CR-059, CR-072, CR-135, CR-353-P1
+  const VISIBLE_SECTIONS = new Set(['dashboard', 'day-closure', 'expenses', 'menu-management', 'credit', 'reports', 'settings', 'inventory', 'insights', 'aggregator', 'pms']); // CR-041, CR-059, CR-072, CR-135, CR-358-P1
 ```
 
 #### E4 — Add `features.room` gate to `visibleMenuItems` filter (line 314–321)
@@ -1103,7 +1103,7 @@ import {
 ```js
   const visibleMenuItems = sidebarMenuItems.filter((item) => {
     if (!VISIBLE_SECTIONS.has(item.id)) return false;
-    // CR-353-P1 OD-P1-01: PMS section — hotel-only (features.room gate).
+    // CR-358-P1 OD-P1-01: PMS section — hotel-only (features.room gate).
     // Future: replace features.room with dedicated features.pms when backend provides the key.
     if (item.id === 'pms' && !restaurant?.features?.room) return false;
     const perm = SIDEBAR_PERMISSIONS[item.id];
@@ -1124,7 +1124,7 @@ import {
 **Replace with** (add PMS section before `];`):
 ```js
   },
-  // CR-353-P1: Rooms & Reservations — hotel-only PMS module
+  // CR-358-P1: Rooms & Reservations — hotel-only PMS module
   // Placed between Credit Management and Daily Report per design spec §3.
   // Section gated on features.room (OD-P1-01). Sidebar touched ONCE — frozen after P1.
   // All 9 routes added at once; P2-P5 screens show PmsPlaceholderPage until their phase ships.
@@ -1165,7 +1165,7 @@ import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
 **Replace with** (append PMS imports after):
 ```js
 import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
-// CR-353-P1: PMS Module — Phase 1 pages (App.js touched ONCE, frozen after P1)
+// CR-358-P1: PMS Module — Phase 1 pages (App.js touched ONCE, frozen after P1)
 import ChannelManagerPage  from './pages/pms/ChannelManagerPage';
 import InHouseGuestsPage   from './pages/pms/InHouseGuestsPage';
 import PmsPlaceholderPage  from './pages/pms/PmsPlaceholderPage';
@@ -1182,7 +1182,7 @@ import PmsPlaceholderPage  from './pages/pms/PmsPlaceholderPage';
 **Replace with**:
 ```jsx
               <Route path="/recipes" element={<ProtectedRoute><RecipeManagementPage /></ProtectedRoute>} />
-              {/* CR-353-P1: PMS Module — all 9 routes added at once, App.js frozen after P1 */}
+              {/* CR-358-P1: PMS Module — all 9 routes added at once, App.js frozen after P1 */}
               <Route path="/pms/channel-manager" element={<ProtectedRoute><ChannelManagerPage /></ProtectedRoute>} />
               <Route path="/pms/in-house"        element={<ProtectedRoute><InHouseGuestsPage /></ProtectedRoute>} />
               <Route path="/pms/new-booking"     element={<ProtectedRoute><PmsPlaceholderPage title="New Booking" phase={2} /></ProtectedRoute>} />
@@ -1229,9 +1229,9 @@ import PmsPlaceholderPage  from './pages/pms/PmsPlaceholderPage';
 ```
 After completing Steps 1-9 and all V1-V20 pass:
 
-- [ ] registry.json: CR-353-P1 → status: "IMPLEMENTED", sprint_key: "pos_pms_1", gate: 5
-- [ ] CR_REGISTRY.md: Add/update CR-353-P1 row → IMPLEMENTED
-- [ ] FILE_OWNERSHIP.md: Add 9 files (6 new + 3 modified) under "CR-353-P1 — 2026-09-01"
+- [ ] registry.json: CR-358-P1 → status: "IMPLEMENTED", sprint_key: "pos_pms_1", gate: 5
+- [ ] CR_REGISTRY.md: Add/update CR-358-P1 row → IMPLEMENTED
+- [ ] FILE_OWNERSHIP.md: Add 9 files (6 new + 3 modified) under "CR-358-P1 — 2026-09-01"
       NEW:    pages/pms/PmsPlaceholderPage.jsx
       NEW:    api/transforms/aiosellTransform.js
       NEW:    api/services/aiosellService.js
@@ -1241,7 +1241,7 @@ After completing Steps 1-9 and all V1-V20 pass:
       MODIFY: api/constants.js (+AIOSELL_ENDPOINTS block)
       MODIFY: components/layout/Sidebar.jsx (E1-E5)
       MODIFY: App.js (imports + routes)
-- [ ] Code markers: // CR-353-P1 in every modified/created file header ✅ (already in each file above)
+- [ ] Code markers: // CR-358-P1 in every modified/created file header ✅ (already in each file above)
 - [ ] Verify: VISIBLE_SECTIONS has 11 entries ('pms' added to original 10)
 - [ ] Verify: App.js route count = 110 (was 101, +9 PMS routes)
 - [ ] Verify: webpack compiles 0 new errors
@@ -1259,4 +1259,4 @@ After completing Steps 1-9 and all V1-V20 pass:
 
 ---
 
-*Planning agent | CR-353-P1 Gate 3 | 2026-09-01 | Implementation Plan COMPLETE | Awaiting Gate 4 GO*
+*Planning agent | CR-358-P1 Gate 3 | 2026-09-01 | Implementation Plan COMPLETE | Awaiting Gate 4 GO*

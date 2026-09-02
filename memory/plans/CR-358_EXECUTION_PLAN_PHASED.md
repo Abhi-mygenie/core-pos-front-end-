@@ -1,7 +1,7 @@
-# CR-353 — Phased Execution Plan (Master Roadmap)
+# CR-358 — Phased Execution Plan (Master Roadmap)
 ## PMS Module + Channel Manager (AIOSELL)
 
-**Doc:** CR-353_EXECUTION_PLAN_PHASED.md
+**Doc:** CR-358_EXECUTION_PLAN_PHASED.md
 **Date:** 2026-06 (session) | **Agent Role:** PLANNING (Gate 3 — phasing strategy)
 **Inputs:** Gate 2 Impact Analysis (CLOSED), SESSION_HANDOVER_2026_09_01, v2 mockups, preprod probe results, backend reply_2.md (2026-09-01)
 **Status:** ✅ **APPROVED BY OWNER (2026-09-01)** — 5-phase breakdown confirmed, no merges/splits requested. Per-phase Gate 3 plan (Phase 1) is next.
@@ -21,7 +21,7 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 - **Risk isolation:** Sidebar.jsx (BUG-361 sweep) and App.js are touched exactly once, in Phase 1, then frozen. Each later phase only ADDS files under `pages/pms/` — regression surface per phase stays small.
 - **QA/smoke per phase:** Owner can verify each phase on preprod independently. A failure in the Tape Chart (hardest UI) cannot hold back the Channel Manager (already unblocked).
 
-**Registry model:** CR-353 stays the parent. Each phase registers as `CR-353-P1` … `CR-353-P5`, each with its own Gate 3 plan → Gate 4 GO → Implementation → QA → Owner smoke. Parent closes when all phases close.
+**Registry model:** CR-358 stays the parent. Each phase registers as `CR-358-P1` … `CR-358-P5`, each with its own Gate 3 plan → Gate 4 GO → Implementation → QA → Owner smoke. Parent closes when all phases close.
 
 ---
 
@@ -148,9 +148,9 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | S8-D Mark No-Show | booking.com + gommt only, per mockup |
 | GAP-09 verification | Probe: checkout → does `aiosell_sync_logs` show inventory release? If NO → BACKEND_BRIEF (availability drift is a real OTA overbooking risk) |
 | Module regression | Full cross-phase pass: S8 setup → mapping → OTA booking → arrivals → check-in → tape chart → in-house → departure → checkout → inventory release. Plus OLD-flow regression: Dashboard room card → RoomCheckInModal still works untouched (OD-01 co-exist proof) |
-| Registry closure prep | Code markers audit, FILE_OWNERSHIP, CR-353 parent status roll-up |
+| Registry closure prep | Code markers audit, FILE_OWNERSHIP, CR-358 parent status roll-up |
 
-**Exit criteria:** V10 + full regression matrix PASS → CR-353 parent ready for owner smoke + sprint closure.
+**Exit criteria:** V10 + full regression matrix PASS → CR-358 parent ready for owner smoke + sprint closure.
 
 ---
 
@@ -206,7 +206,7 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | R4 | NS-01 endpoints never probed — may not exist | P5 | Probe-first entry gate; per-endpoint defer without blocking phase |
 | R5 | GAP-09 inventory release on checkout unverified → OTA overbooking risk | P5 (probe), latent from P2 | Explicit probe in P5; if broken → P0 BACKEND_BRIEF |
 | R6 | Dual check-in paths drift (RoomCheckInModal vs S4) | P2, P5 | OD-01 co-exist; payload builders reuse `roomService.checkIn()` unchanged; P5 regression tests OLD flow explicitly |
-| R7 | No socket for new reservations (GAP-10, deferred) | P3 | Manual refresh + polling-on-focus acceptable for MVP; note for CR-353 Phase-2-of-product |
+| R7 | No socket for new reservations (GAP-10, deferred) | P3 | Manual refresh + polling-on-focus acceptable for MVP; note for CR-358 Phase-2-of-product |
 | R8 | KPI endpoint late (MISSING-01) | P3 | Non-blocking skeleton state per NS-02 |
 | R9 | Multi-room OTA bookings (GAP-15) | P3/P4 | MVP: render first room + "+N rooms" chip; full multi-room UI = backlog |
 
@@ -231,9 +231,9 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 
 ## 7. Per-Phase Process (applies to every phase)
 
-1. PLANNING writes `CR-353-P<N>_IMPLEMENTATION_PLAN.md` (exact edits, verification matrix, registry checklist)
+1. PLANNING writes `CR-358-P<N>_IMPLEMENTATION_PLAN.md` (exact edits, verification matrix, registry checklist)
 2. Owner Gate 4 GO
-3. IMPLEMENTATION (entry verification, code markers `// CR-353-P<N>`, EXIT GATE 5/5)
+3. IMPLEMENTATION (entry verification, code markers `// CR-358-P<N>`, EXIT GATE 5/5)
 4. QA per phase verification matrix
 5. Owner smoke on preprod (restaurant 69) → phase CLOSED in registry
 
@@ -246,9 +246,9 @@ This unblocks Phase 3's hard entry gate early and clears Phase 2's "Save as Book
 | 1 | Owner | ✅ DONE (2026-09-01) — Approved 5-phase breakdown, no merges/splits requested |
 | 2 | Backend | ✅ DONE — ALL 4 backend blockers (BUG-BE-01/02/03/04) fixed and agent-verified live on preprod (2026-09-01), including full Direct + OTA check-in flows reaching `in_house`/`checked_in` |
 | 3 | Owner | 🔲 NEXT — Review the phased plan (re-presented in detail by next agent) |
-| 4 | Planning agent | 🔲 NEXT — Gate 2 (Impact Analysis) for CR-353-P1 (Phase 1) ONLY — NOT Gate 3 Implementation Plan yet, per owner instruction |
-| 5 | Registry | 🔲 NEXT — Register CR-353-P1 in registry.json once Gate 2 starts |
+| 4 | Planning agent | 🔲 NEXT — Gate 2 (Impact Analysis) for CR-358-P1 (Phase 1) ONLY — NOT Gate 3 Implementation Plan yet, per owner instruction |
+| 5 | Registry | 🔲 NEXT — Register CR-358-P1 in registry.json once Gate 2 starts |
 
 ---
 
-*Planning agent | CR-353 phasing strategy | Owner APPROVED 2026-09-01 | ALL 4 backend blockers (BUG-BE-01/02/03/04) agent-verified FIXED end-to-end | Next: present plan -> Gate 2 for CR-353-P1*
+*Planning agent | CR-358 phasing strategy | Owner APPROVED 2026-09-01 | ALL 4 backend blockers (BUG-BE-01/02/03/04) agent-verified FIXED end-to-end | Next: present plan -> Gate 2 for CR-358-P1*

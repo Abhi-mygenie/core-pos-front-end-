@@ -1,7 +1,7 @@
-# CR-353 — Gate 2: Impact Analysis
+# CR-358 — Gate 2: Impact Analysis
 ## PMS Module + Channel Manager Integration (AIOSELL)
 
-**CR ID:** CR-353 *(was labelled CR-351 — renumbered; see §1 GAP-01)*
+**CR ID:** CR-358 *(was labelled CR-351 — renumbered; see §1 GAP-01)*
 **Date:** 2026-08-28 | **Updated:** 2026-08-31 (OD answers + probe results)
 **Agent Role:** PLANNING — Gate 2 (Impact Analysis only)
 **Gate:** 2 ✅ CLOSED — All 8 ODs answered, all probes run, all designs complete. Gate 3 READY.
@@ -18,7 +18,7 @@
 | OD-02 | Does ROOM_CHECK_IN auto-link OTA booking? | **No** — FE must pass `booking_id` explicitly in payload | Probe VERIFY-02 (422 confirms field required) |
 | OD-03 | Where does AIOSELL setup UI live? | **(a) Inside S8** — "Connect AIOSELL" section at top of Channel Manager panel | Owner confirmed |
 | OD-04 | Where does room mapping UI live? | **(a) Inside S8** — new "Room Mapping" tab inside Channel Manager | Owner confirmed |
-| OD-05 | Self check-in (S5) — MVP or Phase 2? | **Phase 2** — S5 screen entirely out of CR-353 scope | Owner confirmed |
+| OD-05 | Self check-in (S5) — MVP or Phase 2? | **Phase 2** — S5 screen entirely out of CR-358 scope | Owner confirmed |
 | OD-06 | "Save as Booking" — which approach? | **(b) Backend builds direct-reservation** — endpoint confirmed in handover_2, has BUG-BE-03 | Probe confirmed endpoint exists |
 | OD-07 | HK/OOO room state — FE or backend? | **(b) Backend field** — must persist across devices/sessions | Owner confirmed "should be from backend" |
 | OD-08 | Decode meal plan from rateplanCode? | **(a) YES — Meal Plan Badge** — decode suffix: ep→Room Only, cp→Breakfast Incl., map→Half Board, ap→Full Board | ✅ CONFIRMED |
@@ -126,21 +126,21 @@ No AIOSELL integration, PMS module, channel manager panel, tape chart, self chec
 
 ## §1 — Step 1: Conflict Pre-Check
 
-### CONFLICT-01 — CR-353 ID RENUMBER (CRITICAL)
+### CONFLICT-01 — CR-358 ID RENUMBER (CRITICAL)
 
 **Registry shows:** `CR-351: status=IMPLEMENTED, title="Local Printer Setup: Bill Content + Bill Style Tabs"`
 
 The PMS design was erroneously assigned CR-351. This is a **registry collision**. The PMS CR must be renumbered.
 
-Next available ID: **CR-353** (CR-352 = Printer Routing Gate, QA PASS).
+Next available ID: **CR-358** (CR-352 = Printer Routing Gate, QA PASS).
 
 **Files requiring rename:**
-- `/app/memory/change_requests/CR-351_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md` → `CR-353_...`
-- `/app/memory/plans/CR-351_DESIGN_SPEC_2026_08_27.md` → `CR-353_...`
-- `/app/memory/impact/CR-351_IMPACT_ANALYSIS.md` → `CR-353_...` (previous placeholder)
+- `/app/memory/change_requests/CR-351_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md` → `CR-358_...`
+- `/app/memory/plans/CR-351_DESIGN_SPEC_2026_08_27.md` → `CR-358_...`
+- `/app/memory/impact/CR-351_IMPACT_ANALYSIS.md` → `CR-358_...` (previous placeholder)
 - All design mockup HTML files (the cr-351 references in comments)
 
-**Action:** Register CR-353 in `registry.json`. Rename files. Owner to confirm renumber.
+**Action:** Register CR-358 in `registry.json`. Rename files. Owner to confirm renumber.
 
 ---
 
@@ -152,7 +152,7 @@ Next available ID: **CR-353** (CR-352 = Printer Routing Gate, QA PASS).
 
 **Architectural decision needed (OD-01):** See §6 Owner Decision Queue.
 
-**Execution order:** CR-353 must execute AFTER confirming no in-flight changes to `RoomCheckInModal.jsx` (CR-350 is IMPLEMENTED, no active CRs queued on it).
+**Execution order:** CR-358 must execute AFTER confirming no in-flight changes to `RoomCheckInModal.jsx` (CR-350 is IMPLEMENTED, no active CRs queued on it).
 
 ---
 
@@ -162,7 +162,7 @@ BUG-361 swept 68 files (2026-08-26) to add localStorage persistence for sidebar 
 - Each new Sidebar entry must use the existing `isExpanded` state driven by localStorage
 - The "Rooms & Reservations" section collapse/expand state must persist via the same mechanism
 
-**Execution:** CR-353 Sidebar work must grep BUG-361 pattern before writing code.
+**Execution:** CR-358 Sidebar work must grep BUG-361 pattern before writing code.
 
 ---
 
@@ -170,7 +170,7 @@ BUG-361 swept 68 files (2026-08-26) to add localStorage persistence for sidebar 
 
 **Last touched:** BUG-358 (sidebar persistence). Room cards are shown as columns on Dashboard. `checkInRoom` state triggers `RoomCheckInModal`.
 
-**Risk:** If CR-353 routes room check-in through the new PMS check-in page (`/pms/check-in`), the `checkInRoom` state + `RoomCheckInModal` mount in `DashboardPage.jsx` becomes redundant. The two systems must not both exist or the user experience forks.
+**Risk:** If CR-358 routes room check-in through the new PMS check-in page (`/pms/check-in`), the `checkInRoom` state + `RoomCheckInModal` mount in `DashboardPage.jsx` becomes redundant. The two systems must not both exist or the user experience forks.
 
 **Decision needed (OD-01)** — see §6.
 
@@ -253,10 +253,10 @@ BUG-361 swept 68 files (2026-08-26) to add localStorage persistence for sidebar 
 
 ### P0 — BLOCKERS (must resolve before Gate 3 can start)
 
-**GAP-01: CR-351 ID collision — must renumber to CR-353**
+**GAP-01: CR-351 ID collision — must renumber to CR-358**
 - **Type:** Registry/Admin
 - **Detail:** `registry.json` CR-351 = "Local Printer Setup" (IMPLEMENTED). PMS design uses same ID. Collision in registry, change_requests folder, plans folder, impact folder, mockups.
-- **Resolution:** Rename all files to CR-353. Register in registry.json as new CR-353.
+- **Resolution:** Rename all files to CR-358. Register in registry.json as new CR-358.
 - **Owner decision needed:** Confirm renumber is acceptable.
 
 ---
@@ -426,7 +426,7 @@ BUG-361 swept 68 files (2026-08-26) to add localStorage persistence for sidebar 
 | OD-02 | ROOM_CHECK_IN auto-link OTA? | **No** — FE passes `booking_id` explicitly | ✅ CONFIRMED (probe) |
 | OD-03 | AIOSELL setup UI location? | **(a) Inside S8** — Connect AIOSELL section at top | ✅ CONFIRMED |
 | OD-04 | Room mapping UI location? | **(a) Inside S8** — Room Mapping tab | ✅ CONFIRMED |
-| OD-05 | Self check-in (S5) scope? | **Phase 2** — S5 out of CR-353 entirely | ✅ CONFIRMED |
+| OD-05 | Self check-in (S5) scope? | **Phase 2** — S5 out of CR-358 entirely | ✅ CONFIRMED |
 | OD-06 | Save as Booking approach? | **(b) direct-reservation endpoint** — exists in handover_2 | ✅ CONFIRMED |
 | OD-07 | HK/OOO state storage? | **(b) Backend field** — persists across devices/sessions | ✅ CONFIRMED |
 | OD-08 | Decode meal plan from rateplanCode? | **(a) YES — Meal Plan Badge** — ep/cp/map/ap decoded to human labels | ✅ CONFIRMED |
@@ -480,10 +480,10 @@ These endpoints do NOT exist per the handover doc. Gate 3 is BLOCKED until backe
 ## §10 — Post-Code Registry Checklist (for Implementation agent)
 
 ```
-□ 1. registry.json: CR-353 status → IMPLEMENTED, sprint_key: pos_5_2
-□ 2. CR_REGISTRY.md: CR-353 row updated to IMPLEMENTED
-□ 3. FILE_OWNERSHIP.md: all new + modified files listed with CR-353 + date
-□ 4. Code markers: // CR-353 comment in every modified file
+□ 1. registry.json: CR-358 status → IMPLEMENTED, sprint_key: pos_5_2
+□ 2. CR_REGISTRY.md: CR-358 row updated to IMPLEMENTED
+□ 3. FILE_OWNERSHIP.md: all new + modified files listed with CR-358 + date
+□ 4. Code markers: // CR-358 comment in every modified file
 □ 5. COMPILE CHECK: webpack 0 new warnings
 ```
 
@@ -492,7 +492,7 @@ These endpoints do NOT exist per the handover doc. Gate 3 is BLOCKED until backe
 ## §11 — Impact Analysis Summary
 
 ```
-Planning complete: CR-353
+Planning complete: CR-358
 Stage: Impact Analysis (Gate 2 only)
 Code reality: NONE — greenfield PMS module
 Risk: HIGH (AIOSELL API, DashboardPage hotspot, RoomCheckInModal conflict, Sidebar sweep)
@@ -505,7 +505,7 @@ Gaps found: 17 total (1 P0, 6 P1, 6 P2, 4 P3)
 New backend endpoints required: 5 (2 mandatory, 3 conditional on OD answers)
 
 Owner decisions: ALL 8 ANSWERED (OD-01 through OD-08). Gate 3 READY.
-Docs: plans/CR-353_DESIGN_SPEC_2026_08_27.md (design), impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md (this doc)
+Docs: plans/CR-358_DESIGN_SPEC_2026_08_27.md (design), impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md (this doc)
 Next: Gate 3 Implementation Plan — READY TO WRITE. Backend must fix BUG-BE-01/02/03 + build 2 missing endpoints in parallel.
 ```
 

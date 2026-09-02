@@ -20,21 +20,21 @@ Owner uploaded `reply_3.md` — backend claimed BUG-BE-02 and BUG-BE-04 also fix
 | BUG-BE-02 (OTA check-in) | `BDC8899464` | `operational_status=in_house`, `line_status=checked_in`, RM 8527 (suite), `order_id=1232181` ✅ |
 | BUG-BE-04 (Direct check-in) | `MG-69-69BCC4D3-...` | `operational_status=in_house`, `line_status=checked_in`, RM 8528 (executive), `order_id=1232179` ✅ |
 
-**All 4 backend blockers (BUG-BE-01/02/03/04) now CLOSED and agent-verified.** No remaining hard backend blockers for Phase 1-3. Updated `plans/CR-353_EXECUTION_PLAN_PHASED.md`, `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`, `test_credentials.md`. Handover (`SESSION_HANDOVER_2026_09_01_CR353_PLAN_APPROVED.md`) Step B (re-probe BUG-BE-02/04) is now satisfied — next agent proceeds straight to Step A (present plan) + Step C (Gate 2 for CR-353-P1).
+**All 4 backend blockers (BUG-BE-01/02/03/04) now CLOSED and agent-verified.** No remaining hard backend blockers for Phase 1-3. Updated `plans/CR-358_EXECUTION_PLAN_PHASED.md`, `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`, `test_credentials.md`. Handover (`SESSION_HANDOVER_2026_09_01_CR353_PLAN_APPROVED.md`) Step B (re-probe BUG-BE-02/04) is now satisfied — next agent proceeds straight to Step A (present plan) + Step C (Gate 2 for CR-358-P1).
 
 ---
 
-## Session 2026-09-01 — CR-353 Phased Execution Plan Approved + Backend Fixes Verified
+## Session 2026-09-01 — CR-358 Phased Execution Plan Approved + Backend Fixes Verified
 
 | Milestone | Detail |
 |---|---|
 | **Role** | PLANNING — phasing strategy (no code written, per owner instruction) |
-| **Plan** | `plans/CR-353_EXECUTION_PLAN_PHASED.md` — 5 phases (Foundation+CM+In-House / Booking+Check-In / Reservation Ops / Tape Chart+Room Status / Rates+No-Show+Regression) |
+| **Plan** | `plans/CR-358_EXECUTION_PLAN_PHASED.md` — 5 phases (Foundation+CM+In-House / Booking+Check-In / Reservation Ops / Tape Chart+Room Status / Rates+No-Show+Regression) |
 | **Owner decision** | ✅ APPROVED as-is, no phase merge/split requested |
 | **Backend validation** | Agent curl-probed preprod directly (restaurant 69, `owner@thegoankitchen.com`): `GET /aiosell/local-reservations?view=arrivals` → **200** (was 500, BUG-BE-01 FIXED); `POST /aiosell/direct-reservation` → **201**, channel=Direct (was 500, BUG-BE-03 FIXED) |
 | **Still unverified** | BUG-BE-02 (OTA check-in, was 422) and new BUG-BE-04 (Direct check-in, was 403) — backend claims fixed in `reply_2.md` but agent has no live `booking_id` to re-test yet; re-probe at Phase 2 QA |
-| **Docs updated** | `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` (§PROBE, §BUGS), `plans/CR-353_EXECUTION_PLAN_PHASED.md` (§1, Phase 2/3, §8), `registry.json` (CR-353 status), `test_credentials.md` (created) |
-| **Owner's next-session instruction** | (1) Next agent re-presents the phased plan in full detail to owner. (2) Re-probe/confirm BUG-BE-02 + BUG-BE-04 with backend. (3) ONLY THEN start **Gate 2 Impact Analysis for CR-353-P1** (Phase 1 only) — explicitly NOT Gate 3 Implementation Plan yet. |
+| **Docs updated** | `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` (§PROBE, §BUGS), `plans/CR-358_EXECUTION_PLAN_PHASED.md` (§1, Phase 2/3, §8), `registry.json` (CR-358 status), `test_credentials.md` (created) |
+| **Owner's next-session instruction** | (1) Next agent re-presents the phased plan in full detail to owner. (2) Re-probe/confirm BUG-BE-02 + BUG-BE-04 with backend. (3) ONLY THEN start **Gate 2 Impact Analysis for CR-358-P1** (Phase 1 only) — explicitly NOT Gate 3 Implementation Plan yet. |
 | **Handover** | `handover/SESSION_HANDOVER_2026_09_01_CR353_PLAN_APPROVED.md` — full step-by-step for next agent |
 
 ---
@@ -44,17 +44,17 @@ Owner uploaded `reply_3.md` — backend claimed BUG-BE-02 and BUG-BE-04 also fix
 | Milestone | Detail |
 |---|---|
 | **Role** | PLANNING — Gate 2 Impact Analysis |
-| **CR** | CR-353 (renumbered from design-label CR-351 — collision with Printer CR) |
+| **CR** | CR-358 (renumbered from design-label CR-351 — collision with Printer CR) |
 | **Gate** | 2 ✅ COMPLETE |
 | **Code reality** | NONE — greenfield |
 | **Risk** | HIGH |
 | **Gaps found** | 17 (1 P0, 6 P1, 6 P2, 4 P3) |
 | **Missing APIs** | 5 new backend endpoints required |
 | **Owner decisions** | 8 decisions (OD-01→OD-08) — Gate 3 BLOCKED until answered |
-| **Impact doc** | `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
+| **Impact doc** | `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
 | **API handover read** | `handover_1.md` — AIOSELL backend API spec fully processed |
 
-**Key discovery:** CR-351 PMS label conflicts with real CR-351 (Printer Setup, IMPLEMENTED). PMS CR renumbered to **CR-353**. All references updated.
+**Key discovery:** CR-351 PMS label conflicts with real CR-351 (Printer Setup, IMPLEMENTED). PMS CR renumbered to **CR-358**. All references updated.
 
 ---
 

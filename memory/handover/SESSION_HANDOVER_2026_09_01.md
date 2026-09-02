@@ -1,4 +1,4 @@
-# SESSION HANDOVER — CR-353 Gate 2 CLOSED, Gate 3 READY
+# SESSION HANDOVER — CR-358 Gate 2 CLOSED, Gate 3 READY
 **Date:** 2026-09-01
 **Role used:** INTAKE + DESIGN AGENT
 **For:** PLANNING agent (Gate 3 — Implementation Plan)
@@ -30,7 +30,7 @@
 | OD-02 | OTA check-in linkage | FE passes `booking_id` + `booking_type=Online` in payload |
 | OD-03 | AIOSELL setup UI | **Inside S8** — "Connect AIOSELL" section + toggle states |
 | OD-04 | Room mapping UI | **Inside S8** — "Room Mapping" tab |
-| OD-05 | Self check-in (S5) | **Phase 2** — out of CR-353 scope entirely |
+| OD-05 | Self check-in (S5) | **Phase 2** — out of CR-358 scope entirely |
 | OD-06 | Save as Booking | `POST /aiosell/direct-reservation` — `booking_type=Direct` |
 | OD-07 | HK/OOO state | **Backend field** — `PATCH /aiosell/room-status/{table_id}` |
 | OD-08 | Meal plan badge | **(a) YES** — decode ep→Room Only, cp→Breakfast Incl., map→Half Board, ap→Full Board |
@@ -112,7 +112,7 @@ Gate 3 plan CAN be written now. FE scaffolding can start. But these 4 items bloc
 
 **Role:** PLANNING (Gate 3 — Implementation Plan)
 
-**First action:** Read this handover. Then read the impact analysis at `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`. Then read design mockups (§4 above — use v2 files where available).
+**First action:** Read this handover. Then read the impact analysis at `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md`. Then read design mockups (§4 above — use v2 files where available).
 
 **Write:** Gate 3 Implementation Plan covering:
 - Exact new files to create (9 pages + 4 services)

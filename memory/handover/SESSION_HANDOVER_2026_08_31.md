@@ -1,4 +1,4 @@
-# SESSION HANDOVER — CR-353 PMS Module: Probe Results + OD Answers
+# SESSION HANDOVER — CR-358 PMS Module: Probe Results + OD Answers
 **Date:** 2026-08-31
 **Role used:** INTAKE (handover_2 triage) + probe verification
 **For:** Design Agent (next session)
@@ -9,25 +9,25 @@
 ## 1. What This Session Covered
 
 1. **Memory sync** — pulled full `/app/memory/` from PMS branch. 81 files synced.
-2. **handover_2.md read** — new backend ops handbook. Cross-referenced against all open CR-353 gaps.
+2. **handover_2.md read** — new backend ops handbook. Cross-referenced against all open CR-358 gaps.
 3. **All curl probes run** — restaurant 69 / preprod.mygenie.online. Token from owner@thegoankitchen.com.
 4. **6 of 8 ODs answered** by owner. OD-08 pending design review.
 5. **3 backend bugs found** (BUG-BE-01/02/03). 1 missing endpoint (dashboard-kpis).
 6. **Impact analysis updated** — §OD, §NS, §PROBE, §BUGS sections added.
-7. **Registry updated** — CR-353 status advanced.
+7. **Registry updated** — CR-358 status advanced.
 
 ---
 
 ## 2. The Only CR This Session
 
-**CR-353** — PMS Module + Channel Manager Integration (AIOSELL)
+**CR-358** — PMS Module + Channel Manager Integration (AIOSELL)
 
 | Artifact | Path |
 |---|---|
-| Impact Analysis (updated) | `impact/CR-353_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
-| Backend Brief | `backend_briefs/BACKEND_BRIEF_CR353_2026_08_28.md` |
-| Design Spec (original 10 screens) | `plans/CR-353_DESIGN_SPEC_2026_08_27.md` |
-| Probe evidence | `evidence/CR-353/` (verify01–05 json files, probe_summary.json) |
+| Impact Analysis (updated) | `impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md` |
+| Backend Brief | `backend_briefs/BACKEND_BRIEF_CR358_2026_08_28.md` |
+| Design Spec (original 10 screens) | `plans/CR-358_DESIGN_SPEC_2026_08_27.md` |
+| Probe evidence | `evidence/CR-358/` (verify01–05 json files, probe_summary.json) |
 | Existing HTML mockups | `/app/frontend/public/pms/` (10 files — see §4) |
 
 ---
@@ -40,7 +40,7 @@
 | OD-02: OTA check-in linkage | FE passes `booking_id` explicitly in ROOM_CHECK_IN payload |
 | OD-03: AIOSELL setup UI | Inside S8 Channel Manager — "Connect AIOSELL" section at top |
 | OD-04: Room mapping UI | Inside S8 Channel Manager — "Room Mapping" tab |
-| OD-05: Self check-in | **Phase 2** — S5 screen dropped from CR-353 |
+| OD-05: Self check-in | **Phase 2** — S5 screen dropped from CR-358 |
 | OD-06: Direct reservation | `POST /aiosell/direct-reservation` endpoint confirmed (has BUG-BE-03) |
 | OD-07: HK/OOO state | **Backend field** — needs `PATCH /aiosell/room-status/{table_id}` |
 | NS-01: New S8 endpoints | **In scope** — push-rates, fetch-rates, push/rate-restrictions, mark-no-show |
@@ -127,7 +127,7 @@ Must be fixed BEFORE FE implementation can start on check-in and reservation scr
 
 ---
 
-## 7. Confirmed Scope of CR-353 (locked)
+## 7. Confirmed Scope of CR-358 (locked)
 
 **9 new screens** (S5 dropped):
 S1 Front Desk · S2 Tape Chart · S3 New Booking · S4 Check-In (Staff OTA + Direct) · S6 In-House Guests · S7 Room Status Board · S8 Channel Manager (expanded) · S9 Arrivals · S10 Departures
