@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-093 — Consumption Report Mock</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; font-size: 13px; }
+
+  /* Header */
+  .header { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { font-size: 17px; font-weight: 700; color: #111827; }
+  .header .sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .badge { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+  /* Filters */
+  .filters { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 12px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .filter-label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .filter-group { display: flex; align-items: center; gap: 6px; }
+  select, input[type="date"], input[type="text"] {
+    border: 1px solid #d1d5db; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #374151;
+    background: #fff; outline: none; height: 32px;
+  }
+  select:focus, input:focus { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249,115,22,0.1); }
+  .btn { display: flex; align-items: center; gap: 5px; padding: 0 14px; height: 32px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-primary { background: #f97316; color: #fff; }
+  .btn-primary:hover { background: #ea6c10; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-outline:hover { background: #f9fafb; }
+  .divider { width: 1px; height: 24px; background: #e5e7eb; }
+
+  /* KPI strip */
+  .kpi-strip { display: flex; gap: 14px; padding: 16px 24px; }
+  .kpi { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 150px; }
+  .kpi .label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+  .kpi .value { font-size: 22px; font-weight: 700; color: #111827; }
+  .kpi .sub { font-size: 11px; color: #9ca3af; margin-top: 3px; }
+  .kpi.orange { border-left: 3px solid #f97316; }
+  .kpi.blue { border-left: 3px solid #3b82f6; }
+  .kpi.purple { border-left: 3px solid #8b5cf6; }
+  .kpi.amber { border-left: 3px solid #f59e0b; }
+  .kpi.muted { background: #f9fafb; border-style: dashed; }
+  .kpi.muted .value { color: #9ca3af; font-size: 14px; }
+
+  /* Table */
+  .table-wrap { margin: 0 24px 24px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+  .table-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f3f4f6; }
+  .table-toolbar .title { font-size: 13px; font-weight: 600; color: #374151; }
+  .table-toolbar .count { font-size: 11px; color: #6b7280; margin-left: 6px; }
+  .tabs { display: flex; gap: 2px; background: #f3f4f6; padding: 3px; border-radius: 6px; }
+  .tab { padding: 4px 14px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #6b7280; }
+  .tab.active { background: #fff; color: #f97316; box-shadow: 0 1px 2px rgba(0,0,0,0.07); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f9fafb; padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+  thead th.right { text-align: right; }
+  tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.1s; cursor: pointer; }
+  tbody tr:hover { background: #fff7ed; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 10px 14px; font-size: 12px; color: #374151; }
+  tbody td.right { text-align: right; }
+  .ing-name { font-weight: 600; color: #111827; }
+  .cat-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; background: #eff6ff; color: #1d4ed8; }
+  .qty { font-weight: 600; color: #059669; }
+  .stock-in { color: #374151; }
+  .stock-low { color: #dc2626; font-weight: 600; }
+  .cost-pending { color: #d1d5db; font-style: italic; }
+  .expand-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 14px; padding: 0 4px; }
+  .expand-btn:hover { color: #f97316; }
+
+  /* Drill-down row */
+  .drill-row { background: #fffbf7 !important; }
+  .drill-inner { padding: 0 14px 14px 42px; }
+  .drill-table { width: 100%; border: 1px solid #fed7aa; border-radius: 6px; overflow: hidden; font-size: 11px; }
+  .drill-table th { background: #fff7ed; padding: 6px 10px; color: #9a3412; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .drill-table td { padding: 6px 10px; border-top: 1px solid #fed7aa; color: #374151; }
+  .drill-table tr:first-child td { border-top: none; }
+
+  /* Backend blocker note */
+  .blocker-note { margin: 0 24px 12px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .blocker-note .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .blocker-note .text { font-size: 12px; color: #92400e; line-height: 1.5; }
+  .blocker-note strong { font-weight: 700; }
+
+  .backend-col { color: #d1d5db !important; }
+  th.backend-col { color: #d1d5db !important; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Consumption Report</h1>
+    <div class="sub">Jul 1, 2026 – Jul 23, 2026 &nbsp;·&nbsp; Palm House &nbsp;·&nbsp; 34 ingredients</div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span class="badge">&#x2022; Live Data</span>
+    <button class="btn btn-outline">&#x2193;&nbsp; Export Excel</button>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <div class="filter-group">
+    <span class="filter-label">From</span>
+    <input type="date" value="2026-07-01" />
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">To</span>
+    <input type="date" value="2026-07-23" />
+  </div>
+  <div class="divider"></div>
+  <div class="filter-group">
+    <span class="filter-label">Category</span>
+    <select>
+      <option>All Categories</option>
+      <option selected>BAR</option>
+      <option>Dairy</option>
+      <option>Spice</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Ingredient</span>
+    <input type="text" placeholder="Search ingredient..." style="width:180px;" value="" />
+    <span style="font-size:10px;color:#f59e0b;background:#fffbeb;border:1px solid #fcd34d;padding:2px 6px;border-radius:4px;">Client-side filter — OQ-2</span>
+  </div>
+  <div class="divider"></div>
+  <button class="btn btn-primary">Apply</button>
+  <button class="btn btn-outline">Reset</button>
+</div>
+
+<!-- BACKEND BLOCKER NOTE -->
+<div class="blocker-note">
+  <div class="icon">&#x26A0;&#xFE0F;</div>
+  <div class="text">
+    <strong>OQ-1 — Cost / Margin fields pending backend delivery.</strong>
+    The DCR endpoint currently returns opening stock, consumed qty, closing stock.
+    Cost per Unit, Total Cost, Recipe Cost, Margin are NOT in the API response.
+    Columns shown in grey below will be available once backend adds cost data.
+    <strong>Owner decision required before Gate 3 — see OQ-1 options (a/b/c).</strong>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi orange">
+    <div class="label">Ingredients Tracked</div>
+    <div class="value">34</div>
+    <div class="sub">Jul 1 – 23, 2026</div>
+  </div>
+  <div class="kpi blue">
+    <div class="label">Consumption Entries</div>
+    <div class="value">987</div>
+    <div class="sub">order-level deductions</div>
+  </div>
+  <div class="kpi purple">
+    <div class="label">Categories</div>
+    <div class="value">1</div>
+    <div class="sub">BAR (filtered)</div>
+  </div>
+  <div class="kpi amber muted">
+    <div class="label">Total Cost</div>
+    <div class="value">— pending backend</div>
+    <div class="sub">OQ-1</div>
+  </div>
+  <div class="kpi amber muted">
+    <div class="label">Avg Margin</div>
+    <div class="value">— pending backend</div>
+    <div class="sub">OQ-1</div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+  <div class="table-toolbar">
+    <div style="display:flex;align-items:center;">
+      <span class="title">Ingredient Summary</span>
+      <span class="count">34 ingredients</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <!-- OQ-3 tab options -->
+      <div style="font-size:10px;color:#f59e0b;background:#fffbeb;border:1px solid #fcd34d;padding:3px 8px;border-radius:4px;">OQ-3: Summary / Detail tabs?</div>
+      <div class="tabs">
+        <div class="tab active">Summary</div>
+        <div class="tab">Details</div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:32px;"></th>
+        <th>Ingredient</th>
+        <th>Category</th>
+        <th class="right">Opening Stock</th>
+        <th class="right">Consumed</th>
+        <th class="right">Closing Stock</th>
+        <th class="right backend-col">Cost / Unit ⚠</th>
+        <th class="right backend-col">Total Cost ⚠</th>
+        <th class="right backend-col">Margin ⚠</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr onclick="toggleDrill('r1')">
+        <td><button class="expand-btn" id="btn-r1">&#x25B6;</button></td>
+        <td class="ing-name">Bacardi White</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">1.05 ltr</td>
+        <td class="right qty">270 ml</td>
+        <td class="right stock-in">780 ml</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r1" style="display:none;" class="drill-row">
+        <td colspan="9">
+          <div class="drill-inner">
+            <table class="drill-table">
+              <thead><tr><th>Date</th><th>Order ID</th><th>Food Item</th><th>Order Type</th><th>Qty Deducted</th></tr></thead>
+              <tbody>
+                <tr><td>Jul 16</td><td>#1070864</td><td>Bacardi Cocktail</td><td>POS</td><td>30 ml</td></tr>
+                <tr><td>Jul 16</td><td>#1070901</td><td>Bacardi Mojito</td><td>POS</td><td>60 ml</td></tr>
+                <tr><td>Jul 17</td><td>#1071234</td><td>Bacardi Cocktail</td><td>POS</td><td>30 ml</td></tr>
+                <tr><td colspan="5" style="color:#9ca3af;font-style:italic;">... 6 more entries</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+
+      <tr onclick="toggleDrill('r2')">
+        <td><button class="expand-btn" id="btn-r2">&#x25B6;</button></td>
+        <td class="ing-name">Baileys</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">3 ltr</td>
+        <td class="right qty">2.7 ltr</td>
+        <td class="right stock-low">300 ml</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r2" style="display:none;" class="drill-row">
+        <td colspan="9">
+          <div class="drill-inner">
+            <table class="drill-table">
+              <thead><tr><th>Date</th><th>Order ID</th><th>Food Item</th><th>Order Type</th><th>Qty Deducted</th></tr></thead>
+              <tbody>
+                <tr><td>Jul 10</td><td>#1068211</td><td>Baileys on Ice</td><td>POS</td><td>60 ml</td></tr>
+                <tr><td colspan="5" style="color:#9ca3af;font-style:italic;">... 44 more entries</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+
+      <tr onclick="toggleDrill('r3')">
+        <td><button class="expand-btn" id="btn-r3">&#x25B6;</button></td>
+        <td class="ing-name">Big banyan Cab Sauvignon</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">3 ltr</td>
+        <td class="right qty">1.44 ltr</td>
+        <td class="right stock-in">1.56 ltr</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r3" style="display:none;" class="drill-row"><td colspan="9"><div class="drill-inner"><table class="drill-table"><thead><tr><th>Date</th><th>Order ID</th><th>Food Item</th><th>Order Type</th><th>Qty Deducted</th></tr></thead><tbody><tr><td colspan="5" style="color:#9ca3af;font-style:italic;">Drill-down data available from stock_details</td></tr></tbody></table></div></td></tr>
+
+      <tr onclick="toggleDrill('r4')">
+        <td><button class="expand-btn" id="btn-r4">&#x25B6;</button></td>
+        <td class="ing-name">Black &amp; White</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">1.65 ltr</td>
+        <td class="right qty">360 ml</td>
+        <td class="right stock-in">1.29 ltr</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r4" style="display:none;" class="drill-row"><td colspan="9"><div class="drill-inner"><table class="drill-table"><thead><tr><th>Date</th><th>Order ID</th><th>Food Item</th><th>Order Type</th><th>Qty Deducted</th></tr></thead><tbody><tr><td colspan="5" style="color:#9ca3af;font-style:italic;">Drill-down data available from stock_details</td></tr></tbody></table></div></td></tr>
+
+      <tr onclick="toggleDrill('r5')">
+        <td><button class="expand-btn" id="btn-r5">&#x25B6;</button></td>
+        <td class="ing-name">Bombay Sapphire</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">750 ml</td>
+        <td class="right qty">90 ml</td>
+        <td class="right stock-in">660 ml</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r5" style="display:none;" class="drill-row"><td colspan="9"><div class="drill-inner"><table class="drill-table"><thead><tr><th>Date</th><th>Order ID</th><th>Food Item</th><th>Order Type</th><th>Qty Deducted</th></tr></thead><tbody><tr><td colspan="5" style="color:#9ca3af;font-style:italic;">Drill-down data available from stock_details</td></tr></tbody></table></div></td></tr>
+
+      <tr onclick="toggleDrill('r6')">
+        <td><button class="expand-btn" id="btn-r6">&#x25B6;</button></td>
+        <td class="ing-name">Budweiser</td>
+        <td><span class="cat-pill">BAR</span></td>
+        <td class="right stock-in">24 pcs</td>
+        <td class="right qty">6 pcs</td>
+        <td class="right stock-in">18 pcs</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+        <td class="right cost-pending">—</td>
+      </tr>
+      <tr id="r6" style="display:none;" class="drill-row"><td colspan="9"><div class="drill-inner"><p style="color:#9ca3af;font-size:11px;padding:8px 0;">Drill-down available</p></div></td></tr>
+
+      <tr style="background:#f9fafb;">
+        <td></td>
+        <td colspan="2" style="font-weight:700;color:#374151;font-size:11px;">... 28 more ingredients</td>
+        <td class="right cost-pending" colspan="6" style="font-size:11px;color:#9ca3af;">scroll to see all</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- OPEN QUESTIONS PANEL -->
+<div style="margin: 0 24px 32px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+  <div style="background: #1e293b; color: #f1f5f9; padding: 10px 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;">
+    OPEN QUESTIONS — Owner must answer before Gate 3
+  </div>
+  <table style="width:100%;border-collapse:collapse;">
+    <thead>
+      <tr style="background:#f8fafc;">
+        <th style="padding:8px 14px;text-align:left;font-size:11px;color:#6b7280;font-weight:700;border-bottom:1px solid #e5e7eb;">OQ</th>
+        <th style="padding:8px 14px;text-align:left;font-size:11px;color:#6b7280;font-weight:700;border-bottom:1px solid #e5e7eb;">Question</th>
+        <th style="padding:8px 14px;text-align:left;font-size:11px;color:#6b7280;font-weight:700;border-bottom:1px solid #e5e7eb;">Options</th>
+        <th style="padding:8px 14px;text-align:left;font-size:11px;color:#6b7280;font-weight:700;border-bottom:1px solid #e5e7eb;">Blocking?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:10px 14px;font-weight:700;color:#dc2626;">OQ-1</td>
+        <td style="padding:10px 14px;font-size:12px;">Cost / Margin columns missing from API. How to proceed?</td>
+        <td style="padding:10px 14px;font-size:11px;color:#374151;">a) Build now without cost, add later &nbsp;|&nbsp; b) Wait for backend &nbsp;|&nbsp; c) Derive from vendor purchase rate (complex)</td>
+        <td style="padding:10px 14px;"><span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">YES</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:10px 14px;font-weight:700;color:#f59e0b;">OQ-2</td>
+        <td style="padding:10px 14px;font-size:12px;">ingredient_id filter not working on backend. Client-side filter OK?</td>
+        <td style="padding:10px 14px;font-size:11px;color:#374151;">a) Client-side filter (recommended) &nbsp;|&nbsp; b) Backend brief + wait</td>
+        <td style="padding:10px 14px;"><span style="background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">LOW</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:10px 14px;font-weight:700;color:#f59e0b;">OQ-3</td>
+        <td style="padding:10px 14px;font-size:12px;">Table layout — Summary only, or expandable drill-down to order level?</td>
+        <td style="padding:10px 14px;font-size:11px;color:#374151;">a) Summary only &nbsp;|&nbsp; b) Summary + expandable rows (shown in mock) &nbsp;|&nbsp; c) Two tabs</td>
+        <td style="padding:10px 14px;"><span style="background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">MEDIUM</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:10px 14px;font-weight:700;color:#6b7280;">OQ-4</td>
+        <td style="padding:10px 14px;font-size:12px;">Export options?</td>
+        <td style="padding:10px 14px;font-size:11px;color:#374151;">a) Excel only &nbsp;|&nbsp; b) Excel + PDF &nbsp;|&nbsp; c) None for now</td>
+        <td style="padding:10px 14px;"><span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">LOW</span></td>
+      </tr>
+      <tr>
+        <td style="padding:10px 14px;font-weight:700;color:#6b7280;">OQ-5</td>
+        <td style="padding:10px 14px;font-size:12px;">Sidebar group label after Expenses in Insights?</td>
+        <td style="padding:10px 14px;font-size:11px;color:#374151;">a) "Inventory" &nbsp;|&nbsp; b) "Stock Reports" &nbsp;|&nbsp; c) No group — standalone item after Expense Report</td>
+        <td style="padding:10px 14px;"><span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">LOW</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function toggleDrill(id) {
+  const row = document.getElementById(id);
+  const btn = document.getElementById('btn-' + id);
+  if (row.style.display === 'none') {
+    row.style.display = 'table-row';
+    btn.innerHTML = '&#x25BC;';
+    btn.style.color = '#f97316';
+  } else {
+    row.style.display = 'none';
+    btn.innerHTML = '&#x25B6;';
+    btn.style.color = '#9ca3af';
+  }
+}
+</script>
+
+</body>
+</html>
