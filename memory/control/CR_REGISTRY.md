@@ -17,7 +17,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 3 — awaiting Gate 4 GO** | 3 | Plan `plans/CR-358-P2_IMPLEMENTATION_PLAN.md`: 8 edits / 5 files (2 new pages, pmsService +4 fns, aiosellTransform +2, App.js 4-line route re-point = **SC-01 needs owner ack**). 26-check matrix. OD-P2-01..07 applied. R11 re-probe at Gate 4 entry. |
+| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 3 — awaiting Gate 4 GO** | 3 | Plan `plans/CR-358-P2_IMPLEMENTATION_PLAN.md`: 8 edits / 5 files (2 new pages, pmsService +4 fns, aiosellTransform +2, App.js 4-line route re-point = **SC-01 needs owner ack**). 26-check matrix. OD-P2-01..07 applied. R11 re-probe DONE (11 probes): direct-reservation 201; JSON check-in needs `id_type` (500 without → BUG-BE-05 brief). |
 
 ---
 

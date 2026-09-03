@@ -22218,10 +22218,20 @@
           "label": "Session Handover (Gate 3)",
           "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE3.md",
           "type": "handover"
+        },
+        {
+          "label": "Backend Brief BUG-BE-05",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BUG-BE-05_2026_09_03.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "R11 Probe Evidence",
+          "path": "memory/evidence/CR-358-P2/",
+          "type": "evidence"
         }
       ],
       "category": "ACTIVE",
-      "note": "Gate 3 plan: 8 edits / 5 files (NewBookingPage.jsx NEW, CheckInPage.jsx NEW, pmsService.js +getBookableRooms/getPmsReservations/createDirectReservation/pmsCheckIn, aiosellTransform.js +directReservation/+pendingArrival, App.js 4-line route re-point = SC-01 scope correction, IA claim \"zero App.js changes\" was stale). 26-check verification matrix (12 auto/14 manual). OD-P2-01..07 applied; A-01..A-07 presentation defaults declared. R11 re-probe deferred to Gate 4 entry (test_credentials.md empty). Next: owner Gate 4 GO + SC-01 ack → IMPLEMENTATION."
+      "note": "Gate 3 plan: 8 edits / 5 files (NewBookingPage.jsx NEW, CheckInPage.jsx NEW, pmsService.js +getBookableRooms/getPmsReservations/createDirectReservation/pmsCheckIn, aiosellTransform.js +directReservation/+pendingArrival, App.js 4-line route re-point = SC-01 scope correction, IA claim \"zero App.js changes\" was stale). 26-check verification matrix (12 auto/14 manual). OD-P2-01..07 applied; A-01..A-07 presentation defaults declared. R11 re-probe EXECUTED 2026-09-03 with owner creds (11 probes, evidence/CR-358-P2/): direct-reservation 201, JSON check-in 200 ONLY with id_type (+FormData parity keys) — 500 + orphan order without it → BACKEND_BRIEF_BUG-BE-05. Contracts frozen in plan §4. Preprod state: probe guest in-house r3 (8524) for owner to check out. Next: owner Gate 4 GO + SC-01 ack → IMPLEMENTATION."
     }
   ],
   "meta": {

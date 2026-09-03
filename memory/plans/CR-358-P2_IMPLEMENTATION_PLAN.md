@@ -25,7 +25,7 @@
 | `aiosell/rooms` shape | Frozen from `evidence/BUG-378/probe_aiosell_rooms.json` — `local_rooms[{id,table_no,rtype,title}]`, `mappings[{restaurant_table_id,aiosell_room_code,aiosell_rateplan_code}]` |
 | Toast lib | `sonner` (`import { toast } from 'sonner'`) — as in `ChannelManagerPage.jsx` |
 | Conflict pre-check | `pmsService.js` last touched BUG-378 (2026-09-03, QA'd); `aiosellTransform.js` BUG-377 (2026-09-02, QA'd); `App.js` CR-358-P1 (frozen). No other ACTIVE item on these files. **CLEAN** |
-| R11 curl re-probe | **NOT executed this session** — `memory/test_credentials.md` is an empty placeholder (owner login alias missing after redeploy). Payload contracts below come from owner-supplied curls (OD-P2-02, ques2_reply.md) + 2026-09-01 agent-verified probes. **IMPL agent MUST re-probe §4 contracts at Gate 4 entry before wiring (R11).** |
+| R11 curl re-probe | ✅ **EXECUTED 2026-09-03 (owner creds, alias OWNER_PREPROD)** — 11 probes saved to `memory/evidence/CR-358-P2/` (phones/emails masked). Results in §4.5. **One contract correction found:** JSON check-in **requires `id_type`** (NOT NULL column) — omitted → HTTP 500. §4.2 + Edit 5 updated. All other contracts confirmed. |
 
 ---
 
@@ -96,7 +96,7 @@ If any of these must change → STOP, re-declare, get owner confirmation (R14).
 
 ## 4. API contracts (frozen for IMPL; re-probe per R11 at Gate 4 entry)
 
-### 4.1 `POST AIOSELL_ENDPOINTS.DIRECT_RESERVATION` (JSON) — expect **201**
+### 4.1 `POST AIOSELL_ENDPOINTS.DIRECT_RESERVATION` (JSON) — expect **201** ✅ probe P5
 ```json
 {
   "guest":   { "name": "<string>", "phone": "<10 digits>", "email": "<string|null>" },
@@ -111,7 +111,7 @@ If any of these must change → STOP, re-declare, get owner confirmation (R14).
 ```
 Rules: `rooms[]` uses **`restaurant_table_id`** (physical room chosen on pill grid — IA R3 explicit intent). Never send `advance_payment` (OD-P2-07). Response read path: `res.data.data.reservation` → fallback `res.data.reservation` → `res.data.data`. Fields used: `booking_id`, `channel`, `checkin`, `checkout`, `operational_status`, `status`.
 
-### 4.2 `POST AIOSELL_ENDPOINTS.LOCAL_CHECKIN` (JSON, not FormData) — expect **200**
+### 4.2 `POST AIOSELL_ENDPOINTS.LOCAL_CHECKIN` (JSON, not FormData) — expect **200** ✅ probe P8
 ```json
 {
   "booking_type":    "WalkIn" | "Direct" | "Online",
@@ -119,20 +119,27 @@ Rules: `rooms[]` uses **`restaurant_table_id`** (physical room chosen on pill gr
   "name":            "<string>",
   "phone":           "<10 digits>",
   "email":           "<string|''>",
-  "room_id":         [ 8526 ],
+  "room_id":         [ 8524 ],
+  "id_type":         "Select document type",   // REQUIRED — NOT NULL column; omit → HTTP 500 (probe P6)
+  "total_adult":     1,
+  "total_children":  0,
+  "children_name":   "",
   "checkin_date":    "YYYY-MM-DD",
   "checkout_date":   "YYYY-MM-DD",
-  "order_amount":    5000,
-  "room_price":      5000,
-  "advance_payment": 0,
-  "balance_payment": 5000,
-  "total_adult":     2,
-  "total_children":  0,
+  "booking_details": "",
   "booking_for":     "Individual",
-  "order_note":      "<string|''>"
+  "order_amount":    1000,
+  "room_price":      1000,
+  "advance_payment": 200,
+  "balance_payment": 800,
+  "payment_method":  "",
+  "order_note":      "<string|''>",
+  "gst_tax":         "0.00",
+  "firm_name":       "",
+  "firm_gst":        ""
 }
 ```
-Rules: `booking_type` is a **mandatory param with no default** (IA R1 mitigation) — `pmsCheckIn` throws synchronously if missing/invalid. Date format `Y-m-d` (IA R4). `balance_payment = order_amount − advance_payment` (2dp). Confirmed-by-curl core = first 11 keys; `total_adult/total_children/booking_for/order_note/email/room_price` mirror the FormData path and are additive — IMPL verifies backend does not 422 on them; if it does, drop the offending key and note in QA handover. Response: `{ message: "Group check-in completed", user_id, ... }`.
+Rules: `booking_type` is a **mandatory param with no default** (IA R1 mitigation) — `pmsCheckIn` throws synchronously if missing/invalid. Date format `Y-m-d` (IA R4). `balance_payment = order_amount − advance_payment` (2dp). **Key set = full FormData parity with `roomService.checkIn()` minus file fields** (probe P8 → 200; probe P6 with the shorter "curl-confirmed core" set → 500 on `id_type`). Response: `{ message: "Group check-in completed successfully", user_id, cust_membership_id }`. Verified side effects (P9/P10): reservation `operational_status → in_house`, `line_status → checked_in`, `order_id` set, `checked_in_at` set, room appears in `get-room-list`.
 
 Channel → `booking_type` map (S4): `channel === 'Direct'` → `Direct`; walk-in card → `WalkIn`; any other channel (booking.com, gommt, …) → `Online`.
 
@@ -141,7 +148,28 @@ Backend FE note (handover_3): check-in `room_id` must map to the SAME aiosell `r
 ### 4.3 `GET AIOSELL_ENDPOINTS.LOCAL_RESERVATIONS?start_date&end_date` — 200
 Frozen shape (probe 2026-09-03): `data.reservations[{ id, booking_id, channel, checkin, checkout, status, operational_status, amount_after_tax, special_requests, guest{first_name,last_name,email,phone}, rooms[{ id, room_code, rateplan_code, guest_name, adults, children, line_status, restaurant_table_id, table_no, order_id, checked_in_at }] }]`
 
-### 4.4 `GET AIOSELL_ENDPOINTS.ROOMS` — 200 (existing `fromAPI.rooms`, unchanged)
+### 4.4 `GET AIOSELL_ENDPOINTS.ROOMS` — 200 (existing `fromAPI.rooms`, unchanged) ✅ probe P1
+**Live mapping 2026-09-03 differs from BUG-378 evidence:** `suite → 8524 (r3), 8525 (r4), 8527 (r5)`; `executive → 8526 (r2), 8528 (r1)`; all `aiosell_rateplan_code` = null. Confirms: room-type label MUST come from live `mappings[]`, never hard-coded; `ratePlanCode`/`mealPlan` may be null → badge hidden.
+
+### 4.5 R11 re-probe results (2026-09-03, restaurant 69, evidence `memory/evidence/CR-358-P2/`)
+
+| # | Probe | HTTP | Finding |
+|---|---|---|---|
+| P1 | `GET /aiosell/rooms` | 200 | 5 RM rooms, 5 mappings (see §4.4) |
+| P2 | `GET /aiosell/local-reservations?start_date=today−1&end_date=today+60` (no `view`) | 200 | 6 reservations; shape == §4.3 exactly (17 top keys, 16 room keys, 7 guest keys) |
+| P3 | `GET /aiosell/status` | 200 | service running |
+| P4 | `GET get-room-list` | 200 | occupied before probe: 8526 r2, 8527 r5, 8528 r1 → free: 8524 r3, 8525 r4 (both `suite`) |
+| P5 | `POST /aiosell/direct-reservation` §4.1 with `rooms:[{restaurant_table_id:8524}]` | **201** | `booking_id=MG-69-A26B…`, `channel=Direct`, `operational_status=pending`, `rooms[0].room_code=suite` (derived from mapping), `restaurant_table_id=8524`, `table_no=r3`, `special_requests` = notes verbatim (A-02 note-suffix works), guest `name` split into first/last. Response also carries `data.inventory_push{}` — ignore in transform |
+| P6 | `POST user-group-check-in` JSON, Direct + booking_id, **without `id_type`** | **500** | `Column 'id_type' cannot be null`. ⚠ Backend created `order_id 1232204` **before** the failing insert → orphan order (not in room-list, reservation stayed pending). → **BUG-BE-05** brief |
+| P7 | verify `view=all&booking_id=` | 200 | still `pending` after P6 (no flip) |
+| P8 | Same as P6 **+ `id_type` + FormData-parity keys** (§4.2) | **200** | `"Group check-in completed successfully"`, `user_id` |
+| P9 | verify flip | 200 | `in_house` / `checked_in` / `order_id 1232205` / `checked_in_at` set |
+| P10 | `get-room-list` after | 200 | 8524 r3 now occupied by probe guest |
+| P11 | `local-reservations …&view=arrivals` | 200 | returns only `pending` (4) — server-side filter works, but plan keeps no-`view` fetch + client filter so one call also feeds in-house KPIs (A-03) |
+
+**Preprod state left behind (owner to clean via Dashboard checkout):** test guest "CR358P2 Probe" in-house in **r3 (8524)**, order `1232205`, booking `MG-69-A26BDA2F-…`, advance ₹200 / balance ₹800. Orphan order `1232204` from P6 (backend-side).
+
+Not probed (would consume the last free room / duplicate 2026-09-01 verified paths): WalkIn JSON, Online JSON. Both share the P8 code path minus/plus `booking_id`; QA V17/V19 cover them on a room the owner frees.
 
 ---
 
@@ -286,16 +314,23 @@ export const pmsCheckIn = async (p) => {
     phone:           p.phone,
     email:           p.email ?? '',
     room_id:         [Number(p.restaurantTableId)],
+    id_type:         'Select document type',   // REQUIRED (NOT NULL) — probe P6 500 without it; parity with roomService.checkIn L73
+    total_adult:     Number(p.adults ?? 1),
+    total_children:  Number(p.children ?? 0),
+    children_name:   '',
     checkin_date:    p.checkin,
     checkout_date:   p.checkout,
+    booking_details: '',
+    booking_for:     'Individual',
     order_amount:    orderAmount,
     room_price:      orderAmount,
     advance_payment: advance,
     balance_payment: to2dp(orderAmount - advance),
-    total_adult:     Number(p.adults ?? 1),
-    total_children:  Number(p.children ?? 0),
-    booking_for:     'Individual',
+    payment_method:  p.paymentMethod ?? '',
     order_note:      p.note ?? '',
+    gst_tax:         '0.00',
+    firm_name:       '',
+    firm_gst:        '',
   };
   const res = await api.post(AIOSELL_ENDPOINTS.LOCAL_CHECKIN, payload, { headers: { 'X-localization': 'en' } });
   return res.data;
@@ -371,7 +406,7 @@ Update comment L97: `// CR-358-P1 (+P2 route re-point): PMS Module pages`. Line 
 
 ## 6. Execution sequence
 
-1. **R11 re-probe** (Gate 4 entry, owner login alias required in `test_credentials.md`): `GET local-reservations` (shape §4.3), `GET aiosell/rooms`, `POST direct-reservation` with §4.1 (expect 201; note returned `booking_id`), `POST user-group-check-in` JSON §4.2 with `booking_type=Direct` + that `booking_id` (expect 200, reservation flips `in_house`). Save to `memory/evidence/CR-358-P2/`. **If any contract deviates → STOP, update §4, re-confirm with owner.**
+1. ~~R11 re-probe~~ ✅ **DONE at Gate 3 (§4.5)** — contracts frozen. IMPL only re-probes if >7 days elapse before coding (R12) or backend announces changes.
 2. Edit 1-3 (transform) → `yarn` compile clean → V3, V4.
 3. Edit 4-5 (service) → V1, V2, V7 → `InHouseGuestsPage` still loads (downstream check).
 4. Edit 6 (`NewBookingPage.jsx`) → Edit 8 line for new-booking only → V12 browser.
@@ -420,7 +455,7 @@ Totals: 26 checks — 12 automated, 14 manual.
 | # | Risk | Sev | Mitigation in plan |
 |---|---|---|---|
 | R1 | Wrong `booking_type` → orphan order on shared endpoint | HIGH | `pmsCheckIn` throws without valid type; `booking_id` key omitted for WalkIn (spread guard); single POST site (S4 only) |
-| R2 | Additive JSON keys (`total_adult` etc.) 422 on backend | MEDIUM | Step 1 re-probe; drop key if rejected; core 11 keys curl-confirmed |
+| R2 | JSON check-in missing a NOT NULL column → 500 + orphan order (backend non-transactional, probe P6) | HIGH | `pmsCheckIn` sends full FormData-parity key set incl. `id_type` (probe P8 = 200). BUG-BE-05 brief to backend: validate → 422 before creating order |
 | R3 | Room-type mismatch on check-in (backend requires same `room_code`) | HIGH | Default room = mapped type; warning chip; QA V24 |
 | R4 | Date format | HIGH | Both pages emit `YYYY-MM-DD` from `<input type=date>`; no time component |
 | R5 | `?booking_id` not in fetched window | LOW | 61-day window (A-01); explicit toast if absent |
