@@ -22257,12 +22257,12 @@
       "id": "BUG-379",
       "title": "Stock Audit save fails 422 — toAPI.addStock() missing unit + physical_qty + physicalqty_master + waste_reason",
       "type": "BUG",
-      "status": "INTAKE COMPLETE — ready for Gate 2 or DIRECT_BUG_FIX",
+      "status": "GATE 3 — PLAN WRITTEN, awaiting Gate 4 GO",
       "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
-      "gate": "0-1",
-      "completeness": "0-1/7",
+      "gate": "3",
+      "completeness": "3/7",
       "area": "Inventory > Stock Audit",
       "artifact_refs": [
         {
@@ -22274,15 +22274,20 @@
           "label": "Investigation Report",
           "path": "memory/BUG-AUDIT-422_INVESTIGATION_REPORT.md",
           "type": "investigation"
+        },
+        {
+          "label": "Impact Analysis + Implementation Plan",
+          "path": "memory/plans/BUG-379_IMPACT_AND_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         }
       ],
       "category": "ACTIVE",
-      "note": "OWNER-REPORTED 2026-09-03. POST /add-stock/{id} → 422 'unit required'. Root cause: toAPI.addStock() missing 5 fields (unit, physicalqty_master, physical_qty, waste_reason, quantity should be 0). Sub-recipe branch correct — regular ingredient branch never updated. Fix: ~15 lines / 2 files. RELATED: BUG-321 (sub-recipe branch). FAST LANE eligible with owner approval."
+      "note": "OWNER-REPORTED 2026-09-03. POST /add-stock/{id} → 422 'unit required'. Root cause: toAPI.addStock() missing 5 fields. Gate 3 PLAN: 2 edits / 2 files (inventoryTransform.js + StockAuditPanel.jsx), 13-check matrix (11 auto / 2 manual). Mirrors sub-recipe pattern. No blockers, no owner decisions. Awaiting Gate 4 GO."
     }
   ],
   "meta": {
     "last_updated": "2026-09-03",
-    "last_action": "BUG-379 INTAKE COMPLETE (Stock Audit 422). Investigation + Intake docs filed. Ready for DIRECT_BUG_FIX or Gate 2.",
+    "last_action": "BUG-379 PLANNING Gate 2+3 complete: Impact Analysis + Implementation Plan. 2 edits / 2 files / 13 checks. No blockers. Awaiting Gate 4 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
