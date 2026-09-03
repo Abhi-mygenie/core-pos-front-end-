@@ -22416,7 +22416,7 @@
       "id": "CR-358-P4",
       "title": "PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)",
       "type": "CR",
-      "status": "GATE 2 CLOSED — IA written, design approved, 4/4 decisions locked. Awaiting Gate 3 (Implementation Plan).",
+      "status": "GATE 2 REOPENED (2026-09-03) — IA non-compliant with ALPHA v0.7 Gate 2: R11 PATCH room-status never probed, room-status-board not re-probed under P4 (hk/ooo shapes unseen), evidence/CR-358-P4 missing, S2 join key unverified, R3 mockup actions undecided (OD-P4-05..10 pending), CR_REGISTRY row was missing. Gate 3 BLOCKED until owner re-closes Gate 2. Audit: handover/SESSION_HANDOVER_2026_09_03_CR358P4_GATE2.md §GATE 2 COMPLIANCE AUDIT.",
       "priority": "P0",
       "risk": "MEDIUM",
       "gate": 2,

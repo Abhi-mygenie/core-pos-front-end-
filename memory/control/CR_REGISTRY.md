@@ -1,7 +1,15 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-03 (CR-358-P3 Gate 2 Impact Analysis — 8 owner decisions open)
+**Last Updated:** 2026-09-03 (CR-358-P4 Gate 2 REOPENED — IA compliance audit; row added, was missing)
+
+---
+
+## 2026-09-03 — CR-358-P4 (GATE 2 — REOPENED, IA COMPLIANCE AUDIT)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 2 REOPENED 2026-09-03 — IA not per ALPHA v0.7 Gate 2 (R11 `PATCH room-status` never probed; board not re-probed under P4; `evidence/CR-358-P4/` missing; S2 join key unverified; R3 mockup actions undecided → OD-P4-05..10 pending). Gate 3 BLOCKED until owner re-closes Gate 2.** | 2 | `impact/CR-358-P4_IMPACT_ANALYSIS.md` (compliance banner added). Design APPROVED `frontend/public/cr358-p4-pms-mockup.html`. OD-P4-01..04 locked (PATCH body, reuse getReservationOps, disabled+tooltip for occupied, Check In / View Folio popover). Scope: 3 new files (roomStatusTransform.js, ReservationsPage.jsx, RoomStatusPage.jsx) + 2 modifies (pmsService.js append, App.js 2-line re-point). Audit G1-G13 / tasks T1-T12: `handover/SESSION_HANDOVER_2026_09_03_CR358P4_GATE2.md`. This row was MISSING at Gate 2 close (drift G9) — added by audit. |
 
 ---
 

@@ -1,7 +1,12 @@
 # Impact Analysis — CR-358-P4: Tape Chart + Room Status Board
 
+> ⚠ **COMPLIANCE FLAG (2026-09-03, PLANNING agent, owner-directed audit): this IA is INCOMPLETE per AGENT_PROMPT_ALPHA v0.7 Gate 2 — Gate 2 REOPENED.**
+> Missing: R11 probe of `PATCH /aiosell/room-status/{table_id}` (never probed), fresh P4 probe of `room-status-board` incl. hk/ooo shapes, `memory/evidence/CR-358-P4/` folder, S2 join-key verification, R3 decisions for mockup actions (Assign Room / + Book Room / View Booking / booked-tile toggles / bulk-clean failure), presentation assumptions, `CR_REGISTRY.md` row, explicit `Risk:` header line.
+> Full gap list (G1-G13) and completion tasks (T1-T12): `memory/handover/SESSION_HANDOVER_2026_09_03_CR358P4_GATE2.md` §GATE 2 COMPLIANCE AUDIT. **Gate 3 is blocked until owner re-closes Gate 2.**
+
 **ID:** CR-358-P4
-**Gate:** 2 (Impact Analysis)
+**Gate:** 2 (Impact Analysis) — **REOPENED 2026-09-03 (compliance)**
+**Risk:** MEDIUM (hotspot `pmsService.js` append + new PATCH integration) — may be upgraded to HIGH if OOO probe shows inventory push side-effects
 **Date:** 2026-09-03
 **Design:** APPROVED (mockup at `cr358-p4-pms-mockup.html`)
 **Code Reality:** NONE — 0 P4 components exist. 2 placeholder routes ready for re-point.

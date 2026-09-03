@@ -46,7 +46,7 @@ MyGenie is a hospitality POS (Point of Sale) and PMS (Property Management System
 - Design APPROVED: `frontend/public/cr358-p4-pms-mockup.html`
 - IA written: `memory/impact/CR-358-P4_IMPACT_ANALYSIS.md`
 - Decisions locked: OD-P4-01 (PATCH body), OD-P4-02 (reuse getReservationOps), OD-P4-03 (disabled+tooltip), OD-P4-04 (Check In/View Folio)
-- **Next: Gate 3 (Implementation Plan)**
+- **Gate 2 REOPENED 2026-09-03 (IA compliance audit — see handover §GATE 2 COMPLIANCE AUDIT). Next: complete IA (T1-T11), owner re-closes Gate 2, then Gate 3**
 
 ## Design System
 - Brand Orange: #F26B33 | Action Green: #329937 | Danger: #EF4444 | Warning: #F59E0B
