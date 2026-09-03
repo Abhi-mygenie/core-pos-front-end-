@@ -13,11 +13,11 @@
 
 ---
 
-## 2026-09-03 — CR-358-P2 (GATE 3 — PLAN WRITTEN)
+## 2026-09-03 — CR-358-P2 (QA PASS — Gate 5b)
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 3 — awaiting Gate 4 GO** | 3 | Plan `plans/CR-358-P2_IMPLEMENTATION_PLAN.md`: 8 edits / 5 files (2 new pages, pmsService +4 fns, aiosellTransform +2, App.js 4-line route re-point = **SC-01 needs owner ack**). 26-check matrix. OD-P2-01..07 applied. R11 re-probe DONE (11 probes): direct-reservation 201; JSON check-in needs `id_type` (500 without → BUG-BE-05 brief). |
+| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **MEDIUM** | **QA PASS — Gate 5b** | 5b | IMPLEMENTED 2026-09-03: 8 edits / 5 files. NewBookingPage.jsx + CheckInPage.jsx (new), pmsService.js +4 exports, aiosellTransform.js +2 transforms, App.js SC-01 route re-point. QA 13/13 PASS (test_reports/iteration_1.json). Next: owner Gate 6 smoke. |
 
 ---
 

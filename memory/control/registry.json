@@ -22187,12 +22187,12 @@
       "id": "CR-358-P2",
       "title": "PMS Phase 2 — New Booking (S3) + Check-In (S4): WalkIn / Direct / OTA",
       "type": "CR",
-      "status": "GATE 3 — PLAN WRITTEN, awaiting Gate 4 GO (+SC-01 App.js ack)",
+      "status": "QA PASS — Gate 5b (13/13 tests PASS, 100%)",
       "priority": "P1",
-      "risk": "HIGH",
+      "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
-      "gate": 3,
-      "completeness": "3/7",
+      "gate": "5b",
+      "completeness": "5b/7",
       "artifact_refs": [
         {
           "label": "Impact Analysis",
@@ -22228,10 +22228,15 @@
           "label": "R11 Probe Evidence",
           "path": "memory/evidence/CR-358-P2/",
           "type": "evidence"
+        },
+        {
+          "label": "QA Report (iteration 1)",
+          "path": "test_reports/iteration_1.json",
+          "type": "qa"
         }
       ],
       "category": "ACTIVE",
-      "note": "Gate 3 plan: 8 edits / 5 files (NewBookingPage.jsx NEW, CheckInPage.jsx NEW, pmsService.js +getBookableRooms/getPmsReservations/createDirectReservation/pmsCheckIn, aiosellTransform.js +directReservation/+pendingArrival, App.js 4-line route re-point = SC-01 scope correction, IA claim \"zero App.js changes\" was stale). 26-check verification matrix (12 auto/14 manual). OD-P2-01..07 applied; A-01..A-07 presentation defaults declared. R11 re-probe EXECUTED 2026-09-03 with owner creds (11 probes, evidence/CR-358-P2/): direct-reservation 201, JSON check-in 200 ONLY with id_type (+FormData parity keys) — 500 + orphan order without it → BACKEND_BRIEF_BUG-BE-05. Contracts frozen in plan §4. Preprod state: probe guest in-house r3 (8524) for owner to check out. Next: owner Gate 4 GO + SC-01 ack → IMPLEMENTATION."
+      "note": "IMPLEMENTED 2026-09-03. 8 edits / 5 files: NewBookingPage.jsx NEW (S3), CheckInPage.jsx NEW (S4), pmsService.js +4 exports, aiosellTransform.js +2 transforms, App.js SC-01 route re-point. QA 13/13 PASS: room pills(5), arrivals(4), KPIs, walk-in mode, cross-nav S3↔S4, form validation, summary sync, room-type-mismatch warning. Next: owner Gate 6 smoke."
     }
   ],
   "meta": {

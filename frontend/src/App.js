@@ -94,10 +94,12 @@ import { AppProviders } from "./contexts";
 import { useRestaurant } from "./contexts";
 import { ProtectedRoute, ErrorBoundary } from "./components/guards";
 import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
-// CR-358-P1: PMS Module — Phase 1 pages (App.js touched ONCE, frozen after P1)
+// CR-358-P1 (+P2 route re-point): PMS Module pages
 import ChannelManagerPage  from './pages/pms/ChannelManagerPage';
 import InHouseGuestsPage   from './pages/pms/InHouseGuestsPage';
 import PmsPlaceholderPage  from './pages/pms/PmsPlaceholderPage';
+import NewBookingPage      from './pages/pms/NewBookingPage'; // CR-358-P2
+import CheckInPage         from './pages/pms/CheckInPage';    // CR-358-P2
 
 // Sync browser tab title with restaurant context.
 // Falls back to "MyGenie POS" before login / when restaurant has no name.
@@ -246,11 +248,11 @@ function App() {
               <Route path="/inventory-purchase" element={<Navigate to="/inventory-smart-purchase" replace />} />
               <Route path="/inventory-physical" element={<Navigate to="/inventory-audit" replace />} />
               <Route path="/recipes" element={<ProtectedRoute><RecipeManagementPage /></ProtectedRoute>} />
-              {/* CR-358-P1: PMS Module — all 9 routes added at once, App.js frozen after P1 */}
+              {/* CR-358-P1: PMS Module — P1 routes frozen; P2 route re-point (SC-01 accepted) */}
               <Route path="/pms/channel-manager" element={<ProtectedRoute><ChannelManagerPage /></ProtectedRoute>} />
               <Route path="/pms/in-house"        element={<ProtectedRoute><InHouseGuestsPage /></ProtectedRoute>} />
-              <Route path="/pms/new-booking"     element={<ProtectedRoute><PmsPlaceholderPage title="New Booking" phase={2} /></ProtectedRoute>} />
-              <Route path="/pms/check-in"        element={<ProtectedRoute><PmsPlaceholderPage title="Check-In" phase={2} /></ProtectedRoute>} />
+              <Route path="/pms/new-booking"     element={<ProtectedRoute><NewBookingPage /></ProtectedRoute>} />     {/* CR-358-P2 */}
+              <Route path="/pms/check-in"        element={<ProtectedRoute><CheckInPage /></ProtectedRoute>} />        {/* CR-358-P2 */}
               <Route path="/pms/front-desk"      element={<ProtectedRoute><PmsPlaceholderPage title="Front Desk" phase={3} /></ProtectedRoute>} />
               <Route path="/pms/arrivals"        element={<ProtectedRoute><PmsPlaceholderPage title="Arrivals" phase={3} /></ProtectedRoute>} />
               <Route path="/pms/departures"      element={<ProtectedRoute><PmsPlaceholderPage title="Departures" phase={3} /></ProtectedRoute>} />
