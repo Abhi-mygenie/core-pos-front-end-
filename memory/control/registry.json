@@ -22233,6 +22233,16 @@
           "label": "QA Report (iteration 1)",
           "path": "test_reports/iteration_1.json",
           "type": "qa"
+        },
+        {
+          "label": "QA Handover",
+          "path": "memory/handover/QA_HANDOVER_CR358P2_2026_09_03.md",
+          "type": "qa_handover"
+        },
+        {
+          "label": "Session Handover (Gate 5b)",
+          "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE5B.md",
+          "type": "handover"
         }
       ],
       "category": "ACTIVE",
@@ -22240,8 +22250,8 @@
     }
   ],
   "meta": {
-    "last_updated": "2026-08-18",
-    "last_action": "PLANNING CLOSED (Gate 4 GO): CR-133 Printer Agent Config — OD-6..9 resolved, implementation authorized",
+    "last_updated": "2026-09-03",
+    "last_action": "CR-358-P2 IMPLEMENTATION + QA PASS Gate 5b (13/13). EXIT GATE 5/5. Awaiting owner Gate 6 smoke.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

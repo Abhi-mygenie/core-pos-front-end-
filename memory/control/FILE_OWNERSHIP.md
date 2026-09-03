@@ -1102,3 +1102,12 @@
 | `components/panels/menu/BulkEditor.jsx` | CR-159: +selectedIds/bulkDeleteOpen/bulkDeleteReason/bulkDeleting state, +showBulkDelete guard, +handleBulkDeleteConfirm, +checkbox th/td, +selection banner, +confirm dialog, +deleteReasons prop | CR-159 IMPL 2026-08-21 |
 | `components/panels/MenuManagementPanel.jsx` | CR-159: +deleteReasons prop to BulkEditor. CR-155: +AddonStockTab/VariationStockTab imports, +stockMode state, +Aggregator Stock button, +stockMode render block, +menuType useEffect reset | CR-159+CR-155 IMPL 2026-08-21 |
 | `components/settings/aggregatorSetup/AggregatorSetupView.jsx` | CR-155: removed AddonStockTab+VariationStockTab imports, tab buttons, conditional renders | CR-155 IMPL 2026-08-21 |
+
+### CR-358-P2 — PMS Phase 2: New Booking (S3) + Check-In (S4) (2026-09-03)
+| File | Change | Agent |
+|---|---|---|
+| `src/api/transforms/aiosellTransform.js` | CR-358-P2: +fromDirectReservation (lines 107-118), +fromPendingArrival (lines 122-158), +2 entries in fromAPI public object | CR-358-P2 IMPL 2026-09-03 |
+| `src/api/services/pmsService.js` | CR-358-P2: +getBookableRooms (L72-77), getPmsReservations replaces stub (L80-87), createDirectReservation replaces stub (L90-104), +pmsCheckIn (L108-148), +imports (aiosellService, axios, constants, aiosellTransform) | CR-358-P2 IMPL 2026-09-03 |
+| `src/pages/pms/NewBookingPage.jsx` | **NEW** CR-358-P2 S3: Guest details form, room pill picker (getBookableRooms), stay/amount, booking summary, Save as Booking (createDirectReservation 201→success card), Walk-in (navigate to /pms/check-in with state) | CR-358-P2 IMPL 2026-09-03 |
+| `src/pages/pms/CheckInPage.jsx` | **NEW** CR-358-P2 S4: KPI strip, walk-in banner, arrivals list (getPmsReservations), right-panel form (room select, advance payment), Confirm Check-In (pmsCheckIn JSON), 3 entry paths (URL param, walk-in state, auto-select) | CR-358-P2 IMPL 2026-09-03 |
+| `src/App.js` | CR-358-P2 SC-01: +NewBookingPage +CheckInPage imports, /pms/new-booking and /pms/check-in routes swapped from PmsPlaceholderPage to real pages | CR-358-P2 IMPL 2026-09-03 |
