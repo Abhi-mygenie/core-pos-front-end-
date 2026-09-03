@@ -17,7 +17,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P3** | **PMS Phase 3 — Front Desk (S1) + Arrivals (S9) + Departures (S10)** | **P1** | **HIGH** | **QA PASS — Gate 5b (2026-09-04). 25/25 exec tests PASS (V-G1..9 auto, V-S1 security, V-U1..6 unit, V-B1..9 browser). 6 V-M money tests deferred (no checkout-eligible room). 4 regression PASS. Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke.** | 5b | IMPLEMENTED 2026-09-03: 9 edits / 7 files. FrontDeskPage.jsx + ArrivalsPage.jsx + DeparturesPage.jsx (new), PmsCheckoutDrawer.jsx (new component), pmsService.js +5 exports, aiosellTransform.js +2 transforms, App.js 3-route re-point. QA: `reports/QA_REPORT_CR358_P3_2026_09_04.md`, unit tests: `__tests__/bucketReservationOps.test.js`. |
+| **CR-358-P3** | **PMS Phase 3 — Front Desk (S1) + Arrivals (S9) + Departures (S10)** | **P1** | **HIGH** | **QA PASS — Gate 5b (2026-09-04). 30/31 exec tests PASS (V-G1..9 auto, V-S1 security, V-U1..6 unit, V-B1..9 browser, V-M1..3,5,6 money). 1 V-M4 skipped (preprod mutation). 4 regression PASS. Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke.** | 5b | IMPLEMENTED 2026-09-03: 9 edits / 7 files. FrontDeskPage.jsx + ArrivalsPage.jsx + DeparturesPage.jsx (new), PmsCheckoutDrawer.jsx (new component), pmsService.js +5 exports, aiosellTransform.js +2 transforms, App.js 3-route re-point. QA: `reports/QA_REPORT_CR358_P3_2026_09_04.md`, unit tests: `__tests__/bucketReservationOps.test.js`. |
 
 ---
 
