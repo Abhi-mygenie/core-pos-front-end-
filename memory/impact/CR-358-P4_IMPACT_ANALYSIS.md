@@ -4,7 +4,7 @@
 > **Awaiting owner Gate 2 re-close (T12) before Gate 3 planning starts.**
 
 **ID:** CR-358-P4
-**Gate:** 2 (Impact Analysis) — **PROBES COMPLETE 2026-09-04, awaiting owner Gate 2 re-close**
+**Gate:** 2 (Impact Analysis) — **✅ CLOSED 2026-09-04 — PLANNING agent, per ALPHA v0.7**
 **Risk:** MEDIUM (hotspot `pmsService.js` append + new PATCH integration) — OOO `inventory_push_warning` = null on sandbox; no upgrade needed
 **Date:** 2026-09-03 (updated 2026-09-04)
 **Design:** APPROVED (mockup at `frontend/public/cr358-p4-pms-mockup.html` — created 2026-09-04 with real probe evidence, 3 tabs: S2 Tape Chart / S7 Room Status Board / API Contract)

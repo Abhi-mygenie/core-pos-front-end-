@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-04 — **CR-358-P4 Gate 2 T1–T11 complete.** PATCH shape probed (200 echoes `manual_status`+`room_operational_status_at`, no `display_status` → must refetch board). 422 on occupied/bogus/bad-id confirmed. OOO probed (`inventory_push_warning=null` on sandbox). Board re-probed (hk+ooo states verified). Join key corrected: `rooms[].restaurant_table_id` (IA was wrong — `roomLines[].restaurantTableId`). Migration confirmed via T3 200. All OD-P4-05..10 locked (Assign Room = Phase 5 disabled, +Book→/pms/new-booking, View Booking→/pms/check-in?booking_id=X, booked toggles hidden, bulk-clean = continue+summary). Assumptions A-P4-01..10 added. Header fixed. Evidence: `evidence/CR-358-P4/` (12 files). **Awaiting owner Gate 2 re-close (T12) → then Gate 3 implementation plan.**
+**Last Updated:** 2026-09-04 — **CR-358-P4 Gate 2 CLOSED** per PLANNING agent (ALPHA v0.7). All 10 ODs locked. PATCH+OOO+board probed. Join key corrected. Mockup created. **Gate 3 (Implementation Plan) UNBLOCKED — next: Gate 4 GO from owner.**
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---

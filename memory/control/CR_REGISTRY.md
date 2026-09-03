@@ -9,7 +9,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 2 PROBES COMPLETE 2026-09-04 — awaiting owner re-close (T12). T1–T11 done: evidence folder created, PATCH probed (200+422 shapes confirmed), OOO probed (inventory_push_warning=null), board re-probed (hk/ooo states confirmed), join key corrected (rooms[].restaurant_table_id), OD-P4-05..10 locked, assumptions added, migration confirmed. Gate 3 BLOCKED until owner says "Gate 2 re-closed".** | 2 | `impact/CR-358-P4_IMPACT_ANALYSIS.md` (fully updated). Design APPROVED `frontend/public/cr358-p4-pms-mockup.html`. All 10 ODs locked. Scope: 3 new (roomStatusTransform.js, ReservationsPage.jsx, RoomStatusPage.jsx) + 2 modifies (pmsService.js append, App.js 2-line re-point). Evidence: `evidence/CR-358-P4/P4_probe_01..T5c_*.json`. |
+| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **✅ GATE 2 CLOSED 2026-09-04 — IA complete per ALPHA v0.7. Code Reality: NONE. Conflict: CLEAR. All 10 ODs locked (P4-01..10). PATCH 200+422 probed. OOO probed (inventory_push_warning=null). Join key corrected: rooms[].restaurant_table_id. Assumptions A-P4-01..10 added. Mockup cr358-p4-pms-mockup.html with real evidence created. Gate 3 UNBLOCKED — awaiting Gate 4 GO.** | 2 ✅ | `impact/CR-358-P4_IMPACT_ANALYSIS.md`. `frontend/public/cr358-p4-pms-mockup.html` (3-tab: S2/S7/API, real probe data). `evidence/CR-358-P4/` (13 files). Scope: roomStatusTransform.js (NEW), ReservationsPage.jsx (NEW), RoomStatusPage.jsx (NEW), pmsService.js (append), App.js (L259-260 re-point). |
 
 ---
 
