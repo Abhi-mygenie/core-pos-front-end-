@@ -22054,7 +22054,7 @@
       "sprint_key": "pos_pms_1",
       "id": "CR-358-P1",
       "title": "PMS Phase 1 \u2014 Foundation + Channel Manager (S8) + In-House Guests (S6)",
-      "status": "IMPLEMENTED \u2014 Gate 5a",
+      "status": "QA PASS \u2014 Gate 5b",
       "files": "pages/pms/PmsPlaceholderPage.jsx, pages/pms/ChannelManagerPage.jsx, pages/pms/InHouseGuestsPage.jsx, api/transforms/aiosellTransform.js, api/services/aiosellService.js, api/services/pmsService.js, api/constants.js (+AIOSELL_ENDPOINTS), components/layout/Sidebar.jsx (E1-E5), App.js (+3 imports +9 routes)",
       "notes": "Phase 1 of PMS module (parent: CR-358). Greenfield \u2014 6 new files + 3 modified hotspots. Sidebar.jsx + App.js frozen after P1. Gate on features.room (OD-P1-01). Entry verified: Sidebar 836\u2192865 lines, App.js 256\u2192269 lines, constants 563\u2192594 lines. webpack 0 new errors. Self-test V1-V20: ALL PASS.",
       "artifact_refs": [
@@ -22089,8 +22089,9 @@
           "type": "handover"
         }
       ],
-      "completeness": "5a/7",
-      "category": "ACTIVE"
+      "completeness": "5b/7",
+      "category": "ACTIVE",
+      "qa_report": "test_reports/QA_REPORT_CR358P1_CR360_2026_09_03.md"
     },
     {
       "type": "BUG",
@@ -22158,7 +22159,7 @@
       "sprint_key": "pos_pms_1",
       "id": "CR-360",
       "title": "S6 In-House Guests \u2014 Phase 1 completion: KPI tiles (Checkout Today / Outstanding Balance / Avg Nights) + View Bill wiring",
-      "status": "IMPLEMENTED \u2014 Gate 5a",
+      "status": "QA PASS \u2014 Gate 5b",
       "files": "pages/pms/InHouseGuestsPage.jsx",
       "notes": "KPI tiles: derive from rows[] already in state (BUG-378 data). View Bill: navigate to /reports/room-orders (Phase 1); full CollectPaymentPanel link is Phase 3 (Departures). 1 file, ~20 lines. Fast Lane eligible.",
       "artifact_refs": [
@@ -22178,8 +22179,9 @@
           "type": "plan"
         }
       ],
-      "completeness": "5a/7",
-      "category": "ACTIVE"
+      "completeness": "5b/7",
+      "category": "ACTIVE",
+      "qa_report": "test_reports/QA_REPORT_CR358P1_CR360_2026_09_03.md"
     }
   ],
   "meta": {

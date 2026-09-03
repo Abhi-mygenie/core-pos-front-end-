@@ -9,7 +9,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-360** | **S6 In-House Guests — Phase 1 completion: KPI tiles + View Bill wiring** | **P2** | **LOW** | **IMPLEMENTED — Gate 5a** | 3 | `InHouseGuestsPage.jsx` +20 lines. KPI tiles derived from rows[]. View Bill → /reports/room-orders. webpack clean. EXIT GATE 5/5. Awaiting QA. |
+| **CR-360** | **S6 In-House Guests — Phase 1 completion: KPI tiles + View Bill wiring** | **P2** | **LOW** | **QA PASS — Gate 5b** | 5b | `InHouseGuestsPage.jsx` +20 lines. KPI tiles derived from rows[]. View Bill → /reports/room-orders. QA 5/5 PASS. Awaiting Owner Smoke (Gate 6). |
 
 ---
 
@@ -17,7 +17,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P1** | **PMS Phase 1 — Foundation + Channel Manager (S8) + In-House Guests (S6)** | **P1** | **HIGH** | **IMPLEMENTED — Gate 5a** | 5a | 6 new files + 3 modified. Greenfield. Sidebar + App.js frozen after P1. features.room gate (OD-P1-01). webpack 0 new errors. Self-test V1-V20 PASS. Awaiting QA (Gate 5b) → Owner Smoke (Gate 6). |
+| **CR-358-P1** | **PMS Phase 1 — Foundation + Channel Manager (S8) + In-House Guests (S6)** | **P1** | **HIGH** | **QA PASS — Gate 5b** | 5b | 6 new files + 3 modified. QA 14/14 PASS (0 BLOCKER, 0 MAJOR, 2 NOTE). Coverage 9/9 files. Awaiting Owner Smoke (Gate 6). |
 
 ---
 
