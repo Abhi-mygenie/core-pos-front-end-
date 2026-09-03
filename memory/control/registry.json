@@ -22252,11 +22252,37 @@
       ],
       "category": "ACTIVE",
       "note": "IMPLEMENTED 2026-09-03. 8 edits / 5 files: NewBookingPage.jsx NEW (S3), CheckInPage.jsx NEW (S4), pmsService.js +4 exports, aiosellTransform.js +2 transforms, App.js SC-01 route re-point. QA 13/13 PASS: room pills(5), arrivals(4), KPIs, walk-in mode, cross-nav S3↔S4, form validation, summary sync, room-type-mismatch warning. Next: owner Gate 6 smoke."
+    },
+    {
+      "id": "BUG-379",
+      "title": "Stock Audit save fails 422 — toAPI.addStock() missing unit + physical_qty + physicalqty_master + waste_reason",
+      "type": "BUG",
+      "status": "INTAKE COMPLETE — ready for Gate 2 or DIRECT_BUG_FIX",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "pos_pms_1",
+      "gate": "0-1",
+      "completeness": "0-1/7",
+      "area": "Inventory > Stock Audit",
+      "artifact_refs": [
+        {
+          "label": "Intake Doc",
+          "path": "memory/change_requests/BUG-379_STOCK_AUDIT_422_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation Report",
+          "path": "memory/BUG-AUDIT-422_INVESTIGATION_REPORT.md",
+          "type": "investigation"
+        }
+      ],
+      "category": "ACTIVE",
+      "note": "OWNER-REPORTED 2026-09-03. POST /add-stock/{id} → 422 'unit required'. Root cause: toAPI.addStock() missing 5 fields (unit, physicalqty_master, physical_qty, waste_reason, quantity should be 0). Sub-recipe branch correct — regular ingredient branch never updated. Fix: ~15 lines / 2 files. RELATED: BUG-321 (sub-recipe branch). FAST LANE eligible with owner approval."
     }
   ],
   "meta": {
     "last_updated": "2026-09-03",
-    "last_action": "CR-358-P2 IMPLEMENTATION + QA PASS Gate 5b (13/13). EXIT GATE 5/5. Awaiting owner Gate 6 smoke.",
+    "last_action": "BUG-379 INTAKE COMPLETE (Stock Audit 422). Investigation + Intake docs filed. Ready for DIRECT_BUG_FIX or Gate 2.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

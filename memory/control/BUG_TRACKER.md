@@ -1026,3 +1026,24 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **OD-1** | Sub-E: Should "Clear All" always preserve role type? (**Recommended: YES**) |
 
 **BUG-376 OD-1 Update (2026-09-02):** OD-1 ANSWERED — Yes, "Clear All" always preserves role type. Role type is structural, not a permission. Gate 3 unblocked.
+
+---
+
+## BUG-379 — Stock Audit save fails 422: "The unit field is required" (2026-09-03)
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-379 |
+| **Severity** | P1 — HIGH |
+| **Risk** | MEDIUM |
+| **Area** | Inventory > Stock Audit |
+| **Source** | OWNER-REPORTED |
+| **Confidence** | CONFIRMED |
+| **Duplicate check** | DISTINCT (Related: BUG-321) |
+| **Status** | INTAKE COMPLETE — ready for Gate 2 or DIRECT_BUG_FIX |
+| **Root cause** | `toAPI.addStock()` missing 5 fields: `unit`, `physicalqty_master`, `physical_qty`, `waste_reason`, `quantity` should be `0` not shelf count. Sub-recipe branch correct; regular ingredient branch never updated. |
+| **Blast radius** | SMALL — 2 files, ~15 lines. No hotspot files. |
+| **Files** | `inventoryTransform.js` (L217-224), `StockAuditPanel.jsx` (L80-85) |
+| **FAST LANE** | Eligible (owner approval needed) |
+| **Intake doc** | `change_requests/BUG-379_STOCK_AUDIT_422_INTAKE.md` |
+| **Investigation** | `BUG-AUDIT-422_INVESTIGATION_REPORT.md` |
