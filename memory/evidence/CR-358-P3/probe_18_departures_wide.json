@@ -1,0 +1,157 @@
+{
+ "request": {
+  "start_date": "2026-07-05",
+  "end_date": "2026-10-03",
+  "view": "departures"
+ },
+ "status": 200,
+ "body": {
+  "status": true,
+  "message": "Local reservations fetched successfully",
+  "data": {
+   "reservations": [
+    {
+     "id": 16,
+     "booking_id": "MG-69-A26BDA2F-9575-4D41-8FCE-C643FF242A3A",
+     "cm_booking_id": null,
+     "channel": "Direct",
+     "hotel_code": "sandbox-pms",
+     "checkin": "2026-09-03",
+     "checkout": "2026-09-04",
+     "status": "confirmed",
+     "pah": false,
+     "operational_status": "in_house",
+     "booked_on": "2026-09-03 17:57:02",
+     "amount_before_tax": "1000.00",
+     "amount_after_tax": "1000.00",
+     "currency": "INR",
+     "special_requests": "CR-358-P2 Gate 3 probe \u00b7 Meal plan: Room Only (EP)",
+     "user_id_document_id": 16955,
+     "guest": {
+      "first_name": "CR358P2",
+      "last_name": "Probe",
+      "email": null,
+      "phone": "***",
+      "address_city": null,
+      "address_state": null,
+      "address_country": null
+     },
+     "rooms": [
+      {
+       "id": 16,
+       "room_code": "suite",
+       "rateplan_code": null,
+       "guest_name": null,
+       "adults": 1,
+       "children": 0,
+       "line_status": "checked_in",
+       "restaurant_table_id": 8524,
+       "table_no": "r3",
+       "table_title": null,
+       "order_id": 1232205,
+       "user_id_document_id": 16955,
+       "order_f_order_status": 5,
+       "order_payment_status": "unpaid",
+       "checked_in_at": "2026-09-03 17:58:08",
+       "checked_out_at": null
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "booking_id": "MG-69-69BCC4D3-3F9B-4432-AE17-867D826F16D8",
+     "cm_booking_id": null,
+     "channel": "Direct",
+     "hotel_code": "sandbox-pms",
+     "checkin": "2026-09-07",
+     "checkout": "2026-09-09",
+     "status": "confirmed",
+     "pah": false,
+     "operational_status": "in_house",
+     "booked_on": "2026-09-01 12:58:35",
+     "amount_before_tax": "5000.00",
+     "amount_after_tax": "5000.00",
+     "currency": "INR",
+     "special_requests": "Booked at front desk",
+     "user_id_document_id": 16945,
+     "guest": {
+      "first_name": "Future",
+      "last_name": "Guest",
+      "email": "***",
+      "phone": "***",
+      "address_city": null,
+      "address_state": null,
+      "address_country": null
+     },
+     "rooms": [
+      {
+       "id": 11,
+       "room_code": "executive",
+       "rateplan_code": null,
+       "guest_name": null,
+       "adults": 2,
+       "children": 0,
+       "line_status": "checked_in",
+       "restaurant_table_id": 8528,
+       "table_no": "r1",
+       "table_title": null,
+       "order_id": 1232179,
+       "user_id_document_id": 16945,
+       "order_f_order_status": 5,
+       "order_payment_status": "unpaid",
+       "checked_in_at": "2026-09-01 14:00:04",
+       "checked_out_at": null
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "booking_id": "BDC8899464",
+     "cm_booking_id": "CM-BDC8899464",
+     "channel": "booking.com",
+     "hotel_code": "sandbox-pms",
+     "checkin": "2026-09-08",
+     "checkout": "2026-09-10",
+     "status": "confirmed",
+     "pah": false,
+     "operational_status": "in_house",
+     "booked_on": "2026-09-01 09:19:39",
+     "amount_before_tax": "13922.28",
+     "amount_after_tax": "13922.28",
+     "currency": "INR",
+     "special_requests": null,
+     "user_id_document_id": 16947,
+     "guest": {
+      "first_name": "Test",
+      "last_name": "Guest",
+      "email": "***",
+      "phone": "***",
+      "address_city": "Bangalore",
+      "address_state": "Karnataka",
+      "address_country": "India"
+     },
+     "rooms": [
+      {
+       "id": 13,
+       "room_code": "suite",
+       "rateplan_code": "suite-d-cp",
+       "guest_name": "Test Guest",
+       "adults": 2,
+       "children": 2,
+       "line_status": "checked_in",
+       "restaurant_table_id": 8527,
+       "table_no": "r5",
+       "table_title": null,
+       "order_id": 1232181,
+       "user_id_document_id": 16947,
+       "order_f_order_status": 5,
+       "order_payment_status": "unpaid",
+       "checked_in_at": "2026-09-01 15:03:42",
+       "checked_out_at": null
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

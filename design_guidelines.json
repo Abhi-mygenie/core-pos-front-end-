@@ -1,0 +1,179 @@
+{
+  "design_system_name": "MyGenie PMS Phase 4 Design System (CR-358-P4)",
+  "project_title": "MyGenie PMS - CR-358-P4 (S2 Tape Chart & S7 Room Status Board)",
+  "target_artifact": "/app/frontend/public/cr358-p4-pms-mockup.html",
+  "app_type": "dashboard",
+  "design_tokens": {
+    "colors": {
+      "brand_orange": "#F26B33",
+      "action_green": "#329937",
+      "action_green_hover": "#2B8230",
+      "text_primary": "#1A1A1A",
+      "text_muted": "#888888",
+      "text_subtle": "#9CA3AF",
+      "border": "#E5E5E5",
+      "page_bg": "#F7F7F7",
+      "card_bg": "#FFFFFF",
+      "card_subtle_bg": "#FAFAFA",
+      "danger": "#EF4444",
+      "warning": "#F59E0B",
+      "status_occupied": "#329937",
+      "status_booked": "#F26B33",
+      "status_available": "#FFFFFF",
+      "status_housekeeping": "#F59E0B",
+      "status_ooo": "#EF4444"
+    },
+    "forbidden_colors": [
+      "#22C55E",
+      "#3B82F6",
+      "#2563EB",
+      "#64748B",
+      "#475569",
+      "#334155",
+      "#1E293B",
+      "#0F172A",
+      "#E2E8F0",
+      "#CBD5E1",
+      "#F1F5F9",
+      "#F8FAFC"
+    ],
+    "typography": {
+      "font_family_headings": "'Poppins', sans-serif",
+      "font_family_body": "'Inter', 'Poppins', sans-serif",
+      "heading_weights": [600, 700],
+      "body_weights": [400, 500],
+      "size_hierarchy": {
+        "page_heading": "18px bold Poppins",
+        "subtext": "12px #888888 Inter",
+        "section_hdr": "11px uppercase tracking-wide #888888 on #FAFAFA",
+        "kpi_label": "11px uppercase tracking-wider #888888",
+        "kpi_value": "22px bold #1A1A1A Poppins",
+        "badge_text": "10px-11px font-weight 600",
+        "button_text": "13px font-weight 600"
+      }
+    },
+    "layout_components": {
+      "active_tab": "border-bottom: 2px solid #F26B33; color: #F26B33; font-weight: 600",
+      "buttons": "rounded-lg (8px), 13px font-size, 36px height, Poppins 600",
+      "cards": "background: #FFFFFF, border: 1px solid #E5E5E5, border-radius: 10px",
+      "table_headers": "11px uppercase tracking-wide #888888 on #FAFAFA"
+    }
+  },
+  "screens": {
+    "S2_TAPE_CHART": {
+      "screen_id": "S2",
+      "title": "S2 Tape Chart (ReservationsPage)",
+      "layout": "Gantt-style horizontal timeline grid",
+      "components": {
+        "toolbar": {
+          "view_switcher": ["14-Day View", "7-Day View", "Month View"],
+          "date_navigation": ["Prev Week Arrow (<)", "Next Week Arrow (>)", "Today Jump Button"],
+          "date_range_display": "Current 14-day date range label",
+          "action_btn": "New Booking (+ #F26B33)"
+        },
+        "legend": {
+          "status_items": [
+            { "label": "Occupied", "color": "#329937", "desc": "Checked-in guest" },
+            { "label": "Booked", "color": "#F26B33", "desc": "Confirmed reservation" },
+            { "label": "Available", "color": "#FFFFFF", "border": "#E5E5E5", "desc": "Ready for booking" },
+            { "label": "Out of Order / Maint", "color": "#EF4444", "desc": "Under maintenance" }
+          ]
+        },
+        "grid_structure": {
+          "left_column": "Room Numbers (r1-r5) and Room Types (executive, suite)",
+          "time_columns": "14-day date headers with day name and date number",
+          "today_marker": "Vertical prominent accent line on current date column",
+          "reservation_blocks": {
+            "positioning": "Spans check-in date to check-out date across date columns",
+            "content": "Guest name, channel logo/source (Booking.com, Expedia, Airbnb, Direct), stay nights count",
+            "interaction": "Click block -> opens Popover/Modal with booking details"
+          }
+        },
+        "unassigned_section": {
+          "title": "Unassigned OTA & Direct Reservations",
+          "description": "Reservations awaiting room assignment (e.g. Test Guest - suite, BDC7497606)",
+          "styling": "Dashed border cards at bottom of tape chart grid with Assign Room button"
+        },
+        "popover_modal": {
+          "title": "Booking Details Popover",
+          "fields": ["Guest Name", "Phone Number", "Booking ID", "Channel Source", "Check-in & Check-out Dates", "Total Amount & Balance Due"],
+          "actions": ["View Folio", "Check In", "Close"]
+        }
+      }
+    },
+    "S7_ROOM_STATUS_BOARD": {
+      "screen_id": "S7",
+      "title": "S7 Room Status Board (RoomStatusPage)",
+      "layout": "Card grid with 1 tile per room (r1-r5)",
+      "components": {
+        "filter_bar": {
+          "filters": ["All (5)", "Available (0)", "Occupied (4)", "Booked (1)", "HK (0)", "OOO (0)"]
+        },
+        "bulk_actions": {
+          "mark_all_clean_btn": "Action button to bulk-clear housekeeping status",
+          "auto_hk_indicator": "Badge indicating Auto-HK on Checkout is Enabled"
+        },
+        "room_tile_card": {
+          "indicator": "4px left border indicator reflecting room status color",
+          "status_states": {
+            "occupied": { "color": "#329937", "badge": "Occupied", "fields": ["Guest Name", "Check-in / Out dates", "Order ID (#1232205, #1232176, etc.)"], "action": "View Folio / HK Toggle" },
+            "booked": { "color": "#F26B33", "badge": "Booked", "fields": ["Guest Name", "Channel (Booking.com)", "Check-in Date (2026-09-07)"], "action": "View Booking / Assign" },
+            "available": { "color": "#329937", "badge": "Ready", "fields": ["Room Clean", "Floor level"], "action": "+ Book Room" },
+            "housekeeping": { "color": "#F59E0B", "badge": "HK Needed", "fields": ["Vacated time", "Cleaning pending"], "action": "Mark Clean" },
+            "out_of_order": { "color": "#EF4444", "badge": "OOO", "fields": ["Maintenance reason"], "action": "Resolve OOO" }
+          },
+          "toggle_buttons": {
+            "hk_toggle": "Button to toggle room status to Housekeeping / Clean",
+            "ooo_toggle": "Button to mark room as Out of Order or Resolve"
+          }
+        }
+      }
+    }
+  },
+  "api_data_shape": {
+    "rooms": [
+      { "restaurant_table_id": 8524, "table_no": "r3", "aiosell_room_code": "suite", "display_status": "occupied", "guest": { "name": "CR358P2 Probe", "order_id": 1232205 } },
+      { "restaurant_table_id": 8525, "table_no": "r4", "aiosell_room_code": "suite", "display_status": "booked", "reservation": { "booking_id": "BDC7497606", "channel": "booking.com", "checkin": "2026-09-07", "checkout": "2026-09-09", "guest_name": "Test Guest" } },
+      { "restaurant_table_id": 8526, "table_no": "r2", "aiosell_room_code": "executive", "display_status": "occupied", "guest": { "name": "WalkIn Probe Test", "order_id": 1232176 } },
+      { "restaurant_table_id": 8527, "table_no": "r5", "aiosell_room_code": "suite", "display_status": "occupied", "guest": { "name": "Test Guest", "order_id": 1232181 } },
+      { "restaurant_table_id": 8528, "table_no": "r1", "aiosell_room_code": "executive", "display_status": "occupied", "guest": { "name": "Future Guest", "order_id": 1232179 } }
+    ]
+  },
+  "testing_attributes": {
+    "required_attribute": "data-testid",
+    "examples": [
+      "pms-nav-tab-tape-chart",
+      "pms-nav-tab-room-status",
+      "tape-chart-date-prev",
+      "tape-chart-date-next",
+      "tape-chart-today-btn",
+      "tape-chart-res-block-r3",
+      "room-card-tile-r1",
+      "room-card-tile-r2",
+      "room-card-tile-r3",
+      "room-card-tile-r4",
+      "room-card-tile-r5",
+      "hk-toggle-btn-r1",
+      "ooo-toggle-btn-r1",
+      "bulk-mark-clean-btn",
+      "filter-chip-all",
+      "filter-chip-occupied",
+      "filter-chip-booked"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Create or update /app/frontend/public/cr358-p4-pms-mockup.html as a single standalone, fully interactive HTML file.",
+    "Implement top navigation bar or tab header allowing seamless switching between S2 (Tape Chart) and S7 (Room Status Board).",
+    "Strictly follow design system tokens: Poppins heading font, Inter body font, Brand Orange #F26B33, Action Green #329937, Danger #EF4444, Muted #888888, Page BG #F7F7F7, Border #E5E5E5.",
+    "Do NOT use any forbidden tailwind blue or slate colors (#22C55E, #3B82F6, #2563EB, slate classes).",
+    "Populate all room tiles (r1-r5) and tape chart rows with exact data matching the API payload above.",
+    "Ensure all interactive elements (toggles, popovers, filter buttons, tab switches) work dynamically via inline JavaScript with data-testid attributes."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never use forbidden tailwind/slate colors (#22C55E, #3B82F6, slate family).",
+    "All interactive elements and key headers must include data-testid attributes.",
+    "Do not change HTML structure, layout, annotations, pins, or OD tables unless necessary for phase 4 mockups.",
+    "Ensure high contrast meeting WCAG AA standards (4.5:1 for normal text, 3:1 for large text).",
+    "Maintain strict adherence to Poppins font and PMS design tokens."
+  ]
+}
