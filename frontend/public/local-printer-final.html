@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Printer Setup — 4-Tab Final Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+:root{
+  --o:#F26B33;--oh:#D95A2B;--o10:rgba(242,107,51,.1);--o25:rgba(242,107,51,.25);
+  --g:#329937;--g10:rgba(50,153,55,.08);--g25:rgba(50,153,55,.25);
+  --dark:#1A1A1A;--gray:#6B7280;--light:#9CA3AF;
+  --border:#E5E7EB;--bg:#F7F7F7;--white:#FFFFFF;
+  --red:#EF4444;
+}
+/* ── Layout ── */
+.page{padding:28px;max-width:1000px;margin:0 auto}
+.page-header{background:#111827;padding:13px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;border-radius:10px}
+.page-header h1{font-size:14px;font-weight:700;color:#fff}
+.page-header p{font-size:11px;color:#9CA3AF;margin-top:1px}
+.badge{background:var(--o);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px}
+
+/* ── Panel ── */
+.panel{background:var(--white);border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.panel-header{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.panel-back{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray)}
+.panel-title{font-size:14px;font-weight:600;color:var(--dark)}
+
+/* ── Tab bar ── */
+.tab-bar{padding:8px 20px;border-bottom:1px solid var(--border);background:var(--white)}
+.tab-pills{display:flex;gap:2px;background:#F3F4F6;border-radius:8px;padding:3px;width:fit-content}
+.tab-pill{padding:6px 16px;font-size:11px;font-weight:500;border:none;background:transparent;color:var(--gray);border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit}
+.tab-pill.active{background:var(--white);color:var(--dark);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tab-pill:hover:not(.active){color:var(--dark)}
+.tab-content{display:none;padding:16px 20px 80px}
+.tab-content.active{display:block}
+
+/* ── Primitives ── */
+.section-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--o);padding:8px 0 6px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.field-label{font-size:10px;font-weight:600;color:var(--gray);margin-bottom:3px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.field-label .req{color:var(--o)}
+.field-label .tag{font-size:9px;background:#FEF9C3;color:#854D0E;padding:1px 5px;border-radius:3px;border:1px solid #FDE68A;font-weight:600;text-transform:none;letter-spacing:0}
+.field-input{width:100%;padding:6px 9px;font-size:12px;border:1px solid var(--border);border-radius:6px;outline:none;color:var(--dark);background:var(--white);font-family:inherit;transition:border-color .15s}
+.field-input:focus{border-color:var(--o);box-shadow:0 0 0 2px var(--o10)}
+.field-select{width:100%;padding:6px 9px;font-size:12px;border:1px solid var(--border);border-radius:6px;outline:none;color:var(--dark);background:var(--white);cursor:pointer;font-family:inherit}
+.field-select:focus{border-color:var(--o)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;font-size:11px;font-weight:500;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-o{background:var(--o);color:#fff}
+.btn-o:hover{background:var(--oh);transform:translateY(-1px)}
+.btn-g{background:var(--g);color:#fff}
+.btn-g:hover{background:#287A2C;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg);color:var(--dark)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px}
+
+/* ── Printing mode radio cards ── */
+.mode-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0 4px}
+.mode-card{padding:10px 12px;border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;background:var(--white)}
+.mode-card:hover{border-color:var(--o25);background:var(--o10)}
+.mode-card.active{border-color:var(--o);background:var(--o10)}
+.mode-card-title{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:2px}
+.mode-card.active .mode-card-title{color:var(--o)}
+.mode-card-desc{font-size:10px;color:var(--gray);line-height:1.4}
+.mode-saved{font-size:10px;color:var(--g);display:flex;align-items:center;gap:3px;margin-top:6px}
+
+/* ── Fixed station employee picker ── */
+.emp-picker{background:#FFFBF5;border:1px solid var(--o25);border-radius:9px;padding:12px 14px;margin-top:8px}
+.emp-picker-label{font-size:10px;color:var(--gray);margin-bottom:8px}
+.emp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.emp-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:11px;font-weight:500;color:var(--dark);cursor:pointer;transition:all .15s}
+.emp-chip:hover{border-color:var(--o25);background:var(--o10)}
+.emp-chip.selected{border-color:var(--o);background:var(--o10);color:var(--o)}
+
+/* ── Station table ── */
+.station-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.station-table th{background:#FAFAFA;font-size:9px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.station-table td{font-size:11px;color:var(--dark);padding:8px 10px;border-bottom:1px solid #F9FAFB;vertical-align:middle}
+.station-table tr:last-child td{border-bottom:none}
+.station-table tr:hover td{background:#FAFAFA}
+.ptype-badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;background:var(--o10);color:var(--o)}
+.stage-badge{font-size:9px;padding:2px 6px;border-radius:3px;background:#F3F4F6;color:var(--gray)}
+.icon-btn{width:24px;height:24px;border-radius:5px;border:1px solid var(--border);background:var(--white);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);transition:all .15s;margin-left:3px}
+.icon-btn:hover{background:var(--bg);color:var(--dark)}
+.icon-btn.red:hover{background:#FEF2F2;color:var(--red);border-color:rgba(239,68,68,.2)}
+
+/* ── Toggle ── */
+.toggle-dot{width:32px;height:18px;border-radius:9px;background:#D1D5DB;position:relative;flex-shrink:0;cursor:pointer;transition:background .2s;display:inline-block}
+.toggle-dot.on{background:var(--o)}
+.toggle-dot::after{content:'';width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle-dot.on::after{left:16px}
+.toggle-g.on{background:var(--g)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F9FAFB}
+.toggle-row:last-child{border-bottom:none}
+.toggle-row-label{font-size:12px;font-weight:500;color:var(--dark)}
+.toggle-row-sub{font-size:10px;color:var(--gray);margin-top:1px}
+
+/* ── Inline form ── */
+.inline-form{background:#FFFBF5;border:1px solid var(--o25);border-radius:9px;padding:14px;margin-top:10px}
+.inline-form-title{font-size:11px;font-weight:700;color:var(--o);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── Mapping tab ── */
+.mapping-card{border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.mapping-header{background:#FAFAFA;padding:8px 14px;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+.mapping-row{display:grid;grid-template-columns:120px 1fr;align-items:center;padding:10px 14px;border-bottom:1px solid #F9FAFB}
+.mapping-row:last-child{border-bottom:none}
+.mapping-station{font-size:12px;font-weight:600;color:var(--dark)}
+.default-users{background:#FFFBF5;border:1px solid var(--o25);border-radius:9px;padding:12px;margin-bottom:14px}
+.du-hint{font-size:11px;color:var(--gray);margin-bottom:8px}
+.du-chips{display:flex;flex-wrap:wrap;gap:6px}
+.du-chip{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:11px;font-weight:500;color:var(--dark);transition:all .15s}
+.du-chip.on{background:var(--o10);border-color:var(--o25);color:var(--o)}
+
+/* ── Bill content tab ── */
+.bc-section{border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:12px}
+.bc-header{background:#FAFAFA;padding:8px 14px;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+
+/* ── Bill style tab ── */
+.sub-tab-bar{display:flex;gap:2px;background:#F3F4F6;border-radius:7px;padding:2px;width:fit-content;margin-bottom:12px}
+.sub-pill{padding:5px 14px;font-size:11px;font-weight:500;border:none;background:transparent;color:var(--gray);border-radius:5px;cursor:pointer;transition:all .15s;font-family:inherit}
+.sub-pill.active{background:var(--white);color:var(--dark);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.bs-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.bs-table th{background:#FAFAFA;font-size:9px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.bs-table td{padding:5px 10px;border-bottom:1px solid #F9FAFB;vertical-align:middle}
+.bs-table tr:hover td{background:#FAFAFA}
+.bs-section-name{font-size:11px;color:var(--dark);font-weight:500}
+.bs-input{width:46px;padding:3px 5px;font-size:11px;border:1px solid var(--border);border-radius:5px;outline:none;text-align:center;font-family:inter;font-variant-numeric:tabular-nums}
+.bs-input:focus{border-color:var(--o)}
+.bs-physical{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;padding:12px;background:#F9FAFB;border-radius:8px;border:1px solid var(--border)}
+
+/* ── Save bar ── */
+.save-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.unsaved{font-size:10px;color:var(--o);display:flex;align-items:center;gap:4px}
+.unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--o)}
+/* ── SVG ── */
+svg.ic{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+svg.ic-sm{width:12px;height:12px}
+svg.ic-xs{width:10px;height:10px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-header">
+  <div>
+    <h1>Local Printer Setup — Final Design (4 Tabs)</h1>
+    <p>printer_agent = "No" · /printer-config · /printing-option · /station-printer-map · /bill-printer-config · /update-settings</p>
+  </div>
+  <span class="badge">Design Approval</span>
+</div>
+
+<div class="panel">
+  <!-- Panel header -->
+  <div class="panel-header">
+    <div class="panel-back"><svg class="ic"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <span class="panel-title">Local Printer Setup</span>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab-pills">
+      <button class="tab-pill active" onclick="switchTab('printers')" data-testid="tab-printers">Printers</button>
+      <button class="tab-pill" onclick="switchTab('billcontent')" data-testid="tab-bill-content">Bill Content</button>
+      <button class="tab-pill" onclick="switchTab('billstyle')" data-testid="tab-bill-style">Bill Style</button>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 1: PRINTERS ════════ -->
+  <div id="tab-printers" class="tab-content active">
+
+    <!-- Printing Mode -->
+    <div class="section-title">Printing Mode</div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:8px">How should the POS route print jobs when placing orders?</div>
+    <div class="mode-cards" data-testid="printing-mode-selector">
+      <div class="mode-card active" data-testid="mode-fixed">
+        <div class="mode-card-title">Fixed</div>
+        <div class="mode-card-desc">One dedicated printer for all jobs</div>
+      </div>
+      <div class="mode-card" data-testid="mode-waiter">
+        <div class="mode-card-title">Waiter</div>
+        <div class="mode-card-desc">Route by serving waiter</div>
+      </div>
+      <div class="mode-card" data-testid="mode-station">
+        <div class="mode-card-title">Station</div>
+        <div class="mode-card-desc">Route by kitchen station per item</div>
+      </div>
+    </div>
+
+    <!-- Fixed Station Employee Picker — shown only when Fixed is selected -->
+    <div class="emp-picker" id="emp-picker" data-testid="fixed-station-employee-picker">
+      <div class="section-title" style="margin-bottom:6px;border:none;padding-bottom:4px">Fixed Station Employee</div>
+      <div class="emp-picker-label">Which employee handles all fixed station orders?</div>
+      <div class="emp-chips">
+        <div class="emp-chip selected" data-testid="employee-chip-3415">BAR</div>
+        <div class="emp-chip" data-testid="employee-chip-3417">Captain</div>
+        <div class="emp-chip" data-testid="employee-chip-3414">KDS</div>
+        <div class="emp-chip" data-testid="employee-chip-3416">Manager</div>
+        <div class="emp-chip" data-testid="employee-chip-3418">Owner</div>
+        <div class="emp-chip" data-testid="employee-chip-3532">Saurav</div>
+        <div class="emp-chip" data-testid="employee-chip-4754">print</div>
+        <div class="emp-chip" data-testid="employee-chip-5007">cd</div>
+        <div class="emp-chip" data-testid="employee-chip-4770">m m</div>
+        <div class="emp-chip" data-testid="employee-chip-4771">n n</div>
+      </div>
+    </div>
+
+    <div class="mode-saved"><svg class="ic-xs" style="stroke:var(--g)"><polyline points="20 6 9 17 4 12"/></svg> Printing mode saved</div>
+
+    <div style="height:1px;background:var(--border);margin:14px 0"></div>
+
+    <!-- Station list -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+      <span style="font-size:12px;font-weight:600;color:var(--dark)">Printers (3)</span>
+      <button class="btn btn-o btn-sm" onclick="toggleForm()" data-testid="btn-add-printer">
+        <svg class="ic-xs" style="stroke:#fff"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Printer
+      </button>
+    </div>
+
+    <table class="station-table" data-testid="station-table">
+      <thead>
+        <tr>
+          <th>Area</th><th>Type</th><th>Printer Name</th><th>IP / MAC</th><th>WiFi IP</th><th>Paper</th><th>Default</th><th>Auto Serve</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-testid="station-row-484">
+          <td style="font-weight:600">KDS</td>
+          <td><span class="ptype-badge">bluetooth</span></td>
+          <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+          <td style="color:var(--gray);font-size:11px;font-variant-numeric:tabular-nums">60:6E:41:45:6F:EF</td>
+          <td style="color:var(--light);font-size:11px">—</td>
+          <td style="color:var(--gray)">58mm</td>
+          <td><span class="stage-badge">None</span></td>
+          <td><span style="font-size:10px;color:var(--gray)">No</span></td>
+          <td style="white-space:nowrap">
+            <button class="icon-btn" onclick="toggleForm()" data-testid="btn-edit-484"><svg class="ic-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn red" data-testid="btn-delete-484"><svg class="ic-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </td>
+        </tr>
+        <tr data-testid="station-row-485">
+          <td style="font-weight:600">BAR</td>
+          <td><span class="ptype-badge">usb</span></td>
+          <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+          <td style="color:var(--gray);font-size:11px;font-variant-numeric:tabular-nums">AB:0A:20:24:42:D3</td>
+          <td style="color:var(--light);font-size:11px">—</td>
+          <td style="color:var(--gray)">58mm</td>
+          <td><span class="stage-badge">None</span></td>
+          <td><span style="font-size:10px;color:var(--g);font-weight:600">Yes</span></td>
+          <td style="white-space:nowrap">
+            <button class="icon-btn" data-testid="btn-edit-485"><svg class="ic-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn red" data-testid="btn-delete-485"><svg class="ic-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </td>
+        </tr>
+        <tr data-testid="station-row-486">
+          <td style="font-weight:600">Bill</td>
+          <td><span class="ptype-badge">bluetooth</span></td>
+          <td style="color:var(--gray);font-size:11px">Everycom-58-Series</td>
+          <td style="color:var(--gray);font-size:11px;font-variant-numeric:tabular-nums">60:6E:41:45:6F:EF</td>
+          <td style="color:var(--light);font-size:11px">—</td>
+          <td style="color:var(--gray)">58mm</td>
+          <td><span class="stage-badge">None</span></td>
+          <td><span style="font-size:10px;color:var(--gray)">No</span></td>
+          <td style="white-space:nowrap">
+            <button class="icon-btn" data-testid="btn-edit-486"><svg class="ic-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn red" data-testid="btn-delete-486"><svg class="ic-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Inline edit form -->
+    <div id="printer-form" class="inline-form" style="display:none" data-testid="printer-inline-form">
+      <div class="inline-form-title">
+        <svg class="ic-xs" style="stroke:var(--o)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Printer — KDS
+        <button onclick="toggleForm()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--gray)"><svg class="ic-xs"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="grid-3" style="margin-bottom:9px">
+        <div><label class="field-label">Printer For <span class="req">*</span></label><select class="field-select" data-testid="input-printer-for"><option>KDS</option><option>BAR</option><option>Bill</option></select></div>
+        <div><label class="field-label">Printer Type <span class="req">*</span></label><select class="field-select" data-testid="input-printer-type"><option>bluetooth</option><option>usb</option><option>wifi</option></select></div>
+        <div><label class="field-label">Printer Name</label><input class="field-input" value="Everycom-58-Series" data-testid="input-printer-name"/></div>
+      </div>
+      <div class="grid-3" style="margin-bottom:9px">
+        <div><label class="field-label">IP / MAC Address</label><input class="field-input" value="60:6E:41:45:6F:EF" data-testid="input-printer-ip"/></div>
+        <div><label class="field-label">WiFi Printer IP</label><input class="field-input" placeholder="e.g. 192.168.1.50" data-testid="input-wifi-ip"/></div>
+        <div><label class="field-label">Paper Roll Size</label><select class="field-select" data-testid="input-paper-roll"><option>58 mm</option><option>80 mm</option></select></div>
+      </div>
+      <div class="grid-4" style="margin-bottom:9px">
+        <div><label class="field-label">Vendor ID <span style="font-weight:400;color:var(--light);text-transform:none">(default 0)</span></label><input class="field-input" placeholder="0" data-testid="input-vendor-id"/></div>
+        <div><label class="field-label">Product ID <span style="font-weight:400;color:var(--light);text-transform:none">(default 0)</span></label><input class="field-input" placeholder="0" data-testid="input-product-id"/></div>
+        <div><label class="field-label">Default</label><select class="field-select" data-testid="input-default"><option value="">None</option><option value="1">Ready</option><option value="2">Serve</option><option value="5">Delivered</option></select></div>
+        <div><label class="field-label">Station GST <span class="tag">Food Court</span></label><input class="field-input" placeholder="GST number" data-testid="input-station-gst"/></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);margin-bottom:10px">
+        <div><div style="font-size:12px;font-weight:500;color:var(--dark)">Auto Serve</div><div style="font-size:10px;color:var(--gray)">Automatically mark items as served</div></div>
+        <div class="toggle-dot" data-testid="toggle-auto-serve"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="toggleForm()" data-testid="btn-cancel-form">Cancel</button>
+        <button class="btn btn-g btn-sm" data-testid="btn-save-printer"><svg class="ic-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg> Update Printer</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ TAB 2: MAPPING ════════ -->
+  <div id="tab-mapping" class="tab-content">
+
+    <!-- Default users -->
+    <div class="default-users" data-testid="default-users-section">
+      <div class="section-title" style="border-color:var(--o25)">Default Users — Print to All Stations</div>
+      <div class="du-hint">These employees automatically print to every station. Toggle to enable / disable.</div>
+      <div class="du-chips">
+        <div class="du-chip on" data-testid="du-toggle-owner"><div class="toggle-dot on toggle-g" style="width:26px;height:15px;transform:scale(.9)"></div> Owner</div>
+        <div class="du-chip on" data-testid="du-toggle-saurav"><div class="toggle-dot on toggle-g" style="width:26px;height:15px;transform:scale(.9)"></div> Saurav</div>
+        <div class="du-chip" data-testid="du-toggle-manager"><div class="toggle-dot" style="width:26px;height:15px;transform:scale(.9)"></div> Manager</div>
+        <div class="du-chip" data-testid="du-toggle-captain"><div class="toggle-dot" style="width:26px;height:15px;transform:scale(.9)"></div> Captain</div>
+        <div class="du-chip" data-testid="du-toggle-bar"><div class="toggle-dot" style="width:26px;height:15px;transform:scale(.9)"></div> BAR</div>
+      </div>
+    </div>
+
+    <!-- Station → Employee mapping -->
+    <div class="section-title">Station Assignment</div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Assign one responsible employee per station. When an order goes to a station, this employee handles it.</div>
+
+    <div class="mapping-card" data-testid="station-mapping-table">
+      <div class="mapping-header">
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:0">
+          <span>Station</span><span>Responsible Employee</span>
+        </div>
+      </div>
+      <div class="mapping-row" data-testid="mapping-bar">
+        <span class="mapping-station">BAR</span>
+        <select class="field-select" style="max-width:240px" data-testid="select-emp-bar">
+          <option>— unassigned —</option>
+          <option selected>BAR (bar@18march.com)</option>
+          <option>Owner</option><option>Saurav</option><option>Manager</option>
+        </select>
+      </div>
+      <div class="mapping-row" data-testid="mapping-kds">
+        <span class="mapping-station">KDS</span>
+        <select class="field-select" style="max-width:240px" data-testid="select-emp-kds">
+          <option>— unassigned —</option>
+          <option selected>KDS (kds@18march.com)</option>
+          <option>Owner</option><option>Saurav</option><option>Manager</option>
+        </select>
+      </div>
+      <div class="mapping-row" data-testid="mapping-bill">
+        <span class="mapping-station">Bill</span>
+        <select class="field-select" style="max-width:240px" data-testid="select-emp-bill">
+          <option>— unassigned —</option>
+          <option>BAR</option>
+          <option selected>Owner</option><option>Saurav</option><option>Manager</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
+      <button class="btn btn-g btn-sm" data-testid="btn-save-mapping"><svg class="ic-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg> Save Mapping</button>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 3: BILL CONTENT ════════ -->
+  <div id="tab-billcontent" class="tab-content">
+
+    <div class="grid-2" style="gap:16px">
+      <!-- Left: Toggles -->
+      <div>
+        <div class="bc-section" data-testid="bill-toggles-section">
+          <div class="bc-header">Print Options</div>
+          <div style="padding:4px 14px">
+            <div class="toggle-row"><div><div class="toggle-row-label">Print Phone Number</div></div><div class="toggle-dot on toggle-g" data-testid="toggle-print-phone"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Print Email</div></div><div class="toggle-dot on toggle-g" data-testid="toggle-print-email"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Show Address on Bill</div></div><div class="toggle-dot" data-testid="toggle-show-address"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Dotted Line Between Items</div></div><div class="toggle-dot on toggle-g" data-testid="toggle-dotted-line"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Total Amount Bold</div></div><div class="toggle-dot on toggle-g" data-testid="toggle-total-bold"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Total Amount Centred</div></div><div class="toggle-dot" data-testid="toggle-total-centred"></div></div>
+            <div class="toggle-row"><div><div class="toggle-row-label">Total Amount in Words</div></div><div class="toggle-dot" data-testid="toggle-total-words"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Text fields -->
+      <div>
+        <div class="bc-section" data-testid="bill-text-section">
+          <div class="bc-header">Bill Text</div>
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <div>
+              <label class="field-label">Footer Text</label>
+              <input class="field-input" placeholder="e.g. Thank you, visit again!" data-testid="input-footer-text"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-section" style="margin-top:10px" data-testid="bill-dimensions-section">
+          <div class="bc-header">Physical Dimensions</div>
+          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div><label class="field-label">Padding</label><input class="field-input" value="0" data-testid="input-padding" style="font-variant-numeric:tabular-nums"/></div>
+            <div><label class="field-label">Margin</label><input class="field-input" value="0" data-testid="input-margin" style="font-variant-numeric:tabular-nums"/></div>
+            <div><label class="field-label">Paper Width</label><input class="field-input" value="72" data-testid="input-paperwidth" style="font-variant-numeric:tabular-nums"/></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
+      <button class="btn btn-g btn-sm" data-testid="btn-save-bill-content"><svg class="ic-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg> Save Bill Content</button>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 4: BILL STYLE ════════ -->
+  <div id="tab-billstyle" class="tab-content">
+
+    <!-- Sub-tabs -->
+    <div class="sub-tab-bar">
+      <button class="sub-pill active" onclick="switchSub('s58')" data-testid="subtab-58mm">2-inch (58mm)</button>
+      <button class="sub-pill" onclick="switchSub('s80')" data-testid="subtab-80mm">3-inch (80mm)</button>
+      <button class="sub-pill" onclick="switchSub('swin')" data-testid="subtab-windows">Windows</button>
+    </div>
+
+    <!-- 58mm sub-tab -->
+    <div id="sub-s58" style="display:block">
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Configure font sizes and visibility for each section on a 2-inch (58mm) roll.</div>
+      <table class="bs-table" data-testid="bs-table-58mm">
+        <thead>
+          <tr>
+            <th style="width:200px">Section</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:70px;text-align:center">Width</th>
+            <th style="width:60px;text-align:center">Bold</th>
+          </tr>
+        </thead>
+        <tbody id="bs-58-body"></tbody>
+      </table>
+    </div>
+
+    <!-- 80mm sub-tab -->
+    <div id="sub-s80" style="display:none">
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Configure font sizes and visibility for each section on a 3-inch (80mm) roll.</div>
+      <table class="bs-table" data-testid="bs-table-80mm">
+        <thead>
+          <tr>
+            <th style="width:200px">Section</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:70px;text-align:center">Width</th>
+            <th style="width:60px;text-align:center">Bold</th>
+          </tr>
+        </thead>
+        <tbody id="bs-80-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Windows sub-tab -->
+    <div id="sub-swin" style="display:none">
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Configure font size and visibility for each section on Windows printing.</div>
+      <table class="bs-table" data-testid="bs-table-windows">
+        <thead>
+          <tr>
+            <th style="width:200px">Section</th>
+            <th style="width:70px;text-align:center">Height</th>
+            <th style="width:60px;text-align:center">Bold</th>
+          </tr>
+        </thead>
+        <tbody id="bs-win-body"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-g btn-sm" data-testid="btn-save-bill-style"><svg class="ic-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg> Save Bill Style</button>
+    </div>
+  </div>
+
+  <!-- Save bar (Tab 1) -->
+  <div class="save-bar">
+    <span class="unsaved"><span class="unsaved-dot"></span> Unsaved changes</span>
+    <button class="btn btn-g btn-sm" data-testid="btn-save-changes"><svg class="ic-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg> Save Changes</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${id}')"]`).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// Sub-tab switching (Bill Style)
+function switchSub(id){
+  document.querySelectorAll('.sub-pill').forEach(b=>b.classList.remove('active'));
+  ['s58','s80','swin'].forEach(s=>{ document.getElementById('sub-'+s).style.display='none'; });
+  document.querySelector(`[onclick="switchSub('${id}')"]`).classList.add('active');
+  document.getElementById('sub-'+id).style.display='block';
+}
+
+// Toggle form
+function toggleForm(){
+  const f=document.getElementById('printer-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+// Bill Style sections data
+const SECTIONS = [
+  {key:'restaurant_logo',label:'Restaurant Logo'},
+  {key:'restaurant_title',label:'Restaurant Title'},
+  {key:'restaurant_address_1',label:'Address Line 1'},
+  {key:'restaurant_address_2',label:'Address Line 2'},
+  {key:'restaurant_gstno',label:'GST Number'},
+  {key:'restaurant_fssai_no',label:'FSSAI Number'},
+  {key:'resturant_order_id',label:'Order ID'},
+  {key:'date_time',label:'Date & Time'},
+  {key:'order_type',label:'Order Type'},
+  {key:'customer_name',label:'Customer Name'},
+  {key:'customer_number',label:'Customer Phone'},
+  {key:'biller_name',label:'Biller Name'},
+  {key:'resturant_table',label:'Table Number'},
+  {key:'resturant_food_list_header',label:'Food List Header'},
+  {key:'restaurant_food_list',label:'Food Items List'},
+  {key:'restaurant_sub_total',label:'Sub Total'},
+  {key:'service_charge',label:'Service Charge'},
+  {key:'tip',label:'Tip'},
+  {key:'station_name',label:'Station Name'},
+  {key:'delivery_charge',label:'Delivery Charge'},
+  {key:'delivery_address_detail',label:'Delivery Address'},
+  {key:'scan_to_feedback',label:'Scan to Feedback'},
+  {key:'discount',label:'Discount'},
+  {key:'gst_parcent',label:'GST %'},
+  {key:'vat_parcent',label:'VAT %'},
+  {key:'restaurant_total_amount',label:'Total Amount'},
+  {key:'resturant_scan_to_pay',label:'Scan to Pay'},
+  {key:'powered_by_mygenie',label:'Powered by MyGenie'},
+];
+
+// 58mm live data
+const DATA_58 = {restaurant_logo:["2","2","true"],restaurant_title:["2","2","true"],restaurant_address_1:["1","1","true"],restaurant_address_2:["1","1","false"],restaurant_gstno:["1","1","true"],restaurant_fssai_no:["1","1","false"],resturant_order_id:["1","1","false"],date_time:["1","1","false"],order_type:["1","1","false"],customer_name:["1","1","false"],customer_number:["1","1","false"],biller_name:["1","1","false"],resturant_table:["1","1","false"],resturant_food_list_header:["1","1","false"],restaurant_food_list:["1","1","true"],restaurant_sub_total:["1","1","true"],service_charge:["1","1","false"],tip:["1","1","false"],station_name:["1","1","false"],delivery_charge:["1","1","false"],delivery_address_detail:["1","1","false"],scan_to_feedback:["1","1","false"],discount:["1","1","false"],gst_parcent:["1","1","false"],vat_parcent:["1","1","false"],restaurant_total_amount:["1","1","true"],resturant_scan_to_pay:["1","1","false"],powered_by_mygenie:["1","1","false"]};
+const DATA_80 = {restaurant_logo:["1","1","false"],restaurant_title:["1","1","true"],restaurant_address_1:["1","1","false"],restaurant_address_2:["1","1","false"],restaurant_gstno:["1","1","false"],restaurant_fssai_no:["1","1","false"],resturant_order_id:["1","1","false"],date_time:["1","1","false"],order_type:["1","1","false"],customer_name:["1","1","false"],customer_number:["1","1","false"],biller_name:["1","1","false"],resturant_table:["1","1","false"],resturant_food_list_header:["1","1","false"],restaurant_food_list:["1","1","false"],restaurant_sub_total:["1","1","false"],service_charge:["1","1","false"],tip:["1","1","false"],station_name:["1","1","false"],delivery_charge:["1","1","false"],delivery_address_detail:["1","1","false"],scan_to_feedback:["1","1","false"],discount:["1","1","false"],gst_parcent:["1","1","false"],vat_parcent:["1","1","false"],restaurant_total_amount:["6","2","true"],resturant_scan_to_pay:["1","1","false"],powered_by_mygenie:["1","1","false"]};
+const DATA_WIN = {restaurant_logo:["7","false"],restaurant_title:["7","false"],restaurant_address_1:["7","false"],restaurant_address_2:["7","false"],restaurant_gstno:["7","false"],restaurant_fssai_no:["7","false"],resturant_order_id:["7","false"],date_time:["7","false"],order_type:["7","false"],customer_name:["7","false"],customer_number:["7","false"],biller_name:["7","false"],resturant_table:["7","false"],resturant_food_list_header:["7","false"],restaurant_food_list:["7","false"],restaurant_sub_total:["7","false"],service_charge:["7","false"],tip:["7","false"],station_name:["7","false"],delivery_charge:["7","false"],delivery_address_detail:["7","false"],scan_to_feedback:["7","false"],discount:["7","false"],gst_parcent:["7","false"],vat_parcent:["7","false"],restaurant_total_amount:["17","true"],resturant_scan_to_pay:["7","false"],powered_by_mygenie:["7","false"]};
+
+function buildAndroidRows(tbodyId, data){
+  const tbody=document.getElementById(tbodyId);
+  SECTIONS.forEach(s=>{
+    const d=data[s.key]||["1","1","false"];
+    const bold=d[2]==="true";
+    const tr=document.createElement('tr');
+    tr.setAttribute('data-testid',`bs-row-${s.key}`);
+    tr.innerHTML=`
+      <td><span class="bs-section-name">${s.label}</span></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-height-${s.key}"/></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[1]}" data-testid="bs-width-${s.key}"/></td>
+      <td style="text-align:center"><div class="toggle-dot toggle-g ${bold?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-bold-${s.key}"></div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildWindowsRows(tbodyId, data){
+  const tbody=document.getElementById(tbodyId);
+  SECTIONS.forEach(s=>{
+    const d=data[s.key]||["7","false"];
+    const bold=d[1]==="true";
+    const tr=document.createElement('tr');
+    tr.setAttribute('data-testid',`bs-row-win-${s.key}`);
+    tr.innerHTML=`
+      <td><span class="bs-section-name">${s.label}</span></td>
+      <td style="text-align:center"><input class="bs-input" value="${d[0]}" data-testid="bs-height-win-${s.key}"/></td>
+      <td style="text-align:center"><div class="toggle-dot toggle-g ${bold?'on':''}" onclick="this.classList.toggle('on')" data-testid="bs-bold-win-${s.key}"></div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Build on load
+buildAndroidRows('bs-58-body', DATA_58);
+buildAndroidRows('bs-80-body', DATA_80);
+buildWindowsRows('bs-win-body', DATA_WIN);
+
+// Mode card toggle + employee picker
+document.querySelectorAll('.mode-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-card').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const isFixed = c.dataset.testid === 'mode-fixed';
+    document.getElementById('emp-picker').style.display = isFixed ? 'block' : 'none';
+  });
+});
+document.querySelectorAll('.emp-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.emp-chip').forEach(x=>x.classList.remove('selected'));
+    chip.classList.add('selected');
+  });
+});
+
+// Toggle dots
+document.querySelectorAll('.toggle-dot:not(.bs-table .toggle-dot)').forEach(t=>{
+  t.addEventListener('click',()=>t.classList.toggle('on'));
+});
+</script>
+</body>
+</html>
