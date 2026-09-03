@@ -1,7 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-04 (CR-358-P4 GATE 3 — Implementation Plan written `plans/CR-358-P4_IMPLEMENTATION_PLAN.md`; local src re-synced to origin/PMS1 0c3d3c0; awaiting Gate 4 GO + SC-P4-01 ack)
+**Last Updated:** 2026-09-04 (CR-358-P3 GATE 5b QA PASS — 25/25 executable tests pass, 6 V-M deferred. Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke. CR-358-P4 GATE 3 plan written, awaiting Gate 4 GO.)
 
 ---
 
@@ -17,7 +17,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P3** | **PMS Phase 3 — Front Desk (S1) + Arrivals (S9) + Departures (S10)** | **P1** | **HIGH** | **GATE 3 — IMPLEMENTATION PLAN WRITTEN 2026-09-03 (`plans/CR-358-P3_IMPLEMENTATION_PLAN.md`) — SC-P3-01 accepted, OD-P3-14=(b) locked; awaiting explicit Gate 4 GO** | 3 | `impact/CR-358-P3_IMPACT_ANALYSIS.md`. Read-only phase (no writes). 3 new pages + additive pmsService/aiosellTransform + App.js 3-route re-point (SC-P3-01). 22 probes. OD-P3-01=(d) in-page checkout slider on Departures reusing CollectPaymentPanel (DashboardPage untouched; HIGH = financial panel new host). OD-P3-11=(c) both syncs. Design v2 approved (cr358-p3-design-comparison.html). departed sample verified. pah + dashboard-kpis delivered by backend. |
+| **CR-358-P3** | **PMS Phase 3 — Front Desk (S1) + Arrivals (S9) + Departures (S10)** | **P1** | **HIGH** | **QA PASS — Gate 5b (2026-09-04). 25/25 exec tests PASS (V-G1..9 auto, V-S1 security, V-U1..6 unit, V-B1..9 browser). 6 V-M money tests deferred (no checkout-eligible room). 4 regression PASS. Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke.** | 5b | IMPLEMENTED 2026-09-03: 9 edits / 7 files. FrontDeskPage.jsx + ArrivalsPage.jsx + DeparturesPage.jsx (new), PmsCheckoutDrawer.jsx (new component), pmsService.js +5 exports, aiosellTransform.js +2 transforms, App.js 3-route re-point. QA: `reports/QA_REPORT_CR358_P3_2026_09_04.md`, unit tests: `__tests__/bucketReservationOps.test.js`. |
 
 ---
 

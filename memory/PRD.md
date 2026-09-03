@@ -21,14 +21,14 @@ MyGenie is a hospitality POS (Point of Sale) and PMS (Property Management System
 - Reservation transforms (fromDirectReservation, fromPendingArrival)
 - PMS service layer (getPmsReservations, getInHouseGuests, getBookableRooms)
 
-### PMS Phase 3 (CR-358-P3) — GATE 4 DONE (2026-09-03) — **Gate 5b QA NOT done**
+### PMS Phase 3 (CR-358-P3) — QA PASS Gate 5b (2026-09-04)
 - Front Desk page (S1): KPI tiles, arrivals preview, departures mini-list, Channel Sync + Sync Now
 - Arrivals page (S9): 5 KPIs, 4 tabs, pagination, PAH/Prepaid badges, SR indicator
 - Departures page (S10): 4 KPIs, 4 tabs, in-page checkout via PmsCheckoutDrawer
 - PmsCheckoutDrawer: CollectPaymentPanel host (OD-P3-14=b Dashboard parity)
 - aiosellTransform.js: +fromReservationOps, +fromDashboardKpis
 - pmsService.js: +localDate, +bucketReservationOps, +getReservationOps, +getFrontDeskKpis, +getChannelSyncStatus, +syncNow
-- QA status: only 8 smoke checks inside `test_reports/QA_REGRESSION_CR358_FULL_2026_09_03.md` (page renders/tabs/nav). **Outstanding:** QA handover + QA report, V-M1..M6 money tests on the checkout slider (never opened), V-U1..U6 unit tests, Sync Now, KPI-failure state, Check-In deep-link, PAH badge. Registry: gate 4, awaiting Gate 5.
+- **QA: 25/25 executable tests PASS** (V-G1..9 auto, V-S1 security, V-U1..6 unit, V-B1..9 browser, V-R1..4 regression). 6 V-M money tests deferred (no checkout-eligible room). Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke.
 
 ### BUG-380 — Occupied Rooms in Picker — Fixed (QA PASS 2026-09-03)
 - getBookableRooms() cross-refs getRoomList() for occupied room IDs, returns isOccupied flag
@@ -58,8 +58,8 @@ MyGenie is a hospitality POS (Point of Sale) and PMS (Property Management System
 
 ## Pending / Backlog
 - **P0**: CR-358-P4 Gate 4 GO (owner) → Implementation per `plans/CR-358-P4_IMPLEMENTATION_PLAN.md` (V-B0 CORS PATCH smoke first)
-- **P1**: CR-358-P3 QA (Gate 5b) + owner smoke — code is on origin/PMS1 and now local
-- **P1**: V-M1..M4 money tests for PmsCheckoutDrawer (requires in-house room with ₹200 advance)
+- **P1**: CR-358-P3 Gate 6 Owner Smoke (code QA-passed, ready for sign-off)
+- **P1**: V-M1..M6 money tests for PmsCheckoutDrawer (deferred — requires checkout-eligible in-house room)
 - **P1**: REACT_APP_CRM_API_KEYS truncated in .env (requires owner input)
 - **P2**: OG-PMS-011 — sync `cr358-p3-design-comparison.html` from origin (local has forbidden #3B82F6)
 - **P2**: OG-PMS-010 — auto-HK not firing after RM checkout (backend) — observe during P4 IMPL
