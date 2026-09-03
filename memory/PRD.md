@@ -42,3 +42,11 @@ Deploy the existing React frontend repo directly from:
 - Supply real `.env` values if preprod API endpoints change
 - Add `yarn.lock` or switch supervisor command to `npm start` if npm-only workflow is preferred
 - Validate Firebase auth, Socket.IO, and CRM API connectivity against preprod endpoints
+
+## PMS Governed Work — Status (2026-09-03)
+Governance: `memory/control/AGENT_PROMPT_ALPHA.md` (gates 0→7, roles). Source of truth: `memory/control/registry.json`.
+- **CR-358** (parent): Gate 3 phased plan approved. Closes after P1–P5 Owner Verified.
+- **CR-358-P1** (Foundation + Channel Manager + In-House Guests): QA PASS Gate 5b → awaiting Owner Smoke (Gate 6).
+- **CR-360** (In-House KPI tiles + View Bill): QA PASS Gate 5b → awaiting Owner Smoke (Gate 6).
+- **CR-358-P2** (New Booking S3 + Check-In S4): **GATE 2 CLOSED 2026-09-03** — OD-P2-01..07 resolved, v3 mockup `frontend/public/cr358-p2-v3-mockup.html` approved. Gate 3 (Implementation Plan) opens only on owner instruction. Scope: NewBookingPage.jsx, CheckInPage.jsx (new); pmsService.js, aiosellTransform.js (extend). Frozen: App.js, Sidebar.jsx, roomService.js, RoomCheckInModal.jsx, CollectPaymentPanel.jsx.
+- Latest handover: `memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE2_CLOSED.md`

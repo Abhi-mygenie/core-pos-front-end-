@@ -13,11 +13,11 @@
 
 ---
 
-## 2026-09-03 — CR-358-P2 (GATE 2)
+## 2026-09-03 — CR-358-P2 (GATE 2 CLOSED — DESIGN APPROVED)
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 2 COMPLETE** | 2 | 4 files (2 new pages + pmsService + aiosellTransform). JSON `pmsCheckIn()` separate from roomService. OD-P2-05/06/07 open — block Gate 3. |
+| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 2 CLOSED — design approved** | 2 | 4 files (2 new pages + pmsService + aiosellTransform). JSON `pmsCheckIn()` separate from roomService. OD-P2-01..07 all resolved (05=A, 06=B, 07=B). v3 mockup `frontend/public/cr358-p2-v3-mockup.html` approved 2026-09-03. Next: Gate 3 plan on owner instruction. |
 
 ---
 

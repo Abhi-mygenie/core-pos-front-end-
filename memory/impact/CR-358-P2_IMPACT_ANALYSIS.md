@@ -62,15 +62,21 @@ Triggers:
 
 ---
 
-## Owner Decisions Still Open (needed before Gate 3)
+## Owner Decisions Resolved — Round 2 (owner accepted recommendations, 2026-09-03)
 
-| # | Question | Blocks |
-|---|---|---|
-| **OD-P2-05** | After "Save as Booking" succeeds (201 + `booking_id`), should the page: **(A)** show a "Check In Now" button on a success card, OR **(B)** auto-navigate to `/pms/check-in` with the new `booking_id` pre-filled? | S3 → S4 transition UX in `NewBookingPage.jsx` |
-| **OD-P2-06** | `CheckInPage` layout: **(A)** single form with a "Booking Type" tab switcher (Walk-in / Direct / OTA), OR **(B)** 3 separate sections on one page showing pending arrivals list + a manual entry fallback? | `CheckInPage.jsx` structure |
-| **OD-P2-07** | Advance payment on `NewBookingPage` (S3 direct-reservation): backend curl above has `advance_payment` absent → defaults to 0. Should the New Booking form include an advance payment field at booking time, or only at check-in? | form fields in `NewBookingPage.jsx` |
+| # | Question | Decision | Effect |
+|---|---|---|---|
+| **OD-P2-05** | S3 post-booking flow | **(A)** Stay on New Booking; success card shows `booking_id` + "Check In Now" (→ `/pms/check-in?booking_id=…`) + "New Booking" reset. No auto-redirect. | `NewBookingPage.jsx` success state |
+| **OD-P2-06** | `CheckInPage` layout | **(B)** Pending arrivals list (today) + Walk-In action banner; selecting an arrival prefills the check-in form. No tab switcher. | `CheckInPage.jsx` structure |
+| **OD-P2-07** | Advance payment at booking time | **(B)** Collect advance at check-in only. New Booking form has NO advance field; `direct-reservation` sent without `advance_payment` (backend defaults 0). | `NewBookingPage.jsx` fields; R6 closed |
 
-**These 3 must be resolved before Gate 3 (Implementation Plan) is written.**
+## Design Review (Gate 2.5) — APPROVED 2026-09-03
+
+- Mockup: `frontend/public/cr358-p2-v3-mockup.html` (S3 New Booking, S3 success state, S4 Check-In)
+- Reference: `frontend/public/checkin-comparison.html` (OD-P2-02)
+- Owner verdict: **"design approved"** — mockup is the UX contract for Gate 3.
+
+**All 7 owner decisions resolved (OD-P2-01..07). Gate 2 CLOSED. Gate 3 may open on owner instruction.**
 
 ---
 
@@ -225,7 +231,7 @@ Page loads
 | R3 | Room assignment: `aiosell_room_code` (type-only) vs `restaurant_table_id` (physical pre-assign) — wrong field causes silent wrong assignment | HIGH | New Booking form must make selection intent explicit; `fromAPI.directReservation` preserves both for UI confirmation |
 | R4 | `checkin`/`checkout` date format: `direct-reservation` requires `Y-m-d` but `roomService.checkIn()` uses `YYYY-MM-DD HH:mm:ss` — mixing formats in `pmsCheckIn` could cause 422 | HIGH | `pmsCheckIn` uses `Y-m-d` format explicitly; `roomService.checkIn` date format unchanged |
 | R5 | OD-01 co-exist: if backend ever changes `/user-group-check-in` signature, both flows break simultaneously | MEDIUM | Documented in OD-01; noted as architecture risk for P5 regression |
-| R6 | Advance payment at booking time (OD-P2-07 unresolved) — if form includes it and user enters a value, financial record created at `direct-reservation` time | HIGH | Block Gate 3 until OD-P2-07 resolved |
+| R6 | Advance payment at booking time — financial record created at `direct-reservation` time | ~~HIGH~~ CLOSED | OD-P2-07 = B: no advance field on New Booking; advance collected at check-in only |
 
 ---
 
@@ -238,11 +244,12 @@ Page loads
 | Risk | HIGH |
 | Files WILL change | 4 (2 new pages, 2 service/transform extensions) |
 | Files WILL NOT touch | 9 (listed above — App.js, Sidebar, roomService, RoomCheckInModal, CollectPaymentPanel + 4 others) |
-| Owner decisions resolved | 4 (OD-P2-01 through OD-P2-04) |
-| Owner decisions still open | **3 (OD-P2-05, OD-P2-06, OD-P2-07) — MUST resolve before Gate 3** |
+| Owner decisions resolved | 7 (OD-P2-01 through OD-P2-07) |
+| Owner decisions still open | **0** |
+| Design review (Gate 2.5) | **APPROVED 2026-09-03** — `frontend/public/cr358-p2-v3-mockup.html` |
 | Estimated new LOC | ~640 |
 
 ---
 
 *Planning agent | CR-358-P2 Gate 2 — Impact Analysis COMPLETE | 2026-09-03*
-*STOP — Gate 3 (Implementation Plan) requires OD-P2-05/06/07 resolution + owner approval*
+*GATE 2 CLOSED 2026-09-03 — all decisions resolved, design approved. Gate 3 (Implementation Plan) opens on owner instruction.*
