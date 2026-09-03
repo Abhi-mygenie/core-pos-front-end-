@@ -22416,10 +22416,10 @@
       "id": "CR-358-P4",
       "title": "PMS Phase 4 \u2014 Tape Chart (S2) + Room Status Board (S7)",
       "type": "CR",
-      "status": "GATE 3 \u2014 IMPLEMENTATION PLAN WRITTEN 2026-09-04 (plans/CR-358-P4_IMPLEMENTATION_PLAN.md). 5 app files (3 NEW + pmsService append + App.js 6-line SC-P4-01) + 2 unit tests + 1 fixture. 43-check verification matrix. Local checkout re-synced to origin/PMS1 0c3d3c0 (9 drifted P3/BUG-380 src files) before planning. CORS PATCH preflight risk flagged (V-B0). Awaiting explicit Gate 4 GO + SC-P4-01 ack.",
+      "status": "QA PASS \u2014 Gate 5b (2026-09-04). 34/34 exec PASS + testing agent 100%. Ready for Gate 6.",
       "priority": "P0",
       "risk": "MEDIUM",
-      "gate": 3,
+      "gate": "5b",
       "completeness": "4/7",
       "area": "PMS > Tape Chart + Room Status",
       "related": [

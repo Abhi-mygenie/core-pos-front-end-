@@ -41,14 +41,16 @@ MyGenie is a hospitality POS (Point of Sale) and PMS (Property Management System
 
 ## In Progress
 
-### PMS Phase 4 (CR-358-P4) — Gate 3 PLAN WRITTEN (2026-09-04) — awaiting Gate 4 GO
-- **S2 Tape Chart** (ReservationsPage): Gantt grid — rooms as rows, dates as columns, reservation blocks
-- **S7 Room Status Board** (RoomStatusPage): Card grid — 5 room tiles with HK/OOO toggles
-- Design APPROVED: `frontend/public/cr358-p4-pms-mockup.html`
-- IA (Gate 2 CLOSED 2026-09-04): `memory/impact/CR-358-P4_IMPACT_ANALYSIS.md` — OD-P4-01..10 locked
-- Implementation Plan (Gate 3, 2026-09-04): `memory/plans/CR-358-P4_IMPLEMENTATION_PLAN.md` — 5 app files + 2 tests, 43-check matrix, SC-P4-01 (App.js 6 lines), A-P4-11..20, CORS PATCH risk (V-B0 first)
-- 2026-09-04: local `/app/frontend/src` re-synced to `origin/PMS1 @ 0c3d3c0` (was 9 files behind — P3 code); OG-PMS-012
-- **Next: owner "Gate 4 GO" + SC-P4-01 ack → IMPLEMENTATION role**
+*None — awaiting owner Gate 6 smoke tests for P3 and P4.*
+
+### PMS Phase 4 (CR-358-P4) — QA PASS Gate 5b (2026-09-04)
+- **S2 Tape Chart** (ReservationsPage.jsx): Gantt grid — rooms × dates, reservation blocks with kind-coded colours, view toggle (7d/14d/30d), navigation (prev/today/next), popover on click, unassigned section, room groups by type
+- **S7 Room Status Board** (RoomStatusPage.jsx): Card grid — room tiles with status badges, filter chips, PATCH actions (HK/OOO/Available/Mark Clean), bulk Mark All Clean, Auto-HK pill, refetch after PATCH
+- roomStatusTransform.js: `fromRoomStatusBoard`, `fromPatchResponse`, `patchErrorMessage`, `ROOM_MANUAL_STATUSES`
+- pmsService.js: +`getRoomStatusBoard`, `patchRoomStatus`, `bulkMarkClean`, `buildTapeChart`, `getTapeChartData`
+- App.js: SC-P4-01 (6 lines — +2 imports, −1 PmsPlaceholderPage, 2 route swaps)
+- V-B0 CORS PATCH verified (preflight + browser round-trip)
+- **QA: 34/34 executable tests PASS + testing agent 100%**. Report: `reports/QA_REPORT_CR358_P4_2026_09_04.md`. Ready for Gate 6.
 
 ## Design System
 - Brand Orange: #F26B33 | Action Green: #329937 | Danger: #EF4444 | Warning: #F59E0B
@@ -57,12 +59,12 @@ MyGenie is a hospitality POS (Point of Sale) and PMS (Property Management System
 - **Forbidden**: #22C55E, #3B82F6, #2563EB, slate-* families
 
 ## Pending / Backlog
-- **P0**: CR-358-P4 Gate 4 GO (owner) → Implementation per `plans/CR-358-P4_IMPLEMENTATION_PLAN.md` (V-B0 CORS PATCH smoke first)
 - **P1**: CR-358-P3 Gate 6 Owner Smoke (code QA-passed, ready for sign-off)
+- **P1**: CR-358-P4 Gate 6 Owner Smoke (code QA-passed, ready for sign-off)
 - **P1**: V-M1..M6 money tests for PmsCheckoutDrawer (deferred — requires checkout-eligible in-house room)
 - **P1**: REACT_APP_CRM_API_KEYS truncated in .env (requires owner input)
 - **P2**: OG-PMS-011 — sync `cr358-p3-design-comparison.html` from origin (local has forbidden #3B82F6)
-- **P2**: OG-PMS-010 — auto-HK not firing after RM checkout (backend) — observe during P4 IMPL
+- **P2**: OG-PMS-010 — auto-HK not firing after RM checkout (backend) — observe
 - **P2**: Sidebar forbidden color fix (#3B82F6) — shared component
 - **P2**: BUG-381 walk-in live test on preprod
 - **P2**: Live token lint check (one-command color audit)

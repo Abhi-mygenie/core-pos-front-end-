@@ -1,4 +1,4 @@
-// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3: PMS aggregation + booking/check-in + reservation-ops service
+// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3 | CR-358-P4: PMS aggregation + booking/check-in + reservation-ops + room-status/tape-chart service
 // getInHouseGuests: two-call join — GET_ROOM_LIST + local-reservations enriched on order_id.
 // roomService.getRoomList() and roomListTransform are NOT modified — only called.
 import { getRoomList } from './roomService';
@@ -7,6 +7,7 @@ import { getLocalReservations, getAiosellRooms, getAiosellStatus, fetchReservati
 import api from '../axios';                                        // CR-358-P2
 import { AIOSELL_ENDPOINTS } from '../constants';                  // CR-358-P2
 import aiosellTransform from '../transforms/aiosellTransform';     // CR-358-P2
+import roomStatusTransform, { ROOM_MANUAL_STATUSES } from '../transforms/roomStatusTransform'; // CR-358-P4
 const to2dp = (v) => Number(Number(v ?? 0).toFixed(2));            // CR-358-P2
 
 // Date helper — offset from today (YYYY-MM-DD)
@@ -221,3 +222,91 @@ export const syncNow = async () => {
   return out;
 };
 
+
+// ─── Phase 4 (CR-358-P4) ─────────────────────────────────────────────────────
+
+/** S7: board → normalized tiles + counts + auto-HK flag (single endpoint, NS-B) */
+export const getRoomStatusBoard = async () => {
+  const res = await api.get(AIOSELL_ENDPOINTS.ROOM_STATUS_BOARD);
+  return roomStatusTransform.fromRoomStatusBoard(res.data);
+};
+
+/** S7: PATCH manual status (OD-P4-01). Caller MUST refetch board afterwards (A-P4-08). Throws axios error on 422/5xx. */
+export const patchRoomStatus = async (tableId, status) => {
+  if (!ROOM_MANUAL_STATUSES.includes(status)) {
+    throw new Error(`[CR-358-P4] patchRoomStatus: status must be one of ${ROOM_MANUAL_STATUSES.join('|')}`);
+  }
+  const res = await api.patch(`${AIOSELL_ENDPOINTS.ROOM_STATUS}/${Number(tableId)}`, { status });
+  return roomStatusTransform.fromPatchResponse(res.data);
+};
+
+/** S7 bulk Mark All Clean (OD-P4-09): sequential, continue on error, never throws. */
+export const bulkMarkClean = async (tableIds) => {
+  const out = { ok: [], failed: [], warnings: [] };
+  for (const id of tableIds) {
+    try {
+      const r = await patchRoomStatus(id, 'available');
+      out.ok.push(id);
+      if (r.inventoryPushWarning) out.warnings.push({ id, message: r.inventoryPushWarning });
+    } catch (e) {
+      out.failed.push({ id, message: roomStatusTransform.patchErrorMessage(e) });
+    }
+  }
+  return out;
+};
+
+/** Date helpers for the tape chart (pure, local calendar, 'YYYY-MM-DD') */
+const addDays = (ymd, n) => { const d = new Date(`${ymd}T00:00:00`); d.setDate(d.getDate() + n); return d.toLocaleDateString('en-CA'); };
+const dayDiff = (a, b) => Math.round((new Date(`${b}T00:00:00`) - new Date(`${a}T00:00:00`)) / 86400000);
+
+const blockKind = (line) => (line.lineStatus === 'checked_in' ? 'in_house' : line.lineStatus === 'checked_out' ? 'departed' : 'pending'); // A-P4-15
+
+/**
+ * S2 pure layout (exported for unit tests V-U*). Join key: roomLines[].restaurantTableId ↔ rooms[].id (T6).
+ * Blocks span nights (A-P4-13), clipped to window (A-P4-06). Unassigned = pending with no table (A-P4-12).
+ */
+export const buildTapeChart = ({ rooms, reservations, startDate, days, today }) => {
+  const endExclusive = addDays(startDate, days);
+  const dates = Array.from({ length: days }, (_, i) => addDays(startDate, i));
+  const byRoom = Object.fromEntries(rooms.map(r => [r.id, []]));
+  const unassigned = [];
+  reservations.forEach(res => {
+    if (!res.checkin || !res.checkout) return;
+    const ci = res.checkin, co = res.checkout <= res.checkin ? addDays(res.checkin, 1) : res.checkout;
+    if (co <= startDate || ci >= endExclusive) return;
+    const lines = (res.roomLines ?? []).filter(l => l.restaurantTableId != null);
+    if (lines.length === 0) { if (res.operationalStatus === 'pending') unassigned.push(res); return; }
+    lines.forEach(l => {
+      if (!byRoom[l.restaurantTableId]) return;
+      const s = ci < startDate ? startDate : ci;
+      const e = co > endExclusive ? endExclusive : co;
+      byRoom[l.restaurantTableId].push({
+        key: `${res.bookingId ?? res.id}-${l.lineId}`, res, line: l, kind: blockKind(l),
+        startIdx: dayDiff(startDate, s), span: Math.max(1, dayDiff(s, e)),
+        clippedStart: ci < startDate, clippedEnd: co > endExclusive,
+      });
+    });
+  });
+  const rowStatus = Object.fromEntries(rooms.map(r => {
+    const blocks = byRoom[r.id] ?? [];
+    const covers = (b) => b.res.checkin <= today && today < (b.res.checkout <= b.res.checkin ? addDays(b.res.checkin, 1) : b.res.checkout);
+    if (blocks.some(b => b.kind === 'in_house')) return [r.id, 'occupied'];
+    if (blocks.some(b => b.kind === 'pending' && covers(b))) return [r.id, 'booked'];
+    return [r.id, null];
+  }));
+  const groups = Object.values(rooms.reduce((acc, r) => {
+    const k = r.roomType ?? 'unmapped';
+    (acc[k] ??= { type: k, rooms: [] }).rooms.push(r);
+    return acc;
+  }, {})).map(g => ({ ...g, rooms: g.rooms.sort((a, b) => String(a.tableNo).localeCompare(String(b.tableNo), undefined, { numeric: true })) }));
+  return { dates, byRoom, unassigned, rowStatus, groups, todayIdx: dayDiff(startDate, today) };
+};
+
+/** S2 data: reuse P3 ops fetch (OD-P4-02) + room catalog (P2 pattern). 0 new reservation endpoints. */
+export const getTapeChartData = async () => {
+  const [ops, raw] = await Promise.all([getReservationOps(), getAiosellRooms()]);
+  const catalog = aiosellTransform.fromAPI.rooms(raw?.data ?? raw);
+  const typeById = Object.fromEntries(catalog.mappings.map(m => [m.restaurantTableId, m.aiosellRoomCode]));
+  const rooms = catalog.localRooms.map(r => ({ id: r.id, tableNo: r.tableNo, roomType: typeById[r.id] ?? null }));
+  return { today: ops.today, reservations: ops.all, rooms };
+};

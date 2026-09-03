@@ -1,7 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-04 (CR-358-P3 GATE 5b QA PASS — 25/25 executable tests pass, 6 V-M deferred. Report: `reports/QA_REPORT_CR358_P3_2026_09_04.md`. Ready for Gate 6 Owner Smoke. CR-358-P4 GATE 3 plan written, awaiting Gate 4 GO.)
+**Last Updated:** 2026-09-04 (CR-358-P4 GATE 5b QA PASS — 34/34 exec tests pass + testing agent 100%. Report: `reports/QA_REPORT_CR358_P4_2026_09_04.md`. Ready for Gate 6 Owner Smoke.)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 3 — IMPLEMENTATION PLAN WRITTEN 2026-09-04 (`plans/CR-358-P4_IMPLEMENTATION_PLAN.md`). Gate 2 CLOSED 2026-09-04 (IA, OD-P4-01..10 locked). Code Reality: NONE (re-verified after local↔origin/PMS1 sync). Conflict: CLEAR. SC-P4-01 (App.js 6 lines incl. unused PmsPlaceholderPage import removal) + A-P4-11..20 defaults surfaced. CORS PATCH preflight = first Gate-4 milestone (V-B0). Awaiting explicit Gate 4 GO.** | 3 | `plans/CR-358-P4_IMPLEMENTATION_PLAN.md` (43 checks: 18 auto / 25 manual). `impact/CR-358-P4_IMPACT_ANALYSIS.md`. `frontend/public/cr358-p4-pms-mockup.html`. `evidence/CR-358-P4/` (13 Gate-2 + 3 Gate-3 probes). Scope: roomStatusTransform.js (NEW), ReservationsPage.jsx (NEW), RoomStatusPage.jsx (NEW), pmsService.js (append 5 exports), App.js L262-263 re-point + imports, 2 tests + 1 fixture. |
+| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **QA PASS — Gate 5b (2026-09-04). 34/34 exec tests PASS (V-G1..9 auto, V-S1 security, V-U1..U8+b+c unit, V-B0 CORS, V-B1..B8 browser, V-M1..3 PATCH, V-R1..5 regression) + testing agent 100%. Report: `reports/QA_REPORT_CR358_P4_2026_09_04.md`. Ready for Gate 6 Owner Smoke.** | 5b | IMPLEMENTED 2026-09-04: 5 app files (3 NEW + 1 append + 1 re-point) + 2 test files. roomStatusTransform.js (NEW), ReservationsPage.jsx (NEW), RoomStatusPage.jsx (NEW), pmsService.js +5 exports (+buildTapeChart), App.js SC-P4-01 6-line re-point. QA: `reports/QA_REPORT_CR358_P4_2026_09_04.md`, unit tests: `__tests__/roomStatusTransform.cr358p4.test.js` + `__tests__/pmsService.tapeChart.cr358p4.test.js`. |
 
 ---
 

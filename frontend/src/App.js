@@ -94,15 +94,16 @@ import { AppProviders } from "./contexts";
 import { useRestaurant } from "./contexts";
 import { ProtectedRoute, ErrorBoundary } from "./components/guards";
 import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
-// CR-358-P1 (+P2 +P3 route re-point): PMS Module pages
+// CR-358-P1 (+P2 +P3 +P4 route re-point): PMS Module pages
 import ChannelManagerPage  from './pages/pms/ChannelManagerPage';
 import InHouseGuestsPage   from './pages/pms/InHouseGuestsPage';
-import PmsPlaceholderPage  from './pages/pms/PmsPlaceholderPage';
 import NewBookingPage      from './pages/pms/NewBookingPage'; // CR-358-P2
 import CheckInPage         from './pages/pms/CheckInPage';    // CR-358-P2
 import FrontDeskPage       from './pages/pms/FrontDeskPage';   // CR-358-P3
 import ArrivalsPage        from './pages/pms/ArrivalsPage';    // CR-358-P3
 import DeparturesPage      from './pages/pms/DeparturesPage';  // CR-358-P3
+import ReservationsPage    from './pages/pms/ReservationsPage'; // CR-358-P4
+import RoomStatusPage      from './pages/pms/RoomStatusPage';   // CR-358-P4
 
 // Sync browser tab title with restaurant context.
 // Falls back to "MyGenie POS" before login / when restaurant has no name.
@@ -259,8 +260,8 @@ function App() {
               <Route path="/pms/front-desk"      element={<ProtectedRoute><FrontDeskPage /></ProtectedRoute>} />  {/* CR-358-P3 */}
               <Route path="/pms/arrivals"        element={<ProtectedRoute><ArrivalsPage /></ProtectedRoute>} />   {/* CR-358-P3 */}
               <Route path="/pms/departures"      element={<ProtectedRoute><DeparturesPage /></ProtectedRoute>} /> {/* CR-358-P3 */}
-              <Route path="/pms/reservations"    element={<ProtectedRoute><PmsPlaceholderPage title="Tape Chart" phase={4} /></ProtectedRoute>} />
-              <Route path="/pms/room-status"     element={<ProtectedRoute><PmsPlaceholderPage title="Room Status" phase={4} /></ProtectedRoute>} />
+              <Route path="/pms/reservations"    element={<ProtectedRoute><ReservationsPage /></ProtectedRoute>} /> {/* CR-358-P4 */}
+              <Route path="/pms/room-status"     element={<ProtectedRoute><RoomStatusPage /></ProtectedRoute>} />   {/* CR-358-P4 */}
             </Routes>
           </BrowserRouter>
           <Toaster />
