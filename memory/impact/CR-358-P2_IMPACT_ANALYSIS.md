@@ -179,7 +179,7 @@ Page loads
 
 | File | Reason |
 |---|---|
-| `App.js` | FROZEN after P1 — routes `/pms/new-booking` and `/pms/check-in` already exist |
+| `App.js` | FROZEN after P1 — routes `/pms/new-booking` and `/pms/check-in` already exist. **GATE 3 CORRECTION (R1, 2026-09-03):** routes exist but mount `PmsPlaceholderPage`; a 4-line element re-point is required (SC-01 in Implementation Plan, owner ack at Gate 4). Logged OG-PMS-006. |
 | `components/layout/Sidebar.jsx` | FROZEN after P1 — sidebar entries already exist |
 | `api/services/roomService.js` | OD-01 co-exist — `roomService.checkIn()` untouched |
 | `components/modals/RoomCheckInModal.jsx` | OD-01 co-exist — Dashboard check-in modal untouched |

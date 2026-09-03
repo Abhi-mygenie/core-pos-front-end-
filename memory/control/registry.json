@@ -22187,17 +22187,22 @@
       "id": "CR-358-P2",
       "title": "PMS Phase 2 — New Booking (S3) + Check-In (S4): WalkIn / Direct / OTA",
       "type": "CR",
-      "status": "GATE 2 CLOSED — design approved, ready for Gate 3",
+      "status": "GATE 3 — PLAN WRITTEN, awaiting Gate 4 GO (+SC-01 App.js ack)",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_1",
-      "gate": 2,
-      "completeness": "2/7",
+      "gate": 3,
+      "completeness": "3/7",
       "artifact_refs": [
         {
           "label": "Impact Analysis",
           "path": "memory/impact/CR-358-P2_IMPACT_ANALYSIS.md",
           "type": "impact"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-358-P2_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         },
         {
           "label": "Approved Design Mockup (v3)",
@@ -22208,10 +22213,15 @@
           "label": "Session Handover (Gate 2 close)",
           "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE2_CLOSED.md",
           "type": "handover"
+        },
+        {
+          "label": "Session Handover (Gate 3)",
+          "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE3.md",
+          "type": "handover"
         }
       ],
       "category": "ACTIVE",
-      "note": "4 files scope (2 new pages + pmsService extend + aiosellTransform extend). JSON check-in (Option B — pmsCheckIn separate from roomService.checkIn). All 7 owner decisions resolved: OD-P2-05=A (stay on New Booking, Check In Now on success card), OD-P2-06=B (arrivals list + Walk-In banner), OD-P2-07=B (advance at check-in only). Design review (Gate 2.5) APPROVED 2026-09-03 — mockup frontend/public/cr358-p2-v3-mockup.html is UX contract. Gate 2 CLOSED. Next: Gate 3 Implementation Plan on owner instruction."
+      "note": "Gate 3 plan: 8 edits / 5 files (NewBookingPage.jsx NEW, CheckInPage.jsx NEW, pmsService.js +getBookableRooms/getPmsReservations/createDirectReservation/pmsCheckIn, aiosellTransform.js +directReservation/+pendingArrival, App.js 4-line route re-point = SC-01 scope correction, IA claim \"zero App.js changes\" was stale). 26-check verification matrix (12 auto/14 manual). OD-P2-01..07 applied; A-01..A-07 presentation defaults declared. R11 re-probe deferred to Gate 4 entry (test_credentials.md empty). Next: owner Gate 4 GO + SC-01 ack → IMPLEMENTATION."
     }
   ],
   "meta": {

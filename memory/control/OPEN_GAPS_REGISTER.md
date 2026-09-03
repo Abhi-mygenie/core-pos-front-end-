@@ -33,6 +33,9 @@
 | OG-PMS-002 | P3 | **OPEN** | S6 In-House Guests: Walk-in guest checkin/checkout/balance show "—" — no AIOSELL reservation record. Would need per-row detail fetch (`getSingleOrderRoom`). | Phase 3 or separate CR if needed |
 | OG-PMS-003 | P3 | **OPEN** | View Bill (Phase 1) links to room orders report. Full bill + checkout via CollectPaymentPanel is Phase 3 (Departures → checkout). | Phase 3 — Departures screen (CR-358-P3) |
 | OG-PMS-004 | P3 | **OPEN** | `aiosellTransform.js` line 75: inventory rooms use `r.roomCode ?? r.room_code` — same field name gap as BUG-377. If `fetch-inventory` also uses `room_id`, the inventory bars won't populate. | Probe before Phase 1 close or Phase 5 |
+| OG-PMS-005 | P3 | **OPEN** | S3 New Booking room picker (`GET /aiosell/rooms`) cannot show occupied/available state — availability endpoint not built (OD-P2-04). Staff may pick an occupied room; backend rejects at check-in. | Phase 4 — `room-status-board` (CR-358-P4) feeds picker state |
+| OG-PMS-006 | P2 | **STALE DOC — flagged R1** | `impact/CR-358-P2_IMPACT_ANALYSIS.md` claimed `App.js` needs "zero changes"; code reality: `/pms/new-booking` + `/pms/check-in` mount `PmsPlaceholderPage`. Gate 3 plan adds SC-01 (4-line route re-point, owner ack at Gate 4). | Closes when SC-01 acked + Edit 8 shipped |
+
 
 ---
 

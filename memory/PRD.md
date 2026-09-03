@@ -48,5 +48,5 @@ Governance: `memory/control/AGENT_PROMPT_ALPHA.md` (gates 0→7, roles). Source 
 - **CR-358** (parent): Gate 3 phased plan approved. Closes after P1–P5 Owner Verified.
 - **CR-358-P1** (Foundation + Channel Manager + In-House Guests): QA PASS Gate 5b → awaiting Owner Smoke (Gate 6).
 - **CR-360** (In-House KPI tiles + View Bill): QA PASS Gate 5b → awaiting Owner Smoke (Gate 6).
-- **CR-358-P2** (New Booking S3 + Check-In S4): **GATE 2 CLOSED 2026-09-03** — OD-P2-01..07 resolved, v3 mockup `frontend/public/cr358-p2-v3-mockup.html` approved. Gate 3 (Implementation Plan) opens only on owner instruction. Scope: NewBookingPage.jsx, CheckInPage.jsx (new); pmsService.js, aiosellTransform.js (extend). Frozen: App.js, Sidebar.jsx, roomService.js, RoomCheckInModal.jsx, CollectPaymentPanel.jsx.
-- Latest handover: `memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE2_CLOSED.md`
+- **CR-358-P2** (New Booking S3 + Check-In S4): **GATE 3 PLAN WRITTEN 2026-09-03** — `memory/plans/CR-358-P2_IMPLEMENTATION_PLAN.md` (8 edits / 5 files, 26-check matrix). Awaiting owner **Gate 4 GO + SC-01 ack** (App.js 4-line route re-point — IA claim of zero App.js changes was stale). Scope: NewBookingPage.jsx, CheckInPage.jsx (new); pmsService.js, aiosellTransform.js (extend); App.js (4 lines). Frozen: Sidebar.jsx, roomService.js, RoomCheckInModal.jsx, CollectPaymentPanel.jsx. Precondition for IMPL: `memory/test_credentials.md` is empty — owner login alias needed for R11 re-probe.
+- Latest handover: `memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE3.md`
