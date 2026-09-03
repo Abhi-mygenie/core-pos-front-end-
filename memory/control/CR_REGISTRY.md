@@ -13,6 +13,14 @@
 
 ---
 
+## 2026-09-03 — CR-358-P2 (GATE 2)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-358-P2** | **PMS Phase 2 — New Booking (S3) + Check-In (S4)** | **P1** | **HIGH** | **GATE 2 COMPLETE** | 2 | 4 files (2 new pages + pmsService + aiosellTransform). JSON `pmsCheckIn()` separate from roomService. OD-P2-05/06/07 open — block Gate 3. |
+
+---
+
 ## 2026-09-02 — CR-358-P1 (IMPLEMENTED)
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |

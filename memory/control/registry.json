@@ -22182,6 +22182,26 @@
       "completeness": "5b/7",
       "category": "ACTIVE",
       "qa_report": "test_reports/QA_REPORT_CR358P1_CR360_2026_09_03.md"
+    },
+    {
+      "id": "CR-358-P2",
+      "title": "PMS Phase 2 \u2014 New Booking (S3) + Check-In (S4): WalkIn / Direct / OTA",
+      "type": "CR",
+      "status": "GATE 2 COMPLETE \u2014 awaiting OD-P2-05/06/07 before Gate 3",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_pms_1",
+      "gate": 2,
+      "completeness": "2/7",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-358-P2_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        }
+      ],
+      "category": "ACTIVE",
+      "note": "4 files scope (2 new pages + pmsService extend + aiosellTransform extend). JSON check-in (Option B \u2014 pmsCheckIn separate from roomService.checkIn). OD-P2-05 (S3 post-booking flow), OD-P2-06 (CheckInPage layout), OD-P2-07 (advance at booking time) open \u2014 must resolve before Gate 3."
     }
   ],
   "meta": {
