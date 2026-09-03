@@ -7,7 +7,7 @@
 **Gate:** 2 (Impact Analysis) — **PROBES COMPLETE 2026-09-04, awaiting owner Gate 2 re-close**
 **Risk:** MEDIUM (hotspot `pmsService.js` append + new PATCH integration) — OOO `inventory_push_warning` = null on sandbox; no upgrade needed
 **Date:** 2026-09-03 (updated 2026-09-04)
-**Design:** APPROVED (mockup at `cr358-p4-pms-mockup.html`)
+**Design:** APPROVED (mockup at `frontend/public/cr358-p4-pms-mockup.html` — created 2026-09-04 with real probe evidence, 3 tabs: S2 Tape Chart / S7 Room Status Board / API Contract)
 **Code Reality:** NONE — 0 P4 components exist. 2 placeholder routes ready for re-point.
 **Conflict Pre-Check:** CLEAR — `pmsService.js` last modified by BUG-380 (QA PASS same session). `App.js` L262-263 placeholder routes untouched since P3 SC-P3-01 re-point. CR-117 (App.js conflict flagged in P3 §0) = GATE_5_PENDING_QA, touches different lines — parallel-safe.
 
