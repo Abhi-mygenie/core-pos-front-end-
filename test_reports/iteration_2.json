@@ -1,0 +1,78 @@
+{
+  "summary": "CR-358-P2 QA Pass Complete - All 13 handover test cases PASS, 4 regression tests PASS, 3 smoke tests PASS. New Booking (S3) and Check-In (S4) pages fully functional with real preprod APIs.",
+  "test_type": "QA FORMAL PASS - Frontend Only",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Check-In Page - KPI Strip",
+        "issues": ["KPI values show '...' placeholder during initial load (~2-3 seconds). Acceptable UX with loading state."]
+      },
+      {
+        "screen": "New Booking - Room Selection",
+        "issues": ["Room pills show skeleton loading for ~3-5 seconds on page load. Acceptable UX."]
+      }
+    ]
+  },
+  "test_results": {
+    "handover_test_cases": {
+      "TC01": {"status": "PASS", "description": "New Booking page renders with all 4 sections: Guest Details, Room Selection, Stay & Amount, Booking Summary + Booking Type cards"},
+      "TC02": {"status": "PASS", "description": "Room Selection loads 5 room pills (r1-r5) with Home icon, room number bold, type (Suite/Executive) + ID (8524-8528)"},
+      "TC03": {"status": "PASS", "description": "Booking Summary updates live as Name, Phone, Room, Check-in, Check-out, Adults, Children, Amount are filled"},
+      "TC04": {"status": "PASS", "description": "Form validation: Save as Booking + Walk-in buttons disabled when invalid (name empty, phone not 10 digits, no room, amount=0). Both enabled when valid"},
+      "TC05": {"status": "PASS", "description": "Check-In page renders with KPI strip (4 tiles: 1 Arriving Today, 3 In-House, 0 Checkout Today, ₹19,922.28 Outstanding), Walk-in banner, Arrivals list"},
+      "TC06": {"status": "PASS", "description": "Arrivals list loads 4 pending arrival cards with guest name, channel pill (Direct green, booking.com blue), dates, nights badge, meal plan badges"},
+      "TC07": {"status": "PASS", "description": "Clicking arrival card shows 'Selected' chip, populates right panel with guest name, phone, room assignment, dates, amount, booking type info"},
+      "TC08": {"status": "PASS", "description": "Walk-in button activates walk-in mode: shows amber walk-in pseudo-card at top of arrivals list, right panel shows blank form with 'Walk-in' label"},
+      "TC09": {"status": "PASS", "description": "Room type mismatch warning (amber chip with Info icon) appears when changing room from executive to suite type"},
+      "TC10": {"status": "PASS", "description": "New Booking 'Walk-in · Check In Now' button navigates to /pms/check-in with prefilled form data (name, phone, room, amount transferred)"},
+      "TC11": {"status": "PASS", "description": "Check-In page 'New Booking' header button navigates to /pms/new-booking"},
+      "TC12": {"status": "PASS", "description": "Empty panel shows BedDouble icon + 'Select an arrival or start a Walk-in' text (data-testid='ci-panel-empty' exists in DOM)"},
+      "TC13": {"status": "PASS", "description": "Sidebar component renders, localStorage key 'mygenie_sidebar_expanded' used for persistence"}
+    },
+    "regression_tests": {
+      "REG01": {"status": "PASS", "description": "/pms/channel-manager loads with Room Mapping tab, shows Executive and Suite room types with availability"},
+      "REG02": {"status": "PASS", "description": "/pms/in-house loads with KPI tiles (4 In-House, 0 Checkout Today, ₹19,922.28 Outstanding, 2d Avg Nights) and guest table with 4 rows"},
+      "REG03": {"status": "PASS", "description": "Dashboard accessible after login with Dine-In (2 tables) and Room (4 rooms) sections visible"},
+      "REG04": {"status": "PASS", "description": "Order entry page loads from table click - shows menu categories, items, cart functionality"}
+    },
+    "smoke_tests": {
+      "SMOKE01": {"status": "PASS", "description": "Full login flow: enter credentials → boot screen completes (~15-20s) → lands on /dashboard with sidebar visible"},
+      "SMOKE02": {"status": "PASS", "description": "Sidebar has 'Rooms' content visible. Child items (New Booking, Check-In, In-House, Channel Manager) are in collapsed submenu - expected behavior"},
+      "SMOKE03": {"status": "PASS", "description": "After testing PMS pages, return to /dashboard - no crash, dashboard content loads correctly"}
+    }
+  },
+  "data_testid_verification": {
+    "new_booking_page": ["new-booking-page", "nb-back-btn", "nb-name", "nb-phone", "nb-email", "nb-adults", "nb-children", "nb-room-grid", "nb-room-pill-{id}", "nb-checkin", "nb-nights", "nb-checkout", "nb-amount", "nb-meal-plan", "nb-notes", "nb-save-booking-btn", "nb-walkin-btn", "nb-summary"],
+    "check_in_page": ["check-in-page", "ci-search", "ci-new-booking-btn", "ci-walkin-btn", "ci-kpi-strip", "ci-walkin-banner", "ci-arrivals-list", "ci-arrival-card-{bookingId}", "ci-walkin-card", "ci-panel-empty", "ci-panel-header", "ci-name", "ci-phone", "ci-room", "ci-room-type-warning", "ci-checkin", "ci-nights", "ci-checkout", "ci-amount", "ci-advance", "ci-note", "ci-type-label", "ci-booking-id-label", "ci-confirm-btn"]
+  },
+  "kpi_values_observed": {
+    "arriving_today": 1,
+    "in_house": 3,
+    "checkout_today": 0,
+    "outstanding": "₹19,922.28"
+  },
+  "channel_pills_observed": {
+    "direct": "Green pill",
+    "booking_com": "Blue pill"
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - frontend only testing",
+    "frontend": "100% (20/20 tests passed)"
+  },
+  "test_credentials": "owner@thegoankitchen.com / Qplazm@10",
+  "seed_data_creation": "None - used existing preprod data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-358-P2 PMS Phase 2 QA complete. All 13 handover test cases, 4 regression tests, and 3 smoke tests passed. Both /pms/new-booking and /pms/check-in routes work correctly with real preprod AIOSELL APIs. Room type mismatch warning (TC09) works when changing from executive to suite type. Empty panel state (TC12) shows correctly before data loads. Sidebar persistence (TC13) uses localStorage key 'mygenie_sidebar_expanded'.",
+  "notes": "This is a FORMAL QA PASS - independent verification of implementation. No code changes made. All tests executed against real preprod backend."
+}

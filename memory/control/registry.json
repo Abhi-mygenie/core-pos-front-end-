@@ -22243,6 +22243,11 @@
           "label": "Session Handover (Gate 5b)",
           "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE5B.md",
           "type": "handover"
+        },
+        {
+          "label": "QA Report (formal)",
+          "path": "memory/test_reports/QA_REPORT_CR358P2_2026_09_03.md",
+          "type": "qa_report"
         }
       ],
       "category": "ACTIVE",
