@@ -1,7 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-04 (CR-358-P4 Gate 2 T1–T11 complete — PATCH+OOO probed, join key corrected, all ODs locked, awaiting owner Gate 2 re-close)
+**Last Updated:** 2026-09-04 (CR-358-P4 GATE 3 — Implementation Plan written `plans/CR-358-P4_IMPLEMENTATION_PLAN.md`; local src re-synced to origin/PMS1 0c3d3c0; awaiting Gate 4 GO + SC-P4-01 ack)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **✅ GATE 2 CLOSED 2026-09-04 — IA complete per ALPHA v0.7. Code Reality: NONE. Conflict: CLEAR. All 10 ODs locked (P4-01..10). PATCH 200+422 probed. OOO probed (inventory_push_warning=null). Join key corrected: rooms[].restaurant_table_id. Assumptions A-P4-01..10 added. Mockup cr358-p4-pms-mockup.html with real evidence created. Gate 3 UNBLOCKED — awaiting Gate 4 GO.** | 2 ✅ | `impact/CR-358-P4_IMPACT_ANALYSIS.md`. `frontend/public/cr358-p4-pms-mockup.html` (3-tab: S2/S7/API, real probe data). `evidence/CR-358-P4/` (13 files). Scope: roomStatusTransform.js (NEW), ReservationsPage.jsx (NEW), RoomStatusPage.jsx (NEW), pmsService.js (append), App.js (L259-260 re-point). |
+| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 3 — IMPLEMENTATION PLAN WRITTEN 2026-09-04 (`plans/CR-358-P4_IMPLEMENTATION_PLAN.md`). Gate 2 CLOSED 2026-09-04 (IA, OD-P4-01..10 locked). Code Reality: NONE (re-verified after local↔origin/PMS1 sync). Conflict: CLEAR. SC-P4-01 (App.js 6 lines incl. unused PmsPlaceholderPage import removal) + A-P4-11..20 defaults surfaced. CORS PATCH preflight = first Gate-4 milestone (V-B0). Awaiting explicit Gate 4 GO.** | 3 | `plans/CR-358-P4_IMPLEMENTATION_PLAN.md` (43 checks: 18 auto / 25 manual). `impact/CR-358-P4_IMPACT_ANALYSIS.md`. `frontend/public/cr358-p4-pms-mockup.html`. `evidence/CR-358-P4/` (13 Gate-2 + 3 Gate-3 probes). Scope: roomStatusTransform.js (NEW), ReservationsPage.jsx (NEW), RoomStatusPage.jsx (NEW), pmsService.js (append 5 exports), App.js L262-263 re-point + imports, 2 tests + 1 fixture. |
 
 ---
 

@@ -1,7 +1,7 @@
 # Impact Analysis — CR-358-P4: Tape Chart + Room Status Board
 
 > ✅ **PROBES COMPLETE 2026-09-04** — T1–T11 executed. PATCH shape verified (T3), OOO probe done (T5), join key corrected to `rooms[].restaurant_table_id` (T6), all OD-P4-05..10 locked (T7), assumptions added (T8), header fixed (T9), migration confirmed (T10), CR_REGISTRY + CONTROL_DASHBOARD updated (T11).
-> **Awaiting owner Gate 2 re-close (T12) before Gate 3 planning starts.**
+> ✅ **Gate 2 CLOSED 2026-09-04.** → **Gate 3 Implementation Plan WRITTEN 2026-09-04:** `memory/plans/CR-358-P4_IMPLEMENTATION_PLAN.md`. Corrections at Gate 3: App.js placeholder routes are **L262-263** (post-sync, not L259-260); transformed-model join key = `roomLines[].restaurantTableId` (raw `rooms[].restaurant_table_id`).
 
 **ID:** CR-358-P4
 **Gate:** 2 (Impact Analysis) — **✅ CLOSED 2026-09-04 — PLANNING agent, per ALPHA v0.7**

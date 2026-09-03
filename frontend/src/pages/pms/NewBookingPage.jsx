@@ -180,11 +180,23 @@ export default function NewBookingPage() {
                       <p className="text-[13px] text-[#888]">No rooms mapped — <button onClick={() => navigate('/pms/channel-manager')} className="text-[#329937] underline">configure in Channel Manager</button></p>
                     </div>
                   ) : rooms.map(r => (
-                    <button key={r.id} data-testid={`nb-room-pill-${r.id}`} onClick={() => setRoomId(r.id)} className={`relative p-3 rounded-xl border-2 text-left transition-all ${roomId === r.id ? 'border-[#329937] bg-[#329937]/5' : 'border-[#E5E5E5] bg-white hover:border-[#329937]/40'}`}>
-                      <Home className="w-5 h-5 text-[#329937] mb-1.5" />
-                      <div className="font-bold text-[15px] text-[#1A1A1A]">{r.tableNo}</div>
+                    <button key={r.id} data-testid={`nb-room-pill-${r.id}`}
+                      onClick={() => !r.isOccupied && setRoomId(r.id)}
+                      disabled={r.isOccupied}
+                      className={`relative p-3 rounded-xl border-2 text-left transition-all ${
+                        r.isOccupied
+                          ? 'border-[#E5E5E5] bg-[#F7F7F7] opacity-60 cursor-not-allowed'
+                          : roomId === r.id
+                            ? 'border-[#329937] bg-[#329937]/5'
+                            : 'border-[#E5E5E5] bg-white hover:border-[#329937]/40'
+                      }`}>
+                      <Home className={`w-5 h-5 mb-1.5 ${r.isOccupied ? 'text-[#888]' : 'text-[#329937]'}`} />
+                      <div className={`font-bold text-[15px] ${r.isOccupied ? 'text-[#888]' : 'text-[#1A1A1A]'}`}>{r.tableNo}</div>
                       <div className="text-[11px] text-[#888] capitalize">{r.roomType ?? 'Room'} · ID {r.id}</div>
-                      {roomId === r.id && <div className="absolute top-2 right-2 w-5 h-5 bg-[#329937] rounded-full flex items-center justify-center"><Check className="w-3 h-3 text-white" /></div>}
+                      {r.isOccupied && (
+                        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide" style={{ background: '#FEE2E2', color: '#991B1B' }} data-testid={`nb-room-occupied-badge-${r.id}`}>Occupied</div>
+                      )}
+                      {!r.isOccupied && roomId === r.id && <div className="absolute top-2 right-2 w-5 h-5 bg-[#329937] rounded-full flex items-center justify-center"><Check className="w-3 h-3 text-white" /></div>}
                     </button>
                   ))}
                 </div>

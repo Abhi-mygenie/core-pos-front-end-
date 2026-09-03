@@ -330,7 +330,7 @@ export default function CheckInPage() {
                       <label className="text-[12px] text-[#888] mb-1 block">Room Assignment *</label>
                       <select data-testid="ci-room" value={form.restaurantTableId ?? ''} onChange={e => setField('restaurantTableId', Number(e.target.value))} className={inputCls}>
                         <option value="" disabled>Select room</option>
-                        {rooms.map(r => <option key={r.id} value={r.id}>{r.tableNo} ({r.roomType ?? 'Room'})</option>)}
+                        {rooms.map(r => <option key={r.id} value={r.id} disabled={r.isOccupied}>{r.tableNo} ({r.roomType ?? 'Room'}){r.isOccupied ? ' — Occupied' : ''}</option>)}
                       </select>
                       {roomTypeMismatch && (
                         <div data-testid="ci-room-type-warning" className="flex items-center gap-1.5 mt-1.5 text-[11px] text-amber-600 bg-amber-50 px-2 py-1 rounded">

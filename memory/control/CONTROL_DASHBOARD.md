@@ -1,7 +1,7 @@
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-04 — **CR-358-P4 Gate 2 CLOSED** per PLANNING agent (ALPHA v0.7). All 10 ODs locked. PATCH+OOO+board probed. Join key corrected. Mockup created. **Gate 3 (Implementation Plan) UNBLOCKED — next: Gate 4 GO from owner.**
+**Last Updated:** 2026-09-04 — **CR-358-P4 GATE 3 — Implementation Plan WRITTEN** (`plans/CR-358-P4_IMPLEMENTATION_PLAN.md`) per PLANNING agent (ALPHA v0.7). Local `/app/frontend/src` re-synced to `origin/PMS1` @ `0c3d3c0` (9 drifted P3/BUG-380 files; git remote was missing). G3 re-probes unchanged. **Next: owner Gate 4 GO + SC-P4-01 ack → IMPLEMENTATION.**
 **Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---

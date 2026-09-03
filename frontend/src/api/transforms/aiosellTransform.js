@@ -1,4 +1,4 @@
-// CR-358-P1 | CR-358-P2: AIOSELL API response transforms + meal plan decoder
+// CR-358-P1 | CR-358-P2 | CR-358-P3: AIOSELL API response transforms + meal plan decoder
 // Defensive: every fromAPI function guards against null/undefined response.
 // Response shapes verified from preprod probes (2026-08-31 evidence files).
 
@@ -151,6 +151,61 @@ const fromPendingArrival = (res) => {
   };
 };
 
+// ─── RESERVATION OPS (CR-358-P3) ─────────────────────────────────────────────
+// Superset of fromPendingArrival for S1/S9/S10. fromPendingArrival is NOT modified (CheckInPage depends on it).
+// Adds room-line ops fields + pah. `roomLines[]` carries one entry per rooms[] element (S10 rows = room lines).
+const fromReservationOps = (res) => {
+  const base  = fromPendingArrival(res);
+  const r     = res ?? {};
+  const rooms = Array.isArray(r.rooms) ? r.rooms : [];
+  const first = rooms[0] ?? {};
+  return {
+    ...base,
+    pah:            typeof r.pah === 'boolean' ? r.pah : null,        // true → PAY AT HOTEL, false → Prepaid, null → no badge
+    cmBookingId:    r.cm_booking_id ?? null,
+    roomCount:      rooms.length,
+    orderId:        first.order_id ?? null,
+    paymentStatus:  first.order_payment_status ?? null,                 // 'paid' | 'unpaid' | null
+    lineStatus:     first.line_status ?? null,
+    checkedInAt:    first.checked_in_at ?? null,
+    checkedOutAt:   first.checked_out_at ?? null,
+    roomLines: rooms.map((rm, i) => ({
+      lineId:            rm.id ?? i,
+      roomCode:          rm.room_code ?? null,
+      tableNo:           rm.table_no ?? null,
+      restaurantTableId: rm.restaurant_table_id ?? null,
+      orderId:           rm.order_id ?? null,
+      paymentStatus:     rm.order_payment_status ?? null,
+      lineStatus:        rm.line_status ?? null,
+      checkedInAt:       rm.checked_in_at ?? null,
+      checkedOutAt:      rm.checked_out_at ?? null,
+      adults:            rm.adults ?? 1,
+      children:          rm.children ?? 0,
+      guestName:         rm.guest_name ?? base.guestName,
+    })),
+  };
+};
+
+// ─── DASHBOARD KPIS (CR-358-P3) ──────────────────────────────────────────────
+// Source: GET /aiosell/dashboard-kpis?start_date&end_date → res.data.data (probe 24). Guards every field; null → tile renders "—".
+const fromDashboardKpis = (data) => {
+  const d = data?.data ?? data ?? {};
+  const t = d.today ?? {};
+  const day0 = Array.isArray(d.physical?.days) ? d.physical.days[0] : null;
+  const tot = day0?.totals ?? {};
+  const num = (v) => (v === null || v === undefined || v === '' ? null : Number(v));
+  return {
+    asOfDate:        d.as_of_date ?? null,
+    arrivalsCount:   num(t.arrivals_count),
+    departuresCount: num(t.departures_count),
+    inHouseCount:    num(t.in_house_count),
+    occupancyPct:    num(t.occupancy_percent_physical),
+    totalRooms:      num(d.physical?.total_rooms) ?? num(tot.capacity),
+    availableTonight:num(tot.available),
+    occupiedTonight: num(tot.occupied),
+  };
+};
+
 // ─── PUBLIC API ─────────────────────────────────────────────────────────────
 const aiosellTransform = {
   fromAPI: {
@@ -159,6 +214,8 @@ const aiosellTransform = {
     inventory:         fromInventory,
     directReservation: fromDirectReservation, // CR-358-P2
     pendingArrival:    fromPendingArrival,     // CR-358-P2
+    reservationOps:    fromReservationOps,     // CR-358-P3
+    dashboardKpis:     fromDashboardKpis,      // CR-358-P3
   },
   decodeMealPlan,
 };
