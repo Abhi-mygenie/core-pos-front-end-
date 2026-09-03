@@ -77,11 +77,13 @@ export default function StockAuditPanel() {
           skipped++;
           toast.error(`"${item.name}" is a sub-recipe but has no sub-recipe ID — skipped`);
         } else {
-          // Regular ingredient — correct endpoint
+          // Regular ingredient — BUG-379: mirrors sub-recipe recount pattern
           await inventoryService.addStock(itemId, {
-            quantity: Number(entry.qty),
+            quantity: 0,
+            unit: item.displayUnit || item.unit || '',
+            physicalQty: Number(entry.qty),
             wastageReasonId: entry.reasonId || null,
-            reason: reasonLabel,
+            reason: reasonLabel || 'Physical stock count',
           });
         }
       }

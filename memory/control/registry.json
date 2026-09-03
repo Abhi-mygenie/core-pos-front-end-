@@ -22257,12 +22257,12 @@
       "id": "BUG-379",
       "title": "Stock Audit save fails 422 — toAPI.addStock() missing unit + physical_qty + physicalqty_master + waste_reason",
       "type": "BUG",
-      "status": "GATE 3 — PLAN WRITTEN, awaiting Gate 4 GO",
+      "status": "IMPLEMENTED — awaiting QA",
       "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
-      "gate": "3",
-      "completeness": "3/7",
+      "gate": "5a",
+      "completeness": "5a/7",
       "area": "Inventory > Stock Audit",
       "artifact_refs": [
         {
@@ -22282,7 +22282,7 @@
         }
       ],
       "category": "ACTIVE",
-      "note": "OWNER-REPORTED 2026-09-03. POST /add-stock/{id} → 422 'unit required'. Root cause: toAPI.addStock() missing 5 fields. Gate 3 PLAN: 2 edits / 2 files (inventoryTransform.js + StockAuditPanel.jsx), 13-check matrix (11 auto / 2 manual). Mirrors sub-recipe pattern. No blockers, no owner decisions. Awaiting Gate 4 GO."
+      "note": "IMPLEMENTED 2026-09-03. 2 edits / 2 files: inventoryTransform.js toAPI.addStock() rebuilt (D1-D5 fixed), StockAuditPanel.jsx caller updated (mirrors sub-recipe pattern). V1-V11 self-test PASS. Compile PASS. Awaiting QA."
     }
   ],
   "meta": {

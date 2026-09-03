@@ -1111,3 +1111,9 @@
 | `src/pages/pms/NewBookingPage.jsx` | **NEW** CR-358-P2 S3: Guest details form, room pill picker (getBookableRooms), stay/amount, booking summary, Save as Booking (createDirectReservation 201→success card), Walk-in (navigate to /pms/check-in with state) | CR-358-P2 IMPL 2026-09-03 |
 | `src/pages/pms/CheckInPage.jsx` | **NEW** CR-358-P2 S4: KPI strip, walk-in banner, arrivals list (getPmsReservations), right-panel form (room select, advance payment), Confirm Check-In (pmsCheckIn JSON), 3 entry paths (URL param, walk-in state, auto-select) | CR-358-P2 IMPL 2026-09-03 |
 | `src/App.js` | CR-358-P2 SC-01: +NewBookingPage +CheckInPage imports, /pms/new-booking and /pms/check-in routes swapped from PmsPlaceholderPage to real pages | CR-358-P2 IMPL 2026-09-03 |
+
+### BUG-379 — Stock Audit save 422: toAPI.addStock() missing unit + physical_qty (2026-09-03)
+| File | Change | Agent |
+|---|---|---|
+| `api/transforms/inventoryTransform.js` | BUG-379: toAPI.addStock() rebuilt — +unit, +physicalqty_master, +physical_qty, +waste_reason, quantity defaults 0. Mirrors addSubRecipeStock pattern. L216-229. | BUG-379 IMPL 2026-09-03 |
+| `components/inventory/StockAuditPanel.jsx` | BUG-379: Regular ingredient branch (L79-88) — quantity:0, +unit, +physicalQty, +reason fallback. Mirrors sub-recipe branch L69-73. | BUG-379 IMPL 2026-09-03 |

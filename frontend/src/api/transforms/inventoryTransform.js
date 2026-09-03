@@ -213,11 +213,16 @@ const toAPI = {
     };
   },
 
-  // B4: add-stock/{id} — physical count / adjustment
+  // B4 + BUG-379: add-stock/{id} — physical count (mirrors addSubRecipeStock pattern)
+  // physicalqty_master + physical_qty included ONLY when data.physicalQty is explicitly passed
+  // quantity = 0 for count-only (no purchase add). waste_reason for audit trail.
   addStock(data) {
+    const hasRecount = data.physicalQty != null;
     return {
-      quantity: data.quantity,
-      reason: data.reason || '',
+      quantity: data.quantity ?? 0,
+      unit: data.unit || '',
+      ...(hasRecount ? { physicalqty_master: true, physical_qty: data.physicalQty } : {}),
+      ...(hasRecount && data.reason ? { waste_reason: data.reason } : {}),
       wastage_reason_id: data.wastageReasonId || null,
       notes: data.notes || '',
     };
