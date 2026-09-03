@@ -441,7 +441,7 @@ Totals: **43 checks — 18 automated, 25 manual (0 financial).** IA V1-V19 fully
 | R4 | S2/S7 disagree (unassigned vs booked tile) confuses owner | LOW | A-P4-12 documented; matches approved mockup; popover text "No room assigned" on unassigned blocks |
 | R5 | "Today" mismatch (server 09-04 vs browser 09-03) | LOW | Browser-local `localDate()` only (P3 A-05); `todayIdx` from same source |
 | R6 | 30d view density (36px columns) unreadable | LOW | Labels truncate with ellipsis + full text in `title`; horizontal scroll wrapper; owner may drop 30d at Gate 4 |
-| R7 | `pmsService.js` hotspot stacking P2/P3/P4 unsmoked | MEDIUM | Append-only; V-G6 diff guard; recommend owner Gate-6 smoke of P3 alongside P4 QA |
+| R7 | `pmsService.js` hotspot stacking P2/P3/P4 while **P3 Gate 5b QA is still outstanding** (only 8 smoke checks in `QA_REGRESSION_CR358_FULL_2026_09_03.md`; V-M1..M6 money tests + V-U1..U6 never run; no P3 QA handover/report) | MEDIUM | Append-only; V-G6 diff guard; **recommend P3 QA (Gate 5b) runs before or in parallel with P4 implementation** — P4 imports `getReservationOps` from P3 |
 | R8 | OG-PMS-010 (auto-HK didn't fire after checkout) surfaces as "wrong" tile | LOW | A-P4-16 info-only pill; QA to log as backend NOTE, not FE FAIL |
 | R9 | Unknown `display_status` value in future | LOW | Transform defaults to `'available'` + `DISPLAY_STATUSES` guard |
 | R10 | App.js hotspot | LOW | 6 lines, V-G7 diff guard, SC-P4-01 ack |
@@ -475,7 +475,7 @@ Totals: **43 checks — 18 automated, 25 manual (0 financial).** IA V1-V19 fully
 | **SC-P4-02** | Accept 2 unit-test files + 1 fixture (owner chose tests at kickoff) | No — informational |
 | **SC-P4-03** | `buildTapeChart` lives in `pmsService.js` (not a 4th file) | No — informational |
 | A-P4-11..20 | Presentation defaults §3.3 — especially **A-P4-14** (S2 badges derived, HK/OOO only on S7) and **A-P4-15** (mockup's `#003580`/`#6366F1` replaced by token-compliant neutrals) | No — override any at Gate 4, else they apply |
-| Sequencing | Agent recommends owner Gate-6 smoke of P3 in parallel with P4 implementation (R7) | No |
+| Sequencing | **CR-358-P3 Gate 5b QA is NOT done** (registry gate 4). Agent recommends P3 QA (incl. V-M1..M6 slider money tests) before/alongside P4 IMPL since P4 depends on P3's `getReservationOps` (R7) | No — owner call |
 
 ---
 

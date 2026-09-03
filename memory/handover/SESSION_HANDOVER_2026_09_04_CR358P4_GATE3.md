@@ -37,6 +37,9 @@ PLANNING agent (Role 2, ALPHA v0.7), stage = Implementation Plan (Gate 3) only. 
 | `OPEN_GAPS_REGISTER.md` | OG-PMS-011 (OPEN), OG-PMS-012 (RESOLVED) ✅ |
 | `evidence/CR-358-P4/` | +3 G3 probes (16 files) ✅ |
 
+## 4b. Correction logged this session
+CR-358-P3 **Gate 5b QA is NOT done** (registry gate 4, 'Awaiting Gate 5'). The 2026-09-03 full regression only smoke-checked 8 P3 screens; no P3 QA handover/report exists; V-M1..M6 money tests on `PmsCheckoutDrawer` and V-U1..U6 unit tests were never executed. PRD.md corrected (earlier line 'Complete (QA Regression PASS)' was wrong).
+
 ## 5. INSTRUCTION TO NEXT AGENT
 **Do NOT code until owner writes "Gate 4 GO" (and acks SC-P4-01).** Then Role = IMPLEMENTATION:
 1. Read plan §0-§6; run Step 0 entry verification (line refs + `git diff origin/PMS1 -- frontend/src` must be empty; re-probe if >7 days).
