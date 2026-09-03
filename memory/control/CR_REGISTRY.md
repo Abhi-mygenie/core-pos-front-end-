@@ -1,7 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-03 (CR-358-P4 Gate 2 REOPENED — IA compliance audit; row added, was missing)
+**Last Updated:** 2026-09-04 (CR-358-P4 Gate 2 T1–T11 complete — PATCH+OOO probed, join key corrected, all ODs locked, awaiting owner Gate 2 re-close)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 2 REOPENED 2026-09-03 — IA not per ALPHA v0.7 Gate 2 (R11 `PATCH room-status` never probed; board not re-probed under P4; `evidence/CR-358-P4/` missing; S2 join key unverified; R3 mockup actions undecided → OD-P4-05..10 pending). Gate 3 BLOCKED until owner re-closes Gate 2.** | 2 | `impact/CR-358-P4_IMPACT_ANALYSIS.md` (compliance banner added). Design APPROVED `frontend/public/cr358-p4-pms-mockup.html`. OD-P4-01..04 locked (PATCH body, reuse getReservationOps, disabled+tooltip for occupied, Check In / View Folio popover). Scope: 3 new files (roomStatusTransform.js, ReservationsPage.jsx, RoomStatusPage.jsx) + 2 modifies (pmsService.js append, App.js 2-line re-point). Audit G1-G13 / tasks T1-T12: `handover/SESSION_HANDOVER_2026_09_03_CR358P4_GATE2.md`. This row was MISSING at Gate 2 close (drift G9) — added by audit. |
+| **CR-358-P4** | **PMS Phase 4 — Tape Chart (S2) + Room Status Board (S7)** | **P0** | **MEDIUM** | **GATE 2 PROBES COMPLETE 2026-09-04 — awaiting owner re-close (T12). T1–T11 done: evidence folder created, PATCH probed (200+422 shapes confirmed), OOO probed (inventory_push_warning=null), board re-probed (hk/ooo states confirmed), join key corrected (rooms[].restaurant_table_id), OD-P4-05..10 locked, assumptions added, migration confirmed. Gate 3 BLOCKED until owner says "Gate 2 re-closed".** | 2 | `impact/CR-358-P4_IMPACT_ANALYSIS.md` (fully updated). Design APPROVED `frontend/public/cr358-p4-pms-mockup.html`. All 10 ODs locked. Scope: 3 new (roomStatusTransform.js, ReservationsPage.jsx, RoomStatusPage.jsx) + 2 modifies (pmsService.js append, App.js 2-line re-point). Evidence: `evidence/CR-358-P4/P4_probe_01..T5c_*.json`. |
 
 ---
 
