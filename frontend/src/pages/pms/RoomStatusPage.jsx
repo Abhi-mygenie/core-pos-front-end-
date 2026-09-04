@@ -247,7 +247,7 @@ function RoomTile({ room, busyId, onPatch, navigate }) {
             <button data-testid={`rs-ooo-btn-${room.id}`} disabled title="Cannot change while occupied"
               className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#EF4444] text-[#EF4444] opacity-40 cursor-not-allowed">OOO</button>
             {room.guest?.orderId && (
-              <button data-testid={`rs-folio-btn-${room.id}`} onClick={() => navigate('/reports/room-orders')}
+              <button data-testid={`rs-folio-btn-${room.id}`} onClick={() => navigate('/reports/rooms')}
                 className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#F26B33] text-[#F26B33] hover:bg-[#FFF7ED] transition-colors flex items-center gap-1">
                 <FileText className="w-3 h-3" />View Folio
               </button>

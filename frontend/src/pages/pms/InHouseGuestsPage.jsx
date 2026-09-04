@@ -164,7 +164,7 @@ export default function InHouseGuestsPage() {
                       <td className="px-4 py-3">
                         <button
                           data-testid="view-bill-btn"
-                          onClick={() => navigate('/reports/room-orders')} // CR-360: Phase 1 — room orders report; full checkout via CollectPaymentPanel is Phase 3 (Departures)
+                          onClick={() => navigate('/reports/rooms')} // CR-360: Phase 1 — room orders report; full checkout via CollectPaymentPanel is Phase 3 (Departures)
                           className="text-[12px] text-[#329937] hover:underline font-medium"
                         >
                           View Bill

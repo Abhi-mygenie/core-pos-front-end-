@@ -235,7 +235,7 @@ export default function DeparturesPage() {
                           <td className="px-4 py-3">
                             {activeTab === 'checkedOut' ? (
                               <button data-testid={`dep-receipt-btn-${row.orderId || lineId}`}
-                                onClick={() => navigate('/reports/room-orders')}
+                                onClick={() => navigate('/reports/rooms')}
                                 className="flex items-center gap-1 px-3 py-1.5 rounded text-[12px] font-medium border border-[#E5E5E5] text-[#666] hover:bg-gray-50">
                                 <Receipt className="w-3.5 h-3.5" /> Receipt
                               </button>
