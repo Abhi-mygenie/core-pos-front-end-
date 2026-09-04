@@ -53,7 +53,30 @@ Agent executed 3 roles in sequence for CR-358:
 ## Next Steps for Owner
 1. **Gate 6 Owner Smoke** — Walk through all PMS pages, sign off CR-358
 2. **CRM Keys** — Provide full `REACT_APP_CRM_API_KEYS` JSON to unblock CRM features
-3. **Post-CR-358 scoping** — Phase 5 (room assignment from Tape Chart), or new CR
+3. **Post-CR-358 scoping** — See enhancement suggestions below
+
+## Suggested PMS Enhancements (Post CR-358)
+
+### 🔴 High Impact — Core Workflow Gaps
+1. **Room Assignment (Tape Chart)** — "Assign Room" button currently disabled. Unassigned OTA bookings need mapping to physical rooms. Daily front desk workflow.
+2. **Booking Modification / Cancellation** — No way to extend stay, change room, modify dates, or cancel from PMS. Staff must use OTA dashboard.
+3. **Night Audit Report** — End-of-day reconciliation: rooms sold, revenue collected, outstanding balances, no-shows.
+4. **Guest Folio Detail Page** — Per-guest itemized charges (room, F&B, extras), payments collected, balance. Completes checkout workflow.
+5. **Drag & Drop Room Move (Tape Chart)** — Reassign guest to different room by dragging block. For upgrades/maintenance.
+
+### 🟠 Medium Impact — Operational Efficiency
+6. **Housekeeping Workflow** — Dedicated HK view: checklist, priority queue, time tracking, push notifications to HK staff.
+7. **Revenue Dashboard / Analytics** — Occupancy %, ADR, RevPAR, channel-wise split, trends (7d/30d/90d).
+8. **Guest Profile & History** — Repeat guest detection, stay history, preferences. Builds loyalty.
+9. **WhatsApp / SMS Notifications** — Auto-send booking confirmation, check-in instructions, checkout reminder. Reduces no-shows.
+10. **Payment Reconciliation View** — Collected vs outstanding across all in-house guests. Daily cash/UPI/card breakdown.
+
+### 🟢 Nice-to-Have — Polish & Scale
+11. **Mobile-Optimized Views** — Responsive layout for tablets at reception.
+12. **Rate Manager** — Set/push room rates by date, room type, channel. Seasonal pricing.
+13. **No-Show / Early Checkout Handling** — Mark no-show (auto-release room), partial refund for early checkout.
+14. **Export Reports (PDF/Excel)** — Night audit, guest list, revenue summary as downloadable files.
+15. **Booking Calendar View** — Month-view calendar as alternative to tape chart.
 
 ## Open Issues (Non-Blocking)
 - `REACT_APP_CRM_API_KEYS` truncated in `.env` (owner to supply)
