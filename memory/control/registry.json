@@ -23031,7 +23031,7 @@
       "id": "CR-372",
       "title": "Security Remediation — Remove Internal Files from Public Surface",
       "type": "CR",
-      "status": "INTAKE",
+      "status": "SPLIT → CR-372-A + CR-372-B",
       "priority": "P1",
       "risk": "HIGH",
       "gate": "1",
@@ -23058,7 +23058,7 @@
           "type": "evidence"
         }
       ],
-      "note": "F-SEC-01 (__dev→/app/memory/dev-dashboard/ Option A), F-SEC-02 (~91 HTML briefs→memory/design_briefs/, PMS files EXCLUDED until PMS closes), F-SEC-03 (protect 23 routes, keep / + /local-printer-setup public), F-SEC-07 (remove CRM_API_KEYS + CORS_ORIGINS from .env — OD-02: not in src/ confirmed). All 3 ODs locked 2026-09-08. Ready for Gate 2 Planning.",
+      "note": "Split 2026-09-08: F-SEC-01/02/07 (no src/) → CR-372-A. F-SEC-03 (App.js) → CR-372-B. Original intake doc retained for context.",
       "status_history": [
         {
           "date": "2026-09-08",
@@ -23069,6 +23069,99 @@
           "date": "2026-09-08",
           "status": "INTAKE — ODs LOCKED",
           "note": "OD-CR372-01/02/03 all answered. Ready for Planning Gate 2."
+        },
+        {
+          "date": "2026-09-08",
+          "status": "SPLIT",
+          "note": "Split into CR-372-A (no src/) and CR-372-B (App.js routing) on owner instruction."
+        }
+      ]
+    },
+    {
+      "id": "CR-372-A",
+      "title": "Security: File Moves + .env Cleanup (Zero src/ changes)",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "LOW",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Security / File Structure",
+      "related": [
+        "CR-372",
+        "CR-372-B",
+        "DEV-DASHBOARD-001"
+      ],
+      "category": "AUDIT",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "backend_blocked": false,
+      "files": "public/__dev/ (move), public/*.html ~91 files (move), frontend/.env (2 lines removed). ZERO frontend/src/ changes.",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-372-A_SECURITY_FILE_MOVES_ENV_CLEANUP_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Parent",
+          "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+          "type": "intake"
+        }
+      ],
+      "note": "Split from CR-372. F-SEC-01 (__dev move), F-SEC-02 (~91 HTML briefs, 5 PMS files excluded), F-SEC-07 (.env). No src/ changes — can proceed to planning immediately.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — split from CR-372 2026-09-08. Zero src/ changes confirmed."
+        }
+      ]
+    },
+    {
+      "id": "CR-372-B",
+      "title": "Security: Add ProtectedRoute to 23 Unguarded Routes (App.js only)",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Security / Routing",
+      "related": [
+        "CR-372",
+        "CR-372-A"
+      ],
+      "category": "AUDIT",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "src/App.js (23 route wraps — only src/ file)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-372-B_SECURITY_ROUTE_GUARDING_APP_JS_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Parent",
+          "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Public Routes",
+          "path": "memory/control/PUBLIC_ROUTES.md",
+          "type": "reference"
+        }
+      ],
+      "note": "Split from CR-372. F-SEC-03. 23 routes wrapped in App.js. 2 kept public (/ and /local-printer-setup). Needs Gate 2 → Gate 4 GO → Impl → QA.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — split from CR-372 2026-09-08. App.js only src/ change."
         }
       ]
     }
