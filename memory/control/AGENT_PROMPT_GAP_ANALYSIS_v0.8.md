@@ -3,7 +3,7 @@
 **Document:** AGENT_PROMPT_GAP_ANALYSIS_v0.8.md
 **Date:** 2026-09-06
 **Input:** `AGENT_PROMPT_ALPHA.md` v0.7 (1 762 lines) · 66 session handovers · 13 QA reports · `PROJECT_BASELINE_2026_09.md` §7
-**Status:** DRAFT — awaiting owner approval before `AGENT_PROMPT_ALPHA_v0.8.md` is written
+**Status:** ✅ ALL 6 DECISIONS APPROVED (2026-09-08) — ready to write `AGENT_PROMPT_ALPHA_v0.8.md`
 **Rule:** v0.8 is additive (v0.7 compatibility rule). v0.7 file stays untouched; v0.8 is a new file.
 
 ---
@@ -136,3 +136,18 @@ Estimated size: v0.7 + ~350 lines. No v0.7 role text deleted; two items marked `
 | D4 | Registry changes | (a) only via `sync_registry.py` (script to be written as a separate CR) · (b) keep manual edits but add Exit-Gate diff check |
 | D5 | Transition token wording | `TRANSITION: X→Y APPROVED` or owner's preferred phrase |
 | D6 | Should v0.8 also absorb the Baseline remediation order (§9) as the sprint's opening queue? | yes / no |
+
+---
+
+## 5. Owner Decisions — APPROVED 2026-09-08
+
+| # | Decision | Owner Choice | Meaning |
+|---|---|---|---|
+| D1 | Self-QA prohibition | **(a) HARD FORBID** | Agent that implements can never QA in the same session. No exceptions. |
+| D2 | Gate 5c Regression scope | **(b) MEDIUM+ or hotspot files only** | Full regression run required only for risk ≥ MEDIUM or changes touching R5/R6 (financial/hotspot) files. LOW-risk items skip Gate 5c. |
+| D3 | Known-failure allow-list | **(b) TRIAGE TO GREEN FIRST** | The 56 failing tests must be triaged to zero before v0.8 goes live as the active prompt. v0.8 can be written but is not adopted until baseline is clean. |
+| D4 | Registry changes | **(a) SCRIPT ONLY** | All registry status changes must go through `control/sync_registry.py`. Manual edits to `registry.json` or markdown tables are forbidden. Script to be written as a separate registered CR. |
+| D5 | Transition token wording | **(accepted as proposed)** | Standard phrase: `TRANSITION: <from>→<to> APPROVED` |
+| D6 | Remediation backlog in v0.8 | **(yes)** | v0.8 ships with the baseline remediation queue as the agent's opening work list (§ REMEDIATION QUEUE section). Agent knows the priority order without being told each session. |
+
+**Status:** All 6 decisions locked. `AGENT_PROMPT_ALPHA_v0.8.md` may now be written.
