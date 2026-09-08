@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-133 v3 — Printer Settings + Live Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#EFEFEF;color:#1A1A1A;font-size:14px}
+:root{
+  --orange:#F26B33;--orange-soft:rgba(242,107,51,.08);--orange-border:rgba(242,107,51,.25);
+  --green:#329937;--green-soft:rgba(50,153,55,.08);--green-border:rgba(50,153,55,.25);
+  --red:#EF4444;--red-soft:rgba(239,68,68,.06);--red-border:rgba(239,68,68,.2);
+  --amber:#F59E0B;--amber-soft:rgba(245,158,11,.08);--amber-border:rgba(245,158,11,.25);
+  --blue:#3B82F6;--blue-soft:rgba(59,130,246,.08);
+  --dark:#1A1A1A;--gray:#6B7280;--light:#9CA3AF;
+  --border:#E5E7EB;--bg:#F7F7F7;--white:#FFFFFF
+}
+
+/* Shell */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:68px;background:#111827;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;flex-shrink:0}
+.si{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6B7280;font-size:17px;transition:all .15s}
+.si:hover{background:rgba(255,255,255,.07);color:#D1D5DB}
+.si.active{background:var(--orange-soft);color:var(--orange)}
+.panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.panel-header{background:var(--white);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.back-btn{width:30px;height:30px;border-radius:7px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray)}
+.back-btn:hover{background:#F3F4F6}
+.panel-title{font-size:15px;font-weight:600;color:var(--dark)}
+.udot{width:7px;height:7px;border-radius:50%;background:var(--orange);margin-left:4px;display:none}
+.udot.show{display:inline-block}
+
+/* Tabs */
+.tab-bar{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 24px;flex-shrink:0}
+.tab{padding:11px 18px;font-size:13px;font-weight:500;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--dark)}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tbadge{background:var(--amber);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px}
+
+/* Tab panes */
+.tab-pane{flex:1;overflow-y:auto;padding:20px 24px 88px;display:none}
+.tab-pane.active{display:block}
+
+/* Print Style tab: split layout */
+#tab-3{display:none;flex-direction:row;gap:0;padding:0;overflow:hidden}
+#tab-3.active{display:flex}
+
+/* Printer Mapping tab */
+.mapping-chip{display:inline-flex;align-items:center;padding:5px 13px;border-radius:20px;font-size:12.5px;font-weight:500;border:1px solid var(--border);cursor:pointer;transition:all .15s;color:var(--gray);background:var(--white);user-select:none}
+.mapping-chip:hover{border-color:var(--orange);color:var(--orange)}
+.mapping-chip.active{background:rgba(242,107,51,.08);border-color:rgba(242,107,51,.35);color:var(--orange)}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pm-printer-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.pm-printer-header{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.pm-printer-name{font-size:13px;font-weight:600;color:var(--dark)}
+.pm-type-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(242,107,51,.1);color:var(--orange)}
+
+/* Station Mapping tab */
+.sm-emp-label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.sm-select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--white);color:var(--dark);outline:none;cursor:pointer;transition:border-color .15s}
+.sm-select:focus{border-color:var(--orange);box-shadow:0 0 0 2px rgba(242,107,51,.12)}
+.sm-select:disabled{opacity:.55;cursor:not-allowed}
+.sm-emp-wrap{position:relative;margin-bottom:6px}
+.sm-auto-hint{font-size:11px;color:var(--light);margin-top:4px;display:flex;align-items:center;gap:5px}
+.sm-empty{text-align:center;padding:36px 20px;color:var(--light);font-size:13px;background:var(--bg);border-radius:10px;border:1px dashed var(--border)}
+.sm-rows{display:flex;flex-direction:column;gap:0}
+.sm-col-heads{display:grid;grid-template-columns:5fr 4fr 1fr;gap:10px;padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:2px;align-items:end}
+.sm-col-head{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em}
+.sm-col-sub{font-size:10px;color:var(--light);margin-top:2px;font-weight:400;text-transform:none;letter-spacing:0}
+.sm-row{display:grid;grid-template-columns:5fr 4fr 1fr;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.sm-row:last-child{border-bottom:none}
+.sm-remove-btn{width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--light);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .15s;justify-self:center}
+.sm-remove-btn:hover{background:var(--red-soft);color:var(--red)}
+.sm-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.sm-add-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;border:1px solid var(--border);background:transparent;border-radius:8px;font-size:12.5px;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s}
+.sm-add-btn:hover{border-color:var(--orange);color:var(--orange)}
+.sm-save-btn{display:flex;align-items:center;gap:6px;padding:8px 22px;background:var(--green);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+.sm-save-btn:hover{background:#2a7d2e}
+.sm-save-btn:disabled{opacity:.6;cursor:not-allowed}
+.sm-status{font-size:11.5px;color:var(--light)}
+.sm-status.dirty{color:var(--amber);font-weight:500}
+.sm-status.synced{color:var(--green);font-weight:500}
+/* shimmer rows while loading */
+.sm-shimmer-row{display:grid;grid-template-columns:5fr 4fr 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.sm-shimmer-cell{height:32px;border-radius:7px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* no-default-users warning */
+.sm-no-default-warn{background:#FFF7ED;border:1px solid #FED7AA;border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;font-size:12.5px;color:#9A3412}
+/* routing synced badge after save */
+.sm-synced-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid var(--green-border);border-radius:20px;padding:3px 10px;opacity:0;transition:opacity .3s}
+.sm-synced-badge.show{opacity:1}
+.style-settings{flex:1;overflow-y:auto;padding:20px 20px 88px}
+.preview-panel{width:340px;flex-shrink:0;background:#E5E7EB;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+
+/* Preview panel */
+.preview-header{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;flex-shrink:0}
+.preview-title{font-size:13px;font-weight:600;color:var(--dark);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.preview-controls{display:flex;gap:8px}
+.pctl{flex:1;display:flex;background:#F3F4F6;border-radius:6px;overflow:hidden}
+.pctl-btn{flex:1;padding:5px 8px;border:none;background:transparent;font-size:11.5px;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s}
+.pctl-btn.active{background:var(--white);color:var(--dark);box-shadow:0 1px 3px rgba(0,0,0,.1);border-radius:5px}
+.preview-body{flex:1;overflow-y:auto;display:flex;justify-content:center;align-items:flex-start;padding:20px 16px}
+.receipt-wrap{background:white;box-shadow:0 4px 20px rgba(0,0,0,.15);border-radius:3px 3px 6px 6px;overflow:hidden;transition:all .3s}
+.receipt-wrap.w58{width:220px}
+.receipt-wrap.w80{width:280px}
+.receipt{padding:10px;font-family:'Poppins',sans-serif}
+.receipt .r-center{text-align:center}
+.receipt .r-left{text-align:left}
+.receipt .r-right{text-align:right}
+.receipt hr.solid{border:none;border-top:1px solid #ccc;margin:6px 0}
+.receipt hr.dashed{border:none;border-top:1px dashed #ccc;margin:6px 0}
+.receipt .r-row{display:flex;justify-content:space-between;align-items:flex-start;line-height:1.4}
+.receipt .r-row.header{font-weight:600}
+.receipt .r-bold{font-weight:700}
+.receipt .r-item-name{flex:1}
+.receipt .r-qty{width:24px;text-align:center;flex-shrink:0}
+.receipt .r-price{flex-shrink:0;text-align:right}
+.preview-live-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--green);background:var(--green-soft);border-radius:10px;padding:2px 7px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* KOT specific */
+.kot-header-strip{background:#1A1A1A;color:white;text-align:center;padding:8px 10px;margin:-10px -10px 8px}
+
+/* Banners */
+.banner{border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px}
+.banner-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.banner-body{flex:1}
+.banner-title{font-weight:600;margin-bottom:2px}
+.banner-desc{color:var(--gray);line-height:1.45}
+.banner.warn{background:var(--amber-soft);border:1px solid var(--amber-border);color:#92400E}
+.banner.warn .banner-desc{color:#78350F}
+.banner.info{background:var(--blue-soft);border:1px solid rgba(59,130,246,.2);color:#1E40AF}
+.banner.info .banner-desc{color:#1D4ED8}
+
+/* Setup card */
+.setup-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.setup-card-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--orange);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.setup-card-title{font-size:13px;font-weight:600;color:var(--dark)}
+.setup-card-sub{font-size:11px;color:var(--gray);margin-top:1px}
+.setup-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Pills */
+.pill-group{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--gray);transition:all .15s;user-select:none}
+.pill:hover{border-color:#D1D5DB;color:var(--dark)}
+.pill.active{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+.pill.ag{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+
+/* Section label */
+.sec-label{font-size:11px;font-weight:600;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Printer cards */
+.printer-card{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:box-shadow .15s}
+.printer-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.pc-head{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.pc-l{flex:1;min-width:0}
+.pc-name{font-size:14px;font-weight:600;color:var(--dark)}
+.pc-sub{font-size:11.5px;color:var(--light);margin-top:3px}
+.pc-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2.5px 8px;border-radius:12px;font-size:11px;font-weight:500}
+.bblue{background:var(--blue-soft);color:var(--blue)}
+.bgreen{background:var(--green-soft);color:var(--green)}
+.borange{background:var(--orange-soft);color:var(--orange)}
+.bgray{background:#F3F4F6;color:#6B7280}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.dg{background:var(--green)}
+.pc-actions{display:flex;gap:2px;flex-shrink:0}
+.ib{width:30px;height:30px;border-radius:6px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray);transition:all .15s}
+.ib:hover{background:#F3F4F6;color:var(--dark)}
+.ib.del:hover{background:var(--red-soft);color:var(--red)}
+.preview-btn{height:28px;border-radius:6px;border:1px solid var(--border);background:white;cursor:pointer;display:flex;align-items:center;gap:5px;padding:0 10px;font-size:11.5px;font-weight:500;color:var(--gray);transition:all .15s}
+.preview-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+.del-confirm{border-top:1px solid var(--border);padding:10px 16px;background:var(--red-soft);display:flex;align-items:center;justify-content:space-between}
+.del-confirm span{font-size:12.5px;color:var(--red);font-weight:500}
+.del-btns{display:flex;gap:8px}
+.btn-no{border:1px solid var(--border);background:white;color:var(--gray);border-radius:6px;padding:5px 14px;font-size:12px;cursor:pointer;font-weight:500}
+.btn-yes{background:var(--red);color:white;border:none;border-radius:6px;padding:5px 14px;font-size:12px;cursor:pointer;font-weight:600}
+
+/* Add printer form */
+.add-form{background:var(--white);border:1.5px solid var(--orange);border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 0 0 4px var(--orange-soft)}
+.form-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.form-title{font-size:14px;font-weight:600;color:var(--dark);display:flex;align-items:center;gap:8px}
+.fsteps{display:flex;align-items:center;margin-bottom:20px}
+.fs{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.fs::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.fs:last-child::after{display:none}
+.fsc{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--light);z-index:1;position:relative}
+.fs.done .fsc{border-color:var(--green);background:var(--green);color:white}
+.fs.active .fsc{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+.fsl{font-size:10px;color:var(--light);margin-top:4px;text-align:center}
+.fs.active .fsl{color:var(--orange);font-weight:600}
+.fs.done .fsl{color:var(--green)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.flabel{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+.flabel .req{color:var(--red)}
+.finput{border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--dark);outline:none;width:100%;font-family:inherit;background:var(--white);transition:border-color .15s}
+.finput:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.finput.err{border-color:var(--red);background:var(--red-soft)}
+.ferr{font-size:11px;color:var(--red);margin-top:2px;display:none}
+.ferr.show{display:block}
+.fhint{font-size:11px;color:var(--light);margin-top:2px}
+.conn-types{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ctype{border:1.5px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;background:white;transition:all .15s}
+.ctype:hover{border-color:#D1D5DB}
+.ctype.active{border-color:var(--orange);background:var(--orange-soft)}
+.ctype-icon{font-size:22px;margin-bottom:5px}
+.ctype-name{font-size:12px;font-weight:600;color:var(--dark)}
+.ctype.active .ctype-name{color:var(--orange)}
+.ctype-desc{font-size:10.5px;color:var(--light);margin-top:2px}
+.adv-tog{font-size:12px;color:var(--gray);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);user-select:none}
+.adv-body{display:none;margin-top:12px}
+.adv-body.open{display:block}
+.paper-override{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.paper-inherit{font-size:12px;color:var(--green);background:var(--green-soft);border:1px solid var(--green-border);border-radius:6px;padding:4px 10px}
+.station-wrap{border:1.5px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:42px;background:white;cursor:text}
+.station-wrap:focus-within{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.stag{display:flex;align-items:center;gap:4px;background:var(--green-soft);color:var(--green);border-radius:20px;padding:3px 8px 3px 10px;font-size:12px;font-weight:500}
+.stag button{border:none;background:none;cursor:pointer;color:var(--green);font-size:15px;line-height:1;padding:0}
+.station-input{border:none;outline:none;font-size:12.5px;color:var(--dark);min-width:80px;flex:1;padding:2px 0;font-family:inherit}
+.station-input::placeholder{color:var(--light)}
+
+/* Toggles */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #F3F4F6}
+.trow:last-child{border-bottom:none}
+.trow-l{flex:1}
+.trow-label{font-size:13px;color:var(--dark);font-weight:500}
+.trow-hint{font-size:11.5px;color:var(--light);margin-top:2px;line-height:1.4}
+.tsw{position:relative;width:42px;height:23px;flex-shrink:0}
+.tsw input{opacity:0;width:0;height:0}
+.track{position:absolute;inset:0;border-radius:12px;cursor:pointer;transition:.2s}
+.tsw input:checked+.track{background:var(--green)}
+.tsw input:not(:checked)+.track{background:#D1D5DB}
+.thumb{position:absolute;width:17px;height:17px;border-radius:50%;background:white;top:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tsw input:not(:checked)+.track .thumb{left:3px}
+.tsw input:checked+.track .thumb{left:22px}
+
+/* Settings blocks */
+.sblock{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.sblock-title{font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:120px}
+.step-btn{width:36px;height:38px;border:none;background:#F9FAFB;cursor:pointer;font-size:18px;color:var(--gray);display:flex;align-items:center;justify-content:center}
+.step-btn:hover{background:#F3F4F6;color:var(--dark)}
+.step-val{flex:1;text-align:center;font-size:15px;font-weight:700;color:var(--dark);border:none;outline:none;background:white}
+.indented{padding-left:16px;border-left:2px solid var(--border);margin:8px 0 4px 4px}
+.fsel{border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--dark);background:white;outline:none;cursor:pointer;font-family:inherit}
+.fsel:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+.fta{border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;width:100%;outline:none;resize:none;font-family:inherit;color:var(--dark)}
+.fta:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-soft)}
+
+/* Accordion */
+.accord{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.accord-head{padding:12px 14px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:500;color:var(--dark);user-select:none}
+.accord-head:hover{background:#FAFAFA}
+.accord-arrow{color:var(--light);transition:transform .2s;font-size:11px}
+.accord.open .accord-arrow{transform:rotate(180deg)}
+.accord-body{border-top:1px solid var(--border);padding:14px;display:none;background:white}
+.accord.open .accord-body{display:block}
+.scols{display:grid;grid-template-columns:1fr 72px 72px 64px 72px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #F9FAFB}
+.scols:last-child{border-bottom:none}
+.sfl{font-size:12px;color:var(--gray)}
+.snum{border:1px solid var(--border);border-radius:6px;padding:5px 6px;font-size:12px;text-align:center;width:100%;outline:none;color:var(--dark)}
+.snum:focus{border-color:var(--orange)}
+.bold-btn{width:32px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:white;cursor:pointer;font-size:13px;font-weight:800;color:var(--light);transition:all .15s}
+.bold-btn.on{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+.col-head{font-size:10px;font-weight:700;color:var(--light);text-transform:uppercase;text-align:center;letter-spacing:.4px}
+
+/* Phase 2/3 feature sections */
+.ph-section{border-radius:12px;padding:20px;margin-bottom:14px;position:relative}
+.ph2-section{background:#FFFBEB;border:1.5px dashed #FDE68A}
+.ph3-section{background:#F5F3FF;border:1.5px dashed #DDD6FE}
+.ph-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:10px;margin-bottom:12px}
+.ph2-badge{background:#FEF3C7;color:#92400E}
+.ph3-badge{background:#EDE9FE;color:#6D28D9}
+.ph-title{font-size:13px;font-weight:600;color:#374151;margin-bottom:4px}
+.ph-desc{font-size:12px;color:#6B7280;margin-bottom:14px;line-height:1.5}
+/* Alignment buttons */
+.align-seg{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:72px}
+.ab{flex:1;height:26px;border:none;background:white;cursor:pointer;font-size:10px;font-weight:700;color:var(--light);transition:all .12s;border-right:1px solid var(--border)}
+.ab:last-child{border-right:none}
+.ab:hover{background:#F9FAFB;color:var(--dark)}
+.ab.on{background:var(--orange-soft);color:var(--orange)}
+/* Field visibility toggles */
+.fv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fv-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:white;border-radius:8px;border:1px solid var(--border)}
+.fv-label{font-size:12px;color:var(--dark);font-weight:500}
+.fv-tsw{position:relative;width:36px;height:20px;flex-shrink:0}
+.fv-tsw input{opacity:0;width:0;height:0}
+.fv-tsw .track{position:absolute;inset:0;border-radius:10px;cursor:pointer;transition:.2s}
+.fv-tsw input:checked+.track{background:var(--green)}
+.fv-tsw input:not(:checked)+.track{background:#D1D5DB}
+.fv-tsw .thumb{position:absolute;width:14px;height:14px;border-radius:50%;background:white;top:3px;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.fv-tsw input:not(:checked)+.track .thumb{left:3px}
+.fv-tsw input:checked+.track .thumb{left:19px}
+/* Section order drag */
+.drag-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.drag-item{display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:grab}
+.drag-item:hover{border-color:#A5B4FC;background:#F5F3FF}
+.drag-handle{color:#9CA3AF;font-size:14px;cursor:grab}
+.drag-label{font-size:13px;font-weight:500;color:var(--dark);flex:1}
+.drag-sub{font-size:11px;color:var(--light)}
+/* Row content selector */
+.row-content-grid{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.rcrow{display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+.rcrow-label{font-size:12px;font-weight:600;color:var(--light);width:48px;text-transform:uppercase;letter-spacing:.3px;flex-shrink:0}
+.rcrow select{flex:1;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;color:var(--dark);background:white;outline:none}
+.rcrow-vis{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray)}
+.font-chips{display:flex;flex-wrap:wrap;gap:6px}
+.font-chip{padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;cursor:pointer;background:white;color:var(--dark)}
+.font-chip.active{border-color:var(--orange);background:var(--orange-soft);color:var(--orange);font-weight:600}
+.font-chip:hover:not(.active){border-color:#D1D5DB}
+
+/* Add button */
+.add-printer-btn{width:100%;border:1.5px dashed var(--border);border-radius:12px;padding:16px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--gray);font-size:13px;font-weight:500;transition:all .15s;margin-top:10px}
+.add-printer-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+
+/* Save bar */
+.save-bar{position:fixed;bottom:0;left:68px;right:0;background:white;border-top:1px solid var(--border);padding:13px 24px;display:flex;justify-content:space-between;align-items:center;z-index:20}
+.save-bar-l{font-size:12px;color:var(--light)}
+.save-bar-l.dirty{color:var(--amber);font-weight:500}
+.save-bar-r{display:flex;gap:10px}
+.btn-discard{background:transparent;border:1px solid var(--border);color:var(--gray);border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer}
+.btn-save{background:var(--green);color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px}
+.btn-save:hover{background:#2A8030}
+
+/* ph2 */
+.ph2{opacity:.4;pointer-events:none;position:relative}
+.ph2-label{position:absolute;top:-8px;right:0;background:var(--gray);color:white;font-size:9px;font-weight:700;border-radius:4px;padding:2px 6px;pointer-events:all;cursor:default}
+
+/* Toast */
+.toast{position:fixed;bottom:72px;right:24px;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:500;z-index:100;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:9px;max-width:340px;box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ts{background:#1A1A1A;color:white}
+.toast.tw{background:#FFFBEB;color:#92400E;border:1px solid var(--amber-border)}
+.toast.te{background:#FEF2F2;color:var(--red);border:1px solid var(--red-border)}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tdot.g{background:var(--green)}.tdot.a{background:var(--amber)}.tdot.r{background:var(--red)}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="si">🏠</div><div class="si">📋</div>
+    <div class="si active">⚙️</div><div class="si">📊</div><div class="si">👥</div>
+  </div>
+
+  <div class="panel">
+    <!-- Header -->
+    <div class="panel-header">
+      <button class="back-btn"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <span class="panel-title">Printer Settings</span>
+      <div class="udot" id="udot"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab(0,this)">Printers <span class="tbadge" id="tb0" style="display:none">!</span></div>
+      <div class="tab" onclick="switchTab(1,this)">Auto Print</div>
+      <div class="tab" onclick="switchTab(2,this)">Bill Content</div>
+      <div class="tab" onclick="switchTab(3,this)">Print Style</div>
+      <div class="tab" onclick="switchTab(4,this)">Printer Mapping</div>
+      <div class="tab" onclick="switchTab(5,this)">Station Mapping</div>
+    </div>
+
+    <!-- ══ TAB 0: PRINTERS ══ -->
+    <div class="tab-pane active" id="tab-0">
+
+      <div class="banner warn" id="no-bill-warn" style="display:none">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-body">
+          <div class="banner-title">No bill printer configured</div>
+          <div class="banner-desc">Bills cannot print until at least one printer has "Handles Bill" turned on.</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Globals -->
+      <div class="setup-card">
+        <div class="setup-card-header">
+          <div class="step-num">1</div>
+          <div><div class="setup-card-title">Global Defaults</div><div class="setup-card-sub">Applied to new printers — each printer can override</div></div>
+        </div>
+        <div class="setup-fields">
+          <div>
+            <div class="flabel" style="margin-bottom:8px;">Default Paper Size</div>
+            <div class="pill-group">
+              <div class="pill active" id="gps-58" onclick="setGP('58 mm')">58mm — Narrow</div>
+              <div class="pill" id="gps-80" onclick="setGP('80 mm')">80mm — Wide</div>
+            </div>
+            <div class="fhint" style="margin-top:6px;">Most thermal POS printers use 58mm</div>
+          </div>
+          <div>
+            <div class="flabel" style="margin-bottom:8px;">Default Connection</div>
+            <div class="pill-group">
+              <div class="pill active" id="gcc-USB" onclick="setGC('USB')">USB</div>
+              <div class="pill" id="gcc-LAN" onclick="setGC('LAN')">LAN</div>
+              <div class="pill" id="gcc-BT" onclick="setGC('BT')">Bluetooth</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Printers -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <div class="step-num">2</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--dark);">Configure Your Printers</div>
+          <div style="font-size:12px;color:var(--light);">Each printer handles KOT stations, Bill — or both</div>
+        </div>
+      </div>
+
+      <!-- Add Form -->
+      <div class="add-form" id="add-form" style="display:none">
+        <div class="form-title-row">
+          <div class="form-title"><span style="font-size:18px;">🖨</span><span id="form-head">Add New Printer</span></div>
+          <button class="ib" onclick="closeForm()" style="font-size:18px;color:var(--light)">×</button>
+        </div>
+        <div class="fsteps">
+          <div class="fs done" id="fs0"><div class="fsc">✓</div><div class="fsl">Connection</div></div>
+          <div class="fs active" id="fs1"><div class="fsc">2</div><div class="fsl">Identity</div></div>
+          <div class="fs" id="fs2"><div class="fsc">3</div><div class="fsl">Routing</div></div>
+        </div>
+        <!-- Step B -->
+        <div id="fstep-B">
+          <div class="fgrid">
+            <div class="fg full">
+              <div class="flabel">Printer Label <span class="req">*</span></div>
+              <input class="finput" id="f-label" placeholder="e.g. Kitchen Printer, Bar Printer, Cashier Bill">
+              <div class="ferr" id="f-label-err">Label is required</div>
+              <div class="fhint">Friendly name shown in print logs</div>
+            </div>
+            <div class="fg full" id="usb-fields">
+              <div class="flabel">USB Printer Name <span class="req">*</span></div>
+              <input class="finput" id="f-usb-name" placeholder="e.g. POS58 Printer, EPSON TM-T82">
+              <div class="ferr" id="f-usb-err">USB printer name is required</div>
+              <div class="fhint">Find in Android → Connected Devices or Windows Devices & Printers</div>
+            </div>
+            <div id="lan-fields" style="display:none;grid-column:1/-1;">
+              <div class="fgrid">
+                <div class="fg"><div class="flabel">IP Address <span class="req">*</span></div><input class="finput" id="f-lan-ip" placeholder="192.168.1.100"><div class="ferr" id="f-lan-ip-err">Valid IP required</div><div class="fhint">Find in printer settings or router admin</div></div>
+                <div class="fg"><div class="flabel">Port</div><input class="finput" id="f-lan-port" value="9100" placeholder="9100"><div class="fhint">Default is 9100</div></div>
+                <div class="fg"><div class="flabel">Android Device IP</div><input class="finput" id="f-android-ip" placeholder="192.168.1.x"></div>
+              </div>
+            </div>
+            <div id="bt-fields" style="display:none;grid-column:1/-1;">
+              <div class="fgrid">
+                <div class="fg"><div class="flabel">Bluetooth MAC <span class="req">*</span></div><input class="finput" id="f-bt-mac" placeholder="AA:BB:CC:DD:EE:FF"><div class="ferr" id="f-bt-err">Valid MAC required</div><div class="fhint">Find in printer manual or BT settings</div></div>
+                <div class="fg"><div class="flabel">Android Device IP</div><input class="finput" id="f-bt-aip" placeholder="192.168.1.x"></div>
+              </div>
+            </div>
+            <div class="fg full">
+              <div class="flabel">Paper Size</div>
+              <div class="paper-override">
+                <span class="paper-inherit" id="f-paper-label">Using global: 58mm</span>
+                <span style="font-size:12px;color:var(--light)">or override:</span>
+                <div class="pill" id="fps-58" onclick="overridePaper('58 mm')">58mm</div>
+                <div class="pill" id="fps-80" onclick="overridePaper('80 mm')">80mm</div>
+              </div>
+            </div>
+            <div class="fg full">
+              <div class="adv-tog" onclick="document.getElementById('adv-body').classList.toggle('open')">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg> Advanced (USB device matching, optional)
+              </div>
+              <div class="adv-body" id="adv-body">
+                <div class="fgrid" style="margin-top:10px;">
+                  <div class="fg"><div class="flabel">Vendor ID (hex)</div><input class="finput" placeholder="e.g. 0x04B8"><div class="fhint">Leave blank for auto-detect</div></div>
+                  <div class="fg"><div class="flabel">Product ID (hex)</div><input class="finput" placeholder="e.g. 0x0202"><div class="fhint">Leave blank for auto-detect</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+            <button class="btn-discard">← Back</button>
+            <button class="btn-save" onclick="formNextB()" style="font-size:12.5px;padding:8px 18px;">Next →</button>
+          </div>
+        </div>
+        <!-- Step C -->
+        <div id="fstep-C" style="display:none">
+          <div class="fgrid">
+            <div class="fg full">
+              <div class="flabel">KOT Stations <span style="font-size:10px;color:var(--light);font-weight:400;text-transform:none;">(type + Enter or comma)</span></div>
+              <div class="station-wrap" id="station-wrap" onclick="document.getElementById('stn-input').focus()">
+                <div class="stag">KDS <button onclick="this.parentElement.remove()">×</button></div>
+                <input class="station-input" id="stn-input" placeholder="Add station…" onkeydown="stnKey(event)">
+              </div>
+              <div class="fhint">Dynamic — any station name: KDS, BAR, GRILL, PASTRY, etc.</div>
+            </div>
+            <div class="fg full">
+              <div style="background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+                <div class="trow" style="padding:0;border:none;">
+                  <div class="trow-l">
+                    <div class="trow-label" style="font-size:14px;">This printer handles BILL prints</div>
+                    <div class="trow-hint">One bill printer per restaurant recommended</div>
+                  </div>
+                  <label class="tsw" style="margin-left:16px;"><input type="checkbox" id="f-bill"><div class="track"><div class="thumb"></div></div></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+            <button class="btn-discard" onclick="showFormStep('B')">← Back</button>
+            <button class="btn-save" onclick="savePrinter()" style="font-size:12.5px;padding:8px 20px;">✓ Save Printer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Printer list -->
+      <div id="printer-list">
+        <div class="printer-card" id="pc-1">
+          <div class="pc-head">
+            <div class="sdot dg" title="Configured"></div>
+            <div class="pc-l" style="margin-left:10px;">
+              <div class="pc-name">Kitchen Printer</div>
+              <div class="pc-sub">USB · POS58 Printer</div>
+              <div class="pc-badges"><span class="badge bblue">USB</span><span class="badge bgray">58mm</span><span class="badge bgreen">KDS</span><span class="badge bgray">KOT only</span></div>
+            </div>
+            <div class="pc-actions">
+              <button class="preview-btn" onclick="openPreviewModal('bill')">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+              <button class="ib" onclick="editPrinter(1)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="ib del" onclick="showDel(1)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div id="del-1" style="display:none"><div class="del-confirm"><span>Delete "Kitchen Printer"?</span><div class="del-btns"><button class="btn-no" onclick="hideDel(1)">Keep</button><button class="btn-yes" onclick="deletePrinter(1)">Delete</button></div></div></div>
+        </div>
+        <div class="printer-card" id="pc-2">
+          <div class="pc-head">
+            <div class="sdot dg"></div>
+            <div class="pc-l" style="margin-left:10px;">
+              <div class="pc-name">Billing Printer</div>
+              <div class="pc-sub">USB · POS58 Printer</div>
+              <div class="pc-badges"><span class="badge bblue">USB</span><span class="badge bgray">58mm</span><span class="badge borange">Bill ✓</span></div>
+            </div>
+            <div class="pc-actions">
+              <button class="preview-btn" onclick="openPreviewModal('bill')">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+              <button class="ib" onclick="editPrinter(2)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="ib del" onclick="showDel(2)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div id="del-2" style="display:none"><div class="del-confirm"><span>Delete "Billing Printer"? Bills will stop printing.</span><div class="del-btns"><button class="btn-no" onclick="hideDel(2)">Keep</button><button class="btn-yes" onclick="deletePrinter(2)">Delete</button></div></div></div>
+        </div>
+      </div>
+      <button class="add-printer-btn" id="add-btn" onclick="openForm()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Another Printer
+      </button>
+
+      <div class="banner info" style="margin-top:16px;">
+        <div class="banner-icon">ℹ️</div>
+        <div class="banner-body">
+          <div class="banner-title">Test Print — Phase 2</div>
+          <div class="banner-desc">Live printer connectivity test requires a new backend endpoint. Use Preview to verify layout without printing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 1: AUTO PRINT ══ -->
+    <div class="tab-pane" id="tab-1">
+      <div class="sblock">
+        <div class="sblock-title">Print Copies</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div><div style="font-size:13px;font-weight:500;margin-bottom:8px;">Bill Copies</div><div class="stepper"><button class="step-btn" onclick="adj('bc',-1)">−</button><input class="step-val" id="bc" value="1" readonly><button class="step-btn" onclick="adj('bc',1)">+</button></div><div class="fhint" style="margin-top:5px;">Copies per settlement</div></div>
+          <div><div style="font-size:13px;font-weight:500;margin-bottom:8px;">KOT Copies</div><div class="stepper"><button class="step-btn" onclick="adj('kc',-1)">−</button><input class="step-val" id="kc" value="1" readonly><button class="step-btn" onclick="adj('kc',1)">+</button></div><div class="fhint" style="margin-top:5px;">Copies per order</div></div>
+        </div>
+      </div>
+      <div class="sblock">
+        <div class="sblock-title">In-House Orders</div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Auto Print KOT</div><div class="trow-hint">Print KOT instantly when order is placed</div></div><label class="tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Auto Print Bill</div><div class="trow-hint">Print bill after payment is collected</div></div><label class="tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Scan Order Auto Print</div><div class="trow-hint">Auto print KOT on QR scan orders</div></div><label class="tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+      </div>
+      <div class="sblock">
+        <div class="sblock-title">Aggregator Orders (Swiggy / Zomato)</div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Auto KOT for Aggregator</div><div class="trow-hint">Print KOT when Swiggy/Zomato order arrives</div></div><label class="tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Auto Bill for Aggregator</div><div class="trow-hint">Auto print bill at a specific order stage</div></div><label class="tsw"><input type="checkbox" id="agg-tog" onchange="showCond(this,'agg-stage')"><div class="track"><div class="thumb"></div></div></label></div>
+        <div id="agg-stage" style="display:none;padding:8px 0 4px;"><div class="indented"><div style="font-size:12px;color:var(--gray);font-weight:500;margin-bottom:8px;">Print bill when order reaches:</div><div class="pill-group"><div class="pill active" onclick="selPill(this)">Acknowledged</div><div class="pill" onclick="selPill(this)">Food Ready</div></div></div></div>
+      </div>
+      <div class="banner warn">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-body">
+          <div class="banner-title">What if the printer is offline?</div>
+          <div class="banner-desc">Order is placed successfully — print job silently fails. Staff can reprint from the Order Card.<br><br><strong>Phase 2:</strong> Dashboard alert when a print job fails due to printer being unreachable.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 2: BILL CONTENT ══ -->
+    <div class="tab-pane" id="tab-2">
+      <div class="sblock">
+        <div class="sblock-title">Bill Display</div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Show Item Date on 80mm</div><div class="trow-hint">Print order date next to each item — useful for room service</div></div><label class="tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+        <div style="margin-top:12px;"><div style="font-size:13px;font-weight:500;margin-bottom:7px;">Bill Footer Text</div><textarea class="fta" id="footer-text" rows="2" oninput="updatePreview()">Powered by MyGenie</textarea><div class="fhint" style="margin-top:4px;">Appears on every bill. 50 chars max for 58mm.</div></div>
+      </div>
+      <div class="sblock">
+        <div class="sblock-title">QR Codes on Bill</div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">UPI Payment QR</div><div class="trow-hint">Scannable QR so customers pay digitally</div></div><label class="tsw"><input type="checkbox" onchange="showCond(this,'upi-f')"><div class="track"><div class="thumb"></div></div></label></div>
+        <div id="upi-f" style="display:none;padding:8px 0 4px;"><div class="indented"><div style="font-size:12px;font-weight:500;color:var(--gray);margin-bottom:6px;">UPI ID</div><input class="finput" style="max-width:280px;" placeholder="yourstore@upi" type="text"></div></div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Feedback QR</div><div class="trow-hint">Link to Google review or feedback form</div></div><label class="tsw"><input type="checkbox" onchange="showCond(this,'fb-f')"><div class="track"><div class="thumb"></div></div></label></div>
+        <div id="fb-f" style="display:none;padding:8px 0 4px;"><div class="indented"><div style="font-size:12px;font-weight:500;color:var(--gray);margin-bottom:6px;">Feedback URL</div><input class="finput" style="max-width:340px;" placeholder="https://g.page/..." type="url"></div></div>
+      </div>
+      <div class="sblock">
+        <div class="sblock-title">Windows Compatibility</div>
+        <div class="trow"><div class="trow-l"><div class="trow-label">Use PDF Printing on Windows</div><div class="trow-hint">Recommended — routes prints via PDF for better formatting</div></div><label class="tsw"><input type="checkbox" checked onchange="showCond(this,'pdf-f')"><div class="track"><div class="thumb"></div></div></label></div>
+        <div id="pdf-f" style="padding:8px 0 4px;"><div class="indented"><div class="trow" style="border:none;padding:8px 0;"><div class="trow-l"><div class="trow-label" style="font-size:12.5px;">PDF for Bills Only</div><div class="trow-hint">KOT goes direct — faster kitchen printing</div></div><label class="tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div></div></div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 3: PRINT STYLE (Split pane) ══ -->
+    <div class="tab-pane" id="tab-3">
+
+      <!-- LEFT: Settings -->
+      <div class="style-settings">
+        <div class="banner info" style="margin-bottom:14px;">
+          <div class="banner-icon">👁</div>
+          <div class="banner-body">
+            <div class="banner-title">Live preview updates on the right as you change settings</div>
+            <div class="banner-desc">Switch between Bill and KOT views. Toggle 58mm ↔ 80mm to see both layouts.</div>
+          </div>
+        </div>
+
+        <div class="sblock">
+          <div class="sblock-title">Global Appearance</div>
+          <div style="margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:9px;">Font Family</div>
+            <div class="font-chips" id="font-chips">
+              <div class="font-chip active" onclick="selFont(this,'Poppins')">Poppins</div>
+              <div class="font-chip" onclick="selFont(this,'Roboto')">Roboto</div>
+              <div class="font-chip" onclick="selFont(this,'Inter')">Inter</div>
+              <div class="font-chip" onclick="selFont(this,'Montserrat')">Montserrat</div>
+              <div class="font-chip" onclick="selFont(this,'Open Sans')">Open Sans</div>
+              <div class="font-chip" onclick="selFont(this,'Lato')">Lato</div>
+              <div class="font-chip" style="color:var(--light);cursor:default;pointer-events:none;">+14 more…</div>
+            </div>
+          </div>
+          <div class="trow" style="border:none;">
+            <div><div style="font-size:13px;font-weight:500;">Divider Line Style</div></div>
+            <div class="pill-group">
+              <div class="pill active" id="div-solid" onclick="selDiv('Solid')">—— Solid</div>
+              <div class="pill" id="div-dashed" onclick="selDiv('Dashed')">- - Dashed</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;">
+            <div><div style="font-size:12px;font-weight:500;margin-bottom:8px;color:var(--gray);">Page Margins (mm)</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;"><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Top</div><input class="snum" value="0" oninput="updatePreview()"></div><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Bottom</div><input class="snum" value="0" oninput="updatePreview()"></div><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Left</div><input class="snum" value="0" oninput="updatePreview()"></div><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Right</div><input class="snum" value="0" oninput="updatePreview()"></div></div></div>
+            <div><div style="font-size:12px;font-weight:500;margin-bottom:8px;color:var(--gray);">Logo Size (mm)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center;"><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Width</div><input class="snum" value="30" oninput="updatePreview()"></div><div><div style="font-size:10px;color:var(--light);margin-bottom:3px;">Height</div><input class="snum" value="30" oninput="updatePreview()"></div></div></div>
+          </div>
+        </div>
+
+        <div class="sec-label">Bill Print Style</div>
+        <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 72px;gap:8px;padding:4px 14px 8px;"><div></div><div class="col-head">58mm</div><div class="col-head">80mm</div><div class="col-head">Bold</div><div class="col-head" style="color:var(--amber)">Align <span style="font-size:8px">P2</span></div></div>
+
+        <div class="accord open" onclick="togA(this)">
+          <div class="accord-head">Restaurant Header <span class="accord-arrow">▼</span></div>
+          <div class="accord-body" onclick="event.stopPropagation()">
+            <div class="scols"><div class="sfl">Restaurant Name</div><input class="snum" value="11" oninput="updatePreview()"><input class="snum" value="17" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Address</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Phone</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">GST Number</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+          </div>
+        </div>
+        <div class="accord" onclick="togA(this)">
+          <div class="accord-head">Item Table <span class="accord-arrow">▼</span></div>
+          <div class="accord-body" onclick="event.stopPropagation()">
+            <div class="scols"><div class="sfl">Table Header</div><input class="snum" value="7" oninput="updatePreview()"><input class="snum" value="8" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Item Name</div><input class="snum" value="7" oninput="updatePreview()"><input class="snum" value="8" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Notes</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+          </div>
+        </div>
+        <div class="accord" onclick="togA(this)">
+          <div class="accord-head">Amount Section <span class="accord-arrow">▼</span></div>
+          <div class="accord-body" onclick="event.stopPropagation()">
+            <div class="scols"><div class="sfl">Breakdown</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Subtotal</div><input class="snum" value="7" oninput="updatePreview()"><input class="snum" value="8" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Grand Total</div><input class="snum" value="7" oninput="updatePreview()"><input class="snum" value="8" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Paid By</div><input class="snum" value="5.5" oninput="updatePreview()"><input class="snum" value="6.5" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+          </div>
+        </div>
+        <div class="accord" onclick="togA(this)"><div class="accord-head">Delivery & Room & Footer <span class="accord-arrow">▼</span></div><div class="accord-body" onclick="event.stopPropagation()"><div class="scols"><div class="sfl">Delivery Header</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div><div class="scols"><div class="sfl">Room Header</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div><div class="scols"><div class="sfl">Footer Text</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div></div></div>
+
+        <div class="sec-label" style="margin-top:20px;">KOT Print Style</div>
+        <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 72px;gap:8px;padding:4px 14px 8px;"><div></div><div class="col-head">58mm</div><div class="col-head">80mm</div><div class="col-head">Bold</div><div class="col-head" style="color:var(--amber)">Align <span style="font-size:8px">P2</span></div></div>
+        <div class="accord open" onclick="togA(this)">
+          <div class="accord-head">KOT Header <span class="accord-arrow">▼</span></div>
+          <div class="accord-body" onclick="event.stopPropagation()">
+            <div class="scols"><div class="sfl">KOT Title</div><input class="snum" value="11" oninput="updatePreview()"><input class="snum" value="14" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Cancel KOT Title</div><input class="snum" value="9" oninput="updatePreview()"><input class="snum" value="14" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+          </div>
+        </div>
+        <div class="accord" onclick="togA(this)">
+          <div class="accord-head">KOT Items <span class="accord-arrow">▼</span></div>
+          <div class="accord-body" onclick="event.stopPropagation()">
+            <div class="scols"><div class="sfl">Column Headers</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Item Name &amp; Qty</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+            <div class="scols"><div class="sfl">Notes</div><input class="snum" value="6" oninput="updatePreview()"><input class="snum" value="7" oninput="updatePreview()"><div style="text-align:center"><button class="bold-btn on" onclick="this.classList.toggle('on');updatePreview()">B</button></div><div class="align-seg" style="opacity:.55;"><button class="ab" onclick="selAlign(this,'L')">L</button><button class="ab on" onclick="selAlign(this,'C')">C</button><button class="ab" onclick="selAlign(this,'R')">R</button></div></div>
+          </div>
+        </div>
+
+        <!-- ══ PHASE 2: ALIGNMENT ══ -->
+        <div class="ph-section ph2-section" style="margin-top:20px;">
+          <div class="ph-badge ph2-badge">⏳ Phase 2 — Alignment</div>
+          <div class="ph-title">Left / Center / Right per Section</div>
+          <div class="ph-desc">The <strong>Align</strong> column above is already stored and shown in the live preview. Actual printed receipts will apply alignment once the print agent reads the <code>alignment</code> key from the config. No new UI needed — alignment buttons are already in every row above.</div>
+          <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px;">
+            <div style="font-size:11px;color:var(--light);margin-bottom:10px;">Example — what happens when you change Grand Total from Right → Center:</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+              <div style="background:#F9FAFB;border-radius:8px;padding:10px;font-family:monospace;text-align:right;border:1px solid var(--border);">
+                <div style="color:var(--light);font-size:10px;margin-bottom:6px;">Right (current default)</div>
+                <div>Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 520.00</div>
+                <div>GST (5%) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 26.00</div>
+                <div style="font-weight:700;border-top:1px solid #ddd;margin-top:4px;padding-top:4px;">GRAND TOTAL &nbsp; ₹557</div>
+              </div>
+              <div style="background:#F9FAFB;border-radius:8px;padding:10px;font-family:monospace;text-align:center;border:1px solid var(--orange-border);">
+                <div style="color:var(--light);font-size:10px;margin-bottom:6px;">Center (owner choice)</div>
+                <div>Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 520.00</div>
+                <div>GST (5%) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 26.00</div>
+                <div style="font-weight:700;border-top:1px solid #ddd;margin-top:4px;padding-top:4px;">GRAND TOTAL &nbsp; ₹557</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ PHASE 2: FIELD VISIBILITY ══ -->
+        <div class="ph-section ph2-section">
+          <div class="ph-badge ph2-badge">⏳ Phase 2 — Field Visibility</div>
+          <div class="ph-title">Show / Hide Fields on Bill &amp; KOT</div>
+          <div class="ph-desc">Toggle individual fields on or off. Config is already stored in <code>field_visibility</code> inside <code>settings_config</code>. Takes effect on actual prints once the print agent update ships. Backend brief filed: <strong>BACKEND_BRIEF_CR133_PRINTER_FIELD_CONFIG_2026_08_07</strong>.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">📄 Bill Fields</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div class="fv-row"><span class="fv-label">Waiter Name</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Customer Name</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Customer Phone</span><label class="fv-tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Order Note</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Token Number</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">GST Breakdown</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">CGST / SGST Split</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Service Charge</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Discount Line</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Coupon Line</span><label class="fv-tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Tip Line</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Delivery Address</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">UPI QR Code</span><label class="fv-tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Bill Footer Text</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">🍳 KOT Fields</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div class="fv-row"><span class="fv-label">Waiter Name</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Customer Name</span><label class="fv-tsw"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Order Note</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Station Name</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Per-Item Notes</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Token Number</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+                <div class="fv-row"><span class="fv-label">Date &amp; Time</span><label class="fv-tsw"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ PHASE 2: ROW CONTENT ══ -->
+        <div class="ph-section ph2-section">
+          <div class="ph-badge ph2-badge">⏳ Phase 2 — Bill Info Row Content</div>
+          <div class="ph-title">Configure What Each Info Row Shows</div>
+          <div class="ph-desc">The 4 info rows in the bill/KOT header currently show hardcoded content. Once the print agent reads the <code>content</code> key, you choose what each row displays. Turn <strong>Visible</strong> off to hide a row entirely (no blank line).</div>
+          <div style="margin-bottom:10px;font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.4px;">Bill Info Rows</div>
+          <div class="row-content-grid">
+            <div class="rcrow"><span class="rcrow-label">Row 1</span><select><option>Order Number + Date</option><option>Table + Waiter</option><option>Customer Name</option><option>Token Number</option><option>Order Note</option><option>Order Type</option><option>Empty (spacer)</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 2</span><select><option>Table + Waiter</option><option>Order Number + Date</option><option>Customer Name</option><option>Customer Phone</option><option>Order Note</option><option>Empty (spacer)</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 3</span><select><option>Customer Name</option><option>Order Number + Date</option><option>Table + Waiter</option><option>Customer Phone</option><option>Empty (spacer)</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 4</span><select><option>Order Note</option><option>Customer Phone</option><option>Payment Method</option><option>Empty (spacer)</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox"><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Hidden</span></div></div>
+          </div>
+          <div style="margin-top:14px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.4px;">KOT Info Rows</div>
+          <div class="row-content-grid">
+            <div class="rcrow"><span class="rcrow-label">Row 1</span><select><option>Order Number</option><option>Table + Channel</option><option>Waiter</option><option>Station</option><option>Token Number</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 2</span><select><option>Table + Channel</option><option>Waiter</option><option>Station</option><option>Date &amp; Time</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 3</span><select><option>Waiter</option><option>Station</option><option>Customer Name</option><option>Date &amp; Time</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+            <div class="rcrow"><span class="rcrow-label">Row 4</span><select><option>Station</option><option>Date &amp; Time</option><option>Order Note</option><option>Empty (spacer)</option></select><div class="rcrow-vis"><label class="fv-tsw" style="margin-right:4px;"><input type="checkbox" checked><div class="track"><div class="thumb"></div></div></label><span style="font-size:11px;color:var(--gray)">Visible</span></div></div>
+          </div>
+        </div>
+
+        <!-- ══ PHASE 3: SECTION ORDER ══ -->
+        <div class="ph-section ph3-section">
+          <div class="ph-badge ph3-badge">⏳ Phase 3 — Section Order</div>
+          <div class="ph-title">Drag to Reorder Bill Sections</div>
+          <div class="ph-desc">Drag handles to reorder major sections of the bill receipt. Stored in <code>bill_section_order[]</code>. Requires a full print agent template rewrite — backend brief to be filed separately as a Phase 3 CR.</div>
+          <div class="drag-list">
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Restaurant Header</div><div class="drag-sub">Name, address, phone, GST, FSSAI</div></div><span style="font-size:11px;color:var(--light);">#1</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Bill Info Rows</div><div class="drag-sub">Order #, table, waiter, customer</div></div><span style="font-size:11px;color:var(--light);">#2</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Item Table</div><div class="drag-sub">Items, qty, price, notes, add-ons</div></div><span style="font-size:11px;color:var(--light);">#3</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Amount Section</div><div class="drag-sub">Subtotal, GST, service charge, total</div></div><span style="font-size:11px;color:var(--light);">#4</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Delivery Details</div><div class="drag-sub">Address, contact — delivery only</div></div><span style="font-size:11px;color:var(--light);">#5</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Room Section</div><div class="drag-sub">Room charges, advance, balance — room only</div></div><span style="font-size:11px;color:var(--light);">#6</span></div>
+            <div class="drag-item"><span class="drag-handle">⠿⠿</span><div><div class="drag-label">Footer</div><div class="drag-sub">Footer text, QR codes</div></div><span style="font-size:11px;color:var(--light);">#7</span></div>
+          </div>
+          <div style="margin-top:12px;background:rgba(109,40,217,.06);border-radius:8px;padding:10px 12px;font-size:12px;color:#6D28D9;line-height:1.5;">
+            <strong>Phase 3 scope:</strong> Requires print agent template to accept a <code>bill_section_order[]</code> array and render sections dynamically. FE drag-to-reorder UI is straightforward once backend contract is agreed.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Live Preview -->
+      <div class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-title">
+            Live Preview
+            <div class="preview-live-badge"><div class="live-dot"></div> LIVE</div>
+          </div>
+          <div class="preview-controls">
+            <div class="pctl">
+              <button class="pctl-btn active" id="pv-bill-btn" onclick="setPvType('bill')">📄 Bill</button>
+              <button class="pctl-btn" id="pv-kot-btn" onclick="setPvType('kot')">🍳 KOT</button>
+            </div>
+            <div class="pctl">
+              <button class="pctl-btn active" id="pv-58-btn" onclick="setPvPaper('58')">58mm</button>
+              <button class="pctl-btn" id="pv-80-btn" onclick="setPvPaper('80')">80mm</button>
+            </div>
+          </div>
+        </div>
+        <div class="preview-body">
+          <div class="receipt-wrap w58" id="receipt-wrap">
+            <div class="receipt" id="receipt-content">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-3 -->
+
+    <!-- ══ TAB 4: PRINTER MAPPING ══ -->
+    <div class="tab-pane" id="tab-4">
+
+      <div class="sblock">
+        <div class="sblock-title">Default Users — Print to All Stations</div>
+        <div class="trow-hint" style="margin-bottom:0;padding-bottom:12px;border-bottom:1px solid var(--border);">Default users automatically print to every configured printer. Toggle employees on or off.</div>
+        <div class="chip-row">
+          <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Albus Dumbledore</div>
+          <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">BAR</div>
+          <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Captain</div>
+          <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">KDS</div>
+          <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Manager</div>
+          <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Owner</div>
+          <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Pizza La</div>
+        </div>
+      </div>
+
+      <div class="sblock" style="margin-top:16px;">
+        <div class="sblock-title">Printer Assignments</div>
+        <div class="trow-hint" style="margin-bottom:12px;">Select which employees are assigned to each printer.</div>
+
+        <div class="pm-printer-card">
+          <div class="pm-printer-header"><span class="pm-printer-name">KDS</span><span class="pm-type-badge">usb</span></div>
+          <div class="chip-row">
+            <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Albus Dumbledore</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">BAR</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Captain</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">KDS</div>
+            <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Manager</div>
+            <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Owner</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Pizza La</div>
+          </div>
+        </div>
+
+        <div class="pm-printer-card">
+          <div class="pm-printer-header"><span class="pm-printer-name">BAR</span><span class="pm-type-badge">usb</span></div>
+          <div class="chip-row">
+            <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Albus Dumbledore</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">BAR</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Captain</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">KDS</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Manager</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Owner</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Pizza La</div>
+          </div>
+        </div>
+
+        <div class="pm-printer-card">
+          <div class="pm-printer-header"><span class="pm-printer-name">Bill</span><span class="pm-type-badge">usb</span></div>
+          <div class="chip-row">
+            <div class="mapping-chip active" onclick="this.classList.toggle('active');markDirty()">Albus Dumbledore</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">BAR</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Captain</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">KDS</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Manager</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Owner</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Pizza La</div>
+          </div>
+        </div>
+
+        <div class="pm-printer-card">
+          <div class="pm-printer-header"><span class="pm-printer-name">Pizza</span><span class="pm-type-badge">usb</span></div>
+          <div class="chip-row">
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Albus Dumbledore</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">BAR</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Captain</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">KDS</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Manager</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Owner</div>
+            <div class="mapping-chip" onclick="this.classList.toggle('active');markDirty()">Pizza La</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+        <button class="btn-save" onclick="showToast('s','Mapping saved')">Save Mapping</button>
+      </div>
+
+    </div><!-- /tab-4 -->
+
+    <!-- ══ TAB 5: STATION MAPPING (CR-359 — OD-3A auto-load + OD-4A profile re-fetch) ══ -->
+    <div class="tab-pane" id="tab-5">
+
+      <!-- Info banner -->
+      <div class="banner info" style="margin-bottom:16px;">
+        <div class="banner-icon">ℹ</div>
+        <div class="banner-body">
+          <div class="banner-title">How station mapping works</div>
+          <div class="banner-desc">Select a waiter below. For each print area, choose which <strong>fixed user's</strong> printer agent fires for that station's KOT when this waiter is active. Changes apply to this session immediately after save — no re-login needed.</div>
+        </div>
+      </div>
+
+      <div class="sblock">
+        <div class="sblock-title" style="margin-bottom:16px;">Station &#8594; Default User Mapping</div>
+
+        <!-- OD-3B: Employee dropdown + explicit Load button (owner preference) -->
+        <div style="margin-bottom:20px;">
+          <div class="sm-emp-label">Select Employee</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sm-emp-wrap" style="flex:1;">
+              <select class="sm-select" id="sm-emp-select" onchange="smOnEmpChange()">
+                <option value="">— Choose employee —</option>
+                <option value="485">Albus Dumbledore</option>
+                <option value="486">BAR</option>
+                <option value="484">Captain</option>
+                <option value="490">KDS</option>
+                <option value="491">Manager</option>
+                <option value="492">Owner</option>
+                <option value="493">Pizza La</option>
+              </select>
+            </div>
+            <button
+              id="sm-load-btn"
+              onclick="smLoad()"
+              style="padding:9px 22px;background:var(--orange);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:7px;transition:background .15s;"
+              onmouseover="this.style.background='#d85a28'" onmouseout="this.style.background='var(--orange)'"
+            >
+              <span id="sm-load-btn-txt">Load</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Shimmer skeleton — shown while loading -->
+        <div id="sm-shimmer" style="display:none;margin-bottom:4px;">
+          <div class="sm-shimmer-row"><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell" style="max-width:36px;"></div></div>
+          <div class="sm-shimmer-row"><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell" style="max-width:36px;"></div></div>
+          <div class="sm-shimmer-row"><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell"></div><div class="sm-shimmer-cell" style="max-width:36px;"></div></div>
+        </div>
+
+        <!-- Empty — no employee chosen -->
+        <div class="sm-empty" id="sm-empty">Choose an employee above to view their station mappings</div>
+
+        <!-- Loaded state -->
+        <div id="sm-loaded" style="display:block;">
+
+          <!-- No default_users warning (e.g. cafeclub scenario — 0 fixed users set up) -->
+          <div class="sm-no-default-warn" id="sm-no-default-warn" style="display:none;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <div style="font-weight:600;margin-bottom:2px;">No fixed users configured</div>
+              <div style="color:#C2410C;">No employees have Fixed Station = Yes on this restaurant. Go to <strong>Printer Mapping</strong> tab and mark at least one employee as a default user before mapping stations.</div>
+            </div>
+          </div>
+
+          <div class="sm-col-heads">
+            <div class="sm-col-head">Area Name</div>
+            <div>
+              <div class="sm-col-head">Default User</div>
+              <div class="sm-col-sub">Fixed Station = Yes only</div>
+            </div>
+            <div></div>
+          </div>
+          <div class="sm-rows" id="sm-rows">
+            <!-- rows injected by JS -->
+          </div>
+          <div class="sm-footer">
+            <button class="sm-add-btn" id="sm-add-btn" onclick="smAddRow()">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Mapping
+            </button>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <!-- OD-4A: routing-synced badge (appears after save) -->
+              <div class="sm-synced-badge" id="sm-synced-badge">
+                <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Routing updated
+              </div>
+              <span class="sm-status" id="sm-status">All changes saved</span>
+              <button class="sm-save-btn" id="sm-save-btn" onclick="smSave()">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Mapping
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /tab-5 -->
+
+    <!-- Save bar -->
+    <div class="save-bar">
+      <div class="save-bar-l dirty" id="dirty-label">● Unsaved changes</div>
+      <div class="save-bar-r">
+        <button class="btn-discard" onclick="discardAll()">Discard</button>
+        <button class="btn-save" id="save-btn" onclick="saveAll()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal (from Printers tab) -->
+<div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;overflow:hidden;width:580px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:15px;font-weight:600;">Print Preview</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:2px;">Based on your current Print Style settings</div>
+      </div>
+      <button onclick="closeModal()" style="width:30px;height:30px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:20px;color:var(--gray);">×</button>
+    </div>
+    <div style="padding:20px;display:flex;gap:20px;overflow-y:auto;justify-content:center;flex-wrap:wrap;background:#E5E7EB;">
+      <!-- Bill 58mm -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;">Bill — 58mm</div>
+        <div style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.15);border-radius:3px 3px 6px 6px;width:220px;" id="modal-bill-58"><div class="receipt" id="modal-bill-58-content"></div></div>
+      </div>
+      <!-- KOT 58mm -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;">KOT — 58mm</div>
+        <div style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.15);border-radius:3px 3px 6px 6px;width:220px;" id="modal-kot-58"><div class="receipt" id="modal-kot-58-content"></div></div>
+      </div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+      <button onclick="closeModal()" class="btn-discard">Close</button>
+      <button onclick="switchTab(3,document.querySelectorAll('.tab')[3]);closeModal()" class="btn-save" style="font-size:13px;padding:8px 18px;">Edit Style Settings →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><div class="tdot g" id="tdot"></div><span id="tmsg">Saved</span></div>
+
+<script>
+/* ── State ── */
+let pvType = 'bill', pvPaper = '58';
+let fontFamily = 'Poppins', dividerStyle = 'Solid', globalPaper = '58 mm', globalConn = 'USB';
+let connType = 'USB';
+
+/* ── Tabs ── */
+function switchTab(idx, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+idx).classList.add('active');
+  if (idx===3) setTimeout(updatePreview, 50);
+}
+
+/* ── Preview type/paper ── */
+function setPvType(t) {
+  pvType=t;
+  ['bill','kot'].forEach(x=>{document.getElementById('pv-'+x+'-btn').classList.toggle('active',x===t)});
+  updatePreview();
+}
+function setPvPaper(p) {
+  pvPaper=p;
+  ['58','80'].forEach(x=>{document.getElementById('pv-'+x+'-btn').classList.toggle('active',x===p)});
+  document.getElementById('receipt-wrap').className='receipt-wrap w'+p;
+  updatePreview();
+}
+
+/* ── Read current settings ── */
+function getS(sectionClass, idx) {
+  const rows=document.querySelectorAll('.scols');
+  // Read from the nth input in nth scols row
+  const inputs=document.querySelectorAll('.accord-body .snum');
+  return inputs[idx] ? parseFloat(inputs[idx].value)||6 : 6;
+}
+function getBold(idx) {
+  const btns=document.querySelectorAll('.accord-body .bold-btn');
+  return btns[idx] ? btns[idx].classList.contains('on') : false;
+}
+function getFooter() { return (document.getElementById('footer-text')||{value:'Powered by MyGenie'}).value||'Powered by MyGenie'; }
+function getDivider() { return dividerStyle; }
+
+/* ── BILL PREVIEW renderer ── */
+function renderBill(p) {
+  const paper=p||pvPaper;
+  const col=paper==='58'?0:1; // 0=58mm idx offset, 1=80mm
+  const s=(r,o)=>{const inp=document.querySelectorAll('.accord-body .snum');return inp[r*2+o]?parseFloat(inp[r*2+o].value)||6:6};
+  const b=(r)=>{const btns=document.querySelectorAll('.accord-body .bold-btn');return btns[r]?btns[r].classList.contains('on'):false};
+  const divLine=getDivider()==='Solid'?'<hr class="solid">':'<hr class="dashed">';
+  const footer=getFooter();
+  const fontF=fontFamily;
+
+  return `<div style="font-family:'${fontF}',sans-serif;padding:${paper==='58'?'8px':'10px'};">
+    <div class="r-center" style="font-size:${s(0,col)}pt;font-weight:${b(0)?'700':'400'}">18march</div>
+    <div class="r-center" style="font-size:${s(1,col)}pt">123 MG Road, Sector 14</div>
+    <div class="r-center" style="font-size:${s(2,col)}pt">Ph: 9999999999</div>
+    <div class="r-center" style="font-size:${s(3,col)}pt">GST: 07AABCU9603R1ZX</div>
+    ${divLine}
+    <div style="font-size:${s(4,col+4)}pt;font-weight:${b(4)?'700':'400'}">
+      <div class="r-row">
+        <span class="r-qty">Qty</span>
+        <span class="r-item-name" style="margin:0 4px">Item</span>
+        <span class="r-price">Amt</span>
+      </div>
+    </div>
+    ${divLine}
+    <div style="font-size:${s(5,col+4)}pt">
+      <div class="r-row"><span class="r-qty">2</span><span class="r-item-name" style="margin:0 4px">Butter Chicken</span><span class="r-price">380</span></div>
+      <div style="font-size:${Math.max(5,s(7,col+4)-1)}pt;color:#888;margin-left:${paper==='58'?'20':'24'}px">Extra spicy, no onion</div>
+      <div class="r-row" style="margin-top:3px"><span class="r-qty">1</span><span class="r-item-name" style="margin:0 4px">Butter Naan</span><span class="r-price">60</span></div>
+      <div class="r-row" style="margin-top:3px"><span class="r-qty">1</span><span class="r-item-name" style="margin:0 4px">Mango Lassi</span><span class="r-price">80</span></div>
+    </div>
+    ${divLine}
+    <div style="font-size:${s(8,col+8)}pt">
+      <div class="r-row"><span>Subtotal</span><span>520.00</span></div>
+      <div class="r-row"><span>GST (5%)</span><span>26.00</span></div>
+      <div class="r-row"><span>Service Charge</span><span>10.40</span></div>
+    </div>
+    ${divLine}
+    <div class="r-row" style="font-size:${s(9,col+8)}pt;font-weight:${b(9)?'700':'400'}"><span>Subtotal</span><span>556.40</span></div>
+    <div class="r-row" style="font-size:${s(10,col+8)}pt;font-weight:${b(10)?'700':'400'}">
+      <span>GRAND TOTAL</span><span>₹557</span>
+    </div>
+    ${divLine}
+    <div class="r-row" style="font-size:${s(11,col+8)}pt"><span>Paid by</span><span>UPI</span></div>
+    ${divLine}
+    <div class="r-center" style="font-size:${s(12,col+12)||6}pt;margin-top:4px">${footer}</div>
+    <div style="height:8px"></div>
+  </div>`;
+}
+
+/* ── KOT PREVIEW renderer ── */
+function renderKOT(p) {
+  const paper=p||pvPaper;
+  const col=paper==='58'?0:1;
+  const s=(r,o)=>{const inp=document.querySelectorAll('.accord-body .snum');const off=16;return inp[off+r*2+o]?parseFloat(inp[off+r*2+o].value)||6:6};
+  const b=(r)=>{const btns=document.querySelectorAll('.accord-body .bold-btn');return btns[16+r]?btns[16+r].classList.contains('on'):false};
+  const divLine=getDivider()==='Solid'?'<hr class="solid">':'<hr class="dashed">';
+  const fontF=fontFamily;
+
+  return `<div style="font-family:'${fontF}',sans-serif;padding:0;">
+    <div class="kot-header-strip">
+      <div style="font-size:${s(0,col)}pt;font-weight:${b(0)?'700':'400'}">KOT</div>
+    </div>
+    <div style="padding:${paper==='58'?'6px 8px':'8px 10px'}">
+      <div style="font-size:${s(1,col)}pt">Order #: 00142</div>
+      <div style="font-size:${s(2,col)}pt">Table: T-5 (Dine In)</div>
+      <div style="font-size:${s(3,col)}pt">Waiter: Ravi Kumar</div>
+      <div style="font-size:${s(4,col)}pt">Station: KDS</div>
+      ${divLine}
+      <div class="r-row" style="font-size:${s(5,col+4)}pt;font-weight:${b(5)?'700':'400'}">
+        <span class="r-qty">Qty</span>
+        <span class="r-item-name" style="margin:0 4px">Item</span>
+      </div>
+      ${divLine}
+      <div style="font-size:${s(6,col+4)}pt">
+        <div class="r-row"><span class="r-qty" style="font-size:${s(6,col+4)+2}pt;font-weight:700">2x</span><span class="r-item-name" style="margin:0 4px">Butter Chicken</span></div>
+        <div style="font-size:${Math.max(5,s(6,col+4)-1)}pt;color:#888;margin-left:${paper==='58'?'20':'24'}px;font-weight:${b(8)?'700':'400'}">Extra spicy · No onion</div>
+        <div class="r-row" style="margin-top:4px"><span class="r-qty" style="font-size:${s(6,col+4)+2}pt;font-weight:700">1x</span><span class="r-item-name" style="margin:0 4px">Butter Naan</span></div>
+        <div class="r-row" style="margin-top:4px"><span class="r-qty" style="font-size:${s(6,col+4)+2}pt;font-weight:700">1x</span><span class="r-item-name" style="margin:0 4px">Mango Lassi</span></div>
+      </div>
+      ${divLine}
+      <div style="font-size:${s(5,col+4)}pt;color:#888">Order Note: Extra napkins please</div>
+      <div style="height:6px"></div>
+    </div>
+  </div>`;
+}
+
+/* ── Main update function ── */
+function updatePreview() {
+  const rc=document.getElementById('receipt-content');
+  if (!rc) return;
+  rc.innerHTML = pvType==='bill' ? renderBill() : renderKOT();
+}
+
+/* ── Modal (from Printers tab Preview button) ── */
+function openPreviewModal(type) {
+  const modal=document.getElementById('preview-modal');
+  modal.style.display='flex';
+  document.getElementById('modal-bill-58-content').innerHTML = renderBill('58');
+  document.getElementById('modal-kot-58-content').innerHTML = renderKOT('58');
+}
+function closeModal() { document.getElementById('preview-modal').style.display='none'; }
+
+/* ── Font / Divider ── */
+function selFont(el, f) {
+  document.querySelectorAll('.font-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); fontFamily=f; updatePreview();
+}
+function selDiv(d) {
+  dividerStyle=d;
+  document.getElementById('div-solid').classList.toggle('active',d==='Solid');
+  document.getElementById('div-dashed').classList.toggle('active',d==='Dashed');
+  updatePreview();
+}
+
+/* ── Global paper/conn ── */
+function setGP(v) {
+  globalPaper=v;
+  document.getElementById('gps-58').classList.toggle('active',v==='58 mm');
+  document.getElementById('gps-80').classList.toggle('active',v==='80 mm');
+  document.getElementById('f-paper-label').textContent='Using global: '+(v==='58 mm'?'58mm':'80mm');
+  markDirty();
+}
+function setGC(v) {
+  globalConn=v;
+  ['USB','LAN','BT'].forEach(x=>document.getElementById('gcc-'+x).classList.remove('active'));
+  document.getElementById('gcc-'+v).classList.add('active');
+  markDirty();
+}
+function overridePaper(v) {
+  document.getElementById('f-paper-label').style.display='none';
+  document.getElementById('fps-58').classList.toggle('active',v==='58 mm');
+  document.getElementById('fps-80').classList.toggle('active',v==='80 mm');
+}
+
+/* ── Form ── */
+function openForm() {
+  document.getElementById('add-form').style.display='block';
+  document.getElementById('add-btn').style.display='none';
+  document.getElementById('form-head').textContent='Add New Printer';
+  showFormStep('B'); updateConnFields('USB');
+  resetStations(['KDS']);
+  document.getElementById('f-bill').checked=false;
+  document.getElementById('f-label').value='';
+  document.getElementById('f-usb-name').value='';
+  document.getElementById('add-form').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeForm() {
+  document.getElementById('add-form').style.display='none';
+  document.getElementById('add-btn').style.display='flex';
+}
+function editPrinter(id) {
+  document.getElementById('add-form').style.display='block';
+  document.getElementById('add-btn').style.display='none';
+  document.getElementById('form-head').textContent='Edit '+(id===1?'Kitchen Printer':'Billing Printer');
+  showFormStep('B'); updateConnFields('USB');
+  document.getElementById('f-label').value=id===1?'Kitchen Printer':'Billing Printer';
+  document.getElementById('f-usb-name').value='POS58 Printer';
+  document.getElementById('f-bill').checked=id===2;
+  resetStations(id===1?['KDS']:[]);
+  document.getElementById('add-form').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function showFormStep(step) {
+  ['B','C'].forEach(s=>{const e=document.getElementById('fstep-'+s);if(e)e.style.display=s===step?'block':'none'});
+  document.getElementById('fs0').className='fstep done';
+  document.getElementById('fs1').className='fstep '+(step==='B'?'active':'done');
+  document.getElementById('fs2').className='fstep '+(step==='C'?'active':'');
+}
+function formNextB() {
+  const label=document.getElementById('f-label').value.trim();
+  if (!label) {document.getElementById('f-label').classList.add('err');document.getElementById('f-label-err').classList.add('show');return}
+  document.getElementById('f-label').classList.remove('err');document.getElementById('f-label-err').classList.remove('show');
+  showFormStep('C');
+}
+function savePrinter() { closeForm(); showToast('s','Printer saved'); markDirty(); }
+function updateConnFields(t) {
+  connType=t;
+  document.getElementById('usb-fields').style.display=t==='USB'?'block':'none';
+  document.getElementById('lan-fields').style.display=t==='LAN'?'block':'none';
+  document.getElementById('bt-fields').style.display=t==='BT'?'block':'none';
+}
+
+/* ── Stations ── */
+function resetStations(list) {
+  const wrap=document.getElementById('station-wrap'),inp=document.getElementById('stn-input');
+  wrap.querySelectorAll('.stag').forEach(c=>c.remove());
+  list.forEach(s=>{const chip=document.createElement('div');chip.className='stag';chip.innerHTML=s+' <button onclick="this.parentElement.remove()">×</button>';wrap.insertBefore(chip,inp)});
+}
+function stnKey(e) {
+  if (e.key==='Enter'||e.key===',') {
+    e.preventDefault();const v=e.target.value.trim().replace(',','').toUpperCase();
+    if(v){const wrap=document.getElementById('station-wrap'),inp=document.getElementById('stn-input');const chip=document.createElement('div');chip.className='stag';chip.innerHTML=v+' <button onclick="this.parentElement.remove()">×</button>';wrap.insertBefore(chip,inp);e.target.value='';markDirty()}
+  }
+}
+
+/* ── Delete ── */
+function showDel(id) {document.getElementById('del-'+id).style.display='block'}
+function hideDel(id) {document.getElementById('del-'+id).style.display='none'}
+function deletePrinter(id) {
+  const c=document.getElementById('pc-'+id);
+  c.style.transition='all .3s';c.style.opacity='0.3';c.style.pointerEvents='none';
+  hideDel(id);markDirty();
+  if(id===2){setTimeout(()=>{document.getElementById('no-bill-warn').style.display='flex';document.getElementById('tb0').style.display='inline'},300)}
+  showToast('w','Printer removed — remember to save');
+}
+
+/* ── Accordion ── */
+function togA(el) {el.classList.toggle('open'); updatePreview()}
+
+/* ── Steppers ── */
+function adj(id,d){const e=document.getElementById(id);e.value=Math.max(1,Math.min(5,parseInt(e.value)+d));markDirty()}
+
+/* ── Misc ── */
+function selPill(el) {const g=el.closest('.pill-group');g.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');markDirty()}
+function showCond(t,id) {const e=document.getElementById(id);if(e)e.style.display=t.checked?'block':'none';markDirty()}
+function markDirty() {document.getElementById('dirty-label').classList.add('dirty');document.getElementById('udot').classList.add('show')}
+
+/* ── Save ── */
+function selAlign(el, dir) {
+  const seg = el.closest('.align-seg');
+  seg.querySelectorAll('.ab').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  markDirty();
+  updatePreview();
+}
+
+function saveAll() {
+  const btn=document.getElementById('save-btn');
+  btn.style.opacity='.7';btn.style.pointerEvents='none';
+  btn.innerHTML='<svg width="14" height="14" style="animation:spin 1s linear infinite" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…';
+  setTimeout(()=>{
+    btn.style.opacity='';btn.style.pointerEvents='';
+    btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes';
+    document.getElementById('dirty-label').classList.remove('dirty');document.getElementById('dirty-label').textContent='✓ Saved just now';document.getElementById('udot').classList.remove('show');
+    showToast('s','Printer settings saved successfully');
+    setTimeout(()=>document.getElementById('dirty-label').textContent='● Unsaved changes',4000);
+  },1200);
+}
+function discardAll() {document.getElementById('dirty-label').classList.remove('dirty');document.getElementById('udot').classList.remove('show');showToast('w','Changes discarded')}
+
+/* ── Toast ── */
+function showToast(type,msg) {
+  const t=document.getElementById('toast'),d=document.getElementById('tdot'),m=document.getElementById('tmsg');
+  t.className='toast '+(type==='s'?'ts':type==='w'?'tw':'te');
+  d.className='tdot '+(type==='s'?'g':type==='w'?'a':'r');
+  m.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ── Station Mapping (Tab 5) — CR-359 OD-3A + OD-4A ── */
+
+// areas[] from API (not printer IDs — verbatim area_name strings)
+const smAreas = ['BAR','Bill','KDS','Pizza'];
+
+// all_users[] — for "whose map am I editing?" dropdown
+const smAllUsers = ['Albus Dumbledore','BAR','Captain','KDS','Manager','Owner','Pizza La'];
+
+// default_users[] — ONLY these appear in the per-row "Default User" dropdown
+// (employees with default_user_v2 = Yes — probe confirmed: Hogwarts has 6)
+const smDefaultUsers = ['KDS','BAR','Manager','Captain','Owner','Albus Dumbledore'];
+
+// seed mappings for selected employee (from API mappings[])
+const smSeedByEmp = {
+  '485': [{area:'BAR',user:'Albus Dumbledore'},{area:'Bill',user:'Albus Dumbledore'},{area:'KDS',user:'Albus Dumbledore'}],
+  '492': [{area:'BAR',user:'Owner'},{area:'Bill',user:'Owner'},{area:'KDS',user:'Owner'},{area:'Pizza',user:'Manager'}],
+  '491': [],  // Manager has no mappings yet
+  '484': [],  // Captain has no mappings yet
+};
+
+function smAreaOpts(selected) {
+  return '<option value="">— Select area —</option>' +
+    smAreas.map(a=>`<option value="${a}"${a===selected?' selected':''}>${a}</option>`).join('');
+}
+// OD-3A key change: only smDefaultUsers in this dropdown (not smAllUsers)
+function smDefaultUserOpts(selected) {
+  return '<option value="">— Select user —</option>' +
+    smDefaultUsers.map(u=>`<option value="${u}"${u===selected?' selected':''}>${u}</option>`).join('');
+}
+function smBuildRow(area, user) {
+  const row = document.createElement('div');
+  row.className = 'sm-row';
+  row.innerHTML = `
+    <select class="sm-select" onchange="smDirty()">${smAreaOpts(area)}</select>
+    <select class="sm-select" onchange="smDirty()">${smDefaultUserOpts(user)}</select>
+    <button class="sm-remove-btn" onclick="this.closest('.sm-row').remove();smDirty()" title="Remove">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    </button>`;
+  return row;
+}
+
+// OD-3B: employee dropdown change clears rows, user must click Load
+function smOnEmpChange() {
+  document.getElementById('sm-empty').style.display='block';
+  document.getElementById('sm-loaded').style.display='none';
+  document.getElementById('sm-shimmer').style.display='none';
+  smClearStatus();
+}
+
+// Load button click → shimmer → render rows
+function smLoad() {
+  const sel = document.getElementById('sm-emp-select');
+  const empId = sel.value;
+  if (!empId) { showToast('w','Select an employee first'); return; }
+
+  const btn = document.getElementById('sm-load-btn');
+  const btnTxt = document.getElementById('sm-load-btn-txt');
+  btn.disabled = true;
+  btnTxt.innerHTML = '<svg width="13" height="13" style="animation:spin .8s linear infinite" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Loading…';
+
+  document.getElementById('sm-empty').style.display='none';
+  document.getElementById('sm-shimmer').style.display='block';
+
+  setTimeout(()=>{
+    btn.disabled = false;
+    btnTxt.textContent = 'Load';
+    document.getElementById('sm-shimmer').style.display='none';
+    document.getElementById('sm-loaded').style.display='block';
+
+    const rows = document.getElementById('sm-rows');
+    rows.innerHTML='';
+    const seed = smSeedByEmp[empId] || [];
+    seed.forEach(d=>rows.appendChild(smBuildRow(d.area, d.user)));
+
+    document.getElementById('sm-no-default-warn').style.display =
+      smDefaultUsers.length === 0 ? 'flex' : 'none';
+    document.getElementById('sm-add-btn').disabled = smDefaultUsers.length === 0;
+
+    smClearStatus();
+  }, 600);
+}
+
+function smAddRow() {
+  document.getElementById('sm-rows').appendChild(smBuildRow('',''));
+  smDirty();
+}
+function smDirty() {
+  const s = document.getElementById('sm-status');
+  s.textContent = 'Unsaved changes';
+  s.className = 'sm-status dirty';
+  document.getElementById('sm-synced-badge').classList.remove('show');
+}
+function smClearStatus() {
+  const s = document.getElementById('sm-status');
+  s.textContent = 'All changes saved';
+  s.className = 'sm-status';
+  document.getElementById('sm-synced-badge').classList.remove('show');
+}
+function smSave() {
+  const btn = document.getElementById('sm-save-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="13" height="13" style="animation:spin .8s linear infinite" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…';
+
+  // Simulate POST + profile re-fetch (OD-4A)
+  setTimeout(()=>{
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Mapping';
+
+    // OD-4A: profile re-fetch done → show "Routing updated" badge
+    const badge = document.getElementById('sm-synced-badge');
+    badge.classList.add('show');
+    const s = document.getElementById('sm-status');
+    s.textContent = 'All changes saved';
+    s.className = 'sm-status';
+
+    // Toast confirms routing is live immediately (OD-4A — no re-login needed)
+    showToast('s','Mapping saved — print routing updated for this session');
+
+    // Fade out badge after 4 sec
+    setTimeout(()=>badge.classList.remove('show'), 4000);
+  }, 900);
+}
+
+/* ── Init: auto-load first employee on tab open ── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Pre-load for the default-selected employee (Albus, value=485)
+  const sel = document.getElementById('sm-emp-select');
+  if (sel && sel.value) smOnEmployeeChange(sel);
+});
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  updatePreview();
+  document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',()=>{markDirty();updatePreview()}));
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change',markDirty));
+});
+</script>
+</body>
+</html>

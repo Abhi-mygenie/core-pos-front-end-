@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-083 — Expense Split Payment Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #F5F5F5; color: #1A1A1A; padding: 24px; }
+  
+  .mockup-label {
+    display: inline-block;
+    background: #FF6B00;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .mockup-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 6px;
+  }
+  .mockup-desc {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  
+  .screen {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #E5E5E5;
+    padding: 24px;
+    margin-bottom: 32px;
+    max-width: 960px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .screen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .screen-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1A1A1A;
+  }
+  .screen-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #FFF3E6;
+    color: #FF6B00;
+  }
+  
+  /* Entry line */
+  .entry-line {
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .entry-line.split-active {
+    border-color: #FF6B00;
+    background: #FFFBF7;
+    box-shadow: 0 0 0 1px rgba(255,107,0,0.1);
+  }
+  
+  .line-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .field label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+  }
+  .field input, .field select {
+    border: 1px solid #DDD;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    color: #1A1A1A;
+    outline: none;
+    background: white;
+  }
+  .field input:focus, .field select:focus {
+    border-color: #FF6B00;
+    box-shadow: 0 0 0 2px rgba(255,107,0,0.1);
+  }
+  .field input.readonly {
+    background: #F5F5F5;
+    color: #888;
+    cursor: not-allowed;
+  }
+  
+  /* Split button */
+  .split-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 12px;
+    border: 1.5px dashed #FF6B00;
+    border-radius: 8px;
+    background: transparent;
+    color: #FF6B00;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .split-btn:hover {
+    background: #FFF3E6;
+  }
+  .split-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Split rows */
+  .split-rows {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #E0D5C8;
+  }
+  .split-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .split-row + .split-row {
+    border-top: 1px solid #F0EBE4;
+  }
+  .split-row-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FF6B00;
+    min-width: 24px;
+    text-align: center;
+  }
+  
+  .remove-split-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 6px;
+    background: #FEE;
+    color: #E53E3E;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background 0.15s;
+  }
+  .remove-split-btn:hover { background: #FDD; }
+  
+  /* Validation bar */
+  .split-validation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .split-validation.ok {
+    background: #F0FFF4;
+    color: #2F855A;
+  }
+  .split-validation.error {
+    background: #FFF5F5;
+    color: #E53E3E;
+  }
+  
+  /* Cash Draw hint */
+  .cash-draw-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #888;
+    margin-top: 3px;
+  }
+  .cash-draw-hint .balance {
+    font-weight: 700;
+    color: #2F855A;
+  }
+  .cash-draw-hint .balance.low {
+    color: #E53E3E;
+  }
+  
+  /* Action buttons */
+  .add-line-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border: 1px solid #DDD;
+    border-radius: 8px;
+    background: white;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .save-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #22C55E;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .section-divider {
+    height: 1px;
+    background: #EEE;
+    margin: 28px 0;
+  }
+  
+  .flow-arrow {
+    text-align: center;
+    color: #CCC;
+    font-size: 20px;
+    margin: 16px 0;
+  }
+  
+  .annotation {
+    display: inline-block;
+    background: #1A1A1A;
+    color: #FFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .annotation.green { background: #22C55E; }
+  .annotation.red { background: #E53E3E; }
+  .annotation.orange { background: #FF6B00; }
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 01: BEFORE — Current State        -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 01 — Current State (Before)</div>
+<h2 class="mockup-title">Expense Entry — Single Payment Per Line</h2>
+<p class="mockup-desc">Each line has ONE payment method. No way to split ₹1000 as ₹500 Cash + ₹500 UPI.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+    <span class="screen-badge">Current</span>
+  </div>
+  
+  <div class="entry-line">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Office Rent" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Amount</label>
+        <input type="text" value="₹ 1,000" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Payment</label>
+        <select>
+          <option selected>Cash</option>
+        </select>
+      </div>
+      <div class="field" style="flex:0.5">
+        <label>Qty</label>
+        <input type="text" value="1" style="width:60px" readonly class="readonly" />
+      </div>
+      <div style="padding-top:18px; color:#CCC; font-size:18px; cursor:pointer">×</div>
+    </div>
+  </div>
+  
+  <div style="display:flex; gap:10px; margin-top:14px">
+    <button class="add-line-btn">+ Add Line</button>
+    <button class="save-btn" style="margin-left:auto">Save Entry</button>
+  </div>
+</div>
+
+<div class="flow-arrow">▼</div>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 02: AFTER — Split Button Visible  -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 02 — New: Split Button Appears</div>
+<h2 class="mockup-title">Each Line Gets a "Split Payment" Button</h2>
+<p class="mockup-desc">Dashed orange button appears next to the payment method. Click to split this line across multiple methods.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+    <span class="screen-badge" style="background:#FFF3E6;color:#FF6B00">CR-083</span>
+  </div>
+  
+  <div class="entry-line">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Office Rent" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Amount</label>
+        <input type="text" value="₹ 1,000" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Payment</label>
+        <select>
+          <option selected>Cash</option>
+        </select>
+      </div>
+      <div class="field" style="flex:0.5">
+        <label>Qty</label>
+        <input type="text" value="1" style="width:60px" readonly class="readonly" />
+      </div>
+      
+      <!-- NEW: Split Button -->
+      <div style="padding-top:18px">
+        <button class="split-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M4 4l17 17"/></svg>
+          Split
+        </button>
+      </div>
+      
+      <div style="padding-top:18px; color:#CCC; font-size:18px; cursor:pointer">×</div>
+    </div>
+  </div>
+  
+  <div style="display:flex; gap:10px; margin-top:14px">
+    <button class="add-line-btn">+ Add Line</button>
+    <button class="save-btn" style="margin-left:auto">Save Entry</button>
+  </div>
+</div>
+
+<div class="flow-arrow">▼</div>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 03: Split Expanded — Two Methods  -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 03 — Split Expanded: ₹500 Cash + ₹500 UPI</div>
+<h2 class="mockup-title">Line Expands Into Payment Rows</h2>
+<p class="mockup-desc">After clicking "Split", line expands. Original payment becomes Row 1. Row 2 auto-fills with remainder. Amounts must sum exactly to ₹1,000.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+    <span class="screen-badge" style="background:#FFF3E6;color:#FF6B00">CR-083</span>
+  </div>
+  
+  <div class="entry-line split-active">
+    <!-- Item row (unchanged) -->
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Office Rent" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Total Amount</label>
+        <input type="text" value="₹ 1,000" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:0.5">
+        <label>Qty</label>
+        <input type="text" value="1" style="width:60px" readonly class="readonly" />
+      </div>
+      <div style="padding-top:18px; color:#CCC; font-size:18px; cursor:pointer">×</div>
+    </div>
+    
+    <!-- Split payment rows -->
+    <div class="split-rows">
+      <!-- Row 1 -->
+      <div class="split-row">
+        <span class="split-row-label">1</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select style="border-color:#FF6B00">
+            <option selected>Cash</option>
+            <option>UPI</option>
+            <option>Card</option>
+            <option>Cash Draw</option>
+            <option>Bank Transfer</option>
+            <option>Unpaid</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="500" style="border-color:#FF6B00" />
+        </div>
+        <button class="remove-split-btn" title="Remove this split">×</button>
+      </div>
+      
+      <!-- Row 2 -->
+      <div class="split-row">
+        <span class="split-row-label">2</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select style="border-color:#FF6B00">
+            <option>Cash</option>
+            <option selected>UPI</option>
+            <option>Card</option>
+            <option>Cash Draw</option>
+            <option>Bank Transfer</option>
+            <option>Unpaid</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="500" style="border-color:#FF6B00" />
+        </div>
+        <button class="remove-split-btn" title="Remove this split">×</button>
+      </div>
+      
+      <!-- Validation bar — GOOD -->
+      <div class="split-validation ok">
+        <span>✓ Split amounts match total</span>
+        <span>₹500 + ₹500 = ₹1,000</span>
+      </div>
+    </div>
+  </div>
+  
+  <div style="display:flex; gap:10px; margin-top:14px">
+    <button class="add-line-btn">+ Add Line</button>
+    <button class="save-btn" style="margin-left:auto">Save Entry</button>
+  </div>
+</div>
+
+<div class="flow-arrow">▼</div>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 04: Half Paid + Half Unpaid       -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 04 — Half Paid + Half Unpaid</div>
+<h2 class="mockup-title">₹600 UPI (Paid) + ₹400 Unpaid</h2>
+<p class="mockup-desc">"Unpaid" is a valid payment method. Shows in reports as trackable unpaid amount. No settlement workflow — just tracking for now.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+    <span class="screen-badge" style="background:#FFF3E6;color:#FF6B00">CR-083</span>
+  </div>
+  
+  <div class="entry-line split-active">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Vendor Payment — Spices" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Total Amount</label>
+        <input type="text" value="₹ 1,000" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:0.5">
+        <label>Qty</label>
+        <input type="text" value="1" style="width:60px" readonly class="readonly" />
+      </div>
+      <div style="padding-top:18px; color:#CCC; font-size:18px; cursor:pointer">×</div>
+    </div>
+    
+    <div class="split-rows">
+      <!-- Row 1: Paid -->
+      <div class="split-row">
+        <span class="split-row-label">1</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select><option selected>UPI</option></select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="600" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <!-- Row 2: Unpaid -->
+      <div class="split-row">
+        <span class="split-row-label">2</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select style="color:#E53E3E; font-weight:600">
+            <option selected style="color:#E53E3E">Unpaid</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="400" />
+          <span style="font-size:10px; color:#E53E3E; margin-top:2px">⚠ Will be tracked as outstanding</span>
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <div class="split-validation ok">
+        <span>✓ Split amounts match total</span>
+        <span>₹600 + ₹400 = ₹1,000</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow">▼</div>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 05: Validation Error              -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 05 — Validation: Amounts Don't Match</div>
+<h2 class="mockup-title">Split Amounts Must Sum to Line Total</h2>
+<p class="mockup-desc">Save button disabled when split doesn't sum correctly. Red validation bar shows the gap.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+  </div>
+  
+  <div class="entry-line split-active" style="border-color:#E53E3E">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Office Rent" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Total Amount</label>
+        <input type="text" value="₹ 1,000" readonly class="readonly" />
+      </div>
+    </div>
+    
+    <div class="split-rows">
+      <div class="split-row">
+        <span class="split-row-label">1</span>
+        <div class="field" style="flex:1">
+          <select><option selected>Cash</option></select>
+        </div>
+        <div class="field" style="flex:1">
+          <input type="text" value="600" style="border-color:#E53E3E" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      <div class="split-row">
+        <span class="split-row-label">2</span>
+        <div class="field" style="flex:1">
+          <select><option selected>UPI</option></select>
+        </div>
+        <div class="field" style="flex:1">
+          <input type="text" value="300" style="border-color:#E53E3E" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <!-- Validation bar — ERROR -->
+      <div class="split-validation error">
+        <span>✗ Amounts don't match — ₹100 remaining</span>
+        <span>₹600 + ₹300 = ₹900 / ₹1,000</span>
+      </div>
+    </div>
+  </div>
+  
+  <div style="display:flex; gap:10px; margin-top:14px">
+    <button class="add-line-btn">+ Add Line</button>
+    <button class="save-btn" style="margin-left:auto; opacity:0.4; cursor:not-allowed">Save Entry</button>
+  </div>
+</div>
+
+<div class="flow-arrow">▼</div>
+
+<!-- ───────────────────────────────────────── -->
+<!-- MOCKUP 06: Cash Draw Balance Hint        -->
+<!-- ───────────────────────────────────────── -->
+<div class="mockup-label">Mockup 06 — Cash Draw Balance Hint</div>
+<h2 class="mockup-title">Available Balance Shown When Cash Draw Selected</h2>
+<p class="mockup-desc">Backend enforces Cash Draw balance. FE shows available balance as a hint so user knows before submitting.</p>
+
+<div class="screen">
+  <div class="screen-header">
+    <span class="screen-title">Add Expenses — 20/07/2026</span>
+  </div>
+  
+  <div class="entry-line split-active">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Kitchen Supplies" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Total Amount</label>
+        <input type="text" value="₹ 800" readonly class="readonly" />
+      </div>
+    </div>
+    
+    <div class="split-rows">
+      <!-- Row 1: Cash Draw with balance hint -->
+      <div class="split-row">
+        <span class="split-row-label">1</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select style="border-color:#FF6B00">
+            <option selected>Cash Draw</option>
+          </select>
+          <div class="cash-draw-hint">
+            Available: <span class="balance">₹2,450</span>
+          </div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="500" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <!-- Row 2: UPI -->
+      <div class="split-row">
+        <span class="split-row-label">2</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select><option selected>UPI</option></select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="300" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <div class="split-validation ok">
+        <span>✓ Split amounts match total</span>
+        <span>₹500 + ₹300 = ₹800</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cash Draw INSUFFICIENT example -->
+  <div class="entry-line split-active" style="margin-top:16px; border-color:#E53E3E">
+    <div class="line-row">
+      <div class="field" style="flex:2">
+        <label>Item</label>
+        <input type="text" value="Bulk Flour Order" readonly class="readonly" />
+      </div>
+      <div class="field" style="flex:1">
+        <label>Total Amount</label>
+        <input type="text" value="₹ 5,000" readonly class="readonly" />
+      </div>
+    </div>
+    
+    <div class="split-rows">
+      <div class="split-row">
+        <span class="split-row-label">1</span>
+        <div class="field" style="flex:1">
+          <label>Method</label>
+          <select style="border-color:#E53E3E">
+            <option selected>Cash Draw</option>
+          </select>
+          <div class="cash-draw-hint">
+            Available: <span class="balance low">₹2,450</span> — <span style="color:#E53E3E; font-weight:600">insufficient for ₹3,000</span>
+          </div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Amount</label>
+          <input type="text" value="3000" style="border-color:#E53E3E" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <div class="split-row">
+        <span class="split-row-label">2</span>
+        <div class="field" style="flex:1">
+          <select><option selected>Bank Transfer</option></select>
+        </div>
+        <div class="field" style="flex:1">
+          <input type="text" value="2000" />
+        </div>
+        <button class="remove-split-btn">×</button>
+      </div>
+      
+      <div class="split-validation error">
+        <span>✗ Cash Draw balance insufficient (₹2,450 available, ₹3,000 requested)</span>
+        <span>Reduce Cash Draw amount or use a different method</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:40px; padding:20px; background:#1A1A1A; border-radius:12px; color:#FFF; max-width:960px">
+  <div style="font-size:13px; font-weight:700; margin-bottom:12px; color:#FF6B00">CR-083 — Flow Summary</div>
+  <div style="font-size:12px; line-height:2; color:#CCC">
+    <strong style="color:white">1.</strong> User adds expense line → single payment method (current behavior)<br>
+    <strong style="color:white">2.</strong> User clicks <span style="color:#FF6B00; font-weight:600">"Split"</span> button → line expands, original method becomes Row 1<br>
+    <strong style="color:white">3.</strong> Row 2 auto-fills: same item, <span style="color:#FF6B00">remainder amount</span>, empty method dropdown<br>
+    <strong style="color:white">4.</strong> User picks second method (UPI, Unpaid, Cash Draw, etc.) and adjusts amounts<br>
+    <strong style="color:white">5.</strong> <span style="color:#22C55E; font-weight:600">Validation:</span> green bar when split sums match total · red bar when gap exists · Save disabled on mismatch<br>
+    <strong style="color:white">6.</strong> <span style="color:#22C55E; font-weight:600">Cash Draw:</span> shows available balance · red warning when amount exceeds balance<br>
+    <strong style="color:white">7.</strong> On Save → FE sends 2 detail lines to backend (same item, different methods) · backend accepts as-is<br>
+    <strong style="color:white">8.</strong> "Unpaid" lines tracked in reports · no settlement workflow (Phase 2)
+  </div>
+</div>
+
+</body>
+</html>
