@@ -796,3 +796,17 @@ BUG range: BUG-001 to BUG-195 (192 registered, 3 cosmetic gaps: BUG-036/120/121)
 | **QA Handover** | `handover/QA_HANDOVER_CR359_2026_09_02.md` |
 | **OD-3** | Load button (Option B) |
 | **OD-4** | Yes — profile re-fetch after save (`getProfile` + `setRestaurant`) |
+
+---
+
+## 2026-09-08 — AUDIT TRACK (Sprint: pos_audit_1 — Gate 1 INTAKE)
+
+Owner decisions D1–D6 locked 2026-09-08. All 5 items are doc/tooling/security — zero `frontend/src/` code changes except CR-372 (App.js routing + .env).
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-368** | Test Suite Triage — Achieve Zero-Failure Baseline | P1 | MEDIUM | **INTAKE** | 1 | 56 failing tests + 3 fake node scripts. Blocks CR-369 (D3-b). Source: F-QA-01 + F-QA-02. `change_requests/CR-368_TEST_SUITE_TRIAGE_CLEAN_BASELINE_INTAKE.md` |
+| **CR-369** | Write AGENT_PROMPT_ALPHA_v0.8.md | P1 | LOW | **INTAKE — BLOCKED by CR-368** | 1 | Doc only. All D1–D6 decisions locked. ~350 additive lines. v0.7 untouched. `change_requests/CR-369_AGENT_PROMPT_ALPHA_V08_WRITE_INTAKE.md` |
+| **CR-370** | Stale Doc Corrections — 5 Records | P2 | LOW | **INTAKE** | 1 | C1 reword v1-defunct, C2 PRD.md, C3 CONTROL_DASHBOARD, C4 create ENV_REGISTRY.md, C5 populate test_credentials.md. `change_requests/CR-370_STALE_DOC_CORRECTIONS_5_RECORDS_INTAKE.md` |
+| **CR-371** | Build sync_registry.py — Canonical Registry Sync Script | P1 | LOW | **INTAKE** | 1 | D4-a: after CLOSED, manual registry edits forbidden. CLI: --id --status --gate --sprint. `change_requests/CR-371_SYNC_REGISTRY_PY_CANONICAL_SCRIPT_INTAKE.md` |
+| **CR-372** | Security Remediation — Remove Internal Files from Public Surface | P1 | HIGH | **INTAKE — 3 owner decisions needed** | 1 | F-SEC-01 (__dev move), F-SEC-02 (96 HTML briefs), F-SEC-03 (22 routes), F-SEC-07 (.env keys). OD-CR372-01/02/03 required before planning. RELATED: DEV-DASHBOARD-001. `change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md` |

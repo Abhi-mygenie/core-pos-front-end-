@@ -22875,6 +22875,197 @@
           "note": "Intake agent — planned Phase 5 of CR-358 registered as own item on owner instruction 2026-09-04; entry-gate endpoints live-verified"
         }
       ]
+    },
+    {
+      "id": "CR-368",
+      "title": "Test Suite Triage — Achieve Zero-Failure Baseline",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Dev Tooling / Testing Infrastructure",
+      "related": [
+        "CR-369"
+      ],
+      "category": "AUDIT",
+      "code_reality": "PARTIAL",
+      "blast_radius": "MEDIUM",
+      "backend_blocked": false,
+      "files": "src/__tests__/ (42 files, 3 node scripts to convert, up to 56 stale/real-bug files)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-368_TEST_SUITE_TRIAGE_CLEAN_BASELINE_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Evidence",
+          "path": "memory/evidence/BASELINE-2026-09/",
+          "type": "evidence"
+        }
+      ],
+      "note": "Blocks CR-369. D3-b: triage to zero before v0.8 goes live. 56 failures + 3 fake node scripts. Source: F-QA-01 + F-QA-02.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — AUDIT track 2026-09-08. Owner decision D3-b."
+        }
+      ]
+    },
+    {
+      "id": "CR-369",
+      "title": "Write AGENT_PROMPT_ALPHA_v0.8.md",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "LOW",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Control Layer / Agent Process",
+      "related": [
+        "CR-368",
+        "CR-047"
+      ],
+      "category": "AUDIT",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "control/AGENT_PROMPT_ALPHA_v0.8.md (NEW, ~350 lines)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-369_AGENT_PROMPT_ALPHA_V08_WRITE_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Gap Analysis",
+          "path": "memory/control/AGENT_PROMPT_GAP_ANALYSIS_v0.8.md",
+          "type": "investigation"
+        }
+      ],
+      "note": "Blocked by CR-368 (D3-b). All 6 owner decisions locked (D1-D6). v0.7 untouched.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — AUDIT track 2026-09-08. All decisions D1-D6 locked."
+        }
+      ]
+    },
+    {
+      "id": "CR-370",
+      "title": "Stale Doc Corrections — 5 Records from Audit §3",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P2",
+      "risk": "LOW",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Control Layer / Documentation",
+      "related": [
+        "CR-369"
+      ],
+      "category": "AUDIT",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "INV_CR363_CR364_CR366_API_IMPACT_ANALYSIS.md, control/OPEN_GAPS_REGISTER.md, PRD.md, control/CONTROL_DASHBOARD.md, control/ENV_REGISTRY.md (NEW), test_credentials.md",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-370_STALE_DOC_CORRECTIONS_5_RECORDS_INTAKE.md",
+          "type": "intake"
+        }
+      ],
+      "note": "5 corrections: reword v1-defunct claim (C1), update PRD.md (C2), add source-of-truth to dashboard (C3), create ENV_REGISTRY.md (C4), populate test_credentials.md (C5). Source: SESSION_HANDOVER_2026_09_06_AUDIT §3.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — AUDIT track 2026-09-08."
+        }
+      ]
+    },
+    {
+      "id": "CR-371",
+      "title": "Build sync_registry.py — Canonical Registry Sync Script",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "LOW",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Control Layer / Tooling",
+      "related": [
+        "CR-369"
+      ],
+      "category": "AUDIT",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "control/sync_registry.py (NEW)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-371_SYNC_REGISTRY_PY_CANONICAL_SCRIPT_INTAKE.md",
+          "type": "intake"
+        }
+      ],
+      "note": "D4-a: after CLOSED, manual registry edits forbidden. CLI: --id --status --gate --sprint --note --dry-run. Updates all 4 registry files atomically.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — AUDIT track 2026-09-08. Owner decision D4-a."
+        }
+      ]
+    },
+    {
+      "id": "CR-372",
+      "title": "Security Remediation — Remove Internal Files from Public Surface",
+      "type": "CR",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "HIGH",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "pos_audit_1",
+      "area": "Security",
+      "related": [
+        "DEV-DASHBOARD-001"
+      ],
+      "category": "AUDIT",
+      "code_reality": "PARTIAL",
+      "blast_radius": "LARGE",
+      "backend_blocked": false,
+      "files": "public/__dev/ (move), public/*.html (96 files, move), App.js (~22 routes), frontend/.env (2 vars)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Baseline",
+          "path": "memory/control/PROJECT_BASELINE_2026_09.md",
+          "type": "evidence"
+        }
+      ],
+      "note": "F-SEC-01/02/03/07. 3 owner decisions needed before planning: OD-CR372-01 (public route list), OD-CR372-02 (CRM key usage), OD-CR372-03 (__dev post-move location). RELATED to DEV-DASHBOARD-001.",
+      "status_history": [
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE",
+          "note": "INTAKE agent — AUDIT track 2026-09-08. S1 finding from PROJECT_BASELINE_2026_09.md."
+        }
+      ]
     }
   ],
   "meta": {
