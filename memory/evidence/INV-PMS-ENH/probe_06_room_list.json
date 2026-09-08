@@ -1,0 +1,52 @@
+[
+ {
+  "table": {
+   "id": 8524,
+   "restaurant_id": 69,
+   "waiter_id": 5115,
+   "title": null,
+   "table_no": "r3",
+   "qr_code": null,
+   "status": 1,
+   "created_at": "2026-08-30T11:10:04.000000Z",
+   "updated_at": "2026-08-30T11:10:04.000000Z",
+   "rtype": "RM",
+   "room_operational_status": null,
+   "room_operational_status_at": null,
+   "room_operational_status_by": null
+  },
+  "order_id": 1232218,
+  "user": {
+   "id": 42630,
+   "f_name": "Test1 Guest1",
+   "l_name": "",
+   "phone": "***",
+   "email": "***"
+  }
+ },
+ {
+  "table": {
+   "id": 8526,
+   "restaurant_id": 69,
+   "waiter_id": 5115,
+   "title": null,
+   "table_no": "r2",
+   "qr_code": null,
+   "status": 1,
+   "created_at": "2026-08-30T11:10:04.000000Z",
+   "updated_at": "2026-09-03T20:50:48.000000Z",
+   "rtype": "RM",
+   "room_operational_status": "hk",
+   "room_operational_status_at": "2026-09-03T20:50:48.000000Z",
+   "room_operational_status_by": null
+  },
+  "order_id": 1232217,
+  "user": {
+   "id": 42629,
+   "f_name": "poii poii",
+   "l_name": "",
+   "phone": "***",
+   "email": "***"
+  }
+ }
+]
