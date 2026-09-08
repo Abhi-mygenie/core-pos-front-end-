@@ -23058,12 +23058,17 @@
           "type": "evidence"
         }
       ],
-      "note": "F-SEC-01/02/03/07. 3 owner decisions needed before planning: OD-CR372-01 (public route list), OD-CR372-02 (CRM key usage), OD-CR372-03 (__dev post-move location). RELATED to DEV-DASHBOARD-001.",
+      "note": "F-SEC-01 (__dev→/app/memory/dev-dashboard/ Option A), F-SEC-02 (~91 HTML briefs→memory/design_briefs/, PMS files EXCLUDED until PMS closes), F-SEC-03 (protect 23 routes, keep / + /local-printer-setup public), F-SEC-07 (remove CRM_API_KEYS + CORS_ORIGINS from .env — OD-02: not in src/ confirmed). All 3 ODs locked 2026-09-08. Ready for Gate 2 Planning.",
       "status_history": [
         {
           "date": "2026-09-08",
           "status": "INTAKE",
           "note": "INTAKE agent — AUDIT track 2026-09-08. S1 finding from PROJECT_BASELINE_2026_09.md."
+        },
+        {
+          "date": "2026-09-08",
+          "status": "INTAKE — ODs LOCKED",
+          "note": "OD-CR372-01/02/03 all answered. Ready for Planning Gate 2."
         }
       ]
     }

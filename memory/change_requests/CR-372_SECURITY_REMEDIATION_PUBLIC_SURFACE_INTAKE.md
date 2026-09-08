@@ -105,3 +105,60 @@ grep REACT_APP_CRM_API_KEYS .env  → live keys present (confirmed)
 - **Source findings:** F-SEC-01, F-SEC-02, F-SEC-03, F-SEC-07 — `control/PROJECT_BASELINE_2026_09.md`
 - **Must NOT start F-SEC-07** until OD-CR372-02 answered (CRM usage check)
 - **Must NOT start F-SEC-03** until OD-CR372-01 answered (public route list)
+
+---
+
+## 10. Owner Decisions — LOCKED 2026-09-08
+
+### OD-CR372-01 — Route Protection List ✅ LOCKED
+
+**Route classification final:**
+
+| Route | Decision | Reason |
+|---|---|---|
+| `/` (LoginPage) | ✅ KEEP PUBLIC | Login page — must be public |
+| `/restaurant-picker` | 🔒 PROTECT | Owner: protect for now |
+| `/reports-module/order-ledger/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/kitchen-ops/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/room-orders/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/food-court/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/item-sales/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/variation-addon-sales/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/reports-module/items-hybrid/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/settlement/preview` | 🔒 PROTECT | Not needed unprotected |
+| `/settings-preview` | 🔒 PROTECT | Not needed unprotected |
+| `/aggregator-preview` | 🔒 PROTECT | Not needed unprotected |
+| `/printer-config-preview` | 🔒 PROTECT | Not needed unprotected |
+| `/screen1-compare` → `/screen9-compare` (9 routes) | 🔒 PROTECT | CR-132 printer screens — not PMS, no reason to stay public |
+| `/cr132-print` | 🔒 PROTECT | Internal print design page |
+| `/local-printer-setup` | ✅ KEEP PUBLIC | Printer agent needs local network access without login |
+
+**PMS note:** All `/pms/*` React routes are already behind `ProtectedRoute` — no action needed.
+PMS static HTML files (`cr358-p2-v3-mockup.html`, `cr358-p3-design-comparison.html`, `cr358-p4-pms-mockup.html`, `comparison_room_ui.html`, `MyGenie_PMS_Screen_Reference.pdf`) — these are static files in `public/`, not React routes. **EXCLUDED from F-SEC-02 scope until PMS track closes.** Revisit at PMS Gate 6 / sprint closure.
+
+**PUBLIC_ROUTES.md must be created at planning listing:** `/` and `/local-printer-setup` with justification.
+
+---
+
+### OD-CR372-02 — REACT_APP_CRM_API_KEYS usage ✅ LOCKED
+
+**Answer: NO** — key is not consumed in any `src/` file. Safe to remove from `frontend/.env` directly. No backend proxy needed.
+
+---
+
+### OD-CR372-03 — Where to move `__dev/` dashboard ✅ LOCKED
+
+**Decision: Option A** — Move `public/__dev/` to `/app/memory/dev-dashboard/`. Not served from any URL. Accessible via filesystem only. Zero browser exposure.
+
+**Scope update:** F-SEC-01 moves `public/__dev/` → `/app/memory/dev-dashboard/`. Any `index.html` reference to `__dev/` scripts must be removed.
+
+---
+
+### Revised F-SEC-02 scope (PMS carve-out)
+
+**Move to `/app/memory/design_briefs/`:** All `.html` files in `public/` EXCEPT PMS-related ones:
+- **EXCLUDE from move (keep in public/ for now):** `cr358-p2-v3-mockup.html`, `cr358-p3-design-comparison.html`, `cr358-p4-pms-mockup.html`, `comparison_room_ui.html`, `MyGenie_PMS_Screen_Reference.pdf`
+- **INCLUDE for move:** all remaining non-PMS HTML briefs (~91 files)
+
+Revisit PMS carve-out files at: PMS track Gate 6 / sprint `pos_pms_1` closure.
