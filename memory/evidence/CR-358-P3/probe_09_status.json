@@ -1,0 +1,22 @@
+{
+ "request": {
+  "method": "GET",
+  "path": "/api/v2/vendoremployee/aiosell/status",
+  "params": {}
+ },
+ "status": 200,
+ "body": {
+  "status": true,
+  "message": "Aiosell service status fetched successfully",
+  "data": {
+   "restaurant_id": 69,
+   "hotel_code": "sandbox-pms",
+   "pms_slug": "sample-pms",
+   "api_base_url": "https://live.aiosell.com",
+   "service_status": "running",
+   "is_active": true,
+   "is_running": true,
+   "last_sync_at": "2026-09-03 19:20:59"
+  }
+ }
+}

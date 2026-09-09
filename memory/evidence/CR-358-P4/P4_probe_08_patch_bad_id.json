@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/api/v2/vendoremployee/aiosell/room-status/99999",
+    "body": {
+      "status": "hk"
+    }
+  },
+  "http_status": 422,
+  "body": {
+    "status": false,
+    "message": "Room not found for this restaurant (must be rtype=RM)."
+  }
+}
