@@ -23504,6 +23504,23 @@
         "OD-386-D2": "LOCKED \u2014 Do not show slab threshold in UI. Slab badge on strip header only."
       },
       "blockers": "NONE \u2014 all ODs locked"
+    },
+    {
+      "id": "BUG-387",
+      "title": "PMS Picker: HK and OOO Rooms Appear Selectable in Check-In / New Booking",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE (2026-09-09). OD-387-01 (HK rooms in picker) + OD-387-02 (OOO rooms in picker) open. Awaiting owner decisions.",
+      "sprint_key": "pos_pms_1",
+      "gate": "1",
+      "area": "PMS > Room Picker (S3 New Booking + S4 Check-In)",
+      "files": "src/api/services/pmsService.js, src/pages/pms/NewBookingPage.jsx, src/pages/pms/CheckInPage.jsx",
+      "note": "getBookableRooms() uses getRoomList() for occupied flag only. HK-only + OOO rooms have no active order so isOccupied=false. Gap confirmed: r5 (OOO, id:8527) appears selectable on live preprod. Related: BUG-380 (occupied rooms - Gate 5b). Fix: add room-status-board call to getBookableRooms, expose isHk + isOoo flags.",
+      "related": "BUG-380, CR-358-P2, CR-358-P3, OG-PMS-005",
+      "artifact_refs": [
+        "change_requests/BUG-387_HK_OOO_ROOMS_SELECTABLE_IN_PICKER_INTAKE.md"
+      ]
     }
   ],
   "meta": {

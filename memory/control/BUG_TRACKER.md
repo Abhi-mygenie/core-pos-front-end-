@@ -1,4 +1,5 @@
-**Last Updated:** 2026-09-09 — **BUG-386 QA PASS — Gate 5b.** 6/6 tests pass. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (TC-386-04 checkout payload deferred Gate 6). Root bug confirmed fixed in live network: gst_tax=1440 (was "0.00"). Registry: SYNCED. Ready Gate 6 owner smoke.
+**Last Updated:** 2026-09-09 — **BUG-387 INTAKE.** PMS picker: HK + OOO rooms appear selectable. Agent-discovered + owner observation. Live probe: r5 (OOO, id:8527) selectable on preprod. Related: BUG-380 (occupied only). OD-387-01 (HK behaviour) + OD-387-02 (OOO behaviour) open. Registry: 631 items.
+**Last Updated (prev):** 2026-09-09 — **BUG-386 QA PASS — Gate 5b.** 6/6 tests pass. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (TC-386-04 checkout payload deferred Gate 6). Root bug confirmed fixed in live network: gst_tax=1440 (was "0.00"). Registry: SYNCED. Ready Gate 6 owner smoke.
 **Last Updated (prev):** 2026-09-09 — **BUG-386 GATE 5a CLOSED.** Q-GST-01 RESOLVED: `room_gst_tax` confirmed as accepted field on BILL_PAYMENT (curl probe passed validation, reached "Order not found"). TODO removed from PmsCheckoutDrawer.jsx. All 7 edits clean. Awaiting QA.
 **Last Updated (prev):** 2026-09-09 — **BUG-386 IMPLEMENTED — Gate 5a.** 7 edits (1 NEW + 6 MOD): roomGstCalculator.js (NEW pure utility), profileTransform.js (E1 roomGstSlabs), pmsService.js (E5 gst_tax+balance_payment), CheckInPage.jsx (E3+E4 compute+strip), orderTransform.js (E6 gstTax), PmsCheckoutDrawer.jsx (E7 room_gst_tax). EXIT GATE 5/5 PASS. webpack clean. Awaiting QA.
 **Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
@@ -1073,6 +1074,26 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **Fast Lane** | NOT ELIGIBLE (4 criteria fail: 3 files, API call added, hotspot, borderline financial) |
 | **Intake doc** | `change_requests/BUG-380_OCCUPIED_ROOMS_IN_PICKER_INTAKE.md` |
 | **Next** | Planning Gate 2 (normal full gate flow) |
+
+---
+
+### BUG-387: PMS Picker — HK and OOO Rooms Appear Selectable in Check-In / New Booking
+
+| Field | Value |
+|---|---|
+| **Status** | INTAKE (2026-09-09) |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Reported** | 2026-09-09 (Agent-discovered + owner observation) |
+| **Area** | PMS > Room Picker (S3 New Booking + S4 Check-In) |
+| **Description** | `getBookableRooms()` only marks rooms unavailable if they have an active order (`getRoomList()`). HK-only rooms (post-checkout, being cleaned) and OOO rooms (maintenance) have no active order → `isOccupied = false` → appear fully selectable. Live probe confirmed: r5 (OOO, id:8527) appears selectable on preprod. Guest could be checked into a room under maintenance. |
+| **Duplicate check** | DISTINCT — **Related: BUG-380** (occupied rooms only; this covers HK/OOO which getRoomList misses) |
+| **Blast radius** | SMALL–MEDIUM — 3 files: `pmsService.js` (add room-status-board call), `NewBookingPage.jsx`, `CheckInPage.jsx` |
+| **Sub-gaps** | GAP-1 (HIGH): OOO rooms selectable — live confirmed · GAP-2 (HIGH): pure-HK rooms selectable — code confirmed |
+| **Owner decisions** | OD-387-01: HK rooms — (a) show greyed "Needs Cleaning" or (b) hide? · OD-387-02: OOO rooms — (a) show greyed "Out of Order" or (b) hide? |
+| **Fast Lane** | NOT ELIGIBLE (3 files, API call, hotspot pmsService.js) |
+| **Intake doc** | `change_requests/BUG-387_HK_OOO_ROOMS_SELECTABLE_IN_PICKER_INTAKE.md` |
+| **Next** | Owner answers OD-387-01 + OD-387-02 → Gate 2 Planning |
 
 ---
 
