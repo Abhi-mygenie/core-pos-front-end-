@@ -241,6 +241,18 @@ export const fromAPI = {
         roomGstApplicable: toBoolean(api.room_gst_applicable),
         foodPriceWithPaisa: toBoolean(api.food_price_with_paisa),
         billDateFormat: api.bill_date_format || 'dd/MMM/yyyy hh:mm a',
+        // BUG-386: room accommodation GST slab config.
+        // room_gst arrives as a JSON string under restaurants[0].settings.room_gst.
+        // parseRoomGstSlabs() safely returns null on missing/malformed input.
+        roomGstSlabs: (() => {
+          try {
+            const raw = api.settings?.room_gst;
+            if (!raw) return null;
+            const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            if (!Array.isArray(parsed?.slabs) || parsed.slabs.length === 0) return null;
+            return { basis: parsed.basis ?? 'unit_accommodation_per_day', slabs: parsed.slabs };
+          } catch { return null; }
+        })(),
       },
 
       // POS2-007 Phase 1 — pass-through ONLY (no FE consumer this CR).

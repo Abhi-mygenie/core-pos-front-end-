@@ -429,6 +429,7 @@ export const fromAPI = {
           remainingRoomBalance: parseFloat(api.room_info.room_payment_summary.remaining_room_balance) || 0,
           ledgerPaidAmount:     parseFloat(api.room_info.room_payment_summary.ledger_paid_amount)     || 0,
           legacyAdvancePayment: parseFloat(api.room_info.room_payment_summary.legacy_advance_payment) || 0,
+          gstTax:               parseFloat(api.room_info.room_payment_summary.gst_tax) || 0, // BUG-386
           payments: (api.room_info.room_payment_summary.payments || []).map(p => ({
             id:            p.id,
             amount:        parseFloat(p.payment_amount) || 0,

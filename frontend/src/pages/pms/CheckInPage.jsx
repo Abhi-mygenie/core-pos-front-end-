@@ -1,10 +1,12 @@
-// CR-358-P2: S4 — Check-In Page (arrivals list + Walk-in → pmsService.pmsCheckIn JSON; roomService.checkIn NOT used)
+// CR-358-P2 | BUG-386: S4 — Check-In Page. BUG-386: room accommodation GST (CGST+SGST) computed from slabs.
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Search, Plus, UserPlus, Loader2, AlertCircle, Check, Home, Calendar, User, Phone, Info, BedDouble } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import { toast } from 'sonner';
 import { getPmsReservations, getBookableRooms, pmsCheckIn } from '@/api/services/pmsService';
+import { useRestaurant } from '@/contexts'; // BUG-386
+import { computeRoomGst } from '@/utils/roomGstCalculator'; // BUG-386
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
 const addDays = (dateStr, n) => { const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
@@ -32,6 +34,10 @@ export default function CheckInPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const today = todayStr();
+
+  // BUG-386: room accommodation GST from profile slab config
+  const { restaurant } = useRestaurant();
+  const { roomGstApplicable, roomGstSlabs } = restaurant?.checkInFlags ?? {};
 
   // CR-358-P2 A-01: arrivals window today-1..today+60
   const startDate = useMemo(() => addDays(today, -1), [today]);
@@ -159,6 +165,14 @@ export default function CheckInPage() {
     if (!formValid || submitting) return;
     setSubmitting(true);
     try {
+      // BUG-386: compute GST before submit
+      const { gstTotal: gstTax } = computeRoomGst(
+        roomGstApplicable,
+        roomGstSlabs,
+        Number(form.orderAmount),
+        formNights ?? 1,
+        1  // single-room check-in (pms_gst.md §5)
+      );
       const res = await pmsCheckIn({
         bookingType: form.bookingType,
         bookingId: form.bookingId,
@@ -173,6 +187,7 @@ export default function CheckInPage() {
         adults: Number(form.adults),
         children: Number(form.children),
         note: form.note,
+        gstTax, // BUG-386
       });
       toast.success(res?.message ?? 'Guest checked in');
       navigate('/pms/in-house'); // CR-358-P2 A-06
@@ -365,12 +380,56 @@ export default function CheckInPage() {
                       </div>
                     </div>
 
+                    {/* BUG-386: GST Accommodation strip */}
+                    {(() => {
+                      const amt = Number(form.orderAmount) || 0;
+                      const nights = formNights ?? 1;
+                      const { gstTotal, cgst, sgst } = computeRoomGst(roomGstApplicable, roomGstSlabs, amt, nights, 1);
+                      const fmt = (n) => n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                      const rate = roomGstSlabs?.slabs?.find(s => (amt / nights) >= (s.min ?? 0) && (s.max == null || (amt / nights) <= s.max))?.gst_percent ?? 0;
+                      const hasGst = roomGstApplicable && roomGstSlabs && gstTotal > 0;
+                      const notApplicable = !roomGstApplicable || !roomGstSlabs;
+                      if (!amt || (!hasGst && !notApplicable)) return null;
+                      return (
+                        <div data-testid="ci-gst-strip"
+                          className={`rounded-xl border px-4 py-3 flex flex-col gap-1.5 text-[12px] ${hasGst ? 'bg-[#F0FDF4] border-[#BBF7D0]' : 'bg-[#FAFAFA] border-[#E5E5E5]'}`}>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className={`font-semibold text-[11px] uppercase tracking-wide ${hasGst ? 'text-[#166534]' : 'text-[#888]'}`}>GST (Accommodation)</span>
+                            {hasGst
+                              ? <span className="text-[10px] font-bold bg-[#22C55E] text-white px-2 py-0.5 rounded-full">{rate}% Slab</span>
+                              : <span className="text-[10px] font-semibold bg-[#E5E5E5] text-[#888] px-2 py-0.5 rounded-full">Not Applicable</span>
+                            }
+                          </div>
+                          {hasGst ? (
+                            <>
+                              <div className="flex justify-between text-[#374151]">
+                                <span>CGST ({rate / 2}%)</span>
+                                <span>₹{fmt(cgst)}</span>
+                              </div>
+                              <div className="flex justify-between text-[#374151]">
+                                <span>SGST ({rate / 2}%)</span>
+                                <span>₹{fmt(sgst)}</span>
+                              </div>
+                              <div className="flex justify-between text-[11px] text-[#888] italic border-t border-[#BBF7D0] pt-1.5 mt-0.5">
+                                <span>Total GST (CGST + SGST)</span>
+                                <span className="font-semibold text-[#166534]">₹{fmt(gstTotal)}</span>
+                              </div>
+                              <div className="flex justify-between font-bold text-[#1A1A1A] border-t border-[#BBF7D0] pt-1.5 mt-0.5">
+                                <span>Total incl. GST</span>
+                                <span className="text-[#15803D] text-[13px]">₹{fmt(amt + gstTotal)}</span>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-[#888] text-[12px]">GST not configured for this property. Sending gst_tax: 0.00</span>
+                          )}
+                        </div>
+                      );
+                    })()}
+
                     <div>
                       <label className="text-[12px] text-[#888] mb-1 block">Note</label>
                       <textarea data-testid="ci-note" value={form.note} onChange={e => setField('note', e.target.value)} rows={2} placeholder="Special requests…" className="w-full border border-[#E5E5E5] rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:border-[#329937] resize-none bg-white" />
                     </div>
-
-                    {/* Info strip */}
                     <div className="flex items-center gap-2 text-[12px] text-[#888] bg-gray-50 rounded-lg px-3 py-2">
                       <Info className="w-3.5 h-3.5 shrink-0" />
                       <span data-testid="ci-type-label">Booking type: <strong className="text-[#1A1A1A]">{form.bookingType}</strong></span>

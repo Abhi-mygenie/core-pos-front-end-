@@ -1,4 +1,5 @@
-**Last Updated:** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
+**Last Updated:** 2026-09-09 — **BUG-386 IMPLEMENTED — Gate 5a.** 7 edits (1 NEW + 6 MOD): roomGstCalculator.js (NEW pure utility), profileTransform.js (E1 roomGstSlabs), pmsService.js (E5 gst_tax+balance_payment), CheckInPage.jsx (E3+E4 compute+strip), orderTransform.js (E6 gstTax), PmsCheckoutDrawer.jsx (E7 room_gst_tax). EXIT GATE 5/5 PASS. webpack clean. Awaiting QA.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
 **Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 DONE.** Impact Analysis written (`impact/BUG-386_IMPACT_ANALYSIS.md`). 7 edits (1 NEW + 6 MOD). Design mockup approved (`public/bug-386-design-review.html`).
 **Last Updated (prev):** 2026-09-08 — **BUG-386 ODs ALL LOCKED.** OD-386-01: P0 this sprint (pos_pms_1). OD-386-02: Option A — checkout must resend `gst_tax` explicitly (PmsCheckoutDrawer now in scope). OD-386-03: Fix forward only. Awaiting Gate 2 GO.
 **Last Updated (prev):** 2026-09-08 — **BUG-386 INTAKE P0 CRITICAL** — PMS check-in `gst_tax` hardcoded `'0.00'`; room GST slab never computed or sent; `balance_payment` missing GST component. 8 sub-gaps. Source: INV-PMS-GST-001 + owner `pms_gst.md` spec. 3 owner decisions open (OD-386-01..03). Backend brief filed (Q-GST-01).
@@ -1153,7 +1154,7 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | INTAKE (2026-09-08) |
+| **Status** | **IMPLEMENTED — Gate 5a (2026-09-09)** |
 | **Priority** | P0 — CRITICAL |
 | **Risk** | CRITICAL (financial — billing, tax, GST compliance) |
 | **Reported** | 2026-09-08 (Agent-discovered via INV-PMS-GST-001; owner-supplied spec: `pms_gst.md`) |

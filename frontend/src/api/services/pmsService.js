@@ -156,10 +156,10 @@ export const pmsCheckIn = async (p) => {
     order_amount:    orderAmount,
     room_price:      orderAmount,
     advance_payment: advance,
-    balance_payment: to2dp(orderAmount - advance),
+    balance_payment: to2dp(orderAmount + (p.gstTax ?? 0) - advance), // BUG-386: include GST
     payment_method:  p.paymentMethod ?? '',
     order_note:      p.note ?? '',
-    gst_tax:         '0.00',
+    gst_tax:         to2dp(p.gstTax ?? 0),                           // BUG-386: computed from slabs
     firm_name:       '',
     firm_gst:        '',
   };
