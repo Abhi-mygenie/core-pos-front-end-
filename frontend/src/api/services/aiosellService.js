@@ -118,3 +118,65 @@ export const getLocalReservations = async ({ startDate, endDate }) => {
   });
   return res.data;
 };
+
+// ─── Phase 5 (CR-358-P5) ─────────────────────────────────────────────────────
+
+/** S8-C: Fetch current rates from Aiosell for a date range */
+export const getRates = async ({ startDate, endDate }) => {
+  const res = await api.post(AIOSELL_ENDPOINTS.FETCH_RATES, {
+    start_date: startDate,
+    end_date:   endDate,
+  });
+  return res.data;
+};
+
+/** S8-C: Push rate changes to Aiosell OTA channels.
+ * @param {{ startDate, endDate, rates: [{room_code, rateplan_code, rate}] }} params
+ */
+export const pushRates = async ({ startDate, endDate, rates }) => {
+  const res = await api.post(AIOSELL_ENDPOINTS.PUSH_RATES, {
+    start_date: startDate,
+    end_date:   endDate,
+    rates,
+  });
+  return res.data;
+};
+
+/** S8-C: Push inventory restrictions (stop-sell, min-stay, CTA, CTD) per room type.
+ * @param {{ startDate, endDate, toChannels: string[], rooms: [{room_code, restrictions: {...}}] }} params
+ * restrictions is an OBJECT not array. Only include keys to change.
+ */
+export const pushInventoryRestrictions = async ({ startDate, endDate, toChannels, rooms }) => {
+  const res = await api.post(AIOSELL_ENDPOINTS.PUSH_INVENTORY_RESTRICT, {
+    start_date:  startDate,
+    end_date:    endDate,
+    to_channels: toChannels,
+    rooms,
+  });
+  return res.data;
+};
+
+/** S8-C: Push rate restrictions (min-stay, CTA, CTD) per rate plan.
+ * @param {{ startDate, endDate, toChannels: string[], rates: [{room_code, rateplan_code, restrictions: {...}}] }} params
+ */
+export const pushRateRestrictions = async ({ startDate, endDate, toChannels, rates }) => {
+  const res = await api.post(AIOSELL_ENDPOINTS.PUSH_RATE_RESTRICT, {
+    start_date:  startDate,
+    end_date:    endDate,
+    to_channels: toChannels,
+    rates,
+  });
+  return res.data;
+};
+
+/** S8-D: Mark a booking as no-show. Irreversible. booking.com / gommt only.
+ * Sends channel field per backend Q2-c for correct Aiosell routing.
+ * @param {{ bookingId: string, channel: string }} params
+ */
+export const markNoShow = async ({ bookingId, channel }) => {
+  const res = await api.post(AIOSELL_ENDPOINTS.MARK_NO_SHOW, {
+    booking_id: bookingId,
+    channel,
+  });
+  return res.data;
+};

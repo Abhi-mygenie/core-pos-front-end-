@@ -1117,3 +1117,15 @@
 |---|---|---|
 | `api/transforms/inventoryTransform.js` | BUG-379: toAPI.addStock() rebuilt — +unit, +physicalqty_master, +physical_qty, +waste_reason, quantity defaults 0. Mirrors addSubRecipeStock pattern. L216-229. | BUG-379 IMPL 2026-09-03 |
 | `components/inventory/StockAuditPanel.jsx` | BUG-379: Regular ingredient branch (L79-88) — quantity:0, +unit, +physicalQty, +reason fallback. Mirrors sub-recipe branch L69-73. | BUG-379 IMPL 2026-09-03 |
+
+### CR-358-P5 — PMS Phase 5: Rate Grid (S8-C) + Mark No-Show (S8-D) (2026-09-08)
+| File | Change | Agent |
+|---|---|---|
+| `src/api/services/aiosellService.js` | CR-358-P5: +5 functions appended after L120 — getRates, pushRates, pushInventoryRestrictions, pushRateRestrictions, markNoShow | CR-358-P5 IMPL 2026-09-08 |
+| `src/api/transforms/aiosellTransform.js` | CR-358-P5: +fromRates function (inserted after fromPendingArrival) + rates entry in fromAPI object | CR-358-P5 IMPL 2026-09-08 |
+| `src/api/services/pmsService.js` | CR-358-P5: import line updated (+5 new imports) + 5 new exports appended (getRatesData, pushRatesData, pushInvRestrictionsData, pushRateRestrictionsData, markNoShowBooking) | CR-358-P5 IMPL 2026-09-08 |
+| `src/pages/pms/ChannelManagerPage.jsx` | CR-358-P5: header updated, RatesTab import added, Tab 3 placeholder replaced with <RatesTab /> | CR-358-P5 IMPL 2026-09-08 |
+| `src/pages/pms/ArrivalsPage.jsx` | CR-358-P5: +UserX import, +markNoShowBooking+toast+NoShowDialog imports, +OTA_NO_SHOW_CHANNELS const, +noShowTarget state, action cell wrapped in flex div + No-Show button, NoShowDialog wired | CR-358-P5 IMPL 2026-09-08 |
+| `src/pages/pms/ReservationsPage.jsx` | CR-358-P5: header updated, +UserX+markNoShowBooking+NoShowDialog imports, +noShowTarget state, BlockPopover caller updated (onNoShow prop), BlockPopover signature updated, No-Show button added in popover, NoShowDialog wired | CR-358-P5 IMPL 2026-09-08 |
+| `src/pages/pms/RatesTab.jsx` | CR-358-P5: NEW FILE — full Rates & Restrictions tab (Rate Grid matrix + cell popover + staged bar + diff modal + Inventory Restrictions + Rate Restrictions sub-tabs) | CR-358-P5 IMPL 2026-09-08 |
+| `src/components/pms/NoShowDialog.jsx` | CR-358-P5: NEW FILE — shared destructive Mark No-Show confirmation dialog (guest card + red warning + remark field + API call) | CR-358-P5 IMPL 2026-09-08 |

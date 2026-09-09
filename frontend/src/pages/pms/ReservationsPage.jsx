@@ -1,11 +1,13 @@
-// CR-358-P4: S2 — Tape Chart (rooms × dates Gantt; reuses getReservationOps via getTapeChartData — OD-P4-02; block popover OD-P4-04; unassigned OD-P4-05)
+// CR-358-P4 | CR-358-P5: S2 — Tape Chart (rooms × dates Gantt; reuses getReservationOps via getTapeChartData — OD-P4-02; block popover OD-P4-04; unassigned OD-P4-05; P5: No-Show in BlockPopover)
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTapeChartData, buildTapeChart, localDate } from '@/api/services/pmsService';
 import { useRestaurant } from '@/contexts/RestaurantContext';
 import Sidebar from '@/components/layout/Sidebar';
 import { toast } from 'sonner';
-import { Plus, RefreshCw, ChevronLeft, ChevronRight, Loader2, AlertCircle, LogIn, FileText, X } from 'lucide-react';
+import { Plus, RefreshCw, ChevronLeft, ChevronRight, Loader2, AlertCircle, LogIn, FileText, X, UserX } from 'lucide-react'; // UserX: CR-358-P5
+import { markNoShowBooking } from '@/api/services/pmsService'; // CR-358-P5
+import NoShowDialog from '@/components/pms/NoShowDialog'; // CR-358-P5
 
 const VIEWS = [7, 14, 30];
 const COL_W = { 7: 108, 14: 64, 30: 36 };
@@ -41,6 +43,7 @@ export default function ReservationsPage() {
   const [days, setDays] = useState(7);
   const [startDate, setStartDate] = useState(() => localDate(-2));
   const [popover, setPopover] = useState(null);
+  const [noShowTarget, setNoShowTarget] = useState(null); // CR-358-P5
   const popRef = useRef(null);
 
   const load = useCallback(async () => {
@@ -220,10 +223,19 @@ export default function ReservationsPage() {
             </table>
 
             {/* Popover */}
-            {popover && <BlockPopover popover={popover} popRef={popRef} setPopover={setPopover} navigate={navigate} />}
+            {popover && <BlockPopover popover={popover} popRef={popRef} setPopover={setPopover} navigate={navigate} onNoShow={(t) => setNoShowTarget(t)} />} {/* CR-358-P5 */}
           </div>
         ) : null}
       </main>
+      {/* CR-358-P5: No-Show confirmation dialog */}
+      <NoShowDialog
+        target={noShowTarget}
+        onClose={() => setNoShowTarget(null)}
+        onSuccess={() => {
+          load();
+          toast.success('No-Show recorded. Room inventory released.');
+        }}
+      />
     </div>
   );
 }
@@ -287,7 +299,7 @@ function GroupRows({ group, chart, colW, onBlockClick }) {
   );
 }
 
-function BlockPopover({ popover, popRef, setPopover, navigate }) {
+function BlockPopover({ popover, popRef, setPopover, navigate, onNoShow }) { // CR-358-P5: onNoShow
   const { block, anchorRect } = popover;
   const { res, line, kind } = block;
   const statusLabels = { in_house: 'In-house', departed: 'Departed', pending: 'Pending' };
@@ -335,6 +347,17 @@ function BlockPopover({ popover, popRef, setPopover, navigate }) {
             className="px-3 py-1.5 rounded-md text-[11px] font-medium border border-[#F26B33] text-[#F26B33] hover:bg-[#FFF7ED] transition-colors flex items-center gap-1">
             <FileText className="w-3 h-3" />View Folio
           </button>
+        )}
+        {/* CR-358-P5: No-Show — pending booking.com/gommt blocks with past check-in */}
+        {kind === 'pending' &&
+          ['booking.com', 'gommt'].includes((res.channel ?? '').toLowerCase()) &&
+          res.checkin <= localDate(0) && (
+            <button
+              data-testid="tc-popover-noshow-btn"
+              onClick={() => { setPopover(null); onNoShow({ bookingId: res.bookingId, guestName: res.guestName, channel: res.channel, checkin: res.checkin, roomCode: res.roomCode }); }}
+              className="px-3 py-1.5 rounded-md text-[11px] font-medium border border-[#EF4444] text-[#EF4444] hover:bg-[#FEE2E2] transition-colors flex items-center gap-1">
+              <UserX className="w-3 h-3" />No-Show
+            </button>
         )}
       </div>
     </div>

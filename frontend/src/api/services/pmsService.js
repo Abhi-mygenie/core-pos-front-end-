@@ -3,7 +3,8 @@
 // roomService.getRoomList() and roomListTransform are NOT modified — only called.
 import { getRoomList } from './roomService';
 import roomListTransform from '../transforms/roomListTransform';
-import { getLocalReservations, getAiosellRooms, getAiosellStatus, fetchReservations, pushInventory } from './aiosellService'; // BUG-378, CR-358-P2, CR-358-P3
+import { getLocalReservations, getAiosellRooms, getAiosellStatus, fetchReservations, pushInventory,
+         getRates, pushRates, pushInventoryRestrictions, pushRateRestrictions, markNoShow } from './aiosellService'; // BUG-378, CR-358-P2, CR-358-P3, CR-358-P5
 import api from '../axios';                                        // CR-358-P2
 import { AIOSELL_ENDPOINTS } from '../constants';                  // CR-358-P2
 import aiosellTransform from '../transforms/aiosellTransform';     // CR-358-P2
@@ -310,3 +311,42 @@ export const getTapeChartData = async () => {
   const rooms = catalog.localRooms.map(r => ({ id: r.id, tableNo: r.tableNo, roomType: typeById[r.id] ?? null }));
   return { today: ops.today, reservations: ops.all, rooms };
 };
+
+// ─── Phase 5 (CR-358-P5) ─────────────────────────────────────────────────────
+
+/** S8-C: Fetch + normalise rates for the rate grid UI */
+export const getRatesData = async ({ startDate, endDate }) => {
+  const raw = await getRates({ startDate, endDate });
+  return aiosellTransform.fromAPI.rates(raw);
+};
+
+/** S8-C: Push staged rate changes to live OTA channels.
+ * @param {Map<string,number>} stagedChanges  key="rateplanCode|date", value=newRate
+ * @param {Array<{roomCode,rateplanCode}>} rateplans  for room_code lookup
+ */
+export const pushRatesData = async (stagedChanges, rateplans) => {
+  const entries = [...stagedChanges.entries()];
+  if (!entries.length) throw new Error('[CR-358-P5] No staged changes to push');
+  const dates       = entries.map(([k]) => k.split('|')[1]).sort();
+  const planToRoom  = Object.fromEntries(rateplans.map(p => [p.rateplanCode, p.roomCode]));
+  const rates       = entries.map(([key, rate]) => {
+    const [rateplanCode] = key.split('|');
+    return { room_code: planToRoom[rateplanCode], rateplan_code: rateplanCode, rate };
+  });
+  return pushRates({ startDate: dates[0], endDate: dates[dates.length - 1], rates });
+};
+
+/** S8-C: Push inventory restrictions per room type */
+export const pushInvRestrictionsData = ({ startDate, endDate, toChannels, rooms }) =>
+  pushInventoryRestrictions({ startDate, endDate, toChannels, rooms });
+
+/** S8-C: Push rate restrictions per rate plan */
+export const pushRateRestrictionsData = ({ startDate, endDate, toChannels, rates }) =>
+  pushRateRestrictions({ startDate, endDate, toChannels, rates });
+
+/** S8-D: Mark booking as no-show. Irreversible. booking.com / gommt only.
+ * @param {string} bookingId  row.bookingId (r.booking_id from LR, e.g. "BDC...")
+ * @param {string} channel    row.channel  (e.g. "booking.com")
+ */
+export const markNoShowBooking = (bookingId, channel) =>
+  markNoShow({ bookingId, channel });

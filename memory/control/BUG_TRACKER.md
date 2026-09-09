@@ -1,4 +1,7 @@
-**Last Updated:** 2026-09-08 — BUG-383 (HK filter count 0, INTAKE P1 MEDIUM — roomStatusTransform.js L28 + RoomStatusPage.jsx L78), BUG-384 (room-payment 403 sandbox perm, INTAKE P1 HIGH BACKEND-BLOCKED), BUG-385 (no_show field missing LR+kpis, INTAKE P2 LOW BACKEND-BLOCKED). Source: 2026-09-08 OG-PMS-010/014/015 fresh probe + investigation report.
+**Last Updated:** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 DONE.** Impact Analysis written (`impact/BUG-386_IMPACT_ANALYSIS.md`). 7 edits (1 NEW + 6 MOD). Design mockup approved (`public/bug-386-design-review.html`).
+**Last Updated (prev):** 2026-09-08 — **BUG-386 ODs ALL LOCKED.** OD-386-01: P0 this sprint (pos_pms_1). OD-386-02: Option A — checkout must resend `gst_tax` explicitly (PmsCheckoutDrawer now in scope). OD-386-03: Fix forward only. Awaiting Gate 2 GO.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 INTAKE P0 CRITICAL** — PMS check-in `gst_tax` hardcoded `'0.00'`; room GST slab never computed or sent; `balance_payment` missing GST component. 8 sub-gaps. Source: INV-PMS-GST-001 + owner `pms_gst.md` spec. 3 owner decisions open (OD-386-01..03). Backend brief filed (Q-GST-01).
 **Last Updated (prev):** 2026-09-03 (CR-360 GATE 3 — S6 In-House KPI tiles + View Bill; OG-PMS-001 through OG-PMS-004 filed in PMS Phase 1 gaps section.) — root fix: aiosellTransform.js roomCode→room_id, roomName→room_name, areaName→title; ChannelManagerPage Table# prefix removed. Testing agent verification pending.) 2026-09-03 (BUG-377 IMPLEMENTED — fallback option added to Room Mapping dropdown for when aiosellRooms is empty. 1 file, 4 lines. webpack clean.) 2026-09-03 (BUG-378 OD-1 RESOLVED — probe confirmed: use local-reservations view=all + op_status=in_house filter + order_id join. view=in_house returns 0. Phone from user.phone for all guests.) 2026-09-02 (BUG-377: PMS Room Mapping Unassigned — INTAKE P2 LOW. BUG-378: PMS In-House Guests incomplete data — INTAKE P1 MEDIUM, owner decision OD-1 pending.) 2026-09-01 (BUG-374, BUG-369, BUG-372, BUG-371 IMPLEMENTED — QA PENDING) (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) 2026-09-01 (BUG-367 G4 Print Style snap INTAKE — CLOSURE Phase B) 2026-08-31 (BUG-366 IMPLEMENTED — restaurantFor added to profileTransform.settings(); 1 file, 1 line; planning skip owner-approved; compile clean) 2026-08-31 (BUG-365 IMPLEMENTED — PUT→POST fix in stationConfigService.js:22; 1 file, 1 line; planning skip owner-approved; compile clean) 2026-08-30 (BUG-364 INTAKE — Printer Type routing gate stale mid-wizard; profile not re-fetched on intermediate step saves; RELATED: BUG-337; P3 LOW; Fast Lane eligible.) 2026-08-30 (BUG-362 INTAKE — CR-133 Gap G1: copies snap back; CODE EXISTS (CLOSURE Phase B); `shared.jsx` NumberInput fix present. BUG-363 INTAKE — CR-133 Gap G5+G6: Android style mismatch; CODE EXISTS (CLOSURE Phase B); `PrintStyleTab.jsx` RowEditor fix present.) 2026-08-26 (BUG-361 IMPLEMENTED — Sidebar Phase 2 Sweep: 68 files. Python script. webpack clean.) 2026-08-26 (CR-348 IMPLEMENTED — Custom item GST % + Tax Calc fields wired: AddCustomItemModal.jsx + orderTransform.js + OrderEntry.jsx. CR-350 IMPLEMENTED — Room check-in ID upload mandatory toggle: StatusConfigPage.jsx + RoomCheckInModal.jsx. BUG-358 IMPLEMENTED — Sidebar state persisted via localStorage: DashboardPage.jsx. BUG-360 IMPLEMENTED — Room checkout live balance: CollectPaymentPanel.jsx + RoomRowCard.jsx.)
 
 ---
@@ -1145,3 +1148,25 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **Owner decision** | OD-385-01: FE-derive (pending+checkin<today) vs wait for P5 Mark No-Show vs request backend add `no_show_count` to kpis |
 | **Intake doc** | `change_requests/BUG-385_NO_SHOW_FIELD_MISSING_LR_DASHBOARD_KPIS.md` |
 | **Next** | Owner decision OD-385-01 → if FE-derive: planning for CR-363; if backend: backend brief |
+
+### BUG-386: PMS Check-In — Room Accommodation GST Never Computed or Sent (gst_tax Hardcoded '0.00')
+
+| Field | Value |
+|---|---|
+| **Status** | INTAKE (2026-09-08) |
+| **Priority** | P0 — CRITICAL |
+| **Risk** | CRITICAL (financial — billing, tax, GST compliance) |
+| **Reported** | 2026-09-08 (Agent-discovered via INV-PMS-GST-001; owner-supplied spec: `pms_gst.md`) |
+| **Area** | PMS > Check-In (S4) — `pmsService.pmsCheckIn` |
+| **Description** | `pmsService.js:162` hardcodes `gst_tax: '0.00'` on every PMS room check-in. The `room_gst` slab object from profile (`restaurants[].settings.room_gst`) is never parsed (`profileTransform.js:241` only extracts the boolean flag). As a result: (1) `user_id_documents.gst_tax = 0` stored on backend for all check-ins; (2) `balance_payment` sent as `orderAmount − advance` instead of `orderAmount + gstTax − advance`; (3) `remaining_room_balance` understated by GST amount; (4) receptionist sees no GST on check-in form. |
+| **Duplicate check** | DISTINCT — Related: BUG-338 (F&B room GST guard — different concern) |
+| **Code reality** | NONE (no slab computation logic exists) |
+| **Blast radius** | MEDIUM — 3 files modified + 1 new file (`roomGstCalculator.js`) |
+| **Hotspot files** | `profileTransform.js` |
+| **Related** | BUG-338, CR-358-P2, INV-PMS-GST-001, CR-116 |
+| **Owner decisions** | ~~OD-386-01~~: **P0 this sprint (pos_pms_1)** ✅ · ~~OD-386-02~~: **Option A — resend gst_tax at checkout; PmsCheckoutDrawer now IN scope** ✅ · ~~OD-386-03~~: **Fix forward only** ✅ — ALL LOCKED |
+| **Backend brief** | `backend_briefs/BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md` (Q-GST-01: checkout `gst_tax` contract) |
+| **Intake doc** | `change_requests/BUG-386_PMS_CHECKIN_ROOM_GST_HARDCODED_ZERO_INTAKE.md` |
+| **Investigation** | `evidence/INV-PMS-GST-001/INVESTIGATION_REPORT_PMS_GST_2026_09_08.md` |
+| **Sub-gaps** | GAP-1 (CRITICAL): gst_tax hardcoded · GAP-2 (CRITICAL): balance_payment wrong · GAP-3 (HIGH): slab not parsed · GAP-4 (HIGH): no computation utility · GAP-5 (MEDIUM): no UI display · GAP-6 (MEDIUM): outstanding balance understated · GAP-7 (MEDIUM): checkout contract unclear · GAP-8 (LOW): multi-room constraint |
+| **Next** | Owner: confirm OD-386-01..03 → Gate 2 Planning (Impact Analysis + Implementation Plan) |

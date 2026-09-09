@@ -1,4 +1,4 @@
-// CR-358-P1: S8 — Channel Manager Page
+// CR-358-P1 | CR-358-P5: S8 — Channel Manager Page (P5: Tab 3 = RatesTab)
 // Tabs: OTA / Sync | AIOSELL Setup | Room Mapping | Rates & Restrictions (P5)
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -18,6 +18,7 @@ import {
   fetchReservations,
 } from '@/api/services/aiosellService';
 import aiosellTransform from '@/api/transforms/aiosellTransform';
+import RatesTab from './RatesTab'; // CR-358-P5
 
 const today = () => new Date().toISOString().slice(0, 10);
 const daysFromNow = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
@@ -463,16 +464,8 @@ export default function ChannelManagerPage() {
             </div>
           )}
 
-          {/* ── TAB 3: Rates & Restrictions (Phase 5 placeholder) ─────── */}
-          {activeTab === 3 && (
-            <div className="flex items-center justify-center py-24">
-              <div className="text-center">
-                <BarChart2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <h2 className="text-[16px] font-semibold text-[#1A1A1A] mb-2">Rates & Restrictions</h2>
-                <p className="text-[13px] text-gray-500">Available in Phase 5 of the PMS rollout.</p>
-              </div>
-            </div>
-          )}
+          {/* ── TAB 3: Rates & Restrictions (CR-358-P5) ─────────────── */}
+          {activeTab === 3 && <RatesTab />}
 
         </div>
       </main>

@@ -151,6 +151,45 @@ const fromPendingArrival = (res) => {
   };
 };
 
+// ─── RATES (CR-358-P5) ───────────────────────────────────────────────────────
+// Source: POST /aiosell/fetch-rates → res.data.data.aiosell.body.updates[]
+// Each update: { startDate, endDate, rates: [{roomCode, rateplanCode, rate}] }
+// Note: fetch-rates returns camelCase; push-rates expects snake_case. FE normalises camelCase internally.
+const fromRates = (data) => {
+  const updates = data?.data?.aiosell?.body?.updates ?? data?.aiosell?.body?.updates ?? [];
+  const dateRateMap = {};   // { date: { rateplanCode: rate } }
+  const planSet     = [];   // ordered insertion of { roomCode, rateplanCode } — no duplicates
+  const planKeys    = new Set();
+  const dateSet     = new Set();
+
+  updates.forEach(u => {
+    if (!u) return;
+    // Aiosell may send a range (startDate === endDate is one day; rarely spans multiple days)
+    const dates = u.startDate === u.endDate
+      ? [u.startDate]
+      : Array.from({ length: Math.round((new Date(u.endDate) - new Date(u.startDate)) / 86400000) + 1 },
+          (_, i) => { const d = new Date(u.startDate); d.setDate(d.getDate() + i); return d.toLocaleDateString('en-CA'); });
+
+    dates.forEach(date => {
+      dateSet.add(date);
+      if (!dateRateMap[date]) dateRateMap[date] = {};
+      (u.rates ?? []).forEach(r => {
+        const planKey = `${r.roomCode}|${r.rateplanCode}`;
+        if (!planKeys.has(planKey)) {
+          planKeys.add(planKey);
+          planSet.push({ roomCode: r.roomCode, rateplanCode: r.rateplanCode });
+        }
+        dateRateMap[date][r.rateplanCode] = r.rate ?? 0;
+      });
+    });
+  });
+
+  // Sort dates ascending
+  const dates = [...dateSet].sort();
+
+  return { dateRateMap, rateplans: planSet, dates };
+};
+
 // ─── RESERVATION OPS (CR-358-P3) ─────────────────────────────────────────────
 // Superset of fromPendingArrival for S1/S9/S10. fromPendingArrival is NOT modified (CheckInPage depends on it).
 // Adds room-line ops fields + pah. `roomLines[]` carries one entry per rooms[] element (S10 rows = room lines).
@@ -216,6 +255,7 @@ const aiosellTransform = {
     pendingArrival:    fromPendingArrival,     // CR-358-P2
     reservationOps:    fromReservationOps,     // CR-358-P3
     dashboardKpis:     fromDashboardKpis,      // CR-358-P3
+    rates:             fromRates,              // CR-358-P5
   },
   decodeMealPlan,
 };

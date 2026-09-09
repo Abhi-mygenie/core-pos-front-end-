@@ -1,9 +1,11 @@
 // CR-358-P3: S9 — Arrivals (tabs Today/Upcoming/Late/Checked In, client pagination 20)
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, RefreshCw, Loader2, AlertCircle, MessageSquare, BedDouble } from 'lucide-react';
+import { Plus, RefreshCw, Loader2, AlertCircle, MessageSquare, BedDouble, UserX } from 'lucide-react'; // UserX: CR-358-P5
 import Sidebar from '@/components/layout/Sidebar';
-import { getReservationOps } from '@/api/services/pmsService';
+import { getReservationOps, markNoShowBooking } from '@/api/services/pmsService'; // markNoShowBooking: CR-358-P5
+import { toast } from 'sonner'; // CR-358-P5
+import NoShowDialog from '@/components/pms/NoShowDialog'; // CR-358-P5
 
 const TABS = [
   { key: 'today',     label: 'Today' },
@@ -12,6 +14,7 @@ const TABS = [
   { key: 'checkedIn', label: 'Checked In' },
 ];
 const PAGE_SIZE = 20; // OD-P3-07
+const OTA_NO_SHOW_CHANNELS = ['booking.com', 'gommt']; // CR-358-P5
 
 // CR-358-P3: PAH/Prepaid badge (OD-P3-03)
 const PahBadge = ({ pah }) => {
@@ -41,6 +44,7 @@ export default function ArrivalsPage() {
   const [error, setError]       = useState(null);
   const [activeTab, setActiveTab] = useState('today');
   const [page, setPage]         = useState(1);
+  const [noShowTarget, setNoShowTarget] = useState(null); // CR-358-P5
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -224,19 +228,33 @@ export default function ArrivalsPage() {
                           </td>
                           <td className="px-4 py-3"><StatusPill status={statusKey} /></td>
                           <td className="px-4 py-3">
-                            {isCheckedIn ? (
-                              <button data-testid={`arr-view-btn-${row.bookingId}`}
-                                onClick={() => navigate('/pms/in-house')}
-                                className="px-3 py-1.5 rounded text-[12px] font-medium border border-[#E5E5E5] text-[#666] hover:bg-gray-50">
-                                View
-                              </button>
-                            ) : (
-                              <button data-testid={`arr-checkin-btn-${row.bookingId}`}
-                                onClick={() => navigate(`/pms/check-in?booking_id=${encodeURIComponent(row.bookingId)}`)}
-                                className="px-3 py-1.5 rounded text-[12px] font-semibold text-white" style={{ background: '#329937' }}>
-                                Check In
-                              </button>
-                            )}
+                            <div className="flex gap-2 flex-wrap items-center">
+                              {isCheckedIn ? (
+                                <button data-testid={`arr-view-btn-${row.bookingId}`}
+                                  onClick={() => navigate('/pms/in-house')}
+                                  className="px-3 py-1.5 rounded text-[12px] font-medium border border-[#E5E5E5] text-[#666] hover:bg-gray-50">
+                                  View
+                                </button>
+                              ) : (
+                                <button data-testid={`arr-checkin-btn-${row.bookingId}`}
+                                  onClick={() => navigate(`/pms/check-in?booking_id=${encodeURIComponent(row.bookingId)}`)}
+                                  className="px-3 py-1.5 rounded text-[12px] font-semibold text-white" style={{ background: '#329937' }}>
+                                  Check In
+                                </button>
+                              )}
+                              {/* CR-358-P5: No-Show — booking.com/gommt pending rows on Late/Today tabs */}
+                              {!isCheckedIn &&
+                                (activeTab === 'late' || activeTab === 'today') &&
+                                OTA_NO_SHOW_CHANNELS.includes((row.channel ?? '').toLowerCase()) &&
+                                row.operationalStatus === 'pending' && (
+                                  <button
+                                    data-testid={`arr-noshow-btn-${row.bookingId}`}
+                                    onClick={() => setNoShowTarget({ bookingId: row.bookingId, guestName: row.guestName, channel: row.channel, checkin: row.checkin, roomCode: row.roomCode })}
+                                    className="px-2.5 py-1.5 rounded text-[12px] font-medium border border-[#EF4444] text-[#EF4444] hover:bg-[#FEE2E2] transition-colors flex items-center gap-1">
+                                    <UserX className="w-3 h-3" /> No-Show
+                                  </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -267,6 +285,15 @@ export default function ArrivalsPage() {
           )}
         </div>
       </main>
+      {/* CR-358-P5: No-Show confirmation dialog */}
+      <NoShowDialog
+        target={noShowTarget}
+        onClose={() => setNoShowTarget(null)}
+        onSuccess={() => {
+          load();
+          toast.success('No-Show recorded. Room inventory released.');
+        }}
+      />
     </div>
   );
 }

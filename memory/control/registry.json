@@ -22837,7 +22837,7 @@
       "id": "CR-358-P5",
       "title": "PMS Phase 5 \u2014 Rates & Restrictions tab (S8-C) + Mark No-Show (S8-D) + module regression",
       "type": "CR",
-      "status": "GATE 3 \u2014 IMPLEMENTATION PLAN WRITTEN (2026-09-08)",
+      "status": "IMPLEMENTED (Gate 5a \u2014 2026-09-08)",
       "priority": "P1",
       "risk": "HIGH",
       "gate": "3",
@@ -23470,6 +23470,40 @@
           "note": "Merged back into CR-358-P5. Owner un-split after B-P5-01 resolved."
         }
       ]
+    },
+    {
+      "id": "BUG-386",
+      "title": "PMS Check-In: Room Accommodation GST Never Computed or Sent (gst_tax Hardcoded 0.00)",
+      "type": "BUG",
+      "severity": "P0",
+      "risk": "CRITICAL",
+      "status": "GATE 2 CLOSED \u2014 Impact Analysis + Design approved (2026-09-08). OD-386-D1/D2 locked. Awaiting Gate 4 GO.",
+      "sprint_key": "pos_pms_1",
+      "gate": "2 CLOSED",
+      "area": "PMS \u2014 Room Check-In (S4)",
+      "artifact_refs": {
+        "intake": "change_requests/BUG-386_PMS_CHECKIN_ROOM_GST_HARDCODED_ZERO_INTAKE.md",
+        "investigation": "evidence/INV-PMS-GST-001/INVESTIGATION_REPORT_PMS_GST_2026_09_08.md",
+        "backend_brief": "backend_briefs/BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md",
+        "impact_analysis": "impact/BUG-386_IMPACT_ANALYSIS.md",
+        "design_mockup": "public/bug-386-design-review.html"
+      },
+      "related": [
+        "BUG-338"
+      ],
+      "duplicate_check": "DISTINCT (related: BUG-338)",
+      "code_reality": "NONE",
+      "blast_radius": "MEDIUM (4 files: 3 mod + 1 new)",
+      "registered": "2026-09-08",
+      "source": "AGENT-DISCOVERED (INV-PMS-GST-001)",
+      "owner_decisions": {
+        "OD-386-01": "LOCKED \u2014 P0 this sprint (pos_pms_1)",
+        "OD-386-02": "LOCKED \u2014 Option A: resend gst_tax explicitly at checkout; PmsCheckoutDrawer IN scope",
+        "OD-386-03": "LOCKED \u2014 Fix forward only; no UI flag for historical bookings",
+        "OD-386-D1": "LOCKED \u2014 Show CGST + SGST split (each = total/2). No slab threshold in UI.",
+        "OD-386-D2": "LOCKED \u2014 Do not show slab threshold in UI. Slab badge on strip header only."
+      },
+      "blockers": "NONE \u2014 all ODs locked"
     }
   ],
   "meta": {
