@@ -24,7 +24,11 @@ const { fromRoomStatusBoard, fromPatchResponse, patchErrorMessage, ROOM_MANUAL_S
   const fromRoomStatusBoard = (data) => {
     const d = data?.data ?? data ?? {};
     const rooms = Array.isArray(d.rooms) ? d.rooms.map(fromBoardRoom) : [];
-    const counts = DISPLAY_STATUSES.reduce((acc, s) => ({ ...acc, [s]: rooms.filter(r => r.displayStatus === s).length }), { all: rooms.length });
+    // BUG-383: count hk by manualStatus
+    const counts = DISPLAY_STATUSES.reduce((acc, s) => ({
+      ...acc,
+      [s]: s === 'hk' ? rooms.filter(r => r.manualStatus === 'hk').length : rooms.filter(r => r.displayStatus === s).length,
+    }), { all: rooms.length });
     return { autoHkOnRmCheckout: Boolean(d.auto_hk_on_rm_checkout), rooms, counts };
   };
   const fromPatchResponse = (data) => {
@@ -61,7 +65,7 @@ const testU1 = () => {
     b.autoHkOnRmCheckout === true,
     b.counts.occupied === 2,
     b.counts.booked === 2,
-    b.counts.hk === 1,
+    b.counts.hk === 2, // BUG-383: fixture has 2 rooms with manualStatus:'hk' (8526+8528)
     b.counts.ooo === 0,
     b.counts.available === 0,
     b.counts.all === 5,

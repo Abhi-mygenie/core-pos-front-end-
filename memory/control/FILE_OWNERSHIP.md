@@ -1,7 +1,7 @@
 # Layer 7 — File Ownership Map
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+**Last Updated:** 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
 
 ---
 
@@ -21,6 +21,9 @@
 | `api/services/aiosellService.js` | Added `getLocalReservations({ startDate, endDate })` function (additive) | BUG-378 |
 | `api/services/pmsService.js` | Rewrote `getInHouseGuests()`: two-call join (GET_ROOM_LIST + local-reservations), dateOffset helper, graceful degradation | BUG-378 |
 | `api/services/pmsService.js` | BUG-386: E5 — `balance_payment` + `gst_tax` in `pmsCheckIn` payload now use computed GST (L159+L162) | BUG-386 IMPL 2026-09-09 |
+| `api/transforms/roomStatusTransform.js` | BUG-383: E1 — `counts.hk` now counts by `manualStatus === 'hk'` (L28–34) | BUG-383 IMPL 2026-09-09 |
+| `pages/pms/RoomStatusPage.jsx` | BUG-383: E2+E3 — `handleBulkClean` uses `manualStatus`, occupied-HK warning (OD-383-01); HK filter special-cased to `manualStatus` | BUG-383 IMPL 2026-09-09 |
+| `api/transforms/__tests__/roomStatusTransform.cr358p4.test.js` | BUG-383: E4 — inline copy + assertion updated (`counts.hk === 1` → `=== 2`) | BUG-383 IMPL 2026-09-09 |
 | `api/transforms/profileTransform.js` | BUG-386: E1 — `roomGstSlabs` added to `checkInFlags` (L247) — parses `room_gst` JSON string from profile | BUG-386 IMPL 2026-09-09 |
 | `utils/roomGstCalculator.js` | BUG-386: E2 — NEW pure utility: `computeRoomGst(applicable, slabs, totalAmount, nights, roomCount)` → `{gstTotal, cgst, sgst}` | BUG-386 IMPL 2026-09-09 |
 | `pages/pms/CheckInPage.jsx` | BUG-386: E3+E4 — imports `useRestaurant`+`computeRoomGst`, reads `roomGstSlabs`, passes `gstTax` to `pmsCheckIn`, renders CGST+SGST GST strip | BUG-386 IMPL 2026-09-09 |

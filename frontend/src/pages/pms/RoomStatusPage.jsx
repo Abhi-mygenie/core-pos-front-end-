@@ -75,10 +75,23 @@ export default function RoomStatusPage() {
 
   const handleBulkClean = async () => {
     if (!board) return;
-    const hkIds = board.rooms.filter(r => r.displayStatus === 'hk').map(r => r.id);
-    if (hkIds.length === 0) return;
+    // BUG-383: use manualStatus to find ALL rooms needing HK (including occupied ones)
+    const hkRooms      = board.rooms.filter(r => r.manualStatus === 'hk');
+    if (hkRooms.length === 0) return;
+    const occupiedHk   = hkRooms.filter(r => r.displayStatus === 'occupied');
+    const cleanableIds = hkRooms.filter(r => r.displayStatus !== 'occupied').map(r => r.id);
+    // OD-383-01: warn if occupied rooms will be skipped
+    if (occupiedHk.length > 0) {
+      const n = occupiedHk.length;
+      const m = cleanableIds.length;
+      toast.warning(
+        `${n} occupied room${n > 1 ? 's' : ''} with HK flag will be skipped — cannot mark clean while occupied.` +
+        (m > 0 ? ` Proceeding with ${m} room${m > 1 ? 's' : ''}.` : '')
+      );
+      if (cleanableIds.length === 0) return;
+    }
     setBulkBusy(true);
-    const result = await bulkMarkClean(hkIds);
+    const result = await bulkMarkClean(cleanableIds);
     if (result.failed.length > 0) {
       toast.warning(`${result.ok.length} cleaned, ${result.failed.length} failed — ${result.failed[0].message}`);
     } else {
@@ -89,7 +102,12 @@ export default function RoomStatusPage() {
     setBulkBusy(false);
   };
 
-  const filtered = board ? (filter === 'all' ? board.rooms : board.rooms.filter(r => r.displayStatus === filter)) : [];
+  // BUG-383: HK filter uses manualStatus so occupied-HK rooms appear when HK tab is selected
+  const filtered = board ? (
+    filter === 'all' ? board.rooms :
+    filter === 'hk'  ? board.rooms.filter(r => r.manualStatus === 'hk') :
+    board.rooms.filter(r => r.displayStatus === filter)
+  ) : [];
   const sorted = [...filtered].sort((a, b) => String(a.tableNo).localeCompare(String(b.tableNo), undefined, { numeric: true }));
 
   return (

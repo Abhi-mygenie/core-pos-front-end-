@@ -1120,7 +1120,7 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | **GATE 3 COMPLETE — 2026-09-09. Awaiting Gate 4 GO.** |
+| **Status** | **IMPLEMENTED — Gate 5a (2026-09-09). Awaiting QA.** |
 | **Priority** | P1 |
 | **Risk** | MEDIUM |
 | **Reported** | 2026-09-08 (Agent-discovered, investigation probe) |
@@ -1132,7 +1132,7 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **Related** | CR-358-P4, OG-PMS-010 |
 | **Intake doc** | `change_requests/BUG-383_HK_FILTER_COUNT_ZERO_MANUAL_STATUS_DISPLAYSTATUS_MISMATCH.md` |
 | **Owner decision** | OD-383-01: **"Show a warning"** — locked 2026-09-09 ✅ |
-| **Next** | Gate 4 GO → Implementation (4 edits: E1 roomStatusTransform, E2+E3 RoomStatusPage, E4 test file) |
+| **Next** | QA agent — V1–V7 from QA handover |
 
 ---
 

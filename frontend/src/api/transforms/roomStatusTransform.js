@@ -25,7 +25,14 @@ const fromBoardRoom = (r) => {
 export const fromRoomStatusBoard = (data) => {
   const d = data?.data ?? data ?? {};
   const rooms = Array.isArray(d.rooms) ? d.rooms.map(fromBoardRoom) : [];
-  const counts = DISPLAY_STATUSES.reduce((acc, s) => ({ ...acc, [s]: rooms.filter(r => r.displayStatus === s).length }), { all: rooms.length });
+  // BUG-383: counts.hk must count by manualStatus (not displayStatus).
+  // Auto-HK sets manual_status:'hk' on occupied rooms; display_status stays 'occupied'.
+  const counts = DISPLAY_STATUSES.reduce((acc, s) => ({
+    ...acc,
+    [s]: s === 'hk'
+      ? rooms.filter(r => r.manualStatus === 'hk').length
+      : rooms.filter(r => r.displayStatus === s).length,
+  }), { all: rooms.length });
   return { autoHkOnRmCheckout: Boolean(d.auto_hk_on_rm_checkout), rooms, counts };
 };
 
