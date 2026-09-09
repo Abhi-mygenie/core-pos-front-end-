@@ -108,9 +108,11 @@ Note: `canToggle` logic (transform line 21) is correct as-is — PATCH is blocke
 
 ## Open Questions (Owner Decisions)
 
-| OD | Question |
-|---|---|
-| OD-383-01 | When an occupied room has `manual_status:hk` (auto-HK fired, room since re-occupied) — should "Mark All Clean" skip it (requires PATCH on occupied = 422) or show a warning? |
+| OD | Question | Decision |
+|---|---|---|
+| OD-383-01 | When an occupied room has `manual_status:hk` — should "Mark All Clean" skip it or show a warning? | **"Show a warning"** — locked 2026-09-09 |
+
+*OD-383-01 LOCKED. Planning (Gate 2) is now unblocked.*
 
 ---
 

@@ -1099,7 +1099,7 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | INTAKE |
+| **Status** | **INTAKE — OD-383-01 LOCKED 2026-09-09. Gate 2 unblocked.** |
 | **Priority** | P1 |
 | **Risk** | MEDIUM |
 | **Reported** | 2026-09-08 (Agent-discovered, investigation probe) |
@@ -1110,8 +1110,8 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 | **Blast radius** | SMALL — 2 files, 2 lines |
 | **Related** | CR-358-P4, OG-PMS-010 |
 | **Intake doc** | `change_requests/BUG-383_HK_FILTER_COUNT_ZERO_MANUAL_STATUS_DISPLAYSTATUS_MISMATCH.md` |
-| **Owner decision** | OD-383-01: Mark All Clean on occupied rooms with HK flag — skip or warn? |
-| **Next** | Planning → Gate 3 impl plan → Gate 4 GO → implement 2-line fix |
+| **Owner decision** | OD-383-01: **"Show a warning"** — locked 2026-09-09 ✅ |
+| **Next** | Gate 2 Planning → Gate 3 impl plan → Gate 4 GO → implement 2-line fix + warning modal |
 
 ---
 
