@@ -151,8 +151,9 @@ const PmsCheckoutDrawer = ({
       // BUG-386 (OD-386-02 Option A): inject room accommodation GST into checkout payload.
       // gstTax was stored at check-in time in user_id_documents.gst_tax.
       // Read it back from roomPaymentSummary (mapped via orderTransform E6).
-      // TODO BUG-386: field name 'room_gst_tax' assumed — confirm via curl probe against
-      // POST /api/v2/vendoremployee/order/order-bill-payment with live token (Q-GST-01).
+      // Q-GST-01 CONFIRMED 2026-09-09: 'room_gst_tax' is an accepted field on
+      // POST /api/v2/vendoremployee/order/order-bill-payment (probe passed full
+      // validation; reached "Order not found" — field name is correct).
       const roomGstTax = detail.roomInfo?.roomPaymentSummary?.gstTax ?? 0;
       if (roomGstTax > 0) payload.room_gst_tax = roomGstTax; // BUG-386
 

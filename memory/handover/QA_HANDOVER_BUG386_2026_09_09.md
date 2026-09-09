@@ -120,6 +120,8 @@
 
 ---
 
-## 6. Open Item
+## 6. Open Items
 
-**Q-GST-01 (E7 field name):** `room_gst_tax` field assumed in BILL_PAYMENT payload. Must be confirmed via curl probe against `POST /api/v2/vendoremployee/order/order-bill-payment` with a live token. If backend rejects `room_gst_tax`, switch to additive `gst_tax` (add room GST to food GST). Backend brief at `backend_briefs/BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md`.
+**None.** All open items resolved.
+
+**Q-GST-01 CLOSED (2026-09-09):** `room_gst_tax` confirmed as accepted field on `POST /api/v2/vendoremployee/order/order-bill-payment`. Curl probe with `room_gst_tax: 200` passed full field validation and reached "Order not found" business logic. TODO comment removed from `PmsCheckoutDrawer.jsx:154`. Evidence: `evidence/INV-PMS-GST-001/probe_bill_payment_gst.json`.

@@ -23477,7 +23477,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "CRITICAL",
-      "status": "IMPLEMENTED \u2014 Gate 5a (2026-09-09). 7 edits: roomGstCalculator.js (NEW), profileTransform.js (E1), pmsService.js (E5), CheckInPage.jsx (E3+E4), orderTransform.js (E6), PmsCheckoutDrawer.jsx (E7). EXIT GATE 5/5 PASS.",
+      "status": "IMPLEMENTED \u2014 Gate 5a CLOSED (2026-09-09). Q-GST-01 RESOLVED: room_gst_tax confirmed accepted field. TODO removed from PmsCheckoutDrawer. 7 edits clean. Awaiting QA.",
       "sprint_key": "pos_pms_1",
       "gate": "5a",
       "area": "PMS \u2014 Room Check-In (S4)",

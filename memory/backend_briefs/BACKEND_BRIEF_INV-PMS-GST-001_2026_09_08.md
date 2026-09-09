@@ -13,6 +13,18 @@
 - Context: Room checkout via `PmsCheckoutDrawer` → `orderToAPI.collectBillExisting`
 
 ## Question Q-GST-01
+## Question Q-GST-01 — ANSWERED 2026-09-09
+
+**Answer: Option (a) — YES.** FE must send `room_gst_tax` as a dedicated field in the checkout payload.
+
+**Evidence:** Curl probe `POST /api/v2/vendoremployee/order/order-bill-payment` with `room_gst_tax: 200` passed ALL field validation without rejection. API reached business logic layer ("Order not found" 404 for probe fake order_id). Field is accepted. Probe saved: `evidence/INV-PMS-GST-001/probe_bill_payment_gst.json`.
+
+**Implementation:** E7 in `PmsCheckoutDrawer.jsx` already uses `payload.room_gst_tax = roomGstTax`. TODO comment removed 2026-09-09. Gate closed.
+
+---
+
+*Original question below for reference:*
+
 After this fix, check-in will store the correct `gst_tax` value in `user_id_documents.gst_tax`.
 
 At checkout, does `order-bill-payment` require a separate explicit `gst_tax` field for room accommodation tax?
