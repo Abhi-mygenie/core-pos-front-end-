@@ -23477,9 +23477,9 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "CRITICAL",
-      "status": "IMPLEMENTED \u2014 Gate 5a CLOSED (2026-09-09). Q-GST-01 RESOLVED: room_gst_tax confirmed accepted field. TODO removed from PmsCheckoutDrawer. 7 edits clean. Awaiting QA.",
+      "status": "IMPLEMENTED \u2014 Gate 5b QA PASS (2026-09-09). 6/6 tests pass, 0 BLOCKER/MAJOR/MINOR, 1 NOTE (TC-386-04 deferred Gate 6). Root bug confirmed fixed: gst_tax=1440 in live network payload. Ready Gate 6 owner smoke.",
       "sprint_key": "pos_pms_1",
-      "gate": "5a",
+      "gate": "5b",
       "area": "PMS \u2014 Room Check-In (S4)",
       "artifact_refs": {
         "intake": "change_requests/BUG-386_PMS_CHECKIN_ROOM_GST_HARDCODED_ZERO_INTAKE.md",

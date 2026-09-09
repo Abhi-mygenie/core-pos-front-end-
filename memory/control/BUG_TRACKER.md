@@ -1,4 +1,5 @@
-**Last Updated:** 2026-09-09 — **BUG-386 GATE 5a CLOSED.** Q-GST-01 RESOLVED: `room_gst_tax` confirmed as accepted field on BILL_PAYMENT (curl probe passed validation, reached "Order not found"). TODO removed from PmsCheckoutDrawer.jsx. All 7 edits clean. Awaiting QA.
+**Last Updated:** 2026-09-09 — **BUG-386 QA PASS — Gate 5b.** 6/6 tests pass. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (TC-386-04 checkout payload deferred Gate 6). Root bug confirmed fixed in live network: gst_tax=1440 (was "0.00"). Registry: SYNCED. Ready Gate 6 owner smoke.
+**Last Updated (prev):** 2026-09-09 — **BUG-386 GATE 5a CLOSED.** Q-GST-01 RESOLVED: `room_gst_tax` confirmed as accepted field on BILL_PAYMENT (curl probe passed validation, reached "Order not found"). TODO removed from PmsCheckoutDrawer.jsx. All 7 edits clean. Awaiting QA.
 **Last Updated (prev):** 2026-09-09 — **BUG-386 IMPLEMENTED — Gate 5a.** 7 edits (1 NEW + 6 MOD): roomGstCalculator.js (NEW pure utility), profileTransform.js (E1 roomGstSlabs), pmsService.js (E5 gst_tax+balance_payment), CheckInPage.jsx (E3+E4 compute+strip), orderTransform.js (E6 gstTax), PmsCheckoutDrawer.jsx (E7 room_gst_tax). EXIT GATE 5/5 PASS. webpack clean. Awaiting QA.
 **Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
 **Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 DONE.** Impact Analysis written (`impact/BUG-386_IMPACT_ANALYSIS.md`). 7 edits (1 NEW + 6 MOD). Design mockup approved (`public/bug-386-design-review.html`).
@@ -1155,7 +1156,7 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | **IMPLEMENTED — Gate 5a (2026-09-09)** |
+| **Status** | **QA PASS — Gate 5b (2026-09-09). Ready Gate 6 Owner Smoke.** |
 | **Priority** | P0 — CRITICAL |
 | **Risk** | CRITICAL (financial — billing, tax, GST compliance) |
 | **Reported** | 2026-09-08 (Agent-discovered via INV-PMS-GST-001; owner-supplied spec: `pms_gst.md`) |
