@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-376 Design Comparison — Menu Switch Tab Strip</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Poppins', 'Inter', -apple-system, sans-serif;
+    background: #F0F0F0;
+    padding: 24px;
+    color: #1A1A1A;
+  }
+
+  /* ── Page Header ── */
+  .page-header {
+    background: #1A1A1A;
+    color: white;
+    border-radius: 12px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .page-header p { font-size: 12px; color: #94A3B8; margin-top: 3px; }
+  .cr-badge {
+    background: #F26B33;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+  }
+
+  /* ── Two-column layout ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .panel-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+  .panel-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .panel-label.before { background: #FEE2E2; color: #B91C1C; }
+  .panel-label.after  { background: #DCFCE7; color: #15803D; }
+  .panel-label span { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 11px; opacity: 0.8; }
+
+  /* ── POS Screen Shell ── */
+  .pos-screen {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    display: flex;
+    height: 560px;
+    border: 1px solid #E5E5E5;
+  }
+
+  /* ── Category Panel (left) ── */
+  .cat-panel {
+    width: 148px;
+    flex-shrink: 0;
+    background: #F7F7F7;
+    border-right: 1px solid #E5E5E5;
+    display: flex;
+    flex-direction: column;
+  }
+  .cat-back {
+    padding: 12px 10px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #F26B33;
+    cursor: pointer;
+  }
+  .cat-back svg { width: 14px; height: 14px; }
+  .cat-list { flex: 1; overflow: hidden; padding: 8px 0; }
+  .cat-item {
+    padding: 9px 12px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 2px 6px;
+    transition: all 0.15s;
+  }
+  .cat-item.active {
+    background: #F26B33;
+    color: white;
+    font-weight: 600;
+  }
+  .cat-item:not(.active):hover { background: #FFF3ED; color: #F26B33; }
+
+  /* ── Middle Panel (items) ── */
+  .mid-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid #E5E5E5;
+  }
+
+  /* Search header */
+  .search-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .search-box {
+    flex: 1;
+    max-width: 220px;
+    position: relative;
+  }
+  .search-box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #F26B33; }
+  .search-box input {
+    width: 100%;
+    padding: 7px 10px 7px 32px;
+    border-radius: 8px;
+    border: 2px solid #F26B33;
+    font-size: 12px;
+    color: #1A1A1A;
+    outline: none;
+    background: white;
+    font-family: inherit;
+  }
+  .hdr-icons { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .hdr-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid #E5E5E5;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #666;
+  }
+  .hdr-icon svg { width: 15px; height: 15px; }
+  .hdr-icon.green svg { color: #329937; }
+
+  /* ── NEW: Menu Tab Strip ── */
+  .menu-tab-strip {
+    padding: 0 14px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    background: white;
+  }
+  .menu-tab {
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.15s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .menu-tab.active {
+    color: #F26B33;
+    font-weight: 700;
+    border-bottom: 2px solid #F26B33;
+  }
+  .menu-tab:not(.active):hover { color: #F26B33; }
+  .tab-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: #329937;
+    border-radius: 50%;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  .tab-lock {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: #F26B33;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: #FFF3ED;
+    border-radius: 20px;
+    border: 1px solid #F26B33;
+  }
+  .tab-lock svg { width: 11px; height: 11px; }
+
+  /* Item grid */
+  .items-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+  }
+  .item-card {
+    width: calc(33.33% - 7px);
+    background: white;
+    border: 1px solid #E5E5E5;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .item-card:hover { box-shadow: 0 4px 12px rgba(242,107,51,0.18); border-color: #F26B33; }
+  .item-img {
+    height: 68px;
+    background: linear-gradient(135deg, #FFF3ED 0%, #FFE4D1 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+  }
+  .item-info { padding: 8px 8px 6px; }
+  .item-name { font-size: 11px; font-weight: 600; color: #1A1A1A; line-height: 1.3; margin-bottom: 4px; }
+  .item-price { font-size: 12px; font-weight: 700; color: #F26B33; }
+  .item-add {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 20px; height: 20px;
+    background: #F26B33;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 300;
+  }
+
+  /* Party menu items — slightly different color scheme to show change */
+  .item-card.party .item-img {
+    background: linear-gradient(135deg, #F0FDF4 0%, #D1FAE5 100%);
+  }
+  .item-card.party .item-price { color: #329937; }
+  .item-card.party .item-add { background: #329937; }
+  .item-card.party:hover { box-shadow: 0 4px 12px rgba(50,153,55,0.18); border-color: #329937; }
+
+  /* ── Right Panel (Cart) ── */
+  .cart-panel {
+    width: 220px;
+    flex-shrink: 0;
+    background: #F7F7F7;
+    display: flex;
+    flex-direction: column;
+  }
+  .cart-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cart-title { font-size: 12px; font-weight: 700; color: #1A1A1A; }
+  .cart-order-type {
+    font-size: 10px;
+    padding: 3px 8px;
+    background: #F26B33;
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .cart-items { flex: 1; padding: 10px; overflow-y: auto; }
+  .cart-item {
+    background: white;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border: 1px solid #E5E5E5;
+  }
+  .cart-item-name { font-size: 11px; font-weight: 600; color: #1A1A1A; margin-bottom: 3px; }
+  .cart-item-row { display: flex; align-items: center; justify-content: space-between; }
+  .cart-item-price { font-size: 11px; color: #F26B33; font-weight: 600; }
+  .qty-ctrl { display: flex; align-items: center; gap: 6px; }
+  .qty-btn {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    background: #F7F7F7;
+    border: 1px solid #E5E5E5;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+  }
+  .qty-num { font-size: 11px; font-weight: 700; color: #1A1A1A; min-width: 14px; text-align: center; }
+  .cart-footer { padding: 10px 14px; border-top: 1px solid #E5E5E5; }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .cart-total-lbl { font-size: 11px; color: #666; }
+  .cart-total-val { font-size: 13px; font-weight: 800; color: #1A1A1A; }
+  .cart-cta {
+    width: 100%;
+    padding: 9px;
+    background: #329937;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+  }
+  .cart-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #CCC;
+    gap: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .cart-empty svg { width: 32px; height: 32px; }
+  .cart-empty p { font-size: 11px; }
+
+  /* ── Callout annotations ── */
+  .annotation-box {
+    margin-top: 12px;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .annotation-box.red { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; }
+  .annotation-box.green { background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; }
+  .annotation-box strong { display: block; font-weight: 700; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .annotation-box ul { padding-left: 16px; }
+  .annotation-box li { margin-bottom: 2px; }
+
+  /* ── Change Highlight Row ── */
+  .highlight-row {
+    margin-top: 20px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E5E5;
+    overflow: hidden;
+  }
+  .highlight-header {
+    background: #1A1A1A;
+    color: white;
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .highlight-cell {
+    padding: 16px 18px;
+    border-right: 1px solid #E5E5E5;
+    font-size: 12px;
+  }
+  .highlight-cell:last-child { border-right: none; }
+  .hc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 6px; }
+  .hc-value { font-size: 13px; font-weight: 600; color: #1A1A1A; line-height: 1.4; }
+  .hc-value.orange { color: #F26B33; }
+  .hc-value.green { color: #329937; }
+  .hc-value.red { color: #DC2626; }
+
+  /* Divider */
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vs-badge {
+    background: #F26B33;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div>
+    <h1>CR-376 — Menu Type Switch: Design Comparison</h1>
+    <p>POS Order Entry · Normal / Party / Premium tab strip · Frontend-only change · ~41 lines across 4 files</p>
+  </div>
+  <span class="cr-badge">CR-376</span>
+</div>
+
+<!-- Side-by-Side -->
+<div class="compare-grid">
+
+  <!-- BEFORE -->
+  <div class="panel-wrap">
+    <div class="panel-label before">
+      ✕ Before — Current State
+      <span>Normal menu only · Party/Premium inaccessible</span>
+    </div>
+
+    <div class="pos-screen">
+
+      <!-- Category Panel -->
+      <div class="cat-panel">
+        <div class="cat-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back
+        </div>
+        <div class="cat-list">
+          <div class="cat-item active">All</div>
+          <div class="cat-item">Starters</div>
+          <div class="cat-item">Main Course</div>
+          <div class="cat-item">Breads</div>
+          <div class="cat-item">Beverages</div>
+          <div class="cat-item">Desserts</div>
+          <div class="cat-item">Rice</div>
+        </div>
+      </div>
+
+      <!-- Middle Panel -->
+      <div class="mid-panel">
+        <!-- Search Header -->
+        <div class="search-header">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search items..." value=""/>
+          </div>
+          <div class="hdr-icons">
+            <div class="hdr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="hdr-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="hdr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- NO TAB STRIP — straight to items -->
+        <div class="items-grid">
+          <div class="item-card">
+            <div class="item-img">🍗</div>
+            <div class="item-info">
+              <div class="item-name">Chicken Tikka</div>
+              <div class="item-price">₹320</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card">
+            <div class="item-img">🥗</div>
+            <div class="item-info">
+              <div class="item-name">Garden Salad</div>
+              <div class="item-price">₹180</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card">
+            <div class="item-img">🍛</div>
+            <div class="item-info">
+              <div class="item-name">Dal Makhani</div>
+              <div class="item-price">₹260</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card">
+            <div class="item-img">🫓</div>
+            <div class="item-info">
+              <div class="item-name">Garlic Naan</div>
+              <div class="item-price">₹60</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card">
+            <div class="item-img">🧁</div>
+            <div class="item-info">
+              <div class="item-name">Gulab Jamun</div>
+              <div class="item-price">₹90</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card">
+            <div class="item-img">☕</div>
+            <div class="item-info">
+              <div class="item-name">Masala Chai</div>
+              <div class="item-price">₹50</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Panel -->
+      <div class="cart-panel">
+        <div class="cart-header">
+          <span class="cart-title">Order</span>
+          <span class="cart-order-type">Dine In</span>
+        </div>
+        <div class="cart-items">
+          <div class="cart-item">
+            <div class="cart-item-name">Chicken Tikka</div>
+            <div class="cart-item-row">
+              <span class="cart-item-price">₹320</span>
+              <div class="qty-ctrl">
+                <div class="qty-btn">−</div>
+                <span class="qty-num">1</span>
+                <div class="qty-btn">+</div>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item">
+            <div class="cart-item-name">Garlic Naan</div>
+            <div class="cart-item-row">
+              <span class="cart-item-price">₹120</span>
+              <div class="qty-ctrl">
+                <div class="qty-btn">−</div>
+                <span class="qty-num">2</span>
+                <div class="qty-btn">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cart-footer">
+          <div class="cart-total-row">
+            <span class="cart-total-lbl">Total</span>
+            <span class="cart-total-val">₹440</span>
+          </div>
+          <button class="cart-cta">Collect Bill</button>
+        </div>
+      </div>
+
+    </div><!-- /pos-screen -->
+
+    <div class="annotation-box red">
+      <strong>❌ Problems</strong>
+      <ul>
+        <li>Party &amp; Premium menu items are <strong>invisible</strong> — filtered out at transform layer</li>
+        <li>Staff cannot ring up special event packages or premium offerings</li>
+        <li>No UI element to switch menus — workaround requires leaving Order Entry</li>
+        <li>productTransform.js line 47 comment already says <em>"Phase 3: will support multiple menus"</em> — planned but never built</li>
+      </ul>
+    </div>
+  </div><!-- /before -->
+
+  <!-- AFTER -->
+  <div class="panel-wrap">
+    <div class="panel-label after">
+      ✓ After — CR-376 Implemented
+      <span>Tab strip · menu lock on first item · cart preserved</span>
+    </div>
+
+    <div class="pos-screen">
+
+      <!-- Category Panel -->
+      <div class="cat-panel">
+        <div class="cat-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back
+        </div>
+        <div class="cat-list">
+          <div class="cat-item active">All</div>
+          <div class="cat-item">Starters</div>
+          <div class="cat-item">Main Course</div>
+          <div class="cat-item">Breads</div>
+          <div class="cat-item">Beverages</div>
+          <div class="cat-item">Desserts</div>
+          <div class="cat-item">Rice</div>
+        </div>
+      </div>
+
+      <!-- Middle Panel -->
+      <div class="mid-panel">
+        <!-- Search Header — unchanged -->
+        <div class="search-header">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search items..." value=""/>
+          </div>
+          <div class="hdr-icons">
+            <div class="hdr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="hdr-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="hdr-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ★ NEW: Menu Tab Strip -->
+        <div class="menu-tab-strip">
+          <div class="menu-tab active">
+            Party
+            <span class="tab-dot"></span>
+          </div>
+          <div class="menu-tab">Normal</div>
+          <div class="menu-tab">Premium</div>
+          <!-- Lock badge — appears after first item added -->
+          <div class="tab-lock" style="margin-left:auto;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Party locked
+          </div>
+        </div>
+
+        <!-- Items from PARTY menu (green-tinted) -->
+        <div class="items-grid">
+          <div class="item-card party">
+            <div class="item-img">🎉</div>
+            <div class="item-info">
+              <div class="item-name">Party Starter Platter</div>
+              <div class="item-price">₹1,200</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card party">
+            <div class="item-img">🍖</div>
+            <div class="item-info">
+              <div class="item-name">BBQ Platter (10 pax)</div>
+              <div class="item-price">₹2,800</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card party">
+            <div class="item-img">🥂</div>
+            <div class="item-info">
+              <div class="item-name">Welcome Mocktail Set</div>
+              <div class="item-price">₹600</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card party">
+            <div class="item-img">🎂</div>
+            <div class="item-info">
+              <div class="item-name">Celebration Cake</div>
+              <div class="item-price">₹950</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card party">
+            <div class="item-img">🍱</div>
+            <div class="item-info">
+              <div class="item-name">Family Thali Set</div>
+              <div class="item-price">₹1,600</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+          <div class="item-card party">
+            <div class="item-img">🥗</div>
+            <div class="item-info">
+              <div class="item-name">Live Counter Salad</div>
+              <div class="item-price">₹450</div>
+            </div>
+            <div class="item-add">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Panel — cart preserved from previous tab -->
+      <div class="cart-panel">
+        <div class="cart-header">
+          <span class="cart-title">Order</span>
+          <span class="cart-order-type">Dine In</span>
+        </div>
+        <div class="cart-items">
+          <!-- Party item added -->
+          <div class="cart-item" style="border-left: 3px solid #329937;">
+            <div class="cart-item-name">Party Starter Platter</div>
+            <div class="cart-item-row">
+              <span class="cart-item-price" style="color:#329937">₹1,200</span>
+              <div class="qty-ctrl">
+                <div class="qty-btn">−</div>
+                <span class="qty-num">1</span>
+                <div class="qty-btn">+</div>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item" style="border-left: 3px solid #329937;">
+            <div class="cart-item-name">BBQ Platter (10 pax)</div>
+            <div class="cart-item-row">
+              <span class="cart-item-price" style="color:#329937">₹2,800</span>
+              <div class="qty-ctrl">
+                <div class="qty-btn">−</div>
+                <span class="qty-num">1</span>
+                <div class="qty-btn">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cart-footer">
+          <div class="cart-total-row">
+            <span class="cart-total-lbl">Total</span>
+            <span class="cart-total-val">₹4,000</span>
+          </div>
+          <button class="cart-cta">Collect Bill</button>
+        </div>
+      </div>
+
+    </div><!-- /pos-screen -->
+
+    <div class="annotation-box green">
+      <strong>✅ What's New</strong>
+      <ul>
+        <li><strong>Tab strip</strong> appears between search bar and item grid — Normal / Party / Premium tabs</li>
+        <li><strong>Active dot</strong> (green) marks the currently selected tab</li>
+        <li><strong>Lock badge</strong> appears once first item is added — menu type is locked for this order</li>
+        <li>Cart is <strong>preserved on tab switch</strong> — items from different menus can coexist</li>
+        <li>Tab strip <strong>hidden entirely</strong> for restaurants with only Normal menu — zero UX change for them</li>
+        <li>Tab labels come from DB — whatever names are configured</li>
+      </ul>
+    </div>
+  </div><!-- /after -->
+
+</div><!-- /compare-grid -->
+
+<!-- Change summary row -->
+<div class="highlight-row" style="margin-top:24px;">
+  <div class="highlight-header">What Changes in Code — 4 Files, ~41 Lines, Zero Backend</div>
+  <div class="highlight-grid">
+    <div class="highlight-cell">
+      <div class="hc-label">File 1</div>
+      <div class="hc-value orange">productTransform.js</div>
+      <div style="font-size:11px;color:#666;margin-top:5px;line-height:1.5">
+        <span style="background:#FEE2E2;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:10px">=== 'Normal'</span>
+        &nbsp;→&nbsp;
+        <span style="background:#DCFCE7;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:10px">!== 'Aggregator'</span>
+        <br><span style="color:#94A3B8">1 line changed. All non-Aggregator items now flow in.</span>
+      </div>
+    </div>
+    <div class="highlight-cell">
+      <div class="hc-label">File 2</div>
+      <div class="hc-value orange">MenuContext.jsx</div>
+      <div style="font-size:11px;color:#666;margin-top:5px;line-height:1.5">
+        Add <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">selectedMenuType</code> state,
+        <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">activeProducts</code> memo,
+        <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">availableMenuTypes</code> memo.
+        <br><span style="color:#94A3B8">~15 lines.</span>
+      </div>
+    </div>
+    <div class="highlight-cell">
+      <div class="hc-label">File 3</div>
+      <div class="hc-value orange">OrderEntry.jsx</div>
+      <div style="font-size:11px;color:#666;margin-top:5px;line-height:1.5">
+        Use <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">activeProducts</code> instead of <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">products</code>.
+        Add tab strip JSX + lock logic after first item.
+        <br><span style="color:#94A3B8">~20 lines.</span>
+      </div>
+    </div>
+    <div class="highlight-cell">
+      <div class="hc-label">File 4</div>
+      <div class="hc-value orange">LoadingPage.jsx</div>
+      <div style="font-size:11px;color:#666;margin-top:5px;line-height:1.5">
+        Category item counts use <code style="font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px">activeProducts</code> so the count badge reflects the selected menu type.
+        <br><span style="color:#94A3B8">~5 lines.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:20px;font-size:11px;color:#94A3B8;padding:12px">
+  CR-376 · pos_7_0 sprint · Gate 1 (Intake complete, all ODs locked) · Awaiting Gate 2 GO
+</div>
+
+</body>
+</html>

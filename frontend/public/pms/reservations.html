@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Reservations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A}
+  .nav-active{background:rgba(50,153,55,.1);border-left:3px solid #329937 !important;color:#329937}
+  .nav-item{border-left:3px solid transparent;transition:background .15s}
+  .nav-item:hover{background:#F7F7F7}
+  /* Tape chart */
+  .tape-wrap{overflow:auto;max-height:calc(100vh - 180px)}
+  .cell-w{width:96px;min-width:96px}
+  .room-col{width:150px;min-width:150px}
+  /* Option C: white block, left OTA accent border */
+  .res-block{
+    position:absolute;top:6px;height:36px;
+    background:#fff;
+    border:1px solid #E5E5E5;border-left-width:4px;
+    border-radius:6px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05);
+    display:flex;align-items:center;gap:6px;
+    padding:0 10px 0 8px;
+    font-size:12px;font-weight:500;color:#1A1A1A;
+    cursor:pointer;white-space:nowrap;overflow:hidden;
+    transition:transform .15s,box-shadow .15s;z-index:10
+  }
+  .res-block:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.1)}
+  .res-block-unassigned{
+    position:absolute;top:6px;height:36px;
+    background:#FAFAFA;
+    border:1.5px dashed #E5E5E5;border-left-width:4px;border-left-style:solid;
+    border-radius:6px;
+    display:flex;align-items:center;gap:6px;
+    padding:0 10px 0 8px;
+    font-size:12px;font-weight:400;color:#888;
+    cursor:pointer;white-space:nowrap;overflow:hidden;
+    transition:transform .15s;z-index:10
+  }
+  .type-hdr{background:#F7F7F7;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#666;padding:8px 16px;border-bottom:1px solid #E5E5E5}
+  ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#E5E5E5;border-radius:4px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- SIDEBAR -->
+<aside style="width:280px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0">
+  <div style="padding:16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:40px">
+    <button style="padding:8px;border-radius:8px;color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="panel-left-close" style="width:20px;height:20px"></i></button>
+  </div>
+  <div style="padding:12px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;gap:8px">
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(242,107,51,.08);color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="layout-grid" style="width:20px;height:20px;flex-shrink:0"></i><span>Table View</span></button>
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(50,153,55,.08);color:#329937;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="columns" style="width:20px;height:20px;flex-shrink:0"></i><span>By Channel</span></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:8px 0">
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="home" style="width:20px;height:20px;flex-shrink:0"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="banknote" style="width:20px;height:20px;flex-shrink:0"></i><span>Day Closure</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="utensils-crossed" style="width:20px;height:20px;flex-shrink:0"></i><span>Menu Management</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="wallet" style="width:20px;height:20px;flex-shrink:0"></i><span>Credit Management</span></a>
+    <div>
+      <a href="front-desk.html" class="nav-active nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bed-double" style="width:20px;height:20px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:16px;height:16px;color:#666"></i></a>
+      <div style="margin-left:16px;border-left:1px solid #E5E5E5">
+        <a href="front-desk.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Front Desk</a>
+        <a href="reservations.html" style="display:flex;padding:10px 16px;color:#329937;background:rgba(50,153,55,.06);font-size:13px;text-decoration:none;font-weight:500">Reservations</a>
+        <a href="in-house.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">In-House Guests</a>
+        <a href="room-status.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Room Status</a>
+        <a href="channel-manager.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Channel Manager</a>
+      </div>
+    </div>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bar-chart-3" style="width:20px;height:20px;flex-shrink:0"></i><span>Daily Report</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="settings" style="width:20px;height:20px;flex-shrink:0"></i><span>Settings</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="package" style="width:20px;height:20px;flex-shrink:0"></i><span>Inventory</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="line-chart" style="width:20px;height:20px;flex-shrink:0"></i><span>Insights</span></a>
+  </nav>
+  <div style="padding:16px;border-top:1px solid #E5E5E5">
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;background:rgba(50,153,55,.1);color:#329937;border:none;cursor:pointer;margin-bottom:4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="bell" style="width:20px;height:20px;flex-shrink:0"></i><span>Ringer On</span></button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="refresh-cw" style="width:20px;height:20px;flex-shrink:0"></i><span>Refresh</span></button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#1A1A1A;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;background:transparent;margin-top:4px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:16px;height:16px;color:white"></i></div>
+      <div style="text-align:left"><div style="font-size:13px;font-weight:500">Owner (Admin)</div><div style="font-size:11px;color:#666">#541</div></div>
+    </button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#EF4444;border:none;cursor:pointer;margin-top:4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="log-out" style="width:20px;height:20px;flex-shrink:0"></i><span>Logout</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+  <!-- Toolbar -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:12px">
+      <h1 style="font-size:18px;font-weight:700">Reservations</h1>
+      <div style="display:flex;border:1px solid #E5E5E5;border-radius:8px;overflow:hidden">
+        <button style="padding:6px 14px;font-size:12px;font-weight:500;color:#666;background:#fff;border:none;cursor:pointer;font-family:Poppins,sans-serif">Month</button>
+        <button style="padding:6px 14px;font-size:12px;font-weight:600;color:#fff;background:#1A1A1A;border:none;cursor:pointer;font-family:Poppins,sans-serif">Week</button>
+        <button style="padding:6px 14px;font-size:12px;font-weight:500;color:#666;background:#fff;border:none;cursor:pointer;font-family:Poppins,sans-serif">Day</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:8px 14px">
+        <button style="color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="chevron-left" style="width:16px;height:16px"></i></button>
+        <span style="font-size:13px;font-weight:600">27 Aug – 2 Sep 2026</span>
+        <button style="color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="chevron-right" style="width:16px;height:16px"></i></button>
+      </div>
+      <button style="display:flex;align-items:center;gap:6px;height:36px;padding:0 12px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;font-weight:500;color:#666;cursor:pointer;font-family:Poppins,sans-serif"><i data-lucide="filter" style="width:14px;height:14px"></i> All Sources</button>
+      <a href="new-booking.html" style="display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;background:#F26B33;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none"><i data-lucide="plus" style="width:14px;height:14px"></i> New Booking</a>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:8px 24px;display:flex;align-items:center;gap:20px;flex-shrink:0">
+    <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#999">Source</span>
+    <div style="display:flex;align-items:center;gap:6px"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=14" style="width:14px;height:14px;border-radius:2px"><span style="font-size:12px;color:#666">Booking.com</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=14" style="width:14px;height:14px;border-radius:2px"><span style="font-size:12px;color:#666">Expedia</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=14" style="width:14px;height:14px;border-radius:2px"><span style="font-size:12px;color:#666">Airbnb</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(50,153,55,.15);border-radius:3px;display:flex;align-items:center;justify-content:center"><i data-lucide="user-plus" style="width:9px;height:9px;color:#329937"></i></div><span style="font-size:12px;color:#666">Walk-in</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(242,107,51,.15);border-radius:3px;display:flex;align-items:center;justify-content:center"><i data-lucide="phone" style="width:9px;height:9px;color:#F26B33"></i></div><span style="font-size:12px;color:#666">Direct</span></div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:16px">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:20px;height:10px;background:#fff;border:1.5px dashed #ccc;border-radius:3px"></div><span style="font-size:12px;color:#999">Unassigned</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:20px;height:10px;background:rgba(50,153,55,.08);border:1px solid rgba(50,153,55,.3);border-radius:3px"></div><span style="font-size:12px;color:#999">Checked-in</span></div>
+    </div>
+  </div>
+
+  <!-- Tape Chart -->
+  <div class="tape-wrap" style="flex:1">
+    <table style="border-collapse:collapse;min-width:900px">
+      <thead style="position:sticky;top:0;z-index:20">
+        <tr>
+          <th class="room-col" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #E5E5E5;padding:12px 16px;text-align:left;position:sticky;left:0;z-index:30">
+            <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#666">Room</span>
+          </th>
+          <!-- TODAY -->
+          <th class="cell-w" style="background:#F26B3308;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center">
+            <div style="font-size:11px;font-weight:600;color:#F26B33">WED</div>
+            <div style="font-size:16px;font-weight:700;color:#F26B33;line-height:1.2">27</div>
+            <div style="font-size:10px;font-weight:600;color:#F26B33;letter-spacing:.04em">TODAY</div>
+          </th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">THU</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">28</div></th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">FRI</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">29</div></th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">SAT</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">30</div></th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">SUN</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">31</div></th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">MON</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">1</div></th>
+          <th class="cell-w" style="background:#fff;border-bottom:1px solid #E5E5E5;padding:10px 8px;text-align:center"><div style="font-size:11px;color:#666;font-weight:600">TUE</div><div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">2</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- UNASSIGNED -->
+        <tr><td colspan="8" class="type-hdr">Unassigned OTA Bookings (2)</td></tr>
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="display:flex;align-items:center;gap:6px"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px"><span style="font-size:12px;color:#666">Standard Double</span></div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px"><i data-lucide="alert-circle" style="width:11px;height:11px;color:#F4A11A"></i><span style="font-size:11px;color:#F4A11A">Assign room</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px" colspan="3"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="4">
+            <div class="res-block-unassigned" style="border-left-color:#003580;left:2px;width:280px"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span>Joshi, A. · 3 nights</span></div>
+          </td>
+        </tr>
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="display:flex;align-items:center;gap:6px"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=13" style="width:13px;height:13px;border-radius:2px"><span style="font-size:12px;color:#666">Deluxe</span></div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px"><i data-lucide="alert-circle" style="width:11px;height:11px;color:#F4A11A"></i><span style="font-size:11px;color:#F4A11A">Assign room</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px" colspan="2"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="5">
+            <div class="res-block-unassigned" style="border-left-color:#FFCC00;left:2px;width:280px"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span>Patel, K. · 3 nights</span></div>
+          </td>
+        </tr>
+
+        <!-- STANDARD DOUBLE -->
+        <tr><td colspan="8" class="type-hdr">Standard Double &nbsp;<span style="font-weight:400;color:#999">(4 / 12 occupied)</span></td></tr>
+        <!-- 101 - checked in (green tint) -->
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">101</div><div style="font-size:11px;color:#999">Standard Double</div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:rgba(50,153,55,.03);position:relative;height:48px" colspan="2">
+            <div class="res-block" style="border-left-color:#003580;left:2px;width:184px;background:rgba(50,153,55,.06)"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span style="flex:1">Sharma, R.</span><span style="font-size:10px;color:#aaa;flex-shrink:0">2A</span><span style="font-size:10px;font-weight:600;color:#329937;margin-left:3px">In</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+        </tr>
+        <!-- 102 -->
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">102</div><div style="font-size:11px;color:#999">Standard Double</div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="3">
+            <div class="res-block" style="border-left-color:#003580;left:2px;width:184px"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span style="flex:1">Kumar, R.</span><span style="font-size:10px;color:#aaa;flex-shrink:0">2A</span></div>
+          </td>
+        </tr>
+        <!-- 103 - walk-in -->
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">103</div><div style="font-size:11px;color:#999">Standard Double</div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="2">
+            <div class="res-block" style="border-left-color:#329937;left:2px;width:184px"><i data-lucide="user-plus" style="width:12px;height:12px;color:#329937;flex-shrink:0"></i><span style="flex:1">Gupta, N.</span><span style="font-size:10px;color:#aaa;flex-shrink:0">1A</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+        </tr>
+        <!-- Expand row -->
+        <tr><td colspan="8" style="background:#FAFAFA;border-bottom:1px solid #E5E5E5;padding:8px 16px;font-size:12px;color:#999;cursor:pointer"><span style="display:flex;align-items:center;gap:6px"><i data-lucide="chevron-right" style="width:13px;height:13px"></i> Rooms 104–112 · All available · Click to expand</span></td></tr>
+
+        <!-- DELUXE -->
+        <tr><td colspan="8" class="type-hdr">Deluxe &nbsp;<span style="font-weight:400;color:#999">(2 / 6 occupied)</span></td></tr>
+        <!-- 201 - Airbnb, checked-in -->
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">201</div><div style="font-size:11px;color:#999">Deluxe</div>
+          </td>
+          <td style="background:rgba(50,153,55,.03);height:48px;position:relative" colspan="7">
+            <div class="res-block" style="border-left-color:#FF5A5F;left:2px;width:572px;background:rgba(50,153,55,.06)"><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span style="flex:1">Singh, A. · 6 nights</span><span style="font-size:10px;color:#aaa;flex-shrink:0">3A</span><span style="font-size:9px;font-weight:600;color:#F4A11A;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);padding:0 3px;border-radius:3px;margin-left:3px;flex-shrink:0">SR</span><span style="font-size:10px;font-weight:600;color:#329937;margin-left:3px">In</span></div>
+          </td>
+        </tr>
+        <!-- 202 - Direct/Phone -->
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">202</div><div style="font-size:11px;color:#999">Deluxe</div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="2">
+            <div class="res-block" style="border-left-color:#F26B33;left:2px;width:184px"><i data-lucide="phone" style="width:12px;height:12px;color:#F26B33;flex-shrink:0"></i><span style="flex:1">Reddy, V.</span><span style="font-size:10px;color:#aaa;flex-shrink:0">2A</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+        </tr>
+        <tr><td colspan="8" style="background:#FAFAFA;border-bottom:1px solid #E5E5E5;padding:8px 16px;font-size:12px;color:#999;cursor:pointer"><span style="display:flex;align-items:center;gap:6px"><i data-lucide="chevron-right" style="width:13px;height:13px"></i> Rooms 203–206 · All available · Click to expand</span></td></tr>
+
+        <!-- SUITE -->
+        <tr><td colspan="8" class="type-hdr">Suite &nbsp;<span style="font-weight:400;color:#999">(1 / 2 occupied)</span></td></tr>
+        <tr>
+          <td class="room-col" style="background:#fff;border-bottom:1px solid #F0F0F0;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">301</div><div style="font-size:11px;color:#999">Suite</div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px;position:relative" colspan="4">
+            <div class="res-block" style="border-left-color:#FFCC00;left:2px;width:376px"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=13" style="width:13px;height:13px;border-radius:2px;flex-shrink:0"><span style="flex:1">Mehta, S. · 4 nights</span><span style="font-size:10px;color:#aaa;flex-shrink:0">2A·1C</span></div>
+          </td>
+          <td style="border-bottom:1px solid #F0F0F0;border-right:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+          <td style="border-bottom:1px solid #F0F0F0;background:#FAFAFA;height:48px"></td>
+        </tr>
+        <tr>
+          <td class="room-col" style="background:#fff;border-right:1px solid #E5E5E5;padding:8px 16px;position:sticky;left:0;z-index:10;height:48px">
+            <div style="font-size:14px;font-weight:600">302</div><div style="font-size:11px;color:#329937;font-weight:500">Available</div>
+          </td>
+          <td style="background:rgba(50,153,55,.02);height:48px" colspan="7"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</div>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+<style>
+aside:not([class]){width:64px!important;min-width:64px!important;overflow:hidden!important}
+aside:not([class])>div:first-child img{height:26px!important;width:26px!important;object-fit:contain!important}
+aside:not([class])>div:first-child>button:last-child{display:none!important}
+aside:not([class])>div:nth-child(2){flex-direction:column!important;align-items:center!important;padding:8px 0!important;gap:4px!important}
+aside:not([class])>div:nth-child(2) button{width:40px!important;height:40px!important;justify-content:center!important;padding:0!important}
+aside:not([class])>div:nth-child(2) button span{display:none!important}
+aside:not([class]) nav a,aside:not([class]) nav>button{justify-content:center!important;padding:10px 0!important}
+aside:not([class]) nav a span,aside:not([class]) nav>button span,aside:not([class]) nav i[data-lucide="chevron-down"]{display:none!important}
+aside:not([class]) nav>div>div[style*="margin-left"]{display:none!important}
+aside:not([class])>div:last-child{flex-direction:column!important;align-items:center!important;padding:6px 0!important;gap:2px!important}
+aside:not([class])>div:last-child button{width:40px!important;height:40px!important;justify-content:center!important;flex:none!important;padding:0!important}
+aside:not([class])>div:last-child button span,aside:not([class])>div:last-child button div[style*="text-align:left"]{display:none!important}
+</style>
+</body>
+</html>

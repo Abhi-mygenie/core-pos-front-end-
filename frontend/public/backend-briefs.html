@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Briefs — MyGenie POS</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #0f172a; min-height: 100vh; }
+  .header { background: #0f172a; color: white; padding: 28px 40px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 32px 0 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+  .section-title:first-child { margin-top: 0; }
+  .card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: flex-start; gap: 14px; user-select: none; }
+  .card-header:hover { background: #f8fafc; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .b-open    { background: #fee2e2; color: #b91c1c; }
+  .b-blocked { background: #ffedd5; color: #c2410c; }
+  .b-answered{ background: #dcfce7; color: #15803d; }
+  .b-partial { background: #fef9c3; color: #a16207; }
+  .b-p0 { background: #7f1d1d; color: #fff; }
+  .b-p1 { background: #dc2626; color: #fff; }
+  .b-p2 { background: #f97316; color: #fff; }
+  .b-p3 { background: #64748b; color: #fff; }
+  .b-high   { background: #fca5a5; color: #7f1d1d; }
+  .b-medium { background: #fed7aa; color: #7c2d12; }
+  .b-low    { background: #bbf7d0; color: #14532d; }
+  .b-critical { background: #450a0a; color: #fca5a5; }
+  .card-title { font-size: 14px; font-weight: 600; color: #0f172a; line-height: 1.4; }
+  .card-id { font-size: 11px; color: #94a3b8; font-family: monospace; margin-top: 2px; }
+  .chevron { margin-left: auto; color: #94a3b8; font-size: 16px; transition: transform 0.2s; flex-shrink: 0; padding-top: 2px; }
+  .card-body { display: none; padding: 0 20px 20px; border-top: 1px solid #f1f5f9; }
+  .card-body.open { display: block; }
+  .card-body h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin: 14px 0 6px; }
+  .card-body p { font-size: 13px; line-height: 1.6; color: #334155; }
+  .card-body code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #7c3aed; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 12px 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; margin: 8px 0; white-space: pre-wrap; word-break: break-all; }
+  .ask-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-top: 10px; }
+  .ask-box.warn { background: #fff7ed; border-color: #fed7aa; }
+  .ask-box p { font-size: 13px; color: #166534; }
+  .ask-box.warn p { color: #9a3412; }
+  .ask-box strong { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th { background: #f8fafc; text-align: left; padding: 7px 10px; color: #475569; font-weight: 600; border: 1px solid #e2e8f0; }
+  td { padding: 7px 10px; border: 1px solid #e2e8f0; color: #334155; vertical-align: top; line-height: 1.5; }
+  .answered-note { background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 12px; color: #166534; }
+  .meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+  .meta-item { font-size: 11px; color: #64748b; }
+  .meta-item strong { color: #334155; }
+  .stats { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 18px; text-align: center; min-width: 90px; }
+  .stat .num { font-size: 24px; font-weight: 800; }
+  .stat .lbl { font-size: 10px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-top: 2px; }
+  .n-open { color: #dc2626; }
+  .n-ans  { color: #16a34a; }
+  .n-blocked { color: #ea580c; }
+  .n-all  { color: #0f172a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Backend Briefs — MyGenie POS</h1>
+  <p>All open questions &amp; blockers filed by the frontend team for backend / dev team action &nbsp;·&nbsp; Last updated: 2026-09-10</p>
+</div>
+
+<div class="container">
+
+  <div class="stats">
+    <div class="stat"><div class="num n-all">10</div><div class="lbl">Total Briefs</div></div>
+    <div class="stat"><div class="num n-open">4</div><div class="lbl">Open</div></div>
+    <div class="stat"><div class="num n-blocked">3</div><div class="lbl">Blocked</div></div>
+    <div class="stat"><div class="num n-ans">3</div><div class="lbl">Answered</div></div>
+  </div>
+
+  <!-- ─────────────────── PMS MODULE ─────────────────── -->
+  <div class="section-title">PMS Module</div>
+
+  <!-- BUG-384 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-384</span>
+        </div>
+        <div class="card-title">POST /pos/room-payment Returns 403 — Sandbox Permission Gap</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-384_2026_09_09.md &nbsp;·&nbsp; Blocks CR-364 Record Payment</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>POST /api/v2/vendoremployee/pos/room-payment</code> returns <strong>HTTP 403</strong> for the sandbox-pms owner account (restaurant_id: 69). The route exists, validates input, but a role/permission check fires first. Observed twice: 2026-09-06 and 2026-09-08 — not resolved.</p>
+
+      <h4>Endpoint</h4>
+      <pre>POST https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-payment
+Authorization: Bearer ***
+Body: {"order_id":"1232244","amount":"1000","payment_mode":"cash","payment_type":"cash"}
+→ HTTP 403  (with validation hints — route is registered)</pre>
+
+      <h4>Frontend Status</h4>
+      <p>FE code is <strong>complete</strong> — zero FE changes needed. Constant <code>ROOM_RECORD_PAYMENT</code> and <code>RecordPaymentModal.jsx</code> are wired. Fix is backend-only.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Grant the sandbox-pms owner role (restaurant_id: 69) permission to call <code>POST /api/v2/vendoremployee/pos/room-payment</code>.<br><br>
+        Likely cause: sandbox-pms owner lacks the billing permission that production owners have, OR the route is intentionally gated for PMS context. Please grant access and confirm.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-385 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-blocked">Backend-Blocked</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-385</span>
+        </div>
+        <div class="card-title">no_show Field Absent from local-reservations &amp; dashboard-kpis</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-385_2026_09_09.md &nbsp;·&nbsp; Blocks CR-363 Night Audit no-show line</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>CR-363 Night Audit Report needs a no-show count. Probed 17 reservations in <code>local-reservations</code> and full <code>dashboard-kpis</code> — <code>no_show</code> key is absent from all responses. Confirmed 2026-09-06 and 2026-09-08.</p>
+
+      <h4>Endpoints Probed</h4>
+      <pre>GET /api/v2/vendoremployee/aiosell/local-reservations?start_date=…&end_date=…
+→ 17 records, no 'no_show' key in any record
+
+GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
+→ today keys: arrivals_count, departures_count, in_house_count, occupancy_percent_physical
+→ Recursive search for 'no_show': 0 hits</pre>
+
+      <h4>Options — please choose one</h4>
+      <table>
+        <tr><th>Option</th><th>What backend does</th><th>FE impact</th></tr>
+        <tr><td><strong>A (recommended)</strong></td><td>Add <code>no_show_count</code> to <code>dashboard-kpis</code> response</td><td>FE reads integer directly. Cleanest.</td></tr>
+        <tr><td>B</td><td>Add <code>no_show: true/false</code> per record in <code>local-reservations</code></td><td>FE counts client-side. Workable.</td></tr>
+        <tr><td>C (FE-derive)</td><td>No backend change</td><td>FE uses <code>operational_status='pending' + checkin &lt; today</code> as proxy. Approximate.</td></tr>
+      </table>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Confirm which option you will implement, or approve Option C (FE-derive) if no backend change is feasible this sprint. FE is blocked on CR-363 Night Audit until this is answered.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-BE-05 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-partial">Workaround Active</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-BE-05</span>
+        </div>
+        <div class="card-title">user-group-check-in: Missing id_type → 500 + Orphan Order (Non-Transactional)</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-BE-05_2026_09_03.md &nbsp;·&nbsp; Data integrity risk on preprod/prod</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>POST /pos/user-group-check-in</code> without <code>id_type</code> returns HTTP 500 (<em>Column 'id_type' cannot be null</em>) <strong>after already inserting an orders row</strong> → orphan order left in DB. No DB transaction wraps the write.</p>
+
+      <h4>Reproduction</h4>
+      <pre>POST /api/v1/vendoremployee/pos/user-group-check-in
+(JSON body, no id_type field)
+→ HTTP 500: QueryException "Column 'id_type' cannot be null"
+→ orders.id = 1232204 created (orphan), reservation stays 'pending'</pre>
+
+      <h4>Frontend Workaround</h4>
+      <p>FE always sends <code>id_type: "Select document type"</code>. Workaround is active — no user-facing issue now.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask (3 items)</strong>
+        <p>1. Wrap <code>user-group-check-in</code> in <code>DB::transaction()</code> so a failed insert rolls back the order.<br>
+        2. Validate <code>id_type</code> → 422 before writes.<br>
+        3. Clean up orphan <code>orders.id = 1232204</code> (restaurant 69).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-386 / INV-PMS-GST-001 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Answered — Q-GST-01 Closed</span>
+          <span class="badge b-p0">P0</span>
+          <span class="badge b-critical">Critical</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-386</span>
+        </div>
+        <div class="card-title">Room Check-In GST: order-bill-payment — room_gst_tax Field Contract</div>
+        <div class="card-id">BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md &nbsp;·&nbsp; Q-GST-01 RESOLVED 2026-09-09</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Context</h4>
+      <p>FE was sending <code>gst_tax: '0.00'</code> on every PMS room check-in. BUG-386 fix now computes CGST+SGST from slab config and sends the correct value. Question was: does checkout <code>order-bill-payment</code> also need an explicit <code>room_gst_tax</code> field?</p>
+      <div class="answered-note">
+        ✅ <strong>Q-GST-01 ANSWERED 2026-09-09:</strong> Option A confirmed — <code>room_gst_tax</code> IS an accepted dedicated field on <code>POST /api/v2/vendoremployee/order/order-bill-payment</code>. Curl probe passed full validation and reached "Order not found" (fake order_id). FE implemented. BUG-386 Gate 5b QA PASS.
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-358 (PMS AIOSELL) -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Resolved — CR-358 shipped</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358</span>
+        </div>
+        <div class="card-title">PMS AIOSELL Integration — All Backend Gaps &amp; Questions (CR-358)</div>
+        <div class="card-id">BACKEND_BRIEF_CR358_2026_08_28.md &nbsp;·&nbsp; 4 missing endpoints (now resolved)</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <p>Filed 2026-08-28 during CR-358 Gate 2. Covered 4 missing endpoints + 2 clarifications + 2 design decisions for the AIOSELL integration. All items resolved — CR-358-P1 through P5 implemented and QA passing.</p>
+      <div class="answered-note">✅ Resolved — CR-358 P1/P2/P3/P4 Gate 5b QA PASS. CR-358-P5 Gate 5a implemented, awaiting QA.</div>
+    </div>
+  </div>
+
+  <!-- CR-358-P3 list params -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-partial">Accepted as-is (Client-side workaround)</span>
+          <span class="badge b-p3">P3</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358-P3</span>
+        </div>
+        <div class="card-title">local-reservations: page / per_page / checkin_date Params Silently Ignored</div>
+        <div class="card-id">BACKEND_BRIEF_CR-358-P3_LIST_PARAMS_2026_09_03.md &nbsp;·&nbsp; P3 — deferred this sprint</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>GET /aiosell/local-reservations</code> ignores <code>page</code>, <code>per_page</code>, and <code>checkin_date</code> params — returns the full window as one flat array. FE implements Today/Late/Upcoming bucketing and pagination client-side. Works now, but payload will grow with hotel volume.</p>
+      <h4>Status</h4>
+      <p>Backend declined for this sprint (<code>ques3_reply.md</code> r3). Accepted as P3 — becomes P2 once a property exceeds ~300 reservations in window.</p>
+      <div class="ask-box">
+        <strong>Future Ask</strong>
+        <p>When roadmap permits: support <code>page</code> + <code>per_page</code> server-side pagination and <code>checkin_date</code> filter on <code>local-reservations</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-358-P5 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Questions Resolved</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358-P5</span>
+        </div>
+        <div class="card-title">PMS Phase 5 — Rates, Restrictions, Mark No-Show: Q1–Q4</div>
+        <div class="card-id">BACKEND_BRIEF_CR358_P5_2026_09_08.md &nbsp;·&nbsp; B-P5-01 resolved, CR-358-P5 implemented Gate 5a</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <p>Filed 2026-09-08. Covered Q1 (restrictions schema), Q2 (mark-no-show), Q3 (GAP-09 checkout inventory release), Q4 (room-payment 403 / BUG-384). B-P5-01 (restrictions object schema) confirmed resolved. CR-358-P5 implemented Gate 5a (2 NEW files: RatesTab.jsx, NoShowDialog.jsx). Q4 (BUG-384) still open — see separate brief above.</p>
+      <div class="answered-note">✅ CR-358-P5 Gate 5b QA PASS (2026-09-09) — 8/8 executed PASS, 13 secondary tests deferred to owner smoke. Rate grid ✅ · Cell popover ✅ · Inventory Restrictions ✅ · No-Show on OTA rows ✅ · Regression clean ✅. Ready for Gate 6 owner smoke.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── PRINTING / STATIONS ─────────────────── -->
+  <div class="section-title">Printing &amp; Station Management</div>
+
+  <!-- STATION-PRINTER-MAP -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p0">P0</span>
+          <span class="badge b-critical">Critical</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-359</span>
+        </div>
+        <div class="card-title">Station Printer Map: Runtime print_agent vs UI station_printer_mappings — Same Source?</div>
+        <div class="card-id">BACKEND_BRIEF_STATION_PRINTER_MAP_GAP6_2026_09_02.md &nbsp;·&nbsp; GAP-6 — unconfirmed data link</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>FE runtime print-agent flow reads <code>print_agent</code> from <code>/api/v1/vendoremployee/profile</code>. The new Station Mapping UI saves to <code>vendor_employees.station_printer_mappings</code> via <code>/api/v2/.../station-printer-map</code>. <strong>Unconfirmed whether these are the same data source.</strong> If not linked — saving mappings in the UI has zero effect on actual KOT/bill printer routing.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Confirm: when <code>POST /station-printer-map</code> saves new mappings, does it also update <code>print_agent</code> in the profile endpoint? If not — what triggers the runtime source to refresh after a mapping change?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-368 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p3">P3</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-368</span>
+        </div>
+        <div class="card-title">Test Suite: Printer Font Sizes + reportService._raw Gating — Two Yes/No Questions</div>
+        <div class="card-id">BACKEND_BRIEF_CR-368_2026-09-08.md &nbsp;·&nbsp; Not blocking production — blocks test clean-up only</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Q1 — Printer font sizes: is the &quot;old&quot; field allowed to change on save?</h4>
+      <p>Tests assert <code>font_size</code> cannot change after a printer config save. Need yes/no: is the old field immutable or should it reflect the saved value?</p>
+      <h4>Q2 — reportService._raw: is ungated access intentional?</h4>
+      <p><code>reportService.js:671</code> accesses <code>_raw</code> without a guard. Is this intentional (always present) or a potential runtime null?</p>
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Two YES/NO answers. No code work requested on backend side. Answers unblock 54 failing tests in the FE test suite.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── REPORTS / INVENTORY ─────────────────── -->
+  <div class="section-title">Reports &amp; Inventory</div>
+
+  <!-- ROOM ORDERS AGGREGATION -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-medium">Medium</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">Room Orders Report</span>
+        </div>
+        <div class="card-title">Room Orders Report — Dedicated Server-Side Aggregation Endpoint</div>
+        <div class="card-id">BACKEND_BRIEF_ROOM_ORDERS_AGGREGATION_2026_08_26.md &nbsp;·&nbsp; Performance — client-side compute on all orders</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>Room Orders Report fetches <code>order-logs-report</code> (ALL orders) and filters/groups client-side. Large payload, heavy JS, no server pagination, slow on large date ranges.</p>
+      <div class="ask-box">
+        <strong>Future Ask</strong>
+        <p>Dedicated endpoint (or query param on existing) that returns only room-type orders, pre-grouped with KPI totals (revenue, occupancy, ADR), with server-side pagination and date-range filtering.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:24px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:16px">
+  Canonical MD files: <code>/app/memory/backend_briefs/</code> &nbsp;·&nbsp; Last updated: 2026-09-10 &nbsp;·&nbsp; MyGenie POS Frontend Team
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const ch = header.querySelector('.chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+
+</body>
+</html>
