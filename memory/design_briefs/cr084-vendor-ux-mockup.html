@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-084 Vendor Management — UX Options Mockup</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Manrope', sans-serif; background: #F8FAFC; }
+  .tab-active { background: #1A1A1A; color: #fff; }
+  .tab-inactive { color: #666; border: 1px solid transparent; }
+  .tab-inactive:hover { border-color: #FF6B00; }
+  .badge-wholesale { background: #DBEAFE; color: #1D4ED8; }
+  .badge-retail { background: #DCFCE7; color: #16A34A; }
+  .badge-grocery { background: #F3E8FF; color: #9333EA; }
+  .badge-restaurant { background: #FFF7ED; color: #EA580C; }
+  .badge-online { background: #F0F9FF; color: #0284C7; }
+  .section-divider { height: 4px; background: linear-gradient(90deg, #F97316 0%, transparent 100%); border-radius: 2px; }
+</style>
+</head>
+<body class="p-0 m-0">
+
+<!-- OPTION SWITCHER -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4 shadow-sm">
+  <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">CR-084 Mockup:</span>
+  <button onclick="showOption('A')" id="btn-a" class="px-4 py-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-700 ring-1 ring-orange-300">Option A — Full-Page Panel</button>
+  <button onclick="showOption('B')" id="btn-b" class="px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-500 border border-slate-200">Option B — Inline Expandable Row</button>
+  <span class="ml-auto text-xs text-slate-400">Click buttons to switch · Scroll down to see Add/Edit states</span>
+</div>
+
+<div class="pt-16">
+
+<!-- ============================================================ -->
+<!-- OPTION A: FULL-PAGE PANEL REPLACEMENT (like Recipes)          -->
+<!-- ============================================================ -->
+<div id="option-a">
+
+  <!-- HEADER -->
+  <div class="bg-white border-b border-slate-200 px-6 py-3">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-lg font-bold text-orange-600">Option A — Full-Page Panel Replacement</h2>
+      <p class="text-xs text-slate-400 mt-1">Same pattern as Recipes. Click "Add Vendor" or vendor row → form replaces list. "← Back" returns.</p>
+    </div>
+  </div>
+
+  <!-- STATE 1: VENDOR LIST VIEW -->
+  <div class="max-w-6xl mx-auto px-6 py-6">
+    <div class="section-divider mb-4"></div>
+    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">State 1 — Vendor List (default view when clicking "Vendors" tab)</h3>
+
+    <!-- Tab bar mockup -->
+    <div class="flex items-center gap-1 px-4 py-2 border-b bg-white rounded-t-xl" style="border-color: #E5E5E5;">
+      <span class="text-[10px] font-bold uppercase tracking-wider mr-1" style="color: #999;">Operations</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Dashboard</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Current Stock</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Smart Purchase</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Stock Audit</span>
+      <div class="w-px h-5 mx-2 flex-shrink-0" style="background: #E0E0E0;"></div>
+      <span class="text-[10px] font-bold uppercase tracking-wider mr-1" style="color: #999;">Setup</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Ingredients</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Recipes</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-active">Vendors</span>
+      <span class="px-4 py-1.5 rounded-full text-xs font-semibold tab-inactive">Wastage Reasons</span>
+    </div>
+
+    <!-- Page content -->
+    <div class="bg-white rounded-b-xl border border-slate-200 border-t-0 overflow-hidden">
+      <!-- Toolbar -->
+      <div class="p-4 flex items-center gap-3 border-b border-slate-100">
+        <div class="relative flex-1 max-w-sm">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input class="pl-9 h-9 w-full text-sm border border-slate-200 rounded-md outline-none focus:border-orange-400" placeholder="Search vendors..." />
+        </div>
+        <span class="text-xs text-slate-400">12 vendors</span>
+        <button class="ml-auto flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Vendor
+        </button>
+      </div>
+
+      <!-- Table -->
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Vendor Name</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Contact Person</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Phone</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Type</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">GST</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200 text-center" style="width:90px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50 cursor-pointer">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Kunafabake</td>
+            <td class="py-3 px-4 text-sm text-slate-600 border-l border-slate-100">Meet Singh</td>
+            <td class="py-3 px-4 text-sm text-slate-600 border-l border-slate-100">8957823844</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-online">Online Vendor</span></td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50 cursor-pointer">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Rahul Grocery</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-online">Online Vendor</span></td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50 cursor-pointer">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Varun Dairy</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-grocery">Grocery Store</span></td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50 cursor-pointer">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Vinayak Grocery</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-sm text-slate-600 border-l border-slate-100">9876543210</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-wholesale">Wholesale Supplier</span></td>
+            <td class="py-3 px-4 text-sm text-slate-500 border-l border-slate-100">27AABCU9603R1ZM</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="px-4 py-2 text-xs text-slate-400 border-t border-slate-100">12 vendors</div>
+    </div>
+  </div>
+
+  <!-- STATE 2: ADD/EDIT VENDOR FORM (replaces list) -->
+  <div class="max-w-6xl mx-auto px-6 py-6">
+    <div class="section-divider mb-4"></div>
+    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">State 2 — Add/Edit Vendor (full-page panel replaces the list)</h3>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <!-- Back button + title -->
+      <div class="p-4 border-b border-slate-100 flex items-center gap-3">
+        <button class="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 font-medium">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Back to Vendors
+        </button>
+        <div class="w-px h-5 bg-slate-200"></div>
+        <h2 class="text-lg font-bold text-slate-900">Add New Vendor</h2>
+      </div>
+
+      <!-- Form body -->
+      <div class="p-6 max-w-2xl">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Vendor Name <span class="text-red-500">*</span></label>
+            <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="e.g. Kunafabake" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Contact Person</label>
+            <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="e.g. Meet Singh" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</label>
+            <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="+91 9876543210" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</label>
+            <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="vendor@example.com" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Vendor Type</label>
+            <select class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 bg-white">
+              <option value="">Select type...</option>
+              <option>Restaurant</option>
+              <option>Grocery Store</option>
+              <option>Wholesale Supplier</option>
+              <option>Retail Store</option>
+              <option>Online Vendor</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">GST Number</label>
+            <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="GST27AAA..." />
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Address</label>
+          <input class="mt-1 h-10 w-full text-sm border border-slate-200 rounded-lg px-3 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100" placeholder="Street, City, State" />
+        </div>
+        <div class="mt-6 flex items-center gap-3">
+          <button class="px-6 py-2.5 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">Save Vendor</button>
+          <button class="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- OPTION B: INLINE EXPANDABLE ROW                               -->
+<!-- ============================================================ -->
+<div id="option-b" style="display:none">
+
+  <!-- HEADER -->
+  <div class="bg-white border-b border-slate-200 px-6 py-3">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-lg font-bold text-blue-600">Option B — Inline Expandable Row</h2>
+      <p class="text-xs text-slate-400 mt-1">Same pattern as Expenses. Click "Add Vendor" → form row appears at top. Click edit → row expands with inputs.</p>
+    </div>
+  </div>
+
+  <!-- STATE 1: LIST WITH ADD ROW EXPANDED AT TOP -->
+  <div class="max-w-6xl mx-auto px-6 py-6">
+    <div class="section-divider mb-4"></div>
+    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">State 1 — Vendor list with "Add Vendor" form expanded at top of table</h3>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <!-- Toolbar -->
+      <div class="p-4 flex items-center gap-3 border-b border-slate-100">
+        <div class="relative flex-1 max-w-sm">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input class="pl-9 h-9 w-full text-sm border border-slate-200 rounded-md outline-none focus:border-orange-400" placeholder="Search vendors..." />
+        </div>
+        <button class="ml-auto flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Vendor
+        </button>
+      </div>
+
+      <!-- ADD ROW — expanded at top -->
+      <div class="border-b-2 border-orange-300 bg-orange-50/40 p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xs font-bold text-orange-700 uppercase tracking-wider">New Vendor</span>
+          <div class="flex-1 h-px bg-orange-200"></div>
+          <button class="text-xs text-slate-400 hover:text-slate-600">Cancel</button>
+        </div>
+        <div class="grid grid-cols-6 gap-3">
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Name *</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-orange-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="Vendor name" />
+          </div>
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Contact</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="Person name" />
+          </div>
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Phone</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="9876543210" />
+          </div>
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Type</label>
+            <select class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white">
+              <option>Select...</option>
+              <option>Restaurant</option>
+              <option>Grocery Store</option>
+              <option>Wholesale Supplier</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">GST</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="GST27..." />
+          </div>
+          <div class="flex items-end">
+            <button class="h-8 px-4 text-xs font-semibold text-white bg-green-600 rounded-md hover:bg-green-700">Save</button>
+          </div>
+        </div>
+        <!-- Second row for email + address -->
+        <div class="grid grid-cols-6 gap-3 mt-2">
+          <div class="col-span-2">
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Email</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="vendor@email.com" />
+          </div>
+          <div class="col-span-4">
+            <label class="text-[10px] font-semibold text-slate-500 uppercase">Address</label>
+            <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white" placeholder="Street, City, State" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Vendor Name</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Contact</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Phone</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">Type</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200">GST</th>
+            <th class="py-2.5 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b-2 border-slate-200 text-center" style="width:90px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Kunafabake</td>
+            <td class="py-3 px-4 text-sm text-slate-600 border-l border-slate-100">Meet Singh</td>
+            <td class="py-3 px-4 text-sm text-slate-600 border-l border-slate-100">8957823844</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-online">Online Vendor</span></td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+
+          <!-- EDIT ROW — expanded inline (click edit on Rahul Grocery) -->
+          <tr class="border-b-2 border-blue-300 bg-blue-50/30">
+            <td colspan="6" class="p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">Editing: Rahul Grocery</span>
+                <div class="flex-1 h-px bg-blue-200"></div>
+                <button class="text-xs text-blue-600 font-semibold hover:underline">Save</button>
+                <button class="text-xs text-slate-400 hover:text-slate-600">Cancel</button>
+              </div>
+              <div class="grid grid-cols-6 gap-3">
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Name *</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-blue-200 rounded-md px-2 outline-none focus:border-blue-400 bg-white" value="Rahul Grocery" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Contact</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white" placeholder="Person" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Phone</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white" placeholder="Phone" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Type</label>
+                  <select class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white">
+                    <option selected>Online Vendor</option>
+                    <option>Restaurant</option>
+                    <option>Grocery Store</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">GST</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white" placeholder="GST..." />
+                </div>
+                <div></div>
+              </div>
+              <div class="grid grid-cols-6 gap-3 mt-2">
+                <div class="col-span-2">
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Email</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white" placeholder="email" />
+                </div>
+                <div class="col-span-4">
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase">Address</label>
+                  <input class="mt-0.5 h-8 w-full text-xs border border-slate-200 rounded-md px-2 outline-none bg-white" placeholder="Address" />
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="border-b border-slate-200 hover:bg-slate-50/50">
+            <td class="py-3 px-4 text-sm font-semibold text-slate-900">Varun Dairy</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 border-l border-slate-100"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full badge-grocery">Grocery Store</span></td>
+            <td class="py-3 px-4 text-sm text-slate-400 border-l border-slate-100">—</td>
+            <td class="py-3 px-4 text-center border-l border-slate-100">
+              <button class="p-1 rounded hover:bg-slate-100 text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button class="p-1 rounded hover:bg-red-50 text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showOption(opt) {
+  document.getElementById('option-a').style.display = opt === 'A' ? 'block' : 'none';
+  document.getElementById('option-b').style.display = opt === 'B' ? 'block' : 'none';
+  document.getElementById('btn-a').className = opt === 'A'
+    ? 'px-4 py-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-700 ring-1 ring-orange-300'
+    : 'px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-500 border border-slate-200';
+  document.getElementById('btn-b').className = opt === 'B'
+    ? 'px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-700 ring-1 ring-blue-300'
+    : 'px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-500 border border-slate-200';
+}
+</script>
+
+</body>
+</html>

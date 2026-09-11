@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/api/v2/vendoremployee/aiosell/room-status/8528",
+    "body": {
+      "status": "ooo"
+    }
+  },
+  "http_status": 200,
+  "body": {
+    "status": true,
+    "message": "Room marked out of order.",
+    "data": {
+      "room": {
+        "restaurant_table_id": 8528,
+        "table_no": "r1",
+        "title": null,
+        "manual_status": "ooo",
+        "room_operational_status_at": "2026-09-04 03:01:32"
+      },
+      "inventory_push_warning": null
+    }
+  }
+}
