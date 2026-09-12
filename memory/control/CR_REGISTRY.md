@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-11 — **CR-162 IMPLEMENTED (Gate 5a, Fast Lane).** `roomService.js:173` — `payment_type: 'interim'` added to `recordPartialPayment()`. All 4 contract fields correct: `room_order_id` + `payment_amount` + `payment_mode` + `payment_type`. webpack clean. EXIT GATE 5/5. QA PENDING.
 **Last Updated:** 2026-09-11 — **CR-377 IMPLEMENTED (Gate 5a).** 9 edits / 2 files: `reportService.js` F1-E1 (transform +50 fields, BUG-393 absorbed) + `OrderSummaryPage.jsx` P2-E1..E8 (6 KPI cards, 3 new payment rows, TAB credit, room advance/checkout/checkin, Galla section, Expense section, Purchase section). webpack clean. Screenshot verified. EXIT GATE 5/5. QA PENDING.
 **Last Updated:** 2026-09-11 — **CR-377 GATE 3 COMPLETE.** Implementation Plan at `plans/CR-377_IMPLEMENTATION_PLAN.md`. 2 files (reportService.js + OrderSummaryPage.jsx), 9 edits. BUG-393 absorbed. Awaiting Gate 4 GO → Implementation.
 **Last Updated:** 2026-09-11 — **CR-377 GATE 2 COMPLETE.** IA at `impact/CR-377_IMPACT_ANALYSIS.md`. All 5 ODs locked. Risk: MEDIUM. 2 files (~255 lines). BUG-393 absorbed. Design mockup: `public/cr377-design-mockup.html`. Awaiting Gate 3 GO.

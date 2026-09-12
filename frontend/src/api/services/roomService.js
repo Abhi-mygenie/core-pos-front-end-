@@ -163,12 +163,14 @@ export const splitRoomOrder = async ({ orderId, orderDetailIds, customerName, re
 // CR-162: Record a mid-stay partial payment against an active room order.
 // Backend derives restaurant_id from Bearer token — no restaurant_id in payload.
 // payment_mode accepted: cash | upi | card | online | razorpay | neft
+// payment_type: 'interim' for mid-stay (backend default is 'advance' — always override per BE reply 2026-09-10)
 // Returns: { success: true, room_payment_summary: { remaining_room_balance, payments: [...] } }
 export const recordPartialPayment = async ({ roomOrderId, amount, paymentMode, note = '' }) => {
   const payload = {
     room_order_id: roomOrderId,
     payment_amount: amount,
     payment_mode: paymentMode,
+    payment_type: 'interim', // CR-162: mid-stay partial payment — BE reply 2026-09-10
     ...(note ? { payment_note: note } : {}),
   };
   const res = await api.post(API_ENDPOINTS.ROOM_RECORD_PAYMENT, payload);

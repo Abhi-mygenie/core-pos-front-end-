@@ -20401,7 +20401,7 @@
       "area": "Room Module \u2192 Active Room Card / Order Entry",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 5a \u2014 FE FULLY IMPLEMENTED (registry drift corrected 2026-09-11). BUG-384 CLOSED (was FE contract error). Fast Lane fix needed: roomService.js send room_order_id+payment_amount+payment_mode (~5 lines). Fast Lane GO from owner needed. Addendum: change_requests/CR-162_PMS_MID_STAY_PARTIAL_PAYMENT_ADDENDUM_2026_09_11.md",
+      "status": "IMPLEMENTED Gate 5a (2026-09-11) \u2014 payment_type: interim added to recordPartialPayment() roomService.js. All 4 contract fields correct: room_order_id + payment_amount + payment_mode + payment_type. webpack clean. EXIT GATE 5/5. QA PENDING.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
