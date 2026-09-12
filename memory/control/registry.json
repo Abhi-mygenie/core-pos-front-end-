@@ -23681,8 +23681,8 @@
       "title": "POS Order Entry: Menu Switch (Normal / Party / Premium tabs)",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "INTAKE CLOSED \u2014 ALL 6 ODs LOCKED (2026-09-10). Design A (pure local setting in StatusConfigPage, no tab strip). OD-376-06: no fallback, show empty-state. Ready for Gate 2.",
-      "gate": 1,
+      "status": "GATE 3 COMPLETE \u2014 Implementation Plan written (2026-09-11). Awaiting Gate 4 GO from owner. 7 files, ~98 lines, MEDIUM risk. Design A (local setting via StatusConfigPage). Plan: plans/CR-376_IMPLEMENTATION_PLAN.md",
+      "gate": 3,
       "sprint_key": "pos_7_0",
       "files": [
         "productTransform.js",
