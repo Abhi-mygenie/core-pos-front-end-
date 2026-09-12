@@ -5,6 +5,15 @@
 
 ---
 
+## FILE_OWNERSHIP — CR-379 (2026-09-14)
+
+| File | Lines Changed | Change | CR/BUG |
+|---|---|---|---|
+| `pages/pms/CheckInPage.jsx` | E-C1..E-C13 (~130 lines added/changed) | Marker, useRef import, BadgeCheck/FileText icons, customerService+documentService imports, 10 CRM/extra-guest state vars + ref, handleCrmLookup useCallback, selectArrival/selectWalkin CRM reset + OTA auto-lookup, handlePhoneChange, phone input wired, CRM badge JSX (4 states), occupancy counter + extra adult/child inputs + corporate B2B toggle, handleConfirm CRM create-if-new + GST sync + expanded pmsCheckIn params | CR-379 |
+| `api/services/pmsService.js` | E-P1..E-P2 (~15 lines changed/added) | Marker comment, children_name/booking_for/firm_name/firm_gst upgraded, customer_id/cust_membership_id/name2/name3/name4/id_type2/id_type3/id_type4 added to pmsCheckIn payload | CR-379 |
+
+---
+
 ## FILE_OWNERSHIP — CR-162 (2026-09-11)
 
 | File | Lines Changed | Change | CR/BUG |

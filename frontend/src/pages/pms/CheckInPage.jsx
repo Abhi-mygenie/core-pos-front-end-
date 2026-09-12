@@ -1,10 +1,12 @@
-// CR-358-P2 | BUG-386: S4 — Check-In Page. BUG-386: room accommodation GST (CGST+SGST) computed from slabs.
-import { useState, useEffect, useCallback, useMemo } from 'react';
+// CR-358-P2 | BUG-386 | CR-379: S4 — Check-In Page. CR-379: CRM customer link, returning-guest badge, extra adults/children, corporate B2B.
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Search, Plus, UserPlus, Loader2, AlertCircle, Check, Home, Calendar, User, Phone, Info, BedDouble } from 'lucide-react';
+import { Search, Plus, UserPlus, Loader2, AlertCircle, Check, Home, Calendar, User, Phone, Info, BedDouble, BadgeCheck, FileText } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import { toast } from 'sonner';
 import { getPmsReservations, getBookableRooms, pmsCheckIn } from '@/api/services/pmsService';
+import { lookupCustomer, createCustomer, updateCustomer } from '@/api/services/customerService'; // CR-379
+import { getDocuments } from '@/api/services/documentService'; // CR-379
 import { useRestaurant } from '@/contexts'; // BUG-386
 import { computeRoomGst } from '@/utils/roomGstCalculator'; // BUG-386
 
@@ -32,6 +34,21 @@ export default function CheckInPage() {
   const [isWalkin, setIsWalkin] = useState(false);
   const [form, setForm] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // CR-379: CRM customer link state
+  const [crmCustomer, setCrmCustomer]   = useState(null);  // null = no match / not searched; object = returning guest
+  const [crmLoading,  setCrmLoading]    = useState(false);
+  const [crmError,    setCrmError]      = useState(null);   // string = timeout/offline message
+  const [crmDocs,     setCrmDocs]       = useState([]);     // docs-on-file for returning guest (DD-4)
+  // CR-379: Extra guests (OD-5A, DD-5, DD-6)
+  const [extraAdults,   setExtraAdults]   = useState([]);   // [{name:''}] length = adults - 1
+  const [childrenNames, setChildrenNames] = useState([]);   // [''] length = children
+  // CR-379: Corporate B2B (DD-7)
+  const [isCorpBooking, setIsCorpBooking] = useState(false);
+  const [firmName,      setFirmName]      = useState('');
+  const [firmGst,       setFirmGst]       = useState('');
+  // CR-379: stale-lookup guard — prevents race condition when phone changes mid-request
+  const crmLookupPhoneRef = useRef(null);
 
   const today = todayStr();
 
@@ -98,6 +115,38 @@ export default function CheckInPage() {
     return match?.id ?? rs[0]?.id ?? null;
   }, [rooms]);
 
+  // CR-379: CRM lookup + docs-on-file fetch. Non-blocking (OD-1A). Stale-guard: crmLookupPhoneRef.
+  const handleCrmLookup = useCallback(async (phone) => {
+    crmLookupPhoneRef.current = phone;
+    setCrmLoading(true);
+    setCrmError(null);
+    setCrmCustomer(null);
+    setCrmDocs([]);
+    try {
+      const result = await lookupCustomer(phone);
+      if (crmLookupPhoneRef.current !== phone) return; // stale — phone changed while request was in-flight
+      setCrmCustomer(result); // null = not found; object = returning guest
+      if (result?.id) {
+        // DD-4: fetch docs immediately after successful lookup (read-only display in CR-379)
+        try {
+          const docs = await getDocuments(result.id);
+          if (crmLookupPhoneRef.current !== phone) return;
+          setCrmDocs(docs);
+        } catch {
+          // Silent — docs-on-file display is informational only
+        }
+      }
+    } catch (err) {
+      if (crmLookupPhoneRef.current !== phone) return;
+      // lookupCustomer throws only for CRM_TIMEOUT; 4xx = null returned (no throw)
+      if (err?.type === 'CRM_TIMEOUT') {
+        setCrmError(err.message || 'CRM lookup failed (Timeout / Offline)');
+      }
+    } finally {
+      if (crmLookupPhoneRef.current === phone) setCrmLoading(false);
+    }
+  }, []); // deps: [] — only uses stable state setters and module-level service functions
+
   const selectArrival = useCallback((a, roomsList) => {
     setIsWalkin(false);
     setSelected(a);
@@ -117,7 +166,15 @@ export default function CheckInPage() {
       note: a.specialRequests,
       _arrivalRoomCode: a.roomCode,
     });
-  }, [defaultRoomForType, today]);
+    // CR-379: reset CRM + extra guest state
+    setCrmCustomer(null); setCrmError(null); setCrmLoading(false); setCrmDocs([]);
+    setIsCorpBooking(false); setFirmName(''); setFirmGst('');
+    const adultCount = a.adults ?? 1;
+    setExtraAdults(Array.from({ length: Math.max(0, adultCount - 1) }, () => ({ name: '' })));
+    setChildrenNames(Array.from({ length: a.children ?? 0 }, () => ''));
+    // OD-6A: OTA arrival phone auto-lookup (DD-1)
+    if ((a.phone ?? '').length === 10) handleCrmLookup(a.phone);
+  }, [defaultRoomForType, today, handleCrmLookup]);
 
   const selectWalkin = useCallback((prefill, roomsList) => {
     const rs = roomsList || rooms;
@@ -139,9 +196,31 @@ export default function CheckInPage() {
       note: prefill?.note ?? '',
       _arrivalRoomCode: null,
     });
-  }, [rooms, today]);
+    // CR-379: reset CRM + extra guest state
+    setCrmCustomer(null); setCrmError(null); setCrmLoading(false); setCrmDocs([]);
+    setIsCorpBooking(false); setFirmName(''); setFirmGst('');
+    setExtraAdults([]);
+    setChildrenNames([]);
+    // Auto-lookup if prefill has a 10-digit phone (walk-in from FrontDesk)
+    if ((prefill?.phone ?? '').length === 10) handleCrmLookup(prefill.phone);
+  }, [rooms, today, handleCrmLookup]);
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // CR-379: phone change handler — triggers CRM lookup on 10 digits (DD-1)
+  const handlePhoneChange = (digits) => {
+    setField('phone', digits);
+    if (digits.length === 10) {
+      handleCrmLookup(digits);
+    } else {
+      // Cancel any in-flight lookup immediately when user edits phone
+      crmLookupPhoneRef.current = null;
+      setCrmLoading(false);
+      setCrmCustomer(null);
+      setCrmError(null);
+      setCrmDocs([]);
+    }
+  };
 
   const formNights = useMemo(() => {
     if (!form?.checkin || !form?.checkout) return null;
@@ -174,21 +253,58 @@ export default function CheckInPage() {
         formNights ?? 1,
         1  // single-room check-in (pms_gst.md §5)
       );
+
+      // CR-379: Step 1 — resolve CRM customer ID (OD-1A: non-blocking)
+      let crmCustomerId = crmCustomer?.id ?? null;
+      if (!crmCustomerId) {
+        try {
+          const created = await createCustomer(
+            { name: form.name.trim(), phone: form.phone, email: form.email ?? '' },
+            restaurant?.id
+          );
+          crmCustomerId = created?.customer_id ?? null;
+        } catch {
+          toast.warning('Could not link to CRM — proceeding without loyalty link.');
+          // Non-blocking: check-in continues with crmCustomerId = null
+        }
+      }
+
+      // CR-379: Step 2 — corporate GST sync (DD-7, non-blocking)
+      if (isCorpBooking && crmCustomerId && firmGst) {
+        try {
+          await updateCustomer(
+            crmCustomerId,
+            { gstName: firmName, gstNumber: firmGst },
+            restaurant?.id
+          );
+        } catch {
+          // Non-blocking: corporate GST sync failure does not block check-in
+        }
+      }
+
+      // CR-379: Step 3 — pmsCheckIn with CRM + extra guest params
       const res = await pmsCheckIn({
-        bookingType: form.bookingType,
-        bookingId: form.bookingId,
-        name: form.name.trim(),
-        phone: form.phone,
-        email: form.email,
+        bookingType:       form.bookingType,
+        bookingId:         form.bookingId,
+        name:              form.name.trim(),
+        phone:             form.phone,
+        email:             form.email,
         restaurantTableId: form.restaurantTableId,
-        checkin: form.checkin,
-        checkout: form.checkout,
-        orderAmount: Number(form.orderAmount),
-        advancePayment: Number(form.advancePayment || 0),
-        adults: Number(form.adults),
-        children: Number(form.children),
-        note: form.note,
+        checkin:           form.checkin,
+        checkout:          form.checkout,
+        orderAmount:       Number(form.orderAmount),
+        advancePayment:    Number(form.advancePayment || 0),
+        adults:            Number(form.adults),
+        children:          Number(form.children),
+        note:              form.note,
         gstTax, // BUG-386
+        // CR-379: CRM + extra guest fields
+        customerId:    crmCustomerId,
+        extraAdults,
+        childrenNames,
+        bookingFor:    isCorpBooking ? 'Corporate' : 'Individual',
+        firmName:      isCorpBooking ? firmName : '',
+        firmGst:       isCorpBooking ? firmGst  : '',
       });
       toast.success(res?.message ?? 'Guest checked in');
       navigate('/pms/in-house'); // CR-358-P2 A-06
@@ -326,6 +442,113 @@ export default function CheckInPage() {
                     <div className="text-[11px] text-[#888]">{form.bookingId ? `Booking: ${form.bookingId}` : 'No booking ID — Walk-in'}</div>
                   </div>
 
+                  {/* CR-379: CRM badge — 4 states: loading / returning / new / failed (DD-2, DD-8) */}
+                  {form.phone?.length === 10 && (
+                    <div className="px-5 pt-3 pb-0">
+                      {/* State 1: loading */}
+                      {crmLoading && (
+                        <div data-testid="ci-crm-loading"
+                          className="flex items-center gap-2 text-[12px] text-[#888] bg-gray-50 rounded-lg px-3 py-2">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Looking up CRM…</span>
+                        </div>
+                      )}
+                      {/* State 4: failed / CRM offline (DD-8 — amber non-blocking) */}
+                      {!crmLoading && crmError && (
+                        <div data-testid="ci-crm-error"
+                          className="flex items-center gap-2 text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <div>
+                            <div className="font-medium">CRM lookup failed (Timeout / Offline)</div>
+                            <div className="text-[11px] text-amber-600">Check-in will proceed without loyalty link.</div>
+                          </div>
+                        </div>
+                      )}
+                      {/* State 2: returning guest (DD-3 — 4-column stats + docs) */}
+                      {!crmLoading && !crmError && crmCustomer && (
+                        <div data-testid="ci-crm-badge"
+                          className="rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] p-3">
+                          <div className="flex items-center gap-2 mb-2.5">
+                            <BadgeCheck className="w-4 h-4 text-[#329937]" />
+                            <span className="text-[12px] font-semibold text-[#329937]">Returning Guest</span>
+                            {crmCustomer.tier && (
+                              <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[#329937]/10 text-[#329937] font-medium">
+                                {crmCustomer.tier}
+                              </span>
+                            )}
+                          </div>
+                          {/* DD-3: 4-column stats row */}
+                          <div className="grid grid-cols-4 gap-2 mb-1">
+                            {[
+                              {
+                                label: 'Stays',
+                                value: crmCustomer.totalVisits ?? '—',
+                                sub: null,
+                              },
+                              {
+                                label: 'Last Stay',
+                                value: crmCustomer.lastVisit
+                                  ? new Date(crmCustomer.lastVisit).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })
+                                  : '—',
+                                sub: null,
+                              },
+                              {
+                                label: 'Loyalty Pts',
+                                value: crmCustomer.totalPoints != null ? String(crmCustomer.totalPoints) : '0',
+                                sub: crmCustomer.pointsValue
+                                  ? `≈ ₹${Number(crmCustomer.pointsValue).toLocaleString('en-IN')}`
+                                  : null,
+                              },
+                              {
+                                label: 'Store Credit',
+                                value: crmCustomer.walletBalance != null
+                                  ? `₹${Number(crmCustomer.walletBalance).toLocaleString('en-IN')}`
+                                  : '₹0',
+                                sub: 'Prepaid balance',
+                              },
+                            ].map((stat, i) => (
+                              <div key={i} className="text-center">
+                                <div className="text-[13px] font-bold text-[#1A1A1A]">{stat.value}</div>
+                                <div className="text-[10px] text-[#888] mt-0.5">{stat.label}</div>
+                                {stat.sub && <div className="text-[9px] text-[#329937] font-medium">{stat.sub}</div>}
+                              </div>
+                            ))}
+                          </div>
+                          {/* DD-4: Documents on file — read-only cards (CR-380 owns upload) */}
+                          {crmDocs.length > 0 && (
+                            <div className="mt-2 pt-2 border-t border-[#BBF7D0]">
+                              <div className="text-[10px] text-[#888] font-medium uppercase tracking-wide mb-1.5">
+                                Documents on file
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {crmDocs.map((doc, i) => (
+                                  <div key={i} data-testid={`ci-doc-card-${doc.doc_type}`}
+                                    className="flex items-center gap-1.5 text-[10px] bg-white border border-[#BBF7D0] rounded-lg px-2 py-1">
+                                    <FileText className="w-3 h-3 text-[#329937] shrink-0" />
+                                    <span className="font-medium capitalize">{(doc.doc_type ?? '').replace(/_/g, ' ')}</span>
+                                    {doc.uploaded_at && (
+                                      <span className="text-[#888]">
+                                        · {new Date(doc.uploaded_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {/* State 3: new guest (no badge needed, subtle indicator) */}
+                      {!crmLoading && !crmError && !crmCustomer && (
+                        <div data-testid="ci-crm-new-guest"
+                          className="flex items-center gap-2 text-[12px] text-[#888] bg-gray-50 rounded-lg px-3 py-2">
+                          <User className="w-3.5 h-3.5 shrink-0" />
+                          <span>New guest — will be registered in CRM on check-in</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Form */}
                   <div className="p-5 space-y-4">
                     <div className="grid grid-cols-2 gap-3">
@@ -337,7 +560,7 @@ export default function CheckInPage() {
                         <label className="text-[12px] text-[#888] mb-1 block">Phone *</label>
                         <div className="relative">
                           <span className="absolute left-3 top-2.5 text-[13px] text-[#888]">+91</span>
-                          <input data-testid="ci-phone" value={form.phone} onChange={e => setField('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} inputMode="numeric" placeholder="10 digits" className={`${inputCls} pl-12`} />
+                          <input data-testid="ci-phone" value={form.phone} onChange={e => handlePhoneChange(e.target.value.replace(/\D/g, '').slice(0, 10))} inputMode="numeric" placeholder="10 digits" className={`${inputCls} pl-12`} />
                         </div>
                       </div>
                     </div>
@@ -372,6 +595,114 @@ export default function CheckInPage() {
                         <label className="text-[12px] text-[#888] mb-1 block">Check-out *</label>
                         <input data-testid="ci-checkout" value={form.checkout} onChange={e => setField('checkout', e.target.value)} type="date" min={form.checkin ? addDays(form.checkin, 1) : ''} className={inputCls} />
                       </div>
+                    </div>
+
+                    {/* CR-379: Occupancy & Guest Name Register (DD-5, DD-6) */}
+                    <div>
+                      <label className="text-[12px] text-[#888] mb-1.5 block font-medium">
+                        Occupancy & Guest Register
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] text-[#888] mb-1 block">Adults</label>
+                          <input
+                            data-testid="ci-adults"
+                            type="number" min="1" max="10"
+                            value={form.adults}
+                            onChange={e => {
+                              const v = Math.max(1, Number(e.target.value) || 1);
+                              setField('adults', v);
+                              setExtraAdults(prev =>
+                                Array.from({ length: v - 1 }, (_, i) => prev[i] ?? { name: '' })
+                              );
+                            }}
+                            className={inputCls}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] text-[#888] mb-1 block">Children</label>
+                          <input
+                            data-testid="ci-children"
+                            type="number" min="0" max="10"
+                            value={form.children}
+                            onChange={e => {
+                              const v = Math.max(0, Number(e.target.value) || 0);
+                              setField('children', v);
+                              setChildrenNames(prev =>
+                                Array.from({ length: v }, (_, i) => prev[i] ?? '')
+                              );
+                            }}
+                            className={inputCls}
+                          />
+                        </div>
+                      </div>
+                      {/* DD-5: Extra adult name slots (Adult 2 → 4) */}
+                      {extraAdults.map((adult, i) => (
+                        <div key={i} className="mt-2">
+                          <input
+                            data-testid={`ci-adult-name-${i + 2}`}
+                            value={adult.name}
+                            onChange={e =>
+                              setExtraAdults(prev =>
+                                prev.map((item, idx) => idx === i ? { name: e.target.value } : item)
+                              )
+                            }
+                            placeholder={`Adult ${i + 2} Name`}
+                            className={inputCls}
+                          />
+                        </div>
+                      ))}
+                      {/* DD-6: Children name inputs — one per child */}
+                      {childrenNames.map((name, i) => (
+                        <div key={i} className="mt-2">
+                          <input
+                            data-testid={`ci-child-name-${i + 1}`}
+                            value={name}
+                            onChange={e =>
+                              setChildrenNames(prev =>
+                                prev.map((item, idx) => idx === i ? e.target.value : item)
+                              )
+                            }
+                            placeholder={`Child ${i + 1} Name & Age`}
+                            className={`${inputCls} border-purple-200 focus:border-purple-400`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CR-379: Corporate / B2B toggle (DD-7) */}
+                    <div>
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          data-testid="ci-corp-toggle"
+                          checked={isCorpBooking}
+                          onChange={e => setIsCorpBooking(e.target.checked)}
+                          className="rounded border-[#E5E5E5] text-[#329937] focus:ring-[#329937]"
+                        />
+                        <span className="text-[13px] text-[#1A1A1A] font-medium">Corporate / B2B Billing</span>
+                      </label>
+                      <p className="text-[11px] text-[#888] mt-0.5 ml-5">
+                        Check if invoice is raised to company GSTIN
+                      </p>
+                      {isCorpBooking && (
+                        <div className="mt-2 space-y-2 ml-5">
+                          <input
+                            data-testid="ci-firm-name"
+                            value={firmName}
+                            onChange={e => setFirmName(e.target.value)}
+                            placeholder="Company / Firm Name"
+                            className={inputCls}
+                          />
+                          <input
+                            data-testid="ci-firm-gst"
+                            value={firmGst}
+                            onChange={e => setFirmGst(e.target.value)}
+                            placeholder="GST Number (e.g. 29XXXXX1234N1Z5)"
+                            className={inputCls}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">

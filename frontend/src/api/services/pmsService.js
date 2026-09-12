@@ -1,4 +1,4 @@
-// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3 | CR-358-P4: PMS aggregation + booking/check-in + reservation-ops + room-status/tape-chart service
+// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3 | CR-358-P4 | CR-379: PMS aggregation + booking/check-in + reservation-ops + room-status/tape-chart service
 // getInHouseGuests: two-call join — GET_ROOM_LIST + local-reservations enriched on order_id.
 // roomService.getRoomList() and roomListTransform are NOT modified — only called.
 import { getRoomList } from './roomService';
@@ -152,11 +152,11 @@ export const pmsCheckIn = async (p) => {
     id_type:         'Select document type',   // REQUIRED (NOT NULL) — probe P6 500 without it
     total_adult:     Number(p.adults ?? 1),
     total_children:  Number(p.children ?? 0),
-    children_name:   '',
+    children_name:   p.childrenNames?.length ? p.childrenNames.join(',') : '',  // CR-379: real names
     checkin_date:    p.checkin,
     checkout_date:   p.checkout,
     booking_details: '',
-    booking_for:     'Individual',
+    booking_for:     p.bookingFor ?? 'Individual',                               // CR-379: Corporate support
     order_amount:    orderAmount,
     room_price:      orderAmount,
     advance_payment: advance,
@@ -164,8 +164,20 @@ export const pmsCheckIn = async (p) => {
     payment_method:  p.paymentMethod ?? '',
     order_note:      p.note ?? '',
     gst_tax:         to2dp(p.gstTax ?? 0),                           // BUG-386: computed from slabs
-    firm_name:       '',
-    firm_gst:        '',
+    firm_name:       p.firmName ?? '',                                            // CR-379: Corporate
+    firm_gst:        p.firmGst ?? '',                                             // CR-379: Corporate GST
+    // CR-379: CRM customer link (OD-1A non-blocking — undefined when CRM fails)
+    ...(p.customerId ? {
+      customer_id:        p.customerId,
+      cust_membership_id: p.customerId,   // CR-127 old-flow parity
+    } : {}),
+    // CR-379: Extra adult names (OD-5A)
+    name2:    p.extraAdults?.[0]?.name ?? '',
+    name3:    p.extraAdults?.[1]?.name ?? '',
+    name4:    p.extraAdults?.[2]?.name ?? '',
+    id_type2: '',
+    id_type3: '',
+    id_type4: '',
   };
   const res = await api.post(AIOSELL_ENDPOINTS.LOCAL_CHECKIN, payload, { headers: { 'X-localization': 'en' } });
   return res.data;

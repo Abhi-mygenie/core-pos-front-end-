@@ -23870,7 +23870,7 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 COMPLETE + ALL PROBES CLOSED (2026-09-13). 15 edit sites. Pre-impl probes: CRM found-path CONFIRMED, getDocuments CONFIRMED (uploaded_at not created_at \u2014 plan corrected), pmsCheckIn on free room SUCCESS (cust_membership_id in response = stored). V-11 CLOSED. ZERO open gaps. Awaiting Gate 4 GO.",
+      "status": "GATE_5A_IMPLEMENTED",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
       "gate": 3,
