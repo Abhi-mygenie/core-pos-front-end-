@@ -3,7 +3,8 @@
 **Date:** 2026-09-12
 **Role:** INVESTIGATION (AGENT_PROMPT_ALPHA v0.7 §ROLE 6)
 **Owner ask:** "CRM is not integrated into the new PMS check-in flow. Old Check-In module has CRM customer lookup/create + document upload; new flow appears to skip it. Investigate in detail."
-**Registration status (R0):** **UNREGISTERED** — no CR/BUG ID exists for this gap. Recommend INTAKE as a new CR (proposed title: *PMS Check-In — CRM Customer Link Parity*). Related: BUG-090, BUG-092, CR-128, CR-129, CR-350, BUG-351, CR-358-P2, CR-364.
+**Registration status (R0):** **UNREGISTERED** — no CR/BUG ID exists for this gap. Recommend INTAKE as new CRs (proposed: CR-A = CRM core + CR-B = Guest Documents). Related: BUG-090, BUG-092, CR-128, CR-129, CR-350, BUG-351, CR-358-P2, CR-364.
+**Owner decisions:** **ALL 7 ODs LOCKED 2026-09-12** — see §5c.
 **Code edits:** NONE (read-only investigation).
 
 ---
@@ -114,16 +115,17 @@ pmsService.pmsCheckIn (L136-172)
 
 Files WILL NOT be touched by such a CR: `RoomCheckInModal.jsx`, `roomService.js`, `customerService.js`, `documentService.js`, `crmAxios.js`, `orderTransform.js`.
 
-### 5c. Owner decisions needed before Planning (R3 — do not invent policy)
+### 5c. Owner decisions — ALL LOCKED (2026-09-12)
 
-| OD | Question | Options |
-|---|---|---|
-| OD-1 | Should CRM link be **blocking** at check-in (fail if CRM down) or **non-blocking** like the old modal (BUG-092)? | A) non-blocking + warning toast B) blocking |
-| OD-2 | Create the CRM customer at **New Booking** time (reservation already linked) or only at **Check-In**? | A) both (create at booking, re-use at check-in) B) check-in only |
-| OD-3 | Where do ID document images live for PMS check-ins? | A) CRM only (`/pos/customers/{id}/documents`, keep JSON check-in) B) both CRM + POS backend (requires FormData variant of `pmsCheckIn` or a follow-up upload endpoint) |
-| OD-4 | Does the CR-350 mandatory-ID toggle apply to the new PMS flow too? | A) yes (same localStorage key) B) separate PMS setting C) CR-358 §7 rules (nationality-based) |
-| OD-5 | Extra adults / children names & IDs — in scope for the new flow (old modal supports them; new form has counts only)? | A) yes B) later CR |
-| OD-6 | OTA (Online) arrivals: auto-create CRM customer from the AIOSELL `guest{}` block at check-in without staff confirmation? | A) yes (auto) B) staff confirms match/create |
+| OD | Question | Decision | Owner answer |
+|---|---|---|---|
+| OD-1 | CRM failure behavior at new PMS check-in | **A — Non-blocking.** Check-in proceeds with a warning toast if CRM fails; `customer_id` stays null for that stay. Matches old modal pattern. | Locked 2026-09-12 |
+| OD-2 | When to identify / create CRM customer | **B — Check-In only.** `NewBookingPage` does NOT call CRM. CRM search/lookup/create fires at `CheckInPage` on confirm. | Locked 2026-09-12 |
+| OD-3 | New PMS ID document storage | **B — CRM + POS backend, same as old model.** `pmsCheckIn` changes from JSON → FormData (same pattern as `roomService.checkIn`). ID images go to CRM via `uploadDocument` AND as FormData files in the check-in request. | Locked 2026-09-12 |
+| OD-4 | Mandatory document rule for new PMS | **A — Reuse existing CR-350 toggle** (same `localStorage` key `mygenie_room_id_upload_required`). One toggle controls both old and new PMS check-in. Returning guest with docs already on file in CRM → skip upload (BUG-351 behavior). | Locked 2026-09-12 |
+| OD-5 | Extra adults / children names & IDs | **A — Include in this CR.** Extra adult names + ID docs and children names are in scope; not deferred. | Locked 2026-09-12 |
+| OD-6 | OTA guest matching behavior | **A — Auto-lookup by phone, create silently if no match.** No staff confirmation step for OTA arrivals. | Locked 2026-09-12 |
+| OD-7 | Returning guest badge at check-in | **A — Show badge with all fields:** visit count ("4th visit"), CRM tier/membership, docs-on-file indicator, last stay date, outstanding credit balance. Badge trigger (auto on phone match vs manual "check CRM" button) **deferred to design stage**. | Locked 2026-09-12 |
 
 ### 5d. Backend — NO blocker (revalidated)
 
@@ -134,7 +136,7 @@ Optional (non-blocking) backend asks to raise only if OD-2 = A or CR-364 needs i
 - Reservation / in-house payloads exposing `cust_membership_id` for CRM deep-links on Folio (CR-364).
 
 ### 5e. Suggested gate path
-INTAKE (register CR, Risk HIGH, P1) → PLANNING Gate 2 with OD-1..6 answered (includes R11 probe: JSON check-in **with** `cust_membership_id`) → Gate 3 plan → Gate 4 GO. Also: CLOSURE to un-stale BUG-090 (registry, BUG_TRACKER, OPEN_GAPS BB-1).
+**All ODs now locked (2026-09-12).** → INTAKE (register CR-A + CR-B, Risk HIGH, P1) → confirm CR structure with owner → PLANNING Gate 2 (includes R11 probe: JSON/FormData check-in **with** `cust_membership_id`) → Gate 3 plan → Gate 4 GO. Also: CLOSURE to un-stale BUG-090 (registry, BUG_TRACKER, OPEN_GAPS BB-1).
 
 ---
 

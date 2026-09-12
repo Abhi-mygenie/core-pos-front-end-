@@ -2110,9 +2110,9 @@
       "id": "BUG-090",
       "title": "CRM customer_id not stored on room orders",
       "priority": "P2",
-      "status": "BACKEND-BLOCKED",
+      "status": "BACKEND-BLOCKED (STALE \u2014 2026-09-12 revalidation: backend field acceptance CONFIRMED via static evidence + owner statement. Old flow already sends customer_id/cust_membership_id via roomService.js:57-61. New PMS flow gap tracked as CR-379. Recommend CLOSURE: mark RESOLVED-BACKEND, note FE parity delivered by CR-127 for old flow, CR-379 for new flow.)",
       "sprint": "POS 4.0",
-      "blocker": "Q-090-B-1 (origin: POS 3.0)",
+      "blocker": "STALE \u2014 see CR-379 for new PMS flow gap",
       "artifact_refs": [
         {
           "label": "Impact Analysis",
@@ -23860,6 +23860,62 @@
       "blast_radius": "SMALL",
       "duplicate_check": "DISTINCT",
       "code_reality": "NONE"
+    },
+    {
+      "type": "CR",
+      "sections": [
+        "active_crs"
+      ],
+      "id": "CR-379",
+      "title": "New PMS Check-In: CRM Customer Link (Core)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE \u2014 Gate 1 (2026-09-12). Code reality: NONE. Duplicate check: DISTINCT. Blast: MEDIUM (2 files). All 5 ODs locked. Related: BUG-090, CR-358-P2, CR-127, CR-128. Next: Planning Gate 2.",
+      "sprint": "pos_pms_1",
+      "sprint_key": "pos_pms_1",
+      "gate": 1,
+      "blocker": "NONE \u2014 all ODs locked, Planning Gate 2 ready",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-379_PMS_CHECKIN_CRM_CUSTOMER_LINK_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation",
+          "path": "memory/investigations/INV-PMS-CHECKIN-CRM-GAP_INVESTIGATION_REPORT_2026_09_12.md",
+          "type": "investigation"
+        }
+      ],
+      "completeness": "1/7"
+    },
+    {
+      "type": "CR",
+      "sections": [
+        "active_crs"
+      ],
+      "id": "CR-380",
+      "title": "New PMS Check-In: Guest ID Documents",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE \u2014 Gate 1 (2026-09-12). Code reality: NONE. Duplicate check: DISTINCT. Blast: MEDIUM (3 files, 1 new). All 3 ODs locked. DEPENDS ON CR-379 (Gate 4 GO min before planning). Related: CR-129, BUG-351, CR-350, CR-358-P2.",
+      "sprint": "pos_pms_1",
+      "sprint_key": "pos_pms_1",
+      "gate": 1,
+      "blocker": "DEPENDS ON CR-379 \u2014 cannot plan until CR-379 Gate 4 GO",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-380_PMS_CHECKIN_GUEST_ID_DOCUMENTS_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation",
+          "path": "memory/investigations/INV-PMS-CHECKIN-CRM-GAP_INVESTIGATION_REPORT_2026_09_12.md",
+          "type": "investigation"
+        }
+      ],
+      "completeness": "1/7"
     }
   ],
   "meta": {

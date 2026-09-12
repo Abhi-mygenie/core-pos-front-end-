@@ -11,6 +11,15 @@
 
 ---
 
+## 2026-09-12 — PMS CHECK-IN CRM GAP (INTAKE — Gate 1)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Code reality | Blast | Notes |
+|---|---|---|---|---|---|---|---|---|
+| **CR-379** | PMS Check-In — CRM Customer Link (Core) | P1 | HIGH | **INTAKE — Gate 1. All ODs locked. Ready for Planning Gate 2.** | 1 | NONE | MEDIUM | CRM typeahead + lookup/create + send `customer_id`/`cust_membership_id` + extra adults/children names + returning guest badge (all fields). Non-blocking (OD-1-A). Check-in only (OD-2-B). Auto-silent OTA create (OD-6-A). Badge trigger deferred to design. Files: `CheckInPage.jsx` + `pmsService.js`. Related: BUG-090, CR-358-P2, CR-127, CR-128. `change_requests/CR-379_PMS_CHECKIN_CRM_CUSTOMER_LINK_INTAKE.md` |
+| **CR-380** | PMS Check-In — Guest ID Documents | P1 | HIGH | **INTAKE — Gate 1. BLOCKED ON CR-379 (Gate 4 GO min).** | 1 | NONE | MEDIUM | `pmsCheckIn` JSON→FormData (OD-3-B). Docs-on-file viewer + upload to CRM. Reuse CR-350 mandatory-doc toggle (OD-4-A). Extra adult/child IDs (OD-5-A). Files: `CheckInPage.jsx` + `pmsService.js` + new `GuestDocsSection.jsx`. Related: CR-379 (dependency), CR-129, BUG-351, CR-350. `change_requests/CR-380_PMS_CHECKIN_GUEST_ID_DOCUMENTS_INTAKE.md` |
+
+---
+
 ## 2026-09-04 — PMS POST-CR-358 ENHANCEMENTS (INTAKE — Gate 1)
 
 Owner decisions 2026-09-04: priorities/risks agreed ("will review later"); **FULL scope, no v1 workarounds**; CR-358-P5 registered as its own item; sprint `pos_pms_1`; evidence = AGENT-DISCOVERED (investigation report + 15 preprod probes in `evidence/INV-PMS-ENH/`).
