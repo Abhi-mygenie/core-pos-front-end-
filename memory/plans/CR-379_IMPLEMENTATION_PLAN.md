@@ -500,11 +500,11 @@ Insert between the panel header closing `</div>` and the form `<div className="p
                               },
                               {
                                 label: 'Loyalty Pts',
-                                // NOTE for impl agent: confirm pts→₹ rate from loyaltyTransform.js
-                                // `remaining_points_value` field suggests 1:1. Placeholder: Math.floor(pts * 1)
+                                // pointsValue (api.points_value) = ₹ equivalent — mapped directly in
+                                // customerTransform.fromAPI.customerLookup line 93. No rate calculation needed.
                                 value: crmCustomer.totalPoints != null ? String(crmCustomer.totalPoints) : '0',
-                                sub: crmCustomer.totalPoints
-                                  ? `≈ ₹${Number(crmCustomer.totalPoints).toLocaleString('en-IN')}`
+                                sub: crmCustomer.pointsValue
+                                  ? `≈ ₹${Number(crmCustomer.pointsValue).toLocaleString('en-IN')}`
                                   : null,
                               },
                               {
@@ -948,8 +948,9 @@ Risk:              HIGH
 Files WILL change: CheckInPage.jsx (MAJOR ~130 lines), pmsService.js (MINOR ~15 lines)
 Files WILL NOT:    customerService, documentService, roomService, RoomCheckInModal, NewBookingPage
 Owner decisions:   All resolved (DD-1..DD-8 frozen, OD-1..OD-7 locked)
-Open items:        Impl agent to verify: (a) points-to-₹ rate in loyaltyTransform.js,
-                   (b) gstName/gstNumber field names in customerTransform.toAPI.updateCustomer
+Open items:        (a) RESOLVED — pointsValue (api.points_value) maps directly from API; use crmCustomer.pointsValue for badge ₹ subtitle (customerTransform.js L93).
+                   (b) Impl agent: verify gstName/gstNumber field names in customerTransform.toAPI.updateCustomer before coding E-C13.
+                   (c) PROBE GAP — successful pmsCheckIn with CRM IDs on a free room remains unverified (persistence). Must be confirmed post-implementation (V-11).
 Edit sites:        15 (2 in pmsService.js, 13 in CheckInPage.jsx)
 Verification:      13 manual browser/network checks (V-01..V-13)
 Docs:              /app/memory/plans/CR-379_IMPLEMENTATION_PLAN.md (this file)
