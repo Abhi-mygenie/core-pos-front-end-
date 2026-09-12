@@ -97,9 +97,36 @@ Files NOT touched: SettlementPanel.jsx, DayClosurePage.jsx, reportService.js (on
 
 ---
 
+## Blocker Update — 2026-09-11
+
+| Blocker | Was | Now |
+|---|---|---|
+| **BUG-385** (`no_show` field) | BLOCKED — field absent from `dashboard-kpis` and `local-reservations` | ✅ **RESOLVED** — Backend shipped Option A (2026-09-10): `today.no_show_count` now in `GET aiosell/dashboard-kpis`. Also: `?status=no_show` filter on local-reservations for full row access. Section D data source confirmed. |
+
+**Section D updated:** Use `today.no_show_count` from `dashboard-kpis` for the no-show count. For the list of no-show bookings: `GET local-reservations?status=no_show&start_date=D&end_date=D`.
+
+**All backend data sources are now confirmed available.** No remaining backend blockers.
+
+---
+
+## Open Owner Decisions (MUST be answered before Gate 2 Impact Analysis can begin)
+
+| OD | Question | Blocking Gate 2? |
+|---|---|:---:|
+| OD-363-01 | Audit day boundary: a) Business day (`businessDay.js`) · b) Calendar day | ✅ YES (R6 — data composition depends on this) |
+| OD-363-02 | Revenue basis for "Rooms sold revenue": a) Collected · b) Booked value · c) Both columns | ✅ YES (R6 — ADR/RevPAR calculation) |
+| OD-363-03 | Include F&B posted to rooms in totals, or list separately? | YES |
+| OD-363-04 | "Close Day" lock action: display-only v1 or needs backend lock endpoint? | YES |
+| OD-363-05 | Sidebar placement: "Night Audit" child under Rooms & Reservations, or button on Front Desk? | YES |
+| OD-363-06 | Historic replay depth: 7d / 30d / 90d? | YES |
+
+**Gate 2 cannot proceed until OD-363-01 through OD-363-06 are answered by owner.**
+
+---
+
 ## Gate status
-- [x] Gate 0/1 — Intake
-- [ ] Gate 2 — Impact Analysis (**can start now**; needs OD-363-01/02 answered)
+- [x] Gate 0/1 — Intake ✅ CLOSED
+- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-363-01 through OD-363-06)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Intake agent | Code reality: NONE | Duplicate: DISTINCT | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED (FE-only)*
+*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-385 RESOLVED, all backend data confirmed | Code reality: NONE | Duplicate: DISTINCT | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*

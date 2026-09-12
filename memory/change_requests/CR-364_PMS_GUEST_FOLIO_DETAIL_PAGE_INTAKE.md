@@ -97,9 +97,55 @@ Files NOT touched: CollectPaymentPanel.jsx, PmsCheckoutDrawer.jsx (embedded as-i
 
 ---
 
+## Blocker Update — 2026-09-11
+
+| Blocker | Was | Now |
+|---|---|---|
+| **BUG-384 / `pos/room-payment` 403** | BLOCKED — FE wired but endpoint returned 403 (believed permission gap) | ✅ **RESOLVED** — Backend reply (2026-09-10): NOT a permission gap. FE was sending wrong field names. Correct contract confirmed (see below). |
+
+**Confirmed API contract for Record Payment (`POST pos/room-payment`):**
+
+```json
+{
+  "room_order_id": 1232244,
+  "payment_amount": 1000,
+  "payment_mode": "cash",
+  "payment_type": "interim"
+}
+```
+
+| Field | Required | Notes |
+|---|---|---|
+| `room_order_id` | Yes | Stay/room `orders.id` — NOT `order_id` |
+| `payment_amount` | Yes | NOT `amount` |
+| `payment_mode` | Yes | `cash` / `card` / `upi` |
+| `payment_type` | No | `advance`/`interim`/`checkout`/`refund` (default `advance`). Use `interim` for mid-stay. |
+
+Wrong fields now return **422** (not 403). Route is live, no permission change needed.
+
+**B-364-02 clarification resolved:** `room_info.receive_balance` = cumulative amount received (advance + interim payments). `balance_payment` = `room_price - receive_balance`. These are backend-computed — FE displays them directly (no recomputation per R6).
+
+**All backend dependencies resolved for v1 scope.** Record Payment action is fully buildable.
+
+---
+
+## Open Owner Decisions (MUST be answered before Gate 2 Impact Analysis can begin)
+
+| OD | Question | Blocking Gate 2? |
+|---|---|:---:|
+| OD-364-01 | v1 without dated payment history (totals only) acceptable until B-364-01 endpoint exists? | ✅ YES — scopes the page |
+| OD-364-02 | Print folio: existing bill print (`printOrder 'bill'`) or PMS-specific folio layout? (new template = R6 — owner approval) | ✅ YES (R6 if new template) |
+| OD-364-03 | Re-point existing "View Bill" / "Folio" links to folio page, or add folio as an extra action? | YES |
+| OD-364-04 | Show F&B item lines inline or order-level rows only (drill to OrderDetailSheet)? | YES |
+| OD-364-05 | Departed-guest folio access window: 60d (LR window) or unlimited by order id? | YES |
+
+**Gate 2 cannot proceed until OD-364-01 through OD-364-05 are answered by owner.**
+
+---
+
 ## Gate status
-- [x] Gate 0/1 — Intake
-- [ ] Gate 2 — Impact Analysis (**can start now**)
+- [x] Gate 0/1 — Intake ✅ CLOSED
+- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-364-01 through OD-364-05)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Intake agent | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED (FE-only)*
+*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*

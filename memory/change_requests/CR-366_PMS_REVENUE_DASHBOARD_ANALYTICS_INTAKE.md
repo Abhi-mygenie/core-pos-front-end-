@@ -97,9 +97,38 @@ Files NOT touched: Insights pages, reportService.js, roomOrdersService.js (only 
 
 ---
 
+## Status Confirmation — 2026-09-11
+
+**CR-366 was never backend-blocked.** Confirmed by investigation (2026-09-06) and reconfirmed 2026-09-11.
+
+All required data sources are live and verified:
+- `GET aiosell/dashboard-kpis?start_date&end_date` → `physical.days[]` (occupancy, rooms sold/available per day per room type) ✅
+- `GET aiosell/local-reservations` → channel, `amount_after_tax`, `booked_on`, `checkin` for channel split + lead time ✅
+- `POST daily-sales-revenue-report {from: D}` → room revenue fields per day ✅
+- `POST aiosell/fetch-rates` → published rates for comparison ✅
+
+**No backend changes needed for v1 scope.** Optional enhancements (B-366-01/02) can be added in v2.
+
+---
+
+## Open Owner Decisions (MUST be answered before Gate 2 Impact Analysis can begin)
+
+| OD | Question | Blocking Gate 2? |
+|---|---|:---:|
+| OD-366-01 | Revenue basis for ADR/RevPAR: a) Collected room revenue (daily-sales) · b) Booked value (`amount_after_tax`) · c) Room charge (`roomInfo.roomPrice`) | ✅ YES — R6, mandatory before any revenue formula is written |
+| OD-366-02 | Include F&B posted to rooms in RevPAR? (industry standard: no — rooms only) | YES |
+| OD-366-03 | Range ceiling: 30d / 90d / 365d? (affects N of API calls or B-366-02 need) | YES |
+| OD-366-04 | Placement: under Rooms & Reservations sidebar, or under Insights? | YES |
+| OD-366-05 | Cache TTL (insightsCache pattern): 5 min / 15 min / session? | NO (can default to 15 min, owner overrides) |
+| OD-366-06 | Compare-to-previous-period deltas? | NO (can default to off for v1) |
+
+**Gate 2 cannot proceed until OD-366-01 through OD-366-04 are answered by owner.** OD-366-05 and OD-366-06 can be defaulted if owner wants to move fast.
+
+---
+
 ## Gate status
-- [x] Gate 0/1 — Intake
-- [ ] Gate 2 — Impact Analysis (**can start now**; OD-366-01 must be answered first — R6)
+- [x] Gate 0/1 — Intake ✅ CLOSED
+- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-366-01 through OD-366-04)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Intake agent | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | UNBLOCKED (FE-only)*
+*Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | UNBLOCKED — no backend blockers*
