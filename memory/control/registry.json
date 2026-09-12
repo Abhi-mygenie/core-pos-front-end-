@@ -23870,7 +23870,7 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 GO (2026-09-12). Design frozen by owner. Gate 2 IA + Gate 2.5 Design Review CLOSED. 8 design decisions locked (DD-1..DD-8). 2 files, 0 backend. Documents fetch (getDocuments) in CR-379 scope. Awaiting Gate 3 Implementation Plan.",
+      "status": "GATE 3 COMPLETE (2026-09-13). Implementation Plan written at plans/CR-379_IMPLEMENTATION_PLAN.md. 15 edit sites across 2 files (CheckInPage.jsx major, pmsService.js minor). 13 verification scenarios (V-01..V-13). Awaiting Gate 4 GO for implementation.",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
       "gate": 3,
@@ -23900,9 +23900,14 @@
           "label": "Design Mockup",
           "path": "public/cr379-design-mockup.html",
           "type": "mockup"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-379_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         }
       ],
-      "completeness": "3/7"
+      "completeness": "4/7"
     },
     {
       "type": "CR",
