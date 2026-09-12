@@ -534,9 +534,9 @@ Insert between the panel header closing `</div>` and the form `<div className="p
                                     className="flex items-center gap-1.5 text-[10px] bg-white border border-[#BBF7D0] rounded-lg px-2 py-1">
                                     <FileText className="w-3 h-3 text-[#329937] shrink-0" />
                                     <span className="font-medium capitalize">{(doc.doc_type ?? '').replace(/_/g, ' ')}</span>
-                                    {doc.created_at && (
+                                    {doc.uploaded_at && (
                                       <span className="text-[#888]">
-                                        · {new Date(doc.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
+                                        · {new Date(doc.uploaded_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
                                       </span>
                                     )}
                                   </div>

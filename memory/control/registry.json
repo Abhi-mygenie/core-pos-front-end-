@@ -23870,7 +23870,7 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 COMPLETE (2026-09-13). Implementation Plan written at plans/CR-379_IMPLEMENTATION_PLAN.md. 15 edit sites across 2 files (CheckInPage.jsx major, pmsService.js minor). 13 verification scenarios (V-01..V-13). Awaiting Gate 4 GO for implementation.",
+      "status": "GATE 3 COMPLETE (2026-09-13). Pre-impl probes CLOSED 2026-09-13: CRM found-path CONFIRMED (all 10 badge fields verified live), getDocuments shape CONFIRMED (field is uploaded_at NOT created_at \u2014 plan corrected), pmsCheckIn accepts full CR-379 payload. ONE gap remains: customer_id persistence (V-11, post-impl). Implementation Plan updated with both corrections. Awaiting Gate 4 GO.",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
       "gate": 3,
@@ -23905,6 +23905,11 @@
           "label": "Implementation Plan",
           "path": "memory/plans/CR-379_IMPLEMENTATION_PLAN.md",
           "type": "plan"
+        },
+        {
+          "label": "Probe Results",
+          "path": "memory/evidence/PROBE_CR379_2026_09_13.md",
+          "type": "evidence"
         }
       ],
       "completeness": "4/7"
