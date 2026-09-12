@@ -20401,7 +20401,7 @@
       "area": "Room Module \u2192 Active Room Card / Order Entry",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 CLOSED \u2014 All decisions locked. Awaiting Gate 4 GO \u2192 Gate 3.",
+      "status": "REGISTRY DRIFT CORRECTED (2026-09-11) \u2014 FE was fully implemented at Gate 5a (RecordPaymentModal.jsx + roomService.js + CartPanel.jsx + constants.js). Blocker was FE contract error (wrong field names, not permission). BUG-384 closed. FE fix: roomService.js send `room_order_id`+`payment_amount`+`payment_mode` (Fast Lane eligible \u2014 1 file, ~5 lines). Awaiting Gate 4 Fast Lane GO.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
@@ -20419,7 +20419,8 @@
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "gate": 5
     },
     {
       "id": "CR-163",
@@ -20428,7 +20429,7 @@
       "area": "Room Module \u2192 Room Order Entry \u2192 Item Transfer",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED \u2014 FE complete. BACKEND BLOCKED: GAP1 (items not removed from source order) + GAP2 (new order created as room not walk-in). Backend brief filed 2026-08-24.",
+      "status": "BACKEND UNBLOCKED (2026-09-11) \u2014 GAP1 CLOSED (source qty reduced on split, no double charge) + GAP2 SHIPPED (send `target_table_id` to assign new order to dine-in table). FE implementation was already complete. FE now needs: (1) smoke Move Items to confirm GAP1 fix, (2) wire `target_table_id` picker in SplitRoomItemsModal (~10-15 lines). Ready for Gate 3 plan + implementation.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
@@ -20449,7 +20450,8 @@
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "gate": 3
     },
     {
       "id": "INV-PG-001",
@@ -22613,10 +22615,10 @@
       "id": "CR-363",
       "title": "PMS \u2014 Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "INTAKE",
+      "status": "UNBLOCKED (2026-09-11) \u2014 `today.no_show_count` shipped in dashboard-kpis (BUG-385 closed). All required data now available (arrivals_count, departures_count, in_house_count, no_show_count, room revenue from room_revenue/room_checkin_revenue). Ready for Gate 2 planning.",
       "priority": "P1",
       "risk": "HIGH",
-      "gate": "1",
+      "gate": 1,
       "completeness": "1/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports",
@@ -23352,7 +23354,7 @@
       "id": "BUG-384",
       "title": "POST room-payment returns HTTP 403 \u2014 sandbox-pms owner role permission gap",
       "type": "BUG",
-      "status": "INTAKE \u2014 BACKEND-BLOCKED. Backend brief filed: BACKEND_BRIEF_BUG-384_2026_09_09.md. Awaiting permission grant from backend.",
+      "status": "CLOSED \u2014 NOT a backend bug. Was FE contract error (sent `order_id`+`amount`; correct is `room_order_id`+`payment_amount`+`payment_mode`). Backend replied 2026-09-11: validation now 422. FE fix needed in roomService.js (~5 lines). Ref: BE_REPLY_FE_VALIDATION_PACK_2026-09-11.md",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 1,
@@ -23393,7 +23395,7 @@
       "id": "BUG-385",
       "title": "no_show field absent from local-reservations and dashboard-kpis \u2014 blocks CR-363 Night Audit",
       "type": "BUG",
-      "status": "INTAKE \u2014 BACKEND-BLOCKED. Backend brief filed: BACKEND_BRIEF_BUG-385_2026_09_09.md. Awaiting OD-385-01 + backend field delivery.",
+      "status": "CLOSED \u2014 Backend shipped Option A on 2026-09-11. `today.no_show_count` now present in dashboard-kpis response. Also: ?status=no_show filter live on local-reservations. CR-363 Night Audit fully unblocked. Ref: BE_REPLY_FE_VALIDATION_PACK_2026-09-11.md",
       "priority": "P2",
       "risk": "LOW",
       "gate": 1,

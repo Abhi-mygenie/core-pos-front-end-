@@ -1180,18 +1180,19 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | INTAKE — BACKEND-BLOCKED |
+| **Status** | **CLOSED — 2026-09-11. Was NOT a backend permission bug. FE contract error.** |
 | **Priority** | P1 |
 | **Risk** | HIGH |
 | **Reported** | 2026-09-08 (Agent-discovered, re-confirmed from OG-PMS-014) |
 | **Area** | PMS > Guest Folio > Record Payment |
 | **Description** | `POST /api/v2/vendoremployee/pos/room-payment` returns HTTP 403 for owner@thegoankitchen.com. Endpoint exists, validates input, but permission check fires first. Completely blocks "Record Payment" in CR-364. FE code is wired correctly (constants.js L102). |
+| **Resolution** | Backend replied 2026-09-10: NOT a permission gap. FE was sending `order_id` + `amount` (wrong). Correct contract: `room_order_id` + `payment_amount` + `payment_mode`. Validation now returns 422 for wrong fields. FE fix needed in roomService.js (~5 lines). Backend change: zero. |
 | **Duplicate check** | DISTINCT (formally registered from OG-PMS-014) |
-| **Blast radius** | NONE (FE) — backend permission fix only |
-| **Backend blocked** | YES — backend must grant PMS role access to room-payment endpoint |
-| **Related** | CR-364, OG-PMS-014 |
+| **Blast radius** | NONE (FE) — FE field rename only |
+| **Backend blocked** | NO — resolved |
+| **Related** | CR-162, CR-364, OG-PMS-014 |
 | **Intake doc** | `change_requests/BUG-384_ROOM_PAYMENT_403_SANDBOX_PERMISSION_GAP.md` |
-| **Next** | Backend brief → backend fixes role permission → re-probe to verify → close |
+| **Next** | FE Fast Lane fix in roomService.js → re-probe → close CR-162 / unblock CR-364 |
 
 ---
 
@@ -1199,19 +1200,20 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 
 | Field | Value |
 |---|---|
-| **Status** | INTAKE — BACKEND-BLOCKED |
+| **Status** | **CLOSED — 2026-09-11. Backend shipped Option A.** |
 | **Priority** | P2 |
 | **Risk** | LOW |
 | **Reported** | 2026-09-08 (Agent-discovered, re-confirmed from OG-PMS-015) |
 | **Area** | PMS > Night Audit (CR-363) / API contract |
 | **Description** | `no_show` field/count absent from `local-reservations` (17 items checked) and `dashboard-kpis` (recursive search: 0 hits). CR-363 Night Audit no-show line is blocked. No FE code currently reads this field — it doesn't exist yet. |
+| **Resolution** | Backend replied 2026-09-10: Option A shipped. `today.no_show_count` now in `dashboard-kpis` response. Count = reservations with `status=no_show` and `checkin == as_of_date`. Also: `?status=no_show` filter live on local-reservations for row-level access. CR-363 fully unblocked. |
 | **Duplicate check** | DISTINCT (formally registered from OG-PMS-015) |
-| **Blast radius** | NONE (FE) — backend must add field |
-| **Backend blocked** | YES |
+| **Blast radius** | NONE (FE) — FE reads new field |
+| **Backend blocked** | NO — resolved |
 | **Related** | CR-363, CR-358-P5, OG-PMS-015 |
-| **Owner decision** | OD-385-01: FE-derive (pending+checkin<today) vs wait for P5 Mark No-Show vs request backend add `no_show_count` to kpis |
+| **Owner decision** | OD-385-01: RESOLVED — backend delivered Option A (preferred) |
 | **Intake doc** | `change_requests/BUG-385_NO_SHOW_FIELD_MISSING_LR_DASHBOARD_KPIS.md` |
-| **Next** | Owner decision OD-385-01 → if FE-derive: planning for CR-363; if backend: backend brief |
+| **Next** | CR-363 Gate 2 planning can proceed |
 
 ### BUG-386: PMS Check-In — Room Accommodation GST Never Computed or Sent (gst_tax Hardcoded '0.00')
 
