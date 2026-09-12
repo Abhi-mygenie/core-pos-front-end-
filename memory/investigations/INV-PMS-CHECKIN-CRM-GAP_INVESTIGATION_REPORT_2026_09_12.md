@@ -13,8 +13,8 @@
 | Field | Value |
 |---|---|
 | Root cause | The new PMS check-in flow (`CR-358-P2`: `NewBookingPage.jsx` → `CheckInPage.jsx` → `pmsService.pmsCheckIn()`) was built as a **standalone function (OD-P2-01 Option B)** with "FormData parity **minus file fields**" to the old `roomService.checkIn()`. The CRM layer that lives in the old **UI component** (`RoomCheckInModal.jsx` — lookup/create/B2B-sync/doc-fetch/doc-upload) was never part of `roomService.checkIn()` and therefore was **not carried across**. The new flow makes **zero CRM calls** and sends **no `customer_id` / `cust_membership_id`** to the POS backend. |
-| Classification | **FE_FEATURE_GAP** (primary) + **BACKEND_BLOCKED linkage** (BUG-090 — POS backend does not persist `customer_id` on room orders even when sent) |
-| Confidence | **HIGH** for the FE gap (grep: 0 CRM references in the 3 new-flow files; probe P8 response `cust_membership_id: null`). **MEDIUM** for backend persistence behaviour (BUG-090 status from registry, not re-probed — no credentials in `test_credentials.md`). |
+| Classification | **FE_FEATURE_GAP** — frontend only. (Revalidated 2026-09-12: BUG-090 backend side is **fixed** — see H4. Registry status `BACKEND-BLOCKED` is stale → R1 flag.) |
+| Confidence | **HIGH**. FE gap: grep = 0 CRM references in the 3 new-flow files. Backend readiness: check-in response echoes `cust_membership_id` (probe P8) and `order-logs` v2 rows carry a `cust_membership_id` column (evidence INV-PMS-CRs-363-364-366) — both `null` only because the new FE flow never sends it. |
 | Risk | **HIGH** (customer data, API contract, reports dependency) — per v0.7 Risk table. |
 | Steps used | 9/10 |
 
@@ -27,7 +27,7 @@
 | H1 | New flow calls CRM but silently fails (env/config) | grep new-flow files for `customerService`/`documentService`/`crmApi`/`customer_id` | 1 | **ELIMINATED** — 0 hits | `evidence/INV-PMS-CHECKIN-CRM-GAP/grep_new_flow_crm_refs.txt` (empty) |
 | H2 | New flow never wired CRM (feature gap from CR-358-P2 scope) | Code trace `CheckInPage.jsx:164-200` → `pmsService.js:136-172`; read IA/plan OD-P2-01 | 3 | **CONFIRMED** — `pmsCheckIn` payload has no `customer_id`; IA/plan for P2 never mention CRM | `pmsService.js:145-169`; `impact/CR-358-P2_IMPACT_ANALYSIS.md:58`; `plans/CR-358-P2_IMPLEMENTATION_PLAN.md:142` |
 | H3 | Backend auto-links to CRM server-side (so FE omission is harmless) | Inspect prior probe P8 response for the JSON check-in | 1 | **ELIMINATED** — response `{ user_id: 42619, cust_membership_id: null }`: backend created a **POS-side user**, no CRM membership link | `evidence/INV-PMS-CHECKIN-CRM-GAP/checkin_response_no_crm_link.json` |
-| H4 | Even the old flow's `customer_id` is persisted by backend | Registry / OPEN_GAPS read | 1 | **NOT CONFIRMED** — BUG-090 is `BACKEND-BLOCKED`: "Check-in API doesn't accept `customer_id`" (Q-090-B-1 OPEN). Old flow **sends** it; backend acceptance unproven | `registry.json` BUG-090; `OPEN_GAPS_REGISTER.md:70` |
+| H4 | Backend does not persist `customer_id` on room orders (BUG-090 still open) | Owner statement + evidence re-read: check-in response shape, `order-logs` v2 room-order rows, old-flow code | 1 | **ELIMINATED (revalidated)** — backend **accepts and stores** the link: (a) `user-group-check-in` response returns `cust_membership_id` (P8), (b) room orders in `order-logs` v2 expose `cust_membership_id` per order, (c) old FE already sends `customer_id` + `cust_membership_id` (`roomService.js:57-61`). Values are `null` in evidence because those probes used the **new JSON flow which omits the field**. Registry/OPEN_GAPS still say BACKEND-BLOCKED → **stale (R1)**; recommend CLOSURE to move BUG-090 → RESOLVED (backend) and note FE old-flow parity exists. | `evidence/INV-PMS-CHECKIN-CRM-GAP/checkin_response_no_crm_link.json`; `evidence/INV-PMS-CRs-363-364-366/probe_order_logs_v2.json` (`cust_membership_id` key present); `roomService.js:57-61` |
 | H5 | Documents in new flow are captured somewhere else (OCR step per CR-358 intake §7) | grep `pages/pms`, `components/pms` for upload/document | 1 | **ELIMINATED** — no document UI/upload in any new PMS page; `pmsCheckIn` hard-codes `id_type: 'Select document type'` | `pmsService.js:152` |
 | H6 | Reservation record carries a CRM id we could reuse | Inspect `local-reservations` shape | 1 | **ELIMINATED** — reservation `guest{first_name,last_name,email,phone,...}` + `user_id_document_id` (POS-internal). No CRM `customer_id` field | `evidence/INV-PMS-CHECKIN-CRM-GAP/reservation_guest_shape_masked.json` |
 
@@ -125,15 +125,16 @@ Files WILL NOT be touched by such a CR: `RoomCheckInModal.jsx`, `roomService.js`
 | OD-5 | Extra adults / children names & IDs — in scope for the new flow (old modal supports them; new form has counts only)? | A) yes B) later CR |
 | OD-6 | OTA (Online) arrivals: auto-create CRM customer from the AIOSELL `guest{}` block at check-in without staff confirmation? | A) yes (auto) B) staff confirms match/create |
 
-### 5d. Backend ask (R23 — BACKEND_BRIEF required before Gate 4)
+### 5d. Backend — NO blocker (revalidated)
 
-- **Re-open BUG-090 / Q-090-B-1:** confirm `POST /api/v1/vendoremployee/pos/user-group-check-in` (JSON variant) **accepts and persists** `customer_id` / `cust_membership_id` on the room order so `cust_membership_id` in the response is non-null and room orders reach CRM aggregates. Without this, FE wiring only fixes CRM *creation*, not CRM *linkage of the stay*.
-- Ask whether `direct-reservation` can accept `customer_id` on `guest{}` so reservations are CRM-linked pre-arrival (supports OD-2 A).
-- Ask whether the reservation/in-house payloads can expose `cust_membership_id` so In-House / Folio (CR-364) pages can deep-link to the CRM profile.
-- Note existing BUG-BE-05 (non-transactional check-in creates orphan `order_id` on validation failure) — any new required field must be validated before order creation.
+BUG-090 backend acceptance of `customer_id` / `cust_membership_id` on `user-group-check-in` is **done** (owner-confirmed; evidence in H4). The fix is **frontend-only**: send the CRM id from the new flow. One R11 confirmation probe during Planning is still advised (JSON variant returns non-null `cust_membership_id` when the field is sent) — but it is a verification step, not a dependency.
+
+Optional (non-blocking) backend asks to raise only if OD-2 = A or CR-364 needs it:
+- `direct-reservation` accepting `customer_id` on `guest{}` (CRM-linked pre-arrival).
+- Reservation / in-house payloads exposing `cust_membership_id` for CRM deep-links on Folio (CR-364).
 
 ### 5e. Suggested gate path
-INTAKE (register CR, Risk HIGH, P1) → PLANNING Gate 2 (impact) with OD-1..6 answered → BACKEND_BRIEF for BUG-090 re-probe → Gate 3 plan → Gate 4 GO.
+INTAKE (register CR, Risk HIGH, P1) → PLANNING Gate 2 with OD-1..6 answered (includes R11 probe: JSON check-in **with** `cust_membership_id`) → Gate 3 plan → Gate 4 GO. Also: CLOSURE to un-stale BUG-090 (registry, BUG_TRACKER, OPEN_GAPS BB-1).
 
 ---
 
@@ -144,7 +145,9 @@ INTAKE (register CR, Risk HIGH, P1) → PLANNING Gate 2 (impact) with OD-1..6 an
 - `checkin_response_no_crm_link.json` — probe P8 (2026-09-03) response: `cust_membership_id: null`
 - `reservation_guest_shape_masked.json` — `local-reservations` guest block has no CRM id (PII masked)
 
-Live re-probe **not executed**: `test_credentials.md` is missing/empty in this workspace (also flagged in prior handover: `cafe103` preprod password unconfirmed). Backend persistence behaviour therefore carries MEDIUM confidence.
+- `../INV-PMS-CRs-363-364-366/probe_order_logs_v2.json` — room-order rows expose `cust_membership_id` (backend stores the link; `null` for PMS-JSON-created orders)
+
+Live re-probe **not executed**: `test_credentials.md` is missing/empty in this workspace. Backend acceptance is owner-confirmed + evidence-consistent (H4); a confirmation probe is scheduled for Planning (R11).
 
 ---
 
@@ -154,5 +157,6 @@ NONE. (CR-129, CR-350, BUG-351 are correctly registered as IMPLEMENTED for the *
 ---
 
 ## 8. Stale-doc flags (R1)
+- **BUG-090** in `registry.json`, `BUG_TRACKER.md:372`, `CR_REGISTRY.md:137`, `OPEN_GAPS_REGISTER.md:70 (BB-1)`, `SPRINT_STATUS.md` still `BACKEND-BLOCKED / Q-090-B-1 OPEN`. Owner confirms backend fixed; code (`roomService.js:57-61`) already sends the id; evidence shows backend echoes/stores `cust_membership_id`. → CLOSURE should mark BUG-090 resolved for the old flow; the **new PMS flow** gap is tracked by the new CR proposed here.
 - `CR-358_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md §7 Document Verification Rules` describes a document step that P2 did not deliver — should be marked "deferred/not built" in OPEN_GAPS_REGISTER when this CR is registered.
 - `CR-358-P2_IMPLEMENTATION_PLAN.md:142` "full FormData parity … minus file fields" — parity claim excludes `customer_id`/`cust_membership_id` as well (those are conditional appends in `roomService.js:58-61`); worth a one-line correction.
