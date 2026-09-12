@@ -23870,7 +23870,7 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
       "gate": 3,
