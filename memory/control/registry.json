@@ -23870,11 +23870,11 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 2 COMPLETE (2026-09-12). Impact Analysis written. Backend contract CONFIRMED (live probe). Gap 100% frontend-only. BUG-090 stale label corrected. 2 files, 0 backend changes. 6 design decisions deferred. Awaiting Gate 2.5 Design Review (owner requested HTML mockup). Gate 3 GO pending design approval.",
+      "status": "GATE 3 GO (2026-09-12). Design frozen by owner. Gate 2 IA + Gate 2.5 Design Review CLOSED. 8 design decisions locked (DD-1..DD-8). 2 files, 0 backend. Documents fetch (getDocuments) in CR-379 scope. Awaiting Gate 3 Implementation Plan.",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
-      "gate": 2,
-      "blocker": "NONE \u2014 Gate 2.5 Design Review required before Gate 3",
+      "gate": 3,
+      "blocker": "NONE \u2014 Gate 3 GO authorised by owner 2026-09-12",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -23890,9 +23890,19 @@
           "label": "Impact Analysis",
           "path": "memory/impact/CR-379_IMPACT_ANALYSIS.md",
           "type": "impact"
+        },
+        {
+          "label": "Design Decisions",
+          "path": "memory/plans/CR-379_DESIGN_DECISIONS.md",
+          "type": "design"
+        },
+        {
+          "label": "Design Mockup",
+          "path": "public/cr379-design-mockup.html",
+          "type": "mockup"
         }
       ],
-      "completeness": "2/7"
+      "completeness": "3/7"
     },
     {
       "type": "CR",

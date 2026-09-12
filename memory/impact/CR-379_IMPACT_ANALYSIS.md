@@ -407,8 +407,11 @@ Action: Update registry.json `BUG-090` note during Gate 2 registry sync.
 
 ```
 Gate 2 status:    COMPLETE
-Next gate:        Gate 2.5 — Design Review (owner requested HTML mockup)
-Gate 3 trigger:   Owner approves design mockup → authorises Implementation Plan
+Gate 2.5 status:  CLOSED — design frozen by owner 2026-09-12
+Gate 3 GO:        AUTHORISED by owner 2026-09-12
+Design artifact:  memory/plans/CR-379_DESIGN_DECISIONS.md (8 decisions locked)
+Mockup:           public/cr379-design-mockup.html
 Author note:      All live probes successful 2026-09-12. No blockers found.
-                  Backend contract confirmed ready. Design stage is the only prerequisite.
+                  Backend contract confirmed ready. Design frozen.
+                  Next: Gate 3 — Implementation Plan.
 ```
