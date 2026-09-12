@@ -23923,10 +23923,10 @@
       "title": "New PMS Check-In: Guest ID Documents",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE \u2014 Gate 1 (2026-09-12). Code reality: NONE. Duplicate check: DISTINCT. Blast: MEDIUM (3 files, 1 new). All 3 ODs locked. DEPENDS ON CR-379 (Gate 4 GO min before planning). Related: CR-129, BUG-351, CR-350, CR-358-P2.",
+      "status": "GATE_3_COMPLETE \u2014 Impact Analysis + Implementation Plan written 2026-09-14. 11 edit sites / 3 files (GuestDocsSection NEW, CheckInPage MAJOR, pmsService MINOR). 15 verification checks. Awaiting Gate 4 GO.",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
-      "gate": 1,
+      "gate": 3,
       "blocker": "DEPENDS ON CR-379 \u2014 cannot plan until CR-379 Gate 4 GO",
       "artifact_refs": [
         {
