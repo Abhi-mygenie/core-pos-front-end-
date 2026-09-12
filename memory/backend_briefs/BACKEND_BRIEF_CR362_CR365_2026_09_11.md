@@ -65,3 +65,24 @@ When room → `hk` or `ooo` status: auto-create task (checkout_clean / stayover 
 ### Optional
 - B-365-05: GET/POST /aiosell/hk-checklists for per-task-type templates. If too complex, FE uses static checklist.
 - B-365-06: FCM push to assignee on assignment. Socket event `room_status_update` on status change.
+
+---
+
+## ep15 — R6 Clarifications (CR-363, CR-364, CR-366)
+
+### B-363-02 / B-366-03 — Room Revenue Field Semantics
+From `daily-sales-revenue-report` response:
+- Q-B02a: What is "Room Total" in room_revenue? Sum of Cash+Card+UPI only, or Advance+Checkout combined?
+- Q-B02b: "Room advance" = advance payments from new check-ins today?
+- Q-B02c: "Room Checkout" = final bill payment at checkout today?
+- Q-B02d: What is room_checkin_revenue vs room_revenue — two separate buckets?
+- Q-B02e: Which field(s) = "room revenue earned for nights on this date" (numerator for ADR)?
+
+### B-363-03 — Business-Day Boundary
+- Q-B03a: What timezone/offset does daily-sales-revenue-report use? (UTC / IST / restaurant schedules)
+- Q-B03b: Does it match dashboard-kpis day boundary?
+- Q-B03c: Does it respect restaurant.schedules or is it hardcoded?
+
+### B-364-03 — Lodging GST on Room Charge
+- Q-B03d: Is GST included in room_info.room_price (tax-inclusive) or separate field?
+- Q-B03e: Should Guest Folio show room_price as single line, or base + GST separately?

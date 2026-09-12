@@ -1483,5 +1483,101 @@ Q3c — If NO:
   </div>
 
 </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep15  R6 Clarifications — Room Revenue Semantics + GST + Day Boundary
+       (Required before Gate 2 of CR-363 Night Audit / CR-366 Revenue Dashboard / CR-364 Folio)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep15">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">R6 Clarifications — Room Revenue Field Semantics · GST on Room Charge · Business-Day Boundary</div>
+        <div class="ep-sub">Required before Gate 2 of CR-363 (Night Audit) · CR-364 (Guest Folio) · CR-366 (Revenue Dashboard) &nbsp;·&nbsp; <span class="badge p1">P1 · HIGH</span> &nbsp;·&nbsp; <span class="badge" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">CLARIFICATION NEEDED — R6 (Financial Display)</span> &nbsp;·&nbsp; Filed: 2026-09-11</div>
+      </div>
+    </div>
+
+    <div class="section-title">Why These Are Blocking</div>
+    <p>FE rule R6: <em>"Do not change tax, billing, or report totals without owner approval + backend confirmation. Total means different things in different contexts."</em> Three reports (Night Audit, Revenue Dashboard, Guest Folio) display room revenue figures. We cannot safely pick the right fields without confirmation of their exact semantics. Getting this wrong = wrong totals shown to staff. No new endpoints needed — just clarification on existing response fields.</p>
+
+    <div class="section-title">B-363-02 / B-366-03 — Room Revenue Field Definitions (shared by CR-363 + CR-366)</div>
+    <div class="note-box amber">
+      <p><code class="mono">POST daily-sales-revenue-report { from: "YYYY-MM-DD" }</code> returns several room-related fields. We need to know exactly what each one means so FE can display the right figure in the right place.</p>
+      <div class="code-block" style="margin-top:10px;"><pre>From a live probe on 2026-09-03 (room-enabled restaurant):
+  paid_revenue_method.room_revenue:
+    "Room Cash":     ?
+    "Room Card":     ?
+    "Room UPI":      ?
+    "Room Total":    84610.04   ← is this Cash+Card+UPI sum, or something else?
+    "Room advance":  24488.38   ← advance payments collected today?
+    "Room Checkout": 36822.28   ← final settlement at checkout today?
+  room_checkin_revenue:
+    "Room Cash":     ?
+    "Room Card":     ?
+    "Room UPI":      ?
+    "Room TAB":      ?          ← is this a separate checkin collection?
+
+Questions — please fill in:
+
+Q-B02a: What is "Room Total" in room_revenue?
+  (a) Sum of Room Cash + Card + UPI only
+  (b) Advance + Checkout combined
+  (c) Something else: ___
+
+Q-B02b: What is "Room advance" in room_revenue?
+  Advance payments received from new check-ins on this day?  YES / NO / ___
+
+Q-B02c: What is "Room Checkout" in room_revenue?
+  Final bill payment at checkout on this day?  YES / NO / ___
+
+Q-B02d: What is room_checkin_revenue vs room_revenue?
+  Are these two separate buckets?
+  room_revenue      = payments against existing room orders (running stays)?
+  room_checkin_revenue = payments collected at the moment of check-in?
+  Or something else: ___
+
+Q-B02e: For ADR (Average Daily Rate) and RevPAR calculation:
+  Which field(s) represent "room revenue earned for nights on this date"?
+  (The numerator in ADR = room revenue ÷ rooms sold)
+  Answer: ___</pre></div>
+    </div>
+
+    <div class="section-title">B-363-03 — Business-Day Boundary</div>
+    <div class="note-box amber">
+      <p>From probing <code class="mono">daily-sales-revenue-report { from: "2026-09-03" }</code>, the response <code class="mono">dateRange.from</code> returned <code class="mono">2026-09-03 00:30:00</code> and <code class="mono">to</code> returned <code class="mono">2026-09-03 23:30:00</code> — suggesting a 30-minute offset from UTC midnight.</p>
+      <div class="code-block" style="margin-top:10px;"><pre>Q-B03a: What timezone/offset does daily-sales-revenue-report use for its day boundary?
+  (a) UTC (00:00 → 23:59 UTC)
+  (b) IST (05:30 → 05:29 UTC next day)
+  (c) Restaurant's configured schedule start time (from restaurant.schedules)
+  (d) Something else: ___
+
+Q-B03b: Does this boundary match the business day used by aiosell/dashboard-kpis
+  (arrivals_count, departures_count)?
+  YES (same boundary) / NO (different — explain): ___
+
+Q-B03c: FE has a businessDay.js utility that reads restaurant.schedules.
+  Does daily-sales-revenue-report respect that same schedule, or is it hardcoded?
+  Answer: ___</pre></div>
+      <p style="margin-top:8px;font-size:12px;">This affects Night Audit date picker default and whether "today's audit" can ever mismatch "today's KPIs."</p>
+    </div>
+
+    <div class="section-title">B-364-03 — Lodging GST on Room Charge</div>
+    <div class="note-box amber">
+      <p>In sandbox, <code class="mono">get-single-order-new</code> returns <code class="mono">food_details[0].tax = 0</code> for the room "check in" line item. The Guest Folio page (CR-364) will display this charge — we must not compute GST ourselves (R6).</p>
+      <div class="code-block" style="margin-top:10px;"><pre>Q-B03d: Is Lodging GST on a room charge computed server-side?
+  (a) YES — GST is included in room_info.room_price (tax-inclusive display)
+  (b) YES — GST is a separate field that FE should display alongside room_price
+      If (b): what is the field name? ___
+  (c) NO — sandbox has tax=0; does production have non-zero GST on room orders?
+      If (c): which field carries the GST amount? ___
+
+Q-B03e: Should the Guest Folio show:
+  (a) room_price (which already includes GST) as a single "Total Room Charge" line
+  (b) base room price + GST line separately
+  Answer: ___</pre></div>
+      <p style="margin-top:8px;font-size:12px;"><strong>FE will not compute Lodging GST under any circumstances (R6).</strong> We display exactly what the backend provides. We just need to know which field(s) to surface.</p>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
