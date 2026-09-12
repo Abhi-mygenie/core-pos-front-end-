@@ -1020,7 +1020,7 @@ upi  = tp[<span class="str">'Credit UPI'</span>]</pre>
       <div class="ep-num" style="background: var(--red);">8</div>
       <div style="flex:1">
         <div class="ep-title">BUG-384 — POST /pos/room-payment Returns HTTP 403 (Sandbox-PMS Permission Gap)</div>
-        <div class="ep-sub">PMS &gt; Room Payment &nbsp;·&nbsp; <span class="badge p1">P1 · HIGH</span> &nbsp;·&nbsp; <span class="badge high">BACKEND-BLOCKED — OPEN</span> &nbsp;·&nbsp; Filed: 2026-09-09 &nbsp;·&nbsp; Related: CR-162, CR-364, OG-PMS-014</div>
+        <div class="ep-sub">PMS &gt; Room Payment &nbsp;·&nbsp; <span class="badge p1">P1 · HIGH</span> &nbsp;·&nbsp; <span class="badge" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0">✅ RESOLVED 2026-09-10 — WAS FE CONTRACT ERROR</span> &nbsp;·&nbsp; Filed: 2026-09-09 &nbsp;·&nbsp; Related: CR-162, CR-364, OG-PMS-014</div>
         <div class="ep-path"><span class="method">POST</span>/api/v2/vendoremployee/pos/room-payment</div>
       </div>
     </div>
@@ -1106,7 +1106,7 @@ curl -s -X POST "https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-p
       <div class="ep-num" style="background: var(--amber);">9</div>
       <div style="flex:1">
         <div class="ep-title">BUG-385 — <code class="mono" style="font-size:15px">no_show</code> Field Absent from local-reservations &amp; dashboard-kpis</div>
-        <div class="ep-sub">PMS &gt; Night Audit / No-Show &nbsp;·&nbsp; <span class="badge medium">P2 · LOW</span> &nbsp;·&nbsp; <span class="badge" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">BACKEND DECISION PENDING</span> &nbsp;·&nbsp; Filed: 2026-09-09 &nbsp;·&nbsp; Related: CR-363, CR-358-P5, OG-PMS-015</div>
+        <div class="ep-sub">PMS &gt; Night Audit / No-Show &nbsp;·&nbsp; <span class="badge medium">P2 · LOW</span> &nbsp;·&nbsp; <span class="badge" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0">✅ RESOLVED 2026-09-10 — Option A shipped</span> &nbsp;·&nbsp; Filed: 2026-09-09 &nbsp;·&nbsp; Related: CR-363, CR-358-P5, OG-PMS-015</div>
         <div class="ep-path"><span class="method">GET</span>/api/v2/vendoremployee/aiosell/local-reservations &nbsp;&nbsp; <span class="method">GET</span>/api/v2/vendoremployee/aiosell/dashboard-kpis</div>
       </div>
     </div>
@@ -1162,6 +1162,323 @@ curl -s -X POST "https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-p
         </div>
       </div>
 
+    </div>
+  </div>
+
+</div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep10  CR-362 — Cancel / Modify / Extend Stay Endpoints
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep10">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">CR-362 — Booking Cancel / Modify / Extend Stay (3 New Write Endpoints)</div>
+        <div class="ep-sub">PMS &gt; Arrivals (S9) / Departures (S10) / Tape Chart (S2) / In-House (S6) &nbsp;·&nbsp; <span class="badge p1">P1 · CRITICAL</span> &nbsp;·&nbsp; <span class="badge high">BACKEND-BLOCKED — OPEN</span> &nbsp;·&nbsp; Filed: 2026-09-11 &nbsp;·&nbsp; Related: CR-362, CR-358-P5, CR-358-P3</div>
+      </div>
+    </div>
+
+    <div class="section-title">Why This Is Blocked</div>
+    <p>Staff cannot cancel, modify, or extend any booking from POS. For OTA bookings they must use the OTA extranet. For Direct/phone bookings there is no path at all — the booking stays <code class="mono">pending</code> forever. Zero of the 3 required write endpoints exist. All probed routes return <strong>404</strong>.</p>
+
+    <div class="section-title">Endpoint 1 — Cancel Booking</div>
+    <div class="code-block"><pre><span class="method">POST</span>  /api/v2/vendoremployee/aiosell/local-reservations/{id}/cancel
+
+Body:
+{
+  "reason":        "string (required)",
+  "cancelled_by":  "employee name or ID",
+  "notify_cm":     true   // push cancellation to Aiosell/OTA channel? boolean
+}
+
+Expected:
+  HTTP 200  { status: "cancelled", cancelled_at: "ISO", cancel_reason: "..." }
+  HTTP 409  if any room line is already checked_in (cannot cancel in-house stay)
+  HTTP 422  if booking not found or already cancelled
+
+Side effects needed:
+  - aiosell_reservations.status → "cancelled"
+  - Soft-allocation released (room block removed from tape chart)
+  - Inventory pushed +1 for each night of the cancelled stay (if notify_cm=true)
+  - local-reservations GET should return this row when status filter = "cancelled"</pre></div>
+
+    <div class="section-title">Endpoint 2 — Modify Booking Dates / Room</div>
+    <div class="code-block"><pre><span class="method">PATCH</span>  /api/v2/vendoremployee/aiosell/local-reservations/{id}
+
+Body (all fields optional — send only what changes):
+{
+  "checkin":             "YYYY-MM-DD",
+  "checkout":            "YYYY-MM-DD",
+  "rooms": [
+    {
+      "id":                   123,          // room line ID
+      "room_code":            "executive",  // new room type (optional)
+      "restaurant_table_id":  42,           // new physical room assignment (optional)
+      "adults":               2,
+      "children":             0
+    }
+  ],
+  "amount_after_tax":   12000.00,   // new price if dates change (optional)
+  "reason":             "string"
+}
+
+Applies to:  status = "pending" only
+Expected:
+  HTTP 200  updated reservation object
+  HTTP 422  if booking is in_house (use Endpoint 3 for in-house extend)
+Side effects: re-push inventory for old nights (release) + new nights (block)</pre></div>
+
+    <div class="section-title">Endpoint 3 — Extend / Shorten In-House Stay</div>
+    <div class="code-block"><pre><span class="method">POST</span>  /api/v2/vendoremployee/pos/room-extend-stay
+
+Body:
+{
+  "order_id":         1232244,      // room order ID (same as room-payment)
+  "new_checkout_date": "YYYY-MM-DD",
+  "new_room_price":    15000.00,    // optional; if omitted: existing nightly rate × new nights
+  "reason":            "string"
+}
+
+Expected:
+  HTTP 200  { order_id, new_checkout_date, new_room_price, balance_payment }
+Side effects needed:
+  - user_id_documents.checkout_date updated
+  - orders.room_info { room_price, balance_payment } recalculated
+  - aiosell_reservations.checkout updated
+  - Inventory re-pushed for new nights</pre></div>
+
+    <div class="section-title">Contract Change — local-reservations</div>
+    <div class="note-box amber">
+      <p><strong>B-362-04:</strong> <code class="mono">GET local-reservations</code> must return cancelled/no-show rows when queried. Either:</p>
+      <ul style="margin-top:8px;padding-left:16px;">
+        <li><code class="mono">?status=cancelled</code> filter works (returns cancelled rows), OR</li>
+        <li>FE can filter client-side if <code class="mono">status</code> field is always present on every row</li>
+      </ul>
+      <p style="margin-top:6px;">Currently <code class="mono">view=cancelled</code> → <strong>422 "Invalid view"</strong>. Please confirm which approach.</p>
+    </div>
+
+    <div class="section-title">One Clarification Needed</div>
+    <div class="note-box amber">
+      <strong>B-362-06:</strong> For Direct-channel bookings (not from OTA): when FE calls cancel/modify, should the change be pushed to Aiosell as a direct-booking update (so Aiosell's inventory reflects it), or is Aiosell push only for OTA-origin bookings?
+    </div>
+
+    <div class="section-title">FE Files That Will Be Built Once Endpoints Exist</div>
+    <ul style="list-style:disc;padding-left:20px;line-height:2">
+      <li><code class="mono">components/pms/CancelBookingDialog.jsx</code> (NEW)</li>
+      <li><code class="mono">components/pms/ModifyBookingDialog.jsx</code> (NEW)</li>
+      <li><code class="mono">components/pms/ExtendStayDialog.jsx</code> (NEW)</li>
+      <li><code class="mono">api/services/pmsService.js</code> — +<code class="mono">cancelReservation()</code>, <code class="mono">modifyReservation()</code>, <code class="mono">extendStay()</code></li>
+      <li><code class="mono">pages/pms/ArrivalsPage.jsx</code> — row actions + Cancelled tab</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep11  CR-365 — Housekeeping Task Model
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep11">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">CR-365 — Housekeeping Workflow (hk_tasks model + employee assignment + push notifications)</div>
+        <div class="ep-sub">PMS &gt; Room Status (S7) → new /pms/housekeeping &nbsp;·&nbsp; <span class="badge medium">P2 · MEDIUM</span> &nbsp;·&nbsp; <span class="badge high">BACKEND-BLOCKED — OPEN</span> &nbsp;·&nbsp; Filed: 2026-09-11 &nbsp;·&nbsp; Related: CR-365, CR-358-P4, OG-PMS-010</div>
+      </div>
+    </div>
+
+    <div class="section-title">Why This Is Blocked</div>
+    <p>CR-358-P4 delivered status-only room board (Mark Clean / Mark OOO). Housekeeping workflow requires a task model, assignment, checklists, time tracking, and notifications — none of which exist on the backend. All probed routes (<code class="mono">aiosell/housekeeping</code>, <code class="mono">hk-tasks</code>, <code class="mono">employee-list</code>) return <strong>404</strong>.</p>
+
+    <div class="section-title">Prerequisite — Fix OG-PMS-010 First</div>
+    <div class="note-box amber">
+      <strong>B-365-01 (prerequisite):</strong> Auto-HK is not firing correctly. When a room is <code class="mono">occupied</code> (booking with live stay), the <code class="mono">booked</code> status takes precedence and the room never transitions to <code class="mono">hk</code> after checkout. Fix needed before the task model can work. Evidence: <code class="mono">probe_02_board.json</code> — r2 has <code class="mono">manual_status: hk</code> but <code class="mono">display_status: occupied</code>.
+    </div>
+
+    <div class="section-title">Required Endpoints (B-365-02)</div>
+    <div class="code-block"><pre><span class="method">GET</span>   /api/v2/vendoremployee/aiosell/hk-tasks
+  Query: date=YYYY-MM-DD, status=pending|in_progress|done, assignee_id=N
+
+<span class="method">POST</span>  /api/v2/vendoremployee/aiosell/hk-tasks
+  Body:
+  {
+    "restaurant_table_id": 42,      // physical room
+    "task_type":  "checkout_clean|stayover|deep_clean|maintenance",
+    "priority":   "high|normal|low",
+    "note":       "optional"
+  }
+
+<span class="method">PATCH</span> /api/v2/vendoremployee/aiosell/hk-tasks/{id}
+  Body (partial update):
+  {
+    "assignee_id":  123,
+    "status":       "pending|in_progress|done|inspected",
+    "checklist":    { "bed": true, "bathroom": true, "minibar": false, ... },
+    "started_at":   "ISO",
+    "completed_at": "ISO",
+    "note":         "string"
+  }</pre></div>
+
+    <div class="section-title">Backend Logic Needed (B-365-03)</div>
+    <div class="note-box amber">
+      <p>When a room transitions to <code class="mono">hk</code> or <code class="mono">ooo</code> status (via checkout or manual PATCH), a task should be auto-created server-side:</p>
+      <ul style="margin-top:8px;padding-left:16px;">
+        <li>Checkout → <code class="mono">task_type: "checkout_clean"</code></li>
+        <li>Manual HK → <code class="mono">task_type: "stayover"</code></li>
+        <li>OOO → <code class="mono">task_type: "maintenance"</code></li>
+        <li>Priority = <code class="mono">high</code> if an arrival is booked for that room today</li>
+      </ul>
+    </div>
+
+    <div class="section-title">Questions We Need Answered</div>
+    <div class="note-box amber">
+      <p><strong>B-365-04:</strong> What is the correct endpoint path for the employee list filtered by housekeeper role? Options probed — all 404: <code class="mono">/employees</code>, <code class="mono">/get-employee-list</code>, <code class="mono">/employee-list</code>. CR-133 G3b claims an employee API exists — please supply the correct path and any role filter param.</p>
+      <p style="margin-top:8px;"><strong>B-365-07:</strong> When a task is marked <code class="mono">done</code>, should the FE call <code class="mono">PATCH room-status available</code> separately, or should the task completion trigger the room-status transition server-side (atomic)?</p>
+    </div>
+
+    <div class="section-title">Checklist Templates (B-365-05, Optional)</div>
+    <div class="note-box" style="background:#f0fdf4;border-left-color:#22c55e;">
+      <p>Optional but preferred: <code class="mono">GET/POST /aiosell/hk-checklists</code> for configurable per-task-type templates (bed / bathroom / minibar / amenities). If too complex for Phase 1, FE will use a static hardcoded checklist for now.</p>
+    </div>
+
+    <div class="section-title">Notifications (B-365-06)</div>
+    <p style="margin-top:6px;">On assignee change: FCM push to assigned housekeeper's device token (tokens already registered per CR-124). On any room status change: socket event <code class="mono">room_status_update { table_id, manual_status, display_status }</code> so boards refresh live without polling.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep12  CR-358-P5 Q1 — restrictions[] schema (UNANSWERED)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep12">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">CR-358-P5 Q1 — restrictions[] Schema for push-inventory-restrictions &amp; push-rate-restrictions</div>
+        <div class="ep-sub">PMS &gt; Channel Manager (S8) &gt; Restrictions tab &nbsp;·&nbsp; <span class="badge p1">P1 · HIGH</span> &nbsp;·&nbsp; <span class="badge" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">AWAITING ANSWER — sent 2026-09-08, not yet replied</span> &nbsp;·&nbsp; Related: CR-358-P5</div>
+      </div>
+    </div>
+
+    <div class="section-title">What We Already Know Works</div>
+    <p>Both endpoints are live and respond. The outer payload shape is correct. Aiosell receives the request and responds with <strong>"Payload Parsing Failed!"</strong> only when <code class="mono">restrictions: []</code> is empty — meaning the structure is right but the content inside the array is unknown.</p>
+
+    <div class="section-title">What We Probed (and What Failed)</div>
+    <div class="code-block"><pre><span class="method">POST</span>  /api/v2/vendoremployee/aiosell/push-inventory-restrictions
+Body:
+{
+  "start_date": "2026-09-20", "end_date": "2026-09-20",
+  "to_channels": ["booking.com"],
+  "rooms": [{
+    "room_code": "executive",
+    "restrictions": []     ← Aiosell: "Payload Parsing Failed!"
+  }]
+}
+
+<span class="method">POST</span>  /api/v2/vendoremployee/aiosell/push-rate-restrictions
+Body:
+{
+  "start_date": "2026-09-20", "end_date": "2026-09-20",
+  "to_channels": ["booking.com"],
+  "rates": [{
+    "room_code": "executive",
+    "rateplan_code": "executive-s-ep",
+    "restrictions": []     ← Aiosell: "Payload Parsing Failed!"
+  }]
+}
+</pre></div>
+
+    <div class="section-title">What We Need (4 answers)</div>
+    <div class="note-box amber">
+      <p><strong>Please fill in and return:</strong></p>
+      <div class="code-block" style="margin-top:10px;"><pre>Q1a — push-inventory-restrictions, one working example item inside restrictions[]:
+  { ... }
+
+Q1b — push-rate-restrictions, one working example item inside restrictions[]:
+  { ... }
+
+Q1c — Full list of valid restriction types for each endpoint:
+  push-inventory-restrictions: ___
+  push-rate-restrictions: ___
+
+Q1d — Valid values for to_channels[]:
+  Is "booking.com" correct?
+  Other valid channel strings: ___</pre></div>
+      <p style="margin-top:8px;font-size:12px;"><strong>Why this blocks:</strong> The Restrictions sub-tab in the Channel Manager (S8-C) is built and shows the UI. The Save/Push action cannot work until we know the correct restriction item schema. This is the last unresolved item from CR-358-P5.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep13  CR-358-P5 Q2 — mark-no-show edge cases (UNANSWERED)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep13">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">CR-358-P5 Q2 — mark-no-show: State Requirements &amp; Failure Conditions</div>
+        <div class="ep-sub">PMS &gt; Channel Manager (S8-D) &gt; No-Show action &nbsp;·&nbsp; <span class="badge p1">P1 · HIGH</span> &nbsp;·&nbsp; <span class="badge" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">AWAITING ANSWER — sent 2026-09-08, not yet replied</span> &nbsp;·&nbsp; Related: CR-358-P5, CR-363</div>
+      </div>
+    </div>
+
+    <div class="section-title">What We Know Works</div>
+    <p>Earlier probe on 2026-09-04 confirmed that <code class="mono">POST aiosell/mark-no-show { booking_id: "BDC8899464" }</code> returned HTTP 200 for a booking.com booking. The No-Show button in the UI (CR-358-P5) works for that case.</p>
+
+    <div class="section-title">What Failed — and Why We Don't Know Why</div>
+    <div class="code-block"><pre><span class="method">POST</span>  /api/v2/vendoremployee/aiosell/mark-no-show
+Body: { "booking_id": "BDC7497606" }
+Response: HTTP 422 — { "status": false, "message": "Failed to mark noshow" }
+
+Booking state at time of probe:
+  channel:             booking.com  ✓ (OTA — supported)
+  checkin:             2026-09-07   ← yesterday (guest never arrived)
+  checkout:            2026-09-09
+  operational_status:  "pending"    (not checked_in, not departed)
+</pre></div>
+
+    <div class="section-title">Three Questions We Need Answered</div>
+    <div class="note-box amber">
+      <div class="code-block" style="margin-top:0"><pre>Q2a — Required booking state for mark-no-show to succeed:
+  Does checkin date need to equal today exactly? (not yesterday?)
+  Does operational_status need to be a specific value?
+  Any other preconditions?
+  Answer: ___
+
+Q2b — Does mark-no-show:
+  (i)  Update operational_status on local-reservations to "no_show"?  YES / NO
+  (ii) Push inventory release to Aiosell (room becomes available)?   YES / NO
+  If (i) = YES — what is the exact operational_status value written?
+  Answer: ___
+
+Q2c — BDC7497606 specific:
+  Was there something sandbox-specific about this booking that caused the failure?
+  (e.g. already processed, data inconsistency, wrong booking state in sandbox)
+  Answer: ___</pre></div>
+      <p style="margin-top:8px;font-size:12px;"><strong>Why this matters:</strong> The FE shows a No-Show button on OTA rows in the Arrivals / Reservations pages. We need to know: (a) on which dates to enable the button, and (b) what status to reflect in the UI after a successful mark. CR-363 Night Audit also needs the count of confirmed no-shows.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ep14  CR-358-P5 Q3 — checkout inventory release (UNANSWERED)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="endpoint-card" id="ep14">
+    <div class="ep-header">
+      <div>
+        <div class="ep-title">CR-358-P5 Q3 — Checkout: Does Backend Auto-Push Inventory to Aiosell?</div>
+        <div class="ep-sub">PMS &gt; Checkout flow (S10 / PmsCheckoutDrawer) &nbsp;·&nbsp; <span class="badge p2">P2 · MEDIUM</span> &nbsp;·&nbsp; <span class="badge" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">AWAITING ANSWER — sent 2026-09-08, not yet replied</span> &nbsp;·&nbsp; Related: CR-358-P3, CR-358-P5</div>
+      </div>
+    </div>
+
+    <div class="section-title">Context</div>
+    <p>When a guest checks out, the room becomes available. For OTA-connected properties, that availability needs to be reflected on OTA channels (booking.com etc.) so new bookings can come in. Currently the FE calls <code class="mono">POST order/order-bill-payment</code> to settle the bill — this is what completes the checkout. We do not know whether your backend auto-pushes inventory to Aiosell after that call, or whether FE needs to trigger the push separately.</p>
+
+    <div class="section-title">Three Questions We Need Answered</div>
+    <div class="note-box amber">
+      <div class="code-block" style="margin-top:0"><pre>Q3a — Is inventory automatically pushed to Aiosell when
+      POST order/order-bill-payment completes a room checkout?
+  Answer: YES / NO
+
+Q3b — If YES:
+  Is there any case where the push can silently fail?
+  (e.g. Aiosell temporarily down, network timeout)
+  If so, does your system surface this to the caller or retry?
+  Answer: ___
+
+Q3c — If NO:
+  Should FE call POST aiosell/push-inventory after checkout?
+  Or is inventory handled through a separate backend job/cron?
+  Answer: ___</pre></div>
+      <p style="margin-top:8px;font-size:12px;"><strong>Why this matters:</strong> If the FE needs to call <code class="mono">push-inventory</code> after checkout, we need to add that call to <code class="mono">PmsCheckoutDrawer.jsx</code>. If it's automatic, we do nothing. Getting this wrong means checked-out rooms stay blocked on OTAs, preventing new bookings.</p>
     </div>
   </div>
 
