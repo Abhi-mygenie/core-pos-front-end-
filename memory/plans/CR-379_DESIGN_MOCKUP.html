@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR-379 PMS Check-In Design Review — Side-by-Side Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#329937',
+              dark: '#2b8230',
+              light: '#f0fdf4',
+              border: '#bbf7d0',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #F7F7F7;
+      color: #1A1A1A;
+      font-size: 13px;
+    }
+    input, select, textarea, button {
+      font-size: 13px;
+    }
+    label {
+      font-size: 12px;
+    }
+    /* Hide scrollbar for clean UI */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#F7F7F7] min-h-screen text-[#1A1A1A] p-4 lg:p-8">
+
+  <!-- Header & Context Banner -->
+  <header class="max-w-7xl mx-auto mb-6 bg-white border border-[#E5E5E5] rounded-xl p-5 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-[#329937] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">CR-379 Design Review</span>
+          <span class="text-[#888] text-[12px]">Hotel PMS · CheckInPage.jsx Redesign</span>
+        </div>
+        <h1 class="text-[20px] font-bold text-[#1A1A1A] mt-1">PMS Check-In with CRM Customer Link & Multi-Guest Details</h1>
+        <p class="text-[13px] text-[#666] mt-0.5">
+          Side-by-side comparison of the Check-In form panel: <strong>Current (Left)</strong> vs. <strong>Proposed CR-379 (Right)</strong> with CRM auto-lookup, Guest Status, Extra Adult/Child names, and Corporate GST toggle.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0 bg-[#F7F7F7] p-3 rounded-lg border border-[#E5E5E5]">
+        <div class="text-right">
+          <div class="text-[11px] font-semibold uppercase text-[#888]">Brand Color</div>
+          <div class="font-mono text-[13px] font-bold text-[#329937]">#329937</div>
+        </div>
+        <div class="w-8 h-8 rounded-lg bg-[#329937] border border-[#2b8230] shadow-inner"></div>
+      </div>
+    </div>
+
+    <!-- Design Open Decisions & Highlights -->
+    <div class="mt-4 pt-4 border-t border-[#E5E5E5] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-[11px]">
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">A. CRM Auto-Lookup</span>
+        <span class="text-emerald-700">Triggers on 10th digit input</span>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">B. Guest Badge</span>
+        <span class="text-emerald-700">Tier, Stays, Credit, Docs flag</span>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">C. Extra Adults</span>
+        <span class="text-emerald-700">Dynamic name slots for Adult 2-4</span>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">D. Children Names</span>
+        <span class="text-emerald-700">Individual inputs when child &gt; 0</span>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">E. Corporate / B2B</span>
+        <span class="text-emerald-700">Firm Name &amp; GSTIN expansion</span>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+        <span class="font-bold text-emerald-800 block mb-0.5">F. CRM Fail Banner</span>
+        <span class="text-emerald-700">Non-blocking fallback warning</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Side-by-Side Grid Container -->
+  <main class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start relative">
+
+      <!-- ========================================== -->
+      <!-- LEFT PANEL: CURRENT CHECK-IN PAGE RIGHT-PANEL -->
+      <!-- ========================================== -->
+      <div class="bg-white rounded-xl border border-[#E5E5E5] shadow-sm overflow-hidden flex flex-col min-h-[820px]">
+        <!-- Panel Title Bar -->
+        <div class="bg-[#2D3748] text-white px-5 py-3 flex items-center justify-between border-b border-gray-700">
+          <div class="flex items-center gap-2">
+            <span class="bg-gray-600 text-gray-200 text-[10px] font-bold px-2 py-0.5 rounded">BEFORE</span>
+            <h2 class="text-[15px] font-bold">Current Check-In Form (No CRM)</h2>
+          </div>
+          <span class="text-[11px] text-gray-400">Standard PMS Field Layout</span>
+        </div>
+
+        <!-- Panel Header -->
+        <div class="px-5 py-4 border-b border-[#E5E5E5] bg-gray-50 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#329937]"></span>
+              <span class="text-[15px] font-bold text-[#1A1A1A]">Rajesh Sharma</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium">Direct</span>
+            </div>
+            <div class="text-[11px] text-[#888]">Booking ID: BK-9042</div>
+          </div>
+          <span class="text-[11px] bg-gray-200 text-gray-700 px-2.5 py-1 rounded font-mono">Room 102</span>
+        </div>
+
+        <!-- Static Form (Current State) -->
+        <div class="p-5 space-y-4 flex-1">
+          <!-- Primary Guest & Phone -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Guest Name *</label>
+              <input type="text" value="Rajesh Sharma" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Phone *</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888]">+91</span>
+                <input type="text" value="9876543210" readonly class="w-full border border-[#E5E5E5] rounded-lg pl-12 pr-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Assignment -->
+          <div>
+            <label class="text-[12px] text-[#888] mb-1 block font-medium">Room Assignment *</label>
+            <select disabled class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+              <option>102 (Deluxe King) — Available</option>
+            </select>
+          </div>
+
+          <!-- Dates & Nights -->
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Check-in *</label>
+              <input type="date" value="2026-09-12" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+            </div>
+            <div class="flex flex-col items-center justify-end pb-2">
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Nights</label>
+              <div class="font-bold text-[16px] text-[#1A1A1A]">2</div>
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Check-out *</label>
+              <input type="date" value="2026-09-14" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+            </div>
+          </div>
+
+          <!-- Occupancy Counters (Static in current page) -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Adults</label>
+              <input type="number" value="2" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Children</label>
+              <input type="number" value="1" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+            </div>
+          </div>
+
+          <!-- Financials -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Room Amount *</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span>
+                <input type="text" value="7,500" readonly class="w-full border border-[#E5E5E5] rounded-lg pl-7 pr-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+              </div>
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Advance Payment</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span>
+                <input type="text" value="2,000" readonly class="w-full border border-[#E5E5E5] rounded-lg pl-7 pr-3 h-10 text-[13px] bg-gray-50 text-[#1A1A1A]">
+              </div>
+            </div>
+          </div>
+
+          <!-- Accommodation GST Strip (BUG-386/BUG-388) -->
+          <div class="rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] p-3.5 space-y-1.5 text-[12px]">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[11px] uppercase tracking-wide text-[#166534]">GST (Accommodation)</span>
+              <span class="text-[10px] font-bold bg-[#22C55E] text-white px-2 py-0.5 rounded-full">12% Slab</span>
+            </div>
+            <div class="flex justify-between text-[#374151]"><span>CGST (6%)</span><span>₹570.00</span></div>
+            <div class="flex justify-between text-[#374151]"><span>SGST (6%)</span><span>₹570.00</span></div>
+            <div class="flex justify-between font-bold text-[#1A1A1A] border-t border-[#BBF7D0] pt-1.5">
+              <span>Total incl. GST</span>
+              <span class="text-[#15803D] text-[13px]">₹10,640.00</span>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div>
+            <label class="text-[12px] text-[#888] mb-1 block font-medium">Note</label>
+            <textarea rows="2" readonly class="w-full border border-[#E5E5E5] rounded-lg px-3 py-2 text-[13px] bg-gray-50 text-[#1A1A1A] resize-none">High floor preferred.</textarea>
+          </div>
+
+          <!-- Booking type tag -->
+          <div class="flex items-center gap-2 text-[12px] text-[#888] bg-gray-50 rounded-lg px-3 py-2 border border-[#E5E5E5]">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Booking type: <strong class="text-[#1A1A1A]">Direct</strong></span>
+            <span class="ml-auto font-mono text-[11px]">BK-9042</span>
+          </div>
+
+          <!-- Missing Gaps Indicator Box -->
+          <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-[12px] space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-red-900">
+              <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              Gaps in Current Implementation:
+            </div>
+            <ul class="list-disc pl-5 space-y-0.5 text-[11px]">
+              <li>No auto CRM lookup on phone number entry</li>
+              <li>No loyalty tier, stay history, or credit balances</li>
+              <li>No adult name slots (Adult 2 name lost)</li>
+              <li>No child names stored</li>
+              <li>No B2B / Corporate GST profile attachment</li>
+            </ul>
+          </div>
+
+          <!-- Confirm Button -->
+          <button disabled class="w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] opacity-70 flex items-center justify-center gap-2 cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Confirm Check-In
+          </button>
+        </div>
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- RIGHT PANEL: PROPOSED CR-379 CHECK-IN PANEL -->
+      <!-- ========================================== -->
+      <div class="bg-white rounded-xl border border-[#E5E5E5] shadow-md overflow-hidden flex flex-col min-h-[820px]">
+        <!-- Panel Title Bar -->
+        <div class="bg-[#329937] text-white px-5 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="bg-white text-[#329937] text-[10px] font-bold px-2 py-0.5 rounded">AFTER</span>
+            <h2 class="text-[15px] font-bold">CR-379 Proposed Check-In (Interactive)</h2>
+          </div>
+          <span class="text-[11px] bg-[#2b8230] text-white px-2 py-0.5 rounded font-mono">Live Interactive Mockup</span>
+        </div>
+
+        <!-- CRM Micro-State Switcher Toolbar -->
+        <div class="bg-gray-100 border-b border-[#E5E5E5] px-5 py-2.5">
+          <div class="text-[11px] font-semibold text-[#666] mb-1.5 flex items-center justify-between">
+            <span>TEST CRM LOOKUP STATES:</span>
+            <span class="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-mono">Click pills to preview</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="state-switcher-container">
+            <button onclick="setCrmState('returning')" id="btn-state-returning" class="px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#329937] text-white transition-all shadow-sm">
+              1. Returning Guest (Gold)
+            </button>
+            <button onclick="setCrmState('new')" id="btn-state-new" class="px-2.5 py-1 text-[11px] font-medium rounded-md bg-white border border-[#E5E5E5] text-[#666] hover:bg-gray-50 transition-all">
+              2. New Guest
+            </button>
+            <button onclick="setCrmState('loading')" id="btn-state-loading" class="px-2.5 py-1 text-[11px] font-medium rounded-md bg-white border border-[#E5E5E5] text-[#666] hover:bg-gray-50 transition-all">
+              3. CRM Loading…
+            </button>
+            <button onclick="setCrmState('failed')" id="btn-state-failed" class="px-2.5 py-1 text-[11px] font-medium rounded-md bg-white border border-[#E5E5E5] text-[#666] hover:bg-gray-50 transition-all">
+              4. Lookup Failed Warning
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel Header -->
+        <div class="px-5 py-3.5 border-b border-[#E5E5E5] bg-gray-50 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#329937]"></span>
+              <span class="text-[15px] font-bold text-[#1A1A1A]" id="header-guest-name">Rajesh Sharma</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium">Direct</span>
+            </div>
+            <div class="text-[11px] text-[#888]">Booking ID: BK-9042</div>
+          </div>
+          <span class="text-[11px] bg-[#329937]/10 text-[#329937] px-2.5 py-1 rounded font-bold">Room 102 (Deluxe)</span>
+        </div>
+
+        <!-- Form Body -->
+        <div class="p-5 space-y-4 flex-1">
+
+          <!-- Primary Guest & Phone with CRM Integration -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Primary Guest Name *</label>
+              <input type="text" id="input-primary-name" value="Rajesh Sharma" oninput="updatePrimaryName(this.value)" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-medium">
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-[12px] text-[#888] block font-medium">Phone (CRM Trigger) *</label>
+                <span class="text-[10px] text-[#329937] font-semibold" id="phone-status-hint">✓ 10 digits</span>
+              </div>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888] font-medium">+91</span>
+                <input type="text" id="input-phone" value="9876543210" maxlength="10" oninput="handlePhoneInput(this.value)" class="w-full border border-[#E5E5E5] rounded-lg pl-12 pr-9 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-mono font-medium">
+                
+                <!-- Phone field right spinner/check icon -->
+                <div class="absolute right-3 top-2.5" id="phone-icon-container">
+                  <svg class="w-4 h-4 text-[#329937]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CRM DYNAMIC BADGE BLOCK / STATES CONTAINER -->
+          <div id="crm-badge-container">
+            <!-- STATE 1: RETURNING GUEST BADGE (DEFAULT) -->
+            <div id="crm-state-returning" class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/80 transition-all">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 bg-[#329937] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                    <svg class="w-3 h-3 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    Gold Member
+                  </span>
+                  <span class="text-[12px] font-bold text-emerald-950">Returning Guest Found</span>
+                </div>
+                <span class="text-[11px] text-emerald-700 bg-emerald-100/80 font-medium px-2 py-0.5 rounded-md flex items-center gap-1 border border-emerald-200">
+                  <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Docs on file ✓
+                </span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-[12px] pt-1 border-t border-emerald-200/60">
+                <div class="bg-white/80 p-2 rounded-lg border border-emerald-100">
+                  <span class="text-[#888] text-[10px] block uppercase font-medium">Total Stays</span>
+                  <span class="font-bold text-[#1A1A1A] text-[13px]">12 stays</span>
+                </div>
+                <div class="bg-white/80 p-2 rounded-lg border border-emerald-100">
+                  <span class="text-[#888] text-[10px] block uppercase font-medium">Last Visit</span>
+                  <span class="font-bold text-[#1A1A1A] text-[13px]">Aug 2026</span>
+                </div>
+                <div class="bg-white/80 p-2 rounded-lg border border-emerald-100">
+                  <span class="text-[#888] text-[10px] block uppercase font-medium">Wallet Credit</span>
+                  <span class="font-bold text-[#329937] text-[13px]">₹850</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- STATE 2: NEW GUEST -->
+            <div id="crm-state-new" class="hidden p-3 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="bg-gray-200 text-gray-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">New Guest</span>
+                <span class="text-[12px] text-[#666]">Phone not in CRM — will be registered on check-in</span>
+              </div>
+              <span class="text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">New Profile</span>
+            </div>
+
+            <!-- STATE 3: CRM LOADING -->
+            <div id="crm-state-loading" class="hidden p-3.5 rounded-xl border border-blue-200 bg-blue-50/60 flex items-center gap-3">
+              <svg class="w-5 h-5 text-blue-600 animate-spin shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <div>
+                <div class="text-[13px] font-bold text-blue-900">Looking up CRM customer profile…</div>
+                <div class="text-[11px] text-blue-700">Checking loyalty tier, past stay records, and credit balance</div>
+              </div>
+            </div>
+
+            <!-- STATE 4: CRM FAILURE WARNING (NON-BLOCKING) -->
+            <div id="crm-state-failed" class="hidden p-3.5 rounded-xl border border-amber-300 bg-amber-50 flex items-start gap-2.5">
+              <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <div>
+                <div class="text-[12px] font-bold text-amber-900">CRM lookup failed (Timeout / Offline)</div>
+                <div class="text-[11px] text-amber-800">Check-in will proceed without loyalty link. PMS records will sync automatically later.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Assignment -->
+          <div>
+            <label class="text-[12px] text-[#888] mb-1 block font-medium">Room Assignment *</label>
+            <select id="select-room" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white">
+              <option value="102" selected>102 (Deluxe King) — Available</option>
+              <option value="103">103 (Deluxe Twin) — Available</option>
+              <option value="104">104 (Executive Suite) — Available</option>
+            </select>
+          </div>
+
+          <!-- Dates & Nights -->
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Check-in *</label>
+              <input type="date" value="2026-09-12" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-medium">
+            </div>
+            <div class="flex flex-col items-center justify-end pb-2">
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Nights</label>
+              <div class="font-bold text-[16px] text-[#1A1A1A]">2</div>
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Check-out *</label>
+              <input type="date" value="2026-09-14" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-medium">
+            </div>
+          </div>
+
+          <!-- OCCUPANCY COUNTERS & EXTRA ADULT / CHILD NAME SLOTS -->
+          <div class="bg-gray-50 border border-[#E5E5E5] p-3.5 rounded-xl space-y-3">
+            <div class="text-[12px] font-bold text-[#1A1A1A] flex items-center justify-between border-b border-[#E5E5E5] pb-2">
+              <span>Occupancy &amp; Guest Name Register</span>
+              <span class="text-[11px] text-[#888] font-normal">Slot 1 is Primary Guest</span>
+            </div>
+
+            <!-- Adult & Child Counters -->
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Adults Counter -->
+              <div class="flex items-center justify-between bg-white border border-[#E5E5E5] rounded-lg p-2">
+                <div>
+                  <div class="text-[12px] font-bold text-[#1A1A1A]">Adults</div>
+                  <div class="text-[10px] text-[#888]">Age 12+</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="adjustAdults(-1)" class="w-7 h-7 rounded-md border border-[#E5E5E5] bg-gray-50 hover:bg-gray-100 flex items-center justify-center font-bold text-[#1A1A1A] transition-colors">-</button>
+                  <span class="font-bold text-[14px] w-5 text-center" id="cnt-adults">2</span>
+                  <button type="button" onclick="adjustAdults(1)" class="w-7 h-7 rounded-md border border-[#E5E5E5] bg-gray-50 hover:bg-gray-100 flex items-center justify-center font-bold text-[#1A1A1A] transition-colors">+</button>
+                </div>
+              </div>
+
+              <!-- Children Counter -->
+              <div class="flex items-center justify-between bg-white border border-[#E5E5E5] rounded-lg p-2">
+                <div>
+                  <div class="text-[12px] font-bold text-[#1A1A1A]">Children</div>
+                  <div class="text-[10px] text-[#888]">Under 12</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="adjustChildren(-1)" class="w-7 h-7 rounded-md border border-[#E5E5E5] bg-gray-50 hover:bg-gray-100 flex items-center justify-center font-bold text-[#1A1A1A] transition-colors">-</button>
+                  <span class="font-bold text-[14px] w-5 text-center" id="cnt-children">1</span>
+                  <button type="button" onclick="adjustChildren(1)" class="w-7 h-7 rounded-md border border-[#E5E5E5] bg-gray-50 hover:bg-gray-100 flex items-center justify-center font-bold text-[#1A1A1A] transition-colors">+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Extra Adult Name Input Slots (Dynamic) -->
+            <div id="extra-adults-container" class="space-y-2 pt-1">
+              <!-- Slot 2 Name (shown because Adults=2 default) -->
+              <div id="adult-slot-2" class="flex items-center gap-2">
+                <span class="text-[11px] font-bold text-[#666] w-16 shrink-0">Adult 2:</span>
+                <input type="text" value="Priya Sharma" placeholder="Adult 2 Full Name" class="flex-1 border border-[#E5E5E5] rounded-lg px-3 h-8 text-[12px] bg-white focus:outline-none focus:border-[#329937]">
+              </div>
+              <!-- Slot 3 Name (hidden by default) -->
+              <div id="adult-slot-3" class="hidden flex items-center gap-2">
+                <span class="text-[11px] font-bold text-[#666] w-16 shrink-0">Adult 3:</span>
+                <input type="text" value="" placeholder="Adult 3 Full Name" class="flex-1 border border-[#E5E5E5] rounded-lg px-3 h-8 text-[12px] bg-white focus:outline-none focus:border-[#329937]">
+              </div>
+              <!-- Slot 4 Name (hidden by default) -->
+              <div id="adult-slot-4" class="hidden flex items-center gap-2">
+                <span class="text-[11px] font-bold text-[#666] w-16 shrink-0">Adult 4:</span>
+                <input type="text" value="" placeholder="Adult 4 Full Name" class="flex-1 border border-[#E5E5E5] rounded-lg px-3 h-8 text-[12px] bg-white focus:outline-none focus:border-[#329937]">
+              </div>
+            </div>
+
+            <!-- Children Name Inputs (Dynamic) -->
+            <div id="children-names-container" class="space-y-2 pt-1 border-t border-[#E5E5E5]/60">
+              <!-- Child 1 Name (shown because Children=1 default) -->
+              <div id="child-slot-1" class="flex items-center gap-2">
+                <span class="text-[11px] font-bold text-purple-700 w-16 shrink-0">Child 1:</span>
+                <input type="text" value="Aarav Sharma (7 yrs)" placeholder="Child 1 Name & Age" class="flex-1 border border-purple-200 rounded-lg px-3 h-8 text-[12px] bg-purple-50/50 focus:outline-none focus:border-purple-500">
+              </div>
+              <!-- Child 2 Name (hidden by default) -->
+              <div id="child-slot-2" class="hidden flex items-center gap-2">
+                <span class="text-[11px] font-bold text-purple-700 w-16 shrink-0">Child 2:</span>
+                <input type="text" value="" placeholder="Child 2 Name & Age" class="flex-1 border border-purple-200 rounded-lg px-3 h-8 text-[12px] bg-purple-50/50 focus:outline-none focus:border-purple-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- CORPORATE / B2B BOOKING TOGGLE -->
+          <div class="bg-gray-50 border border-[#E5E5E5] rounded-xl p-3.5 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="corporate-toggle" onchange="toggleCorporate(this.checked)" class="w-4 h-4 text-[#329937] rounded border-gray-300 focus:ring-[#329937] cursor-pointer">
+                <div>
+                  <span class="text-[13px] font-bold text-[#1A1A1A] block">Corporate / B2B Billing</span>
+                  <span class="text-[11px] text-[#888]">Check if invoice is raised to company GSTIN</span>
+                </div>
+              </label>
+              <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded" id="corporate-pill-badge">Personal</span>
+            </div>
+
+            <!-- Expandable Corporate Fields -->
+            <div id="corporate-fields" class="hidden space-y-3 pt-2 border-t border-[#E5E5E5] transition-all">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12px] text-[#888] mb-1 block font-medium">Company / Firm Name *</label>
+                  <input type="text" id="firm-name-input" value="Acme Technologies Pvt Ltd" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-9 text-[12px] focus:outline-none focus:border-[#329937] bg-white">
+                </div>
+                <div>
+                  <label class="text-[12px] text-[#888] mb-1 block font-medium">GSTIN Number *</label>
+                  <input type="text" id="gstin-input" value="27AABCU9603R1ZM" maxlength="15" class="w-full border border-[#E5E5E5] rounded-lg px-3 h-9 text-[12px] font-mono focus:outline-none focus:border-[#329937] bg-white uppercase">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Amount & Advance Payment -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Room Amount *</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span>
+                <input type="number" id="input-room-amount" value="7500" oninput="calculateGst()" class="w-full border border-[#E5E5E5] rounded-lg pl-7 pr-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-medium">
+              </div>
+            </div>
+            <div>
+              <label class="text-[12px] text-[#888] mb-1 block font-medium">Advance Payment</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span>
+                <input type="number" id="input-advance" value="2000" oninput="calculateGst()" class="w-full border border-[#E5E5E5] rounded-lg pl-7 pr-3 h-10 text-[13px] focus:outline-none focus:border-[#329937] bg-white font-medium">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic GST Strip (Calculated live in JS) -->
+          <div class="rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] p-3.5 space-y-1.5 text-[12px]">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[11px] uppercase tracking-wide text-[#166534]">GST (Accommodation - Live)</span>
+              <span class="text-[10px] font-bold bg-[#22C55E] text-white px-2 py-0.5 rounded-full" id="gst-slab-pill">12% Slab</span>
+            </div>
+            <div class="flex justify-between text-[#374151]"><span>CGST (6%)</span><span id="gst-cgst-val">₹570.00</span></div>
+            <div class="flex justify-between text-[#374151]"><span>SGST (6%)</span><span id="gst-sgst-val">₹570.00</span></div>
+            <div class="flex justify-between font-bold text-[#1A1A1A] border-t border-[#BBF7D0] pt-1.5">
+              <span>Total Bill incl. GST</span>
+              <span class="text-[#15803D] text-[13px]" id="gst-grand-total">₹10,640.00</span>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div>
+            <label class="text-[12px] text-[#888] mb-1 block font-medium">Note</label>
+            <textarea rows="2" placeholder="Special requests…" class="w-full border border-[#E5E5E5] rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:border-[#329937] resize-none bg-white">High floor preferred. Loyalty guest gold tier benefits applied.</textarea>
+          </div>
+
+          <!-- Confirm Button Flow -->
+          <button id="btn-confirm-checkin" onclick="simulateConfirm()" class="w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-all shadow-sm">
+            <svg id="confirm-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span id="confirm-btn-text">Confirm Check-In (Flow: Lookup → Register → PMS CheckIn)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    let currentAdults = 2;
+    let currentChildren = 1;
+
+    function setCrmState(state) {
+      // Hide all states
+      ['returning', 'new', 'loading', 'failed'].forEach(s => {
+        const el = document.getElementById(`crm-state-${s}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Reset button styles
+      ['returning', 'new', 'loading', 'failed'].forEach(s => {
+        const btn = document.getElementById(`btn-state-${s}`);
+        if (btn) {
+          btn.className = "px-2.5 py-1 text-[11px] font-medium rounded-md bg-white border border-[#E5E5E5] text-[#666] hover:bg-gray-50 transition-all";
+        }
+      });
+
+      // Show chosen state & highlight button
+      const chosen = document.getElementById(`crm-state-${state}`);
+      if (chosen) chosen.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`btn-state-${state}`);
+      if (activeBtn) {
+        activeBtn.className = "px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#329937] text-white transition-all shadow-sm";
+      }
+
+      // Update phone icon and hint
+      const hint = document.getElementById('phone-status-hint');
+      const iconContainer = document.getElementById('phone-icon-container');
+      const confirmBtn = document.getElementById('btn-confirm-checkin');
+
+      if (state === 'returning') {
+        hint.innerText = '✓ CRM Gold Guest';
+        hint.className = 'text-[10px] text-[#329937] font-semibold';
+        iconContainer.innerHTML = '<svg class="w-4 h-4 text-[#329937]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+        confirmBtn.disabled = false;
+        confirmBtn.className = 'w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-all shadow-sm';
+      } else if (state === 'new') {
+        hint.innerText = '• New Guest';
+        hint.className = 'text-[10px] text-gray-500 font-semibold';
+        iconContainer.innerHTML = '<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>';
+        confirmBtn.disabled = false;
+        confirmBtn.className = 'w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-all shadow-sm';
+      } else if (state === 'loading') {
+        hint.innerText = 'Looking up…';
+        hint.className = 'text-[10px] text-blue-600 font-semibold';
+        iconContainer.innerHTML = '<svg class="w-4 h-4 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+        confirmBtn.disabled = true;
+        confirmBtn.className = 'w-full h-11 rounded-xl bg-gray-300 text-gray-500 font-semibold text-[14px] flex items-center justify-center gap-2 cursor-not-allowed';
+      } else if (state === 'failed') {
+        hint.innerText = '! Lookup Offline';
+        hint.className = 'text-[10px] text-amber-600 font-semibold';
+        iconContainer.innerHTML = '<svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+        confirmBtn.disabled = false;
+        confirmBtn.className = 'w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-all shadow-sm';
+      }
+    }
+
+    function handlePhoneInput(val) {
+      const clean = val.replace(/\D/g, '').slice(0, 10);
+      document.getElementById('input-phone').value = clean;
+      if (clean.length === 10) {
+        setCrmState('returning');
+      } else if (clean.length > 0) {
+        setCrmState('loading');
+      } else {
+        setCrmState('new');
+      }
+    }
+
+    function updatePrimaryName(val) {
+      document.getElementById('header-guest-name').innerText = val || 'Guest';
+    }
+
+    function adjustAdults(delta) {
+      currentAdults = Math.max(1, Math.min(4, currentAdults + delta));
+      document.getElementById('cnt-adults').innerText = currentAdults;
+
+      // Update slot visibility
+      for (let i = 2; i <= 4; i++) {
+        const slot = document.getElementById(`adult-slot-${i}`);
+        if (slot) {
+          if (i <= currentAdults) {
+            slot.classList.remove('hidden');
+          } else {
+            slot.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    function adjustChildren(delta) {
+      currentChildren = Math.max(0, Math.min(2, currentChildren + delta));
+      document.getElementById('cnt-children').innerText = currentChildren;
+
+      for (let i = 1; i <= 2; i++) {
+        const slot = document.getElementById(`child-slot-${i}`);
+        if (slot) {
+          if (i <= currentChildren) {
+            slot.classList.remove('hidden');
+          } else {
+            slot.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    function toggleCorporate(active) {
+      const fields = document.getElementById('corporate-fields');
+      const badge = document.getElementById('corporate-pill-badge');
+      if (active) {
+        fields.classList.remove('hidden');
+        badge.innerText = "B2B Active";
+        badge.className = "text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded";
+      } else {
+        fields.classList.add('hidden');
+        badge.innerText = "Personal";
+        badge.className = "text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded";
+      }
+    }
+
+    function calculateGst() {
+      const amt = Number(document.getElementById('input-room-amount').value || 0);
+      const adv = Number(document.getElementById('input-advance').value || 0);
+      const base = amt + adv;
+      const rate = 0.12; // 12% slab
+      const cgst = (base * rate) / 2;
+      const sgst = (base * rate) / 2;
+      const total = base + cgst + sgst;
+
+      document.getElementById('gst-cgst-val').innerText = `₹${cgst.toFixed(2)}`;
+      document.getElementById('gst-sgst-val').innerText = `₹${sgst.toFixed(2)}`;
+      document.getElementById('gst-grand-total').innerText = `₹${total.toFixed(2)}`;
+    }
+
+    function simulateConfirm() {
+      const btn = document.getElementById('btn-confirm-checkin');
+      const btnText = document.getElementById('confirm-btn-text');
+      const confirmIcon = document.getElementById('confirm-icon');
+
+      btn.disabled = true;
+      btnText.innerText = "Executing CRM Link & Check-In…";
+      confirmIcon.outerHTML = '<svg id="confirm-icon" class="w-4 h-4 text-white animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+
+      setTimeout(() => {
+        btnText.innerText = "Check-In Complete! Guest Checked In.";
+        btn.className = "w-full h-11 rounded-xl bg-emerald-600 text-white font-semibold text-[14px] flex items-center justify-center gap-2 shadow-sm";
+        document.getElementById('confirm-icon').outerHTML = '<svg id="confirm-icon" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
+        
+        setTimeout(() => {
+          btn.disabled = false;
+          btnText.innerText = "Confirm Check-In (Flow: Lookup → Register → PMS CheckIn)";
+          btn.className = "w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-all shadow-sm";
+        }, 2000);
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

@@ -2110,9 +2110,9 @@
       "id": "BUG-090",
       "title": "CRM customer_id not stored on room orders",
       "priority": "P2",
-      "status": "BACKEND-BLOCKED (STALE \u2014 2026-09-12 revalidation: backend field acceptance CONFIRMED via static evidence + owner statement. Old flow already sends customer_id/cust_membership_id via roomService.js:57-61. New PMS flow gap tracked as CR-379. Recommend CLOSURE: mark RESOLVED-BACKEND, note FE parity delivered by CR-127 for old flow, CR-379 for new flow.)",
+      "status": "RESOLVED \u2014 FRONTEND-ONLY (2026-09-12 live probe confirmed). Backend accepts customer_id + cust_membership_id in JSON payload without validation error (Probe A vs Probe B: identical response). Old POS flow: CR-127 delivered. New PMS flow: CR-379 will deliver. No backend fix needed.",
       "sprint": "POS 4.0",
-      "blocker": "STALE \u2014 see CR-379 for new PMS flow gap",
+      "blocker": "NONE \u2014 resolved; tracked by CR-379 for new PMS path",
       "artifact_refs": [
         {
           "label": "Impact Analysis",
@@ -23870,11 +23870,11 @@
       "title": "New PMS Check-In: CRM Customer Link (Core)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE \u2014 Gate 1 (2026-09-12). Code reality: NONE. Duplicate check: DISTINCT. Blast: MEDIUM (2 files). All 5 ODs locked. Related: BUG-090, CR-358-P2, CR-127, CR-128. Next: Planning Gate 2.",
+      "status": "GATE 2 COMPLETE (2026-09-12). Impact Analysis written. Backend contract CONFIRMED (live probe). Gap 100% frontend-only. BUG-090 stale label corrected. 2 files, 0 backend changes. 6 design decisions deferred. Awaiting Gate 2.5 Design Review (owner requested HTML mockup). Gate 3 GO pending design approval.",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
-      "gate": 1,
-      "blocker": "NONE \u2014 all ODs locked, Planning Gate 2 ready",
+      "gate": 2,
+      "blocker": "NONE \u2014 Gate 2.5 Design Review required before Gate 3",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -23885,9 +23885,14 @@
           "label": "Investigation",
           "path": "memory/investigations/INV-PMS-CHECKIN-CRM-GAP_INVESTIGATION_REPORT_2026_09_12.md",
           "type": "investigation"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-379_IMPACT_ANALYSIS.md",
+          "type": "impact"
         }
       ],
-      "completeness": "1/7"
+      "completeness": "2/7"
     },
     {
       "type": "CR",

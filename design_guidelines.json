@@ -1,0 +1,85 @@
+{
+  "project_id": "CR-379",
+  "title": "PMS Check-In with CRM Customer Link & Multi-Guest Details",
+  "app_type": "dashboard (hotel PMS)",
+  "design_system": {
+    "colors": {
+      "primary": "#329937",
+      "primary_hover": "#2b8230",
+      "primary_light": "#F0FDF4",
+      "primary_border": "#BBF7D0",
+      "background": "#F7F7F7",
+      "card_bg": "#FFFFFF",
+      "card_border": "#E5E5E5",
+      "text_primary": "#1A1A1A",
+      "text_muted": "#888888",
+      "text_subtle": "#666666",
+      "accent_amber_bg": "#FEF3C7",
+      "accent_amber_border": "#FDE68A",
+      "accent_amber_text": "#92400E"
+    },
+    "typography": {
+      "heading": {
+        "size": "18px",
+        "weight": "bold",
+        "color": "#1A1A1A"
+      },
+      "subheading": {
+        "size": "15px",
+        "weight": "bold",
+        "color": "#1A1A1A"
+      },
+      "body": {
+        "size": "13px",
+        "weight": "normal",
+        "color": "#1A1A1A"
+      },
+      "labels": {
+        "size": "12px",
+        "weight": "medium",
+        "color": "#888888"
+      },
+      "badges": {
+        "size": "10px",
+        "weight": "bold"
+      }
+    },
+    "components": {
+      "crm_lookup_badge": {
+        "container_class": "p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/80",
+        "tier_badge_class": "inline-flex items-center gap-1 bg-[#329937] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full",
+        "data_grid_class": "grid grid-cols-3 gap-2 text-[12px] pt-1 border-t border-emerald-200/60"
+      },
+      "extra_adults_section": {
+        "container_class": "bg-gray-50 border border-[#E5E5E5] p-3.5 rounded-xl space-y-3",
+        "counter_btn_class": "w-7 h-7 rounded-md border border-[#E5E5E5] bg-gray-50 hover:bg-gray-100 flex items-center justify-center font-bold text-[#1A1A1A]"
+      },
+      "corporate_toggle_section": {
+        "container_class": "bg-gray-50 border border-[#E5E5E5] rounded-xl p-3.5 space-y-3",
+        "input_class": "w-full border border-[#E5E5E5] rounded-lg px-3 h-9 text-[12px] focus:outline-none focus:border-[#329937] bg-white"
+      },
+      "confirm_button": {
+        "active_class": "w-full h-11 rounded-xl bg-[#329937] text-white font-semibold text-[14px] hover:bg-[#2b8230] flex items-center justify-center gap-2 transition-colors",
+        "loading_class": "w-full h-11 rounded-xl bg-gray-300 text-gray-500 font-semibold text-[14px] flex items-center justify-center gap-2 cursor-not-allowed"
+      }
+    }
+  },
+  "mockup_location": "/app/memory/plans/CR-379_DESIGN_MOCKUP.html",
+  "instructions_to_main_agent": [
+    "Use exact color code #329937 for brand green primary buttons and active badges.",
+    "Implement auto CRM lookup when phone number reaches 10 digits in CheckInPage.jsx.",
+    "Display returning guest badge with Gold Tier, stay count, last stay, wallet credit, and document status when guest profile exists.",
+    "Show subtle 'New Guest' pill when customer is not found in CRM without blocking check-in flow.",
+    "Include expandable Extra Adults slots (Adult 2, 3, 4 names) controlled by Adults counter.",
+    "Include individual Children name inputs when Children counter > 0.",
+    "Add Corporate / B2B toggle revealing Firm Name and GSTIN fields.",
+    "Provide amber non-blocking warning banner when CRM lookup service fails or times out.",
+    "All interactive elements MUST include data-testid attributes for stable testability."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Ensure contrast ratio meets WCAG AA standards against #F7F7F7 and #FFFFFF backgrounds.",
+    "Avoid universal transition CSS property; target specific transform and background transitions.",
+    "Use specific icon set from lucide-react (or SVG strings in HTML mockup).",
+    "All interactive and key informational elements MUST include data-testid attributes in kebab-case."
+  ]
+}
