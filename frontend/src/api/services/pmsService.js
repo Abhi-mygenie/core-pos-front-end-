@@ -1,4 +1,4 @@
-// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3 | CR-358-P4 | CR-379: PMS aggregation + booking/check-in + reservation-ops + room-status/tape-chart service
+// CR-358-P1 | BUG-378 | CR-358-P2 | CR-358-P3 | CR-358-P4 | CR-379 | CR-380: PMS aggregation + booking/check-in + reservation-ops + room-status/tape-chart service
 // getInHouseGuests: two-call join — GET_ROOM_LIST + local-reservations enriched on order_id.
 // roomService.getRoomList() and roomListTransform are NOT modified — only called.
 import { getRoomList } from './roomService';
@@ -142,44 +142,66 @@ export const pmsCheckIn = async (p) => {
   }
   const orderAmount = to2dp(p.orderAmount);
   const advance     = to2dp(p.advancePayment);
-  const payload = {
-    booking_type:    p.bookingType,
-    ...(p.bookingType !== 'WalkIn' ? { booking_id: p.bookingId } : {}),
-    name:            p.name,
-    phone:           p.phone,
-    email:           p.email ?? '',
-    room_id:         [Number(p.restaurantTableId)],
-    id_type:         'Select document type',   // REQUIRED (NOT NULL) — probe P6 500 without it
-    total_adult:     Number(p.adults ?? 1),
-    total_children:  Number(p.children ?? 0),
-    children_name:   p.childrenNames?.length ? p.childrenNames.join(',') : '',  // CR-379: real names
-    checkin_date:    p.checkin,
-    checkout_date:   p.checkout,
-    booking_details: '',
-    booking_for:     p.bookingFor ?? 'Individual',                               // CR-379: Corporate support
-    order_amount:    orderAmount,
-    room_price:      orderAmount,
-    advance_payment: advance,
-    balance_payment: to2dp(orderAmount + (p.gstTax ?? 0)), // BUG-388: advance in GST base → (orderAmount+advance+gstTax)−advance = orderAmount+gstTax
-    payment_method:  p.paymentMethod ?? '',
-    order_note:      p.note ?? '',
-    gst_tax:         to2dp(p.gstTax ?? 0),                           // BUG-386: computed from slabs
-    firm_name:       p.firmName ?? '',                                            // CR-379: Corporate
-    firm_gst:        p.firmGst ?? '',                                             // CR-379: Corporate GST
-    // CR-379: CRM customer link (OD-1A non-blocking — undefined when CRM fails)
-    ...(p.customerId ? {
-      customer_id:        p.customerId,
-      cust_membership_id: p.customerId,   // CR-127 old-flow parity
-    } : {}),
-    // CR-379: Extra adult names (OD-5A)
-    name2:    p.extraAdults?.[0]?.name ?? '',
-    name3:    p.extraAdults?.[1]?.name ?? '',
-    name4:    p.extraAdults?.[2]?.name ?? '',
-    id_type2: '',
-    id_type3: '',
-    id_type4: '',
-  };
-  const res = await api.post(AIOSELL_ENDPOINTS.LOCAL_CHECKIN, payload, { headers: { 'X-localization': 'en' } });
+  // CR-380: pmsCheckIn converted from JSON → FormData (OD-3-B: parity with roomService.checkIn)
+  const fd = new FormData();
+
+  // ── Identity ──────────────────────────────────────────────────────────────
+  fd.append('booking_type',    p.bookingType);
+  if (p.bookingType !== 'WalkIn') fd.append('booking_id', String(p.bookingId));
+  fd.append('name',            p.name);
+  fd.append('phone',           p.phone);
+  fd.append('email',           p.email ?? '');
+  // CR-379: CRM customer link
+  if (p.customerId) {
+    fd.append('customer_id',        String(p.customerId));
+    fd.append('cust_membership_id', String(p.customerId)); // CR-127 old-flow parity
+  }
+
+  // ── Room (bracket notation — FormData parity with roomService.checkIn) ────
+  fd.append('room_id[0]',      String(Number(p.restaurantTableId)));
+
+  // ── Primary guest ID (CR-380: replaces hardcoded placeholder) ─────────────
+  fd.append('id_type',         p.idType || 'Select document type');
+  if (p.frontImage) fd.append('front_image_file',  p.frontImage);
+  if (p.backImage)  fd.append('back_image_file',   p.backImage);
+
+  // ── Counts ────────────────────────────────────────────────────────────────
+  fd.append('total_adult',     String(Number(p.adults ?? 1)));
+  fd.append('total_children',  String(Number(p.children ?? 0)));
+  fd.append('children_name',   p.childrenNames?.length ? p.childrenNames.join(',') : ''); // CR-379
+
+  // ── Extra adult slots 2, 3, 4 (CR-379 names + CR-380 IDs/images) ──────────
+  for (let i = 0; i < 3; i++) {
+    const slot  = i + 2;
+    const adult = p.extraAdults?.[i];
+    fd.append(`name${slot}`,             adult?.name   ?? '');
+    fd.append(`id_type${slot}`,          adult?.idType ?? '');  // CR-380: real id type per adult
+    if (adult?.frontImage) fd.append(`front_image_file${slot}`, adult.frontImage);
+    if (adult?.backImage)  fd.append(`back_image_file${slot}`,  adult.backImage);
+  }
+
+  // ── Dates + booking ───────────────────────────────────────────────────────
+  fd.append('checkin_date',    p.checkin);
+  fd.append('checkout_date',   p.checkout);
+  fd.append('booking_details', '');
+  fd.append('booking_for',     p.bookingFor  ?? 'Individual'); // CR-379
+
+  // ── Money ─────────────────────────────────────────────────────────────────
+  fd.append('order_amount',    String(orderAmount));
+  fd.append('room_price',      String(orderAmount));
+  fd.append('advance_payment', String(advance));
+  fd.append('balance_payment', String(to2dp(orderAmount + (p.gstTax ?? 0)))); // BUG-388 preserved
+  fd.append('payment_method',  p.paymentMethod ?? '');
+  fd.append('order_note',      p.note          ?? '');
+  fd.append('gst_tax',         String(to2dp(p.gstTax ?? 0)));                  // BUG-386 preserved
+
+  // ── Corporate (CR-379) ────────────────────────────────────────────────────
+  fd.append('firm_name',       p.firmName ?? '');
+  fd.append('firm_gst',        p.firmGst  ?? '');
+
+  const res = await api.post(AIOSELL_ENDPOINTS.LOCAL_CHECKIN, fd, {
+    headers: { 'Content-Type': 'multipart/form-data', 'X-localization': 'en' },
+  });
   return res.data;
 };
 

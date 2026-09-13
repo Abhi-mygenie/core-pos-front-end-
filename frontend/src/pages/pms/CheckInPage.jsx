@@ -1,4 +1,4 @@
-// CR-358-P2 | BUG-386 | CR-379: S4 — Check-In Page. CR-379: CRM customer link, returning-guest badge, extra adults/children, corporate B2B.
+// CR-358-P2 | BUG-386 | CR-379 | CR-380: S4 — Check-In Page. CR-379: CRM customer link. CR-380: ID document capture, FormData parity.
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Search, Plus, UserPlus, Loader2, AlertCircle, Check, Home, Calendar, User, Phone, Info, BedDouble, BadgeCheck, FileText } from 'lucide-react';
@@ -6,7 +6,8 @@ import Sidebar from '@/components/layout/Sidebar';
 import { toast } from 'sonner';
 import { getPmsReservations, getBookableRooms, pmsCheckIn } from '@/api/services/pmsService';
 import { lookupCustomer, createCustomer, updateCustomer } from '@/api/services/customerService'; // CR-379
-import { getDocuments } from '@/api/services/documentService'; // CR-379
+import { getDocuments, uploadDocument } from '@/api/services/documentService'; // CR-379, CR-380
+import GuestDocsSection, { CRM_DOC_TYPE } from '@/components/pms/GuestDocsSection'; // CR-380
 import { useRestaurant } from '@/contexts'; // BUG-386
 import { computeRoomGst } from '@/utils/roomGstCalculator'; // BUG-386
 
@@ -40,6 +41,11 @@ export default function CheckInPage() {
   const [crmLoading,  setCrmLoading]    = useState(false);
   const [crmError,    setCrmError]      = useState(null);   // string = timeout/offline message
   const [crmDocs,     setCrmDocs]       = useState([]);     // docs-on-file for returning guest (DD-4)
+  // CR-380: Guest ID document capture (OD-3-B, OD-4-A, OD-5-A)
+  const [idType,     setIdType]     = useState('Aadhar card');
+  const [frontImage, setFrontImage] = useState(null);
+  const [backImage,  setBackImage]  = useState(null);
+  const idUploadRequired = useMemo(() => localStorage.getItem('mygenie_room_id_upload_required') === 'true', []);
   // CR-379: Extra guests (OD-5A, DD-5, DD-6)
   const [extraAdults,   setExtraAdults]   = useState([]);   // [{name:''}] length = adults - 1
   const [childrenNames, setChildrenNames] = useState([]);   // [''] length = children
@@ -169,8 +175,9 @@ export default function CheckInPage() {
     // CR-379: reset CRM + extra guest state
     setCrmCustomer(null); setCrmError(null); setCrmLoading(false); setCrmDocs([]);
     setIsCorpBooking(false); setFirmName(''); setFirmGst('');
+    setIdType('Aadhar card'); setFrontImage(null); setBackImage(null); // CR-380
     const adultCount = a.adults ?? 1;
-    setExtraAdults(Array.from({ length: Math.max(0, adultCount - 1) }, () => ({ name: '' })));
+    setExtraAdults(Array.from({ length: Math.max(0, adultCount - 1) }, () => ({ name: '', idType: 'Aadhar card', frontImage: null, backImage: null }))); // CR-380: include doc slots
     setChildrenNames(Array.from({ length: a.children ?? 0 }, () => ''));
     // OD-6A: OTA arrival phone auto-lookup (DD-1)
     if ((a.phone ?? '').length === 10) handleCrmLookup(a.phone);
@@ -201,6 +208,7 @@ export default function CheckInPage() {
     setIsCorpBooking(false); setFirmName(''); setFirmGst('');
     setExtraAdults([]);
     setChildrenNames([]);
+    setIdType('Aadhar card'); setFrontImage(null); setBackImage(null); // CR-380
     // Auto-lookup if prefill has a 10-digit phone (walk-in from FrontDesk)
     if ((prefill?.phone ?? '').length === 10) handleCrmLookup(prefill.phone);
   }, [rooms, today, handleCrmLookup]);
@@ -227,7 +235,7 @@ export default function CheckInPage() {
     return Math.max(1, Math.round((new Date(form.checkout + 'T00:00:00') - new Date(form.checkin + 'T00:00:00')) / 86400000));
   }, [form?.checkin, form?.checkout]);
 
-  const formValid = form && form.name?.trim() && /^\d{10}$/.test(form.phone) && form.restaurantTableId && form.checkin && form.checkout > form.checkin && Number(form.orderAmount) > 0 && form.adults >= 1 && Number(form.advancePayment || 0) >= 0 && Number(form.advancePayment || 0) <= Number(form.orderAmount);
+  const formValid = form && form.name?.trim() && /^\d{10}$/.test(form.phone) && form.restaurantTableId && form.checkin && form.checkout > form.checkin && Number(form.orderAmount) > 0 && form.adults >= 1 && Number(form.advancePayment || 0) >= 0 && Number(form.advancePayment || 0) <= Number(form.orderAmount) && (!idUploadRequired || crmDocs.length > 0 || !!frontImage); // CR-380: mandatory-doc gate (OD-4-A)
 
   const roomTypeMismatch = useMemo(() => {
     if (!form?._arrivalRoomCode || !form?.restaurantTableId) return false;
@@ -305,7 +313,17 @@ export default function CheckInPage() {
         bookingFor:    isCorpBooking ? 'Corporate' : 'Individual',
         firmName:      isCorpBooking ? firmName : '',
         firmGst:       isCorpBooking ? firmGst  : '',
+        // CR-380: ID documents
+        idType,
+        frontImage,
+        backImage,
       });
+      // CR-380: Step 4 — upload docs to CRM non-blocking (OD-3-B, OD-4-A)
+      if (crmCustomerId && frontImage) {
+        const docType = CRM_DOC_TYPE[idType] || 'other';
+        uploadDocument(crmCustomerId, docType, frontImage).catch(() => {});
+        if (backImage) uploadDocument(crmCustomerId, docType, backImage).catch(() => {});
+      }
       toast.success(res?.message ?? 'Guest checked in');
       navigate('/pms/in-house'); // CR-358-P2 A-06
     } catch (err) {
@@ -613,7 +631,7 @@ export default function CheckInPage() {
                               const v = Math.max(1, Number(e.target.value) || 1);
                               setField('adults', v);
                               setExtraAdults(prev =>
-                                Array.from({ length: v - 1 }, (_, i) => prev[i] ?? { name: '' })
+                                Array.from({ length: v - 1 }, (_, i) => prev[i] ?? { name: '', idType: 'Aadhar card', frontImage: null, backImage: null }) // CR-380: include doc slots
                               );
                             }}
                             className={inputCls}
@@ -636,19 +654,31 @@ export default function CheckInPage() {
                           />
                         </div>
                       </div>
-                      {/* DD-5: Extra adult name slots (Adult 2 → 4) */}
+                      {/* DD-5 + CR-380: Extra adult name + ID doc slots (Adult 2 → 4) */}
                       {extraAdults.map((adult, i) => (
-                        <div key={i} className="mt-2">
+                        <div key={i} className="mt-3 space-y-2">
                           <input
                             data-testid={`ci-adult-name-${i + 2}`}
                             value={adult.name}
                             onChange={e =>
                               setExtraAdults(prev =>
-                                prev.map((item, idx) => idx === i ? { name: e.target.value } : item)
+                                prev.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) // CR-380: spread preserves idType/images
                               )
                             }
                             placeholder={`Adult ${i + 2} Name`}
                             className={inputCls}
+                          />
+                          <GuestDocsSection
+                            label={`Adult ${i + 2}`}
+                            idType={adult.idType ?? 'Aadhar card'}
+                            onIdTypeChange={v => setExtraAdults(prev => prev.map((item, idx) => idx === i ? { ...item, idType: v } : item))}
+                            frontImage={adult.frontImage ?? null}
+                            onFrontChange={f => setExtraAdults(prev => prev.map((item, idx) => idx === i ? { ...item, frontImage: f } : item))}
+                            backImage={adult.backImage ?? null}
+                            onBackChange={b => setExtraAdults(prev => prev.map((item, idx) => idx === i ? { ...item, backImage: b } : item))}
+                            required={false}
+                            hasCrmDocs={false}
+                            inputCls={inputCls}
                           />
                         </div>
                       ))}
@@ -704,6 +734,20 @@ export default function CheckInPage() {
                         </div>
                       )}
                     </div>
+
+                    {/* CR-380: Primary guest ID document capture (OD-3-B, OD-4-A) */}
+                    <GuestDocsSection
+                      label="Primary Guest"
+                      idType={idType}
+                      onIdTypeChange={setIdType}
+                      frontImage={frontImage}
+                      onFrontChange={setFrontImage}
+                      backImage={backImage}
+                      onBackChange={setBackImage}
+                      required={idUploadRequired}
+                      hasCrmDocs={crmDocs.length > 0}
+                      inputCls={inputCls}
+                    />
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>

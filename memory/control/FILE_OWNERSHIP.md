@@ -5,6 +5,16 @@
 
 ---
 
+## FILE_OWNERSHIP — CR-380 (2026-09-14)
+
+| File | Lines Changed | Change | CR/BUG |
+|---|---|---|---|
+| `components/pms/GuestDocsSection.jsx` | NEW (~115 lines) | ID type picker (5 options: Aadhaar/Passport/PAN/DL/VoterID) + front/back file upload tiles with preview + required/hasCrmDocs indicators. Exports: default component, ID_TYPES, CRM_DOC_TYPE map. | CR-380 |
+| `pages/pms/CheckInPage.jsx` | E-C1..E-C9 (~80 lines added/changed) | Marker, uploadDocument+GuestDocsSection imports, idType/frontImage/backImage state + idUploadRequired useMemo, formValid mandatory-doc gate, extraAdults init shape, adult counter onChange + adult JSX (spread fix + per-adult GuestDocsSection), handleConfirm doc params + CRM upload block, selectArrival+selectWalkin doc state resets | CR-380 |
+| `api/services/pmsService.js` | E-P1..E-P2 (~45 lines changed) | Marker, pmsCheckIn JSON→FormData: id_type from param, front/back_image_file, room_id[0] bracket notation, per-adult id_type+image slots, Content-Type multipart/form-data. BUG-888/886 formulas preserved. | CR-380 |
+
+---
+
 ## FILE_OWNERSHIP — CR-379 (2026-09-14)
 
 | File | Lines Changed | Change | CR/BUG |
