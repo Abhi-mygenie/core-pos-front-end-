@@ -22736,7 +22736,7 @@
       "category": "ACTIVE",
       "code_reality": "PARTIAL",
       "blast_radius": "LARGE",
-      "backend_blocked": true,
+      "backend_blocked": false,
       "files": "pages/pms/HousekeepingPage.jsx (NEW), components/pms/HkTaskCard.jsx (NEW), HkChecklistDialog.jsx (NEW), api/services/hkService.js (NEW), RoomStatusPage.jsx, App.js, Sidebar.jsx, socketHandlers.js",
       "artifact_refs": [
         {
@@ -22750,12 +22750,17 @@
           "type": "investigation"
         }
       ],
-      "note": "Board + PATCH room-status exist; hk-tasks/housekeeping/employee-list routes 404. Prerequisite: fix OG-PMS-010 (auto-HK not firing / booked precedence). Socket handler touch if live updates.",
+      "note": "2026-09-13: HK endpoints live (board, PATCH room-status, hk-tasks/employee-list per BE reply); B-365-04/07 answered; sockets deferred. Prerequisite BUG-397 (QA-passed, awaiting Gate 6). Gate 2 blocked only on OD-365-NEW-01 (laundry scope, ties CR-381 OD-381-01).",
       "status_history": [
         {
           "date": "2026-09-04",
           "status": "INTAKE",
           "note": "Intake agent (ALPHA v0.7) — owner-selected post-CR-358 enhancement; priority/risk owner-agreed 2026-09-04 (review later); FULL scope, no v1 workaround; sprint pos_pms_1"
+        },
+        {
+          "date": "2026-09-13",
+          "status": "UNBLOCKED",
+          "note": "Backend shipped HK + laundry endpoints (BE reply 2026-09-13). Registry flag corrected 2026-09-16 (drift fix)."
         }
       ]
     },

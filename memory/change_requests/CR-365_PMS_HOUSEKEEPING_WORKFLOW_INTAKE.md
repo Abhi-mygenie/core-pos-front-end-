@@ -107,7 +107,7 @@ Files NOT touched: CollectPaymentPanel.jsx, OrderEntry.jsx, roomStatusTransform.
 - [ ] Gate 2 — Impact Analysis (blocked on B-365-01 fix + B-365-02 contract)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Intake agent | Code reality: PARTIAL | Duplicate: DISTINCT | Blast radius: LARGE | Risk: MEDIUM | BACKEND-BLOCKED*
+*Intake: 2026-09-04 | Intake agent | Code reality: PARTIAL | Duplicate: DISTINCT | Blast radius: LARGE | Risk: MEDIUM | BACKEND-BLOCKED → UNBLOCKED 2026-09-13 (see Blocker Update below)*
 
 ---
 
