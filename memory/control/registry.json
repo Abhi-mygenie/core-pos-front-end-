@@ -24015,10 +24015,18 @@
       "related": "CR-365 (HK Workflow — feeds laundry queue)",
       "duplicate_check": "DISTINCT",
       "blast_radius": "MEDIUM (3 new + 3 modified files)",
-      "backend_blocked": "NO — all 4 endpoints live",
+      "backend_blocked": false,
       "intake_doc": "change_requests/CR-381_PMS_LAUNDRY_MANAGEMENT_INTAKE.md",
       "registered": "2026-09-13",
-      "owner_confirmed": "YES — 2026-09-13"
+      "owner_confirmed": "YES — 2026-09-13",
+      "note": "backend_blocked: NO — all 4 endpoints live (BE reply 2026-09-13). Type normalised to boolean 2026-09-16.",
+      "status_history": [
+        {
+          "date": "2026-09-16",
+          "status": "INTAKE — Gate 2 pending OD-381-01 (stand",
+          "note": "Registry hygiene: backend_blocked string→false; text moved to note."
+        }
+      ]
     },
     {
       "id": "BUG-398",

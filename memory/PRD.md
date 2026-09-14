@@ -61,3 +61,4 @@
 
 ## 2026-09-16 — Registry drift fix CR-365
 - registry.json `backend_blocked` true→false, status_history entry added; CR_REGISTRY.md row rewritten to UNBLOCKED 2026-09-13; intake footer updated. Source of truth: intake L135 + SESSION_HANDOVER_2026_09_13.
+- CR-381 `backend_blocked` string→false (text moved to note); full scan: 0 non-boolean flags remain.
