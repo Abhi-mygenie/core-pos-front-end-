@@ -1,0 +1,88 @@
+{
+  "status": true,
+  "message": "Room status board fetched successfully",
+  "data": {
+    "auto_hk_on_rm_checkout": true,
+    "rooms": [
+      {
+        "restaurant_table_id": 8524,
+        "table_no": "r3",
+        "title": null,
+        "aiosell_room_code": "suite",
+        "manual_status": "hk",
+        "display_status": "occupied",
+        "room_operational_status_at": "2026-09-08 23:34:59",
+        "guest": {
+          "name": "Test Guest GST",
+          "phone": "9876543210",
+          "email": null,
+          "booking_id": "MG-69-7D37A1DB-1DF0-495C-AF63-78FE43DD5CAF",
+          "order_id": 1232245
+        },
+        "reservation": null
+      },
+      {
+        "restaurant_table_id": 8525,
+        "table_no": "r4",
+        "title": null,
+        "aiosell_room_code": "suite",
+        "manual_status": "hk",
+        "display_status": "occupied",
+        "room_operational_status_at": "2026-09-08 23:33:55",
+        "guest": {
+          "name": "john",
+          "phone": "8888999911",
+          "email": "temp_6aa0e3e27ddd98.00487613@mygenie.online",
+          "booking_id": "MG-69-7FD8B6ED-87B5-49CB-B92C-92D1AEC021C9",
+          "order_id": 1232244
+        },
+        "reservation": null
+      },
+      {
+        "restaurant_table_id": 8526,
+        "table_no": "r2",
+        "title": null,
+        "aiosell_room_code": "executive",
+        "manual_status": "hk",
+        "display_status": "occupied",
+        "room_operational_status_at": "2026-09-09 01:08:59",
+        "guest": {
+          "name": "Test Guest GST",
+          "phone": "9876543210",
+          "email": null,
+          "booking_id": "MG-69-1D0C7E4D-0D6E-4CE2-ACE4-C81AF4D06A30",
+          "order_id": 1232243
+        },
+        "reservation": null
+      },
+      {
+        "restaurant_table_id": 8527,
+        "table_no": "r5",
+        "title": null,
+        "aiosell_room_code": "suite",
+        "manual_status": "ooo",
+        "display_status": "ooo",
+        "room_operational_status_at": "2026-09-08 19:38:00",
+        "guest": null,
+        "reservation": null
+      },
+      {
+        "restaurant_table_id": 8528,
+        "table_no": "r1",
+        "title": null,
+        "aiosell_room_code": "suite",
+        "manual_status": "hk",
+        "display_status": "occupied",
+        "room_operational_status_at": "2026-09-09 01:09:10",
+        "guest": {
+          "name": "Test Guest GST",
+          "phone": "9876543210",
+          "email": null,
+          "booking_id": "MG-69-1D0C7E4D-0D6E-4CE2-ACE4-C81AF4D06A30",
+          "order_id": 1232242
+        },
+        "reservation": null
+      }
+    ]
+  }
+}
