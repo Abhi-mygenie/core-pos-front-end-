@@ -131,21 +131,32 @@ Wrong fields now return **422** (not 403). Route is live, no permission change n
 
 ## Open Owner Decisions (MUST be answered before Gate 2 Impact Analysis can begin)
 
-| OD | Question | Blocking Gate 2? |
-|---|---|:---:|
-| OD-364-01 | v1 without dated payment history (totals only) acceptable until B-364-01 endpoint exists? | ✅ YES — scopes the page |
-| OD-364-02 | Print folio: existing bill print (`printOrder 'bill'`) or PMS-specific folio layout? (new template = R6 — owner approval) | ✅ YES (R6 if new template) |
-| OD-364-03 | Re-point existing "View Bill" / "Folio" links to folio page, or add folio as an extra action? | YES |
-| OD-364-04 | Show F&B item lines inline or order-level rows only (drill to OrderDetailSheet)? | YES |
-| OD-364-05 | Departed-guest folio access window: 60d (LR window) or unlimited by order id? | YES |
+| OD | Question | Decision | Blocking Gate 2? |
+|---|---|---|:---:|
+| OD-364-01 | v1 without dated payment history (totals only) acceptable until B-364-01 endpoint exists? | ✅ **YES (2026-09-16)** — ship totals only in v1; dated ledger endpoint is optional post-v1 | ✅ RESOLVED |
+| OD-364-02 | Print folio: existing bill print (`printOrder 'bill'`) or PMS-specific folio layout? (new template = R6 — owner approval) | ✅ **PMS-specific folio layout (2026-09-16)** — FE will pass every field backend accepts; whatever is not passed simply won't print. Template gates layout switch on `rtype='RM'`. **R6 owner sign-off required before template goes live.** Full field spec + 15 backend questions filed at `/app/memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md` | ✅ RESOLVED |
+| OD-364-03 | Re-point existing "View Bill" / "Folio" links to folio page, or add folio as an extra action? | ⏳ PENDING (next session) | YES |
+| OD-364-04 | Show F&B item lines inline or order-level rows only (drill to OrderDetailSheet)? | ⏳ PENDING (next session) | YES |
+| OD-364-05 | Departed-guest folio access window: 60d (LR window) or unlimited by order id? | ⏳ PENDING (next session) | YES |
 
-**Gate 2 cannot proceed until OD-364-01 through OD-364-05 are answered by owner.**
+**Gate 2 cannot proceed until OD-364-03 through OD-364-05 are answered by owner (OD-01/02 frozen 2026-09-16).**
+
+---
+
+## Investigation performed 2026-09-16
+
+- **CIB vs CR-364 comparison** — `/app/memory/CR-364_INVESTIGATION_CIB_COMPARISON.md`. Verdict: DISTINCT features. CR-131 Customer Intelligence (Beta) is a CRM-fed restaurant-wide aggregate; CR-364 is per-stay operational folio. No duplication.
+- **CR-363 + CR-366 vs CR-364 gap analysis** — Night Audit and Revenue Dashboard are aggregate reports and cannot substitute for the per-guest operational surface (Check Out / Record Payment / Print Folio actions, live balance, walk-in without CRM profile, in-house right-now state, etc.).
+- **Existing A4 print sweep** — `buildBillPrintPayload` (`orderTransform.js` L1797–L2268) already sends `roomAdvancePay`, `roomRemainingPay`, `associated_orders[]`, `rtype='RM'`. Missing from payload: room_no, check-in/out dates, meal plan, channel, booking id, nights, per-night lines, dated payment ledger, special requests, pax, ID proof. **~60%** of missing fields already exist in `orderTransform.roomInfo` + `roomPaymentSummary.payments[]` and just need wiring into `buildBillPrintPayload` (FE-only work). **~30%** exist on backend (`room_info` / `reservation_ops`) and need surfacing on `get-single-order-new`. **~10%** genuinely new (per-night expansion, reprint counter, folio_no, UPI QR, actual check-in/out timestamps).
+
+## Backend brief filed
+- `/app/memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md` — 9-block payload superset (~60 keys), 15 backend questions (`Q-364P-01…15`). Mirrored on `/app/frontend/public/backend-briefs.html` and `/app/memory/backend_briefs/index.html`.
 
 ---
 
 ## Gate status
-- [x] Gate 0/1 — Intake ✅ CLOSED
-- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-364-01 through OD-364-05)
+- [x] Gate 0/1 — Intake ✅ CLOSED (partial — OD-01/02 frozen; OD-03/04/05 pending next session)
+- [ ] Gate 2 — Impact Analysis (blocked on remaining ODs 03/04/05)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
+*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
