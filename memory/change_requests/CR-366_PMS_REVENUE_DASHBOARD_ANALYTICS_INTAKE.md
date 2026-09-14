@@ -60,13 +60,33 @@ Front Desk shows today's 4 KPIs only.
 
 ---
 
-## Backend Dependency (optional — not blocking)
+## Backend Dependency — RESOLVED 2026-09-14
 
-| # | Ask | Type |
+| # | Ask | Status |
 |---|---|---|
-| B-366-01 (optional) | `dashboard-kpis`: lift 31-day limit or add `granularity=day` over 90d; populate `channel{}` block (bookings + revenue per channel) | CONTRACT ENHANCEMENT |
-| B-366-02 (optional) | `GET /aiosell/revenue-summary?start_date&end_date` → per-day `{rooms_sold, rooms_available, room_revenue, adr, revpar, by_channel[]}` (server-side ADR/RevPAR = single source of truth for R6) | NEW ENDPOINT (v2) |
-| B-366-03 | Confirm which daily-sales field(s) constitute "room revenue" for ADR (Room Total vs Room Checkout vs advance) | CLARIFICATION (shared with CR-363 B-363-02) |
+| B-366-01 | Lift 31-day limit on `dashboard-kpis` or populate `channel{}` | ✅ **SUPERSEDED** — `revenue-summary` endpoint solves this entirely. `dashboard-kpis` unchanged by design. |
+| B-366-02 | `GET /aiosell/revenue-summary` server-side aggregation | ✅ **SHIPPED 2026-09-14** — `AiosellController@revenueSummary` + `PmsRevenueMetricsService`. No range ceiling. |
+| B-366-03 | Confirm which daily-sales fields = room revenue for ADR | ✅ **RESOLVED (Q-366-01/02)** — `restaurant_room_payments` table for collected; per-night `sell_rate` or even-spread for booked. |
+
+### BE reply answers — 2026-09-14
+
+| Q | Answer |
+|---|---|
+| Q-366-01 | Per-night `sell_rate` when present; else even spread of de-taxed stay total / nights |
+| Q-366-02 | Room collected from `restaurant_room_payments`; combined checkout: proportional `room_price / (room_price + folio_fnb)` |
+| Q-366-03 | Day-use (checkin=checkout) = **1 night** |
+| Q-366-04 | `occupancy_percent` excludes comp; `occupancy_percent_physical` includes comp — both returned |
+| Q-366-05 | OTA prepaid = gross ex-tax on `booked_on`; commission not stored |
+| Q-366-06 | **Outstanding room balance = room component ONLY (excl F&B)** — answers CR-357 OD-7 |
+| Q-366-07 | No historical OOO snapshots — current board only (**LIMITATION**) |
+| Q-366-08 | Business day = IST calendar date midnight→midnight |
+| Q-366-09 | BUG-385 Option A — `status=no_show`, count by checkin date |
+| Q-366-10 | No hard range ceiling — live compute (long `group_by=day` spans cost CPU) |
+| Q-366-11 | `room_revenue_collected_by_tender {cash,card,upi,tab,ota_remittance,other}`; booking classification key = `booking_payment_type` (NOT `payment_mode`) |
+| Q-366-12 | `reconciliation.settlement_room_share` from room payment ledger |
+| Q-366-13 | Same `PmsRevenueMetricsService` — R6 single source of truth ✅ |
+
+**Compute note:** Live (no materialised cache). FE should auto-switch `group_by`: ≤92d→`day`, ≤366d→`week`, >366d→`month` to manage CPU cost.
 
 ---
 
@@ -137,15 +157,16 @@ All required data sources are live and verified:
 
 **Backend brief filed:** `/app/memory/backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md` (`GET aiosell/revenue-summary`, Q-366-01…10). Listed on `frontend/public/backend-briefs.html`.
 
-**Status change:** UNBLOCKED → **BACKEND-BLOCKED** for owner-approved scope. Gate 2 starts once the endpoint is probe-able on preprod (R11).
+**Status change:** UNBLOCKED → BACKEND-BLOCKED for owner-approved scope. Gate 2 starts once the endpoint is probe-able on preprod (R11). → **BACKEND-UNBLOCKED 2026-09-14**: `aiosell/revenue-summary` shipped (BE reply `sep_14_be_reply.md`). All Q-366-01..13 answered. No range ceiling confirmed. `booking_payment_type` key (not `payment_mode`). Live compute — no cache. Gate 2 ready after R11 curl-probe.
 
 ---
 
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ CLOSED
-- [x] Owner decisions OD-366-01/02/03 frozen 2026-09-15 · OD-366-04 open
-- [ ] Backend: `revenue-summary` endpoint (brief 2026-09-15) — **BLOCKING**
-- [ ] Gate 2 — Impact Analysis (after endpoint probe)
+- [x] Owner decisions OD-366-01/02/03 frozen 2026-09-15 · OD-366-04 open (placement — not blocking backend)
+- [x] Backend: `revenue-summary` endpoint ✅ **SHIPPED 2026-09-14** — all Q-366-01..13 answered
+- [ ] **FE curl-probe on preprod (R11) — NEXT STEP** before Gate 2
+- [ ] Gate 2 — Joint Impact Analysis with CR-363 (unblocked — awaiting R11 probe)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | UNBLOCKED — no backend blockers*
+*Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | Updated: 2026-09-14 — `aiosell/revenue-summary` SHIPPED, all Q-366-01..13 answered, BACKEND-UNBLOCKED. Limitation: live compute (no cache), room_status current-only, no OTA commission. OD-366-04 placement still open (non-blocking). Gate 2 unblocked pending R11 probe.*

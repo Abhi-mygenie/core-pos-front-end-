@@ -61,13 +61,34 @@ Links go to `/reports/room-orders` / `/reports/rooms`; no per-guest page.
 
 ---
 
-## Backend Dependency (optional — not blocking v1)
+## Backend Dependency — STATUS UPDATE 2026-09-14
 
-| # | Ask | Type |
+| # | Ask | Status |
 |---|---|---|
-| B-364-01 (optional) | `GET /pos/room-payments?order_id=` → `[{amount, mode, paid_at, employee, note}]` (or embed `payments[]` in `get-single-order-new`) for a dated payment ledger | NEW ENDPOINT |
-| B-364-02 | Confirm `room_info.receive_balance` semantics vs `advance_payment` after `pos/room-payment` (CR-162) | CLARIFICATION |
-| B-364-03 | Lodging GST on room charge — `food_details.tax = 0` in sandbox; is GST computed at checkout server-side? FE will not compute (R6) | CLARIFICATION |
+| B-364-01 | `GET /pos/room-payments?order_id=` dated payment ledger | ✅ **PARTIALLY RESOLVED** — `room_payment_summary.payments[]` now returned on `get-single-order-new` with `paid_at`, `payment_mode`, `payment_type`, amounts. Full endpoint `pos/room-payments` still 404. Per OD-364-01: totals-only v1 is acceptable; ledger display uses `payments[]` from `room_payment_summary`. |
+| B-364-02 | `room_info.receive_balance` semantics vs `advance_payment` | ✅ **RESOLVED 2026-09-10** — `receive_balance` = cumulative received (advance + interim). `balance_payment` = room_price − receive_balance. Backend-computed, FE displays directly (R6). |
+| B-364-03 | Lodging GST field | ✅ **RESOLVED (Q-364P-05 — 2026-09-14)** — Use `room_info.gst_tax`. Do NOT use `room_payment_summary.gst_tax` (field does not exist). |
+
+### BE reply data path — ANSWERED 2026-09-14
+
+| Q | Answer |
+|---|---|
+| Q-364P-02 | `get-single-order-new` now enriched: full stay doc + `gst_tax` + `room_type` + optional `reservation` block (channel, rateplan, actual `checked_in_at`/`checked_out_at`, guest email/address) |
+| Q-364P-03 | FE derives `room_price ÷ nights` for v1 — no per-night BE expansion yet |
+| Q-364P-04 | `associated_order_list` now has `order_type_label`, `waiter_name`, `item_count`, `item_names[]` (top 2). Still `f_order_status=6` (settled only) |
+| Q-364P-05 | Use **`room_info.gst_tax`** — `room_payment_summary.gst_tax` does not exist |
+| Q-364P-06 | No room-folio round-off — omit field |
+| Q-364P-07 | Actual times: `reservation.checked_in_at` / `checked_out_at` (Aiosell-linked only). Booked dates: `room_info.checkin_date` / `checkout_date` |
+| Q-364P-14 | Payment types enum: `advance \| interim \| checkout \| refund` (final) |
+
+### Fields NOT on schema — omit from FE
+- `discount_amount` / `discount_reason` on lodging
+- `guest_id_proof_no` (ID number column does not exist)
+- Structured `booking_details.*` parse — raw string only; use `reservation` for structured OTA fields
+- `room_payment_summary.gst_tax`
+
+### Print path — STILL DEFERRED
+Q-364P-01, 08, 09, 10, 13, 15 (`order-temp-store` / `rtype='RM'` template) deferred to next BE ship. FE data path unblocked; print folio layout blocked.
 
 ---
 
@@ -159,4 +180,4 @@ Wrong fields now return **422** (not 403). Route is live, no permission change n
 - [ ] Gate 2 — Impact Analysis (UNBLOCKED — ready to proceed)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Updated: 2026-09-14 — OD-03 (re-point), OD-04 (drill-down), OD-05 (no FE limit) FROZEN. Intake FULLY CLOSED. Gate 2 UNBLOCKED. | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
+*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Updated: 2026-09-14 — OD-03 (re-point), OD-04 (drill-down), OD-05 (no FE limit) FROZEN. Intake FULLY CLOSED. Gate 2 UNBLOCKED. BE reply: get-single-order-new enriched (Q-364P-02..07+14 answered). Print deferred (Q-364P-01/08/09/10/13/15). | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | **DATA PATH UNBLOCKED — PRINT DEFERRED***

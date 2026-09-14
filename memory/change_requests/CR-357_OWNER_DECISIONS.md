@@ -17,14 +17,20 @@
 
 ---
 
-## Open Decision (OD-7) — Backend confirmation required
+## OD-7 — ANSWERED 2026-09-14
 
 **Question:** Will backend update `remaining_room_balance` to mean (room_price + food_total − all_advances_paid)?
 
-- **Option A (backend changes):** `remaining_room_balance` = combined balance. FE just uses it directly. Zero FE formula change.
-- **Option B (FE computes):** Backend keeps room-only. FE computes: `(order.amount + roomInfo.roomPrice) − roomInfo.advancePayment − (roomInfo.roomPaymentSummary?.ledgerPaidAmount ?? 0)`
+✅ **ANSWERED — Option B (2026-09-14, Q-366-06 in BE reply `sep_14_be_reply.md`):**
 
-**Impact on implementation:** Option A is cleaner and safer (backend owns the math). Option B works but FE must handle edge cases (food amount timing, mid-stay payment sync).
+> "Outstanding room balance = room component only (excl F&B)"
+
+Backend keeps room-only balance. Night-audit endpoint additionally splits `room_balance` vs `fnb_balance`.
+
+**FE implementation (Option B):**
+`combinedBalance = roomInfo.balancePayment (room-only) + associatedOrdersTotal (food)`
+
+Remove `Math.max(0, ...)` clamp once Gate 2 plan approved — excess advance posts to credit (OD-4).
 
 ---
 

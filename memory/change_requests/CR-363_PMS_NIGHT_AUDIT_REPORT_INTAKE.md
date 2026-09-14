@@ -60,13 +60,26 @@ No page. Staff piece it together from Front Desk KPIs + Day Closure + Room Order
 
 ---
 
-## Backend Dependency (optional — not blocking)
+## Backend Dependency — RESOLVED 2026-09-14
 
-| # | Ask | Type |
+| # | Ask | Status |
 |---|---|---|
-| B-363-01 (optional) | `GET /aiosell/night-audit?date=` server aggregation returning sections A–F in one call (needed for properties > ~20 rooms to avoid N `get-single-order-new` calls) | NEW ENDPOINT (v2) |
-| B-363-02 | Confirm semantic definitions of `room_revenue.Room Total` vs `Room Checkout` vs `Room advance` vs `room_checkin_revenue` in `daily-sales-revenue-report` | CLARIFICATION (R6) |
-| B-363-03 | Confirm business-day boundary used by `daily-sales-revenue-report` (`from` 00:30Z→23:30Z observed) matches `restaurant.schedules` used by `businessDay.js` | CLARIFICATION |
+| B-363-01 | `GET aiosell/night-audit?date=` server aggregation | ✅ **SHIPPED 2026-09-14** — `AiosellController@nightAudit` + `PmsNightAuditService`. All sections A–I available. Shared `PmsRevenueMetricsService` with CR-366 (R6 confirmed). |
+| B-363-02 | Confirm semantic definitions of `room_revenue.*` fields | ✅ **RESOLVED (Q-366-02 / Q-363-03)** — Room collected from `restaurant_room_payments`. Combined checkout: proportional allocation `room_price / (room_price + folio_fnb)`. |
+| B-363-03 | Business-day boundary | ✅ **RESOLVED (Q-366-08)** — IST calendar date midnight→midnight. FE sends `date`, backend returns `business_day{}`. |
+
+### BE reply answers — 2026-09-14
+
+| Q | Answer |
+|---|---|
+| Q-363-01 / Q-366-13 | Same `PmsRevenueMetricsService` — R6 single source of truth ✅ |
+| Q-363-02 / Q-366-12 | `reconciliation.settlement_room_share` from room payment ledger by `received_by` / date |
+| Q-363-03 / Q-366-02 | Combined checkout: proportional `room_price / (room_price + folio_fnb)` |
+| Q-363-04 | Night-audit **splits** `room_balance` vs `fnb_balance` even if `balance_payment` blends — resolves CR-357 OD-7 for folio view |
+| Q-363-05 | No artificial history floor — earliest reservation/order data for restaurant |
+| Q-363-06 / Q-366-07 | **LIMITATION:** No historical OOO snapshots — current board only. `room_status_close` has `status_as_of: "current"`. FE must label "as of now" for past dates |
+| Q-363-07 | `audit_trail` from `order_lifecycle_logs` — available operations only (not all event types) |
+| Q-363-08 | Keys as defined in curl response shape |
 
 ---
 
@@ -151,15 +164,16 @@ The Duplicate-check line above ("Day Closure is F&B cash-drawer focused") is **i
 ### Backend dependency — UPGRADED
 B-363-01 promoted from optional to **REQUIRED**: `GET aiosell/night-audit?date=` (sections A–I incl. reconciliation). Brief: `/app/memory/backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md`. Listed on `frontend/public/backend-briefs.html`. Also depends on CR-366 `revenue-summary` (Q-366-11..13 added 2026-09-16).
 
-**Status change:** UNBLOCKED → **BACKEND-BLOCKED** (owner approved 2026-09-16). Files (expected) unchanged except `pmsService.js` gains `getNightAudit(date)` = 2 calls (`night-audit`, `revenue-summary`) instead of 7 + N.
+**Status change:** UNBLOCKED → BACKEND-BLOCKED (owner approved 2026-09-16). → **BACKEND-UNBLOCKED 2026-09-14**: `aiosell/night-audit` + `aiosell/revenue-summary` both shipped (BE reply `sep_14_be_reply.md`). All Q-363-01..08 answered. Files (expected) unchanged. `pmsService.js` gains `getNightAudit(date)` = 2 calls (`night-audit` + optional `revenue-summary?start_date=D&end_date=D`). **Limitation:** `room_status_close` = current board only.
 
 ---
 
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ CLOSED
 - [x] Owner decisions OD-363-01..06 frozen 2026-09-16
-- [ ] Backend: `night-audit` endpoint (brief 2026-09-16) + `revenue-summary` (CR-366) — **BLOCKING**
-- [ ] Gate 2 — Joint CR-363/CR-366 Impact Analysis (after endpoint probe, R11)
+- [x] Backend: `night-audit` endpoint ✅ **SHIPPED 2026-09-14** + `revenue-summary` (CR-366) ✅ **SHIPPED 2026-09-14**
+- [ ] **FE curl-probe on preprod (R11) — NEXT STEP** before Gate 2 can open
+- [ ] Gate 2 — Joint CR-363/CR-366 Impact Analysis (unblocked — awaiting R11 probe)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-16 — ODs frozen, Day Closure correction, BACKEND-BLOCKED | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-366, reconciles to CR-015/016) | Blast radius: MEDIUM | Risk: HIGH | BACKEND-BLOCKED*
+*Intake: 2026-09-04 | Updated: 2026-09-16 — ODs frozen, Day Closure correction, BACKEND-BLOCKED | Updated: 2026-09-14 — `aiosell/night-audit` SHIPPED, all Q-363-01..08 answered, BACKEND-UNBLOCKED. Limitation: room_status_close current-only. Gate 2 unblocked pending R11 probe. | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-366, reconciles to CR-015/016) | Blast radius: MEDIUM | Risk: HIGH | **UNBLOCKED — awaiting R11 curl-probe***

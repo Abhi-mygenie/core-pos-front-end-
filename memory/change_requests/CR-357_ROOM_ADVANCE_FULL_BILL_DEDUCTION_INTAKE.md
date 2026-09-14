@@ -25,7 +25,7 @@ Owner decisions frozen 2026-09-02.
 | OD-4 | **Excess advance (advance > total bill)** | Add to credit account |
 | OD-5 | **Negative credit** | Allowed — no block on credit going negative |
 | OD-6 | **Dashboard display while running** | Staff should see advance taken + outstanding balance on card |
-| OD-7 | **Backend responsibility** | Backend confirmation needed: will `remaining_room_balance` = (room + food − all advances)? |
+| OD-7 | **Backend responsibility** | ✅ **ANSWERED 2026-09-14 (Q-366-06):** `remaining_room_balance` = room component ONLY (excl F&B). **Option B confirmed.** FE computes combined balance as `roomBalance + associatedOrdersTotal`. Night-audit endpoint splits `room_balance` vs `fnb_balance` separately. |
 
 ---
 
@@ -74,4 +74,10 @@ Related: CR-162 (mid-stay payments, implemented), BUG-360 (live balance, impleme
 - `OrderCard.jsx` or `DineInCard.jsx` — new advance display
 - `creditService.js` — credit posting for excess
 
-## Next: Gate 2 (Impact Analysis) — blocked on OD-7 backend confirmation
+## Next: Gate 2 (Impact Analysis) — UNBLOCKED 2026-09-14
+
+OD-7 answered (Q-366-06): `remaining_room_balance` = room-only. Option B path confirmed. All 7 ODs resolved. Gate 2 Impact Analysis ready.
+
+**Interim fix:** `+ Pay` button disabled (BUG FIX 2026-09-14). Awaiting Gate 4 GO to re-enable with corrected formula.
+
+*Intake: 2026-09-02 | Updated: 2026-09-14 — OD-7 ANSWERED (Q-366-06: room-only balance confirmed, Option B). Interim fix applied. Gate 2 UNBLOCKED. | Code reality: PARTIAL | Blast radius: MEDIUM | Risk: HIGH | **UNBLOCKED — READY FOR GATE 2***
