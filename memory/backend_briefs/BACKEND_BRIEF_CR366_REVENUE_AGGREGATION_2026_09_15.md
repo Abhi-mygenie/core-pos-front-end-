@@ -186,6 +186,8 @@ All money values: **decimal string or number with 2 dp, ex-GST, INR.** FE will n
 | **avg_los_nights** | `Σ nights / bookings_count` | — |
 | **avg_lead_time_days** | `avg(checkin − date(booked_on))` in days; WalkIn = 0. | — |
 | **outstanding_balance** | For departed stays in range: `booked − collected` for room component. | Ties to CR-357 `remaining_room_balance` semantics — see Q-366-06. |
+| **room_revenue_collected_by_tender** *(added 2026-09-16)* | `room_revenue_collected` split by **tender** (`cash`, `card`, `upi`, `tab`, `ota_remittance`, `other`) per bucket. | Needed by CR-363 Night Audit "Room collected by mode" and to reconcile with Day Closure. Frontend fact: room checkout (`PmsCheckoutDrawer`) posts via `POST order/order-bill-payment` with `waiter_id` = cashier and `room_gst_tax` set, i.e. the same path as F&B bills — so room cash is already inside `waiter/get-settlement-report.today_collection`, unsplit. Key name is a proposal; backend may use any key, just state it in reply (Q-366-11). |
+| **settlement_room_share** *(added 2026-09-16)* | Portion of `waiter/get-settlement-report` `today_collection` / `total_paid` that came from room orders (order type RM / room folio), per waiter and total, for date `D`. | Reconciliation: `Σ settlement_room_share(D)` must equal `room_revenue_collected_by_tender.cash+card+upi(D)`. Can be a new key on the settlement report response or on `night-audit`; backend's choice (Q-366-12). |
 
 ---
 
@@ -266,11 +268,15 @@ This lets the CR-364 Guest Folio and CR-363 Night Audit show the same numbers as
 | Q-366-08 | Business-day cutoff for "collection date" — midnight or POS day-close time? | Aligns with `daily-sales-revenue-report`. |
 | Q-366-09 | BUG-385: which option (A/B) are you implementing for `no_show`? This endpoint needs it. | `no_show_count`. |
 | Q-366-10 | Max range you can serve at `group_by=day` within 2 s? If unbounded is not feasible, state the ceiling so FE auto-switches to `week`/`month`. | FE picker has no hard ceiling per owner. |
+| Q-366-11 *(2026-09-16)* | Can you return room collections split by **tender** (cash / card / upi / tab / ota_remittance / other) per bucket? Proposed key `room_revenue_collected_by_tender`; use any key name, tell us which. Note: §5a `payment_mode` is the *booking* payment type (ota_prepaid / pay_at_hotel…), NOT tender — if you prefer, rename §5a to `booking_payment_type` to avoid clashing with POS `payment_mode` (cash/card/upi). | CR-363 Night Audit needs collected-by-tender for one day; Day Closure reconciliation. |
+| Q-366-12 *(2026-09-16)* | `waiter/get-settlement-report` — confirm it includes room checkout collections (room checkout uses `order-bill-payment` with cashier `waiter_id`). Can you expose the room-order share per waiter (`settlement_room_share` or equivalent) so Night Audit ties to Day Closure? | Without this, Night Audit room cash cannot be reconciled to the cashier drawer. |
+| Q-366-13 *(2026-09-16)* | Will `revenue-summary` with `start_date = end_date = D` be computed from the **same code path** as the planned `night-audit?date=D` (separate CR-363 brief)? A 1-day revenue-summary must equal Night Audit totals. | Single source of truth (R6). |
 
 ---
 
 ## 9. Frontend Usage (for context)
 
+- **CR-363 Night Audit** *(added 2026-09-16)* will call `revenue-summary?start_date=D&end_date=D` for its Occupancy and Room-Revenue sections. Folio / departure / room-status lists come from a separate `night-audit` brief. Both must share definitions §4.
 - Page `/pms/revenue` (CR-366). Picker: **Today · 7D · 30D pills + From/To custom** (no ceiling). One call → `revenue-summary` with `group_by` chosen by span. Optional `compare=previous_period` toggle (OD-366-06).
 - `insightsCache` 15-min TTL, restaurant-keyed, logout-cleared (OG-FE-CACHE-002).
 - **No client-side money math.** FE renders server ratios only. Export (Excel/PDF) reuses Insights export with the same numbers.
@@ -294,5 +300,5 @@ This lets the CR-364 Guest Folio and CR-363 Night Audit show the same numbers as
 
 ## Status
 - [ ] Backend acknowledged
-- [ ] Q-366-01…10 answered
+- [ ] Q-366-01…13 answered (Q-11..13 added 2026-09-16: tender split, settlement room share, shared code path with CR-363)
 - [ ] Endpoint available on preprod → FE curl-probe (R11) → CR-366 Gate 2 Impact Analysis

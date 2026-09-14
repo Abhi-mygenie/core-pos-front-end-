@@ -333,8 +333,9 @@ GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
       <p>Night, rooms_available (capacity − OOO), rooms_sold (excl. comp/OOO/no-show), booked vs collected attribution (stay-night vs collection date), F&amp;B-to-room scope, ADR/RevPAR/TRevPAR formulas (<code>null</code> when denominator 0), no-show/cancellation fee → <code>other_revenue_posted</code>, refunds negative on refund date. Full table in the MD brief §4.</p>
 
       <div class="ask-box warn">
-        <strong>Ask — 10 questions (Q-366-01…10)</strong>
-        <p>Per-night rate storage · room vs F&amp;B split in combined payments · day-use = 1 night? · complimentary in occupancy? · OTA gross vs net remittance · CR-357 OD-7 balance rule · room status history for historical OOO · business-day cutoff · BUG-385 no_show option · max range at <code>group_by=day</code> within 2 s.<br><br>
+        <strong>Ask — 13 questions (Q-366-01…13)</strong>
+        <p>Per-night rate storage · room vs F&amp;B split in combined payments · day-use = 1 night? · complimentary in occupancy? · OTA gross vs net remittance · CR-357 OD-7 balance rule · room status history for historical OOO · business-day cutoff · BUG-385 no_show option · max range at <code>group_by=day</code> within 2 s.<br>
+        <em>Added 2026-09-16:</em> Q-11 room collections split by <strong>tender</strong> (cash/card/upi/tab/ota_remittance/other — proposed key <code>room_revenue_collected_by_tender</code>, any key name OK) · Q-12 confirm <code>waiter/get-settlement-report</code> includes room checkout cash (it goes through <code>order-bill-payment</code> with cashier <code>waiter_id</code>) and expose a room-order share per waiter (<code>settlement_room_share</code>) so CR-363 Night Audit reconciles to Day Closure · Q-13 1-day <code>revenue-summary</code> must equal <code>night-audit?date=</code> (same code path).<br><br>
         CR-366 is <strong>BACKEND-BLOCKED</strong> for the owner-approved scope until this endpoint is probe-able on preprod. Materialised <code>pms_daily_revenue</code> table rebuilt at night audit is suggested (non-binding).</p>
       </div>
     </div>
