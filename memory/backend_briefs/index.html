@@ -397,6 +397,64 @@ GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
     </div>
   </div>
 
+  <!-- CR-364 FOLIO PRINT -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-364</span>
+        </div>
+        <div class="card-title">Guest Folio A4 Print — Hotel-Style Folio Layout (per-night charges · dated payment ledger · meal plan/channel/booking · reprint counter)</div>
+        <div class="card-id">BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md &nbsp;·&nbsp; Print semantics change — R6 owner approval before template goes live</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>CR-364 (Guest Folio Detail Page) needs a hotel-style folio print. The existing bill-print pipeline (<code>POST /order-temp-store</code> → template) already handles room orders and carries <code>roomAdvancePay / roomRemainingPay / associated_orders[]</code>, but it renders a restaurant-bill layout — missing room#, per-night charges, meal plan, channel, booking id, dated payment ledger, special requests, extra pax, ID proof, folio badges. FE already has ~60% of the fields in <code>orderTransform.roomInfo</code> and <code>reservation_ops</code> — they just aren't wired into the print payload, and the template has no <code>rtype='RM'</code> branch.</p>
+
+      <h4>Owner Decisions Frozen (2026-09-16)</h4>
+      <table>
+        <tr><th>OD</th><th>Decision</th></tr>
+        <tr><td>OD-364-01</td><td>V1 ships with running totals; dated payment history endpoint (B-364-01) is optional post-v1.</td></tr>
+        <tr><td>OD-364-02</td><td><strong>FE passes every field the backend accepts; whatever is not passed simply won't print.</strong> Template gates layout switch on <code>rtype='RM'</code>.</td></tr>
+      </table>
+
+      <h4>Payload Superset — 9 blocks (folio-only additions)</h4>
+      <pre>Block 2  Doc header        doc_title, folio_no, booking_id, channel, booking_type,
+                              cm_booking_id, printed_at, cashier_name, reprint_no, is_duplicate_copy
+Block 3  Guest details      guest_email, guest_address, guest_id_proof_type/no (masked),
+                              guest_country, guest_company                (custName/Phone/GST already sent)
+Block 4  Stay details       room_no, room_type, room_code, check_in_date, check_out_date,
+                              actual_check_in_at, actual_check_out_at, nights,
+                              pax_adults, pax_children, children_names[], extra_adults[],
+                              meal_plan_code, meal_plan_label, rate_plan, special_requests,
+                              cancellation_policy
+Block 5  Room charges       room_charge_lines[{date,description,qty,unit_rate,amount}],
+                              room_charge_subtotal, room_charge_gst_pct, room_charge_gst_amount,
+                              room_discount_amount, room_discount_reason,
+                              extra_bed_charge, extra_pax_charge
+Block 6  F&amp;B on room       associated_orders[] ← ENRICH with {order_type_label, waiter_name,
+                              item_count, description}   (today: id/order_id/amount/status only)
+Block 7  Totals             cgst_amount, sgst_amount, igst_amount, round_off_amount
+                              (payment_amount / grant_amount / discount_amount / SC already sent)
+Block 8  Payments ledger    payments[{date,type,mode,ref,amount,employee}],
+                              total_advance_paid, total_interim_paid, total_received,
+                              balance_due, payment_status, balance_payment_mode, folio_status
+Block 9  Footer             terms, thank_you_note, signature_lines, qr_code_upi, barcode,
+                              computer_generated_note</pre>
+
+      <div class="ask-box warn">
+        <strong>Ask — 15 questions (Q-364P-01…15)</strong>
+        <p>Q-01 confirm <code>/order-temp-store</code> silently ignores unknown keys · Q-02 enrich <code>get-single-order-new</code> <code>room_info</code> + <code>booking_details</code> with guest email/address/id-proof, channel, booking_type, cm_booking_id, meal_plan, adults/children, no_of_days, special_requests, room_type · Q-03 expand <code>orderDetails</code> per-night ("check in" × N lines) OR FE derives from <code>room_price/nights</code> · Q-04 enrich <code>associated_orders[]</code> with <code>order_type_label / waiter_name / item_count / description</code> · Q-05 confirm lodging GST field post-BUG-386 (<code>room_payment_summary.gst_tax</code> vs new <code>room_info.gst_amount</code>) · Q-06 room-order round-off exposed? · Q-07 expose <strong>actual</strong> <code>checkin_at / checkout_at</code> vs booked · Q-08 reprint counter per <code>order_id</code>? · Q-09 "DUPLICATE COPY" watermark on reprints? · Q-10 <strong>template branch on <code>rtype='RM'</code></strong> renders folio layout — R6 owner sign-off required · Q-11 regulatory (HSN 996311, sequential invoice #, etc.) · Q-12 departed-guest reprint window (backend-enforced 60d vs order-id anytime) · Q-13 zero-balance OTA-prepaid variant · Q-14 <code>payment_type</code> enum finality (advance/interim/checkout/refund + any others) · Q-15 optional UPI QR / payment-link string per unpaid folio.<br><br>
+        <strong>~60%</strong> of fields are already in FE transform (wire into <code>buildBillPrintPayload</code> — no BE work); <strong>~30%</strong> exist on <code>room_info</code>/<code>reservation_ops</code> BE-side (needs surfacing on <code>get-single-order-new</code>); <strong>~10%</strong> genuinely new (per-night expansion, reprint counter, folio_no, UPI QR, actual check-in/out timestamps).</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ─────────────────── PRINTING / STATIONS ─────────────────── -->
   <div class="section-title">Printing &amp; Station Management</div>
 
