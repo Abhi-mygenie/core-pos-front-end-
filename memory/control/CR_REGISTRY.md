@@ -83,7 +83,7 @@ Owner decisions 2026-09-04: priorities/risks agreed ("will review later"); **FUL
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-357** | **Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow** | **P1** | **HIGH** | **INTAKE — Gate 2 blocked on OD-7** | 1 | Advance must cover room+food combined. Excess→credit. Dashboard card needs advance display. OD-1..6 frozen. OD-7 (backend scope of `remaining_room_balance`) open. |
+| **CR-357** | **Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow** | **P1** | **HIGH** | **INTAKE — Gate 2 blocked on OD-7. INTERIM FIX 2026-09-14: mid-stay `+ Pay` button disabled in `CartPanel.jsx` (BUG FIX role, owner-directed). Re-enable after backend answers Q-357-01 in `BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md`.** | 1 | Advance must cover room+food combined. Excess→credit. Dashboard card needs advance display. OD-1..6 frozen. OD-7 (backend scope of `remaining_room_balance`) open. |
 
 ---
 

@@ -21961,7 +21961,7 @@
       "id": "CR-357",
       "type": "CR",
       "title": "Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow",
-      "status": "INTAKE — Gate 2 blocked on OD-7 backend confirmation",
+      "status": "INTAKE — Gate 2 blocked on OD-7 backend confirmation. INTERIM FIX 2026-09-14: mid-stay + Pay button disabled in CartPanel.jsx (CR-357 code marker). Re-enable after Q-357-01 answered.",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_1",
@@ -21982,6 +21982,13 @@
       "artifact_refs": [
         "change_requests/CR-357_ROOM_ADVANCE_FULL_BILL_DEDUCTION_INTAKE.md",
         "change_requests/CR-357_OWNER_DECISIONS.md"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-14",
+          "status": "INTERIM FIX APPLIED",
+          "note": "BUG FIX role (owner-directed): + Pay button hidden in CartPanel.jsx L1484 pending backend reply Q-357-01. No formula change. Code marker CR-357."
+        }
       ]
     },
     {

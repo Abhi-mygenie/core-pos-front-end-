@@ -42,6 +42,14 @@
 
 ---
 
+## FILE_OWNERSHIP — CR-357 INTERIM FIX (2026-09-14)
+
+| File | Lines Changed | Change | CR/BUG |
+|---|---|---|---|
+| `components/order-entry/CartPanel.jsx` | L1484–1494 | `+ Pay` button render block removed. Mid-stay payment disabled pending Q-357-01 backend reply. Code marker: `// CR-357`. | CR-357 |
+
+---
+
 ## FILE_OWNERSHIP — CR-162 (2026-09-11)
 
 | File | Lines Changed | Change | CR/BUG |
