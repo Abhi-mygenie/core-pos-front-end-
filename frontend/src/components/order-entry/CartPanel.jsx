@@ -1481,17 +1481,10 @@ const CartPanel = ({
               <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }} data-testid="cart-room-balance">
                 ₹{(roomSummaryOverride?.remainingRoomBalance ?? roomInfo.roomPaymentSummary?.remainingRoomBalance ?? roomInfo.balancePayment ?? 0).toLocaleString()}
               </span>
-              {/* CR-162: mid-stay partial payment trigger */}
-              {orderId && (
-                <button
-                  onClick={() => setRecordPaymentOpen(true)}
-                  className="text-xs px-2.5 py-1 rounded-lg font-semibold border transition-all active:scale-95"
-                  style={{ color: '#16a34a', borderColor: '#bbf7d0', backgroundColor: '#f0fdf4' }}
-                  data-testid="record-payment-btn"
-                >
-                  + Pay
-                </button>
-              )}
+              {/* CR-162: mid-stay partial payment trigger — DISABLED (CR-357)
+                  Button hidden until backend confirms payment attribution contract
+                  (room vs food split). See BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md
+                  Q-357-01. Re-enable once Q-357-01 is answered and FE formula updated. */}
             </div>
           </div>
         </div>
