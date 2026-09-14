@@ -455,6 +455,51 @@ Block 9  Footer             terms, thank_you_note, signature_lines, qr_code_upi,
     </div>
   </div>
 
+  <!-- CR-357 MID-STAY PAYMENT ATTRIBUTION -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-357</span>
+          <span class="badge" style="background:#fef3c7;color:#92400e">CR-162</span>
+        </div>
+        <div class="card-title">Mid-Stay Payment Attribution — Room vs Food (advance = room · mid-stay pay = food)</div>
+        <div class="card-id">BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md &nbsp;·&nbsp; FE blocked — cannot separate food vs room payments without backend contract change</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Business Rule (owner-stated)</h4>
+      <table>
+        <tr><th>Timing</th><th>Payment for</th></tr>
+        <tr><td>Advance at check-in</td><td><strong>Room charge only</strong></td></tr>
+        <tr><td>Mid-stay "Record Payment" button</td><td><strong>Food / F&amp;B charges only</strong></td></tr>
+        <tr><td>Checkout</td><td>Whatever remains unpaid</td></tr>
+      </table>
+
+      <h4>The Gap</h4>
+      <p><code>POST pos/room-payment</code> with <code>payment_type: 'interim'</code> currently reduces <code>remaining_room_balance</code> (room-only). The mid-stay modal shows room outstanding as "Outstanding Balance" — not accumulated food charges. FE cannot show correct food outstanding or book payments against food without a backend contract change. If FE reroutes mid-stay to food, checkout formula <code>effectiveTotal = food + associatedOrders + remaining_room_balance</code> double-charges food. <strong>FE cannot fix this alone.</strong></p>
+
+      <h4>Current FE checkout formula</h4>
+      <pre>effectiveTotal = finalTotal(food) + associatedOrders + remaining_room_balance
+                  ← food always full →              ← room outstanding only →</pre>
+
+      <div class="ask-box warn">
+        <strong>Ask — 5 questions (Q-357-01…05)</strong>
+        <p>
+        <strong>Q-357-01</strong> Preferred path — pick one: <strong>(A)</strong> Add <code>payment_type: 'food'</code> to <code>pos/room-payment</code>; backend tracks food payments separately; <code>get-single-order-new</code> returns <code>remaining_food_balance</code>; FE shows food outstanding in modal and subtracts at checkout. <strong>(B)</strong> Redefine <code>remaining_room_balance</code> = combined outstanding (room_price + food_total − all payments); FE uses one field for both modal and checkout. <strong>(C)</strong> No backend change — confirm that <code>order-bill-payment</code> grand_total correctly nets out food already paid via interim so there is no double-charge.<br><br>
+        <strong>Q-357-02</strong> If Option A: what field on <code>get-single-order-new</code> exposes food pre-paid so far? Proposed: <code>room_payment_summary.remaining_food_balance</code>. Confirm name and shape.<br><br>
+        <strong>Q-357-03</strong> If Option B: at checkout, does <code>order-bill-payment</code> receiving <code>grand_total = food + assocOrders + remaining_room_balance</code> correctly reconcile against full stay so there is no double-charging?<br><br>
+        <strong>Q-357-04</strong> At checkout, should FE send <code>grand_total = food + assocOrders + remaining_room_balance − food_payments_already_made</code>, or does backend compute net payable itself?<br><br>
+        <strong>Q-357-05</strong> Does current <code>remaining_room_balance</code> subtract <em>all</em> payments (advance + interim) or only advance? This determines if Option B is already partially in place.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- ─────────────────── PRINTING / STATIONS ─────────────────── -->
   <div class="section-title">Printing &amp; Station Management</div>
 
