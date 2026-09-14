@@ -300,7 +300,33 @@ This lets the CR-364 Guest Folio and CR-363 Night Audit show the same numbers as
 
 ---
 
-## Status
-- [ ] Backend acknowledged
-- [ ] Q-366-01…13 answered (Q-11..13 added 2026-09-16: tender split, settlement room share, shared code path with CR-363)
-- [ ] Endpoint available on preprod → FE curl-probe (R11) → CR-366 Gate 2 Impact Analysis
+## Status — UPDATED 2026-09-14
+- [x] Backend acknowledged — BE reply `sep_14_be_reply.md` received 2026-09-14
+- [x] Q-366-01…13 ALL ANSWERED (see answers table below)
+- [x] Endpoint shipped: `GET aiosell/revenue-summary` — `AiosellController@revenueSummary` + `PmsRevenueMetricsService`
+- [ ] FE curl-probe on preprod (R11) — next step before Gate 2
+- [ ] Joint Gate 2 Impact Analysis with CR-363
+
+**Answer summary:**
+
+| Q | Answer |
+|---|---|
+| Q-366-01 | Per-night `sell_rate` when present; else even spread of de-taxed total / nights |
+| Q-366-02 | Room collected from `restaurant_room_payments`; combined checkout: allocate `room_price / (room_price + folio_fnb)` |
+| Q-366-03 | Day-use (checkin=checkout) = **1 night** |
+| Q-366-04 | `occupancy_percent` excl comp; `occupancy_percent_physical` incl comp — both returned |
+| Q-366-05 | OTA prepaid = gross ex-tax on `booked_on`; commission not stored |
+| Q-366-06 | **Outstanding = room component ONLY (excl F&B)** — answers CR-357 OD-7 |
+| Q-366-07/Q-363-06 | No historical OOO — current status only |
+| Q-366-08 | Business day = IST calendar midnight→midnight |
+| Q-366-09 | BUG-385 Option A: `status=no_show`, count by checkin date |
+| Q-366-10 | No hard range ceiling (live compute) |
+| Q-366-11 | `room_revenue_collected_by_tender {cash,card,upi,tab,ota_remittance,other}`; booking key = `booking_payment_type` |
+| Q-366-12/Q-363-02 | `reconciliation.settlement_room_share` from room payment ledger by `received_by`/date |
+| Q-366-13/Q-363-01 | Same `PmsRevenueMetricsService` — R6 ✅ |
+
+**Shipped limitations (confirmed):**
+- Live compute — no materialised table; `group_by=day` over long spans costs CPU
+- No OTA commission/net remittance stored; collected = gross ex-tax on `booked_on`
+- `room_status_close` = current board only
+- `dashboard-kpis` 31-day cap unchanged

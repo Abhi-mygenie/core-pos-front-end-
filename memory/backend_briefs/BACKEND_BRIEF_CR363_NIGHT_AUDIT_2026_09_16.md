@@ -188,7 +188,15 @@ Additional for this endpoint:
 
 ---
 
-## Status
-- [ ] Backend acknowledged
-- [ ] Q-363-01…08 answered (Q-363-01/02/03/04/06 duplicate Q-366-13/12/02/06/07 — answer once)
-- [ ] Endpoint on preprod → FE curl-probe (R11) → joint CR-363/CR-366 Gate 2 Impact Analysis
+## Status — UPDATED 2026-09-14
+- [x] Backend acknowledged — BE reply `sep_14_be_reply.md` received 2026-09-14
+- [x] Q-363-01…08 ALL ANSWERED (see BE reply inline above)
+- [x] Endpoint shipped: `GET aiosell/night-audit` — `AiosellController@nightAudit` + `PmsNightAuditService`
+- [ ] FE curl-probe on preprod (R11) — next step before Gate 2
+- [ ] Joint Gate 2 Impact Analysis with CR-366
+
+**Shipped limitations (confirmed):**
+- `room_status_close` = current board snapshot only; `status_as_of: "current"` (no historical OOO)
+- Live compute — no materialised cache; long date spans cost CPU
+- No Close-Day lock in v1
+- `audit_trail` from `order_lifecycle_logs` — available operations only (not all event types)
