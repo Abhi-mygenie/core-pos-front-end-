@@ -22627,11 +22627,11 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "BACKEND-UNBLOCKED 2026-09-14. Both endpoints shipped: GET aiosell/night-audit + GET aiosell/revenue-summary (shared PmsRevenueMetricsService). All Q-363-01..08 answered. LIMITATION: room_status_close = current board only (no historical OOO). Ready for joint Gate 2 Impact Analysis with CR-366.",
+      "status": "GATE 2 — IMPACT ANALYSIS WRITTEN (2026-09-14, joint with CR-366). R11 probe DONE: night-audit 200. Awaiting OD-363-07/08 + combined Sidebar SC ack → Gate 3.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 2,
-      "completeness": "1/7",
+      "completeness": "2/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports",
       "related": [
@@ -22647,7 +22647,7 @@
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
       "backend_blocked": false,
-      "files": "pages/pms/NightAuditPage.jsx (NEW), api/transforms/nightAuditTransform.js (NEW), pmsService.js (+getNightAudit: night-audit + revenue-summary), App.js, Sidebar.jsx (SC ack, combined with CR-366)",
+      "files": "pages/pms/NightAuditPage.jsx (NEW), api/transforms/nightAuditTransform.js (NEW), pmsService.js (+getNightAudit), constants.js (+NIGHT_AUDIT), App.js, Sidebar.jsx (SC ack, combined with CR-366)",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -22663,6 +22663,11 @@
           "label": "Backend Brief",
           "path": "memory/backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md",
           "type": "backend_brief"
+        },
+        {
+          "label": "Impact Analysis (joint)",
+          "path": "memory/impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
         }
       ],
       "note": "2026-09-16: B-363-01 promoted to REQUIRED. Night Audit must reconcile to Day Closure (room cash blended in settlement report). Consumes revenue-summary?start=end=D + night-audit?date=D on same backend code path (R6).",
@@ -22681,6 +22686,11 @@
           "date": "2026-09-14",
           "status": "BACKEND-UNBLOCKED",
           "note": "BE reply 2026-09-14: aiosell/night-audit + revenue-summary both shipped. All Q-363-01..08 answered. Shared PmsRevenueMetricsService confirmed (R6). Limitation: room_status_close current-only. Ready Gate 2."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 2 — IMPACT ANALYSIS WRITTEN",
+          "note": "R11 probe PASS; joint IA with CR-366; 2nd revenue-summary call dropped; new OD-363-07/08; BE notes BN-1..4"
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22810,11 +22820,11 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "BACKEND-UNBLOCKED 2026-09-14. GET aiosell/revenue-summary shipped. All Q-366-01..13 answered. No hard range ceiling. booking_payment_type key confirmed. LIMITATION: live compute (no cache), no OTA commission, room_status current-only. Ready for joint Gate 2 Impact Analysis with CR-363.",
+      "status": "GATE 2 — IMPACT ANALYSIS WRITTEN (2026-09-14, joint with CR-363). OD-366-04 RESOLVED: sidebar under Rooms & Reservations. R11 probe DONE: revenue-summary day/week 200. Awaiting OD-366-05..08 + Sidebar SC ack → Gate 3.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 2,
-      "completeness": "1/7",
+      "completeness": "2/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports / Insights",
       "related": [
@@ -22828,7 +22838,7 @@
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
       "backend_blocked": false,
-      "files": "pages/pms/RevenueDashboardPage.jsx (NEW), api/transforms/revenueTransform.js (NEW), pmsService.js, aiosellTransform.js (+fromDashboardKpisRange), App.js, Sidebar.jsx",
+      "files": "pages/pms/RevenueDashboardPage.jsx (NEW), api/transforms/revenueTransform.js (NEW), pmsService.js (+getRevenueSummary), constants.js (+REVENUE_SUMMARY), App.js, Sidebar.jsx (SC ack). aiosellTransform.js REMOVED from scope.",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -22844,6 +22854,11 @@
           "label": "Backend Brief",
           "path": "memory/backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md",
           "type": "backend_brief"
+        },
+        {
+          "label": "Impact Analysis (joint)",
+          "path": "memory/impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
         }
       ],
       "note": "dashboard-kpis ≤31d/call with per-day per-room-type occupancy (verified); channel block returns null → client-side split from local-reservations. Revenue basis OD-366-01 (R6) must be frozen before Gate 2. insightsCache reuse.",
@@ -22862,6 +22877,11 @@
           "date": "2026-09-14",
           "status": "BACKEND-UNBLOCKED",
           "note": "BE reply 2026-09-14: revenue-summary shipped. Q-366-01..13 all answered. No ceiling confirmed. booking_payment_type (not payment_mode). Live compute only. Ready Gate 2."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 2 — IMPACT ANALYSIS WRITTEN",
+          "note": "OD-366-04 resolved (sidebar); R11 probe PASS; aiosellTransform dropped; new OD-366-05..08; BE notes BN-5/6"
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",

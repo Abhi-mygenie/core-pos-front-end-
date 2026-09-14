@@ -163,10 +163,11 @@ All required data sources are live and verified:
 
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ CLOSED
-- [x] Owner decisions OD-366-01/02/03 frozen 2026-09-15 · OD-366-04 open (placement — not blocking backend)
+- [x] Owner decisions OD-366-01/02/03 frozen 2026-09-15 · **OD-366-04 RESOLVED 2026-09-14: Sidebar child under Rooms & Reservations** (combined SC ack with CR-363)
 - [x] Backend: `revenue-summary` endpoint ✅ **SHIPPED 2026-09-14** — all Q-366-01..13 answered
-- [ ] **FE curl-probe on preprod (R11) — NEXT STEP** before Gate 2
-- [ ] Gate 2 — Joint Impact Analysis with CR-363 (unblocked — awaiting R11 probe)
-- [ ] Gate 3 / 4
+- [x] FE curl-probe on preprod (R11) ✅ **DONE 2026-09-14** — `group_by=day` (7 buckets) 200, `group_by=week` 200, no-params 422. Evidence: `evidence/CR-366/`
+- [x] Gate 2 — Joint Impact Analysis with CR-363 ✅ **WRITTEN 2026-09-14** → `impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md`. Scope change: `aiosellTransform.js` (+`fromDashboardKpisRange`) **REMOVED** — obsolete; `constants.js` added (+1 key). NEW ODs: OD-366-05 (cache: none vs insightsCache), OD-366-06 (period deltas), OD-366-07 (default range), OD-366-08 (Booked/Collected side-by-side vs toggle). BE notes BN-5/6 (`bookings_count`/LOS/lead-time null; `group_by=month` unprobed).
+- [ ] Gate 3 — Implementation Plan (needs OD-366-05..08 + Sidebar SC ack)
+- [ ] Gate 4
 
-*Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | Updated: 2026-09-14 — `aiosell/revenue-summary` SHIPPED, all Q-366-01..13 answered, BACKEND-UNBLOCKED. Limitation: live compute (no cache), room_status current-only, no OTA commission. OD-366-04 placement still open (non-blocking). Gate 2 unblocked pending R11 probe.*
+*Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | Updated: 2026-09-14 — `aiosell/revenue-summary` SHIPPED, all Q-366-01..13 answered, BACKEND-UNBLOCKED. Limitation: live compute (no cache), room_status current-only, no OTA commission. OD-366-04 placement still open (non-blocking). Gate 2 unblocked pending R11 probe. | Updated: 2026-09-14 — OD-366-04 RESOLVED (sidebar), R11 probe DONE, **GATE 2 IMPACT ANALYSIS WRITTEN** (joint with CR-363). aiosellTransform.js dropped from scope. **GATE 2 COMPLETE — awaiting OD-366-05..08 + Sidebar SC ack → Gate 3***

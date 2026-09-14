@@ -172,8 +172,9 @@ B-363-01 promoted from optional to **REQUIRED**: `GET aiosell/night-audit?date=`
 - [x] Gate 0/1 — Intake ✅ CLOSED
 - [x] Owner decisions OD-363-01..06 frozen 2026-09-16
 - [x] Backend: `night-audit` endpoint ✅ **SHIPPED 2026-09-14** + `revenue-summary` (CR-366) ✅ **SHIPPED 2026-09-14**
-- [ ] **FE curl-probe on preprod (R11) — NEXT STEP** before Gate 2 can open
-- [ ] Gate 2 — Joint CR-363/CR-366 Impact Analysis (unblocked — awaiting R11 probe)
-- [ ] Gate 3 / 4
+- [x] FE curl-probe on preprod (R11) ✅ **DONE 2026-09-14** — `night-audit?date=` 200, no-date 422. Evidence: `evidence/CR-363/`
+- [x] Gate 2 — Joint CR-363/CR-366 Impact Analysis ✅ **WRITTEN 2026-09-14** → `impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md`. Scope change: 2nd `revenue-summary` call DROPPED (night-audit already returns ADR/RevPAR/tender). `constants.js` added to files (+1 key). NEW ODs: OD-363-07 (past-date room_status_close show/hide), OD-363-08 (null guest_name — ship or wait). BE notes BN-1..4 (null fields, occupancy >100 %, audit_trail detail null ↔ BUG-193).
+- [ ] Gate 3 — Implementation Plan (needs OD-363-07/08 + combined Sidebar SC ack with CR-366)
+- [ ] Gate 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-16 — ODs frozen, Day Closure correction, BACKEND-BLOCKED | Updated: 2026-09-14 — `aiosell/night-audit` SHIPPED, all Q-363-01..08 answered, BACKEND-UNBLOCKED. Limitation: room_status_close current-only. Gate 2 unblocked pending R11 probe. | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-366, reconciles to CR-015/016) | Blast radius: MEDIUM | Risk: HIGH | **UNBLOCKED — awaiting R11 curl-probe***
+*Intake: 2026-09-04 | Updated: 2026-09-16 — ODs frozen, Day Closure correction, BACKEND-BLOCKED | Updated: 2026-09-14 — `aiosell/night-audit` SHIPPED, all Q-363-01..08 answered, BACKEND-UNBLOCKED. Limitation: room_status_close current-only. Gate 2 unblocked pending R11 probe. | Updated: 2026-09-14 — R11 probe DONE, **GATE 2 IMPACT ANALYSIS WRITTEN** (joint with CR-366). | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-366, reconciles to CR-015/016) | Blast radius: MEDIUM | Risk: HIGH | **GATE 2 COMPLETE — awaiting OD-363-07/08 + Sidebar SC ack → Gate 3***
