@@ -135,11 +135,11 @@ Wrong fields now return **422** (not 403). Route is live, no permission change n
 |---|---|---|:---:|
 | OD-364-01 | v1 without dated payment history (totals only) acceptable until B-364-01 endpoint exists? | ✅ **YES (2026-09-16)** — ship totals only in v1; dated ledger endpoint is optional post-v1 | ✅ RESOLVED |
 | OD-364-02 | Print folio: existing bill print (`printOrder 'bill'`) or PMS-specific folio layout? (new template = R6 — owner approval) | ✅ **PMS-specific folio layout (2026-09-16)** — FE will pass every field backend accepts; whatever is not passed simply won't print. Template gates layout switch on `rtype='RM'`. **R6 owner sign-off required before template goes live.** Full field spec + 15 backend questions filed at `/app/memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md` | ✅ RESOLVED |
-| OD-364-03 | Re-point existing "View Bill" / "Folio" links to folio page, or add folio as an extra action? | ⏳ PENDING (next session) | YES |
-| OD-364-04 | Show F&B item lines inline or order-level rows only (drill to OrderDetailSheet)? | ⏳ PENDING (next session) | YES |
-| OD-364-05 | Departed-guest folio access window: 60d (LR window) or unlimited by order id? | ⏳ PENDING (next session) | YES |
+| OD-364-03 | Re-point existing “View Bill” / “Folio” links to folio page, or add folio as an extra action? | ✅ **RE-POINT (2026-09-14)** — existing links re-pointed to `/pms/folio/:orderId`. Touches 3 files. | ✅ RESOLVED |
+| OD-364-04 | Show F&B item lines inline or order-level rows only (drill to OrderDetailSheet)? | ✅ **DRILL-DOWN (2026-09-14)** — one row per food order + tap to `OrderDetailSheet`. | ✅ RESOLVED |
+| OD-364-05 | Departed-guest folio access window: 60d (LR window) or unlimited by order id? | ✅ **NO FE-SIDE LIMIT (2026-09-14)** — show whatever backend returns; no artificial date filter. | ✅ RESOLVED |
 
-**Gate 2 cannot proceed until OD-364-03 through OD-364-05 are answered by owner (OD-01/02 frozen 2026-09-16).**
+**All 5 ODs resolved. Gate 2 UNBLOCKED as of 2026-09-14. Proceed to Impact Analysis.**
 
 ---
 
@@ -155,8 +155,8 @@ Wrong fields now return **422** (not 403). Route is live, no permission change n
 ---
 
 ## Gate status
-- [x] Gate 0/1 — Intake ✅ CLOSED (partial — OD-01/02 frozen; OD-03/04/05 pending next session)
-- [ ] Gate 2 — Impact Analysis (blocked on remaining ODs 03/04/05)
+- [x] Gate 0/1 — Intake ✅ FULLY CLOSED (all 5 ODs resolved 2026-09-14)
+- [ ] Gate 2 — Impact Analysis (UNBLOCKED — ready to proceed)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
+*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Updated: 2026-09-14 — OD-03 (re-point), OD-04 (drill-down), OD-05 (no FE limit) FROZEN. Intake FULLY CLOSED. Gate 2 UNBLOCKED. | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
