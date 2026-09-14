@@ -65,14 +65,14 @@
 
 <div class="header">
   <h1>Backend Briefs — MyGenie POS</h1>
-  <p>All open questions &amp; blockers filed by the frontend team for backend / dev team action &nbsp;·&nbsp; Last updated: 2026-09-09</p>
+  <p>All open questions &amp; blockers filed by the frontend team for backend / dev team action &nbsp;·&nbsp; Last updated: 2026-09-15</p>
 </div>
 
 <div class="container">
 
   <div class="stats">
-    <div class="stat"><div class="num n-all">10</div><div class="lbl">Total Briefs</div></div>
-    <div class="stat"><div class="num n-open">4</div><div class="lbl">Open</div></div>
+    <div class="stat"><div class="num n-all">11</div><div class="lbl">Total Briefs</div></div>
+    <div class="stat"><div class="num n-open">5</div><div class="lbl">Open</div></div>
     <div class="stat"><div class="num n-blocked">3</div><div class="lbl">Blocked</div></div>
     <div class="stat"><div class="num n-ans">3</div><div class="lbl">Answered</div></div>
   </div>
@@ -283,7 +283,60 @@ GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
     </div>
     <div class="card-body">
       <p>Filed 2026-09-08. Covered Q1 (restrictions schema), Q2 (mark-no-show), Q3 (GAP-09 checkout inventory release), Q4 (room-payment 403 / BUG-384). B-P5-01 (restrictions object schema) confirmed resolved. CR-358-P5 implemented Gate 5a (2 NEW files: RatesTab.jsx, NoShowDialog.jsx). Q4 (BUG-384) still open — see separate brief above.</p>
-      <div class="answered-note">✅ CR-358-P5 Gate 5a implemented 2026-09-08. Awaiting QA (Gate 5b).</div>
+      <div class="answered-note">✅ CR-358-P5 Gate 5b QA PASS (2026-09-09) — 8/8 executed PASS, 13 secondary tests deferred to owner smoke. Rate grid ✅ · Cell popover ✅ · Inventory Restrictions ✅ · No-Show on OTA rows ✅ · Regression clean ✅. Ready for Gate 6 owner smoke.</div>
+    </div>
+  </div>
+
+  <!-- CR-366 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-366</span>
+        </div>
+        <div class="card-title">Revenue Dashboard — Server-Side Aggregation Endpoint (Occupancy · ADR · RevPAR · Channel · Payment Mode)</div>
+        <div class="card-id">BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md &nbsp;·&nbsp; Blocks CR-366 Gate 2</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>Owner needs a PMS revenue dashboard with a <strong>From/To picker with no range ceiling</strong> (+ Today/7D/30D pills), showing occupancy, ADR, RevPAR, channel split and payment-mode split. Existing sources cannot deliver this: <code>dashboard-kpis</code> rejects &gt;31 days (<strong>422 "Date range cannot exceed 31 days"</strong>) and has no revenue; <code>daily-sales-revenue-report</code> is single-day; <code>local-reservations</code> has <code>amount_before_tax: null</code>, no collected amount, no no-show, no cancel rows. Client-side ADR/RevPAR from four half-fitting sources violates R6.</p>
+
+      <h4>Requested Endpoint</h4>
+      <pre>GET /api/v2/vendoremployee/aiosell/revenue-summary
+  ?start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD        (NO 31-day ceiling)
+  &amp;group_by=day|week|month  &amp;room_code=  &amp;channel=  &amp;compare=previous_period
+
+→ data.totals   { rooms_available, rooms_sold, occupancy_percent,
+                  room_revenue_booked, room_revenue_collected, fnb_revenue_posted, other_revenue_posted,
+                  adr_booked, adr_collected, revpar_booked, revpar_collected, trevpar,
+                  bookings_count, cancellations_count, no_show_count, avg_los_nights, avg_lead_time_days, outstanding_balance }
+→ data.series[] { bucket_start, rooms_ooo, rooms_available, rooms_sold, occupancy_percent,
+                  room_revenue_booked, room_revenue_collected, fnb_revenue_posted, adr_*, revpar_*,
+                  by_room_type[], by_channel[] }
+→ data.by_channel[] · by_payment_mode[] · by_room_type[] · by_booking_status{}</pre>
+
+      <h4>Owner Decisions Frozen (2026-09-15)</h4>
+      <table>
+        <tr><th>OD</th><th>Decision</th></tr>
+        <tr><td>OD-366-01</td><td>Return <strong>both</strong> <code>room_revenue_booked</code> (primary) and <code>room_revenue_collected</code> per bucket, ex-GST, rooms component only.</td></tr>
+        <tr><td>OD-366-02</td><td>F&amp;B posted to rooms returned <strong>separately</strong> as <code>fnb_revenue_posted</code>; RevPAR stays rooms-only; <code>trevpar</code> returned as extra KPI.</td></tr>
+        <tr><td>OD-366-03</td><td><strong>No date-range ceiling.</strong> Server aggregation replaces N chunked calls.</td></tr>
+        <tr><td>Key ask</td><td>Every reservation carries <code>payment_mode</code> (ota_prepaid · ota_pay_at_hotel · direct_prepaid · direct_advance · walkin_postpaid · complimentary · credit_tab) and <code>booking_status</code> (confirmed_pending_arrival · checked_in · checked_out · early_checkout · extended · cancelled · no_show) so OTA-advance vs pay-at-hotel vs "left check-in" are distinguishable.</td></tr>
+      </table>
+
+      <h4>Definitions Provided</h4>
+      <p>Night, rooms_available (capacity − OOO), rooms_sold (excl. comp/OOO/no-show), booked vs collected attribution (stay-night vs collection date), F&amp;B-to-room scope, ADR/RevPAR/TRevPAR formulas (<code>null</code> when denominator 0), no-show/cancellation fee → <code>other_revenue_posted</code>, refunds negative on refund date. Full table in the MD brief §4.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask — 10 questions (Q-366-01…10)</strong>
+        <p>Per-night rate storage · room vs F&amp;B split in combined payments · day-use = 1 night? · complimentary in occupancy? · OTA gross vs net remittance · CR-357 OD-7 balance rule · room status history for historical OOO · business-day cutoff · BUG-385 no_show option · max range at <code>group_by=day</code> within 2 s.<br><br>
+        CR-366 is <strong>BACKEND-BLOCKED</strong> for the owner-approved scope until this endpoint is probe-able on preprod. Materialised <code>pms_daily_revenue</code> table rebuilt at night audit is suggested (non-binding).</p>
+      </div>
     </div>
   </div>
 
@@ -374,7 +427,7 @@ GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
 </div>
 
 <div style="text-align:center;padding:24px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:16px">
-  Canonical MD files: <code>/app/memory/backend_briefs/</code> &nbsp;·&nbsp; Last updated: 2026-09-09 &nbsp;·&nbsp; MyGenie POS Frontend Team
+  Canonical MD files: <code>/app/memory/backend_briefs/</code> &nbsp;·&nbsp; Last updated: 2026-09-10 &nbsp;·&nbsp; MyGenie POS Frontend Team
 </div>
 
 <script>
