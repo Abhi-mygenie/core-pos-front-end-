@@ -22572,10 +22572,10 @@
       "id": "CR-362",
       "title": "PMS \u2014 Booking Modification & Cancellation (cancel / modify dates-room / extend stay / no-show)",
       "type": "CR",
-      "status": "GATE_5A_IMPLEMENTED (2026-09-13). 10 edit groups / 10 files (3 NEW: CancelBookingDialog, ModifyBookingDialog, ExtendStayDialog). Compile clean. EXIT GATE 5/5 PASS. QA handover at handover/QA_HANDOVER_CR362_2026_09_13.md. Awaiting Gate 5b QA.",
+      "status": "GATE_5B_QA_PASS (2026-09-14). 17/17 PASS + 4 regression PASS. 0 BLOCKER, 0 MAJOR. 3 NOTE (live API, covered by pre-impl probes). Coverage 10/10. Report: test_reports/QA_REPORT_CR362_2026_09_14.md. Ready Gate 6.",
       "priority": "P1",
       "risk": "CRITICAL",
-      "gate": "5",
+      "gate": "5b",
       "completeness": "1/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Arrivals (S9) / Departures (S10) / Tape Chart (S2) / In-House (S6)",
@@ -22615,7 +22615,7 @@
       "id": "CR-363",
       "title": "PMS \u2014 Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "INTAKE CLOSED \u2014 UNBLOCKED 2026-09-11. BUG-385 resolved: today.no_show_count in dashboard-kpis. All data sources confirmed live. BLOCKED on owner ODs 363-01..06 before Gate 2. Gate 2 ready once owner answers ODs.",
+      "status": "BACKEND-BLOCKED (2026-09-16) \u2014 owner froze OD-363-01..06 (Sales=booked + Revenue=collected, F&B separate, read-only v1, sidebar under Rooms & Reservations, unlimited replay). Day Closure correction: room checkout cash lands blended in get-settlement-report \u2192 reconciliation needs backend split. Brief filed for GET aiosell/night-audit?date= (+ depends on CR-366 revenue-summary). Joint Gate 2 with CR-366 once endpoints probe-able.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 1,
@@ -22623,17 +22623,19 @@
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports",
       "related": [
-        "CR-358-P3",
         "CR-011-ROOM",
         "CR-015",
         "CR-016",
-        "CR-364"
+        "CR-357",
+        "CR-358-P3",
+        "CR-364",
+        "CR-366"
       ],
       "category": "ACTIVE",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
-      "backend_blocked": false,
-      "files": "pages/pms/NightAuditPage.jsx (NEW), api/transforms/nightAuditTransform.js (NEW), pmsService.js, App.js, Sidebar.jsx (SC ack)",
+      "backend_blocked": true,
+      "files": "pages/pms/NightAuditPage.jsx (NEW), api/transforms/nightAuditTransform.js (NEW), pmsService.js (+getNightAudit: night-audit + revenue-summary), App.js, Sidebar.jsx (SC ack, combined with CR-366)",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -22644,14 +22646,24 @@
           "label": "Investigation",
           "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
           "type": "investigation"
+        },
+        {
+          "label": "Backend Brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md",
+          "type": "backend_brief"
         }
       ],
-      "note": "FE-only composition of dashboard-kpis + daily-sales-revenue-report + getReservationOps + get-single-order-new (all 200). No server aggregation (404). KPI semantics (R6) + business-day boundary need owner decisions OD-363-01/02 before Gate 2.",
+      "note": "2026-09-16: B-363-01 promoted to REQUIRED. Night Audit must reconcile to Day Closure (room cash blended in settlement report). Consumes revenue-summary?start=end=D + night-audit?date=D on same backend code path (R6).",
       "status_history": [
         {
           "date": "2026-09-04",
           "status": "INTAKE",
           "note": "Intake agent (ALPHA v0.7) \u2014 owner-selected post-CR-358 enhancement; priority/risk owner-agreed 2026-09-04 (review later); FULL scope, no v1 workaround; sprint pos_pms_1"
+        },
+        {
+          "date": "2026-09-16",
+          "status": "BACKEND-BLOCKED",
+          "note": "Planning agent (ALPHA v0.7) conflict pre-check vs CR-366; owner froze OD-363-01..06; backend brief night-audit filed; Day Closure characterization corrected."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED \u2014 no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22661,7 +22673,7 @@
       "id": "CR-364",
       "title": "PMS \u2014 Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
       "type": "CR",
-      "status": "INTAKE CLOSED \u2014 UNBLOCKED 2026-09-11. BUG-384 resolved: room-payment contract confirmed (room_order_id+payment_amount+payment_mode+payment_type). Record Payment fully buildable. BLOCKED on owner ODs 364-01..05 before Gate 2.",
+      "status": "INTAKE OPEN \u2014 UNBLOCKED. OD-364-01 (v1 totals only) + OD-364-02 (PMS-specific folio, rtype='RM' branch, R6 required) FROZEN 2026-09-16. Backend brief filed CR364_FOLIO_PRINT. Awaiting OD-03/04/05 next session before Gate 2.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 1,
@@ -22691,6 +22703,16 @@
           "label": "Investigation",
           "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
           "type": "investigation"
+        },
+        {
+          "label": "Investigation \u2014 CIB comparison",
+          "path": "memory/CR-364_INVESTIGATION_CIB_COMPARISON.md",
+          "type": "investigation"
+        },
+        {
+          "label": "Backend Brief \u2014 Folio Print",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md",
+          "type": "backend_brief"
         }
       ],
       "note": "get-single-order-new room_info/associated_order_list verified; PmsCheckoutDrawer fetch + orderTransform.roomInfo reusable. Display-only money (D3 folio unchanged); payment history endpoint missing (optional B-364-01).",
@@ -22699,6 +22721,11 @@
           "date": "2026-09-04",
           "status": "INTAKE",
           "note": "Intake agent (ALPHA v0.7) \u2014 owner-selected post-CR-358 enhancement; priority/risk owner-agreed 2026-09-04 (review later); FULL scope, no v1 workaround; sprint pos_pms_1"
+        },
+        {
+          "date": "2026-09-16",
+          "status": "INTAKE OPEN \u2014 OD-01/02 FROZEN",
+          "note": "Session 2026-09-16 (INVESTIGATION + INTAKE roles): CIB (CR-131) vs CR-364 comparison \u2192 DISTINCT. CR-363/366 vs CR-364 gap analysis \u2192 aggregate reports cannot substitute per-guest operational surface. Print field spec authored (9 blocks, ~60 keys). Backend brief filed: BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md with 15 questions (Q-364P-01..15). Mirrored on backend-briefs.html + index.html. Owner decisions: OD-01=totals only in v1, OD-02=PMS-specific folio via rtype='RM' template branch (R6 required, FE passes every field BE accepts). OD-03/04/05 deferred to next session."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED \u2014 read-only folio OK; pos/room-payment 403 (OG-PMS-014); F&B transfer list empty.",
@@ -22724,7 +22751,7 @@
       "category": "ACTIVE",
       "code_reality": "PARTIAL",
       "blast_radius": "LARGE",
-      "backend_blocked": true,
+      "backend_blocked": false,
       "files": "pages/pms/HousekeepingPage.jsx (NEW), components/pms/HkTaskCard.jsx (NEW), HkChecklistDialog.jsx (NEW), api/services/hkService.js (NEW), RoomStatusPage.jsx, App.js, Sidebar.jsx, socketHandlers.js",
       "artifact_refs": [
         {
@@ -22738,12 +22765,17 @@
           "type": "investigation"
         }
       ],
-      "note": "Board + PATCH room-status exist; hk-tasks/housekeeping/employee-list routes 404. Prerequisite: fix OG-PMS-010 (auto-HK not firing / booked precedence). Socket handler touch if live updates.",
+      "note": "2026-09-13: HK endpoints live (board, PATCH room-status, hk-tasks/employee-list per BE reply); B-365-04/07 answered; sockets deferred. Prerequisite BUG-397 (QA-passed, awaiting Gate 6). Gate 2 blocked only on OD-365-NEW-01 (laundry scope, ties CR-381 OD-381-01).",
       "status_history": [
         {
           "date": "2026-09-04",
           "status": "INTAKE",
           "note": "Intake agent (ALPHA v0.7) \u2014 owner-selected post-CR-358 enhancement; priority/risk owner-agreed 2026-09-04 (review later); FULL scope, no v1 workaround; sprint pos_pms_1"
+        },
+        {
+          "date": "2026-09-13",
+          "status": "UNBLOCKED",
+          "note": "Backend shipped HK + laundry endpoints (BE reply 2026-09-13). Registry flag corrected 2026-09-16 (drift fix)."
         }
       ]
     },
@@ -22751,7 +22783,7 @@
       "id": "CR-366",
       "title": "PMS \u2014 Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "INTAKE CLOSED \u2014 UNBLOCKED (confirmed 2026-09-11, was never backend-blocked). All data sources live. BLOCKED on owner ODs 366-01..04 (OD-366-01 = R6 mandatory). Gate 2 ready once owner answers ODs.",
+      "status": "BACKEND-BLOCKED (2026-09-15) \u2014 owner froze OD-366-01 (booked+collected), OD-366-02 (F&B separate/TRevPAR), OD-366-03 (no range ceiling \u2192 server aggregation). Backend brief filed for GET aiosell/revenue-summary. Gate 2 starts when endpoint is probe-able. OD-366-04 open.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 1,
@@ -22768,7 +22800,7 @@
       "category": "ACTIVE",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
-      "backend_blocked": false,
+      "backend_blocked": true,
       "files": "pages/pms/RevenueDashboardPage.jsx (NEW), api/transforms/revenueTransform.js (NEW), pmsService.js, aiosellTransform.js (+fromDashboardKpisRange), App.js, Sidebar.jsx",
       "artifact_refs": [
         {
@@ -22780,6 +22812,11 @@
           "label": "Investigation",
           "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
           "type": "investigation"
+        },
+        {
+          "label": "Backend Brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md",
+          "type": "backend_brief"
         }
       ],
       "note": "dashboard-kpis \u226431d/call with per-day per-room-type occupancy (verified); channel block returns null \u2192 client-side split from local-reservations. Revenue basis OD-366-01 (R6) must be frozen before Gate 2. insightsCache reuse.",
@@ -22788,6 +22825,11 @@
           "date": "2026-09-04",
           "status": "INTAKE",
           "note": "Intake agent (ALPHA v0.7) \u2014 owner-selected post-CR-358 enhancement; priority/risk owner-agreed 2026-09-04 (review later); FULL scope, no v1 workaround; sprint pos_pms_1"
+        },
+        {
+          "date": "2026-09-15",
+          "status": "BACKEND-BLOCKED",
+          "note": "Planning agent \u2014 owner decisions OD-366-01/02/03 frozen; revenue-summary aggregation brief filed (Q-366-01..10)."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED \u2014 daily-sales-revenue-report is single-day (N calls for N days).",
@@ -23873,7 +23915,7 @@
       "status": "GATE_5B_QA_PASS",
       "sprint": "pos_pms_1",
       "sprint_key": "pos_pms_1",
-      "gate": 3,
+      "gate": 5,
       "blocker": "NONE \u2014 Gate 3 GO authorised by owner 2026-09-12",
       "artifact_refs": [
         {
@@ -23968,8 +24010,8 @@
       "risk": "HIGH",
       "area": "PMS / Room Status Board",
       "sprint_key": "pos_pms_1",
-      "gate": "5",
-      "status": "GATE_5A_IMPLEMENTED (2026-09-13). 7 edits / 2 files. Option A design approved. EXIT GATE 5/5 PASS. Compile clean. QA handover written. Awaiting Gate 5b QA.",
+      "gate": "5b",
+      "status": "GATE_5B_QA_PASS (2026-09-14). 9/9 PASS. 0 BLOCKER, 0 MAJOR. 3 NOTE (live data: occupied_hk rooms needed). Coverage 2/2. Report: test_reports/QA_REPORT_BUG397_2026_09_14.md. Ready Gate 6.",
       "duplicate_check": "DISTINCT (related: BUG-383 \u2014 different issue)",
       "blast_radius": "SMALL (2 files, ~11 lines)",
       "intake_doc": "change_requests/BUG-397_ROOM_STATUS_OCCUPIED_HK_NOT_HANDLED_INTAKE.md",
@@ -23988,10 +24030,18 @@
       "related": "CR-365 (HK Workflow \u2014 feeds laundry queue)",
       "duplicate_check": "DISTINCT",
       "blast_radius": "MEDIUM (3 new + 3 modified files)",
-      "backend_blocked": "NO \u2014 all 4 endpoints live",
+      "backend_blocked": false,
       "intake_doc": "change_requests/CR-381_PMS_LAUNDRY_MANAGEMENT_INTAKE.md",
       "registered": "2026-09-13",
-      "owner_confirmed": "YES \u2014 2026-09-13"
+      "owner_confirmed": "YES \u2014 2026-09-13",
+      "note": "backend_blocked: NO \u2014 all 4 endpoints live (BE reply 2026-09-13). Type normalised to boolean 2026-09-16.",
+      "status_history": [
+        {
+          "date": "2026-09-16",
+          "status": "INTAKE \u2014 Gate 2 pending OD-381-01 (stand",
+          "note": "Registry hygiene: backend_blocked string\u2192false; text moved to note."
+        }
+      ]
     },
     {
       "id": "BUG-398",

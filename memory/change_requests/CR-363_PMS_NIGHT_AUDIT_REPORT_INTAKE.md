@@ -124,9 +124,42 @@ Files NOT touched: SettlementPanel.jsx, DayClosurePage.jsx, reportService.js (on
 
 ---
 
+## Planning Session — 2026-09-16 (Conflict Pre-Check vs CR-366 + owner decisions)
+
+### Correction — Day Closure DOES contain room cash
+The Duplicate-check line above ("Day Closure is F&B cash-drawer focused") is **incomplete**. Code trace 2026-09-16: `PmsCheckoutDrawer.jsx` L138–160 posts room checkout via `POST order/order-bill-payment` with `waiterId = user.employeeId` — the same path as F&B bills. `waiter/get-settlement-report` (Day Closure) therefore includes room checkout collections in `today_collection`, **blended per cashier, no room/F&B split** (`settlementTransform.js` has no room revenue field; only `tips_by_mode.ROOM`). Night Audit remains DISTINCT (occupancy / outstanding / no-show / room-status have no equivalent) but **must reconcile** to Day Closure: Night Audit room cash+card+upi = room share of settlement report. Only backend can produce the split.
+
+### Conflicts with CR-366 (recorded)
+| # | Conflict | Resolution |
+|---|---|---|
+| C1 | Revenue definitions frozen in CR-366 brief §4; CR-363 v1 planned client-side composition from `daily-sales-revenue-report` → 1-day numbers would differ | Night Audit consumes `revenue-summary?start_date=D&end_date=D` + new `night-audit?date=D` built on the same code path (Q-363-01 / Q-366-13) |
+| C2 | Day Closure blending (above) | Section H reconciliation + `settlement_room_share` (Q-363-02 / Q-366-12) |
+| C3 | Shared files `pmsService.js`, `App.js`, `Sidebar.jsx` with CR-366 and CR-364 | Additive edits, parallel-safe; **one combined Sidebar SC ack** at Gate 3; second item to ship rebases |
+| C4 | FE money math (363 v1) vs server math (366) | Server-side for both; "no client-side money math" |
+| C5 | Registry `backend_blocked: false` | Flipped to **true** 2026-09-16 |
+
+### Owner decisions — FROZEN 2026-09-16
+| OD | Decision | Note |
+|---|---|---|
+| OD-363-01 | Follow backend business-day cutoff (Q-366-08); FE sends calendar `date`, backend returns `business_day{}` | Inherited from CR-366 |
+| OD-363-02 | **c — Both.** Booked = **"Sales"** (room-nights sold regardless of payment: OTA prepaid, 50 % advance, pay-at-hotel), Collected = **"Revenue"** (money actually received) | Owner: "sales and revenue are two different things. Both need to be shown." Same as OD-366-01 |
+| OD-363-03 | **separate** — F&B posted to rooms as its own line; TRevPAR extra | Same as OD-366-02 |
+| OD-363-04 | **display-only** v1, no Close-Day lock ("a for this phase") | Lock/stamp = v2 |
+| OD-363-05 | **sidebar** child under Rooms & Reservations ("a for now") | Same as OD-366-04; SC ack required |
+| OD-363-06 | **unlimited** — "whatever backend provides" (Q-363-05) | — |
+
+### Backend dependency — UPGRADED
+B-363-01 promoted from optional to **REQUIRED**: `GET aiosell/night-audit?date=` (sections A–I incl. reconciliation). Brief: `/app/memory/backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md`. Listed on `frontend/public/backend-briefs.html`. Also depends on CR-366 `revenue-summary` (Q-366-11..13 added 2026-09-16).
+
+**Status change:** UNBLOCKED → **BACKEND-BLOCKED** (owner approved 2026-09-16). Files (expected) unchanged except `pmsService.js` gains `getNightAudit(date)` = 2 calls (`night-audit`, `revenue-summary`) instead of 7 + N.
+
+---
+
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ CLOSED
-- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-363-01 through OD-363-06)
+- [x] Owner decisions OD-363-01..06 frozen 2026-09-16
+- [ ] Backend: `night-audit` endpoint (brief 2026-09-16) + `revenue-summary` (CR-366) — **BLOCKING**
+- [ ] Gate 2 — Joint CR-363/CR-366 Impact Analysis (after endpoint probe, R11)
 - [ ] Gate 3 / 4
 
-*Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-385 RESOLVED, all backend data confirmed | Code reality: NONE | Duplicate: DISTINCT | Blast radius: MEDIUM | Risk: HIGH | UNBLOCKED*
+*Intake: 2026-09-04 | Updated: 2026-09-16 — ODs frozen, Day Closure correction, BACKEND-BLOCKED | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-366, reconciles to CR-015/016) | Blast radius: MEDIUM | Risk: HIGH | BACKEND-BLOCKED*

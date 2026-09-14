@@ -126,9 +126,26 @@ All required data sources are live and verified:
 
 ---
 
+## Owner Decisions — 2026-09-15 (Planning session)
+
+| OD | Decision | Effect |
+|---|---|---|
+| OD-366-01 | **c** — backend returns BOTH `room_revenue_booked` (primary) and `room_revenue_collected` per bucket. Plus mandatory `payment_mode` + `booking_status` keys per reservation (OTA prepaid / pay-at-hotel / advance / walk-in / no-show "left check-in" / cancelled). | Server-side formulas only (R6). |
+| OD-366-02 | F&B posted to rooms **excluded** from ADR/RevPAR, returned separately as `fnb_revenue_posted`; `trevpar` returned as extra KPI. | RevPAR rooms-only (industry standard), TRevPAR optional tile. |
+| OD-366-03 | **No range ceiling.** From/To custom + Today/7D/30D pills (same as other reports). Requires backend aggregation — `dashboard-kpis` 31-day limit and single-day daily-sales are not acceptable. | B-366-02 promoted from optional to **REQUIRED**. |
+| OD-366-04 | Open (placement PMS vs Insights). | Not blocking backend. |
+
+**Backend brief filed:** `/app/memory/backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md` (`GET aiosell/revenue-summary`, Q-366-01…10). Listed on `frontend/public/backend-briefs.html`.
+
+**Status change:** UNBLOCKED → **BACKEND-BLOCKED** for owner-approved scope. Gate 2 starts once the endpoint is probe-able on preprod (R11).
+
+---
+
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ CLOSED
-- [ ] Gate 2 — Impact Analysis (**READY** — pending owner OD-366-01 through OD-366-04)
+- [x] Owner decisions OD-366-01/02/03 frozen 2026-09-15 · OD-366-04 open
+- [ ] Backend: `revenue-summary` endpoint (brief 2026-09-15) — **BLOCKING**
+- [ ] Gate 2 — Impact Analysis (after endpoint probe)
 - [ ] Gate 3 / 4
 
 *Intake: 2026-09-04 | Confirmed unblocked: 2026-09-11 | Code reality: NONE | Duplicate: DISTINCT (RELATED CR-363) | Blast radius: MEDIUM | Risk: MEDIUM | UNBLOCKED — no backend blockers*
