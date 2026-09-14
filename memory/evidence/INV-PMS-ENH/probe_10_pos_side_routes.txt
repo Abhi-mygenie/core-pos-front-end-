@@ -1,0 +1,1 @@
+GET /api/v2/vendoremployee/pos/room-order-detail -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/vendor/laravel/framework/src/Illuminate/

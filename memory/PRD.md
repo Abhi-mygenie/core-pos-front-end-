@@ -1,25 +1,28 @@
-# MyGenie POS Frontend Deployment
+# MyGenie Core POS Frontend — Deployment PRD
 
-## Original Problem Statement
-Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-pos-front-end-.git, branch PMS13) directly into `/app` and run it as-is, with no code edits.
+## Source
+- Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
+- Branch: **PMS13** (current) | previously audit8 (2025-09-08)
+- Deployed: 2026-09-14
 
 ## Architecture
-- **Type**: Frontend-only React app (no backend/database needed for this deployment)
-- **Framework**: React (Create React App) with CRACO config
-- **Start command**: `craco start` via `yarn start`
-- **Port**: 3000 (supervisor-managed)
-- **Repo destination**: `/app/frontend/` (platform supervisor is hardcoded to this path)
+- React (CRA + craco) frontend only — no local backend or database
+- All API calls go to external API: https://preprod.mygenie.online/
+- Socket: https://presocket.mygenie.online
+- Firebase for auth/messaging
+- Supervisor runs `yarn start` (craco start) from `/app/frontend`, port 3000
 
-## What Was Done (2026-09-14)
-1. Backed up platform files: `/app/memory/`, `/app/.emergent/`
-2. Cloned repo branch PMS13 → `/tmp/repo-stage/`
-3. Replaced `/app/frontend/` contents with repo's `frontend/` subdirectory
-4. Wrote all env variables to `/app/frontend/.env`
-5. Ran `npm install --legacy-peer-deps` (lockfile: `package-lock.json`)
-6. Restarted supervisor frontend — compiled with 1 ESLint warning only (no errors)
-7. Verified HTTP 200 on port 3000; login page renders correctly
+## What Was Done (2026-09-14 — branch PMS13)
+- Cloned branch `PMS13` from repo into `/tmp/repo-stage`
+- Replaced `/app/frontend/` contents with repo's `frontend/` subdirectory
+- Wrote `/app/frontend/.env` with all provided env variables
+- Installed deps with `npm install --legacy-peer-deps` (lockfile: `package-lock.json`)
+- Cleared webpack cache to fix stale module resolution errors
+- Restarted supervisor frontend → compiles with 1 ESLint warning only (no errors)
+- Synced full remote `memory/` directory into `/app/memory/`
+- App confirmed live at port 3000, HTTP 200, login page renders
 
-## Environment Variables Set
+## Env Variables (frontend/.env)
 - WDS_SOCKET_PORT=443
 - REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
 - REACT_APP_SOCKET_URL=https://presocket.mygenie.online
@@ -29,10 +32,16 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-po
 - CORS_ORIGINS=*
 - REACT_APP_SHOW_AUDIT_TAB=true
 
-## Status
-- App running on port 3000
-- Webpack compiled with 1 warning (ESLint react-hooks/exhaustive-deps — non-blocking)
-- Login page renders; API calls go to preprod.mygenie.online
+## Preserved Platform Files
+- /app/.emergent/
+- /app/memory/
+- /app/backend/
+- /app/.git (platform git)
+- /etc/supervisor/conf.d/ (unchanged — readonly)
+
+## Supervisor
+- Program: `frontend` → `yarn start` from `/app/frontend`
+- Port: 3000 (HOST=0.0.0.0 set by supervisor env)
 
 ## Backlog / Next Steps
 - P0: Verify login with real credentials against preprod API

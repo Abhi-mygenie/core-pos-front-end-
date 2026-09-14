@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BATCH-09 — Printer Config Design Approval</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#EFEFEF;color:#1A1A1A;font-size:13px}
+
+:root{
+  --orange:#F26B33;--orange10:rgba(242,107,51,.1);--orange25:rgba(242,107,51,.25);
+  --green:#329937;--green10:rgba(50,153,55,.08);
+  --dark:#1A1A1A;--gray:#6B7280;--light:#9CA3AF;
+  --border:#E5E7EB;--bg:#F7F7F7;--white:#FFFFFF;
+  --red:#EF4444;--amber:#F59E0B;--blue:#3B82F6;
+}
+
+/* ── Page chrome ─────────────────────────────────────────────────── */
+.page-header{background:#111827;padding:16px 32px;display:flex;align-items:center;gap:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.page-header h1{font-size:15px;font-weight:700;color:#fff}
+.page-header p{font-size:12px;color:#9CA3AF;margin-top:2px}
+.badge{background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px}
+.badge-green{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px}
+
+.section-wrap{padding:28px 32px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--orange25)}
+.cr-badge{background:var(--orange10);border:1px solid var(--orange25);color:var(--orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
+.screen-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.screen-desc{font-size:12px;color:var(--gray);margin-bottom:16px}
+
+/* ── Panel shell ─────────────────────────────────────────────────── */
+.panel-shell{background:var(--white);border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.panel-header{background:var(--white);border-bottom:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;gap:10px}
+.panel-header .back{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);flex-shrink:0}
+.panel-title{font-size:14px;font-weight:600;color:var(--dark)}
+
+/* ── Tab bar ─────────────────────────────────────────────────────── */
+.tab-bar{padding:6px 16px;background:var(--white);border-bottom:1px solid var(--border)}
+.tab-pills{display:flex;gap:2px;background:#F3F4F6;border-radius:8px;padding:3px}
+.tab-pill{flex:1;padding:6px 10px;font-size:11px;font-weight:500;border:none;background:transparent;color:var(--gray);border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.tab-pill.active{background:var(--white);color:var(--dark);box-shadow:0 1px 3px rgba(0,0,0,.1);font-weight:600}
+.tab-pill:hover:not(.active){color:var(--dark)}
+
+.tab-content{padding:16px 20px 80px}
+
+/* ── Shared form primitives ──────────────────────────────────────── */
+.field-group{margin-bottom:12px}
+.field-label{font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px;display:block}
+.field-label .req{color:var(--orange)}
+.field-input{width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:7px;outline:none;color:var(--dark);background:var(--white);font-family:inherit;transition:border-color .15s}
+.field-input:focus{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange10)}
+.field-select{width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:7px;outline:none;color:var(--dark);background:var(--white);cursor:pointer;font-family:inherit}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+.section-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--orange);padding:8px 0 6px;border-bottom:1px solid var(--border);margin-bottom:8px}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:12px;font-weight:500;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:#e05a24;transform:translateY(-1px)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#2a8030;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg);color:var(--dark)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-red{background:#FEF2F2;color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.btn-red:hover{background:#FEE2E2}
+
+/* ── Sticky save bar ─────────────────────────────────────────────── */
+.save-bar{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:between;gap:12px}
+.save-bar-inner{display:flex;align-items:center;justify-content:space-between;width:100%}
+.unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block;margin-right:4px}
+
+/* ── Connection type radio cards ─────────────────────────────────── */
+.conn-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.conn-card{padding:12px 10px;border:2px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;transition:all .15s;background:var(--white)}
+.conn-card:hover{border-color:var(--orange25);background:var(--orange10)}
+.conn-card.active{border-color:var(--orange);background:var(--orange10)}
+.conn-card-icon{width:28px;height:28px;border-radius:6px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;color:var(--gray)}
+.conn-card.active .conn-card-icon{background:var(--orange10);color:var(--orange)}
+.conn-card-label{font-size:11px;font-weight:600;color:var(--dark)}
+.conn-card.active .conn-card-label{color:var(--orange)}
+
+/* ── Printer cards ───────────────────────────────────────────────── */
+.printer-card{border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:8px;background:var(--white);transition:box-shadow .15s}
+.printer-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.printer-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.printer-name{font-size:13px;font-weight:600;color:var(--dark);display:flex;align-items:center;gap:6px}
+.printer-meta{font-size:11px;color:var(--gray);margin-top:3px}
+.printer-actions{display:flex;gap:4px;flex-shrink:0}
+.icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--white);color:var(--gray);transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--dark)}
+.icon-btn.danger:hover{background:#FEF2F2;color:var(--red);border-color:rgba(239,68,68,.2)}
+.station-chip{font-size:10px;padding:2px 8px;border-radius:99px;background:#F3F4F6;color:var(--gray);display:inline-flex;align-items:center}
+.bill-chip{font-size:10px;padding:2px 8px;border-radius:99px;background:var(--green10);color:var(--green);border:1px solid rgba(50,153,55,.2)}
+.chips-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+
+/* ── Printing Mode radio cards ───────────────────────────────────── */
+.mode-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0 14px}
+.mode-card{padding:11px 12px;border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;background:var(--white)}
+.mode-card:hover{border-color:var(--orange25);background:var(--orange10)}
+.mode-card.active{border-color:var(--orange);background:var(--orange10)}
+.mode-card-title{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:2px}
+.mode-card.active .mode-card-title{color:var(--orange)}
+.mode-card-desc{font-size:10px;color:var(--gray);line-height:1.4}
+.mode-saving{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px}
+
+/* ── Employee chips ──────────────────────────────────────────────── */
+.emp-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:99px;background:#EFF6FF;color:var(--blue);border:1px solid #BFDBFE;max-width:130px}
+.emp-chip .remove{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--blue);opacity:.7;cursor:pointer;flex-shrink:0}
+.emp-chip .remove:hover{opacity:1}
+.default-chip{background:var(--orange10);color:var(--orange);border-color:var(--orange25)}
+
+/* ── Printer mapping ─────────────────────────────────────────────── */
+.mapping-row{border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:8px;background:var(--white)}
+.mapping-printer-name{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.mapping-printer-meta{font-size:11px;color:var(--gray);margin-bottom:8px}
+.mapping-assignments{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.add-emp-btn{font-size:11px;color:var(--orange);border:1px dashed var(--orange25);padding:3px 9px;border-radius:99px;background:var(--orange10);cursor:pointer;transition:all .15s}
+.add-emp-btn:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+/* ── Default users section ───────────────────────────────────────── */
+.default-users-section{background:#FFFBF5;border:1px solid var(--orange25);border-radius:9px;padding:12px;margin-bottom:14px}
+.default-users-hint{font-size:11px;color:var(--gray);margin-bottom:8px}
+.user-toggle-row{display:flex;flex-wrap:wrap;gap:6px}
+.user-toggle{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:11px;font-weight:500;color:var(--dark);transition:all .15s}
+.user-toggle.on{background:var(--orange10);border-color:var(--orange25);color:var(--orange)}
+.toggle-dot{width:28px;height:16px;border-radius:8px;background:#D1D5DB;position:relative;flex-shrink:0;transition:background .2s}
+.toggle-dot.on{background:var(--orange)}
+.toggle-dot::after{content:'';width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle-dot.on::after{left:14px}
+
+/* ── Stations tab ────────────────────────────────────────────────── */
+.stations-table{width:100%;border-collapse:collapse}
+.stations-table th{font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.stations-table td{font-size:12px;color:var(--dark);padding:9px 10px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+.stations-table tr:hover td{background:#FAFAFA}
+.stage-badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600}
+.stage-none{background:#F3F4F6;color:var(--gray)}
+.stage-ready{background:#EFF6FF;color:var(--blue)}
+.stage-serve{background:var(--orange10);color:var(--orange)}
+.stage-delivered{background:var(--green10);color:var(--green)}
+.auto-yes{color:var(--green);font-weight:600;font-size:11px}
+.auto-no{color:var(--gray);font-size:11px}
+.add-station-form{background:#FFFBF5;border:1px solid var(--orange25);border-radius:9px;padding:14px;margin-top:12px}
+.add-station-form-title{font-size:12px;font-weight:600;color:var(--orange);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* ── Print Preview split panel ───────────────────────────────────── */
+.style-split{display:flex;gap:0;min-height:500px}
+.style-left{flex:1;padding:16px 20px;overflow-y:auto}
+.style-right{width:340px;flex-shrink:0;background:#E5E7EB;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-header{background:var(--white);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.preview-title{font-size:11px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:.06em}
+.preview-toggles{display:flex;gap:6px}
+.toggle-group{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.toggle-opt{padding:4px 10px;font-size:10px;font-weight:600;border:none;cursor:pointer;background:var(--white);color:var(--gray);font-family:inherit}
+.toggle-opt.active{background:var(--orange);color:#fff}
+.preview-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto}
+.receipt{background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:14px 10px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;position:relative}
+.receipt-58{width:220px}
+.receipt-80{width:280px}
+.r-center{text-align:center}
+.r-row{display:flex;justify-content:space-between}
+.r-divider-solid{border:none;border-top:1px solid #888;margin:5px 0}
+.r-divider-dash{border:none;border-top:1px dashed #888;margin:5px 0}
+.r-bold{font-weight:700}
+.r-xs{font-size:9px}
+.r-sm{font-size:10px}
+.r-md{font-size:11px}
+.r-lg{font-size:12px}
+.r-xl{font-size:14px}
+
+/* ── Station gst badge ───────────────────────────────────────────── */
+.gst-badge{font-size:10px;padding:1px 6px;border-radius:3px;background:#FEF9C3;color:#854D0E;border:1px solid #FDE68A}
+
+/* ── Separator ───────────────────────────────────────────────────── */
+.sep{height:1px;background:var(--border);margin:14px 0}
+
+/* ── Banner ──────────────────────────────────────────────────────── */
+.banner-warn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#FFFBEB;border:1px solid #FDE68A;font-size:11px;color:#92400E;margin-bottom:10px}
+.banner-info{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#EFF6FF;border:1px solid #BFDBFE;font-size:11px;color:#1E40AF;margin-bottom:10px}
+
+/* ── SVG icon helpers ────────────────────────────────────────────── */
+svg.icon{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+svg.icon-sm{width:12px;height:12px}
+svg.icon-xs{width:10px;height:10px}
+</style>
+</head>
+<body>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>MyGenie POS — BATCH-09 Design Approval</h1>
+    <p>Printer Agent Config · CR-167, CR-160, CR-161, CR-169 · 4 screens for owner review</p>
+  </div>
+  <span class="badge">Gate 2 → Gate 3</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 1 — Tab 1 "Printers" + Printing Mode + Inline Form
+     CR-161 Part B + CR-167
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-wrap">
+  <div class="section-label">
+    <span class="cr-badge">CR-161 Part B</span>
+    <span class="cr-badge">CR-167</span>
+    Screen 1 — Printers Tab: Printing Mode + Add Printer Inline Form
+  </div>
+  <div class="screen-title">Tab 1: Printers</div>
+  <div class="screen-desc">Printing Mode radio section added at top. "Add Printer" opens as inline form (no modal/overlay). 3-step wizard collapsed to single scrollable view.</div>
+
+  <div class="panel-shell" style="max-width:560px">
+    <div class="panel-header">
+      <div class="back">
+        <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill active">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill">Print Style</button>
+        <button class="tab-pill">Mapping</button>
+        <button class="tab-pill">Stations</button>
+      </div>
+    </div>
+    <div class="tab-content">
+
+      <!-- ── INLINE ADD PRINTER FORM (CR-167) ── -->
+      <div style="background:#FFFBF5;border:1px solid var(--orange25);border-radius:10px;padding:14px;margin-bottom:16px" data-testid="printer-add-form">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-size:13px;font-weight:600;color:var(--dark)">Add Printer</span>
+          <button class="icon-btn" data-testid="printer-form-close-btn">
+            <svg class="icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <!-- Connection type radio cards -->
+        <div class="section-title">Connection Type <span style="color:var(--orange)">*</span></div>
+        <div class="conn-cards" data-testid="connection-type-selector">
+          <div class="conn-card active" data-testid="connection-type-usb">
+            <div class="conn-card-icon">
+              <svg class="icon"><rect x="7" y="2" width="10" height="6" rx="1"/><path d="M7 8H17M12 8v8M8 16h8M12 20v-4"/></svg>
+            </div>
+            <div class="conn-card-label">USB</div>
+          </div>
+          <div class="conn-card" data-testid="connection-type-lan">
+            <div class="conn-card-icon">
+              <svg class="icon"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+            </div>
+            <div class="conn-card-label">LAN</div>
+          </div>
+          <div class="conn-card" data-testid="connection-type-bluetooth">
+            <div class="conn-card-icon">
+              <svg class="icon"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg>
+            </div>
+            <div class="conn-card-label">Bluetooth</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="field-label">Printer Name <span class="req">*</span></label>
+            <input class="field-input" value="Kitchen USB Printer" placeholder="Auto-fills from USB Printer Name" style="color:var(--gray);font-style:italic" data-testid="printer-name-input"/>
+            <div style="font-size:10px;color:var(--gray);margin-top:3px">Auto-filled from USB Printer Name — edit to customise</div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Paper Size</label>
+            <select class="field-select" data-testid="printer-paper-size-select">
+              <option>80 mm</option>
+              <option>58 mm</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- USB-specific fields (conditional) -->
+        <div style="background:#F9FAFB;border-radius:7px;padding:10px;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:600;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">USB Details</div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">USB Printer Name <span class="req">*</span></label>
+            <input class="field-input" placeholder="As shown in system devices" data-testid="usb-printer-name-input"/>
+            <div style="font-size:10px;color:var(--gray);margin-top:3px">Printer Name above will auto-fill as you type</div>
+          </div>
+          <button style="font-size:11px;color:var(--orange);background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-testid="printer-advanced-toggle">
+            + Show advanced (Vendor / Product ID — Android USB setup)
+          </button>
+          <!-- Advanced expanded state -->
+          <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
+            <div style="font-size:10px;color:var(--blue);background:#EFF6FF;border:1px solid #BFDBFE;border-radius:5px;padding:5px 8px;margin-bottom:8px">
+              For Android USB printing only. Leave as <strong>0</strong> for most setups unless your device requires specific IDs.
+            </div>
+            <div class="grid-2">
+              <div class="field-group" style="margin-bottom:0">
+                <label class="field-label">Vendor ID <span style="font-weight:400;color:var(--light)">(default: 0)</span></label>
+                <input class="field-input" placeholder="0" data-testid="usb-vendor-id-input"/>
+              </div>
+              <div class="field-group" style="margin-bottom:0">
+                <label class="field-label">Product ID <span style="font-weight:400;color:var(--light)">(default: 0)</span></label>
+                <input class="field-input" placeholder="0" data-testid="usb-product-id-input"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:4px">KOT Routing</div>
+        <div style="font-size:10px;color:var(--gray);margin-bottom:6px">Select from your configured stations. Ensures consistent routing.</div>
+        <!-- Multi-select dropdown — owner decision 2026-08-18: dropdown not free text -->
+        <div style="position:relative;margin-bottom:8px">
+          <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-height:36px;padding:5px 10px;border:1px solid var(--border);border-radius:7px;background:var(--white);cursor:pointer" data-testid="printer-stations-multiselect">
+            <span class="station-chip">KDS <span style="margin-left:4px;cursor:pointer;opacity:.6">✕</span></span>
+            <span class="station-chip">BAR <span style="margin-left:4px;cursor:pointer;opacity:.6">✕</span></span>
+            <span style="font-size:11px;color:var(--gray);margin-left:4px">+ Add stations</span>
+            <svg class="icon-xs" style="margin-left:auto;color:var(--gray)"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <!-- Dropdown open state -->
+          <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:10;padding:6px">
+            <div style="font-size:10px;font-weight:600;color:var(--gray);padding:3px 6px 6px;text-transform:uppercase;letter-spacing:.05em">Your configured stations</div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer;background:var(--orange10)" data-testid="station-option-kds">
+              <input type="checkbox" checked style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">KDS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer;background:var(--orange10)" data-testid="station-option-bar">
+              <input type="checkbox" checked style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">BAR</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer" data-testid="station-option-bill">
+              <input type="checkbox" style="accent-color:var(--orange)"/>
+              <span style="font-size:12px;color:var(--dark)">Bill</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);margin-top:4px">
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--dark)">Prints Bills (customer receipts)</div>
+            <div style="font-size:10px;color:var(--gray)">This printer will generate customer receipts</div>
+          </div>
+          <div class="toggle-dot on" data-testid="printer-handles-bill-toggle"></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+          <button class="btn btn-ghost" data-testid="printer-form-cancel-btn">Cancel</button>
+          <button class="btn btn-green" data-testid="printer-form-save-btn">
+            <svg class="icon"><polyline points="20 6 9 17 4 12"/></svg>
+            Add Printer
+          </button>
+        </div>
+      </div>
+
+      <!-- ── PRINTING MODE SECTION (CR-161 Part B) ── -->
+      <div style="margin-bottom:14px">
+        <div class="section-title">Printing Mode</div>
+        <!-- Investigation finding 2026-08-18: printing_option is in profile API (not printer-agent-config).
+             Saves via PUT /printing-option → stored in restaurant settings.
+             Used by the POS FE to decide which printer_agent[] to include per order.
+             The printer agent DEVICE does not read this — it's a POS-side routing decision. -->
+        <div class="banner-info" style="margin-bottom:8px">
+          <svg class="icon-sm" style="stroke:var(--blue);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <strong>POS routing decision</strong> — not read by the printer agent device. Controls which printer the POS selects when placing each order. Saved to restaurant settings via its own endpoint.
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--gray);margin-bottom:8px">Controls how the POS routes print jobs when placing orders.</div>
+        <div class="mode-cards" data-testid="printing-mode-selector">
+          <div class="mode-card active" data-testid="printing-mode-fixed">
+            <div class="mode-card-title">Fixed</div>
+            <div class="mode-card-desc">All print jobs go to a single designated printer</div>
+          </div>
+          <div class="mode-card" data-testid="printing-mode-waiter">
+            <div class="mode-card-title">Waiter</div>
+            <div class="mode-card-desc">Print based on the waiter serving the table</div>
+          </div>
+          <div class="mode-card" data-testid="printing-mode-station">
+            <div class="mode-card-title">Station</div>
+            <div class="mode-card-desc">Print based on the kitchen station for each item</div>
+          </div>
+        </div>
+        <div class="mode-saving" style="font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px">
+          <svg class="icon-xs" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>
+          Printing mode saved
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- ── Printer list ── -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:600;color:var(--dark)">Printers (2)</span>
+        <button class="btn btn-orange btn-sm" data-testid="printer-add-btn">
+          <svg class="icon-sm"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Printer
+        </button>
+      </div>
+
+      <div class="printer-card" data-testid="printer-card-485">
+        <div class="printer-card-header">
+          <div>
+            <div class="printer-name">
+              <svg class="icon" style="color:var(--gray)"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 6V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2"/><line x1="6" y1="14" x2="18" y2="14"/></svg>
+              BAR (Bluetooth)
+              <span class="bill-chip">Bills</span>
+            </div>
+            <div class="printer-meta">bluetooth · 60:6E:41:45:6F:EF · 58mm</div>
+            <div class="chips-row">
+              <span class="station-chip">BAR</span>
+              <span class="station-chip">KDS</span>
+            </div>
+          </div>
+          <div class="printer-actions">
+            <button class="icon-btn" data-testid="printer-edit-485"><svg class="icon-sm"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn danger" data-testid="printer-delete-485"><svg class="icon-sm" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="printer-card" data-testid="printer-card-486">
+        <div class="printer-card-header">
+          <div>
+            <div class="printer-name">
+              <svg class="icon" style="color:var(--gray)"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 6V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2"/><line x1="6" y1="14" x2="18" y2="14"/></svg>
+              KDS (USB)
+            </div>
+            <div class="printer-meta">usb · EPSON_KDS · 80mm</div>
+            <div class="chips-row">
+              <span class="station-chip">KDS</span>
+            </div>
+          </div>
+          <div class="printer-actions">
+            <button class="icon-btn" data-testid="printer-edit-486"><svg class="icon-sm"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn danger" data-testid="printer-delete-486"><svg class="icon-sm" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="save-bar">
+      <div class="save-bar-inner">
+        <span style="font-size:11px;color:var(--orange);display:flex;align-items:center">
+          <span class="unsaved-dot"></span> Unsaved changes
+        </span>
+        <button class="btn btn-green" data-testid="printer-config-save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 2 — Tab 5 "Printer Mapping" (CR-160) — REDESIGNED
+     Two options presented for owner approval
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-wrap">
+  <div class="section-label">
+    <span class="cr-badge">CR-160</span>
+    Screen 2 — Tab 5: Printer Mapping — REDESIGNED (2 options for approval)
+  </div>
+  <div class="screen-title">Tab 5: Printer Mapping</div>
+  <div class="screen-desc">Owner feedback: "which employee can print which station — bar, kitchen, bill — simple idea." Two cleaner designs below. Pick A or B.</div>
+
+  <!-- ── OPTION A: Employee rows with station checkboxes ── -->
+  <div style="margin-bottom:8px">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#1A1A1A;color:#fff;padding:5px 14px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px">
+      OPTION A — Employee rows (recommended)
+    </div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px">Each row = one employee. Tick which stations they print to. "Prints All" = fixed user who prints everything.</div>
+  </div>
+
+  <div class="panel-shell" style="max-width:620px;margin-bottom:32px">
+    <div class="panel-header">
+      <div class="back"><svg class="icon"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill">Print Style</button>
+        <button class="tab-pill active">Mapping</button>
+        <button class="tab-pill">Stations</button>
+      </div>
+    </div>
+    <div class="tab-content">
+
+      <div style="font-size:12px;color:var(--gray);margin-bottom:14px;padding:8px 12px;background:#F9FAFB;border-radius:8px;border:1px solid var(--border)">
+        Set which stations each employee's orders route to. "Prints All" employees always print to every station.
+      </div>
+
+      <!-- Column headers -->
+      <div style="display:grid;grid-template-columns:140px 1fr 80px;gap:0;margin-bottom:4px;padding:0 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em">Employee</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em">Prints To (stations)</div>
+        <div style="font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.06em;text-align:center">Prints All</div>
+      </div>
+
+      <!-- Employee rows -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+
+        <!-- Owner — Prints All ON -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="mapping-row-1478">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">O</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Owner</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px">
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">BAR</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">KDS</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">Bill</span>
+            <span style="font-size:10px;color:var(--light);font-style:italic">all stations</span>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot on" style="transform:scale(.85)" data-testid="prints-all-1478"></div>
+          </div>
+        </div>
+
+        <!-- Saurav — Prints All ON -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="mapping-row-2304">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#6B7280;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">S</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Saurav</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px">
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">BAR</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">KDS</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange10);color:var(--orange);border:1px solid var(--orange25)">Bill</span>
+            <span style="font-size:10px;color:var(--light);font-style:italic">all stations</span>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot on" style="transform:scale(.85)" data-testid="prints-all-2304"></div>
+          </div>
+        </div>
+
+        <!-- BAR employee — only BAR station -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border)" data-testid="mapping-row-1475">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">B</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">BAR</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <!-- Station checkboxes inline -->
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" checked style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-bar-1475-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1475"></div>
+          </div>
+        </div>
+
+        <!-- KDS employee — only KDS -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px;border-bottom:1px solid var(--border)" data-testid="mapping-row-1474">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">K</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">KDS</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" checked style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-kds-1474-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1474"></div>
+          </div>
+        </div>
+
+        <!-- Manager — nothing assigned -->
+        <div style="display:grid;grid-template-columns:140px 1fr 80px;align-items:center;gap:0;padding:10px 12px" data-testid="mapping-row-1476">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB;color:var(--gray);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">M</div>
+            <span style="font-size:12px;font-weight:600;color:var(--dark)">Manager</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:0 8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-bar"/> BAR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-kds"/> KDS
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--white)">
+              <input type="checkbox" style="accent-color:var(--orange);width:12px;height:12px" data-testid="check-mgr-1476-bill"/> Bill
+            </label>
+          </div>
+          <div style="display:flex;justify-content:center">
+            <div class="toggle-dot" style="transform:scale(.85)" data-testid="prints-all-1476"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="font-size:10px;color:var(--gray);margin-top:8px;display:flex;align-items:center;gap:5px">
+        <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>
+        Prints All = employee prints to every station automatically (fixed user)
+      </div>
+
+    </div>
+    <div class="save-bar">
+      <div class="save-bar-inner">
+        <span style="font-size:11px;color:var(--orange);display:flex;align-items:center"><span class="unsaved-dot"></span> Unsaved changes</span>
+        <button class="btn btn-green" data-testid="save-mapping-btn-a">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OPTION B: Matrix grid ── -->
+  <div style="margin-bottom:8px">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#4B5563;color:#fff;padding:5px 14px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px">
+      OPTION B — Matrix grid (compact view)
+    </div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:12px">Employees as rows, stations as columns. Tick each intersection. Good when you have many employees.</div>
+  </div>
+
+  <div class="panel-shell" style="max-width:520px;margin-bottom:16px">
+    <div class="panel-header">
+      <div class="back"><svg class="icon"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill">Print Style</button>
+        <button class="tab-pill active">Mapping</button>
+        <button class="tab-pill">Stations</button>
+      </div>
+    </div>
+    <div class="tab-content">
+
+      <div style="font-size:12px;color:var(--gray);margin-bottom:14px">Tick the stations each employee should print to.</div>
+
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <!-- Matrix header -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);background:#F9FAFB;border-bottom:2px solid var(--border)">
+          <div style="padding:8px 12px;font-size:10px;font-weight:700;color:var(--gray)">EMPLOYEE</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">BAR</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">KDS</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--gray);text-align:center">Bill</div>
+          <div style="padding:8px 4px;font-size:10px;font-weight:700;color:var(--orange);text-align:center">All</div>
+        </div>
+        <!-- Owner -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="matrix-row-owner">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Owner</div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-owner-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot on" style="transform:scale(.75);margin:0 auto" data-testid="m-owner-all"></div></div>
+        </div>
+        <!-- Saurav -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border);background:#FFFBF5" data-testid="matrix-row-saurav">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Saurav</div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" checked disabled style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-saurav-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot on" style="transform:scale(.75);margin:0 auto" data-testid="m-saurav-all"></div></div>
+        </div>
+        <!-- BAR employee -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border)" data-testid="matrix-row-bar">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">BAR</div>
+          <div style="text-align:center"><input type="checkbox" checked style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-bar-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-bar-all"></div></div>
+        </div>
+        <!-- KDS employee -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center;border-bottom:1px solid var(--border)" data-testid="matrix-row-kds">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">KDS</div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" checked style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-kds-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-kds-all"></div></div>
+        </div>
+        <!-- Manager -->
+        <div style="display:grid;grid-template-columns:120px repeat(4,1fr);align-items:center" data-testid="matrix-row-manager">
+          <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--dark)">Manager</div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-bar"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-kds"/></div>
+          <div style="text-align:center"><input type="checkbox" style="accent-color:var(--orange);width:14px;height:14px" data-testid="m-mgr-bill"/></div>
+          <div style="text-align:center"><div class="toggle-dot" style="transform:scale(.75);margin:0 auto" data-testid="m-mgr-all"></div></div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;color:var(--gray);margin-top:8px;display:flex;align-items:center;gap:5px">
+        <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block"></span>
+        All = toggles all stations on/off for that employee. Greys out individual boxes.
+      </div>
+
+    </div>
+    <div class="save-bar">
+      <div class="save-bar-inner">
+        <span style="font-size:11px;color:var(--orange);display:flex;align-items:center"><span class="unsaved-dot"></span> Unsaved changes</span>
+        <button class="btn btn-green" data-testid="save-mapping-btn-b">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 3 — Tab 6 "Stations" (CR-161 Part A)
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-wrap">
+  <div class="section-label">
+    <span class="cr-badge">CR-161 Part A</span>
+    Screen 3 — Tab 6: Stations (CRUD)
+  </div>
+  <div class="screen-title">Tab 6: Stations</div>
+  <div class="screen-desc">Station CRUD table. Area name from dropdown (restaurant-specific list). station_gst field shown only for food court. Delete with confirm. Inline add/edit form.</div>
+
+  <div class="panel-shell" style="max-width:700px">
+    <div class="panel-header">
+      <div class="back">
+        <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill">Print Style</button>
+        <button class="tab-pill">Mapping</button>
+        <button class="tab-pill active">Stations</button>
+      </div>
+    </div>
+    <div class="tab-content">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--dark)">Kitchen Stations</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px">Configure printing destinations for each area of your kitchen</div>
+        </div>
+        <button class="btn btn-orange btn-sm" data-testid="add-station-btn">
+          <svg class="icon-sm"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Station
+        </button>
+      </div>
+
+      <!-- Station table -->
+      <div style="border:1px solid var(--border);border-radius:9px;overflow:hidden">
+        <table class="stations-table">
+          <thead style="background:#FAFAFA">
+            <tr>
+              <th>Area</th>
+              <th>Printer</th>
+              <th>Type</th>
+              <th>Paper</th>
+              <th>Default Stage</th>
+              <th>Auto Serve</th>
+              <th style="width:80px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-testid="station-row-876">
+              <td>
+                <span style="font-weight:600">CreambellParlour</span>
+                <span class="gst-badge" style="margin-left:6px">GST</span>
+              </td>
+              <td>bluetooth</td>
+              <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#EFF6FF;color:var(--blue)">online</span></td>
+              <td>80mm</td>
+              <td><span class="stage-badge stage-none">None</span></td>
+              <td><span class="auto-no">No</span></td>
+              <td>
+                <div style="display:flex;gap:4px">
+                  <button class="icon-btn" style="width:24px;height:24px" data-testid="station-edit-876">
+                    <svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <button class="icon-btn danger" style="width:24px;height:24px" data-testid="station-delete-876">
+                    <svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr data-testid="station-row-877">
+              <td><span style="font-weight:600">Bill</span></td>
+              <td>usb</td>
+              <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#EFF6FF;color:var(--blue)">online</span></td>
+              <td>80mm</td>
+              <td><span class="stage-badge stage-none">None</span></td>
+              <td><span class="auto-no">No</span></td>
+              <td>
+                <div style="display:flex;gap:4px">
+                  <button class="icon-btn" style="width:24px;height:24px" data-testid="station-edit-877"><svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                  <button class="icon-btn danger" style="width:24px;height:24px" data-testid="station-delete-877"><svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-testid="station-row-878">
+              <td><span style="font-weight:600">Zorko</span></td>
+              <td>bluetooth</td>
+              <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#EFF6FF;color:var(--blue)">online</span></td>
+              <td>80mm</td>
+              <td><span class="stage-badge stage-ready">Ready</span></td>
+              <td><span class="auto-yes">Yes</span></td>
+              <td>
+                <div style="display:flex;gap:4px">
+                  <button class="icon-btn" style="width:24px;height:24px" data-testid="station-edit-878"><svg class="icon-xs"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                  <button class="icon-btn danger" style="width:24px;height:24px" data-testid="station-delete-878"><svg class="icon-xs" style="stroke:var(--red)"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Inline Add Station Form -->
+      <div class="add-station-form" data-testid="add-station-form">
+        <div class="add-station-form-title">
+          <svg class="icon-sm" style="stroke:var(--orange)"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Station
+        </div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="field-label">Area Name <span class="req">*</span></label>
+            <select class="field-select" data-testid="station-area-name-select">
+              <option>Select area...</option>
+              <option>Bill</option>
+              <option>MSB</option>
+              <option>CreambellParlour</option>
+              <option>Zorko</option>
+              <option>GuptaJee</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Printer Name</label>
+            <input class="field-input" placeholder="e.g. bluetooth" data-testid="station-printer-name-input"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Printer Type</label>
+            <select class="field-select" data-testid="station-printer-type-select">
+              <option>online</option>
+              <option>offline</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Paper Roll</label>
+            <select class="field-select" data-testid="station-paper-roll-select">
+              <option>58</option>
+              <option>80</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Printer IP / MAC</label>
+            <input class="field-input" placeholder="IP or MAC address" data-testid="station-printer-ip-input"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Default KOT Stage</label>
+            <select class="field-select" data-testid="station-default-stage-select">
+              <option value="null">None</option>
+              <option value="1">Ready</option>
+              <option value="2">Serve</option>
+              <option value="5">Delivered</option>
+            </select>
+          </div>
+          <!-- station_gst — food court only -->
+          <div class="field-group">
+            <label class="field-label">
+              Station GST
+              <span style="font-size:9px;background:#FEF9C3;color:#854D0E;padding:1px 5px;border-radius:3px;margin-left:4px;border:1px solid #FDE68A">Food Court Only</span>
+            </label>
+            <input class="field-input" placeholder="e.g. 07AAACE0531H1ZV" data-testid="station-gst-input"/>
+          </div>
+          <div class="field-group" style="display:flex;align-items:flex-end">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 0;border-top:1px solid var(--border)">
+              <div>
+                <div style="font-size:12px;font-weight:500;color:var(--dark)">Auto Serve</div>
+                <div style="font-size:10px;color:var(--gray)">Automatically mark items as served</div>
+              </div>
+              <div class="toggle-dot" data-testid="station-auto-serve-toggle"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+          <button class="btn btn-ghost btn-sm" data-testid="add-station-cancel-btn">Cancel</button>
+          <button class="btn btn-green btn-sm" data-testid="add-station-save-btn">
+            <svg class="icon-xs" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg>
+            Save Station
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 4 — Tab 4 "Print Style" Split Panel + Live Preview (CR-169)
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-wrap">
+  <div class="section-label">
+    <span class="cr-badge">CR-169</span>
+    Screen 4 — Tab 4: Print Style + Live Bill/KOT Preview
+  </div>
+  <div class="screen-title">Tab 4: Print Style (Split Panel)</div>
+  <div class="screen-desc">Style settings on left. 340px live preview panel on right. "Coming soon" placeholder replaced with real receipt simulation. Bill/KOT toggle and 58mm/80mm paper size toggle.</div>
+
+  <div class="panel-shell" style="max-width:900px">
+    <div class="panel-header">
+      <div class="back">
+        <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <span class="panel-title">Printer Settings</span>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-pills">
+        <button class="tab-pill">Printers</button>
+        <button class="tab-pill">Auto Print</button>
+        <button class="tab-pill">Bill Content</button>
+        <button class="tab-pill active">Print Style</button>
+        <button class="tab-pill">Mapping</button>
+        <button class="tab-pill">Stations</button>
+      </div>
+    </div>
+
+    <!-- Split layout -->
+    <div class="style-split" data-testid="print-style-tab">
+
+      <!-- Left: style settings -->
+      <div class="style-left">
+        <div class="section-title">Global Typography</div>
+        <div class="grid-2">
+          <div class="field-group">
+            <label class="field-label">Font Family</label>
+            <select class="field-select" data-testid="style-font-family-select">
+              <option>Poppins</option>
+              <option>Roboto</option>
+              <option>Montserrat</option>
+              <option>Courier</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Divider Line</label>
+            <select class="field-select" data-testid="style-divider-select">
+              <option>Dashed</option>
+              <option>Solid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:4px">
+          <!-- Windows card -->
+          <div style="border:1px solid var(--border);border-radius:9px;padding:12px;background:#FAFAFA">
+            <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:8px">Windows Print Sizes</div>
+            <div class="section-title">Page Margins (mm)</div>
+            <div class="grid-2">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--gray)">Top</span><input type="number" value="3" style="width:50px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="margin-top"/></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--gray)">Bottom</span><input type="number" value="3" style="width:50px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="margin-bottom"/></div>
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;color:var(--gray)">Left</span><input type="number" value="0" style="width:50px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="margin-left"/></div>
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;color:var(--gray)">Right</span><input type="number" value="0" style="width:50px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="margin-right"/></div>
+            </div>
+          </div>
+          <!-- Android card -->
+          <div style="border:1px solid #86efac;border-radius:9px;padding:12px;background:#F0FFF4">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px">Android Print Sizes</div>
+            <div class="section-title" style="color:var(--green);border-color:rgba(50,153,55,.2)">Logo & QR Sizes</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;color:var(--gray)">Logo Size</span><input type="number" value="44" style="width:50px;padding:3px 6px;border:1px solid #86efac;border-radius:5px;font-size:11px;text-align:center" data-testid="android-androidLogoSize"/></div>
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;color:var(--gray)">UPI QR</span><input type="number" value="46" style="width:50px;padding:3px 6px;border:1px solid #86efac;border-radius:5px;font-size:11px;text-align:center" data-testid="android-androidUpiQrSize"/></div>
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;color:var(--gray)">Feedback QR</span><input type="number" value="23" style="width:50px;padding:3px 6px;border:1px solid #86efac;border-radius:5px;font-size:11px;text-align:center" data-testid="android-androidFeedbackQrSize"/></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:14px">Section Styles</div>
+        <div style="display:flex;gap:3px;background:#F3F4F6;border-radius:7px;padding:3px;margin-bottom:10px">
+          <button class="tab-pill active" style="flex:1;padding:5px" data-testid="style-subtab-bill">Bill</button>
+          <button class="tab-pill" style="flex:1;padding:5px" data-testid="style-subtab-kot">KOT</button>
+        </div>
+        <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden;width:fit-content;margin-bottom:10px">
+          <button style="padding:4px 14px;font-size:11px;font-weight:600;background:var(--orange);color:#fff;border:none;cursor:pointer" data-testid="style-platform-windows">Windows</button>
+          <button style="padding:4px 14px;font-size:11px;font-weight:600;background:var(--white);color:var(--gray);border:none;cursor:pointer" data-testid="style-platform-android">Android</button>
+        </div>
+
+        <!-- Style accordion sample -->
+        <div style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+          <div style="padding:9px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" data-testid="style-section-bill-restaurant_header">
+            <span style="font-size:11px;font-weight:600;color:var(--dark)">Restaurant Header</span>
+            <svg class="icon-sm" style="color:var(--gray)"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div style="padding:4px 12px 10px">
+            <div style="display:flex;gap:6px;font-size:10px;font-weight:600;color:var(--gray);padding:4px 0;margin-bottom:2px">
+              <span style="flex:1">Field</span><span style="width:52px;text-align:center">58mm</span><span style="width:52px;text-align:center">80mm</span><span style="width:28px;text-align:center">Bold</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid #F3F4F6">
+              <span style="flex:1;font-size:11px;color:var(--dark)">Restaurant Name</span>
+              <input type="number" value="11" style="width:52px;padding:3px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="style-row-restaurant_name-58mm"/>
+              <input type="number" value="14" style="width:52px;padding:3px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="style-row-restaurant_name-80mm"/>
+              <button style="width:28px;height:27px;font-size:11px;font-weight:700;border:1px solid var(--orange);border-radius:5px;background:var(--orange10);color:var(--orange);cursor:pointer" data-testid="style-row-restaurant_name-bold">B</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid #F3F4F6">
+              <span style="flex:1;font-size:11px;color:var(--dark)">Address</span>
+              <input type="number" value="6" style="width:52px;padding:3px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="style-row-restaurant_address-58mm"/>
+              <input type="number" value="7" style="width:52px;padding:3px;border:1px solid var(--border);border-radius:5px;font-size:11px;text-align:center" data-testid="style-row-restaurant_address-80mm"/>
+              <button style="width:28px;height:27px;font-size:11px;font-weight:700;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--gray);cursor:pointer" data-testid="style-row-restaurant_address-bold">B</button>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+          <div style="padding:9px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:11px;font-weight:600;color:var(--dark)">Bill Information</span>
+            <svg class="icon-sm" style="color:var(--gray)"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+          <div style="padding:9px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:11px;font-weight:600;color:var(--dark)">Item Table</span>
+            <svg class="icon-sm" style="color:var(--gray)"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:8px">
+          <div style="padding:9px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:11px;font-weight:600;color:var(--dark)">Amount Section</span>
+            <svg class="icon-sm" style="color:var(--gray)"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: live preview panel (CR-169) -->
+      <div class="style-right" data-testid="print-preview-panel">
+        <div class="preview-header">
+          <span class="preview-title">Live Preview</span>
+          <div class="preview-toggles">
+            <div class="toggle-group">
+              <button class="toggle-opt active" data-testid="preview-type-bill">Bill</button>
+              <button class="toggle-opt" data-testid="preview-type-kot">KOT</button>
+            </div>
+            <div class="toggle-group">
+              <button class="toggle-opt active" data-testid="preview-paper-58">58mm</button>
+              <button class="toggle-opt" data-testid="preview-paper-80">80mm</button>
+            </div>
+          </div>
+        </div>
+        <div class="preview-body">
+          <div class="receipt receipt-58">
+            <!-- Receipt header -->
+            <div class="r-center" style="margin-bottom:8px">
+              <div class="r-lg r-bold" style="font-size:14px;margin-bottom:2px">18 March Restaurant</div>
+              <div class="r-xs" style="color:#555">123, Shimla Main Road, HP - 171001</div>
+              <div class="r-xs" style="color:#555">Ph: +91 98765 43210</div>
+              <div class="r-xs" style="color:#555">GSTIN: 02AABCU9603R1ZR</div>
+              <div class="r-xs" style="color:#555">FSSAI: 11224999000123</div>
+            </div>
+            <hr class="r-divider-dash"/>
+            <div class="r-sm" style="margin-bottom:2px">Bill No: #001234</div>
+            <div class="r-sm" style="margin-bottom:2px">Date: 18/08/2026 &nbsp; Time: 14:32</div>
+            <div class="r-sm">Table: T-05 &nbsp; Waiter: Owner</div>
+            <hr class="r-divider-dash"/>
+            <div class="r-xs r-bold" style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="flex:1">Item</span><span style="width:24px;text-align:center">Qty</span><span style="width:40px;text-align:right">Amt</span>
+            </div>
+            <hr class="r-divider-solid"/>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span style="flex:1">Paneer Butter Masala</span><span style="width:24px;text-align:center">1</span><span style="width:40px;text-align:right">320</span>
+            </div>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span style="flex:1">Garlic Naan</span><span style="width:24px;text-align:center">2</span><span style="width:40px;text-align:right">120</span>
+            </div>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span style="flex:1">Mineral Water</span><span style="width:24px;text-align:center">1</span><span style="width:40px;text-align:right">40</span>
+            </div>
+            <hr class="r-divider-dash"/>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span>Subtotal</span><span>480</span>
+            </div>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span>CGST (2.5%)</span><span>12.00</span>
+            </div>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span>SGST (2.5%)</span><span>12.00</span>
+            </div>
+            <hr class="r-divider-solid"/>
+            <div class="r-sm r-bold" style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span>TOTAL</span><span>₹504</span>
+            </div>
+            <div class="r-xs" style="display:flex;justify-content:space-between;margin-bottom:2px;color:#555">
+              <span>Paid by Cash</span><span>₹504</span>
+            </div>
+            <hr class="r-divider-dash"/>
+            <div class="r-center r-xs" style="color:#555;margin-top:4px;line-height:1.5">
+              Thank you for dining with us!<br>Visit again soon
+            </div>
+          </div>
+        </div>
+        <div style="padding:8px 12px;background:var(--white);border-top:1px solid var(--border);font-size:10px;color:var(--gray);text-align:center">
+          Preview updates as you edit style settings above
+        </div>
+      </div>
+
+    </div>
+
+    <div class="save-bar">
+      <div class="save-bar-inner">
+        <span style="font-size:11px;color:var(--gray)">All changes saved</span>
+        <button class="btn btn-green" disabled style="opacity:.5" data-testid="printer-config-save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div style="padding:20px 32px;text-align:center;font-size:11px;color:#9CA3AF">
+  BATCH-09 Design Approval · CR-160, CR-161, CR-167, CR-169 · MyGenie POS v5.x
+</div>
+
+</body>
+</html>
