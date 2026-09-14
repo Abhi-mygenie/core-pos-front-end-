@@ -195,6 +195,8 @@ All money values: **decimal string or number with 2 dp, ex-GST, INR.** FE will n
 
 Owner explicitly asked: *"re-evaluate all cases like advance booking from OTA, left check-in — so a payment type or some key should be there so we get this info."* Each reservation must carry **two** independent keys, and the aggregation groups by them.
 
+> **Owner wording rule (2026-09-16):** in the UI, `room_revenue_booked` is labelled **"Sales"** (room-nights sold — OTA prepaid, partially paid and pay-at-hotel alike) and `room_revenue_collected` is labelled **"Revenue"** (money actually received). "Sales and revenue are two different things; both need to be shown." Backend key names may stay as-is.
+
 ### 5a. `payment_mode` (how the money arrives) — enum
 
 | Value | Rule | Booked vs Collected behaviour |
