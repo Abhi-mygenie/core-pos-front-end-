@@ -1,3 +1,4 @@
+**Last Updated:** 2026-09-15 — **FULL SESSION CLOSED.** Handover: `handover/SESSION_HANDOVER_2026_09_15_FULL_SESSION_CLOSE.md`. 12 bugs implemented (BUG-400..416). 4 parked/blocked (BUG-404/408/412/413). 3 backend briefs filed. Registry: 673 items. BUG-412 investigation: advance stored correctly in live orders, likely resolved via BUG-411 fix. BUG-413 investigation: WalkIn pah FIXED, MG-69 Direct bookings pah still False (backend partial fix). Next: owner shares BUG-412 related issues for investigation.
 # Layer 1 — Control Dashboard
 
 **Status:** POPULATED
