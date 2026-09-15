@@ -87,8 +87,10 @@ Links go to `/reports/room-orders` / `/reports/rooms`; no per-guest page.
 - Structured `booking_details.*` parse — raw string only; use `reservation` for structured OTA fields
 - `room_payment_summary.gst_tax`
 
-### Print path — STILL DEFERRED
-Q-364P-01, 08, 09, 10, 13, 15 (`order-temp-store` / `rtype='RM'` template) deferred to next BE ship. FE data path unblocked; print folio layout blocked.
+### Print path — SPLIT TO CR-364-PRINT (2026-09-14)
+Q-364P-01, 08, 09, 10, 13, 15 (`order-temp-store` / `rtype='RM'` template) scoped out of CR-364 into **CR-364-PRINT** (registered 2026-09-14). CR-364 data path is fully unblocked. Print folio ships separately once BE answers those 6 questions.
+- Intake doc: `change_requests/CR-364-PRINT_PMS_FOLIO_PRINT_TEMPLATE_INTAKE.md`
+- Status: BACKEND-BLOCKED, parked
 
 ---
 
@@ -114,7 +116,9 @@ Q-364P-01, 08, 09, 10, 13, 15 (`order-temp-store` / `rtype='RM'` template) defer
 | `App.js` | +1 route `/pms/folio/:orderId` |
 | `pages/pms/InHouseGuestsPage.jsx`, `DeparturesPage.jsx`, `ReservationsPage.jsx` | link re-points (OD-364-03) |
 
-Files NOT touched: CollectPaymentPanel.jsx, PmsCheckoutDrawer.jsx (embedded as-is), orderTransform.js, roomService.js, printing templates.
+Files NOT touched: CollectPaymentPanel.jsx, PmsCheckoutDrawer.jsx (embedded as-is), **orderTransform.js** (print extension scoped to CR-364-PRINT), roomService.js, printing templates.
+
+**Scope lock (data path only):** This CR builds the folio VIEW page + actions. Print payload extension is CR-364-PRINT (BACKEND-BLOCKED, parked).
 
 ---
 
@@ -177,7 +181,7 @@ Wrong fields now return **422** (not 403). Route is live, no permission change n
 
 ## Gate status
 - [x] Gate 0/1 — Intake ✅ FULLY CLOSED (all 5 ODs resolved 2026-09-14)
-- [ ] Gate 2 — Impact Analysis (UNBLOCKED — ready to proceed)
+- [ ] Gate 2 — Impact Analysis (UNBLOCKED — data path only; print scoped to CR-364-PRINT)
 - [ ] Gate 3 / 4
 
 *Intake: 2026-09-04 | Updated: 2026-09-11 — BUG-384 RESOLVED, room-payment contract confirmed | Updated: 2026-09-16 — CIB comparison, CR-363/366 gap analysis, print field spec + backend brief filed, OD-01/02 frozen | Updated: 2026-09-14 — OD-03 (re-point), OD-04 (drill-down), OD-05 (no FE limit) FROZEN. Intake FULLY CLOSED. Gate 2 UNBLOCKED. BE reply: get-single-order-new enriched (Q-364P-02..07+14 answered). Print deferred (Q-364P-01/08/09/10/13/15). | Code reality: PARTIAL | Duplicate: RELATED (CR-360, CR-358-P4 placeholders); DISTINCT from CR-131 (CIB), CR-363 (Night Audit), CR-366 (Revenue) | Blast radius: MEDIUM | Risk: HIGH | **DATA PATH UNBLOCKED — PRINT DEFERRED***
