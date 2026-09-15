@@ -23769,7 +23769,7 @@
       "sprint_key": "pos_pms_1",
       "id": "BUG-389",
       "title": "PMS Room GST: slab2.min=7500.01 causes ₹7,500 exact to hit 5% slab (should be 18%)",
-      "status": "INTAKE — BACKEND-BLOCKED",
+      "status": "INTAKE — BACKEND-BLOCKED. RE-VALIDATED 2026-09-14: slab2.min=7500.01 STILL PRESENT. Backend fix NOT applied. ₹7,500 exact still hits 5% slab (should be 18%). FE code correct. Awaiting backend config update.",
       "files": "None (backend config fix)",
       "notes": "P1 HIGH. Backend slab config for RID 69 has slab2.min=7500.01 instead of 7500. FE code correct given data. Backend brief required. OD-389-01/02 open. Related: BUG-386, BUG-388.",
       "artifact_refs": [
@@ -23791,7 +23791,14 @@
       ],
       "completeness": "1/7",
       "category": "IN_PROGRESS",
-      "gate": 1
+      "gate": 1,
+      "status_history": [
+        {
+          "date": "2026-09-14",
+          "status": "RE-VALIDATED — STILL NOT FIXED",
+          "note": "API probe 2026-09-14: slab2.min=7500.01 unchanged from original 2026-09-09 probe. FE simulation confirms ₹7,500 hits 5% (wrong). GST undercharged by ₹975/room/night at exact ₹7,500. Backend fix still required: change slab2.min from 7500.01 to 7500. Evidence: evidence/BUG-GST-7500/room_gst_slabs_revalidation_2026_09_14.json"
+        }
+      ]
     },
     {
       "id": "CR-374",
