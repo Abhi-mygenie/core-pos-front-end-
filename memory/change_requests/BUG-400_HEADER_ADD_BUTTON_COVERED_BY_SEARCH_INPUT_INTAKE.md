@@ -66,7 +66,8 @@ Either fix is ≤2 lines, 1 file, non-financial, not a hotspot — Fast Lane eli
 
 | OD | Question |
 |---|---|
-| OD-400-01 | Confirm Fast Lane approval — Option A (`overflow-hidden` on container) or Option B (`min-w-0` on input)? |
+| OD-400-01 | Fast Lane approval — Option A (`overflow-hidden` on container) or Option B (`min-w-0` on input)? |
+| OD-400-02 | **F-05 (from regression):** Room Orders Y-axis ticks show colliding values (e.g. "₹1k ₹1k ₹1k ₹0k") on low-value ranges. Fix the tick formatter precision, or ship as-is? |
 
 ---
 

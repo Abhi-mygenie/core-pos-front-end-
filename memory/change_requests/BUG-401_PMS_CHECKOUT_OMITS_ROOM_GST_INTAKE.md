@@ -110,7 +110,9 @@ const roomGstTax = detail.roomInfo?.gstTax ?? 0;
 | OD | Question |
 |---|---|
 | OD-401-01 | **Gate 3 GO** — fix is clear (2-line FE change). Approve IMPLEMENTATION? |
-| OD-401-02 | **Folio balance display**: Should "Total Balance Due" on GuestFolioPage show ₹1,000 (backend `remaining_room_balance`) or ₹1,050 (room balance + GST)? If ₹1,050, FE must add GST to balance — R6 owner approval required. OR backend must fix `remaining_room_balance` to include GST. |
+| OD-401-02 | **Folio balance display**: Should "Total Balance Due" on GuestFolioPage show ₹1,000 (backend `remaining_room_balance`) or ₹1,050 (room price + GST)? R6 owner approval required if FE computes the sum. |
+| OD-401-03 | **F-04 (from regression):** Night Audit and Revenue Dashboard pages have no Sidebar and no Back button. All other PMS pages include the Sidebar. Add Sidebar + Back button to both pages, or keep shell-less? |
+| OD-401-04 | **F-06 (from regression):** Revenue Dashboard fires 2 identical API requests on first open (double-fetch on mount). Fix the double-fetch, or ship as-is (no visible impact to user)? |
 
 ---
 

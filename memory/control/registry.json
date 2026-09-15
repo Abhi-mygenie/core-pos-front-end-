@@ -24874,7 +24874,7 @@
       "id": "BUG-400",
       "title": "Header \"Add\" button covered by search input — pointer clicks intercepted",
       "type": "BUG",
-      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10 F-01. P1 MEDIUM. Fast Lane eligible pending OD-400-01. Awaiting owner fix option approval.",
+      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10. P1 MEDIUM. Fast Lane eligible. OD-400-01: fix option (A/B). OD-400-02: Room Orders axis ticks (F-05). Both ODs OPEN — awaiting owner answers before Gate 2.",
       "priority": "P1",
       "risk": "MEDIUM",
       "gate": 1,
@@ -24901,6 +24901,11 @@
           "date": "2026-09-15",
           "status": "INTAKE",
           "note": "QA-FOUND BATCH-10 F-01. Playwright: pointer click at Add button centre intercepted by search-input. JS click works → CSS hit-target overlap. Fix: overflow-hidden or min-w-0 on container/input. Fast Lane eligible."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "INTAKE UPDATED — ODs mapped",
+          "note": "OD-400-01 (Fast Lane fix option) + OD-400-02 (F-05 Room Orders axis ticks) registered. Owner to answer before Gate 2 impact analysis."
         }
       ]
     },
@@ -24908,7 +24913,7 @@
       "id": "BUG-401",
       "title": "PMS Checkout omits room_gst_tax payload field; Guest Folio balance understates by GST",
       "type": "BUG",
-      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10 F-02. P0 BLOCKER CRITICAL R6. get-single-order-new room_payment_summary has no gst_tax. roomGstTax=0. room_gst_tax never sent in checkout payload. Night Audit shows room_gst_collected=0. Awaiting OD-401-01+02.",
+      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10. P0 BLOCKER CRITICAL R6. OD-401-01: Gate 3 GO. OD-401-02: Folio balance (R6). OD-401-03: Sidebar/Back on Night Audit + Revenue (F-04). OD-401-04: Revenue Dashboard double-fetch (F-06). All 4 ODs OPEN — awaiting owner answers before Gate 2.",
       "priority": "P0",
       "risk": "CRITICAL",
       "gate": 1,
@@ -24935,6 +24940,11 @@
           "date": "2026-09-15",
           "status": "INTAKE",
           "note": "QA-FOUND BATCH-10 F-02. PmsCheckoutDrawer reads roomPaymentSummary.gstTax but get-single-order-new never returns gst_tax in room_payment_summary. gstTax=0 always. Fix: add room_info.gst_tax directly to roomInfo mapping in orderTransform + read it in PmsCheckoutDrawer. OD-401-02 needed: folio balance display (R6 decision)."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "INTAKE UPDATED — ODs mapped",
+          "note": "OD-401-01 (Gate 3 GO), OD-401-02 (Folio balance R6), OD-401-03 (F-04 sidebar/back on CR-363+CR-366), OD-401-04 (F-06 Revenue double-fetch) all registered. Owner to answer before Gate 2."
         }
       ]
     }
