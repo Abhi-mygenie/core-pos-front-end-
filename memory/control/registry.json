@@ -25332,7 +25332,7 @@
       "id": "BUG-419",
       "title": "New Check-In Form: Corporate/B2B Billing Field in Wrong Position",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P2",
       "risk": "LOW",
       "sprint_key": "pos_pms_2",
@@ -25342,13 +25342,14 @@
         "CR-379"
       ],
       "batch": "BATCH-2 (Check-in UX)",
-      "batch_id": "BATCH-PMS2-2"
+      "batch_id": "BATCH-PMS2-2",
+      "impact_analysis": "impact/BATCH_PMS2_2_BUG420_419_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-420",
       "title": "Old Check-In Modal: Returning Guest ID Document Not Visible (CR-129 Gap)",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_2",
@@ -25359,7 +25360,8 @@
         "CR-380"
       ],
       "batch": "BATCH-2 (Check-in UX)",
-      "batch_id": "BATCH-PMS2-2"
+      "batch_id": "BATCH-PMS2-2",
+      "impact_analysis": "impact/BATCH_PMS2_2_BUG420_419_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-421",
