@@ -55,3 +55,17 @@ Remove `Math.max(0, ...)` clamp once Gate 2 plan approved — excess advance pos
 - `CollectPaymentPanel.jsx` and `orderTransform.js` are **hotspot R5 files** — require explicit file-level plan
 - Credit module exists (`creditService.js`) — no new endpoint needed, just call add-credit
 - `Math.max(0, ...)` clamp on roomBalance must be REMOVED once formula change is confirmed
+
+---
+
+## OD-357-PARK — PARKED 15 DAYS (2026-09-14)
+
+| Field | Value |
+|---|---|
+| **Decision date** | 2026-09-14 |
+| **Owner instruction** | "Park for 15 days — no advance being taken currently, no impact" |
+| **Rationale** | Hotel does not take room advances at check-in. Probe confirmed `advance_payment = 0.00` on live in-house order (order 1232245). `+ Pay` button interim-disabled at `CartPanel.jsx:1484` → staff see ₹0 balance → zero operational impact. F&B during stay goes through normal food order path (SRM), completely separate from `+ Pay` flow. |
+| **Priority change** | P1 → **P2** (no active user pain) |
+| **Re-evaluate** | ~2026-09-29. Trigger: hotel starts taking advances at check-in → restore P1 → proceed to Gate 2. |
+| **Gate 2 status** | READY — all 7 ODs resolved (OD-7 answered 2026-09-14). No blockers when owner decides to proceed. |
+| **NECR** | None — CR-363 / CR-364 / CR-365 / CR-366 all explicitly scope out CartPanel.jsx and CollectPaymentPanel.jsx |

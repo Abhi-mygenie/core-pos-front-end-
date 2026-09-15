@@ -21961,8 +21961,8 @@
       "id": "CR-357",
       "type": "CR",
       "title": "Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow",
-      "status": "INTAKE — OD-7 ANSWERED 2026-09-14 (Q-366-06): remaining_room_balance = room component ONLY (excl F&B). Night-audit endpoint will split room_balance vs fnb_balance separately. INTERIM FIX active (+ Pay button disabled). Gate 2 unblocked pending owner Gate 4 GO on implementation path.",
-      "priority": "P1",
+      "status": "PARKED — 15 DAYS (2026-09-14). Hotel not taking room advances currently (advance_payment=0 confirmed). +Pay button interim-disabled has zero operational impact. Re-evaluate ~2026-09-29. Gate 2 READY when owner decides to proceed — all 7 ODs resolved.",
+      "priority": "P2",
       "risk": "HIGH",
       "sprint_key": "pos_5_1",
       "created": "2026-09-02",
@@ -21977,7 +21977,8 @@
         "OD-4": "Excess advance -> credit account",
         "OD-5": "Negative credit allowed",
         "OD-6": "Dashboard card shows advance + balance while running",
-        "OD-7": "OPEN — backend must confirm remaining_room_balance scope"
+        "OD-7": "OPEN — backend must confirm remaining_room_balance scope",
+        "OD-357-PARK": "PARKED 15 days from 2026-09-14. Hotel does not use advances now. No NECR. Re-evaluate 2026-09-29."
       },
       "artifact_refs": [
         "change_requests/CR-357_ROOM_ADVANCE_FULL_BILL_DEDUCTION_INTAKE.md",
@@ -21993,6 +21994,11 @@
           "date": "2026-09-14",
           "status": "OD-7 ANSWERED",
           "note": "Q-366-06 (BE reply 2026-09-14): remaining_room_balance = room-only, excl F&B. Night-audit splits room_balance + fnb_balance. FE must handle food balance separately. + Pay button interim-disabled pending Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "PARKED — 15 DAYS",
+          "note": "Owner decision: hotel not taking room advances (advance_payment=0 confirmed from probe). +Pay button disabled has no impact. F&B during stay is separate SRM flow. Priority P1→P2. Re-evaluate ~2026-09-29. Gate 2 ready when needed."
         }
       ]
     },

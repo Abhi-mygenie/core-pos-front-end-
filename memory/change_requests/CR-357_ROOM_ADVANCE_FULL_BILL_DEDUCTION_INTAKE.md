@@ -1,5 +1,5 @@
 # CR-357 INTAKE — Room Advance Payment: Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow
-**Date:** 2026-09-02 | **Priority:** P1 | **Risk:** HIGH | **Status:** INTAKE — OWNER DECISIONS FROZEN
+**Date:** 2026-09-02 | **Priority:** P2 (downgraded — see OD-357-PARK) | **Risk:** HIGH | **Status:** PARKED — 15 DAYS (2026-09-14)
 
 ---
 
@@ -15,7 +15,24 @@ Owner decisions frozen 2026-09-02.
 
 ---
 
-## Owner Decisions Frozen (2026-09-02)
+## OD-357-PARK — PARKED 15 DAYS (2026-09-14)
+
+**Owner decision:** CR-357 parked for ~15 days from 2026-09-14.
+
+**Rationale (owner-stated + probe-confirmed):**
+- Room advance is taken **at check-in only**. Whatever happens during the stay goes to food (SRM orders).
+- This hotel is **not currently taking room advances** — probe confirmed `advance_payment = 0.00` on live order 1232245.
+- With no advance in use, the `+ Pay` button (interim-disabled at CartPanel.jsx:1484) shows ₹0 balance — staff have nothing to interact with regardless.
+- **Zero operational impact** for the next 15 days.
+
+**Priority downgraded:** P1 → P2 (no active user pain while advances not in use).
+
+**Re-enable trigger:** When hotel begins taking room advances at check-in, this CR becomes P1 again. Gate 2 Impact Analysis is fully unblocked (all 7 ODs resolved including OD-7).
+
+**Re-evaluate date:** ~2026-09-29
+
+---
+
 
 | # | Decision | Value |
 |---|---|---|

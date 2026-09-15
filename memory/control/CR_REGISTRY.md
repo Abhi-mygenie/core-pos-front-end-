@@ -84,7 +84,7 @@ Owner decisions 2026-09-04: priorities/risks agreed ("will review later"); **FUL
 
 | CR ID | Title | Priority | Risk | Status | Gate | Notes |
 |---|---|---|---|---|---|---|
-| **CR-357** | **Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow** | **P1** | **HIGH** | **OD-7 ANSWERED 2026-09-14 (Q-366-06): `remaining_room_balance` = room-only (excl F&B). Night-audit will split `room_balance` + `fnb_balance`. INTERIM FIX active (`+ Pay` button disabled). Gate 2 ready pending owner Gate 4 GO.** | 1 | All 7 ODs now resolved. Gate 2 unblocked. `BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md` Q-357-01 partially answered by Q-366-06. |
+| **CR-357** | **Room Advance — Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow** | **P1** | **HIGH** | **PARKED — 15 DAYS (2026-09-14). Hotel not taking room advances (advance_payment=0 confirmed). `+Pay` disabled has zero operational impact. Priority P1→P2. Re-evaluate ~2026-09-29. Gate 2 READY (all 7 ODs resolved) when owner decides to proceed.** | 1 | All 7 ODs now resolved. Gate 2 unblocked. `BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md` Q-357-01 partially answered by Q-366-06. |
 
 ---
 
