@@ -358,7 +358,7 @@ function BlockPopover({ popover, popRef, setPopover, navigate, onNoShow, onCance
         )}
         {kind === 'in_house' && line.orderId && (
           <button data-testid="tc-popover-folio-btn"
-            onClick={() => { setPopover(null); navigate('/reports/rooms'); }}
+            onClick={() => { setPopover(null); navigate(`/pms/folio/${line.orderId}`); }} // CR-364
             className="px-3 py-1.5 rounded-md text-[11px] font-medium border border-[#F26B33] text-[#F26B33] hover:bg-[#FFF7ED] transition-colors flex items-center gap-1">
             <FileText className="w-3 h-3" />View Folio
           </button>

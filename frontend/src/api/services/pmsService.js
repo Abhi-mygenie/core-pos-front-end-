@@ -6,7 +6,7 @@ import roomListTransform from '../transforms/roomListTransform';
 import { getLocalReservations, getAiosellRooms, getAiosellStatus, fetchReservations, pushInventory,
          getRates, pushRates, pushInventoryRestrictions, pushRateRestrictions, markNoShow } from './aiosellService'; // BUG-378, CR-358-P2, CR-358-P3, CR-358-P5
 import api from '../axios';                                        // CR-358-P2
-import { AIOSELL_ENDPOINTS } from '../constants';                  // CR-358-P2
+import { AIOSELL_ENDPOINTS, API_ENDPOINTS } from '../constants';                  // CR-358-P2; CR-364: +API_ENDPOINTS
 import aiosellTransform from '../transforms/aiosellTransform';     // CR-358-P2
 import roomStatusTransform, { ROOM_MANUAL_STATUSES } from '../transforms/roomStatusTransform'; // CR-358-P4
 const to2dp = (v) => Number(Number(v ?? 0).toFixed(2));            // CR-358-P2
@@ -459,4 +459,20 @@ export const getRevenueSummary = async ({ startDate, endDate, groupBy }) => {
     params: { start_date: startDate, end_date: endDate, group_by: groupBy },
   });
   return res.data?.data ?? null;
+};
+
+// ─── CR-364 — Guest Folio ────────────────────────────────────────────────────
+/** Fetch full stay detail for the Guest Folio page.
+ *  Reuses same endpoint + unwrap as PmsCheckoutDrawer (L78-111).
+ *  @param {number|string} orderId  Room order id
+ */
+export const getGuestFolio = async (orderId) => {
+  const res = await api.post(API_ENDPOINTS.SINGLE_ORDER_NEW, { order_id: Number(orderId) });
+  return (
+    res?.data?.orders?.order_details_order                              ||
+    res?.data?.order_details_order                                      ||
+    (Array.isArray(res?.data?.orders) ? res.data.orders[0] : null)     ||
+    res?.data?.orders                                                   ||
+    null
+  );
 };

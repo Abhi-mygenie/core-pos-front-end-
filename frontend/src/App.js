@@ -106,6 +106,7 @@ import ReservationsPage    from './pages/pms/ReservationsPage'; // CR-358-P4
 import RoomStatusPage      from './pages/pms/RoomStatusPage';   // CR-358-P4
 import NightAuditPage      from './pages/pms/NightAuditPage';      // CR-363
 import RevenueDashboardPage from './pages/pms/RevenueDashboardPage'; // CR-366
+import GuestFolioPage      from './pages/pms/GuestFolioPage';          // CR-364
 
 // Sync browser tab title with restaurant context.
 // Falls back to "MyGenie POS" before login / when restaurant has no name.
@@ -266,6 +267,7 @@ function App() {
               <Route path="/pms/room-status"     element={<ProtectedRoute><RoomStatusPage /></ProtectedRoute>} />   {/* CR-358-P4 */}
               <Route path="/pms/night-audit"     element={<ProtectedRoute><NightAuditPage /></ProtectedRoute>} />      {/* CR-363 */}
               <Route path="/pms/revenue"         element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} /> {/* CR-366 */}
+              <Route path="/pms/folio/:orderId"   element={<ProtectedRoute><GuestFolioPage /></ProtectedRoute>} />       {/* CR-364 */}
             </Routes>
           </BrowserRouter>
           <Toaster />

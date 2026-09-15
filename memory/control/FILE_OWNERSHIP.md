@@ -1273,3 +1273,10 @@
 | `api/services/pmsService.js` | +getNightAudit +getRevenueSummary (L448-462) | CR-363+CR-366 2026-09-14 |
 | `App.js` | +2 imports (L107-108) +2 routes (L267-268) | CR-363+CR-366 2026-09-14 |
 | `components/layout/Sidebar.jsx` | +pms-night-audit +pms-revenue children (L243-244, SC ack done) | CR-363+CR-366 2026-09-14 |
+| `pages/pms/GuestFolioPage.jsx` | NEW — dual-col folio page, Option Set C, Check Out + disabled Print Folio | CR-364 2026-09-14 |
+| `api/transforms/folioTransform.js` | NEW — pure transform, pass-through money (R6), calcNights date math | CR-364 2026-09-14 |
+| `api/services/pmsService.js` | +getGuestFolio +API_ENDPOINTS import (L9, L469) | CR-364 2026-09-14 |
+| `App.js` | +GuestFolioPage import +/pms/folio/:orderId route (L109, L270) | CR-364 2026-09-14 |
+| `pages/pms/InHouseGuestsPage.jsx` | L169 View Bill re-point → /pms/folio/${row.parentOrderId} | CR-364 2026-09-14 |
+| `pages/pms/DeparturesPage.jsx` | L240 Receipt btn re-point → /pms/folio/${row.orderId} | CR-364 2026-09-14 |
+| `pages/pms/ReservationsPage.jsx` | L361 Tape Chart View Folio re-point → /pms/folio/${line.orderId} | CR-364 2026-09-14 |

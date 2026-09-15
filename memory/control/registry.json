@@ -22725,10 +22725,10 @@
       "id": "CR-364",
       "title": "PMS — Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
       "type": "CR",
-      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). 7 files (2 NEW + 5 MOD). 20 verification checks. All ODs + design decisions locked. Awaiting Gate 4 GO.",
+      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 2 NEW + 5 MOD. Webpack 0 new warnings. Live on preprod — guest name, room charges, split balance, actions all render correctly. Bug fixed: API_ENDPOINTS missing import. Awaiting QA.",
       "priority": "P1",
       "risk": "HIGH",
-      "gate": 3,
+      "gate": 5,
       "completeness": "1/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > In-House (S6) / Departures (S10) / Tape Chart (S2)",
@@ -22823,6 +22823,11 @@
           "date": "2026-09-14",
           "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
           "note": "Plan at plans/CR-364_IMPLEMENTATION_PLAN.md. 7 edits: GuestFolioPage (NEW), folioTransform (NEW), pmsService (+getGuestFolio), App.js (+route), 3 re-points. OD-364-C1=RecordPayment PARKED, C3=OptionSetC, C4=MealPlan. 20 verification checks. Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "IMPLEMENTED",
+          "note": "Gate 5a: GuestFolioPage.jsx (NEW) + folioTransform.js (NEW) + pmsService.js (+getGuestFolio + API_ENDPOINTS import fix) + App.js (+route) + 3 re-points. Bug fixed during self-test: API_ENDPOINTS not imported in pmsService. Live: Test Guest GST, Room ₹8000, GST ₹1440, split balance, Check Out + Print Folio (disabled). Option Set C dual-column layout confirmed."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — read-only folio OK; pos/room-payment 403 (OG-PMS-014); F&B transfer list empty.",
