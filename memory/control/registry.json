@@ -25135,6 +25135,29 @@
       "registered": "2026-09-15",
       "notes": "orderRoom is a single total (\u20b916,888 in probe). No cash/UPI/card split anywhere in API response for food on room tab. Needs new field from backend (e.g. room_food_revenue: {Room Cash, Room Card, Room UPI}). Owner question: do you want food-on-room split included in the combined Room section? OD-409-01 open.",
       "backend_brief": "backend_briefs/BACKEND_BRIEF_BUG409_ROOM_FOOD_PAYMENT_SPLIT_2026_09_15.md"
+    },
+    {
+      "id": "CR-384",
+      "type": "CR",
+      "title": "Channel Manager \u2014 Add default rateplan selector per room (supports rate auto-fill at booking)",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED (waiting on BACKEND_BRIEF_RATE_AUTOFILL Q1/Q2)",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "AGENT-DISCOVERED",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "duplicate_check": "DISTINCT",
+      "files": [
+        "ChannelManagerPage.jsx",
+        "pmsService.js",
+        "NewBookingPage.jsx",
+        "CheckInPage.jsx"
+      ],
+      "registered": "2026-09-15",
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_RATE_AUTOFILL_2026_09_15.md",
+      "notes": "ChannelManagerPage hardcodes aiosellRateplanCode: null. Once backend confirms persistence of aiosell_rateplan_code, add rateplan dropdown in Channel Manager + auto-fill rate in New Booking / Check-In on room selection + date."
     }
   ],
   "meta": {
