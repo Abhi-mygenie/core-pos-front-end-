@@ -25031,7 +25031,7 @@
       "title": "Daily Report \u2014 cancel_revenue key mismatch: FE reads \"Pre-Serve\"/\"Post-Serve\" but API returns \"Preparing\"/\"Serve\"",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE \u2014 GATE 1",
+      "status": "GATE_5A_IMPLEMENTED",
       "gate": 1,
       "sprint_key": "pos_pms_1",
       "source": "OWNER-REPORTED",
@@ -25039,7 +25039,7 @@
         "reportService.js"
       ],
       "registered": "2026-09-15",
-      "notes": "reportService:L465 reads cancel_revenue[\"Pre-Serve\"] and [\"Post-Serve\"]. OLD POS shows \"Preparing\"/\"Serve\". API likely returns those keys \u2192 FE shows \u20b90. Fix: add fallback to both key names."
+      "notes": "reportService:L465 reads cancel_revenue[\"Pre-Serve\"] and [\"Post-Serve\"]. OLD POS shows \"Preparing\"/\"Serve\". API likely returns those keys \u2192 FE shows \u20b90. Fix: add fallback to both key names. | FE fix applied 2026-09-15: fallback reads both key names. Backend contract inconsistency (uses order status names as keys) still present \u2014 no backend brief filed yet."
     },
     {
       "id": "BUG-406",
@@ -25072,6 +25072,67 @@
       ],
       "registered": "2026-09-15",
       "notes": "occupied action block: HK button disabled with title=\"Cannot change while occupied\". Owner confirms occupied rooms should be able to call for HK. Fix: enable HK button \u2192 patchRoomStatus(id, \"hk\") \u2192 backend sets manual_status=hk \u2192 display_status=occupied_hk."
+    },
+    {
+      "id": "CR-383",
+      "type": "CR",
+      "title": "Daily Report \u2014 Room food orders (orderRoom) excluded from Running Orders card",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "duplicate_check": "DISTINCT",
+      "files": [
+        "OrderSummaryPage.jsx",
+        "reportService.js"
+      ],
+      "registered": "2026-09-15",
+      "open_decisions": [
+        "OD-383-01 (design: combine orderRoom into Running card or keep separate?)"
+      ],
+      "notes": "API: running_order excludes room food orders by design. orderRoom (\u20b916,888 confirmed in probe) lives in separate Room section. Gate 2 blocked on OD-383-01."
+    },
+    {
+      "id": "BUG-408",
+      "type": "BUG",
+      "title": "Daily Report \u2014 Room settlement Cash/Card/UPI always \u20b90 despite non-zero Room Total (backend not populating sub-fields)",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED + AGENT-DISCOVERED",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "duplicate_check": "DISTINCT",
+      "files": [
+        "reportService.js (read-only \u2014 backend must fix)"
+      ],
+      "registered": "2026-09-15",
+      "notes": "Probe confirmed: room_revenue Room Total=\u20b984,610 but Room Cash=\u20b90, Room Card=\u20b90, Room UPI=\u20b90. Backend aggregates the total but does not distribute by payment method. FE cannot fix \u2014 backend brief needed. Related G1 of investigation INV_DAILY_REPORT_PMS_GAPS_2026_09_15.md"
+    },
+    {
+      "id": "BUG-409",
+      "type": "BUG",
+      "title": "Daily Report \u2014 Room food orders (orderRoom) have no cash/UPI/card breakdown \u2014 field does not exist in API",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "duplicate_check": "DISTINCT",
+      "files": [
+        "reportService.js (new field needed when backend ships)"
+      ],
+      "registered": "2026-09-15",
+      "notes": "orderRoom is a single total (\u20b916,888 in probe). No cash/UPI/card split anywhere in API response for food on room tab. Needs new field from backend (e.g. room_food_revenue: {Room Cash, Room Card, Room UPI}). Owner question: do you want food-on-room split included in the combined Room section? OD-409-01 open."
     }
   ],
   "meta": {
