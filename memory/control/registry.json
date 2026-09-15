@@ -25367,7 +25367,7 @@
       "id": "BUG-421",
       "title": "In-House Page: Balance Column Shows Booking Total, Not Outstanding Balance",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_2",
@@ -25378,7 +25378,8 @@
         "CR-360"
       ],
       "batch": "BATCH-3 (Data Layer)",
-      "batch_id": "BATCH-PMS2-3"
+      "batch_id": "BATCH-PMS2-3",
+      "impact_analysis": "impact/BATCH_PMS2_3_BUG421_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-422",
