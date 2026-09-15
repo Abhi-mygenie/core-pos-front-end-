@@ -1,3 +1,13 @@
+# BUG-389 — CLOSED: NOT A BUG
+
+**Status:** CLOSED — Working as designed (2026-09-14)
+
+**Owner clarification (2026-09-14):** `slab2.min = 7500.01` is intentional. Rooms priced at exactly ₹7,500/night are taxed at 5%. Rooms at ₹7,500.01+ are taxed at 18%. No dead zone. No config error.
+
+**Agent error:** Original investigation assumed Indian GST rule "≥₹7,500 = 18%", which is incorrect for this property's configuration.
+
+---
+
 # BUG-389 Intake — PMS Room GST: Slab Boundary ₹7,500 Hits 5% (slab2.min=7500.01)
 
 **ID:** BUG-389
