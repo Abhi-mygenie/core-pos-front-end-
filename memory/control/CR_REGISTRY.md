@@ -909,3 +909,39 @@ Owner decisions D1–D6 locked 2026-09-08. All 5 items are doc/tooling/security 
 - OD-381-03: Process action granularity — select items / process all / both?
 
 **Artifacts:** `change_requests/CR-381_PMS_LAUNDRY_MANAGEMENT_INTAKE.md`
+
+
+---
+
+## 2026-09-15 — QA BATCH PASS (BATCH-01 through BATCH-09, QA Agent)
+
+All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate 6 Owner Smoke.
+
+| ID | Batch | QA Result | Notes |
+|---|---|---|---|
+| CR-363 | BATCH-01 | ✅ 12/12 PASS | Ready Gate 6 |
+| CR-364 | BATCH-01 | ✅ 10/10 PASS | Ready Gate 6 |
+| CR-366 | BATCH-01 | ✅ 10/11 PASS | V-20 month-view deferred (no test data) |
+| BUG-374 | BATCH-02 | ✅ PASS | Smoke deferral: variation live test |
+| BUG-368 | BATCH-02 | ✅ PASS | Smoke deferral: cancelled reprint needs ruby account |
+| BUG-369 | BATCH-02 | ✅ PASS | Code-verified |
+| BUG-372 | BATCH-02 | ✅ PASS | Code-verified |
+| BUG-394 | BATCH-02 | ✅ 11/11 PASS | Code-verified |
+| BUG-376 | BATCH-03 | ✅ PASS | — |
+| BUG-371 | BATCH-03 | ✅ PASS | — |
+| BUG-395 | BATCH-03 | ✅ PASS | — |
+| CR-372-A | BATCH-03 | ✅ PASS | .env keys intentional (deployment agent) |
+| BUG-390 | BATCH-04 | ✅ PASS | — |
+| BUG-391 | BATCH-04 | ✅ PASS | — |
+| BUG-392 | BATCH-04 | ✅ PASS | — |
+| CR-373 | BATCH-04 | ✅ PASS | — |
+| CR-374 | BATCH-04 | ✅ PASS | — |
+| CR-140 | BATCH-05 | ✅ PASS | CR_REGISTRY.md row stale (CLOSURE to fix) |
+| BUG-294–302,308,309,340,347,348 | BATCH-05 | ✅ PASS | Code-verified |
+| BUG-170,236,297–300,311,314,316,318,321,322,SCAN-DEDUP | BATCH-06 | ✅ PASS | BUG-SCAN-DEDUP missing R18 marker |
+| CR-100,124,127,128 | BATCH-06 | ✅ PASS | Code-verified |
+| CR-132,133,139,141,146,150,155,157,159,160,161,165 | BATCH-07 | ✅ PASS | Code-verified |
+| BUG-209,292,293,310,315,317,320 + CR-129,131,136,148,167,169,170 + GAP-BULK-DEFAULTS | BATCH-08 | ✅ PASS | Code-verified |
+| BUG-325–327,351,352,357–361 + CR-348,349,350,351 | BATCH-09 | ✅ PASS | Code-verified |
+
+**BATCH-10 (Regression): ❌ FAIL — 53/56 PASS, 2 new bugs filed (BUG-400 MAJOR, BUG-401 BLOCKER). See `test_reports/QA_REPORT_BATCH10_2026_09_15.md`**

@@ -1344,3 +1344,32 @@ Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Imple
 - S2: Dynamically created "Room r2" (rtype=TB) passes free table filter → appears identical to Table 1/2/3 — no visual distinction
 **Blast radius:** SMALL (2 files: SplitRoomItemsModal.jsx + OrderEntry.jsx, ~13 lines)
 **Intake doc:** `change_requests/BUG-398_CR163_MOVE_ITEMS_PATH_B_HIDDEN_ROOM_TABLE_INDISTINGUISHABLE_INTAKE.md`
+
+---
+
+## 2026-09-15 — QA BATCH PASS (BATCH-02 through BATCH-09, QA Agent)
+
+All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agent on `15sepqa` branch.
+
+| Bug ID | Batch | QA Result | Notes |
+|---|---|---|---|
+| BUG-374 | BATCH-02 | ✅ QA PASS | Smoke deferral: live variation test needs variation-menu restaurant |
+| BUG-368 | BATCH-02 | ✅ QA PASS | Smoke deferral: T4 cancelled-order needs ruby account |
+| BUG-369 | BATCH-02 | ✅ QA PASS | Code-verified (print payload + profileTransform) |
+| BUG-372 | BATCH-02 | ✅ QA PASS | Code-verified (DashboardPage merge/transfer states) |
+| BUG-394 | BATCH-02 | ✅ QA PASS | 11/11 code-verified |
+| BUG-376 | BATCH-03 | ✅ QA PASS | — |
+| BUG-371 | BATCH-03 | ✅ QA PASS | — |
+| BUG-395 | BATCH-03 | ✅ QA PASS | — |
+| BUG-390 | BATCH-04 | ✅ QA PASS | — |
+| BUG-391 | BATCH-04 | ✅ QA PASS | — |
+| BUG-392 | BATCH-04 | ✅ QA PASS | — |
+| BUG-294,295,296,301,302,308,309,340,347,348 | BATCH-05 | ✅ QA PASS | Code-verified (older backlog) |
+| BUG-170,236,297,298,299,300,311,314,316,318,321,322 | BATCH-06 | ✅ QA PASS | Code-verified |
+| BUG-SCAN-DEDUP | BATCH-06 | ✅ QA PASS | NOTE: missing R18 code marker (flag Pre-Release Audit §F) |
+| BUG-209,292,293,310,315,317,320 | BATCH-08 | ✅ QA PASS | Code-verified |
+| BUG-325,326,327,351,352,357,358,359,360,361 | BATCH-09 | ✅ QA PASS | Code-verified |
+
+**BATCH-10 Regression NEW BUGS:**
+| BUG-400 | MAJOR (P1) | Header Add button covered by search input — filed, awaiting intake |
+| BUG-401 | BLOCKER (P0, CRITICAL R6) | PMS Checkout omits room_gst_tax; Folio balance excludes GST — filed, awaiting intake |

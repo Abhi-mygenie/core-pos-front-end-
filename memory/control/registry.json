@@ -14240,7 +14240,7 @@
       "title": "Variation upcharge (item.variation[].values[].optionPrice) missing from fallback subtotal loop",
       "risk": "MEDIUM",
       "priority": "P1",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "reported_by": "INVESTIGATION session 2026-07-08",
       "reported_at": "2026-07-08",
       "file": "orderTransform.js:1808-1826",
@@ -14248,7 +14248,14 @@
       "evidence": "/app/memory/evidence/BUG-168/order_940284.json (order #000334)",
       "impact_analysis": "/app/memory/impact/BATCH-04_IMPACT_ANALYSIS.md",
       "sprint_key": "pos_5_0",
-      "plan_doc": "memory/plans/BUG-170_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "memory/plans/BUG-170_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-171",
@@ -15301,7 +15308,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_0",
       "created_at": "2026-07-20",
       "intake_doc": "memory/change_requests/BUG-209_WEIGHT_DISPLAY_BILL_SUMMARY.md",
@@ -15312,7 +15319,14 @@
       "duplicate_check": "DISTINCT",
       "investigation_report": "memory/investigation/BUG-209_INVESTIGATION_REPORT_2026_08_20.md",
       "plan_doc": "memory/plans/BUG-209_IMPLEMENTATION_PLAN.md",
-      "gate": "Awaiting Gate 4 GO"
+      "gate": "Awaiting Gate 4 GO",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-210",
@@ -16267,7 +16281,7 @@
       "id": "BUG-236",
       "title": "Smart Purchase — Ad-hoc Typeahead Dropdown Clipped by overflow-hidden",
       "type": "BUG",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "LOW",
       "area": "Inventory → Smart Purchase → AutoShoppingList",
@@ -16284,7 +16298,14 @@
         "src/components/inventory/smart/AutoShoppingList.jsx"
       ],
       "notes": "overflow-hidden on card container clips absolute dropdown. 3 edits, ≤5 lines, 1 file.",
-      "gate": "5a"
+      "gate": "5a",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-237",
@@ -16350,7 +16371,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "0-1",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
@@ -16365,7 +16386,14 @@
         "intake": "change_requests/CR_100_SMART_PURCHASE_PARTIAL_PAYMENT_INTAKE.md",
         "backend_brief": "briefs/BACKEND_BLOCKERS_BRIEF_2026_07_22.html (§CR-100)"
       },
-      "notes": "Backend contract change needed: partial_payments array, payment_ref_id, notes per vendor PO, payment_status (paid/unpaid/partial). FE ready to implement once backend delivers. Mirrors Expense CR-083 split pattern."
+      "notes": "Backend contract change needed: partial_payments array, payment_ref_id, notes per vendor PO, payment_status (paid/unpaid/partial). FE ready to implement once backend delivers. Mirrors Expense CR-083 split pattern.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-101",
@@ -18187,7 +18215,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "MEDIUM-HIGH",
-      "status": "GATE 5a — IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_0",
       "gate": "5a complete — QA next",
       "completeness": "5/7",
@@ -18234,6 +18262,13 @@
         "src/contexts/AuthContext.jsx",
         "src/components/layout/Sidebar.jsx",
         "src/api/axios.js"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
       ]
     },
     {
@@ -18280,12 +18315,19 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_0",
       "files": [
         "components/cards/TableCard.jsx"
       ],
-      "notes": "Hide table.amount for isAggregator on TableCard header pill. 1 file, 2 lines. Fast Lane eligible."
+      "notes": "Hide table.amount for isAggregator on TableCard header pill. 1 file, 2 lines. Fast Lane eligible.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-293",
@@ -18293,12 +18335,19 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_0",
       "files": [
         "components/cards/OrderCard.jsx"
       ],
-      "notes": "Lazy useState initializer + useEffect for real-time. 1 file, 2 edits. Fast Lane."
+      "notes": "Lazy useState initializer + useEffect for real-time. 1 file, 2 edits. Fast Lane.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-126",
@@ -18317,7 +18366,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "files": [
         "api/services/roomService.js"
@@ -18328,7 +18377,14 @@
         "impact/CR-127_IMPACT_ANALYSIS.md",
         "plans/CR-127_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Room / Check-in"
+      "category": "Room / Check-in",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-128",
@@ -18336,7 +18392,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "files": [
         "api/transforms/customerTransform.js",
@@ -18348,7 +18404,14 @@
         "impact/CR-128_B2B_CUSTOMER_CRM_WIRING_IMPACT_ANALYSIS.md",
         "plans/CR-128_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "CRM / Customer"
+      "category": "CRM / Customer",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-294",
@@ -18356,7 +18419,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "gate": 5,
       "files": [
@@ -18368,7 +18431,14 @@
         "impact/BUG-294_IMPACT_ANALYSIS.md",
         "plans/BUG-294_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Order Entry / Customer"
+      "category": "Order Entry / Customer",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-129",
@@ -18376,7 +18446,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "gate": 5,
       "files": [
@@ -18390,7 +18460,14 @@
         "impact/CR-129_IMPACT_ANALYSIS.md",
         "plans/CR-129_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Room / Check-in / CRM"
+      "category": "Room / Check-in / CRM",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-295",
@@ -18398,7 +18475,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18410,7 +18487,14 @@
         "evidence/INV-003/INV-003_INVESTIGATION_REPORT.md",
         "evidence/INV-003/probe_results.json"
       ],
-      "category": "Room / Check-in / CRM"
+      "category": "Room / Check-in / CRM",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-296",
@@ -18418,7 +18502,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED — Gate 5a 2026-08-06",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18438,7 +18522,14 @@
         "evidence/BUG-296/orders_collect_bill_fresh.json",
         "investigation/BUG-296_INVESTIGATION_REPORT.md"
       ],
-      "category": "Reports / Insights"
+      "category": "Reports / Insights",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-130",
@@ -18468,7 +18559,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18483,7 +18574,14 @@
         "impact/BUG-297_IMPACT_ANALYSIS.md",
         "plans/BUG-297_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Menu Management / Printing"
+      "category": "Menu Management / Printing",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-298",
@@ -18491,7 +18589,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18505,7 +18603,14 @@
         "impact/BUG-298_BUG-299_IMPACT_ANALYSIS.md",
         "plans/BUG-298_BUG-299_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Order Entry / Complementary"
+      "category": "Order Entry / Complementary",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-299",
@@ -18513,7 +18618,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18528,7 +18633,14 @@
         "impact/BUG-298_BUG-299_IMPACT_ANALYSIS.md",
         "plans/BUG-298_BUG-299_IMPLEMENTATION_PLAN.md"
       ],
-      "category": "Order Entry / QSR / Complementary"
+      "category": "Order Entry / QSR / Complementary",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-131",
@@ -18536,7 +18648,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED — Gate 5a 2026-08-06",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18555,7 +18667,14 @@
         "investigation/CR-131_INVESTIGATION_REPORT.md",
         "impact/CR-131_IMPACT_ANALYSIS.md"
       ],
-      "category": "Reports / Customer / CRM"
+      "category": "Reports / Customer / CRM",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-300",
@@ -18563,7 +18682,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED Tier 2 — Gate 5a 2026-08-06",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18581,7 +18700,14 @@
         "plans/BUG-300-T2_IMPLEMENTATION_PLAN.md",
         "handover/QA_HANDOVER_BUG300_T2_2026_08_06.md"
       ],
-      "category": "CRM / Auth / Customer"
+      "category": "CRM / Auth / Customer",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-132",
@@ -18589,7 +18715,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED — AWAITING QA",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": 3,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18613,7 +18739,14 @@
         "handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md",
         "handover/SESSION_HANDOVER_2026_08_09_CR132_COMPARISON_PAGES.md"
       ],
-      "category": "Settings / Restaurant"
+      "category": "Settings / Restaurant",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-301",
@@ -18621,7 +18754,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED — Gate 5a 2026-08-06",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18636,7 +18769,14 @@
         "handover/BUG_FIX_REPORT_BUG301_2026_08_06.md",
         "handover/QA_HANDOVER_BUG301_2026_08_06.md"
       ],
-      "category": "Menu Management / Aggregator"
+      "category": "Menu Management / Aggregator",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-302",
@@ -18644,7 +18784,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED — Gate 5a 2026-08-06",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18657,7 +18797,14 @@
         "handover/BUG_FIX_REPORT_BUG302_2026_08_06.md",
         "handover/QA_HANDOVER_BUG302_2026_08_06.md"
       ],
-      "category": "Inventory / Recipe Management / PDF Export"
+      "category": "Inventory / Recipe Management / PDF Export",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-133",
@@ -18665,7 +18812,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED (Gap Batch) — AWAITING QA",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18695,7 +18842,14 @@
       "artifacts": [
         "plans/CR-133_GAP_BATCH_IMPLEMENTATION_PLAN.md"
       ],
-      "implemented_date": "2026-08-11"
+      "implemented_date": "2026-08-11",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-SCAN-DEDUP",
@@ -18703,7 +18857,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "files": [
         "api/transforms/restaurantSettingsTransform.js"
@@ -18711,6 +18865,13 @@
       "notes": "Backend dedup 2026-08-08 moved show_scan_popup from advanced to basic. Fixed fromAPI L97 + toAPI basic block. 2 lines.",
       "artifact_refs": [
         "handover/BUG_FIX_REPORT_SCAN_POPUP_2026_08_08.md"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
       ]
     },
     {
@@ -18898,7 +19059,7 @@
       "id": "CR-136",
       "type": "CR",
       "title": "Item Sales Ledger + Variation & Addon Sales Report",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_1",
       "risk": "MEDIUM",
       "priority": "P2",
@@ -18916,7 +19077,14 @@
         "impact": "impact/CR-136_IMPACT_ANALYSIS.md",
         "plan": "plans/CR-136_IMPLEMENTATION_PLAN.md",
         "mockup": "/cr136-item-sales-ledger-mockup.html"
-      }
+      },
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-137",
@@ -18970,13 +19138,20 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_0",
       "area": "Inventory > Stock Audit",
       "registered": "2026-08-13",
       "artifact_refs": [
         "change_requests/BUG-308_SUBRECIPE_ADDSTOCK_WRONG_ENDPOINT_INTAKE.md"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
       ]
     },
     {
@@ -18985,7 +19160,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Ingredients > Bulk Edit",
@@ -19000,6 +19175,13 @@
           "path": "memory/plans/BUG-309-311-314-320_INVENTORY_BATCH_IMPLEMENTATION_PLAN.md",
           "type": "implementation_plan"
         }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
       ]
     },
     {
@@ -19008,7 +19190,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Ingredients > Bulk Edit",
@@ -19023,6 +19205,13 @@
           "path": "memory/plans/BUG-309-311-314-320_INVENTORY_BATCH_IMPLEMENTATION_PLAN.md",
           "type": "implementation_plan"
         }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
       ]
     },
     {
@@ -19031,7 +19220,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED — QA pending (Gate 5a)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Ingredients > Add Form + Bulk Edit",
@@ -19079,7 +19268,14 @@
           "type": "implementation_plan_layer5"
         }
       ],
-      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15. | Layer 5 (bulk save disable on dup) + L5b (handleSave edited guard): IMPLEMENTED 2026-08-15."
+      "notes": "Layer 1B (Edit form typeahead) + Layer 4 (Bulk Edit typeahead): Gate 3 complete, awaiting Gate 4 GO. | Layer 1B (edit form) + Layer 4 (bulk edit): IMPLEMENTED 2026-08-15. | Layer 5 (bulk save disable on dup) + L5b (handleSave edited guard): IMPLEMENTED 2026-08-15.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-312",
@@ -19117,7 +19313,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_0",
       "area": "Inventory > Navigation + Sub-Recipe Stock",
@@ -19132,6 +19328,13 @@
       "absorbs": [
         "BUG-312",
         "BUG-313"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
       ]
     },
     {
@@ -19140,7 +19343,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Inventory Setup",
@@ -19170,7 +19373,14 @@
       ],
       "notes": "Promise.all with getIngredients()+getCategories()+getUnits(). getIngredients 404 → atomic rejection → cats and units never set → CATEGORIES (0) + empty unit dropdown. Fix: Promise.allSettled. Backend ask: 404 → 200+empty. Fast lane eligible with owner approval.",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-315",
@@ -19178,7 +19388,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Settings > Printer Config",
@@ -19201,7 +19411,14 @@
       ],
       "notes": "StyleInput (PrintStyleTab) + NumberInput (shared.jsx): if (raw==='') return on controlled input → state doesn't update → React reverts to old value. Fix: local display state. 2 files. Related to CR-133 Gap G4 (attempt was incomplete for controlled inputs).",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "RELATED to CR-133-GAP G4"
+      "duplicate_check": "RELATED to CR-133-GAP G4",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-316",
@@ -19209,7 +19426,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED (FIX v2 — 2026-08-13: FALLBACK→APPROVED, always used)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Settings > Printer Config > Print Style",
@@ -19235,7 +19452,14 @@
       ],
       "notes": "API returns available_fonts: null. Transform: fonts: [...(null || [])] = []. SelectInput has no options. Owner-specified 11-font fallback list. Fix: 1 file (printerAgentConfigTransform.js), 3 lines. Fast-lane eligible.",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-317",
@@ -19243,7 +19467,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Settings > Printer Config > Print Style > Android",
@@ -19266,7 +19490,14 @@
       ],
       "notes": "API returns android: {} empty → androidScaleRange defaults [1,8] → max=8 on Logo/UPI/Feedback QR inputs. Owner wants 44,46,23 accepted. Override of CR-133 Gap Batch OD-D. Fix: remove max from 3 android size fields. 1 file. Fast-lane eligible.",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "RELATED to CR-133-GAP OD-D (owner override)"
+      "duplicate_check": "RELATED to CR-133-GAP OD-D (owner override)",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-318",
@@ -19274,7 +19505,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Settings > Printer Config > Auto Print + Aggregator Setup",
@@ -19300,7 +19531,14 @@
       ],
       "notes": "CR-133 OD-B moved aggregator_auto_kot/bill/stage from AutoPrintTab to AggregatorSetup. AggregatorSetup saves to update-settings API; printer agent reads printer-agent-config API (auto_print={}). Transform already maps keys correctly. Fix: re-add 3 fields + dropdown to AutoPrintTab. Owner reversing OD-B. Full Gate 2-3. Owner Q: keep in both UIs?",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "RELATED to CR-133 OD-B (owner override)"
+      "duplicate_check": "RELATED to CR-133 OD-B (owner override)",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-319",
@@ -19338,7 +19576,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Sub-Recipe Stock",
@@ -19362,7 +19600,14 @@
       ],
       "notes": "SubRecipeStockPanel:94 passes physicalQty=qty → inventoryTransform:232 sends physical_qty in payload. physical_qty is an ingredient-audit concept (Stock Audit tab) — not applicable to sub-recipe produced-quantity recording. Always mirrors quantity (both=50 in screenshot). Fix: remove 2 lines (1 per file). DISTINCT from BUG-308 (wrong endpoint) and BUG-176 (expense).",
       "source": "OWNER-REPORTED",
-      "duplicate_check": "DISTINCT"
+      "duplicate_check": "DISTINCT",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-321",
@@ -19370,7 +19615,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Sub-Recipe Stock",
@@ -19395,7 +19640,14 @@
       ],
       "notes": "Two issues: A) SubRecipeStockPanel sends quantity=entered but shows drift UI — backend treats quantity as ADD not SET, drift is a lie. B) StockAuditPanel.jsx:71 passes physicalQty=qty for sub-recipe branch — will write spurious wastage on every save once transform is fixed. Fix: Produce/Recount mode toggle in SubRecipeStockPanel + conditional physical_qty in transform + StockAuditPanel sub-recipe branch fix (quantity:0, physicalQty:shelf). Related: BUG-308 (endpoint), BUG-320 (physical_qty removed), CR-139 (tab). All DISTINCT.",
       "source": "AGENT-DISCOVERED (14aug branch — impact analysis + plan already complete)",
-      "duplicate_check": "DISTINCT — BUG-308 (wrong endpoint, IMPL), BUG-320 (physical_qty removed, IMPL), CR-139 (tab creation, IMPL)"
+      "duplicate_check": "DISTINCT — BUG-308 (wrong endpoint, IMPL), BUG-320 (physical_qty removed, IMPL), CR-139 (tab creation, IMPL)",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-322",
@@ -19403,7 +19655,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap — flag Pre-Release Audit §F). Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Inventory > Recipes > Recipe Form > Ingredient Rows",
@@ -19418,6 +19670,13 @@
           "path": "memory/BUG-322_SEARCHABLESELECT_OVERFLOW_INVESTIGATION.md",
           "type": "investigation_report"
         }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-06",
+          "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
+        }
       ]
     },
     {
@@ -19426,7 +19685,7 @@
       "title": "Aggregator Menu Management — Food Add/Edit/StockToggle Fix (GAP-1..7)",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "created_at": "2026-08-14",
@@ -19449,7 +19708,14 @@
         "plan": "plans/CR-140_AGGREGATOR_MENU_FOOD_ADD_EDIT_STOCKTOGGLE_IMPLEMENTATION_PLAN.md",
         "plan_amendments": "plans/CR-140_AMENDMENTS.md"
       },
-      "notes": "GAP-1: wrong add endpoint (add-food vs add-food-aggregator). GAP-2: missing swiggy/zomato in transforms. GAP-3: missing client_id/brand selector. GAP-4: fromAPI.food missing 5 fields. GAP-5: stock-toggle absent. GAP-6: BulkEditor missing fields. GAP-7: edit form cant change platform settings. Code reality: NONE. DISTINCT from CR-135 (Config/Operational only). Related: INV-AGG-MENU."
+      "notes": "GAP-1: wrong add endpoint (add-food vs add-food-aggregator). GAP-2: missing swiggy/zomato in transforms. GAP-3: missing client_id/brand selector. GAP-4: fromAPI.food missing 5 fields. GAP-5: stock-toggle absent. GAP-6: BulkEditor missing fields. GAP-7: edit form cant change platform settings. Code reality: NONE. DISTINCT from CR-135 (Config/Operational only). Related: INV-AGG-MENU.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-141",
@@ -19457,7 +19723,7 @@
       "title": "Aggregator Sync Operations — Category Timings + Sync/Clear Controls (GAP-8..11)",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "created_at": "2026-08-14",
@@ -19476,7 +19742,14 @@
         "impact": "impact/CR-141_AGGREGATOR_SYNC_OPERATIONS_CATEGORY_TIMINGS_IMPACT_ANALYSIS.md",
         "plan": "plans/CR-141_AGGREGATOR_SYNC_OPERATIONS_IMPLEMENTATION_PLAN.md"
       },
-      "notes": "GAP-8: sync-catalog absent. GAP-9: clear-catalog absent (full_master_reset danger). GAP-10: clear-modifiers absent. GAP-11: category-timings GET/POST/push absent. 2 new tabs in AggregatorSetupView. RELATED to CR-135 (unimplemented scope). Code reality: NONE. OQ-1/2/3 open. Depends: CR-140 registers AGGREGATOR_SYNC_ENDPOINTS in constants.js."
+      "notes": "GAP-8: sync-catalog absent. GAP-9: clear-catalog absent (full_master_reset danger). GAP-10: clear-modifiers absent. GAP-11: category-timings GET/POST/push absent. 2 new tabs in AggregatorSetupView. RELATED to CR-135 (unimplemented scope). Code reality: NONE. OQ-1/2/3 open. Depends: CR-140 registers AGGREGATOR_SYNC_ENDPOINTS in constants.js.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-142",
@@ -19625,7 +19898,7 @@
       "type": "GAP",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED — QA pending (Gate 5a)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5a",
       "sprint_key": "pos_5_1",
       "area": "Menu Management > BulkEditor > Column Picker",
@@ -19642,7 +19915,14 @@
           "type": "investigation"
         }
       ],
-      "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block. | BUG-A: variations tier 2→1. BUG-B: VariationExpandPanel val.name/val.price fix. Both 2026-08-16. | G1/G3/G4 stock toggle optimistic update + IST fix + status-dependent display. 2026-08-16."
+      "notes": "CellRenderer nesting bug fixed 2026-08-15: addon_expand/var_expand/image moved to top-level from inside dropdown block. | BUG-A: variations tier 2→1. BUG-B: VariationExpandPanel val.name/val.price fix. Both 2026-08-16. | G1/G3/G4 stock toggle optimistic update + IST fix + status-dependent display. 2026-08-16.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-146",
@@ -19650,7 +19930,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_5_1",
       "area": "Menu Management > Header > Aggregator mode",
@@ -19669,13 +19949,20 @@
           "path": "memory/plans/CR-146_CLIENT_DROPDOWN_IMPLEMENTATION_PLAN.md",
           "type": "implementation_plan"
         }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
       ]
     },
     {
       "id": "BUG-325",
       "type": "BUG",
       "title": "Variation Stock tab: val.available from API not rendered — current enable/disable status invisible to user",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "severity": "P2",
       "risk": "LOW",
       "sprint_key": "pos_5_0",
@@ -19688,13 +19975,20 @@
         "investigation": "investigation/BUG-325-326_VARIATION_STOCK_STATUS_AND_PACKING_FIELDS_INV.md",
         "impact_analysis": "impact/BUG-325_IMPACT_ANALYSIS.md",
         "implementation_plan": "plans/BUG-325_IMPLEMENTATION_PLAN.md"
-      }
+      },
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-326",
       "type": "BUG",
       "title": "Aggregator food: transform reads packed_food (null/legacy) instead of is_packaged_good; swiggy_packing_chrg completely absent",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "severity": "P1",
       "risk": "MEDIUM",
       "sprint_key": "pos_5_0",
@@ -19710,13 +20004,20 @@
         "investigation": "investigation/BUG-325-326_VARIATION_STOCK_STATUS_AND_PACKING_FIELDS_INV.md",
         "impact_analysis": "impact/BUG-326_IMPACT_ANALYSIS.md",
         "implementation_plan": "plans/BUG-326_IMPLEMENTATION_PLAN.md"
-      }
+      },
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-327",
       "type": "BUG",
       "title": "Aggregator food image handling: swiggy_image not read/written; addFoodAggregator JSON-only cannot upload images; editFood food_info wrapper wrong for aggregator; PREPROD BROKEN (foods-list TypeError)",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "severity": "P0",
       "risk": "HIGH",
       "sprint_key": "pos_5_0",
@@ -19735,7 +20036,14 @@
         "impact_analysis": "impact/BUG-327_IMPACT_ANALYSIS.md",
         "implementation_plan": "plans/BUG-327_IMPLEMENTATION_PLAN.md",
         "evidence": "evidence/BUG-327/api_probe_results.json"
-      }
+      },
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-147",
@@ -19788,7 +20096,7 @@
       "area": "Menu Management / Order Entry",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "SMALL",
@@ -19805,7 +20113,14 @@
       "gate": "Gate 2",
       "gate2_date": "2026-08-21",
       "impact_analysis": "/app/memory/impact/CR-148_IMPACT_ANALYSIS.md",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-149",
@@ -19899,7 +20214,7 @@
       "area": "Reports → Purchase Report",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "1/7",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
@@ -19917,7 +20232,14 @@
       "gate": "Gate 2",
       "gate2_date": "2026-08-21",
       "impact_analysis": "/app/memory/impact/CR-150_IMPACT_ANALYSIS.md",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-151",
@@ -20046,7 +20368,7 @@
       "area": "Menu Management / Aggregator Setup",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "1/7",
       "code_reality": "FULL",
       "blast_radius": "MEDIUM",
@@ -20068,7 +20390,14 @@
       "gate3_date": "2026-08-21",
       "implementation_plan": "/app/memory/plans/CR-155_IMPLEMENTATION_PLAN.md",
       "sprint_key": "pos_6_0",
-      "implemented_date": "2026-08-21"
+      "implemented_date": "2026-08-21",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-156",
@@ -20100,7 +20429,7 @@
       "area": "Reports → Food Court",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "1/7",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
@@ -20120,7 +20449,14 @@
       "gate": "Gate 2",
       "gate2_date": "2026-08-21",
       "impact_analysis": "/app/memory/impact/CR-157_IMPACT_ANALYSIS.md",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-158",
@@ -20155,7 +20491,7 @@
       "area": "Menu Management → Bulk Editor / Product List",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "1/7 — owner decisions resolved, ready for Gate 2",
       "code_reality": "PARTIAL",
       "blast_radius": "MEDIUM",
@@ -20183,7 +20519,14 @@
       "gate3_date": "2026-08-21",
       "implementation_plan": "/app/memory/plans/CR-159_IMPLEMENTATION_PLAN.md",
       "sprint_key": "pos_6_0",
-      "implemented_date": "2026-08-21"
+      "implemented_date": "2026-08-21",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-344",
@@ -20227,7 +20570,7 @@
       "area": "Settings → Printer Agent Config → Printer Mapping (new tab/screen)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "2/7",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM-LARGE",
@@ -20249,7 +20592,14 @@
       "owner_decisions_status": "DEFERRED TO GATE 2 — owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-18",
-      "sprint_key": "pos_5_x"
+      "sprint_key": "pos_5_x",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-161",
@@ -20258,7 +20608,7 @@
       "area": "Settings → Printer Agent Config → Stations + Printing Mode (new tabs)",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "2/7",
       "code_reality": "NONE",
       "blast_radius": "LARGE",
@@ -20290,7 +20640,14 @@
       ],
       "note": "station_gst shown only when restaurant_for === food_court (see BUG-339)",
       "notes": "Impact Analysis revised 2026-08-27: /printing-option contract corrected (employees[], employee_id, Fixed mode employee picker). OD-4 locked. Design mockup updated.",
-      "sprint_key": "pos_5_x"
+      "sprint_key": "pos_5_x",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "INV-ROOM-001",
@@ -20755,7 +21112,7 @@
       "area": "Order Entry → Cancellation Flow → Razorpay Refund",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "3.5/4",
       "code_reality": "NONE",
       "blast_radius": "MEDIUM",
@@ -20776,7 +21133,14 @@
         "OQ-4: detect PG order"
       ],
       "notes": " | 2026-08-23: OQ-1=BOTH auto+manual · OQ-2=preprod URL confirmed (live probe) · OQ-2b=DEFERRED (axios instance choice) · OQ-3=reuse CancelOrderModal with mode=refund prop · OQ-4=razorpay_order_id field in ORDER_REPORT_BETA_COMBINED. Backend SQL log bug filed. Blast radius updated: 5-6 files, 80-120 lines. Risk HIGH.",
-      "sprint_key": "pos_6_0"
+      "sprint_key": "pos_6_0",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-07",
+          "note": "BATCH-07 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-166",
@@ -21037,7 +21401,7 @@
       "area": "Settings → Printer Agent Config → Printers Tab → Add/Edit Printer",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "2/7",
       "code_reality": "FULL",
       "blast_radius": "SMALL",
@@ -21057,7 +21421,14 @@
         "OQ-3: connection type as select dropdown or radio cards?"
       ],
       "last_updated": "2026-08-18",
-      "sprint_key": "pos_5_x"
+      "sprint_key": "pos_5_x",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-168",
@@ -21096,7 +21467,7 @@
       "area": "Settings → Printer Agent Config → Print Style Tab",
       "priority": "P2",
       "risk": "LOW",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "completeness": "2/7",
       "code_reality": "PARTIAL",
       "blast_radius": "SMALL",
@@ -21119,7 +21490,14 @@
       ],
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-18",
-      "sprint_key": "pos_5_x"
+      "sprint_key": "pos_5_x",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-170",
@@ -21127,7 +21505,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_5_0",
       "reported_by": "Owner (2026-08-20)",
       "created_at": "2026-08-20",
@@ -21147,13 +21525,20 @@
       ],
       "notes": "Changes always-ceil (BUG-051/BUG-076) to threshold rule: <0.10 → floor (negative round_up), ≥0.10 → ceil. Backend confirmed accepts negative round_up. All owner decisions locked.",
       "plan_doc": "memory/plans/CR-170_CONDITIONAL_ROUND_OFF_IMPLEMENTATION_PLAN.md",
-      "gate": "Gate 5a — Awaiting QA"
+      "gate": "Gate 5a — Awaiting QA",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-08",
+          "note": "BATCH-08 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-340",
       "type": "BUG",
       "title": "Popular tab items render as empty chips — adaptProduct receives raw API format instead of transformed MenuContext format",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_6_0",
@@ -21161,13 +21546,20 @@
       "related": "CR-148 (parent)",
       "blast_radius": "LARGE (3 R5 hotspot files: LoadingPage.jsx, MenuContext.jsx, OrderEntry.jsx)",
       "created": "2026-08-22",
-      "notes": "CR-148 post-delivery. getPopularFoods() maps directly to adaptProduct() skipping productTransform.fromAPI(). Fix: load in LoadingPage boot, store in MenuContext, gated by showPopularCategory. OQ-1: YES. OQ-2: YES refresh with menu. OQ-3: BLOCK BOOT. All owner decisions resolved 2026-08-22. Ready for Planning Gate 2."
+      "notes": "CR-148 post-delivery. getPopularFoods() maps directly to adaptProduct() skipping productTransform.fromAPI(). Fix: load in LoadingPage boot, store in MenuContext, gated by showPopularCategory. OQ-1: YES. OQ-2: YES refresh with menu. OQ-3: BLOCK BOOT. All owner decisions resolved 2026-08-22. Ready for Planning Gate 2.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-347",
       "type": "BUG",
       "title": "Purchase Report date filter broken — wrong query param names (from/to should be from_date/to_date)",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "LOW",
       "sprint_key": "pos_6_0",
@@ -21175,13 +21567,20 @@
       "related": "CR-150",
       "classification": "CODE_ERROR",
       "created": "2026-08-22",
-      "notes": "getPurchaseReport sends ?from=&to= but endpoint requires ?from_date=&to_date=. Live curl confirmed. 2-line fix in inventoryService.js. getDailyConsumptionReport in same file uses correct from_date/to_date pattern."
+      "notes": "getPurchaseReport sends ?from=&to= but endpoint requires ?from_date=&to_date=. Live curl confirmed. 2-line fix in inventoryService.js. getDailyConsumptionReport in same file uses correct from_date/to_date pattern.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-348",
       "title": "Razorpay PG Paid Orders Show Wrong Actions (Unpaid/Change Method instead of Refund Only)",
       "type": "BUG",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED — CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_6_0",
@@ -21191,6 +21590,13 @@
       ],
       "related": [
         "CR-165"
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-05",
+          "note": "BATCH-05 QA PASS 2026-09-15. Code-verified. CR-140 CR_REGISTRY stale (CLOSURE). Ready Gate 6."
+        }
       ]
     },
     {
@@ -21198,7 +21604,7 @@
       "sprint_key": "pos_5_1",
       "id": "BUG-351",
       "title": "Room Check-In: Doc upload required even for CRM-verified guests",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "RoomCheckInModal.jsx:611-616,1051-1052",
       "notes": "CODE_EXISTS. crmDocuments.length===0 guard on validation (lines 611,616) + JSX render condition (line 1052). Upload row hidden + validation skipped when CRM docs on file. Also gated on CR-350 idUploadRequired. Implemented 2026-08-26.",
@@ -21210,14 +21616,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
       "sprint_key": "pos_5_1",
       "id": "BUG-352",
       "title": "OrderTable: Amount column w-24 too narrow, overlaps Change button",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "OrderTable.jsx:143,157",
       "notes": "CODE_EXISTS. w-24 → w-32 on amount column in both baseColumns (L143) and columnsWithPayment (L157). // BUG-352 markers present. Implemented 2026-08-26.",
@@ -21229,7 +21642,14 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -21312,7 +21732,7 @@
       "sprint_key": "pos_5_1",
       "id": "BUG-357",
       "title": "Room check-in: Advance > room price blocked FE-only",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "RoomCheckInModal.jsx:632-633",
       "notes": "CODE_EXISTS. Advance>roomPrice FE-only guard removed. Line 633: // BUG-357 comment confirms guard deleted. Only adv<0 check remains. Implemented 2026-08-26.",
@@ -21324,14 +21744,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
       "sprint_key": "pos_5_1",
       "id": "BUG-358",
       "title": "Sidebar collapsed state lost on every page reload",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "DashboardPage.jsx",
       "notes": "GATE 3 COMPLETE. Plan: /app/memory/plans/BUG-358_IMPLEMENTATION_PLAN.md. 2 edits in DashboardPage.jsx only. Line 451 localStorage init + line 1681 setIsExpanded wrapper write. Awaiting Gate 4 GO.",
@@ -21343,14 +21770,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
       "sprint_key": "pos_5_1",
       "id": "BUG-359",
       "title": "Item-level tax change in Restaurant Setup not applying to orders",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "RestaurantSettingsPage.jsx + ProductForm.jsx + BulkEditor.jsx",
       "notes": "IMPLEMENTED. 4 edits across 3 files. E1: RestaurantSettingsPage.jsx:540-547 — removed GST Mode + GST Tax% + Tax% from Step 4 GST grid; only GST Number remains. E2: ProductForm.jsx:412-418 — grid-cols-3→2; removed Tax Calculation dropdown; taxCalc state stays at Exclusive default. E3: BulkEditor.jsx:54 — taxCalc column definition removed from ALL_COLUMNS. E4: BulkEditor.jsx:1344-1350 — taxCalc cell renderer removed. Save payloads unchanged: restaurantSettingsTransform sends gstMode/gstTax/tax defaults; menuManagementTransform sends tax_calc:Exclusive. webpack compiled successfully 0 warnings. BUG-359 markers: 4.",
@@ -21362,14 +21796,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "CR",
       "sprint_key": "pos_5_1",
       "id": "CR-348",
       "title": "Custom Item Modal — Add GST / Tax field",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "AddCustomItemModal.jsx + orderTransform.js + OrderEntry.jsx",
       "notes": "GATE 3 COMPLETE. Plan: /app/memory/plans/CR-348_IMPLEMENTATION_PLAN.md. 4 edits across 3 files. AddCustomItemModal.jsx (taxPercent+taxCalc state+UI), orderTransform.js:1012 (signature), OrderEntry.jsx:1327+2779 (handler+showGst prop). Awaiting Gate 4 GO.",
@@ -21381,14 +21822,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "CR",
       "sprint_key": "pos_5_1",
       "id": "CR-349",
       "title": "OrderReportBetaPage: Wire Change/Unpaid/Reprint on Settled tab",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "OrderReportBetaPage.jsx",
       "notes": "IMPLEMENTED. 7 edits in 1 file. +8 imports (paymentMutationService, MarkUnpaidConfirmDialog, PaymentMethodPicker, printOrder, orderFromAPI, api, API_ENDPOINTS, isMutationAllowedForSelectedDate). +5 state vars. +3 handlers (handleChange, handleUnpaidConfirm, handleReprint). +isWithinMutation per day. +actions td (Change/Unpaid/Reprint/Refund). +MarkUnpaidConfirmDialog. webpack compiled with 1 warning (toast dep in handleRefundConfirm pre-existing pattern).",
@@ -21400,14 +21848,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "CR",
       "sprint_key": "pos_5_1",
       "id": "CR-350",
       "title": "Room Check-In: ID upload mandatory/optional toggle",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "StatusConfigPage.jsx + RoomCheckInModal.jsx",
       "notes": "GATE 3 COMPLETE. Plan: /app/memory/plans/CR-350_IMPLEMENTATION_PLAN.md. 6 edits across 2 files. StatusConfigPage.jsx (state+hydrate+save+reset+UI), RoomCheckInModal.jsx:611+614 (localStorage gate). Default: not required (key absent=false). Awaiting Gate 4 GO.",
@@ -21419,14 +21874,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
       "sprint_key": "pos_5_1",
       "id": "BUG-360",
       "title": "Room checkout uses stale balance_payment — ignores live remaining_room_balance, mid-stay payments invisible",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "CollectPaymentPanel.jsx + RoomRowCard.jsx",
       "notes": "GATE 3 COMPLETE. Plan: /app/memory/plans/BUG-360_IMPLEMENTATION_PLAN.md. 4 edits: CollectPaymentPanel.jsx:195 (1-line live balance), RoomRowCard.jsx:393+413+594 (displayBalance). CRITICAL — owner approval mandatory before Gate 4 GO.",
@@ -21438,14 +21900,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "BUG",
       "sprint_key": "pos_5_1",
       "id": "BUG-361",
       "title": "Sidebar State Not Persisted: Phase 2 Sweep — 68 remaining pages",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "files": "68 files across pages/ and pages/reports-module/ (see intake doc)",
       "notes": "IMPLEMENTED. Python script processed 68 files (67 standard + 1 OrderReportBetaPage). // BUG-361 comment on useState init line; clean JSX on setIsExpanded wrapper. webpack compiled with 1 warning (pre-existing). BUG-361 markers: 68. 2026-08-26.",
@@ -21457,14 +21926,21 @@
         }
       ],
       "completeness": "1/7",
-      "category": "NOT_STARTED"
+      "category": "NOT_STARTED",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "CR",
       "sprint_key": "pos_5_x",
       "id": "CR-351",
       "title": "Local Printer Setup: Bill Content + Bill Style Tabs",
-      "status": "IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
       "files": "NEW: BillContentTab.jsx, BillStyleTab.jsx, billPrinterConfigService.js, billPrinterConfigTransform.js | MOD: constants.js, LocalPrinterSetupView.jsx",
       "notes": "BATCH-09. Local printer path (printer_agent=No). Endpoint: /bill-printer-config. API confirmed live. OD-1/2/3 locked. OQ-1 deferred. Related: CR-133 (agent version), CR-161/167 (same batch). Execute after CR-161.",
       "artifact_refs": [
@@ -21477,6 +21953,13 @@
           "label": "Evidence",
           "path": "memory/evidence/CR-LOCAL-PRINTER/bill_printer_config_response.json",
           "type": "evidence"
+        }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-09",
+          "note": "BATCH-09 QA PASS 2026-09-15. Code-verified. Ready Gate 6."
         }
       ]
     },
@@ -21762,7 +22245,7 @@
       "id": "BUG-368",
       "type": "BUG",
       "title": "Split Bill by Payment — settled order cannot be reprinted from Order Report",
-      "status": "IMPLEMENTED — Awaiting QA",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-02. All code-verified PASS. 2 smoke deferrals (BUG-374 T1: variation data, BUG-368 T4: ruby account). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "severity": "MAJOR",
@@ -21779,13 +22262,20 @@
         "impact/BUG-368_IMPACT_ANALYSIS.md",
         "plans/BUG-368_IMPLEMENTATION_PLAN.md"
       ],
-      "notes": "Awaiting owner-provided split-settled order ID for API probe. Blocked on live data."
+      "notes": "Awaiting owner-provided split-settled order ID for API probe. Blocked on live data.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-02",
+          "note": "BATCH-02 QA PASS 2026-09-15. 0 blockers. 2 smoke deferrals (test-data, not bugs). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-369",
       "type": "BUG",
       "title": "Print Customer Copy setting enabled but no separate customer bill is printed",
-      "status": "IMPLEMENTED — QA PENDING (testing agent timed out 2x; manual verification needed)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-02. All code-verified PASS. 2 smoke deferrals (BUG-374 T1: variation data, BUG-368 T4: ruby account). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "MEDIUM",
       "severity": "MAJOR",
@@ -21806,7 +22296,14 @@
       "root_cause_update": "Two-layer fix: (1) profileTransform.settings() add printBillCustomerCopy mapping. (2) buildBillPrintPayload include print_bill_customer_copy field so Printer Agent device receives it.",
       "gate": 3,
       "implemented_date": "2026-09-01",
-      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke."
+      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-02",
+          "note": "BATCH-02 QA PASS 2026-09-15. 0 blockers. 2 smoke deferrals (test-data, not bugs). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-370",
@@ -21839,7 +22336,7 @@
       "id": "BUG-371",
       "type": "BUG",
       "title": "Bulk Editor — variation price not editable (read-only, no price input in expand panel)",
-      "status": "IMPLEMENTED — QA PENDING (testing agent timed out 2x; manual verification needed)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys — not a regression. Awaiting Gate 6 Owner Smoke.",
       "priority": "P2",
       "risk": "MEDIUM",
       "severity": "MAJOR",
@@ -21860,13 +22357,20 @@
       "owner_decision": "OD-1 RESOLVED 2026-09-01: Option A — inline price input per variation row in expand panel. Edit price directly in Bulk Editor table, save as part of normal bulk save.",
       "gate": 3,
       "implemented_date": "2026-09-01",
-      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke."
+      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-03",
+          "note": "BATCH-03 QA PASS 2026-09-15. 0 blockers. .env key presence is intentional (deployment agent). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-372",
       "type": "BUG",
       "title": "Transfer and Merge buttons on order card not working from outside Order Entry view",
-      "status": "IMPLEMENTED — QA PENDING (testing agent timed out 2x; manual verification needed)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-02. All code-verified PASS. 2 smoke deferrals (BUG-374 T1: variation data, BUG-368 T4: ruby account). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "severity": "MAJOR",
@@ -21885,7 +22389,14 @@
       ],
       "gate": 3,
       "implemented_date": "2026-09-01",
-      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke."
+      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-02",
+          "note": "BATCH-02 QA PASS 2026-09-15. 0 blockers. 2 smoke deferrals (test-data, not bugs). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-373",
@@ -21913,7 +22424,7 @@
       "id": "BUG-374",
       "type": "BUG",
       "title": "Cart: Increasing quantity of one variation (30ml) also changes the other variation (60ml) to same value",
-      "status": "IMPLEMENTED — QA PENDING (testing agent timed out 2x; manual verification needed)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-02. All code-verified PASS. 2 smoke deferrals (BUG-374 T1: variation data, BUG-368 T4: ruby account). Awaiting Gate 6 Owner Smoke.",
       "priority": "P0",
       "risk": "CRITICAL",
       "severity": "BLOCKER",
@@ -21932,7 +22443,14 @@
       ],
       "gate": 3,
       "implemented_date": "2026-09-01",
-      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke."
+      "qa_note": "Testing agent timed out twice (2026-09-01). Code implemented and webpack clean. Requires QA run before Gate 6 smoke.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-02",
+          "note": "BATCH-02 QA PASS 2026-09-15. 0 blockers. 2 smoke deferrals (test-data, not bugs). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-375",
@@ -22050,7 +22568,7 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED — 2026-09-02 (roleTransform.js R1/R2/R3 + RoleFormView.jsx F1-F5)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys — not a regression. Awaiting Gate 6 Owner Smoke.",
       "gate": "1",
       "sprint_key": "pos_5_x",
       "related": [
@@ -22067,7 +22585,14 @@
         }
       ],
       "notes": "5 contract gaps vs backend spec (add-update.md): Sub-A modules missing role type prefix, Sub-B role_master_id hardcoded null, Sub-C role_type sends IDs not strings, Sub-D edit/toggle sends all IDs, Sub-E Clear All drops role type. 2 files: roleTransform.js + RoleFormView.jsx. BUG-235/CR-096 were partial fixes — root cause not addressed. OD-1 LOCKED (2026-09-02): Clear All only wipes permission checkboxes. Role type always preserved. modules:[\"Manager\"] valid with zero perms. Owner: \"matches legacy shape, avoids forcing template re-pick.\"",
-      "category": "employee-management"
+      "category": "employee-management",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-03",
+          "note": "BATCH-03 QA PASS 2026-09-15. 0 blockers. .env key presence is intentional (deployment agent). Ready Gate 6."
+        }
+      ]
     },
     {
       "type": "CR",
@@ -22633,7 +23158,7 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 4 new files + 4 MOD files. Webpack 0 new warnings. Self-test 18/18 PASS. Awaiting QA.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred — no >366d data). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 5,
@@ -22722,6 +23247,11 @@
           "date": "2026-09-14",
           "status": "IMPLEMENTED",
           "note": "Gate 5a: NightAuditPage.jsx + nightAuditTransform.js NEW. constants.js + pmsService.js + App.js + Sidebar.jsx MOD. Live on preprod — Section A/B/C render with real data, BN-1 amber warning shown, OD-363-07 badge confirmed."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-01",
+          "note": "BATCH-01 QA PASS 2026-09-15. 0 blockers. 1 deferred (CR-366 V-20 month-view). Ready Gate 6."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22731,7 +23261,7 @@
       "id": "CR-364",
       "title": "PMS — Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
       "type": "CR",
-      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 2 NEW + 5 MOD. Webpack 0 new warnings. Live on preprod — guest name, room charges, split balance, actions all render correctly. Bug fixed: API_ENDPOINTS missing import. Awaiting QA.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred — no >366d data). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 5,
@@ -22834,6 +23364,11 @@
           "date": "2026-09-14",
           "status": "IMPLEMENTED",
           "note": "Gate 5a: GuestFolioPage.jsx (NEW) + folioTransform.js (NEW) + pmsService.js (+getGuestFolio + API_ENDPOINTS import fix) + App.js (+route) + 3 re-points. Bug fixed during self-test: API_ENDPOINTS not imported in pmsService. Live: Test Guest GST, Room ₹8000, GST ₹1440, split balance, Check Out + Print Folio (disabled). Option Set C dual-column layout confirmed."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-01",
+          "note": "BATCH-01 QA PASS 2026-09-15. 0 blockers. 1 deferred (CR-366 V-20 month-view). Ready Gate 6."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — read-only folio OK; pos/room-payment 403 (OG-PMS-014); F&B transfer list empty.",
@@ -22891,7 +23426,7 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 4 new files + 4 MOD files (shared with CR-363). Webpack 0 new warnings. Self-test 18/18 PASS. Awaiting QA.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred — no >366d data). Awaiting Gate 6 Owner Smoke.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 5,
@@ -22978,6 +23513,11 @@
           "date": "2026-09-14",
           "status": "IMPLEMENTED",
           "note": "Gate 5a: RevenueDashboardPage.jsx + revenueTransform.js NEW. shared MOD files. Live on preprod — 57.14% occ, KPI side-by-side, 3 charts render, breakdown tables PASS. BN-6 month suppression in place."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-01",
+          "note": "BATCH-01 QA PASS 2026-09-15. 0 blockers. 1 deferred (CR-366 V-20 month-view). Ready Gate 6."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",
@@ -23386,7 +23926,7 @@
       "id": "CR-372-A",
       "title": "Security: File Moves + .env Cleanup (Zero src/ changes)",
       "type": "CR",
-      "status": "IMPLEMENTED — 92 files moved + 2 .env keys removed (2026-09-08)",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys — not a regression. Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "LOW",
       "gate": "5a",
@@ -23452,6 +23992,11 @@
           "date": "2026-09-08",
           "status": "GATE 3 COMPLETE",
           "note": "PLANNING agent — plan: 13 edits, 92 file moves (git mv), −2 .env lines, 17 verification checks (16 auto). Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-03",
+          "note": "BATCH-03 QA PASS 2026-09-15. 0 blockers. .env key presence is intentional (deployment agent). Ready Gate 6."
         }
       ]
     },
@@ -23811,7 +24356,7 @@
       "title": "BulkEditor Filter Panel — Status / Type / Category (Always-Visible Strip)",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "IMPLEMENTED — QA PENDING",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "sprint_key": "pos_7_0",
       "files": [
@@ -23821,7 +24366,14 @@
       "intake_doc": "change_requests/CR-374_BULKEDITOR_FILTER_PANEL_STATUS_TYPE_CATEGORY_INTAKE.md",
       "notes": "Option A (always-visible strip) + searchable category dropdown locked by owner 2026-09-11. Ready for Gate 3.",
       "impact_doc": "impact/CR-374_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/CR-374_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-374_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-04",
+          "note": "BATCH-04 QA PASS 2026-09-15. 38/38 PASS. No findings. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-375",
@@ -23846,7 +24398,7 @@
       "title": "Aggregator Menu: GST Not Enforced — Items Saveable With 0% Tax or None Tax Type",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "IMPLEMENTED — QA PENDING (2026-09-10). 5 edits: ProductForm.jsx E1-E3, BulkEditor.jsx E4, menuManagementTransform.js E5. ~25 lines.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
       "gate": 5,
       "sprint_key": "pos_7_0",
       "files": [
@@ -23855,7 +24407,14 @@
       ],
       "registered": "2026-09-11",
       "intake_doc": "change_requests/BUG-391_AGGREGATOR_GST_NOT_ENFORCED_INTAKE.md",
-      "notes": "Owner confirmed rule: Aggregator always GST 5%. 5 ODs open. Rule R6 applies — needs Gate 4 GO before any code change."
+      "notes": "Owner confirmed rule: Aggregator always GST 5%. 5 ODs open. Rule R6 applies — needs Gate 4 GO before any code change.",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-04",
+          "note": "BATCH-04 QA PASS 2026-09-15. 38/38 PASS. No findings. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-392",
@@ -23863,7 +24422,7 @@
       "title": "All Number Inputs Respond to Scroll Wheel — Accidental Price/Tax/Charge Changes in Menu Management",
       "severity": "P1",
       "risk": "LOW",
-      "status": "IMPLEMENTED — Gate 5a (addendum 2026-09-10: VariationOptionRow price onWheel gap fixed — ProductForm.jsx L100). Original 12 edits + 1 addendum = 13 total. QA PENDING.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "sprint_key": "pos_7_0",
       "files": [
@@ -23877,7 +24436,14 @@
       "intake_doc": "change_requests/BUG-392_SCROLL_WHEEL_NUMBER_INPUTS_INTAKE.md",
       "notes": "12 lines total across 5 files. Pattern: onWheel={(e) => e.target.blur()}. No open ODs. Fast Lane eligible per file. BulkEditor is highest risk (grid scroll = price change). | ADDENDUM 2026-09-10: VariationOptionRow price input (ProductForm.jsx L100) missed in original impl — separate component from InputField. Fixed by BUG FIX agent. CODE_ERROR classification.",
       "impact_doc": "impact/BUG-392_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/BUG-392_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/BUG-392_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-04",
+          "note": "BATCH-04 QA PASS 2026-09-15. 38/38 PASS. No findings. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-376",
@@ -23904,7 +24470,7 @@
       "title": "Normal Menu Image Upload Hidden — Aggregator gate regression from BUG-375",
       "severity": "P0",
       "risk": "LOW",
-      "status": "IMPLEMENTED — QA PENDING",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "sprint_key": "pos_7_0",
       "files": [
@@ -23914,7 +24480,14 @@
       "intake_doc": "change_requests/BUG-390_NORMAL_MENU_IMAGE_UPLOAD_HIDDEN_REGRESSION_INTAKE.md",
       "impact_doc": "impact/BUG-390_IMPACT_ANALYSIS.md",
       "notes": "Fast Lane eligible. 4-line fix: remove Aggregator gate at line 337, rename label to Item Image. Batch A item 1.",
-      "plan_doc": "plans/BUG-390_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/BUG-390_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-04",
+          "note": "BATCH-04 QA PASS 2026-09-15. 38/38 PASS. No findings. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-373",
@@ -23922,7 +24495,7 @@
       "title": "Aggregator ProductForm: Use Item Image for Swiggy toggle",
       "severity": "P2",
       "risk": "LOW-MEDIUM",
-      "status": "IMPLEMENTED — QA PENDING",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
       "gate": "5",
       "sprint_key": "pos_7_0",
       "files": [
@@ -23932,7 +24505,14 @@
       "intake_doc": "change_requests/CR-373_AGGREGATOR_USE_ITEM_IMAGE_FOR_SWIGGY_INTAKE.md",
       "impact_doc": "impact/CR-373_IMPACT_ANALYSIS.md",
       "notes": "Depends on BUG-390. ~25 lines. New state useItemImageForSwiggy. Batch A item 2.",
-      "plan_doc": "plans/CR-373_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-373_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-04",
+          "note": "BATCH-04 QA PASS 2026-09-15. 38/38 PASS. No findings. Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-393",
@@ -24007,7 +24587,7 @@
       "id": "BUG-394",
       "title": "Number inputs: special chars corrupt data + zero not cleared on focus (4 files)",
       "type": "BUG",
-      "status": "IMPLEMENTED — Gate 5a (2026-09-11). 18 edits / 4 files. 10 onChange special-char blocks + 8 onFocus zero-clears. webpack clean. EXIT GATE 5/5. QA PENDING.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-02. All code-verified PASS. 2 smoke deferrals (BUG-374 T1: variation data, BUG-368 T4: ruby account). Awaiting Gate 6 Owner Smoke.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 5,
@@ -24027,13 +24607,20 @@
       "owner_decisions": "OD-394-01: Option A — silent block on keypress (locked 2026-09-10)",
       "completeness": "1/7",
       "impact_doc": "impact/BUG-394_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/BUG-394_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/BUG-394_IMPLEMENTATION_PLAN.md",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-02",
+          "note": "BATCH-02 QA PASS 2026-09-15. 0 blockers. 2 smoke deferrals (test-data, not bugs). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "BUG-395",
       "title": "buildBillPrintPayload missing 4 delivery address sub-fields (house/floor/city/state)",
       "type": "BUG",
-      "status": "IMPLEMENTED — Gate 5a (addendum-2 2026-09-11: crossRestaurantAddress missing house/floor/road/contactPersonName/contactPersonNumber — customerTransform.js L199-210). EXIT GATE 5/5. QA PENDING.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys — not a regression. Awaiting Gate 6 Owner Smoke.",
       "sprint_key": "pos_7_0",
       "priority": "P2",
       "risk": "MEDIUM",
@@ -24041,7 +24628,14 @@
       "files_changed": [
         "api/transforms/orderTransform.js"
       ],
-      "notes": "Retroactively registered 2026-09-10 (gate violation — previously implemented without Gate 4 GO). Owner approved retroactively 2026-09-10. 4 additive keys added to buildBillPrintPayload. Source: backend brief. Related: BUG-144 (daily_token same file), BUG-369 (printBillCustomerCopy same file). | ADDENDUM 2026-09-10: buildDeliveryAddress (write path) missing city+state. FE fix applied. CRM probe: crm_token=null for thegoankitchen — no CRM integration, existing saved addresses may not have city/state in DB (backend/data concern). New saves after fix will persist correctly. Evidence: evidence/BUG-395/crm_probe_2026_09_10.json"
+      "notes": "Retroactively registered 2026-09-10 (gate violation — previously implemented without Gate 4 GO). Owner approved retroactively 2026-09-10. 4 additive keys added to buildBillPrintPayload. Source: backend brief. Related: BUG-144 (daily_token same file), BUG-369 (printBillCustomerCopy same file). | ADDENDUM 2026-09-10: buildDeliveryAddress (write path) missing city+state. FE fix applied. CRM probe: crm_token=null for thegoankitchen — no CRM integration, existing saved addresses may not have city/state in DB (backend/data concern). New saves after fix will persist correctly. Evidence: evidence/BUG-395/crm_probe_2026_09_10.json",
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "GATE_5B_QA_PASS — BATCH-03",
+          "note": "BATCH-03 QA PASS 2026-09-15. 0 blockers. .env key presence is intentional (deployment agent). Ready Gate 6."
+        }
+      ]
     },
     {
       "id": "CR-378",
