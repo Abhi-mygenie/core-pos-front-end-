@@ -355,6 +355,8 @@ body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size
             <div class="meta-item"><div class="lbl">Check-out</div><div class="val">10 Sep 2026</div></div>
             <div class="meta-item"><div class="lbl">Nights</div><div class="val">1</div></div>
             <div class="meta-item"><div class="lbl">Adults / Children</div><div class="val">1 / 0</div></div>
+            <div class="meta-item"><div class="lbl">Meal Plan</div><div class="val null" title="Backend field pending — see BN-364-MEAL">— <span style="font-size:9px;color:#ccc">(BE pending)</span></div></div>
+            <div class="meta-item"><div class="lbl">Rate Plan</div><div class="val null">—</div></div>
           </div>
           <div class="meta-item" style="margin-top:10px"><div class="lbl">Special Requests</div><div class="val null">None</div></div>
         </div>
@@ -421,13 +423,13 @@ body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size
         </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Actions — Record Payment PARKED (OD-364-C1) -->
       <div class="action-card">
         <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:10px">Actions</div>
         <button class="btn btn-green" data-testid="action-checkout-button">Check Out</button>
-        <button class="btn btn-orange" data-testid="action-record-payment-button">Record Payment</button>
-        <!-- Option C: disabled print with tooltip -->
+        <!-- Record Payment PARKED (OD-364-C1: hotel disabled mid-stay payments) -->
         <button class="btn btn-disabled" data-testid="action-print-folio-button" disabled>Print Folio</button>
+        <div style="font-size:10px;color:#888;text-align:center;margin-top:4px;font-style:italic">Record Payment — parked (mid-stay payments disabled)</div>
       </div>
 
     </div><!-- /RIGHT COL -->

@@ -22725,7 +22725,7 @@
       "id": "CR-364",
       "title": "PMS — Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
       "type": "CR",
-      "status": "GATE 2 — IMPACT ANALYSIS WRITTEN (2026-09-14). R11 probe PASS (get-single-order-new 200, full shape verified). All ODs resolved. Design questions D1-D5 for design agent. Scope: 2 NEW + 5 MOD (≤3L each). Ready for design → Gate 3.",
+      "status": "GATE 2 — ALL DECISIONS LOCKED 2026-09-14. C1=Record Payment PARKED, C2=F&B kept, C3=Option Set C, C4=Meal plan in header (BN-364-MEAL). Design approved. Ready for Gate 3.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 2,
@@ -22808,6 +22808,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 — IMPACT ANALYSIS WRITTEN",
           "note": "R11 probe order 1232245 PASS. reservation.guest confirmed. room_info.gst_tax confirmed. room_payment_summary.payments[] confirmed. associated_order_list[] confirmed. folioTransform spec written. 5 design questions for design agent. Scope: 2 NEW (GuestFolioPage + folioTransform) + 5 MOD (pmsService, App.js, 3 re-points). Awaiting design → Gate 3."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 2 — DESIGN CLARIFICATIONS LOCKED",
+          "note": "OD-364-C1=Record Payment PARKED (no mid-stay payments). OD-364-C2=F&B section kept. OD-364-C3=Option Set C (dual column). OD-364-C4=meal plan in header (source: reservation.rateplan_code / BN-364-MEAL filed for explicit field). Impact analysis updated. Gate 3 ready."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — read-only folio OK; pos/room-payment 403 (OG-PMS-014); F&B transfer list empty.",

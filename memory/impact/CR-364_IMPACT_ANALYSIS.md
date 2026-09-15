@@ -139,10 +139,8 @@ View model consumed by GuestFolioPage sections:
   F&B     → associated_order_list[] mapped to rows (OD-364-04: drill-down)
   Actions:
     [Check Out]       → open PmsCheckoutDrawer (existing, orderId prop)
-    [Record Payment]  → recordPartialPayment() from roomService.js (existing)
-                        then refetch getGuestFolio(orderId) to refresh balance
-    [Print Folio]     → disabled in v1 (CR-364-PRINT not shipped)
-                        button shown grayed with tooltip "Print folio coming soon"
+    [Record Payment]  → PARKED (OD-364-C1: hotel disabled mid-stay payments). Button not rendered in v1.
+    [Print Folio]     → disabled in v1 (CR-364-PRINT not shipped). Button shown grayed with tooltip "Print folio — coming soon"
 
 Departed guest (f_order_status === 6):
   → isCheckedOut = true → all 3 action buttons hidden
@@ -247,6 +245,10 @@ export function fromAPI(raw) {
     children:        res.children ?? null,
     specialRequests: res.special_requests || null,
 
+    // Meal plan (OD-364-C4 — from rateplan_code; BN-364-MEAL: request explicit meal_plan field)
+    mealPlan:        res.meal_plan || ri.booking_details?.meal_plan || null, // shows '—' until BE adds field
+    ratePlanCode:    res.rateplan_code || null,
+
     // Dates
     checkinDate:     ri.checkin_date || res.checkin || null,
     checkoutDate:    ri.checkout_date || res.checkout || null,
@@ -294,17 +296,23 @@ export function fromAPI(raw) {
 
 ---
 
-## 6. Owner Decisions — ALL RESOLVED
+## 6. Owner Decisions — ALL RESOLVED (incl. design clarifications 2026-09-14)
 
-| OD | Decision |
-|---|---|
-| OD-364-01 | Totals-only v1 — `payments[]` list shown, no dated ledger view |
-| OD-364-02 | Print Folio = CR-364-PRINT (BACKEND-BLOCKED) — v1 shows disabled button with tooltip |
-| OD-364-03 | Re-point all 3 existing links to `/pms/folio/:orderId` |
-| OD-364-04 | F&B = drill-down (one row per associated order, tap → OrderDetailSheet) |
-| OD-364-05 | No FE date limit — show whatever backend returns |
+| OD | Decision | Source |
+|---|---|---|
+| OD-364-01 | Totals-only v1 — `payments[]` list shown, no dated ledger view | 2026-09-04 |
+| OD-364-02 | Print Folio = CR-364-PRINT (BACKEND-BLOCKED) — v1 shows disabled button with tooltip | 2026-09-16 |
+| OD-364-03 | Re-point all 3 existing links to `/pms/folio/:orderId` | 2026-09-14 |
+| OD-364-04 | F&B = drill-down (one row per associated order, tap → OrderDetailSheet) | 2026-09-14 |
+| OD-364-05 | No FE date limit — show whatever backend returns | 2026-09-14 |
+| **OD-364-C1** | **Record Payment button PARKED in v1.** Hotel does not currently take mid-stay partial payments. Button removed entirely from GuestFolioPage. `roomService.recordPartialPayment` not called. Can be re-added when feature is re-enabled. | 2026-09-14 |
+| **OD-364-C2** | **F&B Posted to Room section KEPT.** Hotel does use room posting (F&B charged to room). | 2026-09-14 |
+| **OD-364-C3** | **Option Set C confirmed** — Dual-column layout, disabled Print Folio, side drawer (parked — C1), badge+muted departed view, split balance (Room + F&B + Total). | 2026-09-14 |
+| **OD-364-C4** | **Meal plan in guest header.** Source: `reservation.rateplan_code` (null for walk-ins). Filed BN-364-MEAL as backend note — request explicit `meal_plan` field. FE shows "—" when null. | 2026-09-14 |
 
-**No open decisions. Gate 3 can proceed immediately after design approval.**
+**BN-364-MEAL (backend note):** `reservation.rateplan_code` is null for walk-ins and likely null for most bookings. Request backend to surface `meal_plan` string (e.g. "Room Only", "Bed & Breakfast", "Half Board") on `get-single-order-new → room_info.reservation`. FE will display "—" until populated.
+
+**No open decisions. Gate 3 can proceed.**
 
 ---
 
