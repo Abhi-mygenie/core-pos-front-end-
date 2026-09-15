@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CR-364 — Guest Folio Design Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+
+/* ── OPTION SWITCHER ── */
+.option-bar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid #E5E5E5;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.option-bar-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.opt-btn{padding:7px 18px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;color:#666;background:#fff;transition:all .2s;white-space:nowrap}
+.opt-btn:hover{border-color:#F26B33;color:#F26B33}
+.opt-btn.active{background:#F26B33;color:#fff;border-color:#F26B33}
+.opt-btn.recommended{border-color:#329937;position:relative}
+.opt-btn.recommended::after{content:'★ Recommended';position:absolute;top:-9px;right:6px;font-size:8px;background:#329937;color:#fff;padding:1px 5px;border-radius:4px;white-space:nowrap}
+.opt-btn.recommended.active{background:#329937;border-color:#329937}
+.rec-note{font-size:10px;color:#329937;font-weight:500;margin-left:4px}
+
+/* ── PAGE WRAPPER ── */
+.page{max-width:1100px;margin:0 auto;padding:20px 24px}
+
+/* ── BACK NAV ── */
+.back{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;margin-bottom:14px;cursor:pointer}
+.back:hover{color:#F26B33}
+
+/* ── HEADER CARD ── */
+.folio-header{background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.folio-header-left h1{font-size:17px;font-weight:700}
+.folio-header-left p{font-size:11px;color:#888;margin-top:2px}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+.b-walkin{background:#FFF4F0;color:#F26B33;border:1px solid rgba(242,107,51,.25)}
+.b-pah{background:#FFFBEB;color:#D97706;border:1px solid rgba(245,158,11,.25)}
+.b-inhouse{background:#F0F9F0;color:#329937;border:1px solid rgba(50,153,55,.25)}
+.b-out{background:#F5F5F5;color:#888;border:1px solid #E5E5E5}
+.b-suite{background:#EFF6FF;color:#2563EB;border:1px solid rgba(37,99,235,.15)}
+.folio-header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.grid-2-col{grid-template-columns:7fr 5fr}}
+.grid-2.grid-2-col{display:grid;grid-template-columns:7fr 5fr;gap:14px}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-hdr{padding:12px 16px;border-bottom:1px solid #F5F5F5;display:flex;align-items:center;gap:8px}
+.card-accent{width:3px;height:16px;border-radius:2px;background:#F26B33;flex-shrink:0}
+.card-accent.green{background:#329937}
+.card-title{font-size:12px;font-weight:600}
+.card-body{padding:14px 16px}
+
+/* ── META GRID ── */
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.meta-item .lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:2px}
+.meta-item .val{font-size:12px;font-weight:500;color:#1A1A1A}
+.meta-item .val.null{color:#ccc;font-style:italic}
+
+/* ── FINANCIAL ── */
+.fin-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F5F5F5}
+.fin-row:last-child{border-bottom:none}
+.fin-lbl{font-size:11px;color:#444}
+.fin-val{font-size:12px;font-weight:600}
+.fin-total{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:8px;margin-top:10px}
+.fin-total.orange{background:#FFF4F0;border:1px solid rgba(242,107,51,.2)}
+.fin-total.orange .fin-val{color:#F26B33;font-size:15px}
+.fin-total.split{background:#FAFAFA;border:1px solid #E5E5E5}
+
+/* ── SPLIT BALANCE (OPT B) ── */
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.split-cell{background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;text-align:center}
+.split-cell .lbl{font-size:9px;font-weight:600;text-transform:uppercase;color:#888;letter-spacing:.5px;margin-bottom:4px}
+.split-cell .val{font-size:16px;font-weight:700}
+.split-cell .val.red{color:#EF4444}
+.split-cell .val.zero{color:#329937}
+.split-total{margin-top:8px;background:#FFF4F0;border:1px solid rgba(242,107,51,.2);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.split-total .lbl{font-size:11px;font-weight:600;color:#F26B33}
+.split-total .val{font-size:16px;font-weight:700;color:#F26B33}
+
+/* ── ACTIONS ── */
+.action-card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;margin-bottom:8px;transition:all .15s}
+.btn:last-child{margin-bottom:0}
+.btn-green{background:#329937;color:#fff}
+.btn-green:hover{background:#2B8230}
+.btn-orange{background:#FFF4F0;color:#F26B33;border:1.5px solid #F26B33}
+.btn-orange:hover{background:#F26B33;color:#fff}
+.btn-disabled{background:#F5F5F5;color:#aaa;cursor:not-allowed;border:1px solid #E5E5E5;position:relative}
+.btn-disabled::after{content:'Coming soon';position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:9px;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s}
+.btn-disabled:hover::after{opacity:1}
+
+/* ── F&B TABLE ── */
+.fb-table{width:100%;border-collapse:collapse;font-size:11px}
+.fb-table th{padding:6px 10px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#888;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
+.fb-table td{padding:8px 10px;border-bottom:1px solid #F5F5F5;color:#1A1A1A}
+.fb-table tr:last-child td{border-bottom:none}
+.fb-table tr:hover td{background:#FFF8F5;cursor:pointer}
+.drill-icon{font-size:10px;color:#888}
+
+/* ── PAYMENTS ── */
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F5F5F5}
+.pay-row:last-child{border-bottom:none}
+.pay-mode{display:inline-flex;align-items:center;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:500;background:#F0F9F0;color:#329937;border:1px solid rgba(50,153,55,.2)}
+
+/* ── OPTION-SPECIFIC ── */
+/* Set A — linear scroll, hidden print, inline modal, green banner, single balance */
+/* Set B — accordion, disabled print, drawer, badge+muted, single balance */
+/* Set C — dual col, disabled print, drawer, badge+muted, split balance */
+
+/* Accordion (Set B) */
+.accordion{border:1px solid #E5E5E5;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#fff}
+.accordion-hdr{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#fff}
+.accordion-hdr:hover{background:#FAFAFA}
+.accordion-hdr-left{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.accordion-body{padding:0 16px 14px}
+
+/* Green banner (Set A departed) */
+.checked-out-banner{background:#F0F9F0;border:1px solid rgba(50,153,55,.25);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.checked-out-banner .icon{font-size:14px}
+.checked-out-banner .txt{font-size:12px;font-weight:600;color:#329937}
+
+/* Tabs (Set C alt — not used for C, but showing tab chrome for clarity) */
+.option-desc{background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400E;line-height:1.6}
+.option-desc strong{font-weight:700}
+
+/* Muted overlay for departed (Sets B+C) */
+.muted-page{opacity:.85;pointer-events:none}
+.departed-badge-top{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;margin-bottom:12px;background:#F5F5F5;border:1px solid #E5E5E5}
+.departed-badge-top .txt{font-size:11px;font-weight:600;color:#888}
+.dot{width:8px;height:8px;border-radius:50%;background:#329937;display:inline-block}
+.dot.gray{background:#ccc}
+
+.inline-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;z-index:100}
+.inline-modal{background:#fff;border-radius:12px;padding:20px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.inline-modal h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.modal-close{position:absolute;top:12px;right:14px;font-size:14px;cursor:pointer;color:#888}
+
+.special-req{background:#FFF4F0;border:1px solid rgba(242,107,51,.2);border-radius:6px;padding:6px 10px;font-size:11px;color:#F26B33;margin-top:8px;font-style:italic}
+
+.section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#888;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<!-- OPTION SWITCHER -->
+<div class="option-bar">
+  <span class="option-bar-label">Design option:</span>
+  <button class="opt-btn active" onclick="show('A',this)">Option Set A — Linear Scroll</button>
+  <button class="opt-btn" onclick="show('B',this)">Option Set B — Accordion</button>
+  <button class="opt-btn recommended" onclick="show('C',this)">Option Set C — Dual Column</button>
+  <span class="rec-note" id="rec-note" style="display:none">← Design agent recommends this one</span>
+</div>
+
+<!-- ═══════ OPTION SET A ═══════ -->
+<div id="set-A" class="page">
+  <div class="option-desc">
+    <strong>Option Set A:</strong> Single vertical scroll · Print button hidden · Record Payment = inline modal · Departed = green banner · Balance = single figure.<br>
+    Simple and familiar — but all info stacks vertically, which can require a lot of scrolling on busy checkout days.
+  </div>
+
+  <div class="back">← Back to In-House Guests</div>
+
+  <!-- Header -->
+  <div class="folio-header">
+    <div class="folio-header-left">
+      <h1 data-testid="guest-name">Test Guest GST</h1>
+      <p>Order #000032 · Stay ID MG-69-7D37A1DB</p>
+      <div class="badge-row">
+        <span class="badge b-walkin" data-testid="channel-badge">WalkIn</span>
+        <span class="badge b-pah">PAH</span>
+        <span class="badge b-inhouse">In-House</span>
+        <span class="badge b-suite" data-testid="room-number-badge">Suite · r3</span>
+      </div>
+    </div>
+    <div class="folio-header-right">
+      <div style="text-align:right"><span style="font-size:10px;color:#888">Check-in</span><br><strong>09 Sep 2026 · 11:51</strong></div>
+      <div style="text-align:right"><span style="font-size:10px;color:#888">Check-out</span><br><strong>10 Sep 2026</strong></div>
+      <div style="font-size:10px;color:#888">1 night · 1 adult</div>
+    </div>
+  </div>
+
+  <!-- Section: Room Charges -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hdr"><div class="card-accent"></div><div class="card-title">Room Charges</div></div>
+    <div class="card-body">
+      <div class="fin-row"><span class="fin-lbl">Room Price</span><span class="fin-val" data-testid="room-price-display">₹8,000</span></div>
+      <div class="fin-row"><span class="fin-lbl">Lodging GST (18%)</span><span class="fin-val" data-testid="lodging-gst-display">₹1,440</span></div>
+      <div class="fin-row"><span class="fin-lbl">Advance Paid</span><span class="fin-val" data-testid="advance-paid-display">₹0</span></div>
+      <div class="fin-row"><span class="fin-lbl">Amount Received</span><span class="fin-val" data-testid="amount-received-display">₹0</span></div>
+      <!-- Option A: single balance -->
+      <div class="fin-total orange">
+        <span class="fin-lbl" style="font-weight:600">Balance Due</span>
+        <span class="fin-val" data-testid="total-balance-due-display" style="font-size:18px">₹10,880</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Payments -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hdr"><div class="card-accent" style="background:#329937"></div><div class="card-title">Payments Received</div></div>
+    <div class="card-body" style="color:#888;font-size:12px;text-align:center;padding:20px">No payments recorded yet.</div>
+  </div>
+
+  <!-- Section: F&B -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hdr"><div class="card-accent" style="background:#D97706"></div><div class="card-title">F&B Posted to Room</div></div>
+    <div class="card-body" style="color:#888;font-size:12px;text-align:center;padding:20px">No F&B orders posted to this room.</div>
+  </div>
+
+  <!-- Actions (print hidden in Set A) -->
+  <div class="action-card">
+    <button class="btn btn-green" data-testid="action-checkout-button">Check Out</button>
+    <button class="btn btn-orange" data-testid="action-record-payment-button" onclick="document.getElementById('modal-a').style.display='flex'">Record Payment</button>
+    <!-- Print hidden in Set A -->
+  </div>
+</div>
+
+<!-- inline modal for Set A -->
+<div id="modal-a" style="display:none" class="inline-modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div class="inline-modal">
+    <span class="modal-close" onclick="document.getElementById('modal-a').style.display='none'">✕</span>
+    <h3>Record Payment</h3>
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;color:#888;margin-bottom:4px">Amount (₹)</div>
+      <input type="number" placeholder="0.00" style="width:100%;border:1px solid #E5E5E5;border-radius:6px;padding:8px;font-size:13px;font-family:'Poppins',sans-serif"/>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;color:#888;margin-bottom:4px">Payment Mode</div>
+      <select style="width:100%;border:1px solid #E5E5E5;border-radius:6px;padding:8px;font-size:12px;font-family:'Poppins',sans-serif">
+        <option>Cash</option><option>Card</option><option>UPI</option>
+      </select>
+    </div>
+    <button class="btn btn-orange" style="margin:0">Confirm Payment</button>
+  </div>
+</div>
+
+
+<!-- ═══════ OPTION SET B ═══════ -->
+<div id="set-B" class="page" style="display:none">
+  <div class="option-desc">
+    <strong>Option Set B:</strong> Accordion collapsible sections · Print button disabled (grayed, tooltip) · Record Payment = side drawer · Departed = muted page + badge · Balance = single figure.<br>
+    Reduces height — but critical financial details are hidden behind clicks during busy checkouts.
+  </div>
+
+  <div class="back">← Back to In-House Guests</div>
+  <div class="folio-header">
+    <div class="folio-header-left">
+      <h1 data-testid="guest-name">Test Guest GST</h1>
+      <p>Order #000032</p>
+      <div class="badge-row">
+        <span class="badge b-walkin" data-testid="channel-badge">WalkIn</span>
+        <span class="badge b-pah">PAH</span>
+        <span class="badge b-inhouse">In-House</span>
+        <span class="badge b-suite" data-testid="room-number-badge">Suite · r3</span>
+      </div>
+    </div>
+    <div class="folio-header-right" style="gap:4px">
+      <div style="text-align:right"><span style="font-size:10px;color:#888">Check-in → Check-out</span><br><strong>09 Sep → 10 Sep 2026</strong></div>
+    </div>
+  </div>
+
+  <!-- Accordion: Charges -->
+  <div class="accordion">
+    <div class="accordion-hdr" onclick="toggleAcc(this)">
+      <div class="accordion-hdr-left"><div class="card-accent"></div>Room Charges</div>
+      <span>▾</span>
+    </div>
+    <div class="accordion-body">
+      <div class="fin-row"><span class="fin-lbl">Room Price</span><span class="fin-val" data-testid="room-price-display">₹8,000</span></div>
+      <div class="fin-row"><span class="fin-lbl">GST</span><span class="fin-val" data-testid="lodging-gst-display">₹1,440</span></div>
+      <div class="fin-row"><span class="fin-lbl">Advance / Received</span><span class="fin-val" data-testid="advance-paid-display">₹0 / ₹0</span></div>
+      <div class="fin-total orange" style="margin-top:8px">
+        <span class="fin-lbl" style="font-weight:600">Balance Due</span>
+        <span class="fin-val" data-testid="total-balance-due-display" style="font-size:16px">₹10,880</span>
+      </div>
+    </div>
+  </div>
+  <!-- Accordion: Payments (collapsed) -->
+  <div class="accordion">
+    <div class="accordion-hdr" onclick="toggleAcc(this)">
+      <div class="accordion-hdr-left"><div class="card-accent" style="background:#329937"></div>Payments Received</div>
+      <span>▸</span>
+    </div>
+  </div>
+  <!-- Accordion: F&B (collapsed) -->
+  <div class="accordion">
+    <div class="accordion-hdr" onclick="toggleAcc(this)">
+      <div class="accordion-hdr-left"><div class="card-accent" style="background:#D97706"></div>F&B Posted</div>
+      <span>▸</span>
+    </div>
+  </div>
+
+  <div class="action-card" style="margin-top:4px">
+    <button class="btn btn-green" data-testid="action-checkout-button">Check Out</button>
+    <button class="btn btn-orange" data-testid="action-record-payment-button">Record Payment (→ Drawer)</button>
+    <!-- Option B: disabled print with tooltip -->
+    <button class="btn btn-disabled" data-testid="action-print-folio-button" disabled>Print Folio</button>
+  </div>
+</div>
+
+
+<!-- ═══════ OPTION SET C (RECOMMENDED) ═══════ -->
+<div id="set-C" class="page" style="display:none">
+  <div class="option-desc" style="background:#F0F9F0;border-color:#86EFAC;color:#14532D">
+    <strong>★ Option Set C — Recommended by design agent:</strong> Dual-column grid (left: guest info + F&B | right: charges + actions) · Print button disabled with tooltip · Record Payment = side drawer · Departed = badge + muted · Balance = SPLIT (Room + F&B + Total).<br>
+    <em>Rationale: All critical data visible above the fold — staff see the balance and action buttons without scrolling. Matches PmsCheckoutDrawer pattern already familiar to users.</em>
+  </div>
+
+  <div class="back">← Back to In-House Guests</div>
+
+  <!-- Header -->
+  <div class="folio-header" data-testid="guest-folio-container">
+    <div class="folio-header-left">
+      <h1 data-testid="guest-name">Test Guest GST</h1>
+      <p>Order #000032 · 09 Sep → 10 Sep 2026 · 1 night</p>
+      <div class="badge-row">
+        <span class="badge b-walkin" data-testid="channel-badge">WalkIn</span>
+        <span class="badge b-pah">PAH</span>
+        <span class="badge b-inhouse">In-House</span>
+        <span class="badge b-suite" data-testid="room-number-badge">Suite · r3</span>
+      </div>
+    </div>
+    <div class="folio-header-right" style="align-items:flex-end;gap:4px">
+      <div style="text-align:right">
+        <div style="font-size:10px;color:#888">Checked in</div>
+        <div style="font-size:12px;font-weight:600">09 Sep 2026 · 11:51 AM</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:10px;color:#888">Expected checkout</div>
+        <div style="font-size:12px;font-weight:500;color:#D97706">10 Sep 2026</div>
+      </div>
+      <div style="font-size:10px;color:#888">1 adult · 0 children</div>
+    </div>
+  </div>
+
+  <!-- Dual column grid -->
+  <div class="grid-2 grid-2-col">
+
+    <!-- LEFT COL -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Guest meta -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-accent"></div><div class="card-title">Guest & Stay Details</div></div>
+        <div class="card-body">
+          <div class="meta-grid">
+            <div class="meta-item"><div class="lbl">Guest Name</div><div class="val">Test Guest GST</div></div>
+            <div class="meta-item"><div class="lbl">Phone</div><div class="val">98765 ***10</div></div>
+            <div class="meta-item"><div class="lbl">Booking ID</div><div class="val" style="font-size:10px">MG-69-7D37A1DB</div></div>
+            <div class="meta-item"><div class="lbl">Room Type</div><div class="val">Suite</div></div>
+            <div class="meta-item"><div class="lbl">Check-in</div><div class="val">09 Sep 2026</div></div>
+            <div class="meta-item"><div class="lbl">Check-out</div><div class="val">10 Sep 2026</div></div>
+            <div class="meta-item"><div class="lbl">Nights</div><div class="val">1</div></div>
+            <div class="meta-item"><div class="lbl">Adults / Children</div><div class="val">1 / 0</div></div>
+          </div>
+          <div class="meta-item" style="margin-top:10px"><div class="lbl">Special Requests</div><div class="val null">None</div></div>
+        </div>
+      </div>
+
+      <!-- Payments -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-accent" style="background:#329937"></div><div class="card-title">Payments Received</div><span style="margin-left:auto;font-size:10px;color:#888;background:#FAFAFA;border:1px solid #E5E5E5;padding:2px 8px;border-radius:8px">0 payments</span></div>
+        <div class="card-body" style="color:#888;font-size:11px;text-align:center;padding:18px 0">No payments recorded yet.</div>
+      </div>
+
+      <!-- F&B -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-accent" style="background:#D97706"></div><div class="card-title">F&B Posted to Room</div></div>
+        <div class="card-body">
+          <!-- Sample row -->
+          <table class="fb-table">
+            <thead><tr><th>Order #</th><th>Items</th><th>Amount</th><th></th></tr></thead>
+            <tbody>
+              <tr data-testid="fb-order-row-9900">
+                <td>F-009900</td>
+                <td style="color:#888">Dinner set, Naan × 2…</td>
+                <td style="font-weight:600">₹850</td>
+                <td><span class="drill-icon">›</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;font-size:10px;color:#888;text-align:right">Tap a row to view order details</div>
+        </div>
+      </div>
+
+    </div><!-- /LEFT COL -->
+
+    <!-- RIGHT COL -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Financial Summary (Option C: SPLIT balance) -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-accent"></div><div class="card-title">Room Charges</div></div>
+        <div class="card-body">
+          <div class="fin-row"><span class="fin-lbl">Room Price</span><span class="fin-val" data-testid="room-price-display">₹8,000</span></div>
+          <div class="fin-row"><span class="fin-lbl">Lodging GST</span><span class="fin-val" data-testid="lodging-gst-display">₹1,440</span></div>
+          <div class="fin-row"><span class="fin-lbl">Advance Paid</span><span class="fin-val" data-testid="advance-paid-display">₹0</span></div>
+          <div class="fin-row" style="border-bottom:none"><span class="fin-lbl">Amount Received</span><span class="fin-val" data-testid="amount-received-display">₹0</span></div>
+
+          <!-- SPLIT balance (Option B for D5) -->
+          <div style="margin-top:10px;padding-top:10px;border-top:2px dashed #E5E5E5">
+            <div class="section-label">Balance Breakdown</div>
+            <div class="split-grid">
+              <div class="split-cell">
+                <div class="lbl">Room Balance</div>
+                <div class="val red" data-testid="room-balance-display">₹10,880</div>
+              </div>
+              <div class="split-cell">
+                <div class="lbl">F&B Balance</div>
+                <div class="val red" data-testid="fb-balance-display">₹850</div>
+              </div>
+            </div>
+            <div class="split-total">
+              <span class="lbl">Total Balance Due</span>
+              <span class="val" data-testid="total-balance-due-display">₹11,730</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-card">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:10px">Actions</div>
+        <button class="btn btn-green" data-testid="action-checkout-button">Check Out</button>
+        <button class="btn btn-orange" data-testid="action-record-payment-button">Record Payment</button>
+        <!-- Option C: disabled print with tooltip -->
+        <button class="btn btn-disabled" data-testid="action-print-folio-button" disabled>Print Folio</button>
+      </div>
+
+    </div><!-- /RIGHT COL -->
+  </div><!-- /grid -->
+</div><!-- /Set C -->
+
+
+<!-- ═══════ DEPARTED GUEST PREVIEW ═══════ -->
+<!-- Toggle for departed state preview -->
+<div style="max-width:1100px;margin:0 auto;padding:0 24px 30px">
+  <div style="margin-top:20px;padding:12px 16px;background:#fff;border:1px solid #E5E5E5;border-radius:10px">
+    <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Preview: Departed Guest view (same page, actions hidden)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <!-- Set A departed: green banner -->
+      <div>
+        <div style="font-size:10px;font-weight:600;color:#888;margin-bottom:6px">Set A — Green banner at top</div>
+        <div class="checked-out-banner"><span class="icon">✓</span><span class="txt">Checked Out — 10 Sep 2026 · 12:34 PM</span></div>
+        <div style="background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:11px;color:#888">Actions row: <em>(hidden — no buttons shown)</em></div>
+      </div>
+      <!-- Set B+C departed: muted badge -->
+      <div>
+        <div style="font-size:10px;font-weight:600;color:#888;margin-bottom:6px">Sets B & C — Header badge + actions hidden</div>
+        <div class="departed-badge-top"><span class="dot gray"></span><span class="txt">Checked Out · 10 Sep 2026 · 12:34 PM</span></div>
+        <div style="background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:11px;color:#888">Actions card: <em>(hidden entirely — read-only folio)</em></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(set, btn) {
+  ['A','B','C'].forEach(s => {
+    const el = document.getElementById('set-'+s);
+    if (el) el.style.display = s === set ? 'block' : 'none';
+  });
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const note = document.getElementById('rec-note');
+  note.style.display = set === 'C' ? 'inline' : 'none';
+}
+
+function toggleAcc(hdr) {
+  const body = hdr.nextElementSibling;
+  const arrow = hdr.querySelector('span:last-child');
+  if (!body || !body.classList.contains('accordion-body')) {
+    // collapsed — add body
+    const nb = document.createElement('div');
+    nb.className = 'accordion-body';
+    nb.innerHTML = '<div style="color:#888;font-size:11px;padding:8px 0">No data for this section.</div>';
+    hdr.parentNode.appendChild(nb);
+    arrow.textContent = '▾';
+  } else {
+    body.style.display = body.style.display === 'none' ? 'block' : 'none';
+    arrow.textContent = body.style.display === 'none' ? '▸' : '▾';
+  }
+}
+</script>
+</body>
+</html>
