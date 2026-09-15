@@ -105,3 +105,32 @@
 3. CR-365 Housekeeping Gate 2 (after QA batches settled)
 4. BUG-193 Room Transfer Trail — Gate 0-1 intake + RCA
 5. CR-357 Room Advance — re-enable ~2026-09-29
+
+---
+
+## Session Update — 2026-09-15 (Investigation + Intake close)
+
+### Done this session
+| Task | Status |
+|---|---|
+| T1: 10 QA reports pulled from 15sepqa | ✅ Done |
+| T2: 86 registry items → Gate 5b | ✅ Done |
+| T3: CR_REGISTRY + BUG_TRACKER updated | ✅ Done |
+| BUG-400 registered (P1, MAJOR, Fast Lane eligible) | ✅ Done |
+| BUG-401 registered (P0, BLOCKER, CRITICAL R6) | ✅ Done |
+| Local Room Types investigated (INV_LOCAL_ROOM_TYPES_2026_09_15.md) | ✅ Done |
+| All ODs mapped to intake docs | ✅ Done |
+| Full handover written | ✅ Done |
+
+### Open ODs (owner to answer before next session starts work)
+OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
+
+### Next session priorities
+1. Present 9 plain-English questions to owner (see handover §4)
+2. JOB-1: Fix BUG-401 (BLOCKER) after OD-401-01 approved
+3. JOB-2: Register Local Room Types CR after OD-NEW-01 answered
+4. JOB-3: Re-run BATCH-10 regression after BUG-400/401 fixed
+5. Gate 6 Owner Smoke (after BUG-401 fix landed)
+
+### Handover location
+/app/memory/handover/SESSION_HANDOVER_2026_09_15_NEXT_AGENT_FULL_BRIEFING.md
