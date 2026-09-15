@@ -1373,3 +1373,12 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 **BATCH-10 Regression NEW BUGS:**
 | BUG-400 | MAJOR (P1) | Header Add button covered by search input — filed, awaiting intake |
 | BUG-401 | BLOCKER (P0, CRITICAL R6) | PMS Checkout omits room_gst_tax; Folio balance excludes GST — filed, awaiting intake |
+
+---
+
+### 2026-09-15 — BUG-400, BUG-401 (INTAKE — QA-FOUND Regression BATCH-10)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-400** | Header "Add" button covered by search input | **P1** | **MEDIUM** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-01. Fast Lane eligible. OD-400-01 needed.** | 1 file, ≤2 lines. `overflow-hidden` or `min-w-0` on Header.jsx search container. Workaround: click button edge or table card. |
+| **BUG-401** | PMS Checkout omits `room_gst_tax`; Folio balance excludes GST | **P0** | **CRITICAL** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-02. BLOCKER R6. OD-401-01+02 needed.** | 2 files (PmsCheckoutDrawer.jsx L157 + orderTransform.js R5 hotspot). `get-single-order-new` `room_payment_summary` has no `gst_tax` field → checkout sends `room_gst_tax: 0/absent`. Night Audit `room_gst_collected: 0`. Fix: read `room_info.gst_tax` direct. Related: BUG-386. |

@@ -24869,6 +24869,74 @@
           "note": "Registered as scope split from CR-364. Print path (rtype=RM template, Q-364P-01/08/09/10/13/15) extracted to keep CR-364 Gate 2 clean. Code reality PARTIAL (rtype already emitted). Risk HIGH (R5 orderTransform.js + R6 print semantics). Parked until BE answers."
         }
       ]
+    },
+    {
+      "id": "BUG-400",
+      "title": "Header \"Add\" button covered by search input — pointer clicks intercepted",
+      "type": "BUG",
+      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10 F-01. P1 MEDIUM. Fast Lane eligible pending OD-400-01. Awaiting owner fix option approval.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "gate": 1,
+      "category": "ACTIVE",
+      "sprint_key": "pos_pms_1",
+      "code_reality": "CONFIRMED",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "Header.jsx (1 file, 1-2 lines)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-400_HEADER_ADD_BUTTON_COVERED_BY_SEARCH_INPUT_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "QA Evidence",
+          "path": "memory/test_reports/QA_REPORT_BATCH10_2026_09_15.md",
+          "type": "qa_report"
+        }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "INTAKE",
+          "note": "QA-FOUND BATCH-10 F-01. Playwright: pointer click at Add button centre intercepted by search-input. JS click works → CSS hit-target overlap. Fix: overflow-hidden or min-w-0 on container/input. Fast Lane eligible."
+        }
+      ]
+    },
+    {
+      "id": "BUG-401",
+      "title": "PMS Checkout omits room_gst_tax payload field; Guest Folio balance understates by GST",
+      "type": "BUG",
+      "status": "INTAKE — Gate 1 (2026-09-15). QA-FOUND BATCH-10 F-02. P0 BLOCKER CRITICAL R6. get-single-order-new room_payment_summary has no gst_tax. roomGstTax=0. room_gst_tax never sent in checkout payload. Night Audit shows room_gst_collected=0. Awaiting OD-401-01+02.",
+      "priority": "P0",
+      "risk": "CRITICAL",
+      "gate": 1,
+      "category": "ACTIVE",
+      "sprint_key": "pos_pms_1",
+      "code_reality": "CONFIRMED",
+      "blast_radius": "SMALL",
+      "backend_blocked": false,
+      "files": "PmsCheckoutDrawer.jsx (L157 — 1 line), orderTransform.js (R5 hotspot — +1 line)",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-401_PMS_CHECKOUT_OMITS_ROOM_GST_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "QA Evidence",
+          "path": "memory/test_reports/QA_REPORT_BATCH10_2026_09_15.md",
+          "type": "qa_report"
+        }
+      ],
+      "status_history": [
+        {
+          "date": "2026-09-15",
+          "status": "INTAKE",
+          "note": "QA-FOUND BATCH-10 F-02. PmsCheckoutDrawer reads roomPaymentSummary.gstTax but get-single-order-new never returns gst_tax in room_payment_summary. gstTax=0 always. Fix: add room_info.gst_tax directly to roomInfo mapping in orderTransform + read it in PmsCheckoutDrawer. OD-401-02 needed: folio balance display (R6 decision)."
+        }
+      ]
     }
   ],
   "meta": {
