@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-072: Inventory Management — Redesigned Mockup v2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      brand: { green: '#329937', orange: '#F26B33', amber: '#F4A11A' },
+      pos: { dark: '#1A1A1A', gray: '#666666', border: '#E5E5E5', bg: '#F7F7F7', error: '#EF4444' }
+    }
+  }}
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
+body { font-family: 'Inter', system-ui, sans-serif; background: #f0f0f0; margin: 0; }
+.screen-view { display: none !important; }
+.screen-view.active { display: block !important; animation: fadeIn 0.2s ease-out; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.pill { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; background:#fff; color:#666; border:1px solid #E5E5E5; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.pill.active { background:#1A1A1A; color:white; border-color:#1A1A1A; }
+.pill:hover:not(.active) { border-color:#F26B33; color:#F26B33; }
+.group-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#999; padding:0 4px; }
+.tab { padding:10px 16px; font-size:13px; font-weight:500; cursor:pointer; color:#666; border-bottom:2px solid transparent; display:flex; align-items:center; gap:6px; }
+.tab.active { color:#F26B33; border-bottom-color:#F26B33; font-weight:600; }
+.fi { border:1px solid #E5E5E5; border-radius:8px; padding:8px 12px; font-size:14px; outline:none; width:100%; background:#fff; }
+.fi:focus { border-color:#F26B33; box-shadow:0 0 0 2px rgba(242,107,51,.1); }
+.fl { display:block; font-size:12px; font-weight:500; color:#666; margin-bottom:6px; }
+.ii { border:1px solid #E5E5E5; border-radius:6px; padding:6px 10px; font-size:13px; outline:none; width:100%; }
+.ii:focus { border-color:#F26B33; box-shadow:0 0 0 2px rgba(242,107,51,.1); }
+.phase2 { background:#f9fafb; border:1px dashed #d1d5db; border-radius:8px; color:#9ca3af; }
+.phase2-badge { font-size:9px; background:#f3f4f6; border:1px dashed #d1d5db; color:#9ca3af; padding:2px 6px; border-radius:4px; display:inline-flex; align-items:center; gap:3px; }
+.sidebar-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; cursor:pointer; margin:0 auto; transition:background .2s; }
+.sidebar-icon.active { background:rgba(242,107,51,.1); color:#F26B33; }
+</style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-pos-dark">
+
+<!-- Header -->
+<div class="bg-pos-dark text-white text-center py-2 text-xs font-semibold uppercase tracking-wider">CR-072 Mockup v2 — Inventory Management (Operations + Setup)</div>
+
+<!-- Nav Pills -->
+<div class="flex items-center gap-3 py-3 bg-white border-b border-pos-border shadow-sm z-10 px-6">
+  <span class="group-label text-brand-orange">Operations</span>
+  <button class="pill active" onclick="showScreen('dashboard',this)" data-testid="nav-dashboard">Dashboard</button>
+  <button class="pill" onclick="showScreen('purchase',this)" data-testid="nav-purchase">Purchase Entry</button>
+  <button class="pill" onclick="showScreen('physical',this)" data-testid="nav-physical">Physical Count</button>
+  <div class="w-px h-6 bg-pos-border mx-1"></div>
+  <span class="group-label">Setup</span>
+  <button class="pill" onclick="showScreen('ingredients',this)" data-testid="nav-ingredients">Ingredients</button>
+  <button class="pill" onclick="showScreen('recipes',this)" data-testid="nav-recipes">Recipes</button>
+  <button class="pill" onclick="showScreen('vendors',this)" data-testid="nav-vendors">Vendors</button>
+  <button class="pill" onclick="showScreen('wastage',this)" data-testid="nav-wastage">Wastage Reasons</button>
+</div>
+
+<div class="flex flex-1 overflow-hidden">
+  <!-- Sidebar -->
+  <aside class="w-[70px] bg-white border-r border-pos-border flex flex-col py-4 gap-4 flex-shrink-0">
+    <div class="flex justify-center pb-4 border-b border-pos-border"><img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" class="w-8 h-8" alt="Logo"></div>
+    <div class="flex-1 flex flex-col gap-2">
+      <div class="sidebar-icon" title="Dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div>
+      <div class="sidebar-icon active" title="Inventory"><i data-lucide="boxes" class="w-5 h-5"></i></div>
+      <div class="sidebar-icon" title="Menu"><i data-lucide="utensils" class="w-5 h-5"></i></div>
+      <div class="sidebar-icon" title="Settings"><i data-lucide="settings" class="w-5 h-5"></i></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 overflow-auto bg-pos-bg p-6">
+
+    <!-- ═══════ SCREEN 1: STOCK DASHBOARD ═══════ -->
+    <div id="screen-dashboard" class="screen-view active">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="activity" class="text-brand-orange w-6 h-6"></i> Stock Dashboard</h1>
+          <button class="px-4 py-2 bg-white border border-pos-border rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50" data-testid="export-stock"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+        </div>
+
+        <!-- Phase 2 Intelligence Preview -->
+        <div class="phase2 p-4 mb-5 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><i data-lucide="brain" class="w-5 h-5 text-gray-400"></i></div>
+            <div>
+              <div class="text-sm font-semibold text-gray-500 flex items-center gap-2">Stock Intelligence <span class="phase2-badge"><i data-lucide="lock" class="w-3 h-3"></i> Phase 2</span></div>
+              <div class="text-xs text-gray-400 mt-0.5">Reorder forecasts, consumption trends, cost analysis — coming soon</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-400 italic hidden md:block">"3 items need reorder within 3 days · Butter wastage 18% above avg"</div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-pos-border shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="layers" class="w-6 h-6"></i></div>
+            <div><div class="text-2xl font-bold">105</div><div class="text-xs text-pos-gray font-medium uppercase tracking-wider">Total Items</div></div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-brand-amber shadow-sm flex items-center gap-4" style="border-color:#F4A11A">
+            <div class="w-12 h-12 rounded-full bg-amber-50 text-brand-amber flex items-center justify-center"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+            <div><div class="text-2xl font-bold text-brand-amber">12</div><div class="text-xs text-pos-gray font-medium uppercase tracking-wider">Low Stock</div></div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-pos-error shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-red-50 text-pos-error flex items-center justify-center"><i data-lucide="x-circle" class="w-6 h-6"></i></div>
+            <div><div class="text-2xl font-bold text-pos-error">3</div><div class="text-xs text-pos-gray font-medium uppercase tracking-wider">Out of Stock</div></div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-pos-border shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-green-50 text-brand-green flex items-center justify-center"><i data-lucide="folder-tree" class="w-6 h-6"></i></div>
+            <div><div class="text-2xl font-bold">70</div><div class="text-xs text-pos-gray font-medium uppercase tracking-wider">Categories</div></div>
+          </div>
+        </div>
+
+        <!-- Stock Table -->
+        <div class="bg-white rounded-xl border border-pos-border shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-pos-border flex flex-wrap gap-3 items-center bg-gray-50">
+            <div class="relative flex-1 min-w-[200px] max-w-md">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pos-gray"></i>
+              <input type="text" placeholder="Search stock items..." class="pl-9 pr-4 py-2 w-full border border-pos-border rounded-lg text-sm outline-none focus:border-brand-orange" data-testid="stock-search">
+            </div>
+            <select class="border border-pos-border rounded-lg px-3 py-2 text-sm bg-white outline-none" data-testid="stock-category-filter"><option>All Categories</option><option>Dairy</option><option>Filling</option><option>Kunafa Base</option></select>
+            <select class="border border-pos-border rounded-lg px-3 py-2 text-sm bg-white outline-none" data-testid="stock-status-filter"><option>All Status</option><option>Low Stock</option><option>Out of Stock</option><option>In Stock</option></select>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-[#FAFAFA] border-b border-pos-border text-xs uppercase text-pos-gray tracking-wider">
+                <tr>
+                  <th class="py-3 px-4 font-semibold">Ingredient</th>
+                  <th class="py-3 px-4 font-semibold">Category</th>
+                  <th class="py-3 px-4 font-semibold text-right">Current Stock</th>
+                  <th class="py-3 px-4 font-semibold text-center">Status</th>
+                  <th class="py-3 px-4 font-semibold">Vendor</th>
+                  <th class="py-3 px-4 font-semibold text-center"><span class="phase2-badge"><i data-lucide="lock" class="w-3 h-3"></i> Days Left</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-pos-border">
+                <tr class="hover:bg-gray-50" data-testid="stock-row-ok">
+                  <td class="py-3 px-4 font-medium">Base Cream</td>
+                  <td class="py-3 px-4 text-pos-gray">Filling</td>
+                  <td class="py-3 px-4 text-right font-medium">1.65 <span class="text-xs text-pos-gray">kg</span></td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-1 bg-green-50 text-brand-green rounded-full text-xs font-medium">In Stock</span></td>
+                  <td class="py-3 px-4 text-pos-gray">Kunafabake</td>
+                  <td class="py-3 px-4 text-center text-gray-300 text-xs italic">~6d</td>
+                </tr>
+                <tr class="hover:bg-gray-50 bg-amber-50/30" data-testid="stock-row-low">
+                  <td class="py-3 px-4 font-medium text-brand-amber flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> Biscoff Biscuit</td>
+                  <td class="py-3 px-4 text-pos-gray">Kunafa Base</td>
+                  <td class="py-3 px-4 text-right font-medium text-brand-amber">1.86 <span class="text-xs text-pos-gray">kg</span></td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-1 bg-amber-100 text-brand-amber rounded-full text-xs font-medium">Low Stock</span></td>
+                  <td class="py-3 px-4 text-pos-gray">Kunafabake</td>
+                  <td class="py-3 px-4 text-center text-gray-300 text-xs italic">~3d</td>
+                </tr>
+                <tr class="hover:bg-gray-50 bg-red-50/30" data-testid="stock-row-out">
+                  <td class="py-3 px-4 font-medium text-pos-error flex items-center gap-2"><i data-lucide="x-octagon" class="w-4 h-4"></i> Pistachio Paste</td>
+                  <td class="py-3 px-4 text-pos-gray">Filling</td>
+                  <td class="py-3 px-4 text-right font-medium text-pos-error">0.0 <span class="text-xs text-pos-gray">kg</span></td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-1 bg-red-100 text-pos-error rounded-full text-xs font-medium">Out of Stock</span></td>
+                  <td class="py-3 px-4 text-pos-gray">Tasty Craft</td>
+                  <td class="py-3 px-4 text-center text-pos-error text-xs font-bold">0d</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-3 px-4 font-medium">Butter</td>
+                  <td class="py-3 px-4 text-pos-gray">Dairy</td>
+                  <td class="py-3 px-4 text-right font-medium">8.2 <span class="text-xs text-pos-gray">kg</span></td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-1 bg-green-50 text-brand-green rounded-full text-xs font-medium">In Stock</span></td>
+                  <td class="py-3 px-4 text-pos-gray">Varun Dairy</td>
+                  <td class="py-3 px-4 text-center text-gray-300 text-xs italic">~12d</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-3 px-4 font-medium">Sugar Syrup</td>
+                  <td class="py-3 px-4 text-pos-gray">Sweetener</td>
+                  <td class="py-3 px-4 text-right font-medium">3.5 <span class="text-xs text-pos-gray">ltr</span></td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-1 bg-green-50 text-brand-green rounded-full text-xs font-medium">In Stock</span></td>
+                  <td class="py-3 px-4 text-pos-gray">Rahul Grocery</td>
+                  <td class="py-3 px-4 text-center text-gray-300 text-xs italic">~8d</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 2: PURCHASE ENTRY ═══════ -->
+    <div id="screen-purchase" class="screen-view">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="shopping-cart" class="text-brand-orange w-6 h-6"></i> Add Purchase Entry</h1>
+          <button class="bg-brand-green text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90 shadow-sm" data-testid="complete-purchase"><i data-lucide="check-circle" class="w-4 h-4"></i> Complete Purchase</button>
+        </div>
+        <!-- Header Fields -->
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border p-5 mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div><label class="fl">Vendor <span class="text-pos-error">*</span></label><select class="fi bg-gray-50" data-testid="purchase-vendor"><option>Kunafabake</option><option>Varun Dairy</option><option>Rahul Grocery</option><option>+ Add New Vendor...</option></select></div>
+          <div><label class="fl">Purchase Date</label><input type="date" class="fi bg-gray-50" value="2026-07-15" data-testid="purchase-date"></div>
+          <div><label class="fl">Invoice / Bill No.</label><input type="text" class="fi bg-gray-50" placeholder="INV-0012" data-testid="purchase-invoice"></div>
+          <div><label class="fl">Payment Method</label><select class="fi bg-gray-50" data-testid="purchase-payment"><option>Unpaid</option><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option></select></div>
+        </div>
+        <!-- Line Items -->
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border overflow-hidden mb-4">
+          <div class="p-4 border-b border-pos-border flex justify-between items-center bg-[#FAFAFA]">
+            <h3 class="text-xs font-bold text-pos-gray uppercase tracking-wider">Purchase Line Items</h3>
+            <button class="text-brand-orange text-sm font-medium flex items-center gap-1 hover:underline" data-testid="add-purchase-row"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Row</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-white border-b border-pos-border text-xs text-pos-gray uppercase tracking-wider">
+                <tr><th class="p-3 font-semibold w-56">Ingredient</th><th class="p-3 font-semibold w-20 text-center">Unit</th><th class="p-3 font-semibold w-24 text-center">Qty</th><th class="p-3 font-semibold w-28 text-right">Rate (₹)</th><th class="p-3 font-semibold w-28 text-right">Amount (₹)</th><th class="p-3 font-semibold w-28">Batch</th><th class="p-3 font-semibold w-28">Expiry</th><th class="p-3 w-10"></th></tr>
+              </thead>
+              <tbody class="divide-y divide-pos-border">
+                <tr class="hover:bg-gray-50">
+                  <td class="p-2"><select class="ii"><option>Base Cream</option></select></td>
+                  <td class="p-2 text-center"><span class="text-xs bg-gray-100 px-2 py-1 rounded font-medium">kg</span></td>
+                  <td class="p-2"><input type="number" class="ii text-center" value="5"></td>
+                  <td class="p-2"><input type="number" class="ii text-right" value="450"></td>
+                  <td class="p-2 text-right font-semibold align-middle">2,250.00</td>
+                  <td class="p-2"><input type="text" class="ii" placeholder="B-001"></td>
+                  <td class="p-2"><input type="date" class="ii text-xs"></td>
+                  <td class="p-2 text-center"><button class="text-pos-error p-1 hover:bg-red-50 rounded"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="p-2"><select class="ii"><option>Biscoff Biscuit</option></select></td>
+                  <td class="p-2 text-center"><span class="text-xs bg-gray-100 px-2 py-1 rounded font-medium">kg</span></td>
+                  <td class="p-2"><input type="number" class="ii text-center" value="3"></td>
+                  <td class="p-2"><input type="number" class="ii text-right" value="320"></td>
+                  <td class="p-2 text-right font-semibold align-middle">960.00</td>
+                  <td class="p-2"><input type="text" class="ii"></td>
+                  <td class="p-2"><input type="date" class="ii text-xs" value="2026-08-15"></td>
+                  <td class="p-2 text-center"><button class="text-pos-error p-1 hover:bg-red-50 rounded"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-4 bg-[#FAFAFA] border-t border-pos-border flex justify-between items-center">
+            <div class="flex gap-4 text-sm text-pos-gray"><span>Items: <strong class="text-pos-dark">2</strong></span><span>Total Qty: <strong class="text-pos-dark">8 kg</strong></span></div>
+            <div class="text-lg font-bold text-pos-dark">Total: ₹3,210.00</div>
+          </div>
+        </div>
+        <!-- Bill Upload -->
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border p-4 flex items-center gap-4">
+          <i data-lucide="paperclip" class="w-5 h-5 text-pos-gray"></i>
+          <span class="text-sm text-pos-gray">Attach Invoice (PDF/Image)</span>
+          <button class="ml-auto px-4 py-2 border border-pos-border rounded-lg text-sm font-medium bg-white hover:bg-gray-50">Browse</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 3: PHYSICAL STOCK COUNT ═══════ -->
+    <div id="screen-physical" class="screen-view">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-2">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="clipboard-check" class="text-brand-orange w-6 h-6"></i> Physical Stock Count</h1>
+          <button class="bg-brand-green text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90 shadow-sm" data-testid="adjust-stock"><i data-lucide="check" class="w-4 h-4"></i> Save Adjustments</button>
+        </div>
+        <p class="text-sm text-pos-gray mb-6">Compare system quantities with actual physical stock. Enter what you see on the shelf.</p>
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border overflow-hidden">
+          <div class="p-4 border-b border-pos-border flex gap-3 items-center bg-gray-50">
+            <div class="relative flex-1 max-w-sm">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pos-gray"></i>
+              <input type="text" placeholder="Search ingredient..." class="pl-9 pr-4 py-2 w-full border border-pos-border rounded-lg text-sm outline-none bg-white" data-testid="physical-search">
+            </div>
+            <select class="border border-pos-border rounded-lg px-3 py-2 text-sm bg-white outline-none"><option>All Categories</option></select>
+          </div>
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#FAFAFA] border-b border-pos-border text-xs uppercase text-pos-gray tracking-wider">
+              <tr>
+                <th class="py-3 px-4 font-semibold">Ingredient</th>
+                <th class="py-3 px-4 font-semibold text-center w-32">System Qty</th>
+                <th class="py-3 px-4 font-semibold text-center w-44">Physical Qty</th>
+                <th class="py-3 px-4 font-semibold text-center w-32">Drift</th>
+                <th class="py-3 px-4 font-semibold w-48">Reason</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-pos-border">
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-4"><div class="font-medium">Base Cream</div><div class="text-xs text-pos-gray">Filling</div></td>
+                <td class="py-3 px-4 text-center font-medium text-pos-gray">1.65 kg</td>
+                <td class="py-2 px-4"><input type="number" class="ii text-center font-bold border-brand-orange bg-orange-50/30" value="1.5" data-testid="physical-qty-1"></td>
+                <td class="py-3 px-4 text-center"><span class="text-pos-error font-medium flex items-center justify-center gap-1"><i data-lucide="trending-down" class="w-3 h-3"></i> -0.15 kg</span></td>
+                <td class="py-2 px-4"><select class="ii" data-testid="waste-reason-1"><option>Select reason...</option><option selected>Spillage</option><option>Expired</option><option>Pilferage</option><option>Others</option></select></td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-4"><div class="font-medium">Butter</div><div class="text-xs text-pos-gray">Dairy</div></td>
+                <td class="py-3 px-4 text-center font-medium text-pos-gray">8.2 kg</td>
+                <td class="py-2 px-4"><input type="number" class="ii text-center font-bold" value="8.2"></td>
+                <td class="py-3 px-4 text-center"><span class="text-brand-green font-medium flex items-center justify-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Match</span></td>
+                <td class="py-2 px-4"><select class="ii" disabled><option>N/A — no drift</option></select></td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-4"><div class="font-medium">Sugar Syrup</div><div class="text-xs text-pos-gray">Sweetener</div></td>
+                <td class="py-3 px-4 text-center font-medium text-pos-gray">3.5 ltr</td>
+                <td class="py-2 px-4"><input type="number" class="ii text-center font-bold border-brand-green bg-green-50/30" value="4.0"></td>
+                <td class="py-3 px-4 text-center"><span class="text-brand-green font-medium flex items-center justify-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> +0.5 ltr</span></td>
+                <td class="py-2 px-4"><select class="ii"><option selected>Physical stock count adjustment</option></select></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 4: INGREDIENTS SETUP ═══════ -->
+    <div id="screen-ingredients" class="screen-view">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="book-open" class="text-brand-orange w-6 h-6"></i> Ingredients Master</h1>
+          <div class="flex gap-2">
+            <button class="px-4 py-2 border border-pos-border rounded-lg text-sm font-medium bg-white hover:bg-gray-50 flex items-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+            <button class="px-4 py-2 border border-pos-border rounded-lg text-sm font-medium bg-white hover:bg-gray-50 flex items-center gap-2"><i data-lucide="upload" class="w-4 h-4"></i> Import</button>
+            <button class="px-4 py-2 border border-brand-orange text-brand-orange rounded-lg text-sm font-medium bg-white hover:bg-orange-50 flex items-center gap-2" data-testid="bulk-edit-ingredients"><i data-lucide="edit-3" class="w-4 h-4"></i> Bulk Edit</button>
+            <button class="px-4 py-2 bg-brand-green text-white rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90" data-testid="add-ingredient"><i data-lucide="plus" class="w-4 h-4"></i> Add Ingredient</button>
+          </div>
+        </div>
+        <div class="flex gap-4 h-[calc(100vh-220px)]">
+          <!-- Category Sidebar -->
+          <div class="w-64 flex-shrink-0 bg-white rounded-xl border border-pos-border shadow-sm overflow-hidden flex flex-col">
+            <div class="p-3 border-b border-pos-border flex justify-between items-center bg-gray-50">
+              <span class="text-xs font-bold text-pos-gray uppercase tracking-wider">Categories (70)</span>
+              <button class="text-brand-orange hover:bg-orange-50 p-1 rounded" data-testid="add-category"><i data-lucide="plus" class="w-4 h-4"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-1">
+              <div class="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer border border-brand-orange bg-orange-50/40" data-testid="cat-dairy">
+                <span class="text-sm font-semibold text-pos-dark">Dairy</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full font-bold" style="background:rgba(242,107,51,.12);color:#F26B33;">8</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer hover:bg-gray-50">
+                <span class="text-sm text-pos-dark">Filling</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-pos-gray font-medium">12</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer hover:bg-gray-50">
+                <span class="text-sm text-pos-dark">Kunafa Base</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-pos-gray font-medium">15</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer hover:bg-gray-50">
+                <span class="text-sm text-pos-dark">Sweetener</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-pos-gray font-medium">6</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer hover:bg-gray-50">
+                <span class="text-sm text-pos-dark">Packaging</span>
+                <span class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-pos-gray font-medium">9</span>
+              </div>
+              <!-- Inline add -->
+              <div class="flex items-center gap-1.5 px-2 py-2 border border-dashed border-pos-border rounded-lg">
+                <input class="flex-1 px-2 py-1 text-sm rounded border outline-none focus:ring-1 focus:ring-orange-200 border-pos-border" placeholder="New category..." data-testid="new-cat-input">
+                <button class="p-1 rounded hover:bg-green-50"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-green"></i></button>
+                <button class="p-1 rounded hover:bg-gray-100"><i data-lucide="x" class="w-3.5 h-3.5 text-pos-gray"></i></button>
+              </div>
+            </div>
+          </div>
+          <!-- Ingredients Table -->
+          <div class="flex-1 bg-white rounded-xl border border-pos-border shadow-sm overflow-hidden flex flex-col">
+            <div class="p-3 border-b border-pos-border flex items-center gap-3 bg-gray-50">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pos-gray"></i>
+                <input type="text" placeholder="Search in Dairy..." class="pl-9 pr-4 py-2 w-full border border-pos-border rounded-lg text-sm outline-none bg-white" data-testid="ingredient-search">
+              </div>
+            </div>
+            <div class="flex-1 overflow-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-[#FAFAFA] border-b border-pos-border text-xs uppercase text-pos-gray tracking-wider sticky top-0">
+                  <tr>
+                    <th class="py-3 px-4 font-semibold">Ingredient Name</th>
+                    <th class="py-3 px-4 font-semibold text-center">Base Unit</th>
+                    <th class="py-3 px-4 font-semibold">Conversion</th>
+                    <th class="py-3 px-4 font-semibold text-center">Small Unit</th>
+                    <th class="py-3 px-4 font-semibold text-right">Min Alert</th>
+                    <th class="py-3 px-4 font-semibold text-right w-24">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-pos-border">
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">Milk (Full Cream)</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">ltr</span></td>
+                    <td class="py-3 px-4 text-pos-gray text-sm">1 ltr = 1000 ml</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">ml</span></td>
+                    <td class="py-3 px-4 text-right font-medium text-brand-orange">5.0 ltr</td>
+                    <td class="py-3 px-4 text-right">
+                      <button class="p-1.5 text-pos-gray hover:text-brand-orange rounded hover:bg-orange-50"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                      <button class="p-1.5 text-pos-gray hover:text-pos-error rounded hover:bg-red-50"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">Cheddar Cheese</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">kg</span></td>
+                    <td class="py-3 px-4 text-pos-gray text-sm">1 kg = 1000 gm</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">gm</span></td>
+                    <td class="py-3 px-4 text-right font-medium text-brand-orange">2.0 kg</td>
+                    <td class="py-3 px-4 text-right">
+                      <button class="p-1.5 text-pos-gray hover:text-brand-orange rounded hover:bg-orange-50"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                      <button class="p-1.5 text-pos-gray hover:text-pos-error rounded hover:bg-red-50"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-medium">Cream Cheese</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">kg</span></td>
+                    <td class="py-3 px-4 text-pos-gray text-sm">1 kg = 1000 gm</td>
+                    <td class="py-3 px-4 text-center"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium">gm</span></td>
+                    <td class="py-3 px-4 text-right font-medium text-brand-orange">3.0 kg</td>
+                    <td class="py-3 px-4 text-right">
+                      <button class="p-1.5 text-pos-gray hover:text-brand-orange rounded hover:bg-orange-50"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                      <button class="p-1.5 text-pos-gray hover:text-pos-error rounded hover:bg-red-50"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 5: RECIPES ═══════ -->
+    <div id="screen-recipes" class="screen-view">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="chef-hat" class="text-brand-orange w-6 h-6"></i> Recipes Management</h1>
+          <div class="flex gap-2">
+            <button class="px-4 py-2 border border-pos-border rounded-lg text-sm font-medium bg-white hover:bg-gray-50 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Import/Export</button>
+            <button class="bg-brand-green text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90" data-testid="create-recipe"><i data-lucide="plus" class="w-4 h-4"></i> Create Recipe</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border overflow-hidden">
+          <div class="flex border-b border-pos-border px-4">
+            <div class="tab active" data-testid="tab-standard">Standard Recipes <span class="bg-orange-50 text-brand-orange px-2 py-0.5 rounded-full text-xs font-bold ml-1">92</span></div>
+            <div class="tab" data-testid="tab-sub">Sub-Recipes <span class="bg-gray-100 text-pos-gray px-2 py-0.5 rounded-full text-xs font-bold ml-1">0</span></div>
+            <div class="tab" data-testid="tab-addon">Addon Recipes <span class="bg-gray-100 text-pos-gray px-2 py-0.5 rounded-full text-xs font-bold ml-1">8</span></div>
+          </div>
+          <div class="p-4 border-b border-pos-border flex justify-between bg-gray-50">
+            <div class="relative w-72">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pos-gray"></i>
+              <input type="text" placeholder="Search recipes..." class="pl-9 pr-4 py-2 w-full border border-pos-border rounded-lg text-sm outline-none bg-white" data-testid="recipe-search">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            <!-- Recipe Card 1 -->
+            <div class="border border-pos-border rounded-xl p-4 hover:border-brand-orange transition-colors cursor-pointer group" data-testid="recipe-card-1">
+              <div class="flex justify-between items-start mb-2">
+                <div><h3 class="font-bold text-pos-dark group-hover:text-brand-orange transition-colors">50-50 Aam -E- Bahar</h3><p class="text-xs text-pos-gray">Menu: <span class="font-medium text-pos-dark">50-50 Aam -E- Bahar</span></p></div>
+                <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-semibold">1 Serve</span>
+              </div>
+              <div class="flex gap-4 text-xs text-pos-gray border-y border-pos-border py-2 my-3">
+                <div class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prep: 10m</div>
+                <div class="flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> Cook: 2m</div>
+              </div>
+              <div class="text-xs">
+                <div class="font-semibold text-pos-dark mb-1">Ingredients (5):</div>
+                <div class="text-pos-gray flex justify-between"><span>Butter</span><span>13 gm</span></div>
+                <div class="text-pos-gray flex justify-between"><span>Sugar Syrup</span><span>13 gm</span></div>
+                <div class="text-pos-gray flex justify-between"><span>Base Cream</span><span>25 gm</span></div>
+                <div class="text-pos-gray italic">+ 2 more</div>
+              </div>
+              <!-- Phase 2 Cost Placeholder -->
+              <div class="mt-3 pt-2 border-t border-dashed border-gray-200 flex justify-between items-center">
+                <span class="phase2-badge"><i data-lucide="lock" class="w-3 h-3"></i> Cost: ₹-- · Margin: --%</span>
+              </div>
+            </div>
+            <!-- Recipe Card 2 -->
+            <div class="border border-pos-border rounded-xl p-4 hover:border-brand-orange transition-colors cursor-pointer group" data-testid="recipe-card-2">
+              <div class="flex justify-between items-start mb-2">
+                <div><h3 class="font-bold text-pos-dark group-hover:text-brand-orange transition-colors">50-50 Blueberry</h3><p class="text-xs text-pos-gray">Menu: <span class="font-medium text-pos-dark">50-50 Blueberry</span></p></div>
+                <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-semibold">1 Serve</span>
+              </div>
+              <div class="flex gap-4 text-xs text-pos-gray border-y border-pos-border py-2 my-3">
+                <div class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prep: 10m</div>
+                <div class="flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> Cook: 2m</div>
+              </div>
+              <div class="text-xs">
+                <div class="font-semibold text-pos-dark mb-1">Ingredients (4):</div>
+                <div class="text-pos-gray flex justify-between"><span>Blueberry Filling</span><span>25 gm</span></div>
+                <div class="text-pos-gray flex justify-between"><span>Base Cream</span><span>25 gm</span></div>
+                <div class="text-pos-gray italic">+ 2 more</div>
+              </div>
+              <div class="mt-3 pt-2 border-t border-dashed border-gray-200 flex justify-between items-center">
+                <span class="phase2-badge"><i data-lucide="lock" class="w-3 h-3"></i> Cost: ₹-- · Margin: --%</span>
+              </div>
+            </div>
+            <!-- Recipe Card 3 -->
+            <div class="border border-pos-border rounded-xl p-4 hover:border-brand-orange transition-colors cursor-pointer group" data-testid="recipe-card-3">
+              <div class="flex justify-between items-start mb-2">
+                <div><h3 class="font-bold text-pos-dark group-hover:text-brand-orange transition-colors">Kunafa Classic</h3><p class="text-xs text-pos-gray">Menu: <span class="font-medium text-pos-dark">Kunafa Classic</span></p></div>
+                <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-semibold">1 Serve</span>
+              </div>
+              <div class="flex gap-4 text-xs text-pos-gray border-y border-pos-border py-2 my-3">
+                <div class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prep: 15m</div>
+                <div class="flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> Cook: 5m</div>
+              </div>
+              <div class="text-xs">
+                <div class="font-semibold text-pos-dark mb-1">Ingredients (6):</div>
+                <div class="text-pos-gray flex justify-between"><span>Kunafa Dough</span><span>100 gm</span></div>
+                <div class="text-pos-gray flex justify-between"><span>Mozzarella</span><span>80 gm</span></div>
+                <div class="text-pos-gray italic">+ 4 more</div>
+              </div>
+              <div class="mt-3 pt-2 border-t border-dashed border-gray-200 flex justify-between items-center">
+                <span class="phase2-badge"><i data-lucide="lock" class="w-3 h-3"></i> Cost: ₹-- · Margin: --%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 6: VENDORS ═══════ -->
+    <div id="screen-vendors" class="screen-view">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="truck" class="text-brand-orange w-6 h-6"></i> Vendor Management</h1>
+          <button class="bg-brand-green text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90" data-testid="add-vendor"><i data-lucide="plus" class="w-4 h-4"></i> Add Vendor</button>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border overflow-hidden">
+          <div class="p-4 border-b border-pos-border bg-gray-50">
+            <div class="relative max-w-sm">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pos-gray"></i>
+              <input type="text" placeholder="Search vendors..." class="pl-9 pr-4 py-2 w-full border border-pos-border rounded-lg text-sm outline-none bg-white" data-testid="vendor-search">
+            </div>
+          </div>
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#FAFAFA] border-b border-pos-border text-xs uppercase text-pos-gray tracking-wider">
+              <tr><th class="py-3 px-4 font-semibold">Vendor Name</th><th class="py-3 px-4 font-semibold">Contact Person</th><th class="py-3 px-4 font-semibold">Phone</th><th class="py-3 px-4 font-semibold">Type</th><th class="py-3 px-4 font-semibold">GST</th><th class="py-3 px-4 text-right font-semibold">Actions</th></tr>
+            </thead>
+            <tbody class="divide-y divide-pos-border">
+              <tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium">Kunafabake</td><td class="py-3 px-4 text-pos-gray">Meet Singh</td><td class="py-3 px-4 text-pos-gray">+91 8957823844</td><td class="py-3 px-4"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-medium">Wholesale</span></td><td class="py-3 px-4 text-pos-gray text-xs">—</td><td class="py-3 px-4 text-right"><button class="p-1.5 text-pos-gray hover:text-brand-orange rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="p-1.5 text-pos-gray hover:text-pos-error rounded"><i data-lucide="trash" class="w-4 h-4"></i></button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium">Varun Dairy</td><td class="py-3 px-4 text-pos-gray">Varun Patel</td><td class="py-3 px-4 text-pos-gray">+91 9876543210</td><td class="py-3 px-4"><span class="bg-green-50 text-green-700 px-2 py-1 rounded text-xs font-medium">Retail</span></td><td class="py-3 px-4 text-pos-gray text-xs">GST27AAA...</td><td class="py-3 px-4 text-right"><button class="p-1.5 text-pos-gray hover:text-brand-orange rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="p-1.5 text-pos-gray hover:text-pos-error rounded"><i data-lucide="trash" class="w-4 h-4"></i></button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium">Rahul Grocery</td><td class="py-3 px-4 text-pos-gray">Rahul</td><td class="py-3 px-4 text-pos-gray">+91 9988776655</td><td class="py-3 px-4"><span class="bg-purple-50 text-purple-700 px-2 py-1 rounded text-xs font-medium">Grocery</span></td><td class="py-3 px-4 text-pos-gray text-xs">—</td><td class="py-3 px-4 text-right"><button class="p-1.5 text-pos-gray hover:text-brand-orange rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="p-1.5 text-pos-gray hover:text-pos-error rounded"><i data-lucide="trash" class="w-4 h-4"></i></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 7: WASTAGE REASONS ═══════ -->
+    <div id="screen-wastage" class="screen-view">
+      <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold font-[Poppins] flex items-center gap-2"><i data-lucide="trash-2" class="text-brand-orange w-6 h-6"></i> Wastage Reasons</h1>
+          <button class="bg-brand-green text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90" data-testid="add-reason"><i data-lucide="plus" class="w-4 h-4"></i> Add Reason</button>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-pos-border p-6 space-y-3">
+          <div class="flex justify-between items-center p-3 border border-pos-border rounded-lg bg-gray-50 hover:border-brand-orange transition-colors"><span class="font-medium">Expired</span><div class="flex gap-2"><button class="text-pos-gray hover:text-brand-orange"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="text-pos-gray hover:text-pos-error"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>
+          <div class="flex justify-between items-center p-3 border border-pos-border rounded-lg bg-gray-50 hover:border-brand-orange transition-colors"><span class="font-medium">Pilferage</span><div class="flex gap-2"><button class="text-pos-gray hover:text-brand-orange"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="text-pos-gray hover:text-pos-error"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>
+          <div class="flex justify-between items-center p-3 border border-pos-border rounded-lg bg-gray-50 hover:border-brand-orange transition-colors"><span class="font-medium">Spillage</span><div class="flex gap-2"><button class="text-pos-gray hover:text-brand-orange"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="text-pos-gray hover:text-pos-error"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>
+          <div class="flex justify-between items-center p-3 border border-pos-border rounded-lg bg-gray-50 hover:border-brand-orange transition-colors"><span class="font-medium">Others</span><div class="flex gap-2"><button class="text-pos-gray hover:text-brand-orange"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button class="text-pos-gray hover:text-pos-error"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>
+          <!-- Inline add -->
+          <div class="flex items-center gap-2 p-3 border border-brand-orange rounded-lg bg-orange-50/30">
+            <input type="text" class="ii flex-1 bg-white" value="Quality Issue" data-testid="new-reason-input">
+            <button class="text-brand-green px-3 py-1 text-xs font-semibold border border-brand-green rounded hover:bg-green-50">Save</button>
+            <button class="text-pos-error px-3 py-1 text-xs font-semibold border border-pos-error rounded hover:bg-red-50">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+  function showScreen(id, btn) {
+    document.querySelectorAll('.screen-view').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    document.querySelectorAll('.pill').forEach(el => el.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelector('main').scrollTop = 0;
+    lucide.createIcons();
+  }
+</script>
+</body>
+</html>

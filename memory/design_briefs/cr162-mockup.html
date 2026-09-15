@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-162 Mockup — Mid-Stay Partial Payment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+    /* Brand colours (mirrors COLORS in codebase) */
+    :root {
+      --orange:      #F97316;
+      --orange-soft: #FFF7ED;
+      --orange-border:#FDBA74;
+      --green:       #16a34a;
+      --green-soft:  #f0fdf4;
+      --green-border:#bbf7d0;
+      --dark:        #111827;
+      --gray:        #6B7280;
+      --border:      #E5E7EB;
+      --bg:          #F9FAFB;
+      --white:       #FFFFFF;
+    }
+
+    /* Entrance animation for modal */
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+    .modal-card { animation: modalIn 220ms cubic-bezier(.22,.68,0,1.2) both; }
+
+    /* Accordion smooth height */
+    .accordion-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease;
+    }
+    .accordion-body.open { max-height: 400px; }
+
+    /* Active press effect */
+    .btn-press:active { transform: scale(0.96); }
+
+    /* Mode grid selected state */
+    .mode-btn.selected {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: var(--green);
+      font-weight: 600;
+    }
+    .mode-btn:not(.selected):hover {
+      background: #f3f4f6;
+    }
+
+    /* Tab styles */
+    .tab { cursor: pointer; transition: all .15s; }
+    .tab.active { border-bottom: 2px solid var(--orange); color: var(--orange); font-weight: 600; }
+
+    /* Toast */
+    @keyframes toastIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .toast { animation: toastIn .25s ease; }
+
+    /* Input focus */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      ring: 2px;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249,115,22,.15);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-start justify-center p-6 gap-8 flex-wrap">
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — CARTPANEL ROOM SECTION (Before / After)
+═══════════════════════════════════════════════════════ -->
+
+<div class="flex flex-col gap-6 items-start">
+  <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">CartPanel — Room Section</h2>
+
+  <!-- BEFORE -->
+  <div class="w-72">
+    <p class="text-xs text-gray-400 mb-2 font-medium">BEFORE (current)</p>
+    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden" style="border-color:var(--border)">
+      <!-- Fake cart items -->
+      <div class="px-4 py-3 border-b" style="border-color:var(--border)">
+        <p class="text-xs text-gray-400 font-medium">3 items placed</p>
+      </div>
+      <!-- Room row — old -->
+      <div class="px-4 py-2.5 flex items-center justify-between border-b" style="border-color:var(--border)">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--orange)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="text-xs font-semibold" style="color:var(--dark)">Room</span>
+        </div>
+        <span class="text-xs font-bold" style="color:var(--orange)">₹4,000</span>
+      </div>
+      <!-- Checkout -->
+      <div class="px-4 py-3">
+        <button class="w-full py-2.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2" style="background:var(--green)">
+          Checkout <span>₹5,800</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="w-72">
+    <p class="text-xs text-gray-400 mb-2 font-medium">AFTER — CR-162 (new "+ Pay" button)</p>
+    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden" style="border-color:var(--border)">
+      <div class="px-4 py-3 border-b" style="border-color:var(--border)">
+        <p class="text-xs text-gray-400 font-medium">3 items placed</p>
+      </div>
+      <!-- Room row — new -->
+      <div class="px-4 py-2.5 border-b" style="border-color:var(--border)">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--orange)">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="text-xs font-semibold" style="color:var(--dark)">Room</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Updated balance (live) -->
+            <span class="text-xs font-bold" style="color:var(--orange)" data-testid="cart-room-balance">₹4,000</span>
+            <!-- NEW: + Pay button -->
+            <button
+              onclick="openModal()"
+              class="btn-press text-xs px-2.5 py-1 rounded-lg font-semibold border transition-all"
+              style="color:var(--green);border-color:var(--green-border);background:var(--green-soft)"
+              data-testid="record-payment-btn"
+            >
+              + Pay
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Checkout -->
+      <div class="px-4 py-3">
+        <button class="w-full py-2.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2" style="background:var(--green)">
+          Checkout <span>₹5,800</span>
+        </button>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">↑ tap "+ Pay" to open the payment modal</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — RECORD PAYMENT MODAL (states)
+═══════════════════════════════════════════════════════ -->
+
+<div class="flex flex-col gap-6 items-start">
+  <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">RecordPaymentModal</h2>
+
+  <!-- STATE 1: Empty / default -->
+  <div>
+    <p class="text-xs text-gray-400 mb-2 font-medium">STATE 1 — Default (no amount entered)</p>
+    <div class="modal-card bg-white rounded-2xl w-80 overflow-hidden"
+         style="box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid var(--border)">
+
+      <!-- Header -->
+      <div class="px-5 py-4 flex items-center justify-between border-b" style="border-color:var(--border)">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--green)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span class="text-base font-bold" style="color:var(--dark)">Record Payment</span>
+        </div>
+        <button class="p-1.5 hover:bg-gray-100 rounded-full transition-colors" data-testid="record-payment-close">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--gray)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Outstanding balance block -->
+      <div class="mx-4 mt-4 rounded-xl px-4 py-3" style="background:#FFF7ED;border:1px solid #FDBA74">
+        <p class="text-xs font-medium mb-0.5" style="color:#92400E">Outstanding Balance</p>
+        <p class="text-3xl font-extrabold tracking-tight" style="color:var(--orange)" data-testid="record-payment-outstanding">₹4,000</p>
+        <p class="text-xs mt-1" style="color:#B45309">Room e3 · Order #001232</p>
+      </div>
+
+      <!-- Form -->
+      <div class="px-4 pt-4 pb-2 space-y-3">
+        <!-- Amount -->
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Amount (₹)</label>
+          <input
+            type="number"
+            placeholder="Enter amount"
+            class="w-full px-3 py-2.5 rounded-xl border text-sm transition-all"
+            style="border-color:var(--border);color:var(--dark);background:var(--bg)"
+            data-testid="record-payment-amount-input"
+          />
+        </div>
+
+        <!-- Payment mode grid -->
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Payment Mode</label>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button class="mode-btn selected text-xs py-2 rounded-lg border font-medium transition-all" data-testid="mode-cash">Cash</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" data-testid="mode-card">Card</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" data-testid="mode-upi">UPI</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" data-testid="mode-online">Online</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" data-testid="mode-neft">NEFT</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" data-testid="mode-razorpay">Razorpay</button>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Note <span class="font-normal">(optional)</span></label>
+          <input
+            type="text"
+            placeholder="e.g. Partial advance Day 3"
+            class="w-full px-3 py-2.5 rounded-xl border text-xs transition-all"
+            style="border-color:var(--border);color:var(--dark);background:var(--bg)"
+            data-testid="record-payment-note-input"
+          />
+        </div>
+
+        <!-- Payment history (collapsed) -->
+        <div>
+          <button class="w-full flex items-center justify-between py-2 text-xs font-semibold transition-colors" style="color:var(--gray)">
+            <span>Payment History</span>
+            <span class="text-gray-300 text-xs">0 payments</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer — disabled -->
+      <div class="px-4 pb-4">
+        <button
+          disabled
+          class="w-full py-3 rounded-xl font-bold text-sm text-white opacity-40 cursor-not-allowed"
+          style="background:var(--green)"
+          data-testid="record-payment-confirm-btn"
+        >
+          Confirm Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- STATE 2: Amount entered + mode selected -->
+<div class="flex flex-col gap-6 items-start">
+  <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 invisible">-</h2>
+
+  <div>
+    <p class="text-xs text-gray-400 mb-2 font-medium">STATE 2 — Amount entered (₹1,500 · Cash)</p>
+    <div class="modal-card bg-white rounded-2xl w-80 overflow-hidden"
+         style="box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid var(--border)">
+
+      <div class="px-5 py-4 flex items-center justify-between border-b" style="border-color:var(--border)">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--green)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span class="text-base font-bold" style="color:var(--dark)">Record Payment</span>
+        </div>
+        <button class="p-1.5 hover:bg-gray-100 rounded-full">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--gray)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mx-4 mt-4 rounded-xl px-4 py-3" style="background:#FFF7ED;border:1px solid #FDBA74">
+        <p class="text-xs font-medium mb-0.5" style="color:#92400E">Outstanding Balance</p>
+        <p class="text-3xl font-extrabold tracking-tight" style="color:var(--orange)">₹4,000</p>
+        <!-- Live preview of new balance -->
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-xs" style="color:#B45309">After this payment →</span>
+          <span class="text-xs font-bold" style="color:var(--green)">₹2,500 remaining</span>
+        </div>
+      </div>
+
+      <div class="px-4 pt-4 pb-2 space-y-3">
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Amount (₹)</label>
+          <input
+            type="number"
+            value="1500"
+            class="w-full px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all"
+            style="border-color:var(--green);color:var(--dark);background:var(--white);box-shadow:0 0 0 3px rgba(22,163,74,.1)"
+          />
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Payment Mode</label>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button class="mode-btn selected text-xs py-2 rounded-lg border font-semibold">Cash</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Card</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">UPI</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Online</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">NEFT</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Razorpay</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Note <span class="font-normal">(optional)</span></label>
+          <input type="text" value="Day 3 advance" class="w-full px-3 py-2.5 rounded-xl border text-xs" style="border-color:var(--border);color:var(--dark);background:var(--bg)" />
+        </div>
+
+        <!-- Payment history accordion — with prior payment -->
+        <div>
+          <button id="historyToggle" onclick="toggleHistory()" class="w-full flex items-center justify-between py-2 text-xs font-semibold transition-colors" style="color:var(--dark)">
+            <div class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--orange)">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Payment History
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="px-1.5 py-0.5 rounded-full text-xs font-bold" style="background:var(--orange-soft);color:var(--orange)">1 payment</span>
+              <svg id="historyChevron" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--gray)">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </button>
+          <div id="historyBody" class="accordion-body">
+            <div class="mb-3 rounded-xl overflow-hidden border" style="border-color:var(--border)">
+              <div class="flex items-center justify-between px-3 py-2.5 bg-gray-50">
+                <div>
+                  <p class="text-xs font-semibold" style="color:var(--dark)">₹1,000 · Cash</p>
+                  <p class="text-xs mt-0.5" style="color:var(--gray)">25 Aug 2026 · 14:20</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:var(--green-soft);color:var(--green)">advance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer — active -->
+      <div class="px-4 pb-4">
+        <button
+          class="btn-press w-full py-3 rounded-xl font-bold text-sm text-white transition-all"
+          style="background:var(--green);box-shadow:0 4px 12px rgba(22,163,74,.25)"
+          data-testid="record-payment-confirm-btn"
+        >
+          Pay ₹1,500 via Cash
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- STATE 3: Submitting + post-payment balance update -->
+<div class="flex flex-col gap-6 items-start">
+  <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 invisible">-</h2>
+
+  <div>
+    <p class="text-xs text-gray-400 mb-2 font-medium">STATE 3 — Submitting</p>
+    <div class="modal-card bg-white rounded-2xl w-80 overflow-hidden"
+         style="box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid var(--border)">
+
+      <div class="px-5 py-4 flex items-center justify-between border-b" style="border-color:var(--border)">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--green)">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span class="text-base font-bold" style="color:var(--dark)">Record Payment</span>
+        </div>
+      </div>
+
+      <div class="mx-4 mt-4 rounded-xl px-4 py-3 opacity-50" style="background:#FFF7ED;border:1px solid #FDBA74">
+        <p class="text-xs font-medium mb-0.5" style="color:#92400E">Outstanding Balance</p>
+        <p class="text-3xl font-extrabold tracking-tight" style="color:var(--orange)">₹4,000</p>
+      </div>
+
+      <div class="px-4 pt-4 pb-2 space-y-3 opacity-50 pointer-events-none">
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Amount (₹)</label>
+          <input value="1500" class="w-full px-3 py-2.5 rounded-xl border text-sm font-semibold" style="border-color:var(--green);color:var(--dark)" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Payment Mode</label>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button class="mode-btn selected text-xs py-2 rounded-lg border font-semibold">Cash</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Card</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">UPI</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Online</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">NEFT</button>
+            <button class="mode-btn text-xs py-2 rounded-lg border font-medium" style="border-color:var(--border);color:var(--dark)">Razorpay</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 pb-4">
+        <button disabled class="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 opacity-70" style="background:var(--green)">
+          <!-- Spinner -->
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+          </svg>
+          Recording...
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post-payment: CartPanel updated balance + toast -->
+  <div>
+    <p class="text-xs text-gray-400 mb-2 font-medium">AFTER SUCCESS — CartPanel balance updated</p>
+    <div class="w-72 bg-white rounded-2xl shadow-sm border overflow-hidden" style="border-color:var(--border)">
+      <div class="px-4 py-3 border-b" style="border-color:var(--border)">
+        <p class="text-xs text-gray-400 font-medium">3 items placed</p>
+      </div>
+      <div class="px-4 py-2.5 border-b" style="border-color:var(--border)">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--orange)">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="text-xs font-semibold" style="color:var(--dark)">Room</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Updated live balance -->
+            <span class="text-xs font-bold" style="color:var(--orange)">₹2,500</span>
+            <button class="text-xs px-2.5 py-1 rounded-lg font-semibold border" style="color:var(--green);border-color:var(--green-border);background:var(--green-soft)">+ Pay</button>
+          </div>
+        </div>
+      </div>
+      <div class="px-4 py-3">
+        <button class="w-full py-2.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2" style="background:var(--green)">
+          Checkout <span>₹4,300</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success toast -->
+    <div class="toast mt-3 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg w-72" style="background:var(--dark);color:white">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#4ade80">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+      </svg>
+      <div>
+        <p class="text-xs font-semibold">Payment Recorded</p>
+        <p class="text-xs opacity-60">₹1,500 recorded via Cash</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     LIVE DEMO — Interactive modal
+═══════════════════════════════════════════════════════ -->
+
+<!-- Backdrop -->
+<div id="backdrop" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden items-center justify-center" onclick="closeModal(event)">
+  <div id="liveModal" class="modal-card bg-white rounded-2xl w-80 mx-4 overflow-hidden"
+       style="box-shadow:0 8px 32px rgba(0,0,0,.16);border:1px solid var(--border)"
+       onclick="event.stopPropagation()">
+
+    <div class="px-5 py-4 flex items-center justify-between border-b" style="border-color:var(--border)">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--green)">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span class="text-base font-bold" style="color:var(--dark)">Record Payment</span>
+      </div>
+      <button onclick="closeModal()" class="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--gray)">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mx-4 mt-4 rounded-xl px-4 py-3" style="background:#FFF7ED;border:1px solid #FDBA74">
+      <p class="text-xs font-medium mb-0.5" style="color:#92400E">Outstanding Balance</p>
+      <p class="text-3xl font-extrabold tracking-tight" style="color:var(--orange)">₹4,000</p>
+      <p id="previewLine" class="text-xs mt-1 hidden" style="color:#B45309"></p>
+      <p class="text-xs" style="color:#B45309">Room e3 · Order #001232</p>
+    </div>
+
+    <div class="px-4 pt-4 pb-2 space-y-3">
+      <div>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Amount (₹)</label>
+        <input id="liveAmount" type="number" min="1" max="4000" placeholder="Enter amount"
+          oninput="updateLiveModal()"
+          class="w-full px-3 py-2.5 rounded-xl border text-sm transition-all"
+          style="border-color:var(--border);color:var(--dark);background:var(--bg)" />
+        <p id="amountError" class="text-xs mt-1 hidden" style="color:#ef4444">Cannot exceed outstanding balance</p>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Payment Mode</label>
+        <div class="grid grid-cols-3 gap-1.5" id="modeGrid">
+          <button class="mode-btn selected text-xs py-2 rounded-lg border font-semibold transition-all" onclick="selectMode(this,'cash')">Cash</button>
+          <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" onclick="selectMode(this,'card')">Card</button>
+          <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" onclick="selectMode(this,'upi')">UPI</button>
+          <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" onclick="selectMode(this,'online')">Online</button>
+          <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" onclick="selectMode(this,'neft')">NEFT</button>
+          <button class="mode-btn text-xs py-2 rounded-lg border font-medium transition-all" style="border-color:var(--border);color:var(--dark)" onclick="selectMode(this,'razorpay')">Razorpay</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--gray)">Note <span class="font-normal">(optional)</span></label>
+        <input id="liveNote" type="text" placeholder="e.g. Day 3 advance"
+          class="w-full px-3 py-2.5 rounded-xl border text-xs transition-all"
+          style="border-color:var(--border);color:var(--dark);background:var(--bg)" />
+      </div>
+
+      <!-- History accordion -->
+      <div>
+        <button onclick="toggleLiveHistory()" class="w-full flex items-center justify-between py-2 text-xs font-semibold transition-colors" style="color:var(--dark)">
+          <div class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--orange)">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Payment History
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 rounded-full text-xs font-bold" style="background:var(--orange-soft);color:var(--orange)">1</span>
+            <svg id="liveChevron" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--gray)">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </button>
+        <div id="liveHistoryBody" class="accordion-body">
+          <div class="mb-3 rounded-xl overflow-hidden border" style="border-color:var(--border)">
+            <div class="flex items-center justify-between px-3 py-2.5 bg-gray-50">
+              <div>
+                <p class="text-xs font-semibold" style="color:var(--dark)">₹1,000 · Cash</p>
+                <p class="text-xs mt-0.5" style="color:var(--gray)">25 Aug 2026 · 14:20</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:var(--green-soft);color:var(--green)">advance</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-4 pb-4">
+      <button id="liveConfirmBtn" disabled onclick="simulateConfirm()"
+        class="btn-press w-full py-3 rounded-xl font-bold text-sm text-white transition-all opacity-40 cursor-not-allowed"
+        style="background:var(--green)"
+        data-testid="record-payment-confirm-btn">
+        Confirm Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Live toast -->
+<div id="liveToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] hidden">
+  <div class="toast flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl" style="background:var(--dark);color:white;min-width:240px">
+    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#4ade80">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+    </svg>
+    <div>
+      <p class="text-xs font-semibold">Payment Recorded</p>
+      <p id="toastMsg" class="text-xs opacity-60"></p>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO label -->
+<div class="fixed bottom-4 right-4 z-10 text-xs text-gray-400 bg-white rounded-xl px-3 py-2 shadow border" style="border-color:var(--border)">
+  💡 Click "+ Pay" on the <strong>AFTER</strong> panel to try the live demo
+</div>
+
+<script>
+  let selectedMode = 'cash';
+  const BALANCE = 4000;
+
+  function openModal() {
+    const bd = document.getElementById('backdrop');
+    bd.classList.remove('hidden');
+    bd.classList.add('flex');
+    document.getElementById('liveAmount').focus();
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById('backdrop')) return;
+    document.getElementById('backdrop').classList.add('hidden');
+    document.getElementById('backdrop').classList.remove('flex');
+    document.getElementById('liveAmount').value = '';
+    document.getElementById('liveNote').value = '';
+    document.getElementById('amountError').classList.add('hidden');
+    document.getElementById('previewLine').classList.add('hidden');
+    updateLiveModal();
+  }
+
+  function selectMode(btn, mode) {
+    selectedMode = mode;
+    document.querySelectorAll('#modeGrid .mode-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.style.borderColor = 'var(--border)';
+      b.style.color = 'var(--dark)';
+    });
+    btn.classList.add('selected');
+    updateLiveModal();
+  }
+
+  function updateLiveModal() {
+    const amt = parseFloat(document.getElementById('liveAmount').value) || 0;
+    const err = document.getElementById('amountError');
+    const confirmBtn = document.getElementById('liveConfirmBtn');
+    const previewLine = document.getElementById('previewLine');
+
+    if (amt > BALANCE + 0.01) {
+      err.classList.remove('hidden');
+      confirmBtn.disabled = true;
+      confirmBtn.classList.add('opacity-40','cursor-not-allowed');
+      previewLine.classList.add('hidden');
+    } else if (amt > 0) {
+      err.classList.add('hidden');
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove('opacity-40','cursor-not-allowed');
+      const remaining = BALANCE - amt;
+      previewLine.textContent = `After this payment → ₹${remaining.toLocaleString()} remaining`;
+      previewLine.classList.remove('hidden');
+      const modeLabel = selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1);
+      confirmBtn.textContent = `Pay ₹${amt.toLocaleString()} via ${modeLabel}`;
+    } else {
+      err.classList.add('hidden');
+      confirmBtn.disabled = true;
+      confirmBtn.classList.add('opacity-40','cursor-not-allowed');
+      confirmBtn.textContent = 'Confirm Payment';
+      previewLine.classList.add('hidden');
+    }
+  }
+
+  function simulateConfirm() {
+    const amt = parseFloat(document.getElementById('liveAmount').value) || 0;
+    if (!amt) return;
+    const btn = document.getElementById('liveConfirmBtn');
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>Recording...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // Close modal
+      document.getElementById('backdrop').classList.add('hidden');
+      document.getElementById('backdrop').classList.remove('flex');
+      document.getElementById('liveAmount').value = '';
+
+      // Show toast
+      const modeLabel = selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1);
+      document.getElementById('toastMsg').textContent = `₹${amt.toLocaleString()} recorded via ${modeLabel}`;
+      const toast = document.getElementById('liveToast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+
+      // Reset btn
+      btn.textContent = 'Confirm Payment';
+      btn.disabled = true;
+      btn.classList.add('opacity-40','cursor-not-allowed');
+    }, 1200);
+  }
+
+  // Static accordion toggle
+  function toggleHistory() {
+    const body = document.getElementById('historyBody');
+    const chev = document.getElementById('historyChevron');
+    body.classList.toggle('open');
+    chev.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  // Live accordion
+  function toggleLiveHistory() {
+    const body = document.getElementById('liveHistoryBody');
+    const chev = document.getElementById('liveChevron');
+    body.classList.toggle('open');
+    chev.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  // Mode-btn click inside static grids
+  document.querySelectorAll('.mode-btn:not(#modeGrid .mode-btn)').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const parent = this.closest('.grid');
+      parent.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.remove('selected');
+        b.style.borderColor = 'var(--border)';
+        b.style.color = 'var(--dark)';
+      });
+      this.classList.add('selected');
+    });
+  });
+</script>
+</body>
+</html>
