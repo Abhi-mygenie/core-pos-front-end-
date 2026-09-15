@@ -25293,6 +25293,111 @@
       ],
       "registered": "2026-09-15",
       "notes": "Both pages render as standalone full-page (min-h-screen div, no Sidebar component, no Back button). All other PMS pages (FrontDesk, Arrivals, CheckIn, InHouse, Departures) have <Sidebar> + back navigation. Staff cannot return to PMS without browser back. Fix: wrap both pages with Sidebar + ArrowLeft back button \u2014 same pattern as InHouseGuestsPage."
+    },
+    {
+      "id": "BUG-417",
+      "title": "Guest Folio: F&B Not Posting to Room + Advance Shows \u20b90",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_pms_2",
+      "description": "Folio for order 1232392 (aoi, r4): associated_order_list empty (F&B not shown) + advance_payment = 0. Possibly backend issue. Needs live probe.",
+      "intake_doc": "change_requests/BUG-417_FOLIO_FNB_NOT_POSTING_ADVANCE_ZERO_INTAKE.md",
+      "related": [
+        "CR-163",
+        "INV-ROOM-001"
+      ]
+    },
+    {
+      "id": "BUG-418",
+      "title": "Checkout Drawer: GST Not Shown in Bill Display (BUG-401 Display Gap)",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_pms_2",
+      "description": "PmsCheckoutDrawer injects room_gst_tax in payload only. CollectPaymentPanel displays roomBalance (no GST). Cashier sees \u20b91,000, pays \u20b91,050 blind.",
+      "intake_doc": "change_requests/BUG-418_CHECKOUT_DRAWER_GST_NOT_IN_DISPLAY_INTAKE.md",
+      "related": [
+        "BUG-401",
+        "BUG-386"
+      ]
+    },
+    {
+      "id": "BUG-419",
+      "title": "New Check-In Form: Corporate/B2B Billing Field in Wrong Position",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "pos_pms_2",
+      "description": "Corp/B2B checkbox appears after Adults/Children block. Should be immediately after Guest Name/Phone (before Room Assignment).",
+      "intake_doc": "change_requests/BUG-419_CORP_B2B_POSITION_CHECKIN_FORM_INTAKE.md",
+      "related": [
+        "CR-379"
+      ]
+    },
+    {
+      "id": "BUG-420",
+      "title": "Old Check-In Modal: Returning Guest ID Document Not Visible (CR-129 Gap)",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_pms_2",
+      "description": "CR-129 (GATE_5B_QA_PASS) was supposed to show existing docs in RoomCheckInModal. Gap present \u2014 actual document images not visible for returning guests.",
+      "intake_doc": "change_requests/BUG-420_RETURNING_GUEST_DOCS_NOT_VISIBLE_OLD_MODAL_INTAKE.md",
+      "related": [
+        "CR-129",
+        "CR-380"
+      ]
+    },
+    {
+      "id": "BUG-421",
+      "title": "In-House Page: Balance Column Shows Booking Total, Not Outstanding Balance",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "HIGH",
+      "sprint_key": "pos_pms_2",
+      "description": "pmsService.getInHouseGuests() uses amount_after_tax (booking total) instead of remaining balance. Advance not deducted. All guests show room price.",
+      "intake_doc": "change_requests/BUG-421_INHOUSE_BALANCE_WRONG_FIELD_INTAKE.md",
+      "related": [
+        "BUG-378",
+        "CR-360"
+      ]
+    },
+    {
+      "id": "BUG-422",
+      "title": "Old RoomCheckInModal: balance_payment Sent Without GST (BUG-410 Gap)",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_pms_2",
+      "description": "RoomCheckInModal balancePayment = roomPrice - advance (no GST). BUG-410 added gstTax sending but left this formula unchanged. Stored balance_payment missing GST.",
+      "intake_doc": "change_requests/BUG-422_OLD_MODAL_BALANCE_PAYMENT_MISSING_GST_INTAKE.md",
+      "related": [
+        "BUG-410",
+        "BUG-396"
+      ]
+    },
+    {
+      "id": "BUG-423",
+      "title": "Guest Folio Page: Room Balance Excludes GST (Shows room_price - advance only)",
+      "type": "BUG",
+      "status": "INTAKE \u2014 Gate 1",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_pms_2",
+      "description": "GuestFolioPage uses stored balance_payment (no GST). Fix: compute room_price + gst_tax - advance - amount_received. Affects all guests checked in via old modal.",
+      "intake_doc": "change_requests/BUG-423_FOLIO_ROOM_BALANCE_EXCLUDES_GST_INTAKE.md",
+      "related": [
+        "BUG-401",
+        "CR-364",
+        "BUG-422"
+      ]
     }
   ],
   "meta": {
@@ -25303,7 +25408,7 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 558,
+    "total": 680,
     "total_items": 618,
     "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md"
   }
