@@ -1,6 +1,8 @@
 // CR-363 — Night Audit Report page
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Download, FileText, ChevronDown, ChevronRight, AlertTriangle, Clock } from 'lucide-react';
+import { Calendar, Download, FileText, ChevronDown, ChevronRight, AlertTriangle, Clock, ArrowLeft } from 'lucide-react'; // BUG-416: ArrowLeft added
+import { useNavigate } from 'react-router-dom'; // BUG-416
+import Sidebar from '../../components/layout/Sidebar'; // BUG-416
 import { getNightAudit } from '../../api/services/pmsService';
 import { localDate } from '../../api/services/pmsService';
 import * as nightAuditTransform from '../../api/transforms/nightAuditTransform';
@@ -66,6 +68,10 @@ const WarnBanner = ({ msg }) => (
 );
 
 export default function NightAuditPage() { // CR-363
+  const navigate = useNavigate(); // BUG-416
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState( // BUG-416
+    () => localStorage.getItem('mygenie_sidebar_expanded') !== 'false'
+  );
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
   const [date, setDate] = useState(localDate(0));
@@ -107,14 +113,26 @@ export default function NightAuditPage() { // CR-363
   const hasNullGuests = audit?.outstanding?.rows?.some(r => r.guestName === '—');
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] px-4 py-5" style={{ fontFamily: "'Poppins','Inter',sans-serif" }}>
+    <div className="flex h-screen bg-[#F7F7F7]" data-testid="night-audit-page"> {/* BUG-416 */}
+      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={v => {
+        setIsSidebarExpanded(v);
+        localStorage.setItem('mygenie_sidebar_expanded', String(v));
+      }} />
+      <main className="flex-1 overflow-auto">
+      <div className="px-4 py-5" style={{ fontFamily: "'Poppins','Inter',sans-serif" }}>
       <div className="max-w-6xl mx-auto">
 
-        {/* Header */}
+        {/* Header */} {/* BUG-416: back button added */}
         <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
-          <div>
-            <h1 className="text-xl font-bold text-[#1A1A1A]">Night Audit Report</h1>
-            <p className="text-xs text-[#888] mt-0.5">End-of-day hotel financial &amp; room reconciliation</p>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} data-testid="night-audit-back-btn"
+              className="p-1.5 rounded-lg hover:bg-[#F3F4F6] text-[#555] transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-[#1A1A1A]">Night Audit Report</h1>
+              <p className="text-xs text-[#888] mt-0.5">End-of-day hotel financial &amp; room reconciliation</p>
+            </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative flex items-center">
@@ -415,6 +433,8 @@ export default function NightAuditPage() { // CR-363
           </>
         )}
       </div>
+      </div>
+      </main>
     </div>
   );
 }

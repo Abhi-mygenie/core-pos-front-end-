@@ -109,6 +109,10 @@ user_problem_statement: |
   - BUG-400: Search bar / Add button overlap on Dashboard
   - BUG-401: PMS Checkout room GST field in API request
   - BUG-405: Daily Report cancellations section showing Pre-Serve and Post-Serve values
+  - BUG-411: CheckInPage payment method picker for advance
+  - BUG-410: RoomCheckInModal GST for personal bookings
+  - BUG-415: Room Orders Y-axis tick formatter (smart labels for values < ₹1,000 and >= ₹1,000)
+  - BUG-416: Night Audit and Revenue Dashboard pages now have sidebar and back button
 
 frontend:
   - task: "BUG-403: Arrivals page kebab menu"
@@ -210,6 +214,30 @@ frontend:
         agent: "testing"
         comment: "CODE REVIEW PASS: GST for personal bookings fix verified in RoomCheckInModal.jsx. Config (lines 294-296): roomGstApplicable and roomGstSlabs loaded from restaurant.checkInFlags. GST computation (lines 703-705): computeRoomGst called for ALL booking types (not just Corporate) - THIS IS THE FIX. Previously GST was only computed for Corporate bookings, now computed for Personal/Walk-in as well. UI display (lines 1427-1467): GST strip (data-testid='checkin-gst-strip') shows when roomPrice > 0, displays CGST/SGST/Total or 'Not Applicable' if not configured. Strip visible for all booking types. Fix confirmed: removed booking type condition from GST computation, now applies universally. RUNTIME TEST BLOCKED: Firebase authentication prevents automated testing in current environment."
 
+  - task: "BUG-415: Room Orders Y-axis tick formatter"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/reports-module/RoomOrdersMockup.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "CODE REVIEW PASS: Y-axis tick formatter fix verified in RoomOrdersMockup.jsx line 583. Smart tick formatter implemented: values >= ₹1,000 display as '₹1.2k', '₹5.4k' etc. using (v/1000).toFixed(1)k format; values < ₹1,000 display as '₹200', '₹800' etc. using Math.round(v) format. This prevents '₹0k' labels for small values and provides proper decimal precision for large values. Fix confirmed with comment marker /* BUG-415 */ on line 583. No duplicate tick labels or '₹0k' for small values. RUNTIME TEST BLOCKED: Firebase authentication prevents automated testing."
+
+  - task: "BUG-416: Night Audit and Revenue Dashboard sidebar and back button"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/pms/NightAuditPage.jsx, /app/frontend/src/pages/pms/RevenueDashboardPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "CODE REVIEW PASS: Both pages now have sidebar and back button. NightAuditPage.jsx verified: ArrowLeft/useNavigate/Sidebar imports (lines 3-5), useNavigate hook (line 71), isSidebarExpanded state with localStorage (lines 72-74), flex h-screen wrapper with data-testid='night-audit-page' (line 116), Sidebar component rendered (lines 117-120), back button with data-testid='night-audit-back-btn' and ArrowLeft icon (lines 128-131). RevenueDashboardPage.jsx verified: ArrowLeft/useNavigate/Sidebar imports (lines 3-5), useNavigate hook (line 77), isSidebarExpanded state with localStorage (lines 78-80), flex h-screen wrapper with data-testid='revenue-dashboard-page' (line 157), Sidebar component rendered (lines 158-161), back button with data-testid='revenue-dashboard-back-btn' and ArrowLeft icon (lines 169-172). Both pages previously had NO sidebar and NO back button. Fix confirmed: all required elements present with proper data-testids. RUNTIME TEST BLOCKED: Firebase authentication prevents automated testing."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
@@ -217,8 +245,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "BUG-411: CheckInPage payment method picker for advance"
-    - "BUG-410: RoomCheckInModal GST for personal bookings"
+    - "BUG-415: Room Orders Y-axis tick formatter"
+    - "BUG-416: Night Audit and Revenue Dashboard sidebar and back button"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -234,3 +262,5 @@ agent_communication:
     message: "2026-09-15 RETEST COMPLETE: CheckInPage Children field bug FIXED and VERIFIED. Fix applied: selectArrival now defaults children: a.children ?? 0 (line 171). All 4 test cases PASSED: (1) Type '2' → shows '2' ✅, (2) Change to '0' → shows '0' ✅, (3) Type '1' → shows '1' ✅, (4) Clear and type '3' → shows '3' ✅. Field now correctly accepts user input and triggers expected UI changes (child name fields appear when children > 0). Previous issue where typing '2' showed '0' is now resolved. Used data-testid='ci-children' for testing."
   - agent: "testing"
     message: "2026-09-15: BUG-411 & BUG-410 CODE REVIEW COMPLETE. RUNTIME TESTING BLOCKED by Firebase authentication in test environment. CODE REVIEW FINDINGS: BUG-411 (CheckInPage payment method picker): ✓ Implementation verified in CheckInPage.jsx lines 56-57 (state), 68-75 (options), 792-818 (UI), 250 (validation), 317 (API). Picker shows when advance > 0, hides when advance = 0, validates method selection before confirm. BUG-410 (RoomCheckInModal GST for Personal): ✓ Implementation verified in RoomCheckInModal.jsx lines 294-296 (config), 703-705 (computation for ALL booking types - fix confirmed), 1427-1467 (UI display). GST now computed and displayed for Personal/Walk-in bookings, not just Corporate. Both fixes follow correct patterns and include proper data-testids for testing."
+  - agent: "testing"
+    message: "2026-09-15: BUG-415 & BUG-416 CODE REVIEW COMPLETE. Firebase auth blocks automated testing. CODE REVIEW FINDINGS: BUG-415 (Room Orders Y-axis tick fix): ✓ PASS - RoomOrdersMockup.jsx line 583 contains smart tick formatter: values >= ₹1,000 show as '₹1.2k', '₹5.4k' (using (v/1000).toFixed(1)k), values < ₹1,000 show as '₹200', '₹800' (using Math.round(v)). No '₹0k' for small values. BUG-416 (Night Audit & Revenue Dashboard sidebar + back button): ✓ PASS - Both pages verified: NightAuditPage.jsx (lines 3-5 imports, 71-74 state, 116-120 Sidebar, 128-131 back button with data-testid='night-audit-back-btn') and RevenueDashboardPage.jsx (lines 3-5 imports, 77-80 state, 158-161 Sidebar, 169-172 back button with data-testid='revenue-dashboard-back-btn'). Both have flex h-screen wrapper, ArrowLeft icon, useNavigate hook, and proper data-testids. All requirements met."

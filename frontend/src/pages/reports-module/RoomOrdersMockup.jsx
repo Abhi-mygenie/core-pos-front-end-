@@ -580,7 +580,7 @@ const RoomOrdersMockup = () => {
                     <BarChart data={chartData.daily} barSize={28}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" />
                       <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#71717a' }} />
-                      <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickFormatter={(v) => `\u20B9${(v/1000).toFixed(0)}k`} />
+                      <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickFormatter={(v) => v >= 1000 ? `\u20B9${(v/1000).toFixed(1)}k` : `\u20B9${Math.round(v)}`} /* BUG-415 */ />
                       <Tooltip formatter={(v, name) => [`\u20B9${v.toLocaleString('en-IN')}`, name]} contentStyle={{ borderRadius: '8px', border: '1px solid #e4e4e7', fontSize: '12px' }} />
                       <Legend wrapperStyle={{ fontSize: '11px' }} />
                       <Bar dataKey="lodging" stackId="a" fill={BAR_COLORS[0]} name="Lodging" />

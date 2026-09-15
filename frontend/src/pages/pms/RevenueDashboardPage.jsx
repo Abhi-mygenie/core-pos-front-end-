@@ -1,6 +1,8 @@
 // CR-366 — Revenue Dashboard page
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Download, FileText, TrendingUp, TrendingDown } from 'lucide-react';
+import { Download, FileText, TrendingUp, TrendingDown, ArrowLeft } from 'lucide-react'; // BUG-416: ArrowLeft added
+import { useNavigate } from 'react-router-dom'; // BUG-416
+import Sidebar from '../../components/layout/Sidebar'; // BUG-416
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, Legend,
@@ -72,6 +74,10 @@ const KpiTile = ({ label, occupancy, booked, collected, single, testId }) => (
 );
 
 export default function RevenueDashboardPage() { // CR-366
+  const navigate = useNavigate(); // BUG-416
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState( // BUG-416
+    () => localStorage.getItem('mygenie_sidebar_expanded') !== 'false'
+  );
   const { restaurant } = useRestaurant();
   const { user } = useAuth();
   const [preset, setPreset] = useState('7d');
@@ -148,14 +154,26 @@ export default function RevenueDashboardPage() { // CR-366
   const handleExcel = () => exportReportAsExcel(buildExportParams(), `Revenue_Dashboard_${startDate}_${endDate}.xls`);
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] px-4 py-5" style={{ fontFamily: "'Poppins','Inter',sans-serif" }}>
+    <div className="flex h-screen bg-[#F7F7F7]" data-testid="revenue-dashboard-page"> {/* BUG-416 */}
+      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={v => {
+        setIsSidebarExpanded(v);
+        localStorage.setItem('mygenie_sidebar_expanded', String(v));
+      }} />
+      <main className="flex-1 overflow-auto">
+      <div className="px-4 py-5" style={{ fontFamily: "'Poppins','Inter',sans-serif" }}>
       <div className="max-w-6xl mx-auto space-y-4">
 
-        {/* Header */}
+        {/* Header */} {/* BUG-416: back button added */}
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold text-[#1A1A1A]">Revenue Dashboard</h1>
-            <p className="text-xs text-[#888] mt-0.5">Hotel financial performance &amp; occupancy analytics</p>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} data-testid="revenue-dashboard-back-btn"
+              className="p-1.5 rounded-lg hover:bg-[#F3F4F6] text-[#555] transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-[#1A1A1A]">Revenue Dashboard</h1>
+              <p className="text-xs text-[#888] mt-0.5">Hotel financial performance &amp; occupancy analytics</p>
+            </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex gap-1 bg-white border border-[#E5E5E5] rounded-lg p-1" data-testid="date-pills">
@@ -342,6 +360,8 @@ export default function RevenueDashboardPage() { // CR-366
           </>
         )}
       </div>
+      </div>
+      </main>
     </div>
   );
 }
