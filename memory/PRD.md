@@ -78,3 +78,30 @@
 - Joint IA written: `impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md`. OD-366-04 resolved (sidebar under Rooms & Reservations). `aiosellTransform.js` dropped from CR-366 scope; 2nd revenue-summary call dropped from CR-363.
 - New owner decisions before Gate 3: OD-363-07/08, OD-366-05..08 + combined Sidebar SC ack. BE notes BN-1..6 (null fields, occupancy >100 %, audit_trail detail null ↔ BUG-193).
 - Next: PLANNING Gate 3 (Implementation Plan) for CR-363/366; Gate 2 IA for CR-364 (data path) and CR-357.
+
+---
+
+## Session Update — 2026-09-14 (QA Handover Session)
+
+### What was shipped this session
+| Item | Status |
+|---|---|
+| CR-363 Night Audit | Gate 5a — Implemented. QA pending. |
+| CR-366 Revenue Dashboard | Gate 5a — Implemented. QA pending. |
+| CR-364 Guest Folio | Gate 5a — Implemented. QA pending. |
+| CR-364-PRINT | Registered as sub-CR. Backend-blocked, parked. |
+| CR-357 Room Advance | Parked 15 days. Re-evaluate 2026-09-29. |
+| BUG-389 Room GST slab | CLOSED — Not a bug. Working as designed. |
+| Excel tracker | Generated at /app/frontend/public/mygenie_cr_bug_tracker.xlsx |
+
+### QA Backlog
+- 87 items pending QA total (17 current sprint + 70 older backlog)
+- Full batch plan in: `/app/memory/handover/SESSION_HANDOVER_2026_09_14_QA_AGENT_BRIEFING.md`
+- QA agent to present plan to owner before executing any batch
+
+### Next sprint priorities
+1. QA Batch-01: CR-363 + CR-364 + CR-366 (PMS pages, live on preprod)
+2. QA Batch-02: BUG-374 (P0) + BUG-369, 372, 394, 368 (P1)
+3. CR-365 Housekeeping Gate 2 (after QA batches settled)
+4. BUG-193 Room Transfer Trail — Gate 0-1 intake + RCA
+5. CR-357 Room Advance — re-enable ~2026-09-29
