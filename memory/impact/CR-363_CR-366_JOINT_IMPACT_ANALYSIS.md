@@ -1,7 +1,7 @@
 # CR-363 + CR-366 — JOINT IMPACT ANALYSIS (Gate 2)
 
 **IDs:** CR-363 — PMS Night Audit Report · CR-366 — PMS Revenue Dashboard / Analytics
-**Date:** 2026-09-14
+**Date:** 2026-09-14 · **Gate 2 closed:** 2026-09-14
 **Role:** PLANNING (Gate 2 — Impact Analysis ONLY. Gate 3 Implementation Plan deliberately NOT written — owner instruction 2026-09-14.)
 **Sprint:** pos_pms_1
 **Priority / Risk:** CR-363 P1 / **HIGH** · CR-366 P2 / **MEDIUM** (both confirmed — see §3)
@@ -225,11 +225,13 @@ OD-363-01..06 (2026-09-16) · OD-366-01/02/03 (2026-09-15).
 | **OD-366-05** | **a) No FE cache — v1 always live.** `insightsCache` NOT used. Risk stays MEDIUM. | "no cache" |
 | **OD-366-06** | **No compare-to-previous-period in v1.** Noted for v2. | "V1 simple, note for next phase" |
 | **OD-366-07** | **Default range = last 7 days.** (overrides proposed 30D) | "last 7 days" |
-| **OD-366-08** | **OPEN — owner deciding.** Design agent to present side-by-side vs toggle options before Gate 3. | "not sure" |
+| **OD-366-08** | **a) Side-by-Side (Option A)** — both Booked (Sales) and Collected (Revenue) always visible on every KPI tile. Orange = Sales, Green = Revenue. | "design seems fine" (approved with mockup 2026-09-14) |
 
 **Null-fields backend brief (OD-363-08):** `backend_briefs/BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md`
 
-**Sidebar SC ack:** Still required — combined for CR-363 + CR-366 (+ CR-365 Housekeeping if owner wants single unfreeze).
+**Sidebar SC ack:** ✅ APPROVED (2026-09-14) — covers CR-363 + CR-366 (CR-365 Housekeeping included if required).
+
+**Design:** ✅ APPROVED (2026-09-14) — mockup reviewed at `public/pms-mockup.html`. Guidelines at `design_guidelines.json`.
 
 No business rule has been guessed (R3).
 
@@ -250,9 +252,9 @@ No business rule has been guessed (R3).
 
 ## 8. Gate 3 Entry Requirements (checklist for the Implementation-Plan session)
 - [x] OD-363-07/08, OD-366-05/06/07 answered (2026-09-14)
-- [ ] **OD-366-08 — STILL OPEN** (Booked vs Collected display — design options to be presented to owner)
-- [ ] Design approval for NightAuditPage + RevenueDashboardPage (design agent called 2026-09-14)
-- [ ] Combined Sidebar SC ack (CR-363 + CR-366 [+ CR-365]) acknowledged
+- [x] **OD-366-08 RESOLVED** — Option A: side-by-side (2026-09-14)
+- [x] Design approved — mockup reviewed, design_guidelines.json locked (2026-09-14)
+- [x] Sidebar SC ack — CR-363 + CR-366 + CR-365 approved (2026-09-14)
 - [ ] One probe of `revenue-summary…&group_by=month` (BN-6)
 - [ ] Confirm `utils/reportExporter.js` param contract (R-9)
 - [ ] Re-verify target lines: `constants.js` L596–597 (end of `AIOSELL_ENDPOINTS`), `pmsService.js` EOF, `App.js` L264, `Sidebar.jsx` L241
@@ -274,7 +276,8 @@ Files WILL change: NightAuditPage.jsx (NEW), RevenueDashboardPage.jsx (NEW), nig
                    revenueTransform.js (NEW), pmsService.js, constants.js, App.js, Sidebar.jsx (SC ack)
 Files WILL NOT touch: CollectPaymentPanel, OrderEntry, orderTransform, Settlement/DayClosure, reportService,
                       aiosellTransform, aiosellService, PmsCheckoutDrawer, CartPanel, insightsCache (unless OD-366-05 b)
-Owner decisions: OD-363-07✅ OD-363-08✅ OD-366-04✅ OD-366-05✅ OD-366-06✅ OD-366-07✅ OD-366-08 OPEN
-Docs: impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md · backend_briefs/BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md
-Next: Design approval (design agent 2026-09-14) + owner resolves OD-366-08 → PLANNING Gate 3 (Implementation Plan)
+Owner decisions: ALL RESOLVED — OD-363-07✅ OD-363-08✅ OD-366-04✅ OD-366-05✅ OD-366-06✅ OD-366-07✅ OD-366-08✅
+Design: APPROVED ✅  Sidebar SC ack: APPROVED ✅  Gate 2: CLOSED
+Docs: impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md · backend_briefs/BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md · design_guidelines.json
+Next: PLANNING Gate 3 → Implementation Plan
 ```
