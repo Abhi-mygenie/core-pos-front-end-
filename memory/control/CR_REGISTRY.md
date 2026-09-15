@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-15 — **CR-382 PARKED (OD-382-01: PARK). CR-383 PARKED (OD-383-01: PARK). BUG-409 PARKED (OD-409-01: PARK). CR-384 registered (BACKEND-BLOCKED — BACKEND_BRIEF_RATE_AUTOFILL). Registry: 673 items.**
 **Last Updated:** 2026-09-15 — **CR-382 INTAKE COMPLETE (Gate 1).** PMS Local Room Types (P2 MEDIUM). 4 backend endpoints live (`GET/PUT /room-types`, `PUT /room-types/assign`, `DELETE /room-types/{id}`). Code reality NONE. Blast: MEDIUM (~8 files). 3 ODs open (OD-382-01 build/park · OD-382-02 sidebar · OD-382-03 auto-fill). Gate 2 blocked on OD-382-01. Registry: 656 items. Intake doc: `change_requests/CR-382_PMS_LOCAL_ROOM_TYPES_INTAKE.md`.
 **Last Updated:** 2026-09-13 — **CR-163 GATE 5A IMPLEMENTED.** 17 edits / 3 files. Compile: 0 new warnings. EXIT GATE 5/5. QA PENDING (V-01..V-12). QA handover at `handover/QA_HANDOVER_CR163_2026_09_13.md`.
 **Last Updated:** 2026-09-13 — **CR-162 GATE 5B QA PASS.** 5/5 PASS, 0 BLOCKER, 0 MAJOR. Live API: `payment_type: 'interim'` confirmed persisted (`success:true`). Negative test: old field names return 3 required errors confirming fix scope. Report: `test_reports/QA_REPORT_CR162_2026_09_13.md`. Ready for Gate 6 Owner Smoke.

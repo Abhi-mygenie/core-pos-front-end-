@@ -1,3 +1,4 @@
+**Last Updated:** 2026-09-15 — **INTAKE BATCH (7 new bugs + status updates).** BUG-410 (old modal GST P2 HIGH UNBLOCKED), BUG-411 (CheckInPage no payment method P0 CRITICAL UNBLOCKED), BUG-412 (folio wrong advance P1 HIGH BLOCKED-ON-BUG-411), BUG-413 (PREPAID badge P2 BACKEND-BLOCKED), BUG-414 (adults/children input P1 GATE_5B_QA_PASS retroactive), BUG-415 (Y-axis ticks P3 LOW), BUG-416 (Night Audit+Revenue no Sidebar P2 UNBLOCKED). Status updates: BUG-400 GATE_5B_QA_PASS · BUG-401 GATE_5A_IMPLEMENTED · BUG-402 GATE_5A_IMPLEMENTED · BUG-403 GATE_5B_QA_PASS · BUG-405 GATE_5A_IMPLEMENTED · BUG-406 GATE_5B_QA_PASS · BUG-407 GATE_5B_QA_PASS. OD decisions recorded: CR-382 PARKED · CR-383 PARKED · BUG-409 PARKED · OD-401-02 N/A · OD-401-04 ship-as-is. Registry: 673 items.
 **Last Updated:** 2026-09-11 — **BUG-394 IMPLEMENTED (Gate 5a).** 18 edits / 4 files: `ProductForm.jsx` (7) + `BulkEditor.jsx` (1) + `AddonManagementPanel.jsx` (7) + `VariationExpandPanel.jsx` (2). 10 onChange special-char blocks + 8 onFocus zero-clears. BUG-392 onWheel preserved. webpack clean. EXIT GATE 5/5. QA PENDING.
 **Last Updated:** 2026-09-10 — **BUG-394 GATE 3 COMPLETE.** Implementation Plan at `plans/BUG-394_IMPLEMENTATION_PLAN.md`. 4 files, 18 edit sites. Scope ext: E1b/E1c/E3c (same files, same patterns). Awaiting Gate 4 GO.
 **Last Updated:** 2026-09-10 — **BUG-394 GATE 2 CLOSED.** IA complete. 6 patterns. All ODs locked. Awaiting Gate 3 GO.
@@ -1371,8 +1372,8 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 | BUG-325,326,327,351,352,357,358,359,360,361 | BATCH-09 | ✅ QA PASS | Code-verified |
 
 **BATCH-10 Regression NEW BUGS:**
-| BUG-400 | MAJOR (P1) | Header Add button covered by search input — filed, awaiting intake |
-| BUG-401 | BLOCKER (P0, CRITICAL R6) | PMS Checkout omits room_gst_tax; Folio balance excludes GST — filed, awaiting intake |
+| BUG-400 | MAJOR (P1) | Header Add button covered by search input — GATE_5B_QA_PASS 2026-09-15 |
+| BUG-401 | BLOCKER (P0, CRITICAL R6) | PMS Checkout omits room_gst_tax — GATE_5A_IMPLEMENTED 2026-09-15 |
 
 ---
 
@@ -1382,3 +1383,28 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 |---|---|---|---|---|---|
 | **BUG-400** | Header "Add" button covered by search input | **P1** | **MEDIUM** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-01. Fast Lane eligible. OD-400-01 needed.** | 1 file, ≤2 lines. `overflow-hidden` or `min-w-0` on Header.jsx search container. Workaround: click button edge or table card. |
 | **BUG-401** | PMS Checkout omits `room_gst_tax`; Folio balance excludes GST | **P0** | **CRITICAL** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-02. BLOCKER R6. OD-401-01+02 needed.** | 2 files (PmsCheckoutDrawer.jsx L157 + orderTransform.js R5 hotspot). `get-single-order-new` `room_payment_summary` has no `gst_tax` field → checkout sends `room_gst_tax: 0/absent`. Night Audit `room_gst_collected: 0`. Fix: read `room_info.gst_tax` direct. Related: BUG-386. |
+
+
+---
+
+### 2026-09-15 — PMS + Reports Intake Batch (BUG-400 to BUG-416)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-400** | Header "Add" button covered by search input | **P1** | **MEDIUM** | **GATE_5B_QA_PASS (2026-09-15).** min-w-0 on Header.jsx search input. QA PASS. OD-400-01 CLOSED. OD-400-02 → BUG-415. | `Header.jsx` L359 |
+| **BUG-401** | PMS Checkout omits `room_gst_tax` | **P0** | **CRITICAL** | **GATE_5A_IMPLEMENTED (2026-09-15).** gstTax at roomInfo top-level in orderTransform.js + PmsCheckoutDrawer. Not live-tested (needs active checkout). OD-401-01 CLOSED. OD-401-02 N/A. OD-401-03 → BUG-416. OD-401-04 CLOSED ship-as-is. | `orderTransform.js` + `PmsCheckoutDrawer.jsx` |
+| **BUG-402** | Extend Stay dialog shows ₹0 per extra night | **P1** | **MEDIUM** | **GATE_5A_IMPLEMENTED (2026-09-15).** Fixed rate path (dateRateMap) + non-Aiosell fallback. Not QA-able without live in-house guest. | `ExtendStayDialog.jsx` + `InHouseGuestsPage.jsx` |
+| **BUG-403** | Arrivals 3-dots kebab menu invisible (overflow-hidden clipping) | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Removed overflow-hidden from arr-table container. QA PASS. | `ArrivalsPage.jsx` |
+| **BUG-404** | New Booking — Room Amount stays ₹0 on room selection | **P2** | **MEDIUM** | **INTAKE — GATE 1 — BACKEND-BLOCKED (CR-384).** getBookableRooms() returns no defaultRate. Waiting for BACKEND_BRIEF_RATE_AUTOFILL Change 1+2. | `pmsService.js` + `NewBookingPage.jsx` |
+| **BUG-405** | Daily Report — cancellations show ₹0 (cancel_revenue key mismatch) | **P1** | **MEDIUM** | **GATE_5A_IMPLEMENTED (2026-09-15).** Fallback reads both 'Pre-Serve'→'Preparing' and 'Post-Serve'→'Serve'. QA PASS. | `reportService.js` |
+| **BUG-406** | Room Status — occupied_hk rooms had no Mark Clean button | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Green Mark Clean button added to occupied_hk tiles. QA PASS. | `RoomStatusPage.jsx` |
+| **BUG-407** | Room Status — occupied rooms couldn't request housekeeping | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Enabled Request HK button for occupied rooms. QA PASS. | `RoomStatusPage.jsx` |
+| **BUG-408** | Daily Report — Room settlement Cash/Card/UPI always ₹0 | **P1** | **HIGH** | **INTAKE — GATE 1 — BACKEND-BLOCKED.** room_revenue.Room Cash/Card/UPI = ₹0 despite Room Total=₹84k. Backend brief filed. | `reportService.js` (FE read-only) |
+| **BUG-409** | Daily Report — Room food orders have no payment split | **P2** | **MEDIUM** | **PARKED — OD-409-01 answered: PARK (2026-09-15).** | `reportService.js` |
+| **BUG-410** | Old RoomCheckInModal — no accommodation GST for personal bookings | **P2** | **HIGH** | **INTAKE — GATE 1 — UNBLOCKED.** gstBlockVisible gated to Corporate only. computeRoomGst() needed for personal/WalkIn. | `RoomCheckInModal.jsx` |
+| **BUG-411** | New CheckInPage — no payment method picker for advance | **P0** | **CRITICAL** | **INTAKE — GATE 1 — UNBLOCKED.** payment_method always '' sent to backend. Causes BUG-412. pmsService field already exists — FE UI only. | `CheckInPage.jsx` |
+| **BUG-412** | Guest Folio — Advance Paid shows room price instead of actual advance | **P1** | **HIGH** | **INTAKE — GATE 1 — BLOCKED ON BUG-411.** Backend likely overrides advance when payment_method=''. Will probe after BUG-411 fix. | `GuestFolioPage.jsx` (display) |
+| **BUG-413** | Arrivals — PREPAID badge misleading for Direct/WalkIn bookings | **P2** | **LOW** | **INTAKE — GATE 1 — BACKEND-BLOCKED.** pah field correction owned by backend. FE PahBadge renders correctly once backend fixes pah values. | `ArrivalsPage.jsx` |
+| **BUG-414** | New Booking + CheckIn — Adults/Children inputs locked (retroactive) | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15) — retroactive CLOSURE Phase B.** Fix applied before registration. onChange allowed clearing + onBlur snap. QA PASS. Code marker: BUG-NB-01. | `NewBookingPage.jsx` + `CheckInPage.jsx` |
+| **BUG-415** | Room Orders Report — Y-axis ticks show ₹0k or duplicate at low values | **P3** | **LOW** | **INTAKE — GATE 1.** tickFormatter divides all values by 1000 — small values show ₹0k or collide. Fix: smart formatter (1 line, 1 file). | `RoomOrdersMockup.jsx` |
+| **BUG-416** | Night Audit + Revenue Dashboard — no Sidebar navigation or Back button | **P2** | **LOW** | **INTAKE — GATE 1 — UNBLOCKED.** Both pages shell-less. All other PMS pages have Sidebar + back. Fix: wrap with Sidebar + ArrowLeft — same pattern as InHouseGuestsPage. OD-401-03 Option A. | `NightAuditPage.jsx` + `RevenueDashboardPage.jsx` |
