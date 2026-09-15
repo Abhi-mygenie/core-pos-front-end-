@@ -167,8 +167,8 @@ export default function CheckInPage() {
       checkout: a.checkout ?? addDays(today, 1),
       orderAmount: a.amount ?? '',
       advancePayment: '',
-      adults: a.adults,
-      children: a.children,
+      adults: a.adults ?? 1,
+      children: a.children ?? 0,  // BUG-NB-01: ensure number, not undefined (undefined → uncontrolled input)
       note: a.specialRequests,
       _arrivalRoomCode: a.roomCode,
     });
@@ -628,12 +628,22 @@ export default function CheckInPage() {
                             type="number" min="1" max="10"
                             value={form.adults}
                             onChange={e => {
-                              const v = Math.max(1, Number(e.target.value) || 1);
+                              // BUG-NB-01: allow clearing field to retype
+                              const raw = e.target.value;
+                              const v = raw === '' ? '' : Math.max(1, parseInt(raw, 10) || 1);
                               setField('adults', v);
+                              const n = Number(v) || 1;
                               setExtraAdults(prev =>
-                                Array.from({ length: v - 1 }, (_, i) => prev[i] ?? { name: '', idType: 'Aadhar card', frontImage: null, backImage: null }) // CR-380: include doc slots
+                                Array.from({ length: n - 1 }, (_, i) => prev[i] ?? { name: '', idType: 'Aadhar card', frontImage: null, backImage: null }) // CR-380
                               );
                             }}
+                            onBlur={() => {
+                              if (form.adults === '' || Number(form.adults) < 1) {
+                                setField('adults', 1);
+                                setExtraAdults([]);
+                              }
+                            }}
+                            onWheel={e => e.target.blur()}
                             className={inputCls}
                           />
                         </div>
@@ -644,12 +654,17 @@ export default function CheckInPage() {
                             type="number" min="0" max="10"
                             value={form.children}
                             onChange={e => {
-                              const v = Math.max(0, Number(e.target.value) || 0);
+                              // BUG-NB-01: allow clearing field to retype
+                              const raw = e.target.value;
+                              const v = raw === '' ? '' : Math.max(0, parseInt(raw, 10) || 0);
                               setField('children', v);
+                              const n = Number(v) || 0;
                               setChildrenNames(prev =>
-                                Array.from({ length: v }, (_, i) => prev[i] ?? '')
+                                Array.from({ length: n }, (_, i) => prev[i] ?? '')
                               );
                             }}
+                            onBlur={() => { if (form.children === '') setField('children', 0); }}
+                            onWheel={e => e.target.blur()}
                             className={inputCls}
                           />
                         </div>
@@ -752,11 +767,11 @@ export default function CheckInPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-[12px] text-[#888] mb-1 block">Room Amount *</label>
-                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-amount" value={form.orderAmount} onChange={e => setField('orderAmount', e.target.value)} type="number" min="1" placeholder="0" className={`${inputCls} pl-7`} /></div>
+                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-amount" value={form.orderAmount} onChange={e => setField('orderAmount', e.target.value)} onWheel={e => e.target.blur()} type="number" min="1" placeholder="0" className={`${inputCls} pl-7`} /></div>
                       </div>
                       <div>
                         <label className="text-[12px] text-[#888] mb-1 block">Advance Payment</label>
-                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-advance" value={form.advancePayment} onChange={e => setField('advancePayment', e.target.value)} type="number" min="0" max={form.orderAmount || 0} placeholder="0" className={`${inputCls} pl-7`} /></div>
+                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-advance" value={form.advancePayment} onChange={e => setField('advancePayment', e.target.value)} onWheel={e => e.target.blur()} type="number" min="0" max={form.orderAmount || 0} placeholder="0" className={`${inputCls} pl-7`} /></div>
                       </div>
                     </div>
 

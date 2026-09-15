@@ -154,11 +154,22 @@ export default function NewBookingPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-[12px] text-[#888] mb-1 block">Adults *</label>
-                    <input data-testid="nb-adults" value={adults} onChange={e => setAdults(Math.max(1, Number(e.target.value) || 1))} type="number" min="1" className={inputCls} />
+                    {/* BUG-NB-01: was Number(e.target.value)||1 — cleared field snapped back to 1, impossible to retype */}
+                    <input data-testid="nb-adults" type="number" min="1"
+                      value={adults}
+                      onChange={e => { const v = e.target.value; setAdults(v === '' ? '' : Math.max(1, parseInt(v, 10) || 1)); }}
+                      onBlur={() => { if (adults === '' || Number(adults) < 1) setAdults(1); }}
+                      onWheel={e => e.target.blur()}
+                      className={inputCls} />
                   </div>
                   <div>
                     <label className="text-[12px] text-[#888] mb-1 block">Children</label>
-                    <input data-testid="nb-children" value={children} onChange={e => setChildren(Math.max(0, Number(e.target.value) || 0))} type="number" min="0" className={inputCls} />
+                    <input data-testid="nb-children" type="number" min="0"
+                      value={children}
+                      onChange={e => { const v = e.target.value; setChildren(v === '' ? '' : Math.max(0, parseInt(v, 10) || 0)); }}
+                      onBlur={() => { if (children === '') setChildren(0); }}
+                      onWheel={e => e.target.blur()}
+                      className={inputCls} />
                   </div>
                 </div>
               </div>
@@ -229,7 +240,7 @@ export default function NewBookingPage() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="text-[12px] text-[#888] mb-1 block">Room Amount *</label>
-                    <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="nb-amount" value={amount} onChange={e => setAmount(e.target.value)} type="number" min="1" placeholder="0" className={`${inputCls} pl-7`} /></div>
+                    <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="nb-amount" value={amount} onChange={e => setAmount(e.target.value)} onWheel={e => e.target.blur()} type="number" min="1" placeholder="0" className={`${inputCls} pl-7`} /></div>
                   </div>
                   <div>
                     <label className="text-[12px] text-[#888] mb-1 block">Meal Plan</label>
