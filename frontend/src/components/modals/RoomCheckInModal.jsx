@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 import { getDocuments, uploadDocument } from '../../api/services/documentService'; // CR-129 + INV-003
+import { computeRoomGst } from '../../utils/roomGstCalculator'; // BUG-410
 
 import { COLORS } from '../../constants';
 import * as roomService from '../../api/services/roomService';
@@ -290,6 +291,9 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
   const flags = restaurant?.checkInFlags || {
     guestDetails: false, bookingDetails: false, showUserGst: false,
   };
+  // BUG-410: accommodation GST slab config — same source as CheckInPage (BUG-386)
+  const roomGstApplicable = restaurant?.checkInFlags?.roomGstApplicable ?? false;
+  const roomGstSlabs      = restaurant?.checkInFlags?.roomGstSlabs      ?? null;
 
   // ── State: baseline ──
   const [name, setName] = useState('');
@@ -696,6 +700,10 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         }
       }
 
+      // BUG-410: compute accommodation GST for ALL booking types (not just Corporate)
+      const stayNights = Math.max(1, Math.round((new Date(checkoutDate) - new Date(checkinDate)) / 86400000));
+      const { gstTotal: gstTax } = computeRoomGst(roomGstApplicable, roomGstSlabs, Number(roomPrice), stayNights, 1);
+
       await roomService.checkIn({
         name: name.trim(),
         phone: phone10, // BUG-092: normalized 10-digit
@@ -723,6 +731,7 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
         balancePayment: balancePayment,
         paymentMethod: paymentMethod,  // BUG-027
         orderNote: orderNote.trim(),
+        gstTax, // BUG-410: accommodation GST computed for all booking types
 
         firmName: firmName.trim(),
         firmGst: firmGst.trim(),
@@ -1414,6 +1423,40 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                   />
                   <div />
                 </div>
+
+                {/* BUG-410: GST accommodation strip — all booking types, not just Corporate */}
+                {Number(roomPrice) > 0 && (() => {
+                  const stayN = Math.max(1, Math.round((new Date(checkoutDate) - new Date(checkinDate)) / 86400000));
+                  const { gstTotal, cgst, sgst } = computeRoomGst(roomGstApplicable, roomGstSlabs, Number(roomPrice), stayN, 1);
+                  const rate = roomGstSlabs?.slabs?.find(s => (Number(roomPrice) / stayN) >= (s.min ?? 0) && (s.max == null || (Number(roomPrice) / stayN) <= s.max))?.gst_percent ?? 0;
+                  const hasGst = roomGstApplicable && roomGstSlabs && gstTotal > 0;
+                  if (!roomGstApplicable) return null;
+                  const fmt = (n) => Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                  return (
+                    <div
+                      data-testid="modal-gst-strip"
+                      className={`rounded-lg border px-3 py-2.5 text-[12px] ${hasGst ? 'bg-[#F0FDF4] border-[#A7F3D0]' : 'bg-[#FAFAFA] border-[#E5E5E5]'}`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`font-semibold text-[11px] uppercase tracking-wide ${hasGst ? 'text-[#166534]' : 'text-[#888]'}`}>GST (Accommodation)</span>
+                        {hasGst
+                          ? <span className="text-[10px] font-bold bg-[#22C55E] text-white px-2 py-0.5 rounded-full">{rate}% Slab</span>
+                          : <span className="text-[10px] font-semibold bg-[#E5E5E5] text-[#888] px-2 py-0.5 rounded-full">Not Applicable</span>
+                        }
+                      </div>
+                      {hasGst && (
+                        <>
+                          <div className="flex justify-between text-[#374151]"><span>CGST ({rate/2}%)</span><span>₹{fmt(cgst)}</span></div>
+                          <div className="flex justify-between text-[#374151] mt-0.5"><span>SGST ({rate/2}%)</span><span>₹{fmt(sgst)}</span></div>
+                          <div className="flex justify-between font-bold text-[#1A1A1A] border-t border-[#A7F3D0] pt-1.5 mt-1.5">
+                            <span>Total incl. GST</span>
+                            <span className="text-[#15803D]">₹{fmt(Number(roomPrice) + gstTotal)}</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <InputField
                   icon={FileText}

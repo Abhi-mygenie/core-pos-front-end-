@@ -115,7 +115,7 @@ export const checkIn = async (params) => {
   fd.append('order_note', params.orderNote || '');
 
   // ── GST / Firm block — always sent (empty when not Corporate) ──────────────
-  fd.append('gst_tax', '0.00');
+  fd.append('gst_tax', to2dp(params.gstTax ?? 0)); // BUG-410: use computed accommodation GST (was hardcoded '0.00')
   fd.append('firm_name', params.firmName || '');
   fd.append('firm_gst', params.firmGst || '');
 

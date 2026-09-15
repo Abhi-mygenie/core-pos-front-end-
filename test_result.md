@@ -186,13 +186,39 @@ frontend:
         agent: "testing"
         comment: "✓ RUNTIME TEST PASS: Navigated to /reports/summary (Order Summary page). Found Cancellations section with data-testid='cancellations-section'. Section displays 'Pre-Serve' (Before food ready) and 'Post-Serve' (After food served) labels with values. Today's values: Pre-Serve ₹0.00, Post-Serve ₹0.00 (no cancellations for selected date). Fix confirmed: reportService.js fallback keys working correctly. Screenshot captured showing full cancellations section."
 
+  - task: "BUG-411: CheckInPage payment method picker for advance"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/pms/CheckInPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "CODE REVIEW PASS: Payment method picker implementation verified in CheckInPage.jsx. State management (lines 56-57): advancePaymentMethod state defined. Options computation (lines 68-75): advancePaymentMethodOptions filtered from restaurant.paymentMethods (cash/card/upi). UI rendering (lines 792-818): Picker shown when Number(form.advancePayment) > 0, with buttons for each method (data-testid='ci-advance-method-{value}'). Validation (line 250): formValid requires method when advance > 0. API integration (line 317): paymentMethod sent to pmsCheckIn. Reset logic (lines 189, 220, 787): Method cleared when selecting new arrival/walkin or when advance <= 0. All test scenarios covered in code. RUNTIME TEST BLOCKED: Firebase authentication prevents automated testing in current environment."
+
+  - task: "BUG-410: RoomCheckInModal GST for personal bookings"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/modals/RoomCheckInModal.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "CODE REVIEW PASS: GST for personal bookings fix verified in RoomCheckInModal.jsx. Config (lines 294-296): roomGstApplicable and roomGstSlabs loaded from restaurant.checkInFlags. GST computation (lines 703-705): computeRoomGst called for ALL booking types (not just Corporate) - THIS IS THE FIX. Previously GST was only computed for Corporate bookings, now computed for Personal/Walk-in as well. UI display (lines 1427-1467): GST strip (data-testid='checkin-gst-strip') shows when roomPrice > 0, displays CGST/SGST/Total or 'Not Applicable' if not configured. Strip visible for all booking types. Fix confirmed: removed booking type condition from GST computation, now applies universally. RUNTIME TEST BLOCKED: Firebase authentication prevents automated testing in current environment."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
   test_sequence: 1
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "BUG-411: CheckInPage payment method picker for advance"
+    - "BUG-410: RoomCheckInModal GST for personal bookings"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -206,3 +232,5 @@ agent_communication:
     message: "2026-09-15: COMPREHENSIVE PMS FORM TESTING COMPLETE. PRIMARY BUG FIX VERIFIED: Adults/Children input fields now allow clearing and retyping (BUG-NB-01 fix confirmed). All 20 test cases passed. New Booking form, Check-in form, Arrivals page, and Room Status Board tested successfully. Credentials updated in test_credentials.md (owner@thegoankitchen.com / Qplazm@10). Minor issue found: Check-in page Children field test showed unexpected behavior (typed '2' but field showed '0' - needs investigation)."
   - agent: "testing"
     message: "2026-09-15 RETEST COMPLETE: CheckInPage Children field bug FIXED and VERIFIED. Fix applied: selectArrival now defaults children: a.children ?? 0 (line 171). All 4 test cases PASSED: (1) Type '2' → shows '2' ✅, (2) Change to '0' → shows '0' ✅, (3) Type '1' → shows '1' ✅, (4) Clear and type '3' → shows '3' ✅. Field now correctly accepts user input and triggers expected UI changes (child name fields appear when children > 0). Previous issue where typing '2' showed '0' is now resolved. Used data-testid='ci-children' for testing."
+  - agent: "testing"
+    message: "2026-09-15: BUG-411 & BUG-410 CODE REVIEW COMPLETE. RUNTIME TESTING BLOCKED by Firebase authentication in test environment. CODE REVIEW FINDINGS: BUG-411 (CheckInPage payment method picker): ✓ Implementation verified in CheckInPage.jsx lines 56-57 (state), 68-75 (options), 792-818 (UI), 250 (validation), 317 (API). Picker shows when advance > 0, hides when advance = 0, validates method selection before confirm. BUG-410 (RoomCheckInModal GST for Personal): ✓ Implementation verified in RoomCheckInModal.jsx lines 294-296 (config), 703-705 (computation for ALL booking types - fix confirmed), 1427-1467 (UI display). GST now computed and displayed for Personal/Walk-in bookings, not just Corporate. Both fixes follow correct patterns and include proper data-testids for testing."

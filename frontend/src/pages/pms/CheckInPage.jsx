@@ -53,6 +53,8 @@ export default function CheckInPage() {
   const [isCorpBooking, setIsCorpBooking] = useState(false);
   const [firmName,      setFirmName]      = useState('');
   const [firmGst,       setFirmGst]       = useState('');
+  // BUG-411: advance payment method — cash/card/upi, required when advance > 0
+  const [advancePaymentMethod, setAdvancePaymentMethod] = useState('');
   // CR-379: stale-lookup guard — prevents race condition when phone changes mid-request
   const crmLookupPhoneRef = useRef(null);
 
@@ -61,6 +63,16 @@ export default function CheckInPage() {
   // BUG-386: room accommodation GST from profile slab config
   const { restaurant } = useRestaurant();
   const { roomGstApplicable, roomGstSlabs } = restaurant?.checkInFlags ?? {};
+
+  // BUG-411: payment method options from restaurant config (same pattern as RoomCheckInModal:L366)
+  const advancePaymentMethodOptions = useMemo(() => {
+    const enabled = restaurant?.paymentMethods || {};
+    return [
+      { value: 'cash', label: 'Cash' },
+      { value: 'card', label: 'Card' },
+      { value: 'upi',  label: 'UPI'  },
+    ].filter(o => enabled[o.value]);
+  }, [restaurant?.paymentMethods]);
 
   // CR-358-P2 A-01: arrivals window today-1..today+60
   const startDate = useMemo(() => addDays(today, -1), [today]);
@@ -174,7 +186,7 @@ export default function CheckInPage() {
     });
     // CR-379: reset CRM + extra guest state
     setCrmCustomer(null); setCrmError(null); setCrmLoading(false); setCrmDocs([]);
-    setIsCorpBooking(false); setFirmName(''); setFirmGst('');
+    setIsCorpBooking(false); setFirmName(''); setFirmGst(''); setAdvancePaymentMethod(''); // BUG-411
     setIdType('Aadhar card'); setFrontImage(null); setBackImage(null); // CR-380
     const adultCount = a.adults ?? 1;
     setExtraAdults(Array.from({ length: Math.max(0, adultCount - 1) }, () => ({ name: '', idType: 'Aadhar card', frontImage: null, backImage: null }))); // CR-380: include doc slots
@@ -205,7 +217,7 @@ export default function CheckInPage() {
     });
     // CR-379: reset CRM + extra guest state
     setCrmCustomer(null); setCrmError(null); setCrmLoading(false); setCrmDocs([]);
-    setIsCorpBooking(false); setFirmName(''); setFirmGst('');
+    setIsCorpBooking(false); setFirmName(''); setFirmGst(''); setAdvancePaymentMethod(''); // BUG-411
     setExtraAdults([]);
     setChildrenNames([]);
     setIdType('Aadhar card'); setFrontImage(null); setBackImage(null); // CR-380
@@ -235,7 +247,7 @@ export default function CheckInPage() {
     return Math.max(1, Math.round((new Date(form.checkout + 'T00:00:00') - new Date(form.checkin + 'T00:00:00')) / 86400000));
   }, [form?.checkin, form?.checkout]);
 
-  const formValid = form && form.name?.trim() && /^\d{10}$/.test(form.phone) && form.restaurantTableId && form.checkin && form.checkout > form.checkin && Number(form.orderAmount) > 0 && form.adults >= 1 && Number(form.advancePayment || 0) >= 0 && Number(form.advancePayment || 0) <= Number(form.orderAmount) && (!idUploadRequired || crmDocs.length > 0 || !!frontImage); // CR-380: mandatory-doc gate (OD-4-A)
+  const formValid = form && form.name?.trim() && /^\d{10}$/.test(form.phone) && form.restaurantTableId && form.checkin && form.checkout > form.checkin && Number(form.orderAmount) > 0 && form.adults >= 1 && Number(form.advancePayment || 0) >= 0 && Number(form.advancePayment || 0) <= Number(form.orderAmount) && (!idUploadRequired || crmDocs.length > 0 || !!frontImage) && (Number(form.advancePayment || 0) === 0 || !!advancePaymentMethod); // CR-380 + BUG-411: method required when advance > 0
 
   const roomTypeMismatch = useMemo(() => {
     if (!form?._arrivalRoomCode || !form?.restaurantTableId) return false;
@@ -302,6 +314,7 @@ export default function CheckInPage() {
         checkout:          form.checkout,
         orderAmount:       Number(form.orderAmount),
         advancePayment:    Number(form.advancePayment || 0),
+        paymentMethod:     advancePaymentMethod, // BUG-411
         adults:            Number(form.adults),
         children:          Number(form.children),
         note:              form.note,
@@ -771,9 +784,38 @@ export default function CheckInPage() {
                       </div>
                       <div>
                         <label className="text-[12px] text-[#888] mb-1 block">Advance Payment</label>
-                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-advance" value={form.advancePayment} onChange={e => setField('advancePayment', e.target.value)} onWheel={e => e.target.blur()} type="number" min="0" max={form.orderAmount || 0} placeholder="0" className={`${inputCls} pl-7`} /></div>
+                        <div className="relative"><span className="absolute left-3 top-2.5 text-[13px] text-[#888]">₹</span><input data-testid="ci-advance" value={form.advancePayment} onChange={e => { setField('advancePayment', e.target.value); if (Number(e.target.value) <= 0) setAdvancePaymentMethod(''); /* BUG-411 */ }} onWheel={e => e.target.blur()} type="number" min="0" max={form.orderAmount || 0} placeholder="0" className={`${inputCls} pl-7`} /></div>
                       </div>
                     </div>
+
+                    {/* BUG-411: payment method picker — shown when advance > 0, required before confirm */}
+                    {Number(form.advancePayment) > 0 && advancePaymentMethodOptions.length > 0 && (
+                      <div>
+                        <label className="text-[12px] text-[#888] mb-1.5 block">Advance Payment Method *</label>
+                        <div className="flex gap-2">
+                          {advancePaymentMethodOptions.map(opt => (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              data-testid={`ci-advance-method-${opt.value}`}
+                              onClick={() => setAdvancePaymentMethod(opt.value)}
+                              className={`flex-1 py-2 rounded-lg text-[13px] font-medium border transition-colors ${
+                                advancePaymentMethod === opt.value
+                                  ? 'bg-[#329937] text-white border-[#329937]'
+                                  : 'bg-white text-[#555] border-[#E5E5E5] hover:border-[#329937]'
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                        {!advancePaymentMethod && (
+                          <p className="text-[11px] text-[#EF4444] mt-1" data-testid="ci-advance-method-error">
+                            Select how the advance was collected
+                          </p>
+                        )}
+                      </div>
+                    )}
 
                     {/* BUG-386: GST Accommodation strip */}
                     {(() => {
