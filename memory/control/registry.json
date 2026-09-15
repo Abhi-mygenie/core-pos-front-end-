@@ -22627,7 +22627,7 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "GATE 2 CLOSED (2026-09-14). ALL ODs resolved. Design approved. Sidebar SC ack approved. READY FOR GATE 3 — Implementation Plan.",
+      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). Awaiting Gate 4 GO.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 3,
@@ -22701,6 +22701,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 CLOSED",
           "note": "All ODs resolved (OD-363-07/08 + OD-366-04/05/06/07/08). Design approved (mockup + design_guidelines.json). Sidebar SC ack approved. Gate 3 entry checklist met except BN-6 probe + line re-verify (to be done at Gate 3 start)."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
+          "note": "Joint plan with CR-366 at plans/CR-363_CR-366_JOINT_IMPLEMENTATION_PLAN.md. 8 files, exec sequence defined, Verification Matrix + Registry Checklist included. Awaiting Gate 4 GO."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22830,7 +22835,7 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "GATE 2 CLOSED (2026-09-14). ALL ODs resolved (incl. OD-366-08=Option A side-by-side). Design approved. Sidebar SC ack approved. READY FOR GATE 3 — Implementation Plan.",
+      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). Awaiting Gate 4 GO.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 3,
@@ -22902,6 +22907,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 CLOSED",
           "note": "OD-366-08 = Option A (side-by-side, orange=Booked/green=Collected). Design approved. Sidebar SC ack approved. Gate 3 entry checklist met except BN-6 group_by=month probe + line re-verify."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
+          "note": "Joint plan with CR-363. OD-366-08=Option A (side-by-side) encoded. groupByAutoSelect helper specced. 4 charts, 4 tables, 7D default. Awaiting Gate 4 GO."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",
