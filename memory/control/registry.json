@@ -25314,7 +25314,7 @@
       "id": "BUG-418",
       "title": "Checkout Drawer: GST Not Shown in Bill Display (BUG-401 Display Gap)",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_2",
@@ -25325,7 +25325,8 @@
         "BUG-386"
       ],
       "batch": "BATCH-1 (GST Cluster)",
-      "batch_id": "BATCH-PMS2-1"
+      "batch_id": "BATCH-PMS2-1",
+      "impact_analysis": "impact/BATCH_PMS2_1_BUG422_423_418_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-419",
@@ -25381,7 +25382,7 @@
       "id": "BUG-422",
       "title": "Old RoomCheckInModal: balance_payment Sent Without GST (BUG-410 Gap)",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_2",
@@ -25392,13 +25393,14 @@
         "BUG-396"
       ],
       "batch": "BATCH-1 (GST Cluster) \u2014 impl after BUG-420 in BATCH-2",
-      "batch_id": "BATCH-PMS2-1"
+      "batch_id": "BATCH-PMS2-1",
+      "impact_analysis": "impact/BATCH_PMS2_1_BUG422_423_418_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-423",
       "title": "Guest Folio Page: Room Balance Excludes GST (Shows room_price - advance only)",
       "type": "BUG",
-      "status": "INTAKE \u2014 Gate 1. ODs deferred to Gate 2.",
+      "status": "GATE_2_COMPLETE \u2014 Awaiting ODs + Gate 4 GO",
       "priority": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_2",
@@ -25410,7 +25412,8 @@
         "BUG-422"
       ],
       "batch": "BATCH-1 (GST Cluster)",
-      "batch_id": "BATCH-PMS2-1"
+      "batch_id": "BATCH-PMS2-1",
+      "impact_analysis": "impact/BATCH_PMS2_1_BUG422_423_418_IMPACT_ANALYSIS.md"
     }
   ],
   "meta": {
