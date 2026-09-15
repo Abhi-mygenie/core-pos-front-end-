@@ -269,9 +269,11 @@ function RoomTile({ room, busyId, onPatch, navigate }) {
       <div className="px-4 pb-3 pt-1 flex flex-wrap gap-1.5">
         {s === 'occupied' && (
           <>
-            <button data-testid={`rs-hk-btn-${room.id}`} disabled title="Cannot change while occupied"
-              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#FEF3C7] text-[#D97706] opacity-40 cursor-not-allowed">HK</button>
-            <button data-testid={`rs-ooo-btn-${room.id}`} disabled title="Cannot change while occupied"
+            {/* BUG-407: allow staff to request HK for an in-house guest's room */}
+            <button data-testid={`rs-hk-btn-${room.id}`} onClick={() => onPatch(room.id, 'hk')} disabled={isBusy}
+              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#FEF3C7] text-[#D97706] hover:bg-[#FDE68A] disabled:opacity-40 transition-colors">
+              {isBusy ? <Loader2 className="w-3 h-3 animate-spin inline mr-1"/> : null}Request HK</button>
+            <button data-testid={`rs-ooo-btn-${room.id}`} disabled title="Cannot mark OOO while occupied"
               className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#EF4444] text-[#EF4444] opacity-40 cursor-not-allowed">OOO</button>
             {room.guest?.orderId && (
               <button data-testid={`rs-folio-btn-${room.id}`} onClick={() => navigate('/reports/rooms')}
@@ -281,11 +283,13 @@ function RoomTile({ room, busyId, onPatch, navigate }) {
             )}
           </>
         )}
-        {s === 'occupied_hk' && ( // BUG-397: stayover HK — all toggles disabled, View Folio if orderId
+        {s === 'occupied_hk' && ( // BUG-397: stayover HK — Mark Clean available; OOO disabled; View Folio if orderId
           <>
-            <button data-testid={`rs-hk-btn-${room.id}`} disabled title="Housekeeping in progress"
-              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#FEF3C7] text-[#D97706] opacity-60 cursor-not-allowed">HK In Progress</button>
-            <button data-testid={`rs-ooo-btn-${room.id}`} disabled title="Cannot change while occupied"
+            {/* BUG-406: Mark Clean for occupied_hk — clears HK flag, room stays occupied */}
+            <button data-testid={`rs-clean-btn-${room.id}`} onClick={() => onPatch(room.id, 'available')} disabled={isBusy}
+              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#329937] text-white hover:bg-[#287a2d] disabled:opacity-40 transition-colors flex items-center gap-1">
+              {isBusy ? <Loader2 className="w-3 h-3 animate-spin"/> : null}Mark Clean</button>
+            <button data-testid={`rs-ooo-btn-${room.id}`} disabled title="Cannot mark OOO while occupied"
               className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#EF4444] text-[#EF4444] opacity-40 cursor-not-allowed">OOO</button>
             {room.guest?.orderId && (
               <button data-testid={`rs-folio-btn-${room.id}`} onClick={() => navigate('/reports/rooms')}

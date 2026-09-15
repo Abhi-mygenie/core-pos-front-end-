@@ -199,7 +199,7 @@ export default function ArrivalsPage() {
           {/* Table */}
           {!loading && !error && rows.length > 0 && (
             <>
-              <div className="bg-white rounded-lg border border-[#E5E5E5] overflow-hidden" data-testid="arr-table">
+              <div className="bg-white rounded-lg border border-[#E5E5E5]" data-testid="arr-table"> {/* BUG-403: removed overflow-hidden — it clips the absolute kebab dropdown */}
                 <table className="w-full text-[13px]">
                   <thead>
                     <tr className="bg-[#FAFAFA] border-b border-[#E5E5E5] text-left text-[11px] font-semibold uppercase text-[#888] tracking-wide">

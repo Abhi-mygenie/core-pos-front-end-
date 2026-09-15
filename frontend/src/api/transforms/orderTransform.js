@@ -403,6 +403,10 @@ export const fromAPI = {
         paymentStatus:      api.room_info.payment_status || null,
         balancePaymentMode: api.room_info.balance_payment_mode || null,
         roomNo:             api.room_info.room_no || null,
+        // BUG-401: gst_tax lives at room_info top-level (NOT inside room_payment_summary).
+        // Previous code read from roomPaymentSummary.gstTax which was always 0 when
+        // room_payment_summary was absent. Read directly from api.room_info.gst_tax here.
+        gstTax:             parseFloat(api.room_info.gst_tax) || 0,
         // BE-2 §4.1 (still pending backend) — keep null fallbacks until BE
         // ships explicit discount fields. Until then, `discount` is derived
         // in RoomRowCard.numbers as (room_price - lodging_collected) on

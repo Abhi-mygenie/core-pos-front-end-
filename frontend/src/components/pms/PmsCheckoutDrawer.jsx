@@ -154,7 +154,8 @@ const PmsCheckoutDrawer = ({
       // Q-GST-01 CONFIRMED 2026-09-09: 'room_gst_tax' is an accepted field on
       // POST /api/v2/vendoremployee/order/order-bill-payment (probe passed full
       // validation; reached "Order not found" — field name is correct).
-      const roomGstTax = detail.roomInfo?.roomPaymentSummary?.gstTax ?? 0;
+      // BUG-401: gst_tax is at room_info top-level → mapped to roomInfo.gstTax (not roomPaymentSummary.gstTax).
+      const roomGstTax = detail.roomInfo?.gstTax ?? 0;
       if (roomGstTax > 0) payload.room_gst_tax = roomGstTax; // BUG-386
 
       await api.post(API_ENDPOINTS.BILL_PAYMENT, payload);

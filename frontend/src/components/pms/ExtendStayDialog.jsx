@@ -26,9 +26,19 @@ export default function ExtendStayDialog({ target, onClose, onSuccess }) {
     setLoading(true);
     getRatesData({ startDate: target.checkout, endDate: newCheckout })
       .then(data => {
+        // BUG-402: getRatesData returns { dateRateMap, rateplans, dates }.
+        // Each rateplan = { roomCode, rateplanCode } — no .rates/.rate property.
+        // Must read from dateRateMap[date][rateplanCode].
         const rateplans = data?.rateplans ?? (Array.isArray(data) ? data : []);
         const rp = rateplans[0];
-        const perNight = rp ? Number(rp.rates?.[target.checkout] ?? rp.rate ?? 0) : 0;
+        let perNight = rp
+          ? Number(data?.dateRateMap?.[target.checkout]?.[rp.rateplanCode] ?? 0)
+          : 0;
+        // BUG-402 fallback: if Aiosell has no rate plans (non-CM hotel), derive
+        // per-night from original booking total ÷ original nights.
+        if (perNight === 0 && target.nights && target.nights > 0) {
+          perNight = Math.round(Number(target.currentPrice ?? 0) / target.nights);
+        }
         const extensionTotal = perNight * extraNights;
         setExtRate({
           perNight,

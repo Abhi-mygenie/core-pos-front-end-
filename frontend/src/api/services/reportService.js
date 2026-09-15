@@ -411,7 +411,8 @@ export const getDailySalesReport = async (date) => {
     runningOrders: toNum(data.running_order),
     orderTAB:      toNum(data.orderTAB),
     unpaidRevenue: toNum(data.unpaid_revenue),
-    cancelled:     toNum(data.cancel_revenue?.['Pre-Serve']) + toNum(data.cancel_revenue?.['Post-Serve']),
+    cancelled:     toNum(data.cancel_revenue?.['Pre-Serve']  ?? data.cancel_revenue?.['Preparing']) +
+                   toNum(data.cancel_revenue?.['Post-Serve'] ?? data.cancel_revenue?.['Serve']), // BUG-405
     profitLoss:    toNum(data.total_profit_loss), // CR-377: new KPI card
 
     // Payment Breakdown — CR-377: +zomatoGold, +partial, +roomCheckin
@@ -461,9 +462,11 @@ export const getDailySalesReport = async (date) => {
     },
 
     // Cancellations
+    // BUG-405: API returns 'Preparing'/'Serve' (OLD POS naming) not 'Pre-Serve'/'Post-Serve'.
+    // Read both key names as fallback so either naming convention works.
     cancellations: {
-      preServe:  toNum(data.cancel_revenue?.['Pre-Serve']),
-      postServe: toNum(data.cancel_revenue?.['Post-Serve']),
+      preServe:  toNum(data.cancel_revenue?.['Pre-Serve']  ?? data.cancel_revenue?.['Preparing']),
+      postServe: toNum(data.cancel_revenue?.['Post-Serve'] ?? data.cancel_revenue?.['Serve']),
     },
 
     // Deductions & Extras

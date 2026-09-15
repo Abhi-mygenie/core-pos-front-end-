@@ -356,7 +356,7 @@ const Header = ({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => { if (!searchQuery) setIsSearchFocused(false); }}
-                className="flex-1 bg-transparent text-sm outline-none"
+                className="flex-1 min-w-0 bg-transparent text-sm outline-none"
                 style={{ color: COLORS.darkText }}
               />
               {(searchQuery || isSearchFocused) && (

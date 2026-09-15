@@ -24974,6 +24974,104 @@
       ],
       "registered": "2026-09-15",
       "notes": "Gate 2 blocked on OD-382-01 answer. If PARK: status stays PARKED. Backend endpoints all live (confirmed probe 2026-09-15). CM hotels (Aiosell) unaffected \u2014 additive feature only."
+    },
+    {
+      "id": "BUG-402",
+      "type": "BUG",
+      "title": "Extend Stay \u2014 extra nights rate shows \u20b90 (wrong dateRateMap path + no fallback for non-Aiosell)",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED (ss1)",
+      "files": [
+        "ExtendStayDialog.jsx",
+        "InHouseGuestsPage.jsx"
+      ],
+      "registered": "2026-09-15",
+      "notes": "ExtendStayDialog:L31 reads rp.rates?.[date] but rp={roomCode,rateplanCode}\u2014no rates/rate property. Fix: read from dateRateMap[date][rateplanCode]. Also pass checkin to target for non-Aiosell fallback."
+    },
+    {
+      "id": "BUG-403",
+      "type": "BUG",
+      "title": "Arrivals Page \u2014 3-dots (\u22ee) kebab dropdown clipped by overflow-hidden on table container",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED (ss2)",
+      "files": [
+        "ArrivalsPage.jsx"
+      ],
+      "registered": "2026-09-15",
+      "notes": "ArrivalsPage:L202 table container has overflow-hidden. ArrKebabMenu dropdown is absolute positioned with z-20 but gets clipped. Fix: remove overflow-hidden from table container."
+    },
+    {
+      "id": "BUG-404",
+      "type": "BUG",
+      "title": "New Booking \u2014 Room Amount stays \u20b90 when room selected (no auto-fill from default_sell_rate)",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED (ss3)",
+      "files": [
+        "NewBookingPage.jsx",
+        "pmsService.js"
+      ],
+      "registered": "2026-09-15",
+      "notes": "getBookableRooms() has no defaultRate. No useEffect auto-fills amount on room select. Fix: call GET /room-types, build rateByRoomId map, auto-fill amount on room selection. Related: CR-382."
+    },
+    {
+      "id": "BUG-405",
+      "type": "BUG",
+      "title": "Daily Report \u2014 cancel_revenue key mismatch: FE reads \"Pre-Serve\"/\"Post-Serve\" but API returns \"Preparing\"/\"Serve\"",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED",
+      "files": [
+        "reportService.js"
+      ],
+      "registered": "2026-09-15",
+      "notes": "reportService:L465 reads cancel_revenue[\"Pre-Serve\"] and [\"Post-Serve\"]. OLD POS shows \"Preparing\"/\"Serve\". API likely returns those keys \u2192 FE shows \u20b90. Fix: add fallback to both key names."
+    },
+    {
+      "id": "BUG-406",
+      "type": "BUG",
+      "title": "Room Status \u2014 occupied_hk rooms have no \"Mark Clean\" button (HK cannot be completed individually)",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED",
+      "files": [
+        "RoomStatusPage.jsx"
+      ],
+      "registered": "2026-09-15",
+      "notes": "occupied_hk action block has only disabled \"HK In Progress\" + disabled OOO. No Mark Clean. Fix: add enabled Mark Clean button \u2192 patchRoomStatus(id, \"available\"). Clears HK flag, keeps room occupied."
+    },
+    {
+      "id": "BUG-407",
+      "type": "BUG",
+      "title": "Room Status \u2014 occupied rooms cannot request housekeeping (HK button disabled)",
+      "priority": "P1",
+      "risk": "LOW",
+      "status": "INTAKE \u2014 GATE 1",
+      "gate": 1,
+      "sprint_key": "pos_pms_1",
+      "source": "OWNER-REPORTED",
+      "files": [
+        "RoomStatusPage.jsx"
+      ],
+      "registered": "2026-09-15",
+      "notes": "occupied action block: HK button disabled with title=\"Cannot change while occupied\". Owner confirms occupied rooms should be able to call for HK. Fix: enable HK button \u2192 patchRoomStatus(id, \"hk\") \u2192 backend sets manual_status=hk \u2192 display_status=occupied_hk."
     }
   ],
   "meta": {

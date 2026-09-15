@@ -174,7 +174,19 @@ export default function InHouseGuestsPage() {
                         {/* CR-362: Extend Stay button */}
                         <button data-testid={`inhse-extend-btn-${row.roomNumber}`}
                           disabled={!row.parentOrderId}
-                          onClick={() => row.parentOrderId && setExtendTarget({ orderId: row.parentOrderId, guestName: row.guestName, channel: '—', roomNo: row.roomNumber, checkout: row.checkoutDate, currentPrice: Number(row.balance ?? 0), nights: null })}
+                          onClick={() => row.parentOrderId && setExtendTarget({
+            orderId:       row.parentOrderId,
+            guestName:     row.guestName,
+            channel:       '—',
+            roomNo:        row.roomNumber,
+            checkout:      row.checkoutDate,
+            currentPrice:  Number(row.balance ?? 0),
+            // BUG-402: pass checkin + nights so dialog can derive per-night rate fallback
+            checkin:       row.bookingCheckin ?? row.checkinDate,
+            nights: (row.bookingCheckin && row.checkoutDate)
+              ? Math.max(1, Math.round((new Date(row.checkoutDate) - new Date(row.bookingCheckin)) / 86400000))
+              : null,
+          })}
                           className="text-[12px] font-medium border border-[#E5E5E5] text-[#666] px-2 py-0.5 rounded hover:bg-[#FAFAFA] disabled:opacity-40 disabled:cursor-not-allowed ml-2">
                           Extend Stay
                         </button>
