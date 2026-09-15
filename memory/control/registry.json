@@ -23769,7 +23769,7 @@
       "sprint_key": "pos_pms_1",
       "id": "BUG-389",
       "title": "PMS Room GST: slab2.min=7500.01 causes ₹7,500 exact to hit 5% slab (should be 18%)",
-      "status": "CLOSED — NOT A BUG (2026-09-14). Working as designed. slab2.min=7500.01 is intentional: ₹7,500 exact is taxed at 5%, ₹7,500.01+ is taxed at 18%. Agent mis-classified based on incorrect GST boundary assumption.",
+      "status": "CLOSED — NOT A BUG (2026-09-14). slab2.min=7500.01 is intentional. ₹7,500=5%, ₹7,500.01+=18%. Working as designed. Agent mis-classified.",
       "files": "None (backend config fix)",
       "notes": "P1 HIGH. Backend slab config for RID 69 has slab2.min=7500.01 instead of 7500. FE code correct given data. Backend brief required. OD-389-01/02 open. Related: BUG-386, BUG-388.",
       "artifact_refs": [
@@ -23790,8 +23790,8 @@
         }
       ],
       "completeness": "1/7",
-      "category": "IN_PROGRESS",
-      "gate": 1,
+      "category": "CLOSED",
+      "gate": 7,
       "status_history": [
         {
           "date": "2026-09-14",

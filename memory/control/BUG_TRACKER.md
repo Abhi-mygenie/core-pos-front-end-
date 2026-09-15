@@ -40,6 +40,9 @@
 
 ### 2026-09-09 — BUG-388, BUG-389 (INTAKE — PMS GST Investigation)
 
+**Updated 2026-09-14 — BUG-389 CLOSED (NOT A BUG):** Re-investigation confirmed `slab2.min=7500.01` is intentional business rule. ₹7,500 exact → 5% (intended); ₹7,500.01+ → 18% (intended). No backend fix needed. Agent original intake was incorrect. Registry: BUG-389 category=CLOSED.
+
+
 | Bug ID | Title | Priority | Risk | Status | Notes |
 |---|---|---|---|---|---|
 | **BUG-388** | PMS Check-In: advance payment excluded from GST base — wrong slab + wrong balance_payment | **P0** | **CRITICAL** | **IMPLEMENTED — Gate 5a** | 4 edits, 2 files: `CheckInPage.jsx` (E1a strip L388 + E1b display L422 + E2 handleConfirm L168) + `pmsService.js` (E3 balance_payment L159). Self-test 6/6 PASS. webpack 0 new warnings. EXIT GATE 5/5. IA: `impact/BUG-388_IMPACT_ANALYSIS.md`. Plan: `plans/BUG-388_IMPLEMENTATION_PLAN.md`. **Awaiting QA (Gate 5b).** |
