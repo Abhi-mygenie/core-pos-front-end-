@@ -239,6 +239,9 @@ const sidebarMenuItems = [
       // P4 placeholder
       { id: 'pms-reservations',    label: 'Tape Chart',       path: '/pms/reservations' },
       { id: 'pms-room-status',     label: 'Room Status',      path: '/pms/room-status' },
+      // CR-363 + CR-366 — SC ack approved 2026-09-14
+      { id: 'pms-night-audit',   label: 'Night Audit',        path: '/pms/night-audit' },
+      { id: 'pms-revenue',       label: 'Revenue Dashboard',  path: '/pms/revenue' },
     ],
   },
 ];

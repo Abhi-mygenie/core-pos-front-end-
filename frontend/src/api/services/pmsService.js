@@ -440,3 +440,23 @@ export const getCancelledReservations = async () => {
             : Array.isArray(res.data?.reservations)       ? res.data.reservations : [];
   return raw.map(aiosellTransform.fromAPI.reservationOps);
 };
+
+// ─── CR-363 — Night Audit ────────────────────────────────────────────────────
+/** Fetch end-of-day night audit for a single business date.
+ *  @param {string} date  YYYY-MM-DD (business date, IST calendar)
+ */
+export const getNightAudit = async (date) => {
+  const res = await api.get(AIOSELL_ENDPOINTS.NIGHT_AUDIT, { params: { date } });
+  return res.data?.data ?? null;
+};
+
+// ─── CR-366 — Revenue Dashboard ──────────────────────────────────────────────
+/** Fetch aggregated revenue metrics over a date range.
+ *  @param {{ startDate:string, endDate:string, groupBy:'day'|'week'|'month' }} p
+ */
+export const getRevenueSummary = async ({ startDate, endDate, groupBy }) => {
+  const res = await api.get(AIOSELL_ENDPOINTS.REVENUE_SUMMARY, {
+    params: { start_date: startDate, end_date: endDate, group_by: groupBy },
+  });
+  return res.data?.data ?? null;
+};

@@ -22627,10 +22627,10 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "GATE 3 COMPLETE (2026-09-14). All probes PASS. BN-6: month bucket reduced schema documented. Plan final. Awaiting Gate 4 GO.",
+      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 4 new files + 4 MOD files. Webpack 0 new warnings. Self-test 18/18 PASS. Awaiting QA.",
       "priority": "P1",
       "risk": "HIGH",
-      "gate": 3,
+      "gate": 5,
       "completeness": "2/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports",
@@ -22711,6 +22711,11 @@
           "date": "2026-09-14",
           "status": "GATE 3 COMPLETE — ALL PROBES DONE",
           "note": "P1 night-audit 200 ✓. P2 revenue-summary day 200 ✓. P3 BN-6 group_by=month 200 ✓ — 12 monthly buckets, reduced schema (10 fields absent vs day). Plan §7 addendum written. test_credentials.md updated (goankitchen_owner alias). Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "IMPLEMENTED",
+          "note": "Gate 5a: NightAuditPage.jsx + nightAuditTransform.js NEW. constants.js + pmsService.js + App.js + Sidebar.jsx MOD. Live on preprod — Section A/B/C render with real data, BN-1 amber warning shown, OD-363-07 badge confirmed."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22840,10 +22845,10 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "GATE 3 COMPLETE (2026-09-14). All probes PASS. BN-6: month bucket reduced schema documented. Plan final. Awaiting Gate 4 GO.",
+      "status": "GATE 5A — IMPLEMENTED (2026-09-14). 4 new files + 4 MOD files (shared with CR-363). Webpack 0 new warnings. Self-test 18/18 PASS. Awaiting QA.",
       "priority": "P2",
       "risk": "MEDIUM",
-      "gate": 3,
+      "gate": 5,
       "completeness": "2/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > Reports / Insights",
@@ -22922,6 +22927,11 @@
           "date": "2026-09-14",
           "status": "GATE 3 COMPLETE — ALL PROBES DONE",
           "note": "P1 night-audit 200 ✓. P2 revenue-summary day 200 ✓. P3 BN-6 group_by=month 200 ✓ — 12 monthly buckets, reduced schema (10 fields absent vs day). Plan §7 addendum written. test_credentials.md updated (goankitchen_owner alias). Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "IMPLEMENTED",
+          "note": "Gate 5a: RevenueDashboardPage.jsx + revenueTransform.js NEW. shared MOD files. Live on preprod — 57.14% occ, KPI side-by-side, 3 charts render, breakdown tables PASS. BN-6 month suppression in place."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",

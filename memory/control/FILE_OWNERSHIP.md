@@ -1264,3 +1264,12 @@
 | `components/panels/menu/AddonManagementPanel.jsx` | E8-E11: addForm + editForm price/weight `onWheel` | BUG-392 |
 | `components/panels/menu/VariationExpandPanel.jsx` | E12: variation option price `onWheel` | BUG-392 |
 | `components/panels/menu/BulkEditor.jsx` | E1: 3 filter state fields; E2: groupedRows filter passes + deps; E3: always-visible filter strip JSX; E4: menuType reset useEffect | CR-374 |
+
+| `pages/pms/NightAuditPage.jsx` | NEW — 8-section night audit report, collapsible cards, date picker, export | CR-363 2026-09-14 |
+| `api/transforms/nightAuditTransform.js` | NEW — pure transform, null-normalise, sections A-H | CR-363 2026-09-14 |
+| `pages/pms/RevenueDashboardPage.jsx` | NEW — revenue dashboard, side-by-side KPIs (OD-366-08=A), 3 charts, 4 tables | CR-366 2026-09-14 |
+| `api/transforms/revenueTransform.js` | NEW — pure transform + groupByAutoSelect, BN-6 month schema | CR-366 2026-09-14 |
+| `api/constants.js` | +NIGHT_AUDIT +REVENUE_SUMMARY (L597-598) | CR-363+CR-366 2026-09-14 |
+| `api/services/pmsService.js` | +getNightAudit +getRevenueSummary (L448-462) | CR-363+CR-366 2026-09-14 |
+| `App.js` | +2 imports (L107-108) +2 routes (L267-268) | CR-363+CR-366 2026-09-14 |
+| `components/layout/Sidebar.jsx` | +pms-night-audit +pms-revenue children (L243-244, SC ack done) | CR-363+CR-366 2026-09-14 |

@@ -593,4 +593,7 @@ export const AIOSELL_ENDPOINTS = {
   MARK_NO_SHOW:            '/api/v2/vendoremployee/aiosell/mark-no-show',
   // CR-362 — Booking Modification & Cancellation
   EXTEND_STAY:             '/api/v2/vendoremployee/pos/room-extend-stay',         // CR-362: POST {order_id, new_checkout_date, new_room_price, reason}
+  // CR-363 + CR-366 — PMS Reports (shipped 2026-09-14, BE reply confirmed)
+  NIGHT_AUDIT:             '/api/v2/vendoremployee/aiosell/night-audit',          // CR-363: GET ?date=YYYY-MM-DD
+  REVENUE_SUMMARY:         '/api/v2/vendoremployee/aiosell/revenue-summary',      // CR-366: GET ?start_date&end_date&group_by
 };
