@@ -216,17 +216,22 @@ Fast Lane: **NO** for both.
 ### Carried (frozen earlier, unchanged)
 OD-363-01..06 (2026-09-16) · OD-366-01/02/03 (2026-09-15).
 
-### NEW — surfaced by probe (non-blocking for Gate 2; **must be answered before Gate 3**)
-| OD | Question | Options | Default if silent |
-|---|---|---|---|
-| **OD-363-07** | Past-date Night Audit: show `room_status_close` (which is *today's* board) with an "as of now" badge, or hide the section for dates ≠ today? | a) show + badge · b) hide for past dates | a |
-| **OD-363-08** | §C Outstanding rows currently have `guest_name` = null from BE. Ship v1 with "—" + BE follow-up, or wait for BE fix? | a) ship with "—" · b) wait | a |
-| **OD-366-05** | Cache TTL — BE is live compute. | a) no FE cache (v1) · b) `insightsCache` 15 min (raises risk to HIGH — localStorage) | a |
-| **OD-366-06** | Compare-to-previous-period deltas on KPI tiles? (needs a 2nd `revenue-summary` call) | yes / no | no (v1) |
-| **OD-366-07** | Default range on page open | Today / 7D / 30D | 30D |
-| **OD-366-08** | KPI tile basis default toggle — show Booked and Collected side-by-side always, or a toggle? | a) side-by-side · b) toggle (Booked default) | a |
+### Resolved 2026-09-14 — owner decisions recorded
 
-No business rule has been guessed (R3). Defaults above are proposals only.
+| OD | Decision | Owner instruction |
+|---|---|---|
+| **OD-363-07** | **a) Show `room_status_close` with "as of now" badge** for past dates. Do not hide. | "Show with badge" |
+| **OD-363-08** | **a) Ship with "—" where null.** Backend brief filed for all null fields. | "Ship with '—', write brief for backend" |
+| **OD-366-05** | **a) No FE cache — v1 always live.** `insightsCache` NOT used. Risk stays MEDIUM. | "no cache" |
+| **OD-366-06** | **No compare-to-previous-period in v1.** Noted for v2. | "V1 simple, note for next phase" |
+| **OD-366-07** | **Default range = last 7 days.** (overrides proposed 30D) | "last 7 days" |
+| **OD-366-08** | **OPEN — owner deciding.** Design agent to present side-by-side vs toggle options before Gate 3. | "not sure" |
+
+**Null-fields backend brief (OD-363-08):** `backend_briefs/BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md`
+
+**Sidebar SC ack:** Still required — combined for CR-363 + CR-366 (+ CR-365 Housekeeping if owner wants single unfreeze).
+
+No business rule has been guessed (R3).
 
 ---
 
@@ -244,7 +249,9 @@ No business rule has been guessed (R3). Defaults above are proposals only.
 ---
 
 ## 8. Gate 3 Entry Requirements (checklist for the Implementation-Plan session)
-- [ ] OD-363-07/08, OD-366-05..08 answered (or owner accepts defaults in writing)
+- [x] OD-363-07/08, OD-366-05/06/07 answered (2026-09-14)
+- [ ] **OD-366-08 — STILL OPEN** (Booked vs Collected display — design options to be presented to owner)
+- [ ] Design approval for NightAuditPage + RevenueDashboardPage (design agent called 2026-09-14)
 - [ ] Combined Sidebar SC ack (CR-363 + CR-366 [+ CR-365]) acknowledged
 - [ ] One probe of `revenue-summary…&group_by=month` (BN-6)
 - [ ] Confirm `utils/reportExporter.js` param contract (R-9)
@@ -267,7 +274,7 @@ Files WILL change: NightAuditPage.jsx (NEW), RevenueDashboardPage.jsx (NEW), nig
                    revenueTransform.js (NEW), pmsService.js, constants.js, App.js, Sidebar.jsx (SC ack)
 Files WILL NOT touch: CollectPaymentPanel, OrderEntry, orderTransform, Settlement/DayClosure, reportService,
                       aiosellTransform, aiosellService, PmsCheckoutDrawer, CartPanel, insightsCache (unless OD-366-05 b)
-Owner decisions: OD-366-04 RESOLVED (sidebar). NEW: OD-363-07, OD-363-08, OD-366-05, OD-366-06, OD-366-07, OD-366-08
-Docs: impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md · evidence/CR-363/ · evidence/CR-366/
-Next: Owner answers new ODs + Sidebar SC ack → PLANNING Gate 3 (Implementation Plan)
+Owner decisions: OD-363-07✅ OD-363-08✅ OD-366-04✅ OD-366-05✅ OD-366-06✅ OD-366-07✅ OD-366-08 OPEN
+Docs: impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md · backend_briefs/BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md
+Next: Design approval (design agent 2026-09-14) + owner resolves OD-366-08 → PLANNING Gate 3 (Implementation Plan)
 ```

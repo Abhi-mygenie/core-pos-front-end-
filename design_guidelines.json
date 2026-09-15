@@ -1,0 +1,254 @@
+{
+  "project_name": "MyGenie POS - Property Management System (PMS)",
+  "page_modules": [
+    "CR-363: PMS Night Audit Report (/pms/night-audit)",
+    "CR-366: PMS Revenue Dashboard (/pms/revenue)"
+  ],
+  "typography": {
+    "font_family": "'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    "forbidden_fonts": [
+      "Space Grotesk",
+      "Comic Sans MS",
+      "Times New Roman"
+    ],
+    "headings": {
+      "page_title": "text-2xl font-bold text-[#1A1A1A] tracking-tight",
+      "section_title": "text-base font-semibold text-[#1A1A1A] flex items-center gap-2 border-l-4 border-[#F26B33] pl-3 py-0.5",
+      "card_title": "text-sm font-semibold text-[#1A1A1A]",
+      "table_header": "text-xs font-semibold text-[#666666] uppercase tracking-wider bg-[#FAFAFA]"
+    },
+    "body": {
+      "standard": "text-sm text-[#1A1A1A] font-normal leading-normal",
+      "small": "text-xs text-[#666666]",
+      "muted": "text-xs text-[#888888]",
+      "money_value": "font-semibold text-sm text-[#1A1A1A] font-mono tracking-tight",
+      "money_primary": "font-bold text-lg text-[#F26B33] font-mono",
+      "badge_text": "text-xs font-medium px-2.5 py-0.5 rounded-full"
+    }
+  },
+  "colors": {
+    "brand_orange": "#F26B33",
+    "brand_orange_hover": "#E05A22",
+    "brand_orange_light": "#FFF4F0",
+    "action_green": "#329937",
+    "action_green_hover": "#2B8230",
+    "action_green_light": "#F0F9F0",
+    "amber_warning": "#F4A11A",
+    "amber_light": "#FFFBEB",
+    "amber_text": "#D97706",
+    "text_primary": "#1A1A1A",
+    "text_muted": "#888888",
+    "text_secondary": "#666666",
+    "border_color": "#E5E5E5",
+    "surface_page_bg": "#F7F7F7",
+    "surface_card": "#FFFFFF",
+    "surface_section": "#FAFAFA",
+    "danger_red": "#EF4444",
+    "danger_dark": "#D32F2F",
+    "danger_light": "#FEE2E2",
+    "chart_colors": {
+      "booked_sales": "#F26B33",
+      "collected_revenue": "#329937",
+      "fnb_posted": "#F4A11A",
+      "occupancy_rate": "#329937",
+      "adr": "#F26B33",
+      "revpar": "#D97706",
+      "grid_lines": "#E5E5E5"
+    },
+    "forbidden_colors": [
+      "#22C55E",
+      "#3B82F6",
+      "#2563EB",
+      "Tailwind Slate Family (#64748B, #475569, #334155, #1E293B, #0F172A, #E2E8F0, #CBD5E1)",
+      "#2D3748",
+      "#4A5568",
+      "#7351B7",
+      "#1B93A4"
+    ]
+  },
+  "visual_enhancers": {
+    "card_container": "bg-white border border-[#E5E5E5] rounded-lg shadow-sm p-4 md:p-6 transition-all duration-200",
+    "section_header_accent": "border-l-4 border-[#F26B33] pl-3 py-1 font-semibold text-base text-[#1A1A1A]",
+    "status_badges": {
+      "paid": "bg-[#F0F9F0] text-[#329937] border border-[#329937]/20 rounded-full text-xs font-medium px-2.5 py-0.5",
+      "unpaid": "bg-[#FEE2E2] text-[#EF4444] border border-[#EF4444]/20 rounded-full text-xs font-medium px-2.5 py-0.5",
+      "partial": "bg-[#FFFBEB] text-[#D97706] border border-[#F4A11A]/30 rounded-full text-xs font-medium px-2.5 py-0.5",
+      "as_of_now": "bg-[#FFF4F0] text-[#F26B33] border border-[#F26B33]/30 rounded-full text-xs font-medium px-2.5 py-0.5 flex items-center gap-1"
+    },
+    "tables": {
+      "wrapper": "overflow-x-auto border border-[#E5E5E5] rounded-lg",
+      "header_row": "bg-[#FAFAFA] border-b border-[#E5E5E5]",
+      "body_row_even": "bg-white border-b border-[#E5E5E5] hover:bg-[#FFF4F0]/30 transition-colors",
+      "body_row_odd": "bg-[#F7F7F7] border-b border-[#E5E5E5] hover:bg-[#FFF4F0]/30 transition-colors",
+      "total_row": "bg-[#FAFAFA] font-bold border-t-2 border-[#E5E5E5] text-[#1A1A1A]"
+    }
+  },
+  "component_structure": {
+    "files_to_create": [
+      "frontend/src/pages/pms/NightAuditPage.jsx",
+      "frontend/src/pages/pms/RevenueDashboardPage.jsx",
+      "frontend/src/api/transforms/nightAuditTransform.js",
+      "frontend/src/api/transforms/revenueTransform.js"
+    ],
+    "files_to_modify": [
+      "frontend/src/api/constants.js (add AIOSELL_ENDPOINTS.NIGHT_AUDIT and REVENUE_SUMMARY)",
+      "frontend/src/api/services/pmsService.js (add getNightAudit and getRevenueSummary)",
+      "frontend/src/App.js (add routes /pms/night-audit and /pms/revenue)",
+      "frontend/src/components/layout/Sidebar.jsx (add child links under pms category post SC ack)"
+    ]
+  },
+  "grids_and_layouts": {
+    "night_audit_layout": "space-y-6 max-w-7xl mx-auto px-4 py-6",
+    "revenue_dashboard_layout": "space-y-6 max-w-7xl mx-auto px-4 py-6",
+    "kpi_grid": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4",
+    "chart_grid": "grid grid-cols-1 lg:grid-cols-2 gap-6",
+    "breakdown_grid": "grid grid-cols-1 lg:grid-cols-2 gap-6"
+  },
+  "page_specifications": {
+    "night_audit_report": {
+      "path": "/pms/night-audit",
+      "title": "Night Audit Report",
+      "subtitle": "End-of-day hotel financial & room reconciliation",
+      "header_controls": {
+        "date_picker": "Single date picker defaulting to current business date (YYYY-MM-DD)",
+        "export_pdf": "PDF Export Button with icon (data-testid='export-pdf-button')",
+        "export_excel": "Excel Export Button with icon (data-testid='export-excel-button')"
+      },
+      "sections": [
+        {
+          "id": "section-occupancy",
+          "title": "A. Occupancy Summary & Room Types",
+          "type": "Collapsible Card",
+          "test_id": "section-occupancy",
+          "details": "Summary metrics (Total Available, Rooms Sold, Occupancy %, Arrivals, Departures, In-House) + table by room_type (Deluxe, Executive, Suite, etc.)"
+        },
+        {
+          "id": "section-revenue",
+          "title": "B. Room Revenue Collected",
+          "type": "Collapsible Card",
+          "test_id": "section-revenue",
+          "details": "Split by Tender Type (Cash, Card, UPI, TAB, OTA Remittance) and Stage (Advance at booking, Advance at check-in, Mid-stay, Checkout)"
+        },
+        {
+          "id": "section-outstanding",
+          "title": "C. Outstanding Guest Balances",
+          "type": "Collapsible Card",
+          "test_id": "section-outstanding",
+          "details": "In-house guest balance sheet with split room_balance vs fnb_balance. Per OD-363-08, renders '—' when guest data is null."
+        },
+        {
+          "id": "section-no-shows",
+          "title": "D. No-Shows & Late Arrivals",
+          "type": "Collapsible Card",
+          "test_id": "section-no-shows",
+          "details": "Table of expected arrivals who failed to check in or were marked no-show."
+        },
+        {
+          "id": "section-departures",
+          "title": "E. Departures Reconciliation",
+          "type": "Collapsible Card",
+          "test_id": "section-departures",
+          "details": "Tables for checked out paid, checked out unpaid, and overdue still in-house guests."
+        },
+        {
+          "id": "section-room-status-close",
+          "title": "F. Room Status Close Board",
+          "type": "Collapsible Card",
+          "test_id": "section-room-status-close",
+          "details": "Counts & board of available, occupied, hk, ooo rooms. Per OD-363-07, displays mandatory badge 'Room status as of now' for past dates."
+        },
+        {
+          "id": "section-audit-trail",
+          "title": "G. Order-Level Audit Trail",
+          "type": "Collapsible Card",
+          "test_id": "section-audit-trail",
+          "details": "Logs of room operations, room transfers, and folio adjustments."
+        },
+        {
+          "id": "section-reconciliation",
+          "title": "H. Reconciliation to Day Closure",
+          "type": "Collapsible Card",
+          "test_id": "section-reconciliation",
+          "details": "Reconciles room payment ledger against settlement report cashier collections with calculated delta."
+        }
+      ]
+    },
+    "revenue_dashboard": {
+      "path": "/pms/revenue",
+      "title": "Revenue Dashboard",
+      "subtitle": "Hotel financial performance & occupancy analytics",
+      "header_controls": {
+        "date_preset_pills": ["Today", "7D (Default per OD-366-07)", "30D", "Custom Range"],
+        "export_buttons": "Export PDF & Excel buttons"
+      },
+      "od_366_08_owner_presentation": {
+        "requirement": "Present BOTH design options visually side-by-side or tabbed so hotel owner can choose",
+        "option_a": {
+          "label": "Option A: Side-by-Side Dual Metrics",
+          "description": "Every KPI tile explicitly shows both Booked (Sales) and Collected (Revenue) figures side-by-side with color badges",
+          "badge_sales": "#F26B33 (Booked)",
+          "badge_revenue": "#329937 (Collected)"
+        },
+        "option_b": {
+          "label": "Option B: Dynamic Metric Toggle",
+          "description": "KPI section has a toggle switch in top-right ('Booked (Sales)' vs 'Collected (Revenue)'). Switches all KPI numbers and trend charts dynamically",
+          "default_state": "Booked (Sales)"
+        }
+      },
+      "kpis": [
+        "Occupancy Rate (%)",
+        "Average Daily Rate (ADR - Booked & Collected)",
+        "Revenue Per Available Room (RevPAR - Booked & Collected)",
+        "Total Room Revenue (Booked & Collected)",
+        "Total RevPAR (TRevPAR - including F&B)"
+      ],
+      "charts": [
+        {
+          "title": "Occupancy & Room Nights Trend",
+          "type": "Area / Line Chart (Recharts)",
+          "series": ["Occupancy %", "Rooms Sold", "Rooms Available"]
+        },
+        {
+          "title": "Revenue Performance (Booked vs Collected)",
+          "type": "Bar / Line Chart (Recharts)",
+          "series": ["Booked Sales (#F26B33)", "Collected Revenue (#329937)", "F&B Posted (#F4A11A)"]
+        },
+        {
+          "title": "ADR & RevPAR Metrics",
+          "type": "Line Chart (Recharts)",
+          "series": ["ADR Booked", "ADR Collected", "RevPAR Booked", "RevPAR Collected"]
+        }
+      ],
+      "breakdown_tables": [
+        "Breakdown by Booking Channel (Direct, Booking.com, Walk-in, OTA)",
+        "Breakdown by Room Type (Deluxe, Executive, Suite, Standard)",
+        "Breakdown by Tender / Payment Method",
+        "Breakdown by Booking Status"
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. Strict adherence to PMS tokens: Primary Orange #F26B33, Action Green #329937, Dark #1A1A1A, Surface #F7F7F7, Cards #FFFFFF, Borders #E5E5E5.",
+    "2. NEVER use Tailwind default green #22C55E or blue #3B82F6 or Slate family.",
+    "3. Implement ALL required data-testid attributes on cards, buttons, dropdowns, table rows, and preset pills using kebab-case.",
+    "4. For OD-363-07: Always display the 'Room status as of now' badge on Section F for historical dates.",
+    "5. For OD-363-08: Renders '—' safely whenever guest_name or room_code is null.",
+    "6. For OD-366-08: Build a clear visual comparison banner / switcher showing Option A (Side-by-Side) and Option B (Toggle Switch) so the owner can review both.",
+    "7. Recharts must use brand colors (#F26B33 for Sales/Booked, #329937 for Collected/Revenue, #F4A11A for F&B).",
+    "8. Maintain pure JS files (.jsx / .js) per project conventions."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": {
+    "depth": "Layered design with z-index hierarchy and clean borders",
+    "micro_interactions": "Smooth transition-colors and hover states on buttons and tables",
+    "spacing": "Generous spacing (p-4 to p-6 inside card containers)",
+    "no_emoji": "Use Lucide React icons instead of raw emojis",
+    "testing_attributes": "All interactive elements MUST include data-testid attribute in kebab-case"
+  },
+  "image_urls": [
+    {
+      "category": "hero_hotel_reception",
+      "url": "https://images.unsplash.com/photo-1782714084014-3c1b362ee256?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHJlc29ydCUyMHJlY2VwdGlvbiUyMGRlc2t8ZW58MHx8fHwxNzg5NDQzMTkwfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Modern hotel lobby reception with guests, tree, and wall art"
+    }
+  ]
+}

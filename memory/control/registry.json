@@ -22627,7 +22627,7 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "GATE 2 — IMPACT ANALYSIS WRITTEN (2026-09-14, joint with CR-366). R11 probe DONE: night-audit 200. Awaiting OD-363-07/08 + combined Sidebar SC ack → Gate 3.",
+      "status": "GATE 2 — OD DECISIONS RECORDED 2026-09-14. OD-363-07: show+badge. OD-363-08: ship with \"-\" + BE null-fields brief filed. Sidebar SC ack pending. OD-366-08 design options needed → Gate 3 ready.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 2,
@@ -22691,6 +22691,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 — IMPACT ANALYSIS WRITTEN",
           "note": "R11 probe PASS; joint IA with CR-366; 2nd revenue-summary call dropped; new OD-363-07/08; BE notes BN-1..4"
+        },
+        {
+          "date": "2026-09-14",
+          "status": "OD DECISIONS RECORDED",
+          "note": "OD-363-07=a(show+badge), OD-363-08=a(ship — + BE brief BACKEND_BRIEF_CR363_CR366_NULL_FIELDS_2026_09_14.md). Gate 3 entry: design approval + sidebar SC ack needed."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22820,7 +22825,7 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "GATE 2 — IMPACT ANALYSIS WRITTEN (2026-09-14, joint with CR-363). OD-366-04 RESOLVED: sidebar under Rooms & Reservations. R11 probe DONE: revenue-summary day/week 200. Awaiting OD-366-05..08 + Sidebar SC ack → Gate 3.",
+      "status": "GATE 2 — OD DECISIONS RECORDED 2026-09-14. OD-366-05: no cache. OD-366-06: no v1. OD-366-07: 7D default. OD-366-08: OPEN (design options to be presented). Sidebar SC ack pending → Gate 3 ready after OD-366-08.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 2,
@@ -22882,6 +22887,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 — IMPACT ANALYSIS WRITTEN",
           "note": "OD-366-04 resolved (sidebar); R11 probe PASS; aiosellTransform dropped; new OD-366-05..08; BE notes BN-5/6"
+        },
+        {
+          "date": "2026-09-14",
+          "status": "OD DECISIONS RECORDED",
+          "note": "OD-366-05=no cache, OD-366-06=no v1, OD-366-07=7D default, OD-366-08=OPEN (design agent to present side-by-side vs toggle). Sidebar SC ack pending."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",
