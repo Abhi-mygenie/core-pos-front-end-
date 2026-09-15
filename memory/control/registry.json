@@ -25142,7 +25142,7 @@
       "title": "Channel Manager \u2014 Add default rateplan selector per room (supports rate auto-fill at booking)",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED (waiting on BACKEND_BRIEF_RATE_AUTOFILL Q1/Q2)",
+      "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED (Change 1 + Change 2 both confirmed backend tasks)",
       "gate": 1,
       "sprint_key": "pos_pms_1",
       "source": "AGENT-DISCOVERED",
@@ -25157,7 +25157,7 @@
       ],
       "registered": "2026-09-15",
       "backend_brief": "backend_briefs/BACKEND_BRIEF_RATE_AUTOFILL_2026_09_15.md",
-      "notes": "ChannelManagerPage hardcodes aiosellRateplanCode: null. Once backend confirms persistence of aiosell_rateplan_code, add rateplan dropdown in Channel Manager + auto-fill rate in New Booking / Check-In on room selection + date."
+      "notes": "Both changes confirmed as backend tasks 2026-09-15. Change 1: POST /room-mapping must persist aiosell_rateplan_code. Change 2: GET /rooms must return room_code_defaults object. FE cannot proceed until both ship."
     }
   ],
   "meta": {
