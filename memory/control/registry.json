@@ -22627,7 +22627,7 @@
       "id": "CR-363",
       "title": "PMS — Night Audit Report (end-of-day room reconciliation)",
       "type": "CR",
-      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). Awaiting Gate 4 GO.",
+      "status": "GATE 3 COMPLETE (2026-09-14). All probes PASS. BN-6: month bucket reduced schema documented. Plan final. Awaiting Gate 4 GO.",
       "priority": "P1",
       "risk": "HIGH",
       "gate": 3,
@@ -22706,6 +22706,11 @@
           "date": "2026-09-14",
           "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
           "note": "Joint plan with CR-366 at plans/CR-363_CR-366_JOINT_IMPLEMENTATION_PLAN.md. 8 files, exec sequence defined, Verification Matrix + Registry Checklist included. Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 3 COMPLETE — ALL PROBES DONE",
+          "note": "P1 night-audit 200 ✓. P2 revenue-summary day 200 ✓. P3 BN-6 group_by=month 200 ✓ — 12 monthly buckets, reduced schema (10 fields absent vs day). Plan §7 addendum written. test_credentials.md updated (goankitchen_owner alias). Awaiting Gate 4 GO."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — no no-show field (OG-PMS-015); outstanding balance needs client-side join.",
@@ -22835,7 +22840,7 @@
       "id": "CR-366",
       "title": "PMS — Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
       "type": "CR",
-      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). Awaiting Gate 4 GO.",
+      "status": "GATE 3 COMPLETE (2026-09-14). All probes PASS. BN-6: month bucket reduced schema documented. Plan final. Awaiting Gate 4 GO.",
       "priority": "P2",
       "risk": "MEDIUM",
       "gate": 3,
@@ -22912,6 +22917,11 @@
           "date": "2026-09-14",
           "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
           "note": "Joint plan with CR-363. OD-366-08=Option A (side-by-side) encoded. groupByAutoSelect helper specced. 4 charts, 4 tables, 7D default. Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 3 COMPLETE — ALL PROBES DONE",
+          "note": "P1 night-audit 200 ✓. P2 revenue-summary day 200 ✓. P3 BN-6 group_by=month 200 ✓ — 12 monthly buckets, reduced schema (10 fields absent vs day). Plan §7 addendum written. test_credentials.md updated (goankitchen_owner alias). Awaiting Gate 4 GO."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: MOSTLY UNBLOCKED — daily-sales-revenue-report is single-day (N calls for N days).",

@@ -708,3 +708,56 @@ Owner decisions needed: NONE — all resolved at Gate 2
 Docs: plans/CR-363_CR-366_JOINT_IMPLEMENTATION_PLAN.md
 Next: Gate 4 GO (owner approves) → IMPLEMENTATION
 ```
+
+---
+
+## 7. Gate 3 Probe Results (all verified 2026-09-14 — addendum)
+
+| Probe | Endpoint | Result | Evidence |
+|---|---|---|---|
+| P1 | `night-audit?date=2026-09-13` | **200** ✅ — all 8 sections present; guest_name still null (BN-1 confirmed) | `evidence/CR-363/probe_night_audit_reconfirm_2026_09_14.json` |
+| P2 | `revenue-summary?group_by=day` (7D) | **200** ✅ — 7 buckets; adr_booked=3597.97; revpar_booked=2569.98 | `evidence/CR-366/probe_revenue_summary_day_reconfirm_2026_09_14.json` |
+| P3 (BN-6) | `revenue-summary?group_by=month` (full year 2025) | **200** ✅ — 12 monthly buckets | `evidence/CR-366/probe_revenue_summary_month_2026_09_14.json` |
+
+### BN-6 Critical Finding — Month bucket is a REDUCED schema
+
+**10 fields present in day/week buckets that are ABSENT in month buckets:**
+```
+adr_collected, revpar_collected, arrivals, departures, in_house,
+no_shows, cancellations, rooms_capacity, rooms_ooo, tax_collected
+```
+
+**Month totals also null:** `adr_booked`, `adr_collected`, `bookings_count`, `avg_los_nights`, `avg_lead_time_days`, `outstanding_balance` all null for the test year (no live PMS data in 2025 — expected).
+
+### Impact on Edit 5 (revenueTransform.js) — PLAN UPDATED
+
+The `seriesBucket()` function already handles missing fields safely via `num()` (undefined→0) and `pct()` (undefined→null). **No structural change needed.**
+
+However, the impl agent **MUST** apply these additional rules to `RevenueDashboardPage.jsx` (Edit 6):
+
+```
+// Month-view chart rules (when groupBy === 'month'):
+// 1. ADR/RevPAR chart: hide adrCollected + revparCollected lines
+//    (b.adrCollected will be 0 for month — suppress rather than show flat zero line)
+//    Condition: groupBy === 'month' → render only adrBooked + revparBooked lines
+// 2. Occupancy chart: rooms_capacity / rooms_ooo absent → hide secondary axis (rooms sold only)
+// 3. arrivals/departures/in_house absent → don't render those tooltip fields for month view
+
+// Safe check in chart data prep:
+const isMonthView = groupBy === 'month';
+// In ADR/RevPAR chart dataset config:
+datasets: [
+  { label: 'ADR Booked',     data: series.map(b => b.adrBooked),     ... },
+  // Only include collected lines for day/week:
+  ...(!isMonthView ? [
+    { label: 'ADR Collected',  data: series.map(b => b.adrCollected), ... },
+    { label: 'RevPAR Collected', data: series.map(b => b.revparCollected), ... },
+  ] : []),
+  { label: 'RevPAR Booked',  data: series.map(b => b.revparBooked),  ... },
+]
+```
+
+### Scope lock — UNCHANGED
+No new files. The 8-file plan stands. Only the RevenueDashboardPage chart logic is updated (above).
+
+*BN-6 addendum written 2026-09-14 · Planning agent (ALPHA v0.7)*
