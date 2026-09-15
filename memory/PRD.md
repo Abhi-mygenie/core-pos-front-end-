@@ -1,0 +1,137 @@
+# MyGenie Core POS Frontend — Deployment PRD
+
+## Source
+- Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
+- Branch: 16sep (latest)
+- Deployed: 2026-09-15
+
+## Architecture
+- React (CRA + craco) frontend only — no local backend or database
+- All API calls go to external API: https://preprod.mygenie.online/
+- Socket: https://presocket.mygenie.online
+- Firebase for auth/messaging
+- Hosted at: https://494d04b0-021e-423f-9a56-2f723085dc1f.preview.emergentagent.com
+
+## What Was Done
+- 2026-09-14: Cloned branch `PMS13` from repo into `/tmp/pos-repo`
+- 2026-09-15: Cloned branch `16sep`, synced remote memory dir to `/app/memory/`
+- Replaced `/app/frontend/` contents with repo's `frontend/` directory (branch 16sep)
+- Wrote `/app/frontend/.env` with all provided env variables
+- Installed deps with `npm install --legacy-peer-deps` (package-lock.json detected)
+- Restarted supervisor frontend → compiles with 0 fatal errors, 1 ESLint warning only
+- App confirmed live at port 3000, HTTP 200, login page visible
+
+## Env Variables (frontend/.env)
+- REACT_APP_BACKEND_URL (platform proxy)
+- WDS_SOCKET_PORT=443
+- REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
+- REACT_APP_SOCKET_URL=https://presocket.mygenie.online
+- REACT_APP_FIREBASE_* (full Firebase config)
+- REACT_APP_CRM_BASE_URL / REACT_APP_CRM_API_KEYS
+- REACT_APP_GOOGLE_MAPS_KEY
+- REACT_APP_SHOW_AUDIT_TAB=true
+
+## Preserved Platform Files
+- /app/.emergent/
+- /app/memory/
+- /app/backend/
+- /etc/supervisor/conf.d/ (unchanged, READONLY)
+
+## Supervisor
+- Program: `frontend` → `yarn start` → `craco start` from `/app/frontend`
+- Port: 3000 (HOST=0.0.0.0 set by supervisor env)
+- Status: RUNNING, compiled successfully
+
+## Previous Branches Deployed
+- audit8 (2025-09-08)
+- PMS13 (2026-09-14)
+- 16sep (2026-09-15) ← current
+
+## 2026-09-15 — CR-366 Planning (backend brief stage)
+- Owner froze OD-366-01 (booked + collected revenue, booked primary), OD-366-02 (F&B separate, RevPAR rooms-only, TRevPAR extra), OD-366-03 (no range ceiling → server aggregation; Today/7D/30D pills + From/To).
+- Filed `backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md` (GET aiosell/revenue-summary, payment_mode + booking_status enums, definitions §4, Q-366-01..10).
+- Card added to `frontend/public/backend-briefs.html` (mirrored to `memory/backend_briefs/index.html`). registry.json / CR_REGISTRY.md / intake doc synced → CR-366 BACKEND-BLOCKED. OD-366-04 (placement) still open.
+
+
+## 2026-09-16 — CR-363 Planning (conflict pre-check vs CR-366 + backend brief)
+- Finding: Day Closure (`get-settlement-report`) DOES include room checkout cash (PmsCheckoutDrawer → `order-bill-payment` with cashier waiter_id), blended with F&B, no split. Night Audit must reconcile to it → backend split required.
+- Owner froze OD-363-01..06: business-day per backend Q-366-08; **Both** Sales(booked)+Revenue(collected); F&B separate; read-only v1 (no lock); sidebar under Rooms & Reservations (= OD-366-04); replay unlimited.
+- Filed `backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md` (GET aiosell/night-audit?date=, sections A–I incl. reconciliation, Q-363-01..08). CR-366 brief extended with Q-366-11..13 (tender split, settlement_room_share, same code path) + Sales/Revenue wording.
+- Cards on `backend-briefs.html` (mirrored). registry.json / CR_REGISTRY.md / intake synced → CR-363 BACKEND-BLOCKED. Next: joint CR-363/366 Gate 2 after endpoints probe-able (R11).
+- Pending: CR-362/BUG-397 Gate 6 owner smoke; CR-364 ODs; CR-357 OD-7.
+
+## 2026-09-16 — Registry drift fix CR-365
+- registry.json `backend_blocked` true→false, status_history entry added; CR_REGISTRY.md row rewritten to UNBLOCKED 2026-09-13; intake footer updated. Source of truth: intake L135 + SESSION_HANDOVER_2026_09_13.
+- CR-381 `backend_blocked` string→false (text moved to note); full scan: 0 non-boolean flags remain.
+
+## 2026-09-16 — CR-364 Intake continuation (INVESTIGATION + INTAKE)
+- **CIB vs CR-364 comparison** (`memory/CR-364_INVESTIGATION_CIB_COMPARISON.md`): CR-131 Customer Intelligence (Beta) is CRM-fed restaurant-wide aggregate; CR-364 is per-stay operational folio (Check Out / Record Payment / Print Folio). DISTINCT — not duplicates.
+- **CR-363/366 vs CR-364 gap analysis**: Night Audit and Revenue Dashboard are aggregate reports; cannot substitute per-guest operational surface (real-time balance, walk-ins without CRM profile, action layer, folio print, placeholder-link fix).
+- **Print field spec**: swept `buildBillPrintPayload` (`orderTransform.js` L1797–L2268). Today emits `roomAdvancePay/roomRemainingPay/associated_orders[]/rtype='RM'`; missing room#, dates, meal plan, channel, booking id, per-night lines, dated ledger, special requests, pax, ID proof. ~60% of missing fields already in FE transform → wire into payload; ~30% BE-side on `room_info`/`reservation_ops`; ~10% new (per-night expansion, reprint counter, UPI QR, actual timestamps).
+- **Backend brief filed**: `memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md` — 9 blocks / ~60 keys / 15 questions (Q-364P-01..15). Mirrored on `frontend/public/backend-briefs.html` + `memory/backend_briefs/index.html`. Smoke-tested (card expands, layout intact).
+- **Owner decisions frozen**: **OD-364-01 = v1 totals only** (dated ledger endpoint B-364-01 optional post-v1); **OD-364-02 = PMS-specific folio via `rtype='RM'` template branch, FE passes every field BE accepts, R6 owner sign-off required before template goes live**.
+- registry.json / CR_REGISTRY.md / intake doc synced. CR-364 UNBLOCKED, intake OPEN — Gate 2 gated on OD-03/04/05 answered next session.
+- Pending: CR-364 OD-03 (re-point vs add links), OD-04 (F&B inline vs drill), OD-05 (departed access window); CR-362/BUG-397 Gate 6 owner smoke; CR-357 OD-7; walkthrough of remaining unblocked CR/BUG items.
+
+
+## 2026-09-14 — CR-363 + CR-366 Gate 2 Impact Analysis (PLANNING role)
+- R11 curl-probe on preprod PASS: `aiosell/night-audit` 200, `aiosell/revenue-summary` (day/week) 200; 422 on missing params. Evidence `evidence/CR-363/`, `evidence/CR-366/`.
+- Joint IA written: `impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md`. OD-366-04 resolved (sidebar under Rooms & Reservations). `aiosellTransform.js` dropped from CR-366 scope; 2nd revenue-summary call dropped from CR-363.
+- New owner decisions before Gate 3: OD-363-07/08, OD-366-05..08 + combined Sidebar SC ack. BE notes BN-1..6 (null fields, occupancy >100 %, audit_trail detail null ↔ BUG-193).
+- Next: PLANNING Gate 3 (Implementation Plan) for CR-363/366; Gate 2 IA for CR-364 (data path) and CR-357.
+
+---
+
+## Session Update — 2026-09-14 (QA Handover Session)
+
+### What was shipped this session
+| Item | Status |
+|---|---|
+| CR-363 Night Audit | Gate 5a — Implemented. QA pending. |
+| CR-366 Revenue Dashboard | Gate 5a — Implemented. QA pending. |
+| CR-364 Guest Folio | Gate 5a — Implemented. QA pending. |
+| CR-364-PRINT | Registered as sub-CR. Backend-blocked, parked. |
+| CR-357 Room Advance | Parked 15 days. Re-evaluate 2026-09-29. |
+| BUG-389 Room GST slab | CLOSED — Not a bug. Working as designed. |
+| Excel tracker | Generated at /app/frontend/public/mygenie_cr_bug_tracker.xlsx |
+
+### QA Backlog
+- 87 items pending QA total (17 current sprint + 70 older backlog)
+- Full batch plan in: `/app/memory/handover/SESSION_HANDOVER_2026_09_14_QA_AGENT_BRIEFING.md`
+- QA agent to present plan to owner before executing any batch
+
+### Next sprint priorities
+1. QA Batch-01: CR-363 + CR-364 + CR-366 (PMS pages, live on preprod)
+2. QA Batch-02: BUG-374 (P0) + BUG-369, 372, 394, 368 (P1)
+3. CR-365 Housekeeping Gate 2 (after QA batches settled)
+4. BUG-193 Room Transfer Trail — Gate 0-1 intake + RCA
+5. CR-357 Room Advance — re-enable ~2026-09-29
+
+---
+
+## Session Update — 2026-09-15 (Investigation + Intake close)
+
+### Done this session
+| Task | Status |
+|---|---|
+| T1: 10 QA reports pulled from 15sepqa | ✅ Done |
+| T2: 86 registry items → Gate 5b | ✅ Done |
+| T3: CR_REGISTRY + BUG_TRACKER updated | ✅ Done |
+| BUG-400 registered (P1, MAJOR, Fast Lane eligible) | ✅ Done |
+| BUG-401 registered (P0, BLOCKER, CRITICAL R6) | ✅ Done |
+| Local Room Types investigated (INV_LOCAL_ROOM_TYPES_2026_09_15.md) | ✅ Done |
+| All ODs mapped to intake docs | ✅ Done |
+| Full handover written | ✅ Done |
+
+### Open ODs (owner to answer before next session starts work)
+OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
+
+### Next session priorities
+1. Present 9 plain-English questions to owner (see handover §4)
+2. JOB-1: Fix BUG-401 (BLOCKER) after OD-401-01 approved
+3. JOB-2: Register Local Room Types CR after OD-NEW-01 answered
+4. JOB-3: Re-run BATCH-10 regression after BUG-400/401 fixed
+5. Gate 6 Owner Smoke (after BUG-401 fix landed)
+
+### Handover location
+/app/memory/handover/SESSION_HANDOVER_2026_09_15_NEXT_AGENT_FULL_BRIEFING.md
