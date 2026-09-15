@@ -25113,7 +25113,8 @@
         "reportService.js (read-only \u2014 backend must fix)"
       ],
       "registered": "2026-09-15",
-      "notes": "Probe confirmed: room_revenue Room Total=\u20b984,610 but Room Cash=\u20b90, Room Card=\u20b90, Room UPI=\u20b90. Backend aggregates the total but does not distribute by payment method. FE cannot fix \u2014 backend brief needed. Related G1 of investigation INV_DAILY_REPORT_PMS_GAPS_2026_09_15.md"
+      "notes": "Probe confirmed: room_revenue Room Total=\u20b984,610 but Room Cash=\u20b90, Room Card=\u20b90, Room UPI=\u20b90. Backend aggregates the total but does not distribute by payment method. FE cannot fix \u2014 backend brief needed. Related G1 of investigation INV_DAILY_REPORT_PMS_GAPS_2026_09_15.md",
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_BUG408_ROOM_REVENUE_SPLIT_2026_09_15.md"
     },
     {
       "id": "BUG-409",
@@ -25132,7 +25133,8 @@
         "reportService.js (new field needed when backend ships)"
       ],
       "registered": "2026-09-15",
-      "notes": "orderRoom is a single total (\u20b916,888 in probe). No cash/UPI/card split anywhere in API response for food on room tab. Needs new field from backend (e.g. room_food_revenue: {Room Cash, Room Card, Room UPI}). Owner question: do you want food-on-room split included in the combined Room section? OD-409-01 open."
+      "notes": "orderRoom is a single total (\u20b916,888 in probe). No cash/UPI/card split anywhere in API response for food on room tab. Needs new field from backend (e.g. room_food_revenue: {Room Cash, Room Card, Room UPI}). Owner question: do you want food-on-room split included in the combined Room section? OD-409-01 open.",
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_BUG409_ROOM_FOOD_PAYMENT_SPLIT_2026_09_15.md"
     }
   ],
   "meta": {
