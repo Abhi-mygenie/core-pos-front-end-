@@ -22725,10 +22725,10 @@
       "id": "CR-364",
       "title": "PMS — Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
       "type": "CR",
-      "status": "GATE 2 — ALL DECISIONS LOCKED 2026-09-14. C1=Record Payment PARKED, C2=F&B kept, C3=Option Set C, C4=Meal plan in header (BN-364-MEAL). Design approved. Ready for Gate 3.",
+      "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN (2026-09-14). 7 files (2 NEW + 5 MOD). 20 verification checks. All ODs + design decisions locked. Awaiting Gate 4 GO.",
       "priority": "P1",
       "risk": "HIGH",
-      "gate": 2,
+      "gate": 3,
       "completeness": "1/7",
       "sprint_key": "pos_pms_1",
       "area": "PMS > In-House (S6) / Departures (S10) / Tape Chart (S2)",
@@ -22775,6 +22775,11 @@
           "label": "Impact Analysis",
           "path": "memory/impact/CR-364_IMPACT_ANALYSIS.md",
           "type": "impact_analysis"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-364_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan"
         }
       ],
       "note": "get-single-order-new room_info/associated_order_list verified; PmsCheckoutDrawer fetch + orderTransform.roomInfo reusable. Display-only money (D3 folio unchanged); payment history endpoint missing (optional B-364-01).",
@@ -22813,6 +22818,11 @@
           "date": "2026-09-14",
           "status": "GATE 2 — DESIGN CLARIFICATIONS LOCKED",
           "note": "OD-364-C1=Record Payment PARKED (no mid-stay payments). OD-364-C2=F&B section kept. OD-364-C3=Option Set C (dual column). OD-364-C4=meal plan in header (source: reservation.rateplan_code / BN-364-MEAL filed for explicit field). Impact analysis updated. Gate 3 ready."
+        },
+        {
+          "date": "2026-09-14",
+          "status": "GATE 3 — IMPLEMENTATION PLAN WRITTEN",
+          "note": "Plan at plans/CR-364_IMPLEMENTATION_PLAN.md. 7 edits: GuestFolioPage (NEW), folioTransform (NEW), pmsService (+getGuestFolio), App.js (+route), 3 re-points. OD-364-C1=RecordPayment PARKED, C3=OptionSetC, C4=MealPlan. 20 verification checks. Awaiting Gate 4 GO."
         }
       ],
       "investigation_2026_09_06": "INV 2026-09-06: PARTIALLY UNBLOCKED — read-only folio OK; pos/room-payment 403 (OG-PMS-014); F&B transfer list empty.",
