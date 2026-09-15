@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-15 — **CR-382 INTAKE COMPLETE (Gate 1).** PMS Local Room Types (P2 MEDIUM). 4 backend endpoints live (`GET/PUT /room-types`, `PUT /room-types/assign`, `DELETE /room-types/{id}`). Code reality NONE. Blast: MEDIUM (~8 files). 3 ODs open (OD-382-01 build/park · OD-382-02 sidebar · OD-382-03 auto-fill). Gate 2 blocked on OD-382-01. Registry: 656 items. Intake doc: `change_requests/CR-382_PMS_LOCAL_ROOM_TYPES_INTAKE.md`.
 **Last Updated:** 2026-09-13 — **CR-163 GATE 5A IMPLEMENTED.** 17 edits / 3 files. Compile: 0 new warnings. EXIT GATE 5/5. QA PENDING (V-01..V-12). QA handover at `handover/QA_HANDOVER_CR163_2026_09_13.md`.
 **Last Updated:** 2026-09-13 — **CR-162 GATE 5B QA PASS.** 5/5 PASS, 0 BLOCKER, 0 MAJOR. Live API: `payment_type: 'interim'` confirmed persisted (`success:true`). Negative test: old field names return 3 required errors confirming fix scope. Report: `test_reports/QA_REPORT_CR162_2026_09_13.md`. Ready for Gate 6 Owner Smoke.
 **Last Updated:** 2026-09-11 — **CR-377 IMPLEMENTED (Gate 5a).** 9 edits / 2 files: `reportService.js` F1-E1 (transform +50 fields, BUG-393 absorbed) + `OrderSummaryPage.jsx` P2-E1..E8 (6 KPI cards, 3 new payment rows, TAB credit, room advance/checkout/checkin, Galla section, Expense section, Purchase section). webpack clean. Screenshot verified. EXIT GATE 5/5. QA PENDING.
@@ -18,6 +19,14 @@
 |---|---|---|---|---|---|---|---|---|
 | **CR-379** | PMS Check-In — CRM Customer Link (Core) | P1 | HIGH | **GATE 5B QA PASS (2026-09-14). 8/8 testable cases PASS, 0 BLOCKER, 0 MAJOR. QA report at `test_reports/QA_REPORT_CR379_2026_09_14.md`. Ready for Gate 6 Owner Smoke.** | 6 | NONE | MEDIUM | Files: `CheckInPage.jsx` + `pmsService.js`. Badge: 4-col (Stays/LastStay/LoyaltyPts/StoreCredit) + Doc-type cards. Auto-lookup on 10 digits. Extra adults inline. Children per-input. Corporate checkbox. Amber non-blocking error. `impact/CR-379_IMPACT_ANALYSIS.md` · `plans/CR-379_DESIGN_DECISIONS.md` · `plans/CR-379_IMPLEMENTATION_PLAN.md` · `public/cr379-design-mockup.html` |
 | **CR-380** | PMS Check-In — Guest ID Documents | P1 | HIGH | **GATE 5B QA PASS (2026-09-14). 14/14 testable PASS, 0 FAIL, 5 NOTE (env). Report at `test_reports/QA_REPORT_CR380_2026_09_14.md`. Ready for Gate 6 Owner Smoke.** | 6 | NONE | MEDIUM | `pmsCheckIn` JSON→FormData (OD-3-B). Docs-on-file viewer + upload to CRM. Reuse CR-350 mandatory-doc toggle (OD-4-A). Extra adult/child IDs (OD-5-A). Files: `CheckInPage.jsx` + `pmsService.js` + new `GuestDocsSection.jsx`. Related: CR-379 (dependency), CR-129, BUG-351, CR-350. `change_requests/CR-380_PMS_CHECKIN_GUEST_ID_DOCUMENTS_INTAKE.md` |
+
+---
+
+## 2026-09-15 — PMS LOCAL ROOM TYPES (INTAKE — Gate 1)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Code reality | Blast | Notes |
+|---|---|---|---|---|---|---|---|---|
+| **CR-382** | PMS — Local Room Types: Settings CRUD + Room Assignment + Rate Pre-fill | P2 | MEDIUM | **INTAKE — GATE 1. OD-382-01/02/03 OPEN. Gate 2 blocked on OD-382-01 (build or park).** | 1 | NONE | MEDIUM | 4 BE endpoints live (GET/PUT /room-types, PUT /room-types/assign, DELETE /room-types/{id}). CM (Aiosell) hotels unaffected — additive only. Files: `constants.js`, `pmsService.js`, `RoomTypesPage.jsx` (NEW), `CheckInPage.jsx`, `NewBookingPage.jsx`, `App.js`, optionally `Sidebar.jsx`. Intake: `change_requests/CR-382_PMS_LOCAL_ROOM_TYPES_INTAKE.md`. Investigation: `investigations/INV_LOCAL_ROOM_TYPES_2026_09_15.md`. |
 
 ---
 
