@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Briefs — MyGenie POS</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #0f172a; min-height: 100vh; }
+  .header { background: #0f172a; color: white; padding: 28px 40px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 32px 0 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+  .section-title:first-child { margin-top: 0; }
+  .card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: flex-start; gap: 14px; user-select: none; }
+  .card-header:hover { background: #f8fafc; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .b-open    { background: #fee2e2; color: #b91c1c; }
+  .b-blocked { background: #ffedd5; color: #c2410c; }
+  .b-answered{ background: #dcfce7; color: #15803d; }
+  .b-partial { background: #fef9c3; color: #a16207; }
+  .b-p0 { background: #7f1d1d; color: #fff; }
+  .b-p1 { background: #dc2626; color: #fff; }
+  .b-p2 { background: #f97316; color: #fff; }
+  .b-p3 { background: #64748b; color: #fff; }
+  .b-high   { background: #fca5a5; color: #7f1d1d; }
+  .b-medium { background: #fed7aa; color: #7c2d12; }
+  .b-low    { background: #bbf7d0; color: #14532d; }
+  .b-critical { background: #450a0a; color: #fca5a5; }
+  .card-title { font-size: 14px; font-weight: 600; color: #0f172a; line-height: 1.4; }
+  .card-id { font-size: 11px; color: #94a3b8; font-family: monospace; margin-top: 2px; }
+  .chevron { margin-left: auto; color: #94a3b8; font-size: 16px; transition: transform 0.2s; flex-shrink: 0; padding-top: 2px; }
+  .card-body { display: none; padding: 0 20px 20px; border-top: 1px solid #f1f5f9; }
+  .card-body.open { display: block; }
+  .card-body h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin: 14px 0 6px; }
+  .card-body p { font-size: 13px; line-height: 1.6; color: #334155; }
+  .card-body code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #7c3aed; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 12px 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; margin: 8px 0; white-space: pre-wrap; word-break: break-all; }
+  .ask-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-top: 10px; }
+  .ask-box.warn { background: #fff7ed; border-color: #fed7aa; }
+  .ask-box p { font-size: 13px; color: #166534; }
+  .ask-box.warn p { color: #9a3412; }
+  .ask-box strong { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th { background: #f8fafc; text-align: left; padding: 7px 10px; color: #475569; font-weight: 600; border: 1px solid #e2e8f0; }
+  td { padding: 7px 10px; border: 1px solid #e2e8f0; color: #334155; vertical-align: top; line-height: 1.5; }
+  .answered-note { background: #dcfce7; border: 1px solid #86efac; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 12px; color: #166534; }
+  .meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+  .meta-item { font-size: 11px; color: #64748b; }
+  .meta-item strong { color: #334155; }
+  .stats { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 18px; text-align: center; min-width: 90px; }
+  .stat .num { font-size: 24px; font-weight: 800; }
+  .stat .lbl { font-size: 10px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-top: 2px; }
+  .n-open { color: #dc2626; }
+  .n-ans  { color: #16a34a; }
+  .n-blocked { color: #ea580c; }
+  .n-all  { color: #0f172a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Backend Briefs — MyGenie POS</h1>
+  <p>All open questions &amp; blockers filed by the frontend team for backend / dev team action &nbsp;·&nbsp; Last updated: 2026-09-15</p>
+</div>
+
+<div class="container">
+
+  <div class="stats">
+    <div class="stat"><div class="num n-all">11</div><div class="lbl">Total Briefs</div></div>
+    <div class="stat"><div class="num n-open">5</div><div class="lbl">Open</div></div>
+    <div class="stat"><div class="num n-blocked">3</div><div class="lbl">Blocked</div></div>
+    <div class="stat"><div class="num n-ans">3</div><div class="lbl">Answered</div></div>
+  </div>
+
+  <!-- ─────────────────── PMS MODULE ─────────────────── -->
+  <div class="section-title">PMS Module</div>
+
+  <!-- BUG-384 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-384</span>
+        </div>
+        <div class="card-title">POST /pos/room-payment Returns 403 — Sandbox Permission Gap</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-384_2026_09_09.md &nbsp;·&nbsp; Blocks CR-364 Record Payment</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>POST /api/v2/vendoremployee/pos/room-payment</code> returns <strong>HTTP 403</strong> for the sandbox-pms owner account (restaurant_id: 69). The route exists, validates input, but a role/permission check fires first. Observed twice: 2026-09-06 and 2026-09-08 — not resolved.</p>
+
+      <h4>Endpoint</h4>
+      <pre>POST https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-payment
+Authorization: Bearer ***
+Body: {"order_id":"1232244","amount":"1000","payment_mode":"cash","payment_type":"cash"}
+→ HTTP 403  (with validation hints — route is registered)</pre>
+
+      <h4>Frontend Status</h4>
+      <p>FE code is <strong>complete</strong> — zero FE changes needed. Constant <code>ROOM_RECORD_PAYMENT</code> and <code>RecordPaymentModal.jsx</code> are wired. Fix is backend-only.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Grant the sandbox-pms owner role (restaurant_id: 69) permission to call <code>POST /api/v2/vendoremployee/pos/room-payment</code>.<br><br>
+        Likely cause: sandbox-pms owner lacks the billing permission that production owners have, OR the route is intentionally gated for PMS context. Please grant access and confirm.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-385 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-blocked">Backend-Blocked</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-385</span>
+        </div>
+        <div class="card-title">no_show Field Absent from local-reservations &amp; dashboard-kpis</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-385_2026_09_09.md &nbsp;·&nbsp; Blocks CR-363 Night Audit no-show line</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>CR-363 Night Audit Report needs a no-show count. Probed 17 reservations in <code>local-reservations</code> and full <code>dashboard-kpis</code> — <code>no_show</code> key is absent from all responses. Confirmed 2026-09-06 and 2026-09-08.</p>
+
+      <h4>Endpoints Probed</h4>
+      <pre>GET /api/v2/vendoremployee/aiosell/local-reservations?start_date=…&end_date=…
+→ 17 records, no 'no_show' key in any record
+
+GET /api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=…&end_date=…
+→ today keys: arrivals_count, departures_count, in_house_count, occupancy_percent_physical
+→ Recursive search for 'no_show': 0 hits</pre>
+
+      <h4>Options — please choose one</h4>
+      <table>
+        <tr><th>Option</th><th>What backend does</th><th>FE impact</th></tr>
+        <tr><td><strong>A (recommended)</strong></td><td>Add <code>no_show_count</code> to <code>dashboard-kpis</code> response</td><td>FE reads integer directly. Cleanest.</td></tr>
+        <tr><td>B</td><td>Add <code>no_show: true/false</code> per record in <code>local-reservations</code></td><td>FE counts client-side. Workable.</td></tr>
+        <tr><td>C (FE-derive)</td><td>No backend change</td><td>FE uses <code>operational_status='pending' + checkin &lt; today</code> as proxy. Approximate.</td></tr>
+      </table>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Confirm which option you will implement, or approve Option C (FE-derive) if no backend change is feasible this sprint. FE is blocked on CR-363 Night Audit until this is answered.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-BE-05 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-partial">Workaround Active</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-BE-05</span>
+        </div>
+        <div class="card-title">user-group-check-in: Missing id_type → 500 + Orphan Order (Non-Transactional)</div>
+        <div class="card-id">BACKEND_BRIEF_BUG-BE-05_2026_09_03.md &nbsp;·&nbsp; Data integrity risk on preprod/prod</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>POST /pos/user-group-check-in</code> without <code>id_type</code> returns HTTP 500 (<em>Column 'id_type' cannot be null</em>) <strong>after already inserting an orders row</strong> → orphan order left in DB. No DB transaction wraps the write.</p>
+
+      <h4>Reproduction</h4>
+      <pre>POST /api/v1/vendoremployee/pos/user-group-check-in
+(JSON body, no id_type field)
+→ HTTP 500: QueryException "Column 'id_type' cannot be null"
+→ orders.id = 1232204 created (orphan), reservation stays 'pending'</pre>
+
+      <h4>Frontend Workaround</h4>
+      <p>FE always sends <code>id_type: "Select document type"</code>. Workaround is active — no user-facing issue now.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask (3 items)</strong>
+        <p>1. Wrap <code>user-group-check-in</code> in <code>DB::transaction()</code> so a failed insert rolls back the order.<br>
+        2. Validate <code>id_type</code> → 422 before writes.<br>
+        3. Clean up orphan <code>orders.id = 1232204</code> (restaurant 69).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-386 / INV-PMS-GST-001 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Answered — Q-GST-01 Closed</span>
+          <span class="badge b-p0">P0</span>
+          <span class="badge b-critical">Critical</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">BUG-386</span>
+        </div>
+        <div class="card-title">Room Check-In GST: order-bill-payment — room_gst_tax Field Contract</div>
+        <div class="card-id">BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md &nbsp;·&nbsp; Q-GST-01 RESOLVED 2026-09-09</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Context</h4>
+      <p>FE was sending <code>gst_tax: '0.00'</code> on every PMS room check-in. BUG-386 fix now computes CGST+SGST from slab config and sends the correct value. Question was: does checkout <code>order-bill-payment</code> also need an explicit <code>room_gst_tax</code> field?</p>
+      <div class="answered-note">
+        ✅ <strong>Q-GST-01 ANSWERED 2026-09-09:</strong> Option A confirmed — <code>room_gst_tax</code> IS an accepted dedicated field on <code>POST /api/v2/vendoremployee/order/order-bill-payment</code>. Curl probe passed full validation and reached "Order not found" (fake order_id). FE implemented. BUG-386 Gate 5b QA PASS.
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-358 (PMS AIOSELL) -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Resolved — CR-358 shipped</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358</span>
+        </div>
+        <div class="card-title">PMS AIOSELL Integration — All Backend Gaps &amp; Questions (CR-358)</div>
+        <div class="card-id">BACKEND_BRIEF_CR358_2026_08_28.md &nbsp;·&nbsp; 4 missing endpoints (now resolved)</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <p>Filed 2026-08-28 during CR-358 Gate 2. Covered 4 missing endpoints + 2 clarifications + 2 design decisions for the AIOSELL integration. All items resolved — CR-358-P1 through P5 implemented and QA passing.</p>
+      <div class="answered-note">✅ Resolved — CR-358 P1/P2/P3/P4 Gate 5b QA PASS. CR-358-P5 Gate 5a implemented, awaiting QA.</div>
+    </div>
+  </div>
+
+  <!-- CR-358-P3 list params -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-partial">Accepted as-is (Client-side workaround)</span>
+          <span class="badge b-p3">P3</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358-P3</span>
+        </div>
+        <div class="card-title">local-reservations: page / per_page / checkin_date Params Silently Ignored</div>
+        <div class="card-id">BACKEND_BRIEF_CR-358-P3_LIST_PARAMS_2026_09_03.md &nbsp;·&nbsp; P3 — deferred this sprint</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p><code>GET /aiosell/local-reservations</code> ignores <code>page</code>, <code>per_page</code>, and <code>checkin_date</code> params — returns the full window as one flat array. FE implements Today/Late/Upcoming bucketing and pagination client-side. Works now, but payload will grow with hotel volume.</p>
+      <h4>Status</h4>
+      <p>Backend declined for this sprint (<code>ques3_reply.md</code> r3). Accepted as P3 — becomes P2 once a property exceeds ~300 reservations in window.</p>
+      <div class="ask-box">
+        <strong>Future Ask</strong>
+        <p>When roadmap permits: support <code>page</code> + <code>per_page</code> server-side pagination and <code>checkin_date</code> filter on <code>local-reservations</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-358-P5 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-answered">Questions Resolved</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-358-P5</span>
+        </div>
+        <div class="card-title">PMS Phase 5 — Rates, Restrictions, Mark No-Show: Q1–Q4</div>
+        <div class="card-id">BACKEND_BRIEF_CR358_P5_2026_09_08.md &nbsp;·&nbsp; B-P5-01 resolved, CR-358-P5 implemented Gate 5a</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <p>Filed 2026-09-08. Covered Q1 (restrictions schema), Q2 (mark-no-show), Q3 (GAP-09 checkout inventory release), Q4 (room-payment 403 / BUG-384). B-P5-01 (restrictions object schema) confirmed resolved. CR-358-P5 implemented Gate 5a (2 NEW files: RatesTab.jsx, NoShowDialog.jsx). Q4 (BUG-384) still open — see separate brief above.</p>
+      <div class="answered-note">✅ CR-358-P5 Gate 5b QA PASS (2026-09-09) — 8/8 executed PASS, 13 secondary tests deferred to owner smoke. Rate grid ✅ · Cell popover ✅ · Inventory Restrictions ✅ · No-Show on OTA rows ✅ · Regression clean ✅. Ready for Gate 6 owner smoke.</div>
+    </div>
+  </div>
+
+  <!-- CR-366 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p2">P2</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-366</span>
+        </div>
+        <div class="card-title">Revenue Dashboard — Server-Side Aggregation Endpoint (Occupancy · ADR · RevPAR · Channel · Payment Mode)</div>
+        <div class="card-id">BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md &nbsp;·&nbsp; Blocks CR-366 Gate 2</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>Owner needs a PMS revenue dashboard with a <strong>From/To picker with no range ceiling</strong> (+ Today/7D/30D pills), showing occupancy, ADR, RevPAR, channel split and payment-mode split. Existing sources cannot deliver this: <code>dashboard-kpis</code> rejects &gt;31 days (<strong>422 "Date range cannot exceed 31 days"</strong>) and has no revenue; <code>daily-sales-revenue-report</code> is single-day; <code>local-reservations</code> has <code>amount_before_tax: null</code>, no collected amount, no no-show, no cancel rows. Client-side ADR/RevPAR from four half-fitting sources violates R6.</p>
+
+      <h4>Requested Endpoint</h4>
+      <pre>GET /api/v2/vendoremployee/aiosell/revenue-summary
+  ?start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD        (NO 31-day ceiling)
+  &amp;group_by=day|week|month  &amp;room_code=  &amp;channel=  &amp;compare=previous_period
+
+→ data.totals   { rooms_available, rooms_sold, occupancy_percent,
+                  room_revenue_booked, room_revenue_collected, fnb_revenue_posted, other_revenue_posted,
+                  adr_booked, adr_collected, revpar_booked, revpar_collected, trevpar,
+                  bookings_count, cancellations_count, no_show_count, avg_los_nights, avg_lead_time_days, outstanding_balance }
+→ data.series[] { bucket_start, rooms_ooo, rooms_available, rooms_sold, occupancy_percent,
+                  room_revenue_booked, room_revenue_collected, fnb_revenue_posted, adr_*, revpar_*,
+                  by_room_type[], by_channel[] }
+→ data.by_channel[] · by_payment_mode[] · by_room_type[] · by_booking_status{}</pre>
+
+      <h4>Owner Decisions Frozen (2026-09-15)</h4>
+      <table>
+        <tr><th>OD</th><th>Decision</th></tr>
+        <tr><td>OD-366-01</td><td>Return <strong>both</strong> <code>room_revenue_booked</code> (primary) and <code>room_revenue_collected</code> per bucket, ex-GST, rooms component only.</td></tr>
+        <tr><td>OD-366-02</td><td>F&amp;B posted to rooms returned <strong>separately</strong> as <code>fnb_revenue_posted</code>; RevPAR stays rooms-only; <code>trevpar</code> returned as extra KPI.</td></tr>
+        <tr><td>OD-366-03</td><td><strong>No date-range ceiling.</strong> Server aggregation replaces N chunked calls.</td></tr>
+        <tr><td>Key ask</td><td>Every reservation carries <code>payment_mode</code> (ota_prepaid · ota_pay_at_hotel · direct_prepaid · direct_advance · walkin_postpaid · complimentary · credit_tab) and <code>booking_status</code> (confirmed_pending_arrival · checked_in · checked_out · early_checkout · extended · cancelled · no_show) so OTA-advance vs pay-at-hotel vs "left check-in" are distinguishable.</td></tr>
+      </table>
+
+      <h4>Definitions Provided</h4>
+      <p>Night, rooms_available (capacity − OOO), rooms_sold (excl. comp/OOO/no-show), booked vs collected attribution (stay-night vs collection date), F&amp;B-to-room scope, ADR/RevPAR/TRevPAR formulas (<code>null</code> when denominator 0), no-show/cancellation fee → <code>other_revenue_posted</code>, refunds negative on refund date. Full table in the MD brief §4.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask — 13 questions (Q-366-01…13)</strong>
+        <p>Per-night rate storage · room vs F&amp;B split in combined payments · day-use = 1 night? · complimentary in occupancy? · OTA gross vs net remittance · CR-357 OD-7 balance rule · room status history for historical OOO · business-day cutoff · BUG-385 no_show option · max range at <code>group_by=day</code> within 2 s.<br>
+        <em>Added 2026-09-16:</em> Q-11 room collections split by <strong>tender</strong> (cash/card/upi/tab/ota_remittance/other — proposed key <code>room_revenue_collected_by_tender</code>, any key name OK) · Q-12 confirm <code>waiter/get-settlement-report</code> includes room checkout cash (it goes through <code>order-bill-payment</code> with cashier <code>waiter_id</code>) and expose a room-order share per waiter (<code>settlement_room_share</code>) so CR-363 Night Audit reconciles to Day Closure · Q-13 1-day <code>revenue-summary</code> must equal <code>night-audit?date=</code> (same code path).<br><br>
+        CR-366 is <strong>BACKEND-BLOCKED</strong> for the owner-approved scope until this endpoint is probe-able on preprod. Materialised <code>pms_daily_revenue</code> table rebuilt at night audit is suggested (non-binding).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-363 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-363</span>
+        </div>
+        <div class="card-title">Night Audit — Server-Side End-of-Day Aggregation (Occupancy · Sales vs Revenue by tender · Outstanding · No-shows · Departures · Room status · Day Closure reconciliation)</div>
+        <div class="card-id">BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md &nbsp;·&nbsp; Blocks CR-363 Gate 2 &nbsp;·&nbsp; Companion of CR-366 revenue-summary</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>Front desk needs one end-of-day sheet for a business date <code>D</code>. No server aggregation exists (<code>aiosell/night-audit</code> → 404). Client-side composition needs 7 endpoints incl. N× <code>get-single-order-new</code>, and <strong>cannot</strong> split room vs F&amp;B cash: room checkout (<code>PmsCheckoutDrawer</code>) posts through the same <code>order/order-bill-payment</code> as F&amp;B with the cashier's <code>waiter_id</code>, so it lands in Day Closure's <code>get-settlement-report.today_collection</code> blended. Night Audit must reconcile to Day Closure → backend must produce the split. Must be computed on the <strong>same code path</strong> as CR-366 <code>revenue-summary</code> (1-day totals equal).</p>
+
+      <h4>Requested Endpoint</h4>
+      <pre>GET /api/v2/vendoremployee/aiosell/night-audit?date=YYYY-MM-DD[&amp;include=sections]
+
+→ data.occupancy        { rooms_total, rooms_ooo, rooms_available, rooms_sold, rooms_complimentary, occupancy_percent,
+                          arrivals_expected/actual, departures_expected/actual, in_house, day_use, by_room_type[] }
+→ data.revenue          { room_sales_booked ("Sales"), room_revenue_collected ("Revenue"), room_gst_collected,
+                          collected_by_tender{cash,card,upi,tab,ota_remittance,other}, collected_by_stage{}, refunds,
+                          adr_*, revpar_*, other_revenue_posted }
+→ data.fnb_posted_to_rooms { orders, amount, gst, collected, outstanding, trevpar }        (separate — OD-363-03)
+→ data.outstanding      { total_room_balance, total_fnb_balance, rows[ order_id, room_no, guest, nights_consumed,
+                          booking_payment_type, room_booked/collected/balance, fnb_posted/collected/balance ] }
+→ data.no_shows         { count, fee_charged, rows[] }
+→ data.departures       { checked_out_paid[], checked_out_unpaid[], overdue_in_house[], early_checkouts[] }
+→ data.room_status_close{ available, occupied, occupied_hk, booked, hk, ooo, rows[] }
+→ data.reconciliation   { settlement_total_collection, settlement_room_share, settlement_fnb_share,
+                          night_audit_room_cash_card_upi, delta (=0), by_waiter[] }
+→ data.audit_trail[]    { at, type: check_in|check_out|modify|extend|cancel|no_show|room_transfer|payment|fnb_post, by, detail }</pre>
+
+      <h4>Owner Decisions Frozen (2026-09-16)</h4>
+      <table>
+        <tr><th>OD</th><th>Decision</th></tr>
+        <tr><td>OD-363-01</td><td>Business-day boundary follows backend (Q-366-08); FE sends calendar date, backend returns <code>business_day{}</code>.</td></tr>
+        <tr><td>OD-363-02</td><td><strong>Both</strong> — Booked = <strong>"Sales"</strong> (sold regardless of payment: OTA prepaid, 50% advance, pay-at-hotel), Collected = <strong>"Revenue"</strong>. Same as OD-366-01.</td></tr>
+        <tr><td>OD-363-03</td><td>F&amp;B posted to rooms <strong>separate</strong>; TRevPAR extra. Same as OD-366-02.</td></tr>
+        <tr><td>OD-363-04</td><td><strong>Read-only</strong> v1 — no Close-Day lock (v2).</td></tr>
+        <tr><td>OD-363-05</td><td>Sidebar child under Rooms &amp; Reservations (same as OD-366-04).</td></tr>
+        <tr><td>OD-363-06</td><td>Replay depth <strong>unlimited</strong> — whatever backend provides (Q-363-05).</td></tr>
+      </table>
+
+      <div class="ask-box warn">
+        <strong>Ask — 8 questions (Q-363-01…08)</strong>
+        <p>Same code path as revenue-summary · settlement report room/F&amp;B share per waiter · tender allocation in combined room+F&amp;B checkout · does <code>balance_payment</code> include food (CR-357 OD-7) · historical floor · room-status for past dates · which audit-trail events are logged · <strong>all key names are proposals — return your mapping</strong>.<br><br>
+        Q-363-01/02/03/04/06 duplicate Q-366-13/12/02/06/07 — answer once. CR-363 is <strong>BACKEND-BLOCKED</strong> until this endpoint and <code>revenue-summary</code> are probe-able on preprod.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-364 FOLIO PRINT -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-364</span>
+        </div>
+        <div class="card-title">Guest Folio A4 Print — Hotel-Style Folio Layout (per-night charges · dated payment ledger · meal plan/channel/booking · reprint counter)</div>
+        <div class="card-id">BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md &nbsp;·&nbsp; Print semantics change — R6 owner approval before template goes live</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>CR-364 (Guest Folio Detail Page) needs a hotel-style folio print. The existing bill-print pipeline (<code>POST /order-temp-store</code> → template) already handles room orders and carries <code>roomAdvancePay / roomRemainingPay / associated_orders[]</code>, but it renders a restaurant-bill layout — missing room#, per-night charges, meal plan, channel, booking id, dated payment ledger, special requests, extra pax, ID proof, folio badges. FE already has ~60% of the fields in <code>orderTransform.roomInfo</code> and <code>reservation_ops</code> — they just aren't wired into the print payload, and the template has no <code>rtype='RM'</code> branch.</p>
+
+      <h4>Owner Decisions Frozen (2026-09-16)</h4>
+      <table>
+        <tr><th>OD</th><th>Decision</th></tr>
+        <tr><td>OD-364-01</td><td>V1 ships with running totals; dated payment history endpoint (B-364-01) is optional post-v1.</td></tr>
+        <tr><td>OD-364-02</td><td><strong>FE passes every field the backend accepts; whatever is not passed simply won't print.</strong> Template gates layout switch on <code>rtype='RM'</code>.</td></tr>
+      </table>
+
+      <h4>Payload Superset — 9 blocks (folio-only additions)</h4>
+      <pre>Block 2  Doc header        doc_title, folio_no, booking_id, channel, booking_type,
+                              cm_booking_id, printed_at, cashier_name, reprint_no, is_duplicate_copy
+Block 3  Guest details      guest_email, guest_address, guest_id_proof_type/no (masked),
+                              guest_country, guest_company                (custName/Phone/GST already sent)
+Block 4  Stay details       room_no, room_type, room_code, check_in_date, check_out_date,
+                              actual_check_in_at, actual_check_out_at, nights,
+                              pax_adults, pax_children, children_names[], extra_adults[],
+                              meal_plan_code, meal_plan_label, rate_plan, special_requests,
+                              cancellation_policy
+Block 5  Room charges       room_charge_lines[{date,description,qty,unit_rate,amount}],
+                              room_charge_subtotal, room_charge_gst_pct, room_charge_gst_amount,
+                              room_discount_amount, room_discount_reason,
+                              extra_bed_charge, extra_pax_charge
+Block 6  F&amp;B on room       associated_orders[] ← ENRICH with {order_type_label, waiter_name,
+                              item_count, description}   (today: id/order_id/amount/status only)
+Block 7  Totals             cgst_amount, sgst_amount, igst_amount, round_off_amount
+                              (payment_amount / grant_amount / discount_amount / SC already sent)
+Block 8  Payments ledger    payments[{date,type,mode,ref,amount,employee}],
+                              total_advance_paid, total_interim_paid, total_received,
+                              balance_due, payment_status, balance_payment_mode, folio_status
+Block 9  Footer             terms, thank_you_note, signature_lines, qr_code_upi, barcode,
+                              computer_generated_note</pre>
+
+      <div class="ask-box warn">
+        <strong>Ask — 15 questions (Q-364P-01…15)</strong>
+        <p>Q-01 confirm <code>/order-temp-store</code> silently ignores unknown keys · Q-02 enrich <code>get-single-order-new</code> <code>room_info</code> + <code>booking_details</code> with guest email/address/id-proof, channel, booking_type, cm_booking_id, meal_plan, adults/children, no_of_days, special_requests, room_type · Q-03 expand <code>orderDetails</code> per-night ("check in" × N lines) OR FE derives from <code>room_price/nights</code> · Q-04 enrich <code>associated_orders[]</code> with <code>order_type_label / waiter_name / item_count / description</code> · Q-05 confirm lodging GST field post-BUG-386 (<code>room_payment_summary.gst_tax</code> vs new <code>room_info.gst_amount</code>) · Q-06 room-order round-off exposed? · Q-07 expose <strong>actual</strong> <code>checkin_at / checkout_at</code> vs booked · Q-08 reprint counter per <code>order_id</code>? · Q-09 "DUPLICATE COPY" watermark on reprints? · Q-10 <strong>template branch on <code>rtype='RM'</code></strong> renders folio layout — R6 owner sign-off required · Q-11 regulatory (HSN 996311, sequential invoice #, etc.) · Q-12 departed-guest reprint window (backend-enforced 60d vs order-id anytime) · Q-13 zero-balance OTA-prepaid variant · Q-14 <code>payment_type</code> enum finality (advance/interim/checkout/refund + any others) · Q-15 optional UPI QR / payment-link string per unpaid folio.<br><br>
+        <strong>~60%</strong> of fields are already in FE transform (wire into <code>buildBillPrintPayload</code> — no BE work); <strong>~30%</strong> exist on <code>room_info</code>/<code>reservation_ops</code> BE-side (needs surfacing on <code>get-single-order-new</code>); <strong>~10%</strong> genuinely new (per-night expansion, reprint counter, folio_no, UPI QR, actual check-in/out timestamps).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-357 MID-STAY PAYMENT ATTRIBUTION -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-high">High</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-357</span>
+          <span class="badge" style="background:#fef3c7;color:#92400e">CR-162</span>
+        </div>
+        <div class="card-title">Mid-Stay Payment Attribution — Room vs Food (advance = room · mid-stay pay = food)</div>
+        <div class="card-id">BACKEND_BRIEF_CR357_MID_STAY_PAYMENT_2026_09_14.md &nbsp;·&nbsp; FE blocked — cannot separate food vs room payments without backend contract change</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Business Rule (owner-stated)</h4>
+      <table>
+        <tr><th>Timing</th><th>Payment for</th></tr>
+        <tr><td>Advance at check-in</td><td><strong>Room charge only</strong></td></tr>
+        <tr><td>Mid-stay "Record Payment" button</td><td><strong>Food / F&amp;B charges only</strong></td></tr>
+        <tr><td>Checkout</td><td>Whatever remains unpaid</td></tr>
+      </table>
+
+      <h4>The Gap</h4>
+      <p><code>POST pos/room-payment</code> with <code>payment_type: 'interim'</code> currently reduces <code>remaining_room_balance</code> (room-only). The mid-stay modal shows room outstanding as "Outstanding Balance" — not accumulated food charges. FE cannot show correct food outstanding or book payments against food without a backend contract change. If FE reroutes mid-stay to food, checkout formula <code>effectiveTotal = food + associatedOrders + remaining_room_balance</code> double-charges food. <strong>FE cannot fix this alone.</strong></p>
+
+      <h4>Current FE checkout formula</h4>
+      <pre>effectiveTotal = finalTotal(food) + associatedOrders + remaining_room_balance
+                  ← food always full →              ← room outstanding only →</pre>
+
+      <div class="ask-box warn">
+        <strong>Ask — 5 questions (Q-357-01…05)</strong>
+        <p>
+        <strong>Q-357-01</strong> Preferred path — pick one: <strong>(A)</strong> Add <code>payment_type: 'food'</code> to <code>pos/room-payment</code>; backend tracks food payments separately; <code>get-single-order-new</code> returns <code>remaining_food_balance</code>; FE shows food outstanding in modal and subtracts at checkout. <strong>(B)</strong> Redefine <code>remaining_room_balance</code> = combined outstanding (room_price + food_total − all payments); FE uses one field for both modal and checkout. <strong>(C)</strong> No backend change — confirm that <code>order-bill-payment</code> grand_total correctly nets out food already paid via interim so there is no double-charge.<br><br>
+        <strong>Q-357-02</strong> If Option A: what field on <code>get-single-order-new</code> exposes food pre-paid so far? Proposed: <code>room_payment_summary.remaining_food_balance</code>. Confirm name and shape.<br><br>
+        <strong>Q-357-03</strong> If Option B: at checkout, does <code>order-bill-payment</code> receiving <code>grand_total = food + assocOrders + remaining_room_balance</code> correctly reconcile against full stay so there is no double-charging?<br><br>
+        <strong>Q-357-04</strong> At checkout, should FE send <code>grand_total = food + assocOrders + remaining_room_balance − food_payments_already_made</code>, or does backend compute net payable itself?<br><br>
+        <strong>Q-357-05</strong> Does current <code>remaining_room_balance</code> subtract <em>all</em> payments (advance + interim) or only advance? This determines if Option B is already partially in place.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── PRINTING / STATIONS ─────────────────── -->
+  <div class="section-title">Printing &amp; Station Management</div>
+
+  <!-- STATION-PRINTER-MAP -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p0">P0</span>
+          <span class="badge b-critical">Critical</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-359</span>
+        </div>
+        <div class="card-title">Station Printer Map: Runtime print_agent vs UI station_printer_mappings — Same Source?</div>
+        <div class="card-id">BACKEND_BRIEF_STATION_PRINTER_MAP_GAP6_2026_09_02.md &nbsp;·&nbsp; GAP-6 — unconfirmed data link</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>FE runtime print-agent flow reads <code>print_agent</code> from <code>/api/v1/vendoremployee/profile</code>. The new Station Mapping UI saves to <code>vendor_employees.station_printer_mappings</code> via <code>/api/v2/.../station-printer-map</code>. <strong>Unconfirmed whether these are the same data source.</strong> If not linked — saving mappings in the UI has zero effect on actual KOT/bill printer routing.</p>
+
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Confirm: when <code>POST /station-printer-map</code> saves new mappings, does it also update <code>print_agent</code> in the profile endpoint? If not — what triggers the runtime source to refresh after a mapping change?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-368 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p3">P3</span>
+          <span class="badge b-low">Low</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">CR-368</span>
+        </div>
+        <div class="card-title">Test Suite: Printer Font Sizes + reportService._raw Gating — Two Yes/No Questions</div>
+        <div class="card-id">BACKEND_BRIEF_CR-368_2026-09-08.md &nbsp;·&nbsp; Not blocking production — blocks test clean-up only</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Q1 — Printer font sizes: is the &quot;old&quot; field allowed to change on save?</h4>
+      <p>Tests assert <code>font_size</code> cannot change after a printer config save. Need yes/no: is the old field immutable or should it reflect the saved value?</p>
+      <h4>Q2 — reportService._raw: is ungated access intentional?</h4>
+      <p><code>reportService.js:671</code> accesses <code>_raw</code> without a guard. Is this intentional (always present) or a potential runtime null?</p>
+      <div class="ask-box warn">
+        <strong>Ask</strong>
+        <p>Two YES/NO answers. No code work requested on backend side. Answers unblock 54 failing tests in the FE test suite.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── REPORTS / INVENTORY ─────────────────── -->
+  <div class="section-title">Reports &amp; Inventory</div>
+
+  <!-- ROOM ORDERS AGGREGATION -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div style="flex:1">
+        <div class="badge-row">
+          <span class="badge b-open">Open</span>
+          <span class="badge b-p1">P1</span>
+          <span class="badge b-medium">Medium</span>
+          <span class="badge" style="background:#e0e7ff;color:#3730a3">Room Orders Report</span>
+        </div>
+        <div class="card-title">Room Orders Report — Dedicated Server-Side Aggregation Endpoint</div>
+        <div class="card-id">BACKEND_BRIEF_ROOM_ORDERS_AGGREGATION_2026_08_26.md &nbsp;·&nbsp; Performance — client-side compute on all orders</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="card-body">
+      <h4>Issue</h4>
+      <p>Room Orders Report fetches <code>order-logs-report</code> (ALL orders) and filters/groups client-side. Large payload, heavy JS, no server pagination, slow on large date ranges.</p>
+      <div class="ask-box">
+        <strong>Future Ask</strong>
+        <p>Dedicated endpoint (or query param on existing) that returns only room-type orders, pre-grouped with KPI totals (revenue, occupancy, ADR), with server-side pagination and date-range filtering.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:24px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:16px">
+  Canonical MD files: <code>/app/memory/backend_briefs/</code> &nbsp;·&nbsp; Last updated: 2026-09-10 &nbsp;·&nbsp; MyGenie POS Frontend Team
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const ch = header.querySelector('.chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+
+</body>
+</html>

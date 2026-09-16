@@ -1,0 +1,728 @@
+{
+  "status": true,
+  "message": "Revenue summary fetched successfully",
+  "data": {
+    "generated_at": "2026-09-15T09:35:24+05:30",
+    "currency": "INR",
+    "range": {
+      "start_date": "2026-09-08",
+      "end_date": "2026-09-14",
+      "days": 7,
+      "group_by": "day"
+    },
+    "totals": {
+      "rooms_available": 35,
+      "rooms_sold": 25,
+      "rooms_complimentary": 0,
+      "occupancy_percent": 71.43,
+      "occupancy_percent_physical": 71.43,
+      "room_revenue_booked": 89949.16,
+      "room_revenue_collected": 28085.77,
+      "fnb_revenue_posted": 0,
+      "other_revenue_posted": 0,
+      "tax_collected": 0,
+      "adr_booked": 3597.97,
+      "adr_collected": 1123.43,
+      "revpar_booked": 2569.98,
+      "revpar_collected": 802.45,
+      "trevpar": 2569.98,
+      "bookings_count": null,
+      "arrivals": 3,
+      "departures": 2,
+      "cancellations_count": 0,
+      "no_show_count": 0,
+      "avg_los_nights": null,
+      "avg_lead_time_days": null,
+      "outstanding_balance": null,
+      "room_revenue_collected_by_tender": {
+        "cash": 27990.53,
+        "card": 95.24,
+        "upi": 0,
+        "tab": 0,
+        "ota_remittance": 0,
+        "other": 0
+      },
+      "by_channel": [
+        {
+          "channel": "booking.com",
+          "room_nights": 9,
+          "room_revenue_booked": 51169.52,
+          "room_revenue_collected": 13515.61,
+          "bookings": 0,
+          "cancellations": 0,
+          "no_shows": 0,
+          "adr_booked": 5685.5,
+          "share_of_revenue_percent": 56.89
+        },
+        {
+          "channel": "Direct",
+          "room_nights": 4,
+          "room_revenue_booked": 11904.76,
+          "room_revenue_collected": 5433.67,
+          "bookings": 0,
+          "cancellations": 0,
+          "no_shows": 0,
+          "adr_booked": 2976.19,
+          "share_of_revenue_percent": 13.23
+        },
+        {
+          "channel": "WalkIn",
+          "room_nights": 12,
+          "room_revenue_booked": 26874.88,
+          "room_revenue_collected": 9136.48,
+          "bookings": 0,
+          "cancellations": 0,
+          "no_shows": 0,
+          "adr_booked": 2239.57,
+          "share_of_revenue_percent": 29.88
+        }
+      ],
+      "by_booking_payment_type": [
+        {
+          "booking_payment_type": "ota_prepaid",
+          "room_nights": 9,
+          "room_revenue_booked": 51169.52,
+          "room_revenue_collected": 13515.61,
+          "outstanding": 37653.91
+        },
+        {
+          "booking_payment_type": "walkin_postpaid",
+          "room_nights": 10,
+          "room_revenue_booked": 28779.64,
+          "room_revenue_collected": 10822.45,
+          "outstanding": 17957.19
+        },
+        {
+          "booking_payment_type": "direct_advance",
+          "room_nights": 3,
+          "room_revenue_booked": 2857.14,
+          "room_revenue_collected": 2517.89,
+          "outstanding": 339.25
+        },
+        {
+          "booking_payment_type": "direct_prepaid",
+          "room_nights": 3,
+          "room_revenue_booked": 7142.86,
+          "room_revenue_collected": 1229.82,
+          "outstanding": 5913.04
+        }
+      ],
+      "by_room_type": [
+        {
+          "room_code": "suite",
+          "capacity_nights": 28,
+          "available_nights": 28,
+          "sold_nights": 16,
+          "room_revenue_booked": 63758.7,
+          "room_revenue_collected": 18432.85,
+          "occupancy_percent": 57.14,
+          "adr_booked": 3984.92,
+          "revpar_booked": 2277.1
+        },
+        {
+          "room_code": "executive",
+          "capacity_nights": 7,
+          "available_nights": 7,
+          "sold_nights": 9,
+          "room_revenue_booked": 26190.46,
+          "room_revenue_collected": 9652.92,
+          "occupancy_percent": 128.57,
+          "adr_booked": 2910.05,
+          "revpar_booked": 3741.49
+        }
+      ]
+    },
+    "series": [
+      {
+        "bucket_start": "2026-09-08",
+        "bucket_end": "2026-09-08",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 7,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 140,
+        "arrivals": 0,
+        "departures": 0,
+        "in_house": 0,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 19925.98,
+        "room_revenue_collected": 13800.07,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 2846.57,
+        "adr_collected": 1971.44,
+        "revpar_booked": 3985.2,
+        "revpar_collected": 2760.01,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 5,
+            "complimentary": 0,
+            "room_revenue_booked": 15164.08,
+            "room_revenue_collected": 10502.14,
+            "occupancy_percent": 125,
+            "adr_booked": 3032.82
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 2,
+            "complimentary": 0,
+            "room_revenue_booked": 4761.9,
+            "room_revenue_collected": 3297.93,
+            "occupancy_percent": 200,
+            "adr_booked": 2380.95
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "booking.com",
+            "room_nights": 2,
+            "room_revenue_booked": 13259.32,
+            "room_revenue_collected": 9182.96
+          },
+          {
+            "channel": "Direct",
+            "room_nights": 2,
+            "room_revenue_booked": 4761.9,
+            "room_revenue_collected": 3297.93
+          },
+          {
+            "channel": "WalkIn",
+            "room_nights": 3,
+            "room_revenue_booked": 1904.76,
+            "room_revenue_collected": 1319.17
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 13704.83,
+          "card": 95.24,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-09",
+        "bucket_end": "2026-09-09",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 7,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 140,
+        "arrivals": 0,
+        "departures": 0,
+        "in_house": 1,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 29599.78,
+        "room_revenue_collected": 7619.04,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 4228.54,
+        "adr_collected": 1088.43,
+        "revpar_booked": 5919.96,
+        "revpar_collected": 1523.81,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 5,
+            "complimentary": 0,
+            "room_revenue_booked": 21980.74,
+            "room_revenue_collected": 5657.88,
+            "occupancy_percent": 125,
+            "adr_booked": 4396.15
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 2,
+            "complimentary": 0,
+            "room_revenue_booked": 7619.04,
+            "room_revenue_collected": 1961.16,
+            "occupancy_percent": 200,
+            "adr_booked": 3809.52
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "booking.com",
+            "room_nights": 1,
+            "room_revenue_booked": 6629.66,
+            "room_revenue_collected": 1706.49
+          },
+          {
+            "channel": "WalkIn",
+            "room_nights": 6,
+            "room_revenue_booked": 22970.12,
+            "room_revenue_collected": 5912.55
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 7619.04,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-10",
+        "bucket_end": "2026-09-10",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 4,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 80,
+        "arrivals": 2,
+        "departures": 1,
+        "in_house": 1,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 22687.89,
+        "room_revenue_collected": 3809.52,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 5671.97,
+        "adr_collected": 952.38,
+        "revpar_booked": 4537.58,
+        "revpar_collected": 761.9,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 2,
+            "complimentary": 0,
+            "room_revenue_booked": 13259.32,
+            "room_revenue_collected": 2226.37,
+            "occupancy_percent": 50,
+            "adr_booked": 6629.66
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 2,
+            "complimentary": 0,
+            "room_revenue_booked": 9428.57,
+            "room_revenue_collected": 1583.15,
+            "occupancy_percent": 200,
+            "adr_booked": 4714.29
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "booking.com",
+            "room_nights": 3,
+            "room_revenue_booked": 15640.27,
+            "room_revenue_collected": 2626.16
+          },
+          {
+            "channel": "Direct",
+            "room_nights": 1,
+            "room_revenue_booked": 7047.62,
+            "room_revenue_collected": 1183.36
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 3809.52,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-11",
+        "bucket_end": "2026-09-11",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 3,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 60,
+        "arrivals": 0,
+        "departures": 0,
+        "in_house": 0,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 15640.27,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 5213.42,
+        "adr_collected": 0,
+        "revpar_booked": 3128.05,
+        "revpar_collected": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 2,
+            "complimentary": 0,
+            "room_revenue_booked": 13259.32,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 50,
+            "adr_booked": 6629.66
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 1,
+            "complimentary": 0,
+            "room_revenue_booked": 2380.95,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 100,
+            "adr_booked": 2380.95
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "booking.com",
+            "room_nights": 3,
+            "room_revenue_booked": 15640.27,
+            "room_revenue_collected": 0
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-12",
+        "bucket_end": "2026-09-12",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 1,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 20,
+        "arrivals": 0,
+        "departures": 0,
+        "in_house": 1,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 47.62,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 47.62,
+        "adr_collected": 0,
+        "revpar_booked": 9.52,
+        "revpar_collected": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 1,
+            "complimentary": 0,
+            "room_revenue_booked": 47.62,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 25,
+            "adr_booked": 47.62
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 0,
+            "complimentary": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "WalkIn",
+            "room_nights": 1,
+            "room_revenue_booked": 47.62,
+            "room_revenue_collected": 0
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-13",
+        "bucket_end": "2026-09-13",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 2,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 40,
+        "arrivals": 0,
+        "departures": 0,
+        "in_house": 1,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 1952.38,
+        "room_revenue_collected": 1904.76,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 976.19,
+        "adr_collected": 952.38,
+        "revpar_booked": 390.48,
+        "revpar_collected": 380.95,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 1,
+            "complimentary": 0,
+            "room_revenue_booked": 47.62,
+            "room_revenue_collected": 46.46,
+            "occupancy_percent": 25,
+            "adr_booked": 47.62
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 1,
+            "complimentary": 0,
+            "room_revenue_booked": 1904.76,
+            "room_revenue_collected": 1858.3,
+            "occupancy_percent": 100,
+            "adr_booked": 1904.76
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "WalkIn",
+            "room_nights": 2,
+            "room_revenue_booked": 1952.3799999999999,
+            "room_revenue_collected": 1904.76
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 1904.76,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2026-09-14",
+        "bucket_end": "2026-09-14",
+        "is_forecast": false,
+        "rooms_capacity": 5,
+        "rooms_ooo": 0,
+        "rooms_available": 5,
+        "rooms_sold": 1,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 20,
+        "arrivals": 1,
+        "departures": 1,
+        "in_house": 1,
+        "no_shows": 0,
+        "cancellations": 0,
+        "room_revenue_booked": 95.24,
+        "room_revenue_collected": 952.38,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "tax_collected": 0,
+        "adr_booked": 95.24,
+        "adr_collected": 952.38,
+        "revpar_booked": 19.05,
+        "revpar_collected": 190.48,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity": 4,
+            "ooo": 0,
+            "available": 4,
+            "sold": 0,
+            "complimentary": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null
+          },
+          {
+            "room_code": "executive",
+            "capacity": 1,
+            "ooo": 0,
+            "available": 1,
+            "sold": 1,
+            "complimentary": 0,
+            "room_revenue_booked": 95.24,
+            "room_revenue_collected": 952.38,
+            "occupancy_percent": 100,
+            "adr_booked": 95.24
+          }
+        ],
+        "by_channel": [
+          {
+            "channel": "Direct",
+            "room_nights": 1,
+            "room_revenue_booked": 95.24,
+            "room_revenue_collected": 952.38
+          }
+        ],
+        "room_revenue_collected_by_tender": {
+          "cash": 952.38,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      }
+    ],
+    "by_channel": [
+      {
+        "channel": "booking.com",
+        "room_nights": 9,
+        "room_revenue_booked": 51169.52,
+        "room_revenue_collected": 13515.61,
+        "bookings": 0,
+        "cancellations": 0,
+        "no_shows": 0,
+        "adr_booked": 5685.5,
+        "share_of_revenue_percent": 56.89
+      },
+      {
+        "channel": "Direct",
+        "room_nights": 4,
+        "room_revenue_booked": 11904.76,
+        "room_revenue_collected": 5433.67,
+        "bookings": 0,
+        "cancellations": 0,
+        "no_shows": 0,
+        "adr_booked": 2976.19,
+        "share_of_revenue_percent": 13.23
+      },
+      {
+        "channel": "WalkIn",
+        "room_nights": 12,
+        "room_revenue_booked": 26874.88,
+        "room_revenue_collected": 9136.48,
+        "bookings": 0,
+        "cancellations": 0,
+        "no_shows": 0,
+        "adr_booked": 2239.57,
+        "share_of_revenue_percent": 29.88
+      }
+    ],
+    "by_booking_payment_type": [
+      {
+        "booking_payment_type": "ota_prepaid",
+        "room_nights": 9,
+        "room_revenue_booked": 51169.52,
+        "room_revenue_collected": 13515.61,
+        "outstanding": 37653.91
+      },
+      {
+        "booking_payment_type": "walkin_postpaid",
+        "room_nights": 10,
+        "room_revenue_booked": 28779.64,
+        "room_revenue_collected": 10822.45,
+        "outstanding": 17957.19
+      },
+      {
+        "booking_payment_type": "direct_advance",
+        "room_nights": 3,
+        "room_revenue_booked": 2857.14,
+        "room_revenue_collected": 2517.89,
+        "outstanding": 339.25
+      },
+      {
+        "booking_payment_type": "direct_prepaid",
+        "room_nights": 3,
+        "room_revenue_booked": 7142.86,
+        "room_revenue_collected": 1229.82,
+        "outstanding": 5913.04
+      }
+    ],
+    "by_room_type": [
+      {
+        "room_code": "suite",
+        "capacity_nights": 28,
+        "available_nights": 28,
+        "sold_nights": 16,
+        "room_revenue_booked": 63758.7,
+        "room_revenue_collected": 18432.85,
+        "occupancy_percent": 57.14,
+        "adr_booked": 3984.92,
+        "revpar_booked": 2277.1
+      },
+      {
+        "room_code": "executive",
+        "capacity_nights": 7,
+        "available_nights": 7,
+        "sold_nights": 9,
+        "room_revenue_booked": 26190.46,
+        "room_revenue_collected": 9652.92,
+        "occupancy_percent": 128.57,
+        "adr_booked": 2910.05,
+        "revpar_booked": 3741.49
+      }
+    ],
+    "by_booking_status": {
+      "confirmed_pending_arrival": 0,
+      "checked_in": 1,
+      "checked_out": 17,
+      "cancelled": 1,
+      "no_show": 0,
+      "modified": 0
+    }
+  }
+}
