@@ -122,7 +122,12 @@ export const getInHouseGuests = async ({ roomGstApplicable = false } = {}) => {
           .reduce((s, d) => {
             const qty  = Number(d.quantity) || 1;
             const unit = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
-            const amt  = Math.round(unit * qty * 100) / 100;
+            // BUG-430: include add-ons in GST base (match orderTransform.js L1900-1904)
+            const addonPerUnit = (d.add_ons || []).reduce(
+              (s, a) => s + ((parseFloat(a.price) || 0) * (parseFloat(a.quantity) || 1)),
+              0
+            );
+            const amt  = Math.round((unit * qty + addonPerUnit * qty) * 100) / 100;
             if (!roomGstApplicable) return s + amt;
             // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
             const fd2 = d.food_details || {};

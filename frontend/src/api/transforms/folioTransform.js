@@ -112,7 +112,12 @@ export function fromAPI(raw) {
         const fd     = d.food_details || {};
         const qty    = Number(d.quantity)  || 1;
         const unit   = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
-        const amt    = Math.round(unit * qty * 100) / 100;
+        // BUG-430: include add-ons in GST base (match orderTransform.js L1900-1904)
+        const addonPerUnit = (d.add_ons || []).reduce(
+          (s, a) => s + ((parseFloat(a.price) || 0) * (parseFloat(a.quantity) || 1)),
+          0
+        );
+        const amt    = Math.round((unit * qty + addonPerUnit * qty) * 100) / 100;
         const gstPct = parseFloat(fd.tax) || 0; // kept for gstPercent display field
         // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
         let gstAmt   = Math.round(parseFloat(d.gst_tax_amount || d.tax_amount || 0) * 100) / 100;
