@@ -20,6 +20,8 @@
 | `pages/pms/CheckInPage.jsx` | E1: L255-260 (handleConfirm gstBase) | `gstBase = Number(form.orderAmount)` — advance removed from GST base | BUG-396 |
 | `pages/pms/CheckInPage.jsx` | E2: L765-766 (display strip IIFE) | `advAmt` declaration removed, `gstBase = amt` only | BUG-396 |
 | `api/services/pmsService.js` | E3: L193 (balance_payment) | `balance_payment = orderAmount + gstTax − advance` — advance subtracted (deposit already paid) | BUG-396 |
+| `api/services/pmsService.js` | BUG-426: L38 signature → `{ roomGstApplicable = false } = {}`. L103-135 Step 3 extended: transferredFnb from associated_order_list, roomOrdersTotal from orderDetails (conditional GST), row.transferredFnbBalance + row.roomOrdersBalance + row.balance = all 3 combined | BUG-426 IMPL 2026-09-16 |
+| `pages/pms/InHouseGuestsPage.jsx` | BUG-426: useRestaurant import (L9), roomGstApplicable from checkInFlags (L23), getInHouseGuests({ roomGstApplicable }) (L29), useCallback deps [roomGstApplicable] (L36) | BUG-426 IMPL 2026-09-16 |
 
 ---
 
