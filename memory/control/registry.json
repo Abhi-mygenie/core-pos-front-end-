@@ -25500,7 +25500,7 @@
       "id": "BUG-427",
       "type": "BUG",
       "title": "Folio Total Balance Due Excludes Room Orders Post-GST",
-      "status": "GATE_3_PLAN_READY",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_1",
@@ -25518,8 +25518,8 @@
       "fast_lane": false,
       "duplicate_check": "DISTINCT",
       "blast_radius": "SMALL",
-      "gate": "3",
-      "notes": "OD-427-04: 2 separate tiles. OD-427-05: roomGstApplicable required. totalAmount in folioTransform. Awaiting Gate 4 GO."
+      "gate": "5a",
+      "notes": "6 edits: folioTransform.js (totalAmount field) + GuestFolioPage.jsx (useRestaurant, roomGstApplicable, roomOrdersTotal, 3-tile grid, Total Balance Due). Compile clean. Self-test V1-V11 PASS."
     },
     {
       "id": "BUG-428",

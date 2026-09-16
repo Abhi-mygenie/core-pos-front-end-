@@ -116,15 +116,16 @@ export function fromAPI(raw) {
         const gstPct = parseFloat(fd.tax)  || 0;
         const gstAmt = Math.round(amt * gstPct / 100 * 100) / 100;
         return {
-          name:       fd.name   || 'Item',
+          name:        fd.name   || 'Item',
           qty,
-          unitPrice:  unit,
-          amount:     amt,
-          gstPercent: gstPct,
-          gstAmount:  gstAmt,
-          sgst:       Math.round(gstAmt / 2 * 100) / 100,
-          cgst:       Math.round(gstAmt / 2 * 100) / 100,
-          orderedAt:  d.created_at || null,
+          unitPrice:   unit,
+          amount:      amt,
+          gstPercent:  gstPct,
+          gstAmount:   gstAmt,
+          totalAmount: Math.round((amt + gstAmt) * 100) / 100, // BUG-427: post-GST total per item
+          sgst:        Math.round(gstAmt / 2 * 100) / 100,
+          cgst:        Math.round(gstAmt / 2 * 100) / 100,
+          orderedAt:   d.created_at || null,
         };
       }),
   };
