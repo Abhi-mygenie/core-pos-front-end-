@@ -124,8 +124,18 @@ export const getInHouseGuests = async ({ roomGstApplicable = false } = {}) => {
             const unit = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
             const amt  = Math.round(unit * qty * 100) / 100;
             if (!roomGstApplicable) return s + amt;
-            const gstPct = parseFloat(d.food_details?.tax ?? 0);
-            const gstAmt = Math.round(amt * gstPct / 100 * 100) / 100;
+            // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
+            const fd2 = d.food_details || {};
+            let gstAmt = Math.round(parseFloat(d.gst_tax_amount || d.tax_amount || 0) * 100) / 100;
+            if (!gstAmt) {
+              const gstPct = parseFloat(fd2.tax ?? 0);
+              if (gstPct > 0) {
+                const isInclusive = (fd2.tax_calc || '').toLowerCase() === 'inclusive';
+                gstAmt = isInclusive
+                  ? Math.round(amt * gstPct / (100 + gstPct) * 100) / 100
+                  : Math.round(amt * gstPct / 100 * 100) / 100;
+              }
+            }
             return s + amt + gstAmt;
           }, 0);
 

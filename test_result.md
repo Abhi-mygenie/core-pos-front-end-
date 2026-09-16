@@ -102,12 +102,24 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Verify phone number masking bug fix in GuestFolioPage.jsx - Phone field was showing masked as '88800 *****' instead of full phone number"
+user_problem_statement: "Verify BUG-429 fix — Room Orders GST correction in folioTransform.js and pmsService.js"
 
 backend:
   # No backend tasks for this verification
 
 frontend:
+  - task: "BUG-429: Room Orders GST correction in folioTransform.js and pmsService.js"
+    implemented: true
+    working: true
+    file: "src/api/transforms/folioTransform.js, src/api/services/pmsService.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Code verification completed successfully. All 17 verification points passed: folioTransform.js (L116-124): (1) gstPct assignment present ✓ (2) BUG-429 marker present ✓ (3) Pre-computed gst_tax_amount||tax_amount read first ✓ (4) Fallback condition if (!gstAmt && gstPct > 0) present ✓ (5) isInclusive check present ✓ (6-7) Inclusive/exclusive branch present ✓ (8) No const redeclaration conflict (let gstAmt) ✓ | pmsService.js (L126-139): (9) roomGstApplicable guard intact ✓ (10) BUG-429 marker present ✓ (11) fd2 assignment present ✓ (12) Pre-computed field read first ✓ (13) Inclusive/exclusive branch with fd2.tax_calc present ✓ (14) Old gstPct line removed ✓ | Regression checks: (15) gstPercent: gstPct in folioTransform return object intact (L130) ✓ (16) ESLint passed with no new warnings ✓ (17) transferredFnbBalance, roomOrdersBalance, balance assignments intact (L143-145) ✓. The fix correctly implements the 3-step GST pattern from orderTransform.js: read pre-computed gst_tax_amount first, fallback to food_details.tax % only if absent, and handle tax_calc='inclusive' in fallback. This resolves the GST discrepancy where folio showed ₹238 and in-house showed ₹1,930.4 while checkout correctly showed ₹256/₹1,947."
+
   - task: "BUG-428: Add Lodging GST line item to ROOM checkout breakdown"
     implemented: true
     working: true
@@ -135,12 +147,12 @@ frontend:
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 2
+  test_sequence: 3
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Phone number masking bug fix in GuestFolioPage.jsx"
+    - "BUG-429: Room Orders GST correction in folioTransform.js and pmsService.js"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -150,3 +162,5 @@ agent_communication:
     message: "BUG-428 code verification completed. All 9 verification points passed successfully. The Lodging GST line item has been correctly implemented in CollectPaymentPanel.jsx with proper guards, positioning, and no regression to BUG-338 or roomBalance calculation. Webpack compiled with only 1 pre-existing warning (no new warnings introduced). No functional testing performed as production credentials are unavailable (as expected per review request instructions)."
   - agent: "testing"
     message: "Phone number masking bug fix verification completed. All 5 verification points passed successfully. Line 244 in GuestFolioPage.jsx has been correctly updated from the hardcoded masking regex .replace(/(\d{5})(\d{5})/, '$1 *****') to value={folio.phone ?? null}. No other phone masking exists in the file. folioTransform.js correctly passes through phone as str(g.phone) ?? null with no masking at transform level. Webpack compiled with only pre-existing warnings (no new warnings). The fix resolves the issue where phone numbers were displaying as '88800 *****' instead of showing the full number."
+  - agent: "testing"
+    message: "BUG-429 code verification completed. All 17 verification points passed successfully. Both folioTransform.js (L116-124) and pmsService.js (L126-139) correctly implement the 3-step GST pattern from orderTransform.js: (1) read pre-computed gst_tax_amount||tax_amount first, (2) fallback to food_details.tax % only if absent, (3) handle tax_calc='inclusive' in fallback with extract formula (amt * pct / (100 + pct)) vs add formula (amt * pct / 100). BUG-429 code markers present in both files. ESLint passed with no new warnings. All regression checks passed: gstPercent display field intact, balance assignments intact (transferredFnbBalance, roomOrdersBalance, balance at L143-145), no const redeclaration conflicts. The fix resolves the GST discrepancy where folio showed ₹238 and in-house showed ₹1,930.4 while checkout correctly showed ₹256/₹1,947."

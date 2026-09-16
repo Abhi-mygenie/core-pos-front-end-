@@ -1287,6 +1287,8 @@
 | `api/transforms/folioTransform.js` | BUG-424: roomOrders mapping from raw.orderDetails[] (L101-131, filter check-in marker + cancelled) | BUG-424 IMPL 2026-09-16 |
 | `pages/pms/GuestFolioPage.jsx` | BUG-427: useRestaurant import (L8), roomGstApplicable from checkInFlags (L113), roomOrdersTotal conditional reduce (L138), Room Orders section total conditional (L357), 3-tile grid grid-cols-3 (L379), Total Balance Due = room+fnb+roomOrders (L404) | BUG-427 IMPL 2026-09-16 |
 | `api/transforms/folioTransform.js` | BUG-427: totalAmount field (amt + gstAmt) added to roomOrder items (L125) | BUG-427 IMPL 2026-09-16 |
+| `api/transforms/folioTransform.js` | BUG-429: L116-124 — 3-step GST: gst_tax_amount||tax_amount first, inclusive/exclusive fallback. gstAmt now let. | BUG-429 IMPL 2026-09-16 |
+| `api/services/pmsService.js` | BUG-429: L126-139 — same 3-step GST pattern in roomOrdersTotal reduce. fd2 alias, gst_tax_amount||tax_amount first, inclusive/exclusive fallback. | BUG-429 IMPL 2026-09-16 |
 | `components/pms/PmsCheckoutDrawer.jsx` | BUG-425: roomInfo prop override — remainingRoomBalance computed as roomPrice + gstTax - advance - received (L271-285) | BUG-425 IMPL 2026-09-16 |
 | `api/services/pmsService.js` | BUG-421: Step 3 parallel folio calls (L76-110) — Map-keyed by orderId, formula rp+gt-ap-rb | BUG-421 IMPL 2026-09-16 |
 | `pages/pms/CheckInPage.jsx` | BUG-419: Corp/B2B JSX moved to after name/phone, before Room Assignment (L619). BUG-420: CRM doc tiles replaced — image grid + gradient overlay + click-to-open (L548-590) | BUG-419+BUG-420 IMPL 2026-09-16 |

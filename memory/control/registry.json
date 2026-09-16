@@ -25550,7 +25550,7 @@
       "id": "BUG-429",
       "type": "BUG",
       "title": "Room Orders GST Under-Counted in Folio and In-House (BUG-426/427 Implementation Gap)",
-      "status": "GATE_3_PLAN_READY",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_1",
@@ -25568,8 +25568,8 @@
       "fast_lane": false,
       "duplicate_check": "RELATED to BUG-426 + BUG-427",
       "blast_radius": "SMALL",
-      "gate": "3",
-      "notes": "3-step GST pattern matching orderTransform.js. folioTransform L116-117 + pmsService L126-129. MUST implement before QA of BUG-426/427. Awaiting Gate 4 GO."
+      "gate": "5a",
+      "notes": "2 edits: folioTransform.js L116-124 + pmsService.js L126-139. 3-step GST pattern: gst_tax_amount||tax_amount first, fallback with inclusive/exclusive branch. Compile clean. V1-V8 PASS."
     }
   ],
   "meta": {

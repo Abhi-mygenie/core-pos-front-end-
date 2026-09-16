@@ -113,8 +113,15 @@ export function fromAPI(raw) {
         const qty    = Number(d.quantity)  || 1;
         const unit   = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
         const amt    = Math.round(unit * qty * 100) / 100;
-        const gstPct = parseFloat(fd.tax)  || 0;
-        const gstAmt = Math.round(amt * gstPct / 100 * 100) / 100;
+        const gstPct = parseFloat(fd.tax) || 0; // kept for gstPercent display field
+        // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
+        let gstAmt   = Math.round(parseFloat(d.gst_tax_amount || d.tax_amount || 0) * 100) / 100;
+        if (!gstAmt && gstPct > 0) {
+          const isInclusive = (fd.tax_calc || '').toLowerCase() === 'inclusive';
+          gstAmt = isInclusive
+            ? Math.round(amt * gstPct / (100 + gstPct) * 100) / 100
+            : Math.round(amt * gstPct / 100 * 100) / 100;
+        }
         return {
           name:        fd.name   || 'Item',
           qty,
