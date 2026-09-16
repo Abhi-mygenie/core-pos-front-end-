@@ -25570,6 +25570,28 @@
       "blast_radius": "SMALL",
       "gate": "5a",
       "notes": "2 edits: folioTransform.js L116-124 + pmsService.js L126-139. 3-step GST pattern: gst_tax_amount||tax_amount first, fallback with inclusive/exclusive branch. Compile clean. V1-V8 PASS."
+    },
+    {
+      "id": "BUG-430",
+      "type": "BUG",
+      "title": "Room Orders GST Missing Add-Ons Calculation (BUG-429 Implementation Gap)",
+      "description": "folioTransform.js + pmsService.js calculate GST on (unit_price \u00d7 qty) only, excluding add-ons. orderTransform.js correctly includes add-ons in GST base. Result: GST under-counted by \u20b916-18.",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_1",
+      "created_at": "2026-09-16",
+      "category": "NOT_STARTED",
+      "files_affected": [
+        "frontend/src/api/transforms/folioTransform.js",
+        "frontend/src/api/services/pmsService.js"
+      ],
+      "related_items": [
+        "BUG-429",
+        "BUG-426",
+        "BUG-427"
+      ],
+      "intake_doc": "/app/memory/change_requests/BUG-430_ROOM_ORDERS_GST_MISSING_ADDONS_INTAKE.md"
     }
   ],
   "meta": {
