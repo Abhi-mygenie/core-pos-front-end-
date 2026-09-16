@@ -25475,7 +25475,7 @@
       "id": "BUG-426",
       "type": "BUG",
       "title": "In-House Balance Missing Transferred F&B and Room Orders",
-      "status": "INTAKE",
+      "status": "GATE_3_PLAN_READY",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_1",
@@ -25492,7 +25492,9 @@
       ],
       "fast_lane": false,
       "duplicate_check": "DISTINCT",
-      "blast_radius": "SMALL"
+      "blast_radius": "SMALL",
+      "gate": "3",
+      "notes": "OD-426-02 overridden: roomGstApplicable must be wired. OD-426-03: 2 separate sub-totals. Awaiting Gate 4 GO."
     },
     {
       "id": "BUG-427",
