@@ -25500,7 +25500,7 @@
       "id": "BUG-427",
       "type": "BUG",
       "title": "Folio Total Balance Due Excludes Room Orders Post-GST",
-      "status": "INTAKE",
+      "status": "GATE_3_PLAN_READY",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_1",
@@ -25517,13 +25517,15 @@
       ],
       "fast_lane": false,
       "duplicate_check": "DISTINCT",
-      "blast_radius": "SMALL"
+      "blast_radius": "SMALL",
+      "gate": "3",
+      "notes": "OD-427-04: 2 separate tiles. OD-427-05: roomGstApplicable required. totalAmount in folioTransform. Awaiting Gate 4 GO."
     },
     {
       "id": "BUG-428",
       "type": "BUG",
       "title": "Checkout ROOM Breakdown Missing Lodging GST Line",
-      "status": "INTAKE",
+      "status": "GATE_3_PLAN_READY",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
@@ -25541,7 +25543,8 @@
       "duplicate_check": "DISTINCT",
       "blast_radius": "TINY",
       "hotspot": "CollectPaymentPanel.jsx (R5)",
-      "notes": "All ODs locked: OD-428-01 YES (add GST line), OD-428-02 YES (only when gstTax > 0). R5 hotspot - full plan required."
+      "notes": "OD-428-03: gated on gstTax>0 AND roomGstApplicable!=false. R5 hotspot. 1 JSX block. Awaiting Gate 4 GO.",
+      "gate": "3"
     }
   ],
   "meta": {
