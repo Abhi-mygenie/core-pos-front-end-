@@ -25475,7 +25475,7 @@
       "id": "BUG-426",
       "type": "BUG",
       "title": "In-House Balance Missing Transferred F&B and Room Orders",
-      "status": "INTAKE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_pms_1",
@@ -25492,13 +25492,15 @@
       ],
       "fast_lane": false,
       "duplicate_check": "DISTINCT",
-      "blast_radius": "SMALL"
+      "blast_radius": "SMALL",
+      "gate": "5a",
+      "notes": "5 edits: pmsService.js (signature + Step 3 transferredFnb/roomOrdersTotal/sub-totals) + InHouseGuestsPage.jsx (useRestaurant, roomGstApplicable, pass flag, deps). Compile clean. Self-test V1-V9 PASS."
     },
     {
       "id": "BUG-427",
       "type": "BUG",
       "title": "Folio Total Balance Due Excludes Room Orders Post-GST",
-      "status": "INTAKE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_1",
@@ -25515,13 +25517,15 @@
       ],
       "fast_lane": false,
       "duplicate_check": "DISTINCT",
-      "blast_radius": "SMALL"
+      "blast_radius": "SMALL",
+      "gate": "5a",
+      "notes": "6 edits: folioTransform.js (totalAmount field) + GuestFolioPage.jsx (useRestaurant, roomGstApplicable, roomOrdersTotal, 3-tile grid, Total Balance Due). Compile clean. Self-test V1-V11 PASS."
     },
     {
       "id": "BUG-428",
       "type": "BUG",
       "title": "Checkout ROOM Breakdown Missing Lodging GST Line",
-      "status": "INTAKE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
@@ -25539,7 +25543,57 @@
       "duplicate_check": "DISTINCT",
       "blast_radius": "TINY",
       "hotspot": "CollectPaymentPanel.jsx (R5)",
-      "notes": "All ODs locked: OD-428-01 YES (add GST line), OD-428-02 YES (only when gstTax > 0). R5 hotspot - full plan required."
+      "notes": "1 JSX block (~7 lines): Lodging GST conditional between Room Charge and Advance Paid. Guards: gstTax>0 AND roomGstApplicable!=false. restaurant already in scope. Compile clean. Self-test V1-V5+V11 PASS.",
+      "gate": "5a"
+    },
+    {
+      "id": "BUG-429",
+      "type": "BUG",
+      "title": "Room Orders GST Under-Counted in Folio and In-House (BUG-426/427 Implementation Gap)",
+      "status": "GATE_5A_IMPLEMENTED",
+      "severity": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_pms_1",
+      "area": "PMS / Folio + In-House Guests",
+      "created": "2026-09-16",
+      "artifact_refs": {
+        "intake": "change_requests/BUG-429_ROOM_ORDERS_GST_UNDERCOUNTED_FOLIO_INHOUSE_INTAKE.md",
+        "impact": "impact/BUG-429_IMPACT_ANALYSIS.md",
+        "plan": "plans/BUG-429_IMPLEMENTATION_PLAN.md"
+      },
+      "related": [
+        "BUG-426",
+        "BUG-427"
+      ],
+      "fast_lane": false,
+      "duplicate_check": "RELATED to BUG-426 + BUG-427",
+      "blast_radius": "SMALL",
+      "gate": "5a",
+      "notes": "2 edits: folioTransform.js L116-124 + pmsService.js L126-139. 3-step GST pattern: gst_tax_amount||tax_amount first, fallback with inclusive/exclusive branch. Compile clean. V1-V8 PASS."
+    },
+    {
+      "id": "BUG-430",
+      "type": "BUG",
+      "title": "Room Orders GST Missing Add-Ons Calculation (BUG-429 Implementation Gap)",
+      "description": "folioTransform.js + pmsService.js calculate GST on (unit_price \u00d7 qty) only, excluding add-ons. orderTransform.js correctly includes add-ons in GST base. Result: GST under-counted by \u20b916-18.",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "status": "GATE_5A_IMPLEMENTED",
+      "sprint_key": "pos_pms_1",
+      "created_at": "2026-09-16",
+      "category": "IN_PROGRESS",
+      "files_affected": [
+        "frontend/src/api/transforms/folioTransform.js",
+        "frontend/src/api/services/pmsService.js"
+      ],
+      "related_items": [
+        "BUG-429",
+        "BUG-426",
+        "BUG-427"
+      ],
+      "intake_doc": "/app/memory/change_requests/BUG-430_ROOM_ORDERS_GST_MISSING_ADDONS_INTAKE.md",
+      "impact_doc": "/app/memory/impact/BUG-430_IMPACT_ANALYSIS.md",
+      "plan_doc": "/app/memory/plans/BUG-430_IMPLEMENTATION_PLAN.md"
     }
   ],
   "meta": {

@@ -35,7 +35,7 @@ export const localDate = (offsetDays = 0) => {
  * Walk-in guests (no AIOSELL reservation): phone from Step 1, dates/balance stay null → "—"
  * Graceful degradation: if Step 2 fails, Step 1 data is still returned (no crash).
  */
-export const getInHouseGuests = async () => {
+export const getInHouseGuests = async ({ roomGstApplicable = false } = {}) => {
   // Step 1 — GET_ROOM_LIST (room number, guest name, phone)
   const raw  = await getRoomList();
   const rows = roomListTransform.transformRoomListToRows(raw);
@@ -105,7 +105,49 @@ export const getInHouseGuests = async () => {
         const gt = Number(ri.gst_tax         ?? 0);
         const ap = Number(ri.advance_payment ?? 0);
         const rb = Number(ri.receive_balance ?? 0);
-        row.balance = Math.max(0, rp + gt - ap - rb);
+        const roomBalance = Math.max(0, rp + gt - ap - rb);
+
+        // BUG-426 OD-426-03: transferred F&B (2 different from room orders)
+        const transferredFnb = (raw.associated_order_list ?? []).reduce(
+          (s, a) => s + Number(a.order_amount ?? 0), 0
+        );
+
+        // BUG-426 OD-426-03: room-native food orders — conditional GST per OD-426-02
+        const roomOrdersTotal = (raw.orderDetails ?? [])
+          .filter(d => {
+            if ((d.food_details?.name ?? '').toLowerCase() === 'check in') return false;
+            if (d.food_status === 'cancelled') return false;
+            return true;
+          })
+          .reduce((s, d) => {
+            const qty  = Number(d.quantity) || 1;
+            const unit = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
+            // BUG-430: include add-ons in GST base (match orderTransform.js L1900-1904)
+            const addonPerUnit = (d.add_ons || []).reduce(
+              (s, a) => s + ((parseFloat(a.price) || 0) * (parseFloat(a.quantity) || 1)),
+              0
+            );
+            const amt  = Math.round((unit * qty + addonPerUnit * qty) * 100) / 100;
+            if (!roomGstApplicable) return s + amt;
+            // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
+            const fd2 = d.food_details || {};
+            let gstAmt = Math.round(parseFloat(d.gst_tax_amount || d.tax_amount || 0) * 100) / 100;
+            if (!gstAmt) {
+              const gstPct = parseFloat(fd2.tax ?? 0);
+              if (gstPct > 0) {
+                const isInclusive = (fd2.tax_calc || '').toLowerCase() === 'inclusive';
+                gstAmt = isInclusive
+                  ? Math.round(amt * gstPct / (100 + gstPct) * 100) / 100
+                  : Math.round(amt * gstPct / 100 * 100) / 100;
+              }
+            }
+            return s + amt + gstAmt;
+          }, 0);
+
+        // BUG-426: store sub-totals separately (OD-426-03 — 2 different) + total balance
+        row.transferredFnbBalance = Math.round(transferredFnb * 100) / 100;
+        row.roomOrdersBalance     = Math.round(roomOrdersTotal * 100) / 100;
+        row.balance               = Math.round((roomBalance + transferredFnb + roomOrdersTotal) * 100) / 100;
       });
     }
   } catch {

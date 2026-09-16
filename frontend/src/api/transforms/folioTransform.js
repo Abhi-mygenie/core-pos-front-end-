@@ -112,19 +112,32 @@ export function fromAPI(raw) {
         const fd     = d.food_details || {};
         const qty    = Number(d.quantity)  || 1;
         const unit   = parseFloat(d.unit_price) || (parseFloat(d.price) / qty) || 0;
-        const amt    = Math.round(unit * qty * 100) / 100;
-        const gstPct = parseFloat(fd.tax)  || 0;
-        const gstAmt = Math.round(amt * gstPct / 100 * 100) / 100;
+        // BUG-430: include add-ons in GST base (match orderTransform.js L1900-1904)
+        const addonPerUnit = (d.add_ons || []).reduce(
+          (s, a) => s + ((parseFloat(a.price) || 0) * (parseFloat(a.quantity) || 1)),
+          0
+        );
+        const amt    = Math.round((unit * qty + addonPerUnit * qty) * 100) / 100;
+        const gstPct = parseFloat(fd.tax) || 0; // kept for gstPercent display field
+        // BUG-429: match orderTransform GST logic — pre-computed field first, then fallback
+        let gstAmt   = Math.round(parseFloat(d.gst_tax_amount || d.tax_amount || 0) * 100) / 100;
+        if (!gstAmt && gstPct > 0) {
+          const isInclusive = (fd.tax_calc || '').toLowerCase() === 'inclusive';
+          gstAmt = isInclusive
+            ? Math.round(amt * gstPct / (100 + gstPct) * 100) / 100
+            : Math.round(amt * gstPct / 100 * 100) / 100;
+        }
         return {
-          name:       fd.name   || 'Item',
+          name:        fd.name   || 'Item',
           qty,
-          unitPrice:  unit,
-          amount:     amt,
-          gstPercent: gstPct,
-          gstAmount:  gstAmt,
-          sgst:       Math.round(gstAmt / 2 * 100) / 100,
-          cgst:       Math.round(gstAmt / 2 * 100) / 100,
-          orderedAt:  d.created_at || null,
+          unitPrice:   unit,
+          amount:      amt,
+          gstPercent:  gstPct,
+          gstAmount:   gstAmt,
+          totalAmount: Math.round((amt + gstAmt) * 100) / 100, // BUG-427: post-GST total per item
+          sgst:        Math.round(gstAmt / 2 * 100) / 100,
+          cgst:        Math.round(gstAmt / 2 * 100) / 100,
+          orderedAt:   d.created_at || null,
         };
       }),
   };

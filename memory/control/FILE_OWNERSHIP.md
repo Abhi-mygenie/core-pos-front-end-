@@ -1,7 +1,16 @@
 # Layer 7 — File Ownership Map
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-11 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+**Last Updated:** 2026-09-16 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+
+---
+
+## FILE_OWNERSHIP — BUG-430 (2026-09-16)
+
+| File | Lines Changed | Change | CR/BUG |
+|---|---|---|---|
+| `api/transforms/folioTransform.js` | L115-120 | BUG-430 comment marker + `addonPerUnit` reduction (4 lines) + `amt` modified to include `+ addonPerUnit * qty` — adds add-ons to GST base (matches orderTransform.js L1900-1904). BUG-429 GST logic (L122-129) untouched. | BUG-430 IMPL 2026-09-16 |
+| `api/services/pmsService.js` | L125-130 | BUG-430 comment marker + `addonPerUnit` reduction (4 lines) + `amt` modified to include `+ addonPerUnit * qty` — adds add-ons to GST base (matches orderTransform.js L1900-1904). BUG-429 GST logic (L132-144) untouched. | BUG-430 IMPL 2026-09-16 |
 
 ---
 
@@ -20,6 +29,9 @@
 | `pages/pms/CheckInPage.jsx` | E1: L255-260 (handleConfirm gstBase) | `gstBase = Number(form.orderAmount)` — advance removed from GST base | BUG-396 |
 | `pages/pms/CheckInPage.jsx` | E2: L765-766 (display strip IIFE) | `advAmt` declaration removed, `gstBase = amt` only | BUG-396 |
 | `api/services/pmsService.js` | E3: L193 (balance_payment) | `balance_payment = orderAmount + gstTax − advance` — advance subtracted (deposit already paid) | BUG-396 |
+| `api/services/pmsService.js` | BUG-426: L38 signature → `{ roomGstApplicable = false } = {}`. L103-135 Step 3 extended: transferredFnb from associated_order_list, roomOrdersTotal from orderDetails (conditional GST), row.transferredFnbBalance + row.roomOrdersBalance + row.balance = all 3 combined | BUG-426 IMPL 2026-09-16 |
+| `pages/pms/InHouseGuestsPage.jsx` | BUG-426: useRestaurant import (L9), roomGstApplicable from checkInFlags (L23), getInHouseGuests({ roomGstApplicable }) (L29), useCallback deps [roomGstApplicable] (L36) | BUG-426 IMPL 2026-09-16 |
+| `components/order-entry/CollectPaymentPanel.jsx` | BUG-428: L1836-1842 — Lodging GST conditional JSX block inserted between Room Charge and Advance Paid. Guards: roomInfo.gstTax>0 && restaurant?.settings?.roomGstApplicable!==false. Display only, no formula change. | BUG-428 IMPL 2026-09-16 |
 
 ---
 
@@ -1282,6 +1294,10 @@
 | `pages/pms/ReservationsPage.jsx` | L361 Tape Chart View Folio re-point → /pms/folio/${line.orderId} | CR-364 2026-09-14 || `components/modals/RoomCheckInModal.jsx` | BUG-422: E1 — gstTax useMemo (L363-375) + E2 — balancePayment includes gstTax (L377-381) | BUG-422 IMPL 2026-09-16 |
 | `pages/pms/GuestFolioPage.jsx` | BUG-423: L135 — roomBalance = roomPrice + gstTax - advance - received. BUG-424: RoomOrderRow component (L72) + Room Orders Card (L325) | BUG-423 + BUG-424 IMPL 2026-09-16 |
 | `api/transforms/folioTransform.js` | BUG-424: roomOrders mapping from raw.orderDetails[] (L101-131, filter check-in marker + cancelled) | BUG-424 IMPL 2026-09-16 |
+| `pages/pms/GuestFolioPage.jsx` | BUG-427: useRestaurant import (L8), roomGstApplicable from checkInFlags (L113), roomOrdersTotal conditional reduce (L138), Room Orders section total conditional (L357), 3-tile grid grid-cols-3 (L379), Total Balance Due = room+fnb+roomOrders (L404) | BUG-427 IMPL 2026-09-16 |
+| `api/transforms/folioTransform.js` | BUG-427: totalAmount field (amt + gstAmt) added to roomOrder items (L125) | BUG-427 IMPL 2026-09-16 |
+| `api/transforms/folioTransform.js` | BUG-429: L116-124 — 3-step GST: gst_tax_amount||tax_amount first, inclusive/exclusive fallback. gstAmt now let. | BUG-429 IMPL 2026-09-16 |
+| `api/services/pmsService.js` | BUG-429: L126-139 — same 3-step GST pattern in roomOrdersTotal reduce. fd2 alias, gst_tax_amount||tax_amount first, inclusive/exclusive fallback. | BUG-429 IMPL 2026-09-16 |
 | `components/pms/PmsCheckoutDrawer.jsx` | BUG-425: roomInfo prop override — remainingRoomBalance computed as roomPrice + gstTax - advance - received (L271-285) | BUG-425 IMPL 2026-09-16 |
 | `api/services/pmsService.js` | BUG-421: Step 3 parallel folio calls (L76-110) — Map-keyed by orderId, formula rp+gt-ap-rb | BUG-421 IMPL 2026-09-16 |
 | `pages/pms/CheckInPage.jsx` | BUG-419: Corp/B2B JSX moved to after name/phone, before Room Assignment (L619). BUG-420: CRM doc tiles replaced — image grid + gradient overlay + click-to-open (L548-590) | BUG-419+BUG-420 IMPL 2026-09-16 |

@@ -6,6 +6,7 @@ import { Search, Loader2, BedDouble, AlertCircle, RefreshCw, Calendar } from 'lu
 import Sidebar from '@/components/layout/Sidebar';
 import { getInHouseGuests, extendStay } from '@/api/services/pmsService'; // CR-362: extendStay
 import ExtendStayDialog from '@/components/pms/ExtendStayDialog'; // CR-362
+import { useRestaurant } from '@/contexts'; // BUG-426: roomGstApplicable flag
 
 export default function InHouseGuestsPage() {
   // BUG-361: persist sidebar state
@@ -18,19 +19,21 @@ export default function InHouseGuestsPage() {
   const [search, setSearch]   = useState('');
   const [extendTarget, setExtendTarget] = useState(null); // CR-362
   const navigate              = useNavigate(); // CR-360
+  const { restaurant } = useRestaurant(); // BUG-426
+  const roomGstApplicable = restaurant?.checkInFlags?.roomGstApplicable ?? false; // BUG-426
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getInHouseGuests();
+      const data = await getInHouseGuests({ roomGstApplicable }); // BUG-426
       setRows(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err?.response?.data?.message ?? 'Failed to load in-house guests');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [roomGstApplicable]); // BUG-426: re-load if GST flag changes
 
   useEffect(() => { load(); }, [load]);
 

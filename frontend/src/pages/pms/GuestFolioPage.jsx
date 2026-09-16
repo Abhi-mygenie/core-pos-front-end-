@@ -5,6 +5,7 @@ import { ChevronLeft, User, FileText, Utensils, CreditCard, Clock, AlertTriangle
 import { getGuestFolio } from '../../api/services/pmsService';
 import { fromAPI } from '../../api/transforms/folioTransform';
 import PmsCheckoutDrawer from '../../components/pms/PmsCheckoutDrawer';
+import { useRestaurant } from '../../contexts'; // BUG-427: roomGstApplicable flag
 
 // ── Formatters ──────────────────────────────────────────────────────────────
 const fmtINR  = (n) => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
@@ -108,6 +109,8 @@ const RoomOrderRow = ({ item, idx }) => {
 export default function GuestFolioPage() { // CR-364
   const { orderId } = useParams();
   const navigate    = useNavigate();
+  const { restaurant } = useRestaurant(); // BUG-427
+  const roomGstApplicable = restaurant?.checkInFlags?.roomGstApplicable ?? false; // BUG-427 OD-427-06
 
   const [folio,           setFolio]           = useState(null);
   const [loading,         setLoading]         = useState(false);
@@ -131,6 +134,10 @@ export default function GuestFolioPage() { // CR-364
 
   // F&B display aggregation — labeled clearly, NOT used in any financial formula (R6)
   const fnbTotal = folio?.associatedOrders?.reduce((s, a) => s + a.amount, 0) ?? 0;
+  // BUG-427 OD-427-01/05: room-native orders post-GST total (conditional on roomGstApplicable flag)
+  const roomOrdersTotal = (folio?.roomOrders ?? []).reduce(
+    (s, r) => s + (roomGstApplicable ? (r.totalAmount ?? (r.amount + r.gstAmount)) : r.amount), 0
+  );
 
   // BUG-423: compute room balance fresh from constituent fields (OD-423-01).
   // Formula: room_price + gst_tax - advance_paid - amount_received
@@ -234,7 +241,7 @@ export default function GuestFolioPage() { // CR-364
             <Card icon={User} title="Guest & Stay Details" testId="section-guest-details">
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-3">
                 <Meta label="Guest Name"       value={folio.guestName} />
-                <Meta label="Phone"            value={folio.phone ? folio.phone.replace(/(\d{5})(\d{5})/, '$1 *****') : null} />
+                <Meta label="Phone"            value={folio.phone ?? null} />
                 <Meta label="Booking ID"       value={folio.bookingId} />
                 <Meta label="Room Type"        value={folio.roomCode} />
                 <Meta label="Check-in"         value={fmtDate(folio.checkinDate)} />
@@ -347,7 +354,7 @@ export default function GuestFolioPage() { // CR-364
                   <div className="flex justify-between items-center mt-2 px-1">
                     <span className="text-[10px] text-[#888]">Tap a row to see GST breakdown</span>
                     <span className="text-[11px] font-semibold text-[#D97706]">
-                      Room Orders Total: {fmtINR(folio.roomOrders.reduce((s, r) => s + r.amount, 0))}
+                      Room Orders Total: {fmtINR(folio.roomOrders.reduce((s, r) => s + (roomGstApplicable ? (r.totalAmount ?? (r.amount + r.gstAmount)) : r.amount), 0))}{/* BUG-427 OD-427-02 */}
                     </span>
                   </div>
                 </>
@@ -369,25 +376,32 @@ export default function GuestFolioPage() { // CR-364
               {/* Split balance breakdown */}
               <div className="mt-3 pt-3 border-t-2 border-dashed border-[#E5E5E5]">
                 <div className="text-[9px] font-semibold uppercase tracking-wide text-[#888] mb-2">Balance Breakdown</div>
-                <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="grid grid-cols-3 gap-2 mb-2">{/* BUG-427 OD-427-04: 2 separate tiles — Transferred F&B + Room Orders */}
                   <div className="bg-[#FFF4F0] border border-[#F26B33]/20 rounded-lg p-3 text-center">
                     <div className="text-[9px] font-semibold uppercase tracking-wide text-[#888] mb-1">Room Balance</div>
-                    <div className="text-[15px] font-bold text-[#EF4444]" data-testid="room-balance-display">
+                    <div className="text-[14px] font-bold text-[#EF4444]" data-testid="room-balance-display">
                       {fmtINR(roomBalance)}
                     </div>
                   </div>
                   <div className="bg-[#FFFBEB] border border-[#F4A11A]/25 rounded-lg p-3 text-center">
-                    <div className="text-[9px] font-semibold uppercase tracking-wide text-[#888] mb-1">F&B Posted</div>
-                    <div className={`text-[15px] font-bold ${fnbTotal > 0 ? 'text-[#D97706]' : 'text-[#ccc]'}`}
+                    <div className="text-[9px] font-semibold uppercase tracking-wide text-[#888] mb-1">Transferred F&B</div>
+                    <div className={`text-[14px] font-bold ${fnbTotal > 0 ? 'text-[#D97706]' : 'text-[#ccc]'}`}
                       data-testid="fb-balance-display">
                       {fmtINR(fnbTotal)}
+                    </div>
+                  </div>
+                  <div className="bg-[#F0F9FF] border border-[#3B82F6]/20 rounded-lg p-3 text-center">{/* BUG-427 */}
+                    <div className="text-[9px] font-semibold uppercase tracking-wide text-[#888] mb-1">Room Orders</div>
+                    <div className={`text-[14px] font-bold ${roomOrdersTotal > 0 ? 'text-[#2563EB]' : 'text-[#ccc]'}`}
+                      data-testid="room-orders-balance-display">
+                      {fmtINR(roomOrdersTotal)}
                     </div>
                   </div>
                 </div>
                 <div className="bg-[#FFF4F0] border border-[#F26B33]/25 rounded-lg px-3 py-2.5 flex justify-between items-center">
                   <span className="text-[11px] font-semibold text-[#F26B33]">Total Balance Due</span>
                   <span className="text-[16px] font-bold text-[#F26B33]" data-testid="total-balance-due-display">
-                    {fmtINR(roomBalance + fnbTotal)}
+                    {fmtINR(roomBalance + fnbTotal + roomOrdersTotal)}{/* BUG-427 OD-427-01 */}
                   </span>
                 </div>
               </div>
