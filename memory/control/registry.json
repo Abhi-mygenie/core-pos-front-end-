@@ -25545,6 +25545,29 @@
       "hotspot": "CollectPaymentPanel.jsx (R5)",
       "notes": "1 JSX block (~7 lines): Lodging GST conditional between Room Charge and Advance Paid. Guards: gstTax>0 AND roomGstApplicable!=false. restaurant already in scope. Compile clean. Self-test V1-V5+V11 PASS.",
       "gate": "5a"
+    },
+    {
+      "id": "BUG-429",
+      "type": "BUG",
+      "title": "Room Orders GST Under-Counted in Folio and In-House (BUG-426/427 Implementation Gap)",
+      "status": "INTAKE",
+      "severity": "P1",
+      "risk": "CRITICAL",
+      "sprint_key": "pos_pms_1",
+      "area": "PMS / Folio + In-House Guests",
+      "created": "2026-09-16",
+      "artifact_refs": {
+        "intake": "change_requests/BUG-429_ROOM_ORDERS_GST_UNDERCOUNTED_FOLIO_INHOUSE_INTAKE.md"
+      },
+      "related": [
+        "BUG-426",
+        "BUG-427"
+      ],
+      "fast_lane": false,
+      "duplicate_check": "RELATED to BUG-426 + BUG-427",
+      "blast_radius": "SMALL",
+      "gate": "1",
+      "notes": "Gap in BUG-426/427 implementations: missing gst_tax_amount field + tax_calc=inclusive handling. 2 files: folioTransform.js + pmsService.js. ~6 lines."
     }
   ],
   "meta": {
