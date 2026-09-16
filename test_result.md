@@ -101,3 +101,38 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Verify BUG-428 fix in CollectPaymentPanel.jsx - Add Lodging GST line item to ROOM checkout breakdown"
+
+backend:
+  # No backend tasks for this verification
+
+frontend:
+  - task: "BUG-428: Add Lodging GST line item to ROOM checkout breakdown"
+    implemented: true
+    working: true
+    file: "src/components/order-entry/CollectPaymentPanel.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Code verification completed successfully. All 9 verification points passed: (1) Lodging GST block present at L1836-1842 ✓ (2) data-testid='checkout-room-gst' exists ✓ (3) Guard conditions correct: roomInfo.gstTax > 0 AND restaurant?.settings?.roomGstApplicable !== false ✓ (4) Block positioned between Room Charge and Advance Paid divs ✓ (5) BUG-428 code marker present at L1836 ✓ (6) Webpack compiled with 1 pre-existing warning (SettlementReportMockup.jsx exhaustive-deps) - no NEW warnings ✓ (7) Block nested inside showRoomBooking guard (L1828) protecting non-room flows ✓ (8) roomBalance formula unchanged at L195-203 (display-only change) ✓ (9) BUG-338 guard intact at L276 ✓. The fix correctly displays 'Lodging GST +₹{gstTax}' in the room checkout breakdown when conditions are met, resolving the visual discrepancy where Room Charge ₹1,000 − Advance Paid ₹100 = ₹900 ≠ ₹950 balance."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "BUG-428: Add Lodging GST line item to ROOM checkout breakdown"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "testing"
+    message: "BUG-428 code verification completed. All 9 verification points passed successfully. The Lodging GST line item has been correctly implemented in CollectPaymentPanel.jsx with proper guards, positioning, and no regression to BUG-338 or roomBalance calculation. Webpack compiled with only 1 pre-existing warning (no new warnings introduced). No functional testing performed as production credentials are unavailable (as expected per review request instructions)."

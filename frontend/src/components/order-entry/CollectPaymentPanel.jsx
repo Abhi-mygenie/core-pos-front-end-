@@ -1833,6 +1833,13 @@ const CollectPaymentPanel = ({
                       ₹{(roomInfo.roomPrice || 0).toLocaleString()}
                     </span>
                   </div>
+                  {/* BUG-428 OD-428-01/02/03: Lodging GST line — show when gstTax > 0 AND flag enabled */}
+                  {(roomInfo.gstTax > 0) && (restaurant?.settings?.roomGstApplicable !== false) && (
+                    <div className="flex justify-between" data-testid="checkout-room-gst">
+                      <span style={{ color: COLORS.grayText }}>Lodging GST</span>
+                      <span style={{ color: COLORS.darkText }}>+₹{(roomInfo.gstTax || 0).toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span style={{ color: COLORS.grayText }}>Advance Paid</span>
                     <span style={{ color: COLORS.darkText }} data-testid="checkout-room-advance">

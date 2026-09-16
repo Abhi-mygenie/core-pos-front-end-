@@ -25525,7 +25525,7 @@
       "id": "BUG-428",
       "type": "BUG",
       "title": "Checkout ROOM Breakdown Missing Lodging GST Line",
-      "status": "GATE_3_PLAN_READY",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "pos_pms_1",
@@ -25543,8 +25543,8 @@
       "duplicate_check": "DISTINCT",
       "blast_radius": "TINY",
       "hotspot": "CollectPaymentPanel.jsx (R5)",
-      "notes": "OD-428-03: gated on gstTax>0 AND roomGstApplicable!=false. R5 hotspot. 1 JSX block. Awaiting Gate 4 GO.",
-      "gate": "3"
+      "notes": "1 JSX block (~7 lines): Lodging GST conditional between Room Charge and Advance Paid. Guards: gstTax>0 AND roomGstApplicable!=false. restaurant already in scope. Compile clean. Self-test V1-V5+V11 PASS.",
+      "gate": "5a"
     }
   ],
   "meta": {

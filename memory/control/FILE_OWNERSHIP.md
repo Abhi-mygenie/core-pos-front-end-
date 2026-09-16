@@ -22,6 +22,7 @@
 | `api/services/pmsService.js` | E3: L193 (balance_payment) | `balance_payment = orderAmount + gstTax − advance` — advance subtracted (deposit already paid) | BUG-396 |
 | `api/services/pmsService.js` | BUG-426: L38 signature → `{ roomGstApplicable = false } = {}`. L103-135 Step 3 extended: transferredFnb from associated_order_list, roomOrdersTotal from orderDetails (conditional GST), row.transferredFnbBalance + row.roomOrdersBalance + row.balance = all 3 combined | BUG-426 IMPL 2026-09-16 |
 | `pages/pms/InHouseGuestsPage.jsx` | BUG-426: useRestaurant import (L9), roomGstApplicable from checkInFlags (L23), getInHouseGuests({ roomGstApplicable }) (L29), useCallback deps [roomGstApplicable] (L36) | BUG-426 IMPL 2026-09-16 |
+| `components/order-entry/CollectPaymentPanel.jsx` | BUG-428: L1836-1842 — Lodging GST conditional JSX block inserted between Room Charge and Advance Paid. Guards: roomInfo.gstTax>0 && restaurant?.settings?.roomGstApplicable!==false. Display only, no formula change. | BUG-428 IMPL 2026-09-16 |
 
 ---
 
