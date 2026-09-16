@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Verify BUG-428 fix in CollectPaymentPanel.jsx - Add Lodging GST line item to ROOM checkout breakdown"
+user_problem_statement: "Verify phone number masking bug fix in GuestFolioPage.jsx - Phone field was showing masked as '88800 *****' instead of full phone number"
 
 backend:
   # No backend tasks for this verification
@@ -120,15 +120,27 @@ frontend:
         agent: "testing"
         comment: "Code verification completed successfully. All 9 verification points passed: (1) Lodging GST block present at L1836-1842 ✓ (2) data-testid='checkout-room-gst' exists ✓ (3) Guard conditions correct: roomInfo.gstTax > 0 AND restaurant?.settings?.roomGstApplicable !== false ✓ (4) Block positioned between Room Charge and Advance Paid divs ✓ (5) BUG-428 code marker present at L1836 ✓ (6) Webpack compiled with 1 pre-existing warning (SettlementReportMockup.jsx exhaustive-deps) - no NEW warnings ✓ (7) Block nested inside showRoomBooking guard (L1828) protecting non-room flows ✓ (8) roomBalance formula unchanged at L195-203 (display-only change) ✓ (9) BUG-338 guard intact at L276 ✓. The fix correctly displays 'Lodging GST +₹{gstTax}' in the room checkout breakdown when conditions are met, resolving the visual discrepancy where Room Charge ₹1,000 − Advance Paid ₹100 = ₹900 ≠ ₹950 balance."
 
+  - task: "Phone number masking bug fix in GuestFolioPage.jsx"
+    implemented: true
+    working: true
+    file: "src/pages/pms/GuestFolioPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Code verification completed successfully. All 5 verification points passed: (1) Line 244 in GuestFolioPage.jsx no longer contains .replace() or ***** masking ✓ (2) Line 244 now reads: value={folio.phone ?? null} - no masking present ✓ (3) grep confirms only ONE instance of 'phone' at line 244 - no other masking exists in the file ✓ (4) Webpack compiled with 1 warning (multiple pre-existing exhaustive-deps warnings in various files) - NO warnings about GuestFolioPage.jsx, NO new warnings introduced ✓ (5) folioTransform.js line 44 shows: phone: str(g.phone) ?? null - pass-through confirmed, no masking at transform level ✓. The fix successfully removes the hardcoded phone masking regex that was displaying '88800 *****' instead of the full phone number. Phone numbers will now display in full on the Guest Folio page."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "BUG-428: Add Lodging GST line item to ROOM checkout breakdown"
+    - "Phone number masking bug fix in GuestFolioPage.jsx"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -136,3 +148,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "BUG-428 code verification completed. All 9 verification points passed successfully. The Lodging GST line item has been correctly implemented in CollectPaymentPanel.jsx with proper guards, positioning, and no regression to BUG-338 or roomBalance calculation. Webpack compiled with only 1 pre-existing warning (no new warnings introduced). No functional testing performed as production credentials are unavailable (as expected per review request instructions)."
+  - agent: "testing"
+    message: "Phone number masking bug fix verification completed. All 5 verification points passed successfully. Line 244 in GuestFolioPage.jsx has been correctly updated from the hardcoded masking regex .replace(/(\d{5})(\d{5})/, '$1 *****') to value={folio.phone ?? null}. No other phone masking exists in the file. folioTransform.js correctly passes through phone as str(g.phone) ?? null with no masking at transform level. Webpack compiled with only pre-existing warnings (no new warnings). The fix resolves the issue where phone numbers were displaying as '88800 *****' instead of showing the full number."

@@ -241,7 +241,7 @@ export default function GuestFolioPage() { // CR-364
             <Card icon={User} title="Guest & Stay Details" testId="section-guest-details">
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-3">
                 <Meta label="Guest Name"       value={folio.guestName} />
-                <Meta label="Phone"            value={folio.phone ? folio.phone.replace(/(\d{5})(\d{5})/, '$1 *****') : null} />
+                <Meta label="Phone"            value={folio.phone ?? null} />
                 <Meta label="Booking ID"       value={folio.bookingId} />
                 <Meta label="Room Type"        value={folio.roomCode} />
                 <Meta label="Check-in"         value={fmtDate(folio.checkinDate)} />
