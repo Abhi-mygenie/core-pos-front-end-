@@ -25550,14 +25550,16 @@
       "id": "BUG-429",
       "type": "BUG",
       "title": "Room Orders GST Under-Counted in Folio and In-House (BUG-426/427 Implementation Gap)",
-      "status": "INTAKE",
+      "status": "GATE_3_PLAN_READY",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "pos_pms_1",
       "area": "PMS / Folio + In-House Guests",
       "created": "2026-09-16",
       "artifact_refs": {
-        "intake": "change_requests/BUG-429_ROOM_ORDERS_GST_UNDERCOUNTED_FOLIO_INHOUSE_INTAKE.md"
+        "intake": "change_requests/BUG-429_ROOM_ORDERS_GST_UNDERCOUNTED_FOLIO_INHOUSE_INTAKE.md",
+        "impact": "impact/BUG-429_IMPACT_ANALYSIS.md",
+        "plan": "plans/BUG-429_IMPLEMENTATION_PLAN.md"
       },
       "related": [
         "BUG-426",
@@ -25566,8 +25568,8 @@
       "fast_lane": false,
       "duplicate_check": "RELATED to BUG-426 + BUG-427",
       "blast_radius": "SMALL",
-      "gate": "1",
-      "notes": "Gap in BUG-426/427 implementations: missing gst_tax_amount field + tax_calc=inclusive handling. 2 files: folioTransform.js + pmsService.js. ~6 lines."
+      "gate": "3",
+      "notes": "3-step GST pattern matching orderTransform.js. folioTransform L116-117 + pmsService L126-129. MUST implement before QA of BUG-426/427. Awaiting Gate 4 GO."
     }
   ],
   "meta": {
