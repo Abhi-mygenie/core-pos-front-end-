@@ -314,10 +314,93 @@ Owner (2026-09-16, round 3): *"We can also let user choose by toggle button mayb
 - Filter chips, Mark All Clean, Auto-HK pill unchanged in both densities.
 - Compact tile interaction pattern (popover vs side panel) → decide at **Gate 2.4 UX step**.
 
-### Gate 2 status (after round 3)
+### D-385-R4-01 — Arrivals / Departures must show ALL (not just today); today first
+Owner (2026-09-16, round 4): *"We have 'Arrivals Today', not 'Arrivals' — that is one reason I can't see who is arriving tomorrow from this dashboard. Make it Arrival / Departure with all of them there, and probably show today's first. Let the design agent think what will be the best UX."*
+
+**Facts (verified `pmsService.bucketReservationOps`, `RES_WINDOW = {back:60, ahead:30}`):** the data is **already fetched** — no backend change:
+| Bucket | Exists today? | Shown on Front Desk today? |
+|---|---|---|
+| `arrivalsLate` (checkin < today, still pending — no-show risk) | YES | NO |
+| `arrivalsToday` | YES | YES (preview, 6 rows) |
+| `checkedInToday` | YES | YES (merged into preview) |
+| `arrivalsUpcoming` (checkin > today, up to +30 days) | YES | **NO** ← owner's gap |
+| `depOverdue` | YES | YES |
+| `depDueToday` | YES | YES |
+| `depUpcoming` (checkout > today) | YES | **NO** |
+| `depCheckedOut` | YES | NO |
+
+`ArrivalsPage.jsx` already has Today / Upcoming sub-views (L85–96); `DeparturesPage.jsx` similar. The workstation panels must carry these over.
+
+**Locked:**
+- KPI-tab labels become **"Arrivals"** and **"Departures"** (drop "Today" from the tile label). Tile big number stays *today's* count (operational focus); sub-line may add "· N upcoming".
+- Arrivals panel and Departures panel show **all** buckets, **today first / default**.
+- **UX pattern for "today first, all visible" is delegated to the design agent at Gate 2.4** (candidates: date-segment sub-chips `Late · Today · Tomorrow · This week · Later`; grouped list with sticky date headers; date-range picker). Design agent also to consider how Late/No-show-risk arrivals are surfaced.
+
+**Impact on scope:** none new — panels reuse existing buckets. Adds a design question **UXQ-385-01** to the Gate 2.4 brief.
+
+### Gate 2.4 UX brief — accumulated questions for the design agent
+| ID | Question |
+|---|---|
+| UXQ-385-01 | Arrivals / Departures panel: how to show all buckets (late / today / upcoming / done) with today first, without burying tomorrow |
+| UXQ-385-02 | Check-In without navigation: drawer vs expand-below vs overlay for a 910-line form (OD-03 pattern) |
+| UXQ-385-03 | 4th KPI-tab: "Occupancy" label vs Room Status panel (OD-08) |
+| UXQ-385-04 | Channel Sync card — remove from Front Desk? (D-R2-02) |
+| UXQ-385-05 | Departures mini-widget — drop, or slim persistent rail? (D-R2-03) |
+| UXQ-385-06 | Compact room tile interaction — popover vs side detail panel (OD-05) |
+
+
+### Gate 2 status (after round 4)
+- **Round 4 added:** Arrivals/Departures panels show ALL buckets (late/today/upcoming), today first; tile labels drop "Today". Data already available — no backend change. UX pattern → design agent at Gate 2.4 (UXQ-385-01).
 - **All numbered ODs now answered or routed:** OD-01+07 (KPI-tabs), OD-02 (→FU-385-A), OD-03 (no navigation), OD-04 (drawer), **OD-05 (Hybrid, default Comfortable)**, OD-06 (Arrivals)
 - **Open, to settle at Gate 2.4 UX step:** OD-08 (Occupancy tile ↔ Room Status labelling), OD-03 pattern (P1/P2/P3), Channel Sync removal, Departures widget, Compact-tile interaction
 - Remaining Gate 2 deliverable: **Impact Analysis** (per-panel data sources, API calls, component boundaries, Check-In form extraction). Gate 2 remains **OPEN** until owner explicitly closes it. **Gate 2.4 / 2.5 NOT started.**
+
+---
+
+## Gate 2 — Round 5 (2026-09-16) — Data inventory done, owner answers, learning summary
+
+**Artifact:** `/app/memory/impact/CR-385_DATA_INVENTORY.md` (per-panel data available; gaps: no floor field, row amount ≠ balance due, HK state of occupied room only on room board).
+
+| Q | Owner answer | Recorded as |
+|---|---|---|
+| Q1 Gate 2 close | **NOT YET** | Gate 2 stays OPEN. |
+| Q3 Check-In in side panel | "Will the side panel take all the information with best UX?" | Agent to walk through (see summary). Not locked. |
+| Q4 Balance due on Departures | OK. **Plus: inventory every multi-call (N+1) so backend can provide aggregation endpoints → CR-385 Phase 2** | **Phase 2 scope registered (see N+1 inventory below).** |
+| Q5 Sub-filters | "HK should be just a badge in UI — am I thinking right?" | Agent to explain badge vs filter chip. Not locked. |
+| Q6 4th tile "Rooms" | Walk me through | Pending walkthrough. |
+| Q7 Alert bar | **Needed** — quick-action reminder, user must be able to view. Discuss more. | Direction: YES, design TBD. |
+| Q8 Header sync indicator | **"Channel Manager" name must NOT appear anywhere in the design** | Naming rule locked: use "Sync" / "OTA sync" / "Connected". |
+| Q9 Room board grouping/variants | Needs walkthrough + more explanation | Pending walkthrough. |
+| Q10 Refresh / polling | "We have a webhook — backend to confirm. Ideally everything is on webhook/sockets so no data is lost; if not, highlight." | **Backend question BQ-385-01 registered.** FE finding: socket exists for POS orders/tables only; **zero PMS socket events / listeners today**. |
+| Q11 Mockup scale | **40 rooms** | Locked. |
+| Q12 Landing on Arrivals, not remembered | Yes | Locked. |
+| Point 3 In-House HK | Both **Request HK** and **Mark Clean** available on In-House rows | Locked. |
+
+### N+1 / multi-call inventory (input for Phase 2 backend aggregation) — verified in `pmsService.js`
+| Where | Calls today | Aggregation ask |
+|---|---|---|
+| Front Desk load | 3 parallel: `local-reservations` (−60/+30d window), `dashboard-kpis`, `aiosell/status` | one `front-desk-snapshot` endpoint |
+| In-House list `getInHouseGuests` | room list + reservations + **1 folio call per in-house guest** (N) | reservations endpoint to return `balance_due` |
+| Departures true balance (Q4, new) | would add **1 folio call per departing guest** (N) | same field as above |
+| Bulk Mark All Clean | **1 PATCH per room, sequential** | bulk PATCH endpoint |
+| Room board + reservations | 2 separate calls; HK state of occupied rooms joined client-side | reservations rows to carry `room_display_status` |
+| Bucketing (late/today/upcoming) | client-side over 90-day window | fine for now; server buckets optional |
+
+### Backend questions raised (to go into a BACKEND_BRIEF when Gate 2 closes)
+- **BQ-385-01:** Are PMS changes (new OTA booking via AIOSELL webhook, check-in, check-out, room status PATCH, payment) pushed to the frontend via Socket.io events? Today FE has no PMS events wired (`SOCKET_EVENTS` = POS order/table events only). If backend emits none → workstation must rely on focus-refresh + manual refresh (or polling), and owner's "never lose data" goal needs backend socket events for PMS.
+- **BQ-385-02 (Phase 2):** aggregation endpoints per N+1 table above.
+
+### Design rules locked so far (rolling list)
+1. One URL, one screen; KPI tiles are the tabs (Arrivals default · Departures · In-House · Rooms/Occupancy).
+2. No page navigation for Check-In / Check-Out / HK / Clean / Extend / Cancel / No-Show.
+3. Arrivals = not-yet-checked-in only (Late/Today/Upcoming). Departures = in-house due out (Overdue/Today/Upcoming). Checked-in → In-House. Checked-out → reports link only.
+4. In-House rows carry room-condition actions (Request HK / Mark Clean) — OOO never while occupied.
+5. Rooms panel: density toggle (Comfortable default / Compact); 3 visual variants to be shown in mockup.
+6. Channel Sync card removed → header dot + "synced X min ago". **Never use the words "Channel Manager" in the UI.**
+7. Departures mini-widget removed; urgent items = red counts on tiles + an alert bar (design open).
+8. Mockup: 40 rooms, busy day, desktop 1440 + 1024 check.
+9. Landing always Arrivals.
+10. Gate 2 open; Gate 2.4/2.5 not started; owner closes gates explicitly.
 
 ---
 
