@@ -305,12 +305,19 @@ Owner: *"Before going into the HTML mockup, first we will do a UX."*
 |---|---|---|
 | **FU-385-B** | Confirm Sync Now / AIOSELL sync status is available on `ChannelManagerPage.jsx` before removing the Channel Sync card from Front Desk | Gate 2.4 decision |
 
-### Gate 2 status (after round 2)
-- Locked: OD-01+OD-07 (merged → 4 KPI-tabs, one strip), OD-03 (no navigation for Check-In), OD-04 (default), OD-06 (Arrivals), process (UX step before mockup)
-- Deferred: OD-02 → FU-385-A
-- **Still open (owner answer needed): OD-05 (Full / Compact / Hybrid room grid), OD-08 (Occupancy tile ↔ Room Status panel labelling)**
-- **To decide at Gate 2.4 UX step:** OD-03 pattern (P1/P2/P3), Channel Sync removal (D-R2-02), Departures widget (D-R2-03), OD-08
-- Next agent action inside Gate 2: Impact Analysis (per-panel data sources + component boundaries). **Gate 2 remains OPEN. Gate 2.4 / 2.5 NOT started.**
+### D-385-R3-01 — OD-385-05 RESOLVED: **Hybrid (density toggle)**
+Owner (2026-09-16, round 3): *"We can also let user choose by toggle button maybe, and full grid might have more info and CTAs."*
+
+**Locked:**
+- Room Status panel ships with a **density toggle** in the toolbar: **Comfortable** (= full grid, current `RoomTile` — room no, type, badge, guest/booking, "since", all CTAs on tile) / **Compact** (small tile — room no + colour bar + badge; CTAs on click via popover or side detail panel).
+- **Default = Comfortable** (more info + one-tap CTAs; matches owner's note). User choice persisted in `localStorage` (same pattern as `mygenie_sidebar_expanded`).
+- Filter chips, Mark All Clean, Auto-HK pill unchanged in both densities.
+- Compact tile interaction pattern (popover vs side panel) → decide at **Gate 2.4 UX step**.
+
+### Gate 2 status (after round 3)
+- **All numbered ODs now answered or routed:** OD-01+07 (KPI-tabs), OD-02 (→FU-385-A), OD-03 (no navigation), OD-04 (drawer), **OD-05 (Hybrid, default Comfortable)**, OD-06 (Arrivals)
+- **Open, to settle at Gate 2.4 UX step:** OD-08 (Occupancy tile ↔ Room Status labelling), OD-03 pattern (P1/P2/P3), Channel Sync removal, Departures widget, Compact-tile interaction
+- Remaining Gate 2 deliverable: **Impact Analysis** (per-panel data sources, API calls, component boundaries, Check-In form extraction). Gate 2 remains **OPEN** until owner explicitly closes it. **Gate 2.4 / 2.5 NOT started.**
 
 ---
 
