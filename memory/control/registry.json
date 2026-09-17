@@ -25160,6 +25160,35 @@
       "notes": "Both changes confirmed as backend tasks 2026-09-15. Change 1: POST /room-mapping must persist aiosell_rateplan_code. Change 2: GET /rooms must return room_code_defaults object. FE cannot proceed until both ship."
     },
     {
+      "id": "CR-385",
+      "type": "CR",
+      "title": "PMS Front Desk \u2014 Unified Tabbed Workstation UX Revamp",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE \u2014 GATE 1 COMPLETE. Awaiting Gate 2 GO.",
+      "gate": 1,
+      "sprint_key": "pos_pms_2",
+      "source": "OWNER-REPORTED",
+      "code_reality": "NONE",
+      "blast_radius": "LARGE",
+      "duplicate_check": "DISTINCT",
+      "design_freeze_required": true,
+      "files": [
+        "pages/pms/FrontDeskPage.jsx",
+        "pages/pms/ArrivalsPage.jsx",
+        "pages/pms/DeparturesPage.jsx",
+        "pages/pms/InHouseGuestsPage.jsx",
+        "pages/pms/RoomStatusPage.jsx",
+        "App.js",
+        "components/layout/Sidebar.jsx"
+      ],
+      "registered": "2026-09-16",
+      "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
+      "owner_decisions_open": ["OD-385-01","OD-385-02","OD-385-03","OD-385-04","OD-385-05","OD-385-06","OD-385-07"],
+      "related": ["CR-358-P1","CR-358-P3","CR-358-P4","CR-362","CR-365"],
+      "notes": "Owner selected Option B (Tabbed Workstation) 2026-09-16. Single URL /pms/front-desk. 4 candidate tabs: Arrivals / In-House / Departures / Room Status. All 7 ODs open for Gate 2 discussion. Gate 2.5 design freeze mandatory before any code. CheckInPage.jsx and GuestFolioPage.jsx explicitly out of scope."
+    },
+    {
       "id": "BUG-410",
       "type": "BUG",
       "title": "Old RoomCheckInModal \u2014 no accommodation GST for personal (Walk-in / Individual) bookings",
