@@ -3,19 +3,20 @@
 
 ```
 Session date:     2026-09-16
-Role:             INTAKE AGENT (ALPHA v0.7) — extended discovery, UX pre-discussion
-Status at close:  CR-385 GATE 1 INTAKE — OPEN. Owner has NOT closed the gate. No Gate 2 IA, no Gate 2.4/2.5, no code.
-Next agent role:  INTAKE AGENT (continue) — present open questions ONE AT A TIME (see §7), record answers, do NOT close any gate unless owner says "close gate"
+Role:             INTAKE AGENT (ALPHA v0.7) — extended discovery (6 decision rounds)
+Status at close:  CR-385 GATE 1 INTAKE — CLOSED by owner ("close intake gate", round 6). No Gate 2 IA, no Gate 2.4/2.5, no code yet.
+Next agent role:  PLANNING (Gate 2 Impact Analysis). FIRST: re-open this handover + intake doc, summarise to owner, ask doubts if anything is missing; proceed to Gate 2 only if owner confirms all is in place.
 Workspace:        /app
 Branch:           main (repo core-pos-front-end-)
 ```
 
 **HARD RULES FROM OWNER (verbatim intent):**
-1. *"Do not jump gate unless I explicitly tell to close gate."* Every gate advance needs the owner's explicit words.
-2. *"First we will do a UX, then move to HTML."* Process for this CR: Intake → (owner closes) → Gate 2 Impact Analysis → **Gate 2.4 UX flow (low-fi)** → **Gate 2.5 HTML mockup** → Gate 3 plan → Gate 4 GO → code.
-3. *"Show me the question and all the options with the details, one by one, and I'll try to freeze."* Next agent presents §7 questions **one per message**, each with full explanation + numbered options + ★ suggestion. Record each answer in the intake doc before the next question.
-4. The words **"Channel Manager" must never appear in any UI/design** for this screen.
-5. Nothing is frozen yet. "Locked" items in §5 are owner-confirmed directions, still revisitable until the owner says freeze.
+1. *"Do not jump gate unless I explicitly tell to close gate."* Gate 1 is closed. Gates 2, 2.4, 2.5, 3, 4 each still need the owner's explicit close.
+2. *"First we will do a UX, then move to HTML."* Process: Gate 2 Impact Analysis → **Gate 2.4 UX flow (low-fi)** → **Gate 2.5 HTML mockup with switchable variants** → Gate 3 plan → Gate 4 GO → code.
+3. *"I want to see options in mock."* Owner will NOT decide UX options on paper. Every open UX question (§7, MV-01…MV-09) must appear in the Gate 2.5 mockup as a **live switch** (radio/toggle in a mockup control bar), ★ recommendation pre-selected. Owner freezes per item by looking.
+4. *"Don't make it complex."* When asking the owner anything: ≤5 questions per message, lettered options, one-line explanations. Never numbered lists inside a question (the chat tool splits them into separate prompts).
+5. The words **"Channel Manager" must never appear in any UI/design** for this screen.
+6. Q10 live updates = refresh on focus + Refresh button + after every action, **provisional** — re-discuss when backend replies to BQ-385-01.
 
 ---
 
@@ -65,7 +66,7 @@ Staff perform these 50–200×/day. Additional owner findings during discovery: 
 
 ---
 
-## 4. Screen concept as understood today (not frozen)
+## 4. Screen concept at intake close (detail variants in §7)
 
 ```
 ┌ Header: Good Morning · Tue 16 Sep · <Property>   ● synced 5 min ago        [+ New Booking] ┐
@@ -83,7 +84,7 @@ Removed: Channel Sync card (→ header dot), Departures mini-widget (→ Departu
 
 ---
 
-## 5. Decisions so far (owner-confirmed directions; revisitable until freeze)
+## 5. Decisions so far (owner-confirmed at intake close; UX detail variants live in §7)
 
 | # | Decision | Owner words / round |
 |---|---|---|
@@ -109,7 +110,7 @@ Removed: Channel Sync card (→ header dot), Departures mini-widget (→ Departu
 
 ---
 
-## 6. Backend questions to brief when Gate 2 opens (not yet sent)
+## 6. Backend questions to brief in Gate 2 (not yet sent)
 
 - **BQ-385-01 (Q10):** Does backend emit Socket.io events for PMS changes (new OTA booking via AIOSELL webhook, check-in, check-out, room status PATCH, payment)? FE has none today. Owner: *"we have a webhook… ideally everything is on webhook/sockets so we don't lose data; if not, highlight."* → Highlighted: **today nothing pushes PMS changes to the screen.**
 - **BQ-385-02 (Phase 2):** aggregation endpoints — `front-desk-snapshot` (replaces 3 calls), `balance_due` on reservation rows (removes N folio calls for In-House and Departures), bulk room-status PATCH (replaces N sequential calls), `room_display_status` on reservation rows.
@@ -118,92 +119,33 @@ Backend brief template: `AGENT_PROMPT_ALPHA.md` → BACKEND HANDOFF TEMPLATE →
 
 ---
 
-## 7. OPEN QUESTIONS — present ONE AT A TIME, in this order, with this text
+## 7. UX QUESTIONS → MOCKUP VARIANTS (owner: "I want to see options in mock")
 
-> Presentation rule: one message = one question. Give the explanation, then numbered options, mark ★ suggestion. Wait for the owner's pick. Write the answer into the intake doc (new round) before asking the next. If the owner asks for more detail, expand — don't move on.
+Owner declined to decide these on paper (round 6). Each becomes a **switchable variant in the Gate 2.5 HTML mockup**; ★ = default-selected. Explanations kept here so the mockup control bar can show a one-line hint per switch.
 
-### Q3 — Where does the Check-In form open?
-**Why it matters:** the Check-In form is the largest component in PMS (910 lines: phone → CRM badge with stays/loyalty/store credit/ID docs, dates, room pick, amount, GST, company GSTIN, adults/children with ID front/back uploads, advance payment + method, note). Owner rule: no page navigation. Question is whether a side panel gives good UX for that much content.
-**Agent view:** yes if the panel is wide (~720px ≈ half screen) and sectioned in work order — *1 Who → 2 Stay → 3 Guests & IDs → 4 Payment → Confirm* — with the arrivals queue still visible on the left. Weak spot: ID photo previews get cramped → let the panel expand to full width with one click at that section. Full-screen overlay gives more room but hides the queue.
-1. ★ Wide side panel (~720px), sectioned, expandable to full width at the ID section; list visible behind.
-2. Full-screen overlay (KPI tiles stay on top; panel body replaced by the form).
-3. Put both in the mockup; decide after feeling it.
+| MV | Question | Variants (★ default) | One-line why |
+|---|---|---|---|
+| MV-01 | Q2 — click a guest row | ★ right side panel with folio details + actions, list visible · expand in place · none (Folio link only) | folio object already has dates, room, balance due, payments, food orders, requests |
+| MV-02 | Q3 — Check-In form location | ★ wide side panel ~720px, sectioned Who→Stay→IDs→Payment, expands to full width at ID photos · full-screen overlay | 910-line form, must not navigate; ID photo previews need width |
+| MV-03 | Q13 — cancelled bookings on Arrivals | ★ footer link "Cancelled today: N" · Cancelled chip · not on screen | Arrivals = not-yet-checked-in only |
+| MV-04 | Q5 — housekeeping indicator | ★ badge on tiles/rows + HK chip in Rooms toolbar · badge + Rooms-tile "3 HK" shortcut · badge only | badge = state of this room; chip = housekeeper's list / Mark All Clean |
+| MV-05 | Q5b — old per-page mini KPI rows | ★ drop, chips carry counts, In-House keeps Outstanding ₹ · keep · Outstanding ₹ only | avoid two rows of numbers under the KPI-tab strip |
+| MV-06 | Q6 — Rooms tile big number | ★ 72% occupancy + "18 of 40 · 3 HK · 1 OOO" · available-to-sell count · occupied count | sub-line gives HK/OOO visibility without extra tiles |
+| MV-07 | Q7 — alert bar | urgent set ★ overdue departures + late arrivals + HK > 2h + unpaid today's departures (optional: OOO, new OTA booking) · click ★ jump to tile+filter / open panel / both · dismiss ★ none / session / snooze 30m | replaces Departures widget; visible from every tab; zero pixels when quiet |
+| MV-08 | Q9 — room board layout | RS-A card grid (actions on card, Compact mode) · RS-B grouped rows (housekeeping sheet) · RS-C colour board + detail panel — **all three built**, no default | 40 rooms must be scannable and actionable |
+| MV-09 | Q9b — room grouping | ★ flat by room number + "group by room type" switch · always by type · flat only | no floor field in data |
 
-### Q5 — Housekeeping: badge or filter chip?
-**Why it matters:** owner said *"HK should be just a badge in the UI — am I thinking right?"*
-**Agent view:** both do different jobs. A **badge** on a room tile / In-House row answers "what's the state of *this* room" — always visible, no click. The **HK chip** at the top of the Rooms panel answers "show me *all* rooms needing cleaning" — the housekeeper's morning list and the set that **Mark All Clean** acts on.
-1. ★ Badge everywhere (room tiles + In-House rows) **and** keep the HK chip in the Rooms toolbar.
-2. Badge only; no chip. The Rooms tile sub-line "3 HK" is the shortcut into the filtered list.
-3. Badge only; no chip, no shortcut.
-
-### Q6 — 4th tile "Rooms": what is the big number?
-**Why it matters:** today the tile reads "Occupancy 72% · 18 of 25 rooms" and isn't clickable. As a tab it opens the room board; its sub-line can carry the HK/OOO visibility the owner asked about without extra tiles.
-1. ★ **72%** occupancy · sub-line "18 of 40 occupied · 3 HK · 1 OOO" (HK amber, OOO red, only when non-zero).
-2. **22** available-to-sell · sub-line "of 40 · 72% occupied · 3 HK · 1 OOO".
-3. **18** occupied · sub-line "of 40 · 22 available · 3 HK · 1 OOO".
-
-### Q7a — Alert bar: what counts as urgent? (pick all that apply)
-**Why it matters:** owner wants a quick-action reminder visible from every tab, replacing the removed Departures widget. Appears only when non-empty (zero pixels on a quiet day).
-1. ★ Overdue departures (past checkout, still in-house)
-2. ★ Late arrivals (booked for a past date, never arrived — no-show risk)
-3. ★ Rooms in HK longer than N hours (default N = 2h — owner to confirm N)
-4. Rooms out of order
-5. ★ Today's departures with unpaid balance
-6. New OTA booking received since last look (depends on BQ-385-01)
-
-### Q7b — Alert bar: what happens on click?
-1. ★ Jump to that tile with the matching filter applied (e.g. Departures → Overdue).
-2. Open the guest/room side panel directly for that item.
-3. Both: click the text → filtered list; click the guest name → side panel.
-
-### Q7c — Alert bar: can staff dismiss it?
-1. ★ No dismiss — stays until the item is resolved; bar vanishes by itself when nothing is urgent.
-2. Dismiss per alert for this session only.
-3. Snooze 30 min per alert.
-
-### Q9 — Room board layout
-**Why it matters:** 40 rooms must be scannable and actionable. Data has **no floor/wing field** — grouping by *room type* is possible, by floor is not (unless room numbers encode it).
-1. **RS-A Card grid** — today's tiles evolved; 5–6 per row; actions on the card; Compact mode = chips with actions on click. Best for one-tap actions; ~15 visible at once.
-2. **RS-B Grouped rows** — one row per room (number · type · status pill · guest · since · actions), grouped by room type or status; reads like a housekeeping sheet; all 40 scannable.
-3. **RS-C Board + detail** — tight colour board of all 40 rooms left, click → details/actions right. Best "whole property at a glance".
-4. ★ Build all three in the mockup; pick after seeing them with 40 rooms.
-
-### Q9b — Room grouping
-1. ★ Flat, sorted by room number, with a "Group by room type" switch.
-2. Always grouped by room type.
-3. Flat only.
-
-### Q10 — Live updates (BQ-385-01 goes to backend regardless)
-**Why it matters:** owner wants no lost data; today only refresh-on-focus exists and there are no PMS socket events.
-1. ★ Refresh on focus + Refresh button + refresh after every action now; switch to socket push once backend confirms PMS events.
-2. Add 60-second polling now as a safety net until sockets exist.
-3. Wait for the backend answer before deciding.
-
-### Q2 — Guest quick-view side panel (not yet answered)
-**Why it matters:** the folio object already carries dates, room, balance due, payments with method, food orders, special requests, phone — enough for a "quick view" without navigating to the Folio page.
-1. ★ One click on any guest row (Arrivals / Departures / In-House) opens a right side panel with those details + action buttons (Check-In / Check-Out / Extend / Request HK / Folio). Replaces "View" buttons and most Folio jumps.
-2. Row expands in place (accordion) with the same details.
-3. Keep rows as today; Folio link only.
-
-### Q5b — Per-panel mini KPI strips (confirm)
-Old pages each had their own KPI row (Arrivals 5 tiles, Departures 4, In-House 4). Inside the workstation that would be two rows of numbers under the KPI-tab strip.
-1. ★ Drop them; sub-filter chips carry counts; In-House keeps an "Outstanding ₹ total" at the right of its chip row.
-2. Keep them.
-3. Keep only In-House Outstanding ₹.
-
-### Q13 — Cancelled bookings visibility on Arrivals
-1. ★ Small footer text link "Cancelled today: N" (opens the cancelled list in the panel).
-2. Keep a "Cancelled" chip.
-3. Not on this screen at all.
+**Locked (not a variant):** Q10 live updates = option a (refresh on focus + Refresh button + after every action), provisional until backend answers BQ-385-01.
 
 ---
 
-## 8. After all answers are recorded (still no gate jump)
+## 8. Next steps (each gate needs explicit owner close)
 
-1. Re-summarise all decisions to the owner; ask *explicitly*: "Freeze intake decisions and close Gate 1?"
-2. Only on explicit close → PLANNING role: Gate 2 Impact Analysis (`/app/memory/impact/CR-385_IMPACT_ANALYSIS.md`, use the data inventory) + backend brief for BQ-385-01/02.
-3. Then Gate 2.4 UX flow (low-fi, text/ASCII boxes-and-arrows, no styling) → owner approves → Gate 2.5 HTML mockup at `/app/frontend/public/cr385-frontdesk-mockup.html` (40 rooms, busy day, 3 room-board variants, Check-In panel + overlay variants if Q3-3), decisions frozen in `/app/memory/plans/CR-385_DESIGN_DECISIONS.md`.
-4. No `src/` code before Gate 4 GO.
+1. **Next agent, first message:** summarise §1, §4, §5, §7 to the owner in plain language (≤5 questions if any doubt). If owner says all in place → start Gate 2.
+2. **Gate 2 — PLANNING:** Impact Analysis at `/app/memory/impact/CR-385_IMPACT_ANALYSIS.md` (use `CR-385_DATA_INVENTORY.md`): per-panel data source, component extraction boundaries (`ArrivalsPage`/`DeparturesPage`/`InHouseGuestsPage`/`RoomStatusPage` → panels; `CheckInPage` form body → drawer; success callback replaces `navigate('/pms/in-house')`), `App.js` route impact, `FILE_OWNERSHIP` conflict pre-check (CR-362/365/381 touched these pages). Write backend brief `backend_briefs/BACKEND_BRIEF_CR-385_<DATE>.md` for BQ-385-01 (PMS socket events) + BQ-385-02 (Phase 2 aggregation). Owner closes Gate 2.
+3. **Gate 2.4 — UX flow (low-fi):** boxes-and-arrows of the screen (header · KPI-tab strip · alert bar · panel · side panel), click paths for Check-In / Check-Out / HK / Extend, what stays visible per tab. No styling. Owner approves.
+4. **Gate 2.5 — HTML mockup:** `/app/frontend/public/cr385-frontdesk-mockup.html`, tokens from `PMS_DESIGN_TOKENS.md`, **40 rooms, busy day** (8 arrivals incl. 2 late, 5 departures incl. 1 overdue, ~18 in-house, 3 HK, 1 OOO), desktop 1440 + 1024 check. **Control bar with switches MV-01…MV-09.** Owner freezes each → `/app/memory/plans/CR-385_DESIGN_DECISIONS.md` (format: CR-379 precedent). Owner closes Gate 2.5.
+5. Gate 3 plan → Gate 4 GO → code. Nothing in `src/` before Gate 4.
 
 ---
 

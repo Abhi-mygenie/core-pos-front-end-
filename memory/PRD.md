@@ -136,10 +136,11 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 ### Handover location
 /app/memory/handover/SESSION_HANDOVER_2026_09_15_NEXT_AGENT_FULL_BRIEFING.md
 
-## 2026-09-16 — CR-385 PMS Front Desk Unified Workstation — INTAKE (extended discovery, Gate 1 OPEN)
-- Role: INTAKE (ALPHA v0.7). Owner ran 5 decision rounds; **intake NOT closed** — owner rule: no gate advance without explicit "close gate".
+## 2026-09-16 — CR-385 PMS Front Desk Unified Workstation — INTAKE CLOSED (Gate 1 → Gate 2 next)
+- Role: INTAKE (ALPHA v0.7). 6 decision rounds; **owner closed Gate 1** ("close intake gate"). Rule stands: every further gate needs explicit owner close.
 - Confirmed directions: KPI tiles ARE the tabs (Arrivals default · Departures · In-House · Rooms); no page navigation for daily actions; Arrivals = not-yet-checked-in only; Departures = due-out only (true balance on rows); In-House rows get Request HK + Mark Clean; Rooms panel hybrid density toggle; Channel Sync card → header dot ("Channel Manager" never in UI); Departures widget removed; alert bar wanted; 40-room mockup; Phase 2 = backend aggregation.
 - Artifacts: intake doc (rounds 1–5), `impact/CR-385_DATA_INVENTORY.md`, `handover/SESSION_HANDOVER_2026_09_16_CR385_FRONTDESK_INTAKE.md` (§7 = open questions to present ONE AT A TIME with numbered options).
 - Backend Qs pending brief: BQ-385-01 (no PMS socket events on FE today), BQ-385-02 (aggregation).
 - Process after close: Gate 2 IA → Gate 2.4 UX flow (low-fi) → Gate 2.5 HTML mockup → Gate 3. No `src/` code.
-- Next session: continue INTAKE — ask handover §7 questions one by one, record answers, then ask owner explicitly to close Gate 1.
+- Owner will NOT decide remaining UX options on paper → all become switchable variants MV-01..MV-09 in the Gate 2.5 mockup (handover §7). Q10 live updates = refresh-on-focus (provisional, revisit after BQ-385-01).
+- Next session: PLANNING — re-open handover + intake doc, summarise to owner, ask doubts if any; on owner OK → Gate 2 Impact Analysis + backend brief (BQ-385-01/02). Keep owner questions ≤5, lettered options, no numbered lists (chat tool splits them).
