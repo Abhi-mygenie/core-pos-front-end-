@@ -19,7 +19,7 @@
 | **Fast Lane eligible** | NO — LARGE blast radius, navigation architecture, multi-file |
 | **Gate 2.5 (Design Freeze)** | YES — MANDATORY per CR-011 Screen Freeze Protocol. No code before owner approves mockup. |
 | **Gate** | 2 — PLANNING (in progress) |
-| **Status** | GATE 2 IN PROGRESS. OD round 1 answered 2026-09-16. Open: OD-05, OD-07, OD-03 pattern. |
+| **Status** | GATE 2 IN PROGRESS. OD rounds 1+2 answered 2026-09-16. KPI tiles = tabs (one strip). Open: OD-05, OD-08. New sub-gate 2.4 (UX flow) before 2.5. Gate advances only on explicit owner close. |
 
 ---
 
@@ -55,8 +55,9 @@ Staff loses context on every action. No single view shows Arrivals + In-House + 
   - **In-House** — live guest list with inline Checkout + Extend Stay
   - **Departures** — due/overdue list with inline Checkout
   - **Room Status** — room grid with inline HK / OOO / Available marking
-- KPI strip (Occupancy / Arrivals / Departures / In-House) remains at top, always visible regardless of active tab
+- ~~KPI strip remains at top, tabs separate~~ **REVISED Gate 2 R2:** the 4 KPI tiles (Occupancy / Arrivals / Departures / In-House) **are** the tabs — one KPI-tab strip, no second tab bar
 - New Booking CTA button always visible in header
+- Channel Sync card: candidate for removal (D-385-R2-02); Departures mini-widget: rethink at UX step (D-385-R2-03)
 
 ### What does NOT change (scope lock — Gate 2 to confirm)
 | Page | Decision | Reason |
@@ -251,11 +252,65 @@ Cost: B and C both LOW (board data already loaded by Room Status tab; lift it to
 |---|---|---|
 | **FU-385-A** | Sidebar PMS links review (Arrivals / In-House / Departures / Room Status) — remove / re-point / keep. Per-screen review + owner approval required. | After CR-385 Gate 5b QA PASS. Do not bundle into CR-385. |
 
-### Gate 2 status
-- Locked: OD-01 (provisional), OD-03 (direction), OD-04 (default), OD-06
+## Gate 2 — Owner Decisions Log (2026-09-16, round 2)
+
+### D-385-R2-01 — KPI tiles ARE the tabs (supersedes OD-385-07 options A/B/C)
+Owner: *"KPI is fine as it is written, but these are also clickable tabs. We should have only tabs and a KPI mix, not different tabs. When we click on these tabs, the information for these tabs should be visible."*
+
+**Locked:**
+- **ONE strip, not two.** No separate tab bar under the KPI strip. The 4 KPI tiles double as the tab selectors (a "KPI-tab" strip). Active tile is visually highlighted; its panel renders below.
+- Tile content stays as today (label + big number + sub-line). OD-385-07 → **RESOLVED: keep 4 tiles, make them tabs.** Options B/C (extra HK/OOO tiles) are **dropped** for now.
+- Tile → panel mapping (agent proposal, to confirm at UX step):
+
+| KPI-tab tile | Panel shown below | Source page being absorbed |
+|---|---|---|
+| Arrivals Today *(default, OD-06)* | Arrivals list + inline Check-In (OD-03) | `ArrivalsPage.jsx` |
+| Departures | Due/overdue list + inline Check-Out drawer (OD-04) | `DeparturesPage.jsx` |
+| In-House | Live guest list + Check-Out / Extend / Modify / Cancel | `InHouseGuestsPage.jsx` |
+| **Occupancy** | **Room Status board** (grid + HK/OOO/Available actions) | `RoomStatusPage.jsx` |
+
+⚠️ Open point **OD-385-08**: the 4th tile is labelled "Occupancy" (a %), but the panel behind it would be the Room Status board. Owner to confirm one of: (a) keep label "Occupancy", panel = Room Status; (b) relabel tile to "Rooms" / "Room Status" showing occupancy % + "X of Y" inside; (c) Room Status accessed differently. **Resolve at UX step, not now.**
+
+Consequence: OD-385-01 (tab set) and OD-385-07 (KPI) merge into a single decision — the 4 KPI-tabs above.
+
+### D-385-R2-02 — Channel Sync card (right column) — candidate for REMOVAL from Front Desk
+Owner: *"I see a Channel Sync button on the right-hand side. I don't think we need that, right?"*
+
+Facts (verified `FrontDeskPage.jsx` L270–285): card shows "AIOSELL · synced X min ago", "Available tonight: X / Y", and a **Sync Now** button (pull bookings + push inventory). Added under CR-358-P3 OD-P3-11(c).
+- Agent view: Sync Now is an *admin/config* action, not a front-desk daily op. Natural home is `ChannelManagerPage.jsx` (already the AIOSELL config screen).
+- Nothing else on Front Desk depends on the card; `getChannelSyncStatus()` call can be dropped from the workstation load (one API call fewer).
+- Status: **REMOVE — pending final confirmation at UX step.** If removed, verify Sync Now exists (or is added) on Channel Manager so the capability is not lost. Registered as **FU-385-B**.
+
+### D-385-R2-03 — "Departures Today" mini-widget — RETHINK at UX step
+Owner: *"Not sure if we need that also… it's just a small widget, it looks nice, but when we are revamping the page we might have to check the space."*
+
+- With Departures becoming a full KPI-tab panel, the 3-row mini-widget becomes redundant *unless* the UX wants a persistent "due now" sidebar visible from every tab.
+- Status: **OPEN — decide at UX step.** Two candidate outcomes: (a) drop it — Departures tab covers it; (b) keep a slim right rail (Departures due + overdue count) visible across tabs. Space budget decides.
+
+### D-385-R2-04 — Process: UX step BEFORE HTML mockup (new sub-gate)
+Owner: *"Before going into the HTML mockup, first we will do a UX."*
+
+**Locked process for CR-385:**
+| Step | Deliverable | Fidelity | Owner action |
+|---|---|---|---|
+| **Gate 2** (now) | Decision log + Impact Analysis (data sources, component boundaries per panel) | Text | Answer open ODs |
+| **Gate 2.4 — UX Flow** *(NEW)* | Low-fi wireframe / flow: KPI-tab strip, panel regions, where drawer opens, what stays visible per tab, space budget (Channel Sync / Departures widget yes-no), click paths for Check-In / Check-Out / HK | Boxes-and-arrows (text/ASCII or simple diagram), **no styling** | Review & approve UX |
+| **Gate 2.5 — Design Freeze** | HTML mockup, styled per `PMS_DESIGN_TOKENS.md` | Hi-fi | Approve design |
+| Gate 3 → 4 → 5 | Plan → GO → Implement → QA | — | — |
+
+**Gate rule (owner, 2026-09-16): agent does NOT advance to the next gate unless the owner explicitly says to close the current gate.**
+
+### Follow-up items (round 2)
+| ID | Item | Trigger |
+|---|---|---|
+| **FU-385-B** | Confirm Sync Now / AIOSELL sync status is available on `ChannelManagerPage.jsx` before removing the Channel Sync card from Front Desk | Gate 2.4 decision |
+
+### Gate 2 status (after round 2)
+- Locked: OD-01+OD-07 (merged → 4 KPI-tabs, one strip), OD-03 (no navigation for Check-In), OD-04 (default), OD-06 (Arrivals), process (UX step before mockup)
 - Deferred: OD-02 → FU-385-A
-- **Still open (owner answer needed): OD-05 (Full / Compact / Hybrid), OD-07 (A / B / C), OD-03 pattern (P1 / P2 / P3 — may be settled at Gate 2.5 via mockup)**
-- Gate 2 Impact Analysis (per-tab data sources + component boundaries) proceeds next once OD-05 / OD-07 are answered. **Gate 2.5 mockup NOT started** — owner instruction: "do not jump gate".
+- **Still open (owner answer needed): OD-05 (Full / Compact / Hybrid room grid), OD-08 (Occupancy tile ↔ Room Status panel labelling)**
+- **To decide at Gate 2.4 UX step:** OD-03 pattern (P1/P2/P3), Channel Sync removal (D-R2-02), Departures widget (D-R2-03), OD-08
+- Next agent action inside Gate 2: Impact Analysis (per-panel data sources + component boundaries). **Gate 2 remains OPEN. Gate 2.4 / 2.5 NOT started.**
 
 ---
 
