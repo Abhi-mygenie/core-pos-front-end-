@@ -25165,8 +25165,8 @@
       "title": "PMS Front Desk \u2014 Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE \u2014 GATE 1 COMPLETE. Awaiting Gate 2 GO.",
-      "gate": 1,
+      "status": "GATE 2 IN PROGRESS (2026-09-16). OD round 1 answered. Open: OD-385-05, OD-385-07, OD-385-03 pattern.",
+      "gate": 2,
       "sprint_key": "pos_pms_2",
       "source": "OWNER-REPORTED",
       "code_reality": "NONE",
@@ -25179,12 +25179,14 @@
         "pages/pms/DeparturesPage.jsx",
         "pages/pms/InHouseGuestsPage.jsx",
         "pages/pms/RoomStatusPage.jsx",
-        "App.js",
-        "components/layout/Sidebar.jsx"
+        "pages/pms/CheckInPage.jsx",
+        "App.js"
       ],
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
-      "owner_decisions_open": ["OD-385-01","OD-385-02","OD-385-03","OD-385-04","OD-385-05","OD-385-06","OD-385-07"],
+      "owner_decisions_open": ["OD-385-05","OD-385-07","OD-385-03-pattern"],
+      "owner_decisions_locked": {"OD-385-01":"4 tabs (provisional)","OD-385-02":"DEFERRED -> FU-385-A (sidebar as-is)","OD-385-03":"no page navigation; drawer/expand pattern TBD at 2.5","OD-385-04":"PmsCheckoutDrawer (default)","OD-385-06":"Arrivals"},
+      "follow_ups": ["FU-385-A: Sidebar PMS links review after CR-385 QA PASS"],
       "related": ["CR-358-P1","CR-358-P3","CR-358-P4","CR-362","CR-365"],
       "notes": "Owner selected Option B (Tabbed Workstation) 2026-09-16. Single URL /pms/front-desk. 4 candidate tabs: Arrivals / In-House / Departures / Room Status. All 7 ODs open for Gate 2 discussion. Gate 2.5 design freeze mandatory before any code. CheckInPage.jsx and GuestFolioPage.jsx explicitly out of scope."
     },

@@ -18,8 +18,8 @@
 | **Severity trigger** | Navigation architecture change across 5+ PMS pages — 90% of front-desk daily operations affected |
 | **Fast Lane eligible** | NO — LARGE blast radius, navigation architecture, multi-file |
 | **Gate 2.5 (Design Freeze)** | YES — MANDATORY per CR-011 Screen Freeze Protocol. No code before owner approves mockup. |
-| **Gate** | 1 — INTAKE COMPLETE |
-| **Status** | INTAKE — Gate 1 COMPLETE. Awaiting Gate 2 GO (owner). |
+| **Gate** | 2 — PLANNING (in progress) |
+| **Status** | GATE 2 IN PROGRESS. OD round 1 answered 2026-09-16. Open: OD-05, OD-07, OD-03 pattern. |
 
 ---
 
@@ -61,7 +61,7 @@ Staff loses context on every action. No single view shows Arrivals + In-House + 
 ### What does NOT change (scope lock — Gate 2 to confirm)
 | Page | Decision | Reason |
 |---|---|---|
-| `CheckInPage.jsx` | Stays as-is | Complex form (CRM, ID docs, GST, advance payment) — no change |
+| `CheckInPage.jsx` | ~~Stays as-is~~ **REVISED at Gate 2 (OD-385-03):** form body extracted for in-workstation rendering; `/pms/check-in` route kept | Owner: "no new page navigation" |
 | `GuestFolioPage.jsx` | Stays as-is | Dedicated folio view |
 | `ReservationsPage.jsx` (Tape Chart) | Stays as-is | Separate planning tool |
 | `ChannelManagerPage.jsx` | Stays as-is | Separate AIOSELL config |
@@ -166,6 +166,96 @@ grep -rn "FrontDeskPage|ArrivalsPage|DeparturesPage|InHouseGuestsPage|RoomStatus
 | **OD-385-05** | Room Status tab — full grid (all rooms, same as current `RoomStatusPage`) or compact view? | Full grid |
 | **OD-385-06** | Default tab on landing — which tab opens first? | Arrivals |
 | **OD-385-07** | KPI strip — keep 4 tiles (Occupancy / Arrivals / Departures / In-House) or redesign? | Keep, minor enhancement only |
+
+---
+
+## Gate 2 — Owner Decisions Log (2026-09-16, round 1)
+
+| OD ID | Owner answer | Status | Agent note |
+|---|---|---|---|
+| **OD-385-01** | "ok for now" — 4 tabs: Arrivals / In-House / Departures / Room Status | **LOCKED (provisional)** | May be revisited after mockup review. |
+| **OD-385-02** | Keep sidebar links **as-is for now**. Sidebar modification is a separate follow-up — review + approval needed per screen, after the Front Desk screen is finalised and implemented. | **DEFERRED → FU-385-A** | `Sidebar.jsx` REMOVED from CR-385 blast radius. Follow-up item FU-385-A registered below. |
+| **OD-385-03** | **No new page navigation** for Check-In. Explore side drawer / expand-below-row / similar. | **DIRECTION LOCKED — pattern open** | ⚠️ Scope change: `CheckInPage.jsx` (910 lines, CRM + ID docs + GST + advance payment) was "stays as-is / out of scope". Owner direction now requires its form to render *inside* the workstation. See "OD-03 impact" below. Pattern (drawer vs expand-below) to be decided at Gate 2.5 via mockup. |
+| **OD-385-04** | (no answer) | **DEFAULT ACCEPTED** | Check-Out stays as `PmsCheckoutDrawer` (305 lines, already a drawer). Consistent with OD-03 "no navigation". |
+| **OD-385-05** | "Need to understand what is full grid vs compact" | **OPEN — explained below** | Awaiting owner pick after reading explanation. |
+| **OD-385-06** | **Arrivals** is default tab | **LOCKED** | — |
+| **OD-385-07** | "Check whether the KPI strip covers all kinds of rooms or anything is missing" | **OPEN — gap analysis below** | Awaiting owner pick (Option A / B / C). |
+
+### OD-385-03 impact (Check-In without page navigation)
+
+Current `CheckInPage.jsx` facts (verified):
+- 910 lines, full-page layout with its own `Sidebar`, header, `useSearchParams` (`booking_id`), and `navigate('/pms/in-house')` on success (line 341).
+- It is the **largest single component in the PMS module**. Rendering it inside a drawer requires: (a) extracting the form body from the page shell, (b) replacing post-submit `navigate()` with an `onSuccess` callback, (c) replacing `booking_id` URL param with a prop.
+- `/pms/check-in` route must **remain** (Room Status "booked" tile and Arrivals page still deep-link to it; also New Booking flow). So the extraction is *reuse*, not *removal*.
+
+Candidate in-page patterns (to be mocked at Gate 2.5 — owner picks one):
+| Pattern | Fits Check-In form? | Trade-off |
+|---|---|---|
+| **P1 — Wide right drawer** (~720px, same shell as `PmsCheckoutDrawer`) | YES — form is vertical, scrolls | Consistent with Check-Out; list stays visible behind. Recommended. |
+| **P2 — Expand below row** (accordion inside Arrivals table) | PARTIAL — 910-line form makes the table very tall; other rows pushed off-screen | Best for short actions (Extend Stay, Cancel), not for full Check-In. |
+| **P3 — Full-height overlay panel** (covers workstation body, KPI strip + tabs still visible) | YES | Loses the "list visible behind" benefit but gives maximum form width. |
+
+Blast radius update: `CheckInPage.jsx` **ADDED** (MAJOR — extract form body). `Sidebar.jsx` **REMOVED** (deferred to FU-385-A). Net still ~7 files, LARGE.
+
+### OD-385-05 explained — Full grid vs Compact
+
+Both terms refer to how the **Room Status tab** shows rooms. Current `RoomStatusPage.jsx` (verified):
+
+| | **Full grid (current page, as-is)** | **Compact view (new, smaller tiles)** |
+|---|---|---|
+| Tile size | Large card: room no (20px), room type, status badge, guest name + booking id, "since" timestamp, **2–3 action buttons per tile** | Small chip/tile: room no + colour bar + status badge only. Actions appear on hover/click (popover) or in a side detail panel |
+| Rooms per row | 5 on wide screens (`xl:grid-cols-5`) | ~10–12 per row |
+| Rooms visible without scrolling (1080p) | ~15 | ~60–80 |
+| Actions | One tap — button is right on the tile (Mark Clean / OOO / Request HK / Check In / Book Room / View Folio) | Two taps — click tile → then action |
+| Filter chips (All / Occupied / Booked / HK / OOO / Available) + Mark All Clean + Auto-HK pill | Kept | Kept |
+| Code effort | LOW — reuse `RoomTile` as-is | MEDIUM — new compact tile + popover/detail panel |
+| Best for | Properties ≤ 30 rooms; staff want one-tap HK/OOO | Properties 40+ rooms; staff want the whole floor visible at a glance |
+
+**Agent recommendation:** Full grid (default) *unless* the target property has 40+ rooms. A hybrid is also possible: Full grid by default with a **density toggle** (Comfortable / Compact) in the toolbar — small extra cost. Owner to pick: **Full / Compact / Hybrid toggle**.
+
+### OD-385-07 gap analysis — Does the KPI strip cover all room states?
+
+Current 4 tiles and their data sources (verified in `FrontDeskPage.jsx` + `aiosellTransform.fromDashboardKpis`):
+
+| Tile | Source field(s) | What it shows |
+|---|---|---|
+| Occupancy | `occupancy_percent_physical`, `occupied`, `total_rooms` | % + "X of Y rooms" |
+| Arrivals Today | `arrivals_count` + ops buckets | count + "checked in · pending" |
+| Departures | `departures_count` + ops buckets | count + "N overdue" (red) |
+| In-House | `in_house_count` | count |
+
+Room states that exist in the system (`roomStatusTransform.DISPLAY_STATUSES`): `available`, `occupied`, `occupied_hk`, `booked`, `hk`, `ooo`.
+
+**Gaps — states with NO KPI tile today:**
+| Missing state | Why it matters at front desk | Data already available? |
+|---|---|---|
+| **HK (needs housekeeping)** | Core daily op (owner named it explicitly). Staff can't see "how many rooms are dirty" without opening Room Status. | YES — `board.counts.hk` (from `GET room-status-board`, already fetched by Room Status tab) |
+| **OOO (out of order)** | Affects sellable inventory; invisible today | YES — `board.counts.ooo` |
+| **Available / Ready to sell** | Only shown as small text inside the Channel Sync card ("Available tonight: X / Y") — not a tile | YES — `availableTonight` (KPIs) or `board.counts.available` |
+| **Booked (reserved, not yet arrived)** | Partially covered by "Arrivals pending" | YES — `board.counts.booked` |
+| **Occupied·HK (stayover, HK in progress)** | Sub-state of occupied; minor | YES — `board.counts.occupied_hk` |
+
+Also noted: **no KPI tile is a "Rooms" tile** — all 4 are guest-flow tiles; room-condition tiles are absent entirely.
+
+Options for owner:
+| Option | Tiles | Note |
+|---|---|---|
+| **A — Keep 4** | Occupancy / Arrivals / Departures / In-House | No change. HK/OOO only visible in Room Status tab. |
+| **B — 6 tiles** (recommended) | Occupancy / Arrivals / Departures / In-House / **Housekeeping (HK)** / **Out of Order (OOO)** | Adds the two operational room-condition states. Clicking HK/OOO tile switches to Room Status tab with that filter pre-applied. Data already fetched — zero new API. |
+| **C — 4 + room strip** | Keep 4 guest tiles; add a slim **room-state bar** under them: `Available N · Occupied N · Booked N · HK N · OOO N` (coloured dots, matches Room Status filter colours) | Covers *all 6* states in one line; each segment jumps to Room Status filter. Slightly more visual weight. |
+
+Cost: B and C both LOW (board data already loaded by Room Status tab; lift it to workstation level). No backend change.
+
+### Follow-up items registered
+| ID | Item | Trigger |
+|---|---|---|
+| **FU-385-A** | Sidebar PMS links review (Arrivals / In-House / Departures / Room Status) — remove / re-point / keep. Per-screen review + owner approval required. | After CR-385 Gate 5b QA PASS. Do not bundle into CR-385. |
+
+### Gate 2 status
+- Locked: OD-01 (provisional), OD-03 (direction), OD-04 (default), OD-06
+- Deferred: OD-02 → FU-385-A
+- **Still open (owner answer needed): OD-05 (Full / Compact / Hybrid), OD-07 (A / B / C), OD-03 pattern (P1 / P2 / P3 — may be settled at Gate 2.5 via mockup)**
+- Gate 2 Impact Analysis (per-tab data sources + component boundaries) proceeds next once OD-05 / OD-07 are answered. **Gate 2.5 mockup NOT started** — owner instruction: "do not jump gate".
 
 ---
 
