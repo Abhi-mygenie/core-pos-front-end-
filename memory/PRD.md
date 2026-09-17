@@ -135,3 +135,11 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 
 ### Handover location
 /app/memory/handover/SESSION_HANDOVER_2026_09_15_NEXT_AGENT_FULL_BRIEFING.md
+
+## 2026-09-16 — CR-385 PMS Front Desk Unified Workstation — INTAKE (extended discovery, Gate 1 OPEN)
+- Role: INTAKE (ALPHA v0.7). Owner ran 5 decision rounds; **intake NOT closed** — owner rule: no gate advance without explicit "close gate".
+- Confirmed directions: KPI tiles ARE the tabs (Arrivals default · Departures · In-House · Rooms); no page navigation for daily actions; Arrivals = not-yet-checked-in only; Departures = due-out only (true balance on rows); In-House rows get Request HK + Mark Clean; Rooms panel hybrid density toggle; Channel Sync card → header dot ("Channel Manager" never in UI); Departures widget removed; alert bar wanted; 40-room mockup; Phase 2 = backend aggregation.
+- Artifacts: intake doc (rounds 1–5), `impact/CR-385_DATA_INVENTORY.md`, `handover/SESSION_HANDOVER_2026_09_16_CR385_FRONTDESK_INTAKE.md` (§7 = open questions to present ONE AT A TIME with numbered options).
+- Backend Qs pending brief: BQ-385-01 (no PMS socket events on FE today), BQ-385-02 (aggregation).
+- Process after close: Gate 2 IA → Gate 2.4 UX flow (low-fi) → Gate 2.5 HTML mockup → Gate 3. No `src/` code.
+- Next session: continue INTAKE — ask handover §7 questions one by one, record answers, then ask owner explicitly to close Gate 1.

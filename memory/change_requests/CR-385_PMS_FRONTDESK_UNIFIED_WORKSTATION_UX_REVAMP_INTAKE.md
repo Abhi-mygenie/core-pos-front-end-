@@ -18,8 +18,8 @@
 | **Severity trigger** | Navigation architecture change across 5+ PMS pages — 90% of front-desk daily operations affected |
 | **Fast Lane eligible** | NO — LARGE blast radius, navigation architecture, multi-file |
 | **Gate 2.5 (Design Freeze)** | YES — MANDATORY per CR-011 Screen Freeze Protocol. No code before owner approves mockup. |
-| **Gate** | 2 — PLANNING (in progress) |
-| **Status** | GATE 2 IN PROGRESS. OD rounds 1+2 answered 2026-09-16. KPI tiles = tabs (one strip). Open: OD-05, OD-08. New sub-gate 2.4 (UX flow) before 2.5. Gate advances only on explicit owner close. |
+| **Gate** | 1 — INTAKE (extended discovery) — OPEN |
+| **Status** | GATE 1 INTAKE OPEN. Owner has NOT closed intake (2026-09-16). 5 decision rounds recorded. Open questions to be presented one-by-one next session — see `handover/SESSION_HANDOVER_2026_09_16_CR385_FRONTDESK_INTAKE.md` §7. Process after close: Gate 2 IA → Gate 2.4 UX flow → Gate 2.5 HTML → Gate 3. Gate advances only on explicit owner close. |
 
 ---
 
@@ -400,7 +400,7 @@ Owner (2026-09-16, round 4): *"We have 'Arrivals Today', not 'Arrivals' — that
 7. Departures mini-widget removed; urgent items = red counts on tiles + an alert bar (design open).
 8. Mockup: 40 rooms, busy day, desktop 1440 + 1024 check.
 9. Landing always Arrivals.
-10. Gate 2 open; Gate 2.4/2.5 not started; owner closes gates explicitly.
+10. **Gate 1 INTAKE still OPEN** (owner correction, round 5: "we are still at intake"). Gate 2 / 2.4 / 2.5 not started; owner closes gates explicitly. Open questions + presentation order: `handover/SESSION_HANDOVER_2026_09_16_CR385_FRONTDESK_INTAKE.md` §7.
 
 ---
 
