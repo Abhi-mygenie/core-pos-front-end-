@@ -1,0 +1,22 @@
+{
+  "summary": "Full frontend QA of CR-385 Check-In v2.12 mockup at /cr385-frontdesk-mockup.html. All 13 requested feature/regression scenarios verified end-to-end: F1 (thumbnails+lightbox retake/remove/close, front required, back optional), F2 (upgrade toggle, count updates to 'incl. upgrades', upgrade room options rendered, Paid adds ₹6,900 charge and raises total from ₹2,310 to ₹9,555, Complimentary hides charge and requires reason + manager auth), F3 (payment pills disabled + hint at 0, enabled after amount, no pre-selection, Card/UPI relabel reference to 'Txn / UTR no. *' and appear in readiness missing list, Cash uses optional note), F4 (compact 4-row LEFT summary including 'out 11:00', masked phone, empty email hidden), G1 (arrival chip 'Late · arrived 17 Sep · 2 nights left' on a1, absent on a2), G3 ('Advance · Direct' on a2, 'Prepaid · Direct' on a5 in bill row), G4 ('1 out of order' in availability-count), G7 (a5 primary has on-file CRM thumbnail with meta 'CRM · added 12 Aug 2025 · valid to 2031' and crm-badge; adult #2 still needs name+front), Confirm flow works (mocked toast shown, expansion closes), Checkout regression bills 107 (₹0) and 103 (₹2,677 = 986 F&B + 741 transferred + 950 room) unchanged, and responsive layout at 1920x800 & 390x844 with no horizontal overflow. No JS console errors or page errors observed.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor: 'checkin-payment-reference' input for Card/UPI has visible '*' label and is enforced via readiness list, but the underlying HTML `required` attribute is false. Behaviour is correct (readiness gates Confirm), but adding the native `required` would improve a11y/form semantics."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100%"},
+  "test_credentials": "None - public static mockup",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "CR-385 v2.12 mockup passed all F1/F2/F3/F4 + G1/G3/G4/G7 spec checks, readiness+confirm flow, checkout regression (bills 107/103), and responsive containment. Use ?checkin=a1|a2|a5 and ?bill=103|107 with base REACT_APP_BACKEND_URL. All state is client-side; no backend involved. Room picker options are clickable divs with data-testid 'checkin-room-option-<num>' (not <select>). Adult #2 name uses data-testid 'checkin-adult-name-2'.",
+  "rca of the issue": "N/A - no bugs found"
+}
