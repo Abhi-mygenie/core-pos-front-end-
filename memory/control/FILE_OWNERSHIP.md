@@ -14,6 +14,23 @@
 No production source ownership changes. `CollectPaymentPanel.jsx`, all PMS source pages, APIs, transforms and backend remain untouched. Registry stays at 2.6; HTML verification is not production Gate 5b QA.
 
 ---
+## FILE_OWNERSHIP — CR-385 v2.10 Check-In PLANNING pass (2026-09-18)
+
+| File | Change | Role / Gate |
+|---|---|---|
+| `frontend/public/cr385-frontdesk-mockup.html` | D16: compact Check-In guest/booking column and documents/advance column; scoped CSS, review link, test IDs. v2.9 checkout and other forms unchanged. | PLANNING; Gate 2.6 OPEN; first layout review, not production code |
+
+See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/eight expansion groups, §F for approved D16. No production ownership or financial rules change.
+
+---
+
+## FILE_OWNERSHIP — CR-385 v2.11 Check-In feedback (PLANNING)
+
+`frontend/public/cr385-frontdesk-mockup.html`: D17 compact facts + named per-adult IDs LHS; D18 searchable assignment and room-specific sample ledger/collection RHS; D19 separate non-submittable Phase2 multi-room concept. Local Check-In draft/confirmation/entry-link handling changed; all transactions remain MOCKED.40/30 picker fixture isolated. Checkout + other expansion renderers/handlers and production src/backend unchanged. Gate2.6 OPEN, owner design review pending.
+
+---
+
+
 
 
 ## FILE_OWNERSHIP — BUG-430 (2026-09-16)

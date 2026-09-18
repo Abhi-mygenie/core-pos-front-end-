@@ -139,3 +139,26 @@ See chat — answers recorded in §7.
 | §4 R15 / R19 | spike proposed | **spike approved** (D5) — Gate 3 step 0. |
 | Risk label | HIGH | **HIGH** (unchanged — money paths still copied twice, 4 live dialog files touched). |
 | Conflict pre-check | — | re-scan required at Gate 3 for the 4 dialog files (BUG-402 touched `ExtendStayDialog`; status must be CLOSED or execution order declared). |
+
+
+## 9. Continued design review — v2.9 checkpoint / v2.10 Check-In draft
+
+Owner has settled the v2.9 checkout visual design and chosen to continue other expansion reviews, starting Check-In. This does NOT close Gate2.6 or authorize Gate3/production code. DESIGN_DECISIONS §E records all eight remaining expansion groups and review order.
+
+D16 (owner-approved first pass): Check-In guest/contact, rooms booked and booking/stay/room information LEFT; per-adult documents and existing advance payment RIGHT. No new full-bill collection, tax formula, document storage, API or authentication change. Mockup only, fields/capture/payment MOCKED. Detailed owner feedback and final Check-In freeze pending. Production multi-room count must come from the complete reservation contract, not be inferred from a filtered tab; mockup count is sample data only.
+
+Main IA tables/header remain historical Rev3.1 pending consolidated Rev3.2 after expansion design review. Q6 still needs a shared-state/layout approach, not hide-only CSS; BQ-385-07 brief remains pending; existing source/QA conflicts must be rechecked before Gate3. Existing D6/D7 restrictions and all backend fallback limitations remain in force. No gate registry advancement in this pass.
+
+
+## 10. v2.11 D17-D19 design revision (Gate2.6 still OPEN)
+
+Latest approved layout supersedes D16: compact facts + per-guest IDs LEFT; relevant-booked-room assignment and sample room ledger/collection RIGHT. Owner selected single-room revision plus lightweight **Phase2 multi-room concept for review only**. No Phase1 promotion, batch submission, or new backend/API code approved.
+
+Source findings carried into next consolidation: CheckInPage.jsx has per-extra-adult names/GuestDocsSection but its validation differs from RoomCheckInModal; PMS service serializes one room and extra adult slots2..4, older modal can select multiple rooms; advance cap differs between these entrypoints. Document-per-person ownership must not assume primary CRM docs cover other adults. Room catalog's current status is NOT a complete stay-overlap guarantee. Multi-room billing needs verified room-level allocations, not equal division of booking totals. Children/capacity and corporate detail editing need parity decisions when implementing; no policy silently changed in HTML.
+
+The mockup now demonstrates these states with explicit local assumptions, not integration evidence. Synthetic40-room/30-vacant picker and sample3-room concept cannot submit. Normal single-room mock confirmation uses selected eligible room and entered collection; checkout remains unchanged. Q6/BQ385-07/Rev3.2 and all earlier release/backend dependencies remain pending after owner design review.
+
+
+## 11. D20 owner review hold — documentation-only instruction
+
+Owner requires the next PLANNING agent to walk through current Check-In, collect feedback, seek approval before each design edit, verify revisions and obtain explicit Check-In closure PLUS permission to start Booking. Check-In remains OPEN; Booking design review/edits remain BLOCKED. Approval to write these documents or a mockup QA PASS is not screen sign-off. D20 is recorded in DESIGN_DECISIONS §H and the v2.11 handover gives the walkthrough. Multi remainsPhase2 concept unless separately approved; a single-room design close does not promote it. Hard Gate2.6 stays OPEN independently; no registry, IA version/gate advance or executable changes in this pass.

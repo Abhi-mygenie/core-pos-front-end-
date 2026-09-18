@@ -2,8 +2,8 @@
 
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
-Amended:  Gate 2.6 §D D13–D15 approved after v2.8 review; v2.9 built, verification pending
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.9; owner visual review pending
+Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.11 unchanged; Check-In review OPEN, Booking review BLOCKED
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -69,4 +69,86 @@ History: v2.6 → v2.7 (D8) → v2.8 (D9–D12) → v2.9 (D13–D15). Frozen row
 - PLANNING only: HTML demonstration plus design/impact/evidence documents; no `src/`, backend, environment, frozen baseline or registry gate edits.
 - All transactions/printing in this HTML remain **MOCKED**. Room discount stays disabled. D6 production Adjustments visibility remains accepted; mockup demonstrates adjustment controls even with transferred orders, not a new production policy.
 - Verification: Room 103/P. Nair (owner screenshot), Room 102/R. Fernandes (discount/coupon/loyalty), Room 105/M. D'Souza (zero room balance), width presets 1440/1024 and 390px browser containment, independent scroll/focus, neutral row order and invariant totals.
-- Gate 2.6 remains OPEN for owner visual review. Q6 mechanism, BQ-385-07 brief and IA Rev 3.2 consolidation follow review; Gate 3 spike/plan requires separate owner approval.
+- Gate 2.6 remains OPEN. Subsequent owner confirmation settles v2.9 checkout; continued expansion review is recorded in §§E/F. Q6 mechanism, BQ-385-07 brief and IA Rev 3.2 consolidation follow design review; Gate 3 spike/plan requires separate owner approval.
+
+
+## E. v2.9 pre-feedback checkpoint / expansion review queue (2026-09-18 continuation)
+
+Owner asked to document the current version before giving further feedback. Checkout is settled and must stay unchanged. Gate 2.6 remains OPEN; this is continued PLANNING/design, not production implementation or gate closure.
+
+| Review group | Expansion / entry points | Status |
+|---|---|---|
+| 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | OPEN — owner walkthrough/feedback and explicit Check-In close required (D20) |
+| 2 | New Booking: header / available room Book Room | BLOCKED for design review/edits until explicit Check-In close AND permission to proceed to Booking (D20) |
+| 3 | Extend Stay: Departures / In-House | Waiting for owner feedback; unchanged |
+| 4 | Modify Booking: Arrivals menu | Review with Extend Stay; unchanged |
+| 5 | Cancel Booking: Arrivals menu / expired booking | Review with No-Show; unchanged |
+| 6 | Mark No-Show: Arrivals menu / expired booking | Review with cancellation; existing source restrictions retained |
+| 7 | Room Details: Available, Booked, Occupied, Occupied + HK, HK, OOO | Six state variants; unchanged |
+| 8 | Mark All Clean: Rooms toolbar confirmation | Eligible/skipped room list; unchanged |
+
+Walk-in is New Booking -> Save & Check in now -> Check-In, not a ninth remaining form. Room-tile Check-In/Book Room/Bill reuse the respective expansion. Individual HK/Clean/OOO/Back in Service actions currently execute immediately; menus/search results are not expansion forms. All are MOCKED demonstrations.
+
+Review order: Check-In -> New Booking -> Extend/Modify -> Cancel/No-Show -> Room Details/Mark All Clean. Each group follows review -> proposal -> owner approval -> mockup edit -> verification -> owner freeze. No automatic Gate 2.6 closure.
+
+Baseline v2.9 HTML SHA256: `6a8546d358d569aea0c8870ed6c67f0fe1770413fb3fd0b193dbf8b882c60a92`. D13-D15 match the owner's settled screenshot. Earlier v2.8 7/7 PASS is reported in history but those reports are absent here; do not infer a completed full v2.9 QA run. Read-only current-session inspection confirmed Room107 collapsed checkout at desktop1920x800/mobile390x844 with no horizontal overflow.
+
+## F. Check-In first layout pass — v2.10 (D16)
+
+| Amendment | Supersedes | Owner-approved direction |
+|---|---|---|
+| D16 | F11 visual grouping only | Two columns like checkout. LEFT: compact guest/contact information, rooms booked and existing booking/stay/room information. RIGHT: per-adult documents and existing check-in advance payment. Owner confirmed no new full-bill settlement, no checkout changes. First layout pass only; detailed feedback/freeze pending. |
+
+Owner request: "The left-hand side will have guest details, the number of rooms booked, and whatever is coming from the booking details. The right-hand side is for something that is only at check-in time, like collecting the documents and paying the bill." Owner said `yes` to preserving current check-in advance-payment rules and modifying only the Check-In mockup.
+
+Implementation scope: scoped Check-In markup/CSS and review deep link only. Existing single-room demo data supplies the displayed rooms-booked count; no real multi-room workflow invented. Fields remain a layout preview; document capture and payment are MOCKED, no files uploaded. Check-In submission/demo arithmetic, checkout render/style/submission, other forms, src/, backend, env and registry gates remain unchanged. Responsive containment does not add a production mobile scope decision.
+
+Verification: PASS — current `/app/test_reports/iteration_1.json` + `iteration_2.json`, frontend-only mockup QA (not historical report1/2). Desktop1920x800/mobile390x844 and1024px content width: containment, readable left/right, normal/late guest data, six-adult document scroll, checkbox, capture toasts, Close/Cancel/Esc/confirm, Arrivals/room119/NewBooking entrypoints passed. Checkout107 zero and103 total2677 regression passed. Protected SHA256 checks confirm checkout render/CSS/submission, Check-In submission, src/backend/env and registry unchanged. Detailed owner Check-In feedback/freeze remains pending. Gate 2.6 IA Rev3.2 consolidation, Q6, BQ-385-07, Gate3 spike/plan remain pending after the owner finishes design review.
+
+
+## G. v2.11 — Check-In feedback correction and optional multi-room concept (D17–D19)
+
+Owner feedback: compact the read-only facts; primary name/phone already known; additional adults need NAME plus their own ID; assignment and collection must belong to the relevant booked room; handle40-room/30-vacant property without a tile wall. Owner then explicitly corrected **IDs to LHS**, accepted room/payment and remaining-gap summary, parked multi-check-in in Phase2 but allowed a simple design preview. Owner selected **b: revised single-room Check-In plus lightweight multi-room concept for review only**.
+
+| Decision | Overrides | Approved direction |
+|---|---|---|
+| D17 | D16 visual grouping and placeholder guest controls | LEFT compact one-label/value-per-row booking facts AND per-guest ID collection. Known primary identity reused; extra adult name input + ID type/front/back per person; child names/age separate. RIGHT relevant room assignment and that booking-room bill/collection. |
+| D18 | D16 six-tile picker / fixed500 Cash placeholders | Compact searchable eligible-room dropdown with all matching choices reachable. No automatic fallback to another category or unrelated reservation. Show selected room context, booking charge/GST, payments already allocated, balance before/new collection/remaining or credit. Prepaid/zero scenarios included. Sample 40-room/30-vacant selector is isolated, non-submittable. |
+| D19 | D16 no multi-room preview | Separate **Phase2 concept / review only**: sample3-room booking, compact per-room switcher, independent room/guest/payment drafts, one checked-in room read-only. No combined submission or Phase1 promotion approved. |
+
+Implementation boundaries:
+- v2.11 is an HTML-only local state design, not API/React implementation. Only Check-In and its room-tile entry guard change. Checkout renderer/CSS/submission and NewBooking/other expansion handlers remain unchanged.
+- ID capture/preview/remove are simulated states; no real file upload/storage. Additional names/type fields are locally editable and retained across switches/close until reload. Primary on-file sample ID does not satisfy another adult's requirement. Front required, back optional in this sample per owner reference; live ID policy differences across old/new source still need reconciliation. Child ID policy is NOT newly defined.
+- Room collection inputs now drive the MOCKED single-room confirmation; the prior fixed500 subtraction is superseded for Check-In only. All seeded monetary allocations/GST are explicitly sample ledger values, not inferred production contract or new advance-limit policy. Credit is shown for sample overcollection rather than inventing a hard cap. No automatic equal division of multi-room totals.
+- Read-only booking counts/guest capacity follow the sample booking; adding/removing occupants stays out of this pass. Existing real sources differ (single-room PMS submit, older multi-room modal, additional-adult limits, advance validation); a simple UI does not establish backend support.
+- Real future-date overlap checks and exact booking-room payment allocation remain backend/IA dependencies. 40/30 inventory changes only local picker fixture, not workstation counts/rooms. Multi concept cannot confirm even if all fields ready.
+- Room-tile Check-In must use a linked, non-expired reservation; missing link shows a block instead of substituting an arbitrary arrival. Preassigned mismatched/blocked room is displayed but cannot confirm until an eligible assignment is chosen.
+
+Verification: PASS — `/app/test_reports/iteration_3.json`, current v2.11 frontend-only browser checks: single/late/prepaid/CRM, named per-adult simulated IDs, required-field/readiness and typing/caret/escaping, full searchable room list and40/30 isolation, selected-room collection arithmetic, zero/prepaid/credit, normal mock confirmation, room119 linked / room120 missing-link, multi draft preservation/deduplication/read-only/no-submit, desktop1920x800/mobile390x844/1024-content and checkout103/107 regressions. No reported errors. Main SHA256 checks confirm checkout renderer/CSS/submission, other forms/NewBooking helpers, src/backend/env/registry unchanged. Test3 narrative typo: concept room2 tax165 =82.50SGST+82.50CGST; total3465, not3300+55+55. No code defect. NewBooking helper unchanged; v2.10 entrypoint regression plus current renderer checks, not a claim of live integration QA. Gate2.6 OPEN; Check-In owner review pending; multi remainsPhase2 concept.
+
+
+## H. D20 — Mandatory Check-In walkthrough and explicit close before Booking
+
+**Owner instruction:** "update docs and descisons and write handover was next agent how will walk through check in page and take my feedback and explicit close before moving to booking screen". Owner approved this DOCUMENTATION-ONLY procedure with `yes`. This approval does NOT close the Check-In design.
+
+| Review status | Current value |
+|---|---|
+| Active role | PLANNING / design only |
+| Checkout | v2.9 settled; leave untouched |
+| Check-In | v2.11 draft; review OPEN; final owner sign-off NOT received |
+| Booking design | BLOCKED until Check-In explicitly closed and owner authorizes Booking review |
+| Multi-room | Phase2 concept only; separate scope approval needed to include inPhase1 |
+| Hard Gate2.6 | OPEN, independent of individual screen sign-off |
+
+### Required sequence for the next agent
+1. Read ALPHA, this D20, current v2.11 handover/PRD and report3. Establish current preview host from env. Do not reapply v2.7-v2.10 superseded designs or treat prior QA as final owner approval.
+2. Open single-room `?checkin=a2` first and introduce the boundary: Check-In review only; checkout unchanged; Booking cannot start yet. Explain MOCKED data/documents/payments once.
+3. Walk through compact booking facts -> primary/additional guest IDs/children -> relevant-room assignment/40-30 example -> room bill/collection/readiness -> entry/late/prepaid/missing-booking states. Show one area at a time and ask for the owner's feedback before moving through the next area. Detailed actions/expected sample amounts are in handover §Next-agent walkthrough.
+4. Summarize each feedback item as current behaviour, desired change and proposed correction. Ask clarification only when needed; do not assume a policy decision from a visual preference. Obtain approval BEFORE editing the mockup. A request to explain/compare is not permission to edit.
+5. After an approved revision, verify affected interactions/responsive layout and checkout regression, update decisions/change status/evidence, and show the result. Ask whether it resolves that feedback; do not auto-freeze after tests pass.
+6. Show multi-room concept separately only after the single-room walkthrough or when the owner requests it. Preserve Phase2 label/non-submittable boundary; distinguish design preference, technical feasibility and authorization to promote toPhase1. Deferring multi does NOT prevent the owner from closing the single-room design.
+7. Present the final Check-In version, resolved feedback, explicitly deferred items and remaining limitations. Ask for an unambiguous owner decision, for example: **"Do you explicitly close this Check-In design and authorize us to start the Booking design review?"**
+8. Proceed only after an explicit owner statement such as **"Check-In design closed — proceed to Booking."** Equivalent clear wording is acceptable; record the exact quote, date/version, deferred scope and verification reference. A generic `yes` to an edit, `looks good`, report PASS, approval of optionb, or approval of THIS document is NOT Check-In closure. If the owner closes Check-In but does not authorize Booking, ask for that permission separately.
+9. Only then change the review queue to Check-In CLOSED / Booking READY and ask for Booking-specific feedback. Do not interpret this screen-level closure as Hard Gate2.6 closure, Gate3 spike approval, Gate4GO, or permission for production code.
+
+Current handover: `handover/SESSION_HANDOVER_2026_09_18_CR385_V2_11_CHECKIN_CONCEPT.md`. No executable changes/version bump in this documentation pass. Existing NewBooking -> Check-In transition is historical entrypoint context, not permission to start a Booking walkthrough. If later Check-In regression work requires revisiting that screen before sign-off, explain the narrow need and ask first; do not redesign it.
