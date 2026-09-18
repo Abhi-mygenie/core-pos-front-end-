@@ -191,7 +191,7 @@ body{background:var(--bg)}#ctl{display:none}
 .checkin-expansion .ci-chip.late{background:#FEF2F2;color:#B91C1C;border-color:#FCA5A5}
 .checkin-expansion .ci-pm{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .checkin-expansion .ci-pill{flex:1;min-width:60px;height:32px;border:1px solid var(--bd);border-radius:6px;background:#fff;font:inherit;font-size:11px;font-weight:500;color:var(--tx);cursor:pointer;transition:background-color .15s}
-.checkin-expansion .ci-pill:hover:not(:disabled){background:var(--bg2)}
+.checkin-expansion .ci-pill:not(.on):hover:not(:disabled){background:var(--bg2)}
 .checkin-expansion .ci-pill.on{background:#fff;border-color:var(--tx);color:var(--tx);font-weight:700;box-shadow:inset 0 0 0 1px var(--tx)}
 .checkin-expansion .ci-pill:disabled{opacity:.5;cursor:not-allowed}
 .checkin-expansion .ci-pm-label{display:block;font-size:10px;color:#666;margin-bottom:2px}
@@ -305,7 +305,7 @@ function revealBill(bill){
  const rect=bill.getBoundingClientRect(),panel=$('panel').getBoundingClientRect();
  if(rect.top<panel.top+8||rect.bottom>panel.bottom-12)$('panel').scrollTop+=rect.top-panel.top-12;
 }
-function fitCheckin(){const ci=document.querySelector('[data-testid="checkin-expansion"]');if(!ci)return;const layout=ci.querySelector('.ci-layout');if(!layout)return;const header=ci.querySelector('.exh'),concept=ci.querySelector('[data-testid="checkin-multi-concept"]'),disc=ci.querySelector('.ci-disclaimer');const avail=$('panel').clientHeight-(header?header.offsetHeight:0)-(concept?concept.offsetHeight:0)-(disc?disc.offsetHeight:0)-44;layout.style.setProperty('--ci-height',Math.min(620,Math.max(260,avail))+'px')}
+function fitCheckin(){const ci=document.querySelector('[data-testid="checkin-expansion"]');if(!ci)return;const layout=ci.querySelector('.ci-layout');if(!layout)return;const header=ci.querySelector('.exh'),concept=ci.querySelector('[data-testid="checkin-multi-concept"]'),disc=ci.querySelector('.ci-disclaimer');const avail=$('panel').clientHeight-(header?header.offsetHeight:0)-(concept?concept.offsetHeight:0)-(disc?disc.offsetHeight:0)-52;layout.style.setProperty('--ci-height',Math.min(640,Math.max(240,avail))+'px')}
 function render(){
  const prior=document.querySelector('[data-testid="bill-expansion"]'),priorId=prior?.dataset.booking;
  const sections=prior?[...prior.querySelectorAll('.ledger-section')].filter(e=>e.open).map(e=>e.dataset.section):[];
@@ -325,7 +325,7 @@ function render(){
   const reference=bill.querySelector('[data-testid="payment-reference-input"]');if(reference)reference.value=S.paymentRef||'';
  }
  const checkin=document.querySelector('[data-testid="checkin-expansion"]');
- if(checkin){fitCheckin();const top=checkin.getBoundingClientRect().top,panelTop=$('panel').getBoundingClientRect().top;if(top<panelTop+8)$('panel').scrollTop+=top-panelTop-8}
+ if(checkin){fitCheckin();const rect=checkin.getBoundingClientRect(),panel=$('panel').getBoundingClientRect();if(rect.top<panel.top+8||rect.bottom>panel.bottom-8)$('panel').scrollTop+=rect.top-panel.top-8}
 }
 function counts(){const c={late:arr.filter(a=>arrOf(a)==='late').length,today:arr.filter(a=>arrOf(a)==='today').length,up:arr.filter(a=>arrOf(a)==='upcoming').length,
  od:guests.filter(g=>depOf(g)==='overdue').length,dt:guests.filter(g=>depOf(g)==='today').length,du:guests.filter(g=>depOf(g)==='upcoming').length,

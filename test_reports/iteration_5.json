@@ -1,0 +1,67 @@
+{
+  "summary": "Frontend-only verification of Check-In v2.13 (CR-385) refinements. v2.13 loaded, no JS console errors. CHANGE 1 (2-col facts) PASS. CHANGE 2 (checkout-consistent white pills, no black) PASS. CHANGE 3 (Confirm pinned visible at 1920x800) FAIL — Confirm button clips below viewport and requires OUTER panel scroll to reach; ci-pane-body internal scroll works but the whole check-in modal is too tall for a 1920x800 viewport. v2.12 regressions (focus retention, pill-disabled-at-0, Card→Txn/UTR relabel, checkout bills 103/107) all pass.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Check-In v2.13 right pane footer",
+        "issue": "At 1920x800, the pinned footer (Cancel + Confirm + readiness) is not visible without scrolling the outer .panel. Confirm rect top=806, bottom=842 (viewport height=800); outer .panel is scrollable (scrollH 1096, clientH 638, needsScroll=true). ci-pane-body internal scroll works (verified 0→200) and .ci-pane-foot exists, but ci-pane max-height (514px) + page header layout push the pane bottom to y=871, past the 800px viewport. Requirement was 'visible WITHOUT scrolling the outer panel'.",
+        "selector": "[data-testid=checkin-confirm-button], .ci-pane, .ci-pane-foot",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Check-In selected payment pill vs Checkout .pm button.on",
+        "issues": [
+          "Selected Check-In pill background is rgb(250, 250, 250) (off-white #FAFAFA) while checkout .pm button.on is rgb(255, 255, 255) (pure white). Both share the same dark inset ring (box-shadow: rgb(26,26,26) 0 0 0 1px inset), 1px solid rgb(26,26,26) border and fontWeight 700. Practically consistent but not pixel-identical — consider aligning to pure white for exact parity."
+        ]
+      }
+    ]
+  },
+  "computed_pill_background_color": {
+    "checkin_selected_pill_data-testid_checkin-pay-cash": "rgb(250, 250, 250)",
+    "checkin_pill_border": "1px solid rgb(26, 26, 26)",
+    "checkin_pill_box_shadow_inset": "rgb(26, 26, 26) 0px 0px 0px 1px inset",
+    "checkin_pill_font_weight": "700",
+    "checkin_pill_color": "rgb(26, 26, 26)",
+    "checkout_pm_button_on_bg": "rgb(255, 255, 255)",
+    "verdict": "NOT solid black. Effectively white with dark inset ring + bold text. Minor 250 vs 255 delta between pane and checkout."
+  },
+  "change_verification": {
+    "CHANGE_1_two_col_facts": "PASS. .ci-facts.compact display:grid, grid-template-columns='457.719px 457.719px', 2 rows. Facts: Guest+Booking row1, Stay+Guests row2. Mobile 390x844 falls back to single column (324px). Special requests span full width via .ci-fact-full when present.",
+    "CHANGE_2_pills_no_black": "PASS. Selected pill bg rgb(250,250,250) (not black); shares dark inset ring + bold text with checkout .pm button.on (bg rgb(255,255,255)).",
+    "CHANGE_3_confirm_pinned_visible": "FAIL at 1920x800. Confirm at y=806-842 > viewport 800; .panel needs outer scroll. ci-pane-body internal scroll DOES work (scrollTop 0→200 verified) and .ci-pane-foot exists; but overall page layout puts pane bottom past viewport."
+  },
+  "regression_v2_12": {
+    "focus_retention_collect_now": "PASS (focus remained on checkin-collect-now while typing '500')",
+    "focus_retention_adult_name_2": "PASS (focus remained on checkin-adult-name-2, value 'John Doe')",
+    "pill_disabled_at_zero": "PASS (checkin-pay-cash disabled=true when collect-now empty)",
+    "card_relabel_to_txn_utr": "PASS (readiness: '... Txn / UTR no. for Card')",
+    "upgrade_toggle": "NOT VERIFIED — click on checkin-upgrade-toggle did not open panel in this run (may require prior room assignment); not a v2.13 change, low priority",
+    "bill_103_total": "PASS ₹2,677 (Grand Total incl. GST)",
+    "bill_107_total": "PASS ₹0"
+  },
+  "responsive": {
+    "mobile_390x844": "PASS — facts single column, ci-pane max-height:none (uncapped), no horizontal overflow",
+    "desktop_1920x800_horizontal_overflow": "None"
+  },
+  "console_errors": [],
+  "test_report_links": [],
+  "action_items": [
+    "Fix CHANGE 3: at 1920x800 the pinned footer with Confirm/Cancel/readiness sits below viewport because the check-in modal + surrounding page chrome exceed 800px. Options for main agent: (a) reduce ci-pane max-height (via fitCheckin() setting --ci-height based on window.innerHeight minus header offset), (b) allow ci-pane-body min-height smaller so foot always stays within visible outer .panel, (c) make .ci-pane-foot position:sticky bottom:0 within .panel so it remains visible when outer .panel scrolls. Currently --ci-height CSS var is empty ('') and panes fall back to max-height:514px which is too tall for a 1920x800 viewport.",
+    "Optional CHANGE 2 polish: align selected Check-In pill background to rgb(255,255,255) to exactly match checkout .pm button.on (currently rgb(250,250,250))."
+  ],
+  "critical_code_review_comments": [
+    "fitCheckin() does not appear to be setting --ci-height on :root (computed value is empty string). Investigate whether the fit routine actually runs or whether it targets a scoped element.",
+    "Bounded pane max-height fallback (514px) is not viewport-aware; on shorter desktop viewports the pinned footer overflows."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "2 of 3 v2.13 changes PASS; all v2.12 regressions PASS"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "v2.13 changes 1 & 2 verified. Change 3 (pinned Confirm visible at 1920x800) is failing because ci-pane max-height 514px + outer chrome overflows viewport. Verify fitCheckin() sets --ci-height CSS var (currently blank) and that .ci-pane-foot remains within the outer .panel client area.",
+  "rca of the issue": "At 1920x800: outer .panel has scrollH=1096 clientH=638 (needs scroll). .ci-pane elements have max-height:514px (from CSS fallback since --ci-height is empty), so pane bottom lands at y=872 while viewport ends at 800. The .ci-pane-foot containing Confirm sits at y=759..871, clipping the Confirm button (y=806..842) below the fold. Fix: make fitCheckin() actually compute --ci-height = window.innerHeight - checkinTopOffset - safeMargin, or make .ci-pane-foot position:sticky bottom:0 within the outer scrolling container."
+}
