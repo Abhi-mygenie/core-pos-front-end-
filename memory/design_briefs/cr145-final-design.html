@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-145 — Final Approved Design</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+.topbar { background: #0f172a; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+.topbar h1 { font-size: 16px; font-weight: 700; }
+.topbar p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.approved-badge { background: #22c55e; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+
+.page { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+.decision-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+.dec-pill { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; font-size: 12px; }
+.dec-pill .oq { font-weight: 700; color: #64748b; min-width: 32px; }
+.dec-pill .choice { font-weight: 600; color: #16a34a; }
+.dec-pill .label { color: #374151; }
+
+.section { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 28px; }
+.sec-header { padding: 14px 20px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 12px; }
+.sec-header h2 { font-size: 14px; font-weight: 700; color: #0f172a; }
+.sec-header p { font-size: 12px; color: #64748b; margin-top: 2px; }
+.sec-body { padding: 20px; }
+
+/* Toolbar mockup */
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+.tb-btn { display: flex; align-items: center; gap-5px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #e2e8f0; background: #fff; color: #374151; transition: all 0.12s; white-space: nowrap; }
+.tb-btn:hover { background: #f1f5f9; }
+.tb-btn.active-save { background: #22c55e; color: #fff; border-color: #22c55e; font-weight: 600; }
+.tb-sep { width: 1px; height: 20px; background: #e2e8f0; }
+.dirty-count { background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; border: 1px solid #fde68a; }
+
+/* Column picker */
+.tier-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tier-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; min-width: 100%; margin-bottom: 2px; }
+.col-pill { display: inline-flex; align-items: center; gap-4px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; border: 1px solid; cursor: pointer; transition: all 0.12s; }
+.col-pill.on { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+.col-pill.new { background: #eff6ff; color: #3b82f6; border-color: #bfdbfe; font-weight: 700; }
+.col-pill.off { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+
+/* Table */
+.bt { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.bt th { background: #f8fafc; padding: 9px 12px; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; white-space: nowrap; user-select: none; }
+.bt th.new { background: #f0fdf4; color: #15803d; position: relative; }
+.bt th.new::after { content: 'NEW'; position: absolute; top: 3px; right: 4px; font-size: 9px; background: #22c55e; color: #fff; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+.bt td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.bt tr.dirty > td { background: #fffbeb; }
+.bt tr.dirty > td:first-child { border-left: 3px solid #f59e0b; }
+.bt tr.exp-parent > td { background: #f0fdf4; border-bottom: none; }
+.bt tr.exp-parent.var-open > td { background: #fdf4ff; border-bottom: none; }
+.bt tr.sub-row > td { padding: 0; border-bottom: 1px solid #bbf7d0; background: #f0fdf4; }
+.bt tr.sub-row.var-row > td { border-bottom-color: #e9d5ff; background: #fdf4ff; }
+
+.food-name { font-weight: 600; color: #0f172a; }
+.cat-tag { font-size: 11px; color: #64748b; }
+.price { font-size: 12px; color: #374151; }
+.st-on { display: inline-flex; align-items: center; gap: 4px; background: #dcfce7; color: #16a34a; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+.st-off { display: inline-flex; align-items: center; gap: 4px; background: #fee2e2; color: #dc2626; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 3px 10px; border-radius: 12px; cursor: pointer; border: 1px solid; transition: all 0.12s; white-space: nowrap; }
+.chip.add { background: #eff6ff; color: #3b82f6; border-color: #bfdbfe; }
+.chip.add:hover { background: #dbeafe; }
+.chip.add.open { background: #dbeafe; border-color: #93c5fd; }
+.chip.var { background: #fdf4ff; color: #9333ea; border-color: #e9d5ff; }
+.chip.var:hover { background: #f3e8ff; }
+.chip.var.open { background: #f3e8ff; border-color: #c4b5fd; }
+.chip.none { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: default; }
+.chip.dirty-chip { background: #fef9c3; color: #a16207; border-color: #fde047; }
+
+/* Expand panels */
+.exp-panel { padding: 16px 20px; }
+.exp-title { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.exp-title .food { color: #3b82f6; }
+.exp-title .food.var { color: #9333ea; }
+.exp-title .hint { font-size: 11px; color: #94a3b8; font-weight: 400; }
+.unsaved-tag { background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; border: 1px solid #fde68a; }
+
+.addon-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.aitem { display: flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #e2e8f0; border-radius: 7px; padding: 6px 11px; font-size: 12px; cursor: pointer; transition: all 0.12s; user-select: none; }
+.aitem:hover { background: #f8fafc; }
+.aitem.on { background: #f0fdf4; border-color: #86efac; }
+.aitem input[type=checkbox] { width: 13px; height: 13px; accent-color: #22c55e; pointer-events: none; }
+.aitem .pr { color: #94a3b8; font-size: 11px; margin-left: 2px; }
+
+.var-group { margin-bottom: 14px; }
+.vg-label { font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.vvals { display: flex; flex-wrap: wrap; gap: 6px; }
+.vval { background: #fdf4ff; border: 1px solid #e9d5ff; color: #6b21a8; padding: 4px 12px; border-radius: 12px; font-size: 11.5px; }
+
+.exp-footer { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+.btn-apply { background: #22c55e; color: #fff; border: none; padding: 7px 18px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.12s; }
+.btn-apply:hover { background: #16a34a; }
+.btn-cancel { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.footer-note { font-size: 11px; color: #94a3b8; margin-left: 4px; }
+
+/* Flow diagram */
+.flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin-bottom: 24px; }
+.flow-step { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; font-size: 12px; }
+.flow-step h4 { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 3px; }
+.flow-step p { font-size: 11px; color: #64748b; }
+.flow-arrow { font-size: 18px; color: #94a3b8; padding: 0 8px; }
+.flow-step.green { border-color: #86efac; background: #f0fdf4; }
+.flow-step.blue { border-color: #bfdbfe; background: #eff6ff; }
+.flow-step.amber { border-color: #fde68a; background: #fffbeb; }
+
+.note-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #92400e; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>CR-145 — BulkEditor Addon &amp; Variation Columns · Final Approved Design</h1>
+    <p>Gate 2 complete · Owner-approved 2026-08-15 · All 5 OQs resolved</p>
+  </div>
+  <span class="approved-badge">✔ DESIGN APPROVED</span>
+</div>
+
+<div class="page">
+
+<!-- APPROVED DECISIONS -->
+<div class="decision-strip">
+  <div class="dec-pill"><span class="oq">OQ-1</span><span class="choice">A</span><span class="label">Sub-row inline expand</span></div>
+  <div class="dec-pill"><span class="oq">OQ-2</span><span class="choice">A</span><span class="label">No row dimming</span></div>
+  <div class="dec-pill"><span class="oq">OQ-3</span><span class="choice">A</span><span class="label">Read-only variations</span></div>
+  <div class="dec-pill"><span class="oq">OQ-4</span><span class="choice">A</span><span class="label">Use existing addons prop</span></div>
+  <div class="dec-pill"><span class="oq">OQ-5</span><span class="choice">A</span><span class="label">JSON.stringify dirty check</span></div>
+</div>
+
+<!-- USER FLOW -->
+<div class="section">
+  <div class="sec-header">
+    <div>
+      <h2>How it works — end-to-end flow</h2>
+      <p>From opening BulkEditor to saving addon changes</p>
+    </div>
+  </div>
+  <div class="sec-body">
+    <div class="flow">
+      <div class="flow-step">
+        <h4>Open BulkEditor</h4>
+        <p>Click "Bulk Edit" in<br>Menu Management</p>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step blue">
+        <h4>Enable columns</h4>
+        <p>"Add-ons" in Tier 2<br>"Variations" in Tier 3</p>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">
+        <h4>Click chip</h4>
+        <p>"3 add-ons" opens<br>sub-row below</p>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step amber">
+        <h4>Tick / untick</h4>
+        <p>Row turns amber<br>(unsaved change)</p>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">
+        <h4>Apply</h4>
+        <p>Sub-row closes<br>chip updates count</p>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step green">
+        <h4>Bulk Save</h4>
+        <p>All dirty rows saved<br>addon_ids in payload</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN PICKER PREVIEW -->
+<div class="section">
+  <div class="sec-header">
+    <div><h2>Column Picker — where the new columns appear</h2></div>
+  </div>
+  <div class="sec-body">
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px">The column picker (Columns button in toolbar) shows Add-ons under Tier 2 and Variations under Tier 3:</p>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;max-width:600px">
+      <div class="tier-row">
+        <span class="tier-label">Tier 2 — Pricing &amp; Availability</span>
+        <span class="col-pill on">Discount</span>
+        <span class="col-pill on">Dine-in</span>
+        <span class="col-pill on">Delivery</span>
+        <span class="col-pill on">Takeaway</span>
+        <span class="col-pill on">Out of Stock</span>
+        <span class="col-pill new">Add-ons ★ NEW</span>
+        <span class="col-pill off">Live Web</span>
+      </div>
+      <div class="tier-row" style="margin-top:10px">
+        <span class="tier-label">Tier 3 — Operations</span>
+        <span class="col-pill on">Prep Time</span>
+        <span class="col-pill on">Serve Time</span>
+        <span class="col-pill new">Variations ★ NEW</span>
+        <span class="col-pill off">Item Code</span>
+        <span class="col-pill off">Sort Order</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE DEMO — ADDON EXPAND -->
+<div class="section">
+  <div class="sec-header">
+    <div>
+      <h2>Live Demo — Food Image Upfront + Addon Assignment</h2>
+      <p>Food thumbnails visible in every row (E10) · Click any chip to expand · Image shown in panel header (E11)</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <span class="tb-btn">☰ Columns</span>
+    <span class="tb-sep"></span>
+    <span class="tb-btn">⟳ Refresh</span>
+    <span class="tb-btn">+ Add Item</span>
+    <span class="tb-sep"></span>
+    <span class="dirty-count" id="dirtyCountLabel">1 unsaved row</span>
+    <span class="tb-btn active-save" id="bulkSaveBtn">⬆ Bulk Save (1)</span>
+    <span class="tb-sep"></span>
+    <span class="tb-btn">✕ Close</span>
+  </div>
+
+  <div style="overflow-x:auto">
+  <table class="bt">
+    <thead>
+      <tr>
+        <th style="width:32px"></th>
+        <th style="width:52px">Img</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th class="new">Add-ons</th>
+        <th class="new">Variations</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Row 1 — Paneer Tikka with addon expand OPEN -->
+      <tr id="r1" class="exp-parent">
+        <td style="text-align:center;color:#94a3b8;font-size:11px">1</td>
+        <td><span class="food-name">Paneer Tikka</span></td>
+        <td><span class="cat-tag">Starters</span></td>
+        <td class="price">₹280</td>
+        <td><span class="st-on">● Active</span></td>
+        <td>
+          <span class="chip add open" onclick="toggleAddon()">
+            <span id="addonChipText">3 add-ons ▴</span>
+          </span>
+        </td>
+        <td><span class="chip var" onclick="openVar()">2 groups ▾</span></td>
+        <td style="font-size:11px;color:#64748b">Veg</td>
+      </tr>
+      <!-- Addon sub-row -->
+      <tr class="sub-row" id="addonSub">
+        <td colspan="8">
+          <div class="exp-panel">
+            <div class="exp-title">
+              <span class="food">Add-ons</span> for Paneer Tikka
+              <span class="hint">Check/uncheck to assign · 6 available</span>
+              <span class="unsaved-tag" id="unsavedTag" style="display:none">● Unsaved</span>
+            </div>
+            <div class="addon-grid" id="addonGrid">
+              <div class="aitem on" onclick="toggleItem(this)"><input type="checkbox" checked/><label>Extra Cheese</label><span class="pr">₹40</span></div>
+              <div class="aitem on" onclick="toggleItem(this)"><input type="checkbox" checked/><label>Garlic Sauce</label><span class="pr">₹25</span></div>
+              <div class="aitem on" onclick="toggleItem(this)"><input type="checkbox" checked/><label>Extra Masala</label><span class="pr">₹15</span></div>
+              <div class="aitem" onclick="toggleItem(this)"><input type="checkbox"/><label>Dark Choco</label><span class="pr">₹10</span></div>
+              <div class="aitem" onclick="toggleItem(this)"><input type="checkbox"/><label>Butter Naan</label><span class="pr">₹35</span></div>
+              <div class="aitem" onclick="toggleItem(this)"><input type="checkbox"/><label>Mint Chutney</label><span class="pr">₹20</span></div>
+            </div>
+            <div class="exp-footer">
+              <button class="btn-apply" onclick="applyAddons()">Apply Changes</button>
+              <button class="btn-cancel" onclick="cancelAddons()">Cancel</button>
+              <span class="footer-note">Use Bulk Save toolbar to push changes to API</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 2 — Chicken Biryani — dirty (addon changed) -->
+      <tr class="dirty">
+        <td style="text-align:center;color:#f59e0b;font-size:11px">●</td>
+        <td><span class="food-name">Chicken Biryani</span></td>
+        <td><span class="cat-tag">Mains</span></td>
+        <td class="price">₹320</td>
+        <td><span class="st-on">● Active</span></td>
+        <td>
+          <span class="chip dirty-chip">2 add-ons ▾</span>
+        </td>
+        <td><span class="chip none">None</span></td>
+        <td style="font-size:11px;color:#64748b">Non-Veg</td>
+      </tr>
+
+      <!-- Row 3 — Masala Chai — no addons -->
+      <tr>
+        <td style="text-align:center;color:#94a3b8;font-size:11px">3</td>
+        <td><span class="food-name">Masala Chai</span></td>
+        <td><span class="cat-tag">Beverages</span></td>
+        <td class="price">₹40</td>
+        <td><span class="st-on">● Active</span></td>
+        <td><span class="chip none">None</span></td>
+        <td><span class="chip none">None</span></td>
+        <td style="font-size:11px;color:#64748b">Veg</td>
+      </tr>
+
+      <!-- Row 4 — Variation sub-row (hidden initially) -->
+      <tr id="r4">
+        <td style="text-align:center;color:#94a3b8;font-size:11px">4</td>
+        <td><span class="food-name">Dal Makhani</span></td>
+        <td><span class="cat-tag">Mains</span></td>
+        <td class="price">₹240</td>
+        <td><span class="st-on">● Active</span></td>
+        <td><span class="chip add" onclick="">1 add-on ▾</span></td>
+        <td><span class="chip var" id="varChip4" onclick="openVar4()">3 groups ▾</span></td>
+        <td style="font-size:11px;color:#64748b">Veg</td>
+      </tr>
+      <tr class="sub-row var-row" id="varSub4" style="display:none">
+        <td colspan="8">
+          <div class="exp-panel" style="background:#fdf4ff">
+            <div class="exp-title">
+              <span class="food var">Variations</span> for Dal Makhani
+              <span class="hint">Read-only — edit in Product Form for changes</span>
+            </div>
+            <div class="var-group">
+              <div class="vg-label">Size</div>
+              <div class="vvals"><span class="vval">Half · ₹160</span><span class="vval">Full · ₹240</span></div>
+            </div>
+            <div class="var-group">
+              <div class="vg-label">Portion</div>
+              <div class="vvals"><span class="vval">Regular · ₹0</span><span class="vval">Large · ₹40</span></div>
+            </div>
+            <div class="var-group">
+              <div class="vg-label">Add Naan</div>
+              <div class="vvals"><span class="vval">Without · ₹0</span><span class="vval">With Butter Naan · ₹45</span><span class="vval">With Garlic Naan · ₹55</span></div>
+            </div>
+            <div class="exp-footer">
+              <button class="btn-cancel" onclick="closeVar4()">Close</button>
+              <span class="footer-note">Full variation editing → open Product Form for this item</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note-box" style="margin:16px 20px 20px">
+    ℹ️ <strong>OQ-2=A confirmed:</strong> Rows 2, 3, 4 stay fully visible while Paneer Tikka's panel is open — no dimming, no blocking. You can scroll and read all other rows freely.
+  </div>
+</div>
+
+<!-- VARIATION READ-ONLY NOTE -->
+<div class="section">
+  <div class="sec-header">
+    <div>
+      <h2>Variation panel — read-only (OQ-3=A)</h2>
+      <p>Click "3 groups ▾" on Dal Makhani above to see it live · scroll up and try it</p>
+    </div>
+  </div>
+  <div class="sec-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <p style="font-size:13px;font-weight:600;margin-bottom:8px">What you see (approved)</p>
+        <ul style="font-size:12px;color:#374151;line-height:2;padding-left:18px">
+          <li>Group name (e.g. SIZE, SPICE LEVEL)</li>
+          <li>Each option value + price</li>
+          <li>Close button</li>
+          <li>Link: "edit in Product Form"</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:13px;font-weight:600;margin-bottom:8px;color:#dc2626">What you won't see (deferred)</p>
+        <ul style="font-size:12px;color:#64748b;line-height:2;padding-left:18px">
+          <li>✕ delete option button</li>
+          <li>+ Add option button</li>
+          <li>Price edit inputs</li>
+          <li>(These need a separate CR — higher risk)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DIRTY STATE EXPLAINER -->
+<div class="section">
+  <div class="sec-header"><div><h2>Dirty state — how unsaved changes show</h2></div></div>
+  <div class="sec-body">
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px;background:#f8fafc;border-radius:8px;padding:14px">
+        <p style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:8px">CLEAN ROW</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:#94a3b8;min-width:16px">3</span>
+          <span style="font-weight:600;font-size:13px">Masala Chai</span>
+          <span class="chip none" style="margin-left:auto">None</span>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px;background:#fffbeb;border-radius:8px;padding:14px;border-left:3px solid #f59e0b">
+        <p style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:8px">DIRTY ROW (addon changed)</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:#f59e0b;min-width:16px">●</span>
+          <span style="font-weight:600;font-size:13px">Chicken Biryani</span>
+          <span class="chip dirty-chip" style="margin-left:auto">2 add-ons ▾</span>
+        </div>
+        <p style="font-size:11px;color:#92400e;margin-top:6px">Amber background + orange dot + amber chip = unsaved addon change</p>
+      </div>
+      <div style="flex:1;min-width:200px;background:#f0fdf4;border-radius:8px;padding:14px;border-left:3px solid #22c55e">
+        <p style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:8px">AFTER BULK SAVE</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:#22c55e;min-width:16px">✓</span>
+          <span style="font-weight:600;font-size:13px">Chicken Biryani</span>
+          <span class="chip add" style="margin-left:auto">2 add-ons</span>
+        </div>
+        <p style="font-size:11px;color:#16a34a;margin-top:6px">Green row = saved successfully</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var addonOpen = true;
+var originalChecked = 3;
+
+function getCheckedCount() {
+  return document.querySelectorAll('#addonGrid .aitem.on').length;
+}
+
+function updateChip() {
+  var count = getCheckedCount();
+  var dirty = count !== originalChecked;
+  document.getElementById('addonChipText').textContent = count + ' add-on' + (count!==1?'s':'') + ' ▴';
+  document.getElementById('unsavedTag').style.display = dirty ? 'inline-flex' : 'none';
+}
+
+function toggleItem(el) {
+  var cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  el.className = cb.checked ? 'aitem on' : 'aitem';
+  updateChip();
+}
+
+function toggleAddon() {
+  addonOpen = !addonOpen;
+  document.getElementById('addonSub').style.display = addonOpen ? 'table-row' : 'none';
+  var r = document.getElementById('r1');
+  r.className = addonOpen ? 'exp-parent' : '';
+  if (!addonOpen) {
+    document.getElementById('addonChipText').textContent = getCheckedCount() + ' add-ons ▾';
+  } else {
+    document.getElementById('addonChipText').textContent = getCheckedCount() + ' add-ons ▴';
+  }
+}
+
+function applyAddons() {
+  var count = getCheckedCount();
+  document.getElementById('addonSub').style.display = 'none';
+  document.getElementById('r1').className = '';
+  document.getElementById('addonChipText').textContent = count + ' add-on' + (count!==1?'s':'') + ' ▾';
+  addonOpen = false;
+  document.getElementById('unsavedTag').style.display = 'none';
+  originalChecked = count;
+}
+
+function cancelAddons() {
+  document.getElementById('addonSub').style.display = 'none';
+  document.getElementById('r1').className = '';
+  addonOpen = false;
+  document.getElementById('addonChipText').textContent = getCheckedCount() + ' add-ons ▾';
+  document.getElementById('unsavedTag').style.display = 'none';
+}
+
+function openVar4() {
+  var sub = document.getElementById('varSub4');
+  var row = document.getElementById('r4');
+  var chip = document.getElementById('varChip4');
+  var open = sub.style.display !== 'none';
+  sub.style.display = open ? 'none' : 'table-row';
+  row.className = open ? '' : 'exp-parent var-open';
+  chip.className = 'chip var' + (open ? '' : ' open');
+  chip.textContent = open ? '3 groups ▾' : '3 groups ▴';
+}
+
+function closeVar4() {
+  document.getElementById('varSub4').style.display = 'none';
+  document.getElementById('r4').className = '';
+  document.getElementById('varChip4').className = 'chip var';
+  document.getElementById('varChip4').textContent = '3 groups ▾';
+}
+</script>
+</body>
+</html>
