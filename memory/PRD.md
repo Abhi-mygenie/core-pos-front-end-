@@ -365,3 +365,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Done: one booking-charge source (row = Check-In = Modify = Cancel), Bill derived from guest record (row Balance = Grand Total), partial payment + Credit + two-step Checkout, refund = prepaid − penalty − GST, unified labels/footers/toggles/money format/plurals/dates, glossary, Room Detail footer, a11y tokens + SVG icons, responsive fixes (Check-In fits 1366×768), guards for over-collect/past date/adults, seed fixes, hooks obey source rule, VERSION v2.26.
 - Locks re-closed: Checkout v2.10 · Check-In v2.17 · Booking v2.19. Owner visual acceptance pending; Safari/Edge manual.
 - Docs: DESIGN_DECISIONS D44, QA_TEST_PLAN §6, QA_AUDIT_REPORT closure banner, QA_FIX_PLAN executed, handover addendum, /cr385-qa-fix-plan.html status.
+
+
+## 2026-06 — Hand-off artefacts + Area grouping made data-driven (v2.26)
+- Acceptance criteria for the implementation team: plans/CR-385_IMPLEMENTATION_ACCEPTANCE_CRITERIA.md + /cr385-acceptance-criteria.html (21 tick-boxes, AC-01…AC-21).
+- Rooms › Area grouping now derives sections from room `title` values (normalised, "No section" bucket); mock SECTIONS array is SEED ONLY. Awaiting the real board title list from the owner (only "patal lok" confirmed).
+- Phase 2 backlog (D45): Shift Summary card (check-ins / checkouts / no-shows / collections for handover) — recorded, not built.

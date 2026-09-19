@@ -434,3 +434,9 @@ Source: plans/CR-385_QA_AUDIT_REPORT.md (31 findings) → plans/CR-385_QA_FIX_PL
 - **D44-i Consistency tokens**: `money()` en-IN, 2 dp when fractional, sign before ₹; tax rows SGST → CGST with label "· 2.5%" everywhere; `plural()` helper; `fd()` dates everywhere (no ISO on tiles); No-Show red at row/kebab/dialog; refund-mode & notify toggles use the payment pill component; Room Detail actions in a footer; `--mu` #767676; global `:focus-visible`; SVG icons replace emoji; `VERSION` const; review hooks route through `nsOrCancel()`.
 - **D44-j Responsive**: Check-In/Booking payment reference field appears only after a method is chosen → right pane fits at 1366×768 without internal scroll; tab sub-lines ellipsise; search min-width 200px; compact row actions ≤ 1100px.
 - Provenance: agent-tested (iteration_27: 24/27 pass, then 3 remaining items fixed and self-verified). **Owner visual acceptance pending.**
+
+
+### D45 — Phase-2 backlog notes (2026-06)
+- **D45-a Shift Summary card (Phase 2, not built)**: small end-of-shift card for the receptionist handover — today's check-ins, checkouts, no-shows/cancellations, cash / card / UPI collected, outstanding balances, open HK/OOO. Entry point: user menu › "Shift handover note" (already a mock toast). Data source: backend day-close / shift report; do not derive from front-end counters in production.
+- **D45-b Real section titles**: Rooms › Area grouping now derives its groups from the room records' `title` (normalised, title-cased, "No section" bucket for null). The mock `SECTIONS` array is SEED ONLY — swap it for the real board title list (only "patal lok" is confirmed) or wire the API and the grouping follows automatically.
+- **D45-c Acceptance-criteria hand-off**: plans/CR-385_IMPLEMENTATION_ACCEPTANCE_CRITERIA.md (AC-01…AC-21) + shareable /cr385-acceptance-criteria.html with tick-boxes.
