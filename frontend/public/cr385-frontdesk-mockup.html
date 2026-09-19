@@ -174,7 +174,7 @@ body{background:var(--bg)}#ctl{display:none}
 .checkin-expansion .ci-inventory-toggle{margin-top:5px}.checkin-expansion .ci-money{display:flex;justify-content:space-between;gap:12px;font-size:11px;line-height:1.5;padding:4px 0}.checkin-expansion .ci-money span{min-width:0}.checkin-expansion .ci-money b{font-weight:500;white-space:nowrap}.checkin-expansion .ci-money.total{border-top:1px solid var(--bd);margin-top:4px;padding-top:7px;font-weight:600}.checkin-expansion .ci-money.total b{font-weight:600}
 .checkin-expansion .ci-payment-fields{margin-top:8px}.checkin-expansion .ci-readiness{font-size:10px;line-height:1.6;margin-top:8px;color:#92400E;background:#FFFBEB;border-radius:6px;padding:7px 8px;overflow-wrap:anywhere}.checkin-expansion .ci-readiness.ready{color:var(--gt);background:#F0FDF4}
 .checkin-expansion .ci-payment-actions{display:flex;gap:8px;margin-top:8px}.checkin-expansion .ci-payment-actions .btn.p{flex:1;min-width:0;height:auto;min-height:36px;padding:7px;white-space:normal}
-.checkin-expansion .ci-disclaimer{padding:0 12px 10px;font-size:10px;color:#666;line-height:1.5}.checkin-expansion .ci-concept{margin:10px 12px 0;padding:8px 10px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;font-size:11px;line-height:1.6}
+.checkin-expansion .ci-disclaimer{padding:6px 12px;font-size:9px;color:#888;line-height:1.35}.checkin-expansion .ci-concept{margin:10px 12px 0;padding:8px 10px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;font-size:11px;line-height:1.6}
 .checkin-expansion .ci-room-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.checkin-expansion .ci-room-tab{flex:1;min-width:0;border:1px solid var(--bd);border-radius:6px;background:#fff;padding:8px;font:inherit;text-align:left;font-size:11px;overflow-wrap:anywhere}.checkin-expansion .ci-room-tab.on{border-color:var(--tx);box-shadow:inset 0 0 0 1px var(--tx)}.checkin-expansion .ci-room-tab small{display:block;font-size:10px;color:#666;margin-top:2px}
 .checkin-expansion button:focus-visible,.checkin-expansion input:focus-visible,.checkin-expansion select:focus-visible,.checkin-expansion [tabindex]:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
 @media(max-width:1100px) and (min-width:768px){.checkin-expansion .ci-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}.checkin-expansion .ci-pane-header{align-items:start;flex-direction:column;gap:2px}}
@@ -315,7 +315,9 @@ function revealBill(bill){
  const rect=bill.getBoundingClientRect(),panel=$('panel').getBoundingClientRect();
  if(rect.top<panel.top+8||rect.bottom>panel.bottom-12)$('panel').scrollTop+=rect.top-panel.top-12;
 }
-function fitCheckin(){const ci=document.querySelector('[data-testid="checkin-expansion"]');if(!ci)return;const layout=ci.querySelector('.ci-layout');if(!layout)return;const header=ci.querySelector('.exh'),concept=ci.querySelector('[data-testid="checkin-multi-concept"]'),disc=ci.querySelector('.ci-disclaimer');const avail=$('panel').clientHeight-(header?header.offsetHeight:0)-(concept?concept.offsetHeight:0)-(disc?disc.offsetHeight:0)-52;layout.style.setProperty('--ci-height',Math.min(640,Math.max(240,avail))+'px')}
+function fitCheckin(){const ci=document.querySelector('[data-testid="checkin-expansion"]');if(!ci)return;const layout=ci.querySelector('.ci-layout');if(!layout)return;const panel=$('panel'),pr=panel.getBoundingClientRect(),cr=ci.getBoundingClientRect();
+ if(cr.top<pr.top+4||cr.top>pr.top+64)panel.scrollTop+=cr.top-pr.top-4;
+ const lt=layout.getBoundingClientRect().top,disc=ci.querySelector('.ci-disclaimer'),discH=disc?disc.offsetHeight:0,avail=pr.bottom-lt-discH-14;layout.style.setProperty('--ci-height',Math.min(680,Math.max(220,avail))+'px')}
 function render(){
  const prior=document.querySelector('[data-testid="bill-expansion"]'),priorId=prior?.dataset.booking;
  const sections=prior?[...prior.querySelectorAll('.ledger-section')].filter(e=>e.open).map(e=>e.dataset.section):[];
@@ -335,7 +337,7 @@ function render(){
   const reference=bill.querySelector('[data-testid="payment-reference-input"]');if(reference)reference.value=S.paymentRef||'';
  }
  const checkin=document.querySelector('[data-testid="checkin-expansion"]');
- if(checkin){fitCheckin();const rect=checkin.getBoundingClientRect(),panel=$('panel').getBoundingClientRect();if(rect.top<panel.top+8||rect.bottom>panel.bottom-8)$('panel').scrollTop+=rect.top-panel.top-8}
+ if(checkin)fitCheckin();
 }
 function counts(){const c={late:arr.filter(a=>arrOf(a)==='late').length,today:arr.filter(a=>arrOf(a)==='today').length,up:arr.filter(a=>arrOf(a)==='upcoming').length,
  od:guests.filter(g=>depOf(g)==='overdue').length,dt:guests.filter(g=>depOf(g)==='today').length,du:guests.filter(g=>depOf(g)==='upcoming').length,
@@ -521,7 +523,7 @@ function checkinForm(a,wi){const c=ciContext(a,wi);CI.current=c;const {d,line,mu
  <div class="ci-readiness ${!missing.length?'ready':''}" role="status" data-testid="checkin-readiness">${done?'Already checked in · view only':missing.length?'To complete: '+missing.join(' · '):'Ready for this room’s check-in'}${d.inventoryDemo?' · Inventory example only':multi?' · Concept only':''}</div>
  <div class="ci-payment-actions"><button class="btn" data-testid="checkin-cancel-button" onclick="closeCheckin()">Cancel</button><button class="btn p" data-testid="checkin-confirm-button" ${done||multi||d.inventoryDemo||missing.length?'disabled':''} onclick="confirmCheckin()">${done?'Already checked in':multi?'Concept only · not submittable':d.inventoryDemo?'Inventory example · preview only':f.collect>0?'Collect '+money(f.collect)+' &amp; Check In':'Confirm Check-In · ₹0 collection'}</button></div>
  <p class="ci-note" data-testid="checkin-payment-policy">Sample room ledger only; no automatic split of booking-wide payments. Drafts stay until page reload.</p></div></section></div>
- <div class="ci-disclaimer" data-testid="checkin-demo-note">MOCKED design (v2.14) · LEFT holds booking facts, room assignment/upgrade and collapsible per-guest ID cards (auto-collapse when complete); RIGHT is the room bill + collection with Confirm always visible. ID capture, availability, taxes, upgrades and payments are sample states. ID/document mandatory rules reuse existing check-in logic (front required, back optional; CRM doc on file exempts); thumbnail + lightbox is display only. Live property rules and room payment allocations remain to be reconciled.</div></div>`}
+ <div class="ci-disclaimer" data-testid="checkin-demo-note">MOCKED preview (v2.14) — sample data; ID capture, availability, upgrades and payments are simulated. Mandatory ID rules reuse existing check-in logic (front required, back optional; CRM doc exempts). Live property rules and room payment allocations still to be reconciled.</div></div>`}
 
 function ciAdultComplete(g){return !!(g.name.trim()&&g.front)}
 function ciToggleAdult(i,child){const list2=child?CI.current.d.children:CI.current.d.adults,g=list2[i],complete=child?!!g.name.trim():ciAdultComplete(g),open=g.expanded===undefined?!complete:g.expanded;g.expanded=!open;ciRedraw()}

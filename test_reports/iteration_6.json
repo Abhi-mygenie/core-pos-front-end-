@@ -1,0 +1,51 @@
+{
+  "summary": "Frontend-only verification of Check-In v2.14 (CR-385) layout restructure. No JS console errors. Structure PASS (LEFT = booking facts + room-section + collapsible ID cards; RIGHT = bill + collection + pinned footer). Room-in-LEFT drives RIGHT live PASS (upgrade Paid ₹6,900 → total ₹2,310 → ₹9,555; checkin-upgrade-charge appears). Collapsible cards & auto-collapse-when-complete PASS. Manual-expanded card stays open PASS. F1 lightbox PASS. F3 pills disabled-at-0 + selected pill WHITE (rgb 255,255,255) PASS (v2.13 250 delta fixed). Card relabel to Txn/UTR + readiness PASS. Confirm-happy-path + MOCKED toast + pane closes PASS. a5 prepaid on-file auto-collapsed 'ID ready' PASS. a1 arrival chip PASS. Mobile 390 stacks / no h-overflow PASS. Checkout bill=107 ₹0 + bill=103 ₹2,677 PASS. FAIL: at 1920x800, RIGHT column body STILL needs internal scroll and Confirm/Cancel still clip below viewport (regression from v2.13 unresolved).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Check-In v2.14 right column body + pinned footer",
+        "issue": "Requirement 'RIGHT has NO internal scroll and Confirm visible at 1920x800' still FAILS. Measured on ?checkin=a2 at 1920x800: right body scrollH=421 vs clientH=350 (overflow-y:auto, so internal scroll IS needed); outer .panel scrollH=1088 vs clientH=638 (outer scroll still required); checkin-confirm-button rect y=798..834 and checkin-cancel-button y=798..832 with viewportH=800 → both partially clip below the viewport. Same root cause as iteration_5: pane max-height fallback ~514px + surrounding page chrome pushes pane bottom past 800px.",
+        "selector": "[data-testid=checkin-right-col] .ci-pane-body, [data-testid=checkin-confirm-button], [data-testid=checkin-cancel-button]",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "change_verification_v2_14": {
+    "structure_left_right_headings_and_order": "PASS — checkin-left-col heading 'Booking · room · guests'; order: checkin-readonly-summary (y=411) → checkin-room-section (y=465) → checkin-documents-section (y=642). checkin-right-col heading 'Bill & collection' contains checkin-room-bill + collect + pinned foot with checkin-readiness + checkin-confirm-button.",
+    "right_no_internal_scroll_and_confirm_visible_1920x800": "FAIL — see ui_bugs above.",
+    "room_in_left_drives_right_live": "PASS — click checkin-room-trigger → checkin-room-option-230 (Suite upgrade) → checkin-upgrade-paid → checkin-upgrade-charge=₹6,900 line appears; checkin-total ₹2,310 → ₹9,555.",
+    "collapsible_id_cards_toggle": "PASS — aria-expanded flips true↔false on click for checkin-adult-toggle-1/-2; body shows/hides.",
+    "auto_collapse_when_complete": "PASS — adult#1 capturing checkin-id-front-1 (primary already has name) auto-collapses (aria=false) with checkin-adult-status-1='ID ready'. adult#2 fill name + checkin-id-front-2 auto-collapses with 'ID ready'.",
+    "manual_expand_stays_open": "PASS — after auto-collapse, clicking toggle re-expands and card remains aria-expanded=true across subsequent state changes.",
+    "F1_lightbox": "PASS — Enlarge opens checkin-id-lightbox; Close hides it.",
+    "F3_pills_disabled_at_0_and_white": "PASS — cash/card/upi have disabled attr at collect=0; method hint 'Enter a collection amount to choose a method'. After entering 500 pills enable; selected checkin-pay-cash bg = rgb(255,255,255) (matches checkout .pm button.on).",
+    "F3_card_relabel_readiness": "PASS — readiness includes 'Txn / UTR no. for Card' when Card selected.",
+    "F4_facts_compact_2col_out_1100": "PASS — checkin-readonly-summary contains 'out 11:00' and 2-col compact grid.",
+    "readiness_and_confirm_happy_path": "PASS — with room 229 assigned, both adults complete, ₹500 Cash: checkin-readiness='Ready for this room’s check-in', checkin-confirm-button enabled, click → toast 'MOCKED check-in · V. Rao · Room 229 · ₹500 recorded in preview' and pane closes (checkin-columns removed).",
+    "prepaid_a5": "PASS — checkin-adult-status-1='ID ready' auto-collapsed (aria=false); checkin-adult-status-2='Details needed' expanded (aria=true).",
+    "late_a1_arrival_chip": "PASS — checkin-actual-arrival present ('17 Sep · today').",
+    "responsive_mobile_390": "PASS — no horizontal overflow (scrollW=390=clientW); checkin-columns display:grid template '357px' (stacked single column).",
+    "checkout_regression_bill_107": "PASS — grand-total-amount ₹0.",
+    "checkout_regression_bill_103": "PASS — grand-total-amount ₹2,677 (room ₹950 + fnb ₹986 + transferred ₹741 = ₹2,677)."
+  },
+  "console_errors": [],
+  "test_report_links": [],
+  "action_items": [
+    "Fix the persistent 1920x800 issue: RIGHT ci-pane-body currently overflows (scrollH 421 vs clientH 350) and Confirm/Cancel clip at y=798..834 vs viewport=800. Options: (a) actually populate --ci-height in fitCheckin() so ci-pane max-height tracks window.innerHeight minus outer chrome (currently CSS var is empty and 514px fallback is not viewport-aware), (b) shrink right column body content so scroll is not needed (task states 'no internal scroll'), (c) make the outer .panel not itself scroll (currently scrollH=1088, clientH=638) so the fixed footer stays within viewport.",
+    "Optional: verify Room upgrade card testid nomenclature — task expected 'checkin-upgrade-option-*' but implementation reuses 'checkin-room-option-*' for upgrade rooms shown after clicking checkin-upgrade-toggle. Functionally identical (upgrade note + checkin-upgrade-paid appear after picking a higher-category room), but naming diverges from the review spec — decide whether to add distinct testids or update the spec."
+  ],
+  "critical_code_review_comments": [
+    "fitCheckin() still does not set the --ci-height CSS var so ci-pane falls back to a fixed 514px max-height, causing the same overflow issue reported in v2.13 iteration_5. Compute --ci-height = window.innerHeight - offsetTop - padding on resize/load.",
+    "Consider making .ci-pane-foot position:sticky bottom:0 inside .panel so Confirm/Cancel remain in view even when the outer container needs to scroll."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "10 of 11 spec items PASS; RIGHT-no-scroll-and-Confirm-visible at 1920x800 still FAIL"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Only remaining defect on v2.14 is the layout/height issue at 1920x800 (RIGHT internal scroll + Confirm clipped). Everything else (structure, live-updating upgrades, collapsible auto-collapse, lightbox, pills white, Card→Txn/UTR, confirm toast, prepaid a5, late a1, mobile stack, checkout 103/107) verified PASS with no console errors.",
+  "rca of the issue": "At viewport 1920x800: outer .panel scrollHeight=1088 > clientHeight=638 → outer scroll required. Inside, .ci-pane uses a CSS fallback max-height ~514px because fitCheckin() does not actually write --ci-height to :root/scope (var is empty). Combined with page header/chrome above, ci-pane bottom lands at y≈834 with checkin-confirm-button at y=798..834 and checkin-cancel-button at y=798..832 (viewport height=800). Additionally .ci-pane-body has overflow-y:auto with content 421px in a 350px client, adding an internal scrollbar to the RIGHT column. Fix vectors: (1) implement fitCheckin() to compute --ci-height dynamically; (2) reduce RIGHT body content so scrollH ≤ clientH at 1920x800; (3) make .ci-pane-foot sticky within .panel so Confirm stays visible."
+}
