@@ -378,3 +378,17 @@ shell with a 2-col body (inputs left, read-only money outcome right) and a foote
 Also added a review hook `?open=<id>:noshow|cancel` (mirrors `?checkin=`/`?booking=`). New testids per
 blueprint §9. LOCKED screens (Checkout v2.9 / Check-In v2.16 / Booking v2.18) untouched. Mockup version
 bumped to **v2.22**. NEXT (and last) expandable box: **Room detail**.
+
+### D40.1 — v2.22 refinements (reveal-scroll + EITHER/OR source rule, verified iteration_22)
+Two owner-requested corrections after the first v2.22 build:
+- **Reveal-scroll**: opening Cancel/No-Show from a lower row now auto-scrolls the panel so the whole
+  dialog (header + footer primary button) is visible, matching Booking/Check-In/Extend/Modify. Added
+  `fitConfirm(el)` (same reveal pattern as fitCheckin/fitExtend/fitModify) called from `render()` for
+  `[data-testid=noshow-dialog],[data-testid=cancel-dialog]`. Verified row-6 (H. Shetty): panel
+  scrollTop 0→196, header 385–425 and confirm 697–731 both inside panel 162–800.
+- **EITHER/OR by source (never both)**: a booking offers **Mark No-Show for OTA** (booking.com /
+  makemytrip) OR **Cancel for non-OTA** (Direct/Walk-in/Goibibo), never both. Centralized in
+  `nsOrCancel(o)=isOTA(o)?'noshow':'cancel'` and applied at every entry point: expired-row action
+  button, kebab (Modify + one of No-Show/Cancel), alert-bar 'stay expired' links, and global search.
+  The old disabled-No-Show-for-non-OTA button is gone (non-OTA simply shows Cancel). Verified 100%
+  (iteration_22), zero JS errors.

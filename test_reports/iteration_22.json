@@ -1,0 +1,21 @@
+{
+  "summary": "CR-385 iteration 22 — all 6 targeted checks pass. REVEAL-SCROLL works for lower rows (H. Shetty row 6: panel.scrollTop 0→196; header 385-425, confirm 697-731 inside panel 162-800). SINGLE-BUTTON rule enforced at every entry point: expired rows (K.Menon→Cancel only; F.Almeida→Mark No-Show only), kebab menus on non-expired rows (V.Rao/T.Gomes/L.Fernandes→Modify+Cancel; D.Naik/H.Shetty→Modify+Mark No-Show — never both), alert-bar links (Almeida→No-Show, Menon→Cancel), and global search (Almeida→No-Show, BK-3000/Menon arrival→Cancel). Regression: ans:noshow shows Prepaid ₹9,000, penalty −₹4,500, SGST ₹112.5, CGST ₹112.5, refund ₹4,500, confirm enabled, no internal scrollbar; a1:cancel shows Prepaid ₹3,000, penalty −₹1,000, refund ₹2,000 with 5 reason options (Guest request, No-show, Duplicate booking, Payment failed, Other). Modify still opens via kebab and shows ₹0 change on no edits. Zero JS console errors at 1920x800.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "nsOrCancel(o) is applied consistently across rowHTML expired branch (line 427), row default onclick (line 433), kebab() (line 796), renderAlert() (line 404), and search pick() (line 839) — the EITHER/OR invariant is guarded at the source in one helper. Good centralization.",
+    "fitConfirm() at line 387 uses same reveal-scroll pattern as fitCheckin/fitExtend/fitModify (threshold cr.top<pr.top+4 || cr.bottom>pr.bottom-4). Verified numerically works for row 6 lowest position.",
+    "Two K. Menon records exist (BK-2006 in-house, BK-3000 expired arrival). Search returns both — user must pick the Arrival result to reach Cancel. Not a bug, but worth noting for QA scripts."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Static mockup at /cr385-frontdesk-mockup.html. Kebab (⋮) only on non-expired arrival rows. Expired rows appear under 'Late' chip. fitConfirm() at line 387 handles reveal-scroll on Cancel/No-Show dialogs. Measured values for row-6 (H.Shetty): panel {162,800}, header {385,425}, confirm {697,731}, scrollTop 0→196.",
+  "measurements": {
+    "reveal_scroll_shetty_row6": {"scrollTop_before":0,"scrollTop_after":196,"panel":{"top":162,"bottom":800},"header":{"top":385,"bottom":425},"confirm":{"top":697,"bottom":731},"header_fully_visible":true,"confirm_fully_visible":true,"dialog_internal_scroll":false}
+  }
+}
