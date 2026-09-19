@@ -291,3 +291,8 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Cross-tab fix: clicking an already-open Arrivals/Departures/In-House row now COLLAPSES it (Rooms tiles already toggled); different-row switch still one click; action buttons + Esc unaffected.
 - Verified iteration_14 (frontend 100%, no bugs): grid prices, cell→bill live, B2B gating/placement, advance pass-through, RIGHT no-scroll (collapsed sh157/ch157 btn505; advance sh340/ch340 btn688), toggle on all 4 tabs, regression ?bill=103 ₹2,677 / ?bill=107 / ?checkin=a2 clean, zero JS errors. Checkout v2.9 untouched.
 - Docs: DESIGN_DECISIONS §M D35 + header/blueprint updated. Status: New Booking = v2.18 working baseline (BUILT + agent-verified), awaiting owner review. Minor note: sold-out type greys all its plan cells (correct); revisit messaging at backend wire-up.
+
+## 2026-06 — Alert bar "+N more" made actionable (popover)
+- The alert bar's "+N more" is now a clickable link (data-testid=alert-more) that opens a popover (data-testid=alert-popover) listing ALL alerts, each row (alert-item-<i>) a working link that navigates + expands the record via go(). Toggle-close, outside-click-close, no duplicate popovers.
+- Verified iteration_15 (frontend 100%, no bugs): 6 rows (3 in bar + 3 more), navigation + close all work, zero JS errors.
+- Note (pre-existing mock nuance, tester-flagged, optional): the "K. Menon · stay expired" row's demo link lands on a different sample record in the check-in view; this predates the change and is a mock-data alignment nuance, not the popover. Offer to align mock alert IDs↔labels if owner wants.
