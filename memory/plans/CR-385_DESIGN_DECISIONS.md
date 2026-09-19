@@ -328,8 +328,7 @@ old read-only placeholders in `expansion()`:
 - **Mark No-Show + Cancel Booking** — smaller confirmation-style pair (policy/forfeiture, refund,
   source notification); good to do together.
 - **Room detail** (Rooms-tab tile) — informational; lower priority.
-Recommendation order: Extend Stay (v2.20 done) → Modify Booking (v2.21 done, iteration_20) → No-Show/Cancel pair (next) → Room detail.
-No-Show/Cancel confirmation pair.
+Recommendation order: Extend Stay (v2.20 done) → Modify Booking (v2.21 done, iteration_20) → No-Show/Cancel pair (v2.22 done, iteration_21) → Room detail (LAST remaining box).
 
 ### D39 — Consistent Bill View standard (DOCUMENTED ONLY, not applied · 2026-06)
 Owner asked to keep this as a documented standard for now (no code changes). Standard vocabulary for
@@ -351,3 +350,31 @@ gates Confirm; rate itself not editable). Settle = Add to folio (default) or Col
 (Cash/Card/UPI + UTR). Verified 100% (iteration_17); no-scroll RIGHT worst-case 378/378, btn 770.
 Closed screens untouched. NEXT expandable box: **Modify Booking**, then No-Show/Cancel pair, then
 Room detail. Backlog: consistent discount across Booking (closed) + Extend + Checkout.
+
+### D40 — No-Show + Cancel confirmation pair BUILT as v2.22 (2026-06, verify iteration_21)
+Owner reviewed the blueprint (`CR-385_NOSHOW_CANCEL_V2_22_BLUEPRINT.md`) and chose a **confirmation
+dialog** (not the tall two-column Extend/Modify form) "seeing the nature of the operation". Both
+`expansion(o,'noshow')` and `expansion(o,'cancel')` rebuilt in the compact `.exp/.exh/.exb/.exf`
+shell with a 2-col body (inputs left, read-only money outcome right) and a footer consequence hint +
+`[Back]` + destructive primary. Decisions:
+- **D40-a** Confirmation dialog form factor (short, no internal scroll).
+- **D40-b** NO frontend forfeiture/penalty picker — "backend takes care, we just cancel". Frontend
+  shows the outcome read-only only.
+- **D40-c** Money-outcome card: `Prepaid / advance` → `penalty/forfeited` (with **separate SGST +
+  CGST** sample 2.5% each) → **Refund due**; when refund>0 a `Refund … as` [Refund to guest] /
+  [Folio credit] toggle, labelled **Phase-2 mock**. `prepaid=0` collapses to "Nothing paid — no
+  refund".
+- **D40-d** Non-OTA **No-Show Confirm stays disabled** (BQ-385-04) with the "Cancel booking instead"
+  path — unchanged. OTA (booking.com/makemytrip) enables Confirm.
+- **D40-e** Cancel keeps a **Reason** select whose list is **configuration/API-driven**
+  (`CANCEL_REASONS` mock: Guest request / No-show / Duplicate / Payment failed / Other) + a Notify
+  toggle (source/guest) + optional audit note. Reason required to enable Confirm (defaults to first).
+- **D40-f (Variant A, owner-approved)** prepaid seeding = **booking amount × nights for prepaid/OTA
+  bookings** (`pah=false`), **₹0 for pay-at-hotel** (`pah=true`). Sample penalty (MOCKED,
+  backend-owned in real life): retain **first night** for no-show / most cancel reasons; ₹0 for
+  Duplicate & Payment-failed; capped at prepaid. Added one demo expired-OTA-prepaid arrival
+  (`ans` · F. Almeida · MakeMyTrip · Suite · 14→16 Sep) so the enabled No-Show + refund outcome is
+  visible.
+Also added a review hook `?open=<id>:noshow|cancel` (mirrors `?checkin=`/`?booking=`). New testids per
+blueprint §9. LOCKED screens (Checkout v2.9 / Check-In v2.16 / Booking v2.18) untouched. Mockup version
+bumped to **v2.22**. NEXT (and last) expandable box: **Room detail**.
