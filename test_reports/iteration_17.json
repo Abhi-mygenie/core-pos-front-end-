@@ -1,0 +1,38 @@
+{
+  "summary": "CR-385 v2.19 Extend Stay end-to-end frontend testing on cr385-frontdesk-mockup.html at 1920x800. Verified entry from In-House and Departures Extend buttons, form layout, current-stay summary, new check-out with min=cout+1 and auto nights, same-room availability line, conflict path on EVEN room + auto-suggested pre-selected same-type room (★), progress chips ('Room moved'), live bill (charge/SGST/CGST/total/folio-after), Discount (percent 10% → -660 line, reason gating), Settle pills (Add to folio vs Collect now), advance fields (method + UTR gating for UPI), readiness/confirm gating, confirm toast performing the room move ('Stay extended · Room 229 → 20 Sep · moved to Room 229 · advance ₹2,000 collected'), form close, and NO-SCROLL invariant in the busiest state. Regressions for ?booking=1, ?bill=103, ?checkin=a2 still render unchanged. No JS console errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_evidence": {
+    "odd_room_101_plus1": "extend-room-status green '✓ Room 101 is free through 17 Sep — no move needed.', no picker, confirm enabled",
+    "even_room_102_plus1_no_conflict": "green status ('free through 18 Sep'); confirms na=cout+1 rule: conflict only when newCout > cout+1",
+    "even_room_102_plus3_conflict": "red '⚠ Room 102 has an arrival on 18 Sep — a room move is required', extend-room-picker shown with 4 pills, room 229 ★ pre-selected and aria-pressed=true, extend-progress-room='✓ Room moved'",
+    "live_bill_plus3": "charge=₹6,600 (3×2200), sgst=₹165, cgst=₹165, total=₹6,930, folio-after=₹9,080 (existing 2150+6930)",
+    "discount_10pct_no_reason": "discount-line=₹-660, sgst/cgst=₹148.5 each, total=₹6,237, folio-after=₹8,387, readiness='To complete: Discount reason', confirm DISABLED",
+    "discount_with_reason": "readiness='Ready to extend · added to folio', confirm ENABLED",
+    "collect_now_upi_2000_no_utr": "advance fields visible, folio-after=₹6,387, readiness='To complete: Txn / UTR no. for UPI', confirm DISABLED",
+    "busiest_state_with_utr": "readiness='Ready · collect ₹2,000 now', confirm ENABLED",
+    "no_scroll_invariant_worst_case": {"scrollHeight": 378, "clientHeight": 378, "hasScroll": false, "buttonBottom": 770, "viewportH": 800, "passes": true},
+    "confirm_toast": "Stay extended · Room 229 → 20 Sep · moved to Room 229 · advance ₹2,000 collected",
+    "form_closed_after_confirm": true,
+    "departures_tab_has_extend": true,
+    "regressions": {"booking?1": "renders booking-expansion", "bill=103": "renders bill-expansion", "checkin=a2": "renders checkin-expansion"},
+    "js_console_errors": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor cosmetic: after exConfirm(), g.room is updated to the new room BEFORE building the toast, so the string reads 'Room 229 → 20 Sep · moved to Room 229' — mentions the destination room twice. Consider capturing the original room in a local before mutation so it reads 'Room 102 → 20 Sep · moved to Room 229'.",
+    "extend-progress-date defaults to '✓ Dates' on load because the default draft.newCout = cout+1 which is already > cout; visually there is never a 'pending dates' state unless the user clears the date. Acceptable but worth noting.",
+    "File cr385-frontdesk-mockup.html is 776 lines with heavy inline logic; long-term the extend/checkin/booking/checkout forms would benefit from being split for maintainability (not a blocker for a mocked HTML)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Extend Stay v2.19 verified in full including conflict path (EVEN room + newCout > cout+1), suggested room pre-selection, discount reason gating, UPI UTR gating, and no-scroll invariant at 1920x800 (378/378, button bottom 770). Toast includes a minor redundancy where source room shows the already-updated destination room number; not part of requested checks."
+}

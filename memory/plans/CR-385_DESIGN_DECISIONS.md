@@ -330,3 +330,14 @@ old read-only placeholders in `expansion()`:
 - **Room detail** (Rooms-tab tile) — informational; lower priority.
 Recommendation: do **Extend Stay** next, then **Modify Booking** (shared components), then the
 No-Show/Cancel confirmation pair.
+
+### D38 — Extend Stay BUILT as v2.19 (verified iteration_17, 2026-06)
+Owner approved; built as the next expandable box. Two-column expand-in-place (LEFT extension
+details / RIGHT extension bill + Confirm), locked language. New check-out (min cout+1) → live extra
+nights × room-type rate → SGST/CGST separate → extension total → folio-after. Same-room availability
+check; conflict (mock: even room + newCout>cout+1) warns + auto-suggests/pre-selects first free
+same-type room (★) and REQUIRES the move before Confirm. Optional Discount (percent/amount + reason;
+gates Confirm; rate itself not editable). Settle = Add to folio (default) or Collect now
+(Cash/Card/UPI + UTR). Verified 100% (iteration_17); no-scroll RIGHT worst-case 378/378, btn 770.
+Closed screens untouched. NEXT expandable box: **Modify Booking**, then No-Show/Cancel pair, then
+Room detail. Backlog: consistent discount across Booking (closed) + Extend + Checkout.

@@ -1,6 +1,6 @@
 # CR-385 — Extend Stay design · first-iteration blueprint (PROPOSAL, v2.19)
 
-Status: **PROPOSAL — awaiting owner approval to build** (owner chose blueprint-first). Design-only.
+Status: **BUILT + agent-verified (v2.19, iteration_17, frontend 100%, no bugs).** Awaiting owner review. Design-only mockup.
 Gate 2.6 OPEN. Checkout v2.9, Check-In v2.16, Booking v2.18 all LOCKED/untouched. This is the next
 expandable box after Booking closed (owner: "go one by one"). Everything MOCKED.
 
