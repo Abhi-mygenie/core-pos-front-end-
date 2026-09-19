@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.16 — Check-In baseline CLOSED at v2.14 (§J D31), plus owner-requested additions D32 auto-print receipt (v2.15) & D33 B2B (GST) billing (v2.16); Booking review READY (next, pending owner go-ahead)
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.16 — Check-In baseline CLOSED at v2.14 (§J D31), plus owner-requested additions D32 auto-print receipt (v2.15) & D33 B2B (GST) billing (v2.16); Booking review STARTED (§M D34, 2026-06) — first-iteration blueprint proposed (v2.17), pending owner approval to build
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -79,7 +79,7 @@ Owner asked to document the current version before giving further feedback. Chec
 | Review group | Expansion / entry points | Status |
 |---|---|---|
 | 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | **CLOSED / LOCKED at v2.14 (owner 2026-06, §J D31)** |
-| 2 | New Booking: header / available room Book Room | **READY next**; confirm owner go-ahead before editing the New Booking screen (D20 §8–9) |
+| 2 | New Booking: header / available room Book Room | **IN REVIEW (§M D34, 2026-06)** — owner authorized start; first-iteration blueprint proposed (v2.17), awaiting approval to build |
 | 3 | Extend Stay: Departures / In-House | Waiting for owner feedback; unchanged |
 | 4 | Modify Booking: Arrivals menu | Review with Extend Stay; unchanged |
 | 5 | Cancel Booking: Arrivals menu / expired booking | Review with No-Show; unchanged |
@@ -136,7 +136,7 @@ Verification: PASS — `/app/test_reports/iteration_3.json`, current v2.11 front
 | Active role | PLANNING / design only |
 | Checkout | v2.9 settled; leave untouched |
 | Check-In | **v2.14 — CLOSED / LOCKED by owner (2026-06, §J D31).** Treat like Checkout v2.9; no edits without a new explicit owner request |
-| Booking design | **READY** to begin next; confirm owner go-ahead before editing the New Booking screen (D20 §8–9) |
+| Booking design | **IN REVIEW (§M D34)** — blueprint proposed (v2.17), awaiting approval to build |
 | Multi-room | Phase2 concept only; separate scope approval needed to include inPhase1 |
 | Hard Gate2.6 | OPEN, independent of individual screen sign-off |
 
@@ -249,4 +249,27 @@ Owner: "if it's a B2B billing … tick mark … then GST customer name and GST c
 ### RIGHT no-scroll invariant (maintained through D32/D33)
 Adding the auto-print row briefly re-introduced RIGHT overflow; resolved by removing the redundant footer policy note, relaxing the `fitCheckin` cap buffer (−14→−8), and compacting `.ci-money` bill rows (padding 4→2, line-height 1.5→1.4). **Verified iteration_12: RIGHT `.ci-pane-body` scrollHeight ≤ clientHeight in BOTH baseline (a2/a5/a1) and paid-upgrade states; Confirm within the 1920×800 viewport; SGST/CGST still separate.** No JS errors; checkout `?bill=103` ₹2,677 regression unchanged.
 
-Status: Check-In = **v2.16 working baseline** (v2.14 closed + D32/D33 additions). No new closure statement requested from owner for the additions; treat as settled unless the owner raises more Check-In items. Next: confirm go-ahead for **New Booking** design review.
+Status: Check-In = **v2.16 working baseline** (v2.14 closed + D32/D33 additions). No new closure statement requested from owner for the additions; treat as settled unless the owner raises more Check-In items. Next: **New Booking** design review — now STARTED (§M).
+
+## M. New Booking design review — STARTED (D34, 2026-06)
+Owner authorized starting the Booking review ("yes, we can start looking at the booking part …
+suggest what the first iteration will be before we start second iteration") and chose a **written
+blueprint first** (build only after approval). This is PLANNING/design; Gate 2.6 stays OPEN;
+Checkout v2.9 + Check-In v2.16 remain LOCKED; multi-room stays ON HOLD (§K1). Full blueprint:
+`memory/plans/CR-385_BOOKING_V2_17_BLUEPRINT.md`.
+
+### D34 — Booking first-iteration direction & scope (blueprint proposed as v2.17)
+| Aspect | Owner-decided direction |
+|---|---|
+| Layout | Mirror the locked language: expand-in-place, two columns, **LEFT inputs → RIGHT live bill + pinned Save**. Checkout-style pills (white + dark ring, no black). Readiness strip → "Ready to book" pill (like Check-In D30). |
+| **Room = TYPE only** | Booking books a **room TYPE from inventory, NOT a specific room number.** Room section = type pills + rooms count + **type-level availability for the dates** (e.g. "6 free · 2 OOO"), rate hint by type. The specific room number is assigned later at **Check-In** (existing D18 picker). No specific-room dropdown on Booking. |
+| **Documents NOT here** | Guest ID/document capture stays at **Check-In** (per-guest ID cards, v2.16). Booking captures guest + stay + room type + optional advance + B2B GST only — no document capture, no room picker duplicated. |
+| Advance | Possible at booking but **COLLAPSED by default** (most bookings have none). Expanded = Collect-now + Cash/Card/UPI pills + Txn/UTR (same as Check-In) + disabled **"Send payment link — Phase 2"** placeholder (future auto-update-on-paid). |
+| Save actions | BOTH `Save booking` (→ Arrivals Today) and `Save & Check in now` (→ morphs into Check-In v2.16, where room number + documents are handled). |
+| B2B (GST) | Optional tick → required GST customer name + GSTIN; flips "Bill to" to Company (GST). Same as Check-In D33. |
+| Meal plan | Pills (owner has plans). Room type selector = pills. |
+| Scope/guardrails | All MOCKED; replaces old placeholder `nbForm()` only; no `src/`/backend/.env/registry; Checkout v2.9 + Check-In v2.16 untouched. Re-verify RIGHT no-scroll when advance expanded. |
+
+Two open confirmations before build: (1) exact meal-plan set to show as pills; (2) room-type list
+(kept as sample Deluxe/Executive/Suite unless owner specifies). Not yet built — awaiting owner
+approval to implement v2.17.
