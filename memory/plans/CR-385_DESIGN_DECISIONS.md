@@ -408,3 +408,14 @@ Backend shared the real room payload (thegoankitchen): `{restaurant_table_id, ta
 - **Wired:** mock room model now mirrors the real shape (table_no, title=section, code=aiosell_room_code, display_status/manual_status/is_occupied, hk_assignee, room_operational_status_at). `hk_assignee` and `room_operational_status_*` are REAL fields — our Housekeeping cell maps to them. Grouping by **Area now groups by `title` (section)**; mock sections Patal Lok/Baga Wing/Anjuna Block/Palm Court (10 rooms each) stand in until the real `title` list is available. Section is shown in the Room-Detail header (e.g. "Room 101 · Executive · Patal Lok").
 - **Turns today filter (owner asked why):** a "turn" = room where the in-house guest checks out today AND a same-type arrival comes in today — the highest-pressure same-day clean. New Rooms status chip 'Turns today N' filters to exactly those rooms (reuses the isTurn/'Turn today' chip logic) so the desk + HK prioritise them and cut check-in waits.
 - **Held:** Floor KPIs deferred (no real floor/area dimension exists; would only reflect mock sections). Next real step: replace mock SECTIONS with the actual `title` values from the board API.
+
+### D43 — CR-385 FRONT-DESK DESIGN GATE CLOSED at v2.25 (2026-06)
+All front-desk work panels are now designed and agent-tested: Checkout v2.9, Check-In v2.16, Booking
+v2.18 (LOCKED baselines) + Extend v2.20, Modify v2.21, No-Show/Cancel v2.22, Room Detail v2.23, Rooms
+controls v2.24, real-board-shape/sections/Turns v2.25. No expandable panels remain. Testing agent
+green through iteration_25. **Gate CLOSED — no further design changes without a new explicit request.**
+Handed to QA: `plans/CR-385_QA_TEST_PLAN.md` (full version walkthrough + hooks + invariants + mocked
+list). Session handover: `handover/CR-385_SESSION_HANDOVER.md`. Provenance: agent-tested only; user
+acceptance still pending. Next phase = QA review, then real-data wiring (section `title` list,
+`guest{}` payload, `hk_assignee`), then Section KPIs / refund processing / discount unification;
+CR-365 Housekeeping is a separate module.

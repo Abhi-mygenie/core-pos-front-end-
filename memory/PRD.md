@@ -346,3 +346,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Group by Area now groups by `title` (section). Mock sections Patal Lok/Baga Wing/Anjuna Block/Palm Court (10 each) until the real title list is wired. Section shown in room-detail header.
 - New "Turns today" Rooms filter = rooms checking out today with a same-type arrival today (same-day turn needing fast clean). iteration_25 = 100%, zero issues.
 - Deferred: Floor KPIs (no real floor dimension). Next: swap mock SECTIONS for real board `title` values.
+
+## 2026-06 — CR-385 FRONT-DESK DESIGN GATE CLOSED at v2.25
+- All front-desk panels designed + agent-tested through iteration_25; no expandable panels remain. Gate CLOSED.
+- QA deliverables prepared: plans/CR-385_QA_TEST_PLAN.md (version-by-version walkthrough, review hooks, global invariants, mocked/deferred lists, evidence map) and handover/CR-385_SESSION_HANDOVER.md.
+- Provenance: agent-tested only — user acceptance pending. Everything mocked (static prototype).
+- Next: QA pass → stakeholder acceptance → wire real data (section title list, guest{} payload, hk_assignee) → Section/Floor KPIs, real refund/credit, discount unification. CR-365 Housekeeping Workflow is a separate module.
