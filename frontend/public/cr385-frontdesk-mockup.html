@@ -45,9 +45,12 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
 .alert a{color:var(--dgt);font-weight:600;cursor:pointer;text-decoration:underline}.alert .sep{color:#FCA5A5}.alert .x{margin-left:auto;cursor:pointer;color:var(--dgt)}
 .alert-pop{position:absolute;z-index:60;top:42px;right:0;background:#fff;border:1px solid #FCA5A5;border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.16);padding:6px;min-width:300px;max-width:460px;max-height:300px;overflow:auto}
 .alert-pop-head{display:flex;align-items:center;gap:8px;padding:4px 8px 7px;font-weight:700;font-size:11px;color:var(--dgt);border-bottom:1px solid #FEE2E2;margin-bottom:4px}
-.alert-pop-row{padding:7px 10px;border-radius:6px}
+.alert-pop-row{padding:7px 10px;border-radius:6px;display:flex;align-items:center;gap:2px}
 .alert-pop-row:hover{background:#FEF2F2}
-.alert-pop a{display:block;text-decoration:none;font-weight:600;color:var(--dgt)}
+.alert-pop-row.urgent{border-left:3px solid #DC2626;background:#FEF6F6;padding-left:7px}
+.alert-pop a{text-decoration:none;font-weight:600;color:var(--dgt)}
+.alert-tag{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:999px;margin-right:8px;white-space:nowrap}
+.t-overdue{background:#FEE2E2;color:#B91C1C}.t-hk{background:#FEF3C7;color:#92400E}.t-ooo{background:#E5E7EB;color:#374151}.t-noshow{background:#FCE7F3;color:#9D174D}
 /* panel */
 .panel{flex:1;overflow:auto;padding:12px 16px 20px}
 .chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;min-height:30px}
@@ -380,16 +383,17 @@ function renderTabs(){const c=counts(),bf=$('boardfail').checked,m6=v('mv6');
  ['rooms',rl,rn,bf?'room status unavailable':`${L('rooms','available',c.av+' free','g')} · ${L('rooms','occupied',c.occ+'/40 occupied')} · ${L('rooms','hk',c.hk+' HK','a')} · ${L('rooms','ooo',c.ooo+' OOO','r')}`]];
  const warn={arrivals:c.late>0,departures:c.od>0,inhouse:false,rooms:c.ooo>0};$('tabs').innerHTML=t.map(([k,l,n,s])=>`<button data-testid="tab-${k}" class="tab ${k} ${S.tab===k?'on':''} ${warn[k]?'warn':''}" onclick="go('${k}')"><span class="tl"><span class="t">${l}</span><span class="n">${n}</span></span><span class="sl">${s}</span></button>`).join('')}
 let ALERT_ITEMS=[];
-function renderAlert(){if($('quiet').checked||S.dismissed){$('alert').innerHTML='';return}const items=[];
- arr.filter(expired).forEach(a=>items.push(`<a onclick="go('arrivals','late','${a.id}')">${a.guest} · stay expired, not arrived</a>`));
- guests.filter(g=>depOf(g)==='overdue').forEach(g=>items.push(`<a onclick="go('departures','overdue','${g.id}')">Room ${g.room} overdue · ${-dayDiff(g.cout,T)} day</a>`));
- rooms.filter(r=>(r.st==='hk'||r.st==='occupied_hk')&&r.sinceMin>120).forEach(r=>items.push(`<a onclick="go('rooms','hk','r${r.id}')">Room ${r.no} HK ${Math.floor(r.sinceMin/60)}h ${r.sinceMin%60}m</a>`));
- rooms.filter(r=>r.st==='ooo'&&r.oooDays>=1).forEach(r=>items.push(`<a onclick="go('rooms','ooo','r${r.id}')">Room ${r.no} OOO ${r.oooDays} days</a>`));
- ALERT_ITEMS=items;if(!items.length){$('alert').innerHTML='';return}const more=items.length>3?`<a class="more" data-testid="alert-more" onclick="showAllAlerts(event)">+${items.length-3} more</a>`:'';
- $('alert').innerHTML=`<div class="alert" data-testid="alert-bar">⚠ ${items.slice(0,3).join('<span class="sep">|</span>')}${more}${v('mv7d')==='x'?'<span class="x" onclick="S.dismissed=true;render()">✕</span>':''}</div>`}
+function renderAlert(){if($('quiet').checked||S.dismissed){$('alert').innerHTML='';return}let items=[];
+ guests.filter(g=>depOf(g)==='overdue').forEach(g=>{const dd=-dayDiff(g.cout,T);items.push({p:1,s:dd,cat:'overdue',catLabel:'Overdue',urgent:true,html:`<a onclick="go('departures','overdue','${g.id}')">Room ${g.room} · ${g.guest} · overdue ${dd} day${dd>1?'s':''}</a>`})});
+ rooms.filter(r=>(r.st==='hk'||r.st==='occupied_hk')&&r.sinceMin>120).forEach(r=>items.push({p:2,s:r.sinceMin,cat:'hk',catLabel:'Housekeeping',urgent:true,html:`<a onclick="go('rooms','hk','r${r.id}')">Room ${r.no} · housekeeping ${Math.floor(r.sinceMin/60)}h ${r.sinceMin%60}m</a>`}));
+ rooms.filter(r=>r.st==='ooo'&&r.oooDays>=1).forEach(r=>items.push({p:3,s:r.oooDays,cat:'ooo',catLabel:'Out of order',urgent:false,html:`<a onclick="go('rooms','ooo','r${r.id}')">Room ${r.no} · out of order ${r.oooDays} day${r.oooDays>1?'s':''}</a>`}));
+ arr.filter(expired).forEach(a=>{const dd=-dayDiff(a.cin,T);items.push({p:4,s:dd,cat:'noshow',catLabel:'No-show',urgent:false,html:`<a onclick="go('arrivals','late','${a.id}:noshow')">${a.guest} · ${a.bk} · stay expired, not arrived</a>`})});
+ items.sort((x,y)=>x.p-y.p||y.s-x.s);ALERT_ITEMS=items;
+ if(!items.length){$('alert').innerHTML='';return}const more=items.length>3?`<a class="more" data-testid="alert-more" onclick="showAllAlerts(event)">+${items.length-3} more</a>`:'';
+ $('alert').innerHTML=`<div class="alert" data-testid="alert-bar">⚠ ${items.slice(0,3).map(x=>x.html).join('<span class="sep">|</span>')}${more}${v('mv7d')==='x'?'<span class="x" onclick="S.dismissed=true;render()">✕</span>':''}</div>`}
 function showAllAlerts(e){e.stopPropagation();const wrap=document.querySelector('.alert');if(!wrap)return;const ex=$('alertpop');if(ex){ex.remove();document.removeEventListener('click',closeAlertPop);return}
  const pop=document.createElement('div');pop.id='alertpop';pop.className='alert-pop';pop.setAttribute('data-testid','alert-popover');
- pop.innerHTML=`<div class="alert-pop-head">⚠ All alerts · ${ALERT_ITEMS.length}</div>`+ALERT_ITEMS.map((a,i)=>`<div class="alert-pop-row" data-testid="alert-item-${i}">${a}</div>`).join('');
+ pop.innerHTML=`<div class="alert-pop-head">⚠ All alerts · ${ALERT_ITEMS.length} <span class="sub" style="font-weight:400;color:var(--mu)">· most urgent first</span></div>`+ALERT_ITEMS.map((x,i)=>`<div class="alert-pop-row ${x.urgent?'urgent':''}" data-testid="alert-item-${i}"><span class="alert-tag t-${x.cat}">${x.catLabel}</span>${x.html}</div>`).join('');
  wrap.appendChild(pop);setTimeout(()=>document.addEventListener('click',closeAlertPop),0)}
 function closeAlertPop(ev){const pop=$('alertpop');if(!pop){document.removeEventListener('click',closeAlertPop);return}if(!pop.contains(ev.target)){pop.remove();document.removeEventListener('click',closeAlertPop)}}
 function go(tab,chip,openId){S.tab=tab;if(chip)S.chip[tab]=chip;S.open=openId||null;$('pop').style.display='none';$('side').style.display='none';render();if(openId&&!document.querySelector('[data-testid="bill-expansion"]'))setTimeout(()=>{const el=document.querySelector('tr.ex, .rex');el&&el.scrollIntoView({block:'center',behavior:'smooth'})},50)}
@@ -633,7 +637,7 @@ function nbForm(roomNo){const d=nbContext(roomNo),f=nbFigures(d),missing=nbMissi
  <div class="ci-field full"><span class="ci-pm-label">Method${f.advance>0?' *':''}</span><div class="ci-pm" role="group" aria-label="Payment method" data-testid="booking-payment-methods">${['Cash','Card','UPI'].map(m=>`<button type="button" class="ci-pill ${d.method===m?'on':''}" aria-pressed="${d.method===m}" data-testid="booking-pay-${m.toLowerCase()}" ${f.advance===0?'disabled':''} onclick="nbEdit('method','${d.method===m?'':m}')">${m}</button>`).join('')}</div>${f.advance===0?'<span class="ci-note" data-testid="booking-method-hint">Enter an advance amount to choose a method</span>':''}</div>
  <label class="ci-field full">${(d.method==='Card'||d.method==='UPI')?('Txn / UTR no.'+(f.advance>0?' *':'')):'Note (optional)'}<input class="ci-input" data-testid="booking-payment-reference" value="${ciEsc(d.reference)}" placeholder="${(d.method==='Card'||d.method==='UPI')?'Transaction / UTR reference':'Optional note'}" oninput="nbEdit('reference',this.value)"></label>
  <p class="ci-note" data-testid="booking-paylink-note">Phase 2: send a payment link — the booking updates automatically once the guest pays.</p></div>`:''}
- ${ciMoney(d.advanceOpen?'Balance after advance':'Balance · collect at check-in','booking-balance',f.balance,true)}</div>
+ ${f.advance>0?ciMoney('Advance paid'+(d.method?' · '+d.method:''),'booking-advance-paid',f.advance):''}${(d.b2b&&d.gstName.trim())?`<div class="ci-money" data-testid="booking-bill-gst"><span>Bill to (GST)</span><b>${ciEsc(d.gstName)}${d.gstNumber.trim()?' · '+ciEsc(d.gstNumber):''}</b></div>`:''}${ciMoney(d.advanceOpen?'Balance after advance':'Balance · collect at check-in','booking-balance',f.balance,true)}</div>
  </div>
  <div class="ci-pane-foot"><div class="ci-readiness ${!missing.length?'ready':''}" role="status" data-testid="booking-readiness">${missing.length?'To complete: '+missing.join(' · '):'Ready to save this booking'}</div>
  <div class="ci-payment-actions"><button class="btn" data-testid="booking-cancel-button" onclick="closeBooking()">Cancel</button><button class="btn o" data-testid="booking-save-button" ${missing.length?'disabled':''} onclick="nbSave(false)">Save booking</button><button class="btn p" data-testid="booking-checkin-button" ${missing.length?'disabled':''} onclick="nbSave(true)">Save &amp; Check in now</button></div>
