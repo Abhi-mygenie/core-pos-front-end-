@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.17 — Check-In baseline CLOSED at v2.14 (§J D31) + D32/D33 additions (v2.16); Booking review STARTED (§M D34) — first iteration BUILT as v2.17 (type-only, LEFT inputs / RIGHT live bill, collapsed advance, B2B, Save + Save & Check in now), verified iteration_13, awaiting owner review
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.18 — Check-In CLOSED at v2.14 (§J D31) + D32/D33 (v2.16, only new change: booking-advance pass-through, D35); Booking review STARTED (§M D34) — first iteration v2.17, refined to v2.18 (room×rate-plan grid, B2B in guest block, advance carried into Check-In) + cross-tab row-toggle fix; verified iteration_14, awaiting owner review
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -271,4 +271,31 @@ Checkout v2.9 + Check-In v2.16 remain LOCKED; multi-room stays ON HOLD (§K1). F
 | Scope/guardrails | All MOCKED; replaces old placeholder `nbForm()` only; no `src/`/backend/.env/registry; Checkout v2.9 + Check-In v2.16 untouched. Re-verify RIGHT no-scroll when advance expanded. |
 
 Meal-plan set and room-type list are **API-driven** (rendered from a sample config in the mockup).
-**BUILT as v2.17 and verified iteration_13 (frontend, 100%, no bugs)** — awaiting owner review.
+**BUILT as v2.17 and verified iteration_13 (frontend, 100%, no bugs)** — then refined to v2.18 (§ below).
+
+### D35 — v2.18 refinements + cross-tab row-toggle (BUILT + verified iteration_14, 2026-06)
+Owner reviewed v2.17 and requested three changes; also flagged that expanded table rows didn't
+collapse on re-click. All built and verified (iteration_14, frontend 100%, no bugs).
+- **R1 Room × Rate-plan GRID** (owner chose Option B, "Executive with all plans together"): the
+  separate room-type + meal-plan pills are replaced by ONE matrix (`booking-rate-grid`) — rows = room
+  types, columns = rate plans, each cell (`booking-cell-<type>-<plan>`) = ALL-IN price/night (room
+  base + meal supplement). One tap selects both type + plan. Sold-out type row greys out. RIGHT bill
+  still itemises room vs meal-plan, SGST/CGST separate.
+- **R2 B2B (GST) relocated** into the GUEST block under name/phone (`booking-b2b-row` now inside
+  `booking-guest-section`); the separate bottom Billing section removed.
+- **R3 Advance carries into Check-In**: `nbSave` writes `a.prepaid=f.advance`; `ciContext` reads
+  `line.prepaid` so Check-In's "already paid" reflects the exact booking advance (verified ₹1,000 →
+  balance = total−1000). This is the ONLY Check-In change; rest of v2.16 stays locked.
+- **Cross-tab row-toggle fix** (workstation-level, no renderer change): `rowHTML` onclick now
+  collapses (`S.open=null`) when the row is already open, across Arrivals/Departures/In-House
+  (Rooms tiles already toggled). Clicking a different row still swaps in one click; action buttons
+  (stopPropagation) and Esc unaffected. Previously rows only closed via the in-expansion Close/✕/Esc
+  — now consistent with the Rooms tiles.
+- Verified iteration_14: grid prices, cell→bill live update, B2B gating+placement, advance
+  pass-through, no-scroll RIGHT (collapsed sh157/ch157 btn505; advance sh340/ch340 btn688), toggle
+  on all four tabs, checkout ?bill=103 ₹2,677 / ?bill=107 and check-in ?checkin=a2 regression clean,
+  zero JS errors. Checkout v2.9 untouched; Check-In v2.16 only gains the advance pass-through.
+- Minor open note (reviewer): a fully sold-out type greys all its rate-plan cells (correct — no room
+  of that type is bookable on any plan); revisit messaging at backend wire-up. Not blocking.
+
+Status: New Booking = **v2.18 working baseline (BUILT + agent-verified)**, awaiting owner review.
