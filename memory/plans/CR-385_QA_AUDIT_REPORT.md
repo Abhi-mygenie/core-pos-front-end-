@@ -1,6 +1,8 @@
 # CR-385 Front-Desk Workstation Mockup — UI/UX + FUNCTIONAL QA AUDIT (READ-ONLY)
 Date: 2026-06 · Build audited: `/app/frontend/public/cr385-frontdesk-mockup.html` **v2.25** (title) · Browser: Chromium (Playwright)
-Mode: INVESTIGATE → TEST → REPRODUCE → DOCUMENT → CLASSIFY. **No source file was modified.**
+Mode: INVESTIGATE → TEST → REPRODUCE → DOCUMENT → CLASSIFY. **No source file was modified during the audit.**
+
+> **CLOSURE STATUS (v2.26, D44, iteration_27 + self-test):** all 31 IDs addressed in the mockup — 001–003, 007–031 ✔ FIXED; 004/005/006/020/021 ✔ minimal mock guards (full rules = implementation-track acceptance criteria, D44-h). Expected values that changed by decision: F. Almeida prepaid ₹9,450 / refund ₹4,725 (prepaid = total incl. GST, GST on penalty deducted). Owner visual acceptance pending; Safari/Edge still manual.
 Evidence: `/app/test_reports/iteration_26.json` (agent measurement pass) + viewport sweep (6 sizes × 7 states) + code trace (line refs below).
 Companion docs: `plans/CR-385_QA_TEST_PLAN.md`, `handover/CR-385_SESSION_HANDOVER.md`, `plans/CR-385_DESIGN_DECISIONS.md`.
 

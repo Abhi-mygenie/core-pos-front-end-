@@ -1,5 +1,5 @@
 # CR-385 · Front-Desk Workstation Mockup — QA TEST PLAN & VERSION WALKTHROUGH
-Status: DESIGN GATE CLOSED (v2.25) · handed to QA · Date 2026-06
+Status: v2.26 — QA-audit fixes applied (D44) · re-QA against this plan + plans/CR-385_QA_AUDIT_REPORT.md · Date 2026-06
 
 > For the QA reviewer (human or agent). This is a **static, fully-mocked interactive HTML mockup** —
 > a design prototype, **no backend**. Everything (pricing, GST, availability, payments, HK, documents,
@@ -22,7 +22,7 @@ Status: DESIGN GATE CLOSED (v2.25) · handed to QA · Date 2026-06
 | `?bill=102` | Checkout / folio for the departing guest in room 102 (use any departing room no.) |
 | `?booking=1` | New Booking form |
 | `?open=ans:noshow` | Mark No-Show dialog (F. Almeida, OTA/MakeMyTrip — enabled path + refund) |
-| `?open=a1:cancel` | Cancel Booking dialog (J. Pereira, prepaid — penalty + refund) |
+| `?open=a1:cancel` | Routes through the source rule → opens **No-Show** for a1 (Booking.com). Use a Direct prepaid arrival (kebab › Cancel booking) for the Cancel-with-refund case |
 | `?room=101` | Room Detail — occupied |
 | `?room=119` | Room Detail — booked (Direct source) |
 | `?room=223` | Room Detail — booked (OTA source) |
@@ -111,9 +111,9 @@ just confirms; the dialog shows a **read-only money outcome**:
   expired-row button, the kebab (⋮), the alert-bar links, and global search.
 - Non-OTA No-Show stays **disabled** (backend BQ-385-04) via routing to Cancel; OTA No-Show enabled.
 - Cancel keeps a **config-driven Reason** select + Notify toggle + audit note.
-- Variant-A prepaid seeding: prepaid = amt×nights for prepaid/OTA, ₹0 for pay-at-hotel.
-QA: F.Almeida no-show → Prepaid ₹9,000 / forfeit ₹4,500 / SGST+CGST ₹112.5 / refund ₹4,500, Confirm
-enabled; J.Pereira cancel → Prepaid ₹3,000 / penalty ₹1,000 / refund ₹2,000; changing Cancel reason
+- Variant-A prepaid seeding (v2.26, D44-g): prepaid = booking total incl. GST for prepaid/OTA, ₹0 for pay-at-hotel. Refund = prepaid − penalty − GST on penalty (D44-b).
+QA (v2.26): F.Almeida no-show → Prepaid ₹9,450 / forfeit ₹4,500 / SGST − ₹112.50 / CGST − ₹112.50 / Total deducted − ₹4,725 / refund ₹4,725, Confirm
+enabled; Direct prepaid cancel → refund = prepaid − first night − 5 % of it; changing Cancel reason
 to Duplicate/Payment-failed → penalty ₹0, full refund; single-button rule holds everywhere;
 reveal-scroll from a low row. (Evidence: iteration_21/22.)
 
@@ -176,3 +176,14 @@ module: HK task queue, crew assignment, checklists, timers).
 programme's panels (§3A–3F) via the review hooks. 4. Cross-entry consistency for No-Show/Cancel
 single-button rule (row/kebab/alert/search). 5. Rooms grouping (Type/Area) + Turns filter + reveal
 scroll. 6. Confirm no JS errors on every route. Log anything that contradicts §1–§3; ignore §4–§5.
+
+
+## 6. v2.26 QA-AUDIT CLOSURE — additional checks (D44, verified iteration_27 + self-test)
+Run at 1920×800 and 1366×768. See plans/CR-385_QA_AUDIT_REPORT.md for the finding IDs.
+- Money: `arr.every(a=>a.amt===RATE[a.type])`, `guests.every(g=>g.bal===folioOf(g).grand)`, `guests.filter(g=>g.cin>=g.cout).length===0`; Arrivals header "Booking ₹" = rate × nights = Check-In "Booked charge · N nights" = Modify current (pre-tax); Departures "Balance" = Bill Grand Total for every row.
+- Bill (`?bill=102`): Room block ₹2,200 → SGST +₹55 → CGST +₹55 → ₹2,310 → advance/prepaid line → Room balance; F&B SGST before CGST, `₹17.48`, round-off `+₹0.04`; Amount received: blank = full, 1000 → "₹X outstanding" in label, 99999 → error + Checkout disabled, Credit → ₹0 received/input disabled; two-step Checkout (arm → confirm; 3 s revert); coupon on 102 does not appear on 103.
+- Refund: `?open=ans:noshow` Prepaid ₹9,450 / penalty − ₹4,500 / SGST − ₹112.50 / CGST − ₹112.50 / Total deducted − ₹4,725 / **Refund due ₹4,725**. `?open=a0:cancel` "Nothing paid". `?open=a1:cancel` → No-Show dialog.
+- Guards: Extend collect > payable → "Amount ≤ total payable"; Modify adults blank → "Adults ≥ 1", past check-in → "Check-in not in the past", over-collect → "Amount ≤ change"; Booking same + "Advance ≤ total"; date inputs carry `min`.
+- Labels: every header dismiss "✕ Close"; footer secondary "Close"; expired Direct row "Cancel booking"; sidebar "Rooms"; badge "In-House"; tile "out 19 Sep"; "1 night"; "Amount · total"; Late chip "full booking charged"; "Pending balance · bill"; "Save & check in now"; kebab No-Show red; refund/notify toggles `.ci-pill`.
+- Responsive: Check-In right pane scrollHeight ≤ clientHeight at 1366×768; reference field hidden until a method is chosen; tab sub-lines ellipsised; search ≥ 200px at 768.
+- Version: title/#ctl/freeze all v2.26.

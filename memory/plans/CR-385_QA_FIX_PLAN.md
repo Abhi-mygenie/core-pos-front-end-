@@ -1,6 +1,6 @@
 # CR-385 QA Fix Plan — all 31 findings (QA-385-001 … 031)
 Source: plans/CR-385_QA_AUDIT_REPORT.md · Target: `/app/frontend/public/cr385-frontdesk-mockup.html` v2.25 → **v2.26**
-Status: DRAFT — awaiting owner approval (decisions D-A…D-F below).
+Status: EXECUTED 2026-06 as v2.26 (owner scope: 19 design items + minimal money/seed sanity; decisions A–F taken as recommended, recorded as D44). Verified iteration_27 (24/27) + self-test of the 3 follow-ups. Phases 1–7 done in one pass; Phase 8 docs done. Owner visual acceptance pending.
 Rule: every phase = fix → self-check → testing_agent regression against the §H checklist of the audit; phase is CLOSED only when its checks pass and the audit registry row is marked ✔ with the iteration number.
 
 ## 0. Decisions needed before Phase 1

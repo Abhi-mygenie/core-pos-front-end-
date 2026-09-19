@@ -86,3 +86,11 @@ user-confirmed. Everything is MOCKED (see QA plan §4).
 - Decisions: `plans/CR-385_DESIGN_DECISIONS.md` (D40–D43 latest).
 - Blueprints: `plans/CR-385_NOSHOW_CANCEL_V2_22_BLUEPRINT.md`, Booking/Extend blueprints.
 - PRD/changelog: `PRD.md`. QA: `plans/CR-385_QA_TEST_PLAN.md`. Test reports: `test_reports/iteration_12..25.json`.
+
+
+## ADDENDUM 2026-06 — QA audit + v2.26 closure
+- QA audit (read-only) → plans/CR-385_QA_AUDIT_REPORT.md (31 findings) and the owner-facing HTML at /cr385-qa-fix-plan.html (frontend/public/cr385-qa-fix-plan.html). Fix plan → plans/CR-385_QA_FIX_PLAN.md.
+- Owner decision: design gate fixes 19 design items + minimal money/seed sanity in the mockup; full validation/data rules go to the impact-analysis / implementation track as acceptance criteria (D44-h).
+- v2.26 implemented (D44): single booking-charge source (`RATE`, `bookingCharge`, `folioOf`, `BILL_D`, `refundOf`, `plural`, `money` 2-dp), Bill room block from the guest record, partial-payment state, two-step Checkout, refund = prepaid − penalty − GST, "✕ Close"/"Close" everywhere, glossary sweep, pills for refund/notify, Room Detail action footer, SVG icons, focus ring, contrast, tab ellipsis, Check-In right pane fits 1366×768, guards (over-collect / past date / adults ≥ 1), seed fixes (no same-day stays), hooks obey source rule, VERSION const.
+- Locks: Checkout v2.10, Check-In v2.17, Booking v2.19 (figures/validation/labels only). Evidence: iteration_26 (pre-fix audit), iteration_27 (post-fix, 24/27 → remaining 3 fixed + self-verified: Check-In "✕ Close", balance-remaining clamp, dialog testids).
+- Open: owner visual acceptance of v2.26; Safari/Edge manual pass; implementation-track acceptance criteria hand-off.

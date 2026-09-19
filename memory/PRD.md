@@ -358,3 +358,10 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - 31 findings: P0 ×2 (QA-001 Bill room block hard-coded → row balance ≠ Grand Total; QA-002 one booking shows 4 different amounts across Arrivals/Check-In/Modify/Cancel), P1 ×7 (rate-table contradiction after room link; over-collect/past-date/blank-adults accepted in Extend/Modify/Booking; same-day cin=cout seed rooms 102–105; no partial-payment state in Bill; No-Show/Cancel tax rows not applied to refund), P2 ×12 (consistency: dismiss labels, footers, toggles, tax order, currency format, terminology, Check-In right-pane scroll @1366), P3 ×10.
 - Fix order proposed in §I; P0 fixes require re-opening LOCKED Checkout v2.9 / Check-In v2.16 → owner authorisation needed. Safari/Edge NOT TESTED (Chromium only).
 - Status: awaiting owner triage of the registry before any implementation phase.
+
+
+## 2026-06 — v2.26: QA-audit closure (D44) — verified iteration_27 + self-test
+- Owner scope: fix the 19 design items + minimal money/seed sanity in the mockup; validation/data rules → implementation track as acceptance criteria.
+- Done: one booking-charge source (row = Check-In = Modify = Cancel), Bill derived from guest record (row Balance = Grand Total), partial payment + Credit + two-step Checkout, refund = prepaid − penalty − GST, unified labels/footers/toggles/money format/plurals/dates, glossary, Room Detail footer, a11y tokens + SVG icons, responsive fixes (Check-In fits 1366×768), guards for over-collect/past date/adults, seed fixes, hooks obey source rule, VERSION v2.26.
+- Locks re-closed: Checkout v2.10 · Check-In v2.17 · Booking v2.19. Owner visual acceptance pending; Safari/Edge manual.
+- Docs: DESIGN_DECISIONS D44, QA_TEST_PLAN §6, QA_AUDIT_REPORT closure banner, QA_FIX_PLAN executed, handover addendum, /cr385-qa-fix-plan.html status.
