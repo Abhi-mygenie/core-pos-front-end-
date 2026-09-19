@@ -41,8 +41,13 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
 .tab .sl a{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}.tab .sl a:hover{text-decoration-style:solid;color:var(--tx)}
 .tab .sl a.r{color:var(--dg);font-weight:600}.tab .sl a.a{color:var(--am);font-weight:600}.tab .sl a.g{color:var(--gr);font-weight:600}
 /* alert */
-.alert{height:36px;margin:10px 16px 0;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:0 12px;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--dgt)}
+.alert{height:36px;margin:10px 16px 0;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:0 12px;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--dgt);position:relative}
 .alert a{color:var(--dgt);font-weight:600;cursor:pointer;text-decoration:underline}.alert .sep{color:#FCA5A5}.alert .x{margin-left:auto;cursor:pointer;color:var(--dgt)}
+.alert-pop{position:absolute;z-index:60;top:42px;right:0;background:#fff;border:1px solid #FCA5A5;border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.16);padding:6px;min-width:300px;max-width:460px;max-height:300px;overflow:auto}
+.alert-pop-head{display:flex;align-items:center;gap:8px;padding:4px 8px 7px;font-weight:700;font-size:11px;color:var(--dgt);border-bottom:1px solid #FEE2E2;margin-bottom:4px}
+.alert-pop-row{padding:7px 10px;border-radius:6px}
+.alert-pop-row:hover{background:#FEF2F2}
+.alert-pop a{display:block;text-decoration:none;font-weight:600;color:var(--dgt)}
 /* panel */
 .panel{flex:1;overflow:auto;padding:12px 16px 20px}
 .chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;min-height:30px}
@@ -374,13 +379,19 @@ function renderTabs(){const c=counts(),bf=$('boardfail').checked,m6=v('mv6');
  ['inhouse','In-House',c.occ,`${L('inhouse','all',c.occ+' guests')} · ${L('inhouse','leaving',guests.filter(g=>g.cout<=T).length+' leaving today')}${O('inhouse','today',guests.filter(g=>g.cin===T).length+' arrived today')}`],
  ['rooms',rl,rn,bf?'room status unavailable':`${L('rooms','available',c.av+' free','g')} · ${L('rooms','occupied',c.occ+'/40 occupied')} · ${L('rooms','hk',c.hk+' HK','a')} · ${L('rooms','ooo',c.ooo+' OOO','r')}`]];
  const warn={arrivals:c.late>0,departures:c.od>0,inhouse:false,rooms:c.ooo>0};$('tabs').innerHTML=t.map(([k,l,n,s])=>`<button data-testid="tab-${k}" class="tab ${k} ${S.tab===k?'on':''} ${warn[k]?'warn':''}" onclick="go('${k}')"><span class="tl"><span class="t">${l}</span><span class="n">${n}</span></span><span class="sl">${s}</span></button>`).join('')}
+let ALERT_ITEMS=[];
 function renderAlert(){if($('quiet').checked||S.dismissed){$('alert').innerHTML='';return}const items=[];
  arr.filter(expired).forEach(a=>items.push(`<a onclick="go('arrivals','late','${a.id}')">${a.guest} · stay expired, not arrived</a>`));
  guests.filter(g=>depOf(g)==='overdue').forEach(g=>items.push(`<a onclick="go('departures','overdue','${g.id}')">Room ${g.room} overdue · ${-dayDiff(g.cout,T)} day</a>`));
  rooms.filter(r=>(r.st==='hk'||r.st==='occupied_hk')&&r.sinceMin>120).forEach(r=>items.push(`<a onclick="go('rooms','hk','r${r.id}')">Room ${r.no} HK ${Math.floor(r.sinceMin/60)}h ${r.sinceMin%60}m</a>`));
  rooms.filter(r=>r.st==='ooo'&&r.oooDays>=1).forEach(r=>items.push(`<a onclick="go('rooms','ooo','r${r.id}')">Room ${r.no} OOO ${r.oooDays} days</a>`));
- if(!items.length){$('alert').innerHTML='';return}const more=items.length>3?`<span>+${items.length-3} more</span>`:'';
- $('alert').innerHTML=`<div class="alert">⚠ ${items.slice(0,3).join('<span class="sep">|</span>')}${more}${v('mv7d')==='x'?'<span class="x" onclick="S.dismissed=true;render()">✕</span>':''}</div>`}
+ ALERT_ITEMS=items;if(!items.length){$('alert').innerHTML='';return}const more=items.length>3?`<a class="more" data-testid="alert-more" onclick="showAllAlerts(event)">+${items.length-3} more</a>`:'';
+ $('alert').innerHTML=`<div class="alert" data-testid="alert-bar">⚠ ${items.slice(0,3).join('<span class="sep">|</span>')}${more}${v('mv7d')==='x'?'<span class="x" onclick="S.dismissed=true;render()">✕</span>':''}</div>`}
+function showAllAlerts(e){e.stopPropagation();const wrap=document.querySelector('.alert');if(!wrap)return;const ex=$('alertpop');if(ex){ex.remove();document.removeEventListener('click',closeAlertPop);return}
+ const pop=document.createElement('div');pop.id='alertpop';pop.className='alert-pop';pop.setAttribute('data-testid','alert-popover');
+ pop.innerHTML=`<div class="alert-pop-head">⚠ All alerts · ${ALERT_ITEMS.length}</div>`+ALERT_ITEMS.map((a,i)=>`<div class="alert-pop-row" data-testid="alert-item-${i}">${a}</div>`).join('');
+ wrap.appendChild(pop);setTimeout(()=>document.addEventListener('click',closeAlertPop),0)}
+function closeAlertPop(ev){const pop=$('alertpop');if(!pop){document.removeEventListener('click',closeAlertPop);return}if(!pop.contains(ev.target)){pop.remove();document.removeEventListener('click',closeAlertPop)}}
 function go(tab,chip,openId){S.tab=tab;if(chip)S.chip[tab]=chip;S.open=openId||null;$('pop').style.display='none';$('side').style.display='none';render();if(openId&&!document.querySelector('[data-testid="bill-expansion"]'))setTimeout(()=>{const el=document.querySelector('tr.ex, .rex');el&&el.scrollIntoView({block:'center',behavior:'smooth'})},50)}
 function chipRow(list,cur,tab,extra=''){return `<div class="chips">${list.map(([k,l,n,cls])=>`<button class="chip ${cur===k?'on':(cls||'')}" onclick="S.chip.${tab}='${k}';S.open=null;render()">${l} ${n}</button>`).join('')}${S.q?`<span class="fchip">filtered by "${S.q}" <span style="cursor:pointer" onclick="clearSearch()">✕</span></span>`:''}${extra}</div>`}
 const matches=o=>{if(!S.q)return true;const q=S.q.toLowerCase().replace(/^r/,'');return [o.room,o.guest,o.bk,o.phone,o.type].some(x=>x&&String(x).toLowerCase().includes(q))};
