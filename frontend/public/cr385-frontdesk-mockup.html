@@ -151,10 +151,11 @@ body{background:var(--bg)}#ctl{display:none}
 .checkin-expansion .ci-pane{min-width:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden;max-height:var(--ci-height,560px)}
 .checkin-expansion .ci-pane-header{flex-shrink:0}
 .checkin-expansion .ci-pane-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
-.checkin-expansion .ci-pane-foot{flex-shrink:0;border-top:1px solid var(--bd);background:#fff;padding:8px 12px}
+.checkin-expansion .ci-pane-foot{flex-shrink:0;border-top:1px solid var(--bd);background:#fff;padding:6px 12px}
+.checkin-expansion [data-testid="checkin-right-col"] .ci-pane-body .ci-section{padding-top:8px;padding-bottom:8px}
 .checkin-expansion .ci-pane-foot .ci-readiness{margin-top:0}
 .checkin-expansion .ci-pane-foot .ci-payment-actions{margin-top:8px}
-.checkin-expansion .ci-pane-foot .ci-note{margin:6px 0 0}
+.checkin-expansion .ci-pane-foot .ci-note{margin:4px 0 0}
 .checkin-expansion .ci-pane-header{padding:10px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .checkin-expansion h2{font-size:14px;font-weight:600;margin:0}.checkin-expansion h3{font-size:11px;font-weight:600;margin:0 0 8px;color:#666;text-transform:uppercase;letter-spacing:.4px}
 .checkin-expansion .ci-section{padding:10px 12px;border-bottom:1px solid var(--bd)}.checkin-expansion .ci-section:last-child{border-bottom:0}
@@ -512,7 +513,7 @@ function checkinForm(a,wi){const c=ciContext(a,wi);CI.current=c;const {d,line,mu
  </section>
  <section class="ci-pane" data-testid="checkin-right-col" aria-label="Room bill and collection"><div class="ci-pane-header"><h2 data-testid="checkin-right-heading">Bill &amp; collection</h2><span class="sub" data-testid="checkin-room-context">${d.type} · ${d.room?'Room '+d.room:'unassigned'}</span></div>
  <div class="ci-pane-body">
- <div class="ci-section" data-testid="checkin-room-bill"><h3 data-testid="checkin-room-bill-heading">This room’s booking bill</h3>
+ <div class="ci-section" data-testid="checkin-room-bill">
  ${ciMoney('Booked charge · '+nights(line)+' nights','checkin-room-amount',d.charge)}${f.up>0?ciMoney('Room upgrade · '+d.type+' → '+d.upgradeType+' · paid','checkin-upgrade-charge',f.up):''}${ciMoney('SGST · sample 2.5%','checkin-sgst',f.tax/2)}${ciMoney('CGST · sample 2.5%','checkin-cgst',f.tax/2)}${ciMoney('Total incl. GST','checkin-total',f.total,true)}${ciMoney(d.paid===0?'No advance yet':((d.paid>=f.total?'Prepaid · ':'Advance · ')+ciPaidSource(a)),'checkin-already-paid',d.paid)}${ciMoney('Balance before collection','checkin-balance-before',f.due,true)}
  <div class="ci-payment-fields" data-testid="checkin-advance-section"><label class="ci-field">Collect now<input class="ci-input" type="text" inputmode="decimal" maxlength="12" data-testid="checkin-collect-now" value="${ciEsc(d.collect)}" ${done?'disabled':''} oninput="ciEdit('collect',this.value)"></label>
  <div class="ci-field full"><span class="ci-pm-label">Method${f.collect>0?' *':''}</span><div class="ci-pm" role="group" aria-label="Payment method" data-testid="checkin-payment-methods">${['Cash','Card','UPI'].map(m=>`<button type="button" class="ci-pill ${d.method===m?'on':''}" aria-pressed="${d.method===m}" data-testid="checkin-pay-${m.toLowerCase()}" ${done||f.collect===0?'disabled':''} onclick="ciEdit('method','${d.method===m?'':m}')">${m}</button>`).join('')}</div>${f.collect===0?'<span class="ci-note" data-testid="checkin-method-hint">Enter a collection amount to choose a method</span>':''}</div>
