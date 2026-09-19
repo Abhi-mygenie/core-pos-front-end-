@@ -1,0 +1,40 @@
+{
+  "summary": "CR-385 final narrow re-verify: RIGHT Check-In 'Bill & collection' has NO internal scroll at 1920x800 in BOTH baseline and paid-upgrade states. .ci-money row-spacing reduction (padding 2px, line-height 1.4) fully resolved the previous 23px overflow in the paid-upgrade sub-state.",
+  "measurements": {
+    "a2_baseline": {"scrollHeight": 362, "clientHeight": 362, "overflow": 0, "confirmBottom": 726.73, "total": "₹2,310"},
+    "a2_paid_upgrade": {"scrollHeight": 381, "clientHeight": 381, "overflow": 0, "confirmBottom": 749.13, "total": "₹9,555", "upgrade_charge_line": "₹6,900 (Room upgrade · Deluxe → Suite · paid)"},
+    "a5_baseline": {"scrollHeight": 362, "clientHeight": 362, "overflow": 0, "confirmBottom": 726.73, "total": "₹2,310"},
+    "a1_baseline": {"scrollHeight": 362, "clientHeight": 362, "overflow": 0, "confirmBottom": 726.73, "total": "₹1,050"},
+    "bill_103_total": "₹2,677 (unchanged; Checkout button shows ₹2,677)"
+  },
+  "bill_rows_paid_upgrade_a2": [
+    "Booked charge · 3 nights ₹2,200",
+    "Room upgrade · Deluxe → Suite · paid ₹6,900",
+    "SGST · sample 2.5% ₹227.5",
+    "CGST · sample 2.5% ₹227.5",
+    "Total incl. GST ₹9,555",
+    "Advance · Direct ₹500",
+    "Balance before collection ₹9,055",
+    "Remaining balance ₹9,055"
+  ],
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "regression_checks": {
+    "js_console_errors": "None",
+    "sgst_cgst_separate": "Yes - SGST 2.5% and CGST 2.5% shown as separate legible lines",
+    "all_bill_rows_legible": "Yes - all rows visible without truncation after row-spacing reduction",
+    "checkout_bill_103_total_2677": "Confirmed unchanged"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-385 mockup fitCheckin sizing is now verified across a1/a2/a5 baseline and a2 paid-upgrade sub-state at 1920x800. No overflow anywhere. Confirm buttons all sit well above y=800."
+}

@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.14 — Check-In design CLOSED/LOCKED by owner (2026-06); Booking review READY (next, pending owner go-ahead)
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.16 — Check-In baseline CLOSED at v2.14 (§J D31), plus owner-requested additions D32 auto-print receipt (v2.15) & D33 B2B (GST) billing (v2.16); Booking review READY (next, pending owner go-ahead)
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -236,3 +236,17 @@ After closing single-room Check-In (§J D31), the owner reviewed remaining Check
 **Phase-2 multi-room decisions to capture if/when K1 resumes:** (a) IDs per-room vs one lead ID for the booking; (b) payment per-room vs combined-then-split; (c) allow partial "check in the ready rooms now" while others stay pending; (d) complimentary-upgrade manager authorization once per booking vs per room. Plain-English proposed flow (room tabs, per-room drafts, booking-level readiness line, per-room upgrades, check-in-all or in-waves) was walked through with the owner on 2026-06 and is captured in the closure handover for reference.
 
 Active focus stays: **New Booking** design review next (on owner go-ahead), Check-In v2.14 + Checkout v2.9 locked.
+
+## L. Post-closure Check-In additions — owner-requested (D32, D33, 2026-06)
+After the v2.14 closure (§J), the owner requested two additions to Check-In; both built and verified. These are approved refinements to the closed baseline (not a reopening of the whole design). Multi-room stays ON HOLD (§K); Checkout v2.9 untouched.
+
+### D32 — Auto-print check-in receipt (v2.15)
+Owner: "one checkbox by default which is … from the settings … on or off … used to print the receipt as soon as the check-in is done. Auto print." Implemented: a **"Auto-print check-in receipt"** checkbox in the RIGHT footer above Cancel/Confirm (`checkin-autoprint`), whose **default comes from a property Setting** (mockup `CI_SETTINGS.autoPrintReceipt`, sample = On) shown as "· default from Settings: On"; staff can **override per check-in** (state persists across redraws). On Confirm, the MOCKED toast reports "receipt auto-printed (MOCKED)" when ticked, "no receipt printed" when not. Related to but narrower than G6/CR-364-PRINT (that remains the full welcome-slip print effort). Verified iteration_9.
+
+### D33 — B2B (GST) billing capture (v2.16)
+Owner: "if it's a B2B billing … tick mark … then GST customer name and GST customer number needs to be captured. These are the two things." Implemented: a **"B2B (GST) billing"** checkbox in a LEFT-column **Billing** section (`checkin-b2b-toggle`, default unchecked). When ticked it reveals and **requires two fields — GST customer name (`checkin-gst-name`) and GST customer number/GSTIN (`checkin-gst-number`)** — added to readiness (`ciMissing`) so Confirm/ready-pill block until both are filled; the booking-facts "Bill to" flips to "Company (GST)". The B2B billing flow itself is the **existing, working design**; this only captures the two invoice fields. Verified iteration_10 (behaviour) + iterations 11–12 (RIGHT no-scroll invariant re-confirmed after footer/bill changes).
+
+### RIGHT no-scroll invariant (maintained through D32/D33)
+Adding the auto-print row briefly re-introduced RIGHT overflow; resolved by removing the redundant footer policy note, relaxing the `fitCheckin` cap buffer (−14→−8), and compacting `.ci-money` bill rows (padding 4→2, line-height 1.5→1.4). **Verified iteration_12: RIGHT `.ci-pane-body` scrollHeight ≤ clientHeight in BOTH baseline (a2/a5/a1) and paid-upgrade states; Confirm within the 1920×800 viewport; SGST/CGST still separate.** No JS errors; checkout `?bill=103` ₹2,677 regression unchanged.
+
+Status: Check-In = **v2.16 working baseline** (v2.14 closed + D32/D33 additions). No new closure statement requested from owner for the additions; treat as settled unless the owner raises more Check-In items. Next: confirm go-ahead for **New Booking** design review.

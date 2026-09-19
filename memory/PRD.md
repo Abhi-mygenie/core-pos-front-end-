@@ -267,3 +267,10 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Phase-2 decisions to capture if multi-room resumes: IDs per-room vs one lead ID; payment per-room vs combined-then-split; partial check-in of ready rooms; complimentary-upgrade manager auth once per booking vs per room. Plain-English multi-room walkthrough given to owner (room tabs, per-room drafts, booking-level readiness, per-room upgrades, check-in-all or in-waves) — captured in closure handover.
 - Active focus unchanged: New Booking design review next (on owner go-ahead); Check-In v2.14 + Checkout v2.9 locked.
 
+
+## 2026-06 — CR-385 Check-In additions: auto-print receipt (D32) + B2B GST billing (D33)
+- D32 (v2.15): "Auto-print check-in receipt" checkbox in the RIGHT footer; default from a property Setting (CI_SETTINGS.autoPrintReceipt, sample On), overridable per check-in; confirm toast reports receipt auto-printed / not. Verified iteration_9.
+- D33 (v2.16): "B2B (GST) billing" tick in a LEFT Billing section; when ticked, requires GST customer name + GST customer number (GSTIN); added to readiness so Confirm/ready-pill block until filled; "Bill to" flips to "Company (GST)". B2B flow itself = existing working design; only the two invoice fields captured. Verified iteration_10.
+- RIGHT no-scroll invariant maintained: removed footer policy note, relaxed fitCheckin buffer (−14→−8), compacted .ci-money rows. Verified iteration_12 — RIGHT scrollHeight ≤ clientHeight in baseline AND paid-upgrade; Confirm within 1920×800; SGST/CGST separate; checkout ?bill=103 ₹2,677 unchanged; no JS errors.
+- Docs: DESIGN_DECISIONS new §L (D32/D33) + header updated. Check-In = v2.16 working baseline (v2.14 closed + these additions). Multi-room still ON HOLD (§K). Next: confirm go-ahead for New Booking design review; Checkout v2.9 locked.
+
