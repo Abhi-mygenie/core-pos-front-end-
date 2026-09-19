@@ -5,6 +5,7 @@
 - Treat Check-In like Checkout v2.9 — **do not edit without a new explicit owner request.**
 - **Booking design = READY to begin next.** Owner closed Check-In but did NOT in that message explicitly authorize starting Booking. Per D20 §8–9, **ask for a Booking go-ahead before editing the New Booking screen.**
 - Still PLANNING/design. This is screen-level closure only — NOT Hard Gate 2.6 closure, Gate 3 spike, Gate 4 GO, or production-code permission.
+- **Multi-room check-in: ON HOLD by owner (2026-06)** — stays Phase 2 concept-only; do not design until owner resumes. Full open-items list + Phase-2 decisions in DESIGN_DECISIONS **§K**.
 
 ## What the closed Check-In (v2.14) contains
 Checkout-mirrored two-column layout (details in §J / D21–D31):

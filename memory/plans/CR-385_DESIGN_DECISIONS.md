@@ -220,3 +220,19 @@ frontend-only mockup QA, all PASS: iteration_4 (v2.12 F1–F4/G1–G7), iteratio
 
 ### Next
 Ask the owner to confirm proceeding to the **New Booking** design review (D20 step 8–9). On go-ahead, set Booking = active and follow the same review → proposal → approval → edit → verify loop; keep Check-In v2.14 and Checkout v2.9 locked. Hard Gate 2.6 / Q6 / BQ-385-07 / IA Rev 3.2 / Gate 3 spike remain after the full expansion design review.
+
+## K. Open / parked Check-In items after v2.14 closure (2026-06)
+After closing single-room Check-In (§J D31), the owner reviewed remaining Check-In items. **Multi-room check-in is explicitly ON HOLD by owner decision** ("For now, we will put multi check-in on hold"). Check-In v2.14 stays CLOSED/LOCKED; these are tracked, not in active design.
+
+| # | Open item | Status |
+|---|---|---|
+| K1 | **Multi-room check-in** | **ON HOLD (owner, 2026-06).** Remains Phase 2 **concept-only / non-submittable** in the mockup (`?…&concept=multi`: room tabs, per-room draft/assignment/bill, no combined check-in or payment). Not to be designed until the owner explicitly resumes it. |
+| K2 | Booking-wide payment split (per-room vs combined-and-split allocation of a booking-level advance/collection) | PARKED — tied to K1; mockup intentionally does no auto-split. |
+| K3 | G5 — early check-in fee / waiver | DEFERRED to a later CR (property-rule heavy). |
+| K4 | G6 — welcome slip / registration card printing | DEFERRED to CR-364-PRINT. |
+| K5 | Occupancy changes at check-in (add/remove guests) | Current rule: guest count follows the booking; changes routed to booking review. Confirm as final if revisited. |
+| K6 | Live-rule reconciliation (availability/stay-overlap, ID-upload toggle, tax rates, upgrade rate ladder) | IMPLEMENTATION, not design — all MOCKED now; wire to real property logic when CR-385 moves to build. |
+
+**Phase-2 multi-room decisions to capture if/when K1 resumes:** (a) IDs per-room vs one lead ID for the booking; (b) payment per-room vs combined-then-split; (c) allow partial "check in the ready rooms now" while others stay pending; (d) complimentary-upgrade manager authorization once per booking vs per room. Plain-English proposed flow (room tabs, per-room drafts, booking-level readiness line, per-room upgrades, check-in-all or in-waves) was walked through with the owner on 2026-06 and is captured in the closure handover for reference.
+
+Active focus stays: **New Booking** design review next (on owner go-ahead), Check-In v2.14 + Checkout v2.9 locked.

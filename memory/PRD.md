@@ -260,3 +260,10 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Booking design = READY next; per D20 §8–9 confirm owner go-ahead before editing the New Booking screen. Screen-level closure only — not Hard Gate 2.6/Gate 3/Gate 4/production.
 - Closed design (v2.14) = checkout-mirrored layout + F1–F4/G1–G7 + Completion Badge; verified across iteration_4/6/7/8; checkout 103/107 regression unchanged. Docs: DESIGN_DECISIONS §J D31 + header/§E/§H status updated; handover `handover/SESSION_HANDOVER_2026_06_CR385_CHECKIN_CLOSED.md`.
 - Next: ask owner to proceed to New Booking design review; keep Check-In v2.14 + Checkout v2.9 locked.
+
+## 2026-06 — CR-385 Check-In open items reviewed; multi-room ON HOLD
+- Owner decision: **multi-room check-in is ON HOLD** ("For now, we will put multi check-in on hold"). It remains Phase 2 concept-only / non-submittable in the mockup; not to be designed until owner resumes. Check-In v2.14 stays CLOSED/LOCKED.
+- Open/parked Check-In items recorded in DESIGN_DECISIONS §K: K1 multi-room (ON HOLD), K2 booking-wide payment split (parked, tied to K1), K3 G5 early check-in fee (deferred later CR), K4 G6 welcome slip (CR-364-PRINT), K5 occupancy-change rule (routed to booking review), K6 live-rule reconciliation (implementation).
+- Phase-2 decisions to capture if multi-room resumes: IDs per-room vs one lead ID; payment per-room vs combined-then-split; partial check-in of ready rooms; complimentary-upgrade manager auth once per booking vs per room. Plain-English multi-room walkthrough given to owner (room tabs, per-room drafts, booking-level readiness, per-room upgrades, check-in-all or in-waves) — captured in closure handover.
+- Active focus unchanged: New Booking design review next (on owner go-ahead); Check-In v2.14 + Checkout v2.9 locked.
+
