@@ -154,8 +154,8 @@ body{background:var(--bg)}#ctl{display:none}
 .checkin-expansion .ci-pane-foot{flex-shrink:0;border-top:1px solid var(--bd);background:#fff;padding:6px 12px}
 .checkin-expansion [data-testid="checkin-right-col"] .ci-pane-body .ci-section{padding-top:8px;padding-bottom:8px}
 .checkin-expansion .ci-pane-foot .ci-readiness{margin-top:0}
-.checkin-expansion .ci-pane-foot .ci-payment-actions{margin-top:8px}
-.checkin-expansion .ci-autoprint{flex-wrap:wrap;margin-top:8px}
+.checkin-expansion .ci-pane-foot .ci-payment-actions{margin-top:6px}
+.checkin-expansion .ci-autoprint{flex-wrap:wrap;margin-top:4px}
 .checkin-expansion .ci-autoprint .ci-note{margin:0;color:#888}
 .checkin-expansion .ci-pane-foot .ci-note{margin:4px 0 0}
 .checkin-expansion .ci-pane-header{padding:10px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -535,7 +535,7 @@ function checkinForm(a,wi){const c=ciContext(a,wi);CI.current=c;const {d,line,mu
  <div class="ci-readiness ${!missing.length?'ready':''}" role="status" data-testid="checkin-readiness">${done?'Already checked in · view only':missing.length?'To complete: '+missing.join(' · '):'Ready for this room’s check-in'}${d.inventoryDemo?' · Inventory example only':multi?' · Concept only':''}</div>
  <label class="ci-chk ci-autoprint" data-testid="checkin-autoprint-row"><input type="checkbox" data-testid="checkin-autoprint" ${d.printReceipt?'checked':''} ${done?'disabled':''} onchange="ciEdit('printReceipt',this.checked)"> Auto-print check-in receipt <span class="ci-note" data-testid="checkin-autoprint-source">· default from Settings: ${CI_SETTINGS.autoPrintReceipt?'On':'Off'}</span></label>
  <div class="ci-payment-actions"><button class="btn" data-testid="checkin-cancel-button" onclick="closeCheckin()">Cancel</button><button class="btn p" data-testid="checkin-confirm-button" ${done||multi||d.inventoryDemo||missing.length?'disabled':''} onclick="confirmCheckin()">${done?'Already checked in':multi?'Concept only · not submittable':d.inventoryDemo?'Inventory example · preview only':f.collect>0?'Collect '+money(f.collect)+' &amp; Check In':'Confirm Check-In · ₹0 collection'}</button></div>
- <p class="ci-note" data-testid="checkin-payment-policy">Sample ledger · no split of booking-wide payments · drafts reset on reload.</p></div></section></div>
+ </div></section></div>
  <div class="ci-disclaimer" data-testid="checkin-demo-note">MOCKED preview (v2.15) — sample data; ID capture, availability, upgrades, payments and receipt printing are simulated. Auto-print check-in receipt defaults from property Settings (sample: On) and can be overridden per check-in. Mandatory ID rules reuse existing check-in logic (front required, back optional; CRM doc exempts). Live property rules and room payment allocations still to be reconciled.</div></div>`}
 
 function ciAdultComplete(g){return !!(g.name.trim()&&g.front)}
