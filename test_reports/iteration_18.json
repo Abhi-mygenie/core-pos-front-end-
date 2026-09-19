@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only test of CR-385 Extend Stay v2.20 right-panel rework. Verified full-bill layout (pending + extension = total payable), single optional Collect-now block, live balance recompute, method/UTR gating, discount+conflict path, source-room toast, and regression URLs. 10/11 acceptance items pass. The only failure is the NO-SCROLL invariant at 1920x800 in busiest state: extend-right-col .ci-pane-body scrollHeight=396 > clientHeight=369 (27px overflow), which causes 'extend-balance-note' to be clipped/scrolled. Confirm-button bottom=761 <=800 is still OK. No JS console errors on any regression URL.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "extend-right-col .ci-pane-body", "issue": "Internal scroll present in busiest state (conflict picker + discount open + collect amount + UPI UTR) at 1920x800. Measured scrollHeight=396, clientHeight=369 (27px overflow); extend-balance-note gets clipped behind the sticky footer/readiness. Confirm-button bottom=761 (<=800) is fine, but the no-scroll invariant is violated. In v2.19 the settle pills used ~2 lines; v2.20 added Pending balance line, Total payable line, and Balance-note while only removing settle pills — the pane grew net-taller. Suggested: reduce vertical padding of collect-fields, or hoist balance-note into the footer readiness zone, or shrink ci-payment-fields gap.", "selector": "[data-testid=\"extend-right-col\"] .ci-pane-body", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Reduce right-pane body height by ~30px in busiest state so scrollHeight<=clientHeight and extend-balance-note is fully visible without internal scroll (v2.20 no-scroll invariant)."
+  ],
+  "critical_code_review_comments": [
+    "exFigures/exConfirm/toast wiring look correct; g.bal is set to balanceRemaining after confirm — good.",
+    "extend-payment-methods pills correctly disabled while collected===0; UTR field only rendered for Card/UPI when collected>0 — good.",
+    "Old testids (extend-settle*, extend-advance-fields, extend-folio-after) fully removed — good.",
+    "Layout budget: consider computing --ci-height based on right-column content height (currently fitExtend uses layout height only). Right pane may need a small max-height guard to keep no-scroll invariant across future additions."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "~91%"},
+  "test_credentials": "none",
+  "seed_data_creation": "none",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "In-House tab is [data-testid=\"tab-inhouse\"]. Row 0 (Room 101) has pending balance 0. Row 1 (Room 102, R. Fernandes) triggers a conflict when new checkout is pushed +1 day (i.e. +2 nights from cout 17 Sep -> 19 Sep) and yields a 4-room picker with 229★ suggested. Busy-state check should be done after: pick suggested pill, open discount, fill val=10 + reason, set collect=500, choose UPI, fill UTR. Measure right-col .ci-pane-body scrollHeight/clientHeight and confirm-button bottom.",
+  "rca of the issue": "v2.20 right panel gained 2 new lines (Pending balance, Total payable) plus balance-note while removing only the settle pills. Net vertical growth pushes ci-pane-body scrollHeight beyond clientHeight (~27px) at 1920x800 in busiest state, causing internal scroll and clipping of extend-balance-note. Confirm button remains within viewport (bottom=761). Fix by trimming padding/gaps in the collect-fields block or by absorbing the balance-note into the footer readiness area."
+}
