@@ -1,0 +1,49 @@
+{
+  "summary": "Targeted re-test of iteration_18 MEDIUM no-scroll failure on CR-385 Extend Stay right-pane at 1920x800, plus sanity checks on v2.20 rework. All checks PASS. NO internal scroll in busiest state (even room 102 + +2 nights conflict + discount 10% + collect UPI + UTR).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [".screenshots/extend_busy.png"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "None (all data mocked in JS)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-385 mockup lives at /app/frontend/public/cr385-frontdesk-mockup.html and is served at /cr385-frontdesk-mockup.html. Correct testids for Extend Stay: extend-newcheckout (date), extend-nights (text), extend-room-picker + extend-room-<no>, extend-discount-toggle, extend-disc-percent/amount, extend-disc-val, extend-disc-reason, extend-collect-now, extend-pay-cash/card/upi, extend-payment-reference (UTR), extend-readiness, extend-balance-remaining, extend-right-col.ci-pane-body for scroll measure. To reach the busiest conflict state on room 102: set extend-newcheckout to default+1 day (yields +2 nights) — a room picker appears with even-room conflict.",
+  "verification_results": {
+    "no_scroll_invariant": {
+      "state": "busy: even room 102, +2 nights (conflict → moved to 229), discount 10% + reason, collect ₹500 UPI + UTR filled",
+      "scrollHeight": 363,
+      "clientHeight": 363,
+      "overflow_px": 0,
+      "confirm_button_bottom_px": 703.125,
+      "viewport": "1920x800",
+      "pass": true,
+      "comparison_to_iter18": "iteration_18 reported scrollHeight=396 vs clientHeight=369 (overflow=27). Now 363/363 → invariant restored."
+    },
+    "footer_balance_cue": {
+      "readiness_text": "Ready · collect \u20b9500 now · \u20b95,808 stays on folio",
+      "contains_stays_on_folio_with_amount": true,
+      "extend_balance_note_removed": true,
+      "extend_balance_remaining_still_present": true,
+      "extend_balance_remaining_value": "\u20b95,808"
+    },
+    "v2_20_sanity": {
+      "extend_pending_present": true,
+      "extend_total_payable_present": true,
+      "collect_fields_count": 1,
+      "method_utr_gating_upi_no_utr_disabled": true,
+      "method_utr_gating_upi_with_utr_enabled": true,
+      "confirm_toast_text": "Stay extended \u00b7 Room 102 \u2192 19 Sep \u00b7 moved to Room 229 \u00b7 collected \u20b9500 \u00b7 balance \u20b95,808",
+      "toast_mentions_original_source_room_102": true,
+      "non_conflict_odd_101_plus1_status": "\u2713 Room 101 is free through 17 Sep \u2014 no move needed.",
+      "non_conflict_status_color": "rgb(50, 153, 55) (green)",
+      "js_console_errors": 0
+    }
+  }
+}

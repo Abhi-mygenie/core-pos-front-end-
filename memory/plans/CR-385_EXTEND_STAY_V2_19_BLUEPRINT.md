@@ -1,6 +1,6 @@
 # CR-385 — Extend Stay design · first-iteration blueprint (PROPOSAL, v2.19)
 
-Status: **BUILT + agent-verified (v2.19, iteration_17, frontend 100%, no bugs).** Awaiting owner review. Design-only mockup.
+Status: **BUILT + agent-verified — v2.20 (iterations 17→19, frontend 100%, no bugs).** v2.19 shipped the box; v2.20 reworked the RIGHT panel per owner to show the FULL bill (pending folio balance + extension = Total payable) with a single optional Collect-now block (no settle toggle); Balance remaining = total payable − collected, rest stays on folio. No-scroll invariant restored (363/363). Awaiting owner review.
 Gate 2.6 OPEN. Checkout v2.9, Check-In v2.16, Booking v2.18 all LOCKED/untouched. This is the next
 expandable box after Booking closed (owner: "go one by one"). Everything MOCKED.
 
