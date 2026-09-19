@@ -1,0 +1,38 @@
+{
+  "summary": "Re-verified RIGHT Check-In column no-scroll invariant at 1920x800 after ~6px pane-cap relaxation. Baseline (a2/a5/a1) now passes: scrollHeight == clientHeight (392 == 392), Confirm rect.bottom = 756.5 ≤ 800. Paid-upgrade scenario (a2 + Room 230 Suite upgrade + Paid) shows 23px overflow (scrollHeight 416 > clientHeight 393), but Confirm/Cancel still within viewport (bottom 761/759 ≤ 800). No JS console errors. SGST+CGST split, autoprint present/checked, B2B toggle present in LEFT Billing section. Checkout ?bill=103 shows Grand Total ₹2,677 unchanged.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "cr385-frontdesk-mockup.html Check-In right pane (a2 + PAID upgrade)", "issue": "RIGHT .ci-pane-body overflows: scrollHeight 416 > clientHeight 393 (23px internal scroll) when Room 230 upgrade selected and Paid chosen. Adds a 'Room upgrade · Deluxe → Suite · paid ₹6,900' line. Confirm/Cancel are still visible (bottom 761/759 ≤ 800), but the pane requires internal scroll to reveal Advance/Balance rows.", "selector": "[data-testid=checkin-right-col] .ci-pane-body", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "measurements": {
+    "a2_baseline": {"scrollHeight": 392, "clientHeight": 392, "confirmBottom": 756.5, "cancelBottom": 754.5, "pass": true},
+    "a5_baseline": {"scrollHeight": 392, "clientHeight": 392, "confirmBottom": 756.5, "cancelBottom": 754.5, "pass": true},
+    "a1_baseline": {"scrollHeight": 392, "clientHeight": 392, "confirmBottom": 756.5, "cancelBottom": 754.5, "pass": true},
+    "a2_paid_upgrade": {"scrollHeight": 416, "clientHeight": 393, "confirmBottom": 761, "cancelBottom": 759, "chargeVisible": true, "noScrollPass": false, "confirmVisiblePass": true}
+  },
+  "regression_checks": {
+    "console_errors": [],
+    "sgst_cgst_separate": true,
+    "checkin_autoprint_present_and_checked": true,
+    "checkin_b2b_toggle_present": true,
+    "bill_103_grand_total": "₹2,677"
+  },
+  "test_report_links": [],
+  "action_items": [
+    "PRIMARY re-verify target (baseline a2/a5/a1 no-scroll) is FIXED — 2px residual gone, now exactly 392==392.",
+    "Secondary: paid-upgrade scenario adds one extra line and re-introduces ~23px overflow in RIGHT ci-pane-body. Confirm remains visible so functionally not blocking, but if the no-scroll invariant is required for all Check-In sub-states, consider reducing spacing when checkin-upgrade-charge is present, or allowing pane to grow by ~24px."
+  ],
+  "critical_code_review_comments": [
+    "fitCheckin() cap is state-independent; paid-upgrade state adds a row not accounted for. Consider dynamic re-measurement or slimmer row/gaps when charge row is visible."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "75% (3/4 scenarios pass no-scroll; 4/4 Confirm visible)"},
+  "seed_data_creation": "None (static mockup, mocked JS state).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Baseline a2/a5/a1 right-pane no-scroll invariant verified: 392==392, Confirm bottom 756.5. Only paid-upgrade sub-state (a2+Room230+Paid) still overflows by 23px but Confirm remains within viewport. B2B toggle in LEFT, autoprint checked, SGST/CGST split, bill=103 total ₹2,677 all confirmed."
+}
