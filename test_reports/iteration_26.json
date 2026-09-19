@@ -1,0 +1,74 @@
+{
+  "summary": "READ-ONLY QA audit of CR-385 static front-desk mockup (v2.25). Measured cross-screen amounts on hooks ?bill=102/113, ?checkin=a2, ?open=a1:cancel, ?room=101:extend, ?room=119/223, ?booking=1 at 1920x1080/1024x768/768x1024. No source file was modified. Console is clean (0 errors, 0 warnings) on every hook exercised. Multiple confirmed cross-screen inconsistencies, hardcoded bill figures, missing validation on Extend/Modify, and dismissal-label inconsistency documented below.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Bill · Checkout expansion", "issue": "P0 · Room booking amount, advance and GST are HARDCODED (roomAmt=1000, adv=100, gst=50 → total ₹950) regardless of the guest, booking, room type, nights, source, or actual advance. Measured on ?bill=102 (R. Fernandes · MakeMyTrip · Executive · 1 night · 2A → still shows ₹1,000/₹-100/₹950) AND on ?bill=113 (H. Shetty · Executive · 3 nights → still ₹1,000/₹-100/₹0 because a synthetic ₹950 'Other room payments' line zeros it). Source: line 560 `const adv=100,roomAmt=1000`.", "selector": "[data-testid=\"room-booking-amount\"] / [data-testid=\"room-total-amount\"]", "priority": "P0"},
+      {"component": "Cross-screen amount for same booking", "issue": "P0 · The SAME booking shows different amounts on each screen. Booking a1 (J. Pereira · Booking.com · Executive · 3 nights · 16→19 Sep) — Arrivals row ₹ column = ₹1,000; Cancel dialog prepaid = ₹3,000 (penalty ₹1,000, refund due ₹2,000); Modify computes current using (rate+plan)×n = 3300×3+5% ≈ ₹10,395; Check-In (measured on a2 same shape) 'Booked charge · 3 nights' = ₹2,200 (single-night amt, NOT multiplied). Row uses o.amt (single night); Modify uses per-night rate×n; Cancel/No-Show uses amt×nights; Check-In uses amt only. Four disagreeing figures for one booking. Sources: rowHTML line 432 (o.amt), modFigures line 510 (t.rate×n), prepaidOf line 549 (amt×n), ciContext line 641 (charge=line.amt).", "selector": "row td[₹] · modify-current · cancel-prepaid · checkin-room-amount", "priority": "P0"},
+      {"component": "Extend Stay", "issue": "P1 · Overpayment yields NEGATIVE 'Balance remaining' and Confirm stays enabled. Test on ?room=101:extend, Collect=999999, Cash → extend-total-payable = ₹3,465; extend-balance-remaining = ₹-9,96,534; readiness = 'Ready · collect ₹9,99,999 now'; extend-confirm-button disabled=null (enabled). Also the currency format '₹-9,96,534' places the minus after the ₹ symbol (should be −₹9,96,534). No clamp: line 474 `balanceRemaining=Math.round((totalPayable-collected)*100)/100`.", "selector": "[data-testid=\"extend-balance-remaining\"], [data-testid=\"extend-confirm-button\"]", "priority": "P1"},
+      {"component": "Modify Booking · validation gaps", "issue": "P1 · Adults input can be cleared to blank AND check-in can be set to a past date (e.g. 2026-09-01 vs T=2026-09-17) yet Save stays enabled. Measured on ?room=119 kebab › Modify with adults='' and cin='2026-09-01', reason='test' → modify-save-button disabled=null, readiness='Ready · collect ₹55,440'. Missing guards: modMissing() (line 511) has no adults>=1 check and no cin>=T check.", "selector": "[data-testid=\"modify-adults\"], [data-testid=\"modify-checkin\"], [data-testid=\"modify-save-button\"]", "priority": "P1"},
+      {"component": "Bill · F&B decimal / currency inconsistency", "issue": "P2 · Currency formats mix within one bill. Room block uses money() (no decimals): ₹1,000, +₹25, ₹950. F&B block uses .toFixed(2): ₹17.48 CGST, ₹17.48 SGST, +₹0.04 round-off, but item totals & total use money() (₹699, ₹734). Round off correctness: subtotal 699 × 0.025 = 17.475 (shown 17.48 twice; sum 34.96); ceil(699+34.96)=734 → round-off shown +₹0.04 while real diff = 734−733.96 = 0.04 (ok). But visual inconsistency remains a UI defect.", "selector": "[data-testid=\"fnb-cgst\"] vs [data-testid=\"room-sgst-amount\"]", "priority": "P2"},
+      {"component": "Bill · payment header order & tax label order", "issue": "P2 · Section-to-section header inconsistency. Room block lists SGST before CGST; F&B block lists CGST before SGST (line 589 vs 578).", "selector": "[data-testid=\"room-sgst-amount\"] / [data-testid=\"fnb-cgst\"]", "priority": "P2"},
+      {"component": "Bill · received amount", "issue": "P2 · 'Received' text is hard-wired to grand total (`${money(grand)}</b> received` line 596). No partial-payment input available; the label always claims full amount received even before any pay-action.", "selector": "[data-testid=\"payment-received-amount\"]", "priority": "P2"},
+      {"component": "Dismissal label inconsistency", "issue": "P2 · Five different close labels for the same 'dismiss dialog' action: Bill='Close', Check-In='Close', Extend='✕ Cancel', Booking='✕ Cancel', No-Show='✕ Close', Cancel='✕ Close', Room detail='✕'. Recommend a single label and glyph.", "selector": "*-close-button", "priority": "P2"},
+      {"component": "Arrivals action colour vs kebab colour", "issue": "P2 · No-Show is red on the expired row button (btn dg, line 435) but amber in the kebab menu (color:var(--am), line 804) and red again on the dialog Confirm button. Cancel is red everywhere. Verified: room 223 (Booking.com) kebab HTML style='color:var(--am)'; row button and dialog use btn dg.", "selector": ".btn.dg vs #pop button[style*='--am']", "priority": "P2"},
+      {"component": "Hook ?open=a1:cancel bypasses OTA-only rule", "issue": "P3 (observation) · a1 is Booking.com (OTA) yet the hook opens the Cancel dialog directly. Elsewhere OTA rows only offer No-Show. Deep-link hook does not enforce the isOTA rule.", "selector": "cancel-dialog", "priority": "P3"},
+      {"component": "In-House 'Leaving today' counter definition", "issue": "P3 · line 451 defines leaving=cout<=T which folds overdue into 'Leaving today'. In current mock overdue=0 so tabs read '4 leaving today' matching Departures '4 today'; but any overdue guest will silently inflate the In-House leaving count vs Departures Today.", "selector": "#tabs In-House sub-line", "priority": "P3"},
+      {"component": "Grammar / pluralisation drift", "issue": "P3 · Bill card uses 'night(s)' and 'day(s)' (line 564, 834) while Arrivals/In-House use 'nights'/'night' with runtime pluralisation. Room tile sub-line prints raw ISO date 'out 2026-09-19' (line 816) vs '19 Sep' elsewhere.", "selector": ".guest-stay-card, .rt .st", "priority": "P3"},
+      {"component": "Bill · discount / coupon persistence", "issue": "P3 · S.paymentRef, S.payMethod, S.fdT/V/R, S.cpn, S.loy are global mock state — they persist across different bills opened during a session, potentially leaking discount/coupon from one guest's bill to another when navigating.", "selector": "S.* module-level state", "priority": "P3"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Bill · Checkout (?bill=102)", "issues": ["Section headers, tax order and decimal precision differ between Room and F&B blocks (see ui_bugs above).", "Payment 'received' always equals grand; no partial-pay field."]},
+      {"screen": "Extend / Modify", "issues": ["Negative balance rendered as '₹-9,96,534' (minus after currency symbol).", "No validation for over-collection or past dates."]},
+      {"screen": "Dialog headers", "issues": ["Inconsistent close-button labelling across 7 dialogs."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "P0 Fix checkout Bill to compute roomAmt from the guest booking (rate, nights, plan supp, actual advance) — replace hard-coded adv=100/roomAmt=1000 (line 560).",
+    "P0 Reconcile the four sources of 'booking amount' so Arrivals row · Modify current · Cancel/No-Show prepaid · Check-In room-amount agree for one booking. Prefer per-night rate × nights everywhere and remove reliance on o.amt as a single-night value.",
+    "P1 Clamp Extend balance-remaining at 0 (or block Confirm) when collect > totalPayable; format negatives as '−₹X'.",
+    "P1 Add Modify validation: adults >= 1, check-in >= today, and pin these into modMissing().",
+    "P2 Unify decimal formatting & tax-line order between Room and F&B bill blocks; unify close-button label across dialogs.",
+    "P2 Replace hard-coded 'received' text with a proper amount input and show short-payment vs overpay clearly.",
+    "P3 Fix In-House 'leaving today' filter to cout===T (exclude overdue) to match Departures.",
+    "P3 Reset per-bill state (S.paymentRef, S.fdT/V/R, S.cpn, S.loy, S.payMethod) when switching bills.",
+    "P3 Standardise pluralisation ('night(s)') and date formatting on room tile sub-line."
+  ],
+  "critical_code_review_comments": [
+    "Single-file mockup is 890 lines — beyond the 700-line threshold; split into modules (state, render, expansions, rooms, search) for maintainability.",
+    "State is a monolithic global S{} object — no per-view reset when opening a different guest's bill leads to leakage of discount/coupon/loyalty.",
+    "checkout() (line 799) mutates `guests` (filter) but never updates `counters.checkedOut` visibly on the tab strip until re-render; small footer counter increments — OK, but a rapid double-click could still call checkout() twice on distinct guests; guard by disabling the button after first click.",
+    "Money helper uses toLocaleString('en-IN') which formats negatives as '-₹X' inconsistently — see Extend negative case.",
+    "prepaidOf/nsPenalty/cancelPenalty use amt×nights while ciContext uses only amt — the discrepancy is the root cause of H1 cross-screen mismatch."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only audit)", "frontend": "Audit — see issues"},
+  "measured_values": {
+    "H1_a1_arrivals_row_amount": "₹1,000",
+    "H1_a1_cancel_prepaid": "₹3,000",
+    "H1_a1_cancel_penalty": "− ₹1,000",
+    "H1_a1_cancel_refund_due": "₹2,000",
+    "H1_a2_checkin_room_amount": "₹2,200 (labelled 'Booked charge · 3 nights' but not multiplied)",
+    "H1_a2_checkin_already_paid": "₹500",
+    "H1_a2_checkin_balance_before": "₹1,810",
+    "H2_bill_102_room_total": "₹950 (roomAmt hardcoded 1000)",
+    "H2_bill_102_grand_total": "₹2,425 (fnb ₹734 + trans ₹741 + room ₹950)",
+    "H2_bill_102_fnb_cgst_sgst": "₹17.48 each · roundoff +₹0.04",
+    "H3_bill_113_room_total": "₹0 · Checkout ₹0 button enabled",
+    "H4_extend_room101_overpay_balance": "₹-9,96,534 with Confirm still enabled",
+    "H5_modify_r119_blank_adults_past_date": "Save enabled · readiness 'Ready · collect ₹55,440'",
+    "H6_dismissal_labels": {"Bill":"Close","Check-In":"Close","Extend":"✕ Cancel","Booking":"✕ Cancel","No-Show":"✕ Close","Cancel":"✕ Close","Room detail":"✕"},
+    "H7_kebab_room119_direct": "Cancel booking · style color:var(--dg) (red)",
+    "H7_kebab_room223_ota":   "Mark No-Show · style color:var(--am) (amber)",
+    "H10_tab_strip": "Arrivals 6 · 6 today · 3 late | Departures 4 · 4 today · 0 overdue | In-House 18 · 18 guests · 4 leaving today · 6 arrived today | Rooms 45% · 12 free · 18/40 occupied · 5 HK · 1 OOO",
+    "H13_responsive_horizontal_overflow": "None at 1920x1080, 1024x768, 768x1024 (scrollWidth == clientWidth)",
+    "H15_console_errors_or_warnings": "0"
+  },
+  "seed_data_creation": "None (static mock).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "This is a read-only audit; do not modify the mockup. Priority is the amount-source mismatch (H1) and the hard-coded checkout Bill (H2); once main-agent unifies the amount source, re-verify a1/a2 row ₹, Modify current, Cancel prepaid, Check-in room-amount all agree. Also re-check Extend negative-balance clamp and Modify blank-adults/past-date guards. Playwright evidence captured programmatically; no screenshots persisted (all measured via data-testid).",
+  "rca of the issue": "Different bill-computing functions read different fields for 'amount': rowHTML uses o.amt (single-night rate); modFigures uses (rate+plan.supp)*n; prepaidOf uses amt*n; ciContext uses only line.amt. Additionally, the Checkout expansion hard-codes roomAmt=1000/adv=100 (line 560) instead of deriving from the guest record. Consolidate into a single computeBookingCharge(bookingOrGuest) helper (rate × nights ± plan supplement) and refer every screen to it."
+}

@@ -352,3 +352,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - QA deliverables prepared: plans/CR-385_QA_TEST_PLAN.md (version-by-version walkthrough, review hooks, global invariants, mocked/deferred lists, evidence map) and handover/CR-385_SESSION_HANDOVER.md.
 - Provenance: agent-tested only — user acceptance pending. Everything mocked (static prototype).
 - Next: QA pass → stakeholder acceptance → wire real data (section title list, guest{} payload, hk_assignee) → Section/Floor KPIs, real refund/credit, discount unification. CR-365 Housekeeping Workflow is a separate module.
+
+## 2026-06 — CR-385 QA AUDIT BASELINE (read-only; no source changes) — plans/CR-385_QA_AUDIT_REPORT.md
+- Senior UI/UX + functional QA audit of mockup v2.25 across 19 screens/states, 9 workflows, 6 viewports (1920→768), Chromium. Evidence: test_reports/iteration_26.json + viewport sweep. 0 JS errors, no h-overflow, primary buttons always on-screen, reveal-scroll + single-button rule hold everywhere.
+- 31 findings: P0 ×2 (QA-001 Bill room block hard-coded → row balance ≠ Grand Total; QA-002 one booking shows 4 different amounts across Arrivals/Check-In/Modify/Cancel), P1 ×7 (rate-table contradiction after room link; over-collect/past-date/blank-adults accepted in Extend/Modify/Booking; same-day cin=cout seed rooms 102–105; no partial-payment state in Bill; No-Show/Cancel tax rows not applied to refund), P2 ×12 (consistency: dismiss labels, footers, toggles, tax order, currency format, terminology, Check-In right-pane scroll @1366), P3 ×10.
+- Fix order proposed in §I; P0 fixes require re-opening LOCKED Checkout v2.9 / Check-In v2.16 → owner authorisation needed. Safari/Edge NOT TESTED (Chromium only).
+- Status: awaiting owner triage of the registry before any implementation phase.
