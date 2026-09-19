@@ -224,6 +224,11 @@ body{background:var(--bg)}#ctl{display:none}
 .checkin-expansion .ci-adult-badge.ok{background:#EEF6EE;color:var(--gt);border:1px solid #CBE6C9}
 .checkin-expansion .ci-adult-badge.warn{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .checkin-expansion .ci-chev{font-size:10px;color:#888}
+.checkin-expansion .ci-progress{flex-shrink:0;display:flex;flex-wrap:wrap;gap:6px;padding:6px 12px;border-bottom:1px solid var(--bd);background:var(--bg2)}
+.checkin-expansion .ci-prog{font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.checkin-expansion .ci-prog.ok{background:#EEF6EE;color:var(--gt);border:1px solid #CBE6C9}
+.checkin-expansion .ci-prog.warn{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.checkin-expansion .ci-prog.info{background:#EEF2FF;color:#3730A3;border:1px solid #C7D2FE}
 /* rooms */
 .grid{display:grid;gap:10px;grid-template-columns:repeat(5,1fr)}.grid.cmp{grid-template-columns:repeat(10,1fr);gap:8px}.w1024 .grid{grid-template-columns:repeat(4,1fr)}.w1024 .grid.cmp{grid-template-columns:repeat(8,1fr)}
 .rt{background:#fff;border:1px solid var(--bd);border-radius:10px;overflow:hidden;position:relative;border-top:4px solid var(--c);cursor:pointer;transition:box-shadow .15s}.rt:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}.rt.sel{outline:2px solid var(--or)}
@@ -499,6 +504,7 @@ function checkinForm(a,wi){const c=ciContext(a,wi);CI.current=c;const {d,line,mu
  return `<div class="exp checkin-expansion" data-testid="checkin-expansion"><div class="exh"><b data-testid="checkin-title">${multi?'Multi-room concept':'Check In'} · ${ciEsc(a.guest||'Walk-in guest')}</b><span data-testid="checkin-source">${src(a.ch||'Walk-in')}</span><span class="sub" data-testid="checkin-booking-reference">${multi?'DEMO-MULTI':ciEsc(a.bk||'Walk-in')}</span><span class="sp"></span><button class="btn sm o" data-testid="checkin-concept-toggle" onclick="ciMode('${multi?'single':'multi'}')">${multi?'Back to single room':'Multi-room concept'}</button><button class="btn sm" data-testid="checkin-close-button" onclick="closeCheckin()">Close</button></div>
  ${multi?ciConcept(c):''}<div class="ci-layout" data-testid="checkin-columns">
  <section class="ci-pane" data-testid="checkin-left-col" aria-label="Booking, room assignment and guest IDs"><div class="ci-pane-header"><h2 data-testid="checkin-left-heading">Booking · room · guests</h2><span class="sub">${multi?'Booked room '+(index+1):'Single-room check-in'}</span></div>
+ <div class="ci-progress" data-testid="checkin-progress"><span class="ci-prog ${d.adults.filter(g=>ciAdultComplete(g)).length===d.adults.length?'ok':'warn'}" data-testid="checkin-progress-ids">${d.adults.filter(g=>ciAdultComplete(g)).length===d.adults.length?'✓ ':''}IDs ${d.adults.filter(g=>ciAdultComplete(g)).length}/${d.adults.length}</span><span class="ci-prog ${d.room&&ciEligible(c).some(r=>r.no===d.room)?'ok':'warn'}" data-testid="checkin-progress-room">${d.room&&ciEligible(c).some(r=>r.no===d.room)?'✓ Room '+d.room+' assigned':'• Room not assigned'}</span><span class="ci-prog info" data-testid="checkin-progress-balance">Balance ${money(f.due)}</span></div>
  <div class="ci-pane-body">
  <div class="ci-section" data-testid="checkin-booking-section"><dl class="ci-facts compact" data-testid="checkin-readonly-summary">
  <div><dt>${multi?'Contact':'Guest'}</dt><dd class="ci-inline"><b data-testid="checkin-guest-name">${ciEsc(a.guest||'Walk-in guest')}</b><span data-testid="checkin-phone">${a.phone?mask(a.phone):'—'}</span>${a.email?`<span data-testid="checkin-email">${ciEsc(a.email)}</span>`:'<span data-testid="checkin-email" hidden></span>'}${a.crm?'<span class="ci-badge" data-testid="checkin-crm-badge">CRM ✓</span>':''}</dd></div>
