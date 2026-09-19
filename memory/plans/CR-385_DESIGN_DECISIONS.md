@@ -331,6 +331,16 @@ old read-only placeholders in `expansion()`:
 Recommendation: do **Extend Stay** next, then **Modify Booking** (shared components), then the
 No-Show/Cancel confirmation pair.
 
+### D39 — Consistent Bill View standard (DOCUMENTED ONLY, not applied · 2026-06)
+Owner asked to keep this as a documented standard for now (no code changes). Standard vocabulary for
+**in-stay charge/collection** screens (screens that add a charge on top of an existing folio):
+`Pending balance · folio` → charge lines (+ discount, SGST, CGST) → **Total payable** (pending +
+charge) → `Collect now · optional` (amount + Cash/Card/UPI + UTR) → **Balance remaining** (stays on
+folio). Extend v2.20 already complies. NEW screens (Modify, future incidental/room-service posting)
+adopt it from the start. Booking (no pending) and Check-In (advance is a deduction, no pending) keep
+their own framing. LOCKED Check-In v2.16 / Checkout v2.9 / Booking v2.18 wording is NOT changed
+without a separate explicit owner request (a wording-only consistency pass was offered and deferred).
+
 ### D38 — Extend Stay BUILT as v2.19 (verified iteration_17, 2026-06)
 Owner approved; built as the next expandable box. Two-column expand-in-place (LEFT extension
 details / RIGHT extension bill + Confirm), locked language. New check-out (min cout+1) → live extra
