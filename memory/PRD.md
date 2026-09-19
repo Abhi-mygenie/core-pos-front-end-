@@ -371,3 +371,7 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Acceptance criteria for the implementation team: plans/CR-385_IMPLEMENTATION_ACCEPTANCE_CRITERIA.md + /cr385-acceptance-criteria.html (21 tick-boxes, AC-01…AC-21).
 - Rooms › Area grouping now derives sections from room `title` values (normalised, "No section" bucket); mock SECTIONS array is SEED ONLY. Awaiting the real board title list from the owner (only "patal lok" confirmed).
 - Phase 2 backlog (D45): Shift Summary card (check-ins / checkouts / no-shows / collections for handover) — recorded, not built.
+
+## 2026-06 — SESSION CLOSED · next task = IMPACT ANALYSIS (design v2.26 vs existing implementation)
+- Handover for the impact-analysis agent: handover/SESSION_HANDOVER_2026_06_CR385_V2_26_TO_IMPACT_ANALYSIS.md — reading order, source-of-truth precedence (D44/D45 > mockup > acceptance criteria > QA plan > older blueprints), implementation map (FrontDeskPage / CheckInPage / PmsCheckoutDrawer / ExtendStay-Modify-NoShow-Cancel dialogs / RoomStatusPage / pmsService), validation-date & proof checks, gap-register template, do-not list.
+- Also appended a pointer at the end of handover/CR-385_SESSION_HANDOVER.md. Design status: v2.26 agent-tested, owner visual acceptance pending; real section title list awaited.

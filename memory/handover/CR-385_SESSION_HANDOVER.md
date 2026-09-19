@@ -94,3 +94,6 @@ user-confirmed. Everything is MOCKED (see QA plan §4).
 - v2.26 implemented (D44): single booking-charge source (`RATE`, `bookingCharge`, `folioOf`, `BILL_D`, `refundOf`, `plural`, `money` 2-dp), Bill room block from the guest record, partial-payment state, two-step Checkout, refund = prepaid − penalty − GST, "✕ Close"/"Close" everywhere, glossary sweep, pills for refund/notify, Room Detail action footer, SVG icons, focus ring, contrast, tab ellipsis, Check-In right pane fits 1366×768, guards (over-collect / past date / adults ≥ 1), seed fixes (no same-day stays), hooks obey source rule, VERSION const.
 - Locks: Checkout v2.10, Check-In v2.17, Booking v2.19 (figures/validation/labels only). Evidence: iteration_26 (pre-fix audit), iteration_27 (post-fix, 24/27 → remaining 3 fixed + self-verified: Check-In "✕ Close", balance-remaining clamp, dialog testids).
 - Open: owner visual acceptance of v2.26; Safari/Edge manual pass; implementation-track acceptance criteria hand-off.
+
+## NEXT SESSION → read handover/SESSION_HANDOVER_2026_06_CR385_V2_26_TO_IMPACT_ANALYSIS.md
+The next agent's task is the complete read-only impact analysis of design v2.26 against the already-implemented PMS Front Desk pages. That file is the entry point; this file is history.
