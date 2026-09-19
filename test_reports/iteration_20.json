@@ -1,0 +1,22 @@
+{
+  "summary": "CR-385 v2.21 Modify Booking (frontend-only mockup) tested end-to-end. Kebab→Modify entry, expansion header/title, LEFT column (Guests, Stay w/ nights auto & checkout min, reused booking-rate-grid via nbGrid(d,'modPickCell'), availability line, discount toggle w/ conditional reason, required Reason), RIGHT bill (new-charge/sgst/cgst/new-total/current/change), positive-change collect flow (Cash/Card/UPI, UTR required for Card/UPI), negative-change refund flow (folio default, refund-to-guest pill, Phase-2 mock note), gating (checkout>checkin AND reason; UTR required when method Card/UPI and collected>0), Save toast + persistence across reopen, NO-SCROLL invariant at 1920x800 in busiest state, and regressions (Booking ?booking=1 grid still uses nbPickCell, Checkout ?bill=103, Check-In ?checkin=a2). No console/JS errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "modFigures treats o.amt as a flat 'current charge' (curCharge=o.amt) and only adds 5% GST to derive curTotal; seed rows store per-night rates in o.amt (V.Rao ₹2,200 for 3 nts, T.Gomes ₹1,000 for 2 nts), so 'Current booking' is understated relative to 'New booking · n nt'. This makes 'Change · to collect' appear inflated in most default demos. Consider curCharge=o.amt (already stay-charge) but ensure seed provides real stay totals — or compute curCharge=o.amt*o.n. Not a spec bug but is misleading in demos.",
+    "modConfirm() overwrites o.amt with the new full stay charge (f.charge), i.e. after reopen the row's o.amt now represents full stay amount, not per-night. This is inconsistent with the initial seed convention. Consider normalising the model (store stay charge everywhere).",
+    "Very long inline HTML template in modifyForm/nbGrid (lines ~503-521 & ~691) — hard to review; extract sub-renderers for readability (minor)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "NO-SCROLL busiest state measured: right-col .ci-pane-body scrollHeight=375, clientHeight=375 (no overflow), modify-save-button bottom=715.125 (<=800) at 1920x800. Positive path: BK-3002 → Suite MAP + 5% discount + collect ₹5,000 UPI + UTR = save enabled. Negative path: BK-3003 (Suite 1nt ₹4,500 seed) → Deluxe EP yields Change ₹-2,415, refund-fields shows folio (default)/guest pills + 'Phase-2 mock' note; toast: 'Booking modified · BK-3003 · Deluxe · 17 Sep→18 Sep · refund/credit ₹2,415 · refund to guest (MOCKED)'. Booking regression: booking-cell-* cells still call nbPickCell(). ?bill=103 & ?checkin=a2 render unchanged."
+}

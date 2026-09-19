@@ -328,7 +328,7 @@ old read-only placeholders in `expansion()`:
 - **Mark No-Show + Cancel Booking** — smaller confirmation-style pair (policy/forfeiture, refund,
   source notification); good to do together.
 - **Room detail** (Rooms-tab tile) — informational; lower priority.
-Recommendation: do **Extend Stay** next, then **Modify Booking** (shared components), then the
+Recommendation order: Extend Stay (v2.20 done) → Modify Booking (v2.21 done, iteration_20) → No-Show/Cancel pair (next) → Room detail.
 No-Show/Cancel confirmation pair.
 
 ### D39 — Consistent Bill View standard (DOCUMENTED ONLY, not applied · 2026-06)
