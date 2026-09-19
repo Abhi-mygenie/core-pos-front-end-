@@ -327,7 +327,7 @@ function revealBill(bill){
 }
 function fitCheckin(){const ci=document.querySelector('[data-testid="checkin-expansion"]');if(!ci)return;const layout=ci.querySelector('.ci-layout');if(!layout)return;const panel=$('panel'),pr=panel.getBoundingClientRect(),cr=ci.getBoundingClientRect();
  if(cr.top<pr.top+4||cr.top>pr.top+64)panel.scrollTop+=cr.top-pr.top-4;
- const lt=layout.getBoundingClientRect().top,disc=ci.querySelector('.ci-disclaimer'),discH=disc?disc.offsetHeight:0,avail=pr.bottom-lt-discH-14;layout.style.setProperty('--ci-height',Math.min(680,Math.max(220,avail))+'px')}
+ const lt=layout.getBoundingClientRect().top,disc=ci.querySelector('.ci-disclaimer'),discH=disc?disc.offsetHeight:0,avail=pr.bottom-lt-discH-8;layout.style.setProperty('--ci-height',Math.min(680,Math.max(220,avail))+'px')}
 function render(){
  const prior=document.querySelector('[data-testid="bill-expansion"]'),priorId=prior?.dataset.booking;
  const sections=prior?[...prior.querySelectorAll('.ledger-section')].filter(e=>e.open).map(e=>e.dataset.section):[];

@@ -1,0 +1,26 @@
+{
+  "summary": "CR-385 v2.16 tested end-to-end on the static frontdesk mockup. All B2B (GST) billing behaviours pass: toggle default unchecked with Bill to='Personal'; ticking reveals checkin-gst-name & checkin-gst-number (placeholder '15-digit GSTIN') + note, flips Bill to='Company (GST)'; unticking hides fields and reverts. Validation correctly blocks Confirm when GST fields are empty (readiness lists 'GST customer name'/'GST customer number', ready pill hidden, Confirm disabled); filling both clears missing items, ready pill appears and Confirm enables. B2B state + typed GST name persist across in-place redraw (typing into checkin-collect-now). Regression: bill=107 total 0 ✓, bill=103 total 2677 ✓, auto-print checkbox present + checked + toast copy visible. Mobile 390x844: no horizontal overflow, GST fields readable. No JS console errors. HOWEVER, the RIGHT no-internal-scroll bug re-verify is NOT fully resolved: at 1920x800 fresh ?checkin=a2, [data-testid=checkin-right-col] .ci-pane-body has scrollHeight=392 vs clientHeight=390 (2px overflow). Confirm button rect.bottom=755 (within viewport). Overflow reduced from prior 23px to 2px but the 'scrollHeight <= clientHeight' invariant still fails.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Check-In RIGHT pane body", "issue": "Internal scroll invariant still fails at 1920x800 on ?checkin=a2 (default state, B2B unchecked). Measured scrollHeight=392, clientHeight=390 → 2px overflow. Confirm bottom=755 (in viewport). Prior iteration_9 was 23px; tightening reduced but did not eliminate.", "selector": "[data-testid=checkin-right-col] .ci-pane-body", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Trim ~2px more from RIGHT pane (e.g., reduce vertical padding/margin on auto-print row or actions footer, or slightly increase pane body max-height) so scrollHeight <= clientHeight at 1920x800 on ?checkin=a2."
+  ],
+  "critical_code_review_comments": [
+    "B2B validation, redraw persistence, Bill-to fact flip, readiness/badge/ready-pill integration all wired correctly.",
+    "RIGHT column layout math needs a final 2px tightening to satisfy the no-internal-scroll invariant."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "~95% (1 layout invariant fails by 2px)"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Only outstanding item is 2px overflow in [data-testid=checkin-right-col] .ci-pane-body at 1920x800 on ?checkin=a2 default (B2B unchecked). Everything else in v2.16 (B2B toggle behaviour, GST field validation, redraw persistence, Bill to flip, regression bills 107/103, mobile) passes with no console errors.",
+  "rca of the issue": "After removing the payment-policy note and adding the auto-print footer row, the total right-pane content is 2px taller than the pane body. Likely candidates: auto-print row's line-height/padding or the actions/footer separator margin. A ~2px reduction in one of these will restore scrollHeight <= clientHeight."
+}
