@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.18 — Check-In CLOSED at v2.14 (§J D31) + D32/D33 (v2.16, only new change: booking-advance pass-through, D35); Booking review STARTED (§M D34) — first iteration v2.17, refined to v2.18 (room×rate-plan grid, B2B in guest block, advance carried into Check-In) + cross-tab row-toggle fix; verified iteration_14, awaiting owner review
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.18 — Check-In CLOSED at v2.14 (+D32/D33; booking-advance pass-through D35); Checkout v2.9 CLOSED; **Booking DESIGN CLOSED at v2.18 (§M D36, owner sign-off 2026-06)**; alert bar tidy+priority+popover (§M D37). NEXT expandable box: Extend Stay (recommended).
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -79,7 +79,7 @@ Owner asked to document the current version before giving further feedback. Chec
 | Review group | Expansion / entry points | Status |
 |---|---|---|
 | 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | **CLOSED / LOCKED at v2.14 (owner 2026-06, §J D31)** |
-| 2 | New Booking: header / available room Book Room | **IN REVIEW (§M D34, 2026-06)** — first iteration BUILT as v2.17 (verified iteration_13); awaiting owner review/feedback |
+| 2 | New Booking: header / available room Book Room | **DESIGN CLOSED at v2.18 (§M D36, owner 2026-06)** |
 | 3 | Extend Stay: Departures / In-House | Waiting for owner feedback; unchanged |
 | 4 | Modify Booking: Arrivals menu | Review with Extend Stay; unchanged |
 | 5 | Cancel Booking: Arrivals menu / expired booking | Review with No-Show; unchanged |
@@ -136,7 +136,7 @@ Verification: PASS — `/app/test_reports/iteration_3.json`, current v2.11 front
 | Active role | PLANNING / design only |
 | Checkout | v2.9 settled; leave untouched |
 | Check-In | **v2.14 — CLOSED / LOCKED by owner (2026-06, §J D31).** Treat like Checkout v2.9; no edits without a new explicit owner request |
-| Booking design | **IN REVIEW (§M D34)** — blueprint proposed (v2.17), awaiting approval to build |
+| Booking design | **DESIGN CLOSED at v2.18 (§M D36)**; next expandable box = Extend Stay (then Modify Booking, then No-Show/Cancel) |
 | Multi-room | Phase2 concept only; separate scope approval needed to include inPhase1 |
 | Hard Gate2.6 | OPEN, independent of individual screen sign-off |
 
@@ -298,4 +298,35 @@ collapse on re-click. All built and verified (iteration_14, frontend 100%, no bu
 - Minor open note (reviewer): a fully sold-out type greys all its rate-plan cells (correct — no room
   of that type is bookable on any plan); revisit messaging at backend wire-up. Not blocking.
 
-Status: New Booking = **v2.18 working baseline (BUILT + agent-verified)**, awaiting owner review.
+Status: New Booking = **v2.18 — DESIGN CLOSED (owner sign-off 2026-06): "Booking is fine. We can close the design for the booking."** See D36/D37 below.
+
+### D36 — New Booking design CLOSED at v2.18 (owner sign-off, 2026-06)
+Owner reviewed v2.18 and closed the Booking screen design. Final Booking baseline = **v2.18**:
+two-column expand-in-place; LEFT Guest (with B2B/GST inline) → Stay → Room×Rate-plan GRID; RIGHT
+live bill (room + meal itemised, SGST/CGST separate) → collapsed advance (Phase-2 payment-link
+placeholder) → advance-paid + Bill-to(GST) lines → balance → readiness → Save / Save & Check in now.
+Room TYPE only (room number + documents at Check-In); advance carries into Check-In as already-paid.
+Locked like Checkout v2.9 & Check-In v2.16 — do not modify without an explicit new owner request.
+
+### D37 — Alert bar tidy + priority + actionable "+N more" (2026-06, verified iterations 15–16)
+- "+N more" opens a popover (`alert-popover`) listing ALL alerts, each a clickable shortcut
+  (`alert-item-<i>`); toggle-close, outside-click-close, no duplicate nodes.
+- Alerts sorted MOST-URGENT-FIRST: overdue check-outs → extended housekeeping → out-of-order →
+  no-show (HK by longest duration). Popover rows carry a category tag; overdue+HK get a red
+  "urgent" accent.
+- Alert links precise (guest + room); expired-arrival alerts open the Mark No-Show panel for that
+  exact booking.
+
+### Next expandable box to design (recommendation)
+Big three done (Check-In v2.16, Checkout v2.9, Booking v2.18). Remaining expandable boxes are still
+old read-only placeholders in `expansion()`:
+- **Extend Stay** (`kind='extend'`) — RECOMMENDED NEXT. Frequent front-desk action, currently a bare
+  "—" placeholder, and naturally reuses the language we've built (date picker → live extra-nights ×
+  rate → SGST/CGST → collect-now Cash/Card/UPI pills → balance → readiness). Real design substance:
+  availability conflict for the new dates, rate for extra nights, collect now vs at check-out.
+- **Modify Booking** (`kind='modify'`) — close second; can reuse the Booking grid/date components.
+- **Mark No-Show + Cancel Booking** — smaller confirmation-style pair (policy/forfeiture, refund,
+  source notification); good to do together.
+- **Room detail** (Rooms-tab tile) — informational; lower priority.
+Recommendation: do **Extend Stay** next, then **Modify Booking** (shared components), then the
+No-Show/Cancel confirmation pair.

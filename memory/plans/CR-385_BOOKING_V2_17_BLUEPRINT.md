@@ -97,5 +97,5 @@ Store the exact advance collected at Booking on the reservation and show it as "
 prepaid" in Check-In's bill so the balance reconciles. This is the ONLY Check-In change (a
 pass-through of the booking advance); the rest of Check-In v2.16 stays locked.
 
-Status: v2.18 — **BUILT + agent-verified (iteration_14, frontend 100%, no bugs)**. Awaiting owner review.
+Status: v2.18 — **DESIGN CLOSED (owner sign-off 2026-06).** Booking baseline locked at v2.18; do not modify without a new owner request. Next expandable box: Extend Stay (recommended), then Modify Booking, then No-Show/Cancel.
 
