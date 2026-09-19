@@ -1,0 +1,32 @@
+{
+  "summary": "CR-385 v2.25 mockup frontend testing - all 7 requested scenarios PASS. Title reads v2.25. Zero JS console errors across all routes. Rooms tab shows chips (All 40 / Available 12 / Occupied 18 / Booked 6 / HK 5 / OOO 1 / Turns today 4) + Group segmented (Room no./Type/Area) + Mark All Clean (3) + Auto-HK ON CHECKOUT: ON. Group by Area renders exactly 4 sections with correct labels: 'Patal Lok · 10', 'Baga Wing · 10', 'Anjuna Block · 10', 'Palm Court · 10' — sum = 40. Group by Type still shows Suite/Executive/Deluxe. Group by Room no. is ungrouped. Room detail headers include section: Room 101·Executive·Patal Lok, Room 221·Suite·Anjuna Block, Room 225·Executive·Anjuna Block, Room 119·Executive·Baga Wing. Room 225 (occupied_hk) housekeeping cell reads 'assignee Meena K.' from hk_assignee (not blank/undefined). Turns today filter lists exactly rooms 102, 103, 104, 105 (4 rooms), matching chip count 4; each turn room's detail 'Next arrival' shows bold 'TURN TODAY' chip (verified on Room 104). Booked Room 119 shows Check In + kebab (Direct source). Deep-link routes ?open=ans:noshow, ?open=a1:cancel, ?checkin=a2, ?booking=1 all render their expected dialog/expansion testids.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "observed_data": {
+    "area_sections_and_counts": {"Patal Lok": 10, "Baga Wing": 10, "Anjuna Block": 10, "Palm Court": 10, "total": 40},
+    "turns_chip_count": 4,
+    "turns_rooms_listed": ["102","103","104","105"],
+    "room_225_hk_assignee": "Meena K.",
+    "room_headers": {
+      "101": "Room 101 · Executive · Patal Lok",
+      "119": "Room 119 · Executive · Baga Wing",
+      "221": "Room 221 · Suite · Anjuna Block",
+      "225": "Room 225 · Executive · Anjuna Block"
+    },
+    "title": "CR-385 · Front Desk Workstation (Beta) — Mockup v2.25",
+    "js_console_errors": 0
+  },
+  "context_for_next_testing_agent": "All CR-385 v2.25 acceptance points verified via ?room=<no>, group-* testids, and chip filters. No changes required."
+}
