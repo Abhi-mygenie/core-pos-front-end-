@@ -1,0 +1,36 @@
+{
+  "summary": "CR-385 v2.24 Rooms-tab control cleanup verified end-to-end. Single control row confirmed: status chips on left, new light segmented Group control (Room no./Type/Area) on right; old Density/Compact and second row of big Group-by pills are GONE. All three group modes render correct headers with counts summing to 40. Room 101 detail seed fix (17 Sep -> 19 Sep, night 1 of 2) verified. Room 119 booked shows Check-In + kebab. Arrivals regressions (?open=ans:noshow, ?open=a1:cancel, ?checkin=a2, ?booking=1) all render. Zero JS console errors throughout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "observed_group_headers": {
+    "type": ["Suite · 13", "Executive · 14", "Deluxe · 13 (total 40)"],
+    "area": ["1st Floor · 20 (rooms 101-120)", "2nd Floor · 20 (rooms 221-240) (total 40)"],
+    "available_plus_area": ["2nd Floor · 12 (1st Floor hidden because 0 available - empty group correctly filtered)"]
+  },
+  "verified": [
+    "Title: 'CR-385 · Front Desk Workstation (Beta) — Mockup v2.24'",
+    "data-testid rooms-groupby, group-flat, group-type, group-area all present",
+    "Default active = group-flat (class 'on'); flat mode renders no group headers",
+    "No Density/Compact controls anywhere on Rooms panel",
+    "Group by Type headers: Suite·13, Executive·14, Deluxe·13 (sum=40)",
+    "Group by Area headers: 1st Floor·20, 2nd Floor·20 (sum=40, split by room-number prefix)",
+    "Status Available + Group Area shows only '2nd Floor · 12'; no OCCUPIED/BOOKED/HK tiles leaked; empty 1st Floor group hidden",
+    "Room 101 detail shows '17 Sep', '19 Sep', 'night 1 of 2', Bill, Extend, Request HK",
+    "Room 119 (booked) detail shows Check-In action + kebab",
+    "?open=ans:noshow, ?open=a1:cancel, ?checkin=a2, ?booking=1 all render content",
+    "Zero JS console/page errors captured across all navigations"
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "v2.24 cleanup passed 100%. Rooms panel single control row with Group segmented control confirmed. Any next iteration should re-verify group headers sum to total room count for chosen filter, and that group-flat remains the default."
+}
