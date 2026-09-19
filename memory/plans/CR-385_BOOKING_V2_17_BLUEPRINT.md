@@ -64,3 +64,38 @@ On owner approval → build as mockup v2.17 (replace old placeholder `nbForm()` 
 Check-In-consistent two-column, type-only form), then verify (entry points, CRM lookup, type +
 availability, GST gating, advance expand containment, both save actions, checkout/check-in
 regression).
+
+---
+
+## v2.18 revision — owner feedback after reviewing v2.17 (2026-06)
+Owner reviewed the built v2.17 and gave three changes. v2.17 was correct in structure; v2.18 refines
+the plan/room selection to match how a guest actually shops, relocates B2B, and wires advance through.
+
+### R1 — Room × Rate-plan GRID (owner chose Option B; "Executive with all plans together")
+Replace the two separate selectors (meal-plan pills + room-type pills) with ONE compact matrix so
+the guest can compare every combination the way they ask for it ("Executive how much? … with two
+meals how much?").
+- **Rows = room types, Columns = rate plans; each cell = ALL-IN price per night** (room base + meal
+  supplement) for that type×plan. Selecting a cell sets BOTH type and plan at once.
+- Read across a row = one type with all plans; read down a column = all types on one plan.
+- Selected cell = checkout-style dark ring. Type row label shows **N free**; a 0-free type row is
+  greyed/disabled. OOO count in a footer line.
+- **Right bill still itemises Room vs Meal-plan** (+ SGST/CGST separate → total) so the split stays
+  transparent even though the pick is a single cell.
+- Section renamed "Room & rate plan" and moved to sit where type/plan were. It replaces the old
+  D34 "meal-plan pills above room-type pills" ordering.
+- Responsive: desktop/1024 fits; narrow mobile = horizontally scrollable grid (or fallback to
+  type-first → plan pills) so nothing clips.
+
+### R2 — B2B (GST) into the Guest block
+Move the B2B (GST) tick out of the bottom Billing section into the **Guest block, directly under
+name/phone** (email + occupancy above it). Ticking reveals GST customer name + GSTIN inline. Remove
+the separate bottom Billing section.
+
+### R3 — Carry booking advance into Check-In
+Store the exact advance collected at Booking on the reservation and show it as "already paid /
+prepaid" in Check-In's bill so the balance reconciles. This is the ONLY Check-In change (a
+pass-through of the booking advance); the rest of Check-In v2.16 stays locked.
+
+Status: v2.18 blueprint — awaiting owner approval to build (owner asked for blueprint first).
+
