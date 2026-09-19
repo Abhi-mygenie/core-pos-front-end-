@@ -246,3 +246,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - All MOCKED; checkout v2.9, src/backend/env/registry untouched; Gate 2.6 OPEN. Accepting D29 / any QA PASS is NOT Check-In closure — D20 explicit closure + Booking authorization still required.
 - Docs: DESIGN_DECISIONS §I D29 (status IMPLEMENTED + verification); handover `handover/SESSION_HANDOVER_2026_06_CR385_V2_13_V2_14_LAYOUT.md`.
 - Next: resume the D20 Check-In walkthrough on v2.14 toward explicit closure before Booking; re-confirm the 1920×800 containment fix; multi-room stays Phase 2.
+
+
+## 2026-06 — CR-385 v2.14 RIGHT-scroll fixed + Completion Badge (D30)
+- RIGHT "Bill & collection" no-scroll bug fully resolved: removed the redundant RIGHT h3 "This room's booking bill" (pane header already labels it) + tightened RIGHT section/footer spacing (on top of the viewport-aware `fitCheckin`). SGST/CGST breakup preserved. Re-verified iteration_7: RIGHT `.ci-pane-body` scrollHeight==clientHeight (392) on a2/a5/a1 and paid-upgrade; Confirm bottom 733.5 < 800; no JS errors.
+- Completion Badge (D30): pinned LEFT strip `checkin-progress` — `checkin-progress-ids` (IDs done/total, green when all), `checkin-progress-room` (✓ Room N assigned / • not assigned), `checkin-progress-balance` (Balance ₹N = balance before collection). Live-updates; verified iteration_7 (warn→ok transitions, balance matches checkin-balance-before).
+- Docs: DESIGN_DECISIONS §I D29 (verification updated) + D30. Still PLANNING; per D20 not Check-In closure. Next: walkthrough review of v2.14 toward explicit Check-In closure before Booking.

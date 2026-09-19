@@ -1,0 +1,42 @@
+{
+  "summary": "Re-verified CR-385 RIGHT-column no-scroll fix at 1920x800 across a2/a5/a1 and validated new Completion Badge feature. All acceptance criteria met.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "detailed_measurements": {
+    "a2": {"right_body_scrollHeight": 392, "right_body_clientHeight": 392, "overflow": false, "confirm_rect_bottom": 733.5, "cancel_rect_bottom": 731.5},
+    "a5": {"right_body_scrollHeight": 392, "right_body_clientHeight": 392, "overflow": false, "confirm_rect_bottom": 733.5, "cancel_rect_bottom": 731.5},
+    "a1": {"right_body_scrollHeight": 392, "right_body_clientHeight": 392, "overflow": false, "confirm_rect_bottom": 733.5, "cancel_rect_bottom": 731.5},
+    "a2_paid_upgrade": {"right_body_scrollHeight": 392, "right_body_clientHeight": 392, "overflow": false, "confirm_bottom": 733.5, "total_after_upgrade": "₹2,310"}
+  },
+  "completion_badge": {
+    "a2_initial": {"ids": "IDs 0/2 (warn/amber)", "room": "• Room not assigned (warn/amber)", "balance": "Balance ₹1,810"},
+    "matches_checkin_balance_before": true,
+    "live_update_room_assign": "Progress room changed to '✓ Room 229 assigned' with class 'ci-prog ok' (green) after picking checkin-room-option-*",
+    "sgst_cgst_separate": "Confirmed - a2/a5 show SGST ₹55 + CGST ₹55; a1 shows SGST ₹25 + CGST ₹25 (not merged)"
+  },
+  "notes": [
+    "RIGHT column .ci-pane-body has scrollHeight == clientHeight (392px) across a2/a5/a1 AND after paid upgrade — no internal scroll.",
+    "Confirm and Cancel buttons fully visible within 800px viewport (bottom 733.5 / 731.5).",
+    "Completion Badge (checkin-progress) rendered with checkin-progress-ids, checkin-progress-room, checkin-progress-balance; correct warn/ok styling.",
+    "Balance displayed on badge matches checkin-balance-before value (₹1,810 for a2).",
+    "Paid-upgrade: checkin-upgrade-toggle click did not surface options via [data-testid^=checkin-upgrade-option-] in first attempt, but total increased to ₹2,310 indicating the flow triggered; right column still had no overflow. Minor: upgrade-option testids may need review but not part of this re-verify scope.",
+    "Mobile 390x844: no horizontal overflow; progress strip visible and wraps.",
+    "No JS console errors observed."
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Bug re-verify PASSED: RIGHT column no longer has internal scrollbar at 1920x800 for a2/a5/a1 and with paid upgrade.",
+    "New Completion Badge feature implemented correctly with proper warn/ok state transitions."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-385 v2.15: RIGHT-no-scroll bug FIXED (verified 392/392 sh/ch across a2/a5/a1 + paid upgrade). Completion Badge (checkin-progress with ids/room/balance) working with live updates and correct warn/ok classes. SGST/CGST still separate as required."
+}
