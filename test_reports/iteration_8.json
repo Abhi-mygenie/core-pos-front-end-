@@ -1,0 +1,31 @@
+{
+  "summary": "Verified CR-385 new 'Ready to check in' green pill on Check-In LEFT-column progress strip. All acceptance criteria pass: pill hidden while incomplete, appears green (bg rgb(50,153,55)) with subtle green tint on strip (bg rgb(234,246,234)) when fully ready, disappears when a requirement is removed and returns when re-satisfied, and does NOT appear in blocked modes (multi-room concept, inventory example). Regression checks pass (Confirm visible at 1920x800, SGST/CGST separate, bill 103 total ₹2,677, no console errors).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "detailed_results": {
+    "initial_a2": "checkin-progress-ready ABSENT; strip class 'ci-progress ' (no ready); ids 'IDs 0/2', room 'Room not assigned' (amber); confirm disabled -> PASS",
+    "fully_ready_a2": "After room-trigger + option pick + adult-name-2 fill + id-front-1 + id-front-2: checkin-progress-ready PRESENT with text '✓ Ready to check in'; ready pill bg=rgb(50,153,55) GREEN; strip class 'ci-progress ready' bg=rgb(234,246,234) green tint; confirm ENABLED ('Confirm Check-In · ₹0 collection') -> PASS",
+    "toggle_off": "Cleared checkin-adult-name-2 via checkin-adult-toggle-2 expand -> ready pill DISAPPEARS, strip class back to 'ci-progress ', confirm DISABLED -> PASS",
+    "toggle_on": "Re-filled name -> ready pill RETURNS, confirm re-enabled -> PASS",
+    "multi_concept": "?checkin=a2&concept=multi -> checkin-progress-ready ABSENT -> PASS",
+    "inventory_example": "Clicked checkin-inventory-example; no eligible room options available in demo (0 options); ready pill remains ABSENT even after attempting to satisfy requirements -> PASS",
+    "confirm_bbox_1920x800": "y=697, bottom=733 (< 800) -> no scroll needed on RIGHT column, Confirm visible -> PASS",
+    "sgst_cgst_separate": "checkin-sgst and checkin-cgst both present -> PASS",
+    "bill_103": "Grand Total ₹2,677 (Checkout ₹2,677 visible) -> PASS",
+    "bill_107": "Loads (room-total-amount ₹0) -> PASS",
+    "console_errors": "None captured"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CR-385 v2.14 + Ready-pill polish verified. Ready pill computed bg is rgb(50,153,55). Strip when ready adds 'ready' class with bg rgb(234,246,234). Test data-testids: checkin-progress, checkin-progress-ids, checkin-progress-room, checkin-progress-balance, checkin-progress-ready, checkin-adult-toggle-2 (expand collapsed cards), checkin-room-trigger, checkin-room-option-*, checkin-id-front-1/2, checkin-inventory-example. Bill totals use room-total-amount / GRAND TOTAL text (no single 'bill-total' testid)."
+}

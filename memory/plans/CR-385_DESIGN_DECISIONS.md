@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.11 unchanged; Check-In review OPEN, Booking review BLOCKED
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.14 — Check-In design CLOSED/LOCKED by owner (2026-06); Booking review READY (next, pending owner go-ahead)
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -78,8 +78,8 @@ Owner asked to document the current version before giving further feedback. Chec
 
 | Review group | Expansion / entry points | Status |
 |---|---|---|
-| 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | OPEN — owner walkthrough/feedback and explicit Check-In close required (D20) |
-| 2 | New Booking: header / available room Book Room | BLOCKED for design review/edits until explicit Check-In close AND permission to proceed to Booking (D20) |
+| 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | **CLOSED / LOCKED at v2.14 (owner 2026-06, §J D31)** |
+| 2 | New Booking: header / available room Book Room | **READY next**; confirm owner go-ahead before editing the New Booking screen (D20 §8–9) |
 | 3 | Extend Stay: Departures / In-House | Waiting for owner feedback; unchanged |
 | 4 | Modify Booking: Arrivals menu | Review with Extend Stay; unchanged |
 | 5 | Cancel Booking: Arrivals menu / expired booking | Review with No-Show; unchanged |
@@ -135,8 +135,8 @@ Verification: PASS — `/app/test_reports/iteration_3.json`, current v2.11 front
 |---|---|
 | Active role | PLANNING / design only |
 | Checkout | v2.9 settled; leave untouched |
-| Check-In | v2.11 draft; review OPEN; final owner sign-off NOT received |
-| Booking design | BLOCKED until Check-In explicitly closed and owner authorizes Booking review |
+| Check-In | **v2.14 — CLOSED / LOCKED by owner (2026-06, §J D31).** Treat like Checkout v2.9; no edits without a new explicit owner request |
+| Booking design | **READY** to begin next; confirm owner go-ahead before editing the New Booking screen (D20 §8–9) |
 | Multi-room | Phase2 concept only; separate scope approval needed to include inPhase1 |
 | Hard Gate2.6 | OPEN, independent of individual screen sign-off |
 
@@ -195,4 +195,28 @@ Owner brainstorm: "do we really need scroll in RHS … recheck layout"; "id card
 **Verification (v2.14):** iteration_6 PASS on structure, room-in-LEFT → RIGHT live update (upgrade Paid raises total), collapsible cards + auto-collapse-when-complete (manual-expanded stays open), F1 lightbox, F3 pills (selected pill pure white), F4 2-col facts, a5/a1 states, mobile 390 stack, checkout 103/107 regression. iteration_6's one HIGH (RIGHT still scrolled / Confirm clipped at 1920×800) was resolved in two steps: (1) `fitCheckin()` rewritten viewport-aware (reveal expansion to panel top, then cap `--ci-height` to panel bottom − layout top − disclaimer) + disclaimer compacted; (2) owner asked to reclaim space from headings rather than merge the tax lines — removed the redundant RIGHT h3 "This room's booking bill" (the pane header "Bill & collection" already labels it) and tightened RIGHT section/footer spacing. **SGST/CGST breakup kept intact.** Re-verified iteration_7 with hard numbers: RIGHT `.ci-pane-body` scrollHeight==clientHeight (392) across a2/a5/a1 (and paid-upgrade case), Confirm bottom 733.5 < 800 — NO RIGHT internal scroll; SGST+CGST separate confirmed.
 
 ### D30 — Completion Badge (IMPLEMENTED v2.14, 2026-06)
-Owner requested "a small left-column progress line ('IDs 2/2 · Room assigned · Balance ₹1,810') so staff see readiness at a glance before Confirm." Implemented as a pinned strip `checkin-progress` at the top of the LEFT column (below the header, above the scrolling body): three pills — `checkin-progress-ids` (IDs done/total; done = name + front captured; green when all, amber otherwise), `checkin-progress-room` (green "✓ Room N assigned" when an eligible room is picked, amber "• Room not assigned" otherwise), `checkin-progress-balance` (info pill "Balance ₹N" = balance before collection, `f.due`). Updates live on every redraw. Verified iteration_7 (values correct, live warn→ok transitions, balance matches `checkin-balance-before`). MOCKED display only; no new logic/scope.
+Owner requested "a small left-column progress line ('IDs 2/2 · Room assigned · Balance ₹1,810') so staff see readiness at a glance before Confirm." Implemented as a pinned strip `checkin-progress` at the top of the LEFT column (below the header, above the scrolling body): three pills — `checkin-progress-ids` (IDs done/total; done = name + front captured; green when all, amber otherwise), `checkin-progress-room` (green "✓ Room N assigned" when an eligible room is picked, amber "• Room not assigned" otherwise), `checkin-progress-balance` (info pill "Balance ₹N" = balance before collection, `f.due`). Updates live on every redraw. **Badge polish (owner request):** once every step is complete (`!done && !multi && !d.inventoryDemo && ciMissing(c).length===0`) a green **"Ready to check in"** pill `checkin-progress-ready` appears and the strip gets a subtle green tint — a final confidence cue before Confirm; it disappears if any requirement is removed and is hidden in blocked modes (multi-room concept, inventory example). Verified iteration_7 (values correct, live warn→ok transitions, balance matches `checkin-balance-before`) and iteration_8 (ready pill green rgb(50,153,55), appears only when fully ready, disappears on requirement removal, hidden in blocked modes). MOCKED display only; no new logic/scope.
+
+## J. D31 — Check-In design CLOSED by owner (2026-06)
+**Owner instruction (verbatim):** "Badge Polish: Add a subtle 'Ready to check in' green state on the badge once every step is complete … after that close the design for check in update docs and decision with all details." This is the explicit D20 Check-In closure. Recorded here with date/version.
+
+- **Closed at:** mockup `frontend/public/cr385-frontdesk-mockup.html` **v2.14** (Check-In section), 2026-06.
+- **Review queue now:** **Check-In = CLOSED / LOCKED** (treat like Checkout v2.9 — do not edit without a new explicit owner request). **Booking design = READY** to begin **next**.
+- **D20 note:** the owner closed Check-In but did NOT in this message explicitly authorize starting the Booking review. Per D20 steps 8–9, confirm a Booking go-ahead before editing the New Booking screen. This closure is screen-level only — it is **NOT** Hard Gate 2.6 closure, Gate 3 spike approval, Gate 4 GO, or permission for production code.
+
+### What the closed Check-In (v2.14) contains
+- **Layout (D29):** checkout-mirrored two columns. LEFT (scrolls) = compact 2-col booking facts (D21/F4, incl. checkout time + late-arrival chip / G1) → room assignment + upgrade (D23/F2) → collapsible per-guest ID cards (user toggle, auto-collapse when complete, manual-expanded stays open). RIGHT (short, **no internal scroll**, Confirm always visible) = room bill + collection.
+- **Documents (D22/F1, G2, G7):** inline ID thumbnails + tap-to-enlarge lightbox (Retake/Remove/Close); mandatory rules **reuse existing check-in logic** (front required, back optional, CRM doc on file exempts — no new rule invented); on-file CRM docs show source/date/validity.
+- **Upgrades (D23/F2):** "Show higher categories (upgrade)" in the picker; Paid adds a "Room upgrade" bill line (delta/night × nights) updating GST/balance live; Complimentary requires reason + manager authorization; no auto-upgrade, no downgrade.
+- **Payments (D24/F3):** Cash/Card/UPI pills in the frozen-checkout selected style (white + dark ring, no black fill); disabled at ₹0; non-zero requires an explicit method; Card/UPI require Txn/UTR; Cash optional note. SGST + CGST shown as **separate** lines (not merged).
+- **Clarity (G3/G4):** advance/prepaid source label ("Advance · Direct" / "Prepaid · OTA (…)"); out-of-order rooms shown as a count.
+- **Consistency (D28):** 2-col booking facts; checkout-consistent pills; viewport-aware containment (`fitCheckin`) so the whole screen fits and Confirm stays visible; redundant RIGHT bill heading removed to keep the RIGHT scroll-free.
+- **Completion Badge (D30):** LEFT `checkin-progress` strip (IDs x/y, room state, Balance ₹N) + green "Ready to check in" pill when fully ready.
+- **Deferred (D27):** G5 early check-in fee/waiver → later CR; G6 welcome-slip printing → CR-364-PRINT.
+- **Phase 2:** multi-room check-in remains concept-only (non-submittable) unless separately approved.
+
+### Verification of the closed design
+frontend-only mockup QA, all PASS: iteration_4 (v2.12 F1–F4/G1–G7), iteration_6 (v2.14 layout, collapse/auto-collapse, upgrade→figures live, lightbox, pills), iteration_7 (RIGHT no-scroll hard numbers scrollHeight==clientHeight 392 across a2/a5/a1 + paid upgrade; Confirm bottom 733.5<800; SGST/CGST separate; Completion Badge), iteration_8 ("Ready to check in" pill). Checkout `?bill=107` (₹0) / `?bill=103` (₹2,677) regression unchanged throughout; no JS console errors; desktop 1920×800 + mobile 390×844 clean. Checkout v2.9 renderer/CSS/submission, New Booking + other expansions, `frontend/src`, backend, `.env`, registry gates untouched (all MOCKED design work).
+
+### Next
+Ask the owner to confirm proceeding to the **New Booking** design review (D20 step 8–9). On go-ahead, set Booking = active and follow the same review → proposal → approval → edit → verify loop; keep Check-In v2.14 and Checkout v2.9 locked. Hard Gate 2.6 / Q6 / BQ-385-07 / IA Rev 3.2 / Gate 3 spike remain after the full expansion design review.

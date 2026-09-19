@@ -252,3 +252,11 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - RIGHT "Bill & collection" no-scroll bug fully resolved: removed the redundant RIGHT h3 "This room's booking bill" (pane header already labels it) + tightened RIGHT section/footer spacing (on top of the viewport-aware `fitCheckin`). SGST/CGST breakup preserved. Re-verified iteration_7: RIGHT `.ci-pane-body` scrollHeight==clientHeight (392) on a2/a5/a1 and paid-upgrade; Confirm bottom 733.5 < 800; no JS errors.
 - Completion Badge (D30): pinned LEFT strip `checkin-progress` — `checkin-progress-ids` (IDs done/total, green when all), `checkin-progress-room` (✓ Room N assigned / • not assigned), `checkin-progress-balance` (Balance ₹N = balance before collection). Live-updates; verified iteration_7 (warn→ok transitions, balance matches checkin-balance-before).
 - Docs: DESIGN_DECISIONS §I D29 (verification updated) + D30. Still PLANNING; per D20 not Check-In closure. Next: walkthrough review of v2.14 toward explicit Check-In closure before Booking.
+
+
+## 2026-06 — CR-385 Check-In design CLOSED (v2.14, D31) + badge "Ready" polish
+- Badge polish (D30): green "Ready to check in" pill (`checkin-progress-ready`) appears on the LEFT progress strip once every step is complete (missing.length===0, not blocked); disappears when a requirement is removed; hidden in multi-room/inventory modes. Verified iteration_8 (green rgb(50,153,55), state transitions, blocked-mode hidden). Regression clean.
+- **Check-In design CLOSED / LOCKED by owner** at mockup v2.14 (owner: "close the design for check in update docs and decision with all details"). Recorded in DESIGN_DECISIONS §J D31. Treat Check-In like Checkout v2.9 — no edits without a new explicit owner request.
+- Booking design = READY next; per D20 §8–9 confirm owner go-ahead before editing the New Booking screen. Screen-level closure only — not Hard Gate 2.6/Gate 3/Gate 4/production.
+- Closed design (v2.14) = checkout-mirrored layout + F1–F4/G1–G7 + Completion Badge; verified across iteration_4/6/7/8; checkout 103/107 regression unchanged. Docs: DESIGN_DECISIONS §J D31 + header/§E/§H status updated; handover `handover/SESSION_HANDOVER_2026_06_CR385_CHECKIN_CLOSED.md`.
+- Next: ask owner to proceed to New Booking design review; keep Check-In v2.14 + Checkout v2.9 locked.
