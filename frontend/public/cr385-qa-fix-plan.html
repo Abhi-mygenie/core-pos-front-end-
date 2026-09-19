@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CR-385 Front Desk · QA Findings & Fix Plan (31 items) · v2.25 → v2.26</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F26B33;--ink:#1a1a1a;--mu:#6b6b6b;--line:#e6e6e6;--bg:#faf8f5;--card:#fff;--p0:#B91C1C;--p1:#D97706;--p2:#2563EB;--p3:#6B7280;--gr:#329937;--bug:#B91C1C;--uic:#7C3AED;--uxg:#0E7490;--cr:#374151}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.55}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;background:#f1efeb;padding:1px 5px;border-radius:4px}
+a{color:var(--or)}
+.wrap{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+nav{position:sticky;top:0;height:100vh;overflow:auto;background:#1f1d1b;color:#ddd;padding:22px 16px;font-size:12px}
+nav h1{font-size:14px;color:#fff;margin:0 0 4px}nav .v{color:#aaa;font-size:11px;margin-bottom:18px}
+nav a{display:block;color:#ccc;text-decoration:none;padding:5px 8px;border-radius:6px;margin:1px 0}nav a:hover{background:#2c2926;color:#fff}
+nav .grp{margin-top:14px;color:#8a8a8a;text-transform:uppercase;letter-spacing:.08em;font-size:10px;padding:0 8px}
+nav a .tag{float:right;font-size:10px;font-weight:600}
+main{padding:36px 48px 80px;max-width:1180px}
+h2{font-size:22px;margin:48px 0 12px;padding-top:12px;border-top:3px solid var(--or);display:inline-block}
+h3{font-size:16px;margin:28px 0 8px}
+.lead{font-size:15px;color:#333;max-width:900px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:120px}
+.kpi b{display:block;font-size:24px}.kpi span{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+.kpi.p0 b{color:var(--p0)}.kpi.p1 b{color:var(--p1)}.kpi.p2 b{color:var(--p2)}.kpi.p3 b{color:var(--p3)}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+th{background:#f3f1ed;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;color:#fff;line-height:1.6}
+.P0{background:var(--p0)}.P1{background:var(--p1)}.P2{background:var(--p2)}.P3{background:var(--p3)}
+.BUG{background:#fee2e2;color:var(--bug)}.UIC{background:#ede9fe;color:var(--uic)}.UXG{background:#cffafe;color:var(--uxg)}.CR{background:#e5e7eb;color:var(--cr)}
+.issue{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--p2);border-radius:12px;padding:20px 24px;margin:18px 0;scroll-margin-top:16px}
+.issue.P0{border-left-color:var(--p0)}.issue.P1{border-left-color:var(--p1)}.issue.P3{border-left-color:var(--p3)}
+.issue header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.issue header .id{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:13px;color:var(--or)}
+.issue header h4{margin:0;font-size:16px;flex:1 1 300px}
+.issue .meta{font-size:12px;color:var(--mu);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.blk{background:#faf9f7;border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px}
+.blk .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);font-weight:600;margin-bottom:4px}
+.blk.act{border-color:#fecaca;background:#fff7f7}.blk.exp{border-color:#bbf7d0;background:#f6fff8}
+.blk.fix{grid-column:1/-1;border-color:#fed7aa;background:#fff9f3}.blk.test{grid-column:1/-1}
+.blk ul,.blk ol{margin:4px 0 0;padding-left:18px}.blk li{margin:2px 0}
+.phase{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 24px;margin:14px 0}
+.phase h4{margin:0 0 6px;font-size:15px}.phase .ids{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--mu)}
+.dec{background:#fff;border:1px dashed var(--or);border-radius:10px;padding:14px 18px;margin:10px 0}
+.dec b.q{color:var(--or)}
+.note{font-size:12px;color:var(--mu)}
+.muted{color:var(--mu)}
+.ok{color:var(--gr);font-weight:600}
+@media print{nav{display:none}.wrap{grid-template-columns:1fr}main{padding:20px}.issue{break-inside:avoid}}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}nav{position:static;height:auto}.grid2{grid-template-columns:1fr}main{padding:20px}}
+</style></head><body><div class="wrap">
+<nav>
+<h1>CR-385 QA → Fix Plan</h1><div class="v">Mockup v2.25 → v2.26 · 31 findings · read-only audit, no code changed yet</div>
+<a href="#summary">Summary</a><a href="#decisions">Decisions needed (A–G)</a><a href="#phases">Fix plan · 8 phases</a><a href="#matrix">Registry at a glance</a>
+<div class="grp">P0 · Critical</div><a href="#q001">001 Bill room block hard-coded<span class="tag" style="color:#f87171">P0</span></a><a href="#q002">002 One booking · four amounts<span class="tag" style="color:#f87171">P0</span></a>
+<div class="grp">P1 · High</div><a href="#q003">003 ₹ vs rate table</a><a href="#q004">004 Extend over-collect</a><a href="#q005">005 Modify validation</a><a href="#q006">006 Booking validation</a><a href="#q007">007 Same-day seed 102–105</a><a href="#q008">008 Bill partial payment</a><a href="#q009">009 Penalty tax not applied</a>
+<div class="grp">P2 · Medium</div><a href="#q010">010 Check-In pane scroll @1366</a><a href="#q011">011 Prepaid badge by channel</a><a href="#q012">012 Tax order / labels</a><a href="#q013">013 Currency format</a><a href="#q014">014 Dismiss labels</a><a href="#q015">015 Footer patterns</a><a href="#q016">016 No-Show colour</a><a href="#q017">017 Toggle components</a><a href="#q018">018 Terminology</a><a href="#q019">019 ISO date on tile</a><a href="#q020">020 Leaving-today filter</a><a href="#q021">021 Bill state leak</a>
+<div class="grp">P3 · Low</div><a href="#q022">022 Tab sub-line clipping</a><a href="#q023">023 Search / row-action wrap</a><a href="#q024">024 Plurals</a><a href="#q025">025 ₹ column meaning</a><a href="#q026">026 Accessibility</a><a href="#q027">027 Hook bypass</a><a href="#q028">028 Version labels</a><a href="#q029">029 One-click Checkout</a><a href="#q030">030 Late-arrival charge</a><a href="#q031">031 Dialog chrome variants</a>
+<div class="grp">Close-out</div><a href="#closeout">Phase 8 · regression & docs</a>
+</nav>
+<main>
+<section id="summary">
+<h2>Summary</h2>
+<p class="lead">Read-only QA audit of the CR-385 Front-Desk mockup (<code>cr385-frontdesk-mockup.html</code>, v2.25) — 19 screens/states, 9 workflows, 6 viewports (1920 → 768), Chromium. Evidence: <code>test_reports/iteration_26.json</code> + viewport measurement sweep + code trace. <b>Nothing has been changed yet.</b> This page lists every finding with its proposed fix, how it will be tested, and the phase that closes it.</p>
+<div class="kpis"><div class="kpi"><b>31</b><span>findings</span></div><div class="kpi p0"><b>2</b><span>P0 critical</span></div><div class="kpi p1"><b>7</b><span>P1 high</span></div><div class="kpi p2"><b>12</b><span>P2 medium</span></div><div class="kpi p3"><b>10</b><span>P3 low</span></div><div class="kpi"><b>0</b><span>JS errors</span></div><div class="kpi"><b>8</b><span>fix phases</span></div></div>
+<p><b>What passed:</b> expand-in-place + reveal-scroll on every panel, OTA→No-Show / Direct→Cancel single-button rule at all entry points, primary buttons on-screen at every viewport, no horizontal overflow, KPI strip reconciles with lists today, Rooms grouping sums to 40, alert popover counts match, keyboard navigation, zero console errors.<br><b>What failed:</b> money-figure integrity (the same booking shows up to four different amounts; the Bill's room block is hard-coded), input validation (over-payment, past dates, blank adults accepted), and a set of cross-screen consistency drifts (dismiss labels, footers, toggles, tax order, currency format, terminology).</p>
+<p class="note">Classification: <span class="pill BUG">BUG</span> broken / wrong / inconsistent with established behaviour · <span class="pill UIC">UI CONSISTENCY</span> screens use different styling or component patterns · <span class="pill UXG">UX GAP</span> works but causes confusion or friction · <span class="pill CR">CR</span> new functionality. Severity P0 financial/core failure · P1 materially wrong flow/info · P2 significant inconsistency · P3 cosmetic/wording.</p>
+</section>
+
+<section id="decisions">
+<h2>Decisions needed before implementation (A–G)</h2>
+<div class="dec"><b class="q">A · Locked screens.</b> Fixing 001 / 002 / 008 / 011 / 012 / 021 / 029 requires re-opening <b>Checkout v2.9</b> and <b>Check-In v2.16</b> (both LOCKED). Proposal: authorise for <i>figures &amp; validation only</i>, no layout change; re-lock as Checkout v2.10 / Check-In v2.17. <span class="muted">Options: a) Yes · b) No — skip those items</span></div>
+<div class="dec"><b class="q">B · QA-009 GST on penalty.</b> a) Refund = Prepaid − Penalty − GST (tax charged on top, rows reconcile) <b>— recommended</b> · b) Keep refund, relabel "GST included in penalty".</div>
+<div class="dec"><b class="q">C · QA-008 Bill partial payment.</b> a) Add "Amount received" input + Outstanding line; Credit → ₹0 received, balance to folio/company <b>— recommended</b> · b) Keep full-payment-only, relabel "to collect".</div>
+<div class="dec"><b class="q">D · QA-029 Checkout confirmation.</b> a) Two-step inline button — first click becomes "Confirm checkout ₹X", auto-reverts after 3 s <b>— recommended</b> · b) Confirmation dialog · c) Leave one-click and record as a design decision.</div>
+<div class="dec"><b class="q">E · QA-030 Late arrival.</b> a) Charge full booking + one-line policy note <b>— recommended</b> · b) Recompute for remaining nights.</div>
+<div class="dec"><b class="q">F · QA-018 Terminology.</b> a) <b>Check-In</b> (noun/title) · <b>check in</b> (verb) · <b>Bill</b> (UI) · <b>Checkout</b> (one word) · <b>In-House</b> · <b>Housekeeping</b> (HK only in badges) · <b>Out of order</b> spelled out in detail cells <b>— recommended</b> · b) You specify.</div>
+<div class="dec"><b class="q">G · Scope.</b> a) All 8 phases now · b) Phases 1–3 (money + validation) first, review, then 4–8 · c) Other.</div>
+</section>
+
+<section id="phases">
+<h2>Fix plan · 8 phases</h2>
+<p class="lead">Each phase: implement → self-check → <b>testing_agent</b> regression (audit §H checklist) → registry rows marked ✔ with iteration number → next phase. Locked screens are only touched in the phases that name them.</p>
+<div class="phase"><h4>Phase 1 · Money integrity <span class="ids">QA-001 · 002 · 003 · 007 · 011 · 020</span></h4>
+<b>Change:</b> single <code>bookingCharge(o)</code> = (rate of type + plan supplement) × nights; <code>prepaid</code> stored once on each record. Wire it into the Arrivals ₹ cell, Check-In charge, Modify current, No-Show/Cancel prepaid, Room Detail amount. Room-link recomputes <code>amt</code> from the rate table. Guests seed gets <code>type</code>-based charge, <code>prepaid</code>, <code>pah</code>, valid dates; <code>g.bal</code> derived so row = bill. Bill room block reads the guest record. In-House "leaving today" = <code>cout === T</code>.<br>
+<b>Test:</b> for a1, a2, rooms 102 &amp; 113 the same booking prints the same basis on every screen; Departures row balance = Grand Total; no guest with check-in = check-out; In-House leaving = Departures today; Extend/Modify/No-Show arithmetic regressions (iterations 21/25) still pass.</div>
+<div class="phase"><h4>Phase 2 · Validation guards <span class="ids">QA-004 · 005 · 006</span></h4>
+<b>Change:</b> <code>exMissing / modMissing / nbMissing</code> gain: collected ≤ payable · adults ≥ 1 · check-in ≥ today · check-out ≥ check-in + 1 (with <code>min</code> attributes on date inputs). Balance-remaining never shows negative.<br>
+<b>Test:</b> over-collect, past date, blank/0 adults on all three panels → primary disabled with a readiness reason; happy paths unchanged.</div>
+<div class="phase"><h4>Phase 3 · Refund arithmetic + Bill payment state <span class="ids">QA-009 · 008 · 021</span></h4>
+<b>Change:</b> per decision B refund = prepaid − penalty − GST with a "Total deducted" line. Per decision C the Bill gets an "Amount received" input (default = grand), Outstanding line, Credit → ₹0 received; Checkout label reflects received; disabled when invalid or over. Bill adjustments/payment state move to a per-guest draft <code>BILL[g.id]</code>.<br>
+<b>Test:</b> F. Almeida 9,000 − 4,500 − 225 = 4,275; J. Pereira 3,000 − 1,000 − 50 = 1,950; Duplicate reason → full refund. Bill: full / partial / ₹0 / Credit / over-amount states; coupon applied on bill 102 not present on bill 103.</div>
+<div class="phase"><h4>Phase 4 · Consistency pass <span class="ids">QA-012 · 013 · 014 · 015 · 016 · 017 · 019 · 024</span></h4>
+<b>Change:</b> one money formatter (en-IN, 2 dp, sign before ₹); SGST → CGST order and one label pattern; "✕ Close" on every header; one footer grammar and button height; No-Show red everywhere; refund-mode / notify toggles use the same pill component as payment; tile dates via <code>fd()</code>; <code>plural()</code> helper.<br>
+<b>Test:</b> text assertions per panel (labels, order, "₹1,234.57", "−₹500", "1 night"); side-by-side screenshots Bill vs Extend for footer parity.</div>
+<div class="phase"><h4>Phase 5 · Layout &amp; responsive <span class="ids">QA-010 · 022 · 023 · 031</span></h4>
+<b>Change:</b> Check-In right pane fits at 1366×768 (reference field appears only after a method is chosen; tighter money rows); tab sub-lines ellipsise; search min-width 200px; third row action collapses into kebab ≤ 1100px; Room Detail actions move to a footer; Mark-all-clean uses the standard panel chrome.<br>
+<b>Test:</b> viewport sweep 1920 / 1440 / 1366 / 1280 / 1024 / 768: no right-pane internal scroll, no clipped sub-line, single-line row actions ≥ 1024, search ≥ 200px, primary buttons on-screen.</div>
+<div class="phase"><h4>Phase 6 · Content &amp; product decisions <span class="ids">QA-018 · 025 · 029 · 030</span></h4>
+<b>Change:</b> terminology sweep per decision F; column headers "Booking ₹" (Arrivals) / "Balance" (Departures, In-House); Room Detail "Amount · total"; two-step Checkout per decision D; late-arrival policy note per decision E.<br>
+<b>Test:</b> grep-based label audit (no stray variants); Checkout two-step: first click relabels, second checks out, timeout reverts, counters increment once.</div>
+<div class="phase"><h4>Phase 7 · Accessibility &amp; hygiene <span class="ids">QA-026 · 027 · 028</span></h4>
+<b>Change:</b> muted grey → ≥ 4.5:1; sidebar labels 10px; global focus ring; emoji → inline SVG icons; review hooks route through <code>nsOrCancel()</code>; single <code>VERSION</code> constant.<br>
+<b>Test:</b> contrast script on all ≤ 12px text; Tab-key focus visible on chips/tabs/row buttons; <code>?open=a1:cancel</code> now opens No-Show; all version strings equal.</div>
+<div class="phase" id="closeout"><h4>Phase 8 · Close-out</h4>
+Full regression = audit §H checklist (14 groups) via testing_agent at 1920×800 and 1366×768; owner-review screenshots of Bill, Check-In, Extend, No-Show. Docs: registry ✔ per ID + iteration, DESIGN_DECISIONS (A–G, re-lock Checkout v2.10 / Check-In v2.17), QA_TEST_PLAN (new negative cases), PRD, session handover. Mockup → <b>v2.26</b>. Owner acceptance closes the gate. Safari/Edge remain a manual owner/QA step.</div>
+</section>
+
+<section id="matrix">
+<h2>Registry at a glance</h2>
+<table><tr><th>ID</th><th>Sev</th><th>Class</th><th>Screen</th><th>Finding</th><th>Phase</th></tr>
+<tr><td><a href="#q001">001</a></td><td><span class="pill P0">P0</span></td><td><span class="pill BUG">BUG</span></td><td>Bill / Checkout</td><td>Room block hard-coded → row balance ≠ Grand Total</td><td>1</td></tr>
+<tr><td><a href="#q002">002</a></td><td><span class="pill P0">P0</span></td><td><span class="pill BUG">BUG</span></td><td>Arrivals · Check-In · Modify · Cancel</td><td>One booking, four different amounts</td><td>1</td></tr>
+<tr><td><a href="#q003">003</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>Arrivals · Room Detail</td><td>₹ contradicts rate table after room link</td><td>1</td></tr>
+<tr><td><a href="#q004">004</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>Extend Stay</td><td>Over-collection → negative balance, Confirm enabled</td><td>2</td></tr>
+<tr><td><a href="#q005">005</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>Modify Booking</td><td>Blank adults / past check-in / over-collect accepted</td><td>2</td></tr>
+<tr><td><a href="#q006">006</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>New Booking</td><td>Same validation gaps, negative balance</td><td>2</td></tr>
+<tr><td><a href="#q007">007</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>In-House · Departures</td><td>Rooms 102–105 check-in = check-out</td><td>1</td></tr>
+<tr><td><a href="#q008">008</a></td><td><span class="pill P1">P1</span></td><td><span class="pill UXG">UX GAP</span></td><td>Bill settlement</td><td>No partial-payment state; "received" fixed to total</td><td>3</td></tr>
+<tr><td><a href="#q009">009</a></td><td><span class="pill P1">P1</span></td><td><span class="pill BUG">BUG</span></td><td>No-Show · Cancel</td><td>GST rows shown but not applied to refund</td><td>3</td></tr>
+<tr><td><a href="#q010">010</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UXG">UX GAP</span></td><td>Check-In</td><td>Right pane internal scroll at 1366×768 / 1024</td><td>5</td></tr>
+<tr><td><a href="#q011">011</a></td><td><span class="pill P2">P2</span></td><td><span class="pill BUG">BUG</span></td><td>Bill guest card</td><td>Prepaid / Pay-at-hotel badge derived from channel</td><td>1</td></tr>
+<tr><td><a href="#q012">012</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>All bills</td><td>Tax line order and labels differ</td><td>4</td></tr>
+<tr><td><a href="#q013">013</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>All money</td><td>Currency formatting not unified; ₹-9,96,534</td><td>4</td></tr>
+<tr><td><a href="#q014">014</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Panel headers</td><td>Five dismiss labels; "Cancel" ambiguous in Modify</td><td>4</td></tr>
+<tr><td><a href="#q015">015</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Panel footers</td><td>Three footer patterns, differing primary sizes</td><td>4</td></tr>
+<tr><td><a href="#q016">016</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Row · kebab · dialog</td><td>No-Show red / amber / red</td><td>4</td></tr>
+<tr><td><a href="#q017">017</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Toggles</td><td>Two single-select components</td><td>4</td></tr>
+<tr><td><a href="#q018">018</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">CONTENT</span></td><td>Whole module</td><td>Terminology drift</td><td>6</td></tr>
+<tr><td><a href="#q019">019</a></td><td><span class="pill P2">P2</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Rooms tile</td><td>Raw ISO date "out 2026-09-19"</td><td>4</td></tr>
+<tr><td><a href="#q020">020</a></td><td><span class="pill P2">P2</span></td><td><span class="pill BUG">BUG</span></td><td>KPI strip</td><td>"Leaving today" includes overdue (latent)</td><td>1</td></tr>
+<tr><td><a href="#q021">021</a></td><td><span class="pill P2">P2</span></td><td><span class="pill BUG">BUG</span></td><td>Bill</td><td>Adjustment/payment state leaks between bills</td><td>3</td></tr>
+<tr><td><a href="#q022">022</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UIC">UI CONS.</span></td><td>KPI tab strip</td><td>Sub-line clipped mid-word</td><td>5</td></tr>
+<tr><td><a href="#q023">023</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Header · rows</td><td>Search 110px @768; row actions wrap @1024</td><td>5</td></tr>
+<tr><td><a href="#q024">024</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UIC">CONTENT</span></td><td>Check-In · rows · Room Detail</td><td>"1 nights", "N day", "night(s)"</td><td>4</td></tr>
+<tr><td><a href="#q025">025</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UXG">UX GAP</span></td><td>List ₹ column</td><td>Same header, two meanings</td><td>6</td></tr>
+<tr><td><a href="#q026">026</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UXG">UX GAP</span></td><td>Global</td><td>Contrast, tiny text, hit targets, focus, emoji icons</td><td>7</td></tr>
+<tr><td><a href="#q027">027</a></td><td><span class="pill P3">P3</span></td><td><span class="pill CR">DOC</span></td><td>Review hooks</td><td>?open=a1:cancel bypasses OTA rule</td><td>7</td></tr>
+<tr><td><a href="#q028">028</a></td><td><span class="pill P3">P3</span></td><td><span class="pill CR">DOC</span></td><td>Version labels</td><td>v2.21 / v2.22 / v2.25 in one file</td><td>7</td></tr>
+<tr><td><a href="#q029">029</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UXG">UX GAP</span></td><td>Bill</td><td>One-click irreversible Checkout</td><td>6</td></tr>
+<tr><td><a href="#q030">030</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UXG">UX GAP</span></td><td>Check-In (late)</td><td>"2 nights left" vs full 3-night charge</td><td>6</td></tr>
+<tr><td><a href="#q031">031</a></td><td><span class="pill P3">P3</span></td><td><span class="pill UIC">UI CONS.</span></td><td>Rooms</td><td>Third dialog chrome; actions in header</td><td>5</td></tr>
+</table>
+</section>
+
+<h2>P0 · Critical</h2>
+
+<article class="issue P0" id="q001"><header><span class="id">QA-385-001</span><h4>Bill / Checkout — room block is hard-coded, bill never reconciles with the row</h4><span class="pill P0">P0</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: Departures › Bill (<code>?bill=102</code>, <code>?bill=113</code>) · Code: line 560 <code>const adv=100, roomAmt=1000</code> · Phase 1 · Needs decision A (Checkout v2.9 locked)</div>
+<div class="grid2">
+<div class="blk act"><div class="lbl">Actual</div>Every guest's bill shows Booking amount ₹1,000 − Advance ₹100 (UPI) + SGST ₹25 + CGST ₹25 = <b>₹950</b> regardless of room type, nights or real advance.<ul><li>Room 102 (R. Fernandes · Deluxe · 1 night): row says <b>₹2,150 balance due</b>; bill Grand Total = F&amp;B ₹734 + Transferred ₹741 + Room ₹950 = <b>₹2,425</b>.</li><li>Room 113 (H. Shetty · 3 nights): still ₹1,000, then zeroed by a synthetic "Other room payments − ₹950" line.</li></ul></div>
+<div class="blk exp"><div class="lbl">Expected</div>Room block = rate(type) × nights − actual advance, GST on the pre-tax balance; the list's "balance due" equals the bill's Grand Total. A reviewer doing the arithmetic must get the same number on both surfaces.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><ol><li>Add fields to the <code>guests</code> seed: <code>type</code>-based charge via <code>bookingCharge(g)</code>, <code>prepaid</code>, <code>payMethod</code>.</li><li>Bill room block reads <code>bookingCharge(g)</code> and <code>g.prepaid</code> instead of constants; GST = 2.5 % + 2.5 % of pre-tax balance.</li><li>Derive <code>g.bal</code> = room balance + F&amp;B + transferred, so the row can never disagree with the bill.</li><li>Keep the collapsed-ledger layout (D13/D14) — figures only.</li></ol></div>
+<div class="blk test"><div class="lbl">How it is tested</div>testing_agent: for rooms 102, 113, 101 → <code>room-booking-amount</code> = rate × nights, <code>room-advance-amount</code> = seed prepaid, <code>grand-total-amount</code> equals the row ₹ cell; all previous Bill regressions (discounts, coupon, loyalty, payment pills, Print, Checkout counters).</div></div></article>
+
+<article class="issue P0" id="q002"><header><span class="id">QA-385-002</span><h4>One booking shows four different amounts across screens</h4><span class="pill P0">P0</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screens: Arrivals row (line 432) · Check-In (line 641) · Modify (line 510) · No-Show/Cancel (line 549) · Phase 1 · Check-In part needs decision A</div>
+<div class="grid2">
+<div class="blk act"><div class="lbl">Actual — a1 · J. Pereira · Booking.com · Executive · 3 nights (16 → 19 Sep)</div><ul><li>Arrivals row ₹ column: <b>₹1,000</b> (<code>o.amt</code>, single night)</li><li>Cancel dialog Prepaid: <b>₹3,000</b> (<code>amt × nights</code>)</li><li>Modify "Current booking": <b>₹10,395</b> (rate 3,300 × 3 + 5 % GST)</li><li>Check-In (a2, same shape) "Booked charge · 3 nights": <b>₹2,200</b> — label says 3 nights, value is one night</li></ul></div>
+<div class="blk exp"><div class="lbl">Expected</div>One booking value, computed once, shown identically wherever the booking appears (Arrivals, Check-In, Modify, No-Show, Cancel, Room Detail).</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><ol><li>Introduce <code>bookingCharge(o) = (CI_RATE[o.type] + planSupp(o)) × nights(o)</code> and store <code>o.prepaid</code> once on the record (Variant A: prepaid/OTA = full, pay-at-hotel = 0).</li><li>Replace the five call-sites: row ₹ cell → total (with "/nt" sub-label if per-night is preferred), <code>ciContext.charge</code>, <code>modFigures</code> current, <code>prepaidOf</code>, Room Detail "Amount".</li><li>Remove reliance on <code>o.amt</code> as a semantically ambiguous field (or redefine it as per-night and never sum it directly).</li></ol></div>
+<div class="blk test"><div class="lbl">How it is tested</div>testing_agent reads, for a1 and a2: row ₹ · <code>checkin-room-amount</code> · <code>modify-current</code> (pre-tax) · <code>cancel-prepaid</code>/<code>noshow-prepaid</code> → all equal to rate × nights; label text "· 3 nights" matches the multiplier; Modify no-op still ₹0; No-Show F. Almeida arithmetic still consistent.</div></div></article>
+
+<h2>P1 · High</h2>
+
+<article class="issue P1" id="q003"><header><span class="id">QA-385-003</span><h4>Arrivals ₹ contradicts the rate table after room linking</h4><span class="pill P1">P1</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: Arrivals (Today chip), Room Detail (booked) · Code: line 332 room-link IIFE sets <code>a.type = r.type</code> but leaves <code>a.amt</code> · Phase 1</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Row 119 <b>Executive ₹2,200</b>, row 120 <b>Deluxe ₹4,500</b>, rows 221/224 <b>Suite ₹1,000</b> — while the rate table says Suite 4,500 / Executive 3,300 / Deluxe 2,200. Check-In for 119 shows "Executive · Room 119" with charge ₹2,200.</div>
+<div class="blk exp"><div class="lbl">Expected</div>A booking's amount matches the room type shown next to it.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>When a booking is linked to a room, recompute its charge from <code>CI_RATE[r.type]</code> (falls out naturally once <code>bookingCharge()</code> is the source of truth — QA-002).</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Script dumps <code>arr</code> → every entry satisfies <code>amt === CI_RATE[type]</code>; UI assertion on rows 119/120/221.</div></div></article>
+
+<article class="issue P1" id="q004"><header><span class="id">QA-385-004</span><h4>Extend Stay accepts over-collection — negative balance, Confirm enabled</h4><span class="pill P1">P1</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: Extend Stay › Collect now (<code>?room=101:extend</code>) · Code: line 474 <code>balanceRemaining = totalPayable − collected</code>, no guard in <code>exMissing</code> · Phase 2</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Collect 999999 + Cash → Total payable ₹3,465, Balance remaining <b>₹-9,96,534</b>, readiness "Ready · collect ₹9,99,999 now", Confirm <b>enabled</b>.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Collected amount capped at Total payable (or blocked with "Amount exceeds total payable"); Confirm disabled; balance never negative.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>exMissing</code>: <code>if (collected &gt; totalPayable) m.push('Amount ≤ total payable')</code>; display clamps at ₹0; readiness reason appears in the footer strip like the other guards.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Over / exact / partial / 0 / invalid ("abc", "-5", "12.345") → button state + readiness text asserted; happy path +1 and +3 nights unchanged; conflict/room-move flow regression.</div></div></article>
+
+<article class="issue P1" id="q005"><header><span class="id">QA-385-005</span><h4>Modify Booking — blank adults, past check-in and over-collection accepted</h4><span class="pill P1">P1</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: Modify Booking (kebab › Modify; <code>?room=119</code>) · Code: <code>modMissing</code> line 511 · Phase 2</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Adults cleared to "" and check-in set to 2026-09-01 (today is 17 Sep), reason "test" → Save <b>enabled</b>, readiness "Ready · collect ₹55,440". Collecting more than the change gives a negative "Balance remaining".</div>
+<div class="blk exp"><div class="lbl">Expected</div>Save disabled with reasons: "Adults ≥ 1", "Check-in not in the past", "Amount ≤ change".</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Extend <code>modMissing</code> with the three guards; add <code>min</code> to <code>modify-checkin</code> (today) and <code>modify-checkout</code> (check-in + 1); coerce adults to number before the check.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Negative matrix (blank adults, 0 adults, past date, over-collect) → Save disabled + reason; no-op ₹0, longer +, cheaper − regressions.</div></div></article>
+
+<article class="issue P1" id="q006"><header><span class="id">QA-385-006</span><h4>New Booking — same validation gaps, negative balance on advance</h4><span class="pill P1">P1</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: New Booking (<code>?booking=1</code>) · Code: <code>nbMissing</code> line 745, <code>nbFigures</code> line 744 · Phase 2</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Check-in 2026-09-01, Adults "", Advance 999999 + Cash → readiness "Ready to save this booking", Balance after advance <b>₹-9,95,379</b>, both Save and Save &amp; Check in <b>enabled</b>.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Both buttons disabled; reasons listed; advance ≤ total.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Same guards in <code>nbMissing</code>; <code>min</code> attributes on both date inputs; the "Adults *" field validated like Name/Phone.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Negative matrix → disabled; CRM autofill, grid pick, Save, Save &amp; Check in (advance carried) regressions.</div></div></article>
+
+<article class="issue P1" id="q007"><header><span class="id">QA-385-007</span><h4>Seed: guests in rooms 102–105 have check-in = check-out</h4><span class="pill P1">P1</span><span class="pill BUG">BUG (data / business state)</span></header>
+<div class="meta">Screens: In-House, Departures, Extend Stay · Code: <code>guests</code> seed line 326 (<code>cin: i&lt;6 ? T</code>, <code>cout: i&lt;5 ? T</code>) · Phase 1</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Rows 102–105 show Check-in "17 Sep · today" and Check-out "17 Sep · 1 night" — the guest is counted under both <i>Arrived today</i> and <i>Leaving today</i>. Extend on 102 shows "Check-in 17 Sep · Check-out 17 Sep". Room 101 was corrected earlier; 102–105 were not.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Every stay has ≥ 1 night; a same-day arrival cannot also be a scheduled departure.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Seed <code>cout ≥ cin + 1</code>; keep 4 departures today by giving those guests check-in dates in the past; add a seed sanity assertion to the regression suite.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Script: <code>guests.filter(g =&gt; g.cin &gt;= g.cout).length === 0</code>; Departures today / In-House arrived-today counts re-verified against tab strip.</div></div></article>
+
+<article class="issue P1" id="q008"><header><span class="id">QA-385-008</span><h4>Bill has no partial-payment state — "received" is a fixed label equal to Grand Total</h4><span class="pill P1">P1</span><span class="pill UXG">UX GAP</span></header>
+<div class="meta">Screen: Bill › settlement · Code: line 596 <code>${money(grand)} received</code> · Phase 3 · Needs decisions A + C</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>"₹2,425 received" is printed before any payment happens; there is no way to record a partial or short payment; selecting <b>Credit</b> still claims the full amount was received. The QA brief explicitly requires empty / partial / fully-paid states — only "fully paid" exists.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Editable "Amount received" (default = Grand Total) → "Outstanding" line; Credit sets received ₹0 and shows where the balance goes (folio / company); Checkout button reflects the state.</div>
+<div class="blk fix"><div class="lbl">Suggested fix (decision C-a)</div>Add <code>bill-received-input</code> next to the method pills; <code>outstanding = grand − received</code>; validation like Extend (≤ grand, numeric); Checkout label "Checkout · ₹X outstanding" when &gt; 0; keep the RHS final-figures layout (D14).</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Full / partial / ₹0 / Credit / over-amount → Outstanding value, button label and enabled state; Print and Checkout regressions.</div></div></article>
+
+<article class="issue P1" id="q009"><header><span class="id">QA-385-009</span><h4>No-Show / Cancel — GST rows on the penalty are displayed but not applied to the refund</h4><span class="pill P1">P1</span><span class="pill BUG">BUG (arithmetic)</span></header>
+<div class="meta">Screens: Mark No-Show, Cancel Booking · Code: <code>refundCard</code> line 553 · Phase 3 · Needs decision B</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>F. Almeida: Prepaid ₹9,000 − forfeited ₹4,500; SGST ₹112.5 and CGST ₹112.5 listed underneath; Refund due <b>₹4,500</b> (not ₹4,275). J. Pereira Cancel: 3,000 − 1,000, +25 +25 listed, Refund ₹2,000. The tax rows influence nothing — a reviewer cannot tell whether GST is on top of or inside the penalty.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Either Refund = Prepaid − Penalty − GST (tax charged on top), or the tax rows are labelled "included in penalty". The numbers on screen must add up.</div>
+<div class="blk fix"><div class="lbl">Suggested fix (decision B-a)</div>Refund = prepaid − penalty − (SGST + CGST); add a "Total deducted" subtotal; keep SGST and CGST as separate lines (owner rule). Backend still owns the policy — the mock just states one clearly.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>F. Almeida → ₹4,275; J. Pereira → ₹1,950; Duplicate / Payment-failed reason → penalty 0, refund = prepaid; pay-at-hotel → "Nothing paid"; counters increment once.</div></div></article>
+
+<h2>P2 · Medium</h2>
+
+<article class="issue P2" id="q010"><header><span class="id">QA-385-010</span><h4>Check-In right pane gets an internal scrollbar at 1366×768 and 1024×768</h4><span class="pill P2">P2</span><span class="pill UXG">UX GAP</span></header>
+<div class="meta">Screen: Check-In (<code>?checkin=a2</code>) · Measured: right pane <code>scrollHeight &gt; clientHeight</code> at 1366 and 1024; left pane scrolls at all sizes; Booking left pane scrolls at all sizes · Phase 5</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>At 1366×768 the "Bill &amp; collection" pane cuts off after "Note (optional)"; "Remaining balance" is hidden below the fold. The primary button stays visible (pinned footer) so the invariant technically holds, but the money summary needs a scroll on the most common laptop resolution.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Design rule "no right-pane scroll for critical figures" honoured at 1366×768 as well as 1920×800.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Show the reference/note field only once a method is picked (it is optional for Cash); reduce <code>.ci-money</code> vertical padding by 2px; let <code>--ci-height</code> use the full available height at ≤ 800px tall. Re-measure; if still tight, move "No advance yet / Prepaid" into the "Total incl. GST" sub-label.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Viewport sweep asserts right-pane <code>scrollHeight ≤ clientHeight</code> at 1920×800, 1366×768, 1280×800, 1024×768 for Check-In and Booking; <code>checkin-balance-after</code> inside the viewport.</div></div></article>
+
+<article class="issue P2" id="q011"><header><span class="id">QA-385-011</span><h4>Bill guest card derives Prepaid / Pay-at-hotel from the channel</h4><span class="pill P2">P2</span><span class="pill BUG">BUG / UI CONSISTENCY</span></header>
+<div class="meta">Screen: Bill › Guest &amp; stay card · Code: line 564 <code>pah(o.ch !== 'Direct')</code> · Phase 1</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>MakeMyTrip (OTA) shows <b>PAY AT HOTEL</b>; Direct shows <b>PREPAID</b>; Walk-in shows PAY AT HOTEL. The No-Show/Cancel logic (Variant A) treats OTA as prepaid and Arrivals uses a real <code>pah</code> flag — three surfaces, two meanings.</div>
+<div class="blk exp"><div class="lbl">Expected</div>One <code>pah</code> field per booking/guest read by every screen.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Add <code>pah</code> to the <code>guests</code> seed (carried from the arrival at check-in — <code>confirmCheckin</code> already has it) and read <code>g.pah</code> in the card.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Bill 102 badge equals seed value; check a booking in, open its bill → badge equals the arrival's badge.</div></div></article>
+
+<article class="issue P2" id="q012"><header><span class="id">QA-385-012</span><h4>Tax line order and labels differ between blocks and panels</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: Bill (Room vs F&amp;B), Check-In, Booking, Extend, Modify, No-Show/Cancel · Code: lines 577-578 vs 589 · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Room block: "SGST · 2.5%" then CGST. F&amp;B block: "CGST 2.5%" then "SGST 2.5%". Other panels: "SGST · sample 2.5%". No-Show indents the tax rows under the penalty.</div>
+<div class="blk exp"><div class="lbl">Expected</div>SGST → CGST in every block, one label pattern, always two separate lines (owner rule — never merged).</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>One <code>taxRows(base, testidPrefix)</code> helper emitting "SGST · 2.5%" / "CGST · 2.5%"; drop the word "sample" in favour of the panel disclaimer.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Text assertion on every panel: SGST row index &lt; CGST row index; identical label pattern.</div></div></article>
+
+<article class="issue P2" id="q013"><header><span class="id">QA-385-013</span><h4>Currency formatting is not unified</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: all money · Code: <code>money()</code> line 337 (<code>toLocaleString('en-IN')</code>), F&amp;B <code>toFixed(2)</code> line 578 · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual (measured)</div><code>money(1234.567) → ₹1,234.567</code> (no rounding) · <code>money(112.5) → ₹112.5</code> (one decimal) · F&amp;B <b>₹17.48</b>, <b>+₹0.04</b> (two decimals) · negatives <b>₹-9,96,534</b> (sign after the symbol).</div>
+<div class="blk exp"><div class="lbl">Expected</div>Whole rupees where the value is whole, otherwise exactly two decimals; negatives as <b>−₹500</b>; same everywhere.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>money = v =&gt; (v &lt; 0 ? '−' : '') + '₹' + Math.abs(v).toLocaleString('en-IN', {minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2})</code>; remove the ad-hoc <code>toFixed</code> in F&amp;B.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Unit-style evaluate: money(-500), money(112.5), money(1234.567), money(1000) → "−₹500", "₹112.50", "₹1,234.57", "₹1,000"; F&amp;B block assertions.</div></div></article>
+
+<article class="issue P2" id="q014"><header><span class="id">QA-385-014</span><h4>Five different dismiss labels; "✕ Cancel" is ambiguous in Modify Booking</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: all panel headers · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual (measured)</div>Bill "Close" · Check-In "Close" · Extend "✕ Cancel" · Modify "✕ Cancel" · Booking "✕ Cancel" · No-Show "✕ Close" · Cancel "✕ Close" · Room Detail "✕". In Modify Booking the header "✕ Cancel" sits beside a flow where "Cancel booking" is destructive.</div>
+<div class="blk exp"><div class="lbl">Expected</div>One dismiss label and glyph; the word "Cancel" reserved for cancelling a booking.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>All headers "✕ Close" (keep <code>*-close-button</code> test ids); footers' secondary button becomes "Close" too (see 015).</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Assert header dismiss text on all 8 panels; Esc still closes.</div></div></article>
+
+<article class="issue P2" id="q015"><header><span class="id">QA-385-015</span><h4>Three footer patterns and different primary-button sizes</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: all panel footers · Code: lines 505, 538, 597, 618, 633, 708, 784 · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>[Cancel][Primary] in Check-In / Booking / Extend / Modify · [Back][Danger] in No-Show / Cancel · single full-width "Checkout ₹X" with no secondary in Bill. Heights: 34px <code>.btn</code> vs ≥36px auto in <code>.ci-payment-actions</code> vs full-width block.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Same footer grammar for every final confirmation: readiness strip left, [Close][Primary/Danger] right, one height and radius.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>One <code>.panel-foot</code> class; Bill gets the readiness strip + Close + "Checkout ₹X" at standard height (still emphasised by colour, not by width); dialogs keep the danger colour.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Computed height/border-radius of every primary button equal; screenshot pair Bill vs Extend.</div></div></article>
+
+<article class="issue P2" id="q016"><header><span class="id">QA-385-016</span><h4>No-Show is red on the row, amber in the kebab, red on the dialog</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: Arrivals row · kebab menu · No-Show dialog · Code: line 435 <code>.btn.dg</code>, line 804 <code>color:var(--am)</code> · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Kebab on room 223 / OTA rows renders "Mark No-Show" in amber; the expired-row button and the dialog Confirm are red. Cancel is red everywhere.</div>
+<div class="blk exp"><div class="lbl">Expected</div>One colour per destructive action across entry points.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Kebab item uses <code>var(--dg)</code> for both; amber stays reserved for warnings/HK.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Computed colour of kebab items on 119 (Direct) and 223 (OTA) both = danger red.</div></div></article>
+
+<article class="issue P2" id="q017"><header><span class="id">QA-385-017</span><h4>Two different components for the same single-select toggle</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: No-Show/Cancel refund-mode &amp; Notify (<code>.btn.sm.o</code>, orange outline) vs payment / discount / Modify refund-mode (<code>.ci-pill</code>, black inset) · Code: lines 557, 625 vs 536 · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Refund-to-guest / folio-credit and Notify-source toggles look like orange outline buttons; every other exclusive choice is a black-ring pill.</div>
+<div class="blk exp"><div class="lbl">Expected</div>One segmented-toggle component with <code>aria-pressed</code>.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Swap the two dialogs to <code>.ci-pill</code>; keep test ids.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Class + aria-pressed assertions; toggling still flips the toast text.</div></div></article>
+
+<article class="issue P2" id="q018"><header><span class="id">QA-385-018</span><h4>Terminology drift across the module</h4><span class="pill P2">P2</span><span class="pill UIC">CONTENT</span></header>
+<div class="meta">Whole module · Phase 6 · Needs decision F</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>"Check In" (button, title) · "Check-In" (Confirm Check-In) · "Check-in" (column) · "Check in" (Save &amp; Check in now) · "checked in"; "Bill" (button) vs "Final figures" (pane) vs "folio" (Extend/Modify pending line) vs "Checkout"; sidebar "Room Status" vs tab "Rooms"; "HK" vs "Housekeeping"; "OOO" vs "Out of order"; "In-House" tab vs "In-house" badge; "Reference / txn id" vs "Txn / UTR no.".</div>
+<div class="blk exp"><div class="lbl">Expected</div>One glossary applied consistently (recommendation F-a): <b>Check-In</b> noun/title · <b>check in</b> verb · <b>Bill</b> · <b>Checkout</b> · <b>In-House</b> · <b>Housekeeping</b> (HK in badges only) · <b>Out of order</b> in detail cells · "Txn / UTR no." everywhere.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Label sweep after owner picks the glossary; no automatic renaming of test ids.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>grep audit for the rejected variants returns zero hits in rendered text; screenshot spot-checks.</div></div></article>
+
+<article class="issue P2" id="q019"><header><span class="id">QA-385-019</span><h4>Occupied room tile prints a raw ISO date</h4><span class="pill P2">P2</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screen: Rooms tab tiles · Code: <code>roomLine</code> line 816 · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Tile sub-line "out <b>2026-09-19</b> · ₹2,150 due"; every other surface prints "19 Sep". The Bill guest card is the only place that shows a time ("17 Sep 14:20").</div>
+<div class="blk exp"><div class="lbl">Expected</div><code>fd()</code> everywhere; time shown either consistently or not at all.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>'out ' + fd(g.cout)</code>; drop the sample time from the Bill card (or add arrival time to Check-In facts — owner call).</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Tile text regex <code>/out \d{1,2} [A-Z][a-z]{2}/</code>.</div></div></article>
+
+<article class="issue P2" id="q020"><header><span class="id">QA-385-020</span><h4>In-House "leaving today" includes overdue guests (latent mismatch with Departures)</h4><span class="pill P2">P2</span><span class="pill BUG">BUG (latent)</span></header>
+<div class="meta">Screens: KPI tab strip, In-House "Leaving today" chip · Code: lines 404 / 451 <code>cout &lt;= T</code> · Phase 1</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Today the seed has 0 overdue guests, so In-House "4 leaving today" equals Departures "4 today" by coincidence. Any overdue guest inflates the In-House number while Departures counts it separately as "overdue".</div>
+<div class="blk exp"><div class="lbl">Expected</div>"Leaving today" = <code>cout === T</code>; overdue reported as overdue.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Change both filters to equality; add an "overdue" sub-line to In-House if the owner wants it surfaced there.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Extend a guest's stay into the past via console/seed → In-House leaving still equals Departures today.</div></div></article>
+
+<article class="issue P2" id="q021"><header><span class="id">QA-385-021</span><h4>Bill adjustments and payment state leak between guests</h4><span class="pill P2">P2</span><span class="pill BUG">BUG</span></header>
+<div class="meta">Screen: Bill · Code: global <code>S.fdT/fdV/fdR/cpn/loy/payMethod/paymentRef</code> lines 340-342, 595-596 · Phase 3 · Needs decision A</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Apply coupon WELCOME50 on bill 102, close, open bill 103 → the coupon (and payment method / reference) is still applied.</div>
+<div class="blk exp"><div class="lbl">Expected</div>Each bill has its own draft, like Extend (<code>EX.draft</code>) and Modify (<code>MOD</code>) already do.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>BILL[g.id] = {disc, cpn, loy, method, ref, received}</code>; reset on open of a different guest.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Open 102 → coupon → open 103 → no coupon; reopen 102 → coupon preserved (draft semantics).</div></div></article>
+
+<h2>P3 · Low</h2>
+
+<article class="issue P3" id="q022"><header><span class="id">QA-385-022</span><h4>KPI tab sub-lines are clipped mid-word without an ellipsis</h4><span class="pill P3">P3</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screen: tab strip at ≤ 1440 wide · Measured: 1 clipped sub-line at 1440/1366/1280, 2 at 768 · Phase 5</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>"18 guests · 4 leaving today · 6 arrived toc" — <code>text-overflow: ellipsis</code> has no effect because the sub-line is a flex container.</div><div class="blk exp"><div class="lbl">Expected</div>Ellipsis or graceful hiding of the least important link.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Wrap the links in an inline-block span with <code>overflow:hidden; text-overflow:ellipsis; white-space:nowrap</code>, or hide <code>.opt</code> below 1500px instead of 1100px.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Sweep asserts no sub-line with <code>scrollWidth &gt; clientWidth</code> or a visible "…".</div></div></article>
+
+<article class="issue P3" id="q023"><header><span class="id">QA-385-023</span><h4>Search shrinks to 110px on tablet; row actions wrap to two lines at 1024</h4><span class="pill P3">P3</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: header search (768×1024), Departures / In-House rows (1024×768) · Phase 5</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Search input 110px at 768 (placeholder unreadable); at 1024 "Bill · Request HK · Extend" wrap, doubling row height.</div><div class="blk exp"><div class="lbl">Expected</div>Search ≥ 200px; row actions single-line down to 1024.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>.srch{min-width:200px}</code>; ≤ 1100px show two actions + kebab for the third.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Sweep: <code>.acts</code> height ≤ 34px at 1024; search width ≥ 200 at 768.</div></div></article>
+
+<article class="issue P3" id="q024"><header><span class="id">QA-385-024</span><h4>Pluralisation and grammar drift</h4><span class="pill P3">P3</span><span class="pill UIC">CONTENT</span></header>
+<div class="meta">Screens: Check-In facts (lines 687/699), In-House overdue badge (line 438), Bill card (564), Room Detail (832/834) · Phase 4</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual (measured)</div>"17 Sep → 18 Sep · <b>1 nights</b>" and "Booked charge · <b>1 nights</b>" on 1-night bookings; "Overdue · N <b>day</b>" never pluralised; "night(s)" / "day(s)" style in the Bill card and Room Detail while lists pluralise at runtime.</div><div class="blk exp"><div class="lbl">Expected</div>"1 night", "2 nights", "Overdue · 2 days" everywhere.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>plural(n, 'night')</code> helper used by all seven call-sites.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Text assertions on <code>?checkin=a3</code> (1 night) and a 3-night booking; grep for "(s)" returns none.</div></div></article>
+
+<article class="issue P3" id="q025"><header><span class="id">QA-385-025</span><h4>The "₹" column means two different things</h4><span class="pill P3">P3</span><span class="pill UXG">UX GAP</span></header>
+<div class="meta">Screens: Arrivals (booking amount) vs Departures / In-House (balance due); Room Detail "Amount ₹X" · Phase 6</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Same header "₹" on every list; Arrivals shows the booking charge, the other two show balance due; Room Detail "Amount ₹1,000 · prepaid" doesn't say per-night or total.</div><div class="blk exp"><div class="lbl">Expected</div>Header names the quantity.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Arrivals header "Booking ₹"; Departures / In-House "Balance"; Room Detail "Amount · total".</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Header text assertions; sort still works on the renamed column.</div></div></article>
+
+<article class="issue P3" id="q026"><header><span class="id">QA-385-026</span><h4>Accessibility: contrast, tiny text, hit targets, focus ring, emoji icons</h4><span class="pill P3">P3</span><span class="pill UXG">UX GAP</span></header>
+<div class="meta">Global · CSS lines 5, 15, 31, 66, 94, 140, 194 · Phase 7</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Muted text <code>#888</code> on white ≈ 3.5:1 (fails AA at the 10–11px used for hints/sub-lines); sidebar labels 8px; hit targets 22–28px (<code>.btn.sm</code>, <code>.kebab</code>, <code>.opts .op</code>); <code>:focus-visible</code> styles exist only inside Bill/Check-In expansions; icons are emoji (🔍 🧹 ⚠ ⋮ ▾ ✕) whose glyph and size vary by OS/browser.</div><div class="blk exp"><div class="lbl">Expected</div>≥ 4.5:1 on all body text; visible focus on every interactive element; icons render identically everywhere.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>--mu: #767676</code> (4.54:1); sidebar 10px; global <code>:focus-visible{outline:2px solid var(--or); outline-offset:2px}</code>; inline SVG (lucide paths) for the six icons; hit targets ≥ 32px for desktop.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Contrast script over computed colours of ≤ 12px text; Tab traversal screenshots showing focus on chips/tabs/row buttons.</div></div></article>
+
+<article class="issue P3" id="q027"><header><span class="id">QA-385-027</span><h4>Review hook <code>?open=a1:cancel</code> bypasses the OTA → No-Show-only rule</h4><span class="pill P3">P3</span><span class="pill CR">DOC / OBSERVATION</span></header>
+<div class="meta">Code: line 882 · QA plan §0 documents this hook as expected · Phase 7</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>a1 is Booking.com (OTA) yet the hook opens the Cancel dialog directly; the UI itself never offers Cancel for OTA.</div><div class="blk exp"><div class="lbl">Expected</div>Hooks obey the same rule as the UI so QA doesn't test an unreachable state.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Route the hook through <code>nsOrCancel(a)</code>; update the QA plan to use <code>a0</code> (Direct) for Cancel.</div>
+<div class="blk test"><div class="lbl">How it is tested</div><code>?open=a1:cancel</code> → No-Show dialog; <code>?open=a0:cancel</code> → Cancel dialog.</div></div></article>
+
+<article class="issue P3" id="q028"><header><span class="id">QA-385-028</span><h4>Version labels disagree inside one file</h4><span class="pill P3">P3</span><span class="pill CR">DOC</span></header>
+<div class="meta">Code: hidden <code>#ctl</code> line 280 "v2.21", <code>freeze()</code> line 869 "v2.22", <code>&lt;title&gt;</code> v2.25; panel disclaimers cite v2.16 / v2.18 / v2.20 / v2.21 · Phase 7</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Three build versions in one document; per-panel versions are intentional (design-lock markers) but read as drift.</div><div class="blk exp"><div class="lbl">Expected</div>One build version; per-panel lock versions labelled as such.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div><code>const VERSION='v2.26'</code> used by title, #ctl, freeze(); disclaimers say "design locked at vX.Y".</div>
+<div class="blk test"><div class="lbl">How it is tested</div>grep for <code>v2\.\d+</code> → only the lock markers + VERSION.</div></div></article>
+
+<article class="issue P3" id="q029"><header><span class="id">QA-385-029</span><h4>Checkout is a one-click irreversible action</h4><span class="pill P3">P3</span><span class="pill UXG">UX GAP</span></header>
+<div class="meta">Screen: Bill › "Checkout ₹X" · Code: lines 597 / 799 · Phase 6 · Needs decisions A + D</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>One click removes the row, frees the room (→ HK), increments counters; no undo. The milder No-Show / Cancel actions get a confirmation dialog.</div><div class="blk exp"><div class="lbl">Expected</div>Proportionate confirmation for the highest-consequence money action, without adding a modal.</div>
+<div class="blk fix"><div class="lbl">Suggested fix (decision D-a)</div>Two-step inline: first click relabels to "Confirm checkout ₹X" (danger colour), second click executes; auto-revert after 3 s or on any other click.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>First click → label changes, row still present; second click → checked out; wait 3 s after first click → label reverts; rapid double-click executes once.</div></div></article>
+
+<article class="issue P3" id="q030"><header><span class="id">QA-385-030</span><h4>Late-arrival Check-In: "2 nights left" chip vs full 3-night charge</h4><span class="pill P3">P3</span><span class="pill UXG">UX GAP / POLICY</span></header>
+<div class="meta">Screen: Check-In for a1 (arrived 1 day late) · Code: line 687 chip, line 699 charge · Phase 6 · Needs decision E</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Chip "Late · arrived 17 Sep · 2 nights left" beside "Booked charge · 3 nights". Correct if the policy is "no-show night is still charged"; otherwise it looks like an error.</div><div class="blk exp"><div class="lbl">Expected</div>The screen states which policy applies.</div>
+<div class="blk fix"><div class="lbl">Suggested fix (decision E-a)</div>Add to the chip: "· full booking charged"; keep the charge.</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Chip text assertion on a late arrival; no change for on-time arrivals.</div></div></article>
+
+<article class="issue P3" id="q031"><header><span class="id">QA-385-031</span><h4>Third dialog chrome (Mark all clean) and Room Detail actions in the header</h4><span class="pill P3">P3</span><span class="pill UIC">UI CONSISTENCY</span></header>
+<div class="meta">Screens: Rooms › Mark all clean (line 841), Room Detail (line 836) · Phase 5</div>
+<div class="grid2"><div class="blk act"><div class="lbl">Actual</div>Mark-all-clean uses card → exp → exf with "Cancel" / "Confirm"; Room Detail puts Bill / Extend / Request HK / Mark OOO / ✕ in the header, whereas every other panel keeps actions in the footer.</div><div class="blk exp"><div class="lbl">Expected</div>Same panel chrome and action placement as the rest of the module.</div>
+<div class="blk fix"><div class="lbl">Suggested fix</div>Room Detail: keep header = title + status + ✕ Close; move the action group into a <code>.panel-foot</code>; Mark-all-clean reuses the standard footer grammar ("Close" / "Confirm").</div>
+<div class="blk test"><div class="lbl">How it is tested</div>Room Detail for all six statuses: actions present in footer, same behaviour; Mark-all-clean flow regression; reveal-scroll on room 240 still shows the footer.</div></div></article>
+
+<section>
+<h2>Close-out criteria</h2>
+<ul><li>All 31 registry rows marked ✔ with the testing_agent iteration that verified them (or explicitly REJECTED / DEFERRED by owner).</li><li>Full §H regression checklist (14 groups) green at 1920×800 and 1366×768, zero console errors.</li><li>Decisions A–G recorded in <code>CR-385_DESIGN_DECISIONS.md</code>; Checkout re-locked as v2.10, Check-In as v2.17; Booking v2.18 unchanged unless Phase 2 guards touch it (then v2.19-guards).</li><li>QA_TEST_PLAN updated with the new negative cases; PRD + session handover updated; mockup <b>v2.26</b>.</li><li>Owner visual acceptance (Bill, Check-In, Extend, No-Show screenshots) — agent tests alone do not close the gate.</li><li>Open manual item: Safari / Edge pass.</li></ul>
+<p class="note">Related files: <code>memory/plans/CR-385_QA_AUDIT_REPORT.md</code> · <code>memory/plans/CR-385_QA_FIX_PLAN.md</code> · <code>test_reports/iteration_26.json</code> · mockup <code>/cr385-frontdesk-mockup.html</code>.</p>
+</section>
+</main></div></body></html>
