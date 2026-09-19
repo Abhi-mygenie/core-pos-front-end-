@@ -15,7 +15,8 @@ Gate 2.6 OPEN. Checkout v2.9 and Check-In v2.16 stay LOCKED/untouched. Multi-roo
   bookings have no advance, so the **advance section is COLLAPSED by default**.
 - Keep BOTH `Save booking` (→ Arrivals) and `Save & Check in now` (→ morphs into Check-In) (Q3=a).
 - Include the optional **B2B (GST)** capture (name + GSTIN), same as Check-In D33 (Q4=a).
-- **Meal plan = pills** (owner has plans; pills here too). Room type selector = **pills** (Q for type).
+- **Meal plan = pills, API-driven** (owner: "we have from API"). **Room type = pills, API-driven**
+  (owner: "will be from API"). Mockup renders both from a sample config as if returned by the API.
 
 ## Layout (mirrors Checkout D14 / Check-In D29 — LEFT details, RIGHT final figures + pinned action)
 Expand-in-place card. Header: `New Booking · [source badge] · <type context> · ✕ Cancel`.
@@ -26,10 +27,11 @@ advance is collapsed).
 1. **GUEST** — Row1: Name * | Phone * (10-digit, live CRM lookup → green `✓ Returning guest ·
    last stayed …` line, pre-fills name/email editable). Row2: Email | Adults * / Children.
 2. **STAY** — Row1: Check-in * | Check-out * (nights auto in sub-label). Meal plan = checkout-style
-   pills (Room only / CP / MAP / AP; white + dark-ring selected, no black fill). Notes full-width.
-3. **ROOM TYPE** — Type pills (Deluxe / Executive / Suite) + rooms count (e.g. "1 room"). Shows
-   **type-level availability for the dates** ("6 of this type free · 2 OOO"), NOT a specific-room
-   picker. Rate hint per night by type. Specific room number is assigned at Check-In.
+   pills **driven by the API** (mockup uses a sample plan set); notes full-width.
+3. **ROOM TYPE** — Type pills **driven by the API** (mockup uses a sample set e.g. Deluxe /
+   Executive / Suite) + rooms count (e.g. "1 room"). Shows **type-level availability for the dates**
+   ("6 of this type free · 2 OOO"), NOT a specific-room picker. Rate hint per night by type.
+   Specific room number is assigned at Check-In.
 4. **BILLING** — optional `☐ B2B (GST) billing`; tick reveals required GST customer name + GSTIN,
    flips RIGHT "Bill to" to Company (GST). Exact D33 behaviour.
 

@@ -267,9 +267,8 @@ Checkout v2.9 + Check-In v2.16 remain LOCKED; multi-room stays ON HOLD (§K1). F
 | Advance | Possible at booking but **COLLAPSED by default** (most bookings have none). Expanded = Collect-now + Cash/Card/UPI pills + Txn/UTR (same as Check-In) + disabled **"Send payment link — Phase 2"** placeholder (future auto-update-on-paid). |
 | Save actions | BOTH `Save booking` (→ Arrivals Today) and `Save & Check in now` (→ morphs into Check-In v2.16, where room number + documents are handled). |
 | B2B (GST) | Optional tick → required GST customer name + GSTIN; flips "Bill to" to Company (GST). Same as Check-In D33. |
-| Meal plan | Pills (owner has plans). Room type selector = pills. |
+| Meal plan | Pills, **API-driven** (owner: "we have from API"). Room type selector = pills, **API-driven** (owner: "will be from API"). Mockup renders both from a sample config as if from the API. |
 | Scope/guardrails | All MOCKED; replaces old placeholder `nbForm()` only; no `src/`/backend/.env/registry; Checkout v2.9 + Check-In v2.16 untouched. Re-verify RIGHT no-scroll when advance expanded. |
 
-Two open confirmations before build: (1) exact meal-plan set to show as pills; (2) room-type list
-(kept as sample Deluxe/Executive/Suite unless owner specifies). Not yet built — awaiting owner
-approval to implement v2.17.
+Meal-plan set and room-type list are **API-driven** (rendered from a sample config in the mockup).
+Not yet built — awaiting owner go-ahead to implement v2.17.
