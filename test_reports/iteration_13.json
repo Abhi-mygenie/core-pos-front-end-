@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only QA of CR-385 New Booking (v2.17) mockup at /cr385-frontdesk-mockup.html. All 12 requested scenarios passed: opening via header '+ New Booking' button and ?booking=1 URL param, complete LEFT column (guest/stay/room-type/billing) & RIGHT column (bill with SEPARATE SGST/CGST lines, collapsed advance, balance, footer actions), correct absence of room-number picker and document capture, live figures update on type/meal/date changes, readiness gating and progress pills, CRM lookup for 9811122233, advance section toggle with method/UTR requirements, B2B GST toggle with GSTIN field + gating + progress pill, Save booking (closes form, toast shown, Arrivals tab active, new BK-4022 row with unassigned room), Save & Check-in now (morphs to checkin-expansion for the new guest), entry from an Available room tile ('Book Room' → 'From room 229 · Deluxe' with Deluxe preselected). No-scroll invariant confirmed at 1920x800 both collapsed (scrollHeight=157, clientHeight=157, checkin-btn bottom=505) and advance-expanded+filled (sh=359, ch=359, bottom=707). 1024 width reflows to two equal 447.5px columns. Regressions verified: ?bill=103 shows bill-expansion with Rs 2,677 total, ?bill=107 shows bill-expansion, ?checkin=a2 shows checkin-expansion with separate SGST/CGST + confirm button. Zero JS console/page errors across all flows.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Single HTML file cr385-frontdesk-mockup.html is 706 lines and continues to grow with each CR; consider splitting the JS/CSS out for maintainability (mockup-only concern).",
+    "nbEdit() dereferences document.activeElement.dataset.testid indirectly via nbRedraw; nbRedraw uses active.dataset.testid without a null guard — currently safe because activeElement always exists but worth hardening if the pattern is copied elsewhere."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "test_credentials": "N/A (static mockup, no auth)",
+  "seed_data_creation": "None; all state mocked in JS",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "CR-385 New Booking v2.17 is verified. Use ?booking=1 to open the form, ?bill=103/107 for checkout regression, ?checkin=a2 for check-in regression. Header '+ New Booking' button also opens the form. The no-scroll invariant at 1920x800 (RIGHT pane .ci-pane-body: scrollHeight <= clientHeight, booking-checkin-button bottom <= 800) holds both when advance is collapsed and when it's expanded+filled — re-verify if the right column gains new sections. Save & Check-in-now correctly hands off to checkin-expansion using the newly-created booking id (arr.push then S.open=id+':checkin').",
+  "rca of the issue": "No issues found."
+}

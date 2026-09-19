@@ -3,7 +3,7 @@
 ```
 Frozen:   2026-09-18 — owner: "more or less I am okay with the design … close this gate, start impact analysis"
 Amended:  Gate 2.6 — D17–D19 Check-In corrections; D20 mandatory owner walkthrough/sign-off before Booking
-Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.16 — Check-In baseline CLOSED at v2.14 (§J D31), plus owner-requested additions D32 auto-print receipt (v2.15) & D33 B2B (GST) billing (v2.16); Booking review STARTED (§M D34, 2026-06) — first-iteration blueprint proposed (v2.17), pending owner approval to build
+Mockup:   frontend/public/cr385-frontdesk-mockup.html · v2.17 — Check-In baseline CLOSED at v2.14 (§J D31) + D32/D33 additions (v2.16); Booking review STARTED (§M D34) — first iteration BUILT as v2.17 (type-only, LEFT inputs / RIGHT live bill, collapsed advance, B2B, Save + Save & Check in now), verified iteration_13, awaiting owner review
 Rule:     Preserve frozen rows; record post-freeze amendments in §D and revalidate at OPEN Gate 2.6. No gate advances without explicit owner close.
 ```
 
@@ -79,7 +79,7 @@ Owner asked to document the current version before giving further feedback. Chec
 | Review group | Expansion / entry points | Status |
 |---|---|---|
 | 1 | Check-In: Arrivals row / booked room tile / New Booking continuation | **CLOSED / LOCKED at v2.14 (owner 2026-06, §J D31)** |
-| 2 | New Booking: header / available room Book Room | **IN REVIEW (§M D34, 2026-06)** — owner authorized start; first-iteration blueprint proposed (v2.17), awaiting approval to build |
+| 2 | New Booking: header / available room Book Room | **IN REVIEW (§M D34, 2026-06)** — first iteration BUILT as v2.17 (verified iteration_13); awaiting owner review/feedback |
 | 3 | Extend Stay: Departures / In-House | Waiting for owner feedback; unchanged |
 | 4 | Modify Booking: Arrivals menu | Review with Extend Stay; unchanged |
 | 5 | Cancel Booking: Arrivals menu / expired booking | Review with No-Show; unchanged |
@@ -271,4 +271,4 @@ Checkout v2.9 + Check-In v2.16 remain LOCKED; multi-room stays ON HOLD (§K1). F
 | Scope/guardrails | All MOCKED; replaces old placeholder `nbForm()` only; no `src/`/backend/.env/registry; Checkout v2.9 + Check-In v2.16 untouched. Re-verify RIGHT no-scroll when advance expanded. |
 
 Meal-plan set and room-type list are **API-driven** (rendered from a sample config in the mockup).
-Not yet built — awaiting owner go-ahead to implement v2.17.
+**BUILT as v2.17 and verified iteration_13 (frontend, 100%, no bugs)** — awaiting owner review.

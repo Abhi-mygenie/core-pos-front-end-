@@ -1,8 +1,6 @@
 # CR-385 — New Booking design review · First-iteration blueprint (PROPOSAL, v2.17)
 
-Status: **PROPOSAL — awaiting owner approval to build.** Owner authorized starting the Booking
-review (2026-06). Written blueprint first (ask_human Q5=b). Design-only; nothing built yet.
-Gate 2.6 OPEN. Checkout v2.9 and Check-In v2.16 stay LOCKED/untouched. Multi-room ON HOLD (§K1).
+Status: **BUILT + agent-verified (v2.17, iteration_13) — awaiting owner review/feedback.** Owner authorized starting the Booking review (2026-06). Blueprint below was approved and implemented. Design-only; Gate 2.6 OPEN. Checkout v2.9 and Check-In v2.16 stay LOCKED/untouched. Multi-room ON HOLD (§K1).
 
 ## Owner choices & clarifications captured (ask_human + follow-up, 2026-06)
 - Mirror the locked language: LEFT inputs → RIGHT live bill + pinned Save (Q1=a).
