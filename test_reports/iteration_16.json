@@ -1,0 +1,30 @@
+{
+  "summary": "CR-385 v2.18 delta testing (alert priority/tags/links + booking advance+GST bill lines). All 8 areas verified passing on 1920x800 mockup. No JS console errors. Regressions (?bill=103 shows ~₹2,677, ?checkin=a2 renders unchanged) intact.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "detailed_findings": {
+    "alert_priority_bar": "PASS. Bar shows exactly 3 most-urgent first: (1) 'Room 101 · A. Sharma · overdue 1 day' (2) 'Room 226 · housekeeping 3h 20m' (3) 'Room 112 · housekeeping 2h 10m' then '+3 more'. Housekeeping ordered longest-first (3h20m > 2h10m).",
+    "alert_popover": "PASS. Header 'All alerts · 6 · most urgent first'. 6 rows in priority order: Overdue (urgent, .t-overdue), Housekeeping x3 (urgent, .t-hk, 3h20m→2h10m→2h10m), Out of order (.t-ooo, non-urgent), No-show (.t-noshow, non-urgent). Each has .alert-tag with correct catLabel. Row count 3(bar)+3(more)=6.",
+    "alert_link_precision": "PASS. Overdue click → Departures tab, bill-expansion opens on A. Sharma Room 101 BK-2001. Housekeeping alert-item-1 click → Rooms tab, room 226 in view, popover closed. No-show alert-item-5 click → Arrivals/Late chip, Mark No-Show panel opens with header 'Mark No-Show · K. Menon · BK-3000 · STAY 2026-09-16 → 2026-09-17 EXPIRED' matching label.",
+    "popover_toggle_close": "PASS. Re-clicking alert-more removes popover (count 0). Outside click closes popover. Single #alertpop node (no duplicates).",
+    "advance_in_bill": "PASS. Initially booking-advance-paid absent. After advance-toggle + collect-now=1500 + pay-cash: booking-advance-paid line present, booking-balance = ₹810 (=2310-1500). Setting advance=0 removes booking-advance-paid.",
+    "gst_company_in_bill": "PASS. After B2B tick + gst-name 'Acme Pvt Ltd' + gst-number '27ABCDE1234F1Z5': booking-bill-gst shows 'Bill to (GST) Acme Pvt Ltd · 27ABCDE1234F1Z5'. Unticking B2B or blanking name removes the line.",
+    "no_scroll_invariant": "PASS at 1920x800 with advance filled + B2B on + GST name filled: .ci-pane-body scrollHeight=379, clientHeight=379, hasScroll=FALSE. booking-checkin-button bottom=726.73 (<=800).",
+    "regressions": "PASS. ?bill=103 checkout renders with ₹2,677 present. ?checkin=a2 renders check-in expansion unchanged. No JS console errors observed."
+  },
+  "critical_code_review_comments": [
+    "renderAlert() sort key uses (p asc, s desc). Two housekeeping items with equal sinceMin (both 130min in mock data — rooms 112 & 227) tie; DOM order therefore depends on rooms[] insertion order. Currently stable & correct, but note for future.",
+    "alert-pop-row structure is <div>...<a>...</a></div>. The wrapping div itself is not the click target; only the inner <a> triggers navigation. Row-level click (e.g., clicking the .alert-tag) does nothing — minor UX polish opportunity."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None (all data MOCKED in JS).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "v2.18 alert priority + booking advance/GST bill lines all pass. If bill layout changes further, re-verify booking-right-col .ci-pane-body scroll (scrollHeight was 379 with clientHeight 379 at 1920x800 in max-content state; button-bottom 727). test_credentials.md not needed (no auth)."
+}
