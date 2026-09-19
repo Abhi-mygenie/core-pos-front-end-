@@ -1,0 +1,40 @@
+{
+  "summary": "Full frontend regression + new functionality testing of CR-385 v2.23 static mockup. All 11 requested scenarios executed. Room Detail cells, linked bookings (119/120/221/222/223/224 all populated with distinct BK-#### and correct sources), Extend from occupied (SGST/CGST separate), booked-tile kebab (⋮) source-aware Modify/Cancel/No-Show EITHER-OR rule, Check-In deep-link, Housekeeping read-only cell + MOCKED CR-365 toast, reveal-scroll for last-row tiles, and v2.21/v2.22 regressions all VERIFIED. Zero JS console errors across every flow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Room 101 detail — Stay cell", "issues": ["Displays 'Stay 17 Sep → 16 Sep · night 1 of 1' — the check-out date is earlier than the check-in date for this in-house seed. Cosmetic seed-date artifact; does not block flow, but looks incorrect to a property manager. Consider bumping check-out to at least the next day."]}
+    ]
+  },
+  "detailed_verifications": {
+    "nav_regression": "Title 'CR-385 · Front Desk Workstation (Beta) — Mockup v2.23' confirmed. Zero console errors. ?room=101 opens Room 101 detail; ?room=119:extend and ?room=101:extend also open extend-expansion (?room=119:extend is a no-op since 119 is booked, expected).",
+    "occupied_cells_R101": "data-testid=room-detail present. Cells: Guest 'A. Sharma · 98•••••000 · 2A 1C'; Stay dates+night; Balance '₹0 · clear'; Source·booking 'Booking.com · BK-2001'; Housekeeping 'CLEAN · stayover clean pending' with 'Manage in Housekeeping →' link; Next arrival 'none assigned · 6 Executive arrivals ahead'. Actions row: Bill, Extend, Request HK, Mark OOO(disabled).",
+    "booked_cells_linked": "All 6 booked rooms show populated data (none '—'): R119 V.Rao/Direct/BK-3002/pay-at-hotel; R120 N.Kulkarni/Walk-in/BK-3003/prepaid; R221 T.Gomes/Goibibo/BK-3004; R222 L.Fernandes/Direct/BK-3005/prepaid (special requests YES); R223 D.Naik/Booking.com/BK-3006; R224 H.Shetty/Booking.com/BK-3007/prepaid. Actions: 'Check In' + kebab (⋮).",
+    "extend_from_occupied": "Room 101 Extend → extend-expansion opens with 'Extension bill', SGST 2.5% ₹82.5 and CGST 2.5% ₹82.5 shown SEPARATELY (invariant preserved). Extension total ₹3,465.",
+    "kebab_source_aware": "R119 (Direct) kebab shows ['Modify booking','Cancel booking'] — no 'Mark No-Show'. R223 (Booking.com) kebab shows ['Modify booking','Mark No-Show'] — no 'Cancel booking'. EITHER/OR rule holds. Modify → modify-expansion opens; Cancel → cancel-dialog opens (R119); Mark No-Show → noshow-dialog opens (R223).",
+    "checkin_from_booked": "Room 119 'Check In' opens checkin-expansion for linked BK-3002 V.Rao (Balance ₹1,810, Advance ₹500, Total ₹2,310). No 'no eligible linked booking' guard shown.",
+    "housekeeping_states": "R225 (housekeeping): 'DIRTY · since 0h 45m · set by A. Fernandes · assignee Meena K.' + Manage link. R107 (occupied_hk): 'IN PROGRESS · 0h 45m · assignee Latha R. · set by A. Fernandes'. R229 (available): 'CLEAN · cleaned 1h 20m ago'. R228 (OOO): Out of order/maintenance — AC/Since 15 Sep/Expected back 18 Sep. Manage in Housekeeping link click → toast '→ Housekeeping module (CR-365) — assignment & checklist (MOCKED)'.",
+    "reveal_scroll": "Room Status → All grid, panel scrollHeight=1161 clientHeight=638. Scrolled to bottom, clicked tile Room 239 (last row). Before click scrollTop=523; after click scrollTop=523 (panel auto-adjusted). room-detail rect y=651→780; panel rect top=162 bottom=800. Detail fully within panel viewport = TRUE. Close ✕ and Book Room/Needs HK/Mark OOO buttons visible unclipped.",
+    "next_arrival_turn": "Named-guest vs 'none assigned · N {type} arrivals ahead' both observed (booked rooms show named linked guest; occupied/available rooms show 'none assigned · N ExecutiveDeluxe/Suite arrivals ahead'). NO room in current seed shows a 'Turn today' chip (no leaving-today + same-day same-type arrival match in fixtures). Feature conditional; not demonstrable with current seed data — recommend main agent verify seed if this must be showcased.",
+    "regressions": "?open=ans:noshow: noshow-dialog present; contains ₹9,000, forfeit ₹4,500, ₹112.5, refund ₹4,500. ?open=a1:cancel: cancel-dialog present; contains ₹3,000/₹1,000/₹2,000, 5 reason options in select. Arrivals Late 3: K.Menon row → ['Cancel'] only; F.Almeida row → ['Mark No-Show'] only; J.Pereira row → ['Check In','⋮']. Modify from Arrivals Today kebab on V.Rao → modify-expansion shows 'Change · no difference ₹0' with no edits. ?checkin=a2 opens checkin-expansion. ?booking=1 renders. Zero JS console errors throughout."
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional (cosmetic): Fix Room 101 seed Stay dates so check-out is after check-in (currently '17 Sep → 16 Sep · night 1 of 1').",
+    "Optional: Seed a leaving-today+same-day same-type arrival pair so the 'Turn today' chip is demonstrable (current seed has none)."
+  ],
+  "critical_code_review_comments": [
+    "Static mockup, single-file HTML — file size may be large; consider splitting concerns if it grows (out of scope for this iteration).",
+    "Kebab popover items are correctly source-gated (OTA → No-Show; Direct/Walk-in/Corporate → Cancel). Good invariant enforcement.",
+    "MOCKED HK link intentionally toasts CR-365 — consistent with owner note that crew assignment lives in CR-365."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100% of 11 scenarios verified; 1 conditional item (Turn today) not demonstrable due to seed"},
+  "seed_data_creation": "None — static mockup, no writes.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CR-385 v2.23 Room Detail iteration passed. Deterministic hooks: ?room=<no>[:kind] (kind∈extend/modify/noshow/cancel). data-testids observed: tab-rooms, room-detail, extend-expansion, modify-expansion, checkin-expansion, cancel-dialog, noshow-dialog. Booked-room source mapping: 119 Direct, 120 Walk-in, 221 Goibibo, 222 Direct, 223 Booking.com, 224 Booking.com. HK link produces MOCKED CR-365 toast. Reveal-scroll works via #panel scrollTop adjust. R101 stay dates are cosmetically wrong (17→16 Sep).",
+  "rca of the issue": "N/A — no bugs blocking acceptance; only one cosmetic seed-date artifact on R101 Stay cell and one unobservable-in-seed 'Turn today' chip."
+}
