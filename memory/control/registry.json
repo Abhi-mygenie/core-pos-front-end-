@@ -25418,6 +25418,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "Final regression pack run (owner ask): n7n8 + n11 + gate4 green (G4-01 ✓); D14 FIXED verified (G4-02 ✓); X-05 422 ✓; second TAB = 200 already_paid (idempotent); split advance = lump sum only (BQ-385-20); NEW backend money defects D15 (shorten) + D16 (move) → brief. Sandbox restored."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "Owner confirmed Channel Manager title OK for M7 tab (D62). Both HTMLs updated: checklist rows M4-01/M6-04/M7-01/M7-04 + status banner; mockup v2.29 comment-only."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25459,7 +25464,8 @@
         "BQ-385-19 P2 nights_detail on LR list (OG-PMS-027)",
         "N10 received_by null"
       ],
-      "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md"
+      "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md",
+      "design_lock": "public/cr385-frontdesk-mockup.html v2.29 (v2.28 visuals LOCKED + 2026-09-20 decision log, no visual change; D62)"
     },
     {
       "id": "BUG-410",

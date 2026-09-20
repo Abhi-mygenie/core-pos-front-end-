@@ -633,3 +633,8 @@ Checklist: P-04 ✓ P-05 ✓ P-06 ✓ P-07 ✓ P-08 ✓ P-09 ✓ G4-08 ✓ G4-09
 | **NEW D16 (P1 money):** same-type room move recomputes GST at one slab (2,188 → 3,150) | G4-03 (c) → backend brief; M4 move flow blocked until fixed/waived |
 | G4-03 (a) cheap added night 7,400 @ 5 % ✓ (n11) · (b) `held_fallback` still unreachable (needs a no-rate sandbox date) | G4-03 stays OPEN |
 Brief: `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`. Gate 3 still OPEN (owner review of the plan pending).
+
+### D62 — Owner confirmation: Channel Manager page title is acceptable for the Front Desk Rules tab; both HTML artefacts updated (2026-09-20 22:30)
+**Owner (verbatim):** "The Channel Manager page title reads "Channel Manager"; the Front Desk naming rule ("never show Channel Manager") applies only to the Front Desk screen — I assumed the settings tab there is fine. Confirm? update docs and decision are both html update with updates" → confirmed. The ui_naming_rule stays scoped to the Front Desk screen (`/pms/front-desk-v2`); the M7 tab lives under the existing "Channel Manager" title.
+- `public/cr385-master-checklist.html`: status banner added; rows M4-01 (OD-385-16 a, shorten/move blocked on D15/D16), M6-04 (200 `already_paid`), M7-01 / M7-04 (Channel Manager 5th tab, scope) reworded; G4-01 ✓ G4-02 ✓; G4-03 evidence (partial, not ticked).
+- `public/cr385-frontdesk-mockup.html`: **v2.28 → v2.29, comment-only decision log, zero visual change** (title/version strings + `// v2.29` log). Visual lock of v2.28 stands; Split tile at advance points kept pending OD-385-18.

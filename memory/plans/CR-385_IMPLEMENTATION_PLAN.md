@@ -7,7 +7,7 @@ Code Reality: NONE — `grep -rn "CR-385" frontend/src/` = 0 hits · `grep -rn "
 Conflict Pre-Check: see §0.2 (no blocking conflict; 3 ordering notes)
 Inputs (binding): DESIGN_DECISIONS D1–D58 · IA Rev 4 (G-01…G-56, R15–R26) · AC-01…AC-22 · MASTER brief v1.9 · spike MEASUREMENTS.md (D57/D58) · handover 2026-09-20 §1/§4/§5 · mockup v2.28 (LOCKED) · blueprints v2.17/v2.19/v2.22 · master checklist (P, X, M0–M7, S, R, G4)
 Gate status:  Gate 3 OPEN. This plan is milestone B. Gate 3 closes only when the owner says "close Gate 3" (D58). Nothing in `frontend/src/` before owner "Gate 4 GO" (G4-10).
-Design reference: `frontend/public/cr385-frontdesk-mockup.html` v2.28 — the visual spec; this plan does not restate pixel layout, it maps mockup views → files, data, edits, tests.
+Design reference: `frontend/public/cr385-frontdesk-mockup.html` v2.29 (v2.28 visuals + 2026-09-20 decision log, no visual change) — the visual spec; this plan does not restate pixel layout, it maps mockup views → files, data, edits, tests.
 ```
 
 ---
@@ -229,7 +229,7 @@ No existing-file edits. Layout B (D1/D14/D15) frozen by the spike (D57/D58):
 | E8c | `ChannelManagerPage.jsx` L468 `{activeTab === 3 && <RatesTab />}` | append `{activeTab === 4 && <FrontDeskRulesTab />} {/* CR-385 M7 */}` |
 | E9 | `pages/pms/FrontDeskRulesTab.jsx` NEW (~90 L, pattern = `RatesTab.jsx`) | one card "Front Desk rules": **Allow early check-in** toggle (default off; hint "Let staff check a guest in before the booked arrival date. Off = check-in blocked until the business date reaches the booking.") · **Extension pricing** radio: **Rate table (calendar)** default — "Extra nights are priced from the rate calendar for each date; GST is applied per night." (D55) / **Held rate** — "Extra nights keep the rate held at check-in." · `Save` button · loads from `getSettings()`-style call reading `data.basic` (+ `pms.*` aliases); saves via `updateFrontDeskRules()`; re-reads after save; 422 → toast |
 | E10 | `restaurantSettingsService.js` after L33 | `export const updateFrontDeskRules = async ({ allowEarlyCheckin, extendRateMode }) => { const fd = new FormData(); fd.append('data', JSON.stringify({ basic: { allow_early_checkin: allowEarlyCheckin, extend_rate_mode: extendRateMode } })); return (await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, fd)).data; }; // CR-385 M7` |
-Not touched (superseded by OD-385-17): `RestaurantSettingsPage.jsx`, `restaurantSettingsTransform.js`. Note: the page title "Channel Manager" is fine here — the ui_naming_rule ("never show the words Channel Manager") applies to the Front Desk screen only. Existing tabs 0–3 unchanged (tab index 4 appended; `activeTab` effects L84/L108 are index-specific and unaffected).
+Not touched (superseded by OD-385-17): `RestaurantSettingsPage.jsx`, `restaurantSettingsTransform.js`. Note: the page title "Channel Manager" is fine here — **owner confirmed 2026-09-20**; the ui_naming_rule ("never show the words Channel Manager") applies to the Front Desk screen only. Existing tabs 0–3 unchanged (tab index 4 appended; `activeTab` effects L84/L108 are index-specific and unaffected).
 **Verification**: V-M7-01 unit: `updateFrontDeskRules` posts multipart `data` with exactly the two keys (axios mock) · V-M7-02 Playwright: 5th tab renders (`channel-manager-tab-4`), tabs 0–3 unchanged (screenshot diff), Save → multipart network request · V-M7-03 E2E preprod: early=on → profile `true` → back to `false`; mode=held → profile `held` → back to `calendar` (**restore defaults every run**) · V-M7-04 Front Desk consumes the setting (V-M3-02 with real profile) · V-M7-05 boolean encoding probe (`true/false` as verified in `run_n7n8.py`; if server also needs `1/0`, record).
 **AC**: AC-17 (copy), AC-20. **data-testids**: `channel-manager-tab-4` (existing pattern), `frontdesk-rules-tab`, `toggle-allow-early-checkin`, `radio-extend-rate-mode-calendar`, `radio-extend-rate-mode-held`, `frontdesk-rules-save-btn`, `frontdesk-rules-error`.
 
@@ -335,7 +335,7 @@ Update-endpoint verbs (R25 mandatory line): Modify = **PATCH** `local-reservatio
 - [ ] Copy headers: RoomTile.jsx / CheckInForm.jsx record source file + line range + commit (mirror rule, FU-385-C diff)
 - [ ] Grep guards empty: `grep -rn "balance_payment\|remaining_room_balance\|\* 0.05\|\* 0.18\|toISOString" frontend/src/components/pms/frontdesk frontend/src/api/services/frontDeskService.js frontend/src/api/transforms/frontDeskTransform.js`
 - [ ] Hotspot guard: `git log -1 --format=%H -- frontend/src/components/order-entry/CollectPaymentPanel.jsx frontend/src/api/transforms/orderTransform.js frontend/src/api/services/pmsService.js` unchanged since Gate 4 GO
-- [ ] Locked design untouched: `sha256sum frontend/public/cr385-frontdesk-mockup.html` unchanged
+- [ ] Locked design untouched: `sha256sum frontend/public/cr385-frontdesk-mockup.html` unchanged since v2.29 (2026-09-20)
 - [ ] `yarn test --watchAll=false --testPathPattern=cr385` green; `yarn build` 0 new warnings
 - [ ] Sandbox restored: settings defaults (allow_early_checkin=false, extend_rate_mode=calendar, auto_print_checkin_receipt=false); every test stay settled with TAB; test reservations cancelled
 - [ ] QA handover written from §6 (Verification Matrix inherited) + audit note for CRITICAL modules (M3/M4/M6/M7)

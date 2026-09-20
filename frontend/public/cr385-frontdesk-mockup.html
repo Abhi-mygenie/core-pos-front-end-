@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CR-385 · Front Desk Workstation (Beta) — Mockup v2.28</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CR-385 · Front Desk Workstation (Beta) — Mockup v2.29</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--or:#F26B33;--orh:#E05A22;--gr:#329937;--grh:#2B8230;--tx:#1A1A1A;--mu:#767676;--bd:#E5E5E5;--bg:#F7F7F7;--bg2:#FAFAFA;--dg:#EF4444;--dgb:#FEE2E2;--dgt:#991B1B;--am:#D97706;--amb:#FEF3C7;--gb:#D1FAE5;--gt:#065F46}
@@ -294,7 +294,7 @@ body{background:var(--bg)}#ctl{display:none}
 .ico{vertical-align:-2px;margin-right:2px}
 </style></head><body>
 <div id="ctl" data-testid="mockup-controls" inert aria-hidden="true">
- <span style="font-weight:700;color:#fff">CR-385 mockup <span style="color:var(--or)">v2.28</span> · ★ = recommended</span>
+ <span style="font-weight:700;color:#fff">CR-385 mockup <span style="color:var(--or)">v2.29</span> · ★ = recommended</span>
  <span class="grp"><b>Width</b><label><input type="radio" name="w" value="1440" checked>1440</label><label><input type="radio" name="w" value="1024">1024</label></span>
  <span class="grp"><b>MV-02 Check-In</b><label><input type="radio" name="mv2" value="exp" checked>expand in place ★</label><label><input type="radio" name="mv2" value="side">side panel (compare)</label><label><input type="radio" name="mv2" value="ovl">overlay (compare)</label></span>
  <span class="grp"><b>MV-04 HK</b><label><input type="radio" name="mv4" value="bc" checked>badge + chip ★</label><label><input type="radio" name="mv4" value="b">badge only</label></span>
@@ -359,7 +359,10 @@ function rel(d){const n=dayDiff(d,T);return n===0?'today':(n===1?'tomorrow':(n>1
 // v2.26 (QA-385-002/003/007/013/021/024): single booking-charge source, seed normalisation, money/plural helpers, per-bill drafts.
 // v2.27 (D47): Split tender (POS parity rows), no under-payment, Credit = TAB, real Area titles, Phase-2 ribbon on refund card.
 // v2.28 (D48-N2): B2B (GST) toggle removed from New Booking — company billing is captured at Check-In only; Check-In v2.17 unchanged.
-const VERSION='v2.28';
+// v2.29 (2026-09-20, owner review round 1 — no visual change): OD-385-16 = a (Extend/Modify = new Front-Desk forms, legacy dialogs untouched); OD-385-17 = settings toggles live on the Channel Manager page as a 5th tab "Front Desk Rules" (owner confirmed the page title "Channel Manager" is fine there; the naming rule applies to this Front Desk screen only);
+//        D14 FIXED + verified (extend response charge = LR); M6-04 second payment = 200 already_paid (idempotent, success no-op); split advance stored as lump only → BQ-385-20 (Split tile at advance points kept in the mockup pending owner OD-385-18);
+//        BLOCKERS backend D15 (shorten re-prices at blended rate) + D16 (room move flattens GST slab) — Extend Stay shorten/move disabled in M4 until fixed or waived. Evidence evidence/CR-385/probes_2026_09_20_final/.
+const VERSION='v2.29';
 const RATE={Deluxe:2200,Executive:3300,Suite:4500},PLAN_SUPP={EP:0,CP:300,MAP:700,AP:1000};
 const plural=(n,u)=>`${n} ${u}${Number(n)===1?'':'s'}`;
 const bookingCharge=o=>((RATE[o.type]||0)+(PLAN_SUPP[o.plan]||0))*Math.max(1,dayDiff(o.cout,o.cin));
@@ -841,7 +844,7 @@ function nbForm(roomNo){const d=nbContext(roomNo),f=nbFigures(d),missing=nbMissi
  <div class="ci-pane-foot"><div class="ci-readiness ${!missing.length?'ready':''}" role="status" data-testid="booking-readiness">${missing.length?'To complete: '+missing.join(' · '):'Ready to save this booking'}</div>
  <div class="ci-payment-actions"><button class="btn" data-testid="booking-cancel-button" onclick="closeBooking()">Close</button><button class="btn o" data-testid="booking-save-button" ${missing.length?'disabled':''} onclick="nbSave(false)">Save booking</button><button class="btn p" data-testid="booking-checkin-button" ${missing.length?'disabled':''} onclick="nbSave(true)">Save &amp; check in now</button></div>
  </div></section></div>
- <div class="ci-disclaimer" data-testid="booking-demo-note">MOCKED preview (v2.28) — sample data; rates, meal-plan supplements, GST, type availability and payments are simulated. GST / B2B company billing is captured at Check-In only (D48-N2). Room types and rate plans are API-driven (shown here from a sample config); each grid cell is the all-in price per night (room + meals). Booking reserves a room <b>type</b>; the specific room number and guest documents are handled at Check-In. Advance is optional and collapsed by default (carried into Check-In as already-paid); the Phase-2 payment-link flow is a placeholder.</div></div>`}
+ <div class="ci-disclaimer" data-testid="booking-demo-note">MOCKED preview (v2.29) — sample data; rates, meal-plan supplements, GST, type availability and payments are simulated. GST / B2B company billing is captured at Check-In only (D48-N2). Room types and rate plans are API-driven (shown here from a sample config); each grid cell is the all-in price per night (room + meals). Booking reserves a room <b>type</b>; the specific room number and guest documents are handled at Check-In. Advance is optional and collapsed by default (carried into Check-In as already-paid); the Phase-2 payment-link flow is a placeholder.</div></div>`}
 function nbSave(checkin){const d=NB.draft;if(nbMissing(d).length)return;const f=nbFigures(d),id='a'+Date.now(),a={id,bk:'BK-'+(4000+arr.length),guest:d.name.trim(),ch:'Direct',type:d.type,a:Math.max(1,Number(d.adults)||1),c:Math.max(0,Number(d.children)||0),n:f.n,amt:RATE[d.type],plan:d.plan,pah:f.advance<f.total,sr:!!d.notes.trim(),crm:!!nbCrm(d),phone:(d.phone||'').trim(),email:d.email.trim(),cin:d.cin,cout:d.cout,prepaid:f.advance,room:null};arr.push(a);NB.draft=null;const chip=arrOf(a);S.tab='arrivals';S.chip.arrivals=chip;
  if(checkin){S.open=id+':checkin';toast('Booking saved · '+a.bk+' · continuing to Check-In');render();setTimeout(()=>{const el=document.querySelector('[data-testid="checkin-expansion"]')||document.querySelector('tr.ex');el&&el.scrollIntoView({block:'center',behavior:'smooth'})},60);return}
  S.open=null;toast('Booking saved · '+a.bk+' · '+d.type+' · Arrivals › '+chip+' · inventory pushed to OTAs');render()}
