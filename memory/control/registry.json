@@ -25192,6 +25192,7 @@
         "Sidebar.jsx (+1 line: Front Desk (Beta) item — OD-385-14 a)",
         "api/services/__tests__/frontDeskService.cr385.test.js (NEW)",
         "api/services/frontDeskService.js (NEW)",
+        "api/services/restaurantSettingsService.js (+updateFrontDeskRules — M7)",
         "api/transforms/frontDeskTransform.js (NEW)",
         "api/transforms/restaurantSettingsTransform.js (M7 +2 keys)",
         "api/transforms/roomStatusTransform.js (additive: hkAssignee, isOccupied, guest.phone/email, meta — O-6)",
@@ -25216,15 +25217,15 @@
         "components/pms/frontdesk/WorkstationHeader.jsx (NEW)",
         "components/pms/frontdesk/frontdesk.css (NEW — Q6 host CSS)",
         "components/pms/frontdesk/money.js (NEW)",
-        "pages/RestaurantSettingsPage.jsx (M7 Step 8 card — O-8 a)",
+        "pages/pms/ChannelManagerPage.jsx (+1 tab entry +1 import +1 render line — M7, OD-385-17)",
+        "pages/pms/FrontDeskRulesTab.jsx (NEW — M7, OD-385-17)",
         "pages/pms/FrontDeskWorkstationPage.jsx (NEW)"
       ],
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
       "owner_decisions_open": [
-        "OD-385-16 Extend/Modify reuse vs new forms (plan §9)",
-        "OD-385-17 M7 placement Step 8 (plan §9)",
-        "OD-385-18 Split at advance points payload (plan §9)"
+        "OD-385-18 Split at advance points — split_payments[] proposed in MASTER, never probed/confirmed by backend (walk-through given 2026-09-20)",
+        "G4-07 BQ-385-19 FE fallback acceptance (walk-through given 2026-09-20)"
       ],
       "mockup_variants_required": {
         "MV-01": "Folio+Checkout panel layout: full-width in panel area ★ / wide overlay / collapsed folio summary",
@@ -25288,7 +25289,9 @@
         "O-6 (D54)": "additive roomStatusTransform fields (hk_assignee, guest.phone/email, meta) = OD-385-12 exception",
         "O-8 (D54)": "option a — allow_early_checkin / extend_rate_mode toggles added to the existing PMS settings page (OD-385-12 exception, module M7)",
         "gate_2_6": "CLOSED by owner 2026-09-20: \"08 a 04 ok 05 yes 06 ok update docs and decision and close gate 2.6 follow agent promot and rules\"",
-        "Q6 (D57)": "(a) host CSS hides the 3 section toggle rows on the Front Desk bill; no CollectPaymentPanel edit; owner: \"we don't need duplicate\""
+        "Q6 (D57)": "(a) host CSS hides the 3 section toggle rows on the Front Desk bill; no CollectPaymentPanel edit; owner: \"we don't need duplicate\"",
+        "OD-385-16 (2026-09-20)": "option A — new ExtendStayForm/ModifyBookingForm under components/pms/frontdesk/; legacy ExtendStayDialog/ModifyBookingDialog untouched; Cancel/No-Show keep D2 inline",
+        "OD-385-17 (2026-09-20)": "M7 settings toggles = new 5th tab \"Front Desk Rules\" on ChannelManagerPage (owner: \"in channel manager page another tab\"); RestaurantSettingsPage untouched; OD-385-12 exception"
       },
       "follow_ups": [
         "FU-385-A: Sidebar PMS links review after CR-385 QA PASS",
@@ -25404,6 +25407,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (milestone B done)",
           "note": "PLANNING: Implementation Plan written (P-04…P-09, G4-08, G4-09 ticked). Code reality NONE re-verified; conflict pre-check clean. Gate 3 stays OPEN until owner says \"close Gate 3\" (D58). OD-385-16/17/18 raised."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "Owner: OD-385-16 = a; OD-385-17 = Channel Manager page new tab (plan M7 rewritten). OD-385-18 + G4-07 walk-through requested. Creds question answered (OWNER_TGK alias)."
         }
       ],
       "gate_2_6_closed": "2026-09-20",

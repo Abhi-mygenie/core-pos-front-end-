@@ -610,3 +610,12 @@ Planning agent delivered `plans/CR-385_IMPLEMENTATION_PLAN.md` (P-04) — module
 | **OD-385-18 (owner)** | Split at advance points (D47-h) — split-leg payload not in MASTER for `direct-reservation.advance` / check-in / extend `payment` | (a) recommended: probe; if unsupported ship single-method advance now, park Split-at-advance to a follow-up · (b) block M1/M3/M4. Default: (a). |
 
 Checklist: P-04 ✓ P-05 ✓ P-06 ✓ P-07 ✓ P-08 ✓ P-09 ✓ G4-08 ✓ G4-09 ✓ (evidence `evidence/CR-385/probes_2026_09_20_g4_09/`). **Still open before "Gate 4 GO":** G4-01, G4-02, G4-03, G4-04, G4-06 (owner "close Gate 3"), G4-07 (owner accept fallback), G4-10.
+
+### D60 — Owner answers on the plan review round 1 (2026-09-20)
+**Owner (verbatim):** "OD-385-16 option A OD-385-17 no in channel manager page another tab , OD-385-18 not clear are probe not done all these blcoker were removed during impact walk me through this , BQ-385-19 walk me through not clear"
+| # | Decision | Effect |
+|---|---|---|
+| **OD-385-16 = (a)** | New `ExtendStayForm.jsx` / `ModifyBookingForm.jsx` under `components/pms/frontdesk/` on the new contract; legacy `ExtendStayDialog` / `ModifyBookingDialog` untouched (retire at FU-385-C). Cancel/No-Show keep D2 `inline`. | Plan E6*/E7* removed; scope lock §1.3 gains both legacy dialogs. |
+| **OD-385-17 = (c)** | M7 toggles live on the **Channel Manager page as a 5th tab "Front Desk Rules"** (`ChannelManagerPage.jsx` +3 lines, new `pages/pms/FrontDeskRulesTab.jsx`, `restaurantSettingsService.updateFrontDeskRules`). `RestaurantSettingsPage` / `restaurantSettingsTransform` untouched. New OD-385-12 exception. | Plan M7 rewritten; registry files updated. |
+| OD-385-18 | OPEN — walk-through given: `split_payments[]` is *our proposed* shape in MASTER (L133–134, L261, D47-h), never sent in any probe and never acknowledged in a backend reply; BQ-10/14 "verified" = single-method advance/payment only. | awaiting owner letter |
+| G4-07 / BQ-385-19 | OPEN — walk-through given (per-night lines exist only in the extend *response*; LR list `charge` has no `nights_detail`, so after a reload the Bill/Departures can only show total + nights + "avg. rate / night"). | awaiting owner yes/no |
