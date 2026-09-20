@@ -595,3 +595,18 @@ Per AGENT_PROMPT_ALPHA (Role 2, Step 3; ladder L1428) **Gate 3 = the Implementat
 
 **Gate 3 closes when:** planning agent delivers P-04 (plan) + P-05…P-09 ticked → owner says **"close Gate 3"** (quote recorded, P-12 / G4-06) → then every G4 row ticked/waived → owner **"Gate 4 GO"** (G4-10). Nothing in `src/` before that.
 Handover for the planning agent: `handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md` (updated: spike done, Q6 settled, remaining steps 3.3–3.8).
+
+### D59 — Gate 3 milestone B: Implementation Plan written; planning facts recorded; owner decisions OD-385-16/17/18 raised (2026-09-20)
+Planning agent delivered `plans/CR-385_IMPLEMENTATION_PLAN.md` (P-04) — modules M0–M7 with exact edits (E1–E10), §3 data-contract sheet (P-08/G4-08), §5 gap/AC mapping (P-05/P-06), §6 verification matrix (34 rows), §7 post-code registry checklist, §8 risks R15–R30, §1 scope lock, §0 Code Reality NONE + Conflict Pre-Check. **No gate flipped: Gate 3 remains OPEN until the owner says "close Gate 3" (D58).** Nothing in `src/`.
+
+| Fact / decision | Value | Consequence |
+|---|---|---|
+| G4-09 real Area titles | Live `room-status-board` has **no `sections[]`**; Area = per-room `title`. Raw: `ground floor`, `first  floor` (double space), `2nd floor`, `3rd floor`, `patal lok` | M0 groups by `normaliseTitle(title)` (trim, collapse spaces, title-case, null → "No section"); fixture uses the raw strings. D47-f list confirmed. |
+| LR `payment_status` location | Not top-level; per room line `rooms[].order_payment_status ∈ {unpaid, paid}` | Cleared helper (X-02/AC-22) = `rooms[0].order_payment_status === 'paid' && charge.balance_due === 0`. Money contract D50 unchanged. OG-PMS-028. |
+| LR `view=all` | **422 without `start_date`/`end_date`** | FE always sends a window; server buckets. OG-PMS-029. |
+| BQ-385-19 (G4-07) | FE fallback (room total + nights + "avg. rate / night" after reload) written into the plan §3 D-rules | owner to confirm acceptance or wait for backend |
+| **OD-385-16 (owner)** | Existing `ExtendStayDialog` / `ModifyBookingDialog` contain client rate maths, browser `today`, `new_room_price` / `amount_after_tax` — incompatible with D50/G-02/G-03/C7; an `inline` wrapper (D2) cannot fix that without logic edits | **(a) recommended:** new `ExtendStayForm.jsx` / `ModifyBookingForm.jsx` under `components/pms/frontdesk/`, legacy dialogs untouched (retire at FU-385-C) · (b) inline + logic edits in the 2 legacy dialogs (old pages change → OD-385-12 breach, BUG-402 re-QA). Cancel/No-Show keep D2 `inline`. Default if silent: (a). |
+| **OD-385-17 (owner)** | M7 controls placement | (a) recommended: `RestaurantSettingsPage` **Step 8 "Room & Hospitality"** new card "Front Desk rules" (the handover's "basic" is the payload key, not the Step-2 tab) · (b) Step 2. Default: (a). |
+| **OD-385-18 (owner)** | Split at advance points (D47-h) — split-leg payload not in MASTER for `direct-reservation.advance` / check-in / extend `payment` | (a) recommended: probe; if unsupported ship single-method advance now, park Split-at-advance to a follow-up · (b) block M1/M3/M4. Default: (a). |
+
+Checklist: P-04 ✓ P-05 ✓ P-06 ✓ P-07 ✓ P-08 ✓ P-09 ✓ G4-08 ✓ G4-09 ✓ (evidence `evidence/CR-385/probes_2026_09_20_g4_09/`). **Still open before "Gate 4 GO":** G4-01, G4-02, G4-03, G4-04, G4-06 (owner "close Gate 3"), G4-07 (owner accept fallback), G4-10.

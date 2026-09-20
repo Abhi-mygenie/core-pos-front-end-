@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 OPEN (Implementation Plan) — milestone A spike DONE 2026-09-20 (D57/D58: panel fits 560 px row, Q6 = host CSS). Gate 2.6 CLOSED 2026-09-20 (D54). Next: PLANNING agent writes plans/CR-385_IMPLEMENTATION_PLAN.md (M0–M7, verification matrix, registry checklist, scope lock) → owner 'close Gate 3' → G4-01..10 → owner 'Gate 4 GO'. Backend: all verified (build 3, BQ-17/18, N11); P2 open D14 / BQ-19 / N10. Design locked v2.28. Money contract D50. No src/ code yet.",
+      "status": "GATE 3 OPEN — plan ready, awaiting owner review/\"close Gate 3\". plans/CR-385_IMPLEMENTATION_PLAN.md written 2026-09-20 (M0–M7, matrix 34 rows, registry checklist, risks R15–R30, scope lock). Owner decisions pending: OD-385-16 (Extend/Modify: new forms vs inline legacy dialogs, rec. a), OD-385-17 (M7 in Step 8, rec. a), OD-385-18 (Split at advance points). G4 open: 01, 02, 03, 04, 06, 07, 10. Backend P2 open D14 / BQ-19 / N10. No src/ code.",
       "gate": 3,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25188,27 +25188,44 @@
       "duplicate_check": "DISTINCT",
       "design_freeze_required": true,
       "files": [
-        "pages/pms/FrontDeskWorkstationPage.jsx (NEW)",
-        "components/pms/frontdesk/KpiTabStrip.jsx (NEW)",
-        "components/pms/frontdesk/AlertBar.jsx (NEW)",
-        "components/pms/frontdesk/ArrivalsPanel.jsx (NEW)",
-        "components/pms/frontdesk/DeparturesPanel.jsx (NEW)",
-        "components/pms/frontdesk/InHousePanel.jsx (NEW)",
-        "components/pms/frontdesk/RoomsPanel.jsx (NEW)",
-        "components/pms/frontdesk/RoomTile.jsx (NEW copy)",
-        "components/pms/frontdesk/RoomTileCompact.jsx (NEW)",
-        "components/pms/frontdesk/CheckInForm.jsx (NEW copy of CheckInPage form)",
-        "components/pms/frontdesk/FolioCheckoutPanel.jsx (NEW: GuestFolioPage cards + PmsCheckoutDrawer host logic copied; CollectPaymentPanel imported)",
-        "api/services/frontDeskService.js (NEW)",
-        "api/services/__tests__/frontDeskService.cr385.test.js (NEW)",
         "App.js (+1 import +1 route)",
         "Sidebar.jsx (+1 line: Front Desk (Beta) item — OD-385-14 a)",
+        "api/services/__tests__/frontDeskService.cr385.test.js (NEW)",
+        "api/services/frontDeskService.js (NEW)",
+        "api/transforms/frontDeskTransform.js (NEW)",
+        "api/transforms/restaurantSettingsTransform.js (M7 +2 keys)",
+        "api/transforms/roomStatusTransform.js (additive: hkAssignee, isOccupied, guest.phone/email, meta — O-6)",
+        "components/pms/CancelBookingDialog.jsx (+inline prop, D2)",
+        "components/pms/NoShowDialog.jsx (+inline prop, D2)",
+        "components/pms/frontdesk/AlertBar.jsx (NEW)",
+        "components/pms/frontdesk/ArrivalsPanel.jsx (NEW)",
+        "components/pms/frontdesk/CheckInForm.jsx (NEW copy of CheckInPage form)",
+        "components/pms/frontdesk/DeparturesPanel.jsx (NEW)",
+        "components/pms/frontdesk/ExtendStayForm.jsx (NEW — OD-385-16 a)",
+        "components/pms/frontdesk/FolioCheckoutPanel.jsx (NEW: GuestFolioPage cards + PmsCheckoutDrawer host logic copied; CollectPaymentPanel imported)",
         "components/pms/frontdesk/GlobalSearch.jsx (NEW — client-side over snapshot data)",
-        "components/pms/frontdesk/NewBookingForm.jsx (NEW copy of NewBookingPage form — scope added 2026-09-18)"
+        "components/pms/frontdesk/GuestTable.jsx (NEW)",
+        "components/pms/frontdesk/InHousePanel.jsx (NEW)",
+        "components/pms/frontdesk/KpiTabStrip.jsx (NEW)",
+        "components/pms/frontdesk/ModifyBookingForm.jsx (NEW — OD-385-16 a)",
+        "components/pms/frontdesk/NewBookingForm.jsx (NEW copy of NewBookingPage form — scope added 2026-09-18)",
+        "components/pms/frontdesk/RoomDetail.jsx (NEW)",
+        "components/pms/frontdesk/RoomTile.jsx (NEW copy)",
+        "components/pms/frontdesk/RoomTileCompact.jsx (NEW)",
+        "components/pms/frontdesk/RoomsPanel.jsx (NEW)",
+        "components/pms/frontdesk/WorkstationHeader.jsx (NEW)",
+        "components/pms/frontdesk/frontdesk.css (NEW — Q6 host CSS)",
+        "components/pms/frontdesk/money.js (NEW)",
+        "pages/RestaurantSettingsPage.jsx (M7 Step 8 card — O-8 a)",
+        "pages/pms/FrontDeskWorkstationPage.jsx (NEW)"
       ],
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
-      "owner_decisions_open": [],
+      "owner_decisions_open": [
+        "OD-385-16 Extend/Modify reuse vs new forms (plan §9)",
+        "OD-385-17 M7 placement Step 8 (plan §9)",
+        "OD-385-18 Split at advance points payload (plan §9)"
+      ],
       "mockup_variants_required": {
         "MV-01": "Folio+Checkout panel layout: full-width in panel area ★ / wide overlay / collapsed folio summary",
         "MV-02": "Q3 Check-In: wide side panel / full overlay (default side panel)",
@@ -25221,7 +25238,7 @@
         "MV-09": "Q9b grouping: flat+switch / by type / flat (default flat+switch)"
       },
       "q10_live_updates": "option a (refresh on focus + button + after action) provisional; revisit after BQ-385-01",
-      "handover": "handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md",
+      "handover": "handover/SESSION_HANDOVER_2026_09_20_CR385_PLAN_WRITTEN.md",
       "data_inventory": "impact/CR-385_DATA_INVENTORY.md",
       "backend_questions": [
         "BQ-385-01 PMS socket events exist? (FE has none)",
@@ -25382,6 +25399,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (milestone A done)",
           "note": "Owner: \"update all docs and decsion and handover plan for planning agent , and close the gate follow agnet promt gate and rules\". Gate 3 cannot close without the plan artifact (AGENT_PROMPT Step 3) — spike milestone closed instead (D58); Q6 = a locked. Handover updated for the planning agent."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (milestone B done)",
+          "note": "PLANNING: Implementation Plan written (P-04…P-09, G4-08, G4-09 ticked). Code reality NONE re-verified; conflict pre-check clean. Gate 3 stays OPEN until owner says \"close Gate 3\" (D58). OD-385-16/17/18 raised."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25410,9 +25432,13 @@
       "spike_evidence": "evidence/CR-385/spike/MEASUREMENTS.md",
       "gate_3_milestones": {
         "A_spike": "DONE 2026-09-20 (evidence/CR-385/spike/MEASUREMENTS.md)",
-        "B_implementation_plan": "NOT STARTED — plans/CR-385_IMPLEMENTATION_PLAN.md",
-        "C_owner_close_gate_3": "PENDING"
-      }
+        "B_implementation_plan": "DONE 2026-09-20 — plans/CR-385_IMPLEMENTATION_PLAN.md (owner review pending)",
+        "C_owner_close_gate_3": "PENDING — owner must say \"close Gate 3\""
+      },
+      "implementation_plan": "plans/CR-385_IMPLEMENTATION_PLAN.md",
+      "evidence_probes": [
+        "evidence/CR-385/probes_2026_09_20_g4_09/PROBE_REPORT.md (G4-09 titles; LR shape; payment_status per room line)"
+      ]
     },
     {
       "id": "BUG-410",
