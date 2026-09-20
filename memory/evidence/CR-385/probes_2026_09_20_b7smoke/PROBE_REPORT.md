@@ -1,0 +1,14 @@
+# CR-385 · B-7 smoke (G4-04) — QA agent iterations 1–2 + FE curl triage (2026-09-20 23:00–23:40 IST)
+QA agent reports: `/app/test_reports/iteration_1.json` (BLOCKED — r4/r5/r1 were `hk`; FE flipped them to `available` via `PATCH room-status`), `/app/test_reports/iteration_2.json` (chain S-411 → S-402 → S-425/428 → S-418 executed on the live sandbox; stay 'Smoke 411' order 1232629 settled Cash ₹4,200; screenshots `/app/test_reports/screenshots/b7_smoke_v2/`).
+
+| §S row | QA result | FE triage (this folder) | Verdict for checklist |
+|---|---|---|---|
+| S-411 BUG-411 | Card picker present, check-in OK, **folio Advance Paid ₹0**, no ledger row | `lr_smoke411.json` / `folio_1232629.json`: BE stored `payment_mode "card"` but `advance_payment 0.00`, ledger empty. **Curl reproduction** `c2_checkin_adv500_card.json` (fresh booking, `advance_payment=500`, `payment_method=card`, `room_price=0` per BQ-16) → response `advance_payment 0`, folio ledger `[]`, LR `charge.advance_payment 0`. → **BACKEND DEFECT D17**: check-in advance is dropped (only the method is kept). FE fix BUG-411 sends the field correctly; BUG-412 root cause is this. | **FAIL — backend D17** (P0 for CR-385 M3 collect-now) |
+| S-410 BUG-410 | not executed (iteration budget) | — | pending iteration 3 |
+| S-402 BUG-402 | **PASS** — non-zero rate shown, stay extended, balance 2,100 → 4,200 | Legacy dialog preview said +₹3,500 (CM rate 09-21 executive-s-ep = 3,500, `rates_0920_0922.json`) but the server charged the held ₹2,000 (+GST) — the booking was FE-priced at 2,000 with `rateplan_code null`, so the server could not look the calendar up → **probable `held_fallback` sighting** (response not captured; G4-03 b still unverified). The preview/charge divergence is exactly the D50 client-maths problem → confirms OD-385-16 (a). | **PASS** (BUG-402 fixed) + note |
+| S-421/426 · S-429/430 | not executed | — | pending iteration 3 |
+| S-425/428 BUG-425/428 | **PASS** — drawer room balance ₹4,200 incl. GST = folio; grand total correct; Cash settle → checkout OK, room → HK | ledger `4200 cash checkout` ✓ | **PASS** |
+| S-418 BUG-418 | "FAIL" — TAXES block empty, folio single "Lodging GST" line | **Expected**: BUG-418 is folded into CR-385 **M6** (O-5); the legacy drawer is not being fixed. | **N/A — lands in M6** (row not ticked) |
+
+Other observations (intake candidates, not CR-385 scope): CheckInPage pre-fills Room Amount with base+GST (₹2,100) and re-applies GST on it (₹2,205 shown vs ₹2,100 stored) — **BUG-431 candidate**; CheckInPage has no Card/UPI reference field (CR-385 M3 adds it, AC-09); legacy NewBookingPage lets the FE send a room amount (₹2,000) which the server honours over the CM rate (3,500) — **BUG-432 candidate** (BQ-16 says the server prices only when the FE omits the rate).
+Sandbox: all QA/curl stays settled (orders 1232629, curl S411 order), rooms reset to `available` for iteration 3; settings untouched.

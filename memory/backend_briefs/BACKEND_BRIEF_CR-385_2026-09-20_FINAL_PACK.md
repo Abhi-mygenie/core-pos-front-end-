@@ -34,3 +34,11 @@ BE reply `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`: D15 FIXED
 - Ask: either (a) tell us an existing no-rate date window, or (b) remove the rate for e.g. 2026-11-20 → 2026-11-22 for 48 h and confirm the expected `held_fallback` figures (rate = held check-in rate, GST slab per that rate).
 - Also confirm: does `held_fallback` ever appear in **held** mode, or only in calendar mode?
 - FE side: chip copy "held (no rate for this date)" is planned in M4 (D55); untested until this is answered. Owner may waive (G4-03 b).
+
+## D17 — check-in advance is dropped by `POST /api/v1/vendoremployee/pos/user-group-check-in` (found 2026-09-20 23:30, B-7 smoke S-411)
+- Classification: BACKEND_BUG (money) · Priority **P0** for CR-385 M3 (collect-now at check-in) · also the root cause of **BUG-412** (folio Advance Paid wrong).
+- Repro (`evidence/CR-385/probes_2026_09_20_b7smoke/c1_direct.json` → `c2_checkin_adv500_card.json` → `c3_folio.json`): Direct booking (no advance), then check-in multipart with `advance_payment=500`, `payment_method=card`, `room_price=0`, `order_amount=0` (FE omits the rate per BQ-16).
+- Expected: `orders[0].advance_payment 500`, ledger row `{500, card, advance}`, `charge.advance_payment 500`, `balance_due 5,275`.
+- Actual: `orders[0].advance_payment 0`, folio `room_info.advance_payment "0.00"` while `payment_mode "card"` **is** stored, ledger `[]`, LR `charge.advance_payment 0`, `balance_due 5,775`.
+- Same result through the UI (QA agent, order 1232629, `folio_1232629.json`). Advances taken at **booking** (`direct-reservation.advance`) are recorded fine (gate4 s2/s3) — only the **check-in** advance is lost.
+- Question: is the advance ignored because `room_price=0`? If so, that contradicts BQ-16 (server pricing) and must be fixed server-side; FE will not send a price.
