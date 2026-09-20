@@ -25434,6 +25434,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "Owner: OD-385-18 = a (locked); G4-04 B-7 smoke → QA agent (testing_agent run started); BQ-385-21 held_fallback sandbox ask written (late — FE omission acknowledged)."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "G4-04 B-7 smoke by QA agent (3 iterations): 5 rows PASS, S-411 FAIL (backend D17 found + curl-reproduced), S-418 N/A (M6). D17 added to FINAL_PACK brief. Sandbox settled."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25469,6 +25474,7 @@
         "evidence/CR-385/probes_2026_09_20_g4_09/PROBE_REPORT.md (G4-09 titles; LR shape; payment_status per room line)"
       ],
       "open_backend_items": [
+        "D17 P0 check-in advance dropped by user-group-check-in (advance_payment 0, ledger empty; payment_mode kept) — blocks M3 collect-now; root cause BUG-412",
         "BQ-385-19 P2 nights_detail on LR list (OG-PMS-027) — G4-07 owner fallback",
         "BQ-385-20 CONFIRMED contract: split advance legs not stored (single-method only)",
         "N10 received_by null (P3)",
@@ -25476,7 +25482,28 @@
         "BQ-385-21 sandbox no-rate date for held_fallback (G4-03 b) — asked 2026-09-20 23:00"
       ],
       "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md",
-      "design_lock": "public/cr385-frontdesk-mockup.html v2.29 (v2.28 visuals LOCKED + 2026-09-20 decision log, no visual change; D62)"
+      "design_lock": "public/cr385-frontdesk-mockup.html v2.29 (v2.28 visuals LOCKED + 2026-09-20 decision log, no visual change; D62)",
+      "b7_smoke": {
+        "report": "evidence/CR-385/probes_2026_09_20_b7smoke/PROBE_REPORT.md",
+        "qa_reports": [
+          "test_reports/iteration_1.json",
+          "test_reports/iteration_2.json",
+          "test_reports/iteration_3.json"
+        ],
+        "pass": [
+          "S-410",
+          "S-402",
+          "S-421/426",
+          "S-429/430",
+          "S-425/428"
+        ],
+        "fail": [
+          "S-411 → backend D17 (check-in advance dropped)"
+        ],
+        "na": [
+          "S-418 → CR-385 M6"
+        ]
+      }
     },
     {
       "id": "BUG-410",
@@ -25514,7 +25541,14 @@
         "CheckInPage.jsx"
       ],
       "registered": "2026-09-15",
-      "notes": "pmsCheckIn at handleConfirm never passes paymentMethod → pmsService:L194 appends payment_method=\"\" always. Old RoomCheckInModal had BUG-027 cash/card/upi picker when advance>0. Revenue report room_checkin_revenue cash/UPI/card breakdown is wrong. CAUSES BUG-412. pmsService.js already has the fd.append field — only FE UI is missing (1 file, ~15 lines). No backend change needed."
+      "notes": "pmsCheckIn at handleConfirm never passes paymentMethod → pmsService:L194 appends payment_method=\"\" always. Old RoomCheckInModal had BUG-027 cash/card/upi picker when advance>0. Revenue report room_checkin_revenue cash/UPI/card breakdown is wrong. CAUSES BUG-412. pmsService.js already has the fd.append field — only FE UI is missing (1 file, ~15 lines). No backend change needed.",
+      "status_history": [
+        {
+          "date": "2026-09-20",
+          "to": "GATE_5A_IMPLEMENTED (2026-09-15). Code applied, compile PASS. Awaiting QA Gate 5b.",
+          "note": "CR-385 B-7 smoke: FE sends advance_payment+payment_method correctly (QA iter2 + curl c2); BACKEND drops the advance (D17) → folio Advance Paid 0. BUG-412 root cause = D17 (backend). See backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md §D17"
+        }
+      ]
     },
     {
       "id": "BUG-412",
@@ -25533,7 +25567,14 @@
         "GuestFolioPage.jsx (display only — root cause is backend behavior when payment_method is blank)"
       ],
       "registered": "2026-09-15",
-      "notes": "Owner entered ₹500 advance, folio shows ₹1,000 (= room price). Backend likely overrides advance_payment with room_price when payment_method is \"\" (empty). Evidence: room_balance=₹50 = 1000+50-1000 (consistent only if advance=1000, not 500). Cannot confirm or fix independently — will auto-resolve once BUG-411 is implemented and probed live. Register as BLOCKED."
+      "notes": "Owner entered ₹500 advance, folio shows ₹1,000 (= room price). Backend likely overrides advance_payment with room_price when payment_method is \"\" (empty). Evidence: room_balance=₹50 = 1000+50-1000 (consistent only if advance=1000, not 500). Cannot confirm or fix independently — will auto-resolve once BUG-411 is implemented and probed live. Register as BLOCKED.",
+      "status_history": [
+        {
+          "date": "2026-09-20",
+          "to": "INTAKE — GATE 1 — BLOCKED ON BUG-411",
+          "note": "CR-385 B-7 smoke: FE sends advance_payment+payment_method correctly (QA iter2 + curl c2); BACKEND drops the advance (D17) → folio Advance Paid 0. BUG-412 root cause = D17 (backend). See backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md §D17"
+        }
+      ]
     },
     {
       "id": "BUG-413",

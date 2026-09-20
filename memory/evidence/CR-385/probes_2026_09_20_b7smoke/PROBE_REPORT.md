@@ -12,3 +12,13 @@ QA agent reports: `/app/test_reports/iteration_1.json` (BLOCKED — r4/r5/r1 wer
 
 Other observations (intake candidates, not CR-385 scope): CheckInPage pre-fills Room Amount with base+GST (₹2,100) and re-applies GST on it (₹2,205 shown vs ₹2,100 stored) — **BUG-431 candidate**; CheckInPage has no Card/UPI reference field (CR-385 M3 adds it, AC-09); legacy NewBookingPage lets the FE send a room amount (₹2,000) which the server honours over the CM rate (3,500) — **BUG-432 candidate** (BQ-16 says the server prices only when the FE omits the rate).
 Sandbox: all QA/curl stays settled (orders 1232629, curl S411 order), rooms reset to `available` for iteration 3; settings untouched.
+
+## Iteration 3 (`/app/test_reports/iteration_3.json`, screenshots `b7_smoke_v3/`)
+| §S row | Result | Figures |
+|---|---|---|
+| S-410 BUG-410 | **PASS** | RoomCheckInModal, Personal booking: CGST 2.5 % ₹50 + SGST 2.5 % ₹50, total ₹2,100; folio 1232631 Room ₹2,000 + GST ₹100 |
+| S-421/426 BUG-421/426 | **PASS** | In-House balance ₹2,212.35 = room 2,100 + room-service 107 + GST; folio 2,100 + 112 = 2,212 (order 1232632). Nit: In-House 2,212.35 / folio 2,212 / POS 2,213 — ₹1 rounding divergence across three code paths → **BUG-433 candidate** (P3) |
+| S-429/430 BUG-429/430 | **PASS** | item ₹13 + add-on ₹15 = ₹28 → GST ₹1 + ₹1 on base+add-on; Room Orders 112 → 142 = POS delta ₹30. Nit: per-half rounding over-collects ₹0.60 (LOW) |
+Cleanup: orders 1232631 / 1232632 settled Cash; r1, r5 → HK (auto). Settings untouched.
+
+**G4-04 status:** 5 of 7 §S rows PASS; S-418 N/A (moves to M6); **S-411 blocked on backend D17** — G4-04 can close only after D17 is fixed + re-smoked, or the owner waives S-411 for Gate 4 (M3 collect-now would then be built against a known-broken endpoint — not recommended).

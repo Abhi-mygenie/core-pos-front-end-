@@ -655,3 +655,13 @@ Sandbox restored (settings defaults, stay 1232628 settled, split probes cancelle
 - G4-07: second walk-through given (see chat 23:00); owner answer pending.
 - G4-03 (b): owner rightly notes the `held_fallback` sandbox ask should have gone with the D15/D16 brief. **FE omission acknowledged.** Ask written now as **BQ-385-21** in `BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`.
 - **G4-04 = QA agent** — B-7 smoke of §S (411 · 410 · 402 · 421/426 · 429/430 · 425/428 · 418) delegated to the testing agent on the preview build against preprod; evidence per row in the checklist §S.
+
+### D65 — G4-04 B-7 smoke executed by the QA agent; backend D17 found (2026-09-20 23:00 → 00:10)
+Three QA-agent iterations on the live sandbox (`test_reports/iteration_1..3.json`, FE triage `evidence/CR-385/probes_2026_09_20_b7smoke/`).
+| §S | Verdict | Note |
+|---|---|---|
+| S-410 · S-402 · S-421/426 · S-429/430 · S-425/428 | **PASS** (ticked) | S-402 note: legacy dialog preview ₹3,500 vs charged ₹2,000 — D50 client maths, confirms OD-385-16 (a); probable `held_fallback` sighting (booking had `rateplan_code null`) |
+| **S-411** | **FAIL → BACKEND D17** | `user-group-check-in` keeps `payment_method` but drops `advance_payment` (curl-reproduced with `room_price=0` per BQ-16). FE BUG-411 fix is correct; **BUG-412 root cause = D17**. P0 for M3 collect-now. Brief §D17 written. |
+| S-418 | N/A | folded into CR-385 M6 (O-5) — legacy drawer intentionally unfixed |
+Intake candidates (not CR-385): BUG-431 CheckInPage pre-fills Room Amount with base+GST and re-applies GST; BUG-432 legacy NewBookingPage FE rate honoured over CM rate; BUG-433 ₹1 rounding divergence In-House / folio / POS.
+**G4-04 stays OPEN** until D17 is fixed + S-411 re-smoked (or owner waiver). Gate 3 still OPEN.

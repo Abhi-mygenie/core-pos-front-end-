@@ -49,3 +49,9 @@ Supersedes:  handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md as en
 ## 6. Update 22:45 — BE reply validated
 - `backend_replies/d15-16_reply_2026-09-20.md` → all claims reproduced (`probes_2026_09_20_d1516/PROBE_REPORT.md`): **D15 CLOSED, D16 CLOSED**, BQ-385-20 confirmed (single-method advance; bad sum → 422). D63. M4 shorten/move unblocked; `nights_detail` now on extend/shorten/move responses (still not on LR list — BQ-19 / G4-07).
 - **G4 still open:** G4-03(b) `held_fallback` only, G4-04 B-7 smoke, G4-06 owner "close Gate 3", G4-07 owner accept BQ-19 fallback, G4-10. Owner answers still needed: OD-385-18 (a/b), G4-04 runner, G4-07 yes/no, plan review → "close Gate 3".
+
+## 7. Update 00:10 — round 3 answers + B-7 smoke
+- OD-385-18 = **a** LOCKED (D64). BQ-385-21 (held_fallback sandbox date) asked in the FINAL_PACK brief.
+- **G4-04 B-7 smoke (QA agent, 3 iterations):** PASS S-410 · S-402 · S-421/426 · S-429/430 · S-425/428; **S-411 FAIL → backend D17** (check-in advance dropped; curl repro `probes_2026_09_20_b7smoke/c2_*`); S-418 N/A (M6). D65. Checklist §S ticked accordingly.
+- **Open before Gate 4 GO:** G4-03(b) (BQ-385-21), **G4-04 (D17 fix + S-411 re-smoke, or owner waiver)**, G4-06 (owner "close Gate 3"), G4-07 (owner yes/no on BQ-19 fallback), G4-10.
+- Sandbox: all QA stays settled; rooms r1/r4/r5 at HK/available; settings at defaults (verified 22:45; untouched since).
