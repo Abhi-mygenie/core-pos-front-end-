@@ -362,6 +362,7 @@ function rel(d){const n=dayDiff(d,T);return n===0?'today':(n===1?'tomorrow':(n>1
 // v2.29 (2026-09-20, owner review round 1 — no visual change): OD-385-16 = a (Extend/Modify = new Front-Desk forms, legacy dialogs untouched); OD-385-17 = settings toggles live on the Channel Manager page as a 5th tab "Front Desk Rules" (owner confirmed the page title "Channel Manager" is fine there; the naming rule applies to this Front Desk screen only);
 //        D14 FIXED + verified (extend response charge = LR); M6-04 second payment = 200 already_paid (idempotent, success no-op); split advance stored as lump only → BQ-385-20 (Split tile at advance points kept in the mockup pending owner OD-385-18);
 //        BLOCKERS backend D15 (shorten re-prices at blended rate) + D16 (room move flattens GST slab) — Extend Stay shorten/move disabled in M4 until fixed or waived. Evidence evidence/CR-385/probes_2026_09_20_final/.
+// v2.29 addendum (22:45): D15 + D16 FIXED by BE and FE-validated (probes_2026_09_20_d1516/) — Extend Stay shorten/move unblocked; nights_detail also on shorten/move. BQ-385-20 confirmed: single-method advance only.
 const VERSION='v2.29';
 const RATE={Deluxe:2200,Executive:3300,Suite:4500},PLAN_SUPP={EP:0,CP:300,MAP:700,AP:1000};
 const plural=(n,u)=>`${n} ${u}${Number(n)===1?'':'s'}`;

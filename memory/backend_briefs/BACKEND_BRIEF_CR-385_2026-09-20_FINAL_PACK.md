@@ -25,3 +25,6 @@
 
 ## Frontend workaround
 - D15/D16: none (display-only contract). D14 is now FIXED (verified) — thank you.
+
+## Reply + FE validation (2026-09-20 ~22:45)
+BE reply `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`: D15 FIXED, D16 FIXED (night ledger persisted on `reservation.raw_payload.pms_night_rates`), BQ-385-20 confirmed not stored. **FE live validation** `evidence/CR-385/probes_2026_09_20_d1516/PROBE_REPORT.md`: all claims reproduced (shorten 10,100 / 11,918 with `nights_detail`; move 17,500 / 1,094 unchanged; re-extend no drift; split bad-sum → 422). **D15 CLOSED · D16 CLOSED · BQ-20 = contract note (single-method advance).**

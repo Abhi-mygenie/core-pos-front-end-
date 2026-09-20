@@ -638,3 +638,13 @@ Brief: `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`. Gate 3 st
 **Owner (verbatim):** "The Channel Manager page title reads "Channel Manager"; the Front Desk naming rule ("never show Channel Manager") applies only to the Front Desk screen — I assumed the settings tab there is fine. Confirm? update docs and decision are both html update with updates" → confirmed. The ui_naming_rule stays scoped to the Front Desk screen (`/pms/front-desk-v2`); the M7 tab lives under the existing "Channel Manager" title.
 - `public/cr385-master-checklist.html`: status banner added; rows M4-01 (OD-385-16 a, shorten/move blocked on D15/D16), M6-04 (200 `already_paid`), M7-01 / M7-04 (Channel Manager 5th tab, scope) reworded; G4-01 ✓ G4-02 ✓; G4-03 evidence (partial, not ticked).
 - `public/cr385-frontdesk-mockup.html`: **v2.28 → v2.29, comment-only decision log, zero visual change** (title/version strings + `// v2.29` log). Visual lock of v2.28 stands; Split tile at advance points kept pending OD-385-18.
+
+### D63 — BE reply on D15 / D16 / BQ-385-20 validated live (2026-09-20 22:45)
+**Owner:** "check and validate these replies from backend" (artifact `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`). FE re-ran the BE curl pack as `probes_2026_09_20_d1516/run_d1516.py` with LR read-back after every step.
+| Item | Verdict | Effect |
+|---|---|---|
+| **D15** shorten | **FIXED** — `nights 1 · rate 8600 · 10,100 · 909/909 · 11,918`, `nights_detail` 1 row; re-extend back to 17,500 / 1,094 (no 7,700 drift) | OG-PMS-030 CLOSED; M4 shorten flow unblocked |
+| **D16** move | **FIXED** — same-window move keeps 17,500 / 1,094 and `nights_detail` | OG-PMS-031 CLOSED; M4 move flow unblocked; R31 retired |
+| **BQ-385-20** | confirmed contract: legs not stored, sum validated (422 "advance.split_payments amounts must sum to advance.amount.") | FE single-method advance at Booking/Check-In/Extend; Split-at-advance (D47-h) parked until a BE split-storage pack — **owner OD-385-18 default (a) now backed by BE** |
+| New fact | `nights_detail` is returned on extend, shorten and move responses (never on the LR list — BQ-19 open) | plan M4 + matrix #20 updated |
+Sandbox restored (settings defaults, stay 1232628 settled, split probes cancelled). Gate 3 still OPEN.

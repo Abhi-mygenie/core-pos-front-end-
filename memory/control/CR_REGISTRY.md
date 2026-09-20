@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-20 22:45 (CR-385: D15/D16 fixed + FE-validated, BQ-385-20 confirmed; D63; Gate 3 OPEN.)
 **Last Updated:** 2026-09-20 22:00 (CR-385 final pack green: G4-01 ✓ G4-02 ✓ (D14 fixed); NEW backend D15/D16 P1 money + BQ-385-20 → `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`; OD-385-16 = a, OD-385-17 = Channel Manager tab; Gate 3 OPEN.)
 **Last Updated:** 2026-09-20 (PLANNING — **CR-385 Implementation Plan written** `plans/CR-385_IMPLEMENTATION_PLAN.md` (Gate 3 milestone B; M0–M7; scope lock; matrix; registry checklist; risks R15–R30). Gate 3 **OPEN** pending owner review + "close Gate 3". Owner decisions OD-385-16/17/18 in plan §9. G4 open: 01·02·03·04·06·07·10. Evidence `evidence/CR-385/probes_2026_09_20_g4_09/`.)
 
