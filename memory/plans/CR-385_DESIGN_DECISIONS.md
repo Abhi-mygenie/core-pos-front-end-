@@ -619,3 +619,17 @@ Checklist: P-04 ✓ P-05 ✓ P-06 ✓ P-07 ✓ P-08 ✓ P-09 ✓ G4-08 ✓ G4-09
 | **OD-385-17 = (c)** | M7 toggles live on the **Channel Manager page as a 5th tab "Front Desk Rules"** (`ChannelManagerPage.jsx` +3 lines, new `pages/pms/FrontDeskRulesTab.jsx`, `restaurantSettingsService.updateFrontDeskRules`). `RestaurantSettingsPage` / `restaurantSettingsTransform` untouched. New OD-385-12 exception. | Plan M7 rewritten; registry files updated. |
 | OD-385-18 | OPEN — walk-through given: `split_payments[]` is *our proposed* shape in MASTER (L133–134, L261, D47-h), never sent in any probe and never acknowledged in a backend reply; BQ-10/14 "verified" = single-method advance/payment only. | awaiting owner letter |
 | G4-07 / BQ-385-19 | OPEN — walk-through given (per-night lines exist only in the extend *response*; LR list `charge` has no `nights_detail`, so after a reload the Bill/Departures can only show total + nights + "avg. rate / night"). | awaiting owner yes/no |
+
+### D61 — Final regression pack executed on owner request (2026-09-20 22:00 IST)
+**Owner:** "please do all probes which were required during probe, update the docs and decision and then back with final doubts, questions and blockers". Evidence `evidence/CR-385/probes_2026_09_20_final/PROBE_REPORT.md`; sandbox restored to defaults, all probe stays settled by TAB, probe reservations cancelled.
+| Result | Gate effect |
+|---|---|
+| `run_n7n8` + `run_n11` + `run_gate4` all green on the current build | **G4-01 ✓** |
+| **D14 FIXED** — calendar extend response `charge.advance_payment/balance_due` = LR (1,500 / 18,188) | **G4-02 ✓** (D55 refetch kept as defence) |
+| X-05 zero-night PATCH → 422 "checkout must be after checkin."; `preview:true` is side-effect free | AC-11 / M2-04 confirmed |
+| Second TAB on a paid order → **200 `status:"already_paid"`**, no second ledger row | M6-04: idempotent; FE treats as success no-op (plan matrix #28 updated) |
+| Split advance (`method:"split"` + `split_payments[]`) → 201 but only the lump `advance_payment` is stored/echoed | **BQ-385-20** raised; plan default: single-method advance at M1/M3/M4, Split-at-advance parked (OD-385-18 a) — owner to confirm |
+| **NEW D15 (P1 money):** shorten stay re-prices the remaining night at the blended `rate_per_night` (9,500 instead of 10,100; re-extend → 16,900 instead of 17,500) | G4-03 (d) → backend brief; M4 shorten flow blocked until fixed/waived |
+| **NEW D16 (P1 money):** same-type room move recomputes GST at one slab (2,188 → 3,150) | G4-03 (c) → backend brief; M4 move flow blocked until fixed/waived |
+| G4-03 (a) cheap added night 7,400 @ 5 % ✓ (n11) · (b) `held_fallback` still unreachable (needs a no-rate sandbox date) | G4-03 stays OPEN |
+Brief: `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`. Gate 3 still OPEN (owner review of the plan pending).

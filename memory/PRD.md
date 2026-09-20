@@ -420,3 +420,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Read-only probe `evidence/CR-385/probes_2026_09_20_g4_09/`: board has no `sections[]` (Area = room `title`, 5 real titles); LR `view=all` needs dates; `payment_status` is per room line. → D59, OG-PMS-028/029.
 - Checklist ticked: P-04…P-09, G4-08, G4-09. Owner decisions raised: OD-385-16 (Extend/Modify new forms vs legacy inline), OD-385-17 (M7 in Step 8), OD-385-18 (Split at advance payload).
 - **Gate 3 remains OPEN** — owner review + "close Gate 3" required (D58); G4-01/02/03/04/06/07/10 still open before "Gate 4 GO".
+- **22:00 update:** owner answers OD-385-16 = a, OD-385-17 = Channel Manager 5th tab (plan M7 rewritten; D60). Final regression pack run (`evidence/CR-385/probes_2026_09_20_final/`): all green → G4-01 ✓; D14 fixed → G4-02 ✓; second TAB idempotent (200 already_paid); split advance = lump only (BQ-385-20); NEW backend money defects D15/D16 → brief; D61; OG-PMS-030/031/032; sandbox restored.

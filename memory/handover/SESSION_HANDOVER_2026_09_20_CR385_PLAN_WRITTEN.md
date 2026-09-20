@@ -40,3 +40,8 @@ Supersedes:  handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md as en
 - `test_credentials.md` was empty after the memory sync; restored this session (alias OWNER_TGK). Never print the password.
 - Preview URL = `frontend/.env` `REACT_APP_BACKEND_URL` only. `git diff` unavailable — use `git status` / `git log`.
 - Sandbox shared: rooms 8524/8526 held by other testers; 2 stays in-house on 2026-09-20 (rooms r2/r3). Read-only unless you settle; restore settings after any write.
+
+## 5. Update 22:00 — owner round-1 answers + final regression pack
+- OD-385-16 = **a**, OD-385-17 = **Channel Manager page, 5th tab "Front Desk Rules"** (plan M7 rewritten: `ChannelManagerPage.jsx` +3 lines, new `pages/pms/FrontDeskRulesTab.jsx`, `restaurantSettingsService.updateFrontDeskRules`; `RestaurantSettingsPage` untouched). D60.
+- Final pack `evidence/CR-385/probes_2026_09_20_final/PROBE_REPORT.md`: **G4-01 ✓, G4-02 ✓ (D14 fixed)**. New backend money defects **D15** (shorten re-prices at blended rate) and **D16** (room move flattens GST) → `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`; **BQ-385-20** split advance legs not stored. Second TAB = 200 `already_paid` (plan #28 updated). D61, OG-PMS-030/031/032. Sandbox restored (settings defaults, stays settled, reservations cancelled).
+- **G4 still open:** G4-03 (held_fallback unreachable + D15/D16 fix or owner waiver), G4-04 (B-7 smoke), G4-06 (owner "close Gate 3"), G4-07 (owner accept BQ-19 fallback), G4-10. Owner still to answer OD-385-18 (a/b) after the probe result.

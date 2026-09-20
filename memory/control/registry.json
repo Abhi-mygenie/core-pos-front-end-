@@ -25369,7 +25369,8 @@
         "build1": "evidence/CR-385/probes_2026_09_20/PROBE_REPORT.md (D1–D8)",
         "build2": "evidence/CR-385/probes_2026_09_20_gate4/PROBE_REPORT.md (D9–D13)",
         "build3": "evidence/CR-385/probes_2026_09_20_gate4/PROBE_REPORT.md build-3 section — ALL GREEN",
-        "runner": "evidence/CR-385/probes_2026_09_20_gate4/build3/run_gate4.py"
+        "runner": "evidence/CR-385/probes_2026_09_20_gate4/build3/run_gate4.py",
+        "final_pack": "evidence/CR-385/probes_2026_09_20_final/PROBE_REPORT.md (G4-01 ✓, D14 fixed G4-02 ✓; NEW D15/D16 P1 money; BQ-385-20)"
       },
       "money_contract": "D50: charge.* authoritative; cleared ⇔ payment_status paid && charge.balance_due 0; never balance_payment / folio remaining_room_balance; advance_payment = cumulative paid",
       "mockup_version": "v2.28",
@@ -25412,6 +25413,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "Owner: OD-385-16 = a; OD-385-17 = Channel Manager page new tab (plan M7 rewritten). OD-385-18 + G4-07 walk-through requested. Creds question answered (OWNER_TGK alias)."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "Final regression pack run (owner ask): n7n8 + n11 + gate4 green (G4-01 ✓); D14 FIXED verified (G4-02 ✓); X-05 422 ✓; second TAB = 200 already_paid (idempotent); split advance = lump sum only (BQ-385-20); NEW backend money defects D15 (shorten) + D16 (move) → brief. Sandbox restored."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25433,7 +25439,6 @@
         ]
       },
       "open_backend_items_p2": [
-        "D14 calendar extend response charge stale by same-call payment (OG-PMS-026)",
         "BQ-385-19 nights_detail on LR list (OG-PMS-027)",
         "N10 received_by null on extend ledger"
       ],
@@ -25446,7 +25451,15 @@
       "implementation_plan": "plans/CR-385_IMPLEMENTATION_PLAN.md",
       "evidence_probes": [
         "evidence/CR-385/probes_2026_09_20_g4_09/PROBE_REPORT.md (G4-09 titles; LR shape; payment_status per room line)"
-      ]
+      ],
+      "open_backend_items": [
+        "D15 P1 shorten stay re-prices at blended rate (final pack x3)",
+        "D16 P1 room move recomputes GST at one slab (final pack s5)",
+        "BQ-385-20 P2 split_payments[] on advance not echoed/stored",
+        "BQ-385-19 P2 nights_detail on LR list (OG-PMS-027)",
+        "N10 received_by null"
+      ],
+      "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md"
     },
     {
       "id": "BUG-410",
