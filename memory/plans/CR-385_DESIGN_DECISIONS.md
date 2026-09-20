@@ -648,3 +648,10 @@ Brief: `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`. Gate 3 st
 | **BQ-385-20** | confirmed contract: legs not stored, sum validated (422 "advance.split_payments amounts must sum to advance.amount.") | FE single-method advance at Booking/Check-In/Extend; Split-at-advance (D47-h) parked until a BE split-storage pack — **owner OD-385-18 default (a) now backed by BE** |
 | New fact | `nights_detail` is returned on extend, shorten and move responses (never on the LR list — BQ-19 open) | plan M4 + matrix #20 updated |
 Sandbox restored (settings defaults, stay 1232628 settled, split probes cancelled). Gate 3 still OPEN.
+
+### D64 — Owner round 3: OD-385-18 = a · G4-04 by QA agent · BQ-385-21 (2026-09-20 23:00)
+**Owner (verbatim):** "1 a , 2 walk through , 3 why u did not ask same time i wonder , 4 QA agent ,"
+- **OD-385-18 = (a) LOCKED** — single-method advance (Cash / Card / UPI + reference) at Booking, Check-In and Extend; the Split tile is **not rendered at advance points** until BE stores split legs (BQ-385-20 confirmed). Split stays on the Bill (M6). Mockup v2.29 still shows Split at advance points → **visual change deferred to the implementation build; the mockup is the pre-decision reference** (recorded here so nobody copies the Split tile into M1/M3/M4).
+- G4-07: second walk-through given (see chat 23:00); owner answer pending.
+- G4-03 (b): owner rightly notes the `held_fallback` sandbox ask should have gone with the D15/D16 brief. **FE omission acknowledged.** Ask written now as **BQ-385-21** in `BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`.
+- **G4-04 = QA agent** — B-7 smoke of §S (411 · 410 · 402 · 421/426 · 429/430 · 425/428 · 418) delegated to the testing agent on the preview build against preprod; evidence per row in the checklist §S.

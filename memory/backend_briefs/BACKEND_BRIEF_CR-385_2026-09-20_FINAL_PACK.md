@@ -28,3 +28,9 @@
 
 ## Reply + FE validation (2026-09-20 ~22:45)
 BE reply `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`: D15 FIXED, D16 FIXED (night ledger persisted on `reservation.raw_payload.pms_night_rates`), BQ-385-20 confirmed not stored. **FE live validation** `evidence/CR-385/probes_2026_09_20_d1516/PROBE_REPORT.md`: all claims reproduced (shorten 10,100 / 11,918 with `nights_detail`; move 17,500 / 1,094 unchanged; re-extend no drift; split bad-sum → 422). **D15 CLOSED · D16 CLOSED · BQ-20 = contract note (single-method advance).**
+
+## BQ-385-21 — sandbox help for G4-03 (b) `held_fallback` (asked 2026-09-20 23:00; should have been bundled with the D15/D16 brief — FE omission)
+- Need: one date range on `sandbox-pms` (`executive-s-ep`) with **no CM rate** so a calendar-mode extend onto that night returns `nights_detail[].source = "held_fallback"`.
+- Ask: either (a) tell us an existing no-rate date window, or (b) remove the rate for e.g. 2026-11-20 → 2026-11-22 for 48 h and confirm the expected `held_fallback` figures (rate = held check-in rate, GST slab per that rate).
+- Also confirm: does `held_fallback` ever appear in **held** mode, or only in calendar mode?
+- FE side: chip copy "held (no rate for this date)" is planned in M4 (D55); untested until this is answered. Owner may waive (G4-03 b).

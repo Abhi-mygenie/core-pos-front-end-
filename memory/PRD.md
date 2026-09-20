@@ -423,3 +423,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - **22:00 update:** owner answers OD-385-16 = a, OD-385-17 = Channel Manager 5th tab (plan M7 rewritten; D60). Final regression pack run (`evidence/CR-385/probes_2026_09_20_final/`): all green → G4-01 ✓; D14 fixed → G4-02 ✓; second TAB idempotent (200 already_paid); split advance = lump only (BQ-385-20); NEW backend money defects D15/D16 → brief; D61; OG-PMS-030/031/032; sandbox restored.
 - **22:30:** owner confirmed Channel Manager title OK for M7 tab (D62); checklist + mockup (v2.29, comment-only) updated.
 - **22:45:** BE reply d15-16 validated live (D15/D16 FIXED, BQ-385-20 confirmed → single-method advance); D63; OG-PMS-030/031 closed; M4 unblocked.
+- **23:00:** OD-385-18 = a locked (D64); BQ-385-21 held_fallback sandbox ask written; G4-04 B-7 smoke delegated to QA agent.

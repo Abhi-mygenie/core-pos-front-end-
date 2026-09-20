@@ -25224,8 +25224,7 @@
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
       "owner_decisions_open": [
-        "OD-385-18 Split at advance points — split_payments[] proposed in MASTER, never probed/confirmed by backend (walk-through given 2026-09-20)",
-        "G4-07 BQ-385-19 FE fallback acceptance (walk-through given 2026-09-20)"
+        "G4-07 BQ-385-19 FE fallback acceptance (2nd walk-through given 2026-09-20 23:00)"
       ],
       "mockup_variants_required": {
         "MV-01": "Folio+Checkout panel layout: full-width in panel area ★ / wide overlay / collapsed folio summary",
@@ -25291,7 +25290,8 @@
         "gate_2_6": "CLOSED by owner 2026-09-20: \"08 a 04 ok 05 yes 06 ok update docs and decision and close gate 2.6 follow agent promot and rules\"",
         "Q6 (D57)": "(a) host CSS hides the 3 section toggle rows on the Front Desk bill; no CollectPaymentPanel edit; owner: \"we don't need duplicate\"",
         "OD-385-16 (2026-09-20)": "option A — new ExtendStayForm/ModifyBookingForm under components/pms/frontdesk/; legacy ExtendStayDialog/ModifyBookingDialog untouched; Cancel/No-Show keep D2 inline",
-        "OD-385-17 (2026-09-20)": "M7 settings toggles = new 5th tab \"Front Desk Rules\" on ChannelManagerPage (owner: \"in channel manager page another tab\"); RestaurantSettingsPage untouched; OD-385-12 exception"
+        "OD-385-17 (2026-09-20)": "M7 settings toggles = new 5th tab \"Front Desk Rules\" on ChannelManagerPage (owner: \"in channel manager page another tab\"); RestaurantSettingsPage untouched; OD-385-12 exception",
+        "OD-385-18 (2026-09-20)": "option a — single-method advance (Cash/Card/UPI + ref) at Booking/Check-In/Extend; Split tile at advance points parked (FU-385-D) until BE stores split legs (BQ-385-20 confirmed not stored)"
       },
       "follow_ups": [
         "FU-385-A: Sidebar PMS links review after CR-385 QA PASS",
@@ -25429,6 +25429,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "BE reply d15-16 validated live: D15 + D16 FIXED (shorten 10,100/11,918 w/ nights_detail; move unchanged 17,500/1,094; re-extend no drift); BQ-385-20 confirmed (bad sum → 422). M4 shorten/move unblocked. Sandbox restored."
+        },
+        {
+          "date": "2026-09-20",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "Owner: OD-385-18 = a (locked); G4-04 B-7 smoke → QA agent (testing_agent run started); BQ-385-21 held_fallback sandbox ask written (late — FE omission acknowledged)."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25467,7 +25472,8 @@
         "BQ-385-19 P2 nights_detail on LR list (OG-PMS-027) — G4-07 owner fallback",
         "BQ-385-20 CONFIRMED contract: split advance legs not stored (single-method only)",
         "N10 received_by null (P3)",
-        "G4-03(b) held_fallback needs no-rate sandbox date"
+        "G4-03(b) held_fallback needs no-rate sandbox date",
+        "BQ-385-21 sandbox no-rate date for held_fallback (G4-03 b) — asked 2026-09-20 23:00"
       ],
       "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md",
       "design_lock": "public/cr385-frontdesk-mockup.html v2.29 (v2.28 visuals LOCKED + 2026-09-20 decision log, no visual change; D62)"
