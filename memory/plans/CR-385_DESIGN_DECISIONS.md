@@ -665,3 +665,13 @@ Three QA-agent iterations on the live sandbox (`test_reports/iteration_1..3.json
 | S-418 | N/A | folded into CR-385 M6 (O-5) — legacy drawer intentionally unfixed |
 Intake candidates (not CR-385): BUG-431 CheckInPage pre-fills Room Amount with base+GST and re-applies GST; BUG-432 legacy NewBookingPage FE rate honoured over CM rate; BUG-433 ₹1 rounding divergence In-House / folio / POS.
 **G4-04 stays OPEN** until D17 is fixed + S-411 re-smoked (or owner waiver). Gate 3 still OPEN.
+
+### D66 — BQ-385-19 shipped by BE and validated live; G4-07 closed without an owner decision (2026-09-21)
+**Owner:** "attached reply from backend validate" (`backend_replies/bq385-19_reply_2026-09-21.md`). FE validation `evidence/CR-385/probes_2026_09_21_bq19/PROBE_REPORT.md` (fresh calendar stay RES 207 / order 1232635; BE accept rows 205/206 read live; 5 pending rows checked).
+| Fact | Effect |
+|---|---|
+| LR rows now carry `charge.nights_detail` (same shape as the extend response) when a calendar ledger exists and `sum(rates)+upgrade = booking_charge`; money fields unchanged by the list read | M4 / M5 / M6 read per-night lines **from the row** after reload — same renderer as the extend confirmation |
+| Absent for held-mode stays and for stays never extended | the "N nights · avg. rate / night" path stays as the documented fallback (walk-through "yes" path) — **no owner yes/no needed any more** |
+| Shorten keeps a 1-row ledger; the departed row keeps `nights_detail` after TAB | Bill after checkout can still show lines |
+| Rule unchanged: never sum `nights_detail[].gst`; totals from `charge.sgst/cgst/total_with_gst` (N11) | plan §3 D-rules, matrix #20 |
+OG-PMS-027 CLOSED · G4-07 ✓ · plan §3 / M4 / M6 / §11 updated · mockup v2.29 addendum. Gate 3 still OPEN. **Remaining before Gate 4 GO: G4-03(b) BQ-385-21, G4-04 (D17), G4-06 owner "close Gate 3", G4-10.**

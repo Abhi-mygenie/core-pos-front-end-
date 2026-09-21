@@ -25223,9 +25223,7 @@
       ],
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
-      "owner_decisions_open": [
-        "G4-07 BQ-385-19 FE fallback acceptance (2nd walk-through given 2026-09-20 23:00)"
-      ],
+      "owner_decisions_open": [],
       "mockup_variants_required": {
         "MV-01": "Folio+Checkout panel layout: full-width in panel area ★ / wide overlay / collapsed folio summary",
         "MV-02": "Q3 Check-In: wide side panel / full overlay (default side panel)",
@@ -25371,7 +25369,8 @@
         "build3": "evidence/CR-385/probes_2026_09_20_gate4/PROBE_REPORT.md build-3 section — ALL GREEN",
         "runner": "evidence/CR-385/probes_2026_09_20_gate4/build3/run_gate4.py",
         "final_pack": "evidence/CR-385/probes_2026_09_20_final/PROBE_REPORT.md (G4-01 ✓, D14 fixed G4-02 ✓; NEW D15/D16 P1 money; BQ-385-20)",
-        "d15_d16_validation": "evidence/CR-385/probes_2026_09_20_d1516/PROBE_REPORT.md — D15 CLOSED, D16 CLOSED, BQ-20 confirmed"
+        "d15_d16_validation": "evidence/CR-385/probes_2026_09_20_d1516/PROBE_REPORT.md — D15 CLOSED, D16 CLOSED, BQ-20 confirmed",
+        "bq19_validation": "evidence/CR-385/probes_2026_09_21_bq19/PROBE_REPORT.md — BQ-385-19 CLOSED, G4-07 ✓"
       },
       "money_contract": "D50: charge.* authoritative; cleared ⇔ payment_status paid && charge.balance_due 0; never balance_payment / folio remaining_room_balance; advance_payment = cumulative paid",
       "mockup_version": "v2.28",
@@ -25439,6 +25438,11 @@
           "date": "2026-09-20",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "G4-04 B-7 smoke by QA agent (3 iterations): 5 rows PASS, S-411 FAIL (backend D17 found + curl-reproduced), S-418 N/A (M6). D17 added to FINAL_PACK brief. Sandbox settled."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "BE reply bq385-19 validated live: LR rows carry charge.nights_detail for calendar stays (P1 ✓ P2 ✓ P3 ✓, money unchanged, shorten/TAB keep ledger). OG-PMS-027 closed; G4-07 ticked (no owner decision needed). Sandbox restored."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25475,7 +25479,6 @@
       ],
       "open_backend_items": [
         "D17 P0 check-in advance dropped by user-group-check-in (advance_payment 0, ledger empty; payment_mode kept) — blocks M3 collect-now; root cause BUG-412",
-        "BQ-385-19 P2 nights_detail on LR list (OG-PMS-027) — G4-07 owner fallback",
         "BQ-385-20 CONFIRMED contract: split advance legs not stored (single-method only)",
         "N10 received_by null (P3)",
         "G4-03(b) held_fallback needs no-rate sandbox date",

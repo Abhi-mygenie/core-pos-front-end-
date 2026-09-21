@@ -42,3 +42,6 @@ BE reply `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`: D15 FIXED
 - Actual: `orders[0].advance_payment 0`, folio `room_info.advance_payment "0.00"` while `payment_mode "card"` **is** stored, ledger `[]`, LR `charge.advance_payment 0`, `balance_due 5,775`.
 - Same result through the UI (QA agent, order 1232629, `folio_1232629.json`). Advances taken at **booking** (`direct-reservation.advance`) are recorded fine (gate4 s2/s3) — only the **check-in** advance is lost.
 - Question: is the advance ignored because `room_price=0`? If so, that contradicts BQ-16 (server pricing) and must be fixed server-side; FE will not send a price.
+
+## BQ-385-19 — reply validated (2026-09-21)
+`backend_replies/bq385-19_reply_2026-09-21.md` reproduced live (`probes_2026_09_21_bq19/`): P1 ✓ P2 ✓ P3 ✓; money unchanged; ledger persists through shorten and TAB. **CLOSED.** Still open on your side: **D17** (check-in advance dropped, P0) and **BQ-385-21** (no-rate sandbox date for `held_fallback`).

@@ -55,3 +55,8 @@ Supersedes:  handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md as en
 - **G4-04 B-7 smoke (QA agent, 3 iterations):** PASS S-410 · S-402 · S-421/426 · S-429/430 · S-425/428; **S-411 FAIL → backend D17** (check-in advance dropped; curl repro `probes_2026_09_20_b7smoke/c2_*`); S-418 N/A (M6). D65. Checklist §S ticked accordingly.
 - **Open before Gate 4 GO:** G4-03(b) (BQ-385-21), **G4-04 (D17 fix + S-411 re-smoke, or owner waiver)**, G4-06 (owner "close Gate 3"), G4-07 (owner yes/no on BQ-19 fallback), G4-10.
 - Sandbox: all QA stays settled; rooms r1/r4/r5 at HK/available; settings at defaults (verified 22:45; untouched since).
+
+## 8. Update 2026-09-21 — BQ-385-19 validated
+- `backend_replies/bq385-19_reply_2026-09-21.md` reproduced live (`probes_2026_09_21_bq19/`): LR rows carry `charge.nights_detail` for calendar stays; absent for held / never-extended; money unchanged. **OG-PMS-027 CLOSED, G4-07 ✓** — owner yes/no no longer required. D66. Plan §3/M4/M6/#20 updated (renderer fed from row on reload).
+- **Open before Gate 4 GO:** G4-03(b) BQ-385-21 (held_fallback sandbox date — backend), **G4-04 (D17 check-in advance dropped — backend fix + S-411 re-smoke, or owner waiver)**, G4-06 (owner "close Gate 3"), G4-10 (owner "Gate 4 GO").
+- Owner decisions all locked (OD-385-16 a · 17 Channel Manager tab · 18 a). No open owner decision except the two gate words + the D17 wait/waive call.

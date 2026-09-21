@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-21 (CR-385: BQ-385-19 shipped + validated → G4-07 ✓, OG-PMS-027 closed; D66. Open: D17, BQ-385-21, owner "close Gate 3".)
 **Last Updated:** 2026-09-21 00:10 (CR-385: OD-385-18 = a locked; G4-04 B-7 smoke by QA agent — 5 PASS, S-411 FAIL → backend D17 (check-in advance dropped, P0 for M3); S-418 N/A → M6; BQ-385-21 asked; D64/D65. Gate 3 OPEN; G4 open 03(b)·04·06·07·10.)
 **Last Updated:** 2026-09-20 22:45 (CR-385: D15/D16 fixed + FE-validated, BQ-385-20 confirmed; D63; Gate 3 OPEN.)
 **Last Updated:** 2026-09-20 22:00 (CR-385 final pack green: G4-01 ✓ G4-02 ✓ (D14 fixed); NEW backend D15/D16 P1 money + BQ-385-20 → `backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md`; OD-385-16 = a, OD-385-17 = Channel Manager tab; Gate 3 OPEN.)

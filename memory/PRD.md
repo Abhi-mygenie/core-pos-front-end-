@@ -425,3 +425,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - **22:45:** BE reply d15-16 validated live (D15/D16 FIXED, BQ-385-20 confirmed → single-method advance); D63; OG-PMS-030/031 closed; M4 unblocked.
 - **23:00:** OD-385-18 = a locked (D64); BQ-385-21 held_fallback sandbox ask written; G4-04 B-7 smoke delegated to QA agent.
 - **00:10:** G4-04 B-7 smoke via QA agent: 5 PASS, S-411 FAIL → backend D17 (check-in advance dropped; P0 for M3), S-418 N/A (M6). D65; brief §D17; intake candidates BUG-431/432/433.
+- **2026-09-21:** BE reply BQ-385-19 validated live (LR carries nights_detail for calendar stays) → OG-PMS-027 closed, G4-07 ✓, D66. Remaining: D17 (backend), BQ-385-21, owner "close Gate 3".
