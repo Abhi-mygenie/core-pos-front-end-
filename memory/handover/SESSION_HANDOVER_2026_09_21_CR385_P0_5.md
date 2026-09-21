@@ -5,7 +5,8 @@ Roles this session: Bug Fix (Role 5) → QA (Role 4) · ALPHA v0.7 · owner "Pha
 Items:     BUG-434 · BUG-435 · BUG-436 · BUG-437 · BUG-438 → FIXED + QA-VERIFIED (P0.5) · CR-385 → GATE_5B_QA_PASSED (P0+P0.5)
 Next:      OWNER combined Phase 0 smoke (§6 below) → say "Phase 0 smoke OK" → only then read phased plan §1 (Phase 1). Phase 1 NOT read, NOT started.
 Sandbox:   restored (r4/8525 HK). 8524/8526 never touched. No bookings/payments. Credentials in memory/test_credentials.md (gitignored — re-extract from evidence/CR-385/probes_2026_09_20_final/run_gate4.py on a fresh pod; never echo).
-Env note:  the repo `memory/` folder was not present under /app/memory on this pod (only in the clone at /tmp/pos-frontend) — copied in; /tmp is ephemeral.
+Env note:  the repo `memory/` folder was not present under /app/memory on this pod (only in the clone at /tmp/pos-frontend) — copied in; /tmp is ephemeral (since wiped).
+Reconciled: owner-approved sparse re-pull of `memory/` from remote pms21sep @ ce1e7c66 → 1,153/1,159 identical, 0 missing, 6 differ (= this session's control edits), 8 extra (= this session's new files). Structure identical. Temp clone deleted. See PRD.md 2026-09-21 reconciliation entry.
 ```
 
 ## 1 · Boot for the next agent (in order)
