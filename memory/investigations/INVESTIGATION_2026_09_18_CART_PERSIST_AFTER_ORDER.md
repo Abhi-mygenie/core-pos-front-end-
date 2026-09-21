@@ -201,7 +201,47 @@ Risk:   LOW — DashboardPage, not R5
 
 ---
 
-## 11. Investigation Status
+## 11. Steps to Reproduce
+
+**Preconditions:** At least 1 available dine-in table. Delivery or TakeAway channel enabled.
+**Credentials:** `owner@cafe103` / `Qplazm@10` on preprod.
+
+**Important layout note:** OrderEntry is `fixed inset-0 z-50` — full-screen overlay. Dashboard table grid is completely hidden behind it. Table switching does NOT happen by clicking the grid. Both triggers use the **order type / table picker dropdown in the OrderEntry header** (the badge showing "Walk-In ▾").
+
+---
+
+### Reproduce Trigger 1 — Type Switch
+
+| Step | Action |
+|---|---|
+| 1 | Log in, click **Add** → Walk-in OrderEntry opens |
+| 2 | Add 1–2 items to cart (e.g., Butter Chicken, Naan) |
+| 3 | Click the **"Walk-In ▾" badge** in the OrderEntry header |
+| 4 | Click **TakeAway** (or Delivery) in the dropdown |
+| 5 | OrderEntry switches to TakeAway — cart appears empty |
+| 6 | Close without placing (press X) |
+| 7 | Click **Add** again |
+| **Result** | **EXPECTED:** Empty cart · **ACTUAL:** Butter Chicken + Naan still in cart |
+
+---
+
+### Reproduce Trigger 2 — Table Switch
+
+| Step | Action |
+|---|---|
+| 1 | Log in, click **Add** → Walk-in OrderEntry opens |
+| 2 | Add 1–2 items to cart |
+| 3 | Click the **"Walk-In ▾" badge** in the header |
+| 4 | Scroll past the type options in the dropdown — find the table list |
+| 5 | Click any available table (e.g., Table 3) |
+| 6 | OrderEntry now shows Table 3 — Walk-in items gone from view |
+| 7 | Close without placing (press X) |
+| 8 | Click **Add** again |
+| **Result** | **EXPECTED:** Empty cart · **ACTUAL:** Old Walk-in items still in cart |
+
+---
+
+## 12. Investigation Status
 
 **CLOSED — 2026-09-18**  
 All owner decisions locked. Ready for Planning (Gate 2 Impact Analysis).
