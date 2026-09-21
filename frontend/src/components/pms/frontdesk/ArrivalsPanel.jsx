@@ -38,10 +38,10 @@ export const ArrivalsPanel = ({ rows, meta, kpis, expandedId, onToggle, chip, on
   const active = chip ?? firstNonEmptyChip(counts, CHIP_ORDER.arrivals); // CR-385 M0.5 BUG-437 null chip = auto until the user clicks (D70)
   const visible = useMemo(() => sortRows(rows.filter((r) => bucketArrival(r, bd) === active), sort), [rows, bd, active, sort]); // CR-385 M0.5 BUG-437
 
-  const actions = (r) => (
+  const actions = (r, variant = '') => ( // BUG-439 variant '' = row cell · 'exp-' = expansion drawer → unique testids (D73)
     <>
-      <PhaseButton testId={`fd-row-${r.id}-checkin-btn`} label="Check In" phase={2} />
-      <PhaseButton testId={`fd-row-${r.id}-kebab`} label="⋮" phase={1} />
+      <PhaseButton testId={`fd-row-${r.id}-${variant}checkin-btn`} label="Check In" phase={2} /> {/* BUG-439 */}
+      <PhaseButton testId={`fd-row-${r.id}-${variant}kebab`} label="⋮" phase={1} /> {/* BUG-439 */}
     </>
   );
   const columns = commonColumns({
@@ -54,7 +54,7 @@ export const ArrivalsPanel = ({ rows, meta, kpis, expandedId, onToggle, chip, on
       <Chips tab="arrivals" active={active} counts={counts} onPick={onChip} danger={['late']} /> {/* CR-385 M0.5 BUG-437 active chip */}
       <GuestTable tab="arrivals" rows={visible} columns={columns} sort={sort} onSort={(k) => setSort(toggleSort(sort, k))}
         expandedId={expandedId} onToggle={onToggle} emptyText={`No ${active} arrivals` /* CR-385 M0.5 BUG-437 */}
-        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={actions(row)} />} />
+        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={actions(row, 'exp-')} />} /> {/* BUG-439 drawer copy → -exp- ids */}
       <div className="mt-2 text-[11px] text-[#767676]" data-testid="fd-arrivals-footer">No-shows today: <span className="tabular-nums font-semibold" data-testid="fd-arrivals-footer-noshow">{kpis?.today?.no_show_count ?? '—'}</span></div>
     </section>
   );

@@ -4,11 +4,11 @@ import { bucketDeparture, isCleared, dayDiff } from '@/api/transforms/frontDeskT
 import GuestTable, { commonColumns, sortRows, toggleSort, StatusPill, PhaseButton, RowExpansionStub } from './GuestTable';
 import { Chips, CHIP_ORDER, useChipCounts, firstNonEmptyChip } from './ArrivalsPanel'; // CR-385 M0.5 BUG-437 firstNonEmptyChip
 
-export const stayActions = (r) => (
+export const stayActions = (r, variant = '') => ( // BUG-439 variant '' = row cell · 'exp-' = expansion drawer → unique testids (D73)
   <>
-    <PhaseButton testId={`fd-row-${r.id}-bill-btn`} label="Bill" phase={4} />
-    <PhaseButton testId={`fd-row-${r.id}-hk-btn`} label="Request HK" phase={3} />
-    <PhaseButton testId={`fd-row-${r.id}-extend-btn`} label="Extend" phase={3} />
+    <PhaseButton testId={`fd-row-${r.id}-${variant}bill-btn`} label="Bill" phase={4} /> {/* BUG-439 */}
+    <PhaseButton testId={`fd-row-${r.id}-${variant}hk-btn`} label="Request HK" phase={3} /> {/* BUG-439 */}
+    <PhaseButton testId={`fd-row-${r.id}-${variant}extend-btn`} label="Extend" phase={3} /> {/* BUG-439 */}
   </>
 );
 
@@ -32,7 +32,7 @@ export const DeparturesPanel = ({ rows, meta, expandedId, onToggle, chip, onChip
       <Chips tab="departures" active={active} counts={counts} onPick={onChip} danger={['overdue']} /> {/* CR-385 M0.5 BUG-437 active chip */}
       <GuestTable tab="departures" rows={visible} columns={columns} sort={sort} onSort={(k) => setSort(toggleSort(sort, k))}
         expandedId={expandedId} onToggle={onToggle} emptyText={`No ${active} departures` /* CR-385 M0.5 BUG-437 */}
-        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={stayActions(row)} />} />
+        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={stayActions(row, 'exp-')} />} /> {/* BUG-439 drawer copy → -exp- ids */}
       <div className="mt-2 text-[11px] text-[#767676]" data-testid="fd-departures-footer">Balances shown from the reservation ledger (<code>charge.balance_due</code>); room-service and transferred F&amp;B join in Phase 3.</div>
     </section>
   );

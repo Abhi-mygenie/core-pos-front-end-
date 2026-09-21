@@ -17,7 +17,7 @@ export const InHousePanel = ({ rows, meta, expandedId, onToggle, chip, onChip })
       <Chips tab="inhouse" active={chip} counts={counts} onPick={onChip} />
       <GuestTable tab="inhouse" rows={visible} columns={columns} sort={sort} onSort={(k) => setSort(toggleSort(sort, k))}
         expandedId={expandedId} onToggle={onToggle} emptyText="No guests in house"
-        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={stayActions(row)} />} />
+        renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={stayActions(row, 'exp-')} />} /> {/* BUG-439 drawer copy → -exp- ids */}
     </section>
   );
 };
