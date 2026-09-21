@@ -212,6 +212,16 @@ Channel Manager → 5th tab renders, tabs 0–3 unchanged; toggle early ON → S
 5. Old `/pms/arrivals` → Cancel dialog still pops as an overlay.
 Say **"Phase 1 smoke OK"**.
 
+### 1.7 PHASE 1.5 — Bug fix of everything found in P1 (LOW risk, same gates compressed)
+Owner routing recorded 2026-09-22: **BUG-441 (BLOCKER) → P1.5** · **BUG-442 (MINOR) → P1.5** · **BQ-385-23/24** (backend appends `"| MODIFY: <reason>"` to `special_requests` → false "SR ●"; 500 on non-int id) → **OPEN_GAP, no frontend workaround, no P1.5 action**, listed in the smoke batch as "known, ignore". Owner "Phase 1.5 GO" given with the routing (no re-ask).
+Plan note: `plans/CR-385_PHASE_1_5_BUGFIX_PLAN.md` (authoritative; mirrors §0.7 / `CR-385_PHASE_0_5_BUGFIX_PLAN.md`).
+
+| Bug | File(s) | Change (one line) | Test |
+|---|---|---|---|
+| BUG-441 | `pages/pms/ArrivalsPage.jsx` L272–273, `pages/pms/ReservationsPage.jsx` L370/L375 | Cancel/Modify targets pass the numeric LR id `row.id` / `res.id` as `reservationId` (was the public `bookingId` string → `/local-reservations/MG-69-…/cancel` 500) | RTL: legacy Cancel calls `cancelReservation(15, …)` (numeric) |
+| BUG-442 | `pages/pms/ArrivalsPage.jsx` L11/L55/L273, `pages/pms/ReservationsPage.jsx` L375, `pages/pms/FrontDeskWorkstationPage.jsx` (`cancelledBy` prop) | `cancelledBy` = `useAuth().user.fullName` (fallback `'staff'` only when empty); drop `restaurant.profile.fullName` | RTL: payload `cancelledBy` = logged-in user's fullName; `'staff'` when no user |
+Exit: cr385 tests green (58 → 58 + new) · guards empty · `yarn build` exit 0 · testing_agent 1920×800 + 1366×768 (all 33 P1 Role-4 cases + legacy Cancel 200 on `/pms/arrivals` and `/pms/reservations` + `cancelled_by` = owner name) → `iteration_15.json` + `QA_REPORT_<date>_CR385_P1_5_ROLE4.md` · Bug Fix report `handover/CR-385_P1_5_BUG_FIX_REPORT_<date>.md` · registry `GATE_5B_QA_PASSED (P1+P1.5)` · smoke batch S-21… appended · ONE combined owner smoke (P0 + P1 + P1.5) → "Phase 0 smoke OK" + "Phase 1 smoke OK" → Phase 2 GO.
+
 ---
 
 ## PHASE 2 — M1 New Booking · M3 Check-In (money in)

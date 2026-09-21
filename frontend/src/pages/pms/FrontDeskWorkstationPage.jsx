@@ -5,8 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import Sidebar from '@/components/layout/Sidebar';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRestaurant } from '@/contexts/RestaurantContext'; // CR-385 M2: staff name for cancelled_by (same source as ArrivalsPage L55)
+import { useAuth } from '@/contexts/AuthContext'; // CR-385 M2 BUG-442: cancelled_by = user.fullName (restaurant.profile.fullName never existed)
 import { getSnapshot, patchRoomStatus } from '@/api/services/frontDeskService';
 import { patchErrorMessage } from '@/api/transforms/roomStatusTransform';
 import { plusDays } from '@/api/transforms/frontDeskTransform';
@@ -68,7 +67,6 @@ const useTabParam = () => {
 
 export default function FrontDeskWorkstationPage() {
   const { user } = useAuth();
-  const { restaurant } = useRestaurant(); // CR-385 M2
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => localStorage.getItem('mygenie_sidebar_expanded') !== 'false');
   const { snap, loading, refreshing, error, refresh } = useFrontDeskSnapshot();
   const [tab, setTab] = useTabParam();
@@ -116,7 +114,7 @@ export default function FrontDeskWorkstationPage() {
       case 'departures': return <DeparturesPanel rows={inHouse} {...common} />;
       case 'inhouse': return <InHousePanel rows={inHouse} {...common} />;
       case 'rooms': return <RoomsPanel snapshot={snap} expandedRoomId={expanded.roomId} onToggleRoom={toggleRoom} chip={chips.rooms} onChip={(c) => setChip('rooms', c)} busyId={busyId} onPatch={handlePatch} onRetry={refresh} retrying={refreshing} />; // CR-385 M0.5 BUG-434 retrying
-      default: return <ArrivalsPanel rows={pending} kpis={snap.kpis} {...common} expandedKind={expanded.kind} onOpen={openExpansion} onDone={afterAction} cancelledBy={restaurant?.profile?.fullName} />; // CR-385 M2
+      default: return <ArrivalsPanel rows={pending} kpis={snap.kpis} {...common} expandedKind={expanded.kind} onOpen={openExpansion} onDone={afterAction} cancelledBy={user?.fullName || 'staff'} />; // CR-385 M2 · BUG-442
     }
   };
 

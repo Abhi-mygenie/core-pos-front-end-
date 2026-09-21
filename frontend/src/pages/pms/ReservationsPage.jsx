@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTapeChartData, buildTapeChart, localDate, cancelReservation, modifyReservation } from '@/api/services/pmsService'; // CR-362: cancelReservation, modifyReservation
 import { useRestaurant } from '@/contexts/RestaurantContext';
+import { useAuth } from '@/contexts/AuthContext'; // CR-385 M2 BUG-442
 import Sidebar from '@/components/layout/Sidebar';
 import { toast } from 'sonner';
 import { Plus, RefreshCw, ChevronLeft, ChevronRight, Loader2, AlertCircle, LogIn, FileText, X, UserX } from 'lucide-react';
@@ -38,6 +39,7 @@ const PahBadge = ({ pah }) => pah ? (
 export default function ReservationsPage() {
   const navigate = useNavigate();
   const { restaurant } = useRestaurant();
+  const { user } = useAuth(); // CR-385 M2 BUG-442: cancelled_by = logged-in user's fullName
   const [isExpanded, setIsExpanded] = useState(() => localStorage.getItem('mygenie_sidebar_expanded') !== 'false');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -227,7 +229,7 @@ export default function ReservationsPage() {
             </table>
 
             {/* Popover */}
-            {popover && <BlockPopover popover={popover} popRef={popRef} setPopover={setPopover} navigate={navigate} onNoShow={(t) => setNoShowTarget(t)} onCancel={(t) => setCancelTarget(t)} onModify={(t) => setModifyTarget(t)} />} {/* CR-362: onCancel, onModify */}
+            {popover && <BlockPopover popover={popover} popRef={popRef} setPopover={setPopover} navigate={navigate} onNoShow={(t) => setNoShowTarget(t)} onCancel={(t) => setCancelTarget(t)} onModify={(t) => setModifyTarget(t)} cancelledBy={user?.fullName || 'staff'} />} {/* CR-362: onCancel, onModify · CR-385 M2 BUG-442 cancelledBy */}
           </div>
         ) : null}
       </main>
@@ -314,7 +316,7 @@ function GroupRows({ group, chart, colW, onBlockClick }) {
   );
 }
 
-function BlockPopover({ popover, popRef, setPopover, navigate, onNoShow, onCancel, onModify }) { // CR-362: onCancel, onModify
+function BlockPopover({ popover, popRef, setPopover, navigate, onNoShow, onCancel, onModify, cancelledBy = 'staff' }) { // CR-362: onCancel, onModify · CR-385 M2 BUG-442 cancelledBy
   const { block, anchorRect } = popover;
   const { res, line, kind } = block;
   const statusLabels = { in_house: 'In-house', departed: 'Departed', pending: 'Pending' };
@@ -367,12 +369,12 @@ function BlockPopover({ popover, popRef, setPopover, navigate, onNoShow, onCance
         {kind === 'pending' && (
           <>
             <button data-testid="tc-popover-modify-btn"
-              onClick={() => { setPopover(null); onModify({ reservationId: res.bookingId, guestName: res.guestName, channel: res.channel, roomCode: res.roomCode ?? line.tableNo, checkin: res.checkin, checkout: res.checkout }); }}
+              onClick={() => { setPopover(null); onModify({ reservationId: res.id, guestName: res.guestName, channel: res.channel, roomCode: res.roomCode ?? line.tableNo, checkin: res.checkin, checkout: res.checkout }); }} // CR-385 M2 BUG-441: numeric LR id
               className="px-2.5 py-1.5 rounded-md text-[11px] font-medium border border-[#E5E5E5] text-[#666] hover:bg-[#FAFAFA] transition-colors">
               Modify
             </button>
             <button data-testid="tc-popover-cancel-btn"
-              onClick={() => { setPopover(null); onCancel({ reservationId: res.bookingId, guestName: res.guestName, channel: res.channel, checkin: res.checkin, checkout: res.checkout, roomCode: res.roomCode ?? line.tableNo, advance: res.advance ?? 0, cancelledBy: 'staff' }); }}
+              onClick={() => { setPopover(null); onCancel({ reservationId: res.id, guestName: res.guestName, channel: res.channel, checkin: res.checkin, checkout: res.checkout, roomCode: res.roomCode ?? line.tableNo, advance: res.advance ?? 0, cancelledBy }); }} // CR-385 M2 BUG-441 + BUG-442
               className="px-2.5 py-1.5 rounded-md text-[11px] font-medium border border-[#EF4444] text-[#EF4444] hover:bg-[#FEF2F2] transition-colors">
               Cancel
             </button>

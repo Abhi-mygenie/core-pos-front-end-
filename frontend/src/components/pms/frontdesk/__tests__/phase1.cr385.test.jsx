@@ -191,6 +191,6 @@ describe('CR-385 M2 legacy ArrivalsPage untouched (overlay dialogs, no inline pr
     expect(usages).toMatchSnapshot();
     expect(usages.noShow).not.toMatch(/\binline\b/);
     expect(usages.cancel).not.toMatch(/\binline\b/);
-    expect(src).not.toMatch(/CR-385/);
+    expect(src.match(/CR-385[^\n]*/g).every((m) => /BUG-44[12]/.test(m))).toBe(true); // P1.5 (owner 2026-09-22): only the BUG-441/442 markers may touch the legacy page
   });
 });

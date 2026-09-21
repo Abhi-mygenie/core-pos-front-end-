@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import NoShowDialog from '@/components/pms/NoShowDialog';
 import CancelBookingDialog from '@/components/pms/CancelBookingDialog'; // CR-362
 import ModifyBookingDialog from '@/components/pms/ModifyBookingDialog'; // CR-362
-import { useRestaurant } from '@/contexts/RestaurantContext'; // CR-362: for cancelledBy staff name
+import { useAuth } from '@/contexts/AuthContext'; // CR-385 M2 BUG-442: cancelled_by = logged-in user's fullName
 
 const TABS = [
   { key: 'today',     label: 'Today' },
@@ -52,7 +52,7 @@ export default function ArrivalsPage() {
   const [cancelTarget,  setCancelTarget]  = useState(null); // CR-362
   const [modifyTarget,  setModifyTarget]  = useState(null); // CR-362
   const [cancelledRows, setCancelledRows] = useState([]);   // CR-362: Cancelled tab data
-  const { restaurant } = useRestaurant();                   // CR-362: staff name for cancelled_by
+  const { user } = useAuth();                               // CR-385 M2 BUG-442: staff name for cancelled_by (restaurant.profile.fullName never existed)
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -269,8 +269,8 @@ export default function ArrivalsPage() {
                                 <ArrKebabMenu
                                   row={row} activeTab={activeTab}
                                   otaNoShowChannels={OTA_NO_SHOW_CHANNELS}
-                                  onModify={() => setModifyTarget({ reservationId: row.bookingId, guestName: row.guestName, channel: row.channel, roomCode: row.roomCode, checkin: row.checkin, checkout: row.checkout })}
-                                  onCancel={() => setCancelTarget({ reservationId: row.bookingId, guestName: row.guestName, channel: row.channel, checkin: row.checkin, checkout: row.checkout, roomCode: row.roomCode, advance: row.advance ?? 0, cancelledBy: restaurant?.profile?.fullName ?? 'staff' })}
+                                  onModify={() => setModifyTarget({ reservationId: row.id, guestName: row.guestName, channel: row.channel, roomCode: row.roomCode, checkin: row.checkin, checkout: row.checkout })} // CR-385 M2 BUG-441: numeric LR id, not the public booking_id string
+                                  onCancel={() => setCancelTarget({ reservationId: row.id, guestName: row.guestName, channel: row.channel, checkin: row.checkin, checkout: row.checkout, roomCode: row.roomCode, advance: row.advance ?? 0, cancelledBy: user?.fullName || 'staff' })} // CR-385 M2 BUG-441 + BUG-442
                                   onNoShow={() => setNoShowTarget({ bookingId: row.bookingId, guestName: row.guestName, channel: row.channel, checkin: row.checkin, roomCode: row.roomCode })}
                                 />
                               )}
