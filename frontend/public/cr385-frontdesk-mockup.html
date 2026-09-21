@@ -365,6 +365,7 @@ function rel(d){const n=dayDiff(d,T);return n===0?'today':(n===1?'tomorrow':(n>1
 // v2.29 addendum (22:45): D15 + D16 FIXED by BE and FE-validated (probes_2026_09_20_d1516/) — Extend Stay shorten/move unblocked; nights_detail also on shorten/move. BQ-385-20 confirmed: single-method advance only.
 // v2.29 addendum (00:10): OD-385-18 = a — Split tile NOT to be built at advance points (Booking/Check-In/Extend) until BE stores split legs; mockup still shows it as the pre-decision reference. B-7 smoke: backend D17 (check-in advance dropped) open → M3 collect-now blocked until fixed.
 // v2.29 addendum (2026-09-21): BQ-385-19 shipped — LR rows carry charge.nights_detail for calendar stays; Bill/Departures/In-House show per-night lines when present, else 'N nights · avg. rate / night' (held mode). G4-07 closed.
+// v2.29 addendum (2026-09-21): open backend asks — D17 (check-in advance dropped → M3 collect-now blocked) and BQ-385-21 (no-rate sandbox date so the 'held (no rate for this date)' chip in Extend can be seen once; untested until answered).
 const VERSION='v2.29';
 const RATE={Deluxe:2200,Executive:3300,Suite:4500},PLAN_SUPP={EP:0,CP:300,MAP:700,AP:1000};
 const plural=(n,u)=>`${n} ${u}${Number(n)===1?'':'s'}`;

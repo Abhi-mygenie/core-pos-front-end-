@@ -518,3 +518,15 @@ Independent re-run of the full lifecycle (booking 163 / order 1232593: create+ad
 **Open questions — DECIDED by owner 2026-09-20 (D52) and DELIVERED by backend the same day (v1.8):** N7 → setting `allow_early_checkin` (default false → server 422; FE guard + message) **BQ-385-18 ✅** · N8 → setting `extend_rate_mode` (default `calendar`) **BQ-385-17 ✅** · N9 → unchanged, FE warns · N10 (backend minor) `received_by null` — hygiene · **N11 CLOSED** (per-night slab verified) · **D14 (P2)** calendar extend response `charge` stale by same-call payment · **BQ-385-19 (P2)** `nights_detail` on LR list.
 
 **Backend blockers B-1 / B-3 / B-4 / B-5 / B-6: DELIVERED · VERIFIED.** Remaining: B-7 (open-bug smoke), B-8 (D5 spike), B-9 (owner "close Gate 2.6").
+
+
+## Addendum 2026-09-21 — items raised after v1.9 (tracked in BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md)
+| Item | Status |
+|---|---|
+| D14 extend response under-reports same-call payment | FIXED + validated 2026-09-20 |
+| D15 shorten re-prices at blended rate | FIXED + validated 2026-09-20 |
+| D16 room move flattens GST slab | FIXED + validated 2026-09-20 |
+| **D17 check-in advance dropped (`user-group-check-in` keeps method, zeroes amount)** | **OPEN — P0 for M3** |
+| BQ-385-19 `nights_detail` on LR list | SHIPPED + validated 2026-09-21 |
+| BQ-385-20 `split_payments[]` on advance | CONFIRMED not stored — FE single-method advance (OD-385-18 a) |
+| **BQ-385-21 no-CM-rate sandbox date for `held_fallback`** | **OPEN — asked 2026-09-20 23:00 (P3, not money-blocking)** |
