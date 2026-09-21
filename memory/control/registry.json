@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED (P0+P0.5+P1) — Phase 1 (M7 Front Desk Rules tab + M2 Cancel/No-Show/Modify) IMPLEMENTED 2026-09-21 + agent-QA passed (iteration_11 + iteration_12; unit 58/58; preview-persistence check PASS); Gate 6 = COMBINED owner smoke Phase 0 + Phase 1 pending (\"Phase 0 smoke OK\" + \"Phase 1 smoke OK\"). BUG-440 fixed inside P1 (D76). BUG-441 (legacy pages) registered, owner routing. BQ-385-22/23/24 open (not blocking).",
+      "status": "GATE_5B_QA_PASSED (P0+P0.5+P1, formal Role-4 QA 2026-09-22: iteration_14 all Phase 1 cases PASS, X-10 clean 7 states × 2 viewports, 0 console errors) — Gate 6 = combined Phase 0 + Phase 1 owner smoke pending. Phase 1.5 candidates: BUG-441 (legacy id), BUG-442 (cancelled_by). BQ-385-22/23/24 open.",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25510,6 +25510,11 @@
           "date": "2026-09-21",
           "to": "GATE_5A_IMPLEMENTED + GATE_5B_QA_PASSED (P1)",
           "note": "Owner \"Phase 1 GO\" → Implementation role: Entry Verification zero drift; M7 + M2 coded (10 files, 2 new components, 14 unit tests). QA: iteration_11 (M7 PASS after BLK-M7-CT multipart-header fix — D75; M2-1/M2-7 PASS) + main-agent live M2-3/4/5 (debounce 510 ms, 3 previews → LR row unchanged, confirm = preview total) + iteration_12 (Cancel 222/223 via new panel 200, No-Show inline both viewports, defaults intact). Scope expansion approved: BUG-440 fixed (D76). BUG-441 registered (legacy pages send booking_id string → 500), not fixed. Sandbox clean: 222/223/224 cancelled, settings at defaults, no room touched."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "GATE_5B_QA_PASSED (P1, Role 4)",
+          "note": "Formal QA: precondition PASS (handover §4, EXIT GATE 5/5, spot-check OK). iteration_13 aborted (business date rolled to 22 Sep; tester used wrong chip ids; its radio MAJOR NOT reproducible — click/check/keyboard all work). iteration_14 fresh full run from the Late chip: M7 5/5, M2 01–08 PASS (preview persistence PASS, confirm body clean), legacy expected-FAIL BUG-441 reproduced, cleanup 225/226/227 cancelled, defaults restored. Main agent: X-10 duplicate-testid audit 7 states × 1920/1366 → 0 duplicates; console errors 0; legacy /pms/front-desk + /pms/room-status render. New: BUG-442 (cancelled_by 'staff')."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25665,7 +25670,8 @@
       ],
       "qa_handover_p1": "handover/QA_HANDOVER_2026_09_21_CR385_P1.md",
       "qa_report_p1": "test_reports/QA_REPORT_2026_09_21_CR385_P1.md (test_reports iteration_11.json + iteration_12.json)",
-      "gate6_combined_smoke": "control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 (Phase 0) + S-13…S-20 (Phase 1) · checklist sections M0-S + M1-S"
+      "gate6_combined_smoke": "control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 (Phase 0) + S-13…S-20 (Phase 1) · checklist sections M0-S + M1-S",
+      "qa_report_p1_role4": "test_reports/QA_REPORT_2026_09_22_CR385_P1_ROLE4.md (iteration_13 aborted env-drift run + iteration_14 full re-run + main-agent X-10/console sweep)"
     },
     {
       "id": "BUG-410",
@@ -26658,18 +26664,56 @@
           "note": "testing_agent iteration_12 C-3: legacy Cancel POST /local-reservations/<booking_id string>/cancel → 500 'Argument #2 ($id) must be of type int, string given'. Fix = reservationId: row.id (pmsService arrivals transform L174 exposes id). Not applied: legacy ArrivalsPage.jsx is declared untouched in CR-385 P1 (snapshot test). Recommendation: Fast Lane NOT eligible (inventory release, MEDIUM) → owner-approved Bug Fix (1 line) or fold into P1.5. Backend side ask: return 4xx instead of 500 stack trace (add to MASTER as note)."
         }
       ]
+    },
+    {
+      "id": "BUG-442",
+      "type": "BUG",
+      "title": "Cancel booking posts cancelled_by 'staff' for every user — call sites read restaurant.profile.fullName (does not exist on RestaurantContext); user fullName lives on AuthContext",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE (2026-09-22, QA Role 4 CR-385 P1) — owner routing (P1.5 for the new panel; legacy pages with BUG-441)",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-22",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "qa_severity": "MINOR",
+      "rca_classification": "CODE_ERROR",
+      "duplicate_check": "DISTINCT (RELATED CR-362, CR-385 M2, BUG-440/441)",
+      "blast_radius": "SMALL (3 files, 3 lines)",
+      "code_reality": "EXISTS",
+      "files_affected": [
+        "frontend/src/pages/pms/FrontDeskWorkstationPage.jsx",
+        "frontend/src/pages/pms/ArrivalsPage.jsx",
+        "frontend/src/pages/pms/ReservationsPage.jsx"
+      ],
+      "related_items": [
+        "CR-362",
+        "CR-385",
+        "BUG-440",
+        "BUG-441"
+      ],
+      "intake_doc": "change_requests/BUG-442_CANCELLED_BY_ALWAYS_STAFF_INTAKE.md",
+      "evidence_dir": "evidence/CR-385/phase1_qa_role4/",
+      "status_history": [
+        {
+          "date": "2026-09-22",
+          "to": "INTAKE",
+          "note": "iteration_14 R-M2-02 body cancelled_by 'staff' while logged in as Owner; iteration_12 showed 'Owner' → intermittent hydration; wrong source field either way."
+        }
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "IMPLEMENTATION — CR-385 Phase 1 (M7 + M2) coded + agent-QA passed (iteration_11/12); BUG-440 fixed in P1; BUG-441 registered (owner routing). Next: combined Phase 0 + Phase 1 owner smoke (batch doc S-1…S-20) → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 1.5 if needed → Phase 2 GO.",
+    "last_action": "QA (Role 4) — CR-385 Phase 1 formal QA PASSED (iteration_14 + X-10 sweep). Phase 1.5 list: BUG-441, BUG-442. Next: owner combined Phase 0 + Phase 1 smoke (S-1…S-20) → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 1.5 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 699,
-    "total_items": 699,
+    "total": 700,
+    "total_items": 700,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
     "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" → Implementation role §1."
   }

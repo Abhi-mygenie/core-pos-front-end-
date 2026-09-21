@@ -1,0 +1,69 @@
+{
+  "summary": "CR-385 Phase 1 QA (Role 4) RE-RUN executed end-to-end successfully. All Modify/Cancel/No-Show/M7 acceptance cases now PASS against the Late chip (business date 2026-09-22). Confirmed the previously-reported radio-testability regression is FIXED: page.click on [data-testid=radio-extend-rate-mode-held] flips the DOM `checked` to true, status flips to 'Unsaved changes', Save enables. All three seed bookings 225/226/227 cancelled by end of run (200/200/200). Late chip 13 → 12 → 11 → 10 as expected. Front Desk Rules ends at defaults (early=false, calendar) verified by reload. Legacy BUG-441 reproduced: POST .../local-reservations/MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8/cancel → 500 (string bookingId used as {id} path segment). No new blockers found.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "POST /api/v2/vendoremployee/aiosell/local-reservations/{id}/cancel", "issue": "BUG-441 already filed: legacy /pms/arrivals ⋮ Cancel wires row.bookingId (string) as the {id} path segment → backend returns 500 TypeError. Frontend fix is row.id ?? row.bookingId in ArrivalsPage.jsx L272-273. Reproduced this run on QA-R4-Legacy (227). Expected fail per intake.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "POST /api/v2/vendoremployee/aiosell/local-reservations/{id}/cancel", "issue": "AiosellController::cancelLocalReservation returns 500 on non-int {id}; should validate and return 400/404. Optional hardening."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "cases_pass_fail": {
+    "R-M7_defaults": "PASS — early=false, calendar=true, held=false, status='Saved', save disabled.",
+    "R-M7_radio_reverify": "PASS — page.click(radio-extend-rate-mode-held) → held.checked=true, cal.checked=false, status='Unsaved changes', save-btn enabled. PREVIOUSLY reported MAJOR is fixed.",
+    "R-M7_save_held_multipart": "PASS — multipart/form-data POST /restaurant-settings/update-settings with single `data` part == {\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"held\"}} → 200 → reload → held persisted.",
+    "R-M7_toggle_on_save": "PASS — multipart body {\"basic\":{\"allow_early_checkin\":true,\"extend_rate_mode\":\"held\"}} → 200 → reload → toggle=true, held=true.",
+    "R-M7_restore_defaults": "PASS — final save body {\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}} → 200 → reload → toggle=false, cal=true, held=false, Saved, disabled.",
+    "R-M2-01_late_row_matrix": "PASS — Late chip has 13 rows. Direct rows (15/17/21/18/13/22/54/86/225/226/227) have cancel-btn only, booking.com rows (7/23) have noshow-btn only. All checkin-btn disabled with title 'Available in Phase 2'. All modify-btn enabled. Expand 226: exp-checkin/-exp-modify/-exp-cancel present, no -exp-noshow (correct for Direct).",
+    "R-M2-02_cancel_225_1920": "PASS — outcome-total ₹37,170, outcome-prepaid ₹0, outcome-advance ₹0, phase2-ribbon present, cancel-booking-dialog class 'w-full' (NO 'fixed'), header greeting 'Good morning' still visible, reasons ['Select reason…','guest cancelled'], confirm disabled until selection. POST /225/cancel body {\"reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"notify_cm\":true} → 200 'Reservation cancelled successfully' → row 225 gone → Late chip 13 → 12.",
+    "R-M2-03_modify_226_debounce_preview": "PASS — Initial modify-checkin=2026-09-21, modify-checkout=2026-09-22, checkout min='2026-09-21', rateplan 'suite-s-ep', Current Nights=1/Total=₹37,170, New '—', Confirm disabled. Fill checkout 2026-09-23: 0 PATCH within 400ms, exactly ONE PATCH after debounce with body EXACTLY {\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"Modified from Front Desk\",\"preview\":true} → preview nights='2', total='₹74,340', delta='+₹37,170', Confirm enabled. Burst of 3 fills in ~300ms → exactly 1 subsequent PATCH (final value). Reason 'QA role4' → next PATCH body carries reason 'QA role4'.",
+    "R-M2-04_preview_persistence": "PASS — After ≥3 previews and BEFORE confirm, page reload → row 226 still 21 Sep → 22 Sep, 1 night, ₹37,170. No preview persisted server-side.",
+    "R-M2-05_confirm_no_preview": "PASS — Reopen Modify 226 → wait preview → click modify-booking-confirm-btn → captured PATCH body EXACTLY {\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"Modified from Front Desk\"} (NO preview, NO amount_after_tax) → 200 → row 226 shows 23 Sep, 2 nights, ₹74,340. Zero-night: checkout==checkin → modify-dates-error visible, Confirm disabled, 0 PATCH in 1.6s.",
+    "R-M2-06_cancel_226_1366": "PASS at 1366×768 — outcome-total ₹74,340, document.scrollingElement.scrollWidth == 1366 (no horizontal overflow), inline dialog+card inside viewport. POST /226/cancel → 200 → row 226 gone.",
+    "R-M2-07_noshow_readonly": "PASS on row 7 (booking.com) — outcome-card + phase2-ribbon + noshow-dialog present; noshow-overlay class 'w-full' (NO 'fixed'), style attribute null; typed 'QA read-only test' in noshow-remark-input; noshow-cancel-btn closed the dialog; row 7 unchanged; noshow-confirm-btn NEVER clicked (per SANDBOX RULES).",
+    "R-M2-08_alert_bar": "PASS — fd-alert-more popover lists 15+ items including 'Stay expired' entries (TEST TEST, Loki Loki, poii poii, boii, saurav, test booking …). Records captured; per-row click not executed to avoid extra navigation, but items enumerated with testids fd-alert-item-p-0..N.",
+    "R-LEGACY_227": "EXPECTED FAIL (BUG-441 confirmed) — arr-kebab-MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8 → arr-cancel-btn-... → legacy dialog class 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4' (proper overlay). Reasons list correct. Select + Confirm → POST .../local-reservations/MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8/cancel → 500. Attributed to open BUG-441; cleanup done via new panel.",
+    "R-CLEANUP_227": "PASS — 227 cancelled via Front Desk (Beta) Late chip → POST /227/cancel → 200 → row 227 gone. Late chip 13→10 overall (225+226+227 removed).",
+    "R-P0_regression": "SPOT-CHECKED — header 'Good morning, Owner · Tuesday, 22 September 2026', sync pill visible, Arrivals tile 13 late → 10 late after mutations, Departures 2 overdue, In-House 2, Rooms 0 free / 40% occupancy. Late chip pre-selected (BUG-437 pin behavior). No zero-console-errors sweep beyond firebase/socket noise this iteration.",
+    "R-X10_duplicate_testids": "NOT EXHAUSTIVELY AUDITED — enumeration during expansion of row 226 and cancel/noshow drawers surfaced no obvious duplicates. Recommend a dedicated pass in next iteration if desired."
+  },
+  "network_evidence": {
+    "R-M2-01_late_rows": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_01.json",
+    "R-M2-03_modify_preview": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_03_modify_preview.json",
+    "R-M2-03_netlog": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_03_netlog.json",
+    "R-M2-04_reload_persistence": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_04_reload.json",
+    "R-M2-05_confirm": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_05_confirm.json",
+    "R-M2-02_cancel_225": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_02_cancel225.json",
+    "R-M2-06_and_legacy": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_06_legacy.json",
+    "R-CLEANUP_227": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/cleanup_227.json",
+    "R-M7_reverify": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm7_reverify.json",
+    "R-M2-07_noshow_and_alerts": "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/rm2_07_noshow.json"
+  },
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/phase1_qa_role4_rerun/"
+  ],
+  "action_items": [
+    "Ship BUG-441 fix in /app/frontend/src/pages/pms/ArrivalsPage.jsx L272-273 (use row.id ?? row.bookingId) — still the only outstanding functional item after this Phase 1 QA cycle.",
+    "OPTIONAL backend hardening: AiosellController::cancelLocalReservation should validate {id} is int and return 400/404 instead of 500 PHP TypeError."
+  ],
+  "critical_code_review_comments": [
+    "FrontDeskRulesTab.jsx radio+label wiring now behaves correctly under Playwright programmatic clicks; the prior MAJOR finding is closed.",
+    "ArrivalsPanel Cancel/No-Show inline overlays continue to use `w-full` (no fixed positioning) with the outcome-card above the dialog and no backdrop — matches Phase 1 spec.",
+    "ModifyBookingForm debounce is deterministic (≤500 ms, single request in-flight, last-write-wins with the current form snapshot) — meets spec.",
+    "Confirm PATCH body includes {checkin, checkout, reason} only — no `preview`, no `amount_after_tax` leakage. Good.",
+    "Legacy /pms/arrivals still sends string bookingId as {id} — BUG-441 must ship."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only run, network capture only)", "frontend": "M7 100%, M2 100% (01–07), M2-08 enumerated, LEGACY reproduced as expected fail, CLEANUP 100%"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — never printed.",
+  "seed_data_creation": "None. 225/226/227 cancelled by end of run.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Business date is Tuesday 2026-09-22. Late chip now 10 rows (no 225/226/227). Chip testids are fd-chip-arrivals-{late,today,tomorrow,upcoming}. Radio-testability fix confirmed for FrontDeskRulesTab. BUG-441 is the only outstanding Phase 1 item.",
+  "rca of the issue": "N/A — no new bugs discovered this iteration. Only pre-existing BUG-441 reproduced and left to main agent."
+}

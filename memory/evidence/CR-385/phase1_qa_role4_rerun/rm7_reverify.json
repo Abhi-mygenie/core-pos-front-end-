@@ -1,0 +1,56 @@
+{
+  "R-M7_defaults": {
+    "toggle_checked": false,
+    "cal_checked": true,
+    "held_checked": false,
+    "status": "Saved",
+    "save_disabled": true
+  },
+  "R-M7_radio_click_held": {
+    "held_checked": true,
+    "cal_checked": false,
+    "status": "Unsaved changes",
+    "save_disabled": false
+  },
+  "R-M7_save_held_net": [
+    {
+      "phase": "req",
+      "method": "POST",
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+      "body": "------WebKitFormBoundaryAqmj6yJIhA1AztrE\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"held\"}}\r\n------WebKitFormBoundaryAqmj6yJIhA1AztrE--\r\n"
+    },
+    {
+      "phase": "resp",
+      "status": 200,
+      "method": "POST"
+    },
+    {
+      "phase": "req",
+      "method": "GET",
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "body": null
+    },
+    {
+      "phase": "resp",
+      "status": 200,
+      "method": "GET"
+    }
+  ],
+  "R-M7_reload_after_held": {
+    "held": true,
+    "cal": false
+  },
+  "R-M7_toggle_on_body": "------WebKitFormBoundary2hME1DjCPGFyIaOA\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":true,\"extend_rate_mode\":\"held\"}}\r\n------WebKitFormBoundary2hME1DjCPGFyIaOA--\r\n",
+  "R-M7_reload_toggle_on": {
+    "toggle": true,
+    "held": true
+  },
+  "R-M7_final_restore_body": "------WebKitFormBoundarysubA3fJDBkvuVf7h\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}\r\n------WebKitFormBoundarysubA3fJDBkvuVf7h--\r\n",
+  "R-M7_final_state": {
+    "toggle": false,
+    "cal": true,
+    "held": false,
+    "save_disabled": true,
+    "status": "Saved"
+  }
+}
