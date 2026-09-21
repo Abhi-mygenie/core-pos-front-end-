@@ -25644,7 +25644,8 @@
       "backend_briefs": [
         "backend_briefs/BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md (BQ-385-22, P2 perf/aggregation, not blocking; checklist section B)"
       ],
-      "gate6_phase0": "DEFERRED — combined with Phase 1 owner smoke (D74). Steps: control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 / checklist M0-S01…S12"
+      "gate6_phase0": "DEFERRED — combined with Phase 1 owner smoke (D74). Steps: control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 / checklist M0-S01…S12",
+      "session_handover_latest": "handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md"
     },
     {
       "id": "BUG-410",
@@ -26572,6 +26573,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "CR-385: Phase 0+0.5 QA-passed; Phase 0 owner smoke deferred into Phase 1 smoke (D74). Next: Phase 1 planning."
+    "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" → Implementation role §1."
   }
 }
