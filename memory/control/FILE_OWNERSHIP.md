@@ -1388,3 +1388,13 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `pages/pms/FrontDeskWorkstationPage.jsx` | `useRestaurant` · `expanded.kind` · `openExpansion` · `afterAction` · `navigateTo(kind)` · ArrivalsPanel props | CR-385 M2 2026-09-21 |
 | `components/pms/frontdesk/__tests__/phase1.cr385.test.jsx` (+ `__snapshots__/`) | NEW — 14 tests: multipart snapshot + header, preview/confirm bodies, nsOrCancel wiring, inline dialogs, BUG-440, legacy ArrivalsPage source snapshot | CR-385 P1 2026-09-21 |
 | `pages/pms/ArrivalsPage.jsx`, `pages/pms/ReservationsPage.jsx`, `components/pms/ModifyBookingDialog.jsx`, `ExtendStayDialog.jsx`, `api/services/settingsService.js`, `pmsService.js` | **NOT touched** (P1 scope lock; BUG-441 lives in ArrivalsPage/ReservationsPage — owner routing) | — |
+
+## FILE_OWNERSHIP — CR-385 Phase 1.5 BUG FIX (BUG-441 + BUG-442) — 2026-09-22
+| File | Change | Owner / date |
+|---|---|---|
+| `pages/pms/ArrivalsPage.jsx` | L11 `useAuth` import (replaces `useRestaurant`) · L55 `const { user } = useAuth()` · L272–273 `reservationId: row.id`, `cancelledBy: user?.fullName || 'staff'` | CR-385 P1.5 BUG-441/442 2026-09-22 |
+| `pages/pms/ReservationsPage.jsx` | L6 `useAuth` import · L42 hook · L232 `cancelledBy` prop → `BlockPopover` · L319 prop · L372/L377 `reservationId: res.id`, `cancelledBy` | CR-385 P1.5 BUG-441/442 2026-09-22 |
+| `pages/pms/FrontDeskWorkstationPage.jsx` | `useRestaurant` import + hook removed · `cancelledBy={user?.fullName || 'staff'}` | CR-385 P1.5 BUG-442 2026-09-22 |
+| `tests/cr385/phase1_5.cr385.test.jsx` | NEW — 5 tests (numeric id, fullName, FD target, staff fallback, source guards) | CR-385 P1.5 2026-09-22 |
+| `components/pms/frontdesk/__tests__/phase1.cr385.test.jsx` | legacy-marker guard relaxed to allow only BUG-441/442 markers | CR-385 P1.5 2026-09-22 |
+| `components/pms/ModifyBookingDialog.jsx`, `api/services/pmsService.js` | **NOT touched** — BUG-443 / BUG-444 intakes (owner routing) | — |

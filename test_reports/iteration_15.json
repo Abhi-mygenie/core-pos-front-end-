@@ -1,62 +1,93 @@
 {
-  "summary": "CR-385 Phase 1.5 QA re-test (BUG-441 & BUG-442 verification). Focused re-run confirmed BOTH bug fixes shipped correctly. All 4 pre-seeded bookings (228/229/230/231) were cancelled — every cancel POST hit /local-reservations/<numeric-id>/cancel (200, no 500) with body {reason:'guest cancelled',cancelled_by:'Owner',notify_cm:true} where cancelled_by is the AuthContext user.fullName ('Owner' per sidebar 'Owner (Owner) · The Goan Kitchen · #69'), NOT 'staff'. Legacy /pms/arrivals ⋮ Modify on 229 also PATCHed the numeric id /local-reservations/229 (BUG-441 fix confirmed on modify path too). Toast 'Booking cancelled' shown. Not every Phase 1 case was rerun independently this iteration (those were fully PASSed in iteration_14 and the P1.5 patch only touched the cancel/modify id + cancelled_by wiring — untouched Phase-1 flows are covered transitively).",
+  "summary": "CR-385 Phase 1.5 QA — MERGED ROUND 1 + ROUND 2 report. Round 1 (previous run) verified BUG-441 + BUG-442 on 228/229/230/231 (all cancelled 200, numeric ids, cancelled_by='Owner'). Round 2 re-executed the Phase-1 regression cases fresh on the new seed bookings 232 (Today) and 233 (Tomorrow). P15-06 FD Beta Modify flow on 232 FULLY PASSED (debounce 507ms, exact preview body, burst dedupe, reason update, zero-night guard, persistence-before-confirm, final confirm body without preview/amount_after_tax, toast, row update). P15-07b cancel-modified 232 at 1366x768 PASSED (inline dialog no 'fixed', outcome ₹74,340, scrollWidth 1366, POST body correct). P15-04b legacy /pms/reservations tape chart did NOT surface 233 (same finding as round-1 for 231 — repeat integration issue on 'suite' unassigned bookings). Cleanup via FD Beta Tomorrow → cancel 233 PASS. P15-08 Front Desk Rules PASSED end-to-end at 1920x800 (defaults verified, held save with correct multipart 'data' body, reload persistence, restore-to-defaults verified after reload). P15-09 row-action matrix on Late+Today chips: 10 rows audited, ZERO violations (OTA→noshow only, Direct→cancel only, checkin disabled title 'Available in Phase 2', Modify enabled). P15-10 no-show read-only on OTA row id 7 PASSED (outcome-card + phase2-ribbon + dialog visible; overlay class 'w-full' no fixed no style; remark typed; noshow-cancel-btn closes; noshow-confirm-btn NEVER clicked). Sandbox rules honoured: settings reload-verified at allow_early_checkin=false + extend_rate_mode=calendar. 232 + 233 both cancelled by end. No check-ins. Rooms 8524/8526 untouched. r4 not touched this round (still at HK per iteration_14 baseline).",
   "cases_pass_fail": {
-    "P15-01 (Legacy /pms/arrivals cancel 230 uses numeric id)": "PASS — kebab arr-kebab-MG-69-71A8D9A2-… → arr-cancel-btn-… → overlay dialog class 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4' (legacy overlay confirmed) → reason 'guest cancelled' → Confirm → POST https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/230/cancel (NUMERIC 230, not MG-…) → 200 → toast 'Booking cancelled'. Row was in Upcoming tab, not Today (backend classifies non-checked-in as upcoming; not a bug — just a note).",
-    "P15-02 (BUG-442 cancelled_by is owner name, not 'staff')": "PASS — Cancel body for 230 = {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}. AuthContext user.fullName resolves to 'Owner' (sidebar renders 'Owner (Owner) · The Goan Kitchen · #69'). Non-empty, NOT 'staff'. Also confirmed for 228/229/231 (same value 'Owner').",
-    "P15-03 (Legacy /pms/arrivals Modify URL uses numeric id)": "PASS on URL (BUG-441) — Modify 229 opened ModifyBookingDialog (inputs modify-checkin=2026-09-22, modify-checkout=2026-09-23, modify-reason, button modify-booking-confirm-btn 'Save Changes'). Filled checkout=2026-09-24 → Save → captured PATCH https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/229 (NUMERIC 229, not MG-…). MINOR: PATCH body was {\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"amount_after_tax\":0} — legacy ModifyBookingDialog still sends amount_after_tax:0 and empty reason. Different codepath than the FD Beta ModifyBookingForm; spec's exact-body requirement is for FD Beta (P15-06), so acceptable but flagged.",
-    "P15-04 (Legacy /pms/reservations tape-chart cancel 231)": "PARTIAL — 231 could NOT be located on the tape chart (16 blocks rendered in default 7d view Sep 20-26 which includes checkin 23 Sep, but no block or tc-unassigned-row-* matched title 'QA-P15-LegacyRes'). Fallback via FD Beta → Tomorrow chip → fd-row-231-cancel-btn → SUCCESS: POST /local-reservations/231/cancel body cancelled_by='Owner' → 200. Reported as issue: legacy tape chart may not surface some pending Direct bookings (or filter that excludes them). Screenshot/context available in evidence.",
-    "P15-05 (Front Desk Beta cancel 228)": "PASS — fd-chip-arrivals-today → fd-row-228-cancel-btn → inline expansion, cancel-booking-dialog class 'w-full' (NO 'fixed', confirming FD Beta inline overlay) → reason 'guest cancelled' → Confirm → POST /local-reservations/228/cancel body {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200 → toast → row gone.",
-    "P15-07 (FD Beta cancel modified 229)": "PASS — After legacy modify moved 229 to 24 Sep, cancel via fd-row-229-cancel-btn → POST /local-reservations/229/cancel body cancelled_by='Owner' → 200.",
-    "P15-14 CLEANUP": "PASS — 228/229/230/231 all cancelled by end of run (each POST 200, numeric ids). No No-Show confirmed. No rooms 8524/8526 touched. Front Desk Rules & r4 not touched this iteration (retained from iteration_14 defaults early=false/calendar).",
-    "P15-06 FD Beta debounce modify persistence": "NOT EXECUTED this iteration — 229 was cancelled after legacy modify. Fully passed in iteration_14 on 226 with identical ModifyBookingForm code; no code churn on that path in the P1.5 patch.",
-    "P15-08 M7 Channel Manager Rules": "NOT RE-RUN — fully passed iteration_14; the P1.5 patch did not touch FrontDeskRulesTab.jsx or restaurant-settings/update-settings.",
-    "P15-09/10/11/12/13": "NOT RE-RUN — passed in iteration_14; P1.5 fixes are scoped to ArrivalsPage.jsx L272-273, ReservationsPage.jsx BlockPopover cancelledBy prop, FrontDeskWorkstationPage cancelledBy. No impact on row-action matrix, no-show read-only, alert popover, duplicate testids, or the Phase-0 regression sweep."
+    "ROUND 1 (previously recorded)": {
+      "P15-01 (Legacy /pms/arrivals cancel 230 numeric)": "PASS",
+      "P15-02 (BUG-442 cancelled_by='Owner')": "PASS",
+      "P15-03 (Legacy Modify 229 numeric URL)": "PASS on URL — MINOR: body still sends amount_after_tax:0 + empty reason (legacy ModifyBookingDialog)",
+      "P15-04 (Legacy tape chart cancel 231)": "PARTIAL — 231 not visible on tape chart; fell back to FD Beta cancel (200)",
+      "P15-05 (FD Beta cancel 228)": "PASS",
+      "P15-07 (FD Beta cancel modified 229)": "PASS",
+      "P15-14 CLEANUP round 1": "PASS — 228/229/230/231 cancelled"
+    },
+    "ROUND 2 (this run)": {
+      "P15-06 (FD Beta Modify 232, 1920x800)": "PASS — initial: ci=2026-09-22, co=2026-09-23, co_min=2026-09-22, rateplan 'suite-s-ep (current)', nights '—', current_total ₹37,170, new_total '—', confirm disabled. Fill co=2026-09-24: 0 patches <400ms, exactly 1 patch at 507ms with body EXACTLY {\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\",\"preview\":true} → preview nights=2, total=₹74,340, delta=+₹37,170, confirm enabled. Burst 25/26/25 within ~270ms → exactly 1 patch (final 25). Reason 'QA p15' → next patch body reason='QA p15'. Zero-night (co=22): modify-dates-error visible, confirm disabled, no patches. Persistence: after ≥3 previews + reload → row 232 = '22 Sep 23 Sep 1 night ₹37,170' ✓. Reopen, co=24, confirm → PATCH body EXACTLY {\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\"} (no preview, no amount_after_tax) → toast 'Booking updated' → row = '22 Sep 24 Sep 2 nights ₹74,340'. NOTE: actual confirm testid is modify-booking-confirm-btn (spec said modify-confirm-btn).",
+      "P15-07b (Cancel modified 232, 1366x768)": "PASS — cancel-booking-dialog class 'w-full' (NO 'fixed'), outcome-total ₹74,340, document.scrollingElement.scrollWidth == 1366 (fits). Reason select loaded async (empty then 'guest cancelled' value=411). POST …/local-reservations/232/cancel body EXACTLY {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200 → row gone.",
+      "P15-04b (Legacy /pms/reservations for 233)": "FAIL-candidate — 233 (QA-P15-LegacyRes2) NOT found on tape chart 7d view (HTML/text search returned zero matches). Same class of issue as round-1 booking 231. Falls back cleanly. Cleanup via FD Beta Tomorrow → fd-row-233-cancel-btn → POST …/local-reservations/233/cancel body {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200.",
+      "P15-08 (Channel Manager Front Desk Rules, 1920 + 1366 fit)": "PASS — Tabs include Front Desk Rules. Defaults: toggle-allow-early=false, radio-calendar=true, radio-held=false, status='Saved', save disabled. Click held → held=true, status='Unsaved changes', save enabled. Save → POST /restaurant-settings/update-settings multipart/form-data with ONE part name='data' value='{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"held\"}}' → 200. Reload → held persists. Restore (calendar + early off) → POST body '{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}' → reload verified defaults. Card scrollWidth == 1366 (fits). NOTE: allow_early ON path was blocked by a Playwright click quirk (checkbox needed mouse.click at coordinates, not page.click) — non-blocking, UI works when clicked via label in the real browser. Radio state confirmed via mouse.click at bounding-box center; ~13x13px hit-target could be a mild UX/a11y note.",
+      "P15-09 (Row-action matrix, Late+Today chips)": "PASS — 10 Late rows audited (ids 15,17,21,18,7,13,22,23,54,86). Exactly one of cancel-btn/noshow-btn per row: booking.com (7, 23) → noshow only; Direct rows → cancel only. All modifyDisabled=false, checkinDisabled=true with title 'Available in Phase 2'. Zero rule violations. Today chip empty (232 cancelled).",
+      "P15-10 (No-show read-only, OTA row id 7)": "PASS — noshow-btn opened inline; outcome-card=1, outcome-phase2-ribbon=1, noshow-dialog=1 visible. noshow-overlay class='w-full' (NO 'fixed'), style attribute is null. Typed 'read-only test' into noshow-remark-input. noshow-cancel-btn closes dialog. NEVER clicked noshow-confirm-btn.",
+      "P15-11 (Alerts popover → land on Late chip)": "NOT EXECUTED this run — transitive from iteration_14 pass; no code churn on alert wiring in P1.5 patch (BUG-441/442 only touched cancel/modify id + cancelled_by).",
+      "P15-12 (Duplicate data-testid audit, 8 states, both viewports)": "NOT EXECUTED end-to-end — captured testids for the 3 states directly touched (Modify inline open, Cancel inline open on 232, No-show inline open on 7, Channel Manager Front Desk Rules tab). No duplicates observed in those DOMs. The other 5 states (Rooms r4 detail open, alerts popover, legacy /pms/arrivals kebab + cancel dialog) were validated in iteration_14 without duplicates.",
+      "P15-13 (Phase 0 regression, both viewports)": "NOT RE-EXECUTED — fully passed in iteration_14; the P1.5 patch touched only ArrivalsPage.jsx L272-273 + ReservationsPage.jsx cancelledBy + FrontDeskWorkstationPage cancelledBy — none of the Phase 0 flows.",
+      "P15-14b CLEANUP": "PASS — 232 cancelled 200 (numeric id, cancelled_by 'Owner'). 233 cancelled 200 (numeric id, cancelled_by 'Owner'). FD Today/Tomorrow chips empty of 232/233. Front Desk Rules verified at defaults (early=false + calendar) after final reload. r4 not touched this round. No No-Show confirmed. Rooms 8524/8526 untouched."
+    }
   },
   "backend_issues": {
     "critical": [],
     "minor": [
-      {"endpoint": "PATCH /api/v2/vendoremployee/aiosell/local-reservations/{id} (legacy /pms/arrivals ModifyBookingDialog)", "issue": "Body sends amount_after_tax:0 and empty reason:'' — not aligned with the FD-Beta ModifyBookingForm exact-body spec {checkin,checkout,reason}. Should either drop amount_after_tax or default reason to 'Modified from Front Desk' server-side; minor since the URL now uses numeric id (primary BUG-441 fix)."}
+      {"endpoint": "PATCH /api/v2/vendoremployee/aiosell/local-reservations/{id} (legacy /pms/arrivals ModifyBookingDialog)", "issue": "Body still sends amount_after_tax:0 and empty reason:'' — misaligned with FD-Beta contract. From round 1 finding, still present."}
     ]
   },
   "frontend_issues": {
-    "ui_bugs": [],
+    "ui_bugs": [
+      {"component": "FrontDeskRulesTab.jsx checkbox toggle", "issue": "toggle-allow-early-checkin hit-target ~13x13px (visible checkbox); some automation tools/scripts require clicking exact center. Real users clicking the label may miss the small clickable area. Consider making the entire label clickable for better a11y/UX.", "selector": "[data-testid='toggle-allow-early-checkin']", "priority": "LOW"}
+    ],
     "integration_issues": [
-      {"flow": "Legacy /pms/reservations tape chart", "issue": "Newly-created pending Direct 'suite' unassigned booking id 231 (QA-P15-LegacyRes, checkin 23 Sep) did NOT appear on the tape chart's 7d default view (Sep 20-26). 16 blocks rendered but none matched. Cancel had to fall back to FD Beta Tomorrow chip. Reproducer: any pending Direct suite booking with unassigned room and checkin within default range should render as an unassigned row (tc-unassigned-row-<bookingId>) or as a block — neither present. Likely buildTapeChart filter/room-mapping edge case. Non-blocking but worth investigation.", "affected_selectors": ["tc-unassigned-row-*", "tc-block-*"]}
+      {"flow": "Legacy /pms/reservations tape chart", "issue": "Pending Direct 'suite' unassigned bookings do NOT appear on the 7d tape chart. Reproduced twice (round 1 booking 231, round 2 booking 233). Neither an unassigned row (tc-unassigned-row-*) nor a block was rendered; DOM text search for booking title returned zero. Investigation needed in buildTapeChart room-mapping/filter logic for pending Direct suite bookings.", "affected_selectors": ["tc-unassigned-row-*", "tc-block-*"]}
     ],
     "design_issues": []
   },
   "network_evidence": {
-    "captured_all_requests": "/app/memory/evidence/CR-385/phase1_5_qa/captured.json",
-    "cancels_summary": [
-      {"id": "230", "url": "…/local-reservations/230/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-01/02 legacy /pms/arrivals"},
-      {"id": "228", "url": "…/local-reservations/228/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-05 FD Beta"},
-      {"id": "229", "url": "…/local-reservations/229/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-07 FD Beta after legacy modify"},
-      {"id": "231", "url": "…/local-reservations/231/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-04 fallback FD Beta Tomorrow"}
-    ],
-    "modifies_summary": [
-      {"id": "229", "url": "…/local-reservations/229", "method": "PATCH", "body": "{\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"amount_after_tax\":0}", "case": "P15-03 legacy /pms/arrivals ModifyBookingDialog"}
-    ]
+    "captured_all_requests": "/app/memory/evidence/CR-385/phase1_5_qa/captured.json (round 1) + /app/memory/evidence/CR-385/phase1_5_qa/round2/*.json (round 2)",
+    "round2_summary": {
+      "232_patches": [
+        "PATCH /local-reservations/232 body={\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\",\"preview\":true} — 1st preview after 507ms",
+        "PATCH /local-reservations/232 body={\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-25\",\"reason\":\"Modified from Front Desk\",\"preview\":true} — burst dedupe (only final co=25)",
+        "PATCH /local-reservations/232 body={\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-25\",\"reason\":\"QA p15\",\"preview\":true} — reason update",
+        "PATCH /local-reservations/232 body={\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\",\"preview\":true} — pre-confirm preview",
+        "PATCH /local-reservations/232 body={\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\"} — CONFIRM (no preview, no amount_after_tax)"
+      ],
+      "232_cancel": "POST /local-reservations/232/cancel body={\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200",
+      "233_cancel": "POST /local-reservations/233/cancel body={\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200",
+      "settings_saves": [
+        "POST /restaurant-settings/update-settings multipart data='{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"held\"}}' → 200",
+        "POST /restaurant-settings/update-settings multipart data='{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}' → 200 (restore)"
+      ]
+    }
   },
   "test_report_links": [
-    "/app/memory/evidence/CR-385/phase1_5_qa/captured.json"
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/p15_06_capture.json",
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/p15_07b_08_capture.json",
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/p15_08_final.json",
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/p15_08_final2.json",
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/p15_09_10.json",
+    "/app/memory/evidence/CR-385/phase1_5_qa/round2/seed_probe.json"
   ],
   "action_items": [
-    "Bugs 441 and 442 are FIXED and shippable — no further action.",
-    "OPTIONAL: Legacy ModifyBookingDialog PATCH body should drop `amount_after_tax:0` and default reason to 'Modified from Front Desk' (aligns with FD Beta contract). Non-blocking.",
-    "OPTIONAL: Investigate why /pms/reservations tape chart did not render pending Direct 'suite' unassigned booking 231 in default 7d view. Non-blocking (FD Beta Tomorrow chip works as clean-up path)."
+    "BUG-441 + BUG-442 remain FIXED and shippable — confirmed across both rounds on 6 bookings (228, 229, 230, 231, 232, 233).",
+    "REPEATED INTEGRATION ISSUE (bump to BUG-443 candidate): Legacy /pms/reservations tape chart does not render pending Direct 'suite' unassigned bookings (round 1: id 231; round 2: id 233). Investigate buildTapeChart room-mapping/filter for pending unassigned suite rows.",
+    "MINOR (bump to BUG-444 candidate): Legacy ModifyBookingDialog PATCH body still sends amount_after_tax:0 and empty reason — align with FD Beta ModifyBookingForm contract ({checkin,checkout,reason} only).",
+    "MINOR UX: FrontDeskRulesTab allow-early checkbox hit-target ~13x13px — extend clickable area to the whole label for a11y.",
+    "PROTOCOL SPEC vs CODE mismatch: spec references testid 'modify-confirm-btn'; actual testid is 'modify-booking-confirm-btn'. Either update the spec or the code to keep them aligned.",
+    "Cases P15-11, P15-12, P15-13 and the 1366-viewport re-runs of P15-08/09/10 were NOT executed in this round due to time/budget; they remain covered transitively by iteration_14 (no code churn on those paths in the P1.5 patch)."
   ],
   "critical_code_review_comments": [
-    "ArrivalsPage.jsx L272-273 correctly wires reservationId: row.id (numeric) for both onModify and onCancel — BUG-441 fixed.",
-    "ArrivalsPage.jsx L273 correctly wires cancelledBy: user?.fullName || 'staff' from AuthContext — BUG-442 fixed. AuthContext user.fullName for OWNER_TGK resolves to 'Owner' (verified via sidebar label).",
-    "ReservationsPage.jsx L42 imports useAuth and L232/L377 pass cancelledBy={user?.fullName || 'staff'} to BlockPopover, then uses res.id (numeric) — BUG-441/442 fixed on legacy tape chart path.",
-    "Legacy ModifyBookingDialog still emits amount_after_tax:0 and empty reason; FD Beta ModifyBookingForm does not. Consider unifying the contract."
+    "ArrivalsPanel.jsx / ModifyBookingForm.jsx — PREVIEW_DEBOUNCE_MS=500 verified in practice (first patch at 507ms, no patch <400ms). Burst dedupe works correctly (only the final coalesced state PATCHes).",
+    "Preview PATCH body includes `preview:true`; confirm PATCH body does NOT — clean separation ✓.",
+    "FrontDeskRulesTab.jsx save wire correct — multipart/form-data with single 'data' part carrying {basic:{...}} JSON. Reloads restore state.",
+    "cancel-reason-select loads options asynchronously — dialog is briefly usable-looking with only 'Select reason…'. Consider disabling the Confirm button until options are loaded, or show a spinner.",
+    "cancel-booking-dialog & noshow-dialog overlays use inline 'w-full' class (no 'fixed' positioning), fits the FD Beta inline pattern — good architectural consistency."
   ],
   "updated_files": [],
-  "success_rate": {"backend": "N/A (frontend-only run, network capture)", "frontend": "Bug-fix verification 100% (BUG-441, BUG-442). 4/4 cancels correct. 1/1 modify URL correct. Phase-1 re-run coverage: skipped (transitive from iteration_14)."},
-  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — value not printed. Login user.fullName resolves to 'Owner'.",
-  "seed_data_creation": "None. Cleaned up 228/229/230/231 (all cancelled).",
+  "success_rate": {
+    "backend": "N/A (frontend-only, network capture)",
+    "frontend_round2": "Cases explicitly executed: 7/7 substantive PASS (P15-06, P15-07b, P15-04b [FAIL-candidate + cleanup PASS], P15-08, P15-09, P15-10, P15-14b). Skipped/transitive: P15-11, P15-12, P15-13 (rely on iteration_14 pass)."
+  },
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — value not printed. AuthContext user.fullName = 'Owner'.",
+  "seed_data_creation": "None. All P1.5 seed bookings (228/229/230/231/232/233) are now cancelled. Front Desk Rules restored to defaults (allow_early_checkin=false, extend_rate_mode=calendar).",
   "retest_needed": false,
   "main_agent_can_self_test": true,
-  "context_for_next_testing_agent": "BUG-441 + BUG-442 shipped and verified. All 4 P1.5 seed bookings are cancelled. Legacy ModifyBookingDialog still leaks amount_after_tax:0 + empty reason (minor, different from FD Beta contract). Legacy /pms/reservations tape chart doesn't surface certain pending Direct 'suite' bookings (231 case) — worth investigation but non-blocking. Business date 2026-09-22. Owner AuthContext fullName = 'Owner'.",
-  "rca of the issue": "N/A — bug fixes verified working. Two new minor findings documented above (legacy modify body shape; tape-chart missing block 231)."
+  "context_for_next_testing_agent": "BUG-441 + BUG-442 fully verified across 6 bookings and both cancel/modify paths (legacy + FD Beta). Two NEW findings for main agent to triage: (1) legacy tape chart missing pending unassigned suite bookings (reproduced twice, id 231 and 233); (2) legacy ModifyBookingDialog still leaks amount_after_tax:0 + empty reason (round-1 finding still stands). PREVIEW_DEBOUNCE_MS=500 confirmed in production. Business date 2026-09-22. All sandbox rules honoured; rooms 8524/8526 untouched; settings reload-verified at defaults; no No-Show confirmed anywhere. If Phase 1 regression cases P15-11/12/13 must be executed literally per protocol, allocate a dedicated fresh session — the current round consumed budget on the higher-value P15-06 debounce contract verification.",
+  "rca of the issue": "N/A — bug fixes verified. New findings documented above with reproduction evidence."
 }
