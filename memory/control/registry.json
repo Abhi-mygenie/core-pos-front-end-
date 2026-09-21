@@ -26148,18 +26148,178 @@
           "note": "Filed from CR-385 B-7 smoke notes (handover §10, D65) at Gate 4 GO, before Phase 0."
         }
       ]
+    },
+    {
+      "id": "BUG-434",
+      "type": "BUG",
+      "title": "Front Desk (Beta) Retry buttons give no in-flight feedback — error panel stays static during the 2–3 s re-fetch",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT (RELATED CR-385)",
+      "blast_radius": "SMALL",
+      "code_reality": "EXISTS (defect in CR-385 M0 code)",
+      "files_affected": [
+        "frontend/src/pages/pms/FrontDeskWorkstationPage.jsx",
+        "frontend/src/components/pms/frontdesk/RoomsPanel.jsx"
+      ],
+      "related_items": [
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-434_FRONTDESK_RETRY_NO_INFLIGHT_STATE_INTAKE.md",
+      "evidence_dir": "evidence/BUG-434/",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        }
+      ]
+    },
+    {
+      "id": "BUG-435",
+      "type": "BUG",
+      "title": "Front Desk (Beta) fires a duplicate snapshot fetch on ↻ — window focus listener + click both call refresh()",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT (RELATED CR-385)",
+      "blast_radius": "SMALL",
+      "code_reality": "EXISTS (defect in CR-385 M0 code)",
+      "files_affected": [
+        "frontend/src/pages/pms/FrontDeskWorkstationPage.jsx"
+      ],
+      "related_items": [
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-435_FRONTDESK_DUPLICATE_SNAPSHOT_FETCH_FOCUS_LISTENER_INTAKE.md",
+      "evidence_dir": "evidence/BUG-435/",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        }
+      ]
+    },
+    {
+      "id": "BUG-436",
+      "type": "BUG",
+      "title": "`data-testid=\"fd-page\"` wraps the app Sidebar — \"no Channel Manager on the Front Desk screen\" assertions catch nav chrome",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT (RELATED CR-385)",
+      "blast_radius": "SMALL",
+      "code_reality": "EXISTS (defect in CR-385 M0 code)",
+      "files_affected": [
+        "frontend/src/pages/pms/FrontDeskWorkstationPage.jsx"
+      ],
+      "related_items": [
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-436_FRONTDESK_FD_PAGE_TESTID_WRAPS_SIDEBAR_INTAKE.md",
+      "evidence_dir": "evidence/BUG-436/",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        }
+      ]
+    },
+    {
+      "id": "BUG-437",
+      "type": "BUG",
+      "title": "Arrivals tab lands on an empty \"Today 0\" table while \"Late N\" has rows — default chip UX gap",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT (RELATED CR-385, UXQ-385-01)",
+      "blast_radius": "SMALL",
+      "code_reality": "EXISTS (defect in CR-385 M0 code)",
+      "files_affected": [
+        "frontend/src/pages/pms/FrontDeskWorkstationPage.jsx",
+        "frontend/src/components/pms/frontdesk/ArrivalsPanel.jsx"
+      ],
+      "related_items": [
+        "CR-385",
+        "UXQ-385-01"
+      ],
+      "intake_doc": "change_requests/BUG-437_FRONTDESK_ARRIVALS_DEFAULT_CHIP_EMPTY_TODAY_INTAKE.md",
+      "evidence_dir": "evidence/BUG-437/",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        }
+      ]
+    },
+    {
+      "id": "BUG-438",
+      "type": "BUG",
+      "title": "CR-385 P0 automated QA coverage gap — keyboard ↑↓/Enter/Esc, phone-suffix search (A6), Turns cross-check (A5), focus-refresh (A4) not asserted by any test",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "duplicate_check": "DISTINCT (RELATED CR-385)",
+      "blast_radius": "SMALL",
+      "code_reality": "EXISTS (defect in CR-385 M0 code)",
+      "files_affected": [
+        "frontend/src/components/pms/frontdesk/__tests__/",
+        "frontend/src/components/pms/frontdesk/GuestTable.jsx",
+        "frontend/src/components/pms/frontdesk/GlobalSearch.jsx"
+      ],
+      "related_items": [
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-438_CR385_P0_AUTOMATED_COVERAGE_GAP_INTAKE.md",
+      "evidence_dir": "evidence/BUG-438/",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        }
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "QA — CR-385 Phase 0 QA PASSED (35/35); awaiting owner Gate 6 Phase 0 smoke (\"Phase 0 smoke OK\").",
+    "last_action": "INTAKE — BUG-434…438 registered from CR-385 P0 QA findings (all INTAKE, RELATED CR-385, no hotspots).",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 691,
-    "total_items": 691,
+    "total": 696,
+    "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md"
   }
 }
