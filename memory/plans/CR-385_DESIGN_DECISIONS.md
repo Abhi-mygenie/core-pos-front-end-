@@ -743,3 +743,17 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Decision | **Exception for Phase 0 only:** the owner smoke for Phase 0 is NOT run now; it is executed together with the Phase 1 owner smoke as ONE combined session (Phase 0 steps M0-S01…S12 + Phase 1 steps). Phase 1 may start (planning entry verification → "Phase 1 GO") without "Phase 0 smoke OK". Gate 6 for Phase 0 stays **OPEN — DEFERRED-TO-P1-SMOKE**; CR-385 registry status remains `GATE_5B_QA_PASSED (P0+P0.5)` with the exception noted. |
 | Not changed | Phased plan §0-bis N.5 rule stays in force for Phase 1 and every later phase (smoke per phase, bugs fixed in N.5 before N+1). Any Phase 0 finding surfacing in the combined smoke → Intake → fixed in Phase 1.5 (since Phase 0.5 is closed) unless the owner reopens 0.5. |
 | Owner words | "Only for phase zero we are making this exception that we can do a smoke test in phase one for phase one and phase zero both. Note down this exception, update the documents and close the session" (chat 2026-09-21). |
+
+### D75 — Phase 1 plan-snippet gap: `updateFrontDeskRules` needs an explicit multipart header (QA-found, 2026-09-21)
+| Field | Value |
+|---|---|
+| Context | Phased plan §1.1 E10 snippet posted a `FormData` through the shared axios instance whose default `Content-Type` is `application/json`; axios 1.x then JSON-encodes FormData → wire body `{"data":"<string>"}`. Preprod accepted both shapes, so functional tests passed; QA (`iteration_11` BLK-M7-CT) caught it on the network tab. |
+| Decision | Keep the C10 multipart contract: `api.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } })`. Unit test asserts the config. Plan E10 amended. `updateSettings` (CR-019, same latent pattern) is **not** touched — logged as OG-PMS-034. |
+| Owner words | Implicit in "Phase 1 GO" test mandates (multipart body snapshot); fix applied by the testing agent, kept by the implementation agent. |
+
+### D76 — Phase 1 scope expansion: BUG-440 fixed inside P1; BUG-441 registered only (owner, 2026-09-21)
+| Field | Value |
+|---|---|
+| Context | P1 live QA could not complete a Cancel: the reason dropdown was always empty (CR-362 `CancelBookingDialog.jsx` read an array where `settingsService` returns `{ reasons: [{ reasonId, reasonText }] }`). Fixing it required a file outside the P1 edit list. |
+| Decision | Owner: "R14 scope expansion APPROVED — register first, then fix": BUG-440 intake → 3-line fix (`// CR-385 M2 BUG-440`) → unit tests → QA on the new panel **and** the legacy page. `settingsService.js` and `NoShowDialog.jsx` untouched. Legacy Modify/Cancel on `/pms/arrivals` + `/pms/reservations` still send the public `booking_id` string as the LR id → 500 (**BUG-441**, registered, NOT fixed — `ArrivalsPage.jsx` stays untouched per the P1 snapshot mandate; owner routing needed). |
+| Also | Modify `reason` is appended by the backend to `special_requests` as `"| MODIFY: …"` (row shows SR ●) → BQ-385-23 (backend ask, no FE workaround). Backend 500 on non-int `{id}` → BQ-385-24 (P3). |

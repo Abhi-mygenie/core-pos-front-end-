@@ -1,0 +1,79 @@
+{
+  "summary": "CR-385 Phase 1 QA follow-up on preprod (OWNER_TGK, restaurant #69). Tested cancel flows for the three seeded direct bookings 222/223/224, no-show inline read-only on booking.com row 7, Channel Manager Front Desk Rules read-only defaults, and F/D v2 regression tabs. C-1 (v2 cancel 222 @ 1920), C-2 (v2 cancel 223 @ 1366), C-4 (clean-up), C-5 (No-Show inline both viewports), C-6 (CM defaults), and C-7 (regression: Esc closes expansion, other tabs render, 0 console errors on v2 flows) all PASS. C-3 FAILS with a real BLOCKER on the legacy /pms/arrivals cancel flow: it passes row.bookingId (public string 'MG-69-CF3A95A8-...') as the reservationId to POST /aiosell/local-reservations/{id}/cancel, but the backend expects the integer local-reservation id (e.g. 224). Backend returns HTTP 500 TypeError ('Argument #2 ($id) must be of type int, string given'). BUG-440 (reason dropdown) is verified fixed on the legacy dialog too — the select now lists ['Select reason…','guest cancelled'] and the overlay class is 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4' as expected. Because C-3 could not be completed on the legacy page, 224 was cancelled via the v2 flow as a clean-up (successful, evidence captured) to leave the sandbox in the intended end-state. Settings/rooms/no-show confirm were not touched per owner rule.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/v2/vendoremployee/aiosell/local-reservations/{id}/cancel",
+        "issue": "500 TypeError when the frontend supplies the string public booking id (e.g. 'MG-69-CF3A95A8-472D-4652-9570-60B642BF85EC') as the {id} path segment. Backend Laravel controller cancelLocalReservation() declares Argument #2 as int. The FE bug is on the legacy page (see frontend BLOCKER below); the backend should also validate/reject or accept the string public id cleanly instead of a 500. Response body confirms: 'App\\Http\\Controllers\\Api\\V2\\Vendoremployee\\AiosellController::cancelLocalReservation(): Argument #2 ($id) must be of type int, string given'.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ArrivalsPage.jsx (legacy /pms/arrivals) — line 273 onCancel handler",
+        "issue": "BLOCKER — Legacy Cancel action wires setCancelTarget({ reservationId: row.bookingId, ... }). row.bookingId is the *public* string id (e.g. 'MG-69-CF3A95A8-472D-4652-9570-60B642BF85EC'), not the numeric local-reservation id (row.id === 224). CancelBookingDialog then calls cancelReservation(target.reservationId) → POST /aiosell/local-reservations/MG-69-.../cancel → 500. The v2 ArrivalsPanel path is correct (uses row.id). Fix: change `reservationId: row.bookingId` to `reservationId: row.id ?? row.bookingId` (or `row.id`) so the integer id is sent.",
+        "selector": "arr-cancel-btn-{bookingId} (opens CancelBookingDialog with wrong reservationId)",
+        "priority": "BLOCKER"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Legacy /pms/arrivals → Cancel Booking",
+        "issue": "Because of the bookingId-vs-id mix-up above, cancel POST returns 500 and the guest card never disappears. A single console error (500 resource) surfaces. No user-visible retry path.",
+        "affected_selectors": ["arr-kebab-<bookingId>", "arr-cancel-btn-<bookingId>", "cancel-booking-confirm-btn"]
+      }
+    ],
+    "design_issues": []
+  },
+  "cases_pass_fail": {
+    "C-1_v2_cancel_222_1920": "PASS — fd-row-222 present; clicking fd-row-222-cancel-btn opened fd-row-222-cancel expansion; cancel-booking-dialog class='w-full' (no 'fixed'); outcome-total=₹37,170, outcome-prepaid=₹0, outcome-advance=₹0, outcome-phase2-ribbon='Refund · Phase 2'; cancel-reason-select shows exactly 2 options ['Select reason…','guest cancelled']; Confirm disabled until reason chosen, then enabled; POST …/local-reservations/222/cancel → 200; toast + row removal + fd-tab-arrivals-count dropped 3→2. Body: {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}. Evidence: c1_cancel_222.json.",
+    "C-2_v2_cancel_223_1366": "PASS — fd-row-223 (2 nights, 21→23 Sep) outcome-total=₹74,340; dialog inline (class='w-full'), no horizontal overflow at 1366 (right=1341, viewport=1366, overflowX=false); cancel 200; row removed; fd-tab-arrivals-count dropped 2→1. Evidence: c2c3_cancels.json.",
+    "C-3_legacy_cancel_224": "FAIL (BLOCKER) — Overlay class is correct ('fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4') and BUG-440 reason dropdown is fixed on legacy too (['Select reason…','guest cancelled']). However the POST is issued at /aiosell/local-reservations/MG-69-CF3A95A8-472D-4652-9570-60B642BF85EC/cancel — the public string id — instead of /224/cancel. Response HTTP 500 TypeError, dialog does not close, card does not move to Cancelled tab. See root-cause in frontend_issues. Evidence: c3_legacy_224.json (request+response captured with masked Authorization).",
+    "C-4_cleanup": "PASS — 224 cancelled via v2 flow as workaround; page reload of /pms/front-desk-v2?tab=arrivals + Today chip shows fd-tab-arrivals-count='0' and none of 222/223/224 visible. Evidence: c4c5c6_c7.json + c4_final.png.",
+    "C-5_noshow_inline_1920_and_1366": "PASS both viewports — booking.com row 7 (Late chip): fd-row-7-noshow-btn opens fd-row-7-noshow; outcome-card, outcome-phase2-ribbon, and noshow-dialog all rendered; noshow-overlay class='w-full' (no 'fixed') at both 1920 and 1366; noshow-cancel-btn closes the expansion cleanly. noshow-confirm-btn NOT clicked (owner rule).",
+    "C-6_channel_manager_frontdesk_rules_defaults": "PASS — toggle-allow-early-checkin checked=false; radio-extend-rate-mode-calendar checked=true; radio-extend-rate-mode-held checked=false; frontdesk-rules-save-btn disabled; frontdesk-rules-status text='Saved'. No save was performed.",
+    "C-7_regression": "PASS (with note) — Departures + Rooms tabs render (fd-panel-departures / fd-panel-rooms). In-House tab testid is 'fd-tab-inhouse' (no hyphen) so my initial fd-tab-in-house selector missed; navigating via ?tab=inhouse also didn't render for me on that navigation — worth a quick main-agent recheck (may be data-empty state rather than a real regression). Esc closes an open expansion (verified on fd-row-7-noshow). Zero console errors during v2 cancel and no-show flows; one 500 error surfaced only during the legacy C-3 attempt."
+  },
+  "network_evidence": {
+    "c1_222_cancel_200": "/app/memory/evidence/CR-385/phase1_qa/c1_cancel_222.json",
+    "c2_223_cancel_200_1366": "/app/memory/evidence/CR-385/phase1_qa/c2c3_cancels.json",
+    "c3_legacy_224_cancel_500": "/app/memory/evidence/CR-385/phase1_qa/c3_legacy_224.json",
+    "c4_224_cleanup_via_v2_and_regression": "/app/memory/evidence/CR-385/phase1_qa/c4c5c6_c7.json"
+  },
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/phase1_qa/c1_cancel_222.json",
+    "/app/memory/evidence/CR-385/phase1_qa/c2c3_cancels.json",
+    "/app/memory/evidence/CR-385/phase1_qa/c3_legacy_224.json",
+    "/app/memory/evidence/CR-385/phase1_qa/c4c5c6_c7.json",
+    "/app/memory/evidence/CR-385/phase1_qa/c1_before_confirm.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c1_after_confirm.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c2_1366_before_confirm.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c2_1366_after.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c3_legacy_overlay.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c4_final.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c5_noshow_1920.png",
+    "/app/memory/evidence/CR-385/phase1_qa/c6_fdr_tab.png"
+  ],
+  "action_items": [
+    "FIX BLOCKER (frontend): /app/frontend/src/pages/pms/ArrivalsPage.jsx ~L273 onCancel — replace `reservationId: row.bookingId` with `reservationId: row.id` (fallback to row.bookingId only if row.id is missing). The v2 ArrivalsPanel already does this correctly; the legacy page must match.",
+    "OPTIONAL BACKEND: AiosellController::cancelLocalReservation should return 4xx (400/422/404) with a clean error body when the {id} path param can't be resolved to an int local-reservation, instead of leaking a 500 PHP TypeError with a stack trace.",
+    "Cosmetic: main agent to re-verify /pms/front-desk-v2?tab=inhouse renders fd-panel-inhouse in a data-rich state (my navigation didn't reveal the panel; may just be the empty/loading branch)."
+  ],
+  "critical_code_review_comments": [
+    "BLOCKER: ArrivalsPage.jsx passes the wrong identifier to CancelBookingDialog (bookingId vs numeric id). This is a straight regression against the M2 pattern already used in the v2 ArrivalsPanel (cancelTargetOf L41 uses row.id). Same defect likely exists for the legacy No-Show handler on this page — main agent should audit ArrivalsPage handlers for any other place that spreads row.bookingId where the API expects row.id (search for `reservationId: row.bookingId`, `bookingId: row.bookingId` used against /local-reservations endpoints).",
+    "BUG-440 fix in CancelBookingDialog is correct and works uniformly for both v2 inline and legacy overlay dialogs (verified in DOM & network).",
+    "The v2 cancel flow round-trips cleanly: proper testids, correct payload shape ({reason, cancelled_by, notify_cm:true}), toast + auto-refetch + tile decrement all wired. Nice.",
+    "Suggest emitting a user-friendly toast when cancel POST returns non-2xx on the legacy page — currently the UI silently leaves the dialog open on 500."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only run; 1 backend 500 as side-effect of a frontend id-type bug)", "frontend": "C-1 100%, C-2 100%, C-3 0% (BLOCKER on legacy), C-4 100%, C-5 100%, C-6 100%, C-7 ~95% (inhouse tab needs re-check)"},
+  "test_credentials": "OWNER_TGK — read from /app/memory/test_credentials.md; never printed to logs.",
+  "seed_data_creation": "None. Only cancelled the three sanctioned bookings 222, 223, 224 (222+223 via v2, 224 cleaned up via v2 after legacy 500). No new bookings, no check-ins, no room mutations, no settings saves.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Sandbox @ 2026-09-21. Post-run state: Today arrivals = 0 (222/223/224 all cancelled — 222/223 through v2 inline dialog, 224 through v2 as clean-up after legacy 500). Late chip still has 10 rows; ids 7 and 23 remain the booking.com no-show rows. Channel Manager Front Desk Rules confirmed at defaults (early_checkin=false, extend_rate_mode=calendar). BUG-440 verified fixed in BOTH CancelBookingDialog code paths (v2 inline + legacy overlay). PRIORITY for the next iteration: verify the ArrivalsPage.jsx L273 fix — after main agent changes `row.bookingId` → `row.id`, re-run a legacy cancel end-to-end on any pending direct row and confirm POST /local-reservations/<numeric-id>/cancel → 200 and card moves to Cancelled tab.",
+  "rca of the issue": "BLK-C3-LEGACY-ID: CancelBookingDialog expects target.reservationId to be the numeric local-reservation id (used by cancelReservation → POST /api/v2/.../local-reservations/{id}/cancel). The v2 ArrivalsPanel builds the target with `reservationId: row.id` (integer, e.g. 224). The legacy ArrivalsPage builds it with `reservationId: row.bookingId` where bookingId is the public string identifier (e.g. 'MG-69-CF3A95A8-472D-4652-9570-60B642BF85EC'). The POST therefore hits /local-reservations/MG-69-.../cancel, which the Laravel controller rejects with a 500 TypeError (int required). Fix is one line in /app/frontend/src/pages/pms/ArrivalsPage.jsx (onCancel handler): `reservationId: row.id ?? row.bookingId`. Downstream hardening: backend should coerce/validate and return 400/404 instead of leaking a PHP TypeError."
+}

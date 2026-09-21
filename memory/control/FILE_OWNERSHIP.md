@@ -1373,3 +1373,18 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `components/pms/PmsCheckoutDrawer.jsx` | BUG-425: roomInfo prop override — remainingRoomBalance computed as roomPrice + gstTax - advance - received (L271-285) | BUG-425 IMPL 2026-09-16 |
 | `api/services/pmsService.js` | BUG-421: Step 3 parallel folio calls (L76-110) — Map-keyed by orderId, formula rp+gt-ap-rb | BUG-421 IMPL 2026-09-16 |
 | `pages/pms/CheckInPage.jsx` | BUG-419: Corp/B2B JSX moved to after name/phone, before Room Assignment (L619). BUG-420: CRM doc tiles replaced — image grid + gradient overlay + click-to-open (L548-590) | BUG-419+BUG-420 IMPL 2026-09-16 |
+
+## FILE_OWNERSHIP — CR-385 Phase 1 (M7 + M2) IMPLEMENTATION + BUG-440 (2026-09-21)
+| File | Change | Owner / date |
+|---|---|---|
+| `pages/pms/ChannelManagerPage.jsx` | L22 import FrontDeskRulesTab · L27 TABS + 'Front Desk Rules' · L469–472 tab 4 render | CR-385 M7 2026-09-21 |
+| `pages/pms/FrontDeskRulesTab.jsx` | NEW — allow_early_checkin toggle + extend_rate_mode radio, load/save/re-read | CR-385 M7 2026-09-21 |
+| `api/services/restaurantSettingsService.js` | L34–53 appended `getFrontDeskRules`, `updateFrontDeskRules` (multipart `data`, explicit header — D75) | CR-385 M7 2026-09-21 |
+| `components/pms/CancelBookingDialog.jsx` | L10 `inline` prop · L48–49 overlay↔inline classes · **BUG-440** L19–21 `r.reasons`, L28 `reasonId/reasonText`, L84 option fields | CR-385 M2 D2 + BUG-440 2026-09-21 |
+| `components/pms/NoShowDialog.jsx` | L12 `inline` prop · L38–45 overlay↔inline classes/backdrop/outside-click | CR-385 M2 D2 2026-09-21 |
+| `api/services/frontDeskService.js` | L7 import · L34–42 `cancelReservation`, `markNoShow`, `modifyReservation`, `previewModifyReservation` | CR-385 M2 2026-09-21 |
+| `components/pms/frontdesk/ModifyBookingForm.jsx` | NEW — intent-only PATCH, 500 ms debounced serialised preview, Current → New from `charge`, AC-11 guard | CR-385 M2 2026-09-21 |
+| `components/pms/frontdesk/ArrivalsPanel.jsx` | actions: Modify + Cancel/No-Show XOR (`nsOrCancel`), expansion kinds detail/modify/cancel/noshow, `OutcomeCard`, `cancelTargetOf`/`noShowTargetOf` | CR-385 M2 2026-09-21 |
+| `pages/pms/FrontDeskWorkstationPage.jsx` | `useRestaurant` · `expanded.kind` · `openExpansion` · `afterAction` · `navigateTo(kind)` · ArrivalsPanel props | CR-385 M2 2026-09-21 |
+| `components/pms/frontdesk/__tests__/phase1.cr385.test.jsx` (+ `__snapshots__/`) | NEW — 14 tests: multipart snapshot + header, preview/confirm bodies, nsOrCancel wiring, inline dialogs, BUG-440, legacy ArrivalsPage source snapshot | CR-385 P1 2026-09-21 |
+| `pages/pms/ArrivalsPage.jsx`, `pages/pms/ReservationsPage.jsx`, `components/pms/ModifyBookingDialog.jsx`, `ExtendStayDialog.jsx`, `api/services/settingsService.js`, `pmsService.js` | **NOT touched** (P1 scope lock; BUG-441 lives in ArrivalsPage/ReservationsPage — owner routing) | — |

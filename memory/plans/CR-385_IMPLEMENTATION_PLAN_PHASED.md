@@ -165,11 +165,11 @@ Exit: cr385 tests green · guards empty · `yarn build` exit 0 · testing_agent 
 export const updateFrontDeskRules = async ({ allowEarlyCheckin, extendRateMode }) => {
   const formData = new FormData();
   formData.append('data', JSON.stringify({ basic: { allow_early_checkin: Boolean(allowEarlyCheckin), extend_rate_mode: extendRateMode === 'held' ? 'held' : 'calendar' } }));
-  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData);
+  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData, { headers: { 'Content-Type': 'multipart/form-data' } }); // explicit: shared axios default is application/json → FormData would be JSON-encoded (QA iteration_11 BLK-M7-CT)
   return response.data;
 };
 ```
-(boolean encoding `true/false` — verified by `run_n7n8.py::settings_set`; R29 retired.)
+(boolean encoding `true/false` — verified by `run_n7n8.py::settings_set`; R29 retired. **Amended 2026-09-21 (D75, plan-snippet gap):** the original snippet omitted the multipart header; QA caught the JSON-encoded body on the wire — preprod tolerated both shapes but the C10 contract is multipart.)
 
 **E4 `frontend/src/components/pms/CancelBookingDialog.jsx`**
 | Line | Current | New |

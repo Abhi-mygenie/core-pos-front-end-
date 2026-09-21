@@ -1,7 +1,7 @@
 # BACKEND_BRIEF_CR-385 — MASTER (single tracked brief for the Front Desk Workstation)
 
 ```
-Version:      2.0 · 2026-09-21 (v1.0 2026-09-19) · **v2.0: BQ-385-22 perf/aggregation asks (not blocking)** · **v1.9: N11 FIXED + verified (per-night GST slab, `nights_detail[]`) · new D14 (P2, calendar extend response `charge` stale by the same-call payment) · BQ-385-19 (P2 ask: `nights_detail` on LR list)** · supersedes BACKEND_BRIEF_CR-385_2026-09-17.md, _ADDENDUM_2026-09-18.md, _PHASE1_CONTRACT_2026-09-19.md (kept as history)
+Version:      2.1 · 2026-09-21 (v1.0 2026-09-19) · **v2.1: BQ-385-23/24 (Phase 1 QA asks, not blocking)** · **v2.0: BQ-385-22 perf/aggregation asks (not blocking)** · **v1.9: N11 FIXED + verified (per-night GST slab, `nights_detail[]`) · new D14 (P2, calendar extend response `charge` stale by the same-call payment) · BQ-385-19 (P2 ask: `nights_detail` on LR list)** · supersedes BACKEND_BRIEF_CR-385_2026-09-17.md, _ADDENDUM_2026-09-18.md, _PHASE1_CONTRACT_2026-09-19.md (kept as history)
 From / To:    MyGenie POS frontend team → PMS backend team
 Scope:        CR-385 Front Desk Workstation — every backend question, contract change and data issue, one section each
 Owner rules:  DESIGN_DECISIONS D44–D46 (money rules · owner answers DEC-1…9) · mockup v2.26 accepted 2026-09-19
@@ -29,6 +29,8 @@ How to reply: answer INLINE under the BQ's "### Backend answer" heading, flip th
 | BQ-385-03 | B-1 | `balance_payment` inconsistent (DATA_ISSUE) | P2 | 1 | **RESOLVED by `charge.balance_due`** — legacy field stays pre-GST; FE must not read it | Any screen showing a balance until `charge.balance_due` exists | — |
 | BQ-385-02 | — | Aggregation endpoints (snapshot, bulk HK, per-line HK state) | P2 | 2 | PHASE-2 | Performance only | — |
 | **BQ-385-22** | — | **`local-reservations` performance & payload** — `operational_status[]` filter (111 → 16 rows, 149 KB → ~20 KB), status-driven Late/Overdue without BD−30, list-view field trim, `Server-Timing` · brief `BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md` | P2 | 1→2 | **OPEN 2026-09-21 (not blocking)** | Performance only (0.9 s → 6.9 s variance, one 90 s timeout) | — |
+| **BQ-385-23** | — | **Modify `reason` leaks into `special_requests`** — `PATCH local-reservations/{id}` appends `"| MODIFY: <reason>"` to the guest's `special_requests`; FE shows SR ● on every modified row. Ask: store the modify reason in an audit/history field (or `charge`/`meta`), leave `special_requests` guest-owned. Evidence `evidence/CR-385/phase1_qa/m2_lr_reread_after_previews.json` (row 223 after confirm: `special_requests: " | MODIFY: Modified from Front Desk"`). | P2 | 2 | **OPEN 2026-09-21 (not blocking)** | Cosmetic/data hygiene; no FE workaround | — |
+| **BQ-385-24** | — | **Non-int `{id}` on cancel/modify → 500 with PHP stack trace** (`Argument #2 ($id) must be of type int, string given`). Ask: 404/422 + clean JSON body. Surfaced by BUG-441 (legacy FE sends `booking_id`). Evidence `evidence/CR-385/phase1_qa/c3_legacy_224.json`. | P3 | 2 | **OPEN 2026-09-21 (not blocking)** | Error UX only | — |
 | BQ-385-13 | B-2 | Refund / penalty preview for No-Show & Cancel | P2 | 2 | PHASE-2 (owner DEC-2) | Money card on No-Show/Cancel | — |
 | BQ-385-07 | — | Room-level discount at checkout | P2 | 2 | PHASE-2 | Discount control on Bill (D1) | — |
 | BQ-385-04 | — | Mark No-Show for all channels | — | — | **CLOSED** 2026-09-19 (owner: non-OTA = Cancel only; probe 422 confirms) | — | 2026-09-19 |
@@ -430,6 +432,7 @@ _(pending)_
 | Date | Change |
 |---|---|
 | 2026-09-21 | **v2.0** — BQ-385-22 filed (performance/aggregation, owner request after P0.5 QA saw 7 s / 60–90 s `local-reservations` spells): `operational_status[]` filter, status-driven Late/Overdue, list field trim, snapshot endpoint (→ BQ-385-02), `Server-Timing`. Tracked also in checklist section **B**. |
+| 2026-09-21 | **v2.1** — BQ-385-23 (modify reason appended to `special_requests`) and BQ-385-24 (500 on non-int id) filed from CR-385 Phase 1 QA. Both non-blocking. |
 | 2026-09-17 | BQ-385-01…04 filed (main brief). |
 | 2026-09-18 | BQ-385-06 filed (addendum). |
 | 2026-09-19 | Owner decisions DEC-1…9 (D46). BQ-385-08…12 filed (Phase 1 contract). Live probes P1–P9 on booking 145. BQ-385-04 closed. BQ-385-12 rewritten to server-authoritative snapshot (DEC-7). |
