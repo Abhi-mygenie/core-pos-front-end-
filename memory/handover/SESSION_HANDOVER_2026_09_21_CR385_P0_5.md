@@ -3,11 +3,17 @@
 ```
 Roles this session: Bug Fix (Role 5) → QA (Role 4) · ALPHA v0.7 · owner "Phase 0.5 GO" (severities confirmed)
 Items:     BUG-434 · BUG-435 · BUG-436 · BUG-437 · BUG-438 → FIXED + QA-VERIFIED (P0.5, rounds 1–2) · BUG-439 → INTAKE (registered; routing open — rec. Fast Lane Bug Fix) · CR-385 → Gate 5B (P0+P0.5) CLOSED by owner 2026-09-21
-Next:      OWNER combined Phase 0 smoke (§6 below) → say "Phase 0 smoke OK" → only then read phased plan §1 (Phase 1). Phase 1 NOT read, NOT started.
+Next:      **PLANNING role for Phase 1** — owner exception D74 (2026-09-21): the Phase 0 owner smoke (§6 below / control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md / checklist M0-S) is DEFERRED and run together with the Phase 1 smoke. Phase 1 may start now. Phased plan §1 has NOT been read yet by any agent after P0 — read it first in the next session.
 Sandbox:   restored (r4/8525 HK). 8524/8526 never touched. No bookings/payments. Credentials in memory/test_credentials.md (gitignored — re-extract from evidence/CR-385/probes_2026_09_20_final/run_gate4.py on a fresh pod; never echo).
 Env note:  the repo `memory/` folder was not present under /app/memory on this pod (only in the clone at /tmp/pos-frontend) — copied in; /tmp is ephemeral (since wiped).
 Reconciled: owner-approved sparse re-pull of `memory/` from remote pms21sep @ ce1e7c66 → 1,153/1,159 identical, 0 missing, 6 differ (= this session's control edits), 8 extra (= this session's new files). Structure identical. Temp clone deleted. See PRD.md 2026-09-21 reconciliation entry.
 ```
+
+## 0 · SESSION CLOSED 2026-09-21 — final state
+- Phase 0 + 0.5 QA-passed (Gate 5b closed); BUG-434…439 FIXED + QA-VERIFIED (it.7/8/9/10); BUG-439 Option A (D73); BQ-385-22 backend perf brief filed (not blocking); memory/ reconciled with remote.
+- **D74**: Phase 0 owner smoke deferred into the Phase 1 smoke (one combined session). Gate 6 (P0) = OPEN-DEFERRED, not failed.
+- Next session boot: ALPHA → this file → master handover §2 (as-built map; note ArrivalsPanel `actions(r, variant)` + `-exp-` ids, `useFrontDeskSnapshot` exported, `firstNonEmptyChip`) → phased plan §0-bis, §0.7, **§1 (first read)** → D1–D74 → Planning role: Phase 1 entry verification + plan check → owner "Phase 1 GO".
+- Not pushed to GitHub yet — owner "Save to GitHub" needed (check /app/backend is the platform template, not the repo backend).
 
 ## 1 · Boot for the next agent (in order)
 1. `memory/control/AGENT_PROMPT_ALPHA.md` (v0.7) → 2. this file → 3. `handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md` (P0 as-built map §2, still valid; §3 bug table now closed) → 4. `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md` §0, §0-bis, §0.5, §0.7 (do NOT read §1 before "Phase 0 smoke OK") → 5. `plans/CR-385_DESIGN_DECISIONS.md` D1–D71 → 6. `plans/CR-385_PHASE_0_5_BUGFIX_PLAN.md` → 7. `test_reports/QA_REPORT_2026_09_21_CR385_P0_5.md` + `/app/test_reports/iteration_7.json`, `iteration_8.json` → 8. `control/BUG_TRACKER.md`, `registry.json` (CR-385, BUG-431…438) → 9. source: the five §3 files below.

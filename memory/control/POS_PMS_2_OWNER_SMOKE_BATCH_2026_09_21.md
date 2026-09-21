@@ -27,6 +27,9 @@ Note on speed: preprod's local-reservations call swings 1–7 s (BQ-385-22). A s
 | S-11 | One batch, not two — **BUG-435** | DevTools → Network → filter `aiosell` → clear. Switch to another browser tab for ≥ 10 s, come back and click ↻ **immediately**. Then click ↻ twice quickly | **Exactly one** batch of three calls (`local-reservations`, `room-status-board`, `dashboard-kpis`) after coming back + click — not two batches. Two quick clicks → still one batch. | | |
 | S-12 | Old page untouched | Open `/pms/front-desk` (old) and `/pms/room-status` | Look exactly as before; no console errors (F12 → Console; ignore the pre-existing socket/firebase lines). | | |
 
+## Status 2026-09-21 — DEFERRED (owner exception D74)
+Not run. Owner: Phase 0 smoke is executed together with the Phase 1 smoke in one combined session. Append the Phase 1 steps as S-13… to THIS document when Phase 1 reaches Gate 6; run S-1…S-12 first.
+
 ## Result
 _(facilitator fills)_ S-1…S-12: __/12 PASS · owner verdict: ________ · date/time: ________
 Any FAIL → BUG-4xx filed via Intake → Bug Fix in Phase 0.5 → re-smoke the failed step only.

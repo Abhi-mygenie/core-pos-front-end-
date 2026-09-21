@@ -735,3 +735,11 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Decision | **Option A.** Action factories take `variant` (`''` row cell, `'exp-'` drawer). Drawer buttons become `fd-row-<id>-exp-checkin-btn`, `-exp-kebab`, `-exp-bill-btn`, `-exp-hk-btn`, `-exp-extend-btn`. Row-level ids byte-identical. `GuestTable.jsx` untouched. Plan: `plans/BUG-439_IMPLEMENTATION_PLAN.md` (locked). Route: Bug Fix BEFORE Phase 1 GO (conflict on `ArrivalsPanel.jsx` L41–46). |
 | Owner words | "ok option A lock docs and decision" (chat 2026-09-21). |
 | Rule | Any future element rendered in both a row and its expansion must carry a distinct `-exp-` id; X-10 = collapsed + expanded (D72). |
+
+### D74 — ONE-TIME EXCEPTION: Phase 0 owner smoke (Gate 6) deferred and merged into the Phase 1 smoke (owner, 2026-09-21)
+| Field | Value |
+|---|---|
+| Context | Phase 0 + 0.5 + BUG-439 are QA-passed (Gate 5b closed). The 12-step Phase 0 owner smoke (`control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md`, checklist M0-S01…S12) has not been run. |
+| Decision | **Exception for Phase 0 only:** the owner smoke for Phase 0 is NOT run now; it is executed together with the Phase 1 owner smoke as ONE combined session (Phase 0 steps M0-S01…S12 + Phase 1 steps). Phase 1 may start (planning entry verification → "Phase 1 GO") without "Phase 0 smoke OK". Gate 6 for Phase 0 stays **OPEN — DEFERRED-TO-P1-SMOKE**; CR-385 registry status remains `GATE_5B_QA_PASSED (P0+P0.5)` with the exception noted. |
+| Not changed | Phased plan §0-bis N.5 rule stays in force for Phase 1 and every later phase (smoke per phase, bugs fixed in N.5 before N+1). Any Phase 0 finding surfacing in the combined smoke → Intake → fixed in Phase 1.5 (since Phase 0.5 is closed) unless the owner reopens 0.5. |
+| Owner words | "Only for phase zero we are making this exception that we can do a smoke test in phase one for phase one and phase zero both. Note down this exception, update the documents and close the session" (chat 2026-09-21). |

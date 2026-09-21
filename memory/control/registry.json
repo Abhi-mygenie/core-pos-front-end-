@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED (P0+P0.5) — CLOSED 2026-09-21: BUG-434…438 QA-VERIFIED (it.7/it.8/it.9), BUG-439 (MINOR) registered via Intake, routing open (owner); READY FOR GATE 6 owner combined Phase 0 smoke (handover/SESSION_HANDOVER_2026_09_21_CR385_P0_5.md §6). Phase 1 not started.",
+      "status": "GATE_5B_QA_PASSED (P0+P0.5) — Gate 6 (Phase 0 owner smoke) DEFERRED-TO-P1-SMOKE by owner exception D74 (2026-09-21); Phase 1 may start (Planning: entry verification of phased plan §1 → owner \"Phase 1 GO\"). BUG-434…439 QA-VERIFIED. BQ-385-22 perf brief open (not blocking).",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25500,6 +25500,11 @@
           "date": "2026-09-21",
           "to": "BQ-385-22 filed",
           "note": "Owner request: backend brief for local-reservations performance (0.9→6.9 s, 60–90 s stalls; 149 KB, 95/111 rows departed & never displayed). 5 asks; MASTER v2.0; checklist section B (B-01…B-06). Not a bug; nothing blocked."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE 6 (P0) DEFERRED-TO-P1-SMOKE (D74)",
+          "note": "Owner one-time exception: Phase 0 smoke merged into the Phase 1 smoke. Session closed; next session = PLANNING role for Phase 1 (read phased plan §1 first time)."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25638,7 +25643,8 @@
       ],
       "backend_briefs": [
         "backend_briefs/BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md (BQ-385-22, P2 perf/aggregation, not blocking; checklist section B)"
-      ]
+      ],
+      "gate6_phase0": "DEFERRED — combined with Phase 1 owner smoke (D74). Steps: control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 / checklist M0-S01…S12"
     },
     {
       "id": "BUG-410",
@@ -26566,6 +26572,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "BQ-385-22 perf brief filed + checklist section B. CR-385 Gate 5B closed; awaiting owner Phase 0 smoke."
+    "last_note": "CR-385: Phase 0+0.5 QA-passed; Phase 0 owner smoke deferred into Phase 1 smoke (D74). Next: Phase 1 planning."
   }
 }

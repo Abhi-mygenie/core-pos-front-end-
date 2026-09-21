@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-21 (CR-385: **owner exception D74** — Phase 0 owner smoke (Gate 6) deferred and merged into the Phase 1 smoke; Phase 1 may start. Phase 0+0.5 QA-passed, BUG-434…439 verified, BQ-385-22 open (not blocking). Session closed → handover `handover/SESSION_HANDOVER_2026_09_21_CR385_P0_5.md` (final). Next session: PLANNING role, phased plan §1.)
 **Last Updated:** 2026-09-21 (CR-385: **BQ-385-22 backend perf/aggregation brief filed** `backend_briefs/BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md` (MASTER v2.0) — `local-reservations` 149 KB/111 rows (95 departed never shown), 0.9→6.9 s + 60–90 s stalls; asks: `operational_status[]` filter, status-driven Late/Overdue, field trim, snapshot (BQ-385-02), Server-Timing. Tracked in checklist section **B** (B-01…B-06). Not blocking.)
 **Last Updated:** 2026-09-21 (BUG-439 **FIXED + QA-VERIFIED** — Option A/D73, 3 panels + 1 test, `// BUG-439` ×10, `GuestTable.jsx` untouched; unit 44/44, QA `/app/test_reports/iteration_10.json` 7/7, 0 console errors, `yarn build` exit 0. CR-385 Gate 5B (P0+P0.5) remains CLOSED; Phase 1 conflict on `ArrivalsPanel.jsx` resolved (fix landed first). Next: owner combined Phase 0 smoke → "Phase 0 smoke OK".)
 **Last Updated:** 2026-09-21 (BUG-439 plan **LOCKED — Option A (D73)**: drawer action ids get `-exp-` suffix, no visual change, `GuestTable.jsx` untouched; Bug Fix to run BEFORE CR-385 Phase 1 GO. Awaiting owner "Gate 4 GO".)

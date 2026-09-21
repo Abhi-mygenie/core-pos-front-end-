@@ -127,6 +127,8 @@ route renders; sidebar item; old `/pms/front-desk` unchanged (screenshot diff); 
 7. Open the old `/pms/front-desk` page → looks exactly as before.
 Say **"Phase 0 smoke OK"** (or list what's wrong).
 
+> **EXCEPTION D74 (owner, 2026-09-21, Phase 0 only):** this smoke is deferred and run together with the Phase 1 smoke (one combined session: M0-S01…S12 + Phase 1 steps). Phase 1 may start without "Phase 0 smoke OK". The N.5 rule (§0-bis) is unchanged for Phase 1+.
+
 ### 0.6 Rollback P0
 Delete L110 + L271 in `App.js`, L245 in `Sidebar.jsx`; leave E3 (additive, harmless) or revert the 4 lines. New files inert.
 
