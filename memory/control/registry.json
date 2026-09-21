@@ -26481,7 +26481,7 @@
       "title": "CR-385 P0 duplicate data-testid when a guest row is expanded — row actions re-rendered inside RowExpansionStub with the same ids (Arrivals/Departures/In-House)",
       "priority": "P3",
       "risk": "LOW",
-      "status": "PLANNED — LOCKED (Option A, D73) 2026-09-21; awaiting owner Gate 4 GO for Bug Fix (before CR-385 Phase 1 GO)",
+      "status": "FIXED + QA-VERIFIED 2026-09-21 (Option A, D73) — /app/test_reports/iteration_10.json 7/7, bug439.cr385.test.jsx 6/6, cr385 suite 44/44",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-21",
       "category": "INTAKE",
@@ -26523,6 +26523,16 @@
           "date": "2026-09-21",
           "to": "PLANNED — LOCKED (Option A)",
           "note": "Owner \"ok option A lock docs and decision\". Plan plans/BUG-439_IMPLEMENTATION_PLAN.md locked; execution before Phase 1 GO. Next: owner \"Gate 4 GO\" → Bug Fix role."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "FIXED",
+          "note": "Reproduced YES (failing RTL test on 3 panels). RCA CODE_ERROR — panels hand RowExpansionStub the same actions(row) element commonColumns renders in the row cell. Fix: variant suffix per locked plan; GuestTable.jsx untouched; scope expansion NONE."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "QA-VERIFIED",
+          "note": "QA round 1 /app/test_reports/iteration_10.json: B439-1..5 + 2 adjacent PASS, 0 duplicate testids expanded/collapsed on 3 tabs + Rooms detail, 0 console errors."
         }
       ],
       "area": "PMS Front Desk (Beta) — guest tables (Arrivals / Departures / In-House)",
@@ -26532,7 +26542,9 @@
       "plan_doc": "plans/BUG-439_IMPLEMENTATION_PLAN.md",
       "conflicts": [
         "CR-385 Phase 1 (M2 kebab) on components/pms/frontdesk/ArrivalsPanel.jsx L41–46 — execute BUG-439 BEFORE Phase 1 GO or fold into the first P1 batch"
-      ]
+      ],
+      "fixed_in": "Bug Fix role 2026-09-21 — marker `// BUG-439` (10 lines) in ArrivalsPanel.jsx L41–46/L57, DeparturesPanel.jsx L7–12/L35, InHousePanel.jsx L20; test __tests__/bug439.cr385.test.jsx",
+      "fix_report": "handover/BUG_FIX_REPORT_2026_09_21_BUG439.md"
     }
   ],
   "meta": {
@@ -26546,6 +26558,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "BUG-439 plan LOCKED (Option A, D73); awaiting Gate 4 GO. CR-385 Gate 5B closed, awaiting Phase 0 smoke."
+    "last_note": "BUG-439 FIXED + QA-VERIFIED (Option A). CR-385 Gate 5B closed; awaiting owner Phase 0 smoke."
   }
 }

@@ -1,0 +1,40 @@
+{
+  "summary": "CR-385 BUG-439 QA Round 1 re-test @1920x800 against /pms/front-desk-v2 on preprod. All 5 primary cases (B439-1..5) and both adjacent cases (ADJ-1 one-expansion-at-a-time, ADJ-2 keyboard nav) PASS. The Option-A fix (D73) is verified: with a row expanded, the drawer emits '-exp-' infixed testids (checkin-btn/kebab on Arrivals; bill-btn/hk-btn/extend-btn on Departures & In-House), while the row cell keeps its original testids. No duplicate data-testid values anywhere in the document across Arrivals/Departures/In-House expanded and collapsed states, and 0 duplicates when opening fd-room-tile-8525 on Rooms. Buttons in both row and drawer are disabled with title matching /Available in Phase \\d/ and identical visible text (Check In, \u22ee, Bill, Request HK, Extend). No visual regression on the Arrivals drawer (facts block + \u2715 Close + bottom-right button row all present). Zero non-ignored console errors across the run.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "cases_pass_fail": {
+    "LOGIN_and_nav": "PASS - fd-tab-strip visible on /pms/front-desk-v2",
+    "B439-1_arrivals_expanded (row 15)": "PASS - no duplicate testids in document; fd-row-15-checkin-btn=1, fd-row-15-kebab=1; fd-row-15-exp-checkin-btn=1 (inside expansion), fd-row-15-exp-kebab=1 (inside expansion); both row+drawer buttons disabled, title 'Available in Phase 2'/'Available in Phase 1', text 'Check In' / '\u22ee' identical",
+    "B439-2_departures_expanded (row 155)": "PASS - no duplicate testids; bill-btn/hk-btn/extend-btn each row=1 + exp-=1 inside expansion; disabled + Phase 4/3/3 tooltips; identical text 'Bill'/'Request HK'/'Extend'",
+    "B439-3_inhouse_expanded (row 174)": "PASS - no duplicate testids; bill-btn/hk-btn/extend-btn each row=1 + exp-=1 inside expansion; disabled + Phase 4/3/3 tooltips",
+    "B439-4_collapsed_all_tabs": "PASS - arrivals/departures/inhouse each: 0 [data-testid*='-exp-'] elements and 0 duplicate testids",
+    "B439-5_visual_no_regression_arrivals_drawer": "PASS - facts block contains 'Booking (incl. GST)', 'Paid so far', 'SGST', 'CGST', 'Balance due'; '\u2715 Close' present; bottom-right button row 'Check In' + '\u22ee' present and greyed; testids fd-row-*-total/-paid/-due/-close each =1",
+    "B439-5_rooms_tile_8525_no_dupes": "PASS - opening fd-room-tile-8525 detail yields 0 duplicate testids in the document (no Mark Clean / Request HK clicks performed)",
+    "ADJ-1_one_expansion_at_a_time": "PASS - clicking row A (15) then row B (17) on Arrivals leaves exactly 1 .fd-expansion element (fd-row-17-expansion)",
+    "ADJ-2_keyboard_nav": "PASS - focus fd-row-15 -> ArrowDown moves focus to fd-row-17 -> Enter opens fd-row-17-expansion -> Escape closes it",
+    "zero_non_ignored_console_errors": "PASS - 0 non-ignored console error entries"
+  },
+  "console_errors_non_ignored": 0,
+  "test_report_links": [
+    "/app/memory/evidence/BUG-439/qa_round1_results.json",
+    "/app/memory/evidence/BUG-439/qa_round1_B439-1_arrivals_expanded.jpg",
+    "/app/memory/evidence/BUG-439/qa_round1_B439-2_departures_expanded.jpg",
+    "/app/memory/evidence/BUG-439/qa_round1_B439-3_inhouse_expanded.jpg",
+    "/app/memory/evidence/BUG-439/qa_round1_B439-5_arrivals_drawer.jpg",
+    "/app/memory/evidence/BUG-439/qa_round1_B439-5_rooms_detail.jpg"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix correctly implements Option A (D73): actions(r, variant) in ArrivalsPanel.jsx L41-46 and stayActions(r, variant) in DeparturesPanel.jsx L7-13 inject an '-exp-' infix ONLY when the drawer calls actions(row, 'exp-') via RowExpansionStub. Row-cell ids remain unchanged - fully backward compatible with any existing selectors.",
+    "No visual regression: same PhaseButton component used for both row and drawer buttons, so styling/disabled state/tooltip content is identical by construction.",
+    "Recommend adding a lightweight ESLint rule or a runtime dev-only assertion that scans document for duplicate data-testid values on route change - this would have caught BUG-439 during iteration 9 automatically."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% (5/5 B439 cases + 2/2 ADJ cases + 0 console errors)"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md - used, values never printed.",
+  "seed_data_creation": "None. No room-status toggles, no bookings/payments, no Mark Clean / Request HK clicks. Only login + tab switches + row expand/collapse + keyboard nav.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "BUG-439 fix verified. Sandbox observed rows: Arrivals late chip has 10 rows (first tabIndex row id=15, second id=17); Departures today chip has 2 rows (first id=155); In-House 'All' chip has 2 rows (first id=174). fd-room-tile-8525 = r4 (2nd floor suite, currently Housekeeping). Duplicate-testid check must always be executed WITH a row expanded on each of Arrivals/Departures/In-House to catch drawer-vs-row collisions - collapsed-only checks will miss it. The '-exp-' infix convention should be preserved for any future action buttons added to the row cell + drawer.",
+  "rca of the issue": "iteration_9 REG-1 duplicate: drawer rendered actions(r) with the SAME testids as the row cell. Fix (D73 Option A): actions(r, variant='') for row and actions(r, 'exp-') for drawer, giving 'fd-row-<id>-exp-checkin-btn' etc. Verified: 6 action testids in expanded state (3 row + 3 drawer for Dep/InHouse; 2 + 2 for Arrivals) all unique, and no other duplicate testids across the DOM in any tab/state tested."
+}
