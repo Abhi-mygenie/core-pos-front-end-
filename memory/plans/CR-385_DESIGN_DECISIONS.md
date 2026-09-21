@@ -727,3 +727,11 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Decision | Register as **BUG-439 (P3, LOW, QA MINOR)** via Intake. Do **not** reopen Phase 0.5 for it: Gate 5B (P0+P0.5) is **CLOSED** and the owner Phase 0 smoke proceeds. **Routing is NOT decided here** — the Intake role only registers; owner picks the route (intake recommendation: Fast Lane Bug Fix — LOW risk, no hotspots, ~8 lines; alternative: Planning → batch into Phase 1 where M1/M2 replace the expansion stub). Whichever route: the QA brief must run the duplicate-testid check **with a row expanded** on all three guest tabs. |
 | Owner words | "update docs and decision and close gate … choose intake to register this bug" · "Your role is intake, so we need not to decide what will be done next. Just register the bug and suggest if it can take a bug fix route or it has to go through planning" (chat 2026-09-21). |
 | Rule going forward | X-10 duplicate-testid assertion = collapsed **and** expanded state (guest tabs) + RoomDetail open + alerts popover open. |
+
+### D73 — BUG-439 fix = Option A: suffix the drawer copy of the row actions (`fd-row-<id>-exp-*`), no visual change (owner, 2026-09-21)
+| Field | Value |
+|---|---|
+| Context | Impact analysis `impact/BUG-439_IMPACT_ANALYSIS.md` offered A (rename drawer ids only) / B (remove the drawer action footer) / C. Marked screenshot `evidence/BUG-439/bug439_marked_arrivals_row_expanded.jpeg`. |
+| Decision | **Option A.** Action factories take `variant` (`''` row cell, `'exp-'` drawer). Drawer buttons become `fd-row-<id>-exp-checkin-btn`, `-exp-kebab`, `-exp-bill-btn`, `-exp-hk-btn`, `-exp-extend-btn`. Row-level ids byte-identical. `GuestTable.jsx` untouched. Plan: `plans/BUG-439_IMPLEMENTATION_PLAN.md` (locked). Route: Bug Fix BEFORE Phase 1 GO (conflict on `ArrivalsPanel.jsx` L41–46). |
+| Owner words | "ok option A lock docs and decision" (chat 2026-09-21). |
+| Rule | Any future element rendered in both a row and its expansion must carry a distinct `-exp-` id; X-10 = collapsed + expanded (D72). |

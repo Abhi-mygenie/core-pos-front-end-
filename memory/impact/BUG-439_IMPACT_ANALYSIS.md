@@ -49,7 +49,7 @@ Downstream consumers of the ids: `GuestTable.cr385.test.jsx` / `phase05.cr385.te
 | R2 | Renaming a row-level id by mistake breaks QA briefs | low | Option A keeps row ids byte-identical (`variant=''` default); test asserts `fd-row-15-checkin-btn` count === 1 |
 | R3 | Touching `GuestTable.jsx` (shared by 3 tabs) | n/a in A | Option A does not touch it |
 
-## 5 · Owner decisions needed
+## 5 · Owner decisions — RESOLVED 2026-09-21: **Option A locked (D73)**, Bug Fix before Phase 1 GO
 1. **Option A (ids only, no visual change) vs Option B (remove the drawer action footer)?** Recommendation: A.
 2. **Route/timing:** Fast Lane Bug Fix now (before Phase 1 GO) vs fold into the first Phase 1 batch. Recommendation: Fast Lane now — it is a frozen-rule violation the owner smoke and Phase 1 QA would otherwise carry.
 

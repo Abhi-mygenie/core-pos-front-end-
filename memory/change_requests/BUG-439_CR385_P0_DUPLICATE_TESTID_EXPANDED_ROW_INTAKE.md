@@ -1,6 +1,6 @@
 # BUG-439 — CR-385 P0 duplicate `data-testid` when a guest row is expanded — row actions re-rendered inside `RowExpansionStub` with the same ids
 
-**ID:** BUG-439 · **Date:** 2026-09-21 · **Status:** INTAKE (registered 2026-09-21, owner-confirmed P3) · routing OPEN — owner decides · found in P0.5 re-test round 2; Gate 5B (P0+P0.5) closed with it registered (D72)
+**ID:** BUG-439 · **Date:** 2026-09-21 · **Status:** PLANNED — LOCKED Option A (D73, 2026-09-21) · Bug Fix before Phase 1 GO · awaiting Gate 4 GO · found in P0.5 re-test round 2; Gate 5B (P0+P0.5) closed with it registered (D72)
 **Source:** QA-FOUND — CR-385 Phase 0.5 QA re-test round 2 (Role 4) `/app/test_reports/iteration_9.json` REG-1_no_duplicate_data_testids
 **Confidence:** CONFIRMED (code read: `ArrivalsPanel.jsx` L47–57, `DeparturesPanel.jsx` L35, `InHousePanel.jsx` L20 pass `actions(row)` both to `commonColumns` (row cell) and to `RowExpansionStub` (`GuestTable.jsx` L156–176) → every `fd-row-<id>-*-btn` / `-kebab` appears twice while that row is expanded)
 **Duplicate check:** DISTINCT — RELATED to CR-385 (grep BUG_TRACKER / CR_REGISTRY / registry.json 2026-09-21: no prior item). Not introduced by P0.5 (BUG-434…438 did not touch these lines); missed by P0 QA because the X-10 duplicate-testid check ran with all rows collapsed.

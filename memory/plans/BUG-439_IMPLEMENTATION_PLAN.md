@@ -1,6 +1,6 @@
 # BUG-439 — Implementation Plan (Gate 3) — Option A (suffix the drawer copy of the row actions)
 
-**ID:** BUG-439 · **Date:** 2026-09-21 · **Risk:** LOW · **Fast Lane eligible** (owner approval) · **Gate 4 GO required before coding**
+**ID:** BUG-439 · **Date:** 2026-09-21 · **Risk:** LOW · **Fast Lane eligible** (owner approval) · **Gate 4 GO required before coding** · **LOCKED 2026-09-21 — owner chose Option A (D73)**
 **Impact Analysis:** `memory/impact/BUG-439_IMPACT_ANALYSIS.md` (Option A recommended; re-cut this plan if the owner picks Option B)
 **Execution order:** BEFORE CR-385 Phase 1 GO (conflict on `ArrivalsPanel.jsx` L41–46), or as the first edit of the first Phase 1 batch.
 **Marker:** `// BUG-439` on every edited line.
@@ -92,4 +92,4 @@ Render each panel on the real fixture (`local_reservations_view_all.json` via `f
 - [ ] QA handover `handover/QA_HANDOVER_<date>_BUG439.md` (Registry synced: YES · EXIT GATE 5/5)
 
 ---
-**Handover:** "Plan ready at `memory/plans/BUG-439_IMPLEMENTATION_PLAN.md`. 3 code edits across 3 files + 1 new test file. Code reality: FULL (defect in shipped P0 code; fix NONE). Scope: WILL change `ArrivalsPanel.jsx`, `DeparturesPanel.jsx`, `InHousePanel.jsx`, `__tests__/bug439.cr385.test.jsx` / will NOT touch `GuestTable.jsx`, page, Rooms, transforms, services, hotspots, legacy pages, mockup. Verification matrix: 6 checks (5 automated, 1 manual). Owner decisions needed: (1) Option A vs B, (2) Fast Lane now vs first Phase 1 batch. Awaiting Gate 4 GO."
+**Handover:** "Plan ready at `memory/plans/BUG-439_IMPLEMENTATION_PLAN.md`. 3 code edits across 3 files + 1 new test file. Code reality: FULL (defect in shipped P0 code; fix NONE). Scope: WILL change `ArrivalsPanel.jsx`, `DeparturesPanel.jsx`, `InHousePanel.jsx`, `__tests__/bug439.cr385.test.jsx` / will NOT touch `GuestTable.jsx`, page, Rooms, transforms, services, hotspots, legacy pages, mockup. Verification matrix: 6 checks (5 automated, 1 manual). Owner decisions: Option A LOCKED (D73); execute before Phase 1 GO. Awaiting Gate 4 GO."

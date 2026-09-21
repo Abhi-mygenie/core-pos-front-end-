@@ -26481,7 +26481,7 @@
       "title": "CR-385 P0 duplicate data-testid when a guest row is expanded — row actions re-rendered inside RowExpansionStub with the same ids (Arrivals/Departures/In-House)",
       "priority": "P3",
       "risk": "LOW",
-      "status": "PLANNED — Gate 2 Impact Analysis + Gate 3 Plan (Option A) written 2026-09-21; awaiting owner: Option A/B + Fast Lane vs first-P1-batch → Gate 4 GO",
+      "status": "PLANNED — LOCKED (Option A, D73) 2026-09-21; awaiting owner Gate 4 GO for Bug Fix (before CR-385 Phase 1 GO)",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-21",
       "category": "INTAKE",
@@ -26518,10 +26518,15 @@
           "date": "2026-09-21",
           "to": "PLANNED (Gate 3)",
           "note": "Planning role (owner-requested): Code reality FULL-defect/fix NONE; conflict with CR-385 P1 on ArrivalsPanel L41–46; risk LOW; Option A (variant suffix on drawer copy, no visual change, GuestTable.jsx untouched) recommended over B (drop drawer action footer). 6-check verification matrix. Owner decisions: A/B + route."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "PLANNED — LOCKED (Option A)",
+          "note": "Owner \"ok option A lock docs and decision\". Plan plans/BUG-439_IMPLEMENTATION_PLAN.md locked; execution before Phase 1 GO. Next: owner \"Gate 4 GO\" → Bug Fix role."
         }
       ],
       "area": "PMS Front Desk (Beta) — guest tables (Arrivals / Departures / In-House)",
-      "decision": "D72",
+      "decision": "D72 (gate closed, registered) · D73 (Option A locked)",
       "intake_recommendation": "FAST LANE eligible (risk LOW, no hotspots, ~8 lines in 3–4 non-financial UI files, existing RTL test file to extend). Planning (Gates 2–3) not required unless owner wants it batched into Phase 1 where M1/M2 replace RowExpansionStub.",
       "impact_doc": "impact/BUG-439_IMPACT_ANALYSIS.md",
       "plan_doc": "plans/BUG-439_IMPLEMENTATION_PLAN.md",
@@ -26541,6 +26546,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "BUG-439 PLANNED (Gate 2+3 docs); owner decisions: Option A/B + Fast Lane vs P1 batch → Gate 4 GO. CR-385 Gate 5B closed, awaiting Phase 0 smoke."
+    "last_note": "BUG-439 plan LOCKED (Option A, D73); awaiting Gate 4 GO. CR-385 Gate 5B closed, awaiting Phase 0 smoke."
   }
 }
