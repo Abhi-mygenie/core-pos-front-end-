@@ -694,3 +694,12 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Restore | stay settled by TAB; rates pushed back 31,500 / 7,400 for 11-15…17 and verified; settings at defaults |
 **Decisions/effects:** G4-03 ✓ (no waiver recorded — the owner's scenario replaced it); OG-PMS-033 CLOSED; V-M4-00 uses the real fixture `h1_extend_1116.json`; D55 chip copy "held (no rate for this date)" confirmed. **Repeatable demo recipe** = BE's wipe→extend→restore pack (always restore in the same session; prefer far-future nights).
 **Gate 4 GO now depends only on the owner's words: "close Gate 3" (G4-06) and "Gate 4 GO" (G4-10).**
+
+### D69 — GATE 3 CLOSED by the owner; phased line-by-line execution plan (2026-09-21)
+**Owner (verbatim):** "Follow agent Prem prompt. Don't miss anything. Clean plan should be given by line-by-line implementation since now there are no blockers and nothing. So line-by-line implementation plans should be given, and, uh, we want phased implementation so that smoke test can happen by the owner before moving to the next phase so that nothing goes wrong because this is a complex module. So yes, go ahead and close gate three"
+| Decision | Value |
+|---|---|
+| **Gate 3** | **CLOSED 2026-09-21** on the owner's words above (P-12, G4-06). Gate 4 GO still requires the owner's words "Gate 4 GO" (G4-10). |
+| Execution shape | **Phased** — `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md`: P0 M0 shell (read-only) → P1 M7 Front Desk Rules tab + M2 cancel/no-show/modify → P2 M1 booking + M3 check-in → P3 M4 extend + M5 balances → P4 M6 bill/checkout → P5 closure. **Next phase starts only after the owner says "Phase N smoke OK".** Each phase has: exact existing-file edits (current line → new line), new-file skeletons, tests, QA-agent brief, owner smoke script, rollback. |
+| Companion | `plans/CR-385_IMPLEMENTATION_PLAN.md` stays binding for data contract (§3), gap/AC mapping (§5), verification matrix (§6), registry checklist (§7), risks (§8). |
+| Reconfirmed in the phased plan | no Split tile at advance points (OD-385-18 a); Extend/Modify = new forms (OD-385-16 a); M7 = Channel Manager 5th tab (OD-385-17); D17 fixed → collect-now at check-in live in P2; `held_fallback` real fixture from D68 used in P3. |

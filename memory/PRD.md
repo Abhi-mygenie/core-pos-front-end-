@@ -429,3 +429,8 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - **2026-09-21:** BQ-385-21 propagated to checklist/mockup/plan/OG-PMS-033/MASTER addendum (was only in D64 + FINAL_PACK brief).
 - **2026-09-21 (later):** D17 validated (API + UI) → S-411 ✓, G4-04 ✓; BQ-385-21 answered (no empty night) → G4-03(b) owner waiver pending; D67. Backend queue for CR-385 empty.
 - **2026-09-21 (held_fallback):** owner scenario run — held_fallback observed live, rates restored, G4-03 ✓ no waiver; D68; OG-PMS-033 closed. Only owner gate words remain.
+
+## 2026-09-21 — CR-385 GATE 3 CLOSED (owner) · phased line-by-line execution plan
+- Owner: "…we want phased implementation so that smoke test can happen by the owner before moving to the next phase … so yes, go ahead and close gate three" → Gate 3 CLOSED (D69, P-12, G4-06).
+- Wrote `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md`: P0 M0 shell (read-only) → P1 M7 Front Desk Rules tab + M2 cancel/no-show/modify → P2 M1 booking + M3 check-in → P3 M4 extend + M5 balances → P4 M6 bill/checkout → P5 closure. Per phase: exact current→new line edits for every existing file, new-file skeletons, tests, QA-agent brief, owner smoke script, rollback. Next phase only after owner "Phase N smoke OK".
+- All G4 evidence rows ticked; backend queue empty; sandbox at defaults. **Waiting for owner "Gate 4 GO". No code in frontend/src/.**

@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 OPEN — plan ready, awaiting owner review/\"close Gate 3\". plans/CR-385_IMPLEMENTATION_PLAN.md written 2026-09-20 (M0–M7, matrix 34 rows, registry checklist, risks R15–R30, scope lock). Owner decisions pending: OD-385-16 (Extend/Modify: new forms vs inline legacy dialogs, rec. a), OD-385-17 (M7 in Step 8, rec. a), OD-385-18 (Split at advance points). G4 open: 01, 02, 03, 04, 06, 07, 10. Backend P2 open D14 / BQ-19 / N10. No src/ code.",
+      "status": "GATE 3 CLOSED 2026-09-21 (owner quote D69) — phased line-by-line plan plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md (P0–P5, owner smoke between phases). All G4 evidence rows ticked; backend queue empty. AWAITING owner \"Gate 4 GO\" (G4-10). No src/ code.",
       "gate": 3,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25236,7 +25236,7 @@
         "MV-09": "Q9b grouping: flat+switch / by type / flat (default flat+switch)"
       },
       "q10_live_updates": "option a (refresh on focus + button + after action) provisional; revisit after BQ-385-01",
-      "handover": "handover/SESSION_HANDOVER_2026_09_20_CR385_PLAN_WRITTEN.md",
+      "handover": "handover/SESSION_HANDOVER_2026_09_21_CR385_GATE3_CLOSED.md",
       "data_inventory": "impact/CR-385_DATA_INVENTORY.md",
       "backend_questions": [
         "BQ-385-01 PMS socket events exist? (FE has none)",
@@ -25455,6 +25455,11 @@
           "date": "2026-09-21",
           "to": "GATE 3 OPEN — all G4 evidence rows ticked; awaiting owner words",
           "note": "Owner supplied a live held_fallback scenario (BE wiped 2026-11-15..17 rates, stay 1232648). Extend → nights_detail held + held_fallback @36,800, also on LR. Stay settled; rates restored 31,500/7,400 (verified); settings defaults. G4-03 ✓ without waiver. Only G4-06 + G4-10 owner words remain."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE 3 CLOSED — awaiting Gate 4 GO",
+          "note": "Owner closed Gate 3 with a condition: phased, line-by-line plan with owner smoke between phases → plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md written (exact current→new lines for E1–E5, E8, E10; new-file skeletons; tests; QA briefs; owner smoke scripts; rollback). P-12/G4-06 ticked. Only G4-10 remains."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25483,7 +25488,7 @@
       "gate_3_milestones": {
         "A_spike": "DONE 2026-09-20 (evidence/CR-385/spike/MEASUREMENTS.md)",
         "B_implementation_plan": "DONE 2026-09-20 — plans/CR-385_IMPLEMENTATION_PLAN.md (owner review pending)",
-        "C_owner_close_gate_3": "PENDING — owner must say \"close Gate 3\""
+        "C_owner_close_gate_3": "DONE 2026-09-21 — owner: \"…so yes, go ahead and close gate three\" (D69)"
       },
       "implementation_plan": "plans/CR-385_IMPLEMENTATION_PLAN.md",
       "evidence_probes": [
@@ -25518,9 +25523,22 @@
         "status": "COMPLETE 2026-09-21 — G4-04 ✓"
       },
       "gate_4_open_rows": [
-        "G4-06 owner \"close Gate 3\"",
         "G4-10 owner \"Gate 4 GO\""
-      ]
+      ],
+      "gate_3_closed": {
+        "date": "2026-09-21",
+        "quote": "Follow agent Prem prompt. Don't miss anything. Clean plan should be given by line-by-line implementation since now there are no blockers and nothing. So line-by-line implementation plans should be given, and, uh, we want phased implementation so that smoke test can happen by the owner before moving to the next phase so that nothing goes wrong because this is a complex module. So yes, go ahead and close gate three"
+      },
+      "implementation_plan_phased": "plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md",
+      "phase_plan": [
+        "P0 M0 shell",
+        "P1 M7 rules tab + M2 cancel/no-show/modify",
+        "P2 M1 booking + M3 check-in",
+        "P3 M4 extend + M5 balances",
+        "P4 M6 bill/checkout",
+        "P5 closure"
+      ],
+      "phase_gate_rule": "next phase only after owner says \"Phase N smoke OK\""
     },
     {
       "id": "BUG-410",
