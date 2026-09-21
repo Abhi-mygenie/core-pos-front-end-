@@ -1,0 +1,60 @@
+{
+  "summary": "CR-385 Phase 0.5 QA RE-TEST ROUND 2 (frontend-only @1920x800) against preprod via /pms/front-desk-v2. Independent Playwright script re-ran the two Round-1 FAIL/BLOCKED cases (RT-1 BUG-435 Case C focus-after-idle, RT-2 BUG-434 recovery), the Round-1 BLOCKED Rooms retry (RT-3), the coalescing regression (RT-4 BUG-435 Case B), and a compact regression subset (REG-1). Result: 4/4 RT cases PASS; REG-1 mostly PASS but surfaces a duplicate-data-testid violation on Arrivals when a row expansion is open (fd-row-17-checkin-btn and fd-row-17-kebab). Zero unexpected non-ignored console errors: the 4 'Failed to load resource: 500' entries are emitted by the intentional page.route() intercepts of aiosell/local-reservations and aiosell/room-status-board (2 each) and are expected per spec. Full request timeline captured; preprod was healthy (LR 200 in ~1.1 s for the RT-2 recovery request).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ArrivalsPanel / GuestTable row expansion",
+        "issue": "Duplicate data-testid values on the Arrivals tab when a row is expanded: 'fd-row-17-checkin-btn' and 'fd-row-17-kebab' appear TWICE in the DOM (once in the collapsed row and once in the expansion drawer). All other tabs and Rooms-with-RoomDetail-open remain clean.",
+        "selector": "[data-testid='fd-row-17-checkin-btn'], [data-testid='fd-row-17-kebab']",
+        "priority": "MINOR"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "cases_pass_fail": {
+    "LOGIN_and_nav": "PASS — fd-tab-strip visible ~15.2 s after script start (login + goto + first snapshot).",
+    "RT-1_BUG-435_caseC_focus_after_idle": "PASS — batch done at 16.42 s; after 7.0 s idle, dispatched window 'focus' → delta local-reservations=+1, room-status-board=+1, dashboard-kpis=+1 (measured 3 s after focus). Immediately after that new batch, second focus within 2 s → delta local-reservations=0 (debounced as expected).",
+    "RT-2_BUG-434_recovery_after_unroute": "PASS — 500-mocked LR → fd-page-error shown in ~0.8 s; retry-click in-flight state: disabled attribute present, aria-busy='true', text='Retrying…'; re-enabled to 'Retry'; after unroute + retry click, fd-tab-strip returned and fd-page-error gone in ELAPSED=3.56 s with exactly ONE local-reservations request (req at t=30.60 s → resp 200 at t=31.73 s).",
+    "RT-3_BUG-434_rooms_retry_path": "PASS — with 500 mock on room-status-board and refresh, fd-rooms-error + fd-rooms-retry-btn appeared; retry in-flight state OK (disabled + 'Retrying…'); after unroute + click, room tiles rendered in ~2.04 s.",
+    "RT-4_BUG-435_caseB_coalesce_two_clicks": "PASS — two fd-refresh-btn clicks 50 ms apart produced exactly 1 new local-reservations request.",
+    "REG-1_first_nonempty_chip": "PASS — fd-chip-arrivals-late aria-selected='true' with count=10 while fd-chip-arrivals-today count=0.",
+    "REG-1_tile_counts": "PASS — fd-tab-arrivals-count=0, fd-tab-departures-count=2, fd-tab-inhouse-count=2 (all match iteration_8 sandbox truth; live LR JSON was not re-fetched but tiles were rendered from the batch responses).",
+    "REG-1_one_expansion_only": "PASS — clicking two rows in sequence leaves exactly 1 '.fd-expansion' element.",
+    "REG-1_no_channel_manager_in_workstation_body": "PASS — 'Channel Manager' absent from [data-testid='fd-workstation-body'].innerText.",
+    "REG-1_no_duplicate_data_testids": "FAIL (MINOR) — Arrivals with an expansion open has 2 duplicate data-testids: fd-row-17-checkin-btn, fd-row-17-kebab (twice each). Rooms tab: 0 duplicates.",
+    "REG-1_zero_console_errors": "PASS with note — the only 4 non-ignored console error entries are the two intentional 500 route fulfills (LR + board), which are expected."
+  },
+  "console_errors_non_ignored": 0,
+  "console_errors_from_intentional_500_mocks": 4,
+  "request_timeline_evidence": {
+    "RT-1": "click t=15.21s → batch complete t=16.42s (batch latency ~1.2s); idle 7.00s; focus t=23.42s → +1 LR/+1 board/+1 KPI observed by t=26.44s; second focus after that new batch t=~28.44s → +0 LR in the next 2s.",
+    "RT-2_recovery_request": "click at t=30.58s → LR request t=30.60s → LR 200 at t=31.73s (network latency 1.12s). Total UI recovery time (click→fd-tab-strip visible & fd-page-error gone): 3.56s.",
+    "RT-3_recovery": "elapsed 2.04s after unroute+click for at least one fd-room-tile-* to render."
+  },
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_results.json",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_timeline.json",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_rt1.jpg",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_rt2.jpg",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_rt3.jpg",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/round2_final.jpg"
+  ],
+  "action_items": [
+    "MINOR: Deduplicate data-testid on Arrivals row-expansion drawer. When an expansion is rendered for reservation id 17, the drawer re-uses fd-row-17-checkin-btn and fd-row-17-kebab already present on the collapsed row. Either scope the drawer's testids (e.g., fd-row-17-expansion-checkin-btn, fd-row-17-expansion-kebab) or omit the duplicates entirely. This did not manifest in iteration_8's R12 duplicate-check because that run did not open an arrivals-row expansion during the check."
+  ],
+  "critical_code_review_comments": [
+    "GuestTable/expansion drawer emits data-testid values identical to those on the parent row (fd-row-<id>-checkin-btn, fd-row-<id>-kebab). This is a testability bug — Playwright/CSS locators will match 2 nodes and either flake or over-count. Suffix the drawer's testids with '-expansion' or scope them to '[data-testid=\"fd-row-<id>-expansion\"] [data-testid=\"...\"]'.",
+    "Round-1 FAIL for BUG-435 Case C was correctly a measurement-window artifact (Round-1 measured the 5 s debounce from the click, not from the last snapshot response); with the corrected measurement (wait for the full batch to arrive, then 7 s idle, then focus), the focus refresh fires exactly +1 of each snapshot call and the immediate follow-up focus within 2 s is debounced. Code path in useFrontDeskSnapshot L52–54 is behaving as designed on preprod today; no code change indicated.",
+    "Round-1 FAIL for BUG-434 recovery matches the environmental hypothesis: on today's healthier preprod the recovery completed in 3.56 s (well under the 30 s budget) with exactly 1 LR request per click. Retain the existing recovery UX; the earlier 60 s stall was a preprod latency artifact, not a code regression."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "RT cases 4/4 (100%); REG-1 5/6 sub-checks pass (1 minor duplicate-testid finding)"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — used, values never printed.",
+  "seed_data_creation": "None. No bookings/payments created; no room status toggles. Only fd-refresh-btn clicks, chip/tab clicks, row-expansion clicks, and page.route() intercepts on aiosell/local-reservations and aiosell/room-status-board — both were unroute()-d before exit.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Sandbox 2026-09-21 evening still: Arrivals late=10 today=0 tomorrow=0 upcoming=4; Departures=2; In-house=2; Rooms all=5 (r1 HK, r2 occupied, r3 occupied, r4 HK, r5 HK), 0 free / 3 HK / 0 OOO / 20% occ. Preprod latency during Round 2 was healthy: login+first-snapshot ~15s; single LR round-trip ~1.1s; batch complete ~1.2s from click. Correct testids reminder: fd-tab-<id> tiles with fd-tab-<id>-count child; fd-chip-<tab>-<key>; in-house tab id is 'inhouse'. Duplicate-testid check MUST be repeated with a row expansion open on Arrivals — the collapsed-only check misses fd-row-<id>-checkin-btn/-kebab duplication. For BUG-435 Case C, measure the 5 s focus debounce from the LAST batch RESPONSE, never from a click.",
+  "rca of the issue": "Round-1 FAIL (BUG-435 Case C): measurement error — the 6.5 s idle in Round 1 started at the click, but the batch itself took ~7 s to complete on Round-1's degraded preprod, so 'idle 6.5 s' finished BEFORE the batch responses had updated lastFetchRef; when focus fired, Date.now()-lastFetchRef was still <5000 ms and refresh was skipped. In Round 2, with the corrected rule (idle-from-last-response) and preprod at ~1.2 s batch latency, focus fires refresh exactly once. Round-1 FAIL (BUG-434 recovery): axios 60 s timeout on the recovery LR call because Round-1 preprod stalled that request; Round 2 preprod answered in 1.1 s and recovery completed in 3.56 s. No code change needed for these two. NEW MINOR finding: fd-row-<id>-checkin-btn and fd-row-<id>-kebab are emitted both by the collapsed row and by its expansion drawer, causing duplicate data-testid values whenever an arrivals row is expanded; the fix is to suffix the drawer's testids or scope them under the expansion container."
+}

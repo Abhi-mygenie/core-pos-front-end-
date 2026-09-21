@@ -30,7 +30,8 @@ Not changed: hotspots, legacy PMS pages, `frontDeskService.js`, `frontDeskTransf
 - QA Run A `iteration_7.json`: 8/10 PASS; 2 FAIL disproved by a network-timed probe (focus ≥7 s after last response → 1 batch; Retry recovery 1.8 s) — cause: preprod degraded (login 11.6 s, LR 6.9 s, 60 s timeout at boot) and idle measured from the click. Run B `iteration_8.json`: 15/15 P0 matrix at 1366×768 incl. Rooms retry + r4 round-trip restored. Zero console errors both runs. Report: `test_reports/QA_REPORT_2026_09_21_CR385_P0_5.md`.
 
 ## 4 · Open items / routing (unchanged)
-- BUG-431/432 → DEFERRED-TO-P2 (entry conditions) · BUG-433 → DEFERRED-TO-P3 (entry condition; backend brief early in P3). No new bugs found in P0.5.
+- BUG-431/432 → DEFERRED-TO-P2 (entry conditions) · BUG-433 → DEFERRED-TO-P3 (entry condition; backend brief early in P3).
+- **Re-test round 2 (owner-requested, `/app/test_reports/iteration_9.json`):** the two round-1 FAILs + the BLOCKED case + coalescing → 4/4 PASS independently with request timelines. **New MINOR finding → BUG-439** (duplicate `data-testid` for row actions while a row is expanded — pre-existing P0 code in `RowExpansionStub`/panels, all three guest tabs; intake `change_requests/BUG-439_…_INTAKE.md`). Owner decision pending: fix inside P0.5 (Bug Fix role; needs scope approval for `GuestTable.jsx`/`InHousePanel.jsx`, outside §4.3) or accept and ship to Phase 1.
 - QA-protocol note for every future run: measure debounce "idle" from the **last snapshot response**; use ≥60 s waits on preprod; correct testids are `fd-tab-<id>-count`, `fd-header-greeting`, `fd-header-date`, `fd-sync-pill`, `fd-new-booking-btn`, `fd-alert-bar`/`fd-alert-more`/`fd-alert-popover`.
 
 ## 5 · Registry / doc state
@@ -53,4 +54,4 @@ Say **"Phase 0 smoke OK"** (or list what's wrong — anything found goes to inta
 
 ## 7 · Formal lines
 Bug Fix → QA: "Fixes done. BUG-434/435/436/437/438 in one batch, repro-first, 37 marker lines, §4.3 files only. Unit 38/38, build exit 0, hotspots clean. Registry synced: YES."
-QA → Owner: "QA complete. Run A 10/10 after probe (2 timing false-negatives disproved), Run B 15/15. 0 BLOCKER/MAJOR/MINOR, 3 NOTE. Registry SYNCED — CR-385 GATE_5B_QA_PASSED (P0+P0.5), BUG-434…438 QA-VERIFIED. EXIT GATE 5/5. Ready for Gate 6 owner combined Phase 0 smoke."
+QA → Owner: "QA complete. Run A 10/10 (round-2 independent re-test 4/4 confirms the 2 disputed cases), Run B 15/15. 0 BLOCKER/MAJOR, 1 MINOR (BUG-439, owner to decide ship-or-fix), 3 NOTE. Registry SYNCED — CR-385 GATE_5B_QA_PASSED (P0+P0.5), BUG-434…438 QA-VERIFIED. EXIT GATE 5/5. Ready for Gate 6 owner combined Phase 0 smoke."
