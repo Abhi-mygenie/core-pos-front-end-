@@ -25585,7 +25585,7 @@
       ],
       "phase_gate_rule": "next phase only after owner says \"Phase N smoke OK\"",
       "gate_4_go": "2026-09-21 — owner: \"Gate 4 GO. Correct on all five.\"",
-      "phase": "P0 done → awaiting owner smoke",
+      "phase": "P0+P0.5 QA passed · Gate 6 deferred to P1 smoke (D74) · awaiting Phase 1 GO",
       "files_p0": [
         "App.js (L110 import, L272 route)",
         "components/layout/Sidebar.jsx (L245)",
@@ -25602,7 +25602,7 @@
       "qa_handover_p0": "handover/QA_HANDOVER_2026_09_21_CR385_P0.md",
       "qa_report_p0": "test_reports/QA_REPORT_2026_09_21_CR385_P0.md",
       "phase_0_5": {
-        "status": "PENDING — owner \"Phase 0.5 GO\" required",
+        "status": "CLOSED — QA passed (it.7/8/9/10)",
         "bugs": [
           "BUG-434",
           "BUG-435",
@@ -26517,7 +26517,7 @@
       ],
       "intake_doc": "change_requests/BUG-439_CR385_P0_DUPLICATE_TESTID_EXPANDED_ROW_INTAKE.md",
       "evidence_dir": "evidence/BUG-439/",
-      "phase": "UNASSIGNED (intake recommendation: Fast Lane Bug Fix; needs owner approval)",
+      "phase": "P0.5 (fixed 2026-09-21)",
       "status_history": [
         {
           "date": "2026-09-21",
