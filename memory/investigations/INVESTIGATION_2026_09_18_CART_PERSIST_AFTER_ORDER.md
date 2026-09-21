@@ -190,12 +190,21 @@ Risk:   LOW — DashboardPage, not R5
 
 ---
 
-## 10. Owner Decisions Needed
+## 10. Owner Decisions — LOCKED
 
-| # | Decision | Options |
-|---|---|---|
-| OD-1 | Fix scope: which trigger to fix? | A: type switch only · B: all closes · C: close after placement only |
-| OD-2 | Should mid-build cart resume (carrying items when switching type) remain as a feature for dine-in table switches? | YES (keep for tables only) · NO (always clear) |
+| # | Decision | Answer | Locked |
+|---|---|---|---|
+| OD-1 | Should type switch (walkIn→delivery etc.) clear the cart mid-build? | **YES — always clear** | ✅ 2026-09-18 |
+| OD-2 | Should table switch (Table A → Table B mid-build) also clear the cart? | **YES — always clear** | ✅ 2026-09-18 |
+
+**Combined owner intent:** Every time a cashier switches order type OR switches table while items are in the cart, the previous cart is discarded immediately. No mid-build resume. Every open is a clean slate. Simple, consistent, no surprises.
+
+---
+
+## 11. Investigation Status
+
+**CLOSED — 2026-09-18**  
+All owner decisions locked. Ready for Planning (Gate 2 Impact Analysis).
 
 ---
 
@@ -206,10 +215,14 @@ Root cause:    FE_BUG — cartsByTable[key] written with stale unplaced items
 Classification: FE_BUG
 Confidence:    HIGH
 Why intermittent: Only Trigger 1 (type switch) or Trigger 2 (table switch mid-build) cause it.
-                  Straight-through order flow never hits this path.
-Fix scope:     DashboardPage.jsx (not R5) — Option A is planning-skip eligible
-Planning skip: YES for Option A (owner approval required)
-               NO for Option C (R5 touch)
-Owner decisions: OD-1 (scope) + OD-2 (resume feature)
+                  Straight-through order flow (open → add → place → close) is always clean.
+Fix direction: DashboardPage.jsx — clear cartsByTable[oldKey] on BOTH:
+               (a) handleOrderTypeChange — before switching type
+               (b) handleTableClick — before switching table
+               Both paths are in DashboardPage.jsx (not R5 hotspot).
+OD-1: LOCKED — clear cart on type switch
+OD-2: LOCKED — clear cart on table switch
+Planning skip: Eligible (DashboardPage only, not R5, ~4-6 lines) — owner approval at Gate 4
+Status:        INVESTIGATION CLOSED → next: Gate 2 Impact Analysis (PLANNING role)
 Report:        /app/memory/investigations/INVESTIGATION_2026_09_18_CART_PERSIST_AFTER_ORDER.md
 ```

@@ -118,9 +118,24 @@ Reason: Touches `LoadingPage.jsx` (R5 hotspot), spans 4 files (rule requires 1 f
 
 ---
 
-## 8. Retroactive Candidates
+## 8. Investigation Status
 
-NONE — no registered IDs in code, no registry drift.
+**CLOSED — 2026-09-18**  
+Findings documented. No owner decisions needed. Ready for Planning (Gate 2 Impact Analysis).
+
+---
+
+```
+Root cause: DATA_EDGE — limit: 500 hardcoded; restaurants >500 items get silently truncated.
+            PAGINATION.DEFAULT_LIMIT = 100 is a stale dead default.
+Classification: DATA_EDGE
+Confidence: HIGH — all call sites fully traced
+Planning skip: NO (LoadingPage.jsx is R5 hotspot, spans 4 files)
+Recommended path: Gate 2 Impact Analysis → Gate 3 Plan → Gate 4 GO → Implementation
+Owner decision needed: What limit value to target? (1000 / 2000 / other)
+Status: INVESTIGATION CLOSED → next: Gate 2 Impact Analysis (PLANNING role)
+Report: /app/memory/investigations/INVESTIGATION_2026_09_18_LIMIT_OFFSET_PRODUCTS.md
+```
 
 ---
 
