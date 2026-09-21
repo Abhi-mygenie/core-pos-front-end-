@@ -428,3 +428,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - **2026-09-21:** BE reply BQ-385-19 validated live (LR carries nights_detail for calendar stays) → OG-PMS-027 closed, G4-07 ✓, D66. Remaining: D17 (backend), BQ-385-21, owner "close Gate 3".
 - **2026-09-21:** BQ-385-21 propagated to checklist/mockup/plan/OG-PMS-033/MASTER addendum (was only in D64 + FINAL_PACK brief).
 - **2026-09-21 (later):** D17 validated (API + UI) → S-411 ✓, G4-04 ✓; BQ-385-21 answered (no empty night) → G4-03(b) owner waiver pending; D67. Backend queue for CR-385 empty.
+- **2026-09-21 (held_fallback):** owner scenario run — held_fallback observed live, rates restored, G4-03 ✓ no waiver; D68; OG-PMS-033 closed. Only owner gate words remain.

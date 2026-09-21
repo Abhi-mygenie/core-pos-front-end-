@@ -684,3 +684,13 @@ OG-PMS-027 CLOSED · G4-07 ✓ · plan §3 / M4 / M6 / §11 updated · mockup v2
 | **BQ-385-21** | BE: no empty CM night in any sandbox window; will not wipe live rates. Chip `held (no rate for this date)` ships on the enum with a synthetic fixture (V-M4-00) | **G4-03(b) needs an owner waiver** — the only non-owner-word row left |
 | Legacy UI gap | `NewBookingPage` has no advance field → "booking advance + check-in advance" case testable only via API (done) or the new M1 form | intake note; not CR-385 blocking |
 QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Before Gate 4 GO now only: G4-03(b) owner waiver · G4-06 owner "close Gate 3" · G4-10 owner "Gate 4 GO".**
+
+### D68 — `held_fallback` observed live; G4-03 closed without waiver (2026-09-21)
+**Owner (verbatim, on the waiver ask):** "wait i gove this scanrio" → supplied `backend_replies/held_fallback_probe_2026-09-21.md` + stay HF FE Guest / r4 8525 / order 1232648 / 2026-11-14→15 / held 36,800, with suite-s-ep + executive-s-ep rates for 2026-11-15…17 temporarily wiped to 0 (ORIG suite 31,500 · executive 7,400).
+| Fact | Value |
+|---|---|
+| Extend → 2026-11-16 | `nights_detail`: 11-14 `held` 36,800 · **11-15 `held_fallback` 36,800** (18 %) · `booking_charge 73,600` · total 86,848 — matches BE table |
+| LR read-back | same rows incl. `held_fallback` → chip survives reload |
+| Restore | stay settled by TAB; rates pushed back 31,500 / 7,400 for 11-15…17 and verified; settings at defaults |
+**Decisions/effects:** G4-03 ✓ (no waiver recorded — the owner's scenario replaced it); OG-PMS-033 CLOSED; V-M4-00 uses the real fixture `h1_extend_1116.json`; D55 chip copy "held (no rate for this date)" confirmed. **Repeatable demo recipe** = BE's wipe→extend→restore pack (always restore in the same session; prefer far-future nights).
+**Gate 4 GO now depends only on the owner's words: "close Gate 3" (G4-06) and "Gate 4 GO" (G4-10).**

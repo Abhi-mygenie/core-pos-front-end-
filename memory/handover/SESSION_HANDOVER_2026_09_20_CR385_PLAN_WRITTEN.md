@@ -65,3 +65,8 @@ Supersedes:  handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md as en
 - D17 FIXED + validated (API 3 cases, UI QA `test_reports/iteration_4.json` S-411 PASS ×2) → **G4-04 ✓**. BQ-385-21: no empty CM night exists → `held_fallback` chip on enum only; **G4-03(b) needs owner waiver**. D67.
 - QA agent left orders 1232643/44/45 in-house → FE settled by TAB (`probes_2026_09_21_d17/log_cleanup_qa4.txt`); rooms → hk; settings at defaults.
 - **Before Gate 4 GO only owner words remain:** G4-03(b) "waive held_fallback live demo" · G4-06 "close Gate 3" · G4-10 "Gate 4 GO". No backend item open for CR-385.
+
+## 10. Update 2026-09-21 — held_fallback live (G4-03 ✓)
+- Owner scenario (`backend_replies/held_fallback_probe_2026-09-21.md`): extend order 1232648 into the wiped night → `held_fallback` @ 36,800 observed in the response and on the LR row (`probes_2026_09_21_held_fallback/`). Stay settled; rates restored 31,500/7,400 and verified; settings defaults. D68. OG-PMS-033 closed.
+- **All G4 evidence rows ticked (01·02·03·04·07·08·09).** Remaining = owner words only: **G4-06 "close Gate 3"**, **G4-10 "Gate 4 GO"**. Then IMPLEMENTATION role starts at M0 (plan §10) with Entry Verification.
+- BE's separate "FE open stay" (order 1232647 / res 220) was left for the UI demo by BE — check its status before using; settle when done.

@@ -367,6 +367,7 @@ function rel(d){const n=dayDiff(d,T);return n===0?'today':(n===1?'tomorrow':(n>1
 // v2.29 addendum (2026-09-21): BQ-385-19 shipped — LR rows carry charge.nights_detail for calendar stays; Bill/Departures/In-House show per-night lines when present, else 'N nights · avg. rate / night' (held mode). G4-07 closed.
 // v2.29 addendum (2026-09-21): open backend asks — D17 (check-in advance dropped → M3 collect-now blocked) and BQ-385-21 (no-rate sandbox date so the 'held (no rate for this date)' chip in Extend can be seen once; untested until answered).
 // v2.29 addendum (2026-09-21 b): D17 FIXED + validated (check-in collect-now now persists: 500→500, 1000+500→1500) → M3 collect-now unblocked, S-411 ✓, G4-04 ✓. BQ-385-21: no empty CM night exists → held_fallback chip ships on the enum; live demo needs owner waiver (G4-03 b).
+// v2.29 addendum (2026-09-21 c): held_fallback observed LIVE (owner scenario, rate wipe→extend→restore): nights_detail 11-14 held 36,800 · 11-15 held_fallback 36,800 → chip 'held (no rate for this date)' has a real fixture (probes_2026_09_21_held_fallback/h1_extend_1116.json). G4-03 ✓. Only owner gate words remain.
 const VERSION='v2.29';
 const RATE={Deluxe:2200,Executive:3300,Suite:4500},PLAN_SUPP={EP:0,CP:300,MAP:700,AP:1000};
 const plural=(n,u)=>`${n} ${u}${Number(n)===1?'':'s'}`;
