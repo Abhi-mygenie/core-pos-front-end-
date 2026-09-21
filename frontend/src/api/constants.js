@@ -461,7 +461,7 @@ export const API_LOADING_ORDER = [
 // DEFAULT PAGINATION
 // =============================================================================
 export const PAGINATION = {
-  DEFAULT_LIMIT: 100, // Load all for caching
+  DEFAULT_LIMIT: 1000, // Load all for caching
   DEFAULT_OFFSET: 1,
   PRODUCTS_TYPE: 'all',
 };

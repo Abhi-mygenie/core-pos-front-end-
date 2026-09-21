@@ -26,7 +26,7 @@ export const useRefreshAllData = () => {
     // Step B: Categories + Products in parallel
     const [catResult, prodResult] = await Promise.all([
       categoryService.getCategories(),
-      productService.getProducts({ limit: 500, offset: 1, type: 'all' }),
+      productService.getProducts({ limit: 1000, offset: 1, type: 'all' }),
     ]);
 
     // Cross-calculate item counts (same pattern as LoadingPage)

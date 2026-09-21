@@ -25,7 +25,7 @@ export const getProducts = async (options = {}) => {
  * @returns {Promise<Array>} - All products
  */
 export const getAllProducts = async () => {
-  const result = await getProducts({ limit: 500, offset: 1, type: 'all' });
+  const result = await getProducts({ limit: 1000, offset: 1, type: 'all' });
   return result.products;
 };
 
