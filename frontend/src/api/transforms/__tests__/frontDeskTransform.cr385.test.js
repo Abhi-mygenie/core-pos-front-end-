@@ -100,6 +100,21 @@ describe('CR-385 M0 frontDeskTransform', () => {
     expect(isTurn(room, rows.slice(0, 1), BD)).toBe(false);
   });
 
+  test('isTurn on a live-shaped snapshot: real board room + fromReservation rows (CR-385 M0.5 BUG-438, A5)', () => {
+    expect(snap.rooms.filter((r) => isTurn(r, snap.reservations, BD))).toHaveLength(0); // real fixture: Turns today 0 (QA A5)
+    const r4 = snap.rooms.find((r) => r.tableNo === 'r4');
+    const [inHouseRaw] = lrFixture.data.reservations.filter((r) => r.operational_status === 'in_house');
+    const [pendingRaw] = lrFixture.data.reservations.filter((r) => r.operational_status === 'pending');
+    const leaving = fromReservation({ ...inHouseRaw, checkout: BD, rooms: [{ ...inHouseRaw.rooms[0], restaurant_table_id: r4.id }] });
+    const arriving = fromReservation({ ...pendingRaw, checkin: BD, rooms: [{ ...pendingRaw.rooms[0], restaurant_table_id: r4.id }] });
+    const rows = [...snap.reservations, leaving, arriving];
+    expect(leaving.tableId).toBe(r4.id);
+    expect(isTurn(r4, rows, BD)).toBe(true);
+    expect(snap.rooms.filter((r) => isTurn(r, rows, BD)).map((r) => r.tableNo)).toEqual(['r4']);
+    expect(isTurn(r4, [...snap.reservations, leaving], BD)).toBe(false);
+    expect(isTurn(r4, [...snap.reservations, { ...leaving, checkout: plusDays(BD, 1) }, arriving], BD)).toBe(false);
+  });
+
   test('snapshot with board rejected → boardError true, rooms [] ; kpis pass-through', () => {
     const s = fromFrontDeskSnapshot({ lr: lrFixture, board: { status: 'rejected', reason: new Error('500') }, kpis: { status: 'fulfilled', value: kpisFixture } });
     expect(s.boardError).toBe(true);

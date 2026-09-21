@@ -29,11 +29,14 @@ export const useChipCounts = (rows, bucketFn, bd, keys) => useMemo(() => {
   return c;
 }, [rows, bucketFn, bd, keys]);
 
+export const firstNonEmptyChip = (counts, order) => order.find((k) => (counts?.[k] ?? 0) > 0) ?? 'today'; // CR-385 M0.5 BUG-437 D70: first non-empty bucket in display order, all-zero → today
+
 export const ArrivalsPanel = ({ rows, meta, kpis, expandedId, onToggle, chip, onChip }) => {
   const bd = meta?.business_date;
   const [sort, setSort] = useState({ key: 'checkin', dir: 'asc' });
   const counts = useChipCounts(rows, bucketArrival, bd, CHIP_ORDER.arrivals);
-  const visible = useMemo(() => sortRows(rows.filter((r) => bucketArrival(r, bd) === chip), sort), [rows, bd, chip, sort]);
+  const active = chip ?? firstNonEmptyChip(counts, CHIP_ORDER.arrivals); // CR-385 M0.5 BUG-437 null chip = auto until the user clicks (D70)
+  const visible = useMemo(() => sortRows(rows.filter((r) => bucketArrival(r, bd) === active), sort), [rows, bd, active, sort]); // CR-385 M0.5 BUG-437
 
   const actions = (r) => (
     <>
@@ -48,9 +51,9 @@ export const ArrivalsPanel = ({ rows, meta, kpis, expandedId, onToggle, chip, on
 
   return (
     <section data-testid="fd-panel-arrivals">
-      <Chips tab="arrivals" active={chip} counts={counts} onPick={onChip} danger={['late']} />
+      <Chips tab="arrivals" active={active} counts={counts} onPick={onChip} danger={['late']} /> {/* CR-385 M0.5 BUG-437 active chip */}
       <GuestTable tab="arrivals" rows={visible} columns={columns} sort={sort} onSort={(k) => setSort(toggleSort(sort, k))}
-        expandedId={expandedId} onToggle={onToggle} emptyText={`No ${chip} arrivals`}
+        expandedId={expandedId} onToggle={onToggle} emptyText={`No ${active} arrivals` /* CR-385 M0.5 BUG-437 */}
         renderExpansion={(row) => <RowExpansionStub row={row} onClose={() => onToggle(null)} actions={actions(row)} />} />
       <div className="mt-2 text-[11px] text-[#767676]" data-testid="fd-arrivals-footer">No-shows today: <span className="tabular-nums font-semibold" data-testid="fd-arrivals-footer-noshow">{kpis?.today?.no_show_count ?? '—'}</span></div>
     </section>

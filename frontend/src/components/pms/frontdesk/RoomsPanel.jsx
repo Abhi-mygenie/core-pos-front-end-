@@ -1,6 +1,6 @@
 // CR-385 M0 — Rooms tab: group-by segmented control Room no. · Type · Area (title, D41/D42; persisted mygenie_frontdesk_groupby) · chips All/Available/Occupied/Booked/HK/OOO/Turns today · tile → RoomDetail (one open at a time) · boardError → panel retry only (OD-385-11)
 import { useMemo, useState } from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, Loader2, RefreshCw } from 'lucide-react'; // CR-385 M0.5 BUG-434 Loader2
 import { groupRooms, isTurn, roomChipKey } from '@/api/transforms/frontDeskTransform';
 import RoomTile from './RoomTile';
 import RoomDetail from './RoomDetail';
@@ -9,7 +9,7 @@ const GROUP_MODES = [{ key: 'number', label: 'Room no.' }, { key: 'type', label:
 const ROOM_CHIPS = [['all', 'All'], ['available', 'Available'], ['occupied', 'Occupied'], ['booked', 'Booked'], ['hk', 'HK'], ['ooo', 'OOO'], ['turns', 'Turns today']];
 const GROUPBY_KEY = 'mygenie_frontdesk_groupby';
 
-export const RoomsPanel = ({ snapshot, expandedRoomId, onToggleRoom, chip, onChip, busyId, onPatch, onRetry }) => {
+export const RoomsPanel = ({ snapshot, expandedRoomId, onToggleRoom, chip, onChip, busyId, onPatch, onRetry, retrying = false }) => { // CR-385 M0.5 BUG-434 retrying
   const { rooms = [], reservations = [], meta, boardError, autoHkOnRmCheckout } = snapshot ?? {};
   const bd = meta?.business_date;
   const [mode, setMode] = useState(() => localStorage.getItem(GROUPBY_KEY) || 'number');
@@ -41,7 +41,7 @@ export const RoomsPanel = ({ snapshot, expandedRoomId, onToggleRoom, chip, onChi
       <div className="bg-white rounded-xl border border-[#E5E5E5] p-10 text-center" data-testid="fd-rooms-error">
         <AlertCircle className="w-6 h-6 text-[#EF4444] mx-auto" />
         <div className="text-[13px] mt-2">Room board unavailable. Reservations tabs still work.</div>
-        <button type="button" data-testid="fd-rooms-retry-btn" onClick={onRetry} className="fd-btn mt-3 inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white" style={{ background: '#F26B33' }}><RefreshCw className="w-4 h-4" /> Retry</button>
+        <button type="button" data-testid="fd-rooms-retry-btn" onClick={onRetry} disabled={retrying} aria-busy={retrying} className="fd-btn mt-3 inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white disabled:opacity-70 disabled:cursor-wait" style={{ background: '#F26B33' }}>{retrying ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {retrying ? 'Retrying…' : 'Retry'}</button> {/* CR-385 M0.5 BUG-434 in-flight state (F14) */}
       </div>
     );
   }

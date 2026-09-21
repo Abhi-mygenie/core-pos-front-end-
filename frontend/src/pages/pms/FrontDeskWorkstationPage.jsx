@@ -21,28 +21,38 @@ import '@/components/pms/frontdesk/frontdesk.css';
 
 const TABS = ['arrivals', 'departures', 'inhouse', 'rooms'];
 const TAB_KEY = 'mygenie_frontdesk_tab';
-const DEFAULT_CHIP = { arrivals: 'today', departures: 'today', inhouse: 'all', rooms: 'all' };
+const DEFAULT_CHIP = { arrivals: null, departures: null, inhouse: 'all', rooms: 'all' }; // CR-385 M0.5 BUG-437 null = auto → first non-empty bucket (D70); a chip click pins it
 const browserToday = () => new Date().toLocaleDateString('en-CA'); // request window only (X-06)
 
-const useFrontDeskSnapshot = () => {
+export const useFrontDeskSnapshot = () => { // CR-385 M0.5 BUG-435 named export for the RTL debounce tests (D71)
   const [snap, setSnap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const bdRef = useRef(null);
-  const refresh = useCallback(async () => {
+  const inFlightRef = useRef(null); // CR-385 M0.5 BUG-435 D71: in-flight snapshot promise — a second refresh() is coalesced onto it, never dropped
+  const lastFetchRef = useRef(0);   // CR-385 M0.5 BUG-435 D71: time of the last successful fetch (focus debounce)
+  const refresh = useCallback(() => {
+    if (inFlightRef.current) return inFlightRef.current; // CR-385 M0.5 BUG-435 coalesce
     const bd = bdRef.current ?? browserToday();
     setRefreshing(true);
-    try {
-      const s = await getSnapshot({ start: plusDays(bd, -30), end: plusDays(bd, 60), today: bd });
-      bdRef.current = s.meta?.business_date ?? bdRef.current;
-      setSnap(s); setError(null);
-    } catch (e) {
-      setError(e?.response?.data?.message ?? e?.readableMessage ?? e?.message ?? 'Could not load the front desk');
-    } finally { setLoading(false); setRefreshing(false); }
+    inFlightRef.current = (async () => { // CR-385 M0.5 BUG-435
+      try {
+        const s = await getSnapshot({ start: plusDays(bd, -30), end: plusDays(bd, 60), today: bd });
+        bdRef.current = s.meta?.business_date ?? bdRef.current;
+        lastFetchRef.current = Date.now(); // CR-385 M0.5 BUG-435
+        setSnap(s); setError(null);
+      } catch (e) {
+        setError(e?.response?.data?.message ?? e?.readableMessage ?? e?.message ?? 'Could not load the front desk');
+      } finally { setLoading(false); setRefreshing(false); inFlightRef.current = null; } // CR-385 M0.5 BUG-435
+    })();
+    return inFlightRef.current; // CR-385 M0.5 BUG-435
   }, []);
   useEffect(() => { refresh(); }, [refresh]);
-  useEffect(() => { window.addEventListener('focus', refresh); return () => window.removeEventListener('focus', refresh); }, [refresh]);
+  useEffect(() => {
+    const onFocus = () => { if (Date.now() - lastFetchRef.current < 5000) return; refresh(); }; // CR-385 M0.5 BUG-435 D71: focus refresh ignored < 5 s after the last fetch; manual ↻ / Retry / after-PATCH never skipped
+    window.addEventListener('focus', onFocus); return () => window.removeEventListener('focus', onFocus); // CR-385 M0.5 BUG-435
+  }, [refresh]);
   return { snap, loading, refreshing, error, refresh };
 };
 
@@ -101,7 +111,7 @@ export default function FrontDeskWorkstationPage() {
     switch (tab) {
       case 'departures': return <DeparturesPanel rows={inHouse} {...common} />;
       case 'inhouse': return <InHousePanel rows={inHouse} {...common} />;
-      case 'rooms': return <RoomsPanel snapshot={snap} expandedRoomId={expanded.roomId} onToggleRoom={toggleRoom} chip={chips.rooms} onChip={(c) => setChip('rooms', c)} busyId={busyId} onPatch={handlePatch} onRetry={refresh} />;
+      case 'rooms': return <RoomsPanel snapshot={snap} expandedRoomId={expanded.roomId} onToggleRoom={toggleRoom} chip={chips.rooms} onChip={(c) => setChip('rooms', c)} busyId={busyId} onPatch={handlePatch} onRetry={refresh} retrying={refreshing} />; // CR-385 M0.5 BUG-434 retrying
       default: return <ArrivalsPanel rows={pending} kpis={snap.kpis} {...common} />;
     }
   };
@@ -109,7 +119,7 @@ export default function FrontDeskWorkstationPage() {
   return (
     <div className="flex h-screen bg-[#F7F7F7] fd-page" data-testid="fd-page">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={(v) => { setIsSidebarExpanded(v); localStorage.setItem('mygenie_sidebar_expanded', String(v)); }} />
-      <main className="flex-1 overflow-auto min-w-0">
+      <main className="flex-1 overflow-auto min-w-0" data-testid="fd-workstation-body">{/* CR-385 M0.5 BUG-436 scope for the ui_naming_rule DOM assertions (excludes app chrome) */}
         <WorkstationHeader firstName={user?.firstName} meta={snap?.meta} loadedAt={snap?.loadedAt} refreshing={refreshing} onRefresh={refresh} onNewBooking={null} />
         <div className="p-6 space-y-4">
           {loading && (
@@ -120,7 +130,7 @@ export default function FrontDeskWorkstationPage() {
               <AlertCircle className="w-6 h-6 text-[#EF4444] mx-auto" />
               <div className="text-[14px] font-semibold mt-2">Reservations could not be loaded</div>
               <div className="text-[12px] text-[#767676] mt-1">{error}</div>
-              <button type="button" data-testid="fd-retry-btn" onClick={refresh} className="fd-btn mt-4 inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white" style={{ background: '#F26B33' }}><RefreshCw className="w-4 h-4" /> Retry</button>
+              <button type="button" data-testid="fd-retry-btn" onClick={refresh} disabled={refreshing} aria-busy={refreshing} className="fd-btn mt-4 inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white disabled:opacity-70 disabled:cursor-wait" style={{ background: '#F26B33' }}>{refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {refreshing ? 'Retrying…' : 'Retry'}</button> {/* CR-385 M0.5 BUG-434 in-flight state (F14) */}
             </div>
           )}
           {!loading && !error && snap && (
