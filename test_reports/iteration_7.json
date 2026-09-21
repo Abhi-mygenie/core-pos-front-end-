@@ -1,0 +1,66 @@
+{
+  "summary": "CR-385 Phase 0.5 QA RUN A — verified the 5 fixes (BUG-437 D70, BUG-434, BUG-435 D71, BUG-436, BUG-438) at /pms/front-desk-v2 via a single Playwright script against preprod. 8/10 cases PASS. Two FAILs: BUG-435 Case C (focus refresh after >5s does not fire a request) and BUG-434 recovery/rooms path (recovery timed out because after unroute the retry click did not re-render fd-tab-strip within 45s and the rooms error flow could not proceed). Zero non-ignored console errors captured.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "useFrontDeskSnapshot (FrontDeskWorkstationPage.jsx L52–55)",
+        "issue": "BUG-435 D71 Case C FAIL — after a completed fetch, waiting 6.5 s idle then dispatching a single window 'focus' event does NOT trigger a new /aiosell/local-reservations request (observed 0, expected exactly 1). Case A (two focus events within 2 s of last fetch → 0) trivially passes so cannot alone confirm the listener fires; Case D (manual click) works, so the fetch pipeline is healthy. Root-cause suspicion: the focus listener/onFocus branch or lastFetchRef comparison isn't re-arming — either the debounce window is longer than the spec's 5 s, the listener is attached to a wrong target, or a subsequent event (e.g. visibilitychange) is required. Also verified: a synthetic `visibilitychange` after making document.visibilityState='visible' also yields 0 new requests.",
+        "selector": "window 'focus' event → refresh() in useFrontDeskSnapshot",
+        "priority": "HIGH"
+      },
+      {
+        "component": "FrontDeskWorkstationPage error → retry recovery",
+        "issue": "BUG-434 recovery FAIL — after fulfilling /aiosell/local-reservations with 500 and clicking fd-retry-btn (in-flight state passed: disabled + 'Retrying…' + exactly 1 request), unroute()-ing the mock and clicking fd-retry-btn a second time did NOT bring back [data-testid='fd-tab-strip'] within 45 s. Screenshot shows the app remained on the error card with a different message ('Request timed out. Check your connection and try again.'). This blocked the subsequent rooms-error scenario (fd-rooms-error/fd-rooms-retry-btn) because tabs were not rendered.",
+        "selector": "[data-testid='fd-retry-btn'] → [data-testid='fd-tab-strip']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "cases_pass_fail": {
+    "BUG-437_arrivals_first_nonempty_chip": "PASS (Late=10 selected, others false, no fd-table-arrivals-empty)",
+    "BUG-437_departures_first_nonempty_chip": "PASS (Today=2 selected)",
+    "BUG-437_inhouse_all_default": "PASS (fd-chip-inhouse-all aria-selected true, All=2)",
+    "BUG-437_rooms_all_default": "PASS (fd-chip-rooms-all aria-selected true, All=5)",
+    "BUG-437_user_pin_survives_refresh": "PASS (Today 0 clicked, empty 'No today arrivals' shown, still active after fd-refresh-btn + 6 s)",
+    "BUG-437_url_reset_tab_arrivals": "PASS (goto ?tab=arrivals restores Late=10 active)",
+    "BUG-434_retry_inflight_local_reservations": "PASS (fd-retry-btn disabled + 'Retrying…' within 200 ms; exactly 1 request per click; re-enabled to 'Retry')",
+    "BUG-434_retry_recovery_local_reservations": "FAIL (after unroute + retry click, fd-tab-strip did not return within 45 s; UI stayed on fd-page-error with 'Request timed out')",
+    "BUG-434_rooms_retry_inflight_and_recovery": "BLOCKED (could not reach fd-tab-rooms because the previous recovery failure kept fd-page-error mounted)",
+    "BUG-435_caseA_focus_within_2s_of_last_fetch_zero": "PASS (0 new reqs on 2 focus events within debounce window)",
+    "BUG-435_caseB_two_rapid_manual_clicks_one_req": "PASS (exactly 1 new /aiosell/local-reservations)",
+    "BUG-435_caseC_focus_after_6s_idle_one_req": "FAIL (0 new reqs observed; expected 1). Also visibilitychange yielded 0.",
+    "BUG-435_caseD_manual_click_after_C_one_req": "PASS (1 new; manual never debounced)",
+    "BUG-436_workstation_body_main_and_no_channel_manager": "PASS on all 4 tabs (tag=MAIN, inside fd-page, innerText excludes 'Channel Manager')",
+    "BUG-438_keyboard_arrivals_TR_navigation": "PASS (ArrowDown/Up focus swaps between fd-row-15/fd-row-17, Enter opens exactly one .fd-expansion, Escape closes it)",
+    "BUG-438_phone_suffix_search": "PASS ('/' focuses fd-search-input; typing 4-digit masked-phone suffix e.g. 1345 shows fd-search-results with fd-search-result-inhouse-0; clicking it lands on inhouse tab)",
+    "BUG-438_turns_chip": "PASS (fd-chip-rooms-turns count 0 == count of 'TURN TODAY' tiles 0; clicking it shows fd-rooms-empty; fd-chip-rooms-all restores)"
+  },
+  "console_errors_non_ignored": 0,
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/results.json",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/results_run2.json",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/final.png",
+    "/app/memory/evidence/CR-385/qa_2026_09_21_p0_5/final_run2.png"
+  ],
+  "action_items": [
+    "BUG-435 D71 Case C: investigate why the window 'focus' listener in useFrontDeskSnapshot does not fire a new /aiosell/local-reservations after >5 s idle. Verify onFocus is subscribed to the correct target (window vs document), that lastFetchRef is compared correctly (< 5000 ms not <= or reversed), and that inFlightRef is nulled before the debounce window elapses. Confirm the RTL D71 unit tests (BUG-435 named export) still assert the third scenario.",
+    "BUG-434 recovery: after fulfilling 500, unroute()-ing, and clicking fd-retry-btn, the app must re-fetch and render fd-tab-strip. Currently it stays on fd-page-error with 'Request timed out'. Likely inFlightRef isn't cleared correctly, or the request AbortController is being reused, or refresh() short-circuits when a prior error is present. This also blocks the rooms retry sub-flow.",
+    "Consider adding an explicit data-testid on the Phone <td> cell (e.g. fd-row-<id>-phone) — currently the phone cell has no dedicated testid; tests must scan cell text. Not a bug fix, just testability improvement referenced by the QA spec."
+  ],
+  "critical_code_review_comments": [
+    "FrontDeskWorkstationPage.jsx L47: `inFlightRef.current = null` runs in `finally`, but if an error is thrown the setError path clears refreshing and inFlightRef — subsequent retry clicks may re-enter but the app appears not to actually re-fetch after unroute. Add trace/log for retry click paths.",
+    "FrontDeskWorkstationPage.jsx L53: focus debounce uses Date.now() - lastFetchRef.current < 5000, but lastFetchRef only advances on SUCCESS (L43). If the last fetch errored, lastFetchRef stays at previous value → after a long time focus will trigger a fetch; verify this is what Case C exercises in practice.",
+    "GuestTable.jsx L115: Phone column render has no data-testid attribute; add fd-row-<id>-phone to enable deterministic selection called out in the spec."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "80% (8 of 10 case groups PASS; 1 FAIL + 1 BLOCKED downstream)"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md (used, not printed)",
+  "seed_data_creation": "None. No bookings/payments/room-status changes were made. Only fd-refresh-btn clicks, chip clicks and page.route intercepts (both unroute()-d before exit).",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "Sandbox state (2026-09-21 preprod): Arrivals Late=10 / Today=0 / Tomorrow=0 / Upcoming=4; Departures Today=2; Inhouse All=2 (fd-row-174 phone ••••1345, fd-row-155 phone ••••5723); Rooms All=5 with 0 TURN TODAY. Login via '/' then goto /pms/front-desk-v2 — first load can take up to 90 s (bump wait). Preprod latency 1–3 s per request. Always unroute after every page.route() intercept, and click fd-refresh-btn twice with settle waits before asserting recovery. For BUG-435 Case C, verify by clearing lastFetchRef manually via devtools before dispatching focus to isolate the debounce logic. Screenshots and raw JSON evidence in /app/memory/evidence/CR-385/qa_2026_09_21_p0_5/.",
+  "rca of the issue": "BUG-435 Case C: focus-triggered auto-refresh does not fire after the 5 s debounce window. onFocus in useFrontDeskSnapshot (L53) references lastFetchRef, which is only advanced on a successful fetch. The listener itself might not be attached to the correct target for synthetic events, or the debounce comparison is inverted for the exact 5000 ms boundary. Repro: (1) load /pms/front-desk-v2, wait for tab-strip, (2) click fd-refresh-btn, wait networkidle, (3) sleep 6500 ms, (4) `window.dispatchEvent(new Event('focus'))`, wait 5000 ms → observed 0 /aiosell/local-reservations, expected 1. BUG-434 recovery: after 500-mock unroute + retry click, refresh() is invoked but the app stays on the error card and shows a new 'Request timed out' message, implying inFlightRef/AbortController state or React error boundary is not being reset. Mitigation: force setError(null) at the start of refresh(), null out inFlightRef defensively before invoking, and add an integration test that mounts, injects a 500, then a 200, then asserts snap becomes non-null."
+}
