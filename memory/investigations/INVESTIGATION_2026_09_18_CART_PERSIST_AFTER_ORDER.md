@@ -1,10 +1,11 @@
-# INVESTIGATION REPORT — Stale Cart Items After Order Placement / Navigation
+# INVESTIGATION REPORT — Stale Cart Items (Intermittent) — REVISED
 
 **ID:** INV-CART-PERSIST-001  
 **Date:** 2026-09-18  
 **Role:** INVESTIGATION (ALPHA v0.7)  
-**Triggered by:** Owner — "after placing an order and clicking Add button again, cart still shows previous items. Deep investigation needed — does cart ever remain after order placement or navigating back?"  
-**Steps used:** 8 / 10  
+**Triggered by:** Owner — "sometimes after placing order and clicking Add again, old items still show in cart. Happens very rarely."  
+**Steps used:** 10 / 10  
+**Revised:** Yes — initial hypothesis H1 was too broad and corrected after owner challenge (see §7)
 
 ---
 
@@ -12,185 +13,203 @@
 
 | Field | Value |
 |---|---|
-| Root cause | After a successful `placeOrder`, `cartsByTable[key]` in `DashboardPage` is **never cleared**. The `table.id` prop change on close triggers `onCartChange(oldKey, cartItems)` in OrderEntry — which **writes the stale pre-placed cart back into `cartsByTable`** right before unmount. On next open of the same table/walk-in, `savedCart.length > 0` → stale items restored. |
+| Root cause | `cartsByTable[key]` in DashboardPage is written with stale items when the cashier **switches order type** (Walk-in → TakeAway/Delivery) OR **switches tables** (clicks Table B while Table A is open) mid-build. These two paths keep OrderEntry **mounted** — triggering `onCartChange(oldKey, cartItems)` with live (unplaced) cart items. On next open of the same key, `savedCart.length > 0` restores the stale items. |
 | Classification | **FE_BUG** |
-| Confidence | **HIGH** — full data flow traced end-to-end |
-| Risk | **MEDIUM** — affects every successful order placement, walk-in, and delivery order |
-| Planning skip eligible | **NO** — fix is inside `OrderEntry.jsx` (R5 hotspot) |
-| Steps used | 8 / 10 |
+| Confidence | **HIGH** — exact triggers identified, mount/unmount behaviour confirmed |
+| Why intermittent | Triggered only by order type switch or mid-session table switch — both are rare cashier actions. Straight-through order flow never triggers it (clean unmount path). |
+| Risk | **MEDIUM** |
+| Planning skip eligible | **NO** — fix is in `OrderEntry.jsx` (R5 hotspot) and `DashboardPage.jsx` |
+| Steps used | 10 / 10 |
 
 ---
 
 ## 2. Hypotheses Tested
 
-| # | Hypothesis | Test Method | Steps | Result |
-|---|---|---|---|---|
-| H1 | Cart state not cleared after `placeOrder` success → stale items persist in `cartsByTable` | Code trace: `handlePlaceOrder` → `navigateAfterOrderAction` → `handleCloseOrderEntry` | 4–7 | **CONFIRMED — PRIMARY ROOT CAUSE** |
-| H2 | Cart persisted in `localStorage` | grep `localStorage.*cart` across entire src | 2 | **ELIMINATED** — no localStorage usage for cart anywhere |
-| H3 | Cart lives in a parent that doesn't unmount → survives navigation | Code trace: `cartsByTable` in DashboardPage, `savedCart` prop to OrderEntry | 3–5 | **CONFIRMED (mechanism)** — `cartsByTable` in DashboardPage is the persistence layer |
-| H4 | `placeOrder` clears cart on HTTP path but NOT on socket ack path — race condition | Trace `handlePlaceOrder` both paths | 6–7 | **PARTIAL** — neither path calls `setCartItems([])` or `onCartChange(key, [])` |
+| # | Hypothesis | Test | Result |
+|---|---|---|---|
+| H1 (initial) | `placeOrder` → close → `onCartChange` writes stale items on every unmount | Trace unmount path: `handleCloseOrderEntry` → `setOrderEntryType(null)` → `{orderEntryType &&}` = false → UNMOUNT | **ELIMINATED** — component unmounts; useEffect body does NOT run on unmount; `onCartChange` never called on normal close |
+| H2 | Cart persisted in `localStorage` | grep `localStorage.*cart` entire src | **ELIMINATED** — no localStorage cart |
+| H3 | Order type switch mid-build keeps component mounted and triggers `onCartChange` | Trace `handleOrderTypeChange` → `setOrderEntryType(newType)` (non-null) → mounted → useEffect fires | **CONFIRMED — TRIGGER 1** |
+| H4 | Table switch mid-build keeps component mounted and triggers `onCartChange` | Trace `handleTableClick` → `setOrderEntryTable(tableB)` → mounted → useEffect fires | **CONFIRMED — TRIGGER 2** |
 
 ---
 
-## 3. Full Data Flow Trace — The Bug
+## 3. Why Normal Close Does NOT Cause the Bug (defending intermittency)
 
 ```
-Step 1: User adds items → cartItems state updated in OrderEntry.jsx:104
-        Every item add calls setCartItems() internally.
-        onCartChange NOT called on every add — only on table/orderType switch.
+handleCloseOrderEntry()
+  → setOrderEntryTable(null)  ┐ React batches these
+  → setOrderEntryType(null)   ┘ into ONE render
 
-Step 2: User clicks Place Order
-        handlePlaceOrder (OrderEntry.jsx:978) fires
-        → HTTP POST fires (fire-and-forget, line 1141)
-        → await waitForTableEngaged(tableId) OR 500ms delay
-        → setIsPlacingOrder(false)
-        → navigateAfterOrderAction() called                    ← cartItems NEVER cleared
+DashboardPage re-renders:
+  {orderEntryType && (<OrderEntry .../>)}
+  ↑ orderEntryType = null → condition FALSE → OrderEntry UNMOUNTS
 
-Step 3: navigateAfterOrderAction()
-        → onClose() is called
-        → DashboardPage: handleCloseOrderEntry() fires (line 1513)
-            setOrderEntryTable(null)      ← table prop changes to null
-            setOrderEntryType(null)       ← orderType prop changes to null
-        ⚠️ NO setCartsByTable clearing here
-
-Step 4: table prop change triggers useEffect in OrderEntry (line 379)
-        newKey = null (table is null now)
-        oldKey = previous table id (e.g., "5" or "walkIn")
-        ──────────────────────────────────────────────────────────────────
-        Line 384–386: onCartChange?.(oldKey, cartItems)
-        ← cartItems still has ALL the pre-placed items (NEVER cleared)
-        ← DashboardPage: setCartsByTable(prev => ({ ...prev, ["5"]: cartItems }))
-        ← cartsByTable["5"] = stale unplaced items          ← BUG WRITTEN HERE
-        ──────────────────────────────────────────────────────────────────
-
-Step 5: OrderEntry unmounts. cartsByTable["5"] has stale items.
-
-Step 6: User clicks Add or clicks the same table again
-        DashboardPage: setOrderEntryTable(tableEntry) or setOrderEntryType("walkIn")
-        OrderEntry remounts with:
-          savedCart = cartsByTable["5"]   ← stale items from Step 4!
-                                          (DashboardPage line 2069)
-
-Step 7: useEffect in OrderEntry fires (line 379)
-        savedCart.length > 0 → TRUE
-        → setCartItems(savedCart)         ← stale items RESTORED
-        → Old items appear in cart        ← BUG VISIBLE TO USER
-
-        Note: savedCart takes PRIORITY over orderData (API items):
-          if (savedCart && savedCart.length > 0) {
-            setCartItems(savedCart);    ← savedCart wins
-          } else if (orderData?.items?.length > 0) { ... }
+React unmount sequence:
+  → runs useEffect CLEANUP functions only
+  → useEffect BODY does NOT fire with new null prop values
+  → onCartChange is NEVER called
+  → cartsByTable NOT written
+  → clean slate on next open ✅
 ```
 
 ---
 
-## 4. Why `handleCollectBillStayOnOrder` does NOT have this bug
+## 4. Trigger 1 — Order Type Switch Mid-Build
 
-`DashboardPage.jsx:1536–1545` (the "Stay on Order" flow after collecting bill) **explicitly clears the cart** before closing:
+```
+1. Cashier clicks Add → orderEntryType = "walkIn" → OrderEntry MOUNTS
+2. Cashier adds item1, item2 to cart
+   (cartItems = [item1, item2], cartsByTable["walkIn"] = still empty)
+3. Cashier switches type to TakeAway via OrderEntry dropdown
+     → handleOrderTypeChange("takeAway") in DashboardPage
+     → setOrderEntryType("takeAway")      ← NOT null
+     → OrderEntry stays MOUNTED, orderType prop changes
+4. useEffect([table?.id, orderType]) fires:
+     oldKey = "walkIn"   newKey = "takeAway"
+     oldKey !== newKey → onCartChange("walkIn", [item1, item2])
+     → cartsByTable["walkIn"] = [item1, item2]   ← STALE WRITE
+5. Component now in TakeAway mode with empty cart
+6. Cashier exits (handleCloseOrderEntry → null → UNMOUNT)
+   cartsByTable still has: { "walkIn": [item1, item2] }
 
-```javascript
-const handleCollectBillStayOnOrder = () => {
-  const cartKey = orderEntryTable?.id || orderEntryType;
-  if (cartKey) setCartsByTable(prev => ({ ...prev, [cartKey]: [] })); // ← CART CLEARED ✅
-  setOrderEntryTable(null);
-  setOrderEntryType('walkIn');
-  setOrderEntryResetNonce(n => n + 1);
-};
+7. Next cashier clicks Add:
+   orderEntryType = null → "walkIn" → fresh MOUNT
+   savedCart = cartsByTable["walkIn"] = [item1, item2]
+   useEffect: savedCart.length > 0 → setCartItems([item1, item2])
+   → BUG: stale items appear ❌
 ```
 
-But the regular close path `handleCloseOrderEntry` (line 1513) has **no such clearing**:
-
-```javascript
-const handleCloseOrderEntry = () => {
-  setOrderEntryTable(null);   // ← no cart clear before this
-  setOrderEntryType(null);    // ← table change triggers onCartChange(oldKey, staleCart)
-  setInitialShowPayment(false);
-  setInitialTransferItem(null);
-  // ...
-};
-```
-
-The `onCartChange(oldKey, cartItems)` in the useEffect then writes the stale cart because `cartItems` was never cleared.
+**Frequency:** Any cashier who changes order type mid-build without completing the order.
 
 ---
 
-## 5. Affected Scenarios
+## 5. Trigger 2 — Table Switch Mid-Build (Dashboard grid click)
 
-| Scenario | Affected? | Why |
-|---|---|---|
-| New order placed on dine-in table → click same table | ✅ YES | `cartsByTable[tableId]` not cleared |
-| New walk-in order placed → click Add | ✅ YES | `cartsByTable["walkIn"]` not cleared |
-| TakeAway/Delivery placed → click Add | ✅ YES | `cartsByTable["takeAway"/"delivery"]` not cleared |
-| User adds items, navigates away WITHOUT placing | ✅ YES — BY DESIGN | Resume mid-build feature (intentional) |
-| Collect Bill → Stay on Order flow | ✅ NO BUG | `handleCollectBillStayOnOrder` clears explicitly |
-| Update Order (existing placed order) | LOW RISK | `orderData.items` restored after savedCart; socket sync overrides anyway |
+```
+1. Cashier opens Table A → OrderEntry MOUNTS (orderType="dineIn", table=tableA)
+2. Cashier adds item1 to cart
+   (cartItems = [item1], cartsByTable["tableA_id"] = still empty)
+3. Cashier clicks Table B on the dashboard grid while OrderEntry is open
+     → handleTableClick(tableB) in DashboardPage
+     → setOrderEntryTable(tableB)    ← component stays MOUNTED
+     → setOrderEntryType("dineIn")   ← same type, but table changes
+4. useEffect([table?.id, orderType]) fires:
+     oldKey = "tableA_id"   newKey = "tableB_id"
+     oldKey !== newKey → onCartChange("tableA_id", [item1])
+     → cartsByTable["tableA_id"] = [item1]   ← STALE WRITE
+5. Component now shows Table B
+6. Cashier abandons, exits → UNMOUNT
+   cartsByTable still has: { "tableA_id": [item1] }
+
+7. Next open of Table A:
+   savedCart = cartsByTable["tableA_id"] = [item1]
+   → BUG: stale items appear ❌
+```
+
+**Frequency:** Any cashier who clicks a different table while already inside an order, without completing the first.
 
 ---
 
-## 6. Evidence
-
-All traced via source code — no live API curl needed (pure FE state management bug).
+## 6. Data Flow — The Persistence Mechanism
 
 ```
-Key files:
-  OrderEntry.jsx:379–391   — useEffect that saves + restores per-table cart
-  OrderEntry.jsx:1139–1168 — handlePlaceOrder success path (no cart clear)
-  DashboardPage.jsx:453    — cartsByTable useState
-  DashboardPage.jsx:1513   — handleCloseOrderEntry (missing cart clear)
-  DashboardPage.jsx:1536   — handleCollectBillStayOnOrder (HAS cart clear — correct)
-  DashboardPage.jsx:2069   — savedCart prop passed to OrderEntry
-  DashboardPage.jsx:2070   — onCartChange callback that writes to cartsByTable
+DashboardPage (stays alive for full session):
+  const [cartsByTable, setCartsByTable] = useState({})
+                        ↑
+                 NEVER cleared on close/remount
+                 Only cleared by handleCollectBillStayOnOrder ← only one safe path
+
+OrderEntry:
+  savedCart prop = cartsByTable[key] || []     ← read on mount
+  onCartChange callback = updates cartsByTable ← write on key change
+
+Write triggers (component MOUNTED, key changes):
+  1. handleOrderTypeChange(newType) — "walkIn"→"delivery" etc.
+  2. handleTableClick(tableB) — table.id changes
+
+Non-triggers (component UNMOUNTS — useEffect body skipped):
+  3. handleCloseOrderEntry() — setOrderEntryType(null) → unmount ✅
+  4. navigateAfterOrderAction() → onClose() → handleCloseOrderEntry ✅
 ```
 
 ---
 
-## 7. Recommendations
+## 7. Why Initial H1 Was Wrong and Owner Challenge Was Correct
 
-### Fix location
-The cleanest fix is in `OrderEntry.jsx` — `handlePlaceOrder` success path — to clear the cart **before** calling `navigateAfterOrderAction()`. This way only a **successful placement** clears the saved cart (preserving the mid-build resume feature for navigating away without placing).
+Initial claim: "`placeOrder` writes stale items on every close."  
+**Why wrong:** On successful `placeOrder`, `navigateAfterOrderAction()` → `onClose()` → `handleCloseOrderEntry()` → `setOrderEntryType(null)` → UNMOUNT. React does not re-run the useEffect body during unmount. `onCartChange` is never called. The initial H1 would have predicted the bug on every single order — contradicting owner's "very less" observation.
+
+**Corrected root cause:** The stale write only happens during a KEY CHANGE while the component remains mounted. This is a rare but valid cashier workflow (type switch, table switch mid-build).
+
+---
+
+## 8. Evidence References
 
 ```
-File:   src/components/order-entry/OrderEntry.jsx   (R5 hotspot)
-Where:  handlePlaceOrder success path, just before navigateAfterOrderAction()
-What:   onCartChange?.(cartKeyRef.current, [])   ← clear cartsByTable entry
-Risk:   LOW for the change itself; MEDIUM overall due to R5 hotspot
+DashboardPage.jsx:2059      {orderEntryType && (<OrderEntry.../>)}  ← unmount gate
+DashboardPage.jsx:1504-1511 handleOrderTypeChange — sets non-null type → stays mounted
+DashboardPage.jsx:1462-1497 handleTableClick — sets new table → stays mounted
+DashboardPage.jsx:1513-1520 handleCloseOrderEntry — sets null → UNMOUNTS
+DashboardPage.jsx:2069-2070 savedCart + onCartChange props
+OrderEntry.jsx:378-391      useEffect — saves oldKey cart when key changes, restores savedCart
+OrderEntry.jsx:384-386      onCartChange(oldKey, cartItems) — THE WRITE
 ```
 
-An alternative secondary fix in `handleCloseOrderEntry` (DashboardPage) would clear ALL closes, losing the mid-build resume feature — **NOT recommended**.
+---
+
+## 9. Recommendations
+
+### Fix
+The `cartsByTable` entry should be cleared when:
+- Cashier **completes** a type switch (don't carry unplaced items to new type)
+- Cashier **abandons** a partial build (clear on explicit close without placing)
+
+**Option A (minimal — recommended):** In `handleOrderTypeChange`, explicitly clear the old key before switching:
+```
+File:   DashboardPage.jsx
+Where:  handleOrderTypeChange (line 1504) — add clear before setOrderEntryType
+What:   setCartsByTable(prev => { const {[oldKey]:_, ...rest} = prev; return rest; })
+Risk:   LOW — DashboardPage, not R5
+```
+
+**Option B (comprehensive):** In `handleCloseOrderEntry`, clear `cartsByTable[key]` the same way `handleCollectBillStayOnOrder` does (line 1540). This covers all close paths including user pressing X mid-build. Trade-off: loses the "resume mid-build" feature entirely.
+
+**Option C (selective — best UX):** Only clear `cartsByTable[key]` when close follows a successful order placement. Pass a `didPlaceOrder` flag from OrderEntry to the close handler.
 
 ### Planning skip eligibility
-| Criterion | Status |
-|---|---|
-| ≤ 10 lines | YES — ~1–2 lines |
-| 1 file | YES — OrderEntry.jsx only |
-| Not hotspot (R5) | **NO — OrderEntry.jsx is R5** |
-| Not financial | YES |
+| Criterion | Option A | Option B | Option C |
+|---|---|---|---|
+| ≤ 10 lines | YES | YES | YES |
+| 1 file | YES (DashboardPage only) | YES | NO (2 files) |
+| Not hotspot R5 | YES (DashboardPage not R5) | YES | NO (OrderEntry = R5) |
+| Not financial | YES | YES | YES |
+| **Skip eligible** | **YES — owner must approve** | **YES — owner must approve** | **NO** |
 
-**Planning skip: NOT eligible.** Requires full Gate 2 Impact Analysis → Gate 3 Implementation Plan → Gate 4 GO.
+**Option A is planning-skip-eligible.** Still requires owner approval per OWNER APPROVAL MATRIX.
 
 ---
 
-## 8. Retroactive Candidates
+## 10. Owner Decisions Needed
 
-NONE — no registry drift found relating to this.
+| # | Decision | Options |
+|---|---|---|
+| OD-1 | Fix scope: which trigger to fix? | A: type switch only · B: all closes · C: close after placement only |
+| OD-2 | Should mid-build cart resume (carrying items when switching type) remain as a feature for dine-in table switches? | YES (keep for tables only) · NO (always clear) |
 
 ---
 
 ```
-Root cause:  FE_BUG — cartsByTable[key] not cleared in placeOrder success path.
-             onCartChange(oldKey, cartItems) writes stale items to cartsByTable
-             right before OrderEntry unmounts, because cartItems is never cleared
-             before navigateAfterOrderAction() is called.
+Root cause:    FE_BUG — cartsByTable[key] written with stale unplaced items
+               during order-type switch or table switch (component stays mounted).
+               Normal close (unmount path) does NOT trigger the write.
 Classification: FE_BUG
-Confidence:  HIGH — full trace complete (8/10 steps)
-Fix scope:   OrderEntry.jsx (R5 hotspot) — ~1-2 lines before navigateAfterOrderAction()
-             DashboardPage.jsx reference only (no change)
-Planning skip:  NOT eligible (R5 hotspot)
-Recommended path:  Gate 2 Impact Analysis → Gate 3 Plan → Gate 4 GO → Implementation
-Owner decision needed:
-  OD-1: Should the fix clear ONLY on successful placeOrder, OR on ALL closes?
-         Recommended: placeOrder only — preserve mid-build resume feature.
-  OD-2: Should updateOrder / collectBill also clear cartsByTable?
-         (These have socket-driven setCartItems, so they may be less affected.)
-Report: /app/memory/investigations/INVESTIGATION_2026_09_18_CART_PERSIST_AFTER_ORDER.md
+Confidence:    HIGH
+Why intermittent: Only Trigger 1 (type switch) or Trigger 2 (table switch mid-build) cause it.
+                  Straight-through order flow never hits this path.
+Fix scope:     DashboardPage.jsx (not R5) — Option A is planning-skip eligible
+Planning skip: YES for Option A (owner approval required)
+               NO for Option C (R5 touch)
+Owner decisions: OD-1 (scope) + OD-2 (resume feature)
+Report:        /app/memory/investigations/INVESTIGATION_2026_09_18_CART_PERSIST_AFTER_ORDER.md
 ```
