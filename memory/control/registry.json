@@ -26481,7 +26481,7 @@
       "title": "CR-385 P0 duplicate data-testid when a guest row is expanded — row actions re-rendered inside RowExpansionStub with the same ids (Arrivals/Departures/In-House)",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE (registered 2026-09-21) — routing OPEN, owner decides",
+      "status": "PLANNED — Gate 2 Impact Analysis + Gate 3 Plan (Option A) written 2026-09-21; awaiting owner: Option A/B + Fast Lane vs first-P1-batch → Gate 4 GO",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-21",
       "category": "INTAKE",
@@ -26492,10 +26492,10 @@
       "blast_radius": "MEDIUM (3–4 files, ~8 lines, no hotspots)",
       "code_reality": "EXISTS (defect in CR-385 M0 code)",
       "files_affected": [
-        "frontend/src/components/pms/frontdesk/GuestTable.jsx",
         "frontend/src/components/pms/frontdesk/ArrivalsPanel.jsx",
         "frontend/src/components/pms/frontdesk/DeparturesPanel.jsx",
-        "frontend/src/components/pms/frontdesk/InHousePanel.jsx"
+        "frontend/src/components/pms/frontdesk/InHousePanel.jsx",
+        "frontend/src/components/pms/frontdesk/__tests__/bug439.cr385.test.jsx (NEW)"
       ],
       "related_items": [
         "CR-385"
@@ -26513,11 +26513,21 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Intake role (owner-confirmed): code reality EXISTS (P0 code), duplicate DISTINCT/RELATED CR-385, P3 by rubric, risk LOW, blast radius MEDIUM (3–4 files), evidence captured. Routing NOT decided by intake — recommendation Fast Lane Bug Fix (owner approval needed). Gate 5B (P0+P0.5) stays closed; BUG-439 does not reopen P0.5 (owner)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "PLANNED (Gate 3)",
+          "note": "Planning role (owner-requested): Code reality FULL-defect/fix NONE; conflict with CR-385 P1 on ArrivalsPanel L41–46; risk LOW; Option A (variant suffix on drawer copy, no visual change, GuestTable.jsx untouched) recommended over B (drop drawer action footer). 6-check verification matrix. Owner decisions: A/B + route."
         }
       ],
       "area": "PMS Front Desk (Beta) — guest tables (Arrivals / Departures / In-House)",
       "decision": "D72",
-      "intake_recommendation": "FAST LANE eligible (risk LOW, no hotspots, ~8 lines in 3–4 non-financial UI files, existing RTL test file to extend). Planning (Gates 2–3) not required unless owner wants it batched into Phase 1 where M1/M2 replace RowExpansionStub."
+      "intake_recommendation": "FAST LANE eligible (risk LOW, no hotspots, ~8 lines in 3–4 non-financial UI files, existing RTL test file to extend). Planning (Gates 2–3) not required unless owner wants it batched into Phase 1 where M1/M2 replace RowExpansionStub.",
+      "impact_doc": "impact/BUG-439_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BUG-439_IMPLEMENTATION_PLAN.md",
+      "conflicts": [
+        "CR-385 Phase 1 (M2 kebab) on components/pms/frontdesk/ArrivalsPanel.jsx L41–46 — execute BUG-439 BEFORE Phase 1 GO or fold into the first P1 batch"
+      ]
     }
   ],
   "meta": {
@@ -26531,6 +26541,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "CR-385 Gate 5B (P0+P0.5) CLOSED 2026-09-21; BUG-439 registered (P3/LOW/MINOR), routing open — intake recommends Fast Lane Bug Fix."
+    "last_note": "BUG-439 PLANNED (Gate 2+3 docs); owner decisions: Option A/B + Fast Lane vs P1 batch → Gate 4 GO. CR-385 Gate 5B closed, awaiting Phase 0 smoke."
   }
 }
