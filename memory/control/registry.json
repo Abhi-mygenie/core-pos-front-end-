@@ -26560,6 +26560,43 @@
       ],
       "fixed_in": "Bug Fix role 2026-09-21 — marker `// BUG-439` (10 lines) in ArrivalsPanel.jsx L41–46/L57, DeparturesPanel.jsx L7–12/L35, InHousePanel.jsx L20; test __tests__/bug439.cr385.test.jsx",
       "fix_report": "handover/BUG_FIX_REPORT_2026_09_21_BUG439.md"
+    },
+    {
+      "id": "BUG-440",
+      "type": "BUG",
+      "title": "Cancel Booking dialog: cancellation-reason dropdown always empty — settingsService.getCancellationReasons returns {reasons:[{reasonId,reasonText}]} but CancelBookingDialog expects an array of {id,name}; Confirm never enables (Front Desk Beta + legacy /pms/arrivals + /pms/reservations)",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "FIX IN PROGRESS (CR-385 P1, owner-approved R14 scope expansion 2026-09-21)",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-21",
+      "category": "INTAKE",
+      "source": "QA-FOUND",
+      "confidence": "CONFIRMED",
+      "qa_severity": "MAJOR",
+      "rca_classification": "CODE_ERROR",
+      "duplicate_check": "DISTINCT (RELATED CR-362 owner of the dialog; RELATED CR-385 M2 reuses it inline)",
+      "blast_radius": "SMALL (1 file, 3 lines, 3 consumers, no hotspots)",
+      "code_reality": "EXISTS (defect in CR-362 code)",
+      "files_affected": [
+        "frontend/src/components/pms/CancelBookingDialog.jsx",
+        "frontend/src/components/pms/frontdesk/__tests__/phase1.cr385.test.jsx"
+      ],
+      "related_items": [
+        "CR-362",
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-440_CANCEL_DIALOG_REASONS_EMPTY_INTAKE.md",
+      "evidence_dir": "evidence/CR-385/phase1_qa/",
+      "phase": "P1",
+      "fixed_in": "CR-385 P1",
+      "status_history": [
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Found during CR-385 Phase 1 live QA (M2-2 Cancel): reason select empty on new panel AND legacy pages. Root cause CODE_ERROR in CancelBookingDialog.jsx L19–21/L28/L84 (shape mismatch with settingsService). Owner approved R14 scope expansion: register → fix 3 lines → unit test → QA both surfaces."
+        }
+      ]
     }
   ],
   "meta": {
@@ -26570,8 +26607,8 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 696,
-    "total_items": 696,
+    "total": 698,
+    "total_items": 698,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
     "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" → Implementation role §1."
   }

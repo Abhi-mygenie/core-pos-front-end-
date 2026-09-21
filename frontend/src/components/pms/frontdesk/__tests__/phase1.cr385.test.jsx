@@ -25,7 +25,7 @@ beforeEach(() => { // CRA resetMocks:true wipes factory implementations → re-a
   pms.getRatesData.mockResolvedValue({ rateplans: [{ roomCode: 'executive', rateplanCode: 'executive-s-ep' }, { roomCode: 'executive', rateplanCode: 'executive-s-cp' }], dateRateMap: {}, dates: [] });
   pms.cancelReservation.mockResolvedValue({});
   pms.markNoShowBooking.mockResolvedValue({});
-  settings.getCancellationReasons.mockResolvedValue([{ id: 1, name: 'Guest request' }]);
+  settings.getCancellationReasons.mockResolvedValue({ reasons: [{ reasonId: 411, reasonText: 'guest cancelled', isActive: true }], total: 1, limit: 50, page: 1 }); // BUG-440 real service shape
 });
 
 const snap = fromFrontDeskSnapshot({ lr: lrFixture, board: { status: 'rejected', reason: new Error('500') }, kpis: { status: 'rejected', reason: new Error('500') } });
@@ -39,9 +39,10 @@ describe('CR-385 M7 updateFrontDeskRules', () => {
   test('multipart body: single "data" field = {"basic":{allow_early_checkin, extend_rate_mode}} (snapshot)', async () => {
     api.post.mockResolvedValue({ data: { status: true } });
     await updateFrontDeskRules({ allowEarlyCheckin: true, extendRateMode: 'held' });
-    const [url, fd] = api.post.mock.calls[0];
+    const [url, fd, cfg] = api.post.mock.calls[0];
     expect(url).toBe('/api/v2/vendoremployee/restaurant-settings/update-settings');
     expect(fd).toBeInstanceOf(FormData);
+    expect(cfg).toEqual({ headers: { 'Content-Type': 'multipart/form-data' } }); // QA iteration_11 BLK-M7-CT: shared axios default is application/json → FormData would be JSON-encoded
     const entries = [...fd.entries()].map(([k, v]) => [k, JSON.parse(v)]);
     expect(entries).toMatchSnapshot();
     expect(entries).toEqual([['data', { basic: { allow_early_checkin: true, extend_rate_mode: 'held' } }]]);
@@ -157,6 +158,28 @@ describe('CR-385 M2 D2 inline dialogs render without the fixed overlay', () => {
     unmount();
     render(<NoShowDialog target={noShowTarget} onClose={noop} onSuccess={noop} />);
     expect(screen.getByTestId('noshow-overlay').className).toMatch(/\bfixed\b.*inset-0/);
+  });
+});
+
+describe('CR-385 M2 BUG-440 Cancel dialog reads the service shape { reasons: [{ reasonId, reasonText }] }', () => {
+  const target = { reservationId: 222, guestName: 'QA', channel: 'Direct', checkin: '2026-09-21', checkout: '2026-09-22', roomCode: 'suite', advance: 0, cancelledBy: 'Owner' };
+  test('option renders, Confirm enables after selection, cancelReservation gets reason text', async () => {
+    const onSuccess = jest.fn();
+    render(<CancelBookingDialog inline target={target} onClose={noop} onSuccess={onSuccess} />);
+    const opt = await screen.findByRole('option', { name: 'guest cancelled' });
+    expect(opt).toHaveValue('411');
+    expect(screen.getByTestId('cancel-booking-confirm-btn')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('cancel-reason-select'), { target: { value: '411' } });
+    expect(screen.getByTestId('cancel-booking-confirm-btn')).not.toBeDisabled();
+    fireEvent.click(screen.getByTestId('cancel-booking-confirm-btn'));
+    await waitFor(() => expect(pms.cancelReservation).toHaveBeenCalledWith(222, { reason: 'guest cancelled', cancelledBy: 'Owner' }));
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+  });
+  test('legacy array shape / error → empty list, Confirm stays disabled (no crash)', async () => {
+    settings.getCancellationReasons.mockRejectedValueOnce(new Error('500'));
+    render(<CancelBookingDialog target={target} onClose={noop} />);
+    await waitFor(() => expect(screen.getByTestId('cancel-reason-select').options).toHaveLength(1));
+    expect(screen.getByTestId('cancel-booking-confirm-btn')).toBeDisabled();
   });
 });
 

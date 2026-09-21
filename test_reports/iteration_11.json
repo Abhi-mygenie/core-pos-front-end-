@@ -1,0 +1,59 @@
+{
+  "summary": "CR-385 Phase 1 QA @ 1920x1080 on preprod (OWNER_TGK / restaurant #69). Focused on M7 (Channel Manager 'Front Desk Rules' tab + settings write shape) and M2 read-only + XOR checks (row actions, drawer -exp- infix, No-Show inline). Found and FIXED one BLOCKER (BLK-M7-CT): updateFrontDeskRules was posting application/json instead of multipart/form-data because the shared axios instance defaults Content-Type to 'application/json' and FormData was being JSON-stringified (body captured as `{\"data\":\"{\\\"basic\\\":{...}}\"}`). After adding an explicit `headers: { 'Content-Type': 'multipart/form-data' }` on the POST, the request is now proper multipart with a single 'data' field whose JSON equals `{basic:{allow_early_checkin,extend_rate_mode}}`. Reload persistence verified, final state ended at documented defaults (allow_early_checkin=false, extend_rate_mode=calendar). Test bookings (M2-2/3/4/5/6) NOT executed — legacy /pms/new-booking creation flow was out of budget and inspected existing sandbox data already contains rows using r2/r3 (violates the r4/r5/r1 rule) so main agent should handle those flows manually.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "M7 Save Front Desk Rules → POST /restaurant-settings/update-settings", "issue": "Before fix, body was application/json '{\"data\":\"<json string>\"}' not multipart/form-data. Root cause: shared axios instance in /app/frontend/src/api/axios.js sets default Content-Type: application/json and updateFrontDeskRules did not override it — axios then serialized FormData as JSON. FIXED in /app/frontend/src/api/services/restaurantSettingsService.js by adding explicit `headers: { 'Content-Type': 'multipart/form-data' }`. Server accepted both shapes so data still persisted on preprod, but the wire shape now matches the QA spec.", "affected_selectors": ["frontdesk-rules-save-btn"]}
+    ],
+    "design_issues": []
+  },
+  "cases_pass_fail": {
+    "LOGIN": "PASS",
+    "M7-1_tabs_order": "PASS - ['OTA / Sync','AIOSELL Setup','Room Mapping','Rates & Restrictions','Front Desk Rules']; RatesTab (tab 3) renders (console shows a React key warning inside RatesTab, non-blocking).",
+    "M7-2_defaults_render": "PASS - frontdesk-rules-card mounts; toggle-allow-early-checkin unchecked; radio-extend-rate-mode-calendar checked; radio-extend-rate-mode-held unchecked; frontdesk-rules-status='Saved'; frontdesk-rules-save-btn disabled.",
+    "M7-3_dirty_state": "PASS - after clicking toggle, status flips to 'Unsaved changes' and Save enables.",
+    "M7-3_multipart_wire (POST-FIX)": "PASS - Content-Type='multipart/form-data; boundary=...WebKitFormBoundary...'; single field name=\"data\" with body EXACTLY {\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}} — evidence: /app/memory/evidence/CR-385/phase1_qa/m7_after_fix_restore_defaults.json.",
+    "M7-3_reload_persistence": "PASS - Toggling ON, saving, reloading, and re-opening the tab shows the toggle still ON (server truth); toggling OFF/back also persists correctly.",
+    "M7-3_final_defaults": "PASS - Final page reload shows toggle=false, calendar radio=true, held radio=false (matches owner-mandated defaults).",
+    "M2-1_arrivals_row_actions_1920": "PASS - Scanned 10 visible Late-chip rows: all have fd-row-<id>-checkin-btn (disabled, title 'Available in Phase 2'), fd-row-<id>-modify-btn (enabled), and EXACTLY ONE of cancel-btn or noshow-btn. Direct rows (id 15/17/21/18/13/22/54/86) → cancel-btn only; booking.com rows (id 7/23) → noshow-btn only. Zero rows with both.",
+    "M2-1_drawer_exp_infix_direct_row_15": "PASS - Opening row 15 drawer surfaces fd-row-15-exp-checkin-btn, -exp-modify-btn, -exp-cancel-btn; no -exp-noshow-btn.",
+    "M2-1_drawer_exp_infix_ota_row_7": "PASS - Opening row 7 (booking.com) drawer surfaces fd-row-7-exp-modify-btn and -exp-noshow-btn; no -exp-cancel-btn.",
+    "M2-7_noshow_inline_readonly": "PASS - Clicking fd-row-7-noshow-btn opens fd-row-7-noshow expansion. noshow-overlay className='w-full' (NO 'fixed'), noshow-dialog visible, outcome-card + outcome-phase2-ribbon visible, noshow-cancel-btn closes the expansion cleanly. noshow-confirm-btn NOT clicked (per owner rule).",
+    "M2-2_M2-6_test_bookings": "SKIPPED (BUDGET) - legacy /pms/new-booking creation + Direct booking on r4/r5/r1 not executed. Existing sandbox data includes rows on r2/r3 which already violate the sandbox room rule — main agent should audit those.",
+    "REG-1_legacy_arrivals_dialog": "PARTIAL - /pms/arrivals loads (Today=0, Late=10, Upcoming=4). Cancel button present under 'Cancelled (14)' or Late tab but Today tab has no cards; did not open the legacy Cancel dialog to inspect its className. Not blocked.",
+    "REG-2_zero_console_errors": "PASS (mostly) - Only 1 non-blocking React key warning inside RatesTab: 'Each child in a list should have a unique key prop. Check the render method of RatesTab.' No errors on Channel Manager / Front Desk v2 flows during M7 or M2-1/M2-7."
+  },
+  "network_evidence": {
+    "m7_before_fix (application/json BUG)": "/app/memory/evidence/CR-385/phase1_qa/m7_settings_write_A_toggle_on.json + m7_settings_write_restore_calendar.json (shows content-type=application/json and body {\"data\":\"...\"})",
+    "m7_after_fix (multipart PASS)": "/app/memory/evidence/CR-385/phase1_qa/m7_after_fix_restore_defaults.json (shows content-type=multipart/form-data; boundary=...; body has name=\"data\" field with proper JSON)"
+  },
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/phase1_qa/m7_after_fix_restore_defaults.json",
+    "/app/memory/evidence/CR-385/phase1_qa/m7_settings_write_A_toggle_on.json",
+    "/app/memory/evidence/CR-385/phase1_qa/m7_settings_write_restore_calendar.json"
+  ],
+  "action_items": [
+    "REVIEW MY FIX: /app/frontend/src/api/services/restaurantSettingsService.js updateFrontDeskRules now sets headers: { 'Content-Type': 'multipart/form-data' }. Consider applying the same fix to updateSettings (L24-33) — it uses the identical FormData pattern without an explicit multipart header and, though preprod currently tolerates both, the wire shape is likely equally wrong. All other multipart endpoints in /app/frontend/src/api/services/ explicitly set the header.",
+    "EXECUTE M2-2 → M2-6 in a follow-up: create 'QA P1 Cancel' + 'QA P1 Modify' Direct bookings on r4/r5/r1 via legacy /pms/new-booking, run the debounced-preview + preview-persistence + confirm flows, then cancel both. Capture network JSON to /app/memory/evidence/CR-385/phase1_qa/.",
+    "AUDIT existing sandbox rows on r2/r3 (visible rows: id 18/54/86/58 etc on 'r3 suite' or 'r2 executive'). These are not from this test run but their presence complicates 'sandbox rooms r4/r5/r1 only' — the seed data has already leaked outside the sandbox rule.",
+    "MINOR: Fix React 'unique key' warning inside pages/pms/RatesTab.jsx (surfaces on every Channel Manager visit).",
+    "OPTIONAL: The bare <input type=\"checkbox\" role=\"switch\"> with tailwind-only styling requires Playwright force=True and does not respond to page.check() in headless Chromium (label click also flakes when the visual hitbox is under the sibling text). Consider making the toggle a labelled htmlFor input or a real Radix Switch for testability."
+  ],
+  "critical_code_review_comments": [
+    "BLOCKER (FIXED): restaurantSettingsService.updateFrontDeskRules omitted the multipart Content-Type header. Because the shared axios instance defaults to application/json, axios serialised FormData to `{\"data\":\"<stringified json>\"}`. The pattern must be replicated cautiously — updateSettings has the same latent bug.",
+    "Consider centralising a `postMultipart(url, formData)` helper in api/axios.js to remove the boilerplate `headers: { 'Content-Type': 'multipart/form-data' }` from every service and prevent future recurrences.",
+    "FrontDeskRulesTab has good testability (all testids present) but the switch/radio inputs are visually hidden by the mt-1 offset and depend on `accent-*` colouring — this makes them harder to click programmatically. A future refactor to use a proper Switch component would remove force=True requirements from tests.",
+    "ArrivalsPanel.actions(row, variant) elegantly generates -exp- infixed testids in the drawer and enforces the OTA-vs-Direct XOR via nsOrCancel(row). Verified in the DOM: 10 rows all have correct action mix."
+  ],
+  "updated_files": [
+    "/app/frontend/src/api/services/restaurantSettingsService.js (added explicit multipart header to updateFrontDeskRules)"
+  ],
+  "success_rate": { "backend": "N/A (frontend only)", "frontend": "M7 100% (post-fix), M2-1 100%, M2-7 100%, M2-2..6 NOT_RUN" },
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — used, never printed to logs.",
+  "seed_data_creation": "None. No bookings/payments were created; settings were flipped, saved, and restored to defaults (allow_early_checkin=false, extend_rate_mode=calendar).",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "Sandbox @ 21-Sep-2026 business date. Arrivals Late chip has 10 rows (ids 15,17,21,18,7,13,22,23,54,86); rows 7 and 23 are booking.com (No-Show flow); the rest are Direct (Cancel flow). Today/Tomorrow chips have 0 rows so any 'today' booking must be created before running M2-2/3/5/6. FrontDeskRulesTab now round-trips as multipart. When testing again, verify Content-Type header on every /restaurant-settings/update-settings POST — the axios defaults will silently JSON-encode FormData if the header is omitted. Preview-persistence M2-4 was not executed and remains the highest-priority owner-mandated check for the follow-up run.",
+  "rca of the issue": "BLK-M7-CT: updateFrontDeskRules built a FormData and called api.post(url, formData). Axios' default request `Content-Type: application/json` (set in api/axios.js) was not overridden, so axios' JSON transform ran on the FormData object. The resulting body was `{\"data\":\"{\\\"basic\\\":{...}}\"}` on the wire, not multipart. Preprod backend happened to accept both shapes so persistence tests would have PASSED functionally, but the QA spec explicitly required multipart/form-data. Fix: add `{ headers: { 'Content-Type': 'multipart/form-data' } }` as the 3rd argument to `api.post`. Verified: request now leaves the browser as `multipart/form-data; boundary=----WebKitFormBoundary…` with a single `data` field."
+}

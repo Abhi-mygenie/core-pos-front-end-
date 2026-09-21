@@ -17,7 +17,7 @@ export default function CancelBookingDialog({ target, onClose, onSuccess, inline
     if (!target) return;
     setReasonId('');
     getCancellationReasons({ limit: 50, offset: 1 })
-      .then(r => setReasons(Array.isArray(r) ? r : []))
+      .then(r => setReasons(Array.isArray(r?.reasons) ? r.reasons : [])) // CR-385 M2 BUG-440: service returns { reasons: [{ reasonId, reasonText }] }, not an array
       .catch(() => setReasons([]));
   }, [target]);
 
@@ -25,7 +25,7 @@ export default function CancelBookingDialog({ target, onClose, onSuccess, inline
 
   const isOta      = OTA_CHANNELS.includes((target.channel ?? '').toLowerCase());
   const hasAdvance = Number(target.advance ?? 0) > 0;
-  const reasonText = reasons.find(r => String(r.id) === String(reasonId))?.name ?? '';
+  const reasonText = reasons.find(r => String(r.reasonId) === String(reasonId))?.reasonText ?? ''; // CR-385 M2 BUG-440
 
   const handleConfirm = async () => {
     if (!reasonId) { toast.error('Please select a cancellation reason'); return; }
@@ -81,7 +81,7 @@ export default function CancelBookingDialog({ target, onClose, onSuccess, inline
             className="w-full border border-[#E5E5E5] rounded-md px-3 py-2 text-[13px] font-['Poppins'] bg-white"
             data-testid="cancel-reason-select">
             <option value="">Select reason…</option>
-            {reasons.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+            {reasons.map(r => <option key={r.reasonId} value={r.reasonId}>{r.reasonText}</option>)} {/* CR-385 M2 BUG-440 */}
           </select>
         </div>
 

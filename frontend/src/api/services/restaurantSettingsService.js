@@ -43,9 +43,12 @@ export const getFrontDeskRules = async () => {
 };
 
 // CR-385 M7 — partial write of the two Front Desk rules (multipart data={"basic":{…}} — the only accepted shape, C10)
+// Note: must explicitly set multipart/form-data because the shared axios instance defaults Content-Type to application/json.
 export const updateFrontDeskRules = async ({ allowEarlyCheckin, extendRateMode }) => {
   const formData = new FormData();
   formData.append('data', JSON.stringify({ basic: { allow_early_checkin: Boolean(allowEarlyCheckin), extend_rate_mode: extendRateMode === 'held' ? 'held' : 'calendar' } }));
-  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData);
+  const response = await api.post(API_ENDPOINTS.RESTAURANT_SETTINGS_UPDATE, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 };
