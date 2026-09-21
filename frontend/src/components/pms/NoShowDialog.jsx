@@ -9,7 +9,7 @@ import { UserX, TriangleAlert } from 'lucide-react';
 import { toast } from 'sonner';
 import { markNoShowBooking } from '@/api/services/pmsService';
 
-export default function NoShowDialog({ target, onClose, onSuccess }) {
+export default function NoShowDialog({ target, onClose, onSuccess, inline = false }) { // CR-385 M2 D2 inline = render inside a row expansion (no overlay)
   const [busy, setBusy] = useState(false);
   const [remark, setRemark] = useState('');
 
@@ -36,12 +36,12 @@ export default function NoShowDialog({ target, onClose, onSuccess }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(2px)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      className={inline ? 'w-full' : 'fixed inset-0 z-50 flex items-center justify-center'} // CR-385 M2 D2 inline
+      style={inline ? undefined : { background: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(2px)' }}
+      onClick={(e) => { if (!inline && e.target === e.currentTarget) handleClose(); }}
       data-testid="noshow-overlay">
       <div
-        className="bg-white rounded-2xl shadow-2xl w-[420px] max-h-[90vh] overflow-y-auto"
+        className={`bg-white rounded-2xl w-[420px] max-h-[90vh] overflow-y-auto ${inline ? 'border border-[#E5E5E5]' : 'shadow-2xl'}`} // CR-385 M2 D2
         data-testid="noshow-dialog">
 
         {/* Header */}

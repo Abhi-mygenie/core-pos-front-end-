@@ -6,6 +6,7 @@ import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import Sidebar from '@/components/layout/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRestaurant } from '@/contexts/RestaurantContext'; // CR-385 M2: staff name for cancelled_by (same source as ArrivalsPage L55)
 import { getSnapshot, patchRoomStatus } from '@/api/services/frontDeskService';
 import { patchErrorMessage } from '@/api/transforms/roomStatusTransform';
 import { plusDays } from '@/api/transforms/frontDeskTransform';
@@ -67,22 +68,25 @@ const useTabParam = () => {
 
 export default function FrontDeskWorkstationPage() {
   const { user } = useAuth();
+  const { restaurant } = useRestaurant(); // CR-385 M2
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => localStorage.getItem('mygenie_sidebar_expanded') !== 'false');
   const { snap, loading, refreshing, error, refresh } = useFrontDeskSnapshot();
   const [tab, setTab] = useTabParam();
   const [chips, setChips] = useState(DEFAULT_CHIP);
-  const [expanded, setExpanded] = useState({ rowId: null, roomId: null }); // one open at a time (F1)
+  const [expanded, setExpanded] = useState({ rowId: null, roomId: null, kind: 'detail' }); // one open at a time (F1); CR-385 M2 kind = detail | modify | cancel | noshow
   const [busyId, setBusyId] = useState(null);
 
-  const closeAll = () => setExpanded({ rowId: null, roomId: null });
-  const toggleRow = (id) => setExpanded((e) => ({ rowId: id && String(e.rowId) !== String(id) ? id : null, roomId: null }));
-  const toggleRoom = (id) => setExpanded((e) => ({ roomId: id && String(e.roomId) !== String(id) ? id : null, rowId: null }));
+  const closeAll = () => setExpanded({ rowId: null, roomId: null, kind: 'detail' });
+  const toggleRow = (id) => setExpanded((e) => ({ rowId: id && String(e.rowId) !== String(id) ? id : null, roomId: null, kind: 'detail' }));
+  const toggleRoom = (id) => setExpanded((e) => ({ roomId: id && String(e.roomId) !== String(id) ? id : null, rowId: null, kind: 'detail' }));
+  const openExpansion = (rowId, kind) => setExpanded({ rowId, roomId: null, kind: kind ?? 'detail' }); // CR-385 M2
+  const afterAction = async (msg) => { toast.success(msg); closeAll(); await refresh(); }; // CR-385 M2 X-14: toast → close → refetch after every mutating action
   const setChip = (t, c) => setChips((s) => ({ ...s, [t]: c }));
 
-  const navigateTo = useCallback(({ tab: t, chip, rowId, roomId }) => {
+  const navigateTo = useCallback(({ tab: t, chip, rowId, roomId, kind }) => {
     setTab(t);
     if (chip) setChip(t, chip);
-    setExpanded({ rowId: rowId ?? null, roomId: roomId ?? null });
+    setExpanded({ rowId: rowId ?? null, roomId: roomId ?? null, kind: kind ?? 'detail' }); // CR-385 M2 alert "stay expired" → nsOrCancel kind
   }, [setTab]);
 
   useEffect(() => {
@@ -112,7 +116,7 @@ export default function FrontDeskWorkstationPage() {
       case 'departures': return <DeparturesPanel rows={inHouse} {...common} />;
       case 'inhouse': return <InHousePanel rows={inHouse} {...common} />;
       case 'rooms': return <RoomsPanel snapshot={snap} expandedRoomId={expanded.roomId} onToggleRoom={toggleRoom} chip={chips.rooms} onChip={(c) => setChip('rooms', c)} busyId={busyId} onPatch={handlePatch} onRetry={refresh} retrying={refreshing} />; // CR-385 M0.5 BUG-434 retrying
-      default: return <ArrivalsPanel rows={pending} kpis={snap.kpis} {...common} />;
+      default: return <ArrivalsPanel rows={pending} kpis={snap.kpis} {...common} expandedKind={expanded.kind} onOpen={openExpansion} onDone={afterAction} cancelledBy={restaurant?.profile?.fullName} />; // CR-385 M2
     }
   };
 

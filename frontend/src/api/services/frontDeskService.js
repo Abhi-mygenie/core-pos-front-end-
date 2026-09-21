@@ -4,7 +4,7 @@ import api from '../axios';
 import { AIOSELL_ENDPOINTS } from '../constants';
 import { fromRoomStatusBoard } from '../transforms/roomStatusTransform';
 import { fromFrontDeskSnapshot } from '../transforms/frontDeskTransform';
-import { patchRoomStatus as pmsPatchRoomStatus, bulkMarkClean as pmsBulkMarkClean } from './pmsService';
+import { patchRoomStatus as pmsPatchRoomStatus, bulkMarkClean as pmsBulkMarkClean, cancelReservation as pmsCancelReservation, markNoShowBooking as pmsMarkNoShowBooking } from './pmsService'; // CR-385 M2
 
 export const getLocalReservationsAll = ({ start, end }) =>
   api.get(AIOSELL_ENDPOINTS.LOCAL_RESERVATIONS, { params: { start_date: start, end_date: end, view: 'all' } }).then((r) => r.data);
@@ -30,3 +30,11 @@ export const getSnapshot = async ({ start, end, today }) => {
 // Re-exports — pmsService is called, never edited (plan §1.3)
 export const patchRoomStatus = (tableId, status) => pmsPatchRoomStatus(tableId, status);
 export const bulkMarkClean = (tableIds) => pmsBulkMarkClean(tableIds);
+
+// CR-385 M2 — Cancel / No-Show reuse the existing pmsService calls; Modify PATCHes the LR row directly.
+// Body is the INTENT only ({checkin, checkout, rateplan_code, reason} + preview:true for a dry run) — never amount_after_tax (G-02, BQ-385-08).
+export const cancelReservation = (reservationId, opts) => pmsCancelReservation(reservationId, opts);
+export const markNoShow = (bookingId, channel) => pmsMarkNoShowBooking(bookingId, channel);
+export const modifyReservation = (reservationId, body) =>
+  api.patch(`${AIOSELL_ENDPOINTS.LOCAL_RESERVATIONS}/${reservationId}`, body).then((r) => r.data);
+export const previewModifyReservation = (reservationId, body) => modifyReservation(reservationId, { ...body, preview: true });

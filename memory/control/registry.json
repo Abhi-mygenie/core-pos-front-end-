@@ -26564,7 +26564,7 @@
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "HANDOVER — CR-385 master handover for Phase 0.5 written; next agent: present bugs → \"Phase 0.5 GO\" → Bug Fix → QA → owner smoke.",
+    "last_action": "IMPLEMENTATION — CR-385 Phase 1 (M7 Front Desk Rules tab + M2 Cancel/No-Show/Modify) coding under owner \"Phase 1 GO\" (2026-09-21); Phase 0 smoke merged into the Phase 1 smoke (D74).",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

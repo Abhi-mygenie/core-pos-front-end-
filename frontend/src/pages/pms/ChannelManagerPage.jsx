@@ -19,11 +19,12 @@ import {
 } from '@/api/services/aiosellService';
 import aiosellTransform from '@/api/transforms/aiosellTransform';
 import RatesTab from './RatesTab'; // CR-358-P5
+import FrontDeskRulesTab from './FrontDeskRulesTab'; // CR-385 M7 OD-385-17
 
 const today = () => new Date().toISOString().slice(0, 10);
 const daysFromNow = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
 
-const TABS = ['OTA / Sync', 'AIOSELL Setup', 'Room Mapping', 'Rates & Restrictions'];
+const TABS = ['OTA / Sync', 'AIOSELL Setup', 'Room Mapping', 'Rates & Restrictions', 'Front Desk Rules']; // CR-385 M7
 
 export default function ChannelManagerPage() {
   // BUG-361: persist sidebar state
@@ -466,6 +467,9 @@ export default function ChannelManagerPage() {
 
           {/* ── TAB 3: Rates & Restrictions (CR-358-P5) ─────────────── */}
           {activeTab === 3 && <RatesTab />}
+
+          {/* ── TAB 4: Front Desk Rules (CR-385 M7, OD-385-17) ── */}
+          {activeTab === 4 && <FrontDeskRulesTab />}
 
         </div>
       </main>

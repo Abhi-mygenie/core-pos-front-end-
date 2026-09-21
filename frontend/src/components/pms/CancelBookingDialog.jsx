@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 const OTA_CHANNELS = ['booking.com', 'goibibo', 'gommt', 'makemytrip', 'expedia', 'agoda'];
 
-export default function CancelBookingDialog({ target, onClose, onSuccess }) {
+export default function CancelBookingDialog({ target, onClose, onSuccess, inline = false }) { // CR-385 M2 D2 inline = render inside a row expansion (no overlay)
   // target: { reservationId, guestName, channel, checkin, checkout, roomCode, advance, cancelledBy }
   const [reasons,  setReasons]  = useState([]);
   const [reasonId, setReasonId] = useState('');
@@ -45,8 +45,8 @@ export default function CancelBookingDialog({ target, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" data-testid="cancel-booking-dialog">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+    <div className={inline ? 'w-full' : 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4'} data-testid="cancel-booking-dialog"> {/* CR-385 M2 D2 inline */}
+      <div className={`bg-white rounded-xl w-full max-w-md p-6 ${inline ? 'border border-[#E5E5E5]' : 'shadow-2xl'}`}>{/* CR-385 M2 D2 */}
         {/* Header */}
         <div className="flex justify-between items-start mb-1">
           <h2 className="text-[15px] font-semibold text-[#1A1A1A]">Cancel Booking</h2>
