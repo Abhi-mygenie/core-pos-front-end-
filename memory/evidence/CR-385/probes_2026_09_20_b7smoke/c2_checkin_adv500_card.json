@@ -1,0 +1,51 @@
+{
+ "http": 200,
+ "body": {
+  "message": "Group check-in completed successfully",
+  "user_id": 42770,
+  "cust_membership_id": null,
+  "data": {
+   "order_id": 1232630,
+   "orders": [
+    {
+     "room_id": "8527",
+     "room_no": "r5",
+     "room_price": 5500,
+     "advance_payment": 0,
+     "balance_payment": 5500,
+     "order_id": 1232630,
+     "gst_tax": 275
+    }
+   ],
+   "charge": {
+    "rate_per_night": 5500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 5500,
+    "sgst": 137.5,
+    "cgst": 137.5,
+    "total_with_gst": 5775,
+    "prepaid_amount": 0,
+    "advance_payment": 0,
+    "balance_due": 5775
+   }
+  },
+  "charge": {
+   "rate_per_night": 5500,
+   "nights": 1,
+   "rateplan_code": "suite-s-ep",
+   "rateplan_name": "suite-s-ep",
+   "upgrade_amount": 0,
+   "booking_charge": 5500,
+   "sgst": 137.5,
+   "cgst": 137.5,
+   "total_with_gst": 5775,
+   "prepaid_amount": 0,
+   "advance_payment": 0,
+   "balance_due": 5775
+  },
+  "upgrade": null
+ }
+}

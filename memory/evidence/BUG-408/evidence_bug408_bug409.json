@@ -1,0 +1,57 @@
+{
+  "endpoint": "POST /api/v2/vendoremployee/daily-sales-revenue-report",
+  "request_payload": {
+    "from": "2026-09-03",
+    "to": "2026-09-03"
+  },
+  "date_of_probe": "2026-09-03",
+  "bug_408_actual_room_revenue": {
+    "Room Cash": "0",
+    "Room Card": "0",
+    "Room UPI": "0",
+    "Room Total": "84610.04",
+    "Room advance": "24488.38",
+    "Room Checkout": "36822.28"
+  },
+  "bug_408_expected": {
+    "Room Cash": "<non-zero amount>",
+    "Room Card": "<non-zero amount>",
+    "Room UPI": "<non-zero amount>",
+    "Room Total": "84610.04"
+  },
+  "bug_409_orderRoom_value": "16888.38",
+  "bug_409_room_checkin_revenue_reference": {
+    "Room Cash": 28222,
+    "Room Card": 0,
+    "Room UPI": 6000,
+    "Room TAB": 0
+  },
+  "paid_revenue_method_full": {
+    "order_payment": {
+      "Cash": "0.00",
+      "Card": "0.00",
+      "Upi": "0.00",
+      "Room": "0.00",
+      "Room Checkin": "37622.00"
+    },
+    "tab_payment": {
+      "Credit Cash": "0.00",
+      "Credit Card": "0.00",
+      "Credit UPI": "0.00"
+    },
+    "room_revenue": {
+      "Room Cash": "0",
+      "Room Card": "0",
+      "Room UPI": "0",
+      "Room Total": "84610.04",
+      "Room advance": "24488.38",
+      "Room Checkout": "36822.28"
+    },
+    "room_checkin_revenue": {
+      "Room Cash": 28222,
+      "Room Card": 0,
+      "Room UPI": 6000,
+      "Room TAB": 0
+    }
+  }
+}
