@@ -675,3 +675,12 @@ Intake candidates (not CR-385): BUG-431 CheckInPage pre-fills Room Amount with b
 | Shorten keeps a 1-row ledger; the departed row keeps `nights_detail` after TAB | Bill after checkout can still show lines |
 | Rule unchanged: never sum `nights_detail[].gst`; totals from `charge.sgst/cgst/total_with_gst` (N11) | plan §3 D-rules, matrix #20 |
 OG-PMS-027 CLOSED · G4-07 ✓ · plan §3 / M4 / M6 / §11 updated · mockup v2.29 addendum. Gate 3 still OPEN. **Remaining before Gate 4 GO: G4-03(b) BQ-385-21, G4-04 (D17), G4-06 owner "close Gate 3", G4-10.**
+
+### D67 — D17 fixed and validated (API + UI); G4-04 complete; BQ-385-21 answered "no empty night" (2026-09-21)
+**Owner:** "check attached md file and validate" (`backend_replies/d17_reply_2026-09-21.md`). FE validation `evidence/CR-385/probes_2026_09_21_d17/PROBE_REPORT.md`.
+| Item | Result | Gate effect |
+|---|---|---|
+| **D17** check-in collect-now | API: 500→**500** · booking 1000 + form 0 → **1000** · booking 1000 + form 500 → **1500** (two ledger rows); UI (QA iter4): CheckInPage ₹500 Card → folio Advance Paid ₹500 / Balance ₹1,600, twice | **S-411 ✓ → G4-04 ✓** (B-7 smoke complete; S-418 N/A → M6). M3 collect-now unblocked. |
+| **BQ-385-21** | BE: no empty CM night in any sandbox window; will not wipe live rates. Chip `held (no rate for this date)` ships on the enum with a synthetic fixture (V-M4-00) | **G4-03(b) needs an owner waiver** — the only non-owner-word row left |
+| Legacy UI gap | `NewBookingPage` has no advance field → "booking advance + check-in advance" case testable only via API (done) or the new M1 form | intake note; not CR-385 blocking |
+QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Before Gate 4 GO now only: G4-03(b) owner waiver · G4-06 owner "close Gate 3" · G4-10 owner "Gate 4 GO".**

@@ -45,3 +45,6 @@ BE reply `evidence/CR-385/backend_replies/d15-16_reply_2026-09-20.md`: D15 FIXED
 
 ## BQ-385-19 — reply validated (2026-09-21)
 `backend_replies/bq385-19_reply_2026-09-21.md` reproduced live (`probes_2026_09_21_bq19/`): P1 ✓ P2 ✓ P3 ✓; money unchanged; ledger persists through shorten and TAB. **CLOSED.** Still open on your side: **D17** (check-in advance dropped, P0) and **BQ-385-21** (no-rate sandbox date for `held_fallback`).
+
+## D17 / BQ-385-21 — reply validated (2026-09-21)
+`backend_replies/d17_reply_2026-09-21.md`: **D17 FIXED** — reproduced via API (500 / 1000 / 1500 cases, `probes_2026_09_21_d17/`) and via UI (QA iter4, S-411 PASS ×2). **CLOSED.** BQ-385-21: understood — no empty CM night; no further ask. Nothing open for backend in this pack. Thank you.

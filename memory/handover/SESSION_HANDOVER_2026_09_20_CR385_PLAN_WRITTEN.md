@@ -60,3 +60,8 @@ Supersedes:  handover/SESSION_HANDOVER_2026_09_20_CR385_PLANNING_GATE_3.md as en
 - `backend_replies/bq385-19_reply_2026-09-21.md` reproduced live (`probes_2026_09_21_bq19/`): LR rows carry `charge.nights_detail` for calendar stays; absent for held / never-extended; money unchanged. **OG-PMS-027 CLOSED, G4-07 ✓** — owner yes/no no longer required. D66. Plan §3/M4/M6/#20 updated (renderer fed from row on reload).
 - **Open before Gate 4 GO:** G4-03(b) BQ-385-21 (held_fallback sandbox date — backend), **G4-04 (D17 check-in advance dropped — backend fix + S-411 re-smoke, or owner waiver)**, G4-06 (owner "close Gate 3"), G4-10 (owner "Gate 4 GO").
 - Owner decisions all locked (OD-385-16 a · 17 Channel Manager tab · 18 a). No open owner decision except the two gate words + the D17 wait/waive call.
+
+## 9. Update 2026-09-21 (later) — D17 validated, B-7 smoke complete
+- D17 FIXED + validated (API 3 cases, UI QA `test_reports/iteration_4.json` S-411 PASS ×2) → **G4-04 ✓**. BQ-385-21: no empty CM night exists → `held_fallback` chip on enum only; **G4-03(b) needs owner waiver**. D67.
+- QA agent left orders 1232643/44/45 in-house → FE settled by TAB (`probes_2026_09_21_d17/log_cleanup_qa4.txt`); rooms → hk; settings at defaults.
+- **Before Gate 4 GO only owner words remain:** G4-03(b) "waive held_fallback live demo" · G4-06 "close Gate 3" · G4-10 "Gate 4 GO". No backend item open for CR-385.

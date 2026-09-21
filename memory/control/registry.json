@@ -25223,7 +25223,9 @@
       ],
       "registered": "2026-09-16",
       "intake_doc": "change_requests/CR-385_PMS_FRONTDESK_UNIFIED_WORKSTATION_UX_REVAMP_INTAKE.md",
-      "owner_decisions_open": [],
+      "owner_decisions_open": [
+        "G4-03(b) waiver: accept held_fallback chip without a live sample (BQ-385-21: no empty CM night exists)"
+      ],
       "mockup_variants_required": {
         "MV-01": "Folio+Checkout panel layout: full-width in panel area ★ / wide overlay / collapsed folio summary",
         "MV-02": "Q3 Check-In: wide side panel / full overlay (default side panel)",
@@ -25370,7 +25372,8 @@
         "runner": "evidence/CR-385/probes_2026_09_20_gate4/build3/run_gate4.py",
         "final_pack": "evidence/CR-385/probes_2026_09_20_final/PROBE_REPORT.md (G4-01 ✓, D14 fixed G4-02 ✓; NEW D15/D16 P1 money; BQ-385-20)",
         "d15_d16_validation": "evidence/CR-385/probes_2026_09_20_d1516/PROBE_REPORT.md — D15 CLOSED, D16 CLOSED, BQ-20 confirmed",
-        "bq19_validation": "evidence/CR-385/probes_2026_09_21_bq19/PROBE_REPORT.md — BQ-385-19 CLOSED, G4-07 ✓"
+        "bq19_validation": "evidence/CR-385/probes_2026_09_21_bq19/PROBE_REPORT.md — BQ-385-19 CLOSED, G4-07 ✓",
+        "d17_validation": "evidence/CR-385/probes_2026_09_21_d17/PROBE_REPORT.md — D17 FIXED (API 3 cases + UI QA iter4)"
       },
       "money_contract": "D50: charge.* authoritative; cleared ⇔ payment_status paid && charge.balance_due 0; never balance_payment / folio remaining_room_balance; advance_payment = cumulative paid",
       "mockup_version": "v2.28",
@@ -25443,6 +25446,11 @@
           "date": "2026-09-21",
           "to": "GATE 3 OPEN (plan under owner review)",
           "note": "BE reply bq385-19 validated live: LR rows carry charge.nights_detail for calendar stays (P1 ✓ P2 ✓ P3 ✓, money unchanged, shorten/TAB keep ledger). OG-PMS-027 closed; G4-07 ticked (no owner decision needed). Sandbox restored."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE 3 OPEN (plan under owner review)",
+          "note": "BE reply d17 validated: D17 FIXED (API 500/1000/1500 cases + UI S-411 PASS ×2 via QA iter4) → G4-04 ✓. BQ-385-21 answered: no empty CM night → owner waiver needed for G4-03(b). QA stays settled by FE. Sandbox restored."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25478,11 +25486,10 @@
         "evidence/CR-385/probes_2026_09_20_g4_09/PROBE_REPORT.md (G4-09 titles; LR shape; payment_status per room line)"
       ],
       "open_backend_items": [
-        "D17 P0 check-in advance dropped by user-group-check-in (advance_payment 0, ledger empty; payment_mode kept) — blocks M3 collect-now; root cause BUG-412",
         "BQ-385-20 CONFIRMED contract: split advance legs not stored (single-method only)",
         "N10 received_by null (P3)",
         "G4-03(b) held_fallback needs no-rate sandbox date",
-        "BQ-385-21 sandbox no-rate date for held_fallback (G4-03 b) — asked 2026-09-20 23:00"
+        "BQ-385-21 ANSWERED: no empty CM night; held_fallback chip on enum only — owner waiver pending (G4-03 b)"
       ],
       "backend_brief_final_pack": "backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md",
       "design_lock": "public/cr385-frontdesk-mockup.html v2.29 (v2.28 visuals LOCKED + 2026-09-20 decision log, no visual change; D62)",
@@ -25498,14 +25505,14 @@
           "S-402",
           "S-421/426",
           "S-429/430",
-          "S-425/428"
+          "S-425/428",
+          "S-411 (after D17 fix, QA iter4 + API)"
         ],
-        "fail": [
-          "S-411 → backend D17 (check-in advance dropped)"
-        ],
+        "fail": [],
         "na": [
           "S-418 → CR-385 M6"
-        ]
+        ],
+        "status": "COMPLETE 2026-09-21 — G4-04 ✓"
       }
     },
     {
@@ -25550,6 +25557,11 @@
           "date": "2026-09-20",
           "to": "GATE_5A_IMPLEMENTED (2026-09-15). Code applied, compile PASS. Awaiting QA Gate 5b.",
           "note": "CR-385 B-7 smoke: FE sends advance_payment+payment_method correctly (QA iter2 + curl c2); BACKEND drops the advance (D17) → folio Advance Paid 0. BUG-412 root cause = D17 (backend). See backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md §D17"
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE_5A_IMPLEMENTED (2026-09-15). Code applied, compile PASS. Awaiting QA Gate 5b.",
+          "note": "D17 backend fix validated (CR-385 probes_2026_09_21_d17): check-in advance now persists (folio Advance Paid ₹500 / Balance ₹1,600, QA iter4). BUG-411 smoke PASS; BUG-412 root cause resolved server-side — re-verify on its own item."
         }
       ]
     },
@@ -25576,6 +25588,11 @@
           "date": "2026-09-20",
           "to": "INTAKE — GATE 1 — BLOCKED ON BUG-411",
           "note": "CR-385 B-7 smoke: FE sends advance_payment+payment_method correctly (QA iter2 + curl c2); BACKEND drops the advance (D17) → folio Advance Paid 0. BUG-412 root cause = D17 (backend). See backend_briefs/BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md §D17"
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE — GATE 1 — BLOCKED ON BUG-411",
+          "note": "D17 backend fix validated (CR-385 probes_2026_09_21_d17): check-in advance now persists (folio Advance Paid ₹500 / Balance ₹1,600, QA iter4). BUG-411 smoke PASS; BUG-412 root cause resolved server-side — re-verify on its own item."
         }
       ]
     },
