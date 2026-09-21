@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED (P0+P0.5) — Gate 6 (Phase 0 owner smoke) DEFERRED-TO-P1-SMOKE by owner exception D74 (2026-09-21); Phase 1 may start (Planning: entry verification of phased plan §1 → owner \"Phase 1 GO\"). BUG-434…439 QA-VERIFIED. BQ-385-22 perf brief open (not blocking).",
+      "status": "GATE_5B_QA_PASSED (P0+P0.5) — Gate 6 (Phase 0 owner smoke) DEFERRED-TO-P1-SMOKE by owner exception D74 (2026-09-21); Phase 1 may start (planning complete for all phases; owner \"Phase 1 GO\" → Implementation role runs §1 Entry Verification then codes M7 + M2). BUG-434…439 QA-VERIFIED. BQ-385-22 perf brief open (not blocking).",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25504,7 +25504,7 @@
         {
           "date": "2026-09-21",
           "to": "GATE 6 (P0) DEFERRED-TO-P1-SMOKE (D74)",
-          "note": "Owner one-time exception: Phase 0 smoke merged into the Phase 1 smoke. Session closed; next session = PLANNING role for Phase 1 (read phased plan §1 first time)."
+          "note": "Owner one-time exception: Phase 0 smoke merged into the Phase 1 smoke. Session closed; next session = owner \"Phase 1 GO\" → IMPLEMENTATION role (phased plan §1; planning already complete for all phases)."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
