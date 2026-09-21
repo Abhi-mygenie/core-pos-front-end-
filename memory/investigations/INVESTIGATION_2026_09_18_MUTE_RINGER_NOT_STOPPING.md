@@ -25,14 +25,70 @@
 
 | # | Hypothesis | Result |
 |---|---|---|
-| H1 | `soundManager.stop()` is broken — doesn't pause the Audio object | **ELIMINATED** — `stop()` correctly calls `pause()` + `currentTime = 0` + `null`. Works as intended |
-| H2 | Backend retries FCM for unconfirmed orders → `NotificationContext` re-plays sound after `stop()` — no snooze check | **CONFIRMED — PRIMARY ROOT CAUSE** |
-| H3 | Mute sets a visual flag only — `snoozedOrders` never reaches `NotificationContext` | **CONFIRMED — MECHANISM** |
-| H4 | Multiple Audio instances created simultaneously — stop() kills only one | **ELIMINATED** — `play()` calls `stop()` before creating new instance; only one `currentAudio` at a time |
+| H1 | `soundManager.stop()` is completely broken | **ELIMINATED** — `stop()` logic is correct when `currentAudio` is set |
+| H2 | Backend retries FCM → NotificationContext re-plays sound with no snooze check | **CONFIRMED — SECONDARY (why it repeats after each stop)** |
+| H3 | Mute sets visual flag only — `snoozedOrders` never reaches NotificationContext | **CONFIRMED — MECHANISM** |
+| H4 | `play().catch()` and `error` handlers blindly null `currentAudio` without guard — orphans a playing audio, making `stop()` a no-op | **CONFIRMED — PRIMARY ROOT CAUSE (why Mute does not stop the current sound)** |
 
 ---
 
-## 3. Full Data Flow Trace
+## 3. Primary Root Cause — soundManager.js Race Condition
+
+```javascript
+// LINE 68-72: ended event — CORRECT (has guard)
+audio.addEventListener('ended', () => {
+  if (this.currentAudio === audio) {    // ← guards against stale reference
+    this.currentAudio = null;
+  }
+});
+
+// LINE 74-77: error event — BROKEN (no guard)
+audio.addEventListener('error', (e) => {
+  this.currentAudio = null;             // ← blindly nullifies any currentAudio
+});
+
+// LINE 80-83: play().catch — BROKEN (no guard)
+audio.play().catch((err) => {
+  this.currentAudio = null;             // ← blindly nullifies any currentAudio
+});
+```
+
+**Race condition when two FCM notifications arrive in rapid succession:**
+
+```
+1. FCM-1 → play() → audio1 = cloneNode() → this.currentAudio = audio1
+           → audio1.play() [async, promise PENDING]
+
+2. FCM-2 arrives immediately
+   → play() → this.stop() → audio1.pause() [interrupts pending play promise]
+   → this.currentAudio = null → audio2 = cloneNode()
+   → this.currentAudio = audio2          ← audio2 now tracked
+   → audio2.play() [starts — RINGER HEARD]
+
+3. audio1.play() promise rejects (AbortError — was interrupted by pause)
+   → catch(err) → this.currentAudio = null  ← WIPES audio2 reference!
+
+4. this.currentAudio = null
+   audio2 is still playing — orphaned, untracked
+
+5. Cashier clicks Mute
+   → soundManager.stop()
+   → if (this.currentAudio) → FALSE  ← null
+   → NO-OP — audio2 keeps playing ← BUG
+```
+
+**Fix (1 file, 2 lines):** Add the same guard as the `ended` handler:
+```javascript
+// error handler — add guard
+if (this.currentAudio === audio) this.currentAudio = null;
+
+// play().catch — add guard
+if (this.currentAudio === audio) this.currentAudio = null;
+```
+
+---
+
+## 4. Full Data Flow Trace
 
 ### Sound start path (FCM arrives)
 ```
@@ -175,9 +231,8 @@ When Mute is clicked, temporarily set `soundEnabled = false` in `NotificationCon
 
 | # | Decision |
 |---|---|
-| OD-1 | Override the Jan-2026 anti-rule? Current rule says "NO future-sound suppression." Owner must explicitly approve changing this before any fix is implemented. |
-| OD-2 | Which option? A (time-based mute window — e.g., 2 min) · B (per-order mute) · C (global mute toggle) |
-| OD-3 | For Option A: how long should the mute window last? (suggested: 2 minutes — matches original snooze duration) |
+| OD-1 | Fix only the immediate stop bug (soundManager.js — 2 lines, planning-skip eligible)? OR also fix the FCM retry path (NotificationContext — separate gate)? |
+| OD-2 | Override the Jan-2026 anti-rule "NO future-sound suppression" to allow future FCM sound suppression per snoozed order? |
 
 ---
 
@@ -188,19 +243,24 @@ NONE — no prior registration for Mute/ringer issue in BUG_TRACKER.
 ---
 
 ```
-Root cause:    FE_BUG — soundManager.stop() correctly stops current audio.
-               But backend retries FCM every ~30-60s for unconfirmed YTC orders.
-               NotificationContext.processNotification() has no snooze check
-               → plays sound again on every retry.
-               snoozedOrders Set never reaches NotificationContext.
-               Jan-2026 anti-rule "NO future-sound suppression" locks in the gap.
-Classification: FE_BUG
-Confidence:    HIGH — full chain traced
-Planning skip: NO — cross-context wiring (NotificationContext + soundManager)
+Root cause (PRIMARY):  CODE_ERROR — soundManager.js lines 76 + 82
+  play().catch() and error event handler blindly set this.currentAudio = null
+  without checking if (this.currentAudio === audio).
+  When two FCM pushes arrive rapidly, audio1's AbortError catch wipes the
+  audio2 reference → soundManager.stop() becomes a no-op → Mute does nothing.
+  Fix: add same guard as ended handler (1 file, 2 lines).
+
+Root cause (SECONDARY): FE_BUG — NotificationContext has no snooze check.
+  FCM retries fire play() again after Mute. snoozedOrders never reaches
+  NotificationContext. Mute stops current sound but next FCM restarts it.
+
+Classification: CODE_ERROR (primary) + FE_BUG (secondary)
+Confidence:    HIGH
+Planning skip: YES for primary fix (soundManager.js only, 2 lines, not R5)
+               Owner approval required
 Owner decisions:
-  OD-1: Override the Jan-2026 anti-rule? (REQUIRED before any fix)
-  OD-2: Fix approach — A (time window) / B (per-order) / C (global toggle)
-  OD-3: Mute duration if Option A (suggested 2 min)
-Status:        INVESTIGATION CLOSED → next: Owner OD-1 answer → Gate 2 (PLANNING)
+  OD-1: Fix primary only OR primary + secondary?
+  OD-2: Override Jan-2026 anti-rule for secondary fix?
+Status:        INVESTIGATION CLOSED → Gate 2 (PLANNING)
 Report:        /app/memory/investigations/INVESTIGATION_2026_09_18_MUTE_RINGER_NOT_STOPPING.md
 ```
