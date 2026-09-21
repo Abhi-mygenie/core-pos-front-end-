@@ -434,3 +434,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Owner: "…we want phased implementation so that smoke test can happen by the owner before moving to the next phase … so yes, go ahead and close gate three" → Gate 3 CLOSED (D69, P-12, G4-06).
 - Wrote `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md`: P0 M0 shell (read-only) → P1 M7 Front Desk Rules tab + M2 cancel/no-show/modify → P2 M1 booking + M3 check-in → P3 M4 extend + M5 balances → P4 M6 bill/checkout → P5 closure. Per phase: exact current→new line edits for every existing file, new-file skeletons, tests, QA-agent brief, owner smoke script, rollback. Next phase only after owner "Phase N smoke OK".
 - All G4 evidence rows ticked; backend queue empty; sandbox at defaults. **Waiting for owner "Gate 4 GO". No code in frontend/src/.**
+- **2026-09-21:** Implementation-agent handover written (`handover/SESSION_HANDOVER_2026_09_21_CR385_GATE3_CLOSED.md`).

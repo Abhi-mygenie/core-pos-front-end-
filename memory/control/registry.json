@@ -25236,7 +25236,7 @@
         "MV-09": "Q9b grouping: flat+switch / by type / flat (default flat+switch)"
       },
       "q10_live_updates": "option a (refresh on focus + button + after action) provisional; revisit after BQ-385-01",
-      "handover": "handover/SESSION_HANDOVER_2026_09_21_CR385_GATE3_CLOSED.md",
+      "handover": "handover/SESSION_HANDOVER_2026_09_21_CR385_GATE3_CLOSED.md (full Implementation-agent handover, 11 sections)",
       "data_inventory": "impact/CR-385_DATA_INVENTORY.md",
       "backend_questions": [
         "BQ-385-01 PMS socket events exist? (FE has none)",
@@ -25460,6 +25460,11 @@
           "date": "2026-09-21",
           "to": "GATE 3 CLOSED — awaiting Gate 4 GO",
           "note": "Owner closed Gate 3 with a condition: phased, line-by-line plan with owner smoke between phases → plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md written (exact current→new lines for E1–E5, E8, E10; new-file skeletons; tests; QA briefs; owner smoke scripts; rollback). P-12/G4-06 ticked. Only G4-10 remains."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE 3 CLOSED — awaiting Gate 4 GO",
+          "note": "Full Implementation-agent handover written (boot order, frozen decisions, phase schedule, Entry Verification commands, data contract, sandbox rules, testing duties, registry sync, testids, pitfalls, open items)."
         }
       ],
       "gate_2_6_closed": "2026-09-20",

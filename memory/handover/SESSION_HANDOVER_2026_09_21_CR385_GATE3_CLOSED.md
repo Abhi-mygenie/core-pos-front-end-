@@ -1,23 +1,161 @@
-# CR-385 · Handover — GATE 3 CLOSED, awaiting "Gate 4 GO" (2026-09-21)
+# CR-385 · HANDOVER to the IMPLEMENTATION agent — Gate 3 CLOSED, awaiting "Gate 4 GO" (2026-09-21)
 
 ```
-Item:   CR-385 PMS Front Desk — Unified Tabbed Workstation · P1 · HIGH (CRITICAL modules M3/M4/M6) · code_reality NONE (0 src/ changes)
-Gate 3: CLOSED 2026-09-21 — owner quote in DESIGN_DECISIONS D69 / registry gate_3_closed
-Gate 4: GO not yet given. G4-01…09 all ticked with evidence; only G4-10 (owner words "Gate 4 GO") remains.
-Plans:  plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md (EXECUTION — phases P0–P5, exact edits, owner smoke scripts) + plans/CR-385_IMPLEMENTATION_PLAN.md (contract/matrix/registry checklist/risks)
-Rule:   next phase only after owner says "Phase N smoke OK". Nothing in frontend/src/ before "Gate 4 GO".
+Item:        CR-385 PMS Front Desk — Unified Tabbed Workstation (route /pms/front-desk-v2, sidebar "Front Desk (Beta)")
+Priority:    P1 · Risk HIGH (CRITICAL money modules M3 check-in, M4 extend, M6 checkout) · sprint_key pos_pms_2
+Code reality: NONE — grep -rn "CR-385" frontend/src/ = 0 · no src/spike · git status frontend/src = 0 changes (verified 2026-09-21)
+Gate 3:      CLOSED 2026-09-21 — owner: "…so yes, go ahead and close gate three" (full quote DESIGN_DECISIONS D69, registry gate_3_closed)
+Gate 4:      GO **NOT GIVEN**. G4-01…G4-09 ticked with evidence. Only G4-10 = owner's literal words "Gate 4 GO" remains.
+Your role:   AGENT_PROMPT_ALPHA v0.7 Role 3 IMPLEMENTATION — only after "Gate 4 GO". Until then you may read, verify, prepare fixtures; you may NOT create or edit anything under frontend/src/.
+Language:    respond to the owner in English.
 ```
 
-## Boot order for the IMPLEMENTATION agent (after "Gate 4 GO")
-1. `control/AGENT_PROMPT_ALPHA.md` (Role 3 Implementation, Step 0 Entry Verification) → 2. this file → 3. `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md` **Phase 0 only** → 4. `plans/CR-385_IMPLEMENTATION_PLAN.md` §1 scope lock, §3 data contract, §6 matrix → 5. `plans/CR-385_DESIGN_DECISIONS.md` D1–D69 (all binding) → 6. `public/cr385-frontdesk-mockup.html` v2.29 (visual spec) → 7. fixtures: `evidence/CR-385/probes_2026_09_20_g4_09/*.json` (LR/board/kpis), `probes_2026_09_20_n11/` (mixed nights), `probes_2026_09_21_held_fallback/h1_extend_1116.json` (held_fallback), `probes_2026_09_21_d17/` (advance merge) → 8. `memory/test_credentials.md` (OWNER_TGK) → 9. `public/cr385-master-checklist.html` rows M0-*, X-*, R-*.
-Entry Verification: re-run `sed -n 109p;270p App.js`, `244p Sidebar.jsx`, `17,18,36p roomStatusTransform.js`, `10p;48p CancelBookingDialog.jsx`, `12p;39p NoShowDialog.jsx`, `21p;26p;468p ChannelManagerPage.jsx`, `24,33p restaurantSettingsService.js` and compare with the "Current" column before touching anything.
+---
 
-## State of the world
-- Backend: D14, D15, D16, D17 fixed + FE-validated; BQ-385-19 shipped + validated; BQ-385-20 = contract (single-method advance); BQ-385-21 resolved by the owner's live scenario (D68). **Backend queue empty.**
-- Owner decisions locked: OD-385-16 a · OD-385-17 Channel Manager 5th tab · OD-385-18 a (no Split tile at advance points).
-- B-7 smoke complete (S-411 after D17). BUG-418 lands in P4/M6 (O-5). Intake candidates from smoke: BUG-431 (CheckInPage Room Amount pre-fill re-applies GST), BUG-432 (legacy NewBookingPage FE rate honoured over CM rate), BUG-433 (₹1 rounding divergence In-House/folio/POS) — file at P5 or earlier if the owner asks.
-- Sandbox: settings at defaults; rooms r4/r5/r1 free (hk); 8524/8526 belong to other testers. Rates 2026-11-15…17 restored (31,500 / 7,400).
-- HTML: checklist 36 rows ticked (P-01…P-12, X-*, G4-01…09, S-* except S-418 N/A); mockup v2.29 log current.
+## 0. Boot order (read in this order, nothing skipped)
+| # | File | Why |
+|---|---|---|
+| 1 | `memory/control/AGENT_PROMPT_ALPHA.md` | roles, R1–R26 rules, Step 0 Entry Verification, Step 5 registry sync, EXIT GATE |
+| 2 | this file | state + instructions |
+| 3 | `memory/plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md` | **THE execution schedule** — phases P0–P5, exact current→new lines, new-file skeletons, tests, QA briefs, owner smoke scripts, rollback. Read **Phase 0 only** in depth before coding P0; read the next phase only when the owner has said "Phase N smoke OK". |
+| 4 | `memory/plans/CR-385_IMPLEMENTATION_PLAN.md` | companion, still binding: §1 scope lock (files that WILL / will NOT change), §2 architecture, **§3 data-contract sheet C1–C12 + FORBIDDEN fields + D-rules**, §4 module detail + data-testids, §5 gap/AC mapping, §6 verification matrix (34 rows — your QA handover inherits it), §7 Step-5 registry checklist, §8 risks, §9 owner decisions |
+| 5 | `memory/plans/CR-385_DESIGN_DECISIONS.md` D1–D69 | **every one is binding**; especially D1/D2 (inline expansions), D14/D15 (Layout B), D37 (alert priority), D39 (extend vocabulary), D41 (density removed), D42 (Turns), D47/D48/D49 (payment tiles, badges, panel props), **D50 money contract**, D52–D55 (N7/N8/N9), D57 (spike: 440×560, Q6 host CSS, scroll-on-expand, sticky-th no top padding, panel balance from charge), D60–D69 (owner answers this week) |
+| 6 | `frontend/public/cr385-frontdesk-mockup.html` v2.29 | the visual spec (v2.28 visuals LOCKED; the `// v2.29 addendum` comments are the decision log — read them). Open it in the browser; every view (Arrivals, Departures, In-House, Rooms, Booking, Check-In, Extend, Modify, No-Show/Cancel, Bill) is there. **Do not edit this file.** |
+| 7 | `frontend/public/cr385-master-checklist.html` | rows M0-01…M7-04, X-01…X-15, R-01…R-08 are yours to tick with evidence (browser: tick + evidence text saved to localStorage; ALSO write the `checked` attribute + `value` into the HTML like the previous agents did, so the state is in git). Never tick what you did not do. |
+| 8 | `memory/impact/CR-385_IMPACT_ANALYSIS_REV4_GATE_2_6_FINAL.md` | G-01…G-56 gaps (already mapped to modules in plan §5) |
+| 9 | Blueprints `memory/plans/CR-385_BOOKING_V2_17_BLUEPRINT.md`, `CR-385_EXTEND_STAY_V2_19_BLUEPRINT.md`, `CR-385_NOSHOW_CANCEL_V2_22_BLUEPRINT.md`, `CR-385_UX_FLOW_GATE_2_4.md` | field-level UX for M1/M4/M2 |
+| 10 | `memory/backend_briefs/BACKEND_BRIEF_CR-385_MASTER.md` (+ addendum) and `BACKEND_BRIEF_CR-385_2026-09-20_FINAL_PACK.md` | payload shapes; what BE fixed this week (D14–D17, BQ-19) |
+| 11 | Fixtures (real server responses — copy into `frontend/src/__fixtures__/cr385/` at P0): `memory/evidence/CR-385/probes_2026_09_20_g4_09/{local_reservations_view_all,room_status_board,dashboard_kpis}.json` · `probes_2026_09_20_n11/` (mixed held+calendar nights) · `probes_2026_09_21_held_fallback/h1_extend_1116.json` (**real `held_fallback`**) · `probes_2026_09_21_d17/*_2_checkin.json` (advance merge) · `probes_2026_09_20_final/s6_folio.json` (folio/ledger shape) |
+| 12 | `memory/test_credentials.md` | alias OWNER_TGK (RID 69, hotel `sandbox-pms`). Never print the password in chat, handovers or reports. |
+| 13 | `memory/control/FILE_OWNERSHIP.md`, `memory/control/registry.json` (item CR-385), `memory/control/OPEN_GAPS_REGISTER.md` (OG-PMS-028/029 contract notes) | ownership + registry you must update |
 
-## Next words expected from the owner
-- **"Gate 4 GO"** → start Phase 0 per the phased plan. Then after each phase: **"Phase N smoke OK"**.
+---
+
+## 1. Frozen decisions you must not re-open (owner-locked)
+| Decision | Value | Where |
+|---|---|---|
+| OD-385-16 | Extend Stay + Modify Booking = **new** `components/pms/frontdesk/ExtendStayForm.jsx` / `ModifyBookingForm.jsx` on the new contracts. Legacy `ExtendStayDialog.jsx` / `ModifyBookingDialog.jsx` **untouched**. Cancel + No-Show reuse the legacy dialogs with an `inline` prop (wrapper-only edit). | D60 |
+| OD-385-17 | Settings toggles (allow early check-in · extension pricing) = **5th tab "Front Desk Rules" on `pages/pms/ChannelManagerPage.jsx`** (new `pages/pms/FrontDeskRulesTab.jsx`). `RestaurantSettingsPage` untouched. Page title "Channel Manager" is fine there (owner confirmed D62); the Front Desk screen itself must never show the words "Channel Manager". | D60/D62 |
+| OD-385-18 | **Single-method advance** (Cash / Card / UPI + reference) at Booking, Check-In, Extend. **No Split tile at advance points** (the mockup still shows it — do not build it). Split stays on the Bill (M6) via the panel's own tile. | D64 |
+| Landing | Front Desk opens on **Arrivals**; `?tab=` deep link + `localStorage mygenie_frontdesk_tab` | OD-385-10 |
+| Density | **removed** — always Comfortable | D41 |
+| Money | **`charge.*` only** (`rate_per_night, nights, upgrade_amount, booking_charge, sgst, cgst, total_with_gst, prepaid_amount, advance_payment, balance_due, nights_detail[]`). FORBIDDEN: `balance_payment`, top-level `advance_payment`, `amount_after_tax/before_tax`, folio `remaining_room_balance`, any `* 0.05 / * 0.18`, any client-side rate × nights. Never sum `nights_detail[].gst`. | D50, AC-22 |
+| Dates | compare ISO strings against **`meta.business_date`** from the LR response; browser clock only to build the first request window | X-06, D53 |
+| Cleared | `rows[0].order_payment_status === 'paid' && charge.balance_due === 0` | OG-PMS-028 |
+| Bill layout | Layout B: LEFT statement (own scroll) · RIGHT `CollectPaymentPanel` unmodified in a **440×560** box, class `frontdesk-bill`, three section toggles hidden by **host CSS** (Q6 = a), `scrollIntoView({block:'nearest'})` on expand, panel balance fed from `charge` (no BUG-425 hand-override) | D57/D58 |
+| Idempotency | second payment on a paid order → server 200 `{status:"already_paid"}` → treat as success no-op | verified 2026-09-20 |
+| BUG-418 | fixed **inside M6** (SGST + CGST two lines); legacy drawer not touched | O-5 |
+| Parked | G-07 refund arithmetic (Phase 2 ribbon), G-09 room discount (disabled stub, tooltip "needs BQ-385-07"), G-56 multi-room (`rooms_count 1`) | plan §5 |
+
+---
+
+## 2. Phase schedule and the owner's gate rule
+```
+"Gate 4 GO"  →  P0  →  owner "Phase 0 smoke OK"  →  P1  →  "Phase 1 smoke OK"  →  P2  →  …  →  P4  →  "Phase 4 smoke OK"  →  P5 closure
+```
+| Phase | Modules | Existing files edited (exact lines in the phased plan) | New files |
+|---|---|---|---|
+| P0 | M0 shell (read-only) | `App.js` +L110 import, +L271 route · `Sidebar.jsx` +L245 item · `roomStatusTransform.js` L17 (+2 lines), L18, L36 + its test | `pages/pms/FrontDeskWorkstationPage.jsx`, `api/services/frontDeskService.js`, `api/transforms/frontDeskTransform.js`, `components/pms/frontdesk/{WorkstationHeader,KpiTabStrip,AlertBar,GlobalSearch,GuestTable,ArrivalsPanel,DeparturesPanel,InHousePanel,RoomsPanel,RoomTile,RoomDetail}.jsx`, `money.js`, `frontdesk.css`, 3 test files |
+| P1 | M7 rules tab · M2 cancel/no-show/modify | `ChannelManagerPage.jsx` L22 import, L27 TABS, after L469 render · `restaurantSettingsService.js` append `updateFrontDeskRules` · `CancelBookingDialog.jsx` L10 + L48 · `NoShowDialog.jsx` L12 + L39 | `pages/pms/FrontDeskRulesTab.jsx`, `frontdesk/ModifyBookingForm.jsx` |
+| P2 | M1 booking · M3 check-in | none | `frontdesk/NewBookingForm.jsx`, `frontdesk/CheckInForm.jsx` (copy of CheckInPage form body — header must cite source lines + commit; mirror rule) |
+| P3 | M4 extend · M5 balances | none | `frontdesk/ExtendStayForm.jsx`, `frontdesk/NightsLines.jsx`, service additions |
+| P4 | M6 bill/checkout | none (`CollectPaymentPanel.jsx` imported only) | `frontdesk/FolioCheckoutPanel.jsx`, css rules, `hideSectionRows.cr385.test.js` |
+| P5 | closure | registry/ownership docs | — |
+**Never start a phase without the owner's sentence.** Never work on two phases at once. A failed owner smoke = fix → re-QA → re-smoke of the same phase.
+
+### Files that must NOT change (hard) — re-check with `git status` before every handover
+`components/order-entry/CollectPaymentPanel.jsx` · `api/transforms/orderTransform.js` · `api/services/pmsService.js` (call it, never edit) · `pages/pms/{FrontDeskPage,ArrivalsPage,DeparturesPage,InHouseGuestsPage,RoomStatusPage,CheckInPage,NewBookingPage,GuestFolioPage,RatesTab}.jsx` · `components/pms/{PmsCheckoutDrawer,GuestDocsSection,ExtendStayDialog,ModifyBookingDialog,RoomCheckInModal}.jsx` · `pages/RestaurantSettingsPage.jsx` · `api/transforms/{aiosellTransform,folioTransform,restaurantSettingsTransform}.js` · `AppProviders.jsx` · any existing localStorage key · `.env` · `memory/final/*` · `public/cr385-frontdesk-mockup.html`. Run `sha256sum public/cr385-frontdesk-mockup.html` and `git log -1 -- <hotspot files>` at each phase end (hotspot guard).
+
+---
+
+## 3. Step 0 — Entry Verification (do this first after "Gate 4 GO", before any edit)
+```bash
+cd /app/frontend/src
+grep -rn "CR-385" . | wc -l                      # must be 0
+sed -n 109p App.js; sed -n 270p App.js           # import GuestFolioPage … // CR-364 · <Route path="/pms/folio/:orderId" …
+sed -n 244p components/layout/Sidebar.jsx        # { id: 'pms-revenue', …
+sed -n '17,18p;36p' api/transforms/roomStatusTransform.js
+sed -n '10p;48p' components/pms/CancelBookingDialog.jsx
+sed -n '12p;39p' components/pms/NoShowDialog.jsx
+sed -n '21p;26p;468p' pages/pms/ChannelManagerPage.jsx
+sed -n '24,33p' api/services/restaurantSettingsService.js
+```
+Compare with the "Current" column of the phased plan. If any line drifted (another CR landed), re-anchor by content, record the new line numbers in your QA handover, and check `memory/control/FILE_OWNERSHIP.md` + registry for the item that moved it (Conflict Pre-Check).
+
+---
+
+## 4. Data contract essentials (full sheet: plan §3; verify shapes against the fixtures, not memory)
+| Call | Key facts |
+|---|---|
+| `GET aiosell/local-reservations?start_date&end_date&view=all` | **422 without dates** → always send a window (business_date −30…+60). `data{meta{business_date}, counts{arrivals_today, arrivals_late, arrivals_tomorrow, departures_today, departures_overdue, in_house, leaving_today, arrived_today}, reservations[]}`. Row: `operational_status ∈ {pending, in_house, departed}`, `channel`, `pah`, `guest{first_name,last_name,phone,email}`, `rooms[]{order_id, order_payment_status, restaurant_table_id, table_no, table_title, room_code, adults, children}`, `charge{…, nights_detail[]?}` (present for calendar-extended stays — BQ-19 shipped). |
+| `GET aiosell/room-status-board` | `data{meta, auto_hk_on_rm_checkout, rooms[]{restaurant_table_id, table_no, title, aiosell_room_code, manual_status, display_status, is_occupied, hk_assignee, room_operational_status_at, guest{name,phone,email,booking_id,order_id}, reservation}}`. **No `sections[]`** — Area = `title` (real values: `ground floor`, `first  floor` (double space!), `2nd floor`, `3rd floor`, `patal lok` → normalise: trim, collapse spaces, title-case). |
+| `GET aiosell/dashboard-kpis?start_date&end_date` | `data.today{arrivals_count, departures_count, in_house_count, no_show_count, occupancy_percent_physical}` |
+| `POST aiosell/direct-reservation` | `{guest{name,phone}, checkin, checkout, adults, children, rooms[{room_code, rateplan_code, rooms_count:1}], advance{amount, method, reference}?}` → 201 `data.reservation{id, booking_id, charge}`. **Never send `rate_per_night`** (server prices; 422 "no rate configured" → show verbatim). |
+| `POST v1/…/pos/user-group-check-in` (multipart) | field set = `pmsService.pmsCheckIn` L218–292 + `aiosell_reservation_id`, `upgrade_type paid|complimentary`, `upgrade_amount`, `upgrade_reason`; `room_price=0`, `order_amount=0`; `advance_payment` = collect-now (**D17 fixed**: merged with booking carry, 1000+500→1500), `payment_method`. 422 "Early check-in is not allowed…" when `allow_early_checkin=false` and `checkin > business_date` → show verbatim + client guard (D53). Response `data.order_id`, `data.charge`. |
+| `POST v2/…/pos/room-extend-stay` | `{order_id, new_checkout_date, reason, payment{amount, method}?, discount{type,value,reason}?, new_restaurant_table_id?}` → `data.charge` (+ `nights_detail[]{date, rate, source held|calendar|held_fallback, gst_percent, gst}`), 409 on conflict. **Never `new_room_price`.** Shorten and move are correct now (D15/D16 fixed). After 200: refetch LR (D55). |
+| `PATCH aiosell/local-reservations/{id}` | `{checkin?, checkout?, rateplan_code?, reason, preview?:true}` — preview is side-effect free; **never `amount_after_tax`**; equal dates → 422 "checkout must be after checkin." |
+| Cancel / No-Show / room status | existing `pmsService.cancelReservation`, `markNoShowBooking`, `patchRoomStatus`, `bulkMarkClean` — reuse |
+| `POST v2/…/order/order-bill-payment` | only through the unmodified `CollectPaymentPanel`; second call on a paid order → 200 `status:"already_paid"` |
+| Settings | read `GET v1/vendoremployee/profile` → `restaurants[0].settings.{allow_early_checkin, extend_rate_mode, auto_print_checkin_receipt}` (aliases `pms.*`); write **multipart `data={"basic":{…}}` only** (raw JSON is silently ignored); booleans `true/false` accepted |
+| Folio | existing `pmsService.getGuestFolio(orderId)` (`POST get-single-order-new`) → `orderTransform.fromAPI.order` |
+
+---
+
+## 5. Sandbox rules (shared preprod — other testers are live on it)
+- Login `POST /api/v1/auth/vendoremployee/common-login` (header `X-localization: en`), single-session token → re-login per run; UI 401 → existing re-login flow.
+- Rooms you may use: **r4/8525, r5/8527, r1/8528** only. **Never touch 8524 (r3) or 8526 (r2)** — other testers' stays.
+- Use check-in = server business date (today) unless you toggle `allow_early_checkin=true` for the run — then **restore `false`** in the same session. Restore `extend_rate_mode=calendar`, `auto_print_checkin_receipt=false`.
+- Settle every stay you create (TAB via the panel or the probe body in `evidence/CR-385/probes_2026_09_20_final/run_gate4.py` step 6); cancel unused bookings; rooms go back to `hk` on checkout — flip to `available` with `PATCH aiosell/room-status/{id} {"status":"available"}` if a test needs a bookable room.
+- `held_fallback` demo recipe (D68): wipe one far-future night with `push-rates … rate:0`, extend into it, **restore the original rate in the same session** (`backend_replies/held_fallback_probe_2026-09-21.md`).
+- The QA agent (testing_agent) sometimes leaves stays in-house — check the board after every run and settle.
+
+---
+
+## 6. Testing you owe per phase
+1. Unit/transform tests named `*.cr385.test.js` on the real fixtures; `yarn test --watchAll=false --testPathPattern=cr385` green.
+2. Grep guards empty: `grep -rn "balance_payment\|remaining_room_balance\|amount_after_tax\|\* 0.05\|\* 0.18\|new_room_price\|toISOString()\.slice" src/components/pms/frontdesk src/api/services/frontDeskService.js src/api/transforms/frontDeskTransform.js src/pages/pms/FrontDeskWorkstationPage.jsx src/pages/pms/FrontDeskRulesTab.jsx`.
+3. `yarn build` — no new warnings. (Node 22 here: if you must add a package use `yarn add <pkg> --ignore-engines`; never plain `npm install`.)
+4. One smoke screenshot, then **testing_agent** (frontend, 1920×800 **and** 1366×768, zero console errors, unique `data-testid` on every interactive element) with the phase's QA brief from the phased plan. Read its report in `/app/test_reports/iteration_N.json`, fix everything, re-run.
+5. Write the QA handover section (matrix §6 rows for the phase + audit note for CRITICAL modules).
+6. Hand the owner the phase smoke script (in the phased plan) and **stop** until "Phase N smoke OK".
+
+---
+
+## 7. Registry / doc sync after every phase (R17, plan §7)
+- `registry.json` CR-385: `status` → `GATE_5A_IMPLEMENTED (P<n>)`, `files[]` actual, `status_history` entry; BUG-418 → "IMPLEMENTED via CR-385 M6" at P4.
+- `control/CR_REGISTRY.md` row + header line · `control/CONTROL_DASHBOARD.md` header line · `PRD.md` entry · `control/FILE_OWNERSHIP.md` (every new file + each edited line "CR-385 M<n> IMPL <date>") · master checklist rows ticked with evidence · new handover file `handover/SESSION_HANDOVER_<date>_CR385_P<n>.md`.
+- Code markers `// CR-385 M<n>` on every new file header and every edited line (R18). Copy headers on `RoomTile.jsx` and `CheckInForm.jsx` must cite `source file @commit L<a>–<b>` (mirror rule until FU-385-C).
+
+---
+
+## 8. Data-testid conventions (full lists in plan §4)
+Prefix per surface: `fd-*` shell (`fd-page`, `fd-tab-<t>`, `fd-tab-<t>-count`, `fd-row-<id>`, `fd-row-<id>-balance|badge|expand|bill-btn|hk-btn|extend-btn|cancel-btn|noshow-btn|kebab`, `fd-chip-<tab>-<key>`, `fd-room-tile-<tableId>`, `fd-room-detail-<tableId>`, `fd-search-input`, `fd-alert-item-<i>`, `fd-page-error`, `fd-retry-btn`) · `booking-*` · `checkin-*` · `extend-*` · `modify-*` · `bill-*` (`bill-right` has class `frontdesk-bill`) · `frontdesk-rules-*`, `toggle-allow-early-checkin`, `radio-extend-rate-mode-calendar|held` · existing panel testids (`checkout-*`, `pay-btn`) untouched. Every interactive element and every money figure gets one; kebab-case; unique.
+
+---
+
+## 9. Environment pitfalls
+- Preview URL = `frontend/.env` `REACT_APP_BACKEND_URL` **only** (never build it from memory). The frontend talks to preprod directly; there is no local backend for these routes.
+- `git diff` is unavailable — use `git status --short` and `git log`. Platform commits after each step.
+- Hot reload is on; restart supervisor only for `.env` or dependency changes.
+- The preview pod sleeps; the screenshot tool may time out on first hit — retry or use the testing agent.
+- Do not write to `frontend/.env`; do not modify supervisor configs.
+
+---
+
+## 10. Open items you inherit (not blockers)
+| Item | Owner | Note |
+|---|---|---|
+| Intake candidates BUG-431 (CheckInPage Room Amount pre-fill re-applies GST), BUG-432 (legacy NewBookingPage FE rate overrides CM rate), BUG-433 (₹1 rounding divergence In-House / folio / POS) | file at P5 (or earlier if the owner asks) | found by the B-7 smoke 2026-09-20 |
+| BUG-412 (folio Advance Paid) | re-verify on its own item now that D17 is fixed | registry note added |
+| FU-385-C retire legacy PMS pages + drop "(Beta)" | owner decision at P5 | mirror rule until then |
+| G-09 room discount (BQ-385-07), G-07 refund arithmetic (BQ-13) | Phase 2 of the product, not this CR | disabled stub / ribbon |
+| Split at advance points | parked until BE stores split legs (BQ-385-20) | OD-385-18 a |
+
+---
+
+## 11. What to say to the owner at the start of your session (five lines, then wait)
+1. I am the Implementation agent for CR-385; Gate 3 is closed; I will not touch `frontend/src/` until you say **"Gate 4 GO"**.
+2. Phase 0 = read-only shell (route, sidebar item, tiles, tables, Rooms, search, alerts); its smoke script is in the phased plan §0.5.
+3. Frozen: charge-only money, business-date-only dates, no Split at advance points, new Extend/Modify forms, Front Desk Rules tab on Channel Manager.
+4. After each phase I stop for your "Phase N smoke OK".
+5. Sandbox: rooms r4/r5/r1 only; I settle what I create and restore settings.
