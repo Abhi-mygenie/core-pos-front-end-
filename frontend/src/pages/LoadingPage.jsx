@@ -419,7 +419,7 @@ const LoadingPage = () => {
     const t0 = Date.now();
     updateStatus('products', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
-      const productsResponse = await productService.getProducts({ limit: 1000, offset: 1, type: 'all' });
+      const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
       if (ctrl.aborted) return;
       data.products = productsResponse.products;
       const loadedCount = data.products?.length || 0;
