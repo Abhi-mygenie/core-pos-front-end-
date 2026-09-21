@@ -1,6 +1,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-21 (CR-385: **Phase 0 QA PASSED** — Role 4 run: 35/35 (runner iteration_6 flagged 2 MAJOR retry + 1 MINOR wording → re-executed with network evidence: retries recover in 1.8 s / 3.3 s, wording is sidebar chrome only → NOTE). Coverage 19/19. Report `test_reports/QA_REPORT_2026_09_21_CR385_P0.md`. registry `GATE_5B_QA_PASSED (P0)`. **Ready for Gate 6 owner Phase 0 smoke.**)
 **Last Updated:** 2026-09-21 (CR-385: **Gate 4 GO** (owner: "Gate 4 GO. Correct on all five.") → **Phase 0 (M0 shell) IMPLEMENTED** — route `/pms/front-desk-v2` + sidebar "Front Desk (Beta)" + 16 new files; 20/20 cr385 unit tests, grep guards empty, `yarn build` exit 0, QA `test_reports/iteration_5.json` (~92%; KPI 422 → fixed: `dashboard-kpis` range capped at 31 days → single-day window), self-test 1366×768 zero console errors incl. Mark Clean/Request HK on r4 (restored). BUG-431/432/433 filed INTAKE. registry `GATE_5A_IMPLEMENTED (P0)`. **Awaiting owner "Phase 0 smoke OK"** — Phase 1 not started. Handover `handover/SESSION_HANDOVER_2026_09_21_CR385_P0.md`.)
 **Last Updated:** 2026-09-21 (CR-385: GATE 3 CLOSED (owner quote D69); phased line-by-line plan `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md`; awaiting owner "Gate 4 GO".)
 **Last Updated:** 2026-09-21 (CR-385: held_fallback live-verified → G4-03 ✓ (no waiver); D68. Gate 3 OPEN — only owner "close Gate 3" + "Gate 4 GO" remain.)

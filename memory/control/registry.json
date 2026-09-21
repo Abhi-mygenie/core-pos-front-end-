@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5A_IMPLEMENTED (P0) — Phase 0 M0 shell coded + unit-tested (20/20) + QA iteration_5 + self-test; awaiting owner \"Phase 0 smoke OK\" before Phase 1. Gate 4 GO given 2026-09-21.",
+      "status": "GATE_5B_QA_PASSED (P0) — QA 35/35 (0 BLOCKER/MAJOR/MINOR, 6 NOTE), coverage 19/19; READY FOR GATE 6 owner Phase 0 smoke. Phase 1 not started.",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25470,6 +25470,11 @@
           "date": "2026-09-21",
           "to": "GATE_5A_IMPLEMENTED (P0)",
           "note": "Gate 4 GO; BUG-431/432/433 filed; Phase 0 M0 shell built per phased plan §0 (Entry Verification: no drift; App.js route landed at L272 not L271 because the import shifted lines). Tests 20/20, grep guards empty, yarn build exit 0 (no CR-385 warnings), QA iteration_5 (~92%, KPI 422 → fixed: server caps dashboard-kpis range at 31 days → single-day window), self-test 1366×768 zero console errors incl. Mark Clean/Request HK on r4 (restored). Awaiting owner \"Phase 0 smoke OK\"."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE_5B_QA_PASSED (P0)",
+          "note": "QA role: runner iteration_6 (~93%: 2 MAJOR retry + 1 MINOR wording) → QA evidence re-runs: retries recover in 1.8 s / 3.3 s (timing artefact), \"Channel Manager\" only in sidebar chrome not in <main> → all downgraded to NOTE. Report memory/test_reports/QA_REPORT_2026_09_21_CR385_P0.md; evidence evidence/CR-385/qa_2026_09_21_p0/."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25564,7 +25569,8 @@
         "api/transforms/__tests__/frontDeskTransform.cr385.test.js, api/services/__tests__/frontDeskService.cr385.test.js, components/pms/frontdesk/__tests__/money.cr385.test.js (NEW)",
         "__fixtures__/cr385/{local_reservations_view_all,room_status_board,dashboard_kpis}.json (NEW, copies of probes_2026_09_20_g4_09)"
       ],
-      "qa_handover_p0": "handover/QA_HANDOVER_2026_09_21_CR385_P0.md"
+      "qa_handover_p0": "handover/QA_HANDOVER_2026_09_21_CR385_P0.md",
+      "qa_report_p0": "test_reports/QA_REPORT_2026_09_21_CR385_P0.md"
     },
     {
       "id": "BUG-410",
@@ -26146,7 +26152,7 @@
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "IMPLEMENTATION — CR-385 Phase 0 (M0 shell) GATE_5A_IMPLEMENTED; awaiting owner \"Phase 0 smoke OK\". Entry: handover/SESSION_HANDOVER_2026_09_21_CR385_P0.md",
+    "last_action": "QA — CR-385 Phase 0 QA PASSED (35/35); awaiting owner Gate 6 Phase 0 smoke (\"Phase 0 smoke OK\").",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

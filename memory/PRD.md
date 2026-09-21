@@ -446,3 +446,8 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Sandbox state at hand-off: r3/r2 occupied (other testers), r4/r5/r1 HK — identical to the start; settings untouched (no settings write in P0).
 - QA handover (Role 4 brief, template v0.7): `handover/QA_HANDOVER_2026_09_21_CR385_P0.md` — 19 inherited matrix rows, 10 additional cases, 6 regression rows.
 - Next: owner runs the Phase 0 smoke (phased plan §0.5) → says **"Phase 0 smoke OK"** → Phase 1 (M7 Front Desk Rules tab · M2 cancel/no-show/modify).
+
+## 2026-09-21 — CR-385 Phase 0 QA PASSED (Role 4) · ready for Gate 6 owner smoke
+- QA executed the QA handover (19 matrix + 10 additional + 6 regression + read-only critical path) via runner `test_reports/iteration_6.json` at 1920×800 / 1366×768, then re-ran every FAIL with network logging. Result **35/35**, 0 BLOCKER/MAJOR/MINOR, 6 NOTE: F-1/F-2 retry buttons recover in 1.8 s / 3.3 s (runner's 6 s window raced preprod), F-3 "Channel Manager" match is the sidebar nav label (not in the workstation `<main>`), N-1 keyboard/phone-suffix deferred with evidence, N-2 refresh fires a second snapshot batch via the focus listener (P1 debounce suggestion), N-3 Arrivals default chip "Today" (mockup default; owner to decide).
+- Coverage 19/19 changed files; registry spot-check PASS. Sandbox restored (r4 HK). Report `memory/test_reports/QA_REPORT_2026_09_21_CR385_P0.md`; evidence `memory/evidence/CR-385/qa_2026_09_21_p0/`.
+- registry.json CR-385 → `GATE_5B_QA_PASSED (P0)`. Next: owner Phase 0 smoke (phased plan §0.5) → "Phase 0 smoke OK" → Phase 1.
