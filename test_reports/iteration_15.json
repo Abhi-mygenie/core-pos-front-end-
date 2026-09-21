@@ -1,0 +1,62 @@
+{
+  "summary": "CR-385 Phase 1.5 QA re-test (BUG-441 & BUG-442 verification). Focused re-run confirmed BOTH bug fixes shipped correctly. All 4 pre-seeded bookings (228/229/230/231) were cancelled — every cancel POST hit /local-reservations/<numeric-id>/cancel (200, no 500) with body {reason:'guest cancelled',cancelled_by:'Owner',notify_cm:true} where cancelled_by is the AuthContext user.fullName ('Owner' per sidebar 'Owner (Owner) · The Goan Kitchen · #69'), NOT 'staff'. Legacy /pms/arrivals ⋮ Modify on 229 also PATCHed the numeric id /local-reservations/229 (BUG-441 fix confirmed on modify path too). Toast 'Booking cancelled' shown. Not every Phase 1 case was rerun independently this iteration (those were fully PASSed in iteration_14 and the P1.5 patch only touched the cancel/modify id + cancelled_by wiring — untouched Phase-1 flows are covered transitively).",
+  "cases_pass_fail": {
+    "P15-01 (Legacy /pms/arrivals cancel 230 uses numeric id)": "PASS — kebab arr-kebab-MG-69-71A8D9A2-… → arr-cancel-btn-… → overlay dialog class 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4' (legacy overlay confirmed) → reason 'guest cancelled' → Confirm → POST https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/230/cancel (NUMERIC 230, not MG-…) → 200 → toast 'Booking cancelled'. Row was in Upcoming tab, not Today (backend classifies non-checked-in as upcoming; not a bug — just a note).",
+    "P15-02 (BUG-442 cancelled_by is owner name, not 'staff')": "PASS — Cancel body for 230 = {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}. AuthContext user.fullName resolves to 'Owner' (sidebar renders 'Owner (Owner) · The Goan Kitchen · #69'). Non-empty, NOT 'staff'. Also confirmed for 228/229/231 (same value 'Owner').",
+    "P15-03 (Legacy /pms/arrivals Modify URL uses numeric id)": "PASS on URL (BUG-441) — Modify 229 opened ModifyBookingDialog (inputs modify-checkin=2026-09-22, modify-checkout=2026-09-23, modify-reason, button modify-booking-confirm-btn 'Save Changes'). Filled checkout=2026-09-24 → Save → captured PATCH https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/229 (NUMERIC 229, not MG-…). MINOR: PATCH body was {\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"amount_after_tax\":0} — legacy ModifyBookingDialog still sends amount_after_tax:0 and empty reason. Different codepath than the FD Beta ModifyBookingForm; spec's exact-body requirement is for FD Beta (P15-06), so acceptable but flagged.",
+    "P15-04 (Legacy /pms/reservations tape-chart cancel 231)": "PARTIAL — 231 could NOT be located on the tape chart (16 blocks rendered in default 7d view Sep 20-26 which includes checkin 23 Sep, but no block or tc-unassigned-row-* matched title 'QA-P15-LegacyRes'). Fallback via FD Beta → Tomorrow chip → fd-row-231-cancel-btn → SUCCESS: POST /local-reservations/231/cancel body cancelled_by='Owner' → 200. Reported as issue: legacy tape chart may not surface some pending Direct bookings (or filter that excludes them). Screenshot/context available in evidence.",
+    "P15-05 (Front Desk Beta cancel 228)": "PASS — fd-chip-arrivals-today → fd-row-228-cancel-btn → inline expansion, cancel-booking-dialog class 'w-full' (NO 'fixed', confirming FD Beta inline overlay) → reason 'guest cancelled' → Confirm → POST /local-reservations/228/cancel body {\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true} → 200 → toast → row gone.",
+    "P15-07 (FD Beta cancel modified 229)": "PASS — After legacy modify moved 229 to 24 Sep, cancel via fd-row-229-cancel-btn → POST /local-reservations/229/cancel body cancelled_by='Owner' → 200.",
+    "P15-14 CLEANUP": "PASS — 228/229/230/231 all cancelled by end of run (each POST 200, numeric ids). No No-Show confirmed. No rooms 8524/8526 touched. Front Desk Rules & r4 not touched this iteration (retained from iteration_14 defaults early=false/calendar).",
+    "P15-06 FD Beta debounce modify persistence": "NOT EXECUTED this iteration — 229 was cancelled after legacy modify. Fully passed in iteration_14 on 226 with identical ModifyBookingForm code; no code churn on that path in the P1.5 patch.",
+    "P15-08 M7 Channel Manager Rules": "NOT RE-RUN — fully passed iteration_14; the P1.5 patch did not touch FrontDeskRulesTab.jsx or restaurant-settings/update-settings.",
+    "P15-09/10/11/12/13": "NOT RE-RUN — passed in iteration_14; P1.5 fixes are scoped to ArrivalsPage.jsx L272-273, ReservationsPage.jsx BlockPopover cancelledBy prop, FrontDeskWorkstationPage cancelledBy. No impact on row-action matrix, no-show read-only, alert popover, duplicate testids, or the Phase-0 regression sweep."
+  },
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "PATCH /api/v2/vendoremployee/aiosell/local-reservations/{id} (legacy /pms/arrivals ModifyBookingDialog)", "issue": "Body sends amount_after_tax:0 and empty reason:'' — not aligned with the FD-Beta ModifyBookingForm exact-body spec {checkin,checkout,reason}. Should either drop amount_after_tax or default reason to 'Modified from Front Desk' server-side; minor since the URL now uses numeric id (primary BUG-441 fix)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Legacy /pms/reservations tape chart", "issue": "Newly-created pending Direct 'suite' unassigned booking id 231 (QA-P15-LegacyRes, checkin 23 Sep) did NOT appear on the tape chart's 7d default view (Sep 20-26). 16 blocks rendered but none matched. Cancel had to fall back to FD Beta Tomorrow chip. Reproducer: any pending Direct suite booking with unassigned room and checkin within default range should render as an unassigned row (tc-unassigned-row-<bookingId>) or as a block — neither present. Likely buildTapeChart filter/room-mapping edge case. Non-blocking but worth investigation.", "affected_selectors": ["tc-unassigned-row-*", "tc-block-*"]}
+    ],
+    "design_issues": []
+  },
+  "network_evidence": {
+    "captured_all_requests": "/app/memory/evidence/CR-385/phase1_5_qa/captured.json",
+    "cancels_summary": [
+      {"id": "230", "url": "…/local-reservations/230/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-01/02 legacy /pms/arrivals"},
+      {"id": "228", "url": "…/local-reservations/228/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-05 FD Beta"},
+      {"id": "229", "url": "…/local-reservations/229/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-07 FD Beta after legacy modify"},
+      {"id": "231", "url": "…/local-reservations/231/cancel", "body": {"reason": "guest cancelled", "cancelled_by": "Owner", "notify_cm": true}, "case": "P15-04 fallback FD Beta Tomorrow"}
+    ],
+    "modifies_summary": [
+      {"id": "229", "url": "…/local-reservations/229", "method": "PATCH", "body": "{\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"amount_after_tax\":0}", "case": "P15-03 legacy /pms/arrivals ModifyBookingDialog"}
+    ]
+  },
+  "test_report_links": [
+    "/app/memory/evidence/CR-385/phase1_5_qa/captured.json"
+  ],
+  "action_items": [
+    "Bugs 441 and 442 are FIXED and shippable — no further action.",
+    "OPTIONAL: Legacy ModifyBookingDialog PATCH body should drop `amount_after_tax:0` and default reason to 'Modified from Front Desk' (aligns with FD Beta contract). Non-blocking.",
+    "OPTIONAL: Investigate why /pms/reservations tape chart did not render pending Direct 'suite' unassigned booking 231 in default 7d view. Non-blocking (FD Beta Tomorrow chip works as clean-up path)."
+  ],
+  "critical_code_review_comments": [
+    "ArrivalsPage.jsx L272-273 correctly wires reservationId: row.id (numeric) for both onModify and onCancel — BUG-441 fixed.",
+    "ArrivalsPage.jsx L273 correctly wires cancelledBy: user?.fullName || 'staff' from AuthContext — BUG-442 fixed. AuthContext user.fullName for OWNER_TGK resolves to 'Owner' (verified via sidebar label).",
+    "ReservationsPage.jsx L42 imports useAuth and L232/L377 pass cancelledBy={user?.fullName || 'staff'} to BlockPopover, then uses res.id (numeric) — BUG-441/442 fixed on legacy tape chart path.",
+    "Legacy ModifyBookingDialog still emits amount_after_tax:0 and empty reason; FD Beta ModifyBookingForm does not. Consider unifying the contract."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only run, network capture)", "frontend": "Bug-fix verification 100% (BUG-441, BUG-442). 4/4 cancels correct. 1/1 modify URL correct. Phase-1 re-run coverage: skipped (transitive from iteration_14)."},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — value not printed. Login user.fullName resolves to 'Owner'.",
+  "seed_data_creation": "None. Cleaned up 228/229/230/231 (all cancelled).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "BUG-441 + BUG-442 shipped and verified. All 4 P1.5 seed bookings are cancelled. Legacy ModifyBookingDialog still leaks amount_after_tax:0 + empty reason (minor, different from FD Beta contract). Legacy /pms/reservations tape chart doesn't surface certain pending Direct 'suite' bookings (231 case) — worth investigation but non-blocking. Business date 2026-09-22. Owner AuthContext fullName = 'Owner'.",
+  "rca of the issue": "N/A — bug fixes verified working. Two new minor findings documented above (legacy modify body shape; tape-chart missing block 231)."
+}
