@@ -1,6 +1,6 @@
 # BUG-435 — Front Desk (Beta) fires a duplicate snapshot fetch on ↻ — window focus listener + click both call refresh()
 
-**ID:** BUG-435 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-435 · **Date:** 2026-09-21 · **Status:** INTAKE · **Phase 0.5** (fix before Phase 1 — owner hard rule 2026-09-21)
 **Source:** QA-FOUND — CR-385 Phase 0 QA (Role 4) `test_reports/QA_REPORT_2026_09_21_CR385_P0.md`
 **Confidence:** CONFIRMED
 **Duplicate check:** DISTINCT — RELATED to CR-385 (defect lives in CR-385 P0 code; no prior BUG/CR on this symptom — grep of BUG_TRACKER / CR_REGISTRY / registry.json 2026-09-21)
@@ -22,4 +22,5 @@
 - Estimated scope: SMALL
 
 ## Open questions
-- Debounce window (5 s?) and whether focus-refresh should be kept at all in P1.
+- **RESOLVED (D71):** 5 s focus debounce + in-flight coalescing.
+- ~~Debounce window (5 s?) and whether focus-refresh should be kept at all in P1.

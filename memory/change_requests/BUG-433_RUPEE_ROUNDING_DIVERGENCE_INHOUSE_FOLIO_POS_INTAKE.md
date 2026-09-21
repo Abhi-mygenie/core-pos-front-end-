@@ -1,6 +1,6 @@
 # BUG-433 — ₹1 rounding divergence between In-House balance, Guest Folio and POS
 
-**ID:** BUG-433 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-433 · **Date:** 2026-09-21 · **Status:** INTAKE · **DEFERRED-TO-P3** (owner-approved 2026-09-21 — becomes an ENTRY CONDITION of P3: fixed inside P3, not after)
 **Source:** QA-FOUND — CR-385 B-7 smoke S-421/426 (2026-09-20)
 **Confidence:** CONFIRMED (three figures read on the same order 1232632: In-House ₹2,212.35 · Folio ₹2,212 · POS ₹2,213)
 **Duplicate check:** RELATED to BUG-421/426/429/430 (room-orders GST paths in `pmsService.getInHouseGuests` / `folioTransform` / `orderTransform`) — DISTINCT symptom (rounding, not GST base)

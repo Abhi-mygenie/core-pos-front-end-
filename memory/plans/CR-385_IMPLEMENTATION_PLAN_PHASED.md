@@ -17,12 +17,21 @@ Each phase is independently shippable/rollback-able (sidebar item + route remova
 ```
 | Phase | Modules | Risk | What the owner sees at the end | Files touched (existing) |
 |---|---|---|---|---|
-| **P0** | M0 shell | MEDIUM | New "Front Desk (Beta)" page: 4 tiles/tabs, live counts, tables, Rooms grid + detail, search, alerts, refresh. Read-only — no money movement. | `App.js`, `Sidebar.jsx`, `roomStatusTransform.js` (+test) |
+| **P0** | M0 shell *(CODED + QA 35/35 2026-09-21 → P0.5 §0.7 pending)* | MEDIUM | New "Front Desk (Beta)" page: 4 tiles/tabs, live counts, tables, Rooms grid + detail, search, alerts, refresh. Read-only — no money movement. | `App.js`, `Sidebar.jsx`, `roomStatusTransform.js` (+test) |
 | **P1** | M7 settings tab · M2 cancel / no-show / modify | HIGH (inventory) | Channel Manager › Front Desk Rules tab; Arrivals row → Cancel / No-Show inline, Modify with server preview. | `ChannelManagerPage.jsx`, `restaurantSettingsService.js`, `CancelBookingDialog.jsx`, `NoShowDialog.jsx` |
 | **P2** | M1 new booking · M3 check-in | CRITICAL (money in) | + New Booking form (server-priced, advance), Check-In form (room/upgrade/ID/collect-now, early-check-in guard, HK-room allowed). | none new (all new files) |
 | **P3** | M4 extend stay · M5 balances/row actions | CRITICAL (money) | Departures/In-House balances = folio; Extend Stay with per-night lines (held / calendar / held_fallback), collect-now, 409 → move. | none |
 | **P4** | M6 bill / checkout | CRITICAL (settlement) | Bill expansion (Layout B) with the real POS payment panel; TAB/Cash/Card/UPI/Split; SGST+CGST two lines (BUG-418). | none |
 | **P5** | closure | — | Full regression (matrix §6 all rows), POS F&B regression, registry closure, FU-385-C decision (retire old pages) | — |
+
+### 0-bis. Phase N.5 rule (owner, 2026-09-21 — hard rule)
+```
+Every phase N has an N.5: ALL bugs found during phase N (QA, smoke, intake) are fixed and re-QA'd in N.5 BEFORE phase N+1 starts,
+unless the intake doc proves a hard dependency on a later phase. Then the bug is tagged DEFERRED-TO-P<k>, becomes an ENTRY CONDITION
+of P<k> (fixed inside P<k>, not after), and the owner approves the deferral explicitly. N.5 uses the same loop: plan note → owner
+"Phase N.5 GO" → Bug Fix role → QA re-test protocol (all phase-N cases + fixes) → ONE owner smoke for N + N.5 → "Phase N smoke OK".
+```
+Routing of the bugs open at the end of P0 (owner-approved 2026-09-21): BUG-434/435/436/437/438 → **P0.5** · BUG-431/432 → **DEFERRED-TO-P2** (entry conditions of P2) · BUG-433 → **DEFERRED-TO-P3** (entry condition of P3).
 
 ---
 
@@ -120,6 +129,19 @@ Say **"Phase 0 smoke OK"** (or list what's wrong).
 
 ### 0.6 Rollback P0
 Delete L110 + L271 in `App.js`, L245 in `Sidebar.jsx`; leave E3 (additive, harmless) or revert the 4 lines. New files inert.
+
+### 0.7 PHASE 0.5 — Bug fix of everything found in P0 (LOW risk, same gates compressed)
+Owner decisions recorded: **D70** BUG-437 → option (a) first non-empty chip · **D71** BUG-435 → 5 s focus-refresh debounce.
+Brief, Entry Verification, fix skeleton and smoke additions: `handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md` §4 (authoritative). Plan note to be written by the next agent at `plans/CR-385_PHASE_0_5_BUGFIX_PLAN.md` before "Phase 0.5 GO".
+
+| Bug | File(s) | Change (one line) | Test |
+|---|---|---|---|
+| BUG-434 | `FrontDeskWorkstationPage.jsx`, `RoomsPanel.jsx` | Retry buttons disabled + spinner + "Retrying…" while `refreshing` | RTL busy state |
+| BUG-435 | `FrontDeskWorkstationPage.jsx` (`useFrontDeskSnapshot`) | skip when in flight; ignore focus-refresh < 5 s after last fetch (D71) | RTL 2× focus → 1 fetch |
+| BUG-436 | `FrontDeskWorkstationPage.jsx` | `data-testid="fd-workstation-body"` on `<main>`; QA scope updated | DOM probe |
+| BUG-437 | `FrontDeskWorkstationPage.jsx`, `ArrivalsPanel.jsx` (`CHIP_ORDER`) | initial chip = first non-empty (late→today→tomorrow→upcoming / overdue→…) until the user clicks a chip (D70) | unit + RTL fixture |
+| BUG-438 | `components/pms/frontdesk/__tests__/` | GuestTable keyboard, searchSnapshot phone-suffix, isTurn live-shaped tests; A4/A5/A6 in QA brief | jest |
+Exit: cr385 tests green · guards empty · `yarn build` exit 0 · testing_agent both viewports (P0 matrix + fixes) · EXIT GATE 5/5 · registry `GATE_5B_QA_PASSED (P0+P0.5)` · combined owner smoke (§0.5 + master handover §4.4) → "Phase 0 smoke OK".
 
 ---
 

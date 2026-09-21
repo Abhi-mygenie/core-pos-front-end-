@@ -703,3 +703,19 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Execution shape | **Phased** — `plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md`: P0 M0 shell (read-only) → P1 M7 Front Desk Rules tab + M2 cancel/no-show/modify → P2 M1 booking + M3 check-in → P3 M4 extend + M5 balances → P4 M6 bill/checkout → P5 closure. **Next phase starts only after the owner says "Phase N smoke OK".** Each phase has: exact existing-file edits (current line → new line), new-file skeletons, tests, QA-agent brief, owner smoke script, rollback. |
 | Companion | `plans/CR-385_IMPLEMENTATION_PLAN.md` stays binding for data contract (§3), gap/AC mapping (§5), verification matrix (§6), registry checklist (§7), risks (§8). |
 | Reconfirmed in the phased plan | no Split tile at advance points (OD-385-18 a); Extend/Modify = new forms (OD-385-16 a); M7 = Channel Manager 5th tab (OD-385-17); D17 fixed → collect-now at check-in live in P2; `held_fallback` real fixture from D68 used in P3. |
+
+### D70 — BUG-437: Arrivals/Departures initial chip = first non-empty bucket (owner, 2026-09-21)
+| Field | Decision |
+|---|---|
+| Problem | Mockup default `S.chip.arrivals='today'` greets the desk with an empty table when 0 arrivals today and N late (sandbox 2026-09-21: Today 0 / Late 10). Contradicts UXQ-385-01 "show all buckets, today first — never empty". |
+| Decision | **Option (a):** on load and on every refresh **while the user has not clicked a chip on that tab**, the active chip is the first non-empty bucket in display order — Arrivals: Late → Today → Tomorrow → Upcoming; Departures: Overdue → Today → Tomorrow → Upcoming. All-zero → Today. In-House and Rooms keep `all`. A user's chip click pins the chip for the session (until tab reload). |
+| Rejected | (b) Today + late rows under a divider (chip counts ≠ visible rows); (c) keep mockup default. |
+| Owner words | "BUG-437 = option (a) first non-empty chip" (chat 2026-09-21). Mockup `S.chip` remains the *fallback* default only. |
+
+### D71 — BUG-435: refresh coalescing + 5 s focus-refresh debounce (owner, 2026-09-21)
+| Field | Decision |
+|---|---|
+| Problem | `window.focus` listener and the ↻ / Retry / patch handlers each call `refresh()`; focus + click within ~300 ms fires two full snapshot batches (LR + board + kpis ×2) — double preprod load and a last-writer race. |
+| Decision | `refresh()` is **coalesced**: if a snapshot is in flight, a second call is ignored (the in-flight result serves both). The **focus** trigger is additionally ignored when the last successful fetch is < **5 s** old. Manual triggers (↻, Retry, after Mark Clean/Request HK and every later mutating action — X-14) are never dropped, only coalesced. |
+| Owner words | "BUG-435 debounce = 5 s" (chat 2026-09-21). |
+| Test | RTL: two `focus` events within 5 s → one `getSnapshot`; ↻ during in-flight → one call; ↻ after 6 s → new call. |

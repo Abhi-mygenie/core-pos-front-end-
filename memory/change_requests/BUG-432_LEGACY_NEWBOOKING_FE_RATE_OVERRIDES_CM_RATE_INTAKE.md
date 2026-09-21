@@ -1,6 +1,6 @@
 # BUG-432 — Legacy NewBookingPage FE room amount honoured over the CM (rate-table) rate
 
-**ID:** BUG-432 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-432 · **Date:** 2026-09-21 · **Status:** INTAKE · **DEFERRED-TO-P2** (owner-approved 2026-09-21 — becomes an ENTRY CONDITION of P2: fixed inside P2, not after)
 **Source:** QA-FOUND — CR-385 B-7 smoke (§S, 2026-09-20)
 **Confidence:** CONFIRMED (API-level: server honours FE `rate_per_night` when sent — BQ-385-16 says the server prices only when the FE omits it)
 **Duplicate check:** RELATED to CR-385 (M1 `NewBookingForm` never sends `rate_per_night` — C5/BQ-16) · RELATED to BUG-404 (closed by decision O-4, superseded by server pricing)

@@ -1,6 +1,6 @@
 # BUG-437 — Arrivals tab lands on an empty "Today 0" table while "Late N" has rows — default chip UX gap
 
-**ID:** BUG-437 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-437 · **Date:** 2026-09-21 · **Status:** INTAKE · **Phase 0.5** (fix before Phase 1 — owner hard rule 2026-09-21)
 **Source:** QA-FOUND — CR-385 Phase 0 QA (Role 4) `test_reports/QA_REPORT_2026_09_21_CR385_P0.md`
 **Confidence:** CONFIRMED
 **Duplicate check:** DISTINCT — RELATED to CR-385, UXQ-385-01 (defect lives in CR-385 P0 code; no prior BUG/CR on this symptom — grep of BUG_TRACKER / CR_REGISTRY / registry.json 2026-09-21)
@@ -22,4 +22,5 @@
 - Estimated scope: SMALL
 
 ## Open questions
-- Which behaviour: (a) first non-empty chip, (b) keep Today + show late rows under a divider, (c) keep as mockup?
+- **RESOLVED (D70):** option (a) first non-empty chip.
+- ~~Which behaviour: (a) first non-empty chip, (b) keep Today + show late rows under a divider, (c) keep as mockup?

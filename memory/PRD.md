@@ -456,3 +456,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Owner directive: register every QA gap as a tracked bug. Intake role ran code-reality (defects in shipped CR-385 M0 code), duplicate check (all DISTINCT, RELATED CR-385), blast radius (SMALL, no hotspots), evidence dirs `evidence/BUG-43{4..8}/` → `evidence/CR-385/qa_2026_09_21_p0/`.
 - BUG-434 P2 Retry buttons no in-flight state · BUG-435 P2 duplicate snapshot fetch (focus listener + ↻) · BUG-436 P3 `fd-page` testid wraps Sidebar · BUG-437 P2 Arrivals lands on empty "Today" (owner UX decision a/b/c) · BUG-438 P3 automated coverage gap (keyboard, phone-suffix, Turns, focus-refresh).
 - Severities are agent-classified by the v0.7 rubric — owner to confirm/override. Proposed routing: fold 434/435/436/438 into Phase 1 (same files are edited there); 437 needs the owner's UX choice first.
+
+## 2026-09-21 — Master handover · Phase N.5 rule · Phase 0.5 defined · bug routing approved
+- Owner hard rule: every phase N has an N.5 — all bugs found in N fixed + re-QA'd before N+1 unless intake proves a later-phase dependency (then DEFERRED-TO-P<k>, entry condition, owner-approved). Written into phased plan §0-bis; §0.7 Phase 0.5 added.
+- Decisions: **D70** BUG-437 → option (a) first non-empty chip; **D71** BUG-435 → in-flight coalescing + 5 s focus debounce.
+- Routing (owner "Agree"): BUG-434/435/436/437/438 → P0.5; BUG-431/432 → P2 entry conditions (legacy CheckIn/NewBooking replaced by M3/M1); BUG-433 → P3 entry condition (M5 rounding rule, backend confirmation).
+- `handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md` is the single entry point: boot order (15 rows), the Planning agent's full plan condensed, Phase 0 as-built line map, bug table, Phase 0.5 brief (Entry Verification, fix skeleton, smoke additions). Next agent: present the bug table → owner "Phase 0.5 GO" → Bug Fix → QA re-test → combined Phase 0 smoke → "Phase 0 smoke OK" → Phase 1.

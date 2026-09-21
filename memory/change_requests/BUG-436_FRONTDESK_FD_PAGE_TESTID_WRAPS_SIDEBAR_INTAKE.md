@@ -1,6 +1,6 @@
 # BUG-436 — `data-testid="fd-page"` wraps the app Sidebar — "no Channel Manager on the Front Desk screen" assertions catch nav chrome
 
-**ID:** BUG-436 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-436 · **Date:** 2026-09-21 · **Status:** INTAKE · **Phase 0.5** (fix before Phase 1 — owner hard rule 2026-09-21)
 **Source:** QA-FOUND — CR-385 Phase 0 QA (Role 4) `test_reports/QA_REPORT_2026_09_21_CR385_P0.md`
 **Confidence:** CONFIRMED
 **Duplicate check:** DISTINCT — RELATED to CR-385 (defect lives in CR-385 P0 code; no prior BUG/CR on this symptom — grep of BUG_TRACKER / CR_REGISTRY / registry.json 2026-09-21)

@@ -1,6 +1,6 @@
 # BUG-431 — CheckInPage pre-fills Room Amount with base+GST and re-applies GST
 
-**ID:** BUG-431 · **Date:** 2026-09-21 · **Status:** INTAKE
+**ID:** BUG-431 · **Date:** 2026-09-21 · **Status:** INTAKE · **DEFERRED-TO-P2** (owner-approved 2026-09-21 — becomes an ENTRY CONDITION of P2: fixed inside P2, not after)
 **Source:** QA-FOUND — CR-385 B-7 smoke (§S, 2026-09-20), testing_agent + FE triage
 **Confidence:** REPORTED (observed in UI during smoke; not yet reproduced on its own item)
 **Duplicate check:** RELATED to CR-385 (M3 `CheckInForm` shows server `charge` only — D50; the legacy page keeps the defect until FU-385-C) · RELATED to BUG-410 (old modal GST)

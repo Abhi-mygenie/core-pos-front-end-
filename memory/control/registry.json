@@ -25475,6 +25475,11 @@
           "date": "2026-09-21",
           "to": "GATE_5B_QA_PASSED (P0)",
           "note": "QA role: runner iteration_6 (~93%: 2 MAJOR retry + 1 MINOR wording) → QA evidence re-runs: retries recover in 1.8 s / 3.3 s (timing artefact), \"Channel Manager\" only in sidebar chrome not in <main> → all downgraded to NOTE. Report memory/test_reports/QA_REPORT_2026_09_21_CR385_P0.md; evidence evidence/CR-385/qa_2026_09_21_p0/."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE_5B_QA_PASSED (P0) → P0.5 pending",
+          "note": "Master handover written; N.5 rule added to phased plan §0-bis; §0.7 Phase 0.5; D70/D71; bug routing owner-approved."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25570,7 +25575,39 @@
         "__fixtures__/cr385/{local_reservations_view_all,room_status_board,dashboard_kpis}.json (NEW, copies of probes_2026_09_20_g4_09)"
       ],
       "qa_handover_p0": "handover/QA_HANDOVER_2026_09_21_CR385_P0.md",
-      "qa_report_p0": "test_reports/QA_REPORT_2026_09_21_CR385_P0.md"
+      "qa_report_p0": "test_reports/QA_REPORT_2026_09_21_CR385_P0.md",
+      "phase_0_5": {
+        "status": "PENDING — owner \"Phase 0.5 GO\" required",
+        "bugs": [
+          "BUG-434",
+          "BUG-435",
+          "BUG-436",
+          "BUG-437",
+          "BUG-438"
+        ],
+        "decisions": [
+          "D70",
+          "D71"
+        ],
+        "brief": "handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md §4"
+      },
+      "bug_routing": {
+        "P0.5": [
+          "BUG-434",
+          "BUG-435",
+          "BUG-436",
+          "BUG-437",
+          "BUG-438"
+        ],
+        "P2_entry_conditions": [
+          "BUG-431",
+          "BUG-432"
+        ],
+        "P3_entry_conditions": [
+          "BUG-433"
+        ]
+      },
+      "master_handover": "handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md"
     },
     {
       "id": "BUG-410",
@@ -26077,8 +26114,15 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Filed from CR-385 B-7 smoke notes (handover §10, D65) at Gate 4 GO, before Phase 0."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE · DEFERRED-TO-P2",
+          "note": "Owner approved deferral (chat \"Agree\"): legacy/rounding defect is fixed inside P2 where the replacing module lands; not after."
         }
-      ]
+      ],
+      "phase": "DEFERRED-TO-P2",
+      "deferral": "owner-approved 2026-09-21; entry condition of P2"
     },
     {
       "id": "BUG-432",
@@ -26109,8 +26153,15 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Filed from CR-385 B-7 smoke notes (handover §10, D65) at Gate 4 GO, before Phase 0."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE · DEFERRED-TO-P2",
+          "note": "Owner approved deferral (chat \"Agree\"): legacy/rounding defect is fixed inside P2 where the replacing module lands; not after."
         }
-      ]
+      ],
+      "phase": "DEFERRED-TO-P2",
+      "deferral": "owner-approved 2026-09-21; entry condition of P2"
     },
     {
       "id": "BUG-433",
@@ -26146,8 +26197,15 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Filed from CR-385 B-7 smoke notes (handover §10, D65) at Gate 4 GO, before Phase 0."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE · DEFERRED-TO-P3",
+          "note": "Owner approved deferral (chat \"Agree\"): legacy/rounding defect is fixed inside P3 where the replacing module lands; not after."
         }
-      ]
+      ],
+      "phase": "DEFERRED-TO-P3",
+      "deferral": "owner-approved 2026-09-21; entry condition of P3"
     },
     {
       "id": "BUG-434",
@@ -26178,8 +26236,14 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE (P0.5)",
+          "note": "Owner hard rule: all P0 bugs fixed in P0.5 before P1. Decisions recorded: D70 (437→a), D71 (435→5 s)."
         }
-      ]
+      ],
+      "phase": "P0.5"
     },
     {
       "id": "BUG-435",
@@ -26209,8 +26273,14 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE (P0.5)",
+          "note": "Owner hard rule: all P0 bugs fixed in P0.5 before P1. Decisions recorded: D70 (437→a), D71 (435→5 s)."
         }
-      ]
+      ],
+      "phase": "P0.5"
     },
     {
       "id": "BUG-436",
@@ -26240,8 +26310,14 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE (P0.5)",
+          "note": "Owner hard rule: all P0 bugs fixed in P0.5 before P1. Decisions recorded: D70 (437→a), D71 (435→5 s)."
         }
-      ]
+      ],
+      "phase": "P0.5"
     },
     {
       "id": "BUG-437",
@@ -26273,8 +26349,14 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE (P0.5)",
+          "note": "Owner hard rule: all P0 bugs fixed in P0.5 before P1. Decisions recorded: D70 (437→a), D71 (435→5 s)."
         }
-      ]
+      ],
+      "phase": "P0.5"
     },
     {
       "id": "BUG-438",
@@ -26306,13 +26388,19 @@
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Registered by Intake role from CR-385 Phase 0 QA report findings (F-1/F-2→BUG-434, N-2→BUG-435, F-3→BUG-436, N-3→BUG-437, N-1→BUG-438)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE (P0.5)",
+          "note": "Owner hard rule: all P0 bugs fixed in P0.5 before P1. Decisions recorded: D70 (437→a), D71 (435→5 s)."
         }
-      ]
+      ],
+      "phase": "P0.5"
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "INTAKE — BUG-434…438 registered from CR-385 P0 QA findings (all INTAKE, RELATED CR-385, no hotspots).",
+    "last_action": "HANDOVER — CR-385 master handover for Phase 0.5 written; next agent: present bugs → \"Phase 0.5 GO\" → Bug Fix → QA → owner smoke.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
