@@ -100,23 +100,35 @@ Backend retries FCM push for the same unconfirmed order
 
 ---
 
-## 5. Why `soundManager.stop()` Alone Is Not Enough
+## 5. Why `soundManager.stop()` Alone Is Not Enough — Two Scenarios
 
+### Scenario A — Sound still playing when Mute is clicked
 ```
-soundManager.currentAudio = [playing forty_five_sec_buzzer instance]
+soundManager.stop() called
+  → this.currentAudio is not null → pause() fires → SOUND STOPS ✅
 
-Mute clicked:
-  stop() → currentAudio.pause() → currentAudio = null ✅
-
-(30 seconds pass — backend retries FCM)
-
-NotificationContext.processNotification():
-  soundManager.play('forty_five_sec_buzzer')
-    → stop()          ← no-op (currentAudio is null)
-    → audio = cloneNode()
-    → this.currentAudio = audio
-    → audio.play()    ← RINGER STARTS AGAIN ❌
+(30 seconds later — backend retries FCM)
+  → processNotification() → soundManager.play() → SOUND STARTS AGAIN ❌
 ```
+
+### Scenario B — Sound has already ended before Mute is clicked
+```
+confirm_order.wav (short clip ~2-3s) plays and ends naturally
+  → ended event fires → this.currentAudio = null
+
+Cashier clicks Mute (sound already finished)
+  → soundManager.stop()
+  → if (this.currentAudio) → FALSE ← null reference
+  → NO-OP: nothing paused, nothing stopped
+
+(FCM retry arrives shortly after)
+  → processNotification() → soundManager.play() → SOUND STARTS AGAIN ❌
+Cashier perception: "I muted it, it didn't stop" — but sound was already done
+```
+
+**Scenario B is the more dangerous case.** Mute is a complete no-op. The cashier believes they muted the ringer, but the click did nothing because the short clip had already finished. The next FCM fires and the sound restarts — reinforcing the perception that Mute is broken.
+
+**Root gap is identical in both scenarios:** `onToggleSnooze` puts the orderId in a Set that `NotificationContext` never reads. The next FCM push plays sound regardless of mute state.
 
 ---
 
