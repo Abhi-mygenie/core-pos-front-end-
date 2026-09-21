@@ -1,6 +1,6 @@
 # BUG-439 — CR-385 P0 duplicate `data-testid` when a guest row is expanded — row actions re-rendered inside `RowExpansionStub` with the same ids
 
-**ID:** BUG-439 · **Date:** 2026-09-21 · **Status:** INTAKE · **Phase 0.5** (found in P0.5 re-test → stays in Phase 0.5 per phased plan §0-bis)
+**ID:** BUG-439 · **Date:** 2026-09-21 · **Status:** INTAKE (registered 2026-09-21, owner-confirmed P3) · routing OPEN — owner decides · found in P0.5 re-test round 2; Gate 5B (P0+P0.5) closed with it registered (D72)
 **Source:** QA-FOUND — CR-385 Phase 0.5 QA re-test round 2 (Role 4) `/app/test_reports/iteration_9.json` REG-1_no_duplicate_data_testids
 **Confidence:** CONFIRMED (code read: `ArrivalsPanel.jsx` L47–57, `DeparturesPanel.jsx` L35, `InHousePanel.jsx` L20 pass `actions(row)` both to `commonColumns` (row cell) and to `RowExpansionStub` (`GuestTable.jsx` L156–176) → every `fd-row-<id>-*-btn` / `-kebab` appears twice while that row is expanded)
 **Duplicate check:** DISTINCT — RELATED to CR-385 (grep BUG_TRACKER / CR_REGISTRY / registry.json 2026-09-21: no prior item). Not introduced by P0.5 (BUG-434…438 did not touch these lines); missed by P0 QA because the X-10 duplicate-testid check ran with all rows collapsed.
@@ -17,7 +17,7 @@ With an Arrivals row expanded, `fd-row-17-checkin-btn` and `fd-row-17-kebab` exi
 
 ## Blast radius
 - Files: `frontend/src/components/pms/frontdesk/GuestTable.jsx` (RowExpansionStub) **or** `ArrivalsPanel.jsx` / `DeparturesPanel.jsx` / `InHousePanel.jsx` (actions factory with a suffix) — `GuestTable.jsx` and `InHousePanel.jsx` are OUTSIDE the P0.5 §4.3 file list → Bug Fix needs owner scope approval.
-- Hotspot files touched: NO · Estimated scope: SMALL (≤10 lines) · Tests: extend `GuestTable.cr385.test.jsx` (no duplicate testids with an expansion open).
+- Hotspot files touched: NO · Estimated scope: MEDIUM (3–4 files, ~8 lines) · Tests: extend `GuestTable.cr385.test.jsx` (no duplicate testids with an expansion open).
 
 ## Open questions
-- Owner: fix inside Phase 0.5 now (hard rule §0-bis) or accept MINOR and ship to Phase 1 (where M1/M2 replace the expansion stub anyway)?
+- Route (owner decides): **Intake recommendation = Fast Lane Bug Fix** — risk LOW, no hotspots, non-financial UI, ~8 lines in 3–4 files (suffix the expansion copy of the action testids, e.g. `fd-row-<id>-exp-checkin-btn`, or pass a `variant` to the actions factory), test = extend `GuestTable.cr385.test.jsx` (no duplicate testids with an expansion open) + QA X-10 with a row expanded. **Planning (Gates 2–3) only if** the owner prefers batching it into Phase 1 where M1/M2 replace `RowExpansionStub` (then it becomes a Phase 1 entry item). Not a Phase 0.5 reopen (owner).

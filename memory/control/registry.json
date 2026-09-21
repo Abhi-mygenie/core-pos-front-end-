@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED (P0+P0.5) — P0.5 bug-fix batch BUG-434…438 FIXED + QA-VERIFIED (it.7 8/10 + 2 timing false-negatives disproved by probe; it.8 15/15; 38/38 cr385 unit tests; zero console errors); round-2 re-test 4/4 PASS (iteration_9); 1 new MINOR BUG-439 pending owner decision; READY FOR GATE 6 owner Phase 0 smoke (combined script in handover/SESSION_HANDOVER_2026_09_21_CR385_P0_5.md). Phase 1 not started.",
+      "status": "GATE_5B_QA_PASSED (P0+P0.5) — CLOSED 2026-09-21: BUG-434…438 QA-VERIFIED (it.7/it.8/it.9), BUG-439 (MINOR) registered via Intake, routing open (owner); READY FOR GATE 6 owner combined Phase 0 smoke (handover/SESSION_HANDOVER_2026_09_21_CR385_P0_5.md §6). Phase 1 not started.",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25490,6 +25490,11 @@
           "date": "2026-09-21",
           "to": "GATE_5B_QA_PASSED (P0+P0.5) — re-test round 2",
           "note": "Owner-requested independent QA re-run of the round-1 FAIL/BLOCKED cases (iteration_9): RT-1 BUG-435 case C, RT-2 BUG-434 recovery, RT-3 Rooms retry, RT-4 coalescing → 4/4 PASS with request timelines; regression subset 5/6 → new MINOR BUG-439 (duplicate testids with an expansion open, pre-existing P0). Owner decision pending: fix in P0.5 or ship."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE_5B_CLOSED (P0+P0.5)",
+          "note": "Owner: \"update docs and decision and close gate\". D72 recorded (gate closed, BUG-439 registered, routing left to owner). Awaiting \"Phase 0 smoke OK\"."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -26476,7 +26481,7 @@
       "title": "CR-385 P0 duplicate data-testid when a guest row is expanded — row actions re-rendered inside RowExpansionStub with the same ids (Arrivals/Departures/In-House)",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE",
+      "status": "INTAKE (registered 2026-09-21) — routing OPEN, owner decides",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-21",
       "category": "INTAKE",
@@ -26484,7 +26489,7 @@
       "confidence": "CONFIRMED",
       "qa_severity": "MINOR",
       "duplicate_check": "DISTINCT (RELATED CR-385; pre-existing P0 code, missed by P0 X-10 check run with rows collapsed)",
-      "blast_radius": "SMALL",
+      "blast_radius": "MEDIUM (3–4 files, ~8 lines, no hotspots)",
       "code_reality": "EXISTS (defect in CR-385 M0 code)",
       "files_affected": [
         "frontend/src/components/pms/frontdesk/GuestTable.jsx",
@@ -26497,14 +26502,22 @@
       ],
       "intake_doc": "change_requests/BUG-439_CR385_P0_DUPLICATE_TESTID_EXPANDED_ROW_INTAKE.md",
       "evidence_dir": "evidence/BUG-439/",
-      "phase": "P0.5",
+      "phase": "UNASSIGNED (intake recommendation: Fast Lane Bug Fix; needs owner approval)",
       "status_history": [
         {
           "date": "2026-09-21",
           "to": "INTAKE",
           "note": "Found by QA re-test round 2 (/app/test_reports/iteration_9.json). MINOR → owner decides fix-in-P0.5 vs ship; Bug Fix would need scope approval for GuestTable.jsx/InHousePanel.jsx (outside §4.3)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "INTAKE",
+          "note": "Intake role (owner-confirmed): code reality EXISTS (P0 code), duplicate DISTINCT/RELATED CR-385, P3 by rubric, risk LOW, blast radius MEDIUM (3–4 files), evidence captured. Routing NOT decided by intake — recommendation Fast Lane Bug Fix (owner approval needed). Gate 5B (P0+P0.5) stays closed; BUG-439 does not reopen P0.5 (owner)."
         }
-      ]
+      ],
+      "area": "PMS Front Desk (Beta) — guest tables (Arrivals / Departures / In-House)",
+      "decision": "D72",
+      "intake_recommendation": "FAST LANE eligible (risk LOW, no hotspots, ~8 lines in 3–4 non-financial UI files, existing RTL test file to extend). Planning (Gates 2–3) not required unless owner wants it batched into Phase 1 where M1/M2 replace RowExpansionStub."
     }
   ],
   "meta": {
@@ -26518,6 +26531,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "CR-385 P0.5 re-test round 2 4/4 PASS; BUG-439 (MINOR, duplicate testid on expanded row) INTAKE pending owner decision."
+    "last_note": "CR-385 Gate 5B (P0+P0.5) CLOSED 2026-09-21; BUG-439 registered (P3/LOW/MINOR), routing open — intake recommends Fast Lane Bug Fix."
   }
 }

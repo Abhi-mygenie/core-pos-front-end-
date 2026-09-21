@@ -719,3 +719,11 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Decision | `refresh()` is **coalesced**: if a snapshot is in flight, a second call is ignored (the in-flight result serves both). The **focus** trigger is additionally ignored when the last successful fetch is < **5 s** old. Manual triggers (↻, Retry, after Mark Clean/Request HK and every later mutating action — X-14) are never dropped, only coalesced. |
 | Owner words | "BUG-435 debounce = 5 s" (chat 2026-09-21). |
 | Test | RTL: two `focus` events within 5 s → one `getSnapshot`; ↻ during in-flight → one call; ↻ after 6 s → new call. |
+
+### D72 — BUG-439 (duplicate row-action testids while a row is expanded): accepted MINOR, Gate 5B closed, fix routed to Phase 1 entry (owner, 2026-09-21)
+| Field | Value |
+|---|---|
+| Context | QA re-test round 2 (`/app/test_reports/iteration_9.json`) found `fd-row-<id>-*-btn` / `-kebab` rendered twice while a guest row is expanded (`RowExpansionStub` re-renders `actions(row)`; Arrivals / Departures / In-House). Pre-existing Phase 0 code; P0 X-10 check ran with rows collapsed. No functional/visual impact. |
+| Decision | Register as **BUG-439 (P3, LOW, QA MINOR)** via Intake. Do **not** reopen Phase 0.5 for it: Gate 5B (P0+P0.5) is **CLOSED** and the owner Phase 0 smoke proceeds. **Routing is NOT decided here** — the Intake role only registers; owner picks the route (intake recommendation: Fast Lane Bug Fix — LOW risk, no hotspots, ~8 lines; alternative: Planning → batch into Phase 1 where M1/M2 replace the expansion stub). Whichever route: the QA brief must run the duplicate-testid check **with a row expanded** on all three guest tabs. |
+| Owner words | "update docs and decision and close gate … choose intake to register this bug" · "Your role is intake, so we need not to decide what will be done next. Just register the bug and suggest if it can take a bug fix route or it has to go through planning" (chat 2026-09-21). |
+| Rule going forward | X-10 duplicate-testid assertion = collapsed **and** expanded state (guest tabs) + RoomDetail open + alerts popover open. |

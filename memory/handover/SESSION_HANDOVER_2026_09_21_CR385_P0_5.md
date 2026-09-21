@@ -2,7 +2,7 @@
 
 ```
 Roles this session: Bug Fix (Role 5) → QA (Role 4) · ALPHA v0.7 · owner "Phase 0.5 GO" (severities confirmed)
-Items:     BUG-434 · BUG-435 · BUG-436 · BUG-437 · BUG-438 → FIXED + QA-VERIFIED (P0.5) · CR-385 → GATE_5B_QA_PASSED (P0+P0.5)
+Items:     BUG-434 · BUG-435 · BUG-436 · BUG-437 · BUG-438 → FIXED + QA-VERIFIED (P0.5, rounds 1–2) · BUG-439 → INTAKE (registered; routing open — rec. Fast Lane Bug Fix) · CR-385 → Gate 5B (P0+P0.5) CLOSED by owner 2026-09-21
 Next:      OWNER combined Phase 0 smoke (§6 below) → say "Phase 0 smoke OK" → only then read phased plan §1 (Phase 1). Phase 1 NOT read, NOT started.
 Sandbox:   restored (r4/8525 HK). 8524/8526 never touched. No bookings/payments. Credentials in memory/test_credentials.md (gitignored — re-extract from evidence/CR-385/probes_2026_09_20_final/run_gate4.py on a fresh pod; never echo).
 Env note:  the repo `memory/` folder was not present under /app/memory on this pod (only in the clone at /tmp/pos-frontend) — copied in; /tmp is ephemeral (since wiped).
@@ -31,7 +31,7 @@ Not changed: hotspots, legacy PMS pages, `frontDeskService.js`, `frontDeskTransf
 
 ## 4 · Open items / routing (unchanged)
 - BUG-431/432 → DEFERRED-TO-P2 (entry conditions) · BUG-433 → DEFERRED-TO-P3 (entry condition; backend brief early in P3).
-- **Re-test round 2 (owner-requested, `/app/test_reports/iteration_9.json`):** the two round-1 FAILs + the BLOCKED case + coalescing → 4/4 PASS independently with request timelines. **New MINOR finding → BUG-439** (duplicate `data-testid` for row actions while a row is expanded — pre-existing P0 code in `RowExpansionStub`/panels, all three guest tabs; intake `change_requests/BUG-439_…_INTAKE.md`). Owner decision pending: fix inside P0.5 (Bug Fix role; needs scope approval for `GuestTable.jsx`/`InHousePanel.jsx`, outside §4.3) or accept and ship to Phase 1.
+- **Re-test round 2 (owner-requested, `/app/test_reports/iteration_9.json`):** the two round-1 FAILs + the BLOCKED case + coalescing → 4/4 PASS independently with request timelines. **New MINOR finding → BUG-439** (duplicate `data-testid` for row actions while a row is expanded — pre-existing P0 code in `RowExpansionStub`/panels, all three guest tabs; intake `change_requests/BUG-439_…_INTAKE.md`). **Owner D72 (2026-09-21): accepted MINOR, Gate 5B (P0+P0.5) CLOSED; BUG-439 registered by Intake, routing OPEN (owner decides).** Intake recommendation: Fast Lane Bug Fix (LOW risk, no hotspots, ~8 lines: suffix the expansion copy of the actions, e.g. `fd-row-<id>-exp-<action>`, + extend `GuestTable.cr385.test.jsx`); Planning only if batched into Phase 1. Any route: QA duplicate-testid check with a row expanded on all three guest tabs.
 - QA-protocol note for every future run: measure debounce "idle" from the **last snapshot response**; use ≥60 s waits on preprod; correct testids are `fd-tab-<id>-count`, `fd-header-greeting`, `fd-header-date`, `fd-sync-pill`, `fd-new-booking-btn`, `fd-alert-bar`/`fd-alert-more`/`fd-alert-popover`.
 
 ## 5 · Registry / doc state

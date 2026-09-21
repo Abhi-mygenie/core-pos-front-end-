@@ -143,6 +143,8 @@ Brief, Entry Verification, fix skeleton and smoke additions: `handover/MASTER_HA
 | BUG-438 | `components/pms/frontdesk/__tests__/` | GuestTable keyboard, searchSnapshot phone-suffix, isTurn live-shaped tests; A4/A5/A6 in QA brief | jest |
 Exit: cr385 tests green · guards empty · `yarn build` exit 0 · testing_agent both viewports (P0 matrix + fixes) · EXIT GATE 5/5 · registry `GATE_5B_QA_PASSED (P0+P0.5)` · combined owner smoke (§0.5 + master handover §4.4) → "Phase 0 smoke OK".
 
+**Phase 0.5 CLOSED 2026-09-21 (owner):** BUG-434…438 QA-VERIFIED (rounds 1–2, `iteration_7/8/9.json`); Gate 5B (P0+P0.5) closed. **BUG-439** (MINOR, duplicate row-action testids while expanded — D72) registered via Intake; routing open (owner) — intake recommends Fast Lane Bug Fix; any route must run X-10 with a row expanded. Next: owner combined Phase 0 smoke → "Phase 0 smoke OK".
+
 ---
 
 ## PHASE 1 — M7 Front Desk Rules tab · M2 Cancel / No-Show / Modify
