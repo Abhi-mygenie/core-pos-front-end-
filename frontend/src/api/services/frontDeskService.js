@@ -15,11 +15,13 @@ export const getBoard = () =>
 export const getKpis = ({ start, end }) =>
   api.get(AIOSELL_ENDPOINTS.DASHBOARD_KPIS, { params: { start_date: start, end_date: end } }).then((r) => r.data);
 
-export const getSnapshot = async ({ start, end }) => {
+// KPIs: server caps the range at 31 days (422 'Date range cannot exceed 31 days.' — found by QA iteration_5); only today.* is read, so the KPI window is a single day.
+export const getSnapshot = async ({ start, end, today }) => {
+  const kpiDay = today ?? start;
   const [lr, board, kpis] = await Promise.allSettled([
     getLocalReservationsAll({ start, end }),
     getBoard(),
-    getKpis({ start, end }),
+    getKpis({ start: kpiDay, end: kpiDay }),
   ]);
   if (lr.status === 'rejected') throw lr.reason;
   return fromFrontDeskSnapshot({ lr: lr.value, board, kpis });

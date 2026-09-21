@@ -25178,12 +25178,12 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 3 CLOSED 2026-09-21 (owner quote D69) — phased line-by-line plan plans/CR-385_IMPLEMENTATION_PLAN_PHASED.md (P0–P5, owner smoke between phases). All G4 evidence rows ticked; backend queue empty. AWAITING owner \"Gate 4 GO\" (G4-10). No src/ code.",
-      "gate": 3,
+      "status": "GATE_5A_IMPLEMENTED (P0) — Phase 0 M0 shell coded + unit-tested (20/20) + QA iteration_5 + self-test; awaiting owner \"Phase 0 smoke OK\" before Phase 1. Gate 4 GO given 2026-09-21.",
+      "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
       "source": "OWNER-REPORTED",
-      "code_reality": "NONE",
+      "code_reality": "PARTIAL (P0 M0 shell)",
       "blast_radius": "LARGE",
       "duplicate_check": "DISTINCT",
       "design_freeze_required": true,
@@ -25236,7 +25236,7 @@
         "MV-09": "Q9b grouping: flat+switch / by type / flat (default flat+switch)"
       },
       "q10_live_updates": "option a (refresh on focus + button + after action) provisional; revisit after BQ-385-01",
-      "handover": "handover/SESSION_HANDOVER_2026_09_21_CR385_GATE3_CLOSED.md (full Implementation-agent handover, 11 sections)",
+      "handover": "handover/SESSION_HANDOVER_2026_09_21_CR385_P0.md",
       "data_inventory": "impact/CR-385_DATA_INVENTORY.md",
       "backend_questions": [
         "BQ-385-01 PMS socket events exist? (FE has none)",
@@ -25465,6 +25465,11 @@
           "date": "2026-09-21",
           "to": "GATE 3 CLOSED — awaiting Gate 4 GO",
           "note": "Full Implementation-agent handover written (boot order, frozen decisions, phase schedule, Entry Verification commands, data contract, sandbox rules, testing duties, registry sync, testids, pitfalls, open items)."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "GATE_5A_IMPLEMENTED (P0)",
+          "note": "Gate 4 GO; BUG-431/432/433 filed; Phase 0 M0 shell built per phased plan §0 (Entry Verification: no drift; App.js route landed at L272 not L271 because the import shifted lines). Tests 20/20, grep guards empty, yarn build exit 0 (no CR-385 warnings), QA iteration_5 (~92%, KPI 422 → fixed: server caps dashboard-kpis range at 31 days → single-day window), self-test 1366×768 zero console errors incl. Mark Clean/Request HK on r4 (restored). Awaiting owner \"Phase 0 smoke OK\"."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25543,7 +25548,22 @@
         "P4 M6 bill/checkout",
         "P5 closure"
       ],
-      "phase_gate_rule": "next phase only after owner says \"Phase N smoke OK\""
+      "phase_gate_rule": "next phase only after owner says \"Phase N smoke OK\"",
+      "gate_4_go": "2026-09-21 — owner: \"Gate 4 GO. Correct on all five.\"",
+      "phase": "P0 done → awaiting owner smoke",
+      "files_p0": [
+        "App.js (L110 import, L272 route)",
+        "components/layout/Sidebar.jsx (L245)",
+        "api/transforms/roomStatusTransform.js (L17-20, L38 additive)",
+        "api/transforms/__tests__/roomStatusTransform.cr358p4.test.js (+testCr385Additive)",
+        "pages/pms/FrontDeskWorkstationPage.jsx (NEW)",
+        "api/services/frontDeskService.js (NEW)",
+        "api/transforms/frontDeskTransform.js (NEW)",
+        "components/pms/frontdesk/{WorkstationHeader,KpiTabStrip,AlertBar,GlobalSearch,GuestTable,ArrivalsPanel,DeparturesPanel,InHousePanel,RoomsPanel,RoomTile,RoomDetail}.jsx (NEW)",
+        "components/pms/frontdesk/money.js, frontdesk.css (NEW)",
+        "api/transforms/__tests__/frontDeskTransform.cr385.test.js, api/services/__tests__/frontDeskService.cr385.test.js, components/pms/frontdesk/__tests__/money.cr385.test.js (NEW)",
+        "__fixtures__/cr385/{local_reservations_view_all,room_status_board,dashboard_kpis}.json (NEW, copies of probes_2026_09_20_g4_09)"
+      ]
     },
     {
       "id": "BUG-410",
@@ -26125,7 +26145,7 @@
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "IMPLEMENTATION — CR-385 Gate 4 GO given 2026-09-21; BUG-431/432/433 filed as INTAKE; Phase 0 (M0 shell) in progress.",
+    "last_action": "IMPLEMENTATION — CR-385 Phase 0 (M0 shell) GATE_5A_IMPLEMENTED; awaiting owner \"Phase 0 smoke OK\". Entry: handover/SESSION_HANDOVER_2026_09_21_CR385_P0.md",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

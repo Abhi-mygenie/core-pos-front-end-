@@ -1,9 +1,28 @@
 # Layer 7 — File Ownership Map
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-16 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+**Last Updated:** 2026-09-21 (CR-385 M0 Phase 0 IMPL — see section below) — 2026-09-16 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
 
 ---
+
+## FILE_OWNERSHIP — CR-385 M0 IMPL Phase 0 (2026-09-21)
+
+| File | Change | Role / Gate |
+|---|---|---|
+| `frontend/src/App.js` | L110 `import FrontDeskWorkstationPage` · L272 `<Route path="/pms/front-desk-v2">` | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/components/layout/Sidebar.jsx` | L245 `{ id: 'pms-front-desk-v2', label: 'Front Desk (Beta)' }` | CR-385 M0 IMPL 2026-09-21 (OD-385-14) |
+| `frontend/src/api/transforms/roomStatusTransform.js` | L18–19 `hkAssignee`, `isOccupied` · L20 `guest.phone/email` · L38 `meta` passthrough (additive, O-6/G-52) | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/api/transforms/__tests__/roomStatusTransform.cr358p4.test.js` | `testCr385Additive()` added to the results array (node script) | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/pages/pms/FrontDeskWorkstationPage.jsx` | NEW — page, snapshot hook, tab param, single expansion, handlePatch | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/api/services/frontDeskService.js` | NEW — getSnapshot (LR ‖ board ‖ kpis allSettled), re-exports patchRoomStatus/bulkMarkClean | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/api/transforms/frontDeskTransform.js` | NEW — fromReservation, buckets, normaliseTitle, nsOrCancel, isCleared, badgeFor, groupRooms, isTurn, fromFrontDeskSnapshot | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/components/pms/frontdesk/{WorkstationHeader,KpiTabStrip,AlertBar,GlobalSearch,GuestTable,ArrivalsPanel,DeparturesPanel,InHousePanel,RoomsPanel,RoomTile,RoomDetail}.jsx` | NEW (RoomTile = copy of RoomStatusPage.jsx @8c7745f L25–27/L198–266, mirror rule) | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/components/pms/frontdesk/money.js`, `frontdesk.css` | NEW | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/__fixtures__/cr385/{local_reservations_view_all,room_status_board,dashboard_kpis}.json` | NEW — copies of `memory/evidence/CR-385/probes_2026_09_20_g4_09/` | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/src/api/transforms/__tests__/frontDeskTransform.cr385.test.js`, `api/services/__tests__/frontDeskService.cr385.test.js`, `components/pms/frontdesk/__tests__/money.cr385.test.js` | NEW — 20 tests | CR-385 M0 IMPL 2026-09-21 |
+| `frontend/public/cr385-master-checklist.html` | M0-01…M0-10, X-01/06/07/10/11/12/13/14/15, R-04, R-08, G4-10 ticked with evidence | CR-385 M0 IMPL 2026-09-21 |
+
+Hotspots untouched (verified `git status`): `CollectPaymentPanel.jsx`, `orderTransform.js`, `pmsService.js`, all legacy PMS pages/dialogs, `AppProviders.jsx`, `.env`, `public/cr385-frontdesk-mockup.html` (sha `12fd0f4a…1168ca`).
 
 ## FILE_OWNERSHIP — CR-385 v2.8 PLANNING (2026-09-18 environment date)
 

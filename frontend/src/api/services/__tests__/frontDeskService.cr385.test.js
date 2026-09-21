@@ -27,13 +27,13 @@ describe('CR-385 M0 frontDeskService', () => {
       if (url.includes('room-status-board')) return Promise.resolve({ data: boardFixture });
       return Promise.resolve({ data: kpisFixture });
     });
-    const s = await getSnapshot({ start: 'a', end: 'b' });
+    const s = await getSnapshot({ start: 'a', end: 'b', today: 't' });
     expect(s.meta.business_date).toBe('2026-09-20');
     expect(s.counts.arrivals_late).toBe(10);
     expect(s.rooms).toHaveLength(5);
     expect(s.boardError).toBe(false);
     expect(s.kpis.today.in_house_count).toBe(2);
-    expect(api.get.mock.calls.find(([u]) => u.includes('dashboard-kpis'))[1].params).toEqual({ start_date: 'a', end_date: 'b' });
+    expect(api.get.mock.calls.find(([u]) => u.includes('dashboard-kpis'))[1].params).toEqual({ start_date: 't', end_date: 't' }); // KPI range capped at 31 days → single day
   });
 
   test('board rejected → boardError true, rooms [], reservations intact', async () => {

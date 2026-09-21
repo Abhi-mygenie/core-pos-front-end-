@@ -34,7 +34,7 @@ const useFrontDeskSnapshot = () => {
     const bd = bdRef.current ?? browserToday();
     setRefreshing(true);
     try {
-      const s = await getSnapshot({ start: plusDays(bd, -30), end: plusDays(bd, 60) });
+      const s = await getSnapshot({ start: plusDays(bd, -30), end: plusDays(bd, 60), today: bd });
       bdRef.current = s.meta?.business_date ?? bdRef.current;
       setSnap(s); setError(null);
     } catch (e) {
