@@ -25563,7 +25563,8 @@
         "components/pms/frontdesk/money.js, frontdesk.css (NEW)",
         "api/transforms/__tests__/frontDeskTransform.cr385.test.js, api/services/__tests__/frontDeskService.cr385.test.js, components/pms/frontdesk/__tests__/money.cr385.test.js (NEW)",
         "__fixtures__/cr385/{local_reservations_view_all,room_status_board,dashboard_kpis}.json (NEW, copies of probes_2026_09_20_g4_09)"
-      ]
+      ],
+      "qa_handover_p0": "handover/QA_HANDOVER_2026_09_21_CR385_P0.md"
     },
     {
       "id": "BUG-410",
