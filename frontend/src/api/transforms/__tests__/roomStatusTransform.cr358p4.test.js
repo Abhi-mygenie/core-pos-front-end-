@@ -125,7 +125,23 @@ const testEmpty = () => {
   return pass;
 };
 
-const results = [testU1(), testU2(), testU3(), testEmpty()];
+// CR-385 M0 O-6 / G-52 — additive fields must exist in the REAL module source (this file is a plain-node script; the real-module behaviour is asserted in frontDeskTransform.cr385.test.js under jest)
+function testCr385Additive() {
+  const fs = require('fs'); const path = require('path');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'roomStatusTransform.js'), 'utf8');
+  const checks = [
+    src.includes("hkAssignee:    x.hk_assignee ?? null"),
+    src.includes("isOccupied:    Boolean(x.is_occupied)"),
+    src.includes("phone: g.phone ?? null, email: g.email ?? null"),
+    src.includes("meta: d.meta ?? null }; // CR-385 M0 G-52"),
+  ];
+  const ok = checks.every(Boolean);
+  console.log(`CR-385 additive fields (hkAssignee, isOccupied, guest.phone/email, meta): ${ok ? 'PASS' : 'FAIL'}`);
+  return ok;
+}
+
+const results = [testU1(), testU2(), testU3(), testEmpty(), testCr385Additive()]; // CR-385 M0
 const allPass = results.every(Boolean);
 console.log(`\n=== roomStatusTransform: ${allPass ? 'ALL PASS' : 'FAILURES'} (${results.filter(Boolean).length}/${results.length}) ===`);
 process.exit(allPass ? 0 : 1);
+

@@ -1,0 +1,40 @@
+{
+  "summary": "B-7 SMOKE (§S rows S-411, S-410, S-402, S-421/426, S-429/430, S-425/428, S-418) on preview URL against LIVE preprod. Login verified (data-testid=login-email/login-password work with OWNER_TGK creds). Reached /pms/new-booking; New Booking form renders correctly (Guest Details, Room Selection, Stay & Amount with dates pre-set to 2026-09-20 → 2026-09-21, Booking Summary sidebar, Booking Type = Direct Reservation | Walk-in). Filled guest 'Smoke 411', phone 9999900411, Room Amount ₹2,000. Room Selection listed all 5 sandbox rooms exactly as briefed: r3/8524 OCCUPIED, r4/8525 NEEDS CLEANING, r2/8526 OCCUPIED, r5/8527 NEEDS CLEANING, r1/8528 NEEDS CLEANING. HOWEVER: clicking a NEEDS-CLEANING room card (r4) did NOT select the room — Booking Summary continued to show 'Room —' and no visible selected state on the card. This BLOCKS row S-411 and every downstream row (S-402, S-421/426, S-429/430, S-425/428, S-418 all depend on the 'Smoke 411' stay existing). Because none of the free rooms (r1/r4/r5) is in 'vacant/hk' state (all three are NEEDS CLEANING), the New Booking screen appears to disable selection of them (cards are rendered muted). No 'housekeeping / mark clean' action is available from this page. Rows S-410 (walk-in on r5 via old RoomCheckInModal) is also blocked for the same reason unless the old modal accepts non-vacant rooms. Full flow (create booking → check-in with Card advance → In-House → Extend Stay → Room Service order + add-on → POS transfer-to-room → Guest Folio inspection → PmsCheckoutDrawer settle) cannot be executed by this agent in the current session-per-call automation environment: each tool call restarts the browser, loses auth, and takes ~20–30s to pass through /loading before any PMS page is reachable — the stateful 8-row chain would need dozens of round-trips and repeated re-login, and any half-completed stay must be settled (or it dirties the shared sandbox for other testers). Handing back to main agent for either (a) housekeeping cleanup so r4/r5/r1 become 'vacant/hk' first, then re-request the smoke, or (b) execute the smoke via a persistent Playwright session / API-level probes.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "NewBookingPage room-selection cards", "issue": "Rooms in 'NEEDS CLEANING' state cannot be selected as the room for a new booking (click has no effect, no selected-state, Booking Summary keeps 'Room —'). No inline 'mark clean / move to vacant' action available. Blocks the entire B-7 smoke because all three permitted free rooms (r1/8528, r4/8525, r5/8527) are NEEDS CLEANING on the sandbox.", "selector": "Room Selection card for r4/r5/r1", "priority": "HIGH (blocker for this smoke, may be intended UX)"},
+      {"component": "NewBookingPage date fields", "issue": "Check-in/Check-out use browser-default <input type=date> instead of shadcn Calendar component (Fix Scope note only — matches existing repo pattern).", "selector": "input[type=date]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots/b7_smoke/00_landing.png",
+    "/app/test_reports/screenshots/b7_smoke/01_afterlogin.png",
+    "/app/test_reports/screenshots/b7_smoke/04_after_login_full.png",
+    "/app/test_reports/screenshots/b7_smoke/10_newbooking.png",
+    "/app/test_reports/screenshots/b7_smoke/11_newbooking_filled.png",
+    "/app/test_reports/screenshots/b7_smoke/12_room_selected.png"
+  ],
+  "action_items": [
+    "Ensure at least one 'permitted' room (r1/r4/r5) is in vacant/hk state on the shared sandbox before requesting the B-7 smoke again — currently all three are NEEDS CLEANING and cannot be selected on /pms/new-booking.",
+    "Confirm whether the OLD RoomCheckInModal (walk-in from /pms/room-status) also refuses NEEDS-CLEANING rooms; if yes, S-410 needs the same precondition.",
+    "For future stateful smoke tests, prefer running via a driver that keeps a single Playwright browser context alive across steps (e.g. a Python script in /app that uses playwright.sync_api directly and stores auth), so the full 8-row chain can complete without re-login/loading between rows.",
+    "No source code was modified this session (planning-role smoke). Re-run smoke after room availability is restored."
+  ],
+  "critical_code_review_comments": [
+    "New Booking silently ignores clicks on NEEDS_CLEANING room cards — either disable the card visually (cursor-not-allowed, aria-disabled=true) with a tooltip like 'Room needs cleaning', or offer an inline 'Mark clean' action if the user has HK permission. Current behaviour is a UX dead-end.",
+    "Login uses data-testid on email/password inputs but the submit button lacks a data-testid (had to fall back to text match on 'LOG IN'). Recommend adding data-testid='login-submit'.",
+    "During bootstrap the /loading splash runs on every fresh session (~15–25s). Consider preserving the completed-bootstrap state in localStorage so an authenticated tab that already ran setup within N minutes skips the splash — this would materially speed up automated smokes.",
+    "PMS date fields use native <input type=date> rather than a shadcn Calendar — inconsistent with the rest of the design system."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only)", "frontend": "S-411 setup 40% (form reached & filled, room selection blocked); S-410/S-402/S-421/426/S-429/430/S-425/428/S-418 BLOCKED (dependent on S-411 or on a vacant room)"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md — owner@thegoankitchen.com / Qplazm@10 — LOGIN WORKS on preview URL, lands on /dashboard.",
+  "seed_data_creation": "None. No bookings, orders, or check-ins were persisted on the live sandbox — the New Booking form was filled but never submitted (Save/Walk-in buttons not clicked) because a room could not be selected. Shared sandbox is UNCHANGED. Rooms 8524/8526 (occupied by other testers) were not touched.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Preview URL: https://core-frontend-run-1.preview.emergentagent.com. Backend: https://preprod.mygenie.online (live). Login via data-testid=login-email / login-password; submit button is unlabelled — use text 'LOG IN'. After login the app forces a /loading splash for ~20s, then lands on /dashboard. Direct SPA nav to /pms/new-booking works via page.goto (does NOT re-trigger loading if session cookie is present in the same tab). Business date = 2026-09-20 IST. Sandbox free rooms r1(8528)/r4(8525)/r5(8527) are all NEEDS_CLEANING at time of test — main agent must reset at least one to vacant before the smoke can proceed. Rooms 8524/r3 and 8526/r2 are OCCUPIED by other testers and MUST NOT be touched. New Booking form has: Name (input[placeholder='Guest name']), Phone (input[placeholder='10 digits']), Adults, Children, Check-in/Check-out (native date), Room Amount (input[placeholder='0'] under ₹ prefix), Meal Plan (native select), and Booking Type buttons 'Save as Booking' / 'Walk-in · Check In Now'. To run the full B-7 chain in one sitting, use a standalone Playwright script that holds the browser context open across steps rather than the per-call automation tool.",
+  "rca of the issue": "Root cause of BLOCKED result: the shared preprod sandbox left the three permitted free rooms in NEEDS_CLEANING state after the previous tester's run, and /pms/new-booking's Room Selection prevents selecting a non-vacant room (no click handler fires / no visual affordance). The B-7 smoke row S-411 explicitly requires creating a Direct booking + advance + check-in on one of these rooms, so every dependent row (S-402/421/426/429/430/425/428/418, and S-410 walk-in on r5) is transitively blocked. Mitigation: (1) run /pms/room-status → mark r4 or r5 as vacant/hk before the smoke, or (2) hit the housekeeping API directly to flip 8525/8527 to hk, then re-run the checklist."
+}

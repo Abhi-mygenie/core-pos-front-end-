@@ -1,0 +1,80 @@
+{
+  "summary": "S-411 UI re-smoke on LIVE preprod after backend D17 fix. Frontend-only. CASE 1 (advance at check-in only) PASSED end-to-end via UI — the ₹500 Card advance is persisted and shown on the folio. CASE 2 (booking advance + check-in advance) is INCONCLUSIVE via UI because the NewBookingPage does NOT expose an advance-payment input in the current build (only 8 inputs: nb-name, nb-phone, nb-email, nb-adults, nb-children, nb-checkin, nb-checkout, nb-amount — no nb-advance/booking-advance/deposit). I ran an additional confirmation via a fresh booking Smoke 411D on r1 (advance at check-in only ₹500 Card) which also PASSED with Advance Paid ₹500 / Balance ₹1,600 — matching Case 1.",
+  "s411_results_table": {
+    "case_1_411B_r4_advance_500_card_only_at_checkin": {
+      "result": "PASS",
+      "room_price": "₹2,000",
+      "lodging_gst": "₹100",
+      "total_incl_gst": "₹2,100",
+      "advance_shown": "₹500",
+      "balance_shown": "₹1,600 (2,100 − 500)",
+      "order_id": "1232644 (Order #000172)",
+      "booking_id": "MG-69-B1462E78-2454-471F-B5D9-BF72160323DD",
+      "payment_ledger_row": "card · Advance · 2026-09-21 · ₹500 (1 payment)",
+      "screenshots": [
+        "/app/test_reports/screenshots/b7_smoke_s411/R15_checkin_411B_before_confirm.png",
+        "/app/test_reports/screenshots/b7_smoke_s411/R70_folio_411B.png",
+        "/app/test_reports/screenshots/b7_smoke_s411/R70_folio_411B_bot.png"
+      ]
+    },
+    "case_2_411C_r5_booking_advance_1000_plus_checkin_advance_500": {
+      "result": "INCONCLUSIVE / NOT TESTABLE VIA UI",
+      "reason": "The NewBookingPage in the current build exposes NO advance-payment input on the form. Enumerated all 8 visible inputs post-room-selection: nb-name, nb-phone, nb-email, nb-adults, nb-children, nb-checkin, nb-checkout, nb-amount. There is no nb-advance / booking-advance / deposit / prepayment field. Therefore the ₹1,000 booking advance cannot be entered from the UI. My initial run put a value in the wrong input (I mistakenly filled the 2nd placeholder=0 which mapped to something else) so the folio for 411C shows Advance Paid ₹0 / Balance ₹2,100 — but this is a test-script/UI-availability issue, not a D17 regression.",
+      "folio_observed_411C": {
+        "order_id": "1232643 (Order #000171)",
+        "booking_id": "MG-69-D1D910B8-D14B-47AC-B50F-C8F6F6F59C2E",
+        "room_price": "₹2,000",
+        "lodging_gst": "₹100",
+        "advance_paid": "₹0",
+        "balance": "₹2,100",
+        "payments": "0 payments"
+      },
+      "screenshots": [
+        "/app/test_reports/screenshots/b7_smoke_s411/R60_folio_411C.png",
+        "/app/test_reports/screenshots/b7_smoke_s411/R60_folio_411C_bot.png"
+      ]
+    },
+    "extra_confirmation_411D_r1_checkin_advance_500_only": {
+      "result": "PASS (extra sanity)",
+      "advance_shown": "₹500",
+      "balance_shown": "₹1,600",
+      "order_id": "1232645",
+      "booking_id": "MG-69-28C19FD1-626F-4F7C-AD9D-91333FF73BE8",
+      "screenshots": ["/app/test_reports/screenshots/b7_smoke_s411/R80_newbooking_411D.png","/app/test_reports/screenshots/b7_smoke_s411/R82_checkin_411D_before.png"]
+    }
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "NewBookingPage", "issue": "No advance-payment input field on New Booking form. S-411 second case (advance at booking + advance at check-in must sum to ₹1,500) is not testable end-to-end from the UI because there is no way to record a booking-time advance. Either the field is missing/hidden or must be added with a data-testid like nb-advance.", "selector": "frontend/src/pages/pms/NewBookingPage.jsx (form inputs)", "priority": "HIGH"},
+      {"component": "CheckInPage", "issue": "Both ci-amount and ci-advance share placeholder=\"0\" — this makes generic selectors unreliable. This is only a testability nit; the data-testids ci-amount and ci-advance work correctly.", "selector": "CheckInPage.jsx L807", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots/b7_smoke_s411/R15_checkin_411B_before_confirm.png",
+    "/app/test_reports/screenshots/b7_smoke_s411/R70_folio_411B.png",
+    "/app/test_reports/screenshots/b7_smoke_s411/R70_folio_411B_bot.png",
+    "/app/test_reports/screenshots/b7_smoke_s411/R60_folio_411C.png",
+    "/app/test_reports/screenshots/b7_smoke_s411/R84_folio_411D.png"
+  ],
+  "action_items": [
+    "CLEANUP OWED — Three in-house stays created and left occupied on shared sandbox because testing agent hit end-of-run before checkout: r4 Smoke 411B (order 1232644, bal ₹1,600), r5 Smoke 411C (order 1232643, bal ₹2,100), r1 Smoke 411D (order 1232645, bal ₹1,600). Main agent should settle all three with Cash from /pms/departures so r1/r4/r5 return to HK. Total to settle ≈ ₹5,300.",
+    "Investigate NewBookingPage: is the booking-time advance field intentionally hidden or missing? S-411 second case cannot be UI-verified without it. If it lives elsewhere (a separate 'Record Advance' page) please point testing to that route.",
+    "Consider making ci-amount and ci-advance have distinct placeholders to avoid generic-selector confusion during automation."
+  ],
+  "critical_code_review_comments": [
+    "D17 backend fix is VISIBLE in the UI for the check-in-advance flow: CheckInPage payload (advance_payment + payment_method) is being persisted, folio Advance Paid renders correctly (₹500 for 411B and 411D), and the Payments Received section shows a proper ledger row 'card · Advance · <date> · ₹500'. Balance math is correct (2,100 − 500 = 1,600).",
+    "GuestFolioPage still renders a single 'Lodging GST' line without SGST/CGST split — same BUG-418 as prior iterations. Not a S-411 blocker but still open.",
+    "CheckInPage GST block correctly splits CGST 2.5% + SGST 2.5% before submit; consistent with iter 3 finding."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only)", "frontend": "Case 1: PASS · Case 2: NOT TESTABLE (UI missing field) · Extra 411D: PASS"},
+  "test_credentials": "OWNER_TGK (owner@thegoankitchen.com / Qplazm@10) worked. Note single-session token — parallel logins can invalidate the previous one; expect intermittent /loading stalls.",
+  "seed_data_creation": "Left IN-HOUSE (needs cleanup by main agent): r4 Smoke 411B order 1232644, r5 Smoke 411C order 1232643, r1 Smoke 411D order 1232645. Other testers' stays r2 bkol #1232602 and r3 blpi #1232583 were NOT touched.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview URL https://core-frontend-run-1.preview.emergentagent.com → live https://preprod.mygenie.online. Login form uses input[placeholder='Email']/input[placeholder='Password'] (no type=email). After LOG IN wait 30s+ for /loading to complete; single-session token — do NOT run two browsers in parallel. Key CheckInPage testids: ci-advance, ci-advance-method-cash|card|upi, ci-confirm-btn, ci-amount, ci-name, ci-phone, ci-checkin, ci-checkout. NewBookingPage testids observed: nb-name, nb-phone, nb-email, nb-adults, nb-children, nb-checkin, nb-checkout, nb-amount (NO nb-advance visible). Direct folio route /pms/folio/<orderId> works even while /loading is stuck. To find orderId for a fresh check-in, walk 1232643..1232655 or scrape /pms/in-house table (#<orderId> under Guest name). Confirmed folio balance formula: room + lodging_gst − advance_paid.",
+  "rca of the issue": "S-411 Case 1 D17 fix confirmed working end-to-end in UI: check-in advance ₹500 Card → folio Advance Paid ₹500, Payments Received has ledger row, Balance 1,600. Case 2 (double-source advance) could not be validated via UI because NewBookingPage exposes no advance input in current build — this is a UI/build-config gap, not a backend regression."
+}

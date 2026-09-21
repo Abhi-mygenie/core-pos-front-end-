@@ -1,0 +1,203 @@
+{
+ "http": 200,
+ "body": {
+  "status": true,
+  "message": "Rates fetched from Aiosell successfully",
+  "data": {
+   "aiosell": {
+    "success": true,
+    "http_status": 200,
+    "body": {
+     "hotelCode": "sandbox-pms",
+     "updates": [
+      {
+       "startDate": "2026-11-17",
+       "endDate": "2026-11-17",
+       "rates": [
+        {
+         "roomCode": "executive",
+         "rate": 0,
+         "rateplanCode": "executive-s-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 0,
+         "rateplanCode": "suite-s-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-s-cp"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1920,
+         "rateplanCode": "suite-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1800,
+         "rateplanCode": "suite-d-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 2688,
+         "rateplanCode": "suite-s-cp"
+        }
+       ]
+      },
+      {
+       "startDate": "2026-11-16",
+       "endDate": "2026-11-16",
+       "rates": [
+        {
+         "roomCode": "executive",
+         "rate": 0,
+         "rateplanCode": "executive-s-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 0,
+         "rateplanCode": "suite-s-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-s-cp"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1920,
+         "rateplanCode": "suite-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1800,
+         "rateplanCode": "suite-d-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 2688,
+         "rateplanCode": "suite-s-cp"
+        }
+       ]
+      },
+      {
+       "startDate": "2026-11-15",
+       "endDate": "2026-11-15",
+       "rates": [
+        {
+         "roomCode": "executive",
+         "rate": 0,
+         "rateplanCode": "executive-s-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 0,
+         "rateplanCode": "suite-s-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-s-cp"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1920,
+         "rateplanCode": "suite-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1800,
+         "rateplanCode": "suite-d-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 2688,
+         "rateplanCode": "suite-s-cp"
+        }
+       ]
+      },
+      {
+       "startDate": "2026-11-14",
+       "endDate": "2026-11-14",
+       "rates": [
+        {
+         "roomCode": "executive",
+         "rate": 8600,
+         "rateplanCode": "executive-s-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 36800,
+         "rateplanCode": "suite-s-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-s-cp"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1920,
+         "rateplanCode": "suite-d-cp"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 1800,
+         "rateplanCode": "suite-d-ep"
+        },
+        {
+         "roomCode": "executive",
+         "rate": 9500,
+         "rateplanCode": "executive-d-ep"
+        },
+        {
+         "roomCode": "suite",
+         "rate": 2688,
+         "rateplanCode": "suite-s-cp"
+        }
+       ]
+      }
+     ]
+    },
+    "error": null
+   }
+  }
+ }
+}

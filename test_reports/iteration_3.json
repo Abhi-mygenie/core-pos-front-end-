@@ -1,0 +1,64 @@
+{
+  "summary": "B-7 SMOKE iteration 3 (frontend-only, LIVE preprod). Executed the 3 rows that iter 2 skipped: S-410 (walk-in via OLD RoomCheckInModal on r5), S-421/426 (Direct+CheckIn on r1 with POS room-service order), S-429/430 (2nd POS room-service order with add-on modifier). All 3 PASS with a few rupee-level rounding notes. Full cleanup done: Smoke 410 & Smoke 421 checked out with Cash (auto-HK moved r1 & r5 to HK). r2/r3 (other testers) never touched.",
+  "per_row_results": {
+    "S-410": {
+      "result": "PASS",
+      "reason": "Opened OLD RoomCheckInModal by clicking r5 tile (data-testid=table-card-8527) on /dashboard. Booking Type=Walk-in, Booking For=Personal (default), Guest 'Smoke 410' / 9999900410, Room Price ₹2000. GST block IS visible BEFORE confirming for a Personal booking (BUG-410 fix works): 'GST (ACCOMMODATION) 5% Slab · CGST (2.5%) ₹50.00 · SGST (2.5%) ₹50.00 · Total incl. GST ₹2,100.00'. After Confirm, folio /pms/folio/1232631 shows Room Price ₹2,000 + Lodging GST ₹100 → ROOM BALANCE ₹2,100 → Total Balance Due ₹2,100. Folio still lists a single 'Lodging GST' line (no SGST/CGST split — same BUG-418 as iter 2, not the S-410 concern).",
+      "figures": "Modal: CGST 2.5% ₹50.00 · SGST 2.5% ₹50.00 · Total incl. GST ₹2,100.00 · Balance ₹2,100.00. Folio (order #000159, id 1232631): Room ₹2,000 + Lodging GST ₹100 → Room Balance ₹2,100 → Total Balance Due ₹2,100.",
+      "screenshot": "/app/test_reports/screenshots/b7_smoke_v3/22_price_entered.png (modal GST) · /app/test_reports/screenshots/b7_smoke_v3/30_folio_410.png (folio)"
+    },
+    "S-421/426": {
+      "result": "PASS (with ₹0.35 rounding note)",
+      "reason": "Created Direct booking BID MG-69-3172FA9C-C8AD-4F94-82E7-70C3DCCB20D2 for 'Smoke 421' on r1 (₹2000), checked in via /pms/check-in?booking_id=<BID> (advance 0, Confirm Check-In) → order #000160 id 1232632. Opened POS Order Entry by clicking r1 tile on /dashboard (occupied room → order-entry route with badge 'r1' and guest 'Smoke 421' pre-bound → effectively a room-service order). Added menu item 'jeera rice' @ ₹107, clicked Update Order → KOT placed. In-House shows Smoke 421 balance ₹2,212.35. Folio /pms/folio/1232632 shows Room Orders section with 'Jeera Rice ×1 @ ₹107 = ₹107' and 'Room Orders Total: ₹112'. Balance breakdown = ROOM BALANCE ₹2,100 + ROOM ORDERS ₹112 → Total Balance Due ₹2,212. So In-House balance IS room base+GST + room-service subtotal INCLUDING GST (112 = 107 + ~5 GST). Only nit: In-House shows ₹2,212.35 while Folio Total Balance Due shows ₹2,212 (rounded) and POS cart preview showed ₹2,213 — three views disagree by ₹1 due to inconsistent rounding of ~₹0.35 across GST re-calcs. Overall PASS: the flow, semantics and inclusion of GST are all correct.",
+      "figures": "Room base ₹2,000 · Lodging GST ₹100 · ROOM BALANCE ₹2,100. POS subtotal ₹107 · POS incl.GST preview ₹113. Folio Room Orders line ₹107 · Room Orders Total ₹112. In-House Balance ₹2,212.35. Folio Total Balance Due ₹2,212. POS Checkout button ₹2,213 (before place) / ₹2,212.35 (after place).",
+      "screenshot": "/app/test_reports/screenshots/b7_smoke_v3/51_added_item.png · 53_inhouse_after_order.png · 54_folio_421.png"
+    },
+    "S-429/430": {
+      "result": "PASS",
+      "reason": "On the same 'Smoke 421' stay, re-opened POS for r1 and added item 'nails' ₹13 with add-on 'with fingertips +₹15' (dialog Total showed ₹28 = item + add-on). Update Order → 2nd KOT placed. Folio /pms/folio/1232632 Room Orders now shows a NEW row 'Nails ×1 @ ₹13 = ₹28' (RATE column = base ₹13 but AMOUNT column = ₹28, i.e. the folio row correctly aggregates item + add-on). Tap-to-expand on that row reveals the GST breakdown: 'SGST (2.5%) ₹1 · CGST (2.5%) ₹1'. Combined GST = ₹2 = 5% of ₹28 (rounded up from ₹1.40). If GST were computed only on the base item ₹13, 5% would be ₹0.65 which would round to ₹0 — instead ₹2 is shown, confirming GST is computed on (item + add-on). Room Orders Total went from ₹112 → ₹142 (delta ₹30 = ₹28 + ₹2 GST) which matches the ₹30 delta seen in the POS cart total (₹2,212.35 → ₹2,242.35).",
+      "figures": "Nails item ₹13 · Add-on 'with fingertips' ₹15 · Base incl. add-on ₹28 · Folio GST split SGST ₹1 + CGST ₹1 = ₹2 · Row Amount ₹28 (excl.) → effective ₹30 incl. GST · POS cart delta +₹30 · Folio Room Orders Total ₹142 (₹107 jeera + ₹5 GST + ₹28 nails + ₹2 GST) · Total Balance Due ₹2,242 · In-House balance updates consistent.",
+      "screenshot": "/app/test_reports/screenshots/b7_smoke_v3/62_addon_selected.png · 70_folio_after_addon.png · 71_folio_gst_breakdown.png"
+    }
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "GuestFolioPage / InHouseGuestsPage / PmsCheckoutDrawer rounding", "issue": "Same stay total is displayed as ₹2,212.35 (In-House) vs ₹2,212 (Folio Total Balance Due) vs ₹2,213 (POS Checkout pre-place). ₹0.65-₹1 divergence caused by inconsistent rounding of GST across 3 code paths. Preserve one canonical rounding (recommend round-half-up to nearest paisa in API, integer paisa in display).", "selector": "pmsService.getInHouseGuests · folioTransform.js · OrderEntry checkout button", "priority": "MEDIUM"},
+      {"component": "GuestFolioPage Room Charges", "issue": "Folio still shows a single 'Lodging GST ₹100' line without SGST/CGST split — BUG-418 for folio is still open (also flagged in iter 2). Modal correctly renders split, folio does not.", "selector": "folioTransform.js / GuestFolioPage Room Charges block", "priority": "MEDIUM"},
+      {"component": "PmsCheckoutDrawer TAXES section", "issue": "TAXES header present but empty (no SGST/CGST rows) — reproduced again on Smoke 410 checkout drawer. BUG-418 for drawer is still open.", "selector": "PmsCheckoutDrawer.jsx L260-297", "priority": "MEDIUM"},
+      {"component": "Add-on GST rounding", "issue": "GST on ₹28 (item ₹13 + add-on ₹15) is ₹1.40 but folio shows SGST ₹1 + CGST ₹1 = ₹2 (over-collects ₹0.60). Correct amount would be ₹1 total (halves ₹0.70 each). Consider rounding at the total-GST level rather than per-half.", "selector": "folioTransform.js addonGst calc", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots/b7_smoke_v3/22_price_entered.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/30_folio_410.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/51_added_item.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/53_inhouse_after_order.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/54_folio_421.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/62_addon_selected.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/70_folio_after_addon.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/71_folio_gst_breakdown.png",
+    "/app/test_reports/screenshots/b7_smoke_v3/90_final.jpg"
+  ],
+  "action_items": [
+    "BUG-418 (still open): render SGST + CGST split on GuestFolioPage Room Charges and inside PmsCheckoutDrawer TAXES block — currently only a single 'Lodging GST' line and an EMPTY TAXES section.",
+    "Rounding drift across POS/In-House/Folio (₹0.35–₹1 variance for the same stay) — pick one canonical rounding rule and apply to all 3 views.",
+    "Add-on GST is being displayed as ₹1 SGST + ₹1 CGST (=₹2) for a ₹28 base where the actual GST is ₹1.40 — over-collection by ₹0.60. Consider computing the total GST first and splitting into halves for display, instead of rounding each half up independently."
+  ],
+  "critical_code_review_comments": [
+    "The folio row for an add-on item is stored well (RATE=₹13 base, AMOUNT=₹28 for item+addon) — this is the correct pattern for BUG-429/430; keep it.",
+    "In-House balance already includes room-service GST → BUG-421/426 fix is functionally correct in getInHouseGuests().",
+    "OLD RoomCheckInModal correctly renders the accommodation GST block for Personal (Individual) bookings, i.e. gstBlockVisible is not gated on Corporate — BUG-410 fix is in place.",
+    "Rounding centralization would eliminate the ~₹1 discrepancy across the 3 balance surfaces (POS cart, In-House, Folio)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only)", "frontend": "3/3 target rows PASS (S-410, S-421/426, S-429/430) with minor rounding notes."},
+  "test_credentials": "OWNER_TGK (owner@thegoankitchen.com / Qplazm@10) — worked as documented.",
+  "seed_data_creation": "Created and FULLY SETTLED: (1) walk-in Smoke 410 on r5 via RoomCheckInModal — order #000159 (id 1232631) — Cash ₹2,100 checkout, r5 → HK. (2) Direct booking Smoke 421 on r1 (BID MG-69-3172FA9C-C8AD-4F94-82E7-70C3DCCB20D2) — order #000160 (id 1232632) with 2 POS room-service KOTs (Jeera Rice + Nails w/ 'with fingertips' add-on) — Cash ₹2,242.35 checkout, r1 → HK. No orphaned bookings; other testers' r2/r3 stays never touched; Checked-Out counter went 82 → 83 → confirmed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview URL https://core-frontend-run-1.preview.emergentagent.com → https://preprod.mygenie.online. Post-iteration state: r1 HK, r5 HK, r4 available, r2/r3 occupied (other testers, DO NOT TOUCH). OLD RoomCheckInModal opens from /dashboard by clicking data-testid=table-card-<roomId> (available room tiles). Selectors: checkin-name, checkin-phone-input, checkin-booking-for-individual, checkin-booking-type-walkin, checkin-room-price, checkin-advance, checkin-submit-btn. POS room-service = clicking table-card-<roomId> of an occupied room on /dashboard (routes to OrderEntry with room + guest pre-bound). Add-on modifier dialog: click menu-item-<id> for an item with 'Customize' tag, click addon chip (e.g. 'with fingertips +₹15'), click add-to-order-btn. Place KOT via place-order-btn. Folio /pms/folio/<orderId> displays Room Orders section with tap-to-expand SGST/CGST breakdown per row. In-House balance IS live and includes room-service GST. GST split on FOLIO Room Charges + Checkout Drawer TAXES block still MISSING (BUG-418 still open).",
+  "rca of the issue": "N/A — all target rows passed. Only minor rounding-drift residual issue remains (see action_items #2 and ui_bugs #4)."
+}

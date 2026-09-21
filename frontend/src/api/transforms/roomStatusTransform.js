@@ -15,7 +15,9 @@ const fromBoardRoom = (r) => {
     manualStatus:  x.manual_status ?? null,
     displayStatus: DISPLAY_STATUSES.includes(x.display_status) ? x.display_status : 'available',
     statusSince:   x.room_operational_status_at ?? null,
-    guest: g ? { name: g.name ?? '', bookingId: g.booking_id ?? null, orderId: g.order_id ?? null } : null,
+    hkAssignee:    x.hk_assignee ?? null,            // CR-385 M0 O-6
+    isOccupied:    Boolean(x.is_occupied),           // CR-385 M0 O-6
+    guest: g ? { name: g.name ?? '', phone: g.phone ?? null, email: g.email ?? null, bookingId: g.booking_id ?? null, orderId: g.order_id ?? null } : null, // CR-385 M0 O-6
     reservation: v ? { bookingId: v.booking_id ?? null, channel: v.channel ?? null, checkin: v.checkin ?? null,
                        checkout: v.checkout ?? null, guestName: v.guest_name ?? '', roomCode: v.room_code ?? null } : null,
     canToggle: x.display_status !== 'occupied' && x.display_status !== 'occupied_hk' && x.display_status !== 'booked', // BUG-397: occupied_hk cannot be toggled (guest inside)
@@ -33,7 +35,7 @@ export const fromRoomStatusBoard = (data) => {
       ? rooms.filter(r => r.manualStatus === 'hk').length
       : rooms.filter(r => r.displayStatus === s).length,
   }), { all: rooms.length });
-  return { autoHkOnRmCheckout: Boolean(d.auto_hk_on_rm_checkout), rooms, counts };
+  return { autoHkOnRmCheckout: Boolean(d.auto_hk_on_rm_checkout), rooms, counts, meta: d.meta ?? null }; // CR-385 M0 G-52
 };
 
 export const fromPatchResponse = (data) => {

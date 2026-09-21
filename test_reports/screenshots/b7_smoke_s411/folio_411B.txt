@@ -1,0 +1,70 @@
+Back
+Smoke 411B
+
+Order #000172 · 1N
+
+Direct
+Pay at Hotel
+In-House
+suite · r4
+Checked in 21 Sept 2026 · 10:42
+Expected checkout 22 Sept 2026
+1 adult
+Guest & Stay Details
+GUEST NAME
+Smoke 411B
+PHONE
+9999900412
+BOOKING ID
+MG-69-B1462E78-2454-471F-B5D9-BF72160323DD
+ROOM TYPE
+suite
+CHECK-IN
+21 Sept 2026
+CHECK-OUT
+22 Sept 2026
+NIGHTS
+1
+ADULTS / CHILDREN
+1 / 0
+MEAL PLAN
+—
+RATE PLAN
+—
+Payments Received
+1 payment
+card
+Advance
+2026-09-21
+₹500
+F&B Posted to Room
+
+No F&B orders posted to this room.
+
+Room Orders
+
+No room orders for this stay.
+
+Room Charges
+Room Price
+₹2,000
+Lodging GST
+₹100
+Advance Paid
+₹500
+Amount Received
+₹0
+BALANCE BREAKDOWN
+ROOM BALANCE
+₹1,600
+TRANSFERRED F&B
+₹0
+ROOM ORDERS
+₹0
+Total Balance Due
+₹1,600
+ACTIONS
+Check Out
+Print Folio
+
+Record Payment — mid-stay payments currently disabled

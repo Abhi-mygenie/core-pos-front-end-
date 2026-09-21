@@ -1,0 +1,21 @@
+/* CR-385 M0 — Front Desk workstation host styles (frontdesk.css). P4 adds .frontdesk-bill rules. */
+.fd-page { --fd-orange: #F26B33; --fd-green: #329937; --fd-amber: #D97706; --fd-red: #EF4444; --fd-mu: #767676; --fd-line: #E5E5E5; }
+
+/* M0-03 / D57: sticky <th> needs a scroll container WITHOUT top padding */
+.fd-table-scroll { overflow: auto; padding-top: 0; max-height: calc(100vh - 330px); min-height: 160px; }
+.fd-sticky-th { position: sticky; top: 0; z-index: 10; background: #fff; }
+
+.fd-row { cursor: pointer; transition: background-color 120ms ease; }
+.fd-row:hover { background-color: #FAFAFA; }
+.fd-row:focus-visible { outline: 2px solid var(--fd-orange); outline-offset: -2px; }
+.fd-row[aria-expanded="true"] { background-color: #FFF7F3; }
+
+.fd-tile { transition: transform 120ms ease, box-shadow 120ms ease; }
+.fd-tile:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+.fd-tile[aria-selected="true"] { box-shadow: 0 0 0 2px var(--fd-orange); }
+
+.fd-expansion { animation: fd-reveal 160ms ease-out; }
+@keyframes fd-reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.fd-chip { transition: background-color 120ms ease, color 120ms ease; }
+.fd-chip:focus-visible, .fd-btn:focus-visible, .fd-tab:focus-visible { outline: 2px solid var(--fd-orange); outline-offset: 2px; }
