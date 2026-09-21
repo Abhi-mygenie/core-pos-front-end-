@@ -25495,6 +25495,11 @@
           "date": "2026-09-21",
           "to": "GATE_5B_CLOSED (P0+P0.5)",
           "note": "Owner: \"update docs and decision and close gate\". D72 recorded (gate closed, BUG-439 registered, routing left to owner). Awaiting \"Phase 0 smoke OK\"."
+        },
+        {
+          "date": "2026-09-21",
+          "to": "BQ-385-22 filed",
+          "note": "Owner request: backend brief for local-reservations performance (0.9→6.9 s, 60–90 s stalls; 149 KB, 95/111 rows departed & never displayed). 5 asks; MASTER v2.0; checklist section B (B-01…B-06). Not a bug; nothing blocked."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25630,6 +25635,9 @@
         "components/pms/frontdesk/DeparturesPanel.jsx (active)",
         "components/pms/frontdesk/__tests__/{GuestTable,GlobalSearch,phase05}.cr385.test.jsx (NEW)",
         "api/transforms/__tests__/frontDeskTransform.cr385.test.js (+isTurn live-shaped)"
+      ],
+      "backend_briefs": [
+        "backend_briefs/BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md (BQ-385-22, P2 perf/aggregation, not blocking; checklist section B)"
       ]
     },
     {
@@ -26558,6 +26566,6 @@
     "total": 696,
     "total_items": 696,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "BUG-439 FIXED + QA-VERIFIED (Option A). CR-385 Gate 5B closed; awaiting owner Phase 0 smoke."
+    "last_note": "BQ-385-22 perf brief filed + checklist section B. CR-385 Gate 5B closed; awaiting owner Phase 0 smoke."
   }
 }
