@@ -228,6 +228,8 @@ Exit: cr385 tests green (58 → 58 + new) · guards empty · `yarn build` exit 0
 
 ## PHASE 2 — M1 New Booking · M3 Check-In (money in)
 
+> **Entry state 2026-09-22 (D80):** Gate 6 for P0+P1 CLOSED by the owner. **Before any Phase 2 code the next agent presents this section as a plan note (plus the conflict list in `handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md` §3 — §2.1 "Existing-file edits — none" is already known to be WRONG) and waits for "Phase 2 GO".** Entry conditions BUG-431/432. Deferred bugs to revisit after the note: BUG-446, OD-385-19, BQ-385-25.
+
 ### 2.1 Existing-file edits — none.
 ### 2.2 New files
 **`NewBookingForm.jsx`** (~220 L, blueprint v2.17 + D34/35/36/48-c, **no Split tile — OD-385-18 a**)

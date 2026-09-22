@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED — GATE 5 CLOSED for P0+P0.5+P1+P1.5(+1.5b) 2026-09-22 · Gate 6 OPEN = combined owner smoke S-1…S-25 (checklist M0-S / M1-S / M1.5-S) → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 2 GO (entry conditions BUG-431/432). Bugs: 434–442 + 445 QA-VERIFIED (P1.5c) · 443/444 DEFERRED-TO-FU-385-C (D77/D78) · 431/432 → P2, 433 → P3. · P1.5c (BUG-445) closed 2026-09-22. Pending owner routing: BUG-446, OD-385-19; backend BQ-385-25.",
+      "status": "GATE_6_CLOSED (Phase 0 + Phase 1 + 1.5/1.5b/1.5c) 2026-09-22 by owner words (D80) → NEXT: Phase 2 PLAN NOTE presentation (M1 New Booking · M3 Check-In) → owner \"Phase 2 GO\" → Implementation. Entry conditions P2: BUG-431/432 (fixed by construction, re-verify in P2 QA). Deferred to REVIEW-AFTER-P2-PLAN-NOTE: BUG-446, OD-385-19, BQ-385-25. Deferred to FU-385-C: BUG-443/444. Bugs 434–442 + 445 QA-VERIFIED.",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25535,6 +25535,11 @@
           "date": "2026-09-22",
           "to": "P1.5c closed (Gate 5 re-closed)",
           "note": "BUG-445 fixed + QA-VERIFIED inside the Gate 6 window (owner instruction). Gate 6 owner smoke still open: S-1…S-25."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "GATE_6_CLOSED (P0+P1)",
+          "note": "Owner closed Gate 6 (D80). BUG-446 / OD-385-19 / BQ-385-25 → REVIEW-AFTER-P2-PLAN-NOTE. Next agent: PLANNING role — present Phase 2 plan, top five, conflicts (see handover) → wait for 'Phase 2 GO'."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25615,7 +25620,7 @@
       ],
       "phase_gate_rule": "next phase only after owner says \"Phase N smoke OK\"",
       "gate_4_go": "2026-09-21 — owner: \"Gate 4 GO. Correct on all five.\"",
-      "phase": "P1 + P1.5 closed (Gate 5) · combined P0+P1+P1.5 owner smoke pending · Phase 2 blocked until \"Phase 1 smoke OK\"",
+      "phase": "Phase 2 — PLANNING NOTE (present plan + top-five + conflicts) → GO → Implementation",
       "files_p0": [
         "App.js (L110 import, L272 route)",
         "components/layout/Sidebar.jsx (L245)",
@@ -25675,7 +25680,7 @@
         "backend_briefs/BACKEND_BRIEF_CR-385_PERF_LR_2026_09_21.md (BQ-385-22, P2 perf/aggregation, not blocking; checklist section B)"
       ],
       "gate6_phase0": "DEFERRED — combined with Phase 1 owner smoke (D74). Steps: control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 / checklist M0-S01…S12",
-      "session_handover_latest": "handover/SESSION_HANDOVER_2026_09_21_CR385_P1_IMPLEMENTED.md",
+      "session_handover_latest": "handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md",
       "files_p1": [
         "pages/pms/ChannelManagerPage.jsx",
         "pages/pms/FrontDeskRulesTab.jsx (NEW)",
@@ -25695,8 +25700,9 @@
       "qa_report_p1_5": "test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md (iteration_15.json rounds 1+2 + main-agent P15-11/12/13 sweep)",
       "bug_fix_report_p1_5": "handover/CR-385_P1_5_BUG_FIX_REPORT_2026_09_22.md",
       "probe_report_p1_5b": "handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md",
-      "current_gate": "Gate 6 (owner smoke) — waiting for owner words",
-      "bug_fix_report_p1_5c": "handover/CR-385_P1_5C_BUG_FIX_REPORT_2026_09_22.md"
+      "current_gate": "Gate 6 CLOSED (P0+P1) · Phase 2: Gate 2 (plan note presentation) pending",
+      "bug_fix_report_p1_5c": "handover/CR-385_P1_5C_BUG_FIX_REPORT_2026_09_22.md",
+      "gate6_phase0_phase1": "CLOSED 2026-09-22 — owner words \"Close gate 6, we will look into bugs after phase 2 note is down\" (D80); checklist ticks M1-S04, M1-S07"
     },
     {
       "id": "BUG-410",
@@ -26867,7 +26873,7 @@
       "title": "Old /pms/arrivals and /pms/room-status headers show the browser date (new Date()) instead of the property business date",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE (2026-09-22) — owner routing: DEFERRED-TO-FU-385-C or Fast Lane",
+      "status": "REVIEW-AFTER-P2-PLAN-NOTE (owner 2026-09-22, D80) — not a P2 entry condition",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-22",
       "category": "INTAKE",
@@ -26892,13 +26898,18 @@
           "date": "2026-09-22",
           "to": "INTAKE",
           "note": "Seen as NOTE in QA_REPORT P1 ROLE4 §3 and P1.5 §3; formally registered on owner's 'call intake role' instruction."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "REVIEW-AFTER-P2-PLAN-NOTE",
+          "note": "Owner: look into bugs after the Phase 2 note."
         }
       ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "BUG FIX + QA — BUG-445 FIXED + QA-VERIFIED (P1.5c, iteration_16 7/7). Session closed. Open: owner Gate 6 smoke verdict words; routing for BUG-446 (browser date, legacy) and OD-385-19 (flat Modify vs kebab); backend BQ-385-25.",
+    "last_action": "GATE 6 CLOSED (P0+P1) by owner (D80). Next agent = PLANNING: present the Phase 2 plan note (M1 New Booking · M3 Check-In) + top five + conflict list → wait for \"Phase 2 GO\". Handover: handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

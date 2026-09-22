@@ -534,3 +534,8 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - INTAKE: BUG-445 (In-House Leaving-today chip counted overdue), BUG-446 (legacy headers browser date), BQ-385-25/OG-PMS-037 (backend occupancy %), OD-385-19 (flat Modify vs kebab).
 - BUG FIX P1.5c: `bucketInHouse` `checkout === bd` (1 line, marker `// CR-385 BUG-445`) + 3 tests; jest 63 → 66, build 0; QA `iteration_16.json` 7/7 both viewports, read-only. D79. Smoke S-26 added. Session closed: `handover/SESSION_HANDOVER_2026_09_22_CR385_P1_5C_CLOSED.md`.
 - Open: Gate 6 owner smoke verdict; owner routing BUG-446 / OD-385-19; backend BQ-385-25.
+
+## 2026-09-22 — CR-385 GATE 6 CLOSED (Phase 0 + Phase 1) · Phase 2 entry handover
+- Owner words "Close gate 6, we will look into bugs after phase 2 note is down" → D80. BUG-446 / OD-385-19 / BQ-385-25 → REVIEW-AFTER-P2-PLAN-NOTE. Entry conditions P2 unchanged: BUG-431/432.
+- Registry CR-385 → GATE_6_CLOSED (P0+P1); next = **PLANNING role: present the Phase 2 plan note + top five + conflict list** (`handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md` §2/§3 — 12 conflicts incl. plan §2.1 "no existing-file edits" being wrong, early-check-in flag source = `getFrontDeskRules`, staff name = `useAuth().user.fullName`, test location `tests/cr385/`) → wait for "Phase 2 GO".
+- Docs synced: DESIGN_DECISIONS D80, plan §2 entry banner, registry, BUG_TRACKER, CR_REGISTRY, CONTROL_DASHBOARD, smoke batch (Gate 6 closed banner).

@@ -47,6 +47,8 @@ Known, not in scope of this smoke: legacy `/pms/arrivals` Cancel/Modify **Confir
 Verdict: all S-1…S-12 PASS → say **"Phase 0 smoke OK"**; all S-13…S-20 PASS → say **"Phase 1 smoke OK"**. Any FAIL → Intake → Phase 1.5 (phased plan §0-bis) before Phase 2 GO.
 
 
+## GATE 6 CLOSED 2026-09-22 — owner words "Close gate 6, we will look into bugs after phase 2 note is down" (D80). Ticked rows: M1-S04, M1-S07. Findings during the smoke: BUG-445 (fixed P1.5c), BUG-446 / OD-385-19 / BQ-385-25 (review after the Phase 2 note).
+
 ## Phase 1.5 steps — appended 2026-09-22 (run AFTER S-13…S-20; ≈ 5 min)
 Pre-read: `test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md` (Phase 1 33/33, BUG-441/442 verified). Known, ignore: after a Modify the row shows **"SR ●"** with text "| MODIFY: …" — backend appends the modify reason to special requests (**BQ-385-23/24**, no frontend workaround). Known blocker: S-22 — **BUG-444 DEFERRED-TO-FU-385-C** (old tape chart hides new Direct bookings): write "blocked, BUG-444" and cancel that booking from Front Desk (Beta).
 

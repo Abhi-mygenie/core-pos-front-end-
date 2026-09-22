@@ -792,3 +792,11 @@ Registered: **BUG-445** (In-House "Leaving today" counts overdue — 1 line, Fas
 | Context | Owner smoke surfaced the In-House "Leaving today" chip counting overdue guests. Plan §3 had scheduled the rule for Phase 3. |
 | Decision | Owner: "call bug fix agent and fix BUG-445 … close session after QA". One-line change `checkout === bd` in `bucketInHouse` (marker `// CR-385 BUG-445`), 3 unit tests, QA `iteration_16.json` 7/7. The §3 M5 line item for this rule is now satisfied early. |
 | Still pending owner routing | BUG-446 (legacy browser date), OD-385-19 (flat Modify vs kebab); backend BQ-385-25 (occupancy %). |
+
+### D80 — Gate 6 CLOSED for Phase 0 + Phase 1 (+1.5/1.5b/1.5c) by owner words (2026-09-22)
+| Field | Value |
+|---|---|
+| Owner words (verbatim) | "Close gate 6 , we will look into bugs after phase 2 note is down" — accepted as the combined **"Phase 0 smoke OK" + "Phase 1 smoke OK"**. Owner-ticked rows on the checklist: M1-S04 ("check in already grey · avail for phase 2"), M1-S07 ("works"); the smoke finding BUG-445 was fixed and QA-verified inside the window (D79). |
+| Deferred until the Phase 2 plan note is presented | **BUG-446** (legacy browser date) · **OD-385-19** (flat Modify vs kebab) · **BQ-385-25** (backend occupancy %). Status `REVIEW-AFTER-P2-PLAN-NOTE`. Not entry conditions of Phase 2. |
+| Phase 2 entry conditions (unchanged, plan §0-bis) | **BUG-431** (CheckInPage pre-fills base+GST and re-applies GST) and **BUG-432** (legacy NewBookingPage sends `rate_per_night`) are fixed *by construction* inside M1/M3 (FE never sends a price; bill = `charge.*`) and must be re-verified in the P2 QA. |
+| Next role | **PLANNING (Phase 2 plan note)** — the next agent presents the Phase 2 plan + top-five + conflict list to the owner and waits for **"Phase 2 GO"**. No Phase 2 code before that. |
