@@ -775,3 +775,13 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 
 ### Gate 5B closure — CR-385 P1 + P1.5 + P1.5b (2026-09-22)
 Phase 1 33/33 (Role-4 re-run) · BUG-440/441/442 FIXED + QA-VERIFIED · BUG-443/444 DEFERRED-TO-FU-385-C (D77/D78) · unit 63/63 · build 0 · sandbox clean. **Gate 5 CLOSED. Open: Gate 6 = combined owner smoke S-1…S-25** → "Phase 0 smoke OK" + "Phase 1 smoke OK" → Phase 2 GO.
+
+### OD-385-19 (owner decision PENDING) — Modify as a flat row button vs. the planned kebab (registered 2026-09-22)
+| Field | Value |
+|---|---|
+| Context | Plan §1.2 wrote "Modify (kebab)"; Phase 1 shipped **Modify** as a flat button beside Cancel / No-Show (one click fewer, no menu state). Owner ticked M1-S04 "check in already grey · avail for phase 2" without objecting to the layout. |
+| Options | (a) **keep flat buttons** (recommended — Phase 2 adds only Check In, still 3 visible buttons per row); (b) move Modify + Cancel/No-Show behind a ⋮ kebab as drawn in mockup v2.22 (small P-phase change, no logic). |
+| Needed by | Before Phase 2 planning (affects the row action layout when Check In goes live). |
+
+### Owner smoke intake batch — 2026-09-22 (INTAKE role)
+Registered: **BUG-445** (In-House "Leaving today" counts overdue — 1 line, Fast Lane eligible) · **BUG-446** (legacy headers use browser date — 2 lines) · **BQ-385-25 / OG-PMS-037** (backend occupancy % excludes overdue in-house; FE displays verbatim per MV-06) · **OD-385-19** (flat Modify button vs kebab). Already routed earlier: BUG-443/444 → FU-385-C. Not registered (no user impact): the 16 px checkbox hit-area note from the QA tester.

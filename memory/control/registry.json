@@ -26847,18 +26847,52 @@
           "note": "Owner smoke screenshot: In-House chip 'Leaving today 2' vs tile '0 leaving today' (both overdue guests bkol/blpi, checkout 21 Sep). Validated live + code read. No code (owner: validate only)."
         }
       ]
+    },
+    {
+      "id": "BUG-446",
+      "type": "BUG",
+      "title": "Old /pms/arrivals and /pms/room-status headers show the browser date (new Date()) instead of the property business date",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE (2026-09-22) — owner routing: DEFERRED-TO-FU-385-C or Fast Lane",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-22",
+      "category": "INTAKE",
+      "source": "AGENT-FOUND (owner smoke validation)",
+      "confidence": "CONFIRMED",
+      "qa_severity": "MINOR",
+      "rca_classification": "CODE_ERROR (X-06 gap on legacy pages)",
+      "duplicate_check": "DISTINCT (RELATED CR-385 X-06, FU-385-C, CR-358)",
+      "blast_radius": "SMALL (2 files, 2 lines) — Fast Lane eligible",
+      "code_reality": "EXISTS",
+      "files_affected": [
+        "frontend/src/pages/pms/ArrivalsPage.jsx",
+        "frontend/src/pages/pms/RoomStatusPage.jsx"
+      ],
+      "related_items": [
+        "CR-385",
+        "CR-358"
+      ],
+      "intake_doc": "change_requests/BUG-446_LEGACY_PAGES_SHOW_BROWSER_DATE_INTAKE.md",
+      "status_history": [
+        {
+          "date": "2026-09-22",
+          "to": "INTAKE",
+          "note": "Seen as NOTE in QA_REPORT P1 ROLE4 §3 and P1.5 §3; formally registered on owner's 'call intake role' instruction."
+        }
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "GATE 5 CLOSED — CR-385 P1+P1.5(+1.5b) docs/decisions synced (D77/D78). Waiting on owner Gate 6: combined smoke S-1…S-25 → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → \"Phase 2 GO\".",
+    "last_action": "INTAKE — owner smoke gaps registered: BUG-445 (In-House Leaving-today chip), BUG-446 (legacy pages browser date), BQ-385-25/OG-PMS-037 (backend occupancy %), OD-385-19 (Modify flat button vs kebab). Waiting for owner routing → then Gate 6 verdict words.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 703,
-    "total_items": 703,
+    "total": 704,
+    "total_items": 704,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
     "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" → Implementation role §1."
   }
