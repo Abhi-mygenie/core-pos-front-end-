@@ -757,3 +757,21 @@ QA left three stays in-house; FE settled them (TAB). Sandbox at defaults. **Befo
 | Context | P1 live QA could not complete a Cancel: the reason dropdown was always empty (CR-362 `CancelBookingDialog.jsx` read an array where `settingsService` returns `{ reasons: [{ reasonId, reasonText }] }`). Fixing it required a file outside the P1 edit list. |
 | Decision | Owner: "R14 scope expansion APPROVED — register first, then fix": BUG-440 intake → 3-line fix (`// CR-385 M2 BUG-440`) → unit tests → QA on the new panel **and** the legacy page. `settingsService.js` and `NoShowDialog.jsx` untouched. Legacy Modify/Cancel on `/pms/arrivals` + `/pms/reservations` still send the public `booking_id` string as the LR id → 500 (**BUG-441**, registered, NOT fixed — `ArrivalsPage.jsx` stays untouched per the P1 snapshot mandate; owner routing needed). |
 | Also | Modify `reason` is appended by the backend to `special_requests` as `"| MODIFY: …"` (row shows SR ●) → BQ-385-23 (backend ask, no FE workaround). Backend 500 on non-int `{id}` → BQ-385-24 (P3). |
+
+### D77 — BUG-443 routing after VERIFY-FIRST probe (owner, 2026-09-22)
+| Field | Value |
+|---|---|
+| Context | Legacy `ModifyBookingDialog` sends `amount_after_tax: 0` + empty `reason`. Owner ordered a live probe before any code. |
+| Probe | Booking 234 (Suite, 22 → 24 Sep, ₹74,340) → legacy Modify +1 night with `amount_after_tax:0` → server stored 3 nights, ₹111,510 (= 3 × 31,500 × 1.18). Backend ignores the client amount. Evidence `evidence/CR-385/phase1_5b/`. |
+| Decision | **Branch 3 — no code.** BUG-443 → DEFERRED-TO-FU-385-C, severity MINOR (P3/LOW). Smoke S-25 "legacy Modify — payload known dirty, harmless, retires with FU-385-C". |
+| Owner words | "If the backend ignores amount_after_tax (price correct) → no code; route BUG-443 DEFERRED-TO-FU-385-C, severity downgraded to MINOR." |
+
+### D78 — BUG-444 deferred to legacy retirement (owner, 2026-09-22)
+| Field | Value |
+|---|---|
+| Context | Old `/pms/reservations` tape chart never showed pending Direct bookings 231/233, so the legacy Reservations Cancel path could not be exercised live (code path unit-guarded; identical Arrivals path passed live). Suspected `buildTapeChart` silent drop (hotspot `pmsService.js`). |
+| Decision | **DEFERRED-TO-FU-385-C**, no code. Smoke S-22 stays "blocked, BUG-444"; the booking is cancelled from Front Desk (Beta) instead. |
+| Owner words | "BUG-444 → DEFERRED-TO-FU-385-C (legacy retirement). No code." |
+
+### Gate 5B closure — CR-385 P1 + P1.5 + P1.5b (2026-09-22)
+Phase 1 33/33 (Role-4 re-run) · BUG-440/441/442 FIXED + QA-VERIFIED · BUG-443/444 DEFERRED-TO-FU-385-C (D77/D78) · unit 63/63 · build 0 · sandbox clean. **Gate 5 CLOSED. Open: Gate 6 = combined owner smoke S-1…S-25** → "Phase 0 smoke OK" + "Phase 1 smoke OK" → Phase 2 GO.

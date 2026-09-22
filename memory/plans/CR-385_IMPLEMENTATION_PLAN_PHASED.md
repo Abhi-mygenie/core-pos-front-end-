@@ -222,6 +222,8 @@ Plan note: `plans/CR-385_PHASE_1_5_BUGFIX_PLAN.md` (authoritative; mirrors §0.7
 | BUG-442 | `pages/pms/ArrivalsPage.jsx` L11/L55/L273, `pages/pms/ReservationsPage.jsx` L375, `pages/pms/FrontDeskWorkstationPage.jsx` (`cancelledBy` prop) | `cancelledBy` = `useAuth().user.fullName` (fallback `'staff'` only when empty); drop `restaurant.profile.fullName` | RTL: payload `cancelledBy` = logged-in user's fullName; `'staff'` when no user |
 Exit: cr385 tests green (58 → 58 + new) · guards empty · `yarn build` exit 0 · testing_agent 1920×800 + 1366×768 (all 33 P1 Role-4 cases + legacy Cancel 200 on `/pms/arrivals` and `/pms/reservations` + `cancelled_by` = owner name) → `iteration_15.json` + `QA_REPORT_<date>_CR385_P1_5_ROLE4.md` · Bug Fix report `handover/CR-385_P1_5_BUG_FIX_REPORT_<date>.md` · registry `GATE_5B_QA_PASSED (P1+P1.5)` · smoke batch S-21… appended · ONE combined owner smoke (P0 + P1 + P1.5) → "Phase 0 smoke OK" + "Phase 1 smoke OK" → Phase 2 GO.
 
+**Phase 1.5 CLOSED 2026-09-22 (Gate 5B, owner):** BUG-441/442 FIXED + QA-VERIFIED (`iteration_15.json` rounds 1+2, Phase 1 re-run 33/33, tests 58 → 63). **P1.5b probe (D77):** BUG-443 harmless (backend ignores client `amount_after_tax`) → DEFERRED-TO-FU-385-C MINOR; **BUG-444** → DEFERRED-TO-FU-385-C (D78). No DEFERRED-TO-P2 entry conditions added by P1/P1.5 (BUG-431/432 from P0 remain the P2 entry conditions). Reports: `test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md`, `handover/CR-385_P1_5_BUG_FIX_REPORT_2026_09_22.md`, `handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md`. **Only Gate 6 (combined owner smoke S-1…S-25, checklist M0-S/M1-S/M1.5-S) stands between here and "Phase 2 GO".**
+
 ---
 
 ## PHASE 2 — M1 New Booking · M3 Check-In (money in)

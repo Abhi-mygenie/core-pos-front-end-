@@ -525,3 +525,7 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 
 ## 2026-09-22 — CR-385 P1.5b probe (BUG-443/444 routing) — no code
 - BUG-444 → DEFERRED-TO-FU-385-C (smoke S-22 "blocked, BUG-444"). BUG-443 VERIFY-FIRST probe (booking 234): legacy Modify sent `amount_after_tax:0`, backend stored the correct server price (₹74,340 → ₹111,510 for 2 → 3 nights) → branch 3: DEFERRED-TO-FU-385-C, MINOR; smoke S-25 "known dirty, harmless". Report `handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md`; evidence `evidence/CR-385/phase1_5b/`. Sandbox clean. Next: combined owner smoke S-1…S-25 → Phase 2 GO.
+
+## 2026-09-22 — CR-385 Gate 5 CLOSED (P1 + P1.5 + P1.5b)
+- Decisions D77 (BUG-443 branch 3 → DEFERRED-TO-FU-385-C, MINOR) and D78 (BUG-444 → DEFERRED-TO-FU-385-C) recorded; plan §1.7 closure; registry/CR_REGISTRY/CONTROL_DASHBOARD synced; checklist M1.5-S section; `handover/SESSION_HANDOVER_2026_09_22_CR385_GATE5_CLOSED.md`.
+- **Open: Gate 6 only** — owner combined smoke S-1…S-25 → "Phase 0 smoke OK" + "Phase 1 smoke OK" → "Phase 2 GO" (M1 New Booking · M3 Check-In; entry conditions BUG-431/432).
