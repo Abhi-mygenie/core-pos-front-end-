@@ -529,3 +529,8 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 ## 2026-09-22 — CR-385 Gate 5 CLOSED (P1 + P1.5 + P1.5b)
 - Decisions D77 (BUG-443 branch 3 → DEFERRED-TO-FU-385-C, MINOR) and D78 (BUG-444 → DEFERRED-TO-FU-385-C) recorded; plan §1.7 closure; registry/CR_REGISTRY/CONTROL_DASHBOARD synced; checklist M1.5-S section; `handover/SESSION_HANDOVER_2026_09_22_CR385_GATE5_CLOSED.md`.
 - **Open: Gate 6 only** — owner combined smoke S-1…S-25 → "Phase 0 smoke OK" + "Phase 1 smoke OK" → "Phase 2 GO" (M1 New Booking · M3 Check-In; entry conditions BUG-431/432).
+
+## 2026-09-22 — CR-385 P1.5c: BUG-445 FIXED + QA-VERIFIED; intake batch registered
+- INTAKE: BUG-445 (In-House Leaving-today chip counted overdue), BUG-446 (legacy headers browser date), BQ-385-25/OG-PMS-037 (backend occupancy %), OD-385-19 (flat Modify vs kebab).
+- BUG FIX P1.5c: `bucketInHouse` `checkout === bd` (1 line, marker `// CR-385 BUG-445`) + 3 tests; jest 63 → 66, build 0; QA `iteration_16.json` 7/7 both viewports, read-only. D79. Smoke S-26 added. Session closed: `handover/SESSION_HANDOVER_2026_09_22_CR385_P1_5C_CLOSED.md`.
+- Open: Gate 6 owner smoke verdict; owner routing BUG-446 / OD-385-19; backend BQ-385-25.

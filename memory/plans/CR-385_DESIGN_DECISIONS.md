@@ -785,3 +785,10 @@ Phase 1 33/33 (Role-4 re-run) · BUG-440/441/442 FIXED + QA-VERIFIED · BUG-443/
 
 ### Owner smoke intake batch — 2026-09-22 (INTAKE role)
 Registered: **BUG-445** (In-House "Leaving today" counts overdue — 1 line, Fast Lane eligible) · **BUG-446** (legacy headers use browser date — 2 lines) · **BQ-385-25 / OG-PMS-037** (backend occupancy % excludes overdue in-house; FE displays verbatim per MV-06) · **OD-385-19** (flat Modify button vs kebab). Already routed earlier: BUG-443/444 → FU-385-C. Not registered (no user impact): the 16 px checkbox hit-area note from the QA tester.
+
+### D79 — BUG-445 fixed inside the Gate 6 window as Phase 1.5c (owner, 2026-09-22)
+| Field | Value |
+|---|---|
+| Context | Owner smoke surfaced the In-House "Leaving today" chip counting overdue guests. Plan §3 had scheduled the rule for Phase 3. |
+| Decision | Owner: "call bug fix agent and fix BUG-445 … close session after QA". One-line change `checkout === bd` in `bucketInHouse` (marker `// CR-385 BUG-445`), 3 unit tests, QA `iteration_16.json` 7/7. The §3 M5 line item for this rule is now satisfied early. |
+| Still pending owner routing | BUG-446 (legacy browser date), OD-385-19 (flat Modify vs kebab); backend BQ-385-25 (occupancy %). |

@@ -56,6 +56,7 @@ Pre-read: `test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md` (Phase 1 33/33
 | S-22 | Old `/pms/reservations` | Find a block of YOUR Smoke booking → popover → **Cancel** → reason → Confirm | 200, block gone after Refresh. **If the booking is not on the chart → write "blocked, BUG-444"** and cancel it from Front Desk (Beta) instead. | | |
 | S-23 | Any cancel (S-18 / S-21) | F12 → Network → the `/cancel` request → Payload | `cancelled_by` shows **your name** (e.g. "Owner"), not "staff". | | |
 | S-25 | Old `/pms/arrivals` ⋮ → Modify (optional) | If you modify from the OLD page: rate cards show ₹0 and the request carries `amount_after_tax: 0` | **Known dirty payload, harmless** — the server recomputes the price (probe 2026-09-22: 2 → 3 nights = ₹74,340 → ₹111,510). Retires with FU-385-C (BUG-443). Not a bug for this smoke. | | |
+| S-26 | Front Desk (Beta) → In-House tab | Compare the "Leaving today" chip with the tile's "N leaving today" | Same number (BUG-445 fixed in P1.5c). Overdue guests sit under **Stayover** with a red "Overdue N d" pill. Rooms tile "% occupancy" may disagree with occupied/free when a guest overstays = **known BQ-385-25, ignore**. | | |
 | S-24 | Front Desk (Beta) after S-17b | Look at the modified row | "SR ●" marker with "| MODIFY: …" text = **known BQ-385-23/24 — ignore**, not a bug. | | |
 
 Verdict: S-21, S-23, S-24 PASS (S-22 PASS or "blocked, BUG-444") → include in **"Phase 1 smoke OK"**.
@@ -64,5 +65,5 @@ Verdict: S-21, S-23, S-24 PASS (S-22 PASS or "blocked, BUG-444") → include in 
 Not run. Owner: Phase 0 smoke is executed together with the Phase 1 smoke in one combined session. Append the Phase 1 steps as S-13… to THIS document when Phase 1 reaches Gate 6; run S-1…S-12 first.
 
 ## Result
-_(facilitator fills)_ S-1…S-12: __/12 PASS · S-13…S-20: __/8 PASS · S-21…S-25: __/5 PASS (S-22 = blocked) · owner verdict: ________ · date/time: ________
+_(facilitator fills)_ S-1…S-12: __/12 PASS · S-13…S-20: __/8 PASS · S-21…S-26: __/6 PASS (S-22 = blocked) · owner verdict: ________ · date/time: ________
 Any FAIL → BUG-4xx filed via Intake → Bug Fix in Phase 0.5 → re-smoke the failed step only.

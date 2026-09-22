@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED — GATE 5 CLOSED for P0+P0.5+P1+P1.5(+1.5b) 2026-09-22 · Gate 6 OPEN = combined owner smoke S-1…S-25 (checklist M0-S / M1-S / M1.5-S) → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 2 GO (entry conditions BUG-431/432). Bugs: 434–442 QA-VERIFIED · 443/444 DEFERRED-TO-FU-385-C (D77/D78) · 431/432 → P2, 433 → P3.",
+      "status": "GATE_5B_QA_PASSED — GATE 5 CLOSED for P0+P0.5+P1+P1.5(+1.5b) 2026-09-22 · Gate 6 OPEN = combined owner smoke S-1…S-25 (checklist M0-S / M1-S / M1.5-S) → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 2 GO (entry conditions BUG-431/432). Bugs: 434–442 + 445 QA-VERIFIED (P1.5c) · 443/444 DEFERRED-TO-FU-385-C (D77/D78) · 431/432 → P2, 433 → P3. · P1.5c (BUG-445) closed 2026-09-22. Pending owner routing: BUG-446, OD-385-19; backend BQ-385-25.",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25530,6 +25530,11 @@
           "date": "2026-09-22",
           "to": "GATE 5 CLOSED (P1+P1.5+P1.5b)",
           "note": "Owner: \"update docs and decision and close this Gate\". D77 (BUG-443 branch 3) + D78 (BUG-444 deferral) recorded; plan §1.7 closure; checklist M1.5-S section; handovers written. Next owner action: run S-1…S-25."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "P1.5c closed (Gate 5 re-closed)",
+          "note": "BUG-445 fixed + QA-VERIFIED inside the Gate 6 window (owner instruction). Gate 6 owner smoke still open: S-1…S-25."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25690,7 +25695,8 @@
       "qa_report_p1_5": "test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md (iteration_15.json rounds 1+2 + main-agent P15-11/12/13 sweep)",
       "bug_fix_report_p1_5": "handover/CR-385_P1_5_BUG_FIX_REPORT_2026_09_22.md",
       "probe_report_p1_5b": "handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md",
-      "current_gate": "Gate 6 (owner smoke) — waiting for owner words"
+      "current_gate": "Gate 6 (owner smoke) — waiting for owner words",
+      "bug_fix_report_p1_5c": "handover/CR-385_P1_5C_BUG_FIX_REPORT_2026_09_22.md"
     },
     {
       "id": "BUG-410",
@@ -26822,7 +26828,7 @@
       "title": "In-House 'Leaving today' chip counts overdue guests (bucketInHouse uses checkout <= bd) — chip says 2 while the tile/backend says 0 leaving today",
       "priority": "P3",
       "risk": "LOW",
-      "status": "INTAKE (2026-09-22, owner smoke) — owner routing: Phase 3 M5 wiring (as planned) or Phase 1.5c one-liner",
+      "status": "FIXED + QA-VERIFIED 2026-09-22 (CR-385 P1.5c) — unit tests/cr385/phase1_5c.cr385.test.jsx (3), live iteration_16.json 7/7 both viewports",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-22",
       "category": "INTAKE",
@@ -26834,7 +26840,8 @@
       "blast_radius": "SMALL (1 file, 1 line) — Fast Lane eligible",
       "code_reality": "EXISTS",
       "files_affected": [
-        "frontend/src/api/transforms/frontDeskTransform.js"
+        "frontend/src/api/transforms/frontDeskTransform.js",
+        "frontend/src/tests/cr385/phase1_5c.cr385.test.jsx"
       ],
       "related_items": [
         "CR-385"
@@ -26845,8 +26852,14 @@
           "date": "2026-09-22",
           "to": "INTAKE",
           "note": "Owner smoke screenshot: In-House chip 'Leaving today 2' vs tile '0 leaving today' (both overdue guests bkol/blpi, checkout 21 Sep). Validated live + code read. No code (owner: validate only)."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "FIXED + QA-VERIFIED",
+          "note": "Owner: 'call bug fix agent and fix BUG-445'. Step 0 red (2 failing) → 1-line fix (checkout === bd) marker // CR-385 BUG-445 → 66/66 green, build 0 → iteration_16 7/7 PASS (chip Leaving today 0 == tile/backend leaving_today 0; Stayover 2 with OVERDUE pill; Departures untouched; 0 dupes; 0 console errors)."
         }
-      ]
+      ],
+      "fixed_in": "CR-385 P1.5c"
     },
     {
       "id": "BUG-446",
@@ -26885,7 +26898,7 @@
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "INTAKE — owner smoke gaps registered: BUG-445 (In-House Leaving-today chip), BUG-446 (legacy pages browser date), BQ-385-25/OG-PMS-037 (backend occupancy %), OD-385-19 (Modify flat button vs kebab). Waiting for owner routing → then Gate 6 verdict words.",
+    "last_action": "BUG FIX + QA — BUG-445 FIXED + QA-VERIFIED (P1.5c, iteration_16 7/7). Session closed. Open: owner Gate 6 smoke verdict words; routing for BUG-446 (browser date, legacy) and OD-385-19 (flat Modify vs kebab); backend BQ-385-25.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

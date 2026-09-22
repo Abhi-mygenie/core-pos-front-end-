@@ -1398,3 +1398,9 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `tests/cr385/phase1_5.cr385.test.jsx` | NEW — 5 tests (numeric id, fullName, FD target, staff fallback, source guards) | CR-385 P1.5 2026-09-22 |
 | `components/pms/frontdesk/__tests__/phase1.cr385.test.jsx` | legacy-marker guard relaxed to allow only BUG-441/442 markers | CR-385 P1.5 2026-09-22 |
 | `components/pms/ModifyBookingDialog.jsx`, `api/services/pmsService.js` | **NOT touched** — BUG-443 / BUG-444 intakes (owner routing) | — |
+
+## FILE_OWNERSHIP — CR-385 Phase 1.5c BUG FIX (BUG-445) — 2026-09-22
+| File | Change | Owner / date |
+|---|---|---|
+| `api/transforms/frontDeskTransform.js` | L87 `bucketInHouse`: `checkout <= bd` → `checkout === bd` (leaving = today only) | CR-385 P1.5c BUG-445 2026-09-22 |
+| `tests/cr385/phase1_5c.cr385.test.jsx` | NEW — 3 tests (overdue → stayover, boundaries, fixture-like counts) | CR-385 P1.5c 2026-09-22 |

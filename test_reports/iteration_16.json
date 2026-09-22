@@ -1,0 +1,40 @@
+{
+  "summary": "CR-385 Phase 1.5c — BUG-445 QA (frontend only, READ-ONLY, no mutations). All 7 cases PASS. bucketInHouse fix verified: 'Leaving today' chip = 0 (matches tile), 'Stayover' chip = 2 (both overdue guests bkol r2 + blpi r3 keep their red OVERDUE pill), 'All' = 2, 'Arrived today' = 0. Backend counts confirm: in_house=2, leaving_today=0, arrived_today=0, departures_overdue=2, business_date=2026-09-22. Departures tab regression clean (tile '2 overdue · 0 leaving today', chips 2/0/0/0). Phase 0 in-house regression clean (expand/Esc, action buttons disabled with 'Available in Phase 3/4', zero console errors). Zero duplicate data-testids at both 1920x800 and 1366x768 with a row expanded. Rooms 8524 (r3) / 8526 (r2) untouched — no check-in/out, cancel, no-show, setting change, or write of any kind.",
+  "cases_pass_fail": {
+    "B445-1 (1920x800 counts alignment)": "PASS — tile '20 arrived today 0 leaving today' + count '2' (rendered as 'In-House 2 · 0 arrived today · 0 leaving today'). Chips: 'All 2', 'Arrived today 0', 'Leaving today 0', 'Stayover 2'. Assertions all true (leaving_chip == tile_leaving == 0, stayover == 2, all == 2 == tile_count).",
+    "B445-2 (chip navigation @ 1920x800)": "PASS — Leaving chip → 0 primary rows + empty state text present. Stayover chip → exactly 2 primary rows: fd-row-174 (bkol, r2 executive, ••••1345, Walk-in, Pay at hotel, 20 Sep → 21 Sep, 1 night · 1A, ₹950) and fd-row-155 (blpi, r3 suite, ••••5723, Walk-in, Pay at hotel, 20 Sep → 21 Sep, 1 night · 1A, ₹950). Both carry status pill 'Overdue 1 d' (DOM text; rendered uppercase 'OVERDUE 1 D' via CSS text-transform) and check-out '21 Sep'. All chip → 2 primary rows. Arrived chip → 0 primary rows + empty state.",
+    "B445-3 (network cross-check GET local-reservations view=all)": "PASS — Response counts EXACTLY: in_house=2, leaving_today=0, arrived_today=0, departures_overdue=2, departures_today=0, arrivals_today=0, arrivals_late=10, arrivals_tomorrow=0. meta.business_date='2026-09-22'. reservations array size = 112. Equal to tile and chips.",
+    "B445-4 (1366x768 repeat of B445-1 + B445-2)": "PASS — Same values at 1366x768: tile count 2, sub 0/0, chips All 2 / Arrived 0 / Leaving 0 / Stayover 2. document.scrollingElement.scrollWidth == 1366 (no horizontal overflow, chips wrap ok). Stayover chip → 2 primary rows (bkol, blpi). Leaving chip → 0 rows.",
+    "B445-5 (Departures regression @ 1920x800)": "PASS — Chips: 'Overdue 2', 'Today 0', 'Tomorrow 0', 'Upcoming 0'. Tile text: 'Departures 0 · 2 overdue · 0 leaving today' (0 = departures_today count, red 2 overdue). Overdue chip → 2 primary rows (blpi first, bkol second); both show 'Overdue 1 d' status pill and check-out 21 Sep. bucketDeparture untouched — behaviour intact.",
+    "B445-6 (Phase 0 in-house regression)": "PASS — Row expand on click renders drawer with -exp- action ids; Esc closes it. Sort click on header does not throw. Action buttons in row and drawer: Bill (all disabled, title 'Available in Phase 4'), Request HK (3 of 4 disabled with title 'Available in Phase 3'; 1 header-level button unlabelled), Extend (all disabled, title 'Available in Phase 3'). Zero console errors on In-House and Departures tabs (socket/firebase noise filtered).",
+    "B445-7 (Duplicate data-testid audit with row expanded, both viewports)": "PASS — Zero duplicate data-testids at 1920x800 and at 1366x768 with fd-row-174 expanded."
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "network_evidence": {
+    "endpoint": "GET https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-23&end_date=2026-11-21&view=all",
+    "status": 200,
+    "counts": {"arrivals_today": 0, "arrivals_late": 10, "arrivals_tomorrow": 0, "departures_today": 0, "departures_overdue": 2, "in_house": 2, "leaving_today": 0, "arrived_today": 0},
+    "meta": {"business_date": "2026-09-22", "server_time": "2026-09-22T18:00:36+05:30", "timezone": "Asia/Kolkata"},
+    "captures": 3,
+    "note": "All 3 GETs during the session returned identical counts. No writes issued at any point (no POST/PATCH/DELETE against local-reservations, cancel, no-show, or restaurant-settings)."
+  },
+  "test_report_links": [],
+  "action_items": [
+    "None — BUG-445 fix is verified shippable. bucketInHouse correctly classifies checkout===business_date as 'leaving' and checkout<business_date as 'stayover' (retaining the red OVERDUE Nd pill). Counts, chips and tile all reconcile with backend counts.leaving_today/in_house/arrived_today."
+  ],
+  "critical_code_review_comments": [
+    "frontDeskTransform.js L84-90 — bucketInHouse is now a clean 3-way classifier keyed off ISO string compare vs meta.business_date (no browser clock). The BUG-445 marker on L87 correctly reads `row.checkout === bd` before the arrived branch — an overdue guest (checkout < bd) short-circuits neither branch and correctly falls through to 'stayover'. Pure and unit-testable.",
+    "InHousePanel.jsx uses useChipCounts(rows, bucketInHouse, bd, CHIP_ORDER.inhouse) and filters visible rows via `bucketInHouse(r, bd) === chip` — same predicate for counts and rows, so chip counter is guaranteed consistent with rendered rows. Good invariant.",
+    "KpiTabStrip.jsx tile 'In-House' sub-lines read counts.arrived_today and counts.leaving_today directly (server counts, AC-12) — the chip contract is derived client-side but happens to reconcile to the server counts under the current rule. If the server ever changes leaving_today semantics, the two could drift; consider adding a runtime dev-only assertion (dev build only) that chipCounts.leaving === counts.leaving_today when rows are loaded.",
+    "Status pill text is 'Overdue 1 d' in the DOM but 'OVERDUE 1 D' visually via CSS text-transform. Automated tests that grep the raw text should use case-insensitive matching or read the computed style — a minor authoring hazard for future test agents (spec used 'OVERDUE N d')."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only, network cross-check only)", "frontend": "7/7 (100%)"},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md (value not printed).",
+  "seed_data_creation": "None. Sandbox untouched. Rooms r2 (8526) and r3 (8524) not modified.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "BUG-445 fix verified. Business date on preprod is 2026-09-22. Two in-house guests bkol (r2/8526) and blpi (r3/8524), both checked in 2026-09-20 with checkout 2026-09-21 → overdue 1 d, classified 'Stayover' with red Overdue pill. Chip 'Leaving today' correctly reads 0 (== tile == counts.leaving_today). Departures tab regression clean. Phase 0 regression clean. Zero duplicate testids at 1920x800 and 1366x768. If continuing CR-385 QA, next likely targets are Phase 2 (check-in path) and BUG-443/444 candidates from iteration_15.",
+  "rca of the issue": "N/A — bug fix verified. BUG-445 root cause (previous code classified overdue guests as 'leaving', double-counting them against the '0 leaving today' backend count) is resolved by the equality guard `row.checkout === bd` in bucketInHouse (L87 of frontDeskTransform.js). Overdue rows now fall through to 'stayover' and retain their independent status pill 'OVERDUE N d' from stayStatus()."
+}
