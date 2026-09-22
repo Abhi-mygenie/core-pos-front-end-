@@ -26815,6 +26815,38 @@
           "note": "Owner routing: legacy tape chart retires with FU-385-C. S-22 marked blocked."
         }
       ]
+    },
+    {
+      "id": "BUG-445",
+      "type": "BUG",
+      "title": "In-House 'Leaving today' chip counts overdue guests (bucketInHouse uses checkout <= bd) — chip says 2 while the tile/backend says 0 leaving today",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "INTAKE (2026-09-22, owner smoke) — owner routing: Phase 3 M5 wiring (as planned) or Phase 1.5c one-liner",
+      "sprint_key": "pos_pms_2",
+      "created_at": "2026-09-22",
+      "category": "INTAKE",
+      "source": "OWNER-SMOKE",
+      "confidence": "CONFIRMED",
+      "qa_severity": "MINOR",
+      "rca_classification": "CODE_ERROR",
+      "duplicate_check": "DISTINCT (RELATED CR-385 P0, plan §3 M5 rule)",
+      "blast_radius": "SMALL (1 file, 1 line) — Fast Lane eligible",
+      "code_reality": "EXISTS",
+      "files_affected": [
+        "frontend/src/api/transforms/frontDeskTransform.js"
+      ],
+      "related_items": [
+        "CR-385"
+      ],
+      "intake_doc": "change_requests/BUG-445_INHOUSE_LEAVING_CHIP_COUNTS_OVERDUE_INTAKE.md",
+      "status_history": [
+        {
+          "date": "2026-09-22",
+          "to": "INTAKE",
+          "note": "Owner smoke screenshot: In-House chip 'Leaving today 2' vs tile '0 leaving today' (both overdue guests bkol/blpi, checkout 21 Sep). Validated live + code read. No code (owner: validate only)."
+        }
+      ]
     }
   ],
   "meta": {
@@ -26825,8 +26857,8 @@
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 702,
-    "total_items": 702,
+    "total": 703,
+    "total_items": 703,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
     "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" → Implementation role §1."
   }
