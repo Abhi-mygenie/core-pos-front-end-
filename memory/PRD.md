@@ -522,3 +522,6 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - QA `iteration_15.json` (2 rounds) + main-agent sweep: Phase 1 33/33 re-run PASS; 6 live cancels + 1 legacy modify on numeric ids with `cancelled_by:"Owner"`. Sandbox clean (228…233 cancelled). Registry `GATE_5B_QA_PASSED (P1+P1.5)`.
 - New intakes (no code, owner routing): **BUG-443** legacy `ModifyBookingDialog` sends `amount_after_tax:0` + empty reason (MAJOR — verify money impact); **BUG-444** tape chart hides pending Direct bookings (blocks smoke S-22). Smoke S-21…S-24 appended. Push = platform "Save to GitHub" (no git remote in the workspace).
 - Next: owner routes BUG-443/444 → combined owner smoke P0+P1+P1.5 (S-1…S-24) → "Phase 0 smoke OK" + "Phase 1 smoke OK" → Phase 2 GO.
+
+## 2026-09-22 — CR-385 P1.5b probe (BUG-443/444 routing) — no code
+- BUG-444 → DEFERRED-TO-FU-385-C (smoke S-22 "blocked, BUG-444"). BUG-443 VERIFY-FIRST probe (booking 234): legacy Modify sent `amount_after_tax:0`, backend stored the correct server price (₹74,340 → ₹111,510 for 2 → 3 nights) → branch 3: DEFERRED-TO-FU-385-C, MINOR; smoke S-25 "known dirty, harmless". Report `handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md`; evidence `evidence/CR-385/phase1_5b/`. Sandbox clean. Next: combined owner smoke S-1…S-25 → Phase 2 GO.

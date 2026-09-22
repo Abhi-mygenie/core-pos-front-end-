@@ -25178,7 +25178,7 @@
       "title": "PMS Front Desk — Unified Tabbed Workstation UX Revamp",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_5B_QA_PASSED (P1+P1.5) — P1 33/33 re-run PASS + P1.5 fixes verified (BUG-441/442 QA-VERIFIED, iteration_15); caveat: legacy /pms/reservations Cancel not exercisable live (BUG-444 INTAKE, tape chart hides pending Direct bookings) — verified by unit source-guard + identical Arrivals path. New intakes BUG-443 (legacy Modify amount_after_tax:0, MAJOR) + BUG-444. Gate 6 = combined owner smoke P0+P1+P1.5 (S-1…S-24; S-22 blocked by BUG-444).",
+      "status": "GATE_5B_QA_PASSED (P1+P1.5) — P1 33/33 re-run PASS + P1.5 fixes verified (BUG-441/442 QA-VERIFIED, iteration_15); caveat: legacy /pms/reservations Cancel not exercisable live (BUG-444 INTAKE, tape chart hides pending Direct bookings) — verified by unit source-guard + identical Arrivals path. BUG-443 (probe: backend ignores client amount → MINOR) + BUG-444 both DEFERRED-TO-FU-385-C (owner 2026-09-22). Gate 6 = combined owner smoke P0+P1+P1.5 (S-1…S-24; S-22 blocked by BUG-444).",
       "gate": 5,
       "gate_1_closed": "2026-09-16",
       "sprint_key": "pos_pms_2",
@@ -25520,6 +25520,11 @@
           "date": "2026-09-22",
           "to": "GATE_5B_QA_PASSED (P1+P1.5)",
           "note": "Owner routing + Phase 1.5 GO: BUG-441/442 → P1.5, BQ-385-23/24 → OPEN_GAP. Plan §1.7 + CR-385_PHASE_1_5_BUGFIX_PLAN.md. Fix: 3 files (ArrivalsPage, ReservationsPage, FrontDeskWorkstationPage) + tests/cr385/phase1_5.cr385.test.jsx (5). Tests 58 → 63 green; build 0. QA iteration_15 rounds 1+2 + sweep: P1 33/33, P1.5 6/7 (P15-04 legacy Reservations cancel unreachable → BUG-444). New: BUG-443, BUG-444."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "P1.5b probe closed (branch 3, no code)",
+          "note": "BUG-443 VERIFY-FIRST probe on booking 234: price correct after legacy Modify (₹74,340 → ₹111,510 for 2 → 3 nights) → backend ignores amount_after_tax → DEFERRED-TO-FU-385-C, MINOR. BUG-444 DEFERRED-TO-FU-385-C. Smoke S-25 added. Sandbox clean (234 cancelled). Gate 6 combined owner smoke S-1…S-25 is next."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
@@ -25678,7 +25683,8 @@
       "gate6_combined_smoke": "control/POS_PMS_2_OWNER_SMOKE_BATCH_2026_09_21.md S-1…S-12 (Phase 0) + S-13…S-20 (Phase 1) · checklist sections M0-S + M1-S",
       "qa_report_p1_role4": "test_reports/QA_REPORT_2026_09_22_CR385_P1_ROLE4.md (iteration_13 aborted env-drift run + iteration_14 full re-run + main-agent X-10/console sweep)",
       "qa_report_p1_5": "test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md (iteration_15.json rounds 1+2 + main-agent P15-11/12/13 sweep)",
-      "bug_fix_report_p1_5": "handover/CR-385_P1_5_BUG_FIX_REPORT_2026_09_22.md"
+      "bug_fix_report_p1_5": "handover/CR-385_P1_5_BUG_FIX_REPORT_2026_09_22.md",
+      "probe_report_p1_5b": "handover/CR-385_P1_5B_PROBE_REPORT_2026_09_22.md"
     },
     {
       "id": "BUG-410",
@@ -26726,15 +26732,15 @@
       "id": "BUG-443",
       "type": "BUG",
       "title": "Legacy ModifyBookingDialog PATCH sends amount_after_tax:0 + empty reason (G-02 violation; price risk if backend honours it)",
-      "priority": "P1",
-      "risk": "MEDIUM",
-      "status": "INTAKE (2026-09-22) — owner routing (P1.5b or FU-385-C); verify money impact first",
+      "priority": "P3",
+      "risk": "LOW",
+      "status": "DEFERRED-TO-FU-385-C (owner routing 2026-09-22 after VERIFY-FIRST probe: backend ignores client amount_after_tax — price server-computed; payload dirty but harmless)",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-22",
       "category": "INTAKE",
       "source": "QA-FOUND",
       "confidence": "CONFIRMED (payload) / SUSPECTED (money impact)",
-      "qa_severity": "MAJOR",
+      "qa_severity": "MINOR (downgraded from MAJOR after probe)",
       "rca_classification": "CODE_ERROR",
       "duplicate_check": "DISTINCT (RELATED CR-362, CR-385 M2, BQ-385-08, G-02)",
       "blast_radius": "SMALL (1 file)",
@@ -26754,8 +26760,14 @@
           "date": "2026-09-22",
           "to": "INTAKE",
           "note": "iteration_15 P15-03: legacy Modify 229 → PATCH body {reason:'',checkin,checkout,amount_after_tax:0}. Not fixed (P1.5 scope lock)."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "DEFERRED-TO-FU-385-C",
+          "note": "Owner VERIFY-FIRST: probe shows the backend recomputes the price and ignores amount_after_tax:0 (before ₹74,340 / 2 n → after ₹111,510 / 3 n, = 3×31,500 + 18% GST). Branch 3: no code; severity MINOR; smoke note added (S-25). Cosmetic: legacy dialog rate cards show ₹0 (rates shape mismatch) — same retirement."
         }
-      ]
+      ],
+      "probe": "evidence/CR-385/phase1_5b/ — booking 234 Suite 22→24 Sep (₹74,340) → legacy Modify +1 night with amount_after_tax:0 → LR row 22→25 Sep, 3 nights, booking_charge 94,500, total_with_gst 111,510 (correct)"
     },
     {
       "id": "BUG-444",
@@ -26763,7 +26775,7 @@
       "title": "Legacy /pms/reservations tape chart does not show pending Direct bookings created via direct-reservation (no block, no Unassigned row) — reproduced on 231 and 233",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE (2026-09-22) — owner routing; blocks smoke S-22 (legacy Reservations cancel)",
+      "status": "DEFERRED-TO-FU-385-C (owner routing 2026-09-22, legacy retirement) — no code; smoke S-22 stays \"blocked, BUG-444\"",
       "sprint_key": "pos_pms_2",
       "created_at": "2026-09-22",
       "category": "INTAKE",
@@ -26790,13 +26802,18 @@
           "date": "2026-09-22",
           "to": "INTAKE",
           "note": "iteration_15 rounds 1+2: bookings 231/233 (Suite, 23 Sep) absent from the 7-day tape chart; cancelled via Front Desk (Beta) instead."
+        },
+        {
+          "date": "2026-09-22",
+          "to": "DEFERRED-TO-FU-385-C",
+          "note": "Owner routing: legacy tape chart retires with FU-385-C. S-22 marked blocked."
         }
       ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-21",
-    "last_action": "BUG FIX + QA — CR-385 Phase 1.5 done (BUG-441/442 FIXED + QA-VERIFIED, iteration_15). New intakes BUG-443 (legacy Modify amount_after_tax:0, MAJOR — verify money impact) + BUG-444 (tape chart hides pending Direct bookings). Next: owner routing for 443/444 → combined owner smoke S-1…S-24 → Phase 2 GO.",
+    "last_action": "P1.5b PROBE (no code) — BUG-443 verified harmless (backend ignores client amount_after_tax) → DEFERRED-TO-FU-385-C MINOR; BUG-444 DEFERRED-TO-FU-385-C. Next: combined owner smoke S-1…S-25 → \"Phase 0 smoke OK\" + \"Phase 1 smoke OK\" → Phase 2 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

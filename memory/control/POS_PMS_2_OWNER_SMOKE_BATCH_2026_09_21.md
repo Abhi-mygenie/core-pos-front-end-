@@ -48,13 +48,14 @@ Verdict: all S-1…S-12 PASS → say **"Phase 0 smoke OK"**; all S-13…S-20 PAS
 
 
 ## Phase 1.5 steps — appended 2026-09-22 (run AFTER S-13…S-20; ≈ 5 min)
-Pre-read: `test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md` (Phase 1 33/33, BUG-441/442 verified). Known, ignore: after a Modify the row shows **"SR ●"** with text "| MODIFY: …" — backend appends the modify reason to special requests (**BQ-385-23/24**, no frontend workaround). Known blocker: S-22 cannot run until **BUG-444** (old tape chart hides new Direct bookings) is routed — mark "blocked, BUG-444".
+Pre-read: `test_reports/QA_REPORT_2026_09_22_CR385_P1_5_ROLE4.md` (Phase 1 33/33, BUG-441/442 verified). Known, ignore: after a Modify the row shows **"SR ●"** with text "| MODIFY: …" — backend appends the modify reason to special requests (**BQ-385-23/24**, no frontend workaround). Known blocker: S-22 — **BUG-444 DEFERRED-TO-FU-385-C** (old tape chart hides new Direct bookings): write "blocked, BUG-444" and cancel that booking from Front Desk (Beta).
 
 | # | Where | Do this | You should see | Verdict | Owner words |
 |---|---|---|---|---|---|
 | S-21 | Old `/pms/arrivals` (Today or Upcoming) | ⋮ on one of YOUR Smoke bookings → **Cancel** → reason "guest cancelled" → Confirm | **200**, toast "Booking cancelled", card leaves the list and appears under **Cancelled**. F12 → Network: URL ends `/local-reservations/<number>/cancel` (a number, not MG-…). | | |
 | S-22 | Old `/pms/reservations` | Find a block of YOUR Smoke booking → popover → **Cancel** → reason → Confirm | 200, block gone after Refresh. **If the booking is not on the chart → write "blocked, BUG-444"** and cancel it from Front Desk (Beta) instead. | | |
 | S-23 | Any cancel (S-18 / S-21) | F12 → Network → the `/cancel` request → Payload | `cancelled_by` shows **your name** (e.g. "Owner"), not "staff". | | |
+| S-25 | Old `/pms/arrivals` ⋮ → Modify (optional) | If you modify from the OLD page: rate cards show ₹0 and the request carries `amount_after_tax: 0` | **Known dirty payload, harmless** — the server recomputes the price (probe 2026-09-22: 2 → 3 nights = ₹74,340 → ₹111,510). Retires with FU-385-C (BUG-443). Not a bug for this smoke. | | |
 | S-24 | Front Desk (Beta) after S-17b | Look at the modified row | "SR ●" marker with "| MODIFY: …" text = **known BQ-385-23/24 — ignore**, not a bug. | | |
 
 Verdict: S-21, S-23, S-24 PASS (S-22 PASS or "blocked, BUG-444") → include in **"Phase 1 smoke OK"**.
@@ -63,5 +64,5 @@ Verdict: S-21, S-23, S-24 PASS (S-22 PASS or "blocked, BUG-444") → include in 
 Not run. Owner: Phase 0 smoke is executed together with the Phase 1 smoke in one combined session. Append the Phase 1 steps as S-13… to THIS document when Phase 1 reaches Gate 6; run S-1…S-12 first.
 
 ## Result
-_(facilitator fills)_ S-1…S-12: __/12 PASS · S-13…S-20: __/8 PASS · S-21…S-24: __/4 PASS · owner verdict: ________ · date/time: ________
+_(facilitator fills)_ S-1…S-12: __/12 PASS · S-13…S-20: __/8 PASS · S-21…S-25: __/5 PASS (S-22 = blocked) · owner verdict: ________ · date/time: ________
 Any FAIL → BUG-4xx filed via Intake → Bug Fix in Phase 0.5 → re-smoke the failed step only.
