@@ -84,7 +84,7 @@ export const bucketDeparture = (row, bd) => {
 export const bucketInHouse = (row, bd) => {
   if (!bd) return 'stayover';
   const arrived = (row?.checkedInAt ?? '').slice(0, 10) || row?.checkin;
-  if (row?.checkout && row.checkout <= bd) return 'leaving';
+  if (row?.checkout && row.checkout === bd) return 'leaving'; // CR-385 BUG-445: leaving = checkout today only; overdue (< bd) stays "stayover" with the Overdue pill (plan §3 rule, matches counts.leaving_today)
   if (arrived === bd) return 'arrived';
   return 'stayover';
 };
