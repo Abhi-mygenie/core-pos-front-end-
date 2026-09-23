@@ -49,8 +49,8 @@ Data flow: `LoadingPage` → `productService.getProducts` → `GET /api/v1/vendo
 ## Owner decisions (OPEN — carried from INV-LIMIT-001; the investigation contradicted itself: §7 "decision needed" vs §8 "no decisions needed")
 | # | Decision | Status |
 |---|---|---|
-| OD-451-01 | Target `limit` value: 1000 / 2000 / other — based on largest known restaurant menu | **OPEN** |
-| OD-451-02 | Fix the stale `PAGINATION.DEFAULT_LIMIT: 100` in the same change (P2 guard for future callers)? | **OPEN** |
+| OD-451-01 | Target `limit` value | **LOCKED 2026-09-23 — 2000** (owner "ok" to agent recommendation). Planning must curl-probe that the backend accepts `limit=2000` before Gate 3 (R11). |
+| OD-451-02 | Fix the stale `PAGINATION.DEFAULT_LIMIT: 100` in the same change | **LOCKED 2026-09-23 — YES** |
 
 ## Investigation-doc validation notes (2026-09-23)
 All 5 cited call sites verified line-exact. Gaps in the source doc: no curl evidence (R11), no item-level risk label (R21), no duplicate-check section, OD contradiction §7/§8. Doc itself **not modified** (owner instruction).

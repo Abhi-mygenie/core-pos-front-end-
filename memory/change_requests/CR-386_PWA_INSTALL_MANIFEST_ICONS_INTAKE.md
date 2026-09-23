@@ -48,7 +48,7 @@ INV-PWA-APPROACH-001 evaluated PWA vs Electron/Tauri/Chrome Apps → **PWA is th
 ## Owner decisions (OPEN — carried from INV-PWA-ICON-001)
 | # | Decision | Status |
 |---|---|---|
-| OD-386-01 | Icon source: owner provides `logo192.png` + `logo512.png`, **or** agent converts the CDN SVG (`…/dwikbb41_logo111.svg`) to PNG | **OPEN — blocks implementation** |
+| OD-386-01 | Icon source | **LOCKED 2026-09-23 — agent converts the CDN SVG → PNG; owner approves the preview before anything lands in `public/`. No gate skipping (owner).** Source SVG is a **156×82 landscape wordmark** (green cap/face over "yg" + orange letters + yellow star). Previews in `evidence/CR-386/`: `preview_white_logo{192,512}.png` (A, recommended), `preview_transparent_*` (B), `preview_green_*` (C, brand `#329937`), `preview_maskable_logo512.png` (extra padding for Android adaptive crop), `preview_mark_*` (mascot-only crop — **rejected**: the mascot is fused with the "yg" letters, crop cuts glyphs). **Preview approval: PENDING.** |
 | OD-386-02 | `short_name` shown under the icon: "MyGenie POS" or shorter | OPEN |
 | OD-386-03 | `display`: `standalone` (recommended) vs `minimal-ui` | OPEN |
 | OD-386-04 | `start_url`: `/` (Login) vs `/dashboard` (relies on auth redirect) | OPEN (new, from validation) |

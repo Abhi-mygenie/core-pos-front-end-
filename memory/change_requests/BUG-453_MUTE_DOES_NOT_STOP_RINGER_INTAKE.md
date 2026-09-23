@@ -58,8 +58,8 @@ Race: FCM #1 → `play()` → `audio1` tracked, `play()` pending → FCM #2 with
 | # | Decision | Status |
 |---|---|---|
 | OD-453-01 (was INV OD-1) | Scope: Fix A + Fix B together | **LOCKED 2026-09-23 — merged into one bug (owner)** |
-| OD-453-02 (was INV OD-2) | Override the Jan-2026 anti-rule "NO future-sound suppression" in `ScanOrderPopOut.jsx:22–27` | **OPEN** — implied by the merge, needs explicit owner "yes" (Planning) |
-| OD-453-03 (was INV OD-3) | Fix B approach: time-based mute window (e.g. 2 min, aligns with BUG-081 snooze) vs per-order mute set (suppress until order confirmed/cancelled) | **OPEN** |
+| OD-453-02 (was INV OD-2) | Override the Jan-2026 anti-rule "NO future-sound suppression" in `ScanOrderPopOut.jsx:22–27` | **LOCKED 2026-09-23 — APPROVED** (per-order, manual; header comment to be rewritten as owner override 2026-09-23) |
+| OD-453-03 (was INV OD-3) | Fix B approach | **LOCKED 2026-09-23 — PER-ORDER MUTE TOGGLE.** Owner: "mute till we press the mute button again; if he presses, he hears again." Semantics: Mute on order X → current chime stops (Fix A) **and** every later FCM/socket sound for order X is suppressed; pressing the same button again un-mutes → next FCM for X rings. **No timer. No auto-clear on confirm** (harmless — confirmed orders stop being retried). Other orders ring normally. Sidebar Silent Mode still wins. State = existing in-memory `snoozedOrders` (lost on reload — existing behaviour, acceptable). FCM `data.order_id` (`NotificationContext.jsx:86`) is the key. |
 
 ## Investigation-doc validation notes (2026-09-23)
 All line references verified exact. Doc VALID. Gaps: no evidence dir; status CLOSED while OD-1..3 were open. Doc **not modified** (owner instruction).
