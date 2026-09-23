@@ -1,0 +1,75 @@
+{
+  "summary": "CR-385 Phase 5 Session A re-run on live preprod (RID 69 sandbox-pms). Single QA_TGK login, one Playwright browser call, cleanup in finally. A0 LOGIN PASS, A1 NAVIGATE PASS (fd-page+fd-header-date='Wednesday, 23 September 2026'). A2 NEW BOOKING BLOCKED: booking-rate-grid renders but NO `booking-cell-*suite*` cells appear because the room-availability API preflight fails CORS from origin https://react-app-staging-2.preview.emergentagent.com to https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability. Without rates loaded, no cell can be picked and booking-save-btn never yields booking-confirmation. Consequences: A2/A3/A5 could not be exercised (no P5 QA Suite row created, no in-house row, no bill). A4 partially executed: toggle-allow-early-checkin cycled ON→save→OFF→save→reload; readback after OFF = 'false' (BQ-385-30 read-back check PASSES); radio-extend-rate-mode-calendar was checked (Rate table). The DISABLED→ENABLED→DISABLED early-checkin button transition could not be verified because P5 QA Tomorrow row was not created (same rate-grid CORS block). A6 console: 2 errors — the CORS/ERR_FAILED pair for room-availability. A7 CLEANUP finished clean: 0 P5 QA rows in inhouse, 0 in arrivals across late/today/tomorrow/upcoming, toggle-allow-early-checkin OFF, radio 'Rate table'. Owner's live room r1 (coke, order 1232674) untouched.",
+  "per_row_results": [
+    {"row": "A0 LOGIN", "status": "PASS", "severity": "NOTE", "detail": "Login via / -> /loading -> /dashboard; loading-screen dismissed within ~15s; no second login used."},
+    {"row": "A1 NAVIGATE", "status": "PASS", "severity": "NOTE", "detail": "fd-page found, fd-header-date='Wednesday, 23 September 2026', fd-tab-arrivals click OK, fd-new-booking-btn opens booking-form."},
+    {"row": "A2 NEW BOOKING", "status": "FAIL", "severity": "BLOCKER", "detail": "booking-rate-grid mounts but zero `booking-cell-*` nodes render. Only fetch-rates POST is captured; the sibling GET/POST to /aiosell/room-availability fails CORS preflight (see console errors). Consequently no suite cell to click, booking-confirmation never appears, no direct-reservation POST is emitted. Forbidden-key assertion could not be evaluated (no request body captured)."},
+    {"row": "A3 CHECK-IN", "status": "NOT-RUN", "severity": "BLOCKER", "detail": "Blocked by A2. No P5 QA Suite row present to check in. user-group-check-in forbidden-key assertion not evaluated."},
+    {"row": "A4 TOMORROW booking", "status": "NOT-RUN", "severity": "BLOCKER", "detail": "Same rate-grid CORS block prevented creating P5 QA Tomorrow. booking-form did not re-open on retry (second call). Early-checkin button DISABLED assertion could not be evaluated."},
+    {"row": "A4 Toggle cycle (rules)", "status": "PARTIAL PASS", "severity": "MINOR", "detail": "channel-manager-tab-4 -> frontdesk-rules-card OK. toggle-allow-early-checkin initial aria-checked='false'. Turned ON, saved (POST /restaurant-settings/update-settings captured). Turned OFF, saved. After reload, toggle aria-checked='false' -> BQ-385-30 read-back check PASSES. radio-extend-rate-mode-calendar was already checked (Rate table). The DISABLED->ENABLED->DISABLED verification on the Tomorrow row was NOT executed because no P5 QA Tomorrow row existed."},
+    {"row": "A5 BILL / CASH SETTLE", "status": "NOT-RUN", "severity": "BLOCKER", "detail": "No P5 QA Suite in-house row. bill-panel geometry (440x560), sgst/cgst dual lines, forbidden-testid absence (D88), balance equality (row=stack=left), and bill-payment forbidden-key POST body could not be evaluated. Room tile HK badge (r4=8525, r5=8527) not evaluated."},
+    {"row": "A6 CONSOLE SWEEP", "status": "FAIL", "severity": "MAJOR", "detail": "2 non-ignored console errors, both stemming from the CORS block on room-availability: (1) 'Access to XMLHttpRequest at https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability?checkin=2026-09-23&checkout=2026-09-24 from origin https://react-app-staging-2.preview.emergentagent.com has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.'  (2) 'Failed to load resource: net::ERR_FAILED'."},
+    {"row": "A7 CLEANUP", "status": "PASS", "severity": "NOTE", "detail": "In-house P5 QA rows remaining=0, arrivals P5 QA remaining across Late/Today/Tomorrow/Upcoming=0. toggle-allow-early-checkin final aria-checked='false' (OFF). radio-extend-rate-mode-calendar='checked' (Rate table). Owner's r1 'coke' row untouched (never clicked)."}
+  ],
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability", "issue": "CORS preflight (OPTIONS) fails from origin https://react-app-staging-2.preview.emergentagent.com — no Access-Control-Allow-Origin (or non-2xx status). This blocks the booking-rate-grid from populating cells and therefore blocks the entire New Booking flow on Front Desk (Beta) when accessed via the staging origin.", "priority": "BLOCKER"}
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "New Booking (fd-v2)", "issue": "booking-rate-grid mounts but never receives room-availability data because that upstream call is blocked by CORS; UI shows an empty grid with no `booking-cell-*` nodes, so users cannot select a suite/room. Suggest either (a) fix CORS on room-availability at the API gateway, (b) proxy through the staging frontend origin, or (c) display an inline error state on the empty grid so QA/users see the failure instead of a silent empty grid.", "affected_selectors": ["booking-rate-grid", "booking-cell-*"]}
+    ],
+    "design_issues": []
+  },
+  "captured_mutating_requests": {
+    "unique_urls_seen": [
+      "POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/common-login",
+      "POST https://preprod.mygenie.online/api/v1/vendoremployee/station-order-list",
+      "POST https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/fetch-rates",
+      "POST https://preprod.mygenie.online/api/v2/vendoremployee/get-single-order-new",
+      "POST https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/fetch-inventory",
+      "POST https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings"
+    ],
+    "direct_reservation": "NOT captured (booking never saved)",
+    "user_group_check_in": "NOT captured (check-in never executed)",
+    "bill_payment_or_order_bill_payment": "NOT captured (no bill settle executed)",
+    "restaurant_settings_update_settings_forbidden_keys_check": "NOT applicable — Front Desk Rules save carries only rule flags; no rate/price keys are in scope for A4 assertions."
+  },
+  "console_error_summary": {
+    "count_non_ignored": 2,
+    "texts": [
+      "Access to XMLHttpRequest at 'https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability?checkin=2026-09-23&checkout=2026-09-24' from origin 'https://react-app-staging-2.preview.emergentagent.com' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "cleanup_end_state": {
+    "p5_qa_rows_remaining_inhouse": 0,
+    "p5_qa_rows_remaining_arrivals_all_chips": 0,
+    "toggle_allow_early_checkin": "OFF (aria-checked=false)",
+    "radio_extend_rate_mode": "calendar (Rate table) — checked",
+    "owner_r1_coke_touched": false
+  },
+  "created_row_ids": {"suite_row_id": null, "tomorrow_row_id": null},
+  "critical_code_review_comments": [
+    "Rate grid UX: When room-availability preflight fails, the grid renders as an empty container with no error/toast — users see a saveable form but cannot pick a cell. Add an error banner or retry action inside `booking-rate-grid` so failures are visible.",
+    "CORS: The preview/staging origin (react-app-staging-2.preview.emergentagent.com) must be added to the allowed origin list on the /aiosell/room-availability endpoint (and any sibling aiosell endpoints) at preprod.mygenie.online. fetch-rates and fetch-inventory succeed from the same origin, so this endpoint appears to be an omission."
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "BLOCKER — Fix CORS on POST/GET https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability for origin https://react-app-staging-2.preview.emergentagent.com (preflight returns non-2xx / missing ACAO). Sibling endpoints fetch-rates & fetch-inventory work; align this one.",
+    "After the CORS fix, re-run Session A end-to-end to validate A2/A3/A5 assertions (rate-grid cells, direct-reservation body, user-group-check-in body, bill geometry 440x560, sgst+cgst lines, D88 forbidden testids absent, bill-payment body, room-tile HK badge).",
+    "Optionally: show an inline error state on empty booking-rate-grid so silent CORS failures are surfaced to QA/users."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only run; upstream CORS blocked the flow)", "frontend": "A0/A1/A7 PASS, A4 PARTIAL, A2/A3/A5 BLOCKED — ~30%"},
+  "test_credentials": "QA_TGK owner1@thegoankitchen.com read from /app/memory/test_credentials.md; not printed anywhere.",
+  "seed_data_creation": "None — booking creation itself blocked; no P5 QA bookings persisted.",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Session A re-run must wait for the CORS fix on /aiosell/room-availability (or a same-origin proxy on the staging frontend). Once fixed: business date is still 2026-09-23 in header; use r4/r5 ONLY; never touch r1 'coke' (order 1232674). One login at top, cleanup in finally. Handover recipe unchanged (§5.1 of CR-385_PHASE5_EXECUTION_HANDOVER_2026_09_23.md). The BQ-385-30 read-back check is currently passing (toggle stays OFF across reload). Radio default is 'calendar' (Rate table). Arrivals lands on Late chip (10 old rows, not ours — never touch).",
+  "rca_of_the_issue": "Root cause: preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-availability rejects CORS preflight (OPTIONS) from origin https://react-app-staging-2.preview.emergentagent.com — either missing Access-Control-Allow-Origin for this origin or preflight response returns a non-2xx status. Browser cancels the actual request, so the Front Desk (Beta) NewBookingForm never receives inventory to render `booking-cell-*` cells. Reproduction: login as QA_TGK -> /pms/front-desk-v2 -> Arrivals tab -> New Booking -> fill name/phone/dates/adults -> DevTools Network shows OPTIONS /aiosell/room-availability blocked by CORS and console shows 'blocked by CORS policy'. Mitigation: add the staging origin to the CORS allow-list for /aiosell/room-availability on preprod, or route the call through the frontend origin (same-origin proxy). fetch-rates and fetch-inventory (which the same page calls) already work from this origin, so this is a per-endpoint configuration gap."
+}
