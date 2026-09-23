@@ -1,0 +1,68 @@
+[
+ {
+  "id": 201,
+  "booking_id": "MG-69-20913AAE-6B18-4146-BA10-143B9AEC5A82",
+  "cm_booking_id": null,
+  "channel": "Direct",
+  "hotel_code": "sandbox-pms",
+  "checkin": "2026-09-20",
+  "checkout": "2026-09-22",
+  "status": "confirmed",
+  "cancelled_at": null,
+  "cancel_reason": null,
+  "cancelled_by": null,
+  "pah": true,
+  "operational_status": "departed",
+  "booked_on": "2026-09-20 23:40:35",
+  "amount_before_tax": "4000.00",
+  "amount_after_tax": "4200.00",
+  "advance_payment": 0,
+  "balance_payment": 4000,
+  "charge": {
+   "rate_per_night": 2000,
+   "nights": 2,
+   "rateplan_code": null,
+   "rateplan_name": null,
+   "upgrade_amount": 0,
+   "booking_charge": 4000,
+   "sgst": 100,
+   "cgst": 100,
+   "total_with_gst": 4200,
+   "prepaid_amount": 0,
+   "advance_payment": 4200,
+   "balance_due": 0
+  },
+  "currency": "INR",
+  "special_requests": null,
+  "user_id_document_id": 17205,
+  "guest": {
+   "first_name": "Smoke",
+   "last_name": "411",
+   "email": null,
+   "phone": "9999900411",
+   "address_city": null,
+   "address_state": null,
+   "address_country": null
+  },
+  "rooms": [
+   {
+    "id": 212,
+    "room_code": "suite",
+    "rateplan_code": null,
+    "guest_name": null,
+    "adults": 1,
+    "children": 0,
+    "line_status": "checked_out",
+    "restaurant_table_id": 8525,
+    "table_no": "r4",
+    "table_title": "2nd floor",
+    "order_id": 1232629,
+    "user_id_document_id": 17205,
+    "order_f_order_status": 6,
+    "order_payment_status": "paid",
+    "checked_in_at": "2026-09-20 23:44:48",
+    "checked_out_at": "2026-09-20 23:51:20"
+   }
+  ]
+ }
+]

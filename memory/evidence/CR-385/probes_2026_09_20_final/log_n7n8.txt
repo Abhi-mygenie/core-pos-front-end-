@@ -1,0 +1,58 @@
+== 0 defaults
+[s0_settings_list] HTTP 200 :: 
+  settings-list: {'allow_early_checkin': False, 'pms.allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'pms.extend_rate_mode': 'calendar'}
+[s0_profile] HTTP 200 :: 
+  profile.settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'}
+== 0b board (room 8525 must be free)
+   ('hk', None) | in-house: {8524: ('occupied', 'blpi'), 8526: ('occupied', 'bkol')}
+== 1 invalid mode -> 422
+[s1_bogus_set] HTTP 422 :: 
+  set {'extend_rate_mode': 'bogus'} -> HTTP 422 :: {'allow_early_checkin': None, 'extend_rate_mode': None}
+== 1b raw JSON body (should be ignored per backend)
+[s1b_rawjson] HTTP 200 :: 
+[s1b_settings_list] HTTP 200 :: 
+  settings-list: {'allow_early_checkin': False, 'pms.allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'pms.extend_rate_mode': 'calendar'}
+[s1b_profile] HTTP 200 :: 
+  profile.settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'}
+== 2 CM rates
+[s2_rates] HTTP 200 :: 
+   2026-10-11 7400
+   2026-10-10 8600
+   2026-10-12 7400
+== 3 N7 block (early OFF, calendar)
+[s3_defaults_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'}
+[s3_direct] HTTP 201 :: {"status": true, "message": "Direct reservation created successfully", "data": {"reservation": {"id": 187, "booking_id": "MG-69-CA7EA5C2-AA04-4A3F-93B9-2AA43F5AE5F2", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-10", "checkout": "2026-10-11", "status":
+  RES 187 BOOKING MG-69-CA7EA5C2-AA04-4A3F-93B9-2AA43F5AE5F2 charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+[s3_block_checkin] HTTP 422 :: {"error": "Early check-in is not allowed for this property (stay check-in 2026-10-10 is after business date 2026-09-20)."}
+  N7 blocked: True | msg: Early check-in is not allowed for this property (stay check-in 2026-10-10 is after business date 2026-09-20).
+  charge after failed check-in (must be untouched): {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+== 4 N7 allow -> 200, then N8 calendar extend -> 17500
+[s4_allow_set] HTTP 200 :: 
+  set {'allow_early_checkin': True} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'calendar'}
+[s4_ok_checkin] HTTP 200 :: {"message": "Group check-in completed successfully", "user_id": 42757, "cust_membership_id": null, "data": {"order_id": 1232620, "orders": [{"room_id": "8525", "room_no": "r4", "room_price": 10100, "advance_payment": 1000, "balance_payment": 9100, "order_id": 1232620, "gst_tax": 1818}], "charge": {"rate_per_night": 8600, "nights": 1, "rateplan_code": "executive-s-ep", "rateplan_name": "executive-s-ep", "upgrade_amount": 1500, "booking_charge": 10100, "sgst": 909, "cgst": 909, "total_with_gst": 1
+  check-in 200: True | order 1232620 | booking_charge 10100 rate 8600 upgrade 1500
+[s4_cal_extend] HTTP 200 :: 
+  extend HTTP 200 top-level charge? False data.charge: {'nights': 2, 'rate_per_night': 8000, 'upgrade_amount': 1500, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1500, 'balance_due': 18188}
+  LR charge after extend: {'rate_per_night': 8000, 'nights': 2, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 1500, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'prepaid_amount': 0, 'advance_payment': 1500, 'balance_due': 18188}
+[s4_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+  board after TAB: ('hk', None)
+== 5 N8 held extend -> 18700
+[s5_held_set] HTTP 200 :: 
+  set {'allow_early_checkin': True, 'extend_rate_mode': 'held'} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'held'}
+[s5_direct] HTTP 201 :: {"status": true, "message": "Direct reservation created successfully", "data": {"reservation": {"id": 188, "booking_id": "MG-69-55518034-1232-4BED-ABE4-2095DE41F01B", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-10", "checkout": "2026-10-11", "status":
+  RES 188 BOOKING MG-69-55518034-1232-4BED-ABE4-2095DE41F01B charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+[s5_checkin] HTTP 200 :: {"message": "Group check-in completed successfully", "user_id": 42758, "cust_membership_id": null, "data": {"order_id": 1232621, "orders": [{"room_id": "8525", "room_no": "r4", "room_price": 10100, "advance_payment": 1000, "balance_payment": 9100, "order_id": 1232621, "gst_tax": 1818}], "charge": {"rate_per_night": 8600, "nights": 1, "rateplan_code": "executive-s-ep", "rateplan_name": "executive-s-ep", "upgrade_amount": 1500, "booking_charge": 10100, "sgst": 909, "cgst": 909, "total_with_gst": 1
+  check-in 200 order 1232621
+[s5_held_extend] HTTP 200 :: 
+  extend HTTP 200 top-level charge? False data.charge: {'nights': 2, 'rate_per_night': 8600, 'upgrade_amount': 1500, 'booking_charge': 18700, 'sgst': 1683, 'cgst': 1683, 'total_with_gst': 22066, 'advance_payment': 1500, 'balance_due': 20566}
+  LR charge after extend: {'rate_per_night': 8600, 'nights': 2, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 1500, 'booking_charge': 18700, 'sgst': 1683, 'cgst': 1683, 'total_with_gst': 22066, 'prepaid_amount': 0, 'advance_payment': 1500, 'balance_due': 20566}
+[s5_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+  board after TAB: ('hk', None)
+== 6 restore defaults
+[s6_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'}
+[s6_settings_list] HTTP 200 :: 
+  settings-list: {'allow_early_checkin': False, 'pms.allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'pms.extend_rate_mode': 'calendar'}
+[s6_profile] HTTP 200 :: 
+  profile.settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar'}
