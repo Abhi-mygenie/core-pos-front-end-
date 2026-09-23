@@ -6,6 +6,28 @@ Session date:     2026-09-23
 Role:             INVESTIGATION (validation, read-only) → INTAKE (ALPHA v0.7)
 Registry synced:  YES — 4 items appended (706 → 710), meta updated; no existing item modified
 Scope drift:      NONE — zero src/ or public/ changes; docs + registry + evidence only
+Status at close:  GATE 1 CLOSED for all 4 items (owner 2026-09-23). All blocking ODs LOCKED. Gate 2 READY.
+Next agent role:  PLANNING (Gate 2 Impact Analysis) — suggested order: CR-386 → BUG-453 → BUG-451 → BUG-452
+Workspace:        /app · branch 21implement · HEAD 1be4055 (remote b2db5a01)
+```
+
+## Locked owner decisions (2026-09-23, after walkthroughs)
+| OD | Decision |
+|---|---|
+| OD-451-01 / 02 | `limit: 2000` (backend probe at Planning) · fix `PAGINATION.DEFAULT_LIMIT` in same change |
+| **OD-452-01** | **OPTION B — always clear cart on type/table switch mid-build.** REVERSES BUG-334 (owner chose knowingly after walkthrough). BUG-334 item NOT edited (owner scope lock) — Planning to propose "REVERSED BY BUG-452" annotation + removal of the BUG-334 carry-forward branch for owner approval. New OD-452-03: placed items on occupied tables never affected. |
+| OD-453-01 / 02 / 03 | Fix A + Fix B one bug · anti-rule override APPROVED · **per-order manual mute toggle** (silent until Mute pressed again; no timer, no auto-clear) |
+| OD-386-01 | **Option A APPROVED** — wordmark on white: `evidence/CR-386/approved_A_logo192.png`, `approved_A_logo512.png`, `approved_A_maskable_logo512.png` (copy to `public/` only at Implementation). Designer brief for optional square mascot mark: `design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md` |
+| OD-386-02 / 03 / 04 | Defaults locked: `short_name` "MyGenie POS" · `display` `standalone` · `start_url` `/` (Planning verifies auth redirect) |
+
+## Planning-entry notes
+- BUG-452 IA must read `impact/BATCH-04_IMPACT_ANALYSIS.md` (BUG-334) and `OrderEntry.jsx:504–508`; INV Option A location is wrong (effect re-writes after type change) — fix belongs in the OrderEntry effect (R5).
+- BUG-453: FCM payload has `data.order_id` (`NotificationContext.jsx:86`) → key for the per-order mute set; keep Sidebar Silent Mode precedence; rewrite `ScanOrderPopOut.jsx:22–27` anti-rule header as owner override 2026-09-23.
+- BUG-451: curl-probe `get-products-list?limit=2000` (alias account, masked token) before Gate 3.
+- CR-386: `firebase-messaging-sw.js` untouched; `%PUBLIC_URL%` in link tags; check `/` → auth redirect for installed app.
+
+## (superseded — Gate 1 state at first close)
+```
 Status at close:  4 items at Gate 1 (INTAKE). All blocked on owner decisions before Planning Gate 2.
 Next agent role:  PLANNING (Gate 2 Impact Analysis) after owner answers the ODs below
 Workspace:        /app · branch 21implement · HEAD 1be4055 (remote b2db5a01)

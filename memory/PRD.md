@@ -607,3 +607,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Validated 5 investigation docs (2026-09-18) against HEAD; 24 gaps reported in chat (docs left untouched per owner).
 - INTAKE: BUG-451 (limit 500 cap), BUG-452 (stale cart old key — conflict with BUG-334, OD-452-01 reopened), BUG-453 (Mute ringer, Fix A+B merged), CR-386 (PWA manifest/icons) → sprint `sep_bug_closure`, Gate 1.
 - Handover: `handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md`. Next: owner ODs → PLANNING Gate 2.
+- 2026-09-23 (later): all ODs locked (452 = Option B reverses BUG-334; 453 per-order manual mute; 386 Option A icon approved + designer brief). **Gate 1 CLOSED** for all 4 → PLANNING Gate 2 next.

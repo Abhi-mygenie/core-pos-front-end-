@@ -56,4 +56,4 @@ Data flow: `LoadingPage` → `productService.getProducts` → `GET /api/v1/vendo
 All 5 cited call sites verified line-exact. Gaps in the source doc: no curl evidence (R11), no item-level risk label (R21), no duplicate-check section, OD contradiction §7/§8. Doc itself **not modified** (owner instruction).
 
 ## Next
-Planning Gate 2 (Impact Analysis) — must include: backend `limit` max probe (R11, save to `evidence/BUG-451/`), OD-451-01/02 answers, R5 regression checklist for `LoadingPage.jsx` boot sequencing (param-only, but checklist mandatory).
+**GATE 1 CLOSED — 2026-09-23 (owner).** Planning Gate 2 (Impact Analysis) — must include: backend `limit=2000` probe (R11, save to `evidence/BUG-451/`), R5 regression checklist for `LoadingPage.jsx` boot sequencing (param-only, but checklist mandatory).

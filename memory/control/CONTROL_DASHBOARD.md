@@ -142,7 +142,7 @@
 
 | Sprint | Status | Progress | Top Blocker |
 |---|---|---|---|
-| **sep_bug_closure (POS bug closure)** | **OPEN 2026-09-23 — 4 items at Gate 1 (INTAKE)** | BUG-451 (P1) · BUG-452 (P2) · BUG-453 (P1) · CR-386 (P2) — 0 planned, 0 implemented | ODs locked 2026-09-23: 451 limit 2000 · **452 Option B (reverses BUG-334)** · 453 per-order manual mute · 386 agent-converted icon — **preview approval pending**. Remaining: OD-452-02/03, OD-386-02/03/04 (Planning) |
+| **sep_bug_closure (POS bug closure)** | **OPEN 2026-09-23 — Gate 1 CLOSED for all 4 items → Gate 2 READY** | BUG-451 (P1) · BUG-452 (P2) · BUG-453 (P1) · CR-386 (P2) — 0 planned, 0 implemented | ODs locked 2026-09-23: 451 limit 2000 · **452 Option B (reverses BUG-334)** · 453 per-order manual mute · 386 agent-converted icon — **Option A APPROVED**, designer brief issued. Remaining for Planning: OD-452-02/03 |
 | **pos_audit_1 (Audit Track)** | **CR-368 Gate 2 DONE — 4 ODs locked, OD-05(ii) + OD-06 OPEN, Gate 3 on hold (owner)** | CR-370 DONE · CR-372-A DONE (92 files moved, V1–V17 PASS) · CR-368 IA written (54 fails/11 suites/2 fake scripts; see `impact/CR-368_IMPACT_ANALYSIS.md` §6 for decisions). Execution order: ~~CR-370~~ → ~~CR-372-A~~ → CR-368 → CR-372-B → CR-371 → CR-369. Open decisions: OD-CR368-05(ii)+06 (Dev team brief Q1/Q2) · CR-372-B Gate 4 GO · OD-CR371-01 · OD-CR371-02. | Owner answers OD-CR368-05(ii)/06 → Gate 3 plan |
 | **POS 4.0 (Consolidated Backlog)** | **FROZEN (2026-06-13, baseline corrected 2026-06-14)** | 50 items CLOSED — OWNER VERIFIED (43 + 7 retroactive) | **None — sprint frozen** |
 | POS 3.1 | CLOSED → consolidated into POS 4.0 | 3/3 QSR bugs shipped | — |

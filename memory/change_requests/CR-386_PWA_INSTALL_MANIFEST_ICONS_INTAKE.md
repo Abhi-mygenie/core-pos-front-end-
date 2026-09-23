@@ -48,10 +48,10 @@ INV-PWA-APPROACH-001 evaluated PWA vs Electron/Tauri/Chrome Apps → **PWA is th
 ## Owner decisions (OPEN — carried from INV-PWA-ICON-001)
 | # | Decision | Status |
 |---|---|---|
-| OD-386-01 | Icon source | **LOCKED 2026-09-23 — agent converts the CDN SVG → PNG; owner approves the preview before anything lands in `public/`. No gate skipping (owner).** Source SVG is a **156×82 landscape wordmark** (green cap/face over "yg" + orange letters + yellow star). Previews in `evidence/CR-386/`: `preview_white_logo{192,512}.png` (A, recommended), `preview_transparent_*` (B), `preview_green_*` (C, brand `#329937`), `preview_maskable_logo512.png` (extra padding for Android adaptive crop), `preview_mark_*` (mascot-only crop — **rejected**: the mascot is fused with the "yg" letters, crop cuts glyphs). **Preview approval: PENDING.** |
-| OD-386-02 | `short_name` shown under the icon: "MyGenie POS" or shorter | OPEN |
-| OD-386-03 | `display`: `standalone` (recommended) vs `minimal-ui` | OPEN |
-| OD-386-04 | `start_url`: `/` (Login) vs `/dashboard` (relies on auth redirect) | OPEN (new, from validation) |
+| OD-386-01 | Icon source | **LOCKED 2026-09-23 — OPTION A APPROVED by owner:** agent-converted wordmark on white, 12 % padding — `evidence/CR-386/approved_A_logo192.png`, `approved_A_logo512.png`, `approved_A_maskable_logo512.png` (to be copied to `public/` at Implementation, not before Gate 4 GO). Source SVG is a 156×82 landscape wordmark; B transparent / C green / mascot-crop rejected. **Designer brief issued for an optional purpose-built square mascot mark** (drop-in replacement later, same filenames, no code change): `design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md`. |
+| OD-386-02 | `short_name` | **DEFAULT LOCKED — "MyGenie POS"** (owner did not override at Gate 1; may change at Gate 2 review) |
+| OD-386-03 | `display` | **DEFAULT LOCKED — `standalone`** (owner did not override) |
+| OD-386-04 | `start_url` | **DEFAULT LOCKED — `/`** (Login page; app's own auth redirect takes over). Planning to verify redirect for an already-authenticated session. |
 
 ## Post-deploy owner step
 Delete the existing "Create shortcut" icon; open the app; click **Install** in the address bar (old shortcut cannot be updated in place).
@@ -60,4 +60,4 @@ Delete the existing "Create shortcut" icon; open the app; click **Install** in t
 ICON doc VALID (line drift: SW icon refs at :40–41, doc says 38–39). APPROACH doc conclusion VALID; SW-requirement claim stale. Docs **not modified** (owner instruction).
 
 ## Next
-Planning Gate 2 → Gate 3 (tiny) → Gate 4 GO. Blocked on OD-386-01 for assets.
+**GATE 1 CLOSED — 2026-09-23 (owner: "close intake gate").** → Planning Gate 2 → Gate 3 (tiny) → Gate 4 GO. No blockers: assets approved (Option A), ODs locked/defaulted.

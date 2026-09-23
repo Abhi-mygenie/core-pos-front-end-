@@ -65,4 +65,4 @@ Race: FCM #1 → `play()` → `audio1` tracked, `play()` pending → FCM #2 with
 All line references verified exact. Doc VALID. Gaps: no evidence dir; status CLOSED while OD-1..3 were open. Doc **not modified** (owner instruction).
 
 ## Next
-Planning Gate 2 — answer OD-453-02/03; IA to cover foreground + SW paths, BUG-034 dedup interaction, Sidebar Silent Mode precedence (`setEnabled`), and logout `stop()` (:196).
+**GATE 1 CLOSED — 2026-09-23 (owner).** Planning Gate 2 — all ODs locked; IA to cover foreground + SW paths, BUG-034 dedup interaction, Sidebar Silent Mode precedence (`setEnabled`), logout `stop()` (:196), and the per-order mute toggle wiring (`snoozedOrders` → NotificationContext or a mute set inside `soundManager`).

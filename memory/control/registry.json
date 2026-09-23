@@ -27247,7 +27247,7 @@
       "title": "Product list capped at limit: 500 on boot/refresh (LoadingPage, useRefreshAllData, productService) \u2014 items 501+ never loaded; PAGINATION.DEFAULT_LIMIT 100 stale",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE (Gate 1) \u2014 ODs LOCKED (limit 2000 + DEFAULT_LIMIT) \u2192 ready for Planning Gate 2",
+      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 ODs LOCKED (limit 2000 + DEFAULT_LIMIT) \u2192 ready for Planning Gate 2",
       "confidence": "SUSPECTED",
       "rca_classification": "DATA_EDGE",
       "duplicate_check": "DISTINCT",
@@ -27270,7 +27270,7 @@
       "sprint_key": "sep_bug_closure",
       "created_at": "2026-09-23",
       "category": "INTAKE",
-      "gate": 1,
+      "gate": 2,
       "code_reality": "NONE",
       "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
       "status_history": [
@@ -27283,8 +27283,14 @@
           "date": "2026-09-23",
           "to": "INTAKE \u2014 ODs LOCKED",
           "note": "OD-451-01 = 2000 (subject to backend probe), OD-451-02 = yes."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_1_CLOSED",
+          "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
         }
-      ]
+      ],
+      "gate_1_closed": "2026-09-23"
     },
     {
       "id": "BUG-452",
@@ -27292,7 +27298,7 @@
       "title": "Stale cart restored from cartsByTable[oldKey] after order-type / table switch mid-build (OrderEntry save effect copies instead of moves)",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "INTAKE (Gate 1) \u2014 OD-452-01 LOCKED = Option B (always clear; reverses BUG-334) \u2192 ready for Planning Gate 2",
+      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 OD-452-01 LOCKED = Option B (always clear; reverses BUG-334) \u2192 ready for Planning Gate 2",
       "confidence": "REPORTED",
       "rca_classification": "CODE_ERROR",
       "duplicate_check": "RELATED \u2014 CONFLICT with BUG-334 (CLOSED, carry-forward on switch); RELATED PROD-004, INV-OE-001",
@@ -27318,7 +27324,7 @@
       "sprint_key": "sep_bug_closure",
       "created_at": "2026-09-23",
       "category": "INTAKE",
-      "gate": 1,
+      "gate": 2,
       "code_reality": "NONE",
       "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
       "status_history": [
@@ -27331,8 +27337,14 @@
           "date": "2026-09-23",
           "to": "INTAKE \u2014 OD-452-01 LOCKED",
           "note": "Owner chose Option B after walkthrough. BUG-334 behaviour to be reversed in the fix; BUG-334 item itself not edited (owner scope lock)."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_1_CLOSED",
+          "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
         }
-      ]
+      ],
+      "gate_1_closed": "2026-09-23"
     },
     {
       "id": "BUG-453",
@@ -27340,7 +27352,7 @@
       "title": "Scan & Order pop-out Mute does not stop ringer \u2014 soundManager error/catch handlers blindly null currentAudio (race on rapid FCM) + FCM retries restart sound after Mute (snoozedOrders not wired to NotificationContext)",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "INTAKE (Gate 1) \u2014 all ODs LOCKED (Fix A+B, per-order manual mute toggle) \u2192 ready for Planning Gate 2",
+      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 all ODs LOCKED (Fix A+B, per-order manual mute toggle) \u2192 ready for Planning Gate 2",
       "confidence": "CONFIRMED",
       "rca_classification": "CODE_ERROR (primary) + PLAN_GAP (secondary)",
       "duplicate_check": "DISTINCT (RELATED BUG-081, BUG-122-POST, CR SNOOZE_SOUND_STOP_AND_DURATION)",
@@ -27367,7 +27379,7 @@
       "sprint_key": "sep_bug_closure",
       "created_at": "2026-09-23",
       "category": "INTAKE",
-      "gate": 1,
+      "gate": 2,
       "code_reality": "NONE",
       "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
       "status_history": [
@@ -27380,8 +27392,14 @@
           "date": "2026-09-23",
           "to": "INTAKE \u2014 ODs LOCKED",
           "note": "Owner: \"mute till we press mute button again; if pressed, he hears again\". Aligned with per-order set + Bell toggle; no auto-clear on confirm, no timer."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_1_CLOSED",
+          "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
         }
-      ]
+      ],
+      "gate_1_closed": "2026-09-23"
     },
     {
       "id": "CR-386",
@@ -27389,7 +27407,7 @@
       "title": "PWA install support \u2014 public/manifest.json + PNG icons (192/512) + index.html manifest/apple-touch-icon/theme-color; standalone desktop app window with MyGenie icon; fixes broken push-notification icon (/logo192.png 404)",
       "priority": "P2",
       "risk": "LOW",
-      "status": "INTAKE (Gate 1) \u2014 OD-386-01 = agent converts; icon preview awaiting owner approval; OD-386-02/03/04 open \u2192 Planning Gate 2 (no gate skipping \u2014 owner)",
+      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 Option A icon APPROVED; ODs 02/03/04 defaulted (MyGenie POS / standalone / \"/\"); designer brief issued for optional square mark",
       "confidence": "CONFIRMED",
       "rca_classification": "CONFIG_ISSUE",
       "duplicate_check": "DISTINCT",
@@ -27406,15 +27424,15 @@
       "intake_doc": "change_requests/CR-386_PWA_INSTALL_MANIFEST_ICONS_INTAKE.md",
       "evidence_dir": "evidence/CR-386/",
       "owner_decisions": {
-        "OD-386-01": "LOCKED 2026-09-23 \u2014 agent converts CDN SVG \u2192 PNG; previews in evidence/CR-386/preview_*.png; OWNER APPROVAL OF PREVIEW PENDING before any file lands in public/",
-        "OD-386-02": "OPEN \u2014 short_name",
-        "OD-386-03": "OPEN \u2014 display standalone vs minimal-ui",
-        "OD-386-04": "OPEN \u2014 start_url / vs /dashboard"
+        "OD-386-01": "LOCKED 2026-09-23 \u2014 OPTION A APPROVED (wordmark on white; evidence/CR-386/approved_A_logo{192,512}.png + maskable). Designer brief for optional square mascot mark: design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md",
+        "OD-386-02": "DEFAULT LOCKED \u2014 short_name \"MyGenie POS\"",
+        "OD-386-03": "DEFAULT LOCKED \u2014 display standalone",
+        "OD-386-04": "DEFAULT LOCKED \u2014 start_url \"/\" (Planning verifies auth redirect)"
       },
       "sprint_key": "sep_bug_closure",
       "created_at": "2026-09-23",
       "category": "INTAKE",
-      "gate": 1,
+      "gate": 2,
       "code_reality": "NONE",
       "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
       "status_history": [
@@ -27427,8 +27445,15 @@
           "date": "2026-09-23",
           "to": "INTAKE \u2014 preview generated",
           "note": "SVG is a 156x82 landscape wordmark; square previews A white / B transparent / C green + maskable + mark-only crop (rejected: cuts letters). Owner: \"show and take approval, don't jump gate\"."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_1_CLOSED",
+          "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
         }
-      ]
+      ],
+      "gate_1_closed": "2026-09-23",
+      "design_brief": "design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md"
     }
   ],
   "meta": {
@@ -27442,6 +27467,6 @@
     "total": 710,
     "total_items": 710,
     "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "INTAKE 2026-09-23: BUG-451/452/453 + CR-386 registered (sprint sep_bug_closure) from validated INV docs of 2026-09-18. Handover handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md"
+    "last_note": "2026-09-23 INTAKE Gate 1 CLOSED for BUG-451/452/453 + CR-386 (sprint sep_bug_closure). All blocking ODs locked. Next agent = PLANNING Gate 2. Handover handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md"
   }
 }
