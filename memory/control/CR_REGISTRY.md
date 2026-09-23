@@ -3,6 +3,7 @@
 # Layer 3 — CR Registry
 
 **Status:** POPULATED
+**Last Updated:** 2026-09-23 (**INTAKE CR-386 — PWA install support** (`manifest.json` + PNG icons + `index.html` links; standalone desktop window with MyGenie icon; fixes `/logo192.png` 404 push icon). P2 / LOW / CONFIG_ISSUE. New sprint **`sep_bug_closure`** (owner). From validated INV-PWA-ICON-001 + INV-PWA-APPROACH-001 (2026-09-18). Awaiting OD-386-01 icon assets. Same session: BUG-451/452/453 in BUG_TRACKER. Handover `handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md`.)
 **Last Updated:** 2026-09-22 (CR-385 **Phase 3 IMPLEMENTED (Gate 5A)** — M4 Extend Stay · M5 Balances · BUG-433 fixed (D85 CR-170 shared helper) after owner "Phase 3 GO"; D84 combined P2+P3 smoke. jest cr385 93/93 · build exit 0. BQ-385-27 filed. NEXT: P3 QA incl. P2 regression → Gate 5B → combined owner smoke.)
 **Last Updated:** 2026-09-22 (CR-385 **Phase 2 QA Gate 5B CLOSED** — owner D83 with acknowledged gaps OG-PMS-038…044 (upgrade path sandbox-blocked → M2-S08; toggle cycle → M2-S09/10; F1/C7 counts; API read-back pending preprod login 404; BQ-385-26). 0 defects. NEXT: owner Phase 2 smoke `cr385-master-checklist.html#m2s` → "Phase 2 smoke OK" → Phase 3 plan note.)
 **Last Updated:** 2026-09-22 (CR-385 **Phase 2 IMPLEMENTED (Gate 5A)** — M1 New Booking (top-of-tab, D81; Stay summary pre-save, D82) · M3 Check-In (early guard N7/D53, HK allowed N9, upgrade D23) after owner "Phase 2 GO". Plan §2.1 amended E11–E18 (8 existing files). jest cr385 81/81 · build exit 0 · guards empty. BQ-385-26 filed. OD-385-19 = (a) flat CLOSED; BUG-446 → FU-385-C. NEXT: P2 QA (testing_agent, live sandbox) → owner smoke §2.5.)
@@ -48,6 +49,14 @@
 **Last Updated:** 2026-09-11 — **CR-378 IMPLEMENTED (Gate 5a, Fast Lane).** Sidebar profile sub-line now shows `{restaurant.name} · #{restaurant.id}` (e.g. `CAFE 103 · #644`). `Sidebar.jsx:820` — 1 line. webpack clean. EXIT GATE 5/5. Screenshot verified. QA PENDING.
 **Last Updated:** 2026-09-11 — **CR-378 INTAKE COMPLETE (Gate 1).** Sidebar Profile: show restaurant name alongside ID. P2 LOW risk. 1 file (Sidebar.jsx), 1 line. DISTINCT, code reality NONE. Fast Lane eligible — awaiting OD-378-02 (owner approval). Registry: 645 items.
 **Last Updated:** 2026-09-09 — **CR-358-P5 GATE 5b QA PASS** — 8/8 executed PASS, 13 NOTE deferred. Rate grid✅ popover✅ Inv Restrictions✅ No-Show OTA✅ regression✅. QA report: `test_reports/QA_REPORT_CR358P5_2026_09_09.md`. Ready for Gate 6 owner smoke.
+
+---
+
+## 2026-09-23 — PWA INSTALL SUPPORT (INTAKE — Gate 1 · sprint `sep_bug_closure`)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Code reality | Blast | Notes |
+|---|---|---|---|---|---|---|---|---|
+| **CR-386** | **PWA install support** — `public/manifest.json` (NEW) + `logo192.png`/`logo512.png` (NEW) + `index.html` `<link rel="manifest">`, `<link rel="apple-touch-icon">`, `theme-color #329937`; installed app opens **standalone** with MyGenie icon (today Chrome falls back to letter "C"); also fixes `firebase-messaging-sw.js` L40–41 `/logo192.png` 404 (push icons broken) | **P2** | **LOW** | **INTAKE (Gate 1)** — awaiting **OD-386-01** (owner PNGs vs agent SVG→PNG), OD-386-02 short_name, OD-386-03 display, OD-386-04 start_url (`/` = Login) | 1 | NONE | SMALL (index.html +2–3 lines, 1 JSON, 2–3 assets; **no `src/`**) | OWNER-REPORTED (screenshot "C" icon). CONFIG_ISSUE. DISTINCT. PWA confirmed correct approach vs Electron/Tauri (INV-PWA-APPROACH-001; its "SW required" claim is stale — Chrome ≥112 needs only HTTPS + manifest). Not Fast-Lane (2 files + assets); skip exception possible at Gate 4 (LOW). Intake `change_requests/CR-386_PWA_INSTALL_MANIFEST_ICONS_INTAKE.md` · evidence `evidence/CR-386/`. Post-deploy: owner deletes old shortcut and re-installs via address-bar Install. |
 
 ---
 

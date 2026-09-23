@@ -27240,19 +27240,187 @@
           "note": "Owner (a). it.27 read-only PASS for codes/cards/0-push; QA label finding was a brief error (Room Mapping is channel-manager-tab-2) \u2014 self-check proves catalogue names apply. Pre-existing key warning removed. Legacy routes 'redirect to /loading' in it.27 = bootstrap timing on hard reload, pages load (legacy_routes_selfcheck.json)."
         }
       ]
+    },
+    {
+      "id": "BUG-451",
+      "type": "BUG",
+      "title": "Product list capped at limit: 500 on boot/refresh (LoadingPage, useRefreshAllData, productService) \u2014 items 501+ never loaded; PAGINATION.DEFAULT_LIMIT 100 stale",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE (Gate 1) \u2014 awaiting OD-451-01 (limit value) \u2192 Planning Gate 2",
+      "confidence": "SUSPECTED",
+      "rca_classification": "DATA_EDGE",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "MEDIUM (4 files, 4 lines; R5 LoadingPage.jsx param-only)",
+      "files_affected": [
+        "frontend/src/pages/LoadingPage.jsx (L422)",
+        "frontend/src/hooks/useRefreshAllData.js (L29)",
+        "frontend/src/api/services/productService.js (L28)",
+        "frontend/src/api/constants.js (L463-467)"
+      ],
+      "related_items": [],
+      "source_investigation": "INV-LIMIT-001",
+      "investigation_doc": "investigations/INVESTIGATION_2026_09_18_LIMIT_OFFSET_PRODUCTS.md",
+      "intake_doc": "change_requests/BUG-451_PRODUCT_LIST_LIMIT_500_CAP_INTAKE.md",
+      "evidence_dir": "evidence/BUG-451/",
+      "owner_decisions": {
+        "OD-451-01": "OPEN \u2014 target limit value (1000/2000/other)",
+        "OD-451-02": "OPEN \u2014 fix stale PAGINATION.DEFAULT_LIMIT in same change?"
+      },
+      "sprint_key": "sep_bug_closure",
+      "created_at": "2026-09-23",
+      "category": "INTAKE",
+      "gate": 1,
+      "code_reality": "NONE",
+      "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
+      "status_history": [
+        {
+          "date": "2026-09-23",
+          "to": "INTAKE",
+          "note": "Registered by INTAKE role from validated 2026-09-18 investigation reports; owner confirmed classification, merge (BUG-453), sprint sep_bug_closure."
+        }
+      ]
+    },
+    {
+      "id": "BUG-452",
+      "type": "BUG",
+      "title": "Stale cart restored from cartsByTable[oldKey] after order-type / table switch mid-build (OrderEntry save effect copies instead of moves)",
+      "priority": "P2",
+      "risk": "HIGH",
+      "status": "INTAKE (Gate 1) \u2014 OD-452-01 REOPENED (conflict with BUG-334 carry-forward) \u2192 Planning Gate 2 blocked on owner",
+      "confidence": "REPORTED",
+      "rca_classification": "CODE_ERROR",
+      "duplicate_check": "RELATED \u2014 CONFLICT with BUG-334 (CLOSED, carry-forward on switch); RELATED PROD-004, INV-OE-001",
+      "blast_radius": "SMALL in lines (1-2 files) / HIGH risk \u2014 DashboardPage.jsx + OrderEntry.jsx are R5 hotspots",
+      "files_affected": [
+        "frontend/src/pages/DashboardPage.jsx (L453, L1504-1511, L1462-1497, L2069-2070)",
+        "frontend/src/components/order-entry/OrderEntry.jsx (L378-391, L504-508)"
+      ],
+      "related_items": [
+        "BUG-334",
+        "PROD-004",
+        "INV-OE-001"
+      ],
+      "source_investigation": "INV-CART-PERSIST-001",
+      "investigation_doc": "investigations/INVESTIGATION_2026_09_18_CART_PERSIST_AFTER_ORDER.md",
+      "intake_doc": "change_requests/BUG-452_STALE_CART_RESTORED_AFTER_TYPE_TABLE_SWITCH_INTAKE.md",
+      "evidence_dir": "evidence/BUG-452/",
+      "owner_decisions": {
+        "OD-452-01": "REOPENED \u2014 (a) keep BUG-334 carry-forward + clear old key (move) vs (b) always clear on switch (reverses BUG-334)",
+        "OD-452-02": "OPEN \u2014 fix location DashboardPage:2070 handler vs OrderEntry:383-386 (INV Option A location does not work)"
+      },
+      "sprint_key": "sep_bug_closure",
+      "created_at": "2026-09-23",
+      "category": "INTAKE",
+      "gate": 1,
+      "code_reality": "NONE",
+      "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
+      "status_history": [
+        {
+          "date": "2026-09-23",
+          "to": "INTAKE",
+          "note": "Registered by INTAKE role from validated 2026-09-18 investigation reports; owner confirmed classification, merge (BUG-453), sprint sep_bug_closure."
+        }
+      ]
+    },
+    {
+      "id": "BUG-453",
+      "type": "BUG",
+      "title": "Scan & Order pop-out Mute does not stop ringer \u2014 soundManager error/catch handlers blindly null currentAudio (race on rapid FCM) + FCM retries restart sound after Mute (snoozedOrders not wired to NotificationContext)",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "status": "INTAKE (Gate 1) \u2014 Fix A + Fix B merged into one bug (owner 2026-09-23); awaiting OD-453-02/03 \u2192 Planning Gate 2",
+      "confidence": "CONFIRMED",
+      "rca_classification": "CODE_ERROR (primary) + PLAN_GAP (secondary)",
+      "duplicate_check": "DISTINCT (RELATED BUG-081, BUG-122-POST, CR SNOOZE_SOUND_STOP_AND_DURATION)",
+      "blast_radius": "MEDIUM (3-4 files; no R5 hotspot unless snoozedOrders wired via DashboardPage prop)",
+      "files_affected": [
+        "frontend/src/utils/soundManager.js (L74-77, L79-83)",
+        "frontend/src/contexts/NotificationContext.jsx (L132-135, L175-181)",
+        "frontend/src/components/dashboard/ScanOrderPopOut.jsx (L22-27 anti-rule text, L191-207)",
+        "frontend/src/pages/DashboardPage.jsx (L459, L1280-1290 \u2014 wiring TBD)"
+      ],
+      "related_items": [
+        "BUG-081",
+        "BUG-122-POST"
+      ],
+      "source_investigation": "INV-MUTE-RINGER-001",
+      "investigation_doc": "investigations/INVESTIGATION_2026_09_18_MUTE_RINGER_NOT_STOPPING.md",
+      "intake_doc": "change_requests/BUG-453_MUTE_DOES_NOT_STOP_RINGER_INTAKE.md",
+      "evidence_dir": "evidence/BUG-453/",
+      "owner_decisions": {
+        "OD-453-01": "LOCKED 2026-09-23 \u2014 Fix A + Fix B in one bug",
+        "OD-453-02": "OPEN \u2014 override Jan-2026 anti-rule \"NO future-sound suppression\"",
+        "OD-453-03": "OPEN \u2014 time-based mute window vs per-order mute set"
+      },
+      "sprint_key": "sep_bug_closure",
+      "created_at": "2026-09-23",
+      "category": "INTAKE",
+      "gate": 1,
+      "code_reality": "NONE",
+      "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
+      "status_history": [
+        {
+          "date": "2026-09-23",
+          "to": "INTAKE",
+          "note": "Registered by INTAKE role from validated 2026-09-18 investigation reports; owner confirmed classification, merge (BUG-453), sprint sep_bug_closure."
+        }
+      ]
+    },
+    {
+      "id": "CR-386",
+      "type": "CR",
+      "title": "PWA install support \u2014 public/manifest.json + PNG icons (192/512) + index.html manifest/apple-touch-icon/theme-color; standalone desktop app window with MyGenie icon; fixes broken push-notification icon (/logo192.png 404)",
+      "priority": "P2",
+      "risk": "LOW",
+      "status": "INTAKE (Gate 1) \u2014 awaiting OD-386-01 (icon assets) \u2192 Planning Gate 2",
+      "confidence": "CONFIRMED",
+      "rca_classification": "CONFIG_ISSUE",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL (index.html +2-3 lines, 1 new JSON, 2-3 binary assets; no src/ change)",
+      "files_affected": [
+        "frontend/public/manifest.json (NEW)",
+        "frontend/public/logo192.png (NEW)",
+        "frontend/public/logo512.png (NEW)",
+        "frontend/public/index.html (L6 theme-color, +2 link tags)"
+      ],
+      "related_items": [],
+      "source_investigation": "INV-PWA-ICON-001 + INV-PWA-APPROACH-001",
+      "investigation_doc": "investigations/INVESTIGATION_2026_09_18_PWA_ICON_MISSING.md; investigations/INVESTIGATION_2026_09_18_PWA_APPROACH.md",
+      "intake_doc": "change_requests/CR-386_PWA_INSTALL_MANIFEST_ICONS_INTAKE.md",
+      "evidence_dir": "evidence/CR-386/",
+      "owner_decisions": {
+        "OD-386-01": "OPEN \u2014 owner PNGs vs agent SVG\u2192PNG conversion (blocks implementation)",
+        "OD-386-02": "OPEN \u2014 short_name",
+        "OD-386-03": "OPEN \u2014 display standalone vs minimal-ui",
+        "OD-386-04": "OPEN \u2014 start_url / vs /dashboard"
+      },
+      "sprint_key": "sep_bug_closure",
+      "created_at": "2026-09-23",
+      "category": "INTAKE",
+      "gate": 1,
+      "code_reality": "NONE",
+      "source": "OWNER-REPORTED (investigated 2026-09-18, validated + registered 2026-09-23)",
+      "status_history": [
+        {
+          "date": "2026-09-23",
+          "to": "INTAKE",
+          "note": "Registered by INTAKE role from validated 2026-09-18 investigation reports; owner confirmed classification, merge (BUG-453), sprint sep_bug_closure."
+        }
+      ]
     }
   ],
   "meta": {
-    "last_updated": "2026-09-21",
+    "last_updated": "2026-09-23",
     "last_action": "GATE 6 CLOSED (P0+P1) by owner (D80). Next agent = PLANNING: present the Phase 2 plan note (M1 New Booking \u00b7 M3 Check-In) + top five + conflict list \u2192 wait for \"Phase 2 GO\". Handover: handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 704,
-    "total_items": 704,
+    "total": 710,
+    "total_items": 710,
     "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "Session closed 2026-09-21; entry point handover/SESSION_HANDOVER_2026_09_21_CR385_SESSION_CLOSE.md. Next: owner \"Phase 1 GO\" \u2192 Implementation role \u00a71."
+    "last_note": "INTAKE 2026-09-23: BUG-451/452/453 + CR-386 registered (sprint sep_bug_closure) from validated INV docs of 2026-09-18. Handover handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md"
   }
 }
