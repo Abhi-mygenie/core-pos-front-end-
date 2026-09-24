@@ -27605,6 +27605,102 @@
         "public/logo512.png (NEW)",
         "public/logo512-maskable.png (NEW)"
       ]
+    },
+    {
+      "id": "BUG-454",
+      "type": "BUG",
+      "title": "Order payload GST not gated by gst_status — orderTransform.buildCartItem/calcOrderTotals ignore restaurant.tax.gstStatus (BUG-336 gap)",
+      "area": "Order Entry → orderTransform.js (R5) → place/update order payload",
+      "priority": "P0",
+      "risk": "CRITICAL",
+      "status": "INTAKE — GATE 1 (2026-09-24)",
+      "code_reality": "NONE (gap confirmed in code)",
+      "blast_radius": "MEDIUM",
+      "intake_doc": "change_requests/BUG-454_ORDER_PAYLOAD_GST_NOT_GATED_BY_GST_STATUS_INTAKE.md",
+      "evidence_dir": "evidence/INV-GST-KEY-2026-09-24/",
+      "investigation_doc": "INV_GST_MENU_VALIDATION_INVESTIGATION_REPORT_2026_09_24.md",
+      "files_affected": [
+        "api/transforms/orderTransform.js (R5)",
+        "components/order-entry/OrderEntry.jsx (R5, param threading)"
+      ],
+      "owner_decisions": {
+        "OD-454-01": "OPEN — gate GST-type lines only (+SC/delivery GST), VAT untouched?"
+      },
+      "related_items": [
+        "BUG-336",
+        "BUG-338",
+        "CR-036-FU-03",
+        "CR-387"
+      ],
+      "sprint_key": null,
+      "created_at": "2026-09-24"
+    },
+    {
+      "id": "BUG-455",
+      "type": "BUG",
+      "title": "Single-item ProductForm lacks CR-036-FU-03 tax-required rule (BulkEditor only) — same item valid in form, invalid in bulk editor",
+      "area": "Menu Management → ProductForm.jsx",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "status": "INTAKE — GATE 1 (2026-09-24)",
+      "code_reality": "NONE",
+      "blast_radius": "SMALL",
+      "intake_doc": "change_requests/BUG-455_PRODUCTFORM_MISSING_TAX_REQUIRED_RULE_INTAKE.md",
+      "evidence_dir": "evidence/INV-GST-KEY-2026-09-24/",
+      "investigation_doc": "INV_GST_MENU_VALIDATION_INVESTIGATION_REPORT_2026_09_24.md",
+      "files_affected": [
+        "components/panels/menu/ProductForm.jsx"
+      ],
+      "owner_decisions": {
+        "OD-455-01": "OPEN — same packaged-item exemption as BulkEditor? (rec. YES)"
+      },
+      "related_items": [
+        "CR-036-FU-03",
+        "CR-158",
+        "BUG-391",
+        "CR-387"
+      ],
+      "sprint_key": null,
+      "created_at": "2026-09-24"
+    },
+    {
+      "id": "CR-387",
+      "type": "CR",
+      "title": "Align menu GST/packaging validation with outlet gst_status — Aggregator 5% vs packaged exemption (X1), gst_status=false vs Aggregator rule (X2), no packaging-GST key (X4), settings wizard flat basic.gst_status",
+      "area": "Menu Management + Restaurant Settings → BulkEditor / ProductForm / menuManagementTransform / restaurantSettingsTransform",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "INTAKE — GATE 1 (2026-09-24) — BACKEND QUESTIONS OPEN (BQ-387-01..05) + OD-387-01..04 OPEN",
+      "code_reality": "PARTIAL (gating exists in BulkEditor V1 + Collect Bill display only)",
+      "blast_radius": "MEDIUM",
+      "intake_doc": "change_requests/CR-387_ALIGN_MENU_GST_PACKAGING_VALIDATION_WITH_GST_STATUS_INTAKE.md",
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_CR-387_2026-09-24.md",
+      "evidence_dir": "evidence/INV-GST-KEY-2026-09-24/",
+      "investigation_doc": "INV_GST_MENU_VALIDATION_INVESTIGATION_REPORT_2026_09_24.md",
+      "files_affected": [
+        "components/panels/menu/BulkEditor.jsx",
+        "components/panels/menu/ProductForm.jsx",
+        "api/transforms/menuManagementTransform.js",
+        "api/transforms/restaurantSettingsTransform.js"
+      ],
+      "owner_decisions": {
+        "OD-387-01": "OPEN — Aggregator packaged item GST rule",
+        "OD-387-02": "OPEN — gst_status=false + Aggregator menu",
+        "OD-387-03": "OPEN — Excel import FE pre-validation?",
+        "OD-387-04": "OPEN — packaging GST out of scope until backend key?"
+      },
+      "related_items": [
+        "CR-036-FU-03",
+        "BUG-391",
+        "BUG-336",
+        "BUG-326",
+        "CR-158",
+        "INV-GST-001",
+        "BUG-454",
+        "BUG-455"
+      ],
+      "sprint_key": null,
+      "created_at": "2026-09-24"
     }
   ],
   "meta": {
