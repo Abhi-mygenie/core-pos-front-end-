@@ -25686,6 +25686,10 @@
         {
           "date": "2026-09-24",
           "event": "\u00a75.6 ENTRY handover written for the next agent: handover/SESSION_HANDOVER_2026_09_24_CR385_P5_SEC56_ENTRY.md (full P5 record Sessions A'/B/C + probe pack + guards, findings ledger F1-F13 with no FAIL, exact QA-report section list + per-row verdicts/evidence for all 34 rows, \u00a75.7 tick list, \u00a75.8 sign-off message + order of operations, owner words verbatim, pitfalls, ready-to-paste agent prompt). Evidence-location note: iteration_31/32/33 + sessb_cleanup JSONs not in workspace -> cite SESSA/SESSB handovers + registry #55/#56. No code changes, sandbox untouched. NEXT: \u00a75.6."
+        },
+        {
+          "date": "2026-09-24",
+          "event": "\u00a75.6 P5 regression PASSED 2026-09-24 \u2014 test_reports/QA_REPORT_2026_09_24_CR385_P5_ROLE4.md (Role 4). 34 rows: 33 PASS / 0 FAIL / 1 pending (row 34 = registry Step 5 checklist, closes in \u00a75.7). Row 24 PASS-with-note (F5, owner 1a), row 14 PASS carried from probes_2026_09_20_final X-05 422 (owner 2a). Sessions A'/B/C PASS (it.30-34), D17 legs A/B/C ALL_PASS, probe pack 5/5 + held_fallback skipped-no-recipe, guards 6/6 on origin HEAD b2db5a0 (hotspots by blob sha256; 642ccb8 obsolete), zero code changes, sandbox restored (r1 #256 owner stay untouched). Findings F1-F13 all MINOR/NOTE/process/evidence-location; no BLOCKER/MAJOR; Phase 5.5 not triggered. Evidence-location: iteration_34.json also absent from workspace -> cited via SESSC handover + session_c_pos_regression.json. Registry entry per handover \u00a74 (owner 3a). CR-385 status NOT changed \u2014 CLOSED only on owner's verbatim word (\u00a75.8). NEXT: \u00a75.7 registry closure."
         }
       ],
       "gate_2_6_closed": "2026-09-20",
