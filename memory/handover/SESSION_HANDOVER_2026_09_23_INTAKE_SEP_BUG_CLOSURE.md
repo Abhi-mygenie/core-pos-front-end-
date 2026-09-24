@@ -1,4 +1,6 @@
 # Session Handover — 2026-09-23
+> **Superseded 2026-09-23 (later same day)** — read `SESSION_HANDOVER_2026_09_23_SEP_BUG_CLOSURE_GATE2_OPEN.md` instead (full Gate 2 state + owner questions).
+
 ## INTAKE — BUG-451 / BUG-452 / BUG-453 / CR-386 (new sprint `sep_bug_closure`) from validated 2026-09-18 investigation reports
 
 ```
@@ -6,6 +8,21 @@ Session date:     2026-09-23
 Role:             INVESTIGATION (validation, read-only) → INTAKE (ALPHA v0.7)
 Registry synced:  YES — 4 items appended (706 → 710), meta updated; no existing item modified
 Scope drift:      NONE — zero src/ or public/ changes; docs + registry + evidence only
+Status at close:  GATE 2 IMPACT ANALYSES WRITTEN for all 4 items (PLANNING, IA only — owner request). Awaiting owner Gate 2 review.
+Next agent role:  PLANNING Gate 3 (Implementation Plans) after owner review; BUG-451 Gate 3 blocked on backend limit probe (credential needed)
+Workspace:        /app · branch 21implement · HEAD 1be4055 (remote b2db5a01)
+```
+
+## Gate 2 — Impact Analyses (2026-09-23, PLANNING role)
+| Item | IA | Key recommendation | Open for owner |
+|---|---|---|---|
+| CR-386 | `impact/CR-386_IMPACT_ANALYSIS.md` | 5 files (`index.html` +3 head lines, `manifest.json`, 3 PNG); no `src/` | none — ready for Gate 3 |
+| BUG-453 | `impact/BUG-453_IMPACT_ANALYSIS.md` | **B1**: `mutedOrders` Set inside `soundManager` (`toggleOrderMute/isOrderMuted/clearMutes`), toggled from `DashboardPage.toggleSnooze` (+2 lines, R5 additive), checked in `NotificationContext` before `play()`; Fix A guards at :76/:82; new unit test | clarification: toast/list entry still shown for muted order (default YES); Gate 3 validation = capture real FCM payload, confirm `data.order_id` == card `orderId` |
+| BUG-451 | `impact/BUG-451_IMPACT_ANALYSIS.md` | 4 literal edits; D1 use `PAGINATION.DEFAULT_LIMIT=2000` everywhere (rec) vs literals; D2 delete dead `getAllProducts` (rec) | **BLOCKER:** backend probe `limit=2000` — INV-doc credential rejected (`auth-001`); owner must give an alias credential (not stored) |
+| BUG-452 | `impact/BUG-452_IMPACT_ANALYSIS.md` | Option B via **S1**: bump `orderEntryResetNonce` in `handleOrderTypeChange` + `handleTableClick` when OrderEntry open → remount = exact clean slate; OrderEntry effect untouched except BUG-334 branch comment; also fixes latent stale placed-items snapshot | pick S1 vs S2; approve BUG-334 "REVERSED BY BUG-452" annotation (outside sprint scope lock); optional discard-confirm dialog (rec: no) |
+
+## (superseded — Gate 1 close state)
+```
 Status at close:  GATE 1 CLOSED for all 4 items (owner 2026-09-23). All blocking ODs LOCKED. Gate 2 READY.
 Next agent role:  PLANNING (Gate 2 Impact Analysis) — suggested order: CR-386 → BUG-453 → BUG-451 → BUG-452
 Workspace:        /app · branch 21implement · HEAD 1be4055 (remote b2db5a01)

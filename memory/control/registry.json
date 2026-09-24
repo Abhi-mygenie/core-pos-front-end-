@@ -27247,7 +27247,7 @@
       "title": "Product list capped at limit: 500 on boot/refresh (LoadingPage, useRefreshAllData, productService) \u2014 items 501+ never loaded; PAGINATION.DEFAULT_LIMIT 100 stale",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 ODs LOCKED (limit 2000 + DEFAULT_LIMIT) \u2192 ready for Planning Gate 2",
+      "status": "GATE 2 IA WRITTEN 2026-09-23 \u2014 open: D1 constant vs literals, D2 delete dead getAllProducts; BLOCKER for Gate 3: backend limit probe needs working credential (INV doc creds rejected auth-001)",
       "confidence": "SUSPECTED",
       "rca_classification": "DATA_EDGE",
       "duplicate_check": "DISTINCT",
@@ -27288,9 +27288,15 @@
           "date": "2026-09-23",
           "to": "GATE_1_CLOSED",
           "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_2_IA_WRITTEN",
+          "note": "PLANNING role, IA only (owner request). impact/BUG-451_IMPACT_ANALYSIS.md"
         }
       ],
-      "gate_1_closed": "2026-09-23"
+      "gate_1_closed": "2026-09-23",
+      "impact_analysis": "impact/BUG-451_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-452",
@@ -27298,7 +27304,7 @@
       "title": "Stale cart restored from cartsByTable[oldKey] after order-type / table switch mid-build (OrderEntry save effect copies instead of moves)",
       "priority": "P2",
       "risk": "HIGH",
-      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 OD-452-01 LOCKED = Option B (always clear; reverses BUG-334) \u2192 ready for Planning Gate 2",
+      "status": "GATE 2 IA WRITTEN 2026-09-23 \u2014 Option B via shape S1 (remount nonce in DashboardPage, rec) vs S2 (edit OrderEntry effect); needs owner OK to annotate BUG-334 REVERSED; latent placed-items stale-snapshot defect also fixed",
       "confidence": "REPORTED",
       "rca_classification": "CODE_ERROR",
       "duplicate_check": "RELATED \u2014 CONFLICT with BUG-334 (CLOSED, carry-forward on switch); RELATED PROD-004, INV-OE-001",
@@ -27342,9 +27348,15 @@
           "date": "2026-09-23",
           "to": "GATE_1_CLOSED",
           "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_2_IA_WRITTEN",
+          "note": "PLANNING role, IA only (owner request). impact/BUG-452_IMPACT_ANALYSIS.md"
         }
       ],
-      "gate_1_closed": "2026-09-23"
+      "gate_1_closed": "2026-09-23",
+      "impact_analysis": "impact/BUG-452_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-453",
@@ -27352,7 +27364,7 @@
       "title": "Scan & Order pop-out Mute does not stop ringer \u2014 soundManager error/catch handlers blindly null currentAudio (race on rapid FCM) + FCM retries restart sound after Mute (snoozedOrders not wired to NotificationContext)",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 all ODs LOCKED (Fix A+B, per-order manual mute toggle) \u2192 ready for Planning Gate 2",
+      "status": "GATE 2 IA WRITTEN 2026-09-23 \u2014 design B1 (mute set inside soundManager, toggled from DashboardPage.toggleSnooze, checked in NotificationContext); Gate 3 validation: capture real FCM payload order_id; clarification: toast stays for muted order",
       "confidence": "CONFIRMED",
       "rca_classification": "CODE_ERROR (primary) + PLAN_GAP (secondary)",
       "duplicate_check": "DISTINCT (RELATED BUG-081, BUG-122-POST, CR SNOOZE_SOUND_STOP_AND_DURATION)",
@@ -27397,9 +27409,15 @@
           "date": "2026-09-23",
           "to": "GATE_1_CLOSED",
           "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_2_IA_WRITTEN",
+          "note": "PLANNING role, IA only (owner request). impact/BUG-453_IMPACT_ANALYSIS.md"
         }
       ],
-      "gate_1_closed": "2026-09-23"
+      "gate_1_closed": "2026-09-23",
+      "impact_analysis": "impact/BUG-453_IMPACT_ANALYSIS.md"
     },
     {
       "id": "CR-386",
@@ -27407,7 +27425,7 @@
       "title": "PWA install support \u2014 public/manifest.json + PNG icons (192/512) + index.html manifest/apple-touch-icon/theme-color; standalone desktop app window with MyGenie icon; fixes broken push-notification icon (/logo192.png 404)",
       "priority": "P2",
       "risk": "LOW",
-      "status": "GATE 1 CLOSED (INTAKE) 2026-09-23 \u2192 Gate 2 READY \u2014 Option A icon APPROVED; ODs 02/03/04 defaulted (MyGenie POS / standalone / \"/\"); designer brief issued for optional square mark",
+      "status": "GATE 2 IA WRITTEN 2026-09-23 \u2014 5 files (index.html + manifest + 3 PNG), no src/, no open ODs; ready for Gate 3",
       "confidence": "CONFIRMED",
       "rca_classification": "CONFIG_ISSUE",
       "duplicate_check": "DISTINCT",
@@ -27450,15 +27468,21 @@
           "date": "2026-09-23",
           "to": "GATE_1_CLOSED",
           "note": "Owner: \"update docs and decision and close intake gate\". All blocking ODs locked. Next: PLANNING Gate 2."
+        },
+        {
+          "date": "2026-09-23",
+          "to": "GATE_2_IA_WRITTEN",
+          "note": "PLANNING role, IA only (owner request). impact/CR-386_IMPACT_ANALYSIS.md"
         }
       ],
       "gate_1_closed": "2026-09-23",
-      "design_brief": "design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md"
+      "design_brief": "design_briefs/DESIGN_BRIEF_CR-386_APP_ICON_2026_09_23.md",
+      "impact_analysis": "impact/CR-386_IMPACT_ANALYSIS.md"
     }
   ],
   "meta": {
     "last_updated": "2026-09-23",
-    "last_action": "GATE 6 CLOSED (P0+P1) by owner (D80). Next agent = PLANNING: present the Phase 2 plan note (M1 New Booking \u00b7 M3 Check-In) + top five + conflict list \u2192 wait for \"Phase 2 GO\". Handover: handover/SESSION_HANDOVER_2026_09_22_CR385_PHASE2_ENTRY.md",
+    "last_action": "Gate 2 IAs written; Gate 2 NOT closed (owner instruction). Next agent = PLANNING (IA continuation): ask Q1-Q6 first.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -27467,6 +27491,6 @@
     "total": 710,
     "total_items": 710,
     "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "2026-09-23 INTAKE Gate 1 CLOSED for BUG-451/452/453 + CR-386 (sprint sep_bug_closure). All blocking ODs locked. Next agent = PLANNING Gate 2. Handover handover/SESSION_HANDOVER_2026_09_23_INTAKE_SEP_BUG_CLOSURE.md"
+    "last_note": "2026-09-23 PLANNING Gate 2 OPEN for BUG-451/452/453 + CR-386 (sep_bug_closure). IAs written; owner will answer Q1-Q6 to the next agent, who continues IA then asks Gate 3. ENTRY POINT: handover/SESSION_HANDOVER_2026_09_23_SEP_BUG_CLOSURE_GATE2_OPEN.md"
   }
 }
