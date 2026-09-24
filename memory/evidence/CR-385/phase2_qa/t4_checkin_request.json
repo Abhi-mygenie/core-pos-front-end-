@@ -1,0 +1,106 @@
+{
+  "url": "https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in",
+  "ct": "multipart/form-data; boundary=----WebKitFormBoundary9wRikZRRnOuKpZ7B",
+  "multipart": true,
+  "fields": {
+    "booking_type": [
+      "Direct"
+    ],
+    "booking_id": [
+      "MG-69-FA431A46-274D-478F-A852-8F3002757D2A"
+    ],
+    "aiosell_reservation_id": [
+      "236"
+    ],
+    "name": [
+      "QA P2 Suite"
+    ],
+    "phone": [
+      "9876500301"
+    ],
+    "email": [
+      ""
+    ],
+    "room_id[0]": [
+      "8528"
+    ],
+    "id_type": [
+      "Aadhar card"
+    ],
+    "total_adult": [
+      "1"
+    ],
+    "total_children": [
+      "0"
+    ],
+    "children_name": [
+      ""
+    ],
+    "name2": [
+      ""
+    ],
+    "id_type2": [
+      ""
+    ],
+    "name3": [
+      ""
+    ],
+    "id_type3": [
+      ""
+    ],
+    "name4": [
+      ""
+    ],
+    "id_type4": [
+      ""
+    ],
+    "checkin_date": [
+      "2026-09-22"
+    ],
+    "checkout_date": [
+      "2026-09-23"
+    ],
+    "booking_details": [
+      ""
+    ],
+    "booking_for": [
+      "Individual"
+    ],
+    "order_amount": [
+      "0"
+    ],
+    "room_price": [
+      "0"
+    ],
+    "advance_payment": [
+      "500"
+    ],
+    "balance_payment": [
+      "0"
+    ],
+    "payment_method": [
+      "Card"
+    ],
+    "order_note": [
+      "Card ref QACARD1"
+    ],
+    "gst_tax": [
+      "0"
+    ],
+    "firm_name": [
+      ""
+    ],
+    "firm_gst": [
+      ""
+    ],
+    "upgrade_type": [
+      "none"
+    ],
+    "upgrade_amount": [
+      "0"
+    ],
+    "upgrade_reason": [
+      ""
+    ]
+  }
+}

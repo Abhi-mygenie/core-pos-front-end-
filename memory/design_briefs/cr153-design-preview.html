@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CR-153 Design Preview — Side by Side</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: Inter, sans-serif; background: #e2e8f0; }
+  .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .badge-loss { display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca; }
+  .badge-gain { display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0; }
+  .kpi-left { position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px; }
+</style>
+</head>
+<body class="p-6">
+
+<h1 class="text-center text-xl font-bold text-slate-700 mb-2">CR-153 — Wastage Report: Design Change Preview</h1>
+<p class="text-center text-sm text-slate-500 mb-6">ConsumptionReportPage.jsx — Before vs After</p>
+
+<div class="flex gap-6 items-start max-w-[1400px] mx-auto">
+
+  <!-- ====== BEFORE ====== -->
+  <div class="flex-1 min-w-0">
+    <div class="text-center mb-3">
+      <span class="inline-block bg-slate-600 text-white text-xs font-bold px-4 py-1.5 rounded-full">BEFORE — Current Page</span>
+    </div>
+    <div class="bg-slate-50 rounded-2xl border-2 border-slate-300 overflow-hidden shadow-lg">
+      <div class="max-w-full p-5">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-bold text-slate-900">Consumption Report</div>
+              <div class="text-xs text-slate-400 mt-0.5">2026-08-01 to 2026-08-25 · 58 ingredients</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Excel
+            </button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- NO TAB BAR — this is BEFORE -->
+        <div class="h-3 mb-4 flex items-center">
+          <span class="text-xs text-slate-300 italic">← no tab bar exists here</span>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="bg-white rounded-xl border border-slate-200 p-3 mb-4 flex flex-wrap gap-2 items-end">
+          <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-700">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span class="text-slate-400 text-xs">FROM</span> 08/01/2026 <span class="text-slate-300 mx-1">—</span> <span class="text-slate-400 text-xs">TO</span> 08/25/2026
+          </div>
+          <button class="px-2.5 py-1.5 bg-[#329937] text-white rounded-lg text-xs font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Apply
+          </button>
+          <div class="flex items-center gap-1 px-1.5 py-1 bg-slate-100 rounded-lg">
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">Today</span>
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">7D</span>
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">30D</span>
+            <span class="px-2 py-0.5 text-xs font-medium bg-white text-slate-900 rounded-md shadow-sm">MTD</span>
+          </div>
+          <select class="h-7 text-xs border border-slate-200 rounded-md px-2 bg-white text-slate-700"><option>All Categories</option></select>
+          <input placeholder="Search..." class="h-7 text-xs w-28 border border-slate-200 rounded-md px-2" />
+          <button class="h-7 px-2.5 text-xs border border-slate-200 rounded-md bg-white text-slate-700">Reset</button>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="grid grid-cols-5 gap-2 mb-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-orange-400"></div>
+            <div class="pl-1"><div class="label text-slate-400 mb-1">Ingredients</div><div class="text-lg font-bold text-slate-900">58</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-blue-400"></div>
+            <div class="pl-1"><div class="label text-slate-400 mb-1">Entries</div><div class="text-lg font-bold text-slate-900">5,629</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-purple-400"></div>
+            <div class="pl-1"><div class="label text-slate-400 mb-1">Categories</div><div class="text-lg font-bold text-slate-900">13</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-dashed border-slate-200 p-3">
+            <div class="label text-slate-300 mb-1">Cost / Unit</div><div class="text-sm font-medium text-slate-300 italic">— pending</div>
+          </div>
+          <div class="bg-white rounded-xl border border-dashed border-slate-200 p-3">
+            <div class="label text-slate-300 mb-1">Margin</div><div class="text-sm font-medium text-slate-300 italic">— pending</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <table class="w-full text-xs">
+            <thead><tr class="bg-slate-50 border-b border-slate-200">
+              <th class="w-6 px-2 py-2.5"></th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Ingredient</th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Category</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Opening</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Consumed</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Closing</th>
+              <th class="px-3 py-2.5 text-right label text-slate-300">Cost/Unit</th>
+            </tr></thead>
+            <tbody>
+              <tr class="border-b border-slate-100 hover:bg-orange-50 cursor-pointer">
+                <td class="px-2 py-2.5 text-slate-300">›</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">Roasted Chopped Pistachios</td>
+                <td class="px-3 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">Dry Fruits</span></td>
+                <td class="px-3 py-2.5 text-right text-slate-500">497.235 kg</td>
+                <td class="px-3 py-2.5 text-right font-semibold text-emerald-600">3.429 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">493.806 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-300 italic">—</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-orange-50 cursor-pointer">
+                <td class="px-2 py-2.5 text-slate-300">›</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">Butter</td>
+                <td class="px-3 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">Dairy</span></td>
+                <td class="px-3 py-2.5 text-right text-slate-500">-89.737 kg</td>
+                <td class="px-3 py-2.5 text-right font-semibold text-emerald-600">16.1 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">-105.837 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-300 italic">—</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-2 py-2.5 text-slate-300">›</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">Cashew Nut</td>
+                <td class="px-3 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">Dry Fruits</span></td>
+                <td class="px-3 py-2.5 text-right text-slate-500">2.553 kg</td>
+                <td class="px-3 py-2.5 text-right font-semibold text-emerald-600">164 gm</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">2.389 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-300 italic">—</td>
+              </tr>
+              <tr class="text-slate-400 text-center"><td colspan="7" class="py-2 text-xs">… 55 more rows …</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== ARROW ====== -->
+  <div class="flex flex-col items-center justify-center pt-40 flex-shrink-0">
+    <div class="w-10 h-10 rounded-full bg-[#329937] flex items-center justify-center shadow-lg">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+    </div>
+    <span class="text-xs font-bold text-slate-500 mt-2 text-center">CR-153</span>
+  </div>
+
+  <!-- ====== AFTER ====== -->
+  <div class="flex-1 min-w-0">
+    <div class="text-center mb-3">
+      <span class="inline-block bg-[#329937] text-white text-xs font-bold px-4 py-1.5 rounded-full">AFTER — Wastage Tab Active</span>
+    </div>
+    <div class="bg-slate-50 rounded-2xl border-2 border-[#329937] overflow-hidden shadow-lg">
+      <div class="max-w-full p-5">
+
+        <!-- Header (unchanged) -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-bold text-slate-900">Consumption Report</div>
+              <div class="text-xs text-slate-400 mt-0.5">2026-08-01 to 2026-08-25 · 58 ingredients</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700">Excel</button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700">PDF</button>
+          </div>
+        </div>
+
+        <!-- NEW: Page-tab bar -->
+        <div class="bg-slate-100 rounded-xl p-1 flex w-fit mb-5">
+          <button class="px-5 py-1.5 text-sm font-medium text-slate-500 rounded-lg transition-colors">Consumption</button>
+          <button class="px-5 py-1.5 text-sm font-medium text-slate-900 bg-white rounded-lg shadow-sm">Wastage</button>
+        </div>
+
+        <!-- Filter bar (shared, unchanged) -->
+        <div class="bg-white rounded-xl border border-slate-200 p-3 mb-4 flex flex-wrap gap-2 items-end">
+          <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-700">
+            <span class="text-slate-400 text-xs">FROM</span> 08/01/2026 <span class="text-slate-300 mx-1">—</span> <span class="text-slate-400 text-xs">TO</span> 08/25/2026
+          </div>
+          <button class="px-2.5 py-1.5 bg-[#329937] text-white rounded-lg text-xs font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Apply
+          </button>
+          <div class="flex items-center gap-1 px-1.5 py-1 bg-slate-100 rounded-lg">
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">Today</span>
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">7D</span>
+            <span class="px-2 py-0.5 text-xs font-medium text-slate-600">30D</span>
+            <span class="px-2 py-0.5 text-xs font-medium bg-white text-slate-900 rounded-md shadow-sm">MTD</span>
+          </div>
+          <span class="text-xs text-slate-400 italic ml-1">(Category/ingredient filters hidden on Wastage tab)</span>
+        </div>
+
+        <!-- Wastage KPI strip (NEW) -->
+        <div class="grid grid-cols-4 gap-3 mb-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-orange-500"></div>
+            <div class="pl-2"><div class="label text-slate-400 mb-1">Total Records</div><div class="text-xl font-bold text-slate-900">1</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-red-500"></div>
+            <div class="pl-2"><div class="label text-slate-400 mb-1">Total Loss</div><div class="text-xl font-bold text-slate-900">101</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-green-500"></div>
+            <div class="pl-2"><div class="label text-slate-400 mb-1">Total Gain</div><div class="text-xl font-bold text-slate-900">0</div></div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-3 relative overflow-hidden">
+            <div class="kpi-left bg-slate-400"></div>
+            <div class="pl-2"><div class="label text-slate-400 mb-1">Net Wastage</div><div class="text-xl font-bold text-slate-900">101</div></div>
+          </div>
+        </div>
+
+        <!-- Inner sub-tab bar (NEW) -->
+        <div class="bg-slate-100 rounded-xl p-1 flex w-fit mb-4">
+          <button class="px-4 py-1.5 text-xs font-semibold text-white bg-[#329937] rounded-lg shadow-sm">Wastage Log</button>
+          <button class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-colors">Top Items</button>
+        </div>
+
+        <!-- Wastage Log table (NEW) -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <table class="w-full text-xs">
+            <thead><tr class="bg-slate-50 border-b border-slate-200">
+              <th class="px-3 py-2.5 text-left label text-slate-500">Date</th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Ingredient</th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Type</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Quantity</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Prev Stock</th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Reason</th>
+              <th class="px-3 py-2.5 text-left label text-slate-500">Source</th>
+              <th class="px-3 py-2.5 text-right label text-slate-500">Cost</th>
+            </tr></thead>
+            <tbody>
+              <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                <td class="px-3 py-2.5 text-slate-500">24 Aug 2026</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">BUDWISER PREMIUM</td>
+                <td class="px-3 py-2.5"><span class="badge-loss">Loss</span></td>
+                <td class="px-3 py-2.5 text-right font-medium text-slate-700">101 bottle</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">201</td>
+                <td class="px-3 py-2.5 text-slate-600 max-w-[100px] truncate">Expired</td>
+                <td class="px-3 py-2.5 text-slate-500">Physical Count</td>
+                <td class="px-3 py-2.5 text-right text-slate-300 italic">—</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                <td class="px-3 py-2.5 text-slate-500">22 Aug 2026</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">Rose Water</td>
+                <td class="px-3 py-2.5"><span class="badge-gain">Gain</span></td>
+                <td class="px-3 py-2.5 text-right font-medium text-slate-700">5 ltr</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">12</td>
+                <td class="px-3 py-2.5 text-slate-600">Stock correction</td>
+                <td class="px-3 py-2.5 text-slate-500">Physical Count</td>
+                <td class="px-3 py-2.5 text-right text-slate-700 font-medium">₹250</td>
+              </tr>
+              <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-3 py-2.5 text-slate-500">20 Aug 2026</td>
+                <td class="px-3 py-2.5 font-semibold text-slate-800">Cream Cheese</td>
+                <td class="px-3 py-2.5"><span class="badge-loss">Loss</span></td>
+                <td class="px-3 py-2.5 text-right font-medium text-slate-700">2.5 kg</td>
+                <td class="px-3 py-2.5 text-right text-slate-500">8</td>
+                <td class="px-3 py-2.5 text-slate-600 truncate">Spoiled</td>
+                <td class="px-3 py-2.5 text-slate-500">Physical Count</td>
+                <td class="px-3 py-2.5 text-right text-slate-300 italic">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Change callout -->
+        <div class="mt-3 p-2.5 bg-green-50 border border-green-200 rounded-lg">
+          <div class="text-xs font-semibold text-green-800">CR-153 changes on this view:</div>
+          <ul class="text-xs text-green-700 mt-1 space-y-0.5">
+            <li>+ Page tab bar ("Consumption" / <strong>Wastage</strong> active)</li>
+            <li>+ Wastage KPI strip (4 cards: Records · Loss · Gain · Net)</li>
+            <li>+ Inner sub-tab bar ("Wastage Log" active / Top Items)</li>
+            <li>+ Wastage Log table with Loss/Gain badges and "—" for zero cost</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Top Items preview -->
+<div class="max-w-[1400px] mx-auto mt-6">
+  <div class="text-center mb-3">
+    <span class="inline-block bg-slate-700 text-white text-xs font-bold px-4 py-1.5 rounded-full">AFTER — "Top Items" sub-tab active (same Wastage tab)</span>
+  </div>
+  <div class="bg-slate-50 rounded-2xl border-2 border-slate-400 p-5 max-w-2xl mx-auto">
+    <!-- Inner sub-tab bar - Top Items active -->
+    <div class="bg-slate-100 rounded-xl p-1 flex w-fit mb-4">
+      <button class="px-4 py-1.5 text-xs font-semibold text-slate-600 rounded-lg">Wastage Log</button>
+      <button class="px-4 py-1.5 text-xs font-semibold text-white bg-[#329937] rounded-lg shadow-sm">Top Items</button>
+    </div>
+    <!-- Top items table -->
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <table class="w-full text-xs">
+        <thead><tr class="bg-slate-50 border-b border-slate-200">
+          <th class="px-3 py-2.5 text-left label text-slate-500">#</th>
+          <th class="px-3 py-2.5 text-left label text-slate-500">Ingredient</th>
+          <th class="px-3 py-2.5 text-left label text-slate-500">Type</th>
+          <th class="px-3 py-2.5 text-right label text-slate-500">Events</th>
+          <th class="px-3 py-2.5 text-right label text-slate-500">Total Wasted</th>
+        </tr></thead>
+        <tbody>
+          <tr class="border-b border-orange-100 bg-orange-50/50 hover:bg-orange-50 transition-colors">
+            <td class="px-3 py-2.5 font-bold text-orange-500 text-sm">1</td>
+            <td class="px-3 py-2.5 font-bold text-slate-900">BUDWISER PREMIUM</td>
+            <td class="px-3 py-2.5 text-slate-500">Ingredient</td>
+            <td class="px-3 py-2.5 text-right text-slate-700 font-medium">1</td>
+            <td class="px-3 py-2.5 text-right font-bold text-red-600">101 bottle</td>
+          </tr>
+          <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="px-3 py-2.5 font-semibold text-slate-500">2</td>
+            <td class="px-3 py-2.5 font-semibold text-slate-800">Cream Cheese</td>
+            <td class="px-3 py-2.5 text-slate-500">Ingredient</td>
+            <td class="px-3 py-2.5 text-right text-slate-700">1</td>
+            <td class="px-3 py-2.5 text-right font-semibold text-slate-700">2.5 kg</td>
+          </tr>
+          <tr class="hover:bg-slate-50">
+            <td class="px-3 py-2.5 font-semibold text-slate-500">3</td>
+            <td class="px-3 py-2.5 font-semibold text-slate-800">Roasted Almonds</td>
+            <td class="px-3 py-2.5 text-slate-500">Ingredient</td>
+            <td class="px-3 py-2.5 text-right text-slate-700">1</td>
+            <td class="px-3 py-2.5 text-right font-semibold text-slate-700">800 gm</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<p class="text-center text-xs text-slate-400 mt-6 mb-4">Generated for CR-153 Gate 3 planning · ConsumptionReportPage.jsx · 3 files affected</p>
+</body>
+</html>

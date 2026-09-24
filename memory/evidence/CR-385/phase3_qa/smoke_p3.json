@@ -1,0 +1,193 @@
+{
+  "steps": [
+    {
+      "name": "post-login-landed",
+      "ok": true,
+      "detail": "https://core-frontend-live-1.preview.emergentagent.com/dashboard"
+    },
+    {
+      "name": "nav-fdv2",
+      "ok": true,
+      "detail": "https://core-frontend-live-1.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+    },
+    {
+      "name": "inhouse-balance-testids",
+      "ok": true,
+      "detail": "count=2"
+    },
+    {
+      "name": "inhouse-hk-btns-label",
+      "ok": true,
+      "detail": "['Request HK', 'Request HK']"
+    },
+    {
+      "name": "inhouse-bill-P4-gated",
+      "ok": true,
+      "detail": "[True, True]"
+    },
+    {
+      "name": "inhouse-extend-btns-enabled",
+      "ok": true,
+      "detail": "[False, False]"
+    },
+    {
+      "name": "dep-footer-text",
+      "ok": true,
+      "detail": "Balance = room ledger + room service + transferred F&B, rounded as on the bill (hover for the exact figure)."
+    },
+    {
+      "name": "dep-chips-4-present",
+      "ok": true,
+      "detail": "[{'t': 'fd-chip-departures-overdue', 'txt': 'Overdue 2'}, {'t': 'fd-chip-departures-today', 'txt': 'Today 0'}, {'t': 'fd-chip-departures-tomorrow', 'txt': 'Tomorrow 0'}, {'t': 'fd-chip-departures-upcoming', 'txt': 'Upcoming 0'}]"
+    },
+    {
+      "name": "rooms-tiles-count",
+      "ok": true,
+      "detail": "count=10"
+    },
+    {
+      "name": "rooms-action-extend-visible",
+      "ok": true,
+      "detail": "tile=fd-room-tile-8526"
+    },
+    {
+      "name": "rooms-extend-jumps-to-inhouse-extend-form",
+      "ok": true,
+      "detail": "on=true, formVisible=True"
+    },
+    {
+      "name": "dup-testids-extend-open",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "extend-form-testids-all-present",
+      "ok": false,
+      "detail": "[{'t': 'extend-current-nights', 'count': 0}]"
+    },
+    {
+      "name": "extend-confirm-disabled-initially",
+      "ok": true,
+      "detail": "missing=Missing: new check-out date, reason"
+    },
+    {
+      "name": "extend-bill-no-scroll-1366",
+      "ok": true,
+      "detail": "{'scrollHeight': 290, 'clientHeight': 290}"
+    },
+    {
+      "name": "console-errors-count",
+      "ok": true,
+      "detail": "errors=0; first=[]"
+    }
+  ],
+  "balances_info": {
+    "balances": [
+      {
+        "testid": "fd-row-174-balance",
+        "text": "\u20b91,159",
+        "title": null
+      },
+      {
+        "testid": "fd-row-155-balance",
+        "text": "\u20b91,177",
+        "title": "\u20b91,176.35 + \u20b90.65 round-off (as on the bill)"
+      }
+    ],
+    "loadings_now": 0,
+    "hkBtns": [
+      {
+        "testid": "fd-row-174-hk-btn",
+        "label": "Request HK",
+        "disabled": false
+      },
+      {
+        "testid": "fd-row-155-hk-btn",
+        "label": "Request HK",
+        "disabled": false
+      }
+    ],
+    "extBtns": [
+      {
+        "testid": "fd-row-174-extend-btn",
+        "disabled": false
+      },
+      {
+        "testid": "fd-row-155-extend-btn",
+        "disabled": false
+      }
+    ],
+    "billBtns": [
+      {
+        "testid": "fd-row-174-bill-btn",
+        "disabled": true
+      },
+      {
+        "testid": "fd-row-155-bill-btn",
+        "disabled": true
+      }
+    ]
+  },
+  "dep_chips": [
+    {
+      "t": "fd-chip-departures-overdue",
+      "txt": "Overdue 2"
+    },
+    {
+      "t": "fd-chip-departures-today",
+      "txt": "Today 0"
+    },
+    {
+      "t": "fd-chip-departures-tomorrow",
+      "txt": "Tomorrow 0"
+    },
+    {
+      "t": "fd-chip-departures-upcoming",
+      "txt": "Upcoming 0"
+    }
+  ],
+  "rooms_sample": [
+    {
+      "t": "fd-room-tile-8528",
+      "txt": "Housekeepingr1suite \u00b7 patal lokNeeds housekeepingSince 22 Sep, 21:57"
+    },
+    {
+      "t": "fd-room-tile-badge-8528",
+      "txt": "Housekeeping"
+    },
+    {
+      "t": "fd-room-tile-8526",
+      "txt": "Occupiedr2executive \u00b7 first  floorbkolMG-69-E2CD8B67-04B8-46BA-A999-B5C326E9B8C4"
+    },
+    {
+      "t": "fd-room-tile-badge-8526",
+      "txt": "Occupied"
+    },
+    {
+      "t": "fd-room-tile-8524",
+      "txt": "Occupiedr3suite \u00b7 3rd floorblpiMG-69-7B7B8D9F-C72D-46DE-AE90-6DDAAE8C4413Checked"
+    },
+    {
+      "t": "fd-room-tile-badge-8524",
+      "txt": "Occupied"
+    },
+    {
+      "t": "fd-room-tile-8525",
+      "txt": "Bookedr4suite \u00b7 2nd floorTest Guestbooking.com \u00b7 BDC966599329 Sep \u2013 1 Oct (arriv"
+    },
+    {
+      "t": "fd-room-tile-badge-8525",
+      "txt": "Booked"
+    },
+    {
+      "t": "fd-room-tile-8527",
+      "txt": "Availabler5suite \u00b7 ground floorReady"
+    },
+    {
+      "t": "fd-room-tile-badge-8527",
+      "txt": "Available"
+    }
+  ],
+  "console_errors": [],
+  "console_warnings_count": 4
+}

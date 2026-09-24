@@ -1,0 +1,136 @@
+{
+  "results": {
+    "initial": {
+      "toggle": true,
+      "cal": true,
+      "held": false
+    },
+    "after_toggle_click": {
+      "state": true,
+      "status": "Saved",
+      "save_disabled": true
+    },
+    "final": {
+      "toggle": true,
+      "cal": true,
+      "held": false
+    },
+    "M2-1_rows": [
+      {
+        "id": "15",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "TEST TEST\nSan1ce92d141430\n\t\u2014\tDirectPAY AT HOTEL\t3 Sep\t4 Sep\t1 night \u00b7 1A\t\u2014 \u00b7 executive\t\u20b95,400\tLATE \u00b7 SINCE 3 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "17",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "Loki Loki\nSan1eab3a969017\n\t\u2014\tDirectPAY AT HOTEL\t3 Sep\t4 Sep\t1 night \u00b7 1A\t\u2014 \u00b7 executive\t\u20b97,400\tLATE \u00b7 SINCE 3 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "21",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "poii poii\nSan110f43523659\n\t\u2014\tDirectPREPAID\t4 Sep\t5 Sep\t1 night \u00b7 1A\t\u2014 \u00b7 executive\t\u20b92,966.10\tLATE \u00b7 SINCE 4 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "18",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "boii\nMG-69-24CCA187-6DB6-4155-8747-7003AAA04332 \u00b7 SR \u25cf\n\t\u2022\u2022\u2022\u20221234\tDirectPREPAID\t5 Sep\t8 Sep\t3 nights \u00b7 1A\tr3 \u00b7 suite\t\u20b911.55\tLATE \u00b7 SINCE 5 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "7",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": false,
+        "hasNoShow": true,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "Test Guest\nBDC7497606\n\t\u2022\u2022\u2022\u20223210\tbooking.comPREPAID\t7 Sep\t9 Sep\t2 nights \u00b7 2A 2C\t\u2014 \u00b7 suite\t\u20b914,618.40\tLATE \u00b7 SINCE 7 SEP\tCheck In Modify No-Show"
+      },
+      {
+        "id": "13",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "Validation Guest\nMG-69-8859D21E-D077-45A7-97CB-00070C6DCF9C \u00b7 SR \u25cf\n\t\u2022\u2022\u2022\u20228899\tDirectPREPAID\t7 Sep\t9 Sep\t2 nights \u00b7 2A\t\u2014 \u00b7 executive\t\u20b95,250\tLATE \u00b7 SINCE 7 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "22",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "boki boki\nSan185aa3731454\n\t\u2014\tDirectPREPAID\t10 Sep\t11 Sep\t1 night \u00b7 1A\t\u2014 \u00b7 executive\t\u20b97,400\tLATE \u00b7 SINCE 10 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "23",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": false,
+        "hasNoShow": true,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "Test Guest\nBDC6263973\n\t\u2022\u2022\u2022\u20223210\tbooking.comPREPAID\t10 Sep\t12 Sep\t2 nights \u00b7 2A 2C\t\u2014 \u00b7 suite\t\u20b914,618.40\tLATE \u00b7 SINCE 10 SEP\tCheck In Modify No-Show"
+      },
+      {
+        "id": "54",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "saurav\nMG-69-1B9BF02A-2BB1-4096-8795-2D45E4C908EA\n\t\u2022\u2022\u2022\u20221111\tDirectPREPAID\t14 Sep\t24 Sep\t10 nights \u00b7 2A\tr2 \u00b7 executive\t\u20b91,050\tLATE \u00b7 SINCE 14 SEP\tCheck In Modify Cancel"
+      },
+      {
+        "id": "86",
+        "hasCheckin": true,
+        "hasModify": true,
+        "hasCancel": true,
+        "hasNoShow": false,
+        "xor": true,
+        "checkinDisabled": true,
+        "checkinTitle": "Available in Phase 2",
+        "rowText": "test booking\nMG-69-3DF1E9DD-93D2-4DAB-B899-D1467831D5D9\n\t\u2022\u2022\u2022\u20226612\tDirectPAY AT HOTEL\t16 Sep\t18 Sep\t2 nights \u00b7 1A\tr3 \u00b7 suite\t\u20b91,050\tLATE \u00b7 SINCE 16 SEP\tCheck In Modify Cancel"
+      }
+    ],
+    "M2-1_row_count": 10,
+    "M2-1_all_have_checkin_and_modify": true,
+    "M2-1_xor_cancel_noshow_ok": true,
+    "M2-1_checkin_disabled_ok": true
+  },
+  "writes": []
+}
