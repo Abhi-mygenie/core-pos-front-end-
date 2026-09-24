@@ -24625,7 +24625,7 @@
       "id": "BUG-395",
       "title": "buildBillPrintPayload missing 4 delivery address sub-fields (house/floor/city/state)",
       "type": "BUG",
-      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys \u2014 not a regression. Awaiting Gate 6 Owner Smoke.",
+      "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys \u2014 not a regression. Awaiting Gate 6 Owner Smoke. \u00b7 2026-09-24 INVESTIGATION (Role 6, backend re-request for the same 4 keys): already implemented + LIVE on prod pos.mygenie.online build main.1f7d79fb.js (read-only bundle probe); only the KOT/else-branch payload in orderService.js lacks deliveryCust* keys \u2014 backend/owner to confirm whether KOT needs them (planning-skip eligible, ~12 lines, 1 file, non-hotspot). Retroactive closure candidate. Report BUG-395_INVESTIGATION_REPORT_2026_09_24_TEMP_STORE_KEYS.md",
       "sprint_key": "pos_7_0",
       "priority": "P2",
       "risk": "MEDIUM",

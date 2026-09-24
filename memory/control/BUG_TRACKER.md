@@ -99,7 +99,7 @@
 
 | Bug ID | Title | Priority | Risk | Status | Notes |
 |---|---|---|---|---|---|
-| **BUG-395** | `buildBillPrintPayload` missing 4 delivery address sub-fields: `deliveryCustHouse`, `deliveryCustFloor`, `deliveryCustCity`, `deliveryCustState` | **P2** | **MEDIUM** | **IMPLEMENTED — Gate 5a. QA PENDING** | Additive. 4 keys added to `orderTransform.js:2194-2205`. Follows same pattern as `deliveryCustAddress`/`Pincode`/`Phone`. Source: backend brief 2026-09-10. Retroactively registered after gate violation (implemented without Gate 4 GO). Owner approved retroactively 2026-09-10. EXIT GATE 5/5 PASS. Related: BUG-144, BUG-369. QA handover: `handover/QA_HANDOVER_BUG395_2026_09_10.md` |
+| **BUG-395** | `buildBillPrintPayload` missing 4 delivery address sub-fields: `deliveryCustHouse`, `deliveryCustFloor`, `deliveryCustCity`, `deliveryCustState` | **P2** | **MEDIUM** | **IMPLEMENTED — Gate 5a. QA PENDING** · **2026-09-24 INVESTIGATION:** backend re-requested the same 4 keys → already implemented and live on prod (`main.1f7d79fb.js`); only the KOT payload (`orderService.js` else-branch) has no `deliveryCust*` keys — awaiting backend/owner answer; retroactive closure candidate. Report `BUG-395_INVESTIGATION_REPORT_2026_09_24_TEMP_STORE_KEYS.md` | Additive. 4 keys added to `orderTransform.js:2194-2205`. Follows same pattern as `deliveryCustAddress`/`Pincode`/`Phone`. Source: backend brief 2026-09-10. Retroactively registered after gate violation (implemented without Gate 4 GO). Owner approved retroactively 2026-09-10. EXIT GATE 5/5 PASS. Related: BUG-144, BUG-369. QA handover: `handover/QA_HANDOVER_BUG395_2026_09_10.md` |
 
 ---
 
