@@ -1,0 +1,15 @@
+{
+  "checkin_bill_1366": {
+    "sh": 402,
+    "ch": 402,
+    "eq": true
+  },
+  "duplicates": [],
+  "bill": {
+    "total": "\u20b937,170",
+    "sgst": "\u20b92,835",
+    "cgst": "\u20b92,835",
+    "paid": "\u20b91,000",
+    "bal": "\u20b936,170"
+  }
+}
