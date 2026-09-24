@@ -1,0 +1,262 @@
+{
+ "ts": "2026-09-23T11:57:22.679413+00:00",
+ "legs": {
+  "A": {
+   "room": 8525,
+   "board_before": {
+    "r3": "hk",
+    "r4": "hk",
+    "r2": "hk",
+    "r5": "available",
+    "r1": "occupied_hk"
+   },
+   "direct_http": 201,
+   "res_id": 259,
+   "booking_id": "MG-69-9680B870-C1AF-4101-B2E7-E57759A5A5F8",
+   "direct_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 0,
+    "balance_due": 37170
+   },
+   "checkin_http": 200,
+   "order_id": 1232677,
+   "resp_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 500,
+    "balance_due": 36670
+   },
+   "lr_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 500,
+    "balance_due": 36670
+   },
+   "lr_status": "in_house",
+   "folio_advance": "500.00",
+   "folio_mode": "Card",
+   "ledger": [
+    [
+     null,
+     "Card",
+     null
+    ]
+   ],
+   "expected_advance_cumulative": 500,
+   "PASS": true
+  },
+  "B": {
+   "room": 8527,
+   "board_before": {
+    "r3": "hk",
+    "r4": "hk",
+    "r2": "hk",
+    "r5": "available",
+    "r1": "occupied_hk"
+   },
+   "direct_http": 201,
+   "res_id": 260,
+   "booking_id": "MG-69-34DC815A-6363-4F94-B8C6-F572D1A7962A",
+   "direct_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1000,
+    "balance_due": 36170
+   },
+   "checkin_http": 200,
+   "order_id": 1232678,
+   "resp_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1000,
+    "balance_due": 36170
+   },
+   "lr_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1000,
+    "balance_due": 36170
+   },
+   "lr_status": "in_house",
+   "folio_advance": "1000.00",
+   "folio_mode": null,
+   "ledger": [
+    [
+     null,
+     "upi",
+     null
+    ]
+   ],
+   "expected_advance_cumulative": 1000,
+   "PASS": true
+  },
+  "C": {
+   "room": 8525,
+   "board_before": {
+    "r3": "hk",
+    "r4": "hk",
+    "r2": "hk",
+    "r5": "hk",
+    "r1": "occupied_hk"
+   },
+   "direct_http": 201,
+   "res_id": 261,
+   "booking_id": "MG-69-C7DB66DE-FEBE-44C2-BADF-BF0E5AAF40AD",
+   "direct_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1000,
+    "balance_due": 36170
+   },
+   "checkin_http": 200,
+   "order_id": 1232679,
+   "resp_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1500,
+    "balance_due": 35670
+   },
+   "lr_charge": {
+    "rate_per_night": 31500,
+    "nights": 1,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 31500,
+    "sgst": 2835,
+    "cgst": 2835,
+    "total_with_gst": 37170,
+    "prepaid_amount": 0,
+    "advance_payment": 1500,
+    "balance_due": 35670
+   },
+   "lr_status": "in_house",
+   "folio_advance": "1500.00",
+   "folio_mode": "UPI",
+   "ledger": [
+    [
+     null,
+     "upi",
+     null
+    ],
+    [
+     null,
+     "UPI",
+     null
+    ]
+   ],
+   "expected_advance_cumulative": 1500,
+   "PASS": true
+  }
+ },
+ "cleanup": [
+  {
+   "res_id": 259,
+   "order_id": 1232677,
+   "tab_http": 200,
+   "msg": "Room payment received via TAB",
+   "lr_status_after": "departed",
+   "balance_due_after": 0
+  },
+  {
+   "res_id": 260,
+   "order_id": 1232678,
+   "tab_http": 200,
+   "msg": "Room payment received via TAB",
+   "lr_status_after": "departed",
+   "balance_due_after": 0
+  },
+  {
+   "res_id": 261,
+   "order_id": 1232679,
+   "tab_http": 200,
+   "msg": "Room payment received via TAB",
+   "lr_status_after": "departed",
+   "balance_due_after": 0
+  }
+ ],
+ "forbidden_key_hits": [],
+ "settings_before": {
+  "allow_early_checkin": false,
+  "extend_rate_mode": "calendar",
+  "auto_print_checkin_receipt": false
+ },
+ "board_after": {
+  "r3": "hk",
+  "r4": "hk",
+  "r2": "hk",
+  "r5": "hk",
+  "r1": "occupied_hk"
+ },
+ "settings_after": {
+  "allow_early_checkin": false,
+  "extend_rate_mode": "calendar",
+  "auto_print_checkin_receipt": false
+ },
+ "ALL_PASS": true
+}

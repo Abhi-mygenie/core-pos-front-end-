@@ -1,0 +1,105 @@
+{
+  "late": [
+    {
+      "id": "15",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "17",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "21",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "18",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "7",
+      "source": "booking.com",
+      "hasCancel": false,
+      "hasNoshow": true,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "13",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "22",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "23",
+      "source": "booking.com",
+      "hasCancel": false,
+      "hasNoshow": true,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "54",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    },
+    {
+      "id": "86",
+      "source": "Direct",
+      "hasCancel": true,
+      "hasNoshow": false,
+      "modifyDisabled": false,
+      "checkinDisabled": true,
+      "checkinTitle": "Available in Phase 2"
+    }
+  ],
+  "today": [],
+  "violations": [],
+  "ota_row": {
+    "id": "7",
+    "source": "booking.com",
+    "hasCancel": false,
+    "hasNoshow": true,
+    "modifyDisabled": false,
+    "checkinDisabled": true,
+    "checkinTitle": "Available in Phase 2"
+  }
+}

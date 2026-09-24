@@ -1,0 +1,6 @@
+{
+ "http": 422,
+ "body": {
+  "error": "extend_rate_mode must be calendar or held"
+ }
+}
