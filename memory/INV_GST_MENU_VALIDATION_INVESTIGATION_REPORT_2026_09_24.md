@@ -1,6 +1,10 @@
-# INV — GST architecture, `gst_status` key and menu-validation flow — Investigation Report
+# INV — GST architecture, `gst_status` key and menu-validation flow — FINAL Investigation Report
 
+**Status:** **INVESTIGATION GATE CLOSED 2026-09-24** (owner instruction "close the investigation gate"). Findings frozen; follow-up happens through the registered items only (BUG-454 · BUG-455 · CR-387 · backend brief BQ-387-01..05). Any new fact discovered later must be attached to one of those IDs, not to this report.
 **Date:** 2026-09-24 · **Role:** INVESTIGATION (ALPHA v0.7) → INTAKE for discovered items · **Steps used:** 10/10 · **Risk label:** CRITICAL (tax / money)
+
+## 0. One-paragraph conclusion
+The outlet-level GST switch (`gst_status`) already exists and is already read by the frontend, but it is only honoured in two places (bulk-editor validation and the collect-bill display). It is **not** honoured where money is actually written — the order payload (BUG-454, P0) — nor in the single-item form (BUG-455), nor by the Aggregator "always 5 %" rule, which additionally cancels the owner's packaged-item exemption (CR-387). There is no per-item GST-applicable flag and no packaging-GST field in any API; the settings wizard still uses the legacy `basic.gst` object rather than the new flat `basic.gst_status`. Three items are registered; five backend questions and four owner decisions are open; nothing was coded.
 **Code:** `21implement` @ `a4c9196f` · **Evidence:** `/app/memory/evidence/INV-GST-KEY-2026-09-24/` (profile + settings-list + products sample for owner1@thegoankitchen.com and owner@palmhouse.com; tokens masked)
 **Legend:** ✅ CONFIRMED (code or live API) · ⚠️ ASSUMPTION (needs backend or owner confirmation)
 
@@ -113,3 +117,15 @@ Bill print
 
 ## 10. Retroactive candidates
 NONE (gst_status consumption is already registered as CR-036-FU-03).
+
+## 11. Gate closure record
+| Item | State at closure |
+|---|---|
+| Hypotheses | H-A "backend key not consumed" → PARTIALLY ELIMINATED (profile key consumed; settings flat key not) · H-B "GST OFF still produces GST" → CONFIRMED at payload level (code) · H-C "GST vs packaging rules clash" → CONFIRMED (X1–X4) |
+| Live reproduction | NOT performed for BUG-454 (both tenants GST ON; toggling is a financial mutation — needs sandbox + owner OK). Confidence for BUG-454 = MEDIUM (traced, not reproduced) → Planning must include a validation step. |
+| Registered | BUG-454 (P0/CRITICAL), BUG-455 (P2/MEDIUM), CR-387 (P1/HIGH) — all `INTAKE — GATE 1` in registry.json (715 items), BUG_TRACKER, CR_REGISTRY |
+| Backend brief | `backend_briefs/BACKEND_BRIEF_CR-387_2026-09-24.md` — BQ-387-01..05 OPEN |
+| Owner decisions | OD-454-01, OD-455-01, OD-387-01..04 OPEN |
+| Evidence | `evidence/INV-GST-KEY-2026-09-24/` (5 JSON files, tokens masked) |
+| Code changed | NONE · `git status frontend/src` clean |
+| Next role | PLANNING (BUG-454 first) · INTAKE follow-up when BQ/OD answers arrive (CR-387, BUG-455) |

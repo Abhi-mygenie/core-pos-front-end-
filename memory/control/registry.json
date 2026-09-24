@@ -27633,7 +27633,10 @@
         "CR-387"
       ],
       "sprint_key": null,
-      "created_at": "2026-09-24"
+      "created_at": "2026-09-24",
+      "investigation_status": "INVESTIGATION GATE CLOSED 2026-09-24",
+      "handover": "handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md",
+      "confidence": "MEDIUM — code-traced, not live-reproduced; plan must include validation step"
     },
     {
       "id": "BUG-455",
@@ -27661,7 +27664,9 @@
         "CR-387"
       ],
       "sprint_key": null,
-      "created_at": "2026-09-24"
+      "created_at": "2026-09-24",
+      "investigation_status": "INVESTIGATION GATE CLOSED 2026-09-24",
+      "handover": "handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md"
     },
     {
       "id": "CR-387",
@@ -27700,7 +27705,9 @@
         "BUG-455"
       ],
       "sprint_key": null,
-      "created_at": "2026-09-24"
+      "created_at": "2026-09-24",
+      "investigation_status": "INVESTIGATION GATE CLOSED 2026-09-24",
+      "handover": "handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md"
     }
   ],
   "meta": {

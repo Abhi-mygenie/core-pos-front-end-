@@ -1,6 +1,6 @@
 # BUG-455 — Single-item ProductForm lacks the tax-required rule (CR-036-FU-03 applies to BulkEditor only)
 
-**ID:** BUG-455 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 · **Type:** BUG · **Priority:** P2 · **Risk:** MEDIUM (menu validation, non-financial at save time) · **Sprint:** unassigned
+**ID:** BUG-455 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 (investigation gate CLOSED 2026-09-24 — see `handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md`) · **Type:** BUG · **Priority:** P2 · **Risk:** MEDIUM (menu validation, non-financial at save time) · **Sprint:** unassigned
 **Source:** AGENT-DISCOVERED (INV report §4 clash X3) · **Confidence:** CONFIRMED in code
 
 ## What the issue is

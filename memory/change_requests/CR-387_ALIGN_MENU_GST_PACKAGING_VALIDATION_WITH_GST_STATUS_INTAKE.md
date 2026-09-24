@@ -1,6 +1,6 @@
 # CR-387 — Align menu GST / packaging validation with outlet `gst_status`
 
-**ID:** CR-387 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 — awaiting backend answers + owner decisions · **Type:** CR (rule alignment) · **Priority:** P1 · **Risk:** HIGH (tax rules, API contract) · **Sprint:** unassigned
+**ID:** CR-387 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 (investigation gate CLOSED 2026-09-24 — see `handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md`) — awaiting backend answers + owner decisions · **Type:** CR (rule alignment) · **Priority:** P1 · **Risk:** HIGH (tax rules, API contract) · **Sprint:** unassigned
 **Source:** OWNER-REQUESTED investigation + AGENT-DISCOVERED clashes (INV report §4–§5) · **Confidence:** CONFIRMED (code) for X1/X2/X4; ⚠️ backend behaviour unverified
 
 ## Scope

@@ -1,6 +1,6 @@
 # BUG-454 — Order payload GST not gated by `gst_status` (BUG-336 gap)
 
-**ID:** BUG-454 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 · **Type:** BUG · **Priority:** P0 · **Risk:** CRITICAL (tax/money) · **Sprint:** unassigned (owner to route)
+**ID:** BUG-454 · **Registered:** 2026-09-24 · **Status:** INTAKE — GATE 1 (investigation gate CLOSED 2026-09-24 — see `handover/SESSION_HANDOVER_2026_09_24_GST_INVESTIGATION_CLOSED.md`) · **Type:** BUG · **Priority:** P0 · **Risk:** CRITICAL (tax/money) · **Sprint:** unassigned (owner to route)
 **Source:** AGENT-DISCOVERED (INV `INV_GST_MENU_VALIDATION_INVESTIGATION_REPORT_2026_09_24.md` §2 BREAK POINT 1) · **Confidence:** SUSPECTED (code-traced; not reproduced live — would require placing an order on a GST-disabled tenant)
 
 ## What the issue is
