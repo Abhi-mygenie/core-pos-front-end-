@@ -11,7 +11,12 @@
 - `/app/memory/evidence/BUG-408/probes_2026_09_24/` (tokens masked)
 - `/app/memory/evidence/INV-LAYOUT-DOUBLE-OFFSET-2026-09-24/owner_screenshot_pl_report.png`
 
+## 3rd investigation — caching end to end
+- `/app/memory/INV_CACHING_END_TO_END_INVESTIGATION_REPORT_2026_09_24.md` — 9/10 steps. GAP-C1 (HIGH): `crmReportService` cache has no RID in key and is never cleared on logout/401 → cross-tenant CRM data risk on Customer Intelligence (Beta). GAP-C2 (MEDIUM): pos-uat `index.html` has no `Cache-Control` → stale bundle after deploy. No HTTP/CDN/SW caching of API. react-query + swr are dead deps.
+- Evidence `/app/memory/evidence/INV-CACHING-2026-09-24/`.
+
 ## Owner decisions pending
+0. Caching: register GAP-C1 as BUG (HIGH, Gate 2/3) and GAP-C2 as ops/config brief? Decide O1 (Refresh scope) and O2 (device-level `mygenie_*` keys).
 1. BUG-408: forward G1–G4 to backend (append to `backend_briefs/BACKEND_BRIEF_BUG408_ROOM_REVENUE_SPLIT_2026_09_15.md`)? Hide "Check-In Revenue" card until G2 semantics confirmed?
 2. Layout: register as one BUG (2 files, LOW/MEDIUM) → Fast Lane per file or Gate 2/3?
 
