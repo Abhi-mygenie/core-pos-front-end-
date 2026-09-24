@@ -230,7 +230,6 @@ export default function RecipeFormPanel({ recipe, recipeType, onBack }) {
 
   const inputCls = "h-9 text-sm border-slate-200 focus:border-orange-400 focus:ring-1 focus:ring-orange-100 rounded-md bg-white";
   const selectCls = "h-9 text-sm border border-slate-200 focus:border-orange-400 rounded-md bg-white w-full px-2 outline-none";
-
   if (loading) return <div className="py-12 text-center text-sm text-slate-400">Loading form...</div>;
 
   return (
