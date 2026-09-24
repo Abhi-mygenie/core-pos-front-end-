@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CR-385 M2 legacy ArrivalsPage untouched (overlay dialogs, no inline prop) NoShowDialog + CancelBookingDialog usages snapshot; neither passes inline 1`] = `
+Object {
+  "cancel": "<CancelBookingDialog
+        target={cancelTarget}
+        onClose={() => setCancelTarget(null)}
+        onSuccess={() => { setCancelTarget(null); load(); getCancelledReservations().then(setCancelledRows); }}
+      />",
+  "noShow": "<NoShowDialog
+        target={noShowTarget}
+        onClose={() => setNoShowTarget(null)}
+        onSuccess={() => {
+          load();
+          toast.success('No-Show recorded. Room inventory released.');
+        }}
+      />",
+}
+`;
+
+exports[`CR-385 M7 updateFrontDeskRules multipart body: single "data" field = {"basic":{allow_early_checkin, extend_rate_mode}} (snapshot) 1`] = `
+Array [
+  Array [
+    "data",
+    Object {
+      "basic": Object {
+        "allow_early_checkin": true,
+        "extend_rate_mode": "held",
+      },
+    },
+  ],
+]
+`;

@@ -1,0 +1,33 @@
+/* CR-385 M0 — Front Desk workstation host styles (frontdesk.css). CR-385 M6 adds the .frontdesk-bill host rules (Q6 = host CSS, D57/M6-09). */
+.fd-page { --fd-orange: #F26B33; --fd-green: #329937; --fd-amber: #D97706; --fd-red: #EF4444; --fd-mu: #767676; --fd-line: #E5E5E5; }
+
+/* M0-03 / D57: sticky <th> needs a scroll container WITHOUT top padding */
+.fd-table-scroll { overflow: auto; padding-top: 0; max-height: calc(100vh - 330px); min-height: 160px; }
+.fd-sticky-th { position: sticky; top: 0; z-index: 10; background: #fff; }
+
+.fd-row { cursor: pointer; transition: background-color 120ms ease; }
+.fd-row:hover { background-color: #FAFAFA; }
+.fd-row:focus-visible { outline: 2px solid var(--fd-orange); outline-offset: -2px; }
+.fd-row[aria-expanded="true"] { background-color: #FFF7F3; }
+
+.fd-tile { transition: transform 120ms ease, box-shadow 120ms ease; }
+.fd-tile:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+.fd-tile[aria-selected="true"] { box-shadow: 0 0 0 2px var(--fd-orange); }
+
+.fd-expansion { animation: fd-reveal 160ms ease-out; }
+@keyframes fd-reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.fd-chip { transition: background-color 120ms ease, color 120ms ease; }
+.fd-chip:focus-visible, .fd-btn:focus-visible, .fd-tab:focus-visible { outline: 2px solid var(--fd-orange); outline-offset: 2px; }
+
+/* CR-385 M6 — Bill host (Q6 host CSS, D57/M6-09): hide the panel's three room-mode section toggles ONLY inside the Front Desk bill box; /dashboard keeps them. */
+.frontdesk-bill [data-testid="checkout-room-booking-toggle"],
+.frontdesk-bill [data-testid="checkout-transferred-toggle"],
+.frontdesk-bill [data-testid="checkout-room-service-toggle"] { display: none; }
+.frontdesk-bill { width: 440px; height: 560px; overflow: hidden; }
+.fd-bill-grid { display: grid; grid-template-columns: 1fr 440px; height: 560px; }
+.bill-left { max-height: 560px; }
+/* CR-385 BUG-448 / OD-385-21 — TAB block hidden ONLY when the host prefilled a valid name + 10-digit phone (D47-c: no account field for the guest's TAB). */
+.frontdesk-bill.fd-bill-tab-prefilled [data-testid="tab-customer-section"] { display: none; }
+/* CR-385 D88 / Phase 4.5b — Split tile hidden ONLY inside the Front Desk bill (Split → FU-385-D); /dashboard keeps it. */
+.frontdesk-bill [data-testid="payment-split-btn"] { display: none; }
