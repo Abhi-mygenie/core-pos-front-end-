@@ -11,6 +11,7 @@ import * as categoryService from '../api/services/categoryService';
 import * as productService from '../api/services/productService';
 import * as tableService from '../api/services/tableService';
 import * as orderService from '../api/services/orderService';
+import { PAGINATION } from '../api/constants'; // BUG-451
 
 export const useRefreshAllData = () => {
   const { setCategories, setProducts } = useMenu();
@@ -26,7 +27,7 @@ export const useRefreshAllData = () => {
     // Step B: Categories + Products in parallel
     const [catResult, prodResult] = await Promise.all([
       categoryService.getCategories(),
-      productService.getProducts({ limit: 500, offset: 1, type: 'all' }),
+      productService.getProducts({ limit: PAGINATION.DEFAULT_LIMIT, offset: 1, type: 'all' }), // BUG-451
     ]);
 
     // Cross-calculate item counts (same pattern as LoadingPage)

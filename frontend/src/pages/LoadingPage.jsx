@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { COLORS, GENIE_LOGO_URL } from "../constants";
 import { useToast } from "../hooks/use-toast";
-import { API_LOADING_ORDER, LOADING_STATES } from "../api/constants";
+import { API_LOADING_ORDER, LOADING_STATES, PAGINATION } from "../api/constants"; // BUG-451
 import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders, useStations } from "../contexts";
 import * as profileService from "../api/services/profileService";
 import { setCrmRestaurantId } from "../api/crmAxios";
@@ -419,7 +419,7 @@ const LoadingPage = () => {
     const t0 = Date.now();
     updateStatus('products', LOADING_STATES.LOADING, null, 0, 0, { startedAt: t0 });
     try {
-      const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
+      const productsResponse = await productService.getProducts({ limit: PAGINATION.DEFAULT_LIMIT, offset: 1, type: 'all' }); // BUG-451
       if (ctrl.aborted) return;
       data.products = productsResponse.products;
       const loadedCount = data.products?.length || 0;

@@ -461,7 +461,7 @@ export const API_LOADING_ORDER = [
 // DEFAULT PAGINATION
 // =============================================================================
 export const PAGINATION = {
-  DEFAULT_LIMIT: 100, // Load all for caching
+  DEFAULT_LIMIT: 2000, // BUG-451: single-page full menu load; backend probed OK up to 5000 (2026-09-24)
   DEFAULT_OFFSET: 1,
   PRODUCTS_TYPE: 'all',
 };

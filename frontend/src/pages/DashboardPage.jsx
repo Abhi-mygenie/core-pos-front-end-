@@ -21,6 +21,7 @@ import CancelOrderModal from "../components/order-entry/CancelOrderModal";
 // BUG-167: useSocketEvents moved to AppSocketManager — removed import
 import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
+import soundManager from "../utils/soundManager"; // BUG-453
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
 import { updateOrderStatus, confirmOrder, completePrepaidOrder } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
@@ -1278,6 +1279,7 @@ const DashboardPage = () => {
 
   // --- Handlers ---
   const toggleSnooze = (orderId) => {
+    soundManager.toggleOrderMute(String(orderId)); // BUG-453 Fix B: audio mute follows the visual snooze toggle (OD-453-03)
     setSnoozedOrders(prev => {
       const newSet = new Set(prev);
       if (newSet.has(orderId)) {

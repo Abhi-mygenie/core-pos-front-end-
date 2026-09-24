@@ -24,7 +24,10 @@
 //     handleSnoozeClick (CR SNOOZE_SOUND_STOP_AND_DURATION, Jan-2026 —
 //     owner override of the original "NO soundManager import" rule). NO
 //     `soundManager.play(...)`. NO `soundManager.setEnabled(...)`. NO
-//     global mute. NO per-order mute. NO future-sound suppression.
+//     global mute here. Per-order mute EXISTS since BUG-453 (owner override
+//     2026-09-23, OD-453-02/03/04) but lives in soundManager via
+//     DashboardPage.toggleSnooze — this file still calls ONLY stop() +
+//     onToggleSnooze. NO direct mute-registry calls from here.
 //   - NO NotificationContext import. Pop-out remains a silent layer for
 //     the FCM-driven audio path; existing chime pipeline untouched.
 //   - NO direct service / API / socket call. Every action goes through
@@ -46,7 +49,8 @@ import { COLORS } from '../../constants';
 // CR SNOOZE_SOUND_STOP_AND_DURATION (Jan-2026): Snooze now also stops the
 // in-progress local chime. The original anti-rule above is overridden by
 // owner decision 2026-01-16. Use ONLY soundManager.stop() — no setEnabled,
-// no play, no global / per-order mute.
+// no play, no global mute. Per-order mute is BUG-453 (soundManager registry,
+// toggled by DashboardPage.toggleSnooze), never called directly from here.
 import soundManager from '../../utils/soundManager';
 
 // BUG-122: Only web-origin orders trigger the popup.

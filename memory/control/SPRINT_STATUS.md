@@ -1,7 +1,7 @@
 # Layer 6 — Sprint Status Board
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-15 (CR-047 AGENT_PROMPT_ALPHA v0.6 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
+**Last Updated:** 2026-09-24 (sep_bug_closure — **WAVE 1 IMPLEMENTED Gate 5A**, commit `3783ee8`, testing_agent iteration_1 PASS; owner manual smoke pending; Wave 2 not started) · 2026-02 (sep_bug_closure — Gate 3 CLOSED, B0 PASS for BUG-453 real FCM key `data.orderid`; VD-8 deferred to Wave 2; Gate 4 OPEN awaiting Wave 1 consolidated diff GO; no source code changed) · Prior: 2026-09-24 (Gate 2 CLOSED) · (pos_pms_2 — CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off) · 2026-06-15 (CR-047 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
 
 ---
 
@@ -316,3 +316,24 @@
 - CR-132 S1 review: `handover/SESSION_HANDOVER_2026_08_09_CR132_DESIGN_REVIEW.md`
 - CR-132 comparison pages: `handover/SESSION_HANDOVER_2026_08_09_CR132_COMPARISON_PAGES.md`
 - CR-133 amendment: `handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md`
+
+---
+
+## sep_bug_closure — Sept bug closure (BUG-451 · BUG-452 · BUG-453 · CR-386) — WAVE 1 IMPLEMENTED 2026-09-24 (Gate 5A) · Wave 2 pending
+
+| Item | Status |
+|---|---|
+| **BUG-451** | **GATE 5A IMPLEMENTED 2026-09-24** (commit 3783ee8; testing_agent PASS; `grep 'limit: 500' src/` = 0; owner smoke VC-3..8 pending) — limit 2000 via `PAGINATION.DEFAULT_LIMIT` constant, delete dead `getAllProducts()`; backend probe DONE (`evidence/BUG-451/`) |
+| **BUG-452** | GATE 3 CLOSED — Option B always clear, **S1 remount** via `orderEntryResetNonce`, silent clear; BUG-334 annotated REVERSED. **VD-8 DEFERRED to Wave 2 Gate 4** (owner 2026-02) |
+| **BUG-453** | **GATE 5A IMPLEMENTED 2026-09-24** (commit 3783ee8; 4/4 unit tests; testing_agent PASS; owner smoke VB-3..11 pending) — Fix A race guards + Fix B B1 mute registry; **mute = sound + toast** (OD-453-04). **B0 PASS 2026-02**: real FCM key is `data.orderid` (lowercase), string value; evidence `memory/evidence/BUG-453/B0_fcm_payload_mapping_2026_02.md`; plan B-5 corrected to read `String(data.orderid \|\| data.order_id \|\| data.orderId \|\| '')` |
+| **CR-386** | **GATE 5A IMPLEMENTED 2026-09-24** (commit 3783ee8; manifest/PNGs served 200 on preview; owner smoke VA-3..5 + re-install shortcut pending) — manifest + 3 PNGs + 2 head links; no open ODs |
+| Gate 4/5 | **Wave 1 Gate 4 GO 2026-09-24 (owner verbatim) → IMPLEMENTED → testing_agent PASS (`/app/test_reports/iteration_1.json`) → Gate 5A.** Owner manual smoke → QA PASS → CLOSED per item. Then Wave 2 Gate 4 (BUG-452 diff + VD-8 A/B/C decision). Prior: Gate 3 CLOSED 2026-02 (owner "close gate 3") · B0 PASS. PLAN `plans/SEP_BUG_CLOSURE_CONSOLIDATED_GATE3_IMPLEMENTATION_PLAN.md`. Wave 1 (CR-386 + BUG-453 + BUG-451) awaits **consolidated diff preview → owner "Gate 4 GO"** → implementation. Wave 2 (BUG-452) has its own separate Gate 4 after Wave 1 QA; **VD-8 (modal on remount) deferred until then**. NO source code changed this session. |
+
+## pos_pms_2 — PMS Front Desk (CR-385) — Gate 5 closing
+
+| Item | Status |
+|---|---|
+| **CR-385** | **CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off** (Role 4 `test_reports/QA_REPORT_2026_09_24_CR385_P5_ROLE4.md` 34/34 PASS; guards 6/6; zero code changes). Final line is written in §5.8 only after the owner’s verbatim words: "CR-385 CLOSED <date> — Gate 5 closed; FU-385-C: <owner words>; FU-385-D: <owner words>". |
+| FU-385-C | PLANNED — separate CR after CR-385 closes (owner 2026-09-23 verbatim on record in CR_REGISTRY) |
+| FU-385-D | PLANNED — separate follow-up CR; D88 stays; OG-PMS-048 OPEN pending FU-385-D |
+

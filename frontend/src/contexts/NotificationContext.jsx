@@ -128,6 +128,14 @@ export const NotificationProvider = ({ children }) => {
     console.log('[Notification] Extracted - title:', title, '| body:', body);
     console.log('[Notification] Sound - from payload:', soundKey, '| resolved:', resolvedSound);
 
+    // BUG-453 Fix B (OD-453-04): muted order → no sound, no banner/list entry.
+    // Placed AFTER BUG-034 dedup so dedup refs still update. Real FCM key is data.orderid (B0 evidence 2026-02).
+    const notifOrderId = String(data.orderid || data.order_id || data.orderId || '');
+    if (notifOrderId && soundManager.isOrderMuted(notifOrderId)) {
+      console.log('[Notification] BUG-453 muted order', notifOrderId, '— sound + toast suppressed');
+      return;
+    }
+
     // Play sound (SoundManager handles silent, unknown keys, etc.)
     if (resolvedSound) {
       console.log('[Notification] Playing sound:', resolvedSound);
@@ -193,7 +201,7 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!isAuthenticated && initializedRef.current) {
       initializedRef.current = false;
-      soundManager.stop();
+      soundManager.stop(); soundManager.clearMutes(); // BUG-453: fresh mute state on next login
       setNotifications([]);
     }
   }, [isAuthenticated]);

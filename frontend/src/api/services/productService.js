@@ -20,14 +20,7 @@ export const getProducts = async (options = {}) => {
   return fromAPI.productListResponse(response.data);
 };
 
-/**
- * Fetch all products (load all pages for caching)
- * @returns {Promise<Array>} - All products
- */
-export const getAllProducts = async () => {
-  const result = await getProducts({ limit: 500, offset: 1, type: 'all' });
-  return result.products;
-};
+// BUG-451: dead getAllProducts() removed (0 callers)
 
 /**
  * Get product by ID from cached list

@@ -24,6 +24,7 @@ class SoundManager {
     this.currentAudio = null;
     this.audioCache = {};
     this.isEnabled = true;
+    this.mutedOrders = new Set(); // BUG-453 Fix B: per-order manual mute (OD-453-03)
   }
 
   /**
@@ -73,13 +74,13 @@ class SoundManager {
 
     audio.addEventListener('error', (e) => {
       console.error('[SoundManager] Playback error for', soundKey, e);
-      this.currentAudio = null;
+      if (this.currentAudio === audio) this.currentAudio = null; // BUG-453 Fix A: don't wipe a newer audio's reference
     });
 
     this.currentAudio = audio;
     audio.play().catch((err) => {
       console.warn('[SoundManager] Play blocked:', err.message);
-      this.currentAudio = null;
+      if (this.currentAudio === audio) this.currentAudio = null; // BUG-453 Fix A
     });
   }
 
@@ -93,6 +94,17 @@ class SoundManager {
       this.currentAudio = null;
     }
   }
+
+  // BUG-453 Fix B — per-order mute registry (OD-453-03/04). Keys are String(orderId).
+  muteOrder(id) { this.mutedOrders.add(String(id)); }
+  unmuteOrder(id) { this.mutedOrders.delete(String(id)); }
+  toggleOrderMute(id) {
+    const k = String(id);
+    if (this.mutedOrders.has(k)) this.mutedOrders.delete(k); else this.mutedOrders.add(k);
+    return this.mutedOrders.has(k);
+  }
+  isOrderMuted(id) { return this.mutedOrders.has(String(id)); }
+  clearMutes() { this.mutedOrders.clear(); }
 
   /**
    * Enable or disable sound playback
