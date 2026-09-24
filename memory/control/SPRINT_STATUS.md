@@ -1,7 +1,7 @@
 # Layer 6 — Sprint Status Board
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-15 (CR-047 AGENT_PROMPT_ALPHA v0.6 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
+**Last Updated:** 2026-09-24 (pos_pms_2 — CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off; see section below). Prior: 2026-06-15 (CR-047 AGENT_PROMPT_ALPHA v0.6 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
 
 ---
 
@@ -316,3 +316,14 @@
 - CR-132 S1 review: `handover/SESSION_HANDOVER_2026_08_09_CR132_DESIGN_REVIEW.md`
 - CR-132 comparison pages: `handover/SESSION_HANDOVER_2026_08_09_CR132_COMPARISON_PAGES.md`
 - CR-133 amendment: `handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md`
+
+---
+
+## pos_pms_2 — PMS Front Desk (CR-385) — Gate 5 closing
+
+| Item | Status |
+|---|---|
+| **CR-385** | **CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off** (Role 4 `test_reports/QA_REPORT_2026_09_24_CR385_P5_ROLE4.md` 34/34 PASS; guards 6/6; zero code changes). Final line is written in §5.8 only after the owner’s verbatim words: "CR-385 CLOSED <date> — Gate 5 closed; FU-385-C: <owner words>; FU-385-D: <owner words>". |
+| FU-385-C | PLANNED — separate CR after CR-385 closes (owner 2026-09-23 verbatim on record in CR_REGISTRY) |
+| FU-385-D | PLANNED — separate follow-up CR; D88 stays; OG-PMS-048 OPEN pending FU-385-D |
+

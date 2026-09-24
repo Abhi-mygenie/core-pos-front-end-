@@ -76,9 +76,9 @@ Evidence key: **it.N** = testing_agent iteration N · **SESSA/SESSB/SESSC** = `h
 | 31 | M7 | Front Desk Rules controls render; Save multipart `data=`; other tabs unaffected | **PASS** | it.31 toggle cycle ON→save→OFF→save→reload OFF (BQ-385-30 read-back), Rate-table radio unchanged (SESSA rows 24/31); PROBE §2 1b raw-JSON write ignored, multipart is the only write path; s1 bogus mode 422 | — |
 | 32 | M7 | preprod: profile flips on save; restore `allow_early_checkin=false`, `extend_rate_mode=calendar` | **PASS** | PROBE §2 s4 (N7 on → 200, N8 calendar 17,500) / s5 (held 18,700) / s6 restore verified on `settings-list` + `profile`; n11 s3 restore; exit read-back §1 defaults | — |
 | 33 | all | Zero console errors at 1920×800 + 1366×768; unique `data-testid`s | **PASS** | it.34 C5: 0 errors at 1920×800 and 1366×768 on `/pms/front-desk-v2` (all 4 tabs) + `/dashboard` (SESSC); X-10 unique testids it.31/33/34 (no duplicate reported) | known-ignore list §8 applied |
-| 34 | all | Registry Step 5 checklist executed | **PENDING** | closes in §5.7 (registry closure tick list) — will be flipped to PASS with the R18 marker count once §5.7 is done | not yet run at the time of this report |
+| 34 | all | Registry Step 5 checklist executed | **PASS** | §5.7 executed 2026-09-24 (`registry.json` CR-385 `status_history` "§5.7 REGISTRY CLOSURE EXECUTED"; FILE_OWNERSHIP · BUG_TRACKER · CR_REGISTRY (+FU-385-C/D) · OPEN_GAPS · CONTROL_DASHBOARD · PRD · SPRINT_STATUS placeholder · master-checklist ticks) · R18: `grep -rln "CR-385" frontend/src --include=*.js --include=*.jsx | wc -l` → **48**; copy headers present on `RoomTile.jsx` (`@8c7745f L25–27, L198–266`) and `CheckInForm.jsx` (CheckInPage L26–57 / L787–797 / L263–345) | CR-385 status deliberately NOT CLOSED — waits for the owner’s verbatim word (§5.8) |
 
-**Tally: 33 PASS (incl. 1 PASS-carried, 1 PASS-with-note) · 0 FAIL · 1 PENDING (row 34, §5.7).**
+**Tally: 34 PASS (incl. 1 PASS-carried, 1 PASS-with-note) · 0 FAIL · 0 PENDING (row 34 closed by §5.7 on 2026-09-24).**
 
 ---
 
@@ -218,8 +218,8 @@ Registry spot-check at report time: `control/registry.json` CR-385 `status_histo
 
 ## Result
 
-**Phase 5 regression PASSED 2026-09-24** — 34-row matrix: **33 PASS · 0 FAIL · 1 PENDING** (row 34 = registry Step 5 checklist, closes in §5.7); Sessions A′/B/C PASS (it.30–34); D17 / BUG-412 legs A/B/C ALL_PASS; probe pack 5/5 PASS + held_fallback skipped-no-recipe; guards 6/6 PASS on origin HEAD `b2db5a0`; zero code changes in `frontend/src`; hotspots byte-identical by sha256; sandbox restored (r4/r5 `hk`, settings default, `qa_rows_left: []`, owner stay r1 #256 untouched throughout).
+**Phase 5 regression PASSED 2026-09-24** — 34-row matrix: **34 PASS · 0 FAIL** (row 34 registry Step 5 checklist executed 2026-09-24, §5.7); Sessions A′/B/C PASS (it.30–34); D17 / BUG-412 legs A/B/C ALL_PASS; probe pack 5/5 PASS + held_fallback skipped-no-recipe; guards 6/6 PASS on origin HEAD `b2db5a0`; zero code changes in `frontend/src`; hotspots byte-identical by sha256; sandbox restored (r4/r5 `hk`, settings default, `qa_rows_left: []`, owner stay r1 #256 untouched throughout).
 
-**Ready for owner sign-off (§5.8)** after §5.7 registry closure. This report does not close CR-385 — only the owner's own close word, quoted verbatim, does.
+**Ready for owner sign-off (§5.8)** — §5.7 registry closure executed 2026-09-24. This report does not close CR-385 — only the owner's own close word, quoted verbatim, does.
 
-Next steps: §5.7 registry closure tick list (FILE_OWNERSHIP owed block · `registry.json` files[] + BUG statuses · BUG_TRACKER · CR_REGISTRY + FU-385-C/D rows · OPEN_GAPS_REGISTER · CONTROL_DASHBOARD · PRD · SPRINT_STATUS placeholder · master-checklist ticks · R18 marker count → row 34 PASS) → §5.8 one sign-off message to the owner.
+Next step: §5.8 — one sign-off message to the owner (close word + FU-385-C + FU-385-D confirmations, recorded verbatim); only then registry CLOSED, D90, SPRINT_STATUS final line, CLOSED handover, "Save to GitHub".
