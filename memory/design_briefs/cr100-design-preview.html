@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-100 Design Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; }
+  .label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #64748b; }
+  .badge-before { background:#fef3c7; color:#92400e; font-size:10px; font-weight:600; padding:2px 8px; border-radius:9999px; }
+  .badge-after  { background:#dcfce7; color:#166534; font-size:10px; font-weight:600; padding:2px 8px; border-radius:9999px; }
+</style>
+</head>
+<body class="p-8">
+
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 flex items-center gap-3">
+    <div class="w-2 h-8 bg-orange-500 rounded-full"></div>
+    <div>
+      <h1 class="text-xl font-bold text-slate-800">CR-100 Design Preview</h1>
+      <p class="text-xs text-slate-500">Smart Purchase — Vendor Payment UI · GroupedVendorPreview.jsx</p>
+    </div>
+  </div>
+
+  <!-- Side by side -->
+  <div class="grid grid-cols-2 gap-8">
+
+    <!-- ═══ BEFORE ═══ -->
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="badge-before">BEFORE</span>
+        <span class="text-xs text-slate-500">Single payment method per vendor (current)</span>
+      </div>
+
+      <!-- Vendor card 1 BEFORE -->
+      <div class="rounded-lg border border-slate-200 bg-white p-3 mb-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-sm font-medium text-slate-900">Saurav Traders</span>
+            <span class="text-xs text-slate-400 ml-2">3 items</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-500">Payment:</label>
+            <select class="h-8 text-xs border border-slate-200 rounded-md px-2 outline-none bg-white focus:border-orange-400">
+              <option>Select…</option>
+              <option>Cash</option>
+              <option>Card</option>
+              <option>UPI</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 space-y-0.5 pl-2">
+          <div class="flex justify-between"><span>Chicken Breast · 10 kg</span><span>@ ₹180 = ₹1,800.00</span></div>
+          <div class="flex justify-between"><span>Tomatoes · 5 kg</span><span>@ ₹40 = ₹200.00</span></div>
+          <div class="flex justify-between"><span>Olive Oil · 2 ltr</span><span>@ ₹500 = ₹1,000.00</span></div>
+          <div class="flex justify-between font-semibold text-slate-700 pt-1 border-t border-slate-100 mt-1">
+            <span>Subtotal</span><span>₹3,000.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor card 2 BEFORE — missing PM (error state) -->
+      <div class="rounded-lg border border-red-300 bg-red-50/30 p-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-sm font-medium text-slate-900">Al-Noor Supplies</span>
+            <span class="text-xs text-slate-400 ml-2">2 items</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-500">Payment:</label>
+            <select class="h-8 text-xs border border-red-400 ring-1 ring-red-200 rounded-md px-2 outline-none bg-white">
+              <option>Select…</option>
+              <option>Cash</option>
+              <option>Card</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 space-y-0.5 pl-2">
+          <div class="flex justify-between"><span>Cheese · 3 kg</span><span>@ ₹350 = ₹1,050.00</span></div>
+          <div class="flex justify-between"><span>Cream · 1 ltr</span><span>@ ₹200 = ₹200.00</span></div>
+          <div class="flex justify-between font-semibold text-slate-700 pt-1 border-t border-slate-100 mt-1">
+            <span>Subtotal</span><span>₹1,250.00</span>
+          </div>
+        </div>
+        <div class="mt-2 flex items-center gap-1 text-xs text-red-600">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Payment method required
+        </div>
+      </div>
+
+      <!-- Limitations callout -->
+      <div class="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-3">
+        <p class="text-xs font-semibold text-amber-800 mb-1">Current limitations</p>
+        <ul class="text-xs text-amber-700 space-y-0.5 list-disc pl-4">
+          <li>Single payment mode only (Cash OR Card, not both)</li>
+          <li>No split across multiple modes</li>
+          <li>No reference / transaction ID</li>
+          <li>No unpaid / credit PO option</li>
+          <li><code class="bg-amber-100 px-1 rounded">payment_type</code> sent as PM name string — wrong enum value</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ AFTER ═══ -->
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="badge-after">AFTER CR-100</span>
+        <span class="text-xs text-slate-500">Split / partial payment per vendor</span>
+      </div>
+
+      <!-- Vendor card 1 AFTER — Partial payment selected -->
+      <div class="rounded-lg border border-slate-200 bg-white p-3 mb-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-sm font-medium text-slate-900">Saurav Traders</span>
+            <span class="text-xs text-slate-400 ml-2">3 items</span>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 space-y-0.5 pl-2 mb-3">
+          <div class="flex justify-between"><span>Chicken Breast · 10 kg</span><span>@ ₹180 = ₹1,800.00</span></div>
+          <div class="flex justify-between"><span>Tomatoes · 5 kg</span><span>@ ₹40 = ₹200.00</span></div>
+          <div class="flex justify-between"><span>Olive Oil · 2 ltr</span><span>@ ₹500 = ₹1,000.00</span></div>
+          <div class="flex justify-between font-semibold text-slate-700 pt-1 border-t border-slate-100 mt-1">
+            <span>Subtotal</span><span>₹3,000.00</span>
+          </div>
+        </div>
+        <!-- Payment type tabs -->
+        <div class="flex items-center gap-1 mb-2">
+          <span class="text-xs text-slate-500 mr-1">Payment:</span>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-slate-200 text-slate-500 bg-white">Paid</button>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-amber-400 bg-amber-50 text-amber-700 font-medium">Partial</button>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-slate-200 text-slate-500 bg-white">Unpaid</button>
+        </div>
+        <!-- Split rows -->
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-2">
+            <select class="h-7 text-xs border border-slate-200 rounded px-1.5 bg-white focus:border-orange-400 outline-none min-w-[90px]">
+              <option>Cash</option>
+            </select>
+            <div class="relative">
+              <span class="absolute left-1.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">₹</span>
+              <input type="number" value="2000" class="h-7 text-xs border border-slate-200 rounded pl-5 pr-1.5 bg-white outline-none w-[80px]"/>
+            </div>
+            <input type="text" placeholder="Ref ID (optional)" class="h-7 text-xs border border-slate-200 rounded px-1.5 bg-white outline-none flex-1" value=""/>
+            <button class="text-slate-400 hover:text-red-500">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <select class="h-7 text-xs border border-slate-200 rounded px-1.5 bg-white focus:border-orange-400 outline-none min-w-[90px]">
+              <option>Card</option>
+            </select>
+            <div class="relative">
+              <span class="absolute left-1.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">₹</span>
+              <input type="number" value="1000" class="h-7 text-xs border border-slate-200 rounded pl-5 pr-1.5 bg-white outline-none w-[80px]"/>
+            </div>
+            <input type="text" value="CARD-TXN-8821" class="h-7 text-xs border border-slate-200 rounded px-1.5 bg-white outline-none flex-1"/>
+            <button class="text-slate-400 hover:text-red-500">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+          <!-- Add row button -->
+          <button class="flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 mt-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add payment row
+          </button>
+          <!-- Sum indicator — balanced -->
+          <div class="text-xs pt-1 flex items-center gap-1 text-green-600">
+            ✓ Total: ₹3,000.00
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor card 2 AFTER — Unpaid -->
+      <div class="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-sm font-medium text-slate-900">Al-Noor Supplies</span>
+            <span class="text-xs text-slate-400 ml-2">2 items</span>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 space-y-0.5 pl-2 mb-3">
+          <div class="flex justify-between"><span>Cheese · 3 kg</span><span>@ ₹350 = ₹1,050.00</span></div>
+          <div class="flex justify-between"><span>Cream · 1 ltr</span><span>@ ₹200 = ₹200.00</span></div>
+          <div class="flex justify-between font-semibold text-slate-700 pt-1 border-t border-slate-100 mt-1">
+            <span>Subtotal</span><span>₹1,250.00</span>
+          </div>
+        </div>
+        <!-- Payment type tabs — Unpaid selected -->
+        <div class="flex items-center gap-1 mb-2">
+          <span class="text-xs text-slate-500 mr-1">Payment:</span>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-slate-200 text-slate-500 bg-white">Paid</button>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-slate-200 text-slate-500 bg-white">Partial</button>
+          <button class="px-2.5 py-1 text-xs rounded-md border border-red-400 bg-red-50 text-red-700 font-medium">Unpaid</button>
+        </div>
+        <!-- Unpaid notice -->
+        <div class="text-xs text-red-600 bg-red-50 rounded px-2 py-1.5 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          ₹1,250.00 will be recorded as outstanding credit
+        </div>
+      </div>
+
+      <!-- What changed -->
+      <div class="mt-4 rounded-lg bg-green-50 border border-green-200 p-3">
+        <p class="text-xs font-semibold text-green-800 mb-1">New capabilities (CR-100)</p>
+        <ul class="text-xs text-green-700 space-y-0.5 list-disc pl-4">
+          <li><strong>Paid</strong> — single method, amount auto-filled, optional ref ID</li>
+          <li><strong>Partial</strong> — split N rows, live sum validation (green ✓ / amber ⚠)</li>
+          <li><strong>Unpaid</strong> — credit PO, records outstanding balance</li>
+          <li>Per-row transaction/cheque reference ID</li>
+          <li><code class="bg-green-100 px-1 rounded">payment_type</code> now correct enum · <code class="bg-green-100 px-1 rounded">partial_payments[]</code> sent</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- API payload comparison -->
+  <div class="mt-8 grid grid-cols-2 gap-8">
+    <div>
+      <p class="label mb-2">API payload — BEFORE</p>
+      <pre class="bg-slate-900 text-slate-300 rounded-lg p-4 text-xs overflow-auto leading-relaxed"><span class="text-slate-500">{</span>
+  <span class="text-amber-300">"payment_type"</span>: <span class="text-green-300">"Cash"</span>,    <span class="text-slate-500">// ❌ PM name, not enum</span>
+  <span class="text-amber-300">"notes"</span>: <span class="text-green-300">"Stock Update · 7d"</span>, <span class="text-slate-500">// ignored</span>
+  <span class="text-slate-500">// No partial_payments</span>
+  <span class="text-slate-500">// No split, no refId, no unpaid</span>
+<span class="text-slate-500">}</span></pre>
+    </div>
+    <div>
+      <p class="label mb-2">API payload — AFTER CR-100</p>
+      <pre class="bg-slate-900 text-slate-300 rounded-lg p-4 text-xs overflow-auto leading-relaxed"><span class="text-slate-500">{</span>
+  <span class="text-amber-300">"payment_type"</span>: <span class="text-green-300">"partial"</span>,  <span class="text-slate-500">// ✅ enum</span>
+  <span class="text-amber-300">"partial_payments"</span>: [
+    <span class="text-slate-500">{</span> <span class="text-amber-300">"payment_mode"</span>: <span class="text-green-300">"Cash"</span>, <span class="text-amber-300">"amount"</span>: <span class="text-blue-300">2000</span> <span class="text-slate-500">}</span>,
+    <span class="text-slate-500">{</span> <span class="text-amber-300">"payment_mode"</span>: <span class="text-green-300">"Card"</span>, <span class="text-amber-300">"amount"</span>: <span class="text-blue-300">1000</span>,
+      <span class="text-amber-300">"transaction_id"</span>: <span class="text-green-300">"CARD-TXN-8821"</span> <span class="text-slate-500">}</span>
+  ]
+  <span class="text-slate-500">// notes: dropped (ignored by endpoint)</span>
+<span class="text-slate-500">}</span></pre>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

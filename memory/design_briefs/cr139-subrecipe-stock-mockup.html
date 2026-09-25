@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-139 — Sub-Recipe Stock Tab Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #f8f9fa; color: #1a1a1a; font-size: 13px; }
+
+  /* Tab bar */
+  .tab-bar {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: #999; text-transform: uppercase; margin-right: 4px; }
+  .tab-divider { width: 1px; height: 20px; background: #e0e0e0; margin: 0 8px; flex-shrink: 0; }
+  .tab {
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color .15s;
+  }
+  .tab:hover:not(.active) { border-color: #FF6B00; }
+  .tab.active { background: #1a1a1a; color: #fff; border-color: transparent; }
+  .tab.inactive { color: #666; }
+  .tab.new-tab { background: #f0f9ff; color: #0369a1; border: 1.5px dashed #7dd3fc; }
+  .tab.new-tab.active { background: #0ea5e9; color: #fff; border: 1.5px solid #0ea5e9; }
+
+  /* Page content */
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 28px 60px; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-icon { width: 36px; height: 36px; border-radius: 8px; background: #f0f9ff; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
+  .page-icon svg { width: 20px; height: 20px; color: #0369a1; }
+  .page-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: #111; }
+  .page-subtitle { font-size: 13px; color: #666; margin-top: 2px; }
+  .save-btn {
+    background: #16a34a; color: #fff; padding: 8px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    opacity: 0.5;
+  }
+  .save-btn.active { opacity: 1; }
+
+  /* Unsaved banner */
+  .unsaved-banner {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
+    padding: 10px 16px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #92400e; font-weight: 500;
+    display: none;
+  }
+  .unsaved-banner.visible { display: flex; }
+
+  /* Card */
+  .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; overflow: hidden; }
+
+  /* Toolbar */
+  .toolbar { padding: 12px 16px; border-bottom: 1px solid #f1f1f1; display: flex; align-items: center; gap: 12px; }
+  .search-wrap { position: relative; flex: 1; max-width: 320px; }
+  .search-wrap input { width: 100%; padding: 7px 12px 7px 32px; border: 1px solid #e5e5e5; border-radius: 7px; font-size: 13px; background: #fafafa; outline: none; }
+  .search-wrap input:focus { border-color: #FF6B00; background: #fff; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #aaa; width: 14px; height: 14px; }
+  .chip-count { font-size: 11px; color: #666; margin-left: auto; }
+
+  /* Table */
+  .tbl { width: 100%; border-collapse: collapse; min-width: 780px; }
+  .tbl th {
+    padding: 10px 14px; font-size: 10px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: #9ca3af; background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb; text-align: left; white-space: nowrap;
+  }
+  .tbl th.center { text-align: center; }
+  .tbl td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  .tbl tr:hover td { background: #fafafa; }
+
+  /* Sub-recipe name */
+  .sub-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; background: #f3e8ff; color: #7c3aed; margin-left: 6px; vertical-align: middle; }
+
+  /* Qty cell */
+  .qty-display { font-weight: 600; color: #111; }
+  .qty-unit { font-size: 11px; color: #9ca3af; margin-left: 4px; }
+
+  /* Input cells */
+  .qty-input {
+    width: 80px; padding: 6px 8px; border: 1px solid transparent;
+    border-radius: 6px; text-align: center; font-size: 13px; background: transparent;
+    outline: none; transition: border-color .15s, background .15s;
+  }
+  .qty-input:hover { border-color: #e5e5e5; background: #f9fafb; }
+  .qty-input:focus { border-color: #FF6B00; background: #fff; }
+  .qty-input.filled { border-color: #fde68a; background: #fffbeb; font-weight: 600; }
+  .qty-input.negative-drift { border-color: #fca5a5; background: #fef2f2; font-weight: 600; }
+
+  /* Drift badge */
+  .drift-add { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: #dcfce7; color: #16a34a; }
+  .drift-sub { display: inline-flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: #fef3c7; color: #d97706; }
+  .drift-preview { font-size: 9px; font-weight: 400; color: #b45309; }
+  .drift-empty { color: #d1d5db; font-size: 13px; text-align: center; }
+
+  /* Wastage select */
+  .wastage-select {
+    width: 100%; padding: 6px 8px; border: 1px solid transparent; border-radius: 6px;
+    font-size: 12px; background: transparent; outline: none; cursor: pointer;
+    transition: border-color .15s;
+  }
+  .wastage-select.required { border-color: #fca5a5; background: #fef2f2; }
+  .wastage-select.filled { border-color: #86efac; background: #f0fdf4; }
+  .wastage-select:disabled { opacity: .4; cursor: default; }
+
+  /* Optional input */
+  .opt-input {
+    width: 100%; padding: 6px 8px; border: 1px solid transparent; border-radius: 6px;
+    font-size: 12px; background: transparent; outline: none;
+    transition: border-color .15s;
+  }
+  .opt-input:hover { border-color: #e5e5e5; background: #fafafa; }
+  .opt-input:focus { border-color: #FF6B00; background: #fff; }
+
+  /* Footer */
+  .footer { padding: 12px 16px; border-top: 1px solid #f1f1f1; background: #fafafa; display: flex; align-items: center; justify-content: space-between; }
+  .footer-count { font-size: 12px; color: #9ca3af; }
+  .footer-right { display: flex; gap: 8px; align-items: center; }
+  .reset-btn { padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 500; color: #666; background: transparent; border: 1px solid #e5e5e5; cursor: pointer; }
+  .save-footer-btn { padding: 7px 18px; border-radius: 7px; font-size: 12px; font-weight: 600; background: #16a34a; color: #fff; border: none; cursor: pointer; }
+  .save-footer-btn.disabled { opacity: .4; cursor: default; }
+
+  /* Annotation callouts */
+  .callout { background: #fff7ed; border: 1.5px solid #fb923c; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #9a3412; }
+  .callout strong { font-weight: 700; }
+  .callout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .callout-blue { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+  .callout-green { background: #f0fdf4; border-color: #86efac; color: #14532d; }
+  .callout-purple { background: #f5f3ff; border-color: #c4b5fd; color: #4c1d95; }
+  .callout-amber { background: #fffbeb; border-color: #fde68a; color: #78350f; }
+
+  /* States legend */
+  .legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #555; }
+  .swatch { width: 16px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,.1); }
+
+  /* Header */
+  .mockup-header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: #fff; padding: 20px 28px; }
+  .mockup-header h1 { font-size: 18px; font-weight: 700; }
+  .mockup-header p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge-new { background: #0ea5e9; color: #fff; }
+  .badge-change { background: #f59e0b; color: #fff; }
+
+  .overflow-x { overflow-x: auto; }
+  .annotation { font-size: 10px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<!-- Mockup Header -->
+<div class="mockup-header">
+  <h1>CR-139 — Sub-Recipe Stock Tab · Design Mockup</h1>
+  <p>Gate 2 Impact Analysis · 2026-08-13 · Awaiting owner approval → Gate 3</p>
+</div>
+
+<div class="page">
+
+  <!-- Design notes -->
+  <div class="callout-grid" style="margin-top:20px;">
+    <div class="callout callout-blue">
+      <strong>OD-1: Tab position</strong><br>
+      "Sub-Recipe Stock" tab added <strong>after Stock Update</strong>, before Receive in the OPERATIONS group.
+    </div>
+    <div class="callout callout-purple">
+      <strong>OD-2: Data shown</strong><br>
+      Only actual <strong>sub-recipe quantities</strong> from the recipe master. No ingredient rows mixed in.
+    </div>
+    <div class="callout callout-amber">
+      <strong>OD-3: Wastage Reason</strong><br>
+      <strong>Required</strong> when new qty is less than current stock (negative drift). Blocks save.
+    </div>
+    <div class="callout callout-green">
+      <strong>OD-4 + OD-5: Batch/Expiry + UX</strong><br>
+      Batch/Expiry <strong>optional</strong>. Same save-all-at-once pattern as Stock Audit.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SECTION 1: Tab bar — showing NEW tab position  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .06em;">
+    1 — Inventory Tab Bar (InventoryTabBar.jsx) — New tab added
+  </div>
+
+  <div class="card" style="margin-bottom: 28px;">
+    <div class="tab-bar">
+      <span class="tab-label">Operations</span>
+      <div class="tab inactive">Dashboard</div>
+      <div class="tab inactive">Current Stock</div>
+      <div class="tab inactive" style="display:flex;align-items:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Stock Update
+      </div>
+      <div class="tab new-tab active" style="display:flex;align-items:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Sub-Recipe Stock
+        <span style="font-size:9px;background:#bae6fd;color:#0369a1;padding:1px 5px;border-radius:99px;font-weight:700;">NEW</span>
+      </div>
+      <div class="tab inactive" style="display:flex;align-items:center;gap:5px; opacity:.5;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Receive
+      </div>
+      <div class="tab inactive">Stock Audit</div>
+      <div class="tab-divider"></div>
+      <span class="tab-label">Setup</span>
+      <div class="tab inactive">Ingredients</div>
+      <div class="tab inactive">Recipes</div>
+      <div class="tab inactive">Vendors</div>
+      <div class="tab inactive">Wastage Reasons</div>
+    </div>
+    <div style="padding: 10px 16px; background: #f0f9ff; font-size: 11px; color: #0369a1; border-top: 1px solid #bae6fd;">
+      ↑ "Sub-Recipe Stock" tab appears after "Stock Update" — <strong>1 line added to InventoryTabBar.jsx TABS array</strong>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SECTION 2: Full page view              -->
+  <!-- ═══════════════════════════════════════ -->
+  <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .06em;">
+    2 — Sub-Recipe Stock Page (SubRecipeStockPage.jsx + SubRecipeStockPanel.jsx) — NEW
+  </div>
+
+  <div class="card" style="margin-bottom: 28px;">
+    <!-- Simulated tab bar at top -->
+    <div class="tab-bar" style="font-size:11px; padding: 6px 12px; gap: 3px;">
+      <span class="tab-label" style="font-size:9px;">Ops</span>
+      <div class="tab inactive" style="padding:4px 10px;font-size:11px;">Dashboard</div>
+      <div class="tab inactive" style="padding:4px 10px;font-size:11px;">Current Stock</div>
+      <div class="tab inactive" style="padding:4px 10px;font-size:11px;">Stock Update</div>
+      <div class="tab active" style="padding:4px 10px;font-size:11px;background:#0ea5e9;">Sub-Recipe Stock</div>
+      <div class="tab inactive" style="padding:4px 10px;font-size:11px;opacity:.5;">Receive</div>
+      <div class="tab inactive" style="padding:4px 10px;font-size:11px;">Stock Audit</div>
+    </div>
+
+    <div style="padding: 24px 24px 8px;">
+      <!-- Page header -->
+      <div class="page-header" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;">
+          <div class="page-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0369a1" stroke-width="2" style="width:20px;height:20px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="page-title" style="font-size:18px;">Sub-Recipe Stock</div>
+            <div class="page-subtitle">Enter qty produced for each sub-recipe. Negative adjustments require a wastage reason.</div>
+          </div>
+        </div>
+        <button class="save-btn active">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save 2 Adjustments
+        </button>
+      </div>
+
+      <!-- Unsaved banner (shown when entries exist) -->
+      <div class="unsaved-banner visible" style="margin-bottom:12px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Unsaved adjustments — drift badges are previews until you save.
+      </div>
+
+      <!-- Main panel card -->
+      <div class="card">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search sub-recipes..." value="">
+          </div>
+          <span class="chip-count">8 sub-recipes</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:28%;">Sub-Recipe Name</th>
+                <th class="center" style="width:12%;">Current Qty</th>
+                <th class="center" style="width:10%;">New Qty</th>
+                <th class="center" style="width:7%;">Unit</th>
+                <th class="center" style="width:10%;">Drift</th>
+                <th style="width:17%;">Wastage Reason <span style="color:#ef4444">*</span> <span class="annotation">required if negative</span></th>
+                <th style="width:8%;">Batch <span class="annotation">(opt)</span></th>
+                <th style="width:8%;">Expiry <span class="annotation">(opt)</span></th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Row 1: Normal (no entry yet) -->
+              <tr>
+                <td>
+                  <span style="font-size:13px;font-weight:500;color:#111;">Kunafa Base Dough</span>
+                  <span class="sub-badge">Sub-Recipe</span>
+                </td>
+                <td class="center"><span class="qty-display">12.50</span><span class="qty-unit">kg</span></td>
+                <td class="center"><input type="number" class="qty-input" placeholder="—"></td>
+                <td class="center"><span style="font-size:12px;font-weight:600;color:#555;background:#f1f5f9;padding:2px 7px;border-radius:5px;">kg</span></td>
+                <td class="center"><span class="drift-empty">—</span></td>
+                <td><select class="wastage-select" disabled><option>N/A — no drift</option></select></td>
+                <td><input type="text" class="opt-input" placeholder="e.g. B-001"></td>
+                <td><input type="date" class="opt-input"></td>
+              </tr>
+
+              <!-- Row 2: Positive drift (added stock) -->
+              <tr style="background:#f0fdf4;border-left:3px solid #4ade80;">
+                <td>
+                  <span style="font-size:13px;font-weight:500;color:#111;">Cream Cheese Filling</span>
+                  <span class="sub-badge">Sub-Recipe</span>
+                </td>
+                <td class="center"><span class="qty-display">3.00</span><span class="qty-unit">kg</span></td>
+                <td class="center"><input type="number" class="qty-input filled" value="8"></td>
+                <td class="center"><span style="font-size:12px;font-weight:600;color:#555;background:#f1f5f9;padding:2px 7px;border-radius:5px;">kg</span></td>
+                <td class="center">
+                  <span class="drift-add">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    +5.00 kg
+                  </span>
+                </td>
+                <td><select class="wastage-select" disabled><option>N/A — positive drift</option></select></td>
+                <td><input type="text" class="opt-input" placeholder="e.g. B-002" value="BATCH-001"></td>
+                <td><input type="date" class="opt-input" value="2026-12-31"></td>
+              </tr>
+
+              <!-- Row 3: Negative drift (wastage — reason REQUIRED) -->
+              <tr style="background:#fef3c7;border-left:3px solid #f59e0b;">
+                <td>
+                  <span style="font-size:13px;font-weight:500;color:#111;">Pistachio Paste</span>
+                  <span class="sub-badge">Sub-Recipe</span>
+                </td>
+                <td class="center"><span class="qty-display">5.00</span><span class="qty-unit">kg</span></td>
+                <td class="center"><input type="number" class="qty-input negative-drift" value="3.5"></td>
+                <td class="center"><span style="font-size:12px;font-weight:600;color:#555;background:#f1f5f9;padding:2px 7px;border-radius:5px;">kg</span></td>
+                <td class="center">
+                  <span class="drift-sub">
+                    <span style="display:flex;align-items:center;gap:3px;">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                      −1.50 kg
+                    </span>
+                    <span class="drift-preview">preview</span>
+                  </span>
+                </td>
+                <td>
+                  <select class="wastage-select required">
+                    <option>Select reason... ⚠</option>
+                    <option>Expired</option>
+                    <option>Spillage</option>
+                    <option selected>Physical stock count</option>
+                  </select>
+                  <div style="font-size:10px;color:#dc2626;margin-top:2px;">Required for negative drift</div>
+                </td>
+                <td><input type="text" class="opt-input" placeholder="e.g. B-003"></td>
+                <td><input type="date" class="opt-input"></td>
+              </tr>
+
+              <!-- Row 4: Empty -->
+              <tr>
+                <td>
+                  <span style="font-size:13px;font-weight:500;color:#111;">Rose Water Syrup</span>
+                  <span class="sub-badge">Sub-Recipe</span>
+                </td>
+                <td class="center"><span class="qty-display">2.50</span><span class="qty-unit">ltr</span></td>
+                <td class="center"><input type="number" class="qty-input" placeholder="—"></td>
+                <td class="center"><span style="font-size:12px;font-weight:600;color:#555;background:#f1f5f9;padding:2px 7px;border-radius:5px;">ltr</span></td>
+                <td class="center"><span class="drift-empty">—</span></td>
+                <td><select class="wastage-select" disabled><option>N/A — no drift</option></select></td>
+                <td><input type="text" class="opt-input" placeholder="e.g. B-004"></td>
+                <td><input type="date" class="opt-input"></td>
+              </tr>
+
+              <!-- Row 5: Another empty row -->
+              <tr>
+                <td>
+                  <span style="font-size:13px;font-weight:500;color:#111;">Ghee Caramel</span>
+                  <span class="sub-badge">Sub-Recipe</span>
+                </td>
+                <td class="center"><span class="qty-display">0.00</span><span class="qty-unit" style="color:#ef4444;">kg</span></td>
+                <td class="center"><input type="number" class="qty-input" placeholder="—"></td>
+                <td class="center"><span style="font-size:12px;font-weight:600;color:#555;background:#f1f5f9;padding:2px 7px;border-radius:5px;">kg</span></td>
+                <td class="center"><span class="drift-empty">—</span></td>
+                <td><select class="wastage-select" disabled><option>N/A — no drift</option></select></td>
+                <td><input type="text" class="opt-input" placeholder="e.g. B-005"></td>
+                <td><input type="date" class="opt-input"></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <span class="footer-count">8 sub-recipes · <strong style="color:#d97706;">2 unsaved changes</strong></span>
+          <div class="footer-right">
+            <button class="reset-btn">Reset All</button>
+            <button class="save-footer-btn">Save 2 Adjustments</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page padding -->
+  </div><!-- /card -->
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 3: State annotations          -->
+  <!-- ══════════════════════════════════════ -->
+  <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .06em;">
+    3 — Row State Guide
+  </div>
+  <div class="card" style="margin-bottom: 28px; padding: 16px 20px;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <div style="border:1px solid #e5e5e5;border-radius:8px;padding:12px;">
+        <div style="font-weight:700;font-size:12px;color:#111;margin-bottom:6px;">No entry (default)</div>
+        <div style="height:4px;background:#e5e5e5;border-radius:2px;margin-bottom:6px;"></div>
+        <div style="font-size:11px;color:#666;">Input shows "—" placeholder. Row is white. No wastage dropdown. Save button not counting this row.</div>
+      </div>
+      <div style="border:1px solid #86efac;border-radius:8px;padding:12px;background:#f0fdf4;border-left:3px solid #4ade80;">
+        <div style="font-weight:700;font-size:12px;color:#166534;margin-bottom:6px;">Positive drift (stock added)</div>
+        <div style="height:4px;background:#4ade80;border-radius:2px;margin-bottom:6px;"></div>
+        <div style="font-size:11px;color:#166534;">New qty &gt; current. Row tinted green. Green "+X.XX kg" badge. Wastage N/A (disabled). Batch/Expiry optional.</div>
+      </div>
+      <div style="border:1px solid #fde68a;border-radius:8px;padding:12px;background:#fffbeb;border-left:3px solid #f59e0b;">
+        <div style="font-weight:700;font-size:12px;color:#92400e;margin-bottom:6px;">Negative drift (wastage)</div>
+        <div style="height:4px;background:#f59e0b;border-radius:2px;margin-bottom:6px;"></div>
+        <div style="font-size:11px;color:#92400e;">New qty &lt; current. Row tinted amber. Amber "−X.XX kg preview" badge. <strong>Wastage reason dropdown REQUIRED</strong> — red border until selected. Save blocked if empty.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- SECTION 4: API call comparison        -->
+  <!-- ══════════════════════════════════════ -->
+  <div style="margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .06em;">
+    4 — API Call (how it differs from Stock Audit)
+  </div>
+  <div class="card" style="margin-bottom: 28px; padding: 16px 20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:6px;">❌ Old path (Stock Update / Purchase Entry)</div>
+        <div style="background:#1e1e2e;color:#f8f8f2;border-radius:6px;padding:12px;font-family:monospace;font-size:11px;line-height:1.7;">
+          POST /inventory/add-purchase<br>
+          {<br>
+          &nbsp;&nbsp;"items": [{ "ingredientId": 42, ... }]<br>
+          }
+        </div>
+        <div style="font-size:11px;color:#dc2626;margin-top:6px;">Wrong endpoint for sub-recipes. Fixed by Phase B3.</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:6px;">✅ New path (Sub-Recipe Stock tab)</div>
+        <div style="background:#1e1e2e;color:#f8f8f2;border-radius:6px;padding:12px;font-family:monospace;font-size:11px;line-height:1.7;">
+          POST /inventory/add-sub-recipe-stock<br>
+          {<br>
+          &nbsp;&nbsp;"sub_recipe_id": 17,<br>
+          &nbsp;&nbsp;"quantity": 8,<br>
+          &nbsp;&nbsp;"unit": "kg",<br>
+          &nbsp;&nbsp;"physical_qty": 8,<br>
+          &nbsp;&nbsp;"waste_reason": "",<br>
+          &nbsp;&nbsp;"batch": "BATCH-001", <span style="color:#6b7280;">// optional</span><br>
+          &nbsp;&nbsp;"expiry_date": "2026-12-31" <span style="color:#6b7280;">// optional</span><br>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval CTA -->
+  <div style="background: linear-gradient(135deg, #0f172a, #1e3a5f); border-radius: 12px; padding: 20px 24px; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px;">Ready for Gate 3 — Owner Approval</div>
+      <div style="font-size:12px;color:#94a3b8;">Does this mockup match your expectation? If YES → Gate 3 Implementation Plan will be written.</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <div style="padding:8px 20px;border-radius:8px;background:#22c55e;color:#fff;font-weight:700;font-size:13px;cursor:pointer;">✓ Approve → Gate 3</div>
+      <div style="padding:8px 20px;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-size:13px;cursor:pointer;">✗ Needs changes</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

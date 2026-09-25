@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR-385 · Impact Analysis — Decisions, Blockers &amp; What They Block</title>
+<style>
+  :root{--ink:#1A1A1A;--mu:#767676;--line:#E5E5E5;--bg:#FAFAFA;--or:#F26B33;--gr:#329937;--rd:#D32F2F;--am:#B45309;--bl:#1D4ED8;--soft:#FFF4EE}
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  header{background:#fff;border-bottom:3px solid var(--or);padding:22px 32px}
+  header h1{margin:0 0 4px;font-size:22px}
+  header p{margin:0;color:var(--mu)}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:12px}
+  .meta span{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 10px}
+  main{max-width:1280px;margin:0 auto;padding:24px 32px 60px}
+  nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+  nav a{font-size:12px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px}
+  nav a:hover{border-color:var(--or)}
+  h2{font-size:18px;margin:34px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h2 small{font-weight:400;color:var(--mu);font-size:13px;margin-left:8px}
+  .lead{color:var(--mu);margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:12px;border-left:5px solid var(--gr)}
+  .card.be{border-left-color:var(--bl)}
+  .card.proc{border-left-color:var(--mu)}
+  .card.risk{border-left-color:var(--rd)}
+  .card.fixed{border-left-color:var(--gr)}
+  .card.open{border-left-color:var(--or)}
+  .card h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#DCFCE7;color:var(--gr);border-radius:5px;padding:2px 7px}
+  .card.be .id{background:#EEF2FF;color:var(--bl)}
+  .card.proc .id{background:#F3F4F6;color:#444}
+  .card.risk .id{background:#FEE2E2;color:var(--rd)}
+  .card.open .id{background:var(--soft);color:var(--or)}
+  .tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-radius:4px;padding:2px 7px;background:#F3F4F6;color:#444}
+  .tag.crit{background:#FEE2E2;color:var(--rd)}
+  .tag.high{background:#FFEDD5;color:var(--am)}
+  .tag.med{background:#FEF9C3;color:#854D0E}
+  .tag.ok{background:#DCFCE7;color:var(--gr)}
+  .tag.be{background:#EEF2FF;color:var(--bl)}
+  .row{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}
+  .row b{color:var(--mu);font-weight:600}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#F3F4F6;padding:1px 5px;border-radius:4px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+  th,td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+  th{background:#F7F7F7;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}
+  tr:last-child td{border-bottom:0}
+  td.c{text-align:center;font-weight:700}
+  .x{color:var(--rd)} .p{color:var(--am)} .ok{color:var(--gr)}
+  .legend{font-size:12px;color:var(--mu);margin:8px 0 0}
+  .gate{background:#fff;border:1px dashed var(--or);border-radius:10px;padding:14px 18px}
+  .gate ol{margin:6px 0 0;padding-left:20px}
+  footer{color:var(--mu);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:12px}
+  @media print{nav,header .meta{display:none}body{background:#fff}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <h1>CR-385 Front Desk — Impact Analysis: Decisions, Blockers &amp; What They Block</h1>
+  <p>Design v2.28 (v2.27 owner-accepted + D48-N2 B2B removed from Booking) vs. existing React implementation · IA Rev 4 (Gate 2.6 final re-validation, <code>impact/CR-385_IMPACT_ANALYSIS_REV4_GATE_2_6_FINAL.md</code>) · updated 2026-09-20 (build 3 re-check) · all 9 decisions answered · <b>backend build 3: every money / extend / move / TAB item fixed and independently re-verified (BQ-16, D1–D13)</b> · backend blockers B-1/B-3/B-4/B-5/B-6 DELIVERED · remaining blockers are ours: B-7 bug smoke · B-8 D5 spike · B-9 "close Gate 2.6"</p>
+  <div class="meta">
+    <span>Full report: <code>memory/investigations/CR-385_IMPACT_ANALYSIS_2026_09_19.md</code></span>
+    <span>Backend brief (single tracked file): <code>BACKEND_BRIEF_CR-385_MASTER.md</code> — BQ-385-01…15</span>
+    <span>Probes: <code>evidence/CR-385/probes_2026_09_19/PROBE_REPORT.md</code></span>
+    <span>Gate 2.5 design: <b style="color:var(--gr)">CLOSED · v2.27 accepted</b> · QA iteration_28 29/30 → 30/30 after fixes</span>
+    <span>Gate 2.6: <b style="color:var(--gr)">CLOSED by owner 2026-09-20</b> (D54: "08 a 04 ok 05 yes 06 ok update docs and decision and close gate 2.6 follow agent promot and rules") → <b>Gate 3 OPEN</b> — D5 spike ✓ done (D57, Q6 = a) · next: <code>plans/CR-385_IMPLEMENTATION_PLAN.md</code> (P-04) → owner "close Gate 3" → "Gate 4 GO" · O-4..O-8 decided · <b style="color:var(--gr)">backend build 3 verified end-to-end 2026-09-20: BQ-16 + D1–D13 fixed</b> · <b style="color:var(--gr)">owner decided N7/N8/N9 (D52) · backend shipped N7/N8 as property settings the same day, verified by us (D53, §B7) — no open backend ask</b> · remaining: B-7 bug smoke · B-8 D5 spike · <b>B-9 owner "close Gate 2.6"</b></span>
+  </div>
+</header>
+
+<main>
+<nav>
+  <a href="#status">Status</a>
+  <a href="#decisions">A · 9 decisions (all answered)</a>
+  <a href="#matrix">B · Blocker × functionality matrix</a>
+  <a href="#questions">B2 · Backend questions N1–N5</a>
+  <a href="#defects">B4 · Backend defects D1–D8</a>
+  <a href="#build2">B5 · Build 2 re-check</a>
+  <a href="#build3">B6 · Build 3 — all green</a>
+  <a href="cr385-master-checklist.html" style="font-weight:700">☑ Master checklist (Gate 3/4/5) →</a>
+  <a href="cr385-acceptance-criteria.html">AC-01…22 →</a>
+  <a href="#resolved">B3 · Resolved log</a>
+  <a href="#blockers">C · Blocker detail</a>
+  <a href="#gate">D · Gate proposal</a>
+</nav>
+
+<section id="status">
+  <h2>Status in three lines</h2>
+  <div class="card">
+    <ol style="margin:0;padding-left:18px">
+      <li><b>Analysis is complete.</b> Gap register G-01…G-44, all 9 owner decisions recorded (D46-a…i), mockup v2.26 accepted, live probes confirm the money gaps.</li>
+      <li><b>Build is blocked</b> by one backend contract (BQ-385-08…12) and by 21 unverified bug fixes on the same files. Nothing in Phase 1 money screens can ship before BQ-385-08 lands.</li>
+      <li><b>Planning is not blocked.</b> Gate 3 (spike + module-wise plan) needs no backend answer — it produces the contract the backend team implements against.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="decisions">
+  <h2>A · The 9 decisions <small>all answered by owner 2026-09-19 · recorded as D46-a…i</small></h2>
+
+  <div class="card"><h3><span class="id">DEC-1</span> Booking charge source <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>Backend is the aggregation point.</b> Every reservation carries a server-computed <code>charge{}</code> (rate × nights + upgrade, SGST, CGST, total, prepaid, advance, balance). FE displays only, never recomputes; Check-In amount box becomes read-only.</span>
+    <b>Backed by probe</b><span>Dates-only PATCH left a 4-night stay priced at 2 nights; <code>amount_after_tax: 0</code> was accepted — backend recompute + validation is required (BQ-385-08).</span>
+    <b>Unblocks</b><span>Arrivals ₹ column · Check-In amount · Modify · Extend · No-Show/Cancel prepaid line · Bill Room block (AC-01, AC-03, AC-04).</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-2</span> Refunds on No-Show / Cancel <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>OTA no-show → refund processed by the OTA.</b> <b>Cancel → booking cancelled, refund settled offline</b> in Phase 1. Refund arithmetic / processing = <b>Phase 2</b> (BQ-385-13).</span>
+    <b>Effect</b><span>Phase 1 No-Show/Cancel cards show prepaid (if known) + a fixed note; no penalty/GST/refund maths. AC-05 re-scoped. Removes the most speculative backend endpoint from the critical path.</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-3</span> Checkout with outstanding balance <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>No.</b> A guest cannot check out with an outstanding balance. The remainder may be put on <b>Credit</b> (a configured payment method — tile appears only when enabled; probe: <code>pay_tab: "Yes"</code>), then checkout.</span>
+    <b>Clarified (D46-j)</b><span><b>"Partial payment" = split tender</b> (one bill, several methods — half card / half UPI), exactly as F&amp;B billing — <b>must be available</b> on room checkout. <b>Under-payment</b> (received &lt; total) stays blocked. <b>Credit</b> allowed. Code already shows Split + Credit/TAB in room mode (drawer omits <code>allowedMethods</code>). <b>Design gap:</b> mockup Bill has no Split tile → add in v2.27 (G-45).</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-4</span> Non-OTA no-show <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>Cancel only</b> for Direct / Walk-in. BQ-385-04 closed — no backend change (probe: <code>mark-no-show Direct → 422</code>).</span>
+    <b>Effect</b><span>Fix the row menu EITHER/OR; one OTA channel list (AC-13).</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-5</span> Architecture / cut-over <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>Option A</b> — new workstation route side-by-side; old pages become dead code and are removed later (FU-385-C). Planning <b>tab-wise / module-wise</b>; sequence proposed at Gate 3.</span>
+    <b>Proposed modules</b><span>M0 shared money/format layer → M1 Arrivals tab + Check-In expansion → M2 Departures tab + Bill expansion (Credit) → M3 In-House tab + Extend/Modify inline → M4 Rooms tab (board, Area, Detail) → M5 header/search/alerts → M6 dead-code removal.</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-6</span> Check-In / Booking extras <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>All three in Phase 1:</b> room upgrade (D23), auto-print check-in receipt (D32), advance at booking (D34). Backend brief written (BQ-385-09, 10, 11).</span>
+    <b>Blocked by</b><span>B-1 (upgrade must be inside the aggregated charge), B-5 (advance field + read-back), B-6 (settings key does not exist — probe: no PMS print key, <code>printer_agent: "No"</code>).</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-7</span> Tab numbers / "today" <span class="tag ok">Decided</span></h3>
+    <div class="row"><b>Decision</b><span><b>Server-authoritative snapshot.</b> Server returns list + tab counts + <code>business_date</code> in one response (BQ-385-12). FE displays only — no client counting, no client date logic. Server runs IST; the evening drift was an FE UTC bug and goes away with the client date code.</span>
+    <b>Effect</b><span>Tab ≠ list impossible; every terminal sees the same snapshot. AC-12 re-worded (D46-i).</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-8</span> Modify-Booking ₹0 bug <span class="tag ok">Decided · verified</span></h3>
+    <div class="row"><b>Decision</b><span><b>P0 intake withdrawn.</b> Live probe on booking 145: the app sends no amount today (callers never pass rate plans) — ₹0 is not written. Latent code is deleted in M3. The <b>live</b> gap is "amount never updates after a date change" → covered by DEC-1 / BQ-385-08.</span></div></div>
+
+  <div class="card"><h3><span class="id">DEC-9</span> Mockup v2.26 <span class="tag ok">Accepted</span></h3>
+    <div class="row"><b>Decision</b><span>Owner visual acceptance given 2026-09-19. Gap register is now measured against a signed design.</span></div></div>
+</section>
+
+<section id="matrix">
+  <h2>B · Which blocker blocks which functionality <small>✗ = cannot ship · ◐ = ships degraded / provisional · ✓ = not affected</small></h2>
+  <table>
+    <tr>
+      <th style="width:26%">Functionality (design surface · AC)</th>
+      <th>B-1<br><small>charge{} ✓ verified (build 3)</small></th>
+      <th>B-2<br><small>refund API</small></th>
+      <th>B-3<br><small>Credit=TAB verified</small></th>
+      <th>B-4<br><small>extend-stay ✓ verified (build 3 + BQ-17 setting)</small></th>
+      <th>B-5<br><small>type + advance + pricing ✓ verified</small></th>
+      <th>B-6<br><small>snapshot ✓ · setting read+write ✓</small></th>
+      <th>B-7<br><small>21 open bugs</small></th>
+      <th>B-8<br><small>payment panel</small></th>
+      <th style="width:22%">Can start before unblock?</th>
+    </tr>
+    <tr><td><b>Arrivals tab</b> — rows, ₹ column, prepaid badge (AC-01, AC-03, AC-12)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c p">◐ BUG-413</td><td class="c ok">✓</td><td><b>Buildable now</b> — charge{}, counts, business_date delivered; badge logic pending N3</td></tr>
+    <tr><td><b>Check-In expansion</b> — read-only amount, GST split, balance strip (AC-01, AC-04, AC-09)</td><td class="c ok">✓ (D2/D3/D5 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c x">✗ BUG-410/411</td><td class="c ok">✓</td><td>Money strip buildable from charge{}; wait for BUG-410/411 smoke on CheckInPage</td></tr>
+    <tr><td>&nbsp;&nbsp;↳ Room upgrade comp/paid (D23)</td><td class="c ok">✓ (D1/D9/D10 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td>Delivered, needs disposable in-house stay to verify (N5)</td></tr>
+    <tr><td>&nbsp;&nbsp;↳ Auto-print receipt (D32)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓ write verified (bq11)</td><td class="c ok">✓</td><td class="c ok">✓</td><td>Flag readable from profile; template + manual print buildable; toggle write verify at Gate 5</td></tr>
+    <tr><td><b>New Booking expansion</b> — room type × plan grid, advance (B2B moved to Check-In, D48-c) (D34–D36, AC-07)</td><td class="c ok">✓ (BQ-16 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓ (N1 fixed · N2 v2.28)</td><td class="c ok">✓</td><td class="c p">◐ BUG-404</td><td class="c ok">✓</td><td>Form, grid, advance, availability buildable; <b>pricing waits for BQ-385-16</b> (omit rate → ₹0 today)</td></tr>
+    <tr><td><b>Departures tab</b> — Balance column = bill grand total (AC-02)</td><td class="c ok">✓ (D2/D3/D8 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c p">◐ BUG-426</td><td class="c ok">✓</td><td><b>Buildable now</b> — charge.balance_due replaces the N-folio join</td></tr>
+    <tr><td><b>Bill / Checkout expansion</b> — Room block D15, SGST→CGST, Split + Credit tiles, two-step (AC-04, AC-08, AC-10)</td><td class="c ok">✓ (D2/D3/D8 fixed)</td><td class="c ok">✓</td><td class="c ok">✓ TAB (D8 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c x">✗ BUG-418/425/428</td><td class="c ok">✓ spike (D57)</td><td>D5 spike first; Credit=TAB contract verified live (G1) — ledger amount D8 open; BUG-418/425/428 to Gate 6</td></tr>
+    <tr><td><b>Extend Stay inline</b> — conflict → room move, discount, collect-now (AC-06)</td><td class="c ok">✓ (D4 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓ (BQ-17 <code>extend_rate_mode</code> verified 17,500)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c x">✗ BUG-402</td><td class="c ok">✓</td><td>Backend verified build 3 + calendar pricing (§B7); BUG-402 smoke first (B-7)</td></tr>
+    <tr><td><b>Modify inline</b> — type grid, change ±, reason required (AC-07)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td><b>Buildable now</b> — PATCH preview=true + server recompute verified</td></tr>
+    <tr><td><b>No-Show / Cancel</b> — EITHER/OR, reasons, prepaid note (AC-13)</td><td class="c ok">✓ (charge.prepaid_amount)</td><td class="c ok">✓ Phase 2</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td><b>Yes</b> — DEC-2/DEC-4 made this FE-only</td></tr>
+    <tr><td><b>In-House tab</b> — leaving today, arrived today, balance (AC-12)</td><td class="c ok">✓ (D2/D3 fixed)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c p">◐ BUG-421/429/430</td><td class="c ok">✓</td><td><b>Buildable now</b> — counts + balance_due from the snapshot</td></tr>
+    <tr><td><b>Rooms tab</b> — board, Area grouping by <code>title</code>, Turns, Room Detail (AC-16, D41/D42)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓ (N4: transform already reads rooms; meta added)</td><td class="c p">◐ CR-368</td><td class="c ok">✓</td><td>Buildable — transform must read <code>data.rooms</code> + <code>data.meta</code> (N4); 5 real titles known</td></tr>
+    <tr><td><b>Header</b> — tab counts, alert bar, global search (F7–F9)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td><b>Buildable now</b> — counts{} + business_date delivered</td></tr>
+    <tr><td><b>Terminology / dates / money format / a11y</b> (AC-17–AC-20)</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c ok">✓</td><td><b>Yes</b> — FE only</td></tr>
+  </table>
+  <p class="legend"><b>Read 2026-09-20 (evening, after backend N7/N8 delivery — §B7):</b> BQ-385-17 was delivered as the property setting <code>extend_rate_mode</code> (default <code>calendar</code>) and verified (17,500 vs held 18,700) → B-4 is ✓ again; N7 arrived as <code>allow_early_checkin</code> (default false → server 422). <b>13 of 13 surfaces buildable from the backend side.</b> N11 (GST slab) <b>fixed + verified the same evening</b> (per-night slab, <code>nights_detail</code>); D14 / BQ-19 are P2 and non-blocking. <b>Earlier read (after owner D52):</b> B-4 briefly ◐ for pricing (BQ-17 opened). <b>Read 2026-09-20 (build 3, final for Phase 1):</b> every backend column (B-1, B-3, B-4, B-5, B-6) is ✓ — verified end-to-end on the sandbox (§B6). The only ✗ left in the matrix come from <b>B-7</b> (open bugs on shared files → owner/QA smoke) and <b>B-8</b> (D5 spike). <b>13 of 13 surfaces are buildable from the backend side once B-7/B-8 clear and Gate 2.6 is closed.</b> <b>Earlier read (TAB verification):</b> B-3 is now ✓ — Credit/TAB checkout verified live with the backend's full FE body (D6 closed, N6 closed); the amount written to the ledger (D8, P1 money) is the only open item on the Credit tile. N4 board-shape regression risk withdrawn (no hot-fix needed). <b>Previous read:</b> B-1 column re-blocked for every money surface by D1–D4 + BQ-16 (see §B4). Non-money surfaces (counts, Rooms board, No-Show/Cancel, Modify dates, terminology) remain buildable.  New Booking pricing re-blocked by <b>BQ-385-16</b> (server stores ₹0 when the rate is omitted — found while verifying N1).  backend columns B-1 / B-5 / B-6 are ✓ (delivered and verified live on preprod); B-4 and the upgrade part of B-1 are ◐ (delivered, not yet verified — need a disposable in-house stay, N5); B-3 answered. Every remaining ✗ comes from <b>B-7 (open bug smoke)</b> or <b>B-8 (D5 spike)</b> — i.e. from our side, not the backend. <b>7 of 13 surfaces are buildable now.</b></p>
+</section>
+
+<section id="questions">
+  <h2>B2 · Follow-up questions to backend after verification <small>N1–N6 · MASTER §7 · plain-English version · <b style="color:var(--gr)">all closed</b> — N7/N8/N9 (owner questions) live in §B6</small></h2>
+  <p class="lead">Found while checking the backend's delivery on 2026-09-20. Not proven bugs — "this looks odd, please confirm" items. Each shows what was seen, why it matters, and the one question to answer.</p>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:26%">What I saw (probe)</th><th style="width:30%">Why it matters</th><th>Question for backend</th><th style="width:10%">Status</th></tr>
+    <tr><td><b>N1</b></td><td>Direct create used the rate the <b>front end sent</b> (₹3,000) although the live rate sheet lists that room type at ≈ ₹8,600; changing the plan kept ₹3,000.</td><td>DEC-1 says the <b>server</b> is the only source of the booking charge. If the server trusts the browser's rate, the browser still decides the price.</td><td><b>Owner:</b> server prices when the field is missing. <b>Probe:</b> omitting it today stores <b>₹0</b> (rates exist: 7,400) → <b>BQ-385-16 (P0)</b> opened — backend change required.</td><td><span class="tag ok">Closed · BQ-16 fixed (build 3, §B6)</span></td></tr>
+    <tr><td><b>N2</b></td><td>Sent <code>firm_name</code> + GST no. on the booking → response <code>firm_name: null</code>.</td><td>The design lets staff tick "B2B (GST) billing" at booking so the tax invoice carries the company. If dropped at booking, only Check-In can own it.</td><td><b>Owner: Check-In only.</b> Remove the B2B toggle from New Booking (mockup v2.28, D48-c); Check-In keeps firm name + GST. No backend change.</td><td><span class="tag ok">Closed · design v2.28</span></td></tr>
+    <tr><td><b>N3</b></td><td><code>pah: true</code> on a booking that already had a ₹2,000 advance.</td><td>Arrivals badge: a guest who paid an advance would still read "PAY AT HOTEL", which staff may take as "nothing paid".</td><td><b>Owner: pah applies to OTA and non-OTA</b> (balance collected at hotel). Badge rule D48-b: Prepaid if <code>prepaid_amount &gt; 0</code>; else PAY AT HOTEL if <code>pah</code>; Advance ₹X chip when <code>advance_payment &gt; 0</code>.</td><td><span class="tag ok">Closed</span></td></tr>
+    <tr><td><b>N4</b></td><td><code>room-status-board</code> changed from a plain list to <code>{meta, auto_hk_on_rm_checkout, rooms}</code>.</td><td>Good (business date reached the board) but the <b>live</b> Room Status page reads a list → it will show <b>zero rooms</b> when this build reaches production.</td><td><b>Owner: yes, final format.</b> <b>Re-checked 2026-09-20:</b> the old payload was already <code>{auto_hk_on_rm_checkout, rooms}</code> (evidence 2026-09-19) — the new build only <i>adds</i> <code>meta</code>. The live transform already reads <code>data.rooms</code>; run against both payloads → 5/5 rooms, counts correct. <b>No regression, no hot-fix, no BUG intake.</b> <code>meta.business_date</code> read goes into the M4 plan.</td><td><span class="tag ok">Closed · risk withdrawn</span></td></tr>
+    <tr><td><b>N5</b></td><td>Upgrade (BQ-09), extend-stay (BQ-14), Credit/TAB (BQ-15) can only be tested on a guest who is already checked in — real ledger writes.</td><td>Without a throw-away stay those three stay "delivered-unverified" and keep Check-In upgrade, Extend v2.19 and the Credit tile gated.</td><td><b>Owner: use any checked-in room.</b> Probe: all 5 sandbox rooms are held by <b>overdue in-house stays</b> (orders 1232408 / 1232479 / 1232501 / 1232549 / 1232561) → every extend returns 409, no room free for a check-in. Backend to check out / reset those 5 stays. BQ-14 <i>conflict</i> path verified (409 + booking_id). <b>Owner then checked the sandbox out (2026-09-20 evening)</b> → full E2E run done (§B4); last stay (order 1232582) settled by TAB (G1). Sandbox now empty.</td><td><span class="tag ok">Closed · E2E done</span></td></tr>
+    <tr><td><b>N6</b></td><td>The reply's TAB checkout curl (<code>order_id, payment_mode, payment_amount, mobile</code>) returns <b>403</b>: "order_id must be a string · payment_status required".</td><td>The real FE sends the full bill body (orderTransform L1614–1690); the minimal curl cannot verify BQ-385-15.</td><td><b>Backend answered</b> with the full live FE body (<code>order_id</code> string · <code>payment_status:"success"</code> · <code>paid_room:"yes"</code> · <code>TAB</code>; missing fields → 403 = validation). <b>Verified live on order 1232582: 200, stay departed, room → HK.</b> D6 closed; new D8 (ledger amount) in §B4.</td><td><span class="tag ok">Closed · verified</span></td></tr>
+  </table>
+</section>
+
+<section id="defects">
+  <h2>B4 · Backend defects found in end-to-end verification <small>2026-09-20 evening · independently reproduced by testing agent (iteration_29) · sent back via MASTER §8 · <b style="color:var(--gr)">ALL FIXED in build 3 → §B6</b></small></h2>
+  <p class="lead" style="border-left:4px solid var(--gr);padding-left:10px;background:#F0FDF4"><b>HISTORY — superseded by §B6 (build 3, 2026-09-20 ~13:50).</b> Every red / amber item in this table was re-tested and is now <b>FIXED / CLOSED</b>; the tags below are kept unchanged as the audit trail of what was reported to the backend and when.</p>
+  <p class="lead">After you checked out the sandbox I ran the full lifecycle: book → check-in (with upgrade) → extend (discount + payment + room move) → TAB checkout. The endpoints exist, but the <b>money is wrong in four places</b>.</p>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:30%">What happens</th><th style="width:30%">What should happen</th><th>Blocks</th><th style="width:9%">Prio</th></tr>
+    <tr><td><b>D1</b></td><td>Check-in with <code>upgrade_type=paid</code> (or complimentary) to a higher room type → <b>422 "table maps to suite but reservation expects executive"</b>. The type guard runs before the upgrade fields are read.</td><td>Higher type allowed when an upgrade is declared; paid adds <code>charge.upgrade_amount</code> + folio line; 422 only for a <i>lower</i> type.</td><td>Check-In upgrade (D23) — BQ-09 re-opened</td><td><s style="opacity:.55"><span class="tag crit">P0</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D2</b></td><td>₹1,000 advance taken at booking → after check-in <code>charge.advance_payment</code> is <b>0</b>; after extend it shows only the new ₹500.</td><td>Advances accumulate: 1,000 + 500 = 1,500; balance due reduces accordingly.</td><td>Every balance shown after check-in — BQ-10 read-back re-opened</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D3</b></td><td>Folio <code>room_price 4,200</code> (already GST-inclusive) <i>and</i> <code>gst_tax 200</code> → GST counted twice on the bill.</td><td><code>room_price 4,000</code> + SGST 100 + CGST 100.</td><td>Bill Room block, Departures balance</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D4</b></td><td>Extend 1 → 2 nights with ₹200 discount → <code>rate_per_night 1,900, booking_charge 3,800</code>: the old one-night charge minus discount was <i>divided</i> across two nights. <b>The extra night is never billed.</b></td><td>4,000 × 2 − 200 = 7,800 pre-GST; total 8,190.</td><td>Extend Stay — BQ-14 re-opened</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D5</b></td><td>Check-in returns <code>data: {}</code> — no <code>charge</code>, no order id (reply promised it).</td><td>Return recomputed <code>charge</code> + <code>order_id</code> so the balance strip updates without a second call.</td><td>Check-In balance strip (extra GET meanwhile)</td><td><s style="opacity:.55"><span class="tag med">P1</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D6</b></td><td><s>TAB payment with a partial body → 500 + raw SQL</s> <b>CLOSED 2026-09-20</b> — backend was right: the endpoint expects the full live FE body (our 7-field curl was the fault). Verified with the exact body on order 1232582: <b>200</b> "Room payment received via TAB", order paid/TAB, line checked out, reservation departed, room 8525 → HK.</td><td>Hygiene only: a malformed body should answer 422/403 with field names instead of echoing SQL — not a CR-385 blocker.</td><td>Credit tile (BQ-15) — contract verified</td><td><span class="tag ok">CLOSED</span></td></tr>
+    <tr><td><b>D7</b></td><td>Room move during extend leaves the destination room in <code>hk</code> with the guest inside (<code>occupied_hk</code>).</td><td>Destination → occupied; origin → hk (auto-HK).</td><td>Rooms board / HK worklist</td><td><s style="opacity:.55"><span class="tag low">P2</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D8</b> <small>new</small></td><td>TAB settlement: we sent <code>payment_amount 3,490</code> (the GST-inclusive <code>charge.balance_due</code>). The ledger recorded <b>₹3,300</b> (pre-GST); after the guest is <i>departed</i> the reservation still shows <code>balance_due 3,490</code> and <code>remaining_room_balance 3,490</code>, advance unchanged at 500.</td><td>Receivable row = the amount assigned to TAB (₹3,490 incl. GST, or 3,300 + an explicit GST leg); <code>balance_due</code> → 0 once settled.</td><td>Departures true balance · Night Audit outstanding · Credit tile amount</td><td><s style="opacity:.55"><span class="tag high">P1 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D3+</b></td><td>Folio <code>room_price</code> basis flips: GST-inclusive after check-in (4,200 + 200) but pre-GST after extend (3,800 + 190).</td><td>One basis (pre-GST) everywhere.</td><td>adds to D3</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>BQ-16+</b></td><td>Direct booking: rate honoured only when sent top-level; omitted or inside <code>rooms[]</code> → <b>₹0 booking stored silently</b>.</td><td>Server prices from rates × plan × dates; 422 when no rate exists.</td><td>New Booking amount</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+  </table>
+  <p class="legend"><b>Verified OK in the same run:</b> type booking + advance at create · availability by dates (shows own stay as in-house) · extend mechanics (409 conflict with booking id, room move, <code>payment_record_id</code>, inventory push) · board <code>meta</code> · auto-HK on the vacated room · <b>Credit = TAB checkout with the full FE body (G1–G4, 2026-09-20)</b>. <b>Sandbox:</b> booking 153 / order 1232582 settled by TAB — no in-house stay left. <b>Status after build 3 (§B6):</b> D1 · D2 · D3(+) · D4 · D5 · D6 · D7 · D8 · BQ-16 — <b>all FIXED and re-verified</b>.</p>
+</section>
+
+
+
+<section id="build3">
+  <h2>B6 · Build 3 re-check — all green <small>2026-09-20 ~13:50 · backend reply <code>re_fe.md</code> · our independent run: booking 163 / order 1232593 (+ 164 for D11) · evidence <code>evidence/CR-385/probes_2026_09_20_gate4/build3/</code></small></h2>
+  <p class="lead">The backend fixed everything from B5 and sent a reply with their own numbers. I did not take their word for it — I re-ran the whole lifecycle (book with advance → paid-upgrade check-in → same-room extend with a payment → room move → Credit/TAB checkout) on the sandbox. <b>Every item passes.</b></p>
+  <table>
+    <tr><th style="width:14%">Item</th><th style="width:50%">What we saw (our numbers; Oct rate is now ₹9,500)</th><th>Status</th></tr>
+    <tr><td><b>D9 · D10</b> upgrade</td><td>Rate 9,500 + upgrade 1,500 = booking charge <b>11,000</b>; GST stays 18 % (990 + 990). Upgrade is a folio line "Room upgrade: &lt;reason&gt;" ₹1,500.</td><td><span class="tag ok">FIXED</span></td></tr>
+    <tr><td><b>D12 · D4</b> extend</td><td>Same-room extend → 200; 2 nights: 9,500 × 2 + 1,500 = <b>20,500</b>; advances accumulate 1,000 + 500 = 1,500.</td><td><span class="tag ok">FIXED</span></td></tr>
+    <tr><td><b>D13 · D7</b> move</td><td>Move → 200; destination 8527 <code>occupied</code>, origin 8525 <code>hk</code>.</td><td><span class="tag ok">FIXED</span></td></tr>
+    <tr><td><b>D8</b> TAB ledger</td><td>Sent ₹22,690 → ledger row ₹22,690; <code>charge.balance_due 0</code>; paid / departed; room → HK. (Folio <code>remaining_room_balance</code> still stale — backend says ignore it; we will.)</td><td><span class="tag ok">FIXED</span></td></tr>
+    <tr><td><b>D11</b></td><td>Check-in without <code>booking_for</code> → 200 (server defaults it).</td><td><span class="tag ok">FIXED</span></td></tr>
+    <tr><td>BQ-16 · D1 · D2 · D3 · D5 · D6</td><td>Still green.</td><td><span class="tag ok">OK</span></td></tr>
+  </table>
+  <h3 style="margin-top:14px">Money contract we will code to (agreed with backend)</h3>
+  <ul>
+    <li><code>charge.*</code> is the only source for rate, GST, advance and <b><code>balance_due</code></b>.</li>
+    <li>"Cleared" = <code>payment_status === 'paid'</code> <b>and</b> <code>charge.balance_due === 0</code>. Never read <code>balance_payment</code> or folio <code>remaining_room_balance</code>.</li>
+    <li><code>charge.advance_payment</code> = <b>cumulative paid so far</b> (after checkout it equals the total) → "Advance ₹X" chip only on pending / in-house rows.</li>
+    <li>Check-in keeps sending <code>booking_for=Individual</code>; TAB sends <code>payment_amount = charge.balance_due</code> (<code>order_discount</code> optional).</li>
+  </ul>
+  <h3 style="margin-top:14px">Questions for you (product, not backend) — <span class="tag ok">all decided 2026-09-20 · D52</span></h3>
+  <table>
+    <tr><th style="width:8%">#</th><th style="width:36%">What we saw</th><th style="width:26%">Decision needed</th><th>Owner decision → rule</th></tr>
+    <tr><td><b>N7</b></td><td>Backend lets staff check a guest in on 20 Sep for a stay dated 10 Oct.</td><td>Allow early check-in from the workstation?</td><td><span class="tag ok">Decided · b</span> <b>Block.</b> → <b>backend shipped setting <code>allow_early_checkin</code> (default false) → 422</b>; FE reads it, disables Check In when false and <code>check-in &gt; business_date</code>, surfaces the 422 text. <span class="tag ok">Verified §B7</span></td></tr>
+    <tr><td><b>N8</b></td><td>Extra nights are priced at the <b>held check-in rate</b> (backend run: 8,600 held while the rate table said 7,400 for that night).</td><td>Hold the rate, or price extension nights from the rate table?</td><td><span class="tag ok">Decided · b</span> <b>Rate table.</b> → <b>backend shipped setting <code>extend_rate_mode</code> = <code>calendar</code> (default) | <code>held</code></b>: old nights at the held rate + CM rate per added night, blended into one <code>rate_per_night</code>. <s style="opacity:.55"><span class="tag med">BQ-385-17 opened</span></s> <span class="tag ok">BQ-17 verified §B7</span> — FE labels the rate "avg. / night" on extended stays.</td></tr>
+    <tr><td><b>N9</b></td><td>Check-in into a room still in Housekeeping is allowed (board then shows <code>occupied_hk</code>).</td><td>Should the Check-In room picker warn / block HK rooms?</td><td><span class="tag ok">Decided</span> <b>Allow — "check-in can happen while housekeeping".</b> Picker lists HK rooms with an HK badge + duration and an amber "room is still being cleaned" note; Confirm stays enabled. Backend confirmed: no change.</td></tr>
+  </table>
+  <p class="legend"><b>Backend blockers B-1 · B-3 · B-4 · B-5 · B-6 are DELIVERED · VERIFIED</b> (B-4 incl. the BQ-17 pricing setting, §B7). What still blocks the build on our side: <b>B-7</b> owner/QA smoke of the open bugs on shared files · <b>B-8</b> the half-day D5 spike (CollectPaymentPanel inside a 560 px row) · <b>B-9</b> your explicit "close Gate 2.6". Sandbox: 163/164 departed; 8525/8527/8528 in HK; 8524 held by another tester.</p>
+</section>
+
+<section id="n7n8">
+  <h2>B7 · N7 / N8 delivered as property settings — verified <small>2026-09-20 evening · backend reply <code>n7_n8_2026_09_20.md</code> · our run: bookings 175 / 176, orders 1232604 / 1232605 · evidence <code>evidence/CR-385/probes_2026_09_20_n7n8/</code></small></h2>
+  <p class="lead">You decided N7 (block early check-in) and N8 (rate-table pricing) in the morning; the backend shipped both as <b>property settings</b> the same day, with defaults equal to your decisions. I re-ran their curl pack independently — <b>every number matches</b>.</p>
+  <table>
+    <tr><th style="width:16%">Item</th><th style="width:44%">What we saw</th><th>Status</th></tr>
+    <tr><td><b>Settings</b></td><td><code>allow_early_checkin = false</code> · <code>extend_rate_mode = calendar</code> on <code>settings-list</code> and <code>v1/profile</code> (aliases <code>pms.*</code> too). Invalid mode → 422. <b>Write only works as multipart <code>data={"basic":{…}}</code></b> — a raw JSON body returns 200 but changes nothing.</td><td><span class="tag ok">Verified</span></td></tr>
+    <tr><td><b>N7 off</b></td><td>Check-in for a 10 Oct stay on business date 20 Sep → <b>422</b> "Early check-in is not allowed for this property (stay check-in 2026-10-10 is after business date 2026-09-20)". Reservation <code>charge</code> untouched after the refusal.</td><td><span class="tag ok">Verified · BQ-385-18</span></td></tr>
+    <tr><td><b>N7 on</b></td><td>Same booking → 200, <code>booking_charge 10,100</code> (8,600 + 1,500 upgrade), GST 909 + 909.</td><td><span class="tag ok">Verified</span></td></tr>
+    <tr><td><b>N8 calendar</b></td><td>Extend 11 → 12 Oct: 8,600 (held, old night) + 7,400 (CM, added night) + 1,500 = <b>17,500</b>; <code>rate_per_night</code> becomes the blend 8,000; SGST/CGST 1,575 each; <code>advance_payment 1,500</code>; list <code>charge</code> identical to <code>data.charge</code>.</td><td><span class="tag ok">Verified · BQ-385-17</span></td></tr>
+    <tr><td><b>N8 held</b></td><td>Same flow with <code>extend_rate_mode=held</code>: 8,600 × 2 + 1,500 = <b>18,700</b>, rate 8,600 (the build-3 behaviour, now opt-in).</td><td><span class="tag ok">Verified</span></td></tr>
+    <tr><td><b>N9</b></td><td>Backend: leave as-is (check-in into an HK room allowed, board shows <code>occupied_hk</code> until Mark Clean) — matches your decision.</td><td><span class="tag ok">Agreed</span></td></tr>
+    <tr><td><b>N11</b> <small>money</small></td><td>In calendar mode the GST slab was applied to the <b>blended</b> rate (8,000 → 18 %). <b>Backend v2 (same evening): slab per sold night</b> — 8,600 @ 18 % = 1,548 · 7,400 @ 5 % = 370 · upgrade @ 18 % = 270 → <b>GST 2,188</b> (1,094 + 1,094), total 19,688; new <code>nights_detail[] {date, rate, source, gst_percent, gst}</code> on calendar extends. Re-run by us on bookings 179/180/181 — every number matches; held control unchanged (18,700 / 1,683 + 1,683).</td><td><s style="opacity:.55"><span class="tag med">Question</span></s> <span class="tag ok">FIXED · verified</span></td></tr>
+    <tr><td><b>D14</b> <small>new · P2</small></td><td>Found while verifying N11: on the calendar path the <b>extend response</b> <code>data.charge.advance_payment / balance_due</code> leave out the ₹500 collected in the same call (1,000 / 18,688), although the payment record exists and the list read-back a second later is right (1,500 / 18,188). Held path is correct. A TAB sent at the stale figure was clamped by the server to the true 18,188. <b>FE rule:</b> refetch the list after Extend (X-14), never drive the row from the extend response.</td><td><span class="tag med">P2 · backend</span></td></tr>
+    <tr><td><b>BQ-385-19</b> <small>new · P2 ask</small></td><td><code>nights_detail</code> is response-only today. Asked backend to include it on the list <code>charge</code> for in-house rows so the per-night lines survive a reload (Bill / Departures). Until then: room total + nights + "avg. rate / night".</td><td><span class="tag med">P2 · non-blocking</span></td></tr>
+    <tr><td><b>O-8</b> <small>owner</small></td><td>Backend asks the FE to "wire a settings UI" for the two keys. Recommendation: <b>Phase 1 = backend-config only</b> (defaults already equal your decisions; FE only reads them) — toggles as a small follow-up CR. Alternative: add them to the existing PMS settings page (touches an existing screen, OD-385-12 exception).</td><td><span class="tag med">Owner decision</span></td></tr>
+  </table>
+  <p class="legend"><b>FE rules recorded (D53/D55):</b> Check In disabled when the setting is false and check-in &gt; server business date, 422 text shown verbatim · Extend Stay: per-night lines from <code>nights_detail</code> when present (date · rate · held/calendar chip · GST %), else nights × avg with "avg. rate / night"; totals always from <code>charge.sgst/cgst/total_with_gst</code>, never a sum of <code>nights_detail</code> · after Extend refetch the list (D14) · sandbox left clean (175/176/179/180/181 departed, 8525 → HK, settings restored).</p>
+</section>
+
+<section id="build2">
+  <h2>B5 · Build 2 re-check <small><b style="color:var(--gr)">HISTORY — all items fixed in build 3 → §B6</b> · 2026-09-20 ~10:30 · backend curl plan <code>reblock_fe.md</code> · booking 158 / order 1232586 · evidence <code>evidence/CR-385/probes_2026_09_20_gate4/</code></small></h2>
+  <p class="lead" style="border-left:4px solid var(--gr);padding-left:10px;background:#F0FDF4"><b>HISTORY — superseded by §B6 (build 3, 2026-09-20 ~13:50).</b> Every red / amber item in this table was re-tested and is now <b>FIXED / CLOSED</b>; the tags below are kept unchanged as the audit trail of what was reported to the backend and when.</p>
+  <p class="lead">The backend shipped fixes for D1–D7 + BQ-16 with a curl plan. I ran it end-to-end on the sandbox. <b>Six items are fixed, two could not be reached, one is still open, and the fix for the upgrade introduced two new money bugs.</b></p>
+  <table>
+    <tr><th style="width:12%">Item</th><th style="width:44%">What we saw</th><th>Status</th></tr>
+    <tr><td><b>BQ-16</b> price when rate omitted</td><td>Omit <code>rate_per_night</code> → priced from Aiosell (8,600 + 7,400 → 8,000 × 2 = 16,000, GST 18 %). Unknown rate plan → 422 "no rate configured". (The plan's Jan-2027 "no rates" step is not runnable — the sandbox has rates for every date.)</td><td><span class="tag ok">FIXED · build 2 + 3</span></td></tr>
+    <tr><td><b>D1</b> upgrade 422</td><td>Check-in to a suite with <code>upgrade_type=paid</code> → 200.</td><td><span class="tag ok">FIXED · build 2 + 3</span> → but see D9</td></tr>
+    <tr><td><b>D2</b> advance lost</td><td>₹1,000 booking advance carried into the stay ("booking carry" ledger row); balance due = total − 1,000.</td><td><span class="tag ok">FIXED · build 2 + 3</span></td></tr>
+    <tr><td><b>D3</b> folio GST</td><td>Folio <code>room_price 8,600</code> pre-GST + <code>gst_tax 430</code> separate.</td><td><span class="tag ok">FIXED · build 2 + 3</span></td></tr>
+    <tr><td><b>D5</b> empty check-in reply</td><td>Check-in returns <code>order_id</code> + <code>charge</code>.</td><td><span class="tag ok">FIXED · build 2 + 3</span></td></tr>
+    <tr><td><b>D6</b> TAB body</td><td>Full FE body without <code>order_discount</code> → 200; stay settled; room → HK.</td><td><span class="tag ok">FIXED · build 2 + 3</span></td></tr>
+    <tr><td><b>D4</b> extend pricing</td><td>Cannot be reached: extending the same room → 409 (D12).</td><td><s style="opacity:.55"><span class="tag med">Unverifiable</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D7</b> move leaves HK</td><td>Cannot be reached: room move → 500 (D13).</td><td><s style="opacity:.55"><span class="tag med">Unverifiable</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D8</b> TAB ledger</td><td>Sent ₹8,030 → ledger row ₹7,600; <code>balance_due</code> / <code>remaining_room_balance</code> still 8,030 after departure.</td><td><s style="opacity:.55"><span class="tag high">Still open · P1 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D9</b> <small>new</small></td><td>Paid upgrade is <b>carved out of the room rate</b>: rate 8,600 → 7,100, upgrade 1,500, booking charge unchanged at 8,600 — <b>the guest never pays the ₹1,500</b>. Expected 8,600 + 1,500 = 10,100.</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D10</b> <small>new</small></td><td>Because the rate dropped below ₹7,500, GST flips 18 % → 5 %: the same stay goes from ₹10,148 at booking to ₹9,030 after check-in.</td><td><s style="opacity:.55"><span class="tag crit">P0 money</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D11</b> <small>new</small></td><td>The backend's own check-in probe body (no <code>booking_for</code>) → 500 with raw SQL, and the reservation's <code>charge</code> was mutated although the check-in failed. Real FE body works.</td><td><s style="opacity:.55"><span class="tag med">P1</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D12</b> <small>new</small></td><td>Same-room extend <b>always 409</b> — the guest's own in-house stay counts as the conflict. Extend Stay without a room move is impossible.</td><td><s style="opacity:.55"><span class="tag crit">P0 functional</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>D13</b> <small>new · regression</small></td><td>Room move → 500 <code>Undefined variable $currentTableId</code> (worked yesterday).</td><td><s style="opacity:.55"><span class="tag crit">P0 regression</span></s> <span class="tag ok">FIXED · build 3</span></td></tr>
+    <tr><td><b>N7</b> <small>question</small></td><td>Check-in accepted on 20 Sep for a stay dated 10 Oct. Should check-in be limited to the business date (+ early check-in rule)?</td><td><s style="opacity:.55"><span class="tag med">Question</span></s> <span class="tag ok">Decided · FE blocks (D52, §B6)</span></td></tr>
+  </table>
+  <p class="legend"><b>Buildable after build 2:</b> New Booking pricing + advance (BQ-16, BQ-10), folio Room block basis (D3), check-in balance strip (D5), Credit tile contract (D6). <b>Still blocked:</b> Check-In upgrade (D9/D10), Extend Stay (D12/D13 → D4/D7 unknown), Credit tile amount / Departures true balance (D8). Sandbox: 158 departed, 8525 → HK; 8524 held by another tester.</p>
+</section>
+
+<section id="resolved">
+  <h2>B3 · Resolved log <small>blockers / questions closed so far — nothing here is open</small></h2>
+  <table>
+    <tr><th style="width:14%">Item</th><th style="width:22%">Was</th><th>Resolution</th><th style="width:12%">Date</th></tr>
+    <tr><td><b>B-3</b> · BQ-385-15 · D6 · N6</td><td>Credit/TAB on room checkout unverifiable by curl (partial body → 500)</td><td>Backend supplied the full live FE body (<code>order_id</code> string, <code>payment_status:"success"</code>, <code>paid_room:"yes"</code>, <code>payment_mode:"TAB"</code>). <b>Verified live</b> on order 1232582: 200 → order paid/TAB, line checked_out, reservation departed, room 8525 → HK. D6 and N6 closed. Follow-up D8 (ledger ₹3,300 vs ₹3,490; balance_due not zeroed) stays open in §B4.</td><td>2026-09-20</td></tr>
+    <tr><td><b>N4</b> · board shape</td><td>Feared live regression: Room Status page would show 0 rooms</td><td>Old payload already <code>{auto_hk_on_rm_checkout, rooms}</code>; new build only adds <code>meta</code>. <code>roomStatusTransform</code> verified on both payloads (5/5 rooms). No hot-fix, no BUG intake.</td><td>2026-09-20</td></tr>
+    <tr><td><b>N2</b> · B2B at booking</td><td>Booking v2.19 had a B2B (GST) toggle</td><td>Owner: Check-In only. Mockup <b>v2.28</b> removes the toggle/GST fields/progress chip from New Booking; Check-In keeps them. AC-07 wording to follow.</td><td>2026-09-20</td></tr>
+    <tr><td><b>B-1</b> · BQ-385-08 (list part)</td><td>No aggregated booking charge; FE recomputed on 4 screens</td><td><code>charge{}</code> on every reservation, recompute on dates/plan change, FE amount ignored, <code>preview=true</code> — <b>verified live</b>. <i>Money correctness after check-in / extend is NOT resolved (see §B4 D2–D4).</i></td><td>2026-09-20</td></tr>
+    <tr><td><b>B-5</b> · BQ-385-10 / 06 (create part)</td><td>Booking by room number only, no advance, no availability by dates</td><td>Type booking + advance accepted at create; <code>room-availability</code> live and correct (own stay shows in-house) — <b>verified</b>. <i>Advance read-back after check-in NOT resolved (D2).</i></td><td>2026-09-20</td></tr>
+    <tr><td><b>B-6</b> · BQ-385-12 / 11</td><td>Tab counts from PC clock; no auto-print setting</td><td><code>meta.business_date</code> + <code>counts{}</code> on list and board; <code>auto_print_checkin_receipt</code> in profile — <b>verified</b></td><td>2026-09-20</td></tr>
+    <tr><td>BQ-385-03</td><td><code>balance_payment</code> inconsistent</td><td>Superseded by <code>charge.balance_due</code> (legacy field is pre-GST; FE must not read it)</td><td>2026-09-20</td></tr>
+    <tr><td>BQ-385-01</td><td>No PMS socket events</td><td>Closed — no channel in Phase 1; refresh-on-focus accepted by owner and backend</td><td>2026-09-20</td></tr>
+    <tr><td>BQ-385-04</td><td>No-show for non-OTA</td><td>Closed — owner DEC-4: Cancel only (probe: 422 for Direct)</td><td>2026-09-19</td></tr>
+    <tr><td>BUG-384</td><td>room-payment 403</td><td>Backend: FE sent the wrong body (<code>room_order_id / payment_amount / payment_mode / payment_type</code>); 403 was validation. <b>Closable — registry action for owner</b></td><td>2026-09-20</td></tr>
+    <tr><td>DEC-1 … DEC-9</td><td>Open owner questions</td><td>All answered (D46-a…j); DEC-8 verified by probe as latent, not live</td><td>2026-09-19</td></tr>
+    <tr><td>G-45 design gap</td><td>No Split tile on Bill</td><td>Mockup v2.27: Split everywhere money is taken (D47); owner accepted; QA iteration_28 29/30 → fixes → clean</td><td>2026-09-19</td></tr>
+    <tr><td>BQ-385-14 mechanics</td><td>Extend-stay endpoint untested</td><td>409 conflict (with booking id), room move, <code>payment_record_id</code>, inventory push, auto-HK on vacated room — <b>verified E2E</b>. <i>Pricing (D4) NOT resolved.</i></td><td>2026-09-20</td></tr>
+    <tr><td>N5 sandbox</td><td>All 5 rooms held by overdue stays</td><td>Owner checked out all rooms → E2E lifecycle executed</td><td>2026-09-20</td></tr>
+    <tr><td>N2 · N3 · N4</td><td>Backend follow-ups</td><td>Closed by owner (D48): B2B at Check-In only (mockup v2.28), pah badge rule, board format final (FE hot-fix intake)</td><td>2026-09-20</td></tr>
+    <tr><td>B-10</td><td>Proof files / credentials missing</td><td>Restored; owner creds stored; probe evidence saved (2026-09-19 + 2026-09-20 folders)</td><td>2026-09-19</td></tr>
+  </table>
+</section>
+
+<section id="blockers">
+  <h2>C · Blocker detail <small>blue = backend must deliver · grey = process · red = risk hotspot · green = fixed</small></h2>
+
+  <div class="card be"><h3><span class="id">B-1</span> Aggregated <code>charge{}</code> on every reservation <span class="tag ok">list · preview · date recompute verified</span> <span class="tag ok">CLOSED 2026-09-20 build 3 — D1/D2/D3/D5/D9/D10 fixed; upgrade added to rate; GST slab held; advance carried</span></h3>
+    <div class="row"><b>Missing</b><span><code>rate_per_night</code>, <code>booking_charge</code>, <code>sgst</code>, <code>cgst</code>, <code>total_with_gst</code>, <code>prepaid_amount</code>, <code>advance_payment</code> (authoritative), <code>balance_due</code>; server recompute on modify/extend/upgrade; validation (0 accepted today); rateplan change ignored; no preview.</span>
+    <b>Probe facts</b><span>LR row already has <code>amount_before_tax</code> (unread by FE); folio <code>gst_tax</code> is one merged value; <code>fetch-rates</code> has per-date rates — backend has the inputs.</span>
+    <b>Blocks</b><span>7 surfaces (see matrix). <b>Critical path of Phase 1.</b></span></div></div>
+
+  <div class="card be"><h3><span class="id">B-2</span> Refund / penalty preview <span class="tag med">Phase 2 · BQ-385-13</span></h3>
+    <div class="row"><b>Status</b><span>Deferred by DEC-2. Cancel response has no refund fields (probe). <b>Blocks nothing in Phase 1.</b></span></div></div>
+
+  <div class="card be"><h3><span class="id">B-3</span> Credit posting on room checkout <span class="tag ok">VERIFIED LIVE 2026-09-20 · TAB with full FE body → 200 · stay departed · room → HK · D6 + D8 closed (build 3: ledger row = amount sent, balance_due 0)</span></h3>
+    <div class="row"><b>Status</b><span>DEC-3: full payment or Credit. <code>pay_tab: "Yes"</code> exists; need to confirm the credit/TAB payment contract works on room orders. Blocks only the Credit tile in the Bill expansion.</span></div></div>
+
+  <div class="card be"><h3><span class="id">B-4</span> Extend-stay payment / discount / room move <span class="tag ok">mechanics verified: 409, move, payment record, inventory push</span> <span class="tag ok">mechanics CLOSED 2026-09-20 build 3 — D4/D7/D12/D13 fixed</span> <s style="opacity:.55"><span class="tag med">RE-OPENED (pricing only) — BQ-385-17</span></s> <span class="tag ok">CLOSED again 2026-09-20 evening — BQ-17 delivered as <code>extend_rate_mode=calendar</code>, verified 17,500 (§B7)</span></h3>
+    <div class="row"><b>Missing</b><span>Endpoint takes only <code>{order_id, new_checkout_date, new_room_price, reason}</code>. Blocks Extend Stay v2.19 beyond dates + reason.</span></div>
+    <div class="row"><b>Now missing</b><span>Build 3 bills every added night at the <b>held</b> check-in rate (9,500 held vs 7,400 rate table). Ask: look up Aiosell for each added date (same lookup as BQ-16), return <code>extension_nights[] {date, rate}</code>, 422 if no rate, <code>preview:true</code> supported. ~~Gates M4 pricing only.~~ Delivered as a property setting (blended <code>rate_per_night</code>, held fallback on CM miss, no <code>extension_nights[]</code>) — accepted; N11 slab question open.</span></div></div>
+
+  <div class="card be"><h3><span class="id">B-5</span> Booking by room type + advance (B2B → Check-In, D48-c) <span class="tag ok">create + availability verified</span> <span class="tag ok">CLOSED 2026-09-20 build 3 — advance carried (D2), server pricing + 422 on unknown plan (BQ-16)</span></h3>
+    <div class="row"><b>Missing</b><span><code>direct-reservation</code> takes one <code>restaurant_table_id</code>, no <code>room_code/rateplan_code</code>, no advance, no B2B; no availability-by-date-range; <code>advance_payment</code> read-back not authoritative. Blocks the New Booking grid + advance.</span></div></div>
+
+  <div class="card be"><h3><span class="id">B-6</span> Settings key + server snapshot <span class="tag ok">UNBLOCKED · BQ-385-12 verified (list + board) · BQ-385-11 read verified · E2E re-confirmed</span></h3>
+    <div class="row"><b>Missing</b><span>No <code>pms.auto_print_checkin_receipt</code> key (blocks auto-print toggle). No <code>meta.business_date</code> + <code>counts{}</code> with the list (blocks authoritative tab counts on Arrivals / In-House / header — DEC-7).</span></div></div>
+
+  <div class="card proc"><h3><span class="id">B-7</span> 21 registry items on the same files not yet closed <span class="tag high">Process</span></h3>
+    <div class="row"><b>Detail</b><span>BUG-402 (ExtendStayDialog), BUG-410/411 (CheckInPage), BUG-418/425/428 (Drawer + payment panel), BUG-421/426/429/430 (pmsService), BUG-423/427 (Folio), BUG-404 (NewBooking), BUG-413 (pah), CR-368 (roomStatusTransform) — all GATE_5A (coded, not QA'd / smoked) or intake.</span>
+    <b>Unblock</b><span>Owner smoke → Gate 6 on those bugs, <i>or</i> Gate 3 plan declares per-file order (M4 Rooms and No-Show/Cancel touch none of them and can go first). <b>BUG-384 is closable now</b> (backend confirmed wrong FE body).</span></div></div>
+
+  <div class="card fixed"><h3><span class="id">B-8</span> <code>CollectPaymentPanel.jsx</code> 3,331 lines inside a 560 px expansion <span class="tag ok">SPIKE DONE 2026-09-20 — fits (D57)</span></h3>
+    <div class="row"><b>Spike result</b><span>Unmodified panel in a 560 px box: header pinned, scroll body 353 px, Checkout button always visible at 1920×800 and 1366×768; live order + synthetic 14-line bill identical. Split state N/A in room mode (no Split button). Q6 = (a) host CSS hides the 3 section rows (owner: "we don't need duplicate"). Scroll-on-expand needed for low rows at 768. Evidence <code>evidence/CR-385/spike/MEASUREMENTS.md</code> + 10 screenshots; scratch code deleted, <code>src/</code> clean.</span></div>
+    <div class="row"><b>What it is</b><span>The same payment panel F&amp;B uses (Cash / Card / UPI / <b>Split</b> / Credit-TAB / More) must live inside the Bill expansion row. Split tender and Credit already work in room mode — <b>no payment-logic change is needed</b>.</span>
+    <b>Remaining risk</b><span>(1) D5 ½-day spike: does the panel <b>with Split rows expanded</b> fit the 560 px row at 1366×768 without inner scroll? (2) Any edit to the panel (e.g. SGST→CGST row order, AC-04) regresses F&amp;B billing → full POS regression + owner approval.</span>
+    <b>Design follow-up</b><span>Mockup Bill settlement lacks a Split tile → v2.27 (G-45).</span></div></div>
+
+  <div class="card fixed"><h3><span class="id">B-9</span> Gate 2.6 <span class="tag ok">CLOSED by owner 2026-09-20</span></h3>
+    <div class="row"><b>Status</b><span>Owner: "08 a 04 ok 05 yes 06 ok update docs and decision and close gate 2.6 follow agent promot and rules" (D54). registry.json gate → 3. Gate 3 = D5 spike + implementation plan; owner go-ahead needed to start the spike, "close Gate 3" + "Gate 4 GO" before code.</span></div></div>
+
+  <div class="card fixed"><h3><span class="id">B-10</span> Proof files &amp; credentials <span class="tag ok">Fixed this session</span></h3>
+    <div class="row"><b>Done</b><span><code>iteration_26/27.json</code> restored; owner credentials stored in <code>memory/test_credentials.md</code>; 13 live probe files + report saved under <code>evidence/CR-385/probes_2026_09_19/</code>.</span></div></div>
+</section>
+
+<section id="gate">
+  <h2>D · Gate proposal <small><b style="color:var(--gr)">HISTORY — Gate 2.6 CLOSED 2026-09-20; all backend blockers were verified before closure, so the "build blocked" wording below no longer applies</b></small></h2>
+  <div class="gate">
+    <p style="margin:0 0 6px"><b>Gate 2.6 closes as "analysis complete — build blocked".</b> Closing 2.6 means the gap is understood well enough to plan; it does not mean building starts. Blockers B-1…B-8 are <b>Gate 4 (GO) blockers</b>, not Gate 2 blockers.</p>
+    <ol>
+      <li><b>Gate 3 — allowed now:</b> ½-day D5 spike (payment panel inside an expansion row) + module-wise Implementation Plan M0…M6 with per-file execution order against B-7. Needs no backend answer; it produces the contract the backend builds against.</li>
+      <li><b>Gate 4 — held</b> until: backend fixes <b>D1–D4 + BQ-16</b> and the lifecycle is re-run clean; the B-7 bugs reach Gate 6 for the files each module touches; D5 spike result (B-8). <s>BQ-385-08 list / 12 snapshot</s> ✓ delivered 2026-09-20.</li>
+      <li><b>Parallel-safe work that no blocker touches</b> (can be first in the plan): M4 Rooms tab (Area grouping, Turns, Room Detail), No-Show/Cancel EITHER/OR + one OTA list, terminology / date / money-format sweep (AC-17–20), M0 shared formatting helpers.</li>
+      <li><b>Not allowed</b> before Gate 4: any money screen (Check-In strip, Bill Room block, Modify/Extend pricing, New Booking grid).</li>
+    </ol>
+    <p style="margin:10px 0 0">Owner action to proceed: say <b>"close Gate 2.6 — build blocked on backend D1–D4/BQ-16 + B-7/B-8"</b>. Owner actions to unblock build: forward MASTER §8 (D1–D7, BQ-16) to backend and ask for a fix date; settle sandbox order 1232582; smoke the B-7 bugs (close BUG-384); approve the D5 spike.</p>
+  </div>
+</section>
+
+<footer>Sources: <code>investigations/CR-385_IMPACT_ANALYSIS_2026_09_19.md</code> §4 gap register · §5/§12 backend gaps · §11 owner answers · §15 probe results · <code>plans/CR-385_DESIGN_DECISIONS.md</code> D46-a…i. Companion pages: <a href="/backend-briefs.html">backend briefs</a> · <a href="/cr385-acceptance-criteria.html">acceptance criteria</a> · <a href="/cr385-frontdesk-mockup.html">mockup v2.26</a>.</footer>
+</main>
+</body>
+</html>

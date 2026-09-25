@@ -1,0 +1,1 @@
+BUG-436 evidence → memory/evidence/CR-385/qa_2026_09_21_p0/qa_reruns/20260921_095623/qa_cm_scope.jpeg + console log: {mainHasCM:false, pageHasCM:true, cmInsideSidebar:[true]} — data-testid="fd-page" wraps <Sidebar/> so the "no Channel Manager on the Front Desk screen" assertion catches app chrome.

@@ -1,0 +1,1560 @@
+**Last Updated:** 2026-09-25 — **CR-388 ODs LOCKED — GATE 1 CLOSED.** OD-388-01 LOCKED = editable select dropdown (same units as smallUnit selector) in both ADD and EDIT inline forms. OD-388-02 LOCKED = (a) auto-default from smallUnit, user can override. OD-388-03 LOCKED = (a) both single edit/add + Bulk Edit table. Status → GATE_2_READY. No code this session. Next: Gate 2 Impact Analysis.
+**Last Updated:** 2026-09-25 — **INTAKE: BUG-461 + CR-388 registered.** BUG-461 P2/LOW: sub-recipes appear in Bulk Edit Ingredients — missing `!isSubRecipe` filter in IngredientBulkEditor.jsx filtered useMemo. Fast Lane eligible (1 file, 1 line). CR-388 P2/MEDIUM: editable min alert unit — currently read-only span in both InventorySetupPanel.jsx + IngredientBulkEditor.jsx. No code this session per owner. 3 ODs open (OD-388-01/02/03). Registry 722 items. Intake docs: `change_requests/BUG-461_SUB_RECIPE_IN_BULK_EDIT_INTAKE.md` · `change_requests/CR-388_EDITABLE_MIN_ALERT_UNIT_INTAKE.md`.
+**Last Updated:** 2026-09-25 — **Wave D REGRESSION PASS (9/9).** testing_agent iteration_5: R1 Current Stock BUG-455 paren ✅ · R2 Sub-Recipe Stock ✅ (data gap) · R3 Stock Audit BUG-459 two-box + no dup paren ✅ · R4 Smart Purchase CR-387 all columns ✅ · R5 no-conv rows unchanged ✅ · R6 CR-387 8/8 ✅ · R7 BUG-459 14/14 ✅ · R8 BUG-460 13/13 ✅ · R9 webpack 0 new ✅. 0 BLOCKER · 0 MAJOR · 0 MINOR. Report `test_reports/QA_REPORT_WAVE_D_REGRESSION_2026_09_25.md`. **Next: Gate 6 Owner Smoke.**
+**Last Updated:** 2026-09-25 — **BUG-460 GATE 5B QA PASS (Wave C).** testing_agent iteration_4: 4/4 PASS. V7 Table 2 Suggested Qty shows whole units (642 bottle, 8 box, 321 bottle etc). V8 suggest hint whole. V9 two-box major=642 minor=0. V10 Gap still fractional (-641 bottle 330 ml — unchanged). Math verified on UAT BAR BEER (factor=650, gap=641.51→ceil=642). 0 BLOCKER, 0 MAJOR, 0 MINOR. 3 NOTE observations. Report `test_reports/QA_REPORT_WAVE_C_BUG460_2026_09_25.md`. **Next: Wave D (regression R1-R9).**
+**Last Updated:** 2026-09-25 — **BUG-456 F1 FIX APPLIED (post-QA MINOR).** `InventorySetupPanel.jsx L190`: `Number(ing.displayQty)` → `parseFloat(ing.displayQty)`. Prevents NaN→0 false unlock of unit/conv fields when `displayQty` is a formatted string (e.g. "9.4 pkt"). 1 line. Webpack 0 new warnings. EXIT GATE 5/5. BUG-456 remains GATE_5B_QA_PASS — no status change required. Fix report `handover/BUG_FIX_REPORT_F1_BUG456_2026_09_25.md`.
+**Last Updated:** 2026-09-25 — **BUG-458 GATE 5B QA PASS (Wave B).** testing_agent iteration_3: 3/3 PASS. Vendor names render correctly ("UAT Biryani Supplier", "System Vendor"), zero "(unnamed)" on page. Bonus: BUG-460 suggest hint cross-validated ("suggest: 642 bottle" renders correctly). Report `/app/test_reports/iteration_3.json`. **Next: Wave C (BUG-460) → regression.**
+**Last Updated:** 2026-09-25 — **BUG-455/456/457 GATE 5B QA PASS (Wave A).** testing_agent iteration_2: 7 PASS + 2 code-verified + 2 intentional divergence (OD-UNIFY-01/02). 0 BLOCKER, 0 MAJOR. 1 MINOR code-review finding: `InventorySetupPanel.jsx L190` `Number(ing.displayQty)` could NaN on formatted string → false 0-stock unlock. BUG-457 addon-tab runtime blocked by 0 addon recipes on preprod → deferred to owner smoke. Report `/app/test_reports/iteration_2.json`. **Next: Wave B (BUG-458) → Wave C (BUG-460) → regression.**
+**Last Updated:** 2026-09-25 — **BUG-460 GATE 5A IMPLEMENTED.** `ceilToDisplayUnit` helper in `quantityBreakdown.js` + 2 edit sites in `purchasePlanner.js` (L127-128 velocity, L175-177 alert). 19/19 BUG-460 tests PASS + 14/14 BUG-459 regression PASS + 8/8 CR-387 tests PASS (P1 assertion updated 1480→1950). Webpack compiled successfully. EXIT GATE 5/5. **Next: QA Gate 5b.**
+
+**Last Updated:** 2026-09-25 — **IMPLEMENTATION Gate 5a COMPLETE: BUG-459 coded** (owner verbatim "Gate 4 GO"). FINAL plan applied (OD-UNIFY-01/02): NEW `src/utils/quantityBreakdown.js` + jest 14/14; `inventoryTransform.js` +`displayQtyParts` (ingredients+stockItems); `StockAuditPanel.jsx` two-box display-unit converter, drift-as-breakdown badge, wastage toast, **E4m BUG-455 parenthetical suppressed via `SHOW_BUG455_PARENTHETICAL` flag** (kept on Current/Sub-Recipe Stock). Live smoke PASS (System Qty "9.4 pkt" no paren; two-box prefilled from display_qty_parts). Registry `GATE_5A_IMPLEMENTED`. Impl order BUG-459 → CR-387. **Next: combined QA wave (BUG-455 + BUG-459 + CR-387).**
+
+**Last Updated:** 2026-09-25 — **PLANNING Gate 3 COMPLETE: BUG-459 Implementation Plan written** → `plans/BUG-459_IMPLEMENTATION_PLAN.md` (owner verbatim "choose planning role to complete implementation planning for above bug and CR do not jump gate"). 15 edits / 4 files (NEW `utils/quantityBreakdown.js` + jest; `inventoryTransform.js` +2; `StockAuditPanel.jsx` E4a–E4l two-box + display-unit payload + breakdown drift + wastage toast). V1–V12. Registry `GATE_3_PLAN_COMPLETE` 4/7. **Precondition: BUG-455 Gate 5b closed.** Zero code. **Next: owner verbatim "Gate 4 GO".**
+
+**Last Updated:** 2026-09-25 — **PLANNING Gate 2 CLOSED: BUG-459 — all ODs locked by owner** (verbatim "All recommended · 459-01: a · 9.4 pkt , update docs and decsions"). **OD-459-01 = 9.4 pkt** true on-hand for #20329 UAT BIRYANI MASALA (test data — no manual repair; self-heals on first post-fix audit → Gate 6 smoke item). OD-02 YES · OD-03 (a) auto-normalise · OD-04 YES · OD-05 YES · OD-06 YES · OD-07 (a) after BUG-455 5b. Registry `GATE_2_CLOSED` 3/7. Zero code. **Next: owner verbatim "Gate 3 GO" → `plans/BUG-459_IMPLEMENTATION_PLAN.md`.**
+
+**Last Updated:** 2026-09-25 — **PLANNING: BUG-459 Gate 2 COMPLETE, presented to owner (workspace synced with remote HEAD `0a33e06`).** Status `GATE_2_IMPACT_ANALYSIS` held; **Gate 3 BLOCKED** on OD-459-01…07 (owner answers pending). Zero code. Next: owner locks ODs → verbatim "Gate 3 GO" → `plans/BUG-459_IMPLEMENTATION_PLAN.md`.
+
+**Last Updated:** 2026-09-25 — **PLANNING Gate 2 COMPLETE: BUG-459 Impact Analysis written** → `impact/BUG-459_IMPACT_ANALYSIS.md` (owner verbatim "choose planning role for imapct analysis for above bug and CR" = Gate 2 GO). 12 edit sites: `StockAuditPanel.jsx` (two-box converter, `getDrift()` in base + breakdown, payload `unit: displayUnit` + composed `physical_qty`, wastage toast) · `inventoryTransform.js` +`displayQtyParts` (2 additive lines) · NEW `utils/quantityBreakdown.js` (+jest). R11 PASS (live probe). **CONFLICT BUG-455 → execute after Gate 5b (OD-459-07).** ODs 01–07 OPEN → block Gate 3. Status → GATE_2_IMPACT_ANALYSIS. Zero code. Companion CR-387 IA in CR_REGISTRY.
+
+**Last Updated:** 2026-09-25 — **INTAKE: BUG-459 registered (P0 / CRITICAL, sprint `sep_bug_closure`, Gate 1).** Stock Audit sends base-unit number with display-unit label → ×factor stock inflation on save (live-confirmed on preprod; ANGARA GREAVY repaired, UAT BIRYANI MASALA still corrupted → OD-459-01). Drift badge unit mismatch folded in. Companion **CR-387** (Smart Purchase breakdown + display-unit payload) registered in CR_REGISTRY. Registry 719 items. Zero code. Next: Planning Gate 2 (sequence with BUG-455 Gate 5b on shared files).
+
+**Last Updated:** 2026-09-24 — **BUG-455 + BUG-456 + BUG-457 IMPLEMENTED (Gate 5A).** yarn build exit 0, 0 new warnings. 11 files changed: `inventoryTransform.js` · `CurrentStockPanel.jsx` · `SubRecipeStockPanel.jsx` · `StockAuditPanel.jsx` · `purchasePlanner.js` · `AutoShoppingList.jsx` · `InventorySetupPanel.jsx` · `IngredientBulkEditor.jsx` · `recipeService.js` · `RecipeBulkEditor.jsx` · `RecipeManagementPanel.jsx`. Awaiting QA Gate 5b.
+**Last Updated:** 2026-09-24 — **PLANNING Gate 3 COMPLETE: BUG-455 + BUG-456 + BUG-457 plans written.** All → GATE_3_PLAN_COMPLETE. Awaiting "Gate 4 GO".
+**Last Updated:** 2026-09-24 — **PLANNING Gate 2 CLOSED: BUG-455 + BUG-456 + BUG-457 all ODs locked.** OD-455-02 YES (export column) · OD-455-03 YES (shopping list) · OD-456-03 NO (full Gate 3) · OD-457-02 Option A (Addon only) · OD-457-03 YES (useMemo). All 3 → **GATE_2_CLOSED**. Final scopes: BUG-455 6 files ~16–21 lines · BUG-456 2 files ~12 lines · BUG-457 3 files ~43–45 lines. Next: "Gate 3 GO" → Implementation Plans for all three.
+**Last Updated:** 2026-09-24 — **PLANNING Gate 2 COMPLETE: BUG-455 + BUG-456 + BUG-457 Impact Analysis written.** BUG-455: R11 PASS, 4 files ~10–15 lines. BUG-456: 2 files ~12 lines, OD-456-01 (b) + OD-456-02 confirmed. BUG-457: 2 files ~40 lines, S1+S2 fix, AlertDialog reason dropdown. All 3 → GATE_2_IMPACT_ANALYSIS. Open: OD-455-02/03, OD-456-03 (planning skip?), OD-457-02 (addon-only?), OD-457-03 (useMemo?). Next: owner "Gate 3 GO" → Implementation Plans.
+**Last Updated:** 2026-09-24 — **INTAKE: Owner decisions locked + BUG-233 CLOSED.** OD-456-01 LOCKED = **(b) hard-lock** Unit+Conversion fields (greyed out) when stock > 0. OD-456-02 LOCKED = **include IngredientBulkEditor** in same plan (≤10 lines). BUG-233 **CLOSED_BACKEND_FIXED** — curl-verified on kunafamahal.com: `addon-recipe-list` returns populated `ingredients[]` (1/1 recipes, 0 empty); no FE code needed; evidence `evidence/BUG-233/addon_recipe_list_probe_2026_09_24.json`. Next: Planning Gate 2 for BUG-455 + BUG-456 + BUG-457 (OD-455-02/03, OD-457-02/03 still open).
+**Last Updated:** 2026-09-24 — **INTAKE: BUG-455 · BUG-456 · BUG-457 registered (sprint `sep_bug_closure`, Gate 1, inventory batch).** BUG-455 P2/MEDIUM `display_qty_text` alongside on-hand qty (OD-455-01 LOCKED) · BUG-456 P2/MEDIUM zero-stock gate on ingredient Unit/Conversion edit · BUG-457 P1/HIGH addon recipe delete needs body `reason` (curl-confirmed; standard/sub need none) + stale list after delete (OD-457-01 dropdown LOCKED). Registry 716 items. Zero code. Mockup `frontend/public/inv-intake-mockup-2026-09-24.html` · brief `design_briefs/DESIGN_BRIEF_INVENTORY_INTAKE_BUG455_456_457_2026_09_24.md`. Side finding: BUG-233 backend appears fixed (addon ingredients populated) — re-verify, status untouched. Next: Planning Gate 2 (owner to answer OD-455-02/03, OD-456-01, OD-457-02).
+
+**Last Updated:** 2026-09-24 — **sep_bug_closure WAVE 1 IMPLEMENTED (Gate 5A)** — owner verbatim "Gate 4 GO" → §A CR-386 + §B BUG-453 + §C BUG-451 implemented as one wave (commit `3783ee8`, 15 planned files, zero line drift vs plan at HEAD `7aa95c4`) → `yarn build` exit 0 (only pre-existing lint warnings) → `testing_agent` `/app/test_reports/iteration_1.json` **PASS, 0 findings**. New tests: `src/__tests__/utils/soundManager.bug453.test.js` (4/4) + `src/api/services/__tests__/productService.bug451.test.js` (3/3). Pre-existing (NOT regression, stash-verified at clean HEAD): `ScanOrderPopOut.test.jsx` 22/29 red upstream. **Gate 5 owner manual smoke pending** (VA-3..5, VB-3..11, VC-3..8). **Wave 2 (BUG-452 + VD-8 decision) NOT started.** Handover `handover/SESSION_HANDOVER_2026_09_24_SEP_BUG_CLOSURE_WAVE1_IMPLEMENTED.md`.
+**Last Updated:** 2026-02 — **sep_bug_closure GATE 3 CLOSED (reconfirmed) · B0 PASS · Gate 4 OPEN** · **VD-8 DEFERRED to Wave 2 Gate 4** · **Wave 1 diff preview = ONE consolidated message**. BUG-453 B0 PASS: real FCM key is `payload.data.orderid` (lowercase, no underscore, string value) — plan corrected to `String(data.orderid \|\| data.order_id \|\| data.orderId \|\| '')`. Evidence `memory/evidence/BUG-453/B0_fcm_payload_mapping_2026_02.md`. **No source code changed.** Handover `handover/SESSION_HANDOVER_2026_02_SEP_BUG_CLOSURE_GATE3_CLOSED_B0_PASS.md`.
+**Last Updated:** 2026-09-24 — **sep_bug_closure GATE 3 CLOSED** (owner "close gate 3") for §A CR-386 · §B BUG-453 · §C BUG-451 · §D BUG-452. **Gate 4 OPEN.** BUG-453 B0 validation running: headless Playwright session on preview logged in as yabyum (socket `new_order_835` events captured, e.g. order 1232750) but headless Chromium reports Notification permission `denied` → no FCM token → FCM payload must come from the owner's browser console. Zero code.
+**Last Updated:** 2026-09-24 — **sep_bug_closure GATE 3 PLAN WRITTEN** (owner "Gate 3 GO follow agent prompt, gates and rules") → `plans/SEP_BUG_CLOSURE_CONSOLIDATED_GATE3_IMPLEMENTATION_PLAN.md` (one doc, 4 independently closable sections §A CR-386 · §B BUG-453 · §C BUG-451 · §D BUG-452; 27 edits / 15 files; 49-check verification matrix; code reality re-verified at HEAD `27fca43`). Zero code. Awaiting owner "Gate 3 closed" → Gate 4 code gate (Wave 1 = A+B+C, Wave 2 = D).
+**Last Updated:** 2026-09-24 — **sep_bug_closure GATE 2 CLOSED (owner, Q1–Q6 answered)** — BUG-451 probe DONE (limit=2000 accepted; 561/561, 500-cap reproduced on yabyum; `evidence/BUG-451/probe_limit_*.json`), D1 constant + D2 delete locked · BUG-452 S1 remount + silent clear locked, **BUG-334 annotated REVERSED BY BUG-452** (registry) · BUG-453 OD-453-04 mute = sound + toast · CR-386 no open ODs. **Registry drift fixed:** the 4 sprint items were missing from `registry.json` after the 2026-09-24 memory re-sync → re-registered (712 items). **Gate 3 NOT started** (owner: "do not start gate 3"). Handover `handover/SESSION_HANDOVER_2026_09_24_SEP_BUG_CLOSURE_GATE2_CLOSED.md`.
+
+**Last Updated:** 2026-09-22 — **BUG-450 FIXED + QA-VERIFIED** (owner routing a, mini-gate; legacy CR-358-P5 `RatesTab.jsx` room types now from rateplans; it.27 read-only + self-check; CM-S01 smoke row) · **D88** Split hidden in Front Desk Bill (FU-385-D, OG-PMS-048).
+**Last Updated:** 2026-09-22 — **BUG-447 FIXED + QA-VERIFIED** (P3.5 Fast Lane, owner a; it.20) · BUG-433 FIXED + unit-verified (paise case → combined smoke) · CR-385 P3 Gate 5B QA PASSED.
+**Last Updated:** 2026-09-22 — **BUG-431 / BUG-432 closure (owner tracker validation 9feb4ec):** Front Desk (Beta) path FIXED-BY-CONSTRUCTION + QA-VERIFIED (it.18 wire shapes); legacy pages DEFERRED-TO-FU-385-C, CRITICAL kept. CR-385 Phase 2 entry conditions satisfied (phased plan §2).
+**Last Updated:** 2026-09-21 — **BUG-440 registered** (P1/MEDIUM, QA MAJOR, CODE_ERROR in CR-362 `CancelBookingDialog.jsx`; found by CR-385 Phase 1 QA; owner-approved fix inside P1) · **BUG-439 registered** (P3/LOW, QA MINOR, from P0.5 re-test round 2 `iteration_9.json` where the previously-failed cases passed 4/4) — **owner D72: accepted, Gate 5B (P0+P0.5) CLOSED; BUG-439 FIXED + QA-VERIFIED (Option A/D73, `iteration_10.json` 7/7)** · **CR-385 Phase 0.5 bug batch: BUG-434/435/436/437/438 → **FIXED + QA-VERIFIED** (Bug Fix role, one batch, `// CR-385 M0.5 BUG-43x` markers; QA `test_reports/iteration_7.json` + `iteration_8.json` 15/15 + main-agent timing probe; report `test_reports/QA_REPORT_2026_09_21_CR385_P0_5.md`). BUG-431/432 stay DEFERRED-TO-P2, BUG-433 DEFERRED-TO-P3. Next: owner Phase 0 smoke ("Phase 0 smoke OK") → Phase 1.
+**Last Updated:** 2026-09-21 — Routing (owner-approved): BUG-434/435/436/437/438 → **Phase 0.5** (fix before P1; D70 437→option a, D71 435→5 s); BUG-431/432 → **DEFERRED-TO-P2**, BUG-433 → **DEFERRED-TO-P3** (entry conditions). Master handover `handover/MASTER_HANDOVER_2026_09_21_CR385_P0_TO_P0_5.md`.
+**Last Updated:** 2026-09-21 — **INTAKE BUG-434/435/436/437/438** from the CR-385 Phase 0 QA report (`test_reports/QA_REPORT_2026_09_21_CR385_P0.md`): 434 Retry buttons no in-flight state (P2), 435 duplicate snapshot fetch on ↻ via focus listener (P2), 436 `fd-page` testid wraps Sidebar (P3), 437 Arrivals lands on empty "Today" chip (P2, owner UX decision), 438 automated coverage gap keyboard/phone-suffix/Turns/focus (P3). All LOW risk, no hotspots, RELATED CR-385.
+**Last Updated:** 2026-09-21 — **INTAKE BUG-431/432/433** (from CR-385 B-7 smoke notes, handover §10 / D65): BUG-431 CheckInPage Room Amount pre-fill re-applies GST (P2 CRITICAL), BUG-432 legacy NewBookingPage FE rate overrides CM rate (P2 CRITICAL), BUG-433 ₹1 rounding divergence In-House/folio/POS (P3 HIGH). All INTAKE, evidence `evidence/CR-385/probes_2026_09_20_b7smoke/`. Filed at CR-385 Gate 4 GO, before Phase 0.
+**Last Updated:** 2026-09-20 (PLANNING — **CR-385 Gate 2.6 CLOSED by owner; registry decisions O-4/O-5 applied:** BUG-404 + BUG-413 CLOSED by decision (superseded by CR-385 BQ-16 server pricing / D48-b badge rule); BUG-384 closure re-confirmed; BUG-418 FOLDED INTO CR-385 M6. Handover `handover/SESSION_HANDOVER_2026_09_20_CR385_GATE_2_6_CLOSED.md`.)
+**Last Updated:** 2026-09-16 — **QA PLAN APPROVED (BUG-419 through BUG-430).** Option B: Parallel Batching (3 batches). BATCH 1 (BUG-422/423/424/425): 27 tests, READY. BATCH 2 (BUG-426/427/428/429/430): 25 tests, READY, critical three-way match validation (₹1,947). BATCH 3 (BUG-419/420/421): 10-15 tests, pending implementation verification. Method: Hybrid (automated playwright + manual screenshots). Master plan: `test_reports/QA_MASTER_PLAN_BUG419-430.md`. Handovers: BATCH1 (pre-existing), BATCH2 (`handover/QA_HANDOVER_BATCH2_BUG426-430_2026_09_16.md`), BATCH3 (`handover/QA_HANDOVER_BATCH3_BUG419-421_2026_09_16.md`). test_result.md updated. **Awaiting QA execution GO signal.**
+**Last Updated:** 2026-09-16 — **GATE 2 COMPLETE — ALL BATCHES CLOSED. SESSION CLOSED.** BATCH-1 (BUG-422/423/418): IA `impact/BATCH_PMS2_1_BUG422_423_418_IMPACT_ANALYSIS.md` — 5 ODs deferred to Gate 3 open. BATCH-2 (BUG-420/419): IA `impact/BATCH_PMS2_2_BUG420_419_IMPACT_ANALYSIS.md` — 3 ODs + CRM probe Q-420-01 deferred. BATCH-3 (BUG-421): IA `impact/BATCH_PMS2_3_BUG421_IMPACT_ANALYSIS.md` — 2 ODs deferred. All 7 ODs + 1 probe question to be answered when owner reopens Gate 3. Handover: `SESSION_HANDOVER_2026_09_16_GATE2_CLOSE.md`. Impl order locked: BUG-422→423→418→420→419→421.
+**Last Updated:** 2026-09-15 — **INTAKE BATCH (7 new bugs + status updates).** BUG-410 (old modal GST P2 HIGH UNBLOCKED), BUG-411 (CheckInPage no payment method P0 CRITICAL UNBLOCKED), BUG-412 (folio wrong advance P1 HIGH BLOCKED-ON-BUG-411), BUG-413 (PREPAID badge P2 BACKEND-BLOCKED), BUG-414 (adults/children input P1 GATE_5B_QA_PASS retroactive), BUG-415 (Y-axis ticks P3 LOW), BUG-416 (Night Audit+Revenue no Sidebar P2 UNBLOCKED). Status updates: BUG-400 GATE_5B_QA_PASS · BUG-401 GATE_5A_IMPLEMENTED · BUG-402 GATE_5A_IMPLEMENTED · BUG-403 GATE_5B_QA_PASS · BUG-405 GATE_5A_IMPLEMENTED · BUG-406 GATE_5B_QA_PASS · BUG-407 GATE_5B_QA_PASS. OD decisions recorded: CR-382 PARKED · CR-383 PARKED · BUG-409 PARKED · OD-401-02 N/A · OD-401-04 ship-as-is. Registry: 673 items.
+**Last Updated:** 2026-09-11 — **BUG-394 IMPLEMENTED (Gate 5a).** 18 edits / 4 files: `ProductForm.jsx` (7) + `BulkEditor.jsx` (1) + `AddonManagementPanel.jsx` (7) + `VariationExpandPanel.jsx` (2). 10 onChange special-char blocks + 8 onFocus zero-clears. BUG-392 onWheel preserved. webpack clean. EXIT GATE 5/5. QA PENDING.
+**Last Updated:** 2026-09-10 — **BUG-394 GATE 3 COMPLETE.** Implementation Plan at `plans/BUG-394_IMPLEMENTATION_PLAN.md`. 4 files, 18 edit sites. Scope ext: E1b/E1c/E3c (same files, same patterns). Awaiting Gate 4 GO.
+**Last Updated:** 2026-09-10 — **BUG-394 GATE 2 CLOSED.** IA complete. 6 patterns. All ODs locked. Awaiting Gate 3 GO.
+**Last Updated:** 2026-09-10 — **BUG-394 IA UPDATED — P6 added (zero-clear onFocus).** Owner observed `01` when typing `1` into zero-defaulted fields. Root cause: raw `<input type="number">` elements have no `onFocus` handler (InputField has it, raw inputs don't). 8 additional onFocus edits across same 4 files (BulkEditor L1403, AddonManagementPanel L158/237/239, ProductForm L97/170/175, VariationExpandPanel L54). Total: P1–P5 (7 onChange) + P6 (8 onFocus). All ODs locked. Ready for Gate 3 GO.
+**Last Updated:** 2026-09-10 — **BUG-394 OD-394-01 LOCKED — Option A (silent block on keypress).** IA updated. All owner decisions resolved. Gate 2 fully closed. Ready for Gate 3 GO.
+**Last Updated:** 2026-09-10 — **BUG-394 GATE 2 COMPLETE.** Impact Analysis written at `impact/BUG-394_IMPACT_ANALYSIS.md`. 4 files / 7 line-touches (E1: ProductForm L18, E2: BulkEditor L1403, E3a/E3b: AddonManagementPanel price L156+L237, E4a/E4b: AddonManagementPanel weight L158+L239, E5: VariationExpandPanel L54). BLOCKER: AddonManagementPanel price string→API. Conflict with BUG-392 (same lines, parallel-safe). OD-394-01 open: Option A (silent block on keypress) vs Option B (show then reset on blur). **Awaiting OD-394-01 answer → Gate 3.**
+**Last Updated:** 2026-09-11 — **BUG-395 ADDENDUM-2 FIXED (Gate 5a).** `crossRestaurantAddress` in `customerTransform.js` was missing `house`, `floor`, `road`, `contactPersonName`, `contactPersonNumber` — CRM `/pos/address-lookup` returns these fields but transform dropped them silently. Confirmed via live CRM probe (Hogwarts, 9696759712 — `house: 'G-12'`, `floor: '1'` in API response). `selectedAddress.house/floor` landed as `undefined` → `buildDeliveryAddress` sent `null` to backend; `buildBillPrintPayload` emitted `''` for `deliveryCustHouse`/`deliveryCustFloor`. Fix: 5 fields added to `crossRestaurantAddress` (L199-210). CODE_ERROR. webpack clean. EXIT GATE 5/5. QA PENDING.
+**Last Updated:** 2026-09-10 — **BUG-392 + BUG-395 ADDENDUM FIXES (Gate 5a).** BUG-392: `VariationOptionRow` price input `onWheel` gap fixed (`ProductForm.jsx` L100 — CODE_ERROR, missed in original impl). BUG-395: `buildDeliveryAddress` now includes `city`+`state` (`orderTransform.js` L943-944 — PLAN_GAP, write path was missing). CRM probe: `crm_token=null` for thegoankitchen — no CRM key available, existing DB addresses may need re-save. webpack clean. EXIT GATE 5/5. Both QA PENDING.
+**Last Updated:** 2026-09-10 — **BUG-394 INTAKE COMPLETE (Gate 1).** Number inputs accept special chars — 5 patterns, 4 files. BLOCKER: `AddonManagementPanel` price stored as raw string `"-"` → API. MAJOR: `ProductForm`+`VariationExpandPanel` silent 0. MAJOR: `BulkEditor` NaN in state. P1 HIGH. Planning skip NOT eligible. Intake doc: `change_requests/BUG-394_NUMBER_INPUTS_SPECIAL_CHARS_INTAKE.md`. Evidence: `evidence/BUG-394/`. Registry: 644 items. Awaiting Gate 2 GO.
+**Last Updated:** 2026-09-10 — **BUG-395 REGISTERED + IMPLEMENTED (Gate 5a, retroactive).** `buildBillPrintPayload` missing 4 delivery address sub-fields — house/floor/city/state. Backend brief 2026-09-10. Additive only. `orderTransform.js` L2194-2205. EXIT GATE 5/5. QA PENDING. Registry: 644 items.
+**Last Updated:** 2026-09-09 — **BUG-388 + BUG-389 INTAKE.** BUG-388 (P0 CRITICAL): PMS Check-In advance payment excluded from GST base — 3 edits, 2 files (CheckInPage.jsx × 2, pmsService.js × 1); owner OD-GST-02 confirmed. BUG-389 (P1 HIGH, BACKEND-BLOCKED): room_gst slab2.min=7500.01 causes ₹7,500 exact to hit 5% slab. Registry: 633 items. See `change_requests/BUG-388_*` + `BUG-389_*`.
+**Last Updated:** 2026-09-09 — **QA COMPLETE: BUG-383 Gate 5b partial pass (5/6, MINOR TC-383-04 toast) · BUG-387 Gate 5b PASS (3/3) · QA reports written.** See `test_reports/QA_REPORT_BUG383_2026_09_09.md`, `test_reports/QA_REPORT_BUG387_2026_09_09.md`.
+**Last Updated (prev):** 2026-09-09 — **BUG-387 INTAKE.** PMS picker: HK + OOO rooms appear selectable. Agent-discovered + owner observation. Live probe: r5 (OOO, id:8527) selectable on preprod. Related: BUG-380 (occupied only). OD-387-01 (HK behaviour) + OD-387-02 (OOO behaviour) open. Registry: 631 items.
+**Last Updated (prev):** 2026-09-09 — **BUG-386 QA PASS — Gate 5b.** 6/6 tests pass. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (TC-386-04 checkout payload deferred Gate 6). Root bug confirmed fixed in live network: gst_tax=1440 (was "0.00"). Registry: SYNCED. Ready Gate 6 owner smoke.
+**Last Updated (prev):** 2026-09-09 — **BUG-386 GATE 5a CLOSED.** Q-GST-01 RESOLVED: `room_gst_tax` confirmed as accepted field on BILL_PAYMENT (curl probe passed validation, reached "Order not found"). TODO removed from PmsCheckoutDrawer.jsx. All 7 edits clean. Awaiting QA.
+**Last Updated (prev):** 2026-09-09 — **BUG-386 IMPLEMENTED — Gate 5a.** 7 edits (1 NEW + 6 MOD): roomGstCalculator.js (NEW pure utility), profileTransform.js (E1 roomGstSlabs), pmsService.js (E5 gst_tax+balance_payment), CheckInPage.jsx (E3+E4 compute+strip), orderTransform.js (E6 gstTax), PmsCheckoutDrawer.jsx (E7 room_gst_tax). EXIT GATE 5/5 PASS. webpack clean. Awaiting QA.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 CLOSED.** Design approved. OD-386-D1: CGST+SGST split shown (no slab threshold in UI). OD-386-D2: slab threshold hidden. 5 total ODs locked. Awaiting Gate 4 GO.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 GATE 2 DONE.** Impact Analysis written (`impact/BUG-386_IMPACT_ANALYSIS.md`). 7 edits (1 NEW + 6 MOD). Design mockup approved (`public/bug-386-design-review.html`).
+**Last Updated (prev):** 2026-09-08 — **BUG-386 ODs ALL LOCKED.** OD-386-01: P0 this sprint (pos_pms_1). OD-386-02: Option A — checkout must resend `gst_tax` explicitly (PmsCheckoutDrawer now in scope). OD-386-03: Fix forward only. Awaiting Gate 2 GO.
+**Last Updated (prev):** 2026-09-08 — **BUG-386 INTAKE P0 CRITICAL** — PMS check-in `gst_tax` hardcoded `'0.00'`; room GST slab never computed or sent; `balance_payment` missing GST component. 8 sub-gaps. Source: INV-PMS-GST-001 + owner `pms_gst.md` spec. 3 owner decisions open (OD-386-01..03). Backend brief filed (Q-GST-01).
+### 2026-09-25 — BUG-459 (sprint `sep_bug_closure` — GATE 1 INTAKE, inventory unit contract)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-459** | Stock Audit physical count: `StockAuditPanel.jsx` L83–84 sends `unit: item.displayUnit` with a **base-unit** number (placeholder = `item.quantity`) → backend converts by `converion_factor` → **×factor stock inflation on every save for converted items**; `getDrift()` L47–54 labels a base-unit diff with `displayUnit` ("-100.00 pkt" for 100 gm) | **P0** | **CRITICAL** | **GATE_5A_IMPLEMENTED 2026-09-25** | Source: AGENT-DISCOVERED, **CONFIRMED live** (owner-approved destructive probe, preprod RID 835, alias `QA_INV`): `add-stock` interprets `physical_qty` in the unit sent; accepted units = purchase or consumption unit (case-insensitive) else 422 `PURCHASE_UNIT_NOT_COMPATIBLE`; base-unit send flips `display_unit` → kg (probe A3) → "Option A keep base send" withdrawn. Real damage: ANGARA GREAVY 2,300,000 gm (repaired → 9.4 pkt = 4700 gm, probe C2); **UAT BIRYANI MASALA #20329 250,000 gm still corrupted (OD-459-01)**. Backend already returns `display_qty_parts {major, major_unit, minor, minor_unit, sign}` (unmapped). Expected: two-box converter `[15] tin [305] gm`, send `unit: displayUnit`, `physical_qty: major + minor/factor`; drift in base rendered as breakdown. Code reality NONE · DISTINCT · blast MEDIUM (2 files + new `utils/quantityBreakdown.js`; **sequencing conflict with BUG-455 Gate 5A** on same files). Related BUG-379 (introduced), BUG-223, BUG-455, BUG-321, CR-387. OD-459-01…05 OPEN. Intake `change_requests/BUG-459_STOCK_AUDIT_PHYSICAL_QTY_UNIT_MISMATCH_INFLATION_INTAKE.md` · report `investigations/BUG-459_INVESTIGATION_REPORT_2026_09_25_DRIFT_WRONG_UNIT.md` (§10 addendum) · probe `evidence/INV-UNIT-CONTRACT/probes_2026_09_25/PROBE_REPORT.md`. |
+
+---
+
+
+**Last Updated (prev):** 2026-09-03 (CR-360 GATE 3 — S6 In-House KPI tiles + View Bill; OG-PMS-001 through OG-PMS-004 filed in PMS Phase 1 gaps section.) — root fix: aiosellTransform.js roomCode→room_id, roomName→room_name, areaName→title; ChannelManagerPage Table# prefix removed. Testing agent verification pending.) 2026-09-03 (BUG-377 IMPLEMENTED — fallback option added to Room Mapping dropdown for when aiosellRooms is empty. 1 file, 4 lines. webpack clean.) 2026-09-03 (BUG-378 OD-1 RESOLVED — probe confirmed: use local-reservations view=all + op_status=in_house filter + order_id join. view=in_house returns 0. Phone from user.phone for all guests.) 2026-09-02 (BUG-377: PMS Room Mapping Unassigned — INTAKE P2 LOW. BUG-378: PMS In-House Guests incomplete data — INTAKE P1 MEDIUM, owner decision OD-1 pending.) 2026-09-01 (BUG-374, BUG-369, BUG-372, BUG-371 IMPLEMENTED — QA PENDING) (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) 2026-09-01 (BUG-367 G4 Print Style snap INTAKE — CLOSURE Phase B) 2026-08-31 (BUG-366 IMPLEMENTED — restaurantFor added to profileTransform.settings(); 1 file, 1 line; planning skip owner-approved; compile clean) 2026-08-31 (BUG-365 IMPLEMENTED — PUT→POST fix in stationConfigService.js:22; 1 file, 1 line; planning skip owner-approved; compile clean) 2026-08-30 (BUG-364 INTAKE — Printer Type routing gate stale mid-wizard; profile not re-fetched on intermediate step saves; RELATED: BUG-337; P3 LOW; Fast Lane eligible.) 2026-08-30 (BUG-362 INTAKE — CR-133 Gap G1: copies snap back; CODE EXISTS (CLOSURE Phase B); `shared.jsx` NumberInput fix present. BUG-363 INTAKE — CR-133 Gap G5+G6: Android style mismatch; CODE EXISTS (CLOSURE Phase B); `PrintStyleTab.jsx` RowEditor fix present.) 2026-08-26 (BUG-361 IMPLEMENTED — Sidebar Phase 2 Sweep: 68 files. Python script. webpack clean.) 2026-08-26 (CR-348 IMPLEMENTED — Custom item GST % + Tax Calc fields wired: AddCustomItemModal.jsx + orderTransform.js + OrderEntry.jsx. CR-350 IMPLEMENTED — Room check-in ID upload mandatory toggle: StatusConfigPage.jsx + RoomCheckInModal.jsx. BUG-358 IMPLEMENTED — Sidebar state persisted via localStorage: DashboardPage.jsx. BUG-360 IMPLEMENTED — Room checkout live balance: CollectPaymentPanel.jsx + RoomRowCard.jsx.)
+
+### 2026-09-24 — BUG-455 · BUG-456 · BUG-457 (sprint `sep_bug_closure` — GATE 1 INTAKE, inventory batch)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-455** | Current Stock / Sub-Recipe Stock / Stock Audit: on-hand shows numeric qty+unit only — backend `display_qty_text` ("9 pkt 400 gm") never displayed (`inventoryTransform.js` maps `display_qty`/`display_unit` only; 0 hits for `display_qty_text` in `src/`) | **P2** | **MEDIUM** | **GATE_1_INTAKE 2026-09-24** | Source: AGENT-DISCOVERED from owner backend doc `inv_changes.md` rule R2 (RID 835). Code reality NONE · DISTINCT · blast MEDIUM (4–6 files, no hotspot). **OD-455-01 LOCKED: show alongside existing qty+unit, not replacing.** OD-455-02 export column / OD-455-03 Stock Update column OPEN. Intake `change_requests/BUG-455_CURRENT_STOCK_DISPLAY_QTY_TEXT_INTAKE.md` · investigation `investigations/INV_INVENTORY_FE_RULES_R2_R3_2026_09_24.md` · mockup `frontend/public/inv-intake-mockup-2026-09-24.html`. |
+| **BUG-456** | Ingredients edit row: Unit / Conversion editable while stock > 0 — no proactive zero-stock gate; user only sees backend 422 `UNIT_CHANGE_REQUIRES_ZERO_STOCK` / `CONVERSION_CHANGE_REQUIRES_ZERO_STOCK` after Save (`InventorySetupPanel.jsx:183–206, 421–431`) | **P2** | **MEDIUM** | **GATE_1_INTAKE 2026-09-24** | Source: AGENT-DISCOVERED from `inv_changes.md` rule R3. Code reality NONE · DISTINCT · blast SMALL (1 file ~15–25 lines). Expected: amber inline strip + Save disabled when stock > 0 and unit/factor changed. OD-456-01 warn-on-change (rec.) vs hard-lock · OD-456-02 Bulk Editor parity · OD-456-03 planning-skip — all OPEN. Intake `change_requests/BUG-456_INGREDIENT_UNIT_CHANGE_ZERO_STOCK_GATE_INTAKE.md`. |
+| **BUG-457** | Addon recipe delete fails 422 **"The reason field is required."** — `DELETE product/delete-addon-recipe/{id}` requires body key `reason` (NOT `delete_reason`); FE `recipeService.deleteAddonRecipe()` sends no body, `RecipeBulkEditor.deleteRow()` uses `window.confirm`. **S2:** after a successful delete the row stays listed until reload — `deleteRow()` never calls `onRefresh()`, parent passes `sortRecipes()` new array each render → hydration effect re-seeds stale rows | **P1** | **HIGH** | **GATE_1_INTAKE 2026-09-24** | Source: OWNER-REPORTED (screenshot). Investigation 10/10 steps: live curl on throw-away addon recipe (test restaurant, net-zero) no-body 422 · `{delete_reason}` 422 · `{reason}` 200; **standard + sub delete need no reason (200 no body)**. S1 HIGH / S2 MEDIUM confidence. Code reality NONE · DISTINCT · blast SMALL–MEDIUM (2–3 files, API contract, no hotspot). **OD-457-01 LOCKED: reason = dropdown from `GET product/delete-reasons`.** OD-457-02 addon-only (rec.) vs all tabs · OD-457-03 useMemo parent prop · OD-457-04 backend symmetry ask — OPEN. **Side finding:** `addon-recipe-list` now returns populated `ingredients[]` → BUG-233 (BACKEND-BLOCKED) re-verify candidate, not modified. Intake `change_requests/BUG-457_ADDON_RECIPE_DELETE_REASON_REQUIRED_STALE_LIST_INTAKE.md` · report `investigations/INV-RECIPE-DELETE_INVESTIGATION_REPORT_2026_09_24.md` · evidence `evidence/BUG-457/`. |
+
+
+---
+
+### 2026-09-24 — BUG-454 (sprint `sep_bug_closure` — GATE 1 INTAKE)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-454** | Notification sound / buzzer intermittently silent on first FCM after page load — browser autoplay policy blocks `play()` with `NotAllowedError`; no unlock mechanism in `soundManager.js`; secondary: SW `clients.matchAll()` returns 0 on sleeping tab; tertiary: FCM token tied to stale SW on update | **P1** | **LOW** | **GATE_1_INTAKE 2026-09-24** | Source: OWNER-REPORTED ("Buzzer is not working, sometimes it works"). RCA: RC-1 browser autoplay (HIGH confidence, code-confirmed NONE fix present) + RC-2 SW client gap (MEDIUM) + RC-3 FCM token/SW waiting-state (MEDIUM). **Aggregator orders OUT OF SCOPE** (socket path, independent). RELATED BUG-453 (mute race, GATE_5A_IMPLEMENTED) is separate — BUG-453 = sound doesn't stop; BUG-454 = sound doesn't start. Fast Lane eligible: YES for RC-1 (1 file `soundManager.js` ~10 lines) + RC-3 (1 file `firebase.js` ~3–5 lines) — owner must approve. OD-454-01 (RC-2 scope) + OD-454-02 (FCM data.type probe) open for Gate 2. Intake `change_requests/BUG-454_SOUND_AUTOPLAY_BLOCKED_INTERMITTENT_INTAKE.md` · Investigation `BUG-453_INVESTIGATION_REPORT_2026_09_24_BUZZER_INTERMITTENT.md`. |
+| **BUG-454** (revalidation) | **RCA REVISED 2026-09-24** — two layers: (A) playback: every `play()` re-fetches the sound from origin (`cloneNode()` + Cloudflare `DYNAMIC`, `application/octet-stream`+`nosniff`, 13/14 "wav" files are MP3/AAC); 0.4–9 s+ latency and >20 s stalls reproduced in real Firefox on UAT → "rang once, not again". 1.9 MB file = amplifier, not mechanism. (B) delivery: Firefox user "never rang" — console shows NO FCM ever reached the page, no `play()` attempt; FCM permission/token only requested in `LoginPage`, never re-checked on persisted-session boot. Autoplay RC-1 still valid for Firefox cold loads. Side finding: `order_rejected.wav` is AAC → Firefox cannot decode. | P1 | LOW→**MEDIUM** (fix F1 touches boot flow) | **INVESTIGATED 2026-09-24** | BACKEND_ASK: one `fcm_token` per employee or per device? Owner action: run §6 console snippet on user B's Firefox + share the 2 hidden console errors. Report `BUG-454_INVESTIGATION_REPORT_2026_09_24_REVALIDATION.md` · evidence `evidence/BUG-454/`. |
+| **BUG-454** (final RCA) | **ROOT CAUSE UPSTREAM 2026-09-24** — owner reproduced with fresh Firefox login + token obtained + permission Allowed + Ringer On: socket `scan-new-order` drew the pop-up instantly, **zero FCM reached the browser**, no `play()` attempted. Socket = pop-up, FCM = buzzer, independent by design (grep: `soundManager.play` only in `NotificationContext.jsx:142`; `src/api/socket/*` has no audio). **Owner-confirmed backend model: one `fcm_token` per employee, most-recent login overwrites** → shared-account browsers silently orphaned (H-B2 = design). Fresh-login repro still needs backend send log. | P1 | MEDIUM | **INVESTIGATED_ROOT_CAUSE_UPSTREAM 2026-09-24** | Classification BACKEND_BUG (alt ENVIRONMENT pending owner T1 Firebase-Console test push). **Decisions:** OD-454-03 F5 (ring from socket) WITHDRAWN · OD-454-04 token model confirmed · OD-454-05 multi-device storage PENDING backend Q1. **Backend brief SENT:** `backend_briefs/BACKEND_BRIEF_BUG-454_2026_09_24.md` (Q1 storage model/multi-device · Q2 send log order 1232776 rest 506 + FCM return code · Q3 per-token vs `zone_wise_topic` · Q4 Firefox token stored intact · Q5 logout semantics). Reply expected `backend_replies/BE_REPLY_BUG-454_<DATE>.md`. Secondary FE items F1/F2/F4 + hosting F3 → Planning Gate 2 after reply. Report §1 box/§11/§12 · handover `handover/SESSION_HANDOVER_2026_09_24_BUG454_INVESTIGATION.md`. |
+
+
+
+
+### 2026-09-24 — BUG-451 · BUG-452 · BUG-453 (sprint `sep_bug_closure` — GATE 2 CLOSED, Gate 3 not started)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-451** | Product list capped at `limit: 500` — items 501+ never loaded (boot `LoadingPage.jsx:422`, refresh `useRefreshAllData.js:29`); `PAGINATION.DEFAULT_LIMIT` stale at 100 | **P1** | HIGH (class) / LOW (edit) | **GATE 5A IMPLEMENTED 2026-09-24** (Wave 1, commit `3783ee8`; `DEFAULT_LIMIT: 2000`, 3 literal sites → constant, `getAllProducts()` deleted; test 3/3; testing_agent PASS; owner smoke VC-3..8 pending) — probe DONE: preprod accepts `limit=2000` (200, 561/561 on a 561-product restaurant; `limit=500` returns 500 = bug reproduced). Awaiting Wave 1 Gate 4 GO → implement. | ODs: limit 2000 · fix DEFAULT_LIMIT · **constant at all 3 sites** · **delete dead `getAllProducts()`**. Intake `change_requests/BUG-451_PRODUCT_LIST_LIMIT_500_CAP_INTAKE.md` · IA `impact/BUG-451_IMPACT_ANALYSIS.md` · evidence `evidence/BUG-451/probe_limit_{500,1000,2000,5000}.json` (token masked). Parallel-safe with CR-385 on `api/constants.js`. |
+| **BUG-452** | Stale draft cart restored under the old key after order-type / table switch mid-build (`OrderEntry.jsx` effect L378–512 W1 write + BUG-334 carry-forward; `DashboardPage.cartsByTable`) | **P2** | HIGH | **GATE 5A IMPLEMENTED 2026-09-24** — owner verbatim "gate 4 go" + **VD-8 = Option C** (OD-452-06: on switch also reset `initialShowMerge/Shift/Payment` + `initialTransferItem` so a dismissed modal never re-opens on remount). D-1/D-2 guarded nonce bump in `handleTableClick`/`handleOrderTypeChange` (+12 additive lines, no existing line changed) · D-3 BUG-334 comment REVERSED · D-4 `src/__tests__/pages/DashboardPage.bug452.test.jsx` (structural fallback per plan, 12/12). jest bug452+order-entry 69/69 · `yarn build` exit 0. **Gate 5B QA:** combined Wave 1 + Wave 2 run per `handover/QA_SUPPLEMENT_WAVE1_WAVE2_COMBINED_2026_09_24.md`. | R5 ×2 (`DashboardPage.jsx` +2–4 lines, `OrderEntry.jsx` comment only). Latent second defect (placed items snapshot on occupied-table switch) also fixed by removing W1. `cartsByTable` plumbing becomes dead → cleanup CR later (OPEN_GAPS entry pending owner OK). Intake `change_requests/BUG-452_STALE_CART_RESTORED_AFTER_TYPE_TABLE_SWITCH_INTAKE.md` · IA `impact/BUG-452_IMPACT_ANALYSIS.md`. **BUG-334** (CLOSED 2026-08-20): no tracker row exists in this checkout; reversal recorded in `registry.json` `status_history`. |
+| **BUG-453** | Mute does not stop ringer — `soundManager.js:76/82` null `currentAudio` without `=== audio` guard (race on 2 quick FCMs) + `NotificationContext.jsx:134` plays on every FCM retry with no per-order mute | **P1** | MEDIUM | **GATE 5A IMPLEMENTED 2026-09-24** (Wave 1, commit `3783ee8`; mute key `data.orderid` first; test 4/4; testing_agent PASS; owner smoke VB-3..11 pending) · B0 PASS — Fix A (guards) + Fix B (B1: `mutedOrders` Set + 5 methods in `soundManager`; `DashboardPage.toggleSnooze` +2 lines; `processNotification` early-return) · **OD-453-04: mute = sound + toast**. **B0 evidence 2026-02**: real key is `payload.data.orderid` (lowercase, string); card `orderId` numeric; `String(...)` both sides. Plan B-5 corrected to `String(data.orderid \|\| data.order_id \|\| data.orderId \|\| '')`. Awaiting Wave 1 Gate 4 GO → implement. | Evidence `evidence/BUG-453/B0_fcm_payload_mapping_2026_02.md`. New test `utils/__tests__/soundManager.bug453.test.js`. `ScanOrderPopOut.jsx` anti-rule header → owner override comment, no logic change. Intake `change_requests/BUG-453_MUTE_DOES_NOT_STOP_RINGER_INTAKE.md` · IA `impact/BUG-453_IMPACT_ANALYSIS.md`. |
+
+
+### 2026-09-21 — BUG-434 … BUG-438 (INTAKE — from CR-385 Phase 0 QA report)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-434** | Front Desk (Beta) Retry buttons give no in-flight feedback — error panel stays static during the 2–3 s re-fetch | **P2** | LOW | **QA-VERIFIED (P0.5)** | FIXED 2026-09-21 (P0.5): `fd-retry-btn` + `fd-rooms-retry-btn` disabled + spinner + "Retrying…" while `refreshing` (`retrying` prop on RoomsPanel). QA it.7 (≤200 ms, 1 request/click), it.8 R8 Rooms path, recovery 1.8 s probe. Was: QA-FOUND 2026-09-21 (CONFIRMED). Intake: `change_requests/BUG-434_FRONTDESK_RETRY_NO_INFLIGHT_STATE_INTAKE.md`. Evidence: `evidence/BUG-434/` → `evidence/CR-385/qa_2026_09_21_p0/`. Scope SMALL, no hotspots. Fix in P1 (same files are edited for P1 anyway) or as a stand-alone Fast Lane (LOW risk)? |
+| **BUG-435** | Front Desk (Beta) fires a duplicate snapshot fetch on ↻ — window focus listener + click both call refresh() | **P2** | LOW | **QA-VERIFIED (P0.5)** | FIXED 2026-09-21 (P0.5, D71): `inFlightRef` coalescing (second refresh() returns the in-flight promise) + `lastFetchRef` 5 s focus debounce; manual ↻/Retry/after-PATCH never skipped. phase05.cr385.test.jsx ×3 + live probe (focus ≥7 s after last response → 1 batch; <5 s → 0). QA it.7 A/B/D PASS; case C = tester timing false-negative (idle measured from click while LR took ~7 s) — protocol note added to the QA brief. Was: QA-FOUND 2026-09-21 (CONFIRMED). Intake: `change_requests/BUG-435_FRONTDESK_DUPLICATE_SNAPSHOT_FETCH_FOCUS_LISTENER_INTAKE.md`. Evidence: `evidence/BUG-435/` → `evidence/CR-385/qa_2026_09_21_p0/`. Scope SMALL, no hotspots. Debounce window (5 s?) and whether focus-refresh should be kept at all in P1. |
+| **BUG-436** | `data-testid="fd-page"` wraps the app Sidebar — "no Channel Manager on the Front Desk screen" assertions catch nav chrome | **P3** | LOW | **QA-VERIFIED (P0.5)** | FIXED 2026-09-21 (P0.5): `data-testid="fd-workstation-body"` on `<main>` (fd-page kept). QA it.7 MAIN inside fd-page, no CM wording on 4 tabs; it.8 R12 zero duplicate testids. Was: QA-FOUND 2026-09-21 (CONFIRMED). Intake: `change_requests/BUG-436_FRONTDESK_FD_PAGE_TESTID_WRAPS_SIDEBAR_INTAKE.md`. Evidence: `evidence/BUG-436/` → `evidence/CR-385/qa_2026_09_21_p0/`. Scope SMALL, no hotspots. None — testability only; fold into P1. |
+| **BUG-437** | Arrivals tab lands on an empty "Today 0" table while "Late N" has rows — default chip UX gap | **P2** | LOW | **QA-VERIFIED (P0.5)** | FIXED 2026-09-21 (P0.5, D70 option a): `DEFAULT_CHIP` arrivals/departures `null` = auto; `firstNonEmptyChip(counts, order)` (ArrivalsPanel) → first non-empty in display order, all-zero → Today; click pins; reload resets; In-House/Rooms stay `all`. QA it.7 Late 10 active / Departures Today 2 / pin survives ↻ / reload resets. 5 tests. Was: QA-FOUND 2026-09-21 (CONFIRMED). Intake: `change_requests/BUG-437_FRONTDESK_ARRIVALS_DEFAULT_CHIP_EMPTY_TODAY_INTAKE.md`. Evidence: `evidence/BUG-437/` → `evidence/CR-385/qa_2026_09_21_p0/`. Scope SMALL, no hotspots. Which behaviour: (a) first non-empty chip, (b) keep Today + show late rows under a divider, (c) keep as mockup? |
+| **BUG-438** | CR-385 P0 automated QA coverage gap — keyboard ↑↓/Enter/Esc, phone-suffix search (A6), Turns cross-check (A5), focus-refresh (A4) not asserted by any test | **P3** | LOW | **QA-VERIFIED (P0.5)** | FIXED 2026-09-21 (P0.5): GuestTable.cr385.test.jsx (4) · GlobalSearch.cr385.test.jsx (5) · frontDeskTransform isTurn live-shaped (+1) · phase05.cr385.test.jsx (7). cr385 suite 20 → 38 green. Was: QA-FOUND 2026-09-21 (CONFIRMED). Intake: `change_requests/BUG-438_CR385_P0_AUTOMATED_COVERAGE_GAP_INTAKE.md`. Evidence: `evidence/BUG-438/` → `evidence/CR-385/qa_2026_09_21_p0/`. Scope SMALL, no hotspots. None — test debt; schedule with P1. |
+| **BUG-439** | CR-385 P0 duplicate `data-testid` when a guest row is expanded — row actions re-rendered inside `RowExpansionStub` with the same ids (Arrivals/Departures/In-House) | **P3** | LOW | **FIXED + QA-VERIFIED (2026-09-21)** | QA-FOUND 2026-09-21 (P0.5 re-test round 2, `/app/test_reports/iteration_9.json`, CONFIRMED by code read). QA severity **MINOR**. Intake: `change_requests/BUG-439_CR385_P0_DUPLICATE_TESTID_EXPANDED_ROW_INTAKE.md`. Evidence: `evidence/BUG-439/`. Scope SMALL, no hotspots; fix needs `GuestTable.jsx`/`InHousePanel.jsx` (outside P0.5 §4.3) → owner scope approval. Pre-existing P0 code, missed by P0 X-10 (rows collapsed). **Owner 2026-09-21 (D72): accepted MINOR, Gate 5B closed; routing left to owner.** Planning 2026-09-21: `impact/BUG-439_IMPACT_ANALYSIS.md` + `plans/BUG-439_IMPLEMENTATION_PLAN.md` — **Option A** (`variant` suffix → drawer ids `fd-row-<id>-exp-*`, row ids unchanged, no visual change; 3 panels + 1 test, `GuestTable.jsx` untouched) recommended vs Option B (remove drawer action footer). **CONFLICT** with CR-385 Phase 1 (M2 kebab, `ArrivalsPanel.jsx` L41–46) → run BEFORE Phase 1 GO or fold into first P1 batch. **FIXED 2026-09-21 (Bug Fix role, Option A/D73):** `variant` suffix → drawer ids `fd-row-<id>-exp-*`; ArrivalsPanel L41–46/L57, DeparturesPanel L7–12/L35, InHousePanel L20 (`// BUG-439` ×10); `GuestTable.jsx` untouched; RCA CODE_ERROR; test `bug439.cr385.test.jsx` 6/6 (repro-first), cr385 44/44. **QA-VERIFIED** `/app/test_reports/iteration_10.json` 7/7, 0 console errors. Fix report `handover/BUG_FIX_REPORT_2026_09_21_BUG439.md`. |
+| **BUG-440** | Cancel Booking dialog: cancellation-reason dropdown always empty — `getCancellationReasons` returns `{reasons:[{reasonId,reasonText}]}`, dialog expects an array of `{id,name}`; Confirm never enables (Front Desk Beta + legacy `/pms/arrivals` + `/pms/reservations`) | **P1** | MEDIUM | **FIX IN PROGRESS (CR-385 P1, 2026-09-21)** | QA-FOUND 2026-09-21 (CR-385 Phase 1 live QA, M2-2). QA severity **MAJOR**. RCA CODE_ERROR (CR-362 code, `CancelBookingDialog.jsx` L19–21/L28/L84). RELATED CR-362 + CR-385. Intake: `change_requests/BUG-440_CANCEL_DIALOG_REASONS_EMPTY_INTAKE.md`. Owner approved R14 scope expansion inside Phase 1: fix 3 lines (marker `// CR-385 M2 BUG-440`), `settingsService.js`/`NoShowDialog.jsx` untouched; unit test in `phase1.cr385.test.jsx`; QA on new panel + legacy page. |
+| **BUG-441** | Legacy `/pms/arrivals` Cancel sends the public `booking_id` string as the local-reservation id (`ArrivalsPage.jsx` L273 `reservationId: row.bookingId`) → `POST local-reservations/MG-69-…/cancel` → **500 TypeError**; booking never cancels from the legacy page (new Front Desk path uses `row.id` and works) | **P1** | MEDIUM | **FIXED + QA-VERIFIED 2026-09-22 (CR-385 P1.5)** | QA-FOUND 2026-09-21 (CR-385 P1 QA `iteration_12.json` C-3; reproduced `iteration_14.json` R-LEGACY). QA severity **BLOCKER** on the legacy page. RCA CODE_ERROR (CR-362; masked until BUG-440 made Confirm clickable). Fix = `reservationId: row.id` (1 line); NOT applied — `ArrivalsPage.jsx` is out of P1 scope. Intake `change_requests/BUG-441_LEGACY_ARRIVALS_CANCEL_WRONG_ID_INTAKE.md`, evidence `evidence/CR-385/phase1_qa/c3_legacy_224.json`. Check `ReservationsPage.jsx` cancel wiring too. |
+| **BUG-442** | Cancel booking posts `cancelled_by: "staff"` for every user — call sites read `restaurant.profile.fullName` (not on RestaurantContext; `fullName` is on `AuthContext.user`) | **P2** | LOW | **FIXED + QA-VERIFIED 2026-09-22 (CR-385 P1.5)** | QA-FOUND `iteration_14.json` R-M2-02 (CR-385 P1 Role-4 QA). MINOR. CODE_ERROR (CR-362 origin, inherited by CR-385 M2 per plan copy rule). 3 files / 3 lines. Intake `change_requests/BUG-442_CANCELLED_BY_ALWAYS_STAFF_INTAKE.md`. |
+| **BUG-443** | Legacy `ModifyBookingDialog` PATCH sends `amount_after_tax: 0` + empty `reason` (G-02 violation; price risk if the backend honours it) | **P3** | LOW | **DEFERRED-TO-FU-385-C (owner 2026-09-22, after VERIFY-FIRST probe)** · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | QA-FOUND `iteration_15.json` P15-03. **MINOR** (downgraded): probe on booking 234 — backend ignores the client `amount_after_tax:0`, price server-computed (₹74,340 → ₹111,510 for 2 → 3 nights). Evidence `evidence/CR-385/phase1_5b/`. Smoke S-25 "known dirty, harmless". CODE_ERROR (CR-362 `ModifyBookingDialog.jsx` L53–58). New `ModifyBookingForm` is clean. Intake `change_requests/BUG-443_LEGACY_MODIFY_SENDS_AMOUNT_AFTER_TAX_INTAKE.md`. |
+| **BUG-444** | Legacy `/pms/reservations` tape chart does not show pending Direct bookings created via direct-reservation (no block, no Unassigned row) — reproduced on 231 and 233 | **P2** | LOW | **DEFERRED-TO-FU-385-C (owner 2026-09-22)** — smoke S-22 stays "blocked, BUG-444" · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | QA-FOUND `iteration_15.json` P15-04/04b. MINOR. Suspected `pmsService.buildTapeChart` L396–404 silent drop when `byRoom[tableId]` missing (**hotspot**). Intake `change_requests/BUG-444_TAPECHART_MISSING_PENDING_UNASSIGNED_INTAKE.md`. |
+| **BUG-445** | In-House "Leaving today" chip counts overdue guests (`bucketInHouse` `checkout <= bd`) — chip 2 vs tile/backend "0 leaving today" | **P3** | LOW | **FIXED + QA-VERIFIED 2026-09-22 (CR-385 P1.5c)** | OWNER-SMOKE 2026-09-22, validated (live + code). MINOR. CODE_ERROR vs plan §3 rule (`checkout === bd`). 1 file / 1 line (`frontDeskTransform.js` L87 `checkout === bd`, marker `// CR-385 BUG-445`) + `tests/cr385/phase1_5c.cr385.test.jsx`. QA `iteration_16.json` 7/7 both viewports. Intake `change_requests/BUG-445_INHOUSE_LEAVING_CHIP_COUNTS_OVERDUE_INTAKE.md`. |
+| **BUG-446** | Old `/pms/arrivals` + `/pms/room-status` headers show the **browser date** (`new Date()`) instead of the business date (X-06 gap on legacy pages) | **P3** | LOW | **DEFERRED-TO-FU-385-C (owner 2026-09-22, D81 — "c=defer to FU-385-C")** · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | AGENT-FOUND during owner smoke validation. MINOR. Not in `registry.json` (intake registered in tracker only — to be added at FU-385-C intake). CODE_ERROR `ArrivalsPage.jsx` L102, `RoomStatusPage.jsx` L28. 2 files / 2 lines. Intake `change_requests/BUG-446_LEGACY_PAGES_SHOW_BROWSER_DATE_INTAKE.md`. |
+
+---
+
+### 2026-09-22 — BUG-450 (INTAKE — OWNER-FOUND, legacy Channel Manager CR-358-P5)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-450** | Channel Manager › Rates & Restrictions › **Inventory Restrictions** shows only hard-coded "Executive Room" / "Suite" and pushes `room_code: executive/suite` for every property (Rate Restrictions on the same screen correctly derives room types from `ratesData.rateplans`) | **P1** | **MAJOR** | **FIXED 2026-09-22 (owner routing a — mini-gate, Bug Fix role) + QA-VERIFIED read-only on preprod (testing_agent `iteration_27.json` QA_TGK: cards == rateplan codes, 0 push requests, Rate Restrictions codes match; main-agent self-check `evidence/CR-385/phase4_qa/bug450_selfcheck.json`: labels flip to catalogue `room_name` "EXECUTIVE"/"SUITE" after Room Mapping opened, grid headers same, 0 console errors).** Fix: `roomTypes` = distinct `rateplans[].roomCode` (useMemo) · `roomLabel` = `aiosellRooms[].roomName ?? code` (prop `aiosellRooms` from `ChannelManagerPage` +1 line) · `invForm` lazily keyed (`invFor`) · 0 types → `rt-inv-empty` + push disabled · L288 header → `roomLabel` · keyed `<Fragment>` (pre-existing key warning removed). Markers `// BUG-450`. Unit `pages/pms/__tests__/RatesTab.bug450.test.jsx` 7/7; cr385 suites 70/70; guard grep 0 literals. Smoke row CM-S01 (read-only look). · **P5 2026-09-24:** FIXED + QA-VERIFIED (mini-gate it.27) via CR-385 P4.5b 2026-09-22; P5 Guard 2 grep = 0 lines; CM-S01 smoke PASS. | OWNER-FOUND on preprod (property codes `non-view-room` / `road-view-room`). Origin **LEGACY CR-358-P5 S8-C (2026-09-08)**, not CR-385 (file never touched by CR-385; blame → squashed commit `642ccb8`). CODE_ERROR `pages/pms/RatesTab.jsx` L21 `ROOM_TYPES=['executive','suite']`, L46 `initInvForm`, L118–127 payload `room_code: rt`, L288 Rates-grid header label (every non-`executive` group captioned "Suite" — label only, rates push correct), L360/L362 cards + literal labels. Passed P5 QA only because the TGK sandbox codes coincide. Operational risk: stop-sell/min-stay silently ineffective → overbooking; no money figures (no D50 exposure). Grep: **0 other production hits** (139 hits are tests/fixtures only). Fix: derive room types from distinct `rateplans[].roomCode` (fallback Room Mapping `aiosellRooms`), labels from `roomName`/code, `invForm` keyed by real codes, unit tests (2-code, 3-code, TGK regression, no literal in payload), guard grep. Intake `change_requests/BUG-450_RATESTAB_HARDCODED_ROOM_TYPES_INV_RESTRICTIONS_INTAKE.md`. |
+
+---
+
+### 2026-09-22 — BUG-447 (INTAKE — CR-385 P3 QA)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-447** | Row badge shows PAY AT HOTEL and hides the "₹1,000 advance" chip when `pah=true` | **P3** | **LOW** | **FIXED + QA-VERIFIED 2026-09-22 (P3.5 Fast Lane, owner a: both badges; it.20 100%, `fd-row-<id>-badge` + `fd-row-<id>-badge-advance`)** | AGENT-FOUND 2026-09-22 P3 QA round 2 (res 237). Display priority in `badgeFor` (P0 rule). Options a/b/c in intake; routing 3.5 Fast Lane or FU-385-C. Not blocking. `change_requests/BUG-447_ADVANCE_CHIP_HIDDEN_BY_PAH_BADGE_INTAKE.md` |
+| **BUG-448** | Front Desk (Beta) Bill — Credit/TAB Checkout stays disabled (TAB name/phone not prefilled from the booking) | **P1** | **MAJOR (QA)** | **FIXED 2026-09-22 (Phase 4.5, owner GO) + QA-VERIFIED live it.25 (TAB block hidden, Checkout enabled without typing, `order-bill-payment` 200 `payment_mode: TAB`).** Fix: `billCustomer(order,row)` prefill + `.fd-bill-tab-prefilled` host CSS (OD-385-21); jest 116 → 120. Origin P4. RCA: host passes `customer{customerName,…}` but the panel prefills TAB from `customer.name`/`phone` → empty → Checkout disabled (panel L3308). Cash path unaffected. Intake `change_requests/BUG-448_FRONTDESK_BILL_TAB_DISABLED_INTAKE.md`. · **P5 2026-09-24:** FIXED + QA-VERIFIED via CR-385 P4.5 2026-09-22 — P5 re-check partial (it.33 TAB checkout OK, class not captured; it.34 check-in not reached, business_date rollover) — non-blocking. | `components/pms/frontdesk/FolioCheckoutPanel.jsx` |
+| **BUG-449** | Legacy PmsCheckoutDrawer (`/pms/departures`) — Credit/TAB Checkout disabled until staff type TAB name + 10-digit phone (same `{customerName, phone}` shape, L268) | **P2** | **MINOR** | **DEFERRED-TO-FU-385-C (owner 2026-09-22, Phase 4.5 code-read; no login).** Workaround: use Cash on legacy Departures (smoke pre-read). Front Desk (Beta) path fixed by BUG-448. · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | `PmsCheckoutDrawer.jsx` |
+
+### 2026-09-21 — BUG-431, BUG-432, BUG-433 (INTAKE — from CR-385 B-7 smoke)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-431** | CheckInPage pre-fills Room Amount with base+GST (₹2,100) and re-applies GST (₹2,205 shown vs ₹2,100 stored) | **P2** | **CRITICAL** | **Front Desk (Beta) path: FIXED-BY-CONSTRUCTION + QA-VERIFIED 2026-09-22** (CR-385 M3 `CheckInForm` sends `room_price 0 / order_amount 0 / gst_tax 0`, bill = `charge.*`; QA V-M3-01 `evidence/CR-385/phase2_qa/t4_checkin_request.json`, it.18) · **legacy `/pms/check-in`: still affected → DEFERRED-TO-FU-385-C** (severity kept CRITICAL; staff: use Front Desk (Beta) for check-in) · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | QA-FOUND 2026-09-20 B-7 smoke. Related CR-385 (M3 shows `charge.*` only) / BUG-410. Intake: `change_requests/BUG-431_CHECKINPAGE_ROOM_AMOUNT_GST_REAPPLIED_INTAKE.md`. Evidence: `evidence/CR-385/probes_2026_09_20_b7smoke/{PROBE_REPORT.md,c2_checkin_adv500_card.json,c3_folio.json}`. Decision: fix vs retire with FU-385-C. |
+| **BUG-432** | Legacy NewBookingPage FE room amount (₹2,000) honoured over CM rate (₹3,500) — server prices only when FE omits `rate_per_night` (BQ-385-16) | **P2** | **CRITICAL** | **Front Desk (Beta) path: FIXED-BY-CONSTRUCTION + QA-VERIFIED 2026-09-22** (CR-385 M1 `NewBookingForm` payload = `room_code/rateplan_code/rooms_count`, no `rate_per_night`; QA V-M1-02 `evidence/CR-385/phase2_qa/t1_direct_reservation_request.json`, it.18) · **legacy `/pms/new-booking`: still affected → DEFERRED-TO-FU-385-C** (severity kept CRITICAL; staff: use Front Desk (Beta) for booking) · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | QA-FOUND 2026-09-20. Related CR-385 M1 (never sends rate) / BUG-404. Intake: `change_requests/BUG-432_LEGACY_NEWBOOKING_FE_RATE_OVERRIDES_CM_RATE_INTAKE.md`. Evidence: `…b7smoke/{c1_direct.json,rates_0920_0922.json}`, `probes_2026_09_20_final/s1_bq16_omit_rate.json`. |
+| **BUG-433** | ₹1 rounding divergence: In-House 2,212.35 · Folio 2,212 · POS 2,213 (order 1232632) | **P3** | **HIGH** | **FIXED (Front Desk path, CR-385 M5 · D85) 2026-09-22 + UNIT-VERIFIED · live integer case ✓ (server balance == POS ₹35,170, `phase3_qa/p3_mutating_run.json`) · paise case → combined smoke M3-S01/S02** · legacy In-House/Folio displays unchanged → FU-385-C (OD-385-20 a) · **P5 2026-09-24:** DEFERRED-TO-FU-385-C — owner 2026-09-23 verbatim: "separate CR after CR-385 closes. Gate 5 closes without it; BUG-431/432/443/444/446/449, X-06 and legacy rounding stay DEFERRED-TO-FU-385-C with that sentence in the sign-off." | RCA: FE-only rounding (3 display rules on one raw figure). QA-FOUND 2026-09-20 (S-421/426 nit). Related BUG-421/426/429/430; affects CR-385 M5 balance rule (AC-02). Intake: `change_requests/BUG-433_RUPEE_ROUNDING_DIVERGENCE_INHOUSE_FOLIO_POS_INTAKE.md`. Evidence: `…b7smoke/{PROBE_REPORT.md,folio_1232629.json,lr_smoke411.json}`. Backend rounding rule to confirm. |
+
+---
+
+### 2026-09-16 — BUG-430 (INTAKE — Room Orders GST Missing Add-Ons)
+
+|| Bug ID | Title | Priority | Risk | Status | Notes |
+||---|---|---|---|---|---|
+|| **BUG-430** | Room Orders GST missing add-ons calculation (BUG-429 implementation gap) — folioTransform + pmsService calculate GST on base price only, excluding add-ons | **P1** | **CRITICAL** | **GATE 5A — IMPLEMENTED** | **Root cause:** BUG-429 copied GST formula from orderTransform.js but missed the add-ons calculation block (L1900-1904) that runs BEFORE GST. **Result:** GST calculated on `(unit_price × qty)` only; add-ons excluded from tax base. **Gap:** ₹1,930.40 vs ₹1,947 (₹16-18 = GST on missing add-ons). **Implementation:** E1 folioTransform.js L115-120 (+6 lines): BUG-430 marker + addonPerUnit reduction + amt modified. E2 pmsService.js L125-130 (+6 lines): Same pattern. BUG-429 GST logic untouched in both files. Webpack: 0 new warnings. Code verification: V1-V9 ✅ all pass. Files: `folioTransform.js` + `pmsService.js`. Handover: `handover/QA_HANDOVER_BUG430_2026_09_16.md`. **Awaiting QA (V10-V14).** |
+
+---
+
+### 2026-09-10 — BUG-394 (INTAKE — Special Characters in Number Inputs)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-394** | Number inputs accept special chars (`-`, letters) — silent data corruption across 4 files | **P1** | **HIGH** | **INTAKE — Gate 1** | 5 patterns in 4 files. **BLOCKER:** `AddonManagementPanel.jsx` L156+L237 — `price: e.target.value` stores raw string `"-"` → API receives string not number. **MAJOR (×3):** `ProductForm.jsx` L18 + `VariationExpandPanel.jsx` L54 — `parseFloat(x) \|\| 0` silently coerces to 0. `BulkEditor.jsx` L1403 — `Number(x)` stores NaN in grid state. No sanitisation guards in any file. Planning skip NOT eligible (4 files). Related: BUG-392 (same files, scroll wheel — different fix). Source: OWNER-REPORTED. Confidence: CONFIRMED. Intake doc: `change_requests/BUG-394_NUMBER_INPUTS_SPECIAL_CHARS_INTAKE.md`. Evidence: `evidence/BUG-394/`. **Awaiting Gate 2 GO.** |
+
+---
+
+### 2026-09-10 — BUG-395 (Retroactive Registration — Gate Violation Resolved)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-395** | `buildBillPrintPayload` missing 4 delivery address sub-fields: `deliveryCustHouse`, `deliveryCustFloor`, `deliveryCustCity`, `deliveryCustState` | **P2** | **MEDIUM** | **IMPLEMENTED — Gate 5a. QA PENDING** | Additive. 4 keys added to `orderTransform.js:2194-2205`. Follows same pattern as `deliveryCustAddress`/`Pincode`/`Phone`. Source: backend brief 2026-09-10. Retroactively registered after gate violation (implemented without Gate 4 GO). Owner approved retroactively 2026-09-10. EXIT GATE 5/5 PASS. Related: BUG-144, BUG-369. QA handover: `handover/QA_HANDOVER_BUG395_2026_09_10.md` |
+
+---
+
+### 2026-09-09 — BUG-388, BUG-389 (INTAKE — PMS GST Investigation)
+
+**Updated 2026-09-14 — BUG-389 CLOSED (NOT A BUG):** Re-investigation confirmed `slab2.min=7500.01` is intentional business rule. ₹7,500 exact → 5% (intended); ₹7,500.01+ → 18% (intended). No backend fix needed. Agent original intake was incorrect. Registry: BUG-389 category=CLOSED.
+
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-388** | PMS Check-In: advance payment excluded from GST base — wrong slab + wrong balance_payment | **P0** | **CRITICAL** | **IMPLEMENTED — Gate 5a** | 4 edits, 2 files: `CheckInPage.jsx` (E1a strip L388 + E1b display L422 + E2 handleConfirm L168) + `pmsService.js` (E3 balance_payment L159). Self-test 6/6 PASS. webpack 0 new warnings. EXIT GATE 5/5. IA: `impact/BUG-388_IMPACT_ANALYSIS.md`. Plan: `plans/BUG-388_IMPLEMENTATION_PLAN.md`. **Awaiting QA (Gate 5b).** |
+| **BUG-389** | PMS Room GST slab config: slab2.min=7500.01 causes ₹7,500 exact to hit 5% slab (should be 18%) | **P1** | **CRITICAL** | **INTAKE — BACKEND-BLOCKED** | Backend config fix only (no FE code). RID 69 `room_gst` slab2.min must change 7500.01→7500. OD-389-01/02 open. Backend brief needed. Intake: `change_requests/BUG-389_PMS_ROOM_GST_SLAB_BOUNDARY_7500_HITS_5PCT_INTAKE.md`. |
+
+---
+
+### 2026-09-02 — BUG-377, BUG-378 (INTAKE — CR-358-P1 post-implementation bugs)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-377** | PMS Room Mapping: dropdown shows "— Unassigned —" despite "Mapped" status | P2 | LOW | **IMPLEMENTED — QA PASS** | Fallback `<option>` added for saved mapping code when `aiosellRooms` catalogue empty. `ChannelManagerPage.jsx` +4 lines. Testing agent: 5/5 rooms show correct codes. Fix report: `handover/BUG-377_BUG_FIX_REPORT_2026_09_03.md` |
+| **BUG-378** | PMS In-House Guests: Room/Phone/Dates/Balance all show "—" | P1 | MEDIUM | **IMPLEMENTED — Gate 5a** | 4 files. roomListTransform (+phone), aiosellService (+getLocalReservations), pmsService (two-call join), InHouseGuestsPage (4 field renames). webpack clean. QA: `handover/QA_HANDOVER_BUG378_2026_09_03.md` |
+
+---
+
+### 2026-09-01 — BUG-374, BUG-369, BUG-372, BUG-371 (IMPLEMENTED — QA PENDING)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-374** | Cart: variation qty change mirrors to all variations of same item | P0 | CRITICAL | **IMPLEMENTED — QA PENDING** | Fix: `_cartKey` UUID assigned per cart slot; `updateQuantity` matches by `_cartKey` not `item.id`. Files: `OrderEntry.jsx`, `CartPanel.jsx`. Testing agent timed out 2x. |
+| **BUG-369** | Print Customer Copy flag not passed to Printer Agent | P1 | MEDIUM | **IMPLEMENTED — QA PENDING** | Fix: `printBillCustomerCopy` added to `profileTransform.settings()`; passed in overrides from `CollectPaymentPanel`; included in `buildBillPrintPayload`. Files: `profileTransform.js`, `CollectPaymentPanel.jsx`, `orderTransform.js`. |
+| **BUG-372** | Transfer + Merge from order card not working | P1 | HIGH | **IMPLEMENTED — QA PENDING** | Fix: Merge handler replaced `console.log` with real `initialShowMerge` flow; Transfer timing fixed (state set before navigation). Files: `DashboardPage.jsx`, `OrderEntry.jsx`. |
+| **BUG-371** | Bulk Editor variation price not editable | P2 | MEDIUM | **IMPLEMENTED — QA PENDING** | Fix: `VariationExpandPanel` gets price inputs + `onPriceChange` prop; BulkEditor tracks dirty variations; `buildPayload` includes variation data. Files: `VariationExpandPanel.jsx`, `BulkEditor.jsx`. |
+
+---
+
+### 2026-09-01 — BUG-368 through BUG-375 (INTAKE — Owner Batch)
+
+| Bug ID | Title | Priority | Risk | Severity | Status | Path |
+|---|---|---|---|---|---|---|
+| **BUG-368** | Split Bill Reprint fails after settlement | P1 | MEDIUM | MAJOR | **IMPLEMENTED — Awaiting QA** | `impact/BUG-368_IMPACT_ANALYSIS.md` + `plans/BUG-368_IMPLEMENTATION_PLAN.md` |
+| **BUG-369** | Print Customer Copy setting has no effect | P1 | MEDIUM | MAJOR | INTAKE | Gate 2 — owner decision OD-1 needed |
+| **BUG-370** | Delivery reassign missing in Waiting for Rider state | P2 | LOW | MINOR | INTAKE | Fast Lane eligible |
+| **BUG-371** | Bulk Editor variation price not editable | P2 | MEDIUM | MAJOR | INTAKE | Gate 2 — new UI needed |
+| **BUG-372** | Transfer + Merge buttons not working from order card | P1 | HIGH | MAJOR | INTAKE | Gate 2 — Merge is console.log only |
+| **BUG-373** | Service Charge label hardcoded — custom label ignored | P2 | MEDIUM | MINOR | INTAKE | Fast Lane partial eligible |
+| **BUG-374** | Variation qty change affects all variations of same item | P0 | CRITICAL | BLOCKER | INTAKE | Gate 2 — hotspot, full analysis needed |
+| **BUG-375** | Zomato Image shown in Normal Menu Management | P3 | LOW | MINOR | INTAKE | Fast Lane eligible |
+
+---
+
+### 2026-09-01 — BUG-367, BUG-362 (CLOSED — OWNER VERIFIED retroactive)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-367** | Printer Agent Print Style — value snaps to 0 (G4) | P2 | LOW | **CLOSED — OWNER VERIFIED (retroactive 2026-09-01)** | QA PASS: clear-and-retype works, blur clamps to valid min. QA report: QA_REPORT_CR353_CR355_CLOSURE_2026_09_01.md |
+| **BUG-362** | CR-133 Gap G1: Bill/KOT Copies inputs snap back to 1 (AutoPrintTab) | P2 | LOW | **CLOSED — OWNER VERIFIED (retroactive 2026-09-01)** | QA PASS: copies field allows editing without snap-back, persists after save. QA report: QA_REPORT_CR353_CR355_CLOSURE_2026_09_01.md |
+
+---
+
+### 2026-08-31 — BUG-366 (IMPLEMENTED)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-366** | Station GST field never renders — `restaurantFor` missing from `profileTransform.settings()` | P1 | MEDIUM | **IMPLEMENTED** | 1 file, 1 line. Added `restaurantFor: apiSettings.restaurant_for \|\| 'Normal'` to `profileTransform.js settings()` after `printerType`. Root: `restaurant.settings.restaurantFor` was always `undefined` → coerced to `''` → `'' !== 'food_court'` → guard never passed. Confirmed API field is root-level `restaurant_for` (same as `restaurantSettingsTransform.js:38`). Owner decision: food_court = show field. Compile clean 2026-08-31. |
+
+---
+
+### 2026-08-31 — BUG-365 (IMPLEMENTED)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-365** | Station Config `updateStation` uses `api.put()` — backend rejects 405 (only POST supported) | P1 | MEDIUM | **IMPLEMENTED** | 1 file, 1 line. `stationConfigService.js:22` `api.put()` → `api.post()`. `id` already in body via `toAPI.station(form, false, ...)`. Planning skip — owner approved. Compile clean. Source: INV-PRINTER-UPDATE-GST investigation 2026-08-31. |
+
+---
+
+### 2026-08-30 — BUG-362, BUG-363 (INTAKE — CODE EXISTS, CLOSURE Phase B)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-362** | CR-133 Gap G1: Bill/KOT Copies inputs snap back to 1 (AutoPrintTab NumberInput) | P2 | LOW | **INTAKE — CODE EXISTS (CLOSURE Phase B)** | 1 ✅ | Code reality: FULL. Fix in `shared.jsx` `NumberInput` (localVal+blur clamp, line 5). Shipped under CR-133-GAP label. Never got a BUG ID. Handover 2026-08-27 said NOT FIXED (stale — code is truth). CLOSURE Phase B: QA verify copies persist, then mark CLOSED retroactively. Related: BUG-315. Intake: `change_requests/BUG-362_CR133_GAP_G1_COPIES_SNAP_BACK_INTAKE.md` |
+| **BUG-363** | CR-133 Gap G5+G6: Android bill/KOT style saves incorrectly — API shape flat→windows/android split mismatch | P1 | MEDIUM | **INTAKE — CODE EXISTS (CLOSURE Phase B)** | 1 ✅ | Code reality: FULL. Fix in `PrintStyleTab.jsx` RowEditor (patches `row[platform]` sub-object, lines 41-67). Shipped under CR-133-GAP label. Never got a BUG ID. Handover said NOT FIXED CRITICAL (stale — code is truth). CLOSURE Phase B: QA verify Android style round-trip + confirm transform toAPI emits split shape. Related: BUG-315, BUG-317. Intake: `change_requests/BUG-363_CR133_GAP_G5G6_ANDROID_STYLE_MISMATCH_INTAKE.md` |
+
+---
+
+### 2026-08-26 — CR-348, CR-350, BUG-358, BUG-360 (IMPLEMENTED)
+
+| ID | Title | Priority | Risk | Status | Files |
+|---|---|---|---|---|---|
+| **BUG-361** | Sidebar state not persisted: Phase 2 — 68 remaining pages | P2 | LOW | **IMPLEMENTED** | 5 ✅ | 68 files. Python script applied localStorage init + setIsExpanded wrapper. Same key as BUG-358. 0 new warnings. 2026-08-26. |
+
+| ID | Title | Status | Files |
+|---|---|---|---|
+| **CR-348** | Custom item GST % + Tax Calc wired | **IMPLEMENTED** | `AddCustomItemModal.jsx` · `orderTransform.js` · `OrderEntry.jsx` |
+| **CR-350** | Room check-in ID upload mandatory toggle (localStorage Phase 1) | **IMPLEMENTED** | `StatusConfigPage.jsx` · `RoomCheckInModal.jsx` |
+| **BUG-358** | Sidebar state persisted across reloads | **IMPLEMENTED** | `DashboardPage.jsx` |
+| **BUG-360** | Room checkout reads live `remainingRoomBalance` instead of stale `balancePayment` | **IMPLEMENTED** | `CollectPaymentPanel.jsx` · `RoomRowCard.jsx` |
+
+---
+
+### 2026-08-26 — Batch Intake (BUG-351 → BUG-359) from INVESTIGATION_REPORT_BATCH_2026_08_26
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-351** | Room Check-In: Doc upload required even for CRM-verified guests | P1 | HIGH | **IMPLEMENTED** | 5 ✅ | `RoomCheckInModal.jsx:611-616,1051-1052` — `crmDocuments.length===0` guard on validation + JSX render. Upload row hidden + validation skipped when CRM docs on file. CR-350 idUploadRequired gate also applied. 2026-08-26. |
+| **BUG-352** | OrderTable: Amount column `w-24` too narrow — overlaps Change button | P2 | LOW | **IMPLEMENTED** | 5 ✅ | `OrderTable.jsx:143,157` — `w-24`→`w-32` both column sets. `// BUG-352` markers. 2026-08-26. |
+| **BUG-353** | OrderReportBetaPage: Date range capped at 1 month | P2 | MEDIUM | **INTAKE — BACKEND-BLOCKED** | 1 ✅ | No FE limit found; hypothesis: backend cap on ORDER_REPORT_BETA_COMBINED. Needs backend confirm. Intake: `change_requests/BUG-353_ORDER_REPORT_BETA_DATE_RANGE_LIMIT_INTAKE.md` |
+| **BUG-354** | OrderReportBetaPage: Status column null for some order types | P2 | MEDIUM | **INTAKE** | 1 ✅ | `deriveStatus()` returns null for edge-case fOrderStatus values. Needs live test. Intake: `change_requests/BUG-354_ORDER_REPORT_BETA_STATUS_COLUMN_MISSING_INTAKE.md` |
+| **BUG-355** | PurchaseReportPage: Payment_Type `'paid'` legacy records show ₹0 on cards | P1 | MEDIUM | **PARKED — owner decision** | 1 ✅ | Owner 2026-08-26: no change to display-side mapping. Submit-side fix (SmartPurchasePanel paymentType now sends method name) already shipped. Historical records with `'paid'` accepted as-is. |
+| **BUG-356** | Customer name/phone not saved on order | P1 | HIGH | **INTAKE — NEEDS LIVE TEST** | 1 ✅ | `CartPanel.jsx:846-847` — `customer` prop may be stale when `placeOrder` fires for manual entry vs CRM lookup. Intake: `change_requests/BUG-356_CUSTOMER_DATA_NOT_SAVED_ON_ORDER_INTAKE.md` |
+| **BUG-357** | Room check-in: Advance > room price blocked FE-only | P2 | LOW | **IMPLEMENTED** | 5 ✅ | `RoomCheckInModal.jsx:632-633` — advance>roomPrice guard removed. `// BUG-357` comment. Backend allows advance > room price. 2026-08-26. |
+| **BUG-358** | Sidebar collapsed state lost on every reload | P2 | LOW | **IMPLEMENTED** | 5 ✅ | `DashboardPage.jsx:451` — localStorage-backed `useState` init + `setIsExpanded` wrapper writes on toggle. `mygenie_sidebar_expanded` key. 2026-08-26. |
+| **BUG-359** | Settings Tax Cleanup (misdiagnosis resolved — settings UI dead fields) | P2 | **MEDIUM** | **IMPLEMENTED** | 5 ✅ | `RestaurantSettingsPage.jsx` + `ProductForm.jsx` + `BulkEditor.jsx`. Removed GST Mode + GST Tax% + Tax% from Step 4. Removed Inclusive from ProductForm taxCalc. Removed taxCalc column + renderer from BulkEditor. Save payloads send safe Exclusive/0 defaults. No order calc changes. 2026-08-26. |
+
+---
+
+### 2026-08-22 — BUG-340 (Popular Tab Empty Chips)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-340** | Popular tab items render as empty chips — `adaptProduct()` receives raw API format (id/name/price) instead of transformed MenuContext format (productId/productName/basePrice) | P1 | HIGH | **IMPLEMENTED — QA PASS** | 5b ✅ | Fix: load popular items at boot (LoadingPage→productFromAPI.product()→MenuContext.popularProducts[]→OrderEntry.useMenu(). getFilteredItems popular branch: `popularProducts.map(adaptProduct)`. 4 files: constants.js + LoadingPage.jsx + MenuContext.jsx + OrderEntry.jsx. // BUG-340. QA: iteration_5.json 100% PASS. |
+
+---
+
+
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-323** | BulkEditor: False dirty state — categoryId=0 falsy coercion | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `BulkEditor.jsx:324` — `o.categoryId !== Number(row.categoryId)` — when `categoryId=0`, `0\|\|null=null`, `null !== 0 = TRUE` → perpetual false dirty. Fix: `Number(o.categoryId ?? 0) !== Number(row.categoryId ?? 0)`. DATA_EDGE. 37/108 Aggregator foods affected. Source: INVESTIGATION_COMPLETE (session handover 2026-08-15). // BUG-323 |
+| **BUG-324** | BulkEditor: `isRowDirty` stale closure — menuType always "Normal" | P2 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `BulkEditor.jsx:372` — `useCallback` deps missing `menuType`. Created once at mount with menuType="Normal". In Aggregator mode swiggy/zomato/clientId dirty checks silently skipped. Fix: add `menuType` to deps array `[isDirty, menuType]`. CODE_ERROR (pre-existing ESLint warning). Source: INVESTIGATION_COMPLETE (session handover 2026-08-15). // BUG-324 |
+
+---
+
+**Last Updated (prev):** 2026-08-14 (BUG-322 INTAKE — Recipe Form SearchableSelect ingredient dropdown clipped by overflow-hidden table container; P1 LOW; 1 file; Fast Lane eligible; Related: BUG-236, BUG-238)
+
+---
+
+### 2026-08-14 — BUG-322 (Recipe Form Ingredient Dropdown Clipped)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-322** | Recipe Form — SearchableSelect ingredient dropdown clipped by `overflow-hidden` table container | P1 | LOW | **IMPLEMENTED** | 5a ✅ | `SearchableSelect` (local, `RecipeFormPanel.jsx:12-82`) uses `position:absolute` (L46). Ingredient table container (L305) has `overflow-hidden` → clips dropdown. ALL recipe types broken (sub/standard/addon ingredient rows). X clear-search button also inaccessible. Working: Addon Item + Menu Item dropdowns (top card L227, no overflow-hidden). Code reality: NONE. Fix: position:fixed + getBoundingClientRect on trigger button (identical to BUG-311 L1). 1 file, ~12 lines. DISTINCT. Related: BUG-236 (same pattern Smart Purchase), BUG-238 (introduced SearchableSelect). Intake: `change_requests/BUG-322_RECIPE_SEARCHABLESELECT_OVERFLOW_INTAKE.md`. Investigation: `BUG-322_SEARCHABLESELECT_OVERFLOW_INVESTIGATION.md`. Fast Lane eligible (owner GO needed). |
+
+---
+
+**Last Updated (prev):** 2026-08-13 (BUG-314 INTAKE — Inventory Setup categories/units not loading: Promise.all atomic failure when get-inventory-master 404. P1 MEDIUM. 1 file fix. BUG-315 INTAKE — Printer Config numeric inputs can't be cleared to retype. P2 LOW. 2 files. BUG-316 INTAKE — Font dropdown empty (available_fonts null from API). P1 LOW. Fast Lane eligible. BUG-317 INTAKE — Android size fields reject values > 8; OD-D override by owner. P2 LOW. Fast Lane eligible. BUG-318 INTAKE — Aggregator auto-print keys missing from printer agent UI + saves to wrong API; OD-B reversed. P1 MEDIUM. Full Gate 2-3 needed. BUG-319 INTAKE — Footer text hardcoded in print agent; backend-only fix. P2 LOW.) 
+
+
+---
+
+
+### 2026-08-14 — BUG-321 (Sub-Recipe Stock Semantic Fix)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-321** | Sub-Recipe Stock Panel — Produce/Recount mode (IMPLEMENTED 2026-08-14) (every save adds qty; drift is UI lie; physical_qty gate needed) | P1 | MEDIUM | **GATE 3 COMPLETE — Awaiting Gate 4 GO** | 3 ✅ | Two issues: A) SubRecipeStockPanel sends quantity=ADD but shows drift/wastage UI (wrong). B) StockAuditPanel.jsx:71 physicalQty=qty → spurious wastage on sub-recipe branch once transform fixed. Fix: mode toggle (Produce/Recount) in SubRecipeStockPanel + conditional physical_qty in transform + StockAuditPanel fix. 3 files. Impact: BUG-SRSTOCK_IMPACT_ANALYSIS.md. Plan: BUG-SRSTOCK_IMPLEMENTATION_PLAN.md. Evidence: 6 curl probes in probe_results.json. DISTINCT from BUG-308/320/CR-139. |
+
+
+---
+
+## POS 5.0 — Session 2026-07-22 Registrations (Inventory Module Batch)
+
+### BUG Registrations (BUG-214 → BUG-227)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-214 | Addon Recipe Dropdown Shows Menu Items Instead of Addon Items | P1 | HIGH | **IMPLEMENTED** | 0-5 ✅ | 3 code markers in `RecipeFormPanel.jsx`. `getActiveAddons()` fix + `foods` fallback removed. Status updated 2026-07-24 (code reality check — was stale at Gate 3). |
+| BUG-215 | Recipe Forms — Validation Errors Not Shown on Save Failure | P1 | MEDIUM | **IMPLEMENTED** | 0-5 ✅ | 2 code markers in `RecipeFormPanel.jsx`. Inline error state + validation on save catch. Status updated 2026-07-24 (code reality check). |
+| BUG-216 | Recipe Ingredient Row Shows Base Unit, Should Show Small Unit | P2 | HIGH ⬆ | **IMPLEMENTED** | 0-5 ✅ | 3 code markers in `RecipeFormPanel.jsx` + `RecipeBulkEditor.jsx`. smallUnit fallback on ingredient select + dropdown. 2 files. Status updated 2026-07-24 (code reality check). |
+| BUG-217 | Sub-Recipe Unit Field Required (re-scoped: blank Unit → backend 500) | P2 | MEDIUM | **IMPLEMENTED** | 0-5 ✅ | 2 code markers in `RecipeFormPanel.jsx` (L95 unit required, L178 indicator). Status updated 2026-07-24 (code reality check). |
+| BUG-218 | Delete Ingredient — No Blocking Error When Used in Recipe | P1 | LOW (post-fix) | **IMPLEMENTED** | 0-5 ✅ | 4 code markers in `InventorySetupPanel.jsx`. Dialog + deleteBlocker state + `used_in_recipes[]` parse. Status updated 2026-07-24 (code reality check). |
+| BUG-219 | Ingredient Form — Min Unit Text Input (data corruption fix) | P2 | **HIGH⬆** | **IMPLEMENTED** | 0-5 ✅ | 8 code markers in `inventoryTransform.js` (5) + `InventorySetupPanel.jsx` (3). min_unit_alert as unit string, dropdown. Status updated 2026-07-24 (code reality check). |
+| BUG-220 | Ingredient Category — No Duplicate Alert | P2 | **LOW⬇ (owner-approved)** | **IMPLEMENTED** | 0-5 ✅ | 1 code marker in `InventorySetupPanel.jsx` (L78 pre-call guard). Backend 409 safety net. Status updated 2026-07-24 (code reality check). |
+| BUG-221 | Bulk Ingredient Upload & Excel Download Not Working | P1 | HIGH | **IMPLEMENTED + QA PASS (2026-07-22)** | 0-5 ✅ | 7 code markers in `inventoryService.js` + `IngredientBulkEditor.jsx` + `constants.js`. Export JSON download_url, import UI wired, template endpoint. Status updated 2026-07-24 (code reality check). |
+| BUG-222 | Bulk Recipe Excel — No Template/Export Split; File Won't Open | P2 | HIGH ⬆ | **IMPLEMENTED + QA PASS (2026-07-22)** | 0-5 ✅ | 7 code markers in `recipeService.js` + `RecipeBulkEditor.jsx` + `constants.js`. Export/import/template all wired for standard+sub. Status updated 2026-07-24 (code reality check). |
+| BUG-223 | Wastage & Recipe Deduction Auto-Trigger Without Explicit Save | P1 | LOW (post-fix) | **IMPLEMENTED** | 0-5 ✅ | StockAuditPanel.jsx: amber preview badge + unsaved banner. 1 file ~18 lines. |
+| BUG-224 | Smart Purchase — Ingredients Without Recipes Never Appear | P2 | HIGH ⬆ | **IMPLEMENTED** | 0-5 ✅ | purchasePlanner.js B2 Rule 2 low-stock rows + SmartPurchasePanel origin pass-through + AutoShoppingList amber badge. 3 files ~26 lines. |
+| BUG-225 | Same Name as Ingredient + Recipe; Unit Mismatch Across Screens | P2 | LOW ⬇ (owner-approved) | **GATE 2 COMPLETE ✅ APPROVED — SUBSUMED by BUG-216** | 0-2 ✅ | No code under this ID. Live symptom self-resolved (ghee dosa no longer in any recipe, re-curl 2026-07-23). Residuals: conversion→BUG-226, negative stock→owner data fix. Closes with BUG-216 QA. |
+| BUG-226 | Conversion Factor Not Saved on Add or Edit Ingredient | P1 | LOW (post-fix) | **IMPLEMENTED** | 0-5 ✅ | 2 code markers in `inventoryTransform.js`. `converion_factor` (R9 typo preserved) in ADD + EDIT payloads, default=1. Status updated 2026-07-24 (code reality check). |
+| BUG-227 | Smart Purchase — Vendor Column Shows No History Though Vendors Exist | P1 | HIGH ⬆ | **IMPLEMENTED** | 0-5 ✅ | vendorRanking.js System Vendor + master append + SmartPurchasePanel getVendors + VendorSuggestionCell searchable combobox. 3 files ~60 lines. |
+
+### CR Registrations (CR-088 → CR-094) — see CR_REGISTRY.md for full rows
+
+---
+
+## POS 5.0 — Session 2026-07-22 Registrations (Prior Entries)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| CR-087 | New Expense Payment Fields — `payment_made_to` + `payment_ref_id` | P2 | MEDIUM | **IMPLEMENTED + QA PASS (2026-07-22) — iteration_3.json: 9/9 PASS. Gate 6 (owner smoke) PENDING.** | 0-5 ✅ | Form Row 2: Notes+Paid To+Ref ID side-by-side. Transaction table: 12 cols. Expense Report: 11 cols. Edit mode: 2 new inputs. Search extended. 3 files: `expenseTransform.js`, `ExpenseEntryPanel.jsx`, `ExpenseReportPage.jsx`. Plan: `CR-087_IMPLEMENTATION_PLAN_2026_07_22.md`. |
+
+---
+
+## POS 5.0 — Session 2026-07-16 Registrations
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-196 | Sidebar missing on 6 inventory/employee pages | P1 | LOW | **IMPLEMENTED** | 0-5 ✅ | 6 page wrappers + Sidebar component. Session handover. |
+| BUG-197 | CR-072 Inventory Post-Delivery (10 gaps: recipe store/update/edit, purchase Amount, vendor save, wastage CRUD, add ingredient) | P1 | HIGH | **IMPLEMENTED** | 0-5 ✅ | 7 files, ~265 lines. Includes 4 NEW gaps found during audit (fromAPI foodId, form validation, sub/addon PUT, addon dropdown). **Addendum A2-A7 applied 2026-07-17:** recipe field renames (recipe_qty/recipe_unit, sub_recipe_name/subunit/prepration_time, thershold_qty/unit, serves_people/serve_time for addon). |
+| BUG-198 | CR-069 Employee Post-Delivery — POST→PUT, inline password+eye toggle, status:1, email omit-if-empty, role_type wired, X-localization header, ResetPasswordDialog deleted, role PUT fix | P1 | HIGH | **IMPLEMENTED (2026-07-17).** 12 edits, 6 files + 1 deleted. | 0-5a ✅ | `employeeService.js`, `employeeTransform.js`, `EmployeeListView.jsx`, `roleService.js`, `RoleFormView.jsx`, `axios.js` |
+| BUG-199 | Expense Entry: new item always goes to "misc" category — category_id never serialized to API payload | P1 | MEDIUM | **GATE 3 — IMPL IN PROGRESS** | 0-3 ✅ | Curl-verified 2026-07-16: key = `category_id` at line level. Extended to editExpenseEntry per Q-1. |
+| BUG-200 | Expense Report: category filter returns 0 results | P1 | MEDIUM | **CLOSED — DUPLICATE-OF-BUG-199** | 0-6 ✅ | Curl 2026-07-16 proved filter mechanics correct (`category_id=<int>` works). Empty result was downstream of BUG-199 stuffing everything into misc. Auto-resolves once BUG-199 ships. Zero code change. |
+| BUG-201 | Expense Deletion Safety — item + category cascade | P1 | HIGH | **PHASE 1 — IMPLEMENTED (2026-07-22).** Impact-aware modal: fetches `GET /expense/item/{id}/impact` on trash click, shows real transaction count + amount in confirm dialog. Delete now sends `delete_reason: 'Deleted by owner'`. 3 files: `constants.js` (+ITEM_IMPACT), `expenseService.js` (+getItemImpact + updated deleteExpenseItem), `ExpenseSetupPanel.jsx` (+handleDeleteItemClick, updated modal). Phase 2 (backend 409 enforcement) still pending backend delivery. | 0-5 | `constants.js`, `expenseService.js`, `ExpenseSetupPanel.jsx` |
+| BUG-202 | Expense Setup — no Edit Item (rename + change category) capability | P1 | HIGH | **IMPLEMENTED (2026-07-17).** Backend PUT `/expenses/{id}` confirmed working (rename + category move). FE inline edit already coded (`BUG-202-fwd-compat`). Awaiting owner smoke. | 0-5a ✅ | `ExpenseSetupPanel.jsx`, `expenseService.js` |
+
+---
+
+## POS 5.0 — Session 2026-07-16 Consolidation (retirements / bundling)
+
+Owner ruling 2026-07-16: retire the following 5 items and bundle 2 items into CR-074-B (see `/app/memory/EXPENSE_MODULE_CONSOLIDATED_BACKLOG_2026_07_16.md`).
+
+| Bug ID | Title | Status | Reason |
+|---|---|---|---|
+| BUG-163 | CR-059 Setup — Export fails: missing type field in POST body | **RESOLVED — feature removed post-fix by CR-074-A** | Fix shipped previously but export button was fully removed in CR-074-A. Kept as historical record. |
+| BUG-172 | ExpenseBulkEditor: "+ Add Row" vs "+ Add Item" design inconsistency | **RETIRED — SUPERSEDED-BY-CR-074-B** | Redesign resolves button placement/label. |
+| BUG-173 | ExpenseBulkEditor: Unit column collected but never sent | **RETIRED — SUPERSEDED-BY-CR-074-B** | Redesign decides column set + payload wiring. |
+| BUG-174 | ExpenseBulkEditor: Download Template button missing + STOCK_SAMPLE 404 | **RETIRED — OBSOLETE-BY-CR-074-A** | Template feeds an Import feature that no longer exists. |
+| BUG-162 | CR-059 Setup — Expense Setup panel flickers on every mutation | **IMPLEMENTED (bundled into CR-074-B Phase 1, 2026-07-17)** | Optimistic-update pattern replaces fetchAll(). Testing iteration_26: 100% pass. |
+
+---
+
+## POS 5.0 Active Bugs (registered 2026-06-18)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Blocker |
+|---|---|---|---|---|---|---|
+| BUG-137 | KOT Re-Print from Inside View — `getOrderById` undefined in RePrintOnlyButton | P1 | MEDIUM | **CLOSED — OWNER VERIFIED** | 0-6 ✅ | — |
+| BUG-138 | Discount Payload — `order_discount` and `self_discount` wrong values (self=0, order=total incl coupon/loyalty/wallet) | P0 | CRITICAL | **IMPLEMENTED** | 0-5 ✅ | — |
+| BUG-139 | Collapsed Sidebar — nested items inaccessible (auto-expand fix) | P2 | LOW | **SUPERSEDED by CR-052** | — | — |
+
+## POS 5.0 Batch Intake 2026-07-04 (owner batch report)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-140 | Bulk Editor — changing "Type" field doesn't save | P1 | MEDIUM | **CLOSED — SUBSUMED by BUG-125-B (2026-07-10). Code verified: `buildPayload` sends both `item_type` and `veg` (BulkEditor.jsx:157-159). Read-back correct via `menuManagementTransform.js:60`. BUG-125-B explicitly covers Bulk Editor.** | 0-6 ✅ | BulkEditor.jsx — buildPayload (write) + menuManagementTransform.js:60 (read) |
+| BUG-141 | Excel Import — "Type" column not captured on menu update | P1 | MEDIUM | **CLOSED — SUBSUMED by BUG-125-B (2026-07-10). FE read/write path uses same transform as BUG-140 fix. After import, `onRefresh()` re-fetches menu — `menuManagementTransform.js` correctly reads `api.item_type`. Backend Excel parser concern is separate.** | 0-6 ✅ | menuManagementTransform.js:60 (read-back after import refresh) |
+| BUG-142 | POS Qty input — with NumLock ON qty becomes negative | **P0** | **HIGH** | **CLOSED — FE GUARD EXISTS (2026-07-11). CartPanel.jsx has min={1} + val>=1 guard on both placed/unplaced qty inputs. Negative values rejected.** | 0-5a ✅ | CartPanel.jsx |
+| BUG-143 | Short Code toggle ON but not printing / not effective | P1 | MEDIUM | **CLOSED — FE COMPLETE, BACKEND-OWNED (2026-07-11). shortCode toggle wired + saved via RestaurantSettings. Print output controlled by backend print agent, not FE.** | 0-5a ✅ | restaurantSettingsTransform.js, RestaurantSettingsPage.jsx |
+| BUG-144 | Token Number not on order tickets / not shown on OrderCard | P1 | MEDIUM | **IMPLEMENTED (2026-07-11). 5 edits, 4 files: profileTransform (+useToken), orderTransform (+dailyToken in fromAPI.order + daily_token in buildBillPrintPayload), orderService (+daily_token in KOT payload), OrderCard (+token display gated by useToken). Compiled 0 new warnings.** | 5a | profileTransform.js, orderTransform.js, OrderCard.jsx, orderService.js |
+| BUG-145 | Discount Type dropdown — "Complimentary" option missing | P1 | **HIGH** | **CLOSED — SUBSUMED by CR-058** | — | Owner ruling 2026-07-04: replaced by order-level Mark-Order-Complimentary action |
+| BUG-146 | Item-level scheduled time missing on OrderCard | P2 | LOW | **CLOSED — CODE VERIFIED (schedule badge implemented via CR-018, OrderCard.jsx:456-467). Owner directed close 2026-07-09.** | 0-6 ✅ | OrderCard.jsx:456-467 |
+| BUG-147 | Duplicate-item error toast doesn't include item name | P2 | LOW | **INTAKE** | 0-1 ✅ | AddCustomItemModal.jsx:274 |
+| BUG-148 | Table Management — cannot add new table | P1 | MEDIUM | **CLOSED — SUBSUMED by CR-060** | — | Root cause: CRUD was mocked (toast-only). CR-060 wires real APIs. |
+| BUG-149 | Order ID not visible on Scan & Delivery order cards | P1 | MEDIUM | **CLOSED — COULD NOT REPRODUCE (owner directive 2026-07-09). Code shows orderNumber chip renders for non-Room non-DineIn (OrderCard.jsx:426-432).** | 0-6 ✅ | OrderCard.jsx:426-432 |
+| BUG-150 | CR-059 DnD — item bounces back (categoryId null in expenses-list API; hidden DnD placeholder) | P1 | MEDIUM | **IMPLEMENTED (2026-07-07)** | 0-5a ✅ | ExpenseSetupPanel.jsx — placeholder display:none→height:0; stronger hover (solid border + "Drop here" label) |
+| BUG-DND-CR059 | CR-059 DnD — cross-category move silently ignored by backend (PUT /expenses/{id} ignores stock_title). Fix: DELETE + POST workflow. Within-list drag handles removed (BUG-P2). | P0 | MEDIUM | **IMPLEMENTED + SELF-TEST PASS (2026-07-08)** | 0-5a ✅ | ExpenseSetupPanel.jsx — handleDragEnd rewritten; GripVertical removed |
+| BUG-158 | CR-059 Setup — Add Item to category silently fails. `addItem()` calls `updateCategory` (PUT) which ignores `stock_title`. Toast fires "Item added" but nothing is persisted. Same root cause as BUG-DND-CR059. Fix: replace with `createCategoryWithItems(cat.name, [newItemName])`. | P0 | LOW | **IMPLEMENTED + SELF-TEST PASS (2026-07-08)** | 0-5a ✅ | ExpenseSetupPanel.jsx — `addItem()` line ~203 |
+| BUG-159 | CR-059 Setup — Add Category silently fails. `addCategory()` sends `stock_title: []` (empty). Backend returned HTML redirect instead of JSON 422. Toast fires "Category added" but nothing is created. | P0 | LOW | **IMPLEMENTED (2026-07-11). `addCategory()` now calls `createEmptyCategory()` → `POST /expense/category`. // BUG-159 fix** | 0-5a ✅ | `constants.js` + `expenseService.js` + `ExpenseSetupPanel.jsx` `addCategory()` |
+| BUG-160 | CR-059 Setup — Rename Category broken. `renameCategory()` returned "Category not found". Backend fix shipped 2026-07-10: `PUT /expense/category/{id}`. Also covers deleteCategory (was per-item loop). | P1 | MEDIUM | **IMPLEMENTED (2026-07-11). `renameCategory()` → `renameExpenseCategory()` (`PUT /expense/category/{id}`). `deleteCategory()` → `deleteExpenseCategory()` (atomic). // BUG-160 fix** | 0-5a ✅ | `expenseService.js` + `ExpenseSetupPanel.jsx` `renameCategory()` + `deleteCategory()` |
+| BUG-161 | CR-059 Setup — Bulk Save new items silently fails. `handleBulkSave()` calls `updateCategory` (PUT) for each row → same root cause as BUG-158. Items typed in bulk editor are not persisted. Fix: use `createCategoryWithItems` per row. | P1 | LOW | **IMPLEMENTED + SELF-TEST PASS (2026-07-08)** | 0-5a ✅ | ExpenseSetupPanel.jsx — `handleBulkSave()` line ~271 |
+| BUG-151 | CR-059 Edit — fails silently (editRow.expense ≠ data.exp_name key in expenseService) | P1 | HIGH | **IMPLEMENTED (2026-07-07)** | 0-5a ✅ | expenseService.js L127 — exp_name: data.expense ?? data.exp_name |
+| BUG-152 | CR-059 Delete — HTTP 405 (DELETE /edit-expense not supported; correct: /delete-expense) | P1 | HIGH | **IMPLEMENTED (2026-07-07)** | 0-5a ✅ | constants.js: DELETE_EXPENSE added; expenseService.js: deleteExpenseEntry uses DELETE_EXPENSE |
+| BUG-153 | CR-059 Add UX — category required blocks free-text; no cross-category item suggestions | P2 | MEDIUM | **IMPLEMENTED (2026-07-07)** | 0-5a ✅ | ExpenseEntryPanel.jsx — category optional; handleItemSelect auto-fills categoryId; dropdown shows category badge hints |
+| BUG-154 | CR-059 Add UX — qty/price conditional: unitPrice → show qty+read-only amount; no unitPrice → hide qty/unit | P1 | MEDIUM | **IMPLEMENTED + QA PASS (2026-07-07)** | 0-5b ✅ | ExpenseEntryPanel.jsx — EMPTY_LINE.unitPrice, handleItemSelect, handleQtyChange, conditional EntryLine JSX |
+| BUG-155 | CR-059 Add UX — category dropdown only for free-text items; hidden + auto-fill for master items | P1 | LOW | **IMPLEMENTED + QA PASS (2026-07-07)** | 0-5b ✅ | ExpenseEntryPanel.jsx — isCustomItem flag, category select removed from default position |
+| BUG-156 | CR-059 Add UX — default payment empty; should be Cash Draw | P2 | LOW | **IMPLEMENTED + QA PASS (2026-07-07)** | 0-5b ✅ | ExpenseEntryPanel.jsx — EMPTY_LINE.paymentMethod = "Cash Draw" |
+| BUG-157 | CR-059 Expense Setup — category pills too small for 6-8 cat usability | P2 | LOW | **IMPLEMENTED + QA PASS (2026-07-07)** | 0-5b ✅ | ExpenseSetupPanel.jsx — w-72, py-3.5 px-4, minHeight:52, font-semibold |
+| BUG-162 | CR-059 Setup — Expense Setup panel flickers on every mutation. `fetchAll()` re-fetches 3 endpoints + `setLoading(true)` after Add/Delete/Rename/Bulk operations → full table re-mount. POST/PUT/DELETE responses already return needed fields for local state updates. Fix: replace `fetchAll()` with optimistic local state updates in addItem/deleteItem/renameCategory/deleteCategory/handleBulkSave; keep `fetchAll` for initial mount, manual refresh button, import, and error revert paths. | P2 | MEDIUM | **IMPLEMENTED (bundled CR-074-B Phase 1, 2026-07-17)** | 0-5a ✅ | ExpenseSetupPanel.jsx — optimistic updates in 5 handlers. Testing iteration_26: 100% pass. |
+| BUG-163 | CR-059 Setup — Export button fails: "The type field is required." `exportStockMaster()` calls `POST /expense/bulk-export-expense` with empty body. Backend requires `{ type: 'all' }`. Evidence confirmed via `bulk_export.json` (CR-059 discovery). Same pattern as CR-014 menu bulk export. | P1 | LOW | **IMPLEMENTED (2026-07-11). `expenseService.js` L65: added `{ type: 'all' }` POST body. // BUG-163 fix** | 0-5a ✅ | `expenseService.js` L65 |
+| BUG-164 | Add Category: duplicate name showed "Category added" success toast. Backend now returns HTTP 409 for duplicates. | P1 | LOW | **IMPLEMENTED (2026-07-24). Removed res.data.errors body-inspection workaround. HTTP 409 triggers Axios catch block naturally. // BUG-164** | 0-5a ✅ | `components/expense/ExpenseSetupPanel.jsx` `addCategory()` |
+| BUG-165 | Add Item: duplicate item name. Backend now returns HTTP 422. FE client-side guard retained for UX; 422 catch surfaces backend message. | P1 | LOW | **IMPLEMENTED (2026-07-24). Client guard retained; backend 422 surfaced via catch as safety net. // BUG-165** | 0-5a ✅ | `ExpenseSetupPanel.jsx` `addItem()` |
+| BUG-VQTY | Order/bill payloads — `variation_amount` not multiplied by item qty. `buildCartItem` L703 and `collectBillExisting` L1492 computed `variationAmount` without `× qty`. Caused incorrect billing line totals for items with variations and qty > 1. | P0 | MEDIUM | **IMPLEMENTED (2026-07-11). `orderTransform.js` L703: `variationAmount * (item.qty \|\| 1)`. L1492: `variationAmount * qty`. // BUG-VQTY fix** | 0-5a ✅ | `api/transforms/orderTransform.js` L703 + L1492 |
+| BUG-166 | Order Entry / Collect Bill — `addon_amount` sent as raw per-unit value without multiplying by item qty. Identical pattern to BUG-VQTY (`variation_amount`, now fixed). At L704 (`buildCartItem`) and L1493 (`collectBillExisting`) in `orderTransform.js`. Every item with addon + qty > 1 sends understated addon total to backend. | P0 | MEDIUM | **IMPLEMENTED + OWNER CONFIRMED KEEP (2026-07-11).** 2-line fix: L704: `addonAmount * (item.qty \|\| 1)`. L1493: `addonAmount * qty`. 13/13 unit tests + 18/18 regression PASS. Revert plan `BUG_166_168_ADDON_REVERT_PLAN.md` **CANCELLED** — owner decision to keep the fix permanently. | 0-5 ✅ | `api/transforms/orderTransform.js` L704 + L1493 |
+| BUG-167 | Menu socket (`food_update_644`) lost on all non-dashboard routes. `useSocketEvents()` was only called in `DashboardPage.jsx` L186. Navigating to `/menu`, `/expense-setup`, etc. unmounted `DashboardPage`, tearing down the subscription. Backend emits correctly (3/3 live probes confirmed). Owner confirmed: zero console logs on `/menu` page. | P1 | LOW | **IMPLEMENTED (2026-07-11). Created `AppSocketManager.jsx` — calls `useSocketEvents()`, returns null. Mounted at app level in `App.js` inside `<BrowserRouter>` before `<Routes>`. Removed redundant call from `DashboardPage.jsx`. Testing 7/7 PASS.** | 0-5a ✅ | `components/AppSocketManager.jsx` (NEW), `App.js` L5+L79, `DashboardPage.jsx` L20+L186 |
+| BUG-168 | **[v2 — 2026-07-08 — OWNER DISPUTES SCOPE, INVESTIGATION REOPENED]** Bill print item_total mismatch. My BUG-168 v2 fix at `orderTransform.js:1808-1826` was applied and is proven working for the addon case via backend-sourced (fallback) paths (order #002384: 69→219 ✅, order #002386: 292 ✅). **Owner clarification (late 2026-07-08):** in production, `Collect Bill auto-print (B3/B4/B5, live-UI-override branch)` emits WRONG values while `dashboard/order-card/order-entry Bill-Print button (B1/B2/B6/B7, fallback branch)` emits CORRECT values — OPPOSITE of the model used this session. Owner emphasized: for the WRONG path, all data comes from backend → no FE math change should be needed. Investigation direction reversed. See handover `/app/memory/handover/SESSION_HANDOVER_2026_07_08_BUG168_PRINT_INVESTIGATION.md`. | P0 | CRITICAL | **IMPLEMENTED (v2) but scope disputed.** L1808-1826 fix stays (defends fallback branch for addon case). Next-session ask: capture Collect Bill auto-print AND Bill-Print-button payloads for the same order, diff every field, trace divergent code path (suspected `paymentData` override construction, NOT the fallback loop). Do NOT extend the L1808 fix further until owner path-divergence is resolved. | 5 ✅ (for fallback-branch addon case) | `orderTransform.js` L1808-1826 (still holds) |
+| BUG-ROOM-PAIDROOM | Bill collection — `paid_room` field always sent as `''` even for room orders. `collectBillExisting` L1632 hardcoded empty string. Backend needs `paid_room: 'yes'` to close room booking on checkout. | P1 | MEDIUM | **IMPLEMENTED (2026-07-11). `orderTransform.js` L1632: `table?.isRoom ? 'yes' : ''`. // BUG-ROOM-PAIDROOM fix** | 0-5a ✅ | `api/transforms/orderTransform.js` L1632 |
+
+| BUG-175 | Expense Entry Form Case A: qty input shown when item has unit price — should be hidden. `handleQtyChange` called on qty input inside `unitPrice > 0` block. Amount auto-calc used `price * qty` instead of `price` directly. | P2 | LOW | **IMPLEMENTED (2026-07-11). `ExpenseEntryPanel.jsx`: removed qty input from Case A block, removed `handleQtyChange`, amount set to `String(price)` directly. // BUG-175** | 0-5a ✅ | `components/expense/ExpenseEntryPanel.jsx` |
+| BUG-176 | Expense Entry Form Case B: optional qty/unit/physical_qty hidden when no unit price; physical_quantity hard-coded 0 with wrong "deprecated" comment — field is live on backend. | P2 | LOW | **IMPLEMENTED (2026-07-11). `ExpenseEntryPanel.jsx`: added Case B block showing qty+unit+physical_qty when no unit price; wired physical_quantity through handleSave, startEdit. `expenseService.js`: both addExpenseEntry + editExpenseEntry now pass user-provided physical_quantity. // BUG-176** | 0-5a ✅ | `components/expense/ExpenseEntryPanel.jsx`, `api/services/expenseService.js` |
+| BUG-177 | Expense Entry: `notes` field missing from Add Expense form. Backend accepts `notes` in `POST /store-expense-details` (curl-confirmed) and returns it in reports, but FE form has no notes input and save payload omits the field. | P2 | LOW | **IMPLEMENTED (retroactive 2026-07-17).** Code exists: notes input L354-362, save payload wired, table column L713, edit mode L745-749. Registry was stale. | 0-5a ✅ | `ExpenseEntryPanel.jsx`, `expenseTransform.js`, `expenseService.js` |
+| BUG-178 | Expense Entry: item name editable via `ItemCombobox` dropdown in transaction edit mode. Owner directive: item name must be read-only after creation. | P2 | LOW | **IMPLEMENTED (retroactive 2026-07-17).** Code exists: L729-730 renders `{editRow.expense}` as plain text. | 0-5a ✅ | `ExpenseEntryPanel.jsx` |
+| BUG-179 | Expense Report: Excel export produces file with no transaction data. `exportReportAsExcel` called with raw API array instead of expected `{ title, sheets: [{ columns, rows }] }`. Only Summary metadata sheet generated. | P1 | MEDIUM | **IMPLEMENTED (retroactive 2026-07-17).** Code exists: `buildExportPayload()` L196-224 builds proper structure, `exportReportAsExcel(payload)` at L236. | 0-5a ✅ | `ExpenseReportPage.jsx` |
+| BUG-180 | Expense Report: PDF export throws error. `exportReportAsPDF` called with 1 string arg instead of `(Window, params)`. Missing `openReportWindow()` call. | P1 | MEDIUM | **IMPLEMENTED (retroactive 2026-07-17).** Code exists: `openReportWindow()` + `exportReportAsPDF(pdfWin, payload)` at L228-241. | 0-5a ✅ | `ExpenseReportPage.jsx` |
+| BUG-181 | Expense Entry: "Added By" column missing from daily transaction table. API returns `employee_name`, transform maps to `employeeName`, but table has no column for it. | P2 | LOW | **IMPLEMENTED (retroactive 2026-07-17).** Code exists: header L712, display cell L777-778, edit read-only L743-744. | 0-5a ✅ | `ExpenseEntryPanel.jsx` |
+| BUG-182 | Expense Report: wrong employee name in "Added By" column. | P1 | MEDIUM | **CLOSED — INVESTIGATION (2026-07-17).** Backend returns correct names. Curl confirmed employee_id=3081 → f_name="Counter" consistently across employees-list + expenses-report. Original report was misdiagnosis (different employees, not inconsistent names for same employee). | CLOSED | N/A |
+
+
+---
+
+## CR-074-B Post-Delivery Bugs (registered 2026-07-17)
+
+Source: Owner smoke observations during CR-074-B Phase 6 closeout.
+
+| Bug ID | Description | Severity | Risk | Status | Gate | Scope |
+|--------|-------------|----------|------|--------|------|-------|
+| BUG-203 | Inline edit unit price: was 2-call workaround (PUT rename + POST set-unit-price). Backend now accepts unit_price on PUT. Simplified to single PUT call. | P2 | MEDIUM | **IMPLEMENTED (2026-07-24). Single PUT with unit_price. 2-call workaround removed from inline edit. // BUG-203** | 0-5a ✅ | `ExpenseSetupPanel.jsx`, `expenseService.js` |
+| BUG-204 | Add Expense: priced items (Case A) hide qty input — amount locked to unitPrice×1. Cannot enter quantity for multi-unit purchases (e.g., 3× pav at ₹26 should auto-calc ₹78). Reversal of BUG-175 design decision. Related: BUG-154, BUG-175, BUG-176. | P1 | MEDIUM | **IMPLEMENTED (2026-07-17). Qty input visible, auto-calc live, breakdown text shown.** | 0-5a ✅ | `ExpenseEntryPanel.jsx` (~35 lines) |
+
+BUG-203 intake: registered 2026-07-17 · source OWNER-REPORTED · confidence CONFIRMED · duplicate check DISTINCT · blast radius SMALL · fast lane NO · intake doc `change_requests/BUG_203_INLINE_EDIT_MISSING_UNIT_PRICE.md` · BACKEND-BLOCKED (§3.4 not delivered).
+
+BUG-204 intake: registered 2026-07-17 · source OWNER-REPORTED · confidence CONFIRMED · duplicate check RELATED to BUG-175 (reversal) · blast radius SMALL · fast lane NO · intake doc `change_requests/BUG_204_EXPENSE_ENTRY_QTY_TIMES_UNITPRICE.md` · next role PLANNING (Gate 2).
+
+| BUG-205 | Expense: Qty/Unit columns missing from transaction table + report. API returns `quantity` and `unit`, transform maps them, but neither ExpenseEntryPanel nor ExpenseReportPage renders them. ~20 lines, 2 files. | P2 | LOW | **IMPLEMENTED (2026-07-17).** Qty + Unit columns added to both tables + export payload. | 0-5a ✅ | `ExpenseEntryPanel.jsx`, `ExpenseReportPage.jsx` |
+
+BUG-205 intake: registered 2026-07-17 · source AGENT-DISCOVERED (Finding B) · confidence CONFIRMED (code trace + API verified) · duplicate check DISTINCT (BUG-173 RETIRED/different surface, BUG-181 RELATED/different column) · blast radius SMALL · fast lane NO (2 files) · intake doc `change_requests/BUG_205_EXPENSE_QTY_UNIT_COLUMNS_MISSING.md` · next role PLANNING (Gate 2).
+BUG-162 intake: registered 2026-07-09 · source OWNER-REPORTED · confidence CONFIRMED (owner observed live during BUG-158 verification; agent reproduced via Playwright) · duplicate check DISTINCT · blast radius SMALL · fast lane NO · intake doc `/app/memory/change_requests/BUG_162_EXPENSE_SETUP_FLICKER.md` · next role PLANNING (Gate 2 Impact Analysis).
+
+---
+
+## Insights Cross-Report Audit Batch (registered 2026-06-11, Gates 0-2 complete)
+
+Source: `INSIGHTS_REPORTS_AUDIT.md` (cafe103) + `INSIGHTS_REPORTS_AUDIT_PALMHOUSE.md` (palmhouse). Replication harness: `/app/audit_data/`.
+
+| Bug ID | Title | Priority | Status | Gate | Blocker |
+|---|---|---|---|---|---|
+| BUG-125 | Cancellations Order-Level scope never matches ('Cancel' vs 'cancelled') | P1 | **CLOSED — OWNER VERIFIED (2026-06-13)** | ✅ | — |
+| BUG-126 | insightsService reads non-existent round_off (API: round_up) | P2 | **CLOSED — OWNER VERIFIED (2026-06-13)** | ✅ | — |
+| BUG-127 | Dashboard Unsettled-TAB tile → Credit Outstanding (credit API, option a) | P2 | **CLOSED — OWNER VERIFIED (2026-06-13)** | ✅ | — |
+| BUG-128 | Dashboard double-fetches identical order-logs payload | P2 | **CLOSED — OWNER VERIFIED (2026-06-13)** | ✅ | — |
+| BUG-129 | Backend stamps TAB orders f_order_status=6 before collection | P1→P3 (downgraded; FE gates by pm) | PLANNED (BACKEND-BLOCKED) | Brief sent via owner | Backend reply (brief #3) |
+| BUG-125-B | Food Type (item_type) not persisting on Edit — backend reads `veg` field, FE was sending `item_type` (ignored). Fix: +1 line `veg:` in `menuManagementTransform.js:251` + `BulkEditor.jsx:159`. Covers Quick Edit, Full Edit, Bulk Editor, and Add Food. | P1 | **CLOSED — SHIPPED (retroactive, verified 2026-06-17)** | **POS 5.0** | **2 files, 2 lines added. Code confirmed on `16-june` branch.** |
+**Source:** Canonical sprint summaries + `/memory/bugs/` artifact docs + `BUG_TEMPLATE.md`
+**Reconciliation report:** `change_requests/AUDIT_CLOSURE_DRIFT_001_PHASE_A_RECONCILIATION_2026_05_30.md`
+
+> **Drift reconciliation 2026-05-30:** Pre-reconciliation, this tracker showed 37 bugs (BUG-038..074) as `Intake Only`. AUDIT-CLOSURE-DRIFT-001 found 40 of these were actually closed per sprint final summaries. Sections below now reflect the canonical truth, with Artifact References cited per bug.
+
+---
+
+## Summary (post-reconciliation 2026-05-30)
+
+| Category | Count | Source |
+|---|---|---|
+| Total bugs tracked | 118 (BUG-001..086 + BUG-087..111 + 8 PROD hotfixes) | Reconciled |
+| Closed / Verified | 80 | Canonical sprint summaries + smoke sign-off docs |
+| Open Intake / True Blocked | 11 | Items without canonical closure |
+| Backend-Blocked (POS 3.0) | 6 | BUG-090,091,092,093,094,101 |
+| CRM-Blocked | 1 | BUG-106 (BUG-107 subsumed, BUG-108 partial) |
+| Owner Scope Needed | 2 | BUG-104,105 |
+| Drift reconciled this pass | 44 | Was "Not Started" → now correctly tagged |
+
+---
+
+## Active / Recent Bugs (POS 3.0 + 3.1)
+
+| Bug ID | Title | Priority | Status | Sprint | Blocker |
+|---|---|---|---|---|---|
+| BUG-087 | PayLater PAID badge on dashboard | P0 | CLOSED | POS 3.0 | — |
+| BUG-088 | Room Transfer v2 endpoint + socket | P1 | CLOSED | POS 3.0 | — |
+| BUG-089 | Eliminate redundant API calls on update-food-status | P1 | CLOSED | POS 3.0 | — |
+| BUG-090 | CRM customer_id not stored on room orders | P2 | BACKEND-BLOCKED | POS 3.0 | Q-090-B-1 |
+| BUG-091 | CRM search API duplicates | P2 | **CLOSED — DUPLICATE (no evidence, intake stub mismatched, owner-directed 2026-06-15)** | POS 3.0 | — |
+| BUG-092 | Phone format contract undefined for room check-in | P2 | BACKEND-BLOCKED | POS 3.0 | Q-092-1: Room Check-In sends E.164 (+91...), Order screen sends raw 10-digit. Backend contract undefined. |
+| BUG-093 | Room check-in date missing in API response | P3 | **CLOSED — IMPLEMENTED via CR-004 Phase 4.1 (owner-confirmed 2026-06-15)** | POS 3.0 | **`checkin_date` mapped in orderTransform.js:406 + 7 more files. Fully working.** |
+| BUG-094 | Delivery-assign-order socket missing payload | P3 | BACKEND-BLOCKED | POS 3.0 | Q-094-1 |
+| BUG-095 | Socket handler + dead code cleanup | P2→**P3** | **PREREQUISITES DONE (BUG-088+089 shipped). Dead code removal only (~47 lines). Intake: `memory/change_requests/BUG_095_SOCKET_DEAD_CODE_CLEANUP.md`** | POS 5.0 | — |
+| BUG-096 | Realtime FE updates for menu + hold/unpaid | P1 | **PARTIAL — FE-ACTIONABLE. Food edit ✅ (BUG-116). Reorder ✅. Category socket not needed. Delete-food ❌ — backend emits `type: "delete-food"`, FE doesn't handle. ~20 lines fix. Intake: `memory/change_requests/BUG_096_REALTIME_MENU_SOCKET_HANDLERS.md`** | POS 5.0 | **FE gap — ready to implement** |
+| BUG-097 | Delivery dispatch + assign rider | P1 | SMOKE PENDING | POS 3.0 | 25-row QA + CartPanel gate + Bucket 5 |
+| BUG-098 | Use restaurant profile CRM key | P1 | CLOSED | POS 3.0 | — |
+| BUG-099 | QSR / Cafe Quick Billing UX | P1 | CLOSED | POS 3.0 | — |
+| BUG-100 | Remove duplicate local toast notifications | P1 | CLOSED | POS 3.0 | — |
+| BUG-101 | Print template GST display slot | P3 | BACKEND-BLOCKED | POS 3.0 | Q-101-1 |
+| BUG-102 | Mark Served/Ready button 20-30s delay | P0 | CLOSED | POS 3.0 | — |
+| BUG-103 | Remove number input arrows | P2 | CLOSED | POS 3.0 | — |
+| BUG-104 | Credit/Tab Management module | P1 | **CLOSED — SUBSUMED by CR-039 + CreditManagementPanel (owner-attested 2026-06-15)** | POS 3.0 → POS 4.0 | **CreditManagementPanel.jsx (376 lines) + creditService.js + 3 sub-components. CR-039 wired KPI totals.** |
+| BUG-105 | Settlement Module | P1 | **CLOSED — SUBSUMED by CR-015 + CR-016 (owner-attested 2026-06-15)** | POS 3.0 → POS 4.0 | **SettlementPanel.jsx (497 lines) + settlementService.js + settlementTransform.js. Both CRs OWNER VERIFIED.** |
+| BUG-106 | CRM Notes API integration | P2 | **CLOSED — SUBSUMED by CR-002 (owner-attested 2026-06-15)** | POS 3.0 → CRM 2.0 | **Order notes + food_level_notes via orderService.js. Customer intelligence via CR-002.** |
+| BUG-107 | CRM Cross-Sell/Upsell insights | P2 | CRM-BLOCKED → SUBSUMED | POS 3.0 → CRM 2.0 | Absorbed into CR-002 |
+| BUG-108 | CRM Coupon/Loyalty/Wallet | P1 | **CLOSED — SUBSUMED (owner-attested 2026-06-15). Coupon V1B/V1C + Loyalty shipped.** | POS 3.0 → CRM 2.0 | **couponService.js + loyaltyService.js wired in CollectPaymentPanel. Wallet backend pending.** |
+| BUG-109 | QSR takeaway/delivery validation parity | — | CLOSED | POS 3.1 | — |
+| BUG-110 | QSR prepaid lock parity | — | CLOSED | POS 3.1 | — |
+| BUG-111 | QSR bill parity (Grand Total + breakdown) | — | CLOSED | POS 3.1 | — |
+| **BUG-112** | **Auto-print (order-temp-store) blocked by Place Order API response — should fire in parallel** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **waitForOrderReady 3000→500ms + early HTTP check at redirect point. Phase 2 (table-matching for socket-first) deferred.** |
+| **BUG-113** | **Partial payment UI stuck — auto-fill locks Cash/Card/UPI amount fields, cannot re-enter** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **FE fix: removed real-time capping + auto-fill from onChange. Moved to onBlur — clamp + auto-fill only when other row is empty.** |
+| **BUG-114** | **discount_type, discount_member_category_id/name sent as empty/0 when category discount applied** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **FE fix: threaded selectedDiscountType (id, name) through paymentData.discounts → transform builders read from discounts instead of hardcoded 0. Covers placeOrderWithPayment + collectBillExisting.** |
+| **BUG-115** | **Audit Report — cancelled item/order not rendering correctly in some cases; full production validation needed** | **P1** | **CLOSED — OWNER VERIFIED** | **POS 4.0** | **FE fix: aligned TAB_FILTERS.cancelled with Order Ledger — added lowercase 'cancelled' check to cancelled filter (L84), paid exclusion (L70), running exclusion (L107). 3 lines in AllOrdersReportPage.jsx.** |
+| **BUG-116** | **Out-of-kitchen/out-of-menu item Add — backend already emits `food_update_${rid}` socket; FE had no listener → menu didn't refresh in realtime** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **Runtime validated 2026-06-08 via temp socket.onAny tap. 4-file additive fix: socketEvents.js (channel generator + payload-type const + envelope doc), socketHandlers.js (handleFoodUpdate), MenuContext.jsx (addOrUpdateProduct delta upsert), useSocketEvents.js (subscribe to food_update_${rid}, wire to actionsRef). No existing handlers touched. Webpack + lint clean.** |
+| **BUG-117** | **Audit Report side-sheet — GST line renders negative (₹-44, ₹-26, ₹-168) on VAT-only & mixed-tax orders; same defect in Order Ledger GST columns + false FE-86 audit flag** | **P1** | **CLOSED — OWNER VERIFIED** | **POS 4.0** | **FE fix: corrected per-tax field interpretation in reportTransform.js L957-963 — total_gst_tax_amount is PURE GST (not combined). Removed subtraction. Verified live on Lafetta orders 012553/012554/012555 (2026-06-08). rawGstAmount kept numerically identical for FE-88 compat. Owner approved 2026-06-08.** |
+| **BUG-118** | **Nth-item coupon code and BOGO coupon code — some features not working, needs testing** | **P1** | **INTAKE** | **POS 4.0** | **FE investigation needed** |
+| **BUG-119** | **Backend stores negative `round_up` (e.g. −0.40) violating FE ceiling-only contract; side-sheet renders "₹-0"** | **P2** | **CLOSED — BACKEND FIXED (2026-06-08)** | **POS 4.0** | **Backend fixed the negative round_up. No FE changes needed.** |
+| **BUG-123** *(renumbered from BUG-120 on 2026-06-11 — collision with closed CR-014 post-delivery BUG-120)* | **Place Order on 401 silently redirects to dashboard; cashier mistakes failure for success → missed orders** | **P1** | **INTAKE** | **POS 4.0** | **Fire-and-forget HTTP + socket-wait timeout + `window.location.href` bounce. Toast missable, cart lost, order not actually placed. Affects Place Order, Collect Bill, Transfer, Update Order — same pattern. Intake doc: BUG_123_PLACE_ORDER_401_SILENT_REDIRECT_INTAKE.md** |
+| **BUG-124** *(renumbered from BUG-121 on 2026-06-11 — collision with closed category-count BUG-121)* | **Backend `food_update_${rid}` socket payload missing critical fields (status, is_disable, stock_out, food_status, live_web)** | **P2** | **INTAKE — FE DEFENDED** | **POS 4.0** | **FE has SOCKET_FOOD_DEFAULTS backfill in socketHandlers.js. Backend needs to enrich socket payload. Intake doc: BUG_124_BACKEND_FOOD_UPDATE_SOCKET_PAYLOAD_INCOMPLETE_INTAKE.md** |
+| **BUG-122** | **POS orders with fOrderStatus 7 incorrectly trigger ScanOrderPopOut popup — popup gated to `isWebOrder === true`** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-10)** | **POS 4.0** | **`ScanOrderPopOut.jsx:56` predicate + POS YTC tick flow on OrderCard.** |
+| **BUG-122 post-delivery** | **3 FE fixes: POS YTC Cancel(✗)+Confirm(✓) on OrderCard; TableCard snooze gated web-only; CR-018 schedule_at trailing-space + time-component guard** | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **OrderCard.jsx:871-893, TableCard.jsx:326, CartPanel.jsx:1443/1469. Handover: memory/handover/CR018_BUG122_FE_FIXES_HANDOVER_2026_06_10.md** |
+| **BUG-130** | **Channel Visibility: Restaurant Settings channels not reflected in POS dashboard.** Channels enabled/disabled via Restaurant Settings API (master config) are not properly gating what appears on POS dashboard and local visibility toggles. Two-layer model: (1) Restaurant-level from `settings-list` API, (2) Per-user localStorage override on StatusConfig. Related: CR-024, CR-020 B11. Deep investigation deferred per owner. | **P1** | **REGISTERED — INTAKE COMPLETE 2026-06-12. Investigation deferred. NOT STARTED.** | **POS 4.0** | **Trace needed: settings API → profileTransform → StatusConfigPage → DashboardPage → OrderEntry → localStorage interaction** |
+| **BUG-131** | **Sidebar bottom section (Ringer/Refresh/User/Logout) scrolls up — should be sticky at bottom.** Bottom actions disappear when sidebar nav content is long. Fix: `flex-shrink-0` on bottom section, `min-h-0` on nav, `overflow-hidden` on aside. | **P2** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **3 CSS edits in `Sidebar.jsx`** |
+| **BUG-132** | **Settlement Report business logic broken (formulas).** Expected = TotalFunds − Settled (was subtracting pilferage — circular). Pilferage column showed ₹0 (was ignoring backend value). Missing Total Funds KPI card. 5 micro-phases (A→E), 13 edits, 1 file. | **P1** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **`SettlementPanel.jsx` — 13 formula fixes + 1 KPI card added** |
+| **BUG-133** | **"Check In" item appearing in reports — backend-only room marker with room tariff prices (₹1,100–₹3,600) inflating food revenue.** Validated: Welcome Resort 118 items in 15 days = ~₹1.5L phantom revenue. Filter: `(fd.name || '').trim().toLowerCase() === 'check in'`. 5 filter points across 3 files. Covers all 8 affected report surfaces. | **P1 (upgraded from P2 — money)** | **CLOSED — OWNER VERIFIED (2026-06-13)** | **POS 4.0** | **`insightsService.js` (3 filters), `reportTransform.js` (1 filter), `CancellationsMockup.jsx` (1 filter)** |
+|| **BUG-134** | **Scroll not working on multiple screens (Place Order, QSR) — Windows-specific, intermittent.** Root cause: missing `min-h-0` on 3 flex-column parents (`OrderEntry.jsx:1455`, `:1608`, `CategoryPanel.jsx:20`) + QSR Billing section squeezing cart items to zero height. Fix: 3× `min-h-0`, `overflow-y-auto` on right panel, `min-h-[200px]` on cart items area, scrollbar 6→8px. | **P1** | **CLOSED — OWNER VERIFIED (2026-06-15)** | **POS 5.0** | **5 CSS edits across 3 files + App.css. Zero logic changes. Owner smoke PASSED on Windows.** |
+|| **BUG-135** | **Bulk Editor — Save errors: inactive status not persisting + error messages not surfacing backend description.** 3 sub-items: A: Status→Off save fails (Partial Save 0/6). B: Import shows "Import failed" instead of backend error (e.g., "Duplicate row in file: Fish Amritsari..."). C: Duplicate item 422 shows raw Axios error instead of backend message. All in `BulkEditor.jsx` save/import error handlers. | **P1** | **IMPLEMENTED (2026-07-10 code-verified). A: toggleFoodStatus(id, status) called on status change (BulkEditor.jsx:497-499). B+C: err.readableMessage surfaced in import toast (L600) and save error per-row (L508, L559). All 3 sub-items confirmed in code.** | **POS 5.0** | **1 file (BulkEditor.jsx), 3 error handling paths. Owner screenshots with backend error visible in Network tab.** |
+|| **BUG-136** | **Sidebar scroll jumps to top on navigation.** Root cause: each page renders own `<Sidebar />` instance — React Router unmounts/remounts, losing scroll. Fix: scroll position saved to `InsightsCacheContext` before `navigate()`, restored via `useLayoutEffect` on mount. 2 files changed (~15 lines), zero screen modifications. | **P2** | **IMPLEMENTED (2026-06-17)** | **POS 5.0** | **2 files: `Sidebar.jsx` (hook + 4 saveScroll calls + nav ref) + `InsightsCacheContext.jsx` (state). QA pending.** |
+
+---
+
+## POS 2.0 — Closed (consolidated 2026-05-18)
+
+> Canonical source: `change_requests/final_sprint_reconciliation/POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md`
+
+| Bug ID | Title | Status | Artifact Reference |
+|---|---|---|---|
+| BUG-050 | Printed bill mismatch after item cancellation | ✅ Implemented (W4) | POS2_0_WAVE_4_QA_HANDOFF_BUG_050_2026_05_17.md |
+| BUG-051 | Round-off → Math.ceil | ✅ Implemented (W2) | POS2_0_WAVE_2_IMPLEMENTATION_REPORT_2026_05_17.md |
+| BUG-052 | Profile boolean gate for round-off | ✅ Implemented (W2) | POS2_0_WAVE_2_IMPLEMENTATION_REPORT_2026_05_17.md |
+| BUG-053 | GST split label percentage hardcode | ✅ Closed (no code) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-054 | VAT discount proration | ✅ Implemented (W2) | POS2_0_WAVE_2_IMPLEMENTATION_REPORT_2026_05_17.md |
+| BUG-055 | Prepaid order_discount_type payload | ✅ Implemented (W2) | POS2_0_WAVE_2_IMPLEMENTATION_REPORT_2026_05_17.md |
+| BUG-056 | Preset discount dropdown | ✅ Implemented (W3) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-057 | Print Bill for prepaid | ✅ Implemented (W4) | POS2_0_PRINT_PATH_UNIFICATION_CORRECTIVE_CODE_DIFF_PREVIEW_2026_05_17.md |
+| BUG-058 | PayLater PAID badge + prepaid hold | 🔴 Carry-forward → BUG-087 | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-059 | Audit Report Print Bill | ✅ Implemented (W4) | POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_059_REVISED_2026_05_17.md |
+| BUG-060 | Room transfer table clear | ✅ Implemented (W7) — temp FE fix | POS2_0_WAVE_7_IMPLEMENTATION_REPORT_2026_05_18.md |
+| BUG-061 | Room check-in time createdAt fallback | ✅ Implemented (W7) | POS2_0_WAVE_7_IMPLEMENTATION_REPORT_2026_05_18.md |
+| BUG-062 | Hide To Room for takeaway/delivery | ✅ Implemented (W1) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-063 | Room bill print fields | ✅ Closed (no code) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-064 | Room transfer notification message | 📋 Future sprint → POS3.0 | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-065 | Corporate room check-in CRM lookup | ✅ Implemented (Post) | POS2_0_BUG_065_IMPLEMENTATION_REPORT_2026_05_18.md |
+| BUG-066 | Food transfer exclude rooms | ✅ Implemented (W1) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-067 | Station toggle when no stations | ✅ Implemented (W1) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-068 | Socket reconnect rehydration | ✅ Implemented (W6) | POS2_0_WAVE_6_IMPLEMENTATION_REPORT_2026_05_17.md |
+| BUG-069 | Notification sequencing | 📋 Future sprint → POS3.0 | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-070 | Room area grouping | ✅ Implemented (W5) | POS2_0_WAVE_5_CODE_DIFF_PREVIEW_BUG_070_2026_05_17.md |
+| BUG-071 | Restaurant order ID on surfaces | ✅ Implemented (W5) | POS2_0_WAVE_5_CODE_DIFF_PREVIEW_BUG_071_2026_05_17.md |
+| BUG-072 | Notes visible on order card | ✅ Implemented (W1) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-073 | Empty customization wrapper | ✅ Implemented (W1) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-074 | Remember Me checkbox | ✅ Implemented (Post) | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+| BUG-075..086 | Wave 2-7 misc | ✅ Various — see canonical doc | POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md |
+
+---
+
+## pos_final_1.0 — Closed (consolidated 2026-05-12)
+
+> Canonical source: `bugs/BUG_CODE_VALIDATED_CONSOLIDATION_REPORT_2026_05_12.md` + per-bug `bugs/BUG_0XX_SMOKE_SIGNOFF.md`
+
+| Bug ID | Title | Status | Artifact Reference |
+|---|---|---|---|
+| BUG-037..049 (drift-set) | Various pos_final_1.0 items | ✅ CLOSED — smoke signoff verified | bugs/BUG_0XX_SMOKE_SIGNOFF.md |
+| BUG-038 | Credit payment customer details | Smoke signoff exists | bugs/BUG_038_SMOKE_SIGNOFF.md (if exists) — verified via TAB_CREDIT_CUSTOMER_CRM_* docs |
+| BUG-039,040,041 | Audit report exports | Smoke signoff + impact docs | bugs/POS_FINAL_1_0_BUG_IMPACT_ANALYSIS.md + per-bug docs |
+| BUG-042 | Hold + UPI payment | ✅ Smoke-passed | bugs/BUG_042_B_SMOKE_SIGNOFF.md |
+| BUG-043 | Room orders discount column | ✅ Smoke-passed | bugs/BUG_043_SMOKE_SIGNOFF.md |
+| BUG-044 | Old order items on free table | 🟡 Parked — runtime repro pending | bugs/BUG_044_RUNTIME_SCENARIO_INVESTIGATION.md |
+| BUG-045,046,047,048,049 | Various | ✅ Closed — smoke signoffs exist | bugs/BUG_0XX_SMOKE_SIGNOFF.md |
+
+---
+
+## True Intake / Unverified (no canonical closure proof)
+
+> These remain as INTAKE per rulebook because no canonical doc proves closure.
+
+| Bug ID | Title | Status |
+|---|---|---|
+| BUG-038..041 | Pos_final_1.0 items lacking authoritative closure doc | Awaiting reconciliation audit |
+
+---
+
+## Production Hotfixes
+
+| ID | Title | Status | Date | Notes |
+|---|---|---|---|---|
+| PROD-001 | Auto-settle toggle | CLOSED | 2026-05-20 | 10/10 QA PASS, owner verified |
+| PROD-002 | Settle print guard | RUNTIME-QA-PENDING | 2026-05-21 | 25-row checklist, no code fix needed |
+| PROD-003 | PayLater table clear | FE-VERIFIED, BE-FOLLOWUP | 2026-05-21 | Backend should emit on `update-order-paid` |
+| PROD-004 | Walk-in cart not cleared on stay-on-order | SHIPPED | 2026-05-27 | +2 lines in DashboardPage.jsx |
+| PROD-005 | Prepaid screen clear delay | SHIPPED | 2026-05-27 | DashboardPage.jsx |
+| PROD-006 | Takeaway print: custPhone empty when no phone entered | INTAKE | 2026-05-29 | Investigating — likely backend print template issue |
+| PROD-007 | Loyalty points earned not displayed on Collect Bill | CLOSED — OWNER VERIFIED | 2026-05-29 | +3 lines loyaltyTransform.js, +5 lines CollectPaymentPanel.jsx |
+| PROD-008 | Manual KOT/Bill print: custName & custPhone NULL | CLOSED — OWNER VERIFIED | 2026-05-29 | +2 lines in orderService.js L155-156 |
+
+---
+
+## Carryover Summary
+
+| From Sprint | To Sprint | Items | Reason |
+|---|---|---|---|
+| POS 3.0 | Backlog | 6 backend-blocked bugs (090-094,101) | Backend hasn't delivered |
+| POS 3.0 | CRM 2.0 | BUG-106,107,108 | CRM APIs needed |
+| POS 3.0 | Backlog | BUG-104,105 | Owner scope sessions needed |
+| POS 3.0 | Backlog | BUG-095,096 | Ready but not prioritized |
+| POS 3.0 | Backlog | 12 unfrozen business rules | Each needs fix + verification + re-approval (TIP-003, ROUND-001 + 10 Part B promoted 2026-05-31) |
+| BUG-108 | CRM 2.0 CR-009 | Coupon reversal, wallet, admin UI, multi-coupon, variant matching | Deferred items from BUG-108 |
+
+---
+
+## Closure Rule
+
+Per `IMPLEMENTATION_AGENT_RULES.md` — 6-Artifact Rule (added 2026-05-12):
+1. Intake document
+2. Impact Analysis
+3. Implementation Plan
+4. Pre-Implementation Code Gate
+5. Implementation Summary + QA Report
+6. Owner Smoke Sign-off
+
+### 2026-07-19 QA Intake Batch (CR-073 Recipe Bulk Editor)
+
+| ID | Description | Priority | Risk | Status | Gates | Blast Radius |
+|---|---|---|---|---|---|---|
+| **BUG-206** | RecipeBulkEditor Batch Save fails — sends `name: null` for existing standard recipes. BUG-197 #7 foodId reverse-lookup not ported from RecipeFormPanel to RecipeBulkEditor. PUT returns 422 "name required". Card View works. | **P0** | HIGH | **INTAKE — DIRECT BUG FIX ELIGIBLE** | 0-1 ✅ | 1 file (RecipeBulkEditor.jsx), ~10-15 lines. Pattern exists in RecipeFormPanel.jsx L50-53. |
+| **BUG-207** | RecipeBulkEditor Cost=₹0 and Margin=100% for ALL recipes. API `get-recipe` does not return ingredient `cost` field. Mockup shows real values (₹78, ₹42 etc.). Needs investigation: does `get-inventory-master` return cost? If yes → FE cross-join fix. If no → backend brief. | **P1** | MEDIUM | **INTAKE — NEEDS INVESTIGATION** | 0-1 ✅ | 1 file + possibly backend brief. |
+
+**BUG-206 UPDATE (2026-07-19):** IMPLEMENTED — v2 fix merged foodId reverse-lookup into normaliseRecipe(r, foods). Hydration useEffect deps [recipes, recipeType, foodsMaster]. Testing iteration_6: V9 PASS (PUT 200, name=168408), RT-1 PASS (persistence confirmed), Regression PASS. Preprod cleaned.
+
+**BUG-207 UPDATE (2026-07-19):** QA PASS — v2 fix. Cross-joins vendor-item-list last purchase rate → recipe ingredient cost. 22/92 recipes show real ₹ cost, 70 show '—' (missing purchase data). No ₹0 anywhere. Margin color bands working. Save regression clean. iteration_8: 7/7 PASS.
+
+### 2026-07-20 Current Stock + Ingredients Session
+
+| BUG-211 | Current Stock — No default sort (low stock buried in raw API order) + KPI cards not clickable as filters (static divs). Owner chose Option A: KPI cards replace chip row. | P1 | MEDIUM | **QA PASS** (2026-07-21, iteration_1) — Sort Out→Low→In verified. KPI click filters verified. Chip row removed confirmed. | 0-6 ✅ | 1 file (CurrentStockPanel.jsx) + inventoryTransform.js (de-dupe). |
+| BUG-212 | Ingredients — (A) Edit: pencil icon + inline edit row + PUT /update-inventory/{id}. (B) Add form expanded 3→7 fields. (C) Export calls real exportIngredients() API. | P1 | HIGH | **QA PASS** (2026-07-21, iteration_1) — Edit inline row (blue border) verified. 7-field add form verified. Export downloads real .xlsx. | 0-6 ✅ | 4 files: InventorySetupPanel.jsx, inventoryService.js, inventoryTransform.js, constants.js. |
+| BUG-213 | IngredientBulkEditor — Bulk Edit toolbar has no page title (G8 gap from CR-086 F4). User cannot tell they are in bulk edit mode from the toolbar. | P3 | LOW | **QA PASS** (2026-07-21, iteration_1) — bulk-editor-title element present, text "Bulk Edit Ingredients" confirmed. | 0-6 ✅ | 1 file (IngredientBulkEditor.jsx). |
+
+
+### 2026-07-22 Expense + Employee + Roles Session (BUG-228 → BUG-231)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-228 | Expense Split Bill: Item Appears as 2 Rows in Transaction List | P1 | MEDIUM | **DEFERRED TO BACKEND** — Owner ruling: no FE change | 0-2 ✅ | Backend handles split bill storage model. |
+| BUG-229 | Employee: Auto-Populate Email (User ID) as firstname@restaurantname.com | P2 | LOW | **QA PASS** (2026-07-22, iteration_7) — auto-gen on fname, manual override, email mandatory | 0-5 ✅ | 1 file (EmployeeListView.jsx). |
+| BUG-230 | Employee: Name Change → Email Auto-Sync (if auto-generated) | P2 | LOW | **QA PASS** (2026-07-22, iteration_7) — sync confirmed, custom email preserved | 0-5 ✅ | 1 file (EmployeeListView.jsx). |
+| BUG-231 | Role Form: Hide role_type Field + Add Save Error Toasts | P1 | LOW | **QA PASS** (2026-07-22, iteration_7) — role_type hidden, validation + error indicators working | 0-5 ✅ | 1 file (RoleFormView.jsx). |
+| BUG-232 | By Ingredient tab: empty combobox / no data on fast navigation (loading race) | P2 | LOW | **IMPLEMENTED** (2026-07-23) — loading spinner guard added; awaiting QA | 0-5 ✅ | 1 file (RecipeManagementPanel.jsx). |
+| BUG-233 | By Ingredient tab: addon recipes never show — `addon-recipe-list` returns `ingredients:[]` | P0 | MEDIUM | **CLOSED_BACKEND_FIXED** (2026-09-24) — curl-verified on kunafamahal.com: `ingredients[]` now populated (1/1 recipes, 0 empty). No FE code needed. Evidence `evidence/BUG-233/addon_recipe_list_probe_2026_09_24.json`. | CLOSED ✅ | Backend fixed upstream. Status was BACKEND-BLOCKED since 2026-07-23. |
+
+### 2026-07-24 Employee + Role Management Session (BUG-234 → BUG-235)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-234 | Employee Role Dropdown Shows System Roles + Silent ID Mismatch | P1 | LOW | **QA PASS** (2026-07-24) — 9/9 tests pass. R3+R4 employee dropdown: system roles excluded, custom roles only. Awaiting Gate 6 (Owner Smoke). | 0-5b ✅ | 1 file (EmployeeListView.jsx). QA Report: `/app/memory/test_reports/CR-096_QA_REPORT_2026_07_24.md` |
+| BUG-235 | Role Permissions Save Fails with 422 — role_type Empty on Create/Toggle | P1 | MEDIUM | **QA PASS** (2026-07-24) — 9/9 tests pass. R1 (new role no template), R2 (toggle), T4 (scratch build) all pass. No 422 errors. Awaiting Gate 6 (Owner Smoke). | 0-5b ✅ | 3 files (roleTransform.js + RoleFormView.jsx + RoleListView.jsx). QA Report: `/app/memory/test_reports/CR-096_QA_REPORT_2026_07_24.md` |
+| BUG-236 | Smart Purchase — Ad-hoc Typeahead Dropdown Clipped by overflow-hidden | P1 | LOW | **IMPLEMENTED** | 5a ✅ | E1: removed `overflow-hidden` from Section 1 card (L130). E2+E3: `z-10`→`z-50` on both dropdown divs (L42, L47) inside `AdHocTypeahead`. 1 file. Impact: `impact/BUG-236_ADHOC_DROPDOWN_IMPACT_ANALYSIS.md`. Plan: `plans/BUG-236_ADHOC_DROPDOWN_IMPLEMENTATION_PLAN.md`. // BUG-236 2026-08-14 |
+
+
+### 2026-07-24 Recipe Form — Name Field Visibility (BUG-237)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-237 | Recipe Form — Recipe Name Field Should Be Hidden for Standard & Addon Types (Auto-Derived from Item Selection) | P2 | LOW | **IMPLEMENTED** (2026-07-24) — 6/6 QA PASS. Standard: name hidden, auto-derived from Menu Item. Addon: name hidden, auto-derived from Addon Item. Sub-recipe: name visible (user input). Awaiting Gate 6 (Owner Smoke). | 0-5 ✅ | 1 file (`RecipeFormPanel.jsx`). 3 edits: validation L93, auto-derive L110-115, JSX conditional L157-163. Intake doc: `change_requests/BUG_237_RECIPE_NAME_HIDDEN_FOR_STANDARD_ADDON.md` |
+
+### 2026-07-24 Recipe Form UX (BUG-238 → BUG-239)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-238 | Recipe Form — Replace Plain `<select>` Dropdowns with Searchable Combobox | P2 | LOW | **IMPLEMENTED** (2026-07-24) — 6/6 QA PASS. Menu Item (280 foods), Addon Item, Ingredient rows (246 items) all replaced with SearchableSelect. | 0-5 ✅ | 1 file (`RecipeFormPanel.jsx`). New `SearchableSelect` component (L11-82). Test report: `iteration_9.json`. |
+| BUG-239 | Recipe Form — Hide Serves Field for Sub-Recipe & Addon (Default 1) | P2 | LOW | **IMPLEMENTED** (2026-07-24) — 5/5 QA PASS. Serves visible only for Standard. Sub/Addon hidden, default 1 sent. No regression on BUG-237/238. | 0-5 ✅ | 1 file (`RecipeFormPanel.jsx`), 3 lines. Conditional `recipeType === 'standard'` wrap at L295. Intake doc: `change_requests/BUG_239_SERVES_HIDDEN_SUBRECIPE_ADDON.md` |
+
+### 2026-07-24 Smart Purchase Investigation Bugs (BUG-240 → BUG-243)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-240 | Smart Purchase: On-Hand Shows Small Unit (gm) Instead of Display Unit (kg) | P1 | LOW | **INTAKE — Q1 APPROVED** | 0-1 ✅ | purchasePlanner uses calQuantity(gm), CurrentStock uses displayQty(kg). Fix: add display_on_hand conversion. ~5 lines. |
+| BUG-241 | Smart Purchase: Rate Auto-Fills From Vendor History Making Items Active | P1 | LOW | **INTAKE — Q3 APPROVED** | 0-1 ✅ | vendor ranking pre-fills rate, defeating CR-103 activeRows filter. Fix: rate='' + suggestedRate hint. ~8 lines. CR-103 gap. |
+| BUG-242 | Smart Purchase: No Default Vendor + Allows Null Vendor Submit | P1 | LOW | **INTAKE — Q4 APPROVED** | 0-1 ✅ | Submit goes through with vendor_id=null as "(unassigned)". Fix: default System Vendor + validate. ~10 lines. |
+| BUG-243 | Backend: Stock Not Credited After add-purchase | **P0** | CRITICAL | **INTAKE — BACKEND-BLOCKED** | 0-1 ✅ | Purchase recorded in vendor-item-list but quantity/cal_quantity/display_qty never updated. Brief filed at BACKEND_BLOCKERS_BRIEF_2026_07_22.html. NO FE workaround. |
+
+BUG-240 updated: **IMPLEMENTED (2026-07-24). display_on_hand from displayQty. purchasePlanner.js + AutoShoppingList.jsx. // BUG-240**
+BUG-241 updated: **IMPLEMENTED (2026-07-24). rate='' + suggestedRate hint. SmartPurchasePanel.jsx + AutoShoppingList.jsx. // BUG-241**
+BUG-242 updated: **IMPLEMENTED (2026-07-24). vendor_id defaults to 'system' + validate blocks null. SmartPurchasePanel.jsx. // BUG-242**
+
+| **BUG-244** | add-purchase payload: `payment_method` wrong key (should be `payment_type`), missing `tot_amount`/`item_total` (default to 1), `converion_factor` removed (omit per contract). Affects ALL purchases via `addPurchase`. RELATED to BUG-243 (same endpoint, different root cause). | **P0** | MEDIUM | **IMPLEMENTED** | 5a | 1 file: `inventoryTransform.js`. Plan: `/app/memory/plans/BUG-244_IMPLEMENTATION_PLAN.md`. |
+
+| **BUG-245** | Table card moves to top when order placed. Removed occupied-first bucketing in channel mode. Single `.sort(compare)` — tables stay in label position. | **P1** | LOW | **IMPLEMENTED** | 5a | `ChannelColumn.jsx`. Plan: `/app/memory/plans/BUG-245_IMPACT_AND_PLAN.md` |
+| **BUG-246** | Customized items not merging in cart. Added `customizationKey()` merge logic to `addCustomizedItemToCart()`. Identical items (id+size+variants+addons+notes) now merge qty. Cascades to all print paths. | **P1** | MEDIUM | **IMPLEMENTED** | 5a | `OrderEntry.jsx` (R5). Plan: `/app/memory/plans/BUG-246_IMPACT_AND_PLAN.md` |
+| **BUG-247** | Smart Purchase ad-hoc typeahead blocks UI. Wrapped `VendorSuggestionCell` in `React.memo()`. 50+ cells now skip re-render on typeahead keystrokes. | **P2** | LOW | **IMPLEMENTED** | 5a | `VendorSuggestionCell.jsx`. Plan: `/app/memory/plans/BUG-247_IMPACT_AND_PLAN.md` |
+
+| **BUG-248** | Bulk Editor: 9 columns missing from `isDirty()` + `portionSize` missing from `buildPayload`. Part B (backend drops 4 fields) BACKEND-BLOCKED. | **P1** | LOW | **IMPLEMENTED — isDirty 9 checks + portionSize payload. Part B BACKEND-BLOCKED.** | 5a | `BulkEditor.jsx`: 9 isDirty checks + 1 buildPayload line. Impact: `/app/memory/impact/BUG-248_IMPACT_ANALYSIS.md`. Plan: `/app/memory/plans/BUG-248_IMPLEMENTATION_PLAN.md` |
+| **BUG-249** | Current Stock: Negative qty shows "In Stock" — effectiveQty helper fixes 10 sites. | **P1** | LOW | **IMPLEMENTED** | 5a | `CurrentStockPanel.jsx` — effectiveQty(item) replaces Number(item.quantity). |
+
+
+
+### 2026-08-13 Implementation — Inventory Batch (BUG-309 to BUG-320)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-309 | Bulk Edit: Min Unit type=number drops unit string | P1 | HIGH | **IMPLEMENTED** | 5a ✅ | `IngredientBulkEditor.jsx:442` input→span. // BUG-309 |
+| BUG-310 | Bulk Edit: Conversion field invisible styling | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `IngredientBulkEditor.jsx:296` numCls Option A. // BUG-310 |
+| BUG-311 | No duplicate detection (All layers: L1 typeahead + L2 add-guard + L3 bulk-save-guard + L1B edit-form + L4 bulk-typeahead + **L5 bulk-Save-disable + L5b handleSave-edited-guard**) | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | L1: `IngredientNameCombobox` typeahead in `InventorySetupPanel.jsx`. L2: `isDuplicate` guard. L3: dup skip `IngredientBulkEditor.jsx:192`. L1B: Edit form typeahead + Save disable. L4: BulkEditor name cell combobox. **L5: `hasDuplicateInDirty` useMemo (L103) + both Save buttons disabled (L346, L519). L5b: handleSave EDITED-row guard (L220). `IngredientBulkEditor.jsx`. 2026-08-15** |
+| BUG-314 | Inventory Setup Promise.allSettled | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `InventorySetupPanel.jsx:42`. Backend 404→200 also fixed. // BUG-314 |
+| BUG-320 | Sub-Recipe Stock physical_qty extra key | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `SubRecipeStockPanel.jsx:94` + `inventoryTransform.js:227`. // BUG-320 |
+
+
+
+### 2026-08-13 Implementation — Printer Batch (BUG-315 to BUG-318)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-315 | Printer Config: Numeric inputs snap-back fixed (local display state) | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `shared.jsx` NumberInput + `PrintStyleTab.jsx` StyleInput → stateful with localVal+useEffect. // BUG-315 |
+| BUG-316 | Printer Config: Font dropdown populated (FALLBACK_FONTS) | P1 | LOW | **IMPLEMENTED** | 5a ✅ | `printerAgentConfigTransform.js` FALLBACK_FONTS constant + conditional fonts line. // BUG-316 |
+| BUG-317 | Printer Config: Android size fields uncapped (max removed) | P2 | LOW | **IMPLEMENTED** | 5a ✅ | `PrintStyleTab.jsx` subtitle "Min: 1" + `max={maxScale}` removed from 3 android fields. // BUG-317 |
+| BUG-318 | Printer Config: Aggregator auto-print section restored in AutoPrintTab | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `AutoPrintTab.jsx` full rewrite — banner removed, useNavigate removed, Aggregator Orders section added (2 toggles + conditional SelectInput). `printerAgentConfigTransform.js` FALLBACK_AGGREGATOR_STAGES. // BUG-318 |
+| BUG-319 | Footer text hardcoded in print agent | P2 | LOW | BACKEND-BLOCKED | — | No FE change — backend brief needed |
+
+
+### 2026-08-13 Intake — Inventory + Printer + Sub-Recipe Batch (BUG-314 → BUG-320)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-314 | Inventory Setup: Categories (0) + Unit dropdown empty — Promise.all atomic failure when get-inventory-master 404 | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | `InventorySetupPanel.jsx:42` Promise.all rejects on getIngredients() 404 → cats+units never set. Fix: Promise.allSettled. Backend ask: return 200+[] not 404. 1 file. Fast-lane eligible with owner approval. Investigation: `BUG-314_INV_SETUP_DROPDOWN_INVESTIGATION_REPORT.md`. Evidence: owner@thegoankitchen.com screenshot + curl. |
+| BUG-315 | Printer Config: Numeric inputs snap back — can't clear "1" to retype | P2 | LOW | **INTAKE** | 0-1 ✅ | `StyleInput` (PrintStyleTab) + `NumberInput` (shared.jsx): `if (raw==='') return` on controlled input → state unchanged → React reverts. Fix: local display state. 2 files, ~15 lines each. Related to CR-133 Gap G4 (incomplete fix). |
+| BUG-316 | Printer Config: Font Family dropdown empty (available_fonts: null from API) | P1 | LOW | **INTAKE** | 0-1 ✅ | `printerAgentConfigTransform.js:253` — `gs.available_fonts \|\| []` → empty array. Fix: hardcode 11-font fallback list per owner spec. 1 file, 3 lines. Fast-lane eligible. |
+| BUG-317 | Printer Config: Android size fields reject values >8 (max constraint from [1,8] default) | P2 | LOW | **INTAKE** | 0-1 ✅ | `PrintStyleTab.jsx:116` maxScale=8 → `max={8}` on Logo/UPI/FdbkQR inputs. Owner now accepts 44/46/23. Override of CR-133 Gap OD-D. 1 file, 5 lines. Fast-lane eligible. |
+| BUG-318 | Aggregator auto-print keys (auto_kot/bill/stage) missing from printer UI + save to wrong API | P1 | MEDIUM | **INTAKE** | 0-1 ✅ | CR-133 OD-B moved these to AggregatorSetup. AggregatorSetup→update-settings; printer agent reads printer-agent-config (auto_print={}). Transform correct. Fix: re-add 3 fields to AutoPrintTab. Owner reversing OD-B. Full Gate 2-3. Open Q: keep in both UIs? |
+| BUG-319 | Printer Config: Footer text hardcoded "Powered by MyGenie" in print agent firmware | P2 | LOW | **INTAKE — BACKEND-BLOCKED** | 0-1 ✅ | API returns bill_footer.footer_text correctly. Physical print agent ignores it. Backend brief needed. Owner Q: hide FE field until fixed? |
+| BUG-320 | Sub-Recipe Stock: physical_qty incorrectly sent in add-sub-recipe-stock payload | P2 | LOW | **INTAKE** | 0-1 ✅ | `SubRecipeStockPanel.jsx:94` physicalQty=qty → `inventoryTransform.js:232` physical_qty in payload. physical_qty is ingredient audit concept, not applicable to sub-recipe produced-qty. Always mirrors quantity (redundant). Fix: remove 2 lines (1 per file). DISTINCT. |
+
+
+### 2026-08-11 P&L Report + Item Discount GST + Aggregator Setup (BUG-303 to BUG-307)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-303** | P&L Report — "Paid Revenue" KPI always shows ₹0 (field mismatch: `s.paid_revenue` vs `s.total_paid_revenue`) | **P2** | **LOW** | **IMPLEMENTED — QA PASS** | 1-5b ✅ | 1 file `PLReportPage.jsx`. 4 issues fixed: DollarSign→IndianRupee, paid_revenue field, date sort. |
+| **BUG-304** | Item-Level Discount — `discountRatio` uses `itemTotal` (not `discountableTotal`), GST/VAT wrong for non-discountable items | **P1** | **HIGH** | **IMPLEMENTED — QA PASS (Gate 5b)** | 1-5b ✅ | `CollectPaymentPanel.jsx` + `CartPanel.jsx`. taxTotals split into dSgst/dCgst/dVat. CGST/SGST drop ₹4→₹3.60 on 10% discount verified. Plan: `plans/BUG-304_IMPLEMENTATION_PLAN.md`. |
+| **BUG-305** | `orderTransform.js` — `discountRatio` uses full subtotal in `calcOrderTotals` + `buildBillPrintPayload`: wrong GST in backend payload and bill print | **P1** | **CRITICAL** | **IMPLEMENTED — QA PASS (Gate 5b)** | 1-5b ✅ | 1 file, 3 edits. `buildCartItem` `_giveDiscount` marker + `calcOrderTotals` discountableRatio split + `buildBillPrintPayload` split. iteration_12+13. Plan: `plans/BUG-305_IMPLEMENTATION_PLAN.md`. |
+| **BUG-306** | Aggregator Setup shows "Network Error" / blank when GET /aggregator-config ERR_NETWORK | **P1** | **MEDIUM** | **IMPLEMENTED — QA PASS (Gate 5b)** | 1-5b ✅ | `AggregatorSetupView.jsx`: `isNoConfig = err?.response?.status===404 \|\| !err?.response`. iteration_15 100% PASS. |
+| **BUG-307** | Aggregator Setup: `tone_timing` (notification duration seconds) not mapped in UI | **P1** | **LOW** | **IMPLEMENTED — QA PASS (Gate 5b)** | 1-5b ✅ | `aggregatorConfigTransform.js` fromAPI+toAPI + `ConfigTab.jsx` "Notification Settings" card. iteration_15 100% PASS. |
+
+---
+
+### 2026-08-06 Food Court vs Item Sales Revenue Mismatch (BUG-296)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-296** | Food Court Report vs Item-Wise Report — Data Mismatch (rid=598, Shimla QoH Food Court, June 2026) | **P1** | **HIGH** | **QA PASS — Gate 5b 2026-08-12 (Round 3)** | 0-INV ✅, Gate 2 ✅, Gate 3 ✅, Gate 4 GO ✅, 5a ✅ | 1 file `foodCourtService.js`, 3 edits: E1 L105 cache key `created_at`→`collect_bill` // BUG-296, E2 L108 `sort_by` `created_at`→`collect_bill` // BUG-296, E3 L129 `itemTotal` add `.filter(foodStatus!==3)` // BUG-296. E1+E2 atomic. Self-test V1-V10 ALL PASS. Revenue verified: ZORKO ₹5,74,715 / Total ₹18,37,701.34 / Orders 6,152. Compile: 1 pre-existing warning, 0 new. EXIT GATE 5/5. QA: `handover/QA_HANDOVER_BUG296_2026_08_06.md`. Plan: `plans/BUG-296_IMPLEMENTATION_PLAN.md`. | RC1 (by design): 1,739/6,152 orders (28%) cross-station → order count 8,306 vs 6,152 — intentional food court model, no fix. RC2a (FIX): sort_by created_at→collect_bill in `foodCourtService.js:fetchChunk`. RC2b (FIX): exclude foodStatus=3 from itemTotal in `foodCourtService.js:toStationRow`. Live validated: TAB=0, service_charge=0, unassigned_items=0, comp=0. After both fixes gap=₹0.00 per station (CREAMBELLPARLOUR ₹2,42,458 / GUPTAJEE ₹7,18,535 / MSB ₹3,01,993 / ZORKO ₹5,74,715 / TOTAL ₹18,37,701). 1 file, 2 edits. Credentials: `owner@shimlaqohfoodcourt.com` / `Qplazm@10`. Report: `investigation/BUG-296_INVESTIGATION_REPORT.md`. Evidence: `evidence/BUG-296/live_validation_2026_08_06.json`. Handover: `handover/SESSION_HANDOVER_2026_08_06_BUG296_DEEP_INVESTIGATION.md` |
+
+---
+
+### 2026-08-06 Recipe PDF Download Crash (BUG-302)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-302** | Recipe PDF Download — `doc.autoTable is not a function` — CR-089 implementation used old jspdf-autotable v3/v4 side-effect import pattern; v5.0.8 installed removes prototype patching. Crash on click, no PDF produced. | **P1** | **MEDIUM** | **IMPLEMENTED — Gate 5a 2026-08-06** | 0-5a ✅ | CODE_ERROR. Fix: L6 `import autoTable from 'jspdf-autotable'` (was side-effect only). L437 `autoTable(doc,{})` (was `doc.autoTable({})`). `doc.lastAutoTable.finalY` L454 unchanged — v5 still sets it. 1 file, 2 edits. Compile PASS. EXIT GATE 5/5. Fix report: `handover/BUG_FIX_REPORT_BUG302_2026_08_06.md`. QA: `handover/QA_HANDOVER_BUG302_2026_08_06.md` |
+
+---
+
+### 2026-08-06 Aggregator Status Toggle Wrong Payload (BUG-301)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-301** | Aggregator Menu Status Toggle — `toggleFoodStatus` sends `{ status }` but aggregator endpoint requires `{ food_for: 'Aggregator' }`. HTTP 200 returned with error body — FE `try/catch` misses it. Success toast fires but status unchanged. | **P1** | **HIGH** | **IMPLEMENTED — Gate 5a 2026-08-06** | 0-5a ✅ | PLAN_GAP. Fix: `menuManagementService.js` — `toggleFoodStatus(foodId,status,foodFor='Normal')` sends `{food_for:'Aggregator'}` when aggregator, `{status}` otherwise. `ProductList.jsx:109` — passes `menuType` to call + dep array. `BulkEditor.jsx:510` — passes `menuType`. OQ-1 confirmed: Normal `{status}` still works. All `// BUG-301` markers. Compile PASS. EXIT GATE 5/5. QA: `handover/QA_HANDOVER_BUG301_2026_08_06.md` |
+
+---
+
+### 2026-08-06 CRM Token Storage Fix (BUG-300)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-300** | Customer Name/Phone Search Stops Working After Long Session (CRM Token) | **P1** | **MEDIUM** | **IMPLEMENTED Tier 2 — Gate 5a 2026-08-06** | 0-5a ✅ | Tier 1 (localStorage) + Tier 2 (silent refresh). `crmAxios.js`: E1 `import api from './axios'`, E2 `_crmTokenRefreshing` guard flag, E3 `async (error)` + 401 branch → `GET /restaurant-crm-token` → `setCrmToken` → retry. 1 file, ~25 lines. Compile PASS. EXIT GATE 5/5. QA: `handover/QA_HANDOVER_BUG300_T2_2026_08_06.md` |
+
+---
+
+### 2026-08-05 INV-003 — Room Check-In Docs Not Shown on Return (BUG-295)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-295** | Room Check-In: Documents on File not shown on return visit | **P1** | **MEDIUM** | **IMPLEMENTED — Gate 5a 2026-08-05** | 0-5a ✅ | INV-003 two root causes. RC2 (CODE_ERROR): `setCrmCustomerId` never called in `handleSubmit` BUG-092 block — fixed `if (customerId) setCrmCustomerId(customerId)` (L675-676). RC1 (PLAN_GAP): `uploadDocument()` added to `documentService.js`; called non-blocking after `roomService.checkIn()` succeeds with `CRM_DOC_TYPE` map (L728-735). Import updated. 4 edits, 2 files. Compile PASS. EXIT GATE 5/5. Fix report: `handover/BUG_FIX_REPORT_INV003_2026_08_05.md` |
+
+---
+
+### 2026-08-05 CustomerModal CRM Blocking (BUG-294)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-294** | CustomerModal — CRM Calls Block Order Flow on 401 | **P1** | **HIGH** | **IMPLEMENTED — Gate 5a PASS 2026-08-05** | 0-5a ✅ | 4 edits in `CustomerModal.jsx`: E1 Branch-1 updateCustomer try/catch, E2 throw→warn, E3 Branch-2 updateCustomer try/catch, E4 createCustomer try/catch + `CUST-{ts}` fallback. All `// BUG-294` markers. Compile PASS. EXIT GATE 5/5. QA handover: `handover/QA_HANDOVER_BUG294_2026_08_05.md` |
+
+---
+
+### 2026-08-02 Aggregator TableCard ID Truncation Fix (BUG-292)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-292** | TableCard: Aggregator AggrId Truncated by Amount Pill — `flex-shrink-0` amount competes with aggrId label in `justify-between` header pill. For aggregator orders, `table.label` contains 8-char ID (e.g. `#3H5H9488`) which gets clipped. | **P2** | LOW | **IMPLEMENTED — Compile PASS. Fast Lane.** | 5a ✅ | 1 file: `TableCard.jsx` L365. Wrap `table.amount` in `(!isAggregator && ...)` guard. 2-line change. Code marker `// BUG-292` at L366. Price still visible on OrderCard (by design). |
+
+### 2026-07-26 Aggregator Module Investigation Bugs (BUG-250 → BUG-255)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-250** | Polling Reconciliation Removes Aggregator Orders (~60s) — `useOrderPollingReconciliation` treats aggregator orders as orphans after 1 poll cycle. CRITICAL: orders vanish from dashboard. | **P0** | HIGH | **CLOSED — OWNER VERIFIED (retroactive 2026-07-31)** | 0-6 ✅ | Fix: `isAggregator` exemption in `useOrderPollingReconciliation.js:204-206` (skip orphan removal), `OrderContext.jsx:51-55` (preserve aggregator orders on merge), `socketHandlers.js:952` (remove only on terminal fOS 3/6). Code markers `// BUG-250` confirmed in all 3 files. Registry synced retroactively 2026-07-31. |
+| **BUG-251** | OrderCard Cancel + WhatsApp Buttons Shown for Aggregator — Normal flow (L946-996) has no `isAggregator` guard. Design says no Cancel (uses reject popup). | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx`, 2 lines. |
+| **BUG-252** | TableCard Missing Items/Customer/Rider for Aggregator per Design Mockup — Design Section 3 shows items, customer+phone, rider status. TableCard only shows compact header. | **P2** | MEDIUM | **INTAKE** | 0-1 ✅ | 1 file: `TableCard.jsx`, ~40 lines. Needs Gate 2-3 planning. |
+| **BUG-253** | Platform Dropdown Missing "Aggregator" Filter — Only has All/POS/Web. Aggregator orders wrongly bucket under POS. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 2 files: `PlatformDropdown.jsx`, `DashboardPage.jsx`, ~10 lines. |
+| **BUG-254** | Aggregator Handlers Fail Silently (No Toast) — All 4 handlers (accept/reject/ready/dispatch) catch errors with `console.error` only. No user feedback. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `DashboardPage.jsx`, ~40 lines across 4 handlers. |
+| **BUG-255** | Item-Level Ready/Serve Dots Shown for Aggregator — Owner confirmed: "no item level ready and serve in aggregator order". No `isAggregator` guard on item toggles. | **P1** | LOW | **INTAKE** | 0-1 ✅ | 1 file: `OrderCard.jsx`, ~3 lines. |
+
+### 2026-07-27 Aggregator TableCard Revert + OrderCard Qty Fix (BUG-256, BUG-257)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-256** | Revert BUG-252: TableCard aggregator body makes cards 2× height. Owner: keep same height as regular cards. Delete ~30 lines. | **P1** | LOW | **INTAKE — OWNER APPROVED REVERT** | 0-1 ✅ | 1 file: `TableCard.jsx`. Remove BUG-252 body block (~L412-443). |
+| **BUG-257** | OrderCard `item.qty` undefined for aggregator — empty parens `()`. Root: aggregatorTransform uses `quantity`, OrderCard reads `qty`. | **P1** | LOW | **INTAKE — OWNER APPROVED FIX** | 0-1 ✅ | 1 file: `aggregatorTransform.js`. Add `qty:` alias. 1 line. |
+
+### 2026-07-27 Reports + Inventory Investigation Batch (BUG-258 → BUG-266)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-258** | P&L Report Calendar Broken / Different UI — No Presets, No Max Date, No Calendar Component | **P1** | MEDIUM | **QA PASS (Gate 5b — 2026-07-31)** | | 0-1 ✅ | 1 file (`PLReportPage.jsx`), ~60 lines. Rewrite date bar to match ExpenseReport pattern. Intake: `change_requests/BUG-258_PL_REPORT_CALENDAR_BROKEN_INTAKE.md` |
+| **BUG-259** | P&L Report Charts Hidden When ≤1 Data Point — `chartData.length > 1` too strict | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file, 1 line. Fast lane eligible. Intake: `change_requests/BUG-259_PL_REPORT_CHARTS_HIDDEN_INTAKE.md` |
+| **BUG-260** | Future Dates Allowed in 5 Report Calendars (PLReport, Consumption, EdgeStates, ItemSalesHybrid, Dashboard) | **P1** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 5 files, ~2 lines each. Fast lane eligible. Intake: `change_requests/BUG-260_FUTURE_DATES_ALLOWED_5_REPORTS_INTAKE.md` |
+| **BUG-261** | Missing Preset Pills in P&L + Consumption Reports — should be [Today, 7D, 30D, MTD] | **P1** | MEDIUM | **QA PASS (Gate 5b — 2026-07-31)** | | 0-1 ✅ | 2 files, ~50 lines each. Owner confirmed standard pattern. Intake: `change_requests/BUG-261_MISSING_PRESET_PILLS_PL_CONSUMPTION_INTAKE.md` |
+| **BUG-262** | "Coming Soon" Placeholders Visible in Production (6 Locations: Intelligence, Setup, Sidebar, Login) | **P0** | MEDIUM | **QA PASS (Gate 5b — 2026-07-31)** | | 0-1 ✅ | 4 files with user-visible text. Multi-file audit+removal. Intake: `change_requests/BUG-262_COMING_SOON_IN_PRODUCTION_INTAKE.md` |
+| **BUG-263** | Smart Purchase — No Sticky Toolbar (long scroll with 100+ items) | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file, CSS only. Fast lane eligible. Intake: `change_requests/BUG-263_SMART_PURCHASE_NO_STICKY_TOOLBAR_INTAKE.md` |
+| **BUG-264** | System Vendor — No Explanation/Tooltip (confusing UX) | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1-2 files, ~10 lines. Fast lane eligible. Intake: `change_requests/BUG-264_SYSTEM_VENDOR_NO_EXPLANATION_INTAKE.md` |
+| **BUG-265** | Conversion Factor — No Help Text (users don't understand concept) | **P3** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file, ~10 lines. Fast lane eligible. Intake: `change_requests/BUG-265_CONVERSION_FACTOR_NO_HELP_TEXT_INTAKE.md` |
+| **BUG-266** | Wastage Report / Top Wasted Items — BACKEND-BLOCKED (no endpoint exists) | **P1** | N/A | **INTAKE — BACKEND-BLOCKED** | 0-1 ✅ | Frontend placeholder ready. Backend brief needed. Intake: `change_requests/BUG-266_WASTAGE_REPORT_BACKEND_BLOCKED_INTAKE.md` |
+| **BUG-267** | Inventory Setup — Category Not Selecting When Adding Ingredient | **P2** | LOW | **INVESTIGATION — NEEDS_MORE_DATA** | N/A | Cannot reproduce. Dropdown has 72 options, selection works in automation. Need owner repro steps. |
+| **BUG-268** | Inventory Edit — 500 SQL Error: inventory_audit_logs.id Missing AUTO_INCREMENT | **P0** | CRITICAL | **INVESTIGATION — BACKEND-BLOCKED** | N/A | ALL ingredient edits fail with HTTP 500. Backend fix required: `ALTER TABLE inventory_audit_logs MODIFY id AUTO_INCREMENT`. Brief: `backend_briefs/BACKEND_BRIEF_BUG-268_2026_07_28.md` |
+| **BUG-269** | Ingredient Form 3 UX Bugs: Conversion Sent Incorrectly + No Small Unit Auto-Select + Alert Unit Not Read-Only | **P1** | MEDIUM | **QA PASS (Gate 5b — 2026-07-31)** | 0-5 ✅ | 2 files: `inventoryTransform.js` (hasConversion guard ×2) + `InventorySetupPanel.jsx` (UNIT_SMALL_MAP, unit onChange auto-select, smallUnit sync, alert read-only ×2, startEdit sync). // BUG-269-A/B/C |
+
+### 2026-07-28 Investigation Batch — Order Flow + Reports + Config (BUG-270 → BUG-273)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-270** | Update Order Missing cust_mobile / cust_membership_id in update-place-order | **P1** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `orderTransform.js`. updateOrder L1131 only sends cust_name. placeOrder sends all 3. Fix: +2 lines. Intake: `change_requests/BUG-270_UPDATE_ORDER_MISSING_CUSTOMER_FIELDS_INTAKE.md` |
+| **BUG-271** | GST/VAT Wrong on Print — food_details.tax fallback added to manual print path | **P1** | CRITICAL | **QA PASS (Gate 5b — 2026-07-31)** | 0-5 ✅ | Fixed `orderTransform.js` L1879-1910: added `lineTotal` + `food_details.tax` fallback to manual print path. Same logic as Collect Bill path (L1821-1830). Backend returns `gst_tax_amount: null` — fallback now computes `lineTotal × taxPct / 100`. Code marker: BUG-271 FIX-COMPLETE (2026-07-30). Self-test: PASS. Compile: 0 new warnings. Awaiting QA. |
+| **BUG-272** | Partial Payment Breakdown Missing in Order Report | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 2 files: `reportTransform.js` + `OrderLedgerMockup.jsx`. `partial_payments` array from API never parsed. Column exists but data not populated. Intake: `change_requests/BUG-272_PARTIAL_PAYMENT_BREAKDOWN_MISSING_INTAKE.md` |
+| **BUG-273** | Auto Settle Local Settings Removal — Now Server-Side | **P2** | MEDIUM | **IMPLEMENTED 2026-08-22** | 5a ✅ | 12 edits across 4 files + 1 deleted: StatusConfigPage (constants+state+localStorage+toggle UI removed), DashboardPage (R5 — full queue processor+enqueue useEffect+cleanup removed, ~90 lines), OrderCard + TableCard (inline localStorage condition removed, Settle button always visible), autoSettlePrefs.js (deleted). Compile PASS. EXIT GATE 5/5. // BUG-273 |
+
+### 2026-07-29 Inventory Bugs (BUG-274 → BUG-275)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-274** | Bulk Delete in Ingredient Bulk Editor Not Working — handleSave early return blocks delete processing | **P1** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `IngredientBulkEditor.jsx`. `deleteSelected()` marks `_deleted` but `handleSave()` L147-148 filters out deleted rows → "No changes to save" → deletes never reach API. Fix: include `toDelete.length` in early-return check. Q: BUG-268 audit_logs 500 may also block delete API. Intake: `change_requests/BUG-274_BULK_DELETE_INGREDIENT_NOT_WORKING_INTAKE.md` |
+| **BUG-275** | Edit Ingredient: Conversion Factor Pre-Fills to 1 When No Conversion Exists | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `inventoryTransform.js` L18+L62. `Number(converion_factor) \|\| 1` defaults to 1 for items without conversion. Should use `has_unit_conversion` flag to decide. Related: BUG-226, BUG-265. Intake: `change_requests/BUG-275_CONVERSION_FACTOR_PREFILL_1_INTAKE.md` |
+| **BUG-276** | Bulk Editor UX: Category move causes item to jump/disappear + inconsistent delete between Expense/Ingredient editors | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 2 files: `ExpenseBulkEditor.jsx` + `IngredientBulkEditor.jsx`. After "Move to Category", `groupedRows` re-sorts instantly → item teleports. No scroll/highlight. Delete behavior inconsistent (expense=immediate API, ingredient=mark+save broken). Intake: `change_requests/BUG-276_BULK_EDITOR_UX_CONSISTENCY_INTAKE.md` |
+
+### 2026-07-29 Ingredient Bulk Editor Bugs (BUG-277 → BUG-279)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-277** | Ingredient Bulk Editor: Multi-Select Checkbox Resets on 2nd Row Click | **P1** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `IngredientBulkEditor.jsx` L65-67. `useEffect([allItems])` wipes `selected` on every prop reference change. Parent creates new array each render → selection lost. Fix: stable ID comparison guard. ~5 lines. Intake: `change_requests/BUG-277_MULTI_SELECT_RESETS_INTAKE.md` |
+| **BUG-278** | Ingredient Bulk Editor: DELETE API Called Twice Per Ingredient (400 Bad Request) | **P1** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `IngredientBulkEditor.jsx`. Two Save buttons (toolbar+footer) can fire `handleSave` before async `setSaving(true)` disables them. Fix: `useRef` re-entry guard. ~3 lines. Intake: `change_requests/BUG-278_DELETE_DOUBLE_FIRE_INTAKE.md` |
+| **BUG-279** | Ingredient Bulk Editor: Header Not Sticky on Scroll | **P2** | LOW | **QA PASS (Gate 5b — 2026-07-31)** | 0-1 ✅ | 1 file: `IngredientBulkEditor.jsx` L336. `<thead>` has no `sticky` class. 426 items scroll header away. Fix: add `sticky top-0 z-10`. ~1 line. Intake: `change_requests/BUG-279_HEADER_NOT_STICKY_INTAKE.md` |
+
+### 2026-07-30 Collect Bill + Auto-Print Investigation Batch (BUG-280, BUG-281)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-280** | Customer Details (name/phone/membership_id) Not Sent in Collect Bill Settle API | **P1** | HIGH | **QA PASS — AWAITING OWNER SMOKE** | 0-6 ✅ | LIVE: `[CollectBill] payload` shows `cust_name/cust_mobile/cust_membership_id`. No email (OD-BUG280-1). 2026-07-31. |
+| **BUG-281** | custGST/custGSTName Not Forwarded to Auto-Bill Print — 6 sites | **P1** | HIGH | **QA PASS — AWAITING OWNER SMOKE** | 0-6 ✅ | LIVE: `order-temp-store` has `custGST/custGSTName`. `[CollectBill] payload` has both. All 6 sites verified. 2026-07-31. |
+
+
+### 2026-07-31 Aggregator Investigation Batch (BUG-282 → BUG-285)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-282** | Aggregator Popup: Addons + Variations Not Displayed | **P1** | LOW | **INTAKE** | 0-1 ✅ | `AggregatorOrderPopOut.jsx` has zero addon/variation render code. Transform maps data correctly. Live: orders #002407, #002401 have add_ons. Fix: ~30 lines, copy pattern from ScanOrderPopOut. |
+| **BUG-283** | Aggregator: "Order Instructions :::" Prefix Not Stripped | **P2** | LOW | **INTAKE** | 0-1 ✅ | Zomato sends `"Order Instructions ::: <text>"`, Swiggy sends clean text. Fix: 1-line strip in `aggregatorTransform.js`. |
+| **BUG-284** | Aggregator: Address Duplicate City ("Bangalore, Bangalore") | **P2** | LOW | **INTAKE** | 0-1 ✅ | Swiggy sets line_1=city=sub_locality="Bangalore". Fix: deduplicate + add sub_locality/landmark in `formatAddress()`. |
+| **BUG-285** | Aggregator OrderCard: "Ready to Dispatch" Should Be Text, Not Button | **P2** | LOW | **INTAKE** | 0-1 ✅ | fOS=2: renders as clickable `<button>`. Owner says no dispatch action → convert to text label. Fix: ~5 lines in `OrderCard.jsx`. |
+
+### 2026-07-31 Batch A Implementation (BUG-282, BUG-283, BUG-284, BUG-285)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-282 | Aggregator Popup: Addons + Variations Not Displayed | P1 | LOW | **IMPLEMENTED** | 0-5a ✅ | `AggregatorOrderPopOut.jsx`: +addon/variation render block (~25 lines). |
+| BUG-283 | "Order Instructions :::" Prefix Not Stripped | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `aggregatorTransform.js` L23: regex strip of Zomato prefix. 1 line. |
+| BUG-284 | Address Duplicate City "Bangalore, Bangalore" | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `AggregatorOrderPopOut.jsx` L27-34: dedup filter + sub_locality + landmark. |
+| BUG-285 | "Ready to Dispatch" Button → Text Label | P2 | LOW | **IMPLEMENTED** | 0-5a ✅ | `OrderCard.jsx` L1071-1079 + `TableCard.jsx` L490-517: button→span. |
+
+### 2026-07-31 Intake — BUG-286, BUG-287
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| BUG-286 | Aggregator KOT/Bill Hidden on OrderCard — `canPrintBill` gate | P1 | LOW | **INTAKE** | 0-1 ✅ | `OrderCard.jsx` L1013+L1082: `canPrintBill` blocks aggregator print buttons. TableCard has no gate → shows correctly. Owner directive: always show for aggregator. 1 file, 2 lines. |
+| BUG-287 | "This is order level instructions" Placeholder Not Stripped | P2 | LOW | **INTAKE** | 0-1 ✅ | UrbanPiper default placeholder text not filtered. Shows on OrderCard+PopOut. Related: BUG-283 (prefix strip). Fix: 1 line in `aggregatorTransform.js`. UI auto-hides when null. |
+
+### 2026-07-31 Intake — BUG-288, BUG-289
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-288** | Menu Management: Station Dropdown Only Shows "KDS" — Other Stations Missing | **P1** | MEDIUM | **INTAKE** | 0-1 ✅ | `CategoryList.jsx:24` fallback `[{ id:0, name:'KDS' }]` fires when `stations` prop is empty. `MenuManagementPanel.jsx:74` fetches via `getStationPrinterList()` → `stationPrinterList` transform. Root cause unknown — investigation needed (API shape mismatch, silent failure, or empty response). Intake: `change_requests/BUG-288_MENU_MGMT_STATION_DROPDOWN_ONLY_KDS_INTAKE.md` |
+| **BUG-289** | Restaurant Settings: "Default Order Status" Dropdown Labels Wrong (5 options incorrect, 1 to remove) | **P2** | LOW | **IMPLEMENTED ✅** | 0-5a ✅ | `RestaurantSettingsPage.jsx:510-511`. Fast Lane. New labels: 1→"Ready (Send To kitchen)", 2→"Serve (Send to waiter)", 4→"Accept (Send to Kot Manager)", 5→"Bill (Send to Cashier)". Value 3 removed. Hint → "Order flow configuration". |
+
+
+### 2026-07-31 Intake — BUG-291
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-291** | Aggregator Rider Details Not Displayed — `riderName`/`riderStatus`/`deliveryManId` mapping gaps in `aggregatorTransform.js` + socket bypass in `socketHandlers.js`. 5 gaps: R1 `riderName` emitted but UI reads `rider`; R2 `riderStatus` never computed; R3 `deliveryManId` not mapped; R4 `riderInfo` nested object orphaned; R5 socket `delivery-assign-order` routes aggregator orders through POS transform. Rider section always shows "Awaiting Runner". | **P1** | **HIGH** | **QA PASS (Gate 5b, 2026-08-01) — Awaiting Gate 6 Owner Smoke** | 0-5b ✅ | Code-verified QA PASS (2/2 code + 2/2 regression — 4/6 UI tests not executable without live aggregator orders). Owner to verify on preprod restaurant 749 (order 45334, rider "VEERJINDER SINGH") during Gate 6. Files: `aggregatorTransform.js` (R1 rider key, R2 riderStatus, R4 riderInfo dropped). Plan: `plans/BUG-291_IMPLEMENTATION_PLAN.md`. QA: `test_reports/QA_REPORT_CR124_BUG291_2026_08_01.md`. |
+### 2026-07-31 Owner Decisions Locked — BUG-291 (REVISED)
+
+**Decisions locked after owner Q&A session + API response shape review:**
+
+| Decision | Outcome |
+|---|---|
+| riderStatus derivation (Q-291-1) | `rider_info.id` + `fOrderStatus < 5` → `'riderAssigned'`; `rider_info.id` + `fOrderStatus === 5` → `'dispatched'`; no id → `null`. APPROVED. |
+| deliveryManId mapping (Q-291-2) | DROPPED — all footer action buttons behind `!isAggregator` guard (OrderCard:1111). No UI path reads `deliveryManId` for aggregator. |
+| Socket fix (Q-291-3) | GAP-R5 was a **false alarm**. `delivery-assign-order` does NOT fire for aggregator. Aggregator has own channel (`aggrigator_order_${rid}`) → `handleAggregatorOrderUpdate` already uses `aggregatorTransform`. No socketHandlers.js change needed. |
+| riderInfo block (Q-291-4) | DROP entirely — no UI consumer confirmed. |
+| AggregatorDispatchModal (Q-291-5) | Out of scope — local state, not order model. |
+
+**Risk revised: HIGH → LOW.** Only 1 non-hotspot file changes: `aggregatorTransform.js`. Fast Lane eligible.
+**Real changes: 3** — add `rider:`, add `riderStatus:`, remove `riderInfo:` block.
+**Gate 3 (Implementation Plan) ready to write.**
+
+### 2026-07-31 Gate 3 Complete — BUG-291
+
+Implementation Plan written. Gate 3 COMPLETE. Awaiting Gate 4 GO.
+
+| Artifact | Path | Status |
+|---|---|---|
+| Intake | `change_requests/BUG-291_AGGREGATOR_RIDER_DETAILS_NOT_DISPLAYED_INTAKE.md` | ✅ |
+| Gate 2 | WAIVED (owner instruction) | ✅ |
+| Gate 3 Plan | `plans/BUG-291_IMPLEMENTATION_PLAN.md` | ✅ |
+| Gate 4 GO | Owner approval required | ⏳ |
+
+**What the plan says — exact change:**
+File: `aggregatorTransform.js` lines 84–94 (rider block)
+- ADD `rider:` key (GAP-R1, OrderCard:912 reads `order.rider`)
+- ADD `riderStatus:` derivation — `rider.id + fOS<5 → 'riderAssigned'`; `fOS===5 → 'dispatched'`; else null (GAP-R2, Q-291-1 approved)
+- REMOVE `riderInfo:` block — 8 lines dropped, no UI consumer (GAP-R4, Q-291-4 approved)
+- KEEP `riderName:` and `riderPhone:` unchanged
+Net: −4 lines. 1 file. No hotspot touched.
+
+### 2026-07-31 Gate 5a — BUG-291 IMPLEMENTED
+
+Code applied. Self-test passed. Awaiting QA.
+
+| Exit Gate | Check | Result |
+|---|---|---|
+| □1 Registry Sync | BUG-291 → `IMPLEMENTED` in registry.json | ✅ PASS |
+| □2 BUG_TRACKER.md | This row | ✅ PASS |
+| □3 FILE_OWNERSHIP.md | aggregatorTransform.js entry added | ✅ PASS |
+| □4 Code Markers | `// BUG-291 R1`, `// BUG-291 R2`, `// BUG-291 R4` at lines 85/89/94 | ✅ PASS |
+| □5 Compile | webpack compiled successfully (hot reload) | ✅ PASS |
+
+Self-Test VS-1: `rider:` ✅ `riderStatus:` ✅ `riderInfo:` absent ✅
+Self-Test VS-2: OrderCard reads (`order.rider`, `order.riderStatus`) — untouched ✅
+**EXIT GATE: 5/5 PASS**
+
+### 2026-07-31 Intake — CR-124
+
+| ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **CR-124** | Call PaaS Logout API on User Logout — `authService.logout()` is local-only; token not invalidated server-side (GAP-C1); FCM device token not deregistered (GAP-C2). Fix: fire-and-forget `api.post(API_ENDPOINTS.LOGOUT)` in `logout()` + add `LOGOUT:` to `API_ENDPOINTS` in `constants.js`. AuthContext.jsx NOT touched (fire-and-forget keeps sync signature). | **P1** | **MEDIUM-HIGH** | **INTAKE — BACKEND-BLOCKED** | 1 ✅, Gate 2 blocked | 2 files, ~4 lines. Blocked on Q-124-1 (logout endpoint path), Q-124-2 (FCM same endpoint?), Q-124-3 (fail-silent?). Prior investigation: INVESTIGATION_LOG.md:152. Security Audit: SECURITY_AUDIT_REPORT.md:634. Intake: `change_requests/CR-124_LOGOUT_API_CALL_INTAKE.md`. |
+
+### 2026-07-31 Owner Decisions Locked — CR-124 Intake Closed
+
+| Decision | Answer |
+|---|---|
+| Q-124-1 (endpoint path) | Owner to provide at Gate 2 — no longer a blocker for intake |
+| Q-124-2 (FCM same endpoint?) | ✅ **Yes** — backend handles FCM deregistration. No separate FE call needed. |
+| Q-124-3 (fail silent?) | ✅ **Show error to user** — `logout()` becomes async; AuthContext surfaces error toast |
+
+**Blast radius revised:** 3 files (was 2). `AuthContext.jsx` now in scope due to Q-124-3 (async + error surfacing).
+**Status: INTAKE COMPLETE — Gate 2 ready. Q-124-1 endpoint path to be provided by owner at Gate 2.**
+
+### 2026-07-31 Gate 2 Complete — CR-124 Impact Analysis
+
+Gate 2 (Impact Analysis) written. Artifact: `impact/CR-124_IMPACT_ANALYSIS.md`
+
+**Deep localStorage audit findings:**
+
+| Finding | Type | Action |
+|---|---|---|
+| 29 localStorage keys catalogued | Audit | ✅ Done |
+| Category B (19 POS settings keys) — correctly NOT cleared | Confirmed intentional | No change |
+| Category C (6 UI pref keys) — correctly NOT cleared | Confirmed harmless | No change |
+| **IMP-124-GAP-1**: `remember_me` cleared in Sidebar only, not in `authService.logout()` | Bug | **IN SCOPE — fix in CR-124** |
+| **IMP-124-GAP-2**: `axios.js` 401 auto-logout misses `crm_token` + `channel_visibility` | Minor gap | Owner decision — in CR-124 or separate |
+| **IMP-124-GAP-3**: `Sidebar.jsx:410-411` duplicate `localStorage.removeItem` (dead code) | Cleanup | **IN SCOPE — remove in CR-124** |
+| Sequencing risk: Option C (try/finally) recommended | Architecture | Q-124-4 owner answer needed |
+| Blast radius revised: 4 files (was 3), ~17 lines net | Scope | — |
+
+**Open questions (Gate 3 blocked on):**
+- Q-124-1: Backend logout endpoint path
+- Q-124-4: "Show error" = always complete local logout + toast, OR block logout entirely?
+- IMP-124-GAP-2: Fix axios.js 401 cleanup in this CR or separate?
+
+### 2026-07-31 GAP-2 Decision Locked — CR-124 Impact Analysis Finalised
+
+| Update | Detail |
+|---|---|
+| GAP-2 | ✅ **IN SCOPE** — `axios.js` 401 auto-logout will also clear `crm_token` + `channel_visibility` as part of CR-124. ~2 lines in `axios.js`. |
+| Blast radius revised | **5 files** (was 4): `constants.js`, `authService.js`, `AuthContext.jsx`, `Sidebar.jsx`, `axios.js`. ~15 lines net. |
+| Backend endpoint | 🔴 **BLOCKED** — tested `/api/v1/auth/vendoremployee/logout`, `/api/v2/auth/vendoremployee/logout` + 4 variations on preprod. All return 404. Gate 3 parked until backend ships endpoint. |
+| All other decisions | ✅ LOCKED — Q-124-1 to Q-124-4 + GAP-2 all resolved. |
+
+**CR-124 status: GATE 2 COMPLETE — BACKEND-BLOCKED on Q-124-1 (endpoint path). Resume when backend ships `/logout` endpoint.**
+
+### 2026-07-31 Q-124-1 LOCKED — CR-124 All Decisions Final
+
+| Update | Detail |
+|---|---|
+| Q-124-1 | ✅ **LOCKED** — `POST /api/v2/vendoremployee/employee-logout`. HTTP 200, `{"message":"success"}`. No request body needed. Auth: `Bearer <token>`. Tested on preprod 2026-07-31. |
+| Status | **GATE 2 COMPLETE — ALL DECISIONS LOCKED — Gate 3 ready** |
+| No open questions | All 5 decisions (Q-124-1 through Q-124-4 + GAP-2) locked. Proceed to Gate 3. |
+
+### 2026-07-31 Gate 3 Complete — CR-124 Implementation Plan
+
+Gate 3 (Implementation Plan) written. Artifact: `plans/CR-124_IMPLEMENTATION_PLAN.md`
+
+| Artifact | Path | Status |
+|---|---|---|
+| Intake | `change_requests/CR-124_LOGOUT_API_CALL_INTAKE.md` | ✅ |
+| Impact Analysis | `impact/CR-124_IMPACT_ANALYSIS.md` | ✅ |
+| Gate 3 Plan | `plans/CR-124_IMPLEMENTATION_PLAN.md` | ✅ |
+
+**5 edits across 5 files (+15 lines net):**
+
+| Edit # | File | Summary | Net Lines |
+|---|---|---|---|
+| 1 | `api/constants.js:9` | Add `LOGOUT:` to `API_ENDPOINTS` | +1 |
+| 2 | `api/services/authService.js:49` | Make `logout()` async; `await api.post(LOGOUT)` first; clear storage only on success; add `REMEMBER_ME` removal (IMP-124-GAP-1) | +5 |
+| 3 | `contexts/AuthContext.jsx:34` | Make `logout` callback async; `await authService.logout()` | +1 |
+| 4 | `components/layout/Sidebar.jsx:232,400,752` | Add `isLoggingOut` state; async `handleLogout` with try/catch + toast on error; remove duplicate L410-411 removes (IMP-124-GAP-3); disable button during call | +6 |
+| 5 | `api/axios.js:44` | Add `crm_token` + `channel_visibility` cleanup to 401 auto-logout block (IMP-124-GAP-2) | +2 |
+
+**Files NOT touched:** `firebase.js`, `LoginPage.jsx`, `crmAxios.js`
+**Verification matrix:** 15 checks (13 automated grep/compile, 2 manual browser)
+
+**CR-124 status: GATE 3 COMPLETE — awaiting Gate 4 GO from owner**
+
+### 2026-07-31 Gate 4 GO + Gate 5a IMPLEMENTED — CR-124
+
+Owner issued Gate 4 GO (explicit "choose implementation role for CR-124"). Implementation complete.
+
+**Self-Test Results (Verification Matrix):**
+
+| Edit # | File | Check | Result |
+|---|---|---|---|
+| 1 | `constants.js:9` | `LOGOUT` key present → `/api/v2/vendoremployee/employee-logout` | ✅ PASS |
+| 2 | `authService.js:51` | `logout` is `async` | ✅ PASS |
+| 2 | `authService.js:53` | `await api.post(API_ENDPOINTS.LOGOUT)` is first operation | ✅ PASS |
+| 2 | `authService.js` | `localStorage.removeItem(AUTH_TOKEN)` at line 55 — AFTER the await | ✅ PASS |
+| 2 | `authService.js:67` | `REMEMBER_ME` removed (IMP-124-GAP-1) | ✅ PASS |
+| 3 | `AuthContext.jsx:34` | `logout` callback is `async` | ✅ PASS |
+| 3 | `AuthContext.jsx:35` | `await authService.logout()` present | ✅ PASS |
+| 4 | `Sidebar.jsx:234` | `isLoggingOut` state declared | ✅ PASS |
+| 4 | `Sidebar.jsx:401` | `handleLogout` is `async` with `try/catch` | ✅ PASS |
+| 4 | `Sidebar.jsx` | No duplicate `removeItem('auth_token'/'remember_me')` lines | ✅ PASS |
+| 4 | `Sidebar.jsx:767` | `disabled={isLoggingOut}` on logout button | ✅ PASS |
+| 5 | `axios.js:47-48` | `crm_token` + `channel_visibility` cleared in 401 block (IMP-124-GAP-2) | ✅ PASS |
+| ALL | webpack | `Compiled successfully!` — 0 new warnings | ✅ PASS |
+
+**EXIT GATE:**
+
+| □ | Check | Result |
+|---|---|---|
+| □1 | registry.json: CR-124 → `GATE 5a — IMPLEMENTED`, sprint_key `pos_5_0` (moved from pos_6_0) | ✅ PASS |
+| □2 | BUG_TRACKER.md: this section | ✅ PASS |
+| □3 | FILE_OWNERSHIP.md: 5 files listed (see QA handover) | ✅ PASS |
+| □4 | Code markers: `// CR-124` in all 5 modified files (10 occurrences) | ✅ PASS |
+| □5 | Compile check: `Compiled successfully!` 0 new warnings | ✅ PASS |
+
+**EXIT GATE: 5/5 PASS**
+
+**CR-124 status: GATE 5a — IMPLEMENTED — QA next**
+
+
+---
+
+### 2026-08-13 Inventory Module Investigation Session (BUG-308 → BUG-313)
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-308** | Sub-Recipe Stock: `addStock()` called instead of `addSubRecipeStock()` in StockAuditPanel | **P1** | MEDIUM | **IMPLEMENTED** | 5a ✅ | 4 files: `constants.js` (+ADD_SUB_RECIPE_STOCK), `inventoryTransform.js` (+toAPI.addSubRecipeStock), `inventoryService.js` (+addSubRecipeStock fn), `StockAuditPanel.jsx` (routing guard). Testing iteration_1: 5/5 PASS. Sub-gap: condition requires `subrecipeId != null` — see BUG-315 if needed. |
+| **BUG-309** | Ingredient Bulk Edit: Min Unit `<input type="number">` drops unit string — data loss on save | **P1** | **HIGH** | **INTAKE** | 1 | 1 file: `IngredientBulkEditor.jsx:430-433`. Fix: change to read-only span locked to smallUnit (matches BUG-269-C card view pattern). Planning skip eligible. |
+| **BUG-310** | Ingredient Bulk Edit: Conversion field transparent styling looks like static text | **P2** | LOW | **INTAKE** | 1 | 1 file: `IngredientBulkEditor.jsx:286-288`. `numCls(false)` = `border-transparent bg-transparent`. Visual only. Planning skip eligible. |
+| **BUG-311** | Ingredient Add/Bulk Edit: No duplicate detection (missing typeahead + pre-save check + bulk editor guard) | **P1** | MEDIUM | **INTAKE** | 1 | 2 files: `InventorySetupPanel.jsx` (addIngredient — no isDuplicate), `IngredientBulkEditor.jsx` (handleSave — no dupe check). Layer 3 (typeahead) needs full Gate 2-3. Layers 1+2 fast-lane eligible. |
+| **BUG-312** | `fromAPI.ingredients()` missing `isSubRecipe`/`subrecipeId` — root cause for all sub-recipe misrouting | **P1** | **HIGH** | **SUBSUMED into CR-139** | — | Absorbed as CR-139 Phase A. Will be implemented as part of CR-139 bundle. Owner decision: 2026-08-13. |
+| **BUG-313** | Sub-recipe appears in Stock Update auto-plan + `addPurchase()` called for all rows (no sub-recipe routing) | **P1** | **HIGH** | **SUBSUMED into CR-139** | — | Absorbed as CR-139 Phase B. Will be implemented as part of CR-139 bundle. Owner decision: 2026-08-13. |
+
+
+### CR-139 Implementation (2026-08-13)
+| ID | Status | Notes |
+|---|---|---|
+| **BUG-312** | **IMPLEMENTED** via CR-139 Phase A | `inventoryTransform.js`: +`isSubRecipe`+`subrecipeId` to `fromAPI.ingredients()` |
+| **BUG-313** | **IMPLEMENTED** via CR-139 Phases B1-B4 | `purchasePlanner.js` dual G9, `AutoShoppingList.jsx` filter, `PurchaseEntryPanel.jsx` dropdown filter, `SmartPurchasePanel.jsx` comment marker |
+
+### GAP-BULK-DEFAULTS CellRenderer Fix (2026-08-15)
+| ID | Status | Notes |
+|---|---|---|
+| **GAP-BULK-DEFAULTS** | **IMPLEMENTED** | `BulkEditor.jsx`: `addon_expand`/`var_expand`/`image` CellRenderer handlers moved to top-level from inside `dropdown` block (were structurally unreachable). Cells now render chips/thumbnails instead of `—`. |
+
+### New Bugs Registered 2026-08-17
+| ID | Title | Severity | Risk | Status | Sprint |
+|---|---|---|---|---|---|
+| **BUG-325** | Variation Stock tab: `val.available` from API not rendered — enable/disable status invisible | P2 | LOW | INVESTIGATION COMPLETE | pos_5_0 |
+| **BUG-326** | Aggregator food: transform reads `packed_food` (null/legacy) not `is_packaged_good`; `swiggy_packing_chrg` absent | P1 | MEDIUM | INVESTIGATION COMPLETE | pos_5_0 |
+
+### BUG-325 + BUG-326 Planning Complete 2026-08-17
+| ID | Status | Gate | Notes |
+|---|---|---|---|
+| **BUG-325** | GATE 3 COMPLETE — AWAITING GATE 4 GO | 3 | Impact: `impact/BUG-325_IMPACT_ANALYSIS.md` · Plan: `plans/BUG-325_IMPLEMENTATION_PLAN.md` |
+| **BUG-326** | GATE 3 COMPLETE — AWAITING GATE 4 GO | 3 | Impact: `impact/BUG-326_IMPACT_ANALYSIS.md` · Plan: `plans/BUG-326_IMPLEMENTATION_PLAN.md` |
+
+### IMPLEMENTED 2026-08-17
+| ID | Status | Notes |
+|---|---|---|
+| **BUG-325** | **IMPLEMENTED** | `VariationStockTab.jsx`: `val.available` badge (Active/Inactive, green/red) inserted between label and En button — additive only |
+| **BUG-326** | **IMPLEMENTED** | `menuManagementTransform.js`: read `is_packaged_good??packed_food` + `swiggyPackingChrg`; write `is_packaged_good`+`swiggy_packing_chrg` in Aggregator spread. `BulkEditor.jsx`: +column, +buildRow, +buildPayload keys, +isDirty. `ProductForm.jsx`: +state, +Platform Sync toggle. `ProductCard.jsx`: +state, +conditional select |
+
+### BUG-327 Registered 2026-08-17 (P0 — Preprod Broken)
+| ID | Title | Severity | Risk | Status |
+|---|---|---|---|---|
+| **BUG-327** | Aggregator image gaps (swiggy_image not wired) + **PREPROD foods-list BROKEN** (backend cleanBindings TypeError from orphaned aggregator_food records 13312–13315) | P0 | HIGH | INVESTIGATION COMPLETE — BACKEND FIX NEEDED FIRST |
+
+### BUG-327 Planning Complete 2026-08-17
+| ID | Status | Gate | Notes |
+|---|---|---|---|
+| **BUG-327** | GATE 3 COMPLETE — AWAITING GATE 4 GO (BACKEND FIX FIRST) | 3 | Impact: `impact/BUG-327_IMPACT_ANALYSIS.md` · Plan: `plans/BUG-327_IMPLEMENTATION_PLAN.md` · Backend brief: `backend_briefs/BACKEND_BRIEF_BUG-327_2026-08-17.md` |
+
+### BUG-327 IMPLEMENTED 2026-08-17
+| ID | Status | Notes |
+|---|---|---|
+| **BUG-327** | **IMPLEMENTED** | `menuManagementTransform.js`: +`swiggyImage`. `menuManagementService.js`: +`addFoodAggregatorMultipart()` +`editFoodAggregator()` (flat multipart, skip variations/addon_ids). `ProductForm.jsx`: +`swiggyImageFile`/`swiggyImagePreview` state, +Swiggy image upload UI (aggregator only), save path → new services. `ProductList.jsx`: `handleQuickSave` aggregator → `editFoodAggregator`. `BulkEditor.jsx`: `processOne` aggregator new/edit → new services. NOTE: QA blocked until backend fixes orphaned `aggregator_food` records 13312–13315 to restore preprod. |
+
+---
+
+### 2026-08-18 Multi-Issue Intake Batch (from Investigation INV-AUG18-2026)
+
+**Last Updated:** 2026-08-18 — 6 bugs + 1 CR registered from investigation session. Source: INV-AUG18-2026_INVESTIGATION_REPORT.md
+
+| Bug ID | Title | Priority | Risk | Status | Gate | Notes |
+|---|---|---|---|---|---|---|
+| **BUG-328** | Phone on Bill: Wrong Number Prints on Receipt | P1 | HIGH | **INTAKE** | 1 ✅ | Two separate phone fields: `basic.phone_number_on_bill` (settings API) ≠ `restaurant_information.phone_number` (printer config API). Printer agent reads wrong field. BACKEND_BUG. Backend brief needed. 0 FE files. `BUG-328_PHONE_ON_BILL_WRONG_NUMBER_INTAKE.md` |
+| **BUG-329** | Discount Report: Discount Reason/Type Missing | P2 | MEDIUM | **INTAKE** | 1 ✅ | `insights-discounts` API has no `by_reason[]`. Report has no reason column. `discountFor=null` in QSR flow. FEATURE_GAP. RELATED: CR-137. Backend brief + FE column needed. `BUG-329_DISCOUNT_REPORT_REASON_MISSING_INTAKE.md` |
+| **BUG-330** | Cancel After Serve Setting Not Gated in FE | P1 | HIGH | **INTAKE** | 1 ✅ | `allowPostServeCancel` mapped in profileTransform ✓ but `OrderEntry.jsx:307` gates cancel on `hasPermission('food')` only — never reads `cancellation.allowPostServeCancel`. 1 file ~3 lines. Planning skip eligible (owner GO needed). `BUG-330_CANCEL_AFTER_SERVE_NOT_GATED_INTAKE.md` |
+| **BUG-331** | Schedule Order Setting Not Gated in FE | P1 | MEDIUM | **INTAKE** | 1 ✅ | `schedule_order` NOT in profileTransform → not in context. CartPanel schedule toggle always renders. 2 files ~5 lines. Gate 2-3 required. RELATED: CR-018. `BUG-331_SCHEDULE_ORDER_NOT_GATED_INTAKE.md` |
+| **BUG-332** | Search By Setting Not Consumed in FE | P2 | MEDIUM | **INTAKE** | 1 ✅ | `searchOptions` correctly mapped in profileTransform but ZERO UI consumers. Search options always show all. Search UI component TBD. Gate 2-3. `BUG-332_SEARCH_BY_SETTING_NOT_CONSUMED_INTAKE.md` |
+| **BUG-333** | Printer Style Tab: Row Labels Generic (Row 1/2/3/4) | P2 | LOW | **INTAKE — BLOCKED (owner mapping needed)** | 1 ✅ | `humanize(rowKey)` renders `row_1`→"Row 1" instead of "Restaurant Name" etc. 1 file `PrintStyleTab.jsx`, add `LABEL_MAP`. Fast Lane eligible once owner provides mapping (OQ-1/2/3). `BUG-333_PRINTER_STYLE_TAB_ROW_LABELS_INTAKE.md` |
+
+| **BUG-336** | GST Applied on Bills Even When Disabled in Restaurant Settings | P0 | CRITICAL | **QA PASS — Gate 5b** | 5b ✅ | `taxTotals` useMemo in `CollectPaymentPanel.jsx` lacked `gstStatus` gate. Added per-item `taxType === 'GST' && gstStatus === false` guard + updated deps. 2026-08-18. `BATCH-01_IMPACT_ANALYSIS.md`, `BATCH-01_IMPLEMENTATION_PLAN.md` |
+| **BUG-337** | Profile Not Refreshed After Restaurant Settings Save | P1 | HIGH | **QA PASS — Gate 5b** | 5b ✅ | `RestaurantSettingsPage.jsx` never called `getProfile()+setRestaurant()` after save. Added await getProfile() + setRestaurant(fresh.restaurant) in try/catch before navigate. 2026-08-18. `BATCH-01_IMPACT_ANALYSIS.md`, `BATCH-01_IMPLEMENTATION_PLAN.md` |
+| **BUG-338** | Room GST Applied When roomGstApplicable = false | P1 | HIGH | **QA PASS — Gate 5b** | 5b ✅ | Same `taxTotals` block as BUG-336. Added `isRoom && roomGstApplicable === false` guard on GST items. 2026-08-18. `BATCH-01_IMPACT_ANALYSIS.md`, `BATCH-01_IMPLEMENTATION_PLAN.md` |
+| **BUG-339** | Restaurant Type Select Missing "Food Court" Option | P1 | LOW | **IMPLEMENTED** | 5a ✅ | `RestaurantSettingsPage.jsx:386` — added `{ value: 'food_court', label: 'Food Court' }` to options array. 2026-08-19. `BATCH-02_IMPL_PLAN.md` |
+| **BUG-329** | Discount Report: Discount Reason/Type Missing | P2 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `DiscountReportMockup.jsx` — parse `rawData.orders_table`, render Discount Orders table with `discount_for` column. 2026-08-19. `BATCH-02_IMPL_PLAN.md` |
+| **BUG-331** | Schedule Order Setting Not Gated in Frontend | P1 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `profileTransform.js` +`scheduleOrderEnabled`. `CartPanel.jsx` +`useRestaurant` import + `features?.scheduleOrderEnabled !== false` gate. 2026-08-19. |
+| **BUG-330** | Cancel After Serve Setting Not Gated in Frontend | P1 | HIGH | **IMPLEMENTED** | 5a ✅ | `OrderEntry.jsx:322-324` — `isItemCancelAllowed` now gates on `item.status !== 'preparing' && allowPostServeCancel === false`. 2026-08-19. |
+| **BUG-332** | Search By Setting Not Consumed in Frontend | P2 | MEDIUM | **IMPLEMENTED** | 5a ✅ | `DashboardPage.jsx` — `searchOptions` from `useRestaurant`, `opts` filter in `searchResults` useMemo, deps updated. 2026-08-19. |
+
+---
+
+### 2026-09-02 — BUG-376 (Role Add/Update Contract Gaps)
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-376 |
+| **Title** | Role Add/Update: 5 API Contract Gaps — `modules` missing role type prefix · `role_master_id` always null · `role_type` IDs vs strings |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Status** | **IMPLEMENTED — 2026-09-02** |
+| **Related** | CR-069 (original build) · BUG-235 (partial fix) · CR-096 (partial fix) · BUG-231 (UI hide) |
+| **Source** | AGENT-DISCOVERED via dev team backend spec (add-update.md) + live API probe |
+| **Sub-A** | `modules` missing role type string as `modules[0]` — `toAPI.createRole/updateRole` sends permissions only | CRITICAL |
+| **Sub-B** | `role_master_id` hardcoded `null` in `handleSave` — template ID never stored in state | HIGH |
+| **Sub-C** | `role_type` sends numeric IDs `[1,2,3,4,5,6]`; backend expects string values `["Manager"]` | HIGH |
+| **Sub-D** | `fromAPI.role` never reads `modules[0]` to derive role type; BUG-235 fills with all IDs instead | HIGH |
+| **Sub-E** | "Clear All" on edit drops role type from `modules` | MEDIUM |
+| **Blast radius** | SMALL (2 files: `roleTransform.js` + `RoleFormView.jsx`, ~25 lines) |
+| **Intake doc** | `change_requests/BUG-376_ROLE_ADD_UPDATE_CONTRACT_GAPS_INTAKE.md` |
+| **Investigation** | `handover/INVESTIGATION_EMPLOYEE_ROLE_ADDUPDATE_2026_09_02.md` |
+| **OD-1** | Sub-E: Should "Clear All" always preserve role type? (**Recommended: YES**) |
+
+**BUG-376 OD-1 Update (2026-09-02):** OD-1 ANSWERED — Yes, "Clear All" always preserves role type. Role type is structural, not a permission. Gate 3 unblocked.
+
+---
+
+## BUG-379 — Stock Audit save fails 422: "The unit field is required" (2026-09-03)
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-379 |
+| **Severity** | P1 — HIGH |
+| **Risk** | MEDIUM |
+| **Area** | Inventory > Stock Audit |
+| **Source** | OWNER-REPORTED |
+| **Confidence** | CONFIRMED |
+| **Duplicate check** | DISTINCT (Related: BUG-321) |
+| **Status** | QA PASS — Gate 5b (2026-09-03) |
+| **Root cause** | `toAPI.addStock()` missing 5 fields: `unit`, `physicalqty_master`, `physical_qty`, `waste_reason`, `quantity` should be `0` not shelf count. Sub-recipe branch correct; regular ingredient branch never updated. |
+| **Blast radius** | SMALL — 2 files, ~15 lines. No hotspot files. |
+| **Files** | `inventoryTransform.js` (L217-224), `StockAuditPanel.jsx` (L80-85) |
+| **FAST LANE** | Eligible (owner approval needed) |
+| **Intake doc** | `change_requests/BUG-379_STOCK_AUDIT_422_INTAKE.md` |
+| **Investigation** | `BUG-AUDIT-422_INVESTIGATION_REPORT.md` |
+
+---
+
+### BUG-380: Occupied Rooms Shown in New Booking Room Picker
+
+| Field | Value |
+|---|---|
+| **Status** | QA PASS — 6/6 PASS. Ready for Gate 6. |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Reported** | 2026-09-03 (Owner) |
+| **Area** | PMS > New Booking + Check-In |
+| **Description** | `getBookableRooms()` returns ALL local rooms without occupancy filter. Rooms r1/r2 (checked in via AIOSELL) appear as selectable in the New Booking room picker and Check-In room dropdown. Double-booking possible. |
+| **Duplicate check** | DISTINCT |
+| **Blast radius** | SMALL — 3 files (~5 refs). pmsService.js, NewBookingPage.jsx, CheckInPage.jsx |
+| **Decision** | OQ-380-01=(b) Show greyed out with "Occupied" badge |
+| **Fast Lane** | NOT ELIGIBLE (4 criteria fail: 3 files, API call added, hotspot, borderline financial) |
+| **Intake doc** | `change_requests/BUG-380_OCCUPIED_ROOMS_IN_PICKER_INTAKE.md` |
+| **Next** | Planning Gate 2 (normal full gate flow) |
+
+---
+
+### BUG-387: PMS Picker — HK and OOO Rooms Appear Selectable in Check-In / New Booking
+
+| Field | Value |
+|---|---|
+| **Status** | **GATE_5B_QA_PASS (2026-09-09) — 3/3 PASS. Ready for Gate 6 Owner Smoke.** |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Reported** | 2026-09-09 (Agent-discovered + owner observation) |
+| **Area** | PMS > Room Picker (S3 New Booking + S4 Check-In) |
+| **Description** | `getBookableRooms()` only marks rooms unavailable if they have an active order (`getRoomList()`). HK-only rooms (post-checkout, being cleaned) and OOO rooms (maintenance) have no active order → `isOccupied = false` → appear fully selectable. Live probe confirmed: r5 (OOO, id:8527) appears selectable on preprod. Guest could be checked into a room under maintenance. |
+| **Duplicate check** | DISTINCT — **Related: BUG-380** (occupied rooms only; this covers HK/OOO which getRoomList misses) |
+| **Blast radius** | SMALL–MEDIUM — 3 files: `pmsService.js` (add room-status-board call), `NewBookingPage.jsx`, `CheckInPage.jsx` |
+| **Sub-gaps** | GAP-1 (HIGH): OOO rooms selectable — FIXED ✅ · GAP-2 (HIGH): HK rooms selectable — FIXED ✅ |
+| **Owner decisions** | OD-387-01: (a) Show greyed "Needs Cleaning" ✅ locked · OD-387-02: (a) Show greyed "Out of Order" ✅ locked |
+| **Fast Lane** | NOT ELIGIBLE (3 files, API call, hotspot pmsService.js) |
+| **Intake doc** | `change_requests/BUG-387_HK_OOO_ROOMS_SELECTABLE_IN_PICKER_INTAKE.md` |
+| **QA report** | `test_reports/QA_REPORT_BUG387_2026_09_09.md` |
+| **Next** | Gate 6 Owner Smoke — verify r5 OOO suite greyed in check-in and new booking |
+
+---
+
+### BUG-381: Walk-in Check-In Guest Data Missing on In-House + P3 PMS Pages
+
+| Field | Value |
+|---|---|
+| **Status** | QA PASS (2 NOTE). Backend fix verified. Ready for Gate 6. |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Reported** | 2026-09-03 (Owner) |
+| **Area** | PMS > Walk-in data visibility |
+| **Description** | Walk-in check-ins (non-AIOSELL) don't create a `local-reservation` record. After walk-in check-in: In-House page shows guest but dates/balance are "—"; P3 pages (Front Desk, Arrivals, Departures) walk-in guests are completely invisible. |
+| **Duplicate check** | DISTINCT |
+| **Blast radius** | MEDIUM — 5+ files. pmsService.js, InHouseGuestsPage.jsx, FrontDeskPage.jsx, ArrivalsPage.jsx, DeparturesPage.jsx |
+| **Decision** | OQ-381-01=Option A — Backend to add synthetic local-reservation for walk-ins. No frontend fix needed once backend ships. |
+| **Fix options** | ~~A) Backend synthetic local-res (SELECTED)~~ B) Frontend orphan join. C) Hybrid order detail. |
+| **Intake doc** | `change_requests/BUG-381_WALKIN_DATA_MISSING_INTAKE.md` |
+| **Next** | Backend brief → backend implementation → frontend auto-fixed |
+
+
+
+### BUG-383: RoomStatusPage HK Filter Count Always 0 (manual_status vs displayStatus)
+
+| Field | Value |
+|---|---|
+| **Status** | **GATE_5B_QA_PARTIAL_PASS (2026-09-09) — 5/6 PASS, 1 MINOR (TC-383-04: warning toast missing). Core fix verified. Owner decides ship-or-fix.** |
+| **Priority** | P1 |
+| **Risk** | MEDIUM |
+| **Reported** | 2026-09-08 (Agent-discovered, investigation probe) |
+| **Area** | PMS > Room Status Board (S7) |
+| **Description** | HK filter tab always shows 0; "Mark All Clean" always disabled. Auto-HK fires correctly (r2+r1 confirmed `manual_status:hk`) but `fromRoomStatusBoard` counts HK by `displayStatus==='hk'`; auto-HK on occupied rooms sets only `manualStatus`, `displayStatus` stays `occupied`. Same issue in `RoomStatusPage.jsx` L78 `hkIds` filter. |
+| **Root cause** | `roomStatusTransform.js` L28 + `RoomStatusPage.jsx` L78 — both filter by `displayStatus` instead of `manualStatus` for HK |
+| **Duplicate check** | DISTINCT |
+| **Blast radius** | SMALL — 2 files, 2 lines |
+| **Related** | CR-358-P4, OG-PMS-010 |
+| **Intake doc** | `change_requests/BUG-383_HK_FILTER_COUNT_ZERO_MANUAL_STATUS_DISPLAYSTATUS_MISMATCH.md` |
+| **Owner decision** | OD-383-01: **"Show a warning"** — locked 2026-09-09 ✅ |
+| **QA report** | `test_reports/QA_REPORT_BUG383_2026_09_09.md` |
+| **Finding** | MINOR: TC-383-04 — warning toast for occupied HK rooms not appearing. handleBulkClean skips without notification. Owner decides ship-or-fix. |
+| **Next** | Owner decides: (a) fix TC-383-04 toast → Bug Fix → re-QA, OR (b) ship core fix + defer toast to next sprint |
+
+---
+
+### BUG-384: POST room-payment Returns HTTP 403 — Sandbox-PMS Permission Gap
+
+| Field | Value |
+|---|---|
+| **Status** | **CLOSED — 2026-09-11. Was NOT a backend permission bug. FE contract error.** |
+| **Priority** | P1 |
+| **Risk** | HIGH |
+| **Reported** | 2026-09-08 (Agent-discovered, re-confirmed from OG-PMS-014) |
+| **Area** | PMS > Guest Folio > Record Payment |
+| **Description** | `POST /api/v2/vendoremployee/pos/room-payment` returns HTTP 403 for owner@thegoankitchen.com. Endpoint exists, validates input, but permission check fires first. Completely blocks "Record Payment" in CR-364. FE code is wired correctly (constants.js L102). |
+| **Resolution** | Backend replied 2026-09-10: NOT a permission gap. FE was sending `order_id` + `amount` (wrong). Correct contract: `room_order_id` + `payment_amount` + `payment_mode`. Validation now returns 422 for wrong fields. FE fix needed in roomService.js (~5 lines). Backend change: zero. |
+| **Duplicate check** | DISTINCT (formally registered from OG-PMS-014) |
+| **Blast radius** | NONE (FE) — FE field rename only |
+| **Backend blocked** | NO — resolved |
+| **Related** | CR-162, CR-364, OG-PMS-014 |
+| **Intake doc** | `change_requests/BUG-384_ROOM_PAYMENT_403_SANDBOX_PERMISSION_GAP.md` |
+| **Next** | FE Fast Lane fix in roomService.js → re-probe → close CR-162 / unblock CR-364 |
+
+---
+
+### BUG-385: no_show Field Absent from local-reservations and dashboard-kpis
+
+| Field | Value |
+|---|---|
+| **Status** | **CLOSED — 2026-09-11. Backend shipped Option A.** |
+| **Priority** | P2 |
+| **Risk** | LOW |
+| **Reported** | 2026-09-08 (Agent-discovered, re-confirmed from OG-PMS-015) |
+| **Area** | PMS > Night Audit (CR-363) / API contract |
+| **Description** | `no_show` field/count absent from `local-reservations` (17 items checked) and `dashboard-kpis` (recursive search: 0 hits). CR-363 Night Audit no-show line is blocked. No FE code currently reads this field — it doesn't exist yet. |
+| **Resolution** | Backend replied 2026-09-10: Option A shipped. `today.no_show_count` now in `dashboard-kpis` response. Count = reservations with `status=no_show` and `checkin == as_of_date`. Also: `?status=no_show` filter live on local-reservations for row-level access. CR-363 fully unblocked. |
+| **Duplicate check** | DISTINCT (formally registered from OG-PMS-015) |
+| **Blast radius** | NONE (FE) — FE reads new field |
+| **Backend blocked** | NO — resolved |
+| **Related** | CR-363, CR-358-P5, OG-PMS-015 |
+| **Owner decision** | OD-385-01: RESOLVED — backend delivered Option A (preferred) |
+| **Intake doc** | `change_requests/BUG-385_NO_SHOW_FIELD_MISSING_LR_DASHBOARD_KPIS.md` |
+| **Next** | CR-363 Gate 2 planning can proceed |
+
+### BUG-386: PMS Check-In — Room Accommodation GST Never Computed or Sent (gst_tax Hardcoded '0.00')
+
+| Field | Value |
+|---|---|
+| **Status** | **QA PASS — Gate 5b (2026-09-09). Ready Gate 6 Owner Smoke.** |
+| **Priority** | P0 — CRITICAL |
+| **Risk** | CRITICAL (financial — billing, tax, GST compliance) |
+| **Reported** | 2026-09-08 (Agent-discovered via INV-PMS-GST-001; owner-supplied spec: `pms_gst.md`) |
+| **Area** | PMS > Check-In (S4) — `pmsService.pmsCheckIn` |
+| **Description** | `pmsService.js:162` hardcodes `gst_tax: '0.00'` on every PMS room check-in. The `room_gst` slab object from profile (`restaurants[].settings.room_gst`) is never parsed (`profileTransform.js:241` only extracts the boolean flag). As a result: (1) `user_id_documents.gst_tax = 0` stored on backend for all check-ins; (2) `balance_payment` sent as `orderAmount − advance` instead of `orderAmount + gstTax − advance`; (3) `remaining_room_balance` understated by GST amount; (4) receptionist sees no GST on check-in form. |
+| **Duplicate check** | DISTINCT — Related: BUG-338 (F&B room GST guard — different concern) |
+| **Code reality** | NONE (no slab computation logic exists) |
+| **Blast radius** | MEDIUM — 3 files modified + 1 new file (`roomGstCalculator.js`) |
+| **Hotspot files** | `profileTransform.js` |
+| **Related** | BUG-338, CR-358-P2, INV-PMS-GST-001, CR-116 |
+| **Owner decisions** | ~~OD-386-01~~: **P0 this sprint (pos_pms_1)** ✅ · ~~OD-386-02~~: **Option A — resend gst_tax at checkout; PmsCheckoutDrawer now IN scope** ✅ · ~~OD-386-03~~: **Fix forward only** ✅ — ALL LOCKED |
+| **Backend brief** | `backend_briefs/BACKEND_BRIEF_INV-PMS-GST-001_2026_09_08.md` (Q-GST-01: checkout `gst_tax` contract) |
+| **Intake doc** | `change_requests/BUG-386_PMS_CHECKIN_ROOM_GST_HARDCODED_ZERO_INTAKE.md` |
+| **Investigation** | `evidence/INV-PMS-GST-001/INVESTIGATION_REPORT_PMS_GST_2026_09_08.md` |
+| **Sub-gaps** | GAP-1 (CRITICAL): gst_tax hardcoded · GAP-2 (CRITICAL): balance_payment wrong · GAP-3 (HIGH): slab not parsed · GAP-4 (HIGH): no computation utility · GAP-5 (MEDIUM): no UI display · GAP-6 (MEDIUM): outstanding balance understated · GAP-7 (MEDIUM): checkout contract unclear · GAP-8 (LOW): multi-room constraint |
+| **Next** | Owner: confirm OD-386-01..03 → Gate 2 Planning (Impact Analysis + Implementation Plan) |
+
+---
+
+### BUG-391 Registered 2026-09-11 (P1 — Aggregator GST Not Enforced)
+
+**Title:** Aggregator Menu: GST Not Enforced — Items Can Be Saved With 0% Tax or "None" Tax Type
+
+**Owner-reported rule:** Aggregator menu items must always have GST at 5%. Currently NO enforcement exists.
+
+**Root cause confirmed (code-traced, HIGH confidence):**
+1. `ProductForm.jsx:276` — new item default `taxPercentage: 0` (should be 5 for Aggregator)
+2. `ProductForm.jsx:417` — "None" tax type is selectable for Aggregator items (should be hidden)
+3. `ProductForm.jsx:594–629` — save handler has ZERO pre-save validation
+4. `BulkEditor.jsx:544–554` — tax validation only runs if `restaurant.gstStatus === true`; Aggregator-specific rule not enforced
+5. `menuManagementTransform.js:268–269` — passes through any tax values with no Aggregator override
+
+**Status:** INTAKE — BLOCKED on owner ODs (OD-391-01 to OD-391-05)
+**Rule R6 applies:** Tax-adjacent — owner Gate 4 GO required before any code change.
+**Intake doc:** `change_requests/BUG-391_AGGREGATOR_GST_NOT_ENFORCED_INTAKE.md`
+**Investigation report:** `investigations/INV-AGGREGATOR-GST-ENFORCEMENT-GAP_INVESTIGATION_REPORT_2026_09_11.md`
+
+---
+
+### BUG-392 Registered 2026-09-11 (P1 — Scroll Wheel Changes Number Input Values)
+
+**Title:** All Number Inputs Respond to Scroll Wheel — Accidental Price/Tax/Charge Changes
+
+**Owner-reported:** "There's a scroll working which changes the price of the menu by one paisa, two paisa. We don't want any scroll in any of the tabs."
+
+**Root cause:** Browser default — `<input type="number">` increments by `step` on wheel event when focused. Zero `onWheel` prevention across all 5 menu files.
+
+**Files affected (31 inputs total):**
+- `ProductForm.jsx` — 13 inputs (Price, Tax%, Discount, Kcal, Prep/Serve Time, Pack/Takeaway/Delivery Charge, Comp. Price, Variation Min/Max, Addon Price)
+- `ProductCard.jsx` — 2 inputs (Price, Tax%)
+- `BulkEditor.jsx` — 11+ columns via single renderCell (line 1318) — WORST: grid scroll = price change
+- `AddonManagementPanel.jsx` — 4 inputs
+- `VariationExpandPanel.jsx` — 1 input
+
+**Fix:** `onWheel={(e) => e.target.blur()}` — 12 line changes across 5 files. No open ODs.
+**Status:** INTAKE — Ready for Gate 4 GO
+**Intake doc:** `change_requests/BUG-392_SCROLL_WHEEL_NUMBER_INPUTS_INTAKE.md`
+**Investigation:** `investigations/INV-SCROLL-WHEEL-NUMBER-INPUTS_INVESTIGATION_REPORT_2026_09_11.md`
+
+---
+
+### BUG-393 Registered 2026-09-10 — SUBSUMED by CR-377
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-393 |
+| **Type** | BUG |
+| **Title** | Daily Sales Report: `getDailySalesReport` missing `to` field in POST payload |
+| **Priority** | P2 |
+| **Risk** | LOW |
+| **Status** | **SUBSUMED by CR-377 (2026-09-10)** |
+| **Sprint** | pos_7_0 |
+| **Registered** | 2026-09-10 |
+
+**Root cause:** `reportService.js:399` sends `{from: dateStr}` only. API contract requires `{from, to}`. Additionally, `orderLedgerService.js:257` (`getTabSettlementsForRange`) calls the same endpoint with `{from: d}` only — second call site found during INTAKE.
+
+**Impact:** LOW — backend auto-defaults `to` = end-of-business-day correctly regardless. No wrong data returned. Still a contract violation.
+
+**Fix:** Absorbed into CR-377 transform rewrite. Implementing agent must fix BOTH call sites:
+1. `src/api/services/reportService.js:399` → add `to: dateStr`
+2. `src/api/services/orderLedgerService.js:257` → add `to: d`
+
+**Duplicate check:** DISTINCT. Related: BUG-347 (different endpoint — purchase report `from_date/to_date`)
+
+**Artifacts:** `change_requests/BUG-393_DAILY_SALES_MISSING_TO_FIELD_INTAKE.md` · `investigations/INV-SALES-REPORT-REINVESTIGATION_2026_09_10.md`
+
+---
+
+## BUG-396 — PMS Check-In: GST calculated on advance (advance is deposit, not additional charge)
+
+**ID:** BUG-396 | **Severity:** P0 | **Risk:** CRITICAL | **Sprint:** pos_pms_1
+**Status:** GATE_5A_IMPLEMENTED (2026-09-13)
+**Related:** BUG-388 (introduced wrong formula via OD-GST-02)
+**Files:** `pages/pms/CheckInPage.jsx` (E1+E2), `api/services/pmsService.js` (E3)
+**Fix:** gstBase = orderAmount only (advance removed). balance_payment = orderAmount + gstTax − advance.
+**Artifacts:** `change_requests/BUG-396_*_INTAKE.md` · `impact/BUG-396_IMPACT_ANALYSIS.md` · `plans/BUG-396_IMPLEMENTATION_PLAN.md`
+
+---
+
+## BUG-397 — Room Status Board: `occupied_hk` display_status not handled — falls to `available`
+
+**ID:** BUG-397 | **Severity:** P1 | **Risk:** HIGH | **Sprint:** pos_pms_1
+**Status:** INTAKE — Gate 2 pending owner GO
+**Source:** BE reply 2026-09-13 introduced new `occupied_hk` display_status
+**Duplicate check:** DISTINCT (related: BUG-383 — different issue)
+**Blast radius:** SMALL (2 files: roomStatusTransform.js + RoomStatusPage.jsx, ~11 lines)
+**Must fix before/with CR-365 Gate 2 planning**
+**Intake doc:** `change_requests/BUG-397_ROOM_STATUS_OCCUPIED_HK_NOT_HANDLED_INTAKE.md`
+
+---
+
+## BUG-398 — CR-163 Move Items: Path B hidden (roomNo null) + dynamic Room table indistinguishable
+
+**ID:** BUG-398 | **Severity:** P1 | **Risk:** HIGH | **Sprint:** pos_pms_1
+**Status:** INTAKE — Gate 2 pending owner GO
+**Related:** CR-163 (Gate 5b PASS — not caught in QA due to stale test data)
+**Sub-issues:**
+- S1: `api.room_info.room_no` = null → `roomNo` prop null → `{roomNo && ...}` hides Path B "Create Room" row entirely
+- S2: Dynamically created "Room r2" (rtype=TB) passes free table filter → appears identical to Table 1/2/3 — no visual distinction
+**Blast radius:** SMALL (2 files: SplitRoomItemsModal.jsx + OrderEntry.jsx, ~13 lines)
+**Intake doc:** `change_requests/BUG-398_CR163_MOVE_ITEMS_PATH_B_HIDDEN_ROOM_TABLE_INDISTINGUISHABLE_INTAKE.md`
+
+---
+
+## 2026-09-15 — QA BATCH PASS (BATCH-02 through BATCH-09, QA Agent)
+
+All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agent on `15sepqa` branch.
+
+| Bug ID | Batch | QA Result | Notes |
+|---|---|---|---|
+| BUG-374 | BATCH-02 | ✅ QA PASS | Smoke deferral: live variation test needs variation-menu restaurant |
+| BUG-368 | BATCH-02 | ✅ QA PASS | Smoke deferral: T4 cancelled-order needs ruby account |
+| BUG-369 | BATCH-02 | ✅ QA PASS | Code-verified (print payload + profileTransform) |
+| BUG-372 | BATCH-02 | ✅ QA PASS | Code-verified (DashboardPage merge/transfer states) |
+| BUG-394 | BATCH-02 | ✅ QA PASS | 11/11 code-verified |
+| BUG-376 | BATCH-03 | ✅ QA PASS | — |
+| BUG-371 | BATCH-03 | ✅ QA PASS | — |
+| BUG-395 | BATCH-03 | ✅ QA PASS | — |
+| BUG-390 | BATCH-04 | ✅ QA PASS | — |
+| BUG-391 | BATCH-04 | ✅ QA PASS | — |
+| BUG-392 | BATCH-04 | ✅ QA PASS | — |
+| BUG-294,295,296,301,302,308,309,340,347,348 | BATCH-05 | ✅ QA PASS | Code-verified (older backlog) |
+| BUG-170,236,297,298,299,300,311,314,316,318,321,322 | BATCH-06 | ✅ QA PASS | Code-verified |
+| BUG-SCAN-DEDUP | BATCH-06 | ✅ QA PASS | NOTE: missing R18 code marker (flag Pre-Release Audit §F) |
+| BUG-209,292,293,310,315,317,320 | BATCH-08 | ✅ QA PASS | Code-verified |
+| BUG-325,326,327,351,352,357,358,359,360,361 | BATCH-09 | ✅ QA PASS | Code-verified |
+
+**BATCH-10 Regression NEW BUGS:**
+| BUG-400 | MAJOR (P1) | Header Add button covered by search input — GATE_5B_QA_PASS 2026-09-15 |
+| BUG-401 | BLOCKER (P0, CRITICAL R6) | PMS Checkout omits room_gst_tax — GATE_5A_IMPLEMENTED 2026-09-15 |
+
+---
+
+### 2026-09-15 — BUG-400, BUG-401 (INTAKE — QA-FOUND Regression BATCH-10)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-400** | Header "Add" button covered by search input | **P1** | **MEDIUM** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-01. Fast Lane eligible. OD-400-01 needed.** | 1 file, ≤2 lines. `overflow-hidden` or `min-w-0` on Header.jsx search container. Workaround: click button edge or table card. |
+| **BUG-401** | PMS Checkout omits `room_gst_tax`; Folio balance excludes GST | **P0** | **CRITICAL** | **INTAKE — Gate 1 (2026-09-15). QA-FOUND F-02. BLOCKER R6. OD-401-01+02 needed.** | 2 files (PmsCheckoutDrawer.jsx L157 + orderTransform.js R5 hotspot). `get-single-order-new` `room_payment_summary` has no `gst_tax` field → checkout sends `room_gst_tax: 0/absent`. Night Audit `room_gst_collected: 0`. Fix: read `room_info.gst_tax` direct. Related: BUG-386. |
+
+
+---
+
+### 2026-09-15 — PMS + Reports Intake Batch (BUG-400 to BUG-416)
+
+| Bug ID | Title | Priority | Risk | Status | Notes |
+|---|---|---|---|---|---|
+| **BUG-400** | Header "Add" button covered by search input | **P1** | **MEDIUM** | **GATE_5B_QA_PASS (2026-09-15).** min-w-0 on Header.jsx search input. QA PASS. OD-400-01 CLOSED. OD-400-02 → BUG-415. | `Header.jsx` L359 |
+| **BUG-401** | PMS Checkout omits `room_gst_tax` | **P0** | **CRITICAL** | **GATE_5A_IMPLEMENTED (2026-09-15).** gstTax at roomInfo top-level in orderTransform.js + PmsCheckoutDrawer. Not live-tested (needs active checkout). OD-401-01 CLOSED. OD-401-02 N/A. OD-401-03 → BUG-416. OD-401-04 CLOSED ship-as-is. | `orderTransform.js` + `PmsCheckoutDrawer.jsx` |
+| **BUG-402** | Extend Stay dialog shows ₹0 per extra night | **P1** | **MEDIUM** | **GATE_5A_IMPLEMENTED (2026-09-15).** Fixed rate path (dateRateMap) + non-Aiosell fallback. Not QA-able without live in-house guest. | `ExtendStayDialog.jsx` + `InHouseGuestsPage.jsx` |
+| **BUG-403** | Arrivals 3-dots kebab menu invisible (overflow-hidden clipping) | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Removed overflow-hidden from arr-table container. QA PASS. | `ArrivalsPage.jsx` |
+| **BUG-404** | New Booking — Room Amount stays ₹0 on room selection | **P2** | **MEDIUM** | **CLOSED by owner decision 2026-09-20 (CR-385 O-4, D54).** Superseded: server prices the booking when the FE omits the rate (BQ-385-16, verified build 2/3); New Booking moves into the CR-385 workstation (old page → FU-385-C). | `pmsService.js` + `NewBookingPage.jsx` |
+| **BUG-405** | Daily Report — cancellations show ₹0 (cancel_revenue key mismatch) | **P1** | **MEDIUM** | **GATE_5A_IMPLEMENTED (2026-09-15).** Fallback reads both 'Pre-Serve'→'Preparing' and 'Post-Serve'→'Serve'. QA PASS. | `reportService.js` |
+| **BUG-406** | Room Status — occupied_hk rooms had no Mark Clean button | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Green Mark Clean button added to occupied_hk tiles. QA PASS. | `RoomStatusPage.jsx` |
+| **BUG-407** | Room Status — occupied rooms couldn't request housekeeping | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15).** Enabled Request HK button for occupied rooms. QA PASS. | `RoomStatusPage.jsx` |
+| **BUG-408** | Daily Report — Room settlement Cash/Card/UPI always ₹0 | **P1** | **HIGH** | **INTAKE — GATE 1 — BACKEND-BLOCKED.** room_revenue.Room Cash/Card/UPI = ₹0 despite Room Total=₹84k. Backend brief filed. | `reportService.js` (FE read-only) |
+| **BUG-409** | Daily Report — Room food orders have no payment split | **P2** | **MEDIUM** | **PARKED — OD-409-01 answered: PARK (2026-09-15).** | `reportService.js` |
+| **BUG-410** | Old RoomCheckInModal — no accommodation GST for personal bookings | **P2** | **HIGH** | **INTAKE — GATE 1 — UNBLOCKED.** gstBlockVisible gated to Corporate only. computeRoomGst() needed for personal/WalkIn. | `RoomCheckInModal.jsx` |
+| **BUG-411** | New CheckInPage — no payment method picker for advance | **P0** | **CRITICAL** | **INTAKE — GATE 1 — UNBLOCKED.** payment_method always '' sent to backend. Causes BUG-412. pmsService field already exists — FE UI only. | `CheckInPage.jsx` |
+| **BUG-412** | Guest Folio — Advance Paid shows room price instead of actual advance | **P1** | **HIGH** | **INTAKE — GATE 1 — BLOCKED ON BUG-411.** Backend likely overrides advance when payment_method=''. Will probe after BUG-411 fix. · **P5 2026-09-24:** backend D17 fixed 2026-09-21; re-verified P5 2026-09-23 — D17 legs A/B/C ALL_PASS (`probes_2026_09_23_release/d17_reverify.json`). Status: FIXED (backend) + RE-VERIFIED P5. | `GuestFolioPage.jsx` (display) |
+| **BUG-413** | Arrivals — PREPAID badge misleading for Direct/WalkIn bookings | **P2** | **LOW** | **CLOSED by owner decision 2026-09-20 (CR-385 O-4, D54).** Superseded: badge rule D48-b reads `charge.prepaid_amount` / `advance_payment` instead of `pah`; Arrivals moves into the CR-385 workstation. | `ArrivalsPage.jsx` |
+| **BUG-414** | New Booking + CheckIn — Adults/Children inputs locked (retroactive) | **P1** | **LOW** | **GATE_5B_QA_PASS (2026-09-15) — retroactive CLOSURE Phase B.** Fix applied before registration. onChange allowed clearing + onBlur snap. QA PASS. Code marker: BUG-NB-01. | `NewBookingPage.jsx` + `CheckInPage.jsx` |
+| **BUG-415** | Room Orders Report — Y-axis ticks show ₹0k or duplicate at low values | **P3** | **LOW** | **INTAKE — GATE 1.** tickFormatter divides all values by 1000 — small values show ₹0k or collide. Fix: smart formatter (1 line, 1 file). | `RoomOrdersMockup.jsx` |
+| **BUG-416** | Night Audit + Revenue Dashboard — no Sidebar navigation or Back button | **P2** | **LOW** | **INTAKE — GATE 1 — UNBLOCKED.** Both pages shell-less. All other PMS pages have Sidebar + back. Fix: wrap with Sidebar + ArrowLeft — same pattern as InHouseGuestsPage. OD-401-03 Option A. | `NightAuditPage.jsx` + `RevenueDashboardPage.jsx` |
+| **BUG-417** | Folio — F&B balance not posting advance to zero | **P1** | **HIGH** | **INTAKE — GATE 1.** | `GuestFolioPage.jsx` |
+| **BUG-418** | Checkout Drawer — GST not in display | **P1** | **CRITICAL** | **FIXED-BY-CONSTRUCTION on Front Desk (Beta) 2026-09-22 (CR-385 M6, Gate 5A)** — `FolioCheckoutPanel` renders `charge.sgst` / `charge.cgst` as two lines (`bill-room-sgst` / `bill-room-cgst`, unit-tested) and feeds `gstTax = sgst + cgst` to the panel (M6-10). **QA-VERIFIED live 2026-09-22 (it.23: `bill-room-sgst` ₹2,835 + `bill-room-cgst` ₹2,835 as two DOM nodes) — FIXED + QA-VERIFIED (Beta).** Legacy `PmsCheckoutDrawer` on `/pms/departures` still affected → DEFERRED-TO-FU-385-C. Origin: FOLDED INTO CR-385 M6 (owner O-5, 2026-09-20, D54). · **P5 2026-09-24:** FIXED + QA-VERIFIED (Beta) via CR-385 M6 2026-09-22 — legacy path → FU-385-C; P5 re-verified it.32/it.33 (SGST + CGST two lines). | `PmsCheckoutDrawer.jsx` (legacy) · `components/pms/frontdesk/FolioCheckoutPanel.jsx` (fixed) |
+| **BUG-419** | CheckInPage — Corp/B2B checkbox wrong position | **P2** | **LOW** | **GATE 3 COMPLETE — awaiting Gate 4 GO.** Plan: `plans/BUG-419_IMPLEMENTATION_PLAN.md` | `CheckInPage.jsx` |
+| **BUG-420** | Walk-in check-in — returning guest docs show text only, not images | **P1** | **MEDIUM** | **GATE 3 COMPLETE — awaiting Gate 4 GO.** Plan: `plans/BUG-420_IMPLEMENTATION_PLAN.md` | `CheckInPage.jsx` |
+| **BUG-421** | In-House page — balance column shows booking total not outstanding | **P1** | **HIGH** | **GATE 3 COMPLETE — awaiting Gate 4 GO.** Plan: `plans/BUG-421_IMPLEMENTATION_PLAN.md` | `pmsService.js` |
+| **BUG-422** | Old modal — balance_payment missing GST | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED (2026-09-16) — gstTax useMemo + balancePayment formula fixed** Plan: `plans/BUG-422_IMPLEMENTATION_PLAN.md` | `RoomCheckInModal.jsx` |
+| **BUG-423** | Folio — Room Balance excludes GST | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED (2026-09-16) — roomBalance = roomPrice+gstTax-advance-received** Plan: `plans/BUG-423_IMPLEMENTATION_PLAN.md` | `GuestFolioPage.jsx` |
+| **BUG-424** | Folio — Room Orders section missing on LHS | **P1** | **MEDIUM** | **GATE_5A_IMPLEMENTED (2026-09-16) — Room Orders section + folioTransform roomOrders** Intake: `change_requests/BUG-424_FOLIO_ROOM_ORDERS_SECTION_MISSING_INTAKE.md` | `GuestFolioPage.jsx` + `folioTransform.js` |
+| **BUG-425** | PmsCheckoutDrawer — ROOM balance excludes GST | **P1** | **HIGH** | **GATE_5A_IMPLEMENTED (2026-09-16) — PmsCheckoutDrawer roomInfo override Path A** Intake: `change_requests/BUG-425_PMSCHECKOUTDRAWER_ROOM_BALANCE_NO_GST_INTAKE.md` | `PmsCheckoutDrawer.jsx` |
+| **BUG-426** | In-House Guests balance column shows room-only (₹950), missing transferred F&B (₹418) + room orders with GST (₹256) — should show ₹1,624 | **P1** | **HIGH** | **GATE_5A_IMPLEMENTED.** pmsService.js: signature accepts roomGstApplicable param, Step 3 adds transferredFnb + roomOrdersTotal (conditional GST), stores 2 separate sub-totals + total balance. InHouseGuestsPage.jsx: useRestaurant import, roomGstApplicable from checkInFlags, flag passed to service, useCallback deps updated. Compile clean. Self-test V1-V9 PASS. QA handover: `handover/QA_HANDOVER_BUG426_2026_09_16.md` | `pmsService.js` + `InHouseGuestsPage.jsx` |
+| **BUG-427** | Folio Total Balance Due excludes room orders — fnbTotal sums transferred only (₹418), room orders (₹256 post-GST) absent; shows ₹1,368 not ₹1,624. Room Orders section total pre-tax (₹228) not post-GST (₹256) | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED.** folioTransform.js: totalAmount field added. GuestFolioPage.jsx: useRestaurant + roomGstApplicable flag, roomOrdersTotal conditional, 3-tile grid (Room Balance + Transferred F&B + Room Orders), Total Balance Due = room+fnb+roomOrders. Compile clean. Self-test V1-V11 PASS. QA handover: `handover/QA_HANDOVER_BUG427_2026_09_16.md` | `folioTransform.js` + `GuestFolioPage.jsx` |
+| **BUG-428** | Checkout ROOM breakdown missing Lodging GST line — 1000 − 100 shows 950 (math appears wrong visually; GST ₹50 hidden in balance but not displayed as line item) | **P2** | **MEDIUM** | **GATE_5A_IMPLEMENTED.** CollectPaymentPanel.jsx L1836: conditional JSX block inserted between Room Charge and Advance Paid. Guards: roomInfo.gstTax>0 AND restaurant?.settings?.roomGstApplicable!==false. restaurant already in scope (L79). No formula change. R5 regression checklist in QA handover. Compile clean. QA handover: `handover/QA_HANDOVER_BUG428_2026_09_16.md` | `CollectPaymentPanel.jsx` (R5) |
+| **BUG-429** | Room orders GST under-counted in Folio (₹238 shown, ₹256 correct) and In-House (₹1,930.4 shown, ₹1,947 correct) — BUG-426/427 implementations missing `gst_tax_amount` field read + `tax_calc=inclusive` handling | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED.** folioTransform.js L116-124: 3-step GST pattern (gst_tax_amount||tax_amount first, inclusive/exclusive fallback). pmsService.js L126-139: same pattern. GuestFolioPage + InHouseGuestsPage auto-correct (no change). Compile clean. V1-V8 PASS. QA handover: `handover/QA_HANDOVER_BUG429_2026_09_16.md` | `folioTransform.js` + `pmsService.js` |

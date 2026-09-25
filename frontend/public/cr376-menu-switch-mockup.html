@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-376 — Menu Switch (Normal / Premium) Design Mockup — Gate 3 review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #329937; --green-lt: #E8F5E9; --orange: #F26B33; --orange-lt: #FFF3E0;
+      --dark: #1A1A1A; --gray: #666666; --border: #E5E5E5; --bg: #F7F7F7; --white: #fff;
+      --new: #D946EF; --new-lt: #FDF4FF;
+    }
+    body { font-family: 'Poppins', system-ui, sans-serif; background: #ECECEC; color: var(--dark); font-size: 13px; line-height: 1.45; }
+    header { background: var(--dark); color: #fff; padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    header h1 { font-size: 18px; font-weight: 600; }
+    header .meta { font-size: 12px; color: #bbb; }
+    header .gate { background: var(--orange); color: #fff; font-weight: 600; padding: 6px 12px; border-radius: 999px; font-size: 12px; }
+    main { max-width: 1400px; margin: 0 auto; padding: 28px 24px 80px; }
+    section { margin-bottom: 44px; }
+    section > h2 { font-size: 15px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    section > p.where { color: var(--gray); font-size: 12px; margin-bottom: 14px; }
+    code { background: #eee; padding: 1px 6px; border-radius: 4px; font-size: 11.5px; font-family: ui-monospace, monospace; }
+    .tag { font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .3px; }
+    .tag.new { background: var(--new-lt); color: var(--new); border: 1px solid var(--new); }
+    .tag.cond { background: var(--orange-lt); color: var(--orange); border: 1px solid var(--orange); }
+    .tag.none { background: var(--green-lt); color: var(--green); border: 1px solid var(--green); }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .compare.stack { grid-template-columns: 1fr; }
+    @media (max-width: 1000px) { .compare { grid-template-columns: 1fr; } }
+    .frame { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+    .frame .label { font-size: 11px; font-weight: 600; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--bg); color: var(--gray); display:flex; justify-content:space-between; }
+    .frame .label.after { color: var(--new); }
+    .callout { position: relative; }
+    .callout::after { content: attr(data-note); position: absolute; right: -6px; top: -14px; background: var(--new); color: #fff; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+    .hl { outline: 2px dashed var(--new); outline-offset: 4px; border-radius: 10px; }
+
+    /* ---- Local Settings mock ---- */
+    .ls { padding: 18px 22px; }
+    .ls .row { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .ls .row.on { border-color: var(--green); background: #FAFDFB; }
+    .ls .row .t { font-weight: 600; font-size: 13.5px; display:flex; align-items:center; gap:8px; }
+    .ls .row .d { color: var(--gray); font-size: 11.5px; margin-top: 4px; max-width: 560px; }
+    .badge { font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 4px; color: #fff; }
+    .badge.on { background: var(--green); } .badge.off { background: #bbb; }
+    .toggle { width: 38px; height: 22px; border-radius: 999px; background: #ddd; position: relative; flex-shrink: 0; }
+    .toggle.on { background: var(--green); }
+    .toggle::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+    .toggle.on::after { left: 18px; }
+    .divider { border-top: 1px solid var(--border); margin: 18px 0 14px; }
+    .h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .sub { color: var(--gray); font-size: 11.5px; margin-bottom: 10px; }
+    .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 2px solid var(--border); color: var(--gray); background: var(--white); cursor: pointer; }
+    .pill.sel { border-color: var(--green); color: var(--green); background: rgba(50,153,55,.06); }
+    .upper { font-size: 10px; font-weight: 700; color: var(--orange); letter-spacing: .5px; margin: 10px 0 6px; }
+
+    /* ---- Order Entry mock ---- */
+    .oe { display: grid; grid-template-columns: 170px 1fr 260px; height: 400px; }
+    .oe .cats { border-right: 1px solid var(--border); font-size: 11.5px; overflow: hidden; }
+    .oe .cats div { padding: 9px 12px; border-bottom: 1px solid #f2f2f2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .oe .cats .all { background: var(--green); color: #fff; font-weight: 600; }
+    .oe .cats .empty { color: #bbb; }
+    .oe .mid { display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+    .oe .hdr { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .oe .search { flex: 0 0 180px; border: 2px solid var(--orange); border-radius: 8px; padding: 6px 10px 6px 30px; color: #aaa; font-size: 12px; position: relative; }
+    .oe .search::before { content: '🔍'; position: absolute; left: 8px; top: 5px; font-size: 12px; }
+    .oe .ordno { color: var(--gray); font-size: 13px; margin-left: auto; }
+    .chip { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; background: var(--orange-lt); color: var(--orange); border: 1px solid var(--orange); }
+    .oe .icons { display: flex; gap: 10px; color: var(--gray); font-size: 15px; }
+    .oe .grid { padding: 14px; flex:1; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; overflow: hidden; }
+    .item { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--border); font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+    .item i { color: var(--green); font-style: normal; font-size: 11px; margin-left: 6px; }
+    .oe .cart { padding: 12px; font-size: 11.5px; color: var(--gray); }
+    .oe .cart .btn { display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: 600; font-size: 11px; color: #fff; }
+    .emptystate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
+    .emptystate b { color: var(--orange); font-size: 13.5px; display: block; margin-bottom: 4px; }
+    .emptystate span { color: var(--gray); font-size: 12px; }
+
+    /* ---- Customer modal mock ---- */
+    .cm { padding: 18px 22px; }
+    .cm .sugg { border: 1px solid var(--border); border-radius: 12px; background: var(--bg); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .cm .sugg.inert { opacity: .55; }
+    .cm .sugg .n { font-weight: 500; }
+    .cm .sugg .m { font-size: 10.5px; color: var(--gray); }
+    .cm .plus { width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-weight: 700; }
+    .cm .plus.dis { background: #ccc; }
+
+    table.map { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); font-size: 12px; }
+    table.map th, table.map td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    table.map th { background: var(--bg); font-weight: 600; font-size: 11.5px; }
+    .probe { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+    .probe .kpi { display: inline-block; margin: 6px 18px 6px 0; }
+    .probe .kpi b { font-size: 20px; display: block; }
+    .probe .kpi span { color: var(--gray); font-size: 11px; }
+    .note { background: var(--orange-lt); border-left: 4px solid var(--orange); padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-top: 12px; }
+    .ok { background: var(--green-lt); border-left: 4px solid var(--green); padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>CR-376 · POS Order Entry — Menu Switch (Normal / Premium)</h1>
+    <div class="meta">Design mockup for owner review · Design A (Local Settings, per-station) · Plan <code>memory/plans/CR-376_IMPLEMENTATION_PLAN.md</code> · 2026-09-25</div>
+  </div>
+  <div class="gate">GATE 3 — mockup only · zero code · Gate 4 NOT given</div>
+</header>
+<main>
+
+  <!-- ===================== PROBE ===================== -->
+  <section>
+    <h2>0. Backend reality (R11 probe, 2026-09-25, account alias QA_OWNER) <span class="tag none">no backend change</span></h2>
+    <p class="where"><code>GET /api/v1/vendoremployee/get-products-list?limit=2000&offset=1&type=all</code> → evidence <code>memory/evidence/CR-376/CR-376_products_probe_2026_09_25.json</code></p>
+    <div class="probe">
+      <div class="kpi"><b>258</b><span>products returned</span></div>
+      <div class="kpi"><b>117</b><span><code>food_for = Normal</code> (what POS shows today)</span></div>
+      <div class="kpi"><b>141</b><span><code>food_for = Premium</code> (currently discarded by <code>productTransform.js:47</code>)</span></div>
+      <div class="kpi"><b>0</b><span>Party · 0 Aggregator</span></div>
+      <div class="kpi"><b>45</b><span>categories · 25 Premium-only · 18 Normal-only · 2 shared</span></div>
+      <div class="kpi"><b>7</b><span>item names that exist in both menus (e.g. Margherita Pizza, Cold Coffee)</span></div>
+      <div class="ok">Every field CR-376 needs (<code>food_for</code>, <code>status</code>, <code>is_disable</code>, <code>category_id</code>) is already in the response. No endpoint, payload, socket or DB change. Menu selector labels will read <b>Normal</b> and <b>Premium</b> for this restaurant (dynamic from DB — OD-376-04).</div>
+      <div class="note"><b>New finding for owner (not in the 2026-09-11 plan):</b> the left category column in Order Entry does <u>not</u> hide empty categories and does <u>not</u> render item counts. Today a Normal station already lists the 25 Premium-only categories (they open an empty grid). After CR-376, a Premium station will list the 18 Normal-only categories the same way. See §4 open decisions.</div>
+    </div>
+  </section>
+
+  <!-- ===================== HIGHLIGHTED FINDINGS ===================== -->
+  <section id="findings" style="background:var(--new-lt);border:2px solid var(--new);border-radius:14px;padding:22px 24px">
+    <h2 style="color:var(--new)">★ Highlighted for owner — the 4 open decisions, shown visually</h2>
+    <p class="where">These are the things that changed since the 2026-09-11 plan. Each one needs an (a)/(b) answer before Gate 4.</p>
+
+    <!-- OD-07 -->
+    <div class="frame" style="margin-bottom:18px">
+      <div class="label after"><span>OD-376-07 — Customer modal "Favourites / Smart Suggestions" can add an off-menu item</span><span>OrderEntry.jsx L2844 · 1 line</span></div>
+      <div class="compare" style="padding:16px 18px">
+        <div>
+          <div class="upper" style="color:var(--gray)">TODAY'S PLAN (nothing done) — Premium station</div>
+          <div class="cm" style="padding:0">
+            <div class="sugg"><div><div class="n">Vada Pav <span class="m">(Normal menu)</span></div><div class="m">ordered 12×</div></div><div class="plus hl">+</div></div>
+          </div>
+          <div class="note">One tap → Normal item inside a Premium order. Breaks OD-376-01 "no mixing".</div>
+        </div>
+        <div>
+          <div class="upper" style="color:var(--new)">OPTION (a) — RECOMMENDED</div>
+          <div class="cm" style="padding:0">
+            <div class="sugg inert"><div><div class="n">Vada Pav <span class="m">(Normal menu)</span></div><div class="m">ordered 12×</div></div><div class="plus dis">+</div></div>
+          </div>
+          <div class="ok">Tap does nothing (item not on active menu). Same file, 1 line. Row still visible — hiding it = follow-up (8th file).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OD-08 -->
+    <div class="frame" style="margin-bottom:18px">
+      <div class="label after"><span>OD-376-08 — How the "Active Menu" selector should look in Local Settings</span><span>StatusConfigPage.jsx E5h · same file either way</span></div>
+      <div class="compare" style="padding:16px 18px">
+        <div>
+          <div class="upper" style="color:var(--gray)">OPTION (a) — AS PLANNED 2026-09-11: pills under a heading</div>
+          <div class="ls" style="padding:0">
+            <div class="row on" style="margin-bottom:8px"><div><div class="t">Weight Entry Prompt <span class="badge on">ON</span></div></div><div class="toggle on"></div></div>
+            <div class="hl" style="padding:8px">
+              <div class="h3">Active Menu</div>
+              <div class="sub">Select which menu is active for order taking on this station…</div>
+              <div class="pills"><div class="pill sel">Normal</div><div class="pill">Premium</div></div>
+            </div>
+          </div>
+          <div class="note">Looks lighter/different from the toggle-cards around it.</div>
+        </div>
+        <div>
+          <div class="upper" style="color:var(--new)">OPTION (b) — RECOMMENDED: card row like its neighbours</div>
+          <div class="ls" style="padding:0">
+            <div class="row on" style="margin-bottom:8px"><div><div class="t">Weight Entry Prompt <span class="badge on">ON</span></div></div><div class="toggle on"></div></div>
+            <div class="row hl" style="align-items:center"><div><div class="t">Active Menu <span class="badge" style="background:var(--orange)">PREMIUM</span></div><div class="d">Which menu this station uses for order taking. Only menus with items are shown. Per-device.</div></div><div class="pills"><div class="pill">Normal</div><div class="pill sel">Premium</div></div></div>
+          </div>
+          <div class="ok">Same behaviour, same Save/Reset, matches existing visual language.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OD-09 -->
+    <div class="frame" style="margin-bottom:18px">
+      <div class="label after"><span>OD-376-09 — Plan edits E6 + E7 change a number that is never shown on screen</span><span>LoadingPage.jsx L589 (hotspot) · useRefreshAllData.js L34</span></div>
+      <div class="compare" style="padding:16px 18px">
+        <div>
+          <div class="upper" style="color:var(--gray)">WHAT THE PLAN ASSUMED</div>
+          <div class="oe" style="height:190px;grid-template-columns:200px 1fr">
+            <div class="cats"><div class="all">All ›</div><div>appetizer <span style="float:right;color:var(--gray)">12</span></div><div>Sandwich <span style="float:right;color:var(--gray)">9</span></div><div>Chakna <span style="float:right;color:var(--gray)">4</span></div><div>MAGGIE <span style="float:right;color:var(--gray)">6</span></div></div>
+            <div class="mid" style="display:block;padding:14px;color:var(--gray);font-size:12px">Plan text: "scope category counts to active menu type" — assumed the left column shows per-category item counts.</div>
+          </div>
+        </div>
+        <div>
+          <div class="upper" style="color:var(--new)">WHAT THE SCREEN ACTUALLY SHOWS (live 2026-09-25)</div>
+          <div class="oe" style="height:190px;grid-template-columns:200px 1fr">
+            <div class="cats hl"><div class="all">All ›</div><div>appetizer</div><div>Sandwich</div><div>Chakna</div><div>MAGGIE</div></div>
+            <div class="mid" style="display:block;padding:14px;color:var(--gray);font-size:12px"><code>CategoryPanel.jsx</code> renders names only. <code>itemCount</code> has <b>zero</b> readers in Order Entry (grep). E6/E7 would touch a hotspot for no visible effect.<div class="ok" style="margin-top:8px"><b>Recommend (a): drop E6 + E7</b> → 5 files, 2 hotspots instead of 7 files, 3 hotspots.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OD-10 -->
+    <div class="frame">
+      <div class="label after"><span>OD-376-10 — Category column lists categories that are empty for the active menu</span><span>CategoryPanel.jsx — currently OUT of scope</span></div>
+      <div class="compare" style="padding:16px 18px">
+        <div>
+          <div class="upper" style="color:var(--gray)">TODAY — Normal station (already happens)</div>
+          <div class="oe" style="height:230px;grid-template-columns:200px 1fr">
+            <div class="cats"><div class="all">All ›</div><div>appetizer</div><div class="hl" style="color:#999">Sandwich <span style="float:right;font-size:10px">Premium-only</span></div><div>Chakna</div><div class="hl" style="color:#999">MAGGIE <span style="float:right;font-size:10px">Premium-only</span></div><div class="hl" style="color:#999">TOASTER <span style="float:right;font-size:10px">Premium-only</span></div></div>
+            <div class="mid" style="display:block;padding:14px;color:var(--gray);font-size:12px">Clicking "Sandwich" today → empty grid, because its 9 items are Premium and hidden. <b>25 such categories</b> are listed on every Normal station right now. Nobody has reported it.</div>
+          </div>
+        </div>
+        <div>
+          <div class="upper" style="color:var(--new)">AFTER CR-376 — Premium station (mirror image)</div>
+          <div class="oe" style="height:230px;grid-template-columns:200px 1fr">
+            <div class="cats"><div class="all">All ›</div><div class="hl" style="color:#999">appetizer <span style="float:right;font-size:10px">Normal-only</span></div><div>Sandwich</div><div class="hl" style="color:#999">Chakna <span style="float:right;font-size:10px">Normal-only</span></div><div>MAGGIE</div><div>TOASTER</div></div>
+            <div class="mid" style="display:block;padding:14px;color:var(--gray);font-size:12px"><b>18 Normal-only categories</b> would open an empty grid on a Premium station.<div class="ok" style="margin-top:8px"><b>(a) recommended:</b> accept for CR-376, raise follow-up CR "hide empty categories per active menu".</div><div class="note" style="margin-top:6px"><b>(b):</b> hide them now → adds <code>CategoryPanel.jsx</code> (8th file), plan must be re-issued.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LOCAL SETTINGS ===================== -->
+  <section>
+    <h2>1. Local Settings (<code>/visibility/status-config</code>) — new "Active Menu" selector <span class="tag new">new UI</span> <span class="tag cond">only when 2+ menus have items</span></h2>
+    <p class="where">File <code>StatusConfigPage.jsx</code> · inserted after "Weight Entry Prompt" (L995) and before "Customer Field Requirements" (L997). Saved by the existing <b>Save Configuration</b> button · <b>Reset to Default</b> → Normal · stored per device in <code>localStorage.mygenie_active_menu_type</code>.</p>
+    <div class="compare">
+      <div class="frame">
+        <div class="label"><span>BEFORE (today — live screenshot 2026-09-25)</span></div>
+        <div class="ls">
+          <div class="row"><div><div class="t">QSR Quick Billing <span class="badge off">OFF</span></div><div class="d">When ON, fresh orders show inline payment in the cart…</div></div><div class="toggle"></div></div>
+          <div class="row on"><div><div class="t">Weight Entry Prompt <span class="badge on">ON</span></div><div class="d">When ON, clicking a weight-based item (Kg/gm/L/ml) shows a weight input prompt before adding to cart…</div></div><div class="toggle on"></div></div>
+          <div class="divider"></div>
+          <div class="h3">Customer Field Requirements</div>
+          <div class="sub">Override which customer fields are mandatory per order type. These are per-device settings.</div>
+          <div class="upper">WALK-IN ORDERS</div>
+          <div class="row" style="padding:10px 14px"><div class="t" style="font-weight:400">Name mandatory</div><div class="toggle"></div></div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="label after"><span>AFTER (CR-376 — E5h)</span><span>data-testid="active-menu-option-&lt;type&gt;"</span></div>
+        <div class="ls">
+          <div class="row"><div><div class="t">QSR Quick Billing <span class="badge off">OFF</span></div><div class="d">When ON, fresh orders show inline payment in the cart…</div></div><div class="toggle"></div></div>
+          <div class="row on"><div><div class="t">Weight Entry Prompt <span class="badge on">ON</span></div><div class="d">When ON, clicking a weight-based item (Kg/gm/L/ml) shows a weight input prompt before adding to cart…</div></div><div class="toggle on"></div></div>
+          <div class="divider"></div>
+          <div class="hl callout" data-note="NEW — CR-376">
+            <div class="h3">Active Menu</div>
+            <div class="sub">Select which menu is active for order taking on this station. Only menus with configured items are shown. Per-device setting.</div>
+            <div class="pills">
+              <div class="pill sel">Normal</div>
+              <div class="pill">Premium</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="h3">Customer Field Requirements</div>
+          <div class="sub">Override which customer fields are mandatory per order type. These are per-device settings.</div>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>Design note for owner:</b> the plan's pill buttons (above) are lighter than the surrounding toggle-cards. Alternative — render it as a card row like the others: title "Active Menu" + description on the left, the two pills on the right. Same behaviour, 0 extra files. Say which you prefer (OD-376-08).</div>
+  </section>
+
+  <!-- ===================== ORDER ENTRY ===================== -->
+  <section>
+    <h2>2. Order Entry — header chip + item grid scoped to active menu <span class="tag new">new chip</span> <span class="tag cond">only when active menu ≠ Normal</span></h2>
+    <p class="where">File <code>OrderEntry.jsx</code> · chip after the <code>#000780</code> order-number chip (L1712-1722) · grid logic L557-562 · empty-state L1786-1789. A <b>Normal</b> station looks exactly like today.</p>
+    <div class="compare stack">
+      <div class="frame">
+        <div class="label"><span>BEFORE / Normal station (live 2026-09-25 — 116 Normal items)</span></div>
+        <div class="oe">
+          <div class="cats"><div class="all">All ›</div><div>appetizer</div><div>Sandwich</div><div>Chakna</div><div>MAGGIE</div><div>BREAD BUTTER SAN…</div><div>VEG. SANDWICH (N…</div><div>CHEESE WAFERS</div><div>NACHOS</div><div>GARLIC BREAD</div><div>OPEN TOASTER</div></div>
+          <div class="mid">
+            <div class="hdr"><div class="search">Search items…</div><div class="ordno">#000780</div><div class="icons">＋ 👤 📝</div></div>
+            <div class="grid">
+              <div class="item">Out Of Menu</div><div class="item">Pringles</div><div class="item">Mix Chat</div><div class="item">Coconut Water</div><div class="item">Water 30</div><div class="item">Chilly Mushroom</div><div class="item">Vada Pav<i>Customize</i></div><div class="item">Pav Bhaji<i>Customize</i></div><div class="item">Aloo Tikki Burger<i>Customize</i></div><div class="item">Idli Sambar<i>Customize</i></div><div class="item">Farm fresh Pizza<i>Customize</i></div><div class="item">Cold Coffee<i>Customize</i></div><div class="item">Margherita Pizza<i>Customize</i></div><div class="item">French Fries<i>Customize</i></div>
+            </div>
+          </div>
+          <div class="cart"><span class="btn" style="background:var(--green)">1 ▾</span> &nbsp;<span class="btn" style="background:#fff;color:var(--orange);border:1px solid var(--orange)">Print Bill</span> &nbsp;<span class="btn" style="background:var(--orange)">Cancel</span><div style="margin-top:14px">Items · Qty · Price<br><b style="color:var(--dark)">Farm fresh Pizza</b> · 1 · ₹250</div></div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="label after"><span>AFTER — Premium station (E4a-c)</span><span>data-testid="active-menu-type-chip"</span></div>
+        <div class="oe">
+          <div class="cats"><div class="all">All ›</div><div>Sandwich</div><div class="empty" title="Normal-only category — opens empty grid (see §4)">appetizer</div><div class="empty">Chakna</div><div>MAGGIE</div><div>BREAD BUTTER SAN…</div><div>VEG. SANDWICH (N…</div><div>CHEESE WAFERS</div><div>NACHOS</div><div>GARLIC BREAD</div><div>OPEN TOASTER</div></div>
+          <div class="mid">
+            <div class="hdr"><div class="search">Search items…</div><div class="ordno">#000780</div><span class="chip hl callout" data-note="NEW">Premium Menu</span><div class="icons">＋ 👤 📝</div></div>
+            <div class="grid hl">
+              <div class="item">Veggie Patty Sub</div><div class="item">Tandoori Paneer Sub</div><div class="item">Paneer Tikka Sub</div><div class="item">Mexican Patty Sub</div><div class="item">Margherita Pizza<i>Customize</i></div><div class="item">Cold Coffee<i>Customize</i></div><div class="item">Paneer Tikka Sandwich</div><div class="item">Aloo Tikki Burger</div><div class="item">Peri Peri Fries</div><div class="item">Cheese Maggie</div><div class="item">Garlic Bread</div><div class="item">Nachos</div>
+            </div>
+          </div>
+          <div class="cart"><span class="btn" style="background:var(--green)">1 ▾</span> &nbsp;<span class="btn" style="background:#fff;color:var(--orange);border:1px solid var(--orange)">Print Bill</span> &nbsp;<span class="btn" style="background:var(--orange)">Cancel</span><div style="margin-top:14px;color:var(--gray)">Cart / Print / Collect Bill — <b>unchanged</b></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="compare" style="margin-top:20px">
+      <div class="frame">
+        <div class="label after"><span>AFTER — active menu has 0 items (OD-376-06, E4d)</span><span>data-testid="active-menu-empty-state"</span></div>
+        <div class="oe" style="height:260px">
+          <div class="cats"><div class="all">All ›</div><div class="empty">appetizer</div><div class="empty">Sandwich</div><div class="empty">Chakna</div></div>
+          <div class="mid">
+            <div class="hdr"><div class="search">Search items…</div><div class="ordno">#000781</div><span class="chip">Party Menu</span><div class="icons">＋ 👤 📝</div></div>
+            <div class="emptystate hl"><b>Party menu has no items configured.</b><span>Please update in Local Settings.</span></div>
+          </div>
+          <div class="cart" style="color:var(--gray)">Cart still usable for items already in the order.</div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="label"><span>Behaviour matrix</span></div>
+        <table class="map" style="border:0;border-radius:0">
+          <tr><th>Station setting</th><th>Item grid</th><th>Header chip</th><th>Popular tab</th></tr>
+          <tr><td>Normal (default)</td><td>117 Normal items — identical to today</td><td>none</td><td>unchanged</td></tr>
+          <tr><td>Premium</td><td>141 Premium items only</td><td>"Premium Menu"</td><td>unchanged (separate boot array, Normal-only)</td></tr>
+          <tr><td>Menu with 0 items</td><td>empty-state text, no fallback</td><td>"&lt;Type&gt; Menu"</td><td>unchanged</td></tr>
+          <tr><td>Setting changed while an order is open</td><td colspan="3">applies on the <b>next</b> Order Entry open (read once on mount — Design A)</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CUSTOMER MODAL ===================== -->
+  <section>
+    <h2>3. Customer modal — Favourites / Smart Suggestions <span class="tag cond">pending OD-376-07</span></h2>
+    <p class="where">File <code>OrderEntry.jsx:2844</code> (<code>menuItems=</code> prop) · UI lives in <code>CustomerModal.jsx</code> (not touched). Sections appear only for an <b>existing CRM customer</b>; the live screenshot showed a new-customer form (no intel), so the mock below is illustrative.</p>
+    <div class="compare">
+      <div class="frame">
+        <div class="label"><span>OD-376-07 = (b) leave / (c) park — Premium station</span></div>
+        <div class="cm">
+          <div class="sub" style="text-transform:uppercase;font-weight:600;letter-spacing:.5px">Favourites</div>
+          <div class="sugg"><div><div class="n">Vada Pav <span class="m">(Normal menu)</span></div><div class="m">ordered 12×</div></div><div class="plus">+</div></div>
+          <div class="sugg"><div><div class="n">Cold Coffee <span class="m">(Premium)</span></div><div class="m">ordered 8×</div></div><div class="plus">+</div></div>
+          <div class="note" style="margin-top:10px">Tapping <b>Vada Pav</b> adds a Normal-menu item into a Premium order → menus mixed (breaks OD-376-01).</div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="label after"><span>OD-376-07 = (a) scope to active menu — recommended (E4e, 1 line)</span></div>
+        <div class="cm">
+          <div class="sub" style="text-transform:uppercase;font-weight:600;letter-spacing:.5px">Favourites</div>
+          <div class="sugg inert"><div><div class="n">Vada Pav <span class="m">(Normal menu)</span></div><div class="m">ordered 12×</div></div><div class="plus dis">+</div></div>
+          <div class="sugg"><div><div class="n">Cold Coffee <span class="m">(Premium)</span></div><div class="m">ordered 8×</div></div><div class="plus">+</div></div>
+          <div class="ok" style="margin-top:10px">Off-menu row is <b>inert</b> (tap does nothing — existing "item removed from menu" guard). Row is still listed because the name comes from the CRM payload; hiding/greying it needs <code>CustomerModal.jsx</code> → 8th file → follow-up, not CR-376. (Greyed look above is illustrative only; in code the row looks normal but does nothing.)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FILE MAP ===================== -->
+  <section>
+    <h2>4. Where the changes land + open owner decisions</h2>
+    <table class="map">
+      <tr><th style="width:34%">File</th><th>Visible?</th><th>What</th></tr>
+      <tr><td><code>pages/StatusConfigPage.jsx</code> (hotspot)</td><td><span class="tag new">yes</span></td><td>§1 selector + save/reset/hydrate (E5a-h)</td></tr>
+      <tr><td><code>components/order-entry/OrderEntry.jsx</code> (hotspot)</td><td><span class="tag new">yes</span></td><td>§2 chip, grid scope, empty-state (E4a-d) · §3 if OD-376-07 = a (E4e)</td></tr>
+      <tr><td><code>api/transforms/productTransform.js</code> L47</td><td>no</td><td><code>=== 'Normal'</code> → <code>!== 'Aggregator'</code> (E1)</td></tr>
+      <tr><td><code>utils/activeMenuPrefs.js</code> (new)</td><td>no</td><td>localStorage helper, mirrors <code>qsrModePrefs.js</code> (E2)</td></tr>
+      <tr><td><code>contexts/MenuContext.jsx</code></td><td>no</td><td><code>activeMenuType</code>, <code>activeMenuProducts</code>, <code>availableMenuTypes</code> memos (E3)</td></tr>
+      <tr><td><code>pages/LoadingPage.jsx</code> (hotspot) L589 · <code>hooks/useRefreshAllData.js</code> L34</td><td>no</td><td>category <code>itemCount</code> scoped to active menu (E6/E7) — <b>see OD-376-09</b></td></tr>
+      <tr><td>Cart · Collect Payment · tax/discount · print · reports · Add Custom Item · dashboard · Aggregator · <b>backend</b></td><td><span class="tag none">untouched</span></td><td>—</td></tr>
+    </table>
+
+    <table class="map" style="margin-top:16px">
+      <tr><th style="width:12%">Decision</th><th>Question</th><th>Options (agent recommendation in bold)</th></tr>
+      <tr><td><b>OD-376-07</b><br>OPEN</td><td>Customer-modal Favourites/Smart Suggestions can add off-menu items after E1 (§3)</td><td><b>(a) scope <code>menuItems</code> to active menu — 1 line</b> · (b) leave, documented exception to OD-376-01 · (c) park</td></tr>
+      <tr><td><b>OD-376-08</b><br>NEW</td><td>Visual style of the Active Menu selector in Local Settings (§1)</td><td>(a) pills under a heading, as planned · <b>(b) card row matching the neighbouring toggle cards</b> — same files, same behaviour</td></tr>
+      <tr><td><b>OD-376-09</b><br>NEW</td><td>Probe shows category <code>itemCount</code> from <code>calculateItemCounts</code> is <u>not rendered anywhere</u> in Order Entry. E6/E7 touch a hotspot (<code>LoadingPage.jsx</code>) for a value nobody displays.</td><td><b>(a) drop E6 + E7 → 5 files, 2 hotspots, less risk</b> · (b) keep for data correctness (future consumers)</td></tr>
+      <tr><td><b>OD-376-10</b><br>NEW</td><td>Left category column lists categories that have no items in the active menu (already true today for the 25 Premium-only categories; after CR-376 a Premium station sees 18 empty Normal-only categories)</td><td><b>(a) accept for CR-376, log as follow-up CR</b> · (b) hide empty categories per active menu — expands scope to <code>CategoryPanel.jsx</code> (currently "will NOT touch"), needs re-plan</td></tr>
+    </table>
+    <div class="note" style="margin-top:14px"><b>Gate status:</b> Gate 3 (revalidated 2026-09-25). This page is a mockup — nothing in <code>src/</code> has changed. Implementation starts only after OD-376-07…10 are locked and the owner gives the verbatim <b>"CR-376 Gate 4 GO"</b>.</div>
+  </section>
+</main>
+</body>
+</html>

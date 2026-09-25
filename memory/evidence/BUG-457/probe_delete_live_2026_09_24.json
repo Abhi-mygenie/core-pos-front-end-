@@ -1,0 +1,105 @@
+{
+  "masters": {
+    "ingredient": {
+      "id": 20287,
+      "name": null
+    },
+    "addon": {
+      "id": 13237,
+      "name": "test add on"
+    }
+  },
+  "POST store-addon-recipe (probe)": {
+    "status": 200,
+    "body": {
+      "recipe_id": 11223,
+      "name": "test add on",
+      "preparation_time": 0,
+      "serve_time": 0,
+      "unit": "pieces",
+      "serves_people": 1,
+      "ingredients": [
+        {
+          "id": 20287,
+          "name": "Chicken",
+          "unit": "kg",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  "DELETE addon no-body": {
+    "status": 422,
+    "body": {
+      "message": "The given data was invalid.",
+      "errors": {
+        "reason": [
+          "The reason field is required."
+        ]
+      }
+    }
+  },
+  "DELETE addon {delete_reason}": {
+    "status": 422,
+    "body": {
+      "message": "The given data was invalid.",
+      "errors": {
+        "reason": [
+          "The reason field is required."
+        ]
+      }
+    }
+  },
+  "DELETE addon {reason}": {
+    "status": 200,
+    "body": {
+      "status": true,
+      "message": "Add-on recipe deleted successfully."
+    }
+  },
+  "addon_still_listed_after_delete": false,
+  "POST store-sub-recipe (probe)": {
+    "status": 200,
+    "body": {
+      "data": {
+        "name": "INV-PROBE-DELETE-ME sub",
+        "unit": "kg",
+        "small_unit": "kg",
+        "display_unit": "kg",
+        "quantity": 1,
+        "preparation_time": "0",
+        "serve_time": 0,
+        "serve_people": 1,
+        "threshold_qty": 0,
+        "threshold_unit": "",
+        "restaurant_id": 69,
+        "fg_inventory_master_id": 20497
+      }
+    }
+  },
+  "sub_list_keys": [
+    "sub_recipes"
+  ],
+  "DELETE sub no-body": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  },
+  "DELETE sub {delete_reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  },
+  "DELETE sub {reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  },
+  "sub_still_listed_after_delete": true
+}

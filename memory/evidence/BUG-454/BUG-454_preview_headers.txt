@@ -1,0 +1,26 @@
+== sounds/forty_five_sec_buzzer.wav
+HTTP/2 200 
+content-type: audio/wav
+content-length: 1925805
+cf-ray: a40261eb6d241279-ORD
+cf-cache-status: DYNAMIC
+cache-control: no-store, no-cache, must-revalidate
+server: cloudflare
+set-cookie: __cf_bm=***; HttpOnly; SameSite=None; Secure; Path=/; Domain=preview.emergentagent.com; Expires=Thu, 24 Sep 2026 14:42:10 GMT
+== sounds/five_sec_buzzer.wav
+HTTP/2 200 
+content-type: audio/wav
+content-length: 226605
+cf-ray: a40261ed3e34b271-ORD
+cf-cache-status: DYNAMIC
+cache-control: no-store, no-cache, must-revalidate
+server: cloudflare
+set-cookie: __cf_bm=***; HttpOnly; SameSite=None; Secure; Path=/; Domain=preview.emergentagent.com; Expires=Thu, 24 Sep 2026 14:42:10 GMT
+== firebase-messaging-sw.js
+HTTP/2 200 
+content-type: application/javascript; charset=UTF-8
+cf-ray: a40261ee9e04ead6-ORD
+cf-cache-status: DYNAMIC
+set-cookie: __cf_bm=***; HttpOnly; SameSite=None; Secure; Path=/; Domain=preview.emergentagent.com; Expires=Thu, 24 Sep 2026 14:42:10 GMT
+cache-control: no-store, no-cache, must-revalidate
+server: cloudflare

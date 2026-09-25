@@ -1,0 +1,7 @@
+{
+ "http": 409,
+ "body": {
+  "status": false,
+  "message": "Room conflict for new checkout."
+ }
+}
