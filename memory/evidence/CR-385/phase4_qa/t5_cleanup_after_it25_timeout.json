@@ -1,0 +1,26 @@
+{
+ "ts": "2026-09-23T03:55:36.606053Z",
+ "purpose": "cleanup after it.25 timeout \u2014 QA_TGK cancelled residual QA bookings",
+ "cancelled": [
+  {
+   "id": 246,
+   "guest": "QA P4 B2",
+   "status": 200
+  },
+  {
+   "id": 247,
+   "guest": "QA P4 B2",
+   "status": 200
+  }
+ ],
+ "counts_after": {
+  "arrivals_today": 0,
+  "arrivals_late": 1,
+  "arrivals_tomorrow": 0,
+  "departures_today": 0,
+  "departures_overdue": 0,
+  "in_house": 0,
+  "leaving_today": 0,
+  "arrived_today": 0
+ }
+}
