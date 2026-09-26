@@ -1,3 +1,6 @@
+**Last Updated:** 2026-09-26 — **INTAKE: CR-389 registered (P2 / LOW, NEW sprint `modules_pdf`, Gate 1 — BRAINSTORM MODE)** — Screen Reference PDFs for ALL modules, repeating the PMS v2.0 exercise (real routes + dummy data → PDF) through a **committed, reusable pipeline** (PMS generator scripts were never committed and are lost). Code reality PARTIAL (PMS PDFs exist, tooling absent). DISTINCT. Module inventory M1–M6 (~90–100 screens). **OD-389-01…08 OPEN** (data strategy · persona · granularity · ordering · packaging · public surface · sequencing · template) — Gate 2 blocked until locked. Registry 726 items. Zero code. Intake `change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md`.
+
+
 **Last Updated:** 2026-09-25 — **IMPLEMENTATION Gate 5a COMPLETE: CR-387 coded** (owner verbatim "Gate 4 GO"). FINAL plan applied (OD-UNIFY-01/02): `quantityBreakdown.rowQuantity()` + jest 8/8; `purchasePlanner.js` +conversion metadata (velocity+alert rows); `AutoShoppingList.jsx` breakdown on Projected Need/Gap/Suggested + two-box Qty-to-Buy + **E-A10/E-A11 BUG-455 on-hand parenthetical suppressed**; `SmartPurchasePanel.jsx` two-box seed + `rowQuantity` submit (Unit=display unit, rate per display unit, amount unchanged); `GroupedVendorPreview.jsx` breakdown text. Live smoke PASS (On-Hand no paren; Projected Need/Suggested in breakdown units; no-conversion rows single-unit). Registry `GATE_5A_IMPLEMENTED`. **Next: combined QA wave.**
 
 **Last Updated:** 2026-09-25 — **CR-387 OD-387-06 probe EXECUTED (read-only) → RESOLVED: `vendor-item-list.unit_price` = Amount ÷ BASE qty** (per-base-unit basis; plan E-A7 default confirmed, no change). Owner supplied `QA_INV` creds (stored gitignored). Owner: "no gate 4 till then" — BUG-455 Gate 5b (QA) must close first. Zero code.
@@ -66,6 +69,14 @@
 **Last Updated:** 2026-09-11 — **CR-378 IMPLEMENTED (Gate 5a, Fast Lane).** Sidebar profile sub-line now shows `{restaurant.name} · #{restaurant.id}` (e.g. `CAFE 103 · #644`). `Sidebar.jsx:820` — 1 line. webpack clean. EXIT GATE 5/5. Screenshot verified. QA PENDING.
 **Last Updated:** 2026-09-11 — **CR-378 INTAKE COMPLETE (Gate 1).** Sidebar Profile: show restaurant name alongside ID. P2 LOW risk. 1 file (Sidebar.jsx), 1 line. DISTINCT, code reality NONE. Fast Lane eligible — awaiting OD-378-02 (owner approval). Registry: 645 items.
 **Last Updated:** 2026-09-09 — **CR-358-P5 GATE 5b QA PASS** — 8/8 executed PASS, 13 NOTE deferred. Rate grid✅ popover✅ Inv Restrictions✅ No-Show OTA✅ regression✅. QA report: `test_reports/QA_REPORT_CR358P5_2026_09_09.md`. Ready for Gate 6 owner smoke.
+
+---
+
+## 2026-09-26 — SCREEN REFERENCE PDFs FOR ALL MODULES (sprint `modules_pdf` — GATE 1 INTAKE · BRAINSTORM)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Code reality | Blast | Notes |
+|---|---|---|---|---|---|---|---|---|
+| **CR-389** | Screen Reference PDFs for ALL modules — repeat the PMS "real routes + dummy data → screenshots → PDF" exercise for POS Core (M1), Menu & Setup (M2), Inventory & Recipes (M3), Expenses & Staff (M4), Reports ×3 (M5a/b/c), PMS regen (M6) via a committed, parameterised pipeline (`frontend/scripts/screen-reference/`, planned) | P2 | LOW (→ MEDIUM only if OD-389-01 = (c) in-app demo flag) | **GATE_1_INTAKE — BRAINSTORM 2026-09-26** | 1 | PARTIAL — `public/MyGenie_PMS_Screen_Reference.pdf` v2.0 (38 pp / 36 screens) + v1.0 exist; generator scripts `/app/pms_dummy_data.py`, `/app/generate_pms_pdf_v2.py` LOST (never committed) | SMALL code (0 runtime files) / LARGE surface (~90–100 screens) | Source OWNER-REPORTED. DISTINCT (in-app PDF *export* items BUG-041/180/302, CR-086/089 unrelated). **Brainstorm agenda = OD-389-01 data strategy (rec. (b) Playwright `/api/*` interception + fixtures) · 02 shared persona · 03 granularity (rec. primary + key states) · 04 ordering · 05 packaging (rec. master + per-module + PNG packs) · 06 output location vs CR-372 public surface · 07 sequencing (rec. pilot M4 Expenses & Staff) · 08 PMS v2.0 template as standard.** Gate 2 blocked until all locked. Intake `change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md` · evidence `evidence/CR-389/EVIDENCE_POINTER.md`. |
 
 ---
 

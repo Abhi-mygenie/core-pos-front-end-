@@ -1,7 +1,7 @@
 # Layer 6 — Sprint Status Board
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-24 (sep_bug_closure — **COMBINED WAVE 1+2 QA CONDITIONAL PASS (Gate 5B)**: automated 8/8 PASS, browser E2E 12 BLOCKED (external CORS), 7 NOT COVERABLE, 0 BLOCKER/MAJOR; BUG-452 `GATE_5B_QA_CONDITIONAL_PASS`; report `test_reports/QA_REPORT_SEP_BUG_CLOSURE_WAVE1_WAVE2_COMBINED_2026_09_24.md`; **next = Gate 6 Owner Smoke on direct-access device**) · **WAVE 2 BUG-452 IMPLEMENTED Gate 5A** (owner "gate 4 go", VD-8 Option C; `handover/SESSION_HANDOVER_2026_09_24_SEP_BUG_CLOSURE_WAVE2_IMPLEMENTED.md`) · **WAVE 1 QA DEFERRED → folded into combined run** · **WAVE 1 IMPLEMENTED Gate 5A** (commit `3783ee8`, testing_agent iteration_1 PASS) · 2026-02 (Gate 3 CLOSED, B0 PASS) · Prior: 2026-09-24 (Gate 2 CLOSED) · (pos_pms_2 — CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off) · 2026-06-15 (CR-047 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
+**Last Updated:** 2026-09-26 (**NEW sprint `modules_pdf` opened — CR-389 Screen Reference PDFs for ALL modules, GATE 1 INTAKE · BRAINSTORM**; OD-389-01…08 OPEN; Gate 2 blocked until locked; zero code) · 2026-09-24 (sep_bug_closure — **COMBINED WAVE 1+2 QA CONDITIONAL PASS (Gate 5B)**: automated 8/8 PASS, browser E2E 12 BLOCKED (external CORS), 7 NOT COVERABLE, 0 BLOCKER/MAJOR; BUG-452 `GATE_5B_QA_CONDITIONAL_PASS`; report `test_reports/QA_REPORT_SEP_BUG_CLOSURE_WAVE1_WAVE2_COMBINED_2026_09_24.md`; **next = Gate 6 Owner Smoke on direct-access device**) · **WAVE 2 BUG-452 IMPLEMENTED Gate 5A** (owner "gate 4 go", VD-8 Option C; `handover/SESSION_HANDOVER_2026_09_24_SEP_BUG_CLOSURE_WAVE2_IMPLEMENTED.md`) · **WAVE 1 QA DEFERRED → folded into combined run** · **WAVE 1 IMPLEMENTED Gate 5A** (commit `3783ee8`, testing_agent iteration_1 PASS) · 2026-02 (Gate 3 CLOSED, B0 PASS) · Prior: 2026-09-24 (Gate 2 CLOSED) · (pos_pms_2 — CR-385 P5 regression PASSED 2026-09-24 — awaiting owner sign-off) · 2026-06-15 (CR-047 CLOSED — OWNER VERIFIED; POS 4.0 remains FROZEN)
 
 ---
 
@@ -318,6 +318,13 @@
 - CR-133 amendment: `handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md`
 
 ---
+
+## modules_pdf — Screen Reference PDFs for ALL modules (CR-389) — GATE 1 INTAKE · BRAINSTORM (opened 2026-09-26)
+
+| Item | Status |
+|---|---|
+| **CR-389** | **GATE_1_INTAKE 2026-09-26 — BRAINSTORM MODE.** Repeat PMS v2.0 exercise (real routes + dummy data → PDF) for M1 POS Core · M2 Menu & Setup · M3 Inventory & Recipes · M4 Expenses & Staff · M5a/b/c Reports · M6 PMS regen (~90–100 screens) via committed pipeline. **OD-389-01…08 OPEN** — lock in order, 01 (data strategy) first. Gate 2 blocked until all locked. Zero code. Intake `change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md`. |
+| Brainstorm log | 2026-09-26 session 1: inventory of PMS artifacts done (v1/v2 PDFs on disk, generator scripts lost); module/screen inventory drafted; 8 decision points tabled. Next session: OD-389-01. |
 
 ## sep_bug_closure — Sept bug closure (BUG-451 · BUG-452 · BUG-453 · CR-386) — COMBINED WAVE 1+2 QA CONDITIONAL PASS 2026-09-24 (Gate 5B) · Gate 6 Owner Smoke next
 
