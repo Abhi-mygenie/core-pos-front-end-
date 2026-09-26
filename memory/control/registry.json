@@ -28261,34 +28261,34 @@
       "category": "NOT_STARTED"
     },
     {
-      "id": "CR-389",
+      "id": "CR-390",
       "type": "CR",
       "title": "Screen Reference PDFs for ALL modules — repeat the PMS dummy-data-screenshots-to-PDF exercise via a committed, reusable pipeline (POS Core, Menu & Setup, Inventory, Expenses & Staff, Reports x3, PMS regen)",
       "area": "Cross-module documentation / design reference tooling",
       "priority": "P2",
-      "risk": "LOW (upgrades to MEDIUM if OD-389-01 = (c) in-app demo-mode flag)",
+      "risk": "LOW (upgrades to MEDIUM if OD-390-01 = (c) in-app demo-mode flag)",
       "sprint_key": "modules_pdf",
-      "status": "GATE_1_INTAKE — BRAINSTORM (OD-389-01…08 OPEN; Gate 2 blocked until locked)",
+      "status": "GATE_1_INTAKE — BRAINSTORM (OD-390-01…08 OPEN; Gate 2 blocked until locked)",
       "created_at": "2026-09-26",
       "created": "2026-09-26",
       "code_reality": "PARTIAL — PMS PDF v1/v2 artifacts exist in frontend/public/; generator scripts (/app/pms_dummy_data.py, /app/generate_pms_pdf_v2.py) LOST, never committed",
       "duplicate_check": "DISTINCT (only in-app PDF export items BUG-041/180/302, CR-086/089 — unrelated family)",
       "blast_radius": "SMALL for code (0 runtime files; NEW frontend/scripts/screen-reference/) / LARGE surface (~90-100 screens, ~60 routes)",
-      "intake_doc": "change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
-      "evidence_dir": "evidence/CR-389/EVIDENCE_POINTER.md",
+      "intake_doc": "change_requests/CR-390_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
+      "evidence_dir": "evidence/CR-390/EVIDENCE_POINTER.md",
       "files_affected": [
         "frontend/scripts/screen-reference/ (NEW, planned)",
-        "frontend/public/*.pdf or memory/design_briefs/downloads/ (outputs, OD-389-06)"
+        "frontend/public/*.pdf or memory/design_briefs/downloads/ (outputs, OD-390-06)"
       ],
       "owner_decisions": {
-        "OD-389-01": "OPEN — data strategy: (a) DOM injection · (b) Playwright /api/* interception + fixtures [recommended] · (c) in-app demo-mode flag",
-        "OD-389-02": "OPEN — one shared persona/property across all PDFs",
-        "OD-389-03": "OPEN — screen granularity (primary only / + interaction states / + empty-error states)",
-        "OD-389-04": "OPEN — ordering: recommended (c) hybrid (journey for POS/Inventory/PMS, sidebar-derived for Menu & Settings/Insights)",
-        "OD-389-05": "OPEN — packaging (per-module / master / both + PNG packs)",
-        "OD-389-06": "OPEN — output location: recommended memory/design_briefs/downloads/screen_reference/ (PUBLIC_ROUTES.md treats public/ PDFs as temporary carve-outs); move PMS PDFs out of public/ in M6",
-        "OD-389-07": "OPEN — sequencing; recommended pilot M4 Expenses & Staff",
-        "OD-389-08": "OPEN — reuse PMS v2.0 template as standard"
+        "OD-390-01": "OPEN — data strategy: (a) DOM injection · (b) Playwright /api/* interception + fixtures [recommended] · (c) in-app demo-mode flag",
+        "OD-390-02": "OPEN — one shared persona/property across all PDFs",
+        "OD-390-03": "OPEN — screen granularity (primary only / + interaction states / + empty-error states)",
+        "OD-390-04": "OPEN — ordering: recommended (c) hybrid (journey for POS/Inventory/PMS, sidebar-derived for Menu & Settings/Insights)",
+        "OD-390-05": "OPEN — packaging (per-module / master / both + PNG packs)",
+        "OD-390-06": "OPEN — output location: recommended memory/design_briefs/downloads/screen_reference/ (PUBLIC_ROUTES.md treats public/ PDFs as temporary carve-outs); move PMS PDFs out of public/ in M6",
+        "OD-390-07": "OPEN — sequencing; recommended pilot M4 Expenses & Staff",
+        "OD-390-08": "OPEN — reuse PMS v2.0 template as standard"
       },
       "related": [
         "PMS Screen Reference v2.0 2026-09-16",
@@ -28299,16 +28299,16 @@
       "artifact_refs": [
         {
           "label": "Intake",
-          "path": "memory/change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
+          "path": "memory/change_requests/CR-390_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
           "type": "intake"
         }
       ],
-      "brainstorm_status": "Option analysis for OD-389-01…08 written in intake doc §Brainstorm (2026-09-26); owner to lock next session"
+      "brainstorm_status": "Option analysis for OD-390-01…08 written in intake doc §Brainstorm (2026-09-26); owner to lock next session"
     }
   ],
   "meta": {
     "last_updated": "2026-09-26",
-    "last_action": "INTAKE 2026-09-26: CR-389 registered (P2/LOW) under NEW sprint modules_pdf; full brainstorm option analysis OD-389-01…08 written into intake at owner request. Gate 2 blocked until ODs locked. Zero code.",
+    "last_action": "INTAKE 2026-09-26: CR-390 registered (P2/LOW) under NEW sprint modules_pdf; full brainstorm option analysis OD-390-01…08 written into intake at owner request. Gate 2 blocked until ODs locked. Zero code.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -28317,6 +28317,6 @@
     "total": 726,
     "total_items": 726,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "Session 2026-09-26: CR-389 intake; entry point handover/SESSION_HANDOVER_2026_09_26_CR389_MODULES_PDF_INTAKE.md. Next: brainstorm OD-389-01 (data strategy) → 02…08 → owner \"Gate 2 GO\"."
+    "last_note": "Session 2026-09-26: CR-390 intake; entry point handover/SESSION_HANDOVER_2026_09_26_CR390_MODULES_PDF_INTAKE.md. Next: brainstorm OD-390-01 (data strategy) → 02…08 → owner \"Gate 2 GO\"."
   }
 }
