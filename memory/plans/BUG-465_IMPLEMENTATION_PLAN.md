@@ -21,15 +21,19 @@
 
 ---
 
-## OD-465-02 — Regression Scope (locked by planning agent)
+## OD-465-02 — Regression Scope (LOCKED by owner 2026-09-26)
 
-**Recommendation applied (owner answer pending — safe to proceed):**
-Production build regression = `npm run build` exit 0 + load 5 representative chart pages
-from the production bundle: P&L, Sales, Expense Report, PMS Revenue Dashboard, any inventory
-widget page. These cover all recharts component types used across all 30 affected files.
+**LOCKED: YES — full regression, all 30 chart pages in `npm run build`.**
 
-If owner wants all 30 pages tested explicitly, the Implementation agent should note this
-in the QA handover and the QA agent loads all 30 in the production bundle.
+Every file that imports recharts must be loaded from the minified production bundle and
+verified that no `TypeError: * is not a function` occurs. The QA agent must load all 30
+pages (or navigate to each route) from the production build and confirm charts render.
+
+**Full list of files to exercise (30 total):**
+```bash
+grep -rn "from 'recharts'\|from \"recharts\"" src/ --include="*.jsx" --include="*.js" -l
+```
+All 30 resulting pages/components must be smoke-tested in the production bundle.
 
 ---
 
@@ -150,8 +154,10 @@ npm install
 - V1: grep overrides → `1.46.1` ✅ (automated)
 - V2: node version check → `1.46.1` ✅ (automated)
 - V3: `npm run build` exit 0 ✅ (automated)
-- V4–V7: 4 chart pages load without `TypeError` in production bundle (browser, manual)
-- V8: only package.json + package-lock.json in commit (automated)
+- V4–V33: **All 30 recharts pages** load without `TypeError` in production bundle (browser, manual)
+  - `grep -rn "from 'recharts'" src/ -l --include="*.jsx" --include="*.js"` → load each route
+  - Confirmed by owner: full regression, no spot-check
+- V34: only package.json + package-lock.json in commit (automated)
 
 **Regression tests:**
 - Dev server still starts: `yarn start` / `npm start` — no crash (dev build unaffected)

@@ -14,7 +14,7 @@
 | Code Reality | **NONE** — no `overrides`/`resolutions` in `package.json`; `es-toolkit` floats to latest |
 | Conflict Pre-Check | **CLEAN** — `package.json` has no other open item touching it (registry check: BUG-465 only) |
 | Risk | **HIGH** — build-level change; large blast radius on chart pages in production build |
-| OD-465-02 | OPEN — regression scope (agent recommendation: full, 30 chart pages, `npm run build`) |
+| OD-465-02 | **LOCKED: YES — full regression, all 30 chart pages in `npm run build` (owner 2026-09-26)** |
 
 ---
 
@@ -111,7 +111,7 @@ build regression.
 
 | OD | Question | Agent recommendation |
 |---|---|---|
-| OD-465-02 | Regression scope: all 30 chart pages in `npm run build`, or spot-check key pages? | **Full regression — all 30 pages in a production build.** Rationale: the crash manifests only in the minified bundle; spot-checking 3–5 pages would leave 25 untested. A clean `npm run build` exit 0 + loading 5 key representative pages (P&L, Sales, Expense Report, PMS Revenue, inventory widget) is sufficient — these exercise all recharts component types used across the 30 files. |
+| OD-465-02 | Regression scope: all 30 chart pages in `npm run build`, or spot-check key pages? | **LOCKED: YES — full regression, all 30 chart pages in production build (owner 2026-09-26).** Every file that imports recharts must be loaded from the minified bundle and verified no `TypeError` occurs. |
 
 ---
 

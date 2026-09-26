@@ -195,7 +195,7 @@ higher churn, not recommended).
 | OD | Question | Agent recommendation | Status |
 |---|---|---|---|
 | OD-465-01 | Option 1 (`es-toolkit` pin to `1.46.1`) vs Option 2 (`recharts` downgrade to `2.x`)? | Option 1 — less churn, no API changes | **LOCKED: Option A — pin `es-toolkit@1.46.1` via npm `"overrides"` (owner 2026-09-26)** |
-| OD-465-02 | Regression scope — all 30 chart files in prod build, or spot-check key pages? | Full regression on production build | OPEN — for Gate 2 |
+| OD-465-02 | Regression scope — all 30 chart files in prod build, or spot-check key pages? | Full regression on production build | **LOCKED: YES — full regression, all 30 chart pages in `npm run build` (owner 2026-09-26)** |
 | OD-465-03 | Commit `package-lock.json` after fix so deps are locked going forward? | YES — prevents future silent version floats | **LOCKED: YES (owner 2026-09-26)** |
 
 ---

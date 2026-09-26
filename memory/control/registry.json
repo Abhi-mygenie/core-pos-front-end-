@@ -28349,7 +28349,7 @@
       "build_tool": "npm",
       "od_465_01": "LOCKED: Option A \u2014 pin es-toolkit@1.46.1 via npm overrides",
       "od_465_03": "LOCKED: YES commit package-lock.json",
-      "od_465_02": "OPEN \u2014 agent recommendation: full regression (5 representative chart pages in npm run build). Awaiting Gate 4 GO.",
+      "od_465_02": "LOCKED: YES \u2014 full regression, all 30 chart pages in npm run build (owner 2026-09-26)",
       "impact_analysis": "impact/BUG-465_IMPACT_ANALYSIS.md",
       "implementation_plan": "plans/BUG-465_IMPLEMENTATION_PLAN.md"
     }
